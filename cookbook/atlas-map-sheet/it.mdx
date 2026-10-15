@@ -1,0 +1,68 @@
+---
+title: "Tavola d’atlante: carte numerate e una veduta ruotata"
+summary: "Carte con una numerazione propria e didascalie su una barra blu, una legenda di campioni nei colori delle carte e una carta nautica girata di lato a pagina 3."
+plain: "Quattro pagine di un atlante di isole inventate. Mostra come dare alle carte una numerazione propria e come girare di lato una carta grande perché riempia una pagina."
+description: "Quattro pagine di un atlante inventato, in Postext: carte numerate con didascalia su una barra, legenda nei colori delle carte, toponimi e carta ruotata."
+question: "Come numero le carte come un tipo di figura a sé, con la didascalia su una barra, e le cito nel testo?"
+aliases: ["atlante", "carte geografiche", "figure cartografiche", "dizionario dei toponimi", "legenda", "legenda a colori", "figura orizzontale", "figura ruotata", "barra della didascalia", "carta nautica", "mapa", "nomenclátor", "maps"]
+pageNotes: { "1": "L’apertura: una fascia blu profondo in testa alla pagina con l’occhiello «Sheet 1 · The islands and their waters», il titolo «The Solan Isles» e una rosa dei venti; due brevi colonne di testo; poi la carta 1 a tutta larghezza al piede della pagina, una carta del rilievo di quattro isole in tinte sabbia e ocra su acque azzurre e blu più scuro, con strade rosse e sotto una legenda di campioni che comincia con «In metres».", "2": "La carta 2, l’estremità nord di Brannay con le curve di livello, i tre Hool Stacks al largo della sua punta nord-occidentale e dischi rossi numerati, e la carta 3, la pianta del porto di Kirkwick con gli scandagli e una legenda di numeri cerchiati, stanno in testa alle due colonne; il testo prosegue sotto.", "3": "La carta 4, una carta nautica di tutto l’arcipelago e della costa continentale, ruotata di un quarto di giro in modo che il suo lato superiore guardi il dorso, con una griglia segnata da A a H e da 1 a 6 nel margine, scandagli in mare aperto e diciassette dischi rossi.", "4": "La tabella 1, il dizionario dei toponimi: diciassette righe con un disco rosso numerato, il luogo, che cosa è, l’isola e il riquadro, una riga sì e una no tinta di blu; due colonne di testo di chiusura e il colophon sotto, e una riga di note tipografiche sotto un filetto sottile al piede della pagina." }
+---
+
+## Che cosa comporrai
+
+La prima tavola di un atlante delle Solan Isles, un arcipelago inventato per questa ricetta e disegnato in codice a partire da un unico campo di altitudini. La pagina 1 si apre su una fascia blu mare profondo con il nome dell’atlante in corpo 56 e una rosa dei venti, e la carta 1, il rilievo dell’intero gruppo, occupa il piede della pagina. L’estremità nord dell’isola principale e la pianta del suo porto stanno in testa alle due colonne di pagina 2. A pagina 3 la carta delle isole è ruotata di un quarto di giro, così che la sua griglia di riquadri da 8 km riempia la pagina. La pagina 4 accoglie il dizionario dei toponimi, diciassette luoghi in dischi rossi con il riquadro della carta di ciascuno, e una riga di note tipografiche al piede. Ogni carta ha la didascalia sopra il disegno, su una barra blu, e la legenda della carta 1 è una riga di campioni di colore nei colori della carta.
+
+## Preparazione
+
+### 1 · Una sola palette per la pagina e per le carte
+
+<Excerpt region="palette" />
+
+Le sei tinte della carta sono voci dello stesso oggetto che contiene i colori della pagina: `colorPalette` le elenca come voci di palette e i disegni prendono i riempimenti SVG da `palette[id]`. Il testo bianco carta su `band`, il blu dell’apertura, delle barre delle didascalie e della riga d’intestazione della tabella, ha un contrasto di 9,2:1; `road`, l’unico rosso, è riservato a strade, fari e numeri dei luoghi e ha 5,4:1 rispetto alla carta. `main-color` prende l’esadecimale di `band`, e i valori predefiniti collegano a quell’id titoli, barre delle didascalie e segni degli elenchi, così ognuno di essi che la configurazione non imposta si stampa nel blu dell’atlante.
+
+### 2 · Dove va ogni carta
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. La carta 1 è un elemento flottante `bottom` perché un elemento flottante `top` a tutta larghezza non arriva mai sulla pagina che lo cita. Le carte 2 e 3 sono elementi flottanti di colonna `top` citati a pagina 1, così prendono la testa delle due colonne di pagina 2 ([Collocazione](/it/docs/document-format#collocazione)). `rotate: 'ccw'` porta il lato superiore della carta nautica sul bordo sinistro e le dà la pagina 3 tutta per sé. Ruotato, il disegno misura 247,6 mm lungo la pagina, le 53 righe di griglia della gabbia meno una per lo spazio dell’elemento flottante, e 182,2 mm di traverso, ciò che resta della giustezza di 196 mm dopo la barra della didascalia e la nota. Un disegno più alto verrebbe ridotto e lascerebbe carta nuda in testa alla pagina.
+
+### 3 · Una legenda disegnata dagli stessi id
+
+<Excerpt region="legend" />
+
+`RELIEF` elenca le fasce con i loro id di palette e le altitudini da cui cominciano. Il disegno riempie ogni fascia con `palette[id]` e la legenda sotto la carta 1 scrive uno `:swatch` con lo stesso id, così un nuovo esadecimale nella palette cambia insieme il disegno e la legenda. La legenda nomina l’unità una volta sola, a parole, perché la nota è composta in Alegreya Sans SC, che stampa una *m* minuscola come una M in maiuscoletto. A <PageRef page={2}>pagina 2</PageRef> il testo mette gli stessi campioni accanto alle due profondità dell’acqua.
+
+### 4 · Le carte sono risorse, numerate e collocate dalle loro citazioni
+
+<Excerpt region="resources" />
+
+Una risorsa prende il suo numero dalla prima citazione nel testo, e `:ref{id="north"}` stampa l’etichetta breve del tipo e quel numero, «Map 2», nel testo corrente o nella nota di una didascalia. La carta nautica e il dizionario dei toponimi sono citati per la prima volta a pagina 2, in quest’ordine, così la carta prende la pagina 3 e il dizionario la testa della pagina 4. La rosa dei venti è una risorsa dello stesso tipo, ma la disegna solo l’apertura e il testo non la cita mai, quindi le carte contano comunque da 1 a 4. Ogni voce della legenda del porto è un unico chip senza riempimento, bordo né spaziatura interna, così il suo numero, il suo nome e il punto che li segue restano sulla stessa riga.
+
+### 5 · Numeri condivisi dalle carte e dal dizionario dei toponimi
+
+<Excerpt region="gazetteer" />
+
+`PLACES` è ordinato da nord a sud e numerato in quell’ordine; le carte stampano i numeri in dischi rossi e la tabella in chip rossi. `square()` ricava il riquadro della carta dalle stesse coordinate in chilometri che collocano ogni segno sulle carte, così Kirkwick, il numero 6, sta in D3 sia sulla carta sia nella tabella. Una riga ogni due prende il suo azzurro pallido dallo stile della tabella: `bodyAlternateBackgroundEnabled`, con `bodyAlternateBackground` collegato a `sea`.
+
+### 6 · Il nome dell’atlante su una fascia del suo stesso blu
+
+<Excerpt region="opener" />
+
+La fascia è un riquadro ancorato a `'bleed'` e senza larghezza, così corre da un bordo all’altro. Il titolo grande è `{title}`, il nome dell’atlante preso dal frontmatter, e il testo del titolo vero e proprio segue il numero della tavola nell’occhiello. Da sola la fascia riserva lo spazio fino al suo piede, e il testo comincerebbe 3,9 mm sotto di essa; `minHeight` porta la riserva a 14 righe di griglia sotto il margine superiore, e il testo comincia 8,7 mm sotto la fascia.
+
+## Varianti
+
+### Ruota la carta nautica dall’altra parte
+
+Ruotata in senso orario, la carta ha il lato superiore e la barra della didascalia verso il taglio esterno della pagina 3, e il lettore gira il libro nel verso opposto a quello consueto, che `'ccw'` rispetta.
+
+```diff
+-  chart: { rotate: 'ccw' }, // turned a quarter, top to the left, on a page of its own
++  chart: { rotate: 'cw' }, // turned a quarter, top to the right, on a page of its own
+```
+
+### Ruota invece una tabella
+
+Una tabella ruota con la stessa impostazione e, quando è troppo larga per una pagina, prosegue ruotata sulla successiva sotto una riga d’intestazione ripetuta: vedi <RecipeLink slug="garden-almanac">l’almanacco dell’orto</RecipeLink>.
+
+### Metti una carta nel margine
+
+In un’impaginazione a colonna e mezza la colonna esterna può accogliere figure e didascalie e nessun testo: vedi <RecipeLink slug="textbook-margin-column">il manuale con una colonna a margine</RecipeLink>.

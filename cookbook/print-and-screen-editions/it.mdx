@@ -1,0 +1,71 @@
+---
+title: "Una sola fonte, edizioni per stampa e schermo"
+summary: "Entrambe le edizioni vengono da una configurazione: htmlViewer.overrides ha il design scuro per lo schermo, che applyHtmlViewerOverrides unisce prima dell’HTML."
+plain: "La sezione meteo di una rivista, fatta due volte dallo stesso testo. Mostra come un solo insieme di impostazioni dà una versione stampata a colonne e una versione scura a colonna unica da leggere a schermo."
+description: "Una sezione di rivista in Postext: numero a due colonne per la stampa e vista HTML scura e ridimensionabile, da un solo Markdown e una sola configurazione."
+question: "Come mostro lo stesso documento come vista di lettura HTML adattabile, con un design più semplice?"
+aliases: ["edizione per schermo", "vista di lettura", "edizione web", "modalità scura", "tema notturno", "HTML adattabile", "HTML responsive", "ridimensionamento", "ResizeObserver", "Shadow DOM", "htmlViewer overrides"]
+pageNotes: { "1": "La pagina di parte di «Notes on Weather»: un campo blu pioggia con tratti di pioggia bianchi in diagonale che lasciano libero il testo, un alto numero romano I, il titolo della parte «Autumn» e le tre note elencate al piede.", "2": "La nota «Rain»: una fascia chiara color nebbia con l’occhiello «Autumn · Note 1», il titolo in Gloock e un sommario in corsivo, due colonne giustificate e un pluviometro disegnato in sezione in testa alla seconda colonna.", "3": "La nota «Fog»: due colonne bilanciate sopra un panorama che attraversa il piede della pagina, la fotografia di una valle piena di nebbia all’alba, con un campanile, alberi e un fiume che vi affiorano e una riva recintata in primo piano.", "4": "La nota «Wind»: una rosa dei venti apre la seconda colonna, con i petali blu più lunghi rivolti a ovest e a sud-ovest, e la nota finisce con il colophon del numero." }
+---
+
+## Che cosa comporrai
+
+*Notes on Weather*, la sezione autunnale di una piccola rivista, composta due volte dallo stesso Markdown. Su carta è un numero di 225 × 297 mm: una pagina di parte blu pioggia, tre note che si aprono sotto una fascia chiara color nebbia, due colonne giustificate, disegni di un pluviometro e di una rosa dei venti e la fotografia di una valle nella nebbia. A schermo è una sola colonna a bandiera di Newsreader, grigio chiaro su quasi nero, in testo HTML che chi legge può selezionare e copiare, senza pagina di parte, fasce color nebbia né folio. Il riquadro si apre sul pluviometro, ridotto all’altezza del riquadro e disegnato nei colori notturni, accanto alla pagina stampata in cui si trova. Scorri verso l’alto per l’apertura di Rain, o trascina l’angolo del riquadro e il testo si reimpagina alla nuova dimensione. Il design per lo schermo è fatto di nove chiavi sotto `htmlViewer.overrides`, dentro la configurazione di stampa.
+
+## Preparazione
+
+### 1 · Un solo insieme di nomi di colore, due insiemi di valori
+
+<Excerpt region="palette" />
+
+Ogni colore della configurazione nomina un id della palette, e l’esadecimale scritto accanto è solo il valore di riserva diurno. Così l’edizione per lo schermo passa ai colori notturni sostituendo un solo array. Gli [overrides](/it/docs/configuration-fonts-colors-viewers#visualizzatore-html) della [risposta breve](#la-risposta-breve) uniscono gli oggetti chiave per chiave e i livelli di titolo per `level`, e sostituiscono interamente ogni altro array, `colorPalette` compreso. `main-color` fa parte della palette, quindi cambiano anche i valori predefiniti del motore che lo usano. La nuova palette arriva a ogni colore collegato a essa: il testo, le didascalie, gli elementi di design delle aperture e il colore dei rimandi.
+
+### 2 · Aperture: una fascia su carta, le parole a schermo
+
+<Excerpt region="opener" />
+
+Gli elementi di occhiello, titolo e sommario si definiscono una volta e si distribuiscono in entrambi i design, così entrambe le edizioni mostrano gli stessi attributi del titolo: `{attr.kicker}`, `{attr.lead}` e il `{partTitle}` della parte. Su carta un titolo di livello 1 passa a una nuova pagina e si estende su entrambe le colonne, e il suo design appende una fascia color nebbia all’abbondanza. `minHeight` riserva la profondità della fascia sotto il margine superiore più `AIR`, i 9 mm tra la fascia e la prima riga. I titoli stampati sono composti a 54 pt perché ognuno è una sola parola breve e l’unico testo grande della sua pagina. A schermo lo stesso livello si compone come titolo dentro la colonna, senza fascia e senza spazio. L’override si unisce per `level`, quindi ogni impostazione del titolo che non ripete resta come in stampa.
+
+### 3 · Una pagina di parte che esiste solo su carta
+
+<Excerpt region="part" />
+
+In stampa, `:::part` apre <PageRef page={1}>la pagina di parte blu pioggia</PageRef>: un riquadro al vivo su ogni bordo, un elemento immagine con tratti di pioggia che lasciano libero il testo, il numero e il titolo presi dal blocco e l’elenco delle note in bianco. Gli override per lo schermo impostano `parts.page: false`, così non si apre nessuna pagina e l’elenco non si compone. La [parte](/it/docs/configuration-styles#parti) applica comunque il suo numero e il suo titolo alle note che seguono, e l’occhiello a schermo dice “Autumn · Note 1” come quello stampato.
+
+### 4 · Disegna ogni figura due volte
+
+<Excerpt region="figures" />
+
+Cambiare la palette non ricolora un SVG, quindi ogni disegno si fa una volta per palette. La valle è una fotografia, un solo JPEG che entrambe le edizioni condividono. `figures(edition)` costruisce le stesse risorse per entrambe le edizioni, ognuna che punta al file di quell’edizione: `gauge-day.svg` in stampa, `gauge-night.svg` a schermo. Id, didascalie, testi alternativi e posizionamenti non cambiano, quindi ogni `:ref` del Markdown porta alla stessa figura e allo stesso numero in entrambe le edizioni. Nell’edizione per lo schermo il testo alternativo va in ogni `<img alt>`, dove un lettore di schermo lo trova.
+
+### 5 · Ospita l’edizione per lo schermo
+
+<Excerpt region="screen" />
+
+Ogni pagina a schermo è alta quanto il riquadro, quindi `fitFiguresToPage` riduce il pluviometro finché sta in una pagina con la sua didascalia ([layout](/it/docs/configuration-page-layout#impaginazione)). A 96 dpi, la risoluzione che presuppone il CSS, i millimetri e i punti ereditati dalla stampa si rendono alla loro dimensione nominale ([integrating the HTML viewer](/it/docs/configuration-programmatic-usage#integrare-il-visualizzatore-html)). Il pen scrive le righe a posizionamento assoluto di `renderToHtml` in uno Shadow DOM, dove i selettori della pagina non arrivano. Le proprietà ereditate come `letter-spacing` però superano quel confine, e la radice dell’edizione le azzera da sé, perché il motore ha misurato le righe senza di esse. Le pagine HTML sono trasparenti se non vengono dipinte, quindi `page.backgroundColor` prende dalla palette la carta notturna. Il ResizeObserver aspetta 150 ms e ricompone da un `config()` nuovo solo quando la larghezza o l’altezza del riquadro è cambiata; dopo la ricomposizione il riquadro torna alla stessa frazione della sua altezza.
+
+## Varianti
+
+### Leggi di giorno
+
+Togli la palette notturna e usa i valori diurni per il riquadro e le figure; l’edizione per lo schermo mostra allora pagine bianche, inchiostro scuro e i disegni diurni.
+
+```diff
+-  colorPalette: paletteOf(night), // arrays are replaced whole: the night values
+   parts: { page: false }, // no divider page; the part still names the notes after it
+@@
+-pane.style.background = night.paper; // the pane's own ground, beside the pages and the scrollbar
++pane.style.background = day.paper; // the pane's own ground, beside the pages and the scrollbar
+@@
+-  const screenDoc = buildDocument({ markdown, resources: figures('night') },
++  const screenDoc = buildDocument({ markdown, resources: figures('day') },
+```
+
+### Dai alle aperture stampate un numero di capitolo su una fascia colorata
+
+Per un’apertura stampata più marcata, con una fascia satura e un grande numero di capitolo, vedi <RecipeLink slug="chapter-opener-bleed-band">Chapter opener on a full-bleed band</RecipeLink>; gli override per lo schermo restano gli stessi.
+
+## Errori frequenti
+
+- Tieni il riquadro alto almeno 400 px (il `min-height` del pen). In un riquadro stretto alto meno di circa 350 px, l’apertura a schermo è più alta dell’area di contenuto della pagina; allora occupa tutta la pagina, e il primo paragrafo della nota comincia nella successiva.
+- Dai una dimensione al riquadro prima di impaginarlo. Un riquadro senza larghezza, nascosto o schiacciato fuori da una riga flex, darebbe una pagina di larghezza zero, ed è per questo che `showScreen()` salta un riquadro più stretto o più basso di `FOLDED`, 200 px.

@@ -1,0 +1,73 @@
+---
+title: "PDF pronto per la stampa: abbondanza, crocini e PDF/X"
+summary: "Un pieghevole per una mostra con 3 mm di abbondanza e crocini di taglio, esportato in PDF/X-4 su FOGRA51 con master di stampa e un preflight pulito."
+plain: "Un pieghevole per una mostra di mappe, pronto da mandare in tipografia. Mostra come aggiungere spazio oltre il bordo della pagina e i segni di taglio, e salvare un PDF nei colori delle macchine da stampa."
+description: "Un pieghevole Postext di quattro pagine con 3 mm di abbondanza e crocini di taglio, esportato in PDF/X-4 su FOGRA51 con font, segnalibri e master di stampa."
+question: "Come esporto un PDF/X per la stampa con abbondanza, crocini, profilo ICC, segnalibri ed etichette di pagina?"
+aliases: ["PDF pronto per la stampa", "abbondanza", "crocini di taglio", "segni di taglio", "CMYK", "master di stampa", "prestampa", "pieghevole per mostra", "foglio di sala", "guida alla mostra", "prova in scala di grigi", "unghiatura", "PDF/X-4", "FOGRA51", "PSO Coated v3", "output intent", "preflight", "nero ricco", "sovrastampa"]
+pageNotes: { "1": "La copertina, mostrata con i suoi 3 mm di abbondanza e i crocini agli angoli: un mare verde scuro con isole in verdi a gradini, una rotta arancione tratteggiata con quattro tappe che esce dal rifilo nell’abbondanza, il titolo in Space Grotesk da 50 pt, e le date e la sede al piede.", "2": "La prima pagina interna: l’attacco, le sale 1 e 2 sotto i loro occhielli a forma di tappa con un’etichetta di oggetto dopo ciascuna, e un’unghiatura arancione con il folio 2 che esce dal bordo sinistro.", "3": "Le sale 3 e 4, che finiscono alla pari con la pagina 2, e l’unghiatura con il folio 3 che esce dal bordo destro.", "4": "La quarta di copertina: informazioni pratiche, la pianta (figura 1) con la rotta arancione dal vestibolo attraverso le sale da 1 a 4, e una fascia di rilievo verde al vivo su tre lati, con la sede, le date e il colophon." }
+---
+
+## Che cosa comporrai
+
+Il foglio di sala di *Cartografías imaginarias*, una mostra inventata di mappe di luoghi immaginari, così come va in tipografia, in spagnolo in tutte le edizioni di questa pagina. Ogni pagina di 170 × 227 mm sta su un foglio più grande di 22 mm che porta l’abbondanza e i crocini di taglio. In copertina una rotta arancione attraversa un arcipelago in verdi a gradini ed esce dal rifilo nell’abbondanza. All’interno, quattro sale in Karla a bandiera si aprono sotto occhielli a forma di tappa e un’unghiatura arancione porta il folio fuori dal margine esterno; la quarta di copertina compone una pianta sopra una fascia di rilievo. Il pen esporta il file per la stampa, un PDF/X-4 separato per FOGRA51 (la condizione PSO Coated v3 della carta patinata da 150 g) con i suoi font, segnalibri ed etichette di pagina, e una prova in scala di grigi, ed esegue il preflight sull’impaginazione prima di offrirli. Nel file per la stampa le mappe e la pianta vengono da master di stampa con inchiostri scelti a mano, e il testo, l’unghiatura e gli anelli delle tappe usano gli stessi inchiostri tramite una tavolozza definita in CMYK.
+
+## Preparazione
+
+### 1 · Scegli i colori dello schermo per le loro lastre
+
+<Excerpt region="palette" />
+
+`print: { standard: 'pdfx4', outputProfile: 'fogra51' }` nella configurazione separa ogni colore attraverso il profilo FOGRA51 fornito con postext. I grigi neutri si stampano sulla sola lastra del nero, con un K scelto perché il tono corrisponda: `#161616` diventa K95 e il `#666666` delle testatine K66, e il testo al 100 % K va in sovrastampa. Il profilo stamperebbe il verde foresta come C90 M43 Y71 K62 e l’arancione come C0 M70 Y90 K0, una sfumatura diversa dalla rotta dei master (passo 5), quindi questi due, il verde salvia e il colore della carta sono definiti in CMYK: `ColorValue.cmyk` contiene la composizione dei quattro colori, l’esadecimale resta per lo schermo, e ogni uso collegato alla tavolozza stampa la composizione così come è scritta. Il colore della carta è C0 M0 Y0 K0: il testo in negativo sul verde foresta non stampa inchiostro, quindi nessuna lastra può spostarlo.
+
+### 2 · Un’unghiatura che sopravvive alla taglierina
+
+<Excerpt region="tab" />
+
+Il riquadro dell’unghiatura pende dalla cornice dell’abbondanza ed è più largo di `BLEED` dell’unghiatura finita, così un taglio che cade un millimetro fuori dal rifilo lascia comunque arancione sul bordo; il folio pende dalla cornice della pagina, che è il rifilo, e si centra sui 10 mm che restano. `parity` sceglie le pagine su cui compare ogni elemento e `edge` cambia con essa per raggiungere il margine esterno, mentre `pages: 'body'` tiene l’unghiatura e le testatine (`{title}` e `{subtitle}` dal frontmatter) lontane da entrambe le copertine, che contano come aperture perché ciascuna comincia con un titolo a tutta larghezza o che va a pagina nuova. Ogni elemento di intestazione o piè di pagina si ripete in questo modo, quindi un `image` con `parity` e `pages` mette una filigrana o un’immagine decorativa su ogni pagina; gli slot dipingono sopra il testo, e una tinta dietro va in `page.backgroundColor`.
+
+### 3 · Grafica fino all’abbondanza, testo dentro il rifilo
+
+<Excerpt region="covers" />
+
+`cutLines` aggiunge l’abbondanza, la distanza dei crocini e i 5 mm del crocino a ogni lato della pagina, qui 11 mm. La distanza è di 3 mm per impostazione predefinita, la stessa di questa abbondanza, quindi i crocini cominciano al bordo dell’abbondanza e vanno verso l’esterno; con un’abbondanza più larga comincerebbero comunque al suo bordo, mai al suo interno. Un elemento immagine ancorato all’abbondanza con `width: 'fill'` prende la larghezza di quella cornice e conserva le sue proporzioni: la mappa di copertina è disegnata a 176 × 233 mm, il rifilo più 3 mm per lato, così arriva al bordo dell’abbondanza dove cominciano i crocini, mentre il testo pende dall’area del testo, ben dentro il rifilo. La quarta di copertina è uno stile di titolo il cui piè di pagina sostituisce quello del documento, con una fascia dello stesso generatore ancorata al piede dell’abbondanza e un margine di piede che ferma il testo 8 mm sopra di essa.
+
+### 4 · Titoli che diventano segnalibri
+
+<Excerpt region="levels" />
+
+`renderToPdf` costruisce i segnalibri dai titoli, quindi ogni sala è un titolo di livello 1 che prosegue senza interruzione di pagina, e `numberingTemplate` dà all’occhiello il suo `{number}` e al segnalibro il suo prefisso: il PDF elenca la copertina, da «Sala 1 Una isla en ninguna parte» a «Sala 4 La isla del tesoro», e le informazioni pratiche. Un titolo con design nasconde il suo testo ma lo conserva per i segnalibri e i tag; senza `fontFamily` quel testo nascosto è composto in Open Sans 700, che le pagine caricherebbero e il PDF incorporerebbe solo per quel testo. Le etichette di pagina seguono `page.pageNumbering`, lasciato al valore predefinito, decimale da 1, così la pagina 3 in un visualizzatore PDF è la pagina la cui unghiatura dice 3.
+
+### 5 · Master di stampa con inchiostri esatti
+
+<Excerpt region="master" />
+
+Ogni disegno è definito una volta sola, come tracciati. La regione art li trasforma nell’SVG che il canvas dipinge, e questa regione scrive gli stessi tracciati in un PDF CMYK di una pagina con composizioni scelte perché una prova corrisponda allo schermo, il che mette il mare a C100 M45 Y80 K55, il verde foresta della tavolozza. Ogni risorsa nomina il suo master in `svg.pdfFileId`; `renderToPdf` chiede quell’id, `pressPdf()` nella risposta breve risponde con i byte del master, e postext-pdf incorpora quella pagina invariata, come vettori negli inchiostri propri del master. Questo vale per la pianta, che è una figura, e per la mappa di copertina e la fascia posteriore, che sono immagini di design. La prova in scala di grigi riceve invece gli SVG, perché un master incorporato non viene mai convertito e resterebbe a colori.
+
+## Varianti
+
+### Chiedi 5 mm di abbondanza
+
+La grafica, l’unghiatura e la barra della scala sono dimensionate a partire da `BLEED`, e i crocini cominciano al bordo dell’abbondanza, quindi a una tipografia che vuole 5 mm basta questa modifica, e ogni foglio cresce a 196 × 253 mm.
+
+```diff
+-const BLEED = 3; // mm of artwork past the trim: the cover, the tab and the back band reach it
++const BLEED = 5; // mm of artwork past the trim: the cover, the tab and the back band reach it
+```
+
+### Stampa la grafica dai suoi SVG
+
+Senza `pdfFileId` il file per la stampa disegna ogni immagine dal suo SVG, sempre come vettori e attraverso il profilo: il verde foresta, definito in CMYK, mantiene C100 M45 Y80 K55, mentre gli altri verdi delle isole prendono le separazioni del profilo invece di quelle scelte a mano.
+
+```diff
+-  updatedAt: 0, ...extra, svg: { fileId: `${id}.svg`, pdfFileId: `${id}.pdf`,
++  updatedAt: 0, ...extra, svg: { fileId: `${id}.svg`,
+```
+
+## Errori frequenti
+
+- Uno standard PDF/X scrive sempre in CMYK, qualunque cosa dica `colorSpace`, quindi la prova in scala di grigi sovrascrive `print` con `{ standard: 'none' }` accanto a `colorSpace: 'grayscale'`.
+- Una resa PDF/X fallisce senza il suo profilo di output. `renderToPdf` scarica `fogra51.icc` da `profileBaseUrl` (qui `/icc/` di postext.dev); passa i byte del file come `outputProfile` per servirlo tu stesso.
+- Il preflight segnala il testo sotto i 9 pt composto in più di un inchiostro. Le etichette in grassetto da 7,5 pt in verde foresta reggono in quattro inchiostri su carta patinata, quindi `print.preflight.smallTextSize` è 7 pt; il colophon da 6,3 pt, che in verde salvia sarebbe in tre inchiostri su una fascia in quadricromia, è invece in negativo, nel colore della carta.
+- Un file PDF/X non contiene annotazioni di link, perché un file per la stampa non può averne dentro il suo bleed box; i segnalibri restano.
+- Una volta costruito il file, ogni pulsante diventa un link «Open the PDF ↗» e un link di download, e solo i link di download portano i nomi dei file.

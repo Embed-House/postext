@@ -1,0 +1,80 @@
+---
+title: "Una pagina di giornale verticale a fasce"
+summary: "Due fogli di un giornale cinese del 1912 in verticale: il testo in due fasce separate da un filetto, i telegrammi in tre, il titolo d’apertura su entrambe."
+plain: "Due pagine di un giornale cinese del 1912, stampate in colonne che si leggono dall’alto in basso. La pagina è tagliata in fasce sovrapposte con una linea tra l’una e l’altra, come facevano i vecchi giornali."
+description: "Un giornale cinese verticale in Postext: due fasce (欄) di 25 caratteri separate da un filetto, testata e titolo in un solo disegno, telegrammi in tre fasce."
+question: "Come compongo in verticale una pagina di giornale cinese, a fasce separate da filetti?"
+aliases: ["欄", "栏", "fasce", "giornale verticale", "giornale cinese", "Shenbao", "申報", "testata", "titolo a tutta pagina", "luogo e data", "telegrammi", "1912"]
+pageNotes: { "1": "Il primo foglio: un blocco di testata vermiglio lungo il bordo destro con 民元舊聞 in negativo in un carattere Kai e, sotto, la riga del numero, 中華民國元年　歲次壬子 e 今日出紙兩張; accanto, il titolo d’apertura 西湖公宴孫中山紀事 in Song nero, centrato su tutta l’altezza, e il suo sommario; poi il resoconto in due fasce con un filetto nero tra loro, e l’articolo successivo, 浙都督追祭攻寧陣亡將士, che si apre nella fascia inferiore sotto un filetto sottile, con sommario e luogo e data.", "2": "Il secondo foglio: un’intestazione in alto con il nome del giornale e 第二張; il resoconto della commemorazione finisce nella fascia superiore, l’articolo sul monumento alla vittoria riempie il resto, con l’iscrizione in Kai due caratteri più in basso; a sinistra, i telegrammi in un riquadro di tre fasce sotto un 電報 vermiglio; il colophon lungo il piede." }
+---
+
+## Che cosa comporrai
+
+Due fogli di un giornale cinese come appariva nel 1912, il primo anno della Repubblica, quando i giornali si componevano ancora dall’alto in basso. Il testo viene dallo *Shenbao* di Shanghai: Sun Yat-sen a un banchetto sul Lago dell’Ovest, dove Chen Qimei si alzò per contestare un discorso e si alzò di nuovo per scusarsi; la commemorazione dei soldati dello Zhejiang caduti nella presa di Nanchino; il monumento alla vittoria che Hangzhou eresse per l’esercito al suo ritorno. Quattro telegrammi dal primo numero della gazzetta del Governo provvisorio riempiono un riquadro. Il testo scorre in due fasce (欄) di 25 caratteri con un filetto tra loro, i telegrammi in tre. Una testata vermiglia e il titolo d’apertura, composto su tutta l’altezza della pagina, aprono il primo foglio. <RecipeLink slug="newspaper-front-page">Prima pagina di giornale</RecipeLink> costruisce la stessa pagina in orizzontale.
+
+## Preparazione
+
+### 1 · Trasforma due colonne in due fasce
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Con `writingMode: 'vertical-rl'` la pagina è una pagina orizzontale ruotata di un quarto di giro, quindi `layoutType: 'double'` sovrappone due fasce, quella superiore letta per prima, e il filetto tra le colonne diventa un filetto attraverso la pagina tra di esse ([scrittura verticale](/it/docs/configuration-page-layout#scrittura-verticale)). La griglia dei caratteri imposta ogni fascia a 25 caratteri di 五號 (10,5 pt), l’estremo lungo di una colonna di giornale, e la pagina a 29 righe; arrotonda l’intercolonna a due em e allarga i margini perché le fasce stiano al centro ([griglia dei caratteri](/it/docs/configuration-east-asian#griglia-di-caratteri)).
+
+Il testo resta in due fasce e solo i telegrammi ne richiedono tre, quindi vanno in un riquadro: `span="page"` lo rende alto quanto la gabbia del testo, `placement="bottom"` lo fa flottare al piede del flusso, che in una pagina verticale è il bordo sinistro, e `:::columns{count=3}` lo taglia in fasce. `columnGap` è ciò che tre fasce di 18 caratteri da 9 pt lasciano dei 546 pt della gabbia del testo, così ogni fascia contiene caratteri interi.
+
+<PageShot page={2} crop="0.04,0.12,0.36,0.78" caption="Pagina 2: i telegrammi in tre fasce, con la striscia sul bordo superiore del riquadro disegnata come un filetto lungo il suo lato destro." />
+
+### 2 · Metti testata e titolo d’apertura in un solo disegno
+
+<Excerpt region="front" />
+
+Il titolo dell’articolo d’apertura doveva attraversare entrambe le fasce sotto la testata. Un titolo con `span: 'page'` viene impaginato come apertura in testa a una pagina, quindi un secondo titolo dopo la testata avrebbe cominciato una pagina a sé. L’H1 della pagina è perciò l’articolo d’apertura, e il suo stile di titolo disegna la testata sopra il titolo: un blocco vermiglio profondo 6,5 righe con il nome del giornale in negativo e, sotto, la riga del numero: l’anno della Repubblica e del ciclo, e 今日出紙兩張, «oggi due fogli»; poi il titolo in Noto Serif TC 900 a 44 pt. Nel flusso la larghezza del disegno è l’altezza della gabbia del testo sul foglio, quindi `size: { width: 'fill' }` con `align: 'center'` centra il titolo su entrambe le fasce. Il disegno è profondo 13 righe, un numero intero di righe della griglia, così il testo dopo di esso comincia su una riga della griglia.
+
+<PageShot page={1} crop="0.54,0.1,0.44,0.82" caption="Pagina 1: il blocco della testata, il titolo centrato su entrambe le fasce, il sommario accanto e luogo e data in testa alla loro riga." />
+
+### 3 · Apri ogni articolo con un disegno di titolo
+
+<Excerpt region="heads" />
+
+Un disegno di titolo in colonna vive dentro la sua fascia. Il suo filetto è `direction: 'horizontal'` nel flusso, quindi sul foglio scende lungo la fascia, un filetto sottile tra due articoli. Il titolo comincia in testa alla fascia, il sommario due caratteri più in basso, e la riga di luogo e data indica il luogo, il giornale e il giorno in cui apparve il resoconto. `minHeight` tiene ogni titolo profondo quattro righe, così il testo sotto ogni titolo comincia sulla griglia.
+
+### 4 · Intesta il secondo foglio e firmalo al piede
+
+<Excerpt region="pagehead" />
+
+Le testatine restano orizzontali in una pagina verticale, come descrive clreq. Il riquadro dell’intestazione è il margine sopra le fasce; la griglia allarga quel margine, e `HEAD` ripete la somma della griglia perché il filetto stia 6 mm sopra il primo carattere. `pages: 'body'` lascia la pagina 1 alla testata. Il colophon è un attributo dell’H1, così le edizioni inglese e spagnola stampano ciascuna la propria riga sotto le stesse pagine cinesi.
+
+### 5 · Carica ogni voce con il testo che compone
+
+<Excerpt region="voices" />
+
+Fontsource serve ogni peso di questi caratteri come un centinaio di file, e `loadCjkFonts` scarica quelli toccati da un testo. Noto Serif TC 400 riceve l’intero esempio; i suoi pesi 700 e 900 solo i titoli e le etichette dei telegrammi, Noto Sans TC le righe della testata, luogo e data e il colophon, e LXGW WenKai TC i sommari, l’iscrizione e il nome del giornale. Un carattere che riceve troppo poco testo fa fallire la cattura (C12) e nomina i caratteri presi in prestito da un altro carattere.
+
+## Varianti
+
+### Dai ai telegrammi quattro fasce
+
+Quattro fasce di 14 caratteri stanno nella stessa altezza, e il riquadro si restringe alle righe che servono.
+
+```diff
+-  columnGap: pt((HEIGHT - 3 * 18 * 9) / 2), // three tiers of 18 characters of 9 pt
++  columnGap: pt((HEIGHT - 4 * 14 * 9) / 3), // four tiers of 14 characters of 9 pt
+```
+
+Nel Markdown, `:::columns{count=4}`.
+
+### Componi gli articoli in una sola fascia
+
+Una fascia di 52 caratteri occupa l’altezza della gabbia del testo, 193 mm lungo il foglio per ogni riga. Ogni titolo d’articolo prende ora quattro righe dell’intera pagina, e i due fogli diventano tre.
+
+```diff
+-  layoutType: 'double', writingMode: 'vertical-rl', // binding 'auto' becomes 'right'
++  layoutType: 'single', writingMode: 'vertical-rl', // binding 'auto' becomes 'right'
+```
+
+Con `charsPerLine: 2 * CHARS + 2` nella griglia.
+
+## Errori frequenti
+
+- Il Noto Serif TC di Fontsource dichiara 爲, la forma che stampava lo *Shenbao*, nell’intervallo di uno dei suoi file, ma quel file non ha il glifo: il canvas lo disegnava in un carattere di sistema e il PDF non ne aveva alcuno (C25). I resoconti compongono 為.
+- Le trascrizioni di Wikisource hanno errori che la pagina corregge: 己紀 per 已紀 e, due volte, 倍侍 per 陪侍 nel resoconto del banchetto; nel resoconto della commemorazione 勸勵一番現在將土, con 土 per 士 e il complemento dopo 一番, qui composto come 勸勵現在將士一番, «incoraggiò gli ufficiali e i soldati presenti». La pagina compone anche la forma standard di quattro varianti: 寧 per 寗, 總 per 縂 (tre volte) e 決 per 决 (due volte) nei telegrammi, 刊 per 刋 nell’iscrizione.
+- LXGW WenKai TC, come lo serve Fontsource, disegna 為 come 爲, quindi l’iscrizione, in Kai, mostra la forma più antica che manca al testo in Song.
+- Le tre fasce del riquadro sono terzi della gabbia del testo e non si allineano con le due fasce del testo. Un giornale compone una sezione del genere sulla propria griglia; il filetto sul bordo destro del riquadro tiene separate le due griglie.

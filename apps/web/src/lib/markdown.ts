@@ -14,6 +14,7 @@ import ja from "../../messages/ja.json";
 import pt from "../../messages/pt.json";
 import fr from "../../messages/fr.json";
 import de from "../../messages/de.json";
+import itMessages from "../../messages/it.json";
 import { routing } from "@/i18n/routing";
 import { siteLocale } from "@/i18n/locales";
 import { glossarySections } from "@/lib/glossary/glossary";
@@ -34,7 +35,7 @@ import { localizedText } from "@/lib/cookbook/types";
 import { shownGotchas } from "@/lib/cookbook/validate";
 
 type Messages = typeof en;
-const MESSAGES: Record<string, Messages> = { en, es: es as Messages, ca: ca as Messages, zh: zh as Messages, ja: ja as Messages, ar: ar as Messages, pt: pt as Messages, fr: fr as Messages, de: de as Messages };
+const MESSAGES: Record<string, Messages> = { en, es: es as Messages, ca: ca as Messages, zh: zh as Messages, ja: ja as Messages, ar: ar as Messages, pt: pt as Messages, fr: fr as Messages, de: de as Messages, it: itMessages as Messages };
 
 const REPO_URL = "https://github.com/drnachio/postext";
 const NPM_URL = "https://www.npmjs.com/package/postext";
@@ -556,6 +557,91 @@ const LABELS = {
     licensePD: "gemeinfrei",
     licenseAuthorised: "mit Genehmigung wiedergegeben",
   },
+  it: {
+    docs: "Documentazione",
+    optional: "Optional",
+    lastUpdated: "Ultimo aggiornamento",
+    readingTime: "Tempo di lettura",
+    canonical: "Versione HTML",
+    otherLanguages: "Altre lingue",
+    figure: "Figura",
+    example: "Esempio eseguibile",
+    exampleSource: "codice",
+    home: "Home",
+    sandbox: "Sandbox",
+    sandboxDesc: "Editor interattivo nel browser: scrivi in Markdown, regola la configurazione ed esporta PDF pronti per la stampa e libri digitali EPUB 3.",
+    fullText: "Testo completo di tutte le pagine della documentazione in un unico file",
+    install: "Installazione",
+    fullDocs: "Documentazione completa",
+    links: "Link",
+    localeDocs: "Documentazione in italiano",
+    features: "Funzionalità",
+    packages: "Pacchetti",
+    pkgPostext: "il motore di impaginazione: Markdown in ingresso, pagine in uscita, con i renderer HTML e canvas",
+    pkgPdf: "PDF pronto per la stampa, con tag per l’accessibilità (PDF/UA), segni di taglio e CMYK",
+    pkgEpub: "libri digitali EPUB 3, a layout fisso o fluido",
+    pkgFolio: "un visualizzatore di libri in 3D in cui le pagine si sfogliano a mano",
+    pkgCiteproc: "citazioni e bibliografie negli stili CSL (APA, Chicago, IEEE, Vancouver, GB/T 7714…) e un lettore BibTeX",
+    pkgCli: "la riga di comando: un unico eseguibile autonomo per macOS, Linux e Windows (PDF, HTML, EPUB, immagini delle pagine, Word, pacchetti, verifiche)",
+    linkGithub: "codice sorgente, segnalazioni ed esempi",
+    linkNpm: "il pacchetto `postext`",
+    linkYoutube: "video dimostrativi (in inglese)",
+    agentSkills: "Skill per agenti",
+    agentSkillsDesc: "indice delle skill per agenti (la skill postext-port trasforma una pubblicazione PDF, Word, EPUB, InDesign o HTML in un progetto Postext)",
+    webmcp: "Strumenti WebMCP",
+    webmcpDesc: "in un browser con WebMCP (document.modelContext) ogni pagina registra strumenti per un agente (cercare, leggere una pagina in Markdown, aprire una ricetta del Ricettario nella Sandbox) e la Sandbox aggiunge i suoi (sandbox_*): leggere e modificare il libro, cambiare qualunque impostazione del progetto grafico, ottenere qualunque pagina impaginata come JPEG, sfogliare le pagine, cambiare visualizzatore, esportare",
+    guideBundleDesc: "la guida di Postext in un unico file .postext (manifest, capitoli in Markdown, font e immagini)",
+    cookbook: "Ricettario",
+    cookbookTitle: "Ricettario di Postext",
+    cookbookDesc: "Esempi di Postext da copiare, da un’apertura di capitolo a un libro intero, ognuno con le pagine che compone e il codice completo.",
+    cookbookIntro:
+      "Ogni ricetta è un pen: un modulo JavaScript (con una pagina HTML e il CSS quando servono) che importa postext da esm.sh e costruisce la propria pagina. Ogni link qui sotto porta alla versione Markdown di una ricetta, con il testo di spiegazione e tutto il codice.",
+    allRecipes: "Tutte le ricette, per capitolo",
+    noRecipes: "Ancora nessuna ricetta.",
+    part: "Parte",
+    chapter: "Capitolo",
+    recipe: "Ricetta",
+    numberSign: "Nº",
+    level: "Livello",
+    outputs: "Output",
+    genres: "Generi",
+    draft: "Bozza",
+    requires: "Richiede",
+    testedWith: "provata con",
+    testedOn: "il",
+    pages: "Pagine",
+    pdf: "PDF",
+    openInSandbox: "Apri nella Sandbox",
+    answers: "Questa ricetta risponde a",
+    teaches: "Insegna",
+    alsoUses: "Usa anche",
+    configAtAGlance: "La configurazione in breve",
+    apis: "API",
+    typefaces: "Caratteri",
+    lines: "righe",
+    wholeRecipe:
+      "I file qui sotto sono composti a partire dalla cartella della ricetta, con il testo di esempio e il kit comune del Ricettario già inclusi. Per eseguirli come una sola pagina, metti l’HTML in `<body>`, il CSS in un elemento `<style>` e lo script in un `<script type=\"module\">`; oppure incolla ciascuno nel pannello corrispondente di un nuovo pen di CodePen (il JS come modulo). Lo script importa postext da esm.sh: non c’è niente da installare né da compilare.",
+    wholeRecipeScript:
+      "Un unico file, composto a partire dalla cartella della ricetta con il testo di esempio e il kit comune del Ricettario già inclusi; costruisce la propria pagina. Per eseguirlo, mettilo in uno `<script type=\"module\">` di una pagina vuota, oppure incollalo nel pannello JS di un nuovo pen di CodePen (come modulo). Importa postext da esm.sh: non c’è niente da installare né da compilare.",
+    externals: "Risorse caricate dalla pagina",
+    sourceFolder: "Cartella della ricetta",
+    notComposed: "Non è stato possibile comporre il codice di questa ricetta",
+    pitfall: "Errore frequente",
+    warning: "Avviso di impaginazione",
+    fix: "Soluzione",
+    fixedIn: "corretto in",
+    recipeBy: "Ricetta",
+    creditText: "Testo",
+    creditImages: "Immagini",
+    creditType: "Caratteri",
+    creditCode: "Codice",
+    creditContent: "Contenuto di esempio",
+    source: "fonte",
+    related: "Ricette correlate",
+    licenseOriginal: "originale",
+    licensePD: "pubblico dominio",
+    licenseAuthorised: "riprodotto con autorizzazione",
+  },
   zh: {
     docs: "文档",
     optional: "Optional",
@@ -845,7 +931,7 @@ function unwrapJsxStrings(text: string): string {
 
 /** Site paths with a Markdown rendition (proxy.ts negotiates the same ones). */
 const RENDITION_PATH =
-  /^\/(en|es|ca|zh|ja|ar|pt|fr|de)(\/(docs(\/[a-z0-9-]+)?|cookbook(\/[a-z0-9-]+)?|license|privacy-policy|cookie-policy|accessibility|glossary|sandbox))?$/;
+  /^\/(en|es|ca|zh|ja|ar|pt|fr|de|it)(\/(docs(\/[a-z0-9-]+)?|cookbook(\/[a-z0-9-]+)?|license|privacy-policy|cookie-policy|accessibility|glossary|sandbox))?$/;
 
 /**
  * A link of a rendition as an agent can follow it out of the page (in

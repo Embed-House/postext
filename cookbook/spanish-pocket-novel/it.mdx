@@ -1,0 +1,78 @@
+---
+title: "Spagnolo giustificato in un romanzo tascabile"
+summary: "L’inizio del capitolo I di Marianela in tascabile: sillabazione spagnola, spazi sotto 1,7×, nessuna riga finale corta, iniziale rialzata, Figura 1 sulla mappa."
+plain: "Le prime pagine di un romanzo spagnolo del 1878 in formato tascabile. Mostra come tenere regolari gli spazi tra le parole, con le parole divise nelle sillabe spagnole giuste."
+description: "Marianela di Galdós in un’edizione tascabile di 11,5 × 18 cm: sillabazione spagnola, spazi sotto 1,7×, rayas, comillas latinas e una mappa come Figura 1."
+question: "Come giustifico e sillabo lo spagnolo, con lineette di dialogo, caporali e «Figura» invece di «Figure»?"
+aliases: ["tipografia spagnola", "sillabazione spagnola", "raya", "lineetta di dialogo", "caporali", "comillas latinas", "iniziale rialzata", "capolettera", "Figura invece di Figure", "limite di spaziatura tra le parole", "riga corta sillabata", "romanzo tascabile", "mappa in antiporta"]
+pageNotes: { "1": "L’antiporta: una mappa congetturale delle miniere di Socartes, con il percorso punteggiato del viaggiatore dal paese, oltre la passerella e la collina boscosa, fino al bordo della cava.", "2": "Capitolo I: «CAPÍTULO PRIMERO» in maiuscoletto sopra un filetto corto e il titolo in corsivo «Perdido»; a un quarto dell’altezza della pagina, il testo comincia con una «S» rialzata color sangue di bue." }
+---
+
+## Che cosa comporrai
+
+L’inizio di *Marianela* di Galdós (1878) in un’edizione tascabile di 11,5 × 18 cm, con una mappa congetturale delle miniere di Socartes di fronte al capitolo I. Sopra il titolo del capitolo in Libre Bodoni corsivo, *capítulo primero* è scritto per esteso in maiuscoletto; il testo, in Gentium Book Plus, comincia a un quarto dell’altezza con un’iniziale rialzata color sangue di bue. Le parole si dividono nelle sillabe spagnole (*hie-rro*, *esta-blecimiento*) e gli spazi tra le parole restano sotto 1,7 volte la loro larghezza normale; nessun paragrafo finisce sulla coda di una parola sillabata. Il dialogo è composto con le *rayas*, le lineette lunghe che aprono e chiudono anche gli *incisos* del narratore. La parola d’ordine del viaggiatore è tra «comillas latinas», e tra virgolette doppie inglesi dove la nota dell’edizione la cita dentro una citazione. La mappa è la *Figura 1*, citata nel testo come [fig. 1]. Le testatine in Marcellus SC nominano l’autore sui versi e il titolo sui recto.
+
+## Preparazione
+
+### 1 · Sillabe spagnole, spazi trattenuti
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `locale: 'es'` sceglie i pattern di sillabazione spagnoli, come fa un tag regionale quale `'es-ES'` o `'es-MX'`; le regole americane del locale predefinito spezzerebbero *cabal-los*, *hi-erro* e *establec-imiento* ([locale supportati](/it/docs/justification#lingue-supportate)). Giustificazione, Knuth–Plass e le regole su vedove e orfane sono attive per impostazione predefinita. La giustezza di 86 mm ha bisogno anche di spazi trattenuti: con il valore predefinito `maxWordSpacing: 2`, otto righe si aprono oltre 1,6× e la più larga arriva a 1,89×; con 1,7 la più larga è 1,65×, perché l’algoritmo di divisione sillaba invece *hie-rro* e *ca-lles* ([limiti della spaziatura tra le parole](/it/docs/justification#limiti-della-spaziatura-tra-le-parole)). Oltre il limite una riga costa molto di più ma resta ammessa, quindi su una giustezza più stretta senza una divisione migliore può ancora superarlo. `runtMinCharacters: 26` intercetta i resti sillabati che il valore predefinito di 20 larghezze di spazio lascia passare: *siem- / pre adelante.* diventa *Adelante, / siempre adelante.*, e *So- / cartes [fig. 1].* diventa *de / Socartes [fig. 1].* ([righe finali troppo corte](/it/docs/configuration-text#orfane-vedove-righe-finali-corte-e-regole-per-tenere-unito)).
+
+### 2 · Una pagina tascabile di righe intere
+
+<Excerpt region="page" />
+
+Il margine inferiore è calcolato dal formato, dal margine superiore e da `LINES`, così la gabbia contiene esattamente 30 righe da 13,8 pt e ogni pagina piena finisce sulla stessa linea di base, come fanno <PageRef page={3}>le pagine 10 e 11</PageRef>. Con `mirror: true` il margine interno di 15 mm resta al dorso e quello esterno di 14 mm al taglio su entrambe le pagine di una doppia pagina ([margini speculari](/it/docs/configuration-page-layout#margini-speculari)), e la giustezza di 86 mm contiene circa 57 caratteri di Gentium Book Plus a 10 pt.
+
+### 3 · Il capitolo in lettere e un’iniziale rialzata
+
+<Excerpt region="opener" />
+
+*capítulo primero* viene dall’attributo `ordinal` del titolo stesso ([attributi del titolo](/it/docs/document-format#attributi-dei-titoli)). Un livello numerato con `'{1:ordinal}'` scriverebbe la parola per esteso da solo, ma anche la tavola prima del capitolo è un titolo di livello 1, quindi questo livello non porta contatore. L’iniziale appartiene al livello del capitolo: il suo `dropCap` apre il primo paragrafo dopo ogni titolo di livello 1, e il paragrafo si scrive nel Markdown così come si legge ([capilettera](/it/docs/configuration-text#capilettera)). `lines: 1` con un `fontSize` di tre interlinee ne fa un’iniziale rialzata, che poggia sulla prima linea di base; la prima riga si accorcia della sua larghezza e dello spazio predefinito, e si giustifica con il resto del paragrafo. La lettera sporge sopra la prima riga, e il paragrafo tiene libero quello spazio sopra di sé in righe intere: qui due (`RISE`), quindi `minHeight` chiude l’apertura a `SINK - RISE` righe e la prima riga del testo cade ancora sulla riga `SINK`, a un quarto dell’altezza. Il `marginBottom: 0` del livello del capitolo sostituisce il margine predefinito, che aggiungerebbe una riga vuota. Un paragrafo con capolettera perde il rientro della prima riga.
+
+<PageShot page={2} crop="0.08,0.1,0.84,0.289" caption="Pagina 9: l’etichetta e il titolo del capitolo, e l’iniziale rialzata accanto alla prima riga del testo giustificato." />
+
+### 4 · La mappa sta di fronte al capitolo come Figura 1
+
+<Excerpt region="figure" />
+
+`position: 'here'` mette la mappa dove sta `::resource{id="plano"}`, sotto un titolo suo. Quel titolo fa della pagina 8 del libro un’apertura, e le testatine saltano le aperture. Il suo stile svuota il piè di pagina e imposta una propria interruzione, che tiene la tavola di fronte al capitolo I, senza testatina né folio, anche quando i capitoli si aprono sui recto ([stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)). I tipi spagnoli della risposta breve stampano *Figura 1.* sotto la mappa (senza `resourceTypes` diventa *Figura 1.1*, numerata per capitolo) e *Fig. 1* nel testo, che il `case="lower"` nel `:ref` del Markdown trasforma in *fig. 1*. Il rimando sta tra parentesi quadre, che le edizioni spagnole usano per segnare ciò che il curatore aggiunge al testo dell’autore.
+
+### 5 · L’autore sul verso, il titolo sul recto
+
+<Excerpt region="heads" />
+
+`parity: 'even'` mette l’autore sui versi e `'odd'` il titolo sui recto, e `pages: 'body'` li tiene entrambi lontani dall’apertura, dove l’unico elemento di servizio è il folio al piede impostato con `pages: 'opener'`. Ogni testatina è ancorata alla pagina e spostata di `SHIFT` al centro della gabbia, che sta mezzo millimetro fuori dal centro della pagina perché i margini interno ed esterno differiscono. Per lo stesso motivo il folio al piede viene in due parità. I folii sono composti in Gentium, perché Marcellus SC disegna 1 e 0 come I e O.
+
+### 6 · La punteggiatura spagnola nel Markdown
+
+<Excerpt region="styles" />
+
+<PageRef page={5}>La pagina 12</PageRef>, l’ultima, finisce con tre stili di paragrafo. Gli asterischi, in Bodoni color sangue di bue, sono centrati dopo un [`:::space{lines=2}`](/it/docs/document-format#space), dato che le righe vuote non aggiungono spazio. La nota dell’edizione è a 8,3 pt su 11 pt di interlinea, e il colophon a 7,5 pt nel grigio delle testatine. La nota resta nel colore dell’inchiostro; se la componi in grigio lo stile ha bisogno anche di un `italicColor`, altrimenti il corsivo *Marianela* si stampa più scuro delle parole attorno. Nel Markdown il dialogo si apre con una raya (—), mai con un trattino, perché un trattino e uno spazio all’inizio di una riga aprono un elenco. *1878.* all’inizio della nota aprirebbe un elenco numerato, quindi prima dell’anno va un word joiner (U+2060). Gli asterischi sono preceduti da una barra rovesciata (`\*`); senza, il primo aprirebbe un elenco puntato e gli altri due un tratto in corsivo, e la riga sparirebbe.
+
+## Varianti
+
+### Apri ogni capitolo su un recto
+
+Con `'odd'`, un capitolo che comincerebbe su un verso riceve una pagina bianca prima di sé, come in un’edizione più ariosa. Il capitolo I si apre già su un recto, e la tavola mantiene la sua pagina perché il suo stile imposta una propria interruzione.
+
+```diff
+-const chapter = { level: 1, breakBefore: { enabled: true, parity: 'any' },
++const chapter = { level: 1, breakBefore: { enabled: true, parity: 'odd' },
+```
+
+### Numera le figure per capitolo
+
+Lasciati come sono, i tipi spagnoli predefiniti numerano le figure dentro ogni titolo di primo livello: la mappa diventa *Figura 1.1* e il rimando *fig. 1.1*.
+
+```diff
+-const resourceTypes = defaultResourceTypes(LOCALE)
+-  .map((type) => ({ ...type, numberingTemplate: '{n}', resetOn: 'never' }));
++const resourceTypes = defaultResourceTypes(LOCALE);
+```
+
+## Errori frequenti
+
+- Un abbassamento di nove righe invece di otto lasciava la pagina 11 corta di una riga, perché `avoidWidows` non avrebbe cominciato un paragrafo sull’ultima riga della pagina. Dopo ogni modifica alle impostazioni o al testo, controlla il piede di ogni pagina.
+- `RISE` è il numero di righe che l’iniziale rialzata tiene libere sopra il testo. Un altro carattere o un altro corpo cambia quella sporgenza: un’iniziale più piccola può aver bisogno di una sola riga, e il testo comincia allora una riga più in alto, a meno che `minHeight` non cambi con lei.
+- Nessuno di questi caratteri ha l’asterismo ⁂ (U+2042) nel suo file latin di Fontsource, quindi il browser lo prenderebbe da un font di sistema. I libri spagnoli segnano comunque la pausa con tre asterischi spaziati.

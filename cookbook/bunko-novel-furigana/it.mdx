@@ -1,0 +1,78 @@
+---
+title: "Un romanzo bunko in verticale, con furigana"
+summary: "Sogni di dieci notti di Sōseki su una pagina bunko A6: 38 caratteri per 15 righe, lettura da destra, letture accanto ai kanji rari, titoli su tre righe."
+plain: "L’inizio di un classico giapponese come tascabile: il testo scorre in colonne dall’alto in basso, da leggere da destra a sinistra, con piccoli kana accanto ai caratteri più difficili."
+description: "Yume Jūya di Sōseki come bunko giapponese in Postext: righe verticali rilegate a destra, furigana di Aozora, titoli su 3 righe, hashira esterno, folio in kanji."
+question: "Come compongo un romanzo giapponese in verticale, rilegato a destra, come un tascabile bunko?"
+aliases: ["bunko", "文庫", "文庫本", "tategaki", "縦組", "縦書き", "giapponese verticale", "romanzo giapponese", "tascabile", "furigana", "ルビ", "振り仮名", "3行取り", "gyōdori", "hashira", "柱", "folio in kanji", "漢数字", "Aozora Bunko", "青空文庫", "夢十夜", "Sogni di dieci notti", "Natsume Sōseki", "夏目漱石"]
+pageNotes: { "1": "Il frontespizio, da solo a sinistra del dorso: 夢十夜 in un Mincho grande e nero al centro di una sottile cornice vermiglione, 夏目漱石 più in basso alla sua sinistra, e un colophon di tre righe in inglese al piede.", "2": "La prima notte si apre su una pagina destra: il titolo 第一夜 sta cinque caratteri più in basso in una fascia larga tre righe, poi こんな夢を見た。 e il testo in colonne di 38 caratteri, con piccole letture in kana accanto a parole come 仰向 e 輪郭.", "3": "Una pagina sinistra: i paragrafi di dialogo si aprono con 「 dentro il rientro di un carattere, lo hashira 夢十夜 scende lungo il margine esterno e il folio 三 sta al suo piede.", "6": "Il titolo della seconda notte, 第二夜, occupa le prime tre righe della pagina, e il testo che segue prosegue sulla stessa griglia di righe." }
+---
+
+## Che cosa comporrai
+
+Nove pagine di un tascabile giapponese (文庫, bunko) dei *Sogni di dieci notti* di Natsume Sōseki, la prima e la seconda notte, su una pagina A6 di 105 × 148 mm rilegata a destra. Il frontespizio sta da solo a sinistra del dorso; dalla pagina 2 il testo scorre dall’alto in basso in righe lette da destra, 38 caratteri in verticale e 15 righe in orizzontale, Shippori Mincho B1 a 9 pt con un passo di 1,75 em. Le letture che Aozora Bunko dà per i kanji più difficili stanno accanto a essi in kana di metà corpo, il titolo di ogni notte occupa tre righe della griglia, e le pagine sinistre portano il titolo del libro lungo il margine esterno sopra un folio in numeri kanji. Il tascabile europeo con la stessa struttura è <RecipeLink slug="catalan-pocket-novella">Nº 104</RecipeLink>, e il romanzo cinese verticale è <RecipeLink slug="vertical-novel-right-bound">Nº 075</RecipeLink>.
+
+## Preparazione
+
+### 1 · Ruota la pagina, contala in caratteri e marcala `ja`
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `layout.writingMode: 'vertical-rl'` impagina ogni pagina come una pagina orizzontale ruotata di un quarto di giro in senso orario, e `page.binding`, lasciato su `'auto'`, rilega un libro verticale a destra: la pagina 1 è sempre il recto, ma sta a sinistra del dorso, e `mirror: true` mette il suo margine interno a destra ([Vertical writing](/it/docs/configuration-page-layout#scrittura-verticale), [Binding](/it/docs/configuration-page-layout#rilegatura)). La [griglia dei caratteri](/it/docs/configuration-east-asian#griglia-di-caratteri) fa una gabbia del testo di 38 caratteri da 9 pt in verticale (120,7 mm) e 15 righe da 15,75 pt in orizzontale (83,3 mm); i margini in `page` sono valori minimi, e la griglia allarga ogni coppia della stessa quantità, così la testa resta 4 mm più profonda del piede. Se chiedi più righe di quante ne lascino i margini, la griglia ne toglie una senza dirlo (`cjkGridClamped` in `doc.configWarnings`): sono i 9 mm al dorso e i 12 mm al margine esterno a far entrare 15 righe.
+
+`locale: 'ja'` imposta il resto come si compongono i libri giapponesi, quindi le quattro righe `cjk` scritte qui non cambiano nulla; mostrano che cosa sceglie il tag. `ja-very-strict` è la regola d’inizio riga di JIS X 4051 (行頭禁則): nessuna riga si apre con 、。」, ー o un kana piccolo come っ. `hangingPunctuation: 'allow'` lascia che un 、 o un 。 che altrimenti aprirebbe una riga sporga sotto l’ultimo carattere (ぶら下げ), come fanno i bunko invece di comprimere la riga. `paragraphStartBracket: 'half'` è lo schema ③ di JLReq: un paragrafo che si apre con 「 mette la parentesi nella seconda metà del suo rientro di un carattere, così il primo carattere del discorso sta dove sta quello di ogni altro paragrafo ([East Asian typography](/it/docs/configuration-east-asian#tipografia-dellasia-orientale)). I libri cinesi differiscono su entrambi i punti: per impostazione predefinita non fanno sporgere alcun segno e rientrano un paragrafo di due caratteri, con o senza parentesi.
+
+### 2 · Dai al titolo di ogni notte tre righe della griglia
+
+<Excerpt region="nights" />
+
+Un titolo giapponese occupa un numero intero di righe di testo, 行取り (gyōdori), così le righe successive restano sulla stessa griglia delle precedenti. `lineSpan: 3` compone 第一夜 in una fascia di tre righe da 15,75 pt con i caratteri centrati su di esse; i 12,5 pt del titolo non spostano la griglia, e a pagina 6 第二夜 occupa le prime tre righe della pagina, quindi il testo che segue comincia sulla quarta riga della griglia. `indent: em(5)` si legge in caratteri del testo (五字下げ), che è come il testo di Aozora marca un 中見出し e come JLReq conta i rientri dei titoli ([Per-level overrides](/it/docs/configuration-text#sovrascritture-per-livello)).
+
+### 3 · Prendi il testo e le sue letture da Aozora Bunko
+
+Le due notti vengono dalla scheda 799 di Aozora Bunko, convertita con `aozora.py` della skill postext-port. Il convertitore legge il file come CP932, trasforma ogni lettura scritta `仰向《あおむき》` in una lettura di gruppo `{仰向|あおむき}`, una sola sequenza di kana sull’intera parola, e ogni `［＃５字下げ］…［＃「第一夜」は中見出し］` in un titolo. In un documento `ja` le letture seguono JIS X 4051: una lettura più corta della sua base si distribuisce lungo di essa 1:2:1, e una più lunga può sconfinare su un kana vicino ma mai su un kanji ([Marks, ruby and warichu](/it/docs/configuration-east-asian#segni-ruby-e-warichu)). L’interlinea di 1,75 em lascia 6,75 pt tra le righe, lo spazio per le letture da 4,5 pt.
+
+### 4 · Metti lo hashira lungo il margine esterno, i folio in kanji
+
+<Excerpt region="hashira" />
+
+In un bunko verticale la testatina (柱, hashira) è piccola e sta nel margine esterno. `anchor.to: 'outer'` vi colloca un elemento, nel margine sinistro di una pagina dispari e in quello destro di una pagina pari in un libro rilegato a destra, e `writingMode: 'vertical-rl'` lo compone dall’alto in basso ([Vertical text elements](/it/docs/configuration-page-layout#elementi-di-testo-verticale)). Il titolo 夢十夜 compare solo sulle pagine sinistre (`parity: 'odd'`), e `pages: 'body'` lo terrebbe lontano da ogni pagina che apre un capitolo. `pageNumbering.format: 'japanese-informal'` stampa i folio 二, 三 … 九 ([Numbering](/it/docs/configuration-page-layout#numerazione)).
+
+### 5 · Centra il frontespizio sul formato
+
+<Excerpt region="title-page" />
+
+Il frontespizio è un titolo di livello 1 con uno stile tutto suo, `# 夢十夜 {style="title" …}`, il cui design riempie la pagina. I suoi elementi sono ancorati alla pagina stessa, non alla gabbia del testo, perché la gabbia di una pagina speculare sta 1,5 mm fuori centro: `x` scorre lungo la pagina in verticale e `y` in orizzontale dal bordo destro, quindi `AXIS` è metà della larghezza della pagina su entrambi i lati del dorso. Il colophon nel piè di pagina è composto in Noto Sans JP: Shippori Mincho B1 non ha né ō né ū, e il PDF disegnerebbe riquadri vuoti per Sōseki.
+
+### 6 · Carica ogni peso con i caratteri che compone
+
+<Excerpt region="voices" />
+
+Fontsource serve ogni peso di un carattere giapponese come circa 120 file, ognuno per un intervallo di caratteri, e `loadCjkFonts` scarica i file toccati dal testo che riceve. Il peso del testo riceve l’intero esempio con `vertical: true`, che carica anche le forme verticali del carattere per il canvas: 、。「」 e ー, e i kana piccoli, che nel testo verticale stanno in alto a destra della loro cella. `renderToPdf` prende `cjkPdfProvider`, che incorpora gli stessi file come sottoinsiemi.
+
+## Varianti
+
+### Segna le parole che la fonte mette in rilievo
+
+Le prime due notti di Sōseki non hanno 傍点, ma molti testi di Aozora sì, e il convertitore li scrive come `:dots[…]{style=sesame}`. In un documento `ja`, `*…*` dà gli stessi segni a sesamo accanto alla riga, mai il corsivo.
+
+```diff
+-こんな夢を見た。
++こんな*夢*を見た。
+```
+
+### Metti ogni parentesi un carattere intero più in basso
+
+Lo schema ① mantiene il rientro di un carattere e mette la parentesi dopo di esso, come fanno molti romanzi per lettori più giovani.
+
+```diff
+-  paragraphStartBracket: 'half', // ③: a 「 that opens a paragraph fills the indent cell
++  paragraphStartBracket: 'indent', // ①: the bracket after the one-character indent
+```
+
+### Comprimi invece di far sporgere
+
+Con `hangingPunctuation: 'none'` un 、 o un 。 che aprirebbe una riga viene accolto nella riga precedente comprimendo parentesi e virgole (追い込み), oppure l’ultimo carattere della riga scende con esso (追い出し), e nessun segno sporge sotto la riga.
+
+```diff
+-  hangingPunctuation: 'allow', // ぶら下げ: a 、。 that would open a line hangs below the last
++  hangingPunctuation: 'none',
+```

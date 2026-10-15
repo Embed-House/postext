@@ -1,0 +1,91 @@
+---
+title: "Pagine preliminari in numeri romani, poi pagina 1"
+summary: "Copertina e preliminari sono titoli non numerati contati in romano minuscolo; :::numbering riparte da 1 sul recto dove si apre il romanzo."
+plain: "Le prime pagine di un’edizione tascabile di Frankenstein. Mostra come numerare le pagine prima della storia i, ii, iii e ricominciare da pagina 1 dove la storia comincia."
+description: "Copertina e preliminari di Frankenstein contati da i a x, e la Letter I, su un recto, è pagina 1. L’indice e le etichette del PDF danno gli stessi numeri."
+question: "Come numero le pagine preliminari i, ii, iii e riparto da 1 sul recto dove comincia il romanzo?"
+aliases: ["numeri di pagina romani", "numeri romani", "pagine preliminari", "preliminari", "copertina", "occhiello", "frontespizio", "colophon", "pagina del copyright", "dedica", "epigrafe", "tavola di antiporta", "verso bianco", "firma della lettera", "ricominciare la numerazione", "etichette di pagina PDF"]
+pageNotes: { "3": "L’occhiello, pagina iii. Il suo stile va a una pagina di destra, quindi il retro della copertina, pagina ii, è bianco e non stampa il folio.", "4": "La tavola di antiporta, pagina iv, sta di fronte al frontespizio, v; nessuna delle due stampa il folio.", "10": "L’ultima pagina della «Preface»: il suo folio, x, è composto in maiuscoletto centrato al piede.", "11": "La «Letter I» si apre su una pagina di destra sotto l’aurora boreale su San Pietroburgo; il suo folio, 1, sta nello stesso punto della x sulla pagina a fronte.", "13": "Pagina 3: su una pagina di destra la testatina mette il titolo della lettera accanto al folio, entrambi verso il margine esterno.", "14": "Pagina 4, la fine della «Letter I»: la testatina mette il titolo del libro accanto al folio, e la firma di Walton è allineata a destra." }
+---
+
+## Che cosa comporrai
+
+Le prime carte di *Frankenstein* come classico tascabile, 129 × 198 mm: una copertina con un fulmine sul Monte Bianco, il suo retro lasciato bianco, un occhiello, una tavola di antiporta con la nave di Walton stretta dai ghiacci di fronte al frontespizio, il colophon in basso sul suo verso, la dedica a Godwin sopra l’epigrafe di Milton, una pagina di indice e la «Preface» del 1818. Queste dieci pagine sono numerate da i a x, ma solo l’indice e la prefazione stampano il loro numero. La «Letter I» apre il romanzo su una pagina di destra, sotto l’aurora boreale, e il suo folio dice 1 nello stesso punto della x sulla pagina a fronte. La lettera prosegue fino alla firma di Walton. Il ix accanto alla prefazione nell’indice e l’1 accanto alla lettera vengono dalle pagine finite, e un visualizzatore PDF etichetta le pagine allo stesso modo. La copertina, la tavola di antiporta e l’aurora boreale sono dipinti generati con modelli di diffusione, caricati come bitmap JPEG; il marchio dell’editore e il cristallo di ghiaccio sono disegnati nel codice.
+
+## Preparazione
+
+### 1 · Ogni carta è un titolo con un progetto grafico
+
+<Excerpt region="leaves" />
+
+Un titolo apre una pagina tutta sua e diventa un segnalibro del PDF; il progetto grafico nel suo stile colloca il testo e le immagini della carta. Con `numbered: false` e `toc: false` le carte restano fuori dal conteggio dei capitoli e dall’indice. Un’intestazione e un piè di pagina vuoti danno loro quello che i tipografi chiamano folio cieco: il frontespizio non stampa il numero ma resta pagina v, ed è per questo che la prefazione può essere ix. Solo l’occhiello mantiene un’interruzione su pagina dispari, e questo lascia bianco il retro della copertina. Il colophon, la dedica, l’epigrafe e la chiusa di Walton sono blocchi `:::paragraphs` composti negli stili alla fine dell’estratto.
+
+### 2 · L’indice prende i numeri dall’impaginazione
+
+<Excerpt region="contents" />
+
+`:::toc` elenca ogni titolo che il suo stile lascia entrare, con l’etichetta della pagina su cui cade ([indice](/it/docs/configuration-notes-references#indice-dei-contenuti)). L’indice e la prefazione condividono lo stile `front`, che imposta `toc: false`, e la prefazione lo scavalca con `{toc="true"}`. Né la prefazione né la «Letter I» sono numerate, quindi le loro voci non stampano un numero di capitolo. La seconda riga della voce della lettera è il suo attributo `to="…"`. I numeri di pagina sono composti nel carattere del folio. Le voci cominciano sulla stessa linea di base della prima riga della prefazione, così le due pagine affiancate si allineano.
+
+### 3 · Il romanzo si apre su un recto, sotto l’aurora boreale
+
+<Excerpt region="letter" />
+
+Il dipinto va al vivo in testa alla pagina e sfuma nella carta al piede, dove comincia la lettera. L’apertura riserva la pagina fino al piede del dipinto, a 104 mm dal margine superiore della pagina, e `minHeight` fissa un minimo 2 mm più in basso, che fa partire la lettera una riga di griglia più giù, fuori dalla sfumatura ([progetto grafico a tutta larghezza e avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)). L’occhiello e la riga della data vengono dagli attributi `to` e `dateline` del titolo. La «Letter I» porta anche `{style="letter"}`, uno stile la cui unica impostazione è `numbered: false`, perché le lettere di Walton vengono prima del «Chapter I» e non hanno numero di capitolo.
+
+### 4 · Le testatine tornano con il romanzo
+
+<Excerpt region="heads" />
+
+Una sezione mantiene l’intestazione e il piè di pagina del documento a meno che il suo stile non li sostituisca. Le pagine preliminari li sostituiscono entrambi e lo stile della lettera no, quindi da pagina 1 il romanzo stampa queste testatine sulle pagine di testo e, nell’apertura, il folio al piede definito nella risposta breve. `{pageNumber}` stampa l’etichetta della pagina su cui si trova, così l’helper `folio()` mette x da un lato del dorso e 1 dall’altro con lo stesso progetto grafico.
+
+### 5 · Il PDF porta gli stessi numeri di pagina
+
+<Excerpt region="build" />
+
+`buildDocument` ripete l’impaginazione finché le etichette di pagina nell’indice smettono di cambiare, quindi basta una chiamata. `renderToPdf` scrive quelle etichette nel PDF: in un visualizzatore che legge le etichette di pagina, il campo del numero di pagina va da i a x e poi da 1, e «vai a pagina 1» apre la «Letter I». Ogni titolo diventa un segnalibro con il nome del suo testo, ed è per questo che le carte hanno titoli semplici: «Cover», «Half title», «Frontispiece», «Title page», «Imprint», «Dedication».
+
+## Varianti
+
+### Conta i preliminari in maiuscolo
+
+I numeri maiuscoli si stampano come maiuscole piene nel carattere del folio, più alte del maiuscoletto che danno i numeri minuscoli.
+
+```diff
+-const pageNumbering = { format: 'lower-roman', startAt: 1 }; // startAt spelled out: cover = i
++const pageNumbering = { format: 'upper-roman', startAt: 1 }; // startAt spelled out: cover = I
+```
+
+### Numera il libro di fila
+
+Togli `startAt` e il conteggio prosegue in cifre arabe, così la «Letter I» diventa pagina 11, come nei libri che contano i preliminari insieme al testo.
+
+```diff
+-:::numbering{format="decimal" startAt=1}
++:::numbering{format="decimal"}
+```
+
+### Togli la tavola di antiporta
+
+Cancella il titolo `# Frontispiece` e manda il frontespizio su un recto: pagina iv resta bianca, la prefazione è ancora ix e la «Letter I» è ancora 1.
+
+```diff
+-  { id: 'title', ...blind, advancedDesign: design([ // v: four frontmatter fields, one attribute
++  { id: 'title', ...blind, breakBefore: { enabled: true, parity: 'odd' },
++    advancedDesign: design([ // v: four frontmatter fields, one attribute
+```
+
+### Aggiungi abbondanza e segni di taglio per la stampa
+
+Con `cutLines` la copertina e l’apertura, entrambe ancorate all’abbondanza, vanno 3 mm oltre il rifilo; i folio e il numero di pagine non cambiano ([segni di taglio](/it/docs/configuration-page-layout#segni-di-taglio)).
+
+```diff
+     backgroundColor: col('paper'), pageNumbering,
++    cutLines: { enabled: true }, // a 3 mm bleed and crop marks
+```
+
+## Errori frequenti
+
+- Le carte ereditano l’interruzione `'odd'` del livello 1. Lasciate così, ognuna aspetta una pagina di destra. I preliminari arrivano allora a quattordici pagine invece di dieci, con quattro versi bianchi in più, e la tavola di antiporta sta di fronte a una pagina bianca invece che al frontespizio. Ridichiara l’interruzione con `parity: 'any'`, come fa questa ricetta, o disattivala con `breakBefore: { enabled: false }`; un titolo a tutta larghezza apre comunque una pagina sua.
+- Togli il `:::pagebreak` prima di `:::numbering` quando il livello 1 interrompe con `'always-odd'`, il valore predefinito del motore per l’H1. Se il testo precedente finisce su una pagina di destra, l’interruzione di pagina riempie fino al recto successivo, poi il titolo aggiunge la sua pagina separatrice e riempie di nuovo, e restano tre pagine bianche di fila invece di una. Dopo un’interruzione `'odd'`, come qui, l’interruzione di pagina non cambia nulla; dopo `'any'`, è lei a mettere pagina 1 su un recto.
+- Una prefazione che cresce di una pagina sposta la «Letter I» due pagine più avanti, perché l’interruzione su pagina dispari aggiunge un verso bianco prima di essa. Controlla il numero di pagine ogni volta che modifichi i preliminari.
+- I puntini di guida dell’indice sono composti nel carattere e nel colore dei numeri di pagina, e `toc.leader` non ha un colore suo, quindi qui si stampano in blu acciaio.

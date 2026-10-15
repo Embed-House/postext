@@ -32,16 +32,16 @@ import { parseWriteup, readWriteup, writeupRefs } from "./writeup.ts";
 
 // ─── Fixtures ───────────────────────────────────────────────────────────────
 
-const L = (en: string, es = `${en} (es)`, zh = `${en} (zh)`, ca = `${en} (ca)`, ar = `${en} (ar)`, ja = `${en} (ja)`, pt = `${en} (pt)`, fr = `${en} (fr)`, de = `${en} (de)`) => ({ en, es, ca, zh, ar, ja, pt, fr, de });
+const L = (en: string, es = `${en} (es)`, zh = `${en} (zh)`, ca = `${en} (ca)`, ar = `${en} (ar)`, ja = `${en} (ja)`, pt = `${en} (pt)`, fr = `${en} (fr)`, de = `${en} (de)`, it = `${en} (it)`) => ({ en, es, ca, zh, ar, ja, pt, fr, de, it });
 const HEADINGS = {
-  build: L("What you'll build", "Lo que vas a componer", "成品一览", "Què compondràs", "ما الذي ستنضده", "できあがり", "O que você vai compor", "Ce que vous allez composer", "Was Sie setzen"),
-  short: L("The short answer", "La respuesta corta", "简短回答", "La resposta curta", "الجواب المختصر", "手短な答え", "A resposta curta", "La réponse courte", "Die kurze Antwort"),
-  ingredients: L("Ingredients", "Ingredientes", "用料", "Ingredients", "المكونات", "材料", "Ingredientes", "Ingrédients", "Zutaten"),
-  method: L("Method", "Elaboración", "做法", "Elaboració", "طريقة التحضير", "作り方", "Preparo", "Préparation", "Zubereitung"),
-  whole: L("The whole recipe", "La receta completa", "完整食谱", "La recepta completa", "الوصفة كاملة", "レシピの全体", "A receita completa", "La recette complète", "Das ganze Rezept"),
-  variations: L("Variations", "Variantes", "变化", "Variants", "تنويعات", "アレンジ", "Variações", "Variantes", "Varianten"),
-  pitfalls: L("Pitfalls", "Errores frecuentes", "常见问题", "Errors freqüents", "أخطاء شائعة", "よくあるつまずき", "Erros comuns", "Erreurs fréquentes", "Häufige Fehler"),
-  credits: L("Credits", "Créditos", "致谢", "Crèdits", "الحقوق", "クレジット", "Créditos", "Crédits", "Nachweise"),
+  build: L("What you'll build", "Lo que vas a componer", "成品一览", "Què compondràs", "ما الذي ستنضده", "できあがり", "O que você vai compor", "Ce que vous allez composer", "Was Sie setzen", "Che cosa comporrai"),
+  short: L("The short answer", "La respuesta corta", "简短回答", "La resposta curta", "الجواب المختصر", "手短な答え", "A resposta curta", "La réponse courte", "Die kurze Antwort", "La risposta breve"),
+  ingredients: L("Ingredients", "Ingredientes", "用料", "Ingredients", "المكونات", "材料", "Ingredientes", "Ingrédients", "Zutaten", "Ingredienti"),
+  method: L("Method", "Elaboración", "做法", "Elaboració", "طريقة التحضير", "作り方", "Preparo", "Préparation", "Zubereitung", "Preparazione"),
+  whole: L("The whole recipe", "La receta completa", "完整食谱", "La recepta completa", "الوصفة كاملة", "レシピの全体", "A receita completa", "La recette complète", "Das ganze Rezept", "La ricetta completa"),
+  variations: L("Variations", "Variantes", "变化", "Variants", "تنويعات", "アレンジ", "Variações", "Variantes", "Varianten", "Varianti"),
+  pitfalls: L("Pitfalls", "Errores frecuentes", "常见问题", "Errors freqüents", "أخطاء شائعة", "よくあるつまずき", "Erros comuns", "Erreurs fréquentes", "Häufige Fehler", "Errori frequenti"),
+  credits: L("Credits", "Créditos", "致谢", "Crèdits", "الحقوق", "クレジット", "Créditos", "Crédits", "Nachweise", "Crediti"),
 } satisfies Record<SectionId, Record<Locale, string>>;
 
 /** Just the registry tables validateRecipeMeta reads. */

@@ -11,18 +11,18 @@ import { validateRegistry } from "./validate.ts";
 
 // ─── In-memory fixture ──────────────────────────────────────────────────────
 
-const L = (en: string, es = `${en} (es)`, zh = `${en} (zh)`, ca = `${en} (ca)`, ar = `${en} (ar)`, ja = `${en} (ja)`, pt = `${en} (pt)`, fr = `${en} (fr)`, de = `${en} (de)`) => ({ en, es, ca, zh, ar, ja, pt, fr, de });
-const HEADINGS: Record<SectionId, [string, string, string, string, string, string, string, string, string]> = {
-  build: ["What you'll build", "Lo que vas a componer", "成品一览", "Què compondràs", "ما الذي ستنضده", "できあがり", "O que você vai compor", "Ce que vous allez composer", "Was Sie setzen"],
-  short: ["The short answer", "La respuesta corta", "简短回答", "La resposta curta", "الجواب المختصر", "手短な答え", "A resposta curta", "La réponse courte", "Die kurze Antwort"],
-  ingredients: ["Ingredients", "Ingredientes", "用料", "Ingredients", "المكونات", "材料", "Ingredientes", "Ingrédients", "Zutaten"],
-  method: ["Method", "Elaboración", "做法", "Elaboració", "طريقة التحضير", "作り方", "Preparo", "Préparation", "Zubereitung"],
-  whole: ["The whole recipe", "La receta completa", "完整食谱", "La recepta completa", "الوصفة كاملة", "レシピの全体", "A receita completa", "La recette complète", "Das ganze Rezept"],
-  variations: ["Variations", "Variantes", "变化", "Variants", "تنويعات", "アレンジ", "Variações", "Variantes", "Varianten"],
-  pitfalls: ["Pitfalls", "Errores frecuentes", "常见问题", "Errors freqüents", "أخطاء شائعة", "よくあるつまずき", "Erros comuns", "Erreurs fréquentes", "Häufige Fehler"],
-  credits: ["Credits", "Créditos", "致谢", "Crèdits", "الحقوق", "クレジット", "Créditos", "Crédits", "Nachweise"],
+const L = (en: string, es = `${en} (es)`, zh = `${en} (zh)`, ca = `${en} (ca)`, ar = `${en} (ar)`, ja = `${en} (ja)`, pt = `${en} (pt)`, fr = `${en} (fr)`, de = `${en} (de)`, it = `${en} (it)`) => ({ en, es, ca, zh, ar, ja, pt, fr, de, it });
+const HEADINGS: Record<SectionId, [string, string, string, string, string, string, string, string, string, string]> = {
+  build: ["What you'll build", "Lo que vas a componer", "成品一览", "Què compondràs", "ما الذي ستنضده", "できあがり", "O que você vai compor", "Ce que vous allez composer", "Was Sie setzen", "Che cosa comporrai"],
+  short: ["The short answer", "La respuesta corta", "简短回答", "La resposta curta", "الجواب المختصر", "手短な答え", "A resposta curta", "La réponse courte", "Die kurze Antwort", "La risposta breve"],
+  ingredients: ["Ingredients", "Ingredientes", "用料", "Ingredients", "المكونات", "材料", "Ingredientes", "Ingrédients", "Zutaten", "Ingredienti"],
+  method: ["Method", "Elaboración", "做法", "Elaboració", "طريقة التحضير", "作り方", "Preparo", "Préparation", "Zubereitung", "Preparazione"],
+  whole: ["The whole recipe", "La receta completa", "完整食谱", "La recepta completa", "الوصفة كاملة", "レシピの全体", "A receita completa", "La recette complète", "Das ganze Rezept", "La ricetta completa"],
+  variations: ["Variations", "Variantes", "变化", "Variants", "تنويعات", "アレンジ", "Variações", "Variantes", "Varianten", "Varianti"],
+  pitfalls: ["Pitfalls", "Errores frecuentes", "常见问题", "Errors freqüents", "أخطاء شائعة", "よくあるつまずき", "Erros comuns", "Erreurs fréquentes", "Häufige Fehler", "Errori frequenti"],
+  credits: ["Credits", "Créditos", "致谢", "Crèdits", "الحقوق", "クレジット", "Créditos", "Crédits", "Nachweise", "Crediti"],
 };
-const ANCHOR: DocAnchor = { slug: "configuration-resources", heading: { en: "Table style", es: "Estilo de tablas", ca: "Estil de taules", zh: "表格样式", ar: "نمط الجداول", ja: "表のスタイル", pt: "Estilo de tabela", fr: "Style de tableau", de: "Tabellenstil" } };
+const ANCHOR: DocAnchor = { slug: "configuration-resources", heading: { en: "Table style", es: "Estilo de tablas", ca: "Estil de taules", zh: "表格样式", ar: "نمط الجداول", ja: "表のスタイル", pt: "Estilo de tabela", fr: "Style de tableau", de: "Tabellenstil" , it: "Stile delle tabelle" } };
 
 function fixtureRegistry(): Registry {
   return {
@@ -57,7 +57,7 @@ function fixtureRegistry(): Registry {
     gaps: {
       footnotes: {
         label: L("Footnotes", "Notas al pie", "脚注", "Notes a peu de pàgina"),
-        aliases: { en: ["footnote"], es: ["nota al pie"], ca: ["nota a peu de pàgina"], zh: ["注脚"], ar: ["حاشية سفلية"], ja: ["脚注"], pt: ["nota de rodapé"], fr: ["note de bas de page"], de: ["Fußnote"] },
+        aliases: { en: ["footnote"], es: ["nota al pie"], ca: ["nota a peu de pàgina"], zh: ["注脚"], ar: ["حاشية سفلية"], ja: ["脚注"], pt: ["nota de rodapé"], fr: ["note de bas de page"], de: ["Fußnote"], it: ["nota a piè di pagina"] },
         explanation: L("Not parsed."),
       },
     },
@@ -114,10 +114,10 @@ describe("validateRegistry (fixture)", () => {
   it("checks the per-language frontispieces", () => {
     const registry = fixtureRegistry();
     registry.collections.featured.frontispiece = { es: "a-recipe", zh: "b-recipe" };
-    (registry.collections.featured.frontispiece as Record<string, string>).it = "a-recipe";
+    (registry.collections.featured.frontispiece as Record<string, string>).nl = "a-recipe";
     const errors = validateRegistry(registry, { knownSlugs: ["a-recipe"] });
     expect(errors).toContain('collections.featured.frontispiece.zh: no recipe folder "b-recipe"');
-    expect(errors).toContain("collections.featured.frontispiece.it: unknown locale");
+    expect(errors).toContain("collections.featured.frontispiece.nl: unknown locale");
     expect(errors.filter((e) => e.includes("frontispiece.es"))).toEqual([]);
   });
 
@@ -148,7 +148,8 @@ describe("docLinks", () => {
     expect(docLinkExists("/zh/docs/configuration")).toBe(true);
     expect(docLinkExists("/fr/docs/configuration")).toBe(true);
     expect(docLinkExists("/de/docs/configuration")).toBe(true);
-    expect(docLinkExists("/it/docs/configuration")).toBe(false);
+    expect(docLinkExists("/it/docs/configuration")).toBe(true);
+    expect(docLinkExists("/nl/docs/configuration")).toBe(false);
     expect(docLinkExists("/en/docs/configuration#nope")).toBe(false);
     expect(docLinkExists("/en/docs/nope")).toBe(false);
   });

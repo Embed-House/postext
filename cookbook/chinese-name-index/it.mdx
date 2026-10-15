@@ -1,0 +1,69 @@
+---
+title: "Un indice di nomi cinesi, per pinyin e per tratti"
+summary: "Gli stessi segni :index in due edizioni di un’antologia del 紅樓夢: index.groupBy ordina i nomi per iniziale pinyin in zh-Hans e per numero di tratti in zh-Hant."
+plain: "Una breve antologia di un classico romanzo cinese con un indice dei nomi dei personaggi. Gli stessi segni danno due edizioni: una ordinata per suono, l’altra per numero di tratti del pennello."
+description: "Un indice di nomi cinesi in Postext: gli stessi segni :index danno lettere pinyin A–Z nell’edizione semplificata e tratti 三畫, 四畫 in quella tradizionale."
+question: "Come raggruppo un indice di nomi cinesi per pinyin, o per numero di tratti come nei libri di Taiwan?"
+aliases: ["indice cinese", "indice dei nomi", "人名索引", "indice pinyin", "拼音索引", "indice per numero di tratti", "笔画索引", "筆畫索引", "index.groupBy", "ordinamento cinese", "Il sogno della camera rossa", "Dream of the Red Chamber", "紅樓夢", "edizioni semplificata e tradizionale"]
+pageNotes: { "7": "L’apertura dell’indice nell’edizione semplificata: l’occhiello 按汉语拼音排列 in rosso, il titolo 人名索引 in un Kai a pennello, una nota di una frase su due righe, poi due colonne sotto le lettere pinyin F, H, J, K, L e M; il gruppo J elenca sedici membri della famiglia Jia e Jia Yucun, che ne condivide soltanto il nome.", "8": "Il resto dell’indice, dalla N alla Z, e il colophon in inglese, con la revisione della fonte e le due modifiche apportate al testo, al piede della seconda colonna.", "15": "L’apertura dell’indice nell’edizione tradizionale: l’occhiello 依筆畫排列 in rosso, 人名索引, la stessa nota in caratteri tradizionali, poi due colonne sotto i gruppi per numero di tratti da 三畫 a 十三畫, dove cominciano i nomi Jia, perché 賈 ha tredici tratti.", "16": "Il resto dell’indice per tratti, dai nomi Jia fino a 二十八畫 (鸚哥), e il colophon in inglese dell’edizione tradizionale al piede della seconda colonna." }
+---
+
+## Che cosa comporrai
+
+Un’agile antologia del 紅樓夢 (*Il sogno della camera rossa*) che ristampa, dai capitoli 1–3, i passi in cui i personaggi compaiono per la prima volta, e si chiude con un indice dei suoi 47 nomi, più quattro rimandi da altri nomi. Esce in due edizioni dagli stessi segni. Quella della Cina continentale, in caratteri semplificati, ordina i nomi per iniziale pinyin, F, H, J…; quella di Taiwan, in caratteri tradizionali, per numero di tratti del primo carattere, 三畫, 四畫… Entrambe sono tascabili 大32开, 140 × 203 mm, 26 caratteri per riga in Noto Serif, con i titoli dei capitoli in un carattere Kai e gli occhielli, i folio e i gruppi dell’indice in Noto Sans. La scheda ingrandisce i primi gruppi dell’indice semplificato, dalla F alla L. <RecipeLink slug="names-and-subjects-indexes">Un indice dei nomi e un indice degli argomenti</RecipeLink> costruisce lo stesso tipo di indice per una monografia in inglese.
+
+## Preparazione
+
+### 1 · Segna ogni nome dove il lettore lo incontra
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra; il resto sta nel Markdown. Un segno registra il nome completo qualunque cosa stampi il testo: `字:index[士隐]{term="甄士隐" main}` stampa 士隐 e registra una pagina sotto 甄士隐. `main` mette la pagina in grassetto, e la nota sotto il titolo dell’indice spiega che cosa significa qui il grassetto: la pagina in cui il personaggio entra in scena di persona. Jia Baoyu nasce nel capitolo 2 senza essere nominato (又生了一位公子), quindi il segno si inserisce senza nulla da stampare, `:index{term="贾宝玉"}`, e la sua voce dice 4, **6**. Gli altri nomi e soprannomi hanno un proprio rimando, `:index[凤辣子]{term="凤辣子" see="王熙凤"}`, che Postext stampa alla maniera cinese, dopo un punto fermo e senza spazio: 凤辣子。见王熙凤 ([segni di indice](/it/docs/document-format#segni-dellindice)).
+
+### 2 · Lascia che sia il locale a scegliere l’ordine
+
+<Excerpt region="editions" />
+
+Le due edizioni condividono la configurazione, e `locale` è l’unico interruttore di cui l’indice ha bisogno: `groupBy: 'auto'` raggruppa un indice `zh-Hans` per pinyin e uno `zh-Hant` per tratti, e la risposta breve scrive per esteso i due valori perché tu li veda. Le voci si ordinano secondo il criterio da cui vengono i gruppi, quindi gli stessi nomi cambiano posto: 甄费 viene prima di 甄士隐 sotto la Z (fèi prima di shì), e dopo sotto 十四畫 (士 ha tre tratti, 費 dodici); 宁国公 e 荣国公 si separano tra N e R, mentre 寧國公 e 榮國公 restano insieme tra i nomi di quattordici tratti ([indice analitico](/it/docs/configuration-notes-references#indice-analitico)). Le letture e i numeri di tratti sono quelli dell’ordinamento cinese del browser; un cognome che legge male (曾, 单, 解) riceve una chiave `sort` in caratteri con la lettura giusta.
+
+### 3 · Carica ogni carattere con i segni che compone
+
+<Excerpt region="voices" />
+
+Fontsource divide ogni peso cinese in circa cento file, e `loadCjkFonts` scarica quelli toccati dal suo testo. Il carattere Song riceve tutto il libro, quindi le testatine non gli costano nulla; il suo grassetto, le cifre delle pagine principali; il carattere Hei, il testo degli attributi `kicker`, i gruppi dell’indice e le cifre dei folio; il carattere Kai, i tre distici e 人名索引. Il PDF segue la stessa strada: `cjkPdfProvider` incorpora quei file, ognuno ridotto ai caratteri usati dalle sue pagine, e nessun carattere esce come un quadratino vuoto. Il carattere Kai cambia con l’edizione. LXGW WenKai TC, l’unico Kai da testo su Fontsource, disegna le forme ereditate, 冷 con il vecchio piede 卩 di 令, e centra virgole e punti fermi, quindi i titoli semplificati sono composti in Ma Shan Zheng, un Kai a pennello con le forme continentali ([font cinesi, giapponesi e coreani](/it/docs/configuration-programmatic-usage#font-cinesi-giapponesi-e-coreani)).
+
+### 4 · Metti la nota nell’apertura dell’indice
+
+<Excerpt region="opener" />
+
+La nota è un attributo del titolo, `# 人名索引 {style="index" kicker="按汉语拼音排列" note="…"}`, composta su tutta la giustezza sopra le due colonne. Come paragrafo dentro le colonne era una leva per il bilanciamento delle colonne: per pareggiare l’ultima pagina dell’edizione tradizionale, l’impaginazione la allargava a dodici caratteri per riga in una colonna di quattordici. La nota è una sola frase, `本索引收录前三回选文中的人物，粗体页码为人物出场之页；别名与原名另立参见条目。`, mandata a capo dal progetto grafico: il testo grafico in un libro cinese prende le regole di divisione in righe e le larghezze dei segni del testo corrente, quindi ，； sono a mezza larghezza nell’edizione semplificata e a larghezza piena in quella tradizionale, come nel testo, e nessuna riga della nota comincia con un segno di punteggiatura. Le aperture dei capitoli usano lo stesso progetto grafico, con `第{numberHan}回` come occhiello, che stampa 第一回 nella scrittura del documento.
+
+### 5 · Mostra le due pagine d’indice affiancate
+
+<Excerpt region="side-by-side" />
+
+Il pen costruisce entrambe le edizioni e mostra sul tavolo quella semplificata. I pulsanti 简体版 e 繁體版 cambiano il tavolo, e ogni cambio offre il PDF dell’edizione che vi si trova, `chinese-name-index-hans.pdf` o `chinese-name-index-hant.pdf`. La cattura registra entrambe le build (`capture.doc: ['first', 'last']`): le prime otto pagine qui sopra sono dell’edizione semplificata, e le quattro che seguono vengono da quella tradizionale, la sua prima pagina e il suo indice per tratti. La striscia sopra il tavolo contiene la prima pagina d’indice di ciascuna edizione. Il PDF offerto con la ricetta è quello dell’edizione semplificata.
+
+## Varianti
+
+### Raggruppa per pinyin un indice tradizionale
+
+Un’edizione tradizionale per lettori che cercano i nomi in base alla lettura può ordinarli per pinyin. Imposta `groupBy: 'pinyin'` in entrambe le edizioni: i gruppi vanno dalla A alla Z e le voci conservano le forme tradizionali. L’occhiello dice come è ordinato l’indice, quindi cambialo anche nel Markdown tradizionale, in `kicker="依漢語拼音排列"`.
+
+```diff
+-  groupBy: e.locale === 'zh-Hans' ? 'pinyin' : 'stroke', // A B C… or 三畫 四畫…
++  groupBy: 'pinyin', // A B C… in both scripts
+```
+
+### Stampa i nomi senza intestazioni di gruppo
+
+Un breve elenco di nomi si legge bene con una riga bianca tra i gruppi e nessuna intestazione sopra. Conserva il raggruppamento e disattiva le intestazioni. `groupBy: 'none'` non basterebbe: separa solo simboli, numeri e parole, e qui ogni nome comincia con un carattere Han, quindi i 47 scorrerebbero in un unico blocco.
+
+```diff
+-  groups: { fontFamily: e.sans, fontSize: pt(9.5), fontWeight: 700, color: col('cinnabar'),
+-    marginTop: pt(6.25) }, // the three names of 九畫 stay whole at the foot of their column
++  groups: { enabled: false, marginTop: pt(14) }, // no heads; a blank line between groups
+```
+
+## Errori frequenti
+
+- La configurazione `index` appartiene al documento, quindi un documento stampa un solo ordine. Un libro che vuole sia un indice per pinyin sia un elenco di ricerca per tratti fa due build, come questo pen.
+- Su una griglia di caratteri il bilanciamento delle colonne è disattivato per impostazione predefinita, e l’ultima pagina di ciascun indice riempirebbe la prima colonna fino al piede: il colophon dell’edizione semplificata comincerebbe sotto la Z e finirebbe in testa alla seconda colonna. `headings.balancing: { enabled: true }` accorcia la prima colonna di quella pagina, così i nomi proseguono nella seconda e il colophon resta intero sotto di loro ([bilanciamento delle colonne](/it/docs/configuration-text#bilanciamento-delle-colonne)). Il taglio cade tra le voci e non lascia mai un solo nome di un gruppo da solo al piede o in testa a una colonna (`index.groups.splitMinEntries`, 2 per impostazione predefinita), quindi le due colonne finiscono alla pari solo dove le lunghezze lo permettono. Qui ogni colophon contiene una frase sull’ordine del suo indice, e le colonne di entrambe le pagine finali terminano entro un terzo di riga l’una dall’altra.

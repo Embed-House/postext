@@ -1,0 +1,67 @@
+---
+title: "Una bozza con ogni errore segnato in rosso"
+summary: "Una bozza di giornale corretta in due giri, con ogni errore che il motore segnala o che il pen trova segnato in rosso sulla pagina e collegato al suo Markdown."
+plain: "Un articolo di un settimanale locale, controllato due volte in cerca di errori. Mostra come segnare in rosso sulla pagina ogni errore e collegarlo alla riga di testo che lo ha causato."
+description: "Un banco di correzione Postext per un articolo: blocchi non chiusi, calloutOverflow, id ignoti e righe lasche segnati in pagina; un clic seleziona il Markdown."
+question: "Come scopro che cosa non va nel mio documento e risalgo da ogni errore sulla pagina al suo Markdown?"
+aliases: ["bozza", "correzione di bozze", "debug di un documento", "problemi di parsing", "doc.warnings", "calloutOverflow", "rimando sconosciuto", "direttiva sconosciuta", "righe lasche", "mappatura del sorgente", "clic sul sorgente", "sourceStart", "word joiner", "escape del dollaro", "galley proof"]
+pageNotes: { "1": "Pagina 1 di «The Tideline», numero 41: un timbro «PROOF · 2ND PASS» contornato di rosso nell’angolo in alto a destra, una fotografia notturna del traghetto «Marram» che attraversa un estuario scuro sotto la luna piena, l’occhiello «Estuary · Transport», il titolo «The Night Ferry Returns» in un bastoni nero pesante, un sommario in corsivo e una firma in monospaziato. Seguono due paragrafi giustificati; il primo cita la carta 1, una pianta del percorso composta nella colonna esterna. Al piede della pagina il riquadro dei dati «The crossing in figures» si apre sotto un filetto rosso.", "2": "Pagina 2: il riquadro dei dati prosegue senza titolo sotto il suo filetto rosso con l’orario su due colonne, poi l’articolo continua in un graziato giustificato. La colonna esterna contiene una citazione in evidenza di Dana Whitcomb, una cronologia delle due imbarcazioni (1971, 2015, 2026) e, al suo piede, il colophon." }
+---
+
+## Che cosa comporrai
+
+Il numero 41 di *The Tideline*, un settimanale di contea, apre con il ritorno del traghetto notturno sul Sawyer, e il pen corregge l’articolo in due giri. Il primo giro è il testo come è stato consegnato, cioè l’articolo corretto con sette sviste rimesse al loro posto, tra cui un timbro scritto come una direttiva che non esiste e un riquadro dei dati che non si chiude mai. Quelle sette sviste lasciano undici segni. Come sulla scheda, ogni errore è sottolineato in rosso sulla riga in cui è stato composto (una riga lasca invece viene campita), e il suo numero in margine corrisponde alla sua voce nell’elenco accanto alle pagine. Un clic su una riga o su una voce seleziona il suo Markdown. Le pagine qui sotto sono il secondo giro. Le verifiche non vi trovano nulla, e un timbro «PROOF · 2ND PASS» è fissato nell’angolo in alto a destra.
+
+## Preparazione
+
+### 1 · Leggi ciò che il motore segnala, poi controlla il resto
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `parseMarkdownWithIssues()` restituisce un problema per ogni `$`, `$$` o `:::` lasciato aperto, e `doc.warnings` contiene un `calloutOverflow` per ogni riquadro che nessun taglio è riuscito a dividere. `doc.converged` e `doc.iterationCount` dicono se l’impaginazione si è assestata, e questo articolo si assesta dopo un’iterazione con o senza i suoi errori. Il motore registra anche id e direttive sconosciuti in `doc.contentWarnings`, e `findLooseLines` restituisce le righe lasche: le verifiche che mostra il pannello Verifiche della Sandbox ([Pannelli della barra laterale](/it/docs/sandbox#pannelli-della-barra-laterale)). `proof()` fa da sé quelle letture, così ogni errore finisce in un solo elenco con una sola forma: un tipo, un intervallo del sorgente e un dettaglio. Confronta gli id di `:ref` e `::resource` con le `resources` della costruzione, e i nomi dei blocchi con `KNOWN_CONTAINERS` e `KNOWN_DIRECTIVES`. Per questo articolo segnala anche un blocco di elenco il cui `startNumber` è un anno e qualunque formula, perché l’articolo non ne ha, e legge le righe composte cercando spazi allargati oltre `maxWordSpacing`, righe composte in bandiera e trattini aggiunti dentro un indirizzo.
+
+### 2 · Rimetti gli errori nel testo corretto
+
+<Excerpt region="first-pass" />
+
+Il pen tiene un solo file Markdown, l’articolo corretto, e ne ricava il primo giro annullando sette correzioni, così le due versioni non possono divergere e ogni segno ha una causa nota. Il testo corretto viene costruito per ultimo, e le pagine qui sotto mostrano quella costruzione. `\$` [fa l’escape](/it/docs/document-format#convenzioni-di-scrittura) del simbolo del dollaro di un prezzo, così non si apre nessuna formula. Un word joiner (U+2060) prima di ogni anno nella cronologia di pagina 2 impedisce a una voce come *1971. The Tern…* di aprire un elenco numerato a partire dal suo anno; il primo giro toglie solo quello prima del 1971. Con lo schema `https://`, un indirizzo web viene composto come indirizzo, mai sillabato e diviso solo nei suoi punti di giunzione, come a pagina 1 prima di *.example*. Senza di esso l’indirizzo è una parola qualsiasi, e il primo giro lo sillaba come *night-ferry*. La settima voce toglie il delimitatore di chiusura del riquadro della cronologia, e il passo 3 mostra che cosa ne fa l’impaginazione.
+
+### 3 · Segna ogni errore dove è stato composto
+
+<Excerpt region="marks" />
+
+Ogni riga del VDT porta `sourceStart` e `sourceEnd`, così l’intervallo del sorgente di un errore porta alla riga che lo ha stampato. Il delimitatore di un contenitore non stampa una riga propria, e il suo segno va sulla prima riga che comincia entro `REACH` (80) caratteri dopo di esso. Un `calloutOverflow` riceve una barra sotto il piede della colonna che nomina. Una sola svista può lasciare più segni. I dollari senza escape trasformano `$2.50 on foot, $` in una formula, che non stampa nulla perché questo pen non carica mai il motore matematico, e il terzo dollaro apre una formula che non si chiude mai. Senza quella frase, una riga del paragrafo delle tariffe esce con spazi larghi 1,9 volte il normale. I due delimitatori mancanti del riquadro dei dati lasciano aperti lui e il suo gruppo `:::columns` fino alla fine dell’articolo, e ciò che segue si compone al loro interno, nella seconda colonna del gruppo. Un gruppo di colonne si taglia tra le sue colonne come il riquadro che lo contiene, quindi con quei due soli delimitatori nulla trabocca. È il delimitatore della cronologia a farlo. Il suo riquadro, lasciato aperto dentro il riquadro dei dati, ingloba gli ultimi cinque paragrafi e il colophon, e un riquadro dentro un altro riquadro non si taglia mai. Viene composto a pagina 3 e va 69 mm oltre il piede della colonna; ciò che sta sotto quel piede non si stampa, e il primo giro ha tre pagine invece di due. L’avviso porta l’intervallo del sorgente del riquadro dei dati, il riquadro che l’impaginazione ha collocato, quindi la voce 8 seleziona il riquadro esterno, dal suo delimitatore alla fine dell’articolo. `proof()` considera lasca una riga quando la sua spaziatura tra parole, `lineWordSpacing(line)`, supera `maxWordSpacing` (qui 1.6). Una riga i cui spazi supererebbero 3× non ha un rapporto da confrontare, perché la divisione in righe [la compone in bandiera](/it/docs/justification#righe-che-il-motore-non-riesce-a-riempire), quindi `proof()` controlla anche `ragged`.
+
+### 4 · Seleziona il Markdown dietro una riga
+
+<Excerpt region="source" />
+
+Un clic arriva in pixel CSS. `onPageClick()` lo scala in pixel della pagina, trova la riga il cui `bbox` lo contiene e seleziona nella textarea l’intervallo del sorgente di quella riga; una voce dell’elenco seleziona allo stesso modo l’intervallo del suo errore. `selectSource()` dà il focus alla textarea senza far scorrere la pagina e imposta il suo `scrollTop` in base all’altezza del testo che precede la selezione. Il `bbox` di una riga giustificata conserva la larghezza naturale della riga, non quella a cui è dipinta, quindi `linesOf()` lo estende fino al bordo destro del suo blocco. Altrimenti la campitura si fermerebbe prima del margine, e un clic vicino al bordo destro non selezionerebbe nulla.
+
+### 5 · Lascia dividere il riquadro dei dati, fissa il timbro
+
+<Excerpt region="boxes" />
+
+`keepTogether: false` permette al riquadro dei dati di cominciare al piede di pagina 1 e di proseguire a tergo sotto il suo filetto rosso, senza titolo. Il riquadro non ha sfondo né filetto al piede, quindi a pagina 2 solo lo spazio bianco separa l’orario dall’articolo, e `marginBottom` è un’intera interlinea, 14 pt; con 4 pt l’orario finirebbe 1,5 mm sopra il paragrafo successivo. Il timbro è `placement: 'fixed'`, fuori dal flusso e fissato 8 mm sotto il bordo superiore, e `width: 'auto'` lo riduce al suo titolo, largo 42 mm invece dei 110 mm della colonna principale.
+
+## Varianti
+
+### Tieni intero il riquadro dei dati
+
+Con il `keepTogether` predefinito, il riquadro passa a pagina 2 in un solo pezzo; la pagina 1 finisce 33 mm prima e l’articolo arriva a una terza pagina.
+
+```diff
+-  { id: 'facts', keepTogether: false, backgroundEnabled: false, marginBottom: pt(LEAD),
++  { id: 'facts', backgroundEnabled: false, marginBottom: pt(LEAD),
+```
+
+### Ferma una costruzione che ha ancora errori
+
+In uno script di costruzione o in un test, esegui `proof()` sul testo finale e lancia un errore se trova qualcosa.
+
+```diff
+ const doc = await build(markdown); // last: the corrected galley, the pages below
++if (proof(markdown, doc).length) throw new Error('The second pass still has faults.');
+```
+
+## Errori frequenti
+
+- Adatta il testo in modo che il riquadro dei dati riempia la pagina 1 fino all’ultima riga. Un riquadro che chiude una pagina scende al suo piede quando le colonne vengono bilanciate (`headings.balancing.closingBox`, `'first'` per impostazione predefinita): taglia l’ultima frase del primo paragrafo e il filetto del riquadro sta 6,4 mm sotto il paragrafo delle tariffe invece di 2,4 mm.

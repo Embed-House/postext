@@ -407,7 +407,7 @@
   "Showcase": {
     "eyebrow": "Schaufenster",
     "title": "Echte Bücher, gesetzt in Ihrem Browser",
-    "lead": "Ein Lehrbuch, ein Magazin, ein kommentiertes Versepos, ein Ausstellungskatalog, ein chinesischer Klassiker in 120 Kapiteln, Tausendundeine Nacht auf Arabisch, ein japanischer Roman im vertikalen Satz, ein Comic in neun Sprachen. Öffnen Sie eines davon in der Sandbox, ändern Sie eine Regel und sehen Sie zu, wie jede Seite neu umbricht.",
+    "lead": "Ein Lehrbuch, ein Magazin, ein kommentiertes Versepos, ein Ausstellungskatalog, ein chinesischer Klassiker in 120 Kapiteln, Tausendundeine Nacht auf Arabisch, ein japanischer Roman im vertikalen Satz, ein Comic in zehn Sprachen. Öffnen Sie eines davon in der Sandbox, ändern Sie eine Regel und sehen Sie zu, wie jede Seite neu umbricht.",
     "open": "In der Sandbox öffnen",
     "guideName": "Der Postext-Leitfaden",
     "guideDescription": "Der eingebaute Leitfaden: 13 Kapitel, drei Teile, ein Umschlag",
@@ -434,7 +434,7 @@
       "kokoro": "Natsume Sōsekis Roman von 1914 auf Japanisch, vertikal gesetzt und rechts gebunden nach der Erstausgabe bei Iwanami, mit dem Umschlag, den Vorsatzblättern und der Titelseite, die Sōseki selbst gestaltete, drei seiner Gemälde und Furigana über den schwierigeren Wörtern. Nur auf Japanisch",
       "openstax-fisica": "Ein Lehrbuch in anderthalb Spalten mit durchgerechneten Beispielen, Kontrollfragen, Tabellen und Formeln",
       "paradise-lost": "Eine kommentierte Ausgabe von Miltons Gedicht in zwölf Büchern: Veritys Anmerkungen am Fuß der Seite und Dorés fünfzig Tafeln. Nur auf Englisch",
-      "pepper-carrot": "Episode 8 von David Revoys Webcomic in neun Sprachen: die textlosen Originalpanels, mit Sprechblasen und Lettering, die die Engine aus jeder offiziellen Übersetzung setzt. Die japanische Ausgabe ist in Spalten gelettert und wird, wie die arabische, von rechts nach links gelesen und von rechts aufgeschlagen",
+      "pepper-carrot": "Episode 8 von David Revoys Webcomic in zehn Sprachen: die textlosen Originalpanels, mit Sprechblasen und Lettering, die die Engine aus jeder offiziellen Übersetzung setzt. Die japanische Ausgabe ist in Spalten gelettert und wird, wie die arabische, von rechts nach links gelesen und von rechts aufgeschlagen",
       "pintura-espanola": "Ein einspaltiger Ausstellungskatalog, Katalogeintrag und Kommentar gegenüber der ganzseitigen Tafel",
       "senales": "Ein zweispaltiges Magazin der EUA mit Fotoauftaktseiten, Kästen, hervorgehobenen Zitaten und Datentafeln"
     }
@@ -4374,7 +4374,7 @@
     "title": "Barrierefreiheit",
     "lastUpdated": "Zuletzt aktualisiert: Oktober 2026",
     "targetTitle": "Konformitätsziel",
-    "targetText": "Wir streben an, dass diese Website und die Sandbox den Richtlinien für barrierefreie Webinhalte (WCAG) 2.2 auf Stufe AAA entsprechen, auf Englisch, Spanisch, Katalanisch, Chinesisch, Japanisch, Arabisch (von rechts nach links), brasilianischem Portugiesisch, Französisch und Deutsch, im hellen wie im dunklen Design. Jede Seite wird mit automatisierten Tests geprüft (axe-core sowie eigene Prüfungen für die AAA-Kriterien) und mit der Tastatur durchgegangen.",
+    "targetText": "Wir streben an, dass diese Website und die Sandbox den Richtlinien für barrierefreie Webinhalte (WCAG) 2.2 auf Stufe AAA entsprechen, auf Englisch, Spanisch, Katalanisch, Chinesisch, Japanisch, Arabisch (von rechts nach links), brasilianischem Portugiesisch, Französisch, Deutsch und Italienisch, im hellen wie im dunklen Design. Jede Seite wird mit automatisierten Tests geprüft (axe-core sowie eigene Prüfungen für die AAA-Kriterien) und mit der Tastatur durchgegangen.",
     "prefsTitle": "Leseeinstellungen",
     "prefsText": "Die Website setzt ihre Texte im Blocksatz und mit Silbentrennung, wie die Bücher, die Postext erzeugt. Wenn Ihnen das Lesen dadurch schwerer fällt, öffnet das Buchsymbol in der Menüleiste die Leseeinstellungen. Sie gelten für alle Seiten der Website und werden in diesem Browser gespeichert.",
     "prefsTheme": "Design: hell oder dunkel. Es ist dieselbe Einstellung wie der Schalter in der Menüleiste; ohne eigene Wahl folgt die Website Ihrem System.",

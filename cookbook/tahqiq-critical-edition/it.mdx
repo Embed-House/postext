@@ -1,0 +1,59 @@
+---
+title: "Un taḥqīq: note per pagina e preliminari in abjad"
+summary: "Pagine preliminari numerate أ ب ج د, il testo da ١, le note del curatore numerate (١) da capo su ogni pagina e un indice che ordina i nomi senza l’articolo ال."
+plain: "L’inizio della Muqaddima di Ibn Khaldūn come edizione critica araba moderna: pagine dell’introduzione numerate con lettere, il testo con cifre e note a piè di pagina che ricominciano da uno su ogni pagina."
+description: "Un’edizione critica araba in Postext: numeri di pagina abjad, :::numbering per il testo, note per pagina come (١) e un indice analitico con ignoreArticle."
+question: "Come numero le pagine preliminari di un libro arabo con le lettere abjad (أ، ب، ج)?"
+aliases: ["taḥqīq", "tahqiq", "edizione critica", "edizione critica araba", "abjad", "numerali abjad", "أبجد", "numerazione delle pagine preliminari", "note per pagina", "(١)", "note a piè di pagina in arabo", "Ibn Khaldūn", "Muqaddima", "مقدمة ابن خلدون", "indice dei nomi", "فهرس الأعلام", "تحقيق"]
+pageNotes: { "4": "L’ultima pagina dell’introduzione del curatore, con il folio د al piede.", "5": "La pagina d’apertura del testo, folio ١: il titolo della sezione in Naskh grassetto, il suo lungo sottotitolo sotto un breve filetto, il testo con i numeri delle note in apice tra parentesi e tre note al piede sotto un filetto a destra, ciascuna aperta dal suo numero (١), (٢), (٣)." }
+---
+
+## Che cosa comporrai
+
+Undici pagine di un’edizione critica araba moderna, un taḥqīq, della prima sezione della *Muqaddima* di Ibn Khaldūn, sull’eccellenza della storia. Le pagine preliminari sono numerate con lettere abjad, come fanno le edizioni del Cairo e di Beirut: un frontespizio أ, il suo colophon ب, poi l’introduzione del curatore ج e د. Il testo riparte da ١ sul recto successivo. Le note del curatore stanno al piede di ogni pagina, numerate (١), (٢), (٣) e ricominciando su ogni pagina, sotto un breve filetto a destra; spiegano le parole rare, identificano le persone e i luoghi che Ibn Khaldūn nomina e danno la sura e il versetto di ogni citazione del Corano. Un indice dei nomi chiude il libro, ordinato come gli indici arabi, senza l’articolo ال. Le note e l’introduzione sono scritte per questa ricetta.
+
+## Preparazione
+
+### 1 · Due serie di folio e note per pagina
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `page.pageNumbering` comincia il libro in `'abjad'`, le lettere in ordine abjad, con هـ per cinque. Prima del testo due direttive fanno ripartire il conteggio dalla pagina dispari successiva nelle cifre del documento ([`:::numbering`](/it/docs/document-format#numbering), [Cifre e stili numerali](/it/docs/arabic-layout#cifre-e-stili-di-numerazione)). Le note usano `numbering: 'page'`, un `markerTemplate` di `'({n})'` e `noteNumberPosition: 'inline'`, così il richiamo è in apice nel testo e la nota si apre con il suo numero sulla riga ([Note a piè di pagina](/it/docs/arabic-layout#note-a-piè-di-pagina)).
+
+<PageShot page={5} crop="0,0.62,1,0.33" caption="Pagina ١: le note ripartono da (١), sotto un filetto sul lato d’inizio della pagina." />
+
+### 2 · Un indice che salta l’articolo
+
+<Excerpt region="index" />
+
+I nomi sono segnati nel testo, `:index[المسعودي]`, e `:::index` li stampa alla fine. Con `ignoreArticle`, المسعودي va sotto م e الطبري sotto ط, mentre ابن إسحاق resta sotto ا; un rimando «vedi» manda إسرائيل a يعقوب ([Sommario e indice](/it/docs/arabic-layout#indice-e-indice-analitico)). I numeri di pagina nell’indice sono le etichette delle pagine, quindi un nome dell’introduzione riporta ج.
+
+### 3 · Testatine sopra un filetto
+
+<Excerpt region="furniture" />
+
+Il verso porta il titolo del libro e il recto la sezione, sopra un filetto sottile largo quanto la gabbia del testo, con il folio all’estremità esterna. In un libro rilegato a destra il verso è la pagina di destra, quindi il suo folio va in alto a destra ([Ordine delle pagine e rilegatura a destra](/it/docs/arabic-layout#ordine-delle-pagine-e-rilegatura-a-destra)). Le aperture e le pagine preliminari ricevono invece un folio centrato al piede.
+
+### 4 · Un frontespizio e il suo colophon
+
+<Excerpt region="title" />
+
+Il frontespizio e il colophon sul suo retro sono stili di titolo senza nulla nel flusso: le loro righe vengono da attributi del titolo, così le righe latine del colophon, che cambiano con l’edizione, sono un solo attributo nel Markdown.
+
+## Varianti
+
+### Usa i numerali abjad
+
+`'arabic-abjad'` scrive i numerali abjad additivi invece della semplice serie di lettere: l’undicesima pagina è يا, non ك.
+
+```diff
+-const pageNumbering = { format: 'abjad', startAt: 1 }; // أ ب ج د هـ و ز ح…
++const pageNumbering = { format: 'arabic-abjad', startAt: 1 }; // … ط ي يا يب
+```
+
+### Numera le note lungo tutta la sezione
+
+`numbering: 'chapter'` fa proseguire il conteggio delle note da una pagina all’altra, come fanno alcune edizioni più vecchie.
+
+```diff
+-  numbering: 'page', markerTemplate: '({n})', noteNumberPosition: 'inline',
++  numbering: 'chapter', markerTemplate: '({n})', noteNumberPosition: 'inline',
+```

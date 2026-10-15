@@ -1,0 +1,63 @@
+---
+title: "Un racconto su genkō yōshi, un carattere per quadretto"
+summary: "L’inizio di Botchan su carta da manoscritto da 400 quadretti: una griglia 20 × 20 disegnata, un carattere per quadretto, e 、。 a inizio riga appesi sotto."
+plain: "La carta giapponese da manoscritto ha un quadretto per ogni carattere. Questa pagina vi scrive le prime righe di un romanzo famoso, con titolo, nome dell’autore e punteggiatura dove li mettono le regole scolastiche giapponesi."
+description: "Genkō yōshi in Postext: una griglia 20 × 20 disegnata, un carattere per quadretto, righe per titolo e nome, e 、。 appesi sotto l’ultimo quadretto, mai compressi."
+question: "Come compongo il giapponese su carta da manoscritto, 20 quadretti per 20 righe, un carattere per quadretto?"
+aliases: ["genkō yōshi", "genkouyoushi", "原稿用紙", "carta da manoscritto", "foglio da 400 caratteri", "400字詰", "carta a quadretti", "griglia di caratteri", "マス目", "masume", "quaderno giapponese per temi", "作文", "sakubun", "kinsoku su carta da manoscritto", "ぶら下げ", "burasage", "Botchan", "坊っちゃん", "Natsume Sōseki", "Klee One", "manuscript paper"]
+pageNotes: { "1": "Il primo foglio, da solo a sinistra: una doppia cornice bruno-rossiccia attorno a 20 righe di 20 quadretti grigi, 坊っちゃん nella prima riga dal terzo quadretto, 夏目　漱石 nella seconda che finisce un quadretto sopra il piede, poi il testo di Botchan dalla terza riga, un carattere o segno per quadretto; un 、 che cade dopo il ventesimo quadretto è appeso sotto di esso. Il numero del foglio （1） e la scritta stampata «20×20» stanno sotto la cornice.", "3": "Il terzo foglio: il paragrafo finisce sulla sua dodicesima riga, e le righe restanti sono quadretti vuoti." }
+---
+
+## Che cosa comporrai
+
+Tre fogli di carta giapponese da manoscritto (原稿用紙, genkō yōshi), quella da 400 quadretti, con i primi tre paragrafi di *Botchan* di Natsume Sōseki ricopiati come farebbe uno scrittore o uno scolaro: 20 righe di 20 quadretti, lette dall’alto in basso a partire da destra, in Klee One, un carattere disegnato a penna. Il titolo sta nella prima riga dal terzo quadretto e il nome dell’autore nella seconda, un quadretto sopra il piede; ogni paragrafo comincia dopo un quadretto vuoto. Ogni carattere, kana piccolo e segno ha un quadretto tutto suo, e un 、 o un 。 che finirebbe a inizio riga viene scritto sotto l’ultimo quadretto della riga precedente. Una cornice bruno-rossiccia, il numero del foglio e la scritta stampata della carta, 20×20, completano il foglio. La pagina cinese contata in caratteri è la <RecipeLink slug="chinese-official-document">Nº 082</RecipeLink>.
+
+## Preparazione
+
+### 1 · Disegna i quadretti e dai a ogni segno un quadretto intero
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. La [griglia di caratteri](/it/docs/configuration-east-asian#griglia-di-caratteri) fa della gabbia del testo 20 caratteri da 20 pt (7,1 mm) in verticale e 20 righe da 27 pt (9,5 mm) in orizzontale, e `show: true` ne disegna i quadretti in un grigio chiaro proprio, sullo schermo, e nel PDF quando `renderToPdf` riceve `characterGrid: true` (in un libro la griglia è un aiuto per le bozze, quindi il PDF la omette per impostazione predefinita); la striscia di 2,5 mm tra due righe è dove uno scrittore aggiunge letture e correzioni. Un segno giapponese è mezzo glifo e mezzo em di bianco, e un libro assorbe i bianchi dove due segni si incontrano o una parentesi apre una riga. Sulla carta da manoscritto ogni segno conserva il suo quadretto, quindi `compressAdjacent: false` compone 。」 in due quadretti e `trimLineStart: false` lascia a una parentesi a inizio riga il suo quadretto intero ([tipografia dell’Asia orientale](/it/docs/configuration-east-asian#tipografia-dellasia-orientale)).
+
+### 2 · Segui le regole di riga del manoscritto
+
+La carta da manoscritto ha un suo kinsoku. Un kana piccolo o un ー può aprire una riga, ciascuno nel proprio quadretto; `ja-loose` lo consente. Un 、 o un 。 che finirebbe a inizio riga si scrive nell’ultimo quadretto della riga precedente, insieme al carattere che c’è, oppure subito sotto; `hangingPunctuation: 'force'` lo appende sotto il ventesimo quadretto, e nessuna riga viene mai compressa. Con `'allow'`, il valore predefinito per il giapponese, il motore prima fa entrare il segno nella riga comprimendo a mezzo quadretto un 、 al suo interno, cosa che un libro stampato fa e un manoscritto mai: il resto di quella riga starebbe mezzo quadretto più in su, a cavallo delle linee della griglia.
+
+L’ultima riga di un paragrafo richiede un’impostazione in più. Postext evita che un paragrafo finisca con un solo carattere: la riga precedente gli cede il suo ultimo, e poiché qui il testo non è giustificato, quella riga si fermerebbe un quadretto prima. Sulla carta da manoscritto ogni quadretto di una riga piena viene scritto, quindi la griglia imposta `fullLines: true`: nel <PageRef page={3}>foglio 3</PageRef> la riga che finisce con 来 conserva i suoi venti quadretti e il paragrafo si chiude con た。 da solo ([griglia di caratteri](/it/docs/configuration-east-asian#griglia-di-caratteri)).
+
+### 3 · Scrivi il titolo e il nome dove li mettono le regole
+
+<Excerpt region="heading" />
+
+Il titolo è un titolo con il corpo e il carattere del testo, quindi riempie i quadretti come qualsiasi altra riga: `lineSpan: 1` lo tiene su una riga della griglia e `indent: em(2)` lascia due quadretti vuoti sopra di esso ([impostazioni per livello](/it/docs/configuration-text#sovrascritture-per-livello)). Il nome è un paragrafo con `textAlign: 'end'` ed `endIndent: em(1)`, che lo fa finire un quadretto sopra il piede, e il Markdown scrive il quadretto vuoto tra cognome e nome come uno spazio ideografico: `夏目　漱石`. Il testo comincia dalla terza riga, ogni paragrafo dopo un quadretto vuoto dato da `firstLineIndent: em(1)`.
+
+### 4 · Stampa il foglio attorno ai quadretti
+
+<Excerpt region="sheet" />
+
+Gli elementi dell’intestazione sono disegnati sul foglio stesso: su una pagina verticale `x` va verso destra e `y` verso il basso dall’angolo superiore sinistro, a differenza del progetto grafico di un titolo, che si impagina nel riquadro ruotato del testo. La doppia cornice sta 1,5 mm fuori dai quadretti su tre lati e 8 mm sotto di essi, dove cadono i segni appesi. `GRID` e `MARGIN` la collocano a partire dagli stessi numeri di cui sono fatti i margini della pagina; i margini passati alla pagina sono mezzo millimetro più piccoli, perché la griglia li tratta come minimi e un adattamento esatto potrebbe arrotondare a 19 righe.
+
+### 5 · Componi in un carattere a penna
+
+<Excerpt region="pen" />
+
+Klee One è disegnato a penna e conserva le forme giapponesi dei kanji, così i fogli si leggono come una scrittura a mano senza le irregolarità di una scansione. Le sue forme verticali mettono 、。 in alto a destra del loro quadretto e ruotano ー e le parentesi, che è dove li mette chi scrive. Come ogni famiglia giapponese su Fontsource arriva in circa 120 file, e `loadCjkFonts` scarica quelli di cui il testo ha bisogno ([font cinesi, giapponesi e coreani](/it/docs/configuration-programmatic-usage#font-cinesi-giapponesi-e-coreani)).
+
+## Varianti
+
+### Verifica la griglia di un libro con gli stessi quadretti
+
+`show: true` funziona su qualsiasi griglia di caratteri: sul bunko della <RecipeLink slug="bunko-novel-furigana">Nº 117</RecipeLink> disegna i 38 × 15 quadretti sopra il testo, una verifica rapida che ogni riga rispetti la griglia e ogni titolo le sue tre righe.
+
+```diff
+-  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES },
++  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES, show: true },
+```
+
+### Lascia che i segni si comprimano, come in una pagina stampata
+
+Con il valore predefinito giapponese i fogli sembrano un libro battuto su carta a quadretti: un 、 che finirebbe a inizio riga viene assorbito comprimendone un altro, e il resto di quella riga sta mezzo quadretto fuori dalla griglia.
+
+```diff
+-  hangingPunctuation: 'force',
++  hangingPunctuation: 'allow',
+```

@@ -1,0 +1,48 @@
+---
+title: "Una pagina con il lettering in sei lingue"
+summary: "Una tavola a fumetti, vignette e immagini fisse, letterata per lingua: il locale sceglie il font; il giapponese è verticale e, come l’arabo, si legge da destra."
+plain: "La stessa pagina di fumetto in inglese, spagnolo, francese, giapponese, cinese e arabo: cambiano solo le parole, e Postext ridisegna ogni nuvoletta attorno a esse."
+description: "Una pagina di fumetto riletterata in Postext: una divisione, cinque immagini, un copione per lingua, nuvolette verticali, giapponese e arabo letti da destra."
+question: "Come rifaccio il lettering di un fumetto in un’altra lingua?"
+aliases: ["rilettering", "relettering", "lettering", "traduzione", "traduzione di fumetti", "localizzazione", "traduzione di manga", "lettering verticale", "fumetto da destra a sinistra", "rotulación", "写植", "嵌字", "defaultComicFont"]
+---
+
+## Che cosa comporrai
+
+Una pagina di un fumetto, *The Lighthouse Radio*: Maya arriva al faro del nonno mentre si avvicina una tempesta, la radio è muta e il colpevole è Biscuit, addormentato sul cavo. La divisione in vignette e le cinque immagini ad acquerello sono fisse; ciò che cambia da un’edizione all’altra è un copione di nove righe. Ogni edizione di questa ricetta compone la propria lingua, e ogni edizione compone anche la pagina francese accanto: inglese e francese, spagnolo e francese, e così via con giapponese, cinese e arabo. Il motore ridisegna ogni nuvoletta attorno alle parole che contiene. Il giapponese è letterato in colonne verticali in Zen Antique. Le pagine giapponese e araba si leggono da destra, quindi le tre vignette della fascia centrale si scambiano di posto.
+
+## Preparazione
+
+### 1 · Una sola configurazione per ogni lingua
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Nella configurazione nient’altro che `locale` nomina una lingua. Senza `fontFamily`, il lettering prende il carattere da fumetto della lingua del documento (`defaultComicFont`): Comic Neue, Zen Antique, Noto Sans SC o Playpen Sans Arabic, e l’effetto sonoro il carattere da titolazione corrispondente. `writingMode: 'auto'` trasforma le nuvolette giapponesi in colonne verticali; `readingDirection: 'auto'` legge le pagine giapponese e araba da destra, come fanno le loro lingue, quindi la stessa `split="30 / 35 [* | * | *] / *"` mette la vignetta della radio a destra e il gatto a sinistra. Gli id dei personaggi (`maya`, `tomas`) sono gli stessi in ogni copione, e gli ancoraggi delle immagini rispondono a loro.
+
+Il corpo è uno solo per tutto il libro. Il copione inglese ha 216 lettere, lo spagnolo 220, il francese 224, il cinese 74 caratteri; i copioni più lunghi ricevono nuvolette più grandi, mai un corpo più piccolo.
+
+### 2 · Il francese viaggia in ogni edizione
+
+<Excerpt region="editions" />
+
+Il francese non è una delle edizioni di questa ricetta, quindi ogni edizione costruisce due documenti: la propria pagina, poi quella francese da `content.fr.en.md`, con la stessa configurazione e un `locale` di `'fr'`. Il copione francese usa lo spazio fine indivisibile prima di `!` e `?`, come vuole la composizione francese.
+
+### 3 · Le immagini non cambiano
+
+<Excerpt region="art" />
+
+Le zone sicure sono più strette delle celle di questa divisione: la fascia centrale contiene tre vignette larghe circa 46 mm e alte 80 mm, quindi ogni immagine quadrata mostra una colonna pari a circa il 58 % della sua larghezza, mentre la sua zona sicura, il volto di chi parla e ciò di cui parla la battuta, occupa il 36–42 %. Le immagini non vengono specchiate per il giapponese o l’arabo (`mirrorArt` resta false): Maya sale ancora il sentiero da sinistra, e solo l’ordine delle vignette segue la lettura.
+
+## Varianti
+
+### Specchia le immagini per le edizioni da destra a sinistra
+
+`mirrorArt: true` capovolge ogni immagine quando la pagina si legge nel verso opposto a quello in cui è disegnata. Lascia non capovolta una vignetta con scritte o un orologio usando `::panel{mirror=false}`.
+
+```diff
+   readingDirection: 'auto', // the default, written out: it is what an edition flips
++  mirrorArt: true,
+```
+
+## Errori frequenti
+
+- Una riga del copione nomina chi parla tramite id, non tramite nome: scrivi `maya:` in ogni lingua. Il nome che annuncia un lettore di schermo è `cast[].name`.
+- La pagina francese condivide le immagini dell’edizione, quindi il testo alternativo delle sue vignette è nella lingua dell’edizione; metti `::panel{alt="…"}` in `content.fr.en.md` per avere il testo alternativo in francese.

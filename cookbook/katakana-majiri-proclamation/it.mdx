@@ -1,0 +1,68 @@
+---
+title: "Un proclama Meiji in kanji e katakana"
+summary: "La Costituzione del 1889 in verticale, in kanji e katakana: articoli 第一條 da un contatore japanese-informal, una cornice di filetti, controfirme al piede."
+plain: "La costituzione giapponese del 1889, scritta in kanji e katakana, stampata in righe dall’alto in basso come la stampò la gazzetta ufficiale, con gli articoli numerati in kanji."
+description: "Un documento Meiji in Postext: kanji e katakana in verticale su una griglia di 40 caratteri, articoli 第一條 da un contatore, cornice doppia, blocco del sigillo."
+question: "Come compongo un testo Meiji in kanji e katakana e numero i suoi articoli 第一條, 第二條?"
+aliases: ["katakana", "kanji katakana majiri", "漢字カタカナ交じり文", "Costituzione Meiji", "大日本帝國憲法", "官報", "numeri degli articoli in kanji", "第一條", "testo giuridico verticale", "forme antiche dei kanji", "Meiji Constitution"]
+pageNotes: { "1": "Il frontespizio: 大日本帝國憲法 in Mincho nero al centro di un filetto spesso e uno sottile, la data in vermiglio alla sua destra, 官報號外 alla sua sinistra, la riga inglese ruotata di lato al piede.", "2": "Le note del curatore, quattro voci aperte ciascuna dal carattere 一, poi il titolo 上諭 e le prime righe dell’editto, tutto in kanji e katakana.", "4": "御名　御璽 in vermiglio, la data e dieci controfirme composte al piede delle loro righe.", "5": "Il capitolo primo: 第一章　天皇 rientrato di due caratteri, poi gli articoli da 第一條 a 第八條 in grassetto, il secondo comma dell’articolo 8 rientrato di un carattere." }
+---
+
+## Che cosa comporrai
+
+Una ristampa di otto pagine della Costituzione Meiji come la stampò la Gazzetta ufficiale (官報) l’11 febbraio 1889: l’editto imperiale, le controfirme dei ministri e i primi due capitoli, trentadue articoli. Il testo è 漢字カタカナ交じり文 (kanji-katakana majiri-bun), la lingua scritta del diritto Meiji: i kanji portano le parole, i katakana le desinenze, e non ci sono segni di sonorizzazione, kana piccoli né punteggiatura di alcun tipo. Le pagine sono A5, verticali e rilegate a destra, con una griglia di 40 × 15 caratteri dentro un filetto spesso e uno sottile. Gli articoli sono numerati da un contatore di elenco in kanji, da 第一條 a 第三十二條, e il sigillo e le controfirme stanno dove li mise la Gazzetta.
+
+## Preparazione
+
+### 1 · Lascia che un contatore di elenco scriva 第十八條
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni articolo è una voce di un elenco ordinato Markdown, e `orderedLists` trasforma il suo numero nella forma della Gazzetta: `numberFormat: 'japanese-informal'` scrive 十八, non 一十八, `prefix: '第'` e `separator: '條'` lo racchiudono, e `gap: em(1)` lascia lo spazio a tutta larghezza dell’originale. `numberWidth: 'item'` fa cominciare il testo di ogni articolo uno spazio dopo la sua etichetta, così 第九條 e 第十一條 sono seguiti ciascuno da uno spazio a tutta larghezza, come nella Gazzetta, e i loro testi cominciano a un carattere di distanza. Con `hangingIndent: false` le righe successive tornano alla testa della riga invece di sporgere sotto il testo, come nella Gazzetta. Il capitolo secondo comincia il suo elenco da `18.`, così il contatore prosegue attraverso i capitoli, e i capitoli stessi sono numerati 第一章 e 第二章 dal modello di titolo `第{2:一}章`, con lo stesso stile di contatore ([elenchi ordinati](/it/docs/configuration-text#elenchi-numerati)).
+
+<PageShot page={5} crop="0.1,0.12,0.8,0.76" caption="Pagina 5: 第一章　天皇 rientrato di due caratteri, gli articoli da 第一條 a 第八條 in grassetto, il secondo comma dell’articolo 8 rientrato di un carattere." />
+
+### 2 · Lascia i katakana come li scrisse la Gazzetta
+
+`locale: 'ja'` imposta le regole giapponesi, e nessuna di esse riscrive il testo. 侵スヘカラス resta senza segni di sonorizzazione (si legge *okasu bekarazu*), 行フ conserva i suoi kana storici e 奪ハルヽ il suo segno di iterazione katakana. Senza kana piccoli né punteggiatura nel testo, le righe possono andare a capo tra due caratteri qualsiasi; le regole kinsoku tengono comunque ヽ e 々 lontani dalla testa della riga. Le note del curatore, in giapponese moderno con gli hiragana, stanno accanto all’editto a pagina 2, così i due modi di scrivere il giapponese si possono confrontare su una sola pagina.
+
+### 3 · Disegna la cornice su ogni pagina
+
+<Excerpt region="frame" />
+
+Lo slot dell’intestazione disegna in semplici millimetri della pagina, non nel flusso verticale, quindi la cornice è fatta di due riquadri collocati dagli stessi numeri che collocano la gabbia: `HEAD` dall’alto, `SIDE` da ciascun bordo. I margini sono calcolati dalla griglia, non lasciati a essa, così la gabbia sta esattamente 6 mm dentro il filetto sottile. Il folio, in kanji grazie a `pageNumbering.format: 'japanese-informal'`, sta sotto la cornice.
+
+### 4 · Componi il frontespizio lungo l’asse
+
+<Excerpt region="cover" />
+
+In un flusso verticale `x` scende lungo il foglio e `y` va verso sinistra, quindi la colonna del titolo si colloca in base alla sua distanza dal bordo destro della gabbia. La data, nel colore d’accento, e il nome della Gazzetta stanno ai due lati del titolo, a 18 mm dall’asse.
+
+### 5 · Carica ogni carattere con il testo che compone
+
+<Excerpt region="voices" />
+
+Shippori Mincho B1, un Mincho con le forme antiche 國, 條 e 權, carica i file per il testo e i titoli; Noto Sans JP carica solo le note del curatore, i folii e la riga inglese. Un carattere che riceve meno di ciò che compone fa fallire la cattura (C12).
+
+## Varianti
+
+### Fai sporgere le righe successive sotto il testo
+
+I codici moderni compongono la seconda riga di un articolo sotto il suo primo carattere di testo, non sotto 第.
+
+```diff
+-  indent: em(0), hangingIndent: false, fontFamily: MINCHO, fontWeight: 800,
++  indent: em(0), hangingIndent: true, fontFamily: MINCHO, fontWeight: 800,
+```
+
+### Numera gli articoli in daiji
+
+Alcuni testi giuridici e finanziari scrivono 壱, 弐, 参: il token 壱 o lo stile `japanese-formal` danno 第壱條, 第弐條.
+
+```diff
+-  numberFormat: 'japanese-informal', prefix: '第', separator: '條', gap: em(1),
++  numberFormat: 'japanese-formal', prefix: '第', separator: '條', gap: em(1),
+```
+
+## Errori frequenti
+
+- La Gazzetta compone i katakana delle desinenze più piccoli dei kanji, e spazia uniformemente i titoli dei ministri su un’unica larghezza (字取り). Postext compone ogni carattere nel corpo del testo, e la sua spaziatura uniforme, `jidori`, si applica solo ai titoli, quindi qui le controfirme sono solo allineate al piede della riga.
+- Giapponese e cinese non concordano su questo contatore: in un documento `ja` il token `一` e `{2:一}` significano `japanese-informal` (百一, 十八), in uno cinese significano lo stile cinese (一百零一, 十八). La raccolta cinese <RecipeLink slug="chinese-dates-upright">Date e sigle diritte nel testo verticale</RecipeLink> scrive a mano i suoi 第一條.

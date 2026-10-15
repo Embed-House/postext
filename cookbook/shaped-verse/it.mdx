@@ -1,0 +1,65 @@
+---
+title: "Versi figurati: Easter Wings di Herbert, ogni riga centrata"
+summary: "Easter Wings e The Altar di George Herbert composti come testo centrato, un paragrafo per ogni verso, così le lunghezze delle righe disegnano le due figure."
+plain: "Due antiche poesie inglesi i cui versi sono stampati in modo che ogni poesia sembri un’immagine: un altare e un paio d’ali. Ogni verso è semplicemente centrato, e la sua lunghezza disegna la forma."
+description: "Un opuscolo di quattro pagine composto con Postext: due carmi figurati di Herbert, ogni verso centrato sotto un titolo semplice, gli spazi fatti con :::space."
+question: "Come spazio un frontespizio e le strofe di una poesia, se le righe vuote nel Markdown non aggiungono spazio?"
+aliases: ["carme figurato", "poesia figurata", "poesia visiva", "poesia concreta", "versi centrati", "testo centrato", "carmen figuratum", "George Herbert", "Easter Wings", "The Altar", "opuscolo", "frontespizio", "epigrafe", "colophon", "finalino", "spazio verticale"]
+pageNotes: { "1": "Il frontespizio sul modello di quello del 1633: «THE TEMPLE» in maiuscole viola, il sottotitolo in corsivo, l’autore, l’epigrafe dal Salmo 29 sotto un’etichetta in maiuscoletto a metà pagina e, al piede, un’etichetta e due righe su ciò che contiene l’opuscolo.", "2": "«The Altar»: due righe larghe per la lastra, due un po’ più strette, otto righe brevi per il pilastro e quattro più larghe per la base, ogni riga centrata sotto il titolo viola.", "3": "«Easter Wings»: due strofe, ciascuna che si restringe da un verso lungo fino a «With thee» e si riallarga, così la pagina mostra due clessidre una sopra l’altra.", "4": "L’ultima pagina: il motto di Herbert in corsivo sotto un’etichetta in maiuscoletto, con una riga dei suoi stampatori; una nota sulla stampa del 1633 sotto una seconda etichetta, alla stessa altezza dell’etichetta del Salmo di pagina 1; e un colophon di quattro righe centrate, ciascuna più corta di quella sopra." }
+---
+
+## Che cosa comporrai
+
+Un opuscolo di quattro pagine A5, un foglio A4 piegato una volta, con due carmi figurati da *The Temple* di George Herbert nella grafia della prima edizione del 1633. Il frontespizio segue quello del 1633, fino all’epigrafe dal Salmo 29. All’interno, *The Altar* sta di fronte a *Easter Wings*. Nessun verso delle due poesie è rientrato o riempito di spazi; ciascuno è centrato, così l’altare poggia su un pilastro stretto e ogni strofa delle ali si restringe fino a due parole e si riallarga. Nell’ultima pagina, sotto il motto di Herbert, una nota racconta come gli stampatori del 1633 composero le ali di traverso, e il colophon si accorcia riga dopo riga. Tutto è composto come testo corrente o come uno dei tre livelli di titolo nei caratteri IM Fell, senza stili con nome e senza disegni di pagina. L’edizione spagnola compone una versione verso per verso che conserva entrambe le forme.
+
+## Preparazione
+
+### 1 · Un verso è un paragrafo centrato
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Postext unisce in una sola le righe di un paragrafo Markdown, quindi ogni verso è un paragrafo, con una riga vuota dopo. `textAlign: 'center'` compone ogni riga alla sua larghezza naturale sull’asse della giustezza, e poiché solo il testo giustificato viene sillabato a meno che `hyphenation.ragged` non sia attivo, nessuna parola viene divisa ([testo corrente](/it/docs/configuration-text#testo-corrente)). Ogni riga è la prima del suo paragrafo, quindi il rientro di prima riga predefinito di 1,5 em la spingerebbe 3,3 mm a destra dell’asse dei titoli; `firstLineIndent: pt(0)` tiene poesie e titoli su un solo asse.
+
+### 2 · La giustezza accoglie il verso più lungo
+
+<Excerpt region="measure" />
+
+Una riga che non ci sta va a capo, ed entrambe le metà sono centrate, così il profilo acquista un gradino che non c’è nella figura di Herbert. Con una giustezza di 75 mm, tre versi di *The Altar* e due di *Easter Wings* vanno a capo, e l’opuscolo arriva a sei pagine. Il verso più largo qui, il primo di *Easter Wings*, misura 80,7 mm in inglese e 80,0 mm in spagnolo, quindi la giustezza di 110 mm della pagina A5 accoglie ogni verso intero.
+
+### 3 · Titoli semplici, centrati
+
+<Excerpt region="titles" />
+
+Nessun livello ha un disegno, solo impostazioni tipografiche, e `headings.textAlign` centra tutti e tre ([titoli](/it/docs/configuration-text#titoli)). La parità `'any'` apre ogni poesia sulla pagina successiva, recto o verso, così l’altare a pagina 2 sta di fronte alle ali a pagina 3. Un `marginTop` non può abbassare quei titoli, perché lo spazio sopra un titolo che apre una pagina viene eliminato. È invece il riquadro di riga del livello 2, alto tre righe, ad abbassare ogni titolo di circa 5 mm, ed entrambe le poesie cominciano alla riga 5 della gabbia del testo. Il livello 1 apre il documento e qui non ha bisogno di un’interruzione; ne porta comunque una, perché un secondo titolo `#` si apra su un recto. Il livello 3 compone le quattro etichette delle pagine 1 e 4 nel maiuscoletto di IM Fell English SC, al corpo del testo.
+
+### 4 · Il Markdown spazia e interrompe le pagine
+
+<Excerpt region="pages" />
+
+Una riga vuota tra i paragrafi non aggiunge spazio, quindi ogni spazio di queste pagine viene da `:::space`: una riga tra le strofe di *Easter Wings*, e nel frontespizio cinque righe sopra l’etichetta del Salmo e dieci sotto l’epigrafe ([`:::space`](/it/docs/document-format#space)). Con questi conteggi le note tipografiche di pagina 1 finiscono sull’ultima riga della gabbia del testo, e le etichette sopra il Salmo e sopra la nota stanno entrambe alla riga 13, a 94 mm dalla sommità della pagina. `:::pagebreak` apre l’ultima pagina ([`:::pagebreak`](/it/docs/document-format#pagebreak)). Anche il colophon è composto un paragrafo per riga, spezzato dove finisce una frase, così le sue quattro righe si assottigliano in un finalino.
+
+## Varianti
+
+### Apri ogni poesia su una pagina destra
+
+Con la parità `'odd'` *The Altar* ed *Easter Wings* si aprono alle pagine 3 e 5, entrambe recto, e l’opuscolo arriva a sei pagine con le pagine 2 e 4 bianche.
+
+```diff
+-      breakBefore: { enabled: true, parity: 'any' } },
++      breakBefore: { enabled: true, parity: 'odd' } },
+```
+
+### Allinea i versi a sinistra
+
+Con `textAlign: 'left'` ogni riga comincia sul margine e le due poesie conservano solo il profilo destro; anche il resto del testo corrente, dal sottotitolo al colophon, va allineato a sinistra, e restano centrati solo i titoli.
+
+```diff
+-  textAlign: 'center', // ragged on both sides; only justified text is hyphenated by default
++  textAlign: 'left', // ragged right; only justified text is hyphenated by default
+```
+
+## Errori frequenti
+
+- Un verso troppo lungo per la giustezza va a capo, ed entrambe le metà vengono centrate ciascuna per conto suo. Misura il verso più largo prima di scegliere il corpo e i margini. Per versi allineati a sinistra, con righe a capo sporgenti, vedi <RecipeLink slug="poetry-collection">Poesie composte verso per verso</RecipeLink>.
+- Gli spazi iniziali vengono tolti da un paragrafo, quindi non puoi dare forma a una riga riempiendola di spazi. La larghezza di ogni riga dipende solo dalle sue parole, e una traduzione deve trovare versi larghi più o meno quanto quelli dell’originale, come fa l’edizione spagnola.
+- La centratura tiene ogni riga alla sua larghezza naturale, quindi la lastra e la base di *The Altar* non risultano squadrate: la terza e la quarta riga della lastra sono più strette delle prime due. Nemmeno la giustificazione può squadrarle, perché l’ultima riga di un paragrafo giustificato mantiene la sua larghezza naturale e ognuna di queste righe è un paragrafo a sé.
+- Il frontespizio e l’ultima pagina sono pieni fino all’ultima riga della griglia. Una riga in più sul frontespizio, per un’epigrafe più lunga, una riga che va a capo o un `:::space` più grande, sposta l’etichetta al piede e le due righe sotto di essa su una pagina tutta loro; una riga in più nell’ultima pagina sposta da sola l’ultima riga del colophon su una quinta pagina. Per aggiungere una riga a una delle due pagine, toglila da un `:::space` sopra di essa.
+- Postext non compone il testo di traverso, come gli stampatori del 1633 composero *Easter Wings*: ruotano solo figure e tabelle intere. Qui le strofe stanno in piedi, e la nota a pagina 4 lo dice.

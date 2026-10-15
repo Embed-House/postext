@@ -1,0 +1,68 @@
+---
+title: "Un libro tecnico con rimandi tra capitoli"
+summary: "Un manuale solare di tre capitoli il cui testo scrive :sun, :loads e :array-size, e buildBundle stampa ogni numero e pagina tra i capitoli."
+plain: "Un breve manuale per dimensionare pannelli solari e batterie per una baita. Quando il capitolo 3 rimanda a una tabella del capitolo 1, o il capitolo 1 anticipa una sezione del capitolo 2, si stampano il numero e la pagina giusti, come link."
+description: "Un libro tecnico in Postext: rimandi pandoc-crossref a figure, tabelle e sezioni di altri capitoli, con numeri e pagine risolti da buildBundle."
+question: "Come rimando a una figura, una tabella o una sezione di un altro capitolo mantenendo giusti i numeri?"
+aliases: ["pandoc-crossref", "rimando", "rimandi incrociati", "crossref", "@fig", "@tbl", "@sec", "vedi capitolo", "rimandi tra capitoli", "libro tecnico", "manuale", "numeri delle figure", "numeri delle tabelle", "rimando alla pagina"]
+pageNotes: { "1": "Pagina 1, la copertina: una fascia blu notte su due terzi della pagina con i percorsi del sole di giugno e di dicembre disegnati come archi ambra sopra un pannello solare inclinato, la riga della collana «LARCH HILL TECHNICAL NOTES · NO. 4», il titolo «Power for a Cabin» in grandi caratteri bianchi condensati e un sottotitolo in corsivo; autore ed edizione sotto la fascia.", "2": "Pagina 2: l’indice sotto la stessa fascia, tre capitoli numerati con le loro sezioni e i numeri di pagina, e un colophon.", "3": "Pagina 3: il capitolo 1 si apre sotto la fascia con un grande 1 ambra; il testo anticipa il capitolo 2, il capitolo 3 e la sezione 1.3, rimandi composti in grassetto arancione.", "4": "Pagina 4: la tabella 1.1 dei carichi giornalieri con un’intestazione blu notte, poi le sezioni 1.2 e 1.3 con rimandi a «section 2.1» a «p. 6», a «fig. 1.1» e a «section 3.1».", "5": "Pagina 5: la figura 1.1, un grafico a barre del consumo orario con le ore di luce ombreggiate, e la fine del capitolo 1.", "6": "Pagina 6: comincia il capitolo 2; la sua prima riga rimanda al capitolo 1 e alla tabella 1.1; la figura 2.1, le ore di sole di picco per mese con dicembre in arancione.", "7": "Pagina 7: le sezioni 2.2 e 2.3, un rimando in avanti a «section 3.2» a «p. 8», una formula centrata e la tabella 2.1 delle perdite.", "8": "Pagina 8: si apre il capitolo 3; il suo testo cita la sezione 2.3, la «fig. 2.1», la tabella 1.1, la sezione 1.3 con la sua pagina, la tabella 2.1 e le tabelle 2.1 e 3.1 con il solo numero.", "9": "Pagina 9: la tabella 3.1 che confronta le chimiche delle batterie, la sezione 3.3 e la figura 3.1, un grafico a linee della carica della batteria in cinque giorni di dicembre." }
+---
+
+## Che cosa comporrai
+
+Un breve manuale tecnico, *Power for a Cabin*, composto in IBM Plex su una pagina di 178 × 233 mm: una copertina con i percorsi del sole disegnati nel codice, una pagina di indice e tre capitoli sotto una fascia blu notte. Il libro dimensiona un piccolo impianto solare, quindi ogni capitolo si appoggia agli altri. Il capitolo 3 cita la tabella dei carichi del capitolo 1 e il grafico delle ore di sole del capitolo 2; il capitolo 1 manda il lettore avanti alla sezione 2.3 e ne dà la pagina. L’autore scrive `@tbl:loads` e `@sec:array-size`, come li legge pandoc-crossref, in quattro file Markdown separati. `buildBundle` li impagina come un unico libro, così ogni rimando stampa il numero che il suo bersaglio ha ricevuto nel proprio capitolo, la pagina su cui è finito e un link.
+
+## Preparazione
+
+### 1 · Nomina ogni bersaglio una volta, per tutto il libro
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. I titoli prendono un identificatore Pandoc con il suo prefisso, `## Sizing the array {#sec:array-size}`. Figure e tabelle sono risorse dichiarate nello script, e i loro id si scrivono allo stesso modo, `fig:sun` e `tbl:loads`, così il testo dice `@fig:sun` che la figura sia due paragrafi più in là o due capitoli prima. Un id deve essere unico in tutto il libro, non solo nel suo capitolo.
+
+### 2 · Impagina i capitoli come un unico libro
+
+<Excerpt region="answer" highlight="6" />
+
+`buildBundle` porta i contatori di figure e tabelle da un capitolo all’altro, così la prima tabella del capitolo 3 è la 3.1 e `@tbl:loads` nel capitolo 3 stampa ancora *table 1.1*. Un capitolo il cui testo nomina un titolo che non contiene viene impaginato con la struttura dell’intero libro, e reimpaginato (al massimo tre giri) finché le pagine di quella struttura non smettono di spostarsi. È così che il capitolo 1 può stampare *section 2.1 … p. 6* prima che il capitolo 2 esista sulla carta.
+
+### 3 · Scegli le parole che stampa un rimando
+
+`crossRefs` imposta *chapter*, *section* e *p.* (in spagnolo *capítulo*, *apartado* e *pág.*). Un rimando a una figura o a una tabella stampa lo `shortLabel` del suo tipo, qui in minuscolo come li compone pandoc-crossref, *fig. 2.1* e *table 1.1*. Una maiuscola nel prefisso, `@Tbl:loads` o `@Sec:array`, rende maiuscola l’etichetta all’inizio di una frase, e `[-@tbl:losses]` stampa il solo numero per *tables 2.1 and 3.1*.
+
+### 4 · Rimanda in avanti alle sezioni, indietro alle figure
+
+Una figura o una tabella si numera, e flotta, dove viene citata per la prima volta. `@fig:soc` nel capitolo 1 la renderebbe la figura 1.2 e la collocherebbe nel capitolo 1. Per questo il capitolo 1 anticipa `@sec:autonomy`, e figure e tabelle si citano per la prima volta nel loro capitolo; ogni capitolo successivo vi rimanda liberamente. Una pagina va con la sezione, `:ref{id="sec:sun-hours" style=page}`: un rimando a una risorsa stampa la sua etichetta e il suo numero, mai la sua pagina.
+
+### 5 · Le aperture e la copertina vengono dalla stessa fascia
+
+<Excerpt region="opener" />
+
+La fascia scende per 55 mm dalla testa del rifilo in ogni capitolo e nella pagina dell’indice, che riusano gli stessi elementi; il numero del capitolo è `{chapterNumber}`, il sommario un attributo del titolo.
+
+<Excerpt region="cover" />
+
+## Varianti
+
+### Stampa «Figure 2.1» nel testo
+
+Un libro che scrive per esteso i suoi rimandi usa il nome completo del tipo invece dell’etichetta breve.
+
+```diff
+-  shortLabel: type.id === 'table' ? t({ en: 'table', es: 'tabla' })
+-    : t({ en: 'fig.', es: 'figura' }),
++  shortLabel: type.id === 'table' ? t({ en: 'Table', es: 'Tabla' })
++    : t({ en: 'Figure', es: 'Figura' }),
+```
+
+### Numera le sezioni con il segno di paragrafo
+
+```diff
+-  section: t({ en: 'section {n}', es: 'apartado {n}' }), // @sec:losses → "section 2.2"
++  section: '§ {n}',
+```
+
+## Errori frequenti
+
+- Un rimando a un id che nessun capitolo imposta stampa *?*. Controlla gli id dopo aver rinominato un titolo in un capitolo: i rimandi a esso vivono negli altri.
+- Impaginare i capitoli uno per uno con `buildDocument` fa perdere sia i contatori sia la struttura del libro: ogni capitolo numera di nuovo le figure da 1 e un rimando a un altro capitolo stampa *?*. Usa `buildBundle`, oppure concatena `continuation` e passa tu `outline`.
+- In Postext le equazioni non hanno una numerazione propria, quindi `@eq:` trova solo un ancoraggio impostato da te e ne stampa il testo; questo libro scrive le sue due formule senza numero.
+- Un titolo di sezione che apre una pagina, o che sta sotto una tabella flottata in testa come fa la 3.3 a pagina 9, perde per impostazione predefinita tutto lo spazio sopra, e l’aggancio alla griglia mette allora sotto il titolo la frazione di riga di cui ha bisogno, più lontano dal suo testo dei titoli a metà pagina. `headings.columnHeadSpace: 'remainder'` tiene quella frazione di riga sopra il titolo ([titoli](/it/docs/configuration-text#titoli)). Si addice a un libro a una colonna, dove nessuna colonna accanto mostra che il titolo comincia un po’ più in basso.

@@ -1,0 +1,79 @@
+---
+title: "Un articolo sulle proteine con una sezione Methods"
+summary: "L’articolo su AlphaFold ricomposto su A4: riassunto in grassetto su tutta la pagina, apici alla Nature e Methods in corpo minore che proseguono la numerazione."
+plain: "Un famoso articolo di biologia, abbreviato e reimpaginato come articolo di rivista. I Methods seguono il testo principale in corpo minore, e i loro riferimenti continuano a contare da dove si era fermato il testo principale."
+description: "L’articolo su AlphaFold ricomposto in Postext: citazioni in apice alla Nature, Methods in corpo minore che proseguono la numerazione, 34 autori e dati PDB."
+question: "Come compongo i Methods in corpo minore dopo il testo principale, con citazioni che proseguono la numerazione?"
+aliases: ["sezione Methods", "metodi", "stile Nature", "citazioni in apice", "scienze della vita", "biologia strutturale", "biologia computazionale", "AlphaFold", "struttura delle proteine", "PDB", "pLDDT", "lungo elenco di autori", "paragrafo di sintesi", "disponibilità dei dati", "disponibilità del codice", "Jumper et al. 2021"]
+pageNotes: { "1": "Pagina 1: una fascia blu intenso con «ARTICLE · STRUCTURAL BIOLOGY» in maiuscole bianche, il titolo su due righe «Highly accurate protein structure prediction with AlphaFold» in un bastoni nero, tutti i 34 autori in corpo piccolo con numeri di affiliazione in apice, una riga della fonte con il DOI e la licenza, poi il riassunto in grassetto su tutta la pagina con citazioni in apice da 1–4 a 15, e sotto la «Fig. 1» su tutta la pagina: a, un grafico a barre della r.m.s.d.95 mediana, AlphaFold 0,96 e 1,5 Å contro 2,8 e 3,5 Å del metodo successivo, con una linea tratteggiata a 1,4 Å; b, uno scheletro sperimentale grigio del target T1049 con dentro la traccia del modello in blu e giallo secondo il pLDDT. Cinque righe di testo a due colonne chiudono la pagina.", "2": "Pagina 2: l’introduzione finisce e le sezioni «The AlphaFold network» ed «Evoformer» scorrono in due colonne giustificate con grazie, con titoli bastoni e numeri di citazione in apice.", "3": "Pagina 3: «End-to-end structure prediction» e la «Discussion» nella colonna sinistra; la «Discussion» finisce nella colonna destra, seguita dai riferimenti del testo principale da 1 a 15 sotto un piccolo titolo blu.", "4": "Pagina 4: i riferimenti da 15 a 35, poi i «Methods» sotto un titolo più grande in corpo minore, con le sottosezioni «IPA», «Inputs and data sources» e «Inference regimen» in blu, la «Table 1» dei tempi di inferenza con una riga d’intestazione blu e l’inizio di «Metrics».", "5": "Pagina 5: la fine dei «Methods», «Data availability» e «Code availability», poi un secondo elenco di riferimenti, da 36 a 55, le opere citate per la prima volta nei «Methods», seguito dai ringraziamenti, dalle affiliazioni e da una nota su questa edizione in un piccolo bastoni." }
+---
+
+## Che cosa comporrai
+
+Cinque pagine di un articolo di rivista di scienze della vita su A4: *Highly accurate protein structure prediction with AlphaFold* di Jumper et al., abbreviato da Nature con licenza CC BY 4.0. Una fascia blu apre la prima pagina sopra il titolo, tutti i 34 autori a 7,4 pt con numeri di affiliazione in apice, e il riassunto composto in grassetto su tutta la pagina. Sotto, la Fig. 1 occupa tutta la larghezza della pagina: un grafico a barre delle accuratezze CASP14 che il testo cita, e lo scheletro del target T1049 tracciato dal PDB con dentro il modello di AlphaFold, colorato secondo l’affidabilità. Il testo cita con i numeri in apice di Nature. Il testo principale si chiude sui riferimenti 1–35. I Methods seguono a 8,2 pt, e un’opera che vi è citata per la prima volta prende il numero successivo, così il loro elenco comincia da 36, come nella rivista.
+
+## Preparazione
+
+### 1 · Due elenchi di riferimenti, una numerazione
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Le citazioni prendono i loro numeri nell’ordine della prima citazione, quindi non devi fare nulla per proseguire il conteggio: jackhmmer, citato per la prima volta nei Methods, prende 36, mentre il campo di forze Amber, citato prima nel testo principale, mantiene il suo 30. Gli elenchi vengono da `:::bibliography{scope=new}`, che stampa solo le opere che nessun elenco precedente ha stampato. Il pen mette lo stesso blocco dopo la Discussion e dopo i Methods: il primo compone 1–35, il secondo 36–55, e Amber non viene ristampato. Il titolo dei Methods è un titolo di livello 1 con uno stile proprio; il suo `bodyStyle` compone la sezione a 8,2 pt su 10,8 pt, `breakBefore: { enabled: false }` la tiene nella colonna, e `runningChapter: false` lascia le testatine sul titolo dell’articolo. Per un tuo articolo, incolla l’esportazione `.bib` in un blocco `:::references{format=bibtex}`, cita con `[@key]` subito dopo la parola e cambia `nature` con lo stile della tua rivista.
+
+### 2 · Un blocco del titolo per 34 autori
+
+<Excerpt region="title" />
+
+L’elenco degli autori è un solo attributo del titolo, `authors="John Jumper^1,4^, Richard Evans^1,4^, …"`, composto in Noto Sans a 7,4 pt su tutta la giustezza, dove 34 nomi occupano cinque righe. `inlineMarks` mette in apice i numeri di affiliazione. Le affiliazioni e la nota sul contributo paritario vanno in fondo, sotto *Author information*, come le stampa Nature, così la prima pagina conserva lo spazio per il riassunto e la figura. Nessun autore viene omesso: la testatina sui versi abbrevia l’elenco in *Jumper et al.*
+
+### 3 · Il riassunto su tutta la pagina, sotto la Fig. 1
+
+<Excerpt region="resources" />
+
+Il riassunto è un riquadro con `span: 'page'` e senza cornice, con il testo in Noto Sans semibold. La Fig. 1 lo segue come `::resource{id="fig1"}`, e la sua collocazione, `{ position: 'here', span: 'page' }`, la mette sulle due colonne in quel punto; le due colonne di testo cominciano sotto la sua didascalia. La didascalia comincia con una frase in grassetto, come le legende di Nature; il `captionPrefix` del tipo e il `labelSeparator` dello stile della didascalia fanno leggere l’etichetta *Fig. 1 |*. La Table 1 è inserita dove si trova nei Methods con `position: 'here'` e resta nella sua colonna.
+
+### 4 · Lo scheletro di una proteina disegnato da coordinate aperte
+
+<Excerpt region="art" />
+
+Le coordinate sono state lette una sola volta, quando è stata scritta la ricetta, dalla voce PDB 6Y4F (CC0) e dal modello dell’AlphaFold Database della stessa proteina (CC BY 4.0), sovrapposte sui loro atomi Cα e ruotate sugli assi principali dell’esperimento. Il pen le conserva come tre brevi array. Ogni traccia è una catena di segmenti di Bézier attraverso le posizioni dei Cα, dipinta dalla più lontana alla più vicina con un alone color carta, che dà profondità senza ombreggiature. I colori del modello sono le fasce di pLDDT usate dall’AlphaFold Database, lette dalla colonna del fattore B del suo file.
+
+### 5 · Lettere greche e accenti nel PDF
+
+Fontsource divide ogni carattere per sistema di scrittura. `kitFonts(FONTS)` legge il testo che riceve e carica il file latin-ext di ogni carattere quando compone Ž o Š e il suo file greek quando compone α o χ; `fontsourceProvider` incorpora nel PDF gli stessi file a partire dai caratteri che ogni font compone. Cα, χ, Žídek e Šali non richiedono codice proprio: la ricetta passa il markdown, che contiene ogni slot di contenuto, e il provider del kit.
+
+## Varianti
+
+### Tieni i Methods al corpo del testo
+
+Alcune riviste compongono i Methods nello stesso corpo del testo; togli lo stile del corpo della sezione e mantieni il titolo.
+
+```diff
+-  bodyStyle: { fontSize: pt(8.2), lineHeight: pt(SMALL) } };
++};
+```
+
+### Numeri tra parentesi quadre
+
+Alcune riviste dello stesso campo stampano [1] sulla riga.
+
+```diff
+-  style: 'nature', // raised 1–4, "Nature 577, 706–710 (2020)." entries
++  style: 'nature', marker: 'brackets',
+```
+
+### Stampa un solo elenco alla fine
+
+Le riviste che stampano tutti i riferimenti dopo i Methods, come fa *Science*, tengono solo il secondo blocco.
+
+```diff
+-const markdown = [/* @content */ '', references, /* @content:methods */ '', references,
++const markdown = [/* @content */ '', /* @content:methods */ '', references,
+```
+
+### Usa l’elenco Vancouver
+
+Per una rivista medica, parti dallo stile NLM incluso, come fa l’<RecipeLink slug="medical-article-vancouver">articolo medico in stile Vancouver</RecipeLink>.
+
+## Errori frequenti
+
+- Nature nomina fino a cinque autori e riduce un elenco più lungo al primo, seguito da *et al.* Dove l’elenco dell’articolo stesso fa così, scrivi `and others` nella voce BibTeX (`{Senior, Andrew W. and others}`) e lo stile stampa *Senior, A. W. et al.*; in CSL-YAML, chiudi l’elenco con `"others"`.
+- Il `bodyStyle` di uno stile di titolo cambia il corpo e l’interlinea del testo, non la griglia della linea di base: i titoli dei Methods usano `snapToGrid: false`, altrimenti la riga sotto ciascuno salterebbe alla riga successiva della griglia del testo principale.

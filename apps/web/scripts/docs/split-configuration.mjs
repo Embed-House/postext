@@ -242,7 +242,7 @@ function relinkInPage(line, locale, current, where) {
   });
 }
 
-const ABSOLUTE = /((?:https:\/\/postext\.dev)?)\/(en|es|ca|zh|ja|ar|pt|fr|de)\/docs\/configuration#([^)"\s'<>`\]]+)/g;
+const ABSOLUTE = /((?:https:\/\/postext\.dev)?)\/(en|es|ca|zh|ja|ar|pt|fr|de|it)\/docs\/configuration#([^)"\s'<>`\]]+)/g;
 
 /** Links to `/<locale>/docs/configuration#id`, in any file. On a page of the
  *  reference (`current`), a link to a heading of the same page becomes `#id`. */
@@ -431,7 +431,7 @@ for (const l of ONLY_RECIPES ? [] : LOCALES) {
 // ---------------------------------------------------------------------------
 
 for (const file of fs.readdirSync(DOCS)) {
-  const m = file.match(/^(.+)-(en|es|ca|zh|ja|ar|pt|fr|de)\.mdx$/);
+  const m = file.match(/^(.+)-(en|es|ca|zh|ja|ar|pt|fr|de|it)\.mdx$/);
   if (!m) continue;
   const [, slug, locale] = m;
   const order = ORDER.indexOf(slug) + 1;

@@ -1,0 +1,64 @@
+---
+title: "Un compito d’esame con il foglio delle risposte"
+summary: "Un esame di storia di quattro pagine su US Letter: bolle e punteggi come chip, punteggi su un tabulatore, domande numerate 1, a), i) e righe da una tabella."
+plain: "Un esame di storia di quattro pagine con una copertina, bolle per le risposte e pagine a righe per scrivere. Mostra come numerare le domande e le loro parti e indicare il punteggio di ciascuna."
+description: "Un compito d’esame in Postext, con caselle del candidato e griglia di bolle in copertina, domande numerate 1, a), i), punteggi in chip e righe da una tabella."
+question: "Come impagino un compito d’esame con griglia di bolle, parti a) e i), punteggi e righe per le risposte?"
+aliases: ["compito d’esame", "prova d’esame", "simulazione d’esame", "foglio delle domande", "foglio delle risposte", "griglia delle risposte", "foglio a bolle", "OMR", "scelta multipla", "righe per le risposte", "righe per scrivere", "punteggi", "punteggi allineati a destra", "tabulatore", "numerazione delle domande", "numero del candidato", "volta pagina", "exam paper"]
+pageNotes: { "1": "Una fascia cremisi sul terzo superiore contiene la riga della sessione, History in un bianco pesante, Paper 2 · Sources and interpretations e The American Civil War, 1863 in corsivo, sopra l’anno 1863 disegnato in bianco in contorno e tagliato dal piede della fascia. Sotto: la data e il tempo concesso, un modulo arrotondato con caselle per nome, classe, numero del candidato e punteggio su 25, un riquadro rosa pallido di istruzioni e informazioni su due colonne e, sotto il titolo cremisi Section A answer grid, un pannello rosa pallido di righe numerate da 1 a 10, ciascuna con quattro bolle cremisi contrassegnate da A a D. Al piede, in maiuscole cremisi: Do not turn over until you are told to do so.", "2": "Section A, 10 marks: dieci domande a scelta multipla sul 1863, ciascuna con un grande numero in grassetto e un punto cremisi, e sotto ogni domanda una riga di quattro opzioni che si aprono ciascuna con una bolla contrassegnata da una lettera.", "3": "Section B, 15 marks: il discorso di Gettysburg come Source A accanto a una banda cremisi, firmato Abraham Lincoln. November 19, 1863, con una piccola riga di crediti sotto; poi la domanda 11 con le parti a) i), a) ii), b) e c), ciascuna con un chip rosa che dà il suo punteggio a filo del margine destro del testo, e Turn over al piede.", "4": "La pagina delle risposte: gruppi di filetti grigi a due righe di testo l’uno dall’altro, la prima riga di ogni gruppo con la sua parte in cremisi, da una riga per 11 a) i) a otto per 11 c); End of questions e il colophon chiudono la pagina." }
+---
+
+## Che cosa comporrai
+
+La seconda prova di una simulazione d’esame di storia sulla guerra civile americana, composta come un fascicolo di quattro pagine su US Letter. La copertina è una fascia cremisi con l’anno 1863 disegnato in contorno, sopra le caselle del candidato, le istruzioni su due colonne e una griglia di bolle con le lettere per la sezione A. La pagina 2 contiene dieci domande a scelta multipla, ciascuna seguita dalle sue quattro opzioni, e ogni opzione si apre con una bolla con la lettera come quelle della griglia. La pagina 3 compone il discorso di Gettysburg come Source A e numera le domande che lo riguardano 11, a), i), con il punteggio di ogni parte in un chip al margine destro. La pagina 4 è rigata per le risposte, un filetto ogni due righe di testo, e ogni gruppo di filetti si apre con il numero della sua parte. Ogni pagina dopo la copertina porta un folio e un margine filettato per l’esaminatore, e l’unica pagina destra tra queste dice «Turn over».
+
+## Preparazione
+
+### 1 · Numera le domande e appendi le opzioni
+
+<Excerpt region="numbering" />
+
+Ogni livello di `orderedLists` sceglie il proprio `numberFormat` e il proprio `separator`, e `separatorColor` colora il punto e le parentesi nel colore d’accento mentre il numero resta in inchiostro ([elenchi numerati](/it/docs/configuration-text#elenchi-numerati)). Con `numberWidth: 'level'` i numeri si allineano a destra sul più largo della loro profondità, così il testo di ogni domanda comincia a 23 pt: i 17 pt di «10.» più `GAP`. Le quattro opzioni sono una sola voce puntata con un `bulletChar` vuoto, alla stessa profondità delle domande invece che annidata sotto di esse. Il suo testo comincia all’`indent` dell’elenco, cioè «10.» misurato nel carattere dei numeri più `GAP`, così le opzioni si allineano sotto la prima lettera della domanda con qualsiasi font; il riquadro delle istruzioni imposta `indent: pt(0)`, perché gli elenchi in un riquadro prendono il rientro del documento. Tra due voci della stessa profondità lo spazio è l’`itemSpacing` della prima: 5 pt dopo una voce numerata, 15 pt dopo una riga di opzioni. Annidata sotto la sua domanda, la riga di opzioni prenderebbe i 5 pt dell’elenco delle domande da entrambi i lati.
+
+### 2 · Ricava le bolle e i punteggi dai chip
+
+<Excerpt region="chips" />
+
+Un chip è un riquadro dentro la riga, e un a capo non cade mai al suo interno ([chip in linea](/it/docs/document-format#chip-in-linea)). Con una maiuscola dentro, `paddingX: em(0.3)` rende il riquadro largo quasi quanto è alto: da 4,5 a 4,8 mm di larghezza nella griglia, per un’altezza di 4,7 mm. `borderRadius: em(1)` è più della metà del riquadro, e il raggio di un chip viene limitato a metà del suo lato minore, quindi le estremità sono del tutto rotonde. Un chip senza `style` prende la prima voce di `chipStyles`, quindi le ottanta bolle, quaranta nella griglia e quaranta tra le opzioni, sono chip semplici come `:chip[A]`; solo l’esempio pieno nelle istruzioni e i punteggi nominano uno stile. I punteggi stanno a filo a destra: ogni parte finisce con `:tab` prima del suo chip, e l’unico tabulatore del testo, alla fine della giustezza con `align: 'end'`, fa finire lì il chip ([tabulazioni e tabulatori](/it/docs/document-format#tabulazioni-e-tabulatori)). Le voci di elenco delle domande prendono i tabulatori del testo, così i chip di a) e di i) finiscono nello stesso punto. Una parte la cui ultima riga non ha più spazio per il suo chip porta con sé l’ultima parola alla riga successiva.
+
+### 3 · Dai a ogni modulo il suo stile di tabella
+
+<Excerpt region="forms" />
+
+Le caselle del candidato, la griglia di bolle e le righe per le risposte sono tre `tableStyles`, scelti per ogni tabella con `styleId` ([stili di tabella con nome](/it/docs/configuration-resources#stili-di-tabella-con-nome)). Le righe per le risposte nella [risposta breve](#la-risposta-breve) usano `rules: 'horizontal'` e un padding che rende ogni riga della tabella alta due righe di testo, così ogni filetto cade 30 pt (10,6 mm) sotto il precedente, su una riga ogni due della griglia di 15 pt del testo. La riga centrale vuota della cella MARK contiene uno spazio indivisibile, perché una riga di cella vuota o con soli spazi normali non aggiunge nulla: quella cella è alta tre righe e porta l’intera riga della tabella a 14,4 mm, contro i 10,8 mm con due righe. La griglia non disegna filetti, così la tinta di ogni cella tocca quella della vicina e la griglia si legge come un unico pannello. Il suo titolo è una didascalia composta 1,6 mm sopra ([stile delle didascalie](/it/docs/configuration-resources#stile-delle-didascalie)). Un titolo starebbe almeno una riga di testo (5,3 mm) più in alto, perché ogni tabella collocata «here» tiene sopra di sé quello spazio. Il tipo `form` ha un `captionPrefix` vuoto, quindi nessuna etichetta «Form 1.» precede il titolo.
+
+### 4 · Disegna la copertina dagli attributi del titolo
+
+<Excerpt region="cover" />
+
+La copertina è un solo titolo, `# History {style="cover" …}`, e il suo stile disegna una fascia, l’anno e quattro righe di testo riempite dagli attributi del titolo. Con `span: 'page'` la pagina conta come apertura, quindi il margine filettato, il folio e «Turn over» delle pagine di testo restano fuori, e l’avvertenza si stampa al suo piede. Senza, la copertina è una pagina di testo come le altre. I `margins` dello stile allargano la colonna della copertina ai 168 mm pieni per i moduli, e il titolo successivo, un livello 1 senza stile, riporta le pagine di testo alla giustezza di 134 mm.
+
+### 5 · Tieni folio e «Turn over» fuori dalla copertina
+
+<Excerpt region="furniture" />
+
+Ogni elemento corrente delle pagine di testo porta `pages: 'body'`, così la copertina, un’apertura, mostra solo la propria avvertenza (`pages: 'opener'`). Le sezioni cominciano quindi con `:::pagebreak` e un titolo senza `breakBefore`. Un titolo che interrompe la pagina fa della sua pagina un’apertura, e le pagine 2 e 3 perderebbero folio, testatina e margine. `parity: 'odd'` tiene «Turn over» sul recto, dato che un verso ha già di fronte la pagina che lo segue.
+
+## Varianti
+
+### Stampalo su A4
+
+La fascia, l’anno, il margine filettato e l’avvertenza prendono le loro misure da `PAGE`, quindi l’A4 è una modifica di una riga. I blocchi della copertina restano al loro posto, e il bianco sotto la griglia cresce di 17,6 mm in entrambe le edizioni.
+
+```diff
+-const [TEXT, LABEL, PAGE] = ['PT Serif', 'Inter Tight', { w: 215.9, h: 279.4 }]; // US Letter
++const [TEXT, LABEL, PAGE] = ['PT Serif', 'Inter Tight', { w: 210, h: 297 }]; // A4
+```
+
+### Aggiungi un elenco di parole o una lista di controllo
+
+Elenchi di parole, spazi da completare e cerchi da colorare sono anch’essi chip: <RecipeLink slug="worksheet-answer-boxes">la scheda con caselle per le risposte e un elenco di parole</RecipeLink> compone un elenco di chip gialli in un riquadro annidato e una lista di controllo che apre ogni riga con un cerchio vuoto.
+
+## Errori frequenti
+
+- Righe per le risposte tra le parti di una domanda spezzano il suo elenco: l’elenco dopo la tabella comincia una nuova sequenza, e una sequenza allinea a destra i suoi numeri sul proprio più largo, quindi il testo di ii) comincerebbe 1 mm più a destra del testo di i). Qui le risposte stanno su una pagina propria, e ogni parte resta in un solo elenco.

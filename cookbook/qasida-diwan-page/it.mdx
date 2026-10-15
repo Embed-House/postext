@@ -1,0 +1,59 @@
+---
+title: "Una qasida da dīwān, ogni verso in due emistichi"
+summary: "Un solo blocco :::verse compone i quarantasei bayt di al-Mutanabbī in due colonne di emistichi, ogni metà allungata con le kashida fino a una sola larghezza."
+plain: "Una poesia araba classica stampata come la stampano i vecchi libri di poesia: ogni verso diviso in due metà affiancate, entrambe allungate alla stessa larghezza perché le loro estremità si allineino lungo la pagina."
+description: "Una pagina del Dīwān di al-Mutanabbī in Postext: :::verse per bayt in due emistichi, giustificazione con kashida, testata in Ruqʿa e rilegatura a destra."
+question: "Come compongo la poesia araba classica con ogni bayt in due emistichi?"
+aliases: ["qasida", "qaṣīda", "diwan", "dīwān", "bayt", "emistichio", "ṣadr", "ʿajuz", "poesia araba", "poesia araba classica", "al-Mutanabbī", "Sayf al-Dawla", "kashida", "tatweel", "قصيدة", "ديوان", "شطر"]
+pageNotes: { "2": "La pagina d’apertura della qaṣīda: una fascia chiara filettata di rosso in alto contiene il titolo على قدر أهل العزم in una grafia Ruqʿa rossa, sotto il metro من البحر الطويل in un piccolo cufico grigio, due righe di prosa che danno l’occasione, poi i bayt in due colonne, la metà destra e la metà sinistra di ogni verso allungate entrambe alla stessa larghezza." }
+---
+
+## Che cosa comporrai
+
+Quattro pagine di un dīwān, le poesie raccolte di al-Mutanabbī, come le componevano un secolo fa i tipografi del Cairo: un occhiello con ديوان in Ruqʿa rossa, poi la qaṣīda che recitò davanti a Sayf al-Dawla nel 954, sotto una testata filettata di rosso. Ognuno dei quarantasei bayt è un verso di due emistichi, lo ṣadr a destra e lo ʿajuz a sinistra, entrambi allungati con le kashida fino a una sola larghezza, così le rime in ‑mu scendono lungo il bordo sinistro in linea retta. Il libro è rilegato a destra e i folio contano in cifre indo-arabe. Solo la nota sul testo, alla fine, cambia con l’edizione. <RecipeLink slug="tang-poems-facing-english">Le poesie Tang di fronte ai versi inglesi</RecipeLink> compone la poesia cinese classica sulla sua griglia.
+
+## Preparazione
+
+### 1 · Un bayt per riga, le due metà a una sola larghezza
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Dentro `:::verse` ogni riga è un bayt, e `||` separa i due emistichi, così il Markdown si legge come il testo di Wikisource da cui proviene ([:::verse](/it/docs/document-format#verse)). La poesia misura ogni emistichio, prende la metà più larga come larghezza di entrambe le colonne (fino a metà della giustezza meno lo spazio intermedio) e riempie ogni metà fino a quella larghezza, prima con le kashida e poi con gli spazi tra parole ([Poesia classica](/it/docs/arabic-layout#versi-classici)). Lo stile `bayt` è composto a 14 pt con un passo di 26,6 pt, 1,9 × il corpo, così le shadda e le kasra di righe vicine non si toccano ([Segni vocalici](/it/docs/arabic-layout#segni-vocalici)). Il formato è 17 × 24 cm: a 14 × 21 cm un terzo dei bayt non stava nella sua metà della giustezza di 104 mm e ripiegava su una disposizione sfalsata, ṣadr e ʿajuz su righe proprie.
+
+<PageShot page={2} crop="0,0.45,1,0.55" caption="Pagina 2: ogni emistichio allungato alla larghezza del più largo. Una metà corta prende più kashida, così ogni rima finisce sullo stesso bordo sinistro." />
+
+### 2 · Una fascia di testata in Ruqʿa
+
+<Excerpt region="opener" />
+
+Il titolo di livello 1 si disegna con la sua grafica: un riquadro colorato filettato di rosso sopra e sotto, il titolo centrato su di esso in Aref Ruqaa, e sotto il metro da un attributo del titolo, `{metre="من البحر الطويل"}`. I caratteri da titolo in Ruqʿa non prendono kashida, quindi il titolo mantiene la sua larghezza naturale ([Giustificazione e kashida](/it/docs/arabic-layout#giustificazione-e-kashida)).
+
+### 3 · Testatine sui lati del foglio
+
+<Excerpt region="heads" />
+
+Il testo corre da destra a sinistra, e per lui sinistra e destra significano inizio e fine. Le testatine restano fisiche. In un libro rilegato a destra il verso, una pagina pari, sta a destra nella doppia pagina, quindi il suo folio va in alto a destra e quello del recto in alto a sinistra: entrambi stanno sul margine esterno ([Ordine delle pagine e rilegatura a destra](/it/docs/arabic-layout#ordine-delle-pagine-e-rilegatura-a-destra)). Il solo tag `locale: 'ar'` imposta la direzione, la rilegatura e le cifre indo-arabe.
+
+### 4 · Un occhiello senza nulla nel flusso
+
+<Excerpt region="title" />
+
+L’occhiello è uno stile di titolo con `span: 'page'` e intestazione e piè di pagina propri, vuoti. Il testo del titolo è il nome del poeta, quindi la parola ديوان è testo della grafica, composto a 64 pt sopra di esso, e la riga latina sotto la rima viene dall’attributo `latin`, che ogni edizione scrive nella propria lingua.
+
+## Varianti
+
+### Segna lo spazio con un ornamento
+
+Alcuni dīwān stampano una piccola stella tra gli emistichi. `ornament` mette un segno al centro dello spazio senza aggiungerlo al testo.
+
+```diff
+-:::verse{style="bayt"}
++:::verse{style="bayt" ornament="٭"}
+```
+
+### Dai a ogni emistichio la stessa larghezza
+
+Una `width` fissa porta entrambe le colonne a una sola giustezza su ogni pagina del dīwān, qualunque sia la metà più larga di una data poesia.
+
+```diff
+-:::verse{style="bayt"}
++:::verse{style="bayt" width=58mm}
+```

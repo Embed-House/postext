@@ -1,0 +1,61 @@
+---
+title: "Titoli a margine, numeri sporgenti e titoli in linea"
+summary: "Un bando di concorso con i titoli di sezione in un canale a margine sulle linee di base del testo, numeri sporgenti nell’intercolonna e titoli in linea rossi."
+plain: "Il bando di un comune per i progetti che trasformeranno un vecchio mercato del pesce in una biblioteca. I titoli di sezione stanno in un ampio margine sinistro, alla pari con la prima riga del testo accanto."
+description: "Un bando di concorso di cinque pagine in Postext, con i titoli di sezione in un canale di 50 mm a sinistra e i numeri delle sottosezioni nell’intercolonna."
+question: "Come metto i titoli in un canale a margine, faccio sporgere i numeri e metto in linea i titoli minori?"
+aliases: ["titoli a margine", "titoli laterali", "titoli marginali", "numeri sporgenti", "numeri di sezione sporgenti", "titoli in linea", "rapporto svizzero", "bando di concorso", "numero di sezione e filetto", "canale a margine", "titolo nel margine", "side heads"]
+pageNotes: { "1": "La prima pagina del bando: il nome del comune su due righe in alto a sinistra, l’occhiello «FILE BML-2026/04» in rosso, il titolo «Competition brief» in un graziato chiaro su due righe e un sommario in corsivo. Una planimetria del sito attraversa tutta la gabbia, con i vicoli del quartiere vecchio, una griglia di isolati smussati, il lungomare, il porto e il lotto in rosso. Sotto, la sezione 1 si apre con un 1 rosso e un filetto nero; il suo titolo, «The competition», sta nel canale sinistro sulla prima riga del testo, e le sottosezioni 1.1 e 1.2 fanno sporgere i loro numeri rossi nell’intercolonna.", "2": "La sezione 2, «The site», con il titolo nel canale e sotto una piccola pianta del lotto: il padiglione del mercato in grigio con le sue tredici campate, sei alberi lungo il lato nord e frecce rosse per gli ingressi. Le sottosezioni da 2.1 a 2.3 fanno sporgere i loro numeri accanto al testo; la sezione 3, «Schedule of accommodation», si apre più in basso con un titolo di due righe nel canale, seguita dalla sottosezione 3.1.", "3": "Un prospetto del padiglione del mercato attraversa la testa della pagina: tredici volte, undici archi e quattro lesene rosse sul lato est. Sotto, la tabella delle superfici, con una riga d’intestazione nera, riempie la colonna di testo, e la sua didascalia, «Table 1», sta nel canale alla pari con la testa della tabella. Seguono le sottosezioni 3.2 e 3.3, poi la sezione 4, «Design criteria», i cui paragrafi si aprono su termini in grassetto rosso.", "4": "Altri tre criteri che si aprono su termini in grassetto rosso, poi le sezioni 5, «Submission of entries», e 6, «Jury and timetable», ciascuna con il suo numero e il suo filetto e il titolo nel canale, e le sottosezioni da 5.1 a 6.1 con numeri sporgenti. La colonna di testo finisce alla pari con il piede della pagina.", "5": "Le sottosezioni 6.2 e 6.3, poi il calendario del concorso come tabella con un’intestazione nera, la sua didascalia, «Table 2», nel canale alla pari con la testa della tabella, e un piccolo colophon grigio." }
+---
+
+## Che cosa comporrai
+
+Cinque pagine A4 del bando di un concorso di architettura, in cui il comune di Puerto Lince, un porto spagnolo inventato, chiede progetti per trasformare il suo mercato del pesce del 1931 nella biblioteca civica. L’impaginazione segue i rapporti municipali svizzeri. Un canale di 50 mm scende lungo il lato sinistro di ogni pagina, e ogni sezione si apre su un numero rosso e un filetto nero che attraversa tutta la gabbia. Il titolo della sezione sta nel canale in Noto Serif Display, alla pari con la prima riga del testo. I numeri delle sottosezioni sporgono nell’intercolonna in DM Mono rosso, così ogni titolo di sottosezione mantiene il bordo sinistro del testo. I criteri di valutazione della sezione 4 si aprono su termini in grassetto rosso. La pagina 1 compone un titolo in corpo 58 sopra una planimetria del sito, una pianta del lotto sta nel canale a pagina 2 e un prospetto del fronte del molo apre la pagina 3.
+
+## Preparazione
+
+### 1 · Stampa il titolo della sezione da un riquadro nel canale
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Un titolo riserva spazio fino all’elemento più basso del suo progetto grafico, quindi un titolo disegnato nel canale alla pari con la prima riga della sezione spingerebbe il testo una riga più in basso, e due per un titolo di due righe. Il progetto grafico del titolo disegna invece solo il numero e il filetto, e `sideHeads()` copia il testo di ogni `## Title` in un `:::callout` delimitato subito dopo il titolo. Con `span="side"` quel riquadro esce dal flusso e sta nel canale sulla linea di griglia dove riprende il testo ([stili dei riquadri](/it/docs/configuration-styles#stili-dei-riquadri)). Il numero e il filetto impostano `reserve: false`: altrimenti un riquadro nel canale mantiene uno spazio da elemento flottante, una riga, sotto gli elementi del titolo che stanno lì, e il titolo scenderebbe alla seconda riga del testo. Riquadri e testo corrente mettono entrambi la linea di base di una riga a 0,8 dell’interlinea, quindi un riquadro sull’interlinea di 14 pt del testo mette ogni riga di un titolo di due righe su una linea di base del paragrafo accanto. Il Markdown resta un semplice `## Schedule of accommodation`. Poiché il progetto grafico del titolo non stampa `{titleText}`, la Sandbox elenca l’avviso *Testo del titolo non usato*, anche se il riquadro stampa il titolo.
+
+<PageShot page={2} crop="0,0.068,1,0.292" caption="Pagina 2: il numero e il filetto vengono dal titolo, il titolo dal riquadro nel canale, alla pari con la prima riga del testo. La pianta del lotto si impila sotto." />
+
+### 2 · Riserva il canale a titoli e figure
+
+<Excerpt region="channel" />
+
+`sideColumnRole: 'floats'` tiene il testo fuori dal canale ([tipi di impaginazione](/it/docs/configuration-page-layout#tipi-di-impaginazione)). Dopo l’apertura, il canale contiene solo i sei titoli di sezione e la pianta del lotto, mandati entrambi lì con `span: 'side'`, e le didascalie delle tabelle 1 e 2. La colonna laterale è `'right'` per impostazione predefinita, e un bando stampato su un solo lato del foglio la tiene sullo stesso lato in ogni pagina. `sideColumnSide: 'left'` la mette a sinistra, dove ogni titolo di sezione si legge prima del suo testo.
+
+### 3 · Fai sporgere i numeri e metti in linea i titoli più piccoli
+
+<Excerpt region="lower" />
+
+Il titolo della sottosezione comincia sul bordo sinistro della colonna. Il suo numero è ancorato `'left-of'` al titolo, allineato a destra in un riquadro di 12 mm che finisce 2 mm prima del testo, così numeri come 2.1 e 3.3 sporgono nell’intercolonna e ogni titolo si allinea con il testo sotto ([collocazione degli elementi](/it/docs/configuration-page-layout#collocazione-degli-elementi)). Il riquadro ha bisogno di una larghezza fissa. Una larghezza `'auto'` viene limitata alla colonna. Fuori, nell’intercolonna, questo non lascia alcuna larghezza, e il numero non viene disegnato. Il livello 2 stampa `'{2}'` e il livello 3 `'{2}.{3}'`, perché con `{1}` ogni numero comincerebbe con l’1 dell’unico H1 del bando. I criteri della sezione 4 sono un quarto livello composto senza titolo. Ogni paragrafo si apre su un termine in grassetto, e `bodyText.boldColor` lo stampa in rosso ([testo corrente](/it/docs/configuration-text#testo-corrente)). Nessun altro paragrafo ha grassetto, e le celle delle tabelle prendono il colore da `tableStyle`, quindi la riga del totale in grassetto della tabella 1 resta nera.
+
+### 4 · Dai a ogni figura e tabella la sua collocazione
+
+<Excerpt region="resources" />
+
+La pianta del lotto va nel canale con `span: 'side'` e si impila sotto il titolo a margine della sezione 2 ([collocazione](/it/docs/document-format#collocazione)). `width: PLAN_W / SIDE` la rende larga 44 mm, il che mette i suoi 88 metri esattamente in scala 1:2000. Il prospetto della facciata è un elemento flottante `'top'` a tutta larghezza. È citato a pagina 2 e apre la pagina 3, perché un elemento flottante non si colloca mai sopra il suo rimando. La tabella delle superfici, anch’essa citata a pagina 2, flotta in testa alla colonna di testo di pagina 3, sotto il prospetto. `captionSide: true` mette la sua didascalia nel canale, alla pari con la testa della tabella. Il calendario sta dove lo mette `::resource`, alla fine del bando, e `captionSide: true` mette anche la sua didascalia nel canale, accanto alla sezione 6.3.
+
+### 5 · Apri il bando sulla planimetria del sito
+
+<Excerpt region="opener" />
+
+Con `span: 'page'` il contenitore dell’apertura è l’intera gabbia, canale compreso ([estensione e progetto grafico avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)). L’occhiello e il titolo sono collocati a 57 mm, sul bordo sinistro della colonna di testo, e la planimetria attraversa canale e colonna. Senza di esso il contenitore è la colonna di testo, ogni elemento si sposta di 57 mm a destra, e il titolo, il sommario e la planimetria escono dal bordo destro della pagina. Il progetto grafico riserva spazio fino al piede della planimetria, che cade tra due linee di griglia. Un `minHeight` arrotondato per eccesso alla linea di griglia successiva lascia il filetto della sezione 1 alla stessa distanza dal suo testo del filetto di ogni sezione successiva. L’occhiello, il sommario e la legenda della carta sono attributi della riga `# Competition brief`.
+
+## Varianti
+
+### Metti il filetto solo sulla colonna di testo
+
+Ancora il filetto al riquadro del titolo stesso invece che al numero, e va dal bordo sinistro del testo al bordo destro della colonna, con solo il numero e il titolo nel canale.
+
+```diff
+-        color: col('ink'), placement: { ...at('#number', 'right-of', mm(2), RULE_Y),
++        color: col('ink'), placement: { ...at('container', 'top-left', mm(0), RULE_Y),
+```
+
+## Errori frequenti
+
+- Una figura laterale prende la testa del canale nella pagina che la cita, e un titolo a margine delimitato dopo di essa si impila sotto la figura, al di sotto dell’inizio della propria sezione. Cita le figure laterali dopo il titolo di sezione della loro pagina, come la sezione 2 cita la pianta del lotto.
+- Un inserimento in linea (`position: 'here'`) accetta `captionSide` da postext 1.28: la didascalia del calendario sta nel canale a pagina 5, come quella della tabella delle superfici a pagina 3. La didascalia ha bisogno del canale libero accanto alla tabella. Dove c’è già un titolo a margine o una figura laterale, resta sotto la tabella.

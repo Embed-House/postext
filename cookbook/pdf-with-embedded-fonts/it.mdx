@@ -1,0 +1,72 @@
+---
+title: "Un vero PDF con gli stessi font incorporati"
+summary: "Il programma di un recital esportato in PDF. Ogni carattere si scarica una volta sola, per FontFace e per il PDF, e ogni titolo diventa un segnalibro."
+plain: "Un programma di quattro pagine per un concerto serale. Mostra come salvarlo in un PDF identico allo schermo, con i font al suo interno e ogni titolo elencato per saltarci subito."
+description: "Con Postext, esporta nel browser un PDF che incorpora i file WOFF2 con cui è stata composta la pagina, convertiti in TrueType, e dà a ogni titolo un segnalibro."
+question: "Come esporto nel browser un vero PDF, con segnalibri ed esattamente i font con cui è composta la pagina?"
+aliases: ["incorporare i font in un PDF", "scaricare un PDF", "segnalibri PDF", "struttura del PDF", "provider di font", "FontFace da byte", "decompressWoff2", "da WOFF2 a TTF", "i font del PDF non corrispondono", "programma di sala", "programma di un recital", "embed fonts in a PDF"]
+pageNotes: { "1": "La copertina: blu petrolio notturno fino al rifilo, The Harbour Consort in piccole maiuscole dorate, il titolo Home from Sea in un grande corsivo dorato su due righe, un sottotitolo in corsivo chiaro, la data e il luogo in maiuscole spaziate, e file di squame d’onda dorate che salgono dal piede e sfumano verso il titolo.", "2": "Pagina 2: l’occhiello Twilight recital in maiuscole di un oro intenso, il titolo Programme sopra un corto filetto dorato, l’ordine di esecuzione come tabella con un’intestazione blu petrolio in maiuscole bianche, durate allineate a destra e una riga del totale chiara, poi le note sulla musica in testo giustificato.", "3": "Pagina 3: il titolo The texts, poi due poesie composte verso per verso sotto titoli in corsivo, con i rientri delle loro edizioni a stampa: The Tide Rises, the Tide Falls di Longfellow, con il ritornello rientrato, e Requiem di Stevenson, con gli ultimi tre versi in corsivo.", "4": "Pagina 4: Crossing the Bar di Tennyson in quattro strofe con i versi brevi rientrati, un paragrafo sugli interpreti e un colophon in un piccolo Tenor Sans grigio." }
+---
+
+## Che cosa comporrai
+
+Il programma di un recital al crepuscolo, *Home from Sea*: quattro pagine A5 per un ensemble di soprano, violoncello e arpa. La copertina è blu petrolio notturno, con il titolo in Fraunces corsivo dorato e file di squame d’onda dorate che salgono dal piede. All’interno, l’ordine di esecuzione è una tabella con un’intestazione blu petrolio in maiuscole Tenor Sans e una riga del totale colorata. Le note sono in Crimson Text giustificato. Le parole delle tre canzoni sono poesie di Longfellow, Stevenson e Tennyson, composte con i rientri delle loro edizioni a stampa. Il pulsante *Build the PDF* crea il file che manderesti per email al pubblico o metteresti sul sito della sala. Le sue quattro pagine corrispondono allo schermo riga per riga. Incorpora solo i cinque file di font che il browser ha caricato, e ogni titolo è un segnalibro. Per la stampa commerciale, vedi <RecipeLink slug="print-ready-pdf">il PDF pronto per la stampa</RecipeLink>.
+
+## Preparazione
+
+### 1 · Un solo download per carattere, per la pagina e per il PDF
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Postext misura ogni parola con i caratteri che il browser ha caricato quando parte la composizione, e il PDF disegna ogni riga dove l’ha messa quell’impaginazione. Se il PDF incorpora un file diverso, come l’istanza predefinita di un font variabile o un ripiego di sistema, ogni parola comincia comunque nella posizione misurata, ma le sue lettere hanno altre larghezze, quindi le parole si sovrappongono o lasciano vuoti. La ricetta perciò scarica ogni carattere una volta sola. I suoi byte diventano un `FontFace` prima della prima composizione, e il provider di font passa gli stessi byte attraverso `decompressWoff2` per il PDF, così l’esportazione non scarica font per conto suo.
+
+### 2 · Prima i font, poi l’impaginazione
+
+<Excerpt region="build" />
+
+`registerFaces()` si risolve solo quando ogni carattere in `FONTS` è caricato, così la prima composizione misura con i caratteri che il PDF incorporerà. È anche l’unica composizione, perché `FONTS` elenca ogni carattere che le pagine usano, e `buildDocumentWithFonts` trova già dichiarato ogni carattere che cerca ([Caricare i font prima dell’impaginazione](/it/docs/configuration-programmatic-usage#caricare-i-font-prima-dellimpaginazione)). Quel controllo aiuta solo lo schermo. Se in `FONTS` manca un carattere, il motore lo chiede al kit, carica il file di Fontsource e rifà l’impaginazione senza avvisi nella console, ma il PDF riceve comunque il carattere più vicino che il provider ha.
+
+### 3 · L’esportazione, e un elenco di ciò che ha incorporato
+
+<Excerpt region="pdf" />
+
+`renderToPdf` chiama `onProgress` in tre fasi: `prepare` una volta incorporati i font e la copertina, `pages` dopo ogni pagina, e `save` prima di scrivere il file. Chiede al provider solo i caratteri che le pagine dipingono, qui cinque. La riga di stato elenca i cinque file serviti dal provider, esattamente quelli di `FONTS`, e nessun sostituto. Un sostituto indica un carattere che manca in `FONTS`. Se togli Crimson Text 600, la riga segnala `Crimson Text 600 → 400` e il grassetto *The Harbour Consort* di pagina 4 si stampa in tondo. L’anteprima di CodePen non può mostrare un PDF, quindi l’`offerPdf` del kit sostituisce il pulsante con due link, uno che apre il PDF in una nuova scheda e uno che lo scarica ([Generare PDF](/it/docs/configuration-programmatic-usage#generare-pdf)).
+
+### 4 · L’albero dei titoli è l’albero dei segnalibri
+
+<Excerpt region="headings" />
+
+Nel PDF, il pannello dei segnalibri mostra il titolo della copertina, *Programme* con sotto *About the music*, *The texts* con le sue tre canzoni, e *The performers*. La struttura segue i livelli dei titoli, quindi sceglili pensando ai segnalibri: qui, un H1 per sezione e un H2 per canzone. *The performers* ha uno stile di titolo proprio, un H1 senza interruzione di pagina e senza apertura, così condivide pagina 4 con la poesia di Tennyson e riceve comunque un segnalibro di primo livello. Il `\\` che divide in due il titolo della copertina diventa uno spazio nel segnalibro.
+
+### 5 · Titolo e autore dal frontmatter
+
+<Excerpt region="cover" />
+
+La copertina stampa due valori del frontmatter tramite `{author}` e `{subtitle}`, e le proprietà del documento PDF prendono il titolo *Home from Sea* e l’autore *The Harbour Consort* dallo stesso blocco. La data e il luogo sono attributi del titolo della copertina. Il disegno dietro di loro è un unico SVG largo quanto la pagina, e il PDF lo conserva come tracciati vettoriali.
+
+## Varianti
+
+### Lascia fuori i segnalibri
+
+Un volantino di una pagina o un manifesto non ha nulla da mettere tra i segnalibri. Con `outlines: false` il PDF non ha struttura, e si apre con la barra laterale chiusa.
+
+```diff
+-    outlines: true, // the default, spelled out: each heading becomes a bookmark
++    outlines: false,
+```
+
+### Servi i font da te
+
+Punta la fetch alle tue copie degli stessi file WOFF2 statici, uno per peso e stile, con i nomi di file di Fontsource. La pagina e il PDF condividono ancora ogni download.
+
+```diff
+-    files.set(file, fetch(`https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${file}.woff2`)
++    files.set(file, fetch(`/fonts/${file}.woff2`)
+       .then((res) => {
+-        if (!res.ok) throw new Error(`Fontsource has no ${family} ${weight} ${style}`);
++        if (!res.ok) throw new Error(`No font file ${file}.woff2`);
+```
+
+## Errori frequenti
+
+Elenca in `FONTS` ogni carattere che le tue pagine usano, compresi il grassetto e il corsivo del testo. Se ne manca uno, lo schermo sembra comunque corretto, perché il kit carica il carattere senza avvisi, ma il PDF stampa il carattere più vicino del provider, e solo i sostituti nella riga di stato rivelano lo scambio.
+
+Usa file statici, uno per peso e stile. Da un WOFF2 variabile il PDF incorpora solo l’istanza predefinita, quindi un tratto in grassetto si stamperebbe in tondo ([Perché un provider di font?](/it/docs/configuration-programmatic-usage#perché-un-provider-di-font)).

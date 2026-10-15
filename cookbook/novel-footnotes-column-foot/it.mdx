@@ -1,0 +1,65 @@
+---
+title: "Note al piede della colonna che le cita"
+summary: "I richiami [^id] del Markdown diventano note numerate al piede della colonna che le cita, con opzioni per una colonna, note a fine capitolo e numeri continui."
+plain: "Un’edizione scolastica di un classico romanzo spagnolo, su due colonne. Mostra come mettere ogni nota in fondo alla colonna che la nomina, così chi legge non deve mai girare pagina per trovarla."
+description: "Un’edizione scolastica del Lazarillo de Tormes su due colonne: ogni nota al piede della colonna che la cita, sotto un filetto corto, con il codice completo."
+question: "Come compongo le note a piè di pagina al piede della colonna in cui sono citate?"
+aliases: ["note a piè di pagina", "note al piede della pagina", "[^1]", "richiami di nota", "note di chiusura", "edizione annotata", "edizione scolastica"]
+---
+
+## Che cosa comporrai
+
+Un’edizione scolastica del *Lazarillo de Tormes*, 210 × 280 mm su due colonne di EB Garamond: il prologo e l’inizio del primo trattato, in cui Lázaro nasce in un mulino sul Tormes e va per il mondo con un cieco. Le note spiegano ciò che un lettore del 1554 sapeva e un lettore di oggi no: il villaggio di Tejares, la spedizione all’isola di Los Gelves, il toro di pietra sul ponte di Salamanca. Ognuna sta al piede della colonna che la cita, in corpo minore sotto un filetto corto color sangue di bue, così l’occhio scende dal numero alla nota e torna su senza girare pagina. L’edizione inglese riporta le note che Clements Markham scrisse per la sua traduzione del 1908.
+
+## Preparazione
+
+### 1 · Cita la nota dove serve, definiscila dove vuoi
+
+La configurazione è nella [risposta breve](#la-risposta-breve) qui sopra; il resto è Markdown. `natives of Tejares,[^9]` stampa un numero in apice attaccato alla virgola, e un paragrafo che comincia con `[^9]:` contiene la nota. Le definizioni escono dal flusso ovunque tu le scriva, quindi questo esempio le tiene tutte alla fine del capitolo, come stavano le note di Markham nel file sorgente. I numeri seguono l’ordine di citazione, quindi gli id del Markdown possono essere parole (`[^tejares]` nell’edizione spagnola) e rinumerare un capitolo non significa mai modificare le note.
+
+### 2 · Lascia alla colonna lo spazio per le sue note
+
+Prima di comporre una riga, l’impaginazione aggiunge l’altezza delle note che quella riga cita per la prima volta, più il filetto quando è la prima nota della colonna. Una riga la cui nota non ci sta sotto passa alla colonna successiva con il suo paragrafo, secondo le regole su vedove e orfane, così un numero non rimanda mai a una nota in un’altra colonna. Le note si impilano dal piede con il loro corpo e la loro interlinea, fuori dalla griglia della linea di base, mentre il testo sopra resta sulla griglia; il bilanciamento delle colonne conta solo il testo.
+
+### 3 · Abbassa ogni apertura alla stessa riga
+
+<Excerpt region="opener" />
+
+L’apertura occupa entrambe le colonne e prende l’occhiello del capitolo dall’attributo `kicker` del titolo. `minHeight` riserva dieci righe della griglia, abbastanza per un titolo in Bodoni di due righe e il suo filetto, così il testo di ogni capitolo comincia sulla stessa riga e il filetto non finisce mai sulla prima riga di testo.
+
+### 4 · Metti il libro sul verso e il capitolo sul recto
+
+<Excerpt region="running-heads" />
+
+Le testatine sono ancorate alla pagina per parità, con il folio sul margine esterno; `pages: 'body'` le tiene lontane dalle aperture, che ricevono un folio centrato al piede. Un titolo di capitolo lungo finisce con i puntini di sospensione a 120 mm invece di finire addosso al folio.
+
+### 5 · Prova le altre collocazioni
+
+<Excerpt region="live" />
+
+Ogni interruttore costruisce di nuovo il capitolo con una sola opzione cambiata. **One column** mette le note al piede della pagina, che lì è la colonna. **End of chapter** le mette dopo l’ultimo paragrafo del capitolo e le fa scendere al piede della colonna che chiudono, sotto lo stesso filetto. **Continuous** fa proseguire i numeri dal prologo nel primo capitolo invece di ricominciare da 1.
+
+## Varianti
+
+### Tieni le note di fine capitolo sotto il testo
+
+Con `placement: 'chapterEnd'` le note stanno per impostazione predefinita al piede dell’ultima colonna; `chapterEndAlign: 'text'` le mette subito sotto l’ultimo paragrafo.
+
+```diff
+   placement: options.placement,
++  chapterEndAlign: 'text',
+```
+
+### Togli il filetto
+
+Senza il filetto le note restano comunque staccate dal testo di `spaceAbove` e `spaceBelowRule`.
+
+```diff
+-  separator: { width: 0.25, lineWidth: pt(0.5), color: col('oxblood') },
++  separator: { enabled: false },
+```
+
+## Errori frequenti
+
+- Un richiamo in una didascalia, in una cella di tabella o in un titolo si stampa così come è scritto: le note si leggono nei paragrafi, nelle voci di elenco, nelle citazioni e nei riquadri.
+- Una nota non si divide mai tra colonne: una più alta della sua colonna sconfina oltre il piede. Tieni le note a poche righe, come fanno i curatori.

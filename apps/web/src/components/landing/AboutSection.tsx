@@ -152,6 +152,23 @@ wie :ref{id="fig-flow"} zeigt.
 Ändern Sie ein Wort: Die Seite
 setzt sich neu.
 :::`,
+  it: `:::part{number="I" title="Fondamenti"
+  palette="band=#2b4acb"}
+:::
+
+# Perché Postext {lead="La tipografia
+a stampa ha impiegato cinque secoli…"}
+
+Postext è un **motore di
+impaginazione open source** che
+porta sul web il mestiere della
+tipografia a stampa, come mostra
+:ref{id="fig-flusso"}.
+
+:::callout{type="try"}
+Cambia una parola: la pagina
+si ricompone.
+:::`,
 };
 
 export async function AboutSection() {

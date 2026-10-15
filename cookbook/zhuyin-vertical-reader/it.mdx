@@ -1,0 +1,60 @@
+---
+title: "Un libro di lettura verticale con lo zhuyin a destra"
+summary: "Un libro di lettura di Taiwan composto in verticale: {守株|ㄕㄡˇ|ㄓㄨ} mette una colonna di zhuyin a destra di ogni carattere, con figure e note in una fascia alta."
+plain: "Un libro di lettura scolastico di Taiwan, stampato in colonne dall’alto in basso. Ogni carattere cinese ha accanto una piccola guida alla pronuncia, così i bambini possono leggere parole che non hanno ancora imparato."
+description: "Una lezione di un libro di lettura di Taiwan in Postext: testo Kai verticale con lo zhuyin accanto a ogni carattere, figure e note sopra, rilegatura a destra."
+question: "Come compongo lo zhuyin accanto a ogni carattere di un testo cinese verticale?"
+aliases: ["zhuyin", "bopomofo", "注音", "注音符號", "國語課本", "manuale di Taiwan", "libro di lettura", "libro di lettura verticale", "直排", "寓言"]
+pageNotes: { "1": "Pagina 86, un verso a destra della doppia pagina: un’immagine di un contadino seduto accanto a un ceppo con una lepre che scappa; sotto, il titolo 第十二課　寓言兩則 in rosso, un sommario, il titolo 一　守株待兔 e il testo originale, ogni carattere con il suo zhuyin; un’unghiatura rossa sul bordo destro porta 第三單元　寓言故事.", "2": "Pagina 87: nella fascia alta un riquadro di quindici note su entrambe le favole, numerate lungo tutta la lezione; sotto, la versione moderna della prima favola e l’originale della seconda, 二　鄭人買履.", "3": "Pagina 88: un’immagine dell’uomo che torna a casa da una bancarella di scarpe allo sgabello dove ha lasciato la sua misura; sotto, la versione moderna della seconda favola e tre domande sotto 想一想.", "4": "Pagina 89: nella fascia alta un riquadro su Han Fei e un riquadro di sei caratteri nuovi con il loro zhuyin; sotto, 語文天地 sulle due favole come modi di dire, i lemmi in rosso, e il colophon." }
+---
+
+## Che cosa comporrai
+
+La lezione 12 del volume 9 di *國語*, un libro di lettura inventato per la quinta elementare di Taiwan: due favole dello *Han Feizi*, il contadino di Song che aspetta accanto a un ceppo un’altra lepre e l’uomo di Zheng che si fida più della sua misura che dei suoi piedi. I libri di lettura di Taiwan sono composti in verticale, in una calligrafia Kai, con lo zhuyin di ogni carattere in una colonna alla sua destra, così un bambino può leggere un carattere prima di impararlo. La lezione si apre su una doppia pagina rilegata a destra. In alto, una fascia contiene le figure, le note, l’autore e i caratteri nuovi; sotto, la lezione corre in Iansui da 16 pt, 23 caratteri per riga. L’equivalente in alfabeto latino è <RecipeLink slug="textbook-margin-column">il manuale con una colonna a margine</RecipeLink>, la cui colonna laterale riservata agli elementi flottanti qui è la fascia alta, ruotata di un quarto di giro.
+
+## Preparazione
+
+### 1 · Una colonna di zhuyin accanto a ogni carattere
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `{宋人|ㄙㄨㄥˋ|ㄖㄣˊ}` dà a ogni carattere la sua lettura, una per `|`; la punteggiatura resta fuori dalle graffe, quindi 。e ， non ne ricevono. Nel testo verticale una lettura in bopomofo va a destra della colonna, con i simboli impilati, il segno di tono a destra dell’ultimo e il punto del tono neutro sopra il primo. A metà del corpo del testo, `cjk.ruby.fontSize` compone i simboli a 0,3 em, così tre simboli stanno accanto a un carattere, e due letture di questo tipo di seguito, come in 就像, restano distanti almeno un quarto di simbolo senza allargare nessuno dei due caratteri; a 0,6 em ㄇㄧㄥˊ è più alto di 明 e distanzia i due caratteri di 明明. Il passo delle righe di 32 pt lascia uno spazio di un em, che lo zhuyin e i suoi segni di tono riempiono per metà. clreq chiede 1,5 em quando lo zhuyin sta tra righe verticali; questo significa un passo di 40 pt e dieci righe per pagina, quindi questa pagina tiene un em per 13 righe da 23, e ogni lettura resta a circa 8 pt dalla riga accanto.
+
+### 2 · Figure e note nella fascia alta
+
+<Excerpt region="upper-tier" />
+
+Nel testo verticale le colonne di un layout `oneAndHalf` sono fasce, e `sideColumnSide: 'left'` mette in alto quella riservata agli elementi flottanti. `::resource{id="plate-1"}` nel testo vi manda la prima figura; il tipo `plate` non ha prefisso di didascalia e le figure non hanno didascalia, quindi sotto non si stampa nulla. Un riquadro recintato con `span="side"` finisce nella fascia a partire dalla riga in cui è recintato, e il suo testo scende lungo la fascia. Le note di entrambe le favole sono un solo riquadro, numerato lungo tutta la lezione e recintato dopo il primo originale, che finisce a pagina 86: riempiono la fascia di pagina 87, così le note di entrambe le favole stanno sulla doppia pagina che contiene i loro originali. Lo zhuyin è 0,3 em del testo che legge, e `cjk.ruby` è un’unica impostazione per tutto il libro, quindi le note e il riquadro dell’autore sono composti a 13 pt per tenere le loro letture a 3,9 pt.
+
+### 3 · Quattro caratteri, ciascuno caricato con il suo testo
+
+<Excerpt region="build" />
+
+La lezione è in Iansui, una calligrafia Kai ricavata da Klee One secondo le forme standard dei caratteri di Taiwan, quelle che i bambini imparano a scrivere. Le letture sono in LXGW WenKai TC, il cui punto del tono neutro resta tondo a 4,8 pt, le note in Noto Serif TC e le etichette in Noto Sans TC. Ogni carattere carica i file che contengono i caratteri che compone: le letture sono separate dai loro caratteri, e i riquadri delle note vanno solo al carattere Ming. `vertical: true` aggiunge le forme verticali, così 「」 e 、 stanno come devono lungo la colonna. `pageIndexOffset: 1` fa della pagina 86 un verso, così la lezione si apre su una doppia pagina.
+
+### 4 · L’unghiatura e i folio sul bordo esterno
+
+<Excerpt region="furniture" />
+
+In un libro rilegato a destra il verso sta a destra della doppia pagina, quindi le pagine pari portano l’unghiatura dell’unità e il folio al bordo destro e le dispari a quello sinistro. L’unghiatura è un riquadro con un elemento di testo sopra; `writingMode: 'vertical-rl'` sull’elemento compone 第三單元　寓言故事 lungo l’unghiatura, mentre i folio e le righe di piede restano orizzontali. I numeri della lezione e della favola vengono dal `numberingTemplate` dei titoli (`第{1:一}課` e `{2:一}`, uno spazio ideografico come `numberSeparator`, `{startAt=12}` sulla lezione), separati dal titolo perché lo zhuyin di 寓 resti sopra 寓; la riga di piede dispari stampa `{chapterNumber}　{chapterTitle}`, perché `{chapterTitle}` lascia fuori il numero.
+
+## Varianti
+
+### Stampa lo zhuyin in un secondo colore
+
+Alcuni libri di lettura stampano le letture più chiare del testo, così i caratteri risaltano.
+
+```diff
+-  ruby: { fontFamily: ZHUYIN, fontSize: em(0.5) },
++  ruby: { fontFamily: ZHUYIN, fontSize: em(0.5), color: col('muted') },
+```
+
+### Componi le letture sopra un testo orizzontale
+
+<RecipeLink slug="pinyin-primer">L’abbecedario in pinyin</RecipeLink> mette una sillaba sopra ogni carattere lungo la riga orizzontale, come fanno i primi libri di lettura della Cina continentale e di Hong Kong.
+
+## Errori frequenti
+
+- Prendi le letture dal dizionario di Taiwan. Gli strumenti basati sui dizionari della Cina continentale, tra cui pypinyin, danno 度 duó, 寧 nìng, 時候 shíhou e 市場 shìchǎng; il *Revised Mandarin Chinese Dictionary* del Ministero dell’Istruzione, che i libri di lettura di Taiwan seguono, legge ㄉㄨㄛˋ, ㄋㄧㄥˊ, ㄕˊ ㄏㄡˋ e ㄕˋ ㄔㄤˊ, e compone 故事, 家裡 e 過來 con la seconda sillaba in tono neutro. moedict.tw lo consulta parola per parola. Mantiene 一 e 不 nel loro tono proprio, e lo stesso fa questa lezione.
+
+- Disegna alcuni caratteri in ogni carattere tipografico prima di mescolarli. LXGW WenKai TC segue le forme ereditate e disegna 為 (U+70BA) come 爲, così una lezione composta con esso stampava 爲宋國笑 nel testo e 為宋國笑 nella nota in Ming sulla stessa doppia pagina. Iansui disegna il 為 standard.
+
+- Iansui ha un solo peso. I titoli risaltano per corpo e i lemmi dei modi di dire per colore: lo stile `idiom` imposta `boldFontWeight: 400` con il colore d’accento come `boldColor`, così `**…**` cambia il colore e non il carattere.

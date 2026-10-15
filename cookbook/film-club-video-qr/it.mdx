@@ -1,0 +1,74 @@
+---
+title: "Il programma di un cineclub con QR code sui poster"
+summary: "Ogni film è una risorsa video il cui poster si stampa con un segno di play e un QR code che lo apre su YouTube; nel PDF anche il poster è un link."
+plain: "Un programma di sei pagine per la stagione autunnale di un cineclub con quattro cortometraggi. Ogni pagina di film mostra un’immagine con un codice che il telefono può inquadrare per vedere il film, e nel PDF l’immagine si può cliccare."
+description: "Il programma di un cineclub in Postext: quattro film di YouTube come risorse video, cartoni del titolo con segno di play, QR code di 20 mm e link nel PDF."
+question: "Come stampo un video in un programma perché il lettore possa inquadrarlo dalla pagina o cliccarlo nel PDF?"
+aliases: ["video su carta", "QR code", "codice QR", "YouTube", "pulsante play", "fotogramma del poster", "programma di film", "cineclub", "inquadra per guardare", "link video nel PDF", "vídeo", "video in print"]
+pageNotes: { "1": "La copertina: una fascia nero schermo sulla metà superiore con l’occhiello «Lumen Film Club · Autumn 2026» in oro, «OPEN MOVIES» in alte maiuscole condensate, un sommario in corsivo, quattro chip nei colori dei film con le date 6, 13, 20 e 27 Nov, e la riga del luogo; seguono due paragrafi di introduzione su carta crema, che citano da «Film 1» a «Film 4».", "2": "Sessione 1, «Elephants Dream»: l’occhiello in rosso, il titolo in maiuscole condensate e una riga dei crediti, poi il cartone del titolo, ingranaggi e cavi di rame su verde petrolio profondo con il nome del film, un segno di play rosso arrotondato nell’angolo in alto a sinistra e un QR code su una piastra crema in basso a destra; sotto, la didascalia «Film 1» e l’indirizzo breve youtu.be/TLkA0RELQ1g, e due paragrafi sul film.", "3": "Sessione 2, «Big Buck Bunny»: un cartone del titolo con un sole color pesca su colline verdi e farfalle, lo stesso segno di play e QR code, la didascalia «Film 2» e due paragrafi.", "4": "Sessione 3, «Tears of Steel»: un cartone del titolo con uno skyline scuro, una guglia di chiesa e una luna con alone in oro, con il segno di play, il QR code, la didascalia «Film 3» e due paragrafi.", "5": "Sessione 4, «Spring»: un cartone del titolo con creste azzurre nella nebbia, abeti scuri e una luce rossa, con il segno di play, il QR code, la didascalia «Film 4» e due paragrafi.", "6": "Note pratiche: orari e prezzi, perché il club può proiettare questi film, come guardarli a casa, i crediti dei quattro film con le loro licenze, e il colophon." }
+---
+
+## Che cosa comporrai
+
+Il programma autunnale del Lumen Film Club, un libretto di 165 × 235 mm su carta crema: una fascia di copertina nero schermo con il titolo della stagione in Big Shoulders Display, poi una pagina per ciascuno dei quattro film open della Blender Foundation. Ogni pagina di film si apre con un occhiello rosso per la sessione, il titolo in maiuscole condensate e una riga dei crediti, poi un cartone del titolo su tutta la giustezza di 125 mm. Un segno di play rosso sta nell’angolo in alto a sinistra del cartone e un QR code di 20 mm in basso a destra. Un socio che ha perso un venerdì punta il telefono sul codice e il film si apre su YouTube; nel PDF l’intero cartone è il link. L’indirizzo breve sotto ogni cartone serve per il telefono che non riesce a leggere il codice.
+
+## Preparazione
+
+### 1 · Fai di ogni film una risorsa video
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Una risorsa video si colloca, si correda di didascalia e si numera come una figura, e la stampa la mostra come il suo poster con due sovrapposizioni. Il segno di play e il codice vanno in angoli opposti, così non si incontrano mai, e il poster alto 70 mm lascia spazio a entrambi. Il codice misura 20 mm con una zona di rispetto di due moduli: `https://youtu.be/` più un id di undici caratteri fa 29 moduli al livello Q, quindi ogni modulo misura 0,61 mm, circa il doppio di ciò che serve alla fotocamera di un telefono. Q è il livello più alto che mantiene 29 moduli a questa lunghezza (il motore vi porta M da solo); H ne richiederebbe 33 e ridurrebbe i moduli a 0,54 mm. Il tipo predefinito `video` stamperebbe *Video 1.1*; rinominato in *Film* e contato con `{n}` su tutto il documento, numera le quattro sessioni della stagione da *Film 1* a *Film 4*, e le citazioni della copertina stampano le stesse parole.
+
+### 2 · Tieni breve l’indirizzo e lascia che il motore lo espanda
+
+<Excerpt region="films" />
+
+L’indirizzo di ogni voce è quello stampato sotto il cartone, `youtu.be/TLkA0RELQ1g`, che il lettore può digitare. `parseVideoUrl` legge qualunque forma di YouTube o Vimeo, e `videoWatchUrl` scrive l’indirizzo canonico a partire da ciò che ha letto: il QR code e il link nel PDF contengono entrambi `https://youtu.be/<id>`. Un errore di battitura che non lascia un id valido fa restituire `undefined` a `parseVideoUrl`, e il pen si ferma prima della costruzione, così un link rotto non arriva mai in tipografia.
+
+### 3 · Disegna un cartone del titolo per il poster
+
+<Excerpt region="art" />
+
+Nella maggior parte dei progetti il poster è un fotogramma del film: la Sandbox lo recupera quando inserisci l’indirizzo, e nel codice `youtubePosterUrls(id)` elenca le miniature di YouTube dalla più grande (1280 × 720) in giù. I fotogrammi delle piattaforme appartengono ai film e alle loro licenze, e un programma stampato può usare cartoni del titolo propri, quindi qui ogni film ne riceve uno disegnato su un canvas nel suo colore, con il motivo, il titolo, l’anno e il regista del film. Il cartone lascia liberi gli angoli in alto a sinistra e in basso a destra per le sovrapposizioni. Un canvas disegna ogni cartone e ne compone il testo nei caratteri del libretto, che a quel punto la pagina ha già caricato. Il cartone misura 1600 × 900 pixel, il 16:9 dei film, e `video.poster` dichiara quella dimensione: alla giustezza di 125 mm si stampa a 325 dpi. Un video senza poster si stampa come un riquadro scuro 16:9 con lo stesso segno e lo stesso codice, e la costruzione lo segnala con un avviso.
+
+### 4 · Metti il poster sotto l’apertura
+
+<Excerpt region="furniture" />
+
+Ogni film è un titolo di primo livello la cui apertura impila l’occhiello della sessione, il titolo e la riga dei crediti, tutti e tre dagli attributi del titolo. `::resource` mette il poster subito sotto con `position: 'here'`, così ogni pagina di film ha lo stesso ordine. La copertina è uno stile di titolo la cui fascia, il cui titolo e i cui chip sono elementi del progetto grafico; i quattro chip prendono i colori dei film dalla palette, come i cartoni del titolo.
+
+### 5 · Una sola palette per le pagine e i cartoni
+
+<Excerpt region="palette" />
+
+Il nero, il rosso e il crema sono quelli del libretto; i quattro colori dei film (chiamati come i progetti Blender Orange, Peach e Mango, più Spring) dipingono sia i chip della copertina sia i cartoni. Il segno di play è dello stesso rosso degli occhielli, e la piastra del QR code è il crema della pagina con i moduli in nero: un codice scuro su una piastra chiara, il contrasto che ogni app di lettura si aspetta.
+
+## Varianti
+
+### Stampa il fotogramma del film
+
+Recupera la miniatura più grande di YouTube invece di disegnare un cartone, quando la licenza del film e il tuo hosting lo permettono, e dichiara la dimensione del fotogramma.
+
+```diff
+-for (const f of FILMS) await titleCard(f); // after the fonts: the cards set type too
++for (const f of FILMS) { // 1280 × 720, maxresdefault.jpg, the first of youtubePosterUrls
++  await loadImage(`${f.id}.png`, youtubePosterUrls(parseVideoUrl(f.address).id)[0]);
++}
+```
+
+### Riproduci i film nell’edizione HTML
+
+`renderToHtml` compone ogni video come il player di YouTube con privacy avanzata, e un EPUB mostra il poster collegato al film; `videoStyle.html: 'poster'` mantiene anche a schermo il cartone stampato. Vedi [Video](/it/docs/document-format#video) e [Stile dei video](/it/docs/configuration-resources#stile-dei-video).
+
+### Centra un segno di play più grande
+
+Un segno al centro del cartone si riconosce come un player video anche dall’altra parte della stanza; i cartoni tengono libera dal testo la fascia centrale, quindi copre solo il motivo.
+
+```diff
+-  playMark: { shape: 'rounded', position: 'top-left', size: mm(8), inset: mm(4),
++  playMark: { shape: 'rounded', position: 'center', size: mm(14), inset: mm(4),
+```
+
+## Errori frequenti
+
+- Il motore limita il codice al 45 % del lato corto del poster e il segno di play al 40 %. Su un poster piccolo un codice di 20 mm diventa più piccolo, e con lui i suoi moduli: un codice di 20 mm richiede un poster alto almeno 45 mm.
+- Due sovrapposizioni con la stessa posizione si coprono a vicenda. Dai al segno di play e al codice angoli diversi, e disegna il poster con quegli angoli liberi.

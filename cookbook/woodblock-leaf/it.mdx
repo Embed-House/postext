@@ -1,0 +1,89 @@
+---
+title: "Un foglio xilografico: doppia cornice, filetti e striscia"
+summary: "Il commento di Zhu Xi ai Dialoghi come lo stampava una matrice di legno: un foglio per doppia pagina, doppia cornice, filetti, la striscia centrale sulla piega."
+plain: "Un libro classico cinese composto come le antiche stampe xilografiche. Ogni pagina ha un doppio bordo e linee sottili tra le colonne, e le note scorrono in piccolo dentro le righe."
+description: "Tre fogli del commento di Zhu Xi ai Dialoghi come edizione xilografica in Postext: testo verticale, note su due righe, filetti e striscia a coda di pesce."
+question: "Come impagino un foglio xilografico con doppia cornice, filetti tra le colonne e la striscia sulla piega?"
+aliases: ["stampa xilografica", "libro xilografico", "libro a legatura cucita", "frontespizio", "classico cinese", "Dialoghi", "Analetti", "Zhu Xi", "coda di pesce", "filetti tra le colonne", "doppia cornice", "mezzo foglio", "numero del foglio", "線裝書", "刻本", "內封", "版心", "魚尾", "界行", "四周雙邊", "半葉", "論語集註"]
+pageNotes: { "1": "La pagina 1, il frontespizio, da sola a sinistra del dorso: una doppia cornice divisa in tre colonne da due linee sottili. La firma «宋 朱子 集註» in testa alla colonna destra, il titolo «論語集註» in grandi caratteri Kai al centro, e al piede della colonna sinistra tre brevi colonne rosse: la nota su questa edizione. Un colophon di due righe in piccoli caratteri grigi sotto la cornice.", "2": "La pagina 2, la metà destra del primo foglio: nove colonne dentro una linea esterna spessa e una interna sottile, con una linea sottile tra ogni coppia di colonne. Da destra: «論語卷一», la firma «宋 朱子 集註» in basso nella seconda colonna, «學而第一» con la sua nota su due righe piccole, poi «子曰學而時習之不亦說乎» e le note di Zhu Xi piegate dentro le colonne. Sul bordo sinistro, sulla piega, metà della striscia centrale: «論語集註», una coda di pesce nera, «卷一» e il numero del foglio «一».", "3": "La pagina 3, la metà sinistra dello stesso foglio, con l’altra metà della striscia centrale sul bordo destro, così che le pagine 2 e 3 affiancate mostrano il foglio intero con la striscia al centro.", "6": "La pagina 6, la metà destra del terzo foglio. La sua prima colonna prosegue una nota su due righe piccole, interrotta dove finiva il secondo foglio; il numero del foglio sulla piega è «三».", "7": "La pagina 7, la metà sinistra del terzo foglio. Il testo finisce una colonna prima della cornice." }
+---
+
+## Che cosa comporrai
+
+Tre fogli del commento di Zhu Xi ai *Dialoghi* di Confucio (論語集註), l’inizio del libro 學而, composti come li stampava una matrice di legno, dopo un frontespizio. Ogni pagina è un mezzo foglio, 121 × 213 mm, e ogni doppia pagina è un foglio intero, letto da destra: su ogni metà nove colonne di 17 caratteri in Noto Serif TC da 20 pt, una doppia cornice, una linea sottile tra ogni coppia di colonne, e sulla piega la striscia centrale (版心) con il titolo, una coda di pesce nera, il juan e il numero del foglio. Le note di Zhu Xi si piegano in due righe di caratteri da 10 pt dentro la colonna, dopo le parole che spiegano. Il margine di testa è il doppio di quello di piede.
+
+## Preparazione
+
+### 1 · Un mezzo foglio per pagina, un foglio per doppia pagina
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Una matrice stampava un foglio intero (葉) alla volta, con le due metà ai lati della striscia centrale; lo stampatore piegava il foglio lungo la striscia, con il lato stampato all’esterno, e cuciva i bordi aperti, così la striscia diventava il taglio esterno del libro. Queste pagine stanno come il foglio usciva dalla matrice. Ogni pagina è un mezzo foglio. In un [libro rilegato a destra](/it/docs/configuration-page-layout#rilegatura) la pagina 1 sta da sola a sinistra del dorso e ogni doppia pagina successiva accoppia una pagina pari a destra con la pagina dispari che la segue, quindi con il frontespizio a pagina 1 ogni doppia pagina contiene un foglio. La [griglia dei caratteri](/it/docs/configuration-east-asian#griglia-di-caratteri) imposta il 行款 della matrice, nove colonne di 17 caratteri, e i margini che lascia sono esatti: quello interno è metà della striscia.
+
+Postext numera le pagine, non i fogli. Ogni foglio si apre con un titolo di livello 1 [nascosto](/it/docs/configuration-text#sovrascritture-per-livello): non stampa nulla e non occupa spazio, ma il suo `breakBefore` con `parity: 'even'` comincia una pagina di destra, e il suo numero, 一, 二, 三 tramite `numberingTemplate: '{1:一}'`, è il `{chapterNumber}` della striscia.
+
+### 2 · Spezza il testo dove finisce ogni foglio
+
+Il copista che trascriveva un testo per l’intagliatore lo adattava alla matrice, foglio per foglio. Il Markdown fa lo stesso: il titolo di un foglio va dove finisce la nona colonna della metà sinistra del foglio precedente, anche dentro una frase o una nota. Una nota interrotta lì viene chiusa e riaperta, e poiché ogni colonna piega in due righe la propria parte di una nota, le righe escono come erano:
+
+```markdown
+子曰巧言令色鮮矣仁:warichu[巧好令善也好其言善其色致飾於]
+
+# 學而
+
+:warichu[外務以悦人則人欲肆而本心之德亡矣…]
+```
+
+La matrice non ha punteggiatura, quindi nessuna regola di a capo sposta un carattere, e ogni colonna finisce sul suo 17º: le interruzioni dei fogli si contano una volta e restano ferme. Le note di Zhu Xi sono span [`:warichu[…]`](/it/docs/document-format#segni-cinesi-ruby-e-warichu) alla metà del corpo predefinita, 34 caratteri piccoli per riga, con un ○ tra la lettura e la glossa come nella matrice.
+
+### 3 · Disegna la matrice dai numeri della griglia
+
+<Excerpt region="frame" />
+
+L’intestazione è impaginata sul foglio, quindi la cornice, i filetti e la striscia sono collocati in punti dall’angolo della pagina con i numeri che impostano la griglia: un [elemento filetto](/it/docs/configuration-page-layout#elementi-filetto) ogni 29 pt attraverso la gabbia, un [riquadro](/it/docs/configuration-page-layout#elementi-riquadro) 4,5 pt attorno al testo per la linea sottile e un altro 4,5 pt più all’esterno per quella spessa. Ogni colonna di caratteri sta al centro del suo passo, quindi i filetti cadono a metà tra le colonne. Il testo della striscia è composto lungo la pagina da [elementi di testo verticali](/it/docs/configuration-page-layout#elementi-di-testo-verticale) e la coda di pesce è un [elemento immagine](/it/docs/configuration-page-layout#elementi-immagine) SVG, entrambi centrati tra i due filetti della striscia, sulla piega: ogni pagina mostra 17 pt della striscia. Ogni pagina disegna per intero il testo della striscia e la coda di pesce e mostra la parte dal suo lato, e affiancate le parti si incontrano. Per lo stesso motivo le cornici proseguono oltre la piega.
+
+### 4 · Dai al frontespizio uno stile suo
+
+<Excerpt region="title" />
+
+Il frontespizio (內封) è un titolo di livello 1 con uno [stile di titolo](/it/docs/configuration-styles#stili-dei-titoli) nascosto e non numerato, così i fogli contano ancora da 一. Uno stile governa le pagine della sua sezione, e lì il suo `header` sostituisce quello del documento: il frontespizio riceve una cornice chiusa divisa in tre colonne invece degli elementi di un mezzo foglio. La firma, la nota di questa edizione in Kai rosso e il colophon vengono dagli [attributi](/it/docs/document-format#attributi-dei-titoli) del titolo; il colophon è l’unica riga che cambia con la lingua dell’edizione. `\n` in un attributo comincia una nuova colonna.
+
+### 5 · Carica ogni carattere con i glifi che compone
+
+<Excerpt region="voices" />
+
+Fontsource serve ogni carattere cinese in circa cento file per peso. Il Song compone i fogli, la striscia e i numeri dei fogli, quindi la sua chiamata riceve l’esempio e quei caratteri; il Kai compone solo il titolo e la nota. La matrice non ha punteggiatura, quindi nessuno dei due caratteri ha bisogno delle forme verticali di `loadCjkFonts(…, { vertical: true })`.
+
+### 6 · Un solo inchiostro su una carta calda
+
+<Excerpt region="palette" />
+
+Il testo e le linee della matrice si stampano in un unico nero caldo, 14 : 1 sulla carta. Sono comunque due voci di palette, `ink` e `rule`, così i filetti possono cambiare colore senza il testo. Il rosso è riservato a ciò che aggiunge questa edizione.
+
+## Varianti
+
+### Traccia le colonne in rosso
+
+Le copie fatte per il 四庫全書 erano scritte su carta rigata in rosso (朱絲欄). Cambia il colore dei filetti; la coda di pesce lo segue.
+
+```diff
+-  rule: '#1f1b17', // the frame, the column rules and the fish tail: the same block, same ink
++  rule: '#b3412e', // 朱絲欄: red rules under black text
+```
+
+### Intaglia una matrice diversa
+
+Le matrici avevano molti conteggi diversi, e 半葉十行，行二十字 è uno dei più comuni. Le cornici, la striscia, le tre celle del frontespizio e il rientro della firma sono tutti calcolati da questi numeri, quindi li seguono; le interruzioni dei fogli nel Markdown vanno contate di nuovo.
+
+```diff
+-const [BODY, PITCH, CHARS, LINES] = [20, 29, 17, 9];
++const [BODY, PITCH, CHARS, LINES] = [17, 24.5, 20, 10];
+```
+
+### Confrontalo con una pagina europea su una griglia
+
+<RecipeLink slug="baseline-grid-book-page">Una pagina di libro su una griglia della linea di base</RecipeLink> costruisce la sua gabbia da un numero di righe, come questo foglio costruisce la propria da colonne e caratteri; <RecipeLink slug="certificate-single-page">l’attestato</RecipeLink> disegna il suo bordo nell’intestazione di uno stile di titolo, come fa qui il frontespizio.
+
+## Errori frequenti
+
+- Le interruzioni dei fogli vivono nel Markdown. Cambia il testo, il corpo o il 行款 e un foglio che sborda spinge il titolo successivo una pagina più avanti, così le doppie pagine smettono di corrispondere ai fogli; uno che resta corto lascia colonne vuote prima della piega. Controlla l’ultima colonna di ogni pagina di sinistra.
+- La trascrizione del 四庫全書 scrive 巳 sia per 已 sia per 己; questo esempio legge ciascuno dalla sua frase. La pagina va comunque corretta sulle scansioni, e si vede: l’osservazione di 張敬夫 dice 必開其政 dove i *Dialoghi* che ripete hanno 必聞其政, e due caratteri arrivano come immagini del glifo. L’esempio compone 聞, 傳 e 邦. Controlla un passo su una seconda edizione prima di comporlo.
+- La stessa trascrizione porta forme per cui Noto Serif TC non ha glifo (廹 徳 絶 逺 専 内). Cinque di esse cadono nell’intervallo di un file Fontsource, quindi `loadCjkFonts` le lascia passare, e allora il canvas le disegna da un carattere di sistema e postext-pdf stampa una casella vuota e lo segnala. 廹 non cade nell’intervallo di nessun file, e `loadCjkFonts` si ferma con un errore. L’esempio compone 迫 德 絕 遠 專 內.

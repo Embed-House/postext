@@ -1,16 +1,16 @@
 {
   "$comment": "The Cookbook's book structure: parts (the docs' part colours and numerals), the chapters a recipe belongs to (exactly one each; ids and numbers are permanent, new chapters are appended, cap 12), the secondary facets (genres, outputs, levels) and the localised H2 headings of the write-up template. Labels here feed the gallery's filters, the band and the catalogue; no UI string for these lives in messages/*.json.",
   "parts": [
-    { "id": "page", "number": "I", "color": "blue", "title": { "en": "The page", "es": "La página", "ca": "La pàgina", "zh": "页面", "ar": "الصفحة", "ja": "ページ", "pt": "A página", "fr": "La page", "de": "Die Seite" } },
-    { "id": "book", "number": "II", "color": "gilt", "title": { "en": "The book", "es": "El libro", "ca": "El llibre", "zh": "图书", "ar": "الكتاب", "ja": "本", "pt": "O livro", "fr": "Le livre", "de": "Das Buch" } },
-    { "id": "practice", "number": "III", "color": "vermilion", "title": { "en": "In practice", "es": "La práctica", "ca": "La pràctica", "zh": "实践", "ar": "في التطبيق", "ja": "実践", "pt": "Na prática", "fr": "En pratique", "de": "In der Praxis" } }
+    { "id": "page", "number": "I", "color": "blue", "title": { "en": "The page", "es": "La página", "ca": "La pàgina", "zh": "页面", "ar": "الصفحة", "ja": "ページ", "pt": "A página", "fr": "La page", "de": "Die Seite", "it": "La pagina" } },
+    { "id": "book", "number": "II", "color": "gilt", "title": { "en": "The book", "es": "El libro", "ca": "El llibre", "zh": "图书", "ar": "الكتاب", "ja": "本", "pt": "O livro", "fr": "Le livre", "de": "Das Buch", "it": "Il libro" } },
+    { "id": "practice", "number": "III", "color": "vermilion", "title": { "en": "In practice", "es": "La práctica", "ca": "La pràctica", "zh": "实践", "ar": "في التطبيق", "ja": "実践", "pt": "Na prática", "fr": "En pratique", "de": "In der Praxis", "it": "In pratica" } }
   ],
   "chapters": [
     {
       "id": "page",
       "number": 1,
       "part": "page",
-      "title": { "en": "Page & grid", "es": "Página y retícula", "ca": "Pàgina i retícula", "zh": "页面与网格", "ar": "الصفحة والشبكة", "ja": "ページとグリッド", "pt": "Página e grade", "fr": "Page et grille", "de": "Seite und Raster" },
+      "title": { "en": "Page & grid", "es": "Página y retícula", "ca": "Pàgina i retícula", "zh": "页面与网格", "ar": "الصفحة والشبكة", "ja": "ページとグリッド", "pt": "Página e grade", "fr": "Page et grille", "de": "Seite und Raster", "it": "Pagina e griglia" },
       "intro": {
         "en": "Trim sizes, mirrored margins, one, two and one-and-a-half columns, the baseline grid, flush columns and pages built to exact positions.",
         "es": "Formatos de página, márgenes simétricos, maquetas a una columna, a dos y a columna y media, la rejilla base, columnas que acaban a ras y páginas compuestas con medidas exactas.",
@@ -20,14 +20,15 @@
         "ja": "仕上がりサイズ、見開きで対称になる余白、1段・2段・1段半の段組み、ベースライングリッド、段末をそろえた段、正確な位置に組むページ。",
         "pt": "Formatos de página, margens espelhadas, diagramações em uma, duas e uma coluna e meia, a grade de linhas de base, colunas que terminam alinhadas e páginas montadas com posições exatas.",
         "fr": "Formats de page, marges en miroir, une, deux colonnes ou colonne et demie, grille de ligne de base, colonnes alignées en pied et pages construites à des positions exactes.",
-        "de": "Endformate, gespiegelte Ränder, eine, zwei und anderthalb Spalten, das Grundlinienraster, bündige Spalten und Seiten, die auf genaue Positionen gebaut sind."
+        "de": "Endformate, gespiegelte Ränder, eine, zwei und anderthalb Spalten, das Grundlinienraster, bündige Spalten und Seiten, die auf genaue Positionen gebaut sind.",
+        "it": "Formati, margini speculari, una, due e una colonna e mezza, la griglia della linea di base, colonne pareggiate e pagine costruite in posizioni esatte."
       }
     },
     {
       "id": "type",
       "number": 2,
       "part": "page",
-      "title": { "en": "Type & text", "es": "Texto y tipografía", "ca": "Text i tipografia", "zh": "字体与文字", "ar": "الحروف والنص", "ja": "文字と本文", "pt": "Tipo e texto", "fr": "Caractères et texte", "de": "Schrift und Text" },
+      "title": { "en": "Type & text", "es": "Texto y tipografía", "ca": "Text i tipografia", "zh": "字体与文字", "ar": "الحروف والنص", "ja": "文字と本文", "pt": "Tipo e texto", "fr": "Caractères et texte", "de": "Schrift und Text", "it": "Caratteri e testo" },
       "intro": {
         "en": "Justification and hyphenation per language, verse set line by line, paragraph styles, chips, superscripts, subscripts and maths.",
         "es": "Justificación y separación silábica por idioma, verso compuesto línea a línea, estilos de párrafo, chips, superíndices, subíndices y matemáticas.",
@@ -37,14 +38,15 @@
         "ja": "言語ごとの両端そろえとハイフネーション、1行ずつ組む韻文、段落スタイル、チップ、上付き文字、下付き文字、数式。",
         "pt": "Justificação e hifenização por idioma, verso composto linha a linha, estilos de parágrafo, chips, sobrescritos, subscritos e matemática.",
         "fr": "Justification et césure selon la langue, vers composés ligne à ligne, styles de paragraphe, pastilles, exposants, indices et mathématiques.",
-        "de": "Blocksatz und Silbentrennung je Sprache, Verse Zeile für Zeile gesetzt, Absatzformate, Chips, Hoch- und Tiefstellungen und Formeln."
+        "de": "Blocksatz und Silbentrennung je Sprache, Verse Zeile für Zeile gesetzt, Absatzformate, Chips, Hoch- und Tiefstellungen und Formeln.",
+        "it": "Giustificazione e sillabazione per lingua, versi composti riga per riga, stili di paragrafo, chip, apici, pedici e matematica."
       }
     },
     {
       "id": "headings",
       "number": 3,
       "part": "page",
-      "title": { "en": "Headings & openers", "es": "Títulos y aperturas", "ca": "Títols i obertures", "zh": "标题与章首页", "ar": "العناوين وصفحات الافتتاح", "ja": "見出しと章扉", "pt": "Títulos e aberturas", "fr": "Titres et ouvertures", "de": "Überschriften und Auftakte" },
+      "title": { "en": "Headings & openers", "es": "Títulos y aperturas", "ca": "Títols i obertures", "zh": "标题与章首页", "ar": "العناوين وصفحات الافتتاح", "ja": "見出しと章扉", "pt": "Títulos e aberturas", "fr": "Titres et ouvertures", "de": "Überschriften und Auftakte", "it": "Titoli e aperture" },
       "intro": {
         "en": "Band and photo openers, sunk and framed titles, side heads and hanging numbers, badges, datelines and one-off designed pages.",
         "es": "Aperturas con banda y con foto, títulos hundidos y enmarcados, títulos al margen y números colgados, insignias, fechas y páginas sueltas de diseño propio.",
@@ -54,14 +56,15 @@
         "ja": "帯と写真の章扉、下げて組んだタイトルと枠付きのタイトル、サイド見出しとぶら下げた番号、バッジ、日付欄、1回限りのデザインページ。",
         "pt": "Aberturas com faixa e com foto, títulos rebaixados e emoldurados, títulos laterais e números pendurados, selos, datas e páginas avulsas com design próprio.",
         "fr": "Ouvertures à bande et à photo, titres abaissés et encadrés, intertitres en marge et numéros en saillie, badges, lignes de date et pages uniques composées sur mesure.",
-        "de": "Auftakte mit Band und Foto, abgesenkte und gerahmte Titel, Marginaltitel und hängende Nummern, Abzeichen, Ortsmarken und einmalig gestaltete Seiten."
+        "de": "Auftakte mit Band und Foto, abgesenkte und gerahmte Titel, Marginaltitel und hängende Nummern, Abzeichen, Ortsmarken und einmalig gestaltete Seiten.",
+        "it": "Aperture con fascia e con foto, titoli calati e incorniciati, titoli laterali e numeri sporgenti, badge, righe di data e pagine progettate una per una."
       }
     },
     {
       "id": "running-heads",
       "number": 4,
       "part": "book",
-      "title": { "en": "Running heads & folios", "es": "Cabeceras y folios", "ca": "Capçaleres i folis", "zh": "书眉与页码", "ar": "الترويسات وأرقام الصفحات", "ja": "柱とノンブル", "pt": "Cabeços e fólios", "fr": "Titres courants et folios", "de": "Kolumnentitel und Paginas" },
+      "title": { "en": "Running heads & folios", "es": "Cabeceras y folios", "ca": "Capçaleres i folis", "zh": "书眉与页码", "ar": "الترويسات وأرقام الصفحات", "ja": "柱とノンブル", "pt": "Cabeços e fólios", "fr": "Titres courants et folios", "de": "Kolumnentitel und Paginas", "it": "Testatine e folio" },
       "intro": {
         "en": "Verso and recto heads, folios, filters by page role and parity, thumb tabs that move or change colour, and painted blank pages.",
         "es": "Cabeceras de página par e impar, folios, filtros por tipo de página y paridad, uñeros que bajan o cambian de color y páginas en blanco pintadas.",
@@ -71,14 +74,15 @@
         "ja": "偶数ページと奇数ページの柱、ノンブル、ページの役割と偶奇による絞り込み、位置や色が変わるツメ、色を塗った白ページ。",
         "pt": "Cabeços de página par e ímpar, fólios, filtros por tipo de página e paridade, índices de dedo que descem ou mudam de cor e páginas em branco pintadas.",
         "fr": "Titres courants de verso et de recto, folios, filtres selon le rôle et la parité de la page, onglets de tranche qui se déplacent ou changent de couleur, et pages blanches peintes.",
-        "de": "Kolumnentitel auf linken und rechten Seiten, Paginas, Filter nach Seitenrolle und Parität, Daumenregister, die wandern oder die Farbe wechseln, und gestaltete Vakatseiten."
+        "de": "Kolumnentitel auf linken und rechten Seiten, Paginas, Filter nach Seitenrolle und Parität, Daumenregister, die wandern oder die Farbe wechseln, und gestaltete Vakatseiten.",
+        "it": "Testatine di verso e di recto, folio, filtri per ruolo e parità della pagina, linguette a unghiatura che si spostano o cambiano colore, e pagine bianche colorate."
       }
     },
     {
       "id": "structure",
       "number": 5,
       "part": "book",
-      "title": { "en": "Book structure", "es": "Estructura del libro", "ca": "Estructura del llibre", "zh": "图书结构", "ar": "بنية الكتاب", "ja": "本の構成", "pt": "Estrutura do livro", "fr": "Structure du livre", "de": "Buchaufbau" },
+      "title": { "en": "Book structure", "es": "Estructura del libro", "ca": "Estructura del llibre", "zh": "图书结构", "ar": "بنية الكتاب", "ja": "本の構成", "pt": "Estrutura do livro", "fr": "Structure du livre", "de": "Buchaufbau", "it": "Struttura del libro" },
       "intro": {
         "en": "Covers, front matter, contents generated from the headings, parts in colour, back matter and books built chapter by chapter.",
         "es": "Cubiertas, preliminares, índices generados a partir de los títulos, partes en color, páginas finales y libros compuestos capítulo a capítulo.",
@@ -88,14 +92,15 @@
         "ja": "表紙、前付け、見出しから生成する目次、色分けした部、後付け、1章ずつ組み上げる本。",
         "pt": "Capas, elementos pré-textuais, sumários gerados a partir dos títulos, partes em cor, elementos pós-textuais e livros montados capítulo a capítulo.",
         "fr": "Couvertures, pages liminaires, table des matières générée à partir des titres, parties en couleur, pages de fin et livres construits chapitre par chapitre.",
-        "de": "Umschläge, Titelei, aus den Überschriften erzeugte Inhaltsverzeichnisse, farbige Teile, Anhang und Bücher, die Kapitel für Kapitel gebaut werden."
+        "de": "Umschläge, Titelei, aus den Überschriften erzeugte Inhaltsverzeichnisse, farbige Teile, Anhang und Bücher, die Kapitel für Kapitel gebaut werden.",
+        "it": "Copertine, pagine preliminari, indici generati dai titoli, parti a colori, apparati finali e libri costruiti capitolo per capitolo."
       }
     },
     {
       "id": "boxes",
       "number": 6,
       "part": "book",
-      "title": { "en": "Boxes & notes", "es": "Recuadros y notas", "ca": "Requadres i notes", "zh": "框与注释", "ar": "الإطارات والملاحظات", "ja": "囲みと注", "pt": "Boxes e notas", "fr": "Encadrés et notes", "de": "Kästen und Anmerkungen" },
+      "title": { "en": "Boxes & notes", "es": "Recuadros y notas", "ca": "Requadres i notes", "zh": "框与注释", "ar": "الإطارات والملاحظات", "ja": "囲みと注", "pt": "Boxes e notas", "fr": "Encadrés et notes", "de": "Kästen und Anmerkungen", "it": "Riquadri e note" },
       "intro": {
         "en": "Callout families, boxes that split, float or stay pinned, footnotes, endnotes and margin glosses, worksheets, recipe cards and code listings.",
         "es": "Familias de recuadros, cajas que se parten, flotan o se quedan fijas, notas al pie, notas finales y glosas al margen, fichas de ejercicios y de recetas, y listados de código.",
@@ -105,14 +110,15 @@
         "ja": "囲みのファミリー、分割される囲み・フロートする囲み・位置を固定した囲み、脚注、後注、傍注、ワークシート、レシピカード、コードリスト。",
         "pt": "Famílias de boxes, caixas que se dividem, flutuam ou ficam fixas, notas de rodapé, notas de fim e glosas na margem, fichas de exercícios, fichas de receitas e listagens de código.",
         "fr": "Familles d’encadrés, encadrés qui se coupent, flottent ou restent fixés, notes de bas de page, notes de fin et gloses marginales, fiches d’exercices, fiches recettes et listings de code.",
-        "de": "Kastenfamilien, Kästen, die sich teilen, gleiten oder fest stehen, Fußnoten, Endnoten und Marginalien, Arbeitsblätter, Rezeptkarten und Code-Listings."
+        "de": "Kastenfamilien, Kästen, die sich teilen, gleiten oder fest stehen, Fußnoten, Endnoten und Marginalien, Arbeitsblätter, Rezeptkarten und Code-Listings.",
+        "it": "Famiglie di riquadri, riquadri che si dividono, flottano o restano fissati, note a piè di pagina, note di chiusura e glosse a margine, schede di esercizi, schede di ricette e listati di codice."
       }
     },
     {
       "id": "figures",
       "number": 7,
       "part": "book",
-      "title": { "en": "Figures & images", "es": "Figuras e imágenes", "ca": "Figures i imatges", "zh": "图与图片", "ar": "الأشكال والصور", "ja": "図と画像", "pt": "Figuras e imagens", "fr": "Figures et images", "de": "Abbildungen und Bilder" },
+      "title": { "en": "Figures & images", "es": "Figuras e imágenes", "ca": "Figures i imatges", "zh": "图与图片", "ar": "الأشكال والصور", "ja": "図と画像", "pt": "Figuras e imagens", "fr": "Figures et images", "de": "Abbildungen und Bilder", "it": "Figure e immagini" },
       "intro": {
         "en": "Numbered figures that float to their citation, facing plates, maps and rotated overviews, full-bleed spreads and single-ink artwork.",
         "es": "Figuras numeradas que flotan hasta su cita, láminas enfrentadas, mapas y vistas giradas, dobles páginas a sangre e ilustración a una sola tinta.",
@@ -122,14 +128,15 @@
         "ja": "参照箇所へフロートする番号付きの図、向かい合わせの図版、地図と回転した全体図、裁ち落としの見開き、単色インキのアートワーク。",
         "pt": "Figuras numeradas que flutuam até a citação, pranchas em páginas opostas, mapas e vistas giradas, páginas duplas com sangria e ilustrações em uma só cor.",
         "fr": "Figures numérotées qui flottent jusqu’à leur citation, planches en regard, cartes et vues d’ensemble pivotées, doubles pages à fond perdu et illustrations à une seule encre.",
-        "de": "Nummerierte Abbildungen, die zu ihrem Zitat gleiten, gegenüberstehende Tafeln, Karten und gedrehte Übersichten, randabfallende Doppelseiten und einfarbige Grafiken."
+        "de": "Nummerierte Abbildungen, die zu ihrem Zitat gleiten, gegenüberstehende Tafeln, Karten und gedrehte Übersichten, randabfallende Doppelseiten und einfarbige Grafiken.",
+        "it": "Figure numerate che flottano verso la loro citazione, tavole a fronte, mappe e panoramiche ruotate, doppie pagine al vivo e illustrazioni a un solo inchiostro."
       }
     },
     {
       "id": "tables",
       "number": 8,
       "part": "book",
-      "title": { "en": "Tables", "es": "Tablas", "ca": "Taules", "zh": "表", "ar": "الجداول", "ja": "表", "pt": "Tabelas", "fr": "Tableaux", "de": "Tabellen" },
+      "title": { "en": "Tables", "es": "Tablas", "ca": "Taules", "zh": "表", "ar": "الجداول", "ja": "表", "pt": "Tabelas", "fr": "Tableaux", "de": "Tabellen", "it": "Tabelle" },
       "intro": {
         "en": "Tables built from data: merged headers, splits with a repeated header, fills and swatch keys, pictures in cells, calendars and grids.",
         "es": "Tablas construidas a partir de datos: cabeceras combinadas, cortes con cabecera repetida, rellenos y leyendas de color, imágenes en celdas, calendarios y rejillas.",
@@ -139,14 +146,15 @@
         "ja": "データから組む表。結合した見出し、見出しを繰り返す分割、塗りと色見本の凡例、セル内の画像、カレンダーとグリッド。",
         "pt": "Tabelas montadas a partir de dados: cabeçalhos mesclados, quebras com cabeçalho repetido, preenchimentos e legendas de cor, imagens nas células, calendários e grades.",
         "fr": "Tableaux construits à partir de données : en-têtes fusionnés, coupures avec en-tête répété, fonds et légendes de couleur, images dans les cellules, calendriers et grilles.",
-        "de": "Aus Daten gebaute Tabellen: verbundene Kopfzellen, Teilungen mit wiederholtem Kopf, Füllungen und Farbfeld-Legenden, Bilder in Zellen, Kalender und Raster."
+        "de": "Aus Daten gebaute Tabellen: verbundene Kopfzellen, Teilungen mit wiederholtem Kopf, Füllungen und Farbfeld-Legenden, Bilder in Zellen, Kalender und Raster.",
+        "it": "Tabelle costruite dai dati: intestazioni unite, divisioni con l’intestazione ripetuta, riempimenti e legende con campioni di colore, immagini nelle celle, calendari e griglie."
       }
     },
     {
       "id": "publications",
       "number": 9,
       "part": "practice",
-      "title": { "en": "Complete publications", "es": "Publicaciones completas", "ca": "Publicacions completes", "zh": "完整出版物", "ar": "منشورات كاملة", "ja": "完成した出版物", "pt": "Publicações completas", "fr": "Publications complètes", "de": "Vollständige Publikationen" },
+      "title": { "en": "Complete publications", "es": "Publicaciones completas", "ca": "Publicacions completes", "zh": "完整出版物", "ar": "منشورات كاملة", "ja": "完成した出版物", "pt": "Publicações completas", "fr": "Publications complètes", "de": "Vollständige Publikationen", "it": "Pubblicazioni complete" },
       "intro": {
         "en": "Whole issues and editions, each using at least eight features on four pages or more.",
         "es": "Números y ediciones completos, cada uno con al menos ocho funciones repartidas en cuatro páginas o más.",
@@ -156,14 +164,15 @@
         "ja": "号や版をまるごと組んだ例です。どれも4ページ以上で、8つ以上の機能を使っています。",
         "pt": "Números e edições inteiros, cada um com pelo menos oito recursos distribuídos em quatro páginas ou mais.",
         "fr": "Numéros et éditions complets, chacun utilisant au moins huit fonctionnalités sur quatre pages ou plus.",
-        "de": "Ganze Hefte und Ausgaben, jede mit mindestens acht Funktionen auf vier Seiten oder mehr."
+        "de": "Ganze Hefte und Ausgaben, jede mit mindestens acht Funktionen auf vier Seiten oder mehr.",
+        "it": "Numeri ed edizioni interi, ognuno con almeno otto funzionalità su quattro pagine o più."
       }
     },
     {
       "id": "output",
       "number": 10,
       "part": "practice",
-      "title": { "en": "Output & integration", "es": "Salida e integración", "ca": "Sortida i integració", "zh": "输出与集成", "ar": "الإخراج والدمج", "ja": "出力と組み込み", "pt": "Saída e integração", "fr": "Sortie et intégration", "de": "Ausgabe und Integration" },
+      "title": { "en": "Output & integration", "es": "Salida e integración", "ca": "Sortida i integració", "zh": "输出与集成", "ar": "الإخراج والدمج", "ja": "出力と組み込み", "pt": "Saída e integração", "fr": "Sortie et intégration", "de": "Ausgabe und Integration", "it": "Output e integrazione" },
       "intro": {
         "en": "From a Markdown string to canvas, HTML and PDF: fonts, print-ready and tagged PDFs, screen editions, bundles, workers, diagnostics and live rebuilds.",
         "es": "De una cadena Markdown al canvas, al HTML y al PDF: fuentes, PDF para imprenta y PDF etiquetados, ediciones de pantalla, paquetes, workers, diagnóstico y recomposición en vivo.",
@@ -173,14 +182,15 @@
         "ja": "Markdownの文字列からcanvas、HTML、PDFへ。フォント、入稿用PDFとタグ付きPDF、画面版、バンドル、ワーカー、診断、ライブ再ビルド。",
         "pt": "De uma string Markdown ao canvas, ao HTML e ao PDF: fontes, PDFs prontos para impressão e PDFs etiquetados, edições para tela, pacotes, workers, diagnóstico e recomposição ao vivo.",
         "fr": "D’une chaîne Markdown au canvas, au HTML et au PDF : polices, PDF prêts pour l’impression et balisés, éditions pour écran, paquets, workers, diagnostics et recompositions en direct.",
-        "de": "Von einem Markdown-String zu Canvas, HTML und PDF: Schriften, druckfertige und getaggte PDFs, Bildschirmausgaben, Pakete, Worker, Diagnose und Live-Neuaufbau."
+        "de": "Von einem Markdown-String zu Canvas, HTML und PDF: Schriften, druckfertige und getaggte PDFs, Bildschirmausgaben, Pakete, Worker, Diagnose und Live-Neuaufbau.",
+        "it": "Da una stringa Markdown a canvas, HTML e PDF: font, PDF pronti per la stampa e con tag, edizioni a schermo, pacchetti, worker, diagnostica e ricomposizioni in tempo reale."
       }
     },
     {
       "id": "comics",
       "number": 11,
       "part": "practice",
-      "title": { "en": "Comics & manga", "es": "Cómic y manga", "ca": "Còmic i manga", "zh": "漫画与连环画", "ar": "القصص المصوّرة والمانغا", "ja": "コミックと漫画", "pt": "Quadrinhos e mangá", "fr": "Bande dessinée et manga", "de": "Comics und Manga" },
+      "title": { "en": "Comics & manga", "es": "Cómic y manga", "ca": "Còmic i manga", "zh": "漫画与连环画", "ar": "القصص المصوّرة والمانغا", "ja": "コミックと漫画", "pt": "Quadrinhos e mangá", "fr": "Bande dessinée et manga", "de": "Comics und Manga", "it": "Fumetti e manga" },
       "intro": {
         "en": "Comic pages split into panels, balloons lettered from a Markdown script, manga read right to left, strips on a newspaper page, double-page spreads and one page re-lettered in six languages.",
         "es": "Páginas de cómic divididas en viñetas, bocadillos rotulados a partir de un guion en Markdown, manga que se lee de derecha a izquierda, tiras en una página de periódico, dobles páginas y una misma página rotulada en seis idiomas.",
@@ -190,38 +200,39 @@
         "ja": "コマに割った漫画のページ、Markdownの台本から写植する吹き出し、右から左へ読む漫画、新聞紙面の帯漫画、見開き、6言語で写植し直した同じページ。",
         "pt": "Páginas de quadrinhos divididas em quadros, balões letreirados a partir de um roteiro em Markdown, mangá lido da direita para a esquerda, tirinhas numa página de jornal, páginas duplas e uma mesma página letreirada em seis idiomas.",
         "fr": "Planches de bande dessinée découpées en cases, bulles lettrées à partir d’un script Markdown, manga lus de droite à gauche, strips sur une page de journal, doubles pages et une planche relettrée en six langues.",
-        "de": "In Panels geteilte Comicseiten, aus einem Markdown-Skript geletterte Sprechblasen, von rechts nach links gelesene Manga, Strips auf einer Zeitungsseite, Doppelseiten und eine Seite, die in sechs Sprachen neu gelettert wird."
+        "de": "In Panels geteilte Comicseiten, aus einem Markdown-Skript geletterte Sprechblasen, von rechts nach links gelesene Manga, Strips auf einer Zeitungsseite, Doppelseiten und eine Seite, die in sechs Sprachen neu gelettert wird.",
+        "it": "Pagine di fumetto divise in vignette, nuvolette scritte da una sceneggiatura in Markdown, manga letti da destra a sinistra, strisce su una pagina di giornale, doppie pagine e una pagina con il lettering rifatto in sei lingue."
       }
     }
   ],
   "genres": [
-    { "id": "novel", "title": { "en": "Fiction, drama & literary prose", "es": "Narrativa, teatro y prosa literaria", "ca": "Narrativa, teatre i prosa literària", "zh": "小说、戏剧与文学散文", "ar": "الأدب القصصي والمسرح والنثر الأدبي", "ja": "小説・戯曲・文芸", "pt": "Ficção, teatro e prosa literária", "fr": "Fiction, théâtre et prose littéraire", "de": "Belletristik, Drama und Prosa" } },
-    { "id": "poetry", "title": { "en": "Poetry", "es": "Poesía", "ca": "Poesia", "zh": "诗歌", "ar": "الشعر", "ja": "詩歌", "pt": "Poesia", "fr": "Poésie", "de": "Lyrik" } },
-    { "id": "textbook", "title": { "en": "Textbooks", "es": "Libros de texto", "ca": "Llibres de text", "zh": "教科书", "ar": "الكتب المدرسية", "ja": "教科書", "pt": "Livros didáticos", "fr": "Manuels scolaires", "de": "Lehrbücher" } },
-    { "id": "workbook", "title": { "en": "Workbooks & exercises", "es": "Cuadernos y ejercicios", "ca": "Quaderns i exercicis", "zh": "练习册与习题", "ar": "كتب التمارين والتدريبات", "ja": "ワークブックと練習問題", "pt": "Cadernos de exercícios", "fr": "Cahiers et exercices", "de": "Arbeitshefte und Übungen" } },
-    { "id": "manual", "title": { "en": "Manuals, guides & reference", "es": "Manuales, guías y obras de consulta", "ca": "Manuals, guies i obres de consulta", "zh": "手册、指南与参考书", "ar": "الأدلة والمراجع", "ja": "マニュアル・ガイド・リファレンス", "pt": "Manuais, guias e obras de referência", "fr": "Manuels, guides et ouvrages de référence", "de": "Handbücher und Nachschlagewerke" } },
-    { "id": "paper", "title": { "en": "Papers & academic", "es": "Artículos y trabajos académicos", "ca": "Articles i treballs acadèmics", "zh": "论文与学术出版物", "ar": "الأوراق البحثية والأكاديمية", "ja": "論文・学術書", "pt": "Artigos e trabalhos acadêmicos", "fr": "Articles et publications universitaires", "de": "Fachartikel und Wissenschaft" } },
-    { "id": "report", "title": { "en": "Reports", "es": "Informes y memorias", "ca": "Informes i memòries", "zh": "报告", "ar": "التقارير", "ja": "報告書", "pt": "Relatórios", "fr": "Rapports", "de": "Berichte" } },
-    { "id": "magazine", "title": { "en": "Magazines & zines", "es": "Revistas y fanzines", "ca": "Revistes i fanzins", "zh": "杂志与小志", "ar": "المجلات والمجلات المستقلة", "ja": "雑誌とジン", "pt": "Revistas e fanzines", "fr": "Magazines et fanzines", "de": "Magazine und Zines" } },
-    { "id": "newsletter", "title": { "en": "Newspapers & newsletters", "es": "Periódicos y boletines", "ca": "Diaris i butlletins", "zh": "报纸与通讯", "ar": "الجرائد والنشرات", "ja": "新聞とニュースレター", "pt": "Jornais e boletins", "fr": "Journaux et lettres d’information", "de": "Zeitungen und Newsletter" } },
-    { "id": "catalogue", "title": { "en": "Catalogues", "es": "Catálogos", "ca": "Catàlegs", "zh": "目录册", "ar": "الكتالوجات", "ja": "カタログ", "pt": "Catálogos", "fr": "Catalogues", "de": "Kataloge" } },
-    { "id": "photobook", "title": { "en": "Photobooks", "es": "Fotolibros", "ca": "Fotollibres", "zh": "摄影集", "ar": "كتب الصور", "ja": "写真集", "pt": "Fotolivros", "fr": "Livres de photographie", "de": "Fotobücher" } },
-    { "id": "comic", "title": { "en": "Comics", "es": "Cómics", "ca": "Còmics", "zh": "漫画", "ar": "القصص المصوّرة", "ja": "漫画・コミック", "pt": "Quadrinhos", "fr": "Bande dessinée", "de": "Comics" } },
-    { "id": "ephemera", "title": { "en": "Single sheets & ephemera", "es": "Hojas sueltas y efímeros", "ca": "Fulls solts i efímers", "zh": "单页与零散印品", "ar": "الأوراق المفردة والمطبوعات العابرة", "ja": "一枚物とエフェメラ", "pt": "Folhas avulsas e impressos efêmeros", "fr": "Feuilles volantes et éphémères", "de": "Einzelblätter und Akzidenzen" } },
-    { "id": "any", "title": { "en": "Any genre", "es": "Cualquier género", "ca": "Qualsevol gènere", "zh": "任意类型", "ar": "أي نوع", "ja": "すべてのジャンル", "pt": "Qualquer gênero", "fr": "Tous genres", "de": "Jedes Genre" } }
+    { "id": "novel", "title": { "en": "Fiction, drama & literary prose", "es": "Narrativa, teatro y prosa literaria", "ca": "Narrativa, teatre i prosa literària", "zh": "小说、戏剧与文学散文", "ar": "الأدب القصصي والمسرح والنثر الأدبي", "ja": "小説・戯曲・文芸", "pt": "Ficção, teatro e prosa literária", "fr": "Fiction, théâtre et prose littéraire", "de": "Belletristik, Drama und Prosa", "it": "Narrativa, teatro e prosa letteraria" } },
+    { "id": "poetry", "title": { "en": "Poetry", "es": "Poesía", "ca": "Poesia", "zh": "诗歌", "ar": "الشعر", "ja": "詩歌", "pt": "Poesia", "fr": "Poésie", "de": "Lyrik", "it": "Poesia" } },
+    { "id": "textbook", "title": { "en": "Textbooks", "es": "Libros de texto", "ca": "Llibres de text", "zh": "教科书", "ar": "الكتب المدرسية", "ja": "教科書", "pt": "Livros didáticos", "fr": "Manuels scolaires", "de": "Lehrbücher", "it": "Libri di testo" } },
+    { "id": "workbook", "title": { "en": "Workbooks & exercises", "es": "Cuadernos y ejercicios", "ca": "Quaderns i exercicis", "zh": "练习册与习题", "ar": "كتب التمارين والتدريبات", "ja": "ワークブックと練習問題", "pt": "Cadernos de exercícios", "fr": "Cahiers et exercices", "de": "Arbeitshefte und Übungen", "it": "Quaderni ed eserciziari" } },
+    { "id": "manual", "title": { "en": "Manuals, guides & reference", "es": "Manuales, guías y obras de consulta", "ca": "Manuals, guies i obres de consulta", "zh": "手册、指南与参考书", "ar": "الأدلة والمراجع", "ja": "マニュアル・ガイド・リファレンス", "pt": "Manuais, guias e obras de referência", "fr": "Manuels, guides et ouvrages de référence", "de": "Handbücher und Nachschlagewerke", "it": "Manuali, guide e opere di consultazione" } },
+    { "id": "paper", "title": { "en": "Papers & academic", "es": "Artículos y trabajos académicos", "ca": "Articles i treballs acadèmics", "zh": "论文与学术出版物", "ar": "الأوراق البحثية والأكاديمية", "ja": "論文・学術書", "pt": "Artigos e trabalhos acadêmicos", "fr": "Articles et publications universitaires", "de": "Fachartikel und Wissenschaft", "it": "Articoli scientifici e testi accademici" } },
+    { "id": "report", "title": { "en": "Reports", "es": "Informes y memorias", "ca": "Informes i memòries", "zh": "报告", "ar": "التقارير", "ja": "報告書", "pt": "Relatórios", "fr": "Rapports", "de": "Berichte", "it": "Rapporti" } },
+    { "id": "magazine", "title": { "en": "Magazines & zines", "es": "Revistas y fanzines", "ca": "Revistes i fanzins", "zh": "杂志与小志", "ar": "المجلات والمجلات المستقلة", "ja": "雑誌とジン", "pt": "Revistas e fanzines", "fr": "Magazines et fanzines", "de": "Magazine und Zines", "it": "Riviste e fanzine" } },
+    { "id": "newsletter", "title": { "en": "Newspapers & newsletters", "es": "Periódicos y boletines", "ca": "Diaris i butlletins", "zh": "报纸与通讯", "ar": "الجرائد والنشرات", "ja": "新聞とニュースレター", "pt": "Jornais e boletins", "fr": "Journaux et lettres d’information", "de": "Zeitungen und Newsletter", "it": "Giornali e newsletter" } },
+    { "id": "catalogue", "title": { "en": "Catalogues", "es": "Catálogos", "ca": "Catàlegs", "zh": "目录册", "ar": "الكتالوجات", "ja": "カタログ", "pt": "Catálogos", "fr": "Catalogues", "de": "Kataloge", "it": "Cataloghi" } },
+    { "id": "photobook", "title": { "en": "Photobooks", "es": "Fotolibros", "ca": "Fotollibres", "zh": "摄影集", "ar": "كتب الصور", "ja": "写真集", "pt": "Fotolivros", "fr": "Livres de photographie", "de": "Fotobücher", "it": "Libri fotografici" } },
+    { "id": "comic", "title": { "en": "Comics", "es": "Cómics", "ca": "Còmics", "zh": "漫画", "ar": "القصص المصوّرة", "ja": "漫画・コミック", "pt": "Quadrinhos", "fr": "Bande dessinée", "de": "Comics", "it": "Fumetti" } },
+    { "id": "ephemera", "title": { "en": "Single sheets & ephemera", "es": "Hojas sueltas y efímeros", "ca": "Fulls solts i efímers", "zh": "单页与零散印品", "ar": "الأوراق المفردة والمطبوعات العابرة", "ja": "一枚物とエフェメラ", "pt": "Folhas avulsas e impressos efêmeros", "fr": "Feuilles volantes et éphémères", "de": "Einzelblätter und Akzidenzen", "it": "Fogli singoli ed effimeri" } },
+    { "id": "any", "title": { "en": "Any genre", "es": "Cualquier género", "ca": "Qualsevol gènere", "zh": "任意类型", "ar": "أي نوع", "ja": "すべてのジャンル", "pt": "Qualquer gênero", "fr": "Tous genres", "de": "Jedes Genre", "it": "Qualsiasi genere" } }
   ],
   "outputs": [
-    { "id": "canvas", "title": { "en": "Canvas", "es": "Canvas", "ca": "Canvas", "zh": "Canvas", "ar": "Canvas", "ja": "Canvas", "pt": "Canvas", "fr": "Canvas", "de": "Canvas" } },
-    { "id": "html", "title": { "en": "HTML", "es": "HTML", "ca": "HTML", "zh": "HTML", "ar": "HTML", "ja": "HTML", "pt": "HTML", "fr": "HTML", "de": "HTML" } },
-    { "id": "pdf", "title": { "en": "PDF", "es": "PDF", "ca": "PDF", "zh": "PDF", "ar": "PDF", "ja": "PDF", "pt": "PDF", "fr": "PDF", "de": "PDF" } },
-    { "id": "epub", "title": { "en": "EPUB", "es": "EPUB", "ca": "EPUB", "zh": "EPUB", "ar": "EPUB", "ja": "EPUB", "pt": "EPUB", "fr": "EPUB", "de": "EPUB" } },
-    { "id": "bundle", "title": { "en": ".postext bundle", "es": "Paquete .postext", "ca": "Paquet .postext", "zh": ".postext文件包", "ar": "حزمة .postext", "ja": ".postextバンドル", "pt": "Pacote .postext", "fr": "Paquet .postext", "de": ".postext-Paket" } },
-    { "id": "live", "title": { "en": "Live controls", "es": "Controles en vivo", "ca": "Controls en viu", "zh": "实时控件", "ar": "عناصر تحكم حية", "ja": "ライブ操作", "pt": "Controles ao vivo", "fr": "Contrôles en direct", "de": "Live-Steuerung" } }
+    { "id": "canvas", "title": { "en": "Canvas", "es": "Canvas", "ca": "Canvas", "zh": "Canvas", "ar": "Canvas", "ja": "Canvas", "pt": "Canvas", "fr": "Canvas", "de": "Canvas", "it": "Canvas" } },
+    { "id": "html", "title": { "en": "HTML", "es": "HTML", "ca": "HTML", "zh": "HTML", "ar": "HTML", "ja": "HTML", "pt": "HTML", "fr": "HTML", "de": "HTML", "it": "HTML" } },
+    { "id": "pdf", "title": { "en": "PDF", "es": "PDF", "ca": "PDF", "zh": "PDF", "ar": "PDF", "ja": "PDF", "pt": "PDF", "fr": "PDF", "de": "PDF", "it": "PDF" } },
+    { "id": "epub", "title": { "en": "EPUB", "es": "EPUB", "ca": "EPUB", "zh": "EPUB", "ar": "EPUB", "ja": "EPUB", "pt": "EPUB", "fr": "EPUB", "de": "EPUB", "it": "EPUB" } },
+    { "id": "bundle", "title": { "en": ".postext bundle", "es": "Paquete .postext", "ca": "Paquet .postext", "zh": ".postext文件包", "ar": "حزمة .postext", "ja": ".postextバンドル", "pt": "Pacote .postext", "fr": "Paquet .postext", "de": ".postext-Paket", "it": "Pacchetto .postext" } },
+    { "id": "live", "title": { "en": "Live controls", "es": "Controles en vivo", "ca": "Controls en viu", "zh": "实时控件", "ar": "عناصر تحكم حية", "ja": "ライブ操作", "pt": "Controles ao vivo", "fr": "Contrôles en direct", "de": "Live-Steuerung", "it": "Controlli dal vivo" } }
   ],
   "levels": [
     {
       "id": 1,
-      "title": { "en": "Basic", "es": "Básico", "ca": "Bàsic", "zh": "基础", "ar": "أساسي", "ja": "初級", "pt": "Básico", "fr": "Débutant", "de": "Einfach" },
+      "title": { "en": "Basic", "es": "Básico", "ca": "Bàsic", "zh": "基础", "ar": "أساسي", "ja": "初級", "pt": "Básico", "fr": "Débutant", "de": "Einfach", "it": "Base" },
       "criteria": {
         "en": "Markdown plus at most four design sections in the config (colorPalette and the empty header and footer every recipe carries do not count), no design slots, at most one resource and a single buildDocument call.",
         "es": "Markdown y como mucho cuatro secciones de diseño en la configuración (no cuentan colorPalette ni la cabecera y el pie vacíos que lleva toda receta), sin ranuras de diseño, un recurso como máximo y una sola llamada a buildDocument.",
@@ -231,12 +242,13 @@
         "ja": "Markdownと、設定のデザインセクション4つまで（colorPaletteと、どのレシピにもある空のheaderとfooterは数えません）。デザインスロットは使わず、リソースは1つまで、buildDocumentの呼び出しは1回だけです。",
         "pt": "Markdown e no máximo quatro seções de design na configuração (colorPalette e o cabeçalho e o rodapé vazios que toda receita traz não contam), nenhum slot de design, no máximo um recurso e uma única chamada a buildDocument.",
         "fr": "Du Markdown et au plus quatre sections de maquette dans la configuration (colorPalette ainsi que l’en-tête et le pied de page vides que porte chaque recette ne comptent pas), aucun emplacement de maquette, au plus une ressource et un seul appel à buildDocument.",
-        "de": "Markdown plus höchstens vier Gestaltungsabschnitte in der Konfiguration (colorPalette und die leere Kopf- und Fußzeile, die jedes Rezept mitführt, zählen nicht), keine Gestaltungsslots, höchstens eine Ressource und ein einziger Aufruf von buildDocument."
+        "de": "Markdown plus höchstens vier Gestaltungsabschnitte in der Konfiguration (colorPalette und die leere Kopf- und Fußzeile, die jedes Rezept mitführt, zählen nicht), keine Gestaltungsslots, höchstens eine Ressource und ein einziger Aufruf von buildDocument.",
+        "it": "Markdown più al massimo quattro sezioni di progetto grafico nella configurazione (colorPalette e l’intestazione e il piè di pagina vuoti presenti in ogni ricetta non contano), nessuno slot di design, al massimo una risorsa e una sola chiamata a buildDocument."
       }
     },
     {
       "id": 2,
-      "title": { "en": "Intermediate", "es": "Intermedio", "ca": "Intermedi", "zh": "中级", "ar": "متوسط", "ja": "中級", "pt": "Intermediário", "fr": "Intermédiaire", "de": "Mittel" },
+      "title": { "en": "Intermediate", "es": "Intermedio", "ca": "Intermedi", "zh": "中级", "ar": "متوسط", "ja": "中級", "pt": "Intermediário", "fr": "Intermédiaire", "de": "Mittel", "it": "Intermedio" },
       "criteria": {
         "en": "Design slots (openers, running heads), resources with placement, named styles or a PDF or EPUB export.",
         "es": "Ranuras de diseño (aperturas, cabeceras), recursos con colocación, estilos con nombre o exportación a PDF o EPUB.",
@@ -246,12 +258,13 @@
         "ja": "デザインスロット（章扉、柱）、配置を指定したリソース、名前付きスタイル、またはPDFやEPUBの書き出し。",
         "pt": "Slots de design (aberturas, cabeços), recursos com posicionamento, estilos nomeados ou exportação para PDF ou EPUB.",
         "fr": "Emplacements de maquette (ouvertures, titres courants), ressources avec placement, styles nommés ou export PDF ou EPUB.",
-        "de": "Gestaltungsslots (Auftakte, Kolumnentitel), Ressourcen mit Platzierung, benannte Stile oder ein PDF- oder EPUB-Export."
+        "de": "Gestaltungsslots (Auftakte, Kolumnentitel), Ressourcen mit Platzierung, benannte Stile oder ein PDF- oder EPUB-Export.",
+        "it": "Slot di design (aperture, testatine), risorse con posizionamento, stili con nome o un’esportazione in PDF o EPUB."
       }
     },
     {
       "id": 3,
-      "title": { "en": "Advanced", "es": "Avanzado", "ca": "Avançat", "zh": "高级", "ar": "متقدم", "ja": "上級", "pt": "Avançado", "fr": "Avancé", "de": "Fortgeschritten" },
+      "title": { "en": "Advanced", "es": "Avanzado", "ca": "Avançat", "zh": "高级", "ar": "متقدم", "ja": "上級", "pt": "Avançado", "fr": "Avancé", "de": "Fortgeschritten", "it": "Avanzato" },
       "criteria": {
         "en": "Any of buildBundle, parts with palettes, rotated or split tables, a column-and-a-half float channel with side captions, maths, workers or interactive rebuilds.",
         "es": "Cualquiera de estos: buildBundle, partes con paleta propia, tablas giradas o partidas, columna y media con canal de flotantes y pies laterales, matemáticas, workers o recomposición interactiva.",
@@ -261,18 +274,19 @@
         "ja": "buildBundle、パレット付きの部、回転または分割した表、サイドキャプション付きの1段半のフロート用チャネル、数式、ワーカー、インタラクティブな再ビルドのいずれか。",
         "pt": "Qualquer um destes: buildBundle, partes com paleta própria, tabelas giradas ou divididas, coluna e meia com canal de flutuantes e legendas laterais, matemática, workers ou recomposição interativa.",
         "fr": "Au moins un des éléments suivants : buildBundle, parties avec palettes, tableaux pivotés ou coupés, canal de flottants en colonne et demie avec légendes latérales, mathématiques, workers ou recompositions interactives.",
-        "de": "Eines von buildBundle, Teilen mit Paletten, gedrehten oder geteilten Tabellen, einem Gleitkanal bei anderthalb Spalten mit seitlichen Bildunterschriften, Formeln, Workern oder interaktivem Neuaufbau."
+        "de": "Eines von buildBundle, Teilen mit Paletten, gedrehten oder geteilten Tabellen, einem Gleitkanal bei anderthalb Spalten mit seitlichen Bildunterschriften, Formeln, Workern oder interaktivem Neuaufbau.",
+        "it": "Una qualsiasi tra buildBundle, parti con palette, tabelle ruotate o divise, un canale per elementi flottanti a colonna e mezza con didascalie laterali, matematica, worker o ricomposizioni interattive."
       }
     }
   ],
   "sections": {
-    "build": { "en": "What you'll build", "es": "Lo que vas a componer", "ca": "Què compondràs", "zh": "成品一览", "ar": "ما الذي ستنضده", "ja": "できあがり", "pt": "O que você vai compor", "fr": "Ce que vous allez composer", "de": "Was Sie setzen" },
-    "short": { "en": "The short answer", "es": "La respuesta corta", "ca": "La resposta curta", "zh": "简短回答", "ar": "الجواب المختصر", "ja": "手短な答え", "pt": "A resposta curta", "fr": "La réponse courte", "de": "Die kurze Antwort" },
-    "ingredients": { "en": "Ingredients", "es": "Ingredientes", "ca": "Ingredients", "zh": "用料", "ar": "المكونات", "ja": "材料", "pt": "Ingredientes", "fr": "Ingrédients", "de": "Zutaten" },
-    "method": { "en": "Method", "es": "Elaboración", "ca": "Elaboració", "zh": "做法", "ar": "طريقة التحضير", "ja": "作り方", "pt": "Preparo", "fr": "Préparation", "de": "Zubereitung" },
-    "whole": { "en": "The whole recipe", "es": "La receta completa", "ca": "La recepta completa", "zh": "完整食谱", "ar": "الوصفة كاملة", "ja": "レシピの全体", "pt": "A receita completa", "fr": "La recette complète", "de": "Das ganze Rezept" },
-    "variations": { "en": "Variations", "es": "Variantes", "ca": "Variants", "zh": "变化", "ar": "تنويعات", "ja": "アレンジ", "pt": "Variações", "fr": "Variantes", "de": "Varianten" },
-    "pitfalls": { "en": "Pitfalls", "es": "Errores frecuentes", "ca": "Errors freqüents", "zh": "常见问题", "ar": "أخطاء شائعة", "ja": "よくあるつまずき", "pt": "Erros comuns", "fr": "Erreurs fréquentes", "de": "Häufige Fehler" },
-    "credits": { "en": "Credits", "es": "Créditos", "ca": "Crèdits", "zh": "致谢", "ar": "الحقوق", "ja": "クレジット", "pt": "Créditos", "fr": "Crédits", "de": "Nachweise" }
+    "build": { "en": "What you'll build", "es": "Lo que vas a componer", "ca": "Què compondràs", "zh": "成品一览", "ar": "ما الذي ستنضده", "ja": "できあがり", "pt": "O que você vai compor", "fr": "Ce que vous allez composer", "de": "Was Sie setzen", "it": "Che cosa comporrai" },
+    "short": { "en": "The short answer", "es": "La respuesta corta", "ca": "La resposta curta", "zh": "简短回答", "ar": "الجواب المختصر", "ja": "手短な答え", "pt": "A resposta curta", "fr": "La réponse courte", "de": "Die kurze Antwort", "it": "La risposta breve" },
+    "ingredients": { "en": "Ingredients", "es": "Ingredientes", "ca": "Ingredients", "zh": "用料", "ar": "المكونات", "ja": "材料", "pt": "Ingredientes", "fr": "Ingrédients", "de": "Zutaten", "it": "Ingredienti" },
+    "method": { "en": "Method", "es": "Elaboración", "ca": "Elaboració", "zh": "做法", "ar": "طريقة التحضير", "ja": "作り方", "pt": "Preparo", "fr": "Préparation", "de": "Zubereitung", "it": "Preparazione" },
+    "whole": { "en": "The whole recipe", "es": "La receta completa", "ca": "La recepta completa", "zh": "完整食谱", "ar": "الوصفة كاملة", "ja": "レシピの全体", "pt": "A receita completa", "fr": "La recette complète", "de": "Das ganze Rezept", "it": "La ricetta completa" },
+    "variations": { "en": "Variations", "es": "Variantes", "ca": "Variants", "zh": "变化", "ar": "تنويعات", "ja": "アレンジ", "pt": "Variações", "fr": "Variantes", "de": "Varianten", "it": "Varianti" },
+    "pitfalls": { "en": "Pitfalls", "es": "Errores frecuentes", "ca": "Errors freqüents", "zh": "常见问题", "ar": "أخطاء شائعة", "ja": "よくあるつまずき", "pt": "Erros comuns", "fr": "Erreurs fréquentes", "de": "Häufige Fehler", "it": "Errori frequenti" },
+    "credits": { "en": "Credits", "es": "Créditos", "ca": "Crèdits", "zh": "致谢", "ar": "الحقوق", "ja": "クレジット", "pt": "Créditos", "fr": "Crédits", "de": "Nachweise", "it": "Crediti" }
   }
 }

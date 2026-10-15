@@ -1,0 +1,63 @@
+---
+title: "Un quotidiano formato lenzuolo su sei colonne"
+summary: "Quattro pagine di un quotidiano formato lenzuolo: sei colonne con filetti, foto e riquadri su 2-5 colonne, pubblicità a tutta pagina e opinioni su cinque."
+plain: "Quattro pagine di un grande quotidiano, composte su sei colonne strette. Mostra come stendere una foto o un riquadro su più colonne e come dare a una pagina cinque colonne."
+description: "Un quotidiano formato lenzuolo a sei colonne in Postext, col codice: impaginazione multipla, foto e riquadri su k colonne, pubblicità, una sezione su cinque."
+question: "Come compongo un quotidiano formato lenzuolo su sei colonne, con foto e riquadri su due, tre o quattro?"
+aliases: ["formato lenzuolo", "broadsheet", "quotidiano", "giornale", "sei colonne", "cinque colonne", "colonne multiple", "griglia di giornale", "foto su più colonne", "riquadro dell’articolo", "box di dati", "notizie in breve", "pagina delle opinioni", "lettere al direttore", "rimando", "segue a pagina 2"]
+pageNotes: { "1": "La prima pagina di «The Corrington Despatch»: la testata tra un’orecchietta del meteo e una delle maree, una striscia colorata con quattro richiami, il titolo d’apertura «Tram to the docks wins council vote after six-hour debate» su quattro colonne sopra una fotografia di una banchina portuale acciottolata con gru all’alba, l’articolo d’apertura su quattro colonne sotto, con una tabella dei finanziamenti al piede delle colonne 3 e 4, un secondo articolo sulle colonne 5 e 6 con la fotografia di tre ingegneri che osservano una paratia antipiena, il suo testo nella colonna 5, una colonna «In brief» nella colonna 6 sopra un box di dati colorato e, al piede, una pubblicità a tutta larghezza per una corsa di 10 km.", "2": "Pagina 2, «City»: un titolo di rimando a tutta larghezza «Market Street traders count the cost of two years of digging» su sei brevi spezzoni, poi l’articolo sulla casa «Rents rise 9% in a year as students return», con un box colorato di cinque cifre grandi sulle colonne 1 e 2 accanto alla fotografia di una schiera di case in mattoni rossi sulle colonne da 3 a 6, l’articolo su tutte e sei le colonne sotto e, al piede, una grande pubblicità di un’agenzia immobiliare.", "3": "Pagina 3, «Opinion», su cinque colonne: i due editoriali del giornale nella colonna 1, un commento intitolato «Close the Albert Baths and the city loses more than a pool» sulle colonne da 2 a 4 sopra la fotografia di una piscina vittoriana, il suo testo nelle colonne da 2 a 4, le lettere nella colonna 5 e una pubblicità di un concerto a tutta larghezza nella metà inferiore.", "4": "Pagina 4, «Arts & Weather»: un titolo teatrale a tutta larghezza, la fotografia di tre attori in un ufficio di spedizioni degli anni Venti su cinque colonne, la recensione su cinque colonne sotto, una colonna «What's on» nella colonna 6 e, al piede, un box meteo colorato con una tabella di cinque giorni e simboli del cielo disegnati." }
+---
+
+## Che cosa comporrai
+
+Quattro pagine di *The Corrington Despatch*, un quotidiano inventato, in formato lenzuolo da 375 × 597 mm. Il testo corre su sei colonne da 55,2 mm con intercolonne di 4 mm e un filetto sottile in ognuna: una giustezza di circa 38 caratteri a 9 pt, quella di un vero quotidiano formato lenzuolo. La prima pagina ha una testata con due orecchiette, una striscia di richiami, un’apertura il cui titolo e la cui fotografia occupano quattro colonne, un secondo articolo con una fotografia su due colonne, una colonna di brevi, una tabella dei finanziamenti e un box di dati su due colonne e una pubblicità al piede. La pagina 2 si apre con il seguito di un articolo della prima, la pagina 3 passa a cinque colonne per gli editoriali, un commento e le lettere, e l’ultima pagina porta una recensione teatrale e il meteo.
+
+## Preparazione
+
+### 1 · Sei colonne su un formato lenzuolo
+
+Il codice di questo passo è [la risposta breve](#la-risposta-breve) qui sopra. `page.sizePreset: 'broadsheet'` imposta il formato 375 × 597 mm, e `layoutType: 'multiple'` con `columnCount: 6` divide i 351 mm di larghezza del testo in sei colonne uguali ([Tipi di impaginazione](/it/docs/configuration-page-layout#tipi-di-impaginazione)). Ognuna è larga (351 − 5 × 4) / 6 = 55,2 mm, che in Newsreader a 9 pt contengono circa 38 caratteri, quindi il testo ha bisogno della sillabazione, di `minWordSpacing: 0.8` per tenere aperti gli spazi e di `maxJustifyTracking: 15` per distribuire una riga troppo spaziata anche tra le lettere. Il filetto di colonna traccia una linea sottile di 0,4 pt in ogni intercolonna, interrotta dove un elemento flottante o un riquadro la attraversa. Fino a postext 1.17 il corpo del testo aveva al massimo due colonne, e per questo <RecipeLink slug="newspaper-front-page">Nº 027</RecipeLink> componeva le sue quattro colonne di brevi dentro un riquadro.
+
+### 2 · Un elemento flottante su k colonne prende la prima serie di colonne vuote
+
+<Excerpt region="pictures" highlight="1-6" />
+
+`placement.columns` dà a una foto o a una tabella la sua larghezza in colonne, intercolonne comprese: quattro colonne della prima pagina misurano 232,7 mm. Il motore cerca il posto a partire dalla colonna in cui si trova il testo, da sinistra a destra. Un elemento flottante `top` prende la testa della prima serie di k colonne che non contengono ancora testo e cominciano alla stessa altezza; un elemento `bottom` prende il piede della colonna in cui si trova il testo e di quelle vuote che la seguono. Così la tabella dei finanziamenti, citata in un paragrafo della colonna 3, sta al piede delle colonne 3 e 4, e a <PageRef page={2}>pagina 2</PageRef> il box di dati, recintato per primo, prende le colonne 1 e 2, il che lascia le colonne da 3 a 6 come prima serie alla pari per la foto su quattro colonne recintata dopo. Con l’ordine inverso il box si impilerebbe sotto la foto. Un k pari al numero di colonne della pagina (o maggiore) equivale alla larghezza della pagina, come `span: 'page'`.
+
+### 3 · Riquadri del titolo, box di dati e pubblicità
+
+<Excerpt region="boxes" />
+
+Un `:::callout` con `placement="top"` e `columns="4"` flotta su quattro colonne come fa una foto. Il titolo e il sommario dell’apertura sono un riquadro di questo tipo, recintato prima del testo dell’apertura, così prende le colonne da 1 a 4 e la fotografia si impila sotto. Il riquadro del titolo del secondo articolo viene dopo l’apertura nel testo, dietro un `:::columnbreak`: a quel punto il testo è nella colonna 5, e le colonne 5 e 6 sono la prima coppia vuota. Ogni pubblicità è un riquadro con `columns="6"`, a tutta larghezza, recintato per primo nella sua pagina perché il suo piede sia riservato prima che arrivi il testo, e i titoli di rimando delle pagine 2 e 4 sono riquadri a tutta larghezza, come in Nº 027. `balancing.trailing: false` lascia che ogni pagina riempia le colonne fino al piede, perché qui ogni pagina chiude una sezione.
+
+### 4 · La testata è l’H1 della prima pagina
+
+<Excerpt region="nameplate" />
+
+`# The Corrington Despatch` usa lo stile di titolo `front`: il nome in Playfair Display Black a 64 pt, due orecchiette riempite con gli attributi del titolo, la riga della data tra un filetto sottile e uno spesso. L’apertura è alta nove righe della griglia. La striscia colorata dei richiami sotto di essa è un riquadro a tutta larghezza, un elemento proprio della prima pagina: chiude la fascia dell’apertura, e il riquadro del titolo d’apertura prende le colonne da 1 a 4 della fascia che la striscia apre. Senza la striscia il riquadro prenderebbe le stesse quattro colonne subito sotto la testata, perché la testa della colonna 1 sotto un’apertura è un posto come le teste delle altre colonne (fino a postext 1.24 non lo era, e il riquadro finiva a partire dalla colonna 2).
+
+### 5 · La pagina delle opinioni corre su cinque colonne
+
+<Excerpt region="sections" />
+
+`# Opinion {style="opinion"}` apre una sezione il cui stile di titolo imposta `layout: { layoutType: 'multiple', columnCount: 5 }`. La sezione conserva l’intercolonna e il filetto di colonna del documento e cambia solo il numero di colonne, così gli editoriali, il commento e le lettere corrono su una giustezza di 67 mm, circa 47 caratteri. Il riquadro del titolo del commento è `columns="3"`, recintato quando l’editoriale è già cominciato nella colonna 1, così finisce sulle colonne da 2 a 4 con la fotografia sotto, e due righe `:::columnbreak` mandano il commento alla colonna 2 e le lettere alla colonna 5.
+
+## Varianti
+
+### Componi un berlinese su cinque colonne
+
+Lo stesso giornale in formato berlinese da 315 × 470 mm: cinque colonne da 55 mm, la giustezza delle sei del formato lenzuolo. Anche il filetto del folio prende la larghezza minore; poi riadatta ogni pagina.
+
+```diff
+-const layout = { layoutType: 'multiple', columnCount: 6, gutterWidth: mm(GUTTER),
++const layout = { layoutType: 'multiple', columnCount: 5, gutterWidth: mm(GUTTER),
+-      size: { width: mm(375 - 2 * MARGIN.side) } }] };
++      size: { width: mm(315 - 2 * MARGIN.side) } }] };
+-  page: { sizePreset: 'broadsheet', dpi: 150, backgroundColor: col('paper'), // 375 × 597 mm
++  page: { sizePreset: 'berliner', dpi: 150, backgroundColor: col('paper'), // 315 × 470 mm
+```
+
+## Errori frequenti
+
+- Un elemento flottante recintato quando il testo ha già superato le sue colonne non trova posto nella pagina e apre la successiva. In prima pagina l’apertura deve finire nella colonna 4: un paragrafo in più e il riquadro del titolo e la fotografia del secondo articolo passano a pagina 2.
+- Qui ogni pagina è adattata a mano, come un redattore adatta un giornale: le righe `:::space` delle pubblicità e la lunghezza di ogni articolo stabiliscono dove finiscono le colonne. Se cambi un articolo, riadatta la sua pagina.

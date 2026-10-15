@@ -1,0 +1,63 @@
+---
+title: "Un romanzo arabo da destra a sinistra, rilegato a destra"
+summary: "L’inizio di un romanzo arabo su una pagina di 14 × 21 cm: locale 'ar' compone il testo da destra, rilega il libro a destra e stampa ١٢ nei folio."
+plain: "Le prime pagine di un romanzo scritto in arabo, impaginate come le stamperebbe un editore arabo: le righe vanno da destra a sinistra, il libro si apre da quello che per un lettore latino è il fondo e i numeri di pagina usano le cifre arabe."
+description: "Un romanzo arabo in brossura con Postext: locale 'ar' dà testo da destra a sinistra, rilegatura a destra e folio arabo-indiani; kashida e capitoli in lettere."
+question: "Come compongo un libro arabo da destra a sinistra e lo rilego a destra?"
+aliases: ["romanzo arabo", "da destra a sinistra", "RTL", "libro rilegato a destra", "cifre arabo-indiane", "kashida", "tatweel", "Markazi Text", "رواية", "الفصل الأول", "14 × 21 cm"]
+pageNotes: { "1": "Una pagina destra in blu intenso, al vivo, sotto un reticolo di stelle a otto punte tracciate con linee di un blu più chiaro. Una grande stella profilata in ottone contiene l’etichetta della parte القسم الأول, la parola الدرب in lettere cufiche bianche e una citazione in bianco.", "2": "La pagina sinistra che le sta di fronte: una piccola stella in ottone, il numero del capitolo in lettere, الفصل الأول, il titolo الباب الأزرق in lettere cufiche, poi il testo arabo giustificato dal margine destro e il folio ١١ centrato al piede." }
+---
+
+## Che cosa comporrai
+
+L’inizio di *حروف من رصاص* (Lettere di piombo), un romanzo su un nipote che riapre la tipografia del nonno in un vicolo del Cairo, composto come una brossura editoriale araba: 14 × 21 cm, Markazi Text a 13,5 pt su un’interlinea di 22 pt, giustificato, con il rientro di prima riga a destra. L’estratto comincia a pagina 10 con una pagina di parte nel blu della porta della bottega, un reticolo di stelle a otto punte disegnato nel codice, e il nome della parte in Reem Kufi a 64 pt. L’apertura del capitolo le sta di fronte sulla pagina sinistra, numerata in lettere, الفصل الأول. I folio stampano ١٠, ١١, ١٢; il titolo del libro corre sulle pagine destre e il capitolo sulle sinistre. <RecipeLink slug="trade-paperback-novel">Un romanzo in brossura</RecipeLink> compone lo stesso tipo di libro da sinistra a destra.
+
+## Preparazione
+
+### 1 · Un locale, tre decisioni
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `locale: 'ar'` è tutto ciò che dice la configurazione, e il motore ne ricava tre cose: il testo va da destra a sinistra (`direction: 'auto'`), il libro è rilegato a destra (`page.binding: 'auto'`), e ogni numero scritto dal motore usa le cifre arabo-indiane (`numerals: 'auto'`), folio compresi ([iniziare un libro arabo](/it/docs/arabic-layout#iniziare-un-libro-arabo)). Margini e allineamenti mantengono le parole `left` e `right`, ma in un libro da destra a sinistra indicano i lati del flusso: `margins.left` è il lato del dorso, e il rientro di prima riga sta a destra. Le righe giustificate allargano prima gli spazi e poi allungano le lettere legate con il tatweel, la kashida dei libri arabi; il testo non viene mai sillabato ([giustificazione e kashida](/it/docs/arabic-layout#giustificazione-e-kashida)).
+
+<PageShot page={3} crop="0.1,0.12,0.8,0.3" caption="Pagina 12: righe giustificate allargate dalla kashida, il rientro a destra, il folio ١٢ sul bordo esterno." />
+
+### 2 · Un numero di capitolo in lettere
+
+<Excerpt region="opener" />
+
+Il `numberingTemplate` del livello scrive الفصل e il numero come ordinale maschile, così il secondo capitolo è الفصل الثاني senza toccare il Markdown; `{1:ordinal-feminine}` dà الأولى, الثانية per un nome femminile come الليلة ([numeri ordinali e cardinali in lettere](/it/docs/arabic-layout#ordinali-e-cardinali-in-lettere)). L’apertura lo stampa con `{number}` sopra il titolo. Le aperture arabe sono di solito centrate, quindi `align: 'center'` evita ogni dubbio su quale lato comincia il disegno.
+
+### 3 · Le testatine restano sulle loro pagine
+
+<Excerpt region="heads" />
+
+Il testo corrente segue il flusso, ma testatine e folio mantengono i loro lati fisici. La pagina 12 è pari ed è una pagina destra in questo libro, quindi il suo folio va in alto a destra con accanto il titolo del libro; la pagina 13 sta a sinistra e porta il capitolo. Leggi una doppia pagina da destra, come fa un lettore arabo, e il titolo del libro viene prima. `showBook` dispone le pagine specchiate, la pagina 11 a sinistra della pagina 10, così lo schermo mostra le doppie pagine come si apre il libro.
+
+### 4 · Una pagina di parte disegnata nel codice
+
+<Excerpt region="plate" />
+
+La pagina di parte è un titolo di primo livello, `# الدرب {style="plate" …}`, il cui stile dipinge l’intero foglio e toglie testatina e folio. Il reticolo è un SVG generato nel pen da due quadrati ruotati di 45°, la stella khātam dell’ornato geometrico islamico, nel blu e nell’ottone della tavolozza, così il PDF lo conserva come tracciati vettoriali. `numbered: false` tiene la pagina di parte fuori dal conteggio dei capitoli, e l’apertura che segue è الفصل الأول.
+
+## Varianti
+
+### Stampa cifre europee
+
+Un’edizione del Maghreb stampa 1, 2, 3; `locale: 'ar-MA'` lo fa da solo, e <RecipeLink slug="maghreb-edition-european-digits">l’edizione del Maghreb</RecipeLink> mostra il libro intero.
+
+```diff
+-  locale: 'ar', // written out, never LANG (gotcha: arabic-locale-tag)
++  locale: 'ar', numerals: 'latn',
+```
+
+### Giustifica solo con gli spazi
+
+Alcuni editori tengono il tatweel fuori dal testo corrente: gli spazi assorbono tutta la differenza.
+
+```diff
+   textAlign: 'justify', optimalLineBreaking: true,
++  kashida: 'none',
+```
+
+## Errori frequenti
+
+- Un colophon in inglese o in spagnolo alla fine di un libro arabo richiede `{dir=ltr}` sul suo blocco: senza, la riga latina viene allineata e punteggiata come un paragrafo da destra a sinistra, con il punto finale a sinistra.

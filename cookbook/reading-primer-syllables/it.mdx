@@ -1,0 +1,62 @@
+---
+title: "Abbecedario con chip delle sillabe"
+summary: "Un’unità di abbecedario sulla M: i suoni di ogni parola come chip nel colore della sua vocale, e una griglia di parole illustrate con un acquerello per cella."
+plain: "Tre pagine di un libro di lettura per bambini piccoli, sulla lettera M. Ogni suono di una parola sta in una piccola etichetta colorata, e ogni parola di una griglia ha la sua immagine."
+description: "Unità di abbecedario in Postext: uno stile di chip per vocale, parole come chip di suoni accostati, una griglia illustrata arrotondata e righe di ricalco."
+question: "Come compongo le sillabe come chip colorati in linea, un colore per vocale, in un abbecedario?"
+aliases: ["abbecedario", "sillabario", "fonetica", "sillabe", "famiglie di parole", "pulsanti dei suoni", "primo libro di lettura", "quaderno per bambini", "cartilla"]
+pageNotes: { "1": "Una fascia color crema con una gigantesca «Mm», una scimmia e una luna; sotto, sei parole divise nei loro suoni, «map», «men», «mop» e «Sam», «dim», «gum», ogni suono un chip nel colore della vocale della parola con la m piena, poi quattro coppie di parole in rima: «mat» e «sat», «man» e «pan», «mug» e «tug», «mop» e «top».", "2": "Sei parole illustrate, «map», «mat», «man», «mug», «mop» e «mud», in una griglia arrotondata di tessere color crema, ogni immagine sopra i suoi suoni; sotto, righe di ricalco per m, M e le parole «man», «mat» e «men».", "3": "Quattro frasi a 24 pt con le parole nuove, «Tom» e «Mum», in chip di suoni, un riquadro color crema di parole a contorno da colorare, una nota per genitori ed educatori e il colophon." }
+---
+
+## Che cosa comporrai
+
+L’unità 12 di *Letter by Letter*, un abbecedario fonetico inglese inventato: tre pagine sul suono m. L’apertura compone una «Mm» in DynaPuff da 190 pt su una fascia color crema accanto a due cose il cui nome comincia con m, una scimmia (monkey) e una luna (moon). Ogni parola è divisa nei suoi suoni, e ogni suono è un chip nel colore della vocale della parola: a rossa, e arancione, i verde acqua, o blu, u viola. La m è piena e gli altri suoni sono a contorno, così un bambino vede dove cade il suono di questa unità in *map* e in *gum*. La pagina 38 compone sei parole illustrate in una griglia arrotondata, con un acquerello in ogni cella, poi tre righe da ricalcare. Gli acquerelli sono stati generati con modelli di diffusione; la fascia, le icone e le righe di ricalco sono disegnate nel codice. La pagina 39 ha quattro frasi a 24 pt, un riquadro di parole da colorare e una nota per genitori ed educatori.
+
+L’edizione spagnola è un’altra unità, non una traduzione: l’unità 7 di *Letra a letra*, sulla stessa lettera. Lo spagnolo si insegna per sillabe aperte (ma, me, mi, mo, mu), quindi i suoi chip contengono sillabe, `{mi·mo·sa}`. Quelle sillabe non sono parole inglesi, e gli abbecedari inglesi lavorano suono per suono, quindi l’unità inglese fonde i suoni di parole brevi, `{m·a·p}`, e le raggruppa in famiglie che fanno rima (-at, -an, -ug, -op). Entrambe le unità escono dallo stesso pen: gli stessi stili di chip, la stessa funzione `syllables()`, la stessa griglia, le stesse righe di ricalco e gli stessi riquadri.
+
+## Preparazione
+
+### 1 · Uno stile di chip per vocale e una funzione che scrive i chip
+
+[La risposta breve](#la-risposta-breve) costruisce 21 stili di chip espandendo un unico oggetto `syllable`. C’è uno stile pieno per vocale per la m, uno a contorno per vocale per gli altri suoni, un gemello `-frase` di ciascuno di questi dieci, e `pinta`, il contorno a inchiostro che un bambino colora. `syllables()` trasforma `{m·a·p}` in tre `:chip[…]` senza nulla in mezzo, così i suoni di una parola si toccano e il bordo bianco disegna la giuntura. Un chip prende il colore della sua vocale, e un pezzo senza vocale, qui la m e la p, prende la vocale della sua parola, così *map* è rossa da cima a fondo. Attraverso uno spazio tra parole un chip conserva almeno il suo `gap`, e 0,5 em distanzia le parole di una fila a 24 pt di 4,2 mm, dove il solo spazio lascerebbe 2,3 mm. Dentro una frase quel distacco quasi raddoppierebbe lo spazio prima della parola nuova, quindi una parola che segue un’altra parola riceve i gemelli `-frase`, il cui `gap` di 0 lascia lo spazio di 2,3 mm così com’è. Nell’edizione spagnola i pezzi sono sillabe, `{mi·mo·sa}`, e ognuna ha una sua vocale.
+
+### 2 · Un’interlinea che lascia spazio ai chip
+
+<Excerpt region="reading" />
+
+La spaziatura interna verticale e il bordo di un chip si dipingono fuori dalla sua riga e non aggiungono interlinea, quindi un chip più alto del passo delle righe invade i chip della riga sotto. Un chip a 24 pt è alto 10,4 mm; con un’interlinea di 30 pt (10,6 mm), i chip di due frasi starebbero a 0,1 mm di distanza. Le righe che un bambino legge ricevono 45 pt e le file a 34 pt della prima attività 60 pt, tre e quattro righe della griglia da 15 pt delle istruzioni.
+
+### 3 · Un’immagine in ogni cella
+
+<Excerpt region="pictures" />
+
+`setCellImage` mette un’immagine sopra il testo di una cella a una frazione della larghezza interna della cella, qui 0,72 (36,5 mm), e la riga cresce per contenerla. Ogni immagine è un JPEG dipinto su bianco e moltiplicato per il crema delle tessere, così sta sulla tessera senza riquadro. Sotto ogni immagine c’è la parola in chip di suoni. Una cella di tabella accetta il markup dei chip come qualunque paragrafo. Lo stile di tabella `dibujos` arrotonda la cornice e i suoi riempimenti a 5 mm e separa le tessere color crema con filetti bianchi da 4 pt.
+
+### 4 · Una riga di spazio prima del riquadro
+
+<Excerpt region="boxes" />
+
+Il Markdown mette `:::space{lines=1}` tra l’ultima frase e il riquadro da colorare, una riga da 15 pt (5,3 mm). Il `marginTop` del riquadro è 0, quindi quella riga è l’intero distacco; senza di essa il riquadro comincerebbe dove finisce la riga dell’ultima frase. Un `:::space` che apre un riquadro viene scartato, quindi il riquadro comincia con la sua riga di consegna e i chip della legenda dei colori, e il suo `:::space` viene dopo di essi, tra la legenda e l’attività da colorare.
+
+### 5 · L’apertura della lettera
+
+<Excerpt region="opener" />
+
+La «Mm» è il testo del titolo (`{titleText}`); il numero dell’unità, la collana e il nome sotto la lettera sono attributi sulla stessa riga del titolo. La fascia, la scimmia e la luna sono immagini. La fascia è alta 104 mm, e l’apertura riserva la pagina fino alla prima riga della griglia sotto il suo piede, così il titolo della prima attività comincia a 118,5 mm, sulla griglia e 16,6 mm sotto il punto più basso dell’onda (101,9 mm).
+
+### 6 · Icone accanto ai titoli delle attività
+
+<Excerpt region="activities" />
+
+Ogni titolo di attività nomina il suo stile di titolo, come in `## Read the sentences {style="lee"}`, e lo stile disegna un’icona con il titolo centrato accanto. I titoli restano titoli di livello 2, quindi è il livello `H2` a spaziarli: due righe della griglia di `lineHeight` per il titolo e altre due di `marginTop` sopra di esso.
+
+## Varianti
+
+### Arrotonda i chip in pillole
+
+Un raggio maggiore di metà dell’altezza del chip viene limitato a quella metà, quindi un valore grande disegna estremità tonde. Un chip di una sola lettera diventa quasi un cerchio, e le giunture dentro una parola diventano tacche.
+
+```diff
+-  paddingX: em(0.26), paddingY: em(0.05), gap: em(0.5) };
++  paddingX: em(0.26), paddingY: em(0.05), gap: em(0.5), borderRadius: em(1) };
+```

@@ -1,0 +1,68 @@
+---
+title: "Un sillabario in pinyin: la lettura sopra ogni carattere"
+summary: "Ruby mono in un primo libro di lettura di Hong Kong: {人之初|rén zhī chū} centra una sillaba pinyin su ogni carattere, in Andika, nei 28 pt tra le righe."
+plain: "Pagine di un primo libro di lettura per bambini di Hong Kong. Mostra come stampare la pronuncia in lettere latine sopra ogni carattere cinese, con i quadretti per esercitarsi a scrivere."
+description: "Un primo libro di lettura cinese in Postext: una sillaba pinyin su ogni carattere in Kai da 26 pt, titoli con la loro lettura, quadretti e codice completo."
+question: "Come stampo il pinyin sopra ogni carattere di un testo cinese, come fa un primo libro di lettura?"
+aliases: ["pinyin", "注音版", "primo libro di lettura", "sillabario cinese", "abbecedario cinese", "ruby", "三字經", "Classico dei tre caratteri", "Three Character Classic", "田字格", "quadretti per la scrittura"]
+pageNotes: { "1": "Lezione uno, «人之初»: una fascia verde chiaro con un distintivo rosso «第一課», un germoglio e il titolo con il suo pinyin «rén zhī chū»; quattro distici del Classico dei tre caratteri con una sillaba pinyin sopra ogni carattere; sei quadretti per la scrittura che contengono «人之本不相以»; una nota per le famiglie.", "2": "Lezione due, «昔孟母», sulla storia della madre di Mencio: la stessa pagina con una spola da telaio che attraversa l’ordito, i quadretti con «子母山五方名» e una nota su Mencio e Dou Yanshan.", "3": "Lezione tre, «養不教»: un pennello che traccia un tratto in un quadretto, quattro distici, i quadretti con «父師學幼老何» e una nota sul tono di «bù».", "4": "Lezione quattro, «玉不琢»: un disco di giada intagliata su un cordoncino rosso, quattro distici, i quadretti con «玉成知方友禮», una nota per le famiglie e il colophon." }
+---
+
+## Che cosa comporrai
+
+Due doppie pagine di 《蒙學誦讀》, un primo libro di lettura inventato di Hong Kong, dove i bambini leggono ad alta voce in putonghua il *Classico dei tre caratteri*. Ogni pagina è una lezione di quattro distici in Kai 一号 (26 pt), ogni carattere sotto la sua sillaba pinyin. Le sillabe sono composte in Andika perché disegna la a e la g a un solo occhiello che stampano i libri di scuola cinesi. Una fascia chiara porta un distintivo rosso con il numero della lezione, un piccolo acquerello e il titolo in 初号 (42 pt) con le sue letture. Sotto il testo, sei quadretti per la scrittura (田字格) contengono i caratteri da copiare, e una nota spiega alla famiglia che cosa vogliono dire i versi. La controparte spagnola è <RecipeLink slug="reading-primer-syllables">il sillabario con le sillabe nei chip</RecipeLink>, dove ogni sillaba è un chip colorato invece di una lettura sopra un carattere.
+
+Un sillabario abbandona di proposito le regole di un libro cinese. Un bambino legge pochi caratteri grandi alla volta, quindi una riga ne contiene dodici a 26 pt, dove un libro ne compone da 25 a 40 a 10,5 pt, e l’interlinea è poco più del doppio del corpo per accogliere le letture. Ogni distico sta centrato su una riga tutta sua, né giustificato né rientrato. Il testo è in Kai, il carattere che segue il pennello, perché mostra i tratti che un bambino impara a scrivere; un libro lo comporrebbe in Song.
+
+## Preparazione
+
+### 1 · Una sillaba sopra ogni carattere
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `{人之初|rén zhī chū}` dà a tre caratteri tre letture, separate dagli spazi: ogni sillaba è centrata sopra il proprio carattere, e una riga può andare a capo tra l’una e l’altra. Una lettura non occupa spazio proprio. Sta nello spazio interlineare, qui 54 − 26 = 28 pt, e uno spazio più stretto della lettura viene segnalato come `rubyExceedsLeading`. Una sillaba più larga del suo carattere, invece, occupa spazio: allarga la casella di quel carattere, e in una riga centrata i caratteri che seguono escono dalla griglia. Le letture sono composte al corpo a cui le sillabe più larghe di questo testo, xiāng e zhuān, stanno ancora sopra un solo carattere, 0,38 em (9,9 pt): ogni distico è lungo otto caratteri e ogni carattere mantiene il suo quadrato. A 0,45 em, 性相近，習相遠 si allargherebbe a otto caratteri e mezzo e aprirebbe spazi attorno a 相.
+
+### 2 · Il titolo mantiene le sue letture
+
+<Excerpt region="opener" />
+
+Il testo di design non stampa letture, quindi il titolo non può venire dal design dell’apertura. Il titolo di livello 1, 第一課, disegna la fascia, l’immagine e il distintivo rosso; il titolo vero è il titolo di livello 2 sotto di esso, un titolo semplice in 初号 che il compositore del testo compone con il suo pinyin. `reserve: false` lascia la fascia e l’immagine fuori dall’altezza del titolo, e `span: 'page'` le dipinge sotto il testo.
+
+Il design di un titolo ignora `parity`, quindi l’immagine ha un elemento per ogni lato della pagina: `{attr.left}` a 14 mm dal bordo sinistro e `{attr.right}` a 14 mm dal bordo destro. Le lezioni sui versi scrivono `# 第一課 {left="sprout"}` e quelle sui recto `{right="shuttle"}`, così ogni immagine sta sul lato esterno della doppia pagina; l’elemento a cui manca l’attributo non disegna nulla.
+
+### 3 · Sei quadretti da un solo attributo
+
+<Excerpt region="squares" />
+
+`### 我會寫 {write="人之本不相以"}` dà al design i sei caratteri in un solo attributo. Ogni carattere Han di LXGW WenKai TC è largo un em, quindi una spaziatura tra lettere pari al passo dei quadretti meno un em (18,4 − 10,6 mm) sposta i caratteri da un quadretto all’altro, e un solo elemento di testo riempie la fila. Il quadretto è un SVG disegnato in codice: una cornice rossa e una croce tratteggiata.
+
+### 4 · Ogni carattere carica i propri glifi
+
+<Excerpt region="voices" />
+
+Fontsource taglia ogni carattere cinese in circa cento file per intervallo di caratteri. Il carattere Kai compone tutto l’esempio e carica i file che contengono i suoi glifi. Il carattere Hei compone solo i distintivi, le etichette e il piè di pagina, quindi riceve quel testo e scarica pochi file. Andika viene da `loadFonts`, che aggiunge il file latin-ext quando il testo ha lettere oltre il Latin-1, come ǎ e ǐ.
+
+### 5 · La punteggiatura di Hong Kong dal locale
+
+<Excerpt region="locale" />
+
+`zh-HK` applica le regole di Hong Kong: punteggiatura a larghezza piena e le regole di base per gli a capo, di cui nessun distico qui ha bisogno. LXGW WenKai TC disegna le virgole e i punti al centro del quadrato, come li stampano Hong Kong e Taiwan, ed è per questo che il sillabario viene da Hong Kong. Anche un primo libro di lettura della Cina continentale si compone in Kai, in caratteri semplificati con la virgola e il punto in basso a sinistra del quadrato. Fontsource però non ha un Kai da testo per il cinese semplificato, e quello tradizionale ammasserebbe quei segni contro il carattere successivo, quindi una pagina continentale in questo Ricettario usa Noto Serif SC, il carattere Song della <RecipeLink slug="chinese-novel-horizontal">pagina di romanzo continentale</RecipeLink>.
+
+## Varianti
+
+### Mostra la griglia mentre componi la pagina
+
+`show: true` disegna sul canvas i dodici quadrati di ogni riga; il PDF li omette, a meno che `renderToPdf` non riceva `characterGrid: true`.
+
+```diff
+-  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: 11 },
++  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: 11, show: true },
+```
+
+### Metti lo zhuyin accanto ai caratteri
+
+Le letture in bopomofo stanno in una colonna a destra di ogni carattere; <RecipeLink slug="zhuyin-vertical-reader">il libro di lettura in zhuyin</RecipeLink> le compone lungo una pagina verticale.
+
+## Errori frequenti
+
+- Questa ricetta non offre un PDF. Il `fontsourceProvider` del kit incorpora solo il file latin di un carattere, e le lettere con i toni ā ǎ ǐ ǒ ǔ sono in latin-ext, quindi un PDF le perderebbe e postext-pdf le segnalerebbe ciascuna come `missingGlyph`. Se ne hai bisogno, componi le letture in un carattere cinese, i cui file `cjkPdfProvider` sceglie carattere per carattere.
+
+- Controlla ogni carattere dei quadretti rispetto alle forme standard della regione. LXGW WenKai TC disegna 為 con la parte superiore 爫 di 爲, una forma più antica che passa nel testo corrente, come qui in 老何為 e 為人子, ma non in un quadretto che un bambino di Hong Kong copia. La lezione tre fa invece esercitare 幼.

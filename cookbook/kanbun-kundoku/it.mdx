@@ -1,0 +1,59 @@
+---
+title: "Kanbun con i segni di lettura e la lettura giapponese"
+summary: "Tre detti dei Dialoghi e una quartina Tang composti alla giapponese: segni di ritorno e okurigana in vermiglione, e la lettura in kana sotto ogni passo."
+plain: "Il cinese classico come lo imparano i lettori giapponesi: piccoli segni rossi accanto ai caratteri dicono in che ordine leggerli e quali desinenze giapponesi aggiungere, e la lettura giapponese completa segue ogni passo."
+description: "Kanbun kundoku in Postext: 返り点 e 送り仮名 con :kunten accanto ai Dialoghi e a Spring Dawn, in verticale, con lo yomikudashi in furigana sotto ogni passo."
+question: "Come stampo il kanbun con i segni di ritorno e gli okurigana, seguito dalla lettura giapponese?"
+aliases: ["kanbun", "漢文", "kundoku", "訓読", "kunten", "訓点", "segni di ritorno", "返り点", "kaeriten", "レ点", "一二点", "okurigana", "送り仮名", "yomikudashi", "書き下し文", "kakikudashi", "cinese classico in giapponese", "Dialoghi", "Analetti", "論語", "Confucio", "春暁", "Spring Dawn", "Meng Haoran", "孟浩然"]
+pageNotes: { "1": "«論語» apre la prima pagina, con «学而・為政より» in piccoli caratteri vermiglione; sotto l’etichetta «学而第一» il detto «子曰、学而時習之…» scorre in due righe di Mincho grande con piccoli segni vermiglione accanto ai caratteri, レ e 一 二 in basso a sinistra e okurigana come ビテ e ハク a destra, poi la lettura giapponese «子曰はく、学びて時に之を習ふ…» in tre righe di una grafia da libro di scuola con furigana.", "3": "«唐詩»: «春暁» di «孟浩然» in due righe di due versi ciascuna, «春眠不覚暁» con due segni レ, poi la sua lettura «春眠暁を覚えず　処処啼鳥を聞く»." }
+---
+
+## Che cosa comporrai
+
+Tre pagine di un’antologia scolastica giapponese di 漢文 (kanbun), il cinese classico letto come giapponese, su una pagina A5 rilegata a destra: tre detti dei *Dialoghi* di Confucio e la quartina *Spring Dawn* di Meng Haoran. Ogni passo è composto in Zen Old Mincho a 15 pt nell’ordine cinese, con i suoi 訓点 (kunten) accanto ai caratteri in vermiglione, a metà del loro corpo: i segni di ritorno (返り点) in basso a sinistra di un carattere dicono al lettore di proseguire e tornarci dopo, e gli okurigana (送り仮名) alla sua destra aggiungono le desinenze giapponesi. Sotto ogni passo il suo 書き下し文 (yomikudashi), lo stesso testo riscritto in giapponese, scorre in Klee One, una grafia da libro di scuola, con i furigana dove una lettura è difficile. I classici cinesi con i loro ausili di lettura sono nella <RecipeLink slug="zhuyin-vertical-reader">Nº 080</RecipeLink>.
+
+## Preparazione
+
+### 1 · Segna ogni carattere con `:kunten`
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `:kunten[習]{kaeri="レ" okuri="フ"}` dà a 習 il segno di ritorno レ e l’okurigana フ; il testo conserva il carattere, quindi la ricerca, la copia e il PDF leggono il passo come è scritto, e i segni non prendono nessun carattere del testo ([Segni, ruby e warichu](/it/docs/configuration-east-asian#segni-ruby-e-warichu)). Leggi 学ビテ而時ニ習フレ之ヲ: レ su 習 manda il lettore prima a 之 e poi indietro, 之を習ふ; 而 non ha segni e non si legge. Nel testo verticale il segno di ritorno sta in basso a sinistra del suo carattere e occupa mezzo carattere della riga, e gli okurigana stanno a destra, a partire da metà altezza del carattere, come li compone JIS X 4051. `cjk.kunten` ne fissa il corpo, la metà di quello del testo, e il colore, il vermiglione con cui li scrive un lettore; un passo è a 15 pt su due righe della griglia, il che lascia 27 pt accanto a ogni riga per gli okurigana.
+
+### 2 · Salta con 一 二 e con 一レ
+
+I numeri portano il lettore più indietro. In 不二亦タ説バシカラ一乎 il lettore salta 不, che ha 二, legge 亦た説ばしから, e a 一 risale a 不: 亦た説ばしからずや. In 為政 il segno combinato 一レ su 為 fa entrambe le cose: 可二以テ為一レ師ト矣 si legge 以て, 師と (レ), 為る, poi di nuovo a 可 (da 一 a 二), 以て師と為るべし. I code point kanbun ㆑ ㆒ ㆓ si leggono come i caratteri che rappresentano, quindi un testo copiato da altrove conserva i suoi segni.
+
+### 3 · Lascia che gli okurigana lunghi spingano avanti il carattere successivo
+
+Un okurigana più lungo del suo carattere non scorre accanto al successivo: in 花落ツルコト知ル多少 i quattro kana di ツルコト occupano la lunghezza di due caratteri, e 知 scende per cominciare dopo di loro, come li compone JIS X 4051 (§5.6.4). La riga cresce; il suo a capo successivo si sposta con lei.
+
+### 4 · Dai a ogni passo un’etichetta alta due righe
+
+<Excerpt region="headings" />
+
+Ogni libro dell’antologia apre una pagina con il suo titolo, 論語 o 唐詩, il primo con una piccola nota vermiglione su ciò che contiene; ogni passo riceve un’etichetta in gotico larga due righe di testo (2行取り), 学而第一 o 春暁　孟浩然, così i passi sotto di essa restano sulla griglia. La lettura è un blocco `:::paragraphs{style="kudashi"}` abbassato di due caratteri, nel carattere e nel corpo del testo, con furigana jukugo: `{君子|くん|し}` dà a ogni carattere la sua lettura, così una riga potrebbe andare a capo tra di loro.
+
+### 5 · Carica ogni voce con i suoi caratteri
+
+<Excerpt region="voices" />
+
+Il testo classico e la lettura sono composti in caratteri diversi, quindi ognuno carica i file per i propri glifi: Zen Old Mincho per i passi e i loro segni, i cui kana stanno dentro gli attributi di `:kunten`, Klee One per le letture e i loro furigana, Noto Sans JP per le etichette. La quartina è composta con due versi per riga e uno spazio ideografico tra loro, un modo comune di stamparla, così la poesia e la sua lettura stanno nella pagina sotto il titolo.
+
+## Varianti
+
+### Stampa i segni in nero
+
+Un’antologia stampata compone i kunten con l’inchiostro del testo; togli il colore.
+
+```diff
+-  kunten: { fontSize: em(0.5), color: col('vermilion'), placement: 'inline' },
++  kunten: { fontSize: em(0.5), placement: 'inline' },
+```
+
+### Componi i segni tra le righe
+
+`placement: 'interlinear'` toglie i segni di ritorno dalla riga e li mette nello spazio accanto alla metà inferiore del carattere, così il passo mantiene la spaziatura del testo nudo (白文). JIS li compone in linea, l’impostazione predefinita.
+
+```diff
+-  kunten: { fontSize: em(0.5), color: col('vermilion'), placement: 'inline' },
++  kunten: { fontSize: em(0.5), color: col('vermilion'), placement: 'interlinear' },
+```

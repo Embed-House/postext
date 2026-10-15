@@ -197,10 +197,10 @@ describe("page renditions", () => {
 
   it("rejects unknown pages and locales", () => {
     expect(pageMarkdown("en", "/nope")).toBeNull();
-    expect(pageMarkdown("it", "")).toBeNull();
+    expect(pageMarkdown("nl", "")).toBeNull();
     expect(pageMarkdown("en", "/docs/nope")).toBeNull();
     expect(pageMarkdown("en", "/cookbook/nope")).toBeNull();
-    expect(pageMarkdown("it", "/cookbook")).toBeNull();
+    expect(pageMarkdown("nl", "/cookbook")).toBeNull();
   });
 
   it("renders every visible recipe with its fixed sections and the whole code", () => {

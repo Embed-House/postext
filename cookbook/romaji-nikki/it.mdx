@@ -1,0 +1,54 @@
+---
+title: "Giapponese in caratteri latini: il Rōmaji nikki di Takuboku"
+summary: "Un testo in rōmaji etichettato ja-Latn: regole giapponesi per i kana, nessuna sillabazione per il latino e i macron di un carattere latino portati nel PDF."
+plain: "La prima pagina di un diario del 1909 che il poeta Takuboku scrisse in giapponese con lettere latine, con una lettura in scrittura giapponese sotto ogni paragrafo."
+description: "Il diario in rōmaji di Takuboku in Postext: giapponese in lettere latine etichettato ja-Latn, senza sillabazione, kana sotto ogni paragrafo, ō ū nel PDF."
+question: "Come compongo il giapponese scritto in rōmaji: quale tag di lingua, quale sillabazione e i macron nel PDF?"
+aliases: ["rōmaji", "romaji", "ローマ字", "ja-Latn", "giapponese in lettere latine", "Takuboku", "石川啄木", "ローマ字日記", "Nippon-shiki", "Hepburn", "macron", "ō ū", "latin-ext", "senza sillabazione"]
+pageNotes: { "1": "Il frontespizio: le righe d’intestazione del diario stesso, «NIKKI. I. MEIDI 42 NEN. 1909. APRIL. TOKYO.», in maiuscole spaziate su un campo indaco, un breve filetto e una riga sull’edizione.", "2": "La voce del 7 aprile: «7TH, WEDNESDAY.» e l’indirizzo in maiuscoletto, poi i paragrafi in rōmaji, ciascuno seguito dalla sua lettura in kana e kanji, più piccola e rientrata.", "4": "La fine della voce, «Kanasii koto da !» e 悲しいことだ！, e la nota sul testo in un piccolo bastoni." }
+---
+
+## Che cosa comporrai
+
+Quattro pagine del *Rōmaji nikki*, il diario che Ishikawa Takuboku tenne a Tokyo nella primavera del 1909 in lettere latine, perché la moglie non potesse leggerlo: le righe del titolo del suo quaderno e la prima voce, il 7 aprile, fino a *Kanasii koto da!* Il diario è composto come edizione di studio su una pagina A5: il rōmaji in Source Serif 4, giustificato e mai sillabato, e sotto ogni paragrafo la sua lettura in kana e kanji in Noto Serif JP, più piccola, più leggera e rientrata. Takuboku scrive nel sistema Nippon-shiki, *si*, *tu*, *hu*, con l’accento circonflesso sulle vocali lunghe, *Tôkyô*; le righe del curatore usano lo Hepburn con i macron, *Rōmaji*, ed entrambi arrivano nel PDF.
+
+## Preparazione
+
+### 1 · Etichetta il testo ja-Latn
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `ja-Latn` è il tag BCP 47 per il giapponese scritto in alfabeto latino. La sua lingua è `ja`, quindi la lettura sotto ogni paragrafo riceve le regole giapponesi: kinsoku, spaziatura di 、。 e lo spazio em che il motore aggiunge dopo ！ dentro una frase, come in 「ええ！　ええ！」. Il giapponese non ha pattern di sillabazione, quindi il rōmaji non viene mai diviso; con `en`, i pattern inglesi dividerebbero parole come *tatinobotta* o *Surigarasu* secondo le sillabe inglesi, non secondo le more che sente un lettore giapponese. Senza trattini sono gli spazi ad assorbire il gioco, quindi la giustezza è di circa 70 caratteri e `maxWordSpacing` è 1,8 ([sillabazione](/it/docs/configuration-text#sillabazione)).
+
+<PageShot page={2} crop="0,0.1,1,0.45" caption="Pagina 2: il giorno, l’indirizzo, i primi due paragrafi in rōmaji e le loro letture in kana, composte più piccole e rientrate." />
+
+### 2 · Metti i macron nel PDF
+
+<Excerpt region="macrons" />
+
+Fontsource tiene ō ū ā in un file `latin-ext` a parte. Lo schermo lo carica (`loadFonts` vede la ō nell’esempio), e il `cjkPdfProvider` del kit fa lo stesso per il PDF. Serve Noto Serif JP dalle sue sezioni giapponesi, e quando un carattere latino compone una lettera che solo `latin-ext` contiene, risponde con due file, `latin` e poi `latin-ext`; postext-pdf prende ogni glifo dal primo file che lo contiene. Il semplice `fontsourceProvider` del kit passa al PDF solo il file `latin`: con quello, il PDF non avrebbe alcun glifo per la ō.
+
+### 3 · Apri con le righe del diario stesso
+
+<Excerpt region="title" />
+
+Il quaderno comincia con NIKKI. I. MEIDI 42 NEN. 1909. APRIL. TOKYO., una voce per riga. Il titolo le prende da un attributo, ogni `\n` una nuova riga, e le compone in maiuscole spaziate su un campo indaco, la tela della copertina di un quaderno. La sua pagina è un’apertura, quindi le testatine la saltano.
+
+### 4 · Testatine per parità
+
+<Excerpt region="heads" />
+
+Il verso porta il nome del diario e il recto il luogo e il mese, con i folio negli angoli esterni, in Source Sans 3 a 7,5 pt.
+
+## Varianti
+
+### Scrivi il rōmaji in Hepburn
+
+Un’edizione moderna può riscrivere il diario in Hepburn con i macron, *Tōkyō* per *Tôkyô*. Il PDF porta già la ō, quindi cambia solo il testo; aggiungi una nota che dica che la grafia è del curatore.
+
+### Sillaba tra le more
+
+Se una colonna stretta ha bisogno di trattini, dai al rōmaji dei trattini morbidi (U+00AD) tra le more, `Su\u00adna-ho\u00adko\u00adri` nel codice o un U+00AD digitato nel testo: un documento etichettato `ja-Latn` non sillaba mai da solo, ma va a capo su un trattino morbido quando una parola non ci sta.
+
+## Errori frequenti
+
+- Shippori Mincho non ha né ō né ū; Noto Serif JP e Source Serif 4 le hanno nei loro file `latin-ext`. Controlla il carattere prima di sceglierlo per un testo in Hepburn.
+- Il cinese scritto in lettere latine è il pinyin, composto come ruby sopra i caratteri in <RecipeLink slug="pinyin-primer">Un primo libro di lettura con il pinyin sopra ogni carattere</RecipeLink>; il rōmaji di Takuboku è il testo stesso, quindi si compone come testo latino con la sua spaziatura, non come annotazione.

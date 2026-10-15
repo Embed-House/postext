@@ -1,0 +1,78 @@
+---
+title: "Attestato con cornice guilloché"
+summary: "Attestati di fine corso disegnati da un solo stile di titolo: cornice guilloché nell’intestazione, sigillo e firme al piede, il nome nell’apertura."
+plain: "Attestati di un corso per un laboratorio di stampa, una pagina per allievo, con un bordo decorato e un sigillo. Scrivere una volta il nome di un allievo dà un attestato completo."
+description: "Attestati di fine corso in Postext: cornice guilloché e sigillo disegnati via codice, il nome in corsivo calligrafico da ogni titolo e la classe in un PDF."
+question: "Come metto una cornice guilloché, un sigillo e le righe per le firme su ogni pagina di un attestato?"
+aliases: ["diploma", "attestato", "certificato", "premio", "guilloché", "cornice ornamentale", "sigillo", "righe per le firme", "stampa unione", "elenco della classe", "PDF in serie", "una pagina per record", "bordo decorativo su ogni pagina", "certificate"]
+pageNotes: { "1": "Un attestato US Letter su carta crema, incorniciato da una fascia verde petrolio piena di lenti guilloché color crema, con un rosone crema in ogni angolo. All’interno, la riga in maiuscole spaziate «The Quoin Room · Letterpress workshop», «CERTIFICATE» in grandi maiuscole verde petrolio e «OF COMPLETION», poi «This certifies that» in corsivo e il nome «Imogen Achterberg» in corsivo calligrafico nero su un filetto dorato. Seguono quattro righe centrate di motivazione e una riga della data in corsivo. Vicino al piede, un sigillo rosso con due code di nastro sta tra le righe per le firme di Harriet Colfax, maestra tipografa, e Samuel Okoro, docente del corso, con una riga di sigla editoriale sotto; il numero di serie «No. 26-031» è stampato in rosso in alto a destra.", "2": "Lo stesso attestato per Tomás Okafor, numero di serie 26-032.", "3": "Lo stesso attestato per Ruth Adair, numero di serie 26-033." }
+---
+
+## Che cosa comporrai
+
+Attestati di fine corso per il Quoin Room, un laboratorio di stampa a caratteri mobili immaginario a Providence: una pagina US Letter per allievo. L’edizione spagnola li compone come diplomi A4 per La Cuña, un laboratorio di Saragozza. Una fascia verde petrolio piena di lenti guilloché color crema incornicia il foglio, con un rosone crema in ogni angolo; entrambi sono disegnati via codice a partire da sinusoidi e ipotrocoidi. Sotto un titolo in maiuscole spaziate, il nome dell’allievo è composto in Pinyon Script da 48 pt sopra un filetto dorato, e la motivazione è centrata in Rosarivo. Un sigillo rosso con due code di nastro sta tra le righe per le firme, con una riga di sigla editoriale sotto. Poiché un solo stile di titolo disegna tutta la pagina, ogni allievo è un titolo Markdown, e il PDF contiene la classe con un segnalibro per nome.
+
+## Preparazione
+
+### 1 · Lascia che un solo stile di titolo disegni la pagina
+
+Lo stile è [la risposta breve](#la-risposta-breve) qui sopra. Uno stile di titolo governa le pagine della sua sezione ([stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)): il suo `header` e il suo `footer` sostituiscono quelli del documento, che qui sono vuoti, i suoi `margins` stabiliscono l’area del testo e il suo `advancedDesign` disegna l’apertura. L’altezza di un’apertura si arrotonda per eccesso a righe intere della griglia del testo da 17 pt. Una `minHeight` di 106 mm diventa 18 righe, quindi la motivazione comincia a 140 mm dal bordo superiore; in A4, `y()` la porta a 112,7 mm, cioè 19 righe, e la motivazione comincia a 146 mm. Il solo blocco del titolo farebbe cominciare la motivazione a 128 mm (134 mm in A4). Senza `marginBottom: 0`, i 0,5 em predefiniti sotto un titolo porterebbero gli stessi 106 mm a 19 righe.
+
+### 2 · Aggancia la cornice alla pagina nell’intestazione
+
+<Excerpt region="frame" />
+
+Un elemento immagine disegna una risorsa alle dimensioni della sua collocazione ([elementi immagine](/it/docs/configuration-page-layout#elementi-immagine)): ancorato all’angolo superiore sinistro della pagina con entrambi i lati `'fill'`, il guilloché copre il riquadro del formato rifilato, e l’SVG, dichiarato con le proporzioni della pagina, lo riempie senza deformarsi. L’intestazione lo dipinge sopra `page.backgroundColor` e non riserva spazio, quindi sono i soli margini a tenere il testo ad almeno 32 mm dal rifilo, dentro il filetto interno a 26 mm. Una filigrana collocata nell’intestazione si stamperebbe sopra le parole, perché l’intestazione viene dipinta dopo il testo. In un’intestazione, `{attr.serial}` legge l’attributo del titolo alla cui sezione appartiene la pagina, così ogni attestato stampa il proprio numero.
+
+### 3 · Tieni nell’apertura solo il blocco del titolo
+
+<Excerpt region="title" />
+
+Ogni riga è ancorata al bordo `'top'` della pagina, il che la centra, con una `y` misurata dal rifilo, così il blocco resta al suo posto qualunque siano i margini; `y()` allunga quelle posizioni da Letter ad A4. Il nome è il testo stesso del titolo, letto tramite `{titleText}`, quindi i segnalibri e i tag del PDF lo riportano. Un nome lungo va su una seconda riga, perché un progetto grafico di titolo manda a capo il suo testo (`overflow: 'wrap'`). Le righe spaziate non richiedono correzioni: la spaziatura dopo l’ultima lettera resta fuori dalla misura, quindi sono le lettere stesse a essere centrate.
+
+### 4 · Aggancia il sigillo e le firme a un solo bordo
+
+<Excerpt region="signatures" />
+
+Tutto ciò che sta nel piè di pagina è misurato da `SIGN`, il bordo superiore del sigillo, e il margine inferiore dello stile chiude l’area del testo sullo stesso bordo, così una motivazione troppo lunga per la pagina passa alla successiva invece di scorrere sotto il sigillo. Spostate nell’apertura, le righe e i nomi conterebbero per la sua altezza ([span e progetto grafico avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)); poiché arrivano sotto l’area del testo, l’apertura reclamerebbe l’intera pagina e manderebbe la motivazione alla successiva. `LINE` prende la larghezza tra i margini della pagina, sottrae il disco del sigillo da 34 mm, dimezza il resto e toglie 3 mm, così ogni riga si ferma 3 mm prima del sigillo in entrambi i formati (lunga 56 mm in Letter, 53 mm in A4). Ogni nome e ruolo è un elemento di testo largo quanto la sua riga, il che lo centra sotto di essa.
+
+### 5 · Unisci l’elenco della classe ai titoli
+
+<Excerpt region="merge" />
+
+Ogni riga diventa un titolo `#` che nomina lo stile e porta il numero di serie come attributo ([attributi dei titoli](/it/docs/document-format#attributi-dei-titoli)), seguito dal testo di `content.en.md`, quindi tre righe danno tre pagine. Il `breakBefore` del livello 1 con parità `'any'` fa cominciare ogni titolo su una nuova pagina senza pagine bianche tra gli attestati; lo stile lo eredita.
+
+### 6 · Costruisci un solo PDF per tutta la classe
+
+<Excerpt region="pdf" />
+
+La classe è un unico documento, quindi `renderToPdf` scrive un solo file di tre pagine con un segnalibro per titolo, ciascuno intitolato a un allievo. `renderToPdf` accetta anche un array di documenti, come i capitoli di un libro, ma un documento per allievo significa una chiamata a `buildDocument` per ciascuno. Sotto forma di titoli, l’intera classe viene impaginata in una sola build, e il visualizzatore mostra i tre attestati di quella build. Il PDF incorpora i quattro caratteri che le pagine stampano, che il font provider del kit scarica da Fontsource ([perché un font provider?](/it/docs/configuration-programmatic-usage#perché-un-provider-di-font)).
+
+## Varianti
+
+### Stampa un PDF per allievo
+
+Un pulsante per allievo costruisce quell’attestato come documento a sé, con `buildDocumentWithFonts` come build propria del pen, e dà al file il nome del numero di serie; ogni file pesa circa 245 KB.
+
+```diff
+-offerPdf(() => renderToPdf(doc, { fontProvider: fontsourceProvider, resourceBytes: imageBytes }),
+-  `${RECIPE}.pdf`); // bookmarks: one per heading, so one per student
+-document.querySelector('[data-postext-pdf]').textContent = t({ en: 'Class list → one PDF',
+-  es: 'Toda la clase en un PDF' });
++for (const [name, serial] of CLASS) {
++  const one = `# ${name} {style="certificate" serial="${serial}"}\n\n${markdown}`;
++  offerPdf(async () => renderToPdf(await buildDocumentWithFonts({ markdown: one, metadata,
++    resources }, config(), kitFonts(FONTS)), { fontProvider: fontsourceProvider,
++    resourceBytes: imageBytes }), `${serial}.pdf`);
++  document.querySelector(`[data-postext-pdf="${serial}.pdf"]`).textContent = name;
++}
+```
+
+### Stampa la cornice e il titolo in blu marino
+
+La grafica SVG e la configurazione leggono lo stesso oggetto `palette`, quindi cambiando una voce si ricolorano la fascia, i motivi dei rosoni e le righe del titolo.
+
+```diff
+-  teal: '#1f5f5b', // the frame, the title lines
++  teal: '#2b3a67', // the frame, the title lines
+```

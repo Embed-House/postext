@@ -1,0 +1,70 @@
+---
+title: "Copertina di rivista e sommario per sezioni"
+summary: "Una copertina fotografica con i richiami appesi alla testata e un sommario generato con una riga colorata per sezione. Ogni sezione è una parte senza pagina."
+plain: "La copertina e le prime pagine di una rivista di cucina e agricoltura, con una copertina fotografica e una pagina di sommario. Mostra come dare a ogni sezione un colore proprio, che prosegue nelle sue pagine."
+description: "Sei pagine di rivista in Postext. La copertina è uno slot grafico su una foto, e il sommario mette ogni articolo sotto una linguetta del colore della sezione."
+question: "Come faccio una copertina di rivista e un colophon, e che cosa sostituisce occhiello e frontespizio?"
+aliases: ["copertina di rivista", "testata", "richiami di copertina", "pagina del sommario", "sezioni per colore", "colori di sezione", "apertura della rivista", "numero della rivista", "linguetta del folio", "lettera del direttore", "editoriale", "colophon", "magazine cover"]
+pageNotes: { "1": "La copertina: una valle toscana sotto un cielo pallido, «FALLOW» in Bodoni nero lungo la testa, un pannello color carta con tre richiami i cui occhielli sono oliva, terracotta e vino, e un riquadro del prezzo con un codice a barre inventato nell’angolo in basso a destra.", "2": "Il sommario: un grande 14 in bruno terra, tre righe di sezione con linguette colorate, il titolo, il numero di pagina e il sommario di ogni articolo, una piccola copia della copertina, e la lettera del direttore, i collaboratori e un piccolo colophon nella colonna di destra.", "3": "«Field notes»: fiaschette di vetro con germogli verdi lungo la testa della pagina, con un pannello terracotta che sale nel suo piede e porta il titolo e il sommario, poi due colonne giustificate e una linguetta del folio terracotta.", "4": "L’apertura del servizio: una fotografia aerea di un mosaico di campi, uno dei quali lasciato a maggese, una strada bianca che passa accanto a un casale, con un pannello oliva che sale nel suo piede.", "5": "Il servizio prosegue sotto la fotografia di un casale tra vigne e cipressi, con un riquadro di dati oliva che elenca la rotazione settennale e una citazione in evidenza oliva.", "6": "«Kitchen»: grano maturo con un pannello rosso vino che sale nel suo piede, poi gli ingredienti e il procedimento con trattini e numeri rosso vino." }
+---
+
+## Che cosa comporrai
+
+Sei pagine di un numero di *FALLOW*, un trimestrale immaginario di cibo e terra, su una pagina di 230 × 300 mm. Una valle toscana esce al vivo dalla copertina sotto una testata in Bodoni da 118 pt, e tre richiami stanno su un pannello color carta, ciascun occhiello nel colore della sua sezione, con il prezzo e il codice a barre nell’angolo. La pagina 2 contiene il sommario generato: una linguetta colorata per sezione, con sotto il titolo, il numero di pagina e il sommario dell’articolo. La colonna di destra porta la lettera del direttore, i collaboratori e il colophon. Le sezioni che seguono sono terracotta, oliva e vino. Ogni articolo si apre con un’immagine al vivo sulla testa della pagina e un pannello nel colore della sezione che sale al suo interno, e le sue linguette del folio, i suoi punti elenco e i suoi riquadri prendono quel colore. Il colore viene dalla recinzione `:::part` sopra ogni articolo, che non apre alcuna pagina divisoria.
+
+## Preparazione
+
+### 1 · Appendi la copertina alla sua testata
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Solo la fotografia, le due righe in testa e il prezzo sono ancorati alla pagina. Tutto il resto è ancorato a un altro elemento ([posizionamento degli elementi](/it/docs/configuration-page-layout#collocazione-degli-elementi)): la testata sotto la riga superiore, il primo occhiello 8 mm sotto la testata, poi ogni richiamo sotto il suo occhiello e ogni occhiello sotto il richiamo precedente, così un richiamo più lungo o una testata più grande spinge in basso ciò che sta sotto invece di stampargli sopra. Ogni occhiello e ogni richiamo ha un proprio riquadro color carta, largo 84 mm, e i sei riquadri impilati formano il pannello, che cresce con le parole. Ogni riquadro dopo il primo si sovrappone di 0,3 mm a quello sopra (`SEAM`), e il codice a barre si sovrappone allo stesso modo al prezzo, perché sul canvas due riempimenti che si toccano soltanto lasciano tra loro un filo della fotografia. Una rivista non ha occhiello né frontespizio; la copertina porta il suo nome, e la pagina del sommario il numero, la stagione e il colophon. Per le pagine preliminari di un libro, vedi <RecipeLink slug="front-matter-roman-to-arabic">Pagine preliminari con folio romani, poi pagina 1</RecipeLink>.
+
+### 2 · Fai di ogni sezione una parte senza pagina
+
+<Excerpt region="sections" />
+
+Con `parts.page: false`, una recinzione come `:::part{title="Features" palette="band=#5d6a2b"}` non apre alcuna pagina divisoria e si limita a impostare il titolo e la tavolozza della sezione dal blocco successivo in poi ([il contenitore `:::part`](/it/docs/configuration-styles#il-contenitore-part)). L’H1 di ogni articolo prende uno [stile di titolo](/it/docs/configuration-styles#stili-dei-titoli) con `numbered: false`, così il sommario lo elenca senza numero. Lo stile sceglie l’immagine dell’apertura, e la parte fornisce il colore.
+
+### 3 · Collega ogni colore di sezione a una sola voce
+
+<Excerpt region="palette" />
+
+Una parte sostituisce le voci della tavolozza per id, quindi tutto ciò che cambia con la sezione è collegato a `band`: il pannello dell’apertura, la linguetta del folio, i punti elenco e i numeri degli elenchi, la citazione in evidenza, e la striscia e il titolo del riquadro di dati. Nel testo la sostituzione avviene per valore: ogni colore il cui esadecimale è uguale all’esadecimale di base di `band` (`#8b6a3e`) prende quello della sezione, ed è per questo che nessun’altra voce usa quell’esadecimale. Gli elementi grafici funzionano al contrario: la sostituzione di una parte li raggiunge tramite il `paletteId`, quindi `col()` scrive l’id accanto all’esadecimale.
+
+### 4 · Lascia che il sommario si raggruppi da solo
+
+<Excerpt region="contents" />
+
+`:::toc` elenca gli articoli e dà a ogni `:::part` una riga impaginata da `toc.parts.design` con la tavolozza di quella parte ([indice](/it/docs/configuration-notes-references#indice-dei-contenuti)), così un solo progetto grafico di riga stampa tre linguette in tre colori. Il filetto e la linguetta sono entrambi appesi a `mid`, il centro della riga alzato di 1 mm, il che tiene la linguetta lontana dal titolo sottostante. Con i puntini di guida disattivati, tra un titolo e il suo numero di pagina (3, 4 e 6) non corre nulla, e `subtitle.attr` stampa in corsivo sotto il titolo l’attributo `standfirst` dell’apertura. Il colophon che chiude la colonna di destra è uno stile di paragrafo, Jost da 7 pt in `muted`, che il Markdown applica con `:::paragraphs{style="colophon"}`.
+
+### 5 · Dai a ogni articolo la stessa apertura
+
+<Excerpt region="opener" />
+
+L’immagine esce al vivo dalla testa della pagina e scende per 150 mm. Un pannello in `band` sale di 34 mm nel suo piede. Il pannello è formato da tre riquadri di testo larghi 136 mm, ciascuno concatenato `below` al precedente, che contengono il nome della sezione da `{partTitle}`, il titolo e il sommario. Il pannello e la firma arrivano sotto il piede dell’immagine, quindi l’articolo comincia sotto l’elemento più basso, la firma, il cui padding inferiore vuoto di 5 mm tiene la prima riga almeno a quella distanza.
+
+### 6 · Nomina la sezione nel folio
+
+<Excerpt region="folios" />
+
+Il numero di pagina sta in un quadrato di 6,5 mm di `band` al piede esterno. Il nome della sezione è ancorato accanto, verso il margine interno, e il titolo dell’articolo accanto al nome; tutti e tre i riquadri sono alti 6,5 mm con il testo centrato in verticale, quindi condividono un’unica linea mediana. Le riviste stampano il folio anche su una pagina d’apertura, quindi il piè di pagina non ha filtro `pages`. Lo stile di titolo della copertina svuota il piè di pagina, e quello del sommario mette il nome della rivista e la stagione del numero (`{title}` e `{publishDate}`) dove vanno la sezione e l’articolo.
+
+## Varianti
+
+### Componi la testata nel colore della casa
+
+La testata prende il bruno terra del grande 14 della pagina del sommario.
+
+```diff
+-    textTransform: 'uppercase', align: 'center', color: col('ink') },
++    textTransform: 'uppercase', align: 'center', color: col('band') },
+```
+
+### Apri ogni sezione con una pagina divisoria
+
+Per parti con una pagina propria, e un numero di pagina in ogni riga di parte del sommario, vedi <RecipeLink slug="parts-in-colour">Parti a colori da un solo attributo</RecipeLink>.
+
+## Errori frequenti
+
+- Un elemento immagine adatta la sua immagine dentro il riquadro e non la ritaglia mai. Taglia prima ogni JPEG sul suo riquadro, 23 : 30 per la copertina e 230 × 150 mm per le aperture, altrimenti l’immagine si rimpicciolisce e lascia strisce bianche ai bordi.
+- Nel testo, una parte ricolora ogni colore il cui esadecimale è uguale all’esadecimale di base di `band`, che sia collegato a `band` oppure no. Riserva quell’esadecimale a ciò che deve cambiare con la sezione.
+- Gli articoli sono adattati al testo in entrambe le lingue: alcune frasi della sezione «Field notes» spagnola sono state accorciate perché restasse su una pagina, e una frase del servizio inglese ha perso tre parole perché entrambe le colonne di pagina 4 finissero alla pari. Dopo una modifica, controlla che nessun articolo trabocchi di qualche riga su una nuova pagina e che ogni pagina tranne l’ultima di un articolo finisca alla pari.

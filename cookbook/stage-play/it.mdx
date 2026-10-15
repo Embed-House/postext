@@ -1,0 +1,80 @@
+---
+title: "Copione teatrale: personaggi, battute e didascalie"
+summary: "La commedia di Wilde come copione per attori: nomi in grassetto prugna, didascalie in corsivo grigio e un elenco dei personaggi con puntini fino a ogni attore."
+plain: "L’inizio di una celebre commedia di Oscar Wilde, stampata per gli attori. I nomi di chi parla risaltano in grassetto colorato, e le didascalie sono in grigio così si saltano facilmente."
+description: "Un copione di The Importance of Being Earnest composto con Postext: una locandina prugna per frontespizio e il cast del 1895 di fronte al primo atto."
+question: "Come compongo un copione: nomi di chi parla, didascalie, titoli di atti e scene e l’elenco dei personaggi?"
+aliases: ["testo teatrale", "dramma", "copione", "copione per attori", "commedia", "didascalie", "didascalie sceniche", "nomi dei personaggi", "elenco dei personaggi", "dramatis personae", "puntini di guida", "riempimento a puntini", "tabulazione", "rientro sporgente", "locandina", "frontespizio", "fregio", "garofano", "Oscar Wilde", "The Importance of Being Earnest", "L’importanza di chiamarsi Ernesto"]
+pageNotes: { "1": "Il frontespizio: un foglio prugna in una doppia cornice dorata i cui filetti si incrociano agli angoli. Il sottotitolo corre in maiuscole dorate spaziate sopra il titolo, che occupa quattro righe, maiuscole grassissime per «Importance» ed «Earnest» e corsivo per «The» e «of Being». Sotto vengono un garofano dorato tra due volute, l’autore in maiuscole spaziate e, al piede, il teatro e la data della prima rappresentazione.", "2": "I personaggi della commedia sotto una riga prugna centrata in maiuscoletto che nomina il cast originale, il teatro e la data: ogni personaggio in grassetto prugna a sinistra, una fila di puntini e l’attore che creò il ruolo sul margine destro. Sotto, le tre scene della commedia, con i numeri degli atti allineati a destra su una colonna e i luoghi che cominciano sulla successiva, il tempo dell’azione in corsivo grigio e un colophon.", "3": "Il primo atto comincia con il suo titolo in maiuscole prugna e un garofano prugna. La scena è descritta in corsivo grigio centrato sotto un’etichetta in maiuscoletto; poi cominciano le battute, ciascuna con il nome di chi parla in grassetto prugna e le righe successive sporgenti.", "4": "Battute con righe successive sporgenti e tre didascalie centrate tra di esse: l’entrata e l’uscita di Lane e l’entrata di Jack.", "5": "La pagina finisce sulla battuta di Algernon sui divorzi, che una didascalia in corsivo grigio taglia in due." }
+---
+
+## Che cosa comporrai
+
+L’inizio di *The Importance of Being Earnest* di Oscar Wilde, composto come copione per attori di cinque pagine a 140 × 216 mm. Il frontespizio è una locandina prugna in una doppia cornice dorata, con *Importance* ed *Earnest* in maiuscole grassissime e un garofano dorato sotto il titolo. Di fronte al primo atto, l’elenco dei personaggi nomina l’attore che creò ogni ruolo al St James’s Theatre nel 1895. Ogni battuta si apre con il nome di chi parla in grassetto prugna e fa sporgere di 5 mm le righe successive, così un attore trova la battuta d’attacco seguente a colpo d’occhio. Le didascalie, dentro una battuta o tra due battute, sono in corsivo grigio, e l’occhio può saltarle mentre si ripassa la parte. L’edizione spagnola è una nuova traduzione che segue l’uso teatrale spagnolo, con una lineetta dopo ogni nome e le didascalie tra parentesi.
+
+## Preparazione
+
+### 1 · Un atto è un titolo semplice
+
+<Excerpt region="acts" />
+
+Il titolo dell’atto è un titolo di primo livello in Abril Fatface a 24 pt, senza spazio grafico. `textTransform` lo compone in maiuscolo, e le sue tre righe di griglia da 13,6 pt mettono le maiuscole 5,5 mm sotto la sommità della gabbia del testo ([titoli](/it/docs/configuration-text#titoli)). `textAlign: 'center'` non si può impostare per livello, quindi centra anche i titoli dell’elenco dei personaggi e l’etichetta *Scene*. `breakBefore` con parità `'odd'` fa cominciare l’atto su un recto, di fronte all’elenco dei personaggi. Il valore predefinito, `'always-odd'`, metterebbe due pagine bianche tra di loro ([interruzione prima](/it/docs/configuration-text#interruzione-prima-del-titolo)).
+
+### 2 · L’elenco dei personaggi è una fila di puntini fino a ogni attore
+
+<Excerpt region="cast" />
+
+Ogni personaggio è un paragrafo dello stile `person`, con l’attore dopo `:tab` ([tabulazioni e punti di tabulazione](/it/docs/document-format#tabulazioni-e-tabulatori)). Lo stile ha un solo punto di tabulazione, a `'end'`, la fine della giustezza, e con `align: 'end'` il nome dell’attore finisce lì. Il suo `leader: '.'` riempie lo spazio prima del punto di tabulazione con punti fermi, a mezzo em di distanza dal personaggio e dall’attore, e `spaceBetween` mette un personaggio ogni riga e mezza. I nomi dei personaggi sono in grassetto, quindi si stampano in prugna, come i nomi di chi parla nel dialogo. Il cast originale, il teatro e la data intestano l’elenco nello stile `bill-head`, centrati in Playfair Display SC, le cui minuscole sono maiuscoletti. Le scene usano due punti di tabulazione: `:tab Act I :tab …` fa finire *Act I* sul primo, a 15 mm, con `align: 'end'`, così i tre atti stanno allineati a destra su una colonna, e fa cominciare il luogo sul secondo, 2 mm dopo. Il tempo dell’azione è una riga centrata nello stile delle didascalie.
+
+### 3 · Ornamenti senza numero e senza didascalia
+
+<Excerpt region="ornament" />
+
+Un tipo di risorsa con `captionPrefix` e `shortLabel` vuoti stampa le sue immagini senza nulla ([tipi di risorsa](/it/docs/configuration-resources#tipi-di-risorsa)). Il suo `defaultPlacement` mette il garofano dove sta `::resource{id="fleuron"}`, centrato e largo 0,24 della giustezza di 107 mm, circa 26 mm.
+
+### 4 · Il frontespizio è uno stile di titolo
+
+<Excerpt region="playbill" />
+
+`# The Importance of Being Earnest {style="playbill" …}` porta il titolo in quattro attributi, che il disegno compone in due caratteri: Abril Fatface a 40 e 60 pt per i sostantivi, Libre Baskerville corsivo a 17 pt per *The* e *of Being* ([attributi del titolo](/it/docs/document-format#attributi-dei-titoli)). Il fondo prugna, la cornice e il garofano sono un unico SVG disegnato nel codice e ancorato all’abbondanza ([elementi immagine](/it/docs/configuration-page-layout#elementi-immagine)). Lo stile imposta `span: 'page'` anche se il libro ha una sola colonna. Tenuto nella colonna, il disegno verrebbe tagliato al piede della gabbia del testo, 23,3 mm sopra il piede del foglio. L’`header` vuoto dello stile tiene le testatine lontane dall’elenco dei personaggi, che appartiene alla stessa sezione, e il suo `footer` vuoto tiene il folio al piede lontano dal frontespizio, dove si stamperebbe prugna su prugna ([stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)).
+
+Il fondo è un elemento immagine, e un’apertura riserva lo spazio fino al piede delle sue immagini, quindi il titolo occupa l’intero foglio: *The Persons of the Play* comincia a pagina 2 senza un `:::pagebreak` dopo il titolo, ovunque stiano le righe del frontespizio. Nemmeno una riga centrata con `letterSpacing` richiede correzioni. La spaziatura dopo la sua ultima lettera è esclusa dalla centratura, e *OSCAR WILDE* sta al centro della pagina.
+
+### 5 · Testatine che saltano la prima pagina dell’atto
+
+<Excerpt region="heads" />
+
+Il verso porta il titolo della commedia dal frontmatter e il recto l’atto, da `{chapterTitle}`, entrambi in maiuscole di Playfair Display SC con il folio in prugna sul bordo esterno ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)). La prima pagina dell’atto conta come apertura perché il suo primo blocco è un titolo che interrompe la pagina, quindi `pages: 'body'` tiene lontane le testatine, e il piè di pagina le dà invece un folio al piede.
+
+<Note>
+Una sceneggiatura cinematografica rientra il dialogo da entrambi i lati invece di farlo sporgere: <RecipeLink slug="screenplay-format">Formato di sceneggiatura</RecipeLink> compone ogni battuta come un riquadro senza cornice con un padding pari alla larghezza del blocco del dialogo.
+</Note>
+
+## Varianti
+
+### Allinea le didascalie alle righe successive
+
+Allineata a sinistra con un rientro di prima riga di 5 mm, una didascalia di una riga comincia dove cominciano le righe successive delle battute, e la descrizione della scena diventa due paragrafi rientrati sotto la sua etichetta centrata.
+
+```diff
+ const direction = { id: 'direction', fontSize: pt(8.6),
+-  textAlign: 'center', firstLineIndent: pt(0) };
++  textAlign: 'left', firstLineIndent: mm(5) };
+```
+
+### Lascia una riga tra le battute
+
+`paragraphSpacing: true` aggiunge una riga bianca della griglia dopo ogni battuta. L’atto inglese arriva allora a cinque pagine invece di tre, quello spagnolo a quattro.
+
+```diff
+   firstLineIndent: mm(5), hangingIndent: true, // the name at the margin, the turnovers hung
++  paragraphSpacing: true,
+ };
+```
+
+## Errori frequenti
+
+- Ogni sequenza in corsivo del dialogo prende `italicColor`, enfasi compresa, quindi l’enfatico *is* di Lane si stampa nel grigio delle didascalie. Il grigio va su `bodyText` perché la maggior parte delle didascalie sta dentro una battuta, nello stesso paragrafo dell’enfasi; solo il tondo terrebbe l’*is* in nero.
+- Tre battute di Wilde finiscono con una parola da sola: *information.*, *you.* e *that?* La correzione delle righe finali troppo corte può tirare su la terza nella riga precedente, ma solo con l’1 % di spaziatura negativa che `bodyText.maxRuntTracking` consente per impostazione predefinita, e la battuta risulta allora più scura di quelle intorno. `maxRuntTracking: 5` dimezza quel limite: *that?* va a capo, e la riga sopra si allarga a 1,78 volte lo spazio normale tra parole, entro il limite di 1,8. Le pagine inglesi tengono le tre righe corte piuttosto che cambiare le parole di Wilde. La traduzione spagnola è stata riformulata ovunque una riga finisse su una parola di una lettera o una sillaba restasse da sola.
+- I nomi si sillabano come qualsiasi altra parola: *Au-gusta* e *Gwen-dolen* vanno a capo a pagina 5. Un word joiner (U+2060) dentro *Augusta* lo tiene intero, ma allarga la riga sopra a 1,71 volte lo spazio normale tra parole, quindi il testo inglese tiene i trattini.
+- Playfair Display SC disegna *fi* come legatura minuscola sul canvas, quindi *first* stamperebbe una *fi* minuscola tra i maiuscoletti. Per questo il titolo dell’elenco dei personaggi dice *The original cast*.

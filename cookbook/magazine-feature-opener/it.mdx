@@ -1,0 +1,71 @@
+---
+title: "Servizio di rivista: dall’apertura con foto al segno finale"
+summary: "Un’apertura advancedDesign compone una foto al vivo con occhiello, titolo, sommario e firma del titolo; poi due riquadri flottanti e un segno finale in un chip."
+plain: "Un articolo di una rivista di natura che si apre con una grande foto in testa alla pagina. Mostra come impaginare il titolo, la breve introduzione, l’autore e il credito fotografico, poi riquadri laterali e un piccolo segno finale."
+description: "Un servizio di rivista in Postext: apertura fotografica al vivo costruita dal titolo Markdown, citazione sporgente, due riquadri flottanti e un segno finale."
+question: "Come do a un’apertura di rivista occhiello, sommario, firma e credito fotografico presi dal titolo Markdown?"
+aliases: ["servizio di rivista", "apertura di articolo", "apertura fotografica", "foto di apertura", "sommario", "catenaccio", "firma", "credito fotografico", "citazione in evidenza", "virgolette sporgenti", "riquadro di dati", "pannello in cifre", "segno finale", "segno di fine articolo", "apertura di rubrica", "magazine feature"]
+pageNotes: { "1": "Un lago di montagna che riflette le nuvole tra pendii autunnali riempie la testa della pagina; sotto, l’occhiello «Climate · Field report», il titolo «The Lake That Keeps Time» su due righe, un sommario in corsivo e la firma, poi due colonne giustificate.", "2": "La pagina verso: titoletti in corsivo verde acqua, una citazione in evidenza le cui virgolette sporgono nel margine esterno, e un riquadro «At a glance» sotto una striscia verde acqua in testa alla colonna di destra.", "3": "Il recto: una fascia di bosco di pini innevato lungo la testa, la fine dell’articolo chiusa da un piccolo quadrato nero e un pannello scuro «In numbers» al piede.", "4": "«Five Kinds of Ice», una guida sul campo, si apre con lo stesso progetto grafico sopra il disegno in sezione di un lago ghiacciato, con un occhiello color ruggine." }
+---
+
+## Che cosa comporrai
+
+Le pagine dei servizi di *Boreal*, il numero invernale di una rivista di natura, su una pagina di 225 × 297 mm. L’articolo si apre sotto un lago di montagna al vivo sulla testa della pagina. Sotto l’immagine, un occhiello spaziato sovrasta un titolo di due righe, con un sommario in corsivo alla sua destra e la firma sotto; il credito del fotografo corre sotto la foto. Il titolo è il testo del titolo Markdown, e occhiello, sommario, firma e credito sono i suoi attributi. L’articolo prosegue su una doppia pagina in due colonne giustificate. La pagina verso ha una citazione in evidenza con le virgolette sporgenti e un riquadro di dati in testa alla colonna di destra; il recto, una fascia di bosco di pini in alto e un pannello scuro di cifre al piede. Un piccolo quadrato chiude l’articolo. Nella pagina seguente, una guida sul campo riusa l’apertura con un disegno e un occhiello color ruggine.
+
+## Preparazione
+
+### 1 · Costruisci l’apertura dalla riga del titolo
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Ogni `{attr.<key>}` stampa il valore `<key>="…"` sulla riga `#` dell’articolo e `{titleText}` stampa il titolo stesso ([attributi dei titoli](/it/docs/document-format#attributi-dei-titoli)), così ogni articolo tiene le sue parole nel proprio Markdown e tutti i titoli di livello 1 condividono un unico progetto grafico. La foto è appesa al bordo superiore della pagina e il contenitore comincia 22 mm più in basso, quindi `depth - TOP` è il bordo inferiore della foto misurato dal contenitore; il credito sta 2 mm sotto quella linea in alto a destra e l’occhiello 9 mm sotto in alto a sinistra. Il titolo va `below` l’occhiello, con la giustezza `HEAD` di 118 mm. Il sommario va `right-of` il titolo senza una larghezza propria, quindi va a capo al bordo del contenitore, e la firma va `below` il sommario, così un sommario più lungo spinge in basso la firma invece di finirle addosso. Il livello non ha `minHeight`. Il titolo e la firma terminano ciascuno con un padding vuoto di 5 mm che conta per l’altezza dell’apertura, quindi l’articolo comincia sulla prima riga di griglia che sta almeno 5 mm sotto quello dei due che finisce più in basso, su quante righe vadano.
+
+### 2 · Dichiara le immagini una volta, con i loro pixel reali
+
+<Excerpt region="resources" />
+
+Un elemento grafico indica la sua immagine con l’id della risorsa, quindi la fotografia dell’apertura si dichiara come qualsiasi figura ma non viene mai citata: solo l’apertura la disegna, fino al rifilo, dove nessun elemento flottante arriva. Le bitmap si misurano ai 150 `dpi` della pagina, quindi i 2000 px del bosco di pini fanno 339 mm e si riducono alla giustezza di 195 mm, circa 260 dpi in stampa. Le immagini hanno un tipo proprio, con un prefisso di didascalia e un modello di numerazione vuoti, così la didascalia del bosco di pini non porta un numero di figura. La fascia è un elemento flottante `top` a tutta pagina, e un elemento flottante in testa apre la pagina successiva a quella che lo cita. La sua riga `::resource` sta sulla pagina verso, dopo il paragrafo del 1944, quindi la fascia apre il recto.
+
+### 3 · Fai sporgere le virgolette nel margine
+
+<Excerpt region="quote" />
+
+Un’icona glifo occupa una colonna propria accanto al testo, il che farebbe rientrare la citazione. Lo spazio negativo fa scivolare di nuovo il testo sopra il lato destro vuoto del quadrato del glifo. Un padding sinistro negativo largo quanto ciò che resta di quella colonna (dimensione + spazio, 34 pt) sposta poi la colonna fuori nel margine, e il testo ricomincia dal bordo della colonna. La cornice del riquadro resta sulla colonna, quindi uno sfondo si fermerebbe prima del segno. Il quadrato comincia 12 mm fuori, e le virgolette, centrate al suo interno, sporgono di circa 6 mm nel margine esterno di 14 mm della pagina verso. L’edizione spagnola compone il suo « più piccolo, perché un caporale sta più in basso ed è più largo di una virgoletta inglese.
+
+### 4 · Fai flottare i riquadri in testa a una colonna e al piede della pagina
+
+<Excerpt region="boxes" />
+
+Con `placement: 'top'` il riquadro di dati flotta: esce dal flusso e prende la prima testa di colonna libera, così il testo prosegue fino al piede della colonna invece di lasciare un buco dove il riquadro non entrava. Il pannello delle cifre flotta nell’altra direzione, al piede della pagina, e occupa entrambe le colonne; le sue tre cifre sono titoli di livello 4, un livello che l’articolo non usa mai, collocati da `breaks="3,5"`, che conta i blocchi figli, non le righe. Il segno finale è un chip senza testo visibile. Il suo `paddingX` dà al quadrato la larghezza e il corpo del chip gli dà l’altezza, entrambe di 1,05 em al corpo del chip stesso.
+
+### 5 · Testatine che nominano il numero e l’articolo
+
+<Excerpt region="heads" />
+
+Gli elementi dell’intestazione si dipingono sopra la pagina e non riservano spazio, quindi ogni pezzo è ancorato alla pagina nel margine superiore con scostamenti in millimetri. La pagina verso nomina la rivista e il numero dal frontmatter, il recto il titolo del servizio, e `pages: 'body'` li tiene entrambi fuori dalle aperture, che portano solo un folio, al piede. La linea di base di un testo grafico sta a 0,8 dell’altezza del suo riquadro di riga, che è 1,2 volte il suo corpo, quindi `baseline()` abbassa l’etichetta da 7,5 pt di 0,34 mm rispetto al folio da 8,5 pt e mette il quadrato sulla stessa riga. Se cambi uno dei due corpi, i tre pezzi condividono comunque una linea di base.
+
+### 6 · Riusa l’apertura per il pezzo successivo
+
+<Excerpt region="guide" />
+
+L’apertura è una funzione, quindi la guida sul campo riceve lo stesso progetto grafico con la propria immagine e la propria profondità tramite uno stile di titolo, `# Five Kinds of Ice {style="guide" kicker="Field guide" …}`. Il disegno scende al vivo per 126 mm invece di 160; il credito e l’occhiello si misurano da `depth - TOP` e le altre parole sono appese all’occhiello, quindi salgono tutti di 34 mm e il testo della guida comincia più in alto. La tavolozza dello stile mappa `lake` sul ruggine in quelle pagine, così l’occhiello, e ogni titoletto o riquadro collegato a `lake`, diventa ruggine senza passare un colore a `opener()`; anche un chip collegato a `lake` diventerebbe ruggine, e il segno finale è nero in entrambi i pezzi.
+
+## Varianti
+
+### Apri ogni pezzo su un recto
+
+Con `'odd'`, la guida sul campo passa a pagina 61, e la pagina 60 resta bianca.
+
+```diff
+- { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' },
++ { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' },
+```
+
+### Metti il titolo su una fascia di colore
+
+Per il capitolo di un manuale, dove una fascia di colore e un grande numero sostituiscono la fotografia, vedi <RecipeLink slug="chapter-opener-bleed-band">Apertura di capitolo su una fascia al vivo</RecipeLink>.
+
+## Errori frequenti
+
+- Un elemento immagine adatta l’immagine dentro il riquadro e non la ritaglia mai. Ritaglia il JPEG nelle proporzioni del riquadro, qui 225 × 160 mm, altrimenti la fotografia si rimpicciolisce e lascia strisce bianche ai bordi della pagina.
+- Le virgolette sporgenti hanno bisogno di un margine. Se una modifica sposta la citazione in evidenza in una colonna di destra, il segno riempie l’intercolonna di 6 mm e tocca il testo della colonna di sinistra: sposta la citazione un paragrafo prima o dopo.
+- L’articolo è adattato per finire a pagina 59, sopra il pannello delle cifre. Qualche riga in più manda la sua coda su una pagina a sé, quindi dopo una modifica adatta di nuovo il testo in entrambe le lingue.
+- `runtMinCharacters: 40` impedisce le ultime righe di una sola parola. Quando la divisione in righe non può evitare un’ultima riga troppo corta, il motore compone il paragrafo con una riga in meno, con spazi tra le parole più stretti e, se non basta, fino a 0,01 em in meno tra le lettere. Dopo una modifica, cerca un paragrafo composto così stretto e togli o aggiungi invece qualche parola; il testo pubblicato non ha bisogno della correzione in nessuna delle due lingue.

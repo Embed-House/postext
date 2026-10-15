@@ -1,0 +1,551 @@
+{/* docs/comics-it.mdx */}
+
+export const metadata = {
+  title: 'Fumetti',
+  sidebarTitle: 'Fumetti',
+  description: 'Come Postext compone fumetti e manga dal Markdown: tavole tagliate da un albero di divisione, immagini delle vignette ritagliate attorno alla loro zona sicura, lettering generato da una sceneggiatura (parlato, pensiero, sussurro, urlo, radio, didascalie, onomatopee), stili delle nuvolette, ancore dei personaggi sulle immagini, strisce nel testo, doppie pagine, lettura da destra a sinistra e lettering verticale, traduzioni, e gli output canvas, PDF, HTML ed EPUB',
+  lang: 'it',
+  lastUpdated: '2026-10-07',
+  readingTime: '25 min',
+  order: 18,
+  plainSummary: "Questa pagina spiega come fare un fumetto con Postext. Le immagini sono le vignette, e tutto ciò che i personaggi dicono, pensano o sentono è scritto come testo nel file Markdown. Postext colloca le vignette sulla pagina e disegna da solo nuvolette, didascalie e onomatopee attorno alle parole. Per tradurre il fumetto riscrivi solo le parole, e Postext rifà il lettering nella nuova lingua: il giapponese in colonne, l’arabo da destra a sinistra. La pagina tratta anche le strisce a fumetti dentro un libro, le tavole su due pagine affiancate, gli output e i limiti che restano.",
+};
+
+# Fumetti
+
+**Le immagini sono le vignette; tutto ciò che si dice, si pensa, si racconta o si sente è testo nel Markdown.**
+
+Un fumetto in Postext è un insieme di immagini e una sceneggiatura. Le immagini sono normali risorse bitmap o SVG, disegnate senza alcun lettering. La sceneggiatura sta nel Markdown del capitolo: un blocco `:::page` taglia una pagina in vignette, assegna a ogni vignetta la sua immagine ed elenca, riga per riga, le nuvolette, le didascalie e le onomatopee di quella vignetta. Postext impagina le vignette, ritaglia ogni immagine sulla sua cella senza tagliare ciò che conta, compone il testo nel carattere del lettering del libro a un solo corpo, gli disegna attorno una nuvoletta, punta il codino verso chi parla e colloca le nuvolette in ordine di lettura dove non coprono nessun volto. Una traduzione è un altro file Markdown con le stesse vignette e altre parole; Postext ne rifà il lettering da zero, in colonne per il giapponese e da destra a sinistra per l’arabo.
+
+I fumetti si attivano solo se li usi: un documento senza `:::page` né `:::strip` si impagina esattamente come prima. Le impostazioni stanno nella [sezione `comics` della configurazione](/it/docs/configuration-comics#fumetti), e la marcatura è riassunta in [Formato del documento › Fumetti](/it/docs/document-format#fumetti).
+
+## Tavole a fumetti
+
+Un blocco `:::page` è una tavola a fumetti. Si apre con una riga `:::page{…}`, contiene una riga `::panel` per vignetta, ciascuna seguita dalla sceneggiatura di quella vignetta, e si chiude con un `:::` da solo:
+
+```md
+:::page{split="30 [30 | 20 | *] / *" gutter=4mm}
+::panel{art=lh-arrive}
+caption: Every summer, Maya spent a week at the lighthouse.
+maya: Grandpa! I'm here!
+::panel{art=lh-radio}
+tomas: Just in time. The radio's gone deaf,
+tomas: and there's a storm on the way.
+::panel{art=lh-maya}
+maya{thought}: That valve looks loose…
+::panel{art=lh-beam bleed}
+sfx{rotate=-8}: KRAK
+tomas{shout}: Hold on to the rail!
+:::
+```
+
+Il blocco comincia sempre su una pagina nuova e la occupa tutta. Il testo dopo la recinzione di chiusura comincia sulla pagina successiva, quindi due blocchi `:::page` di seguito fanno due tavole, e un `:::pagebreak` tra loro non aggiunge pagine. Il motore legge il corpo del blocco da sé, riga per riga, come legge `:::verse`: blocchi Markdown, contenitori e altre direttive non vengono riconosciuti al suo interno, e i `<!-- comments -->` vengono ignorati, anche quando occupano più righe.
+
+Il ruolo della pagina è `'comic'` (`VDTPage.role`). Non porta testatine né folio, perché una tavola è tutta vignette, ma conta nella numerazione delle pagine; `comics.runningHeads: true` li stampa. Le vignette si tagliano dalla **cornice**, che è l’area del testo della pagina dentro i margini, a meno che `comics.frame.margins` non dia alle tavole margini propri.
+
+Gli attributi della riga di apertura:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Attributo</th>
+      <th>Effetto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>split="…"</code></td><td>Come si taglia la cornice in celle (vedi <a href="#dividere-la-tavola">Dividere la tavola</a>). Se non è impostato, le vignette si impilano in strisce di uguale altezza.</td></tr>
+    <tr><td><code>gutter=4mm</code>, <code>gutter="4mm 2mm"</code></td><td>Lo spazio tra le strisce, e tra le vignette affiancate quando si dà un secondo valore. Un numero senza unità è in millimetri. Non impostato: <code>comics.gutter</code> (4 mm e 2 mm).</td></tr>
+    <tr><td><code>style=…</code></td><td>Uno stile di vignetta con nome per tutte le vignette della tavola (<code>comics.panelStyles</code>).</td></tr>
+    <tr><td><code>bleed</code></td><td>Ogni vignetta che tocca la cornice arriva fino al rifilo e nell’abbondanza.</td></tr>
+    <tr><td><code>direction=rtl</code>, <code>dir=ltr</code></td><td>La direzione di lettura di questa tavola, qualunque cosa dica la configurazione (vedi <a href="#direzione-di-lettura">Direzione di lettura</a>).</td></tr>
+    <tr><td><code>spread</code></td><td>Stende la tavola su due pagine affiancate (vedi <a href="#doppie-pagine">Doppie pagine</a>).</td></tr>
+  </tbody>
+</table>
+
+## Dividere la tavola
+
+L’attributo `split` descrive la tavola come un albero di tagli. Un elenco di dimensioni separate da `/` impila le celle dall’alto in basso (strisce); un elenco separato da `|` le affianca, a partire dal lato da cui si legge la pagina. Una dimensione seguita da un elenco tra parentesi quadre taglia di nuovo quella cella sull’altro asse. La tavola dell’esempio qui sopra, `30 [30 | 20 | *] / *`, è una striscia alta il 30 % della cornice, tagliata in vignette larghe il 30 % e il 20 % e una terza che prende il resto, sopra una seconda striscia che prende il resto della pagina:
+
+<Illustration name="ComicSplit" data='{"title": "La divisione 30 [30 | 20 | *] / *", "desc": "La cornice di una tavola tagliata dalla divisione 30 [30 | 20 | *] / *. Una prima striscia prende il 30 % dell’altezza ed è tagliata in tre vignette: il 30 % della larghezza, il 20 % e il resto. Una seconda striscia sotto prende il resto della pagina come un’unica vignetta. Gli spazi tra le vignette stanno a cavallo delle linee di divisione. Accanto alla tavola, la divisione è disegnata come un albero: un elenco di righe con due voci; la prima contiene un elenco tra parentesi di tre colonne. Le foglie sono le vignette da 1 a 4 in ordine di lettura.", "caption": "Le dimensioni sono percentuali della cella madre; * prende ciò che resta. Le vignette sono numerate in ordine di lettura, l’ordine dell’albero.", "split": "30 [30 | 20 | *] / *", "rows": "/ righe, dall’alto in basso", "columns": "| colonne, dal lato d’inizio", "rest": "* il resto", "order": "vignette in ordine di lettura", "gutter": "spazio tra le vignette"}' />
+
+La grammatica completa:
+
+```
+split := list
+list  := item ( "/" item )*  |  item ( "|" item )*
+item  := size [ "[" list "]" ]
+size  := number ["%"] [ "~" number ["%"] ]  |  "*"  |  (nothing)
+```
+
+- **Le dimensioni** sono percentuali della cella madre lungo l’asse dell’elenco; `30` e `30%` sono la stessa cosa. Un `*`, o una dimensione vuota, prende una parte uguale di ciò che lasciano le dimensioni scritte. L’ultima voce di un elenco arriva sempre fino in fondo, qualunque cosa dica la sua dimensione.
+- **Un separatore per elenco.** Mescolare `/` e `|` nello stesso elenco, una `[` non chiusa o un elenco tra parentesi sullo stesso asse della cella madre sono errori di sintassi (`comicSplitSyntax`): si usa la parte leggibile.
+- **Troppo.** Dimensioni che sommate superano il 100 % vengono ridotte in modo che ogni `*` conservi il 5 %, e la tavola segnala `comicSplitOverflow`.
+- **L’ordine di lettura** è l’ordine dell’albero: le strisce dall’alto in basso e, dentro una striscia, le vignette dal lato d’inizio. Le righe `::panel` riempiono le celle in quest’ordine. Una tavola con più vignette che celle tralascia le vignette in più; una con meno lascia vuote le ultime celle (`comicPanelCount`, segnalato solo quando è scritto uno `split`).
+
+Alcune divisioni:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '260px' }}>Divisione</th>
+      <th>Tavola</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&#42;</code></td><td>Una splash page: una sola vignetta.</td></tr>
+    <tr><td><code>33 / 33 / &#42;</code></td><td>Tre strisce.</td></tr>
+    <tr><td><code>&#42; / &#42; / &#42; / &#42;</code></td><td>Quattro strisce uguali, lo yonkoma di una striscia comica in quattro vignette.</td></tr>
+    <tr><td><code>50 [&#42; | &#42;] / 50 [&#42; | &#42; | &#42;]</code></td><td>Due vignette sopra tre.</td></tr>
+    <tr><td><code>30 / 35 [&#42; | &#42; | &#42;] / &#42;</code></td><td>Una vignetta larga, tre in fila, una vignetta larga.</td></tr>
+    <tr><td><code>60 | &#42; [50 / &#42;]</code></td><td>Una vignetta alta sul lato d’inizio e due impilate accanto.</td></tr>
+    <tr><td><code>&#42; [40&#126;55 | &#42;] / 35</code></td><td>Una striscia d’azione tagliata da una linea obliqua, sopra una striscia alta il 35 %.</td></tr>
+  </tbody>
+</table>
+
+### Tagli obliqui
+
+Una dimensione scritta `a~b` dà una linea obliqua: il bordo lontano della cella va da `a` % all’inizio dell’asse trasversale a `b` % all’altra estremità. Per le vignette affiancate l’inizio è in alto, quindi `40~55 | *` traccia una linea dal 40 % della larghezza in alto al 55 % in basso; per le strisce l’inizio è il lato da cui si legge la pagina. Le dimensioni si sommano separatamente a ciascuna estremità, e le celle restano poligoni convessi. Gli angoli arrotondati valgono solo per le vignette rettangolari; una vignetta obliqua mantiene gli angoli vivi.
+
+### Spazi tra le vignette
+
+Lo spazio tra le vignette sta a cavallo di ogni linea di divisione, metà per lato, così una linea scritta al 30 % cade esattamente al 30 % della sua cella. Le linee oblique mantengono lo spazio del loro asse, misurato perpendicolarmente alla linea. I valori predefiniti seguono la tavola consueta: 4 mm tra le strisce e 2 mm tra le vignette di una striscia (`comics.gutter.horizontal` e `vertical`, o l’attributo `gutter` della tavola).
+
+### Abbondanza
+
+Una vignetta al vivo esce dalla cornice: ogni suo lato che tocca la cornice viene portato fuori fino al rifilo, e oltre, nell’abbondanza, quando la pagina ne ha una (`page.cutLines.bleed`). L’attributo `bleed` della tavola porta al vivo tutte le vignette; il `bleed` proprio di una vignetta porta al vivo solo lei, `bleed="top start"` solo quei lati (`top`, `bottom`, `start`, `end`, `left`, `right`), e `bleed=false` lo impedisce. Uno stile di vignetta con `bleed: true` porta al vivo le sue vignette.
+
+### Rientri e inserti
+
+`pad` rende una vignetta più piccola della sua cella: da uno a quattro valori nell’ordine dei margini CSS con lati logici (alto, fine, basso, inizio), ciascuno una lunghezza o una percentuale della cella. `::panel{art=x pad="0 15%"}` dà una vignetta più stretta della sua striscia, centrata in essa.
+
+Una vignetta con `inset="x y w h"` non prende una cella: si sovrappone alla vignetta precedente, in quella posizione e con quella dimensione in percentuali del riquadro di quella vignetta, come un piccolo ritratto in un angolo o un primo piano sopra un campo lungo. La sua sceneggiatura viene letterata al suo interno.
+
+```md
+:::page{split="*"}
+::panel{art=storm-wide}
+caption{at=bottom-start}: The storm broke at midnight.
+::panel{art=maya-window inset="62% 6% 32% 30%"}
+maya{whisper}: Grandpa?
+:::
+```
+
+## Vignette e disegni
+
+Una riga `::panel{…}` comincia una vignetta; la sua sceneggiatura va fino alla riga `::panel` successiva o alla recinzione di chiusura. Una vignetta senza `art` si disegna vuota nel suo colore di sfondo: è così che si fa una vignetta di solo testo. Il testo prima della prima `::panel` viene letterato come didascalia della prima vignetta e segnalato come `comicStrayText`.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attributo</th>
+      <th>Effetto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>art=&lt;id&gt;</code></td><td>L’immagine della vignetta: l’id di una risorsa bitmap o SVG. Un id sconosciuto lascia vuota la vignetta e segnala <code>comicUnknownArt</code>.</td></tr>
+    <tr><td><code>fit=cover</code>, <code>fit=contain</code></td><td><code>cover</code> ritaglia l’immagine per riempire la cella, mai dentro la sua zona sicura; <code>contain</code> la mostra intera, con bande dello sfondo della vignetta. Non impostato: quello dello stile di vignetta (<code>cover</code>).</td></tr>
+    <tr><td><code>focus="70% 40%"</code></td><td>Il punto dell’immagine da tenere centrato dove la zona sicura lascia margine di scelta.</td></tr>
+    <tr><td><code>style=…</code></td><td>Uno stile di vignetta con nome per questa vignetta.</td></tr>
+    <tr><td><code>border=none</code>, <code>border=0.5mm</code></td><td>Nessun bordo, o un bordo di quello spessore.</td></tr>
+    <tr><td><code>bg=#1b1b2f</code></td><td>Lo sfondo della vignetta: un colore, un id della tavolozza o <code>none</code>.</td></tr>
+    <tr><td><code>bleed</code>, <code>bleed="top start"</code>, <code>bleed=false</code></td><td>Vedi <a href="#abbondanza">Abbondanza</a>.</td></tr>
+    <tr><td><code>pad="…"</code></td><td>Vedi <a href="#rientri-e-inserti">Rientri e inserti</a>.</td></tr>
+    <tr><td><code>inset="x y w h"</code></td><td>Sovrappone questa vignetta alla precedente invece di darle una cella.</td></tr>
+    <tr><td><code>pop=&lt;id&gt;</code></td><td>Un ritaglio disegnato sopra il bordo (vedi <a href="#disegni-che-escono-dalla-vignetta">Disegni che escono dalla vignetta</a>).</td></tr>
+    <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Ribalta l’immagine di questa vignetta, o la tiene com’è disegnata quando la tavola specchia le sue immagini (vedi <a href="#direzione-di-lettura">Direzione di lettura</a>).</td></tr>
+    <tr><td><code>alt="…"</code></td><td>Il testo alternativo della vignetta, per il PDF marcato, l’HTML e l’EPUB. Non impostato: l’<code>altText</code> della risorsa.</td></tr>
+    <tr><td><code>id=…</code></td><td>Un id per la vignetta, che gli output HTML ed EPUB usano come ancora.</td></tr>
+  </tbody>
+</table>
+
+### Ritagliare l’immagine sulla sua cella
+
+I disegni delle vignette si fanno senza badare alla forma della cella in cui finiranno: una tavola si può dividere di nuovo, un divisore si può trascinare, una traduzione può richiedere una striscia più alta. La **zona sicura** dell’immagine (`Resource.safeArea`, vedi [Formato del documento › Zona sicura](/it/docs/document-format#zona-sicura)) dice che cosa deve restare visibile, e il ritaglio si calcola per ogni cella:
+
+1. Con `fit=cover` la finestra visibile ha le proporzioni della cella ed è grande quanto l’immagine permette.
+2. Viene collocata in modo che la zona sicura stia al suo interno. Dove resta margine, la finestra si centra su `focus` quando la vignetta ne imposta uno; altrimenti i margini fuori dalla zona sicura si tagliano in proporzione alla loro dimensione, così un soggetto a sinistra del centro resta a sinistra del centro.
+3. Se nessuna finestra con le proporzioni della cella può contenere la zona sicura (una cella molto larga per un soggetto alto), l’immagine si mostra con la zona sicura intera e il resto della cella si riempie con lo sfondo della vignetta. La tavola segnala `comicPanelLetterbox`. Una cella mantiene intera la zona sicura di un’immagine W × H finché il rapporto tra la sua larghezza e la sua altezza resta tra `sw·W/H` e `W/(sh·H)`, dove `sw` e `sh` sono la larghezza e l’altezza della zona sicura in frazioni.
+
+Un’immagine senza zona sicura si ritaglia attorno al suo centro, o attorno a `focus`. Un SVG senza dimensioni intrinseche riempie la cella così com’è. I renderer ritagliano sul poligono della cella e disegnano l’immagine intera alla sua dimensione non ritagliata, così il ritaglio non ricampiona mai l’immagine.
+
+### Stili di vignetta
+
+L’aspetto di una vignetta viene da `comics.panel` (un bordo nero di 1 pt, un fondo bianco, `cover`), da uno stile con nome in `comics.panelStyles` che una tavola o una vignetta sceglie con `style=`, e dal `border` e dal `bg` propri della vignetta. Un bordo può essere `solid`, `none` o `rough`: una linea tracciata a mano che ondeggia un poco, uguale a ogni composizione, perché il suo ondeggiamento ha come seme la vignetta. Vedi [Configurazione › Fumetti](/it/docs/configuration-comics#fumetti) per tutti i campi.
+
+### Disegni che escono dalla vignetta
+
+Un bordo spezzato, dove un personaggio o un oggetto esce dalla sua vignetta, richiede due immagini: il disegno della vignetta, ritagliato sulla cella come al solito, e un ritaglio trasparente della parte che esce, indicato con `pop`. Il ritaglio viene inquadrato e collocato esattamente come il disegno (dovrebbe avere la stessa dimensione dell’immagine del disegno) e disegnato dopo il bordo, senza ritaglio, così copre il bordo e lo spazio tra le vignette. I ritagli di una tavola si disegnano dopo tutte le sue vignette, quindi uno che raggiunge la vignetta accanto si vede anche sopra quella vignetta, e sotto ogni nuvoletta.
+
+```md
+::panel{art=gull-sky pop=gull-cutout bleed="top"}
+sfx{at="70% 20%"}: SKRAAW
+```
+
+## Lettering
+
+Sotto ogni riga `::panel` viene la sceneggiatura della vignetta, una nuvoletta per riga:
+
+```md
+key{attributes}: text
+```
+
+La **chiave** è un id del personaggio (lettere, cifre, `_`, `.` e `-`), uguale in ogni traduzione; corrisponde alle ancore delle immagini e al [cast](#il-cast). Tre chiavi sono riservate: `caption` (un riquadro di narrazione), `sfx` (un’onomatopea, senza nuvoletta) e `note` (una nota del redattore). I due punti possono essere quelli a larghezza piena `：` che digita un metodo di input cinese o giapponese. Il testo è Markdown in linea: `*emphasis*` e `**strong**` si stampano in grassetto corsivo, la convenzione del lettering (solo grassetto nelle scritture senza corsivo), `:tcy[12]` compone le cifre di traverso in una colonna verticale, `:ruby` compone la sua lettura a metà corpo sopra la base (accanto, in una colonna), e `:ltr` / `:rtl` mantengono un tratto nella sua direzione dentro una nuvoletta dell’altra. Una riga rientrata di due spazi o di una tabulazione continua la nuvoletta sopra (unita con uno spazio, senza spazio tra due caratteri cinesi o giapponesi); una barra rovesciata alla fine di una riga manda a capo lì il testo della nuvoletta. Le righe vuote si ignorano, e una riga che non è una riga di sceneggiatura viene letterata come didascalia e segnalata come `comicStrayText`.
+
+```md
+::panel{art=lh-radio}
+tomas: Just in time.
+  The radio's gone deaf,\
+  and there's a storm on the way.
+biscuit{to="40% 70%"}: Mrrp?
+note: Valve radios warm up for a minute before they speak.
+```
+
+Gli attributi di una riga di sceneggiatura:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '230px' }}>Attributo</th>
+      <th>Effetto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&#123;whisper&#125;</code>, <code>style=whisper</code></td><td>Lo stile della nuvoletta. Una parola sola tra le graffe indica uno stile: <code>thought</code>, <code>whisper</code>, <code>shout</code>, <code>radio</code>, <code>inner</code>, o uno di quelli propri del libro. Un nome sconosciuto segnala <code>comicUnknownBalloonStyle</code>, e la riga prende lo stile della sua chiave.</td></tr>
+    <tr><td><code>at="62% 40%"</code></td><td>Fissa il centro della nuvoletta in quel punto dell’immagine della vignetta (della cella quando la vignetta non ne ha). Il punto è in frazioni dell’immagine, quindi resta nello stesso punto del disegno attraverso ritagli e trascinamenti dei divisori.</td></tr>
+    <tr><td><code>at=top-start</code></td><td>Mette la nuvoletta in un angolo o su un lato della vignetta: <code>top-start</code>, <code>top-end</code>, <code>bottom-start</code>, <code>bottom-end</code>, <code>top</code>, <code>bottom</code>. Didascalie e note vengono accostate al bordo.</td></tr>
+    <tr><td><code>to="40% 70%"</code></td><td>Punta il codino verso quel punto dell’immagine invece che verso l’ancora del personaggio. Il codino si gira verso di esso e si ferma poco prima, come fa davanti a una bocca.</td></tr>
+    <tr><td><code>tail=none</code>, <code>tail=start</code></td><td>Nessun codino, o un codino verso un personaggio fuori dalla vignetta da quel lato (<code>top</code>, <code>bottom</code>, <code>start</code>, <code>end</code>, <code>left</code>, <code>right</code>). <code>start</code> ed <code>end</code> seguono la direzione di lettura della tavola; <code>left</code> e <code>right</code> sono lati dell’immagine della vignetta. <code>tail=auto</code> è il valore predefinito.</td></tr>
+    <tr><td><code>join</code>, <code>join=false</code></td><td>Unisce questa nuvoletta alla precedente dello stesso personaggio, o la tiene separata, qualunque cosa dica <code>comics.lettering.joinSameSpeaker</code>.</td></tr>
+    <tr><td><code>break</code></td><td>Lascia che la nuvoletta attraversi il bordo della vignetta ed entri nello spazio tra le vignette o nella vignetta successiva. L’attraversamento non viene segnalato come sconfinamento, perché è stato richiesto; ciò che la nuvoletta copre dall’altra parte (un volto, la nuvoletta di un’altra vignetta) invece sì, e il suo centro resta dentro la sua vignetta.</td></tr>
+    <tr><td><code>rotate=-8</code></td><td>Ruota la nuvoletta o l’onomatopea, in gradi, in senso orario.</td></tr>
+    <tr><td><code>skew=-8</code></td><td>Inclina le lettere di quei gradi (positivi in avanti, come il corsivo, negativi all’indietro), prima di ogni rotazione: un testo scritto su un oggetto visto in prospettiva, il titolo sulla copertina di un libro, un’insegna. Con <code>rotate</code> il lettering segue sia il bordo superiore dell’oggetto sia i suoi lati. Uno stile di nuvoletta lo imposta per ogni riga con <code>skew</code>.</td></tr>
+    <tr><td><code>size=1.5</code></td><td>Scala il lettering di un’onomatopea.</td></tr>
+    <tr><td><code>color=#c0392b</code></td><td>Il colore del lettering: un colore esadecimale o un id della tavolozza.</td></tr>
+    <tr><td><code>font="…"</code></td><td>Il carattere di questa riga.</td></tr>
+    <tr><td><code>vertical</code>, <code>horizontal</code>, <code>mode=vertical</code></td><td>La modalità di scrittura di questa riga, sopra quella del libro: <code>vertical</code> la compone in colonna in un’edizione orizzontale (un <code>ドン</code> non tradotto), <code>horizontal</code> in riga in un’edizione verticale (un’insegna scritta in orizzontale). Una colonna in un libro di un’altra lingua segue le regole del suo testo (con i kana, quelle del giapponese) e prende l’interlinea del lettering verticale. In un libro verticale una riga senza caratteri cinesi o giapponesi si compone comunque in riga, a meno che non dica <code>vertical</code>.</td></tr>
+  </tbody>
+</table>
+
+### Come si costruisce una nuvoletta
+
+Il lettering segue le abitudini del lettering dei fumetti piuttosto che quelle di una cornice di testo:
+
+- **Un solo corpo per libro.** Ogni nuvoletta si compone in `comics.lettering.fontFamily` a `comics.lettering.fontSize` (7,5 pt per impostazione predefinita), scalato solo dal `fontScale` del suo stile (un sussurro a 0,9, un urlo a 1,15). Il testo non si rimpicciolisce mai per farlo entrare: una nuvoletta che non entra cambia forma, si sposta, attraversa il bordo o viene segnalato.
+- **Prima il testo, poi la nuvoletta.** Le parole si dividono prima in righe, puntando a una losanga: righe corte in alto e in basso, la più lunga al centro, nessuna ultima riga molto più corta delle altre, nessuna riga che finisce con un articolo o una preposizione quando un’altra divisione è altrettanto buona. Poi si disegna il contorno attorno alle righe, con lo stesso respiro su ogni lato.
+- **Regole della casa.** Tre punti diventano dei puntini di sospensione (restano tre punti in un carattere che disegna i puntini come un punto solo); `textTransform: 'uppercase'` compone il testo in maiuscolo (le scritture senza maiuscole restano com’erano, e la ß tedesca diventa SS); in giapponese e in cinese il punto che chiude una nuvoletta si toglie (`dropFinalStop`) e i `!` e `?` ASCII diventano le loro forme a larghezza piena nelle colonne, due in una cella (`!?` come ⁉); `doubleDash` rende una lineetta lunga come `--`, come fanno i fumetti americani.
+- **Collocazione.** Le nuvolette di una vignetta si collocano in ordine di lettura dentro la vignetta, a `comics.lettering.inset` dal suo bordo (1,5 mm). La prima sta verso l’alto sul lato d’inizio, e ogni successiva non deve stare più in alto della precedente a meno che non sia più avanti nella direzione di lettura. Le nuvolette stanno lontane dai volti e dalle zone da evitare che le immagini segnano, dalle bocche dei personaggi e le une dalle altre, stanno sopra o accanto al loro personaggio piuttosto che sotto, e i loro codini non dovrebbero incrociarsi. Un codino non attraversa mai il lettering di un’altra nuvoletta. Una nuvoletta che esce dalla sua vignetta, con `break` o con un ancoraggio `at=`, si tiene lontana da ciò che proteggono le vignette attorno come si tiene lontana da ciò che protegge la sua: le loro didascalie e le loro nuvolette, i codini di quelle nuvolette, e i volti e le zone da evitare delle loro immagini; una nuvoletta di una vignetta con un inserto sopra si tiene lontana dall’inserto. Didascalie e note con un angolo vanno per prime, poi le nuvolette ancorate, poi il resto. La collocazione è deterministica: la stessa tavola dà sempre le stesse nuvolette.
+- **Sul foglio.** Il lettering non esce mai dal rifilo. In una vignetta al vivo le nuvolette restano nella parte della vignetta dentro la cornice, dove il rifilo non può tagliarli; solo un’onomatopea ancorata con `at=` o marcata `break` può entrare nell’abbondanza accanto alla sua vignetta.
+- **Quando non entra.** Una nuvoletta che non si può collocare in modo pulito può prima attraversare il bordo (solo con `break`), poi coprire una zona da evitare (mai un volto), poi prendere una forma più larga o più stretta. Una forma presa per farlo entrare non spezza una parola cinese (`comics.lettering.strictPlacement`, attivo per impostazione predefinita): una parola tagliata su due righe costa più di una nuvoletta letta fuori ordine, quindi prima si sposta la nuvoletta. Una riga lunga in una cella stretta si compone larga più o meno quanto la cella e sporge nello spazio tra le vignette piuttosto che ergersi come una colonna sottile sopra il volto del suo personaggio. Se la nuvoletta si sovrappone ancora a qualcosa, viene collocata dove fa meno danno e la tavola segnala `comicBalloonOverflow`, indicando la vignetta e ciò che copre. Un attraversamento richiesto, con `break` o con un ancoraggio `at=`, non è uno di quei difetti: l’avviso allora indica solo ciò che la nuvoletta copre. Una riga più corta, una vignetta più grande o un ancoraggio `at=` lo risolvono.
+
+### Codini
+
+Il codino di una nuvoletta di parlato punta verso la bocca del suo personaggio, le bollicine di una nuvoletta di pensiero verso la testa (vedi [Parlanti e ancore](#personaggi-e-ancore)). Esce dal contorno dalla parte del personaggio, si piega un poco e si ferma prima della bocca. Quando l’ancora del personaggio è tagliata fuori dalla vignetta, o l’immagine non segna nessuna ancora per quel personaggio, il codino punta fuori dalla vignetta, verso l’ancora o verso il bordo più vicino, e finisce sul bordo. Una nuvoletta del genere sta accanto al bordo da cui viene la sua voce, con un codino corto: un codino tracciato attraverso tutta la vignetta si legge come una freccia, quindi si sposta la nuvoletta invece di allungare il codino. `to="x% y%"` punta un codino verso un altro punto dell’immagine, e `tail=start` (o `top`, `bottom`, `end`, `left`, `right`) verso un personaggio fuori da quel lato. Didascalie, note e onomatopee non hanno codino.
+
+### Nuvolette unite
+
+Due righe consecutive dello stesso personaggio si uniscono, come si rende in lettering una pausa di chi parla: con `joinSameSpeaker: 'butt'` (il valore predefinito) i due corpi si sovrappongono e condividono un solo contorno; con `'connector'` li collega un collo stretto; con `'none'` restano due nuvolette con due codini. Solo la prima nuvoletta di un gruppo ha il codino. Una riga può chiedere il proprio comportamento con `join` o `join=false`.
+
+### Onomatopee
+
+Una riga `sfx` non ha nuvoletta: il suo testo si compone grande (2,4 volte il corpo del lettering), in grassetto, nel carattere delle onomatopee della lingua del documento, con un alone bianco attorno alle lettere perché si legga sopra l’immagine. Si colloca vicino all’ancora `sfx` della vignetta quando l’immagine ne segna una (un’ancora il cui id è `sfx`), altrimenti dovunque non copra un volto. `rotate`, `size`, `color` e `font` la modificano, e `at` la ancora. Nel lettering verticale si compone in colonna, lunga al massimo cinque caratteri. Le onomatopee si dipingono dopo tutte le nuvolette della tavola.
+
+Una riga può impostare la propria modalità di scrittura. Un’edizione orizzontale di un manga che mantiene un’onomatopea in giapponese la compone in colonna:
+
+```md
+sfx{vertical size=2.6 font="Dela Gothic One"}: ドン
+```
+
+### Impostazioni del lettering
+
+`comics.lettering` contiene il carattere, il corpo, l’interlinea, il colore e le regole della casa dell’intero libro. Per impostazione predefinita il carattere segue la lingua del documento, e così il carattere delle onomatopee:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Lingua</th>
+      <th>Lettering</th>
+      <th>Onomatopee</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Latino, greco, cirillico e il resto</td><td>Comic Neue</td><td>Bangers</td></tr>
+    <tr><td>Giapponese</td><td>Zen Antique</td><td>Dela Gothic One</td></tr>
+    <tr><td>Cinese semplificato</td><td>Noto Sans SC</td><td>ZCOOL KuaiLe</td></tr>
+    <tr><td>Cinese tradizionale</td><td>LXGW WenKai TC</td><td>LXGW WenKai TC</td></tr>
+    <tr><td>Arabo, persiano, urdu</td><td>Playpen Sans Arabic</td><td>Lalezar</td></tr>
+  </tbody>
+</table>
+
+Sono tutti su Google Fonts e si caricano per nome come qualunque altro carattere. Con l’interlinea predefinita, le nuvolette verticali e quelle cinesi o giapponesi si compongono con un’interlinea di 1,5 e quelli arabi di 1,45. Il lettering giapponese, cinese e arabo non è mai inclinato, qualunque cosa dica lo stile, e l’arabo non riceve mai spaziatura tra le lettere.
+
+### Il cast
+
+`comics.cast` elenca i personaggi: un id (la chiave del personaggio), un `name` e, facoltativamente, lo stile di nuvoletta in cui parlano (`balloonStyle`, un robot che parla sempre in `radio`), il `color` del testo e il `fill` della nuvoletta che li distinguono, e un `fontFamily`. Il nome è ciò che gli output annunciano: il visualizzatore HTML e l’EPUB a layout fluido stampano «Nome: parole» per ogni riga. Un personaggio che è nel cast non viene mai segnalato come sconosciuto.
+
+```ts
+comics: {
+  cast: [
+    { id: 'maya', name: 'Maya' },
+    { id: 'tomas', name: 'Grandpa Tomás' },
+    { id: 'beacon', name: 'The beacon', balloonStyle: 'radio', fill: { hex: '#e8f4ff', model: 'hex' } },
+  ],
+}
+```
+
+## Stili delle nuvolette
+
+Uno stile di nuvoletta è un tipo di nuvoletta: il suo contorno, il suo codino e il suo lettering. Nove sono incorporati, e una riga di sceneggiatura ne indica uno con una parola sola tra graffe (`ben{whisper}: …`). Le chiavi riservate prendono il proprio dal loro nome (`caption:`, `sfx:`, `note:`), e ogni altra riga prende `speech`, o il `balloonStyle` del suo personaggio nel cast.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '120px' }}>Stile</th>
+      <th style={{ width: '170px' }}>Contorno</th>
+      <th style={{ width: '120px' }}>Codino</th>
+      <th>Per il resto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>speech</code></td><td>ovale</td><td>curvo</td><td>La base di ogni stile: riempimento bianco, contorno nero di 0,6 pt, 0,55 em di respiro.</td></tr>
+    <tr><td><code>thought</code></td><td>nuvola</td><td>bollicine</td><td>Le bollicine puntano alla testa, non alla bocca.</td></tr>
+    <tr><td><code>whisper</code></td><td>ovale, tratteggiato</td><td>curvo</td><td>Testo a 0,9.</td></tr>
+    <tr><td><code>shout</code></td><td>esplosione</td><td>a cuneo</td><td>Testo a 1,15, in grassetto; contorno di 0,8 pt.</td></tr>
+    <tr><td><code>radio</code></td><td>elettrico (a zigzag)</td><td>a zigzag</td><td>Una voce da una radio, un telefono o una macchina.</td></tr>
+    <tr><td><code>caption</code></td><td>rettangolo</td><td>nessuno</td><td>Giallo pallido, accostato all’angolo in alto sul lato d’inizio, testo allineato all’inizio.</td></tr>
+    <tr><td><code>inner</code></td><td>riquadro arrotondato</td><td>nessuno</td><td>Riempimento grigio, corsivo: la voce interiore di un personaggio.</td></tr>
+    <tr><td><code>note</code></td><td>rettangolo</td><td>nessuno</td><td>Accostato all’angolo in basso sul lato finale, testo a 0,8.</td></tr>
+    <tr><td><code>sfx</code></td><td>nessuno</td><td>nessuno</td><td>Testo a 2,4, in grassetto, nel carattere delle onomatopee, con un alone bianco di 1,5 pt.</td></tr>
+  </tbody>
+</table>
+
+`comics.balloonStyles` li modifica e ne aggiunge altri. Una voce con un id incorporato si sovrappone a quello stile; una voce con un id nuovo parte da `speech`:
+
+```ts
+comics: {
+  balloonStyles: [
+    { id: 'caption', fill: { hex: '#ffffff', model: 'hex' }, textTransform: 'uppercase' },
+    { id: 'shout', burstPoints: 18, burstDepth: 0.3 },
+    { id: 'eerie', shape: 'wavy', stroke: { hex: '#5b4a8a', model: 'hex' }, italic: true },
+    { id: 'writing', shape: 'none', tail: 'none', fontFamily: 'Caveat', color: { hex: '#3b2a1a', model: 'hex' } },
+  ],
+}
+```
+
+```md
+ghost{eerie}: Leave this house…
+caption{at=bottom-end}: Three streets away.
+```
+
+I contorni sono `oval` (una superellisse adattata alle righe, `roundness` 2,2), `rounded`, `rectangle`, `cloud` (smerli contati a partire dal perimetro), `burst` (`burstPoints` punte, profonde `burstDepth`), `wavy`, `electric` e `none`. `dash` disegna un contorno tratteggiato, `double` uno doppio, e `wobble` (0–1) lo fa tremare come a mano, sempre allo stesso modo per la stessa nuvoletta. I codini sono `curved`, `wedge`, `bubbles`, `zigzag` e `none`. Ogni campo, con il suo valore predefinito, è in [Configurazione › Fumetti](/it/docs/configuration-comics#fumetti).
+
+I renderer disegnano una nuvoletta come la inchiostra un letterista: tutti i contorni di un gruppo si tracciano prima a doppio spessore, poi si riempiono, poi si compone il testo. Due corpi uniti e il loro codino escono quindi come un’unica forma, senza una linea tra loro.
+
+## Personaggi e ancore
+
+I codini puntano verso le persone, e le nuvolette si tengono lontane dai volti, perché le immagini dicono dove sono le persone. Una risorsa bitmap o SVG può portare delle **ancore**: un punto per personaggio, scritto una volta sola, in frazioni dell’immagine (da 0 a 1 a partire dall’angolo in alto a sinistra), come la zona sicura.
+
+```ts
+const arrive: Resource = {
+  id: 'lh-arrive', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'lh-arrive.jpg', format: 'jpeg', width: 1100, height: 733 },
+  altText: 'A girl in a yellow raincoat walks up a coastal path towards a lighthouse.',
+  safeArea: { x: 0.2, y: 0.08, width: 0.42, height: 0.82 },
+  anchors: [
+    { id: 'maya', x: 0.29, y: 0.52, head: { x: 0.27, y: 0.47 }, face: { x: 0.22, y: 0.42, width: 0.12, height: 0.16 } },
+    { id: 'biscuit', x: 0.4, y: 0.68 },
+  ],
+  avoid: [{ x: 0.51, y: 0.09, width: 0.1, height: 0.43 }], // the lighthouse
+  faces: [{ x: 0.7, y: 0.5, width: 0.06, height: 0.1 }], // a walker on the path, who says nothing
+};
+```
+
+- `id` è la chiave del personaggio usata dalla sceneggiatura (`maya: …`). Un’ancora il cui id è `sfx` colloca le onomatopee della vignetta.
+- `x`, `y` è la bocca, verso cui punta il codino di una nuvoletta di parlato.
+- `head` è il punto verso cui puntano le bollicine di una nuvoletta di pensiero. Non impostato: la bocca.
+- `face` è un rettangolo che nessuna nuvoletta copre. Un’ancora che non ne ha riceve un riquadro di protezione di qualche em sopra e attorno alla bocca, così le nuvolette si tengono lontane anche da un volto non delimitato.
+- `avoid` (sulla risorsa) elenca altri rettangoli che nessuna nuvoletta copre: una mano, un oggetto chiave, un’insegna. Sotto pressione una nuvoletta può coprire una zona da evitare, mai un volto.
+- `faces` (sulla risorsa) elenca, come rettangoli, i volti delle persone che non parlano: un passante, la folla dietro i personaggi. Ciascuno segue la regola del volto di un personaggio. Nessuna nuvoletta lo copre, a nessun livello di ripiego, e una che lo copre comunque (una nuvoletta ancorata) viene segnalato come `comicBalloonOverflow`; i capelli sopra di esso sono protetti; nessun codino lo attraversa, né attraversa la figura sotto di esso, quando esiste un altro percorso. Anche un’ancora da cui non parla nessuna riga protegge il suo volto, ma resta un personaggio per tutto il resto (la sua bocca è un punto che nessuna nuvoletta tocca, e viene confrontata con la zona sicura): `faces` è il segno per chi sta solo a guardare.
+
+Poiché le ancore sono frazioni dell’immagine, si spostano con il ritaglio: il motore porta ciascuna sulla pagina attraverso il ritaglio e lo specchiamento della vignetta, così il trascinamento di un divisore, un’altra divisione o una traduzione non staccano mai un codino dal suo personaggio. Un’ancora che il ritaglio lascia fuori dalla vignetta fa puntare il codino fuori dalla vignetta, verso di essa. La zona sicura protegge le ancore da questo: un’ancora fuori da essa viene segnalata come `comicAnchorOutsideSafeArea`, un suggerimento per chi compone, perché un ritaglio potrebbe tagliarla fuori. Una chiave di personaggio che nessuna immagine della tavola segna e nessuna voce del cast nomina viene segnalata come `comicUnknownSpeaker`, il che di solito intercetta un id scritto male; le tavole le cui immagini non segnano nessuna ancora non segnalano nulla, così un fumetto si può letterare anche senza ancore.
+
+Ancore e zone da evitare appartengono all’immagine e sono le stesse in ogni lingua. Nella Sandbox si segnano nell’editor delle immagini del [pannello Risorse](/it/docs/sandbox#pannello-risorse): il campo **Zona sicura e lettering** apre una finestra con tre modalità, Zona sicura, Personaggi e Zone da evitare. Un clic sull’immagine aggiunge lì un personaggio; la sua bocca, la sua testa e il suo volto si trascinano al loro posto e il suo id si digita accanto; un trascinamento su una parte vuota dell’immagine disegna una zona da evitare. La modalità Zone da evitare segna anche i volti delle persone che non parlano: un pulsante ne aggiunge uno, e un interruttore su ogni riga trasforma una zona in un volto del genere o viceversa. Ogni segno si può spostare con i tasti freccia (Maiusc per passi più grandi) e togliere con Canc, e la finestra ha un proprio annullamento.
+
+## Strisce
+
+Un blocco `:::strip` ha il corpo di una tavola a fumetti ma sta nel testo, come un riquadro largo quanto una colonna o quanto la pagina, tagliato in vignette: la striscia quotidiana di un giornale, una gag in quattro vignette in una rivista, un fumetto breve dentro un libro di prosa.
+
+```md
+:::strip{split="* | * | * | *" aspect=4 span=page placement=top}
+::panel{art=pip-1}
+pip: Otto, the ice is melting.
+::panel{art=pip-2}
+otto{thought}: Not the bakery…
+::panel{art=pip-3}
+::panel{art=pip-4}
+sfx: SPLOSH
+:::
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attributo</th>
+      <th>Effetto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>span=column</code>, <code>span=page</code></td><td>Occupa la colonna in cui cade (il valore predefinito) o l’area del testo.</td></tr>
+    <tr><td><code>placement=here</code></td><td>Il valore predefinito: composta nel testo dove è scritta. Una striscia non si divide mai; una che non entra passa intera alla colonna o alla pagina successiva, portando con sé un titolo che le sta subito sopra. Una striscia a tutta larghezza scritta <code>here</code> su una pagina di più colonne taglia le colonne dove si trova, come fa un riquadro a tutta larghezza: il testo sopra di essa finisce pari in ogni colonna, la striscia attraversa la pagina, e il testo prosegue nelle colonne sotto. Quando il resto della pagina non può contenerla, apre la pagina successiva.</td></tr>
+    <tr><td><code>placement=top</code>, <code>bottom</code>, <code>auto</code></td><td>Flottante come una figura, in testa o al piede della prima pagina con spazio a partire da questo punto.</td></tr>
+    <tr><td><code>width=60%</code>, <code>width=12cm</code></td><td>La larghezza della striscia: una frazione della giustezza che occupa (la colonna, o l’area del testo con <code>span=page</code>) o una lunghezza (un numero senza unità è in millimetri). Mai più larga di quella giustezza. Se non è impostata, la striscia prende l’intera giustezza.</td></tr>
+    <tr><td><code>align=start</code>, <code>center</code>, <code>end</code></td><td>Dove sta una striscia più stretta dentro la sua giustezza. Il valore predefinito è <code>center</code>. <code>start</code> ed <code>end</code> seguono la direzione del testo: l’inizio è il bordo destro su una pagina da destra a sinistra e la cima di una colonna su una pagina verticale.</td></tr>
+    <tr><td><code>height=4cm</code></td><td>L’altezza della striscia (un numero senza unità è in millimetri).</td></tr>
+    <tr><td><code>aspect=4</code>, <code>aspect=4/1</code></td><td>Larghezza su altezza, dove la larghezza è quella della striscia. Se non è impostato, la striscia prende le proporzioni che rendono quadrate le sue vignette (quattro vignette in fila: 4).</td></tr>
+    <tr><td><code>caption="…"</code></td><td>Una didascalia sotto la striscia (o sopra, con <code>captionStyle.position: 'above'</code>), composta alla larghezza della striscia nello stile delle didascalie delle figure. Il testo è Markdown in linea, scritto nella lingua di ogni edizione.</td></tr>
+    <tr><td><code>type=figure</code></td><td>Numera una striscia con didascalia come risorsa di quel tipo: la didascalia si apre con l’etichetta e il numero del tipo («Figura 3.»), e la striscia conta nella sequenza di quel tipo, in ordine di lettura con le risorse del tipo. Senza <code>type</code>, o con un tipo che nessun tipo di risorsa ha, la didascalia è semplice e la striscia non viene contata.</td></tr>
+    <tr><td><code>id=…</code></td><td>Dà un nome a una striscia numerata: <code>:ref&#123;id="…"&#125;</code> ne stampa l’etichetta e il numero, come per una figura, e vi rimanda con un collegamento.</td></tr>
+  </tbody>
+</table>
+
+Una striscia senza `split` affianca le sue vignette. Il riquadro della striscia è la sua cornice: spazi tra le vignette, stili di vignetta e lettering sono quelli della configurazione, e niente va al vivo. Una striscia più alta di una colonna viene ridotta alla colonna, didascalia compresa. Dopo di essa il testo prosegue alla riga successiva della griglia della linea di base, con la distanza richiesta da `layout.inlineResourceGap`, come dopo una figura in linea. Su una pagina verticale la striscia si impagina nel suo riquadro ruotato, così uno yonkoma `* / * / * / *` con `aspect=0.25` scende lungo una colonna verticale, e la sua didascalia la segue come una colonna di testo.
+
+```md
+:::strip{split="* | * | *" width=70% caption="Pip and Otto on the ice." type=figure id=pip-ice}
+::panel{art=pip-1}
+::panel{art=pip-2}
+::panel{art=pip-3}
+:::
+
+As :ref{id="pip-ice"} shows, the ice was thin.
+```
+
+La didascalia prende tutto ciò che imposta lo stile delle didascalie: il carattere e il corpo, i colori dell’etichetta e del testo, il peso e l’inclinazione dell’etichetta, la distanza tra striscia e didascalia, l’allineamento e la barra dietro. Il `captionStyle` proprio di un tipo si applica alle strisce numerate in esso.
+
+Nel VDT una striscia è un blocco di `type: 'resource'` con un campo `comic` e senza `resourceBlock`; le sue coordinate sono relative al riquadro del blocco sul foglio, e una striscia più stretta, o una sotto la sua didascalia, sta dentro quel riquadro (in quel caso `comic.frame` non comincia dal suo angolo). Una didascalia sono le `lines` proprie del blocco, composte nei font e nei colori della didascalia, e `stripCaption` dice quali righe sono, dove stanno, il tipo e il numero, e la barra. `pageComics(page)` restituisce il fumetto di una pagina e le strisce delle sue colonne e dei suoi elementi flottanti, tutti portati sul foglio.
+
+## Doppie pagine
+
+`:::page{spread}` stende un solo albero di divisione su due pagine affiancate, per un panorama o una battaglia che richiede tutto il libro aperto. La cornice sono le due aree del testo unite attraverso il dorso, senza i loro margini interni; la divisione, gli spazi tra le vignette e il ritaglio funzionano come su una pagina sola, e una vignetta o un’immagine possono attraversare il dorso.
+
+```md
+:::page{spread split="25 [* | * | *] / *" bleed}
+::panel{art=market-1}
+::panel{art=market-2}
+::panel{art=market-3}
+::panel{art=market-panorama}
+caption: The Saturday market, from the clock tower.
+:::
+```
+
+Una doppia pagina si apre su un verso, la pagina pari, perché le due metà si fronteggino: si aggiunge una pagina bianca prima quando il fumetto comincerebbe su un recto, anche all’inizio stesso di un libro, dove la pagina 1 sta da sola. In un libro rilegato a sinistra il verso è la pagina di sinistra; in un libro rilegato a destra (arabo, giapponese e cinese verticali, un fumetto letto da destra a sinistra) è quella di destra. Ogni pagina porta la sua metà: le vignette che raggiungono il suo lato, tagliate al dorso, con l’immagine di una vignetta che attraversa il dorso disegnata su entrambe le pagine. Le vignette al vivo escono dalla testa, dal piede e dai bordi esterni, mai al dorso. Niente viene letterato in una fascia di 8 mm attorno al dorso, dove la rilegatura lo inghiottirebbe: una nuvoletta ancorata lì scivola verso il lato più vicino. Ogni nuvoletta sta sulla pagina che contiene il suo centro.
+
+## Direzione di lettura
+
+Un fumetto occidentale si legge da sinistra a destra: la prima vignetta di una striscia è a sinistra. I manga e i fumetti arabi si leggono da destra a sinistra. Postext legge la direzione da `comics.readingDirection`:
+
+- `'auto'` (il valore predefinito): la direzione della lingua dell’edizione. Da destra a sinistra in un documento da destra a sinistra, così un’edizione araba specchia le sue pagine; in un documento verticale; e in giapponese e cinese tradizionale (`ja`, `zh-Hant`, `zh-TW`, `zh-HK`, `zh-MO`), così un’edizione giapponese di un fumetto occidentale si legge da destra a sinistra, come i manga. In qualunque altra lingua, compresi il cinese semplificato e il coreano (manhua e manhwa oggi si leggono da sinistra a destra), è la direzione per cui è stato disegnato il fumetto, `comics.artDirection` (`'ltr'` per impostazione predefinita): un manga, con `artDirection: 'rtl'`, si legge da destra a sinistra in qualunque lingua.
+- `'ltr'` o `'rtl'` impone una direzione all’intero libro, e l’attributo `direction` di una tavola la impone a quella tavola.
+
+La rilegatura segue i fumetti. Con `page.binding: 'auto'`, un libro la cui sezione `comics` si legge da destra a sinistra viene rilegato a destra: la pagina 1 sta da sola a sinistra del dorso, le doppie pagine si leggono `[3 | 2]`, i visualizzatori sfogliano verso sinistra, il PDF chiede l’ordine delle pagine da destra a sinistra e l’EPUB dichiara una progressione delle pagine da destra a sinistra. La sezione `comics` decide per l’intero libro, quindi un capitolo senza tavole a fumetti è rilegato come gli altri; la `direction` propria di una tavola non sposta il dorso. Un documento le cui tavole leggono i valori predefiniti, senza una sezione `comics`, mantiene la rilegatura del suo testo (basta `comics: {}` per rilegarlo come si leggono i suoi fumetti). `page.binding: 'left'` o `'right'` hanno comunque la meglio. Vedi [Rilegatura](/it/docs/configuration-page-layout#rilegatura).
+
+Lo stesso sorgente dà entrambe le impaginazioni. Una tavola da destra a sinistra dispone da destra le vignette di ogni striscia, così la vignetta 1 sta in alto a destra; le linee oblique si specchiano con loro, e così i lati logici di `bleed`, `pad` e le parole chiave degli angoli (una didascalia a `top-start` sta in alto a destra). Le strisce restano nel loro ordine dall’alto in basso, e l’ordine di lettura della sceneggiatura non cambia. Anche il lettering specchia le sue regole: la prima nuvoletta di una vignetta pende a destra, e la successiva può stare più in alto solo più a sinistra.
+
+Le immagini non vengono specchiate se non lo chiedi: `comics.mirrorArt: true` ribalta ogni immagine di una tavola letta nella direzione opposta a `artDirection`, ciò che hanno fatto a lungo le edizioni occidentali dei manga, e `::panel{mirror=false}` tiene un’immagine com’è disegnata (un testo disegnato nel disegno, uno spadaccino destrimane). Ancore e zone sicure seguono il ribaltamento. Lo segue anche un codino fuori vignetta puntato con `tail=left` o `tail=right`: questi indicano un lato dell’immagine, mentre `tail=start` e `tail=end` seguono la direzione di lettura della tavola. Con il disegno tenuto com’è, `tail=right` finisce sul bordo destro in ogni edizione; con l’immagine ribaltata, su quello sinistro. Di solito è meglio lasciare spento lo specchiamento: l’ordine delle vignette segue già il lettore, e un’immagine ribaltata cambia ciò che l’artista ha disegnato.
+
+La scrittura delle nuvolette segue la lingua, non l’ordine delle vignette. Con `comics.lettering.writingMode: 'auto'`, il giapponese e il cinese tradizionale si letterano in colonne verticali lette da destra a sinistra, lunghe al massimo `maxColumnChars` caratteri (8), con le regole kinsoku del giapponese, le cifre composte di traverso nella colonna con `:tcy` e la punteggiatura nelle sue forme verticali; un documento composto in scrittura verticale si lettera in verticale in qualunque lingua. Il cinese semplificato, il coreano e ogni altra lingua si letterano in orizzontale, e `'horizontal'` o `'vertical'` impongono l’una o l’altra modalità. L’arabo si lettera da destra a sinistra, con le parole latine e le cifre nella loro direzione, mai inclinato e mai con spaziatura tra le lettere.
+
+## Tradurre un fumetto
+
+Una traduzione è un file Markdown con le stesse righe `:::page` e `::panel` e le stesse chiavi dei personaggi, e altre parole. Le immagini, le loro zone sicure, ancore e zone da evitare, le divisioni e gli ancoraggi (i punti `at=` sono in frazioni delle immagini) sono condivisi da tutte le edizioni. Ogni edizione si lettera da sé: il testo si misura nella sua lingua e nel suo carattere, si divide nelle sue righe, e ogni nuvoletta viene di nuovo modellata e collocata attorno a esso.
+
+```md
+:::page{split="30 [30 | 20 | *] / *"}
+::panel{art=lh-arrive}
+caption: Todos los veranos, Maya pasaba una semana en el faro.
+maya: ¡Abuelo! ¡Ya estoy aquí!
+::panel{art=lh-radio}
+tomas: Llegas justo a tiempo. La radio se ha quedado sorda,
+tomas: y viene tormenta.
+:::
+```
+
+Ciò che cambia da un’edizione all’altra discende dal `locale` del documento: i caratteri predefiniti del lettering e delle onomatopee, il lettering verticale per il giapponese e il cinese tradizionale, i punti finali tolti del cinese e del giapponese, l’interlinea e la direzione delle pagine di un’edizione araba. In spagnolo o in francese il testo è circa un quinto più lungo che in inglese, e molto più corto in cinese o in giapponese; le nuvolette crescono e si restringono con esso, e `comicBalloonOverflow` indica le vignette in cui una traduzione ha bisogno di una riga più corta o di un ancoraggio. Le onomatopee sono parole come le altre: traducile, oppure tieni l’originale e aggiungine una piccola sotto, come sottotitolo.
+
+## Output dei fumetti
+
+Ogni output dipinge lo stesso fumetto: sfondi delle vignette, immagini ritagliate sulle vignette, bordi, disegni che escono dalla vignetta, poi le nuvolette di ogni gruppo unito (contorni tracciati, poi riempiti, poi il testo), e per ultime le onomatopee.
+
+- **Canvas.** Il canvas della Sandbox, le pagine 3D di Folio e le miniature dipingono tutti tramite `renderPageToCanvas`.
+- **PDF.** `postext-pdf` dipinge le tavole con contorni vettoriali e i caratteri del lettering incorporati, e le immagini SVG con un master di stampa PDF (`svg.pdfFileId`) si incorporano come quel master. Un PDF marcato dà a ogni tavola un `Div`, a ogni vignetta una `Figure` con il suo testo alternativo (l’`alt` della vignetta, altrimenti l’`altText` della risorsa), e a ogni nuvoletta un `P` dopo la figura della sua vignetta, in ordine di lettura; un’onomatopea è uno `Span` il cui `/ActualText` sono le sue parole. Sfondi, bordi e contorni sono artefatti. L’output supera le verifiche PDF/UA-1 di veraPDF.
+- **HTML.** Ogni vignetta è una `<figure>` che contiene un SVG in linea (il ritaglio, l’immagine, il bordo, il ritaglio che esce) con il testo alternativo della vignetta, seguita dalle sue nuvolette come elementi `<p>` in ordine di lettura. Una nuvoletta di parlato comincia con il nome del personaggio in uno span visivamente nascosto, così un lettore di schermo sente «Maya: Grandpa! I'm here!»; un’onomatopea viene annunciata come un’immagine la cui etichetta sono le sue parole. Il visualizzatore HTML della Sandbox, le cui pagine sono larghe uno schermo e alte quanto lo scorrimento, compone una tavola come la pagina di stampa scalata alla finestra (`comics.viewerLeaf`), mai ridistribuita.
+- **EPUB a layout fisso.** Le pagine sono quelle del libro stampato. Il libro porta anche una **navigazione per regioni** (`regions.xhtml`, EPUB Region-Based Navigation 1.0): una regione `panel` per vignetta in ordine di lettura, con dentro le sue nuvolette, didascalie e onomatopee, così un sistema di lettura può percorrere il libro vignetta per vignetta. La progressione delle pagine segue la direzione di lettura dei fumetti. L’opzione `kindlePanelView: true` di `renderToEpub` aggiunge Kindle Panel View: una zona da toccare per vignetta e una copia ingrandita che riempie lo schermo, con i metadati che Kindle richiede.
+- **EPUB a layout fluido.** Lì una tavola non ha una pagina da mantenere, quindi ogni vignetta diventa la sua immagine, ritagliata esattamente come sulla pagina, seguita dalle sue righe come testo: «**Maya**: Grandpa! I'm here!», le didascalie come paragrafi, le onomatopee in corsivo.
+
+La didascalia di una striscia si dipinge con il testo, come quella di una figura. In un PDF marcato è la `Caption` del `Div` della striscia, letta dopo le sue vignette (prima, quando sta sopra la striscia). Nell’HTML, nell’EPUB a layout fisso e nell’EPUB a layout fluido la striscia e la sua didascalia sono un’unica `<figure>`, con la didascalia come suo `<figcaption>`; su una pagina verticale o da destra a sinistra, dove l’immagine della striscia giace sopra il foglio, l’HTML tiene la didascalia nel testo per conto suo.
+
+## Modificare i fumetti nella Sandbox
+
+Nel canvas, nelle pagine HTML e nella modalità di selezione di Folio, una tavola si può modificare con il puntatore, e ogni modifica viene riscritta nel Markdown del capitolo (la [guida della Sandbox](/it/docs/sandbox#modificare-i-fumetti) ha i dettagli):
+
+- **Divisori.** Sopra uno spazio tra le vignette il puntatore diventa un cursore di ridimensionamento. Trascinarlo sposta la linea di divisione; al rilascio la nuova percentuale si scrive nel valore `split` della tavola (l’attributo si aggiunge se la tavola non ce l’ha), e la tavola si impagina di nuovo. Maiusc aggancia a passi del 5 %, Alt sposta solo l’estremità più vicina, inclinando la linea, e nessuna cella diventa più stretta del 5 %. Durante il trascinamento viene marcata una vignetta la cui immagine finirebbe tra bande vuote. Ogni divisore è anche un separatore che può ricevere il focus: i tasti freccia lo spostano dell’1 % (del 5 % con Maiusc), Invio scrive la posizione, Esc la rimette com’era.
+- **Vignette.** Una piccola barra degli strumenti sopra una vignetta la divide con una linea orizzontale o verticale, aggiungendo dopo di essa una `::panel` vuota per la nuova cella, oppure la fonde con la vignetta successiva: la linea di divisione sparisce, e la vignetta fusa mantiene l’immagine della prima vignetta ed entrambe le sceneggiature.
+- **Nuvolette.** Trascinare una nuvoletta la ancora: la sua riga di sceneggiatura riceve `at="x% y%"` in percentuali dell’immagine della vignetta, e un gruppo unito si sposta tutto insieme. Mentre si muove, la nuvoletta diventa arancione dove coprirebbe un volto o una zona da evitare o uscirebbe dalla sua vignetta, e il suggerimento dice quale. I tasti freccia spostano di poco una nuvoletta con il focus, dell’1 %, e un doppio clic su una nuvoletta ancorata toglie l’ancoraggio.
+- **Codini.** Trascinare la punta di un codino scrive nella riga `to="x% y%"`, il punto verso cui punta il codino; un doppio clic sulla punta lo toglie, e il codino torna a puntare verso il suo personaggio. Da una nuvoletta con il focus, T passa al suo codino, il cui bersaglio si sposta con i tasti freccia.
+- **Tastiera.** Una vignetta con il focus si divide con H (una linea orizzontale) o V (una linea verticale) e si fonde con la vignetta successiva con M.
+- **Strisce.** Ogni strumento funziona anche sui blocchi `:::strip`, in una colonna, flottanti o a tutta larghezza, più stretti della loro giustezza o sotto una didascalia, e scrive nella recinzione propria della striscia.
+- **Immagini.** La zona sicura, i personaggi e le zone da evitare di un’immagine si segnano nel pannello Risorse (vedi [Parlanti e ancore](#personaggi-e-ancore)).
+- **Impostazioni.** Il pannello Grafica ha un gruppo **Fumetti**: direzione di lettura, cornice e spazi tra le vignette, la vignetta predefinita e gli stili di vignetta, il lettering e gli stili delle nuvolette, ciascuno con un’anteprima.
+- **Editor.** L’editor di testo colora le righe `:::page`, `::panel` e quelle di sceneggiatura, e il pannello Verifiche elenca gli avvisi dei fumetti alle loro righe.
+
+## Avvisi dei fumetti
+
+Ogni avviso indica la riga o l’attributo a cui si riferisce, e il pannello Verifiche della Sandbox lo elenca lì, sotto il titolo nella prima colonna.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '230px' }}>Avviso</th>
+      <th>Causa</th>
+      <th>Rimedio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Divisione delle vignette illeggibile<br /><code>comicSplitSyntax</code></td><td>Un valore <code>split</code> non si può leggere per intero: un carattere spurio, una <code>[</code> non chiusa, <code>/</code> e <code>|</code> mescolati in un elenco, o un elenco tra parentesi sull’asse della cella madre. Si usa la parte leggibile; un valore senza nulla di leggibile dà una sola vignetta.</td><td>Correggi il valore secondo la <a href="#dividere-la-tavola">grammatica</a>: un solo tipo di separatore per elenco, e le parentesi per cambiare asse.</td></tr>
+    <tr><td>Dimensioni delle vignette oltre il 100 %<br /><code>comicSplitOverflow</code></td><td>Le dimensioni di un elenco sommate superano il 100 %. Vengono ridotte, e ogni <code>&#42;</code> conserva il 5 %.</td><td>Abbassa le dimensioni, o sostituiscine una con <code>&#42;</code>.</td></tr>
+    <tr><td>Vignette e celle non corrispondono<br /><code>comicPanelCount</code></td><td>La tavola ha più righe <code>::panel</code> di quante celle abbia la sua divisione (le vignette in più vengono tralasciate), o meno (le ultime celle restano vuote).</td><td>Aggiungi o togli celle nella divisione, o vignette nella sceneggiatura. Una riga <code>::panel</code> vuota dà di proposito una cella vuota.</td></tr>
+    <tr><td>Testo fuori da una riga della sceneggiatura<br /><code>comicStrayText</code></td><td>Testo prima della prima riga <code>::panel</code>, o una riga senza <code>key:</code> che non continua la riga sopra. Viene letterato come didascalia.</td><td>Comincia la riga con una chiave (<code>caption:</code>, <code>maya:</code>), o rientrala di due spazi per continuare la nuvoletta sopra.</td></tr>
+    <tr><td>Stile di nuvoletta sconosciuto<br /><code>comicUnknownBalloonStyle</code></td><td>Una riga indica tra le graffe uno stile che né gli stili incorporati né <code>comics.balloonStyles</code> definiscono, spesso un errore di battitura (<code>&#123;wisper&#125;</code>). La riga prende lo stile della sua chiave.</td><td>Correggi il nome, o aggiungi lo stile a <code>comics.balloonStyles</code>.</td></tr>
+    <tr><td>Immagine della vignetta non trovata<br /><code>comicUnknownArt</code></td><td>L’<code>art</code> o il <code>pop</code> di una vignetta non indica nessuna risorsa, o indica una risorsa che non è né una bitmap né un SVG. La vignetta si disegna vuota.</td><td>Correggi l’id, o aggiungi l’immagine alle risorse del libro.</td></tr>
+    <tr><td>Immagine mostrata per intero nella vignetta<br /><code>comicPanelLetterbox</code></td><td>Le proporzioni della cella sono troppo lontane da quelle dell’immagine: nessun ritaglio di quella forma contiene l’intera zona sicura, quindi l’immagine si mostra con la zona sicura intera, tra bande dello sfondo della vignetta.</td><td>Sposta il divisore per dare alla cella altre proporzioni (la Sandbox segna queste posizioni durante il trascinamento), disegna una zona sicura più piccola o usa un’altra immagine.</td></tr>
+    <tr><td>Punto del personaggio fuori dalla zona sicura<br /><code>comicAnchorOutsideSafeArea</code></td><td>L’ancora di un’immagine sta fuori dalla sua zona sicura, quindi un ritaglio può tagliare fuori il personaggio e il codino punterebbe allora fuori dalla vignetta.</td><td>Allarga la zona sicura per includere la bocca, o sposta l’ancora. Non c’è niente da correggere se il personaggio deve a volte stare fuori dalla vignetta.</td></tr>
+    <tr><td>La nuvoletta non entra<br /><code>comicBalloonOverflow</code></td><td>Dopo ogni ripiego una nuvoletta copre ancora un volto, un’altra nuvoletta, una zona da evitare o una bocca, fa passare il codino attraverso un’altra nuvoletta, o esce dalla sua vignetta (un attraversamento richiesto con <code>break</code> o con un ancoraggio <code>at=</code> non conta). L’avviso indica la vignetta e ciò che viene coperto. Mentre trascini una nuvoletta nella Sandbox, un volto o una zona da evitare che coprirebbe, o un bordo che oltrepasserebbe, si vedono prima del rilascio.</td><td>Accorcia la riga o dividila in due, dai più spazio alla vignetta, ancora la nuvoletta con <code>at=</code>, o lasciala attraversare il bordo con <code>break</code>. Il testo non viene mai rimpicciolito.</td></tr>
+    <tr><td>Personaggio senza punto<br /><code>comicUnknownSpeaker</code></td><td>Una chiave di personaggio che nessuna immagine della tavola segna con un’ancora e nessuna voce del cast nomina, molto spesso una chiave scritta male. I suoi codini puntano fuori dalla vignetta. Sollevato solo sulle tavole le cui immagini segnano ancore; solo informativo.</td><td>Correggi la chiave, segna il personaggio sull’immagine o aggiungi una voce in <code>comics.cast</code> per un personaggio che non si vede mai.</td></tr>
+  </tbody>
+</table>
+
+Gli avvisi tornano nei `contentWarnings` del documento con l’intervallo del sorgente della riga o dell’attributo a cui si riferiscono (vedi [Configurazione › Avvisi nel documento](/it/docs/configuration-programmatic-usage#avvisi-nel-documento)).
+
+Un’impostazione dei fumetti che accetta una tra poche parole e ne contiene un’altra, come `shape: 'ovl'` in uno stile di nuvoletta o `readingDirection: 'rlt'`, viene letta come il suo valore predefinito ed elencata nel pannello Verifiche come **Valore di impostazione sconosciuto** (`unknownConfigValue`), con il valore usato dal motore e la parola a cui è più vicina. Le impostazioni controllate sono `readingDirection`, `artDirection`, `borderStyle` e `fit` di uno stile di vignetta, `writingMode`, `textTransform`, `dropFinalStop` e `joinSameSpeaker` del lettering, e `shape`, `tail`, `target`, `position`, `align` e `textTransform` di uno stile di nuvoletta.
+
+## Dal codice
+
+Un fumetto non ha bisogno di niente oltre a `buildDocument`: le risorse portano le immagini con le loro zone sicure, ancore e zone da evitare, e la configurazione può portare `comics`. Il lettering misura il suo testo con i font caricati, quindi i caratteri del lettering devono essere caricati prima dell’impaginazione, come qualunque carattere: `comicFontFamilies(config, markdown)` elenca i caratteri di cui hanno bisogno i fumetti di un documento (il carattere del lettering, i caratteri di ogni stile di nuvoletta e del cast, e quelli che le sue righe di sceneggiatura indicano con `font=`), e `markdownHasComics(markdown)` dice se un testo ha tavole o strisce a fumetti. Nel PDF, al fornitore dei font si chiedono quei caratteri come qualunque altro.
+
+Il fumetto impaginato sta nel VDT: `page.comic` (`VDTComicPage`) contiene la cornice, la direzione di lettura, le vignette in ordine di lettura (poligono, bordo, sfondo, il ritaglio dell’immagine come `art.source` e `art.box`), i divisori (con l’intervallo del sorgente del valore `split` in cui scrivono) e le nuvolette (tracciato del contorno, blocchi di testo, punta del codino, tipo, personaggio). La grammatica delle divisioni è esportata per gli editor: `parseComicSplit`, `serializeComicSplit`, `moveComicSplitLine`, `splitComicCell` e `mergeComicCells` leggono e riscrivono un valore `split`, mantenendo i suoi `*` dove possono. `comicArtCrop` e `comicCropFeasibleRange` calcolano un ritaglio, e `comicArtPointToPage` porta sulla pagina un punto di un’immagine.
+
+## Limiti noti
+
+- **Solo alberi di suddivisioni.** Una suddivisione taglia ogni cella in due con una linea che la attraversa da parte a parte, quindi non si possono scrivere i layout in cui nessuna linea attraversa l’intera pagina, come una girandola di quattro vignette attorno a una quinta. Gli inserti e le figure che escono dalla vignetta coprono gran parte di ciò a cui servono quei layout.
+- **Forme delle vignette.** Le vignette sono poligoni convessi; le vignette rotonde, frastagliate o senza bordo, le immagini ruotate o ingrandite e le linee cinetiche si disegnano nelle immagini, non le traccia Postext.
+- **Lettering.** Il ruby su una base da destra a sinistra non è supportato, e le altre annotazioni si stampano come testo semplice dentro le nuvolette. Il posizionamento avviene vignetta per vignetta: le code non si incrociano grazie a un costo, non perché vengano instradate l’una attorno all’altra, e il flusso da una vignetta alla successiva non viene bilanciato. Le righe lunghe in celle molto piccole vengono segnalate, non risolte. La protezione su un volto non marcato si dimensiona a partire dalla bocca e dal punto della testa (qualche em quando l’ancora non ha una testa), per cui in un primo piano può proteggere la bocca più del volto; marca il volto.
+- **Le strisce** non possono occupare un numero di colonne inferiore a quello della pagina (`columns=2` in una pagina di tre), e vengono lette solo al livello principale di un capitolo (non dentro un riquadro, una tabella o una nota a piè di pagina). Una citazione nella didascalia di una striscia si stampa così come è scritta.
+- **Doppie pagine.** Una vignetta arrotondata tagliata in corrispondenza del dorso perde tutti gli angoli arrotondati. Un fumetto da destra a sinistra in un libro rilegato a sinistra si apre comunque sulla pagina di sinistra, quindi la sua prima vignetta finisce sulla seconda pagina della doppia pagina.
+- **Le figure che escono dalla vignetta** prendono il ritaglio dell’immagine della vignetta, quindi la scontornatura deve avere le stesse dimensioni dell’immagine.
+- **Output.** Il testo alternativo di ripiego di una vignetta senza `alt` né `altText` è «Panel N», in inglese. La navigazione per regioni descrive le vignette inclinate con i loro riquadri di delimitazione. Kindle Panel View copia il fumetto di una pagina una volta per ogni vignetta, il che rende il file più grande, e non è stato verificato in Kindle Previewer.
+
+## Fonti
+
+- Nate Piekos, [*Comic Book Grammar & Tradition*](https://blambot.com/pages/comic-book-grammar-tradition) (Blambot): tipi di nuvoletta, didascalie, enfasi, il doppio trattino.
+- John Roshell e Comicraft, [*Balloon Tales*](https://balloontales.com/creating-tails-and-joins/): code e giunzioni, e [il metodo a livelli](https://balloontales.com/the-layer-method/) che prima traccia il contorno e poi riempie.
+- Todd Klein, [*Digital lettering for comics*](https://kleinletters.com/Blog/digital-lettering-for-comics/).
+- David Kurlander, Tim Skelly e David Salesin, [*Comic Chat*](https://kurlander.net/DJ/Pubs/SIGGRAPH96.pdf), SIGGRAPH 96: posizionamento delle nuvolette in ordine di lettura.
+- IDPF, [*EPUB Region-Based Navigation 1.0*](https://idpf.org/epub/renditions/region-nav/epub-region-nav.html), e Amazon KDP, [Kindle Panel View](https://kdp.amazon.com/en_US/help/topic/G9GSTY4LTRT39D4Z).

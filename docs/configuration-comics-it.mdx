@@ -1,0 +1,548 @@
+{/* docs/configuration-comics-it.mdx */}
+
+export const metadata = {
+  title: 'Configurazione: fumetti',
+  sidebarTitle: 'Impostazioni dei fumetti',
+  description: 'Le impostazioni dei fumetti: cornice e spazi tra le vignette delle tavole, stili delle vignette, lettering, stili delle nuvolette e personaggi',
+  lang: 'it',
+  lastUpdated: '2026-10-10',
+  readingTime: '3 min',
+  order: 10,
+  parent: 'configuration',
+  plainSummary: "Questa pagina presenta le impostazioni delle tavole a fumetti. Fissi la cornice della pagina e lo spazio tra le vignette. Scegli il font e la dimensione del lettering. Definisci come vengono disegnate le nuvolette, le didascalie e le onomatopee. Puoi anche elencare i personaggi, così che ognuno parli con il proprio stile. La guida Fumetti spiega come scrivere le tavole vere e proprie.",
+};
+
+# Configurazione: fumetti
+
+
+## Fumetti
+
+La proprietà `comics` configura le tavole a fumetti (`:::page`), le strisce (`:::strip`) e le doppie pagine: la cornice e gli spazi da cui si ritagliano le vignette, gli stili delle vignette, il lettering, gli stili delle nuvolette e i personaggi. La leggono solo i documenti che contengono fumetti; un documento senza fumetti si impagina esattamente come prima, e un documento con fumetti ma senza una sezione `comics` prende i valori predefiniti della sua lingua. Il markup e il modo in cui si letterano le tavole sono spiegati in [Fumetti](/it/docs/comics).
+
+```ts
+const config: PostextConfig = {
+  comics: {
+    readingDirection: 'auto',
+    gutter: { horizontal: { value: 5, unit: 'mm' }, vertical: { value: 2.5, unit: 'mm' } },
+    panel: { borderWidth: { value: 0.8, unit: 'pt' }, borderStyle: 'rough' },
+    panelStyles: [{ id: 'night', background: { hex: '#14142b', model: 'hex' }, borderColor: { hex: '#ffffff', model: 'hex' } }],
+    lettering: { fontSize: { value: 8.5, unit: 'pt' }, textTransform: 'uppercase' },
+    balloonStyles: [{ id: 'eerie', shape: 'wavy', italic: true }],
+    cast: [{ id: 'maya', name: 'Maya' }, { id: 'tomas', name: 'Grandpa Tomás' }],
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>readingDirection</code></td>
+      <td><code>'auto' | 'ltr' | 'rtl'</code></td>
+      <td><code>'auto'</code></td>
+      <td>L’ordine delle vignette in una fila. <code>'auto'</code> legge da destra a sinistra in un documento da destra a sinistra, in uno verticale e in giapponese e cinese tradizionale, e altrimenti nella direzione di <code>artDirection</code> (cinese semplificato e coreano compresi). L’attributo <code>direction</code> di una tavola ha la precedenza. Con <code>page.binding: 'auto'</code>, un libro i cui fumetti si leggono da destra a sinistra viene rilegato a destra.</td>
+    </tr>
+    <tr>
+      <td><code>artDirection</code></td>
+      <td><code>'ltr' | 'rtl'</code></td>
+      <td><code>'ltr'</code></td>
+      <td>Il verso di lettura per cui sono stati disegnati i disegni: <code>'rtl'</code> per i manga.</td>
+    </tr>
+    <tr>
+      <td><code>mirrorArt</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Rovescia specularmente i disegni di una tavola letta nel verso opposto ad <code>artDirection</code>. Con <code>mirror=false</code> una vignetta mantiene il disegno così com’è stato disegnato.</td>
+    </tr>
+    <tr>
+      <td><code>frame.margins</code></td>
+      <td><code>PageMargins</code></td>
+      <td>i margini della pagina</td>
+      <td>Margini propri per le tavole a fumetti (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Le vignette si ritagliano dal riquadro che lasciano; se non sono impostati, dalla gabbia del testo della pagina.</td>
+    </tr>
+    <tr>
+      <td><code>gutter.horizontal</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>4mm</code></td>
+      <td>Lo spazio tra le file. L’attributo <code>gutter</code> di una tavola ha la precedenza.</td>
+    </tr>
+    <tr>
+      <td><code>gutter.vertical</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>2mm</code></td>
+      <td>Lo spazio tra vignette affiancate nella stessa fila.</td>
+    </tr>
+    <tr>
+      <td><code>panel</code></td>
+      <td><code>PanelStyleConfig</code></td>
+      <td>vedi sotto</td>
+      <td>Lo stile predefinito delle vignette.</td>
+    </tr>
+    <tr>
+      <td><code>panelStyles</code></td>
+      <td><code>NamedPanelStyleConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Stili di vignetta con nome, scelti con <code>:::page&#123;style=…&#125;</code> o <code>::panel&#123;style=…&#125;</code>. Ognuno ha un <code>id</code>, un <code>name</code> facoltativo (solo per le interfacce degli editor) e i campi di uno stile di vignetta; i campi non impostati seguono <code>panel</code>.</td>
+    </tr>
+    <tr>
+      <td><code>lettering</code></td>
+      <td><code>LetteringConfig</code></td>
+      <td>vedi sotto</td>
+      <td>Il carattere, la dimensione e le regole redazionali di tutte le nuvolette del libro.</td>
+    </tr>
+    <tr>
+      <td><code>balloonStyles</code></td>
+      <td><code>BalloonStyleConfig[]</code></td>
+      <td>i nove stili predefiniti</td>
+      <td>Stili delle nuvolette per tipo. Quelli predefiniti ci sono sempre; una voce con uno dei loro id lo modifica, una voce con un id nuovo aggiunge uno stile sovrapposto a <code>speech</code>.</td>
+    </tr>
+    <tr>
+      <td><code>cast</code></td>
+      <td><code>ComicCastMember[]</code></td>
+      <td><code>[]</code></td>
+      <td>I personaggi (vedi <a href="#personaggi">Personaggi</a>).</td>
+    </tr>
+    <tr>
+      <td><code>runningHeads</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Stampa le testatine e i folio sulle tavole a fumetti. Se è disattivato, una tavola è fatta solo di vignette e il suo numero conta comunque.</td>
+    </tr>
+    <tr>
+      <td><code>viewerLeaf</code></td>
+      <td><code>ComicViewerLeafConfig</code></td>
+      <td>non impostato</td>
+      <td>Per gli ambienti le cui pagine non sono fogli: impagina le tavole su un foglio di stampa (<code>width</code>, <code>height</code>, <code>margins</code>) scalato a <code>fitWidth</code> px (e alto al massimo <code>fitHeight</code> px) in cima alla pagina. Lo imposta il visualizzatore HTML della Sandbox; non viene mai salvato con un documento.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Stili delle vignette
+
+`comics.panel` e ogni voce di `comics.panelStyles`:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>borderWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1pt</code></td>
+      <td>Spessore del bordo; <code>0</code> non ne disegna nessuno. Il bordo è tracciato sul contorno della vignetta.</td>
+    </tr>
+    <tr>
+      <td><code>borderColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>nero</td>
+      <td>Colore del bordo (collegabile alla palette).</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Raggio degli angoli di una vignetta rettangolare, limitato alla metà del lato più corto. Una vignetta tagliata da una linea obliqua mantiene gli angoli vivi.</td>
+    </tr>
+    <tr>
+      <td><code>borderStyle</code></td>
+      <td><code>'solid' | 'rough' | 'none'</code></td>
+      <td><code>'solid'</code></td>
+      <td>Una linea netta, una linea tracciata a mano che ondeggia un poco (con un seme ricavato dalla vignetta, quindi uguale a ogni build) oppure nessuna.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td>bianco</td>
+      <td>Il riempimento sotto il disegno: il colore di una vignetta vuota e delle fasce attorno a un disegno mostrato per intero.</td>
+    </tr>
+    <tr>
+      <td><code>fit</code></td>
+      <td><code>'cover' | 'contain'</code></td>
+      <td><code>'cover'</code></td>
+      <td><code>cover</code> ritaglia il disegno per riempire la vignetta, senza mai entrare nella sua zona sicura; <code>contain</code> lo mostra per intero.</td>
+    </tr>
+    <tr>
+      <td><code>bleed</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Le vignette con questo stile oltrepassano la cornice fino al rifilo e all’abbondanza su ogni lato che tocca la cornice.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Lettering
+
+`comics.lettering` imposta tutte le nuvolette del libro. La dimensione è una sola: uno stile di nuvoletta può scalarla (`fontScale`), e il testo non viene mai rimpicciolito per farlo entrare in una nuvoletta.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>secondo la lingua</td>
+      <td>Il carattere del lettering. Se non è impostato: <code>Comic Neue</code>; <code>Zen Antique</code> in giapponese, <code>Noto Sans SC</code> in cinese semplificato, <code>LXGW WenKai TC</code> in cinese tradizionale, <code>Playpen Sans Arabic</code> in arabo, persiano e urdu (<code>defaultComicFont(locale)</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>7.5pt</code></td>
+      <td>La dimensione del testo delle nuvolette. Sulla pagina stampata i fumetti si letterano di solito tra 7 e 9 pt.</td>
+    </tr>
+    <tr>
+      <td><code>lineHeight</code></td>
+      <td><code>number</code></td>
+      <td><code>1.15</code></td>
+      <td>Distanza tra le righe, come multiplo della dimensione. Se resta al valore predefinito, le nuvolette verticali, cinesi e giapponesi prendono 1,5 e quelli arabi 1,45.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>nero</td>
+      <td>Colore del testo.</td>
+    </tr>
+    <tr>
+      <td><code>bold</code>, <code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Mette tutto il lettering in grassetto o in corsivo. Il lettering cinese, giapponese e arabo non viene mai inclinato.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Spazio aggiuntivo tra le lettere; <code>em</code> è relativo alla dimensione del testo. Non si applica mai all’arabo. Non cambia i glifi: le legature restano.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'auto' | 'horizontal' | 'vertical'</code></td>
+      <td><code>'auto'</code></td>
+      <td><code>'auto'</code> dispone in colonne verticali il lettering del giapponese, del cinese tradizionale e di qualsiasi documento composto in scrittura verticale, e tutto il resto in orizzontale. Il flag <code>vertical</code> o <code>horizontal</code> di una battuta della sceneggiatura imposta diversamente quella battuta (vedi <a href="/it/docs/comics#lettering">Fumetti › Lettering</a>).</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Tutto in maiuscolo, l’aspetto classico del lettering americano ed europeo. Le scritture senza maiuscole e minuscole restano come sono.</td>
+    </tr>
+    <tr>
+      <td><code>dropFinalStop</code></td>
+      <td><code>'auto' | boolean</code></td>
+      <td><code>'auto'</code></td>
+      <td>Omette il punto che chiude una nuvoletta (<code>。</code> nei manga). <code>'auto'</code>: solo in giapponese e in cinese.</td>
+    </tr>
+    <tr>
+      <td><code>doubleDash</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Lettera una lineetta lunga come <code>--</code>, un’abitudine del lettering americano.</td>
+    </tr>
+    <tr>
+      <td><code>inset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5mm</code></td>
+      <td>Spazio lasciato tra una nuvoletta e il bordo della sua vignetta. Una didascalia accostata al bordo lo ignora.</td>
+    </tr>
+    <tr>
+      <td><code>joinSameSpeaker</code></td>
+      <td><code>'butt' | 'connector' | 'none'</code></td>
+      <td><code>'butt'</code></td>
+      <td>Due nuvolette consecutive dello stesso personaggio: corpi fusi in un unico contorno, uniti da un collo stretto o tenuti separati. Una battuta della sceneggiatura chiede il proprio con <code>join</code> o <code>join=false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>maxColumnChars</code></td>
+      <td><code>number</code></td>
+      <td><code>8</code></td>
+      <td>Lettering verticale: il numero massimo di caratteri in una colonna di una nuvoletta. Le onomatopee vanno a capo dopo cinque.</td>
+    </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Una nuvoletta rimodellata per entrare nella sua vignetta non spezza per farlo una parola cinese: ogni parola tagliata dalle sue nuove righe, che la forma preferita lascia intera, costa più di una nuvoletta letta fuori ordine, quindi il posizionamento sposta prima la nuvoletta o cambia l’ordine. Il lettering giapponese, diviso per sintagmi, non viene toccato. Con <code>false</code> il lettering funziona come in postext 1.27; un documento salvato prima della 1.28 che contiene un fumetto viene letto con questo valore.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Stili delle nuvolette
+
+Ogni voce di `comics.balloonStyles` si sovrappone allo stile predefinito con lo stesso id (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`), oppure a `speech` per un id nuovo. I valori predefiniti qui sotto sono quelli di `speech`; la [pagina Fumetti](/it/docs/comics#stili-delle-nuvolette) elenca che cosa cambia ogni stile predefinito. Le lunghezze in `em` sono relative alla dimensione del testo della nuvoletta.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obbligatorio</td>
+      <td>La parola con cui una battuta della sceneggiatura nomina lo stile: <code>ben&#123;whisper&#125;: …</code> o <code>style=whisper</code>.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Nome leggibile, solo per le interfacce degli editor.</td>
+    </tr>
+    <tr>
+      <td><code>shape</code></td>
+      <td><code>'oval' | 'rounded' | 'rectangle' | 'cloud' | 'burst' | 'wavy' | 'electric' | 'none'</code></td>
+      <td><code>'oval'</code></td>
+      <td>Il contorno attorno al testo. <code>'none'</code> mette il testo direttamente sul disegno.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code></td>
+      <td><code>ColorValue</code></td>
+      <td>bianco</td>
+      <td>Riempimento della nuvoletta.</td>
+    </tr>
+    <tr>
+      <td><code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>nero</td>
+      <td>Colore del contorno.</td>
+    </tr>
+    <tr>
+      <td><code>strokeWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.6pt</code></td>
+      <td>Spessore del contorno.</td>
+    </tr>
+    <tr>
+      <td><code>dash</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Un contorno tratteggiato (un sussurro).</td>
+    </tr>
+    <tr>
+      <td><code>double</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Un contorno doppio.</td>
+    </tr>
+    <tr>
+      <td><code>wobble</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Ondeggiamento a mano libera del contorno, da 0 a 1, con un seme ricavato dalla nuvoletta, così non cambia mai tra una build e l’altra.</td>
+    </tr>
+    <tr>
+      <td><code>roundness</code></td>
+      <td><code>number</code></td>
+      <td><code>2.2</code></td>
+      <td>L’esponente della superellisse di un ovale: 2 è un’ellisse, valori più alti sono più squadrati.</td>
+    </tr>
+    <tr>
+      <td><code>burstPoints</code></td>
+      <td><code>number</code></td>
+      <td><code>14</code></td>
+      <td>Le punte di un’esplosione; <code>0</code> le conta a partire dal perimetro.</td>
+    </tr>
+    <tr>
+      <td><code>burstDepth</code></td>
+      <td><code>number</code></td>
+      <td><code>0.22</code></td>
+      <td>La profondità delle punte di un’esplosione, come frazione del raggio del corpo.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.55em</code></td>
+      <td>L’aria tra il testo e il contorno.</td>
+    </tr>
+    <tr>
+      <td><code>aspect</code></td>
+      <td><code>number</code></td>
+      <td><code>1.6</code></td>
+      <td>Il rapporto tra larghezza e altezza a cui la divisione in righe punta per il blocco di testo (lettering orizzontale).</td>
+    </tr>
+    <tr>
+      <td><code>tail</code></td>
+      <td><code>'curved' | 'wedge' | 'bubbles' | 'zigzag' | 'none'</code></td>
+      <td><code>'curved'</code></td>
+      <td>La codina.</td>
+    </tr>
+    <tr>
+      <td><code>tailWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.9em</code></td>
+      <td>La larghezza della codina nel punto in cui lascia il contorno.</td>
+    </tr>
+    <tr>
+      <td><code>tailReach</code></td>
+      <td><code>number</code></td>
+      <td><code>0.55</code></td>
+      <td>Quanto si allunga la codina verso chi parla, come frazione della distanza tra il contorno e la bocca.</td>
+    </tr>
+    <tr>
+      <td><code>target</code></td>
+      <td><code>'mouth' | 'head'</code></td>
+      <td><code>'mouth'</code></td>
+      <td>Dove punta la codina: la bocca dell’ancora o la sua testa (nuvolette di pensiero).</td>
+    </tr>
+    <tr>
+      <td><code>position</code></td>
+      <td><code>'auto' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Dove va la nuvoletta quando la battuta non ne fissa nessuna: collocata dal lettering, oppure in un angolo o lungo un lato della vignetta.</td>
+    </tr>
+    <tr>
+      <td><code>butt</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Accosta al bordo della vignetta una nuvoletta d’angolo o di lato (didascalie).</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>il carattere del lettering</td>
+      <td>Il carattere di questo stile. Per <code>sfx</code> il predefinito è il carattere per onomatopee della lingua: <code>Bangers</code>, <code>Dela Gothic One</code> in giapponese, <code>ZCOOL KuaiLe</code> in cinese semplificato, <code>LXGW WenKai TC</code> in cinese tradizionale, <code>Lalezar</code> in arabo (<code>defaultComicSfxFont(locale)</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>La dimensione del testo, come multiplo della dimensione del lettering.</td>
+    </tr>
+    <tr>
+      <td><code>bold</code>, <code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td>quello del lettering</td>
+      <td>Testo in grassetto o in corsivo.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>quello del lettering</td>
+      <td>Colore del testo.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td>quello del lettering</td>
+      <td>Tutto in maiuscolo per questo stile.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td>quello del lettering</td>
+      <td>Spazio aggiuntivo tra le lettere.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'center' | 'start'</code></td>
+      <td><code>'center'</code></td>
+      <td>Allineamento delle righe dentro la nuvoletta.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>Dimension</code></td>
+      <td>nessuno</td>
+      <td>Un contorno tracciato attorno alle lettere, di cui indica lo spessore, perché il testo si legga sopra il disegno (onomatopee).</td>
+    </tr>
+    <tr>
+      <td><code>haloColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>bianco</td>
+      <td>Il colore dell’alone.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Rotazione in gradi, in senso orario. Prevale l’attributo <code>rotate</code> di una battuta.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Personaggi
+
+Ogni voce di `comics.cast` descrive un personaggio:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obbligatorio</td>
+      <td>La chiave di chi parla nella sceneggiatura e nelle ancore dei disegni.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Il nome che l’output HTML e l’EPUB a layout fluido stampano prima delle battute del personaggio, e che gli editor mostrano.</td>
+    </tr>
+    <tr>
+      <td><code>balloonStyle</code></td>
+      <td><code>string</code></td>
+      <td><code>speech</code></td>
+      <td>Lo stile delle battute del personaggio che non ne indicano nessuno.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>quello dello stile</td>
+      <td>Colore del testo delle nuvolette del personaggio.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code></td>
+      <td><code>ColorValue</code></td>
+      <td>quello dello stile</td>
+      <td>Riempimento delle nuvolette del personaggio.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>quello dello stile</td>
+      <td>Il carattere delle nuvolette del personaggio.</td>
+    </tr>
+  </tbody>
+</table>
+
+`color` e `font` propri di una battuta prevalgono sui personaggi, e i personaggi sullo stile della nuvoletta. Ogni colore dei fumetti può essere una voce della palette, che segue la palette come qualsiasi colore collegato.
+
+```ts
+const resolved = resolveComicsConfig(config.comics, 'ja');
+// => every field filled; Zen Antique and Dela Gothic One as the faces
+
+const minimal = stripComicsDefaults(config.comics, 'ja');
+// => undefined when everything is a default
+
+const shout = pickBalloonStyle(resolved, 'shout'); // the built-in shout with the book's changes
+const night = pickPanelStyle(resolved, 'night');   // a named panel style, else the default panel
+```

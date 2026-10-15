@@ -1,0 +1,77 @@
+---
+title: "Prima pagina di giornale"
+summary: "Prima pagina e pagina 2 di un settimanale locale su due colonne con filetti, titoli a tutta pagina come riquadri e brevi su quattro colonne flottanti al piede."
+plain: "La prima pagina e la pagina 2 di un settimanale locale. Mostra come far correre grandi titoli su tutta la pagina e mettere in basso una striscia di notizie brevi."
+description: "Prima pagina di giornale in Postext, con il codice: testata gotica, titoli in riquadri a tutta pagina, colonne con filetti e brevi su quattro colonne al piede."
+question: "Come compongo una prima pagina di giornale, con titoli sopra le colonne e brevi su quattro colonne?"
+aliases: ["giornale", "prima pagina", "formato lenzuolo", "broadsheet", "tabloid", "testata", "titolo a tutta pagina", "notizie in breve", "brevi", "tre colonne", "quattro colonne", "filetto tra le colonne", "giornale locale", "newspaper front page"]
+pageNotes: { "1": "La prima pagina di «The Elverdale Courier»: la testata in gotico tra un’orecchia con il meteo e un’orecchia con il prezzo, un filetto spesso e uno sottile sopra la riga della data, il titolo di due righe «Harrow Ridge turbines win the town’s vote», un sommario in corsivo, una fotografia di pale eoliche su un crinale innevato su entrambe le colonne, l’articolo su due colonne giustificate separate da un filetto sottile, e una striscia colorata «In brief» di quattro colonne al piede, ogni breve aperta da un chip rosso.", "2": "La pagina 2, aperta da una bandella rossa «Town & Valley» su una barra nera: l’articolo sull’Old Mill Bridge con un disegno del ponte a due arcate tra le sue sponde e la nuova fondazione in rosso, una tabella delle previsioni a cinque giorni in testa alla colonna di destra, un secondo titolo su tutta la pagina sopra l’articolo sui risultati dei quartieri e una colonna «Letters», e lungo il piede una tabella di come hanno votato i cinque quartieri, con una barra rossa e grigia in ogni riga." }
+---
+
+## Che cosa comporrai
+
+La prima pagina e la pagina 2 di *The Elverdale Courier*, un settimanale di valle immaginario, su un foglio di 246 × 328 mm. Una testata in gotico sta tra un’orecchia con il meteo e un’orecchia con il prezzo, sopra un filetto spesso, uno sottile e la riga della data. L’articolo d’apertura comincia con un titolo di due righe in Libre Franklin Black da 56 pt su entrambe le colonne, un sommario in corsivo e una fascia fotografica larga 222 mm, poi scorre su due colonne giustificate separate da un filetto sottile. Al piede, quattro brevi condividono una striscia colorata, una per colonna, ciascuna introdotta da un chip rosso. La pagina 2 si apre con una bandella di sezione rossa e contiene l’articolo sul ponte con un disegno fatto via codice, le previsioni a cinque giorni in testa alla colonna di destra, un secondo titolo su tutta la pagina, le lettere e una tabella dei voti per quartiere con una barra in ogni riga.
+
+## Preparazione
+
+### 1 · Carta da giornale, inchiostro e un solo rosso
+
+<Excerpt region="palette" />
+
+La pagina è carta da giornale (#f8f5ee) e il testo è inchiostro quasi nero (#111315). L’unico rosso, #a6192e, va sulle bandelle di sezione, sugli occhielli, sui chip e sulle barre del sì. Ogni colore è collegato alla sua voce della tavolozza tramite `paletteId`. `main-color` punta all’inchiostro, quindi il grassetto, il corsivo, i due rimandi di pagina 2 e ogni valore predefinito che la configurazione non tocca si stampano in inchiostro; lasciati al loro valore, si stamperebbero nel blu predefinito, #295AA3.
+
+### 2 · La testata è l’H1 della prima pagina
+
+<Excerpt region="nameplate" />
+
+`# The Elverdale Courier` prende lo stile di titolo `front`, che riempie la testata con il testo del titolo e sette dei suoi attributi (`issue`, `area`, `outlook`, `temps`, `since`, `day` e `price`); la data viene da `publishDate` nel frontmatter. Un riquadro vuoto profondo sette righe di griglia (31,1 mm) stabilisce l’altezza dell’apertura. I filetti, la riga della data e il nome sono appesi al suo piede, quindi l’apertura finisce su una riga di griglia.
+
+### 3 · Un titolo su entrambe le colonne è un riquadro
+
+<Excerpt region="banner" />
+
+Un titolo occupa entrambe le colonne solo come apertura, e un’apertura comincia una nuova pagina. Metti `span: 'page'` sull’H2 dell’articolo sui quartieri invece che sul suo riquadro, e quell’articolo passa a una terza pagina. Un riquadro senza cornice con `span="page"` può cominciare a metà pagina. A <PageRef page={2}>pagina 2</PageRef> le colonne vengono tagliate alla pari sopra di esso e riprendono sotto. Il riquadro contiene l’H2 in uno di tre stili di titolo (56, 30 o 22 pt), il sommario in corsivo e, in prima pagina, la fotografia. Il suo `marginBottom` di mezza riga fa cominciare le colonne alla riga di griglia successiva, 3,4 mm sotto il sommario a pagina 2. Con il margine predefinito lo spazio è di 7,8 mm e le lettere finiscono su una terza pagina.
+
+### 4 · La striscia a quattro colonne è un riquadro con colonne
+
+Il codice di questo passo è [la risposta breve](#la-risposta-breve) qui sopra. Il testo di entrambe le pagine scorre su due colonne ([tipi di layout](/it/docs/configuration-page-layout#tipi-di-impaginazione)). Le brevi ne richiedono quattro solo al piede di pagina 1, sotto un titolo e su un fondo colorato, quindi vanno in un riquadro, qui uno a tutta pagina che contiene un gruppo [`:::columns`](/it/docs/document-format#columns). `breaks` conta i blocchi del gruppo, uno per breve, quindi le brevi 2, 3 e 4 aprono le colonne 2, 3 e 4. Ogni colonna è larga 49 mm, con l’intercolonna di 6 mm della pagina tra l’una e l’altra.
+
+```markdown
+:::callout{type="briefs" span="page" placement="bottom" title="In brief"}
+:::columns{count=4 breaks="2,3,4"}
+:chip[TRANSPORT]{style="flag"} **Bus 44 back on Sundays.** The Elverdale to Kirkby bus …
+
+:chip[SCHOOLS]{style="flag"} **An orchard for Brook Lane.** Pupils at Brook Lane …
+…
+:::
+:::
+```
+
+`placement="bottom"` fa flottare il riquadro al piede di <PageRef page={1}>pagina 1</PageRef>, dove occupa 36,9 mm, e l’articolo riempie gli 83 mm di colonne sopra di esso. La foto d’apertura resta una fascia su entrambe le colonne dentro il riquadro del titolo: il testo scorre accanto a un’immagine più stretta della sua colonna, da un lato, mai attorno a un’immagine che occupa due colonne. Il disegno del ponte a pagina 2 ha il testo accanto (passo 5).
+
+### 5 · Immagini in linea, tabelle flottanti
+
+<Excerpt region="floats" />
+
+La fotografia sta in linea nel riquadro del titolo perché un elemento flottante `top` a tutta pagina non finisce mai sopra la riga che lo cita; come elemento flottante, la foto aprirebbe la pagina 2 (vedi Errori frequenti). Anche il disegno del ponte sta in linea, dopo il paragrafo sulla pila, e `wrap: 'right'` con `width: 0.47` lo colloca a destra della colonna 1, largo il 47 % della colonna, con i paragrafi successivi che gli scorrono accanto e poi sotto a piena giustezza ([testo attorno alle immagini](/it/docs/document-format#testo-intorno-alle-immagini)). A quella larghezza nessuna riga accanto risulta troppo spaziata; il testo dell’articolo è stato riadattato al disegno più corto. Le previsioni flottano in testa a una colonna e finiscono in cima a quella di destra. La tabella dei quartieri flotta sotto entrambe le colonne, dove si ferma il filetto tra le colonne. Nell’ultima pagina sta subito sotto le colonne bilanciate, quindi il testo sopra è stato adattato per portarla giù fino al piede. Entrambi i tipi di risorsa impostano `captionPrefix: ''`, e un’etichetta di didascalia si stampa solo quando il prefisso contiene testo, quindi nessuna didascalia comincia con «Figure 1».
+
+### 6 · Una pagina interna si apre con una bandella di sezione
+
+<Excerpt region="inside" />
+
+`# Town & Valley` è un H1 il cui `breakBefore` ha parità `'any'`, quindi la sezione apre la pagina 2 senza una pagina bianca prima. Il suo progetto grafico è una bandella rossa su una barra da 3 pt, appesa a un riquadro vuoto profondo due righe di griglia. La riga del folio è un’intestazione ancorata 6 mm sotto il bordo superiore della pagina, con una versione per le pagine pari e una per le dispari. Lo stile della prima pagina svuota l’intestazione, quindi sopra la testata non si stampa alcuna riga del folio.
+
+## Varianti
+
+### Tieni le brevi sotto la fotografia
+
+Senza `placement="bottom"` in `content.en.md`, la striscia resta dove si trova la sua recinzione, subito sotto la fotografia, e l’articolo d’apertura scorre sotto di essa fino al piede della pagina.
+
+```diff
+-:::callout{type="briefs" span="page" placement="bottom" title="In brief"}
++:::callout{type="briefs" span="page" title="In brief"}
+```
+
+## Errori frequenti
+
+- Dai alla fotografia `placement: { position: 'top', span: 'page' }` e lascerà pagina 1 per stare da sola a pagina 2. L’articolo di pagina 1 finisce allora 92 mm sopra la striscia delle brevi, e la sezione passa a pagina 3.

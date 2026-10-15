@@ -11,7 +11,8 @@
       "ja": "ページ",
       "pt": "Página",
       "fr": "Page",
-      "de": "Seite"
+      "de": "Seite",
+      "it": "Pagina"
     }
   },
   "layout": {
@@ -25,7 +26,8 @@
       "ja": "レイアウト",
       "pt": "Diagramação",
       "fr": "Mise en page",
-      "de": "Layout"
+      "de": "Layout",
+      "it": "Impaginazione"
     }
   },
   "bodyText": {
@@ -39,7 +41,8 @@
       "ja": "本文",
       "pt": "Texto do corpo",
       "fr": "Texte courant",
-      "de": "Fließtext"
+      "de": "Fließtext",
+      "it": "Testo corrente"
     }
   },
   "headings": {
@@ -53,7 +56,8 @@
       "ja": "見出し",
       "pt": "Títulos",
       "fr": "Titres",
-      "de": "Überschriften"
+      "de": "Überschriften",
+      "it": "Titoli"
     }
   },
   "tableStyle": {
@@ -67,7 +71,8 @@
       "ja": "表スタイル",
       "pt": "Estilo de tabela",
       "fr": "Style de tableau",
-      "de": "Tabellenstil"
+      "de": "Tabellenstil",
+      "it": "Stile delle tabelle"
     }
   },
   "tableStyles": {
@@ -81,7 +86,8 @@
       "ja": "名前付きの表スタイル",
       "pt": "Estilos de tabela nomeados",
       "fr": "Styles de tableau nommés",
-      "de": "Benannte Tabellenstile"
+      "de": "Benannte Tabellenstile",
+      "it": "Stili di tabella con nome"
     }
   },
   "captionStyle": {
@@ -95,7 +101,8 @@
       "ja": "キャプションスタイル",
       "pt": "Estilo de legenda",
       "fr": "Style de légende",
-      "de": "Legendenstil"
+      "de": "Legendenstil",
+      "it": "Stile delle didascalie"
     }
   },
   "diagramStyle": {
@@ -109,7 +116,8 @@
       "ja": "ダイアグラムスタイル",
       "pt": "Estilo de diagramas",
       "fr": "Style des diagrammes",
-      "de": "Diagrammstil"
+      "de": "Diagrammstil",
+      "it": "Stile dei diagrammi"
     }
   },
   "paragraphStyles": {
@@ -123,7 +131,8 @@
       "ja": "段落スタイル",
       "pt": "Estilos de parágrafo",
       "fr": "Styles de paragraphe",
-      "de": "Absatzformate"
+      "de": "Absatzformate",
+      "it": "Stili di paragrafo"
     }
   },
   "calloutStyles": {
@@ -137,7 +146,8 @@
       "ja": "囲みスタイル",
       "pt": "Estilos de boxe",
       "fr": "Styles d’encadré",
-      "de": "Kastenstile"
+      "de": "Kastenstile",
+      "it": "Stili dei riquadri"
     }
   },
   "chipStyles": {
@@ -151,7 +161,8 @@
       "ja": "チップスタイル",
       "pt": "Estilos de chip",
       "fr": "Styles de pastille",
-      "de": "Chip-Stile"
+      "de": "Chip-Stile",
+      "it": "Stili dei chip"
     }
   },
   "parts": {
@@ -165,7 +176,8 @@
       "ja": "部",
       "pt": "Partes",
       "fr": "Parties",
-      "de": "Teile"
+      "de": "Teile",
+      "it": "Parti"
     }
   },
   "headingStyles": {
@@ -179,7 +191,8 @@
       "ja": "見出しスタイル",
       "pt": "Estilos de título",
       "fr": "Styles de titre",
-      "de": "Überschriftenstile"
+      "de": "Überschriftenstile",
+      "it": "Stili dei titoli"
     }
   },
   "toc": {
@@ -193,7 +206,8 @@
       "ja": "目次",
       "pt": "Sumário",
       "fr": "Table des matières",
-      "de": "Inhaltsverzeichnis"
+      "de": "Inhaltsverzeichnis",
+      "it": "Indice dei contenuti"
     }
   },
   "unorderedLists": {
@@ -207,7 +221,8 @@
       "ja": "箇条書きリスト",
       "pt": "Listas com marcadores",
       "fr": "Listes à puces",
-      "de": "Aufzählungen"
+      "de": "Aufzählungen",
+      "it": "Elenchi puntati"
     }
   },
   "orderedLists": {
@@ -221,7 +236,8 @@
       "ja": "番号付きリスト",
       "pt": "Listas numeradas",
       "fr": "Listes numérotées",
-      "de": "Nummerierte Listen"
+      "de": "Nummerierte Listen",
+      "it": "Elenchi numerati"
     }
   },
   "math": {
@@ -235,7 +251,8 @@
       "ja": "数式",
       "pt": "Matemática",
       "fr": "Mathématiques",
-      "de": "Mathematik"
+      "de": "Mathematik",
+      "it": "Matematica"
     }
   },
   "cjk": {
@@ -249,7 +266,8 @@
       "ja": "東アジアの組版",
       "pt": "Tipografia do Leste Asiático",
       "fr": "Typographie d’Asie de l’Est",
-      "de": "Ostasiatische Typografie"
+      "de": "Ostasiatische Typografie",
+      "it": "Tipografia dell’Asia orientale"
     }
   },
   "header": {
@@ -263,7 +281,8 @@
       "ja": "柱とノンブル",
       "pt": "Cabeços e rodapés",
       "fr": "En-têtes et pieds de page",
-      "de": "Kopf- und Fußzeilen"
+      "de": "Kopf- und Fußzeilen",
+      "it": "Intestazioni e piè di pagina"
     }
   },
   "footer": {
@@ -277,7 +296,8 @@
       "ja": "柱とノンブル",
       "pt": "Cabeços e rodapés",
       "fr": "En-têtes et pieds de page",
-      "de": "Kopf- und Fußzeilen"
+      "de": "Kopf- und Fußzeilen",
+      "it": "Intestazioni e piè di pagina"
     }
   },
   "locale": {
@@ -291,7 +311,8 @@
       "ja": "ハイフネーション",
       "pt": "Hifenização",
       "fr": "Césure",
-      "de": "Silbentrennung"
+      "de": "Silbentrennung",
+      "it": "Sillabazione"
     }
   },
   "direction": {
@@ -305,7 +326,8 @@
       "ja": "言語と文字体系",
       "pt": "Idiomas e escritas",
       "fr": "Langues et écritures",
-      "de": "Sprachen und Schriftsysteme"
+      "de": "Sprachen und Schriftsysteme",
+      "it": "Lingue e scritture"
     }
   },
   "numerals": {
@@ -319,7 +341,8 @@
       "ja": "文書の言語",
       "pt": "Idioma do documento",
       "fr": "Langue du document",
-      "de": "Dokumentsprache"
+      "de": "Dokumentsprache",
+      "it": "Lingua del documento"
     }
   },
   "debug": {
@@ -333,7 +356,8 @@
       "ja": "デバッグ",
       "pt": "Depuração",
       "fr": "Débogage",
-      "de": "Debug"
+      "de": "Debug",
+      "it": "Debug"
     }
   },
   "htmlViewer": {
@@ -347,7 +371,8 @@
       "ja": "HTMLビューアー",
       "pt": "Visualizador HTML",
       "fr": "Visionneuse HTML",
-      "de": "HTML-Betrachter"
+      "de": "HTML-Betrachter",
+      "it": "Visualizzatore HTML"
     }
   },
   "pdfGeneration": {
@@ -361,7 +386,8 @@
       "ja": "PDF生成（設定）",
       "pt": "Geração de PDF (configuração)",
       "fr": "Génération PDF (configuration)",
-      "de": "PDF-Erzeugung (Konfiguration)"
+      "de": "PDF-Erzeugung (Konfiguration)",
+      "it": "Generazione del PDF (configurazione)"
     }
   },
   "print": {
@@ -375,7 +401,8 @@
       "ja": "印刷出力（設定）",
       "pt": "Produção gráfica (configuração)",
       "fr": "Production pour l’impression (configuration)",
-      "de": "Druckvorstufe (Konfiguration)"
+      "de": "Druckvorstufe (Konfiguration)",
+      "it": "Produzione di stampa (configurazione)"
     }
   },
   "colorPalette": {
@@ -389,7 +416,8 @@
       "ja": "カラーパレット",
       "pt": "Paleta de cores",
       "fr": "Palette de couleurs",
-      "de": "Farbpalette"
+      "de": "Farbpalette",
+      "it": "Tavolozza dei colori"
     }
   },
   "customFonts": {
@@ -403,7 +431,8 @@
       "ja": "カスタムフォント",
       "pt": "Fontes personalizadas",
       "fr": "Polices personnalisées",
-      "de": "Eigene Schriften"
+      "de": "Eigene Schriften",
+      "it": "Font personalizzati"
     }
   },
   "resourceTypes": {
@@ -417,7 +446,8 @@
       "ja": "リソースの種類",
       "pt": "Tipos de recurso",
       "fr": "Types de ressources",
-      "de": "Ressourcentypen"
+      "de": "Ressourcentypen",
+      "it": "Tipi di risorsa"
     }
   },
   "index": {
@@ -431,7 +461,8 @@
       "ja": "索引",
       "pt": "Índice remissivo",
       "fr": "Index",
-      "de": "Register"
+      "de": "Register",
+      "it": "Indice analitico"
     }
   },
   "crossRefs": {
@@ -445,7 +476,8 @@
       "ja": "相互参照",
       "pt": "Referências cruzadas",
       "fr": "Renvois",
-      "de": "Querverweise"
+      "de": "Querverweise",
+      "it": "Rimandi"
     }
   },
   "citations": {
@@ -459,7 +491,8 @@
       "ja": "引用",
       "pt": "Citações",
       "fr": "Citations",
-      "de": "Zitationen"
+      "de": "Zitationen",
+      "it": "Citazioni"
     }
   },
   "videoStyle": {
@@ -473,7 +506,8 @@
       "ja": "動画スタイル",
       "pt": "Estilo de vídeo",
       "fr": "Style des vidéos",
-      "de": "Videostil"
+      "de": "Videostil",
+      "it": "Stile dei video"
     }
   },
   "comics": {
@@ -487,7 +521,8 @@
       "ja": "漫画のページ",
       "pt": "Páginas de quadrinhos",
       "fr": "Planches",
-      "de": "Comicseiten"
+      "de": "Comicseiten",
+      "it": "Tavole a fumetti"
     }
   }
 }

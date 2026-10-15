@@ -1,0 +1,76 @@
+---
+title: "Un classico annotato con glosse a margine"
+summary: "Il tè dei matti di Alice in edizione annotata: glosse verdi e rosse nel margine esterno, accanto alle righe che spiegano, richiamate da una lettera colorata."
+plain: "Alcune pagine di Alice nel Paese delle Meraviglie con le note di un curatore nel margine laterale. Ogni nota sta accanto alle righe che spiega ed è segnalata da una lettera colorata."
+description: "Il capitolo VII di Alice composto in Postext come edizione annotata, su una pagina a colonna e mezza la cui colonna laterale, sul taglio, ospita solo le glosse."
+question: "Come compongo le glosse nel margine accanto al paragrafo che spiegano, invece delle note a piè di pagina?"
+aliases: ["note a margine", "glosse marginali", "postille", "marginalia", "edizione annotata", "alternativa alle note a piè di pagina", "note del curatore", "lettere di richiamo colorate", "Alice nel Paese delle Meraviglie", "Lewis Carroll", "occhiello con capolettera", "sidenotes"]
+pageNotes: { "1": "Il capitolo VII si apre sotto un acquerello della tavola del tè sotto un albero, vista dall’alto: una lunga tovaglia bianca apparecchiata con tazze su un prato verde, una teiera rossa, pane e burro e l’orologio del Cappellaio con la sua catena, il Ghiro addormentato in una teiera a un capo e una poltrona rossa all’altro. Sotto vengono l’occhiello «CHAPTER VII» in rosso, il titolo «A Mad Tea-Party» e un cappello di quattro righe in corsivo che si apre con un capolettera verde. La nota su questa edizione sta nel margine destro, accanto al cappello. La glossa a («The March Hare», in verde) sta accanto al primo paragrafo e la glossa b («The Hatter», in rosso) sotto di essa; le lettere in apice a e b di quel paragrafo sono stampate negli stessi colori.", "2": "Un verso: la colonna di testo a destra e le glosse a sinistra, c sui capelli di Alice e d sull’indovinello in rosso, e sulla logica del Cappellaio in verde e f sulla data in rosso al piede, ciascuna accanto al paragrafo che porta la sua lettera in apice.", "3": "Un recto: le glosse a destra, g sul burro migliore e h sul Ghiro, entrambe in verde e ciascuna all’altezza della riga che porta la sua lettera. L’estratto finisce due righe sopra il piede, sulla battuta del Cappellaio «I dare say you never even spoke to Time!»" }
+---
+
+## Che cosa comporrai
+
+L’inizio del capitolo VII di *Alice’s Adventures in Wonderland*, il tè dei matti, composto come tre pagine di un’edizione annotata su una pagina editoriale di 156 × 234 mm. Il testo di Carroll scorre in una sola colonna giustificata di Unna, circa 66 caratteri per riga. Un canale di 33 mm sul lato del taglio accoglie le otto glosse del curatore, ciascuna accanto al paragrafo che porta la sua lettera, così che scendono a destra di un recto e a sinistra di un verso. Le glosse su parole e giochi di parole sono verdi, quelle sulla storia rosse, e ogni lettera nel testo prende il colore della sua glossa. Il capitolo si apre sotto un acquerello della tavola del tè visto dall’alto, seguito dal numerale, dal titolo in Rozha One e da un cappello in corsivo con un capolettera verde; la nota su questa edizione sta nel margine accanto al cappello.
+
+## Preparazione
+
+### 1 · Dai il lato del taglio alle glosse
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. In un [layout a colonna e mezza](/it/docs/configuration-page-layout#tipi-di-impaginazione), `sideColumnPercent: 26` dà alla colonna laterale 33 mm dei 127 mm tra i margini, e il testo conserva 89,5 mm dopo l’intercolonna di 4,5 mm. `sideColumnRole: 'floats'` tiene Carroll fuori dalla colonna laterale, che contiene solo ciò che vi viene collocato con `span: 'side'`. Una [nota a piè di pagina](/it/docs/document-format#note-a-piè-di-pagina) aspetta al piede della colonna, sotto un filetto; nel margine ogni glossa sta all’altezza della riga che spiega, e le glosse non tolgono righe alla colonna di testo. I due stili di glossa differiscono solo nel colore del filetto sottile e del titolo, così il lettore distingue una glossa su una parola da una glossa sulla storia prima di leggerla.
+
+### 2 · Specchia la pagina perché il canale segua il taglio
+
+<Excerpt region="page" />
+
+Con `mirror: true` i margini si scambiano su ogni verso, e `sideColumnSide: 'outer'` sposta il canale con loro, così le glosse scendono a destra di <PageRef page={1}>pagina 81</PageRef> e di <PageRef page={3}>pagina 83</PageRef> e a sinistra di <PageRef page={2}>pagina 82</PageRef>. Margini di testa e di piede di 22 mm lasciano 190 mm, lo spazio per 38 righe da 14 pt, e ogni glossa comincia su una riga della stessa griglia.
+
+### 3 · Delimita ogni glossa prima del paragrafo che spiega
+
+<Excerpt region="text" />
+
+Un riquadro con `span="side"` sul suo [blocco `:::callout`](/it/docs/configuration-styles#il-contenitore-callout) lascia il flusso e si colloca nel canale all’altezza del blocco che lo segue, quindi ogni glossa va aperta subito prima del paragrafo che porta la sua lettera, come qui sotto. Le glosse a e b vanno accanto al primo paragrafo, perciò i loro blocchi stanno tra il titolo e quel paragrafo. Un riquadro che lascia il flusso non conta come blocco dopo il titolo, così `indentAfterHeading: false` compone comunque quel paragrafo senza rientro. Il corpo è adattato alla colonna: a 9,5 pt il paragrafo che si apre con «Have some wine,» sta in una riga di 89,5 mm, mentre a 10,4 pt ogni giustezza tra 77 e 93 mm gli lasciava una riga finale troppo corta come «ing tone.» o «tone.». Lo spazio tra parole di Unna è stretto, 0,22 em, e con il `minWordSpacing` predefinito di 0,6 una riga di pagina 83 aveva gli spazi compressi a 0,69 di quella larghezza; `minWordSpacing: 0.75` esclude quella riga. A pagina 81 il dizionario divideva il nome dell’eroina, «Al-» e «ice», perciò quel paragrafo è racchiuso in `:::paragraphs{style="whole"}`, uno stile con `hyphenation: false`; la sua unica divisione è un trattino morbido (U+00AD) digitato in «together».
+
+```markdown
+:::callout{type="context" span="side" title="c · Hair"}
+Tenniel drew Alice with long, loose hair. …
+:::
+
+“Your hair wants cutting,”:chip[^c^]{style="context"} said the Hatter. …
+```
+
+### 4 · Stampa ogni lettera nel colore della sua glossa
+
+<Excerpt region="letters" />
+
+Il Markdown non ha un segno per il testo colorato, ma uno stile di [chip](/it/docs/document-format#chip-in-linea) imposta un colore del testo, quindi ogni lettera è un chip il cui stile ha lo stesso nome del tipo della sua glossa. `:chip[^c^]{style="context"}` stampa una c rossa, il rosso del filetto e del titolo della glossa c. Senza riempimento, contorno, padding né distanza il chip non aggiunge larghezza, e ogni riga va a capo dove andava con un semplice `^c^`.
+
+### 5 · Apri il capitolo sotto la tavola del tè
+
+<Excerpt region="opener" />
+
+Lo [spazio grafico](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato) del titolo occupa tutta la larghezza della pagina perché il dipinto possa arrivare al rifilo. L’occhiello, il titolo e il cappello pendono sotto il dipinto, e l’apertura riserva lo spazio fino al più basso di essi, arrotondato alla griglia; il margine inferiore predefinito del titolo aggiunge una riga bianca. Con un cappello di quattro righe il testo comincia alla riga 23, e una quinta riga lo sposterebbe alla 24. Il numerale, il cappello e la nota su questa edizione vengono dagli [attributi del titolo](/it/docs/document-format#attributi-dei-titoli), `{num="VII" headnote="…" source="…"}`. Il numerale viene da lì perché `{chapterNumber}` stamperebbe 1 in un estratto che è un documento a sé. Il capolettera apre il cappello del curatore, composto in corsivo a bandiera, e il testo di Carroll comincia giustificato nel flusso sottostante. `dropSize()` dimensiona l’iniziale in modo che la sua sommità si allinei con le maiuscole della prima riga del cappello.
+
+### 6 · Colora ogni glossa secondo ciò che spiega
+
+<Excerpt region="palette" />
+
+Il verde prato contrassegna le glosse su parole, modi di dire e giochi di parole, il rosso marmellata le persone, le date e la storia del testo. Un nuovo valore per `jam` nello stesso oggetto `palette` ricolora in un’unica modifica le glosse sulla storia, le loro lettere e l’occhiello; l’acquerello sopra di loro è stato scelto per lo stesso verde prato e lo stesso rosso marmellata.
+
+## Varianti
+
+### Tieni le glosse a destra di ogni pagina
+
+Per un’edizione letta una pagina alla volta sullo schermo, disattiva la specchiatura: `'outer'` indica allora il bordo destro di ogni pagina, e le testatine restano al loro posto, perché sono ancorate al rifilo.
+
+```diff
+-    mirror: true } };
++    mirror: false } };
+```
+
+### Manda le note lunghe al piede della pagina
+
+Scrivi una nota troppo lunga per il margine come nota a piè di pagina, `[^1]` nel testo e la sua definizione `[^1]:` sotto il paragrafo: Postext la compone al piede della colonna di testo, larga 89,5 mm sotto un filetto corto, e le glosse conservano il canale. <RecipeLink slug="novel-footnotes-column-foot">Note al piede della colonna che le cita</RecipeLink> dà lo stile a quelle note.
+
+## Errori frequenti
+
+- Le glosse si impilano nell’ordine del Markdown, una sotto l’altra, quindi una glossa lunga spinge in basso la successiva. A <PageRef page={1}>pagina 81</PageRef> entrambe le lettere cadono nella seconda riga del primo paragrafo: la glossa a comincia all’altezza del paragrafo e la glossa b sotto di essa, cinque righe sotto la sua lettera. Dove le lettere sono vicine, tieni le glosse brevi.

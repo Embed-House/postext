@@ -1,0 +1,68 @@
+---
+title: "Bilancio annuale con colonne pareggiate al piede"
+summary: "Il bilancio annuale di una cooperativa energetica su due colonne giustificate che finiscono sulla stessa riga, un riquadro di cifre chiave e una chiusa pari."
+plain: "La relazione annuale di un piccolo gruppo locale per l’energia, composta su due colonne. Mostra come far finire le due colonne di testo esattamente alla stessa altezza."
+description: "Un bilancio annuale di cinque pagine composto con Postext su una griglia di 50 righe: il bilanciamento porta ogni colonna all’ultima riga e pareggia la chiusa."
+question: "Come faccio a far finire ogni colonna di una relazione sull’ultima riga di griglia, e pari in ultima pagina?"
+aliases: ["giustificazione verticale", "colonne pareggiate al piede", "colonne bilanciate", "colonne della stessa altezza", "cifre chiave", "riquadro di cifre", "conto economico", "bilancio annuale", "relazione annuale", "colori per sezione", "riquadro flottante", "annual report"]
+pageNotes: { "1": "La copertina: un fondo blu-nero con «Tidewell Community Energy» in bianco, 2025 in cifre bianche molto grandi, «Annual report and accounts» in giallo e il periodo in maiuscole monospaziate spaziate. Sulla metà inferiore un nastro verde acqua e uno giallo si gonfiano e si incrociano da gennaio a dicembre, etichettati «WIND» e «SUN», sopra una fila di iniziali dei mesi, con due righe in corpo minore al piede.", "2": "La lettera del presidente sotto una fascia blu mare e il titolo «The wind and the sun took turns». I primi paragrafi si fermano allo stesso livello nelle due colonne sopra un riquadro blu-nero con tre cifre in giallo, «8.47 GWh», «2,316» e «£84,000»; la lettera prosegue sotto il riquadro e finisce con una firma manoscritta al piede della colonna destra.", "3": "La relazione sulle attività sotto una fascia verde acqua, due colonne con titoletti verde acqua, un breve elenco dei tre tetti più grandi e, al piede della pagina, un grafico a barre appaiate verde acqua e gialle per i dodici mesi.", "4": "Una nota su come si conta un chilowattora, su due colonne sotto un filetto verde acqua in testa alla pagina; sotto, una tabella della produzione per sito e un grafico ad anello delle ore delle turbine in testa alle due colonne, poi il resto della relazione sulle attività fino al piede.", "5": "La relazione del tesoriere sotto una fascia rosso mattone: due colonne corte che si fermano sulla stessa riga e, sotto, il conto economico a tutta larghezza, con una riga d’intestazione blu-nera, titoli di gruppo in corsivo e subtotali in grassetto su una tinta chiara." }
+---
+
+## Che cosa comporrai
+
+Il bilancio annuale 2025 di Tidewell Community Energy, una cooperativa inventata con due turbine eoliche, un campo solare e pannelli su 21 tetti. Cinque pagine da 210 × 280 mm. In copertina la produzione eolica e solare dell’anno scorre come due nastri sotto un «2025» da 150 pt. La lettera del presidente, la relazione sulle attività e i conti del tesoriere seguono su due colonne giustificate in Brygada 1918, su una griglia di 50 righe. Le colonne piene finiscono sull’ultima riga della griglia e quelle corte finiscono alla pari con le vicine. Un riquadro con tre cifre chiave attraversa la pagina del presidente, con la lettera pareggiata sopra, e una nota sulla misurazione flotta in testa a pagina 4. Nell’ultima pagina le due colonne si fermano sulla stessa riga sopra il conto economico. Un attributo di tavolozza colora di verde acqua le pagine delle attività e di rosso mattone la pagina dei conti.
+
+## Preparazione
+
+### 1 · Tieni ogni riga sulla griglia e lascia che le leve chiudano i vuoti
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. La gabbia del testo è alta esattamente 50 righe da 13,4 pt e il margine di piede (21,6 mm) si ricava da questa altezza. Un titoletto prende una riga della griglia sopra di sé e una per sé, quindi una colonna che finisce corta è corta di righe intere, ed è proprio di righe intere che il <Feature id="column-balancing">bilanciamento delle colonne</Feature> dispone. A <PageRef page={3}>pagina 3</PageRef> il paragrafo di tre righe sulla grandinata passa intero a pagina 4 per effetto di `avoidOrphans`, il nome che Postext dà alla regola che impedisce all’ultima riga di un paragrafo di restare sola in testa a una colonna, e la colonna destra finisce due righe più corta. `maxLinesPerHeading: 1` assegna una di queste righe allo spazio sopra *The Saltings and the roofs* e lascia l’altra alla leva successiva, che la aggiunge dopo l’elenco dei tetti. Per impostazione predefinita un titolo prende fino a due righe prima che si provino le leve successive (`maxLinesBeforeLoose`), e fino a quattro quando queste non hanno più nulla da dare, quindi entrambe le righe finirebbero sopra il titolo.
+
+### 2 · Pareggia il testo sopra un riquadro che attraversa la pagina
+
+<Excerpt region="figures" />
+
+Un riquadro con `span="page"` divide una pagina a due colonne in fasce. A <PageRef page={2}>pagina 2</PageRef> la lettera del presidente si ferma a otto righe in ciascuna colonna sopra il riquadro e prosegue su entrambe le colonne sotto. Dentro il riquadro, `:::columns{count=3 breaks="3,5"}` apre la seconda e la terza colonna alla seconda e alla terza cifra (il terzo e il quinto blocco del gruppo) invece di tagliare il flusso dove le colonne si pareggiano meglio. Lo stile di paragrafo `figure` compone queste cifre a 26 pt e il suo `boldColor` le stampa in giallo.
+
+### 3 · Fai flottare un riquadro in testa alla pagina successiva
+
+<Excerpt region="aside" />
+
+Nel Markdown la nota sulla misurazione segue il primo paragrafo su Harrow Down, a pagina 3; `placement="top"` la toglie dal flusso e la colloca in testa alla pagina successiva. La relazione riempie il resto di pagina 3 e <PageRef page={4}>pagina 4</PageRef> si apre con il riquadro a tutta larghezza sulle due colonne. Sotto, la tabella dei siti e il grafico ad anello, entrambi `position: 'top'`, stanno in testa a una colonna ciascuno, una riga della griglia più in basso di dove starebbero senza i 3,5 mm di spaziatura inferiore del riquadro.
+
+### 4 · Dai a ogni sezione il suo colore senza pagina divisoria
+
+<Excerpt region="palette" />
+
+Con `parts: { page: false }` un blocco come `:::part{number="02" title="Operations" palette="band=#1c6e67"}` non apre alcuna pagina. Dà il nome alla sezione per la fascia d’apertura e i piedini correnti e sostituisce `band` su ogni pagina fino alla parte successiva. Le fasce, i titoletti, i punti elenco, le etichette delle didascalie e il filetto della nota prendono tutti `band`, così le pagine delle attività si stampano in verde acqua e la pagina dei conti in rosso mattone, mentre la lettera del presidente conserva il blu mare di base (<Feature id="part-palettes">colori per parte</Feature>).
+
+### 5 · Costruisci le tabelle dai dati e chiudi l’ultima pagina alla pari
+
+<Excerpt region="data" />
+
+`statement()` trasforma `DATA.accounts` nel conto economico riga per riga. Un’etichetta che comincia con `=` stampa in grassetto sulla tinta la somma progressiva di ciascun anno; nei dati i costi sono negativi, quindi *Operating surplus* esce da quella somma senza alcun totale scritto a mano. Un’etichetta senza cifre, *Income* o *Operating costs*, diventa una sola cella in corsivo larga quanto la tabella, unita con `mergeCells`, che scrive anche le celle segnaposto richieste da un’unione. A <PageRef page={5}>pagina 5</PageRef> il conto economico flotta a tutta larghezza al piede della pagina, sotto la relazione del tesoriere, che chiude il documento. Senza bilanciamento le colonne arriverebbero a 12 righe a sinistra e 9 a destra; il taglio finale le porta entrambe a 11 e la leva dei titoli aggiunge sopra *Cash and reserves* la riga che ancora manca alla colonna destra.
+
+## Varianti
+
+### Lascia ai titoli tutto il vuoto
+
+Le due righe libere di pagina 3 vanno allora entrambe sopra *The Saltings and the roofs* e nessuna dopo l’elenco.
+
+```diff
+-const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
++const balancing = {}; // the default: two lines above a heading, then the other levers
+```
+
+### Disattiva il bilanciamento
+
+La colonna destra di pagina 3 finisce allora due righe più corta. A pagina 5 la colonna sinistra arriva a 12 righe e la destra a 9, e il conto economico comincia una riga più in basso.
+
+```diff
+-const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
++const balancing = { enabled: false };
+```
+
+## Errori frequenti
+
+- Quando le colonne di un’ultima pagina differiscono di una riga restano come sono, la sinistra più lunga di una riga, come le comporrebbe un tipografo; il taglio finale interviene solo su una differenza di due righe o più. Per farle finire insieme, allunga o accorcia il testo di una riga.
+- Il conto economico compone i costi tra parentesi. Per allineare con questi le cifre positive, il pen chiude ogni cifra positiva con uno spazio non divisibile, che in un carattere monospaziato è largo quanto la parentesi di chiusura; una cella di tabella conserva quello spazio alla fine del testo.

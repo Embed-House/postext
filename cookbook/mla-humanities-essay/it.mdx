@@ -1,0 +1,67 @@
+---
+title: "Un saggio umanistico con bibliografia MLA"
+summary: "Un saggio letterario le cui citazioni [@key, 48] diventano riferimenti autore-pagina MLA 9, con una citazione in blocco e una lista Works Cited da dati BibTeX."
+plain: "Un saggio su un’ode di Keats, come lo stampa una rivista letteraria. L’autrice scrive un breve codice per ogni fonte; Postext stampa autore e pagina tra parentesi e alla fine l’elenco delle opere citate, in stile MLA."
+description: "Un saggio letterario in Postext: citazioni autore-pagina MLA 9 con citeproc-js, un titolo breve per due opere di Keats, una citazione in blocco, Works Cited."
+question: "Come cito in stile MLA e costruisco l’elenco delle opere citate per un saggio di letteratura?"
+aliases: ["MLA", "MLA 9", "Works Cited", "opere citate", "autore-pagina", "saggio di letteratura", "studi umanistici", "citazione in blocco", "tre trattini", "BibTeX", "shorttitle", "citeproc"]
+pageNotes: { "1": "Pagina 1: una fascia nera sulla metà superiore con l’occhiello «ESSAYS · ROMANTIC POETRY», il titolo «Cold Pastoral» in grande corsivo chiaro, un sottotitolo sulla «Ode on a Grecian Urn» di Keats e la firma «Helena Ward», sopra una striscia rosso argilla; sotto, i primi paragrafi con citazioni come «(Jack)» e «(McDermott)».", "2": "Pagina 2: sezioni in maiuscoletto rosso; citazioni dall’ode con riferimenti MLA «(Keats, “Ode” 1–3)», poi i soli numeri di verso come «(8–9)», e la frase di Eliot seguita da «(230)».", "3": "Pagina 3: la sezione sulle lettere, con «(Keats, Letters 41)» e una citazione in blocco rientrata di 2 em il cui riferimento «(Keats, Letters 48)» segue il punto finale.", "4": "Pagina 4: «Works Cited», in ordine alfabetico con rientri sporgenti; la seconda opera di Keats si apre con una lineetta di tre em; sotto, un piccolo colophon." }
+---
+
+## Che cosa comporrai
+
+Un saggio di una rivista letteraria trimestrale: quattro pagine su chi pronunci gli ultimi due versi della «Ode on a Grecian Urn» di Keats. La pagina è quella di una rivista di 150 × 230 mm composta in Spectral, con titoli di sezione e testatine in Spectral SC, e l’apertura sta in una fascia del colore della vernice nera sopra una striscia di argilla rossa, i due colori di un vaso attico. Le citazioni seguono MLA 9, lo stile della maggior parte dei dipartimenti di letteratura e di storia dell’arte: autore e pagina tra parentesi, la sola pagina quando la frase nomina l’autore, un titolo breve quando due opere hanno lo stesso autore, e una lista Works Cited su una pagina propria. Ogni citazione è una chiave nel testo e lo stile è una sola impostazione.
+
+## Preparazione
+
+### 1 · Lo stile è MLA, i dati sono BibTeX
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Il motore delle citazioni si registra una volta sola e `citations.style` nomina lo stile MLA incluso; citeproc-js scrive da esso ogni citazione e la lista. I riferimenti stanno in un blocco `:::references{format=bibtex}` alla fine del saggio, scritti come li esporta un gestore di bibliografie. MLA ha bisogno di un titolo breve per le due opere di Keats, e il campo `shorttitle` di ogni voce lo fornisce (in CSL il campo si chiama `title-short`).
+
+### 2 · Quattro tipi di citazione
+
+Il testo cita un’opera con `[@jack1967]`, che stampa «(Jack)» perché il saggio si riferisce al libro nel suo insieme. Con una pagina, `[@keats-letters, 41]` stampa «(Keats, *Letters* 41)»: si citano due opere di Keats, quindi citeproc aggiunge il titolo breve per distinguerle. Quando la frase nomina già il critico, `[-@eliot1932, 230]` omette il nome e stampa «(230)». Una citazione narrativa senza pagina, `@stillinger1974 records`, stampa il solo nome, «Stillinger records», con uno spazio dopo: MLA non ha nulla da mettere tra parentesi. Una volta citata l’ode con i numeri dei versi, le citazioni successive ne riportano solo i numeri, digitati tra semplici parentesi tonde, come MLA consente.
+
+### 3 · Una citazione in blocco con il riferimento dopo il punto
+
+<Excerpt region="quotation" />
+
+La lettera sulla capacità negativa supera le quattro righe di prosa, quindi è staccata come blockquote Markdown: in tondo, in nero, rientrata di 2 em senza rientro della prima riga. MLA mette il riferimento di una citazione in blocco dopo il suo punto finale, e il sorgente fa lo stesso: `…fact and reason. [@keats-letters, 48]`. Un `:::space{lines=0.5}` sopra e sotto separa la citazione dai paragrafi intorno.
+
+### 4 · Works Cited su una pagina propria
+
+<Excerpt region="works-cited" />
+
+Il titolo prende uno stile che va a una nuova pagina, e `:::bibliography{title=""}` colloca la lista sotto di esso senza un secondo titolo. La lista è in ordine alfabetico con un rientro sporgente, e la seconda opera di Keats si apre con una lineetta di tre em al posto del suo nome, come MLA chiede per gli autori ripetuti. Un folio al piede si stampa in questa pagina e in quella d’apertura, dove le testatine si fanno da parte.
+
+### 5 · L’apertura nei due colori di un vaso
+
+<Excerpt region="opener" />
+
+<Excerpt region="palette" />
+
+La fascia è alta 116 mm e contiene l’occhiello, il titolo in corpo 56 in Spectral Light corsivo, il sottotitolo e la firma, tutti alimentati dagli attributi del titolo. La striscia d’argilla è un secondo riquadro ancorato 3 mm sopra il piede della fascia.
+
+## Varianti
+
+### Fai seguire la lista subito dopo il saggio
+
+Una rivista che compone Works Cited dopo l’ultimo paragrafo, senza una nuova pagina, toglie l’interruzione dallo stile del titolo.
+
+```diff
+-  headingStyles: [{ id: 'works-cited', breakBefore: { enabled: true, parity: 'any' } }],
++  headingStyles: [{ id: 'works-cited', breakBefore: { enabled: false } }],
+```
+
+### Cita in stile Chicago autore-data
+
+Lo stesso saggio in Chicago mette l’anno dopo l’autore, «(Brooks 1947, 165)», e la lista si adegua.
+
+```diff
+-  style: 'modern-language-association', // MLA 9th edition, author-page
++  style: 'chicago-author-date',
+```
+
+## Errori frequenti
+
+- citeproc-js stampa i titoli come li danno i dati. MLA usa il title case per i titoli inglesi, quindi scrivili così nei riferimenti.

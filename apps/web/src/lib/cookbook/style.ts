@@ -45,6 +45,9 @@ const frRule = ptRule;
  *  umlaut, and German compounds would otherwise match inside a longer word. */
 const deRule = ptRule;
 
+/** An Italian phrase as a whole word or words, for the same reason. */
+const itRule = ptRule;
+
 const HARD: Record<Locale, Rule[]> = {
   en: [
     rule("\\bdelv(e|es|ed|ing)\\b", "delve"),
@@ -155,6 +158,21 @@ const HARD: Record<Locale, Rule[]> = {
     deRule("eine (breite|vielfältige|große) (Palette|Vielfalt) (an|von)", "eine breite Palette an"),
     deRule("das Beste (aus [^.!?]{1,40})?herausholen", "das Beste herausholen"),
   ],
+  it: [
+    itRule("immergiamoci|tuffiamoci", "immergiamoci"),
+    itRule("nel mondo (digitale |moderno )?(di oggi|odierno|attuale)", "nel mondo di oggi"),
+    itRule("in (continua|costante) evoluzione|nell['’]era digitale", "in continua evoluzione"),
+    itRule("senza (alcuno )?sforzo|in modo (semplice e )?(fluido|intuitivo)", "senza sforzo / in modo fluido"),
+    itRule("(sbloccare|sblocca|liberare|libera) (tutto )?(il|il suo|il tuo) potenziale", "sbloccare il potenziale"),
+    itRule("(una |vera )?testimonianza di", "una testimonianza di"),
+    itRule("(svolge|svolgono|gioca|giocano) un ruolo (cruciale|chiave|fondamentale|essenziale|centrale)", "svolge un ruolo cruciale"),
+    itRule("(è importante|vale la pena|occorre) (notare|sottolineare|ricordare)", "è importante notare"),
+    itRule("in (sintesi|conclusione|definitiva)|per concludere", "in sintesi / in conclusione"),
+    itRule("un (vero|autentico) gioiello", "un vero gioiello"),
+    itRule("al livello successivo", "portare al livello successivo"),
+    itRule("un['’] ?(ampia|vasta) (gamma|varietà|serie) di (possibilità|opzioni|strumenti|stili)", "un'ampia gamma di possibilità"),
+    itRule("sfruttare al massimo|ottenere il massimo da", "sfruttare al massimo"),
+  ],
   // HARD_ZH, below, checks Chinese prose in every locale.
   zh: [],
   ar: [
@@ -253,6 +271,18 @@ const SOFT: Record<Locale, Rule[]> = {
     deRule("im Herzen (von|des|der)|die Kunst (des|der)|die Magie (des|der)", "im Herzen von / die Kunst des"),
     deRule("eine Reise (durch|in)", "eine Reise"),
     deRule("entdecken Sie,? wie", "Entdecken Sie, wie"),
+  ],
+  it: [
+    itRule("affascinant(e|i)|accattivant(e|i)|mozzafiato|vibrant(e|i)|meticolos(o|a|i|e|amente)", "affascinante/vibrante"),
+    itRule("crucial(e|i)|robust(o|a|i|e)|all['’]avanguardia|di punta", "cruciale/robusto/all'avanguardia"),
+    itRule("senza (ombra di|alcun) dubbio", "senza ombra di dubbio"),
+    itRule("non solo[^.!?]{1,80}ma anche", "non solo … ma anche"),
+    rule("(Il|La) (risultato|chiave|trucco|segreto|risposta)\\?", "Il risultato? (rivelazione)"),
+    rule("(^|[.!?]\\s+)Immagina\\b", "Immagina…"),
+    itRule("nel cuore d[ei]|l['’]arte d[ei]|la magia d[ei]", "nel cuore di / l'arte di"),
+    itRule("un viaggio", "un viaggio"),
+    itRule("scopri (come|tutto)", "scopri come"),
+    itRule("non è (solo|soltanto|semplicemente) un", "non è solo un"),
   ],
   // SOFT_ZH, below, checks Chinese prose in every locale.
   zh: [],

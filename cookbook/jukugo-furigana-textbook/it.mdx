@@ -1,0 +1,68 @@
+---
+title: "Un libro di lettura scolastico con furigana su ogni kanji"
+summary: "«Gon la volpe» di Niimi Nankichi in un libro di lettura: furigana per carattere, per parola e jukugo, spaziati 1:2:1 e sporgenti sui kana ma mai sui kanji."
+plain: "Una pagina di un libro di lettura giapponese, con piccoli kana sopra ogni kanji perché un bambino possa leggerla ad alta voce. Postext mette ogni lettura sopra i suoi caratteri e lascia che una lunga sporga sui kana vicini, mai su un kanji."
+description: "Furigana in Postext: ruby jukugo {漢字|かん|じ}, ruby di gruppo {百舌鳥|もず}, allineamento JIS 1:2:1 e sporgenza solo sui kana in una pagina di lettura giapponese."
+question: "Come aggiungo i furigana sopra i kanji, una lettura per carattere o una per tutta la parola?"
+aliases: ["furigana", "振り仮名", "ルビ", "ruby", "ruby jukugo", "熟語ルビ", "ruby di gruppo", "グループルビ", "ruby mono", "モノルビ", "熟字訓", "1:2:1", "ruby JIS X 4051", "肩掛け", "sporgenza del ruby", "総ルビ", "libro di lettura", "教科書", "ごんぎつね", "Niimi Nankichi"]
+pageNotes: { "1": "Pagina 24, un verso: una fascia color paglia sul terzo superiore con un tondo rosso con il 4, il nome della collana よみもの　四年 e il titolo ごんぎつね in un grande gotico arrotondato, il nome dell’autore in kana e 新美南吉　作. Sotto, il numero di sezione 一 in rosso e l’inizio del racconto in una calligrafia da libro scolastico a 14 pt, con piccole letture in kana sopra ogni kanji.", "3": "Pagina 26: la fine della prima sezione, poi un riquadro color paglia intitolato ふりがなの つけかた con tre righe: una lettura per kanji (村 城 森 穴), una lettura per una parola (百舌鳥 一人 黒子) e una lettura per kanji tenuta come una sola parola (兵十 小川 菜種). Sotto, un piccolo colophon in caratteri latini." }
+---
+
+## Che cosa comporrai
+
+Le prime pagine di «Gon la volpe» (ごんぎつね, 1932) di Niimi Nankichi come le stampa un libro di lettura di quarta elementare, il racconto che ogni bambino giapponese incontra a nove o dieci anni. Una pagina B5 contiene 28 caratteri per 21 righe in Klee One, un carattere disegnato sulla mano dei libri scolastici, a 14 pt su un’interlinea di 28 pt, con una lettura in piccoli kana sopra ogni kanji. Le letture sono il tema: una per carattere sopra 村 e 森, una per tutta la parola sopra 百舌鳥 (mozu), i cui kanji non hanno una lettura propria, e letture jukugo sopra 兵十 (Hyōjū), ciascuna sopra il suo kanji finché una non risulta troppo lunga. Un riquadro alla fine mostra i tre casi per l’insegnante. <RecipeLink slug="pinyin-primer">L’abbecedario in pinyin</RecipeLink> mette allo stesso modo le letture cinesi sopra ogni carattere.
+
+## Preparazione
+
+### 1 · Tre modi di scrivere una lettura
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Nel Markdown, `{村|むら}` mette むら sopra 村; `{兵十|ひょう|じゅう}` dà a ogni kanji la sua lettura, e in un documento contrassegnato `'ja'` questo è ruby jukugo: le letture restano sopra i loro kanji quando ci stanno, e una più lunga può appoggiarsi sul kanji successivo della stessa parola, mai su quello di un’altra parola. `{百舌鳥|もず}`, una lettura per tre kanji, è ruby di gruppo, distribuito sulla parola come un tutt’uno. `:ruby[菜種]{rt="な たね" mode=jukugo}` scrive l’ultimo esempio del riquadro nella forma a direttiva, che accetta anche `mode=mono` e `align` ([Segni, ruby e warichu](/it/docs/configuration-east-asian#segni-ruby-e-warichu)).
+
+<PageShot page={3} crop="0.1,0.492,0.8,0.15" caption="Pagina 26: una lettura per kanji, una per la parola e letture jukugo, che restano con i loro kanji." />
+
+### 2 · 1:2:1, e letture che si appoggiano solo sui kana
+
+Le due impostazioni sotto `cjk.ruby` sono quelle che `'ja'` sceglie da solo. `align: 'jis'` compone una lettura più corta della sua base secondo JIS X 4051: mezza unità di spazio a ciascuna estremità e una intera tra i kana, così も e ず stanno sopra le giunture di 百舌鳥 a <PageRef page={2}>pagina 25</PageRef> invece di ammassarsi al centro. `overhang: 'kana'` lascia che una lettura più lunga della sua base sporga fino a un carattere ruby su un kana o sul bianco di un segno vicino, mai su un kanji: ぎつね sopra il 狐 di 「ごん狐」 si appoggia su ん e sulla parentesi che segue, e il じゅう di 兵十だな su だ. Dove non c’è un kana su cui appoggiarsi, i kanji vengono distanziati fino alla larghezza della lettura. Al bordo di una riga la lettura resta dentro la giustezza.
+
+<PageShot page={1} crop="0.08,0.63,0.84,0.09" caption="Pagina 24: ぎつね sopra 狐 sporge su ん e 」, e こぎつね sopra 小狐 resta con i suoi due kanji." />
+
+### 3 · Uno spazio tra le righe che accoglie le letture
+
+Le letture sono a 7 pt, metà del testo a 14 pt, e l’interlinea è di 28 pt, quindi i 14 pt tra due righe le contengono con margine e ogni riga della griglia resta al suo posto. Se imposti un passo più stretto del testo più le sue letture, la build avvisa con `rubyExceedsLeading`.
+
+### 4 · L’apertura non stampa letture
+
+<Excerpt region="opener" />
+
+Il titolo e il nome dell’autore sono testo di design, che non compone ruby, quindi la lettura di 新美南吉 è una riga a sé sopra il nome, in kana, come la stampano i libri di lettura. Il titolo stesso è in kana, ごんぎつね, come lo scrivono i libri di lettura, anche se il testo di Aozora lo intitola ごん狐.
+
+### 5 · Un solo colore d’accento e letture un tono più chiare
+
+<Excerpt region="palette" />
+
+Le letture usano `reading`, un marrone un gradino più chiaro dell’inchiostro, così l’occhio distingue i due livelli senza che i kana diventino sbiaditi. Il rosso degli higanbana che fioriscono nel racconto segna il tondo, il numero di sezione e il titolo del riquadro.
+
+## Varianti
+
+### Kana a grandezza piena nelle letture
+
+I libri più vecchi stampavano っ e ょ a grandezza piena nel ruby, がつこう per がっこう; `smallKana: 'full'` fa lo stesso e lascia invariato il testo letto ad alta voce e copiato.
+
+```diff
+-    smallKana: 'keep', // ひょう with its small ょ, as today's books print it
++    smallKana: 'full', // ひよう: the small kana at full size, as letterpress books printed them
+```
+
+### Centra ogni lettura
+
+`align: 'center'` mette una lettura corta al centro della sua base, come fa la maggior parte dei libri cinesi; 1:2:1 è il valore predefinito giapponese.
+
+```diff
+-    align: 'jis', // a reading shorter than its base: ½ unit at each end, 1 between (1:2:1)
++    align: 'center', // も ず together in the middle of 百舌鳥
+```
+
+## Errori frequenti
+
+- Aozora Bunko scrive una sola lettura per tutta la parola, 兵十《ひょうじゅう》, e il convertitore la conserva come ruby di gruppo, `{兵十|ひょうじゅう}`. Per il ruby jukugo, dividi a mano la lettura per kanji: `{兵十|ひょう|じゅう}`.
+- Una lettura viene divisa alla barra in una parte per carattere solo quando le parti corrispondono alla base; `{一人|ひ|と|り}` ha tre parti per due kanji e viene composta come una sola lettura per la parola, che è comunque ciò che serve a 一人.

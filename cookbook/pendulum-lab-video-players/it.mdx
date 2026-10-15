@@ -1,0 +1,75 @@
+---
+title: "Una scheda di laboratorio con video su schermo e in EPUB"
+summary: "Due risorse video con i loro file MP4: la stampa mostra di ciascuna il primo fotogramma con un codice QR, renderToHtml e postext-epub riproducono i file."
+plain: "Una scheda di fisica con due brevi filmati di un pendolo. Sulla carta ogni filmato è un’immagine fissa con un codice da inquadrare; sullo schermo e nell’e-book i filmati si riproducono sulla pagina."
+description: "Scheda di laboratorio di fisica con due clip MP4: stampate come poster con codici QR, riprodotte dai player dell’edizione HTML e incluse in un EPUB fisso."
+question: "Come riproducono le clip del libro l’edizione a schermo e l’EPUB, e come nascondo il pulsante di download?"
+aliases: ["video", "MP4", "video HTML5", "player video", "pulsante di download", "nodownload", "controlslist", "codice QR", "video in EPUB", "scheda di laboratorio", "scheda di esercizi", "resourceVideoUrl", "videoStyle"]
+pageNotes: { "1": "L’apertura della scheda di laboratorio 4.2: una fascia color ruggine con il titolo «The period of a pendulum» e tre campi bianchi per nome, gruppo e data, poi l’obiettivo, le due clip e la teoria in due colonne. Al piede, i primi fotogrammi di «Video 1» e «Video 2», ciascuno con un segno di riproduzione scuro e un codice QR.", "2": "Il procedimento in un riquadro crema, una tabella vuota per le misure, una tabella dei periodi esatti da 5° a 90° e quattro domande con riquadri bianchi per le risposte." }
+---
+
+## Che cosa comporrai
+
+La scheda di laboratorio 4.2 di *Bench Physics*, un quaderno A4 per studenti dai 16 ai 18 anni, sul periodo di un pendolo. Una fascia color ruggine porta il titolo e i campi per nome, gruppo e data. Al piede della prima pagina due clip dello stesso pendolo, lasciato andare da 10° e da 80°, stanno affiancate. Sulla carta ogni clip è il suo primo fotogramma, con un segno di riproduzione e un codice QR che apre l’MP4. Nell’edizione a schermo accanto alle pagine, e nell’EPUB che scrive il pen, le stesse due risorse si riproducono nel player video del lettore. La seconda pagina contiene il procedimento, una tabella da compilare, i periodi esatti calcolati dal codice e quattro domande con i riquadri per le risposte.
+
+## Preparazione
+
+### 1 · Dai a ogni clip un indirizzo di produzione e un file
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Una clip tua ha due indirizzi. `video.url` è dove la troverà il libro pubblicato: il codice QR lo stampa e il PDF vi collega il poster, quindi qui è l’indirizzo jsDelivr della clip, quello che un telefono può aprire oggi. `video.fileId` nomina il file stesso, tenuto fuori dal documento come una bitmap, per gli output che possono contenerlo o riprodurlo da un’altra posizione (vedi [Formato del documento › Video](/it/docs/document-format#video)). Le opzioni del player in `videoStyle.player` valgono per ogni clip: si ripetono in loop, partono senza audio, si caricano per intero (27 e 61 KB) e non offrono download, picture in picture né trasmissione, così le clip restano sulla scheda.
+
+### 2 · Impagina l’edizione a schermo dalla stessa sorgente
+
+<Excerpt region="screen" />
+
+L’edizione a schermo vive nella configurazione come `htmlViewer.overrides`, che canvas e PDF ignorano. A 122 dpi ogni misura data in punti risulta circa un quarto più grande che a 96, quindi il testo da 9,4 pt si legge a 16 px nel pannello e didascalie, riquadri e tabelle crescono con esso. L’apertura mantiene il titolo e lascia cadere la fascia e i campi, che appartengono alla carta.
+
+### 3 · Riproduci le clip nel pannello
+
+<Excerpt region="pane" />
+
+`renderToHtml` compone ogni risorsa video come un `<video>` HTML5 con le opzioni del player come attributi: `controls`, `muted`, `loop`, `playsinline`, `preload="auto"`, `disablepictureinpicture`, `disableremoteplayback` e `controlslist="nodownload"`. Quest’ultimo nasconde solo il pulsante. Chiunque abbia l’indirizzo può comunque salvare il file, quindi consideralo ordine, non protezione. `resourceVideoUrl` passa al backend un indirizzo riproducibile per ogni `fileId`, come fa `resourceImageUrl` per i poster. Qui è la risorsa pubblicata; un sito che tiene i caricamenti altrove restituisce il suo URL, o un URL blob dei byte. Senza, il player ripiega su `video.url`, e senza nessuno dei due il pannello mostra il poster.
+
+### 4 · Metti le clip in un EPUB a layout fisso
+
+<Excerpt region="epub" />
+
+La scheda è costruita attorno a due clip affiancate e a riquadri vuoti da compilare, quindi il layout fisso la conserva: ogni pagina come stampata, con un player dove c’era il poster. Anche un EPUB fluido riprodurrebbe le clip, una sotto l’altra alla larghezza del testo. `resourceBytes` risponde `video/mp4` per ogni clip e un JPEG per ogni poster, e il writer li impacchetta sotto `media/` e `images/`. L’EPUB conserva solo gli attributi che il suo schema conosce (`controls`, `autoplay`, `muted`, `loop`, `playsinline`, `preload`), quindi il pulsante di download e il resto restano al sistema di lettura. Il file supera EPUBCheck senza errori né avvisi.
+
+### 5 · Componi θ e π in canvas, PDF ed EPUB
+
+Source Serif 4 tiene le lettere greche in un file Fontsource a parte, `greek`, accanto a `latin`. `kitFonts(FONTS)` trova le lettere greche nel testo e carica quel file per ogni carattere della famiglia, e `fontsourceProvider` lo incorpora nel PDF accanto al file latin per ogni carattere che compone θ o π, quindi le due lettere non richiedono codice. L’EPUB incorpora solo i font che gli passa il pen, quindi il passo 4 elenca i file greek del carattere del testo dopo quelli latin, ciascuno limitato al blocco greco dal suo `unicodeRange`.
+
+### 6 · Calcola la tabella nel codice
+
+<Excerpt region="periods" />
+
+Il periodo esatto richiede l’integrale ellittico completo *K*, e la media aritmetico-geometrica lo dà in pochi passi: *T* = *T*~0~ / AGM(1, cos ½θ~0~). La tabella stampa tre decimali con la virgola decimale in spagnolo, e le righe di 10° e 80° corrispondono alle clip: 2,010 s e 2,282 s, lo 0,2 % e il 13,8 % più lunghi di *T*~0~ = 2,006 s. In 8 s sono poco meno di quattro oscillazioni complete per la prima clip e tre e mezza per la seconda.
+
+## Varianti
+
+### Fai partire da sola una clip
+
+Il `player` di un video si sovrappone a `videoStyle.player`. La riproduzione automatica parte sempre senza audio, come chiedono i browser.
+
+```diff
+ ];
++clips[0].video.player = { autoplay: true }; // the 10° clip starts as the pane opens
+```
+
+### Mostra a schermo il poster stampato
+
+Con `html: 'poster'` l’edizione HTML compone il poster con il segno di riproduzione e il codice QR, collegato all’indirizzo di produzione, al posto del player.
+
+```diff
+ const videoStyle = {
++  html: 'poster',
+```
+
+### Usa un video di YouTube o Vimeo
+
+`source: 'youtube'` con l’indirizzo del video incorpora il player di YouTube da `youtube-nocookie.com` (`privacy` è attivo per impostazione predefinita). Quel player rispetta meno opzioni: controlli, schermo intero, riproduzione automatica, audio disattivato e loop, e quello di Vimeo aggiunge il menu della velocità e il picture in picture; nessuno dei due offre il download. Un EPUB non può incorporare il player di una pagina web, quindi lì il video è il suo poster collegato al video. Le opzioni e la loro portata sono elencate in [Configurazione › Stile dei video](/it/docs/configuration-resources#stile-dei-video).
+
+## Errori frequenti
+
+Gli MP4 sono H.264. Chrome, Edge, Safari e Firefox li riproducono, e così il Chrome for Testing usato dalla cattura. Un Chromium compilato senza i suoi codec proprietari, l’impostazione predefinita open source, no; codifica le clip in WebM (`format: 'webm'`) se per i tuoi lettori conta.

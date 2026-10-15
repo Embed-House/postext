@@ -1,0 +1,917 @@
+{/* docs/architecture-it.mdx */}
+
+export const metadata = {
+  title: 'Architettura di Postext',
+  sidebarTitle: 'Architettura',
+  description: 'Architettura tecnica del motore di impaginazione Postext',
+  lang: 'it',
+  lastUpdated: '2026-10-11',
+  readingTime: '45 min',
+  order: 2,
+  plainSummary: "Questa pagina spiega come funziona Postext al suo interno ed è scritta per chi programma. Per prima cosa Postext misura ogni parola senza disegnare nulla sullo schermo, e per questo è molto veloce. Poi calcola dove va ogni riga, ogni immagine e ogni colonna, e tiene questo piano in memoria. Ripete il lavoro finché non si sposta più niente. Infine disegna le pagine finite come pagina web, come immagine su canvas o come file PDF. Quando cambi una parola, reimpagina le pagine e riusa le misure dei paragrafi che non sono cambiati.",
+};
+
+# Architettura di Postext
+
+Se hai lavorato con React, il trucco di fondo lo conosci già. React costruisce in memoria un DOM virtuale, ne calcola le differenze e solo allora tocca il DOM reale del browser. Postext fa la stessa cosa, ma invece di componenti di interfaccia costruisce un albero di **pagine, colonne, blocchi di testo e riquadri di delimitazione**. L’intera geometria di un documento di molte pagine e più colonne, calcolata prima di disegnare un solo pixel. Ogni paragrafo, titolo, immagine, nota a piè di pagina e citazione in evidenza collocato a coordinate esatte, nel rispetto di regole tipografiche secolari che il CSS semplicemente non sa esprimere.
+
+Tutto questo è possibile grazie a [`@chenglou/pretext`](https://github.com/chenglou/pretext), una libreria di misurazione del testo che non usa il DOM ed è da 300 a 600 volte più veloce del reflow del browser. Per la storia del progetto (un decennio di tentativi falliti, il collo di bottiglia che li aveva bloccati tutti e la libreria che finalmente lo ha tolto di mezzo), leggi l’[Introduzione](/it/docs/introduction).
+
+## L’idea di fondo
+
+Pensa a un documento di 74 pagine su due colonne. Il bilancio annuale di un’azienda, per esempio, o un manuale scolastico fitto di illustrazioni. Lo consegni a Postext e il motore costruisce in memoria l’intera impaginazione: ogni pagina, ogni colonna, la posizione esatta e le dimensioni in pixel di ogni paragrafo. Vuoi sapere che cosa c’è a pagina 72, colonna 2? La risposta è già lì, senza bisogno di disegnare nulla. Il motore ha già deciso dove spezzare ogni paragrafo, dove collocare ogni immagine, come evitare vedove e orfane e come allineare le linee di base tra colonne affiancate.
+
+Ecco perché questo conta così tanto.
+
+Le regole tipografiche dipendono le une dalle altre in modo profondo ed esasperante. Correggi una vedova a pagina 5 (un’ultima riga isolata in fondo a una colonna) riportandola nella colonna precedente. Bene. Ma la modifica accorcia la colonna di pagina 5, il che sposta in avanti il contenuto, il che potrebbe creare un’orfana a pagina 6: una prima riga spinta in una nuova colonna, staccata dal suo paragrafo. Anche solo per *accorgerti* di aver creato un nuovo problema ti serve l’impaginazione dell’intero documento a disposizione per esaminarla. E per *risolverlo* senza crearne un altro altrove devi poter regolare, rimisurare e ricontrollare tutto quanto.
+
+È questa la filosofia del «prima calcola tutto, poi disegna». Non è un espediente per le prestazioni. È l’unico modo di applicare le decine di regole tipografiche interconnesse che i compositori professionisti usano da secoli.
+
+
+## Concetti fondamentali
+
+Un breve glossario. Il resto del documento dà per scontati questi termini: torna qui ogni volta che uno
+ti sembra poco chiaro.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '180px' }}>Termine</th>
+      <th>Definizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>VDT</strong></td>
+      <td>Virtual Document Tree, l’albero virtuale del documento. La struttura dati mutabile, modificata sul posto, che rappresenta l’intero documento: pagine, colonne, blocchi, segmenti in linea e riquadri di delimitazione. È l’analogo di un DOM virtuale, ma per la geometria dell’impaginazione.</td>
+    </tr>
+    <tr>
+      <td><strong>Pagina</strong></td>
+      <td>Un’area rettangolare di dimensioni fisse. Il motore ragiona per pagine fin dall’inizio. Un documento è una sequenza ordinata di pagine.</td>
+    </tr>
+    <tr>
+      <td><strong>Colonna</strong></td>
+      <td>Una suddivisione verticale della pagina. Le colonne hanno una larghezza fissa e un’altezza massima. Il testo scorre da una colonna alla successiva, poi alla pagina seguente.</td>
+    </tr>
+    <tr>
+      <td><strong>Blocco</strong></td>
+      <td>Un’unità di contenuto che occupa spazio verticale in una colonna: paragrafo, titolo, immagine, tabella, citazione, citazione in evidenza o area delle note.</td>
+    </tr>
+    <tr>
+      <td><strong>Riga</strong></td>
+      <td>Una riga di testo misurata all’interno di un blocco, prodotta da Pretext. Ogni riga ha un riquadro di delimitazione e la posizione della sua linea di base.</td>
+    </tr>
+    <tr>
+      <td><strong>Riquadro di delimitazione</strong></td>
+      <td>{'{'}  <code>x, y, width, height</code>  {'}'} in pixel, relativo all’origine della pagina. Ogni nodo del VDT ne ha uno.</td>
+    </tr>
+    <tr>
+      <td><strong>Risorsa</strong></td>
+      <td>Un elemento non testuale collegato alla prosa tramite id: una bitmap, un SVG, una tabella o un video (<code>Resource</code>, con <code>kind: 'bitmap' | 'svg' | 'table' | 'video'</code>). Le risorse sono numerate per tipo (Figura 1, Tabella 2.1…) al primo rimando e fatte flottare in una fascia in alto o in basso su una pagina vicina a quel rimando.</td>
+    </tr>
+    <tr>
+      <td><strong>Nota</strong></td>
+      <td>Una nota a piè di pagina o una nota di fine capitolo, scritta nel markdown come marcatore <code>[^id]</code> e definizione <code>[^id]:</code> (vedi <a href="/it/docs/document-format#note-a-piè-di-pagina">Note a piè di pagina</a>). Le note a margine, e l’elenco <code>PostextNote</code> che il modello di contenuto accetta, non sono implementate: il motore non legge <code>notes</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Griglia della linea di base</strong></td>
+      <td>Il reticolo verticale derivato dall’interlinea del corpo del testo (per esempio 24px per 16px/1,5). Ogni linea di base del testo corrente dovrebbe cadere su un suo multiplo, così le righe restano allineate tra colonne e tra pagine affiancate.</td>
+    </tr>
+    <tr>
+      <td><strong>Badness</strong></td>
+      <td>Quanto gli spazi tra le parole di una riga giustificata si allontanano dalla loro larghezza naturale: il quadrato del rapporto di aggiustamento, saturato a 10000. È il costo di base nella divisione in righe di Knuth–Plass.</td>
+    </tr>
+    <tr>
+      <td><strong>Demerits</strong></td>
+      <td>Il costo totale di un possibile punto di a capo in Knuth–Plass: la badness più le penalità (sillabazione, riga finale troppo corta, discordanza di classe di idoneità). L’algoritmo sceglie l’insieme di a capo con il totale di demerits più basso. La divisione di un paragrafo tra due colonne si sceglie allo stesso modo, con la somma più bassa dei costi di vedova, orfana e spazio vuoto.</td>
+    </tr>
+    <tr>
+      <td><strong>Classe di idoneità</strong></td>
+      <td>Una categoria approssimativa di quanto una riga è stretta o lasca. Righe adiacenti in classi molto diverse (una riga stretta accanto a una molto lasca) comportano un demerit in più, che uniforma la trama del paragrafo.</td>
+    </tr>
+    <tr>
+      <td><strong>Slack</strong></td>
+      <td>Righe lasciate vuote in fondo a una colonna quando un paragrafo viene spezzato lì o spostato in avanti per intero. Un costo di slack al quadrato (pesato con <code>slackWeight</code>) viene messo a confronto con le penalità di vedova e orfana quando il motore sceglie la divisione.</td>
+    </tr>
+    <tr>
+      <td><strong>Backend</strong></td>
+      <td>Una destinazione di rendering che consuma il VDT finito. Oggi ce ne sono quattro: <strong>canvas</strong> (anteprima bitmap), <strong>HTML</strong> (lettura a schermo basata sul DOM), <strong>PDF</strong> (output pronto per la stampa con <code>postext-pdf</code>) ed <strong>EPUB</strong> (<code>postext-epub</code>, il libro come e-book). Tutti e quattro disegnano a partire dalla stessa misurazione (il modulo measure sopra Pretext).</td>
+    </tr>
+    <tr>
+      <td><strong>Passata di collocazione</strong></td>
+      <td>Un percorso del contenuto, dal primo all’ultimo blocco, che costruisce un VDT completo: analizza, misura attraverso la cache, colloca testo, elementi flottanti e riquadri, e applica le regole di interruzione e di tenuta.</td>
+    </tr>
+    <tr>
+      <td><strong>Round</strong></td>
+      <td>Una nuova esecuzione della passata di collocazione con indicazioni tratte dalla precedente: un limite di fascia, leve di bilanciamento, etichette di pagina o numeri di nota ormai stabili. Ogni tipo di round ha il proprio limite (vedi <a href="#il-driver-delle-passate">Il driver delle passate</a>).</td>
+    </tr>
+  </tbody>
+</table>
+
+
+## Architettura del sistema
+
+<Illustration name="SystemArchitecture" data='{"title": "Architettura del sistema Postext", "desc": "Il markdown arricchito e PostextConfig entrano nel parser. La passata di collocazione misura il testo con Pretext e riempie l’albero virtuale del documento; buildDocument ripete la passata con indicazioni finché l’impaginazione non si stabilizza. Un backend disegna il VDT finito in HTML o PDF.", "caption": "Parser → passata di collocazione ↔ Pretext → VDT → backend → output.", "markdown": "Markdown arricchito", "configTitle": "PostextConfig", "configSubtitle": "(colonne, regole, spaziatura)", "engine": "Motore di impaginazione", "parser": "Parser", "pass1": "markdown → blocchi", "vdtLine1": "Albero virtuale", "vdtLine2": "del documento (VDT)", "vdtAttr1": "riempito sul posto da una passata", "vdtAttr2": "pagine > colonne > blocchi", "vdtAttr3": "ogni nodo ha un bbox", "vdtAttr4": "un albero nuovo per ogni passata", "pretext": "Pretext", "pretextSubtitle": "misurazione del testo", "passesTitle": "Passata di collocazione (un percorso del contenuto)", "passes": [{"num": "Misura", "name": "righe, attraverso la cache"}, {"num": "Colloca", "name": "blocchi in colonne e pagine"}, {"num": "Flottanti", "name": "risorse nelle fasce di pagina"}, {"num": "Interrompi", "name": "paragrafi a fine colonna"}, {"num": "Tieni", "name": "titoli ed elenchi con il loro testo"}, {"num": "Allinea", "name": "il flusso di nuovo sulla griglia"}], "convergence": "ripeti con indicazioni", "backend": "Backend", "backendSubtitle": "(interfaccia unificata)", "backendItems": ["Canvas / browser", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "output disegnato"}' />
+
+**Ecco il percorso che il tuo contenuto compie attraverso il motore:**
+
+1. Il **parser** legge il tuo markdown arricchito e lo trasforma in un elenco piatto di blocchi di contenuto tipizzati: contenuto e struttura, ancora nessuna posizione
+2. Una **passata di collocazione** percorre quell’elenco una volta e costruisce il VDT. Misura ogni blocco con Pretext alla larghezza della colonna in cui il blocco sta per entrare, colloca testo, elementi flottanti e riquadri in pagine e colonne, e applica strada facendo le regole di interruzione e di tenuta
+3. Il **driver** (`buildDocument`) ripete la passata quando una decisione richiede il risultato di un’impaginazione completa: un indice che stampa i numeri di pagina, un riquadro a tutta larghezza che deve pareggiare le colonne sopra di sé, una colonna rimasta corta. Ogni ripetizione prende indicazioni dalla passata precedente, e ogni tipo di ripetizione ha il proprio limite
+4. Il **VDT finale** è la geometria completa dell’impaginazione: ogni elemento conosce il suo numero di pagina, la colonna assegnata, la posizione e il riquadro di delimitazione. Il documento è interamente «composto» prima di qualsiasi rendering
+5. Un **backend** percorre il VDT finito e lo disegna nel formato di destinazione: una bitmap rasterizzata su canvas, un albero DOM di elementi HTML posizionati, un documento PDF con i font incorporati o un EPUB. Lo stesso VDT alimenta tutti e quattro; scegliere un backend è solo una decisione sull’output
+
+
+## Livello di input
+
+### Modello di contenuto
+
+Il modello di contenuto è una filosofia almeno quanto una struttura dati. Descrivi *che cosa* dire, non *come* impaginarlo. Le decisioni di impaginazione le prende il motore.
+
+<Illustration name="ContentModel" data='{"title": "Modello di contenuto: markdown, risorse, note", "desc": "L’input di Postext separa il markdown (ordine di lettura e struttura semantica) dalle risorse (bitmap, SVG, tabelle) e dalle note. Il motore risolve per ID i rimandi in linea :ref e gli inserimenti ::resource e produce il VDT.", "caption": "Il markdown possiede l’ordine di lettura; le risorse possiedono i dati visivi.", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "ordine di lettura + :ref / ::resource per id", "resources": "resources[]", "resourcesSub": "bitmap, SVG, tabelle", "notes": "metadata", "notesSub": "titolo, autore, date", "resolveMarker": "risolti per id: :ref{id=…}, ::resource{id=…}", "engineLabel": "motore", "vdtLabel": "VDT"}' />
+
+```typescript
+// packages/postext/src/types.ts
+
+interface PostextContent {
+  markdown: string;            // enriched markdown with :ref / ::resource markers
+  metadata?: DocumentMetadata; // title, subtitle, author, publishDate, …
+  resources?: Resource[];      // bitmaps, SVGs, tables, videos — referenced by id
+  notes?: PostextNote[];       // not read: footnotes are written as [^id] in the markdown
+}
+
+interface Resource {
+  id: string;                  // stable id, referenced by inline :refs
+  typeId: string;              // ResourceType this resource belongs to ('figure', 'table', …)
+  kind: 'bitmap' | 'svg' | 'table' | 'video';
+  caption?: string;            // the type prefix + number are computed, not written here
+  altText?: string;
+  createdAt: number;
+  updatedAt: number;
+  // Exactly one kind-specific payload:
+  bitmap?: { fileId: string; format: string; width: number; height: number };
+  svg?: { fileId: string; width?: number; height?: number };
+  table?: { model: TableModel };
+  video?: ResourceVideo;       // where it plays from; drawn on the page as its poster
+  placement?: ResourcePlacement; // optional per-resource float override
+  safeArea?: ResourceSafeArea;  // bitmap / svg: { x, y, width, height } in fractions, the part always shown
+}
+```
+
+Le **risorse** portano i dati visivi: didascalie, testo alternativo e un contenuto specifico per tipo. I contenuti binari (bitmap, SVG) vivono *fuori banda*: la risorsa conserva solo un `fileId` e il renderer lo risolve al momento di disegnare (la Sandbox tiene i byte in IndexedDB). Le risorse tabella sono l’eccezione: il loro `TableModel` (una griglia di celle con unioni e allineamenti) viaggia in linea, perché sono dati strutturati, non byte.
+Le **note** si scrivono nel markdown: un marcatore `[^id]` dove la nota è citata e una definizione `[^id]:`, un paragrafo a sé in qualsiasi punto del capitolo. Il motore numera le note nell’ordine in cui vengono citate per la prima volta e compone ciascuna al piede della colonna che contiene la riga che la cita, sotto un breve filetto, oppure dopo l’ultimo blocco del capitolo con `footnotes.placement: 'chapterEnd'` (vedi [Note a piè di pagina](/it/docs/document-format#note-a-piè-di-pagina) e [Configurazione → Note a piè di pagina](/it/docs/configuration-notes-references#note-a-piè-di-pagina)). Il modello di contenuto accetta ancora un array `notes`, ma nessuna fase della pipeline lo legge.
+
+Questa separazione è una scelta progettuale precisa, e conta più di quanto sembri. Il markdown possiede l’*ordine di lettura* e la *struttura semantica*: che cosa viene prima, che cosa è un titolo, dove è citata una nota e che cosa dice. L’array delle risorse possiede i *dati visivi*: dimensioni delle immagini, testo delle didascalie, celle delle tabelle. Tenendoli separati, lo stesso markdown si può impaginare in modi del tutto diversi cambiando soltanto la configurazione. Un’impaginazione accademica a due colonne e un articolo di blog a una colonna possono condividere lo stesso contenuto di partenza. E il motore può prendere decisioni di collocazione (come rimandare un’immagine alla colonna successiva perché qui non entra) senza mai toccare il tuo contenuto sorgente.
+
+```typescript
+// Example: a simple article with a referenced figure
+const content: PostextContent = {
+  markdown: `
+# The Art of Typography
+
+The history of typography begins with Gutenberg's
+movable type, shown in :ref{id="printing-press"}.
+His invention transformed the production of books.
+
+The technique spread rapidly across Europe, reaching
+Italy by 1465 and France by 1470.
+  `,
+  resources: [
+    {
+      id: 'printing-press',
+      typeId: 'figure',
+      kind: 'bitmap',
+      caption: 'A reconstruction of the original press.',
+      altText: "Reconstruction of Gutenberg's printing press",
+      createdAt: 1765379100000,
+      updatedAt: 1765379100000,
+      bitmap: { fileId: 'press-photo', format: 'jpeg', width: 600, height: 400 },
+    },
+  ],
+};
+```
+
+Le risorse sono collegate alla prosa tramite id, e **fare riferimento a una risorsa basta per incorporarla**. Il rimando in linea `:ref{id="printing-press"}` fa due cose insieme: mostra nel testo corrente il numero calcolato della risorsa («Fig. 1») e, al primo rimando nell’ordine di lettura, *fa flottare* la risorsa sulla pagina, riservando una fascia in alto o in basso vicino a quel rimando, esattamente come farebbe un compositore tipografico. Non devi mai collocare la figura una seconda volta. Per la risorsa occasionale che deve stare in un punto preciso del flusso, `::resource{id="…"}` su una riga a sé è un inserimento di blocco facoltativo: viene disegnato in linea solo quando il `placement.position` risolto della risorsa è `'here'` (che la esclude dagli elementi flottanti); per una risorsa flottante vale come un semplice rimando in più. Chi scrive non deve mai pensare alla collocazione. Ci pensa il motore.
+
+<Illustration name="ReferenceResolution" data='{"title": "Risoluzione dei rimandi", "desc": "Un sorgente markdown rimanda in linea a una figura con :ref{id=printing-press}. L’array delle risorse fornisce il contenuto vero e proprio per ID. Il motore risolve il rimando, mostra il numero calcolato nel testo e fa flottare la figura in una fascia in cima alla pagina.", "caption": "I rimandi nel markdown sono solo nomi. Il motore li risolve sulle risorse, li numera e fa flottare la figura vicino al rimando.", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "inserimento facoltativo per la collocazione &#39;here&#39;", "resolveLabel": "risolvi", "outputTitle": "pagina impaginata", "outputFigure": "[ Figura 1 — flottante in una fascia ]", "outputFootnote": "…shown in Fig. 1…"}' />
+
+### Configurazione
+
+Ogni aspetto della pipeline di impaginazione è controllato da `PostextConfig`. La rassegna completa delle sezioni (pagina, impaginazione, testo corrente, titoli, elenchi, matematica, intestazioni e piè di pagina…) si trova nella pagina <a href="/it/docs/configuration">Configurazione</a>; quelle più rilevanti per questo documento sono:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Configurazione</th>
+      <th>Controlla</th>
+      <th style={{ width: '200px' }}>Usata in</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>bodyText</code> / <code>headings</code></td>
+      <td>Penalità per campo di vedove, orfane e righe finali troppo corte, regole di tenuta, limiti di giustificazione, sillabazione: vedi <a href="/it/docs/configuration-text#testo-corrente">Configurazione → Testo corrente</a></td>
+      <td>Misurazione, regole di interruzione e di tenuta, bilanciamento</td>
+    </tr>
+    <tr>
+      <td><code>tableStyle</code></td>
+      <td>Tipografia delle celle, bordi, raggio degli angoli, riempimenti di intestazione e corpo per le risorse <code>kind: 'table'</code>, più le varianti con nome di <code>tableStyles</code> che una tabella sceglie con <code>table.styleId</code>: vedi <a href="/it/docs/configuration-resources#stile-delle-tabelle">Configurazione → Stile delle tabelle</a></td>
+      <td>Collocazione delle risorse</td>
+    </tr>
+    <tr>
+      <td><code>captionStyle</code></td>
+      <td>Tipografia delle didascalie delle risorse: l’etichetta numerata e il testo descrittivo. Vedi <a href="/it/docs/configuration-resources#stile-delle-didascalie">Configurazione → Stile delle didascalie</a></td>
+      <td>Collocazione delle risorse</td>
+    </tr>
+    <tr>
+      <td><code>diagramStyle</code></td>
+      <td><code>singleInk</code> + <code>inkColor</code>: ricolora i diagrammi SVG con tinte di un solo inchiostro ricavate dalla luminanza, così le figure si riproducono fedelmente quando si stampa con un unico colore piatto. Vedi <a href="/it/docs/configuration-resources#stile-dei-diagrammi">Configurazione → Stile dei diagrammi</a></td>
+      <td>Backend</td>
+    </tr>
+    <tr>
+      <td><code>resourceTypes</code></td>
+      <td>Numerazione delle risorse per tipo: modelli, formati dei contatori, ambiti di azzeramento, collocazione flottante predefinita. Vedi <a href="/it/docs/configuration-resources#tipi-di-risorsa">Configurazione → Tipi di risorsa</a></td>
+      <td>Strutturazione del contenuto, collocazione delle risorse</td>
+    </tr>
+  </tbody>
+</table>
+
+### Strategia di parsing
+
+Il parsing è di proposito il passo più semplice della pipeline. Il markdown entra ed esce come elenco piatto di blocchi di contenuto tipizzati (`ContentBlock`, in `packages/postext/src/parse/`): un titolo, un paragrafo con i suoi segmenti in linea, una voce di elenco, una direttiva. Il risultato è memorizzato (`parseMarkdownMemo`), così le passate di una stessa costruzione analizzano il testo una volta sola, e lo stesso vale per una costruzione successiva dello stesso testo. I rimandi alle risorse si risolvono per ID sull’array `resources[]` all’inizio di ogni passata di collocazione. Anche le definizioni delle note (paragrafi che si aprono con `[^id]:`) lasciano il flusso in quel momento e vengono conservate per id per i marcatori che le citano; l’array `notes[]` non viene letto.
+
+Consideralo un inventario: «c’è un titolo, poi un paragrafo di 200 parole, poi un rimando a una figura, poi un altro paragrafo». Nessuna misura. Nessun posizionamento. Nessuna decisione di impaginazione. Un `VDTBlock` esiste solo dopo che la passata di collocazione ha misurato un blocco e gli ha dato un posto.
+
+
+## Albero virtuale del documento (VDT)
+
+Immagina di chiedere a un compositore professionista di impaginare un libro intero, ma invece di consegnarti pagine stampate ti consegna un foglio di calcolo. Ogni riga è un elemento. Ogni cella è una misura precisa: «il titolo è a (40, 30), il primo paragrafo inizia a (40, 78) ed è alto 144px, l’immagine va in cima alla colonna 2 di pagina 3...». Quel foglio di calcolo è il VDT.
+
+L’albero virtuale del documento è la struttura dati centrale di Postext: un albero mutabile, modificato sul posto, che rappresenta ogni pagina, colonna, blocco e riga, ciascuno con un riquadro di delimitazione preciso. Quando `buildDocument` restituisce il risultato, il VDT *è* la risposta. Puoi chiedere «che cosa c’è a pagina 72, colonna 2?» senza disegnare un solo pixel.
+
+### Perché mutabile
+
+È lo stesso approccio delle pipeline di rendering dei motori di gioco, dove uno stato del mondo condiviso e mutabile viene aggiornato da sistemi successivi in un ciclo serrato. E per la stessa ragione.
+
+Una passata di collocazione riempie l’albero sul posto. Apre una pagina, vi aggiunge colonne, sottrae l’altezza di un blocco dall’`availableHeight` della colonna in cui il blocco finisce e chiude le colonne di una fascia nel punto in cui un riquadro a tutta larghezza la taglia. Un libro ha migliaia di blocchi, e un albero immutabile (come il DOM virtuale di React) allocherebbe un oggetto nuovo per ciascuno di questi passi. Per questo i nodi sono oggetti semplici e la passata scrive direttamente su di essi.
+
+Una passata conclusa non viene ritoccata. Quando `buildDocument` ha bisogno di un altro tentativo (un limite di fascia, una leva di bilanciamento), ripete la passata a partire dal contenuto e ottiene un albero nuovo. L’albero della passata precedente resta com’era, così il driver può confrontare i due, tenere il migliore o prendere alcune pagine da ciascuno. La cache delle misure rende sostenibile la ripetizione: un paragrafo il cui testo, i cui font e la cui larghezza non sono cambiati si legge dalla cache invece di essere misurato di nuovo.
+
+### Struttura
+
+<Illustration name="VdtStructure" data='{"title": "Struttura dell’albero virtuale del documento", "desc": "VDT gerarchico: il documento contiene pagine, ogni pagina contiene colonne, ogni colonna contiene blocchi (titolo, paragrafo, risorsa), ogni blocco di testo contiene righe misurate. Ogni blocco porta un riquadro di delimitazione, il suo tipo e gli indici di pagina e di colonna.", "caption": "Ogni blocco porta il suo bbox, il suo tipo e gli indici di pagina e di colonna.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["titolo", "paragrafo", "risorsa"], "lineLabels": ["riga 0", "riga 1"], "legendHeader": "Ogni blocco porta:", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "Le righe portano anche:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
+
+### Definizioni dei tipi
+
+Le forme qui sotto sono **semplificate a scopo espositivo**: le definizioni reali in `packages/postext/src/vdt.ts` hanno molti altri campi orientati al rendering (stringhe di font, colori, punti elenco, rendering matematici, slot di design). Qui conta la struttura:
+
+```typescript
+// Simplified — see packages/postext/src/vdt.ts for the full definitions
+
+// The root of the Virtual Document Tree
+interface VDTDocument {
+  pages: VDTPage[];
+  blocks: VDTBlock[];         // flat view of the same block objects
+  config: ResolvedConfig;     // every sub-config resolved to non-optional
+  baselineGrid: number;       // baseline increment in px (e.g. 24 for 16px/1.5)
+  converged: boolean;         // every balancing segment ended flush or out of levers
+  iterationCount: number;     // placement passes behind this layout (see The Pass Driver)
+  metadata: DocumentMetadata;
+}
+
+// A physical page
+interface VDTPage {
+  index: number;
+  width: number;
+  height: number;
+  columns: VDTColumn[];
+  header?: VDTDesignSlot;     // running header (design slot)
+  footer?: VDTDesignSlot;     // running footer / page number
+  floats?: VDTBlock[];        // resource bands floated to the top/bottom of this page
+  pageNumberValue: number;
+  pageLabel: string;          // rendered label ('iv', '7', 'A', …)
+}
+
+// A column within a page
+interface VDTColumn {
+  index: number;
+  bbox: BoundingBox;          // position within the page
+  blocks: VDTBlock[];
+  availableHeight: number;    // remaining vertical space
+  baselineOffset: number;     // current baseline y-position
+  band?: number;              // column band (0 unless a span block split the page)
+  kind?: 'text' | 'span' | 'side'; // 'span' = full-width column holding a page-span block,
+                              // 'side' = the float-only side column of a one-and-a-half layout
+}
+
+// A content block (paragraph, heading, resource, etc.)
+type VDTBlockType =
+  | 'paragraph' | 'heading' | 'resource' | 'blockquote'
+  | 'listItem' | 'footnoteRef' | 'mathDisplay' | 'callout' | 'code';
+
+interface VDTBlock {
+  id: string;
+  type: VDTBlockType;
+  bbox: BoundingBox;
+  lines: VDTLine[];           // for text blocks: the measured lines
+  resourceBlock?: ResolvedResourceBlock; // for resource blocks
+  pageIndex: number;
+  columnIndex: number;
+  dirty: boolean;             // not used: cleared when the block is placed, read by nothing
+  snappedToGrid: boolean;     // the flow went back to the baseline grid under this block
+  balancing?: VDTBalancing;   // the column-balancing levers applied to this block
+}
+
+// A measured line of text
+interface VDTLine {
+  text: string;
+  bbox: BoundingBox;            // natural width: a justified line is painted to its block's right edge
+  baseline: number;             // y-position of the text baseline
+  hyphenated: boolean;          // line ends inside a word, or after a closed dash ("say—" | "that’s")
+  hardHyphen?: boolean;         // …after a hyphen the text carries ("well-" | "known"): nothing added
+  repeatedHyphen?: boolean;     // opens with that hyphen repeated ("vencer-" | "-se"), not in the source
+  segments?: VDTLineSegment[];  // word/space/math runs for justified rendering
+  isLastLine?: boolean;         // last line of its paragraph
+  justifiedSpaceRatio?: number; // width every space is painted at ÷ the regular face's space
+  justifiedSpaceLimitRatio?: number; // the spacing the limits bound, when the line's own spaces are not regular (lineWordSpacing reads both)
+  sourceStart?: number;         // markdown source map (char offsets; a line opening with `\$` starts at the backslash)
+  sourceEnd?: number;
+  plainStart?: number;          // plain-text source map
+  plainEnd?: number;
+}
+
+// A measured, placement-ready resource embed (bitmap / svg / table / video)
+interface ResolvedResourceBlock {
+  resource: Resource;
+  kind: 'bitmap' | 'svg' | 'table' | 'video';
+  number: string;             // computed number, e.g. "1.7"
+  captionPrefix: string;      // e.g. "Figure"
+  bodyRect: BoundingBox;      // the image / table area
+  bodySource?: ResourceSafeArea; // the part of the picture shown in bodyRect when cropped to its safe area
+  bodyFlex?: { shrink: number; grow: number; delta: number }; // px the body can still shrink / grow, px applied
+  fileId?: string;            // out-of-band binary (bitmap / svg)
+  captionLines: VDTLine[];    // measured caption, prefix + number included
+  table?: VDTResourceTableLayout; // cell geometry for table resources
+}
+
+// Bounding box — all values in px, relative to page origin
+interface BoundingBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+```
+
+Alcuni di questi campi meritano una nota:
+
+- **`isLastLine`** guida il rendering giustificato: le righe finali sono disegnate in bandiera anche quando il paragrafo è giustificato, tranne le righe finali *troppo piene*, i cui spazi tra le parole si comprimono per rientrare nella giustezza (la semantica di distribuzione della colla di TeX).
+- **`sourceStart`/`sourceEnd` e `plainStart`/`plainEnd`** sono mappe che riportano ogni riga al markdown originale e al testo semplice del blocco: rendono possibile la sincronizzazione di cursore e selezione nelle integrazioni con un editor.
+- **`VDTResourceTableLayout`** (con le sue voci `VDTResourceTableCell`) contiene la geometria completa di una risorsa tabella impaginata: i bordi x delle colonne, i bordi y delle righe e i rettangoli di ogni cella con le relative righe di contenuto misurate, così ogni backend disegna la stessa tabella.
+- **`dirty` e `snappedToGrid`** vengono scritti quando un blocco è collocato e non li legge nessuna fase né alcun backend. `dirty` parte da `true` su un blocco nuovo e passa a `false` quando il blocco viene collocato; il motore non tiene traccia delle modifiche sull’albero, ripete la passata di collocazione (vedi [Il driver delle passate](#il-driver-delle-passate)). `snappedToGrid` vale `true` sulla prima parte di un blocco di testo dopo la quale il flusso torna sulla griglia (vedi [Sistema del ritmo verticale](#sistema-del-ritmo-verticale)).
+- **`balancing`** indica quali leve del bilanciamento delle colonne hanno spostato o allungato il blocco; un blocco che il bilanciamento ha lasciato stare non ne ha (vedi [Bilanciamento delle colonne](#bilanciamento-delle-colonne)).
+- **`computePageTextExtent(page)`** è una piccola funzione pubblica che restituisce l’estensione verticale effettivamente occupata dal testo su una pagina (didascalie degli elementi flottanti comprese). Le sovrapposizioni di debug la usano perché le linee della griglia della linea di base coprano solo il testo reale, non il fondo vuoto della pagina.
+
+## Pipeline di impaginazione
+
+Una passata di posizionamento, eseguita tutte le volte che l’impaginazione ne ha bisogno. Questa è l’intera pipeline di impaginazione.
+
+La passata (`placeDocumentPass`, in `packages/postext/src/pipeline/build.ts`) percorre il contenuto dal primo blocco all’ultimo. Per ogni blocco fa tutto ciò che serve per comporlo: lo misura alla larghezza della colonna in cui sta per entrare, verifica se ci sta, lo divide o lo sposta avanti secondo le regole di interruzione e di tenuta, offre un posto agli elementi flottanti che cita, e riporta il flusso sulla griglia della linea di base (vedi [Sistema del ritmo verticale](#sistema-del-ritmo-verticale)). Elementi flottanti, vedove e griglia non hanno una passata propria: si sistemano man mano che ogni blocco trova posto.
+
+Alcune decisioni non si possono prendere dentro un solo percorso, perché dipendono da dove il percorso va a finire: i numeri di pagina che stampa un sommario, l’altezza alla quale un riquadro a tutta larghezza taglia le colonne sopra di sé, le righe che servono ancora a una colonna corta. Per queste, `buildDocument` esegue di nuovo la passata con dei *suggerimenti* presi dal risultato della passata precedente. Le cinque fasi qui sotto seguono un blocco attraverso la passata; [Il driver delle passate](#il-driver-delle-passate) e [Bilanciamento delle colonne](#bilanciamento-delle-colonne) trattano le riesecuzioni.
+
+### Fase 1: strutturazione del contenuto
+
+- **Ingresso:** il `PostextContent` grezzo
+- **Azione:** analizza il markdown in blocchi di contenuto, risolve i riferimenti alle risorse in `resources[]` per ID, toglie dal flusso le definizioni delle note (`[^id]:`) e numera i loro richiami in ordine di citazione, numera i titoli e pianifica gli elementi flottanti: quali risorse flottano, e dopo quale blocco (`notes[]` non viene letto)
+- **Uscita:** un elenco piatto di blocchi di contenuto (tipizzati e con il loro contenuto, ma senza assegnazione a pagine o colonne) e il piano degli elementi flottanti
+- **Quando:** all’inizio di ogni passata di posizionamento. Dopo la prima passata l’analisi si legge dalla sua memoizzazione; il resto si ricalcola
+
+### Fase 2: misurazione del testo
+
+- **Ingresso:** un blocco di contenuto con del testo, e la larghezza della colonna in cui sta per entrare
+- **Azione:** misura le righe del blocco a quella larghezza attraverso il **modulo di misura** dedicato (`packages/postext/src/measure/`), che sovrappone a Pretext sillabazione, giustificazione, tratti in linea con formattazione ricca e divisione in righe Knuth-Plass. Il risultato sono le `VDTLine[]` del blocco e la sua altezza totale
+- **Dettaglio chiave:** la misurazione è in cache. `cachedMeasureBlock` / `cachedMeasureRichBlock` (in `measure/cache.ts`) usano come chiave il testo, i font, la larghezza e ogni opzione che influisce sull’impaginazione, quindi rimisurare un paragrafo invariato è una ricerca in una mappa
+- **Uscita:** le righe del blocco, con dimensioni precise in pixel
+- **Quando:** quando il percorso raggiunge il blocco, non prima, perché la larghezza dipende da dove il blocco va a finire: una colonna accanto a una colonna laterale, le righe accanto a una figura scontornata, le sottocolonne di un gruppo `:::columns`. Un blocco che passa a una colonna di altra larghezza viene rimisurato a quella larghezza
+
+Il modulo è diviso con chiarezza per responsabilità: `plain.ts` misura i tratti semplici, `rich.ts` misura i tratti misti in grassetto, corsivo e matematica, `font.ts` costruisce le stringhe dei font e gestisce il ciclo di vita della cache, e `canvas.ts` incapsula le primitive grezze del canvas per la larghezza del testo. Un dettaglio del ciclo di vita conta nella pratica: le larghezze dei glifi misurate su un font di ripiego non devono sopravvivere all’arrivo del font vero. `canvas.ts` tiene le sue larghezze per stringa di font e una generazione di misurazione; `evictFontFamilies` (chiamata quando una composizione scopre che i caratteri di una famiglia sono cambiati, da `watchFonts`, `prepareFonts` e `loadBundleFonts`) elimina le larghezze di quelle famiglie e svuota la cache di Pretext, e una `MeasurementCache` riempita sotto una generazione precedente elimina i suoi blocchi in quelle famiglie alla ricerca successiva. `clearMeasurementCache()` fa lo stesso per tutte le famiglie. I caratteri stessi vengono caricati prima dell’impaginazione da `fonts/prepare.ts` (`prepareFonts`), e `fonts/faces.ts` rilegge i caratteri usati da un documento impaginato, per gli avvisi `fontFallback`.
+
+I paragrafi cinesi, giapponesi e coreani seguono un’altra strada attraverso lo stesso modulo. Un paragrafo con più caratteri CJK che spazi tra parole va al **compositore CJK** (`cjkCompose.ts`). Questo taglia il testo in unità (un carattere, una serie di testo latino, una lineetta doppia o dei puntini di sospensione, un riquadro atomico come un chip o un richiamo di nota), misura ogni unità una sola volta e riempie le righe con il criterio del primo adatto, secondo le regole di inizio e fine riga di `cjkClasses.ts`: una riga accoglie un segno che non può aprire la riga successiva rinunciando al bianco della punteggiatura (`cjkPunctuation.ts`) prima di portare giù un carattere. Una riga giustificata viene poi distribuita tra i suoi caratteri. L’uscita sono normali `VDTLine` i cui segmenti portano ciò che serve ai renderer per dipingerli esattamente come sono stati misurati: `tracking` (pixel dopo ogni carattere, già compresi nella larghezza del segmento), `inkOffset` per un segno che ha ceduto il suo bianco, `hangs`, gli spazi tra han e latino come segmenti `autospace`, e i segni, le letture ruby e le righe warichu delle annotazioni cinesi. In un documento giapponese lo stesso compositore segue JLReq: le classi kinsoku dei livelli giapponesi si leggono dai caratteri ai bordi di ogni unità al momento della divisione, i bianchi della punteggiatura vengono compressi e restituiti nell’ordine di JLReq, i furigana sono disposti da `rubyJis.ts` (spaziatura 1:2:1, sporgenza sui kana, parole jukugo), e i segni kanbun allargano l’unità del loro carattere. Il costo è lineare nella lunghezza del paragrafo: il capitolo 1 del 紅樓夢 (6.949 caratteri) si compone misurando 1.298 caratteri, ogni carattere distinto una volta sola, dove misurare i prefissi del paragrafo ne richiedeva 636.948. Vedi [Impaginazione cinese](/it/docs/chinese-layout).
+
+Sotto, è qui che Pretext si guadagna il posto. La chiamata `prepare()` è la parte costosa: analizza il testo con il motore dei font del canvas e mette in cache il risultato. E la chiamata `layout()`? Pura aritmetica, quasi gratis. Quella separazione è tutto. Una volta preparato il testo, il motore può dividerlo di nuovo a un costo trascurabile: a un’altra larghezza, per un paragrafo che prosegue in una colonna più stretta, o con una riga in più, per un paragrafo che il bilanciamento delle colonne allenta. Prepara una volta, impagina tutte le volte che ti serve.
+
+```typescript
+// Simplified: how the measure module uses pretext internally
+const prepared = prepare(paragraphText, '16px/1.5 Inter');
+const { height } = layout(prepared, columnWidth, 24); // 24px line-height
+// => "This paragraph is 168px tall at 320px column width — that's 7 lines."
+```
+
+### Fase 3: posizionamento in pagine e colonne
+
+- **Ingresso:** un blocco misurato
+- **Azione:** compone il blocco nella colonna corrente. Crea i nodi `VDTPage` e `VDTColumn` man mano che il flusso ne ha bisogno. Tiene traccia di `availableHeight` per ogni colonna. Quando un blocco non ci sta, lo divide (fase 5) o passa alla colonna o alla pagina successiva
+- **Strategia:** posizionamento avido del primo adatto. Le interruzioni di colonna e di pagina seguono l’assegnazione valida più semplice
+- **Uscita:** al blocco vengono assegnati `pageIndex`, `columnIndex` e `bbox`
+
+È il momento in cui il VDT diventa un documento vero. Prima di questa fase un blocco è una voce in un elenco piatto, senza indirizzo. Il posizionamento assegna ognuno a una pagina e a una colonna, come versare acqua in una griglia di contenitori: riempi la colonna 1 finché trabocca, versa nella colonna 2, quando la pagina è piena ne cominci una nuova.
+
+Prima che un qualunque blocco di contenuto arrivi su una pagina, la passata riserva lo spazio per gli elementi strutturali: intestazioni e piè di pagina (impaginati come slot di progetto grafico a partire da `config.header` / `config.footer`) e tutte le fasce di elementi flottanti già in attesa per la pagina appena aperta. Queste riserve riducono la `availableHeight` di ogni colonna, così quando i blocchi di contenuto cominciano a entrare il motore sa già esattamente quanto spazio c’è.
+
+**Fasce di colonne e colonne a tutta larghezza.** `page.columns` è un array piatto in ordine di lettura, ma una pagina non è sempre una sola fila di colonne. In un’impaginazione a più colonne un blocco in linea a tutta larghezza taglia la pagina in *fasce* sovrapposte. Contano come tali quattro cose: un `:::callout` il cui stile o la cui recinzione imposta `span: 'page'`, un gruppo `:::columns{span="page"}` nel testo corrente, un `::resource` in linea il cui posizionamento si risolve in `{ position: 'here', span: 'page' }`, e una striscia a fumetti composta attraverso la pagina nel punto in cui è scritta (`:::strip{span=page}`). Le ultime tre vengono avvolte in un riquadro a tutta larghezza senza cornice prima del posizionamento (`pipeline/flowColumns.ts`, `pipeline/spanEmbeds.ts`), così un solo meccanismo le compone tutte e quattro. Al taglio, le colonne di testo della fascia corrente vengono chiuse alla linea di taglio (altezza limitata, `availableHeight` a zero), il blocco riceve una propria colonna a tutta larghezza con `kind: 'span'`, e una nuova fascia di colonne di testo (`band + 1`, stessa x e stessa larghezza, stesso fondo della fascia che sostituisce) viene aggiunta sotto. Le colonne vengono solo aggiunte, mai tolte, quindi `columnIndex` continua a indirizzare `page.columns[i]`, e i renderer non hanno bisogno di disegni speciali: ogni colonna ritaglia sul proprio bbox (allargato da `columnClipRect`: 2 pt per l’inchiostro dei glifi più quanto sporgono ai lati le sovrapposizioni del progetto grafico della colonna, come la linguetta di un titolo o il badge di un riquadro, e quanto il progetto di un titolo arriva sopra la sua cima; il piede resta il bordo; lo stesso rettangolo nei backend canvas e PDF), e il filetto tra le colonne si disegna per fascia tra colonne di testo adiacenti, cominciando sotto la fascia che un titolo a tutta larghezza occupa in testa alla pagina (`columnRuleSegments`), con il filetto proprio della pagina quando una sezione con stile ne imposta uno (`VDTPage.columnRule`, letto tramite `pageColumnRule`). Il bilanciamento delle colonne ignora le colonne a tutta larghezza, le colonne laterali e le fasce di altezza zero. Un blocco a tutta larghezza taglia direttamente dove la fascia è pari (in cima alla pagina, subito dopo un titolo di apertura, un altro blocco a tutta larghezza o una fascia di elementi flottanti in alto); se arriva in una fascia irregolare propone invece un *limite di fascia* (`packages/postext/src/pipeline/bandCaps.ts`): le colonne della fascia che si apre con un dato blocco di contenuto vengono accorciate a `ceil(Σ used / N / grid)` righe, e `buildDocument` riesegue la passata di posizionamento con il limite (aumentandolo di una riga alla volta quando la fascia limitata trabocca, fino a `MAX_BAND_CAP_RETRIES` = 3 volte, e poi abbandonandolo, così il blocco ricade in cima alla pagina successiva), in modo che il testo riempia le colonne accorciate rispettando ogni regola di posizionamento, finisca pari al taglio, e le colonne chiuse conservino il gioco rimanente come `availableHeight` che il bilanciamento potrà assorbire. Lo stesso meccanismo pareggia la fascia di *chiusura* di un capitolo e del documento (`headings.balancing.trailing`): un’apertura di capitolo, una `:::part`, un riquadro `placement: 'fixed'` che chiude un capitolo o la fine del documento, raggiunti con le colonne della fascia corrente irregolari, propongono un limite di `kind: 'trailing'`, con il blocco di confine come chiave; poiché un limite ha come chiave il blocco che apre la sua fascia, e quel blocco si sposta ogni volta che una pagina precedente assorbe righe di bilanciamento in più, i limiti di chiusura si risolvono *dopo* che il bilanciamento delle colonne si è assestato, con i suggerimenti di bilanciamento congelati, e un breve giro di rifinitura lascia poi che le leve riempiano ciò che il taglio ha lasciato corto. I riquadri `placement: 'fixed'` escono dal flusso: il riquadro è ancorato all’area del contenuto della pagina, al box di rifilo o al box dell’abbondanza, le colonne di testo che copre cedono quella zona (tagliata dal basso o dall’alto come una fascia di elementi flottanti, passando alla pagina successiva in caso di conflitto), e cornice e figli vanno in `page.floats`.
+
+**Pagine verticali.** Con `layout.writingMode: 'vertical-rl'` la passata impagina una pagina orizzontale ruotata di un quarto di giro in senso orario. Su una pagina del genere area del contenuto, colonne, blocchi, righe, elementi flottanti e aree delle note sono in **coordinate del flusso**, e `VDTPage.flow` porta la rotazione che li porta sul foglio: un punto del flusso (x, y) va a finire in (larghezza della pagina − y, x). A valle nessuno ha bisogno di saperlo: divisione, elementi flottanti, regole di tenuta e bilanciamento lavorano nel riferimento del flusso come su qualunque pagina, una colonna del flusso è un registro sul foglio, e ogni backend applica la rotazione quando dipinge (`flowToPage` e `pageToFlow` convertono i punti nei due sensi). Testatine, folio, segni di taglio e sfondo restano in coordinate del foglio. Figure e tabelle si impaginano come blocchi diritti ruotati all’indietro dentro il riferimento, e i caratteri che stanno diritti vengono ruotati all’indietro uno per uno al momento della pittura.
+
+### Fase 4: posizionamento delle risorse
+
+- **Ingresso:** il piano degli elementi flottanti della fase 1, e le pagine come sono state posizionate fin lì
+- **Azione:** fa flottare ogni risorsa citata nel primo posto libero dopo il suo primo riferimento: il fondo della colonna che la cita, la cima o il fondo della colonna vuota successiva, o una fascia della pagina successiva (`packages/postext/src/pipeline/floatPlacement.ts` pianifica gli elementi flottanti, `pipeline/floatSlots.ts` enumera e misura i posti; la passata di posizionamento riserva le fasce mentre procede)
+- **Quando:** appena il blocco che contiene il primo riferimento ha trovato posto, dentro lo stesso percorso; il testo posizionato dopo scorre oltre la fascia
+- **Risoluzione del posizionamento:** per ogni risorsa, il motore risolve `resource.placement` → il `resourceType.defaultPlacement` del tipo → il valore predefinito incorporato `{ position: 'auto', span: 'column' }`
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '160px' }}>Campo di posizionamento</th>
+      <th>Comportamento</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>position: 'auto'</code></td>
+      <td>La risorsa prende il primo posto libero dopo il suo riferimento, in alto o in basso: è il valore predefinito</td>
+    </tr>
+    <tr>
+      <td><code>position: 'top'</code></td>
+      <td>Solo posti in alto: una fascia in cima alla colonna o alla pagina vuota successiva, che spinge sotto di sé il contenuto della colonna</td>
+    </tr>
+    <tr>
+      <td><code>position: 'bottom'</code></td>
+      <td>Solo posti in basso: una fascia in fondo a una colonna o a una pagina, che accorcia la colonna sopra di sé</td>
+    </tr>
+    <tr>
+      <td><code>position: 'here'</code></td>
+      <td>Rinuncia a flottare: la risorsa si incorpora in linea alla sua direttiva <code>::resource</code>, esattamente dove compare nel flusso</td>
+    </tr>
+    <tr>
+      <td><code>span: 'column'</code></td>
+      <td>La fascia occupa una sola colonna (su una pagina appena aperta il motore sceglie la colonna con più spazio rimasto)</td>
+    </tr>
+    <tr>
+      <td><code>span: 'page'</code></td>
+      <td>La fascia occupa l’intera larghezza del contenuto attraverso tutte le colonne, interrompendo il flusso delle colonne; le fasce a tutta larghezza si riservano per prime, così gli elementi flottanti di colonna si annidano nello spazio rimanente</td>
+    </tr>
+    <tr>
+      <td><code>span: 'side'</code></td>
+      <td>La risorsa si compone nella colonna laterale di un’impaginazione a colonna e mezza che riserva quella colonna agli elementi flottanti (<code>layout.sideColumnRole: 'floats'</code>), impilata accanto al paragrafo che la cita per primo. Su una pagina senza una colonna del genere si comporta come <code>'column'</code></td>
+    </tr>
+  </tbody>
+</table>
+
+`ResourcePlacement` ha più campi di questi due: `rotate`, `width`, `align`, `columns`, `captionSide`, `shrink`, `minScale`, `captionMeasure`, `wrap`, `wrapGap` e `citingPage`. [Configurazione → Tipi di risorsa](/it/docs/configuration-resources#tipi-di-risorsa) e [Formato del documento › Posizionamento](/it/docs/document-format#collocazione) spiegano che cosa fa ciascuno.
+
+- **Posizionamento differito:** un elemento flottante che non entra in nessun posto della pagina corrente aspetta la pagina successiva che il flusso apre e, a un confine di capitolo, viene smaltito su pagine aperte prima del confine. Un’immagine mantiene la sua dimensione a meno che `placement.shrink` (o il `layout.floatShrink` del documento) non le permetta di ridursi allo spazio di un posto. Una tabella troppo alta per una pagina nuova viene tagliata tra le righe e prosegue nelle pagine successive con le righe d’intestazione ripetute (`tableStyle.overflow: 'split'`, il valore predefinito)
+- **Uscita:** risorse posizionate in fasce della pagina (`page.floats`), con l’altezza delle colonne interessate ridotta in modo che il testo scorra attorno alle fasce
+
+Il posizionamento delle risorse è dove le cose si fanno interessanti, perché gli elementi flottanti non si limitano a occupare spazio: rimodellano lo spazio attorno a sé. Quando il blocco che contiene un riferimento ha trovato posto, all’elemento flottante in attesa si offrono i posti liberi della pagina corrente dopo di esso: il fondo di quella colonna, poi la cima e il fondo della colonna vuota successiva (per un elemento flottante a tutta larghezza, il fondo della pagina, quando ogni colonna ha ancora spazio); ciò che non entra da nessuna parte aspetta la pagina successiva, dove gli elementi flottanti in attesa reclamano le loro fasce prima che entri qualunque testo. Le colonne si restringono per stare tra le fasce, il testo scorre senza interruzioni nelle colonne ristrette, e il lettore vede la figura vicino al punto in cui viene citata (ma non esattamente lì). È la pratica abituale della composizione professionale; i libri lo fanno di continuo.
+
+**Regole di posizionamento.** Oltre alla scelta del posizionamento, gli elementi flottanti seguono vincoli editoriali rigorosi:
+
+- **Regola del dopo-riferimento.** Un elemento flottante va nel primo posto libero *dopo* il suo primo riferimento nel testo, mai prima. Il lettore incontra prima il riferimento, poi vede la risorsa. Se un elemento flottante non ci sta, viene rimandato in avanti a un posto o a una pagina successivi, mai indietro.
+- **Ordine dei riferimenti dentro una sequenza.** Gli elementi flottanti in attesa si offrono a ogni posto nell’ordine del primo riferimento, e uno che non entra da nessuna parte trattiene quelli che lo seguono nella sua sequenza di numerazione: la tabella 3 non finisce mai dopo la tabella 4, la figura 12 mai prima della figura 11. Le sequenze non si trattengono a vicenda: una tabella in attesa lascia passare una figura successiva. Perché una tabella lunga non debba aspettare una pagina nuova, quella a cui si offre la cima di una colonna vuota viene tagliata a misura di quella colonna e prosegue nel posto successivo (la colonna accanto, o le fasce della pagina successiva), con le righe d’intestazione ripetute.
+- **Barriera di capitolo.** Gli elementi flottanti non escono mai dal loro capitolo. A un’apertura di capitolo (un livello di titolo con `breakBefore` o `span: 'page'`), a una `:::part`, a uno stile di riquadro con `floatBarrier: true` e alla fine del documento, ogni elemento flottante in attesa viene posizionato prima: nei posti liberi della pagina, poi su pagine aperte prima del confine (ciascuna con almeno un elemento flottante posizionato d’autorità), prima dell’interruzione di pagina propria del confine. Prima di aprire una pagina del genere, a una figura o a una tabella ancora in attesa si offrono ancora una volta i posti liberi della pagina corrente, qualunque sia la sua `position`: un elemento flottante di testa pagina citato nella pagina di chiusura di un capitolo prende il piede di quella pagina, sotto le colonne bilanciate, invece di una pagina tutta sua (i riquadri flottanti mantengono il loro posizionamento). Un `:::pagebreak` manda gli elementi flottanti in attesa alla pagina che lo segue, dopo un’eventuale pagina di riempimento per la parità.
+- **Spazio minimo per il testo.** Su una pagina appena aperta una fascia si riserva solo se nelle colonne interessate entrano ancora almeno 3 righe di testo corrente, con un’eccezione: un elemento flottante sovradimensionato può essere posizionato d’autorità in una fascia ancora tutta di testo, così una figura dominante non può bloccare la coda all’infinito. Un posto nella pagina corrente deve stare nell’altezza rimasta della colonna; lì la regola delle 3 righe vale solo accanto a un’altra fascia di elementi flottanti.
+- **Respiro.** Una distanza pari a un’interlinea del testo corrente separa una fascia dal testo accanto.
+- **Allineamento alla griglia della linea di base.** Le fasce in alto si arrotondano *per eccesso* a un multiplo della griglia della linea di base (allargando la distanza sotto l’elemento flottante), così ogni riga spostata cade ancora sulla griglia. Gli elementi flottanti in basso si ancorano in modo che l’ultima linea di base della didascalia stia sulla griglia: la didascalia condivide la linea di base con l’ultima riga di testo delle colonne vicine, e le pagine finiscono alla stessa altezza in tutte le colonne e nelle pagine affiancate.
+
+**Numerazione per tipo al primo riferimento.** Le risorse *non* sono numerate nel markdown. `pipeline/resourceNumbering.ts` assegna a ogni risorsa il suo numero la prima volta che viene citata in ordine di lettura, usando il `ResourceType` della risorsa: il `numberingTemplate` combina il contatore per tipo `{n}` con i contatori dei titoli `{h1}`..`{h6}` in vigore al riferimento (per esempio `'{h1}.{n}'` → «1.7»), `resetOn` decide quando il contatore ricomincia (`'never'` o a qualunque livello di titolo), e `counterFormat` sceglie numeri decimali, romani o alfabetici. I tipi incorporati *Figura* e *Tabella* vengono da `defaultResourceTypes(locale)`, localizzati nella lingua del documento. Poiché la numerazione segue l’ordine del primo riferimento, inserire una nuova figura a metà documento rinumera automaticamente tutto ciò che viene dopo, senza modifiche al sorgente.
+
+### Fase 5: interruzioni e regole di tenuta
+
+È la fase che separa un motore di impaginazione da un riversatore di testo. Applica le regole di qualità editoriale che i compositori professionisti hanno applicato a mano per secoli, e che un rendering ingenuo del testo ignora del tutto.
+
+Tre meccanismi si dividono il lavoro, ciascuno nel punto in cui esiste l’informazione che gli serve: una **penalità per le righe finali troppo corte** dentro l’algoritmo di divisione in righe, una **divisione con punteggio** dove un paragrafo incontra la fine di una colonna, e **regole strutturali di tenuta** tra i blocchi.
+
+#### Vedove, orfane e righe finali troppo corte
+
+**Vedove e orfane** sono i segni più visibili di una composizione dilettantesca:
+
+- Una **vedova** è una sola riga di un paragrafo lasciata da sola in fondo a una colonna. Il paragrafo
+  prosegue nella colonna successiva, ma quella riga isolata sembra abbandonata (come se la colonna
+  fosse finita troppo presto).
+- Un’**orfana** è una sola riga di un paragrafo isolata in cima a una colonna. Il grosso del
+  paragrafo sta nella colonna precedente, ma una riga è traboccata (e sembra staccata dal suo
+  contesto).
+- Una **riga finale troppo corta** è l’ultima riga di un paragrafo formata da una sola parola breve (o due): visivamente troppo corta per sembrare una vera riga di testo. Strutturalmente meno grave di una vedova, ma altrettanto fastidiosa per un lettore attento.
+
+**Le righe finali troppo corte si sistemano nell’algoritmo di divisione in righe.** Una riga finale corta appartiene solo al paragrafo: la sua ultima riga è corta dovunque il paragrafo vada a finire. Per questo è, delle tre, l’unica regola che vede l’algoritmo Knuth-Plass. Quando un insieme di punti di divisione chiuderebbe il paragrafo su una riga il cui contenuto è più stretto di `runtMinCharacters × normalSpaceWidth` (`runtMinCharacters` predefinito 20: venti spazi tra parole di contenuto, circa da 8 a 12 lettere), l’algoritmo aggiunge `runtPenalty` (predefinita 1000) alla bruttezza di quella riga dentro la formula quadratica dei demeriti, così compete sulla stessa scala della bruttezza di riga (che satura a 10000) invece di esserne schiacciata. La penalità si somma ai demeriti abituali (bruttezza, costo della sillabazione, discordanza di classe di adattamento) in un’unica ottimizzazione globale, e l’algoritmo trova quasi sempre un insieme di divisioni senza una riga finale troppo corta. Quando non ci riesce, `bodyText.tightenRunts` compone il paragrafo con una riga in meno se i suoi spazi tra parole, e un poco di tracking negativo, possono assorbire la differenza. Il modulo di misura passa la penalità all’algoritmo (`measure/plain.ts`, `measure/rich.ts`) e `knuthPlass/breakpoints.ts` la applica.
+
+**Vedove e orfane si sistemano a fine colonna.** L’algoritmo di divisione in righe divide un paragrafo per una larghezza. Non sa dove starà il paragrafo sulla pagina, quindi non può sapere quale delle sue righe chiuderà una colonna. La passata di posizionamento lo sa. Quando le righe di un paragrafo non entrano tutte in ciò che resta della colonna, `chooseParagraphSplit` (in `pipeline/orphanWidow.ts`) prova ogni divisione `k` delle righe già divise, da 0 al numero che ci sta: `k` righe restano e il resto apre la colonna successiva. Ogni candidata riceve un punteggio:
+
+- `slackWeight · slack²` per le righe che lascia vuote al piede della colonna, dove `slack` sono le righe che ci stanno meno `k` (`slackWeight` predefinito 10);
+- più `widowPenalty` (predefinita 1000) quando lascia meno di `widowMinLines` righe in fondo alla colonna;
+- più `orphanPenalty` (predefinita 1000) quando porta meno di `orphanMinLines` righe in cima alla successiva.
+
+Vince la divisione con il punteggio più basso, e `k = 0` sposta il paragrafo intero. Le regole sono morbide, e i numeri dicono quanto: una penalità di 1000 è il costo di gioco di dieci righe vuote (10 · 10² = 1000), quindi con i valori predefiniti una divisione che rispetta entrambe le regole vince ogni volta che lascia vuote meno di dieci righe della colonna. Oltre quel punto, una vedova o un’orfana possono essere la scelta più economica. La divisione sceglie tra le righe che l’algoritmo di divisione ha già prodotto; non divide di nuovo il paragrafo. Le voci di elenco passano per la stessa divisione tramite `avoidOrphansInLists` e `avoidWidowsInLists`, e prendono la penalità per le righe finali corte tramite `avoidRuntsInLists` (tutti `true` per impostazione predefinita).
+
+Tutto questo si regola in `BodyTextConfig`: vedi [Configurazione → Orfane, vedove, righe finali corte e regole di tenuta](/it/docs/configuration-text#orfane-vedove-righe-finali-corte-e-regole-per-tenere-unito). Impostare una qualunque `*Penalty` a `0` disattiva di fatto quella regola.
+
+#### Regole strutturali di tenuta
+
+Alcuni raggruppamenti sono più grandi di un singolo paragrafo: si estendono su blocchi adiacenti e non si possono affrontare solo con la divisione in righe. La passata di posizionamento li fa rispettare man mano che ogni blocco trova posto, spostando in avanti interi gruppi quando altrimenti verrebbero divisi da un’interruzione di colonna o di pagina:
+
+- **Titolo con il suo primo paragrafo.** Un titolo non deve mai comparire in fondo a una colonna se il paragrafo che introduce comincerebbe nella colonna successiva. Lo garantisce `headings.keepWithNext` (predefinito `true`): se non c’è spazio per il titolo *più* il minimo per le vedove del testo corrente (`bodyText.widowMinLines`, predefinito `2`) del blocco successivo, o solo una riga quando `avoidWidows` è disattivato, il titolo viene spinto avanti per viaggiare con il suo testo.
+- **Titoli consecutivi.** Quando più titoli compaiono in sequenza (per esempio un h2 seguito da un h3 seguito da un paragrafo), l’intero gruppo deve restare unito. Nessuno dei titoli può restare isolato in fondo a una colonna senza il contenuto che introduce.
+- **Elenchi introdotti dai due punti.** Quando un paragrafo finisce con i due punti che introducono direttamente un elenco, la riga con i due punti deve restare con l’inizio dell’elenco. Lo garantisce `bodyText.keepColonWithList` (predefinito `true`): se posizionare il paragrafo non lascerebbe spazio per l’inizio della prima voce dell’elenco (tutta la voce quando le regole di orfane e vedove per gli elenchi la tengono intera; una riga con `bodyText.colonListRoom: 'line'`, come fino a postext 1.4), l’ultima riga con i due punti (o l’intero paragrafo, se è di una riga) si sposta avanti insieme all’elenco. Ogni volta che questa regola deve spingere l’intero paragrafo e nella colonna lo precede immediatamente una serie di titoli, anche quei titoli vengono tirati avanti, così `keepWithNext` non viene violato in silenzio; l’unica eccezione è quando la colonna contiene solo i titoli che uno spostamento precedente ha già portato avanti, e in quel caso il motore tiene il paragrafo con il titolo e accetta la separazione, più lieve, tra due punti ed elenco per evitare un ciclo.
+- **Figura con la sua didascalia.** Una figura e la sua didascalia sono un’unità inseparabile. Si spostano sempre insieme.
+
+Quando rileva una violazione di tenuta, il motore spinge l’intero gruppo alla colonna o alla pagina successiva. La colonna che ha lasciato finisce allora più corta, delle righe che il gruppo avrebbe occupato. Riempirla è compito del [Bilanciamento delle colonne](#bilanciamento-delle-colonne).
+
+Queste correzioni sono invisibili quando sono fatte bene (un lettore non dovrebbe mai notarle). Ma la loro *assenza* salta subito all’occhio di chiunque legga con attenzione: quella goffa riga isolata in cima a una colonna, quei vuoti irregolari dove il motore ha smesso di cercare di far entrare il testo. Gli editori professionali hanno interi manuali di stile per prevenire esattamente questi problemi. Postext li automatizza.
+
+### Il driver delle passate
+
+<Illustration name="ConvergenceLoop" data='{"title": "La passata di posizionamento e le sue riesecuzioni", "desc": "Una passata di posizionamento porta il contenuto attraverso cinque fasi: struttura, misura, posizionamento, elementi flottanti, e interruzioni e regole di tenuta. buildDocument riesegue l’intera passata con suggerimenti tratti dalla passata precedente: un limite di fascia, leve di bilanciamento, il taglio di una fascia di chiusura, etichette di pagina o numeri di nota assestati.", "caption": "Una passata posiziona l’intero documento. buildDocument la riesegue con dei suggerimenti finché ogni giro si assesta o raggiunge il suo limite.", "passBadges": [{"num": "Fase 1", "name": "struttura"}, {"num": "Fase 2", "name": "misura"}, {"num": "Fase 3", "name": "posizionamento"}, {"num": "Fase 4", "name": "elementi flottanti"}, {"num": "Fase 5", "name": "interruzioni, regole di tenuta"}], "loopBadge": "una passata di posizionamento", "loopCondition": "riesegui con suggerimenti: limiti di fascia, leve di bilanciamento, tagli delle fasce di chiusura"}' />
+
+`buildDocument` è un driver attorno alla passata di posizionamento (`buildDocumentGen` e `buildDocumentBalanced`, in `pipeline/build.ts`). Esegue la passata una volta. Poi legge ciò che la passata ha riportato e, dove una decisione richiede un secondo sguardo, riesegue la passata, intera, con dei suggerimenti (`PassHints`): i limiti, le righe in più e i numeri che la passata successiva deve applicare. Quando non si presenta nessuna delle condizioni della tabella qui sotto, quella prima passata è l’intera composizione.
+
+Le riesecuzioni avvengono a giri, ciascuno dedicato a un tipo di decisione, in quest’ordine:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '150px' }}>Giro</th>
+      <th>Si esegue quando</th>
+      <th>Alla passata successiva si comunica</th>
+      <th style={{ width: '230px' }}>Limite</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Sommario</strong></td>
+      <td>Il documento stampa numeri di pagina che l’applicazione ospite non ha fornito: un <code>:::toc</code> o un <code>:::index</code> senza <code>outline</code> nel contenuto, o un riferimento che stampa la pagina di un’ancora</td>
+      <td>La struttura con le etichette di pagina della composizione precedente</td>
+      <td><code>MAX_TOC_ROUNDS</code>: 3 composizioni oltre la prima</td>
+    </tr>
+    <tr>
+      <td><strong>2. Numeri delle note</strong></td>
+      <td><code>footnotes.numbering</code> è <code>'page'</code>, <code>'column'</code> o <code>'spread'</code> e le note stanno al piede della colonna o della doppia pagina, quindi il numero di una nota dipende da dove l’impaginazione la colloca</td>
+      <td>Il numero che ogni nota ha avuto nella composizione precedente (<code>footnoteNumbers</code>)</td>
+      <td><code>MAX_FOOTNOTE_ROUNDS</code>: 3 composizioni oltre la prima</td>
+    </tr>
+    <tr>
+      <td><strong>3. Didascalie laterali</strong></td>
+      <td>Un riquadro laterale o un elemento flottante laterale si è sovrapposto alla didascalia che una figura ha collocato nella colonna laterale (<code>placement.captionSide</code>)</td>
+      <td>Quelle didascalie vanno sotto le loro figure (<code>captionUnder</code>)</td>
+      <td>3 passate</td>
+    </tr>
+    <tr>
+      <td><strong>4. Elementi flottanti alla pagina che li cita</strong></td>
+      <td>Un elemento flottante con <code>placement.citingPage</code> è finito su una pagina o colonna successiva alla riga che lo cita</td>
+      <td>Quella pagina, o colonna, si apre con l’elemento flottante in testa (<code>citingPageFloats</code>)</td>
+      <td><code>MAX_CITING_PAGE_ROUNDS</code>: 3 giri di proposte, poi una passata per ogni gruppo di elementi flottanti che una passata non è riuscita a tenere lì</td>
+    </tr>
+    <tr>
+      <td><strong>5. Limiti di fascia</strong></td>
+      <td>Un blocco a tutta larghezza è arrivato in una fascia con le colonne irregolari (vedi <a href="#fase-3-posizionamento-in-pagine-e-colonne">Fase 3</a>)</td>
+      <td>L’altezza a cui tagliare quella fascia (<code>bandCaps</code>)</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 passate di proposte e tentativi. Un limite cresce di una riga fino a 3 volte (<code>MAX_BAND_CAP_RETRIES</code>), poi viene abbandonato</td>
+    </tr>
+    <tr>
+      <td><strong>6. Bilanciamento delle colonne</strong></td>
+      <td><code>headings.balancing.enabled</code> è attivo e una colonna bilanciabile finisce corta</td>
+      <td>Righe di griglia in più per blocco e i paragrafi da dividere con una riga in più (<code>balanceExtraPx</code>, <code>balanceLooseness</code>)</td>
+      <td><code>MAX_BALANCING_PASSES</code>: 10 tentativi per segmento. <code>MAX_BALANCING_PASSES_PER_DOCUMENT</code>: 30 passate per documento</td>
+    </tr>
+    <tr>
+      <td><strong>7. Fasce di chiusura</strong></td>
+      <td>Il bilanciamento è attivo con <code>headings.balancing.trailing</code>, e un capitolo o il documento finisce in una fascia con le colonne irregolari</td>
+      <td>Un limite di chiusura per quella fascia, con i suggerimenti di bilanciamento congelati</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 passate di proposte e tentativi, ogni limite con i suoi 3 tentativi</td>
+    </tr>
+    <tr>
+      <td><strong>8. Rifinitura</strong></td>
+      <td>Il giro 7 ha mantenuto un limite di chiusura</td>
+      <td>Ancora una volta il bilanciamento delle colonne, sull’impaginazione limitata, con nuovi segmenti</td>
+      <td>10 tentativi per segmento e 30 passate, contati da capo</td>
+    </tr>
+  </tbody>
+</table>
+
+I giri da 3 a 8 si eseguono uno dopo l’altro dentro una sola composizione (`buildDocumentBalanced`). I giri 1 e 2 stanno fuori: un giro del sommario o dei numeri delle note è una composizione intera, con i propri giri da 3 a 8. Non c’è un limite per una composizione nel suo insieme, solo questi.
+
+**Ogni riesecuzione è un posizionamento completo.** Un suggerimento non corregge l’albero della passata precedente. La passata posiziona di nuovo il documento con il suggerimento in vigore, così un titolo con due righe in più sopra di sé, o una fascia tagliata sei righe più su, passa per le stesse regole di interruzione e di tenuta di tutto il resto. Il driver poi controlla il risultato: un limite di fascia il cui riquadro non è caduto sul taglio viene aumentato o abbandonato, e una passata di bilanciamento che non ha migliorato un segmento viene scartata per quel segmento. Ciò che il driver restituisce è fatto di pagine posizionate da una passata: l’intera passata, oppure, dopo il bilanciamento delle colonne, le pagine di ogni segmento prese dalla migliore passata che quel segmento ha avuto.
+
+**Che cosa riporta il documento.** `doc.iterationCount` conta le passate di posizionamento dietro l’impaginazione restituita: la prima e quelle dei giri dei limiti di fascia, del bilanciamento e delle fasce di chiusura. Le passate delle didascalie laterali e della pagina che cita non vi rientrano, e nemmeno le composizioni precedenti di un giro del sommario o dei numeri delle note; `BuildDocumentOptions.onPass` viene chiamata per ogni passata, con il suo tempo reale. `doc.converged` riguarda solo il bilanciamento delle colonne. È `true` quando ogni segmento è finito senza righe vuote nelle sue colonne bilanciabili o senza più leve da proporre, e `false` quando un segmento si è fermato su una passata che non lo ha migliorato, o ha esaurito i tentativi, con un vuoto ancora aperto. Con il bilanciamento disattivato è `true`. Un documento con `converged: false` è completo: contiene la migliore impaginazione trovata dal driver, e qualche sua colonna finisce corta.
+
+### Bilanciamento delle colonne
+
+- **Quando:** come giri 6 e 8 del driver (attivo per impostazione predefinita; `headings.balancing.enabled: false` lo disattiva, ed è disattivato per impostazione predefinita nel testo verticale e su una griglia dei caratteri, vedi [Configurazione → Bilanciamento delle colonne](/it/docs/configuration-text#bilanciamento-delle-colonne))
+- **Ingresso:** la migliore impaginazione fin lì e le righe di griglia vuote al piede di ogni colonna bilanciabile (`collectColumnGaps`, in `pipeline/columnBalancing.ts`)
+- **Azione:** propone leve che riempiono sul posto ogni colonna corta, esegue con esse la passata di posizionamento e mantiene il risultato per un segmento quando il suo punteggio dei vuoti è sceso
+- **Uscita:** colonne che finiscono sull’ultima riga di griglia della pagina, con ogni leva registrata sul blocco a cui è stata applicata (`VDTBlock.balancing`)
+
+Le colonne sbilanciate si notano subito. Le regole di interruzione ne lasciano di continuo: un titolo spostato avanti per restare con il suo testo, un paragrafo spostato intero per evitare una vedova, una figura che non entrava. Una colonna che si ferma due righe sopra quella accanto sembra incompiuta, come se l’impaginazione si fosse arresa a metà strada.
+
+Nessun blocco cambia colonna per rimediare. Un’interruzione di colonna è legata all’elemento che non entrava: il blocco che apre la colonna successiva era troppo alto per lo spazio rimasto, e lo è ancora per uno spazio più piccolo. Quindi una colonna corta si può riempire solo dall’interno, al massimo del suo vuoto, e niente passa nella colonna successiva. La correzione è locale, ed è ciò che fa a mano un compositore: aggiungere una riga di spazio dove l’occhio la accetta. Una colonna è bilanciabile quando il contenuto è scorso oltre di essa in una colonna successiva della stessa pagina o, per l’ultima colonna di una pagina, quando la pagina prosegue nella successiva. L’ultima pagina di un capitolo può finire corta; la sua fascia di chiusura viene invece tagliata pari da un limite di chiusura (vedi [Fase 3](#fase-3-posizionamento-in-pagine-e-colonne)).
+
+Per ogni vuoto le leve si propongono in ordine di priorità editoriale, lo stesso ordine in cui le presenta [Configurazione → Bilanciamento delle colonne](/it/docs/configuration-text#bilanciamento-delle-colonne):
+
+1. **Un riquadro che chiude la colonna** prende lo spazio sotto il suo piede come spazio sopra di sé, così il suo piede cade sull’ultima riga di griglia della pagina, pari all’ultima riga della colonna accanto. Registrata come `trailingCallout`.
+2. **Un’immagine con una zona sicura** (`Resource.safeArea`), composta in linea nella colonna o flottante in testa o al piede su quella sola colonna, cresce di righe di griglia intere, ritagliata dentro la sua zona sicura. Un’immagine più alta non lascia buchi sulla pagina, perciò questa leva si applica prima che si aggiunga qualunque spazio. Registrata come `flexFigure`.
+3. **I titoli** prendono righe di griglia intere sopra di sé, una riga alla volta a turno, cominciando dal titolo più importante (il livello più basso), che così ottiene la quota maggiore. Un titolo proprio in cima a una colonna non ne prende, così le colonne continuano a cominciare in cima alla pagina. In questo modo un titolo prende solo le sue prime righe prima che si provino le leve qui sotto, e altre, fino al suo limite, quando quelle non hanno più nulla da dare. Registrata come `heading`.
+4. **Le fini degli elenchi** prendono una riga di griglia dove finisce un elenco. Registrata come `listEnd`.
+5. **Formule, riquadri ed elementi flottanti in alto** prendono una riga di griglia sotto di sé: sotto una formula in display o un riquadro dopo cui il testo riprende (`afterDisplay`), e tra una figura o tabella in testa alla colonna e il testo sotto di essa (`afterFloat`).
+6. **I paragrafi allentati** sono l’ultima risorsa. I paragrafi della colonna, a partire dal più lungo, vengono divisi ciascuno con una riga in più (il `\looseness=+1` di TeX, tramite l’opzione `looseness` dell’algoritmo Knuth-Plass), e la composizione più lunga si accetta solo finché ogni riga resta entro `bodyText.maxWordSpacing`. Quando la sola spaziatura tra le parole non basta a guadagnare la riga, il paragrafo può anche prendere il più piccolo tracking positivo che ci riesce, entro un limite. Registrata come `looseParagraph`.
+
+I limiti, gli interruttori e le eccezioni (una griglia dei caratteri, le pagine di chiusura, un elemento flottante su più colonne) sono chiavi di `headings.balancing`. La pagina Configurazione li elenca ed è tenuta aggiornata; questa pagina non li ripete.
+
+Una proposta si verifica posizionandola. La passata che applica le leve è un posizionamento completo, e di tanto in tanto una leva sposta comunque del contenuto oltre un’interruzione di colonna: un paragrafo diviso la cui testa non entra più, un elemento flottante che ha perso il suo posto. Le pagine dopo quel punto scorrono diversamente e si aprono vuoti altrove. Il driver lo vede nel punteggio, scarta la passata per quel segmento e mette in lista nera le leve appena applicate nella prima colonna cambiata, così la proposta successiva mantiene le leve che hanno funzionato e tralascia quella che ha provocato la cascata.
+
+**Il bilanciamento converge per segmento.** Le pagine tra interruzioni esplicite (un’apertura di capitolo, un `:::pagebreak`) si impaginano indipendentemente le une dalle altre: niente scorre oltre un’interruzione del genere, quindi una leva di bilanciamento dentro una serie di pagine non può mai spostare una riga di un’altra. Il ciclo di bilanciamento delle colonne giudica perciò ogni *segmento* per conto suo. Il suo punteggio dei vuoti è il numero di righe di griglia vuote al piede delle sue colonne bilanciabili. Una passata posiziona comunque l’intero documento, ma ogni segmento accetta o rifiuta la sua parte di leve in base al proprio punteggio dei vuoti, mette in lista nera le proprie cascate, si stabilizza per conto suo e spende il proprio budget di tentativi; un segmento il cui nuovo tentativo è peggiorato riprende le sue pagine dalla migliore passata che ha avuto, mentre gli altri vanno avanti. Un libro di trenta capitoli si bilancia così esattamente come si bilancerebbero i suoi capitoli uno per uno (il PDF del libro intero e il PDF del solo capitolo sono identici per quel capitolo), invece di far costare a ogni pagina del libro una passata per una cascata in un punto qualsiasi.
+
+I limiti sono una valvola di sicurezza. Alcune colonne non si possono chiudere: una che contiene solo paragrafi brevi non ha leve da azionare, e una le cui leve spingono ciascuna un blocco oltre l’interruzione di colonna non ne ha nessuna da mantenere. Il motore conserva la migliore impaginazione trovata e lascia corta quella colonna. Poiché le leve sono registrate sui blocchi, una bozza di controllo o un test possono elencare le colonne che niente ha chiuso (vedi [Configurazione → Quale leva è scattata](/it/docs/configuration-text#quale-leva-è-intervenuta)).
+
+
+## Sistema del ritmo verticale
+
+Tieni controluce un libro ben composto. Le righe della pagina di sinistra coincidono con quelle della pagina di destra. La linea di base della riga 5 nella colonna 1 sta esattamente alla stessa altezza della linea di base della riga 5 nella colonna 2. Questo è il ritmo verticale, ed è una delle prime cose che un occhio esperto controlla quando valuta la qualità tipografica. È anche uno dei tratti che distinguono Postext.
+
+Quando entrambe le colonne contengono solo testo corrente dello stesso corpo, l’allineamento è banale: ogni riga ha la stessa altezza, quindi le linee di base coincidono da sole. La difficoltà arriva nel momento in cui una colonna contiene un titolo di corpo maggiore, un’immagine di altezza arbitraria in pixel o dello spazio in più attorno a una citazione a blocco. Questi elementi «rompono» la griglia: il contenuto sotto di essi si sposta di una quantità che non è un multiplo dell’incremento della linea di base, e di colpo le linee di base di quella colonna non sono più allineate con quelle della colonna accanto. L’armonia visiva è perduta.
+
+L’obiettivo è recuperarla: le linee di base del testo corrente in colonne adiacenti devono allinearsi orizzontalmente, anche quando titoli, immagini o altri elementi di altezza non standard compaiono in una colonna e non nell’altra.
+
+### Griglia della linea di base
+
+Tutto si ancora a un solo numero. Il documento definisce un valore `baselineGrid` ricavato dall’interlinea del testo corrente: per esempio, un testo corrente composto a `16px` con una `line-height` di `1.5` produce una griglia della linea di base di `24px`. Ogni linea di base del testo corrente deve cadere su un multiplo di questo valore. Questo è il patto.
+
+### Elementi che rompono la griglia
+
+Alcuni elementi rompono inevitabilmente la griglia perché la loro altezza non è un multiplo di `baselineGrid`:
+
+- **Titoli** (corpo maggiore, interlinea diversa)
+- **Immagini** (altezza arbitraria in pixel)
+- **Tabelle** (altezza variabile)
+- **Citazioni a blocco** (possono usare un corpo o un padding diversi)
+- **Aree delle note** (le note al piede di una colonna e il loro filetto: l’area del testo della colonna finisce sopra di esse)
+
+### Come il flusso torna sulla griglia
+
+<Illustration name="VerticalRhythm" data='{"title": "Allineamento del ritmo verticale", "desc": "La colonna 1 contiene un titolo che rompe la griglia della linea di base di 12 pixel. Mentre posiziona il titolo, il motore arrotonda per eccesso l’altezza usata nella colonna alla riga di griglia successiva, aggiungendo 12 pixel sotto il titolo, così la riga successiva di testo corrente ricade sulla griglia. La colonna 2 resta sempre allineata.", "caption": "Lo spazio sotto un elemento che rompe la griglia viene arrotondato alla griglia nel momento in cui l’elemento è posizionato, così le linee di base delle colonne restano allineate.", "column1": "Colonna 1", "column2": "Colonna 2", "bodyLine": "Riga di testo corrente", "bodyBaseline": "Riga di testo corrente (linea di base: 24px)", "heading": "Titolo (alto 36px)", "adjustment": "+12px di spazio di correzione", "backOnGrid": "Testo corrente (di nuovo sulla griglia)", "aligned": "allineate", "legendTitle": "Allineamento alla griglia, al posizionamento", "legendSteps": ["1. Componi il blocco: le sue righe, poi il suo spazio sotto (marginBottom)", "2. Arrotonda per eccesso l’altezza usata nella colonna alla riga di griglia successiva", "3. Il blocco successivo comincia lì, quindi lo spazio sotto è un minimo", "4. snapToGrid: false mantiene lo spazio esatto fino al blocco successivo che si allinea"]}' />
+
+La griglia si mantiene al momento del posizionamento, blocco per blocco. Nessuna passata successiva percorre le colonne in cerca di scarti. Le righe del testo corrente sono alte una riga di griglia, quindi una serie di testo corrente che comincia sulla griglia ci resta. Quando la passata di posizionamento ha composto un blocco che può lasciare la griglia, arrotonda per eccesso l’altezza usata nella colonna alla riga di griglia successiva prima che cominci il blocco seguente. I blocchi che si allineano in questo modo sono:
+
+- l’ultimo titolo di una serie di titoli (i titoli consecutivi si susseguono senza allineamento, e l’ultimo riallinea il testo che li segue);
+- l’ultima voce di un elenco, qualunque sia la spaziatura tra le voci;
+- una formula in display;
+- un riquadro, un listato di codice, e una figura o tabella incorporata in linea;
+- l’ultimo paragrafo di un contenitore `:::paragraphs` e una poesia `:::verse`, che hanno un’interlinea propria.
+
+Lo spazio sotto il blocco (`marginBottom`) si conta prima dell’arrotondamento, quindi il margine è un minimo e la griglia decide il resto. Nella figura, la colonna 1 contiene un titolo alto 36px su una griglia di 24px, senza margine sotto. Il suo piede cade 12px oltre una riga di griglia, l’allineamento aggiunge 12px, e la riga successiva di testo corrente comincia sulla griglia, pari alla riga accanto nella colonna 2. Con un `marginBottom` di 16px il piede sarebbe a 52px, e l’allineamento lo arrotonderebbe a 72px.
+
+Le fasce degli elementi flottanti mantengono la griglia a modo loro, come descritto nella [Fase 4](#fase-4-posizionamento-delle-risorse): una fascia in alto si arrotonda per eccesso a righe di griglia intere, e un elemento flottante in basso si ancora in modo che l’ultima linea di base della sua didascalia stia sulla griglia. Il bilanciamento delle colonne aggiunge il suo spazio in righe di griglia intere, quindi anch’esso mantiene la griglia.
+
+Niente confronta una colonna con un’altra. Ogni colonna comincia sulla griglia e ogni allineamento ci ritorna, quindi le righe di colonne adiacenti, e di pagine affiancate, coincidono senza una seconda passata.
+
+**Rinunciare.** `snapToGrid: false` mantiene invece lo spazio esatto sotto un blocco. Si può impostare su `headings` (per tutti i livelli, per un livello o per uno stile di titolo), su uno stile di paragrafo, su uno stile di riquadro e su `codeStyle`. Il testo dopo un blocco del genere può restare fuori griglia fino al blocco successivo che si allinea. Il testo dentro un riquadro segue l’interlinea propria del riquadro e non ha griglia.
+
+
+## Interfaccia dei backend
+
+Esiste una sola fonte di verità per la misurazione del testo (il modulo di misura sopra le metriche dei font del canvas di Pretext), e ogni backend disegna a partire dallo stesso VDT finito che essa ha prodotto.
+
+È una scelta deliberata, e ha una ragione decisiva: **il modo in cui misuri il testo deve corrispondere esattamente al modo in cui lo disegni.** Supponi che la misurazione usi le metriche dei font del canvas, ma che un backend di rendering usi una libreria PDF con tabelle di crenatura leggermente diverse. L’impaginazione non corrisponderebbe all’output. Righe che il motore ha misurato come contenute in 320px potrebbero traboccare o restare corte una volta disegnate. Ogni pixel di scarto è una bugia. Misurando una volta e disegnando ovunque a partire dalla geometria risultante, i backend non possono essere in disaccordo: divisioni di riga, altezze delle colonne e posizionamento delle risorse sono congelati nel VDT prima che qualunque backend entri in azione.
+
+Per questo il backend PDF, per esempio, non rimisura il testo: consuma un VDT finito e traduce le sue coordinate in pixel in punti PDF. Le metriche del canvas sono la fonte di verità; il PDF è un mezzo di trasporto. Chi usa `renderToPdf` (dal pacchetto `postext-pdf`) passa lo stesso VDT che passerebbe a `renderToCanvas` o `renderToHtml`, e i tre output sono garantiti concordi.
+
+### Superficie dell’API
+
+I backend sono semplici funzioni su `VDTDocument`, non una gerarchia di classi. Non c’è un’interfaccia `PostextBackend`: solo i punti d’ingresso di rendering di ogni output e le funzioni di supporto che servono:
+
+```typescript
+// Canvas (from 'postext')
+renderToCanvas(doc, options?): HTMLCanvasElement[];     // one canvas per page
+renderPage(page, doc, options?): HTMLCanvasElement;     // a single page
+renderPageToCanvas(page, doc, canvas, options?): void;  // draw into an existing canvas
+
+// Canvas resource-image registry — decoded images keyed by Resource fileId
+registerResourceImage(fileId, image, options?): void;   // options: { vector?, singleInk? }
+unregisterResourceImage(fileId): void;
+clearResourceImages(): void;
+
+// HTML (from 'postext')
+renderToHtml(doc, options?): string;
+renderToHtmlIndexed(doc, options?): HtmlRenderIndex;    // per-page / per-block breakdown
+
+// PDF (from 'postext-pdf')
+renderToPdf(doc, options): Promise<Uint8Array>;
+
+// EPUB (from 'postext-epub'), a book's chapters in order
+renderToEpub(docs, options): Promise<Uint8Array>;
+```
+
+Poiché i dati binari delle risorse viaggiano fuori banda, ogni backend risolve i `fileId` a modo suo. Il backend canvas tiene un registro di `CanvasImageSource` decodificate: l’applicazione ospite registra ogni bitmap o SVG una volta con `registerResourceImage(fileId, image)` e il renderer lo cerca al momento del disegno. Il backend HTML riceve nelle opzioni un resolver `resourceImageUrl(fileId)` ed emette tag `<img>` che puntano a qualunque URL (URL di oggetti, data URI, percorsi di CDN) l’applicazione ospite restituisca. Il backend PDF riceve un fornitore `resourceBytes` e incorpora i byte veri e propri; anche lo scrittore EPUB ne riceve uno e salva ogni immagine una sola volta come file del libro. Una risorsa video si disegna come il suo fotogramma di copertina, una bitmap come le altre; il backend HTML riceve anche un resolver `resourceVideoUrl(fileId)` per i file video che riproduce, e lo scrittore EPUB salva quei file sotto `media/`. Il backend PDF disegna il segno di riproduzione e il codice QR come tracciati vettoriali sopra il fotogramma di copertina e, quando `video.linkPoster` è attivo, vi mette sopra un’annotazione di collegamento URI che apre `video.link`; in un PDF marcato il collegamento si unisce alla `Figure` del fotogramma, il cui testo alternativo comincia con il nome del tipo (*Video: …*). Le risorse tabella non hanno bisogno di niente di tutto questo: il loro modello è in linea, e ogni backend disegna le celle dalla geometria della tabella nel VDT.
+
+`renderToHtmlIndexed` merita una nota: oltre alla stringa HTML completa, restituisce una scomposizione per pagina e per blocco (`HtmlRenderIndex`), così chi la chiama può confrontarla con un rendering precedente e aggiornare solo i sottoalberi del DOM il cui HTML è davvero cambiato: è il percorso dell’anteprima dal vivo nella Sandbox.
+
+### Backend
+
+<table>
+  <thead>
+    <tr>
+      <th>Backend</th>
+      <th>Misurazione</th>
+      <th>Rendering</th>
+      <th>Stato</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Canvas</strong></td>
+      <td>Pretext (metriche dei font del canvas)</td>
+      <td>Disegno bitmap su un <code>HTMLCanvasElement</code> (<code>renderToCanvas</code>, <code>renderPage</code>, <code>renderPageToCanvas</code>)</td>
+      <td><strong>Disponibile</strong></td>
+    </tr>
+    <tr>
+      <td><strong>HTML</strong></td>
+      <td>Pretext (stesse metriche del canvas)</td>
+      <td>Nodi DOM con posizionamento assoluto e CSS editoriale (<code>renderToHtml</code>, <code>renderToHtmlIndexed</code>)</td>
+      <td><strong>Disponibile</strong></td>
+    </tr>
+    <tr>
+      <td><strong>PDF</strong></td>
+      <td>Consuma il VDT già misurato con Pretext</td>
+      <td>Costruzione delle pagine PDF con pdf-lib e incorporamento dei font per peso (<code>renderToPdf</code> in <code>postext-pdf</code>)</td>
+      <td><strong>Disponibile</strong></td>
+    </tr>
+    <tr>
+      <td><strong>EPUB</strong></td>
+      <td>Consuma il VDT già misurato con Pretext</td>
+      <td>File EPUB 3: un documento XHTML per ogni pagina stampata (layout fisso) o per ogni capitolo (layout fluido), font incorporati (<code>renderToEpub</code> in <code>postext-epub</code>)</td>
+      <td><strong>Disponibile</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Riga di comando</strong></td>
+      <td>Pretext sopra Skia (<code>@napi-rs/canvas</code>), al posto del canvas del browser</td>
+      <td>Gli scrittori PDF, HTML ed EPUB, le immagini delle pagine e Word, eseguiti da un terminale senza browser (<code>postext-cli</code>)</td>
+      <td><strong>Disponibile</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+Tutti e quattro i backend disponibili consumano lo stesso `VDTDocument`. La separazione tra `postext` (che esporta i backend canvas e HTML) e `postext-pdf` (che esporta il backend PDF) riguarda solo le dipendenze: il percorso PDF si porta dietro `pdf-lib` e `@pdf-lib/fontkit`, e la maggior parte delle integrazioni web non ne ha bisogno. Installa `postext-pdf` solo quando vuoi davvero produrre byte PDF. `postext-epub` è un pacchetto a sé per lo stesso motivo, e serve solo per gli e-book. La riga di comando non è un quinto backend: `postext-cli` esegue questi stessi scrittori dove non c’è un browser.
+
+**Dove gira l’impaginazione:** il motore misura il testo su un canvas, quindi gira ovunque gliene si dia uno. In un browser la pipeline gira sul thread principale (`buildDocument`) oppure dentro un Web Worker dedicato (`createLayoutWorker` da `postext/worker`); il percorso del worker è l’integrazione consigliata per le applicazioni guidate dall’interfaccia, perché tiene la misurazione e le passate di posizionamento fuori dal thread principale, supporta l’annullamento in cui vince l’ultima richiesta tramite `AbortSignal`, e possiede una propria cache di misurazione e una propria cache di rasterizzazione della matematica, così le ricomposizioni successive restano economiche. Vedi [Configurazione → Impaginare in un Web Worker](/it/docs/configuration-programmatic-usage#eseguire-limpaginazione-in-un-web-worker) per lo schema di integrazione completo. Fuori da un browser, la [riga di comando](/it/docs/command-line) esegue la stessa pipeline con Skia al posto del canvas del browser, così un libro si divide nelle stesse pagine in un terminale, in uno script o su un server di build.
+
+## Strategia delle prestazioni
+
+Tra uno strumento lento e uno che sembra magico c’è un fattore di circa 10. Un’impaginazione da 500 ms vuol dire che chi scrive vede uno scatto ogni volta che cambia una parola. Un’impaginazione da 50 ms sembra istantanea, come se il documento fosse sempre stato lì. Quel fattore non si recupera dopo con una toppa: va previsto nel progetto fin dal primo giorno.
+
+Pensa a che cosa deve affrontare il motore: migliaia di blocchi di testo su centinaia di pagine, impaginati di nuovo a ogni modifica, e più volte quando l’impaginazione ha bisogno dei suoi giri. I motori dei videogiochi hanno lo stesso tipo di problema (elaborare migliaia di oggetti, tra geometria, fisica, illuminazione e IA, 60 volte al secondo) e lo risolvono non ripetendo il lavoro già fatto. Postext applica questo principio a ciò che gli costa di più, cioè misurare il testo.
+
+### Principi
+
+1. **Calcolo in memoria.** L’intero VDT sta in memoria. Durante l’impaginazione non si legge
+   il DOM. Il DOM si tocca solo alla fine, durante il rendering.
+
+2. **Passate complete su misure in cache.** Una nuova esecuzione della passata di collocazione non
+   cerca che cosa è cambiato: colloca di nuovo il documento a partire dal primo blocco. Ce lo si può
+   permettere perché la misurazione, la parte costosa, è in cache per paragrafo (principio 5). Una
+   passata che non cambia nulla del testo, dei font o della larghezza di un paragrafo legge le sue
+   righe dalla cache.
+
+3. **Giri limitati.** Ogni tipo di nuova esecuzione ha un limite fisso (vedi
+   [Il driver delle passate](#il-driver-delle-passate)), e il bilanciamento delle colonne ne ha uno per documento oltre a uno
+   per segmento, così un libro di molti capitoli non può consumare passate all’infinito. Il costo di una build
+   si può misurare passata per passata: `BuildDocumentOptions.onPass` riporta ogni passata e il suo tempo reale.
+
+
+4. **La velocità di Pretext.** Misurare il testo a 300–600 volte la velocità del DOM permette al motore di
+   rimisurare il testo in via speculativa (provando larghezze di colonna, punti di sillabazione e ritocchi
+   di tracking diversi) senza bloccare il thread principale.
+
+5. **Cache di misurazione a più livelli.** Il modulo di misurazione (`packages/postext/src/measure/`) tiene
+   una cache di misurazione esplicita con chiave su testo, font, larghezza e ogni opzione che influisce
+   sull’impaginazione, sopra la cache di `prepare()` di Pretext e una cache delle larghezze del testo grezzo.
+   Rimisurare un paragrafo invariato costa una ricerca in una mappa. Quando cambiano le varianti di una famiglia,
+   il motore scarta le larghezze di quella famiglia e la cache di Pretext, e una cache di misurazione scarta i
+   blocchi composti in quella famiglia alla ricerca successiva (porta con sé la generazione in cui è stata
+   riempita), così le larghezze dei glifi sono corrette quando i font finiscono di caricarsi, senza alcuna
+   chiamata da parte dell’host; `clearMeasurementCache()` scarta tutte le famiglie.
+
+6. **Divisione in righe sul percorso critico.** La gestione dei nodi attivi di Knuth-Plass è stata riscritta
+   per la velocità: l’insieme attivo si compatta sul posto man mano che i nodi escono, e i candidati vengono
+   deduplicati per (riga, classe di adattamento), così per ogni chiave sopravvive solo il nodo con meno demeriti.
+   I risultati dell’algoritmo sono identici: gli stessi insiemi di interruzioni, solo calcolati più in fretta.
+
+7. **Build fuori dal thread principale.** Il punto d’ingresso `postext/worker` esegue l’intera pipeline
+   dentro un Web Worker dedicato. Il thread principale invia `{ content, config }` e un
+   `AbortSignal`; il worker registra i font (trasferiti come `ArrayBuffer`), esegue le passate di
+   collocazione e restituisce il `VDTDocument` finito. Una chiamata `build()` più recente annulla
+   la precedente in modo cooperativo: il worker esegue `buildDocumentAsync`, che interroga un
+   hook di annullamento una volta per blocco e tra una passata e l’altra e lancia `BuildCancelledError`, così chi scrive in un editor
+   non aspetta mai un’impaginazione superata. Il worker mantiene anche una propria cache di
+   misurazione persistente e una cache dei raster matematici con chiave sul contenuto, così gli oggetti
+   `MathRender` clonati con structured clone sopravvivono da una ricostruzione all’altra senza essere rasterizzati di nuovo.
+
+8. **VDT a doppio accesso.** L’albero (`pages > columns > blocks`) dà un accesso gerarchico per
+   il lavoro che procede pagina per pagina o colonna per colonna (il bilanciamento delle colonne misura il vuoto
+   al piede di ogni colonna). Un array piatto parallelo `blocks[]` dà accesso diretto a ogni blocco,
+   ovunque si trovi (il giro dei numeri delle note legge da lì il richiamo che ogni nota ha stampato). Entrambe
+   le viste fanno riferimento agli stessi oggetti blocco (non c’è duplicazione, solo due modi di percorrere
+   gli stessi dati).
+
+### Impaginare di nuovo
+
+Non esiste un punto d’ingresso incrementale: nessuna chiamata prende un VDT finito e lo aggiorna. Quando cambia il contenuto o la configurazione (un tasto premuto, un altro formato di pagina), l’host chiama di nuovo `buildDocument` e ottiene un nuovo documento.
+
+Ciò che passa da una build all’altra è la misurazione. Crea una `MeasurementCache` una sola volta con `createMeasurementCache()` e passala come terzo argomento di ogni chiamata a `buildDocument`. Un paragrafo il cui testo, i cui font, la cui larghezza e le cui opzioni di divisione non sono cambiati viene letto dalla cache, così un editor che impagina il documento a ogni tasto misura solo il paragrafo in cui si sta scrivendo. Un cambio di formato della pagina o del numero di colonne cambia le larghezze, e quei paragrafi vengono misurati di nuovo; i risultati di `prepare()` di Pretext restano validi, perché dipendono dal font e dal testo e non dalla larghezza, quindi viene eseguita solo l’aritmetica economica di `layout()`. Anche il parsing è memoizzato.
+
+Per un editor dal vivo, `createLayoutWorker` (da `postext/worker`) fa tutto questo fuori dal thread principale: il worker possiede una cache di misurazione che vive quanto lui, e una `build()` più recente annulla quella in corso. Vedi [Configurazione → Cache di misurazione](/it/docs/configuration-programmatic-usage#cache-delle-misure) e [Eseguire l’impaginazione in un Web Worker](/it/docs/configuration-programmatic-usage#eseguire-limpaginazione-in-un-web-worker).
+
+### Benchmark
+
+In `packages/postext/src/__bench__/` ci sono due benchmark. `pnpm test` li salta; `pnpm bench`, eseguito in `packages/postext`, li esegue. `chapter.bench.test.ts` impagina un capitolo delle dimensioni di un manuale (quaranta sezioni di titoli, paragrafi ed elenchi) cinque volte con una cache di misurazione vuota e cinque volte con una già calda, e riporta le due mediane e il numero di passate. `cjkChapter.bench.test.ts` impagina il capitolo 1 di 红楼梦 e conta i caratteri inviati a `measureText`, per tenere il compositore CJK a un costo lineare nella lunghezza del paragrafo.
+
+```typescript
+// From packages/postext/src/__bench__/chapter.bench.test.ts
+const cold: number[] = [];
+for (let i = 0; i < ROUNDS; i++) cold.push(time(() => buildDocument({ markdown }, config, createMeasurementCache())));
+
+const warmCache = createMeasurementCache();
+buildDocument({ markdown }, config, warmCache);
+const warm: number[] = [];
+for (let i = 0; i < ROUNDS; i++) warm.push(time(() => buildDocument({ markdown }, config, warmCache)));
+
+const passes: BuildPassInfo[] = [];
+const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPass: (p) => passes.push(p) });
+// [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
+```
+
+Un’avvertenza, per onestà: in Node non c’è canvas, quindi entrambi i benchmark simulano la misurazione del testo e i loro tempi assoluti non sono quelli del browser. Lo sono invece il rapporto tra cache fredda e cache calda e il numero di passate, e una regressione in uno dei due si vede qui prima che nella Sandbox. Il benchmark del capitolo riporta numeri e non fa fallire la build; quello cinese verifica che i caratteri misurati restino sotto il triplo della lunghezza del paragrafo più lungo. Nessuno dei due gira in CI: le regressioni si scoprono confrontando i numeri tra un’esecuzione e l’altra quando cambia un percorso critico (come si è fatto per la riscrittura dei nodi attivi di Knuth-Plass). Le prestazioni sono una funzionalità, non una speranza, ma oggi a farle rispettare sono la misurazione e la revisione, non una pipeline che fallisce.
+
+
+## Flusso dei dati
+
+<Illustration name="DataFlow" data='{"title": "Flusso dei dati nel motore", "desc": "Il contenuto e la configurazione entrano nella passata di collocazione, che struttura, misura e colloca ogni blocco, fa flottare le risorse e applica le regole di interruzione e di unione. buildDocument esegue di nuovo la passata con dei suggerimenti finché ogni giro non si stabilizza. Il VDT finito passa al backend, che produce HTML o PDF.", "caption": "Flusso dei dati da capo a fondo: una passata di collocazione, ripetuta con suggerimenti, poi il rendering.", "input": ["Contenuto +", "Configurazione"], "loopBadge": "passata di collocazione", "passesInLoop": [{"num": "1", "name": "struttura"}, {"num": "2", "name": "misura"}, {"num": "3", "name": "collocazione"}, {"num": "4", "name": "flottanti"}, {"num": "5", "name": "regole di unione"}], "loopCondition": "ripeti con suggerimenti, ogni giro fino al suo limite", "convergedLabel": "VDT (finito)", "backend": "Backend: rendering", "output": "HTML / PDF"}' />
+
+
+## Fuori dagli obiettivi
+
+Ognuno di questi limiti è una scelta deliberata: il motore è già abbastanza complesso di suo, e
+farsi carico di responsabilità che spettano ad altri sarebbe il modo più rapido per non finire mai.
+
+- **Editing WYSIWYG.** Postext è un motore di impaginazione, non un editor. Contenuto in ingresso, geometria in uscita. Costruire una superficie di editing interattiva (gestione del cursore, selezione, annulla/ripeti, gestione dell’input) è un problema del tutto diverso. Postext può fare da backend di rendering per un editor, ma non offre di per sé funzioni di editing.
+- **Involucro per column-count di CSS.** Postext sostituisce il layout multicolonna di CSS, non lo avvolge. Calcola da zero una geometria posizionata con precisione, perché l’algoritmo di colonne del browser non dà controllo sulla collocazione delle risorse, sulla prevenzione di vedove e orfane e sulle regole tipografiche tra colonne. Ed è proprio questo il punto.
+- **Gestione dei breakpoint responsive.** Postext calcola l’impaginazione per un formato di pagina dato. È chi lo usa a decidere quando impaginare di nuovo (al ridimensionamento della finestra, al cambio di orientamento). Postext non gestisce breakpoint, media query né decisioni di design responsive. Quello è compito tuo.
+- **Editing collaborativo in tempo reale.** Postext è un calcolo di impaginazione senza stato (contenuto in ingresso, geometria in uscita), non un sistema di documenti collaborativo con risoluzione dei conflitti, trasformazioni operazionali o consapevolezza di più utenti.
+- **File dei font.** Il pacchetto `postext` carica i font, non li contiene. `prepareFonts` carica, prima della prima build, ogni variante richiesta da una configurazione e dal suo testo, e una variante che l’insieme di font non ha potuto fornire compare negli avvisi del documento come `fontFallback`. I file stessi vengono dall’host: una regola `@font-face` nella pagina, o una funzione `resolve` che dice dove si trova ogni variante. Vedi [Configurazione → Caricare i font prima dell’impaginazione](/it/docs/configuration-programmatic-usage#caricare-i-font-prima-dellimpaginazione).
+
+
+## Appendice: relazione con i tipi esistenti
+
+Ecco come i tipi principali definiti in `packages/postext/src/types.ts` corrispondono all’architettura descritta sopra:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Tipo</th>
+      <th>Ruolo nell’architettura</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>PostextContent</code></td>
+      <td>Punto d’ingresso: l’input del motore (strutturazione del contenuto)</td>
+    </tr>
+    <tr>
+      <td><code>PostextConfig</code></td>
+      <td>Controlla ogni fase della passata di collocazione e dei giri che la circondano</td>
+    </tr>
+    <tr>
+      <td><code>Resource</code></td>
+      <td>Una risorsa tipizzata bitmap/SVG/tabella/video. Durante la misurazione diventa un <code>ResolvedResourceBlock</code> e poi un <code>VDTBlock</code> in linea di tipo <code>'resource'</code> (collocazione <code>'here'</code>) oppure un elemento flottante in una fascia della pagina (collocazione delle risorse)</td>
+    </tr>
+    <tr>
+      <td><code>ResourceType</code></td>
+      <td>Guida la numerazione per tipo, i prefissi delle didascalie, le etichette dei rimandi e la collocazione flottante predefinita (strutturazione del contenuto, collocazione delle risorse)</td>
+    </tr>
+    <tr>
+      <td><code>ResourcePlacement</code></td>
+      <td>Sostituzione per singola risorsa della collocazione flottante: <code>position</code> (<code>'auto'</code> / <code>'top'</code> / <code>'bottom'</code> / <code>'here'</code>) e <code>span</code> (<code>'column'</code> / <code>'page'</code> / <code>'side'</code>), più <code>rotate</code>, <code>width</code>, <code>align</code>, <code>columns</code>, <code>captionSide</code>, <code>shrink</code>, <code>minScale</code>, <code>captionMeasure</code>, <code>wrap</code>, <code>wrapGap</code> e <code>citingPage</code>; ogni campo ricade sul <code>defaultPlacement</code> del tipo, risolto durante la collocazione delle risorse</td>
+    </tr>
+    <tr>
+      <td><code>PostextNote</code></td>
+      <td>Il motore non lo legge. Le note a piè di pagina si scrivono nel markdown (<code>[^id]</code>) e si compongono al piede della colonna che le cita o dopo il capitolo; le note a margine non sono implementate</td>
+    </tr>
+    <tr>
+      <td><code>PostextResource</code></td>
+      <td><strong>Deprecato.</strong> La vecchia risorsa del modello di contenuto, mantenuta solo finché l’ultimo riferimento dei renderer (<code>VDTBlock.resource</code>) non passa al modello <code>Resource</code></td>
+    </tr>
+  </tbody>
+</table>
+
+### Dove si trovano i tipi del VDT
+
+I tipi del VDT (`VDTDocument`, `VDTPage`, `VDTColumn`, `VDTBlock`, `VDTLine`, `VDTLineSegment`, `ResolvedResourceBlock`, `VDTResourceTableLayout`, `BoundingBox` e compagnia) si trovano in `packages/postext/src/vdt.ts`, insieme alle funzioni di fabbrica (`createVDTDocument`, `createVDTPage`, `createVDTBlock`, …) e a `computePageTextExtent`. Non c’è un modulo separato per l’interfaccia dei backend: i punti d’ingresso del rendering descritti in [Interfaccia dei backend](#interfaccia-dei-backend) sono esportati direttamente da `postext` (canvas, HTML), `postext-pdf` (PDF) e `postext-epub` (EPUB).

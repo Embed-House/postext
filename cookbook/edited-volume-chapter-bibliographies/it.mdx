@@ -1,0 +1,74 @@
+---
+title: "Un volume collettaneo con una bibliografia per capitolo"
+summary: "Tre saggi di tre autori, ciascuno un documento a sé in buildBundle, ciascuno chiuso da un elenco Chicago autore-data delle sole opere che cita."
+plain: "Un libro di saggi di autori diversi. Ogni saggio mostra il suo autore sotto il titolo e si chiude con il proprio elenco di riferimenti, come nei volumi collettanei."
+description: "Un volume collettaneo in Postext: capitoli buildBundle con l’autore preso dagli attributi del titolo e una bibliografia per capitolo in Chicago autore-data."
+question: "Come do a ogni capitolo di un volume collettaneo il proprio autore e il proprio elenco di riferimenti?"
+aliases: ["volume collettaneo", "raccolta di saggi", "atti di convegno", "capitoli di più autori", "riferimenti per capitolo", "bibliografia di capitolo", "Chicago autore-data", "nome dell’autore", "edited volume"]
+pageNotes: { "1": "Pagina 1: il frontespizio, un campo rosso tipografico sui due terzi superiori con «The Working Page» in grande Caslon bianco e il sottotitolo in corsivo; sotto, i curatori in maiuscole rosse e i tre autori in corsivo.", "2": "Pagina 2: il sommario, tre saggi numerati con puntini di guida e numeri di pagina, ciascuno con il nome del suo autore in corsivo grigio sotto il titolo.", "5": "Pagina 5: la fine del capitolo 1 e il suo elenco «References» di quattro opere, tra cui Eisenstein 1979 e Gaskell 1972.", "8": "Pagina 8: la fine del capitolo 2 e il suo elenco «References», che ripete Eisenstein 1979 perché anche questo capitolo lo cita." }
+---
+
+## Che cosa comporrai
+
+*The Working Page*, una piccola raccolta di saggi sulla storia della stampa, curata da due studiosi e scritta da tre. Ogni saggio arriva dal suo autore come file Markdown con un proprio blocco BibTeX, ed è così che il libro lo conserva: un volume di 155 × 235 mm in Libre Caslon, un frontespizio rosso e capitoli che si aprono con un numero, un titolo e il nome dell’autore. Ogni capitolo si chiude con il proprio elenco «References» in Chicago autore-data, che contiene solo le opere citate da quel saggio. *Printing Press as an Agent of Change* di Eisenstein è citato da due autori e compare quindi in entrambi i loro elenchi; *New Introduction to Bibliography* di Gaskell fa lo stesso nei capitoli 1 e 3.
+
+## Preparazione
+
+### 1 · Un documento per autore
+
+<Excerpt region="chapters" />
+
+L’ambito nella [risposta breve](#la-risposta-breve) è l’ambito di un documento. `buildBundle` impagina i quattro documenti come un unico libro, quindi i numeri di pagina, i numeri di capitolo e il sommario proseguono senza interruzioni, mentre ogni `:::bibliography` raccoglie le citazioni del proprio file. I riferimenti restano dove l’autore li ha scritti: una chiave definita in qualsiasi capitolo vale per tutto il libro, quindi sarebbe bastata una sola voce condivisa, ma capitoli autosufficienti si possono scambiare o riordinare senza rompere l’elenco di un altro saggio.
+
+### 2 · Il nome dell’autore è un attributo del titolo
+
+<Excerpt region="byline" />
+
+Il titolo di ogni saggio porta `author="…"` e un titolo `short="…"` per la testatina. L’apertura stampa l’autore sotto il titolo, la testatina della pagina verso nomina l’autore del saggio a cui appartiene la pagina, e il sommario stampa il nome come una riga sotto ogni voce. Nulla nelle pagine preliminari del libro elenca gli autori due volte.
+
+### 3 · L’apertura
+
+<Excerpt region="opener" />
+
+Occhiello, titolo e nome dell’autore si impilano dalla sommità dell’area del testo, ciascuno ancorato sotto il precedente, quindi un titolo di due righe come quello del capitolo 3 spinge in basso con sé il nome e il filetto. La riserva fa scendere il testo di 48 mm, dieci righe, sotto un titolo di una riga; un titolo di due righe ne prende una in più, così il filetto resta staccato dal testo e il capitolo 3 comincia una riga più in basso degli altri due.
+
+### 4 · Testatine per un libro con molti autori
+
+<Excerpt region="running-heads" />
+
+Un volume collettaneo nomina l’autore sulla pagina verso e il capitolo sul recto, dove una monografia stamperebbe il titolo del libro e il capitolo. Le testatine sono filtrate su `pages: 'body'`, quindi le aperture portano solo un folio al piede.
+
+### 5 · Le pagine preliminari
+
+<Excerpt region="front" />
+
+Il frontespizio e il sommario sono due titoli non numerati nel primo documento, senza testatine e senza voce nel sommario. I loro progetti grafici leggono `{title}` e `{subtitle}` dal frontmatter, e i curatori e gli autori dagli attributi del titolo stesso.
+
+## Varianti
+
+### Un solo elenco per tutto il volume
+
+Alcuni editori raccolgono tutte le opere in un’unica bibliografia in fondo. Cambia l’ambito ed elimina i tre titoli `## References`; l’elenco segue allora l’ultimo capitolo.
+
+```diff
+-    scope: 'chapter',
+-    title: '', // no bold title paragraph: each chapter has its own ## References heading
++    scope: 'book',
++    title: 'Bibliography',
+```
+
+### Cita invece in APA
+
+Un volume di scienze sociali cambia lo stile e nient’altro.
+
+```diff
+-  style: 'chicago-author-date', // the humanities' author-date: (Eisenstein 1979)
++  style: 'apa',
+```
+
+## Errori frequenti
+
+- `scope: 'chapter'` elenca ciò che il documento cita prima di `:::bibliography`, non ciò che cita la sua sezione H1. Con tutti i saggi in un unico file Markdown, il secondo elenco ripete le opere del primo saggio e il terzo le ripete entrambe.
+- In tutto il libro vince la prima definizione di una chiave. Se due autori usano entrambi `smith2001` per opere diverse, il saggio successivo cita senza alcun avviso il libro del primo autore: dai un prefisso alle chiavi di ogni autore, o confronta gli elenchi con i manoscritti.
+- La disambiguazione si calcola per tutto il libro. Due opere diverse di Smith del 2001 in capitoli diversi possono stamparsi come 2001a e 2001b, anche quando l’elenco di un capitolo ne contiene solo una.
+- Un sottotitolo che apre una pagina elimina per impostazione predefinita tutto lo spazio sopra di sé, e l’aggancio alla griglia mette poi sotto di esso la frazione di riga che gli serve: *Whose letters*, in testa a pagina 10, starebbe più lontano dal suo testo di *What the reader sees* più in basso nella pagina. `headings.columnHeadSpace: 'remainder'` mantiene quella frazione di riga sopra il sottotitolo ([titoli](/it/docs/configuration-text#titoli)). È adatto a un libro a una colonna, dove nessuna colonna accanto mostra che il sottotitolo comincia un po’ più in basso.

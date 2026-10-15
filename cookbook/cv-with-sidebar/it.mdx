@@ -1,0 +1,63 @@
+---
+title: "CV di una pagina con barra laterale"
+summary: "Un CV A4 di una pagina: la barra prugna è un riquadro in una colonna per soli flottanti, estesa ai margini dall’intestazione, con le date allineate a destra."
+plain: "Il CV di una pagina di una grafica editoriale, con una fascia colorata lungo il lato sinistro per i contatti e le competenze. Le date di ogni impiego si allineano a destra."
+description: "Un CV di una pagina a colonna e mezza: un riquadro prugna riempie la colonna laterale e i riquadri dell’intestazione ne portano il colore fino ai bordi."
+question: "Come impagino un CV di una pagina con una colonna laterale colorata e le date allineate a destra?"
+aliases: ["CV", "curriculum", "curriculum vitae", "résumé", "resume", "CV a due colonne", "barra laterale", "colonna laterale colorata", "date allineate a destra", "competenze come etichette", "currículum"]
+pageNotes: { "1": "Un CV A4. Una fascia prugna scende lungo il bordo sinistro del foglio dalla testa al piede; in cima una pila di cinque libri rilegati in tela albicocca, bianca, lampone e lilla sta all’altezza della linea di base del nome. Sotto, maiuscole albicocca aprono le sezioni, il cui testo è bianco: «Contact»; «Skills» e «Tools», composte come pillole arrotondate; «Languages», «Education», «Teaching» e «Outside work». Sulla pagina bianca a destra, «Irene Salcedo» in un grande carattere graziato, «BOOK DESIGNER AND ART DIRECTOR» in piccole maiuscole lampone, un profilo di cinque righe, poi «Experience», un titolo graziato lampone con un filetto sottile che corre fino al margine, tre impieghi i cui titoli stanno a sinistra con le date allineate a destra sulla stessa riga e il datore di lavoro in corsivo sotto, un elenco di «Selected books» e un colophon di una riga." }
+---
+
+## Che cosa comporrai
+
+Il CV di Irene Salcedo, una grafica editoriale immaginaria di Madrid, su un solo foglio A4. Una fascia prugna larga 66 mm scende lungo il bordo sinistro dalla testa del foglio al piede. In cima, una pila di libri rilegati in tela disegnata via codice sta all’altezza della linea di base del suo nome. Sotto vengono i contatti, le competenze e gli strumenti composti come pillole, le lingue, la formazione e l’insegnamento, e ciò che fa fuori dal lavoro. Il suo nome, in Hedvig Letters Serif da 46 pt, apre una colonna di testo di 118 mm con un profilo di cinque righe, tre impieghi e un elenco dei libri che ha progettato. Il titolo di ogni impiego mette la qualifica a sinistra e le date allineate a destra sulla stessa linea di base, con il datore di lavoro in corsivo sotto. Il primo titolo della barra laterale condivide la linea di base con il ruolo sotto il nome.
+
+## Preparazione
+
+### 1 · Annida le sezioni in un solo riquadro laterale
+
+<Excerpt region="sections" />
+
+Dentro la colonna, la fascia è il riquadro della [risposta breve](#la-risposta-breve). La sua recinzione viene prima del nome, quindi `span="side"` lo mette in testa alla colonna per soli elementi flottanti. Le sezioni sono riquadri annidati al suo interno, senza riempimento proprio, così il prugna corre senza interruzioni da «Contact» a «Outside work». Come riquadri laterali separati starebbero a una distanza da 4,7 a 9,1 mm, anche con `marginBottom` a 0. Le pillole sono alte circa 3,9 mm. «Skills» e «Tools» usano uno stile di sezione proprio, `chips`, la cui interlinea di 16 pt lascia 1,8 mm tra le righe; i 12,4 pt delle altre sezioni ne lascerebbero mezzo ([stili dei chip](/it/docs/configuration-styles#stili-dei-chip)).
+
+### 2 · Dipingi i margini attorno alla colonna
+
+<Excerpt region="margins" />
+
+La colonna laterale sta dentro i margini della pagina, quindi il riquadro della barra laterale si ferma 9 mm prima del bordo sinistro e 18 mm prima della testa. Tre riquadri dell’intestazione riempiono il margine superiore sopra la colonna, il margine sinistro dalla testa al piede e il margine inferiore sotto la colonna. Gli elementi dell’intestazione vengono dipinti dopo il testo e sopra di esso, quindi la ricetta li tiene nei margini, dove non scorre testo. Si ripetono inoltre su ogni pagina, e una seconda pagina porterebbe anch’essa la fascia ([intestazioni e piè di pagina](/it/docs/configuration-page-layout#intestazioni-e-piè-di-pagina)). I riquadri superiore e sinistro si sovrappongono di 0,5 mm al riquadro della barra laterale, e il riquadro di piede sale 1 mm sopra il piede della colonna, oltre la fine del riquadro della barra laterale, così nelle giunture non si vede alcun filo di carta. Lo `:::space` che chiude il riquadro della barra laterale lo porta fino a 278,0 mm, 0,8 mm sopra il piede della colonna, con 2,76 righe in inglese e 1,76 in spagnolo.
+
+### 3 · Componi il nome in testa alla colonna di testo
+
+<Excerpt region="name" />
+
+L’H1 mantiene lo `span: 'column'` predefinito. Con `'page'` diventa un’apertura su entrambe le colonne; composto dopo il riquadro della barra laterale, passa a pagina 2, e lì la colonna laterale comincia sotto il nome, 45,9 mm più in basso. `breakBefore` è disattivato perché il riquadro della barra laterale è già sulla pagina: con un’interruzione, il nome e l’intera colonna di testo passano a pagina 2. Il `marginBottom` del livello, pari a una riga di griglia, fa cominciare il profilo a 45,9 mm invece che a 41,3 mm. Il padding superiore del riquadro della barra laterale è `ROLE_Y`, l’altezza del nome più lo spazio sotto, così il primo titolo della barra laterale e il ruolo condividono una linea di base, a 39,3 mm dal bordo superiore.
+
+### 4 · Metti le date sulla riga della qualifica
+
+<Excerpt region="jobs" />
+
+Ogni impiego è un H3 i cui attributi portano il datore di lavoro e le date: `### Art director {org="Ediciones del Albardín, Madrid" dates="2021 – present"}` ([attributi dei titoli](/it/docs/document-format#attributi-dei-titoli)). La qualifica e le date sono ancorate alla sommità dello stesso contenitore, una per angolo, con lo stesso corpo e la stessa interlinea, quindi stanno su un’unica linea di base. La qualifica è limitata a 84 mm e va a capo: una qualifica lunga passa su una seconda riga prima di raggiungere le date, e il datore di lavoro scende sotto di essa. Con lo spazio sopra, ogni titolo di sezione occupa esattamente tre righe di griglia, il che mette ogni titolo d’impiego 9 pt sotto una riga di griglia, che segua un titolo di sezione o un elenco.
+
+## Varianti
+
+### Ricolora la fascia
+
+Ogni colore è scritto una volta sola, in `palette`, e i riquadri della fascia, il riquadro della barra laterale, i chip, il ruolo, i titoli e il disegno lo prendono da lì. Queste tre righe rendono verde petrolio la fascia, l’accento e i chip.
+
+```diff
+-  band: '#3a2235', // the sidebar
++  band: '#1d3b3a', // the sidebar
+-  accent: '#8f3b62', // on paper: the role and the section heads (7.1:1)
++  accent: '#2b5f5b', // on paper: the role and the section heads (7.3:1)
+-  chip: '#744d6c', // on the band: the skill chips
++  chip: '#456d69', // on the band: the skill chips
+```
+
+### Fai flottare figure nella stessa colonna
+
+Il <RecipeLink slug="textbook-margin-column">manuale con colonna a margine</RecipeLink> mette figure, didascalie laterali e glosse in una colonna per soli elementi flottanti sul bordo esterno di ogni pagina.
+
+## Errori frequenti
+
+- Adatta lo `:::space` alla pagina. Nell’edizione inglese 2,76 righe chiudono il riquadro 0,8 mm sopra il piede della colonna. A 2,96 righe va 0,1 mm oltre il piede e l’intera barra laterale passa a pagina 2; a 2,66 si apre una striscia di carta tra il riquadro e il riquadro di piede.
+- Un riquadro nel progetto grafico del nome non serve a dipingere la fascia. Il titolo riserva l’altezza del riquadro, quindi un riquadro alto quanto la fascia gli fa riservare più dei 260,8 mm della colonna, e il testo passa a pagina 2. Con `reserve: false` il riquadro non riserva nulla, ma un progetto grafico nella colonna viene tagliato al piede della colonna, e il margine inferiore resterebbe bianco.

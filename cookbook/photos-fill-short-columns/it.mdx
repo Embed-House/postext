@@ -1,0 +1,60 @@
+---
+title: "Foto che crescono per riempire una colonna corta"
+summary: "Ogni foto segna una zona sicura; il bilanciamento può ritagliare fuori da essa per alzarla, e una colonna accorciata da un titolo o un flottante finisce a filo."
+description: "Un servizio a due colonne in cui le foto con zona sicura crescono di righe di griglia intere per riempire le colonne corte, accanto alle stesse pagine senza."
+plain: "Indica all’impaginazione quale parte di ogni foto deve vedersi sempre. Quando una colonna resta corta di qualche riga, la foto diventa più alta invece di lasciare un vuoto."
+question: "Come lascio ritagliare una foto per riempire una colonna corta senza perderne il soggetto?"
+aliases: ["zona sicura", "ritaglio adattivo", "foto flessibile", "riempire il vuoto della colonna", "area focale", "safe area"]
+---
+
+## Che cosa comporrai
+
+Tre pagine di una rivista della costa: un servizio sui mestieri di una cittadina d’estuario, con una foto al vivo sull’apertura e cinque foto nelle colonne. Il pen compone il servizio due volte dallo stesso testo. Nella prima composizione le foto mantengono la forma dei loro file, e a <PageRef page={2}>pagina 2</PageRef> entrambe le colonne finiscono una riga prima della fine della griglia: quella sinistra sotto il suo ultimo paragrafo, quella destra sopra la foto al suo piede. Nella seconda ogni foto nomina la parte dell’inquadratura che deve vedersi sempre, e il motore ritaglia fuori da essa: nella <PageRef page={5}>stessa pagina</PageRef> la raccoglitrice di molluschi e il riparatore di reti crescono ciascuno di una riga, ed entrambe le colonne finiscono sull’ultima riga della griglia. Nessuno ha dovuto scegliere i ritagli.
+
+## Preparazione
+
+### 1 · Segna ciò che deve restare, nient’altro
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Una zona sicura è fatta di quattro frazioni dell’immagine, misurate dal suo angolo in alto a sinistra. Il motore può mostrare la foto in qualunque forma tra l’intero file e quel rettangolo, larga quanto la sua colonna: più alta tagliando i lati, più bassa tagliando sopra e sotto. Ciò che sta fuori dalla zona si toglie in proporzione ai margini di ciascun lato, così Rosa, a destra del centro sulla banchina, resta a destra del centro quando si tagliano i lati.
+
+### 2 · Lascia che il bilanciamento recuperi lo spazio solo attraverso le foto
+
+La stessa regione imposta il bilanciatore. Le sue leve abituali aggiungono bianco: una riga sopra un titolo, aria sotto una foto, un paragrafo allungato di una riga. Qui sono disattivate, così la composizione semplice mostra ogni colonna corta com’è. Una foto con una zona sicura viene comunque provata per prima, prima di tutte quelle leve, perché una foto più alta non lascia buchi nel testo.
+
+### 3 · La zona sicura appartiene alla risorsa
+
+<Excerpt region="photos" />
+
+`safeArea` sta sulla risorsa accanto al file, alla didascalia e alla collocazione, così una foto la conserva dovunque vada a collocarsi e in ogni documento che la usa. Il pen la passa o la omette, e questa è l’unica differenza tra le due composizioni. L’estuario dell’apertura è disegnato dallo stile del titolo, non è un elemento flottante, quindi non ne ha bisogno.
+
+### 4 · Costruisci entrambe e confronta
+
+<Excerpt region="builds" />
+
+Entrambi i documenti vengono da una sola configurazione e da una sola stringa Markdown. Si riempiono fino al piede solo le pagine dopo le quali il testo prosegue: <PageRef page={3}>pagina 3</PageRef> chiude il servizio, e in una pagina di chiusura le colonne devono solo finire alla pari tra loro, cosa che qui fanno già, quindi lì nessuna foto cresce. Il pulsante PDF costruisce la composizione che sta sul tavolo, e il PDF ritaglia ogni foto nel suo riquadro allo stesso modo.
+
+## Varianti
+
+### Tieni una foto in linea con il suo testo
+
+Una foto composta con `position: 'here'` e una zona sicura viene ritagliata sopra e sotto quando è un po’ troppo alta per lo spazio rimasto nella sua colonna, invece di passare alla successiva.
+
+```diff
+-const PLACEMENT = { pulpeira: { position: 'here' } }; // the rest float to the first free slot
++const PLACEMENT = { pulpeira: { position: 'here' }, faro: { position: 'here' } };
+```
+
+### Restituisci al bilanciatore le sue altre leve
+
+Con i valori predefiniti le foto vengono comunque prima, e i titoli e gli elementi flottanti prendono ciò che la zona sicura di una foto non può prendere.
+
+```diff
+-const balancing = { enabled: true, maxLinesPerHeading: 0, stretchAfterLists: false,
+-  stretchAfterFloats: false, looseParagraphs: false };
++const balancing = { enabled: true };
+```
+
+## Errori frequenti
+
+- Una zona sicura che copre tutta l’immagine, o con un lato inferiore al 2 % di essa, viene ignorata: la foto si mostra intera, come senza.
+- Crescono solo gli elementi flottanti di colonna e le foto in linea. Una foto flottante su entrambe le colonne mantiene la sua forma, perché farla crescere spingerebbe in basso tutte le colonne sotto di essa insieme.
