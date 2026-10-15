@@ -1,8 +1,9 @@
 import { getTranslations } from "next-intl/server";
-import { RecipeCard, type PlateLabels } from "@/components/cookbook/RecipeCard";
 import type { CatalogRecipe, Locale } from "@/lib/cookbook/types";
 import type { GalleryChapter, GalleryData } from "./data";
 import { collectionHref } from "./links";
+import { PlateGrid } from "./PlateGrid";
+import { plateFacets, toPlate } from "./plates";
 
 function chapterOf(chapters: GalleryChapter[], recipe: CatalogRecipe) {
   const c = chapters.find((ch) => ch.id === recipe.chapter);
@@ -13,16 +14,15 @@ function chapterOf(chapters: GalleryChapter[], recipe: CatalogRecipe) {
  *  collections with their counts. Either part hides when empty. */
 export async function EditorsPicks({
   data,
-  labels,
   locale,
 }: {
   data: GalleryData;
-  labels: PlateLabels;
   locale: Locale;
 }) {
   const t = await getTranslations("Cookbook");
   const { picks, collections, chapters } = data;
   if (picks.length === 0 && collections.length === 0) return null;
+  const plates = picks.map(toPlate);
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-7 sm:px-6 sm:pt-10 2xl:max-w-7xl 2xl:px-8">
@@ -31,13 +31,14 @@ export async function EditorsPicks({
           <h2 id="cb-picks" className="kicker text-brand">
             {t("picks")}
           </h2>
-          <ul className="cb-shelf-row mt-6 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-            {picks.map((recipe) => (
-              <li key={recipe.slug}>
-                <RecipeCard recipe={recipe} chapter={chapterOf(chapters, recipe)} labels={labels} size="lg" eager />
-              </li>
-            ))}
-          </ul>
+          <PlateGrid
+            plates={plates}
+            chapter={picks.map((recipe) => chapterOf(chapters, recipe))}
+            facets={plateFacets(data.catalog.facets, plates)}
+            className="cb-shelf-row mt-6 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3"
+            size="lg"
+            eager
+          />
         </section>
       )}
 

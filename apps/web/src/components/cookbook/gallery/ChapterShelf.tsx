@@ -1,9 +1,10 @@
 import { getTranslations } from "next-intl/server";
-import { RecipeCard, type PlateLabels } from "@/components/cookbook/RecipeCard";
 import { PART_CLASSES } from "@/components/brand/partColors";
-import type { CatalogRecipe } from "@/lib/cookbook/types";
+import type { Catalog, CatalogRecipe } from "@/lib/cookbook/types";
 import { cn } from "@/lib/utils";
 import type { GalleryChapter, GalleryData } from "./data";
+import { PlateGrid } from "./PlateGrid";
+import { plateFacets, toPlate } from "./plates";
 
 /** One chapter of the book view: its band in the part colour (kicker,
  *  title, intro, the chapter number huge at the outer edge, an ink foot)
@@ -12,19 +13,20 @@ function ChapterShelf({
   chapter,
   intro,
   recipes,
-  labels,
+  facets,
   eager,
   partHeading,
 }: {
   chapter: GalleryChapter;
   intro?: string;
   recipes: CatalogRecipe[];
-  labels: PlateLabels;
+  facets: Catalog["facets"];
   eager: boolean;
   partHeading: string;
 }) {
   const c = PART_CLASSES[chapter.color];
   const headingId = `cb-ch-${chapter.id}-title`;
+  const plates = recipes.map(toPlate);
   return (
     <section id={`cb-ch-${chapter.id}`} aria-labelledby={headingId} className={`cb-shelf part-${chapter.color} mt-14`}>
       <header className={cn("relative isolate overflow-hidden rounded-sm", c.band, c.onBand)}>
@@ -54,19 +56,15 @@ function ChapterShelf({
         <div aria-hidden="true" className="h-1.5 bg-night" />
       </header>
 
-      <ul className="cb-shelf-row mt-7 grid gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {recipes.map((recipe) => (
-          <li key={recipe.slug} className="cb-reveal">
-            <RecipeCard
-              recipe={recipe}
-              chapter={{ title: chapter.title, color: chapter.color }}
-              labels={labels}
-              headingLevel={4}
-              eager={eager}
-            />
-          </li>
-        ))}
-      </ul>
+      <PlateGrid
+        plates={plates}
+        chapter={{ title: chapter.title, color: chapter.color }}
+        facets={plateFacets(facets, plates)}
+        className="cb-shelf-row mt-7 grid gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        itemClassName="cb-reveal"
+        headingLevel={4}
+        eager={eager}
+      />
 
     </section>
   );
@@ -74,13 +72,7 @@ function ChapterShelf({
 
 /** The book view's shelves, part by part (an h2 per part for the outline;
  *  the bands show it visually). Chapters with no recipe never appear. */
-export async function ChapterShelves({
-  data,
-  labels,
-}: {
-  data: GalleryData;
-  labels: PlateLabels;
-}) {
+export async function ChapterShelves({ data }: { data: GalleryData }) {
   const t = await getTranslations("Cookbook");
   const { parts, catalog, intros } = data;
   // The first shelf's plates load eagerly when there are no editor's picks
@@ -104,7 +96,7 @@ export async function ChapterShelves({
                   chapter={chapter}
                   intro={intros[chapter.id]}
                   recipes={recipes}
-                  labels={labels}
+                  facets={catalog.facets}
                   eager={firstEager && pi === 0 && ci === 0}
                   partHeading={partHeading}
                 />

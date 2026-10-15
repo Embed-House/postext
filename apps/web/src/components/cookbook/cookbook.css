@@ -178,7 +178,27 @@ html[data-cb-filtered] .cb-front-title br {
 .on-night .cb-stage-img {
   filter: brightness(0.94);
 }
+/* Printer's crop marks 4px outside the stage's corners, 10px long (the
+   brand CropMarks, as eight background strokes on one span). */
 .cb-plate-marks {
+  --m: 14px;
+  position: absolute;
+  inset: calc(-1 * var(--m));
+  pointer-events: none;
+  color: color-mix(in oklab, var(--color-gold) 70%, transparent);
+  --h: linear-gradient(currentColor, currentColor);
+  background-image: var(--h), var(--h), var(--h), var(--h), var(--h), var(--h), var(--h), var(--h);
+  background-repeat: no-repeat;
+  background-size: 10px 1px, 10px 1px, 10px 1px, 10px 1px, 1px 10px, 1px 10px, 1px 10px, 1px 10px;
+  background-position:
+    0 var(--m),
+    100% var(--m),
+    0 calc(100% - var(--m)),
+    100% calc(100% - var(--m)),
+    var(--m) 0,
+    calc(100% - var(--m)) 0,
+    var(--m) 100%,
+    calc(100% - var(--m)) 100%;
   opacity: 0;
   transition: opacity 0.25s ease;
 }
