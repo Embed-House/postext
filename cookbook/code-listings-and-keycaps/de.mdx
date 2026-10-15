@@ -1,0 +1,84 @@
+---
+title: "Codelistings und Tastenkappen"
+summary: "Ein Shell-Leitfaden, dessen Codeblöcke als dunkle Listing-Kästen gesetzt sind, nach Token eingefärbt, mit Tasten als Chips in Form von Tastenkappen."
+plain: "Drei Seiten aus einem Einsteigerleitfaden für die Kommandozeile. Sie zeigen, wie Codebeispiele in dunklen farbigen Kästen stehen und Tasten wie Ctrl als kleine Knöpfe im Text erscheinen."
+description: "Codelistings und Tastaturtasten in Postext: Codeblöcke in dunklen Kästen, die bis in den Rand reichen, nach Token gefärbt, Tasten wie Ctrl als Tastenkappen."
+question: "Wie zeige ich Codelistings und Tastenkürzel?"
+aliases: ["Codeblock", "fenced code", "Quellcode", "Shell-Sitzung", "Terminalausgabe", "dicktengleiche Schrift", "Syntaxhervorhebung", "codeStyle", "Tastenkürzel", "kbd", "Tastenkappe", "Spickzettel", "Inline-Code", "code block"]
+pageNotes: { "1": "Der Auftakt von Kapitel 4: eine kleine bernsteinfarbene Dachzeile „CHAPTER 4“, der Titel „Small tools, joined“ in einer kräftigen Grotesk, ein kursiver Vorspann und zwei Absätze im Blocksatz mit Befehlsnamen in dicktengleicher Schrift und einer Tastenkappe „Enter“, daneben eine Marginalie mit der Überschrift „The prompt“ unter einer bernsteinfarbenen Linie. Darunter läuft ein fast schwarzer Kasten mit dem Tab „Terminal“ von der Textspalte in den Außensteg: die getippten Zeilen samt Dollar-Prompt in fettem Bernstein, die Antworten der Shell in hellem Grau. Der Absatz unter dem Kasten beginnt stumpf.", "2": "Der Abschnitt „When a command will not stop“: eine Marginalie „On a Mac“ im Außensteg neben der Überschrift, Tasten wie Ctrl, C, Tab und der Pfeil nach oben als kleine umrandete Tastenkappen in den Blocksatzzeilen und vier Schritte, bernsteinfarben nummeriert mit einem grauen Trenner ›. Am Fuß ein fast schwarzer Kasten „Cheat sheet · bash and zsh“ über Text und Rand, der in zwei Spalten Tastenkappen aus Ctrl und einem Buchstaben ihren Aktionen gegenüberstellt.", "3": "Der Abschnitt „A script to keep“: ein fast schwarzer Kasten unter einem grün beschrifteten Tab „backup.sh“, die Schlüsselwörter in fettem Bernstein, Zeichenketten grün kursiv und Kommentare grau, der Schleifenrumpf eingerückt; danach zwei Absätze über das Skript neben einer Marginalie „Archive mode“, der Schlussabsatz und das Impressum im Rand." }
+---
+
+## Was Sie setzen
+
+Drei Seiten aus Kapitel 4 von *The Shell, Gently*, einem erfundenen Taschenleitfaden für die Kommandozeile, auf einer Seite von 178 × 229 mm. Der Text steht im Blocksatz aus der Charis SIL in einer 100 mm breiten Spalte, mit einer Randspalte für Marginalien an der Außenseite. Jedes Listing ist ein fast schwarzer Kasten aus JetBrains Mono, der in diese Spalte hineinreicht, unter einem Tab mit dem Namen der Datei oder der Sitzung. Schlüsselwörter und getippte Befehle erscheinen in Bernstein, Zeichenketten in Grün und Kommentare in Grau. Tasten wie Ctrl und Tab sind kleine umrandete Tastenkappen in den Blocksatzzeilen, und ein zweispaltiger Spickzettel mit Ctrl-Kürzeln füllt den Fuß von Seite 50. Das Markdown behält gewöhnliche Codeblöcke, und die Engine setzt sie, wie sie sind.
+
+## Zubereitung
+
+### 1 · Den Codeblöcken einen Kasten geben
+
+Der Code für diesen Schritt steht oben in [der kurzen Antwort](#die-kurze-antwort). Jeder Block zwischen zwei Zeilen ```` ``` ```` im Markdown ist ein [Codeblock](/de/docs/document-format#codeblöcke): Postext setzt seine Zeilen so, wie sie getippt wurden, eine Codezeile pro Satzzeile, mit den Einzügen, den Leerzeilen des Skripts und der zweispaltigen Ausgabe von `du`. `codeStyle` gestaltet alle Listings auf einmal ([Codelistings](/de/docs/configuration-styles#code-listings)): Schrift und Zeilenabstand, die fast schwarze Fläche, den Innenabstand und den Raum darüber und darunter. Was in der öffnenden Zeile des Codeblocks auf die Sprache folgt (`Terminal`, `backup.sh`), ist der Titel des Listings, und weil `codeStyle.label` gesetzt ist, erscheint er auf einem [Tab](/de/docs/configuration-styles#kastenstile) an der Oberkante des Kastens statt in einer Titelzeile. `codeStyle.inline` setzt den Inline-Code des Fließtexts, `ls` oder `grep -c`, in derselben Schrift in 0,88 em ([Inline-Code](/de/docs/configuration-styles#inline-code)). Der Absatz nach einem Listing steht in `:::paragraphs{style="resume"}`, sodass er stumpf beginnt, wie nach einer Überschrift.
+
+### 2 · Den Text schmal halten und den Code über den Rand laufen lassen
+
+<Excerpt region="page" />
+
+In 10 pt setzt die Charis SIL etwa 62 Zeichen in die 100 mm breite Spalte. Die Seitenspalte dieses [anderthalbspaltigen Layouts](/de/docs/configuration-page-layout#layout-typen) nimmt nur Gleitobjekte und Marginalien auf, sodass der Text nie in sie hineinläuft. `span: 'page'` in `codeStyle` zieht jedes Listing über beide Spalten, 143 mm. Innerhalb seines Innenabstands fasst ein Kasten 73 Zeichen JetBrains Mono in 8,6 pt; die längste Zeile auf diesen Seiten, der Kommentar zu Beginn von `backup.sh`, hat 71.
+
+### 3 · Den Code nach Token einfärben
+
+<Excerpt region="paint" />
+
+Die Sprache in der öffnenden Zeile (`console`, `bash`) wählt den eingebauten Tokenizer, und `codeStyle.tokens` gibt jeder Token-Art Farbe, Schriftstärke und Neigung ([Syntaxhervorhebung](/de/docs/configuration-styles#syntaxhervorhebung)). In `backup.sh` erscheinen Schlüsselwörter wie `for` und `done` und eingebaute Befehle wie `set` und `echo` in fettem Bernstein, Zeichenketten grün kursiv und Kommentare grau; Programme wie `mkdir` und `rsync` bleiben schlicht. Der Standardstil setzt Kommentare kursiv, deshalb hält `italic: false` sie aufrecht. In einem Codeblock `console` ist eine Zeile, die mit einem Prompt beginnt, ein Token `prompt` und jede andere Zeile `output`, sodass die getippten Befehle in fettem Bernstein erscheinen und die Antwort der Shell im hellen Grau des Listings bleibt. Die Arten, die das Rezept nicht einfärben will, darunter Zahlen, Variablen und Optionen, nehmen ebenfalls dieses Grau an.
+
+### 4 · Tasten als Chips setzen
+
+<Excerpt region="keycaps" />
+
+Tasten sind Chips `key` mit heller Fläche und einer Kontur von 0,6 pt. Ihre Größe ist in Punkt angegeben, sodass eine Taste im Text zu 10 pt, in der Marginalie zu 8,6 pt und im Spickzettel zu 8,4 pt gleich 7,8 pt misst; `em(0.78)` würde die Tasten des Spickzettels auf 6,6 pt schrumpfen lassen. Ein Chip bricht nie über Zeilen um und dehnt sich nie ([Inline-Chips](/de/docs/document-format#inline-chips)), sodass eine Zeile mit Tasten ihren ganzen Spielraum in die Wortabstände legt. `spacing` lässt den Zeilenumbruch andere Umbruchstellen versuchen, bevor ein Wortabstand über 140 % seiner normalen Breite wächst. Beim Standardwert von 200 % dehnen sich sechs Zeilen dieser Seiten weiter; mit der Einstellung erreicht die breiteste 132 %.
+
+### 5 · Die Schritte im Raster nummerieren
+
+<Excerpt region="steps" />
+
+Die Nummern stehen in der Sora 800 in der Akzentfarbe, der Trenner ist ein dicktengleiches `›` in Grau. Der Trenner hat eigene Schrift und Farbe und wird deshalb als eigener Lauf gezeichnet ([Nummerierte Listen](/de/docs/configuration-text#nummerierte-listen)). Die Listenränder sind null, sodass die Schritte im 14,5-pt-Raster des umgebenden Texts weiterlaufen. Der Standardwert von 1,5 em würde über den Schritten 5,3 mm öffnen und den Spickzettel auf Seite 51 schieben.
+
+### 6 · Den Spickzettel an den Fuß der Seite gleiten lassen
+
+<Excerpt region="sheet" />
+
+Der Spickzettel ist ein Kastenstil mit der Fläche der Listings, der Sora für die Aktionen und `placement: 'bottom'`, das ihn an den Fuß von Seite 50 gleiten lässt ([Gleitende Kästen](/de/docs/configuration-styles#der-container-callout)). Bliebe er im Textfluss, bräuchte ein Kasten über die ganze Seitenbreite Platz für sich und zwei Textzeilen darunter. Hier würde der Kasten auf Seite 51 rücken, unter den Schritten 58 mm leer lassen, und das Kapitel liefe auf vier Seiten. Im Markdown eröffnet `:::columns{count=2 breaks="8"}` die rechte Spalte beim achten Block, ihrer Überschrift. Der Ausgleich allein bricht nach Höhe um, und wenn eine Aktion auf eine zweite Zeile läuft, bleibt *Commands and history* am Fuß der linken Spalte stehen. Jeder Eintrag beginnt mit denselben zwei Chips, `Ctrl` und einem Buchstaben, beide in der dicktengleichen Schrift, sodass jede Aktion im selben Abstand vom linken Rand ihrer Spalte beginnt.
+
+## Varianten
+
+### Den Tab rechts aufhängen
+
+Der Tab rückt an die obere rechte Ecke des Kastens, die auf einer rechten Seite über der Randspalte steht.
+
+```diff
+-    position: 'top-left' },
++    position: 'top-right' },
+```
+
+### Die Zeilen nummerieren
+
+Jedes Listing bekommt graue Zeilennummern in einem Steg innerhalb seines Kastens. Der Steg nimmt etwa vier der 73 Zeichen ein, sodass der Kommentar zu Beginn von `backup.sh` nicht mehr passt: Er bricht nach `backup` um, und `disk.` läuft hinter einem `»` darunter weiter. Die Prüfung des Rezeptbuchs meldet das als Warnung `codeOverflow`; kürzen Sie den Kommentar, damit das Skript bei seinen 13 Zeilen bleibt. Ein einzelnes Listing bekommt Nummern mit `{lineNumbers}` in seiner öffnenden Zeile.
+
+```diff
++  lineNumbers: true, lineNumberColor: col('slate'),
+   tokens: tokens(), // the colours, below
+```
+
+### Kommentaren die Farbe der Zeichenketten geben
+
+Die Kommentare nehmen das Grün der Zeichenketten an, kursiv.
+
+```diff
+-    comment: { color: col('slate'), italic: false }, // upright: the default comment is italic
++    comment: { color: col('phosphor'), italic: true }, // the strings' green italic
+```
+
+## Häufige Fehler
+
+- Halten Sie jede Codezeile bei höchstens 73 Zeichen. Eine längere bricht an ihrem letzten passenden Leerzeichen oder Satzzeichen um und läuft hinter einem `»` darunter weiter, und die Engine meldet eine Warnung `codeOverflow`; `overflow: 'shrink'` setzt stattdessen das ganze Listing kleiner, und `'clip'` schneidet die Zeile an der Kante des Kastens ab.
+- Ein Tabulator in einem Listing springt zum nächsten Vielfachen von vier Spalten (`codeStyle.tabSize`). Ein mit Tabulatoren eingerücktes Skript, das Ihr Editor acht Spalten breit zeigt, fällt hier schmaler aus.
+- Ist `codeStyle.inline` gesetzt, bricht Inline-Code wie ein Chip nie über Zeilen um. Ein langer Pfad im Fließtext wie `~/Pictures/2025/IMG_0977.MOV` rückt ganz in die nächste Zeile und kann davor eine zu lockere Zeile hinterlassen.

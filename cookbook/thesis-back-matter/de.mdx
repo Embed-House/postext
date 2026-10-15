@@ -1,0 +1,68 @@
+---
+title: "Schlussteil einer Dissertation: Anhang, Glossar und Register"
+summary: "Die letzten Seiten einer Dissertation in Schwarzweiß: ein Anhang mit Buchstaben, ein zweispaltiges Glossar, APA-Literatur und ein Register aus Marken im Text."
+plain: "Die letzten Seiten einer Doktorarbeit, vom Schlusskapitel bis zum Register. Postext baut das Register aus Wörtern, die im Text markiert sind, und ergänzt ihre Seitenzahlen."
+description: "Überschriftenformate setzen das Ende einer Dissertation in Postext: Anhang A, ein Glossar in zwei Spalten, Literatur mit hängendem Einzug, Register aus :index."
+question: "Wie setze ich Glossar, Literatur und Register einer Dissertation mit hängendem Einzug und kleinerer Schrift?"
+aliases: ["Dissertation", "Doktorarbeit", "Abschlussarbeit", "Anhang", "Anhänge", "Anhang mit Buchstaben", "Glossar", "Bibliografie", "Literaturverzeichnis", "APA-Stil", "Register", "Stichwortverzeichnis", "hängender Einzug", "Schwarzweiß", "back matter"]
+pageNotes: { "1": "Seite 171 eröffnet Kapitel 6, „Conclusion“, unter einem schwarzen Band von 62 mm Höhe: Titel und eine Ziffer zu 118 pt in Weiß, darüber die Dachzeile „CHAPTER“. Tabelle 6.1 steht am Fuß zwischen waagerechten Linien.", "3": "Seite 173, Anhang A, „Interview guide“: Das Band trägt den Buchstaben „A“, wo das Kapitel seine Ziffer hatte. Darunter sieben nummerierte Fragen mit zwei Nachfragen, dann Tabelle A.1.", "4": "Seite 174, das Glossar: die Dachzeile „BACK MATTER“ und eine kursive Notiz im Band, dann zwei Spalten im Flattersatz mit fetten Begriffen, deren Definitionen um 1 em hängen.", "5": "Seite 175, das Literaturverzeichnis: eine Spalte mit siebzehn APA-Einträgen in 9,3 pt, jeder um 1,5 em hängend.", "6": "Seite 176, das Register: Buchstaben in der Auszeichnungsschrift über zwei Spalten mit Einträgen und eingerückten Untereinträgen. Fette Seitenzahlen verweisen auf die Definitionen im Glossar.", "7": "Seite 177: Das Register endet in zwei fast gleich langen Spalten unter dem Kolumnentitel „INDEX“, und ein Impressum folgt." }
+---
+
+## Was Sie setzen
+
+Die letzten sieben Seiten einer Doktorarbeit über das Lesen am Bildschirm und auf Papier, auf einer B5-Seite in Schwarzweiß gesetzt. Kapitel 6, Anhang A, Glossar, Literaturverzeichnis und Register beginnen jeweils unter demselben schwarzen Band von 62 mm Höhe, aus dem der Titel weiß ausgespart ist. Das Kapitel zeigt im Band seine Ziffer und der Anhang seinen Buchstaben; die Abschnitte des Schlussteils tragen die Dachzeile „BACK MATTER“ und eine kurze kursive Notiz. Das Kapitel läuft in einer Spalte im Blocksatz. Glossar und Register wechseln zu zwei Spalten im Flattersatz, und das Literaturverzeichnis kehrt zu einer zurück, wobei die Folgezeilen jedes Eintrags eingezogen sind. Das Register entsteht aus Marken im Text: Die Engine sortiert die Begriffe unter ihren Buchstaben, findet die Seite jeder Marke und fasst aufeinanderfolgende Seiten zu Bereichen wie 171–73 zusammen. Fette Zahlen verweisen auf die Definitionen des Glossars.
+
+## Zubereitung
+
+### 1 · Jedem Abschnitt des Schlussteils ein Überschriftenformat geben
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `# Glossary {style="glossary" note="…"}` eröffnet einen Abschnitt, der bis zur nächsten Überschrift der Ebene 1 reicht, und seine Seiten übernehmen Layout, Kolumnentitel und Auftakt des Formats ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)); so wechseln Glossar und Register zu zwei Spalten, während das Literaturverzeichnis, dessen Format kein Layout festlegt, zur einen Spalte des Dokuments zurückkehrt. `numbered: false` hält diese Überschriften aus der Kapitelzählung heraus (löschen Sie es, und das Band des Glossars druckt 2), und jedes Format nennt seinen Seitenumbruch, weil eines, das keinen nennt, das `'odd'` des Kapitels erbt und leere linke Seiten hinterlässt. Die Einträge von Glossar und Literaturverzeichnis sind Absätze eines Blocks `:::paragraphs{style="…"}` in 9,3 pt auf 12,4 pt Zeilenabstand, gegenüber 11 auf 14,6 pt im Text, mit Folgezeilen, die im Glossar um 1 em und im Literaturverzeichnis um 1,5 em hängen ([Absatzformate](/de/docs/configuration-styles#absatzformate)).
+
+### 2 · Ein Band für jeden Auftakt zeichnen
+
+<Excerpt region="opener" />
+
+Das Zeichen ist `{number}`: 6 beim Kapitel, A beim Anhang und nichts bei einer nicht nummerierten Überschrift. Ein einziges Design dient allen dreien, und die Abschnitte des Schlussteils drucken ihr `{attr.note}` dort, wo die Ziffer stünde. `minHeight` reserviert acht Zeilen zu 14,6 pt, 41,2 mm ab der Oberkante des Satzspiegels, was 3,2 mm Abstand zum Band lässt und den Text auf seinem Raster hält. Designtext setzt seine Grundlinie bei 0,8 der Zeile; ein unten ausgerichteter Kasten, dessen Fuß `below()` unter einer Grundlinie sitzt, setzt also seine letzte Zeile auf diese Grundlinie. Titel, Ziffer zu 118 pt und die letzte Zeile der Notiz stehen alle auf der Grundlinie des Titels, 52,5 mm unter dem Endformat. Die Zeile der Ziffer misst 0,72 ihres Grads, sodass die Zeile in ihren Kasten passt.
+
+### 3 · Den Anhang über sein Format mit Buchstaben zählen
+
+<Excerpt region="appendix" />
+
+Das Format des Anhangs setzt `numberingTemplate: '{1:A}'`, das den Zähler der Ebene als Buchstaben druckt, und `# Interview guide {style="appendix" startAt=1}` setzt diesen Zähler zurück, sodass der erste Anhang A ist und nicht G ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Das Band liest den Buchstaben über `{number}` und der Kolumnentitel über `{chapterNumber}`. `{h1}` in einem Ressourcentyp druckt den Zähler als Zahl, sofern es keinen Stil nennt; die Tabellen des Anhangs nehmen daher einen Typ, dessen Vorlage `'{h1:A}.{n}'` lautet: A.1, A.2 und so weiter, und B.1 in einem zweiten Anhang; mit dem voreingestellten Typ wäre die Tabelle Table 1.1. Die eigenen Überschriften des Kapitels zählen nach den Vorlagen der Ebenen: `'{1}.{2}'` druckt 6.1, und `continuation.headings.h1: 5` macht dieses Kapitel zum sechsten.
+
+### 4 · Die Kolumnentitel an die Außenkante setzen
+
+<Excerpt region="running-heads" />
+
+Die vier Textelemente sind an der Seite verankert und nach `parity` gefiltert, was die Pagina auf beiden Seiten an der Außenkante hält; jedes wird an seiner Oberkante platziert, `above()` über einer Grundlinie 17,5 mm unter dem Endformat, sodass die Pagina zu 9,5 pt und die Versalien zu 7,5 pt auf einer Linie stehen. Die linke Seite trägt den Titel der Arbeit (`{title}` aus dem Frontmatter) und die rechte den des Abschnitts (`{chapterTitle}`), etwa „INDEX“ auf <PageRef page={7}>Seite 177</PageRef>. `pages: 'body'` hält sie von den Auftaktseiten fern, deren einzige Pagina die der Fußzeile ist, zentriert unter dem Satzspiegel. Die rechte Seite des Kapitels würde *Chapter 6. Conclusion* lauten und die des Anhangs *Appendix A. Interview guide*, doch in diesem Beispiel läuft nur das Register auf eine rechte Seite weiter.
+
+### 5 · Die Begriffe dort markieren, wo der Text sie behandelt
+
+<Excerpt region="index" />
+
+`:index[tablet]` druckt sein Wort und ordnet es unter demselben Wort ein; `Rayner:index{term="Rayner, Keith"}` druckt nichts und ordnet die Seite von *Rayner* unter dem vollen Namen ein; `term="interviews!timing of"` erzeugt einen Untereintrag. Die Begriffe des Glossars tragen `main`, deshalb steht ihre Seite fett, wie die Notiz im Band des Registers sagt. `:::index` unter `# Index {style="index"}` druckt die Einträge in den zwei Spalten des Formats, und `buildDocument` setzt das Dokument erneut, bis sich die Seitenzahlen nicht mehr verschieben. Die Einträge stehen in 9 auf 11,6 pt, mit Folgezeilen, die um 2 em hängen, und um 1 em eingerückten Untereinträgen; die Buchstaben stehen in 13 pt in der Auszeichnungsschrift. Marken funktionieren nicht in Tabellenzellen, die Zeilen von Tabelle 6.1 fügen also keine Seiten hinzu: *look-backs* führt den Absatz auf, der über sie berichtet, nicht die Tabelle.
+
+### 6 · Jede Voreinstellung in der Textfarbe halten
+
+<Excerpt region="palette" />
+
+Die Voreinstellungen der Engine für Fett, Kursiv, Listenzeichen und Verweise folgen dem Paletteneintrag `main-color`; richtet man ihn auf die Textfarbe, drucken sie schwarz statt blau ([Farbpalette](/de/docs/configuration-fonts-colors-viewers#farbpalette)). `referenceBold: false` setzt *Table 6.1* aufrecht und normal, wie die Autor-Jahr-Zitate um ihn herum.
+
+<Note>Ein Tabellenverzeichnis bleibt Handarbeit. In einer ganzen Dissertation, die mit `buildBundle` Kapitel für Kapitel gesetzt wird, erhält das Kapitel mit `:::index` die Marken aller Kapitel.</Note>
+
+## Varianten
+
+### Jeden Abschnitt auf einer rechten Seite beginnen
+
+Dissertationen, die für eine Bibliothek gebunden werden, beginnen jeden Abschnitt oft auf einer rechten Seite. Glossar, Literaturverzeichnis und Register rücken dann auf die Seiten 175, 177 und 179, jeweils nach einer leeren linken Seite, und die fetten Zahlen des Registers verweisen auf Seite 175.
+
+```diff
+-const backMatter = (id, extra) => ({ id, numbered: false, breakBefore: { enabled: true,
+-  parity: 'any' }, advancedDesign: opener('Back matter'), header: sectionHeads, ...extra });
++const backMatter = (id, extra) => ({ id, numbered: false, breakBefore: { enabled: true,
++  parity: 'odd' }, advancedDesign: opener('Back matter'), header: sectionHeads, ...extra });
+```
+
+### Auch den Anfang der Dissertation setzen
+
+Die Titelei, vor Seite 1 in römischen Ziffern gezählt, behandelt <RecipeLink slug="front-matter-roman-to-arabic">Titelei mit römischen Paginas, dann Seite 1</RecipeLink>.

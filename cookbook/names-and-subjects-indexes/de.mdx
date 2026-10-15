@@ -1,0 +1,66 @@
+---
+title: "Ein Personenregister und ein Sachregister"
+summary: "Marken mit index=\"names\" speisen ein Personenregister, der Rest ein Sachregister; :::index druckt beide zweispaltig, und der Build legt die Seiten fest."
+plain: "Ein Kapitel aus einem wissenschaftlichen Buch über die Geschichte der Druckschriften. Es zeigt, wie hinten zwei Listen entstehen, eine der Personen und eine der Themen, mit der Seite, auf der jeder Eintrag vorkommt."
+description: "Ein Monografiekapitel über Druckschriften, das mit einem Personen- und einem Sachregister endet, beide aus Marken :index in einem einzigen Markdown-Dokument."
+question: "Wie drucke ich aus demselben Text ein Personenregister und ein Sachregister?"
+aliases: ["Personenregister", "Namensregister", "Sachregister", "Stichwortverzeichnis", "Register", "Index", "índice onomástico", "índice de materias", "back-of-book index", ":index", ":::index"]
+pageNotes: { "6": "Das Personenregister: Nachnamen vorangestellt unter Buchstabenüberschriften in Bodoni, Hauptfundstellen fett.", "7": "Das Sachregister: Untereinträge, Querverweise „See“ und „See also“, die „42-line Bible“ unter F eingeordnet." }
+---
+
+## Was Sie setzen
+
+Kapitel vier von *Letters of Metal*, einer wissenschaftlichen Monografie über Druckschriften, gesetzt auf 155 × 235 mm: eine Spalte Crimson Pro, Bodoni kursiv für die Titel, ein ziegelroter Akzent. Der Essay reicht von Gutenbergs Textura über Jenson, Aldus und Griffo, Garamond und Plantin, Caslon und Baskerville, Fourniers Punkte und die spanischen Schriften, die Pradell und Gil schnitten und Ibarra druckte, bis zu Bodonis klassizistischen Antiquas. Er endet, wie solche Bücher enden, mit zwei Registern auf gegenüberliegenden Seiten: Drucker, Stempelschneider und Mäzene auf der linken Seite, Schriften, Werkzeuge und Bücher auf der rechten. Beide stammen aus demselben ausgezeichneten Text, und jede Seitenzahl darin ist die Seite, auf der die Marke gelandet ist.
+
+## Zubereitung
+
+### 1 · Jede Person für das Personenregister und jedes Thema für das Hauptregister markieren
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort); der Rest steht im Markdown. Eine Marke mit `index="names"` geht in das Register, das `:::index{index="names"}` druckt, und jede andere Marke in das Hauptregister, das ein schlichtes `:::index` druckt. So druckt `:index[Aldus Manutius]{term="Manutius, Aldus" index="names" main}` den Namen im Text und legt im Personenregister unter *Manutius* eine fette Seitenzahl ab, während `:index[italic]{term="Italic" main}` zwei Zeilen weiter dieselbe Seite im Sachregister unter *Italic* ablegt. Eine Person, die Thema des Kapitels ist, kann beide Marken tragen.
+
+### 2 · Namen umstellen und nach den Buchstaben sortieren, unter denen der Leser sucht
+
+Namen werden mit dem Nachnamen zuerst eingeordnet: `term="Garamond, Claude"`, `term="Dall’Aglio, Margherita"`. Das Komma gehört zum Begriff, sodass die Sortierung *Didot, Firmin* vor *Didot, François-Ambroise* stellt, wie es ein Registermacher täte. Wenn die gedruckte Form unter dem falschen Buchstaben stünde, gibt `sort` den Schlüssel an: Die englische Ausgabe markiert `term="42-line Bible" sort="Forty-two-line Bible"`, sodass die Bibel unter F steht, statt eine Gruppe 0–9 zu eröffnen. Untereinträge (`term="Foundries!Plantin-Moretus"`), fette Hauptfundstellen (`main`), `range="start"` und `range="end"` um den Abschnitt über Bodoni und Querverweise (`see="Italic"`, `seealso="Matrices"`) erledigen den Rest; ein Ziel von `see` mit Ebenen wird mit Doppelpunkt gedruckt, wie in *Humanist type. See Roman type: Venetian*.
+
+### 3 · Einmal bauen; das Dokument legt seine Nummern selbst fest
+
+<Excerpt region="build" />
+
+Das Register druckt Seitenzahlen, die erst nach dem Layout existieren, und sein Druck braucht eigene Seiten. `buildDocument()` erledigt das: Es setzt das Kapitel, liest die Seite jeder Marke, druckt beide Register und setzt erneut, sobald sich eine Zahl geändert hat. Hier folgen die Register dem Text, ein zweiter Durchgang bestätigt also den ersten; ein Register vor dem Text würde jede Seite danach verschieben, und die Durchgänge liefen weiter, bis sie übereinstimmen. Fügen Sie dem Abschnitt über Bodoni einen Absatz hinzu, und das Personenregister gibt Whittingham von selbst seine neue Seite.
+
+### 4 · Jedem Register einen Auftakt über zwei Spalten geben
+
+<Excerpt region="opener" />
+
+Das Überschriftenformat in der kurzen Antwort leistet für `# Index of Names {style="index"}` dreierlei: Es beginnt eine Seite (`parity: 'any'`, sodass die beiden Register ohne Vakatseite aufeinanderfolgen), es setzt den folgenden Abschnitt in zwei Spalten mit 7 mm Abstand, und mit `numbered: false` lässt es die Kapitelzählung unberührt. Das Format übernimmt den Kapitelauftakt mit einer Absenkung von sechs Zeilen und einem Titel in 20 pt, und die Buchstabenüberschriften wiederholen dessen Bodoni in der Akzentfarbe, eine Registerzeile hoch, damit die Spalten ihren Zeilenabstand halten.
+
+### 5 · Das Register auf der rechten Seite benennen
+
+<Excerpt region="running-heads" />
+
+Der Kolumnentitel der rechten Seite druckt `{chapterTitle}`, und eine Registerüberschrift ist eine Überschrift der Ebene 1 wie jedes Kapitel; die Seiten danach tragen also oben *Index of Subjects*. `pages: 'body'` hält die Kolumnentitel von beiden Registerauftakten fern, die stattdessen eine Pagina am Fuß tragen.
+
+## Varianten
+
+### Ein gemeinsames Register drucken
+
+Entfernen Sie `index="names"` aus den Marken der Personen und die zweite Überschrift: Jede Marke landet dann im Hauptregister, Namen und Sachen in einem Alphabet.
+
+```diff
+-:index[Aldus Manutius]{term="Manutius, Aldus" index="names" main}
++:index[Aldus Manutius]{term="Manutius, Aldus" main}
+```
+
+### Die Buchstabenüberschriften weglassen
+
+Ein so kurzes Personenregister liest sich auch ohne sie gut. `groups.enabled: false` entfernt die Überschriften und lässt eine Leerzeile zwischen den Buchstaben; die Einstellung gilt für beide Register.
+
+```diff
+-  groups: { fontFamily: 'Bodoni Moda', fontSize: pt(11), fontWeight: 600, color: col('brick') },
++  groups: { enabled: false },
+```
+
+## Häufige Fehler
+
+- Die Konfiguration `index` ist gemeinsam: Beide Register erhalten dieselbe Schrift, denselben Zeilenabstand und dieselben Buchstabenüberschriften.
+- Eine Marke in einer Bildunterschrift oder einer Tabellenzelle wird gedruckt, wie sie geschrieben ist. Markieren Sie die Person in dem Absatz, der die Abbildung zitiert.

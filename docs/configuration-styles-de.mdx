@@ -1,0 +1,1509 @@
+{/* docs/configuration-styles-de.mdx */}
+
+export const metadata = {
+  title: 'Konfiguration: Stile und Teile',
+  sidebarTitle: 'Stile und Teile',
+  description: 'Benannte Stile für Absätze, Chips, Code-Listings, Kästen und Überschriften sowie die Seiten, die jeden Teil eröffnen',
+  lang: 'de',
+  lastUpdated: '2026-10-10',
+  readingTime: '7 min',
+  order: 9,
+  parent: 'configuration',
+  plainSummary: "Diese Seite behandelt die benannten Stile, die Sie einmal festlegen und vielfach verwenden. Ein Absatzformat legt eine Textart fest, etwa ein Literaturverzeichnis oder ein Glossar. Ein Chip-Stil zeichnet eine kleine Marke in eine Zeile, ein Kastenstil zeichnet einen Kasten um eine Anmerkung oder einen Tipp. Code-Listings haben ihre eigene Schrift, ihren eigenen Kasten und ihre eigenen Farben. Außerdem behandelt die Seite die Seiten, die jeden Teil eines Buchs eröffnen, und die Stile für besondere Überschriften.",
+};
+
+# Konfiguration: Stile und Teile
+
+
+## Absatzformate
+
+Die Eigenschaft `paragraphStyles` deklariert benannte Stile, die ein Dokument mit einem Container `:::paragraphs{style="…"}` auf eine Folge von Absätzen anwendet – Literaturverzeichnisse, Glossare, Anmerkungen, jeder Block von Einträgen, der eine eigene Schrift, Schriftstärke, Neigung, Größe, einen eigenen Zeilenabstand, Versalien, Kapitälchen oder einen hängenden Einzug verlangt. Jedes typografische Feld ist optional und erbt, wenn nicht gesetzt, den Wert des Fließtexts; ein Stil nennt also nur, was vom Fließtext abweicht.
+
+```ts
+const config: PostextConfig = {
+  paragraphStyles: [
+    {
+      id: 'bibliography',
+      name: 'Bibliography',
+      fontSize: { value: 7, unit: 'pt' },
+      lineHeight: { value: 1.2, unit: 'em' },
+      hangingIndent: { value: 2, unit: 'em' },
+      spaceBetween: { value: 0.25, unit: 'em' },
+      marginTop: { value: 1, unit: 'em' },
+      marginBottom: { value: 1, unit: 'em' },
+    },
+  ],
+};
+```
+
+```md
+## References
+
+:::paragraphs{style="bibliography"}
+Knuth, D. E. (1984). *The TeXbook*. Addison-Wesley.
+
+Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
+:::
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '180px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>Pflichtfeld</td>
+      <td>Bezeichner, auf den <code>:::paragraphs&#123;style="…"&#125;</code> verweist.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Lesbarer Name, nur für Editor-Oberflächen.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>Schrift des Fließtexts</td>
+      <td>Schriftfamilie. Ihre Schriftstärken sind <code>fontWeight</code> / <code>boldFontWeight</code> weiter unten (die des Fließtexts, wenn nicht gesetzt).</td>
+    </tr>
+    <tr>
+      <td><code>fontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td>Schriftgröße des Fließtexts</td>
+      <td>Schriftgröße.</td>
+    </tr>
+    <tr>
+      <td><code>lineHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>Zeilenabstand des Fließtexts</td>
+      <td>Zeilenabstand. <code>em</code>/<code>rem</code> beziehen sich auf die eigene Schriftgröße des Stils, ein geerbtes <code>1.5em</code> wird also mit einer kleineren Schrift enger.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Farbe des Fließtexts</td>
+      <td>Textfarbe. Fetter und kursiver Text behält die Auszeichnungsfarben des Fließtexts, sofern <code>boldColor</code> / <code>italicColor</code> nicht eigene des Stils setzen.</td>
+    </tr>
+    <tr>
+      <td><code>textAlign</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
+      <td>Ausrichtung des Fließtexts</td>
+      <td>Waagerechte Ausrichtung. <code>'center'</code> und <code>'right'</code> setzen jede Zeile auch von der anderen Seite im Flattersatz – eine Widmung, ein Unterschriftenblock. In einem Absatz mit Leserichtung von rechts nach links ist <code>'left'</code> seine Anfangsseite, also rechts.</td>
+    </tr>
+    <tr>
+      <td><code>boldColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>bodyText.boldColor</code></td>
+      <td>Farbe fetten Texts (eine Autorenliste mit den Namen in der Hausfarbe).</td>
+    </tr>
+    <tr>
+      <td><code>italicColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>bodyText.italicColor</code></td>
+      <td>Farbe kursiven Texts (<code>*…*</code>) – in einem Stil mit <code>italic</code> die der Textstellen, die aufrecht werden. Sie folgt <code>color</code> nicht: Ein farbiger Stil, dessen Kursive in seiner Farbe bleiben soll, setzt beide.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>bodyText.fontWeight</code></td>
+      <td>Schriftstärke des normalen Texts (100–900) – eine halbfette Frage auf einem Arbeitsblatt, ein leichtes Motto.</td>
+    </tr>
+    <tr>
+      <td><code>boldFontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>bodyText.boldFontWeight</code></td>
+      <td>Schriftstärke fetten Texts (<code>**…**</code>).</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Die Absätze kursiv setzen – Regieanweisungen, ein Motto. Kursiver Text (<code>*…*</code>) darin wird aufrecht, wie in einem Zitatblock.</td>
+    </tr>
+    <tr>
+      <td><code>smallCaps</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Die Absätze in Kapitälchen setzen: Kleinbuchstaben als Versalien in 70 % der Größe, Versalien in voller Größe, in jeder Ausgabe gleich gezeichnet (siehe <a href="/de/docs/document-format#kapitälchen">Kapitälchen</a>) – ein Personenverzeichnis, die Stichwörter eines Glossars.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenation</code></td>
+      <td><code>boolean</code></td>
+      <td>Silbentrennung des Fließtexts</td>
+      <td>Im Blocksatz trennen (verwendet die Sprache des Dokuments).</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Einzug jeder Zeile vom linken Rand der Spalte (oder des Kastens, in dem die Absätze stehen); <code>em</code> ist die eigene Größe des Stils. Erstzeileneinzug und hängender Einzug werden davon aus gemessen, sodass eine eingerückte Verszeile ihren Umbruch tiefer einhängen kann als ihren eigenen Anfang: <code>indent: 1.5em</code> mit <code>hangingIndent: 2.5em</code> setzt die Zeile auf 1,5 em und ihren Umbruch auf 4 em. Ein negativer Wert zählt als <code>0</code>.</td>
+    </tr>
+    <tr>
+      <td><code>endIndent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Einzug jeder Zeile von der Endseite (rechts bei einer waagerechten Zeile, unten bei einer senkrechten); <code>em</code> ist die eigene Größe des Stils. Mit <code>textAlign: 'end'</code> setzt er eine Zeile einige Zeichen über dem Fuß, das 地からN字上げ von Datum oder Unterschrift eines japanischen Briefs. Seit postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>firstLineIndent</code></td>
+      <td><code>Dimension</code></td>
+      <td>Erstzeileneinzug des Fließtexts</td>
+      <td>Einzug der ersten Zeile, ab <code>indent</code>. Mit einem von null verschiedenen <code>hangingIndent</code> gilt er nur, wenn der Stil ihn selbst setzt: Die erste Zeile beginnt bei <code>indent + firstLineIndent</code> und die Umbrüche bei <code>indent + hangingIndent</code>, sodass eine Verszeile 1 em eingerückt beginnen und ihren Umbruch um 3 em einhängen kann. Vom Fließtext geerbt, weicht er dem hängenden Einzug, und die erste Zeile beginnt bei <code>indent</code>, wie bis postext 1.22 (einer zuvor gespeicherten Konfiguration wird ein ausdrücklicher Wert aus einem solchen Stil entfernt).</td>
+    </tr>
+    <tr>
+      <td><code>hangingIndent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Einzug jeder Zeile außer der ersten, ab <code>indent</code> – die klassische Form eines Literaturverzeichnisses oder Glossars und der Umbruch einer Verszeile. Die erste Zeile beginnt bei <code>indent</code> oder beim eigenen <code>firstLineIndent</code> des Stils, wenn er einen setzt.</td>
+    </tr>
+    <tr>
+      <td><code>spaceBetween</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Senkrechter Abstand zwischen aufeinanderfolgenden Absätzen im Container. <code>0</code> lässt die Einträge aneinanderstoßen.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Abstand über dem ersten Absatz des Containers. Fällt mit dem bereits anstehenden Abstand zusammen und entfällt am Kopf einer Spalte, wie jeder andere Außenabstand.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Mindestabstand unter dem letzten Absatz des Containers. Wie er mit dem Abstand des Blocks nach dem Container zusammentrifft, regelt <code>bodyText.paragraphContainerSpacing</code>.</td>
+    </tr>
+    <tr>
+      <td><code>snapToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Den Textfluss unter dem Container wieder auf das Grundlinienraster einrasten, wobei der Abstand darunter ein Mindestwert ist. <code>false</code> behält den genauen Abstand: Der Text nach dem Container bleibt bis zum nächsten einrastenden Block (eine Überschrift, das Ende einer Liste, abgesetzte Formeln) außerhalb des Rasters, für ein Dokument ohne Raster oder eine Gruppe mit eigenem Zeilenabstand. In einem Kasten, der kein Raster hat, ändert es nichts.</td>
+    </tr>
+    <tr>
+      <td><code>containerSpacing</code></td>
+      <td><code>'collapse' | 'add'</code></td>
+      <td>nicht gesetzt</td>
+      <td>Die Regel für den Abstand unter den Containern dieses Stils, im Fließtext und in einem Kasten: einer der beiden Werte von <code>bodyText.paragraphContainerSpacing</code>, für die Container, die den Stil nennen. Nicht gesetzt: Sie folgen dem Dokument. Mit <code>'add'</code> enden die Gruppen des Stils mit dessen eigenem Abstand, ohne hinzugefügte Zeile Absatzabstand, während der Rest des Dokuments <code>'collapse'</code> behält. Seit postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Groß- und Kleinschreibung der Absätze: <code>'uppercase'</code> setzt sie in Versalien (ein Personenverzeichnis, eine Zeile Bühnenhandlung), einschließlich der Wörter eines Chips und der Bezeichnung eines <code>:ref</code>. Länge für Länge, damit die Quellzuordnung des Editors eins zu eins bleibt: Ein Buchstabe, dessen Großbuchstabe länger ist (<code>ß</code>), bleibt, wie er geschrieben ist. Formeln bleiben unberührt, und ein Kolumnentitel, der den Absatz als Marke liest (<code>&#123;firstMark.<em>style</em>&#125;</code>), übernimmt den Text so, wie er geschrieben ist; das eigene <code>textTransform</code> eines Gestaltungstexts setzt ihn in Versalien.</td>
+    </tr>
+    <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>Wo die Zeilen der Absätze zwischen chinesischen, japanischen und koreanischen Zeichen umbrechen (siehe <code>cjk.wordBreak</code>): <code>'keep-all'</code> für eine Fibel in Kana mit Phrasenabständen, zitiert in einem Buch gewöhnlicher Prosa, <code>'normal'</code> für den umgekehrten Fall. Es gilt für einen Absatz solchen Texts und für die Zeichen, die ein lateinischer Absatz zitiert. Seit postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>lineNumbers</code></td>
+      <td><code>boolean</code></td>
+      <td>nicht gesetzt</td>
+      <td>Ob <a href="/de/docs/configuration-notes-references#zeilennummern">Zeilennummern</a> die Zeilen der Absätze zählen. Nicht gesetzt: gezählt, wenn <code>lineNumbers.count</code> den Wert <code>'all'</code> hat, und in einem im Stil gesetzten Gedicht, wenn Verse gezählt werden. <code>true</code>: auch unter <code>'verse'</code> gezählt, und in einem Kasten, dessen Text sonst nie gezählt wird. <code>false</code>: nie gezählt. Seit postext 1.23.</td>
+    </tr>
+    <tr>
+      <td><code>tabStops</code></td>
+      <td><code>TabStop[]</code></td>
+      <td><code>bodyText.tabStops</code></td>
+      <td>Tabulatoren der Absätze des Stils (siehe <a href="/de/docs/configuration-text#tabulatoren">Tabulatoren</a>), gemessen ab dem <code>indent</code> des Stils. Ein Tabulatorzeichen in ihrem Text ist ein Tabulator, wenn der Stil Tabstopps oder ein Intervall hat, eigene oder die des Fließtexts. Nicht gesetzt: die des Fließtexts; eine leere Liste setzt keine. Seit postext 1.23.</td>
+    </tr>
+    <tr>
+      <td><code>tabInterval</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>bodyText.tabInterval</code></td>
+      <td>Standard-Tabstopps nach dem letzten von <code>tabStops</code>. Nicht gesetzt: die des Fließtexts. Seit postext 1.23.</td>
+    </tr>
+    <tr>
+      <td><code>dropCap</code></td>
+      <td><code>ParagraphDropCap</code></td>
+      <td>keine</td>
+      <td>Eine Initiale, die den ersten Absatz jeder Gruppe <code>:::paragraphs</code> im Stil eröffnet, oder jeden Absatz mit <code>each: true</code> (siehe <a href="/de/docs/configuration-text#initialen">Initialen</a>). <code>&#123;dropcap=false&#125;</code> an der Einfassung einer Gruppe schaltet sie aus, <code>&#123;dropcap=2&#125;</code> legt ihre Zeilen fest. Seit postext 1.23.</td>
+    </tr>
+  </tbody>
+</table>
+
+Ein Theaterstück setzt seine Regieanweisungen kursiv und sein Personenverzeichnis in Kapitälchen:
+
+```ts
+paragraphStyles: [
+  { id: 'direction', italic: true, fontSize: { value: 9, unit: 'pt' } },
+  { id: 'cast', smallCaps: true, textAlign: 'center', fontWeight: 600 },
+],
+```
+
+```md
+:::paragraphs{style="direction"}
+Elsinore. A platform before the castle. *Francisco* at his post.
+:::
+```
+
+Die Anweisung erscheint kursiv, der Name darin aufrecht; Schriftstärken, `italic` und `smallCaps` eines Stils gelten auch in Kästen.
+
+Ein Gedichtband rückt manche Zeilen ein und hängt den Umbruch einer für die Satzbreite zu langen Zeile tiefer ein als die Zeile selbst. `indent` rückt jede Zeile des Absatzes ein, und der hängende Einzug zählt von dort aus:
+
+```ts
+paragraphStyles: [
+  { id: 'verse', textAlign: 'left', firstLineIndent: { value: 0, unit: 'em' }, hangingIndent: { value: 4, unit: 'em' } },
+  { id: 'verse-indented', textAlign: 'left', indent: { value: 1.5, unit: 'em' }, hangingIndent: { value: 2.5, unit: 'em' } },
+],
+```
+
+Eine Zeile in `verse-indented` beginnt bei 1,5 em und ihr Umbruch bei 4 em, auf gleicher Höhe mit den Umbrüchen der Zeilen in `verse`. Ohne `indent` kann ein Stil die erste Zeile einrücken oder die übrigen einhängen, nicht beides: `firstLineIndent` wird ignoriert, sobald `hangingIndent` gesetzt ist.
+
+Eine Speisekarte setzt jeden Preis bündig an das Ende der Satzbreite, hinter eine Punktlinie:
+
+```ts
+paragraphStyles: [
+  {
+    id: 'menu',
+    textAlign: 'left',
+    firstLineIndent: { value: 0, unit: 'em' },
+    tabStops: [{ position: 'end', align: 'end', leader: '. ' }],
+  },
+],
+```
+
+```md
+:::paragraphs{style="menu"}
+Onion soup :tab 8.50
+
+Grilled sea bream with fennel and lemon :tab 21.00
+:::
+```
+
+Die Punkte jeder Zeile enden ein halbes Geviert vor dem Preis (`leaderGap`). Ein Gericht, das für seine Zeile zu lang ist, wird umbrochen, und seine letzte Zeile behält Punktlinie und Preis; passt der Preis nicht neben das letzte Wort, geht dieses Wort mit ihm in die nächste Zeile.
+
+### Der Container `:::paragraphs`
+
+Eine Zeile `:::paragraphs{style="<id>"}` öffnet den Container, eine bloße Zeile `:::` schließt ihn; jeder Absatz dazwischen erhält den benannten Stil, während Überschriften, Listen und andere Blöcke darin ihre übliche Gestaltung behalten. Container dürfen in anderen eingefassten Containern verschachtelt werden. Eine unbekannte `style`-ID ist kein Fehler: Die Absätze erscheinen als schlichter Fließtext.
+
+Die Einfassung nimmt außerdem `align` (`start`, `end`, `left`, `right`, `center`, `justify`), `indent` und `endIndent` (bloße Zahlen sind Geviert), mit oder ohne Stil: Mit Stil überschreiben sie ihn; ohne gelten sie über dem Stil des umschließenden Containers oder über dem Textstil an der Stelle der Einfassung (der Fließtext, ein Teil, ein gestalteter Abschnitt oder ein Kasten). `:::paragraphs{align=end}` setzt einen Block bündig an das Zeilenende (地付き) und `:::paragraphs{align=end endIndent=1}` ein Zeichen davor. Seit postext 1.16.
+
+Im Container verlässt der Textfluss das Grundlinienraster – ein Eintrag in 7 pt mit 1,2 em Zeilenabstand passt nicht auf ein Raster von 8 pt/1,5 em –, und der letzte Absatz rastet den Fluss wieder darauf ein (das Raster hat Vorrang; der Abstand darunter ist ein Mindestwert, dieselbe Konvention, der Überschriften folgen). Einträge teilen sich über Spalten und Seiten wie Absätze des Fließtexts, mit demselben Schutz vor Witwen und Waisen; eine Überschrift unmittelbar vor dem Container bleibt bei dessen erstem Absatz.
+
+Der Abstand unter dem Container ist der größere von `spaceBetween` und `marginBottom` des Stils und dem Absatzabstand des umgebenden Texts (eine Zeile, wenn `bodyText.paragraphSpacing` eingeschaltet ist), und er verschmilzt mit dem Abstand, den der nächste Block über sich hält, wie es der Abstand zwischen zwei Absätzen des Fließtexts tut: Eine Überschrift nach einem Literaturverzeichnis steht um ihr eigenes `marginTop` unter dem letzten Eintrag (oder um den Abstand des Stils, wenn dieser größer ist), und ein Absatz nach einer Gruppe engerer Einträge behält den Absatzabstand des Texts. Der Fluss rastet zuerst unter dem Text wieder auf das Raster ein, und was das Einrasten nicht abgedeckt hat, wird in ganzen Rasterzeilen weitergeführt, sodass der Text nach dem Container auf dem Raster landet. Bis postext 1.4 wurde der Abstand des Stils vor dem Einrasten unter die letzte Zeile gesetzt und der obere Abstand des nächsten Blocks darunter addiert, und der Absatzabstand blieb außen vor; `bodyText.paragraphContainerSpacing: 'add'` behält diese Regel, und vorher gespeicherte Konfigurationen werden damit gelesen. Ein Stil mit `snapToGrid: false` rastet nicht ein: Der Text nach dem Container steht um den genauen Abstand darunter, außerhalb des Rasters bis zum nächsten einrastenden Block. Ein Container, der mit einer Liste schließt, wird unter beiden Regeln wie in 1.4 gesetzt: Die Liste behält ihren eigenen Abstand darunter, und `marginBottom` folgt diesem Abstand und verschmilzt mit dem des nächsten Blocks.
+
+Ein Stil kann die Regel für seine eigenen Container mit `containerSpacing` festlegen: `'add'` am Stil einer großen Abbildung oder eines Literaturverzeichnisses beendet seine Gruppen mit dem eigenen Abstand des Stils, im Text und in einem Kasten, während jeder andere Container des Dokuments `'collapse'` behält; `'collapse'` an einem Stil bewirkt das Umgekehrte in einem Dokument, das mit `'add'` gelesen wird. Ein Container, der keinen Stil nennt, folgt dem Dokument.
+
+In einem `:::callout` übernimmt der Container die Außenabstände seines Stils auf dieselbe Weise: `marginTop` und `marginBottom` fallen mit dem Abstand der umgebenden Blöcke zusammen (ein negativer Wert zieht sie näher heran), und ein Container, der den Kasten eröffnet, erhält keinen oberen Außenabstand, wie am Kopf einer Spalte. Ein Kasten hat kein Grundlinienraster zum Einrasten, daher ist der Abstand unter dem letzten Absatz der größte von `marginBottom`, `spaceBetween` und dem eigenen Absatzabstand des Kastens (sein `body.paragraphSpacing`, eine Zeile seines Texts; entfällt mit `paragraphContainerSpacing: 'add'`), oder der eigene obere Außenabstand des nächsten Blocks, wenn dieser noch größer ist; ein negatives `marginBottom` zieht stattdessen den nächsten Block nach oben. (Bis postext 1.4 ignorierte ein Container in einem Kasten beide Außenabstände.)
+
+```ts
+const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
+// => every unset field filled from the resolved body text
+
+const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
+// => undefined when the list is empty; zero margins and `name === id` dropped
+```
+
+
+## Chip-Stile
+
+Die Eigenschaft `chipStyles` deklariert die benannten Stile des Inline-Elements `:chip[text]{style="…"}` – die abgerundeten, getönten Kästchen eines Wortspeichers, einer Tastaturtaste, eines Schlagworts (Syntax und Umbruchregeln stehen in der Referenz zum Dokumentformat). Ein Stil, `chip`, ist standardmäßig dabei (eine blassblaue Fläche mit einer Haarlinie in der Hauptfarbe, leicht abgerundet, der Text wie die umgebenden Wörter), sodass `:chip[…]` ohne jede Konfiguration funktioniert; wer `chipStyles` deklariert, ersetzt diese Standardliste. Ein Chip ohne `style` oder mit einer ID, die kein Stil deklariert, erhält den ersten Stil.
+
+```ts
+const config: PostextConfig = {
+  chipStyles: [
+    { id: 'chip', name: 'Word bank' },
+    {
+      id: 'key',
+      name: 'Keyboard key',
+      background: { hex: '#fff4d6', model: 'hex' },
+      borderColor: { hex: '#8a6d1f', model: 'hex' },
+      borderRadius: { value: 2, unit: 'pt' },
+      bold: true,
+    },
+  ],
+};
+```
+
+```md
+Classify: :chip[battery] :chip[cable] :chip[switch]
+
+Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '180px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>Pflichtfeld</td>
+      <td>Bezeichner, auf den <code>:chip[…]&#123;style="…"&#125;</code> verweist.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Lesbarer Name, nur für Editor-Oberflächen.</td>
+    </tr>
+    <tr>
+      <td><code>backgroundEnabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Die Fläche des Kästchens zeichnen.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#e8eef7</code></td>
+      <td>Fläche des Kästchens (an die Palette bindbar).</td>
+    </tr>
+    <tr>
+      <td><code>borderColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Hauptfarbe der Palette</td>
+      <td>Farbe der Umrisslinie.</td>
+    </tr>
+    <tr>
+      <td><code>borderWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5pt</code></td>
+      <td>Stärke der Umrisslinie; <code>0</code> zeichnet keine. Die Umrisslinie wird innerhalb der Kästchenkante gezeichnet.</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.3em</code></td>
+      <td>Eckenradius, begrenzt auf die halbe Höhe des Kästchens (ein großer Wert ergibt eine Pillenform).</td>
+    </tr>
+    <tr>
+      <td><code>paddingX</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.3em</code></td>
+      <td>Raum zwischen Umrisslinie und Text, links und rechts. Teil der Dickte des Chips.</td>
+    </tr>
+    <tr>
+      <td><code>paddingY</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.1em</code></td>
+      <td>Raum über und unter dem Textband. Wird außerhalb des Zeilenkastens gezeichnet: Er ändert nie die Zeilenhöhe.</td>
+    </tr>
+    <tr>
+      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>paddingY</code></td>
+      <td>Raum über bzw. unter dem Textband, jeweils anstelle von <code>paddingY</code>. Das Band reicht 0,8 em über die Grundlinie und 0,25 em darunter, seine Mitte liegt also 0,275 em über der Grundlinie, tiefer als die Mitte eines Versals (in den meisten Schriften etwa 0,35 em): Ein Versal oder eine Ziffer in einem runden Chip (<code>borderRadius: 1em</code>) wirkt zu hoch. Ein oberer Innenabstand, der um das Doppelte der Differenz größer ist als der untere, zentriert ihn: <code>paddingTop: 0.2em</code> mit <code>paddingBottom: 0.05em</code> für eine Schrift mit 0,7 em hohen Versalien.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>umgebender Text</td>
+      <td>Schriftfamilie des Chip-Texts. Die Schriftstärken folgen dem umgebenden Text.</td>
+    </tr>
+    <tr>
+      <td><code>fontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td>umgebender Text</td>
+      <td>Schriftgröße des Chip-Texts; <code>em</code> bezieht sich auf den umgebenden Text.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>umgebender Text</td>
+      <td>Farbe des Chip-Texts. Nicht gesetzt, behält fetter und kursiver Text die Auszeichnungsfarben.</td>
+    </tr>
+    <tr>
+      <td><code>bold</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Den Chip-Text fett setzen, zusätzlich zu seiner eigenen Auszeichnung.</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Den Chip-Text kursiv setzen, zusätzlich zu seiner eigenen Auszeichnung.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.25em</code></td>
+      <td>Mindestraum zwischen dem Kästchen und einem benachbarten Wort oder Chip über einen Wortzwischenraum hinweg; ein schmalerer Zwischenraum wird innerhalb der Dickte des Chips aufgefüllt, sodass der Blocksatz ihn nie aufzehrt. Am Zeilenrand oder an angehängter Interpunktion wird nichts hinzugefügt.</td>
+    </tr>
+  </tbody>
+</table>
+
+Em-Längen des Kästchens (`paddingX`, `paddingY`, `borderRadius`, `borderWidth`, `gap`) beziehen sich auf die eigene Schriftgröße des Chips. Das Kästchen ist ein Band 0,8 em über und 0,25 em unter der Grundlinie, vergrößert um `paddingY` und die Umrisslinie; es wird außerhalb des Zeilenkastens gezeichnet und ändert nie den Zeilenabstand, sodass das Grundlinienraster hält. Wird das Kästchen höher als der Zeilenabstand, kann ein Chip in einen Chip auf der Zeile darüber oder darunter hineinragen – die Sandbox listet die Warnung „Chips berühren die nächste Zeile“, wenn sich zwei Chips auf verschiedenen Zeilen überlappen, mit der Überlappung in Punkt, sodass sich `paddingY`, die Umrisslinie oder `fontSize` verringern lassen. Ein hoher Chip ohne Chip darüber oder darunter wird nicht gemeldet.
+
+Im VDT ist ein Chip ein Zeilensegment mit `kind: 'chip'`, dessen Feld `chip` die Textläufe (jeder mit seiner Schriftangabe und Breite), die Geometrie des Kästchens (`boxWidth`, `ascent`, `descent`, `paddingX`, `borderWidth`, `borderRadius`, die Abstandsränder) und seine Farben trägt; der `text` des Segments ist ein Platzhalter aus einem Zeichen, sodass Klartext-Offsets und Quellzuordnungen einen Chip als ein Zeichen zählen.
+
+```ts
+const resolved = resolveChipStylesConfig(config.chipStyles);
+// => the built-in `chip` style when unset; every field filled
+
+const minimal  = stripChipStylesDefaults(config.chipStyles);
+// => undefined for the built-in default; static defaults dropped
+
+const style = pickChipStyle(resolved, 'key');
+// => the `key` style, else the first one
+```
+
+
+## Code-Listings
+
+Die Eigenschaft `codeStyle` legt fest, wie Code-Listings aussehen: die Codezäune ```` ``` ```` und `~~~` des Texts (siehe [Dokumentformat › Codeblöcke](/de/docs/document-format#codeblöcke)) und Inline-Code, wenn er eine Code-Schrift verlangt. Ein Listing wird Zeile für Zeile so gesetzt, wie es geschrieben ist, in einer dicktengleichen Schrift, in einem Kasten: Keine Zeile wird getrennt oder im Blocksatz gesetzt, jedes Leerzeichen behält seine Breite, und ein Tabulator springt zum nächsten Tabstopp. Der Kasten stammt aus derselben Mechanik wie ein `:::callout`, sodass sich ein Listing zwischen Zeilen über Spalten und Seiten teilt, jeder Teil in einem eigenen Kasten, und ein Codeblock in einem Kasten ein darin verschachtelter Kasten ist. Jede Eigenschaft ist optional. Seit postext 1.23.
+
+```ts
+const config: PostextConfig = {
+  codeStyle: {
+    fontFamily: 'JetBrains Mono',
+    fontSize: { value: 0.8, unit: 'em' },
+    background: { hex: '#0e1116', model: 'hex' },
+    color: { hex: '#d3d9df', model: 'hex' },
+    padding: { top: { value: 4, unit: 'mm' }, right: { value: 5, unit: 'mm' }, bottom: { value: 4, unit: 'mm' }, left: { value: 5, unit: 'mm' } },
+    borderRadius: { value: 2, unit: 'pt' },
+    lineNumbers: true,
+    tokens: {
+      keyword: { color: { hex: '#f2b134', model: 'hex' }, bold: true },
+      string: { color: { hex: '#3ddc84', model: 'hex' } },
+      comment: { color: { hex: '#8a939d', model: 'hex' }, italic: true },
+    },
+    inline: { background: { hex: '#eef1f4', model: 'hex' } },
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Eigenschaft</th>
+      <th style={{ width: '180px' }}>Typ</th>
+      <th style={{ width: '150px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>blocks</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Codezäune als Codeblöcke lesen. <code>false</code> liest einen Codeblock und seine Zeilen als Markdown, wie postext 1.22; eine vor 1.23 gespeicherte Konfiguration, deren Text einen Codeblock enthält, erhält diesen Wert (siehe <a href="/de/docs/configuration-programmatic-usage#pakete-die-postext-14-oder-früher-geschrieben-hat">Pakete, die postext 1.4 oder früher geschrieben hat</a>).</td>
+    </tr>
+    <tr>
+      <td><code>indentedCode</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Auch eine Folge von Zeilen, die um vier Spalten eingerückt sind (vier Leerzeichen oder ein Tabulator), nach einer Leerzeile als Listing lesen; von jeder Zeile werden vier Spalten abgezogen. Standardmäßig aus: Postext-Text rückt oft mit Leerzeichen ein, und verschachtelte Listeneinträge lesen führende Leerzeichen.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td><code>'Source Code Pro'</code></td>
+      <td>Die Code-Schrift. Eine dicktengleiche Schrift hält die Spalten bündig; für chinesische oder japanische Kommentare eine mit Kanji (BIZ UDGothic), deren Zeichen voller Breite zwei Zellen einnehmen.</td>
+    </tr>
+    <tr>
+      <td><code>fontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.85em</code></td>
+      <td><code>em</code> ist die Größe des Fließtexts.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code> / <code>boldFontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>400</code> / <code>700</code></td>
+      <td>Die Schriftstärken des Codes und fetter Token.</td>
+    </tr>
+    <tr>
+      <td><code>lineHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>die Rasterzeile des Fließtexts</td>
+      <td>Der Zeilenabstand der Codezeilen; <code>em</code> ist die Code-Größe. Nicht gesetzt, stehen die Zeilen auf dem Grundlinienraster.</td>
+    </tr>
+    <tr>
+      <td><code>snapToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Der Text nach einem Listing kehrt auf das Grundlinienraster zurück; <code>false</code> behält das genaue <code>marginBottom</code>, wie bei einem Kasten.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>die Farbe des Fließtexts</td>
+      <td>Die Farbe des Codes, die Token ohne eigene Farbe behalten.</td>
+    </tr>
+    <tr>
+      <td><code>backgroundEnabled</code> / <code>background</code></td>
+      <td><code>boolean</code> / <code>ColorValue</code></td>
+      <td><code>true</code> / <code>#f4f4f4</code></td>
+      <td>Die Fläche des Kastens.</td>
+    </tr>
+    <tr>
+      <td><code>border</code></td>
+      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td>aus, <code>#cccccc</code>, <code>0.5pt</code></td>
+      <td>Die Umrisslinie des Kastens.</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Abgerundete Ecken; ein Teil eines geteilten Listings behält sie, wie ein geteilter Kasten.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top, right, bottom, left &#125;</code></td>
+      <td>je <code>0.6em</code></td>
+      <td><code>em</code> ist die Code-Größe.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.75em</code></td>
+      <td>Der Abstand über und unter dem Kasten.</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>'column' | 'page'</code></td>
+      <td><code>'column'</code></td>
+      <td>Ein Listing über die ganze Seitenbreite überquert jede Spalte einer mehrspaltigen Seite, wie ein Kasten mit <code>span: 'page'</code>. Ein Codeblock setzt seinen eigenen Wert mit <code>span=page</code>.</td>
+    </tr>
+    <tr>
+      <td><code>tabSize</code></td>
+      <td><code>number</code></td>
+      <td><code>4</code></td>
+      <td>Ein Tabulator springt zum nächsten Vielfachen dieser Anzahl Zeichenzellen (ein Zeichen voller Breite zählt zwei). Er bleibt ein Tabulator: Kopierter Text behält ihn.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td><code>'wrap' | 'shrink' | 'clip'</code></td>
+      <td><code>'wrap'</code></td>
+      <td>Eine Zeile, die breiter als der Kasten ist. <code>'wrap'</code>: Sie bricht nach dem letzten passenden Leerzeichen oder Satzzeichen um (zwischen zwei Zeichen, wenn keines passt), und der Rest geht darunter weiter, um <code>wrapIndent</code> Zellen eingerückt, hinter <code>wrapMarker</code>; ein Teil eines geteilten Listings beginnt nie mit einem solchen Rest, wenn ein anderer Schnitt passt. <code>'shrink'</code>: Das ganze Listing wird kleiner gesetzt, bis seine breiteste Zeile passt, bis hinab zu <code>minFontScale</code>, und was dann noch nicht passt, wird umbrochen. <code>'clip'</code>: Die Zeile endet an der Innenkante des Kastens; die Zeichen dahinter werden nicht gedruckt. Jeder Fall löst eine Warnung <code>codeOverflow</code> aus.</td>
+    </tr>
+    <tr>
+      <td><code>wrapIndent</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Der Einzug des Rests einer umbrochenen Zeile, in Zeichenzellen.</td>
+    </tr>
+    <tr>
+      <td><code>wrapMarker</code></td>
+      <td><code>string</code></td>
+      <td><code>'»'</code></td>
+      <td>In diesen Einzug gesetzt, in der Farbe der Zeilennummern; nicht Teil des Texts (Kopien lassen es weg, ein getaggtes PDF zeichnet es als Artefakt). <code>''</code> setzt keines. <code>↪</code> fehlt in den meisten Code-Schriften und erscheint dort als leeres Kästchen.</td>
+    </tr>
+    <tr>
+      <td><code>minFontScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.8</code></td>
+      <td>Mit <code>'shrink'</code> der kleinste Anteil von <code>fontSize</code>, in dem ein Listing gesetzt wird.</td>
+    </tr>
+    <tr>
+      <td><code>lineNumbers</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Die Zeilen jedes Listings nummerieren, in einer Leiste vor dem Code. Ein Codeblock setzt seinen eigenen Wert mit <code>lineNumbers</code>, <code>lineNumbers=false</code> und <code>start=N</code>. Der Rest einer umbrochenen Zeile hat keine Nummer. Die Nummern werden neben den Text gesetzt, nicht in ihn: Der HTML-Betrachter verbirgt sie vor einer Auswahl und vor assistiven Technologien, ein getaggtes PDF zeichnet sie als Artefakte.</td>
+    </tr>
+    <tr>
+      <td><code>lineNumberColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#8a8a8a</code></td>
+      <td>Die Farbe der Nummern (und des Umbruchzeichens).</td>
+    </tr>
+    <tr>
+      <td><code>lineNumberGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1em</code></td>
+      <td>Der Raum zwischen der breitesten Nummer und dem Code; <code>em</code> ist die Code-Größe.</td>
+    </tr>
+    <tr>
+      <td><code>highlightBackground</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#fff4c2</code></td>
+      <td>Das Band hinter den Zeilen, die ein Codeblock mit <code>highlight="3,5-7"</code> nennt, über die Breite des Kastens.</td>
+    </tr>
+    <tr>
+      <td><code>keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Wie bei einem Kastenstil: <code>false</code> teilt ein Listing, das höher als der verbleibende Raum ist, zwischen Zeilen; <code>true</code> verschiebt es ganz und teilt es nur, wenn es höher als eine Spalte ist.</td>
+    </tr>
+    <tr>
+      <td><code>splitMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Die Mindestzahl an Zeilen auf jeder Seite einer Teilung, damit kein Teil eine einzelne Zeile enthält.</td>
+    </tr>
+    <tr>
+      <td><code>repeatTitle</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Den Titel am Kopf jedes Teils wiederholen, mit dem Suffix „(cont.)“ in der Sprache des Dokuments.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerEnabled</code> / <code>continuesMarker</code></td>
+      <td><code>boolean</code> / <code>string</code></td>
+      <td><code>false</code> / „Continued“</td>
+      <td>Ein Hinweis unter der letzten Zeile eines Teils, der weitergeht.</td>
+    </tr>
+    <tr>
+      <td><code>titleStyle</code></td>
+      <td><code>CalloutTitleStyleConfig</code></td>
+      <td>die Code-Schrift, fett, 0,9 ihrer Größe</td>
+      <td>Die Titelzeile, die der <code>title</code> eines Codeblocks druckt (siehe <a href="#kastenstile">Kastenstile</a> für die Felder).</td>
+    </tr>
+    <tr>
+      <td><code>label</code></td>
+      <td><code>CalloutLabelConfig</code></td>
+      <td>keines</td>
+      <td>Wenn gesetzt, erscheint der Titel stattdessen in einem Etikettenreiter an der Oberkante des Kastens (in Code-Schrift und -Größe, sofern das Etikett keine eigenen nennt).</td>
+    </tr>
+    <tr>
+      <td><code>highlight</code></td>
+      <td><code>'builtin' | 'none'</code></td>
+      <td><code>'builtin'</code></td>
+      <td>Die Token mit dem eingebauten Tokenizer (und einem registrierten Highlighter) einfärben; <code>'none'</code> setzt jedes Listing in <code>color</code>.</td>
+    </tr>
+    <tr>
+      <td><code>tokens</code></td>
+      <td><code>Partial&lt;Record&lt;CodeTokenKind, &#123; color?, bold?, italic? &#125;&gt;&gt;</code></td>
+      <td>eine ruhige Palette</td>
+      <td>Das Aussehen jeder Token-Art, Art für Art mit den Standardwerten zusammengeführt (siehe unten). Eine an die Palette gebundene Farbe folgt <code>colorPalette</code> und der Palette eines Teils.</td>
+    </tr>
+    <tr>
+      <td><code>inline</code></td>
+      <td><code>InlineCodeStyleConfig</code></td>
+      <td>nicht gesetzt</td>
+      <td>Inline-Code in einer Code-Schrift (siehe unten). Nicht gesetzt, wird Inline-Code in der Schrift des Texts gesetzt, wie vor 1.23.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Syntaxhervorhebung
+
+Ein kleiner, in die Engine eingebauter Tokenizer benennt die Token von `js` und `ts` (`javascript`, `jsx`, `typescript`, `tsx`), `json`, `python`, `bash` (`sh`, `zsh`, `shell`), `console` (eine Shell-Sitzung), `css`, `html` und `xml` (`svg`), `markdown` und `sql`; ein Listing in jeder anderen Sprache oder ohne Sprache wird in `color` gesetzt. Er liest das ganze Listing, sodass ein Kommentar oder eine Zeichenkette, die über Zeilen läuft, ein Token bleibt. In einem Listing `console` ist eine Zeile, die mit einem Prompt beginnt (`$ `, `% `, `# `, `> `, `>>> `, `PS …> `), das, was der Benutzer eingegeben hat (`prompt`), und jede andere Zeile das, was die Programme ausgegeben haben (`output`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '140px' }}>Art</th>
+      <th style={{ width: '200px' }}>Standard</th>
+      <th>Was sie benennt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>keyword</code></td><td><code>#8b2c8f</code></td><td>Reservierte Wörter: <code>const</code>, <code>def</code>, <code>if</code>, <code>SELECT</code>, ein HTML-Tag-Name, eine CSS-At-Regel.</td></tr>
+    <tr><td><code>string</code></td><td><code>#3d7a2a</code></td><td>Zeichenketten, Template-Literale, Attributwerte.</td></tr>
+    <tr><td><code>number</code></td><td><code>#985f00</code></td><td>Zahlen und Konstanten (<code>true</code>, <code>None</code>, <code>null</code>), Farben, Entitäten.</td></tr>
+    <tr><td><code>comment</code></td><td><code>#7a7f87</code>, kursiv</td><td>Kommentare.</td></tr>
+    <tr><td><code>function</code></td><td><code>#2b5fb4</code></td><td>Ein Name, gefolgt von einer Klammer; Shell-Builtins.</td></tr>
+    <tr><td><code>type</code></td><td><code>#99540a</code></td><td>Typen und großgeschriebene Klassennamen, CSS-Selektoren.</td></tr>
+    <tr><td><code>operator</code></td><td>die Farbe des Codes</td><td>Operatoren, Shell-Pipes und -Umleitungen.</td></tr>
+    <tr><td><code>punctuation</code></td><td>die Farbe des Codes</td><td>Klammern, Trennzeichen.</td></tr>
+    <tr><td><code>variable</code></td><td><code>#b23b2e</code></td><td>Shell-Variablen, JSON-Schlüssel, CSS-Eigenschaften, HTML-Attribute, <code>self</code>.</td></tr>
+    <tr><td><code>meta</code></td><td><code>#985f00</code></td><td>Dekoratoren, Kommandozeilenoptionen (<code>-l</code>, <code>--all</code>), ein Doctype.</td></tr>
+    <tr><td><code>prompt</code></td><td>die Farbe des Codes, fett</td><td>Die eingegebene Zeile einer Shell-Sitzung.</td></tr>
+    <tr><td><code>output</code></td><td><code>#5c6168</code></td><td>Was die Programme ausgegeben haben.</td></tr>
+  </tbody>
+</table>
+
+Ein Host bindet mit `registerCodeHighlighter` seinen eigenen Highlighter ein (Shiki, Prism, highlight.js). Konfigurationen sind serialisierbare Daten, daher wird die Funktion bei der Engine registriert, nicht in `codeStyle` geschrieben:
+
+```ts
+import { registerCodeHighlighter } from 'postext';
+
+// fn(code, lang) returns the listing's lines, each as runs whose texts join into the line.
+registerCodeHighlighter('rust', (code) => code.split('\n').map((line) => [
+  { text: line, token: line.trimStart().startsWith('//') ? 'comment' : undefined },
+]));
+registerCodeHighlighter('*', null); // remove the one registered for every language
+```
+
+Ein für eine Sprache registrierter Highlighter hat Vorrang vor einem für `'*'` registrierten, der wiederum Vorrang vor dem eingebauten Tokenizer hat. Ein Textlauf nennt eine Token-Art `token` (eingefärbt über `tokens`) oder eine eigene `color` (ein CSS-Hexwert). Ein Highlighter, der `undefined` liefert, eine Ausnahme wirft oder Zeilen liefert, die sich nicht zu denen des Listings zusammenfügen, wird übergangen. Das Layout liest das Register, wenn es ein Listing setzt: Registrieren Sie vor dem Build, und in einem Web Worker (die Sandbox setzt in einem) registrieren Sie innerhalb des Workers.
+
+### Inline-Code
+
+`codeStyle.inline` setzt Text zwischen Backticks in einer Code-Schrift: als eine Einheit, wie einen Chip, in der eine Zeile nie umbricht. Nicht gesetzt, behält Inline-Code die Schrift des Texts.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Eigenschaft</th>
+      <th style={{ width: '120px' }}>Typ</th>
+      <th style={{ width: '160px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td><code>codeStyle.fontFamily</code></td><td>Die Schrift.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td><code>0.9em</code></td><td><code>em</code> ist die Größe des umgebenden Texts.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>die des Texts</td><td></td></tr>
+    <tr><td><code>bold</code> / <code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Zusätzlich zu den eigenen Auszeichnungen des Texts (Code in fettem Text ist fett).</td></tr>
+    <tr><td><code>background</code></td><td><code>ColorValue</code></td><td>keine</td><td>Eine Fläche hinter dem Abschnitt.</td></tr>
+    <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>keine / <code>0.5pt</code></td><td>Eine Umrisslinie.</td></tr>
+    <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> ist die Größe des Abschnitts.</td></tr>
+    <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> mit Fläche oder Umrisslinie, sonst <code>0</code> / <code>0.1em</code></td><td>Raum innerhalb der Fläche; der senkrechte Innenabstand wird außerhalb des Zeilenkastens gezeichnet.</td></tr>
+  </tbody>
+</table>
+
+### Wie ein Listing gesetzt wird
+
+- **Eine Zeile pro Quellzeile.** Die Zeilen werden aus den eigenen Dickten der Code-Schrift gebildet, nicht vom Absatzumbruch: Leerzeichen behalten ihre Breite, eine Folge davon bleibt erhalten, führende Leerzeichen rücken ein. Ein Listing in einem Buch mit Leserichtung von rechts nach links liest sich von links nach rechts, seine Zeilen werden von der gegenüberliegenden Seite des Kastens aus gesetzt, wie ein Zitat mit Leserichtung von links nach rechts, seine Nummern stehen in der Leiste links davon. In einem vertikal gesetzten Buch folgt ein Listing dem vertikalen Fluss (sein lateinischer Text seitlich gedreht, wie ihn vertikaler Text setzt) und erhält keine Zeilennummern.
+- **Teilung.** Ein Listing, das höher als der verbleibende Raum ist, teilt sich zwischen Zeilen über Spalten und Seiten, jeder Teil als eigener Kasten gerahmt, und lässt nie weniger als `splitMinLines` Zeilen auf einer Seite; der Rest einer umbrochenen Zeile bleibt bei ihr, wenn ein anderer Schnitt passt.
+- **Ausgaben.** Canvas, HTML-Betrachter und PDF zeichnen die Zeilen und den Kasten so, wie sie umbrochen sind. Der HTML-Betrachter behält die Leerzeichen (`white-space: pre`), sodass eine Auswahl das Listing mit seiner Einrückung und einem Zeilenvorschub nach jeder Quellzeile kopiert, ohne Nummern oder Umbruchzeichen. Ein getaggtes PDF setzt jedes Listing als Absatz mit einem Element `Code`, mit echten Leerzeichen-Glyphen, seine Nummern und Umbruchzeichen als Artefakte. Das umfließende EPUB schreibt `<pre><code class="language-…">` mit den Farben der Token und einem Stylesheet aus `codeStyle`; das EPUB mit festem Layout entspricht dem Druck.
+- **Schriften.** Die Sandbox und `configFontFamilies` laden die Code-Schrift, wenn der Text einen Codeblock enthält (oder die Konfiguration einen Abschnitt `codeStyle` hat), in ihren normalen und fetten Schnitten, aufrecht und kursiv; das PDF bettet die Schnitte ein, die die Zeilen verwenden.
+
+## Kastenstile
+
+Die Eigenschaft `calloutStyles` deklariert die benannten Kastenstile, die ein Dokument mit einem Container `:::callout{type="…"}` anwendet – Anmerkungen, Tipps, Warnungen, Lernziele, jeder Inhalt, der in einem getönten oder umrandeten Kasten vom Fließtext abgesetzt wird. Ein neutraler Stil, `note`, ist standardmäßig dabei (hellgrauer Hintergrund, kein Rahmen, kein Streifen, kein Symbol, kein Titel), sodass `:::callout` ohne jede Konfiguration funktioniert; wer `calloutStyles` deklariert, ersetzt diese Standardliste.
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [
+    { id: 'note', name: 'Note' },
+    {
+      id: 'objectives',
+      name: 'Learning objectives',
+      title: 'Objectives',
+      stripe: { enabled: true, side: 'left' },
+      icon: { kind: 'glyph', glyph: '✓' },
+      titleStyle: { textTransform: 'uppercase' },
+      lists: { bulletChar: '–' },
+    },
+    {
+      id: 'warning',
+      title: 'Warning',
+      backgroundEnabled: false,
+      border: { enabled: true, color: { hex: '#AA0000', model: 'hex' }, width: { value: 1, unit: 'pt' } },
+      borderRadius: { value: 1, unit: 'mm' },
+      titleStyle: { color: { hex: '#AA0000', model: 'hex' } },
+    },
+  ],
+};
+```
+
+```md
+:::callout{type="objectives"}
+- Describe the parts of the lantern.
+- Trim the wick at dusk.
+:::
+
+:::callout{type="warning" title="Do not touch the lens"}
+The glass stays hot for an hour after the flame is out.
+:::
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '220px' }}>Typ</th>
+      <th style={{ width: '150px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Bezeichner, den <code>:::callout&#123;type="…"&#125;</code> auswählt. Eine Einfassung mit unbekanntem oder fehlendem <code>type</code> verwendet den ersten konfigurierten Stil (die Sandbox meldet unbekannte Typen).</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Lesbarer Name (nur für die Editor-Oberfläche).</td>
+    </tr>
+    <tr>
+      <td><code>title</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>Standardtitel; leer bedeutet kein Titel. Das Attribut <code>title</code> der Einfassung überschreibt ihn pro Instanz.</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>'column' | 'page' | 'side'</code></td>
+      <td><code>'column'</code></td>
+      <td>Waagerechte Ausdehnung: die Spalte, die volle Inhaltsbreite oder die nur für Gleitobjekte bestimmte Seitenspalte eines Layouts mit anderthalb Spalten (<code>layout.sideColumnRole: 'floats'</code>) – der Kasten verlässt dann den Fluss und stapelt sich in dieser Spalte neben dem Text, den er unterbricht. Pro Instanz mit dem Attribut <code>span</code> überschreibbar. In mehrspaltigen Layouts wird ein Kasten mit <code>'page'</code> zu einem <em>Spannblock</em>: Er teilt die Seite in Spaltenbänder und steht in einer eigenen Spalte über die volle Breite (siehe den Abschnitt zum Container unten). Ein Seitenkasten, den die Seitenspalte seiner Seite nicht fassen kann, nimmt die Seitenspalte der nächsten Seite; wo das Kapitel (oder das Dokument) zuerst endet, wird jeder noch wartende Kasten in der Reihenfolge seiner Einfassungen in die Seitenspalte einer Seite nach dem Text gesetzt, und der Build meldet das (<code>afterText</code>; bis postext 1.24 entfielen die Kästen nach der ersten solchen Seite).</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Wie viele benachbarte Spalten ein gleitender Kasten (<code>placement</code> <code>'auto'</code>, <code>'top'</code> oder <code>'bottom'</code>, mit <code>span: 'column'</code>) einnimmt, wie es <code>placement.columns</code> bei einer Abbildung tut: der Kasten eines Artikels über drei der fünf Spalten einer Zeitung. So viele Spalten, wie die Seite hat, oder mehr machen ihn zu einem Kasten über die ganze Seitenbreite. Ein im Fluss gesetzter Kasten (<code>'here'</code>) bleibt in seiner Spalte. Pro Instanz mit dem Attribut <code>columns</code> überschreibbar. Seit postext 1.18.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>'here' | 'auto' | 'top' | 'bottom' | 'fixed'</code></td>
+      <td><code>'here'</code></td>
+      <td>Wohin der Kasten kommt. <code>'here'</code> setzt ihn in den Fluss; <code>'top'</code> / <code>'bottom'</code> lassen ihn wie eine Ressource <strong>gleiten</strong> (<code>'auto'</code> nimmt das Band, das zuerst frei ist, Kopf oder Fuß) – er verlässt den Fluss an seiner Stelle und nimmt das erste freie Band an oder nach diesem Punkt (den Fuß der aktuellen Seite oder Kopf / Fuß der nächsten Seite, die der Fluss eröffnet), und der Text danach füllt die Seite um ihn herum; <code>'fixed'</code> verankert ihn über <code>fixed</code> (siehe unten) an Seitenkoordinaten, außerhalb des Spaltenflusses. Einzelheiten im Abschnitt zum Container. Pro Instanz mit dem Attribut <code>placement</code> überschreibbar.</td>
+    </tr>
+    <tr>
+      <td><code>sideAtColumnEnd</code></td>
+      <td><code>'before' | 'after'</code></td>
+      <td><code>'before'</code></td>
+      <td>Wo ein Seitenkasten (<code>span: 'side'</code>) steht, wenn der Text nach seiner Einfassung nicht in derselben Spalte weitergeht: Die Spalte hat keinen Platz mehr dafür, oder die Umbruchregeln schicken ihn weiter (ein Absatz, den die Regeln für Witwen und Waisen ganz verschieben, eine Überschrift, die bei ihrem Text bleibt). <code>'before'</code> hält ihn an seiner Einfassung, auf dieser Seite, neben dem Text davor, und schiebt ihn vom Fuß der Spalte nach oben, wenn er unter der Einfassung nicht passt: der Platz für eine Glosse, die nach der erläuterten Stelle geschrieben ist. <code>'after'</code> setzt ihn auf Höhe der ersten Zeile des Texts nach der Einfassung, in die Seitenspalte der Seite, auf der dieser Text weitergeht: der Platz für eine Zeilennummer oder eine Marginalie, die vor ihrer Zeile geschrieben ist. Geht der Text in derselben Spalte weiter, setzen beide den Kasten an seine Einfassung. Ein Kasten, dem in seinem Kapitel nichts folgt, bleibt in beiden Fällen beim Text davor, und hintereinander eingefasste Seitenkästen behalten ihre Reihenfolge. Bis postext 1.4 verhielt sich jeder Seitenkasten wie <code>'before'</code>, was der Standard bleibt: Ein Stil für Glossen hält seine Kästen auf der Seite der Stelle, die sie erläutern.</td>
+    </tr>
+    <tr>
+      <td><code>fixed</code></td>
+      <td><code>{'{ anchor?, offset? }'}</code></td>
+      <td><code>{'{ anchor: { to: \'container\', edge: \'bottom-left\' } }'}</code></td>
+      <td>Position eines Kastens mit <code>'fixed'</code>: ein <code>ElementAnchor</code> (<code>to</code>: <code>'container'</code> = der Inhaltsbereich der Seite, auf geraden Seiten gespiegelt; <code>'page'</code> = das Endformat; <code>'bleed'</code> = der Anschnitt; <code>edge</code>: eine der neun Kanten des Containers) plus ein optionales <code>offset</code> (Maße <code>x</code> / <code>y</code>).</td>
+    </tr>
+    <tr>
+      <td><code>floatBarrier</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Den Kasten zu einer Gleitobjekt-Schranke machen: Jede Abbildung oder Tabelle, auf die vor ihm verwiesen wird, wird vor ihm platziert – in den freien Plätzen der Seite, sonst auf Seiten, die vor dem Kasten eröffnet werden –, sodass kein Gleitobjekt an einem abschließenden Kasten eines Kapitels (typischerweise eine Zusammenfassung der „Kernpunkte“) vorbeigerät. Kapitelauftakte, <code>:::part</code> und das Ende des Dokuments sind immer Schranken.</td>
+    </tr>
+    <tr>
+      <td colSpan={4}>Ein Kasten mit <code>span: 'page'</code> auf einer mehrspaltigen Seite schneidet das Band unter dem Text, dem er folgt; eine Abbildung über die ganze Breite, auf die vor ihm verwiesen wird, nimmt diesen Schnitt zuerst – der Text wird ausgeglichen, die Abbildung steht genau dort, wo er endete, und der Kasten geht darunter weiter (oder auf der nächsten Seite, wenn er nicht mehr passt). Eine Abbildung, die zu hoch ist, um dem ausgeglichenen Text zu folgen, eröffnet stattdessen die nächste Seite, der Kasten danach, und das verlassene Band endet trotzdem ausgeglichen. Ein teilbarer Kasten (<code>keepTogether: false</code>) beginnt unter Text und Abbildung mit so vielen Einträgen, wie passen, und der Rest geht auf der nächsten Seite weiter.</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>'fill' | 'auto'</code></td>
+      <td><code>'fill'</code></td>
+      <td><code>'fill'</code> nimmt die verfügbare Breite ein; <code>'auto'</code> passt sich eng an den Titel an (als Abzeichen) und ignoriert den Inhalt.</td>
+    </tr>
+    <tr>
+      <td><code>backgroundEnabled</code> / <code>background</code></td>
+      <td><code>boolean</code> / <code>ColorValue</code></td>
+      <td><code>true</code> / <code>#f4f4f4</code></td>
+      <td>Fläche des Kastens.</td>
+    </tr>
+    <tr>
+      <td><code>border</code></td>
+      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>false</code>, <code>#cccccc</code>, <code>0.5pt</code></td>
+      <td>Umrisslinie des Kastens, innerhalb der Kastenkante gezeichnet wie der Rahmen eines Kastenelements (siehe <a href="/de/docs/configuration-page-layout#kastenelemente">Kastenelemente</a>).</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Eckenradius von Hintergrund / Rahmen (begrenzt auf die halbe Breite und Höhe des Kastens). Der Streifen folgt ihm: Bei einem abgerundeten Kasten wird der Streifen auf den abgerundeten Rahmen beschnitten, so wie CSS ein <code>border-left</code> auf <code>border-radius</code> beschneidet. Der Reiter <code>label</code> behält eckige Ecken.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top, right, bottom, left &#125;</code></td>
+      <td>je <code>0.75em</code></td>
+      <td>Innenabstand zwischen Kastenkante und Inhalt. <code>em</code>-Werte beziehen sich auf die Schriftgröße des Kastentexts.</td>
+    </tr>
+    <tr>
+      <td><code>stripe</code></td>
+      <td><code>&#123; enabled, side, width, color &#125;</code></td>
+      <td><code>false</code>, <code>'left'</code>, <code>1.5em</code>, Hauptfarbe</td>
+      <td>Vollflächiges Band an einer Kante. Ein Streifen <code>'left'</code> / <code>'right'</code> verschmälert den Inhalt; ein Streifen <code>'top'</code> schiebt ihn nach unten. <code>'left'</code> und <code>'right'</code> sind Seiten des Textflusses (in einem Buch mit Leserichtung von rechts nach links ist <code>'left'</code> die rechte Seite des Blatts); <code>'start'</code> und <code>'end'</code> folgen der eigenen Richtung des Kastens, sodass ein <code>:::callout&#123;dir=ltr&#125;</code> in einem arabischen Buch einen Streifen <code>'start'</code> links setzt. Bei einem Kasten mit <code>borderRadius</code> werden seine äußeren Ecken mit denen des Rahmens gerundet (bis postext 1.4 blieben sie eckig und ragten über die Rundung hinaus).</td>
+    </tr>
+    <tr>
+      <td><code>icon</code></td>
+      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
+      <td><code>'none'</code>, Schrift der Überschriften, <code>400</code>, <code>1.5em</code>, Hauptfarbe, <code>'top'</code>, <code>'inline'</code>, <code>'right'</code></td>
+      <td>Ein Textzeichen (<code>kind: 'glyph'</code>) oder eine Bitmap-/SVG-Ressource (<code>kind: 'resource'</code> + <code>resourceId</code>) neben dem Inhalt. Mit einem seitlichen Streifen wird das Symbol über dem Streifen zentriert; sonst reserviert es eine eigene Spalte (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> zentriert es senkrecht zum Inhalt. Ein Ressourcenbild wird unter Wahrung seines Seitenverhältnisses in das Quadrat eingepasst – oder in einen Rahmen von <code>width</code> × <code>size</code>, wenn <code>width</code> gesetzt ist (ein breiter Streifen von Symbolen); ein Symbol, das höher als der Inhalt ist, vergrößert den Kasten entsprechend (und zentriert mit <code>align: 'center'</code> den Inhalt daran). <code>position: 'corner'</code> hängt das Symbol als Abzeichen an eine obere Ecke, zur Hälfte über den Rahmen hinaus, ohne dem Inhalt Raum zu nehmen; ein breites Symbol (<code>width</code>) wird nach der Breite, in der es gezeichnet wird, an der Ecke zentriert, und an der linken Ecke beginnt der Titel hinter seiner inneren Hälfte (bis postext 1.4 wurde es nach seiner Höhe platziert, sodass ein breiter Streifen über den Kasten hinaus und über den Titel hing); <code>cornerSide</code> wählt die Ecke – <code>'right'</code> / <code>'left'</code> oder <code>'outer'</code> / <code>'inner'</code>, die der Seitenparität gespiegelter Ränder folgen (außen = rechts auf einer rechten Seite, links auf einer linken).</td>
+    </tr>
+    <tr>
+      <td><code>marker</code></td>
+      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, color, align, gap, rule &#125;</code></td>
+      <td><code>'none'</code>, Schrift der Überschriften, <code>400</code>, <code>1.5em</code>, Hauptfarbe, <code>'center'</code>, <code>0.5em</code>, Linie aus (<code>0.5pt</code>, Hauptfarbe, Länge <code>0</code>)</td>
+      <td>Ein zweites Symbol, <em>außerhalb</em> des Kastens in einer Spalte links davon gezeichnet, mit einer optionalen senkrechten Linie <code>rule</code> zwischen ihm und dem Kasten – die „hier tippen“-Hand neben einem Abzeichen zur Selbsteinschätzung. Der Rahmen wird zu <code>[marker][rule][gap][box]</code> und so hoch wie das höchste der drei; <code>align</code> zentriert sie zueinander oder richtet sie oben aus. <code>rule.length</code> ist ein Mindestwert: Die Linie reicht immer mindestens über die Höhe des Kastens.</td>
+    </tr>
+    <tr>
+      <td><code>titleStyle</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, italic, color, textTransform, gap, letterSpacing, indent, lineHeight &#125;</code></td>
+      <td>Schrift der Überschriften, Größe des Fließtexts, <code>700</code>, <code>false</code>, Hauptfarbe, <code>'none'</code>, <code>0.5em</code>, <code>0</code>, <code>0</code>, <code>1.2em</code></td>
+      <td>Typografie des Titels. <code>gap</code> ist der Abstand zwischen dem Titel und dem ersten Kindblock (und der Abstand der Symbolspalte). <code>lineHeight</code> ist der Zeilenabstand der Titelzeilen, wobei <code>em</code> die eigene Größe des Titels zählt; die Grundlinie liegt in jeder Zeile bei 0,8 davon, wie im Fließtext, sodass ein Titel mit dem Zeilenabstand des Fließtexts (<code>lineHeight: 12pt</code> über einem Raster von 12 pt) den Kasten bei einer ganzen Zahl von Zeilen und seinen Titel auf dem Raster hält, während der Standard von 1,2 em jedem Kasten einen Bruchteil einer Zeile hinzufügt. <code>textTransform: 'uppercase'</code> erhält die Länge. <code>letterSpacing</code> sperrt den Titel (Canvas <code>letterSpacing</code> / PDF <code>Tc</code>); <code>indent</code> rückt ihn von der Innenkante des Kastens nach rechts. Ein Eckabzeichen auf der Seite des Titels (der linken Ecke) reserviert zuerst seinen eigenen Raum – die innere Hälfte des Abzeichens plus <code>gap</code> –, sodass der Titel es auf jeder Seite freihält; <code>indent</code> kommt nur darüber hinaus hinzu.</td>
+    </tr>
+    <tr>
+      <td><code>body</code></td>
+      <td><code>&#123; fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight, italic, smallCaps, textAlign, hyphenation, paragraphSpacing, firstLineIndent, tabStops, tabInterval &#125;</code></td>
+      <td>erbt <code>bodyText</code>; <code>italic</code> / <code>smallCaps</code> <code>false</code></td>
+      <td>Typografie der Absätze und Listeneinträge im Kasten. Jedes Feld erbt, wenn nicht gesetzt, den Wert des Fließtexts; <code>italicColor</code> setzt die Farbe kursiven Texts (ein kursives Hervorhebungszitat in der Farbe des Kastens). <code>fontWeight</code> / <code>boldFontWeight</code> setzen die Schriftstärken des normalen und des fetten Texts; <code>italic</code> setzt den Kasten kursiv, wobei Text in <code>*…*</code> aufrecht wird; <code>smallCaps</code> setzt ihn in Kapitälchen; <code>tabStops</code> und <code>tabInterval</code> ersetzen im Kasten die des Fließtexts (siehe <a href="/de/docs/configuration-text#tabulatoren">Tabulatoren</a>). Was der Text des Kastens sonst noch übernimmt, steht unter <a href="#typografie-im-kasten">Typografie im Kasten</a>.</td>
+    </tr>
+    <tr>
+      <td><code>lists</code></td>
+      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight &#125;</code></td>
+      <td>erbt <code>unorderedLists</code></td>
+      <td>Typografie der Listen im Kasten (<code>color</code>, <code>indent</code>, <code>gap</code> und <code>itemSpacing</code> gelten auch für nummerierte Listen). <code>bulletFontSize</code> / <code>bulletFontWeight</code> setzen das Aufzählungszeichen in der Schrift des Kastentexts in dieser Größe und Schriftstärke (ein kräftiges, farbiges Aufzählungszeichen).</td>
+    </tr>
+    <tr>
+      <td><code>label</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
+      <td>nicht gesetzt (kein Reiter)</td>
+      <td>Ein Reiter an der Oberkante des Kastens, der das Attribut <code>label</code> der Einfassung druckt – die Nummer eines nummerierten Kastens („BOX 1-1“). Er schmiegt sich an die Ecke <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>), um <code>inset</code> eingerückt, ragt <code>offset</code> über die Oberkante des Kastens hinaus (dieser Raum gehört zum Block, zusätzlich zu <code>marginTop</code>, sodass der Reiter ihn auch am Kopf einer Spalte behält), ist <code>height</code> hoch mit <code>paddingX</code> auf jeder Seite des Texts und kann daneben eine Ressource <code>icon</code> tragen (<code>&#123; resourceId, width, gap &#125;</code>, auf der von der Ecke abgewandten Seite) sowie eine Linie <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) entlang der Oberkante von der gegenüberliegenden Ecke bis zu ihm. Standardwerte: Schrift der Überschriften, Größe des Fließtexts, <code>700</code>, Weiß auf der Hauptfarbe, <code>1.4em</code> hoch, <code>0.6em</code> Innenabstand. Der Reiter ist eine eigene Form, die auf dem Rahmen steht, und behält daher eckige Ecken, gleich welchen <code>borderRadius</code> der Kasten hat.</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5em</code></td>
+      <td>Abstand zwischen den Spalten einer Gruppe <code>:::columns</code> im Kasten (siehe den Abschnitt zum Container unten).</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.75em</code> / <code>0.75em</code></td>
+      <td>Abstand über dem Kasten (fällt mit dem Außenabstand des vorigen Blocks zusammen) und Mindestabstand darunter (der genaue Abstand mit <code>snapToGrid: false</code>). Ein gleitender Kasten (<code>placement: 'top'</code>, <code>'bottom'</code> oder <code>'auto'</code>) behält den Gleitobjektabstand, eine Zeile Fließtext, zwischen seinem Band und dem Text; ein größeres <code>marginBottom</code> setzt den Abstand unter einem Kasten in einem Kopfband, ein größeres <code>marginTop</code> den Abstand über einem Kasten in einem Fußband, mit dem Band auf das Raster aufgerundet. Bis postext 1.4 ignorierte ein gleitender Kasten seine Außenabstände.</td>
+    </tr>
+    <tr>
+      <td><code>snapToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Mit <code>true</code> rastet der Fluss nach dem Kasten wieder auf das Grundlinienraster ein, der Abstand darunter ist also <code>marginBottom</code>, auf ganze Rasterzeilen aufgerundet. Mit <code>false</code> behält der Kasten sein genaues <code>marginBottom</code>, das mit dem oberen Außenabstand des nächsten Blocks zusammenfällt – zwei aufeinanderfolgende Kästen eines solchen Stils stehen genau <code>max(marginBottom, marginTop)</code> voneinander entfernt –, und der Text danach kann bis zum nächsten Einrastpunkt (einer Überschrift, dem Ende einer Liste) außerhalb des Rasters stehen, wie nach einer Überschrift mit <code>headings.snapToGrid: false</code>. Gedacht für Dokumente aus gestapelten Kästen (Arbeitsblätter, Formulare). Es gilt für Kästen im Fluss; Kästen über die ganze Seitenbreite in einem mehrspaltigen Layout sowie gleitende, fixierte und Seitenkästen behalten das Raster, da Spaltenbänder und Gleitzonen darauf aufgebaut werden. Die Hebel des Spaltenausgleichs bleiben unverändert: Ein Kasten, der eine Spalte abschließt, wird weiterhin auf den letzten Rasterplatz der Spalte hinabgeschoben.</td>
+    </tr>
+    <tr>
+      <td><code>keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Mit <code>true</code> wird der Kasten zusammengehalten: Ein Kasten, der nicht in den verbleibenden Raum passt, wandert ganz in die nächste Spalte oder auf die nächste Seite. Nur ein Kasten, der höher als eine leere, volle Spalte ist – eine ganze Seite bei einem Kasten mit <code>span: 'page'</code> –, lässt sich nicht zusammenhalten: Er wird stattdessen nach den Regeln für <code>false</code> unten geteilt, statt überzulaufen, beginnend an seiner Stelle, und eine Fortsetzung, die in eine Spalte passt, wandert dann ganz weiter; ein so hoher gleitender Kasten (<code>placement: 'top' | 'bottom' | 'auto'</code>) gleitet nicht, sondern bleibt an seiner Stelle im Fluss. Mit <code>false</code> darf jeder Kasten zwischen seinen Kindblöcken oder zwischen den Zeilen eines Absatzes oder Listeneintrags umbrechen: Der tiefste passende Schnitt schließt die aktuelle Spalte ab (oder bei einem Kasten mit <code>span: 'page'</code> die Seite, bündig mit dem Fuß der Spalten), und der Rest geht am Kopf der nächsten in einem eigenen Kasten weiter – gleicher Rahmen und Streifen, kein Symbol und kein Titel, sofern <code>repeatTitle</code> ihn nicht wiederholt –, und wird erneut geteilt, wenn er immer noch zu hoch ist. Der Text jedes Fragments behält die Spalte, die ein Inline-Symbol am Kopf einnimmt, leer, sodass der Kasten auf jeder Seite eine Satzbreite hat. Ein Schnitt in einem Listeneintrag lässt dessen Aufzählungszeichen beim Kopf. Der Rahmen jedes Fragments teilt <code>contentIndex</code> / <code>containerId</code> der Einfassung und vermerkt <code>callout.part</code> / <code>callout.continued</code>. Verwenden Sie es für einen langen abschließenden Kasten mit „Kernpunkten“ zusammen mit <code>headings.balancing.beforeSpan</code> oder für einen Anmerkungsstil, dessen Kästen nie eine Abbildung von der Seite drängen dürfen. Ein verschachtelter Kasten (ein <code>:::callout</code> in einem anderen) ist ein Kindblock seines Elternkastens: Ein Schnitt darf davor oder danach fallen und in ihm nur, wenn sein eigener Stil das Teilen erlaubt (<code>keepTogether: false</code> oder höher als eine volle Spalte), nach seinem eigenen <code>splitMinLines</code>.</td>
+    </tr>
+    <tr>
+      <td><code>splitMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Mindestzahl an Textzeilen, die ein Fragment eines geteilten Kastens (<code>keepTogether: false</code> oder ein zusammenzuhaltender Kasten, der höher als eine volle Spalte ist) auf beiden Seiten des Schnitts behält. Es schützt nur Text: Eine Seite mit mindestens einer Abbildung, Tabelle, abgesetzten Formel oder einem verschachtelten Kasten ist unabhängig von ihrer Zeilenzahl zulässig, sodass ein Kasten mit Bildern ein einzelnes auf einer Seite lassen darf. Ein Schnitt in einem Absatz oder Listeneintrag zählt weiterhin jede Zeile auf beiden Seiten (eine Abbildung oder Formel dort als eine Zeile) und lässt außerdem mindestens <code>layout.boxChildSplitMinLines</code> Zeilen dieses Absatzes oder Eintrags auf jeder Seite (standardmäßig zwei; dieses Minimum, wenn es kleiner ist, sodass 1 eine erlaubt). Mit den Standardwerten wird ein Eintrag von zwei oder drei Zeilen nie geteilt und einer von vier Zeilen nur zwei zu zwei. Mit dem Standard bricht kein Kasten so um, dass eine einzelne Textzeile am Fuß einer Spalte oder am Kopf der nächsten steht; erfüllt kein Schnitt das Minimum, wandert der Kasten ganz. (Vor postext 1.5 prüfte ein Schnitt in einem Absatz nur die Zeilen der ganzen Seite, sodass ein Eintrag von zwei Zeilen eins zu eins geteilt werden konnte, wenn andere Zeilen des Kastens das Minimum auffüllten.)</td>
+    </tr>
+    <tr>
+      <td><code>repeatTitle</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Den Titel am Kopf jeder Fortsetzung eines geteilten Kastens wiederholen, gefolgt von <code>continuedSuffix</code> („Key points (cont.)“). Die Wiederholung übernimmt den Titelstil. Ein Kasten ohne Titel wiederholt nichts. Siehe <a href="#hinweise-an-einem-geteilten-kasten">Hinweise an einem geteilten Kasten</a>.</td>
+    </tr>
+    <tr>
+      <td><code>continuedSuffix</code></td>
+      <td><code>string</code></td>
+      <td><code>'(cont.)'</code></td>
+      <td>Text nach dem wiederholten Titel, in der Sprache des Dokuments (<code>locale</code>, sonst die Sprache der Silbentrennung), wie bei einer geteilten Tabelle, und mit dem Titel verbunden wie bei einer Tabelle.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerEnabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td><code>continuesMarker</code> unter die letzte Zeile jedes weitergehenden Teils eines geteilten Kastens setzen, innerhalb des Kastens.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarker</code></td>
+      <td><code>string</code></td>
+      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
+      <td>Text dieses Hinweises (das „(MORE)“ eines Drehbuchs), in Schrift und Größe des Kastentexts, je nach Sprache des Dokuments.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerAlign</code></td>
+      <td><code>'left' | 'center' | 'right'</code></td>
+      <td><code>'right'</code></td>
+      <td>Wo der Hinweis in der Innenbreite des Kastens steht.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerItalic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Den Hinweis kursiv setzen.</td>
+    </tr>
+    <tr>
+      <td><code>numbering</code></td>
+      <td><code>&#123; label, counter, numberingTemplate, resetOn, counterFormat, placement, bold, italic, suffix &#125;</code></td>
+      <td>nicht gesetzt</td>
+      <td>Die Kästen dieses Stils als nummerierte Aussagen zählen: Sätze, Lemmata, Definitionen. Siehe <a href="#nummerierte-aussagen-und-beweise">Nummerierte Aussagen und Beweise</a>.</td>
+    </tr>
+    <tr>
+      <td><code>endMark</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>Ein Zeichen, rechtsbündig ans Ende der letzten Zeile des Kastens gesetzt, wie ein Beweis mit <code>'∎'</code> oder <code>'□'</code> endet: auf der letzten Zeile, wenn es nach einem Leerzeichen passt, sonst auf einer eigenen Zeile. Ein Kasten, der mit einer abgesetzten Formel ohne Nummer endet, nimmt es als Kennzeichen der Formel. Mit eingeschalteter Mathematik werden die Quadrate (∎ □ ■ ▪ ◻ ▫) aus den eigenen Glyphen von TeX gezeichnet, sodass eine Schrift ohne sie (die latin-Dateien von Fontsource) sie trotzdem druckt; mit ausgeschalteter Mathematik werden sie in der Schrift des Kastentexts gesetzt.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Der Container `:::callout`
+
+Eine Zeile `:::callout{type="<id>"}` öffnet den Kasten, eine bloße Zeile `:::` schließt ihn. Die Einfassung nimmt fünf Attribute an – `type` (die ID des Stils), `title` (überschreibt den Titel des Stils), `span`, `placement` und `columns` (überschreiben die Werte des Stils) –, und der Inhalt dazwischen wird im Kasten gesetzt: ein optionaler Titel, dann die Absätze, Listen, Zitatblöcke, Formeln oder Ressourceneinbettungen, jeweils mit der Typografie `body` / `lists` des Stils (Überschriften behalten ihre üblichen Stile). Außenabstände zwischen Kindblöcken fallen wie im Fließtext zusammen; das Innere verlässt das Grundlinienraster, und der Fluss rastet nach dem Kasten mit mindestens `marginBottom` darunter wieder darauf ein (das Raster hat Vorrang; der Außenabstand ist ein Mindestwert – dieselbe Konvention, der Ressourcen folgen). Ein Stil mit `snapToGrid: false` behält stattdessen das genaue `marginBottom`, und der Text nach dem Kasten bleibt bis zur nächsten Überschrift oder zum nächsten Listenende außerhalb des Rasters. Eine Überschrift unmittelbar vor einem Kasten bleibt bei ihm.
+
+Grenzen in dieser Version:
+
+- Ein Kasten wird zusammengehalten, sofern sein Stil nicht `keepTogether: false` setzt. Passt er nicht in den verbleibenden Spaltenraum, wandert er ganz in die nächste Spalte oder auf die nächste Seite – auch aus einer leeren Spalte, die Gleitobjekt-Bänder oder eine Bandgrenze verkürzt haben, solange eine volle Spalte ihn fassen würde. Ein Kasten, der höher als eine volle Spalte ist, wird stattdessen geteilt, wie ein teilbarer; nur einer, den kein Schnitt teilen kann (eine Abbildung oder Tabelle, die höher als die Spalte ist, oder ein `splitMinLines`, das kein Schnitt erfüllt), wird trotzdem platziert und läuft über; das Layout vermerkt dann eine Warnung `calloutOverflow` (`VDTDocument.warnings`), die die Sandbox auflistet. Eine Gruppe `:::columns` wird wie der Kasten um sie herum geschnitten, zwischen ihren Unterspalten (seit postext 1.25); sie bleibt nur mit `layout.flowColumns: false` oder in einem verschachtelten Kasten ganz und kann dann ebenso überlaufen. Ein teilbarer Kasten lässt den passenden Teil zurück – ganze Kindblöcke oder die Zeilen eines Absatzes bis hinab zu `splitMinLines` auf jeder Seite (eine Abbildung, Tabelle oder abgesetzte Formel allein genügt für eine Seite) – und geht in einem Kasten ohne Symbol in der nächsten Spalte oder auf der nächsten Seite weiter, ohne Titel, sofern der Stil ihn nicht wiederholt, und optional mit einem Hinweis unter dem verlassenen Teil (siehe [Hinweise an einem geteilten Kasten](#hinweise-an-einem-geteilten-kasten)).
+- Gleitobjekte weichen einem unteilbaren Kasten. Ist der Block direkt nach dem Verweis auf eine Abbildung ein Kasten mit `keepTogether`, wird ein Platz, der dem Kasten keine Spalte des aktuellen Bands zum Landen ließe (die verweisende Spalte oder eine leere danach, die ihn vor dem Gleitobjekt aufgenommen hat), nicht genommen: Die Abbildung geht zu ihrem nächsten Platz weiter, meist auf der nächsten Seite, und der Kasten bleibt im Fluss – so, wie ein Setzer ihn setzen würde, statt den Kasten von der Seite zu drängen und die Spalte mit der Abbildung allein zu lassen.
+- `span: 'page'` in einem mehrspaltigen Layout macht den Kasten zu einem **Spannblock**: Er wird auf die volle Inhaltsbreite gesetzt und teilt die Seite in Spaltenbänder – die Textspalten darüber werden an der Schnittlinie geschlossen, der Kasten nimmt eine eigene Spalte über die volle Breite ein, und darunter öffnet sich ein neues Band von Textspalten, sodass der Fluss in jeder Spalte unter dem Kasten weitergeht. Wo die Spalten *ausgeglichen* sind – am Kopf einer Seite, direkt unter einer Auftaktüberschrift mit `span: 'page'`, direkt unter einem anderen Spannblock oder direkt unter einem Gleitobjekt-Band am Kopf –, schneidet der Kasten einfach dort. Kommt er mitten auf der Seite an, bei ungleichen Spalten, wird er so gesetzt, wie es ein Setzer täte: Der Text darüber wird über alle Spalten ausgeglichen geschnitten (die Engine wiederholt die Platzierung mit Spalten des Bands, die auf dieselbe Zahl von Rasterzeilen gekürzt sind, sodass der Text natürlich von Spalte zu Spalte überläuft und jede Regel zu Waisen, Witwen und Zusammenhalt mit dem Folgenden weiterhin gilt), der Kasten überspannt die Seite, und die Spalten gehen darunter weiter. Der Schnitt kostet einige zusätzliche Platzierungsdurchgänge; ließe die Schnittlinie keinen Raum für den Kasten plus das Witwenminimum an Fließtextzeilen darunter, oder passt nach einigen Versuchen keine Anordnung, wandert der Kasten an den Kopf der nächsten Seite. Der Text darüber hält sich an den Schnitt: Ein Absatz, der in den wenigen Zeilen, die eine Spalte unter einer Abbildung darüber freihält, nicht beginnen kann, geht in die nächste Spalte (die Abbildung steht dann allein in ihrer Spalte), und würde ein Block dennoch über den Schnitt hinauslaufen, wird der Schnitt eine Zeile tiefer gesetzt, statt dort, wo dieser Block endet. Ein geteilter Kasten, der das Band eröffnet, wird ebenfalls dort geschnitten, sodass sein Rest nie über den Schnitt hinausläuft. Mit `headings.balancing.beforeSpan` (dem Standard) wird das verlassene Band hinter ihm ausgeglichen geschnitten – wie das abschließende Band eines Kapitels –, und wenn der Stil das Teilen erlaubt (`keepTogether: false`), schließt der Teil des Kastens, der unter die ausgeglichenen Spalten passt, die Seite ab, und der Rest eröffnet die nächste; mit `beforeSpan: false` wird die verlassene Seite einfach wie üblich ausgeglichen, ohne einen Seitenumbruch zu erzwingen. Eine Überschrift direkt vor einem Spannblock wandert nicht mit ihm. In einspaltigen Layouts ist `span: 'page'` einfach ein Kasten im Fluss.
+- `placement: 'fixed'` nimmt den Kasten aus dem Fluss: Er wird gesetzt (`width: 'auto'` passt sich eng an den Titel an; `'fill'` nimmt die Breite der Textspalte unter dem Ankerpunkt) und auf der Seite, auf der er im Fluss vorkommt, an der Position fixiert, die `fixed.anchor` / `fixed.offset` beschreiben – standardmäßig die linke untere Ecke des Inhaltsbereichs. Die Textspalten, die er überdeckt, geben diese Zone frei (von unten abgeschnitten oder von oben, wenn die Spalte noch leer ist), genau wie bei einem Gleitobjekt-Band; enthält die Zone bereits Text, ein Gleitobjekt oder einen Spannblock, wandert der Kasten auf die nächste Seite. Ein fixierter Kasten, der das Kapitel abschließt (der nächste Block ist ein Kapitelauftakt, ein `:::part`, ein Schrankenkasten oder das Ende des Dokuments), gleicht zuerst die Spalten darüber aus (`headings.balancing.trailing`), sodass eine kurze Schlussseite ausgeglichen über dem Abzeichen darunter endet. Rahmen und Kindblöcke stehen in `page.floats` und werden in jeder Ausgabe außerhalb des Spaltenbeschnitts gezeichnet.
+- `placement: 'top' | 'bottom'` lässt den Kasten wie eine Ressource **gleiten**: Er verlässt den Fluss an seiner Stelle und nimmt das erste freie Band nach diesem Punkt – den Fuß der aktuellen Seite (`'bottom'`) oder Kopf / Fuß der nächsten Seite, die der Fluss eröffnet – in Spaltenbreite (`span: 'column'`) oder in voller Inhaltsbreite (`span: 'page'`); der Text danach füllt die verlassene Seite. Rahmen und Kindblöcke kommen in `page.floats`, wie bei einem fixierten Kasten. Ein gleitender Kasten, der eine neue Seite anführt, wird vor den Abbildungen gesetzt, die auf diese Seite warten, und eine Abbildung, auf die auf einer früheren Seite verwiesen wurde und die dann darunter passt, nimmt den Rest dieser Seite, auch wenn weniger als drei Textzeilen übrig blieben (eine Galerieseite: Kasten plus Abbildung, kein Text dazwischen). Ein Kasten mit `span: 'side'` gleitet nie: Er stapelt sich neben dem Text, gleich welche Platzierung er hat. Mit `columns` über 1 (im Stil oder als Attribut der Einfassung, seit postext 1.18) nimmt ein Kasten mit `span: 'column'` so viele benachbarte Spalten ein: den Kopf einer Folge leerer Spalten, die auf gleicher Höhe beginnen, oder den Fuß der aktuellen Spalte und der leeren danach, wie in `:::callout{placement="top" columns="2"}`.
+- `width: 'auto'` passt sich nur eng an den Titel an; Kindblöcke werden ignoriert.
+- Ein in einem anderen Kasten verschachteltes `:::callout` ist ein eigener Kasten: Es wird mit seinem eigenen Stil (Hintergrund, Rahmen, Radius, Innenabstand, Streifen, Titel, Symbol, Marker, Reiter, Typografie) auf die volle Innenbreite seines Elternkastens gesetzt und stapelt sich als ein Kindblock darin, wobei sein `marginTop` / `marginBottom` mit den Nachbarn zusammenfällt. Sein `span` und `placement` (aus Einfassung oder Stil) werden ignoriert – ein verschachtelter Kasten fließt immer in seinem Elternkasten –, ebenso `floatBarrier` und `snapToGrid`. Kästen lassen sich beliebig tief verschachteln und können in einer Gruppe `:::columns` stehen (jeder ganz, in einer Spalte). Wird der Elternkasten geteilt, fällt der Schnitt vor oder nach einem verschachtelten Kasten oder in ihn, wenn der verschachtelte Stil das Teilen erlaubt; jedes Fragment zeichnet die Rahmen neu, die es durchschneidet, und ein verschachtelter Kasten, der aus dem vorigen Fragment fortgesetzt wird, verliert Titel und Symbol, wie eine Fortsetzung auf oberster Ebene.
+- Eine Gruppe `:::columns{count=N}` … `:::` unter den Kindblöcken setzt diese Kindblöcke im Kasten in `N` gleich breiten Spalten im Abstand `columnGap`: Die Folge wird an den Block- oder Zeilengrenzen geschnitten, die die Spalten am besten ausgleichen (ein mittendrin geschnittener Absatz oder Listeneintrag geht am Kopf der nächsten Spalte ohne sein Aufzählungszeichen weiter), jede Spalte beginnt am Kopf der Gruppe, und die Gruppe ist so hoch wie ihre höchste Spalte; die Kindblöcke danach kehren zur vollen Breite zurück. Ein Kasten, der sich teilt (`keepTogether: false` oder höher als eine Spalte), schneidet auch innerhalb einer Gruppe, zwischen ihren Spalten: Eine fortlaufende Gruppe füllt ihre Spalten der Reihe nach und geht im nächsten Fragment weiter, eine parallele (`breaks`) geht Strang für Strang weiter (seit postext 1.25; siehe [Dokumentformat › `:::columns`](/de/docs/document-format#columns)). Ein `gap` an der Einfassung ersetzt `columnGap` für diese Gruppe, und `rule` zieht eine Linie durch jeden Spaltenabstand. Verwenden Sie es für eine zweispaltige Zusammenfassung von Kernpunkten oder für nebeneinandergesetzte Tabellen eines breiten Kastens.
+- Das sechste Attribut der Einfassung, `label`, erscheint auf dem Reiter des Stils (siehe `label` oben) – `:::callout{type="box" label="BOX 1-1" title="The octet rule"}`; ohne einen Stil `label` wird das Attribut ignoriert.
+
+Im VDT ist der Kasten ein Rahmenblock mit `type: 'callout'`, dessen Schmuck (Hintergrund, Streifen, Symbol, Titel) in `designOverlay` liegt, gefolgt von seinen Kindblöcken in derselben Spalte; der Rahmen und jeder Kindblock tragen die `containerId` der Einfassung. Ein verschachtelter Kasten ist ein eigener Rahmen mit `type: 'callout'` unter den Kindblöcken, gefolgt von seinen Blöcken; sie behalten die `containerId` der Einfassung auf oberster Ebene (Platzierung und Ausgleich sehen weiterhin eine Einheit) und fügen `calloutPath` hinzu, die Container-IDs der umgebenden verschachtelten Einfassungen, die äußerste zuerst (die eigene ID eines verschachtelten Rahmens ist der letzte Eintrag). Das getaggte PDF gibt jedem verschachtelten Kasten ein `Div` innerhalb dessen seines Elternkastens. Symbolbilder werden wie Ressourcenbilder aufgelöst: über das Bildregister des Canvas, die HTML-Option `resourceImageUrl` und den PDF-Provider `resourceBytes`.
+
+```ts
+const resolved = resolveCalloutStylesConfig(config.calloutStyles, resolvedBodyText, resolvedHeadings, resolvedUnorderedLists, config.locale);
+// => every inherited field filled from the resolved sections; the optional
+//    locale picks the language of the continuation strings
+
+const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
+// => undefined for the built-in `note` default; static defaults dropped
+```
+
+### Nummerierte Aussagen und Beweise
+
+Ein Stil mit `numbering` zählt seine Kästen, so wie `amsthm` in LaTeX Theorem-Umgebungen zählt (seit postext 1.19). Jeder Kasten druckt seine Bezeichnung und Nummer – „**Theorem 2.**“ zu Beginn seines ersten Absatzes –, und der `title` der Einfassung folgt der Nummer in Klammern: `:::callout{type="theorem" title="Bradley–Terry"}` beginnt mit „**Theorem 2** (Bradley–Terry)**.**“. Ein Kasten, der mit einem Bezeichner eröffnet wird (`{#thm:main}`), ist ein Ziel von Querverweisen, die „Theorem 2“ drucken (`:ref{id="thm:main"}`), und `\ref{thm:main}` oder `style=number` druckt 2.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '180px' }}>Feld</th>
+      <th style={{ width: '160px' }}>Typ</th>
+      <th style={{ width: '160px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>label</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Das Wort vor der Nummer: <code>'Theorem'</code>, <code>'Lemma'</code>, <code>'Definición'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>counter</code></td>
+      <td><code>string | false</code></td>
+      <td>die <code>id</code> des Stils</td>
+      <td>Der Zähler, den die Kästen erhöhen. Stile, die denselben Zähler nennen, teilen ihn, wie es <code>\newtheorem&#123;lemma&#125;[theorem]</code> tut: Theorem 1, Lemma 2, Theorem 3. <code>'equation'</code> zählt mit den bezeichneten Gleichungen. <code>false</code> druckt die Bezeichnung ohne Nummer (das „<em>Proof.</em>“ eines Beweises).</td>
+    </tr>
+    <tr>
+      <td><code>numberingTemplate</code> / <code>resetOn</code> / <code>counterFormat</code></td>
+      <td><code>string</code> / <code>ResourceCounterReset</code> / <code>ResourceCounterFormat</code></td>
+      <td><code>'&#123;n&#125;'</code> / <code>'never'</code> / <code>'decimal'</code></td>
+      <td>Wie bei einem Ressourcentyp: <code>'&#123;h1&#125;.&#123;n&#125;'</code> mit <code>resetOn: 'h1'</code> nummeriert Theorem 2.1, 2.2 … nach Kapitel; <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> mit <code>'h2'</code> nach Abschnitt. Ein von mehreren Stilen geteilter Zähler zählt weiter, was auch immer ihre Vorlagen drucken. Ein Platzhalter nimmt nach einem Doppelpunkt einen Stil an, wie bei einem Ressourcentyp: <code>'&#123;h1:A&#125;.&#123;n&#125;'</code> druckt <em>Theorem A.1</em> in einem mit Buchstaben gezählten Anhang.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>'runIn' | 'title'</code></td>
+      <td><code>'runIn'</code></td>
+      <td><code>'runIn'</code> eröffnet den ersten Absatz des Kastens mit der Bezeichnung (ein Kasten, der mit einer Liste, einer Formel oder einem anderen Kasten beginnt, erhält dafür einen Absatz); <code>'title'</code> macht die Bezeichnung zum Titel des Kastens, in dessen <code>titleStyle</code>: „Theorem 2 (Bradley–Terry)“.</td>
+    </tr>
+    <tr>
+      <td><code>bold</code> / <code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code> / <code>false</code></td>
+      <td>Der Schnitt der eingebundenen Bezeichnung und ihres Suffixes, unabhängig vom Text des Kastens: Ein kursiver Text (<code>body.italic</code>) lässt eine aufrechte Bezeichnung aufrecht. Der Titel in Klammern wird aufrecht in der normalen Schriftstärke gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>suffix</code></td>
+      <td><code>string</code></td>
+      <td><code>'.'</code></td>
+      <td>Nach der eingebundenen Bezeichnung und ihrem Titel gesetzt.</td>
+    </tr>
+  </tbody>
+</table>
+
+Ein Beweis ist ein Stil mit einer nicht nummerierten Bezeichnung und einem Schlusszeichen:
+
+```ts
+calloutStyles: [
+  { id: 'theorem', numbering: { label: 'Theorem' }, body: { italic: true } },
+  { id: 'lemma', numbering: { label: 'Lemma', counter: 'theorem' }, body: { italic: true } },
+  { id: 'definition', numbering: { label: 'Definition' } },
+  { id: 'proof', backgroundEnabled: false, endMark: '□',
+    numbering: { label: 'Proof', counter: false, bold: false, italic: true } },
+]
+```
+
+In einem Buch, das Kapitel für Kapitel umbrochen wird, zählen die Zähler vom vorigen Kapitel aus weiter (`LayoutContinuation.statementCounters`, das `continuationAfter` füllt), und die Gliederung des Buchs gibt dem Anker jedes nummerierten Kastens seine Bezeichnung (`OutlineEntry.numberLabel`), sodass ein Verweis aus einem anderen Kapitel sie druckt.
+
+### Typografie im Kasten
+
+Ein Kasten setzt seinen Inhalt mit seiner eigenen Typografie `body` und `lists`; alles andere behält die Stile des Dokuments:
+
+- **Absätze** übernehmen den `body` des Kastens: Schrift, Größe, Zeilenabstand, Farbe, Auszeichnungsfarben, Schriftstärken, `italic`, `smallCaps`, Ausrichtung, Silbentrennung, Einzug und Absatzabstand. Ein nicht gesetztes Feld erbt `bodyText`. Eine geerbte Auszeichnungsfarbe behält ihre Bindung an die Palette, sodass sich fetter und kursiver Text sowie Bezeichnungen von `:ref` in einem Kasten mit `colorPalette` ändern wie außerhalb. (Bis postext 1.4 blieb Fettes in einem Kasten `#295AA3`, gleich welche Hauptfarbe galt.)
+- **Aufzählungen** übernehmen die `lists` des Kastens (Aufzählungszeichen, Farbe, Glyphengröße und -stärke, Einzug, Abstand, Eintragsabstand) über `unorderedLists`, und ihr Text ist der Text des Kastens. Ein `lists.bulletChar` oder `lists.color`, das von dem des Dokuments (`unorderedLists`) abweicht, ersetzt Aufzählungszeichen oder Farbe jeder Ebene; eines, das ihn wiederholt oder nicht gesetzt ist, lässt jeder Ebene ihren eigenen Wert (`unorderedLists.levels`), sodass verschachtelte Striche im Kasten erhalten bleiben.
+- **Nummerierte Listen** übernehmen `lists.indent`, `gap` und `itemSpacing` sowie `lists.color`, sobald der Stil es setzt – auch wenn es die Farbe der Aufzählungszeichen des Dokuments ist; ein Stil, der es nicht setzt, behält die Nummern in `orderedLists.color`. (Bis postext 1.4 erreichte die Farbe die Nummern nur, wenn sie von `unorderedLists.color` abwich, sodass es nichts bewirkte, sie auf genau diese Farbe zu setzen.) Die Nummer selbst – Schrift, Größe und Trennzeichen – stammt aus dem globalen `orderedLists`, da `lists` nur Felder für Aufzählungszeichen hat: Gestalten Sie die Nummern eines Kastens dort.
+- **`:::paragraphs` im Kasten** verwenden ihr Absatzformat, auch in verschachtelten Kästen. Die Felder, die das Format nicht setzt, erben den `bodyText` des Dokuments, nicht den `body` des Kastens (auch nicht dessen Kursive oder Kapitälchen).
+- **Gruppen `:::columns`** haben keinen eigenen Stil: Jede Spalte teilt die Text- und Listentypografie des Kastens, und `columnGap` setzt den Abstand zwischen ihnen.
+- **Zitatblöcke** übernehmen Schrift, Größe und Schriftstärken des Kastentexts (kursiv und grau, wie im Fließtext) sowie seine Kapitälchen. **Überschriften** behalten die Überschriftenstile, **abgesetzte Formeln** die Mathematik-Einstellungen.
+- **Abbildungen und Tabellen** behalten die Legenden- und Tabellenstile des Dokuments, in der Innenbreite des Kastens; ihre normalen und fetten Schriftstärken folgen denen des `body` des Kastens.
+- **Chips** behalten ihren Chip-Stil; eine Größe in `em` wird an der Schriftgröße des Kastentexts gemessen.
+- **`:::space`** wird in Zeilen des Kastentexts gemessen (siehe [`:::space`](/de/docs/document-format#space) dazu, wo es entfällt).
+- **Ein verschachtelter Kasten** übernimmt seinen eigenen Stil vollständig; sein `span`, `placement`, `floatBarrier` und `snapToGrid` werden ignoriert.
+
+### Hinweise an einem geteilten Kasten
+
+Teilt sich ein Kasten über Spalten oder Seiten (`keepTogether: false` oder ein Kasten, der höher als eine Spalte ist), beginnt jeder Teil nach dem ersten ohne Titel und Symbol, und standardmäßig sagt nichts dem Leser, dass der Kasten weitergeht. Zwei Optionen fügen die Hinweise hinzu, die ein Buch oder ein Drehbuch verwendet:
+
+- **`repeatTitle: true`** wiederholt den Titel am Kopf jeder Fortsetzung, gefolgt von `continuedSuffix` – standardmäßig „Key points (cont.)“. Die Wiederholung übernimmt den Titelstil, sodass sie mit `textTransform: 'uppercase'` das „HAMLET (CONT'D)“ eines Drehbuchs ergibt. Symbol und Reiter bleiben am ersten Teil.
+- **`continuesMarkerEnabled: true`** setzt `continuesMarker` – „Continued“ oder „Continúa“ in einem spanischen Dokument – unter die letzte Zeile jedes weitergehenden Teils, innerhalb des Kastens, in Schrift und Größe des Kastentexts: kursiv, sofern `continuesMarkerItalic` nicht `false` ist, rechtsbündig, sofern `continuesMarkerAlign` nicht `'left'` oder `'center'` angibt. Der Hinweis nimmt Raum in dem Teil ein, den er abschließt, und der Schnitt wird so gewählt, dass er passt.
+
+```ts
+calloutStyles: [{
+  id: 'speech',
+  keepTogether: false,
+  titleStyle: { textTransform: 'uppercase' },
+  repeatTitle: true,
+  continuedSuffix: "(CONT'D)",
+  continuesMarkerEnabled: true,
+  continuesMarker: '(MORE)',
+  continuesMarkerAlign: 'center',
+  continuesMarkerItalic: false,
+}],
+```
+
+```md
+:::callout{type="speech" title="Hamlet"}
+A speech long enough to run over the foot of the page…
+:::
+```
+
+Der Teil, der die Seite abschließt, endet mit „(MORE)“, und die nächste Seite beginnt mit „HAMLET (CONT'D)“. Beides gehört zum Paginierungszubehör: In einem barrierefreien PDF sind es Artefakte, und im HTML sind sie vor assistiven Technologien verborgen, sodass der Titel nur einmal vorgelesen wird. Im VDT sind es Textblöcke in `designOverlay` mit dem Flag `artifact: true`.
+
+
+## Teile
+
+Die Eigenschaft `parts` konfiguriert die Teiltitelseiten, die ein Dokument mit einem Container `:::part{number="…" title="…"}` eröffnet – die Seite „Teil I – Grundlagen“, die eine Folge von Kapiteln zusammenfasst. Ein Teil belegt immer eine eigene Seite: Der Container bricht auf eine neue Seite der konfigurierten Parität um, wandelt sie in eine einspaltige Seite um, deren Textbereich aus `parts.margins` stammt, legt die Auftaktgestaltung über die ganze Seite und bricht nach der schließenden Einfassung erneut um, sodass das nächste Kapitel (mit seinem eigenen `breakBefore.parity`) sauber beginnt – mit den Standardeinstellungen für H1 ergibt das die klassische Teiltitelseite rechts, eine leere linke Seite und das Kapitel auf der nächsten rechten Seite.
+
+```ts
+const config: PostextConfig = {
+  parts: {
+    breakBefore: { parity: 'odd' },
+    breakAfter: { enabled: true, parity: 'any' },
+    margins: { top: { value: 9, unit: 'cm' }, left: { value: 3, unit: 'cm' }, right: { value: 3, unit: 'cm' } },
+    design: {
+      elements: [
+        {
+          kind: 'text', id: 'number', content: 'Part {numberRoman}',
+          fontSize: { value: 12, unit: 'pt' }, fontWeight: 600, align: 'left',
+          placement: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: { value: 3, unit: 'cm' }, y: { value: 5, unit: 'cm' } }, size: { width: 'auto', height: 'auto' } },
+        },
+        {
+          kind: 'text', id: 'title', content: '{titleText}',
+          fontSize: { value: 28, unit: 'pt' }, fontWeight: 700, align: 'left', overflow: 'wrap',
+          placement: { anchor: { to: '#number', edge: 'below' }, size: { width: { value: 15, unit: 'cm' }, height: 'auto' } },
+        },
+      ],
+    },
+    bodyStyle: { fontSize: { value: 11, unit: 'pt' }, numberColor: { hex: '#AA0000', model: 'hex' } },
+  },
+};
+```
+
+```md
+:::part{number="I" title="Foundations"}
+1. The lantern and its parts
+2. Trimming the wick
+3. Reading the weather
+:::
+
+# The lantern and its parts
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '160px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>page</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Ob ein <code>:::part</code> eine Teiltitelseite eröffnet. Mit <code>false</code> wird keine Seite eröffnet und der Inhalt der Einfassung nicht gesetzt: Nummer, Titel und Palette des Teils gelten ab dem nächsten Inhalt, ohne eigenen Umbruch. Typischer Einsatz: <code>htmlViewer.overrides.parts.page: false</code>, eine Bildschirmausgabe ohne Teiltitel.</td>
+    </tr>
+    <tr>
+      <td><code>breakBefore.parity</code></td>
+      <td><code>HeadingBreakParity</code></td>
+      <td><code>'odd'</code></td>
+      <td>Parität der Seite, auf der der Teil beginnt. Dieselben Werte und Regeln für die Zugehörigkeit leerer Seiten wie beim <a href="/de/docs/configuration-text#umbruch-davor">breakBefore</a> der Überschriften: Eine Vakatseite, die eingefügt wird, um die Parität zu erreichen, gehört zum Teil (ihr <code>{'{partTitle}'}</code> löst bereits zum neuen Teil auf); die vorgeschriebene Trennseite von <code>'always-*'</code> gehört zum vorigen Inhalt.</td>
+    </tr>
+    <tr>
+      <td><code>breakAfter.enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Den Inhalt nach der schließenden Einfassung auf eine neue Seite verschieben. Mit <code>false</code> geht er in der einzigen Spalte der Teiltitelseite weiter.</td>
+    </tr>
+    <tr>
+      <td><code>breakAfter.parity</code></td>
+      <td><code>HeadingBreakParity</code></td>
+      <td><code>'any'</code></td>
+      <td>Parität dieser neuen Seite. Belassen Sie sie bei <code>'any'</code>, und lassen Sie das eigene <code>breakBefore.parity</code> des nächsten Kapitels entscheiden, ob eine leere linke Seite folgt. Der Umbruch wird angewandt, wenn der nächste Block platziert wird, sodass ein Teil, der das Dokument abschließt, keine leere Seite am Ende hinterlässt.</td>
+    </tr>
+    <tr>
+      <td><code>margins</code></td>
+      <td><code>PageMargins</code></td>
+      <td>Seitenränder</td>
+      <td>Textbereich der Teiltitelseite – die einzige Spalte, in der die Blöcke der Einfassung fließen. Jede Seite erbt, wenn nicht gesetzt, den Seitenrand; <code>mirror</code> vertauscht Bund- und Außensteg auf geraden Seiten genau wie die Seitenränder.</td>
+    </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>leer</td>
+      <td>Auftaktgestaltung. Ihr Container ist das <strong>Endformat</strong> der Seite, sodass Container-Anker und <code>'page'</code>-Anker zusammenfallen und <code>'bleed'</code> bei eingeschalteten Schnittmarken bis in den Anschnitt reicht. Rein dekorativ: Sie reserviert nie Textraum – erhöhen Sie <code>margins.top</code>, um den Text von ihr freizuhalten. Ist sie leer, wird oben links im Textbereich ein Standardtext <code>{'{number} {titleText}'}</code> in der Typografie von H1 erzeugt, mit dem <code>numberSeparator</code> von H1 zwischen Nummer und Titel.</td>
+    </tr>
+    <tr>
+      <td><code>versoDesign</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>leer</td>
+      <td>Gestaltung der leeren linken Seite, die auf eine Teiltitelseite folgt (die Rückseite des Teiltitelblatts): derselbe Container und dieselben Platzhalter wie bei <code>design</code>. Für eine schlichte linke Seite leer lassen. Sie wird nur gezeichnet, wenn die Seite nach der Teiltitelseite leer bleibt, was einen Umbruch mit Parität erfordert: siehe <a href="#die-gestaltung-der-linken-seite">Die Gestaltung der linken Seite</a> unten.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle.fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>color</code>, <code>textAlign</code></td>
+      <td>wie in <code>bodyText</code></td>
+      <td>erben <code>bodyText</code></td>
+      <td>Typografie der Absätze, Zitatblöcke und Listeneinträge in der Einfassung. Schriftstärken, Auszeichnungsfarben und Silbentrennung stammen aus dem Fließtext.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle.bulletColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>unorderedLists.color</code></td>
+      <td>Farbe der Aufzählungszeichen in Aufzählungen innerhalb des Teils.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle.numberColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>orderedLists.color</code></td>
+      <td>Farbe der Nummern in nummerierten Listen innerhalb des Teils. Nummern werden immer in der fetten Schriftstärke des Fließtexts gesetzt, sodass sich eine Kapitelliste wie ein Inhaltsverzeichnis liest.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle.unorderedLists</code></td>
+      <td><code>UnorderedListsConfig</code></td>
+      <td>—</td>
+      <td>Teilweise Überschreibungen, die innerhalb des Teils nach <code>bulletColor</code> über die <code>unorderedLists</code> des Dokuments gelegt werden. Listenweite Werte gehen auf die Ebenen über, die sie geerbt haben; Einträge in <code>levels</code> gelten nur für ihre Ebene.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle.orderedLists</code></td>
+      <td><code>OrderedListsConfig</code></td>
+      <td>—</td>
+      <td>Teilweise Überschreibungen, die innerhalb des Teils nach <code>numberColor</code> und der fetten Schriftstärke über die <code>orderedLists</code> des Dokuments gelegt werden – z. B. ein <code>separator</code> <code>'•'</code> mit eigenem <code>separatorFontFamily</code> und <code>separatorColor</code> für die Kapitelliste eines Teilauftakts.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Platzhalter der Teilgestaltung
+
+Der Gestaltungsplatz löst die Platzhalter der Überschriften mit den eigenen Werten des Teils auf: `{titleText}` ist der `title` der Einfassung; `{number}` die `number` genau so, wie sie geschrieben ist; `{numberDecimal}`, `{numberRoman}`, `{numberRomanLower}`, `{numberAlpha}`, `{numberAlphaLower}` formatieren sie um – die Nummer wird als Dezimalzahl, römische Zahl oder chinesische Zahlzeichen gelesen, mit oder ohne die Wörter, die sie einrahmen (`"IV"`, `"iv"`, `"4"`, `"４"`, `"四"`, `"卷四"` und `"第四卷"` ergeben alle `{numberDecimal}` = `4`), und lösen bei allem anderen zu `''` auf. `{partTitle}` / `{partNumber}`, `{chapterTitle}` / `{chapterNumber}` (das Kapitel vor dem Teil), `{pageNumber}`, `{totalPages}`, `{bookTotalPages}` und die Metadaten-Platzhalter stehen ebenfalls zur Verfügung. `{attr.<key>}` liest die Attribute der H1 des aktuellen Kapitels.
+
+### Die Gestaltung der linken Seite
+
+`versoDesign` schmückt die Seite direkt nach einer Teiltitelseite, wenn diese Seite keinen Inhalt hat: die Rückseite des Teiltitelblatts. Der Teil selbst lässt diese Seite nie leer. `breakAfter.parity` ist standardmäßig `'any'`, sodass der Inhalt nach der Einfassung auf der unmittelbar folgenden Seite beginnt, sofern nicht etwas eine Parität verlangt:
+
+- **Die Überschrift des nächsten Kapitels.** Das Standard-`breakBefore` von H1 ist `'always-odd'`, und `'odd'` bewirkt nach einer rechten Teiltitelseite dasselbe: Das Kapitel wandert auf die nächste rechte Seite, und die linke bleibt leer. Die Gestaltung der linken Seite wird gezeichnet.
+- **`parts.breakAfter: { enabled: true, parity: 'odd' }`.** Der Teil verlangt selbst die nächste rechte Seite, was immer die nächste Überschrift tut. Verwenden Sie es, wenn Kapitel auf beiden Seiten beginnen dürfen (`breakBefore.parity: 'any'` oder `breakBefore.enabled: false`).
+
+Mit keinem von beiden beginnt das Kapitel auf der linken Seite, und es wird keine Gestaltung der linken Seite gezeichnet. Mit `breakAfter.enabled: false` geht der Inhalt auf der Teiltitelseite selbst weiter. Die linke Seite übernimmt die Palette des Teils, sodass ein `palette="band=#…"` an der Einfassung auch sie umfärbt.
+
+```ts
+parts: {
+  breakBefore: { parity: 'odd' },
+  breakAfter: { enabled: true, parity: 'odd' },   // always a blank verso to paint
+  versoDesign: {
+    elements: [{
+      kind: 'box', id: 'field',
+      style: { backgroundColor: { hex: '#b07d2b', model: 'hex', paletteId: 'band' } },
+      placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } },
+    }],
+  },
+}
+```
+
+**Ein Teil, der sein Kapitel abschließt.** In einem Buch, das Kapitel für Kapitel umbrochen wird (die Sandbox, `buildBundle`), kann eine Einfassung `:::part` ein eigenes Kapitel sein oder das Ende eines Kapitels. Ihre Teiltitelseite ist dann die letzte Seite des Kapitels, und das nächste Kapitel übernimmt, was der Teil noch schuldet: Es wendet `breakAfter` vor seinem ersten Block an und zeichnet `versoDesign` auf seiner ersten Seite, wenn diese leer bleibt. Die Seiten fallen so aus, wie sie es mit dem ganzen Buch in einem Dokument täten. Nur Direktiven, die nichts platzieren (`:::numbering`, `:::space`), dürfen der Einfassung folgen; alles andere ist Inhalt des Kapitels, das dann den Umbruch selbst übernimmt. Ein leeres Kapitel direkt nach dem Teil ist eine eigene Seite: Diese Seite ist die linke Seite. Ein Host, der Kapitel selbst umbricht, erhält dies von `continuationAfter()`, das für ein Kapitel, das mit einem Teil endet, `afterPartPage: true` meldet; geben Sie es in der `continuation` des nächsten Kapitels weiter.
+
+### Der Container `:::part`
+
+Eine Zeile `:::part{number="…" title="…"}` öffnet den Teil, ein bloßes `:::` schließt ihn; beide Attribute sind optional (Standard ist `''`). Die Blöcke dazwischen – typischerweise die Kapitelliste – fließen mit `bodyStyle` in der einzigen Spalte der Teiltitelseite, beginnend bei `margins.top`; ein Inhalt, der länger als die Seite ist, geht auf gewöhnlichen Seiten weiter. Die Seite wird als `role: 'part'` eingestuft (`VDTPage.partInfo` trägt Nummer und Titel), sodass Elemente der Kopf- und Fußzeile sie mit `pages: 'part'` / `pages: 'body'` ansteuern oder auslassen können; die PDF-Ausgabe fügt den Teil der Gliederung über seinen Kapiteln hinzu. Ein leerer Inhalt (`:::part{…}` direkt gefolgt von `:::`) ist der übliche Fall und erzeugt trotzdem die Seite – aufeinanderfolgende Teile teilen sich nie eine. Ein in einem anderen Teil verschachteltes `:::part` wird in den äußeren eingeebnet.
+
+Ein drittes Attribut, `palette="<id>=<hex>[, <id>=<hex>…]"`, gibt dem Teil eigene Farben: Auf der Teiltitelseite und auf jeder folgenden Seite – bis zum nächsten Teil – nimmt jede Gestaltungsfarbe (Kopfzeile, Fußzeile, Auftaktband, Teil- und Rückseitengestaltung), die an eine dieser Paletten-IDs gebunden ist, den Wert des Teils statt den der Dokumentpalette an. So färben die Abschnitte eines Buchs den Eckreiter, den Punkt im Kolumnentitel und das Band des Kapitelauftakts ohne zweite Gestaltung um: `:::part{number="II" title="…" palette="band=#f6c297"}`. Der Textfluss folgt ebenfalls: Auf denselben Seiten nimmt jede Flussfarbe, die dem Grundwert eines überschriebenen Paletteneintrags gleicht – Farben von Überschriften, Fettem, Kursivem und Verweisen, Aufzählungszeichen und Listennummern, Legendenbezeichnungen und Legendenbalken, Tabellentext, Tabellenlinien und -flächen (Kopf, Inhalt, Zebrastreifen und die eigene Fläche einer Zelle), Kästen (Hintergrund, Rahmen, Streifen, Titel) und Chips (Fläche, Umrisslinie und Text) –, den Wert des Teils an, sodass ein an `band` gebundenes `headings.levels[1].color` die Überschriften jedes Abschnitts in dessen eigener Farbe setzt. Inline-Farbfelder behalten die in ihnen geschriebene Farbe. Paare werden durch Kommas, Semikolons oder Leerzeichen getrennt, `=` oder `:` verbindet ID und Farbe, das `#` ist optional. Ein Teil bleibt nach dem Schließen seiner Einfassung wirksam: `{partTitle}`, `{partNumber}` und die Palette folgen dem Fluss in die Kapitel danach und – über `continuation.part`, das `continuationAfter()` meldet – in einzeln umbrochene Kapitel, sodass das zweite Kapitel eines Abschnitts den Abschnitt in seinen Kolumnentiteln genau wie das erste zeigt.
+
+Zwei Paletteneinträge können denselben Grundwert haben und in einem Teil dennoch unterschiedliche Werte annehmen, wenn der Teil den einen überschreibt und den anderen nicht oder ihnen verschiedene Farben gibt. Der Wert allein sagt nicht, aus welchem Eintrag eine Flussfarbe stammt; daher wird jede Farbe des Flusses mit den Einstellungen abgeglichen, aus denen sie stammen kann, und nimmt den Wert an, an den diese Einstellungen gebunden sind. Unterschieden werden:
+
+- die Farben des Texts eines Blocks: die Textfarbe, die Farben von Fettem, Kursivem und Verweisen, das Listenzeichen (ein Aufzählungszeichen oder eine Nummer) und das Trennzeichen nach einer Nummer. Mit `bodyText.color` an `ink` und `bodyText.boldColor` an `accent` gebunden, beide `#1a1a1a`, färbt ein Teil mit `palette="accent=#b8413d"` den fetten Text um und lässt den übrigen Text unverändert; ist stattdessen `unorderedLists.color` an `accent` gebunden, färbt er die Aufzählungszeichen um und lässt den Text der Einträge unverändert;
+- jede Überschriftenebene und jeder Überschriftenstil, der eine Farbe setzt;
+- der Text einer Zeile des Inhaltsverzeichnisses, ihre Nummer sowie ihre Seitenzahl und ihr Untertitel;
+- in jedem Kastenstil die Flächen (Hintergrund, Streifen, Reiter), der Rahmen, die Linien (Marker und Reiter) und der Text (Titel, Symbol, Marker-Glyphe, Reiter);
+- jede Farbe jedes Tabellen-, Chip- und Legendenstils. Ein benannter Tabellenstil ist von `tableStyle` getrennt, der Legendenstil eines Ressourcentyps von `captionStyle`. Die eigene Fläche einer Zelle folgt ihrer eigenen Bindung.
+
+Ein Fall wird weiterhin nach dem Wert entschieden: Einstellungen an verschiedenen Stellen, die dieselbe Farbe eines Blocks setzen. `bodyText.color`, `bodyText.blockquote.color`, das `color` eines Absatzformats und das `body.color` eines Kastenstils setzen beispielsweise alle die Textfarbe eines Blocks. Sind zwei davon an Einträge mit demselben Grundwert gebunden und unterscheidet der Teil sie, nimmt die Farbe die Überschreibung an (die zuletzt geschriebene, wenn beide überschrieben sind). Geben Sie solchen Einträgen eigene Grundwerte.
+
+```ts
+const resolved = resolvePartsConfig(config.parts, resolvedPage, resolvedBodyText, resolvedUnorderedLists, resolvedOrderedLists);
+// => margins filled from the page, bodyStyle from the body / list configs
+
+const minimal = stripPartsDefaults(config.parts);
+// => undefined when only static defaults remain
+```
+
+## Überschriftenstile
+
+Die Eigenschaft `headingStyles` deklariert benannte Stile, die ein Dokument mit `# Title {style="<id>"}` auf eine Überschrift anwendet. Ein Stil leistet zweierlei. Er überschreibt Typografie, Gestaltung und Nummerierung der Überschriftenebene – jedes Feld eines Ebeneneintrags außer `level` (Schrift, Größe, Farbe, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate` …) –, und er bestimmt den **Abschnitt**, den die Überschrift eröffnet: Dessen Seiten, bis zur nächsten Überschrift derselben oder einer höheren Ebene, übernehmen Kolumnentitel, Seitengeometrie, Texttypografie und Palette des Stils. So steht die Titelei eines Buchs (ein Vorwort in einer einzigen breiten Spalte mit römischen Seitenzahlen und blauen Bändern) in einem zweispaltigen, dezimal nummerierten Handbuch, ohne dass es eine zweite Konfiguration braucht.
+
+```ts
+const config: PostextConfig = {
+  headingStyles: [
+    {
+      id: 'front-matter',
+      numbered: false,
+      breakBefore: { enabled: true, parity: 'odd' },
+      span: 'page',
+      advancedDesign: { enabled: true, minHeight: { value: 52, unit: 'mm' }, slot: { elements: [/* bands, `{titleText}` */] } },
+      header: { elements: [/* folio | rule | `{title}. {subtitle}` */] },
+      margins: { left: { value: 50, unit: 'mm' }, right: { value: 17, unit: 'mm' } },
+      layout: { layoutType: 'single' },
+      bodyStyle: { fontSize: { value: 10.5, unit: 'pt' }, textAlign: 'justify' },
+      palette: { band: '#547396' },
+    },
+  ],
+};
+```
+
+```md
+# Preface {style="front-matter"}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '160px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Bezeichner, auf den <code>{'{style="…"}'}</code> in einer Überschriftenzeile verweist. Eine unbekannte ID lässt die Überschrift, wie sie ist.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Lesbarer Name (nur für die Editor-Oberfläche).</td>
+    </tr>
+    <tr>
+      <td><code>numbered</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Ob die Überschrift zählt: Sie erhöht den Zähler ihrer Ebene (die Nummern von <code>numberingTemplate</code>, das <code>{'{h1}'}</code> der Ressourcennummern), die Kapitelordnungszahl hinter <code>{'{chapterNumber}'}</code> und die im Inhaltsverzeichnis gedruckte Nummer. <code>false</code> für ein Vorwort, ein Autorenverzeichnis, ein Register: Das erste nummerierte Kapitel danach ist weiterhin Kapitel 1, und <code>{'{chapterNumber}'}</code> ist auf ihren Seiten leer.</td>
+    </tr>
+    <tr>
+      <td><code>toc</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Ob <code>:::toc</code> die Überschrift aufführt. Eine Überschrift überschreibt das mit <code>{'{toc="false"}'}</code> / <code>{'{toc="true"}'}</code>.</td>
+    </tr>
+    <tr>
+      <td><code>runningChapter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Ob eine Überschrift der Ebene 1 in diesem Stil zum laufenden Kapitel wird: dem Kapitel, das <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> und ihre Formen <code>…AtTop</code> auf ihrer Seite und den folgenden nennen. <code>false</code> für eine Tafel, eine Karte oder einen Umschlag, die als H1 in einem Kapitel gesetzt sind: Die Kolumnentitel übergehen sie, auch auf ihrer eigenen Seite, und nennen weiter das Kapitel, das sie unterbricht; sie setzt auch kein Leitwort <code>h1</code>. Die Überschrift zählt weiterhin, wenn <code>numbered</code> gilt (ihre eigene Gestaltung liest ihr eigenes <code>{'{chapterNumber}'}</code>), und wird weiterhin von <code>:::toc</code> aufgeführt, wenn <code>toc</code> gilt. Mit zusätzlich <code>toc: false</code> erhält sie kein PDF-Lesezeichen: Die Tafel eines Kapitels auf der Seite vor dessen Auftakt überlässt die Lesezeichen den Kapiteln. Überschriften anderer Ebenen ignorieren die Option. Mit dem Standard drucken die Seiten nach einer Tafel deren Titel. Ein Vorwort oder ein Prolog mit <code>numbered: false</code> ist weiterhin ein eigenes Kapitel und behält den Standard. Die Option ändert nur, welches Kapitel die Platzhalter nennen: Der Stil eröffnet weiterhin einen eigenen Abschnitt, wie jeder Überschriftenstil, sodass die Seiten bis zur nächsten Überschrift der Ebene 1 die Kolumnentitel-Plätze, Ränder, Spalten, den Textstil und die Palette des Tafelstils übernehmen (die des Dokuments, wo der Stil keine setzt), nicht die eines gestalteten Abschnitts, den das unterbrochene Kapitel eröffnet hat. In einem Buch, das Kapitel für Kapitel umbrochen wird, gehen die Kolumnentitel nicht von einer Kapiteldatei in die nächste über, sodass eine Tafel, die eine Datei eröffnet, bis zur ersten Kapitelüberschrift der Datei leere Kapitelplatzhalter zeigt.</td>
+    </tr>
+    <tr>
+      <td>Ebenenfelder</td>
+      <td>wie in <code>headings.levels[]</code></td>
+      <td>die Werte der Ebene</td>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>breakBefore</code>, <code>span</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: Jedes gesetzte Feld ersetzt für Überschriften dieses Stils den Wert der Überschriftenebene (<code>dropCap: false</code> entfernt die Initiale der Ebene). <code>breakBefore</code> wird Feld für Feld mit dem der Ebene zusammengeführt: Ein Stil, der nur <code>parity</code> setzt, behält das <code>enabled</code> der Ebene, und einer, der nur <code>enabled: true</code> setzt, behält ihre Parität (bis postext 1.4 kam das fehlende Feld stattdessen aus dem Standard ohne Umbruch).</td>
+    </tr>
+    <tr>
+      <td><code>numberingTemplate</code></td>
+      <td><code>string</code></td>
+      <td>die der Ebene</td>
+      <td>Vorlage, mit der die Überschriften des Stils nummeriert werden, anstelle der ihrer Ebene (dieselben Platzhalter wie <a href="/de/docs/configuration-text#überschreibungen-pro-ebene"><code>levels[].numberingTemplate</code></a>). Der Zähler bleibt der der Ebene: Ein Anhangsstil mit <code>'Appendix {'{1:A}'}'</code> nach fünf Kapiteln druckte <em>Appendix F</em>; starten Sie die Zählung daher mit <code>{'{startAt=1}'}</code> beim ersten Anhang neu. <code>''</code> druckt keine Nummer, während die Überschrift weiterhin zählt: nicht einmal die Kapitelordnungszahl, die Inhaltsverzeichnis und <code>{'{chapterNumber}'}</code> für eine Überschrift der Ebene 1 ohne Vorlage zeigen. Die Nummer erscheint im Fluss, im <code>{'{number}'}</code> der Gestaltung des Stils, im Inhaltsverzeichnis und in <code>{'{chapterNumber}'}</code>.</td>
+    </tr>
+    <tr>
+      <td><code>header</code>, <code>footer</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>die des Dokuments</td>
+      <td>Kolumnentitel der Seiten des Abschnitts, die dort <code>header</code> / <code>footer</code> ersetzen (die Filter <code>parity</code> und <code>pages</code> der Elemente gelten weiterhin). Ein leerer Platz entfernt sie.</td>
+    </tr>
+    <tr>
+      <td><code>margins</code></td>
+      <td><code>PageMargins</code></td>
+      <td>Seitenränder</td>
+      <td>Textbereich der Seiten des Abschnitts; jede Seite erbt, wenn nicht gesetzt, den Seitenrand, <code>mirror</code> eingeschlossen. Wirkt auf den Seiten, die der Abschnitt eröffnet – kombinieren Sie es mit <code>breakBefore</code>.</td>
+    </tr>
+    <tr>
+      <td><code>layout</code></td>
+      <td><code>LayoutConfig</code></td>
+      <td><code>layout</code></td>
+      <td>Spaltenlayout der Seiten des Abschnitts (<code>layoutType</code>, <code>gutterWidth</code> …): eine einzige breite Spalte für ein Vorwort in einem zweispaltigen Buch. Seine <code>columnRule</code> wird auf den Seiten des Abschnitts gezeichnet, und jedes Feld, das es nicht setzt, übernimmt den Wert von <code>layout.columnRule</code> des Dokuments, sodass ein Abschnitt, der nur seine Spalten ändert, die Spaltenlinie des Dokuments behält (siehe <a href="/de/docs/configuration-page-layout#spaltenlinie">Spaltenlinie</a>).</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>PartsBodyStyleConfig</code></td>
+      <td>erbt <code>bodyText</code></td>
+      <td>Typografie der Absätze, Zitatblöcke und Listen im Abschnitt – dieselben Felder wie <a href="#teile">parts.bodyStyle</a>.</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>Record&lt;string, string&gt;</code></td>
+      <td><code>{'{}'}</code></td>
+      <td>Überschreibungen der Palette (ID → Hex) für die Seiten des Abschnitts, über denen des aktuellen Teils – derselbe Mechanismus wie das Attribut <code>palette</code> eines Teils und mit derselben Reichweite: nicht nur die auf diesen Seiten gesetzten Gestaltungsplätze (Kolumnentitel, das Auftaktband – jede an eine überschriebene ID gebundene Farbe), sondern auch der Textfluss, nach Wert: Jede Flussfarbe, die dem Grundwert eines überschriebenen Eintrags gleicht – Farben von Überschriften, Fettem, Kursivem und Verweisen, Aufzählungszeichen und Listennummern, Legendenbezeichnungen und Legendenbalken, Tabellentext, Tabellenlinien und -flächen, Kästen (Hintergrund, Rahmen, Streifen, Titel) und Chips (Fläche, Umrisslinie und Text) –, nimmt den Wert des Abschnitts an, wie unter einem Teil, einschließlich der Regel für zwei Einträge mit demselben Grundwert (siehe <a href="#der-container-part">Der Container <code>:::part</code></a>). Inline-Farbfelder behalten die in ihnen geschriebene Farbe. Auch die Seitenfarbe folgt: Ist <code>page.backgroundColor</code> an einen überschriebenen Eintrag gebunden (oder hat es, ungebunden, dessen Grundwert), werden die Seiten des Abschnitts im Wert des Abschnitts gefärbt, sodass die Wirtschaftsseiten einer Zeitung auf Lachsrosa gedruckt werden, während die übrigen weiß bleiben. Seit postext 1.18.</td>
+    </tr>
+  </tbody>
+</table>
+
+Ein Abschnitt endet an der nächsten Überschrift derselben oder einer höheren Ebene: Ein ungestaltetes `#` nach einem gestalteten kehrt zu Kolumnentiteln und Geometrie des Dokuments zurück; ein gestaltetes eröffnet seinen eigenen Abschnitt. Seiten, die der Abschnitt für die Parität leer gelassen hat, gehören zu ihm, wie es bei Kapiteltiteln der Fall ist.
+
+**Ein Seitenumbruch ersetzt nicht den eigenen Umbruch der Überschrift.** Ein Stil erbt das `breakBefore` seiner Ebene (der Standard für Ebene 1 ist `{ enabled: true, parity: 'always-odd' }`), und eine Überschrift wendet es an, wo immer sie steht, auch direkt nach einem `:::pagebreak`. Der Seitenumbruch eröffnet eine neue Seite, und die Überschrift verlangt dann trotzdem ihre Seite der Doppelseite. Mit `parity: 'odd'` folgt auf einen Umbruch, der auf einer linken Seite landet, eine Vakatseite, sodass die Überschrift auf der nächsten rechten Seite beginnt. Mit `'always-odd'` kommt auch die trennende Vakatseite hinzu, und der Seitenumbruch ändert nichts, da die Überschrift diese Seite ohnehin eröffnet hätte. Ein Stil, der auf der Seite beginnen soll, die ein manueller Umbruch eröffnet, etwa eine Inhaltsseite nach der Titelseite, schaltet seinen eigenen Umbruch aus:
+
+```ts
+headingStyles: [
+  // Starts where the text puts it: on the page the `:::pagebreak` before it opened.
+  { id: 'contents', numbered: false, toc: false, breakBefore: { enabled: false } },
+],
+```
+
+Um eine eigene Seite zu behalten, ohne eine Seite der Doppelseite zu wählen, setzen Sie stattdessen `breakBefore: { parity: 'any' }` und lassen das `:::pagebreak` weg.
+
+**Zu welchem Abschnitt eine Seite gehört.** Kolumnentitel und Palette werden pro Seite gewählt, nicht pro Überschrift. Eine Seite übernimmt den Abschnitt, der nach dem letzten Abschnittswechsel auf ihr gilt: Wo ein Abschnitt auf derselben Seite endet und ein anderer beginnt – etwa zwei kurze Buchstaben eines Wörterbuchs –, trägt die Seite Kolumnentitel und Palette des zweiten; wo ein gestalteter Abschnitt mitten auf der Seite an einer ungestalteten Überschrift endet, kehrt die Seite zu denen des Dokuments zurück. `{chapterTitle}` folgt derselben Regel: Eine Seite, auf der zwei Kapitel zusammentreffen, zeigt den Titel des späteren. Leere Seiten folgen der Regel für [Kapiteltitel](/de/docs/configuration-text#zugehörigkeit-leerer-seiten): Eine Vakatseite für die Parität (`blankForParity`) gehört zum Abschnitt, der nach ihr beginnt, und die Trennseite, die ein Umbruch `'always-odd'` / `'always-even'` hinzufügt (`blankForForce`), zum Abschnitt davor. Ein Teiltitel schließt den offenen Abschnitt.
+
+```md
+# A {style="letter"}
+
+Aardvark, abacus.
+
+# B {style="letter"}
+
+Babble, badger… (runs on to the next page)
+```
+
+Beide Buchstaben beginnen auf Seite 1, also übernimmt Seite 1 die Kolumnentitel des Abschnitts `B`: Ein im Kopf des Stils gesetzter Daumenregister-Reiter zeigt dort „B“, und keine Seite trägt den Reiter für „A“. Geben Sie jedem Abschnitt eine eigene Seite (`breakBefore`), wenn jeder seinen Reiter braucht.
+Mit Buchstaben gezählte Anhänge nach nummerierten Kapiteln und eine Widmungsseite, die Inhaltsverzeichnis und PDF-Lesezeichen aufführen, die Seite selbst aber nicht betitelt:
+
+```ts
+headingStyles: [
+  { id: 'appendix', numberingTemplate: 'Appendix {1:A}' },
+  { id: 'silent', hidden: true, numbered: false },
+],
+```
+
+```md
+# Dedication {style="silent"}
+
+For M., who read every draft.
+
+# Method
+
+…
+
+# Survey instrument {style="appendix" startAt=1}
+
+# Raw data {style="appendix"}
+```
+
+Mit `numberingTemplate: '{1}.'` auf Ebene 1 drucken die Kapitel *1.*, *2.* …, die Anhänge *Appendix A* und *Appendix B*. Die Widmung eröffnet ihre Seite (das `breakBefore` ihrer Ebene), druckt nur ihren Absatz und erscheint trotzdem als *Dedication* in `:::toc`, in Kolumnentiteln mit `{chapterTitle}` und in der PDF-Gliederung – fügen Sie dem Stil `toc: false` hinzu, um sie aus dem Inhaltsverzeichnis herauszuhalten. Eine Tafel oder Karte, die mitten in einem Kapitel als H1 gesetzt ist, verlangt das Gegenteil der Widmung: Ein Stil mit `runningChapter: false` (meist mit `numbered: false` und `toc: false`) hält die Kolumnentitel bei dem Kapitel, das sie unterbricht.
+
+```ts
+const resolved = resolveHeadingStylesConfig(config.headingStyles, resolvedPage, resolvedBodyText, resolvedUnorderedLists, resolvedOrderedLists);
+// => level overrides normalised, margins filled from the page, bodyStyle from the body
+
+const minimal = stripHeadingStylesDefaults(config.headingStyles);
+// => undefined when no style remains
+```

@@ -1,0 +1,186 @@
+{/* docs/contributing-en.mdx */}
+
+export const metadata = {
+  title: 'Zu Postext beitragen',
+  sidebarTitle: 'Mitwirken',
+  description: 'Wie Sie der Postext-Community beitreten und zum Projekt beitragen',
+  lang: 'de',
+  lastUpdated: '2026-09-24',
+  readingTime: '5 min',
+  order: 19,
+  plainSummary: "Postext wird von einer Gemeinschaft Freiwilliger gebaut, und jeder kann helfen. Sie müssen nicht programmieren können. Sie können auch helfen, indem Sie testen, Dokumentation schreiben, übersetzen oder Ihr Wissen über Gestaltung und Druck weitergeben. Diese Seite erklärt, wie das Team arbeitet, wo Hilfe am dringendsten gebraucht wird und wie Ihr erster Beitrag aussieht. Am Ende stehen die langfristigen Ziele des Projekts.",
+};
+
+# Zu Postext beitragen
+
+**Gemeinsam die Layout-Engine für den Verlagssatz bauen, die das Web nie hatte.**
+
+Postext ist ein Open-Source-Projekt, das von seiner Community getragen wird. Es will ein Problem lösen,
+das seit Jahrzehnten liegen geblieben ist: professionellen Verlagssatz ins Web zu bringen. Das ist ein
+großes Vorhaben, und dafür braucht es mehr als eine Person.
+
+Das Projekt ist jung, aber kein leeres Blatt mehr: Die zentrale Layout-Pipeline, das Dokumentformat
+und das Konfigurationssystem sind ausgeliefert. Viele Gestaltungsentscheidungen sind aber noch offen,
+und wer jetzt dazukommt, hat echten Einfluss auf die Richtung des Projekts. Wenn Sie auf einen
+günstigen Moment zum Einstieg gewartet haben – das ist er.
+
+Sie müssen nicht programmieren können, um beizutragen. Ob Sie Code schreiben, Verlagslayouts
+gestalten, sich in Typografie auskennen, in verschiedenen Browsern testen, Dokumentation schreiben,
+Inhalte übersetzen oder einfach Ideen dazu haben, wie redaktionelle Inhalte im Web funktionieren
+sollten – hier ist Platz für Sie.
+
+
+## Warum beitragen
+
+Jedes Entwicklungsteam für Verlagsinhalte auf der Welt steht vor demselben Problem: CSS wurde nicht
+für den Verlagssatz gebaut. Es gibt keine eingebaute Unterstützung für Spaltenausgleich, das
+Vermeiden von Waisen und Witwen, Text, der um Hindernisse fließt, oder die Platzierung von Fußnoten.
+Jedes Team löst diese Probleme von Grund auf neu und baut fragile Einzellösungen, die teuer in der
+Wartung sind und sich nicht teilen lassen.
+
+Postext will das ändern. Nicht als proprietäres Werkzeug, sondern als gemeinsamer offener Standard –
+eine einzige hochwertige Layout-Engine, die Verlage, Zeitschriften, Zeitungen, Buchplattformen und
+Entwicklungsteams weltweit übernehmen und auf der sie aufbauen können.
+
+Einen solchen Standard kann keine einzelne Person und keine einzelne Firma bauen. Er braucht den
+Blick von Typografen aus verschiedenen Traditionen, PDF-Spezialisten, Fachleuten für
+Barrierefreiheit, Entwicklern, die mit Schriften von rechts nach links arbeiten, Gestaltern, die
+Zeitschriften setzen, und Ingenieuren, die die Darstellungsleistung optimieren. Die Vielfalt der
+Verlagswelt verlangt eine vielfältige Gemeinschaft hinter dem Werkzeug, das ihr dient.
+
+
+## Wie wir arbeiten
+
+Die gesamte Abstimmung läuft über GitHub. Es gibt keine privaten Kanäle, keine geschlossenen
+Mailinglisten, keine Entscheidungen hinter verschlossenen Türen. Alles ist öffentlich, durchsuchbar
+und offen für Beteiligung.
+
+- **[Issues](https://github.com/drnachio/postext/issues)** – für Fehlerberichte, Funktionswünsche
+  und konkrete Aufgaben. Wenn Sie an etwas arbeiten wollen, fangen Sie hier an.
+- **[Pull Requests](https://github.com/drnachio/postext/pulls)** – für Codebeiträge. Eröffnen Sie
+  zuerst ein Issue, um den Ansatz zu besprechen, bevor Sie Code schreiben.
+- **[Discussions](https://github.com/drnachio/postext/discussions)** – für Ideen, Gespräche über
+  die Gestaltung, Fragen und alles, was kein konkreter Fehler und keine konkrete Aufgabe ist. Hier
+  darf laut nachgedacht werden.
+
+Das ist Absicht: Wenn alles an einem Ort liegt, kann jeder den Hintergrund jeder Entscheidung finden,
+und neue Mitwirkende können die Vorgeschichte nachlesen.
+
+<Illustration name="ContributionWorkflow" data='{"title": "Ein typischer Beitrag von Anfang bis Ende", "desc": "Eine Idee beginnt als Issue oder Discussion, wird besprochen, wird zu einem Pull Request, der begutachtet wird, und wird schließlich gemergt. Issues mit dem Label good first issue sind der Einstieg für Neue.", "caption": "Von der Idee bis zum Merge: vier Stationen, alle öffentlich auf GitHub.", "steps": [{"name": "Issue", "sub": "Problem oder Idee"}, {"name": "Discussion", "sub": "Ansatz & Entwurf"}, {"name": "Pull Request", "sub": "Code-Review"}, {"name": "Merge", "sub": "in develop"}], "branchLabel": "good first issue", "branchSub": "bester Einstieg"}' />
+
+
+## Wo Sie helfen können
+
+Das Projekt braucht viele verschiedene Arten von Fachwissen. Hier einige Bereiche, in denen Beiträge
+besonders wertvoll sind:
+
+### Code und Algorithmen
+- **Typografische Layout-Algorithmen** – die Blocksatz-Engine nach Knuth-Plass, Spaltenausgleich,
+  optimaler Absatzumbruch, typisierte Nummerierung von Ressourcen und Platzierung von Gleitobjekten.
+- **PDF-Erzeugung** – PDF-Aufbau auf niedriger Ebene, Einbetten von Schriften, Farbmanagement und
+  der Umgang mit den Ressourcen-Bytes einfarbiger Abbildungen.
+- **Textdarstellung** – Darstellung auf dem Canvas, SVG-Ausgabe, einfarbige Umfärbung von SVGs
+  (`diagramStyle.singleInk`), Schriftmetriken.
+- **Leistungsoptimierung** – die Cache-Schicht für Messungen und eine Layout-Engine, die schnell
+  genug bleibt, um bei jeder Größenänderung in Echtzeit zu arbeiten.
+
+### Sandbox und Oberfläche
+Die [Sandbox](/de/docs/sandbox) ist zu einer umfangreichen eigenen React-Oberfläche gewachsen: ein
+Bedienfeld Ressourcen mit interaktivem Tabelleneditor und Hochladen von Bildern und SVGs, ein
+Bedienfeld Schriften und ein Bedienfeld Gestaltung, dessen zwölf Gruppen jeden Winkel der Engine
+abdecken. Ihre Bedienelemente bauen auf Primitiven von Base UI (`packages/postext-sandbox/src/ui/`)
+auf und werden mit axe-core auf WCAG 2.1 AA geprüft; neue Bedienelemente sollten sie daher
+wiederverwenden und jedes Feld durch seine Beschriftung benennen und durch seinen Hilfetext
+beschreiben. Jeder Text der Oberfläche folgt einer strengen i18n-Konvention und wird über Labels
+in fünf Dateien verdrahtet, die das Sandbox-Paket und die Sprachkataloge der Web-App umfassen.
+Wenn Sie zu Frontend oder UX beitragen, landet Ihre Arbeit hier.
+
+### Gestaltung und Typografie
+- **Erfahrung in der Verlagsgestaltung** – wenn Sie Zeitschriften, Zeitungen oder Bücher gesetzt
+  haben, ist Ihr Wissen darüber, was ein Layout gelingen (oder scheitern) lässt, unschätzbar – ganz
+  ohne Code.
+- **Typografische Traditionen** – das Projekt soll die typografischen Konventionen verschiedener
+  Sprachen und Schriftsysteme achten, nicht nur die der lateinischen Schrift.
+
+### Dokumentation und Community
+- **Dokumentation** – die Dokumentation verbessern, erweitern und pflegen. Klare Dokumentation
+  entscheidet darüber, ob Menschen ein Projekt übernehmen oder es wieder fallen lassen.
+- **Übersetzungen** – die Dokumentation ist derzeit zweisprachig (Englisch und Spanisch). Weitere
+  Sprachen sind willkommen.
+- **Testen** – Tests in verschiedenen Browsern, Betriebssystemen und Grenzfällen. Die Layouts zu
+  finden, die brechen, ist genauso wertvoll, wie die zu bauen, die funktionieren.
+
+### Gestaltung von Format und Schema
+Das Format ist kein unbeschriebenes Blatt mehr: Blöcke `::resource`, Inline-Verweise `:ref` und die
+Konfigurationsabschnitte `tableStyle`, `captionStyle` und `diagramStyle` sind ausgeliefert. Jetzt
+geht es darum, ein etabliertes Format weiterzuentwickeln, ohne es zu brechen:
+
+- **Grammatik des Dokuments** – Marginalien und Querverweise über Ressourcen hinaus sind noch
+  offene Fragen, jede ebenso sehr ein Gestaltungs- wie ein technisches Problem.
+- **Konfigurationsschema** – das System beim Wachsen leistungsfähig genug für Profis und einfach
+  genug für Einsteiger halten.
+
+<Illustration name="ContributionAreas" data='{"title": "Wo Sie helfen können, auf einen Blick", "desc": "Vier Quadranten mit konkreten Beispielen in jedem: Code und die Sandbox-Oberfläche, Gestaltung und Typografie, Dokumentation und Community, Format und Schema.", "caption": "Kein Code nötig: Ein Beitrag bewirkt an vielen Fronten etwas.", "areas": [{"name": "Code & Sandbox-Oberfläche", "items": ["Knuth-Plass & Gleitobjekte", "PDF & Darstellung", "Mess-Cache", "Sandbox-Oberfläche & i18n"]}, {"name": "Gestaltung & Typografie", "items": ["Verlagsgestaltung", "Typografische Traditionen", "Zeitschriften & Zeitungen", "Nichtlateinische Schriften"]}, {"name": "Doku & Community", "items": ["Doku verbessern", "Übersetzungen", "Tests in allen Browsern", "Neue an Bord holen"]}, {"name": "Format & Schema", "items": ["Direktiven ::resource & :ref", "Konfigurationsschema", "Fußnoten & Marginalien", "Querverweise"]}]}' />
+
+
+## Erste Schritte
+
+Die praktische Einrichtung – Repository klonen, Abhängigkeiten installieren, Tests ausführen – ist in
+[CONTRIBUTING.md](https://github.com/drnachio/postext/blob/develop/CONTRIBUTING.md) beschrieben. Dort
+finden Sie die mechanischen Schritte.
+
+Wenn Sie eingerichtet sind, gibt es drei konkrete Schritte, vom leichtesten bis zum größten
+Engagement:
+
+1. **Stellen Sie sich in den [Discussions](https://github.com/drnachio/postext/discussions) vor** –
+   sagen Sie, woran Sie arbeiten und was Sie hergeführt hat. Keine Frage ist zu einfach, und so
+   erfährt die Community am schnellsten, dass Sie da sind.
+2. **Übernehmen Sie ein [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)** –
+   ausgewählt als realistischer Einstieg, ohne dass verborgenes Vorwissen aus der Projektgeschichte
+   nötig ist.
+3. **Übersetzen Sie die Dokumentation in eine neue Sprache** – heute liegt die Dokumentation auf
+   Englisch und Spanisch vor. Jede dritte Sprache ist ein Geschenk für Leser, die bisher außen vor
+   bleiben.
+
+Wenn Sie Code schreiben wollen, eröffnen Sie zuerst ein Issue, um den Ansatz zu besprechen – das
+vermeidet doppelte Arbeit, und ein kurzes Gespräch vorab spart allen Zeit.
+
+### Was Sie als Nächstes lesen sollten
+
+Zur Orientierung, bevor Sie loslegen:
+
+- **[Architektur](/de/docs/architecture)** – wie die Layout-Pipeline aufgebaut ist und wo jedes
+  Teilsystem liegt.
+- **[Dokumentformat](/de/docs/document-format)** – die Grammatik des erweiterten Markdown, die
+  Mitwirkende ausbauen.
+- **[Sandbox](/de/docs/sandbox)** – die Spielwiese, auf der sich die meisten Änderungen am
+  leichtesten sehen und testen lassen.
+
+
+## Die Community
+
+Postext steht noch am Anfang – und genau das macht diesen Moment besonders. Wer jetzt dazukommt,
+schreibt nicht nur Code, sondern prägt die Konventionen, die Prioritäten und die Kultur.
+
+Dem Projekt ist wichtig:
+
+- **Durchdachte Gestaltung vor Tempo.** Die richtigen Abstraktionen zählen mehr als schnelles
+  Ausliefern. Die Typografie wurde über Jahrhunderte verfeinert; wir können uns die Zeit nehmen, es
+  richtig zu machen.
+- **Klarheit vor Raffinesse.** Code, der leicht zu lesen und zu durchdenken ist, ist mehr wert als
+  Code, der beeindruckt, aber undurchsichtig bleibt.
+- **Zusammenarbeit vor Revierdenken.** Niemandem gehört ein Teil der Codebasis. Ideen werden nach
+  ihrem Gehalt beurteilt, nicht danach, wer sie vorgeschlagen hat.
+
+Alle Mitwirkenden werden gewürdigt. Dieses Projekt gibt es, weil Menschen beschließen, ihre Zeit
+darauf zu verwenden, es besser zu machen.
+
+
+## Vision
+
+Postext will die Standard-Layout-Engine für redaktionelle Inhalte im Web werden – das Werkzeug, zu
+dem Verlage, Zeitschriften, Zeitungen und Buchplattformen greifen, wenn sie professionelle
+Typografie brauchen.
+
+Wenn Sie in der Entwicklung für Verlagsinhalte arbeiten und diese Layoutprobleme bisher allein gelöst
+haben, ist das Ihre Einladung, sie einmal richtig zu lösen, gemeinsam mit anderen.

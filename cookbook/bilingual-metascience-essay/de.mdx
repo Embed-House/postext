@@ -1,0 +1,74 @@
+---
+title: "Ein Essay zur Metawissenschaft auf Englisch und Spanisch"
+summary: "Ioannidis’ Essay von 2005 aus einem Skript in zwei Ausgaben neu gesetzt, mit Formeln im Text und in Tabellenzellen und Abbildung 1 aus seiner Gleichung."
+plain: "Ein bekannter Open-Access-Essay dazu, warum viele Forschungsergebnisse nicht standhalten, als siebenseitiger Nachdruck. Ein Skript erzeugt eine englische und eine spanische Ausgabe, jede mit eigener Trennung, Dezimalkomma und Beschriftung."
+description: "Ein Postext-Skript setzt einen frei zugänglichen Artikel auf Englisch und Spanisch: Formeln in Tabellenzellen, nummerierte Gleichungen, Vancouver-Zitierstil."
+question: "Wie veröffentliche ich einen Artikel aus einem Skript in zwei Sprachen, jede mit ihrer eigenen Typografie?"
+aliases: ["zweisprachiger Artikel", "Übersetzung", "zwei Ausgaben", "spanische Ausgabe", "Ioannidis", "PLoS Medicine", "Metawissenschaft", "positiver Vorhersagewert", "PPV", "Vierfeldertafel", "Formel in einer Tabellenzelle", "griechische Buchstaben in Tabellen", "Vancouver", "elsevier-vancouver", "Open Access", "Artikel neu setzen"]
+pageNotes: { "1": "Seite 1: ein marineblaues Band, über das sich die blassen Kurven des positiven Vorhersagewerts fächern, die Dachzeile „ESSAY · RESEARCH METHODS“, der Titel „Why Most Published Research Findings Are False“ in weißer, kräftiger serifenloser Schrift, der Autor und seine beiden Institutionen; unter dem Band die Zeile mit Quelle und Lizenz, die „Summary“ auf hellem Blaugrau über die ganze Seitenbreite und der Anfang des Essays in zwei Spalten mit Zitatnummern in eckigen Klammern.", "2": "Seite 2: das Modell des Essays in zwei Spalten, mit den Gleichungen (1) bis (3) als zentrierten, rechts nummerierten Brüchen, und Tabelle 1 über den Fuß der Seite: ein marineblauer Tabellenkopf in zwei Zeilen, „Research finding“ über beiden und „True relationship“ über „Yes“, „No“ und „Total“, und eine Formel in jeder Zelle des Tabellenkörpers.", "3": "Seite 3: Tabelle 2, dann Abbildung 1 in drei Feldern für die Teststärke 0,80, 0,50 und 0,20, je vier Kurven von Marineblau bis Zinnoberrot für u = 0,05 bis 0,80 und eine gestrichelte Kurve ohne Verzerrung, dann Tabelle 3 und der Anfang der „Corollaries“, jede mit einem kleinen zinnoberroten Etikett eröffnet.", "5": "Seite 5: die Folgerungen 5 und 6, der Abschnitt über Studiendesigns und Tabelle 4 am Fuß der zweiten Spalte: neun praktische Beispiele mit Teststärke, R, u und einer PPV-Spalte, die aus Gl. (2) berechnet ist.", "6": "Seite 6: die letzten Abschnitte des Essays in zwei Spalten.", "7": "Seite 7: das Ende des Textes, die Angaben zum Artikel in kleiner serifenloser Schrift und 33 Literaturangaben im Vancouver-Stil, in eckigen Klammern nummeriert, in zwei Spalten." }
+---
+
+## Was Sie setzen
+
+Einen siebenseitigen Nachdruck von John Ioannidis’ Essay *Why Most Published Research Findings Are False* (PLoS Medicine, 2005), gekürzt und auf einer Seite von 210 × 280 mm in zwei Spalten gesetzt. Ein marineblaues Band eröffnet die erste Seite, und hinter dem Titel stehen blass die Kurven der Formel, um die es im Essay geht. Die drei Formeln sind nummerierte, abgesetzte Gleichungen; die Vierfeldertafeln tragen in jeder Zelle eine Formel mit echtem α und β; Abbildung 1 ist aus Gl. (2) berechnet, ebenso die letzte Spalte von Tabelle 4. Dasselbe Skript baut eine spanische Übersetzung mit spanischer Silbentrennung, Dezimalkomma in Tabellen und Abbildungen, Anführungszeichen « » und spanischen Beschriftungen. Es folgen 33 Literaturangaben im Vancouver-Stil, aus der Liste des Artikels als BibTeX nachgebaut.
+
+## Zubereitung
+
+### 1 · Ein Skript, zwei Ausgaben
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Das Rezeptbuch stellt den Pen für jede Sprache einmal zusammen und setzt `content.en.md` oder `content.es.md` dort ein, wo die Marke `@content` steht; jeder benannte Platz (`content.corollaries.es.md`, `content.resources.es.md`) folgt derselben Regel, und ein Platz ohne spanische Datei fällt auf Englisch zurück. So teilen sich beide Ausgaben eine BibTeX-Datei. Alles andere, was sich mit der Sprache ändert, läuft über `LANG`: `locale` wählt die Trennmuster (`'es'` ist der Code, der Spanisch trennt), `defaultResourceTypes(LANG)` schreibt *Tabla* und *Figura*, die CSL-Locale schreibt die Wörter des Literaturverzeichnisses, und `toLocaleString` gibt den Zahlen, die das Skript berechnet, ihr Dezimalkomma. Die Übersetzung folgt spanischer Typografie: Anführungszeichen « », *0,05* im Text und `0{,}05` in einer Formel, damit TeX das Komma nicht als Satzzeichen mit nachfolgendem Leerraum setzt. Wenn Sie Ihren eigenen Artikel in zwei Sprachen veröffentlichen wollen, halten Sie für Text und Legenden je eine Datei pro Sprache und legen Sie jeden anderen Unterschied in ein einziges Objekt wie `edition`.
+
+### 2 · Formeln in Tabellenzellen
+
+<Excerpt region="tables" />
+
+Eine Tabellenzelle setzt `$…$` wie der Text (seit postext 1.19), eine Zelle mit `$c(1-\beta)R/(R+1)$` in der TSV ist also eine Formel: MathJax-Pfade in den 8 pt der Zellen, auf der Grundlinie der Zellzeile, sodass *Yes*, *No* und die Formeln auf einer Linie stehen, und Vektorkonturen im PDF. Die Latin-Dateien von Fontsource enthalten keine griechischen Buchstaben, und die Formeln brauchen keine. Auch Legenden und Anmerkungen nehmen Mathematik auf: Die Legende von Tabelle 4 nennt die Teststärke 1 − β, und ihre Anmerkung setzt α = 0,05 voraus, so wie der Artikel von 2005 sie druckt. `setAlignment` setzt die Zahlen von Tabelle 4 rechtsbündig, und `mergeCells` verbindet *Research finding* über beide Kopfzeilen und *True relationship* über drei Spalten; es schreibt auch die verborgenen Platzhalterzellen, die eine verbundene Zelle braucht.
+
+### 3 · Legenden und Tabellen aus dem Platz, Zahlen aus der Formel
+
+<Excerpt region="resources" />
+
+Die Tabellen, Legenden, Anmerkungen und Alternativtexte stehen in `content.resources.<lang>.md`, je ein Block, sodass eine Übersetzerin nur Textdateien bearbeitet und jede Ausgabe nur ihre eigene Sprache mitführt. Die PPV-Spalte von Tabelle 4 ist nicht eingetippt: `ppv()` berechnet sie aus Teststärke, *R* und *u* jeder Zeile, und die neun Werte stimmen auf zwei signifikante Stellen mit den 2005 gedruckten überein. Die Tabellen gleiten mit `position: 'auto'`, sodass Tabelle 1 den Fuß der Seite einnehmen kann, die sie zitiert, statt sich mit den anderen Gleitobjekten auf der nächsten zu stauen.
+
+### 4 · Abbildung 1, aus Gl. (2) gezeichnet
+
+<Excerpt region="art" />
+
+Jedes Feld ist eine Schleife über *R* von 0 bis 1 durch dieselbe Funktion `ppv()`, die Tabelle 4 füllt. Wer die Kurven aus der Formel zeichnet, sieht etwas, das die Abbildung von 2005 verbirgt: Ihre Kurven entsprechen *u* = 0, 0,05, 0,20 und 0,80, ihre Legende nennt aber 0,05, 0,20, 0,50 und 0,80. Diese Fassung zeichnet die Werte der Zeichenerklärung, ergänzt den Fall ohne Verzerrung als gestrichelte Kurve, und die Anmerkung zur Legende sagt das. Die Beschriftungen in der Grafik sind Text, der die Beschriftungsschrift nennt: `loadSvg` reicht die Zeichnung durch `inlineSvgFonts`, das diese Schrift für den Canvas einbettet, und das PDF setzt sie in der Schrift, die der Provider liefert.
+
+### 5 · Eine erste Seite und ein Kasten für einen Essay
+
+<Excerpt region="title" />
+
+Der Titel ist die einzige Überschrift der Ebene 1; ihr Format `essay` reicht über die ganze Seitenbreite und zeichnet Band, Dachzeile, Autor, Institutionen und Quellenzeile aus Attributen der Überschrift, sodass die spanische Ausgabe nur Wörter ändert. Die Zusammenfassung ist ein seitenbreiter Kasten auf einer Tönung. Kasten 1, das durchgerechnete Beispiel, gleitet über beide Spalten an den Fuß einer Seite und setzt seinen Text im Kasten in zwei Spalten. Die Folgerungen behalten die Form des Artikels mit eingezogenem Anfang: `:chip[Corollary 1]{style="corollary"}` gibt jeder ein kleines zinnoberrotes Etikett vor ihrer fetten Aussage.
+
+<Excerpt region="boxes" />
+
+## Varianten
+
+### Zitatnummern hochstellen
+
+Medizinische Zeitschriften setzen Vancouver-Nummern oft hochgestellt.
+
+```diff
+-    marker: 'brackets', collapseRanges: true,
++    marker: 'superscript', collapseRanges: true,
+```
+
+### DOIs drucken
+
+Das BibTeX dieses Rezepts enthält keine DOIs, damit der Pen in seiner Größe bleibt. Behalten Sie sie in Ihrer eigenen Datei und drucken Sie sie als Links.
+
+```diff
+-      labelWidth: mm(6.4), doi: 'hide' } },
++      labelWidth: mm(6.4), doi: 'link' } },
+```
+
+### Die Tabellen einspaltig setzen
+
+Eine Vierfeldertafel mit kürzeren Formeln passt in eine Spalte: Entfernen Sie ihr `span: 'page'`, so wie Tabelle 4 keines hat. Eine einspaltige Tabelle zeigt <RecipeLink slug="journal-article-with-maths">Zweispaltiger Aufsatz mit nummerierten Gleichungen</RecipeLink>.
+
+## Häufige Fehler
+
+- Wo die Liste von 2005 nach fünf Autoren mit *et al.* endet, schließt das BibTeX die Liste mit `and others`, und `elsevier-vancouver` druckt an dieser Stelle *et al.* (seit postext 1.19; frühere Versionen druckten einen Mitautor namens *others*).
+- Die Seiten der beiden Ausgaben unterscheiden sich: Der spanische Text ist länger, deshalb landet Tabelle 4 eine Seite später. Die Aufnahme veröffentlicht von beiden die Seiten 1, 2, 3, 5, 6 und 7, damit die Seitenbilder unter der Größengrenze bleiben und Tabelle 4 trotzdem in jeder zu sehen ist.

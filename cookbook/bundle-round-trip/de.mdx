@@ -1,0 +1,75 @@
+---
+title: ".postext hin und zurück in zwei Sprachen"
+summary: "Ein beidseitiges DL-Faltblatt, im Code als .postext-Datei gespeichert und aus deren Bytes neu gesetzt, mit Schriften, Zeichnungen und Legenden je Ausgabe."
+plain: "Ein beidseitiges Faltblatt für eine alte Gezeitenmühle, auf Englisch und Spanisch. Es zeigt, wie man ein Dokument mit Schriften und Bildern in einer Datei speichert und aus dieser Datei dieselben Seiten zurückbekommt."
+description: "createBundle schreibt das Faltblatt in eine .postext-Datei, und openBundle liest es mit Schriften und Zeichnungen zurück, in englischer und spanischer Ausgabe."
+question: "Wie setze ich eine .postext-Datei mit den Schriften, Bildern und der Konfiguration, die sie mitbringt?"
+aliases: ["postext-Datei", "Paket", "bundle", "createBundle", "openBundle", "loadBundleFonts", "Hin- und Rückweg", "zweisprachiges Faltblatt", "an die Sandbox übergeben", "DL-Faltblatt", "Gezeitenmühle"]
+pageNotes: { "1": "Die Vorderseite eines DL-Faltblatts: auf einer sandfarbenen Fläche die Dachzeile „Arenal estuary · Visitor leaflet 3“ und der Titel „The Tide Mill“ in blauer Kursive über einem Mühlrad, dessen untere Hälfte blass unter dem blauen Mündungswasser liegt; ein blauer Reiter an der Oberkante zeigt „EN“. Ein kursiver Vorspann und die Zeile „Open all year · Free on Sundays“ stehen im Wasser.", "2": "Die Rückseite: die Mühle im Schnitt am Kopf, links der Teich, rechts die Mündung unter einer gestrichelten Hochwasserlinie, beschriftet „Figure 1“; der Abschnitt „Two tides a day“ in DM Sans im Blocksatz; die Öffnungszeiten als „Table 1“ mit blauem Tabellenkopf; drei Zeilen zu Anfahrt und Eintritt, ein Impressum und ein blauer Streifen mit dem Namen des Herausgebers." }
+---
+
+## Was Sie setzen
+
+Beide Seiten eines Besucherfaltblatts im Format DL, 99 × 210 mm, für eine Gezeitenmühle an einer erfundenen Flussmündung. Die Vorderseite ist eine einzige Zeichnung: ein Mühlrad auf der Wasserlinie, seine obere Hälfte auf dem Sand, die untere blass unter dem blauen Wasser, dazu der Titel in der DM Serif Display Italic zu 50 pt und ein blauer Reiter, der die Ausgabe nennt, EN oder ES. Die Rückseite beginnt mit der Mühle im Schnitt, dann folgen der Text in DM Sans im Blocksatz, die Öffnungszeiten in einer Tabelle mit blauem Kopf, Legenden in Instrument Sans, ein Impressum und ein blauer Streifen mit dem Herausgeber. Jede Ausgabe wird in eine `.postext`-Datei geschrieben, und jede Seite hier ist aus den Bytes dieser Datei gesetzt, mit den Schriften und Zeichnungen, die sie mitbringt.
+
+## Zubereitung
+
+### 1 · Die Ausgabe schreiben, dann nur die Bytes zurücklesen
+
+<Excerpt region="answer" highlight="14-17" />
+
+`createBundle` packt Kapitel, Konfiguration, Ressourcen und jede Datei, die sie nennen, in ein Zip; `openBundle` bekommt nichts als diese Bytes. Die Schriften kommen aus `loadBundleFonts`, die Zeichnungen aus `registerBundleImages` und die Gestaltung aus `bundle.config`. Eine Schrift, die in `files` fehlt, druckt in der Ersatzschrift des Browsers, und eine fehlende Zeichnung entfällt mit einer Warnung, während ihr Verweis (?) druckt. Im Zip wird jede `fileId` zu einem Pfad (`mill.svg` heißt jetzt `resources/mill.svg`), und die Ressourcen und `customFonts`, die `openBundle` zurückgibt, verwenden bereits die neuen Namen ([ein Paket öffnen](/de/docs/configuration-programmatic-usage#ein-paket-öffnen)).
+
+### 2 · Die Schriften in die Datei legen
+
+<Excerpt region="faces" />
+
+Ein Paket trägt eine Schrift, wenn `customFonts` sie nennt und `files` ihre Bytes unter der `fileId` des Schnitts enthält; `createBundle` speichert DM Sans 400 als `fonts/dm-sans-400-normal.woff2`. Der Pen lädt die sieben woff2-Dateien von Fontsource herunter, registriert aber keine davon: `loadBundleFonts` fügt die Kopien des Pakets zu `document.fonts` hinzu, bevor `buildBundle` eine Zeile misst, und das PDF nimmt seine Schriften aus denselben sieben Dateien.
+
+### 3 · Jede Datei nach ihrer fileId benennen
+
+<Excerpt region="resources" />
+
+Die beiden Zeichnungen sind SVG-Markup, das der Pen erzeugt und unter der `svg.fileId` ihrer Ressourcen an `files` übergibt; die Tabelle besteht aus Daten und reist deshalb mit ihrer Legende in `preset.json`. Schnitt und Tabelle stehen mit `position: 'here'`: der Schnitt am Kopf der Rückseite, die Öffnungszeiten unter dem Absatz, der sie zitiert. Das Faltblatt setzt `layout.inlineResourceGap: 'above'`, wodurch eine Ressource im Textfluss ihren Abstand nur oberhalb behält, damit die Rückseite auf eine Seite passt: Die Überschrift unter dem Schnitt bringt ihren eigenen Abstand mit, und eine Zeile `:::space{lines=0.5}` nach der Tabelle lässt 3,7 mm unter ihrer Legende frei.
+
+### 4 · Die Beschriftungen in der Sprache der Datei halten
+
+<Excerpt region="labels" />
+
+Ein Leser baut die eingebauten Typen in der Sprache, die die Datei ausliefert: Ohne `resourceTypes` in ihrer Konfiguration druckt das spanische Faltblatt Figura 1.1 und Tabla 1.1, wo immer es geöffnet wird, auch in der englischen Sandbox. Das Faltblatt schreibt die Typen nur für ihre Nummern: `'{n}'` lässt die Kapitelnummer weg, die ein zweiseitiges Faltblatt nicht braucht ([Ressourcentypen](/de/docs/configuration-resources#ressourcentypen)). Dieselbe Funktion `config()` setzt `locale`, die die spanischen Trennmuster wählt (compuer-tas auf der Rückseite) und die Sprache, die das PDF angibt.
+
+### 5 · Dieselben Bytes weitergeben
+
+<Excerpt region="handoff" />
+
+Der Link bietet die `bytes` an, aus denen die Seiten gesetzt wurden, 132 KB mit den Schriften. In der Sandbox importiert (*Bücher → Neu → Eine .postext-Datei öffnen …*), wird die Datei zu einem spanischen oder englischen Buch mit dem Rad als Bild, entnommen aus `thumbnail`. Das PDF nimmt seine Schriften aus `bundleFontProvider`, das die Schrift des Pakets mit der nächstliegenden Strichstärke zurückgibt, im selben Stil, wenn es einen gibt, und seine Zeichnungen aus `bundleResourceBytes`, sodass keine Schrift und kein Bild ein zweites Mal heruntergeladen wird ([ein Paket setzen und rendern](/de/docs/configuration-programmatic-usage#ein-paket-setzen-und-rendern)).
+
+### 6 · Die Vorderseite mit einer Überschrift zeichnen
+
+<Excerpt region="cover" />
+
+Die Vorderseite ist die Gestaltung der Umschlagüberschrift: die Zeichnung an der Seite in voller Größe verankert, der Text der Überschrift über `{titleText}`, Dachzeile, Vorspann und Zeile mit den Eckdaten aus ihren Attributen und ein Textelement mit einem Kasten für den Sprachreiter. Die Ebene H1 hat `span: 'page'`, sodass die Zeichnung bis zur Unterkante des Papiers reicht. Eine Überschriftengestaltung, die in der Spalte bleibt, wird am Fuß des Satzspiegels abgeschnitten: Die Zeichnung endete 13 mm über der Unterkante.
+
+## Varianten
+
+### Ein zweisprachiges Paket lesen
+
+Der Postext-Leitfaden trägt seine englischen und spanischen Kapitel, Konfiguration und Legenden in einer Datei; `{ locale }` wählt die Ausgabe, die sich in beiden Sprachen als zwölf Kapitel auf 48 Seiten öffnet, während der Link weiterhin die Datei des Faltblatts anbietet und die PDF-Schaltfläche den Leitfaden baut.
+
+```diff
+-const bundle = await openBundle(bytes);
++const guide = await fetch('https://postext.dev/bundles/postext-guide.postext');
++const bundle = await openBundle(await guide.arrayBuffer(), { locale: LANG });
+```
+
+### Die Abbildungen nach Kapiteln zählen
+
+Ohne die Typen baut der Leser sie in der Sprache der Datei mit den Standardnummern, und die Abbildungen zählen ab der Umschlagüberschrift: hier Figure 1.1 und Table 1.1, in der spanischen Ausgabe Figura 1.1 und Tabla 1.1.
+
+```diff
+-  resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type, numberingTemplate: '{n}' })),
+```
+
+## Häufige Fehler
+
+- Jede Ausgabe ist hier eine eigene Datei. Um beide Sprachen in einer Datei zu tragen, geben Sie `createBundle` eine Zuordnung `localized` ([Zweisprachige Pakete](/de/docs/configuration-programmatic-usage#zweisprachige-pakete)); `openBundle(bytes, { locale })` liest dann jede der beiden Ausgaben.

@@ -1,0 +1,78 @@
+---
+title: "Kommentar in roter Tinte in der Zeile und am Kopfsteg"
+summary: "Eine senkrechte chinesische Kommentarseite: Seitenkommentare der Handschrift als zwei rote Reihen in der Zeile, Kopfstegkommentare in der Leiste darüber."
+plain: "Sechs Seiten eines klassischen chinesischen Romans, in Spalten gedruckt, die von oben nach unten gelesen werden. Die alten roten Anmerkungen eines Lesers erscheinen in den Zeilen und in einer Leiste über dem Text."
+description: "Kapitel 1 der Jiaxu-Handschrift der Geschichte des Steins mit Zhiyan Zhais Kommentar, senkrecht in Postext: Warichu in der Zeile, Kommentare am Kopfsteg."
+question: "Wie setze ich eine Kommentarausgabe mit zweizeiligen Anmerkungen in der Zeile und Kommentaren am Kopfsteg?"
+aliases: ["Kommentarausgabe", "Kommentar in roter Tinte", "Zhiyan Zhai", "Geschichte des Steins", "Der Traum der roten Kammer", "Kopfstegkommentare", "Randkommentare oben", "眉批", "雙行夾批", "脂批", "評點", "紅樓夢"]
+pageNotes: {"1": "Seite 1, eine rechte Seite bei Bindung rechts, beginnt mit 脂硯齋重評石頭記 in kleiner roter Schrift am rechten Rand des Satzspiegels hinab, dann 第一回 in großen fetten Zeichen und dem Verspaar 甄士隱夢幻識通靈 / 賈雨村風塵懷閨秀 in zwei Spalten. Links davon beginnt der Text. Eine einzelne rote Spalte am Kopfsteg, 妙！自謂落墮情根，故無補天之用。, steht über dem zweiten Absatz; die Seitenkommentare erscheinen als Paare winziger roter Reihen in den Spalten.", "4": "Seite 4: die lange Antwort des Steins an den Taoisten. Drei rote Kommentare stehen in der linken Hälfte des Kopfstegs: acht Spalten 事則實事… über dem Absatz, der mit 「竟不如我 beginnt, dann 開卷一篇立意… in zwei Spalten und 斯亦太過。 in einer, über dem Rest der Rede. Kleine rote zweireihige Anmerkungen unterbrechen die Spalten darunter.", "5": "Seite 5: fünf Kommentare ziehen sich über den Kopfsteg, jeder über der Passage, die er bespricht: 雪芹舊有… und 若云雪芹… über dem Absatz, der Cao Xueqin nennt, 能觧者方有辛酸之淚… über dem Vierzeiler 滿紙荒唐言，一把辛酸淚, 今而後… daneben und 真。後之甄寶玉… über 廟傍住着, wo die Familie Zhen auftritt. Die Pagina 五 steht am Fuß des linken Rands.", "6": "Seite 6, eine linke Seite: die letzten beiden Spalten des Zhen-Absatzes unter einem leeren Kopfsteg, dann die Notiz zur Ausgabe (本編說明) in Kai, zwei Zeichen tiefer als der Text, und das Impressum in kleiner grauer Grotesk, seine lateinischen Buchstaben quergestellt über zwei Spalten hinab. Der Titel des Buchs steht oben am rechten Rand, über der Pagina 六."}
+---
+
+## Was Sie setzen
+
+Der Anfang von Kapitel 1 der Jiaxu-Handschrift der *Geschichte des Steins*, der Abschrift, die Zhiyan Zhais Kommentar trägt, neu gesetzt als sechs Seiten einer Kommentarausgabe auf einer 16开-Seite von 184 × 260 mm, senkrecht gesetzt und rechts gebunden. Cao Xueqins Text läuft in Noto Serif TC, 36 Zeichen jede Spalte hinab und 18 Spalten je Seite. Die Handschrift schreibt die 61 Seitenkommentare (側批) des Auszugs in Rot neben die Spalten. Postext setzt nichts zwischen zwei Spalten; diese Ausgabe holt daher jeden in die Zeile, gefaltet zu zwei zinnoberroten Reihen in halber Größe direkt hinter den Wörtern, die er erläutert, so wie gedruckte Kommentarausgaben ihre 雙行夾批 setzen. Die zehn Kopfstegkommentare (眉批) stehen in roter Kai in einer Leiste von 42 mm über dem Text, über der Passage, die sie besprechen, sodass ein Leser Text und Kommentar in einem Durchgang verfolgt.
+
+## Zubereitung
+
+### 1 · Die Seitenspalte zum Kopfsteg machen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine senkrechte Seite ist eine waagerechte Seite, um eine Vierteldrehung gedreht; so wird die Seitenspalte eines [anderthalbspaltigen Layouts](/de/docs/configuration-page-layout#layout-typen) zu einer Leiste quer über die Seite, und `sideColumnSide: 'left'` setzt diese Leiste an den Kopf ([Senkrechte Schrift](/de/docs/configuration-page-layout#vertikale-schrift)). Das [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster) rundet `sideColumnPercent: 19` auf 10 Zeichen des Grundtexts, 120 pt, und den Spaltenabstand auf zwei; die Spaltenlinie wird zur Haarlinie zwischen Kommentaren und Text. Das Kommentarformat hat keinen Kasten: Kai zu 7 pt, 17 Zeichen je Spalte, eine Größe, bei der keiner der zehn Kommentare mit einer Spalte aus einem einzigen Zeichen endet, und `snapToGrid: false`, damit sich die Kommentare in ihrem eigenen Abstand von 10 pt stapeln statt in den 21 pt des Grundtexts.
+
+Beide Arten von Kommentar sind dort ausgezeichnet, wo die Handschrift sie hat. Ein Seitenkommentar ist ein Span [`:warichu[…]`](/de/docs/document-format#chinesische-zeichen-ruby-und-warichu), den `cjk.warichu` einfärbt; ein Kopfstegkommentar ist ein Kasten, mit `span="side"` direkt vor der Passage eingefasst, die er bespricht:
+
+```markdown
+:::callout{type="meipi" span="side"}
+妙！自謂落墮情根，故無補天之用。
+:::
+
+原來女媧氏煉石補天之時，:warichu[補天濟世，勿認真，用常言。]于大荒山:warichu[荒唐也。]…
+```
+
+### 2 · Nummer und Verspaar des Kapitels die ersten Spalten hinab setzen
+
+<Excerpt region="opener" />
+
+Auf einer senkrechten Seite wird ein Auftakt im Bezugsrahmen des Flusses angelegt: Sein Text läuft abwärts, `below` bedeutet nach links, und ein Versatz in `x` verschiebt ein Element die Spalte hinab. Zuerst kommt der Titel des Buchs in roter Hei, dann 第一回 zu 30 pt, um zwei eigene Zeichen tiefer gesetzt, dann die beiden Hälften des Verspaars aus den [Attributen der Überschrift](/de/docs/document-format#attribute-von-überschriften) `{a="…" b="…"}`, erneut tiefer gesetzt, sodass Nummer und Verspaar wie in einem gedruckten 回目 stufenweise die Seite hinabsteigen. `minHeight: mm(46)` hält zwischen Verspaar und Text eine Spalte frei.
+
+### 3 · Die Kolumnentitel am Außensteg hinablaufen lassen
+
+<Excerpt region="fore-edge" />
+
+Das sind die Kolumnentitel am Außensteg aus [Senkrechte Textelemente](/de/docs/configuration-page-layout#vertikale-textelemente): `anchor.to: 'outer'` ist der Rand fern vom Bund, in einem rechts gebundenen Buch links auf einer rechten und rechts auf einer linken Seite, und `writingMode: 'vertical-rl'` setzt den Text die Seite hinab. Der Satzspiegel schließt hier die Kommentarleiste ein; „vier Zeichen unter dem Kopf“ wird also ab der Oberkante der roten Kommentare gemessen. `trad-chinese-informal` druckt die Paginas 一 bis 六.
+
+### 4 · Jede Stimme mit dem Text laden, den sie setzt
+
+<Excerpt region="voices" />
+
+Fontsource liefert jede chinesische Schrift als etwa hundert Dateien je Schriftstärke. Song setzt das ganze Beispiel im normalen Schnitt und nur 第一回 fett, Kai nur die Kopfstegkommentare und die Notiz zur Ausgabe und Hei nur die Kolumnentitel, die Paginas und das Impressum, sodass jeder Aufruf die Dateien lädt, die seine eigenen Zeichen brauchen. `vertical: true` lädt außerdem die senkrechten Satzzeichen jeder Schrift für den Canvas.
+
+### 5 · Zwei Druckfarben
+
+<Excerpt region="palette" />
+
+Die Seite druckt in zwei Farben, so wie die Handschrift geschrieben wurde: ein warmes Schwarz für den Text und ein Zinnoberrot für jeden Kommentar, die Dachzeile des Kapitels und sonst nichts. Das Zinnoberrot erreicht auf dem Papier einen Kontrast von 5,5 : 1, genug für die Reihen der Seitenkommentare zu 6 pt. `main-color` zeigt darauf, sodass eine Voreinstellung, die die Konfiguration nicht neu festlegt, rot druckt, nie blau.
+
+## Varianten
+
+### Die Kommentare in einer Farbe drucken
+
+Für einen einfarbigen Druck setzen Sie die Anmerkungen schwarz in Klammern und die Kopfstegkommentare in der gedämpften Farbe; die Klammern stehen in Textgröße vor der ersten und nach der letzten Reihe einer Anmerkung.
+
+```diff
+-  warichu: { color: col('vermilion') },
++  warichu: { color: col('ink'), open: '〔', close: '〕' },
+-  body: { fontFamily: KAI, fontSize: pt(7), lineHeight: pt(10), color: col('vermilion'),
++  body: { fontFamily: KAI, fontSize: pt(7), lineHeight: pt(10), color: col('muted'),
+```
+
+### Mit einer Ausgabe in lateinischer Schrift vergleichen
+
+Dieselbe Technik auf einer waagerechten Seite zeigt <RecipeLink slug="annotated-classic-glosses">der kommentierte Klassiker mit Randglossen</RecipeLink>: Die Seitenspalte steht am Außensteg (`sideColumnSide: 'outer'`), und jede Glosse steht neben dem Absatz, den sie erklärt, statt darüber.
+
+## Häufige Fehler
+
+- Ein Kopfstegkommentar steht auf der Höhe der Spalte, die der Text bei seinem Block erreicht hat; der Block kommt also direkt vor die Passage, die er bespricht. Steht der Block dahinter, beginnt der Kommentar neben dem nächsten Absatz. Ein Block steht zwischen zwei Blöcken, nie innerhalb eines Absatzes; wo die Handschrift eine Wendung tief in einem langen Absatz kommentiert, bricht diese Ausgabe den Absatz deshalb dort: vor 石頭聽了, vor 廟傍住着 und einmal innerhalb der Rede des Steins, vor 竟不如我, wo der neue Absatz wieder mit 「 beginnt, wie es ein Zitat tut, das über zwei Absätze läuft.
+- Die Leiste fasst, was ihre Seite fasst. Ein Kommentar, der für ihren Rest zu lang ist, rückt nach rechts zurück, bis seine letzte Spalte den linken Rand des Texts erreicht, und einer, der dann immer noch nicht passt, wartet auf die nächste Seite, mit jedem Kommentar, der nach ihm eingefasst ist. Jeder Kommentar beginnt auf einer Textspalte und lässt nach dem vorigen eine Spalte des Grundtexts frei. Die drei Kommentare der Handschrift zur Rede des Steins nehmen elf Spalten der Leiste ein: Vor 今之人 eingefasst, wo die Transkription sie hat, wartete der letzte, 斯亦太過, auf <PageRef page={5}>Seite 5</PageRef> und schob die Kommentare dort eine Stufe weiter. Diese Ausgabe bricht die Rede einen Satz früher, vor 竟不如我, und alle drei stehen auf <PageRef page={4}>Seite 4</PageRef>.
+- Das Raster füllt jede Seite ohne weitere Einstellung mit ihren 18 Spalten: Auf einem Zeichenraster ist `avoidWidows` standardmäßig aus, sodass ein Absatz in der letzten Spalte einer Seite beginnen darf. Eingeschaltet würde es diesen Absatz als Ganzes weiterschieben, die Seite würde eine Spalte zu früh enden, und ein vor dem Absatz eingefasster Kommentar bliebe zurück. `avoidOrphans` bleibt aktiv, wie es ein chinesisches Raster standardmäßig hat: Die letzte Spalte eines Absatzes allein am Kopf einer Seite (孤行) ist das, was ein chinesischer Lektor vermeidet.
+- Zwei unmittelbar hintereinander geschriebene Seitenkommentare falten sich zu Reihen, die sich wie eine einzige Anmerkung lesen. Das Markdown hält zwischen ihnen ein ideografisches Leerzeichen (U+3000).
+- Noto Serif TC hat für manche Formen der Handschrift keine Glyphe, etwa 縂, 竒 und 数. Der Canvas ergänzt sie aus einer Systemschrift, und das PDF lässt sie leer und führt sie unter C25 auf. Diese Ausgabe setzt ihre Standardformen und behält die Varianten, die die Schriften haben.

@@ -1,0 +1,91 @@
+---
+title: "Lehrbuch mit Randspalte"
+summary: "Anderthalb Spalten, die äußere nur für Gleitobjekte: Abbildungen mit span 'side' und Erläuterungen stapeln sich dort, captionSide holt die Legenden hinein."
+plain: "Ein Kapitel aus einem Physiklehrbuch mit einer breiten Textspalte und einer schmalen am Außenrand. Die schmale Spalte enthält Diagramme und kurze Anmerkungen neben dem Text, zu dem sie gehören."
+description: "Der Postext-Code für ein Physikkapitel mit einer Spalte nur für Gleitobjekte im Außenrand, für Strahlendiagramme, Begriffserläuterungen und Bildunterschriften."
+question: "Wie halte ich Abbildungen, Legenden und Erläuterungen in einer äußeren Randspalte ohne Grundtext?"
+aliases: ["Randspalte", "Marginalspalte", "Marginalien", "Randnotizen", "Erläuterungen", "seitliche Bildunterschriften", "Randabbildungen", "anderthalb Spalten", "Tufte-Layout", "Physiklehrbuch", "margin column"]
+pageNotes: { "1": "Kapitel 4 beginnt mit dem Titel „Light and Lenses“ in der Textspalte und einer großen grünen 4 im Außenrand, darunter die Lernziele und, auf der Höhe von Abschnitt 4.1, eine Begriffserläuterung neben dem Absatz, der den Brechungsindex definiert; ein Diagramm eines Brennglases auf dunklem Feld füllt den Fuß der Textspalte, seine Bildunterschrift steht daneben im Rand.", "2": "Auf der linken Seite steht die Randspalte links: Ein Brechungsdiagramm, die Erläuterung zum Grenzwinkel und ein Diagramm eines halbrunden Glasblocks stapeln sich darin, und die Abbildung der Glasfaser am Fuß der Textspalte hat ihre Bildunterschrift im Rand.", "3": "Ein dunkles Feld, in dem ein weißer Strahl ein Prisma durchquert und sich zu einem Spektrum auffächert, reicht am Kopf der rechten Seite über beide Spalten; im Rand beginnt die Erläuterung zur Dispersion knapp unter dem Satz, der den Begriff definiert, die Erläuterung zur Brennweite steht auf der Höhe von Abschnitt 4.3, und die Bildunterschrift eines Linsendiagramms auf heller Platte sitzt am Fuß.", "4": "Die Abbildung der Zerstreuungslinse steht am Kopf der Randspalte der letzten Seite; der Kasten „Key ideas“ beginnt unter dem Schlussabsatz des Kapitels, auf der Höhe der Überschrift „Questions“, und läuft neben den Fragen; ein einzeiliges Impressum beendet das Kapitel." }
+---
+
+## Was Sie setzen
+
+Kapitel 4 von *Lever and Lens*, einem Physiklehrbuch für Einsteiger auf einem Format von 210 × 275 mm. Der Grundtext läuft in einer breiten Spalte und betritt nie den Außenrand, eine Randspalte von 53 mm. Die Kapitelnummer, eine grüne 4, steht in dieser Randspalte auf der Höhe des Titels, und die Lernziele stehen darunter. Strahlendiagramme stapeln sich vom Kopf der Randspalte an, und Schlüsselbegriffe stehen in mintgrünen Erläuterungen neben den Passagen, die sie definieren. Die Abbildungen, die in der Textspalte bleiben, auf dunklen oder hellen Platten, haben ihre Bildunterschriften im Rand, auf der Höhe des Fußes der Abbildung. Nur das Prismenfeld reicht über beide Spalten. Die Ränder sind gespiegelt, sodass die Randspalte auf jeder Seite am Außenrand steht, rechts auf einer rechten Seite und links auf einer linken.
+
+## Zubereitung
+
+### 1 · Den Rand den Gleitobjekten überlassen
+
+Der Code dieses Schritts steht oben in [der kurzen Antwort](#die-kurze-antwort). In einem [Layout mit anderthalb Spalten](/de/docs/configuration-page-layout#layout-typen) gibt `sideColumnPercent: 30` der Seitenspalte 30 % der Inhaltsbreite von 176 mm (52,8 mm), und die Textspalte behält, was nach dem Spaltenabstand von 7 mm bleibt (116 mm, etwa 75 Zeichen Merriweather in 9,3 pt). `sideColumnRole: 'floats'` hält den Grundtext aus der Seitenspalte heraus, und `sideColumnSide: 'outer'` stellt sie auf die Außenseite, die die gespiegelten Ränder von Seite zu Seite wechseln. Abbildungen kommen mit `span: 'side'` dorthin. Ein Kasten mit `span="side"` an seinem Direktivenblock verlässt den Fluss und geht auf der Höhe, die der Text erreicht hat, in die Randspalte, sodass jede Erläuterung auf der Höhe des Blocks beginnt, der ihrem Direktivenblock folgt.
+
+### 2 · Das Zitat jede Abbildung platzieren lassen
+
+<Excerpt region="figures" />
+
+Das erste `:ref` auf eine Abbildung nummeriert sie und platziert sie dort, wo ihre [Platzierung](/de/docs/document-format#platzierung) es angibt. Eine Abbildung mit `span: 'side'` stapelt sich vom Kopf der Randspalte an auf der Seite, die sie zitiert, wie weit unten das Zitat auch steht, und rückt auf die nächste Seite, wenn der Rest dieser Randspalte zu kurz ist. Die Abbildungen 4.2 und 4.3, beide auf <PageRef page={2}>Seite 88</PageRef> zitiert, stapeln sich in der Randspalte dieser Seite hinab, mit der Erläuterung zum Grenzwinkel dazwischen. Das Prisma ist ein seitenbreites Gleitobjekt `top`, das auf Seite 88 zitiert wird, und ein Gleitobjekt steht nie über seinem Zitat; es eröffnet daher Seite 89 über beide Spalten. Die Abbildungen 4.1, 4.4 und 4.6 bleiben in der Textspalte und übernehmen `captionSide` aus der `defaultPlacement` des Abbildungstyps. Sie nehmen den unteren Platz der Spalte ein, sodass jede Bildunterschrift auf der Höhe des Fußes ihrer Abbildung steht; auf einem oberen Platz fluchtete sie mit der Oberkante der Abbildung.
+
+### 3 · Das Kapitel im Rand eröffnen
+
+<Excerpt region="opener" />
+
+Die Überschrift der Ebene 1 bleibt in der Textspalte, wo ein [Gestaltungsplatz](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung) ihren Text, die Linie und den Vorspann stapelt; die Dachzeile hängt an der oberen rechten Ecke der Seite und die Ziffer an der Dachzeile, beide so breit wie die Randspalte. `minHeight` legt den Auftakt auf neun Rasterzeilen fest (42,9 mm), genug für einen einzeiligen Titel, die Linie und einen vierzeiligen Vorspann, sodass ein kürzerer Vorspann den Text nicht nach oben zieht. Dachzeile und Ziffer in 104 pt enden 40,6 mm unter dem oberen Rand, innerhalb dieser neun Zeilen, und schieben den Text daher auch nicht nach unten. Die Randspalte steht nur auf einer rechten Seite rechts, die H1 bricht daher auf eine ungerade Seite um. Der Kasten mit den Lernzielen steht nach dem ersten Absatz, und davor wird keine Randabbildung zitiert, sodass er unter der Ziffer steht (siehe Häufige Fehler).
+
+### 4 · Die Paginas an der Kante der Randspalte halten
+
+<Excerpt region="heads" />
+
+Jedes Element ist an der physischen Seite verankert und nach `parity` gefiltert, sodass Pagina und Kolumnentitel auf beiden Seiten der Doppelseite an derselben Kante stehen wie die Randspalte. `pages: 'body'` hält sie vom Auftakt fern, der stattdessen eine Pagina am Fuß der Randspalte erhält.
+
+### 5 · Das Buch mit Kapitel 4 beginnen
+
+<Excerpt region="build" />
+
+Diese Seiten sind Kapitel 4 eines längeren Buches. Die Fortsetzung setzt den Kapitelzähler auf 3, sodass `{chapterNumber}` eine 4 druckt und `numberingTemplate: '{1}.{2}'` der Ebene 2 die Abschnitte mit 4.1 bis 4.3 nummeriert; die Abbildungen laufen von 4.1 bis 4.7. `## Questions {style="plain"}` nimmt einen Eintrag aus `headingStyles` mit `numbered: false`, sodass diese Überschrift keine Nummer hat. Die Paginas beginnen bei 87, weil die erste Seite eine rechte Seite ist und eine rechte Seite eine ungerade Pagina trägt.
+
+### 6 · Die Farben einmal benennen
+
+<Excerpt region="palette" />
+
+Jede Farbe in der Konfiguration ist mit einem Paletteneintrag verknüpft und trägt außerdem ihren Hexwert, den `col()` aus demselben Objekt kopiert. Um das Kapitel umzufärben, bearbeiten Sie `palette`: Die Diagramme lesen dasselbe Objekt, sodass sich ihr Glas, ihre Strahlen, die dunklen Felder und die helle Platte zusammen mit Ziffern, Bezeichnungen und Erläuterungen ändern. `main-color` zeigt auf die Akzentfarbe, sodass jede Standardfarbe in den Textformaten, die die Konfiguration nicht setzt, grün gedruckt wird statt im Blau der Engine.
+
+## Varianten
+
+### Die Bildunterschriften unter den Abbildungen lassen
+
+Mit den schlichten Standardwerten des Abbildungstyps nehmen die Bildunterschriften der Abbildungen 4.1, 4.4 und 4.6 Zeilen der Textspalte ein, und die Randspalte enthält nur Diagramme und Erläuterungen.
+
+```diff
+-const resourceTypes = defaultResourceTypes(LANG).map((type) => (type.id !== 'figure' ? type
+-  : { ...type, defaultPlacement: { captionSide: true } })); // the built-in types, in LANG
++const resourceTypes = defaultResourceTypes(LANG); // what the engine uses when none are set
+```
+
+### Die Randspalte auf jeder Seite rechts
+
+Für ein Dokument, das am Bildschirm Seite für Seite gelesen wird, schalten Sie die Spiegelung der Ränder ab und versetzen Pagina und Kolumnentitel der linken Seite an die rechte Kante; Kapitel können dann auf jeder Seite beginnen.
+
+```diff
+-  sideColumnSide: 'outer', // right on a recto, left on a verso (the margins are mirrored)
++  sideColumnSide: 'right', // what 'outer' means anyway once the margins stop mirroring
+-    bottom: mm(BOTTOM), left: mm(INNER), right: mm(OUTER), mirror: true } }, // left: recto's inner
++    bottom: mm(BOTTOM), left: mm(INNER), right: mm(OUTER), mirror: false } },
+-      { level: 1, breakBefore: { enabled: true, parity: 'odd' }, marginBottom: pt(LEAD),
++      { level: 1, breakBefore: { enabled: true, parity: 'any' }, marginBottom: pt(LEAD),
+-const verso = { parity: 'even', edge: 'top-left' }; // x counts in from the left edge
++const verso = { parity: 'even', edge: 'top-right' };
+-  head({ id: 'verso-folio', ...verso, ...folio, x: OUTER }),
+-  head({ id: 'verso-title', ...verso, content: '{title}', x: OUTER + HEAD_GAP }),
++  head({ id: 'verso-folio', ...verso, ...folio, x: -OUTER }),
++  head({ id: 'verso-title', ...verso, content: '{title}', x: -(OUTER + HEAD_GAP) }),
+-  head({ id: 'drop-folio', ...recto, ...folio, pages: 'opener', edge: 'bottom-right', x: -OUTER,
++  head({ id: 'drop-folio', ...folio, pages: 'opener', edge: 'bottom-right', x: -OUTER,
+```
+
+### Das Kapitel unter einem Farbband eröffnen
+
+<RecipeLink slug="chapter-opener-bleed-band">Kapitelauftakt auf einem randabfallenden Farbband</RecipeLink> lässt ein Farbband oben von der Seite abfallen und setzt Titel und eine Kapitelnummer in 168 pt darauf.
+
+## Häufige Fehler
+
+- Abbildungen und Erläuterungen stapeln sich in der Randspalte in der Reihenfolge, in der der Text sie erreicht, nie nebeneinander. Die Erläuterung zum Grenzwinkel steht nach dem Absatz zum Snelliusschen Brechungsgesetz und vor dem Absatz, der Abbildung 4.3 zitiert; auf <PageRef page={2}>Seite 88</PageRef> stapelt sie sich daher zwischen den Abbildungen 4.2 und 4.3, neben dem Absatz, der den Begriff einführt. Nach diesem Zitat gesetzt, landete sie unter Abbildung 4.3.
+- Auf der ersten Seite eines Kapitels stapeln sich Randabbildungen unter Dachzeile und Ziffer. Eine im ersten Absatz zitierte Abbildung nimmt diesen Platz ein und schiebt den Kasten mit den Lernzielen die Randspalte hinab; dieses Kapitel zitiert seine erste Randabbildung daher nach dem Kasten.

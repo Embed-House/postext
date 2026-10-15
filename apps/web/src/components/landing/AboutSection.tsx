@@ -136,6 +136,22 @@ montre :ref{id="fig-flow"}.
 Changez un mot : la page se
 compose de nouveau.
 :::`,
+  de: `:::part{number="I" title="Grundlagen"
+  palette="band=#2b4acb"}
+:::
+
+# Warum Postext {lead="Der Buchdruck
+hat fünf Jahrhunderte …"}
+
+Postext ist eine **quelloffene
+Layout-Engine**, die das Handwerk
+der Buchtypografie ins Web bringt,
+wie :ref{id="fig-flow"} zeigt.
+
+:::callout{type="try"}
+Ändern Sie ein Wort: Die Seite
+setzt sich neu.
+:::`,
 };
 
 export async function AboutSection() {

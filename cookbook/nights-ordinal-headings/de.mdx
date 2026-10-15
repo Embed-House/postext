@@ -1,0 +1,68 @@
+---
+title: "Überschriften als arabische Ordnungswörter: die erste Nacht…"
+summary: "Eine Ebenenvorlage schreibt jede Nacht als الليلة mit femininer Ordnungszahl, الليلة الأولى, الثانية, الثالثة, sodass das Markdown nie eine Zahl enthält."
+plain: "Der Anfang von Tausendundeiner Nacht, wo über jeder Nacht ihre Nummer in arabischen Worten steht, „die erste Nacht“, „die zweite Nacht“, in der femininen Form, die zum arabischen Wort für Nacht passt."
+description: "Die ersten Nächte von Alf layla wa-layla in Postext: eine Nummerierungsvorlage mit {2:ordinal-feminine}, Überschriften in Ruqʿa, Auftakte und Kolumnentitel."
+question: "Wie nummeriere ich Kapitel in arabischen Ordnungswörtern, etwa الليلة الأولى?"
+aliases: ["Tausendundeine Nacht", "Märchen aus Tausendundeiner Nacht", "Alf layla wa-layla", "ألف ليلة وليلة", "Scheherazade", "Schahrazad", "Ordnungswörter", "arabische Ordnungszahlen", "feminine Ordnungszahl", "ausgeschriebene Zahlen", "Nachtüberschriften", "الليلة الأولى", "Der Kaufmann und der Dschinn", "Merchant and the Jinni", "Hindawi", "Arabian Nights"]
+pageNotes: { "2": "Der Auftakt von „Der Kaufmann und der Dschinn“: ein blasses, goldliniertes Band mit dem Titel der Erzählung in grüner Ruqʿa, darüber eine kleine graue Dachzeile und darunter eine lateinische Zeile, dann die Wörter فلما كانت in kleiner kufischer Schrift über الليلة الأولى in grüner Ruqʿa und einer kurzen goldenen Linie, und der Text der ersten Nacht." }
+---
+
+## Was Sie setzen
+
+Zehn Seiten vom Anfang von *Tausendundeiner Nacht*: ein Schmutztitel, dann „Der Kaufmann und der Dschinn“, die erste Geschichte, die Schahrazad erzählt und die sich über drei Nächte erstreckt. Jede Nacht beginnt mit Hindawis Formel فلما كانت in kleiner kufischer Schrift über ihrer Nummer in grüner Ruqʿa, الليلة الأولى, الليلة الثانية, الليلة الثالثة, ausgeschrieben, wie die Bücher sie drucken. Keine dieser Nummern steht im Markdown: Die Überschriftenebene zählt die Nächte und schreibt jede Zahl als feminine Ordnungszahl, die mit ليلة übereinstimmt. Die Geschichte beginnt unter einer goldlinierten Kopfleiste, die Erzählungen der drei alten Männer haben eigene kleine Titel, und die Kolumnentitel nennen Buch und Erzählung. Der Text ist die Ausgabe der Hindawi Foundation von 2022 unter CC BY 4.0.
+
+## Zubereitung
+
+### 1 · Nächte in Worten gezählt
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine Nacht ist eine Überschrift der Ebene 2, `## الليلة`, und das `numberingTemplate` der Ebene lautet `'الليلة {2:ordinal-feminine}'`: Der Modifikator `-feminine` schreibt الأولى, الثانية, الحادية عشرة, الحادية بعد الألف ([Ordnungs- und Grundzahlen in Worten](/de/docs/arabic-layout#ordnungs--und-grundzahlwörter), [Ausgeschriebene Zahlen](/de/docs/configuration-text#ausgeschriebene-zahlen)). Mit `numberPosition: 'replace'` ist die Nummer der ganze Titel der Überschrift: Was das Markdown nach `##` sagt, entfällt, und Überschrift, PDF-Lesezeichen und Alternativtext lauten الليلة الثانية. Die Gestaltung druckt diesen Titel, `{titleText}`, groß und Hindawis Formel فلما كانت, einen festen Text, klein darüber. Die Überschriften der Erzählungen verwenden einen Stil mit `numbered: false`: Eine nummerierte Ebene 1 würde die Zählung der Nächte mit jeder Erzählung neu beginnen, eine unnummerierte lässt die tieferen Zähler in Ruhe, sodass die Nächte durch das ganze Buch weiterzählen.
+
+<PageShot page={5} crop="0,0.15,1,0.35" caption="Seite 5: die zweite Nacht, ihre Nummer von der Vorlage ausgeschrieben und als ganze Überschrift gedruckt." />
+
+### 2 · Eine Kopfleiste für jede Erzählung
+
+<Excerpt region="opener" />
+
+Die Überschrift der Ebene 1 ist ein getöntes Band zwischen zwei goldenen Linien, darüber der Titel der Erzählung in Ruqʿa, eine Dachzeile und eine lateinische Zeile aus Attributen der Überschrift, `{kicker="…" latin="…"}`. Die lateinische Zeile ist der einzige Teil des Auftakts, der sich mit der Ausgabe ändert.
+
+### 3 · Kolumnentitel, die mit der Erzählung kommen
+
+<Excerpt region="heads" />
+
+Die Kolumnentitel gehören zum Überschriftenstil `tale`, sodass jede Erzählung ihre eigenen mitbringt; der Schmutztitel hat keine. Die Versoseite trägt den Titel des Buchs, die Rektoseite `{chapterTitle}`, die Erzählung. In einem rechts gebundenen Buch ist die Versoseite die rechte Seite, deshalb steht ihre Seitenzahl oben rechts ([Seitenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)).
+
+### 4 · Ein Schmutztitel in Ruqʿa
+
+<Excerpt region="title" />
+
+Der Schmutztitel ist ein Überschriftenstil mit `span: 'page'`, `numbered: false` und leerer Kopf- und Fußzeile, sodass er weder mitzählt noch einen Kolumnentitel trägt.
+
+## Varianten
+
+### Bei der tausendundersten Nacht beginnen
+
+`{startAt=1001}` an einer Nachtüberschrift setzt ihren Zähler, und die Vorlage schreibt الليلة الحادية بعد الألف ([Attribute von Überschriften](/de/docs/document-format#attribute-von-überschriften)).
+
+```diff
+-## الليلة
++## الليلة {startAt=1001}
+```
+
+### Die Hunderter nach Art von Bulaq schreiben
+
+`-classical` schreibt مائة statt مئة, sodass die zweihundertste Nacht الليلة المائتان lautet.
+
+```diff
+-  level: 2, numberingTemplate: 'الليلة {2:ordinal-feminine}', numberPosition: 'replace',
++  level: 2, numberingTemplate: 'الليلة {2:ordinal-feminine-classical}', numberPosition: 'replace',
+```
+
+### Kapitel im Maskulinum nummerieren
+
+Ohne Modifikator ist die Ordnungszahl maskulin, für ein Nomen wie الفصل: الفصل الأول، الفصل الثاني.
+
+```diff
+-  level: 2, numberingTemplate: 'الليلة {2:ordinal-feminine}', numberPosition: 'replace',
++  level: 2, numberingTemplate: 'الفصل {2:ordinal}', numberPosition: 'replace',
+```

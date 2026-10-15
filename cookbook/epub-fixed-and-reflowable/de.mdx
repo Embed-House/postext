@@ -1,0 +1,61 @@
+---
+title: "Ein Buch, zwei EPUB-3-Dateien: fest und umfließend"
+summary: "renderToEpub aus postext-epub schreibt die von buildBundle gesetzten Kapitel als EPUB mit festem Layout und als umfließendes; readEpub listet den Inhalt."
+plain: "Ein kleines Fabelbuch, einmal für den Druck gesetzt und als zwei E-Books gespeichert: eines, das jede gedruckte Seite bewahrt, und eines, dessen Text ein Handy oder E-Reader in eigener Größe neu setzt."
+description: "Ein Buch mit drei Kapiteln, mit buildBundle gesetzt, mit postext-epub als EPUB 3 mit festem Layout und als umfließendes geschrieben und mit readEpub geprüft."
+question: "Wie exportiere ich mein Buch als EPUB, mit festen Seiten oder mit umfließendem Text?"
+aliases: ["EPUB", "EPUB 3", "E-Book", "ebook", "festes Layout", "umfließend", "reflowable", "postext-epub", "renderToEpub", "readEpub", "Kindle", "Apple Books"]
+pageNotes: { "1": "Die Titelseite: der Autor in kleinen blauen Versalien, der Titel „Fables of Aesop“ in einer Display-Antiqua, ein kurzer Strich und ein kursiver Untertitel.", "3": "Der Auftakt von Buch I, „The Lion’s Court“, darunter die Fabel „The Lion and the Mouse“." }
+---
+
+## Was Sie setzen
+
+*Fables of Aesop*, achtzehn Fabeln in drei Büchern auf einem Format von 120 × 190 mm, mit Titelseite, einem Impressum auf deren Rückseite und einem abgesenkten Auftakt für jedes Buch. Die spanische Ausgabe setzt Claríns *¡Adiós, Cordera!* in drei Kapiteln auf demselben Format. Das Buch wird einmal gesetzt, Kapitel für Kapitel, und aus diesem Satz entstehen zwei EPUB-3-Dateien. Das feste Layout bewahrt jede gedruckte Seite: die Auftakte, die Kolumnentitel und die Zeilenumbrüche, in der eingebetteten Caslon. Die umfließende Datei bewahrt den Text und seine Struktur, und das Lesesystem setzt ihn auf einem Handy oder einem E-Ink-Bildschirm neu. Beide lassen sich von der Seite herunterladen, und beide bestehen W3C EPUBCheck.
+
+## Zubereitung
+
+### 1 · Das Buch als Kapitel setzen
+
+<Excerpt region="openers" />
+
+`buildBundle` setzt jedes Kapitel als eigenes Dokument und trägt Seitenzahlen und Parität von einem zum nächsten; `docs` ist also das Array, das `renderToPdf` drucken würde. Der EPUB-Schreiber liest dasselbe Array: Jedes Kapitel wird zu einem Navigationseintrag, und die umfließende Datei schreibt ein XHTML-Dokument pro Kapitel. Titelseite und Impressum sind das erste Kapitel, und dessen Frontmatter enthält Titel, Untertitel und Autor des Buches.
+
+### 2 · Dem Schreiber die Schriftdateien übergeben
+
+<Excerpt region="embed" />
+
+Die Schriften, die der Browser geladen hat, sind keine Dateien, die der Schreiber lesen kann; der Pen holt daher dieselben woff2-Dateien von Fontsource erneut, der Browser hat sie im Cache. Jede wird zu einer Schriftdatei im EPUB und zu einer Regel `@font-face`. Ohne sie würde das feste Layout den in Caslon gesetzten Text in der Schrift des Lesegeräts platzieren, und die Zeilen passten nicht mehr in ihre Satzbreite.
+
+### 3 · Beide Fassungen schreiben
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `layout: 'fixed'` schreibt ein XHTML-Dokument pro gedruckter Seite im beschnittenen Seitenformat, mit echtem, auswählbarem Text; `layout: 'reflowable'` baut die Absätze aus den gesetzten Zeilen wieder auf, entfernt die Trennstriche, die die Zeilenumbrüche hinzugefügt haben, und leitet ein Stylesheet aus der Konfiguration ab. Ein festes Datum `modified` sorgt dafür, dass jeder Lauf dieselben Bytes erzeugt. Die Metadaten kommen aus dem Frontmatter des ersten Kapitels, sodass Titel und Autor der Datei die auf der Titelseite gedruckten sind.
+
+### 4 · Jede Datei zurücklesen
+
+<Excerpt region="shelf" />
+
+`readEpub` öffnet die Datei wie ein Lesesystem: den Spine in Lesereihenfolge, das Inhaltsverzeichnis, die Seitenliste und das Layout. Die feste Datei hat einen Spine-Eintrag pro Seite, die umfließende vier, einen pro Kapitel. Beide tragen eine Seitenliste der gedruckten Paginas, sodass ein Leser in beiden einem Zitat auf Seite 9 folgen kann. Der Link `<a download>` gibt den Bytes einen Dateinamen; nichts läuft über einen Server.
+
+## Varianten
+
+### Dem festen Layout ein Umschlagbild geben
+
+Zeichnen Sie die Titelseite in einen Canvas und übergeben Sie sie als Umschlag; `showsFirstPage` sagt dem Schreiber, sie nicht als eigene Seite hinzuzufügen.
+
+```diff
++const canvas = document.createElement('canvas');
++renderPageToCanvas(docs[0].pages[0], docs[0], canvas, { scale: 2 });
++const png = await new Promise((done) => canvas.toBlob(done, 'image/png'));
++const cover = { bytes: new Uint8Array(await png.arrayBuffer()), mediaType: 'image/png',
++  showsFirstPage: true };
+-const fixed = await renderToEpub(docs, { ...book, layout: 'fixed' });
++const fixed = await renderToEpub(docs, { ...book, layout: 'fixed', cover });
+```
+
+### Dieselben Kapitel als PDF drucken
+
+`renderToPdf(docs, …)` aus `postext-pdf` nimmt dasselbe Array, sodass PDF, EPUB und Bildschirm aus einem Satz stammen. <RecipeLink slug="catalan-pocket-novella">Die katalanische Novelle</RecipeLink> zeigt die PDF-Seite.
+
+## Häufige Fehler
+
+Die umfließende Datei bewahrt den Text einer Überschrift, aber nicht ihre Gestaltung: Die Dachzeile jedes Auftakts (*Book I*) ist ein Gestaltungselement und steht daher nicht im Text. Setzen Sie Wörter, die der Leser sehen muss, in die Überschrift selbst oder in den Text.

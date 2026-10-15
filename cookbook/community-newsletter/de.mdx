@@ -1,0 +1,58 @@
+---
+title: "Vereinsblatt: Aufmacher und Kurzmeldungen"
+summary: "Zweiseitiges Kleingärtnerblatt, anderthalbspaltig: Der Aufmacher füllt die breite Spalte, springt auf Seite 2; Umbrüche schicken Meldungen in die schmale."
+plain: "Ein zweiseitiges Mitteilungsblatt für einen Gartenverein. Der Hauptartikel füllt eine breite Spalte und geht auf Seite 2 weiter, kurze Meldungen füllen eine schmale Spalte daneben."
+description: "Vereinsblatt in Postext: Text in beiden Spalten einer anderthalbspaltigen Seite, Spaltenumbrüche, Sprung auf Seite 2, Chips als Etiketten, Text neben Grafik."
+question: "Wie setze ich einen Aufmacher breit neben eine schmale Spalte mit Kurzmeldungen, und Text neben ein Bild?"
+aliases: ["Mitteilungsblatt", "Vereinszeitung", "Vereinsblatt", "Gemeindeblatt", "Spalte mit Kurzmeldungen", "Kurzmeldungen", "Fortsetzungshinweis", "Fortsetzung auf Seite 2", "Etiketten", "Text neben einem Bild", "Kleingartenverein", "newsletter", "boletín"]
+pageNotes: { "1": "Ein strohfarbenes Band quer über den Kopf der Seite, mit einer Reihe Setzlinge an seinem Fuß, trägt den Namen des Vereins in kleinen grünen Versalien, „The Allotment Gazette“ in kräftigen grünen Buchstaben auf zwei Zeilen und einen roten Tab mit „No. 47 · Spring 2026“. Darunter enthält die breite Spalte ein rotes Etikett „SITE NEWS“, die Schlagzeile „Shared compost bays open by the top gate“, einen Vorspann, eine Autorenzeile, einen farbigen Plan der Gartenparzellen von oben mit drei Kompostboxen am Tor, zwei Absätze und ein strohfarbenes Etikett „Continued on page 2“. Die schmale Spalte hinter einer Haarlinie ist rot mit „In brief“ überschrieben und enthält fünf Kurzmeldungen, jede beginnend mit roten, gelben oder grün umrandeten pillenförmigen Etiketten.", "2": "Unter einem Kolumnentitel mit Titel, Jahreszeit und einer roten Seitenzahl 2 beginnt die breite Spalte mit einem Etikett „Continued from page 1“ und der Zwischenüberschrift „What goes into the bays“, dann folgen ein Liniendiagramm der Temperatur im Komposthaufen, zentriert und 62 % so breit wie die Spalte, weiterer Text und eine kleine grüne Überschrift, „Sixteen squares by the gate“, über einem Absatz, der neben der Zeichnung eines quadratischen, in sechzehn bepflanzte Quadrate geteilten Beets läuft, die rechts in der Spalte steht. Die schmale Spalte mit der Überschrift „Notices“ listet acht Bekanntmachungen unter roten Versalüberschriften und endet mit dem Impressum." }
+---
+
+## Was Sie setzen
+
+Die Frühjahrsausgabe von *The Allotment Gazette*, dem Mitteilungsblatt eines erfundenen Kleingartenvereins, beidseitig auf ein A4-Blatt gedruckt. Ein strohfarbenes Band trägt den Namen in der Titan One auf zwei Zeilen, eine Reihe Setzlinge an seinem Fuß und einen tomatenroten Tab mit Ausgabenummer und Jahreszeit. Darunter teilt sich die Seite in eine 113 mm und eine 57 mm breite Spalte. Der Aufmacher über drei neue Kompostboxen füllt die breite Spalte unter einem in Code gezeichneten Plan der Anlage und endet bei einem Etikett „Continued on page 2“. Die schmale Spalte enthält fünf Kurzmeldungen, jede beginnend mit pillenförmigen Etiketten. Seite 2 nimmt den Artikel unter einer Fortsetzungsüberschrift wieder auf und zentriert ein Temperaturdiagramm in der Spalte. Weiter unten läuft der Absatz über ein Pflanzbeet neben dessen Zeichnung, die rechts in der Spalte steht. Acht Bekanntmachungen füllen die schmale Spalte.
+
+## Zubereitung
+
+### 1 · Das Markdown jede Spalte füllen lassen
+
+Die Layouteinstellungen stehen oben in [der kurzen Antwort](#die-kurze-antwort). In einem Layout `oneAndHalf` nimmt die schmale Spalte standardmäßig Text auf, und der Text läuft die breite Spalte hinunter, dann die schmale, dann die breite Spalte der nächsten Seite ([Layouttypen](/de/docs/configuration-page-layout#layout-typen)). Ein `:::columnbreak` beendet eine Spalte dort, wo es steht ([Direktiven](/de/docs/document-format#direktiven)): Nach dem Etikett „Continued on page 2“ des Aufmachers eröffnet es die schmale Spalte für die Kurzmeldungen, und nach der letzten Kurzmeldung, in der letzten Spalte der Seite, eröffnet es Seite 2. In dieser Ausgabe sind beide Spalten von Seite 1 so eingepasst, dass sie auf derselben Rasterlinie enden, 275 mm unter der Oberkante; wer einen der beiden Umbrüche löscht, ändert die Seiten also nicht. Die Umbrüche zählen, sobald sich der Text ändert. Streichen Sie den zweiten Absatz des Aufmachers, und ohne den ersten Umbruch beginnt „In brief“ 247 mm tief in der breiten Spalte unter dem Etikett, und die erste Kurzmeldung läuft in die schmale Spalte über, wo ihre zweite Hälfte für die Satzbreite von 57 mm neu umbrochen wird.
+
+### 2 · Den Zeitungskopf aus dem Frontmatter bauen
+
+<Excerpt region="masthead" />
+
+Die H1 nimmt einen Überschriftenstil, dessen Gestaltung den Zeitungskopf zeichnet, und `span: 'page'` setzt diese Gestaltung über beide Spalten. `{titleText}` in 60 pt bricht in seinem 178 mm breiten Kasten in zwei Zeilen um. Der Tab verbindet `{attr.issue}`, in der H1-Zeile geschrieben, mit `{publishDate}` aus dem Frontmatter ([Textelemente](/de/docs/configuration-page-layout#textelemente)). Ohne `minHeight` würde der Kopf Platz bis zum Fuß des Bands reservieren, 62 mm unter der Oberkante, und der Text begänne auf der nächsten Rasterlinie bei 62,5 mm, direkt am Band. Ein `minHeight` von zehn Rasterlinien lässt ihn bei 67 mm beginnen.
+
+### 3 · Die Kurzmeldungen mit Chips etikettieren
+
+<Excerpt region="tags" />
+
+Wer `chipStyles` deklariert, ersetzt den eingebauten blassblauen Chip, und ein Chip ohne `style` nimmt den ersten ([Chip-Stile](/de/docs/configuration-styles#chip-stile)). Ein Radius, der größer ist als die halbe Höhe des Kastens, zeichnet eine Pille. Ein Chip bricht in sich nie um, eine Zeile bricht also nur am Leerzeichen vor oder nach einem Chip, und ein Datum wie „Sat 11 April“ bleibt auf einer Zeile. Die Etiketten sind im Markdown in Versalien getippt, weil Chip-Stile keine Einstellung für Groß- und Kleinschreibung haben. Der vertikale Innenabstand wird außerhalb der Zeile gezeichnet, sodass das 13,4-pt-Raster hält.
+
+### 4 · Den Text neben der Zeichnung laufen lassen
+
+<Excerpt region="wrap" />
+
+`wrap: 'right'` setzt die Beetzeichnung an den rechten Rand der 113 mm breiten Spalte, 45 % davon breit (51 mm), und der Absatz nach der Zeile `::resource` läuft daneben auf den verbleibenden 57 mm, eine Grundtextzeile Abstand zur Zeichnung und ihrer Bildunterschrift ([Textumfluss](/de/docs/document-format#textumfluss)). Die Oberkante der Zeichnung steht auf Höhe der ersten Zeile des Absatzes, und jede Zeile bleibt im 13,4-pt-Raster. Ein längerer Absatz liefe unter der Zeichnung auf vollen 113 mm weiter, als ein Absatz; eine Überschrift oder eine weitere Abbildung, die käme, solange die Zeichnung noch neben dem Text steht, rückte darunter. Die Überschrift der Ebene 4 darüber nimmt einen Überschriftenstil, der nur ihre Farbe in das Blattgrün ändert.
+
+### 5 · Ein schmales Diagramm in seinem Band zentrieren
+
+<Excerpt region="band" />
+
+`width: 0.62` setzt das Diagramm 70,1 mm breit in die 113 mm breite Spalte, und `align: 'center'` lässt auf jeder Seite 21,5 mm Papier frei ([Platzierung](/de/docs/document-format#platzierung)). Der Text darüber und darunter behält die volle Satzbreite und fließt nie in diesen Weißraum. Die Zeichnungen gehören zu einem Ressourcentyp mit leerem `captionPrefix`, sodass jede Bildunterschrift mit ihren eigenen fetten Wörtern beginnt, ohne ein „Figure 1“ davor.
+
+## Varianten
+
+### Die Kurzmeldungen nach links setzen
+
+Die breite Spalte wird weiterhin zuerst gelesen, also setzt dasselbe Markdown den Aufmacher rechts und die Kurzmeldungen links.
+
+```diff
+   layoutType: 'oneAndHalf',
++  sideColumnSide: 'left',
+```
+
+### Die Kurzmeldungen über die Seitenbreite setzen
+
+Grundtext läuft in höchstens zwei Spalten. Die <RecipeLink slug="newspaper-front-page">Titelseite einer Zeitung</RecipeLink> setzt vier Kurzmeldungen quer über den Fuß der Seite in einen Kasten mit `:::columns{count=4}`.

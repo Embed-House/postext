@@ -1,0 +1,77 @@
+---
+title: "Titelseite einer Zeitung"
+summary: "Titelseite und Seite 2 eines Lokalblatts in zwei Spalten mit Linie, seitenbreite Schlagzeilen als Kästen und ein vierspaltiger Streifen Kurzmeldungen am Fuß."
+plain: "Titelseite und Seite 2 einer lokalen Wochenzeitung. Das Rezept zeigt, wie große Schlagzeilen über die ganze Seite laufen und wie ein Streifen mit Kurzmeldungen unten auf die Seite kommt."
+description: "Eine Zeitungstitelseite in Postext, mit Code: Zeitungskopf in Fraktur, Schlagzeilen in seitenbreiten Kästen, Spalten mit Linie, vier Spalten Meldungen am Fuß."
+question: "Wie setze ich die Titelseite einer Zeitung, mit Schlagzeilen über die Spalten und vier Spalten Kurzmeldungen?"
+aliases: ["Zeitung", "Titelseite", "Nordisches Format", "Tabloid", "Zeitungskopf", "Titelkopf", "Balkenüberschrift", "Kurzmeldungen", "drei Spalten", "vier Spalten", "Spaltenlinie", "Lokalzeitung", "newspaper front page"]
+pageNotes: { "1": "Die Titelseite von „The Elverdale Courier“: der Zeitungskopf in Fraktur zwischen einem Wetter- und einem Preisfeld, eine dicke und eine dünne Linie über der Datumszeile, die zweizeilige Balkenüberschrift „Harrow Ridge turbines win the town’s vote“, eine kursive Unterzeile, ein Foto von Windrädern auf einem verschneiten Kamm über beide Spalten, der Artikel in zwei Spalten im Blocksatz, getrennt von einer Haarlinie, und am Fuß ein getönter Streifen „In brief“ mit vier Spalten, jede Meldung mit einem roten Chip eröffnet.", "2": "Seite 2, überschrieben von einer roten Rubrikflagge „Town & Valley“ auf einem schwarzen Balken: der Artikel über die Old Mill Bridge mit einer Zeichnung der zweibogigen Brücke zwischen ihren Ufern und ihrem neuen Fundament in Rot, eine Fünftage-Wettertabelle am Kopf der rechten Spalte, eine zweite Schlagzeile über die Seite über dem Artikel zu den Ergebnissen der Bezirke und einer Spalte „Letters“ und am Fuß eine Tabelle, wie die fünf Bezirke abstimmten, mit einem roten und einem grauen Balken in jeder Zeile." }
+---
+
+## Was Sie setzen
+
+Titelseite und Seite 2 von *The Elverdale Courier*, einer erfundenen Wochenzeitung aus einem Tal, auf einem Bogen von 246 × 328 mm. Ein Zeitungskopf in Fraktur steht zwischen einem Wetter- und einem Preisfeld, über einer dicken und einer dünnen Linie und der Datumszeile. Der Aufmacher beginnt mit einer zweizeiligen Balkenüberschrift in Libre Franklin Black zu 56 pt über beide Spalten, einer kursiven Unterzeile und einem 222 mm breiten Fotoband und läuft dann in zwei Spalten im Blocksatz, getrennt von einer Haarlinie. Am Fuß teilen sich vier Kurzmeldungen einen getönten Streifen, eine je Spalte, jede von einem roten Chip eröffnet. Seite 2 beginnt mit einer roten Rubrikflagge und enthält den Brückenartikel mit einer im Code erzeugten Zeichnung, eine Fünftage-Wettervorhersage am Kopf der rechten Spalte, eine zweite Schlagzeile über die Seite, die Leserbriefe und eine Tabelle der Bezirksabstimmungen mit einem Balken in jeder Zeile.
+
+## Zubereitung
+
+### 1 · Zeitungspapier, Druckfarbe und ein Rot
+
+<Excerpt region="palette" />
+
+Die Seite ist Zeitungspapier (#f8f5ee) und die Schrift fast schwarze Druckfarbe (#111315). Das eine Rot, #a6192e, kommt auf die Rubrikflaggen, die Dachzeilen, die Chips und die Ja-Balken. Jede Farbe ist über `paletteId` mit ihrem Paletteneintrag verknüpft. `main-color` zeigt auf die Druckfarbe, sodass Fett, Kursiv, die beiden Verweise auf Seite 2 und jeder Standardwert, den die Konfiguration nicht ändert, in Druckfarbe drucken; auf seinem eigenen Wert belassen, druckten sie im Standardblau #295AA3.
+
+### 2 · Der Zeitungskopf ist die H1 der Titelseite
+
+<Excerpt region="nameplate" />
+
+`# The Elverdale Courier` nimmt das Überschriftenformat `front`, das den Titelkopf aus dem Text der Überschrift und sieben ihrer Attribute füllt (`issue`, `area`, `outlook`, `temps`, `since`, `day` und `price`); das Datum kommt aus `publishDate` im Frontmatter. Ein leerer Kasten von sieben Rasterzeilen Tiefe (31,1 mm) legt die Höhe des Auftakts fest. Linien, Datumszeile und Name hängen an seinem Fuß, sodass der Auftakt auf einer Rasterzeile endet.
+
+### 3 · Eine Schlagzeile über beide Spalten ist ein Kasten
+
+<Excerpt region="banner" />
+
+Eine Überschrift reicht nur als Auftakt über beide Spalten, und ein Auftakt beginnt eine neue Seite. Setzen Sie `span: 'page'` auf die H2 des Bezirksartikels statt auf ihren Kasten, und dieser Artikel wandert auf eine dritte Seite. Ein rahmenloser Kasten mit `span="page"` kann mitten auf der Seite beginnen. Auf <PageRef page={2}>Seite 2</PageRef> werden die Spalten darüber auf gleicher Höhe abgeschnitten und setzen darunter wieder ein. Der Kasten enthält die H2 in einem von drei Überschriftenformaten (56, 30 oder 22 pt), die kursive Unterzeile und, auf der Titelseite, das Foto. Sein `marginBottom` von einer halben Zeile lässt die Spalten auf der nächsten Rasterzeile beginnen, auf Seite 2 3,4 mm unter der Unterzeile. Mit dem Standardabstand ist die Lücke 7,8 mm, und die Leserbriefe laufen auf eine dritte Seite.
+
+### 4 · Der vierspaltige Streifen ist ein Kasten mit Spalten
+
+Der Code dieses Schritts steht oben in [der kurzen Antwort](#die-kurze-antwort). Der Text beider Seiten läuft in zwei Spalten ([Layout-Typen](/de/docs/configuration-page-layout#layout-typen)). Die Kurzmeldungen brauchen vier nur am Fuß von Seite 1, unter einem Titel und auf einer Tönung, deshalb kommen sie in einen Kasten, hier einen seitenbreiten mit einer Gruppe [`:::columns`](/de/docs/document-format#columns). `breaks` zählt die Blöcke der Gruppe, einen je Meldung, sodass die Meldungen 2, 3 und 4 die Spalten 2, 3 und 4 eröffnen. Jede Spalte ist 49 mm breit, mit dem Spaltenabstand der Seite von 6 mm dazwischen.
+
+```markdown
+:::callout{type="briefs" span="page" placement="bottom" title="In brief"}
+:::columns{count=4 breaks="2,3,4"}
+:chip[TRANSPORT]{style="flag"} **Bus 44 back on Sundays.** The Elverdale to Kirkby bus …
+
+:chip[SCHOOLS]{style="flag"} **An orchard for Brook Lane.** Pupils at Brook Lane …
+…
+:::
+:::
+```
+
+`placement="bottom"` lässt den Kasten an den Fuß von <PageRef page={1}>Seite 1</PageRef> gleiten, wo er 36,9 mm einnimmt, und der Artikel füllt die 83 mm Spalten darüber. Das Aufmacherfoto bleibt ein Band über beide Spalten im Kasten der Balkenüberschrift: Der Text läuft neben einem Bild, das schmaler als seine Spalte ist, auf einer Seite davon, nie um ein Bild über zwei Spalten. Die Brückenzeichnung auf Seite 2 hat ihren Text daneben (Schritt 5).
+
+### 5 · Bilder im Textfluss, Tabellen als Gleitobjekte
+
+<Excerpt region="floats" />
+
+Das Foto steht im Textfluss des Schlagzeilenkastens, weil ein seitenbreites Gleitobjekt `top` nie über der Zeile landet, die es zitiert; als Gleitobjekt eröffnete das Foto Seite 2 (siehe „Häufige Fehler“). Auch die Brückenzeichnung steht im Textfluss, nach dem Absatz über den Pfeiler, und `wrap: 'right'` mit `width: 0.47` setzt sie rechts in Spalte 1, 47 % der Spaltenbreite, wobei die nächsten Absätze neben ihr und dann in voller Zeilenlänge darunter laufen ([Textumfluss](/de/docs/document-format#textumfluss)). Bei dieser Breite ist keine Zeile neben ihr zu locker gesetzt; der Text des Artikels wurde auf die kürzere Zeichnung neu eingepasst. Die Wettervorhersage gleitet an den Kopf einer Spalte und landet oben in der rechten. Die Bezirkstabelle gleitet unter beide Spalten, wo die Spaltenlinie endet. Auf der letzten Seite steht sie direkt unter den ausgeglichenen Spalten, deshalb wurde der Text darüber so eingepasst, dass sie bis zum Fuß hinunterrückt. Beide Ressourcentypen setzen `captionPrefix: ''`, und eine Legendenbezeichnung druckt nur, wenn das Präfix Text hat, sodass keine Legende mit „Figure 1“ beginnt.
+
+### 6 · Eine Innenseite beginnt mit einer Rubrikflagge
+
+<Excerpt region="inside" />
+
+`# Town & Valley` ist eine H1, deren `breakBefore` die Parität `'any'` hat, sodass die Rubrik Seite 2 ohne vorangehende Vakatseite eröffnet. Ihre Gestaltung ist eine rote Flagge auf einem Balken von 3 pt, aufgehängt an einem leeren Kasten von zwei Rasterzeilen Tiefe. Die Paginazeile ist eine Kopfzeile, 6 mm unter der Oberkante der Seite verankert, mit einer Fassung für gerade und einer für ungerade Seiten. Das Format der Titelseite leert die Kopfzeile, sodass über dem Zeitungskopf keine Paginazeile druckt.
+
+## Varianten
+
+### Die Kurzmeldungen unter dem Foto halten
+
+Ohne `placement="bottom"` in `content.en.md` bleibt der Streifen dort, wo sein Direktivenblock steht, direkt unter dem Foto, und der Aufmacher läuft darunter bis zum Fuß der Seite.
+
+```diff
+-:::callout{type="briefs" span="page" placement="bottom" title="In brief"}
++:::callout{type="briefs" span="page" title="In brief"}
+```
+
+## Häufige Fehler
+
+- Geben Sie dem Foto `placement: { position: 'top', span: 'page' }`, und es wandert von Seite 1 weg, um allein auf Seite 2 zu stehen. Der Artikel auf Seite 1 endet dann 92 mm über dem Streifen mit Kurzmeldungen, und die Rubrik wandert auf Seite 3.

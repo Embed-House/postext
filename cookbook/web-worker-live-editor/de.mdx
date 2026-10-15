@@ -1,0 +1,53 @@
+---
+title: "Live-Editor mit Layout in einem Web Worker"
+summary: "Markdown neben einer Taschenbuchseite: Ein Web Worker setzt das Kapitel mit eigenen Schriften, und jeder Tastendruck bricht den laufenden Build ab."
+plain: "Ein Live-Editor für eine kleine Taschenausgabe von The Time Machine. Bei jeder Eingabe wird die Seite im Hintergrund neu gesetzt, sodass der Bildschirm weiter reagiert."
+description: "Postext-Seiten in einem Web Worker setzen, mit einem Aufruf gestartet: Schriftdateien senden, den Build bei jedem Tastendruck abbrechen, im Hauptthread malen."
+question: "Wie bleibt ein Editor flüssig, während ein langer Text gesetzt wird, mit Schriften und Abbruch im Web Worker?"
+aliases: ["Web Worker", "createLayoutWorker", "registerFonts", "AbortController", "Build abbrechen", "Live-Vorschau", "außerhalb des Hauptthreads", "Markdown-Editor", "headless", "Node", "live preview"]
+pageNotes: { "1": "Die Titelseite: über die oberen 84 mm ein ochsenblutrotes Feld, von einer doppelten Goldlinie gerahmt, mit einem Messingzifferblatt, auf dem vier kleine Zifferblätter sitzen; darunter, auf cremefarbenem Papier, „The Time Machine“ in Cinzel auf zwei Zeilen, „An Invention“ in ochsenblutroter Kursive, eine kurze Messinglinie und „H. G. Wells“ in Kapitälchen.", "2": "Der Text von Kapitel I beginnt auf der neunten Zeile, unter einer ochsenblutroten römischen Ziffer, einer kurzen Messinglinie und INTRODUCTION in gesperrten Versalien; die ersten beiden Absätze füllen den Rest der Seite, und die Pagina steht an ihrem Fuß.", "3": "Eine rechte Seite mit kurzen Wortwechseln, mit „Introduction“ in ochsenblutroten Kapitälchen über dem Text und der Pagina am Außenrand.", "4": "Eine linke Seite mit dem Kolumnentitel „The Time Machine“ und der Pagina am Außenrand; ein Satz des Zeitreisenden ist kursiv gesetzt.", "5": "Eine rechte Seite über die Geometrie von vier Dimensionen, mit dem Kolumnentitel „Introduction“." }
+---
+
+## Was Sie setzen
+
+Sie setzen Kapitel I von H. G. Wells’ *The Time Machine* als Taschenausgabe von 110 × 147 mm, mit dem Markdown daneben. Die Titelseite hat das Foto eines Messingzifferblatts mit vier kleinen Zifferblättern, mit Diffusionsmodellen erzeugt, auf einem im Code gezeichneten ochsenblutroten Feld, über dem Titel in Cinzel. Der Text des Kapitels beginnt auf der neunten Zeile, unter einer römischen Ziffer und einer Messinglinie, und läuft in Baskervville zu 9,5 auf 13 pt unter Kolumnentiteln in Kapitälchen. Jeder Tastendruck setzt das ganze Kapitel in einem Web Worker neu, und der Canvas rechts blättert zu der Seite, die den Cursor enthält. Unter dem Editor bleibt ein Zeiger, den der Hauptthread in jedem Frame dreht, stehen, solange dieser Thread beschäftigt ist, und die Statuszeile nennt die Dauer des Builds, den längsten Frame und wie viele Builds ein neuerer Tastendruck abgebrochen hat. Ein Menü oben rechts verlegt den Build zum Vergleich in den Hauptthread.
+
+## Zubereitung
+
+### 1 · Den Worker mit einem Aufruf starten
+
+Den Code für diesen Schritt finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). `createLayoutWorker()` nimmt keine Optionen. Wenn das Modul von esm.sh kommt, liegt die Worker-Datei auf dem Origin von esm.sh, wo der Konstruktor `Worker` sie ablehnt, daher startet die Engine ihren Worker-Einstiegspunkt über ein Blob desselben Origins, in der Version, die die Seite importiert hat. In einer gebündelten App startet derselbe Aufruf die Worker-Datei neben dem Modul. `build()` des Handles nimmt denselben Inhalt und dieselbe Konfiguration wie `buildDocument()` und liefert dieselbe Art von Dokument ([Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen)).
+
+<Note>Das Paket postext misst Text mit einem Canvas, daher setzt es in einem Browser oder einem Worker. Für einen Stapelauftrag setzt die Kommandozeile von postext (postext-cli) ein Buch und schreibt sein PDF ohne Browser; eine in Headless-Chrome mit Puppeteer geöffnete Seite ist der andere Weg. Für ein `.postext`-Projekt auf der Festplatte führt `render.mjs` des Skills postext-port die Engine in Node aus und misst mit fontkit, aus den eigenen Schriften des Projekts, statt mit einem Canvas ([Skripte](/de/docs/skill#skripte)).</Note>
+
+### 2 · Jede Schrift zweimal laden
+
+<Excerpt region="fonts" />
+
+Der Worker hat ein eigenes `FontFaceSet` und sieht die Schriften nicht, die die Seite geladen hat, daher lädt die kurze Antwort dieselben Fontsource-Dateien und übergibt ihre Bytes an `registerFonts()`, jede Schriftstärke als String (`'400'`). Lassen Sie diesen Aufruf weg, misst der Worker in einer Ersatzschrift: Er setzt dieses Kapitel in 175 statt 190 Zeilen, die erste Zeile endet auf „him)“ statt auf „of“, und die Konsole der Seite nennt jede fehlende Familie einmal. Eine Schriftdatei, deren Download scheitert, ist schwerer zu bemerken. Erhält der Worker eine 404-Seite statt der normalen Baskervville, löst `registerFonts()` trotzdem auf, und das Kapitel kommt mit 186 Zeilen heraus, mit einer Warnung nur in der Konsole des Workers. Die kurze Antwort prüft daher den Status jeder Antwort, bevor sie Bytes sendet, und wirft einen Fehler mit der Schrift und dem HTTP-Status. Die Seite lädt dieselben Schriften außerdem mit `loadFonts()`, weil der Canvas mit den Schriften der Seite malt.
+
+### 3 · Bei jedem Tastendruck bauen, im Hauptthread malen
+
+<Excerpt region="editor" />
+
+`typeset()` bricht den laufenden Build ab, bevor es den nächsten anfordert. Das Promise des abgebrochenen Builds wird sofort mit einem `AbortError` abgelehnt, den `typeset()` in `null` verwandelt. Im Worker wird ein Build, der noch in der Warteschlange steht, sofort verworfen, und ein laufender hält am Ende seines aktuellen Platzierungsdurchgangs an, weil der Build nur zwischen Durchgängen auf einen Abbruch prüft. `refresh()` nummeriert seine Builds und malt nur den neuesten, sodass ein verspätet eintreffender Worker-Build keinen aus dem Hauptthread übermalen kann. Das Dokument kehrt in den Hauptthread zurück, wo `renderPageToCanvas()` es mit den dort registrierten Bildern malt. Der Worker braucht nur die Größe jedes Bildes, die der Ressourceneintrag trägt (1100 × 840). Jeder Block behält seinen Versatz im Markdown (`sourceStart`), und `follow()` zeigt die letzte Seite mit einem Block, der am Cursor oder davor beginnt.
+
+<Note>Gemessen auf dem Rechner, der die Aufnahme gemacht hat, in zwölf Ladevorgängen der Seite zusätzlich zu dem auf der Karte. Die Statuszeile misst jeden Build von der Anforderung bis zum ersten Frame nach dem Eintreffen der Seiten. Der erste Build des Workers dauert 66 bis 141 ms und spätere 10 bis 36 ms, weil der Worker einen Messcache für seine ganze Lebensdauer behält; der längste Frame bleibt dabei bei 8 bis 18 ms. Im Hauptthread hält der erste Build das Zifferblatt 54 bis 74 ms an. Spätere Builds dort, mit eigenem Cache, dauern 5 bis 17 ms und dehnen den längsten Frame auf höchstens 25 ms, etwa anderthalb Frames bei 60 Hz. Ein Build, der länger als ein Frame dauert (16,7 ms bei 60 Hz), wie der erste dieses Kapitels oder der Build eines Buchs mit vielen Kapiteln, friert den Editor im Hauptthread ein, im Worker nicht.</Note>
+
+### 4 · Eine Titelseite als Überschriftenstil
+
+<Excerpt region="title" />
+
+Die Zeile `# The Time Machine {style="title"}` setzt Seite 1 im Überschriftenstil `title`, dessen leere `header` und `footer` die Seite ohne Kolumnentitel und Pagina lassen. `numbered: false` hält den Titel aus der Kapitelzählung heraus, sodass Introduction weiterhin Kapitel I ist. Die Tafel ist an der oberen linken Ecke des Anschnitts verankert, und der Name des Autors steht unter dem Fuß der Spalte. Ein Design, das in seiner Spalte bleibt, wird am Fuß der Spalte abgeschnitten, daher setzt der Stil `span: 'page'`; ohne die Einstellung wird der Name des Autors nicht gemalt.
+
+### 5 · Kolumnentitel nach Rolle der Seite
+
+<Excerpt region="heads" />
+
+`pages: 'body'` hält die Kolumnentitel von Titelseite und Auftakt fern, und `parity` setzt den Buchtitel auf die linken und den Kapiteltitel auf die rechten Seiten, mit den Seitenzahlen am Außenrand. Der Auftakt erhält stattdessen eine Pagina am Fuß, aus einem Fußzeilenelement mit `pages: 'opener'`. Seitenzahlen und Kolumnentitel haben alle 8 pt und hängen 8,2 mm unter der Oberkante, sodass die Ziffern der Pagina auf der Grundlinie der Kolumnentitel stehen.
+
+### 6 · Der Kapitelauftakt
+
+<Excerpt region="opener" />
+
+`{number}` des Designs druckt die Kapitelnummer in der Form, die `numberingTemplate: '{1:I}'` ihr gibt, als römische I. `minHeight` reserviert mindestens acht Zeilen, sodass der Text auf der neunten beginnt, solange der Titel eine oder zwei Zeilen einnimmt, und weiter unten, wenn ein längerer Titel mehr Raum braucht. `breakBefore` mit `parity: 'any'` lässt das Kapitel auf Seite 2 beginnen, seiner zweiten Seite gegenüber; die Vorgabe schickte es auf Seite 3, eine rechte Seite.

@@ -1,0 +1,62 @@
+---
+title: "Kinderbuchkapitel mit Vignetten und Inhaltsangaben"
+summary: "Ein Überschriftenstil eröffnet jedes Kapitel; jede Überschrift nennt in Attributen ihre Vignette und ihre kursive Inhaltsangabe, die der Auftakt malt."
+plain: "Die ersten Seiten einer italienischen Kinderausgabe von Pinocchio. Jedes Kapitel beginnt mit einem eigenen sanft gemalten Bild und einer kurzen Inhaltsangabe dessen, was geschieht."
+description: "Collodis Pinocchio auf Italienisch, mit Postext gesetzt: Jedes Kapitel beginnt unter einer eigenen Vignette, darunter Kapitelzeile und kursive Inhaltsangabe."
+question: "Wie setze ich über jedes Kapitel eines Kinderbuchs eine eigene Vignette und eine kursive Inhaltsangabe?"
+aliases: ["Kinderbuch", "Kapitelbuch", "Vignette", "Kopfvignette", "Schlussvignette", "Kapitelinhalt", "Frontispiz", "Pinocchio", "children's book"]
+pageNotes: { "1": "Die Titelseite, eine linke Seite: ein Aquarell toskanischer Hügel mit Zypressen und einem Bergdorf unter blassblauem Himmel, wo ein alter Mann mit Strohhut einen Eselskarren mit Brennholz zur offenen Werkstatt eines Tischlers führt; darunter LE AVVENTURE DI, „Pinocchio“ in großer brauner Displayschrift, „Storia di un burattino“ kursiv und CARLO COLLODI.", "2": "Kapitel I beginnt unter einer Aquarellvignette, die ins Papier verläuft: der kahle Maestro Ciliegia, die Nase rot wie eine Kirsche, erstarrt mit erhobener Axt über dem Holzscheit auf seiner Hobelbank, zwischen Hobeln, Sägen und Spänen. CAPITOLO I, Collodis zweizeilige Inhaltsangabe zentriert und kursiv, die ersten Absätze und eine holzfarbene Scheibe mit der Pagina zentriert am Fuß.", "3": "Eine volle Seite von Kapitel I unter dem Kolumnentitel LE AVVENTURE DI PINOCCHIO, mit der Paginascheibe außen am Fuß.", "4": "Das Ende von Kapitel I unter dem Kolumnentitel CAPITOLO I, abgeschlossen von zwei roten Kirschen an einem Stiel, zentriert, ohne Legende.", "5": "Kapitel II beginnt unter einer Aquarellvignette von Geppetto mit seiner lockigen gelben Perücke, der Maestro Ciliegia das Holzscheit abnimmt, neben einem roten Topf dampfender Polenta; CAPITOLO II, eine dreizeilige Inhaltsangabe, die ersten Absätze und das Impressum." }
+---
+
+## Was Sie setzen
+
+Die ersten Seiten einer italienischen Kinderausgabe von Collodis *Le avventure di Pinocchio*, gesetzt in Averia Serif Libre zu 13 auf 19 pt auf einer Seite von 190 × 240 mm. Eine Titelseite links steht Kapitel I gegenüber: ein Aquarell der toskanischen Hügel, wo ein Eselskarren Brennholz zur Werkstatt eines Tischlers bringt, über dem Titel in Fredericka the Great. Jedes Kapitel beginnt unter einer Aquarellvignette, die ins Papier verläuft (Maestro Ciliegia mit erhobener Axt über dem sprechenden Holzscheit für Kapitel I, Geppetto mit seiner gelben Perücke, der das Holzscheit nimmt, für Kapitel II), dann folgen die Kapitelzeile und Collodis Inhaltsangabe, zentriert und kursiv. Alle vier Bilder wurden mit Diffusionsmodellen aus einem gemeinsamen Stil-Prompt und der Palette der Seite erzeugt. Kolumnentitel stehen nur auf den Seiten 8 und 9, den beiden ohne Auftakt. Die Seitenzahlen sitzen in holzfarbenen Scheiben, und zwei Kirschen schließen Kapitel I ohne Legende oder Nummer ab.
+
+## Zubereitung
+
+### 1 · Ein Überschriftenstil, eine Vignette pro Überschrift genannt
+
+Den Code für diesen Schritt finden Sie unter [Die kurze Antwort](#die-kurze-antwort). Die `resourceId` eines Bildelements nimmt dieselben Platzhalter an wie ein Design-Text, sodass `'{attr.vignetta}'` die Ressource zeichnet, die die Überschrift nennt, so wie `{attr.summary}` ihre Inhaltsangabe druckt. Beide Kapitel teilen den Stil `capitolo` und nennen ihr Bild in der Zeile der Überschrift: `# Capitolo II {style="capitolo" vignetta="polenta" summary="…"}`. Ein drittes Kapitel braucht eine weitere Ressource und eine weitere Überschrift, keinen weiteren Stil ([Bildelemente](/de/docs/configuration-page-layout#bildelemente)). Die Kapitelzeile wird von der Oberkante des Containers aus platziert, 6 mm unter dem Rahmen der Vignette, und die Inhaltsangabe hängt 5 mm darunter; der Auftakt reserviert Raum bis zur letzten Zeile der Inhaltsangabe. Mit `minHeight` als Untergrenze von 14 Zeilen beginnt der Text von Kapitel I auf derselben Zeile wie der von Kapitel II, dessen Inhaltsangabe eine Zeile länger ist; ohne sie beginnt der Text von Kapitel I 6,7 mm höher ([Spannweite und erweitertes Design](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)).
+
+### 2 · Die Bilder als Bitmap-Ressourcen laden
+
+<Excerpt region="pictures" />
+
+Jedes Bild ist ein JPEG im Ordner `assets/` des Rezepts, mit seiner Pixelgröße angegeben: Das Layout liest nur diese Größen, und der Canvas malt beim Zeichnen der Seite, was `loadImage()` unter der jeweiligen Datei-ID registriert hat. Die Vignetten und die Kirschen wurden auf Weiß erzeugt und dann mit der Papierfarbe `#fffaf0` multipliziert, sodass ihre Ränder wie die Seite drucken und die Bilder keine sichtbare Kante haben. Das Frontispiz ist auf 190:150 zugeschnitten, die Form seines Feldes, sodass das eingepasste Bild das Feld ohne Papierstreifen füllt. Die Landschaft und die Vignetten malen Bildelemente in den Designs, die Kirschen `::resource{id="ciliegie"}` im Markdown.
+
+### 3 · Die Titelseite zum Überschriftenstil machen
+
+<Excerpt region="frontispiece" />
+
+Die Titelseite ist die erste Überschrift des Markdowns, `# Pinocchio {style="frontespizio" kicker="Le avventure di"}`, und ihr Stil malt alles auf der Seite: die Landschaft, 150 mm tief ab der Oberkante, dann die Dachzeile aus dem Attribut, den Titel sowie Untertitel und Autor aus dem Frontmatter. Jedes Element hängt an der Seite, nicht am Satzspiegel, sodass das Bild bis an die Oberkante und beide Seiten des Bogens reicht, während die Überschrift selbst in der einen Spalte des Buchs bleibt. Der leere `footer` entfernt die Paginascheibe, die die Kapitelauftakte drucken, und `pages: 'body'` hält die Kolumnentitel ohnehin von der Seite fern ([Überschriftenstile](/de/docs/configuration-styles#überschriftenstile)).
+
+### 4 · Kolumnentitel auf Textseiten, Seitenzahlen in Scheiben
+
+<Excerpt region="folios" />
+
+`continuation` nummeriert den Auszug ab Buchseite 6, einer linken Seite, sodass die Titelseite Kapitel I gegenübersteht und die erste gedruckte Seitenzahl 7 ist. `pages: 'body'` hält die Kolumnentitel von der Titelseite und beiden Auftakten fern, sodass sie nur auf den Seiten 8 und 9 stehen, der Buchtitel links und der Kapiteltitel rechts ([Textelemente](/de/docs/configuration-page-layout#textelemente)). Die Seitenzahl ist ein Design-Text in einem festen Quadrat von 7,4 mm, dessen Eckenradius die halbe Seitenlänge ist, was einen Kreis ergibt; `verticalAlign: 'middle'` und die im Kommentar berechnete Zeilenhöhe zentrieren die Ziffern darin. Die papierfarbenen Ziffern haben gegenüber dem Holz ein Kontrastverhältnis von 4,98:1. Die gesperrten Beschriftungen brauchen keinen Versatz: Die Sperrung nach dem letzten Buchstaben einer Zeile bleibt beim Zentrieren unberücksichtigt.
+
+### 5 · Das Kapitel mit einer unnummerierten Schlussvignette schließen
+
+<Excerpt region="tailpiece" />
+
+Ein Ressourcentyp druckt sein `captionPrefix` und seine Nummer vor der Legende. Mit leerem Präfix und ohne Legende wird unter den Kirschen nichts gedruckt; mit `captionPrefix: 'Fregio'` druckt dieselbe Ressource *Fregio 1.* unter die Zeichnung und wird 10 mm höher ([Ressourcentypen](/de/docs/configuration-resources#ressourcentypen)). Die `defaultPlacement` des Typs setzt jede Ressource dorthin, wo ihre Zeile `::resource` steht, ein Sechstel der Satzbreite breit und zentriert, sodass das Markdown nach dem letzten Absatz des Kapitels nur `::resource{id="ciliegie"}` braucht. Die anderen Bilder teilen sich den Typ, aber kein `:ref` und kein `::resource` nennt sie, daher werden sie nie platziert oder gezählt.
+
+## Varianten
+
+### Jedes Kapitel auf einer rechten Seite beginnen
+
+Mit `'odd'` wandert Kapitel II auf Seite 11, und Seite 10 bleibt leer; die Titelseite schaltet ihren eigenen Umbruch aus, denn sie erbt den der Ebene und würde sonst nach einer leeren Seite 6 auf Seite 7 wandern.
+
+```diff
+@@ the frontispiece style @@
+   id: 'frontespizio',
++  breakBefore: { enabled: false },
+@@ headings, in config() @@
+-    levels: [{ level: 1, breakBefore: { enabled: true, parity: 'any' } }],
++    levels: [{ level: 1, breakBefore: { enabled: true, parity: 'odd' } }],
+```
+
+## Häufige Fehler
+
+- Im Markdown bindet ein geschütztes Leerzeichen (U+00A0) jeden Dialogstrich Collodis an sein Wort, sodass ein schließender Strich nie eine Zeile eröffnet; zwei weitere halten *di legno* und *in piedi* am Ende ihrer Absätze zusammen. Die Bindungen halten auch in einem Absatz mit Fett- oder Kursivsatz, wie dem mit *ohi* auf Seite 9, der vier hat.

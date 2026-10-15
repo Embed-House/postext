@@ -5,7 +5,7 @@ import { extractToc, getAllDocs, getDocSource } from "./docs";
 import { docPart } from "./docParts";
 import { fragmentId, oldAnchorUrl, resolveOldAnchor } from "./oldAnchors";
 
-const LOCALES = ["en", "es", "ca", "zh", "ja", "ar", "pt", "fr"] as const;
+const LOCALES = ["en", "es", "ca", "zh", "ja", "ar", "pt", "fr", "de"] as const;
 
 /** The pages of the Configuration reference after its entry page (#655). */
 const CONFIGURATION_PAGES = [
@@ -43,7 +43,7 @@ describe("docs table of contents", () => {
       "webmcp",
     ]);
     for (const doc of docs) {
-      expect(Object.keys(doc.locales).sort(), doc.slug).toEqual(["ar", "ca", "en", "es", "fr", "ja", "pt", "zh"]);
+      expect(Object.keys(doc.locales).sort(), doc.slug).toEqual(["ar", "ca", "de", "en", "es", "fr", "ja", "pt", "zh"]);
       expect(doc.locales.en!.order, doc.slug).toBe(doc.locales.es!.order);
       expect(doc.locales.en!.order, doc.slug).toBe(doc.locales.zh!.order);
       expect(doc.locales.zh!.lang, doc.slug).toBe("zh");
@@ -57,6 +57,8 @@ describe("docs table of contents", () => {
       expect(doc.locales.pt!.lang, doc.slug).toBe("pt");
       expect(doc.locales.en!.order, doc.slug).toBe(doc.locales.fr!.order);
       expect(doc.locales.fr!.lang, doc.slug).toBe("fr");
+      expect(doc.locales.en!.order, doc.slug).toBe(doc.locales.de!.order);
+      expect(doc.locales.de!.lang, doc.slug).toBe("de");
     }
   });
 

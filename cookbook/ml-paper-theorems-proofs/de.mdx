@@ -1,0 +1,69 @@
+---
+title: "Paper zum maschinellen Lernen mit Sätzen und Beweisen"
+summary: "Das DPO-Paper aus arXiv neu gesetzt: beschriftete, nummerierte, verlinkte Gleichungen; Kästen für Definition, Lemma, Satz; Beweise mit Quadrat; Harvard-Zitate."
+plain: "Ein bekanntes Paper zum maschinellen Lernen, neu gesetzt aus seiner frei zugänglichen Quelle, mit nummerierten Gleichungen zum Verweisen, Sätzen und Lemmata in Kästen, Beweisen und Autor-Jahr-Zitaten."
+description: "Das DPO-Paper (NeurIPS 2023, CC BY 4.0) gekürzt und neu gesetzt: \\label und \\eqref für Gleichungen, Sätze und Beweise wie mit amsthm, Harvard-Zitate."
+question: "Wie nummeriere ich in einem Paper Gleichungen, formuliere Sätze und Beweise und verweise per Nummer darauf?"
+aliases: ["Satz", "Theorem", "Lemma", "Definition", "Beweis", "QED", "Beweisende", "amsthm", "Gleichungsnummern", "eqref", "label", "Querverweis", "Paper zum maschinellen Lernen", "NeurIPS", "arXiv", "Preprint", "DPO", "natbib", "Autor-Jahr", "Harvard"]
+pageNotes: { "1": "Ein pflaumenfarbenes Band oben auf der Seite trägt einen Fächer heller logistischer Kurven, die Dachzeile „Preprint · Machine learning · Re-set and abridged“, den Titel „Direct Preference Optimization: Your Language Model is Secretly a Reward Model“ in Weiß und die Zeile mit der Tagung; die sechs Autoren und ihre Institutionen folgen auf Weiß, dann das Abstract unter einer pflaumenfarbenen Linie und am Fuß die Zeile mit Quelle und Lizenz.", "3": "Abbildung 1 oben über die ganze Breite: links die RLHF-Pipeline in Ocker, Präferenzdaten, an ein Belohnungsmodell angepasst, und eine Schleife aus Sampling und bestärkendem Lernen mit der LM-Policy; rechts die DPO-Pipeline in Pflaume, Präferenzdaten per Maximum Likelihood direkt zum fertigen LM. Darunter geht Abschnitt 3 mit Gleichung 1 weiter.", "6": "Abschnitt 5 mit Definition 1 und den Lemmata 1 und 2 neben pflaumenfarbenen und grauen Seitenstreifen, Satz 1 auf hellem Pflaumenton und die Beweisskizze mit Gleichung 8.", "9": "Anhang A.1 geht weiter: eine vierzeilige ausgerichtete Formel, in ihrer letzten Zeile mit 10 nummeriert, die Gleichungen 11 bis 13, dann Anhang A.5 mit dem erneut aufgeführten Lemma 1 und dem Beginn seines Beweises." }
+---
+
+## Was Sie setzen
+
+*Direct Preference Optimization* von Rafailov, Sharma, Mitchell, Ermon, Manning und Finn (NeurIPS 2023), gekürzt nach dem arXiv-Quelltext und als zehnseitiger Preprint auf einer Seite von 7 × 10 Zoll gesetzt. Ein pflaumenfarbenes Band trägt den Titel über einem Fächer logistischer Kurven, der Form des Gewichts, das der DPO-Gradient jedem Beispiel gibt. Darunter enthält eine großzügige Spalte in Spectral dreizehn nummerierte Gleichungen, Definition, Lemmata und Satz aus Abschnitt 5 als Kästen mit eingezogenen Labels, eine Beweisskizze und einen vollständigen Beweis, die mit einem Quadrat enden, eine in Code neu gezeichnete Pipeline-Abbildung und zwanzig Werke, zitiert nach Autor und Jahr. Jeder Verweis auf eine Gleichung, eine Aussage oder einen Abschnitt im Text ist ein Link, und jede Nummer stammt aus einem Label, wie in LaTeX.
+
+## Zubereitung
+
+### 1 · Gleichungen und Aussagen beschriften, per Schlüssel darauf verweisen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Seit postext 1.19 führt die Engine die Zähler von LaTeX. Ein `\label{eq:dpo}` in einer abgesetzten Formel nummeriert sie in Lesereihenfolge, eine Nummer für jede beschriftete Zeile eines `align` und keine für eine mit `\notag` markierte Zeile; `resetOn: 'never'` trägt die Zählung von (1) durch den Anhang bis (13), so wie dieses gekürzte Paper neu nummeriert ist. Ein Kasten, geöffnet als `:::callout{type="lemma" #lem:same-policy}`, beginnt mit „**Lemma 2.**“, weil sein Format `numbering: { label: 'Lemma' }` und einen eigenen Zähler hat. Im Text druckt `\eqref{eq:dpo}` (7), `\ref{lem:same-policy}` druckt 2 und `:ref{id="lem:same-policy"}` druckt Lemma 2, jeweils als Link zum Ziel; `Eq.~\eqref{…}` behält das geschützte Leerzeichen von LaTeX. Das erneut aufgeführte Lemma des Anhangs beginnt mit `***:ref{id="lem:same-preference"} Restated.***`, und der Verweis übernimmt das Fett des umgebenden Labels. Abschnitte brauchen keine Hilfe: Ihre Nummern stammen aus den Überschriftenvorlagen, `{startAt=3}` behält die eigene Nummerierung des Papers nach dem gestrichenen Abschnitt 2 bei, und `crossRefs.section` druckt „Section 5“ mit großem Anfangsbuchstaben, wie das Paper.
+
+### 2 · Jeder Umgebung ihren eigenen Kasten geben
+
+<Excerpt region="theorems" />
+
+Jede Umgebung ist ein [Kastenformat](/de/docs/configuration-styles#kastenstile) mit einem einzigen Merkmal: ein grauer Streifen für die Definition, ein pflaumenfarbener Streifen für die Lemmata, ein heller Pflaumenton für den Satz. `box()` legt dieses Aussehen über die Nummerierung aus der kurzen Antwort. `body.italic` setzt die Aussage kursiv, wie der Stil plain von amsthm, und das eingezogene Label bleibt darin fett und aufrecht. Ein Beweis hat gar keinen Kasten: Sein Label ist kursiv und ohne Nummer (`counter: false`), `endMark: '□'` setzt ein Quadrat rechtsbündig in seine letzte Zeile, gezeichnet aus `\square` von TeX, weil Mathematik aktiv ist, und `keepTogether: false` lässt einen langen Beweis auf die nächste Seite weiterlaufen. `snapToGrid: false` hält um jede Aussage denselben Abstand; in einer einzigen Spalte ohne Nachbarn, an dem sich etwas ausrichten müsste, liest sich ein exakter Abstand besser als ein auf das Raster gerundeter.
+
+### 3 · Nach Autor und Jahr aus dem eigenen Literaturverzeichnis des Papers zitieren
+
+<Excerpt region="citations" />
+
+Die Quellen sind BibTeX in einem Block `:::references{format=bibtex}`, neu aufgebaut aus der `.bbl` des Papers mit nur den zwanzig Werken, die der gekürzte Text noch zitiert. Cite Them Right Harvard setzt sie im Text als „(Bong and Rinaldo, 2022)“ und im Verzeichnis als „Ouyang, L. *et al.* (2022)“ und kürzt Autorenlisten ab vier Namen auf den ersten. `@ziegler2020finetuning` druckt im Text die erzählende Form, Ziegler *et al.* (2020). Das Verzeichnis steht dort, wo `:::bibliography` steht, nach Abschnitt 7 und vor dem Anhang, wie im Paper.
+
+### 4 · Den Titel auf ein Band, die Quelle an den Fuß setzen
+
+<Excerpt region="title" />
+
+Der Titel ist die einzige Überschrift der Ebene 1, und ihr Format `paper` zeichnet stattdessen einen Platz aus Designelementen: Das Band läuft oben über die Seite in den Anschnitt, der Titel bricht an der Satzbreite um, und Autoren und Institutionen kommen aus Attributen der Überschrift, mit ¹ ² und * als Zeichen geschrieben. Das Fußzeilenelement mit `pages: 'opener'` druckt Quelle, Lizenz und vorgenommene Änderungen nur auf Seite 1, sodass die erste Seite auch dann sagt, woher der Text stammt, wenn sie allein weitergegeben wird.
+
+### 5 · Die Abbildung in Code neu zeichnen
+
+<Excerpt region="art" />
+
+Abbildung 1 ist als SVG aus den Kästen und Wörtern des Originals gezeichnet. Ihre Beschriftungen nennen Work Sans in `font-family`, und `loadSvg` reicht das Markup durch `inlineSvgFonts` der Engine, das die beiden verwendeten Dateien der Work Sans einbettet; `tex()` schreibt die Beschriftungen `y_w ≻ y_l` als MathJax-Pfade, mit denselben Glyphen wie die Gleichungen. Pfeilspitzen sind gezeichnete Pfade statt SVG-Marker, sodass die Abbildung im PDF ein Vektorbild bleibt.
+
+## Varianten
+
+### Mit Nummern zitieren, wie die NeurIPS-Vorlage
+
+Das Original verwendet die nummerierten Zitate von natbib; IEEE druckt [1] im Text und nummeriert das Verzeichnis in der Reihenfolge der Zitate.
+
+```diff
+-const citations = { style: 'harvard-cite-them-right', link: true,
++const citations = { style: 'ieee', link: true,
+```
+
+### Lemmata und Sätze gemeinsam zählen
+
+Manche Zeitschriften nummerieren alle Aussagen in einer Folge (Lemma 1, Lemma 2, Satz 3), wie es `\newtheorem{lemma}[theorem]` tut. Lassen Sie die Lemmata auf den Zähler der Sätze zeigen.
+
+```diff
+-  { id: 'lemma', numbering: { label: 'Lemma' } }, // counter: 'theorem' would share one sequence
++  { id: 'lemma', numbering: { label: 'Lemma', counter: 'theorem' } },
+```
+
+## Häufige Fehler
+
+- `endMark` zeichnet seine Quadrate (□ ∎ ■) nur dann aus TeX, wenn Mathematik aktiv ist. In einem Dokument ohne `initMathEngine()` wird das Zeichen in der Textschrift des Kastens gesetzt, und Spectral hat wie jede Latin-Datei von Fontsource kein □: Wählen Sie dort ein Zeichen, das die Schrift setzen kann.
+- Der Spaltenausgleich füllt eine Seite, die eine hohe abgesetzte Formel zu kurz lässt, indem er über ihren Überschriften Rasterzeilen hinzufügt. `balancing: { maxLinesPerHeading: 1 }` hält die Überschriften eines Papers nahe an ihren eigenen Abständen; eine solche Seite kann dann ein paar Zeilen früher enden.
+- Eine abgesetzte Formel mit einem `\underbrace`-Label, das breiter ist als die Klammer, wie der Gradient in Abschnitt 4, braucht einen Umbruch mit `aligned`; breiter als die Satzbreite gesetzt, läuft sie rechts über.

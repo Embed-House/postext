@@ -1,0 +1,77 @@
+---
+title: "Ein chinesisches Amtsschreiben nach GB/T 9704"
+summary: "Eine vierseitige Mitteilung auf A4 nach der Landesnorm: 28 × 22 Zeichen 三号, roter Briefkopf, Gliederung 一、（一）1.（1）, Anlage und Pagina „— 1 —“."
+plain: "Eine vierseitige chinesische Mitteilung im Stil einer Behörde. Sie folgt den landesweiten Regeln für solche Schreiben, mit rotem Kopf, nummerierten Abschnitten und Seitenzahlen in fester Form."
+description: "Ein chinesisches Amtsschreiben in Postext nach GB/T 9704—2012: A4, ein Raster von 28 × 22 Zeichen, roter Briefkopf, Gliederung, Anlage, 版记 und Pagina."
+question: "Wie setze ich ein chinesisches Amtsschreiben nach GB/T 9704, mit rotem Briefkopf, Raster und Pagina?"
+aliases: ["Amtsschreiben", "Behördenmitteilung", "公文", "公文格式", "GB/T 9704", "党政机关公文格式", "Dokument mit rotem Kopf", "红头文件", "发文字号", "版记", "三号", "仿宋", "一、（一）1.（1）", "Zeichenraster A4", "Pagina mit Strichen", "Briefkopf", "official document"]
+pageNotes: { "1": "Seite 1 einer Mitteilung des erfundenen 示例市出版协会. Oben rechts ein rot umrandeter Stempel mit 样张, oben links die Exemplarnummer 000001. Über die Seite läuft in großen roten Zeichen der Name des Absenders mit 文件 dahinter, dann das Aktenzeichen 示出协〔2026〕7号 zentriert über einer roten Linie über die ganze Breite und der Titel in zwei zentrierten Zeilen aus kräftiger schwarzer Schrift, die obere Zeile kürzer. Darunter der Empfänger, 各会员单位, der erste Absatz, die erste Überschrift 一、培训时间 und drei Zeilen Text. Die Pagina — 1 — steht rechts unter dem Text.", "2": "Seite 2: Überschriften auf vier Ebenen, 二、培训地点, （一）排版规范, 1.公文格式 und （1）版心与字体, jede auf einer eigenen Zeile und zwei Zeichen eingezogen, über Absätzen mit 28 Zeichen pro Zeile. Am Ende der vorletzten Zeile hängt ein Komma über den rechten Textrand hinaus. Die Pagina — 2 — steht links.", "3": "Seite 3: die letzten Überschriften der Mitteilung, dann die Anlagenzeile 附件：培训日程安排, der Name des Absenders und das Datum nach rechts gerückt, der Vermerk （此件公开发布） und die Pagina — 3 — rechts.", "4": "Seite 4: die Anlage. 附件 oben links, der zentrierte Titel 培训日程安排 und eine linierte Tabelle der drei Kurstage, die Daten jeweils über zwei Zeilen. Am Fuß, zwischen einer dicken, einer dünnen und einer dicken Linie, die Verteilerzeile 抄送 und die ausstellende Stelle mit 2026年9月28日印发. Die Pagina — 4 — links und ganz unten eine kleine Zeile mit den Schriftnamen." }
+---
+
+## Was Sie setzen
+
+Eine Mitteilung eines erfundenen Verlegerverbands in einer erfundenen Stadt, 示例市 („Beispielstadt“), gesetzt, wie eine Behörde in Festlandchina ihre Schreiben nach GB/T 9704—2012 setzt, 《党政机关公文格式》. Sie umfasst vier A4-Seiten mit 28 Zeichen pro Zeile und 22 Zeilen pro Seite. Seite 1 beginnt mit dem Namen des Absenders in Rot, dem Aktenzeichen über einer roten Linie und einem zweizeiligen Titel in 二号. Die Überschriften sind 一、（一）1.（1） nummeriert, jede Ebene in ihrer eigenen Schrift. Unterschrift und Datum stehen rechts, und eine Anlage auf einer eigenen Seite trägt an ihrem Fuß den 版记 zwischen Linien. Die Pagina lautet „— 1 —“, rechts auf ungeraden und links auf geraden Seiten. Jedes Blatt weist im Kopfsteg aus, dass es ein Muster ist. <RecipeLink slug="din-business-letter">Geschäftsbrief nach DIN 5008</RecipeLink> erledigt dieselbe Aufgabe nach einer europäischen Norm.
+
+## Zubereitung
+
+### 1 · Ein in Zellen gezählter Satzspiegel
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). GB/T 9704 legt den Kopfsteg auf 37 mm und den Bundsteg auf 28 mm fest und füllt einen Satzspiegel von 156 × 225 mm mit 22 Zeilen zu 28 Zeichen in 三号. `cjk.grid` übernimmt die Zahlen, wie sie sind: 28 Geviert zu 15,75 pt ergeben 155,6 mm, und 22 Zeilen zu 29 pt ergeben 225,1 mm ([Zeichenraster](/de/docs/configuration-east-asian#zeichenraster)). Das 三号 von Word misst 16 pt, was die Zeile 158 mm lang machte, breiter als der Satzspiegel der Norm; 15,75 pt ist der Wert aus den Tabellen der Setzer. Mit eingeschaltetem Raster sind die Ränder Mindestwerte. Diese lassen 0,02 mm zum Verteilen, sodass der Satzspiegel dort bleibt, wo die Norm ihn hinsetzt. Die Norm nennt 仿宋 für den Text; Fontsource hat keine Fangsong-Schrift, daher steht der Text in der Song von Noto Serif SC (siehe Häufige Fehler).
+
+Jedes Satzzeichen nimmt eine ganze Zelle ein und gibt nichts davon ab, sodass die Zeichen in einer chinesischen Zeile in den Spalten des Rasters stehen, das die Norm zeichnet. Arabische Ziffern sind schmaler als eine Zelle, daher fallen in einer Zeile wie 版心156毫米×225毫米 die Zeichen nach den Ziffern zwischen die Spalten. Fällt ein Komma auf die 29. Zelle, hängt `hangingPunctuation: 'allow'` es in den Rand, statt ein Zeichen in die nächste Zeile zu schieben und den Rest auszutreiben ([Hängende Interpunktion](/de/docs/configuration-east-asian#hängende-satzzeichen)).
+
+<PageShot page={2} crop="0.08,0.683,0.9,0.2" caption="Seite 2: Das Komma nach 各一份 füllt die 28. Zelle; das nach 可自愿报名 hängt in einer 29., jenseits des Satzspiegelrands, und die nächste Zeile beginnt am Rand." />
+
+### 2 · Vier Gliederungsebenen, je eine Zeile
+
+<Excerpt region="levels" />
+
+Die Norm setzt 一、 in 黑体, （一） in 楷体 und 1. sowie （1） in der Textschrift, alle in Textgröße. `{2:一}` setzt die informelle chinesische Zahl in der Schrift von `locale` ([Nummerierung](/de/docs/configuration-page-layout#seitennummerierung)). Mit Größe und Zeilenabstand des Textes und ohne Abstände nimmt eine Überschrift eine Rasterzeile ein, und der Text darunter bleibt ebenfalls im Raster. `firstLineIndent: em(2)` rückt jede Überschrift um zwei Zellen ein, in Geviert des Textes gezählt, und eine Überschrift, die in eine zweite Zeile läuft, beginnt diese am Rand, wie die Norm es will; die Nummer folgt dem Einzug, sodass Inhaltsverzeichnis und PDF-Lesezeichen 一、 ohne vorangestellte Leerzeichen lesen ([Einstellungen pro Ebene](/de/docs/configuration-text#überschreibungen-pro-ebene)).
+
+### 3 · Der Briefkopf, Zeile für Zeile
+
+<Excerpt region="letterhead" />
+
+Der Briefkopf ist das Design der H1, deren Attribute Exemplarnummer, Absender und Aktenzeichen tragen: Die Konfiguration enthält das Briefpapier, das Markdown das Dokument. `lineTop(n)` liefert die Oberkante der Rasterzeile *n*, sodass jedes Element dort steht, wo die Norm es zählt: das Aktenzeichen zwei Leerzeilen unter dem Namen des Absenders, der Titel zwei Leerzeilen unter der roten Linie. Bei 46 pt reicht die Farbe des Namens von 35 mm unter der Oberkante des Satzspiegels bis zum Fuß der Zeile 5, was die Zeilen 6 und 7 frei lässt und das Aktenzeichen auf Zeile 8 setzt; bei 48 pt reichte er in Zeile 6 hinein und schöbe den Rest der Seite eine Zeile tiefer. Das `\\` in der Überschrift bricht den Titel nach 关于举办 um, eine kurze Zeile über einer langen: ein Trapez, eine der beiden Formen, die die Norm erlaubt (die andere ist eine Raute). `minHeight` reserviert 13 Zeilen und `marginBottom` eine weitere, sodass der Empfänger auf Zeile 15 beginnt ([Spannweite und erweitertes Design](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)).
+
+### 4 · Pagina unter dem Satzspiegel
+
+<Excerpt region="folios" />
+
+In der Fußzeile ist die Oberkante des Containers der Fuß des Satzspiegels, sodass `offset.y` vom Text aus nach unten misst ([Kopf- und Fußzeilen](/de/docs/configuration-page-layout#kopf--und-fußzeilen)). Die Striche stehen 7 mm darunter und eine Zelle 四号 vom Außenrand entfernt: `parity` setzt die ungeraden Seitenzahlen rechts und die geraden links. Der Kopfsteg setzt `{subtitle}` aus dem Frontmatter. Diese Zeile und das Impressum unter dem 版记 sind alles, was sich zwischen der englischen und der spanischen Ausgabe ändert.
+
+### 5 · Die Anlage und der 版记
+
+<Excerpt region="annex" />
+
+Die Überschrift der Anlage hat einen eigenen Stil: eine neue Seite, 附件 auf Zeile 1, der Titel auf Zeile 3 und kein Abstand unter den drei Zeilen, die sie reserviert. Die leere Zeile 4 ist der Abstand, den jede eingebundene Ressource über sich hält (`inlineResourceGap`, unter [Layout](/de/docs/configuration-page-layout#layout)), sodass die obere Linie der Tabelle auf Zeile 5 sitzt. Der 版记 gehört zum selben Design und wird auf den beiden Rasterzeilen gezeichnet, die am Fuß des Satzspiegels enden. Seine Elemente haben `reserve: false`, sodass sie dem Raum der Überschrift nichts hinzufügen und die Tabelle nicht an ihnen vorbei nach unten geschoben wird. Die Norm setzt den 版记 auf die letzte Seite, nach den Anlagen; bei einer einseitigen Anlage ist das die Seite der Anlage. Eine längere Anlage bräuchte einen 版记, den eine Überschrift auf ihrer letzten Seite zeichnet.
+
+### 6 · Der Unterschriftenblock
+
+<Excerpt region="styles" />
+
+Eine Mitteilung ohne Siegel setzt den Namen des Absenders zwei Zellen vom rechten Rand eingerückt und das Datum darunter, zwei Zellen weiter rechts beginnend. Ein Datum, das länger ist als der Name, endet stattdessen zwei Zellen vor dem rechten Rand, und der Name rückt nach links, um die Stufe von zwei Zellen zu wahren. Unseres misst 6,9 Geviert, eine Spur kürzer als die 7 des Namens, also begänne es nach dem Buchstaben der Regel zwei Zellen rechts vom Namen und endete 0,14 Geviert vor dem Rand. Wir lesen die Regel nach ihrem Zweck, einem Datum, das nie bis an den Rand läuft, und nehmen den zweiten Fall: Das Datum endet knapp über zwei Zellen vor dem Rand. `indent` setzt beide Zeilen auf ganze Zellen, 17 und 19 Geviert vom Rand ([Absatzformate](/de/docs/configuration-styles#absatzformate)).
+
+## Varianten
+
+### Aufeinandertreffende Satzzeichen stauchen
+
+Paare wie ），und 》（ nehmen anderthalb Zellen statt zwei ein, wie in den meisten Büchern; die Zeichen danach verlassen die Spalten des Rasters.
+
+```diff
+-  punctuationWidth: 'fullwidth', compressAdjacent: false, trimLineStart: false,
++  punctuationWidth: 'fullwidth', compressAdjacent: true, trimLineStart: true,
+```
+
+### Das Raster beim Setzen der Seite zeigen
+
+Der Canvas zeichnet für jede Zelle des Rasters von 28 × 22 ein graues Quadrat, und das PDF lässt es weg, sofern `renderToPdf` nicht `characterGrid: true` erhält.
+
+```diff
+-  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES },
++  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES, show: true },
+```
+
+## Häufige Fehler
+
+- Eine Blocksatzzeile verteilt ihren Überschuss auf die chinesischen Zeichen und jedes Leerzeichen darin, und das Leerzeichen nimmt mehr als seinen Anteil: Auf Seite 2 öffnete sich das in GB/T 15834 fast doppelt so weit wie das in GB/T 9704 darüber. Der Inhalt schreibt beide Nummern mit einem geschützten Leerzeichen (U+00A0), das jede Nummer zusammenhält, sodass der Überschuss zwischen die Zeichen geht.

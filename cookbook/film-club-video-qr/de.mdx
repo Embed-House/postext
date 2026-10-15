@@ -1,0 +1,74 @@
+---
+title: "Ein Filmclubprogramm mit QR-Codes auf den Vorschaubildern"
+summary: "Jeder Film ist eine Videoressource, deren Vorschaubild mit Abspielzeichen und einem QR-Code für YouTube gedruckt wird; im PDF ist das Bild auch ein Link."
+plain: "Ein sechsseitiges Programm für die Herbstsaison eines Filmclubs mit vier Kurzfilmen. Jede Filmseite zeigt ein Bild mit einem Code, den ein Handy scannen kann, um den Film anzusehen, und im PDF lässt sich das Bild anklicken."
+description: "Ein Filmclubprogramm in Postext: vier YouTube-Filme als Videoressourcen, gedruckt als Titelkarten mit Abspielzeichen, QR-Code von 20 mm und PDF-Link."
+question: "Wie drucke ich ein Video in ein Programm, sodass man es von der Seite scannen oder im PDF anklicken kann?"
+aliases: ["Video im Druck", "QR-Code", "YouTube", "Abspielschaltfläche", "Vorschaubild", "Filmprogramm", "Filmclub", "Kino", "zum Ansehen scannen", "Videolink im PDF", "vídeo"]
+pageNotes: { "1": "Der Umschlag: ein bildschirmschwarzes Band über der oberen Hälfte mit der Dachzeile „Lumen Film Club · Autumn 2026“ in Gold, „OPEN MOVIES“ in hohen schmalen Versalien, einem kursiven Vorspann, vier Chips in den Farben der Filme mit den Daten 6, 13, 20 und 27 Nov und der Zeile mit dem Spielort; zwei Absätze Einleitung folgen auf cremefarbenem Papier und zitieren „Film 1“ bis „Film 4“.", "2": "Vorstellung 1, „Elephants Dream“: die Dachzeile in Rot, der Titel in schmalen Versalien und eine Zeile mit den Mitwirkenden, dann die Titelkarte, Kupferzahnräder und Kabel auf tiefem Petrol mit dem Namen des Films, ein rotes abgerundetes Abspielzeichen in der Ecke oben links und ein QR-Code auf einer cremefarbenen Platte unten rechts; darunter die Bildunterschrift „Film 1“ und die Kurzadresse „youtu.be/TLkA0RELQ1g“ sowie zwei Absätze über den Film.", "3": "Vorstellung 2, „Big Buck Bunny“: eine Titelkarte mit einer pfirsichfarbenen Sonne über grünen Hügeln und Schmetterlingen, dasselbe Abspielzeichen und derselbe QR-Code, die Bildunterschrift „Film 2“ und zwei Absätze.", "4": "Vorstellung 3, „Tears of Steel“: eine Titelkarte mit einer dunklen Skyline, einem Kirchturm und einem beringten Mond in Gold, mit Abspielzeichen, QR-Code, der Bildunterschrift „Film 3“ und zwei Absätzen.", "5": "Vorstellung 4, „Spring“: eine Titelkarte mit nebligen blauen Bergrücken, dunklen Tannen und einem roten Licht, mit Abspielzeichen, QR-Code, der Bildunterschrift „Film 4“ und zwei Absätzen.", "6": "Praktische Hinweise: Zeiten und Preise, warum der Club diese Filme zeigen darf, wie man sie zu Hause ansieht, die Mitwirkenden der vier Filme mit ihren Lizenzen und das Impressum." }
+---
+
+## Was Sie setzen
+
+Das Herbstprogramm des Lumen Film Club, ein Heft von 165 × 235 mm auf cremefarbenem Papier: ein bildschirmschwarzes Umschlagband mit dem Titel der Saison in Big Shoulders Display, dann eine Seite für jeden von vier offenen Filmen der Blender Foundation. Jede Filmseite beginnt mit einer roten Dachzeile für die Vorstellung, dem Titel in schmalen Versalien und einer Zeile mit den Mitwirkenden, dann folgt eine Titelkarte über die volle Satzbreite von 125 mm. Ein rotes Abspielzeichen sitzt in der Ecke oben links der Karte, ein QR-Code von 20 mm unten rechts. Wer einen Freitag verpasst hat, richtet ein Handy auf den Code, und der Film öffnet sich auf YouTube; im PDF ist die ganze Karte der Link. Die Kurzadresse unter jeder Karte ist für ein Handy da, das den Code nicht liest.
+
+## Zubereitung
+
+### 1 · Jeden Film zu einer Videoressource machen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine Videoressource wird wie eine Abbildung platziert, beschriftet und nummeriert, und der Druck zeigt sie als ihr Vorschaubild mit zwei Überlagerungen. Abspielzeichen und Code gehen in gegenüberliegende Ecken, sodass sie sich nie berühren, und das Vorschaubild lässt mit 70 mm Höhe Platz für beide. Der Code misst 20 mm mit einer Ruhezone von zwei Modulen: `https://youtu.be/` plus eine elfstellige ID ergibt 29 Module auf Stufe Q, jedes Modul misst also 0,61 mm, etwa das Doppelte dessen, was eine Handykamera braucht. Q ist die höchste Stufe, die bei dieser Länge 29 Module behält (die Engine hebt M von selbst darauf an); H bräuchte 33 und verkleinerte die Module auf 0,54 mm. Der eingebaute Typ `video` würde *Video 1.1* drucken; in *Film* umbenannt und mit `{n}` über das ganze Dokument gezählt, nummeriert er die vier Vorstellungen der Saison als *Film 1* bis *Film 4*, und die Zitate auf dem Umschlag drucken dieselben Wörter.
+
+### 2 · Die Adresse kurz halten und die Engine sie erweitern lassen
+
+<Excerpt region="films" />
+
+Die Adresse in jedem Eintrag ist die unter der Karte gedruckte, `youtu.be/TLkA0RELQ1g`, die ein Leser eintippen kann. `parseVideoUrl` liest jede Form von YouTube oder Vimeo, und `videoWatchUrl` schreibt aus dem Gelesenen die kanonische Adresse: QR-Code und PDF-Link enthalten beide `https://youtu.be/<id>`. Ein Tippfehler, der keine gültige ID übrig lässt, lässt `parseVideoUrl` `undefined` zurückgeben, und der Pen hält vor dem Build an; ein kaputter Link erreicht also nie die Druckerei.
+
+### 3 · Eine Titelkarte als Vorschaubild zeichnen
+
+<Excerpt region="art" />
+
+In den meisten Projekten ist das Vorschaubild ein Bild aus dem Film: Die Sandbox holt es, wenn Sie die Adresse eingeben, und im Code listet `youtubePosterUrls(id)` die Vorschaubilder von YouTube vom größten (1280 × 720) abwärts. Die Bilder der Plattformen gehören zu den Filmen und deren Lizenzen, und ein gedrucktes Programm kann eigene Titelkarten verwenden; jeder Film erhält hier daher eine auf einem Canvas in seiner Farbe gezeichnete, mit dem Motiv, Titel, Jahr und Regisseur des Films. Die Karte hält die Ecken oben links und unten rechts für die Überlagerungen frei. Ein Canvas zeichnet jede Karte und setzt ihre Schrift in den Schriften des Hefts, die die Seite bis dahin geladen hat. Die Karte misst 1600 × 900 Pixel, das 16:9 der Filme, und `video.poster` gibt diese Größe an: Bei der Satzbreite von 125 mm wird sie mit 325 dpi gedruckt. Ein Video ohne Vorschaubild erscheint als dunkler Kasten in 16:9 mit demselben Zeichen und Code, und der Build warnt davor.
+
+### 4 · Das Vorschaubild unter den Auftakt setzen
+
+<Excerpt region="furniture" />
+
+Jeder Film ist eine Überschrift der ersten Ebene, deren Auftakt die Dachzeile der Vorstellung, den Titel und die Zeile mit den Mitwirkenden stapelt, alle drei aus Überschriftenattributen. `::resource` setzt das Vorschaubild mit `position: 'here'` direkt darunter, sodass jede Filmseite dieselbe Reihenfolge hat. Der Umschlag ist ein Überschriftenformat, dessen Band, Titel und Chips Gestaltungselemente sind; die vier Chips nehmen die Farben der Filme aus der Palette, wie die Titelkarten.
+
+### 5 · Eine Palette für Seiten und Karten
+
+<Excerpt region="palette" />
+
+Textfarbe, Rot und Creme gehören dem Heft; die vier Filmfarben (benannt nach den Blender-Projekten Orange, Peach und Mango, dazu Spring) färben sowohl die Chips auf dem Umschlag als auch die Karten. Das Abspielzeichen hat dasselbe Rot wie die Dachzeilen, und die QR-Platte ist das Creme der Seite mit Modulen in der Textfarbe: ein dunkler Code auf heller Platte, der Kontrast, den jede Lese-App erwartet.
+
+## Varianten
+
+### Das eigene Bild des Films drucken
+
+Holen Sie statt einer gezeichneten Karte das größte Vorschaubild von YouTube, wenn Lizenz des Films und Ihr Host das erlauben, und geben Sie die Größe dieses Bildes an.
+
+```diff
+-for (const f of FILMS) await titleCard(f); // after the fonts: the cards set type too
++for (const f of FILMS) { // 1280 × 720, maxresdefault.jpg, the first of youtubePosterUrls
++  await loadImage(`${f.id}.png`, youtubePosterUrls(parseVideoUrl(f.address).id)[0]);
++}
+```
+
+### Die Filme in der HTML-Ausgabe abspielen
+
+`renderToHtml` setzt jedes Video als datenschutzfreundlichen Player von YouTube, und ein EPUB zeigt das mit dem Film verlinkte Vorschaubild; `videoStyle.html: 'poster'` behält die gedruckte Karte auch am Bildschirm. Siehe [Videos](/de/docs/document-format#videos) und [Videoformat](/de/docs/configuration-resources#videostil).
+
+### Ein größeres Abspielzeichen zentrieren
+
+Ein Zeichen in der Mitte der Karte wird quer durch den Raum als Videoplayer erkannt; die Karten halten ihr mittleres Band frei von Schrift, sodass es nur das Motiv verdeckt.
+
+```diff
+-  playMark: { shape: 'rounded', position: 'top-left', size: mm(8), inset: mm(4),
++  playMark: { shape: 'rounded', position: 'center', size: mm(14), inset: mm(4),
+```
+
+## Häufige Fehler
+
+- Die Engine begrenzt den Code auf 45 % der kürzeren Seite des Vorschaubilds und das Abspielzeichen auf 40 %. Auf einem kleinen Vorschaubild wird ein Code von 20 mm kleiner und seine Module mit ihm: Ein Code von 20 mm braucht ein Vorschaubild von mindestens 45 mm Höhe.
+- Zwei Überlagerungen mit derselben Position verdecken einander. Geben Sie Abspielzeichen und Code verschiedene Ecken, und zeichnen Sie das Vorschaubild mit diesen Ecken frei.

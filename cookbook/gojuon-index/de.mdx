@@ -1,0 +1,61 @@
+---
+title: "Ein japanisches Register in Gojūon-Folge, nach Lesung"
+summary: "Ein Kapitel über japanische Satzbegriffe mit Register: Jede Marke gibt ihre Lesung per Furigana oder yomi an, die Einträge stehen unter あ行, か行, さ行 nach JIS."
+plain: "Ein kurzes Kapitel, das die Wörter japanischer Setzer erklärt, mit einem Register am Ende. Jedes Registerwort trägt seine Aussprache, und Postext sortiert damit das Register in japanischer Kana-Folge, unter den Zeilenköpfen あ行, か行 usw."
+description: "Ein japanisches Register in Postext: :index-Marken mit Lesungen per yomi oder Furigana, Zeilenköpfe mit groupBy 'gojuon', Folge nach JIS X 4061, → und も見よ."
+question: "Wie sortiere ich ein japanisches Register nach den Lesungen in Gojūon-Reihenfolge?"
+aliases: ["japanisches Register", "索引", "五十音順", "gojūon", "gojuon", "あ行 か行", "yomi", "読み", "Lesung", "Lesung per Furigana", "JIS X 4061", "Kana-Reihenfolge", "見よ", "も見よ", "siehe auch", "indexReadingMissing", "組版用語", "Glossar des Schriftsatzes", "Japanese index"]
+pageNotes: { "1": "Seite 9, der Kapitelauftakt: 第1章 in kleiner zinnoberroter Gothic, der Titel 紙面を呼ぶ言葉 fett, eine kurze zinnoberrote Linie, ein einleitender Absatz und Abschnitt 1.1 unter einer dreizeiligen Überschrift. Die Begriffe 版面, 天, 地, 小口 und 柱 tragen bei ihrer ersten Nennung kleine Kana-Lesungen.", "3": "Seite 11, das Register: auf einem blassen Band 五十音順 in Zinnoberrot und der Titel 索引; darunter zwei Spalten mit Einträgen unter zinnoberroten Köpfen D, J, か行, さ行, た行, な行, は行, ま行, や行, ら行 und わ行, jeder Eintrag mit seiner Seite nach einem ideografischen Leerzeichen, die Hauptstelle fett, und Verweise wie 級　10　→歯も見よ und 振り仮名　→ルビ." }
+---
+
+## Was Sie setzen
+
+Ein Kapitel eines erfundenen Handbuchs des japanischen Schriftsatzes, 組版の言葉 (Die Wörter des Schriftsatzes), und sein Register. Das Kapitel erklärt die Namen der Teile einer Seite, der Schriftgrade und der Regeln für Satzzeichen, auf einer A5-Seite mit 36 Zeichen auf 28 Zeilen; jeder Begriff ist dort für das Register markiert, wo er erklärt wird. Das Register ist das eigentliche Thema: Das Japanische kennt keine alphabetische Ordnung für Kanji, also ordnet ein Register jeden Eintrag nach seiner Lesung in Kana ein, in der Reihenfolge der Gojūon-Tafel (五十音), unter den Zeilenköpfen あ行, か行, さ行. Ein Begriff mit Furigana gibt seine Lesung von selbst an; jeder andere Begriff mit Kanji nennt sie in einem Attribut `yomi`. <RecipeLink slug="chinese-name-index">Das chinesische Namensregister</RecipeLink> sortiert chinesische Namen stattdessen nach Pinyin und nach Strichen.
+
+## Zubereitung
+
+### 1 · Eine Lesung für jeden Begriff mit Kanji
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). Im Text setzt `:index[{版面|はん|めん}]{main}` 版面 mit はんめん darüber und ordnet den Eintrag als はんめん ein; `:index[明朝体]{yomi="みんちょうたい" main}` setzt keine Lesung und ordnet ihn als みんちょうたい ein. Begriffe in Kana, ノンブル oder のど, und lateinische Begriffe, DTP oder JIS X 4051, brauchen nichts ([Registermarken](/de/docs/document-format#registermarken)). Die Lesung bestimmt nur die Reihenfolge: Der Eintrag wird gedruckt, wie er geschrieben ist. Lesungen von Kanji lassen sich nicht erraten, denn 天 ist hier てん und anderswo あめ, also versucht es die Engine gar nicht.
+
+### 2 · JIS-Reihenfolge und Zeilenköpfe
+
+`groupBy: 'gojuon'` ist das, was `'auto'` für `locale: 'ja'` wählt. Die Einträge werden nach JIS X 4061 sortiert: Katakana wie Hiragana, kleine Kana wie große, ein stimmhaftes Kana direkt nach seinem stimmlosen, ー wie der Vokal davor. So steht 級 (きゅう) vor 行取り (ぎょうどり) und ゴシック体 (ごしっくたい) nach 小口 (こぐち). Lateinische Begriffe kommen zuerst, unter ihren Buchstaben, wie JIS sie ordnet; Symbole und Ziffern kämen davor ([Register](/de/docs/configuration-notes-references#register)).
+
+<PageShot page={3} crop="0.08,0.29,0.84,0.6" caption="Seite 11: lateinische Begriffe unter D und J, dann die Kana-Zeilen か行 bis わ行, jeder Eintrag nach seiner Lesung." />
+
+### 3 · → und も見よ
+
+Ein Siehe-Verweis ist eine Marke mit `see`, `:index{term="振り仮名" yomi="ふりがな" see="ルビ"}`, und wird als 振り仮名　→ルビ gedruckt. Ein Siehe-auch-Verweis verwendet `seealso` und setzt die Ziele vor も見よ, 級　10　→歯も見よ, wie japanische Register es formulieren. `see: { italic: false }` hält die Bezeichnungen aufrecht, da eine japanische Schrift keine Kursive hat. Das ideografische Leerzeichen nach jedem Begriff und das 、 zwischen den Seiten kommen aus `separator` und `locatorSeparator`.
+
+### 4 · Das Register in zwei Spalten
+
+<Excerpt region="opener" />
+
+Die Überschrift des Registers ist ein Überschriftenstil mit `span: 'page'` und einem zweispaltigen `layout`: Sein Design, ein blasses Band mit dem Titel, läuft über die ganze Seitenbreite, und `:::index` fließt darunter in zwei Spalten. Die Zeilenköpfe stehen in der zinnoberroten Gothic, die Einträge in der Mincho des Textes zu 8,5 pt auf einer Zeile von 14 pt.
+
+## Varianten
+
+### Köpfe nach dem ersten Kana
+
+`'kana'` überschreibt jede Gruppe mit dem ersten Kana des Eintrags, wie Wörterbücher und lange Namensregister es tun: か, き, く statt eines einzigen か行.
+
+```diff
+-  groupBy: 'gojuon', // what 'auto' picks in a 'ja' document: heads あ行 か行 さ行 …
++  groupBy: 'kana', // heads か き く け こ…
+```
+
+### Eine Lesung ohne Furigana im Text
+
+Um die erste Nennung eines Begriffs schlicht zu lassen und trotzdem seine Lesung anzugeben, verschieben Sie die Lesung nach `yomi`.
+
+```diff
+-ページのうち、本文が組まれる範囲を:index[{版面|はん|めん}]{main}という。
++ページのうち、本文が組まれる範囲を:index[版面]{yomi="はんめん" main}という。
+```
+
+## Häufige Fehler
+
+- Ein Begriff mit Kanji und ohne Lesung löst `indexReadingMissing` aus. Ohne sein `yomi` rutschte 明朝体 ans Ende des Registers, hinter わ行, ohne Kopf, und der Build warnte, der Eintrag „has a kanji and no reading“.
+- `:ruby[…]` innerhalb von `:index[…]` braucht maskierte Klammern, denn die Marke endet an der ersten `]`; schreiben Sie die Kurzform, `{版面|はん|めん}`.
+- Eine Ruby-Lesung zählt nur, wenn sie jedes Kanji des Begriffs abdeckt: `:index[行{取|ど}り]` lässt 行 ohne Lesung und warnt. `{行取|ぎょう|ど}り` ergibt ぎょうどり.

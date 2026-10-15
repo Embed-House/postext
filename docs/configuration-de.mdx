@@ -1,0 +1,103 @@
+{/* docs/configuration-en.mdx */}
+
+export const metadata = {
+  title: 'Konfiguration von Postext',
+  sidebarTitle: 'Konfiguration',
+  description: 'Was eine Postext-Konfiguration ist und auf welcher der neun Seiten der Referenz jede Gruppe von Einstellungen erklärt wird',
+  lang: 'de',
+  lastUpdated: '2026-10-10',
+  readingTime: '2 min',
+  order: 3,
+  plainSummary: "Diese Seite eröffnet die Referenz aller Einstellungen, die das Aussehen Ihrer Seiten bestimmen. Eine einzige Gruppe von Einstellungen enthält alle Entscheidungen: Seitenformat, Spaltenzahl, Schriften, Schriftgröße, Überschriften, Kästen, Farben und mehr. Sie schreiben nur die Einstellungen auf, die Sie ändern wollen, denn jede beginnt mit einem sinnvollen Wert. Die Referenz ist auf neun Seiten verteilt. Die Liste auf dieser Seite verlinkt jeden Abschnitt, springen Sie also direkt zu dem Teil, den Sie brauchen.",
+};
+
+# Konfiguration
+
+**Jede Layout-Entscheidung in Postext wird von einem einzigen Konfigurationsobjekt gesteuert.**
+
+`PostextConfig` legt die Seitenmaße, den Spaltenaufbau, die Typografie des Fließtexts, die Gestaltung der Überschriften, die Sprache des Dokuments (`locale`) und mehr fest. Jede Eigenschaft ist optional – Postext bringt sinnvolle Voreinstellungen mit, die sich an der klassischen Buchtypografie orientieren. Sie geben nur an, was Sie ändern wollen.
+
+```ts
+import { buildDocument } from 'postext';
+
+const document = buildDocument(content, {
+  page: { sizePreset: '21x28', dpi: 300 },
+  layout: { layoutType: 'double', gutterWidth: { value: 0.5, unit: 'cm' } },
+  bodyText: { fontFamily: 'EB Garamond', fontSize: { value: 9, unit: 'pt' } }, // 9 pt overrides the 8 pt default
+  headings: { fontFamily: 'Open Sans' },
+});
+```
+
+Einen Überblick darüber, wie die Engine diese Konfiguration verarbeitet, gibt die Seite [Architektur](/de/docs/architecture).
+
+
+## Übersicht
+
+Die Referenz ist auf neun Seiten verteilt. Jede Gruppe unten ist eine Seite, gefolgt von den Abschnitten, die sie enthält.
+
+**[Seite und Layout](/de/docs/configuration-page-layout)**
+
+- [Seite](/de/docs/configuration-page-layout#seite) – Format, Ränder, Grundlinienraster, Schnittmarken, [Bindung](/de/docs/configuration-page-layout#bindung).
+- [Layout](/de/docs/configuration-page-layout#layout) – Spaltenzahl, Spaltenabstände, Linien, [vertikale Schrift](/de/docs/configuration-page-layout#vertikale-schrift).
+- [Kopf- und Fußzeilen](/de/docs/configuration-page-layout#kopf--und-fußzeilen) – Text- und Linienelemente je Seite mit Platzhaltern, Seitenparität und Ausrichtung.
+
+**[Text und Überschriften](/de/docs/configuration-text)**
+
+- [Fließtext](/de/docs/configuration-text#fließtext) – Typografie, Silbentrennung, Tabulatoren, Waisen und Witwen.
+- [Dokumentsprache](/de/docs/configuration-text#dokumentsprache) – das oberste `locale`: Rückfall für die Silbentrennung, eingebaute Ressourcentypen und die Fortsetzungstexte von Tabellen und geteilten Kästen, die Sprache, die in ein barrierefreies PDF eingetragen wird; die [Ziffern](/de/docs/configuration-text#ziffern-des-dokuments) (`numerals`) und die [Schreibrichtung](/de/docs/configuration-text#schreibrichtung) (`direction`), die daraus folgen; und die [Sprachen und Schriftsysteme](/de/docs/configuration-text#sprachen-und-schriftsysteme), die Postext setzt. Der Leitfaden für Bücher von rechts nach links ist [Arabischer Satz](/de/docs/arabic-layout).
+- [Überschriften](/de/docs/configuration-text#überschriften) – gemeinsame Voreinstellungen und eigene Werte für H1–H6.
+- [Aufzählungen](/de/docs/configuration-text#aufzählungen) und [Nummerierte Listen](/de/docs/configuration-text#nummerierte-listen) – Aufzählungszeichen, Nummerierung, Verschachtelung.
+- [Mathematik](/de/docs/configuration-text#mathematik) – LaTeX-Darstellung, Skalierung, Farbe, Ränder.
+
+**[Anmerkungen und Verweise](/de/docs/configuration-notes-references)**
+
+- [Fußnoten](/de/docs/configuration-notes-references#fußnoten) – `footnotes`: wohin die mit `[^id]` zitierten Anmerkungen kommen, wie sie nummeriert werden und wie sie aussehen.
+- [Zeilennummern](/de/docs/configuration-notes-references#zeilennummern) – `lineNumbers`: die Nummer jeder fünften Vers- oder Textzeile im Rand; was gezählt wird, wo die Zählung neu beginnt, auf welcher Seite die Nummern stehen.
+- [Querverweise](/de/docs/configuration-notes-references#querverweise) – `crossRefs`: die Wörter, die um die Nummer oder die Seite eines `:ref` gedruckt werden, und seine Standardgestaltung.
+- [Zitationen](/de/docs/configuration-notes-references#zitationen) – `citations`: der Zitierstil und das Aussehen der Zitate und des Literaturverzeichnisses.
+- [Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis) – was `:::toc` druckt: Typografie der Einträge, Füllzeichen, Seitenzahlen, Autorenzeilen, Zeilen für Teile.
+- [Register](/de/docs/configuration-notes-references#register) – was `:::index` druckt: Typografie der Einträge, Einzüge, Trennzeichen und Bereiche der Seitenzahlen, Buchstabengruppen, Sortiersprache.
+
+**[Ostasiatische Typografie](/de/docs/configuration-east-asian)**
+
+- [Ostasiatische Typografie](/de/docs/configuration-east-asian#ostasiatische-typografie) – `cjk`: die regionalen Konventionen und der Zeilenumbruch von chinesischem, japanischem und koreanischem Text, wie ihre Zeilen im Blocksatz ausgetrieben werden, Breite und Überhang der Satzzeichen, der Abstand zwischen Han- und lateinischen Zeichen, das Zeichenraster, aufrechte Zahlen im vertikalen Text sowie Betonungszeichen, Ruby, Warichu-Anmerkungen und Kanbun-Zeichen. Die Leitfäden dazu sind [Chinesischer Satz](/de/docs/chinese-layout) und [Japanischer Satz](/de/docs/japanese-layout).
+
+**[Ressourcen und Tabellen](/de/docs/configuration-resources)**
+
+- [Ressourcentypen](/de/docs/configuration-resources#ressourcentypen) – typisierte Nummerierung für Abbildungen, Tabellen und eigene Arten.
+- [Tabellenstil](/de/docs/configuration-resources#tabellenstil) (mit [benannten Tabellenstilen](/de/docs/configuration-resources#benannte-tabellenstile)) und [Legendenstil](/de/docs/configuration-resources#legendenstil) – Typografie und Ausstattung von Tabellenressourcen und ihren Legenden.
+- [Diagrammstil](/de/docs/configuration-resources#diagrammstil) – einfarbige Umfärbung eingebetteter SVG-Diagramme für den Druck mit Sonderfarben.
+- [Videostil](/de/docs/configuration-resources#videostil) – `videoStyle`: das Abspielzeichen und der QR-Code, die über das Vorschaubild eines Videos gedruckt werden, und was seine Player im HTML-Betrachter und im EPUB bieten.
+
+**[Stile und Teile](/de/docs/configuration-styles)**
+
+- [Absatzformate](/de/docs/configuration-styles#absatzformate) – benannte Formate für Container `:::paragraphs`: Literaturverzeichnisse, Glossare, Anmerkungen.
+- [Chip-Stile](/de/docs/configuration-styles#chip-stile) – `chipStyles`: benannte Formate für das Inline-Element `:chip[…]`: der Kasten einer Wortbank, eine Taste, ein Schlagwort.
+- [Code-Listings](/de/docs/configuration-styles#code-listings) – `codeStyle`: Schrift, Kasten, Tabulatorbreite, lange Zeilen, Zeilennummern und Token-Farben von Listings mit ```` ``` ````, die Syntaxhervorhebung mit ihrem Highlighter-Hook und Inline-Code in einer Codeschrift.
+- [Kastenstile](/de/docs/configuration-styles#kastenstile) – umrahmte Hinweise, Tipps und Lernziele für Container `:::callout`.
+- [Teile](/de/docs/configuration-styles#teile) – Teiltitelseiten für Container `:::part`: Seitenparität, Textbereich, Gestaltung des Auftakts, Typografie des Texts.
+- [Überschriftenstile](/de/docs/configuration-styles#überschriftenstile) – benannte Formate für Überschriften mit `{style="…"}`: unnummerierte Kapitel, Titelei mit eigenen Kolumnentiteln, Geometrie und Farbpalette.
+
+**[Comic-Einstellungen](/de/docs/configuration-comics)**
+
+- [Comics](/de/docs/configuration-comics#comics) – `comics`: Rahmen und Zwischenräume von Comicseiten, Panelstile, Lettering, Sprechblasenstile und die Figuren. Der Leitfaden ist [Comics](/de/docs/comics).
+
+**[Schriften, Farben und Ausgabe](/de/docs/configuration-fonts-colors-viewers)**
+
+- [Einheiten und Farben](/de/docs/configuration-fonts-colors-viewers#einheiten-und-farben) + [Farbpalette](/de/docs/configuration-fonts-colors-viewers#farbpalette) – `Dimension`, `ColorValue`, benannte Farben.
+- [Eigene Schriften](/de/docs/configuration-fonts-colors-viewers#eigene-schriften) – vom Benutzer hochgeladene Schriftfamilien neben Google Fonts deklarieren.
+- [HTML-Betrachter](/de/docs/configuration-fonts-colors-viewers#html-betrachter) – Zielbreite der Spalte und Zeilenumbruch für das HTML-Backend.
+- [PDF-Erzeugung (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#pdf-erzeugung-konfiguration) – Lesezeichen, barrierefreie (getaggte) Ausgabe, erzwungener Farbraum für das PDF-Backend.
+- [Druckvorstufe (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#druckvorstufe-konfiguration) – `print`: PDF/X-1a und PDF/X-4, die ICC-Ausgabeprofile, Schwarz (Grautöne nur in K, Überdrucken, Tiefschwarz), in CMYK angelegte Farben, der Preflight und die Druckvorschau.
+- [Kontrastprüfung (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#kontrastprüfung-konfiguration) – `contrast`: Text gegen seinen Untergrund nach WCAG AA oder AAA, am Bildschirm und auf dem Papier des Ausgabeprofils, sowie negativer Text, der für die Druckmaschine zu fein ist.
+- [Folio-Betrachter (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#folio-betrachter-konfiguration) – Papiersorte, Bindung, Oberfläche und Licht des 3D-Buchbetrachters.
+- [Debug](/de/docs/configuration-fonts-colors-viewers#debug) – visuelle Überlagerungen und Warnungen beim Schreiben für den Editor.
+
+**[Programmatische Nutzung](/de/docs/configuration-programmatic-usage)**
+
+- [Programmatische Nutzung](/de/docs/configuration-programmatic-usage#programmatische-nutzung) – `buildDocument`, die Warnungen, die es meldet, Resolver, Caches.
+- [Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen) – Builds außerhalb des Hauptthreads mit Abbruch.
+- [Den HTML-Betrachter einbinden](/de/docs/configuration-programmatic-usage#den-html-betrachter-einbinden) und [PDFs erzeugen](/de/docs/configuration-programmatic-usage#pdfs-erzeugen) – Anleitungen von Anfang bis Ende.
+- [Ein 3D-Buch (`postext-folio`)](/de/docs/configuration-programmatic-usage#ein-3d-buch-postext-folio) – das gesetzte Dokument als gedrucktes Buch, das aufgeschlagen auf einem Tisch liegt, mit Blättern, die der Leser umblättert.
+- [EPUB-Bücher](/de/docs/configuration-programmatic-usage#epub-bücher-postext-epub) – EPUB-3-Dateien mit festem Layout und umfließend aus demselben Layout, und ihre Prüfung mit EPUBCheck.
+- [Pakete (Dateien im Format `.postext`)](/de/docs/configuration-programmatic-usage#pakete-dateien-im-format-postext) – ein ganzes Buch in einer Datei: `.postext`-Archive aus Code erstellen, öffnen und bauen.

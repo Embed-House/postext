@@ -1,0 +1,68 @@
+---
+title: "Eine Pinyin-Fibel: Lesungen über jedem Zeichen"
+summary: "Mono-Ruby in einer Hongkonger Fibel: {人之初|rén zhī chū} zentriert eine Pinyin-Silbe über jedem Zeichen, in der Andika, in einem Zeilenzwischenraum von 28 pt."
+plain: "Seiten aus einer Lesefibel für Kinder in Hongkong. Sie zeigen, wie man die Aussprache in lateinischen Buchstaben über jedes chinesische Schriftzeichen druckt, mit Kästchen zum Schreibenüben."
+description: "Eine chinesische Lesefibel, gesetzt mit Postext: eine Pinyin-Silbe über jedem Zeichen in Kai von 26 pt, Titel mit Lesungen, Schreibkästchen und der ganze Code."
+question: "Wie drucke ich Pinyin über jedes Zeichen eines chinesischen Textes, wie es eine Lesefibel tut?"
+aliases: ["Pinyin", "注音版", "Lesefibel", "Fibel", "chinesische Fibel", "Ruby", "三字經", "Drei-Zeichen-Klassiker", "Three Character Classic", "田字格", "Schreibkästchen", "first reader"]
+pageNotes: { "1": "Lektion eins, 人之初: ein blassgrünes Band mit einem roten Abzeichen 第一課, einem Keimling und dem Titel mit seinem Pinyin rén zhī chū; vier Verspaare des Drei-Zeichen-Klassikers mit einer Pinyin-Silbe über jedem Zeichen; sechs Schreibkästchen mit 人之本不相以; ein Hinweis für Familien.", "2": "Lektion zwei, 昔孟母, über die Geschichte der Mutter des Menzius: dieselbe Seite mit einem Webschiffchen, das die Kettfäden kreuzt, die Kästchen mit 子母山五方名 und ein Hinweis zu Menzius und Dou Yanshan.", "3": "Lektion drei, 養不教: ein Pinsel, der einen Strich in ein Schreibkästchen setzt, vier Verspaare, die Kästchen mit 父師學幼老何 und ein Hinweis zum Ton von bù.", "4": "Lektion vier, 玉不琢: eine geschnitzte Jadescheibe an einer roten Schnur, vier Verspaare, die Kästchen mit 玉成知方友禮, ein Hinweis für Familien und das Impressum." }
+---
+
+## Was Sie setzen
+
+Zwei Doppelseiten aus 《蒙學誦讀》, einer erfundenen Lesefibel aus Hongkong, in der Kinder den *Drei-Zeichen-Klassiker* laut auf Putonghua lesen. Jede Seite ist eine Lektion aus vier Verspaaren in 一号 Kai (26 pt), jedes Zeichen unter seiner Pinyin-Silbe. Die Silben stehen in der Andika, weil sie das einstöckige a und g zeichnet, das chinesische Schulbücher drucken. Ein blasses Band trägt ein rotes Lektionsabzeichen, ein kleines Aquarell und den Titel in 初号 (42 pt) mit seinen eigenen Lesungen. Unter dem Text enthalten sechs Schreibkästchen (田字格) die Zeichen zum Abschreiben, und ein Hinweis erklärt der Familie, was die Zeilen bedeuten. Das spanische Gegenstück ist <RecipeLink slug="reading-primer-syllables">das Erstlesebuch mit Silben-Chips</RecipeLink>, in dem jede Silbe ein farbiger Chip ist statt einer Lesung über einem Zeichen.
+
+Eine Fibel verlässt die Regeln eines chinesischen Buches mit Absicht. Ein Kind liest wenige große Zeichen auf einmal, deshalb fasst eine Zeile zwölf in 26 pt, wo ein Buch 25 bis 40 in 10,5 pt setzt, und der Zeilenabstand ist etwas mehr als doppelt so groß wie der Schriftgrad, um die Lesungen aufzunehmen. Jedes Verspaar steht zentriert auf einer eigenen Zeile, weder im Blocksatz noch eingezogen. Der Text steht in Kai, der Schrift, die dem Pinsel folgt, weil sie die Striche zeigt, die ein Kind schreiben lernt; ein Buch würde ihn in Song setzen.
+
+## Zubereitung
+
+### 1 · Eine Silbe über jedem Zeichen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `{人之初|rén zhī chū}` gibt drei Zeichen drei Lesungen, an den Leerzeichen getrennt: Jede Silbe wird über ihrem eigenen Zeichen zentriert, und eine Zeile darf zwischen ihnen umbrechen. Eine Lesung beansprucht keinen eigenen Raum. Sie sitzt im Zeilenzwischenraum, hier 54 − 26 = 28 pt, und ein Zwischenraum, der schmaler ist als die Lesung, wird als `rubyExceedsLeading` gemeldet. Eine Silbe, die breiter ist als ihr Zeichen, beansprucht sehr wohl Raum: Sie verbreitert den Kasten dieses Zeichens, und in einer zentrierten Zeile rücken die folgenden Zeichen vom Raster. Die Lesungen stehen in dem Grad, bei dem die breitesten Silben hier, xiāng und zhuān, noch über ein Zeichen passen, 0,38 em (9,9 pt): Jedes Verspaar ist acht Zeichen lang, und jedes Zeichen behält sein Quadrat. Bei 0,45 em würde sich 性相近，習相遠 auf achteinhalb Zeichen dehnen und Lücken um 相 öffnen.
+
+### 2 · Der Titel behält seine Lesungen
+
+<Excerpt region="opener" />
+
+Gestaltungstext druckt keine Lesungen, deshalb kann der Titel nicht aus der Gestaltung des Auftakts kommen. Die Überschrift der Ebene 1, 第一課, zeichnet das Band, das Bild und das rote Abzeichen; der Titel ist die Überschrift der Ebene 2 darunter, eine schlichte Überschrift in 初号, die der Textsetzer mit ihrem Pinyin setzt. `reserve: false` lässt Band und Bild aus der Höhe der Überschrift heraus, und `span: 'page'` malt sie unter den Text.
+
+Die Gestaltung einer Überschrift ignoriert `parity`, deshalb hat das Bild ein Element an jedem Seitenrand: `{attr.left}` 14 mm vom linken Rand und `{attr.right}` 14 mm vom rechten. Die Lektionen auf linken Seiten schreiben `# 第一課 {left="sprout"}` und die auf rechten `{right="shuttle"}`, sodass jedes Bild auf der Außenseite der Doppelseite sitzt; das Element, dessen Attribut fehlt, zeichnet nichts.
+
+### 3 · Sechs Kästchen aus einem Attribut
+
+<Excerpt region="squares" />
+
+`### 我會寫 {write="人之本不相以"}` gibt der Gestaltung die sechs Zeichen in einem Attribut. Jedes Han-Zeichen der LXGW WenKai TC ist ein Geviert breit, deshalb rückt eine Sperrung vom Kästchenabstand minus ein Geviert (18,4 − 10,6 mm) die Zeichen von Kästchen zu Kästchen, und ein einziges Textelement füllt die Reihe. Das Kästchen ist ein im Code gezeichnetes SVG: ein roter Rahmen und ein gestricheltes Kreuz.
+
+### 4 · Jede Schrift lädt ihre eigenen Zeichen
+
+<Excerpt region="voices" />
+
+Fontsource zerlegt jede chinesische Schrift nach Zeichenbereichen in etwa hundert Dateien. Die Kai setzt das ganze Beispiel und lädt die Dateien, die ihre Zeichen enthalten. Die Hei setzt nur die Abzeichen, die Bezeichnungen und die Fußzeile, bekommt also diesen Text und holt einige wenige Dateien. Die Andika kommt aus `loadFonts`, das die Datei latin-ext hinzufügt, wenn der Text Buchstaben jenseits von Latin-1 enthält, wie ǎ und ǐ.
+
+### 5 · Hongkonger Satzzeichen aus der Locale
+
+<Excerpt region="locale" />
+
+`zh-HK` setzt die Hongkonger Regeln: Satzzeichen in voller Breite und die grundlegenden Regeln des Zeilenumbruchs, die hier kein Verspaar braucht. Die LXGW WenKai TC zeichnet ihre Kommas und Punkte in die Mitte des Quadrats, wie Hongkong und Taiwan sie drucken, und deshalb kommt diese Fibel aus Hongkong. Eine Fibel vom Festland wird ebenfalls in Kai gesetzt, in Kurzzeichen mit Komma und Punkt unten links im Quadrat. Fontsource hat jedoch keine Kai-Textschrift für vereinfachtes Chinesisch, und die traditionelle würde diese Zeichen gegen das nächste Schriftzeichen drängen, deshalb nimmt eine Festlandseite in diesem Rezeptbuch die Noto Serif SC, die Song-Schrift <RecipeLink slug="chinese-novel-horizontal">der Romanseite vom Festland</RecipeLink>.
+
+## Varianten
+
+### Das Raster beim Setzen der Seite zeigen
+
+`show: true` zeichnet die zwölf Quadrate jeder Zeile auf das Canvas; das PDF lässt sie weg, es sei denn, `renderToPdf` erhält `characterGrid: true`.
+
+```diff
+-  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: 11 },
++  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: 11, show: true },
+```
+
+### Zhuyin neben die Zeichen setzen
+
+Bopomofo-Lesungen stehen in einer Spalte rechts von jedem Zeichen; <RecipeLink slug="zhuyin-vertical-reader">die Zhuyin-Fibel</RecipeLink> setzt sie auf einer senkrechten Seite.
+
+## Häufige Fehler
+
+- Dieses Rezept bietet kein PDF an. Der `fontsourceProvider` des Kits bettet von einer Schrift nur die Datei latin ein, und die Tonbuchstaben ā ǎ ǐ ǒ ǔ liegen in latin-ext, sodass ein PDF sie verlöre und postext-pdf jeden als `missingGlyph` meldete. Brauchen Sie eines, setzen Sie die Lesungen in einer chinesischen Schrift, deren Dateien `cjkPdfProvider` Zeichen für Zeichen auswählt.
+
+- Prüfen Sie jedes Zeichen der Kästchen gegen die Standardformen der Region. Die LXGW WenKai TC zeichnet 為 mit dem 爫-Kopf von 爲, einer älteren Form, die im laufenden Text durchgeht, wie hier in 老何為 und 為人子, aber nicht in einem Kästchen, das ein Hongkonger Kind abschreibt. Lektion drei übt stattdessen 幼.

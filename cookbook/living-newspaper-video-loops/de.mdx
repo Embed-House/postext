@@ -1,0 +1,60 @@
+---
+title: "Eine lebende Zeitung, deren Bilder sich bewegen"
+summary: "Sechs Videoressourcen als Pressefotos auf einem vierspaltigen Tabloid; autoplay, loop und exclusive: false lassen die Clips in Folio gemeinsam laufen."
+plain: "Eine Lokalzeitung im Stil der 1930er-Jahre, in der jedes Foto ein kurzer Stummfilm ist. Auf Papier sind es Standbilder; im 3D-Betrachter bewegen sie sich alle zugleich, immer wieder, wie eine Zeitung im Märchen."
+description: "Ein vierseitiges Tabloid in vier Spalten, dessen sechs Bilder Schwarz-Weiß-Videoschleifen sind, die in Folio gemeinsam auf gefaltetem Zeitungspapier laufen."
+question: "Wie lasse ich mehrere stumme Videoschleifen gleichzeitig auf einer Zeitungsseite laufen?"
+aliases: ["lebende Zeitung", "bewegte Bilder", "Videoschleife", "Endlosschleife", "autoplay", "loop", "mehrere Videos gleichzeitig", "exclusive", "nebeneinander abspielen", "Tabloid", "Zeitung", "vier Spalten", "Folio", "Zeitungspapier", "gefaltet"]
+pageNotes: { "1": "Die Titelseite von „The Wexcombe Lantern“, 10. Juni 1933: ein schmaler schwarzer Zeitungskopf, die Schlagzeile „Trams run to the sea at last“, ein Bild des Bürgermeisters am Rednerpult über drei Spalten, ein Bild einer Frau, die aus einem Doppeldecker winkt, über zwei und am Fuß ein getönter Streifen „In brief“.", "2": "„Town & Harbour“: ein Bild des Uhrturms und ein lachender Fischer mit einem riesigen Kabeljau, je über zwei Spalten, das Ende der Straßenbahngeschichte, ein Kasten mit Fahrpreisen, eine Gezeitentabelle, Ratsnotizen, Schiffsnachrichten und fünf kurze Meldungen in vier durch Linien getrennten Spalten.", "3": "„Stage & Screen“: eine Schauspielerin in einer Gartenkulisse über zwei Spalten, eine Kritik, Kino- und Rundfunktabellen, Leserbriefe und ein umrandeter Kasten mit Kleinanzeigen.", "4": "„Sport“: ein Torwart, auf seiner Linie kauernd, über drei Spalten, der Pokalbericht, Spielplan-, Cricket- und Radsporttabellen und das Impressum." }
+---
+
+## Was Sie setzen
+
+*The Wexcombe Lantern*, eine erfundene Wochenzeitung eines Seebads vom Juni 1933, auf einer Tabloidseite von 280 × 430 mm in vier durch Linien getrennten Spalten: ein schmaler Zeitungskopf, ein Aufmacher mit seinem Bild über drei Spalten, ein zweites Bild über zwei, Gezeitentabellen, Kleinanzeigen und eine Sportseite. Jedes Bild ist ein fünf Sekunden langer Schwarz-Weiß-Film. Im Druck und in den flachen Seiten unter dem Betrachter ist jedes sein erstes Einzelbild. In Folio als gefaltete Zeitung auf hellem Zeitungspapier geöffnet, bewegen sich die Bilder der offenen Seiten auf einmal und hören nicht auf: Der Bürgermeister spricht, die Fliegerin winkt, der Fischer lacht, der Torwart wirft sich und steht wieder auf. Die Seite zeichnet nichts; das Layout ist eine gewöhnliche Zeitung, und die Clips erledigen den Rest.
+
+## Zubereitung
+
+### 1 · Jedes Bild zu einem Clip machen, der mit den anderen läuft
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine Videoressource druckt ihr Vorschaubild als Bild, sodass die Clips den Platz von Fotos einnehmen und wie diese beschriftet werden. Drei Player-Optionen bringen die Seite in Bewegung: `autoplay` startet einen Clip, wenn seine Seite zu sehen ist (immer stumm, wie es Browser verlangen), `loop` spielt ihn wieder von vorn, und `exclusive: false` lässt ihn neben den anderen Clips laufen. Standardmäßig ist ein Video exklusiv: Wird es gestartet, pausiert alles andere, was läuft, und das passt zu einer Vorlesung, aber nicht zu einer Seite bewegter Fotos. Die Wiedergabemarke und der QR-Code sind abgeschaltet, sodass die Clips auf Papier wie Pressefotos wirken.
+
+### 2 · Jeder Schleife ihren Platz im Raster geben
+
+<Excerpt region="clips" />
+
+Das Layout ist `layoutType: 'multiple'` mit `columnCount: 4`. `columns` eines Gleitobjekts legt fest, wie viele davon es belegt: Bürgermeister und Torwart drei, Fliegerin, Uhrturm, Fischer und Schauspielerin zwei. Ein Gleitobjekt über mehrere Spalten nimmt den Kopf einer Folge leerer Spalten, die auf gleicher Höhe beginnen, oder den Fuß der Spalte, in der es zitiert wird, und der leeren Spalten danach; wo die Zeile `::resource` steht, entscheidet also über den Platz. Der Bürgermeister wird nach dem ersten Absatz zitiert, was Spalte 1 dem Text überlässt und das Bild über die Spalten 2 bis 4 stellt.
+
+### 3 · Zeitungskopf und Ressortseiten setzen
+
+<Excerpt region="nameplate" />
+
+Die Überschrift der Ebene 1 auf der Titelseite ist der Name der Zeitung, gezeichnet aus einem Gestaltungsplatz: zwei Ohren darüber, der Name in Versalien der Oswald und eine Datumszeile zwischen einer dünnen und einer kräftigen Linie. Die Innenseiten beginnen mit einer roten Ressortfahne auf einem 3-pt-Balken (der Bereich `pages`) und einer Paginazeile am Kopf jeder Seite außer der ersten.
+
+### 4 · Die Zeitung in Folio öffnen
+
+<Excerpt region="folio" />
+
+`config.folio` legt die Zeitung bei Tageslicht auf Eiche: Zeitungspapier mit 45 g/m², durch das die nächste Seite durchscheint, und `binding.type: 'folded'`, einmal gefaltete und ineinandergelegte Bogen ohne Heftklammern und ohne Rücken, wie eine Zeitung zusammengestellt wird. Folio zeichnet jeden Clip der offenen Doppelseite in eine Textur, bis zu acht gleichzeitig, startet die automatisch laufenden Schleifen jedes Mal, wenn ein Umblättern auf ihrer Seite zur Ruhe kommt, und hält sie an, wenn die Seite weggeblättert wird. Ein Klick auf ein exklusives Video spielt es weiterhin allein und mit Ton ab, und die Schleifen warten, bis es endet.
+
+## Varianten
+
+### Den Leser jeden Clip starten lassen
+
+Ohne `autoplay` bleiben die Bilder still, bis der Leser eines anklickt; einmal gestartet, laufen die Schleifen weiterhin gemeinsam.
+
+```diff
+-  player: { autoplay: true, loop: true, muted: true, exclusive: false, controls: false },
++  player: { loop: true, muted: true, exclusive: false, controls: false },
+```
+
+### Ein exklusiver Clip mit Ton
+
+Ein einzelnes Video kann den Standard behalten und nach eigenen Regeln laufen: Setzen Sie `player: { exclusive: true, muted: false }` im `video` dieser Ressource, und sein Start hält die Schleifen an, bis es endet.
+
+### Ein Großformat in sechs Spalten
+
+<RecipeLink slug="newspaper-front-page">Die zweispaltige Titelseite</RecipeLink> setzt eine kleinere Zeitung mit Standfotos; dasselbe Raster nimmt auf einem großformatigen Endformat mit `sizePreset: 'broadsheet'` sechs Spalten auf.
+
+## Häufige Fehler
+
+Ein Zeitungsressort ist eine Überschrift der Ebene 1, die eine Seite eröffnet, und ein Gleitobjekt überschreitet sie nie. Ein Bild, das auf der letzten Seite seines Ressorts keinen Platz findet, wird vor dem nächsten Ressort auf eine eigene Seite gesetzt, passen Sie den Text also auf die Seite ein: Hier springt die Straßenbahngeschichte auf Seite 2, statt die Fliegerin von der Titelseite zu verdrängen.

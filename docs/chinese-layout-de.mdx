@@ -1,0 +1,446 @@
+{/* docs/chinese-layout-en.mdx */}
+
+export const metadata = {
+  title: 'Chinesischer Satz',
+  sidebarTitle: 'Chinesischer Satz',
+  description: 'Wie Postext Chinesisch setzt, waagerecht und senkrecht: Regionen, Zeilenumbruch, Breite der Satzzeichen, Blocksatz zwischen den Zeichen, das Zeichenraster, rechts gebundene Bücher, aufrechte Zahlen, Auszeichnungen, Ruby, Warichu, chinesische Zahlzeichen und Schriften',
+  lang: 'de',
+  lastUpdated: '2026-09-30',
+  readingTime: '26 min',
+  order: 15,
+  plainSummary: "Diese Seite erklärt, wie Postext chinesischen Text setzt. Chinesisch kann in Zeilen quer über die Seite laufen oder in Spalten von oben nach unten, die von rechts nach links gelesen werden. Festlandchina, Taiwan und Hongkong haben leicht unterschiedliche Regeln für Satzzeichen und Zeilenumbrüche, und Postext folgt jedem dieser Regelwerke. Außerdem geht es um Zahlen in senkrechtem Text, Ausspracheangaben neben den Zeichen, Anmerkungen in kleiner Schrift und die passenden Schriften. Am Ende stehen zwei vollständige Beispiele und die Grenzen, die es noch gibt.",
+};
+
+# Chinesischer Satz
+
+**Eine chinesische Seite ist ein Raster aus quadratischen Zellen, und nach welchen Regeln es gefüllt wird, hängt davon ab, wo das Buch gedruckt wird.**
+
+Postext setzt Chinesisch quer über die Seite und von oben nach unten, aus einer einzigen Markdown-Quelle und einer einzigen Konfiguration. Dieselbe Engine stellt die Satzzeichen eines Romans vom Festland dorthin, wo GB/T 15834 sie vorsieht, und die einer taiwanischen Ausgabe dorthin, wo das Handbuch des Bildungsministeriums sie haben will, bricht die Zeilen nach den Regeln der jeweiligen Region um, passt den Leerraum in jedem Zeichen an, verteilt eine Blocksatzzeile auf die Abstände zwischen ihren Zeichen, stellt kurze Zahlen in einer senkrechten Spalte aufrecht und dreht die Doppelseiten eines Buchs so, dass es sich von rechts öffnet. Diese Seite erklärt, was die Engine tut und welche Einstellungen das steuern. Die [Konfigurationsreferenz](/de/docs/configuration-east-asian#ostasiatische-typografie) führt jeden Schlüssel mit seinem Standardwert auf, und das [Dokumentformat](/de/docs/document-format#chinesische-zeichen-ruby-und-warichu) beschreibt die Auszeichnung.
+
+Die Regeln folgen den *Requirements for Chinese Text Layout* des W3C ([clreq](https://www.w3.org/TR/clreq/)), die im Folgenden mit Abschnittsnummer zitiert werden, und den nationalen Normen, auf die sie sich stützen. Die Quellen stehen am Ende.
+
+## Zellen, Raster und Regionen
+
+Ein Han-Zeichen füllt ein Quadrat von einem Geviert Breite und einem Geviert Höhe, und ebenso jedes Satzzeichen voller Breite: ein halbes Geviert Glyphe und ein halbes Geviert Leerraum. Kompress gesetzt stehen die Zeichen auch senkrecht übereinander in einer Flucht, nicht nur entlang der Zeile. Deshalb wird ein chinesischer Satzspiegel in Zeichen und Zeilen angegeben statt in Millimetern: Schriftgrad, Zeichen pro Zeile, Zeilen pro Seite, Zeilenzwischenraum und bei zwei Spalten der Spaltenabstand (clreq §7.1.1). Eine Zeile von 28 Zeichen in 10,5 pt ist 294 pt breit, und jede Blocksatzzeile des Buchs endet in derselben Zelle.
+
+Eine waagerechte Seite führt ihre Zeilen von links nach rechts und von oben nach unten und wird wie ein westliches Buch links gebunden. Eine senkrechte Seite führt ihre Zeichen von oben nach unten und ihre Zeilen vom rechten Rand nach links; das Buch wird rechts gebunden, seine erste Seite ist also eine linke Seite, und die Doppelseiten werden von rechts nach links gelesen (clreq §7.1.1.1).
+
+<Illustration name="ChinesePageModels" data='{"title": "Waagerechte und senkrechte chinesische Seiten", "desc": "Zwei Doppelseiten. Das waagerechte Buch ist links gebunden: Seite 2 links, Seite 3 rechts, die Zeilen laufen von links nach rechts und stapeln sich von oben. Das senkrechte Buch ist rechts gebunden: Seite 2 rechts, Seite 3 links, die Zeichen laufen von oben nach unten in Spalten, die vom rechten Rand nach links fortschreiten.", "caption": "Derselbe Text, waagerecht gesetzt und links gebunden oder senkrecht gesetzt und rechts gebunden.", "horizontalTitle": "Waagerecht, links gebunden", "verticalTitle": "Senkrecht, rechts gebunden", "spine": "Bund", "lineDirection": "Zeilen laufen von links nach rechts", "columnDirection": "Spalten laufen von rechts", "pageOrder": "nächste Seite", "sample": "此開卷第一回也作者自云因曾歷過一番夢幻之後故將真事隱去"}' />
+
+### Region vor Schreibweise
+
+Kurz- und Langzeichen sind eine Frage der Schreibung. Die typografischen Regeln richten sich nach dem Druckort: Ein Klassiker in Langzeichen, der in Peking gedruckt wird, folgt der Norm des Festlands, und ein taiwanischer Roman der Taiwans. clreq empfiehlt, dass Software „typografische Regeln nach ‚Region‘ statt nach ‚Lang- oder Kurzzeichen‘ unterscheidet“ ([§1.2](https://www.w3.org/TR/clreq/#x1-2-basic-features-of-chinese-script)), und Postext liest beides aus der Dokumentsprache, `config.locale`:
+
+- Die **Schreibweise** bestimmt die eingebauten Wörter: 图 oder 圖 für Abbildungen, （续） oder （續） hinter der Legende einer fortgesetzten Tabelle, 见 oder 見 im Register und die Zahlzeichen, die eine Überschriftenvorlage schreibt. `zh`, `zh-Hans`, `zh-CN` und `zh-SG` sind Kurzzeichen; `zh-Hant`, `zh-TW`, `zh-HK` und `zh-MO` sind Langzeichen.
+- Die **Region** bestimmt die typografischen Standardwerte des Schlüssels `cjk`. CN, SG und MY stehen für das Festland, TW für Taiwan, HK und MO für Hongkong, und ein Tag ohne Region folgt seiner Schreibweise: `zh-Hant` gilt als Taiwan, `zh` und `zh-Hans` als Festland. `cjk.region` überschreibt das.
+
+Schreiben Sie das ganze Tag: `zh-Hans` oder `zh-Hant` und, wenn Sie sie kennen, die Region (`zh-Hans-CN`, `zh-Hant-TW`, `zh-Hant-HK`). Dasselbe Tag wird im HTML (`lang` am Dokument) und im PDF (`/Lang`) deklariert, und Browser und PDF-Reader wählen danach die Glyphenformen der Region: Unicode gibt 骨 einen einzigen Codepunkt, und eine Schrift für das Festland zeichnet ihn anders als eine für Taiwan. In einem chinesischen Dokument ist die Silbentrennung ausgeschaltet, sofern Sie sie nicht für die lateinischen Wörter einschalten.
+
+Die Sprache ist auch die, in der der Text geformt wird. Eine chinesische Schrift antwortet unter einer Sprache mit anderen Glyphen: Noto Serif SC setzt eine Ziffer auf Chinesisch 0,47 Geviert breit und in einer Sprache, für die sie keine eigenen Formen hat, 0,55 Geviert. Das Layout misst in jedem Kontext in der Sprache des Dokuments, sodass ein chinesisches Buch seine Zeilen auf einer chinesischen Seite genauso umbricht wie auf einer englischen Seite, die es zeigt, und in einem Layout-Worker; das Canvas malt in dieser Sprache, HTML und EPUB deklarieren sie, und das PDF formt mit dem OpenType-Sprachsystem, auf das sie abgebildet wird (`ZHS` für `zh-Hans`, `zh-CN` und `zh-SG`; `ZHT` für `zh-Hant` und `zh-TW`; `ZHH` für `zh-HK`); ein Abschnitt in einer anderen Sprache gibt das an (`:ltr[…]` mit `lang=en`) und wird in ihr gemessen. Das ist [`bodyText.shapingLanguage: 'document'`](/de/docs/configuration-text#fließtext), der Standard seit postext 1.30. Mit `'host'`, das ein vor 1.30 gespeichertes Buch beibehält, misst das Layout in der Sprache der Seite, die es einbettet, und ein chinesisches Buch kann seine Zeilen auf einer chinesischen Seite anders umbrechen als auf einer englischen Seite, die es zeigt, oder in einem Layout-Worker.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Standardwert</th>
+      <th>Festland (<code>zh-Hans</code>, <code>zh-CN</code>)</th>
+      <th>Taiwan (<code>zh-Hant</code>, <code>zh-TW</code>)</th>
+      <th>Hongkong (<code>zh-HK</code>, <code>zh-MO</code>)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Zeilenumbruch (<code>lineBreak</code>)</td><td><code>gb</code></td><td><code>basic</code></td><td><code>basic</code></td></tr>
+    <tr><td>Breite der Satzzeichen (<code>punctuationWidth</code>)</td><td><code>kaiming</code></td><td><code>fullwidth</code></td><td><code>fullwidth</code></td></tr>
+    <tr><td>Zwei aufeinandertreffende Zeichen nehmen 1,5 Geviert ein (<code>compressAdjacent</code>)</td><td>ja</td><td>nein</td><td>ja</td></tr>
+    <tr><td>Klammern am Zeilenrand beschnitten (<code>trimLineStart</code>)</td><td>ja</td><td>nein</td><td>ja</td></tr>
+    <tr><td>、，。 waagerecht</td><td>links unten in der Zelle</td><td>zentriert</td><td>zentriert</td></tr>
+    <tr><td>、，。 senkrecht</td><td>rechts oben in der Zelle</td><td>zentriert</td><td>zentriert</td></tr>
+    <tr><td>Mittelpunkt ·</td><td>ein halbes Geviert</td><td>ein Geviert</td><td>ein Geviert</td></tr>
+    <tr><td>Zeichen, die bei eingeschaltetem <code>hangingPunctuation</code> hängen dürfen</td><td>、，。．；：？！</td><td>、，。．, waagerecht nur unter <code>'force'</code></td><td>、，。．, waagerecht nur unter <code>'force'</code></td></tr>
+    <tr><td><code>:book[…]</code> (<code>bookTitleMark</code>)</td><td>《》 um den Titel</td><td>Wellenlinie</td><td>Wellenlinie</td></tr>
+    <tr><td><code>&#42;…&#42;</code> auf chinesischen Zeichen (<code>emphasis</code>)</td><td>Betonungspunkte</td><td>Betonungspunkte</td><td>Betonungspunkte</td></tr>
+    <tr><td>Abbildung, fortgesetzte Tabelle, siehe</td><td>图, （续）, 见</td><td>圖, （續）, 見</td><td>圖, （續）, 見</td></tr>
+    <tr><td>Registergruppen (<code>index.groupBy</code>)</td><td>Pinyin-Anfangslaute</td><td>Strichzahlen</td><td>Strichzahlen</td></tr>
+  </tbody>
+</table>
+
+Die letzten beiden Zeilen folgen der Schreibweise, nicht der Region. Ein Klassiker in Langzeichen, der in Peking gedruckt wird (`zh-Hant-CN`), erhält Zeilenumbruch und Satzzeichen des Festlands sowie 圖, （續）, 見 und Gruppen nach Strichzahl; ein Buch in Kurzzeichen mit dem Tag für Hongkong (`zh-Hans-HK`) erhält 图 und Pinyin-Gruppen.
+
+Japanische Dokumente haben seit postext 1.16 eine eigene Region, `japan`: siehe [Japanischer Satz](/de/docs/japanese-layout). Koreanische Dokumente erhalten die Regel ohne Silbentrennung und den CJK-Umbruch, aber noch keine eigenen Regeln: Sie werden mit den Standardwerten des chinesischen Festlands gesetzt, und ein Absatz in Hangul behält die Anführungszeichen und Striche der Schrift.
+
+### Das Markdown eines chinesischen Kapitels
+
+Chinesischer Text wird in demselben Markdown geschrieben wie jeder andere. Ein paar Regeln machen die Arbeit angenehm:
+
+- **Zeilen beliebig umbrechen.** Ein Zeilenende zwischen zwei chinesischen Zeichen entfällt, so wie CSS es entfallen lässt; ein Editor, der bei 80 Spalten umbricht, fügt dem Text also keine Leerzeichen hinzu. Zwischen zwei Satzzeichen (`”⏎“`) entscheiden die Zeichen dahinter. Ein innerhalb einer Zeile getipptes Leerzeichen bleibt erhalten.
+- **Einzug über die Konfiguration.** Der Erstzeileneinzug von zwei Zeichen ist `bodyText.firstLineIndent: { value: 2, unit: 'em' }`; der Parser verwirft die ideografischen Leerzeichen (U+3000), mit denen ein Absatz beginnt.
+- **Auch Überschriften über die Konfiguration einziehen.** Eine Überschrift, die zwei Zellen eingerückt ist und deren Folgezeile am Rand beginnt, wie GB/T 9704 sie setzt, ist `headings.levels[n].firstLineIndent: { value: 2, unit: 'em' }` (seit postext 1.24). In ein `numberingTemplate` getippte ideografische Leerzeichen würden Teil der Überschriftennummer und auch im Inhaltsverzeichnis und in den PDF-Lesezeichen gedruckt.
+- **Die Auszeichnung in ASCII tippen.** Eine chinesische Eingabemethode liefert `：：：`, `＃`, `［＾1］`, `｛…｝` und `＊＊`; diese werden als Text gedruckt, und der Build meldet jede solche Zeile als `fullwidthMarkup`, zusammen mit der ASCII-Form, die zu tippen ist. Attributwerte dürfen in “…” oder 「…」 stehen und `＝` verwenden, und Überschriftenattribute dürfen ohne Leerzeichen auf den Titel folgen: `# 第一回{style="hui"}`. Schlüssel bleiben ASCII; ein chinesischer Schlüssel (`作者=曹雪芹`) wird mit der Warnung `attributeKeyInvalid` verworfen.
+- **Hervorhebung und Bereiche.** `_` und `__` funktionieren zwischen chinesischen Zeichen (`中文_斜体_中文`). Eine `~` zwischen zwei Ziffern oder zwei chinesischen Wörtern ist ein Bereich und bleibt wie getippt (`3~5天`, `周一~周五`).
+- **IDs und Dateinamen** behalten chinesische Schriftzeichen: Ein Kapitel mit dem Titel 第一回 wird als `chapters/001-第一回.md` gespeichert.
+
+Die Direktiven für chinesische Auszeichnungen, Ruby, Warichu und Ausrichtung werden [weiter unten](#auszeichnungen-und-annotationen) und im [Dokumentformat](/de/docs/document-format#chinesische-zeichen-ruby-und-warichu) beschrieben.
+
+## Waagerechter Satz
+
+Ein Absatz, der mehr chinesische, japanische oder koreanische Zeichen als Wortzwischenräume enthält, wird vom CJK-Umbruch gesetzt. Als Wortzwischenraum zählt nur ein Leerzeichen zwischen zwei lateinischen Wörtern, Zahlen oder Zeichen: Die Leerzeichen, die Webtexte um lateinische Wörter und Zahlen tippen (`2026 年 9 月 28 日`, `安装 Node.js 和 Git`), zählen nicht, ein solcher Satz wird also so umbrochen, als wäre er ohne sie geschrieben. Der Umbruch zerlegt den Text in Einheiten (eine pro Zeichen, eine pro lateinischem Wort oder Zahl, eine pro Zwei-Geviert-Strich oder Auslassungszeichen), misst jede einmal und füllt die Zeilen nacheinander. Für eine optimierende Suche wie Knuth-Plass gibt es nichts abzuwägen: Fast jeder Abstand zwischen zwei Zeichen ist eine Umbruchstelle, und die folgenden Regeln streichen die wenigen, die keine sind. Ein lateinischer Absatz, der einen chinesischen Titel zitiert, behält Knuth-Plass und darf neben seinen chinesischen Zeichen nach denselben Regeln umbrechen. Legenden, Tabellenzellen, Fußnoten und Kästen brechen ebenfalls auf der Stufe des Dokuments um.
+
+### Zeilenumbruch
+
+Die Regeln für Zeilenanfang und Zeilenende (避头尾) legen fest, welche Zeichen eine Zeile nicht eröffnen und welche sie nicht beschließen dürfen. `cjk.lineBreak` wählt eine der vier Stufen aus [clreq §6.1.1](https://www.w3.org/TR/clreq/#x6-1-1-prohibition-rules-for-line-start-and-line-end):
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '90px' }}>Stufe</th>
+      <th>Nie am Zeilenanfang</th>
+      <th>Nie am Zeilenende</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>none</code></td><td>Nichts: Zeitungen in Taiwan und Hongkong brechen überall um.</td><td>Nichts.</td></tr>
+    <tr><td><code>basic</code></td><td>Pausen- und Schlusszeichen 、，；：。！？, schließende Anführungszeichen und Klammern ”’」』）〕］》〉, die Verbindungszeichen ～ und ein einzelnes —, Mittelpunkte ·‧・, Wiederholungszeichen 々, Einheiten % ‰ ° ℃.</td><td>Öffnende Anführungszeichen und Klammern “‘「『（〔［《〈, Währungszeichen ¥ $ €.</td></tr>
+    <tr><td><code>gb</code></td><td><code>basic</code> und der Schrägstrich ／ (GB/T 15834—2011 §5.1.9).</td><td><code>basic</code> und der Schrägstrich.</td></tr>
+    <tr><td><code>strict</code></td><td><code>gb</code> und die Zwei-Geviert-Zeichen —— ⸺ …… ⋯⋯.</td><td><code>gb</code>.</td></tr>
+  </tbody>
+</table>
+
+Auf jeder Stufe trennt eine Zeile niemals den Zwei-Geviert-Strich —— oder das Auslassungszeichen ……, eine Zahl und ihr Zeichen oder ihre Einheit (¥5,999, 50%, 120㎡, −3 ℃), ein lateinisches Wort oder eine in Ziffern voller Breite geschriebene Zahl (１２：３０); ein Fußnotenzeichen, ein `:ref` und eine Hochstellung bleiben beim vorangehenden Zeichen; und vor einem ideografischen Leerzeichen wird nie umbrochen. Die einzige Ausnahme ist ein lateinisches Wort oder eine Webadresse, die breiter ist als die ganze Zeile: Das Wort wird an einer Silbe getrennt, die Adresse an einer ihrer Fugen.
+
+Ein Buchtitel wird nicht nach seinem ersten oder vor seinem letzten Zeichen umbrochen: Innerhalb von `《…》` und `〈…〉` (getippt oder um einen `:book[…]`-Titel ergänzt) bricht eine Zeile nur dort um, wo auf beiden Seiten zwei Zeichen des Titels stehen; keine Zeile endet also auf `《說`, während `文》` die nächste eröffnet, und ein Titel aus zwei oder drei Zeichen bleibt ganz. `cjk.titleMinChars` legt die Zahl fest (`1` bricht überall um, wo die Stufe es erlaubt). Eine Zeile ohne andere Umbruchstelle bricht dennoch innerhalb eines Titels um, statt über die Satzbreite hinauszulaufen.
+
+Die eingekreisten Zahlen ① bis ⑳ (sowie ⑴, ⒈, ⓐ, ❶ und ihre Verwandten) sind in chinesischem Text chinesische Zeichen: Jede nimmt eine Zelle ein, ohne Han-Latein-Abstand ringsum, und eine Zeile endet nie auf einer von ihnen, da sie die Bedeutung oder den Punkt danach nummeriert (auf jeder Stufe außer `none`). Ein Wörterbucheintrag schreibt `**①**天也` ohne etwas zwischen Nummer und Text. `cjk.circledNumbers: 'western'` setzt sie wie lateinische Buchstaben, so wie postext es bis 1.24 tat.
+
+Passt das nächste Zeichen nicht mehr, prüft der Umbruch es. Darf es eine Zeile eröffnen, rückt es hinunter, und eine Blocksatzzeile wird ausgetrieben. Darf es das nicht (ein Komma, eine schließende Klammer, das Zeichen nach einer öffnenden), versucht die Zeile zuerst, es aufzunehmen, indem sie Leerraum der Satzzeichen aufgibt, das Einbringen nach [clreq §6.2.2.3](https://www.w3.org/TR/clreq/#x6-2-2-3-procedures-for-inter-character-spacing-reduction); nur wenn dieser Leerraum den Überhang nicht deckt, endet die Zeile früher und nimmt das Zeichen davor mit dem Satzzeichen in die nächste Zeile mit. Das Einbringen kommt zuerst, weil es die Zeichen der Zeile zusammenhält; das Austreiben ist die Rückfallebene.
+
+### Breite der Satzzeichen
+
+Ein Satzzeichen voller Breite besteht aus einem halben Geviert Glyphe und einem halben Geviert Leerraum, und die Einstellungen verändern den Leerraum, nie die Glyphe ([clreq §6.3.2](https://www.w3.org/TR/clreq/#x6-3-2-punctuation-width-adjustment)). Wo dieser Leerraum liegt, hängt von der Region ab. Das Festland setzt seine Pausen- und Schlusszeichen in eine Ecke der Zelle, der Leerraum folgt also der Glyphe; Taiwan und Hongkong zentrieren sie, mit einem Viertelgeviert auf jeder Seite. Öffnende Klammern und Anführungszeichen tragen ihren Leerraum in jeder Region vor der Glyphe, schließende dahinter.
+
+<Illustration name="PunctuationPositions" data='{"title": "Wo die Pausen- und Schlusszeichen in ihrer Zelle stehen", "desc": "Vier Streifen von Zellen mit den Zeichen 甲 乙 丙 丁, gefolgt von einem Punkt, einem Komma, einem Aufzählungskomma und einem Doppelpunkt. Waagerechter Text des Festlands setzt die Zeichen links unten in die Zelle, senkrechter Text des Festlands rechts oben. Text aus Taiwan und Hongkong zentriert sie in beiden Richtungen.", "caption": "Die Glyphe nimmt die halbe Zelle ein; welche Hälfte, entscheidet die Region.", "mainland": "Festland", "taiwan": "Taiwan und Hongkong", "horizontal": "waagerecht", "vertical": "senkrecht", "sample": "甲乙丙丁"}' />
+
+`cjk.punctuationWidth` legt fest, wie viel Leerraum ein Satzzeichen behält:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '150px' }}>Stil</th>
+      <th>Innerhalb der Zeile</th>
+      <th>Am Zeilenende</th>
+      <th style={{ width: '180px' }}>Wo er verwendet wird</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>fullwidth</code> 全角式</td><td>Jedes Zeichen ein Geviert.</td><td>Ein Geviert.</td><td>Bücher aus Taiwan und Hongkong; die meisten Webtexte.</td></tr>
+    <tr><td><code>kaiming</code> 开明式</td><td>。．？！ ein Geviert; ，、；：, Klammern, Anführungszeichen und Mittelpunkte ein halbes Geviert.</td><td>Jedes Zeichen ein halbes Geviert.</td><td>Die meisten Bücher vom Festland; der Standard von 方正书版.</td></tr>
+    <tr><td><code>lineEndHalf</code> 行末半角</td><td>Jedes Zeichen ein Geviert.</td><td>Jedes Zeichen ein halbes Geviert.</td><td>GB/T 15834—2011 §5.1.10 wörtlich genommen.</td></tr>
+    <tr><td><code>halfwidth</code> 半角式</td><td>Jedes Zeichen ein halbes Geviert.</td><td>Ein halbes Geviert.</td><td>Wörterbücher.</td></tr>
+  </tbody>
+</table>
+
+Zwei weitere Einstellungen wirken in jedem Stil auf Satzzeichen. Mit `compressAdjacent` geben zwei aufeinandertreffende Zeichen den Leerraum zwischen sich auf, sodass `。」`, `》（` oder `，「` anderthalb statt zwei Gevierte einnehmen. Ein zentriertes `。` oder `，`, wie Taiwan und Hongkong sie setzen, behält vor einer schließenden Klammer sein ganzes Geviert, `。」` bleibt dort also zwei Gevierte breit; `》（`, `」，` und `，「` rücken trotzdem zusammen. Mit `trimLineStart` gibt eine öffnende Klammer am Zeilenanfang ihre vordere Hälfte auf, sodass ihre Farbe bündig mit der Textkante steht, und eine schließende Klammer am Zeilenende ihre hintere Hälfte. Beide sind für das Festland und Hongkong eingeschaltet und für Taiwan ausgeschaltet, dessen Bücher jedes Satzzeichen in seiner Zelle lassen.
+
+<Illustration name="PunctuationWidths" data='{"title": "Satzzeichen voller Breite und im Kaiming-Stil", "desc": "Die Zeile 曹雪芹著《红楼梦》（又名《石头记》）。 zweimal gesetzt. In voller Breite nimmt jedes Satzzeichen ein Geviert ein, und die Zeile ist 19 Geviert lang; die leere Hälfte jedes Zeichens ist getönt. Im Kaiming-Stil nehmen die Klammern je ein halbes Geviert ein und der Punkt am Zeilenende ein halbes Geviert, und dieselbe Zeile ist 15,5 Geviert lang.", "caption": "Dieselbe Zeile in voller Breite (19 Geviert) und im Kaiming-Stil (15,5 Geviert).", "fullwidth": "Volle Breite (全角式)", "kaiming": "Kaiming (开明式)", "blank": "aufgegebener Leerraum", "sample": "曹雪芹著《红楼梦》（又名《石头记》）。", "ems": "Geviert"}' />
+
+Anführungszeichen, Auslassungszeichen, Strich und Mittelpunkt teilt sich Chinesisch mit lateinischem Text, und eine lateinische Schrift zeichnet sie schmal. In chinesischem Text (das nächste Zeichen auf beiden Seiten ist chinesisch) nehmen sie unabhängig von der Dickte der Schrift die Zelle eines chinesischen Satzzeichens ein: “ und ” je ein Geviert (unter Kaiming ein halbes), …… zwei Gevierte zentriert, · ein halbes Geviert auf dem Festland und ein Geviert anderswo. Ein 破折号 (——) wird als eine durchgehende Linie über seine zwei Gevierte gedruckt, auf die Mitte der Zeichen angehoben. Neben lateinischen Wörtern behalten dieselben Zeichen die Breiten der Schrift, sodass `他说：He said “yes” and left.` seine englischen Anführungszeichen englisch setzt. In einem Satz einer anderen Schrift genannt, wie in einem englischen Impressum (`Cuts are marked …….`), bleiben doppeltes Auslassungszeichen und doppelter Strich in einem chinesischen oder japanischen Buch die Zeichen des Dokuments: Das Paar behält seine Han-Formen, der Punkt danach die des Satzes ([Wörter ohne Buchstaben](/de/docs/arabic-layout#wörter-ohne-buchstaben)).
+
+Setzen Sie ein Buch in einer Schrift seiner Region: Noto Serif SC oder Source Han Serif SC für das Festland, TC für Taiwan, HK für Hongkong. Auf welcher Seite eines Satzzeichens der Leerraum liegt, entscheidet das Layout nach der Region, nicht nach der Schrift, und eine Langzeichen-Schrift unter einem Tag des Festlands staucht ihre zentrierten Zeichen auf der falschen Seite.
+
+### Hängende Satzzeichen
+
+Mit `hangingPunctuation: 'allow'` darf ein Komma oder Punkt, der sonst die nächste Zeile eröffnen würde und den das Einbringen nicht aufnehmen kann, über das Zeilenende hinaushängen ([clreq §6.1.3](https://www.w3.org/TR/clreq/#x6-1-3-hanging-punctuation-at-line-end)). `'force'` lässt ein solches Zeichen immer hängen, wenn es eine Zeile beschließt. Höchstens ein Zeichen hängt, nie eines, das an ein anderes Satzzeichen stößt (`。」`). Unter `'allow'` hängt in waagerechtem Text aus Taiwan oder Hongkong keines, da die zentrierten Zeichen abgeschnitten wirken würden; `'force'` lässt sie auch dort hängen. Die meisten chinesischen Bücher lassen keine Satzzeichen hängen; clreq empfiehlt es zusammen mit einem Zeichenraster. Der Standard ist `'none'`.
+
+### Blocksatz zwischen den Zeichen
+
+Chinesischer Grundtext steht im Blocksatz, und eine Blocksatzzeile wird zwischen ihren Zeichen ausgetrieben. Eine Zeile, die nicht die letzte ihres Absatzes ist, wird in der Reihenfolge von [clreq §6.2.2.4](https://www.w3.org/TR/clreq/#x6-2-2-4-procedures-for-inter-character-space-expansion) gefüllt:
+
+1. Die Wortzwischenräume zwischen lateinischen Wörtern, bis zu je einem halben Geviert.
+2. Die Abstände zwischen Han und Latein (nächster Abschnitt), bis zu je einem halben Geviert.
+3. Jeder Abstand zwischen Zeichen, gleichmäßig: zwischen zwei Han-Zeichen, zwischen einem Zeichen und einem Satzzeichen, zwischen Han und einem lateinischen Wort. Nie innerhalb eines lateinischen Worts, einer Zahl oder eines Zwei-Geviert-Zeichens und nie neben einem Verbindungszeichen (～, ein einzelnes —) oder einem Schrägstrich.
+
+Eine Zeile, die mehr als ein halbes Geviert zwischen ihren Zeichen bräuchte (oder mehr als `bodyText.maxJustifyTracking`, wenn gesetzt), nimmt so viel und endet vor der Satzbreite; der Build meldet sie als Inhaltswarnung `cjkLooseLine`, die die Sandbox **CJK-Zeile zu kurz gesetzt** nennt. Die übliche Ursache ist ein langes lateinisches Wort oder eine Webadresse, die nicht heraufrücken kann. Die letzte Zeile eines Absatzes wird kompress gesetzt. [Silbentrennung und Blocksatz](/de/docs/justification#chinesisch-japanisch-und-koreanisch) hat die Einzelheiten, darunter, wie eine CJK-Zeile für die Markierung zu lockerer Zeilen zählt und wie der Spaltenausgleich einen chinesischen Absatz um eine Zeile verlängert.
+
+Ein Absatz endet nicht auf einer Zeile mit nur einem Zeichen, allein oder mit den Satzzeichen, die es beschließen (孤字, wie in `後。`). Die Zeile darüber gibt ihr letztes Zeichen ab, samt jedem Satzzeichen, das bei ihm bleiben muss, und wird auf die Satzbreite ausgetrieben; wenn das mehr als die Obergrenze der Sperrung erfordern würde, bleibt das Zeichen allein. Das folgt `bodyText.avoidRunts`, standardmäßig eingeschaltet, in beiden Schreibrichtungen; auch der Spaltenausgleich erzeugt nie eine solche Zeile. Ein Absatz ohne Blocksatz gibt das Zeichen ebenfalls ab, mit Zeichenraster wie ohne, und die Zeile darüber steht ein Zeichen kürzer. Manuskriptpapier ist die Ausnahme: Mit `cjk.grid.fullLines` behält eine solche Zeile jedes Kästchen, und der Absatz darf auf einem Zeichen enden.
+
+### Abstand zwischen Han und Latein
+
+`cjk.latinSpacing` setzt ein Viertelgeviert zwischen ein Han-Zeichen und einen benachbarten lateinischen Buchstaben oder eine Ziffer ([clreq §6.3.3](https://www.w3.org/TR/clreq/#x6-3-3-mixed-text-composition-in-horizontal-writing-mode)): `1999年的iPhone 15售价为¥5,999。` wird mit einem Abstand nach 1999, vor und nach iPhone 15 und ohne Abstand vor ¥ gedruckt, das ein Zeichen ist. Am Anfang oder Ende einer Zeile gibt es keinen, ebenso wenig zwischen einem lateinischen Wort und einem chinesischen Satzzeichen (`用iPhone，`) und innerhalb chinesischer Klammern (`（iPhone）`). Ein Leerzeichen, das der Autor an einer solchen Grenze getippt hat, wie es viele Webtexte tun, wird durch den Han-Latein-Abstand ersetzt, sodass `用 iPhone 拍照` und `用iPhone拍照` gleich gesetzt werden. In einer Blocksatzzeile wächst der Abstand auf ein halbes Geviert, bevor die Zeichen ausgetrieben werden, und eine Zeile, die ein weiteres Zeichen aufnimmt, verkleinert ihn auf ein Achtelgeviert. Der Abstand ist kein Text: Kopieren, Suche und der aus dem PDF extrahierte Text lesen `用iPhone拍照` wie geschrieben. `0` schaltet ihn aus. Welche Seite eines westlichen Worts den Abstand erhält, bestimmt `cjk.latinSpacingEdge`: Chinesischer Text behält `'letters'`, die Regel oben, und `'western'` setzt ihn auch neben Klammern und Zeichen eines westlichen Worts, wie japanischer Text es tut.
+
+### Das Zeichenraster
+
+`cjk.grid` legt den Satzspiegel auf chinesische Weise fest, in Zeichen pro Zeile und Zeilen pro Seite:
+
+```ts
+cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
+```
+
+Jede Spalte wird `charsPerLine` Gevierte des Schriftgrads breit und der Satzspiegel `linesPerPage` Zeilen des Zeilenabstands des Grundtexts hoch. Die konfigurierten `page.margins` wirken als Mindestwerte: Der Satzspiegel wird in dem Raum zentriert, den sie lassen, und jeder Rand wächst um die Hälfte der Differenz. Bei zwei Spalten wird der Spaltenabstand auf eine ganze Zahl von Gevierten gerundet. Eine größere Zahl, als hineinpasst, wird verringert und gemeldet (`cjkGridClamped`); eine nicht gesetzte nimmt so viele, wie passen. `show` zeichnet das Raster (稿纸) auf dem Bildschirm, ein Kästchen pro Zeichenposition; das PDF lässt es weg, es sei denn, `renderToPdf` erhält `characterGrid: true`.
+
+Eine Seite auf dem Raster wird Zeile für Zeile gefüllt und nicht ausgeglichen: Eine Spalte, die kurz endet, etwa weil eine Überschrift mit ihrem Text auf die nächste Seite rückt, bleibt kurz, so wie ein Dokument nach GB/T 9704 seine 22 Zeilen zählt. `headings.balancing.enabled: true` schaltet den Ausgleich mit Hebeln ein, die das Raster respektieren: Zeilen, die über Überschriften und unter Listen, abgesetzten Formeln und Abbildungen eingefügt werden, sind ganze Zeilen des Rasters, was `headings.balancing.gridLines: 'off'` unterbindet, und ein Absatz läuft nur dann eine Zeile länger, wenn seine Zeichen nicht weiter als `headings.balancing.maxTracking` auseinandergetrieben werden, was eine Zeile, der ein ganzes Zeichen fehlt, beim Standardwert nie erfüllt. Jedes Zeichen bleibt in beiden Fällen in seiner Zelle. Siehe [Konfiguration › Spaltenausgleich](/de/docs/configuration-text#spaltenausgleich).
+
+Auch die Regeln `avoidWidows` und `avoidOrphans` folgen dem Raster. `bodyText.avoidWidows` ist auf einem Raster standardmäßig ausgeschaltet: Ein Absatz darf mit einer Zeile am Fuß einer Seite beginnen, und die Seite behält ihre Zeilenzahl. `bodyText.avoidOrphans` bleibt eingeschaltet: Die letzte Zeile eines Absatzes steht nicht allein oben auf einer Seite (孤行, clreq §7.1.2), und die Seite davor gibt dafür eine Zeile ab. Setzen Sie einen der beiden Schlüssel, um es anders zu wollen.
+
+Die üblichen Bücher, in 五号 (10,5 pt) mit 6 pt Zeilenzwischenraum, also 16,5 pt Zeilenabstand:
+
+- 大32开, 140 × 203 mm, 28 × 28 Zeichen: 103,7 mm Satzbreite und 163 mm Satzspiegelhöhe.
+- 16开, 184 × 260 mm, zwei Spalten zu 23 Zeichen in 小五 (9 pt, 13,5 pt Zeilenabstand) mit einem Spaltenabstand von zwei Zeichen.
+
+clreq empfiehlt Zeilen von 17 bis 40 Zeichen, höchstens 48 waagerecht und 55 senkrecht, und einen Zeilenzwischenraum von einem halben bis einem ganzen Zeichen ([clreq §7.1.1.5](https://www.w3.org/TR/clreq/#x7-1-1-5-considerations-when-designing-the-type-area)). Chinesische Schriftgrade haben Namen: 五号 10,5 pt ist Werksatz, 小五 9 pt für Zeitungen und Anmerkungen, 小四 12 pt, 四号 14 pt, 三号 16 pt, 二号 22 pt. Postext nimmt Größen in Punkt entgegen; schreiben Sie den 号-Grad als seinen Punktwert.
+
+## Nummerierung
+
+Jede Nummerierungseinstellung nimmt die chinesischen Zahlstile der CSS Counter Styles an: Seitenzahlen, nummerierte Listen, Abbildungszähler, Überschriftenvorlagen, Teile und PDF-Seitenbeschriftungen. `simp-chinese-informal` schreibt 一, 十二, 一百零一; `trad-chinese-informal` dasselbe mit 萬 und 億; `cjk-decimal` 二〇二六; `simp-chinese-formal` und `trad-chinese-formal` die Finanzzahlzeichen 壹贰叁; `circled-decimal` ①; außerdem gibt es die Himmelsstämme 甲乙丙 und die Erdzweige 子丑寅. In einer Vorlage steht `一` für die gewöhnlichen Zahlzeichen der Schreibweise des Dokuments, sodass eine Vorlage beiden Ausgaben dient:
+
+```ts
+headings: {
+  levels: [{ level: 1, numberingTemplate: '第{1:一}回', numberSeparator: '　' }],
+},
+```
+
+Das ergibt 第一回 bis 第一百二十回, gefolgt von einem ideografischen Leerzeichen vor dem Titel. Ein 回目-Verspaar wird mit einem Zeilenumbruch in der Überschrift geschrieben, `# 甄士隱夢幻識通靈 \\ 賈雨村風塵懷閨秀`. Ein Überschriften-Design druckt `{titleText}` auf zwei Zeilen, je eine Hälfte: ein Auftaktband oder ein `advancedDesign` in der Spalte, an der Ebene oder an einem Überschriftenformat (siehe [Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). Überall sonst werden die Hälften mit einem ideografischen Leerzeichen verbunden: im Inhaltsverzeichnis, in den Kolumnentiteln und den PDF-Lesezeichen sowie in einer Überschrift, die ohne Design in der Spalte gesetzt wird, wo der verbundene Titel dann dort umbricht, wo die Satzbreite endet, oft mitten in der zweiten Hälfte. Ein Umbruch zwischen einem chinesischen Zeichen und einer Ziffer oder einem lateinischen Wort (`# 示例市出版协会关于举办 \\ 2026年中文排版实务培训班的通知`) wird in der Spalte, im Inhaltsverzeichnis und in den Kolumnentiteln als Han-Latein-Abstand gesetzt, und PDF-Lesezeichen und Dokumenttitel fügen die Teile ohne Zwischenraum zusammen. Keines der beiden Beispiele unten hat ein Design; geben Sie der Überschrift also eines, wenn das Verspaar auf zwei Zeilen stehen soll. `{1:words}` schreibt die Zahl in einem chinesischen Dokument in chinesischen Wörtern (十二) und `{1:ordinal}` mit 第 (第十二). Ein Teil mit der Nummer `:::part{number="卷三"}` gilt für die Platzhalter, die eine Zahl brauchen, als 3.
+
+Nummerierte Listen folgen der Hierarchie von GB/T 15834—2011 (一、 （一） 1. （1） ①) mit einem `prefix` vor der Zahl:
+
+```ts
+orderedLists: {
+  levels: [
+    { level: 1, numberFormat: 'simp-chinese-informal', separator: '、' },
+    { level: 2, numberFormat: 'simp-chinese-informal', prefix: '（', separator: '）' },
+    { level: 3, numberFormat: 'arabic', separator: '.' },
+    { level: 4, numberFormat: 'arabic', prefix: '（', separator: '）' },
+    { level: 5, numberFormat: 'circled-decimal', separator: '' },
+  ],
+},
+```
+
+Die eingebauten chinesischen Abbildungs- und Tabellentypen nummerieren kapitelweise mit Bindestrich (图1-1, 表3-2). Chinesische Legenden setzen keinen Abstand zwischen Bezeichnung und Nummer und ein ideografisches Leerzeichen vor den Text: `captionStyle: { labelNumberGap: '', labelSeparator: '　' }` ergibt 图1-1　大观园图, und ein `:ref` lautet 图1-1. Das PDF schreibt chinesische Seitenbeschriftungen, sodass das Seitenfeld des Readers 一, 二, 三 zeigt, wo die Seiten sie drucken.
+
+Das Register eines chinesischen Buchs gruppiert seine Einträge nach Pinyin-Anfangslaut (Kurzzeichen) oder nach Strichzahl (Langzeichen), auf Grundlage der Daten der Sortierfunktion (`index.groupBy`, standardmäßig `'auto'`). Ein Zeichen mit mehreren Lesungen wird unter der gebräuchlichen Lesung der Sortierfunktion eingeordnet; geben Sie einem solchen Eintrag einen `sort`-Schlüssel aus Zeichen, die wie gewünscht gelesen werden: `:index[重阳]{sort="崇阳"}`. Siehe [Register](/de/docs/configuration-notes-references#register).
+
+### Fußnoten
+
+Ein Buch vom Festland nummeriert seine Anmerkungen (页下注) mit eingekreisten Zahlen, die auf jeder Seite neu beginnen: ① ist die erste Anmerkung jeder Seite, im Text auf der Grundlinie und am Anfang der Anmerkung gesetzt. Die meisten Bücher aus Taiwan und Hongkong machen es ebenso.
+
+```ts
+footnotes: { numberFormat: 'circled-decimal', numbering: 'page' },
+```
+
+Mit `circled-decimal` wird das Zeichen standardmäßig in der Zeile gesetzt (`markerPosition: 'auto'`); `markerSize: { value: 0.75, unit: 'em' }` setzt es kleiner als den Text. Zahlen über 50 haben keine eingekreiste Form und werden dezimal geschrieben. Die Nummer einer Anmerkung hängt von der Seite ab, auf der sie landet; ein seitenweise nummeriertes Dokument wird daher zuerst kapitelweise umbrochen, dann danach nummeriert, wo seine Anmerkungen gelandet sind, und erneut umbrochen; ein eingekreistes Zeichen hat unabhängig von seiner Nummer dieselbe Breite, sodass der zweite Build keine Zeile verschiebt. `numbering: 'column'` beginnt in jeder Spalte neu, für Bücher, die ihre Anmerkungen spaltenweise setzen. Wie eine Hochstellung bleibt das Zeichen beim vorangehenden Zeichen und eröffnet nie eine Zeile, und in senkrechtem Text steht es aufrecht in einer eigenen Zelle. **Chinesische Standards** in der Sandbox führt diese Einstellungen unter ihren Änderungen auf. Siehe [Fußnoten](/de/docs/configuration-notes-references#fußnoten).
+
+## Senkrechter Satz
+
+`layout.writingMode: 'vertical-rl'` setzt das Buch von oben nach unten. Der gesamte oben beschriebene Satz gilt unverändert, nur entlang der senkrechten statt der waagerechten Zeile; was sich ändert, sind die Seite ringsum und die Art, wie jedes Zeichen steht.
+
+### Die um eine Vierteldrehung gedrehte Seite
+
+Eine senkrechte Seite wird wie eine waagerechte Seite umbrochen, die um eine Vierteldrehung im Uhrzeigersinn gedreht ist. Ihre Zeilen sind die Spalten des senkrechten Texts, von rechts gelesen, und alles, was die Engine mit Zeilen macht (Umbruch, Blocksatz, Gleitobjekte, Fußnoten, Regeln zum Zusammenhalten, Ausgleich), arbeitet in diesem gedrehten Rahmen. Auf dem Blatt:
+
+- Eine Spalte des Layouts ist eine **Etage** (栏). `layoutType: 'double'` ergibt zwei übereinandergestapelte Etagen, die von rechts oben gefüllt werden, mit der Spaltenlinie als waagerechter Linie dazwischen. Etagen werden am Ende eines Kapitels nicht ausgeglichen ([clreq §7.1.3.4](https://www.w3.org/TR/clreq/#x7-1-3-4-handling-of-spaces-just-before-the-new-recto-page-breaks-and-new-edges)).
+- Der Anfang des Flusses ist der **rechte** Rand des Blatts: Ein Kapitelauftakt ist ein Band am rechten Rand der Seite, ein oberes Gleitobjekt steht rechts, ein unteres links, Fußnoten landen am linken Ende jeder Etage.
+- `page.margins` behalten auf dem Blatt ihre Namen. Kolumnentitel, Paginas, Schneidmarken und Hintergrund bleiben ebenfalls auf dem Blatt.
+- Ein Überschriftenformat kann seine eigene Schreibrichtung festlegen, sodass ein waagerechter Anhang oder ein waagerechtes Register auf ein senkrechtes Buch folgen kann.
+
+Ein Host, der das Layout liest, findet auf einer senkrechten Seite `VDTPage.flow` sowie Hilfsfunktionen (`flowToPage`, `pageToFlow`, `flowRectToPage`), die zwischen Fluss und Blatt umrechnen. Siehe [Vertikale Schrift](/de/docs/configuration-page-layout#vertikale-schrift) in der Konfigurationsreferenz.
+
+### Bindung rechts
+
+`page.binding` ist standardmäßig `'auto'`, und auto bedeutet bei einem senkrechten Buch den rechten Rand. Seite 1 ist weiterhin ungerade und weiterhin die rechte Seite (recto), sodass Paritätseinstellungen, `:::pagebreak{parity="odd"}` und Seitenzahlen ihre Bedeutung behalten; was sich ändert, ist die Seite, auf der die Recto-Seite liegt: die linke Seite der Doppelseite (clreq §7.1.3.3). Mit gespiegelten Rändern tragen die ungeraden Seiten ihren Bundsteg rechts. Die Sandbox zeigt die Doppelseiten als 3 | 2, Seite 1 allein links vom Bund, und ihr HTML-Betrachter lässt die Seiten von rechts nach links laufen. Das PDF bittet Betrachter um dasselbe (`/Direction /R2L` und `/PageLayout /TwoPageRight`); Acrobat und Foxit folgen dem, der eingebaute Betrachter von Chrome nicht. Auch ein waagerechtes Buch kann rechts gebunden werden. Siehe [Bindung](/de/docs/configuration-page-layout#bindung).
+
+### Wie jedes Zeichen steht
+
+Welche Zeichen aufrecht stehen und welche gedreht werden, folgt der Unicode-Eigenschaft für die senkrechte Ausrichtung ([UAX #50](https://www.unicode.org/reports/tr50/)), ergänzt um die chinesischen Konventionen aus Anhang A von clreq:
+
+- Han-Zeichen, Kana, Bopomofo und Buchstaben voller Breite stehen aufrecht, je ein Geviert.
+- Lateinische Wörter und Zahlen, die länger sind als die Grenze für aufrechte Zahlen (nächster Abschnitt), werden um eine Vierteldrehung im Uhrzeigersinn gedreht und behalten ihre waagerechten Breiten.
+- Klammern und Anführungszeichen nehmen ihre senkrechten Formen an (﹁﹂﹃﹄︵︶). In Text vom Festland werden “ ” ‘ ’ als 『』「」 gesetzt, wie GB/T 15834—2011 §5.2.3 es vorschreibt.
+- Pausen- und Schlusszeichen werden nie gedreht, auch wenn UAX #50 ：； für das Japanische dreht. Eine Schrift des Festlands setzt 、，。． rechts oben in die Zelle und ！？：； in ihre rechte Hälfte (GB/T 15834—2011 §5.2.1); Schriften aus Taiwan und Hongkong zentrieren sie.
+- Striche, Auslassungszeichen und die Wellenlinie laufen die Spalte hinunter; ein 破折号 ist eine einzige Linie entlang der Achse der Zeichen.
+- Die Zeichen, die Unicode aufrecht setzt (× © ± § ℃ ①), stehen in einer eigenen Zelle, auch innerhalb einer Zahl: `30×40` ist 30, × und 40, alle aufrecht.
+
+Breite der Satzzeichen, Stauchung, Hängen und der Han-Latein-Abstand wirken in senkrechter Zeile wie in waagerechter: Ein 、 im Kaiming-Stil nimmt eine halbe Zelle ein, `」「` anderthalb, und `：；？！` behalten in jeder Region eine ganze Zelle.
+
+### Aufrecht gesetzte Zahlen
+
+Eine kurze Zahl liest sich besser, wenn sie in einer Zelle steht, als wenn sie auf der Seite liegt: Tate-chu-yoko (縱中橫, [clreq §2.1.3](https://www.w3.org/TR/clreq/#x2-1-3-mixed-text-composition-in-vertical-writing-mode)). `cjk.uprightDigits` legt fest, wie viele Ziffern eine solche Zahl haben darf: standardmäßig `2`, `3` oder `4`, oder `0` für keine. Entweder steht die ganze Zahl in der Zelle oder nichts davon; unter dem Standardwert setzt `2026年9月28日` also 2026 seitlich, 9 aufrecht und 28 nebeneinander in einer Zelle; `A4`, `3.14` und `10,000` bleiben mit ihren Buchstaben und Trennzeichen seitlich. Eine Zahl in einem englischen Satz folgt ihm auf der Seite liegend: In `chapters 49 and 32` laufen beide Zahlen mit den Wörtern um sie herum, während eine Zahl neben einem chinesischen Zeichen aufrecht steht (`第 3 回`, `用iPhone 15拍攝`), ebenso die Zahlen einer Uhrzeit, eines Spielstands oder eines Datums in chinesischem Text, deren Doppelpunkte und Bindestriche zu chinesischen Zeichen führen (`上午12:30开会`, `比分3:2`). Drei Auszeichnungen überschreiben die Einstellung von Hand:
+
+```markdown
+第:tcy[120]回，:upright[GDP]增長:sideways[12]倍。
+```
+
+`:tcy[…]` setzt seinen Text in eine aufrechte Zelle und staucht ihn auf das Geviert, wenn er breiter ist; `:upright[…]` stellt jedes Zeichen in eine eigene Zelle, für eine Abkürzung, die Buchstabe für Buchstabe gelesen wird; `:sideways[…]` dreht den Abschnitt. In waagerechtem Text ändern sie nichts. Literarische Texte schreiben Zahlen meist in chinesischen Zahlzeichen, die nichts davon brauchen.
+
+### Abbildungen, Tabellen und Legenden
+
+Abbildungen und Tabellen stehen in einem senkrechten Buch aufrecht. Eine Abbildung füllt die Höhe ihrer Etage, soweit ihre Legende es zulässt, und die Breite, die sie auf dem Blatt einnimmt, ist der Raum, den sie im Fluss verbraucht; ihre Legende wird waagerecht darunter gesetzt, ebenso die Zellen einer Tabelle (clreq merkt an, dass Legenden, Tabellen und Seitenzahlen meist waagerecht bleiben, §2.1.1). Bei einer Tabelle, die höher ist als ihre Etage, werden die Zeilen über die Etagen hinweg geteilt. Ein `placement.rotate` wird dort, wo eine Abbildung zum ersten Mal in senkrechtem Text zitiert wird, mit der Warnung `rotateIgnoredVertical` ignoriert.
+
+### Kolumnentitel und Paginas
+
+Kolumnentitel und Paginas bleiben auf dem Blatt und werden waagerecht gesetzt, wie in den meisten senkrechten Büchern (clreq §7.2). Zwei andere Konventionen sind verbreitet; für sie kann ein Textelement senkrecht gesetzt (`writingMode: 'vertical-rl'`) und am Außensteg der Seite verankert werden (`anchor.to: 'outer'`):
+
+- **Kolumnentitel am Außensteg**: der Kapiteltitel den Außensteg hinunter, etwa vier Zeichen unter dem Kopf des Satzspiegels beginnend, und die Pagina etwa fünf Zeichen über seinem Fuß endend, in chinesischen Zahlzeichen, in etwa 80 % des Schriftgrads des Grundtexts. Die Sandbox fügt sie in einem Schritt hinzu (**Kopfzeile › Kolumnentitel am Außenrand (vertikal)**).
+- **Pagina in der äußeren unteren Ecke**, wie es die taiwanischen Regeln für senkrechte Bücher verlangen: ein waagerechtes Element in der Fußzeile unten links auf ungeraden Seiten und unten rechts auf geraden Seiten eines rechts gebundenen Buchs.
+
+Die Vorlage steht in der Konfigurationsreferenz unter [Vertikale Textelemente](/de/docs/configuration-page-layout#vertikale-textelemente).
+
+### Senkrechter Text in jeder Ausgabe
+
+Das Canvas malt eine senkrechte Seite selbst und dreht jedes aufrechte Zeichen um die Mitte seiner Zelle zurück. Um die eigenen senkrechten Formen der Satzzeichen aus der Schrift zu verwenden, lädt ein Browser-Host einen Zwilling jeder Familie mit eingeschaltetem OpenType-Feature `vert` (`loadVerticalAlternates`); die Sandbox tut das für jede Familie eines senkrechten Buchs, und ohne den Zwilling dreht oder verschiebt die Engine die Zeichen selbst. Das PDF zeigt aufrechte Zeichen über ein zweites Font-Dictionary im senkrechten Modus (`Identity-V`) über derselben eingebetteten Datei, mit `vert` geformt, sodass Reader eine Spalte als eine Zeile markieren und kopieren und nichts doppelt eingebettet wird; ein getaggtes PDF deklariert `WritingMode /TbRl`. Das HTML setzt jede Zeile als Box mit `writing-mode: vertical-rl` und `text-combine-upright` für Zahlen in einer Zelle. Alle drei Ausgaben platzieren jedes Zeichen bis auf wenige Hundertstel Geviert genau wie das senkrechte Layout von HarfBuzz.
+
+## Auszeichnungen und Annotationen
+
+Chinesische Ausgaben zeichnen Text zwischen den Zeilen aus statt mit Kursive oder Unterstreichung, versehen Zeichen mit ihren Lesungen und setzen Kommentare in die Zeile. Fünf Direktiven decken das ab. Jede lässt ihren Text im Absatz, sodass Suche, Inhaltsverzeichnis, Registeranker und kopierter Text die Zeichen wie geschrieben lesen; nur was um sie herum gezeichnet wird, hängt von der Konfiguration ab.
+
+```markdown
+此事:dots[不可]輕忽。:name[賈寶玉]與:name[林黛玉]讀:book[西廂記]。
+
+{滿紙|mǎn|zhǐ}荒唐言，:ruby[一把]{rt="yì bǎ"}辛酸淚！
+
+寶玉:warichu[甲戌側批：此是第一首標題詩。]{open="〔" close="〕"}道：
+```
+
+### Betonungspunkte
+
+`:dots[…]` setzt einen Betonungspunkt (着重号) unter jedes Zeichen in waagerechtem Text und rechts daneben in senkrechtem, keinen auf Satzzeichen (clreq §5.3.1; GB/T 15834—2011 §4.12 und §5.2.5 für senkrechten Text). `style` wählt einen Punkt, einen offenen Kreis oder einen Sesampunkt. Markdown-Hervorhebung bewirkt in einem chinesischen Dokument dasselbe: `cjk.emphasis` ist dort standardmäßig `'dots'`, sodass `*不可*` Punkte druckt, denn eine chinesische Schrift hat keine Kursive, auf die sie ausweichen könnte. Lateinische Buchstaben in derselben Hervorhebung behalten ihre Kursive.
+
+### Eigennamen- und Buchtitelzeichen
+
+`:name[…]` zieht die Eigennamenlinie (专名号) unter den Text, in senkrechtem Text links davon. `:book[…]` druckt das Buchtitelzeichen (书名号) so, wie `cjk.bookTitleMark` es festlegt: 《》 um den Titel, wie moderne Bücher vom Festland es schreiben (〈〉 für einen Titel in einem anderen), die Wellenlinie darunter wie in klassischen und taiwanischen Ausgaben, oder nichts. Eine Quelle dient damit einer modernen Ausgabe für das Festland ebenso wie einer klassischen. Wo zwei Namen oder zwei Titel aufeinandertreffen, gibt jede Linie an der Fuge ein Achtelgeviert ab, sodass `:name[賈寶玉]:name[林黛玉]` als zwei Namen zu lesen ist.
+
+### Ruby: Pinyin und Zhuyin
+
+`:ruby[紅樓]{rt="hóng lóu"}` setzt eine Lesung über jedes Zeichen; bei so vielen Lesungen wie Zeichen darf eine Zeile zwischen ihnen umbrechen, und `group` setzt eine Lesung über das ganze Wort. Die Kurzform `{紅樓|hóng|lóu}` gilt gleichermaßen, wenn die Basis chinesische Zeichen enthält, sodass `{x|x>0}` in lateinischer Prosa Text bleibt. Lesungen in Bopomofo (Zhuyin) stehen in einer Spalte rechts von jedem Zeichen, mit dem Tonzeichen neben der Spalte und der Hälfte seiner Farbe über dem letzten Symbol (clreq §5.5.3.3); Pinyin steht in waagerechtem Text über dem Text und in senkrechtem rechts davon. Eine Lesung, die breiter ist als ihre Basis, verbreitert deren Box, abzüglich eines Viertels der Ruby-Größe, das sie auf einen Nachbarn ohne Lesung überragen darf. `cjk.ruby` legt Schrift, Größe (standardmäßig die Hälfte des Texts), Farbe und Standardseite fest.
+
+### Warichu
+
+`:warichu[…]` setzt eine Anmerkung in zwei Zeilen halber Größe innerhalb der Zeile (双行夹注), die Form des Kommentars in klassischen Ausgaben. Die obere Zeile nimmt mindestens die Hälfte jedes Teils auf, sodass die untere nicht die längere ist, und ein Zeichen, das keine Zeile eröffnen darf, eröffnet nie die untere Zeile; wenn die einzigen Teilungsstellen, die diese Regel einhalten, vor der Hälfte liegen (`本名。`), wird die nächstgelegene genommen, und die untere Zeile ist die längere (`本` über `名。`). Eine lange Anmerkung füllt, was von der Zeile übrig ist, und setzt sich in der nächsten Zeile, Spalte oder Seite fort, wobei auf jeder Seite des Umbruchs mindestens zwei ihrer Zeichen bleiben (`cjk.warichu.minChars`), und ihre Klammern stehen nur vor der ersten Zeile und nach der letzten. In senkrechtem Text wird die rechte Teilspalte zuerst gelesen. `cjk.warichu` legt Größe, Farbe und Standardklammern fest.
+
+### Platz im Zeilenabstand
+
+Der Zeilenabstand ändert sich nie: Punkte, Linien und Lesungen leben im Zwischenraum zwischen den Zeilen. Der Build warnt, wenn der Zwischenraum eines Absatzes für das, was er trägt, zu schmal ist: unter einem halben Geviert bei Auszeichnungen auf einer Seite, unter fünf Achteln bei Auszeichnungen auf beiden Seiten (clreq §5.6.1), gemeldet als `cjkMarksExceedLeading`, und `rubyExceedsLeading` für Lesungen, die höher sind als der Zwischenraum. Geben Sie annotierten Absätzen ein Absatzformat mit größerem Zeilenabstand. Auszeichnungen und Lesungen werden in Absätzen, Überschriften, Listenpunkten, Zitaten und Kästen gezeichnet sowie in Legenden, Tabellenzellen und Anmerkungen, deren Zwischenräume ebenso geprüft werden; Kolumnentitel drucken den Text ohne sie.
+
+## Schriften
+
+Postext setzt jedes Format in einer einzigen Familie und weicht bei einem fehlenden Zeichen nicht auf eine andere Familie aus: Noto Serif TC leiht sich nichts von Noto Serif SC. Die Schrift muss jedes Zeichen abdecken, das das Buch druckt, Satzzeichen eingeschlossen.
+
+- **Im Browser und in der Sandbox** kommt eine chinesische Familie von Fontsource als etwa hundert Dateien pro Schriftstärke, jede mit einem Teil der Zeichen und mit ihrem `unicode-range` deklariert; der Browser lädt die Dateien, die der Text berührt. Der PDF-Tab der Sandbox macht es genauso: Sein Font-Provider liest das Stylesheet der Familie und übergibt `renderToPdf` die Teilstücke, die die Seiten verwenden, jedes als Teilmenge eingebettet. Die benannten Teilmengen von Fontsource sind unvollständig (`chinese-traditional` von Noto Serif TC hat kein ，！？ voller Breite); verwenden Sie daher die nummerierten Teilstücke.
+- **In einem Paket** liefern Sie die Schriften als Teilmenge mit den eigenen Zeichen des Buchs aus, Satzzeichen und senkrechte Formen eingeschlossen. Schneiden Sie aus einer variablen Schrift eine statische Datei pro Schriftstärke: pdf-lib bettet die Standardinstanz einer variablen Schrift ein, eine fette Überschrift würde also in der Standardstärke gedruckt (`variableFontDefaultInstance`). Ziehen Sie TrueType-Builds (Google Fonts, Fontsource) den CFF-Dateien `.otf` vor, die postext-pdf vollständig einbettet, bis zu 25 MB pro Schriftstärke (`cffEmbeddedWhole`). Behalten Sie beim Erstellen der Teilmenge die Layout-Features (`vert`, `vrt2`) und die senkrechten Metriken (`vhea`, `vmtx`): Die senkrechten Satzzeichen kommen daher.
+- **Fehlende Glyphen** werden als leeres Kästchen der Schrift gedruckt. `renderToPdf` meldet sie pro Schrift (`missingGlyph`), und die Sandbox führt sie nach jedem PDF im Bedienfeld Prüfungen auf.
+- **Die Schrift der Region.** Noto Serif SC, TC und HK zeichnen dieselben Codepunkte in den Formen ihrer Region und stellen die Pausen- und Schlusszeichen dorthin, wo ihre Region sie hinstellt. Schrift und Locale eines Buchs sollten übereinstimmen.
+- **Keine Kursive.** Chinesische Schriften haben keine; Browser und PDF würden die Glyphen schräg stellen. Setzen Sie Hervorhebungen mit Punkten, einer Kai-Schrift (楷体, etwa LXGW WenKai) oder fett.
+
+Die traditionellen Stimmen eines chinesischen Buchs entsprechen Familien: Song (宋体, Noto Serif) für den Text, Hei (黑体, Noto Sans) für Überschriften und Bezeichnungen, Kai (楷体) für Zitate, Verse und Vorworte, Fangsong (仿宋) für amtliche Dokumente. [Chinesische, japanische und koreanische Schriften](/de/docs/configuration-programmatic-usage#chinesische-japanische-und-koreanische-schriften) in der Konfigurationsreferenz enthält den Code für den Font-Provider.
+
+## Zwei vollständige Konfigurationen
+
+### Ein Roman vom Festland, waagerecht gesetzt
+
+Ein Buch im Format 大32开, 28 × 28 Zeichen Noto Serif SC in 10,5 pt, Kapitel nummeriert als 第一章, Anmerkungen auf jeder Seite mit ① nummeriert, Satzzeichen im Kaiming-Stil und GB-Zeilenumbruch aus der Locale:
+
+```ts
+import type { PostextConfig } from 'postext';
+
+const pt = (value: number) => ({ value, unit: 'pt' as const });
+const mm = (value: number) => ({ value, unit: 'mm' as const });
+const ink = { hex: '#1a1a1a', model: 'hex' as const };
+
+const config: PostextConfig = {
+  locale: 'zh-Hans-CN',
+  page: {
+    sizePreset: 'custom', width: mm(140), height: mm(203),
+    margins: { top: mm(18), bottom: mm(20), left: mm(16), right: mm(20), mirror: true },
+  },
+  layout: { layoutType: 'single' },
+  bodyText: {
+    fontFamily: 'Noto Serif SC', fontSize: pt(10.5), lineHeight: pt(16.5),
+    textAlign: 'justify', firstLineIndent: { value: 2, unit: 'em' },
+    color: ink, boldColor: ink, italicColor: ink,
+  },
+  headings: {
+    fontFamily: 'Noto Sans SC', color: ink,
+    levels: [
+      { level: 1, fontSize: pt(16), numberingTemplate: '第{1:一}章', numberSeparator: '　',
+        breakBefore: { enabled: true, parity: 'any' } },
+    ],
+  },
+  captionStyle: { labelNumberGap: '', labelSeparator: '　' },
+  footnotes: { numberFormat: 'circled-decimal', numbering: 'page' },
+  cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28 } },
+  header: { elements: [] },
+  footer: { elements: [
+    { kind: 'text', id: 'folio', content: '{pageNumber}', fontFamily: 'Noto Serif SC', fontSize: pt(9),
+      overflow: 'clip', color: ink, placement: { anchor: { to: 'container', edge: 'center' } } },
+  ] },
+};
+```
+
+Der Schlüssel `cjk` legt nur das Raster fest: Region, Zeilenumbruch, Breite der Satzzeichen, Stauchung und Han-Latein-Abstand folgen aus `zh-Hans-CN`. Kapitel beginnen auf beliebiger Seite, wie bei den meisten Romanen vom Festland (另页起).
+
+### Ein taiwanischer Roman, senkrecht gesetzt und rechts gebunden
+
+Ein Buch im Format 25開 (148 × 210 mm) in Noto Serif TC, 38 Zeichen pro Spalte, Kapitel nummeriert als 第一回, Kolumnentitel am Außensteg und chinesische Paginas; die zentrierten Satzzeichen voller Breite und der einfache Zeilenumbruch Taiwans kommen aus `zh-Hant-TW`, die Bindung rechts aus der Schreibrichtung:
+
+```ts
+const config: PostextConfig = {
+  locale: 'zh-Hant-TW',
+  page: {
+    sizePreset: 'custom', width: mm(148), height: mm(210),
+    margins: { top: mm(24), bottom: mm(18), left: mm(16), right: mm(22), mirror: true },
+    pageNumbering: { format: 'trad-chinese-informal' },
+  },
+  layout: { layoutType: 'single', writingMode: 'vertical-rl' },
+  bodyText: {
+    fontFamily: 'Noto Serif TC', fontSize: pt(10.5), lineHeight: pt(18),
+    textAlign: 'justify', firstLineIndent: { value: 2, unit: 'em' },
+    color: ink, boldColor: ink, italicColor: ink,
+  },
+  headings: {
+    fontFamily: 'Noto Serif TC', color: ink,
+    levels: [
+      { level: 1, fontSize: pt(14), numberingTemplate: '第{1:一}回', numberSeparator: '　',
+        breakBefore: { enabled: true, parity: 'odd' } },
+    ],
+  },
+  cjk: { grid: { enabled: true, charsPerLine: 38 } },
+  header: { elements: [
+    { kind: 'text', id: 'head', content: '{chapterTitle}', writingMode: 'vertical-rl', pages: 'body',
+      fontFamily: 'Noto Serif TC', fontSize: pt(8.4), overflow: 'clip', align: 'left', color: ink,
+      placement: { anchor: { to: 'outer', edge: 'top' }, offset: { y: { value: 4, unit: 'em' } } } },
+    { kind: 'text', id: 'folio', content: '{pageNumber}', writingMode: 'vertical-rl',
+      fontFamily: 'Noto Serif TC', fontSize: pt(8.4), overflow: 'clip', align: 'left', color: ink,
+      placement: { anchor: { to: 'outer', edge: 'bottom' }, offset: { y: { value: -5, unit: 'em' } } } },
+  ] },
+  footer: { elements: [] },
+};
+```
+
+`parity: 'odd'` lässt jedes Kapitel auf einer Recto-Seite beginnen, die in diesem Buch eine linke Seite ist. `linesPerPage` fehlt, die Seite nimmt also so viele Spalten auf, wie ihre Breite fasst. Die Kolumnentitel am Außensteg laufen auf ungeraden Seiten den linken Rand hinunter und auf geraden den rechten, und `{pageNumber}` druckt auf Seite 103 一百零三.
+
+## In der Sandbox und in den Rezepten
+
+In der Sandbox enthält **Gestaltung › Schriftsystem** die Dokumentsprache, die Schreibrichtung, die Bindung und jede `cjk`-Einstellung, und **Chinesische Standards › Prüfen…** richtet ein Buch in einem Schritt für Chinesisch ein und listet vorher jede Änderung auf (siehe [Sandbox](/de/docs/sandbox#bedienfeld-gestaltung)). Im Schaufenster steht *Der Traum der Roten Kammer* (紅樓夢, 程乙本 von 1792) in drei Ausgaben: [Langzeichen, senkrecht und rechts gebunden](/de/sandbox#preset=hongloumeng&lang=zh-Hant), [Kurzzeichen und waagerecht](/de/sandbox#preset=hongloumeng&lang=zh-Hans) sowie die ersten 56 Kapitel in der englischen Übersetzung von H. Bencraft Joly. Der eigene Leitfaden der Sandbox hat [eine chinesische Ausgabe](/de/sandbox#preset=postext-guide&lang=zh-Hans), die genauso gesetzt ist: senkrecht und rechts gebunden, in zwei Etagen, mit Kapitelbändern am rechten Rand, Kolumnentiteln am Außensteg und Paginas in chinesischen Zahlzeichen. Das [Rezeptbuch](/de/cookbook?col=chinese-layout) versammelt die chinesischen Rezepte in seiner Sammlung *Chinesischer Satz*, jedes eine Seite oder Doppelseite mit dem Skript, das sie setzt.
+
+## Bekannte Grenzen
+
+- **Koreanisch** wird mit den Standardwerten des chinesischen Festlands gesetzt; seine eigenen Regeln (KLREQ) sind nicht umgesetzt. Japanisch folgt seit postext 1.16 seinen eigenen Regeln ([Japanischer Satz](/de/docs/japanese-layout)).
+- **Gestaltungstext** (Kolumnentitel, Auftakte, Kastentitel, Teilseiten) übernimmt die Regeln für Zeilenanfang und -ende, die Breite der Satzzeichen und den Han-Latein-Abstand des Grundtexts (`cjk.composeDesignText`, seit postext 1.25), aber seine Zeilen stehen im Flattersatz: Sie werden nicht zwischen den Zeichen ausgetrieben.
+- **Eine Schreibrichtung pro Seite.** Ein waagerechter Kasten in einer senkrechten Seite, echte senkrechte Tabellen mit der Kopfzeile rechts und Legenden neben einer aufrechten Abbildung sind nicht verfügbar. Formeln im Text, Chips und Farbfelder werden in einer senkrechten Zeile seitlich gedreht.
+- **Zeilennummern** werden in senkrechtem Text nicht gedruckt: Ein senkrechtes Buch, das `lineNumbers` einschaltet, erhält keine, mit der Konfigurationswarnung `lineNumbersUnsupported`. Waagerechte Bücher nummerieren ihre Zeilen wie jedes andere ([Konfiguration › Zeilennummern](/de/docs/configuration-notes-references#zeilennummern)).
+- **Textumfluss.** In waagerechtem Text kann ein Bild oder ein Kasten an einer Seite seiner Spalte stehen, mit dem Text daneben (siehe [Textumfluss](/de/docs/document-format#textumfluss)); unter dem Zeichenraster ist der Raum, den es einnimmt, eine ganze Zahl von Zeichen, sodass die Zeilen daneben im Raster bleiben. Senkrechter Text setzt keinen Text neben eine Abbildung: Eine umflossene Abbildung behält ihr Band, mit der Warnung `textWrap` (`wrapUnsupported` für den Standard eines Ressourcentyps).
+- **Tabulatoren.** Ein waagerechter Absatz mit einem Tabulator (`:tab` oder einem Tabulatorzeichen unter einem Format mit Tabstopps) wird Zeile für Zeile gesetzt: nach den Umbruchregeln des Dokuments zwischen den Zeichen umbrochen, aber ohne Stauchung der Satzzeichen und ohne Blocksatz zwischen den Zeichen. In senkrechtem Text gibt es keine Tabstopps: Ein Tabulator ist ein Wortzwischenraum, und ein `:tab` löst die Inhaltswarnung `tabInVerticalText` aus. Ein Absatz mit Ruby oder Warichu setzt seine Tabulatoren ebenfalls als Wortzwischenräume. Siehe [Tabulatoren und Tabstopps](/de/docs/document-format#tabulatoren-und-tabstopps).
+- **Initialen.** Ein waagerechter Absatz kann mit einer Initiale aus einem Zeichen beginnen (首字下沉), festgelegt über ein Absatzformat oder eine Überschriftenebene (siehe [Initialen](/de/docs/configuration-text#initialen)): Ihre Größe richtet sich nach der Höhe des Zeichens im Verhältnis zu der des Texts, und der Umbruch setzt die verkürzten Zeilen mit seiner üblichen Stauchung und seinem Blocksatz. Senkrechter Text hat keine Initialen: Ein Absatz, der mit einer beginnen würde, wird ohne sie gesetzt und löst die Inhaltswarnung `dropCap` aus.
+- **Größen in Punkt.** Es gibt keine 号- oder Q-Einheiten.
+- **Senkrechte Metriken.** Jedes aufrechte Zeichen rückt um ein Geviert vor; proportionale senkrechte Metriken (`vpal`) und senkrechtes Kerning werden nicht verwendet.
+- **Ruby und Warichu**: kein beidseitiges Ruby, keine automatischen Lesungen, keine einzeiligen Anmerkungen; Anmerkungen und Lesungen in Gestaltungstext werden als einfacher Text gedruckt.
+- **Schriften**: kein Ausweichen von einer Familie auf eine andere, keine Kursive in chinesischen Schriften, CFF-Schriften werden vollständig eingebettet.
+- **Register**: Ein Zeichen mit mehreren Lesungen erhält die gebräuchliche Lesung der Sortierfunktion, sofern sein Eintrag keinen `sort`-Schlüssel hat; eine Ordnung nach Radikalen ist nicht verfügbar.
+- **Code-Listings.** Ein waagerechtes Listing wird Zeile für Zeile in seiner Codeschrift gesetzt; in einer dicktengleichen Schrift mit Han-Zeichen nimmt ein Zeichen voller Breite zwei Zellen ein, sodass die Spalten fluchten, und ein Tabulator zählt es als zwei. In senkrechtem Text folgt ein Listing dem senkrechten Fluss, sein lateinischer Text wird seitlich gedreht, wie senkrechter Text ihn setzt, und es erhält keine Zeilennummern. Siehe [Code-Listings](/de/docs/configuration-styles#code-listings).
+
+## Quellen
+
+- W3C, [Requirements for Chinese Text Layout (clreq)](https://www.w3.org/TR/clreq/), Group Note Draft, 2026.
+- W3C, [Requirements for Japanese Text Layout (JLREQ)](https://www.w3.org/TR/jlreq/), für die Kolumnentitel senkrechter Bücher.
+- Unicode Standard Annex #50, [Unicode Vertical Text Layout](https://www.unicode.org/reports/tr50/).
+- W3C, [CSS Writing Modes Level 4](https://www.w3.org/TR/css-writing-modes-4/) und [CSS Text Level 4](https://www.w3.org/TR/css-text-4/).
+- W3C, [CSS Counter Styles Level 3](https://www.w3.org/TR/css-counter-styles-3/#limited-chinese), für die chinesischen Zahlstile.
+- GB/T 15834—2011 《标点符号用法》 ([Text](https://people.ubuntu.com/~happyaron/l10n/GB%28T%2915834-2011.html)).
+- GB/T 15835—2011 《出版物上数字用法》.
+- Taiwanisches Bildungsministerium, 《重訂標點符號手冊》, überarbeitete Ausgabe, 2008.

@@ -32,9 +32,10 @@ describe("recipeBundleCandidates (#737)", () => {
   it("falls back on English and Spanish for no language and for one the Cookbook has no edition in", () => {
     expect(recipeBundleCandidates("a-recipe", null)).toEqual(urls("a-recipe", "en", "es"));
     expect(recipeBundleCandidates("a-recipe", "")).toEqual(urls("a-recipe", "en", "es"));
-    expect(recipeBundleCandidates("a-recipe", "de")).toEqual(urls("a-recipe", "en", "es"));
+    expect(recipeBundleCandidates("a-recipe", "it")).toEqual(urls("a-recipe", "en", "es"));
     expect(recipeBundleCandidates("a-recipe", "it-CH")).toEqual(urls("a-recipe", "en", "es"));
     expect(recipeBundleCandidates("a-recipe", "fr-CA")).toEqual(urls("a-recipe", "fr", "en", "es"));
+    expect(recipeBundleCandidates("a-recipe", "de-AT")).toEqual(urls("a-recipe", "de", "en", "es"));
   });
 
   it("refuses a slug that is not a recipe's", () => {

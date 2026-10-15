@@ -1,0 +1,66 @@
+---
+title: "Eigennamen- und Buchtitelstriche, vertikal und horizontal"
+summary: "Die Grundannalen des Xiang Yu mit :name und :book, vertikal auf einer rechts gebundenen Seite, dann horizontal: Striche erst links der Namen, dann darunter."
+plain: "Musterseiten aus einem klassischen chinesischen Geschichtswerk. Sie zeigen, wie man Namen mit einem geraden roten Strich und Buchtitel mit einem welligen markiert, in vertikalem wie horizontalem Text."
+description: "Eigennamenstriche und wellige Buchtitelstriche in einem klassischen chinesischen Text, vertikal und horizontal aus einer Markdown-Quelle mit Postext gesetzt."
+aliases: ["Eigennamenstrich", "Unterstreichung von Eigennamen", "Buchtitelzeichen", "Wellenlinie", "專名號", "私名號", "書名號", "全式標點", "klassisches Chinesisch", "Shiji", "Xiang Yu", "Musterseiten", "樣張", "proper-name mark"]
+pageNotes: { "1": "Seite 1, vertikal gesetzt: ein indigoblaues Band am rechten Rand mit 史記選讀 in großen weißen Zeichen, dann die Vorbemerkung und fünf nummerierte Konventionen in der Kai-Schrift, mit geraden roten Strichen links der Namen, welligen roten Strichen links der Titel und drei roten Punkten rechts von 萬人敵.", "2": "Seite 2, vertikal gesetzt: das Band mit 項羽本紀 und der Autorenzeile, dann die Passage in neun Spalten, von rechts gelesen, ein roter Strich links von jedem Namen.", "3": "Seite 3, horizontal gesetzt: das Band über den Kopf mit 項羽本紀, dann dieselbe Passage in Zeilen zu 28 Zeichen, jeder Name rot unterstrichen, und das Impressum in kleiner grauer Schrift." }
+---
+
+## Was Sie setzen
+
+Drei Musterseiten für ein Lesebuch zu den *Aufzeichnungen des Chronisten*, im Endformat 140 × 203 mm eines chinesischen Buchs 大32開. Die Passage ist der Anfang der Grundannalen des Xiang Yu in der vollen Interpunktion einer klassischen Ausgabe: ein gerader Strich neben jeder Person, jedem Ort, Staat und jeder Dynastie, ein welliger Strich neben jedem Buch- und Kapiteltitel, beide in Zinnoberrot. Seite 1 setzt die Vorbemerkung und die Konventionen des Herausgebers in der Kai-Schrift. Die Seiten 2 und 3 setzen dasselbe Markdown zweimal, die Seite hinunter und über sie hinweg, sodass die Doppelseite zeigt, wohin die Marken kommen: links der Namen in vertikalen Zeilen, darunter in horizontalen. Das Buch ist rechts gebunden, und ein indigoblaues Band trägt jeden Titel. <RecipeLink slug="critical-edition-line-numbers">Nº 044, Lycidas im Text von 1645</RecipeLink>, hebt seine Namen auf europäische Art hervor, kursiv.
+
+## Zubereitung
+
+### 1 · Das Markup markiert, die Schreibrichtung platziert
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). `:name[項梁]` und `:book[史記]` behalten ihre Zeichen im Text, sodass Suche, kopierter Text und PDF 項梁 und 史記 lesen, und fügen die Marken daneben hinzu ([Chinesische Zeichen, Ruby und Warichu](/de/docs/document-format#chinesische-zeichen-ruby-und-warichu)). Auf welcher Seite sie stehen, entscheidet allein die Schreibrichtung: `layout.writingMode: 'vertical-rl'` setzt die Striche links der Zeichen, und der Überschriftenstil `across`, dessen Layout `'horizontal-tb'` ist, setzt sie darunter. `bookTitleMark: 'wavy'` ist das, was ein Dokument in `zh-Hant` von Haus aus bekommt; es steht ausgeschrieben da, weil ein Wechsel zu `zh-Hans` die Titel sonst in 《》 setzen würde. Zwei sich berührende Marken derselben Art, wie in 東漢班固 oder 史記項羽本紀, geben an den aufeinandertreffenden Enden je ein Achtelgeviert ab, sodass die Striche als zwei Namen lesbar sind.
+
+### 2 · Zeilenabstand mit Platz für die Marken
+
+<Excerpt region="type" />
+
+Die Marken leben im Zwischenraum zwischen den Zeilen und ändern nie den Zeilenabstand ([Zeichen, Ruby und Warichu](/de/docs/configuration-east-asian#zeichen-ruby-und-warichu)). Bei 10,5 pt auf 18 pt beträgt der Zwischenraum 0,71 Geviert, was die Namensstriche einer Spalte und die Punkte der nächsten aufnimmt, wie bei der fünften Konvention auf Seite 1. Das Raster zählt die Seite in Zeichen: 42 in jeder Zeile nach unten und 17 Zeilen nebeneinander, und es verschiebt die Ränder so, dass der Satzspiegel genau das ist: 25,7 mm Rand am Kopf, 21,7 mm am Fuß ([Zeichenraster](/de/docs/configuration-east-asian#zeichenraster)).
+
+### 3 · Ein Auftakt, der sich mit der Seite dreht
+
+<Excerpt region="opener" />
+
+Das Design einer Überschrift wird im Fluss seiner Seite angelegt, daher dient ein Satz von Elementen beiden Richtungen ([Vertikale Schrift](/de/docs/configuration-page-layout#vertikale-schrift)). Oben links am Anschnitt verankert, liegt das Band quer über dem Kopf der horizontalen Seite und senkrecht am rechten Rand der vertikalen, wo das Lesen beginnt. Dachzeile, Titel und Autorenzeile stapeln sich ebenfalls im Fluss: untereinander auf der horizontalen Seite, nebeneinander von rechts nach links auf der vertikalen. Die Länge des Bandes wird entlang des Flusses gemessen: 181,3 mm lassen es am Fuß des vertikalen Textes enden, frei von der Pagina, und über das Endformat der horizontalen Seite hinauslaufen.
+
+### 4 · Seitenzahlen für ein rechts gebundenes Buch
+
+<Excerpt region="folios" />
+
+Vertikaler Text bindet das Buch rechts ([Bindung](/de/docs/configuration-page-layout#bindung)): Seite 1 liegt links vom Bund, und die Außenkante einer rechten Seite ist ihre linke. Die ungerade Seitenzahl kommt nach unten links und die gerade nach unten rechts, umgekehrt wie in einem westlichen Buch, und `pageNumbering.format: 'trad-chinese-informal'` druckt sie als 一, 二, 三. Die Zeile dazwischen kommt aus einem Attribut jeder Überschrift, `slug="…"`; zusammen mit dem Impressum ist sie alles, was sich zwischen der englischen und der spanischen Ausgabe ändert.
+
+### 5 · Eine zweite Druckfarbe
+
+<Excerpt region="palette" />
+
+Eine klassische Ausgabe druckt ihre Marken in der Farbe des Textes. Ein Lesebuch für Studierende kann sie in einer zweiten Farbe drucken, damit sie sich von den Strichen der Zeichen abheben: `annotationColor` verknüpft sie mit dem Eintrag `mark` der Palette, dem Zinnoberrot eines Kommentars in roter Tinte, und eine Änderung dieses Eintrags färbt jeden Strich und jeden Punkt des Buchs um.
+
+## Varianten
+
+### Die Titel in 《》 setzen
+
+Bücher aus Festlandchina außerhalb der Klassiker setzen Titel in Klammern: Das Markdown bleibt, wie es ist, und die Klammern werden als Satzzeichen des Textes gedruckt.
+
+```diff
+-  bookTitleMark: 'wavy', // zh-Hant's default; mainland editions of the classics use it too
++  bookTitleMark: 'brackets', // 《史記》《項羽本紀》
+```
+
+### Die Marken in der Farbe des Textes drucken
+
+Lassen Sie `annotationColor` weg, und jede Marke nimmt die Farbe des Blocks an, den sie markiert.
+
+```diff
+-  annotationColor: col('mark'), // unset, the marks print in the colour of the text
+```
+
+## Häufige Fehler
+
+- Eine von einem Design gezeichnete Überschrift druckt ihren Titel über das Design, und Design-Text lässt die Marken weg: `# :book[項羽本紀]` zeigte im Band keine Wellenlinie. Auch Kolumnentitel, Legenden und Tabellenzellen drucken ihren Text ohne Marken.
+- Postext hält bei `cjkMarksExceedLeading` nicht an: Der Build führt die Warnung in `doc.contentWarnings`, und das Bedienfeld Prüfungen der Sandbox zeigt sie, aber die Seiten werden trotzdem gedruckt, mit Marken, die sich an die nächste Zeile drängen. Wenn Sie den Zeilenabstand ändern, lesen Sie diese Liste; bei 15 pt enthält sie jeden markierten Absatz dieser Seiten.

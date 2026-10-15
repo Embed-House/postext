@@ -1,0 +1,915 @@
+{/* docs/architecture-en.mdx */}
+
+export const metadata = {
+  title: 'Architektur von Postext',
+  sidebarTitle: 'Architektur',
+  description: 'Technische Architektur der Layout-Engine Postext',
+  lang: 'de',
+  lastUpdated: '2026-10-11',
+  readingTime: '45 min',
+  order: 2,
+  plainSummary: "Diese Seite erklärt, wie Postext im Inneren arbeitet, und richtet sich an Programmiererinnen und Programmierer. Zuerst misst Postext jedes Wort, ohne etwas auf dem Bildschirm zu zeichnen, und ist dadurch sehr schnell. Dann berechnet es, wohin jede Zeile, jedes Bild und jede Spalte gehört, und behält diesen Plan im Speicher. Es wiederholt die Arbeit, bis sich nichts mehr bewegt. Zuletzt zeichnet es die fertigen Seiten als Webseite, als Canvas-Bild oder als PDF-Datei. Wenn Sie ein Wort ändern, setzt es die Seiten neu und verwendet die Messungen der Absätze wieder, die sich nicht geändert haben.",
+};
+
+# Architektur von Postext
+
+Wenn Sie schon einmal mit React gearbeitet haben, kennen Sie den Kerngedanken bereits. React baut ein virtuelles DOM im Speicher auf, vergleicht es und fasst erst dann das echte DOM des Browsers an. Postext macht dasselbe – nur baut es statt UI-Komponenten einen Baum aus **Seiten, Spalten, Textblöcken und Begrenzungsrahmen**. Die gesamte Geometrie eines mehrseitigen, mehrspaltigen Dokuments, berechnet, bevor ein einziges Pixel gezeichnet wird. Jeder Absatz, jede Überschrift, jedes Bild, jede Fußnote und jedes herausgestellte Zitat steht an genauen Koordinaten und folgt jahrhundertealten typografischen Regeln, die CSS schlicht nicht ausdrücken kann.
+
+Möglich ist all das dank [`@chenglou/pretext`](https://github.com/chenglou/pretext), einer Bibliothek zur Textmessung ohne DOM, die 300- bis 600-mal schneller ist als ein Reflow im Browser. Die Geschichte hinter dem Projekt (ein Jahrzehnt gescheiterter Versuche, der Engpass, an dem sie alle hängen blieben, und die Bibliothek, die ihn endlich beseitigte) erzählt die [Einführung](/de/docs/introduction).
+
+## Der Kerngedanke
+
+Denken Sie an ein zweispaltiges Dokument mit 74 Seiten. Einen Geschäftsbericht vielleicht oder ein dicht bebildertes Lehrbuch. Sie übergeben es Postext, und die Engine baut das gesamte Layout im Speicher auf – jede Seite, jede Spalte, die genaue Position und die Pixelmaße jedes Absatzes. Sie wollen wissen, was auf Seite 72 in Spalte 2 steht? Die Antwort liegt schon bereit. Ohne zu rendern. Die Engine hat bereits entschieden, wo jeder Absatz umbricht, wo jedes Bild steht, wie Witwen und Waisen vermieden werden und wie die Grundlinien benachbarter Spalten fluchten.
+
+Und darum ist das so wichtig.
+
+Typografische Regeln hängen tief und zum Verzweifeln voneinander ab. Sie beheben eine Witwe auf Seite 5 – eine einsame letzte Zeile, die unten in einer Spalte gestrandet ist –, indem Sie sie in die vorige Spalte zurückholen. Gut. Aber diese Änderung verkürzt die Spalte auf Seite 5, das schiebt Inhalt nach vorn, und das erzeugt womöglich auf Seite 6 eine Waise: eine einzelne erste Zeile, in eine neue Spalte geschoben und von ihrem Absatz getrennt. Um überhaupt *zu erkennen*, dass Sie ein neues Problem geschaffen haben, muss das gesamte Layout des Dokuments zur Prüfung vorliegen. Und um es *zu beheben*, ohne woanders noch ein Problem zu erzeugen, müssen Sie das Ganze anpassen, neu messen und neu prüfen können.
+
+Das ist die Philosophie „erst alles berechnen, dann rendern“. Sie ist kein Leistungstrick. Sie ist der einzige Weg, die Dutzenden miteinander verflochtenen typografischen Regeln anzuwenden, nach denen professionelle Setzer seit Jahrhunderten arbeiten.
+
+
+## Grundbegriffe
+
+Ein kurzes Glossar. Der Rest des Dokuments setzt diese Begriffe voraus – kommen Sie hierher zurück, wenn einer
+unscharf geworden ist.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '180px' }}>Begriff</th>
+      <th>Definition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>VDT</strong></td>
+      <td>Virtual Document Tree, der virtuelle Dokumentbaum. Die veränderliche, an Ort und Stelle bearbeitete Datenstruktur, die das gesamte Dokument darstellt: Seiten, Spalten, Blöcke, Inline-Segmente und Begrenzungsrahmen. Vergleichbar mit einem virtuellen DOM, aber für die Geometrie des Dokumentlayouts.</td>
+    </tr>
+    <tr>
+      <td><strong>Seite</strong></td>
+      <td>Eine rechteckige Fläche fester Größe. Die Engine kennt Seiten von Anfang an. Ein Dokument ist eine geordnete Folge von Seiten.</td>
+    </tr>
+    <tr>
+      <td><strong>Spalte</strong></td>
+      <td>Eine senkrechte Unterteilung einer Seite. Spalten haben eine feste Breite und eine maximale Höhe. Text fließt von einer Spalte in die nächste und dann auf die nächste Seite.</td>
+    </tr>
+    <tr>
+      <td><strong>Block</strong></td>
+      <td>Eine Inhaltseinheit, die senkrechten Raum in einer Spalte einnimmt: Absatz, Überschrift, Bild, Tabelle, Zitatblock, herausgestelltes Zitat oder Fußnotenbereich.</td>
+    </tr>
+    <tr>
+      <td><strong>Zeile</strong></td>
+      <td>Eine gemessene Textzeile innerhalb eines Blocks, erzeugt von Pretext. Jede Zeile hat einen Begrenzungsrahmen und eine Grundlinienposition.</td>
+    </tr>
+    <tr>
+      <td><strong>Begrenzungsrahmen</strong></td>
+      <td>{'{'}  <code>x, y, width, height</code>  {'}'} in Pixeln, relativ zum Ursprung der Seite. Jeder Knoten im VDT trägt einen.</td>
+    </tr>
+    <tr>
+      <td><strong>Ressource</strong></td>
+      <td>Ein Element, das kein Text ist und über eine ID mit dem Fließtext verbunden ist: eine Bitmap, ein SVG, eine Tabelle oder ein Video (<code>Resource</code>, mit <code>kind: 'bitmap' | 'svg' | 'table' | 'video'</code>). Ressourcen werden beim ersten Verweis je Typ nummeriert (Abbildung 1, Tabelle 2.1 …) und in ein Band oben oder unten auf einer Seite in der Nähe dieses Verweises gleiten gelassen.</td>
+    </tr>
+    <tr>
+      <td><strong>Anmerkung</strong></td>
+      <td>Eine Fußnote oder eine Anmerkung am Kapitelende, im Markdown als Marke <code>[^id]</code> und Definition <code>[^id]:</code> geschrieben (siehe <a href="/de/docs/document-format#fußnoten">Fußnoten</a>). Marginalien und die Liste <code>PostextNote</code>, die das Inhaltsmodell annimmt, sind nicht implementiert: Die Engine liest <code>notes</code> nicht.</td>
+    </tr>
+    <tr>
+      <td><strong>Grundlinienraster</strong></td>
+      <td>Das senkrechte Raster, abgeleitet aus dem Zeilenabstand des Fließtextes (z. B. 24 px bei 16 px/1,5). Jede Grundlinie des Fließtextes soll auf einem Vielfachen davon landen, damit die Zeilen über Spalten und gegenüberliegende Seiten hinweg fluchten.</td>
+    </tr>
+    <tr>
+      <td><strong>Badness</strong></td>
+      <td>Wie weit die Wortzwischenräume einer Zeile im Blocksatz von ihrer natürlichen Breite abweichen – das quadrierte Anpassungsverhältnis, gesättigt bei 10000. Die Grundkosten beim Zeilenumbruch nach Knuth-Plass.</td>
+    </tr>
+    <tr>
+      <td><strong>Demerits</strong></td>
+      <td>Die Gesamtkosten eines möglichen Zeilenumbruchs nach Knuth-Plass: Badness plus Strafen (Silbentrennung, eine zu kurze Ausgangszeile, unpassende Fitness-Klassen). Der Algorithmus wählt die Menge der Umbrüche mit den niedrigsten Gesamt-Demerits. Die Aufteilung eines Absatzes auf zwei Spalten wird genauso gewählt, nach der niedrigsten Summe aus Witwen-, Waisen- und Leerraumkosten.</td>
+    </tr>
+    <tr>
+      <td><strong>Fitness-Klasse</strong></td>
+      <td>Eine grobe Einteilung, wie eng oder locker eine Zeile ist. Benachbarte Zeilen in sehr unterschiedlichen Klassen (eine enge Zeile neben einer sehr lockeren) kosten zusätzliche Demerits, was das Satzbild des Absatzes glättet.</td>
+    </tr>
+    <tr>
+      <td><strong>Leerraum</strong></td>
+      <td>Zeilen, die am Fuß einer Spalte leer bleiben, wenn ein Absatz dort geteilt oder als Ganzes weitergeschoben wird. Quadrierte Leerraumkosten (gewichtet mit <code>slackWeight</code>) werden gegen die Witwen- und Waisenstrafen abgewogen, wenn die Engine die Teilung wählt.</td>
+    </tr>
+    <tr>
+      <td><strong>Backend</strong></td>
+      <td>Ein Ausgabeziel, das den fertigen VDT verarbeitet. Vier gibt es heute: <strong>Canvas</strong> (Bitmap-Vorschau), <strong>HTML</strong> (Lesen am Bildschirm über das DOM), <strong>PDF</strong> (druckfertige Ausgabe über <code>postext-pdf</code>) und <strong>EPUB</strong> (<code>postext-epub</code>, das Buch als E-Book). Alle vier rendern aus derselben Messung (dem Messmodul über Pretext).</td>
+    </tr>
+    <tr>
+      <td><strong>Platzierungsdurchlauf</strong></td>
+      <td>Ein Durchgang durch den Inhalt, vom ersten bis zum letzten Block, der einen ganzen VDT aufbaut: Er parst, misst über den Cache, platziert Text, Gleitobjekte und Kästen und wendet die Umbruch- und Zusammenhalteregeln an.</td>
+    </tr>
+    <tr>
+      <td><strong>Runde</strong></td>
+      <td>Eine Wiederholung des Platzierungsdurchlaufs mit Hinweisen aus dem vorigen: eine Bandgrenze, Hebel für den Spaltenausgleich, feststehende Seitenbezeichnungen oder Anmerkungsnummern. Jede Art von Runde hat ihre eigene Grenze (siehe <a href="#der-durchlaufsteuerer">Der Durchlaufsteuerer</a>).</td>
+    </tr>
+  </tbody>
+</table>
+
+
+## Systemarchitektur
+
+<Illustration name="SystemArchitecture" data='{"title": "Systemarchitektur von Postext", "desc": "Angereichertes Markdown und PostextConfig gehen in den Parser. Der Platzierungsdurchlauf misst Text über Pretext und füllt den virtuellen Dokumentbaum; buildDocument wiederholt den Durchlauf mit Hinweisen, bis das Layout feststeht. Ein Backend rendert den fertigen VDT als HTML oder PDF.", "caption": "Parser → Platzierungsdurchlauf ↔ Pretext → VDT → Backend → Ausgabe.", "markdown": "Angereichertes Markdown", "configTitle": "PostextConfig", "configSubtitle": "(Spalten, Regeln, Abstände)", "engine": "Layout-Engine", "parser": "Parser", "pass1": "Markdown → Blöcke", "vdtLine1": "Virtueller Dokument-", "vdtLine2": "baum (VDT)", "vdtAttr1": "von einem Durchlauf gefüllt", "vdtAttr2": "Seiten > Spalten > Blöcke", "vdtAttr3": "jeder Knoten hat eine bbox", "vdtAttr4": "ein neuer Baum pro Durchlauf", "pretext": "Pretext", "pretextSubtitle": "Textmessung", "passesTitle": "Platzierungsdurchlauf (ein Gang durch den Inhalt)", "passes": [{"num": "Messen", "name": "Zeilen, über den Cache"}, {"num": "Platzieren", "name": "Blöcke in Spalten und Seiten"}, {"num": "Gleiten", "name": "Ressourcen in Seitenbänder"}, {"num": "Umbrechen", "name": "Absätze am Spaltenende"}, {"num": "Halten", "name": "Überschriften und Listen beim Text"}, {"num": "Einrasten", "name": "den Fluss zurück aufs Raster"}], "convergence": "mit Hinweisen wiederholen", "backend": "Backend", "backendSubtitle": "(einheitliche Schnittstelle)", "backendItems": ["Canvas / Browser", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "gerenderte Ausgabe"}' />
+
+**So durchläuft Ihr Inhalt die Engine:**
+
+1. Der **Parser** liest Ihr angereichertes Markdown und macht daraus eine flache Liste typisierter Inhaltsblöcke: Inhalt und Struktur, noch ohne Positionen
+2. Ein **Platzierungsdurchlauf** geht diese Liste einmal durch und baut den VDT auf. Er misst jeden Block über Pretext in der Breite der Spalte, in die der Block gleich kommt, platziert Text, Gleitobjekte und Kästen in Seiten und Spalten und wendet dabei die Umbruch- und Zusammenhalteregeln an
+3. Der **Steuerer** (`buildDocument`) wiederholt den Durchlauf, wenn eine Entscheidung das Ergebnis eines ganzen Layouts braucht: ein Inhaltsverzeichnis mit Seitenzahlen, ein Kasten über die ganze Seitenbreite, der die Spalten über sich auf gleiche Höhe bringen muss, eine Spalte, die zu kurz endete. Jede Wiederholung erhält Hinweise aus dem Durchlauf davor, und jede Art von Wiederholung hat ihre eigene Grenze
+4. Der **fertige VDT** ist die vollständige Layoutgeometrie: Jedes Element kennt seine Seitenzahl, seine Spalte, seine Position und seinen Begrenzungsrahmen. Das Dokument ist vollständig „gesetzt“, bevor irgendetwas gerendert wird
+5. Ein **Backend** geht den fertigen VDT durch und rendert ihn im Zielformat: eine gerasterte Canvas-Bitmap, ein DOM-Baum aus positionierten HTML-Elementen, ein PDF-Dokument mit eingebetteten Schriften oder ein EPUB. Derselbe VDT speist alle vier; die Wahl eines Backends ist allein eine Frage der Ausgabe
+
+
+## Eingabeschicht
+
+### Inhaltsmodell
+
+Das Inhaltsmodell ist ebenso eine Philosophie wie eine Datenstruktur. Sie beschreiben, *was* gesagt werden soll, nicht, *wie* es gesetzt wird. Die Layoutentscheidungen trifft die Engine.
+
+<Illustration name="ContentModel" data='{"title": "Inhaltsmodell: Markdown, Ressourcen, Anmerkungen", "desc": "Die Eingabe für Postext trennt das Markdown (Lesereihenfolge und semantische Struktur) von den Ressourcen (Bitmaps, SVGs, Tabellen) und den Anmerkungen. Die Engine löst Inline-Verweise :ref und Einbettungen ::resource über die ID auf und erzeugt den VDT.", "caption": "Das Markdown bestimmt die Lesereihenfolge, die Ressourcen tragen die visuellen Daten.", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "Lesereihenfolge + :ref / ::resource per ID", "resources": "resources[]", "resourcesSub": "Bitmaps, SVGs, Tabellen", "notes": "metadata", "notesSub": "Titel, Autor, Daten", "resolveMarker": "per ID aufgelöst: :ref{id=…}, ::resource{id=…}", "engineLabel": "Engine", "vdtLabel": "VDT"}' />
+
+```typescript
+// packages/postext/src/types.ts
+
+interface PostextContent {
+  markdown: string;            // enriched markdown with :ref / ::resource markers
+  metadata?: DocumentMetadata; // title, subtitle, author, publishDate, …
+  resources?: Resource[];      // bitmaps, SVGs, tables, videos — referenced by id
+  notes?: PostextNote[];       // not read: footnotes are written as [^id] in the markdown
+}
+
+interface Resource {
+  id: string;                  // stable id, referenced by inline :refs
+  typeId: string;              // ResourceType this resource belongs to ('figure', 'table', …)
+  kind: 'bitmap' | 'svg' | 'table' | 'video';
+  caption?: string;            // the type prefix + number are computed, not written here
+  altText?: string;
+  createdAt: number;
+  updatedAt: number;
+  // Exactly one kind-specific payload:
+  bitmap?: { fileId: string; format: string; width: number; height: number };
+  svg?: { fileId: string; width?: number; height?: number };
+  table?: { model: TableModel };
+  video?: ResourceVideo;       // where it plays from; drawn on the page as its poster
+  placement?: ResourcePlacement; // optional per-resource float override
+  safeArea?: ResourceSafeArea;  // bitmap / svg: { x, y, width, height } in fractions, the part always shown
+}
+```
+
+**Ressourcen** tragen die visuellen Daten: Legenden, Alternativtext und eine Nutzlast, die von ihrer Art abhängt. Binäre Nutzlasten (Bitmaps, SVGs) liegen *außerhalb* – die Ressource speichert nur eine `fileId`, und der Renderer löst sie beim Zeichnen auf (die Sandbox hält die Bytes in IndexedDB). Tabellenressourcen sind die Ausnahme: Ihr `TableModel` (ein Raster aus Zellen mit Spannen und Ausrichtung) reist mit, weil es strukturierte Daten sind und keine Bytes.
+**Anmerkungen** werden im Markdown geschrieben: eine Marke `[^id]` dort, wo die Anmerkung zitiert wird, und eine Definition `[^id]:`, ein eigener Absatz an beliebiger Stelle im Kapitel. Die Engine nummeriert die Anmerkungen in der Reihenfolge, in der sie zuerst zitiert werden, und setzt jede an den Fuß der Spalte, die die zitierende Zeile enthält, unter einer kurzen Linie, oder mit `footnotes.placement: 'chapterEnd'` hinter den letzten Block des Kapitels (siehe [Fußnoten](/de/docs/document-format#fußnoten) und [Konfiguration → Fußnoten](/de/docs/configuration-notes-references#fußnoten)). Das Inhaltsmodell nimmt weiterhin ein Array `notes` an, aber keine Stufe der Pipeline liest es.
+
+Diese Trennung ist eine bewusste Gestaltungsentscheidung, und sie wiegt schwerer, als es aussieht. Das Markdown bestimmt die *Lesereihenfolge* und die *semantische Struktur* – was zuerst kommt, was eine Überschrift ist, wo eine Fußnote zitiert wird und was sie sagt. Das Ressourcen-Array trägt die *visuellen Daten* – Bildmaße, Text der Legende, Tabellenzellen. Weil beides getrennt bleibt, lässt sich dasselbe Markdown allein durch eine andere Konfiguration völlig unterschiedlich setzen. Ein zweispaltiges wissenschaftliches Layout und ein einspaltiger Blogbeitrag können denselben Quellinhalt teilen. Und die Engine kann Platzierungsentscheidungen treffen – etwa ein Bild in die nächste Spalte zu verschieben, weil es hier nicht passt –, ohne je Ihren Quellinhalt anzurühren.
+
+```typescript
+// Example: a simple article with a referenced figure
+const content: PostextContent = {
+  markdown: `
+# The Art of Typography
+
+The history of typography begins with Gutenberg's
+movable type, shown in :ref{id="printing-press"}.
+His invention transformed the production of books.
+
+The technique spread rapidly across Europe, reaching
+Italy by 1465 and France by 1470.
+  `,
+  resources: [
+    {
+      id: 'printing-press',
+      typeId: 'figure',
+      kind: 'bitmap',
+      caption: 'A reconstruction of the original press.',
+      altText: "Reconstruction of Gutenberg's printing press",
+      createdAt: 1765379100000,
+      updatedAt: 1765379100000,
+      bitmap: { fileId: 'press-photo', format: 'jpeg', width: 600, height: 400 },
+    },
+  ],
+};
+```
+
+Ressourcen sind über eine ID mit dem Fließtext verbunden, und **ein Verweis genügt, um eine Ressource aufzunehmen**. Das Inline-`:ref{id="printing-press"}` erledigt zwei Aufgaben auf einmal: Es setzt die berechnete Nummer der Ressource in den Fließtext („Abb. 1“), und – beim ersten Verweis in Lesereihenfolge – lässt es die Ressource auf die Seite *gleiten*, indem es oben oder unten in der Nähe dieses Verweises ein Band reserviert, genau wie ein Setzer im Druck es täte. Sie platzieren die Abbildung nie ein zweites Mal. Für die gelegentliche Ressource, die an einer genauen Stelle im Fluss stehen muss, ist `::resource{id="…"}` auf einer eigenen Zeile eine optionale Blockeinbettung: Sie wird nur dann an Ort und Stelle gerendert, wenn die aufgelöste `placement.position` der Ressource `'here'` ist (was sie vom Gleiten ausnimmt); bei einer gleitenden Ressource gilt sie einfach als weiterer Verweis. Die Autorin oder der Autor muss nie über die Platzierung nachdenken. Das übernimmt die Engine.
+
+<Illustration name="ReferenceResolution" data='{"title": "Auflösung von Verweisen", "desc": "Eine Markdown-Quelle verweist inline mit :ref{id=printing-press} auf eine Abbildung. Das Ressourcen-Array liefert den eigentlichen Inhalt per ID. Die Engine löst den Verweis auf, setzt die berechnete Nummer in den Text und lässt die Abbildung in ein Band oben auf der Seite gleiten.", "caption": "Verweise im Markdown sind nur Namen. Die Engine löst sie gegen die Ressourcen auf, nummeriert sie und lässt die Abbildung in die Nähe des Verweises gleiten.", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "optionale Einbettung für Platzierung &#39;here&#39;", "resolveLabel": "auflösen", "outputTitle": "gesetzte Seite", "outputFigure": "[ Abbildung 1 – in ein Band geglitten ]", "outputFootnote": "…gezeigt in Abb. 1…"}' />
+
+### Konfiguration
+
+Jeder Aspekt der Layout-Pipeline wird über `PostextConfig` gesteuert. Der vollständige Überblick über die Abschnitte (Seite, Layout, Fließtext, Überschriften, Listen, Mathematik, Kopf- und Fußzeilen …) steht auf der Seite <a href="/de/docs/configuration">Konfiguration</a>; die für dieses Dokument wichtigsten sind:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Konfiguration</th>
+      <th>Steuert</th>
+      <th style={{ width: '200px' }}>Verwendet in</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>bodyText</code> / <code>headings</code></td>
+      <td>Strafen für Witwen, Waisen und zu kurze Ausgangszeilen je Feld, Zusammenhalteregeln, Grenzen des Blocksatzes, Silbentrennung – siehe <a href="/de/docs/configuration-text#fließtext">Konfiguration → Fließtext</a></td>
+      <td>Messung, Umbruch- und Zusammenhalteregeln, Spaltenausgleich</td>
+    </tr>
+    <tr>
+      <td><code>tableStyle</code></td>
+      <td>Zelltypografie, Rahmenlinien, Eckenradius, Füllungen für Kopf und Rumpf von Ressourcen mit <code>kind: 'table'</code>, dazu die benannten Varianten aus <code>tableStyles</code>, die eine Tabelle mit <code>table.styleId</code> wählt – siehe <a href="/de/docs/configuration-resources#tabellenstil">Konfiguration → Tabellenstil</a></td>
+      <td>Platzierung von Ressourcen</td>
+    </tr>
+    <tr>
+      <td><code>captionStyle</code></td>
+      <td>Typografie der Legenden von Ressourcen: die nummerierte Kennung und der Beschreibungstext – siehe <a href="/de/docs/configuration-resources#legendenstil">Konfiguration → Legendenstil</a></td>
+      <td>Platzierung von Ressourcen</td>
+    </tr>
+    <tr>
+      <td><code>diagramStyle</code></td>
+      <td><code>singleInk</code> + <code>inkColor</code> – färbt SVG-Diagramme in Tönungen einer einzigen Druckfarbe um, abgebildet nach Helligkeit, sodass Abbildungen beim Druck mit einer einzigen Sonderfarbe getreu wiedergegeben werden – siehe <a href="/de/docs/configuration-resources#diagrammstil">Konfiguration → Diagrammstil</a></td>
+      <td>Backends</td>
+    </tr>
+    <tr>
+      <td><code>resourceTypes</code></td>
+      <td>Nummerierung von Ressourcen nach Typ: Vorlagen, Zählerformate, Rücksetzbereiche, standardmäßige Gleitplatzierung – siehe <a href="/de/docs/configuration-resources#ressourcentypen">Konfiguration → Ressourcentypen</a></td>
+      <td>Strukturierung des Inhalts, Platzierung von Ressourcen</td>
+    </tr>
+  </tbody>
+</table>
+
+### Parsing-Strategie
+
+Das Parsen ist mit Absicht der einfachste Schritt der Pipeline. Markdown geht hinein und kommt als flache Liste typisierter Inhaltsblöcke heraus (`ContentBlock`, in `packages/postext/src/parse/`): eine Überschrift, ein Absatz mit seinen Inline-Spannen, ein Listenpunkt, eine Direktive. Das Ergebnis wird memoisiert (`parseMarkdownMemo`), sodass die Durchläufe eines Builds nur einmal parsen und ein späterer Build desselben Textes ebenso. Ressourcenverweise werden zu Beginn jedes Platzierungsdurchlaufs über die ID gegen das Array `resources[]` aufgelöst. Fußnotendefinitionen (Absätze, die mit `[^id]:` beginnen) verlassen dort ebenfalls den Fluss und werden nach ID für die Marken aufbewahrt, die sie zitieren; das Array `notes[]` wird nicht gelesen.
+
+Stellen Sie es sich als Manifest vor: „Da ist eine Überschrift, dann ein Absatz mit 200 Wörtern, dann ein Abbildungsverweis, dann ein weiterer Absatz.“ Keine Messungen. Keine Positionierung. Überhaupt keine Layoutentscheidungen. Ein `VDTBlock` existiert erst, wenn der Platzierungsdurchlauf einen Block gemessen und ihm einen Platz gegeben hat.
+
+
+## Virtueller Dokumentbaum (VDT)
+
+Angenommen, Sie bitten einen professionellen Setzer, ein ganzes Buch zu setzen, und statt gedruckter Seiten gibt er Ihnen eine Tabelle zurück. Jede Zeile ist ein Element. Jede Zelle ist ein genaues Maß: „Die Überschrift steht bei (40, 30), der erste Absatz beginnt bei (40, 78) und ist 144 px hoch, das Bild kommt oben in Spalte 2 auf Seite 3 …“ Diese Tabelle ist der VDT.
+
+Der virtuelle Dokumentbaum ist die zentrale Datenstruktur von Postext – ein veränderlicher, an Ort und Stelle bearbeiteter Baum, der jede Seite, jede Spalte, jeden Block und jede Zeile darstellt, jeweils mit einem genauen Begrenzungsrahmen. Sobald `buildDocument` zurückkehrt, *ist* der VDT die Antwort. Sie können fragen „Was steht auf Seite 72 in Spalte 2?“, ohne ein einziges Pixel zu rendern.
+
+### Warum veränderlich
+
+Das ist derselbe Ansatz wie in den Render-Pipelines von Spiele-Engines, wo ein gemeinsamer, veränderlicher Weltzustand in einer engen Schleife von aufeinanderfolgenden Systemen aktualisiert wird. Und zwar aus demselben Grund.
+
+Ein Platzierungsdurchlauf füllt den Baum an Ort und Stelle. Er öffnet eine Seite, hängt ihr Spalten an, zieht die Höhe eines Blocks von der `availableHeight` der Spalte ab, in der der Block landet, und schließt die Spalten eines Bandes, wo ein Kasten über die ganze Seitenbreite es abschneidet. Ein Buch hat Tausende von Blöcken, und ein unveränderlicher Baum (wie das virtuelle DOM von React) würde für jeden dieser Schritte ein neues Objekt anlegen. Deshalb sind die Knoten einfache Objekte, und der Durchlauf schreibt in sie hinein.
+
+Ein abgeschlossener Durchlauf wird nicht nachgebessert. Braucht `buildDocument` einen weiteren Versuch (eine Bandgrenze, einen Ausgleichshebel), wiederholt es den Durchlauf vom Inhalt aus und erhält einen neuen Baum. Der Baum des vorigen Durchlaufs bleibt, wie er war, sodass der Steuerer beide vergleichen, den besseren behalten oder von jedem einige Seiten nehmen kann. Der Messcache macht die Wiederholung bezahlbar: Ein Absatz, dessen Text, Schriften und Breite sich nicht geändert haben, wird aus dem Cache gelesen, statt neu gemessen zu werden.
+
+### Struktur
+
+<Illustration name="VdtStructure" data='{"title": "Struktur des virtuellen Dokumentbaums", "desc": "Hierarchischer VDT: Das Dokument enthält Seiten, jede Seite enthält Spalten, jede Spalte enthält Blöcke (Überschrift, Absatz, Ressource), jeder Textblock enthält gemessene Zeilen. Jeder Block trägt einen Begrenzungsrahmen, seinen Typ und seine Seiten- und Spaltenindizes.", "caption": "Jeder Block trägt seine bbox, seinen Typ und seine Seiten- und Spaltenindizes.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["Überschrift", "Absatz", "Ressource"], "lineLabels": ["Zeile 0", "Zeile 1"], "legendHeader": "Jeder Block trägt:", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "Zeilen tragen außerdem:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
+
+### Typdefinitionen
+
+Die folgenden Formen sind **zur Erklärung vereinfacht** – die echten Definitionen in `packages/postext/src/vdt.ts` enthalten viele weitere Felder für das Rendern (Schriftangaben, Farben, Aufzählungszeichen, gerenderte Formeln, Gestaltungsplätze). Hier kommt es auf die Struktur an:
+
+```typescript
+// Simplified — see packages/postext/src/vdt.ts for the full definitions
+
+// The root of the Virtual Document Tree
+interface VDTDocument {
+  pages: VDTPage[];
+  blocks: VDTBlock[];         // flat view of the same block objects
+  config: ResolvedConfig;     // every sub-config resolved to non-optional
+  baselineGrid: number;       // baseline increment in px (e.g. 24 for 16px/1.5)
+  converged: boolean;         // every balancing segment ended flush or out of levers
+  iterationCount: number;     // placement passes behind this layout (see The Pass Driver)
+  metadata: DocumentMetadata;
+}
+
+// A physical page
+interface VDTPage {
+  index: number;
+  width: number;
+  height: number;
+  columns: VDTColumn[];
+  header?: VDTDesignSlot;     // running header (design slot)
+  footer?: VDTDesignSlot;     // running footer / page number
+  floats?: VDTBlock[];        // resource bands floated to the top/bottom of this page
+  pageNumberValue: number;
+  pageLabel: string;          // rendered label ('iv', '7', 'A', …)
+}
+
+// A column within a page
+interface VDTColumn {
+  index: number;
+  bbox: BoundingBox;          // position within the page
+  blocks: VDTBlock[];
+  availableHeight: number;    // remaining vertical space
+  baselineOffset: number;     // current baseline y-position
+  band?: number;              // column band (0 unless a span block split the page)
+  kind?: 'text' | 'span' | 'side'; // 'span' = full-width column holding a page-span block,
+                              // 'side' = the float-only side column of a one-and-a-half layout
+}
+
+// A content block (paragraph, heading, resource, etc.)
+type VDTBlockType =
+  | 'paragraph' | 'heading' | 'resource' | 'blockquote'
+  | 'listItem' | 'footnoteRef' | 'mathDisplay' | 'callout' | 'code';
+
+interface VDTBlock {
+  id: string;
+  type: VDTBlockType;
+  bbox: BoundingBox;
+  lines: VDTLine[];           // for text blocks: the measured lines
+  resourceBlock?: ResolvedResourceBlock; // for resource blocks
+  pageIndex: number;
+  columnIndex: number;
+  dirty: boolean;             // not used: cleared when the block is placed, read by nothing
+  snappedToGrid: boolean;     // the flow went back to the baseline grid under this block
+  balancing?: VDTBalancing;   // the column-balancing levers applied to this block
+}
+
+// A measured line of text
+interface VDTLine {
+  text: string;
+  bbox: BoundingBox;            // natural width: a justified line is painted to its block's right edge
+  baseline: number;             // y-position of the text baseline
+  hyphenated: boolean;          // line ends inside a word, or after a closed dash ("say—" | "that’s")
+  hardHyphen?: boolean;         // …after a hyphen the text carries ("well-" | "known"): nothing added
+  repeatedHyphen?: boolean;     // opens with that hyphen repeated ("vencer-" | "-se"), not in the source
+  segments?: VDTLineSegment[];  // word/space/math runs for justified rendering
+  isLastLine?: boolean;         // last line of its paragraph
+  justifiedSpaceRatio?: number; // width every space is painted at ÷ the regular face's space
+  justifiedSpaceLimitRatio?: number; // the spacing the limits bound, when the line's own spaces are not regular (lineWordSpacing reads both)
+  sourceStart?: number;         // markdown source map (char offsets; a line opening with `\$` starts at the backslash)
+  sourceEnd?: number;
+  plainStart?: number;          // plain-text source map
+  plainEnd?: number;
+}
+
+// A measured, placement-ready resource embed (bitmap / svg / table / video)
+interface ResolvedResourceBlock {
+  resource: Resource;
+  kind: 'bitmap' | 'svg' | 'table' | 'video';
+  number: string;             // computed number, e.g. "1.7"
+  captionPrefix: string;      // e.g. "Figure"
+  bodyRect: BoundingBox;      // the image / table area
+  bodySource?: ResourceSafeArea; // the part of the picture shown in bodyRect when cropped to its safe area
+  bodyFlex?: { shrink: number; grow: number; delta: number }; // px the body can still shrink / grow, px applied
+  fileId?: string;            // out-of-band binary (bitmap / svg)
+  captionLines: VDTLine[];    // measured caption, prefix + number included
+  table?: VDTResourceTableLayout; // cell geometry for table resources
+}
+
+// Bounding box — all values in px, relative to page origin
+interface BoundingBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+```
+
+Einige dieser Felder verdienen eine Anmerkung:
+
+- **`isLastLine`** steuert das Rendern im Blocksatz: Letzte Zeilen werden im Flattersatz gezeichnet, auch wenn der Absatz im Blocksatz steht – außer *überfüllten* letzten Zeilen, deren Wortzwischenräume sich zusammenziehen, damit sie in die Satzbreite passen (die Semantik des Glue-Setting in TeX).
+- **`sourceStart`/`sourceEnd` und `plainStart`/`plainEnd`** sind Source-Maps von jeder Zeile zurück zum ursprünglichen Markdown und zum reinen Text des Blocks – darauf beruht die Synchronisierung von Cursor und Auswahl in Editor-Integrationen.
+- **`VDTResourceTableLayout`** (mit seinen Einträgen `VDTResourceTableCell`) trägt die vollständige gesetzte Geometrie einer Tabellenressource: x-Kanten der Spalten, y-Kanten der Zeilen und Rechtecke je Zelle mit ihren gemessenen Inhaltszeilen, sodass jedes Backend dieselbe Tabelle zeichnet.
+- **`dirty` und `snappedToGrid`** werden beim Platzieren eines Blocks geschrieben und von keiner Stufe und keinem Backend gelesen. `dirty` beginnt bei einem neuen Block mit `true` und wird beim Platzieren des Blocks auf `false` gesetzt; die Engine verfolgt keine Änderungen am Baum, sie wiederholt den Platzierungsdurchlauf (siehe [Der Durchlaufsteuerer](#der-durchlaufsteuerer)). `snappedToGrid` ist `true` beim ersten Teil eines Textblocks, nach dem der Fluss auf das Raster zurückkehrt (siehe [System des vertikalen Rhythmus](#system-des-vertikalen-rhythmus)).
+- **`balancing`** gibt an, welche Hebel des Spaltenausgleichs den Block verschoben oder gedehnt haben; ein Block, den der Ausgleich nicht angerührt hat, hat keinen (siehe [Spaltenausgleich](#spaltenausgleich)).
+- **`computePageTextExtent(page)`** ist eine kleine öffentliche Hilfsfunktion, die die senkrechte Ausdehnung zurückgibt, die auf einer Seite tatsächlich von Text bedeckt ist (einschließlich der Legenden von Gleitobjekten). Debug-Overlays nutzen sie, damit die Linien des Grundlinienrasters nur echten Text überspannen und nicht den leeren Seitenfuß.
+
+## Layout-Pipeline
+
+Ein Platzierungsdurchlauf, so oft ausgeführt, wie das Layout es braucht. Das ist die ganze Layout-Pipeline.
+
+Der Durchlauf (`placeDocumentPass`, in `packages/postext/src/pipeline/build.ts`) geht den Inhalt vom ersten bis zum letzten Block durch. Für jeden Block tut er alles, was zu seinem Satz nötig ist: ihn in der Breite der Spalte messen, in die er gleich kommt, prüfen, ob er passt, ihn nach den Umbruch- und Zusammenhalteregeln teilen oder weiterschieben, den Gleitobjekten, die er zitiert, einen Platz anbieten und den Fluss zurück auf das Grundlinienraster bringen (siehe [System des vertikalen Rhythmus](#system-des-vertikalen-rhythmus)). Gleitobjekte, Witwen und das Raster haben keinen eigenen Durchlauf: Sie werden geregelt, während jeder Block landet.
+
+Manche Entscheidungen lassen sich nicht innerhalb eines Durchgangs treffen, weil sie davon abhängen, wo der Durchgang endet: die Seitenzahlen, die ein Inhaltsverzeichnis druckt, die Höhe, in der ein Kasten über die ganze Seitenbreite die Spalten über sich abschneidet, die Zeilen, die einer kurzen Spalte noch fehlen. Dafür wiederholt `buildDocument` den Durchlauf mit *Hinweisen* aus dem Ergebnis des vorigen Durchlaufs. Die fünf Stufen unten begleiten einen Block durch den Durchlauf; [Der Durchlaufsteuerer](#der-durchlaufsteuerer) und [Spaltenausgleich](#spaltenausgleich) behandeln die Wiederholungen.
+
+### Stufe 1: Strukturierung des Inhalts
+
+- **Eingabe:** Rohes `PostextContent`
+- **Aktion:** Das Markdown in Inhaltsblöcke parsen, Ressourcenverweise per ID gegen `resources[]` auflösen, die Fußnotendefinitionen (`[^id]:`) aus dem Fluss nehmen und ihre Marken in Zitierreihenfolge nummerieren, die Überschriften nummerieren und die Gleitobjekte planen: welche Ressourcen gleiten und nach welchem Block (`notes[]` wird nicht gelesen)
+- **Ausgabe:** Eine flache Liste von Inhaltsblöcken (typisiert und mit Inhalt gefüllt, aber ohne Zuordnung zu Seite oder Spalte) und der Gleitplan
+- **Läuft:** zu Beginn jedes Platzierungsdurchlaufs. Das Parsen wird nach dem ersten Durchlauf aus seinem Memo gelesen; der Rest wird neu berechnet
+
+### Stufe 2: Textmessung
+
+- **Eingabe:** Ein Inhaltsblock mit Text und die Breite der Spalte, in die er gleich kommt
+- **Aktion:** Die Zeilen des Blocks in dieser Breite über das eigene **Messmodul** (`packages/postext/src/measure/`) messen, das Silbentrennung, Blocksatz, formatierte Inline-Läufe und den Zeilenumbruch nach Knuth-Plass über Pretext legt. Das Ergebnis sind die `VDTLine[]` des Blocks und seine Gesamthöhe
+- **Wichtiges Detail:** Die Messung wird gecacht. `cachedMeasureBlock` / `cachedMeasureRichBlock` (in `measure/cache.ts`) verwenden als Schlüssel den Text, die Schriften, die Breite und jede Option, die das Layout beeinflusst, sodass das erneute Messen eines unveränderten Absatzes eine Map-Abfrage ist
+- **Ausgabe:** Die Zeilen des Blocks mit genauen Pixelmaßen
+- **Läuft:** wenn der Durchgang den Block erreicht, nicht vorher, weil die Breite davon abhängt, wo der Block landet: eine Spalte neben einer Seitenspalte, die Zeilen neben einer umflossenen Abbildung, die Unterspalten einer Gruppe `:::columns`. Ein Block, der in eine Spalte anderer Breite weiterrückt, wird in dieser Breite neu gemessen
+
+Das Modul ist sauber nach Zuständigkeiten aufgeteilt: `plain.ts` misst einfache Läufe, `rich.ts` misst gemischte Spannen aus Fett, Kursiv und Formeln, `font.ts` baut Schriftangaben und verwaltet den Lebenszyklus des Caches, und `canvas.ts` kapselt die rohen Primitive der Canvas zur Messung der Textbreite. Ein Detail des Lebenszyklus zählt in der Praxis: Glyphenbreiten, die mit einer Ersatzschrift gemessen wurden, dürfen das Eintreffen der echten Schrift nicht überdauern. `canvas.ts` hält seine Breiten je Schriftangabe und eine Messgeneration; `evictFontFamilies` (aufgerufen, wenn ein Build feststellt, dass sich die Schnitte einer Familie geändert haben, von `watchFonts`, `prepareFonts` und `loadBundleFonts`) verwirft die Breiten dieser Familien und leert den Cache von Pretext, und ein `MeasurementCache`, der unter einer älteren Generation gefüllt wurde, verwirft bei seiner nächsten Abfrage seine Blöcke in diesen Familien. `clearMeasurementCache()` tut dasselbe für jede Familie. Die Schnitte selbst lädt `fonts/prepare.ts` (`prepareFonts`) vor dem Layout, und `fonts/faces.ts` liest für die Warnungen `fontFallback` zurück, welche Schnitte ein gesetztes Dokument verwendet hat.
+
+Chinesische, japanische und koreanische Absätze nehmen einen anderen Weg durch dasselbe Modul. Ein Absatz mit mehr CJK-Zeichen als Wortzwischenräumen geht an das **CJK-Satzmodul** (`cjkCompose.ts`). Es zerlegt den Text in Einheiten (ein Zeichen, ein Lauf lateinischen Textes, ein zwei Geviert langer Strich oder eine Auslassung, eine atomare Box wie ein Chip oder eine Anmerkungsmarke), misst jede Einheit einmal und füllt die Zeilen nach dem First-Fit-Verfahren unter den Regeln für Zeilenanfang und Zeilenende aus `cjkClasses.ts`: Eine Zeile nimmt ein Zeichen, das die nächste Zeile nicht eröffnen darf, noch auf, indem sie Weißraum der Satzzeichen abgibt (`cjkPunctuation.ts`), bevor sie ein Zeichen in die nächste Zeile schiebt. Eine Zeile im Blocksatz wird dann zwischen ihren Zeichen ausgetrieben. Die Ausgabe sind gewöhnliche `VDTLine`s, deren Segmente das tragen, was die Renderer brauchen, um sie genau so zu zeichnen, wie sie gemessen wurden: `tracking` (Pixel nach jedem Zeichen, bereits in der Breite des Segments enthalten), `inkOffset` für ein Satzzeichen, das Weißraum abgegeben hat, `hangs`, die Abstände zwischen Han- und lateinischer Schrift als Segmente `autospace` sowie die Zeichen, Ruby-Lesungen und Warichu-Zeilen chinesischer Annotationen. In einem japanischen Dokument folgt dasselbe Satzmodul JLReq: Die Kinsoku-Klassen der japanischen Stufen werden beim Umbruch an den Randzeichen jeder Einheit abgelesen, die Weißräume der Satzzeichen werden in der Reihenfolge von JLReq gestaucht und zurückgegeben, Furigana setzt `rubyJis.ts` (Verteilung 1:2:1, Überhang auf Kana, Jukugo-Wörter), und Kanbun-Zeichen verbreitern die Einheit ihres Zeichens. Der Aufwand wächst linear mit der Länge des Absatzes: Kapitel 1 von 紅樓夢 (6.949 Zeichen) wird gesetzt, indem 1.298 Zeichen gemessen werden, jedes unterschiedliche Zeichen einmal, wo das Messen von Präfixen des Absatzes 636.948 brauchte. Siehe [Chinesischer Satz](/de/docs/chinese-layout).
+
+Darunter zeigt Pretext, was es kann. Der Aufruf `prepare()` ist der teure Teil – er analysiert den Text mit der Schrift-Engine der Canvas und cacht das Ergebnis. Aber der Aufruf `layout()`? Reine Arithmetik, nahezu kostenlos. Auf dieser Aufteilung beruht alles. Ist ein Text einmal vorbereitet, kann die Engine ihn zu vernachlässigbaren Kosten neu umbrechen: in einer anderen Breite, für einen Absatz, der in einer schmaleren Spalte weitergeht, oder um eine Zeile länger, für einen Absatz, den der Spaltenausgleich lockert. Einmal vorbereiten, so oft setzen wie nötig.
+
+```typescript
+// Simplified: how the measure module uses pretext internally
+const prepared = prepare(paragraphText, '16px/1.5 Inter');
+const { height } = layout(prepared, columnWidth, 24); // 24px line-height
+// => "This paragraph is 168px tall at 320px column width — that's 7 lines."
+```
+
+### Stufe 3: Platzierung auf Seiten und Spalten
+
+- **Eingabe:** Ein gemessener Block
+- **Aktion:** Den Block in die aktuelle Spalte setzen. Knoten `VDTPage` und `VDTColumn` anlegen, wie der Fluss sie braucht. `availableHeight` je Spalte nachführen. Passt ein Block nicht, ihn teilen (Stufe 5) oder zur nächsten Spalte oder Seite weitergehen
+- **Strategie:** Gierige Platzierung nach dem First-Fit-Verfahren. Spalten- und Seitenumbrüche folgen der einfachsten gültigen Zuordnung
+- **Ausgabe:** Dem Block sind `pageIndex`, `columnIndex` und `bbox` zugewiesen
+
+In diesem Moment wird der VDT zu einem echten Dokument. Vor dieser Stufe ist ein Block ein Eintrag in einer flachen Liste, ohne Adresse. Die Platzierung ordnet jeden einer Seite und einer Spalte zu, wie Wasser, das in ein Raster von Behältern gegossen wird: Spalte 1 füllen, bis sie überläuft, in Spalte 2 weiterfließen, und wenn die Seite voll ist, eine neue beginnen.
+
+Bevor Inhaltsblöcke auf einer Seite landen, reserviert der Durchlauf Platz für strukturelle Elemente – Kolumnentitel in Kopf- und Fußzeile (gesetzt als Gestaltungsplätze aus `config.header` / `config.footer`) und alle Gleitbänder, die für die frisch geöffnete Seite bereits anstehen. Diese Reservierungen verringern die `availableHeight` jeder Spalte, sodass die Engine, wenn die Inhaltsblöcke einzufließen beginnen, bereits genau weiß, wie viel Platz zur Verfügung steht.
+
+**Spaltenbänder und Spannspalten.** `page.columns` ist ein flaches Array in Lesereihenfolge, aber eine Seite ist nicht immer eine einzige Reihe von Spalten. In einem mehrspaltigen Layout zerschneidet ein Inline-Block über die ganze Seitenbreite die Seite in übereinanderliegende *Bänder*. Vier Dinge zählen als solcher Block: ein `:::callout`, dessen Format oder Direktivenblock `span: 'page'` setzt, eine Gruppe `:::columns{span="page"}` im Fließtext, ein Inline-`::resource`, dessen Platzierung zu `{ position: 'here', span: 'page' }` aufgelöst wird, und ein Comicstreifen, der dort, wo er geschrieben steht, über die Seite gesetzt wird (`:::strip{span=page}`). Die letzten drei werden vor der Platzierung in einen rahmenlosen Kasten über die ganze Seitenbreite gehüllt (`pipeline/flowColumns.ts`, `pipeline/spanEmbeds.ts`), sodass ein einziger Mechanismus alle vier setzt. Am Schnitt werden die Textspalten des aktuellen Bandes an der Schnittlinie geschlossen (ihre Höhe begrenzt, `availableHeight` null), der Block erhält eine eigene Spalte über die volle Breite mit `kind: 'span'`, und darunter wird ein neues Band von Textspalten angehängt (`band + 1`, gleiches x und gleiche Breite, gleicher Fuß wie das Band, das es ersetzt). Spalten werden immer nur angehängt, sodass `columnIndex` weiterhin `page.columns[i]` adressiert und die Renderer kein besonderes Zeichnen brauchen: Jede Spalte wird auf ihre eigene bbox zugeschnitten (erweitert durch `columnClipRect` – 2 pt für die Farbe der Glyphen plus so weit, wie die Gestaltungsüberlagerungen der Spalte, etwa ein Überschriftenreiter oder ein Kastenabzeichen, über ihre Seiten hinausragen, und so weit, wie die Gestaltung einer Überschrift über ihren Kopf hinausreicht; ihr Fuß bleibt die Kante – im Canvas- und im PDF-Backend dasselbe Rechteck), und die Spaltenlinie wird je Band zwischen benachbarten Textspalten gezeichnet, beginnend unter dem Band, das eine Überschrift über die ganze Seitenbreite am Seitenkopf einnimmt (`columnRuleSegments`), in der eigenen Linie der Seite, wenn ein gestalteter Abschnitt eine setzt (`VDTPage.columnRule`, gelesen über `pageColumnRule`). Der Spaltenausgleich übergeht Spannspalten, Seitenspalten und Bänder ohne Höhe. Ein Spannblock schneidet direkt, wo das Band auf gleicher Höhe steht (Seitenkopf, direkt nach einer Auftaktüberschrift, einem anderen Spannblock oder einem oberen Gleitband); trifft er auf ein ungleiches Band, schlägt er stattdessen eine *Bandgrenze* vor (`packages/postext/src/pipeline/bandCaps.ts`) – die Spalten des Bandes, das mit einem bestimmten Inhaltsblock beginnt, werden auf `ceil(Σ used / N / grid)` Zeilen gekürzt –, und `buildDocument` wiederholt den Platzierungsdurchlauf mit der Grenze (und erhöht sie jeweils um eine Zeile, wenn das begrenzte Band überläuft, bis zu `MAX_BAND_CAP_RETRIES` = 3 Mal, danach wird sie verworfen, sodass der Block an den Kopf der nächsten Seite zurückfällt), sodass der Text die gekürzten Spalten unter allen Platzierungsregeln füllt, am Schnitt auf gleicher Höhe endet und die geschlossenen Spalten den verbleibenden Leerraum als `availableHeight` behalten, den der Spaltenausgleich aufnehmen kann. Derselbe Mechanismus gleicht das *schließende* Band eines Kapitels und des Dokuments aus (`headings.balancing.trailing`): Ein Kapitelauftakt, ein `:::part`, ein Kasten mit `placement: 'fixed'`, der ein Kapitel schließt, oder das Ende des Dokuments, das erreicht wird, während die Spalten des aktuellen Bandes ungleich sind, schlägt eine Grenze `kind: 'trailing'` vor, geschlüsselt nach dem Grenzblock; weil eine Grenze nach dem Block geschlüsselt ist, der ihr Band eröffnet – und dieser Block wandert, sobald eine frühere Seite zusätzliche Ausgleichszeilen aufnimmt –, werden schließende Grenzen erst *nach* dem Abschluss des Spaltenausgleichs aufgelöst, mit eingefrorenen Ausgleichshinweisen, und eine kurze Nachbesserungsrunde lässt die Hebel dann füllen, was der Schnitt zu kurz gelassen hat. Kästen mit `placement: 'fixed'` verlassen den Fluss: Der Kasten wird am Inhaltsbereich der Seite, an der Endformat-Box oder an der Anschnitt-Box verankert, die Textspalten, die er überdeckt, geben diese Zone ab (unten oder oben abgeschnitten wie bei einem Gleitband, bei einem Konflikt auf die nächste Seite verschoben), und Rahmen samt Kindern kommen nach `page.floats`.
+
+**Senkrechte Seiten.** Mit `layout.writingMode: 'vertical-rl'` setzt der Durchlauf eine waagerechte Seite, die um eine Vierteldrehung im Uhrzeigersinn gedreht ist. Auf einer solchen Seite liegen Inhaltsbereich, Spalten, Blöcke, Zeilen, Gleitobjekte und Fußnotenbereiche in **Flusskoordinaten**, und `VDTPage.flow` trägt die Drehung, die sie auf das Blatt bringt: Ein Flusspunkt (x, y) landet bei (Seitenbreite − y, x). Nichts weiter hinten in der Kette muss davon wissen: Umbruch, Gleitobjekte, Zusammenhalteregeln und Spaltenausgleich arbeiten im Flussrahmen wie auf jeder Seite, eine Spalte des Flusses ist auf dem Blatt eine Zeilenreihe, und jedes Backend wendet die Drehung beim Zeichnen an (`flowToPage` und `pageToFlow` bilden Punkte in beide Richtungen ab). Kolumnentitel, Paginae, Schnittmarken und der Hintergrund bleiben in Blattkoordinaten. Abbildungen und Tabellen werden als aufrechte Blöcke gesetzt, die innerhalb des Rahmens zurückgedreht werden, und Zeichen, die aufrecht stehen, werden beim Zeichnen einzeln zurückgedreht.
+
+### Stufe 4: Platzierung von Ressourcen
+
+- **Eingabe:** Der Gleitplan aus Stufe 1 und die bisher platzierten Seiten
+- **Aktion:** Jede referenzierte Ressource in den ersten freien Platz nach ihrem ersten Verweis gleiten lassen – den Fuß der verweisenden Spalte, Kopf oder Fuß der nächsten leeren Spalte oder ein Band der nächsten Seite (`packages/postext/src/pipeline/floatPlacement.ts` plant die Gleitobjekte, `pipeline/floatSlots.ts` zählt die Plätze auf und misst sie; der Platzierungsdurchlauf reserviert die Bänder auf seinem Weg)
+- **Läuft:** sobald der Block mit dem ersten Verweis gelandet ist, innerhalb desselben Durchgangs; der danach platzierte Text fließt am Band vorbei
+- **Auflösung der Platzierung:** Je Ressource löst die Engine `resource.placement` → das `resourceType.defaultPlacement` des Typs → den eingebauten Standard `{ position: 'auto', span: 'column' }` auf
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '160px' }}>Platzierungsfeld</th>
+      <th>Verhalten</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>position: 'auto'</code></td>
+      <td>Die Ressource nimmt den ersten freien Platz nach ihrem Verweis, oben oder unten – der Standard</td>
+    </tr>
+    <tr>
+      <td><code>position: 'top'</code></td>
+      <td>Nur obere Plätze: ein Band am Kopf der nächsten leeren Spalte oder Seite, das den Spalteninhalt darunter schiebt</td>
+    </tr>
+    <tr>
+      <td><code>position: 'bottom'</code></td>
+      <td>Nur untere Plätze: ein Band am Fuß einer Spalte oder Seite, das die Spalte darüber verkürzt</td>
+    </tr>
+    <tr>
+      <td><code>position: 'here'</code></td>
+      <td>Verzichtet auf das Gleiten: Die Ressource wird an ihrer Direktive <code>::resource</code> eingebettet, genau dort, wo sie im Fluss steht</td>
+    </tr>
+    <tr>
+      <td><code>span: 'column'</code></td>
+      <td>Das Band belegt eine einzige Spalte (auf einer frisch geöffneten Seite wählt die Engine die Spalte mit dem meisten freien Platz)</td>
+    </tr>
+    <tr>
+      <td><code>span: 'page'</code></td>
+      <td>Das Band erstreckt sich über die volle Inhaltsbreite und alle Spalten und unterbricht den Spaltenfluss – Bänder über die volle Breite werden zuerst reserviert, sodass spaltenbreite Gleitobjekte sich in den verbleibenden Raum einfügen</td>
+    </tr>
+    <tr>
+      <td><code>span: 'side'</code></td>
+      <td>Die Ressource wird in die Seitenspalte eines anderthalbspaltigen Layouts gesetzt, das diese Spalte für Gleitobjekte freihält (<code>layout.sideColumnRole: 'floats'</code>), gestapelt neben dem Absatz, der sie zuerst zitiert. Auf einer Seite ohne eine solche Spalte verhält sie sich wie <code>'column'</code></td>
+    </tr>
+  </tbody>
+</table>
+
+`ResourcePlacement` hat mehr Felder als diese beiden: `rotate`, `width`, `align`, `columns`, `captionSide`, `shrink`, `minScale`, `captionMeasure`, `wrap`, `wrapGap` und `citingPage`. [Konfiguration → Ressourcentypen](/de/docs/configuration-resources#ressourcentypen) und [Dokumentformat › Platzierung](/de/docs/document-format#platzierung) erklären, was jedes davon tut.
+
+- **Aufgeschobene Platzierung:** Ein Gleitobjekt, das in keinen Platz der aktuellen Seite passt, wartet auf die nächste Seite, die der Fluss öffnet, und wird an einer Kapitelgrenze auf Seiten untergebracht, die vor der Grenze geöffnet werden. Ein Bild behält seine Größe, es sei denn, `placement.shrink` (oder `layout.floatShrink` des Dokuments) erlaubt ihm, sich auf den Platz zu verkleinern, den ein Platz bietet. Eine Tabelle, die für eine frische Seite zu hoch ist, wird zwischen Zeilen geteilt und auf den folgenden Seiten mit wiederholten Kopfzeilen fortgesetzt (`tableStyle.overflow: 'split'`, der Standard)
+- **Ausgabe:** Ressourcen, positioniert in Seitenbändern (`page.floats`), wobei die Höhe der betroffenen Spalten verringert ist, sodass der Text um die Bänder fließt
+
+Bei der Platzierung von Ressourcen wird es interessant, denn Gleitobjekte belegen nicht nur Raum – sie formen den Raum um sich herum neu. Ist der Block mit einem Verweis gelandet, werden dem anstehenden Gleitobjekt die freien Plätze der aktuellen Seite danach angeboten – der Fuß dieser Spalte, dann Kopf und Fuß der nächsten leeren Spalte (bei einem Gleitobjekt über die ganze Seitenbreite: der Seitenfuß, wenn jede Spalte noch Platz hat); was nirgends passt, wartet auf die nächste Seite, wo anstehende Gleitobjekte ihre Bänder beanspruchen, bevor Text einfließt. Die Spalten schrumpfen, damit sie zwischen die Bänder passen, der Text fließt ohne Unterbrechung durch die verengten Spalten, und der Leser sieht die Abbildung in der Nähe der Stelle (aber nicht genau dort), an der sie erwähnt wird. Das ist gängige Praxis im professionellen Satz; Bücher tun es ständig.
+
+**Platzierungsregeln.** Über die Verteilung der Platzierung hinaus folgen Gleitobjekte strengen redaktionellen Vorgaben:
+
+- **Regel „nach dem Verweis“.** Ein Gleitobjekt landet im ersten freien Platz *nach* seinem ersten Verweis im Text, nie davor. Der Leser trifft zuerst auf den Verweis und sieht dann die Ressource. Passt ein Gleitobjekt nicht, wird es nach vorn auf einen späteren Platz oder eine spätere Seite verschoben, nie zurück.
+- **Verweisreihenfolge innerhalb einer Folge.** Anstehenden Gleitobjekten wird jeder Platz in der Reihenfolge ihres ersten Verweises angeboten, und eines, das nirgends passt, hält die hinter ihm in seiner Nummernfolge auf: Tabelle 3 landet nie nach Tabelle 4, Abbildung 12 nie vor Abbildung 11. Die Folgen halten einander nicht auf – eine wartende Tabelle lässt eine spätere Abbildung durch. Damit eine lange Tabelle nicht auf eine frische Seite warten muss, wird eine, der der Kopf einer leeren Spalte angeboten wird, auf diese Spalte zugeschnitten und im nächsten Platz fortgesetzt (der Spalte daneben oder den Bändern der nächsten Seite), mit wiederholten Kopfzeilen.
+- **Kapitelgrenze.** Gleitobjekte entkommen nie ihrem Kapitel. An einem Kapitelauftakt (einer Überschriftenebene mit `breakBefore` oder `span: 'page'`), einem `:::part`, einem Kastenformat mit `floatBarrier: true` und am Ende des Dokuments wird jedes anstehende Gleitobjekt zuerst platziert – in den freien Plätzen der Seite, dann auf Seiten, die vor der Grenze geöffnet werden (jede erzwingt die Platzierung mindestens eines Gleitobjekts) –, vor dem eigenen Seitenumbruch der Grenze. Bevor eine solche Seite geöffnet wird, werden einer noch anstehenden Abbildung oder Tabelle die freien Plätze der aktuellen Seite noch einmal angeboten, unabhängig von ihrer `position` – ein Gleitobjekt für den Seitenkopf, das auf der letzten Seite eines Kapitels zitiert wird, nimmt den Fuß dieser Seite unter den ausgeglichenen Spalten statt einer eigenen Seite (gleitende Kästen behalten ihre Platzierung). Ein `:::pagebreak` schickt anstehende Gleitobjekte auf die Seite, die ihm folgt, nach etwaigen Ausgleichsseiten für die Parität.
+- **Mindestplatz für Text.** Auf einer frisch geöffneten Seite wird ein Band nur reserviert, wenn in den betroffenen Spalten noch mindestens 3 Zeilen Fließtext passen – mit einer Ausnahme: Ein übergroßes Gleitobjekt darf in ein Band gezwungen werden, das noch ganz aus Text besteht, damit eine alles beherrschende Abbildung die Warteschlange nicht für immer blockiert. Ein Platz auf der aktuellen Seite muss in die verbleibende Höhe der Spalte passen; die Drei-Zeilen-Regel gilt dort nur neben einem anderen Gleitband.
+- **Luft.** Ein Abstand von einer Zeilenhöhe des Fließtextes trennt ein Band vom Text daneben.
+- **Ausrichtung am Grundlinienraster.** Obere Bänder werden auf ein Vielfaches des Grundlinienrasters *aufgerundet* (der Abstand unter dem Gleitobjekt wächst), sodass jede verschobene Zeile weiterhin auf dem Raster landet. Untere Gleitobjekte werden so verankert, dass die letzte Grundlinie der Legende auf dem Raster steht – die Legende teilt ihre Grundlinie mit der letzten Textzeile der benachbarten Spalten, und die Seiten enden über Spalten und gegenüberliegende Seiten hinweg auf derselben Höhe.
+
+**Nummerierung nach Typ beim ersten Verweis.** Ressourcen werden *nicht* im Markdown nummeriert. `pipeline/resourceNumbering.ts` weist jeder Ressource ihre Nummer zu, wenn sie zum ersten Mal in Lesereihenfolge referenziert wird, anhand ihres `ResourceType`: Die `numberingTemplate` verbindet den Zähler `{n}` des Typs mit den Überschriftenzählern `{h1}`..`{h6}`, die beim Verweis gelten (z. B. `'{h1}.{n}'` → „1.7“), `resetOn` steuert, wann der Zähler neu beginnt (`'never'` oder auf einer beliebigen Überschriftenebene), und `counterFormat` wählt dezimale, römische oder alphabetische Zahlen. Die eingebauten Typen *Abbildung* und *Tabelle* stammen aus `defaultResourceTypes(locale)`, lokalisiert in die Sprache des Dokuments. Weil die Nummerierung der Reihenfolge der ersten Verweise folgt, nummeriert das Einfügen einer neuen Abbildung mitten im Dokument alles danach automatisch neu – ohne Änderungen an der Quelle.
+
+### Stufe 5: Umbrüche und Zusammenhalteregeln
+
+Diese Stufe unterscheidet eine Layout-Engine von einem Textabwurf. Sie setzt die redaktionellen Qualitätsregeln durch, die professionelle Setzer seit Jahrhunderten von Hand anwenden – und die naives Textrendering vollständig ignoriert.
+
+Drei Mechanismen teilen sich die Arbeit, jeder dort, wo die Information vorliegt, die er braucht: eine **Strafe für zu kurze Ausgangszeilen** im Zeilenumbruch, eine **bewertete Teilung** dort, wo ein Absatz auf das Ende einer Spalte trifft, und **strukturelle Zusammenhalteregeln** zwischen Blöcken.
+
+#### Witwen, Waisen und zu kurze Ausgangszeilen
+
+**Witwen und Waisen** sind die sichtbarsten Zeichen laienhaften Satzes:
+
+- Eine **Witwe** ist eine einzelne Zeile eines Absatzes, die allein am Fuß einer Spalte zurückbleibt. Der
+  Absatz geht in der nächsten Spalte weiter, aber diese einsame Zeile wirkt gestrandet (als ob die Spalte
+  zu früh endete).
+- Eine **Waise** ist eine einzelne Zeile eines Absatzes, die am Kopf einer Spalte gestrandet ist. Der größte
+  Teil des Absatzes steht in der vorigen Spalte, aber eine Zeile ist hinübergeschwappt (sie wirkt von ihrem
+  Zusammenhang abgeschnitten).
+- Eine **zu kurze Ausgangszeile** ist die letzte Zeile eines Absatzes, die nur aus einem einzigen kurzen Wort (oder zweien) besteht – optisch viel zu kurz, um wie eine richtige Textzeile zu wirken. Strukturell weniger schwerwiegend als eine Witwe, aber für aufmerksame Leser ebenso störend.
+
+**Zu kurze Ausgangszeilen werden im Zeilenumbruch geregelt.** Eine zu kurze Ausgangszeile gehört allein zum Absatz: Seine letzte Zeile ist gleich kurz, wo auch immer der Absatz landet. Deshalb ist sie die einzige der drei Regeln, die der Zeilenumbruch nach Knuth-Plass sieht. Würde eine Menge von Umbrüchen den Absatz mit einer Zeile beenden, deren Inhalt schmaler ist als `runtMinCharacters × normalSpaceWidth` (Standard `runtMinCharacters` 20: Inhalt von zwanzig Wortzwischenräumen, etwa 8 bis 12 Buchstaben), addiert der Umbruch `runtPenalty` (Standard 1000) zur Badness dieser Zeile innerhalb der quadrierten Demerit-Formel, sodass sie auf derselben Skala konkurriert wie die Badness der Zeilen (die bei 10000 sättigt), statt von ihr erdrückt zu werden. Die Strafe steht neben den üblichen Demerits (Badness, Kosten der Silbentrennung, unpassende Fitness-Klassen) in einer einzigen globalen Optimierung, und der Umbruch findet fast immer eine Menge von Umbrüchen ohne zu kurze Ausgangszeile. Wo nicht, setzt `bodyText.tightenRunts` den Absatz um eine Zeile kürzer, wenn seine Wortzwischenräume und eine leicht negative Laufweite den Unterschied aufnehmen können. Das Messmodul gibt die Strafe an den Umbruch weiter (`measure/plain.ts`, `measure/rich.ts`), und `knuthPlass/breakpoints.ts` wendet sie an.
+
+**Witwen und Waisen werden am Spaltenende geregelt.** Der Zeilenumbruch bricht einen Absatz für eine Breite um. Er weiß nicht, wo auf der Seite der Absatz stehen wird, also kann er nicht wissen, welche seiner Zeilen eine Spalte schließen wird. Der Platzierungsdurchlauf weiß es. Passen nicht alle Zeilen eines Absatzes in das, was von der Spalte übrig ist, probiert `chooseParagraphSplit` (in `pipeline/orphanWidow.ts`) jede Teilung `k` der bereits umbrochenen Zeilen aus, von 0 bis zu der Zahl, die passt: `k` Zeilen bleiben, und der Rest eröffnet die nächste Spalte. Jeder Kandidat wird bewertet:
+
+- `slackWeight · slack²` für die Zeilen, die er am Fuß der Spalte leer lässt, wobei `slack` die passenden Zeilen minus `k` sind (Standard `slackWeight` 10);
+- plus `widowPenalty` (Standard 1000), wenn er weniger als `widowMinLines` Zeilen am Fuß der Spalte lässt;
+- plus `orphanPenalty` (Standard 1000), wenn er weniger als `orphanMinLines` Zeilen an den Kopf der nächsten trägt.
+
+Die Teilung mit dem niedrigsten Wert gewinnt, und `k = 0` verschiebt den Absatz als Ganzes. Die Regeln sind weich, und die Zahlen sagen, wie weich: Eine Strafe von 1000 entspricht den Leerraumkosten von zehn leeren Zeilen (10 · 10² = 1000), mit den Standardwerten gewinnt also eine Teilung, die beide Regeln einhält, immer dann, wenn sie weniger als zehn Zeilen der Spalte leer lässt. Darüber hinaus kann eine Witwe oder eine Waise die günstigere Wahl sein. Die Teilung wählt unter den Zeilen, die der Zeilenumbruch bereits gebildet hat; sie bricht den Absatz nicht neu um. Listenpunkte durchlaufen dieselbe Teilung über `avoidOrphansInLists` und `avoidWidowsInLists` und erhalten die Strafe für zu kurze Ausgangszeilen über `avoidRuntsInLists` (alle standardmäßig `true`).
+
+All das lässt sich in `BodyTextConfig` einstellen – siehe [Konfiguration → Waisen, Witwen, zu kurze Ausgangszeilen und Regeln zum Zusammenhalten](/de/docs/configuration-text#waisen-witwen-zu-kurze-ausgangszeilen-und-regeln-zum-zusammenhalten). Wird eine beliebige `*Penalty` auf `0` gesetzt, ist die betreffende Regel praktisch abgeschaltet.
+
+#### Strukturelle Zusammenhalteregeln
+
+Manche Gruppierungen sind größer als ein einzelner Absatz – sie erstrecken sich über benachbarte Blöcke und lassen sich nicht allein durch den Zeilenumbruch behandeln. Der Platzierungsdurchlauf setzt sie durch, während jeder Block landet, und schiebt ganze Gruppen nach vorn, wenn sie sonst durch einen Spalten- oder Seitenumbruch getrennt würden:
+
+- **Überschrift mit ihrem ersten Absatz.** Eine Überschrift darf nie am Fuß einer Spalte stehen, wenn der Absatz, den sie einleitet, in der nächsten Spalte beginnen würde. Durchgesetzt durch `headings.keepWithNext` (Standard `true`): Ist nicht genug Platz für die Überschrift *plus* das Witwenminimum des Fließtextes (`bodyText.widowMinLines`, Standard `2`) des nächsten Blocks – oder nur eine Zeile, wenn `avoidWidows` aus ist –, wird die Überschrift nach vorn geschoben und wandert mit ihrem Text.
+- **Aufeinanderfolgende Überschriften.** Stehen mehrere Überschriften hintereinander (z. B. eine h2, gefolgt von einer h3 und dann einem Absatz), muss die ganze Gruppe zusammenbleiben. Keine der Überschriften darf ohne den Inhalt, den sie einleitet, am Fuß einer Spalte zurückbleiben.
+- **Mit Doppelpunkt eingeleitete Listen.** Endet ein Absatz mit einem Doppelpunkt, der direkt eine Liste einleitet, muss die Zeile mit dem Doppelpunkt beim Anfang der Liste bleiben. Durchgesetzt durch `bodyText.keepColonWithList` (Standard `true`): Würde das Platzieren des Absatzes keinen Platz lassen, damit der erste Listenpunkt beginnen kann (den ganzen Punkt, wenn die Waisen- und Witwenregeln für Listen ihn zusammenhalten; eine Zeile mit `bodyText.colonListRoom: 'line'`, wie bis postext 1.4), wandert die letzte Zeile mit dem Doppelpunkt (oder der ganze Absatz, wenn er einzeilig ist) zusammen mit der Liste nach vorn. Muss diese Regel den ganzen Absatz schieben und steht direkt davor in der Spalte eine Folge von Überschriften, werden diese Überschriften ebenfalls nach vorn gezogen, damit `keepWithNext` nicht stillschweigend verletzt wird; die einzige Ausnahme ist eine Spalte, die nur die Überschrift(en) enthält, die eine frühere Verschiebung bereits nach vorn gebracht hat – dann hält die Engine den Absatz bei der Überschrift und nimmt die weichere Trennung von Doppelpunkt und Liste in Kauf, um eine Endlosschleife zu vermeiden.
+- **Abbildung mit ihrer Legende.** Eine Abbildung und ihre Legende sind eine untrennbare Einheit. Sie wandern immer zusammen.
+
+Wird ein Verstoß gegen eine Zusammenhalteregel erkannt, schiebt die Engine die ganze Gruppe in die nächste Spalte oder auf die nächste Seite. Die verlassene Spalte endet dann zu kurz, um die Zeilen, die die Gruppe eingenommen hätte. Sie zu füllen ist die Aufgabe des [Spaltenausgleichs](#spaltenausgleich).
+
+Gut gemacht sind diese Korrekturen unsichtbar (ein Leser sollte sie nie bemerken). Ihr *Fehlen* aber fällt allen, die aufmerksam lesen, sofort auf: diese unbeholfene einzelne Zeile am Kopf einer Spalte, diese ungleichmäßigen Lücken, wo die Engine es aufgegeben hat, den Text passend zu machen. Professionelle Verlage haben ganze Stilhandbücher darüber, genau diese Probleme zu verhindern. Postext automatisiert sie.
+
+### Der Durchlaufsteuerer
+
+<Illustration name="ConvergenceLoop" data='{"title": "Der Platzierungsdurchlauf und seine Wiederholungen", "desc": "Ein Platzierungsdurchlauf führt den Inhalt durch fünf Stufen: Struktur, Messung, Platzierung, Gleitobjekte sowie Umbrüche und Zusammenhalteregeln. buildDocument wiederholt den ganzen Durchlauf mit Hinweisen aus dem vorigen Durchlauf: eine Bandgrenze, Ausgleichshebel, ein Schnitt im schließenden Band, feststehende Seitenbezeichnungen oder Anmerkungsnummern.", "caption": "Ein Durchlauf platziert das ganze Dokument. buildDocument wiederholt ihn mit Hinweisen, bis jede Runde feststeht oder ihre Grenze erreicht.", "passBadges": [{"num": "Stufe 1", "name": "Struktur"}, {"num": "Stufe 2", "name": "Messung"}, {"num": "Stufe 3", "name": "Platzierung"}, {"num": "Stufe 4", "name": "Gleitobjekte"}, {"num": "Stufe 5", "name": "Umbrüche, Zusammenhalt"}], "loopBadge": "ein Platzierungsdurchlauf", "loopCondition": "mit Hinweisen wiederholen: Bandgrenzen, Ausgleichshebel, Schnitte im schließenden Band"}' />
+
+`buildDocument` ist ein Steuerer um den Platzierungsdurchlauf (`buildDocumentGen` und `buildDocumentBalanced`, in `pipeline/build.ts`). Er führt den Durchlauf einmal aus. Dann liest er, was der Durchlauf gemeldet hat, und wo eine Entscheidung einen zweiten Blick braucht, wiederholt er den Durchlauf vollständig mit Hinweisen (`PassHints`): den Grenzen, zusätzlichen Zeilen und Nummern, die der nächste Durchlauf anwenden soll. Tritt keine der Bedingungen aus der folgenden Tabelle ein, ist dieser erste Durchlauf der ganze Build.
+
+Die Wiederholungen kommen in Runden, jede für eine Art von Entscheidung, in dieser Reihenfolge:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '150px' }}>Runde</th>
+      <th>Läuft, wenn</th>
+      <th>Der nächste Durchlauf erhält</th>
+      <th style={{ width: '230px' }}>Grenze</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Inhaltsverzeichnis</strong></td>
+      <td>Das Dokument druckt Seitenzahlen, die der Host nicht geliefert hat: ein <code>:::toc</code> oder ein <code>:::index</code> ohne <code>outline</code> im Inhalt oder ein Verweis, der die Seite eines Ankers druckt</td>
+      <td>Die Gliederung mit den Seitenbezeichnungen des vorigen Builds</td>
+      <td><code>MAX_TOC_ROUNDS</code>: 3 Builds über den ersten hinaus</td>
+    </tr>
+    <tr>
+      <td><strong>2. Anmerkungsnummern</strong></td>
+      <td><code>footnotes.numbering</code> ist <code>'page'</code>, <code>'column'</code> oder <code>'spread'</code>, und die Anmerkungen stehen am Fuß der Spalte oder der Doppelseite, sodass die Nummer einer Anmerkung davon abhängt, wo das Layout sie setzt</td>
+      <td>Die Nummer, die jede Anmerkung im vorigen Build erhielt (<code>footnoteNumbers</code>)</td>
+      <td><code>MAX_FOOTNOTE_ROUNDS</code>: 3 Builds über den ersten hinaus</td>
+    </tr>
+    <tr>
+      <td><strong>3. Seitliche Legendeen</strong></td>
+      <td>Ein seitlicher Kasten oder ein seitliches Gleitobjekt hat die Legende überdeckt, die eine Abbildung in die Seitenspalte gesetzt hat (<code>placement.captionSide</code>)</td>
+      <td>Diese Legendeen kommen unter ihre Abbildungen (<code>captionUnder</code>)</td>
+      <td>3 Durchläufe</td>
+    </tr>
+    <tr>
+      <td><strong>4. Gleitobjekte auf der zitierenden Seite</strong></td>
+      <td>Ein Gleitobjekt mit <code>placement.citingPage</code> ist auf einer Seite oder in einer Spalte nach der Zeile gelandet, die es zitiert</td>
+      <td>Diese Seite oder Spalte beginnt mit dem Gleitobjekt an ihrem Kopf (<code>citingPageFloats</code>)</td>
+      <td><code>MAX_CITING_PAGE_ROUNDS</code>: 3 Runden mit Vorschlägen, dann ein Durchlauf für jede Gruppe von Gleitobjekten, die ein Durchlauf dort nicht halten konnte</td>
+    </tr>
+    <tr>
+      <td><strong>5. Bandgrenzen</strong></td>
+      <td>Ein Block über die ganze Seitenbreite traf auf ein Band mit ungleichen Spalten (siehe <a href="#stufe-3-platzierung-auf-seiten-und-spalten">Stufe 3</a>)</td>
+      <td>Die Höhe, auf der dieses Band geschnitten wird (<code>bandCaps</code>)</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 Durchläufe mit Vorschlägen und Wiederholungen. Eine Grenze wächst bis zu 3 Mal um eine Zeile (<code>MAX_BAND_CAP_RETRIES</code>), dann wird sie verworfen</td>
+    </tr>
+    <tr>
+      <td><strong>6. Spaltenausgleich</strong></td>
+      <td><code>headings.balancing.enabled</code> ist aktiv, und eine ausgleichbare Spalte endet zu kurz</td>
+      <td>Zusätzliche Rasterzeilen je Block und die Absätze, die um eine Zeile länger umbrochen werden (<code>balanceExtraPx</code>, <code>balanceLooseness</code>)</td>
+      <td><code>MAX_BALANCING_PASSES</code>: 10 Versuche je Segment. <code>MAX_BALANCING_PASSES_PER_DOCUMENT</code>: 30 Durchläufe je Dokument</td>
+    </tr>
+    <tr>
+      <td><strong>7. Schließende Bänder</strong></td>
+      <td>Der Ausgleich ist mit <code>headings.balancing.trailing</code> aktiv, und ein Kapitel oder das Dokument endet in einem Band mit ungleichen Spalten</td>
+      <td>Eine schließende Grenze für dieses Band, mit eingefrorenen Ausgleichshinweisen</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 Durchläufe mit Vorschlägen und Wiederholungen, jede Grenze mit ihren 3 Wiederholungen</td>
+    </tr>
+    <tr>
+      <td><strong>8. Nachbesserung</strong></td>
+      <td>Runde 7 hat eine schließende Grenze behalten</td>
+      <td>Noch einmal Spaltenausgleich, auf dem begrenzten Layout, mit neuen Segmenten</td>
+      <td>10 Versuche je Segment und 30 Durchläufe, neu gezählt</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Runden 3 bis 8 laufen innerhalb eines Builds nacheinander (`buildDocumentBalanced`). Die Runden 1 und 2 liegen außerhalb: Eine Inhaltsverzeichnis- oder Anmerkungsnummern-Runde ist ein ganzer Build mit eigenen Runden 3 bis 8. Für einen Build als Ganzes gibt es keine Grenze, nur diese.
+
+**Jede Wiederholung ist eine vollständige Platzierung.** Ein Hinweis bessert den Baum des vorigen Durchlaufs nicht nach. Der Durchlauf platziert das Dokument mit dem geltenden Hinweis neu, sodass eine Überschrift mit zwei zusätzlichen Zeilen darüber oder ein sechs Zeilen höher geschnittenes Band dieselben Umbruch- und Zusammenhalteregeln durchläuft wie alles andere. Der Steuerer prüft dann das Ergebnis: Eine Bandgrenze, deren Kasten nicht auf dem Schnitt gelandet ist, wird erhöht oder verworfen, und ein Ausgleichsdurchlauf, der ein Segment nicht verbessert hat, wird für dieses Segment verworfen. Was der Steuerer zurückgibt, besteht aus Seiten, die ein Durchlauf platziert hat: der ganze Ertrag eines Durchlaufs oder, nach dem Spaltenausgleich, die Seiten jedes Segments aus dem besten Durchlauf, den dieses Segment hatte.
+
+**Was das Dokument meldet.** `doc.iterationCount` zählt die Platzierungsdurchläufe hinter dem zurückgegebenen Layout: den ersten und die der Runden für Bandgrenzen, Ausgleich und schließende Bänder. Die Durchläufe für seitliche Legendeen und zitierende Seiten sind nicht enthalten, ebenso wenig die früheren Builds einer Inhaltsverzeichnis- oder Anmerkungsnummern-Runde; `BuildDocumentOptions.onPass` wird für jeden Durchlauf aufgerufen, mit seiner tatsächlichen Laufzeit. `doc.converged` betrifft allein den Spaltenausgleich. Es ist `true`, wenn jedes Segment ohne leere Zeile in seinen ausgleichbaren Spalten oder ohne weiteren vorschlagbaren Hebel endete, und `false`, wenn ein Segment bei einem Durchlauf stehen blieb, der es nicht verbesserte, oder keine Versuche mehr hatte, während noch eine Lücke offen war. Bei abgeschaltetem Ausgleich ist es `true`. Ein Dokument mit `converged: false` ist vollständig: Es enthält das beste Layout, das der Steuerer gefunden hat, und eine seiner Spalten endet zu kurz.
+
+### Spaltenausgleich
+
+- **Läuft:** als Runden 6 und 8 des Steuerers (standardmäßig aktiv; `headings.balancing.enabled: false` schaltet ihn ab, und in senkrechtem Text und auf einem Zeichenraster ist er standardmäßig aus, siehe [Konfiguration → Spaltenausgleich](/de/docs/configuration-text#spaltenausgleich))
+- **Eingabe:** Das bisher beste Layout und die leeren Rasterzeilen am Fuß jeder ausgleichbaren Spalte (`collectColumnGaps`, in `pipeline/columnBalancing.ts`)
+- **Aktion:** Hebel vorschlagen, die jede kurze Spalte an Ort und Stelle füllen, den Platzierungsdurchlauf damit ausführen und das Ergebnis für ein Segment behalten, wenn sein Lückenwert gesunken ist
+- **Ausgabe:** Spalten, die auf der letzten Rasterzeile der Seite enden, wobei jeder Hebel an dem Block vermerkt ist, auf den er angewendet wurde (`VDTBlock.balancing`)
+
+Unausgeglichene Spalten fallen sofort auf. Umbruchregeln hinterlassen sie ständig: eine Überschrift, die weitergeschoben wurde, um bei ihrem Text zu bleiben, ein Absatz, der als Ganzes verschoben wurde, um eine Witwe zu vermeiden, eine Abbildung, die nicht passte. Eine Spalte, die zwei Zeilen über ihrer Nachbarin aufhört, wirkt unfertig – als hätte das Layout auf halbem Weg aufgegeben.
+
+Kein Block wechselt die Spalte, um das zu beheben. Ein Spaltenumbruch ist an das Element gebunden, das nicht passte: Der Block, der die nächste Spalte eröffnet, war für den verbleibenden Platz zu hoch, und für weniger Platz ist er erst recht zu hoch. Eine kurze Spalte lässt sich also von innen füllen, um höchstens ihre Lücke, und nichts wandert in die nächste Spalte. Die Anpassung ist lokal, und genau so arbeitet ein Setzer von Hand: eine Zeile Abstand dort einfügen, wo das Auge sie hinnimmt. Eine Spalte ist ausgleichbar, wenn Inhalt an ihr vorbei in eine spätere Spalte derselben Seite geflossen ist oder, bei der letzten Spalte einer Seite, wenn die Seite in die nächste weiterfließt. Die letzte Seite eines Kapitels darf zu kurz enden; ihr schließendes Band wird stattdessen von einer schließenden Grenze auf gleiche Höhe geschnitten (siehe [Stufe 3](#stufe-3-platzierung-auf-seiten-und-spalten)).
+
+Für jede Lücke werden die Hebel in redaktioneller Rangfolge vorgeschlagen, in derselben Reihenfolge, in der [Konfiguration → Spaltenausgleich](/de/docs/configuration-text#spaltenausgleich) sie nennt:
+
+1. **Ein Kasten, der die Spalte schließt,** nimmt den Raum unter seinem Fuß als Abstand über sich auf, sodass sein Fuß auf der letzten Rasterzeile der Seite landet, auf gleicher Höhe mit der letzten Zeile der Nachbarspalte. Vermerkt als `trailingCallout`.
+2. **Ein Bild mit Sicherheitsbereich** (`Resource.safeArea`), inline in die Spalte gesetzt oder an ihren Kopf oder Fuß über genau dieser Spalte gleiten gelassen, wächst um ganze Rasterzeilen, beschnitten innerhalb seines Sicherheitsbereichs. Ein höheres Bild hinterlässt kein Loch auf der Seite, deshalb kommt dieser Hebel vor jedem zusätzlichen Abstand. Vermerkt als `flexFigure`.
+3. **Überschriften** nehmen ganze Rasterzeilen über sich auf, abwechselnd jeweils eine Zeile, die wichtigste Überschrift (die niedrigste Ebene) zuerst, sodass sie den größten Anteil erhält. Eine Überschrift ganz oben in einer Spalte nimmt nichts auf, damit Spalten weiterhin am Seitenkopf beginnen. Eine Überschrift nimmt auf diese Weise nur ihre ersten Zeilen auf, bevor die Hebel unten versucht werden, und mehr, bis zu ihrer Obergrenze, wenn diese nichts mehr hergeben. Vermerkt als `heading`.
+4. **Listenenden** nehmen eine Rasterzeile dort auf, wo eine Liste endet. Vermerkt als `listEnd`.
+5. **Formeln, Kästen und obere Gleitobjekte** nehmen eine Rasterzeile unter sich auf: unter einer abgesetzten Formel oder einem Kasten, nach dem der Text weitergeht (`afterDisplay`), und zwischen einer Abbildung oder Tabelle am Kopf der Spalte und dem Text darunter (`afterFloat`).
+6. **Lockere Absätze** sind das letzte Mittel. Absätze der Spalte, die längsten zuerst, werden jeweils um eine Zeile länger umbrochen (`\looseness=+1` aus TeX, über die Option `looseness` des Knuth-Plass-Umbruchs), und der längere Satz wird nur angenommen, solange jede Zeile innerhalb von `bodyText.maxWordSpacing` bleibt. Kann der Wortabstand allein die Zeile nicht gewinnen, darf der Absatz zusätzlich die kleinste positive Laufweite annehmen, die es schafft, unter einer Obergrenze. Vermerkt als `looseParagraph`.
+
+Die Obergrenzen, die Schalter und die Ausnahmen (ein Zeichenraster, die Schlussseiten, ein Gleitobjekt über mehrere Spalten) sind Schlüssel von `headings.balancing`. Die Seite Konfiguration führt sie auf und wird mit ihnen aktuell gehalten; diese Seite wiederholt sie nicht.
+
+Ein Vorschlag wird geprüft, indem er platziert wird. Der Durchlauf, der die Hebel anwendet, ist eine vollständige Platzierung, und hin und wieder verschiebt ein Hebel doch Inhalt über einen Spaltenumbruch: ein geteilter Absatz, dessen Anfang nicht mehr passt, ein Gleitobjekt, das seinen Platz verloren hat. Die Seiten nach dieser Stelle fließen anders, und anderswo öffnen sich Lücken. Der Steuerer sieht das am Wert, verwirft den Durchlauf für dieses Segment und sperrt die Hebel, die in der ersten veränderten Spalte neu angewendet wurden, sodass der nächste Vorschlag die Hebel behält, die funktioniert haben, und den weglässt, der die Kettenreaktion ausgelöst hat.
+
+**Der Ausgleich konvergiert je Segment.** Die Seiten zwischen ausdrücklichen Umbrüchen – einem Kapitelauftakt, einem `:::pagebreak` – werden unabhängig voneinander gesetzt: Nichts fließt über einen solchen Umbruch, also kann ein Ausgleichshebel in einer Folge von Seiten nie eine Zeile einer anderen verschieben. Die Schleife des Spaltenausgleichs beurteilt deshalb jedes solche *Segment* für sich. Sein Lückenwert ist die Zahl der leeren Rasterzeilen am Fuß seiner ausgleichbaren Spalten. Ein Durchlauf platziert weiterhin das ganze Dokument, aber jedes Segment behält oder verwirft seinen Anteil der Hebel nach seinem eigenen Lückenwert, sperrt seine eigenen Kettenreaktionen, stagniert für sich und verbraucht sein eigenes Budget an Versuchen; ein Segment, dessen Wiederholung sich verschlechtert hat, erhält seine Seiten aus dem besten Durchlauf zurück, den es hatte, während die anderen weitermachen. Ein Buch mit dreißig Kapiteln gleicht sich so genau so aus, wie seine Kapitel es einzeln täten – das PDF des ganzen Buches und das PDF eines einzelnen Kapitels sind für dasselbe Kapitel identisch –, statt dass eine einzige Kettenreaktion irgendwo jede Seite des Buches einen Durchlauf kostet.
+
+Die Grenzen sind ein Sicherheitsventil. Manche Spalten lassen sich nicht schließen: Eine, die nur kurze Absätze enthält, hat keinen Hebel, an dem sich ziehen ließe, und eine, deren Hebel jeweils einen Block über den Spaltenumbruch schieben, hat keinen, der sich behalten ließe. Die Engine behält das beste Layout, das sie gefunden hat, und lässt diese Spalte zu kurz. Weil die Hebel an den Blöcken vermerkt sind, kann ein Korrekturabzug oder ein Test die Spalten auflisten, die nichts geschlossen hat (siehe [Konfiguration → Welcher Hebel gegriffen hat](/de/docs/configuration-text#welcher-hebel-gegriffen-hat)).
+
+
+## System des vertikalen Rhythmus
+
+Halten Sie ein gut gesetztes Buch gegen das Licht. Die Zeilen der linken Seite decken sich mit den Zeilen der rechten. Die Grundlinie von Zeile 5 in Spalte 1 steht auf genau derselben Höhe wie die Grundlinie von Zeile 5 in Spalte 2. Das ist vertikaler Rhythmus, und er gehört zu den ersten Dingen, die ein geschultes Auge bei der Beurteilung typografischer Qualität prüft. Er ist auch eines der wesentlichen Unterscheidungsmerkmale von Postext.
+
+Enthalten beide Spalten nur Fließtext in derselben Größe, ist die Ausrichtung trivial – jede Zeile ist gleich hoch, also stimmen die Grundlinien von selbst überein. Die Schwierigkeit beginnt in dem Moment, in dem eine Spalte eine Überschrift mit größerer Schrift enthält, ein Bild mit beliebiger Pixelhöhe oder zusätzlichen Abstand um ein Zitat. Diese Elemente „brechen“ das Raster: Der Inhalt darunter verschiebt sich um einen Betrag, der kein Vielfaches des Grundlinienschritts ist, und plötzlich laufen die Grundlinien dieser Spalte aus dem Takt mit der Nachbarspalte. Die optische Harmonie ist dahin.
+
+Das Ziel ist, sie zurückzugewinnen: Die Grundlinien des Fließtextes in benachbarten Spalten müssen waagerecht fluchten, auch wenn Überschriften, Bilder oder andere Elemente mit abweichender Höhe in der einen Spalte stehen und in der anderen nicht.
+
+### Grundlinienraster
+
+Alles hängt an einer einzigen Zahl. Das Dokument legt einen Wert `baselineGrid` fest, abgeleitet vom Zeilenabstand des Fließtextes – zum Beispiel ergibt Fließtext in `16px` mit einer `line-height` von `1.5` ein Grundlinienraster von `24px`. Jede Grundlinie des Fließtextes soll auf ein Vielfaches dieses Wertes fallen. Das ist die Abmachung.
+
+### Rasterbrechende Elemente
+
+Manche Elemente brechen das Raster zwangsläufig, weil ihre Höhe kein Vielfaches von `baselineGrid` ist:
+
+- **Überschriften** (größere Schrift, anderer Zeilenabstand)
+- **Bilder** (beliebige Pixelhöhe)
+- **Tabellen** (variable Höhe)
+- **Zitatblöcke** (eventuell mit anderer Schriftgröße oder anderem Innenabstand)
+- **Fußnotenbereiche** (die Anmerkungen am Fuß einer Spalte und ihre Linie: Der Textbereich der Spalte endet darüber)
+
+### Wie der Fluss zum Raster zurückkehrt
+
+<Illustration name="VerticalRhythm" data='{"title": "Ausrichtung im vertikalen Rhythmus", "desc": "Spalte 1 enthält eine Überschrift, die das Grundlinienraster um 12 Pixel bricht. Beim Platzieren der Überschrift rundet die Engine die in der Spalte belegte Höhe auf die nächste Rasterzeile auf, was 12 Pixel unter der Überschrift hinzufügt, sodass die nächste Fließtextzeile wieder auf dem Raster steht. Spalte 2 bleibt durchgehend ausgerichtet.", "caption": "Der Raum unter einem rasterbrechenden Element wird beim Platzieren des Elements auf das Raster aufgerundet, sodass die Grundlinien über die Spalten hinweg im Takt bleiben.", "column1": "Spalte 1", "column2": "Spalte 2", "bodyLine": "Fließtextzeile", "bodyBaseline": "Fließtextzeile (Grundlinie: 24 px)", "heading": "Überschrift (36 px hoch)", "adjustment": "+12 px Abstandsausgleich", "backOnGrid": "Fließtext (wieder auf dem Raster)", "aligned": "ausgerichtet", "legendTitle": "Einrasten beim Platzieren", "legendSteps": ["1. Den Block setzen: seine Zeilen, dann seinen Abstand darunter (marginBottom)", "2. Die in der Spalte belegte Höhe auf die nächste Rasterzeile aufrunden", "3. Der nächste Block beginnt dort, der Abstand darunter ist also ein Minimum", "4. snapToGrid: false behält den genauen Abstand bis zum nächsten einrastenden Block"]}' />
+
+Das Raster wird beim Platzieren gehalten, Block für Block. Kein späterer Durchlauf geht die Spalten auf der Suche nach Abweichungen durch. Fließtextzeilen sind eine Rasterzeile hoch, also bleibt eine Folge von Fließtext, die auf dem Raster beginnt, darauf. Hat der Platzierungsdurchlauf einen Block gesetzt, der das Raster verlassen kann, rundet er die in der Spalte belegte Höhe auf die nächste Rasterzeile auf, bevor der nächste Block beginnt. Die Blöcke, die auf diese Weise einrasten, sind:
+
+- die letzte Überschrift einer Folge von Überschriften (aufeinanderfolgende Überschriften folgen ohne Einrasten aufeinander, und die letzte richtet den Text danach neu aus);
+- der letzte Punkt einer Liste, unabhängig vom Abstand zwischen den Punkten;
+- eine abgesetzte Formel;
+- ein Kasten, ein Codelisting und eine inline eingebettete Abbildung oder Tabelle;
+- der letzte Absatz eines Containers `:::paragraphs` und ein Gedicht `:::verse`, deren Zeilenabstand ihr eigener ist.
+
+Der Abstand unter dem Block (`marginBottom`) wird vor dem Runden gezählt, der Rand ist also ein Minimum, und das Raster entscheidet über den Rest. In der Abbildung enthält Spalte 1 eine 36 px hohe Überschrift auf einem 24-px-Raster, ohne Rand darunter. Ihr Fuß liegt 12 px hinter einer Rasterzeile, das Einrasten fügt 12 px hinzu, und die nächste Fließtextzeile beginnt auf dem Raster, auf gleicher Höhe mit der Zeile daneben in Spalte 2. Mit einem `marginBottom` von 16 px läge der Fuß bei 52 px, und das Einrasten würde auf 72 px aufrunden.
+
+Gleitbänder halten das Raster auf ihre eigene Weise, beschrieben unter [Stufe 4](#stufe-4-platzierung-von-ressourcen): Ein oberes Band wird auf ganze Rasterzeilen aufgerundet, und ein unteres Gleitobjekt wird so verankert, dass die letzte Grundlinie seiner Legende auf dem Raster steht. Der Spaltenausgleich fügt seinen Abstand in ganzen Rasterzeilen hinzu und hält das Raster damit ebenfalls.
+
+Nichts vergleicht eine Spalte mit einer anderen. Jede Spalte beginnt auf dem Raster, und jedes Einrasten kehrt zu ihm zurück, sodass sich die Zeilen benachbarter Spalten und gegenüberliegender Seiten ohne zweiten Durchlauf treffen.
+
+**Abwählen.** `snapToGrid: false` behält stattdessen den genauen Abstand unter einem Block. Es lässt sich an `headings` setzen (für jede Ebene, für eine Ebene oder für ein Überschriftenformat), an einem Absatzformat, an einem Kastenformat und an `codeStyle`. Der Text nach einem solchen Block kann neben dem Raster liegen, bis zum nächsten Block, der einrastet. Der Text in einem Kasten folgt dem eigenen Zeilenabstand des Kastens und hat kein Raster.
+
+
+## Backend-Schnittstelle
+
+Es gibt genau eine Quelle der Wahrheit für die Textmessung – das Messmodul über den Canvas-Schriftmetriken von Pretext –, und jedes Backend rendert aus demselben fertigen VDT, den es erzeugt hat.
+
+Das ist eine bewusste Entscheidung, und sie hat einen entscheidenden Grund: **Wie Sie Text messen, muss genau dem entsprechen, wie Sie ihn rendern.** Angenommen, die Messung verwendete Canvas-Schriftmetriken, ein Backend aber eine PDF-Bibliothek mit leicht abweichenden Kerning-Tabellen. Das Layout würde nicht zur Ausgabe passen. Zeilen, die die Engine als passend für 320 px gemessen hat, könnten beim Rendern über- oder unterlaufen. Jedes Pixel Abweichung ist eine Lüge. Weil einmal gemessen und überall aus der daraus entstandenen Geometrie gerendert wird, können die Backends nicht voneinander abweichen: Zeilenumbrüche, Spaltenhöhen und die Platzierung von Ressourcen sind im VDT festgeschrieben, bevor irgendein Backend läuft.
+
+Deshalb misst etwa das PDF-Backend den Text nicht neu: Es verarbeitet einen fertigen VDT und übersetzt dessen Pixelkoordinaten in PDF-Punkte. Die Canvas-Metriken sind die Quelle der Wahrheit; PDF ist ein Transportweg. Wer `renderToPdf` (aus dem Paket `postext-pdf`) nutzt, übergibt denselben VDT, den er an `renderToCanvas` oder `renderToHtml` übergeben würde, und die drei Ausgaben stimmen garantiert überein.
+
+### API-Oberfläche
+
+Die Backends sind einfache Funktionen über `VDTDocument`, keine Klassenhierarchie. Es gibt keine Schnittstelle `PostextBackend` – nur die Render-Einstiegspunkte jeder Ausgabe und die Hilfsfunktionen, die sie braucht:
+
+```typescript
+// Canvas (from 'postext')
+renderToCanvas(doc, options?): HTMLCanvasElement[];     // one canvas per page
+renderPage(page, doc, options?): HTMLCanvasElement;     // a single page
+renderPageToCanvas(page, doc, canvas, options?): void;  // draw into an existing canvas
+
+// Canvas resource-image registry — decoded images keyed by Resource fileId
+registerResourceImage(fileId, image, options?): void;   // options: { vector?, singleInk? }
+unregisterResourceImage(fileId): void;
+clearResourceImages(): void;
+
+// HTML (from 'postext')
+renderToHtml(doc, options?): string;
+renderToHtmlIndexed(doc, options?): HtmlRenderIndex;    // per-page / per-block breakdown
+
+// PDF (from 'postext-pdf')
+renderToPdf(doc, options): Promise<Uint8Array>;
+
+// EPUB (from 'postext-epub'), a book's chapters in order
+renderToEpub(docs, options): Promise<Uint8Array>;
+```
+
+Weil binäre Nutzlasten der Ressourcen außerhalb liegen, löst jedes Backend `fileId`s auf seine eigene Weise auf. Das Canvas-Backend führt ein Register dekodierter `CanvasImageSource`s – die Host-Anwendung registriert jede Bitmap und jedes SVG einmal mit `registerResourceImage(fileId, image)`, und der Renderer schlägt sie beim Zeichnen nach. Das HTML-Backend nimmt in seinen Optionen einen Auflöser `resourceImageUrl(fileId)` an und gibt `<img>`-Tags aus, die auf die URLs zeigen, die der Host zurückgibt (Object-URLs, Data-URIs, CDN-Pfade). Das PDF-Backend erhält einen Anbieter `resourceBytes` und bettet die tatsächlichen Bytes ein; der EPUB-Schreiber nimmt ebenfalls einen an und speichert jedes Bild einmal als Datei des Buches. Eine Videoressource wird als ihr Vorschaubild gezeichnet, eine Bitmap wie jede andere; das HTML-Backend nimmt zusätzlich einen Auflöser `resourceVideoUrl(fileId)` für die Videodateien an, die es abspielt, und der EPUB-Schreiber legt diese Dateien unter `media/` ab. Das PDF-Backend zeichnet das Abspielsymbol und den QR-Code als Vektorpfade über das Vorschaubild und legt, wenn `video.linkPoster` aktiv ist, eine URI-Link-Annotation darüber, die `video.link` öffnet; in einem getaggten PDF schließt sich der Link der `Figure` des Vorschaubilds an, deren Alternativtext mit dem Namen des Typs beginnt (*Video: …*). Tabellenressourcen brauchen nichts davon – ihr Modell reist mit, und jedes Backend zeichnet die Zellen aus der Tabellengeometrie des VDT.
+
+`renderToHtmlIndexed` verdient eine Anmerkung: Neben dem vollständigen HTML-String liefert es eine Aufschlüsselung je Seite und je Block (`HtmlRenderIndex`), sodass Aufrufer gegen ein früheres Rendering vergleichen und nur die DOM-Teilbäume aktualisieren können, deren HTML sich tatsächlich geändert hat – der Weg der Live-Vorschau in der Sandbox.
+
+### Backends
+
+<table>
+  <thead>
+    <tr>
+      <th>Backend</th>
+      <th>Messung</th>
+      <th>Rendering</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Canvas</strong></td>
+      <td>Pretext (Canvas-Schriftmetriken)</td>
+      <td>Bitmap-Zeichnung auf einem <code>HTMLCanvasElement</code> (<code>renderToCanvas</code>, <code>renderPage</code>, <code>renderPageToCanvas</code>)</td>
+      <td><strong>Verfügbar</strong></td>
+    </tr>
+    <tr>
+      <td><strong>HTML</strong></td>
+      <td>Pretext (dieselben Metriken wie Canvas)</td>
+      <td>Absolut positionierte DOM-Knoten mit redaktionellem CSS (<code>renderToHtml</code>, <code>renderToHtmlIndexed</code>)</td>
+      <td><strong>Verfügbar</strong></td>
+    </tr>
+    <tr>
+      <td><strong>PDF</strong></td>
+      <td>Verarbeitet den bereits mit Pretext gemessenen VDT</td>
+      <td>Aufbau der PDF-Seiten über pdf-lib mit Schrifteinbettung je Schriftstärke (<code>renderToPdf</code> in <code>postext-pdf</code>)</td>
+      <td><strong>Verfügbar</strong></td>
+    </tr>
+    <tr>
+      <td><strong>EPUB</strong></td>
+      <td>Verarbeitet den bereits mit Pretext gemessenen VDT</td>
+      <td>EPUB-3-Datei: ein XHTML-Dokument je gedruckter Seite (festes Layout) oder je Kapitel (umfließend), Schriften eingebettet (<code>renderToEpub</code> in <code>postext-epub</code>)</td>
+      <td><strong>Verfügbar</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Kommandozeile</strong></td>
+      <td>Pretext über Skia (<code>@napi-rs/canvas</code>) statt der Canvas des Browsers</td>
+      <td>Die Schreiber für PDF, HTML und EPUB, Seitenbilder und Word, ausgeführt in einem Terminal ohne Browser (<code>postext-cli</code>)</td>
+      <td><strong>Verfügbar</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+Alle vier verfügbaren Backends verarbeiten dasselbe `VDTDocument`. Die Aufteilung zwischen `postext` (das die Canvas- und HTML-Backends exportiert) und `postext-pdf` (das das PDF-Backend exportiert) hat allein mit Abhängigkeiten zu tun: Der PDF-Weg zieht `pdf-lib` und `@pdf-lib/fontkit` nach sich, und die meisten Web-Integrationen brauchen sie nicht. Installieren Sie `postext-pdf` nur, wenn Sie tatsächlich PDF-Bytes erzeugen wollen. `postext-epub` ist aus demselben Grund ein eigenes Paket und wird nur für E-Books gebraucht. Die Kommandozeile ist kein fünftes Backend: `postext-cli` führt dieselben Schreiber dort aus, wo es keinen Browser gibt.
+
+**Wo das Layout läuft:** Die Engine misst Text auf einer Canvas, läuft also überall, wo sie eine bekommt. Im Browser läuft die Pipeline entweder im Hauptthread (`buildDocument`) oder in einem eigenen Web Worker (`createLayoutWorker` aus `postext/worker`) – der Worker-Weg ist die empfohlene Integration für Anwendungen mit Benutzeroberfläche, weil er Messung und Platzierungsdurchläufe vom Hauptthread fernhält, Abbruch nach dem Prinzip „der letzte gewinnt“ über `AbortSignal` unterstützt und seinen eigenen Messcache und Raster-Cache für Formeln besitzt, sodass aufeinanderfolgende Neuaufbauten günstig bleiben. Das vollständige Integrationsmuster beschreibt [Konfiguration → Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen). Außerhalb des Browsers führt die [Kommandozeile](/de/docs/command-line) dieselbe Pipeline aus, wobei Skia die Canvas des Browsers vertritt, sodass ein Buch in einem Terminal, einem Skript oder auf einem Build-Server in dieselben Seiten umbricht.
+
+## Leistungsstrategie
+
+Zwischen einem schwerfälligen Werkzeug und einem, das wie von selbst arbeitet, liegt etwa der Faktor 10. Ein Layout von 500 ms bedeutet, dass die Nutzerin oder der Nutzer bei jeder Änderung eines Wortes ein sichtbares Ruckeln sieht. Ein Layout von 50 ms wirkt augenblicklich – als wäre das Dokument schon immer da gewesen. Dieser Faktor lässt sich nicht nachträglich hineinflicken. Er muss vom ersten Tag an eingeplant sein.
+
+Bedenken Sie, womit es die Engine zu tun hat: Tausende von Textblöcken auf Hunderten von Seiten, bei jeder Bearbeitung neu gesetzt, und mehrmals, wenn das Layout seine Runden braucht. Spiele-Engines stehen vor derselben Art von Problem – Tausende von Objekten (Geometrie, Physik, Beleuchtung, KI) 60-mal pro Sekunde zu verarbeiten –, und sie lösen es, indem sie bereits getane Arbeit nicht wiederholen. Postext wendet das auf das an, was es am meisten kostet: das Messen von Text.
+
+### Grundsätze
+
+1. **Berechnung im Speicher.** Der gesamte VDT passt in den Speicher. Während des Layouts wird das DOM
+   nicht gelesen. Das DOM wird erst ganz am Ende angefasst, beim Rendern.
+
+2. **Ganze Durchläufe über gecachten Messungen.** Eine Wiederholung des Platzierungsdurchlaufs sucht nicht
+   nach dem, was sich geändert hat: Sie platziert das Dokument vom ersten Block an neu. Das ist bezahlbar, weil
+   das Messen, der teure Teil, je Absatz gecacht wird (Grundsatz 5). Ein Durchlauf, der an Text, Schriften
+   oder Breite eines Absatzes nichts ändert, liest dessen Zeilen aus dem Cache.
+
+3. **Begrenzte Runden.** Jede Art von Wiederholung hat eine feste Grenze (siehe
+   [Der Durchlaufsteuerer](#der-durchlaufsteuerer)), und der Spaltenausgleich hat eine je Dokument und eine
+   je Segment, sodass ein Buch mit vielen Kapiteln nicht endlos Durchläufe verbrauchen kann. Die Kosten eines Builds
+   lassen sich Durchlauf für Durchlauf messen: `BuildDocumentOptions.onPass` meldet jeden Durchlauf und seine tatsächliche Laufzeit.
+
+
+4. **Geschwindigkeit von Pretext.** Textmessung mit dem 300- bis 600-Fachen der DOM-Geschwindigkeit bedeutet, dass die Engine es sich leisten kann,
+   Text auf Verdacht neu zu messen (verschiedene Spaltenbreiten, Trennstellen, Anpassungen der Laufweite
+   ausprobieren), ohne den Hauptthread zu blockieren.
+
+5. **Geschichtetes Caching der Messungen.** Das Messmodul (`packages/postext/src/measure/`) führt
+   einen ausdrücklichen Messcache, geschlüsselt nach Text, Schriften, Breite und jeder Option, die das Layout beeinflusst,
+   zusätzlich zum eigenen Cache von `prepare()` in Pretext und einem rohen Cache für Textbreiten. Das erneute Messen eines
+   unveränderten Absatzes kostet eine Map-Abfrage. Ändern sich die Schnitte einer Familie, verwirft die Engine die Breiten
+   dieser Familie und den Cache von Pretext, und ein Messcache verwirft bei seiner nächsten Abfrage die in ihr gesetzten Blöcke
+   (er trägt die Generation, unter der er gefüllt wurde), sodass die Glyphenbreiten nach dem
+   Laden der Schriften korrekt sind, ohne dass der Host etwas aufrufen muss; `clearMeasurementCache()` verwirft jede Familie.
+
+6. **Zeilenumbruch auf dem heißen Pfad.** Die Behandlung der aktiven Knoten in Knuth-Plass wurde für Geschwindigkeit neu geschrieben:
+   Die aktive Menge wird an Ort und Stelle verdichtet, während Knoten ausscheiden, und Kandidaten werden
+   je (Zeile, Fitness-Klasse) dedupliziert, sodass je Schlüssel nur der Knoten mit den niedrigsten Demerits überlebt. Die algorithmischen
+   Ergebnisse sind identisch – dieselben Umbruchmengen, nur schneller berechnet.
+
+7. **Builds außerhalb des Hauptthreads.** Der Einstiegspunkt `postext/worker` führt die gesamte Pipeline
+   in einem eigenen Web Worker aus. Der Hauptthread sendet `{ content, config }` und ein
+   `AbortSignal`; der Worker registriert die Schriften (übertragen als `ArrayBuffer`s), führt die
+   Platzierungsdurchläufe aus und sendet das fertige `VDTDocument` zurück. Ein neuerer Aufruf von `build()`
+   bricht den vorigen kooperativ ab – der Worker führt `buildDocumentAsync` aus, das einmal je Block und zwischen
+   den Durchläufen einen Abbruch-Hook abfragt und `BuildCancelledError` wirft, sodass jemand, der in einen Editor tippt,
+   nie auf ein überholtes Layout wartet. Der Worker hält außerdem seinen eigenen dauerhaften
+   Messcache und einen nach Inhalt geschlüsselten Raster-Cache für Formeln, sodass per Structured Clone übertragene
+   Objekte `MathRender` Neuaufbauten überdauern, ohne neu gerastert zu werden.
+
+8. **VDT mit doppeltem Zugriff.** Der Baum (`pages > columns > blocks`) bietet hierarchischen Zugriff für
+   Arbeit, die Seite für Seite oder Spalte für Spalte vorgeht (der Spaltenausgleich misst die Lücke am
+   Fuß jeder Spalte). Ein paralleles flaches Array `blocks[]` bietet direkten Zugriff auf jeden Block,
+   wo auch immer er steht (die Anmerkungsnummern-Runde liest daraus die Marke, die jede Anmerkung gedruckt hat). Beide
+   Sichten verweisen auf dieselben Blockobjekte (es gibt keine Verdopplung, nur zwei Wege, dieselben
+   Daten zu durchlaufen).
+
+### Neu setzen
+
+Es gibt keinen inkrementellen Einstiegspunkt: Kein Aufruf nimmt einen fertigen VDT und aktualisiert ihn. Ändern sich Inhalt oder Konfiguration (ein Tastendruck, ein anderes Seitenformat), ruft der Host `buildDocument` erneut auf und erhält ein neues Dokument.
+
+Was von einem Build zum nächsten erhalten bleibt, ist das Messen. Legen Sie einmal mit `createMeasurementCache()` einen `MeasurementCache` an und übergeben Sie ihn als drittes Argument bei jedem Aufruf von `buildDocument`. Ein Absatz, dessen Text, Schriften, Breite und Umbruchoptionen sich nicht geändert haben, wird daraus gelesen, sodass ein Editor, der das Dokument bei jedem Tastendruck setzt, nur den Absatz misst, in dem getippt wird. Eine Änderung des Seitenformats oder der Spaltenzahl ändert die Breiten, und diese Absätze werden neu gemessen; die Ergebnisse von `prepare()` in Pretext gelten weiterhin, da sie von Schrift und Text abhängen und nicht von der Breite, sodass nur die günstige Arithmetik von `layout()` läuft. Auch das Parsen wird memoisiert.
+
+Für einen Live-Editor erledigt `createLayoutWorker` (aus `postext/worker`) all das außerhalb des Hauptthreads: Der Worker besitzt einen Messcache, der so lange lebt wie er selbst, und ein neuerer Aufruf von `build()` bricht den laufenden ab. Siehe [Konfiguration → Mess-Cache](/de/docs/configuration-programmatic-usage#mess-cache) und [Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen).
+
+### Benchmarks
+
+Zwei Benchmarks liegen in `packages/postext/src/__bench__/`. `pnpm test` überspringt sie; `pnpm bench`, ausgeführt in `packages/postext`, führt sie aus. `chapter.bench.test.ts` setzt ein Kapitel im Umfang eines Lehrbuchkapitels (vierzig Abschnitte aus Überschriften, Absätzen und Listen) fünfmal mit leerem und fünfmal mit gefülltem Messcache und meldet beide Mediane und die Zahl der Durchläufe. `cjkChapter.bench.test.ts` setzt Kapitel 1 von 红楼梦 und zählt die an `measureText` gesendeten Zeichen, um das CJK-Satzmodul auf Kosten zu halten, die linear mit der Länge des Absatzes wachsen.
+
+```typescript
+// From packages/postext/src/__bench__/chapter.bench.test.ts
+const cold: number[] = [];
+for (let i = 0; i < ROUNDS; i++) cold.push(time(() => buildDocument({ markdown }, config, createMeasurementCache())));
+
+const warmCache = createMeasurementCache();
+buildDocument({ markdown }, config, warmCache);
+const warm: number[] = [];
+for (let i = 0; i < ROUNDS; i++) warm.push(time(() => buildDocument({ markdown }, config, warmCache)));
+
+const passes: BuildPassInfo[] = [];
+const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPass: (p) => passes.push(p) });
+// [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
+```
+
+Der Ehrlichkeit halber eine Einschränkung: In Node gibt es keine Canvas, deshalb ersetzen beide Benchmarks die Textmessung durch eine Attrappe, und ihre absoluten Zeiten sind nicht die des Browsers. Das Verhältnis von kaltem zu warmem Cache und die Zahl der Durchläufe sind es aber, und eine Verschlechterung bei einem von beiden zeigt sich hier, bevor sie sich in der Sandbox zeigt. Der Kapitel-Benchmark meldet Zahlen und lässt den Build nicht scheitern; der chinesische prüft, dass die gemessenen Zeichen unter dem Dreifachen der Länge des längsten Absatzes bleiben. Keiner von beiden läuft in der CI: Verschlechterungen werden erkannt, indem die Zahlen über mehrere Läufe verglichen werden, wenn sich ein heißer Pfad ändert (so geschehen bei der Neufassung der aktiven Knoten in Knuth-Plass). Leistung ist ein Feature, keine Hoffnung – aber durchgesetzt wird sie heute durch Messung und Review, nicht durch eine fehlschlagende Pipeline.
+
+
+## Datenfluss
+
+<Illustration name="DataFlow" data='{"title": "Datenfluss durch die Engine", "desc": "Inhalt und Konfiguration gehen in den Platzierungsdurchlauf, der jeden Block strukturiert, misst und platziert, die Ressourcen gleiten lässt und die Umbruch- und Zusammenhalteregeln anwendet. buildDocument wiederholt den Durchlauf mit Hinweisen, bis jede Runde feststeht. Der fertige VDT geht an das Backend, das HTML oder PDF rendert.", "caption": "Datenfluss von Anfang bis Ende: ein Platzierungsdurchlauf, mit Hinweisen wiederholt, dann gerendert.", "input": ["Inhalt +", "Konfiguration"], "loopBadge": "Platzierungsdurchlauf", "passesInLoop": [{"num": "1", "name": "Struktur"}, {"num": "2", "name": "Messung"}, {"num": "3", "name": "Platzierung"}, {"num": "4", "name": "Gleitobjekte"}, {"num": "5", "name": "Zusammenhalt"}], "loopCondition": "mit Hinweisen wiederholen, jede Runde bis zu ihrer Grenze", "convergedLabel": "VDT (fertig)", "backend": "Backend: Rendern", "output": "HTML / PDF"}' />
+
+
+## Nicht-Ziele
+
+Jede dieser Grenzen ist eine bewusste Entscheidung – die Engine ist für sich schon komplex genug, und
+Aufgaben zu übernehmen, die anderswo hingehören, wäre der schnellste Weg, nie fertig zu werden.
+
+- **WYSIWYG-Bearbeitung.** Postext ist eine Layout-Engine, kein Editor. Inhalt hinein, Geometrie heraus. Eine interaktive Bearbeitungsoberfläche zu bauen – Cursorverwaltung, Auswahl, Rückgängig/Wiederholen, Eingabeverarbeitung – ist ein völlig anderes Problem. Postext kann als Rendering-Backend für einen Editor dienen, bietet aber selbst keine Bearbeitungsfunktionen.
+- **Hülle um CSS column-count.** Postext ersetzt das mehrspaltige Layout von CSS; es kapselt es nicht. Es berechnet genaue, positionierte Geometrie von Grund auf, weil dem Spaltenalgorithmus des Browsers die Kontrolle über die Platzierung von Ressourcen, die Vermeidung von Witwen und Waisen und spaltenübergreifende typografische Regeln fehlt. Genau darum geht es.
+- **Verwaltung responsiver Breakpoints.** Postext berechnet das Layout für ein gegebenes Seitenformat. Wann neu gesetzt wird (bei einer Größenänderung des Viewports, bei einem Wechsel der Ausrichtung), entscheidet die nutzende Anwendung. Postext verwaltet keine Breakpoints, Media Queries oder Entscheidungen des responsiven Designs. Das ist Ihre Aufgabe.
+- **Gemeinsame Bearbeitung in Echtzeit.** Postext ist eine zustandslose Layoutberechnung – Inhalt hinein, Geometrie heraus –, kein kollaboratives Dokumentsystem mit Konfliktauflösung, Operational Transforms oder Wissen um mehrere Nutzer.
+- **Schriftdateien.** Das Paket `postext` lädt Schriften; es bringt keine mit. `prepareFonts` lädt vor dem ersten Build jeden Schnitt, den eine Konfiguration und ihr Text verlangen, und ein Schnitt, den der Schriftbestand nicht liefern konnte, wird in den Warnungen des Dokuments als `fontFallback` aufgeführt. Die Dateien selbst kommen vom Host: eine Regel `@font-face` auf der Seite oder eine Funktion `resolve`, die angibt, wo jeder Schnitt liegt. Siehe [Konfiguration → Schriften vor dem Layout laden](/de/docs/configuration-programmatic-usage#schriften-vor-dem-layout-laden).
+
+
+## Anhang: Beziehung zu den vorhandenen Typen
+
+So bilden sich die wichtigsten in `packages/postext/src/types.ts` definierten Typen auf die oben beschriebene Architektur ab:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Typ</th>
+      <th>Rolle in der Architektur</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>PostextContent</code></td>
+      <td>Einstiegspunkt: die Eingabe der Engine (Strukturierung des Inhalts)</td>
+    </tr>
+    <tr>
+      <td><code>PostextConfig</code></td>
+      <td>Steuert jede Stufe des Platzierungsdurchlaufs und die Runden um ihn herum</td>
+    </tr>
+    <tr>
+      <td><code>Resource</code></td>
+      <td>Eine typisierte Ressource aus Bitmap, SVG, Tabelle oder Video. Wird bei der Messung zu einem <code>ResolvedResourceBlock</code> und dann entweder zu einem Inline-<code>VDTBlock</code> vom Typ <code>'resource'</code> (Platzierung <code>'here'</code>) oder zu einem Gleitobjekt in einem Seitenband (Platzierung von Ressourcen)</td>
+    </tr>
+    <tr>
+      <td><code>ResourceType</code></td>
+      <td>Steuert die Nummerierung nach Typ, die Präfixe der Legenden, die Verweisbezeichnungen und die standardmäßige Gleitplatzierung (Strukturierung des Inhalts, Platzierung von Ressourcen)</td>
+    </tr>
+    <tr>
+      <td><code>ResourcePlacement</code></td>
+      <td>Überschreibt das Gleiten je Ressource: <code>position</code> (<code>'auto'</code> / <code>'top'</code> / <code>'bottom'</code> / <code>'here'</code>) und <code>span</code> (<code>'column'</code> / <code>'page'</code> / <code>'side'</code>), dazu <code>rotate</code>, <code>width</code>, <code>align</code>, <code>columns</code>, <code>captionSide</code>, <code>shrink</code>, <code>minScale</code>, <code>captionMeasure</code>, <code>wrap</code>, <code>wrapGap</code> und <code>citingPage</code>; jedes Feld fällt auf das <code>defaultPlacement</code> des Typs zurück und wird bei der Platzierung von Ressourcen aufgelöst</td>
+    </tr>
+    <tr>
+      <td><code>PostextNote</code></td>
+      <td>Wird von der Engine nicht gelesen. Fußnoten werden im Markdown geschrieben (<code>[^id]</code>) und am Fuß der zitierenden Spalte oder nach dem Kapitel gesetzt; Marginalien sind nicht implementiert</td>
+    </tr>
+    <tr>
+      <td><code>PostextResource</code></td>
+      <td><strong>Veraltet.</strong> Die Ressource des alten Inhaltsmodells, nur so lange beibehalten, bis der letzte Verweis in einem Renderer (<code>VDTBlock.resource</code>) auf das Modell <code>Resource</code> umgestellt ist</td>
+    </tr>
+  </tbody>
+</table>
+
+### Wo die VDT-Typen liegen
+
+Die VDT-Typen (`VDTDocument`, `VDTPage`, `VDTColumn`, `VDTBlock`, `VDTLine`, `VDTLineSegment`, `ResolvedResourceBlock`, `VDTResourceTableLayout`, `BoundingBox` und verwandte) liegen in `packages/postext/src/vdt.ts`, zusammen mit den Fabrikfunktionen (`createVDTDocument`, `createVDTPage`, `createVDTBlock` …) und `computePageTextExtent`. Ein eigenes Modul für eine Backend-Schnittstelle gibt es nicht – die in [Backend-Schnittstelle](#backend-schnittstelle) beschriebenen Render-Einstiegspunkte werden direkt aus `postext` (Canvas, HTML), `postext-pdf` (PDF) und `postext-epub` (EPUB) exportiert.

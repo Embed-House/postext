@@ -1,0 +1,65 @@
+---
+title: "Arbeitsblatt mit Antwortkästen und Wortspeicher"
+summary: "Ein vierseitiges Sachkunde-Arbeitsblatt: weiße Antwortkästen in hellgrünen Karten, 2 mm unter jeder Frage, ohne Raster, mit Wortspeichern und Lücken aus Chips."
+plain: "Ein Sachkunde-Arbeitsblatt für Achtjährige über die Teile einer Pflanze. Unter jeder Frage steht ein Kasten für die Antwort, und manche Sätze haben Lücken, die aus einer Liste von Wörtern gefüllt werden."
+description: "Ein Arbeitsblatt für die Grundschule in Postext: Antwortkästen in Aufgabenkarten, in Millimetern abgesetzt, ohne Raster, mit Chips für Wortspeicher und Lücken."
+question: "Wie verschachtle ich Antwortkästen mit genauen Abständen in Aufgabenkarten, mit Wortspeichern und Lücken?"
+aliases: ["Arbeitsblatt", "Aufgabenblatt", "Antwortkasten", "Schreibraum", "verschachtelter Kasten", "Kasten im Kasten", "Wortspeicher", "Lückentext", "Lücken füllen", "Zuordnungsaufgabe", "Checkliste", "Ich-kann-Sätze", "Selbsteinschätzung", "worksheet"]
+pageNotes: { "1": "Ein blattgrünes Band mit einer gelben Pille „UNIT 3“, dem Titel „Plants and their parts“, der Reihenzeile und weißen Feldern für Name und Datum des Kindes. Rechts wächst eine Erbsenpflanze mit weißen Blüten in einer weißen Scheibe, deren Erde unter das Band hängt; sechs gelbe Punkte nummerieren Blüte, Hülse, Erbsen, Blatt, Stängel und Wurzeln. Unter einer dreizeiligen Einleitung steht Aufgabe 1 in einer grünen Scheibe über einer hellgrünen Karte mit zwei Fragen, jede über einem weißen Antwortkasten, der mit einem kleinen grauen „Write here“ beginnt.", "2": "Aufgabe 2: ein weißer Wortspeicher aus gelben Chips und sechs nummerierte Lücken in drei Spalten. Aufgabe 3: ein zweiter Wortspeicher und sechs Sätze mit je einer umrandeten Lücke sowie eine Notiz „Did you know?“ über Ranken.", "3": "Aufgabe 4: in ihrer Karte eine abgerundete weiße Tabelle mit sechs Zeilen, jede links mit einem gezeichneten Lebensmittel und seinem Namen, rechts mit einem gelben Chip, der einen Pflanzenteil nennt, und dazwischen ein breiter Abstand mit einem grünen Punkt an jedem Ende. Aufgabe 5: ein hoher Antwortkasten, um eine Pflanze zu zeichnen und zu beschriften.", "4": "Aufgabe 6, eine Erbse, die zu Hause keimen soll, mit einem Kasten „I think“ und einem Kasten „I saw“; „How did I do?“, von einem Stern eingeleitet, nennt drei Sätze „I can“, jeder hinter einem leeren Kreis zum Ausmalen; unter der Karte zwei Zeilen Impressum." }
+---
+
+## Was Sie setzen
+
+Arbeitsblatt 3A von *Seedlings Science*, einer erfundenen Reihe für Achtjährige, auf vier einseitig bedruckten Seiten von 200 × 260 mm. Ein blattgrünes Band trägt eine gelbe Pille für die Einheit, den Titel und weiße Felder für Name und Datum; daneben hat eine Erbsenpflanze in Aquarell in einer weißen Scheibe ihre sechs Teile gelb nummeriert. Das Aquarell wurde mit Diffusionsmodellen erzeugt und kommt bereits in seine Scheibe gesetzt, als zwei JPEGs, die sich an der Kante des Bandes treffen: Das obere hat in seinen Ecken das Grün des Bandes, das untere Weiß; die Nummern und die Hinweislinien bleiben im Code, über dem Bild. Jede Aufgabe ist eine nummerierte Überschrift über einer hellgrünen Karte. Die Karten enthalten weiße Antwortkästen mit einer kleinen grauen Aufforderung und Platz für mehrere Zeilen, Wortspeicher aus gelben Chips, umrandete Lücken in Sätzen, eine Tabelle mit Lebensmitteln, die Pflanzenteilen zuzuordnen sind, und eine Checkliste mit Kreisen zum Ausmalen. Jeder Antwortkasten steht 2 mm unter seiner Frage und 5 mm über dem, was folgt, und jede Karte endet 9 mm über dem, was auf ihrer Seite als Nächstes kommt. Der Text steht in der Andika, die SIL für Kinder entworfen hat, die lesen lernen.
+
+## Zubereitung
+
+### 1 · Auch die Überschriften vom Raster nehmen
+
+<Excerpt region="grid" />
+
+In der kurzen Antwort fallen die Ränder jedes Kastens mit denen seiner Nachbarn zusammen, und der größere gewinnt. Die 5 mm eines Wortspeichers schlagen die 2 mm über der Liste darunter, und die 5 mm des letzten Antwortkastens fallen in die 5 mm Innenabstand unten in der Karte, statt sich dazu zu addieren. Auf dem Raster belassen, reserviert eine Überschrift der Ebene 2 zwischen 10,8 und 14,1 mm statt der 8,6 mm ihrer Scheibe, weil das Folgende auf die nächste Zeile von 17 pt zurückspringt; `headings.snapToGrid: false` hält sie bei 8,6 mm. `snapToGrid` an den verschachtelten Formaten zu setzen ändert nichts, denn nur die äußere Karte kann das Raster verlassen ([verschachtelte Kästen](/de/docs/configuration-styles#der-container-callout)). Der Spaltenausgleich ist aus, weil er über Überschriften Raum hinzufügt, um eine Seite zu füllen; auf Seite 2 setzte er 33 mm statt 9 über Aufgabe 3.
+
+### 2 · Jede Lücke zu einem Chip machen
+
+<Excerpt region="chips" />
+
+Ein Chip ist ein unteilbarer Kasten in der Zeile, und sein Innenabstand wird über die Zeile hinaus gemalt, ohne die Zeile höher zu machen. Ein Wortspeicher ist eine Reihe von Chips in einem verschachtelten Kasten `bank`. Die Lücken, die zu verbindenden Punkte und die auszumalenden Kreise sind ebenfalls Chips, jeweils als `:chip[ ]` geschrieben: Ein Chip aus einem Leerzeichen ist ein leerer Kasten aus Innenabstand und Umriss ([Inline-Chips](/de/docs/document-format#inline-chips)). `paddingX` bestimmt die Breite: Eine Lücke ist im Satz 34 mm breit und allein in einer Spalte 38 mm, und ein Kreis erhält auf jeder Seite die Hälfte seiner Höhe von 1,25 em. In der Checkliste steht der Kreis dort, wo der Aufzählungspunkt stünde (`bulletChar: ''`). Mit 19,6 pt ist eine Lücke höher als die Zeile von 17 pt, deshalb hat jede einen Listenpunkt für sich, 24 pt vom nächsten entfernt.
+
+### 3 · Die Aufgaben mit einer Überschriftengestaltung nummerieren
+
+<Excerpt region="activity" />
+
+Eine Überschrift der Ebene 2 mit einem `advancedDesign` behält ihren Platz in der Spalte, und statt ihres Textes wird die Gestaltung gezeichnet: eine Scheibe mit `{number}`, das die `numberingTemplate` der Ebene druckt, und rechts daneben `{titleText}` ([Spannweite und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). Scheibe und Titel sind beide 8,6 mm hoch, und ohne Raster reserviert die Überschrift genau so viel, sodass die Gestaltung keine `minHeight` braucht. Da die Nummern aus dem Zähler der Ebene 2 kommen, nummeriert eine im Markdown eingefügte Aufgabe die folgenden neu. Die Überschrift der Selbsteinschätzung verwendet ein Format mit `numbered: false`, das sie aus der Zählung nimmt, und ein SVG-Stern steht dort, wo die Scheibe wäre.
+
+### 4 · Die Bilder in die Tabellenzellen setzen
+
+<Excerpt region="tables" />
+
+`TableCell.image` zeichnet eine Ressource in ihre Zelle, hier mit 76 % der Zellbreite, und die Zeile wächst mit. `verticalAlign: 'middle'` zentriert den Namen des Lebensmittels, die Punkte und den Chip auf das Bild. Die breiteste Spalte, 31 % der Tabelle, bleibt leer für den Strich des Kindes. Das benannte Format rundet den Rahmen der Tabelle und beschneidet die weiße Füllung des Tabellenkörpers darauf. Es zeichnet keine Linien, also besteht das Feld allein aus der weißen Füllung ([benannte Tabellenformate](/de/docs/configuration-resources#benannte-tabellenstile)). Sein Ressourcentyp hat ein leeres `captionPrefix`, und die Tabelle hat keinen Legendentext, also wird keine Legende darunter gedruckt. `placement: { position: 'here' }` setzt die Tabelle dorthin, wo ihre Zeile `::resource` steht, in die Karte. Ein Kasten hält über einer solchen Tabelle eine Zeile seines eigenen Textes frei, hier 6 mm; `layout.inlineResourceGapInBoxes: false` schaltet das ab, und ein `:::space{lines=0.33}` vor der Zeile `::resource` setzt die 2 mm, die die Antwortkästen unter ihren Fragen halten.
+
+## Varianten
+
+### Die Karten zurück aufs Raster setzen
+
+Mit der Voreinstellung `snapToGrid: true` fällt alles, was einer Karte folgt, auf die nächste Rasterlinie von 17 pt, und aus den 9 mm unter jeder Karte werden 14,5 mm unter Aufgabe 2, 13,2 mm unter Aufgabe 4 und 11,2 mm unter Aufgabe 6.
+
+```diff
+-  snapToGrid: false,
++  snapToGrid: true,
+```
+
+### Einer Antwort mehr Platz geben
+
+`:::space` zählt in den eigenen Zeilen von 17 pt des Antwortkastens, und jede zusätzliche Zeile gibt dem Kind 6 mm mehr zum Schreiben.
+
+```diff
+ Write here
+-:::space{lines=4}
++:::space{lines=6}
+```
+
+## Häufige Fehler
+
+- Ein Kasten kann keine eigenen Schreiblinien ziehen, denn Kastenformate haben keinen linierten Hintergrund. Die Antwortkästen bleiben leer und nehmen ihre Höhe aus `:::space`, und die kurzen Linien zum Ausfüllen sind umrandete Chips.
+- Ein Überschriftenformat mit `numbered: false` zeichnet weiterhin die Gestaltung seiner Ebene, mit leerem `{number}`. Ohne eigene Gestaltung begänne die Selbsteinschätzung mit einer leeren grünen Scheibe, deshalb kopiert `review` die Gestaltung der Aufgaben und setzt den Stern dorthin, wo die Scheibe war.

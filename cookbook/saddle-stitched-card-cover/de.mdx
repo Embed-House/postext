@@ -1,0 +1,58 @@
+---
+title: "Ein geheftetes Zine mit Umschlagbogen aus Karton"
+summary: "Zwei Direktivenblöcke :::paper legen lachsfarbenen Karton auf den Außenbogen eines achtseitigen Zines; postext-folio zeigt es um Zeitungspapier geheftet."
+plain: "Ein kleines gefaltetes Heft über einen Fluss, mit dickem farbigem Umschlag und dünnem Zeitungspapier innen. Im 3D-Betrachter liegt es geschlossen auf dem Tisch und öffnet sich wie ein echtes."
+description: "Achtseitiges Zine, Umschlagbogen aus Karton, Innenbogen aus Zeitungspapier: zwei Direktivenblöcke :::paper, Rückstichheftung, cover: 'pages' in config.folio."
+question: "Wie drucke ich Umschlag, Beilage oder Tafelteil auf einem anderen Papier als den Rest des Buches?"
+aliases: ["Zine", "Heft", "Broschüre", "Rückstichheftung", "geheftet", "Kartonumschlag", "Zeitungspapier", "Umschlagbogen", "Riso", "saddle stitch"]
+pageNotes: { "1": "Der Umschlag auf Weiß: die Ausgabezeile, „Low Tide“ in großer blauer Grotesk, eine kursive Unterzeile und elf blaue Gezeitenlinien unterschiedlicher Länge über den Fuß.", "3": "Der Beitrag über den Alpenstrandläufer: eine blaue Dachzeile, ein schwarzer Titel, ein kurzer blauer Strich und Text im Blocksatz.", "8": "Die Rückseite: „Low Tide“ in Blau und eine kleine Zeile in Versalien, zentriert." }
+---
+
+## Was Sie setzen
+
+Ausgabe 3 von *Low Tide*, einem kostenlosen Zine über eine Flussmündung: acht Seiten zu 140 × 200 mm, zwei Bogen, gefaltet und durch den Falz geheftet. Der äußere Bogen, Seiten 1–2 und 7–8, ist ein lachsfarbener Karton; der innere Bogen, Seiten 3–6, ist billiges Zeitungspapier. Der Umschlag ist in einem einzigen Riso-Blau auf den blanken Karton gedruckt, ohne eigenes Farbfeld; auf den flachen Seiten unten druckt er daher auf Weiß, und in Folio liegt er geschlossen in seiner Kartonfarbe auf dem Tisch, bis Sie ihn umblättern. Die beiden Papiere sind zwei Direktivenblöcke im Markdown, und die Bindung sind drei Einstellungen in `config.folio`.
+
+## Zubereitung
+
+### 1 · Den äußeren Bogen als Direktivenblock auszeichnen
+
+<Excerpt region="cover-sheet" />
+
+Ein rückstichgeheftetes Heft ist ein Stapel gefalteter Bogen, der Umschlagbogen enthält also die ersten zwei und die letzten zwei Seiten. Ein Direktivenblock enthält die Seiten 1–2, ein anderer die Seiten 7–8, und die Seiten dazwischen fallen aus beiden heraus, auf das eigene Papier des Buches. Jeder Direktivenblock beginnt und endet auf einer neuen Seite, und das ist hier die Seite, die Umschlag und Begrüßung ohnehin brauchen.
+
+### 2 · Zeitungspapier, geheftet, Umschläge aus den Seiten
+
+<Excerpt region="folio" />
+
+`folio.paper` ist das Zeitungspapier jeder Seite außerhalb eines Direktivenblocks. `saddleStitch` faltet die Bogen um Heftklammern ohne flachen Rücken, und `cover: 'pages'` blättert Seite 1 und Seite 8 als Umschläge um. Bei einer Rückstichheftung blättert sich der Umschlag wie die anderen Bogen um, nur steifer, und ein Umschlagblatt, das sein eigenes Papier nennt (den Karton), wird auf diesem Papier gezeichnet.
+
+### 3 · Ein Umschlag in einer Druckfarbe
+
+<Excerpt region="covers" />
+
+Der Umschlag ist ein Überschriftenformat ohne Ränder mit einer ganzseitigen Gestaltung: die Ausgabezeile, der Titel in Bricolage Grotesque in 70 pt, die Unterzeile in Newsreader kursiv und elf Gezeitenlinien, deren Längen aus einem Generator mit festem Startwert stammen, sodass jeder Lauf dieselben zeichnet. Nichts malt den Grund der Seite: Das übernimmt der Karton.
+
+### 4 · Ein Auftakt für jeden Beitrag
+
+<Excerpt region="features" />
+
+Jeder Beitrag ist eine Überschrift der ersten Ebene im Format `feature`: eine neue Seite, eine Dachzeile aus ihren Attributen, der Titel und ein kurzer blauer Strich. Weil alle fünf Beiträge durch ein Format laufen, bleibt das Innere des Zines bei zwei Schriften und einer Akzentfarbe.
+
+### 5 · Es geheftet öffnen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `createFolioFromDocument` liest Bindung und Umschläge aus `doc.config.folio` und das Papier jedes Blatts aus `page.paper`. Der Pen warnt, wenn die Seitenzahl ungerade ist, denn Seite 8 kann nur dann die Rückseite sein, wenn sie auf eine linke Seite fällt.
+
+## Varianten
+
+### Ein schwererer, weißer Umschlag
+
+Ändern Sie beide Direktivenblöcke, und der Umschlagbogen ist ein weißer Karton von 300 g; die Innenseiten bleiben auf Zeitungspapier.
+
+```diff
+-:::paper{type=cardStock grammage=250 shade=#f2c9b4}
++:::paper{type=cardStock grammage=300 shade=#fbfaf6}
+```
+
+### Ein schlichtes Heft
+
+Lassen Sie die Direktivenblöcke weg, und der Umschlag ist ein Bogen aus dem Zeitungspapier der Seiten, etwas schwerer. <RecipeLink slug="paper-swatch-book">Das Papiermusterbuch</RecipeLink> geht den umgekehrten Weg und gibt jedem Blatt sein eigenes Papier.

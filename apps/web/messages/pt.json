@@ -406,7 +406,7 @@
   "Showcase": {
     "eyebrow": "Vitrine",
     "title": "Livros de verdade, compostos no seu navegador",
-    "lead": "Um livro didático, uma revista, um poema épico anotado, um catálogo de exposição, um clássico chinês em 120 capítulos, As mil e uma noites em árabe, um romance japonês composto na vertical, um quadrinho em sete idiomas. Abra qualquer um deles no Sandbox, mude uma regra e veja todas as páginas se recomporem.",
+    "lead": "Um livro didático, uma revista, um poema épico anotado, um catálogo de exposição, um clássico chinês em 120 capítulos, As mil e uma noites em árabe, um romance japonês composto na vertical, um quadrinho em nove idiomas. Abra qualquer um deles no Sandbox, mude uma regra e veja todas as páginas se recomporem.",
     "open": "Abrir no Sandbox",
     "guideName": "O guia do Postext",
     "guideDescription": "O guia incluído: 13 capítulos, três partes e uma capa",
@@ -433,7 +433,7 @@
       "kokoro": "O romance de Natsume Sōseki (1914) em japonês, composto na vertical e encadernado à direita segundo a primeira edição da Iwanami, com a capa, as guardas e a folha de rosto desenhadas por Sōseki, três de suas pinturas e furigana sobre as palavras mais difíceis. Somente em japonês",
       "openstax-fisica": "Livro didático em coluna e meia com exemplos resolvidos, verificações, tabelas e fórmulas",
       "paradise-lost": "Edição anotada do poema de Milton em doze livros: as notas de Verity no pé da página e as cinquenta pranchas de Doré. Somente em inglês",
-      "pepper-carrot": "O episódio 8 do webcomic de David Revoy em oito idiomas: os quadros originais sem texto, com os balões e o letreiramento que o motor compõe a partir de cada tradução oficial. A edição japonesa é letreirada em colunas e, como a árabe, se lê da direita para a esquerda e abre pela direita",
+      "pepper-carrot": "O episódio 8 do webcomic de David Revoy em nove idiomas: os quadros originais sem texto, com os balões e o letreiramento que o motor compõe a partir de cada tradução oficial. A edição japonesa é letreirada em colunas e, como a árabe, se lê da direita para a esquerda e abre pela direita",
       "pintura-espanola": "Catálogo de exposição em uma coluna, com verbete e comentário diante da prancha de página inteira",
       "senales": "Revista da Agência Europeia do Ambiente em duas colunas com aberturas fotográficas, boxes, olhos e painéis de dados"
     }
@@ -4373,7 +4373,7 @@
     "title": "Acessibilidade",
     "lastUpdated": "Última atualização: outubro de 2026",
     "targetTitle": "Meta de conformidade",
-    "targetText": "Nosso objetivo é que este site e o Sandbox estejam em conformidade com as Diretrizes de Acessibilidade para Conteúdo Web (WCAG) 2.2 no nível AAA, em inglês, espanhol, catalão, chinês, japonês, árabe (da direita para a esquerda), português do Brasil e francês, no tema claro e no escuro. Cada página é verificada com testes automatizados (axe-core e verificações próprias para os critérios AAA) e percorrida com o teclado.",
+    "targetText": "Nosso objetivo é que este site e o Sandbox estejam em conformidade com as Diretrizes de Acessibilidade para Conteúdo Web (WCAG) 2.2 no nível AAA, em inglês, espanhol, catalão, chinês, japonês, árabe (da direita para a esquerda), português do Brasil, francês e alemão, no tema claro e no escuro. Cada página é verificada com testes automatizados (axe-core e verificações próprias para os critérios AAA) e percorrida com o teclado.",
     "prefsTitle": "Preferências de leitura",
     "prefsText": "O site compõe seus textos justificados e hifenizados, como os livros que o Postext produz. Se isso dificultar a sua leitura, o ícone de livro na barra de menu abre as preferências de leitura. Elas valem para todas as páginas do site e ficam salvas neste navegador.",
     "prefsTheme": "Tema: claro ou escuro. É a mesma configuração do botão da barra de menu; se você não escolher nenhum, o site segue o do seu sistema.",

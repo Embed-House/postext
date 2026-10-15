@@ -263,6 +263,14 @@ export const STOP_WORDS: Record<Locale, ReadonlySet<string>> = {
     "ne", "ou", "par", "pas", "plus", "pour", "qu", "quand", "que", "quel", "quelle", "qui", "sa",
     "sans", "se", "ses", "son", "sur", "un", "une", "vos", "votre", "vous", "y",
   ]),
+  // Folded as the terms are: "für" → "fur", "über" → "uber".
+  de: new Set([
+    "aber", "als", "am", "an", "auf", "aus", "bei", "bis", "das", "dass", "dem", "den", "der", "des",
+    "die", "durch", "ein", "eine", "einem", "einen", "einer", "eines", "es", "fur", "ich", "ihr",
+    "im", "in", "ist", "kann", "man", "mit", "nach", "nicht", "noch", "ob", "oder", "ohne", "sich",
+    "sie", "sind", "so", "uber", "um", "und", "unter", "vom", "von", "vor", "was", "wenn", "wie",
+    "wird", "wo", "zu", "zum", "zur",
+  ]),
 };
 
 /** Lowercase and without diacritics: "Cómo" → "como", "Título" → "titulo". */
@@ -319,6 +327,13 @@ function singular(term: string, locale: Locale): string {
     if (/[^su]s$/.test(term) || /[aeiou]s$/.test(term)) return term.slice(0, -1);
     return term;
   }
+  if (locale === "de") {
+    // Spalten / Spalte → spalt, Abbildungen → abbildung, Bilder → bild,
+    // Sätze → satz (folded), Fonts → font
+    if (term.length > 5 && /(en|er|es)$/.test(term)) return term.slice(0, -2);
+    if (term.length > 4 && /[ens]$/.test(term)) return term.slice(0, -1);
+    return term;
+  }
   if (locale === "ca") {
     // taules / taula → taul, imatges / imatge → imatg, colors → color
     if (term.length > 4 && /es$/.test(term)) return term.slice(0, -2);
@@ -352,7 +367,7 @@ export function makeProcessTerm(locale: Locale): (term: string) => string | null
 
 /** The search locale of a site locale segment, English for anything else. */
 export function searchLocale(locale: string): Locale {
-  return locale === "es" || locale === "ca" || locale === "pt" || locale === "fr" || locale === "zh" || locale === "ja" || locale === "ar" ? locale : "en";
+  return locale === "es" || locale === "ca" || locale === "pt" || locale === "fr" || locale === "de" || locale === "zh" || locale === "ja" || locale === "ar" ? locale : "en";
 }
 
 // ─── MiniSearch ─────────────────────────────────────────────────────────────
@@ -389,6 +404,7 @@ export const MINISEARCH_OPTIONS: Record<Locale, Options<SearchDocument>> = {
   ca: miniSearchOptions("ca"),
   pt: miniSearchOptions("pt"),
   fr: miniSearchOptions("fr"),
+  de: miniSearchOptions("de"),
   zh: miniSearchOptions("zh"),
   ja: miniSearchOptions("ja"),
   ar: miniSearchOptions("ar"),

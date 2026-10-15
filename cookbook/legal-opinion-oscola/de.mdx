@@ -1,0 +1,63 @@
+---
+title: "Ein juristisches Gutachten mit Zitaten nach OSCOLA"
+summary: "Eine vierseitige Urteilsanmerkung, deren Zitate [@robinson2018, para 21] zu OSCOLA-Fußnoten werden: Fälle kursiv, neutrale Zitate, ibid und Rückverweise (n 1)."
+plain: "Ein kurzer Kommentar zu einer englischen Gerichtsentscheidung über die Polizei. Jeder Fall, jedes Gesetz und jeder Aufsatz, auf die er sich stützt, wird in einer nummerierten Fußnote zitiert, im Stil britischer Law Schools."
+description: "Eine Urteilsanmerkung in Postext: Fälle, Gesetze und Aufsätze als OSCOLA-Fußnoten, mit Pinpoints, ibid, Rückverweisen (n 1) und einem angepassten CSL-Stil."
+question: "Wie zitiere ich Fälle und Gesetze in Fußnoten nach OSCOLA?"
+aliases: ["OSCOLA", "juristische Zitierweise", "Rechtszeitschrift", "Urteilsanmerkung", "Entscheidungsbesprechung", "Fallverzeichnis", "neutrales Zitat", "Law Reports", "ibid", "ebenda", "Bluebook", "britisches Recht", "Fundstelle", "pinpoint"]
+pageNotes: { "1": "Seite 1: ein bordeauxrotes Band über der oberen Hälfte mit der Reihenzeile, dem Fallnamen „Robinson“ in großer Kursive, „v Chief Constable of West Yorkshire Police“ und dem Zitat „[2018] UKSC 4, [2018] AC 736“, dann der Titel „Acts, Omissions and the Police“; darunter der Sachverhalt und die Fußnoten 1 und 2, deren zweite „ibid [21]“ lautet.", "2": "Seite 2: der Abschnitt „There is no Caparo test“ und der Beginn von „Acts and omissions“, mit den Fußnoten 3 bis 10: „Donoghue v Stevenson“, „Anns“, „Murphy“ und „Caparo“ vollständig, ein australischer Report in runden Klammern und „Robinson (n 1) [26–27]“.", "3": "Seite 3: „Acts and omissions“, mit Fußnoten zu „Stovin v Wise“, „Hill“, „Michael“, zwei Aufsätzen im Cambridge Law Journal und in der Law Quarterly Review und dem Beginn von „The statutory route“.", "4": "Seite 4: der Human Rights Act 1998 nach Section zitiert, „ibid s 7“, der Compensation Act 2006, der abschließende „Comment“, ein kleines Impressum und die Fußnoten 18 bis 23." }
+---
+
+## Was Sie setzen
+
+Ein Sonderdruck aus der Reihe der Urteilsanmerkungen einer Rechtszeitschrift: vier Seiten zu *Robinson v Chief Constable of West Yorkshire Police*, der Entscheidung des Supreme Court von 2018 darüber, wann die Polizei eine Sorgfaltspflicht trifft. Die Seite misst 162 × 240 mm, gespiegelt, in Libre Baskerville mit 9,4/13,6 pt, und die erste Seite beginnt mit einem bordeauxroten Band, auf dem der Fallname in 60 pt kursiv steht. Der Autor schreibt jede Fundstelle als Schlüssel mit ihrem Pinpoint, `[@caparo1990, 617–18]`, und Postext setzt 23 Fußnoten nach OSCOLA, dem Zitierstandard britischer Law Schools: Fallnamen kursiv, Gesetze gerade, keine Punkte nach AC, HL oder edn, *ibid* für die Fundstelle der vorigen Fußnote und danach *Robinson (n 1) [55]*. Die Fundstellen sind echt; Autor und Zeitschrift sind es nicht.
+
+## Zubereitung
+
+### 1 · Eine OSCOLA-Fußnote für jede Fundstelle
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). OSCOLA ist ein Fußnotenstil, `[@robinson2018, para 21]` hinterlässt also eine hochgestellte Ziffer nach dem Punkt, und seine Wörter gehen an den Fuß der Seite. Fußnote 1 nennt den Fall vollständig, *Robinson v Chief Constable of West Yorkshire Police [2018] UKSC 4, [2018] AC 736*; Fußnote 2, die ihn sofort erneut zitiert, lautet *ibid [21]*; Fußnote 8, nachdem andere Fälle dazwischengekommen sind, lautet *Robinson (n 1) [26–27]*. Ein Aufsatz in einer Rechtszeitschrift zitiert nur in seinen Fußnoten, `bibliography.auto: false` hält das Literaturverzeichnis daher von der letzten Seite fern.
+
+### 2 · Ein Fall sind Daten, geschrieben, wie die Reports ihn drucken
+
+Ein Fall ist ein CSL-Eintrag vom `type: legal_case`: sein Name in `title`, das Gericht in `authority`, die Report-Reihe in `container-title` und die erste Seite in `page`. OSCOLA setzt das Jahr eines Reports in eckige Klammern, wenn das Jahr den Band bezeichnet, wie bei den Appeal Cases; das Rezept schreibt dieses Jahr daher in `volume`, mit der Bandnummer danach: `volume: "[1990] 2"` ergibt *[1990] 2 AC 605 (HL)*. Ein nach 2001 entschiedener Fall hat außerdem ein neutrales Zitat: `authority: UKSC`, `number: "4"` und `issued: 2018` ergeben *[2018] UKSC 4*, gefolgt vom Report. Ein Gesetz ist `type: legislation` mit dem Jahr im Titel und ohne `issued`, damit das Jahr nicht zweimal gedruckt wird, und `[@hra1998, § 6]` zitiert eine Section als *s 6*.
+
+### 3 · Zwei Korrekturen am mitgelieferten Stil
+
+<Excerpt region="oscola" />
+
+Das mitgelieferte `oscola.csl` setzt einen Pinpoint auf einen Absatz nur in der ersten Fußnote eines Falls in Klammern. Spätere Fußnoten druckten *para 55* und *ibid 27*, und eine zweite Fußnote zum selben Gesetz verlor ihr *s*. Die Korrektur ersetzt vor dem Build ein Makro und eine Zeile im XML des Stils und übergibt das Ergebnis als eigenen Stil, sodass sich Text und Referenzen nicht ändern.
+
+### 4 · Der Fallname auf dem Band
+
+<Excerpt region="opener" />
+
+Das Band reicht 124 mm von der Beschnittkante abwärts. Fallname, Parteien und Zitat sind Überschriftenattribute, sodass eine andere Anmerkung der Reihe nur ihr Markdown ändert. *Robinson* steht in Libre Baskerville Italic in 60 pt, weil OSCOLA Fallnamen kursiv setzt, und das Zitat darunter bleibt gerade, wie in den Fußnoten.
+
+<Excerpt region="palette" />
+
+## Varianten
+
+### Den Stil drucken, wie er ausgeliefert wird
+
+Zum Vergleich mit der unveränderten Ausgabe verwenden Sie die mitgelieferte ID. Pinpoints auf Absätze lauten in späteren Fußnoten dann *para 55*.
+
+```diff
+-  style: 'custom', customStyle: OSCOLA, // the bundled 'oscola', patched above
++  style: 'oscola',
+```
+
+### Die Fußnoten am Ende sammeln
+
+Manche Zeitschriften drucken ihre Anmerkungen nach dem Text. Die Zitate behalten ihre Lang- und Kurzform und ihre Nummern.
+
+```diff
+-  placement: 'column', numbering: 'chapter',
++  placement: 'chapterEnd', numbering: 'chapter',
+```
+
+## Häufige Fehler
+
+- Ein Report, dessen Band eine einfache Zahl ist, `volume: "2"`, druckt das Jahr in runden Klammern, *(1990) 2 AC*; OSCOLA behält das Reihen vor, die über Jahre hinweg nummeriert sind, etwa den Commonwealth Law Reports (Fußnote 7). Schreiben Sie das eingeklammerte Jahr für die Appeal Cases und die Weekly Law Reports in `volume`.
+- `s` vor einem Lokator bedeutet eine Seite (wie im deutschen *Seite*), keine Section: Schreiben Sie `§ 6`. Eine Untergliederung wie `6(1)` wird nicht als Lokator gelesen; nennen Sie sie im Satz und zitieren Sie die Section.
+- OSCOLA kennt in einem Aufsatz kein Literaturverzeichnis, und der Stil hat keine getrennten Verzeichnisse für Fälle und Gesetze. Eine Dissertation, die diese Verzeichnisse braucht, erhält von `:::bibliography` eine sortierte Liste, zuerst die Sekundärquellen, dann Fälle und Gesetze gemischt.

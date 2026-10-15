@@ -1,0 +1,63 @@
+---
+title: "Ein arabischer Roman, rechts gebunden, von rechts nach links"
+summary: "Der Anfang eines arabischen Romans auf 14 × 21 cm: locale 'ar' setzt von rechts nach links, bindet das Buch rechts und druckt ١٢ als Seitenzahlen."
+plain: "Die ersten Seiten eines arabischen Romans, gesetzt wie bei einem arabischen Verlag: Die Zeilen laufen von rechts nach links, das Buch öffnet sich von dem, was ein lateinischer Leser hinten nennt, die Seitenzahlen sind arabische Ziffern."
+description: "Ein arabischer Roman in Postext: locale 'ar' ergibt Text von rechts nach links, Bindung rechts, ostarabische Seitenzahlen, Kaschida und Kapitel in Worten."
+question: "Wie setze ich ein arabisches Buch von rechts nach links und binde es rechts?"
+aliases: ["arabischer Roman", "von rechts nach links", "RTL", "rechts gebundenes Buch", "ostarabische Ziffern", "Kaschida", "Tatweel", "Markazi Text", "رواية", "الفصل الأول", "14 × 21 cm"]
+pageNotes: { "1": "Eine rechte Seite in tiefem Blau, randabfallend, unter einem Gitter achtzackiger Sterne aus helleren blauen Linien. Ein großer, messingfarben umrissener Stern enthält die Teilbezeichnung القسم الأول, das Wort الدرب in weißen kufischen Buchstaben und ein Zitat in Weiß.", "2": "Die gegenüberliegende linke Seite: ein kleiner Messingstern, die Kapitelnummer in Worten, الفصل الأول, der Titel الباب الأزرق in kufischen Buchstaben, darunter arabischer Text im Blocksatz vom rechten Rand aus und die Seitenzahl ١١ mittig am Fuß." }
+---
+
+## Was Sie setzen
+
+Der Anfang von *حروف من رصاص* (Lettern aus Blei), einem Roman über einen Enkel, der die Druckerei seines Großvaters in einer Kairoer Gasse wieder öffnet, gesetzt als arabisches Taschenbuch: 14 × 21 cm, Markazi Text in 13,5 pt auf 22 pt Zeilenabstand, Blocksatz, der Erstzeileneinzug rechts. Der Auszug beginnt auf Seite 10 mit einer Teiltitelseite im Blau der Werkstatttür, einem in Code gezeichneten Gitter achtzackiger Sterne und dem Namen des Teils in der Reem Kufi in 64 pt. Der Kapitelauftakt steht ihr gegenüber auf der linken Seite, in Worten nummeriert: الفصل الأول. Die Seitenzahlen lauten ١٠, ١١, ١٢; der Buchtitel steht über den rechten Seiten, das Kapitel über den linken. <RecipeLink slug="trade-paperback-novel">Ein Roman als Taschenbuch</RecipeLink> setzt dieselbe Art Buch von links nach rechts.
+
+## Zubereitung
+
+### 1 · Eine Locale, drei Entscheidungen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `locale: 'ar'` ist alles, was die Konfiguration sagt, und die Engine leitet drei Dinge daraus ab: Der Text läuft von rechts nach links (`direction: 'auto'`), das Buch wird rechts gebunden (`page.binding: 'auto'`), und jede Zahl, die die Engine schreibt, verwendet ostarabische Ziffern (`numerals: 'auto'`), die Seitenzahlen eingeschlossen ([Ein arabisches Buch anlegen](/de/docs/arabic-layout#ein-arabisches-buch-anlegen)). Ränder und Ausrichtungen behalten die Wörter `left` und `right`, bezeichnen in einem Buch von rechts nach links aber die Seiten des Textflusses: `margins.left` ist die Bundseite, und der Erstzeileneinzug steht rechts. Zeilen im Blocksatz öffnen zuerst ihre Wortabstände und dehnen dann verbundene Buchstaben mit dem Tatweel, der Kaschida arabischer Bücher; Silbentrennung gibt es im Text nie ([Blocksatz und Kaschida](/de/docs/arabic-layout#blocksatz-und-kaschida)).
+
+<PageShot page={3} crop="0.1,0.12,0.8,0.3" caption="Seite 12: Zeilen im Blocksatz, durch Kaschida gedehnt, der Einzug rechts, die Seitenzahl ١٢ am Außenrand." />
+
+### 2 · Eine Kapitelnummer in Worten
+
+<Excerpt region="opener" />
+
+Das `numberingTemplate` der Ebene schreibt الفصل und die Zahl als maskuline Ordnungszahl, sodass das zweite Kapitel ohne jede Änderung am Markdown الفصل الثاني heißt; `{1:ordinal-feminine}` ergibt الأولى, الثانية für ein feminines Nomen wie الليلة ([Ordnungs- und Grundzahlen in Worten](/de/docs/arabic-layout#ordnungs--und-grundzahlwörter)). Der Auftakt druckt sie mit `{number}` über dem Titel. Arabische Kapitelauftakte sind meist zentriert, deshalb erspart `align: 'center'` jede Frage, auf welcher Seite die Gestaltung beginnt.
+
+### 3 · Kolumnentitel bleiben auf ihren Seiten
+
+<Excerpt region="heads" />
+
+Der Grundtext folgt dem Textfluss, Kolumnentitel und Seitenzahlen aber behalten ihre physischen Seiten. Seite 12 ist in diesem Buch eine gerade und zugleich eine rechte Seite, deshalb steht ihre Seitenzahl oben rechts, daneben der Buchtitel; Seite 13 liegt links und trägt das Kapitel. Wer eine Doppelseite von rechts liest wie ein arabischer Leser, trifft zuerst auf den Buchtitel. `showBook` legt die Seiten gespiegelt aus, Seite 11 links von Seite 10, sodass der Bildschirm die Doppelseiten so zeigt, wie sich das Buch öffnet.
+
+### 4 · Eine in Code gezeichnete Teiltitelseite
+
+<Excerpt region="plate" />
+
+Die Teiltitelseite ist eine Überschrift der Ebene 1, `# الدرب {style="plate" …}`, deren Stil das ganze Blatt bemalt und Kolumnentitel und Seitenzahl entfernt. Das Gitter ist ein SVG, das der Pen aus zwei um 45° gedrehten Quadraten erzeugt, dem Chātam-Stern der islamischen geometrischen Ornamentik, im Blau und Messing der Palette, sodass das PDF es als Vektorpfade behält. `numbered: false` hält die Teiltitelseite aus der Kapitelzählung heraus, und der folgende Auftakt ist الفصل الأول.
+
+## Varianten
+
+### Europäische Ziffern drucken
+
+Eine maghrebinische Ausgabe druckt 1, 2, 3; `locale: 'ar-MA'` erledigt das von selbst, und <RecipeLink slug="maghreb-edition-european-digits">die maghrebinische Ausgabe</RecipeLink> zeigt das ganze Buch.
+
+```diff
+-  locale: 'ar', // written out, never LANG (gotcha: arabic-locale-tag)
++  locale: 'ar', numerals: 'latn',
+```
+
+### Blocksatz nur über die Wortabstände
+
+Manche Verlage halten den Tatweel aus dem Fließtext heraus: Die Wortabstände nehmen dann die ganze Differenz auf.
+
+```diff
+   textAlign: 'justify', optimalLineBreaking: true,
++  kashida: 'none',
+```
+
+## Häufige Fehler
+
+- Ein englisches oder spanisches Impressum am Ende eines arabischen Buchs braucht `{dir=ltr}` an seinem Block: Ohne diese Angabe wird die lateinische Zeile wie ein Absatz von rechts nach links ausgerichtet und interpunktiert, mit dem Schlusspunkt links.

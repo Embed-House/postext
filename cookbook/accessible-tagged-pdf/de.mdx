@@ -1,0 +1,62 @@
+---
+title: "Barrierefreies getaggtes PDF (PDF/UA)"
+summary: "Ein Abfallratgeber als getaggtes PDF/UA-1 mit Alternativtext, Kopfzellen, Dokumentsprache und verlinktem Inhalt; die Vorschau zeichnet die Tags auf Seite 3."
+plain: "Ein vierseitiger Abfallratgeber einer Stadtverwaltung. Er zeigt, wie ein PDF entsteht, dem Screenreader folgen können, mit Bildbeschreibungen und Tabellen, die sie vorlesen können."
+description: "Ein städtischer Abfallratgeber in Postext als getaggtes PDF nach PDF/UA-1, mit Alternativtext, Kopfzellen, Sprache, Lesezeichen und verlinktem Inhalt."
+question: "Wie exportiere ich ein getaggtes PDF (PDF/UA) mit Alternativtext, Tabellenkopfzellen und Dokumentsprache?"
+aliases: ["PDF/UA", "PDF/UA-1", "barrierefreies PDF", "getaggtes PDF", "Screenreader", "Alternativtext", "Lesereihenfolge", "Strukturbaum", "Tabellenkopfzellen", "Dokumentsprache", "veraPDF", "Abfallratgeber", "tagged PDF"]
+pageNotes: { "1": "Der Umschlag: ein marineblaues Band über die oberen drei Fünftel mit dem Titel „Reciclar en el barrio“ in großer weißer Schrift auf zwei Zeilen und an seinem Fuß die fünf Straßentonnen (gelb, blau, grün, braun und grau, jede mit einem weißen oder dunklen Piktogramm) auf einer gelben Bordsteinkante. Darunter ein Vorspann in großer Schrift und am Fuß der Seite der Name der Stadtverwaltung in kleiner dicktengleicher Schrift.", "2": "Seite 2: „Índice“, das Inhaltsverzeichnis mit zwei nummerierten Abschnitten und ihren Unterabschnitten, Punktlinien und Seitenzahlen, über drei getönten Kästen: „Cómo usar esta guía“, „Esta guía, en otros formatos“ und „Datos útiles“. In der zweiten Spalte „Presentación“, ein Brief aus fünf Absätzen, einen Grad größer als der Grundtext gesetzt und vom Umweltdezernenten unterzeichnet.", "3": "Seite 3 mit eingezeichneter Lesereihenfolge: ein marineblaues Band mit einer gelben Ziffer 1 und dem Titel „Qué va en cada contenedor“, darunter zwei Spalten, in denen jeder getaggte Block in einem magentafarbenen Rahmen steht, von 1 bis 14 nummeriert und nach seinem Tag benannt (H1, P, Figure, H2, Table). Die Abbildung zeigt die fünf Tonnen; jede Tonne hat eine Überschrift und einen Absatz; Tabelle 1.1 nennt die Tonne für elf Gegenstände, mit einem farbigen Quadrat neben dem Namen jeder Tonne und einem leeren neben dem Wertstoffhof. Der Absatz über Glas läuft in die zweite Spalte weiter und behält dort seine Nummer 9 in einem gestrichelten Rahmen; die Fußzeile ist als „Artifact“ markiert.", "4": "Seite 4: ein marineblaues Band mit der Ziffer 2 und „Lo que no va al contenedor“, darunter der Wertstoffhof mit einer Aufzählung dessen, was er annimmt, die Abfuhrtage als Tabelle 2.1, vier nummerierte Schritte, um eine Sperrmüllabholung zu buchen, und das Impressum." }
+---
+
+## Was Sie setzen
+
+*Reciclar en el barrio* ist ein vierseitiger Abfallratgeber im Format A4 von einer erfundenen spanischen Stadtverwaltung, zum Lesen am Bildschirm oder zum Ausdrucken zu Hause. Der marineblaue Umschlag zeigt die fünf Straßentonnen auf einer gelben Bordsteinkante. Seite 2 enthält das Inhaltsverzeichnis und drei Kästen neben einem Brief des Dezernenten, die Seiten 3 und 4 die beiden Abschnitte in zwei Spalten im Flattersatz aus der Atkinson Hyperlegible Next. Der Pen exportiert ein getaggtes PDF, das die PDF/UA-1-Prüfungen von veraPDF besteht: Überschriften, Listen, Kästen und Tabellen in Lesereihenfolge, Alternativtext an der Abbildung und Kopfzellen in beiden Tabellen. Die Datei nennt ihren Titel und ihre Sprache (`es`), und ihre Lesezeichen wie die Zeilen des Inhaltsverzeichnisses verlinken auf die Seiten. Tags werden nicht gedruckt, deshalb zeichnet der Pen sie über Seite 3 seiner Vorschau, die hier zu sehen ist: jeden getaggten Block in einem nummerierten Rahmen, beschriftet mit seinem Tag. Das heruntergeladene PDF hat diese Überlagerung nicht.
+
+## Zubereitung
+
+### 1 · Sprache und Titel des Dokuments
+
+<Excerpt region="identity" />
+
+postext-pdf schreibt die Sprache der Tags aus `locale`, hier `/Lang es`, sodass ein Screenreader den Ratgeber mit spanischer Aussprache liest; ohne diese Angabe meldet die Datei `en-US`. `title` und `author` aus dem Frontmatter von `content.es.md` werden Titel und Autor des PDF, und die Datei bittet Betrachter, diesen Titel statt des Dateinamens in der Fensterleiste zu zeigen. Dieselbe `locale` gibt den Legenden und Verweisen ihre spanischen Namen: „Figura 1.1“, „tabla 1.1“. [Die kurze Antwort](#die-kurze-antwort) gibt der Abbildung und den Tabellen ihren zugänglichen Text: `altText` wird zur Alternativbeschreibung der Abbildung (`/Alt`) und zur `/Summary` jeder Tabelle, und die erste Zeile und die erste Spalte beider Tabellen werden als Kopfzellen getaggt.
+
+### 2 · Eine Gliederung und ein Umschlagband nur mit dem Titel
+
+<Excerpt region="headings" />
+
+Der Tag-Baum nimmt seine H1- und H2-Elemente aus den Markdown-Überschriften, und die Lesezeichen des PDF stammen aus derselben Liste: Umschlag, Inhaltsverzeichnis, Brief und beide Abschnitte sind Ebene 1, die Zwischentitel Ebene 2. postext-pdf taggt jedes Textelement in der Gestaltung einer Überschrift als Teil dieser Überschrift. Deshalb trägt das Band des Umschlags nur den Titel, und Vorspann und Name der Stadtverwaltung stehen als Absätze darunter. Die marineblauen Bänder, die Bordsteinkante und die Reihe der Tonnen sind Gestaltungselemente, und das PDF markiert Gestaltungskästen und -bilder als Artefakte; sie brauchen also keinen Alternativtext, und ein Screenreader überspringt sie.
+
+### 3 · Ein Inhaltsverzeichnis mit Links
+
+<Excerpt region="contents" />
+
+`:::toc` listet die H1 und H2 mit den Seitenzahlen, die sie drucken, und im PDF verlinkt jede seiner elf Zeilen auf den Kopf ihrer Seite. Die `:ref`-Verweise „figura 1.1“ und „tabla 1.1“ auf Seite 3 und „tabla 2.1“ auf Seite 4 verlinken auf die Abbildung und die Tabellen. Die Seitenzahlen stehen in der Textschrift, Atkinson Hyperlegible Next Bold, und die Punktlinien übernehmen die Schrift der Zahlen, nicht die Public Sans der Einträge.
+
+### 4 · Die Lesereihenfolge, auf die Seite gezeichnet
+
+<Excerpt region="reading-order" />
+
+Ein Screenreader folgt den Tags. `renderToPdf` taggt zuerst den Titel im Band, dann jede Spalte von oben nach unten, und ein Gleitobjekt liest es direkt nach dem Absatz, der es zitiert, gleich wo die Seite es zeichnet. Diese Funktion spielt dieselbe Reihenfolge nach, um die Rahmen auf Seite 3 zu nummerieren, und der Strukturbaum des PDF listet dieselben vierzehn Elemente in derselben Reihenfolge. Die Abbildung und beide Tabellen stehen im Textfluss, mit `placement: { position: 'here' }` und einer Zeile `::resource`, sodass auch sehende Leser jede von ihnen unter dem Satz finden, der sie zitiert. Der Absatz über Glas, der in die zweite Spalte weiterläuft, behält eine einzige Nummer, 9, weil das PDF beide Teile als einen Absatz taggt.
+
+### 5 · Farben nach Kontrastverhältnis gewählt
+
+<Excerpt region="palette" />
+
+PDF/UA-1 prüft keine Farben, doch WCAG 2.2 verlangt 4,5:1 zwischen Text und Hintergrund. Die Textfarbe erreicht 15,6:1 auf Weiß, weiße Schrift 12,5:1 auf den marineblauen Bändern und das Grau der Fußzeile 7,0:1. Das Gelb kommt auf Weiß nur auf 1,8:1, deshalb erscheint es nur auf Marineblau (6,9:1) und als Fläche. Die Piktogramme folgen der WCAG-Schwelle von 3:1 für Grafiken: weiß, wo Weiß sie gegen die Tonne erreicht, in Textfarbe auf der gelben. `cell()` schreibt den Namen jeder Tonne neben ihr Farbfeld und gibt dem Wertstoffhof ein leeres Quadrat, sodass keine Anweisung davon abhängt, Farben unterscheiden zu können.
+
+## Varianten
+
+### Die Abbildung gleiten lassen
+
+Entfernen Sie die Platzierung, und Abbildung 1.1 gleitet an den Fuß der ersten Spalte von Seite 3. Das PDF liest sie weiterhin nach dem Absatz, der sie zitiert, deshalb behält die Überlagerung ihre Nummer 3, und die Reihenfolge der Tags ändert sich nicht.
+
+```diff
+-  { id: 'contenedores', typeId: 'figure', kind: 'svg', placement: { position: 'here' },
++  { id: 'contenedores', typeId: 'figure', kind: 'svg',
+```
+
+## Häufige Fehler
+
+Der Pen kann sein eigenes PDF nicht validieren, weil veraPDF außerhalb des Browsers läuft. Laden Sie die Datei herunter und führen Sie `verapdf -f ua1 accessible-tagged-pdf.pdf` aus; die für diese Seite erfasste Kopie besteht die Prüfung. Ob ein Alternativtext sein Bild beschreibt, kann die Prüfung nicht erkennen, hören Sie sich den Ratgeber also auch mit einem Screenreader an.
+
+Das Impressum druckt die Webadresse vollständig aus, weil der Ratgeber für postext 1.4.1 geschrieben wurde, wo ein Markdown-Link seine Wörter druckte und dem PDF keinen Link hinzufügte. Seit postext 1.10 ist ein Link `[text](url)` im PDF aktiv, getaggt als Element `Link`, dessen Text die verlinkten Wörter sind.

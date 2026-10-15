@@ -1,0 +1,76 @@
+---
+title: "Teile in Farbe aus einem einzigen Attribut"
+summary: "Ein Bestimmungsbuch, in dem jeder :::part einen Paletteneintrag setzt; Teiltitel, gefärbte Rückseite, Register, Merkmale und Inhaltszeile tragen diese Farbe."
+plain: "Ein Taschenführer zu den Vögeln einer Flussmündung in zwei Teilen, einer schlammbraun, einer schilfgrün. Er zeigt, wie eine Farbeinstellung je Teil dessen Auftaktseite, Registermarken, Seitenzahlen und Zeile im Inhaltsverzeichnis färbt."
+description: "Ein Bestimmungsbuch zu zwei Lebensräumen einer Mündung, in Postext. Jeder :::part nennt die Farbe für Teiltitel, Rückseite, Register, Merkmale und Inhalt."
+question: "Wie gebe ich jedem Buchteil eigene Farbe, Teiltitelseite und gefärbte Rückseite, mit farbigen Inhaltszeilen?"
+aliases: ["Bestimmungsbuch", "Naturführer", "Teile", "Farben je Teil", "farbcodierte Abschnitte", "Teiltitelseite", "farbige Rückseite", "Daumenregister", "Registermarke", "Farbe des Teils"]
+pageNotes: { "4": "Seite 4 ist die Rückseite des Teiltitels von Teil I. Der Text lässt sie leer, und parts.versoDesign färbt sie von Kante zu Kante im Schlammbraun des Teils, mit der Registermarke des Teils negativ am Vorderschnitt und seinem Namen am Fuß.", "8": "Seite 8 ist die Rückseite des Teiltitels von Teil II, vom selben Design schilfgrün gefärbt." }
+---
+
+## Was Sie setzen
+
+*Birds of the Estuary* ist ein Bestimmungsbuch im Taschenformat in zwei Teilen, einer je Lebensraum. Das Watt druckt in Schlammbraun, das Röhricht in Schilfgrün, und jede Farbe wird nur einmal geschrieben, im `:::part`, der ihren Lebensraum eröffnet. Jeder Teiltitel ist eine randabfallende Fläche mit einer römischen Ziffer zu 150 pt und den Arten des Lebensraums in Cremeweiß. Die Rückseite des Blatts ist passend gefärbt, mit der Registermarke des Teils negativ am Vorderschnitt. Auf den Artenseiten nehmen Registermarke, Pagina, Dachzeile, die Linie unter dem lateinischen Namen, die fetten Bestimmungsmerkmale, die Aufzählungszeichen und das Tafellabel die Farbe des Teils an. Das Inhaltsverzeichnis beginnt unter einem Streifen der Mündung und gibt jedem Teil ein Band in seiner Farbe, mit der Seitenzahl seines Teiltitels. Umschlag, Streifen und die vier Tafeln sind mit Diffusionsmodellen erzeugte Gemälde, als JPEG-Bitmaps geladen; die Palette eines Teils erreicht Bilder nicht, ihre Farben bleiben also ihre eigenen.
+
+## Zubereitung
+
+### 1 · Ein Paletteneintrag, den die Teile überschreiben
+
+<Excerpt region="palette" />
+
+Ein Teil überschreibt Paletteneinträge nach ihrer ID; alles, was sich mit dem Lebensraum ändern soll, ist daher mit einem einzigen Eintrag verknüpft, `band`. Sein eigener Wert, ein Schiefergrau, druckt nur außerhalb der Teile (in der Dachzeile des Umschlags und im Titel der Notiz unter dem Inhaltsverzeichnis), und keine andere Farbe der Konfiguration hat denselben Hex-Wert. `col()` gibt jeder Farbe ihre `paletteId`, und dieser ID folgt die Überschreibung eines Teils, in den Textformaten ebenso wie in den Designelementen.
+
+### 2 · Ein Teiltitel, seine Rückseite und seine Liste
+
+Der Code für diesen Schritt steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein `:::part` öffnet eine [Teiltitelseite](/de/docs/configuration-styles#teile) auf einer rechten Seite, und `parts.design` legt sie über das ganze Endformat an. Das Markdown zwischen seinen Begrenzern beginnt 125 mm unter der Oberkante, unter dem Titel: ein paar Zeilen über den Lebensraum im Absatzformat `habitat`, dann seine Artenliste in `bodyStyle`. `versoDesign` färbt die Rückseite des Blatts (die Fläche und die negative Registermarke) nur, wenn diese Seite leer ist, und `breakAfter: { parity: 'odd' }` hält sie leer, indem es die erste Art auf die nächste rechte Seite schickt. `{numberRoman}` druckt `number="I"` des Teils als römische Ziffer (`"1"` würde dasselbe I drucken), während die Arten mit arabischen Ziffern von 1 bis 4 nummeriert sind. Das `\\` im Titel bricht die Zeile nur auf dem Teiltitel um; Inhaltsverzeichnis und Kolumnentitel setzen den Titel in eine Zeile.
+
+### 3 · Die Akzente des Texts folgen dem Teil
+
+<Excerpt region="flow" />
+
+Von einem `:::part` bis zum nächsten nimmt jede Textfarbe, die dem eigenen Wert von `band` gleicht, den Wert des Teils an ([der Container `:::part`](/de/docs/configuration-styles#der-container-part)). Hier sind das die fetten Bestimmungsmerkmale, die Aufzählungszeichen und die Tafellabels. Grundtext und Kursive bleiben in der Textfarbe. Die Tafeln sind ein eigener Ressourcentyp, mit „Plate“ beschriftet und nie zurückgesetzt, sodass sie im Gleichschritt mit den Arten von 1 bis 4 zählen.
+
+### 4 · Der Auftakt einer Art
+
+<Excerpt region="species" />
+
+Der Auftakt einer Art druckt drei Attribute der Überschrift: `status` in der Dachzeile nach der Nummer, `size` rechts in der Dachzeile und `latin` unter dem Namen. Dachzeile und die Linie unter dem lateinischen Namen sind mit `band` verknüpft, sodass ein einziges Design beiden Lebensräumen dient. Die Überschrift setzt keinen eigenen Seitenumbruch: Jede Art beginnt nach einem `:::pagebreak` oder nach dem Umbruch, der auf den Teil folgt; ihre Seite zählt daher als Textseite und druckt die Kolumnentitel. Die Größe steht ohne die Großbuchstaben des Labels, weil `cm` ein Einheitenzeichen ist.
+
+### 5 · Ein Band je Teil im Inhaltsverzeichnis
+
+<Excerpt region="contents" />
+
+`:::toc` gibt jedem `:::part` eine Zeile und legt darin `toc.parts.design` mit Nummer, Titel, Teiltitelseite und Palette dieses Teils an ([Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis)), sodass derselbe Kasten für das Watt braun und für das Röhricht grün druckt. Jede Artenzeile unter einem Band zeigt ihre Nummer, eine gepunktete Führungslinie und ihre Seite, mit dem lateinischen Namen aus dem Attribut `latin` in der Zeile darunter.
+
+### 6 · Der Teil in den Kolumnentiteln und der Registermarke
+
+<Excerpt region="running-heads" />
+
+Mit `pages: 'body'` erscheinen die Kolumnentitel nur auf Textseiten. Die Teiltitel sind Seiten vom Typ `part` und ihre gefärbten Rückseiten Seiten vom Typ `blank`; Umschlag und Inhaltsverzeichnis beginnen jeweils mit einer Überschrift über die ganze Seitenbreite und sind damit Auftaktseiten. Der Kolumnentitel der rechten Seite druckt `{partTitle}` in einer Zeile, und die Registermarke am Vorderschnitt druckt `{partNumber}` auf einem Kasten, dessen Hintergrund mit `band` verknüpft ist.
+
+## Varianten
+
+### Einen dritten Lebensraum hinzufügen
+
+Ein Block vor der ersten Art der Salzwiese fügt eine dritte Farbe hinzu, mit Teiltitel, gefärbter Rückseite und Inhaltszeile, und die Konfiguration bleibt, wie sie ist. Streichen Sie auch die Notiz unter dem Inhaltsverzeichnis, weil das dritte Band und seine Arten den Platz brauchen.
+
+```diff
++:::part{number="III" title="The \\ Saltmarsh" palette="band=#6b4a7a"}
++:::
++
++# Common Shelduck {latin="Tadorna tadorna" size="58–67 cm" status="Resident"}
+```
+
+### Die Art dem Teiltitel gegenüberstellen
+
+Ohne den Umbruch auf die nächste rechte Seite beginnt die erste Art auf der Rückseite des Teiltitels, sodass keine leere linke Seite bleibt, die `versoDesign` färben könnte.
+
+```diff
+-  breakAfter: { parity: 'odd' },
+```
+
+## Häufige Fehler
+
+- Ein Teil färbt den Text um, indem er Werte vergleicht: Jede Textfarbe, die dem eigenen Wert von `band` gleicht, wechselt mit dem Teil, auch eine, die mit einem anderen oder mit gar keinem Eintrag verknüpft ist. Reservieren Sie diesen Hex-Wert für `band`.
+- Die Registermarke druckt `{partNumber}`, das außerhalb eines Teils leer ist; eine Textseite vor dem ersten `:::part` bekommt also eine leere schiefergraue Registermarke. Halten Sie jede Textseite innerhalb eines Teils.
+- Bilder und Inline-Farbfelder behalten die Farben, die in ihnen geschrieben sind. Die Tafeln hier nehmen die Farben ihres Lebensraums aus `HABITAT` im Code, eine neue Farbe in einem `:::part` muss also auch dort eingetragen werden.

@@ -1,0 +1,54 @@
+---
+title: "Japanisch in lateinischer Schrift: Takubokus Rōmaji-Tagebuch"
+summary: "Ein Rōmaji-Text mit Sprachangabe ja-Latn: japanische Regeln für die Kana, keine Silbentrennung für das Latein, die Makrons einer lateinischen Schrift im PDF."
+plain: "Der erste Eintrag eines Tagebuchs von 1909, das der Dichter Takuboku auf Japanisch in lateinischen Buchstaben schrieb, mit einer Lesung in japanischer Schrift unter jedem Absatz."
+description: "Takubokus Rōmaji-Tagebuch in Postext: Japanisch in Lateinschrift als ja-Latn, keine Silbentrennung, Kana-Lesung unter jedem Absatz, ō ū ins PDF eingebettet."
+question: "Wie setze ich Japanisch in Rōmaji: welche Sprachangabe, welche Silbentrennung, und Makrons im PDF?"
+aliases: ["Rōmaji", "Romaji", "ローマ字", "ja-Latn", "Japanisch in lateinischen Buchstaben", "Takuboku", "石川啄木", "ローマ字日記", "Nippon-shiki", "Hepburn", "Makrons", "Längestriche", "ō ū", "latin-ext", "keine Silbentrennung"]
+pageNotes: { "1": "Die Titelseite: die eigenen Kopfzeilen des Tagebuchs, „NIKKI. I. MEIDI 42 NEN. 1909. APRIL. TOKYO.“, in gesperrten Versalien auf einem indigoblauen Feld, eine kurze Linie und eine Zeile zur Ausgabe.", "2": "Der Eintrag vom 7. April: „7TH, WEDNESDAY.“ und die Adresse in Kapitälchen, dann die Rōmaji-Absätze, jeder gefolgt von seiner Lesung in Kana und Kanji, kleiner und eingezogen.", "4": "Das Ende des Eintrags, „Kanasii koto da !“ und 悲しいことだ！, und die Anmerkung zum Text in einer kleinen Grotesk." }
+---
+
+## Was Sie setzen
+
+Vier Seiten des *Rōmaji nikki*, des Tagebuchs, das Ishikawa Takuboku im Frühjahr 1909 in Tokio in lateinischen Buchstaben führte, damit seine Frau es nicht lesen konnte: die Titelzeilen seines Notizbuchs und der erste Eintrag, 7. April, bis *Kanasii koto da!* Das Tagebuch ist als Studienausgabe auf einer A5-Seite gesetzt: das Rōmaji in der Source Serif 4, im Blocksatz und nie getrennt, und unter jedem Absatz seine Lesung in Kana und Kanji in der Noto Serif JP, kleiner, leichter und eingezogen. Takuboku schreibt im System Nippon-shiki, *si*, *tu*, *hu*, mit Zirkumflex auf langen Vokalen, *Tôkyô*; die Zeilen des Herausgebers verwenden Hepburn mit Makrons, *Rōmaji*, und beides gelangt ins PDF.
+
+## Zubereitung
+
+### 1 · Den Text mit ja-Latn auszeichnen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `ja-Latn` ist BCP 47 für Japanisch in lateinischer Schrift. Seine Sprache ist `ja`, deshalb bekommt die Lesung unter jedem Absatz die japanischen Regeln: Kinsoku, Abstände um 、。 und das Geviert, das die Engine innerhalb eines Satzes nach ！ einfügt, wie in 「ええ！　ええ！」. Für Japanisch gibt es keine Trennmuster, deshalb wird das Rōmaji nie getrennt; mit `en` würden englische Muster Wörter wie *tatinobotta* oder *Surigarasu* nach englischen Silben trennen, nicht nach den Moren, die ein japanischer Leser hört. Ohne Trennstriche nehmen die Wortabstände den Spielraum auf, deshalb beträgt die Satzbreite etwa 70 Zeichen und `maxWordSpacing` 1,8 ([Silbentrennung](/de/docs/configuration-text#silbentrennung)).
+
+<PageShot page={2} crop="0,0.1,1,0.45" caption="Seite 2: der Tag, die Adresse, die ersten zwei Rōmaji-Absätze und ihre Lesungen in Kana, kleiner gesetzt und eingezogen." />
+
+### 2 · Die Makrons ins PDF bringen
+
+<Excerpt region="macrons" />
+
+Fontsource hält ō ū ā in einer eigenen Datei `latin-ext`. Der Bildschirm lädt sie (`loadFonts` sieht das ō im Beispiel), und der `cjkPdfProvider` des Kits tut dasselbe für das PDF. Er liefert die Noto Serif JP aus ihren japanischen Teilstücken, und wenn eine lateinische Schrift einen Buchstaben setzt, den nur `latin-ext` enthält, antwortet er mit zwei Dateien, erst `latin`, dann `latin-ext`; postext-pdf nimmt jede Glyphe aus der ersten Datei, die sie hat. Der schlichte `fontsourceProvider` des Kits gibt dem PDF nur die Datei `latin`: Damit hätte das PDF keine Glyphe für ō.
+
+### 3 · Mit den eigenen Zeilen des Tagebuchs beginnen
+
+<Excerpt region="title" />
+
+Das Notizbuch beginnt mit NIKKI. I. MEIDI 42 NEN. 1909. APRIL. TOKYO., ein Eintrag pro Zeile. Die Titelüberschrift nimmt sie aus einem Attribut, jedes `\n` eine neue Zeile, und setzt sie in gesperrten Versalien auf ein indigoblaues Feld, das Leinen eines Notizbucheinbands. Ihre Seite ist eine Auftaktseite, deshalb lassen die Kolumnentitel sie aus.
+
+### 4 · Kolumnentitel nach Parität
+
+<Excerpt region="heads" />
+
+Die linke Seite trägt den Namen des Tagebuchs, die rechte Ort und Monat, mit den Seitenzahlen an den Außenecken, in der Source Sans 3 in 7,5 pt.
+
+## Varianten
+
+### Das Rōmaji in Hepburn schreiben
+
+Eine moderne Ausgabe kann das Tagebuch in Hepburn mit Makrons neu schreiben, *Tōkyō* für *Tôkyô*. Das PDF enthält ō bereits, also ändert sich nur der Text; behalten Sie eine Anmerkung, die sagt, dass die Schreibung vom Herausgeber stammt.
+
+### Zwischen Moren trennen
+
+Braucht eine schmale Spalte Trennstriche, geben Sie dem Rōmaji weiche Trennzeichen (U+00AD) zwischen den Moren, `Su­na-ho­ko­ri` im Code oder ein getipptes U+00AD im Text: Ein mit `ja-Latn` ausgezeichnetes Dokument trennt nie von selbst, bricht aber an einem weichen Trennzeichen um, wenn ein Wort nicht passt.
+
+## Häufige Fehler
+
+- Shippori Mincho hat kein ō und kein ū; Noto Serif JP und Source Serif 4 haben sie in ihren Dateien `latin-ext`. Prüfen Sie die Schrift, bevor Sie sie für Hepburn-Text wählen.
+- In lateinischen Buchstaben geschriebenes Chinesisch ist Pinyin, als Ruby über den Zeichen gesetzt in <RecipeLink slug="pinyin-primer">Eine Pinyin-Fibel: Lesungen über jedem Zeichen</RecipeLink>; Takubokus Rōmaji ist der Text selbst und wird deshalb als lateinischer Text mit eigenen Abständen gesetzt, nicht als Annotation.

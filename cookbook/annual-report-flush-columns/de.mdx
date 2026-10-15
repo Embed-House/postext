@@ -1,0 +1,68 @@
+---
+title: "Jahresbericht mit bündig endenden Spalten"
+summary: "Der Jahresbericht einer Energiegenossenschaft in zwei Spalten im Blocksatz, die auf derselben Rasterlinie enden, mit Kennzahlenkasten und bündiger Schlussseite."
+plain: "Der Jahresbericht einer kleinen Bürgerenergiegruppe, zweispaltig gesetzt. Er zeigt, wie beide Textspalten auf genau derselben Höhe enden."
+description: "Ein fünfseitiger Jahresbericht in Postext auf 50 Rasterzeilen: Der Spaltenausgleich führt jede Spalte zur letzten Zeile und schließt die letzte Seite bündig."
+question: "Wie enden alle Spalten eines zweispaltigen Berichts auf der letzten Rasterlinie und eine Schlussseite bündig?"
+aliases: ["vertikaler Keil", "vertikaler Ausgleich", "bündige Spaltenfüße", "Spaltenausgleich", "ausgeglichene Spalten", "Kennzahlen", "Zahlenkasten", "Gewinn- und Verlustrechnung", "Jahresbericht", "Geschäftsbericht", "memoria anual", "Abschnittsfarben", "gleitender Kasten", "vertical justification"]
+pageNotes: { "1": "Der Umschlag: eine blauschwarze Fläche mit „Tidewell Community Energy“ in Weiß, „2025“ in sehr großen weißen Ziffern, „Annual report and accounts“ in Gelb und dem Zeitraum in gesperrten dicktengleichen Versalien. Über die untere Hälfte schwellen ein petrolfarbenes und ein gelbes Band an und kreuzen sich von Januar bis Dezember, beschriftet mit „WIND“ und „SUN“, über einer Reihe von Monatsinitialen, am Fuß zwei Zeilen Kleingedrucktes.", "2": "Der Brief des Vorsitzes unter einem meerblauen Streifen und dem Titel „The wind and the sun took turns“. Seine ersten Absätze enden in beiden Spalten auf gleicher Höhe über einem blauschwarzen Kasten mit drei Zahlen in Gelb, „8.47 GWh“, „2,316“ und „£84,000“; der Brief läuft unter dem Kasten weiter und endet am Fuß der rechten Spalte mit einer Unterschrift in Schreibschrift.", "3": "Der Betriebsbericht unter einem petrolfarbenen Streifen, zwei Spalten mit petrolfarbenen Zwischentiteln, eine kurze Liste der drei größten Dächer und am Fuß der Seite über die ganze Breite ein Diagramm mit paarweisen petrolfarbenen und gelben Balken für die zwölf Monate.", "4": "Eine Notiz dazu, wie eine Kilowattstunde gezählt wird, zweispaltig unter einer petrolfarbenen Linie über dem Kopf der Seite; darunter eine Tabelle der Erzeugung nach Standort und ein Ringdiagramm der Betriebsstunden der Turbinen an den Köpfen der beiden Spalten, dann der Rest des Betriebsberichts bis zum Fuß.", "5": "Der Bericht des Schatzmeisters unter einem ziegelroten Streifen: zwei kurze Spalten, die auf derselben Zeile enden, und darunter über die ganze Seitenbreite die Gewinn- und Verlustrechnung, mit blauschwarzer Kopfzeile, kursiven Gruppenköpfen und fetten Zwischensummen auf heller Tönung." }
+---
+
+## Was Sie setzen
+
+Der Jahresbericht 2025 von Tidewell Community Energy, einer erfundenen Genossenschaft mit zwei Windturbinen, einem Solarfeld und Modulen auf 21 Dächern. Fünf Seiten im Format 210 × 280 mm. Auf dem Umschlag laufen die Wind- und Sonnenerträge des Jahres als zwei Bänder unter einer „2025“ in 150 pt. Brief des Vorsitzes, Betriebsbericht und Abschluss des Schatzmeisters folgen in zwei Spalten Brygada 1918 im Blocksatz auf einem Raster von 50 Zeilen. Volle Spalten enden auf der letzten Rasterlinie, kurze auf gleicher Höhe mit ihren Nachbarn. Ein Kasten mit drei Kennzahlen läuft quer über die Seite des Vorsitzes, der Brief endet darüber bündig, und eine Notiz zur Zählung gleitet an den Kopf von Seite 4. Auf der Schlussseite enden beide Spalten auf einer Zeile über der Gewinn- und Verlustrechnung. Ein Palettenattribut färbt die Betriebsseiten petrol und die Finanzseite ziegelrot.
+
+## Zubereitung
+
+### 1 · Jede Zeile auf dem Raster halten und die Lücken von den Hebeln schließen lassen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Der Satzspiegel ist genau 50 Zeilen zu 13,4 pt hoch, und der untere Rand (21,6 mm) ergibt sich aus dieser Höhe. Ein Zwischentitel nimmt eine Rasterzeile über sich und eine für sich selbst; eine Spalte, die zu kurz endet, ist also um ganze Zeilen zu kurz, und ganze Zeilen sind es, die der <Feature id="column-balancing">Spaltenausgleich</Feature> hinzufügt. Auf <PageRef page={3}>Seite 3</PageRef> geht der dreizeilige Absatz über das Hagelunwetter wegen `avoidOrphans` geschlossen auf Seite 4 über; so heißt in Postext die Regel, die verhindert, dass die letzte Zeile eines Absatzes allein am Kopf einer Spalte steht, und die rechte Spalte endet zwei Zeilen zu kurz. `maxLinesPerHeading: 1` gibt eine dieser Zeilen dem Raum über *The Saltings and the roofs* und überlässt die andere dem nächsten Hebel, der sie nach der Liste der Dächer einfügt. Standardmäßig nimmt eine Überschrift bis zu zwei Zeilen, bevor die Hebel nach ihr versucht werden (`maxLinesBeforeLoose`), und bis zu vier, sobald diese nichts mehr zu geben haben; beide Zeilen gingen dann über die Überschrift.
+
+### 2 · Den Text über einem Kasten quer über die Seite bündig schneiden
+
+<Excerpt region="figures" />
+
+Ein Kasten mit `span="page"` schneidet eine zweispaltige Seite in Bänder. Auf <PageRef page={2}>Seite 2</PageRef> endet der Brief des Vorsitzes über dem Kasten nach acht Zeilen in jeder Spalte und läuft darunter in beiden Spalten weiter. Im Kasten öffnet `:::columns{count=3 breaks="3,5"}` die zweite und dritte Spalte bei der zweiten und dritten Zahl (dem dritten und fünften Block der Gruppe), statt den Lauf dort zu schneiden, wo sich die Spalten am besten ausgleichen. Das Absatzformat `figure` setzt diese Zahlen in 26 pt, und sein `boldColor` druckt sie gelb.
+
+### 3 · Einen Kasten an den Kopf der nächsten Seite gleiten lassen
+
+<Excerpt region="aside" />
+
+Im Markdown folgt die Notiz zur Zählung dem ersten Absatz über Harrow Down auf Seite 3; `placement="top"` nimmt sie aus dem Textfluss und setzt sie an den Kopf der nächsten Seite. Der Bericht füllt den Rest von Seite 3, und <PageRef page={4}>Seite 4</PageRef> beginnt mit dem Kasten über beide Spalten. Darunter stehen die Standorttabelle und das Ringdiagramm, beide mit `position: 'top'`, je an einem Spaltenkopf, eine Rasterlinie tiefer, als sie ohne die 3,5 mm Innenabstand unten am Kasten stünden.
+
+### 4 · Jedem Abschnitt seine Farbe geben, ohne Trennseite
+
+<Excerpt region="palette" />
+
+Mit `parts: { page: false }` öffnet ein Direktivenblock wie `:::part{number="02" title="Operations" palette="band=#1c6e67"}` keine Seite. Er benennt den Abschnitt für den Auftaktstreifen und die lebenden Fußzeilen und tauscht `band` auf jeder Seite bis zum nächsten Teil aus. Streifen, Zwischentitel, Aufzählungszeichen, Bezeichnungen der Bildunterschriften und die Linie der Notiz nehmen alle `band`, deshalb drucken die Betriebsseiten in Petrol und die Finanzseite in Ziegelrot, während der Brief des Vorsitzes das Meerblau der Grundgestaltung behält (<Feature id="part-palettes">Farben pro Teil</Feature>).
+
+### 5 · Die Tabellen aus den Daten bauen und die letzte Seite bündig schließen
+
+<Excerpt region="data" />
+
+`statement()` macht aus `DATA.accounts` Zeile für Zeile die Gewinn- und Verlustrechnung. Eine Bezeichnung, die mit `=` beginnt, druckt die laufende Summe jedes Jahres fett auf der Tönung; Kosten sind in den Daten negativ, also ergibt sich *Operating surplus* aus dieser Summe, ohne dass eine Summe von Hand eingetragen wird. Eine Bezeichnung ohne Zahlen, *Income* oder *Operating costs*, wird zu einer kursiven Zelle über die ganze Tabelle, zusammengeführt mit `mergeCells`, das auch die Platzhalterzellen schreibt, die eine Zusammenführung braucht. Auf <PageRef page={5}>Seite 5</PageRef> gleitet die Rechnung quer über den Fuß der Seite, unter den Bericht des Schatzmeisters, der das Dokument schließt. Ohne Ausgleich liefen die Spalten links auf 12 und rechts auf 9 Zeilen; der Schlussschnitt setzt beide auf 11, und der Überschriftenhebel fügt über *Cash and reserves* die Zeile hinzu, die der rechten Spalte noch fehlt.
+
+## Varianten
+
+### Die Überschriften die ganze Lücke nehmen lassen
+
+Beide freien Zeilen auf Seite 3 gehen dann über *The Saltings and the roofs*, keine nach der Liste.
+
+```diff
+-const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
++const balancing = {}; // the default: two lines above a heading, then the other levers
+```
+
+### Den Ausgleich ausschalten
+
+Die rechte Spalte von Seite 3 endet dann zwei Zeilen zu kurz. Auf Seite 5 läuft die linke Spalte auf 12 Zeilen und die rechte auf 9, und die Rechnung beginnt eine Zeile tiefer.
+
+```diff
+-const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
++const balancing = { enabled: false };
+```
+
+## Häufige Fehler
+
+- Unterscheiden sich die Spalten einer Schlussseite um eine Zeile, bleiben sie, wie sie sind, die linke Spalte eine Zeile länger, so wie ein Setzer sie stellen würde; der Schlussschnitt greift erst ab einem Unterschied von zwei Zeilen. Damit beide zusammen enden, verlängern oder kürzen Sie den Text um eine Zeile.
+- Die Gewinn- und Verlustrechnung setzt Kosten in Klammern. Um positive Zahlen mit ihnen auszurichten, beendet der Pen jede positive Zahl mit einem geschützten Leerzeichen, das in einer dicktengleichen Schrift so breit ist wie die schließende Klammer; eine Tabellenzelle behält dieses Leerzeichen am Ende ihres Texts.

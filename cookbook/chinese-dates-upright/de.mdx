@@ -1,0 +1,77 @@
+---
+title: "Daten und Akronyme aufrecht im vertikalen Text"
+summary: "Zwei Gründungstexte von 1912, vertikal, rechts gebunden: Zweistellige Zahlen stehen von selbst aufrecht in einer Zelle, :tcy und :upright markieren den Rest."
+plain: "Zwei chinesische Dokumente von 1912, in Spalten von oben nach unten gedruckt. Sie zeigen, wie Daten, Zahlen und lateinische Buchstaben im vertikalen Text gut lesbar gesetzt werden."
+description: "Ein chinesischer Dokumentenband in Postext: vertikaler Text auf einem Raster von 44 Zeichen, Daten tate-chu-yoko, ein Akronym gestapelt, Latein gedreht."
+question: "Wie stehen Daten im vertikalen Chinesisch aufrecht, und was geschieht mit Akronymen und lateinischen Wörtern?"
+aliases: ["tate-chu-yoko", "縱中橫", "Daten im vertikalen Chinesisch", "Zahlen im vertikalen Text", "Akronyme im vertikalen Text", "Dokumentenband", "Proklamation", "Kolumnentitel am Außenrand", "文告"]
+pageNotes: { "1": "Der Umschlag: ein zinnoberrotes Feld innerhalb einer dicken und einer dünnen Linie in blassem Zinnoberrot; der Titel 民國元年文告二種 läuft rechts in Weiß abwärts, die beiden Dokumente und ihre Daten in zwei Zeilen links, die 11 von 3月11日 aufrecht in einer Zelle.", "2": "Der Auftakt der Proklamation: Ein zinnoberrotes Band an der rechten Kante trägt den Titel, den englischen Untertitel auf die Seite gedreht und am Fuß das Datum; die Vorbemerkung in einer Kai-Schrift, zwei Zeichen tiefer gesetzt, dann die Proklamation in Song.", "3": "Die Proklamation läuft über die Seite weiter und endet mit ihrer Datumszeile, zwölf Zeichen tiefer gesetzt, und in der nächsten Zeile mit dem Siegelvermerk in Zinnoberrot, ein Zeichen unter dem Ende des Datums beginnend.", "4": "Die Anmerkungen zur Proklamation in der Kai-Schrift: 10月10日 aufrecht, 1911 und „Sun Yat-sen“ auf die Seite gedreht, „ROC“ Buchstabe für Buchstabe gestapelt.", "5": "Der Auftakt der Provisorischen Verfassung: das Band, die Vorbemerkung mit 3月8日 und 第35號 aufrecht, der Verkündungsbefehl mit Siegelvermerk und Datum, dann Kapitel eins.", "6": "Kapitel zwei der Verfassung: die Artikel 5 bis 15, die sieben Freiheiten von Artikel 6 zwei Zeichen tiefer gesetzt.", "7": "Die Anmerkungen zur Verfassung und das Impressum, auf Englisch, auf die Seite gedreht." }
+---
+
+## Was Sie setzen
+
+Ein siebenseitiger Lesetext zu zwei Gründungstexten der Republik China: Sun Wens Proklamation zum Amtsantritt am 1. Januar 1912 und die ersten beiden Kapitel der Provisorischen Verfassung vom 11. März. Die Seiten sind vertikal auf einem Format von 184 × 260 mm gesetzt, rechts gebunden. Die Dokumente behalten ihre eigenen chinesischen Zahlzeichen, 民國元年三月十一日. Die Vorbemerkungen und Anmerkungen in einer Kai-Schrift geben Daten des westlichen Kalenders, Mengen und Ausgabenummern in arabischen Ziffern an, und diese Ziffern setzt das Rezept: 10月10日 steht aufrecht, eine Zahl pro Zelle, 1912 und Sun Yat-sen sind auf die Seite gedreht, 民國115年 bringt drei Ziffern in einer Zelle unter, und ROC stapelt seine Buchstaben. Ein zinnoberroter Umschlag in einer Doppellinie, ein zinnoberrotes Band zu Beginn jedes Dokuments und Kolumnentitel am Außenrand mit Paginas in chinesischen Zahlzeichen rahmen den Text.
+
+## Zubereitung
+
+### 1 · Die kurzen Zahlen der Einstellung überlassen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Mit `cjk.uprightDigits: 2` steht jede Folge aus einer oder zwei Ziffern im vertikalen Text aufrecht in einer Zelle von einem Geviert, die beiden Ziffern nebeneinander: 10月10日, 第35號 und 7章56條 brauchen keine Auszeichnung. Eine längere Zahl wird als Ganzes auf die Seite gelegt, wie ein lateinisches Wort; so setzt clreq vierstellige Zahlen, und 1912 und 1644 laufen um eine Vierteldrehung gedreht die Zeile hinab. Eine dreistellige Zahl, die aufrecht stehen soll, braucht eine Markierung: `民國:tcy[115]年` presst 115 in das Geviert. `:upright[ROC]` stellt jeden Buchstaben in eine eigene Zelle, einen unter den anderen, und die Zeile bricht nie darin um ([Zahlen im vertikalen Text](/de/docs/configuration-east-asian#zahlen-im-vertikalen-text)).
+
+<PageShot page={4} crop="0.43,0.145,0.45,0.74" caption="Seite 4, die Anmerkungen: 10月10日 und 2月12日 aufrecht, 1911 und „Sun Yat-sen“ auf der Seite, 268 und 115 von :tcy zusammengepresst, „ROC“ von :upright gestapelt." />
+
+Die Texte von 1912 bleiben wie gedruckt. Die Anmerkungen des Herausgebers folgen den taiwanischen Regeln für Zahlen, den 公文書橫式書寫數字使用原則 des Exekutiv-Yuan von 2004: Daten, laufende Nummern und Mengen erhalten arabische Ziffern (1912年3月8日, 第35號, 7章56條), Eigennamen, feste Wendungen und runde Zahlen behalten chinesische Zahlzeichen (東三省, 四萬萬, 四億), ebenso das Mondkalenderdatum 辛亥年八月十九日. Wo eine Anmerkung eine Überschrift oder einen Begriff der Dokumente zitiert, behält sie deren Form, 第一章 und 二十二行省. Diese Regeln wurden für horizontale Dokumente geschrieben; vertikal gesetzt sind ihre Ziffern genau die, die das Rezept aufrecht stellen muss.
+
+### 2 · Jedes Dokument mit einem Band rechts eröffnen
+
+<Excerpt region="opener" />
+
+In einem vertikalen Textfluss ist der Kopf der Seite die rechte Kante des Blatts, wo das Lesen beginnt. Eine Überschriftengestaltung, die oben am Anschnitt verankert ist, wird daher zu einem Band an der rechten Kante, und ihre `size.height` ist ihre Breite auf dem Blatt. Die Versätze drehen sich mit dem Fluss: `x` misst das Blatt hinab, `y` nach links. Das Raster zentriert den Satzspiegel zwischen den Rändern, und `HEAD` wiederholt diese Summe, sodass der Titel auf der Höhe des ersten Zeichens jeder Zeile beginnt. `align: 'right'` setzt das Datum an den Fuß seiner Zeile, wo die Textzeilen enden, und `cjk.uprightDigits` erreicht auch den Text der Gestaltung: Die 11 von 3月11日 steht wie im Grundtext in einer Zelle. Das Band ist das aus <RecipeLink slug="chapter-opener-bleed-band">Kapitelauftakt auf einem randabfallenden Farbband</RecipeLink>, um eine Vierteldrehung gedreht.
+
+Eine Überschriftengestaltung kennt keine Parität, das Band läuft also immer an der rechten Kante des Blatts hinab. Auf Seite 2, einer rechten Seite, ist diese Kante der Außenrand; auf Seite 5, einer linken Seite eines rechts gebundenen Buches, ist sie der Bund, und der Titel beginnt 8 mm vom Falz, innerhalb des Bundstegs von 21,6 mm. Ein geheftetes Heft öffnet sich dafür flach genug. Bei einem fadengehefteten oder geklebten Buch beginnen Sie jedes Dokument mit `breakBefore.parity: 'even'` auf einer rechten Seite, womit Seite 5 leer bleibt.
+
+<PageShot page={2} crop="0.55,0.13,0.45,0.52" caption="Seite 2: der Titel vom Kopf des Satzspiegels an, das Datum am Fuß des Bandes, die 10 von 晚上10時 und die 29 von 同月29日 aufrecht in der Vorbemerkung." />
+
+### 3 · Die Kolumnentitel an den Außenrand setzen
+
+<Excerpt region="heads" />
+
+`anchor.to: 'outer'` ist der Rand abseits des Bundes; in einem rechts gebundenen Buch laufen die Kolumnentitel also an der linken Kante einer rechten Seite und an der rechten Kante einer linken Seite hinab. Der Titel steht vier Zeichen unter dem Kopf des Satzspiegels, und die Pagina endet fünf Zeichen über seinem Fuß, beide vertikal in 80 % der Grundschriftgröße gesetzt ([vertikale Textelemente](/de/docs/configuration-page-layout#vertikale-textelemente)). `pageNumbering.format: 'trad-chinese-informal'` druckt die Paginas 三, 四, 六 und 七, und `pages: 'body'` hält sie von den beiden Auftakten fern.
+
+### 4 · Den Umschlag aus einer seitenbreiten Gestaltung randabfallend setzen
+
+<Excerpt region="cover" />
+
+Eine Überschriftengestaltung in einer Spalte wird am Fuß der Spalte abgeschnitten, und auf einer vertikalen Seite ist dieser Fuß der linke Rand: Ein am Anschnitt verankertes Feld endete 21,6 mm vor der linken Beschnittkante. Mit `span: 'page'` wird die Überschrift als Seitenband gesetzt, das nicht abgeschnitten wird, und das Feld reicht an beide Kanten. Die beiden Rahmen zeichnen die Doppellinie aus dicker und dünner Linie chinesischer Druckbücher, 1,6 pt und 0,5 pt, 2 mm voneinander entfernt.
+
+### 5 · Jede Stimme mit dem Text laden, den sie setzt
+
+<Excerpt region="voices" />
+
+Fontsource liefert jede Schriftstärke dieser Schriften als etwa hundert Dateien, die je einen Zeichenbereich abdecken, und `loadCjkFonts` lädt die Dateien, die ein Text berührt. Erhält jede Schriftstärke von Noto Sans TC nur Überschriften, Siegelvermerke, Impressum, Umschlagzeilen und Paginas, lädt sie 10 Dateien; mit dem ganzen Beispiel wären es 35, und es gibt drei Schriftstärken. LXGW WenKai TC erhält die Vorbemerkungen und Anmerkungen und lädt 16. Eine Schrift, die zu wenig Text erhält, lässt die Aufnahme scheitern (C12) und nennt die Zeichen, die sie aus einer Ersatzschrift leihen musste.
+
+## Varianten
+
+### Auch dreistellige Zahlen aufrecht stellen
+
+Mit 3 nehmen die 268 und die 115 der Anmerkungen ihre Zelle ohne Auszeichnung ein, ebenso jede Artikel- oder Seitenzahl bis 999; 1912 bleibt auf der Seite.
+
+```diff
+-  uprightDigits: 2,
++  uprightDigits: 3,
+```
+
+### Jede Zahl auf die Seite drehen
+
+Mit 0 steht keine Zahl von selbst aufrecht: 10月10日 dreht sich wie 1912, und nur die markierten 268, 115 und ROC stehen noch.
+
+```diff
+-  uprightDigits: 2,
++  uprightDigits: 0,
+```
+
+## Häufige Fehler
+
+- Noto Serif TC hat, so wie Fontsource sie ausliefert, kein 爲 und kein 敎: Ihr Stylesheet führt beide, aber keine Datei enthält eine Glyphe dafür. Der Druck der Verfassung von 1912 schreibt 為 und 教 in diesen Formen. Der Canvas zeichnete 敎 in einer Systemschrift, und das PDF hatte keine Glyphe dafür, was die Aufnahme meldete (C25). Der Lesetext setzt 為 und 教, bringt mit ihnen 靑 und 决 zu 青 und 決, und seine Vorbemerkung sagt das.
+- LXGW WenKai TC zeichnet, so wie Fontsource sie ausliefert, 即, 為, 青 und 教 in den älteren Formen 卽, 爲, 靑 und 敎, die neben denselben Zeichen im Song-Text seltsam wirken. Die Anmerkungen sind ohne diese vier formuliert; nur die Vorbemerkung, die die alten Formen der Verfassung aufzählt, braucht sie. Lesen Sie den Kai-Text Ihrer eigenen Anmerkungen in voller Größe.
+- Eine seitwärts gesetzte Zahl erhält zum Chinesischen daneben Abstand wie ein lateinisches Wort, ein Viertelgeviert auf jeder Seite (`cjk.latinSpacing`), sodass die Vorbemerkungen `1912 年` lesen; eine Zahl in einer Zelle erhält keinen Abstand, wie ein chinesisches Zeichen.

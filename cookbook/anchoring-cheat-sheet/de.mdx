@@ -1,0 +1,71 @@
+---
+title: "Spickzettel zum Verankern: Plakat aus verketteten Elementen"
+summary: "Ein A3-Vortragsplakat, dessen Elemente am Anschnitt, an der Seite, am Slot oder aneinander hängen, und ein Bogen, der jedes rahmt und dreizehn beschriftet."
+plain: "Ein Plakat für Astronomievorträge vor einer Sonnenfinsternis. Es zeigt, wie man jedes Element platziert, indem man vom Seitenrand oder von einem anderen Element aus misst."
+description: "Ein Vortragsplakat, in Postext ohne Koordinaten gesetzt: ein Himmel am Anschnitt, eine Sonne an der Seite, der Rest verkettet, dazu ein Bogen mit Hilfslinien."
+question: "Wie platziere ich Gestaltungselemente relativ zur Seite, zum Anschnitt oder zueinander statt mit Koordinaten?"
+aliases: ["Verankerung", "verankern", "Anker", "Elementplatzierung", "Design-Slot", "Plakat", "Hilfslinien", "Konstruktionslinien", "ohne Koordinaten", "below", "above", "right-of", "align-bottom", "Container-Rahmen", "Fußzeilen-Container", "Band im Anschnitt", "Finsternis-Plakat", "anchoring"]
+pageNotes: { "1": "Ein A3-Plakat für vier Vorträge vor der totalen Sonnenfinsternis vom 2. August 2027. Ein ultramarinblauer Himmel füllt die oberen zwei Drittel, mit einem schwarzen Mond, der eine vom rechten Rand angeschnittene zitronengelbe Sonne verdeckt, und einer weißen Korona ringsum; der Titel „The Shadow Returns“ steht weiß am Fuß des Himmels, zwischen einer gelben Dachzeile und einem dreizeiligen Vorspann. Darunter stehen vier blaue Daten über vier Spalten mit Vorträgen und Vortragenden, es folgen zwei Spalten Kleingedrucktes, und ein blaues Band mit dem Zeichen des Vereins läuft am Fuß des Bogens entlang.", "2": "Dasselbe Plakat, der Kasten jedes Elements rosa gerahmt, dazu dreizehn rosa Etiketten, die Id, Kante, Anker und gegebenenfalls Versatz eines Elements drucken, darunter „#deck · align-bottom #sky · x +18 y −14“ und „#day2 · right-of #day1 · x +7“. Zwei weitere Etiketten benennen die Rahmen der Container von Kopf- und Fußzeile, die am oberen und unteren Rand entlanglaufen, und der Text unter den Abenden erklärt, wie der Bogen zu lesen ist." }
+---
+
+## Was Sie setzen
+
+Ein Plakat eines erfundenen Astronomievereins für vier Vortragsabende an Donnerstagen vor der totalen Sonnenfinsternis vom 2. August 2027. Ein ultramarinblauer Himmel füllt die oberen zwei Drittel eines A3-Bogens. Rechts verdeckt ein schwarzer Mond eine zitronengelbe Sonne, die der Beschnitt kappt, und eine im Code gezeichnete Korona breitet sich hinter beiden aus. Der Titel, *The Shadow Returns* in 120 pt Funnel Display, steht am Fuß des Himmels auf seinem Vorspann. Unter dem Horizont stehen vier blaue Daten über den Vorträgen, und das Kleingedruckte läuft in zwei Spalten über einem blauen Band. Jedes Element hängt am Anschnitt, an der Seite, an seinem Slot oder an einem anderen Element, und seine Versätze zählen von dort. Der zweite Bogen wiederholt das Plakat mit einem rosa Rahmen um den Kasten jedes Elements und um die Container von Kopf- und Fußzeile sowie einem Etikett an dreizehn Elementen, das die Platzierung jedes einzelnen druckt.
+
+## Zubereitung
+
+### 1 · Zwei Elemente am Bogen festmachen und den Rest daran hängen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Darin nennt `anchor.to`, woran ein Element hängt: `'bleed'` und `'page'` sind Rahmen des Bogens (derselbe Kasten, solange `page.cutLines` aus ist), `'container'` ist der eigene Kasten des Slots und `'#id'` ein anderes Element ([Elementplatzierung](/de/docs/configuration-page-layout#platzierung-von-elementen)). Ein Kasten ohne Breite reicht bis zur gegenüberliegenden Kante seines Rahmens, deshalb füllt der Himmel den Anschnitt von Seite zu Seite. Ein Element, das am Himmel platziert ist, misst von der linken Kante des Himmels, also der des Anschnitts, deshalb nimmt der Vorspann `INSET`, 18 mm, als sein `x`. Die Titelgruppe wird von der Unterkante des Himmels aus nach oben aufgebaut. `'align-bottom'` setzt den Fuß des Vorspannkastens `AIR`, 14 mm, über diese Kante, und `'above'` stellt den Fuß jedes Elements auf die Oberkante des Elements darunter; ein Titel, der mehr Zeilen braucht, hebt also die Dachzeile an, statt den Vorspann zu überdecken. Unter der Gestaltung beginnt das Kleingedruckte auf der ersten Linie des 16-pt-Rasters, die mindestens 3,2 mm unter dem tiefsten Element liegt, der Zeile der Vortragenden; diese 3,2 mm sind der voreingestellte untere Abstand der Überschrift.
+
+### 2 · Mond und Korona an die Sonne hängen
+
+<Excerpt region="eclipse" />
+
+Die Sonne ist das einzige Element, das an der Seite, also am Beschnittkasten, festgemacht ist. Von der Ecke `'top-right'` aus gemessen, läuft ein positives `x` über den rechten Rand hinaus, sodass 30 mm der Scheibe abgeschnitten werden. Mond und Korona hängen mit `'align-top'` an der Sonne; wer die Sonne verschiebt, verschiebt also beide. Ihre Versätze zählen von der linken oberen Ecke der Sonne: Der Mond sitzt 2 mm rechts und 2,5 mm tiefer, was oben links eine schmale Sichel der Sonne frei lässt, und die Korona beginnt `HALO`, 75 mm, weiter oben und links, was ihr Quadrat von 300 mm auf der Scheibe von 150 mm zentriert. Die Korona ist ein Bildelement, das die Größe seines Kastens annimmt ([Bildelemente](/de/docs/configuration-page-layout#bildelemente)), und steht in der Liste vor den Scheiben, wird also hinter ihnen gezeichnet.
+
+### 3 · Die Abende zu Spalten verketten
+
+<Excerpt region="programme" />
+
+Jedes Datum, jeder Vortrag und jede Zeile mit Vortragenden hat eine feste `size.width` von `COL`, und `'right-of'` plus `GUT` legt das nächste Datum eine Spalte weiter. Ohne Breite schrumpft ein Datum auf seine Ziffern (die ‚8‘ ist 17 mm breit), die ‚15‘ begänne dann 7 mm dahinter, und jeder Vortrag liefe in einer Zeile bis in die nächste Spalte. `COL` teilt die Textbreite in vier, mit demselben Spaltenabstand von 7 mm wie die beiden Spalten Kleingedrucktes darunter, wodurch die zweite Spalte Kleingedrucktes unter der 22 steht. Jeder Vortrag hängt `'below'` an seinem Datum und jede Zeile mit Vortragenden unter ihrem Vortrag; ein Vortrag, der auf eine dritte Zeile umbräche, schöbe also nur die eigenen Vortragenden nach unten und sonst nichts.
+
+### 4 · Das Band in die Fußzeile setzen, auf jeder Seite
+
+<Excerpt region="footer" />
+
+Alles, was auf jeder Seite gedruckt werden muss, wie dieses Band, gehört in den Slot der Kopf- oder Fußzeile, und ein Überschriftenformat mit eigener Kopf- oder Fußzeile ersetzt diesen Slot auf den Seiten seines Abschnitts. Die Fußzeile des Formats guides wiederholt diese vier Elemente mit ihren Rahmen und Etiketten, deshalb drucken Band und Zeichen auf beiden Bögen. Der Container der Fußzeile ist der untere Rand, vom Text bis zum Beschnitt: `'bottom-left'` zählt vom Beschnitt nach oben und `'top-right'` vom Text nach unten, und die −10 des Zeichens und die +10 der Zeile „Free entry“ landen auf demselben 10 mm hohen Streifen in der Mitte des Bandes ([Kopf- und Fußzeilen](/de/docs/configuration-page-layout#kopf--und-fußzeilen)). Die Fußzeile wird nach dem Text gezeichnet und nimmt ihm keinen Platz weg, deshalb legt `FOOT` sowohl den unteren Rand als auch die Höhe des Bandes fest, und das Band bleibt frei von den Zeilen darüber.
+
+### 5 · Die Hilfslinien aus derselben Konfiguration zeichnen
+
+<Excerpt region="guides" />
+
+`guides()` geht die Elemente des Plakats durch. Ein Text bekommt einen Rahmen an seinem Kasten und ein eckiger Kasten einen Rahmen an seinem Format; keiner von beiden verschiebt etwas, denn nur ein Innenabstand macht einen Kasten größer. Ein Bild oder eine runde Scheibe bekommt einen eckigen Kasten in eigener Größe, der an ihrer linken oberen Ecke hängt; so wird auch die Ecke der Sonne gezeichnet, an der Mond und Korona hängen. Jedes Etikett ist ein Text, der an seinem Element hängt, von `describe()` aus der eigenen `placement` dieses Elements geschrieben, sodass ein Etikett der Konfiguration, die es beschriftet, nicht widersprechen kann. `{style="guides"}` an der zweiten Überschrift bringt diese Gestaltung mit eigener Kopf- und Fußzeile ins Spiel ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Ein Etikett ohne Breite hat nur den Raum zwischen seinem Anker und der rechten Kante des Containers, deshalb beginnt das Etikett `#free` 30 mm links von seinem Text. `pageIndexOffset: 1` in der `continuation` des Inhalts macht das Plakat zu einer linken Seite (verso), sodass der Betrachter die beiden Bögen nebeneinanderstellt.
+
+## Varianten
+
+### 3 mm Anschnitt und Schnittmarken hinzufügen
+
+Drei Millimeter `BLEED` schalten die Schnittlinien ein und schieben Himmel und Fußband 3 mm in den Anschnitt, an dem sie hängen, während `INSET` den Text auf dem Rand hält; Sonne, Mond und Korona hängen an der Seite, und alles, was eine Seite zeichnet, wird am Anschnitt beschnitten, sodass die Sonne 3 mm hinter dem Beschnitt endet und der Infobereich nur die Schnittmarken enthält.
+
+```diff
+-const BLEED = 0; // mm; 3 for the printer, which switches on page.cutLines below
++const BLEED = 3; // mm; 3 for the printer, which switches on page.cutLines below
+```
+
+### Den Horizont anheben
+
+Nimmt man 20 mm von `SKY`, hebt sich die Kante des Himmels und mit ihr Vorspann, Titel, Dachzeile und die zwölf Texte des Programms, während das Kleingedruckte auf einer höheren Rasterlinie beginnt; die Sonne hängt an der Seite, deshalb hebt die zweite Änderung sie um dieselben 20 mm an, sonst berührte das ‚w‘ von *Shadow* die Sichel.
+
+```diff
+-const SKY = 272; // mm from the trim's top edge to the horizon, the sky's lower edge
++const SKY = 252; // mm from the trim's top edge to the horizon, the sky's lower edge
+-  disc('sun', 'sun', at('page', 'top-right', 30, 25)), // 30 mm of it past the right edge
++  disc('sun', 'sun', at('page', 'top-right', 30, 5)), // 30 mm of it past the right edge
+```
+
+## Häufige Fehler
+
+- Ein Pen erhält keine Meldung über einen zirkulären oder ins Leere zeigenden Anker. Das Bedienfeld Prüfungen der Sandbox listet sie in Kopfzeile, Fußzeile, Teilseiten und Überschriftenebenen, nicht aber in Überschriftenformaten wie `guides`. Ein Element, das an einer nicht vorhandenen `#id` festgemacht ist, wird am Container platziert: Eine Elementkante wie `'below'` fällt auf die linke obere Ecke des Containers zurück, Versatz eingeschlossen, und eine Containerkante wie `'top-right'` auf diese Ecke. In einer Schleife fällt ein Element auf dieselbe Weise zurück, und die anderen verketten sich an ihm.
+- `'align-left'` und `'align-top'` landen auf demselben Punkt: Beide setzen die linke obere Ecke des Elements auf die linke obere Ecke seines Ankers.
+- Ein Rahmen wird mittig auf der Kante des Kastens gezeichnet, deshalb ragt jeder rosa Rahmen von 1 pt 0,5 pt über den Kasten hinaus, den er nachzeichnet, obwohl die Konfigurationsdokumentation sagt, Konturen würden innen gezeichnet.

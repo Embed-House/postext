@@ -1,0 +1,282 @@
+{/* docs/skill-en.mdx */}
+
+export const metadata = {
+  title: 'Agent-Skill: eine Publikation nach Postext übertragen',
+  sidebarTitle: 'Skill',
+  description: 'Installieren Sie den Skill postext-port in Claude Code, Codex oder einem anderen Agenten und lassen Sie ihn eine PDF-, Word-, PowerPoint-, EPUB-, InDesign- oder HTML-Quelle in ein Postext-Projekt umwandeln, das dem Layout des Originals folgt',
+  lang: 'de',
+  lastUpdated: '2026-10-09',
+  readingTime: '8 min',
+  order: 21,
+  plainSummary: "Diese Seite richtet sich an Menschen, die ein Buch oder Dokument bereits in einem anderen Format haben, etwa als PDF, Word- oder InDesign-Datei, und es nach Postext übertragen möchten. Ein KI-Helfer, ein sogenannter Agent, kann den größten Teil der Arbeit erledigen, wenn Sie ihm eine kleine Erweiterung geben, einen sogenannten Skill. Der Skill bringt dem Agenten bei, den Text zu übernehmen und die Gestaltung des Originals nachzubauen. Die Seite erklärt, wie Sie ihn installieren, worum Sie bitten und wie Sie das Ergebnis prüfen. Ein Video von etwa fünf Minuten, auf Englisch, zeigt jeden Schritt.",
+};
+
+# Agent-Skill
+
+**Machen Sie aus einer vorhandenen Publikation mit einem Coding-Agenten ein Postext-Projekt.**
+
+Viele kommen mit einem Buch zu Postext, das es bereits gibt: ein Lehrbuch als
+Druck-PDF, ein Bericht in Word, ein Kurs in PowerPoint, ein Katalog in InDesign,
+ein EPUB. Die Übertragung umfasst zwei Aufgaben:
+
+- **Inhalt**: das erweiterte Markdown jedes Kapitels mit seinen Direktiven und
+  Mikroformaten.
+- **Gestaltung**: ein Konfigurationsmanifest, das die Layoutregeln des Originals
+  nachbildet (Seitengeometrie, Grundlinienraster, Schrift, Kapitelauftakte,
+  Kolumnentitel, Kästen, Gleitobjekte, Tabellen, Teile).
+
+Ein LLM kann einen großen Teil dieser Arbeit übernehmen, aber nur, wenn es weiß,
+wie Postext funktioniert. Postext-Markdown ist kein CommonMark, und die
+Konfiguration hat Fallstricke, die erst auffallen, wenn eine Seite falsch
+gerendert wird. Der Skill **`postext-port`** bündelt dieses Wissen mit den
+Werkzeugen, mit denen wir jede Vorlage in der Sandbox gebaut haben, damit Ihr
+Agent die Übertragung sauber erledigen kann.
+
+Er folgt dem offenen Format [Agent Skills](https://agentskills.io) und funktioniert
+daher mit Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, OpenCode und
+[vielen anderen Agenten](https://skills.sh).
+
+## Das Tutorial ansehen
+
+Fünf Minuten, kein Code: den Ordner vorbereiten, die Vektororiginale mitbringen,
+ein Referenz-PDF hinzufügen, den Agenten beauftragen und das Ergebnis in der
+Sandbox prüfen. Das Video ist auf Englisch.
+
+<TutorialVideo />
+
+Auch auf YouTube (auf Englisch): [dort ansehen](https://www.youtube.com/watch?v=Hh-mWtZGWHw&list=PLXV_YSL9ROv0) oder in der
+[Postext-Playlist](https://www.youtube.com/playlist?list=PLXV_YSL9ROv0).
+
+## Was der Skill enthält
+
+- **Einen Arbeitsablauf**:
+  1. den Auftrag abstimmen;
+  2. die Quelle inventarisieren;
+  3. die Gestaltung in einem Datenblatt vermessen;
+  4. das Projektgerüst anlegen;
+  5. den Inhalt extrahieren;
+  6. ihn zu Postext-Markdown aufbereiten;
+  7. Schriften und Bilder vorbereiten;
+  8. Seite für Seite prüfen;
+  9. das Paket schnüren.
+- **Referenzen**:
+  - das Dokumentformat und das Konfigurationsmanifest, beide an der Engine
+    geprüft;
+  - das Projektformat (Paket);
+  - ein Leitfaden je Quellformat;
+  - eine Methode zur Gestaltungsanalyse;
+  - ein Katalog gelöster Layoutfälle: Teile mit eigenen Farben,
+    Kapitelauftakte, Verse, Marginalglossen, Fußnoten, Register, gleitende,
+    geteilte und verschachtelte Kästen, Vektor-Druckvorlagen, Abbildungen mit
+    Live-Text, Bilder in Tabellenzellen, Tabellen im Querformat, zweisprachige
+    Ausgaben und mehr;
+  - chinesische Bücher, waagerecht oder senkrecht gesetzt und rechts gebunden:
+    was im Auftrag zu klären ist (Schrift, Region, Richtung, Bindung), wie man
+    ein Zeichenraster vermisst, wie man senkrechte PDFs liest, Ruby und Warichu
+    aus InDesign, das ostasiatische Layout von Word und EPUBs von rechts nach
+    links, und wie man CJK-Schriften auf das Buch zuschneidet (siehe
+    [Chinesischer Satz](/de/docs/chinese-layout));
+  - japanische Bücher, senkrecht gesetzte Bunko- und Tankōbon-Romane mit
+    Bindung rechts oder waagerecht gesetzte Fachbücher: das Gebietsschema, das
+    die japanischen Regeln einschaltet (`ja`, nie ein chinesisches Tag), was zu
+    klären ist (Richtung, Raster, Furigana, Anmerkungen, die Orthografie der
+    Ausgabe), wie man den Satzspiegel in Zeichen und Zeilen vermisst, die
+    Auszeichnung von Furigana und Bōten, mit `aozora.py` umgewandelte Texte aus
+    Aozora Bunko, Scans gemeinfreier Ausgaben aus der National Diet Library und
+    japanische Schriften, zugeschnitten mit ihren Kana und senkrechten Formen
+    (siehe [Japanischer Satz](/de/docs/japanese-layout));
+  - arabische Bücher, modern oder klassisch und vokalisiert, von rechts nach
+    links gesetzt und rechts gebunden: das Gebietsschema, das das Buch wendet,
+    was zu klären ist (Region und Ziffern, Vokalisierung, Verse, Inhaltsverzeichnis
+    am Ende), wie man eine gespiegelte Seite vermisst, wie man Arabisch aus PDFs,
+    Word und Wikisource liest, Gedichte als `:::verse`, Anmerkungen «(١)» je
+    Seite und arabische Schriften, zugeschnitten mit ihren Verbindungstabellen
+    (siehe [Arabischer Satz](/de/docs/arabic-layout));
+  - Comics, Manga und Zeitungsstrips: die Aufteilung, die eine Seite in Panels
+    schneidet, die Panelbilder mit ihren Sprecherankern und Sicherheitsbereichen, ein
+    Skript je Sprache, das die Engine letterst (Sprechblasen, Textkästen,
+    Geräuschwörter), Manga und arabische Ausgaben von rechts nach links, und wie
+    man aus textfreien Zeichnungen samt Übersetzungen, aus geletterten Scans oder
+    aus einem Skript mit generierten Bildern überträgt (siehe
+    [Comics](/de/docs/comics));
+  - das gedruckte Objekt: wie man Papier, Bindung, Umschläge und Buchrücken
+    der Quelle abliest und als die Einstellungen `folio` festlegt, die der
+    [Betrachter Folio](/de/docs/sandbox#tab-folio) zeigt, geprüft vom Linter.
+- **Skripte** (Python und Node), im nächsten Abschnitt beschrieben.
+
+## Skripte
+
+<table>
+  <thead>
+    <tr>
+      <th>Skript</th>
+      <th>Was es tut</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>inventory.py</code></td><td>Erster Blick auf jede Quelle: Geometrie, Schriften, verwendete Formate, Medien, Seiten, die OCR brauchen; bei einem als PDF/X gedruckten PDF seine Ausgabebedingung und sein Anschnitt samt den Einstellungen <code>print</code>, die beides nachbilden.</td></tr>
+    <tr><td><code>measure_layout.py</code></td><td>Ränder, Spalten, Spaltenabstand und Zeilenabstand (das Grundlinienraster) eines PDFs</td></tr>
+    <tr><td><code>pdf_extract.py</code></td><td>PDF → Kapitelentwürfe nach <em>typografischer Rolle</em> (Schrift/Größe/Farbe): Lesereihenfolge, Absätze, Auflösen von Trennungen, fett/kursiv, hoch-/tiefgestellt, Listen, Legenden</td></tr>
+    <tr><td><code>pdf_figures.py</code></td><td>Schneidet Abbildungen aus einem PDF: Fotos in nativer Auflösung, SVG-Vorschauen, Vektor-PDF-Druckvorlagen</td></tr>
+    <tr><td><code>extract_tables.py</code></td><td>PDF-Tabellen → Postext-<code>TableModel</code></td></tr>
+    <tr><td><code>pandoc_to_postext.py</code></td><td>DOCX, PPTX, ODT, EPUB, HTML, LaTeX, Markdown, JATS, DocBook → Kapitelentwürfe, wobei Word-Formatvorlagen auf Kästen und Absatzformate abgebildet werden</td></tr>
+    <tr><td><code>idml_extract.py</code></td><td>InDesign-IDML → Kapitelentwürfe nach Absatzformat, Tabellen und verankerte Bilder; Ruby, Tate-chū-yoko, Betonungszeichen und Warichu werden zu <code>:ruby</code>, <code>:tcy</code>, <code>:dots</code> und <code>:warichu</code>, und senkrechte Textabschnitte sowie eine Bindung von rechts nach links werden gemeldet</td></tr>
+    <tr><td><code>aozora.py</code></td><td>Text aus Aozora Bunko (ein CP932-Zip oder eine <code>.txt</code>) → Postext-Markdown: Furigana, Bōten und Seitenlinien, Überschriften mit ihren Einzügen, 字下げ- und 地付き-Blöcke als Absatzformate, Seitenumbrüche, über JIS X 0213 aufgelöste 外字, Kanbun-Zeichen; es gibt den Block mit den Nachweisen und einen Bericht über das zurück, was es nicht ausdrücken konnte</td></tr>
+    <tr><td><code>index_marks.py</code></td><td>Baut ein gedrucktes Register als Marken <code>:index</code> nach: liest die Registerseiten des PDFs, findet jeden Begriff auf seiner Seite und markiert dieselben Wörter in den Kapiteln</td></tr>
+    <tr><td><code>comic_panels.py</code></td><td>Vermisst Comicseiten: findet die Panels am Papier zwischen ihnen, schreibt den Ausdruck <code>split</code> (von links nach rechts oder von rechts nach links, schräge Zwischenräume eingeschlossen), die Zwischenräume und den Rahmen, schneidet ein Bild je Panel aus und gibt die Gerüste <code>:::page</code> aus; legt ein Raster über die Bilder, um Sprecheranker und Sicherheitsbereiche abzulesen, und zeichnet sie zur Kontrolle wieder ein</td></tr>
+    <tr><td><code>fonts.py</code>, <code>images.py</code>, <code>convert_assets.py</code></td><td>Instanziieren, reduzieren, skalieren und teilen Schriften (eine chinesische oder japanische Schrift, auf die Zeichen des Buchs zugeschnitten, behält ihre senkrechten Formen und Metriken, eine arabische ihre Verbindungsformen und das Tatweel); wandeln Bilder nach sRGB um, beschneiden und verbinden sie; machen aus <code>.ai</code>-/<code>.pdf</code>-Grafiken SVG</td></tr>
+    <tr><td><code>preset_kit.py</code></td><td>Legt das Projektgerüst und sein Generatorskript an, erstellt <code>preset.json</code> und packt die <code>.postext</code>-Datei</td></tr>
+    <tr><td><code>lint_project.py</code></td><td>Findet alles, was Parser und Loader stillschweigend falsch machen, und bei chinesischem, japanischem und koreanischem Text die Zeichen, die die mitgelieferten Schriften nicht setzen können; bei japanischem Text Kana unter einem chinesischen Gebietsschema, chinesische Schriften oder Einstellungen, in den Kapiteln verbliebene Aozora-Notation und Kanji-Registereinträge ohne Lesung; bei arabischem Text ein fehlendes arabisches Gebietsschema, rein lateinische oder nicht verbindende Schriften, Sperrung, erzwungene Silbentrennung und kursive Hervorhebung; bei Comics Aufteilungsausdrücke, die sich nicht einlesen lassen, Panels, die nicht zu den Zellen passen, unbekannte Bilder sowie Sprechblasen- oder Panelformate, fehlerhafte Sprecheranker, Lettering-Schriften, die das Projekt nicht mitliefert, und Ausgaben mit abweichenden Seiten</td></tr>
+    <tr><td><code>render.mjs</code></td><td>Setzt das Projekt (einen Ordner oder eine <code>.postext</code>-Datei) ohne Oberfläche mit der echten Engine, liest seine Konfiguration wie die Sandbox und gibt Warnungen aus. Mit <code>--jpeg</code> malt es die gewünschten Seiten (<code>--pages 12-15</code>) mit dem Canvas-Renderer der Engine in ein bis zwei Sekunden als JPEG-Dateien, sodass der Agent seine Seiten ansieht, ohne ein PDF zu erzeugen; <code>--out</code> schreibt das PDF. Ein für den Druck eingerichtetes Buch erhält PREFLIGHT-Zeilen (Bilder mit niedriger Auflösung, dünne Linien, kleiner Text in mehreren Farben, Farbauftrag über dem Grenzwert, Text nahe am Beschnitt), und sein PDF wird über das ICC-Ausgabeprofil separiert.</td></tr>
+    <tr><td><code>compare_pages.py</code></td><td>Stellt Quell- und Postext-Seiten nebeneinander, aus dem PDF des Renderlaufs oder aus seinem Ordner mit JPEGs</td></tr>
+  </tbody>
+</table>
+
+## Installation
+
+### Jeder Agent (skills.sh)
+
+Das CLI [`skills`](https://skills.sh) erkennt Ihre Agenten und installiert den
+Skill für sie:
+
+```bash
+npx skills add drnachio/postext --skill postext-port
+```
+
+Wählen Sie Agenten ausdrücklich mit `-a` und installieren Sie global (für jedes
+Projekt) mit `-g`:
+
+```bash
+npx skills add drnachio/postext --skill postext-port -a codex -a claude-code -g
+```
+
+Derselbe Skill wird auch von der Website veröffentlicht, daher funktioniert ebenso:
+
+```bash
+npx skills add https://postext.dev
+```
+
+### Plug-in für Claude Code
+
+Das Postext-Repository ist zugleich ein Plug-in-Marktplatz für Claude Code. In
+Claude Code:
+
+```text
+/plugin marketplace add drnachio/postext
+/plugin install postext@postext
+```
+
+Oder aus einer Shell:
+
+```bash
+claude plugin marketplace add drnachio/postext
+```
+
+```bash
+claude plugin install postext@postext
+```
+
+### Den Agenten installieren lassen
+
+Sie können Ihren Agenten darum bitten, zum Beispiel: *„Installiere den Skill zur
+Übertragung nach Postext (`npx skills add drnachio/postext --skill postext-port`)
+und übertrage damit dieses PDF.“* Agenten, die `https://postext.dev/llms.txt`
+lesen, finden dort diese Seite und den Installationsbefehl.
+
+### Werkzeuge, die die Skripte nutzen
+
+```bash
+python3 -m pip install pymupdf pillow fonttools brotli
+```
+
+```bash
+brew install pandoc poppler
+```
+
+```bash
+mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools && npm init -y && npm i postext postext-pdf postext-citeproc react @pdf-lib/fontkit @napi-rs/canvas
+```
+
+Pandoc wird für Quellen aus Word, PowerPoint, EPUB und HTML gebraucht, poppler
+für die Seitenbilder der Quelle. Die Node-Pakete treiben den Renderer ohne
+Oberfläche an (Node 22.15 oder neuer); `@napi-rs/canvas` ist ein vorkompiliertes
+Canvas, mit dem er die Seiten des Buchs direkt als JPEG malen kann. Optionale
+Werkzeuge: `ocrmypdf` für Scans, ImageMagick und veraPDF für PDF/UA-Prüfungen.
+
+Die Arbeitsschleife läuft über die [Kommandozeile](/de/docs/command-line), eine eigenständige ausführbare Datei, für die nichts installiert werden muss: Der Agent hält das Projekt entpackt und lässt `postext build --watch` auf den Seiten laufen, an denen er arbeitet, sodass jede Änderung etwa eine Sekunde später als JPEG erscheint, auch in einem langen Buch. Die Node-Pakete sind optional: Sie führen `render.mjs` aus, das die zusätzlichen Prüfungen der Sandbox ergänzt. Beide setzen das Buch mit `bodyText.shapingLanguage: 'host'`, gleich was seine Konfiguration angibt, sodass eine Zeile an einem anderen Wort umbrechen kann als in der Sandbox (siehe [Unterschiede zur Sandbox](/de/docs/command-line#unterschiede-zur-sandbox)).
+
+## Anwendung
+
+Legen Sie die Quelldateien in Ihren Arbeitsordner und bitten Sie um die Übertragung. Zum Beispiel:
+
+- *„Übertrage die Kapitel 1–3 von `manual.pdf` nach Postext und bilde dabei das
+  zweispaltige Layout, die Kapitelauftakte und die Kästen nach.“*
+- *„Wandle `course.docx` in ein Postext-Buch um. Die Formatvorlagen ‚Nota‘ und
+  ‚Actividad‘ sind Kästen.“*
+- *„Mach aus `deck.pptx` ein Postext-Handout: Folien werden zu Abschnitten,
+  Sprechernotizen werden zum Text.“*
+- *„Wir haben das InDesign-Paket (IDML + Druck-PDF) dieses Lehrbuchs. Erstelle
+  die Postext-Vorlage für Kapitel 1 auf Spanisch und Englisch.“*
+
+Der Agent folgt dem Arbeitsablauf:
+
+1. **Auftrag.** Er fragt, was er nicht ableiten kann: eine getreue Nachbildung
+   oder eine Neugestaltung, ein Beispielkapitel oder das ganze Buch, Sprachen,
+   Druck oder Bildschirm sowie die Rechte an Text, Bildern und Schriften.
+2. **Inventar und Vermessung.** Er liest die Quelle und schreibt ein Datenblatt
+   mit gemessenen Fakten: Endformat, Ränder, Spalten, Zeilenabstand,
+   typografische Rollen, Farbpalette, Kapitelauftakte, Kolumnentitel,
+   Kastenfamilien und Gewohnheiten der Platzierung.
+3. **Projekt.** Er legt das Gerüst `my-book/` mit einem Generator
+   `build_preset.py` an, der das Datenblatt als Konstanten enthält und
+   `preset.json` erzeugt.
+4. **Inhalt.** Er extrahiert Kapitelentwürfe mit dem passenden Extraktor und
+   bereitet sie dann zu Postext-Markdown auf: Kästen, Absatzformate, Teile,
+   Attribute von Überschriften für Kapitelauftakte, Verweise mit `:ref`,
+   Ressourcen für Tabellen und Abbildungen.
+5. **Prüfung.** Er prüft das Projekt mit dem Linter und lässt
+   `postext build --watch` auf dem entpackten Projekt laufen: Er ändert ein
+   Kapitel oder eine Einstellung, sieht sich das JPEG der Seite an, das etwa eine
+   Sekunde später neu gemalt ist, und ändert erneut, bis Seitenumbrüche,
+   Abbildungen und Kästen Seite für Seite mit der Quelle übereinstimmen. An
+   jedem Meilenstein führt er die vollständigen Prüfungen aus (`postext check`
+   und den Linter). Das PDF wird für die Druckprüfungen erzeugt, nicht für jeden
+   Blick.
+6. **Übergabe.** Er legt Papier, Bindung und Umschläge des Buchs für den
+   Betrachter Folio fest und packt `my-book.postext`.
+
+Öffnen Sie das Ergebnis in der [Sandbox](/de/sandbox): **Bücher → Neu → Eine .postext-Datei öffnen …**.
+Der Import übernimmt die Kapitel und Texte in der Sprache der Sandbox. Um mit
+einem Ordner voller Projekte in einer lokalen Kopie von Postext zu arbeiten,
+setzen Sie `POSTEXT_PRIVATE_PRESETS_DIR` (siehe [Sandbox](/de/docs/sandbox)).
+
+### Das Ergebnis per Code laden
+
+Die gelieferte Datei ist nicht an die Sandbox gebunden. Das Paket `postext` öffnet sie mit `openBundle`, setzt das Buch mit `buildBundle` und rendert es als Canvas, HTML oder PDF (siehe [Pakete](/de/docs/configuration-programmatic-usage#pakete-dateien-im-format-postext)). Eine Übertragung kann daher direkt ein Programm speisen. Wenn die Ausgabe dieses Programms Anpassungen braucht, exportieren Sie sie mit `createBundle` zurück in eine `.postext`-Datei, stimmen sie in der Sandbox fein ab und laden die korrigierte Datei erneut. Das `render.mjs` des Skills, das ohne Oberfläche läuft, nimmt neben einem Projektordner auch eine gepackte `.postext`-Datei an.
+
+## Was Sie erwarten können
+
+- **Die Extraktoren liefern Entwürfe; der Agent bereitet sie auf.** Rechnen Sie
+  mit einem Durchgang je Kapitel, bei dem mit den Originalseiten verglichen wird.
+  Aus dieser Durchsicht kommt die Qualität.
+- **Nur Konfiguration und Markdown.** Der Skill ändert nie die Engine, um ein
+  einzelnes Buch passend zu machen. Wenn Postext etwas nicht ausdrücken kann,
+  wählt der Agent den nächstliegenden Ausdruck und führt ihn als bekannte Lücke
+  auf.
+- **Über Rechte entscheiden Sie.** Der Agent fragt nach, bevor er Bilder oder
+  Schriften mit unklarer Lizenz übernimmt. Lizenzierte Schriften werden als
+  `redistributable: false` gekennzeichnet, sodass exportierte Projekte sie
+  weglassen.
+- **Treue dort, wo es darauf ankommt.** Das Ziel sind dasselbe Raster, dieselbe
+  Schrift, dieselben Kapitelauftakte, Kästen, Abbildungsplatzierungen und
+  Seitenumbrüche auf den meisten Seiten (innerhalb einer Seite je Kapitel), nicht
+  identische Zeilenumbrüche.
+
+## Wo er liegt
+
+Der Skill liegt im Repository unter
+[`plugins/postext/skills/postext-port`](https://github.com/drnachio/postext/tree/main/plugins/postext/skills/postext-port).
+Er deckt jeden Fall ab, der beim Bau der öffentlichen und privaten Vorlagen in
+der Sandbox aufgetreten ist. Wenn eine Übertragung auf einen Fall stößt, den er
+noch nicht abdeckt, eröffnen Sie bitte ein Issue oder einen Pull-Request, der den
+Skill verbessert, damit die nächste Übertragung ihn gleich mitbekommt.

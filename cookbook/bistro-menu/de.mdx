@@ -1,0 +1,83 @@
+---
+title: "Bistrokarte: Preise auf einem Tabulator"
+summary: "Eine zweiseitige Bistrokarte: Preise rechtsbündig auf einem Tabulator, Weine in einer Tabelle ohne Linien und eine Messinglinie beiderseits jedes Gangtitels."
+plain: "Eine zweiseitige Speisekarte für ein erfundenes Pariser Restaurant. Sie zeigt, wie ein Tabulator jeden Preis an den rechten Rand schiebt und wie eine Weinkarte als Tabelle ohne sichtbare Linien entsteht."
+description: "Die Herbstkarte eines erfundenen Pariser Bistros, gesetzt mit Postext: vorn Gerichte mit Preisen auf einem Tabulator, hinten Weine nach Region ohne Linien."
+question: "Wie setze ich Preise einer Speisekarte rechtsbündig und die Weinkarte mit Kopfzeile und verbundenen Zeilen?"
+aliases: ["Speisekarte", "Restaurantkarte", "Menükarte", "Weinkarte", "Preisliste", "Tabulatoren", "Tabulator", "rechter Tabulator", "rechtsbündige Preise", "Tabelle ohne Linien", "Tabelle ohne Rahmen", "Ernährungshinweise", "Überschrift zwischen Linien", "menu"]
+pageNotes: { "1": "Die Vorderseite der Karte auf cremefarbenem Papier: eine weinrot-strohgelbe Markise an einer Messingstange, „Les Tanneurs“ in weinroter Limelight und darunter „Bistrot parisien depuis 1931“ und „Carte d’automne 2026“. Drei zentrierte Gangtitel, „Entrées“, „Plats“ und „Desserts“, jeder zwischen zwei Messinglinien, die bis an die Ränder laufen, und jeder über vier Gerichten: der französische Name fett mit seiner Beilage, darunter eine englische Zeile kursiv und der Preis fett am rechten Rand. Vier Gerichte tragen eine dunkelgrüne V-Scheibe und fünf eine umrissene SG-Pille. Am Fuß zwei kleine zentrierte Zeilen: die Legende der Zeichen, dann die Herkunft des Rindfleischs und ein Hinweis, dass die Bedienung inbegriffen ist.", "2": "Die Rückseite: zwei Gläser, vier Flaschen und eine Karaffe auf einem Messingbord über „La Cave“. Eine Weinkarte mit den Spaltenköpfen „Appellation · cépage“, „12 cl“ und „75 cl“, die Regionen „Bulles“, „Blancs“ und „Rouges“ zentriert über die ganze Breite; der Saint-Émilion hat einen Strich in der Glasspalte. Darunter „Le Comptoir“ zwischen zwei Messinglinien mit Kir, Pastis, Bier vom Fass und Kaffee, und ein kleines zentriertes Impressum läuft am Fuß entlang." }
+---
+
+## Was Sie setzen
+
+Die Herbstkarte von Les Tanneurs, einem erfundenen Pariser Bistro: ein Bogen, 230 × 310 mm, beidseitig bedruckt. Vorn hängt eine gestreifte Markise über dem Namen, gesetzt in der Limelight. Jeder Gangtitel steht zwischen zwei Messinglinien, die bis an die Ränder laufen, darunter vier Gerichte. Ein Gericht besteht aus seinem französischen Namen fett mit der Beilage, darunter einer englischen Zeile kursiv und dem Preis fett, rechtsbündig. Eine dunkelgrüne V-Scheibe kennzeichnet die vegetarischen Gerichte, eine umrissene SG-Pille die glutenfreien. Jedes Gericht ist ein Absatz, und ein Tabulator schickt seinen Preis an einen Tabstopp am rechten Rand. Hinten steht die Weinkarte unter einem Bord mit Flaschen, die Glas- und Flaschenpreise in Spalten mit den Köpfen 12 cl und 75 cl, in einer Tabelle ohne Linien und ohne Legende.
+
+## Zubereitung
+
+### 1 · Ein Tabstopp, wo der Preis steht
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jeder Gang ist eine Gruppe `:::paragraphs{style="dish"}`, ein Absatz pro Gericht ([Absatzformate](/de/docs/configuration-styles#absatzformate)). Das Format `dish` hat einen Tabstopp bei `'end'`, dem Ende der Satzbreite, mit `align: 'end'`: Der Text nach einem Tabulator endet auf dem Stopp. So schickt `:tab **7**` nach der Beilage und den Zeichen den Preis an den rechten Rand, wie lang das Gericht auch ist ([Tabulatoren und Tabstopps](/de/docs/document-format#tabulatoren-und-tabstopps)). `:tab` schluckt die Leerzeichen um sich herum, und der Backslash am Zeilenende ist ein erzwungener Zeilenumbruch, sodass die englische Zeile kursiv eine zweite Zeile desselben Absatzes beginnt und der Preis auf der ersten bleibt. `spaceBetween` setzt eine halbe Zeile zwischen zwei Gerichte, jedes Gericht nimmt also zweieinhalb Zeilen des Zeilenabstands von 14,5 pt ein. `indent` und `endIndent` von einer Viertelzeile halten die Gerichte auf der Flucht des Textes in den Zellen der Weinkarte auf der Rückseite. Ein Absatz mit Tabulatoren wird Zeile für Zeile gesetzt; hier steht ohnehin jede Zeile im Flattersatz.
+
+### 2 · Ein Ressourcentyp, an Ort und Stelle und nie nummeriert
+
+<Excerpt region="type" />
+
+Die eingebauten Typen für Abbildungen und Tabellen drucken eine Legendenzeile und lassen jede Ressource an den ersten freien Platz nach ihrem ersten Verweis gleiten. Der Typ `menu` hat kein Legendenpräfix, und seine Teile haben keine Legende, deshalb steht unter den Zeichnungen und der Weinkarte nichts. Geben Sie ihm `captionPrefix: 'Menu'`, und unter jedem Teil erscheint eine nummerierte Zeile, beginnend mit „Menu 1.“ unter der Markise, was die Karte auf vier Seiten bringt. `defaultPlacement` setzt die Weinkarte und jede Zeichnung an ihre Zeile `::resource` ([Blockeinbettung](/de/docs/document-format#blockeinbettung-optional-ausdrückliche-platzierung-im-text)). Ohne diese Angabe gleitet die Weinkarte an den Fuß der Rückseite, unter „Le Comptoir“ und das Impressum. Die Markise und die Flaschen sind SVG-Ressourcen desselben Typs, im Code gezeichnet und mit `loadSvg` aus dem Kit registriert.
+
+### 3 · Die Regionszeilen verbinden
+
+<Excerpt region="wines" />
+
+Die Weinkarte bleibt eine Tabelle: Ihre beiden Preise stehen in Spalten unter ihren Köpfen, 12 cl und 75 cl, die eine Reihe von Tabstopps ohne Kopf ließe. `parseTSV(tsv, { headerRows: 1 })` liest die erste Zeile als Kopfzeile, sodass „Appellation · cépage“, „12 cl“ und „75 cl“ über ihren Spalten in der Kopfschrift stehen, der Josefin Sans. Eine Zeile mit nur einem Feld nennt eine Region. Ihre Zelle wird zu einer zentrierten Kopfzelle, und `mergeCells` zieht sie über die drei Spalten und markiert die beiden Zellen, die sie überdeckt, mit `hiddenBy` ([Tabellenmodelle aufbauen](/de/docs/configuration-resources#tabellenmodelle-aufbauen)). Zentriert allein in der ersten Spalte stünde „BLANCS“ 22,6 mm links der Achse, auf der „La Cave“ und „Le Comptoir“ zentriert sind. Eine Leerzeile im TSV wird zu einer Zeile leerer Zellen, anderthalb Zeilen hoch, und diese Zeile ist der Abstand über „Blancs“ und „Rouges“.
+
+### 4 · Eine Linie an jede Seite des Gangtitels hängen
+
+<Excerpt region="heads" />
+
+Ein Gangtitel ist eine Gestaltung in der Spalte. Das Element `{titleText}` hat keine Breite, sein Kasten ist also so breit wie seine Versalien, und der Anker `'top'` zentriert ihn in der Spalte. Jede Linie hängt mit `'left-of'` oder `'right-of'` an einer Kante des Titels und füllt bis zum Rand der Spalte ([Platzierung von Elementen](/de/docs/configuration-page-layout#platzierung-von-elementen)), sodass die Linien neben „PLATS“ 66,7 mm lang sind und die neben „LE COMPTOIR“ 56,2 mm, jede 4 mm von den Buchstaben entfernt. Das `lineHeight` des Titels ist ein Faktor, 0.96, der seinen Kasten 14,4 pt hoch macht und ihn innerhalb einer Rasterzeile von 14,5 pt hält. Bei 1 ist der Kasten 15 pt hoch, jeder Titel nimmt zwei Zeilen ein, und die Karte läuft auf vier Seiten.
+
+### 5 · Zeichen als Chips, Kleingedrucktes als Absatzformate
+
+<Excerpt region="badges" />
+
+Ein Chip zeichnet einen Kasten um ein Stück Text innerhalb der Zeile ([Chip-Formate](/de/docs/configuration-styles#chip-stile)), sodass `:chip[V]{style="veg"}`, nach der Beilage getippt, die Scheibe vor dem Tabulator auf die französische Zeile des Gerichts setzt. Die Chip-Formate setzen `bold: true`, weil ein Chip die Schriftstärke des umgebenden Textes übernimmt, nach einer Beilage 400, und `FONTS` die Josefin Sans nur in 700 lädt. Die Hinweise unter den Desserts und das Impressum auf der Rückseite sind Blöcke `:::paragraphs` in 9 und 7,5 pt, und beide Formate tragen ein `marginTop` von einer Zeile ([Absatzformate](/de/docs/configuration-styles#absatzformate)). Ohne diesen Abstand beginnen die Hinweise auf der Zeile nach der englischen Zeile der Käseplatte, als gehörten sie zum Gericht.
+
+### 6 · Die Karte auf eine Achse zentrieren
+
+<Excerpt region="centred" />
+
+`headings.textAlign` und `bodyText.textAlign` stellen alles außer den Gerichten und der Weinkarte auf die Mittelachse der Karte. `lineHeight: pt(3 * LEAD)` gibt dem Namen in 48 pt drei Rasterzeilen. Ohne diese Angabe nimmt der Name den Standardzeilenabstand und vier Zeilen ein, die zweite Zeile der Hinweise rückt auf eine eigene Seite, und die Karte läuft auf vier Seiten. Ebene 1 schaltet den Umbruch vor H1 ab, `breakBefore: { enabled: false }`, weil der Name und „La Cave“ auf die Seite der Zeichnung über ihnen gehören. Bleibt der Standardwert `{ enabled: true, parity: 'always-odd' }`, steht jede Zeichnung allein auf einer Seite, sieben Seiten insgesamt. Die Konfiguration setzt keine `locale`: Nichts auf dieser Karte steht im Blocksatz, und Flattersatz wird nur mit eingeschaltetem `bodyText.hyphenation.ragged` getrennt.
+
+## Varianten
+
+### Die Linien bei fester Länge enden lassen
+
+Eine feste Breite statt `'fill'` hält jede Linie 20 mm lang und 4 mm vom Titel entfernt, sodass das Paar neben „PLATS“ näher an der Mitte sitzt als neben „LE COMPTOIR“.
+
+```diff
+-    size: { width: 'fill' }, // to the column's edge
++    size: { width: mm(20) }, // 20 mm, wherever the title ends
+```
+
+### Punkte bis zum Preis führen
+
+Eine Füllzeichenfolge füllt den Raum vor dem Stopp. `'. '` wiederholt einen Punkt und ein Leerzeichen, von einem halben Geviert nach dem letzten Zeichen oder Wort des Gerichts bis ein halbes Geviert vor seinen Preis.
+
+```diff
+-  tabStops: [{ position: 'end', align: 'end' }],
++  tabStops: [{ position: 'end', align: 'end', leader: '. ' }],
+```
+
+### Die Weinkarte wie ein Kassenbuch linieren
+
+`rules: 'horizontal'` zieht eine Haarlinie in Messing von 0,5 pt über und unter jede Zeile der Weinkarte. Linien nehmen keinen Raum ein, beide Seiten behalten also ihr Layout, und die leeren Zeilen über „Blancs“ und „Rouges“ bekommen ein eigenes Paar Haarlinien.
+
+```diff
+-const tableStyle = { rules: 'none', cellPadding: pt(LEAD / 4), // a row: 1½ lines of LEAD
++const tableStyle = { rules: 'horizontal', borderColor: col('brass'),
++  borderWidth: pt(0.5), cellPadding: pt(LEAD / 4),
+```
+
+## Häufige Fehler
+
+Lassen Sie auf der ersten Zeile des Gerichts Platz für den Preis. Laufen Gericht und Beilage über die Stelle hinaus, die der Preis braucht, nimmt der Stopp das letzte Wort des Gerichts mit dem Preis auf die nächste Zeile mit, und die englische Zeile folgt danach: Das Gericht nimmt dann drei Zeilen ein, und der Gang endet eine Zeile tiefer.

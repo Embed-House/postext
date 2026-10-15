@@ -1,0 +1,67 @@
+---
+title: "Eine Fahnenkorrektur mit jedem Fehler rot markiert"
+summary: "Eine Zeitungsfahne, zweimal korrigiert: Jeder Fehler, den die Engine meldet oder der Pen findet, ist rot auf der Seite markiert und mit dem Markdown verknüpft."
+plain: "Ein Nachrichtenartikel aus einer Lokalzeitung, zweimal auf Fehler geprüft. Er zeigt, wie jeder Fehler auf der Seite rot markiert und mit der Textzeile verknüpft wird, die ihn verursacht hat."
+description: "Korrekturplatz in Postext: offene Direktivenblöcke, calloutOverflow, unbekannte IDs, zu lockere Zeilen auf der Seite markiert, ein Klick wählt das Markdown."
+question: "Wie finde ich heraus, was mit meinem Dokument nicht stimmt, und führe jeden Fehler auf sein Markdown zurück?"
+aliases: ["Fahnenkorrektur", "Korrektur lesen", "Korrekturabzug", "Dokument debuggen", "Parse-Fehler", "doc.warnings", "calloutOverflow", "unbekannter Verweis", "unbekannte Direktive", "zu lockere Zeilen", "Quellzuordnung", "Klick zur Quelle", "sourceStart", "Wortverbinder", "Dollarzeichen maskieren", "galley proof"]
+pageNotes: { "1": "Seite 1 von „The Tideline“, Ausgabe 41: ein rot umrandeter Stempel „PROOF · 2ND PASS“ in der Ecke oben rechts, ein Nachtfoto der Fähre „Marram“, die unter einem Vollmond eine dunkle Flussmündung überquert, die Dachzeile „Estuary · Transport“, die Schlagzeile „The Night Ferry Returns“ in kräftiger schwarzer Grotesk, ein kursiver Vorspann und eine Autorenzeile in Monospace. Es folgen zwei Absätze im Blocksatz; der erste zitiert „map 1“, einen Plan der Route in der Außenspalte. Am Fuß der Seite beginnt der Infokasten „The crossing in figures“ unter einer roten Linie.", "2": "Seite 2: Der Infokasten läuft ohne Titel unter seiner roten Linie mit dem zweispaltigen Fahrplan weiter, dann läuft der Artikel in einer Antiqua im Blocksatz weiter. Die Außenspalte enthält ein Zitat von Dana Whitcomb, eine Zeitleiste der beiden Boote (1971, 2015, 2026) und an ihrem Fuß das Impressum." }
+---
+
+## Was Sie setzen
+
+Ausgabe 41 von *The Tideline*, einer Wochenzeitung des Landkreises, macht mit der Rückkehr der Nachtfähre über den Sawyer auf, und der Pen korrigiert den Artikel zweimal. Der erste Durchgang ist der Text, wie er eingereicht wurde: der korrigierte Artikel mit sieben wieder eingesetzten Fehlern, darunter ein Stempel, der als nicht existierende Direktive getippt ist, und ein Infokasten, der nie geschlossen wird. Diese sieben Fehler hinterlassen elf Markierungen. Wie auf der Karte ist jeder Fehler auf der Zeile, in der er gesetzt wurde, rot unterstrichen (eine zu lockere Zeile wird stattdessen getönt), und seine Nummer im Rand entspricht seinem Eintrag in der Liste neben den Seiten. Ein Klick auf eine Zeile oder einen Eintrag wählt sein Markdown aus. Die Seiten unten sind der zweite Durchgang. Die Prüfungen finden darin nichts, und ein Stempel „PROOF · 2ND PASS“ ist in die Ecke oben rechts geheftet.
+
+## Zubereitung
+
+### 1 · Lesen, was die Engine meldet, und dann den Rest prüfen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `parseMarkdownWithIssues()` gibt für jedes offen gebliebene `$`, `$$` oder `:::` eine Meldung zurück, und `doc.warnings` enthält ein `calloutOverflow` für jeden Kasten, den kein Schnitt teilen konnte. `doc.converged` und `doc.iterationCount` sagen, ob sich das Layout eingependelt hat, und dieser Artikel pendelt sich mit und ohne Fehler nach einer Iteration ein. Die Engine verzeichnet außerdem unbekannte IDs und Direktiven in `doc.contentWarnings`, und `findLooseLines` gibt die zu lockeren Zeilen zurück: die Prüfungen, die das Bedienfeld Prüfungen der Sandbox zeigt ([Bedienfelder der Seitenleiste](/de/docs/sandbox#bedienfelder-der-seitenleiste)). `proof()` nimmt diese Messungen selbst vor, damit jeder Fehler in einer Liste mit einer Form landet: eine Art, ein Quellbereich und ein Detail. Es vergleicht die IDs von `:ref` und `::resource` mit den `resources` des Builds und die Namen der Direktivenblöcke mit `KNOWN_CONTAINERS` und `KNOWN_DIRECTIVES`. Für diesen Artikel meldet es außerdem einen Listenblock, dessen `startNumber` eine Jahreszahl ist, und jede Formel, da der Artikel keine enthält, und es liest die gesetzten Zeilen auf Wortzwischenräume, die über `maxWordSpacing` gedehnt sind, auf Zeilen im Flattersatz und auf Trennstriche, die in eine Adresse eingefügt wurden.
+
+### 2 · Die Fehler in den korrigierten Text zurücksetzen
+
+<Excerpt region="first-pass" />
+
+Der Pen behält eine Markdown-Datei, den korrigierten Artikel, und macht daraus den ersten Durchgang, indem er sieben Korrekturen rückgängig macht; so können die beiden Fassungen nicht auseinanderlaufen, und jede Markierung hat eine bekannte Ursache. Der korrigierte Text wird zuletzt gebaut, und die Seiten unten zeigen diesen Build. `\$` [maskiert](/de/docs/document-format#konventionen-beim-schreiben) das Dollarzeichen eines Preises, sodass sich keine Formel öffnet. Ein Wortverbinder (U+2060) vor jeder Jahreszahl in der Zeitleiste auf Seite 2 verhindert, dass ein Eintrag wie *1971. The Tern…* eine ab seinem Jahr nummerierte Liste eröffnet; der erste Durchgang entfernt nur den vor 1971. Mit dem Schema `https://` wird eine Webadresse als Adresse gesetzt, nie getrennt und nur an ihren Fugen umbrochen, wie auf Seite 1 vor *.example*. Ohne das Schema ist die Adresse ein gewöhnliches Wort, und der erste Durchgang trennt sie als *night-ferry*. Der siebte Eintrag entfernt die schließende Zeile des Zeitleistenkastens, und Schritt 3 zeigt, was das Layout daraus macht.
+
+### 3 · Jeden Fehler dort markieren, wo er gesetzt wurde
+
+<Excerpt region="marks" />
+
+Jede Zeile des VDT trägt `sourceStart` und `sourceEnd`, sodass der Quellbereich eines Fehlers zu der Zeile führt, die ihn gedruckt hat. Die Zeile `:::` eines Containers wird nicht gedruckt, und ihre Markierung kommt auf die erste Zeile, die innerhalb von `REACH` (80) Zeichen danach beginnt. Ein `calloutOverflow` erhält einen Balken unter dem Fuß der Spalte, die er nennt. Ein Fehler kann mehrere Markierungen hinterlassen. Die nackten Dollarzeichen machen aus `$2.50 on foot, $` eine Formel, die nichts druckt, weil dieser Pen die Mathe-Engine nie lädt, und das dritte Dollarzeichen öffnet eine Formel, die sich nie schließt. Ohne diese Wendung fällt eine Zeile des Fahrpreisabsatzes mit Wortzwischenräumen vom 1,9-Fachen ihrer normalen Breite aus. Die zwei fehlenden schließenden Zeilen des Infokastens lassen ihn und seine Gruppe `:::columns` bis zum Ende des Artikels offen, und was folgt, wird darin gesetzt, in der zweiten Spalte der Gruppe. Eine Spaltengruppe wird wie der Kasten um sie herum zwischen ihren Spalten geschnitten, mit diesen beiden fehlenden Zeilen allein läuft also nichts über. Die fehlende Zeile der Zeitleiste ist es, die das bewirkt. Sein Kasten, im Infokasten offen gelassen, nimmt die letzten fünf Absätze und das Impressum auf, und ein Kasten in einem anderen Kasten wird nie geschnitten. Er wird auf Seite 3 gesetzt und läuft 69 mm über den Fuß der Spalte hinaus; was unter diesem Fuß liegt, wird nicht gedruckt, und der erste Durchgang hat drei Seiten statt zwei. Die Warnung trägt den Quellbereich des Infokastens, des Kastens, den das Layout platziert hat, sodass Eintrag 8 den äußeren Kasten auswählt, von seiner öffnenden Zeile bis zum Ende des Artikels. `proof()` nennt eine Zeile zu locker, wenn ihr Wortabstand, `lineWordSpacing(line)`, über `maxWordSpacing` liegt (hier 1,6). Eine Zeile, deren Wortzwischenräume das 3-Fache überschreiten würden, hat keinen Wert zum Vergleichen, weil der Zeilenumbruch sie stattdessen [im Flattersatz setzt](/de/docs/justification#zeilen-die-der-umbruch-nicht-füllen-kann); `proof()` prüft daher auch `ragged`.
+
+### 4 · Das Markdown hinter einer Zeile auswählen
+
+<Excerpt region="source" />
+
+Ein Klick kommt in CSS-Pixeln an. `onPageClick()` rechnet ihn in Seitenpixel um, findet die Zeile, deren `bbox` ihn enthält, und wählt den Quellbereich dieser Zeile in der Textarea aus; ein Eintrag in der Liste wählt den Bereich seines Fehlers auf dieselbe Weise aus. `selectSource()` fokussiert die Textarea, ohne die Seite zu scrollen, und setzt ihr `scrollTop` aus der Höhe des Textes vor der Auswahl. Die `bbox` einer Blocksatzzeile behält die natürliche Breite der Zeile, nicht die, in der sie gemalt wird; `linesOf()` verlängert sie daher bis zur rechten Kante ihres Blocks. Sonst endete die Tönung vor dem Rand, und ein Klick nahe der rechten Kante wählte nichts aus.
+
+### 5 · Den Infokasten teilen lassen, den Stempel anheften
+
+<Excerpt region="boxes" />
+
+`keepTogether: false` lässt den Infokasten am Fuß von Seite 1 beginnen und umseitig unter seiner roten Linie weiterlaufen, ohne seinen Titel. Der Kasten hat keinen Hintergrund und keine Linie an seinem Fuß, auf Seite 2 trennt also nur Weißraum den Fahrplan vom Artikel, und `marginBottom` ist ein voller Zeilenabstand, 14 pt; mit 4 pt endete der Fahrplan 1,5 mm über dem nächsten Absatz. Der Stempel ist `placement: 'fixed'`, aus dem Fluss genommen und 8 mm unter der Oberkante angeheftet, und `width: 'auto'` schrumpft ihn auf seinen Titel, 42 mm breit statt der 110 mm der Hauptspalte.
+
+## Varianten
+
+### Den Infokasten zusammenhalten
+
+Mit dem voreingestellten `keepTogether` rückt der Kasten in einem Stück auf Seite 2; Seite 1 endet 33 mm zu früh, und der Artikel läuft auf eine dritte Seite.
+
+```diff
+-  { id: 'facts', keepTogether: false, backgroundEnabled: false, marginBottom: pt(LEAD),
++  { id: 'facts', backgroundEnabled: false, marginBottom: pt(LEAD),
+```
+
+### Einen Build anhalten, der noch Fehler hat
+
+Führen Sie in einem Build-Skript oder einem Test `proof()` auf dem endgültigen Text aus und werfen Sie einen Fehler, wenn es etwas findet.
+
+```diff
+ const doc = await build(markdown); // last: the corrected galley, the pages below
++if (proof(markdown, doc).length) throw new Error('The second pass still has faults.');
+```
+
+## Häufige Fehler
+
+- Passen Sie den Text so ein, dass der Infokasten Seite 1 bis zur letzten Zeile füllt. Ein Kasten, der eine Seite abschließt, rückt beim Spaltenausgleich an ihren Fuß (`headings.balancing.closingBox`, standardmäßig `'first'`): Streichen Sie den letzten Satz des ersten Absatzes, und die Linie des Kastens sitzt 6,4 mm statt 2,4 mm unter dem Fahrpreisabsatz.

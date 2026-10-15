@@ -1,0 +1,46 @@
+---
+title: "Ein Prüfstand für die Einstellungen des Folio-Betrachters"
+summary: "Ein Formular mit allen Einstellungen von config.folio steuert per setAppearance einen Betrachter: Papier, Bindung, Einband, Tisch, Licht, Neigung."
+plain: "Ein kleines Taschenbuch in 3D neben einem Bedienfeld mit Reglern. Ändern Sie Papier, Bindung, Tisch oder Licht, und das Buch ändert sich sofort, ohne neu gesetzt zu werden."
+description: "Papiersorte, Grammatur, Struktur, Bindung, Einband, Tisch, Licht und Neigung als Formularfelder, die ein Buch in postext-folio per setAppearance umgestalten."
+question: "Wie sehe ich mir Bindung, Einband, Papier und Licht eines Buchs an, bevor es in den Druck geht?"
+aliases: ["Folio-Einstellungen", "setAppearance", "Vorschau der Bindung", "Papiervorschau", "Buch-Mockup", "Einbandfarbe", "Beleuchtung", "Tischoberfläche"]
+pageNotes: { "1": "Der vordere Umschlag: eine ziegelrote Fläche bis an jede Kante, der Titel „Six Knots“ in einer cremefarbenen geometrischen Grotesk, eine kursive Unterzeile und der Name der Autorin am Fuß.", "3": "Eine Knotenseite: eine kleine rote Dachzeile, der Name des Knotens in einer Groteskschrift als Überschrift und zwei kurze Absätze im Blocksatz.", "10": "Der hintere Umschlag: die ziegelrote Fläche mit einer zentrierten kursiven Zeile." }
+---
+
+## Was Sie setzen
+
+*Six Knots*, ein zehnseitiges Taschenbuch im Endformat 110 × 160 mm, in Folio geöffnet neben einem Bedienfeld mit jeder Einstellung von `config.folio`. Wählen Sie eine Papiersorte, und die Blätter ändern Farbe, Oberfläche und Steifigkeit; schalten Sie die Bindung vom Paperback zum Hardcover, und um den Buchblock wächst eine Decke; wählen Sie statt der gedruckten Umschlagseiten die Decke, einen Bezug aus Leinen oder Leder, einen Tisch, ein Licht, eine Neigung. Das Buch wird einmal gesetzt. Jede Änderung geht mit `setAppearance` an den Betrachter, sodass sich keine Zeile verschiebt und keine Seite neu gezeichnet wird, und unter dem Formular erscheinen die Einstellungen als Code zum Einfügen in `config.folio`.
+
+## Zubereitung
+
+### 1 · Die Felder nach der Konfiguration benennen
+
+<Excerpt region="form" />
+
+Jedes Feld des Formulars heißt nach seinem Pfad in `config.folio` (`paper.grammage`, `binding.cover`, `lighting.environment`), sodass eine einzige Schleife das Formular in das Objekt verwandelt, das der Betrachter annimmt: Zahlen aus den Schiebereglern, Wahrheitswerte aus den Kontrollkästchen, eine Farbe `{ hex, model }` aus dem Farbwähler. Dasselbe Objekt ist die eigene `config.folio` des Dokuments, wenn der Pen es baut, und so öffnet die Sandbox das Buch im Anfangszustand des Formulars.
+
+### 2 · Umschlagseiten, die der Betrachter als Deckel umschlagen kann
+
+<Excerpt region="covers" />
+
+Mit `binding.cover: 'pages'` ist die erste Seite der vordere Deckel und die letzte der hintere, sofern sie auf eine linke Seite fällt. Das Überschriftenformat des hinteren Umschlags bricht auf eine gerade Seite um, sodass das Buch immer auf einer linken Seite endet und sich beide Deckel umschlagen lassen. Stellen Sie das Formular auf „A case round the pages“, und dieselben beiden Seiten blättern als gewöhnliche Blätter in einer Leinendecke.
+
+### 3 · Das Buch an Ort und Stelle umgestalten
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `setAppearance({ folio })` ersetzt die Einstellungen des Dokuments und zeichnet die Szene neu: Dicke und Steifigkeit des Papiers, die Decke, die Texturen des Tischs und das Licht. Die Seiten behalten ihre Bilder, sodass eine Änderung im nächsten Frame erscheint. Eine Papiersorte bringt ihre eigene Grammatur mit, deshalb verschiebt ihre Wahl den Grammaturregler; `resetView()` holt die Kamera zurück, nachdem der Leser das Buch mit gedrückter rechter Maustaste gedreht hat.
+
+## Varianten
+
+### Mit einem Hardcover in Leinendecke beginnen
+
+Ändern Sie die Vorgaben des Formulars in `index.html`; Dokument und Sandbox folgen ihnen.
+
+```diff
+-        <option value="hardcover">Hardcover</option><option value="paperback" selected>Paperback</option>
++        <option value="hardcover" selected>Hardcover</option><option value="paperback">Paperback</option>
+```
+
+### Ein Buch, sein Aussehen in der Konfiguration
+
+<RecipeLink slug="folio-book-on-a-desk">Ein Buch auf dem Tisch</RecipeLink> schreibt dieselben Einstellungen einmal in `config.folio`, ohne Formular, und <RecipeLink slug="paper-swatch-book">das Papiermusterbuch</RecipeLink> legt auf jedes Blatt ein anderes Papier.

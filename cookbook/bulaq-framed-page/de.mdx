@@ -1,0 +1,53 @@
+---
+title: "Eine Bulaq-Seite: der Text im Rahmen seines Kommentars"
+summary: "Ibn ʿAqīls Grammatikkommentar in der Hauptspalte, Glossen in der äußeren Seitenspalte neben den erklärten Stellen, alles in einem doppelten Linienrahmen."
+plain: "Eine Seite wie in den arabischen Büchern, die im 19. Jahrhundert in Kairo gedruckt wurden: der Haupttext in der Mitte, kurze Anmerkungen dazu in einer schmalen Spalte am Rand und die ganze Seite von gedruckten Linien eingerahmt."
+description: "Eine Seite im Bulaq-Stil in Postext: anderthalb Spalten mit Seitenkästen für die Ḥāschiya, eine Spaltenlinie und ein Linienrahmen je Seite der Doppelseite."
+question: "Wie gestalte ich eine Bulaq-Seite, mit dem Kommentar als Rahmen um den Text?"
+aliases: ["Bulaq", "Būlāq", "Ḥāschiya", "hashiya", "Hamisch", "Randkommentar", "Scharḥ", "Kommentarseite", "Ibn ʿAqīl", "Alfiyya", "Ibn Mālik", "arabische Grammatik", "Linienrahmen", "Dschadwal", "شرح ابن عقيل", "حاشية", "هامش"]
+pageNotes: { "2": "Die erste Textseite in einem doppelten Linienrahmen: ein roter Kapiteltitel in Ruqʿa, die ersten Verse der Alfiyya in Rot, zwei je Zeile, und Ibn ʿAqīls Kommentar in Schwarz; in einer schmalen Spalte am rechten Rand, hinter einer senkrechten Linie, drei Glossen, deren erste Wörter rot sind." }
+---
+
+## Was Sie setzen
+
+Sechs Seiten, gesetzt wie die Druckerei von Bulaq und ihre Kairoer Nachfolger im 19. Jahrhundert einen Kommentar druckten. Ibn ʿAqīls Erklärung der ersten Verse der Alfiyya, der Grammatik Ibn Māliks in tausend Versen, läuft in der Hauptspalte, die Verse in Rot; am Außenrand steht eine Ḥāschiya, kurze Glossen, die jeweils mit den Wörtern des erklärten Textes beginnen, neben der Stelle, zu der sie gehören. Eine Doppellinie rahmt den Satzspiegel, mit einem Band an seinem Kopf für Kapitel und Pagina, und eine einfache Linie trennt den Text von seinem Rand. Eine echte Bulaq-Seite legt die Ḥāschiya um drei Seiten des Textes; Postext setzt sie nur auf eine Seite, und dieses Rezept sagt es.
+
+## Zubereitung
+
+### 1 · Die Ḥāschiya in einer eigenen Seitenspalte
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Layout mit anderthalb Spalten, dessen Seitenspalte nur Gleitobjekte aufnimmt, hält den Kommentar aus dem Textfluss heraus: Jede Glosse ist ein `:::callout{type="hashiya" span="side"}`, geschrieben vor der Stelle, die sie erklärt, und sie beginnt auf der Höhe der ersten Zeile dieser Stelle; `sideAtColumnEnd: 'after'` hält sie neben der Stelle, wenn diese auf der nächsten Seite weiterläuft ([Layout](/de/docs/configuration-page-layout#layout)). Der Kasten hat weder Hintergrund noch Rahmen noch Innenabstand, er liest sich also wie Text am Rand, sein Lemma fett, das `boldColor` rot färbt. `sideColumnSide: 'outer'` legt die Spalte auf beiden Seiten an den Außenrand: rechts auf der geraden Seite, die in einem rechts gebundenen Buch rechts liegt.
+
+<PageShot page={2} crop="0,0.58,1,0.34" caption="Seite 2: Die Glosse zu «كديز» beginnt auf der Höhe des Absatzes, der das Wort verwendet, am Außenrand hinter der Spaltenlinie." />
+
+### 2 · Ein Rahmen für jede Seite der Doppelseite
+
+<Excerpt region="frame" />
+
+Der Rahmen besteht aus drei Gestaltungselementen der Seite in der Kopfzeile: zwei Kästen mit Rahmen und ohne Füllung im Abstand von 1,3 mm und einer Linie unter dem Band mit dem Kolumnentitel. Seitenelemente sind physisch, deshalb wird der Rahmen zweimal gebaut, einmal je Parität, aus den Rändern dieser Seite ([Seitenreihenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)). Die Pagina steht auf jeder Seite am äußeren Ende des Bandes, auch auf Auftaktseiten; der Kapiteltitel ist zentriert und fehlt auf der Auftaktseite, wo der Titel selbst darunter steht.
+
+### 3 · Eine Titelseite im selben Rahmen
+
+<Excerpt region="title" />
+
+Die Titelseite verwendet den Rahmen ohne sein Band wieder. Die Gestaltung einer Überschrift steht im Fluss und wird mit der Seite gespiegelt, deshalb wird der Rahmen dort mit vertauschten Seiten gebaut (`inFlow`): Seine linke Seite ist die rechte des Blattes. Seine Zeilen kommen aus Attributen der Überschrift, `on` und `margin`, sodass die ganze Titelseite eine einzige Zeile Markdown ist, und die lateinische Zeile darunter wechselt mit der Ausgabe.
+
+## Varianten
+
+### Den Kommentar an den Bundsteg legen
+
+Manche Druckereien setzen die Ḥāschiya an den Bund, damit der Text den breiteren Außenrand behält.
+
+```diff
+-const layout = { layoutType: 'oneAndHalf', sideColumnRole: 'floats', sideColumnSide: 'outer',
++const layout = { layoutType: 'oneAndHalf', sideColumnRole: 'floats', sideColumnSide: 'inner',
+```
+
+### Jede Glosse einrahmen
+
+Eine dünne Linie um jede Glosse, wie sie manche späteren Kairoer Drucke zeigen, ist der eigene Rahmen des Kastens.
+
+```diff
+-  stripe: { enabled: false }, border: { enabled: false },
++  stripe: { enabled: false }, border: { enabled: true, width: pt(0.4), color: col('rule') },
+```

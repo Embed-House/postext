@@ -1,0 +1,51 @@
+---
+title: "Arabischer Text für den Maghreb mit europäischen Ziffern"
+summary: "Ein arabisches Kapitel für Marokko: Die Locale „ar-MA“ hält den Text rechts nach links und rechts gebunden und schreibt jede erzeugte Zahl als 1, 2, 3."
+plain: "In Marokko, Algerien und Tunesien drucken arabische Bücher ihre Zahlen mit den in Europa üblichen Ziffern 1, 2, 3, nicht mit ١، ٢، ٣. Eine Einstellung, Sprache und Land des Dokuments, gibt dem ganzen Buch diese Ziffern."
+description: "Ein arabisches Kapitel für eine marokkanische Ausgabe in Postext: ar-MA gibt Paginas, Überschriften, Listen, Noten und Abbildungen europäische Ziffern."
+question: "Wie drucke ich europäische Ziffern (1, 2, 3) in einem arabischen Buch für eine Maghreb-Ausgabe?"
+aliases: ["Maghreb", "Marokko", "ar-MA", "europäische Ziffern", "westarabische Ziffern", "arabische Ziffern", "Zahlzeichen", "latn", "Fès", "Zellige", "أرقام", "المغرب"]
+pageNotes: { "1": "Der Kapitelauftakt, Seite 41: الفصل 3: أبواب فاس in grünen kufischen Buchstaben, zwei Absätze arabischer Text im Blocksatz mit der Jahreszahl 789 in europäischen Ziffern und darunter ein Band aus Zellige, kobaltblaue achtzackige Sterne auf Grün mit ockerfarbenen Quadraten, beschriftet mit شكل 3-1." }
+---
+
+## Was Sie setzen
+
+Ein Kapitel aus einem Führer durch die Altstädte Marokkos, über die Tore von Fès, so gedruckt, wie es ein marokkanischer Verlag tun würde: 13,5 × 21 cm, Noto Naskh Arabic in 12,5 pt, Überschriften in Noto Kufi Arabic im Grün der Fliesen von Fès. Der Text läuft von rechts nach links, und das Buch ist rechts gebunden wie jedes arabische Buch, aber jede Zahl auf der Seite steht als 1, 2, 3: die Paginas 41 bis 44, الفصل 3, die Abschnittsnummern 3-1 und 3-2, die Liste der Tore 1- bis 5-, die Notenzeichen (1) und die Abbildungsnummer شكل 3-1. So ist es im Maghreb von Marokko bis Tunesien üblich, und die Seite zeigt es mit einer einzigen Einstellung. <RecipeLink slug="arabic-novel-right-bound">Ein arabischer Roman, rechts gebunden, von rechts nach links</RecipeLink> zeigt dasselbe Buch mit den Ziffern des Maschrek, ١٢.
+
+## Zubereitung
+
+### 1 · Das Land wählt die Ziffern
+
+Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. `numerals` bleibt auf `'auto'`, und die Engine liest die Ziffern aus dem Sprach-Tag: `ar-MA`, `ar-DZ`, `ar-TN`, `ar-LY`, `ar-MR` und `ar-EH` ergeben europäische Ziffern, `ar` allein und die Regionen des Maschrek ergeben ١٢٣ ([Ziffern und Zahlstile](/de/docs/arabic-layout#ziffern-und-zahlstile)). Es ändern sich nur die Zahlen, die die Engine schreibt: die Pagina, die Zähler der Überschriften, die Listennummern, die Notenzeichen, die Abbildungsnummern. Die Jahreszahlen im Text, 789 und 1913, stammen vom Autor, sind in den Ziffern der Ausgabe getippt, und die Engine schreibt sie nie um. Das `{startAt=3}` der Überschrift liest ٣ ebenso wie 3, sodass dasselbe Markdown beiden Ausgaben dient.
+
+### 2 · Zeichen rund um die Zahlen
+
+<Excerpt region="marks" />
+
+Arabische Bücher schreiben eine Listennummer mit einem nachgestellten Bindestrich, 1-, und ein Notenzeichen in Klammern, (1); beide Vorlagen übernehmen die Ziffern des Dokuments, sodass die Maschrek-Ausgabe aus denselben Einstellungen ١- und (١) druckt ([Fußnoten](/de/docs/arabic-layout#fußnoten)). Das Etikett der Bildunterschrift endet mit einem Doppelpunkt, شكل 3-1:, weil ein Punkt nach einer Zahl wie ein Dezimalpunkt gelesen wird. Die Noten beginnen auf jeder Seite wieder bei (1), wie die meisten arabischen Bücher sie zählen.
+
+### 3 · Ein Fliesenband, im Code gezeichnet
+
+<Excerpt region="art" />
+
+Die Abbildung ist ein im Pen erzeugtes SVG: achtzackige Sterne aus zwei um 45° gedrehten Quadraten, kleine Quadrate dazwischen, in Grün, Kobaltblau und Ocker aus der Palette. Ihre Bildunterschrift ist in beiden Ausgaben arabisch und wird nach dem Kapitel nummeriert, `{h1}-{n}`, so wie die arabischen Ressourcentypen ihre Abbildungen zählen.
+
+## Varianten
+
+### Die Ziffern des Maschrek drucken
+
+Die ägyptische oder levantinische Ausgabe desselben Kapitels: Das Tag ändert sich, das Markdown nicht.
+
+```diff
+-  locale: 'ar-MA',
++  locale: 'ar-EG',
+```
+
+### Eine marokkanische Locale behalten und ١٢٣ drucken
+
+Eine ausdrücklich gesetzte Einstellung hat Vorrang vor der Voreinstellung der Region.
+
+```diff
+   locale: 'ar-MA',
++  numerals: 'arab',
+```

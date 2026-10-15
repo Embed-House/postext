@@ -1,0 +1,63 @@
+---
+title: "Eine Erzählung auf Genkō yōshi, ein Zeichen je Kästchen"
+summary: "Der Anfang von Botchan auf Manuskriptpapier mit 400 Kästchen: ein Raster von 20 × 20, ein Zeichen je Kästchen, 、。 nie am Zeilenkopf, sondern darunter gehängt."
+plain: "Japanisches Manuskriptpapier hat für jedes Zeichen ein Kästchen. Diese Seite schreibt die ersten Zeilen eines berühmten Romans darauf, mit Titel, Autorenname und jedem Satzzeichen dort, wo die japanischen Schulregeln sie hinsetzen."
+description: "Genkō yōshi in Postext: ein gezeichnetes Zeichenraster von 20 × 20, ein Zeichen je Kästchen, Titel- und Namenszeile, 、。 unter das letzte Kästchen gehängt."
+question: "Wie setze ich Japanisch auf Manuskriptpapier, 20 Kästchen mal 20 Zeilen, ein Zeichen in jedem Kästchen?"
+aliases: ["genkō yōshi", "genkouyoushi", "原稿用紙", "Manuskriptpapier", "Blatt mit 400 Zeichen", "400字詰", "Kästchenpapier", "Zeichenraster", "マス目", "masume", "japanisches Aufsatzpapier", "作文", "sakubun", "Kinsoku auf Manuskriptpapier", "ぶら下げ", "burasage", "Botchan", "坊っちゃん", "Natsume Sōseki", "Klee One"]
+pageNotes: { "1": "Das erste Blatt, allein links: ein rotbrauner Doppelrahmen um 20 Zeilen mit je 20 grauen Kästchen, 坊っちゃん in der ersten Zeile ab dem dritten Kästchen, 夏目　漱石 in der zweiten, ein Kästchen über dem Fuß endend, dann der Text von Botchan ab der dritten Zeile, ein Zeichen oder Satzzeichen in jedem Kästchen; ein 、, das nach dem zwanzigsten Kästchen fällt, hängt darunter. Die Blattnummer （1） und der aufgedruckte Vermerk „20×20“ stehen unter dem Rahmen.", "3": "Das dritte Blatt: Der Absatz endet in seiner zwölften Zeile, und die übrigen Zeilen sind leere Kästchen." }
+---
+
+## Was Sie setzen
+
+Drei Blätter japanisches Manuskriptpapier (原稿用紙, Genkō yōshi) der Sorte mit 400 Kästchen, auf denen die ersten drei Absätze von Natsume Sōsekis *Botchan* abgeschrieben sind, wie es ein Schriftsteller oder ein Schüler täte: 20 Zeilen mit je 20 Kästchen, von oben nach unten und von rechts gelesen, in der Klee One, einer mit der Feder gezeichneten Schrift. Der Titel steht in der ersten Zeile ab dem dritten Kästchen, der Name des Autors in der zweiten, ein Kästchen über dem Fuß; jeder Absatz beginnt nach einem leeren Kästchen. Jedes Zeichen, jedes kleine Kana und jedes Satzzeichen hat ein eigenes Kästchen, und ein 、 oder 。, das eine Zeile eröffnen würde, wird unter das letzte Kästchen der Zeile davor geschrieben. Ein rotbrauner Rahmen, die Blattnummer und der aufgedruckte Vermerk 20×20 machen das Blatt aus. Die chinesische Seite, in Zeichen gezählt, ist <RecipeLink slug="chinese-official-document">Nº 082</RecipeLink>.
+
+## Zubereitung
+
+### 1 · Die Kästchen zeichnen und jedem Zeichen ein ganzes geben
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Das [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster) macht den Satzspiegel 20 Zeichen zu 20 pt (7,1 mm) hoch und 20 Zeilen zu 27 pt (9,5 mm) breit, und `show: true` zeichnet seine Kästchen in einem eigenen hellen Grau, am Bildschirm und im PDF, wenn `renderToPdf` `characterGrid: true` erhält (in einem Buch ist ein Raster eine Korrekturhilfe, deshalb lässt ein PDF es standardmäßig weg); der Streifen von 2,5 mm zwischen zwei Zeilen ist der Platz, an dem Schreibende Lesungen und Korrekturen ergänzen. Ein japanisches Satzzeichen besteht aus einer halben Glyphe und einem halben Geviert Leerraum, und ein Buch nimmt Leerraum heraus, wo zwei Zeichen aufeinandertreffen oder eine Klammer eine Zeile beginnt. Auf Manuskriptpapier behält jedes Zeichen sein Kästchen, deshalb setzt `compressAdjacent: false` 。」 in zwei Kästchen, und `trimLineStart: false` lässt einer Klammer am Zeilenkopf ihr ganzes Kästchen ([Ostasiatische Typografie](/de/docs/configuration-east-asian#ostasiatische-typografie)).
+
+### 2 · Den Zeilenregeln des Manuskripts folgen
+
+Manuskriptpapier hat sein eigenes Kinsoku. Ein kleines Kana oder ー darf eine Zeile beginnen, jedes in seinem eigenen Kästchen; `ja-loose` erlaubt das. Ein 、 oder 。, das eine Zeile eröffnen würde, wird in das letzte Kästchen der Zeile davor geschrieben, zum Zeichen dort, oder direkt darunter; `hangingPunctuation: 'force'` hängt es unter das zwanzigste Kästchen, und keine Zeile wird je gestaucht. Mit `'allow'`, dem Standard für Japanisch, nimmt die Engine das Zeichen zuerst in die Zeile, indem sie ein 、 darin auf ein halbes Kästchen staucht, wie es ein gedrucktes Buch tut und ein Manuskript nie: Der Rest dieser Zeile säße ein halbes Kästchen höher, quer über den Linien des Rasters.
+
+Die letzte Zeile eines Absatzes braucht noch eine Einstellung. Postext verhindert, dass ein Absatz mit einem einzelnen Zeichen endet: Die Zeile davor gibt ihr letztes ab, und da der Text hier nicht im Blocksatz steht, endete diese Zeile ein Kästchen zu früh. Auf Manuskriptpapier wird jedes Kästchen einer vollen Zeile beschrieben, deshalb setzt das Raster `fullLines: true`: Auf <PageRef page={3}>Blatt 3</PageRef> behält die Zeile, die auf 来 endet, ihre zwanzig Kästchen, und der Absatz schließt mit た。 allein ([Zeichenraster](/de/docs/configuration-east-asian#zeichenraster)).
+
+### 3 · Titel und Namen dorthin schreiben, wo die Regeln sie verlangen
+
+<Excerpt region="heading" />
+
+Der Titel ist eine Überschrift in Größe und Schrift des Textes, er füllt also Kästchen wie jede andere Zeile: `lineSpan: 1` hält ihn auf einer Zeile des Rasters, und `indent: em(2)` lässt zwei leere Kästchen über ihm frei ([Abweichungen je Ebene](/de/docs/configuration-text#überschreibungen-pro-ebene)). Der Name ist ein Absatz mit `textAlign: 'end'` und `endIndent: em(1)`, was ihn ein Kästchen über dem Fuß enden lässt, und das Markdown schreibt das leere Kästchen zwischen Familien- und Vornamen als ideografisches Leerzeichen: `夏目　漱石`. Der Text beginnt in der dritten Zeile, jeder Absatz nach einem leeren Kästchen aus `firstLineIndent: em(1)`.
+
+### 4 · Das Blatt um die Kästchen drucken
+
+<Excerpt region="sheet" />
+
+Die Elemente der Kopfzeile werden auf das Blatt selbst gezeichnet: Auf einer vertikalen Seite läuft `x` nach rechts und `y` nach unten, von der linken oberen Ecke aus, anders als bei der Gestaltung einer Überschrift, die im gedrehten Rahmen des Textes angelegt wird. Der Doppelrahmen steht an drei Seiten 1,5 mm von den Kästchen ab und 8 mm unter ihnen, wo die hängenden Satzzeichen hinfallen. `GRID` und `MARGIN` platzieren ihn aus denselben Zahlen, aus denen die Seitenränder bestehen; die an die Seite übergebenen Ränder sind einen halben Millimeter kleiner, weil das Raster sie als Mindestwerte behandelt und eine exakte Passung auf 19 Zeilen gerundet werden könnte.
+
+### 5 · In einer Federschrift setzen
+
+<Excerpt region="pen" />
+
+Die Klee One ist mit der Feder gezeichnet und behält die japanischen Formen der Kanji, sodass die Blätter wie Handschrift wirken, ohne die Unregelmäßigkeit eines Scans. Ihre vertikalen Formen setzen 、。 oben rechts in ihr Kästchen und drehen ー und die Klammern, so wie Schreibende sie setzen. Wie jede japanische Schriftfamilie bei Fontsource kommt sie in etwa 120 Dateien, und `loadCjkFonts` holt diejenigen, die der Text braucht ([Chinesische, japanische und koreanische Schriften](/de/docs/configuration-programmatic-usage#chinesische-japanische-und-koreanische-schriften)).
+
+## Varianten
+
+### Das Raster eines Buches mit denselben Kästchen prüfen
+
+`show: true` funktioniert bei jedem Zeichenraster: Im Bunko von <RecipeLink slug="bunko-novel-furigana">Nº 117</RecipeLink> zeichnet es die 38 × 15 Kästchen über den Text, eine schnelle Kontrolle, ob jede Zeile im Raster bleibt und jede Überschrift in ihren drei Zeilen.
+
+```diff
+-  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES },
++  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES, show: true },
+```
+
+### Die Zeichen stauchen lassen, wie eine gedruckte Seite es tut
+
+Mit dem japanischen Standard lesen sich die Blätter wie ein Buch, das auf Kästchenpapier getippt wurde: Ein 、, das eine Zeile eröffnen würde, wird aufgenommen, indem ein anderes gestaucht wird, und der Rest dieser Zeile sitzt ein halbes Kästchen neben dem Raster.
+
+```diff
+-  hangingPunctuation: 'force',
++  hangingPunctuation: 'allow',
+```

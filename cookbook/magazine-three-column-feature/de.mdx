@@ -1,0 +1,64 @@
+---
+title: "Magazinreportage im dreispaltigen Raster"
+summary: "layoutType 'multiple' teilt die Seite in drei Spalten; placement.columns setzt Fotos und ein gleitendes Zitat über zwei davon oder über alle drei."
+plain: "Eine sechsseitige Reisereportage aus einem Monatsmagazin, in drei schmalen Spalten gesetzt. Sie zeigt, wie Fotos und ein großes Zitat über zwei Spalten oder die ganze Seite laufen und ein Kasten mit praktischen Tipps in einer steht."
+description: "Eine Reisereportage in Postext auf drei Spalten: Fotoauftakt über eine Doppelseite, Fotos über eine bis drei Spalten, ein gleitendes Zitat und ein Infokasten."
+question: "Kann Postext eine Magazinseite in drei Spalten setzen, mit Fotos über zwei davon?"
+aliases: ["dreispaltiges Magazin", "drei Spalten", "Magazinraster", "Foto über zwei Spalten", "zweispaltiges Foto", "Zitat über mehrere Spalten", "Infokasten", "Reisereportage", "Auftaktdoppelseite", "Fotodoppelseite", "Initiale", "Vorspann", "Autorenzeile", "Schlusszeichen", "Lageplan", "pull quote"]
+pageNotes: { "1": "Die linke Seite der Auftaktdoppelseite: Salinen bei Sonnenaufgang füllen die Seite, mit der Dachzeile „Islands · The Atlantic“ und der Schlagzeile „The Salt Rakers of Marisal“ in Weiß über dem dunklen Wasser am Fuß.", "2": "Die rechte Seite: dasselbe Foto läuft oben weiter, ein Salzarbeiter mit seinem Holzrechen vor einer Reihe weißer Salzhaufen; darunter ein Einstiegsabsatz mit einer vierzeiligen blauen Initiale in der ersten Spalte, der kursive Vorspann und die Autorenzeile über den anderen beiden, dann drei Textspalten.", "3": "Drei Spalten im Blocksatz mit blauen Zwischentiteln; ein Foto eines Rechens, der einen Wall aus nassem Salz schiebt, steht über der zweiten und dritten Spalte.", "4": "Ein Foto der rosa Salinen von oben läuft über die ganze Seite; darunter steht ein blau liniiertes Zitat über der zweiten und dritten Spalte.", "5": "Ein Foto eines Siebs, das Salzkristalle abschöpft, steht über der zweiten und dritten Spalte; ein Porträt eines älteren Salzsieders mit Korb steht am Fuß der ersten.", "6": "Die Schlussseite: ein getönter Infokasten, „Visiting Marisal“, mit einer kleinen Karte der Insel füllt den Kopf der ersten Spalte; ein hohes Hafenfoto in der Abenddämmerung reicht über die anderen beiden; die Reportage endet in allen drei Spalten auf gleicher Höhe mit einem kleinen blauen Quadrat." }
+---
+
+## Was Sie setzen
+
+Sechs Seiten aus der Novemberausgabe von *Meridian*, einem Reisemonatsmagazin, auf einer Seite von 225 × 297 mm. Die Reportage beginnt auf einer Doppelseite: Ein einziges Foto von Salinen bei Sonnenaufgang läuft über beide Seiten, links die Schlagzeile negativ aus dem Wasser, rechts unter dem Bild der Einstiegsabsatz mit seiner Initiale, der Vorspann und die Autorenzeile. Danach läuft die Geschichte in drei Spalten im Blocksatz, je 61,7 mm breit. Fotos nehmen zwei Spalten, die ganze Breite oder eine Spalte ein; ein Zitat steht zwischen den Absätzen über zwei Spalten; ein getönter Infokasten mit einer Karte der Insel eröffnet die Schlussseite. Ein kleines blaues Quadrat beendet den Text.
+
+## Zubereitung
+
+### 1 · Die Seite in drei Spalten teilen und Gleitobjekte eine, zwei oder drei nehmen lassen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `layoutType: 'multiple'` mit `columnCount: 3` teilt den 195 mm breiten Satzspiegel in drei gleiche Spalten, bei 5 mm Spaltenabstand also je 61,7 mm, etwa 40 Zeichen Source Serif in 9,6 pt. Das `placement.columns` eines Bilds nimmt so viele benachbarte Spalten samt den Abständen dazwischen ein: Das Rechenfoto ist 128,3 mm breit, die Salinen mit `span: 'page'` die vollen 195 mm. Der Stil des Zitats tut dasselbe für einen Kasten, mit `columns: 2` an einem Stil `placement: 'top'`, sodass es an den Kopf zweier freier Spalten gleitet und der Text darum herum weiterläuft. Ein dreispaltiges Raster passt zu einer Magazinreportage mit vielen Bildern, weil jedes Bild eine, zwei oder drei Spalten einnehmen kann. Langer Text mit wenigen Bildern liest sich in zwei breiteren Spalten besser.
+
+### 2 · Auf einer Doppelseite beginnen, ein Foto über zwei Seiten
+
+<Excerpt region="spread" />
+
+Jede Hälfte des Fotos gehört zu einem Überschriftenstil mit `span: 'page'`, und eine Überschrift über die ganze Seitenbreite beginnt immer eine neue Seite, sodass die Seite der Schlagzeile und die Seite des Vorspanns aufeinanderfolgen. Die linke Hälfte füllt die linke Seite und reserviert nichts (`reserve: false`), sodass die Schlagzeile über dem Wasser am Fuß stehen kann. Die rechte Hälfte ist auf 165 mm zugeschnitten, und Einstiegsabsatz, Vorspann und Autorenzeile hängen darunter am Container. Der Einstiegsabsatz ist ein Gestaltungstext mit einem vierzeiligen `dropCap`, eine Spalte breit; sein leerer unterer Innenabstand zählt zur Höhe des Auftakts, sodass die Spalten 6 mm darunter beginnen. `continuation.pageIndexOffset: 83` macht Seite 84 zu einer linken Seite, sodass sich die beiden Hälften gegenüberstehen.
+
+### 3 · Die Fotos deklarieren und jedes dort zitieren, wo es landen soll
+
+<Excerpt region="resources" />
+
+Ein Gleitobjekt geht an den ersten freien Kopf (oder Fuß) seiner Spalten nach der Zeile, die es zitiert, also bestimmen die Zeilen `::resource` die Seiten. Das Siebfoto wird oben in der ersten Spalte der fünften Seite zitiert, wo die zweite und dritte Spalte noch leer sind, also steht es auf derselben Seite über ihnen. Das Hafenfoto wird spät auf dieser Seite zitiert und steht über zwei Spalten der nächsten. Fotos desselben Typs überholen einander nie, deshalb bleiben ihre Verweise in der Reihenfolge der Geschichte. Bitmaps werden mit den 150 dpi der Seite gemessen: 1500 px ergeben 254 mm und schrumpfen auf die 128,3 mm zweier Spalten.
+
+### 4 · Kolumnentitel und Seitenzahlen außerhalb der Auftaktdoppelseite
+
+<Excerpt region="heads" />
+
+Kopfzeilenelemente werden über die Seite gezeichnet und reservieren keinen Platz, deshalb sind Seitenzahl und Beschriftung im oberen Rand an der Seite verankert. `pages: 'body'` hält sie von beiden Seiten der Doppelseite fern, die Auftaktseiten sind, weil jede mit einer Überschrift über die ganze Seitenbreite beginnt. Die rechte Seite der Doppelseite bekommt ihre Seitenzahl stattdessen am Fuß, über `pages: 'opener'` und `parity: 'odd'`; die linke, ganz Foto, trägt keine.
+
+### 5 · Die Karte des Infokastens in Code zeichnen
+
+<Excerpt region="art" />
+
+Die Karte ist eine SVG-Ressource mit `placement: 'here'`, zitiert innerhalb des Direktivenblocks des Infokastens, sodass sie unter dem Kastentitel in der Satzbreite des Kastens steht. Sie hat keine Beschriftung: Text in einem SVG kann die Webschriften der Seite nicht verwenden, deshalb benennt die Bildunterschrift die Formen. Die Pfeilspitze auf der Fährroute ist ein Pfad, weil ein `<marker>` einen PDF-Export nicht überstehen würde.
+
+## Varianten
+
+### Das Zitat über alle drei Spalten setzen
+
+Ein gleitender Kasten zieht das Attribut `columns` des Direktivenblocks dem seines Stils vor, sodass ein einzelnes Zitat über die volle Breite laufen kann.
+
+```diff
+- :::callout{type="pull"}
++ :::callout{type="pull" columns="3"}
+```
+
+### Die Geschichte in zwei Spalten setzen
+
+Für eine Reportage mit weniger Bildern und längeren Absätzen siehe <RecipeLink slug="magazine-feature-opener">Magazinreportage: vom Fotoauftakt bis zum Schlusszeichen</RecipeLink>, in einem Layout `double`.
+
+## Häufige Fehler
+
+- Ein Foto über zwei Spalten steht über zwei Spalten, die noch leer sind. Wird es in der zweiten Spalte zitiert, findet es auf seiner Seite kein solches Paar mehr, da nur die dritte Spalte übrig ist, und wartet auf die nächste Seite.
+- Die Geschichte ist so eingepasst, dass sie auf der sechsten Seite unter dem Hafenfoto auf gleicher Höhe endet. Prüfen Sie nach einer Änderung, ob die letzte Seite noch voll wird: ein paar Zeilen weniger, und das Foto rückt auf eine eigene Seite.
+- Bei Zeilen von 40 Zeichen hat ein Absatz im Blocksatz wenige Umbruchstellen. `maxJustifyTracking: 15` lässt eine Zeile, die sich nicht innerhalb des doppelten normalen Wortabstands setzen lässt, stattdessen bis zu 0,015 em Sperrung aufnehmen. Beheben Sie eine einzelne Wortzeile am Absatzende, indem Sie den Text ändern, wie es bei diesen Seiten geschah.

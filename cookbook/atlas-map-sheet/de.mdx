@@ -1,0 +1,68 @@
+---
+title: "Atlasblatt: nummerierte Karten und eine gedrehte Übersicht"
+summary: "Karten mit eigener Nummerierung und Legenden auf blauem Balken, ein Schlüssel aus Farbfeldern in den Kartenfarben, eine quer gestellte Seekarte auf Seite 3."
+plain: "Vier Seiten eines Atlas erfundener Inseln. Sie zeigen, wie Karten eigene Nummern erhalten und wie eine große Karte quer gestellt wird, damit sie eine Seite füllt."
+description: "Vier Seiten eines erfundenen Atlas in Postext: nummerierte Karten mit Legendenbalken, Farbschlüssel aus der Kartenpalette, Ortsregister und eine Querkarte."
+question: "Wie nummeriere ich Karten als eigene Abbildungsart, beschrifte sie auf einem Balken und zitiere sie im Text?"
+aliases: ["Atlas", "Karten", "Kartenabbildungen", "Ortsregister", "Legende", "Farbschlüssel", "Abbildung im Querformat", "gedrehte Abbildung", "Legendenbalken", "Seekarte", "Gazetteer", "mapa", "nomenclátor"]
+pageNotes: { "1": "Der Auftakt: ein tiefblaues Band über den Kopf der Seite mit der Dachzeile „Sheet 1 · The islands and their waters“, dem Titel „The Solan Isles“ und einer Windrose; zwei kurze Textspalten; dann Karte 1 über den Fuß der Seite, eine Reliefkarte von vier Inseln in Sand- und Ockertönen auf hellem und dunklerem blauem Wasser, mit roten Straßen und darunter einem Schlüssel aus Farbfeldern, der mit „In metres“ beginnt.", "2": "Karte 2, das Nordende von Brannay mit Höhenlinien, den drei Hool Stacks vor seiner Nordwestspitze und roten nummerierten Scheiben, und Karte 3, der Hafenplan von Kirkwick mit Lotungen und einem Schlüssel aus umrandeten Ziffern, stehen über den beiden Spalten; der Text läuft darunter weiter.", "3": "Karte 4, eine Seekarte der ganzen Inselgruppe und der Festlandküste, um eine Vierteldrehung gedreht, sodass ihr oberer Rand zum Bund zeigt, mit einem Gitter, im Rand mit A bis H und 1 bis 6 bezeichnet, Lotungen im offenen Wasser und siebzehn roten Scheiben.", "4": "Tabelle 1, das Ortsregister: siebzehn Zeilen mit roter nummerierter Scheibe, Ort, Art, Insel und Planquadrat, jede zweite Zeile blau getönt; darunter zwei Spalten Schlusstext und das Impressum, und am Fuß der Seite eine Druckvermerkzeile unter einer Haarlinie." }
+---
+
+## Was Sie setzen
+
+Das erste Blatt eines Atlas der Solan Isles, eines für dieses Rezept erfundenen Archipels, im Code aus einem einzigen Höhenfeld gezeichnet. Seite 1 beginnt mit einem tiefseeblauen Band mit dem Namen des Atlas in 56 pt und einer Windrose, und Karte 1, das Relief der ganzen Inselgruppe, füllt den Fuß der Seite. Das Nordende der Hauptinsel und der Plan ihres Hafens stehen über den beiden Spalten von Seite 2. Auf Seite 3 ist die Karte der Inseln um eine Vierteldrehung gedreht, sodass ihr Gitter aus Quadraten von 8 km die Seite füllt. Seite 4 enthält das Ortsregister, siebzehn Orte in roten Scheiben mit dem Planquadrat jedes Ortes, und am Fuß einen Druckvermerk. Jede Karte ist über der Zeichnung auf einem blauen Balken beschriftet, und der Schlüssel von Karte 1 ist eine Zeile aus Farbfeldern in den Farben der Karte.
+
+## Zubereitung
+
+### 1 · Eine Palette für Seite und Karten
+
+<Excerpt region="palette" />
+
+Die sechs Kartentöne sind Schlüssel desselben Objekts wie die Farben der Seite; `colorPalette` führt sie daher als Paletteneinträge, und die Zeichnungen nehmen ihre SVG-Füllungen aus `palette[id]`. Papierweiße Schrift auf `band`, dem Blau des Auftakts, der Legendenbalken und der Kopfzeile der Tabelle, hat einen Kontrast von 9,2:1; `road`, das einzige Rot, bleibt Straßen, Leuchtfeuern und Ortsnummern vorbehalten und erreicht 5,4:1 gegen das Papier. `main-color` übernimmt den Hexwert von `band`, und die Standardwerte verknüpfen Überschriften, Legendenbalken und Listenzeichen mit dieser ID; alles davon, was die Konfiguration nicht setzt, wird also im Blau des Atlas gedruckt.
+
+### 2 · Wohin jede Karte kommt
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Karte 1 ist ein Gleitobjekt `bottom`, denn ein seitenbreites Gleitobjekt `top` landet nie auf der Seite, die es zitiert. Die Karten 2 und 3 sind Spalten-Gleitobjekte `top`, die auf Seite 1 zitiert werden, und nehmen daher die Köpfe der beiden Spalten von Seite 2 ein ([Platzierung](/de/docs/document-format#platzierung)). `rotate: 'ccw'` legt den oberen Rand der Seekarte an die linke Kante und gibt ihr Seite 3 für sich allein. Gedreht misst die Zeichnung 247,6 mm entlang der Seite, die 53 Rasterzeilen des Satzspiegels abzüglich einer für den Abstand des Gleitobjekts, und 182,2 mm quer dazu, was von der Satzbreite von 196 mm nach Legendenbalken und Anmerkung bleibt. Eine höhere Zeichnung würde verkleinert und ließe am Kopf der Seite blankes Papier.
+
+### 3 · Ein Schlüssel aus denselben IDs
+
+<Excerpt region="legend" />
+
+`RELIEF` führt die Höhenstufen mit ihren Paletten-IDs und den Höhen, bei denen sie beginnen. Die Zeichnung füllt jede Stufe mit `palette[id]`, und der Schlüssel unter Karte 1 schreibt ein `:swatch` mit derselben ID; ein neuer Hexwert in der Palette ändert also Zeichnung und Schlüssel zugleich. Der Schlüssel nennt die Einheit einmal, ausgeschrieben, weil die Anmerkung in Alegreya Sans SC gesetzt ist, die ein kleines *m* als Kapitälchen-M druckt. Auf <PageRef page={2}>Seite 2</PageRef> stellt der Text dieselben Farbfelder neben die beiden Wassertiefen.
+
+### 4 · Karten sind Ressourcen, nummeriert und platziert nach ihren Zitaten
+
+<Excerpt region="resources" />
+
+Eine Ressource erhält ihre Nummer vom ersten Zitat im Text, und `:ref{id="north"}` druckt die Kurzbezeichnung des Typs und diese Nummer, „Map 2“, im laufenden Text oder in einer Legendenanmerkung. Seekarte und Ortsregister werden zuerst auf Seite 2 zitiert, in dieser Reihenfolge; die Seekarte erhält also Seite 3 und das Register den Kopf von Seite 4. Die Windrose ist eine Ressource desselben Typs, aber nur der Auftakt zeichnet sie, und der Text zitiert sie nie; die Karten zählen also weiterhin von 1 bis 4. Jeder Eintrag des Hafenschlüssels ist ein einziger Chip ohne Füllung, Rahmen oder Innenabstand, sodass Nummer, Name und der Punkt danach auf einer Zeile bleiben.
+
+### 5 · Nummern, die Karten und Ortsregister teilen
+
+<Excerpt region="gazetteer" />
+
+`PLACES` ist von Nord nach Süd sortiert und in dieser Reihenfolge nummeriert; die Karten drucken die Nummern in roten Scheiben, die Tabelle in roten Chips. `square()` errechnet das Planquadrat aus denselben Kilometerkoordinaten, die jede Markierung auf den Karten platzieren, sodass Kirkwick, Nummer 6, auf der Seekarte und in der Tabelle in D3 liegt. Jede zweite Zeile erhält ihr blasses Blau aus dem Tabellenformat: `bodyAlternateBackgroundEnabled`, mit `bodyAlternateBackground` an `sea` gebunden.
+
+### 6 · Der Name des Atlas auf einem Band in seinem eigenen Blau
+
+<Excerpt region="opener" />
+
+Das Band ist ein Kasten, an `'bleed'` verankert und ohne Breitenangabe, sodass es von Kante zu Kante reicht. Der große Titel ist `{title}`, der Name des Atlas aus dem Frontmatter, und der eigene Text der Überschrift folgt in der Dachzeile der Blattnummer. Für sich allein reserviert das Band Platz bis zu seinem Fuß, und der Text begänne 3,9 mm darunter; `minHeight` erhöht die Reservierung auf 14 Rasterzeilen unter dem oberen Rand, womit der Text 8,7 mm unter dem Band beginnt.
+
+## Varianten
+
+### Die Seekarte andersherum drehen
+
+Im Uhrzeigersinn gedreht hat die Seekarte ihren oberen Rand und ihren Legendenbalken am Außenrand von Seite 3, und der Leser dreht das Buch entgegen der üblichen Konvention, der `'ccw'` folgt.
+
+```diff
+-  chart: { rotate: 'ccw' }, // turned a quarter, top to the left, on a page of its own
++  chart: { rotate: 'cw' }, // turned a quarter, top to the right, on a page of its own
+```
+
+### Stattdessen eine Tabelle drehen
+
+Eine Tabelle dreht sich mit derselben Einstellung und läuft, wenn sie für eine Seite zu breit ist, gedreht auf der nächsten unter einer wiederholten Kopfzeile weiter: siehe <RecipeLink slug="garden-almanac">den Gartenalmanach</RecipeLink>.
+
+### Eine Karte in den Rand stellen
+
+In einem Layout mit anderthalb Spalten kann die äußere Spalte Abbildungen und ihre Legenden aufnehmen, aber keinen Text: siehe <RecipeLink slug="textbook-margin-column">das Lehrbuch mit Randspalte</RecipeLink>.

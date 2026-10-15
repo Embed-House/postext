@@ -1,7 +1,7 @@
 {
   "$comment": "Curated paths through the Cookbook, edited here rather than in recipe.json so rotating them is a one-file change. 'featured' is ordered: [0] is the gallery's frontispiece, [1..3] the editor's picks; its 'frontispiece' map overrides [0] per site language with a book representative of that language (1–4 entries once a recipe is published); its title is not shown. Every other collection is a reading path, in order, and gets a strip on each of its recipes' pages. List only slugs whose folders exist: the curator adds recipes as they land (the planned line-up is in the design catalogue).",
   "featured": {
-    "title": { "en": "Featured recipes", "es": "Recetas destacadas", "ca": "Receptes destacades", "zh": "精选食谱", "ar": "وصفات مختارة", "ja": "注目のレシピ", "pt": "Receitas em destaque", "fr": "Recettes à la une" },
+    "title": { "en": "Featured recipes", "es": "Recetas destacadas", "ca": "Receptes destacades", "zh": "精选食谱", "ar": "وصفات مختارة", "ja": "注目のレシピ", "pt": "Receitas em destaque", "fr": "Recettes à la une", "de": "Ausgewählte Rezepte" },
     "summary": {
       "en": "The gallery's frontispiece and three editor's picks; the selection changes from time to time.",
       "es": "El frontispicio de la galería y tres recetas elegidas por la redacción; la selección cambia de vez en cuando.",
@@ -10,13 +10,14 @@
       "ar": "واجهة المعرض وثلاث وصفات يختارها المحرّر؛ وتتغير المختارات من حين لآخر.",
       "ja": "ギャラリーの口絵と、編集部が選んだ3つのレシピです。選定は折に触れて入れ替わります。",
       "pt": "O frontispício da galeria e três escolhas da redação; a seleção muda de tempos em tempos.",
-      "fr": "Le frontispice de la galerie et trois choix de la rédaction ; la sélection change de temps en temps."
+      "fr": "Le frontispice de la galerie et trois choix de la rédaction ; la sélection change de temps en temps.",
+      "de": "Das Titelbild der Galerie und drei Empfehlungen der Redaktion; die Auswahl wechselt von Zeit zu Zeit."
     },
     "recipes": ["magazine-cover-and-contents", "letters-edition", "bilingual-facing-verse", "photo-essay-full-bleed"],
-    "frontispiece": { "en": "trade-paperback-novel", "es": "spanish-pocket-novel", "ca": "spanish-pocket-novel", "zh": "vertical-novel-right-bound", "ar": "trade-paperback-novel", "ja": "bunko-novel-furigana", "pt": "trade-paperback-novel", "fr": "trade-paperback-novel" }
+    "frontispiece": { "en": "trade-paperback-novel", "es": "spanish-pocket-novel", "ca": "spanish-pocket-novel", "zh": "vertical-novel-right-bound", "ar": "trade-paperback-novel", "ja": "bunko-novel-furigana", "pt": "trade-paperback-novel", "fr": "trade-paperback-novel", "de": "trade-paperback-novel" }
   },
   "start-here": {
-    "title": { "en": "Start here", "es": "Empieza aquí", "ca": "Comença aquí", "zh": "从这里开始", "ar": "ابدأ من هنا", "ja": "ここから始める", "pt": "Comece por aqui", "fr": "Pour commencer" },
+    "title": { "en": "Start here", "es": "Empieza aquí", "ca": "Comença aquí", "zh": "从这里开始", "ar": "ابدأ من هنا", "ja": "ここから始める", "pt": "Comece por aqui", "fr": "Pour commencer", "de": "Hier anfangen" },
     "summary": {
       "en": "The recipes to read first, in order, starting with a designed page set from a Markdown string.",
       "es": "Las recetas que conviene leer primero, en orden, empezando por una página diseñada a partir de una cadena Markdown.",
@@ -25,12 +26,13 @@
       "ar": "الوصفات التي تُقرأ أولًا، بالترتيب، بدءًا بصفحة مصمَّمة منضَّدة من نص Markdown.",
       "ja": "最初に読むレシピを順に並べました。Markdownの文字列からデザインしたページを組むところから始まります。",
       "pt": "As receitas para ler primeiro, em ordem, começando por uma página diagramada a partir de uma string Markdown.",
-      "fr": "Les recettes à lire en premier, dans l’ordre, à commencer par une page mise en forme à partir d’une chaîne Markdown."
+      "fr": "Les recettes à lire en premier, dans l’ordre, à commencer par une page mise en forme à partir d’une chaîne Markdown.",
+      "de": "Die Rezepte, die Sie zuerst lesen sollten, der Reihe nach, beginnend mit einer gestalteten Seite aus einer Markdown-Zeichenkette."
     },
     "recipes": ["first-page-from-markdown", "shaped-verse", "baseline-grid-book-page"]
   },
   "opener-specimens": {
-    "title": { "en": "Opener specimens", "es": "Muestrario de aperturas", "ca": "Mostrari d'obertures", "zh": "章首页样张", "ar": "نماذج صفحات الافتتاح", "ja": "章扉の見本", "pt": "Mostruário de aberturas", "fr": "Spécimens d’ouvertures" },
+    "title": { "en": "Opener specimens", "es": "Muestrario de aperturas", "ca": "Mostrari d'obertures", "zh": "章首页样张", "ar": "نماذج صفحات الافتتاح", "ja": "章扉の見本", "pt": "Mostruário de aberturas", "fr": "Spécimens d’ouvertures", "de": "Musterseiten für Auftakte" },
     "summary": {
       "en": "Ways to open a chapter or an article: bands and photos, sunk and framed titles, a vignette over each chapter, short chapters that start in mid-page, side heads and numbers hung in the gutter, badges, bylines and datelines, the head of each letter and a poster built from anchored elements.",
       "es": "Maneras de abrir un capítulo o un artículo: bandas y fotos, títulos hundidos y enmarcados, una viñeta sobre cada capítulo, capítulos breves que empiezan a media página, títulos al margen y números colgados en el medianil, insignias, firmas y fechas, el encabezamiento de cada carta y un cartel hecho de elementos anclados.",
@@ -39,7 +41,8 @@
       "ar": "طرق لافتتاح فصل أو مقال: أشرطة وصور، وعناوين منخفضة وأخرى مؤطَّرة، وحلية فوق كل فصل، وفصول قصيرة تبدأ في منتصف الصفحة، وعناوين جانبية وأرقام معلّقة في الفاصل بين الأعمدة، وشارات، وأسطر المؤلف وأسطر التاريخ والمكان، ورأس كل رسالة، وملصق مبني من عناصر مُرساة.",
       "ja": "章や記事の始め方の見本です。帯と写真、下げて組んだタイトルと枠付きのタイトル、各章の上に置く飾りカット、ページの途中から始まる短い章、サイド見出しと余白に掛けた番号、バッジ、署名と日付欄、各手紙の冒頭、位置を固定した要素で組むポスター。",
       "pt": "Maneiras de abrir um capítulo ou um artigo: faixas e fotos, títulos rebaixados e emoldurados, uma vinheta sobre cada capítulo, capítulos curtos que começam no meio da página, títulos laterais e números pendurados na medianiz, selos, assinaturas e linhas de data, o cabeçalho de cada carta e um cartaz feito de elementos ancorados.",
-      "fr": "Façons d’ouvrir un chapitre ou un article : bandeaux et photos, titres descendus et encadrés, une vignette au-dessus de chaque chapitre, des chapitres courts qui commencent en milieu de page, des intertitres en marge et des numéros suspendus dans la gouttière, des badges, des signatures et des lignes de date, la tête de chaque lettre et une affiche construite à partir d’éléments ancrés."
+      "fr": "Façons d’ouvrir un chapitre ou un article : bandeaux et photos, titres descendus et encadrés, une vignette au-dessus de chaque chapitre, des chapitres courts qui commencent en milieu de page, des intertitres en marge et des numéros suspendus dans la gouttière, des badges, des signatures et des lignes de date, la tête de chaque lettre et une affiche construite à partir d’éléments ancrés.",
+      "de": "Wege, ein Kapitel oder einen Artikel zu eröffnen: Farbbänder und Fotos, abgesenkte und gerahmte Titel, eine Vignette über jedem Kapitel, kurze Kapitel, die mitten auf der Seite beginnen, Marginaltitel und in den Steg gehängte Nummern, Plaketten, Autorenzeilen und Ortsmarken, der Briefkopf jedes Briefs und ein Plakat aus verankerten Elementen."
     },
     "recipes": [
       "chapter-opener-bleed-band", "magazine-feature-opener", "five-chapter-openers", "storybook-chapter-vignettes",
@@ -49,7 +52,7 @@
     ]
   },
   "first-book": {
-    "title": { "en": "Your first book", "es": "Tu primer libro", "ca": "El teu primer llibre", "zh": "你的第一本书", "ar": "كتابك الأول", "ja": "はじめての本", "pt": "Seu primeiro livro", "fr": "Votre premier livre" },
+    "title": { "en": "Your first book", "es": "Tu primer libro", "ca": "El teu primer llibre", "zh": "你的第一本书", "ar": "كتابك الأول", "ja": "はじめての本", "pt": "Seu primeiro livro", "fr": "Votre premier livre", "de": "Ihr erstes Buch" },
     "summary": {
       "en": "From a single page to a finished book, in order: the page and its grid, justified text, running heads, roman front matter, parts in colour, chapters built one by one, short chapters that run on without a page break, an appendix, glossary and index, a whole novel and the PDF.",
       "es": "De una página suelta a un libro terminado, por orden: la página y su rejilla, el texto justificado, las cabeceras, los preliminares en romanos, las partes en color, los capítulos compuestos uno a uno, capítulos breves que siguen sin salto de página, el apéndice, el glosario y el índice, una novela entera y el PDF.",
@@ -58,7 +61,8 @@
       "ar": "من صفحة واحدة إلى كتاب مكتمل، بالترتيب: الصفحة وشبكتها، والنص المضبوط، والترويسات، والصفحات التمهيدية بالأرقام الرومانية، والأجزاء الملوّنة، والفصول مبنية واحدًا واحدًا، والفصول القصيرة التي تتوالى بلا فاصل صفحة، والملحق والمسرد والفهرس الأبجدي، ورواية كاملة، وملف PDF.",
       "ja": "1ページから完成した本まで、順を追って進みます。ページとグリッド、両端そろえの本文、柱、ローマ数字ノンブルの前付け、色分けした部、1章ずつ組む章、改ページせずに続く短い章、付録、用語集と索引、長編小説1冊とそのPDF。",
       "pt": "De uma página avulsa a um livro pronto, em ordem: a página e sua grade, o texto justificado, os cabeços, os elementos pré-textuais em algarismos romanos, as partes em cor, os capítulos compostos um a um, capítulos curtos que seguem sem quebra de página, um apêndice, o glossário e o índice remissivo, um romance inteiro e o PDF.",
-      "fr": "D’une seule page à un livre achevé, dans l’ordre : la page et sa grille, le texte justifié, les titres courants, les pages liminaires en chiffres romains, des parties en couleur, des chapitres construits un par un, des chapitres courts qui s’enchaînent sans saut de page, une annexe, un glossaire et un index, un roman entier et le PDF."
+      "fr": "D’une seule page à un livre achevé, dans l’ordre : la page et sa grille, le texte justifié, les titres courants, les pages liminaires en chiffres romains, des parties en couleur, des chapitres construits un par un, des chapitres courts qui s’enchaînent sans saut de page, une annexe, un glossaire et un index, un roman entier et le PDF.",
+      "de": "Von einer einzelnen Seite zum fertigen Buch, der Reihe nach: die Seite und ihr Raster, Blocksatz, Kolumnentitel, römisch paginierte Titelei, farbige Teile, Kapitel für Kapitel aufgebaut, kurze Kapitel ohne Seitenumbruch dazwischen, ein Anhang, Glossar und Register, ein ganzer Roman und das PDF."
     },
     "recipes": [
       "baseline-grid-book-page", "spanish-pocket-novel", "running-heads-by-parity", "front-matter-roman-to-arabic",
@@ -67,7 +71,7 @@
     ]
   },
   "magazine-issue": {
-    "title": { "en": "A magazine issue", "es": "Un número de revista", "ca": "Un número de revista", "zh": "一期杂志", "ar": "عدد من مجلة", "ja": "雑誌の1号", "pt": "Uma edição de revista", "fr": "Un numéro de magazine" },
+    "title": { "en": "A magazine issue", "es": "Un número de revista", "ca": "Un número de revista", "zh": "一期杂志", "ar": "عدد من مجلة", "ja": "雑誌の1号", "pt": "Uma edição de revista", "fr": "Un numéro de magazine", "de": "Eine Zeitschriftenausgabe" },
     "summary": {
       "en": "The pages of a periodical: a cover and its contents, a first page from Markdown, feature openers on a photo, a news page with headlines across its columns, a newsletter that sends its briefs to a narrow column, figures that float to their citation, a zine for a two-drum risograph and a screen edition.",
       "es": "Las páginas de una publicación periódica: una portada con su sumario, una primera página desde Markdown, aperturas de reportaje sobre una foto, una página de noticias con titulares que cruzan las columnas, un boletín que lleva los breves a una columna estrecha, figuras que flotan hasta su cita, un fanzine para risógrafo de dos tambores y una edición para pantalla.",
@@ -76,7 +80,8 @@
       "ar": "صفحات دورية: غلاف وجدول محتوياته، وصفحة أولى من Markdown، وافتتاحيات تحقيقات على صورة، وصفحة أخبار عناوينها بعرض أعمدتها، ونشرة ترسل أخبارها القصيرة إلى عمود ضيق، وأشكال تطفو إلى موضع الإحالة إليها، ومجلة صغيرة لطابعة ريزوغراف بأسطوانتين، وطبعة للشاشة.",
       "ja": "定期刊行物のページです。表紙と目次、Markdownから組む第1ページ、写真に重ねた特集の扉、段をまたぐ見出しを並べたニュースページ、短信を細い段に送るニュースレター、参照箇所へフロートする図、2ドラムのリソグラフで刷るジン、画面版。",
       "pt": "As páginas de um periódico: uma capa e seu sumário, uma primeira página a partir de Markdown, aberturas de matéria sobre uma foto, uma página de notícias com manchetes que atravessam as colunas, um boletim que manda as notas curtas para uma coluna estreita, figuras que flutuam até a sua citação, um fanzine para risografia de dois tambores e uma edição para tela.",
-      "fr": "Les pages d’un périodique : une couverture et son sommaire, une première page tirée du Markdown, des ouvertures d’articles sur une photo, une page d’actualités avec des titres sur plusieurs colonnes, une lettre d’information qui envoie ses brèves dans une colonne étroite, des figures qui flottent jusqu’à leur citation, un fanzine pour une risographie à deux tambours et une édition écran."
+      "fr": "Les pages d’un périodique : une couverture et son sommaire, une première page tirée du Markdown, des ouvertures d’articles sur une photo, une page d’actualités avec des titres sur plusieurs colonnes, une lettre d’information qui envoie ses brèves dans une colonne étroite, des figures qui flottent jusqu’à leur citation, un fanzine pour une risographie à deux tambours et une édition écran.",
+      "de": "Die Seiten eines Periodikums: ein Titelblatt und sein Inhaltsverzeichnis, eine erste Seite aus Markdown, Auftakte großer Beiträge auf einem Foto, eine Nachrichtenseite mit Schlagzeilen über mehrere Spalten, ein Newsletter, der seine Kurzmeldungen in eine schmale Spalte setzt, Abbildungen, die zu ihrem Verweis gleiten, ein Zine für eine Risographie mit zwei Trommeln und eine Bildschirmausgabe."
     },
     "recipes": [
       "magazine-cover-and-contents", "first-page-from-markdown", "magazine-feature-opener", "newspaper-front-page",
@@ -84,7 +89,7 @@
     ]
   },
   "workbook-kit": {
-    "title": { "en": "Workbook kit", "es": "Cuadernos y fichas", "ca": "Quaderns i fitxes", "zh": "练习册套件", "ar": "عُدّة كتب التمارين", "ja": "ワークブック・キット", "pt": "Cadernos de atividades", "fr": "Kit cahier d’exercices" },
+    "title": { "en": "Workbook kit", "es": "Cuadernos y fichas", "ca": "Quaderns i fitxes", "zh": "练习册套件", "ar": "عُدّة كتب التمارين", "ja": "ワークブック・キット", "pt": "Cadernos de atividades", "fr": "Kit cahier d’exercices", "de": "Arbeitsheft-Baukasten" },
     "summary": {
       "en": "Pages people write on or work from: answer boxes nested in cards, a word bank of chips, a reading primer with syllable chips and letters to trace, a puzzle book whose crossword and word search are tables, an exam paper with a bubble grid and ruled answer lines, a workshop booklet with a readings table to fill in and a recipe card with its checklist.",
       "es": "Páginas para escribir en ellas o para trabajar con ellas delante: cajas de respuesta dentro de fichas, un banco de palabras con chips, una cartilla de lectura con sílabas en chips y letras para repasar, un cuaderno de pasatiempos con el crucigrama y la sopa de letras hechos con tablas, un examen con su cuadrícula de burbujas y renglones para responder, un cuaderno de taller con una tabla de lecturas por rellenar y una ficha de receta con su lista de comprobación.",
@@ -93,7 +98,8 @@
       "ar": "صفحات يكتب عليها الناس أو يعملون بها: إطارات إجابات داخل بطاقات، وبنك كلمات من الشارات، وكتاب قراءة للمبتدئين بشارات مقاطع وحروف للتتبع، وكتاب ألغاز كلماته المتقاطعة وبحثه عن الكلمات جداول، وورقة امتحان بشبكة فقاعات وأسطر إجابة مسطّرة، وكتيّب ورشة فيه جدول قراءات للتعبئة، وبطاقة وصفة مع قائمة تحققها.",
       "ja": "書き込んだり手元で使ったりするページです。カードに入れ子にした解答欄、チップで作る語群、音節チップとなぞり書きの文字を使った読み方の入門書、クロスワードと単語探しを表で作るパズル本、マークシートと罫線入りの解答欄がある試験問題、記入式の記録表がある講習会の冊子、チェックリスト付きのレシピカード。",
       "pt": "Páginas para escrever nelas ou para trabalhar com elas à frente: caixas de resposta dentro de fichas, um banco de palavras em chips, uma cartilha de leitura com sílabas em chips e letras para cobrir, um livro de passatempos com as palavras cruzadas e o caça-palavras feitos de tabelas, uma prova com grade de bolinhas e linhas pautadas para as respostas, uma apostila de oficina com uma tabela de leituras para preencher e uma ficha de receita com sua lista de verificação.",
-      "fr": "Des pages sur lesquelles on écrit ou à partir desquelles on travaille : des cases de réponse imbriquées dans des cartes, une banque de mots en pastilles, un abécédaire avec des pastilles de syllabes et des lettres à repasser, un livre de jeux dont la grille de mots croisés et les mots mêlés sont des tableaux, une copie d’examen avec une grille de cases à cocher et des lignes de réponse réglées, un livret d’atelier avec un tableau de relevés à remplir et une fiche recette avec sa liste de contrôle."
+      "fr": "Des pages sur lesquelles on écrit ou à partir desquelles on travaille : des cases de réponse imbriquées dans des cartes, une banque de mots en pastilles, un abécédaire avec des pastilles de syllabes et des lettres à repasser, un livre de jeux dont la grille de mots croisés et les mots mêlés sont des tableaux, une copie d’examen avec une grille de cases à cocher et des lignes de réponse réglées, un livret d’atelier avec un tableau de relevés à remplir et une fiche recette avec sa liste de contrôle.",
+      "de": "Seiten, auf die man schreibt oder mit denen man arbeitet: Antwortkästen in Karten, eine Wörterliste aus Chips, eine Fibel mit Silben-Chips und Buchstaben zum Nachspuren, ein Rätselheft, dessen Kreuzworträtsel und Suchsel Tabellen sind, eine Prüfungsarbeit mit Ankreuzraster und linierten Antwortzeilen, ein Workshop-Heft mit einer auszufüllenden Messwerttabelle und eine Rezeptkarte mit Checkliste."
     },
     "recipes": [
       "worksheet-answer-boxes", "reading-primer-syllables", "puzzle-book", "exam-paper", "boxes-split-float-pin",
@@ -101,7 +107,7 @@
     ]
   },
   "print-production": {
-    "title": { "en": "Print production", "es": "Producción para imprenta", "ca": "Producció per a impremta", "zh": "印刷制作", "ar": "الإنتاج الطباعي", "ja": "印刷用データの制作", "pt": "Produção gráfica", "fr": "Fabrication et impression" },
+    "title": { "en": "Print production", "es": "Producción para imprenta", "ca": "Producció per a impremta", "zh": "印刷制作", "ar": "الإنتاج الطباعي", "ja": "印刷用データの制作", "pt": "Produção gráfica", "fr": "Fabrication et impression", "de": "Druckvorstufe" },
     "summary": {
       "en": "Getting the file to the printer and the reader: faces loaded before layout, embedded and brand fonts, a galley with each fault marked in red where it was set, bleed and crop marks, CMYK and a greyscale proof, drawings recoloured as tints of one ink, and a tagged, accessible PDF.",
       "es": "Cómo llevar el archivo a la imprenta y al lector: fuentes cargadas antes de componer, fuentes incrustadas y corporativas, una galerada con cada fallo marcado en rojo donde se compuso, sangrado y marcas de corte, CMYK y una prueba en escala de grises, dibujos recoloreados en tonos de una sola tinta, y un PDF etiquetado y accesible.",
@@ -110,7 +116,8 @@
       "ar": "إيصال الملف إلى المطبعة وإلى القارئ: أوجه خطوط محمّلة قبل الإخراج، وخطوط مضمّنة وخطوط العلامة التجارية، وبروفة كل عيب فيها معلَّم بالأحمر حيث نُضّد، والنزف وعلامات القص، وCMYK وبروفة بتدرجات الرمادي، ورسوم أعيد تلوينها بدرجات حبر واحد، وملف PDF موسوم سهل الوصول.",
       "ja": "ファイルを印刷所と読者に届けるまで。レイアウト前に読み込む書体、埋め込みフォントとブランドフォント、組んだ箇所に不具合を赤で示すゲラ、裁ち落としとトンボ、CMYKとグレースケールの校正刷り、1色のインキの濃淡に塗り替えた図版、タグ付きのアクセシブルなPDF。",
       "pt": "Como levar o arquivo à gráfica e ao leitor: fontes carregadas antes da diagramação, fontes incorporadas e corporativas, uma prova de paquê com cada falha marcada em vermelho no ponto onde foi composta, sangria e marcas de corte, CMYK e uma prova em tons de cinza, desenhos recoloridos em tons de uma só tinta e um PDF com tags, acessível.",
-      "fr": "Amener le fichier jusqu’à l’imprimeur et au lecteur : les caractères chargés avant la mise en page, les polices intégrées et les polices de marque, un placard où chaque défaut est marqué en rouge à l’endroit où il a été composé, le fond perdu et les traits de coupe, le CMJN et une épreuve en niveaux de gris, des dessins recolorés en teintes d’une seule encre, et un PDF balisé et accessible."
+      "fr": "Amener le fichier jusqu’à l’imprimeur et au lecteur : les caractères chargés avant la mise en page, les polices intégrées et les polices de marque, un placard où chaque défaut est marqué en rouge à l’endroit où il a été composé, le fond perdu et les traits de coupe, le CMJN et une épreuve en niveaux de gris, des dessins recolorés en teintes d’une seule encre, et un PDF balisé et accessible.",
+      "de": "Die Datei zur Druckerei und zum Leser bringen: Schriften vor dem Layout geladen, eingebettete Schriften und Hausschriften, eine Korrekturfahne mit jedem Fehler rot an seiner Stelle markiert, Anschnitt und Schnittmarken, CMYK und ein Graustufen-Proof, Zeichnungen als Tonwerte einer einzigen Farbe umgefärbt und ein getaggtes, barrierefreies PDF."
     },
     "recipes": [
       "fonts-before-layout", "pdf-with-embedded-fonts", "brand-fonts-identity-manual", "proof-sheet-diagnostics",
@@ -118,7 +125,7 @@
     ]
   },
   "workarounds": {
-    "title": { "en": "Not supported yet, and what to do", "es": "Lo que aún no hay y cómo resolverlo", "ca": "El que encara no hi ha i com resoldre-ho", "zh": "尚不支持的功能及对策", "ar": "غير مدعوم بعد، وما العمل", "ja": "未対応の機能と代わりの方法", "pt": "O que ainda não existe e como contornar", "fr": "Pas encore pris en charge, et que faire" },
+    "title": { "en": "Not supported yet, and what to do", "es": "Lo que aún no hay y cómo resolverlo", "ca": "El que encara no hi ha i com resoldre-ho", "zh": "尚不支持的功能及对策", "ar": "غير مدعوم بعد، وما العمل", "ja": "未対応の機能と代わりの方法", "pt": "O que ainda não existe e como contornar", "fr": "Pas encore pris en charge, et que faire", "de": "Noch nicht unterstützt, und was zu tun ist" },
     "summary": {
       "en": "What Postext does not do yet (line numbers, pipe tables, tab stops, three columns, text wrap, body drop caps, code blocks) and the layouts that stand in for them.",
       "es": "Lo que Postext aún no hace (números de línea, tablas con barras, tabuladores, tres columnas, contorneo, capitulares en el texto, bloques de código) y las maquetas que lo sustituyen.",
@@ -127,7 +134,8 @@
       "ar": "ما لا يفعله Postext بعد (أرقام الأسطر، وجداول الخطوط العمودية، ومواضع الجدولة، والأعمدة الثلاثة، والتفاف النص، والحروف الاستهلالية في المتن، وكتل الشيفرة) والتخطيطات التي تقوم مقامها.",
       "ja": "Postextがまだ対応していないこと（行番号、パイプ記法の表、タブストップ、3段組み、回り込み、本文のドロップキャップ、コードブロック）と、その代わりになるレイアウトです。",
       "pt": "O que o Postext ainda não faz (números de linha, tabelas com barras verticais, paradas de tabulação, três colunas, contorno de texto, capitulares no texto corrido, blocos de código) e as diagramações que fazem as vezes deles.",
-      "fr": "Ce que Postext ne fait pas encore (numéros de ligne, tableaux à barres verticales, taquets de tabulation, trois colonnes, habillage du texte, lettrines dans le corps du texte, blocs de code) et les mises en page qui les remplacent."
+      "fr": "Ce que Postext ne fait pas encore (numéros de ligne, tableaux à barres verticales, taquets de tabulation, trois colonnes, habillage du texte, lettrines dans le corps du texte, blocs de code) et les mises en page qui les remplacent.",
+      "de": "Was Postext noch nicht kann (Zeilennummern, Pipe-Tabellen, Tabulatoren, drei Spalten, Textumfluss, Initialen im Fließtext, Codeblöcke), und die Layouts, die stattdessen einspringen."
     },
     "recipes": [
       "critical-edition-line-numbers",
@@ -136,7 +144,7 @@
     ]
   },
   "chinese-layout": {
-    "title": { "en": "Chinese layout", "es": "Composición china", "ca": "Composició xinesa", "zh": "中文排版", "ar": "التنضيد الصيني", "ja": "中国語の組版", "pt": "Composição chinesa", "fr": "Mise en page chinoise" },
+    "title": { "en": "Chinese layout", "es": "Composición china", "ca": "Composició xinesa", "zh": "中文排版", "ar": "التنضيد الصيني", "ja": "中国語の組版", "pt": "Composição chinesa", "fr": "Mise en page chinoise", "de": "Chinesischer Satz" },
     "summary": {
       "en": "Chinese set as Chinese books set it: line breaking and punctuation, the character grid, vertical text bound on the right, readings and marks beside the characters, and fonts, from a novel page to an official document, a newspaper, a dictionary and a woodblock leaf.",
       "es": "El chino compuesto como lo componen los libros chinos: corte de líneas y puntuación, la retícula de caracteres, el texto vertical encuadernado por la derecha, las lecturas y marcas junto a los caracteres y las fuentes, de una página de novela a un documento oficial, un periódico, un diccionario y una hoja xilográfica.",
@@ -145,7 +153,8 @@
       "ar": "الصينية منضَّدة كما تنضدها الكتب الصينية: كسر الأسطر وعلامات الترقيم، وشبكة الحروف، والنص العمودي المجلَّد من اليمين، والقراءات والعلامات بجانب الحروف، والخطوط، من صفحة رواية إلى وثيقة رسمية وجريدة وقاموس وورقة طباعة خشبية.",
       "ja": "中国語の本の作法どおりに中国語を組みます。改行規則と約物、文字グリッド、右綴じの縦組み、文字の横に付ける読みと記号、フォント。小説のページから公文書、新聞、辞書、木版本の丁まで。",
       "pt": "O chinês composto como os livros chineses o compõem: quebra de linha e pontuação, a grade de caracteres, o texto vertical encadernado à direita, as leituras e marcas ao lado dos caracteres e as fontes, de uma página de romance a um documento oficial, um jornal, um dicionário e uma folha xilográfica.",
-      "fr": "Le chinois composé comme le composent les livres chinois : coupure des lignes et ponctuation, la grille de caractères, le texte vertical relié à droite, les lectures et les marques à côté des caractères, et les polices, d’une page de roman à un document officiel, un journal, un dictionnaire et un feuillet de xylographie."
+      "fr": "Le chinois composé comme le composent les livres chinois : coupure des lignes et ponctuation, la grille de caractères, le texte vertical relié à droite, les lectures et les marques à côté des caractères, et les polices, d’une page de roman à un document officiel, un journal, un dictionnaire et un feuillet de xylographie.",
+      "de": "Chinesisch gesetzt wie in chinesischen Büchern: Zeilenumbruch und Interpunktion, das Zeichenraster, senkrechter Text mit Bindung rechts, Lesehilfen und Markierungen neben den Zeichen und Schriften, von einer Romanseite bis zu einem amtlichen Schriftstück, einer Zeitung, einem Wörterbuch und einem Holzdruckblatt."
     },
     "recipes": [
       "chinese-novel-horizontal", "vertical-novel-right-bound", "pinyin-primer", "proper-name-marks",
@@ -155,7 +164,7 @@
     ]
   },
   "japanese-layout": {
-    "title": { "en": "Japanese layout", "es": "Composición japonesa", "ca": "Composició japonesa", "zh": "日文排版", "ar": "التنضيد الياباني", "ja": "日本語の組版", "pt": "Composição japonesa", "fr": "Mise en page japonaise" },
+    "title": { "en": "Japanese layout", "es": "Composición japonesa", "ca": "Composició japonesa", "zh": "日文排版", "ar": "التنضيد الياباني", "ja": "日本語の組版", "pt": "Composição japonesa", "fr": "Mise en page japonaise", "de": "Japanischer Satz" },
     "summary": {
       "en": "Japanese set as Japanese books set it: kinsoku and punctuation spacing, vertical text bound on the right, furigana and emphasis marks, kanji numerals, notes and a gojūon index, from a bunko novel to a textbook, a letter and a page of kanbun.",
       "es": "El japonés compuesto como lo componen los libros japoneses: kinsoku y espaciado de la puntuación, texto vertical encuadernado por la derecha, furigana y marcas de énfasis, numerales kanji, notas y un índice gojūon, de una novela bunko a un libro de texto, una carta y una página de kanbun.",
@@ -164,7 +173,8 @@
       "ar": "اليابانية منضَّدة كما تنضدها الكتب اليابانية: kinsoku وتباعد الترقيم، والنص العمودي المجلَّد من اليمين، والفوريغانا وعلامات التوكيد، والأعداد الكانجية، والحواشي وفهرس gojūon، من رواية bunko إلى كتاب مدرسي ورسالة وصفحة من الكانبون.",
       "ja": "日本語の本の作法どおりに日本語を組みます。禁則処理と約物の空き、右綴じの縦組み、ふりがなと圏点、漢数字、注、五十音順の索引。文庫の小説から教科書、手紙、漢文のページまで。",
       "pt": "O japonês composto como os livros japoneses o compõem: kinsoku e espaçamento da pontuação, texto vertical encadernado à direita, furigana e marcas de ênfase, numerais kanji, notas e um índice gojūon, de um romance bunko a um livro didático, uma carta e uma página de kanbun.",
-      "fr": "Le japonais composé comme le composent les livres japonais : kinsoku et espacement de la ponctuation, texte vertical relié à droite, furigana et marques d’emphase, chiffres en kanji, notes et un index gojūon, d’un roman au format bunko à un manuel, une lettre et une page de kanbun."
+      "fr": "Le japonais composé comme le composent les livres japonais : kinsoku et espacement de la ponctuation, texte vertical relié à droite, furigana et marques d’emphase, chiffres en kanji, notes et un index gojūon, d’un roman au format bunko à un manuel, une lettre et une page de kanbun.",
+      "de": "Japanisch gesetzt wie in japanischen Büchern: Kinsoku und Abstände der Interpunktion, senkrechter Text mit Bindung rechts, Furigana und Betonungspunkte, Kanji-Zahlen, Anmerkungen und ein Gojūon-Register, von einem Bunko-Roman bis zu einem Lehrbuch, einem Brief und einer Seite Kanbun."
     },
     "recipes": [
       "bunko-novel-furigana", "two-tier-tankobon", "haiku-and-tanka", "genko-yoshi-manuscript", "vertical-notes-and-sidenotes", "kanbun-kundoku",
@@ -173,7 +183,7 @@
     ]
   },
   "scientific-papers": {
-    "title": { "en": "Scientific papers", "es": "Artículos científicos", "ca": "Articles científics", "zh": "科学论文", "ar": "الأوراق العلمية", "ja": "学術論文", "pt": "Artigos científicos", "fr": "Articles scientifiques" },
+    "title": { "en": "Scientific papers", "es": "Artículos científicos", "ca": "Articles científics", "zh": "科学论文", "ar": "الأوراق العلمية", "ja": "学術論文", "pt": "Artigos científicos", "fr": "Articles scientifiques", "de": "Wissenschaftliche Aufsätze" },
     "summary": {
       "en": "Papers as journals and preprint servers print them, most of them real open-access papers re-set from their source: an AI preprint with its prompt examples, a theory paper with theorems and proofs, a biology article with its Methods, a physics letter, a meta-research essay in English and Spanish, a mental-health trial, a 1981 outbreak report, and the citation styles they use.",
       "es": "Artículos como los imprimen las revistas y los servidores de preprints, la mayoría artículos reales de acceso abierto recompuestos desde su fuente: un preprint de IA con sus ejemplos de prompts, un artículo teórico con teoremas y demostraciones, un artículo de biología con sus Métodos, una carta de física, un ensayo de metaciencia en inglés y en español, un ensayo clínico de salud mental, un informe de brote de 1981 y los estilos de cita que usan.",
@@ -182,7 +192,8 @@
       "ar": "أوراق كما تطبعها المجلات وخوادم المسودات، وأغلبها أوراق حقيقية مفتوحة الوصول أُعيد تنضيدها من مصدرها: مسودة في الذكاء الاصطناعي بأمثلة موجّهاتها، وورقة نظرية بمبرهناتها وبراهينها، ومقالة في الأحياء بقسم طرائقها، ورسالة فيزيائية، ومقالة في علم البحث بالإنجليزية والإسبانية، وتجربة سريرية في الصحة النفسية، وتقرير عن تفشٍّ وبائي من عام 1981، وأساليب الاستشهاد التي تتبعها.",
       "ja": "学術誌やプレプリントサーバーが刷る形の論文。多くは実在のオープンアクセス論文を原典から組み直したもの：プロンプト例を載せたAIのプレプリント、定理と証明のある理論論文、Methodsを備えた生物学の論文、物理学のレター、英語とスペイン語のメタサイエンス論文、メンタルヘルスの臨床試験、1981年の集団発生報告、そしてそれぞれの引用スタイル。",
       "pt": "Artigos como as revistas e os servidores de preprints os publicam, a maioria artigos reais de acesso aberto recompostos a partir da fonte original: um preprint de IA com seus exemplos de prompts, um artigo teórico com teoremas e demonstrações, um artigo de biologia com sua seção de Métodos, uma carta de física, um ensaio de metaciência em inglês e em espanhol, um ensaio clínico de saúde mental, um relatório de surto de 1981 e os estilos de citação que eles usam.",
-      "fr": "Des articles tels que les impriment les revues et les serveurs de prépublications, pour la plupart de vrais articles en libre accès recomposés à partir de leur source : une prépublication sur l’IA avec ses exemples de prompts, un article théorique avec théorèmes et démonstrations, un article de biologie avec ses Méthodes, une lettre de physique, un essai de méta-recherche en anglais et en espagnol, un essai clinique en santé mentale, un rapport d’épidémie de 1981, et les styles de citation qu’ils utilisent."
+      "fr": "Des articles tels que les impriment les revues et les serveurs de prépublications, pour la plupart de vrais articles en libre accès recomposés à partir de leur source : une prépublication sur l’IA avec ses exemples de prompts, un article théorique avec théorèmes et démonstrations, un article de biologie avec ses Méthodes, une lettre de physique, un essai de méta-recherche en anglais et en espagnol, un essai clinique en santé mentale, un rapport d’épidémie de 1981, et les styles de citation qu’ils utilisent.",
+      "de": "Aufsätze, wie Fachzeitschriften und Preprint-Server sie drucken, die meisten echte Open-Access-Aufsätze aus ihrer Quelle neu gesetzt: ein KI-Preprint mit seinen Prompt-Beispielen, ein theoretischer Aufsatz mit Sätzen und Beweisen, ein Biologieartikel mit Methodenteil, ein Physik-Letter, ein Metaforschungs-Essay auf Englisch und Spanisch, eine Studie zur psychischen Gesundheit, ein Ausbruchsbericht von 1981 und die Zitierstile, die sie verwenden."
     },
     "recipes": [
       "ai-preprint-prompt-exemplars", "ml-paper-theorems-proofs", "protein-paper-methods-section",

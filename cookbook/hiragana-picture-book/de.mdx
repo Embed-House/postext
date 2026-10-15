@@ -1,0 +1,57 @@
+---
+title: "Ein Hiragana-Bilderbuch, nach Phrasen gesperrt"
+summary: "Ein vertikales Bilderbuch in Hiragana mit Leerzeichen zwischen den Phrasen (Wakachigaki): keep-all hält jede Phrase ganz, Zeilen brechen nur an den Leerzeichen."
+plain: "Ein japanisches Bilderbuch für kleine Kinder, ganz in Hiragana, mit einem Leerzeichen nach jeder Wortgruppe und Zeilen, die nie eine davon teilen, unter einem Bild auf jeder Seite."
+description: "Ein japanisches Bilderbuch in Postext: Hiragana vertikal in 20 pt mit Wakachigaki-Leerzeichen, Phrasen ganz durch keep-all, eine Bildzone auf jeder Seite."
+question: "Wie sperre ich ein japanisches Bilderbuch nach Phrasen (Wakachigaki) und breche Zeilen nur an Leerzeichen um?"
+aliases: ["Wakachigaki", "分かち書き", "わかち書き", "Bilderbuch", "絵本", "Hiragana", "ひらがな", "japanisches Kinderbuch", "word-break", "cjk.wordBreak", "keep-all", "Umbruch nur an Leerzeichen", "Klee One", "picture book"]
+pageNotes: { "1": "Der Umschlag: die Flussszene über die ganze Seite, ein rotes Papierschiff auf blauem Wasser, der Titel かみの ふね rot rechts den Himmel hinunter.", "2": "Seite 2: ein Mädchen am Tisch, das das rote Schiff faltet, darunter sechs kurze vertikale Zeilen in Hiragana, jeder Umbruch an einem Leerzeichen zwischen Phrasen.", "3": "Seite 3: das Schiff wird auf den Fluss gesetzt, das Mädchen winkt vom Ufer; der Text beginnt mit 「いって らっしゃい。」.", "8": "Seite 8: Nacht, der Mond und sein Spiegelbild auf dem Wasser; der Text erzählt, wie der Mond dem Schiff den Weg leuchtet.", "10": "Die letzte Seite: das Mädchen an einem Fenster mit Blick aufs Meer, der Text, おしまい in Rot am Fuß seiner Zeile, und das Impressum quer gestellt." }
+---
+
+## Was Sie setzen
+
+Ein zehnseitiges Bilderbuch, かみの ふね (*Das Papierschiff*), für das Rezept geschrieben und mit zehn Gemälden illustriert: Ein Mädchen faltet nach dem Regen ein rotes Papierschiff, und das Schiff reist flussabwärts an einem Frosch, einem Reiher und dem Mond vorbei bis zum Meer. Es ist so gesetzt, wie japanische Bücher für die jüngsten Leser gesetzt werden: nur Hiragana, 20 pt in der Klee One, einer Handschrift nach dem Vorbild der Schulbuchschrift, und ein Leerzeichen zwischen den Phrasen, 分かち書き (Wakachigaki), sodass ein Kind eine Phrase nach der anderen liest. Die Seiten sind quer, 260 × 200 mm, vertikal und rechts gebunden: das Bild über den oberen Teil der Seite, darunter kurze Zeilen zu acht Zeichen, und das Schiff reist beim Umblättern nach links.
+
+## Zubereitung
+
+### 1 · Jede Phrase ganz halten
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Japanischer Text darf zwischen zwei beliebigen Kana umbrechen, ein Leerzeichen zwischen Phrasen schafft also nur Raum; für sich allein hindert es eine Zeile nicht daran, innerhalb von あか|い zu enden. `cjk.wordBreak: 'keep-all'` behält nur die Umbrüche an einem Leerzeichen und neben Satzzeichen, nach 、。」 oder vor 「, wie es CSS mit `word-break: keep-all` tut, und die Kinsoku-Regeln gelten weiterhin ([Ostasiatische Typografie](/de/docs/configuration-east-asian#ostasiatische-typografie)). Das Leerzeichen ist ein gewöhnliches U+0020, in der Klee One 0,35 em breit, und eine Zeile lässt es an ihrem Ende fallen. Ein U+3000 ist ebenfalls ein Phrasenumbruch, aber ein festes Zeichen von einem Geviert Breite, das am Zeilenende stehen bleibt.
+
+<PageShot page={3} crop="0.45,0.52,0.55,0.48" caption="Seite 3: acht Zeilen, jede endet an einem Leerzeichen oder nach 」 und 、: 「いって / らっしゃい。」 / みいちゃんが / そっと てを…" />
+
+Der Text steht im Flattersatz. Im Blocksatz würde eine kurze Zeile ihre Leerzeichen und die Abstände zwischen ihren Kana dehnen, um den Fuß der Zone zu erreichen; ein Bilderbuch setzt jede Zeile dorthin, wo ihre letzte Phrase endet.
+
+### 2 · Die Bilder in eine Zone über dem Text setzen
+
+<Excerpt region="layout" />
+
+Im vertikalen Satz ist `'left'` der Kopf der Seite, also ergibt ein anderthalbspaltiges Layout mit der Seitenspalte links zwei Zonen: Die Bilder gleiten in die obere Zone (14 Zeichen tief), und der Text läuft in der unteren (8 Zeichen). Jede Seite zitiert ihr Bild mit `::resource{id="…"}` und endet mit `:::pagebreak`. Der Bildtyp hat kein Legendenpräfix, und die Bilder sind 2,186-mal so breit wie hoch, das Format der Zone, sodass jedes sie füllt ([Vertikaler Satz](/de/docs/configuration-page-layout#vertikale-schrift)).
+
+### 3 · Den Umschlag zu einem ganzseitigen Bild machen
+
+<Excerpt region="cover" />
+
+Der Umschlag ist eine Überschriftengestaltung über die ganze Seitenbreite: Das Bild ist mit der Größe der Seite selbst am Anschnitt verankert (im vertikalen Fluss läuft seine `width` das Blatt hinunter), und der Titel steht rechts den Himmel hinunter in der Zen Maru Gothic in 60 pt.
+
+### 4 · Die Gemälde als Bitmaps laden
+
+<Excerpt region="pictures" />
+
+Die zehn Bilder sind Gemälde, JPEG-Dateien in `assets/` des Rezepts. Die neun Szenen sind auf das Format der Zone zugeschnitten, 612 : 280, der Umschlag auf das der Seite, 260 : 200, sodass jedes seinen Rahmen füllt und nichts beschnitten wird. Jedes ist eine Ressource `bitmap`, mit ihrer Pixelgröße deklariert und mit Alternativtext in der Sprache des Buchs, und ihre Datei wird vor dem Build unter der `fileId` der Ressource geladen. Szenen von 1.400 px Breite werden über die Zone mit etwa 165 dpi gedruckt ([Ressourcentypen](/de/docs/configuration-resources#ressourcentypen)).
+
+## Varianten
+
+### Die Zeilen im Blocksatz setzen
+
+Im Blocksatz reicht jede Zeile bis zum Fuß der Zone: Zuerst dehnen sich die Leerzeichen zwischen den Phrasen, bis zu einem halben Geviert, dann die Abstände zwischen den Kana (JLReq §3.8). Eine kurze Zeile aus Kana zu 20 pt zeigt dann weite Lücken, weshalb das Rezept seine Zeilen im Flattersatz lässt.
+
+```diff
+-  textAlign: 'left', firstLineIndent: em(0),
++  textAlign: 'justify', firstLineIndent: em(0),
+```
+
+## Häufige Fehler
+
+- `keep-all` behält die Umbrüche, die der Text schon hat: Postext findet die Phrasen nicht selbst, die Leerzeichen tippt der Autor. Eine Phrase, die länger ist als die Zeile, bricht trotzdem in sich um, an der letzten Stelle, die die Kinsoku-Regeln erlauben.
+- Chinesisch setzt nie Leerzeichen zwischen Wörter, und die chinesische Fibel <RecipeLink slug="zhuyin-vertical-reader">Ein vertikales Lesebuch mit Zhuyin rechts</RecipeLink> hilft ihren jungen Lesern stattdessen mit Lesungen; ein japanisches Bilderbuch verwendet keine Kanji, braucht also keine Furigana, und die Leerzeichen zwischen den Phrasen tragen das Lesen.

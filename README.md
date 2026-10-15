@@ -214,7 +214,7 @@ Everything below ships today in `postext` 1.16 and its companion packages (`post
 
 ### Website
 
-- [postext.dev](https://postext.dev/) in English, Spanish, Catalan, French, Brazilian Portuguese, Simplified Chinese, Japanese and Arabic, built to WCAG 2.2 AAA, with a Markdown version of every page for agents (`<page>.md`, `llms.txt`) and [WebMCP](https://webmachinelearning.github.io/webmcp/) tools for an agent in the browser: on every page to search, read and open pages, and in the Sandbox to edit the book, change any setting, get any laid-out page as a JPEG and change again.
+- [postext.dev](https://postext.dev/) in English, Spanish, Catalan, French, German, Brazilian Portuguese, Simplified Chinese, Japanese and Arabic, built to WCAG 2.2 AAA, with a Markdown version of every page for agents (`<page>.md`, `llms.txt`) and [WebMCP](https://webmachinelearning.github.io/webmcp/) tools for an agent in the browser: on every page to search, read and open pages, and in the Sandbox to edit the book, change any setting, get any laid-out page as a JPEG and change again.
 
 ### Configuration-driven
 

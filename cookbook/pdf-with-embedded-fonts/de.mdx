@@ -1,0 +1,72 @@
+---
+title: "Ein echtes PDF mit denselben eingebetteten Schriften"
+summary: "Ein Konzertprogramm als PDF exportiert. Jede Schrift wird einmal geladen, für FontFace und für das PDF, und jede Überschrift wird zu einem Lesezeichen."
+plain: "Ein vierseitiges Programm für ein Abendkonzert. Es zeigt, wie man es als PDF speichert, das genau dem Bildschirm entspricht, mit den Schriften darin und jeder Überschrift in einer Liste zum schnellen Springen."
+description: "Mit Postext im Browser ein PDF exportieren, das die WOFF2-Dateien der Seite als TrueType einbettet und jeder Überschrift ein Lesezeichen gibt."
+question: "Wie exportiere ich im Browser ein echtes PDF mit Lesezeichen und genau den Schriften der Seite?"
+aliases: ["Schriften in PDF einbetten", "PDF herunterladen", "PDF-Lesezeichen", "PDF-Gliederung", "Font-Provider", "FontFace aus Bytes", "decompressWoff2", "WOFF2 nach TTF", "PDF-Schriften stimmen nicht", "Konzertprogramm", "Programmheft", "embed fonts in a PDF"]
+pageNotes: { "1": "Der Umschlag: Nachtpetrol bis an den Rand, „The Harbour Consort“ in kleinen goldenen Versalien, der Titel „Home from Sea“ in großer goldener Kursive auf zwei Zeilen, ein Untertitel in blasser Kursive, Datum und Spielort in gesperrten Versalien und Reihen goldener Wellenschuppen, die vom Fuß aufsteigen und zum Titel hin verblassen.", "2": "Seite 2: die Dachzeile „Twilight recital“ in tiefgoldenen Versalien, die Überschrift „Programme“ über einer kurzen goldenen Linie, die Programmfolge als Tabelle mit petrolfarbenem Kopf in weißen Versalien, rechtsbündigen Spieldauern und einer blassen Summenzeile, dann die Werkeinführung im Blocksatz.", "3": "Seite 3: die Überschrift „The texts“, dann zwei Gedichte, Zeile für Zeile unter kursiven Titeln gesetzt, mit den Einzügen ihrer gedruckten Ausgaben: Longfellows „The Tide Rises, the Tide Falls“, dessen Refrain eingezogen ist, und Stevensons „Requiem“, dessen letzte drei Zeilen kursiv stehen.", "4": "Seite 4: Tennysons „Crossing the Bar“ in vier Strophen mit eingezogenen kurzen Zeilen, ein Absatz über die Ausführenden und ein Impressum in kleiner grauer Tenor Sans." }
+---
+
+## Was Sie setzen
+
+Das Programm für ein Konzert in der Dämmerung, *Home from Sea*: vier A5-Seiten für ein Ensemble aus Sopran, Violoncello und Harfe. Der Umschlag ist nachtpetrol, mit dem Titel in goldener Fraunces Kursiv und Reihen goldener Wellenschuppen, die vom Fuß aufsteigen. Innen ist die Programmfolge eine Tabelle mit petrolfarbenem Kopf in Versalien aus der Tenor Sans und einer getönten Summenzeile. Die Werkeinführung steht im Blocksatz aus der Crimson Text. Die Texte der drei Lieder sind Gedichte von Longfellow, Stevenson und Tennyson, gesetzt mit den Einzügen ihrer gedruckten Ausgaben. Die Schaltfläche *Build the PDF* erzeugt die Datei, die Sie dem Publikum per E-Mail schicken oder auf die Website des Spielorts stellen würden. Ihre vier Seiten entsprechen dem Bildschirm Zeile für Zeile. Sie bettet nur die fünf Schriftdateien ein, die der Browser geladen hat, und jede Überschrift ist ein Lesezeichen. Für den kommerziellen Druck siehe <RecipeLink slug="print-ready-pdf">das druckfertige PDF</RecipeLink>.
+
+## Zubereitung
+
+### 1 · Ein Download pro Schrift, für die Seite und für das PDF
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Postext misst jedes Wort mit den Schriften, die der Browser beim Build geladen hat, und das PDF zeichnet jede Zeile dorthin, wo dieses Layout sie gesetzt hat. Bettet das PDF eine andere Datei ein, etwa die Standardinstanz einer variablen Schrift oder einen Systemersatz, beginnt jedes Wort zwar an seiner gemessenen Position, doch seine Buchstaben haben andere Breiten, sodass Wörter sich überlappen oder Lücken lassen. Das Rezept lädt deshalb jede Schrift einmal. Ihre Bytes werden vor dem ersten Build zu einem `FontFace`, und der Font-Provider reicht dieselben Bytes für das PDF durch `decompressWoff2`, sodass der Export keine eigenen Schriften herunterlädt.
+
+### 2 · Erst die Schriften, dann das Layout
+
+<Excerpt region="build" />
+
+`registerFaces()` wird erst aufgelöst, wenn jede Schrift in `FONTS` geladen ist, sodass der erste Build mit den Schriften misst, die das PDF einbetten wird. Es ist auch der einzige Build, weil `FONTS` jede Schrift auflistet, die die Seiten setzen, und `buildDocumentWithFonts` jede gesuchte Schrift bereits deklariert vorfindet ([Schriften vor dem Layout laden](/de/docs/configuration-programmatic-usage#schriften-vor-dem-layout-laden)). Diese Prüfung hilft nur dem Bildschirm. Fehlt in `FONTS` eine Schrift, fragt die Engine das Kit danach, lädt die Fontsource-Datei und setzt das Layout ohne Warnung in der Konsole erneut, doch das PDF bekommt trotzdem die nächstliegende Schrift, die der Provider hat.
+
+### 3 · Der Export und eine Liste dessen, was er eingebettet hat
+
+<Excerpt region="pdf" />
+
+`renderToPdf` ruft `onProgress` in drei Phasen auf: `prepare`, sobald die Schriften und der Umschlag eingebettet sind, `pages` nach jeder Seite und `save`, bevor es die Datei schreibt. Es fragt den Provider nur nach den Schriften, die die Seiten zeichnen, hier fünf. Die Statuszeile listet die fünf Dateien, die der Provider geliefert hat, genau die aus `FONTS`, und keinen Ersatz. Ein Ersatz verweist auf eine Schrift, die in `FONTS` fehlt. Entfernen Sie Crimson Text 600, meldet die Zeile `Crimson Text 600 → 400`, und das fette *The Harbour Consort* auf Seite 4 erscheint in normaler Schriftstärke. Die Vorschau von CodePen kann kein PDF zeigen, deshalb ersetzt `offerPdf` aus dem Kit die Schaltfläche durch zwei Links: einen, der das PDF in einem neuen Tab öffnet, und einen, der es herunterlädt ([PDFs erzeugen](/de/docs/configuration-programmatic-usage#pdfs-erzeugen)).
+
+### 4 · Der Überschriftenbaum ist der Lesezeichenbaum
+
+<Excerpt region="headings" />
+
+Im PDF zeigt das Lesezeichenfenster den Titel des Umschlags, *Programme* mit *About the music* darunter, *The texts* mit seinen drei Liedern und *The performers*. Die Gliederung folgt den Überschriftenebenen, wählen Sie sie also mit Blick auf die Lesezeichen: hier eine H1 pro Abschnitt und eine H2 pro Lied. *The performers* hat ein eigenes Überschriftenformat, eine H1 ohne Seitenumbruch und ohne Auftakt, sodass sie sich Seite 4 mit Tennysons Gedicht teilt und trotzdem ein Lesezeichen auf oberster Ebene bekommt. Das `\\`, das den Umschlagtitel in zwei Zeilen bricht, wird im Lesezeichen zu einem Leerzeichen.
+
+### 5 · Titel und Autor aus dem Frontmatter
+
+<Excerpt region="cover" />
+
+Der Umschlag druckt zwei Werte aus dem Frontmatter über `{author}` und `{subtitle}`, und die Dokumenteigenschaften des PDF nehmen den Titel *Home from Sea* und den Autor *The Harbour Consort* aus demselben Block. Datum und Spielort sind Attribute der Umschlagüberschrift. Die Zeichnung dahinter ist ein SVG in Seitenbreite, und das PDF behält es als Vektorpfade.
+
+## Varianten
+
+### Die Lesezeichen weglassen
+
+Ein einseitiger Flyer oder ein Plakat hat nichts, was Lesezeichen bräuchte. Mit `outlines: false` hat das PDF keine Gliederung und öffnet sich mit geschlossener Seitenleiste.
+
+```diff
+-    outlines: true, // the default, spelled out: each heading becomes a bookmark
++    outlines: false,
+```
+
+### Die Schriften selbst ausliefern
+
+Richten Sie den Fetch auf Ihre eigenen Kopien derselben statischen WOFF2-Dateien, eine pro Schriftstärke und Stil, unter den Dateinamen von Fontsource. Seite und PDF teilen sich weiterhin jeden Download.
+
+```diff
+-    files.set(file, fetch(`https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${file}.woff2`)
++    files.set(file, fetch(`/fonts/${file}.woff2`)
+       .then((res) => {
+-        if (!res.ok) throw new Error(`Fontsource has no ${family} ${weight} ${style}`);
++        if (!res.ok) throw new Error(`No font file ${file}.woff2`);
+```
+
+## Häufige Fehler
+
+Listen Sie in `FONTS` jede Schrift auf, die Ihre Seiten setzen, darunter Fett und Kursiv des Textes. Fehlt eine, sieht der Bildschirm trotzdem richtig aus, weil das Kit die Schrift ohne Warnung lädt, doch das PDF druckt die nächstliegende Schrift des Providers, und nur die Ersatzschriften in der Statuszeile verraten den Tausch.
+
+Verwenden Sie statische Dateien, eine pro Schriftstärke und Stil. Aus einer variablen WOFF2 bettet das PDF nur die Standardinstanz ein, sodass ein fetter Abschnitt in normaler Schriftstärke erschiene ([Warum ein Font-Provider?](/de/docs/configuration-programmatic-usage#warum-ein-font-provider)).

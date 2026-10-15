@@ -1,0 +1,71 @@
+---
+title: "Eine Quelle, Druck- und Bildschirmausgabe"
+summary: "Beide Ausgaben aus einer Konfiguration: htmlViewer.overrides hält die dunkle Bildschirmgestaltung, applyHtmlViewerOverrides mischt sie vor jedem HTML-Build ein."
+plain: "Der Wetterteil eines Magazins, zweimal aus demselben Text erzeugt. Er zeigt, wie ein einziger Satz Einstellungen eine gedruckte Fassung in Spalten und eine dunkle, einspaltige Fassung zum Lesen am Bildschirm ergibt."
+description: "Ein Magazinteil in Postext als zweispaltige Druckausgabe und als dunkle, skalierbare HTML-Leseansicht aus einer Markdown-Quelle und einer Konfiguration."
+question: "Wie zeige ich dasselbe Dokument als responsive HTML-Leseansicht mit einer schlichteren Bildschirmgestaltung?"
+aliases: ["Bildschirmausgabe", "Leseansicht", "Webausgabe", "Dunkelmodus", "Nachtdesign", "responsives HTML", "Größe ändern", "ResizeObserver", "Shadow DOM", "htmlViewer overrides", "dark mode"]
+pageNotes: { "1": "Die Teiltitelseite von „Notes on Weather“: ein regenblaues Feld mit weißen diagonalen Regenstrichen, die die Schrift frei lassen, eine hohe römische Ziffer I, der Teiltitel „Autumn“ und am Fuß die drei aufgelisteten Notizen.", "2": "Die Notiz „Rain“: ein blasses Nebelband mit der Dachzeile „Autumn · Note 1“, dem Titel in der Gloock und einem kursiven Vorspann, zwei Spalten im Blocksatz und ein im Schnitt gezeichneter Regenmesser am Kopf der zweiten Spalte.", "3": "Die Notiz „Fog“: zwei ausgeglichene Spalten über einem Panorama, das quer über den Fuß der Seite läuft, ein Foto eines bei Sonnenaufgang mit Nebel gefüllten Tals, durch den ein Kirchturm, Bäume und ein Fluss scheinen, und im Vordergrund ein umzäuntes Ufer.", "4": "Die Notiz „Wind“: Eine Windrose steht über der zweiten Spalte, ihre längsten blauen Blätter zeigen nach Westen und Südwesten, und die Notiz endet mit dem Impressum der Ausgabe." }
+---
+
+## Was Sie setzen
+
+*Notes on Weather*, der Herbstteil eines kleinen Magazins, zweimal aus demselben Markdown gesetzt. Auf Papier ist es ein Heft von 225 × 297 mm: eine regenblaue Teiltitelseite, drei Notizen, die unter einem blassen Nebelband beginnen, zwei Spalten im Blocksatz, Zeichnungen eines Regenmessers und einer Windrose und ein Foto eines nebligen Tals. Auf dem Bildschirm ist es eine einzige Spalte aus der Newsreader im Flattersatz, hellgrau auf fast Schwarz, als HTML-Text, den ein Leser markieren und kopieren kann, ohne Teiltitelseite, Nebelbänder oder Seitenzahlen. Das Fenster öffnet sich beim Regenmesser, auf die Höhe des Fensters verkleinert und in Nachtfarben gezeichnet, neben der gedruckten Seite, auf der er steht. Scrollen Sie nach oben zum Auftakt von „Rain“, oder ziehen Sie an der Ecke des Fensters, und der Text wird in der neuen Größe neu gesetzt. Die Bildschirmgestaltung besteht aus neun Schlüsseln unter `htmlViewer.overrides`, innerhalb der Druckkonfiguration.
+
+## Zubereitung
+
+### 1 · Ein Satz Farbnamen, zwei Sätze Werte
+
+<Excerpt region="palette" />
+
+Jede Farbe der Konfiguration nennt eine Paletten-ID, und der daneben geschriebene Hexwert ist nur der Tageswert als Rückfall. Deshalb wechselt die Bildschirmausgabe zu den Nachtfarben, indem sie ein einziges Array ersetzt. Die [Überschreibungen](/de/docs/configuration-fonts-colors-viewers#html-betrachter) in [der kurzen Antwort](#die-kurze-antwort) mischen Objekte Schlüssel für Schlüssel und Überschriftenebenen über `level` und ersetzen jedes andere Array vollständig, `colorPalette` eingeschlossen. `main-color` gehört zur Palette, also ändern sich auch die Standardwerte der Engine, die sie verwenden. Die neue Palette erreicht jede mit ihr verknüpfte Farbe: den Text, die Bildunterschriften, die Gestaltungselemente der Auftakte und die Verweisfarbe.
+
+### 2 · Auftakte: ein Band auf Papier, die Wörter auf dem Bildschirm
+
+<Excerpt region="opener" />
+
+Dachzeile, Titel und Vorspann sind einmal definiert und werden in beide Gestaltungen eingesetzt, sodass beide Ausgaben dieselben Attribute der Überschrift zeigen: `{attr.kicker}`, `{attr.lead}` und den `{partTitle}` des Teils. Auf Papier beginnt eine Überschrift der Ebene 1 eine neue Seite und reicht über beide Spalten, und ihre Gestaltung hängt ein Nebelband an den Anschnitt. `minHeight` reserviert die Tiefe des Bands unter dem oberen Rand plus `AIR`, die 9 mm zwischen Band und erster Zeile. Die gedruckten Titel stehen in 54 pt, weil jeder ein kurzes Wort ist und die einzige große Schrift auf seiner Seite. Auf dem Bildschirm wird dieselbe Ebene als Überschrift in der Spalte gesetzt, ohne Band und ohne Luft. Die Überschreibung mischt über `level`, sodass jede Einstellung der Überschrift, die sie nicht neu angibt, wie im Druck bleibt.
+
+### 3 · Eine Teiltitelseite, die es nur auf Papier gibt
+
+<Excerpt region="part" />
+
+Im Druck eröffnet `:::part` <PageRef page={1}>die regenblaue Teiltitelseite</PageRef>: einen an allen Kanten randabfallenden Kasten, ein Bildelement aus Regenstrichen, die die Schrift frei lassen, Ziffer und Titel aus dem Direktivenblock und die Liste der Notizen in Weiß. Die Bildschirm-Überschreibungen setzen `parts.page: false`, sodass sich keine Seite öffnet und die Liste nicht gesetzt wird. Der [Teil](/de/docs/configuration-styles#teile) gibt seine Nummer und seinen Titel trotzdem an die folgenden Notizen weiter, und die Dachzeile auf dem Bildschirm lautet „Autumn · Note 1“ wie die gedruckte.
+
+### 4 · Jede Abbildung zweimal zeichnen
+
+<Excerpt region="figures" />
+
+Der Tausch der Palette färbt kein SVG um, deshalb wird jede Zeichnung einmal pro Palette angefertigt. Das Tal ist ein Foto, ein JPEG, das sich beide Ausgaben teilen. `figures(edition)` baut für beide Ausgaben dieselben Ressourcen, jede zeigt auf die Datei ihrer Ausgabe: `gauge-day.svg` im Druck, `gauge-night.svg` auf dem Bildschirm. IDs, Bildunterschriften, Alternativtexte und Platzierungen ändern sich nicht, sodass jedes `:ref` im Markdown in beiden Ausgaben zur selben Abbildung und Nummer führt. In der Bildschirmausgabe steht der Alternativtext in jedem `<img alt>`, wo ein Screenreader ihn findet.
+
+### 5 · Die Bildschirmausgabe einbetten
+
+<Excerpt region="screen" />
+
+Jede Bildschirmseite ist so hoch wie das Fenster, deshalb verkleinert `fitFiguresToPage` den Regenmesser, bis er mit seiner Bildunterschrift auf eine Seite passt ([Layout](/de/docs/configuration-page-layout#layout)). Bei 96 dpi, der Auflösung, die CSS annimmt, erscheinen die aus dem Druck geerbten Millimeter und Punkt in ihrer Nenngröße ([Den HTML-Betrachter einbinden](/de/docs/configuration-programmatic-usage#den-html-betrachter-einbinden)). Der Pen schreibt die absolut positionierten Zeilen von `renderToHtml` in ein Shadow DOM, wo die Selektoren der Seite sie nicht erreichen. Vererbte Eigenschaften wie `letter-spacing` überschreiten diese Grenze allerdings, und die Wurzel der Ausgabe setzt sie selbst zurück, weil die Engine die Zeilen ohne sie gemessen hat. HTML-Seiten sind durchsichtig, solange sie nicht bemalt werden, deshalb nimmt `page.backgroundColor` das Nachtpapier aus der Palette. Der ResizeObserver wartet 150 ms und baut nur dann aus einem frischen `config()` neu, wenn sich Breite oder Höhe des Fensters geändert haben; nach dem Neubau scrollt das Fenster zum selben Bruchteil seiner Höhe zurück.
+
+## Varianten
+
+### Bei Tag lesen
+
+Entfernen Sie die Nachtpalette und verwenden Sie die Tageswerte für Fenster und Abbildungen; die Bildschirmausgabe zeigt dann weiße Seiten, dunkle Schrift und die Tageszeichnungen.
+
+```diff
+-  colorPalette: paletteOf(night), // arrays are replaced whole: the night values
+   parts: { page: false }, // no divider page; the part still names the notes after it
+@@
+-pane.style.background = night.paper; // the pane's own ground, beside the pages and the scrollbar
++pane.style.background = day.paper; // the pane's own ground, beside the pages and the scrollbar
+@@
+-  const screenDoc = buildDocument({ markdown, resources: figures('night') },
++  const screenDoc = buildDocument({ markdown, resources: figures('day') },
+```
+
+### Den gedruckten Auftakten eine Kapitelnummer auf einem Farbband geben
+
+Für einen kräftigeren Druckauftakt mit gesättigtem Band und großer Kapitelnummer siehe <RecipeLink slug="chapter-opener-bleed-band">Kapitelauftakt auf einem randabfallenden Farbband</RecipeLink>; die Bildschirm-Überschreibungen bleiben dieselben.
+
+## Häufige Fehler
+
+- Halten Sie das Fenster mindestens 400 px hoch (die `min-height` des Pens). In einem schmalen Fenster unter etwa 350 px Höhe ist der Bildschirmauftakt höher als der Inhaltsbereich der Seite; er nimmt dann die ganze Seite ein, und der erste Absatz der Notiz beginnt auf der nächsten.
+- Geben Sie dem Fenster eine Größe, bevor Sie es setzen. Ein Fenster ohne Breite, verborgen oder aus einer Flex-Zeile gedrückt, ergäbe eine Seite ohne Breite; deshalb überspringt `showScreen()` ein Fenster, das schmaler oder niedriger als `FOLDED` ist, 200 px.

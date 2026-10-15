@@ -1,0 +1,75 @@
+---
+title: "Zweispaltiger Aufsatz mit nummerierten Gleichungen"
+summary: "Ein zweispaltiger Physikaufsatz, dessen Formeln im Text und sieben nummerierte Gleichungen MathJax setzt und die im PDF als Vektoren bleiben."
+plain: "Ein physikalischer Forschungsaufsatz in zwei Spalten, mit Formeln im Text und sieben nummerierten Gleichungen. Er zeigt, wie man Mathematik setzt, die im PDF scharf bleibt."
+description: "Ein Physikaufsatz, dessen Titelblock ein Überschriftenformat zeichnet, mit nummerierten MathJax-Gleichungen, einer berechneten Tabelle und Literatur mit Einzug."
+question: "Wie setze ich Formeln im Text und nummerierte abgesetzte Gleichungen, die im PDF Vektoren bleiben?"
+aliases: ["wissenschaftlicher Aufsatz", "Zeitschriftenaufsatz", "Forschungsartikel", "Preprint", "Gleichungen", "nummerierte Gleichungen", "Gleichungsnummern", "LaTeX", "MathJax", "Formeln", "tag", "Abstract", "Schlüsselwörter", "Literaturverzeichnis", "zwei Spalten", "journal article"]
+pageNotes: { "1": "Ein flaschengrünes Band trägt den Zeitschriftenkopf „Measure“, ein stroboskopisches Bild eines an der Kopflinie aufgehängten Pendels mit einem roten Pendelkörper am Ende seines Ausschlags und den Titel „The period of a pendulum at large amplitudes“; darunter die Autorenzeile, die Daten für Eingang, Annahme und Veröffentlichung und die Lizenz, dann ein getönter Abstract mit vier Schlüsselwort-Chips und zwei Spalten mit der ersten nummerierten Gleichung.", "2": "Abschnitt 2, „Theory“, mit den Gleichungen 2 bis 7, nummeriert am rechten Rand ihrer Spalte, und Abbildung 1, das Pendel und seine Symbole, am Kopf der zweiten Spalte.", "3": "Das Ende der Methode, dann „Results“, „Discussion“ und der Anfang von „Conclusions“: Abbildung 2 trägt am Kopf der zweiten Spalte die Periode gegen die Amplitude auf, und Tabelle 1 listet am Fuß der ersten die Messungen.", "4": "Abbildung 3, der Phasenraum, läuft über den Kopf der Seite; darunter teilen sich das Ende der Schlussfolgerungen, der Anhang und die Literatur die beiden Spalten, die auf gleicher Höhe beginnen und enden." }
+---
+
+## Was Sie setzen
+
+Ein Forschungsaufsatz aus der Septemberausgabe von *Measure*, einer erfundenen Open-Access-Zeitschrift für Experimentalphysik, auf A4 in zwei Spalten gesetzt. Oben trägt ein flaschengrünes Band den Zeitschriftenkopf, ein stroboskopisches Bild eines schwingenden Pendels und den Titel. Autorenzeile, Daten und Lizenz stehen auf Weiß unter dem Band, und ein getönter Abstract mit vier Schlüsselwort-Chips läuft über beide Spalten. Es folgen sechs nummerierte Abschnitte mit sieben nummerierten Gleichungen und 46 Formeln im Text; MathJax setzt diese und die Beschriftungen in den Abbildungen. Tabelle 1 und die Punkte von Abbildung 2 stammen aus einem einzigen Array von Messwerten. Auf der letzten Seite teilen sich das Ende der Schlussfolgerungen, der Anhang und die Literatur die beiden Spalten unter Abbildung 3, und beide Spalten enden auf gleicher Höhe. Das PDF behält jede Formel als Vektorkontur, ohne eine Mathematikschrift einbetten zu müssen.
+
+## Zubereitung
+
+### 1 · MathJax starten und die Gleichungen nummerieren
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). [Mathematik](/de/docs/configuration-text#mathematik) setzt MathJax, das im Paket enthalten ist: `initMathEngine` wird mit allen anderen Symbolen aus `https://esm.sh/postext` importiert, und `await initMathEngine()` muss vor dem ersten Build laufen, sonst erscheint jede Formel als grauer Kasten. Von da an setzt `$…$` Formeln im Text und `$$…$$` abgesetzte Formeln, und `renderToPdf` schreibt jede Formel als Vektorpfade. Ein `\tag{1}` am Ende einer abgesetzten Formel nummeriert sie: Die Formel nimmt die Breite ihrer Spalte ein, die Gleichung zentriert und die Nummer rechtsbündig auf ihrer Zeile. Die Nummern sind hier von Hand getippt, und der Text zitiert sie, wie sie geschrieben sind, „Eq. (6)“.
+
+### 2 · Den Titelblock aus einem Überschriftenformat zeichnen
+
+<Excerpt region="title" />
+
+Der Titel des Aufsatzes ist eine Überschrift der Ebene 1 (`#`) und steht deshalb an der Spitze der PDF-Gliederung, mit den nummerierten Abschnitten darunter. Sein [Überschriftenformat](/de/docs/configuration-styles#überschriftenstile) `article` ersetzt die Überschrift durch einen Slot von Gestaltungselementen: ein Band, das oben angeschnitten ist, den Zeitschriftenkopf, das stroboskopische Bild und den Titel, umbrochen dort, wo die Markdown-Überschrift ihr `\\` hat. Die Autorenzeile und zwei der Daten kommen aus den Attributen der Überschrift, das Veröffentlichungsdatum aus `publishDate` im Frontmatter. `minHeight` reserviert 130 mm vom Kopfsteg bis zum Fuß der Autorenzeile, und der Abstract beginnt darunter.
+
+### 3 · Die Abschnitte nummerieren, nicht den Titel
+
+<Excerpt region="numbering" />
+
+Jede Ebene hat ihre eigene Vorlage und Schrift: `{2}` nummeriert die sechs Abschnitte 1 bis 6 in 11,5 pt im Grün der Zeitschrift, `{2}.{3}` die Unterabschnitte von „Theory“ 2.1 bis 2.3 in 10 pt halbfett in der Textfarbe, und `numbered: false` hält Titel und Anhang aus der Zählung heraus. Jede Überschrift lässt den Text darunter wieder auf das Grundlinienraster von 12,6 pt einrasten, sodass die Zeilen der beiden Spalten über den Spaltenabstand hinweg Register halten. Abbildungen und Tabellen zählen mit `{n}` durch den ganzen Aufsatz. Der Standard `{h1}.{n}` würde hier dieselben Nummern drucken, weil der nicht nummerierte Titel `{h1}` leer lässt und ein leerer Zähler mitsamt seinem Punkt wegfällt, doch `{n}` hängt davon nicht ab. Der Tabellentyp setzt außerdem seine Legende über die Tabelle, wo Zeitschriften sie setzen.
+
+### 4 · Den Abstract über beide Spalten laufen lassen
+
+<Excerpt region="abstract" />
+
+Ein Kasten mit `span: 'page'` unter dem Titelblock setzt den Abstract über die volle Satzbreite, und die beiden Spalten beginnen darunter. Ein Innenabstand von 22 mm auf jeder Seite hält seine Zeilen bei etwa 90 Zeichen. Die Schlüsselwörter sind [Chips](/de/docs/configuration-styles#chip-stile), die nie über Zeilen umbrechen, jeder mit `{style="keyword"}` benannt. Ihr Absatzformat, `keywords`, steht im Flattersatz, weil eine Blocksatzzeile aus Chips die Wortabstände dazwischen zu Lücken dehnt.
+
+### 5 · Mit einer Literaturliste mit hängendem Einzug schließen
+
+<Excerpt region="references" />
+
+Ein Block `:::paragraphs` wendet das [Absatzformat](/de/docs/configuration-styles#absatzformate) `references` auf jeden Eintrag an, und sein `hangingIndent` von 5 mm hält die Nummer am Rand und lässt jede Folgezeile 5 mm eingerückt beginnen. Der Spaltenausgleich gleicht das letzte Band des Aufsatzes aus. Auf <PageRef page={4}>Seite 216</PageRef> teilen sich das Ende der Schlussfolgerungen, der Anhang und die Literatur die beiden Spalten unter Abbildung 3. Der Ausgleich kann nur Raum hinzufügen, und ein zweizeiliger Literatureintrag lässt sich nicht teilen, deshalb wurde der Anhang um zwei Zeilen kürzer geschrieben, bis beide Spalten auf gleicher Höhe endeten.
+
+### 6 · Die Tabelle berechnen, die Abbildungen in MathJax beschriften
+
+<Excerpt region="figures" />
+
+Ein Array, `runs`, speist Tabelle 1 und die Punkte von Abbildung 2, und die vorhergesagte Spalte der Tabelle ist Gleichung (6), für jede Amplitude ausgewertet. Die Tabelle übernimmt die [Booktabs-Linien](/de/docs/configuration-resources#booktabs-linien) einer Zeitschrift, `rules: 'booktabs'` in der Textfarbe: eine kräftige Linie darüber und unter der letzten Zeile, eine feine unter dem Tabellenkopf, keine senkrechten Linien. Der Text zitiert jede Ressource mit `:ref{id="…" style="full"}`, was „Figure 2“ fett in der Textfarbe druckt und die Ressource an den ersten freien Platz nach dem Zitat gleiten lässt. Die Legenden und Tabellenzellen verwenden schlichtes Markup `~sub~` und `^sup^` (`*T*~0~`), das in ihrer eigenen serifenlosen Schrift bleibt, und Symbole im laufenden Text sind `$T_0$`. Auch die Beschriftungen in den Abbildungen sind Mathematik: `tex()` ruft für jede `renderMath` auf und schreibt die Konturen als Pfade in das SVG. Das *θ*₀ von Abbildung 1 ist dieselbe Glyphe, die die Formeln verwenden, und bleibt im PDF ein Vektor.
+
+## Varianten
+
+### Abbildungen innerhalb der Abschnitte nummerieren
+
+Lange Aufsätze zählen Abbildungen pro Abschnitt; so erscheint in der Einleitung „Figure 1.1“ und in den Ergebnissen „Table 4.1“.
+
+```diff
+-  numberingTemplate: '{n}', resetOn: 'never',
++  numberingTemplate: '{h2}.{n}', resetOn: 'h2',
+```
+
+### Die Engine die Gleichungen nummerieren lassen
+
+Mit einem `\label` statt jedes `\tag` werden die Gleichungen in Lesereihenfolge nummeriert, sodass eine in der Mitte eingefügte Gleichung die übrigen neu nummeriert, und `\eqref{eq:small}` im Text druckt (1). Die Seiten bleiben gleich.
+
+```diff
+-$$T_0 = 2\pi\sqrt{\frac{L}{g}} \, . \tag{1}$$
++$$T_0 = 2\pi\sqrt{\frac{L}{g}} \, . \label{eq:small}$$
+```
+
+## Häufige Fehler
+
+- Text, der nach einer Leerzeile unter einer abgesetzten Formel steht, ist ein neuer Absatz und wird eingezogen, deshalb beginnt hier jeder als eigener Satz („Here *L* is…“). Für ein „where…“ wie in LaTeX schreiben Sie den Text direkt unter das schließende `$$`: Er setzt den Absatz fort und steht stumpf.
+- Schlichtes `~0~` senkt seine Ziffer um ein Drittelgeviert, unter die Unterlängen, und `^2^` danach folgt dem ₀, statt darüber zu stehen. Im laufenden Text schreiben Sie `$T_0$` und `$T_0^2$` und behalten das schlichte Markup für Legenden und Tabellenzellen, wo es in der Beschriftungsschrift bleibt.
+- Prüfen Sie, dass die Beschriftungsschrift ¹, ² und ± enthält, und Griechisch, falls eine Legende es braucht. Die zuerst erprobte Instrument Sans hat keines der drei Zeichen in ihren Fontsource-Dateien, und die Schibsted Grotesk hat kein Griechisch, deshalb nennt die Legende von Abbildung 1 die Amplitude in Worten statt als *θ*₀.

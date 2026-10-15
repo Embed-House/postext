@@ -1,0 +1,69 @@
+---
+title: "Vertikales Chinesisch mit Zitaten in Zeilennotizen"
+summary: "Ein vertikales Kapitel in Langzeichen, rechts gebunden, dessen Zitate als Anmerkungen nach GB/T 7714 als 夾注 in der Spalte gesetzt sind."
+plain: "Ein Kapitel eines chinesischen Buchs, in Spalten von oben nach unten gesetzt. Jede Quelle wird in einer kleinen zweizeiligen Notiz innerhalb der Spalte zitiert, und die zitierten Werke stehen am Ende in einer Liste."
+description: "Ein vertikales chinesisches Kapitel in Postext: Zitate als Anmerkungen nach GB/T 7714, als 夾注 (Warichu) in der Spalte gesetzt, mit Liste der zitierten Werke."
+question: "Wie setze ich Zitate als zweizeilige Notizen in der Zeile (夾注) in einem vertikalen chinesischen Buch?"
+aliases: ["夾注", "夹注", "割注", "Warichu", "雙行夾注", "双行夹注", "Zeilennotizen", "Zitate in vertikalem Chinesisch", "豎排", "直排", "GB/T 7714 Anmerkungen", "注釋體", "zitierte Werke", "引用書目", "Langzeichen", "traditionelles Chinesisch", "rechts gebundenes Buch", "Tategaki"]
+pageNotes: { "1": "Die erste Seite, links vom Bund: von rechts 第三章 in fetter Hei und der Titel 宋刻本的版式 in Kai, jedes in einer eigenen Spalte zwischen drei zinnoberroten Linien, dann der Text in Spalten zu 36 Zeichen. Zwei Zitate stehen innerhalb der Spalten als Notizen in zwei Zeilen halber Größe: das Buch von 宿白 am Fuß der dritten Spalte, fortgesetzt am Kopf der vierten, und das von 張秀民 weiter hinten. Die Seitenzahl 四十五 steht tief im linken Rand; quer über den Fuß sagt eine Zeile in kleiner lateinischer Schrift, dass das Buch erfunden ist und die zitierten Werke echt sind.", "2": "Eine rechte Seite: 版刻叢談 den rechten Rand hinunter mit der Seitenzahl 四十六. Zwölf Spalten über das 版心, den 魚尾, die Drucker von Zhejiang und Jianyang und das 牌記, mit einer Notiz, die 黃永年 in zwei Zeilen halber Größe zitiert, und in den letzten zwei ihrer fünfzehn Spalten zwei quer gestellte Notizen auf Englisch: Carters Buch, das am Kopf der letzten Spalte endet, und das von Twitchett, das an ihrem Fuß beginnt.", "3": "Eine linke Seite: der Rest von Twitchetts Notiz am Kopf der ersten Spalte, der letzte Satz, dann der fette Titel 本章引用書目 und fünf nummerierte Einträge, die beiden englischen quer gestellt, ihre Folgespalten eingezogen. 第三章　宋刻本的版式 läuft den linken Rand hinunter über der Seitenzahl 四十七." }
+---
+
+## Was Sie setzen
+
+Das Ende eines Kapitels aus einem erfundenen Buch über den chinesischen Druck, 版刻叢談 („Gespräche über den Holztafeldruck“), in Langzeichen gesetzt, von oben nach unten in Spalten, die von rechts gelesen werden, auf einer 大32開-Seite von 140 × 203 mm, rechts gebunden. Das Kapitel handelt vom Seitenbild der Song-Ausgaben und zitiert fünf echte Werke. Jedes Zitat ist so gesetzt, wie chinesische Bücher seit Jahrhunderten Kommentare setzen: als 夾注, eine Notiz in zwei Zeilen in halber Textgröße, innerhalb der Spalte, in der das Zitat steht. Eine Notiz, die nicht in den Rest einer Spalte passt, läuft am Kopf der nächsten weiter, und eine läuft über das Umblättern hinweg. Die Notizen folgen der Anmerkungsform von GB/T 7714—2015, der festlandchinesischen Norm für Literaturangaben, und das Kapitel endet mit einer nummerierten Liste der Werke, die es zitiert, die englischen quer gestellt. Dasselbe Kapitel mit Fußnoten am Fuß der Seite würde wie <RecipeLink slug="novel-footnotes-column-foot">Nº 071</RecipeLink> gesetzt.
+
+## Zubereitung
+
+### 1 · Ein Anmerkungsstil, in der Zeile gesetzt
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Der Anmerkungsstil von GB/T 7714 (`china-national-standard-gb-t-7714-2015-note`) ist ein Notenstil: Jedes Zitat wird zu einer Anmerkung, die das Werk vollständig nennt ([Zitate](/de/docs/configuration-notes-references#zitationen)). Standardmäßig schickt ein Notenstil seine Anmerkungen an den Fuß der Seite. `notes: 'warichu'` hält jede Anmerkung stattdessen in der Spalte, als Warichu gesetzt: zwei Zeilen in `cjk.warichu.fontSize`, der halben Textgröße, auf der Spalte zentriert, die rechte Zeile zuerst gelesen ([Markierungen, Ruby und Warichu](/de/docs/configuration-east-asian#zeichen-ruby-und-warichu)). Das Markdown ist dasselbe wie bei jedem Stil, `[@su1999]` nach den Wörtern, die es belegt, und die Anmerkung tritt an die Stelle des Zitats, vor das 。, das den Satz beendet.
+
+<PageShot page={1} crop="0.48,0.17,0.16,0.7" caption="Seite 1: Die Notiz zum Buch von 宿白 beginnt am Fuß der dritten Spalte und läuft am Kopf der vierten weiter, jeweils die rechte Zeile zuerst." />
+
+Die Zeilen werden Stück für Stück gefüllt. Am Fuß der dritten Spalte ist Platz für 宿白. 唐宋時期 und nicht mehr, also wird es in zwei Zeilen zu drei und vier Zellen geteilt; der Rest der Notiz füllt den Kopf der nächsten Spalte, wieder in zwei Zeilen. Auf Seite 2 beginnt Twitchetts Notiz am Fuß der letzten Spalte, und der Leser blättert um, um sie zu Ende zu lesen.
+
+### 2 · Die zitierten Werke am Ende des Kapitels
+
+`:::bibliography{title="本章引用書目" scope=chapter}` setzt die Liste dort, wo es steht, und führt nur die Werke auf, die dieses Kapitel zitiert ([Das Literaturverzeichnis](/de/docs/document-format#das-literaturverzeichnis)). Die Literaturangaben stammen aus einem BibTeX-Block. Jeder Eintrag trägt eine `langid`, `chinese` oder `english`, die der Stil als Sprache des Werks liest, und in Schriftzeichen geschriebene Namen bleiben ganz. Die Liste ist in der Reihenfolge des ersten Zitats nummeriert, und die Folgespalten eines Eintrags beginnen unterhalb seiner Nummer.
+
+### 3 · Langzeichen nach festlandchinesischen Regeln
+
+`locale: 'zh-Hant-CN'` verlangt Langzeichen, nach den Regeln des Festlands gesetzt, wie Verlage in Peking und Schanghai klassische Gelehrsamkeit setzen: Komma und Punkt stehen in der oberen rechten Ecke ihrer Zelle, und ein vertikales Buch wird rechts gebunden. Die Zitate folgen der Sprachangabe: Die traditionelle Schrift wählt die CSL-Locale zh-TW, sodass auch die Wörter, die der Stil hinzufügt, in Langzeichen stehen. Noto Serif SC zeichnet Langzeichen in den Formen des Festlands, was zu dieser Ausgabe passt; LXGW WenKai TC, eine taiwanische Schrift, setzt nur den Kapiteltitel, der keine Satzzeichen hat ([Zahlen im vertikalen Satz](/de/docs/configuration-east-asian#zahlen-im-vertikalen-text) erklärt, was mit den Ziffern geschieht).
+
+In den Notizen und der Liste drehen sich ein lateinischer Titel und eine vierstellige Jahreszahl quer und laufen die Spalte hinunter. Eine kurze Zahl neben chinesischem Text, etwa die 1 einer Nummer, steht aufrecht in ihrer Zelle.
+
+### 4 · Der Auftakt zwischen Linien
+
+<Excerpt region="opener" />
+
+Auf einer vertikalen Seite wird eine Überschriftengestaltung im Rahmen des Textflusses angelegt: `x` läuft die Spalte hinunter und `y` quer über die Seite von ihrem rechten Rand aus, sodass eine Linie `'horizontal'` auf dem Blatt eine senkrechte Linie ist. Drei Linien rahmen zwei Spalten im Abstand von 30,4 pt. 第三章 steht in der ersten in fetter Hei, der Titel in der zweiten in Kai ([Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). Die Kapitelnummer kommt aus `startAt=3` an der Überschrift und der Vorlage `第{1:一}章`, die Seitenzahlen aus `pageNumbering`: `trad-chinese-informal` ab 45. Kolumnentitel und Seitenzahlen laufen den Außenrand hinunter wie in <RecipeLink slug="vertical-novel-right-bound">Nº 075</RecipeLink> ([Vertikale Textelemente](/de/docs/configuration-page-layout#vertikale-textelemente)).
+
+<Excerpt region="palette" />
+
+## Varianten
+
+### Klammern um jede Notiz
+
+Manche Ausgaben schließen ein 夾注 in Klammern in Textgröße ein. `cjk.warichu` setzt sie für jede Notiz, die Zitate eingeschlossen.
+
+```diff
+-  warichu: { fontSize: em(0.5), color: col('ink') }, // no brackets: the half size sets it off
++  warichu: { fontSize: em(0.5), color: col('ink'), open: '〔', close: '〕' },
+```
+
+### Nummern in der Spalte statt Notizen
+
+Der numerische Stil von GB/T 7714 mit Eckklammern druckt 〔1〕 aufrecht in der Spalte, und die Liste bleibt, wie sie ist.
+
+```diff
+-  style: 'china-national-standard-gb-t-7714-2015-note',
+-  notes: 'warichu', // 夾注; 'footnote' sets the same notes at the foot of the page
++  style: 'china-national-standard-gb-t-7714-2015-numeric',
++  marker: 'corner', // 〔1〕, upright in vertical text
+```
+
+## Häufige Fehler
+
+- Ein Notenstil schreibt ein zum zweiten Mal zitiertes Werk in Kurzform, und der Anmerkungsstil von GB/T 7714 kürzt es zu 同1, „wie in Anmerkung 1“. Ein Warichu hat keine Nummer, also kann der Leser Anmerkung 1 nicht finden. Dieses Kapitel zitiert jedes Werk einmal; ein Text, der ein Werk erneut zitiert, sollte das zweite Zitat von Hand schreiben oder den numerischen Stil der zweiten Variante verwenden.
+- Der Stil schreibt westliche Satzzeichen in chinesische Einträge, `宿白. 唐宋時期的雕版印刷[M]. 北京: 文物出版社, 1999.`, wie die Norm sie druckt. In einer vertikalen Spalte behalten diese Zeichen ihre westliche Form: Sie drehen sich quer und nehmen weniger als eine Zelle ein, anders als das 。 und ， des Texts.
+- Eine Warichu-Zeile hat die halbe Textgröße: Bei 10,5 pt ist jede Zeile 5,25 pt groß, die kleinste Schrift auf der Seite. Setzen Sie den Text in 五號 oder größer, oder erhöhen Sie `cjk.warichu.fontSize`; die beiden Zeilen teilen sich immer die Breite einer Spalte.

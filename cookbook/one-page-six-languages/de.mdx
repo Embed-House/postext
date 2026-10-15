@@ -1,0 +1,48 @@
+---
+title: "Eine Seite, in sechs Sprachen gelettert"
+summary: "Eine Comicseite, Aufteilung und Bilder fest, je Sprache gelettert: Die Locale wählt die Schrift; Japanisch läuft senkrecht und liest wie Arabisch von rechts."
+plain: "Dieselbe Comicseite auf Englisch, Spanisch, Französisch, Japanisch, Chinesisch und Arabisch: Nur die Wörter ändern sich, und Postext zeichnet jede Sprechblase um sie herum neu."
+description: "Comicseite, in Postext neu gelettert: eine Aufteilung, fünf Bilder, ein Skript pro Sprache, senkrechte japanische Blasen, Japanisch und Arabisch von rechts."
+question: "Wie lettere ich einen Comic in einer anderen Sprache neu?"
+aliases: ["Neu-Lettering", "Relettering", "Übersetzung", "Comicübersetzung", "Lokalisierung", "Manga-Übersetzung", "senkrechtes Lettering", "Comic von rechts nach links", "re-lettering", "rotulación", "写植", "嵌字", "defaultComicFont"]
+---
+
+## Was Sie setzen
+
+Eine Seite eines Comics, *The Lighthouse Radio*: Maya kommt beim Leuchtturm ihres Großvaters an, als ein Sturm aufzieht, das Funkgerät ist tot, und der Übeltäter ist Biscuit, der auf dem Kabel schläft. Die Aufteilung und die fünf Aquarellbilder stehen fest; was sich von einer Ausgabe zur nächsten ändert, ist ein Skript aus neun Zeilen. Jede Ausgabe dieses Rezepts setzt ihre eigene Sprache, und jede Ausgabe setzt außerdem die französische Seite daneben: Englisch und Französisch, Spanisch und Französisch und so weiter über Japanisch, Chinesisch und Arabisch. Die Engine zeichnet jede Sprechblase um die Wörter neu, die sie enthält. Japanisch wird in senkrechten Spalten in der Zen Antique gelettert. Die japanische und die arabische Seite lesen sich von rechts, deshalb tauschen die drei Panels der mittleren Reihe die Plätze.
+
+## Zubereitung
+
+### 1 · Eine Konfiguration für jede Sprache
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Nichts in der Konfiguration nennt eine Sprache außer `locale`. Ohne `fontFamily` nimmt das Lettering die Comicschrift der Dokumentsprache (`defaultComicFont`): Comic Neue, Zen Antique, Noto Sans SC oder Playpen Sans Arabic, und das Geräuschwort die passende Displayschrift. `writingMode: 'auto'` macht aus den japanischen Sprechblasen senkrechte Spalten; `readingDirection: 'auto'` liest die japanische und die arabische Seite von rechts, wie ihre Sprachen es tun, sodass dieselbe Aufteilung `split="30 / 35 [* | * | *] / *"` das Panel mit dem Funkgerät rechts und die Katze links setzt. Die Sprecher-IDs (`maya`, `tomas`) sind in jedem Skript dieselben, und die Anker der Bilder richten sich nach ihnen.
+
+Der Schriftgrad gilt für das ganze Buch. Das englische Skript hat 216 Buchstaben, das spanische 220, das französische 224, das chinesische 74 Schriftzeichen; die längeren Skripte bekommen größere Sprechblasen, nie kleinere Schrift.
+
+### 2 · Französisch fährt in jeder Ausgabe mit
+
+<Excerpt region="editions" />
+
+Französisch ist keine der Ausgaben dieses Rezepts, deshalb baut jede Ausgabe zwei Dokumente: ihre eigene Seite und dann die französische aus `content.fr.en.md`, mit derselben Konfiguration und der `locale` `'fr'`. Das französische Skript setzt das schmale geschützte Leerzeichen vor `!` und `?`, wie es der französische Satz tut.
+
+### 3 · Die Bilder ändern sich nicht
+
+<Excerpt region="art" />
+
+Die Sicherheitsbereiche sind schmaler als die Zellen dieser Aufteilung: Die mittlere Reihe enthält drei Panels von etwa 46 mm Breite und 80 mm Höhe, sodass jedes quadratische Bild einen Streifen von etwa 58 % seiner Breite zeigt, während sein Sicherheitsbereich, das Gesicht des Sprechers und das, worum es in der Zeile geht, 36–42 % einnimmt. Die Bilder werden für Japanisch und Arabisch nicht gespiegelt (`mirrorArt` bleibt false): Maya kommt weiterhin von links den Weg herauf, und nur die Reihenfolge der Panels folgt der Leserichtung.
+
+## Varianten
+
+### Die Bilder für die Ausgaben von rechts nach links spiegeln
+
+`mirrorArt: true` spiegelt jedes Bild, wenn die Seite andersherum gelesen wird, als das Bild gezeichnet ist. Lassen Sie ein Panel mit Schrift oder einer Uhr darin mit `::panel{mirror=false}` ungespiegelt.
+
+```diff
+   readingDirection: 'auto', // the default, written out: it is what an edition flips
++  mirrorArt: true,
+```
+
+## Häufige Fehler
+
+- Eine Skriptzeile nennt einen Sprecher über seine ID, nicht über seinen Namen: Schreiben Sie in jeder Sprache `maya:`. Den Namen, den ein Screenreader ansagt, liefert `cast[].name`.
+- Die französische Seite teilt sich die Bilder der Ausgabe, deshalb steht der Alternativtext ihrer Panels in der Sprache der Ausgabe; geben Sie in `content.fr.en.md` `::panel{alt="…"}` für französischen Alternativtext an.

@@ -1,0 +1,70 @@
+---
+title: "Hausschriften in Layout, PDF und Paket"
+summary: "Das Gestaltungshandbuch einer erfundenen U-Bahn in den Schriftdateien der Marke, einmal geladen für Layout, Schriftlieferant des PDFs und .postext-Paket."
+plain: "Ein Gestaltungshandbuch für eine erfundene U-Bahn. Es zeigt, wie man die eigenen Schriften einer Marke einmal herunterlädt und für die Seitenvorschau, das PDF und die gespeicherte Datei verwendet."
+description: "Eigene Schriftdateien vor dem Layout registrieren, dem PDF über einen Schriftlieferanten dieselben Bytes geben, die weitergebbaren in ein .postext-Paket packen."
+question: "Wie setze ich Seiten in meinen eigenen Schriftdateien und bette genau diese Dateien ins PDF ein?"
+aliases: ["Hausschriften", "Markenschriften", "lizenzierte Schriften", "Unternehmensschrift", "selbst gehostete Schriften", "FontFace aus Bytes", "customFonts", "weitergebbar", "Schriftlieferant", "font provider", "Corporate Design", "Gestaltungshandbuch", "Farbfelder", "fuentes corporativas"]
+pageNotes: { "1": "Der Umschlag: „Metro de Alba“ in schwarzen, schmalen Versalien und Gemeinen auf einer Zeile, darunter „Identity manual“ und die Ausgabe, und über der unteren Seitenhälfte fünf dicke Linien in Rot, Petrol, Gelb, Violett und Grün, die links unten auf einer gemeinsamen Trasse beginnen, einen grauen Fluss kreuzen und sich nach rechts auffächern, mit weißen, schwarz umrandeten Stationen.", "2": "Seite 2: oben ein dunkles Band mit rotem Quadrat und dem Titel des Handbuchs, eine riesige rote „01“ neben der Überschrift „Colour“ und ihrem Vorspann, zwei Spalten zu den Linienfarben mit kleinen Farbquadraten im Text und über die ganze Breite des Fußes eine Tabelle, deren erste Spalte aus neun Farbblöcken besteht, gefolgt von Namen sowie HEX-, RGB- und CMYK-Werten in einer Monospace-Schrift.", "3": "Seite 3: das Band mit violettem Quadrat, eine riesige violette „02“ neben der Überschrift „Type“, Text zu den drei Schriften unter den Zwischentiteln „Big Shoulders Display“, „Public Sans“, „Weights“ und „Spline Sans Mono“, mit Schriftmusterzeilen der Public Sans und der Spline Sans Mono, und über die Breite des Fußes ein schwarzes Bahnsteigschild mit „Puerta del Mercado“ in Weiß und petrolfarbenen, gelben und grünen Quadraten vor den Linien 2, 3 und 5.", "4": "Seite 4: das Band mit grünem Quadrat, eine riesige grüne „03“ neben der Überschrift „Usage“, zwei Spalten mit Regeln für den Netzplan (Zeichnung, Namen, Geografie, Linienstärke, Dateien für Zulieferer), die mit dem Impressum enden, und über die Breite des Fußes zwei gerahmte Zeichnungen nebeneinander: „Do“, drei Linien, die gemeinsam im 45-Grad-Winkel abknicken, mit weißen Stationen, und „Don't“, dieselben Linien in freien Winkeln mit farbigen Punkten." }
+---
+
+## Was Sie setzen
+
+Vier Seiten aus dem Gestaltungshandbuch der Metro de Alba, einer erfundenen U-Bahn mit fünf Linien. Auf dem Umschlag verlassen die fünf Linien die untere linke Ecke auf einer gemeinsamen Trasse und verzweigen sich nach rechts, nachdem sie einen grauen Fluss gekreuzt haben, unter dem Namen in Big Shoulders Display. Jeder Abschnitt beginnt unter einem dunklen Band mit einer großen zweistelligen Zahl in der Farbe einer Linie. In *01 Colour* ist die erste Spalte der Tabelle die Farbe selbst; *02 Type* zeigt Schriftmusterzeilen und ein Bahnsteigschild, und *03 Usage* schließt mit zwei gerahmten Netzplanzeichnungen, einer nach den Regeln (Do) und einer gegen sie (Don't). Der gesamte Text steht in sechs Schriftdateien, die das Skript vor dem ersten Layout herunterlädt. Das PDF wird mit denselben sechs Dateien gezeichnet, und die `.postext`-Datei trägt fünf davon, weil die Displayschrift als nicht weitergebbar markiert ist.
+
+## Zubereitung
+
+### 1 · Die Schriften der Marke registrieren, setzen und dem PDF dieselben Bytes geben
+
+<Excerpt region="build" />
+
+Das Layout misst jedes Wort mit den Schriften in `document.fonts`, darum lädt `loadBrandFonts()` in [der kurzen Antwort](#die-kurze-antwort) jede Datei einmal, behält ihre Bytes und registriert ein daraus gebautes `FontFace`, bevor `buildDocument` läuft. Die Funktion `kitFonts` des Kits lädt nur von Fontsource, eine Marke liefert ihre Dateien aber von ihrem eigenen Server. `renderToPdf` fragt nach den Schriften, die die Seiten zeichnen, und `brandFontProvider` beantwortet jede Anfrage mit den bereits geladenen Bytes; eine Schriftstärke oder Neigung, die der Marke fehlt, bekäme die nächstliegende Datei derselben Familie ([Warum ein Schriftlieferant?](/de/docs/configuration-programmatic-usage#warum-ein-font-provider)). Das PDF bettet die sechs Dateien, mit denen der Canvas gemessen hat, je einmal ein.
+
+### 2 · Das Farbsystem ist eine Liste
+
+<Excerpt region="colours" />
+
+Da die Palette und Tabelle 1.1 aus denselben neun Zeilen gebaut sind, kann die Tabelle keinen Wert nennen, den die Seiten nicht verwenden. `setCellBackground` füllt die leere erste Zelle jeder Zeile mit deren Farbe, verknüpft mit der Palette. Im Text nimmt `:swatch{color="line-2"}` eine Paletten-ID und zeichnet ein Quadrat mit einer Kontur in der Textfarbe. `main-color` hat den Hexwert von Ink, sodass Überschriften sowie fette und kursive Passagen, deren Standardwerte damit verknüpft sind, in Ink statt im Blau der Engine erscheinen. `bodyText.referenceColor: col('ink')` nennt Ink auch für Verweise ([Farbpalette](/de/docs/configuration-fonts-colors-viewers#farbpalette)).
+
+### 3 · Ein Kapitelauftakt, drei Linienfarben
+
+<Excerpt region="sections" />
+
+`numberingTemplate: '{1:01}'` schreibt den Zähler zweistellig, und `{number}` druckt im Auftakt 01, 02 und 03; die Überschrift des Umschlags ist `numbered: false` und bekommt keine Nummer. Die drei Abschnittsformate unterscheiden sich nur im Paletteneintrag `section`, den jedes auf die Farbe seiner Linie setzt. Zahl und Quadrat im Band sind mit `section` verknüpft, sodass eine Auftaktgestaltung allen drei Abschnitten dient. `minHeight` reserviert für den Auftakt zehn Zeilen des 14-pt-Rasters, und der Text jedes Abschnitts beginnt auf derselben Rasterzeile seiner Seite.
+
+### 4 · Do und Don't sind Abbildungstypen
+
+<Excerpt region="do-dont" />
+
+Ein Ressourcentyp kann ein partielles `captionStyle` tragen, und diese beiden setzen nur die Farbe der Marke, Signalgrün für Do und Signalrot für Don't ([Ressourcentypen](/de/docs/configuration-resources#ressourcentypen)). Die Signalfarben erreichen auf Weiß 5,1:1 und 5,5:1, während die Linien 1, 2, 3 und 5 unter den 4,5:1 bleiben, die kleiner Text braucht. Beide Zeichnungen gleiten mit `position: 'bottom'` und werden im selben Absatz zitiert, dem ersten unter „Drawing the map“, sodass sie sich den Fuß von Seite 4 teilen, Do in der linken und Don't in der rechten Spalte.
+
+### 5 · Das Paket packt die Schriften, die es weitergeben darf
+
+<Excerpt region="bundle" />
+
+`createBundle` liest `config.customFonts`, sucht die Bytes jeder Variante über ihre `fileId` in `files` und schreibt sie unter `fonts/`, mit einem Eintrag `fonts` im Manifest. Die Displayfamilie trägt `redistributable: false`, stellvertretend für eine Lizenz, die die Weitergabe der Dateien verbietet (Big Shoulders Display selbst steht unter der OFL). Ihre Datei bleibt draußen, und `warnings` nennt die Familie. Die 81 KB große Datei enthält das Kapitel, die Konfiguration, die drei Zeichnungen und fünf Schriftdateien. Das Layout liest `customFonts` nie; die Seiten sehen ohne es genauso aus ([Ein Paket erstellen](/de/docs/configuration-programmatic-usage#ein-paket-erstellen)).
+
+## Varianten
+
+### Auch die Displayschrift einpacken
+
+Erlaubt die Lizenz die Weitergabe der Dateien, entfernen Sie das Flag, und das Paket trägt alle drei Familien in 96 KB.
+
+```diff
+-  name, redistributable: name !== DISPLAY, // the display face reaches suppliers another way
++  name,
+```
+
+### Einen echten fetten Schnitt verwenden
+
+`boldFontWeight: 600` setzt fette Passagen, Tabellenköpfe und Legendenbezeichnungen im SemiBold, weil die Marke keinen Bold hat; hat Ihre Familie einen, fügen Sie seine Dateien zu `FONTS` hinzu, löschen die Einstellung und schreiben die Schriftmusterzeile des Beispiels mit ihrem „There is no Bold“ um, das dann nicht mehr stimmt.
+
+```diff
+-    boldFontWeight: 600, // the brand has no Bold: its SemiBold sets **emphasis**
+-  'Public Sans': ['400', '400i', '600', '600i'],
++  'Public Sans': ['400', '400i', '600', '600i', '700', '700i'],
+```
+
+## Häufige Fehler
+
+Übergeben Sie `createBundle` die Bytes jeder Schrift unter der `fileId`, die `customFonts` ihr gibt. Eine Variante ohne Bytes bleibt mit der Warnung „missing file, skipped“ draußen, und eine Familie, die alle Varianten verliert, fällt aus dem Manifest.

@@ -1,0 +1,578 @@
+{/* docs/justification-en.mdx */}
+
+export const metadata = {
+  title: 'Silbentrennung und Blocksatz',
+  sidebarTitle: 'Silbentrennung und Blocksatz',
+  description: 'Wie Postext Zeilen umbricht, Text im Blocksatz setzt und den Wortabstand mit dem Knuth-Plass-Algorithmus steuert',
+  lang: 'de',
+  lastUpdated: '2026-09-29',
+  readingTime: '14 min',
+  order: 13,
+  plainSummary: "Diese Seite erklärt, wie Postext die Wörter auf jede Zeile verteilt. Sind beide Ränder eines Absatzes gerade, können die Lücken zwischen den Wörtern zu breit werden und unschön aussehen. Postext betrachtet den ganzen Absatz, bevor es entscheidet, wo jede Zeile endet, damit die Lücken gleichmäßig bleiben. Lange Wörter kann es außerdem an der richtigen Stelle mit einem Trennstrich teilen. Sie können festlegen, wie breit die Lücken werden dürfen, und die Zeilen markieren lassen, die trotzdem zu locker wirken. Die Seite zeigt auch, wie Postext Spalten auf gleicher Höhe enden lässt.",
+};
+
+# Silbentrennung und Blocksatz
+
+**Der Unterschied zwischen laienhaftem und professionellem Satz steckt in den Räumen zwischen den Wörtern.**
+
+Schlagen Sie einen beliebigen Taschenbuchroman auf. Der Text steht im Blocksatz – beide Ränder jedes Absatzes sind exakt ausgerichtet. Doch sehen Sie genauer hin. Die Wortabstände sind Zeile für Zeile nahezu gleich. Keine Gießbäche aus Weißraum, die die Seite hinunterlaufen. Keine Zeilen, in denen zwei Wörter verloren in einem weiten Meer aus Leerraum stehen. Das zu erreichen ist weit schwieriger, als es aussieht, und kein anderes Problem hat in der Typografie mehr Entwicklungsaufwand verschlungen.
+
+Postext löst es mit demselben Algorithmus, den TeX seit 1981 verwendet: dem **optimalen Zeilenumbruch nach Knuth-Plass**. Zusammen mit Trennmustern in TeX-Qualität, einstellbaren Grenzen für den Wortabstand und einer visuellen Fehlersuche, die problematische Zeilen kenntlich macht, erzeugt die Engine Blocksatz, der den Ansprüchen des Verlagswesens genügt.
+
+
+## Das Problem
+
+Wird Text mit `textAlign: 'justify'` gesetzt, muss jede Zeile außer der letzten gedehnt oder gestaucht werden, bis sie genau die Spaltenbreite füllt. Die Engine verteilt die Differenz zwischen der natürlichen Breite des Inhalts und der Spaltenbreite auf die Wortzwischenräume dieser Zeile. (Die letzte Zeile bleibt in ihrer natürlichen Breite im Flattersatz stehen – mit einer Ausnahme, die unter [Die letzte Zeile](#die-letzte-zeile) beschrieben ist.)
+
+Hat eine Zeile viele Wörter, nimmt jeder Zwischenraum nur eine winzige Anpassung auf – für den Leser unsichtbar. Hat sie dagegen wenige Wörter (weil ein langes Wort einen frühen Umbruch erzwungen hat), muss sich jeder Zwischenraum stark dehnen. So entsteht eine **zu lockere Zeile**: eine Zeile, deren Wortabstände so breit sind, dass sie den Leserhythmus stören und hässliche Lücken bilden.
+
+Auch das umgekehrte Problem gibt es. Packt die Engine zu viele Wörter in eine Zeile, schrumpfen die Zwischenräume unter ihre natürliche Breite, und es entsteht eine **zu enge Zeile**, in der die Wörter gedrängt wirken.
+
+Ein naiver Umbruchalgorithmus – wie ihn CSS verwendet – entscheidet Zeile für Zeile. Er füllt die aktuelle Zeile mit so vielen Wörtern wie möglich, bricht um und macht weiter. Dieses **Greedy-Verfahren (First Fit)** hat eine grundsätzliche Schwäche: Es kann nicht vorausschauen. Eine Entscheidung, die für Zeile 5 optimal aussieht, kann Zeile 6 in einen schlechten Umbruch zwingen. Wenn der Algorithmus bei Zeile 6 ankommt, ist es zu spät – Zeile 5 steht bereits fest.
+
+
+## Knuth-Plass: der Blick auf den ganzen Absatz
+
+Der Algorithmus, den Donald Knuth und Michael Plass 1981 veröffentlicht haben, geht grundlegend anders vor. Statt eine Zeile nach der anderen umzubrechen, betrachtet er **jede mögliche Art, den ganzen Absatz umzubrechen**, und wählt die Kombination, die die gesamte „Badness“ (Unschönheit) über alle Zeilen minimiert. Auf diesem Algorithmus beruht TeX, und deshalb gelten mit TeX gesetzte Dokumente seit über vier Jahrzehnten als Maßstab für Blocksatz.
+
+### Das Box-Glue-Penalty-Modell
+
+Knuth-Plass denkt nicht in Wörtern und Leerzeichen. Es bildet Text als Folge von drei Grundelementen ab:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '100px' }}>Grundelement</th>
+      <th style={{ width: '200px' }}>Steht für</th>
+      <th>Verhalten</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Box</strong></td>
+      <td>Ein Wort oder Textstück</td>
+      <td>Hat eine feste Breite. Kann weder gedehnt noch gestaucht werden. Kann nicht umbrochen werden.</td>
+    </tr>
+    <tr>
+      <td><strong>Glue</strong></td>
+      <td>Wortzwischenraum</td>
+      <td>Hat eine <em>natürliche</em> Breite, eine <em>Dehnbarkeit</em> und eine <em>Stauchbarkeit</em>. Innerhalb dieser Grenzen kann die Engine den Glue anpassen, um die Zeile zu füllen.</td>
+    </tr>
+    <tr>
+      <td><strong>Penalty</strong></td>
+      <td>Eine mögliche Umbruchstelle</td>
+      <td>Hat Kosten. Niedrige Penalty = billiger Umbruch. Hohe Penalty = teurer Umbruch. Eine <em>markierte</em> Penalty steht für eine Trennstelle (fügt einen sichtbaren Trennstrich ein, wenn sie genutzt wird).</td>
+    </tr>
+  </tbody>
+</table>
+
+Ein Absatz wird so zu einer Folge wie:
+
+```
+[box "The"] [glue] [box "quick"] [glue] [box "brown"] [glue] [box "fox"]
+[penalty -∞]  ← forced break at paragraph end
+```
+
+Ist die Silbentrennung aktiv, werden lange Wörter in Stücke zerlegt, zwischen denen Penaltys stehen:
+
+```
+[box "ty"] [penalty 50, flagged] [box "pog"] [penalty 50, flagged] [box "raphy"]
+```
+
+Jede markierte Penalty kostet 50 – nicht umsonst, aber billiger als eine zu lockere Zeile.
+
+<Illustration name="BoxGluePenalty" data='{"title": "Die Grundelemente Box, Glue und Penalty", "desc": "Legende zu den drei Grundelementen: Box für ein Wortstück, Glue für den Wortzwischenraum und Penalty für eine mögliche Umbruchstelle. Der Beispielabsatz zeigt, wie aus einer Trennstelle eine markierte Penalty wird.", "caption": "Jeder Absatz wird zu einer Folge von Boxen, Glues und Penaltys.", "box": "Box", "glue": "Glue", "penalty": "Penalty", "boxDesc": "festes Wort", "glueDesc": "dehnbarer Zwischenraum", "penaltyDesc": "möglicher Umbruch", "exampleLabel": "Beispiel: „Die Typografie ist alt.“"}' />
+
+### Wie der Algorithmus das Optimum findet
+
+Der Algorithmus arbeitet mit dynamischer Programmierung. Er führt eine Menge **aktiver Knoten** – möglicher Umbruchstellen, an denen neue Zeilen beginnen könnten – und bewertet von jedem aktiven Knoten aus jeden zulässigen Umbruch. Für jeden Kandidaten berechnet er:
+
+1. **Anpassungsverhältnis (r)**: wie stark der Glue dieser Zeile gedehnt oder gestaucht werden muss. `r = 0` heißt, die Zeile passt genau. `r > 0` heißt Dehnen (locker). `r < 0` heißt Stauchen (eng).
+
+2. **Badness**: ein Maß dafür, wie ungleichmäßig die Abstände sind, berechnet als `100 × |r|³`. Durch das kubische Wachstum ist eine leicht lockere Zeile erträglich, eine sehr lockere dagegen wird hart bestraft. Eine Zeile mit `r = 2` hat die Badness 800, eine Zeile mit `r = 0.5` die Badness 12.
+
+3. **Fitnessklasse**: Jede Zeile wird als eng (`r < -0.5`), normal (`-0.5 ≤ r < 0.5`), locker (`0.5 ≤ r < 1.0`) oder sehr locker (`r ≥ 1.0`) eingestuft. Steht eine enge Zeile neben einer sehr lockeren, wirkt der Kontrast störend – deshalb werden benachbarte Zeilen bestraft, deren Klassen mehr als eine Stufe auseinanderliegen.
+
+4. **Demerits** (Strafpunkte): die Gesamtkosten eines Umbruchs an dieser Stelle. Wie in TeX werden Badness und die Penalty der Umbruchstelle in einer quadratischen Formel verrechnet – `demerits = (1 + badness + penalty)²`, wenn die Penalty nicht negativ ist; eine negative Penalty (ein *erwünschter* Umbruch) zieht stattdessen ihr Quadrat ab: `(1 + badness)² − penalty²`. Dazu kommen zwei pauschale Demerits:
+   - **Demerit für aufeinanderfolgende Trennungen** (Standard 3000): bestraft zwei getrennte Zeilen hintereinander, weil gestapelte Trennstriche das Auge ablenken.
+   - **Demerit für Fitnessklassen** (Standard 100): fällt an, wenn die Fitnessklasse dieser Zeile mehr als eine Stufe von der der vorigen Zeile entfernt ist.
+
+   Auch die weiter unten beschriebene Strafe für zu kurze Ausgangszeilen geht in diese Formel ein, als zusätzliche Badness; die Strafen für Waisen und Witwen wirken in einer späteren Phase, wenn ein Absatz auf mehrere Spalten verteilt wird.
+
+Der Algorithmus wählt die Folge von Umbrüchen mit den geringsten Demerits über den ganzen Absatz – darin liegt sein ganzer Vorteil gegenüber dem Greedy-Verfahren.
+
+<Illustration name="BadnessCurve" data='{"title": "Badness in Abhängigkeit vom Anpassungsverhältnis", "desc": "Die Badness wächst mit dem Hundertfachen des Betrags von r hoch drei. Kleine Dehnungen oder Stauchungen kosten wenig, extreme Dehnungen werden dagegen extrem teuer, und deshalb meidet der Algorithmus sie.", "caption": "Die Badness wächst kubisch: leicht ungleichmäßig ist erträglich, sehr ungleichmäßig wird hart bestraft.", "xAxis": "r", "yAxis": "Badness", "zero": "0", "tight": "eng (r < 0)", "loose": "locker (r > 0)", "formula": "badness(r) = 100 · |r|³"}' />
+
+<Illustration name="FitnessClasses" data='{"title": "Fitnessklassen", "desc": "Jede Zeile wird nach ihrem Anpassungsverhältnis als eng, normal, locker oder sehr locker eingestuft. Benachbarte Zeilen, deren Klassen sich um mehr als eine Stufe unterscheiden, werden bestraft.", "caption": "Benachbarte Zeilen, die mehr als eine Klasse auseinanderliegen, erhalten den Fitness-Demerit.", "classes": [{"name": "Eng", "range": "r < -0.5", "example": "gequetscht"}, {"name": "Normal", "range": "-0.5 ≤ r < 0.5", "example": "genau richtig"}, {"name": "Locker", "range": "0.5 ≤ r < 1.0", "example": "etwas luftig"}, {"name": "Sehr locker", "range": "r ≥ 1.0", "example": "sehr luftig"}], "adjacentNote": "Der Fitness-Demerit fällt an, wenn benachbarte Zeilen mehr als eine Klasse auseinanderliegen."}' />
+
+Der Algorithmus verfolgt die aktiven Knoten zurück und findet den Pfad mit den geringsten Demerits – die global optimale Menge an Umbruchstellen für den ganzen Absatz.
+
+#### Strafen für Waisen, Witwen und zu kurze Ausgangszeilen
+
+Postext erweitert das übliche Kostenmodell um drei redaktionelle Strafen, die die Engine von Umbrüchen mit unschönen Absatz- und Spaltenenden abbringen:
+
+- Die **Strafe für Waisen** greift, wenn eine mögliche Teilung weniger als `orphanMinLines` Zeilen oben in der nächsten Spalte hinterließe. Standardwert von `orphanPenalty` ist `1000`.
+- Die **Strafe für Witwen** greift, wenn die Teilung weniger als `widowMinLines` Zeilen unten in der aktuellen Spalte hinterließe. Standardwert von `widowPenalty` ist `1000`.
+- Die **Strafe für zu kurze Ausgangszeilen** greift, wenn die letzte Zeile des Absatzes kürzer als etwa `runtMinCharacters × normalSpaceWidth` Pixel würde – gezählt in Wortzwischenräumen, nicht in Buchstaben: Der Standardwert 20 entspricht einer letzten Zeile von etwa 8 bis 12 Buchstaben. Standardwert von `runtPenalty` ist `1000`, für jede zu kurze Ausgangszeile gleich; mit `gradedRuntPenalty` wird er nach dem Fehlbetrag der Zeile gestaffelt, `runtPenalty × (1 − width / threshold)`, sodass ein Ausgang aus zwei Wörtern weniger kostet als einer aus einem Wort und gewinnt, wenn eine Zeile darüber ein Wort abgeben kann. Anders als die Strafen für Waisen und Witwen (die linear auf die Demerits der Teilung aufgeschlagen werden) wird diese Strafe als gleichwertige *Badness* in die quadratische Knuth-Plass-Formel eingespeist, damit sie auf derselben Skala wie die Badness der Zeile konkurriert (die bei 10.000 gesättigt ist), statt von ihr erdrückt zu werden.
+
+Verliert die Strafe trotzdem – weil jeder andere Umbruch unzulässig ist –, greift die Engine auf das zurück, was ein Setzer von Hand tut: Sie setzt den Absatz eine Zeile kürzer (`tightenRunts`). Die Wortabstände jeder Zeile werden enger, nie unter `minWordSpacing`, und reicht das allein nicht, um die gestrandeten Wörter aufzunehmen, kommt eine leicht negative Laufweite hinzu, der kleinste Schritt, der genügt, und nie mehr als `maxRuntTracking` Tausendstel Geviert. Auch der kürzere Satz muss `maxWordSpacing` einhalten. Wenn die Wörter in eine Zeile weniger passen, werden die meisten Zeilen enger, doch ein Umbruch kann sich dabei so verschieben, dass eine andere Zeile sich weit dehnen muss. Ein Satz, der eine Zeile über `maxWordSpacing` hinaus dehnen würde oder, wenn der Absatz bereits eine lockerere Zeile hat, über diese Zeile hinaus, ist keine Lösung, und die zu kurze Ausgangszeile bleibt. Es zählen nur Zeilen, die im Blocksatz bleiben: Eine Zeile, die der Absatz im Flattersatz setzt, weil sie sich über das Dreifache des normalen Wortzwischenraums dehnen würde (siehe [Zeilen, die der Umbruch nicht füllen kann](#zeilen-die-der-umbruch-nicht-füllen-kann)), legt die Messlatte nicht höher, und der kürzere Satz darf nicht mehr Zeilen im Flattersatz setzen, als der Absatz hatte. Ebenso wenig tauscht die Korrektur eine Flattersatzzeile gegen Blocksatzzeilen jenseits dieser Messlatte: Der Absatz behält seine Flattersatzzeile und seine zu kurze Ausgangszeile. Der Spaltenausgleich folgt derselben Regel in umgekehrter Richtung: Einen Absatz, den er um eine Zeile verlängern würde, um eine kurze Spalte zu füllen, lässt er in Ruhe, wenn diese zusätzliche Zeile zu kurz ausliefe – eine Spalte zu füllen ist kein Grund, eine Silbe allein stehen zu lassen.
+
+Ein so verkürzt gesetzter Block weist das aus: `VDTBlock.runtFix` enthält `{ tracking }`, die verwendete negative Laufweite in Tausendstel Geviert, 0, wenn die Wortabstände allein die Zeile getragen haben. Kein Renderer liest diesen Wert; er ist für den da, der den Text einpasst, denn ein Absatz an der Obergrenze wirkt neben seinen Nachbarn eng, und mit ein paar Wörtern weniger wäre er ohne Laufweite ausgekommen.
+
+Die Strafe für zu kurze Ausgangszeilen wird im Zeilenumbruch auf die Demerits des Kandidatenknotens aufgeschlagen, sodass der Löser eine etwas lockerere Zeile gegen eine längere letzte Zeile eintauschen kann – aber nur innerhalb von `maxWordSpacing`: Eine Zeile, die über diese Grenze hinaus gedehnt wird, trägt eine zusätzliche Badness, die größer ist als jede Strafe für zu kurze Ausgangszeilen oder Trennungen, sodass der Umbruch eine kurze letzte Zeile oder ein getrenntes letztes Wort einem Wortabstand vorzieht, der die Grenze überschreitet. Die Strafen für Waisen und Witwen gehen in eine eigene Optimierung ein, die läuft, wenn ein Absatz eine Spaltengrenze überquert: Jede mögliche Teilung wird bewertet – Demerits für Restraum, Waisen und Witwen addiert –, und die billigste Teilung gewinnt, sodass die Engine von sich aus Teilungen bevorzugt, die beides vermeiden, wann immer es geht. Die Abwägung stellen Sie über `orphanPenalty`, `widowPenalty` oder `runtPenalty` ein; setzen Sie einen dieser Werte auf `0`, um die jeweilige Regel ganz abzuschalten. Listeneinträge nehmen über `avoidOrphansInLists`, `avoidWidowsInLists` und `avoidRuntsInLists` teil (standardmäßig alle `true`). Diese Regeln halten die Zeilen eines Eintrags zusammen; `shortListSplit` hält die Einträge einer kurzen Liste zusammen (standardmäßig aus, siehe [Fließtext](/de/docs/configuration-text#fließtext)).
+
+### Warum das zählt
+
+<Illustration name="GreedyVsKnuthPlass" data='{"title": "Greedy-Verfahren und optimaler Umbruch nach Knuth-Plass", "desc": "Gegenüberstellung: Der Greedy-Algorithmus nimmt die erste Zeile, die passt, und verdirbt damit spätere Zeilen; es entstehen Absätze mit ungleichmäßigen Abständen. Knuth-Plass bewertet den Absatz als Ganzes und erzeugt gleichmäßige Zeilen.", "caption": "Eine lokal gierige Entscheidung verliert, wo ein global optimaler Plan gewinnt.", "greedyTitle": "Greedy (First Fit)", "greedyLead": "Entscheidet Zeile für Zeile, ohne Vorausschau", "greedyCons": ["Ein schlechter Umbruch verdirbt die nächste Zeile", "Ungleichmäßige Abstände im ganzen Absatz", "Gießbäche aus Weißraum", "Kein Kostenmodell für benachbarte Zeilen"], "greedyEquals": "= Was CSS tut", "kpTitle": "Knuth-Plass optimal", "kpLead": "Bewertet jede mögliche Menge von Umbrüchen", "kpPros": ["Global minimale Demerits", "Gleichmäßige Abstände durchgehend", "Strafe für aufeinanderfolgende Trennungen", "Ausgeglichene Fitnessklassen"], "kpEquals": "= Was Postext tut"}' />
+
+Der praktische Unterschied ist sichtbar. In einem Satz nach dem Greedy-Verfahren finden Sie Absätze, in denen eine Zeile merklich lockerer ist als ihre Nachbarn – und wenn Sie genau hinsehen, erkennen Sie, dass es geschah, weil die *vorige* Zeile ein Wort zu viel genommen hat. Knuth-Plass vermeidet das, indem es eine etwas schlechtere aktuelle Zeile gegen eine viel bessere nächste eintauscht, denn es sieht die Folgen.
+
+### Die Umsetzung in Postext
+
+Postext setzt den vollständigen Knuth-Plass-Algorithmus im Modul `knuthPlass/` des Kernpakets um: einen Kern aus dynamischer Programmierung (aktive Knoten, Demerits, Rückverfolgung) und zwei Adapterpfade, die Text in das Box-Glue-Penalty-Modell überführen:
+
+- **Pfad für reinen Text**: verwendet `@chenglou/pretext` zur DOM-freien Textmessung. Pretext liefert die Breiten der Segmente und der bedingten Trennstriche; Postext wandelt sie in KP-Elemente um.
+- **Pfad für formatierten Text**: verarbeitet fette und kursive Abschnitte mit Messung über Canvas. Jedes formatierte Token wird zu einer oder mehreren Boxen, Trennstellen werden als Penaltys eingefügt.
+
+Beide Pfade berechnen pro Zeile `justifiedSpaceRatio`: die Breite, mit der jeder Zwischenraum der Zeile gezeichnet wird, geteilt durch den Wortzwischenraum des normalen Schnitts. Alle Zwischenräume einer Zeile werden gleich gezeichnet, gleich aus welchem Schnitt sie stammen. Die Grenzen beschränken etwas leicht anderes, nämlich die Änderung jedes Zwischenraums gegenüber seiner eigenen Breite, gezählt in normalen Wortzwischenräumen, und ein kursiver oder fetter Zwischenraum ist schmaler oder breiter als der normale. Eine Zeile, die einen solchen enthält, wird daher etwas unter `minWordSpacing` oder über `maxWordSpacing` gezeichnet, obwohl sie innerhalb der Grenzen umbrochen wurde, und sie trägt zusätzlich `justifiedSpaceLimitRatio`, die Zahl, die die Grenzen beschränken: 1 plus den Restraum der Zeile, geteilt durch ihre Zwischenräume, jeder in seiner eigenen Breite. `lineWordSpacing(line)` gibt diesen Wert zurück, oder `justifiedSpaceRatio` bei einer Zeile, deren Zwischenräume alle normal sind und bei der beide Zahlen gleich sind. Er speist die weiter unten beschriebene Fehlersuche für zu lockere Zeilen; das Layout selbst (der Rückfall auf Flattersatz, die Korrektur zu kurzer Ausgangszeilen, der Hebel der lockeren Absätze) liest weiterhin das gezeichnete Verhältnis. Die Verhältnisse werden nur für Zeilen berechnet, die nicht die letzte sind; wie die letzte Zeile gesetzt wird, beschreibt [Die letzte Zeile](#die-letzte-zeile).
+
+Rund um den Zeilenumbruch liegt die Textmessung im Modul `measure/` – die Messpfade für reinen und formatierten Text, Glyphenmetriken über Canvas und die Verarbeitung von Font-Strings – hinter einem expliziten Messcache. Kommen die Schnitte einer Familie hinzu oder fallen sie weg, verwirft die Engine, was sie in dieser Familie gemessen hat, in ihren Breitencaches und im Messcache, den ein Host führt; so bleiben die Messungen korrekt, nachdem Webfonts fertig geladen sind, ohne dass der Host etwas leeren muss (siehe [Schriften vor dem Layout laden](/de/docs/configuration-programmatic-usage#schriften-vor-dem-layout-laden)). Das Parsen, die Stufe, die den Quelltext in Blöcke und Inline-Abschnitte zerlegt, liegt im Modul `parse/`. Wie sich diese Module auf Dateien verteilen, zeigt die Seite [Architektur](/de/docs/architecture).
+
+Der Zeilenumbruch wirkt auch mit den neueren Inhaltsarten zusammen. Gleitende Ressourcen belegen den oberen oder unteren Bereich einer Spalte oder Seite und verkürzen so die Spaltenhöhen, auf die die Strafen für Waisen, Witwen und Restraum reagieren. Legenden und Tabellenzellen werden als umbrochene formatierte Textläufe mit den Schriften für Legenden und Tabellen gemessen. Abgesetzte Formelzeilen werden zentriert und als unteilbare Einheit behandelt – nie im Blocksatz, nie umbrochen. Einzelheiten unter [Dokumentformat › Ressourcen](/de/docs/document-format#ressourcen) und [Konfiguration › Tabellenstil](/de/docs/configuration-resources#tabellenstil) / [Legendenstil](/de/docs/configuration-resources#legendenstil).
+
+**Rückfallverhalten**: Liefert Knuth-Plass keine gültigen Umbrüche (was bei extrem schmalen Spalten oder sehr langen Wörtern vorkommen kann), greift die Engine auf die Greedy-Funktion `layoutNextLine()` von Pretext zurück. So wird das Layout immer fertig.
+
+
+## Silbentrennung
+
+Silbentrennung und Blocksatz gehören untrennbar zusammen. Ohne Silbentrennung kann die Engine eine zu lockere Zeile nur vermeiden, indem sie ein Wort in die nächste Zeile schiebt – was das Problem oft nur verlagert. Die Silbentrennung gibt der Engine viel mehr Umbruchstellen zur Auswahl und verbessert die Qualität des Blocksatzes erheblich.
+
+<Illustration name="HyphenationExample" data='{"title": "Blocksatz mit und ohne Silbentrennung", "desc": "Die linke Spalte hat keine Silbentrennung: Die Zeilenbreiten schwanken stark, weil die Engine nur ganze Wörter verschieben kann. Die rechte Spalte hat Silbentrennung: Die Zeilen sind fast gleichmäßig, und ein Wort ist mit Trennstrich getrennt.", "caption": "Die Silbentrennung verringert die Schwankung der Abstände im Blocksatz erheblich.", "withoutTitle": "Ohne Silbentrennung", "withTitle": "Mit Silbentrennung", "withoutCaption": "Ungleichmäßige Zeilen, große Lücken, sichtbare Gießbäche.", "withCaption": "Gleichmäßige Zeilen, ein Trennstrich fängt die Schwankung auf."}' />
+
+### Trennmuster in TeX-Qualität
+
+Postext trennt mit **Hypher** (`hypher` v0.2.5), gestützt auf **TeX-Trennmuster nach Liang**. Es sind dieselben Muster, die TeX seit 1983 verwendet – eine kompakte Darstellung von Regeln für Silbengrenzen, die Frank Liangs Algorithmus zur Mustererzeugung aus großen Wortkorpora abgeleitet hat.
+
+Die Muster kodieren nummerierte Regeln, die, über ein Wort gelegt, anzeigen, wo Umbrüche erlaubt (ungerade Zahlen) und verboten (gerade Zahlen) sind. Die Parameter `leftmin` und `rightmin` in der Musterdatei jeder Sprache sichern eine Mindestzahl an Zeichen vor und nach jeder Trennstelle. Für Englisch (`en-us`) sind das typischerweise 2 und 3 – ein Wort muss also mindestens 2 Zeichen vor dem Trennstrich und 3 danach haben.
+
+### Unterstützte Sprachen
+
+<table>
+  <thead>
+    <tr>
+      <th>Sprachcode</th>
+      <th>Sprache</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>'en-us'</code></td><td>Englisch (USA)</td></tr>
+    <tr><td><code>'es'</code></td><td>Spanisch</td></tr>
+    <tr><td><code>'fr'</code></td><td>Französisch</td></tr>
+    <tr><td><code>'de'</code></td><td>Deutsch</td></tr>
+    <tr><td><code>'it'</code></td><td>Italienisch</td></tr>
+    <tr><td><code>'pt'</code></td><td>Portugiesisch</td></tr>
+    <tr><td><code>'ca'</code></td><td>Katalanisch</td></tr>
+    <tr><td><code>'nl'</code></td><td>Niederländisch</td></tr>
+  </tbody>
+</table>
+
+Jede Sprache lädt ihren eigenen Mustersatz. Hypher-Instanzen werden bei Bedarf angelegt und zwischengespeichert – der erste Aufruf für eine Sprache trägt die Initialisierungskosten, alle weiteren kommen sofort zurück. Eine Sprachangabe mit Region verwendet die Muster ihrer Sprache (`'es-ES'` trennt mit `'es'`, `'en-GB'` mit `'en-us'`). Eine Sprache, für die es hier keine Muster gibt, fällt auf `en-us` zurück, und die Engine gibt einmalig eine Warnung in der Konsole aus (siehe [Silbentrennung](/de/docs/configuration-text#silbentrennung) in der Konfigurationsreferenz). Chinesisch, Japanisch und Koreanisch sind die Ausnahme: Sie werden ohne Silbentrennung und ohne die Warnung gesetzt, und ihre Zeilen brechen zwischen Zeichen um (siehe [Chinesisch, Japanisch und Koreanisch](#chinesisch-japanisch-und-koreanisch) weiter unten).
+
+**Katalanisch** folgt den Regeln des Institut d’Estudis Catalans (*Llibre d’estil*, Kapitel VI). Das gilt seit postext 1.14:
+
+- Ein Umbruch lässt auf jeder Seite mindestens zwei Buchstaben stehen (`ter-ra`, `cai-xa`, `plu-ja`).
+- Die *ela geminada* wird zwischen ihren beiden *l* getrennt, und der Trennstrich tritt an die Stelle des Mittelpunkts: Aus *il·lusió* wird `il-` | `lusió`. Die Zeile wird ohne den Punkt gemessen, sodass Blocksatz und Knuth-Plass ihre tatsächliche Breite sehen.
+- Zwei Vokale im Hiat bleiben zusammen (`cièn-cia`, `ca-mions`). Ein *i* oder *u* zwischen Vokalen zählt als Konsonant und eröffnet seine Silbe (`fe-ia`, `ve-ient`).
+- Nach einem Apostroph wird nicht getrennt (`s'ha-via`, nie `s'-havia`).
+- Gängige Wörter mit Präfix werden am Präfix getrennt (`vos-altres`, `cel-obert`, `ben-estar`).
+- Um Wörter mit enklitischen Pronomen außer an ihrem eigenen Bindestrich ganz zu lassen (`portar-` | `lo`), wie es das IEC bevorzugt, setzen Sie [`hyphenation.compounds`](/de/docs/configuration-text#silbentrennung) auf `false`.
+
+### Warum Hypher (und kein eigener Algorithmus)
+
+Die ursprüngliche Silbentrennung von Postext arbeitete mit einer **eigenen Heuristik auf Vokalbasis**: Sie erkannte Silbengrenzen an Vokalgruppen, gängigen Präfixen (`over-`, `under-`, `inter-`) und gängigen Suffixen (`-tion`, `-ment`, `-sion`). Sie war einfach und schnell, aber grundsätzlich begrenzt:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Aspekt</th>
+      <th>Eigene Heuristik</th>
+      <th>Hypher (TeX-Muster)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Genauigkeit</strong></td>
+      <td>Gut bei gängigen Wörtern, unzuverlässig bei ungewöhnlichen. Die Vokalerkennung übersieht viele gültige Trennstellen und erzeugt ungültige.</td>
+      <td>Nahezu fehlerfrei. Die Muster werden aus großen Korpora erzeugt und seit über 40 Jahren verfeinert.</td>
+    </tr>
+    <tr>
+      <td><strong>Sprachabdeckung</strong></td>
+      <td>Vokalmengen, Präfixe und Suffixe mussten für jede Sprache von Hand festgelegt werden – mühsam und fehleranfällig.</td>
+      <td>Musterdateien gibt es für über 50 Sprachen, gepflegt von der TeX-Gemeinschaft. Eine Sprache hinzuzufügen heißt, einen Import hinzuzufügen.</td>
+    </tr>
+    <tr>
+      <td><strong>Branchenstandard</strong></td>
+      <td>Kein anerkannter Standard. Weder Werkzeuge noch Unterstützung durch eine Gemeinschaft.</td>
+      <td>Dieselben Muster, die TeX, LibreOffice, Firefox, Chrome und praktisch jedes professionelle Satzsystem verwenden.</td>
+    </tr>
+    <tr>
+      <td><strong>Pflege</strong></td>
+      <td>Jeder Sonderfall ist ein Fehler, der von Hand behoben werden muss.</td>
+      <td>Von der Gemeinschaft gepflegte Musterdateien. Fehlerkorrekturen kommen aus dem Ursprungsprojekt.</td>
+    </tr>
+    <tr>
+      <td><strong>Bundle-Größe</strong></td>
+      <td>ca. 170 Zeilen, keine Abhängigkeiten.</td>
+      <td>Der Hypher-Kern hat ca. 3 KB. Jede Musterdatei einer Sprache fügt 20–80 KB hinzu (mit gzip: 5–20 KB). Alle acht mitgelieferten Sprachen zusammen ergeben rund 300 KB (mit gzip: ca. 80 KB).</td>
+    </tr>
+    <tr>
+      <td><strong>Geschwindigkeit</strong></td>
+      <td>Sehr schnell (einfaches Durchsuchen von Zeichenketten).</td>
+      <td>Schnell (Trie-Abfrage pro Zeichen). In der Praxis vernachlässigbar – die Silbentrennung ist nie der Engpass.</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Abwägung ist eindeutig: ein größeres Bundle gegen deutlich bessere Korrektheit und keinen Wartungsaufwand. Für eine Layout-Engine, die auf druckreife Ergebnisse zielt, gewinnt die Korrektheit. Eine einzige falsche Trennung in einem gedruckten Buch kostet mehr als ein paar Kilobyte zusätzlicher Muster.
+
+### Wie die Silbentrennung mit Knuth-Plass zusammenspielt
+
+Bevor Text in den Knuth-Plass-Algorithmus geht, bereitet die Engine ihn mit Hypher vor und fügt an jeder zulässigen Trennstelle **bedingte Trennstriche** (Unicode `­`) ein. Diese unsichtbaren Zeichen werden dann auf KP-**Penaltys** mit Kosten 50 und `flagged: true` abgebildet.
+
+Der Algorithmus behandelt Trennstellen als eine weitere Möglichkeit, die er neben den natürlichen Wortgrenzen (an denen Glue einen Umbruch erlaubt) abwägt. Ergibt ein Trennstrich geringere Gesamt-Demerits, als die Zeile locker zu lassen, nimmt der Algorithmus den Trennstrich. Andernfalls bleibt das Wort ganz.
+
+Der Demerit für aufeinanderfolgende Trennungen (Standard 3000) sorgt dafür, dass der Algorithmus Trennstriche in zwei benachbarten Zeilen konsequent meidet – eine typografische Konvention, die praktisch jedes Regelwerk vorschreibt.
+
+Ein Trennstrich in der letzten Zeile einer Spalte oder Seite schickt den Leser mitten im Wort in die nächste Spalte. `bodyText.hyphenateAcrossColumns: false` hält ihn aus diesen Zeilen heraus: Endet die Zeile, die eine Spalte schließt, mit einem Trennstrich, wird der Absatz erneut umbrochen, wobei ein Trennstrich an dieser Stelle wie eine zu kurze Ausgangszeile bepreist wird, sodass der Umbruch diese Zeile mit einem ganzen Wort beendet, wann immer die Wortzwischenräume der Zeilen darüber die Differenz innerhalb von `maxWordSpacing` und `minWordSpacing` aufnehmen können. Wo sie das nicht können, bleibt der Trennstrich. Das gilt für den ersten Spaltenumbruch eines Absatzes und für die späteren, die dort fallen, wo eine volle Spalte endet. Ein späterer Umbruch, der woanders fällt – eine Spalte, die gekürzt wurde, um eine Witwe von ihr fernzuhalten, ein auf gleiche Höhe gekürzter Schlussbereich –, erhält von dieser Spalte aus einen zweiten Neuumbruch: Die Zeilen, die in den vorigen Spalten bereits gesetzt sind, behalten ihre Umbrüche, und nur der Rest des Absatzes wird neu umbrochen. Ein Trennstrich bleibt also nur dort, wo keine Einstellung innerhalb der Grenzen ihn vermeidet, in der Praxis am ersten Spaltenumbruch eines Absatzes. `hyphenateAcrossColumns: 'withinPage'` behält die Sperre für die Zeilen, die eine Seite schließen: Wer umblättert oder auf die gegenüberliegende Seite wechselt, trifft auf ein ganzes Wort, während ein Wort, das zwischen zwei Spalten derselben Seite getrennt ist, bleiben darf. Bei drei Spalten bleiben damit zwei von drei Spaltenenden unberührt, sodass weniger Absätze neu umbrochen werden und weniger Zeilen breitere oder schmalere Zwischenräume brauchen, um das auszugleichen. Der Umbruch unterscheidet die Wege, auf denen er eine Zeile erreicht, nur bis zur letzten Zeile, die er schützt, sodass ein neuer Versuch etwa so viel kostet wie die erste Messung: eine Messung mehr für jeden Absatz, den er neu umbricht.
+
+Standardmäßig wird nur getrennt, wenn sowohl `bodyText.hyphenation.enabled` auf `true` steht **als auch** `bodyText.textAlign` auf `'justify'`: Ein flatternder Rand soll ja variieren. Auch Flattersatz kann getrennt werden, mit `bodyText.hyphenation.ragged: true`. Eine Flattersatzzeile hat keine Wortabstände auszugleichen, deshalb entscheidet stattdessen eine **Trennzone**: Ein Wort, das nicht passt, wird nur dann geteilt, wenn es, ganz in die nächste Zeile geschickt, eine Lücke breiter als `hyphenation.zone` (standardmäßig 3 Geviert) hinterließe. Knuth-Plass setzt auch Fließtext im Flattersatz (`bodyText.optimalRagged`, standardmäßig an): Seine Wortzwischenräume behalten ihre Breite, jede Zeile zahlt dafür, wie weit sie hinter der Satzbreite zurückbleibt, und die Zone entscheidet, welche Silben sie aufnehmen darf; zwei Silbenenden hintereinander kosten den Demerit für aufeinanderfolgende Trennungen. Zeile für Zeile gesetzt (`optimalRagged: false`), enden nie mehr als zwei Zeilen hintereinander auf einer Silbe. Siehe [Flattersatz](/de/docs/configuration-text#flattersatz).
+
+Zwei Umbruchmöglichkeiten bestehen unabhängig von dieser Einstellung. Ein **fester Bindestrich zwischen zwei Buchstaben** – `enseñanza-aprendizaje`, `físico-química` – ist eine Stelle, an der die Zeile enden darf: Das Wort trägt den Strich schon, also wird nichts hinzugefügt. Knuth-Plass nutzt sie in jedem Absatz mit `bodyText.breakAfterHyphens` (standardmäßig an), bepreist wie eine Silbe; in einem Blocksatzabsatz ohne Inline-Formatierung nur mit zwei Buchstaben auf jeder Seite des Bindestrichs, sodass keine Zeile auf dem `e-` von `e-mail` endet. Ist die Option aus, wie bis postext 1.4, bricht ein Blocksatzabsatz ohne Inline-Formatierung nicht direkt nach einem solchen Bindestrich um, derselbe Absatz mit einem einzigen kursiven Wort irgendwo dagegen schon; Bücher, die vor postext 1.5 gespeichert wurden, werden mit ausgeschalteter Option gelesen. Die Zeile endet auf dem Bindestrich des Textes, den sie neben `hyphenated` als `hardHyphen` verzeichnet, sodass alles, was einen hinzugefügten Trennstrich weglässt (die Kolumnentitel, der Cursor der Sandbox), diesen behält. Ein **Geviert- oder Halbgeviertstrich, der ohne Abstand zwischen Wörtern steht** – `say—that’s`, `riddles.—I`, `Hamburg–Berlin` –, ist ebenfalls eine Stelle, an der die Zeile enden darf, bei beiden Umbruchverfahren, mit `bodyText.breakAfterDashes` (standardmäßig an): Die Zeile endet auf dem Strich, nichts wird hinzugefügt, nichts berechnet. Ebenso ein Strich, der einen Lauf in einem Stil vor einem Wort in einem anderen beendet (`see—*and*`). Die Zeile ist dann `hyphenated`, ohne `hardHyphen`. Nie jedoch nach einem Strich, der einen Einschub oder eine Dialogzeile eröffnet (`—dijo`, `said "—Hola`; ein Anführungszeichen, das ein Wort schließt, darf vor dem Strich stehen, wie in `"no"—and` oder deutsch `„nein“—und`), vor Satzzeichen, vor einem Anführungszeichen oder einer Klammer (`thinking—" and`, `says—“no”`), innerhalb einer Folge von Strichen oder innerhalb eines Zahlenbereichs (`1914–1918`). Und ein **Wort, das breiter ist als seine ganze Satzbreite** (eine schmale Tabellenzelle, ein langes Kompositum in einer schmalen Spalte), läuft nie darüber hinaus: Die Engine teilt es an der letzten Silbe, die passt, mit Trennstrich, oder am letzten Zeichen, das passt, wenn das Wörterbuch dort keine Silbe anbietet; ein Schnitt neben einem Bindestrich, den das Wort trägt, fällt hinter diesen Bindestrich und fügt keinen hinzu, sodass das Wort nie zwei zeigt. Der Rest des Wortes behält seine eigenen Umbruchstellen: Ein Kompositum bricht weiter an seinen Bindestrichen um und eine Webadresse an ihren Fugen, wo bis postext 1.4 der Rest an den Silben des Wörterbuchs geteilt wurde. Ein Absatz ohne Inline-Formatierung wird am letzten Zeichen, das passt, ohne Trennstrich geschnitten, es sei denn, er wird getrennt. Für Knuth-Plass ist keine Menge von Umbrüchen rund um ein solches Wort zulässig, deshalb wird ein Blocksatzabsatz, der eines enthält, stattdessen Zeile für Zeile gesetzt.
+
+
+### Zusammengesetzte Wörter
+
+Ein mit Bindestrich verbundenes Kompositum (`after-dinner`, `teórico-práctico`) kann an zwei Arten von Stellen umbrechen: nach seinem eigenen Bindestrich und an den Wörterbuchsilben eines der beiden Teile (`af-ter-dinner`). TeX und das Chicago Manual of Style lassen die Teile ganz und brechen ein Kompositum nur am Bindestrich um. `bodyText.hyphenation.compounds: false` tut dasselbe: Das Wörterbuch lässt jedes Wort mit einem Bindestrich zwischen zwei Buchstaben in Ruhe, sodass es nur nach diesem Bindestrich umbricht. Ein bedingter Trennstrich, der zwischen zwei Buchstaben des Wortes eingegeben wurde, trennt weiterhin, und ein Kompositum, das breiter ist als die ganze Zeile, wird weiterhin geteilt, wo es sein muss. Der Standardwert `true` teilt die Teile weiterhin, was einer schmalen Spalte im Blocksatz mehr Möglichkeiten gibt, ihre Zeilen zu füllen.
+
+Die portugiesische Rechtschreibung verlangt, dass der Bindestrich eines am Zeilenende getrennten Kompositums am Anfang der nächsten Zeile wiederholt wird (`vencer-` · `-se`), ebenso die Regeln der Spanischen Akademie seit 2010 (`léxico-` · `-semántico`), damit der Leser weiß, dass der Bindestrich zum Wort gehört. `bodyText.repeatHyphen: true` erledigt das. Der wiederholte Bindestrich wird mit seiner Zeile gemessen, sodass der Umbruch Platz für ihn lässt, und er wird wie der übrige Text gezeichnet; im PDF trägt er einen Ersatztext, der ihn auslässt, sodass aus dem PDF kopierter oder extrahierter Text das Wort nur einmal liest (`vencer-se`). Die Zeile verzeichnet ihn als `repeatedHyphen`, und ihre Werte `plainStart` und `sourceStart` zeigen hinter ihn, sodass Quellzuordnung, Links und Kolumnentitel das Wort so lesen, wie es geschrieben ist. Eine Webadresse erhält nie einen. Das gilt für den Fließtext, Überschriften, Listen, Blockzitate und Kästen; ein Absatz ohne Formatierung, der ein Kompositum enthält, wird dann von dem Umbruchverfahren umbrochen, das formatierten Text setzt.
+
+### Wörter, die nicht getrennt werden
+
+Dem Wörterbuch lässt sich sagen, bestimmte Wörter in Ruhe zu lassen. `bodyText.hyphenation.exceptions` nennt sie einzeln: `'Alice'` wird nie geteilt, `'You-Tube'` nur am Bindestrich seines Eintrags, wie bei TeX mit `\hyphenation{…}`. `bodyText.hyphenation.capitalized: false` lässt jedes Wort, das mit einem Großbuchstaben beginnt, ganz, und `citations.hyphenateNames: false` die Familiennamen der Autoren, die das Dokument zitiert. Der Umbruch hat dann weniger Stellen, an denen eine Zeile enden kann: Wo ein Name getrennt stand, nimmt die Zeile davor stattdessen mehr oder weniger Raum zwischen ihren Wörtern, innerhalb von `minWordSpacing` und `maxWordSpacing`. Ein Wort, das breiter ist als seine ganze Satzbreite, wird trotzdem geteilt. Wie ein Eintrag abgeglichen wird, steht unter [Ungetrennte Wörter](/de/docs/configuration-text#ungetrennte-wörter).
+
+### Wo eine Zeile nie umbricht
+
+Manche Stellen sind nie Umbruchmöglichkeiten, bei keinem der beiden Umbruchverfahren:
+
+- **Ein geschütztes Leerzeichen.** U+00A0, das schmale geschützte Leerzeichen U+202F und das Ziffernleerzeichen U+2007 verbinden die Wörter zu beiden Seiten: eine Zahl und ihre Einheit, eine Seitenangabe, eine Tausendergruppe. Dasselbe gilt in Legenden, Tabellenzellen, Kästen und Gestaltungstext (Kolumnentitel, Kapitelauftakte). Jedes behält seine eigene Breite, so wie es gemessen wird; der Blocksatz dehnt nur die Wortzwischenräume. Eine Schrift ohne Glyphe für U+202F oder U+2007 erhält die Breite, die Browser ihnen geben, einen halben Wortzwischenraum bzw. eine Ziffernbreite, in jeder Ausgabe, auch im PDF; U+00A0 hat praktisch jede Schrift. Eine so verbundene Gruppe, die breiter ist als die ganze Zeile, ist die Ausnahme, mit oder ohne Inline-Formatierung: Sie bricht an ihrem letzten geschützten Leerzeichen um, statt mitten in einem Wort geschnitten zu werden. Der Wortverbinder U+2060 verbindet, ohne Platz einzunehmen, auch in chinesischem Text: Zwei Zeichen mit einem Wortverbinder dazwischen bleiben in einer Zeile. (Eine eingekreiste Zahl wie ① braucht keinen: Chinesischer Text hält sie seit postext 1.25 beim folgenden Zeichen.) Dasselbe leistet U+FEFF, das geschützte Leerzeichen ohne Breite, auch wenn der Wortverbinder das dafür vorgesehene Zeichen ist.
+- **Eine Verweisbezeichnung mit Zahl.** Ein Inline-Verweis, der eine Zahl oder eine Seite ausgibt (`section 3.2`, `p. 112`, `Fig. 1.7`, `Theorem 2`), ist ein Wort: Zwischen seinem Wort und seiner Zahl bricht keine Zeile um, welches Leerzeichen die Vorlage auch enthält, und sein Leerzeichen dehnt sich nicht. Ein Verweis, der Wörter ausgibt (der Text eines Ankers, ein Titel, eine Überschreibung mit `text="…"`), verhält sich seit postext 1.28 anders: Er bricht an seinen eigenen Leerzeichen um, die sich mit der Zeile dehnen (`crossRefs.breakLabels`); seine Wörter werden trotzdem nie getrennt.
+- **Text, der aneinanderstößt.** Ein fettes oder kursives Wort und das Satzzeichen danach (`**osmosis**.`), die Klammern um einen Inline-Verweis (`(:ref{id="fig-3"})`), ein Wort, das in zwei Läufen gesetzt ist: Text ohne Leerzeichen dazwischen ist eine Einheit, als wäre er ein Wort. Passt eine solche Einheit nicht in den Rest einer Zeile, geht sie als Ganzes in die nächste. Eröffnet sie eine Zeile und passt trotzdem nicht, wird ihr letztes Wort an einer Silbe getrennt, sodass das Satzzeichen mit dem Wortende in die nächste Zeile geht; nur eine Einheit ohne Silbe zum Trennen lässt ihr Satzzeichen die nächste Zeile eröffnen.
+- **An einem bedingten Trennstrich, der auf einer Seite keinen Buchstaben hat.** Ein im Text eingegebener bedingter Trennstrich (U+00AD) ist nur zwischen zwei Buchstaben oder Ziffern ein Umbruch: Zwischen `to` und `gether` eingegeben, lässt er eine Zeile auf `to-` enden. Am Rand eines Wortes eingegeben, nach einer öffnenden Klammer oder einem öffnenden Anführungszeichen oder vor schließender Interpunktion, bricht er nichts um und druckt nichts, sodass keine Zeile nach einem ganzen Wort auf einem Trennstrich endet. Und da das Wörterbuch ein Wort, das bereits einen bedingten Trennstrich trägt, in Ruhe lässt, hält ein vor dem ersten Buchstaben eingegebener Trennstrich dieses Vorkommen des Wortes ganz, in jeder Sprache: Mit einem vor seinem `A` wird `Alice` nie geteilt. InDesign schreibt seinen bedingten Trennstrich auf diese Weise, und aus InDesign exportierter Text behält diese Bedeutung. Bis postext 1.27 war ein solcher bedingter Trennstrich ein Umbruch wie jeder andere (`said Alice-`), und im Katalanischen wurde der Rest des Wortes trotzdem geteilt.
+- **Innerhalb eines Wortes in einer verbundenen Schrift.** Ein arabisches Wort (oder ein syrisches, N’Ko- oder mongolisches) wird nie getrennt, nicht einmal an einem darin eingegebenen bedingten Trennstrich, und nie zwischen seinen Buchstaben geschnitten: Seine Buchstaben sind verbunden, und ein allein gesetztes Stück nähme andere Buchstabenformen und eine andere Breite an. Arabisch und die anderen Sprachen mit Schreibrichtung von rechts nach links haben die Silbentrennung standardmäßig ausgeschaltet; ist sie eingeschaltet (für die lateinischen Wörter eines arabischen Buches oder in einem englischen Buch, das Arabisch zitiert), überspringt das Wörterbuch solche Wörter. Ein in zwei Stilen gesetztes Wort (`كتا**ب**`) bleibt ein Wort und wird als Ganzes gemessen. Eines, das breiter ist als die ganze Zeile, läuft über die Satzbreite hinaus, und der Build meldet eine Inhaltswarnung `unbreakableWordOverflow`.
+
+Bis postext 1.4 konnte ein Absatz mit Inline-Formatierung oder einem `:ref` an einem geschützten Leerzeichen umbrechen, und eine Flattersatzzeile konnte auf der `(` vor einem Verweis enden oder mit dem Punkt nach einem fetten Wort beginnen.
+
+## Grenzen des Wortabstands
+
+Das Glue-Modell gibt der Engine ausdrückliche Grenzen dafür, wie stark Wortzwischenräume gedehnt oder gestaucht werden dürfen. Diese Grenzen steuern zwei Konfigurationseigenschaften in `bodyText`:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '180px' }}>Eigenschaft</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>maxWordSpacing</code></td>
+      <td><code>2</code></td>
+      <td>Obergrenze des Wortabstands als Vielfaches der normalen Breite des Wortzwischenraums. Beim Standardwert dürfen sich Zwischenräume auf bis zu 200 % ihrer natürlichen Breite dehnen.</td>
+    </tr>
+    <tr>
+      <td><code>minWordSpacing</code></td>
+      <td><code>0.6</code></td>
+      <td>Untergrenze des Wortabstands als Vielfaches der normalen Breite des Wortzwischenraums. Beim Standardwert dürfen Zwischenräume auf bis zu 60 % ihrer natürlichen Breite schrumpfen.</td>
+    </tr>
+  </tbody>
+</table>
+
+Diese Faktoren gehen direkt in die Werte `stretch` und `shrink` des Glues im Knuth-Plass-Modell ein:
+
+```
+stretchPerSpace = normalSpaceWidth × (maxWordSpacing - 1)
+shrinkPerSpace  = normalSpaceWidth × (1 - minWordSpacing)
+```
+
+Bei den Standardwerten (2 / 0,6) und einer normalen Breite des Wortzwischenraums von 4 px gilt:
+- Jeder Zwischenraum kann um 4 px gedehnt werden (von 4 px auf 8 px)
+- Jeder Zwischenraum kann um 1,6 px gestaucht werden (von 4 px auf 2,4 px)
+
+**Engere Grenzen** (z. B. `maxWordSpacing: 1.2`) ergeben gleichmäßigere Abstände, lassen dem Algorithmus aber weniger Spielraum, was zu mehr Trennungen oder im Extremfall zu Überlauf führen kann. **Weitere Grenzen** (z. B. `maxWordSpacing: 2.5`) geben dem Algorithmus mehr Flexibilität, erlauben aber sichtbar ungleichmäßige Abstände in manchen Zeilen.
+
+Die Standardwerte 2 und 0,6 begünstigen die Flexibilität des Algorithmus – sie geben Knuth-Plass genug Raum, um in schmalen Spalten Überlauf, Trennungen und zu kurze Ausgangszeilen zu vermeiden, und liegen trotzdem gut innerhalb der Bereiche, die die typografische Literatur für vertretbar hält.
+
+### Zeilen, die der Umbruch nicht füllen kann
+
+Knuth-Plass dehnt eine Zeile nicht über `maxWordSpacing` hinaus, wenn es eine Wahl hat, und die Korrektur zu kurzer Ausgangszeilen tut es auch nicht (siehe [Strafen für Waisen, Witwen und zu kurze Ausgangszeilen](#strafen-für-waisen-witwen-und-zu-kurze-ausgangszeilen)). Eine Zeile jenseits der Grenze kostet mehr als jeder andere Mangel, den es abwägt – ein Trennstrich, eine kurze letzte Zeile, eine Zeile, die etwas lockerer ist als ihre Nachbarn –, und zwar vom Moment an, in dem sie die Grenze überschreitet; die Kosten wachsen dann mit dem Quadrat ihres Dehnungsverhältnisses, deshalb trennt der Umbruch lieber ein Wort, verteilt den Restraum auf die umliegenden Zeilen oder setzt zwei Zeilen etwas locker statt einer viel zu locker.
+
+Manchmal hält keine Menge von Umbrüchen die Grenzen ein. Die Zeile, die das nächste Wort nicht aufnehmen kann, hat zu wenige Zwischenräume, um den Restraum zu teilen: die erste Zeile unter einem Absatzeinzug, gefolgt von einem Wort, das zu lang ist, um heraufzukommen, und zu kurz, um getrennt zu werden; eine Zeile aus langen untrennbaren Begriffen; eine lange URL, die nur an ihren eigenen Fugen umbricht; ein Listeneintrag, dessen letztes Wort nicht heraufkommt, während jede Trennung eine zu kurze Ausgangszeile hinterließe. Wie oft das vorkommt, hängt von Satzbreite, Schrift und Sprache ab. In einer 83 mm breiten Spalte englischen Textes in 9,3 pt gingen je nach Schrift 2 % bis 8 % der Zeilen eines Kapitels über `maxWordSpacing` hinaus (bei der breitesten Schrift die meisten); dasselbe Kapitel auf Spanisch, dessen Silbentrennung viel mehr Umbrüche bietet, hatte keine. Knuth-Plass akzeptiert dann die am wenigsten schlechte Zeile, und ihre Zwischenräume dehnen sich über die Grenze. Würden sie sich auf mehr als das Dreifache der normalen Breite des Wortzwischenraums dehnen, setzt die Engine die Zeile stattdessen im **Flattersatz** – sie wird mit ihren natürlichen Abständen gezeichnet, und der rechte Rand gibt nach, wie bei der letzten Zeile eines Absatzes. Die Schwelle ist dieselbe, die die Warnung der Sandbox für zu lockere Zeilen verwendet. Die Zeile wird im Flattersatz gesetzt und gemeldet: Eine Inhaltswarnung `raggedLine` enthält ihren Text, ihre Seite und das Verhältnis, das sie gebraucht hätte (in der Sandbox **Blocksatzzeile im Flattersatz**, unter den Satzwarnungen; ein Klick wählt die Zeile aus), und `VDTLine.raggedSpaceRatio` hält das Verhältnis an der Zeile fest. Formulieren Sie den Text um oder geben Sie der Zeile eine Stelle zum Umbrechen. Zeilen innerhalb der Schwelle bleiben, wie sie gemessen wurden. Dasselbe gilt in Kästen, deren schmale Satzbreiten der häufigste Ort dafür sind; bis postext 1.4 hielt ein Kasten eine solche Zeile im Blocksatz, wie weit sich ihre Zwischenräume auch dehnten.
+
+Um weniger solche Zeilen zu bekommen, gehen Sie in dieser Reihenfolge vor: Prüfen Sie, ob die Silbentrennung eingeschaltet und auf die Sprache des Textes eingestellt ist; vergrößern Sie die Satzbreite oder verkleinern Sie die Schrift; lassen Sie die Zeilen etwas Laufweite aufnehmen (nächster Abschnitt); oder erhöhen Sie `maxWordSpacing`, wodurch dieselben Zeilen als innerhalb der Grenze gelten, ohne anders gesetzt zu werden.
+
+### Laufweite als letztes Mittel
+
+`bodyText.maxJustifyTracking` lässt eine solche Zeile etwas Laufweite – Buchstabenabstand – statt zusätzlichen Wortabstands aufnehmen, bis zu so vielen Tausendstel Geviert je Zeichen (10 = 0,01 em, die Einheit von InDesign). Das wirkt in beide Richtungen: Eine Zeile, deren Zwischenräume sich über `maxWordSpacing` dehnen würden, sperrt ihre Buchstaben, bis ihre Zwischenräume wieder an der Grenze liegen, und eine Zeile, die nur mit Zwischenräumen unter `minWordSpacing` passen würde, rückt ihre Buchstaben enger zusammen, statt ein Wort in die nächste Zeile zu schicken. Knuth-Plass berücksichtigt das bei der Wahl der Umbrüche: Eine Zeile mit geänderter Laufweite kostet etwas mehr als eine innerhalb der Grenzen und viel weniger als eine jenseits davon, sodass Laufweite nur dort genommen wird, wo der Wortabstand allein versagen würde. Zeilen innerhalb der Grenzen, die letzte Zeile eines Absatzes (sofern sie nicht überläuft), eine Zeile aus einem Wort und eine Zeile mit einem Chip nehmen nie welche. Die Zeile verzeichnet sie als `VDTLine.letterSpacing`, zusätzlich zur eigenen Laufweite ihres Blocks, und Canvas, HTML und PDF zeichnen sie. Wörter einer verbundenen Schrift (Arabisch …) nehmen nie Laufweite an, weder diese noch eine andere (die `letterSpacing` eines Stils, den Spaltenausgleich, die Korrektur zu kurzer Ausgangszeilen): Ihre Buchstaben auseinanderzurücken zerreißt die Verbindungen. Eine Zeile zählt keinen ihrer Buchstaben, und die Renderer zeichnen sie ohne Laufweite; ein Stil, der `letterSpacing` für solchen Text setzt, erzeugt eine Inhaltswarnung `joiningScriptLetterSpacing`.
+
+```ts
+bodyText: {
+  maxWordSpacing: 2,
+  maxJustifyTracking: 10, // at most 0.01 em a letter, either way
+}
+```
+
+Standardmäßig ist die Option aus, sodass Dokumente ihre Zeilen behalten, sofern sie nicht danach verlangen. Im englischen Kapitel oben brachten 10 ‰ die Zeilen jenseits von `maxWordSpacing` auf eine oder keine je Schrift, 20 ‰ bei drei von vier Schriften auf keine. Halten Sie den Wert klein: Ab etwa 20 ‰ zeigt sich die Laufweite als hellere oder dunklere Zeile.
+
+### Kaschida in arabischem Text
+
+Eine arabische Zeile im Blocksatz wird nicht gesperrt: Ihre Buchstaben sind verbunden, und sie auseinanderzurücken zerreißt die Verbindungen. Stattdessen wird sie an zwei Stellen gedehnt, an ihren Wortzwischenräumen und an ihren Kaschidas, den gedehnten Verbindungen, die ein Kalligraf zwischen zwei verbundenen Buchstaben zieht (كتاب → كتـاب). Postext fügt sie als Tatweels (U+0640, ـ) ein, als ganze, die die Schrift als einen Strich zeichnet; Amiri macht aus einer Folge von einem bis sieben eine geschwungene Kaschida.
+
+`bodyText.kashida` steht standardmäßig auf `'auto'` in einem Dokument, dessen Sprache in arabischer Schrift geschrieben wird (`ar`, `fa`, `ur` …), und auf `'none'` in jedem anderen; setzen Sie `'auto'`, um die arabischen Wörter zu dehnen, die im Buch einer anderen Sprache zitiert werden. Jede Zeile außer der letzten eines Absatzes bekommt zuerst ihre Wortzwischenräume um bis zu ein Viertel ihrer Breite geweitet, dann Kaschidas für den Rest ihres Restraums, ein Tatweel nach dem anderen, zuerst an den besten Stellen und Runde um Runde, wobei jedes Wort mit seinen Tatweels neu als Ganzes gemessen wird; was übrig bleibt, weniger als ein Tatweel, geht zurück an die Zwischenräume. Knuth-Plass zählt die mögliche Dehnung jedes Wortes als Dehnbarkeit und wählt die Umbrüche also im Wissen, dass sich eine Zeile arabischer Wörter dort weiten kann.
+
+Wo eine Kaschida stehen darf, ergibt sich aus den Regeln von [raqim-kashida](https://github.com/aliftype/raqim-kashida) (MIT): nur zwischen zwei Buchstaben, die sich verbinden, nie nach einem Buchstaben, der sich nicht mit dem folgenden verbindet (ا د ذ ر ز و ة), nie am Wortende, nie innerhalb von Lām-Alif, hinter den Zeichen des vorhergehenden Buchstabens. `kashidaPatterns: 'naskh'` folgt den klassischen Naskh-Regeln (Benatias Matrix mit Afifis Verboten: nichts nach Kāf oder Lām, nichts vor Ṣād, ʿAin oder Wāw, ein schließendes Pronomen-Hāʾ direkt davor gedehnt); `'simple'` den Prioritäten von Microsoft für einfache moderne Schriften; `'nastaliq'` den auf Nastaʿlīq zugeschnittenen Naskh-Regeln. Der Standardwert `'auto'` liest die Grundschrift: keine Kaschida in einer Ruqʿa- oder Dīwānī-Schrift wie Aref Ruqaa, Nastaʿlīq-Regeln in einer Nastaʿlīq-Schrift, sonst Naskh. Ein Wort nimmt `kashidaPerWord` Dehnungen auf (standardmäßig 1), höchstens `kashidaMaxLength` Geviert lang (0,6, drei Tatweels von Amiri). Ein Wort, das ein vom Autor eingegebenes Tatweel enthält, wird dort gedehnt. Lateinische Wörter, Ziffern, Überschriften, Flattersatzzeilen und die letzte Zeile eines Absatzes nehmen nie welche auf.
+
+```ts
+bodyText: {
+  kashida: 'auto',          // the default in an Arabic book
+  kashidaPatterns: 'naskh', // 'auto' picks it from the font
+  kashidaMaxLength: 0.6,    // em
+}
+```
+
+Die Tatweels sind Teil des gezeichneten Textes (jedes Segment führt sie in `VDTLineSegment.kashida` auf, und die Zeile zählt sie in `VDTLine.kashida`); der reine Text, die Quellzuordnung, Links und der aus dem PDF kopierte Text lassen sie weg.
+
+### Die letzte Zeile
+
+Im Box-Glue-Penalty-Modell endet jeder Absatz mit einem unendlich dehnbaren Glue der Breite 0, gefolgt von einem erzwungenen Umbruch. Dieser abschließende Glue nimmt ohne Kosten den gesamten restlichen Raum der letzten Zeile auf, sodass letzte Zeilen von selbst flattern: Sie werden in ihrer natürlichen Breite gezeichnet, und `justifiedSpaceRatio` wird nur für die übrigen Zeilen berechnet.
+
+Es gibt eine Ausnahme. Knuth-Plass kann eine letzte Zeile akzeptieren, deren natürlicher Inhalt *breiter* ist als die Satzbreite, in der Annahme, dass ihr Glue zwischen den Wörtern schrumpft – das ist die übliche Glue-Semantik von TeX. Alle drei Backends erkennen diesen Fall (die natürliche Inhaltsbreite der Zeile übersteigt die wirksame Satzbreite) und stauchen die Wortzwischenräume dieser letzten Zeile, sodass sie genau in die Satzbreite passt, statt überzulaufen. Die Prüfung läuft in den Backends für Canvas, PDF und HTML identisch.
+
+### Optimaler Umbruch und Greedy-Verfahren
+
+Die Eigenschaft `bodyText.optimalLineBreaking` (Standard: `true`) legt fest, welchen Umbruchalgorithmus die Engine verwendet:
+
+- **`true`**: der Knuth-Plass-Algorithmus mit dynamischer Programmierung. Bewertet alle möglichen Mengen von Umbrüchen und wählt die global optimale. Das ist die empfohlene Einstellung für jeden Blocksatz. Fließtext im Flattersatz nutzt ihn ebenfalls mit `bodyText.optimalRagged` (standardmäßig an): Die Wortzwischenräume behalten ihre Breite, und der Umbruch wägt stattdessen ab, wie weit jede Zeile hinter der Satzbreite zurückbleibt, wobei eine um 3 Geviert zu kurze Zeile so viel kostet wie eine Blocksatzzeile bei `maxWordSpacing`; so wird der Flatterrand gleichmäßiger, und die Regeln für zu kurze Ausgangszeilen greifen.
+- **`false`**: Greedy-Verfahren (First Fit) mit `layoutNextLine()` von Pretext. Schneller, aber mit schlechterem Ergebnis. Verwenden Sie es nur, wenn Geschwindigkeit wichtiger ist als typografische Qualität (z. B. für eine Echtzeitvorschau bei sehr vielen Zeichen).
+
+Ist Knuth-Plass aktiv und liefert keine gültigen Umbrüche (was bei extrem schmalen Spalten oder Wörtern, die länger als die Spaltenbreite sind, vorkommen kann), weicht die Engine für diesen Absatz automatisch auf das Greedy-Verfahren aus.
+
+### Zeilen mit Tabulatoren
+
+Ein Absatz mit einem Tabulator (siehe [Dokumentformat › Tabulatoren und Tabstopps](/de/docs/document-format#tabulatoren-und-tabstopps)) wird Zeile für Zeile gesetzt, so wie Textverarbeitungen und InDesign Text mit Tabulatoren setzen, nie mit Knuth-Plass, was immer `optimalLineBreaking` sagt. Wo ein Tabulator landet, hängt davon ab, wie weit seine Zeile gekommen ist, und die optimale Suche addiert die Breiten jeder Kandidatenzeile, als hinge das nicht davon ab. Dasselbe gilt für chinesischen und japanischen Text: Ein Absatz mit einem Tabulator wird nach den Zeilenumbruchregeln des Dokuments zwischen Zeichen umbrochen, ohne Stauchung der Interpunktion und ohne Ausgleich zwischen den Zeichen.
+
+In einem Blocksatzabsatz wird eine Zeile mit Tabulator vor ihrem letzten Tabulator nicht gedehnt, denn die Tabstopps legen fest, wo jeder ihrer Teile beginnt. Nur die Wortzwischenräume nach dem letzten Tabulator nehmen den Restraum auf, und nur, wenn die Zeile nicht die letzte des Absatzes ist; eine Zeile ohne Wortzwischenraum nach ihrem letzten Tabulator bleibt, wie sie fällt. Flattersatzzeilen sind nicht betroffen. Die Zeile verzeichnet, dass sie einen Tabulator enthält (`VDTLine.tabbed`); jeder Tabulator ist ein Leerraumsegment, das seinen Tabstopp trägt (`VDTLineSegment.tab`), und jede Füllzeichenfolge ein eigenes Segment (`VDTLineSegment.leader`, `'text'` oder `'rule'`).
+
+Der Spaltenausgleich umbricht einen solchen Absatz nie lockerer neu und ändert nie seine Laufweite: Er bleibt, wie er gemessen wurde, damit sich seine Tabstopps nicht verschieben.
+
+
+### Chinesisch, Japanisch und Koreanisch
+
+Ein Absatz, der mehr CJK-Zeichen als Wortzwischenräume enthält, wird vom CJK-Setzer gesetzt, nicht von Knuth-Plass. Jede Lücke zwischen zwei Zeichen ist eine Stelle, an der eine Zeile umbrechen darf (außer dort, wo die Zeilenumbruchregeln von `cjk.lineBreak` es verbieten), es gibt also nichts, was eine optimale Suche abwägen müsste; die Zeilen werden nacheinander gefüllt. Passt ein Zeichen nicht, versucht die Zeile zuerst, es aufzunehmen, indem sie Weißraum der Interpunktion und Zwischenräume abgibt (Hineinschieben: Wortzwischenräume bis auf ein Viertelgeviert, dann Mittelpunkte, Klammern, Pausenzeichen, Han-Latein-Abstände bis auf ein Achtelgeviert und Schlusszeichen, soweit `cjk.punctuationWidth` es erlaubt); erst wenn das nicht reicht, nimmt ein Zeichen, das keine Zeile eröffnen darf, das vorhergehende mit in die nächste Zeile. Die Regeln stehen unter [Ostasiatische Typografie](/de/docs/configuration-east-asian#ostasiatische-typografie). [Chinesischer Satz](/de/docs/chinese-layout) behandelt den Rest des chinesischen Satzes: Interpunktionsbreiten nach Region, das Zeichenraster und senkrechten Text. Ein japanisches Dokument folgt stattdessen JLReq (siehe [Japanischer Satz](/de/docs/japanese-layout#blocksatz-und-letzte-zeile)): seinen Kinsoku-Stufen, einer Zeile, die Raum in der Reihenfolge von JLReq §3.8.3 zurückgibt (zuerst das halbe Geviert nach dem Zeichen am Zeilenende, ganz oder gar nicht, der Raum nach 。 nie innerhalb der Zeile), und keinem zusätzlichen Raum nach einer öffnenden Klammer, vor einer schließenden oder neben 、。・：；？！, wenn eine Zeile ausgetrieben wird.
+
+Eine Blocksatzzeile eines solchen Absatzes, außer seiner letzten, wird in der Reihenfolge, die clreq festlegt (§6.2.2.4), auf die Satzbreite ausgetrieben:
+
+1. Die Zwischenräume zwischen westlichen Wörtern, gleichmäßig, bis zu je einem halben Geviert.
+2. Die Abstände zwischen Han und Latein (`cjk.latinSpacing`), gleichmäßig, bis zu je einem halben Geviert.
+3. Jede Lücke zwischen Zeichen, gleichmäßig, auch die Han-Latein-Abstände: zwischen Han-Zeichen, zwischen Han und Interpunktion, zwischen Han und einem lateinischen Wort. Nie innerhalb eines lateinischen Wortes, einer Zahl oder eines zwei Geviert langen Strichs oder Auslassungszeichens, und nie neben einem Verbindungszeichen (～, –, ein einzelnes —) oder einem Schrägstrich. Ein über das Zeilenende hinausgehängtes Zeichen (`cjk.hangingPunctuation`) bleibt außerhalb der Satzbreite.
+
+Die letzte Zeile eines Absatzes wird ohne zusätzlichen Abstand gesetzt. Der Abstand wird je Segment der Zeile festgehalten (`VDTLineSegment.tracking`), sodass Canvas, HTML und PDF dieselben Positionen zeichnen und die Sandbox den Cursor auf das angeklickte Zeichen setzt.
+
+Eine Zeile, die mehr als ein halbes Geviert zwischen ihren Zeichen bräuchte – oder mehr als `bodyText.maxJustifyTracking`, wenn das gesetzt ist –, wird mit diesem Höchstwert gesetzt, kürzer als die Satzbreite, und als Inhaltswarnung `cjkLooseLine` gemeldet (in der Sandbox **CJK-Zeile zu kurz gesetzt**). Die übliche Ursache ist ein langes lateinisches Wort oder eine Webadresse, die nicht in die Zeile heraufkommen konnte. Eine Zeile ohne CJK-Zeichen, etwa der Anfang einer langen Webadresse, wird ohne die Warnung im Flattersatz gesetzt.
+
+Für die Hervorhebung zu lockerer Zeilen gilt eine CJK-Zeile nach ihrem Zeichenabstand als locker: Ihr Verhältnis ist 1 plus ihr Abstand in Achtelgevierten, sodass bei der Standardschwelle 3 eine Zeile markiert wird, deren Zeichen um mehr als ein Viertelgeviert auseinandergerückt sind (`lineLooseness(line, fontSizePx)` liefert das Verhältnis). Der Spaltenausgleich kann einen CJK-Absatz um eine Zeile verlängern: Er bricht die Zeilen etwas kürzer als die Satzbreite um, in Schritten von einem Achtelgeviert bis zu zwei Gevierten, und treibt sie wieder auf die Satzbreite aus. Auf einem Zeichenraster darf er sie zwischen zwei Zeichen um nicht mehr als `headings.balancing.maxTracking` austreiben, damit die Zeichen in ihren Zellen bleiben (siehe [Vertikaler Ausgleich: Spaltenausgleich](#vertikaler-ausgleich-spaltenausgleich)).
+
+## Zu lockere Zeilen aufspüren
+
+Auch mit Knuth-Plass und Silbentrennung werden manche Zeilen lockerer sein als ideal – besonders in schmalen Spalten mit langen Wörtern oder in Sprachen mit wenigen Trennmöglichkeiten. Die Debug-Funktion **Hervorhebung zu lockerer Zeilen** hilft Ihnen, diese Problemzeilen sofort zu finden.
+
+### So funktioniert es
+
+Jede Blocksatzzeile im virtuellen Dokumentbaum trägt ein `justifiedSpaceRatio`: die Breite, mit der ihre Zwischenräume gezeichnet werden, geteilt durch den Wortzwischenraum des normalen Schnitts. Ein Wert von 1,0 bedeutet den normalen Zwischenraum, 2,5 Zwischenräume, die 2,5-mal so breit sind. Eine Zeile mit Zwischenräumen aus einem anderen Schnitt (eine kursive Wendung, ein fettes Wort) trägt eine zweite Zahl, `justifiedSpaceLimitRatio`, ihren Wortabstand, wie ihn `minWordSpacing` und `maxWordSpacing` begrenzen. `lineWordSpacing(line)` liefert die Zahl, die mit den Grenzen zu vergleichen ist: die zweite, wenn die Zeile eine hat, sonst die erste.
+
+Ist `debug.looseLineHighlight.enabled` auf `true` gesetzt, legt die Sandbox in ihrer Canvas-Vorschau eine halbtransparente Fläche über jede Zeile, deren Wortabstand (`lineWordSpacing`) den eingestellten Schwellenwert `threshold` überschreitet. Eine Zeile, die genau bei `maxWordSpacing` gesetzt ist und einen fetten Zwischenraum enthält, wird ein paar Hundertstel eines Zwischenraums darüber gezeichnet und nicht mitgezählt: Der Umbruch hat die Grenze eingehalten. Die Standardschwelle ist 3,0 – es werden also nur Zeilen hervorgehoben, deren Zwischenräume dreimal so breit sind wie normal. Diese Hürde ist bewusst hoch; so lockere Zeilen sind echte typografische Probleme. Es ist zugleich die Breite, ab der die Engine eine Blocksatzzeile im Flattersatz setzt, statt sie zu dehnen (siehe [Zeilen, die der Umbruch nicht füllen kann](#zeilen-die-der-umbruch-nicht-füllen-kann)), sodass Hervorhebung und Warnung `looseLines` beim Standardwert im Fließtext fast nichts finden: Eine solche Zeile wird im Flattersatz gesetzt und stattdessen als Warnung `raggedLine` gemeldet. Senken Sie die Schwelle auf 1,5 oder 2, um die Zeilen zu finden, die locker, aber noch im Blocksatz sind.
+
+Die Fläche gehört nicht zur Seite, deshalb zeigen exportierte Seiten sie nie. Um sie auf einem eigenen Canvas zu zeichnen, rufen Sie direkt nach `renderPageToCanvas` die Funktion `drawLooseLines(ctx, page, doc, { threshold })` auf; `findLooseLines(doc, { threshold })` liefert dieselben Zeilen als Daten (siehe [Zu lockere Zeilen im eigenen Canvas](/de/docs/configuration-fonts-colors-viewers#zu-lockere-zeilen-im-eigenen-canvas)).
+
+### Konfiguration
+
+Die Hervorhebung zu lockerer Zeilen gehört zum Abschnitt `debug` von `PostextConfig`:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '180px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>looseLineHighlight.enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Ob zu lockere Zeilen hervorgehoben werden.</td>
+    </tr>
+    <tr>
+      <td><code>looseLineHighlight.color</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#ff000040</code></td>
+      <td>Farbe der hervorhebenden Fläche. Standard ist ein halbtransparentes Rot.</td>
+    </tr>
+    <tr>
+      <td><code>looseLineHighlight.threshold</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>Vielfaches der normalen Breite des Wortzwischenraums, ab dem eine Zeile als locker gilt. Niedrigere Werte erfassen mehr Zeilen, höhere heben nur die schlimmsten Fälle hervor. Ab 3 zeigt Fließtext so gut wie nichts, denn Zeilen über dem Dreifachen werden im Flattersatz gesetzt.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+debug: {
+  looseLineHighlight: {
+    enabled: true,
+    threshold: 2.5,
+    color: { hex: '#ff660040', model: 'hex' },
+  },
+}
+```
+
+### Die Ergebnisse deuten
+
+Wenn Sie die Hervorhebung einschalten und über bestimmten Zeilen rote Bänder sehen, konnte die Engine diese Zeilen nicht ohne übermäßigen Wortabstand setzen. Beginnen Sie oben: Die Ursachen sind von der wahrscheinlichsten zur unwahrscheinlichsten geordnet.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Ursache</th>
+      <th>Lösung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Die Spalte ist für die Schriftgröße zu schmal</td>
+      <td>Vergrößern Sie die Spaltenbreite, verkleinern Sie die Schrift oder wechseln Sie zu einem einspaltigen Layout.</td>
+    </tr>
+    <tr>
+      <td>Lange Wörter mit wenigen Trennstellen</td>
+      <td>Prüfen Sie, ob die Silbentrennung eingeschaltet und die richtige Sprache eingestellt ist. Manche Fachbegriffe oder Eigennamen haben keine gültigen Trennstellen.</td>
+    </tr>
+    <tr>
+      <td>Die Silbentrennung ist ausgeschaltet</td>
+      <td>Schalten Sie <code>bodyText.hyphenation.enabled</code> ein. Blocksatz ohne Silbentrennung ist fast immer schlechter.</td>
+    </tr>
+    <tr>
+      <td>Einige Zeilen bleiben in jeder Schrift locker</td>
+      <td>Lassen Sie diese Zeilen etwas Laufweite aufnehmen: <code>bodyText.maxJustifyTracking: 10</code>. Siehe <a href="#laufweite-als-letztes-mittel">Laufweite als letztes Mittel</a>.</td>
+    </tr>
+    <tr>
+      <td>Die Grenzen des Wortabstands sind zu eng</td>
+      <td>Erhöhen Sie <code>maxWordSpacing</code> leicht (z. B. von 2 auf 2,4). Das gibt dem Algorithmus mehr Raum.</td>
+    </tr>
+    <tr>
+      <td>Die Sprache hat lange zusammengesetzte Wörter (z. B. Deutsch)</td>
+      <td>Stellen Sie sicher, dass die richtige Sprache eingestellt ist. Deutsche Trennmuster kommen mit Komposita gut zurecht, aber nur, wenn die Engine weiß, dass es Deutsch ist.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Vertikaler Ausgleich: Spaltenausgleich
+
+Knuth-Plass löst das *horizontale* Problem – wo jede Zeile umbricht. Der Spaltenausgleich löst sein *vertikales* Gegenstück: wo jede Spalte endet. Verlage erwarten, dass jede Spalte einer Seite oben beginnt und bündig mit dem unteren Rand des Satzspiegels endet, Zeile für Zeile über die ganze Doppelseite. Gerade die Regeln, die die Qualität des Textes schützen, arbeiten dagegen: der Schutz vor Waisen und Witwen, Überschriften mit `keepWithNext` und unteilbare Abbildungen schieben Inhalt in die nächste Spalte, bevor die aktuelle ganz voll ist, und lassen unten eine oder mehrere leere Zeilen des Grundlinienrasters zurück.
+
+Ist `headings.balancing` eingeschaltet (der Standard, außer bei senkrechtem Text und auf einem Zeichenraster), schließt die Engine diese Lücken so, wie es ein Setzer täte, und setzt ihre Hebel in strenger redaktioneller Rangfolge ein – jeder Hebel wirkt nur auf das, was der vorige nicht aufnehmen konnte:
+
+1. **Ein Kasten, der die Spalte schließt.** Ein Kasten, der eine kurze Spalte beendet, rückt genau um den Raum unter seinem Fuß nach unten, sodass seine Unterkante auf die letzte Rasterzeile trifft, auf gleicher Höhe mit der Nachbarspalte; dieser Raum kann ein Bruchteil einer Zeile sein. Dieser Hebel läuft zuerst und nimmt die ganze Lücke, sofern `closingBox` nichts anderes sagt: `'last'` lässt die Hebel weiter unten zuerst die ganzen Zeilen nehmen und gibt dem Kasten nur, was sie übrig lassen, sodass ein Kasten, der den Absatz darüber kommentiert, nah bei ihm bleibt; `'off'` verschiebt den Kasten nie.
+2. **Bilder mit Sicherheitsbereich.** Ein Bild, dessen Ressource einen Sicherheitsbereich festlegt (`Resource.safeArea`, der Teil, der immer sichtbar sein muss; siehe [Dokumentformat › Sicherheitsbereich](/de/docs/document-format#sicherheitsbereich)), wächst um ganze Rasterzeilen, wenn es in der kurzen Spalte im Textfluss steht oder an ihrem Kopf oder Fuß nur über dieser Spalte gleitet: Die Engine beschneidet, was außerhalb des Sicherheitsbereichs liegt, um es höher zu machen, in voller Breite. Ein höheres Bild hinterlässt nirgends auf der Seite ein Loch, deshalb kommt es vor jedem zusätzlichen Abstand. Ein Gleitobjekt am Kopf einer Spalte auf einer Schlussseite oder in einem Schlussbereich, deren Spaltenköpfe auf gleicher Höhe bleiben, wächst nicht.
+3. **Abstand über Überschriften.** Ganze Zeilen des Grundlinienrasters werden dem oberen Abstand der Überschriften in der kurzen Spalte hinzugefügt. Werden mehrere Zeilen gebraucht und enthält die Spalte mehrere Überschriften, werden die Zeilen reihum nach Rang verteilt, sodass die wichtigste Überschrift immer den größten Anteil bekommt – aus 3 Zeilen über einer `h2` und einer `h3` werden +2 über der `h2` und +1 über der `h3`. Überschriften ganz oben in einer Spalte erhalten nie zusätzlichen Abstand (Spalten beginnen weiterhin oben auf der Seite), und eine Überschrift am Spaltenende wird nie zum Spaltenfuß geschoben. Eine Überschrift nimmt auf diese Weise höchstens `maxLinesBeforeLoose` Zeilen auf (standardmäßig zwei), bevor die Hebel weiter unten versucht werden, und weitere Zeilen, bis zu `maxLinesPerHeading`, erst wenn diese nichts mehr hergeben.
+4. **Abstand nach Listenenden.** Wo eine Liste oder Aufzählung endet, wird eine Rasterzeile hinzugefügt – Luft nach einer Liste liest sich natürlich. Begrenzt je Listenende (`maxLinesAfterList`, Standard 1). Dann eine Rasterzeile unter einer abgesetzten Formel oder einem Kasten, nach dem der Text weitergeht (`stretchAfterDisplays`), und eine unter einer Abbildung oder Tabelle am Kopf der Spalte (`stretchAfterFloats`, `maxLinesAfterFloat`). Der Text unter der Abbildung kann der Rest eines Absatzes sein, der auf der vorigen Seite begonnen hat; er rückt trotzdem nach unten, um die Zeile, die die Umbruchregeln am Fuß der Spalte frei gelassen haben (eine Zeile, die die Witwenregel leer gehalten hat, ein Absatzabstand ohne Platz für Text danach). Unter einer Abbildung über mehrere Spalten wird die Zeile nur hinzugefügt, wenn jede Spalte unter der Abbildung sie aufnimmt, damit die Spaltenköpfe auf gleicher Höhe bleiben, oder wenn sie ihre Spalte bündig abschließt (`stretchAfterWideFloats`).
+5. **Lockere Absätze.** Als letztes Mittel werden Absätze der Spalte um eine Zeile länger neu umbrochen – das `\looseness=+1` von TeX –, bis zu `maxLooseParagraphs` davon (standardmäßig zwei), mit je einer zusätzlichen Zeile. Der Umbruch lässt Knuth-Plass erneut laufen, verlangt genau eine Zeile mehr und übernimmt das Ergebnis nur, wenn **jede Zeile der lockeren Lösung unter `maxWordSpacing` bleibt**: Der Grauwert überschreitet nie die Grenze, die Sie bereits eingestellt haben. Die Engine bevorzugt die längsten Absätze der Spalte, in denen sich der zusätzliche Raum auf die meisten Wortzwischenräume verteilt und unsichtbar wird. Setzt `optimalLineBreaking` voraus (den Standard); Absätze, die über Spalten geteilt sind, sind ausgenommen. Ein Absatz, den die Korrektur zu kurzer Ausgangszeilen eine Zeile kürzer gesetzt hat, zählt seine zusätzliche Zeile von diesem Satz aus: Er kann die Zeile zurückgewinnen, die die Korrektur ihm genommen hat, aber nur in einem Satz ohne zu kurze Ausgangszeile und ohne Zeile jenseits von `maxWordSpacing` (bis postext 1.4 konnte er mit einer Zeile weit jenseits der Grenze zurückkommen).
+
+   Reicht der Wortabstand allein nicht, um die Zeile zu gewinnen, darf der Absatz zusätzlich etwas positive **Laufweite** aufnehmen – die klassische Abhilfe des Setzers. Die Engine versucht zuerst den kleinsten Betrag (die Hälfte von `maxTracking`, dann `maxTracking`, in Tausendstel Geviert je Zeichen; standardmäßig 10 = 0,01 em) und behält den ersten, der die Zeile gewinnt, weiterhin unter derselben Grenze für den Wortabstand. Die Laufweite wird in die Zeilen des Absatzes eingemessen und von jedem Backend gezeichnet (`letterSpacing` im Canvas, `letter-spacing` in CSS, Zeichenabstand im PDF). Mit `trackParagraphs: false` schalten Sie sie ab.
+
+### Warum die Korrektur lokal bleibt
+
+Spaltenumbrüche sind *an Elemente gebunden*: Das Element, das die nächste Spalte eröffnet, steht dort, weil es nicht in die Lücke gepasst hat. Wird das Ende einer Spalte um höchstens ihre eigene Lücke nach unten geschoben, wandert daher nie Inhalt in die nächste Spalte oder auf die nächste Seite – jede Spalte bleibt an ihrem Platz, ohne kaskadierende Neuumbrüche. Die Engine prüft das trotzdem empirisch: Sie wiederholt die Platzierung mit den vorgeschlagenen Anpassungen (bis zu 8 Durchläufe), misst die verbleibende Gesamtlücke und behält stets das beste gefundene Layout. Ein lockerer Absatz, der seine Zeile innerhalb der Abstandsgrenze bei keiner Laufweite gewinnt, kommt auf eine Sperrliste, und der nächste Kandidat wird versucht.
+
+### Wann eine kurze Spalte bleibt, wie sie ist
+
+Manchmal ist eine kurze Spalte das *richtige* Ergebnis, und der Spaltenausgleich weiß, wann er sich heraushalten muss:
+
+- Die **letzte Spalte einer Seite** wird nur ausgeglichen, wenn die Seite natürlich in die nächste übergeht. Seiten, die durch `:::pagebreak`, das `breakBefore` einer Überschrift oder einen Kapitelauftakt enden, behalten ihre kurze letzte Spalte – ein Kapitel darf zu Recht mitten auf der Seite enden.
+- Die **letzte Seite des Dokuments** wird nie ausgeglichen.
+- Eine Spalte **ohne nutzbare Dehnstelle** (keine geeignete Überschrift, kein Listenende, kein Absatz, der sich lockerer setzen lässt) behält ihre Lücke, statt die Typografie zu verschlechtern.
+- Ein **Absatz mit Tabulator** wird nie lockerer gesetzt und nie in der Laufweite verändert (siehe [Zeilen mit Tabulatoren](#zeilen-mit-tabulatoren)).
+
+```js
+const doc = buildDocument(content, {
+  headings: {
+    balancing: {
+      enabled: true,            // default
+      maxLinesPerHeading: 4,    // cap per heading
+      maxLinesBeforeLoose: 2,   // lines before the other levers
+      stretchAfterLists: true,  // lever 4
+      maxLinesAfterList: 1,     // cap per list end
+      stretchAfterDisplays: true, // under a formula or a box
+      looseParagraphs: true,    // lever 5 — bounded by bodyText.maxWordSpacing
+      maxLooseParagraphs: 2,    // loose paragraphs per short column
+      trackParagraphs: true,    // let a loose paragraph take a little tracking
+      maxTracking: 10,          // ‰ em per character (0.01 em)
+      closingBox: 'first',      // lever 1: 'first' | 'last' | 'off'
+    },
+  },
+});
+```
+
+In der Sandbox finden Sie diese Optionen im Bereich *Überschriften* unter **Gestaltung → Überschriften & Inhalt** („Spaltenausgleich“, darunter verschachtelt „Nach Listen dehnen“, „Unter Abbildungen dehnen“, „Kasten am Spaltenende“ und „Lockere Absätze“). Schalten Sie das Grundlinienraster ein (**Gestaltung → Erweitert → Bildschirmhilfen**) und sehen Sie sich die Canvas-Ansicht an, um die Wirkung zu sehen: Ohne Ausgleich enden kurze Spalten über der letzten Rasterzeile, mit Ausgleich schließt jede ausgleichbare Spalte auf derselben Zeile. Die vollständige Referenz der Optionen steht auf der Seite [Konfiguration](/de/docs/configuration-text#spaltenausgleich).
+
+## Vollständiges Beispiel
+
+Eine vollständige Konfiguration mit allen Einstellungen für Silbentrennung und Blocksatz:
+
+```ts
+import { buildDocument } from 'postext';
+
+const vdt = buildDocument(content, {
+  bodyText: {
+    fontFamily: 'EB Garamond',
+    fontSize: { value: 9, unit: 'pt' },
+    textAlign: 'justify',
+
+    // Knuth-Plass optimal line breaking (default: true)
+    optimalLineBreaking: true,
+
+    // Hyphenation
+    hyphenation: {
+      enabled: true,
+      locale: 'es',
+    },
+
+    // Word spacing bounds (multipliers of normal space width)
+    maxWordSpacing: 2,     // spaces stretch up to 200%
+    minWordSpacing: 0.6,   // spaces shrink down to 60%
+  },
+
+  // Debug: highlight lines with excessive spacing
+  debug: {
+    looseLineHighlight: {
+      enabled: true,
+      threshold: 2.5,
+      color: { hex: '#ff000040', model: 'hex' },
+    },
+  },
+});
+```
+
+Die vollständige Liste der Konfigurationsoptionen für den Fließtext steht auf der Seite [Konfiguration](/de/docs/configuration-text#fließtext). Wie die Layout-Pipeline diese Einstellungen bei der Textmessung verwendet, zeigt die Seite [Architektur](/de/docs/architecture).

@@ -1,0 +1,59 @@
+---
+title: "Ein Taḥqīq: Fußnoten pro Seite und Abdschad-Titelei"
+summary: "Titelei mit أ ب ج د paginiert, Text ab ١, Fußnoten des Herausgebers auf jeder Seite neu ab (١) gezählt, ein Register, das Namen ohne den Artikel ال sortiert."
+plain: "Der Anfang von Ibn Chalduns Muqaddima als moderne arabische wissenschaftliche Ausgabe: Einleitungsseiten mit Buchstaben paginiert, der Text mit Ziffern, und Fußnoten, die auf jeder Seite wieder bei eins beginnen."
+description: "Eine arabische kritische Ausgabe in Postext: Seitenzahlen im Abdschad, :::numbering für den Text, Fußnoten pro Seite als (١) und ein Register mit ignoreArticle."
+question: "Wie paginiere ich die Titelei eines arabischen Buchs mit Abdschad-Buchstaben (أ، ب، ج)?"
+aliases: ["taḥqīq", "tahqiq", "kritische Ausgabe", "arabische wissenschaftliche Ausgabe", "Abdschad", "abjad", "Abdschad-Zahlen", "أبجد", "Paginierung der Titelei", "Fußnoten pro Seite", "(١)", "arabische Fußnoten", "Ibn Chaldun", "Ibn Khaldūn", "Muqaddima", "مقدمة ابن خلدون", "Personenregister", "فهرس الأعلام", "تحقيق", "critical edition"]
+pageNotes: { "4": "Die letzte Seite der Einleitung des Herausgebers, Pagina د an ihrem Fuß.", "5": "Die erste Seite des Textes, Pagina ١: der Abschnittstitel in fetter Naskh, sein langer Untertitel unter einer kurzen Linie, der Text mit hochgestellten Fußnotenzeichen in Klammern und drei Fußnoten am Fuß unter einer Linie rechts, jede beginnend mit ihrer Nummer (١), (٢), (٣)." }
+---
+
+## Was Sie setzen
+
+Elf Seiten einer modernen arabischen kritischen Ausgabe, eines Taḥqīq, des ersten Abschnitts von Ibn Chalduns *Muqaddima*, über den Vorzug der Geschichtsschreibung. Die Titelei ist mit Abdschad-Buchstaben paginiert, wie es Ausgaben aus Kairo und Beirut tun: eine Titelseite أ, ihr Impressum ب, dann die Einleitung des Herausgebers ج und د. Der Text beginnt auf der nächsten Rectoseite wieder bei ١. Die Fußnoten des Herausgebers stehen am Fuß jeder Seite, gezählt (١), (٢), (٣) und auf jeder Seite neu beginnend, unter einer kurzen Linie rechts; sie erklären seltene Wörter, bestimmen die Personen und Orte, die Ibn Chaldun nennt, und geben Sure und Vers jedes Koranzitats an. Ein Personenregister schließt das Buch ab, sortiert, wie arabische Register es sind, ohne den Artikel ال. Fußnoten und Einleitung sind für dieses Rezept geschrieben.
+
+## Zubereitung
+
+### 1 · Zwei Paginierungsfolgen und Fußnoten pro Seite
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). `page.pageNumbering` beginnt das Buch in `'abjad'`, den Buchstaben in Abdschad-Reihenfolge, mit هـ für fünf. Vor dem Text lassen zwei Direktiven die Zählung auf der nächsten ungeraden Seite in den Ziffern des Dokuments neu beginnen ([`:::numbering`](/de/docs/document-format#numbering), [Ziffern und Zahlstile](/de/docs/arabic-layout#ziffern-und-zahlstile)). Die Fußnoten erhalten `numbering: 'page'`, ein `markerTemplate` von `'({n})'` und `noteNumberPosition: 'inline'`, sodass das Zeichen im Text hochgestellt ist und die Fußnote mit ihrer Nummer in der Zeile beginnt ([Fußnoten](/de/docs/arabic-layout#fußnoten)).
+
+<PageShot page={5} crop="0,0.62,1,0.33" caption="Seite ١: Die Fußnoten beginnen wieder bei (١), unter einer Linie auf der Anfangsseite der Seite." />
+
+### 2 · Ein Register, das den Artikel überspringt
+
+<Excerpt region="index" />
+
+Namen werden im Text markiert, `:index[المسعودي]`, und `:::index` druckt sie am Ende. Mit `ignoreArticle` steht المسعودي unter م und الطبري unter ط, während ابن إسحاق unter ا bleibt; ein Siehe-Verweis schickt إسرائيل zu يعقوب ([Inhaltsverzeichnis und Register](/de/docs/arabic-layout#inhaltsverzeichnis-und-register)). Die Seitenzahlen im Register sind die Bezeichnungen der Seiten, sodass ein Name aus der Einleitung ج lautet.
+
+### 3 · Kolumnentitel über einer Linie
+
+<Excerpt region="furniture" />
+
+Die Versoseite trägt den Titel des Buchs und die Rectoseite den Abschnitt, über einer Haarlinie in der Breite des Satzspiegels, mit der Pagina am äußeren Ende. In einem rechts gebundenen Buch liegt die Versoseite rechts, daher kommt ihre Pagina nach oben rechts ([Seitenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)). Auftakte und Titelei erhalten stattdessen eine zentrierte Pagina am Fuß.
+
+### 4 · Eine Titelseite und ihr Impressum
+
+<Excerpt region="title" />
+
+Die Titelseite und das Impressum auf ihrer Rückseite sind Überschriftenstile ohne Inhalt im Textfluss: Ihre Zeilen kommen aus Attributen der Überschrift, sodass die lateinischen Zeilen des Impressums, die sich mit der Ausgabe ändern, ein einziges Attribut im Markdown sind.
+
+## Varianten
+
+### Die Abdschad-Zahlen verwenden
+
+`'arabic-abjad'` schreibt die additiven Abdschad-Zahlen statt der schlichten Buchstabenfolge: Die elfte Seite ist يا, nicht ك.
+
+```diff
+-const pageNumbering = { format: 'abjad', startAt: 1 }; // أ ب ج د هـ و ز ح…
++const pageNumbering = { format: 'arabic-abjad', startAt: 1 }; // … ط ي يا يب
+```
+
+### Die Fußnoten durch den Abschnitt zählen
+
+`numbering: 'chapter'` zählt die Fußnoten von Seite zu Seite weiter, wie es manche älteren Ausgaben tun.
+
+```diff
+-  numbering: 'page', markerTemplate: '({n})', noteNumberPosition: 'inline',
++  numbering: 'chapter', markerTemplate: '({n})', noteNumberPosition: 'inline',
+```

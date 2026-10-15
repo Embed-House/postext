@@ -1,0 +1,68 @@
+---
+title: "Ein Fachbuch mit Querverweisen über Kapitel hinweg"
+summary: "Ein Solarhandbuch in drei Kapiteln, dessen Text @fig:sun, @tbl:loads und @sec:array-size schreibt; buildBundle druckt Nummer und Seite über Kapitel hinweg."
+plain: "Ein kurzes Handbuch zur Auslegung von Solarmodulen und Akkus für eine Hütte. Verweist Kapitel 3 auf eine Tabelle in Kapitel 1 oder Kapitel 1 voraus auf einen Abschnitt in Kapitel 2, stehen dort die richtige Nummer und Seite, als Links."
+description: "Ein Fachbuch in Postext: Querverweise im Stil von pandoc-crossref auf Abbildungen, Tabellen und Abschnitte anderer Kapitel, aufgelöst durch buildBundle."
+question: "Wie verweise ich auf Abbildung, Tabelle oder Abschnitt eines anderen Kapitels, mit richtigen Nummern?"
+aliases: ["pandoc-crossref", "Querverweis", "Querverweise", "crossref", "@fig", "@tbl", "@sec", "siehe Kapitel", "Verweise zwischen Kapiteln", "Fachbuch", "Handbuch", "Abbildungsnummern", "Tabellennummern", "Seitenverweis", "cross-reference"]
+pageNotes: { "1": "Seite 1, der Umschlag: ein nachtblaues Band über zwei Drittel der Seite mit den Sonnenbahnen von Juni und Dezember als bernsteinfarbene Bögen über einem geneigten Solarmodul, der Reihenzeile „LARCH HILL TECHNICAL NOTES · NO. 4“, dem Titel „Power for a Cabin“ in großer weißer schmaler Schrift und einem kursiven Untertitel; Autor und Ausgabe unter dem Band.", "2": "Seite 2: das Inhaltsverzeichnis unter demselben Band, drei nummerierte Kapitel mit ihren Abschnitten und Seitenzahlen, und ein Impressum.", "3": "Seite 3: Kapitel 1 beginnt unter dem Band mit einer großen bernsteinfarbenen 1; der Text verweist voraus auf Kapitel 2 und Kapitel 3 und auf Abschnitt 1.3, die Verweise fett in Orange gesetzt.", "4": "Seite 4: Tabelle 1.1 der täglichen Lasten mit nachtblauem Kopf, dann die Abschnitte 1.2 und 1.3 mit Verweisen auf Abschnitt 2.1 auf S. 6, Abb. 1.1 und Abschnitt 3.1.", "5": "Seite 5: Abbildung 1.1, ein Balkendiagramm des stündlichen Verbrauchs mit schattierten Tagstunden, und das Ende von Kapitel 1.", "6": "Seite 6: Kapitel 2 beginnt; seine erste Zeile verweist zurück auf Kapitel 1 und Tabelle 1.1; Abbildung 2.1, Spitzensonnenstunden nach Monat mit dem Dezember in Orange.", "7": "Seite 7: die Abschnitte 2.2 und 2.3, ein Verweis voraus auf Abschnitt 3.2 auf S. 8, eine zentrierte Formel und Tabelle 2.1 der Verluste.", "8": "Seite 8: Kapitel 3 beginnt; sein Text zitiert Abschnitt 2.3, Abb. 2.1, Tabelle 1.1, Abschnitt 1.3 mit seiner Seite, Tabelle 2.1 sowie die Tabellen 2.1 und 3.1 allein mit ihrer Nummer.", "9": "Seite 9: Tabelle 3.1 vergleicht Akkuchemien, Abschnitt 3.3 und Abbildung 3.1, ein Liniendiagramm des Ladestands des Akkus über fünf Dezembertage." }
+---
+
+## Was Sie setzen
+
+Ein kurzes technisches Handbuch, *Power for a Cabin*, gesetzt in IBM Plex auf einer Seite von 178 × 233 mm: ein Umschlag mit im Code gezeichneten Sonnenbahnen, eine Inhaltsseite und drei Kapitel unter einem nachtblauen Band. Das Buch legt eine kleine Solaranlage aus, also stützt sich jedes Kapitel auf die anderen. Kapitel 3 zitiert die Lasttabelle aus Kapitel 1 und das Sonnenstundendiagramm aus Kapitel 2; Kapitel 1 schickt den Leser voraus zu Abschnitt 2.3 und nennt dessen Seite. Der Autor schreibt `@tbl:loads` und `@sec:array-size`, wie pandoc-crossref sie liest, in vier getrennten Markdown-Dateien. `buildBundle` setzt sie als ein Buch, sodass jeder Verweis die Nummer druckt, die das Ziel in seinem eigenen Kapitel erhalten hat, die Seite, auf der es gelandet ist, und einen Link darauf.
+
+## Zubereitung
+
+### 1 · Jedes Ziel einmal benennen, für das ganze Buch
+
+Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. Überschriften erhalten einen Pandoc-Bezeichner mit seinem Präfix, `## Sizing the array {#sec:array-size}`. Abbildungen und Tabellen sind im Skript deklarierte Ressourcen, und ihre IDs werden genauso geschrieben, `fig:sun` und `tbl:loads`, sodass der Text `@fig:sun` lautet, ob die Abbildung zwei Absätze entfernt ist oder zwei Kapitel zurückliegt. Eine ID muss im ganzen Buch eindeutig sein, nicht nur in ihrem Kapitel.
+
+### 2 · Die Kapitel als ein Buch setzen
+
+<Excerpt region="answer" highlight="6" />
+
+`buildBundle` trägt die Zähler für Abbildungen und Tabellen von Kapitel zu Kapitel weiter, sodass die erste Tabelle von Kapitel 3 die 3.1 ist und `@tbl:loads` in Kapitel 3 weiterhin *table 1.1* druckt. Ein Kapitel, dessen Text eine Überschrift nennt, die es nicht enthält, wird mit der Gliederung des ganzen Buchs gesetzt und erneut gesetzt (höchstens drei Runden), bis sich die Seiten dieser Gliederung nicht mehr verschieben. So kann Kapitel 1 *section 2.1 … p. 6* drucken, bevor Kapitel 2 auf Papier existiert.
+
+### 3 · Die Wörter wählen, die ein Verweis druckt
+
+`crossRefs` legt *chapter*, *section* und *p.* fest (im Spanischen *capítulo*, *apartado* und *pág.*). Ein Verweis auf eine Abbildung oder Tabelle druckt das `shortLabel` ihres Typs, hier kleingeschrieben, wie pandoc-crossref sie setzt, *fig. 2.1* und *table 1.1*. Ein Großbuchstabe im Präfix, `@Tbl:loads` oder `@Sec:array`, schreibt das Etikett am Satzanfang groß, und `[-@tbl:losses]` druckt die bloße Nummer für *tables 2.1 and 3.1*.
+
+### 4 · Voraus auf Abschnitte verweisen, zurück auf Abbildungen
+
+Eine Abbildung oder Tabelle wird dort nummeriert und platziert, wo sie zum ersten Mal zitiert wird. `@fig:soc` in Kapitel 1 machte sie zu Abbildung 1.2 und setzte sie in Kapitel 1. Deshalb verweist Kapitel 1 voraus auf `@sec:autonomy`, und die Abbildungen und Tabellen werden zuerst in ihrem eigenen Kapitel zitiert; jedes spätere Kapitel verweist frei auf sie zurück. Eine Seitenangabe geht mit dem Abschnitt, `:ref{id="sec:sun-hours" style=page}`: Ein Verweis auf eine Ressource druckt ihr Etikett und ihre Nummer, nie ihre Seite.
+
+### 5 · Auftaktseiten und Umschlag kommen aus demselben Band
+
+<Excerpt region="opener" />
+
+Das Band reicht in jedem Kapitel und auf der Inhaltsseite, die dieselben Elemente wiederverwenden, 55 mm von der Oberkante des Endformats herab; die Kapitelnummer ist `{chapterNumber}`, der Vorspann ein Attribut der Überschrift.
+
+<Excerpt region="cover" />
+
+## Varianten
+
+### „Figure 2.1“ im Text drucken
+
+Ein Buch, das seine Verweise ausschreibt, verwendet statt des kurzen Etiketts den vollen Namen des Typs.
+
+```diff
+-  shortLabel: type.id === 'table' ? t({ en: 'table', es: 'tabla' })
+-    : t({ en: 'fig.', es: 'figura' }),
++  shortLabel: type.id === 'table' ? t({ en: 'Table', es: 'Tabla' })
++    : t({ en: 'Figure', es: 'Figura' }),
+```
+
+### Abschnitte mit einem Paragrafenzeichen nummerieren
+
+```diff
+-  section: t({ en: 'section {n}', es: 'apartado {n}' }), // @sec:losses → "section 2.2"
++  section: '§ {n}',
+```
+
+## Häufige Fehler
+
+- Ein Verweis auf eine ID, die kein Kapitel setzt, druckt *?*. Prüfen Sie die IDs, nachdem Sie eine Überschrift in einem Kapitel umbenannt haben: Die Verweise darauf stehen in den anderen.
+- Setzen Sie die Kapitel einzeln mit `buildDocument`, gehen sowohl die Zähler als auch die Gliederung des Buchs verloren: Jedes Kapitel nummeriert seine Abbildungen wieder ab 1, und ein Verweis auf ein anderes Kapitel druckt *?*. Verwenden Sie `buildBundle`, oder verketten Sie `continuation` und übergeben Sie `outline` selbst.
+- Gleichungen haben in Postext keine eigene Nummerierung, also findet `@eq:` nur einen Anker, den Sie selbst setzen, und druckt dessen Text; dieses Buch schreibt seine beiden Formeln ohne Nummern.
+- Ein Abschnittstitel, der eine Seite eröffnet oder unter einer an ihren Kopf geglittenen Tabelle steht, wie 3.3 auf Seite 9, verliert standardmäßig seinen gesamten Raum darüber, und das Einrasten ins Raster setzt dann den Zeilenbruchteil, den er braucht, unter den Titel, weiter von seinem Text entfernt als bei Titeln mitten auf der Seite. `headings.columnHeadSpace: 'remainder'` hält diesen Zeilenbruchteil über dem Titel ([Überschriften](/de/docs/configuration-text#überschriften)). Das passt zu einem einspaltigen Buch, in dem keine Nachbarspalte zeigt, dass der Titel etwas tiefer beginnt.

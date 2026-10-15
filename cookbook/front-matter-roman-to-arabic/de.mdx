@@ -1,0 +1,91 @@
+---
+title: "Titelei mit römischen Paginas, dann Seite 1"
+summary: "Umschlag und Titelei sind nicht nummerierte Überschriften, römisch in Kleinbuchstaben gezählt; :::numbering beginnt rechts beim Roman wieder bei 1."
+plain: "Die ersten Seiten einer Taschenbuchausgabe von Frankenstein. Sie zeigen, wie die Seiten vor der Geschichte i, ii, iii gezählt werden und die Zählung dort, wo die Geschichte beginnt, wieder bei Seite 1 anfängt."
+description: "Umschlag und Titelei von Frankenstein sind i bis x gezählt, und Letter I auf einer rechten Seite ist Seite 1. Inhalt und PDF zeigen dieselben Zahlen."
+question: "Wie nummeriere ich die Titelei i, ii, iii und beginne rechts, wo der Roman anfängt, wieder bei 1?"
+aliases: ["römische Seitenzahlen", "römische Ziffern", "Titelei", "Vorspann", "Umschlag", "Schmutztitel", "Haupttitel", "Titelblatt", "Impressum", "Widmung", "Motto", "Frontispiz", "leere linke Seite", "Vakatseite", "Briefunterschrift", "Seitenzählung neu beginnen", "PDF-Seitenbeschriftungen", "front matter"]
+pageNotes: { "3": "Der Schmutztitel, Seite iii. Sein Format bricht auf eine rechte Seite um, deshalb bleibt die Rückseite des Umschlags, Seite ii, leer und druckt keine Pagina.", "4": "Das Frontispiz, Seite iv, steht dem Titelblatt, v, gegenüber; keine der beiden druckt ihre Pagina.", "10": "Die letzte Seite des Vorworts („Preface“): Ihre Pagina, x, steht in Kapitälchen zentriert am Fuß.", "11": "„Letter I“ beginnt auf einer rechten Seite unter dem Nordlicht über St Petersburgh; seine Pagina, 1, steht an derselben Stelle wie das x auf der gegenüberliegenden Seite.", "13": "Seite 3: Auf einer rechten Seite setzt der Kolumnentitel den Titel des Briefes neben die Pagina, beide zum Außenrand hin.", "14": "Seite 4, das Ende von „Letter I“: Der Kolumnentitel setzt den Titel des Buches neben die Pagina, und Waltons Unterschrift steht rechtsbündig." }
+---
+
+## Was Sie setzen
+
+Die ersten Blätter von *Frankenstein* als Taschenbuchklassiker, 129 × 198 mm: ein Umschlag mit Blitzen über dem Mont Blanc, dessen Rückseite leer bleibt, ein Schmutztitel, ein Frontispiz mit Waltons im Eis eingeschlossenem Schiff gegenüber dem Titelblatt, das Impressum tief auf dessen Rückseite, die Widmung an Godwin über Miltons Motto, eine Inhaltsseite und das Vorwort von 1818. Diese zehn Seiten sind i bis x nummeriert, doch nur das Inhaltsverzeichnis und das Vorwort drucken ihre Zahlen. „Letter I“ eröffnet den Roman auf einer rechten Seite unter dem Nordlicht, und seine Pagina lautet 1, an derselben Stelle wie das x auf der gegenüberliegenden Seite. Der Brief läuft bis zu Waltons Unterschrift. Das ix neben dem Vorwort im Inhaltsverzeichnis und die 1 neben dem Brief stammen aus den fertigen Seiten, und ein PDF-Betrachter beschriftet die Seiten genauso. Umschlag, Frontispiz und Nordlicht sind mit Diffusionsmodellen erzeugte Gemälde, als JPEG-Bitmaps geladen; das Verlagssignet und der Eiskristall sind im Code gezeichnet.
+
+## Zubereitung
+
+### 1 · Jedes Blatt ist eine Überschrift mit einer Gestaltung
+
+<Excerpt region="leaves" />
+
+Eine Überschrift eröffnet eine eigene Seite und wird zu einem PDF-Lesezeichen; die Gestaltung in ihrem Format platziert Schrift und Bilder des Blattes. Mit `numbered: false` und `toc: false` bleiben die Blätter aus der Kapitelzählung und dem Inhaltsverzeichnis heraus. Eine leere Kopf- und Fußzeile macht sie zu mitgezählten Seiten ohne gedruckte Pagina, englisch „blind folios“: Das Titelblatt druckt keine Zahl, ist aber trotzdem Seite v, deshalb kann das Vorwort ix sein. Nur der Schmutztitel behält einen Umbruch auf eine ungerade Seite, und der lässt die Rückseite des Umschlags leer. Impressum, Widmung, Motto und Waltons Briefschluss sind Blöcke `:::paragraphs`, gesetzt in den Formaten am Ende des Ausschnitts.
+
+### 2 · Das Inhaltsverzeichnis nimmt seine Zahlen aus dem Layout
+
+<Excerpt region="contents" />
+
+`:::toc` listet jede Überschrift, die ihr Format zulässt, mit der Beschriftung der Seite, auf der sie landet ([Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis)). Inhaltsverzeichnis und Vorwort teilen sich das Format `front`, das `toc: false` setzt, und das Vorwort überschreibt es mit `{toc="true"}`. Weder das Vorwort noch „Letter I“ ist nummeriert, deshalb drucken ihre Einträge keine Kapitelnummer. Die zweite Zeile des Eintrags für den Brief ist sein Attribut `to="…"`. Die Seitenzahlen stehen in der Schrift der Pagina. Die Einträge beginnen auf derselben Grundlinie wie die erste Zeile des Vorworts, sodass die beiden gegenüberliegenden Seiten Register halten.
+
+### 3 · Der Roman beginnt rechts, unter dem Nordlicht
+
+<Excerpt region="letter" />
+
+Das Gemälde läuft über den Kopf der Seite hinaus und verblasst an seinem Fuß ins Papier, wo der Brief beginnt. Der Auftakt reserviert die Seite bis zum Fuß des Gemäldes, 104 mm unter der Oberkante der Seite, und `minHeight` setzt eine Untergrenze 2 mm tiefer, wodurch der Brief eine Rasterzeile weiter unten beginnt, frei vom Verlauf ([Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). Dachzeile und Ortszeile kommen aus den Attributen `to` und `dateline` der Überschrift. „Letter I“ trägt außerdem `{style="letter"}`, ein Format, dessen einzige Einstellung `numbered: false` ist, weil Waltons Briefe vor „Chapter I“ stehen und keine Kapitelnummer haben.
+
+### 4 · Mit dem Roman kehren die Kolumnentitel zurück
+
+<Excerpt region="heads" />
+
+Ein Abschnitt behält Kopf- und Fußzeile des Dokuments, es sei denn, sein Format ersetzt sie. Die Titelei ersetzt beide, das Format `letter` nicht, deshalb druckt der Roman ab Seite 1 diese Kolumnentitel auf seinen Textseiten und auf seinem Auftakt die in der kurzen Antwort definierte Pagina am Fuß. `{pageNumber}` druckt die Beschriftung der Seite, auf der es steht, sodass der Helfer `folio()` mit derselben Gestaltung x auf die eine Seite des Bundes setzt und 1 auf die andere.
+
+### 5 · Das PDF trägt dieselben Seitenzahlen
+
+<Excerpt region="build" />
+
+`buildDocument` wiederholt das Layout, bis sich die Seitenbeschriftungen im Inhaltsverzeichnis nicht mehr ändern, ein Aufruf genügt also. `renderToPdf` schreibt diese Beschriftungen in das PDF: In einem Betrachter, der Seitenbeschriftungen liest, läuft das Feld für die Seitenzahl von i bis x und dann ab 1, und „gehe zu Seite 1“ öffnet „Letter I“. Jede Überschrift wird zu einem Lesezeichen, das nach ihrem Text benannt ist, deshalb haben die Blätter schlichte Titel: „Cover“, „Half title“, „Frontispiece“, „Title page“, „Imprint“, „Dedication“.
+
+## Varianten
+
+### Die Titelei in Großbuchstaben zählen
+
+Römische Ziffern in Großbuchstaben erscheinen in der Schrift der Pagina als volle Versalien, höher als die Kapitälchen, die römische Ziffern in Kleinbuchstaben ergeben.
+
+```diff
+-const pageNumbering = { format: 'lower-roman', startAt: 1 }; // startAt spelled out: cover = i
++const pageNumbering = { format: 'upper-roman', startAt: 1 }; // startAt spelled out: cover = I
+```
+
+### Das Buch durchgehend nummerieren
+
+Lassen Sie `startAt` weg, und die Zählung läuft in arabischen Ziffern weiter, sodass „Letter I“ zu Seite 11 wird, wie in Büchern, die ihre Titelei mit dem Text zählen.
+
+```diff
+-:::numbering{format="decimal" startAt=1}
++:::numbering{format="decimal"}
+```
+
+### Das Frontispiz weglassen
+
+Löschen Sie die Überschrift `# Frontispiece` und schicken Sie das Titelblatt auf eine rechte Seite: Seite iv bleibt leer, das Vorwort ist weiterhin ix und „Letter I“ weiterhin 1.
+
+```diff
+-  { id: 'title', ...blind, advancedDesign: design([ // v: four frontmatter fields, one attribute
++  { id: 'title', ...blind, breakBefore: { enabled: true, parity: 'odd' },
++    advancedDesign: design([ // v: four frontmatter fields, one attribute
+```
+
+### Anschnitt und Schnittmarken für den Druck hinzufügen
+
+Mit `cutLines` laufen Umschlag und Auftakt, beide am Anschnitt verankert, 3 mm über das Endformat hinaus; Paginas und Seitenzahl ändern sich nicht ([Schnittmarken](/de/docs/configuration-page-layout#schnittmarken)).
+
+```diff
+     backgroundColor: col('paper'), pageNumbering,
++    cutLines: { enabled: true }, // a 3 mm bleed and crop marks
+```
+
+## Häufige Fehler
+
+- Die Blätter erben den Umbruch `'odd'` der Ebene 1. Ohne Eingriff wartet jedes auf eine rechte Seite. Die Titelei läuft dann auf vierzehn statt zehn Seiten, mit vier weiteren leeren linken Seiten, und das Frontispiz steht einer leeren Seite statt dem Titelblatt gegenüber. Geben Sie den Umbruch mit `parity: 'any'` neu an, wie dieses Rezept es tut, oder schalten Sie ihn mit `breakBefore: { enabled: false }` ab; eine Überschrift über die ganze Seitenbreite eröffnet ohnehin ihre eigene Seite.
+- Entfernen Sie den `:::pagebreak` vor `:::numbering`, wenn Ebene 1 mit `'always-odd'` umbricht, dem eigenen Standard der Engine für H1. Endet der Text davor auf einer rechten Seite, füllt der Seitenumbruch bis zur nächsten rechten Seite auf, dann fügt die Überschrift ihre Trennseite hinzu und füllt erneut auf, was drei leere Seiten hintereinander statt einer hinterlässt. Nach einem Umbruch `'odd'`, wie hier, ändert der Seitenumbruch nichts; nach `'any'` ist er es, der Seite 1 auf eine rechte Seite bringt.
+- Ein Vorwort, das um eine Seite wächst, schiebt „Letter I“ um zwei Seiten weiter, weil der Umbruch auf eine ungerade Seite eine leere linke Seite davor einfügt. Prüfen Sie die Seitenzahl, wann immer Sie die Titelei bearbeiten.
+- Die Punktlinien des Inhaltsverzeichnisses stehen in Schrift und Farbe der Seitenzahlen, und `toc.leader` hat keine eigene Farbe, deshalb erscheinen sie hier in Stahlblau.
