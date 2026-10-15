@@ -1,5 +1,5 @@
-postext command line 1.33.9
-===========================
+postext command line 1.33.10
+============================
 
 One self-contained executable per system: no installation, no runtime and
 no libraries. The postext engine, the PDF, EPUB, HTML and Word writers,
@@ -22,7 +22,7 @@ Download the latest (every release of postext publishes them):
 
   e.g. https://github.com/drnachio/postext/releases/latest/download/postext-linux-x64
 
-or a given version: https://github.com/drnachio/postext/releases/tag/v1.33.9
+or a given version: https://github.com/drnachio/postext/releases/tag/v1.33.10
 SHA256SUMS lists the checksum of each file.
 
 Install
