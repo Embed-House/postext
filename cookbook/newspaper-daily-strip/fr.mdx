@@ -1,0 +1,60 @@
+---
+title: "Strip quotidien et demi-page du dimanche dans le journal"
+summary: "Le cahier BD d’un journal : une demi-page du dimanche composée dans le texte de la une, et un strip quotidien de quatre cases sur une page en quatre colonnes."
+plain: "Deux pages du cahier BD d’un journal : une grande bande dessinée en couleur sur la une, puis un article sur le dessinateur en quatre colonnes, avec en dessous le strip quotidien en quatre cases."
+description: "BD dans un journal Postext : blocs :::strip composés dans le texte ou flottant sur quatre colonnes, demi-page du dimanche et strip quotidien en huit langues."
+question: "Comment placer une bande dessinée sur une page de journal, en travers des colonnes du texte ?"
+aliases: ["strip", "bande dessinée de presse", "strip quotidien", "BD du dimanche", "page BD", "bande dessinée de journal", "comic strip", "strip en 4 cases", "tira cómica", "tira de prensa", "新聞漫画", "报纸漫画"]
+pageNotes: { "1": "La une du supplément BD : le bandeau rouge « Bandes dessinées », la demi-page du dimanche (Pip et Otto pêchant sur la banquise, le poisson minuscule de Pip qui souffle « Remets-moi à l’eau. », Otto qui remonte une botte avec un « PLOUF ») et trois lignes de sommaire : « Dans ce numéro », « Courrier de la banquise » et « Dimanche prochain ».", "2": "La page intérieure : le titre « Dix hivers sur la banquise » sur quatre colonnes avec une interview, l’encadré « Pip et Otto en chiffres », le courrier des lecteurs et une publicité, et en dessous, sur toute la largeur de la page, le strip quotidien du croissant en quatre cases (« Bonjour, Otto ! Un croissant, s’il te plaît. » … « Voilà. Plus petit. »)." }
+---
+
+## Ce que vous allez composer
+
+Le supplément BD d’un journal du week-end, *La Dépêche de Corrington*, plié au format 230 × 310 mm. La une porte la demi-page du dimanche de *Pip et Otto*, un manchot et un morse qui tiennent une boulangerie sur une banquise, avec le sommaire en dessous. À l’intérieur, une interview du dessinateur de la série court sur quatre colonnes, avec le courrier des lecteurs et une publicité, et le strip quotidien de la semaine, quatre cases carrées, traverse la page en dessous. Les deux bandes dessinées sont des blocs `:::strip` dans le texte du journal, et le supplément existe en huit langues.
+
+## Préparation
+
+### 1 · Écrire le strip là où le journal le veut
+
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Un `:::strip` a le corps d’une planche de bande dessinée (son `split`, ses lignes `::panel` et leur script), mais c’est un bloc du texte ([strips](/fr/docs/comics#strips)). Sur la une à une colonne, le strip du dimanche est composé là où il est écrit, sur 210 mm de haut, et le sommaire le suit. Son découpage, `55 / * [40 | *]`, donne à la grande scène de pêche une bande à elle et aux deux gags une rangée en dessous. Un strip ne se coupe jamais : s’il ne tient pas, il passe entier à la page suivante.
+
+<PageShot page={1} crop="0,0,1,0.8" caption="La une : la demi-page du dimanche composée dans le texte, le sommaire en dessous." />
+
+### 2 · Faire flotter le strip quotidien sur les colonnes
+
+La page intérieure s’ouvre sur un H1 dont le style de titre fait passer la section à quatre colonnes. Le strip quotidien est écrit après l’article avec `span=page` : il est composé sur les quatre colonnes là où le texte s’arrête, et les colonnes de l’article finissent à hauteur égale au-dessus de lui. Sans `height` ni `aspect`, un strip prend la forme qui rend ses cases carrées, ici quatre pour un. Avec `placement=bottom`, il flotterait au pied de la page, ce qui convient à un article assez long pour l’atteindre ; avec `placement=top`, il ouvrirait la page suivante, car un flottant ne remonte jamais au-dessus du point où il est écrit.
+
+### 3 · Ajuster chaque image à sa case
+
+<Excerpt region="art" />
+
+Les images ont été dessinées carrées ou larges, et les cases du découpage du dimanche ne le sont pas : le gag de la botte occupe une case de 112 × 88 mm. Chaque zone sûre est découpée selon ce dont la blague a besoin, Pip, Otto et la botte : le recadrage n’ajoute ainsi jamais de bandes autour de l’image ([cases et dessin](/fr/docs/comics#cases-et-dessins)).
+
+### 4 · Imprimer la même page dans huit journaux
+
+<Excerpt region="editions" />
+
+Chaque édition compose le journal dans des caractères adaptés à son écriture et lettre les strips dans ses propres caractères de bande dessinée. Les bulles japonaises vont à la verticale. Les éditions japonaise et arabe lisent les strips de droite à gauche : les cases de chaque rangée changent donc de place ; l’édition arabe, composée de droite à gauche, inverse aussi les colonnes de la page. Les images et le découpage restent les mêmes ; seul `content.<lang>.md` change ([sens de lecture](/fr/docs/comics#sens-de-lecture)).
+
+## Variantes
+
+### Donner au strip quotidien une hauteur fixe
+
+```diff
+-:::strip{split="* | * | * | *" span=page}
++:::strip{split="* | * | * | *" span=page height=45mm}
+```
+
+### Composer un strip d’une colonne dans le texte
+
+Sans `span=page`, un strip a la largeur de sa colonne et se compose là où il est écrit, comme une figure dans le texte.
+
+```diff
+-:::strip{split="* | * | * | *" span=page}
++:::strip{split="* / * / * / *" aspect=0.25}
+```
+
+## Erreurs fréquentes
+
+- Le bandeau de rubrique est dessiné par l’en-tête, et non par une ouverture de H1 : rien d’autre que la ligne de folio ne se trouve au-dessus du strip de la une.
+- Une zone sûre plus large que la forme de sa case encadre l’image de bandes de la couleur de fond de la case, et la construction avertit `comicPanelLetterbox`.

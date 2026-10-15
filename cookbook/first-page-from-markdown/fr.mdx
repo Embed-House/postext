@@ -1,0 +1,90 @@
+---
+title: "D’une chaîne Markdown à une page mise en forme"
+summary: "Une chaîne Markdown avec frontmatter, composée en pages de magazine sur deux colonnes et peinte sur canvas, avec six couleurs nommées au lieu du bleu d’origine."
+plain: "Les deux premières pages d’un article de voyage dans un petit magazine, avec un bandeau coloré et une image. La recette montre comment un texte simple avec quelques titres devient une page mise en forme dans vos couleurs."
+description: "Le pen charge ses polices avant la première construction, crée une configuration à chaque fois, tire l’ouverture du frontmatter et peint les pages sur canvas."
+question: "Comment composer du Markdown en pages mises en forme sans le bleu par défaut des titres, du gras, des puces ?"
+aliases: ["premier document", "premiers pas", "démarrage rapide", "hello world", "markdown vers canvas", "habillage par défaut", "reportage de voyage"]
+pageNotes: { "1": "Une photographie occupe le haut de la page : des salines au crépuscule et une ligne d’empreintes qui gravit une dune jusqu’à un cairn sur la crête ; sur le ciel sombre, le surtitre CARNET DE TERRAIN, le titre « La route du sel », le chapeau « Quatre jours à pied sur le chemin des porteurs, des salines d’Arvela au marché de Castrel. » et la signature PAR LENA VARGA · MAI 2026. Dessous, deux colonnes justifiées qui s’ouvrent en gras sur « Les porteurs partaient de la digue d’Arvela. » et, au pied, le folio 1.", "2": "Le verso qui suit : le folio 2 et LA ROUTE DU SEL en titre courant, deux colonnes justifiées avec les intertitres « Le chargement du retour » et « Dans les pins » en indigo, une liste à tirets aux mots d’attaque en gras (Du grain, De la résine de pin, De la laine et des peaux, Des clous et des hameçons), une marque de fin carrée après « un porteur était payé en grain » et le colophon sous un filet : « Œuvre de fiction : Arvela, Sorra, Orsa et Castrel sont des lieux imaginaires. »" }
+---
+
+## Ce que vous allez composer
+
+Les premières pages d’un reportage de voyage dans *Carnet de terrain*, un petit magazine. La page 1 est une ouverture sur un recto : une photographie de marais salants et d’une dune au crépuscule sur les 58 % supérieurs de la page, le titre en Young Serif de 54 pt, et dessous deux colonnes justifiées qui commencent le texte par une attaque en gras. La page 2, au verso, continue sous un titre courant en capitales espacées et se termine sur une marque de fin et un colophon. La maquette est définie par une seule fabrique de configuration et une palette de six couleurs. Le titre vient du titre de niveau 1, et le chapeau, l’auteur et la date viennent du frontmatter de la chaîne Markdown : le même pen compose donc tout article dont le titre tient en deux lignes ; seule la photographie appartient à celui-ci.
+
+## Préparation
+
+### 1 · Toutes les polices, avant la première construction
+
+<Excerpt region="fonts" />
+
+Postext mesure le texte avec les polices dont dispose le navigateur au moment de la mise en page : une construction lancée avant l’arrivée des polices garderait les sauts de ligne d’une police de secours. `buildDocumentWithFonts` charge toutes les polices que la configuration nomme, ainsi que celles de `FONTS`, avant la première construction ; `kitFonts(FONTS)` lui fournit les fichiers de Fontsource, les mêmes qu’un PDF intégrerait. Il parcourt ensuite les polices utilisées par les pages, charge celles qui manquent encore et reconstruit. Une police que Fontsource ne fournit pas reste en police de secours et figure dans `doc.contentWarnings` comme `fontFallback`. Le gras et l’italique d’une police de texte ne se chargent que si la famille les possède.
+
+### 2 · Nommer les couleurs, puis renvoyer aux noms
+
+<Excerpt region="palette" />
+
+Chaque couleur de la configuration est un `col('id')`, un id de palette avec sa valeur hexadécimale à côté. `bodyText.boldColor`, `italicColor`, `referenceColor` et `unorderedLists.color` nomment `ink`, et `headings.color` nomme l’accent. Les valeurs par défaut du moteur pour les titres, le gras, l’italique et les puces renvoient à `main-color`, et cette palette fait pointer cette entrée vers l’accent : tout ce que vous omettez sort donc en indigo plutôt qu’en bleu. Les objets de maquette sont des fonctions que `config()` appelle à chaque construction, et `col()` recopie chaque fois la valeur hexadécimale actuelle depuis `palette` : une seule modification de `palette` atteint le texte, les folios et l’ouverture. La marque de fin est une pastille de couleur en ligne qui nomme `band`, si bien qu’un changement de teinte l’atteint aussi. Le titre courant par défaut renvoie lui aussi à `main-color` : il s’imprimerait dans l’accent tant que vous ne le remplacez pas (étape 5).
+
+### 3 · Une photographie recadrée à son cadre
+
+<Excerpt region="art" />
+
+Les marais salants, la dune et le cairn sont une photographie générée par des modèles de diffusion, prise au crépuscule pour que le titre clair se lise sur un ciel sombre. Le JPEG est recadré au cadre du bandeau, `PAGE.width` × `BAND` millimètres, et la ressource déclare ses pixels, 1440 × 1120 : en pleine largeur, l’image remplit exactement le bandeau. Un bandeau plus haut demande une image recadrée au nouveau cadre. L’ouverture la montre au moyen d’un élément image qui nomme la ressource par son id.
+
+### 4 · Le frontmatter écrit l’ouverture
+
+<Excerpt region="opener" />
+
+Le titre de niveau 1 s’étend sur les deux colonnes, et son ouverture est un emplacement d’éléments : la photographie jusqu’au fond perdu et quatre textes enchaînés l’un sous l’autre. Un titre plus long pousse le chapeau et la signature vers le bas au lieu de les chevaucher, mais au-delà de deux lignes la signature tombe sur les marais salants clairs. `{titleText}` est le texte du titre ; `{subtitle}`, `{author}` et `{publishDate}` sont des champs du frontmatter. Le `\\` dans le titre coupe la ligne là où vous le placez ([sauts de ligne dans les titres](/fr/docs/document-format#sauts-de-ligne-dans-les-titres)). `minHeight` se compte depuis la marge du haut : la hauteur réservée se termine donc 5 mm sous le bandeau.
+
+### 5 · Des titres courants à la place du bleu par défaut
+
+<Excerpt region="running-heads" />
+
+Omettez `header` et la valeur par défaut du moteur revient : de l’Open Sans au-dessus d’un filet sur toute la largeur, sur chaque page. Ici, chaque folio est ancré à la page physique et filtré par parité, pour qu’il se trouve toujours au bord extérieur. Son libellé est ancré au folio, à `GAP` millimètres avec `right-of` ou `left-of`, et un folio de trois ou quatre chiffres pousse le libellé au lieu de le heurter. `pages: 'body'` écarte les quatre éléments de l’ouverture. Le pied de page contient un seul folio en pied pour l’ouverture et, puisque `footer` est défini, les pages courantes perdent le folio centré par défaut.
+
+### 6 · Construire avec une configuration neuve, puis peindre
+
+<Excerpt region="build" />
+
+`config()` est une fonction pour que chaque construction lise la palette telle qu’elle est : elle rappelle les fonctions de maquette de l’étape 2. Un objet de configuration unique modifié sur place marcherait aussi : depuis postext 1.25, le moteur voit le changement à la construction suivante. `buildDocumentWithFonts` prend le contenu, cette configuration et les options de polices du kit, et se résout avec le document. `showPages` dispose les pages comme dans un livre relié, la page 1 seule à droite, et peint chacune avec `renderPageToCanvas`.
+
+## Variantes
+
+### Voir ce que la configuration remplace
+
+Construisez avec une configuration vide : le même Markdown sort sur une page de 17 × 24 cm en EB Garamond de 8 pt, avec des titres en Open Sans bleu et un titre courant bleu au-dessus d’un filet ; le moteur charge aussi ces deux familles, puisque la configuration par défaut les nomme.
+
+```diff
+-const doc = await buildDocumentWithFonts({ markdown, resources }, config(), kitFonts(FONTS));
++const doc = await buildDocumentWithFonts({ markdown, resources }, {}, kitFonts(FONTS));
+```
+
+### Changer la teinte de toute la page
+
+Changez l’accent et l’exécution suivante peint les folios, les intertitres et la marque de fin dans la nouvelle couleur, parce que `col()` recopie la nouvelle valeur hexadécimale à côté de l’id à chaque appel de `config()`. La photographie garde ses propres couleurs.
+
+```diff
+-  band: '#2b3a67', // the one accent (an indigo): the folios, the subheads, the end mark
++  band: '#3f5b3a', // the one accent (a pine green): the folios, the subheads, the end mark
+```
+
+### Peindre une page sur votre propre canvas
+
+`renderPageToCanvas` dimensionne le canvas à la page en pixels, à la résolution du document (300 dpi par défaut) multipliée par `scale` : `scale: 0.5` peint donc à environ 150 dpi, et le CSS décide de sa taille à l’écran.
+
+```diff
+-showPages(doc, {
+-  title: t({ en: 'From a Markdown string to a designed page',
+-    es: 'De una cadena Markdown a una página diseñada',
+-    pt: 'De uma string Markdown a uma página diagramada',
+-    fr: 'D’une chaîne Markdown à une page mise en forme' }),
+-});
++const canvas = document.body.appendChild(document.createElement('canvas'));
++renderPageToCanvas(doc.pages[0], doc, canvas, { scale: 0.5 });
+```
+
+## Erreurs fréquentes
+
+- Young Serif n’existe qu’en une seule graisse. Les titres sont en gras par défaut : `headings.fontWeight: 400` est donc obligatoire ici. Sans lui, les intertitres demandent un Young Serif gras que Fontsource n’a pas, le navigateur épaissit le romain, et `doc.contentWarnings` liste la police comme `fontFallback`.

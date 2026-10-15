@@ -74,7 +74,8 @@
   "sample": {
     "locales": [
       "en",
-      "pt"
+      "pt",
+      "fr"
     ]
   },
   "capture": {
@@ -84,7 +85,7 @@
     "expect": {
       "pages": [
         8,
-        8
+        9
       ],
       "nearEmptyPages": [
         2,
@@ -117,7 +118,8 @@
         "what": {
           "en": "The Awakening (1899), chapters I and II",
           "es": "The Awakening (El despertar, 1899), capítulos I y II",
-          "pt": "The Awakening (O despertar, 1899), capítulos I e II, na edição em inglês"
+          "pt": "The Awakening (O despertar, 1899), capítulos I e II, na edição em inglês",
+          "fr": "The Awakening (L’Éveil, 1899), chapitres I et II, dans l’édition anglaise"
         },
         "who": "Kate Chopin",
         "source": "https://www.gutenberg.org/ebooks/160",
@@ -127,7 +129,8 @@
         "what": {
           "en": "Quincas Borba (1891), chapters I to III, the Portuguese edition’s text, in modern spelling",
           "es": "Quincas Borba (1891), capítulos I a III, el texto de la edición portuguesa, en ortografía actualizada",
-          "pt": "Quincas Borba (1891), capítulos I a III, com a ortografia atualizada"
+          "pt": "Quincas Borba (1891), capítulos I a III, com a ortografia atualizada",
+          "fr": "Quincas Borba (1891), chapitres I à III, dans l’édition portugaise, en orthographe modernisée"
         },
         "who": "Machado de Assis",
         "source": "https://pt.wikisource.org/wiki/Quincas_Borba",
@@ -135,9 +138,21 @@
       },
       {
         "what": {
+          "en": "Madame Gervaisais (1869), chapters I and II, the French edition’s text, in the first edition’s spelling",
+          "es": "Madame Gervaisais (1869), capítulos I y II, el texto de la edición francesa, con la ortografía de la primera edición",
+          "pt": "Madame Gervaisais (1869), capítulos I e II, o texto da edição francesa, com a ortografia da primeira edição",
+          "fr": "Madame Gervaisais (1869), chapitres I et II, avec l’orthographe de la première édition"
+        },
+        "who": "Edmond et Jules de Goncourt",
+        "source": "https://fr.wikisource.org/wiki/Madame_Gervaisais",
+        "license": "PD"
+      },
+      {
+        "what": {
           "en": "The colophon",
           "es": "El colofón",
-          "pt": "O colofão"
+          "pt": "O colofão",
+          "fr": "Le colophon"
         },
         "who": "Postext Cookbook",
         "license": "original"
@@ -148,7 +163,8 @@
         "what": {
           "en": "The cover’s view of the gulf, a painting",
           "es": "La vista del golfo de la cubierta, una pintura",
-          "pt": "A vista do mar da capa, uma pintura"
+          "pt": "A vista do mar da capa, uma pintura",
+          "fr": "La vue de la mer de la couverture, une peinture"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -158,7 +174,8 @@
         "what": {
           "en": "The camomile tailpiece, drawn in code in the page’s palette",
           "es": "El florón de manzanilla, dibujado en código con la paleta de la página",
-          "pt": "A vinheta de camomila, desenhada em código com a paleta da página"
+          "pt": "A vinheta de camomila, desenhada em código com a paleta da página",
+          "fr": "Le cul-de-lampe à la camomille, dessiné en code dans la palette de la page"
         },
         "who": "Ignacio Ferro",
         "license": "MIT"

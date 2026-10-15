@@ -60,7 +60,8 @@
       "zh",
       "ar",
       "ja",
-      "pt"
+      "pt",
+      "fr"
     ]
   },
   "capture": {
@@ -148,6 +149,16 @@
           "pt": "A tradução para o português do Brasil do episódio 8, “A Festa de Aniversário da Pepper”: os diálogos das páginas 5 e 6 e os créditos"
         },
         "who": "Frederico Batista, with Alexandre E. Almeida",
+        "source": "https://www.peppercarrot.com/0_sources/ep08_Pepper-s-Birthday-Party/",
+        "license": "CC-BY-4.0"
+      },
+      {
+        "what": {
+          "en": "The original French text of episode 8, “L’anniversaire de Pepper”: the dialogue of pages 5 and 6 and the credits",
+          "es": "El texto original en francés del episodio 8, «L’anniversaire de Pepper»: los diálogos de las páginas 5 y 6 y los créditos",
+          "fr": "Le texte original en français de l’épisode 8, « L’anniversaire de Pepper » : les dialogues des pages 5 et 6 et les crédits"
+        },
+        "who": "David Revoy, proofread by Aurélien Gâteau",
         "source": "https://www.peppercarrot.com/0_sources/ep08_Pepper-s-Birthday-Party/",
         "license": "CC-BY-4.0"
       }

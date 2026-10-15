@@ -7,7 +7,7 @@ import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
 
-const LANG = 'en'; // @lang: the language of the sample document ('en' | 'es' | 'pt')
+const LANG = 'en'; // @lang: the language of the sample document ('en' | 'es' | 'pt' | 'fr')
 const RECIPE = 'baseline-grid-book-page';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -88,7 +88,7 @@ const balancing = { enabled: true };
 // #endregion
 
 const config = () => ({
-  locale: t({ en: 'en-us', es: 'es', pt: 'pt' }), // hyphenation, and Figure, Figura in captions
+  locale: t({ en: 'en-us', es: 'es', pt: 'pt', fr: 'fr' }), // hyphenation and the caption labels
   colorPalette,
   page,
   layout,
@@ -201,6 +201,11 @@ const CAPTIONS = {
       + 'das duas manchas; o círculo, da largura da página, tem exatamente a altura da mancha.',
     'Duas páginas lado a lado cruzadas por linhas vermelhas de construção, uma mancha pautada '
       + 'onde elas se cruzam em cada página e um círculo da largura da página esquerda.'],
+    fr: ['Le canon sur une double page ouverte de pages 2:3. Les diagonales fixent les angles '
+      + 'des deux blocs de texte ; le cercle, aussi large que la page, est exactement aussi haut '
+      + 'que son bloc.',
+    'Deux pages en regard traversées de lignes de construction rouges, un bloc de texte réglé '
+      + 'là où elles se croisent sur chaque page, et un cercle aussi large que la page de gauche.'],
   },
   pages: {
     en: ['This book’s 210 × 280 mm page twice. Left, divided by the canon into ninths, with a '
@@ -218,6 +223,11 @@ const CAPTIONS = {
       + '16, 24, 32 e 48 mm e duas colunas de 44 linhas.',
     'Duas páginas iguais: a da esquerda dividida numa grade de nove por nove em volta da '
       + 'mancha, a da direita com duas colunas pautadas.'],
+    fr: ['La page de 210 × 280 mm de ce livre, deux fois. À gauche, divisée en neuvièmes par le '
+      + 'canon, avec un bloc de texte de 140 × 187 mm. À droite, telle que le livre la compose : '
+      + 'marges de 16, 24, 32 et 48 mm et deux colonnes de 44 lignes.',
+    'Deux pages identiques : celle de gauche divisée en une grille de neuf sur neuf autour de '
+      + 'son bloc de texte, celle de droite avec deux colonnes réglées.'],
   },
 };
 
@@ -252,6 +262,7 @@ const doc = await buildDocumentWithFonts({ markdown, resources, continuation }, 
   kitFonts(FONTS));
 showPages(doc, { title: t({ en: 'A book page on a baseline grid',
   es: 'Una página de libro sobre una rejilla base',
-  pt: 'Uma página de livro sobre a grade de linhas de base' }) });
+  pt: 'Uma página de livro sobre a grade de linhas de base',
+  fr: 'Une page de livre sur une grille de ligne de base' }) });
 
 // @kit core fonts viewer images · the Cookbook inlines cookbook/_kit/*.js here

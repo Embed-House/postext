@@ -10,7 +10,7 @@ pageNotes: { "1": "The style sheet: the title in red display capitals, then twel
 
 ## What you'll build
 
-Page 7 of *The Porthcove Light*, a comic about a storm night at a lighthouse, with the letterer's style sheet in front of it. A trawler loses its engine, the keeper talks it in by radio, Maya waits with the cat, and in the morning the skipper thanks them. The page uses every kind of balloon Postext draws: speech, joined speech, thought, whisper, shout, radio, narration captions, an inner voice, an editor's note, a sound effect, an off-panel voice and a pinned balloon. The trim is an American comic book, 168 × 259 mm, and the page comes in six languages.
+Page 7 of *The Porthcove Light*, a comic about a storm night at a lighthouse, with the letterer's style sheet in front of it. A trawler loses its engine, the keeper talks it in by radio, Maya waits with the cat, and in the morning the skipper thanks them. The page uses every kind of balloon Postext draws: speech, joined speech, thought, whisper, shout, radio, narration captions, an inner voice, an editor's note, a sound effect, an off-panel voice and a pinned balloon. The trim is an American comic book, 168 × 259 mm, and the page comes in eight languages.
 
 ## Method
 
@@ -24,7 +24,7 @@ The code is [the short answer](#the-short-answer) above. A line of the script is
 
 <Excerpt region="art" />
 
-Each picture carries anchors in fractions of the picture: the mouth a speech tail aims at, the head a thought aims at, the face no balloon may cover ([speakers and anchors](/en/docs/comics#speakers-and-anchors)). The skipper is never drawn: his anchor in the storm picture is the radio set, in the sea picture his boat. When the speaker is not in the panel, `tail=right` (or `left`, `top`, `bottom`) runs the tail to that edge, and `at="44% 22%"` pins a balloon's centre to a point of the picture, so it stays there whatever the crop. Two lines in a row from one speaker join into one outline with one tail. `left` and `right` are sides of the picture, so the seven editions write the same line for the keeper in the sea panel, whose light stands at the right of the picture: `tail=right`, read from left to right or from right to left. `start` and `end` follow the reading direction of the page instead.
+Each picture carries anchors in fractions of the picture: the mouth a speech tail aims at, the head a thought aims at, the face no balloon may cover ([speakers and anchors](/en/docs/comics#speakers-and-anchors)). The skipper is never drawn: his anchor in the storm picture is the radio set, in the sea picture his boat. When the speaker is not in the panel, `tail=right` (or `left`, `top`, `bottom`) runs the tail to that edge, and `at="44% 22%"` pins a balloon's centre to a point of the picture, so it stays there whatever the crop. Two lines in a row from one speaker join into one outline with one tail. `left` and `right` are sides of the picture, so the eight editions write the same line for the keeper in the sea panel, whose light stands at the right of the picture: `tail=right`, read from left to right or from right to left. `start` and `end` follow the reading direction of the page instead.
 
 ### 3 · Give a character a voice of their own
 
@@ -34,7 +34,7 @@ The cast in the short answer gives every `skipper:` line the radio style, so the
 
 <Excerpt region="editions" />
 
-The same page comes in six languages: `content.<lang>.md` holds only the words. The Japanese balloons are set vertically in Zen Antique and its sound effects in Dela Gothic One, the Arabic ones in Playpen Sans Arabic with Lalezar for the thunder. Italics and bold apply where the face has them: the inner voice is italic in English, upright in Japanese ([lettering](/en/docs/comics#lettering)).
+The same page comes in eight languages: `content.<lang>.md` holds only the words. The Japanese balloons are set vertically in Zen Antique and its sound effects in Dela Gothic One, the Arabic ones in Playpen Sans Arabic with Lalezar for the thunder. Italics and bold apply where the face has them: the inner voice is italic in English, upright in Japanese ([lettering](/en/docs/comics#lettering)).
 
 ## Variations
 

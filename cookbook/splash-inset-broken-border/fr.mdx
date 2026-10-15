@@ -1,0 +1,61 @@
+---
+title: "Une pleine page, une incrustation et un cadre brisé"
+summary: "Une tempête en deux planches : pleine page à fond perdu sous une case incrustée, bande à fond perdu sur trois bords, mouette hors du cadre, case de récitatifs."
+plain: "Deux planches de BD sur une tempête : une immense image qui remplit toute la première page, avec une petite image d’une fillette incrustée dedans, puis une page où une mouette sort de sa case."
+description: "Planches de BD avec Postext : pleine page à fond perdu, case incrustée, fond perdu sur des bords choisis, dessin qui déborde du cadre et case sans image."
+question: "Comment faire déborder une case de BD à fond perdu, ou faire sortir le dessin du cadre de la case ?"
+aliases: ["pleine page", "splash", "case à fond perdu", "fond perdu", "case incrustée", "cadre brisé", "débordement de case", "splash page", "broken border", "página splash", "viñeta insertada", "裁ち切り", "出血"]
+pageNotes: { "1": "La pleine page : le phare dans une tempête nocturne, à fond perdu sur les quatre bords, « BRRAOUM » en lettres blanches près de l’éclair, le récitatif « La nuit de la grande tempête, le feu de Porthcove ne s’est jamais éteint. » en haut à gauche et, en bas à droite, une petite case encadrée du visage de Maya derrière une vitre sous la pluie, avec la bulle « Grand-père est encore dehors, sur la galerie. »", "2": "Planche 2 : une vague qui se brise sur les rochers avec un « FLOOOCH », à fond perdu en haut et sur les deux côtés ; dessous, le gardien lève une lanterne (« Doucement, ma vieille. Tu en as vu d’autres. » « Moi aussi. ») pendant qu’une mouette sort par le bord gauche de la case, et une case étroite bleu nuit avec deux récitatifs : « À l’aube, le vent était tombé. » et « Les mouettes sont revenues les premières. »" }
+---
+
+## Ce que vous allez composer
+
+Deux planches de la tempête du *Phare de Porthcove*. La première est une pleine page : une seule image du phare dans la tempête déborde de tous les bords de la page, et une petite case encadrée de Maya à sa fenêtre est posée sur son coin inférieur. La seconde s’ouvre sur une vague à fond perdu sur trois bords ; dessous, une mouette sort de la case du gardien en franchissant son cadre, et une case étroite sans image porte deux récitatifs sur un fond bleu nuit. Le format est celui d’un comic book américain, 168 × 259 mm avec 3 mm de fond perdu, et les planches existent en huit langues.
+
+## Préparation
+
+### 1 · Faire déborder la pleine page sur tous les bords
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `split="*"` fait une seule cellule de tout le cadre, et `bleed` sur la page étend chaque case qui touche le cadre jusqu’à la zone de fond perdu, 3 mm au-delà du format, sans bordure de ces côtés ([découper la page](/fr/docs/comics#découper-la-planche)). Sur la planche 2, `bleed="top start end"` sur la vague ne fait déborder que ces trois côtés ; son pied garde la gouttière qui la sépare des cases du dessous. `start` et `end` suivent le sens de lecture : les éditions japonaise et arabe, lues de droite à gauche, font donc déborder les mêmes côtés.
+
+### 2 · Poser une incrustation sur la pleine page
+
+`inset="56 64 38 30"` place la case de Maya à 56 %, 64 % de la case qui la précède, avec 38 % de largeur et 30 % de hauteur. Une incrustation ne prend pas de cellule : elle est posée sur la pleine page, garde sa propre bordure et se lit juste après. Son image est recadrée à sa propre case selon sa zone de sécurité, ici le visage de Maya.
+
+<PageShot page={1} crop="0.35,0.55,0.65,0.45" caption="L’incrustation : le visage de Maya dans son propre cadre sur le coin inférieur de la pleine page, avec sa voix intérieure." />
+
+### 3 · Laisser une mouette briser le cadre
+
+<Excerpt region="art" />
+
+`pop=sp-tomas-pop` nomme une seconde image pour la case du gardien : un PNG transparent de la taille de son image, où ne figure que la mouette. Postext la recadre et la place exactement comme le dessin de la case, puis la dessine après la bordure et hors du masque de la case : la partie de la mouette qui dépasse de la cellule passe par-dessus la bordure et la marge ([cases et images](/fr/docs/comics#cases-et-dessins)). `focus="45% 50%"` décale le recadrage vers la gauche dans la limite permise par la zone de sécurité, si bien que la mouette chevauche le bord gauche au lieu de partir dans la marge.
+
+### 4 · Laisser une case sans image
+
+<Excerpt region="palette" />
+
+Un `::panel` sans `art` est une cellule vide avec la bordure du style de case ; `bg=night` la remplit d’une couleur de la palette. Ses récitatifs, `at=top` et `at=bottom`, sont collés à ses bords supérieur et inférieur : un temps calme après la tempête.
+
+## Variantes
+
+### Faire aussi déborder toute la bande du bas
+
+```diff
+-::panel{art=sp-tomas pop=sp-tomas-pop focus="45% 50%"}
++::panel{art=sp-tomas pop=sp-tomas-pop focus="45% 50%" bleed="bottom start"}
+```
+
+### Donner un cadre blanc à l’incrustation
+
+Un style de case nommé modifie une seule case ; `style=` sur la case le choisit.
+
+```diff
+   panel: { borderWidth: pt(1.2), borderColor: col('ink'), background: col('paper') },
++  panelStyles: [{ id: 'framed', borderWidth: pt(3), borderColor: col('paper') }],
+```
+
+## Erreurs fréquentes
+
+- Le calque `pop` doit avoir exactement la taille en pixels de l’image de la case : Postext le recadre avec la même fenêtre, et un détourage plus petit tomberait au mauvais endroit.
+- Le fond perdu exige `page.bleed` ; sans lui, une case à fond perdu s’arrête au format.
+- Une onomatopée près d’un bord à fond perdu peut déborder dans le fond perdu, au-delà du format, là où le massicot la coupe. Le ザッバーン japonais est une colonne de cinq caractères de haut : il est donc épinglé plus bas que les onomatopées latines, à `60% 44%`.

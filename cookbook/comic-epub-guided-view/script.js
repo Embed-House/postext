@@ -13,7 +13,7 @@ import {
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 import { renderToEpub, readEpub } from 'https://esm.sh/postext-epub';
 
-const LANG = 'en'; // @lang: the sample's language ('en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt')
+const LANG = 'en'; // @lang: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr'
 const RECIPE = 'comic-epub-guided-view';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -37,6 +37,7 @@ const [LETTERING, SFX] = t({
   en: ['Comic Neue', 'Bangers'], es: ['Comic Neue', 'Bangers'], ca: ['Comic Neue', 'Bangers'],
   ja: ['Zen Antique', 'Dela Gothic One'], zh: ['ZCOOL KuaiLe', 'ZCOOL QingKe HuangYou'],
   ar: ['Playpen Sans Arabic', 'Lalezar'], pt: ['Comic Neue', 'Bangers'],
+  fr: ['Comic Neue', 'Bangers'],
 });
 // #endregion
 
@@ -48,7 +49,7 @@ const comics = {
     stroke: col('ink') }, { id: 'sfx', fontFamily: SFX, color: col('accent') }],
   // The names the reflowable EPUB prints before each line ("Maya: …").
   cast: [{ id: 'maya', name: 'Maya' }, { id: 'tomas', name: t({ en: 'Tomás', es: 'Tomás',
-    ca: 'Tomàs', zh: '托马斯', ar: 'توماس', ja: 'トマス', pt: 'Tomás' }) }],
+    ca: 'Tomàs', zh: '托马斯', ar: 'توماس', ja: 'トマス', pt: 'Tomás', fr: 'Tomás' }) }],
   runningHeads: true, // the folio on every comic page
 };
 const footer = { elements: [{ kind: 'text', id: 'folio', content: '{pageNumber}', pages: 'comic',
@@ -56,7 +57,8 @@ const footer = { elements: [{ kind: 'text', id: 'folio', content: '{pageNumber}'
   placement: { anchor: { to: 'page', edge: 'bottom' }, offset: { x: mm(0), y: mm(-8) } } }] };
 
 const config = () => ({
-  locale: t({ en: 'en-gb', es: 'es', ca: 'ca', ja: 'ja', zh: 'zh-Hans', ar: 'ar', pt: 'pt-BR' }),
+  locale: t({ en: 'en-gb', es: 'es', ca: 'ca', ja: 'ja', zh: 'zh-Hans', ar: 'ar', pt: 'pt-BR',
+    fr: 'fr' }),
   colorPalette, comics,
   // The trim of an American comic book, 6⅝ × 10³⁄₁₆ in.
   page: { sizePreset: 'custom', width: mm(168), height: mm(259), dpi: 150,
@@ -109,28 +111,32 @@ const ALT = {
     zh: '玛雅沿着海边小路走向灯塔，猫走在她前面。',
     ar: 'مايا تصعد الدرب الساحلي إلى المنارة والقط أمامها.',
     ja: 'マヤが海辺の小道を灯台へのぼっていく。前を猫が歩く。',
-    pt: 'Maya sobe a trilha da costa até o farol, com o gato na frente.' }),
+    pt: 'Maya sobe a trilha da costa até o farol, com o gato na frente.',
+    fr: 'Maya monte le sentier côtier vers le phare, le chat devant elle.' }),
   'lh-radio': t({ en: 'The old keeper taps his valve radio, microphone in hand.',
     es: 'El viejo farero golpea su radio de válvulas con el micrófono en la mano.',
     ca: 'El vell faroner pica la ràdio de vàlvules amb el micròfon a la mà.',
     zh: '老守塔人手握话筒，敲着他的电子管收音机。',
     ar: 'الحارس العجوز ينقر على مذياعه القديم والميكروفون في يده.',
     ja: '老灯台守がマイクを握り、真空管ラジオをたたく。',
-    pt: 'O velho faroleiro dá umas batidinhas no rádio valvulado, com o microfone na mão.' }),
+    pt: 'O velho faroleiro dá umas batidinhas no rádio valvulado, com o microfone na mão.',
+    fr: 'Le vieux gardien tapote sa radio à lampes, le micro à la main.' }),
   'lh-maya': t({ en: 'Maya frowns at the floor and points down.',
     es: 'Maya frunce el ceño mirando al suelo y señala hacia abajo.',
     ca: 'La Maya arrufa les celles mirant a terra i assenyala avall.',
     zh: '玛雅皱着眉看着地板，手指向下。',
     ar: 'مايا تعقد حاجبيها ناظرةً إلى الأرض وتشير إلى أسفل.',
     ja: 'マヤが眉をひそめて床を見つめ、下を指さす。',
-    pt: 'Maya franze a testa olhando para o chão e aponta para baixo.' }),
+    pt: 'Maya franze a testa olhando para o chão e aponta para baixo.',
+    fr: 'Maya fronce les sourcils en fixant le sol et pointe le doigt vers le bas.' }),
   'lh-biscuit': t({ en: 'The fat orange cat sleeps on his back on the radio cable.',
     es: 'El gato naranja gordo duerme panza arriba sobre el cable de la radio.',
     ca: 'El gat taronja gras dorm panxa enlaire sobre el cable de la ràdio.',
     zh: '胖橘猫四脚朝天睡在收音机的电线上。',
     ar: 'القط البرتقالي السمين نائم على ظهره فوق سلك المذياع.',
     ja: '太ったオレンジ色の猫が、ラジオのコードの上であおむけに眠っている。',
-    pt: 'O gato laranja gordo dorme de barriga para cima sobre o cabo do rádio.' }),
+    pt: 'O gato laranja gordo dorme de barriga para cima sobre o cabo do rádio.',
+    fr: 'Le gros chat roux dort sur le dos, sur le câble de la radio.' }),
   'lh-beam': t({ en: 'Night: the beam sweeps the sea; Maya and her grandfather stand on the '
       + 'gallery.',
     es: 'De noche, el haz barre el mar; Maya y su abuelo están en la galería.',
@@ -138,7 +144,8 @@ const ALT = {
     zh: '夜里，光束扫过海面；玛雅和外公站在回廊上。',
     ar: 'ليلًا يمسح الشعاع البحر، ومايا وجدّها على الشرفة.',
     ja: '夜。光の帯が海をなでる。マヤと祖父が回廊に立つ。',
-    pt: 'À noite, o facho varre o mar; Maya e o avô estão na galeria.' }),
+    pt: 'À noite, o facho varre o mar; Maya e o avô estão na galeria.',
+    fr: 'La nuit, le faisceau balaie la mer ; Maya et son grand-père sont sur la galerie.' }),
 };
 // #endregion
 
@@ -204,7 +211,8 @@ const resources = await Promise.all([
 const doc = await withLoadedFonts(() => buildDocument({ markdown, resources }, config()),
   { ...kitFonts(FONTS), text: markdown });
 showBook(doc, { title: t({ en: 'A comic EPUB read panel by panel',
-  es: 'Un EPUB de cómic que se lee viñeta a viñeta', pt: 'Um EPUB de HQ lido quadro a quadro' }) });
+  es: 'Un EPUB de cómic que se lee viñeta a viñeta', pt: 'Um EPUB de HQ lido quadro a quadro',
+  fr: 'Un EPUB de BD qui se lit case par case' }) });
 offerPdf(() => renderToPdf(doc, { fontProvider: comicPdfProvider, resourceBytes: imageBytes }),
   `${RECIPE}.pdf`);
 

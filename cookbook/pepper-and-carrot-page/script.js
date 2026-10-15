@@ -12,7 +12,7 @@ import {
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
-const LANG = 'en'; // @lang: the sample's language: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt'
+const LANG = 'en'; // @lang: sample language: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr'
 const RECIPE = 'pepper-and-carrot-page';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -43,6 +43,7 @@ const [LETTERING, SFX, DEMON, TEXT, PLATE] = t({
     'Noto Sans SC'],
   ar: ['Playpen Sans Arabic', 'Lalezar', 'Lalezar', 'Noto Naskh Arabic', 'Lalezar'],
   pt: ['Comic Neue', 'Bangers', 'Grenze Gotisch', 'Source Serif 4', 'Zen Antique'],
+  fr: ['Comic Neue', 'Bangers', 'Grenze Gotisch', 'Source Serif 4', 'Zen Antique'],
 });
 // #endregion
 
@@ -74,7 +75,7 @@ const comics = {
   cast: [{ id: 'pepper', name: 'Pepper' }, { id: 'carrot', name: 'Carrot' },
     { id: 'monster', name: t({ en: 'Monsters of Chaosah', es: 'Demonios de Caosah',
       ca: 'Monstres del Chaosah', zh: '浑沌魔兽', ar: 'وحوش الفوضى', ja: 'ケイオサーの怪物',
-      pt: 'Monstros do Caosah' }),
+      pt: 'Monstros do Caosah', fr: 'Démons de Chaosah' }),
     fill: col('demon'), color: col('paper'), fontFamily: DEMON }],
   runningHeads: true, // the folio on comic pages
 };
@@ -85,7 +86,8 @@ const footer = { elements: [{ kind: 'text', id: 'folio', content: '{pageNumber}'
   placement: { anchor: { to: 'page', edge: 'bottom' }, offset: { x: mm(0), y: mm(-3) } } }] };
 
 const config = () => ({
-  locale: t({ en: 'en-gb', es: 'es', ca: 'ca', ja: 'ja', zh: 'zh-Hans', ar: 'ar', pt: 'pt-BR' }),
+  locale: t({ en: 'en-gb', es: 'es', ca: 'ca', ja: 'ja', zh: 'zh-Hans', ar: 'ar', pt: 'pt-BR',
+    fr: 'fr' }),
   colorPalette, comics,
   // Revoy's pages are A4 with 8.5 mm of white around the art.
   page: { sizePreset: 'custom', width: mm(210), height: mm(297), dpi: 150,
@@ -139,7 +141,9 @@ const ALT = {
     ar: 'برق. فُلفُل غاضبة تسحب من الرف كتابًا على غلافه وجه شيطان، وجزرة مذعور.',
     ja: '稲妻。怒ったペッパーが、表紙に悪魔の顔のある本を棚から引き抜く。キャロットはおびえている。',
     pt: 'Relâmpagos. Pepper, furiosa, tira da estante um livro com a cara de um demônio na capa. '
-      + 'Carrot está apavorado.' }),
+      + 'Carrot está apavorado.',
+    fr: 'Des éclairs. Pepper, furieuse, tire de l’étagère un livre dont la couverture porte un '
+      + 'visage de démon. Carrot est terrifié.' }),
   'e08p05-2': t({ en: 'From above, in the rain, Pepper draws three glowing red magic circles on '
       + 'the ground with her wand. Carrot watches.',
     es: 'Desde arriba, bajo la lluvia, Pimienta traza con su varita tres círculos mágicos rojos en '
@@ -151,14 +155,17 @@ const ALT = {
       + 'يراقب.',
     ja: '上から見たところ。雨の中、ペッパーが杖で地面に赤く光る魔法陣を三つ描く。キャロットが見ている。',
     pt: 'Vista de cima, na chuva, Pepper traça com a varinha três círculos mágicos vermelhos e '
-      + 'brilhantes no chão. Carrot observa.' }),
+      + 'brilhantes no chão. Carrot observa.',
+    fr: 'Vue d’en haut, sous la pluie, Pepper trace à la baguette trois cercles magiques rouges et '
+      + 'lumineux sur le sol. Carrot regarde.' }),
   'e08p05-3': t({ en: 'Red light floods the scene. Pepper, grim, holds the open book.',
     es: 'Una luz roja lo inunda todo. Pimienta, seria, sostiene el libro abierto.',
     ca: 'Una llum vermella ho inunda tot. La Pepper, seriosa, aguanta el llibre obert.',
     zh: '红光笼罩一切。小辣椒神情严峻，捧着打开的书。',
     ar: 'ضوء أحمر يغمر المشهد، وفُلفُل متجهّمة تمسك الكتاب مفتوحًا.',
     ja: '赤い光があたりを満たす。ペッパーが険しい顔で、開いた本を持っている。',
-    pt: 'Uma luz vermelha inunda a cena. Pepper, séria, segura o livro aberto.' }),
+    pt: 'Uma luz vermelha inunda a cena. Pepper, séria, segura o livro aberto.',
+    fr: 'Une lumière rouge envahit la scène. Pepper, l’air sombre, tient le livre ouvert.' }),
   'e08p06-1': t({ en: 'Pepper and Carrot stand before three huge red-eyed demons that rise in the '
       + 'storm, lightning around them.',
     es: 'Pimienta y Zanahoria ante tres enormes demonios de ojos rojos que se alzan en la '
@@ -169,10 +176,13 @@ const ALT = {
     ar: 'فُلفُل وجزرة أمام ثلاثة شياطين ضخمة بعيون حمراء تنهض في العاصفة والبرق حولها.',
     ja: '嵐の中に現れた赤い目の巨大な悪魔三体の前に、ペッパーとキャロットが立つ。まわりに稲妻。',
     pt: 'Pepper e Carrot diante de três demônios enormes de olhos vermelhos que surgem na '
-      + 'tempestade, entre relâmpagos.' }),
+      + 'tempestade, entre relâmpagos.',
+    fr: 'Pepper et Carrot face à trois démons gigantesques aux yeux rouges qui se dressent dans '
+      + 'l’orage, entre les éclairs.' }),
   'e08p06-2': t({ en: 'Pepper smiles a sly smile.', es: 'Pimienta sonríe con malicia.',
     ca: 'La Pepper somriu amb malícia.', zh: '小辣椒狡黠地一笑。', ar: 'فُلفُل تبتسم ابتسامة ماكرة.',
-    ja: 'ペッパーがにやりと笑う。', pt: 'Pepper dá um sorriso malicioso.' }),
+    ja: 'ペッパーがにやりと笑う。', pt: 'Pepper dá um sorriso malicioso.',
+    fr: 'Pepper esquisse un sourire malicieux.' }),
   'e08p06-3': t({ en: 'The party: Pepper, Carrot and the three demons drink tea around the table '
       + 'by candlelight, all smiling.',
     es: 'La fiesta: Pimienta, Zanahoria y los tres demonios toman té alrededor de la mesa a la luz '
@@ -184,7 +194,9 @@ const ALT = {
     ja: 'パーティー。ペッパーとキャロットと三体の悪魔が、ろうそくの明かりのテーブルを囲んでお茶を飲み、'
       + 'みんな笑っている。',
     pt: 'A festa: Pepper, Carrot e os três demônios tomam chá em volta da mesa à luz de velas, '
-      + 'todos sorrindo.' }),
+      + 'todos sorrindo.',
+    fr: 'La fête : Pepper, Carrot et les trois démons boivent le thé autour de la table à la '
+      + 'lueur des bougies, tous souriants.' }),
 };
 // #endregion
 
@@ -250,7 +262,8 @@ const doc = await withLoadedFonts(() => buildDocument({ markdown, resources }, c
   { ...kitFonts(FONTS), text: markdown });
 showBook(doc, { title: t({ en: 'A Pepper&Carrot page re-lettered from its transcript',
   es: 'Una página de Pepper&Carrot rotulada de nuevo a partir de su transcripción',
-  pt: 'Uma página de Pepper&Carrot reletreirada pela transcrição' }) });
+  pt: 'Uma página de Pepper&Carrot reletreirada pela transcrição',
+  fr: 'Une page de Pepper&Carrot relettrée d’après sa transcription' }) });
 offerPdf(() => renderToPdf(doc, { fontProvider: pdfFonts, resourceBytes: imageBytes }),
   `${RECIPE}.pdf`);
 

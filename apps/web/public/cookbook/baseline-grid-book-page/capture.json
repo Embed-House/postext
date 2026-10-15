@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "baseline-grid-book-page",
-  "sourceHash": "e6242b75f1e0b198be8ac5b30e2015d0f7cc70a2ea87339caa0db023f9695489",
+  "sourceHash": "692ee66f253d04c1778395a5966dde8d3a36a129d6d6b7070b732b1cd23b9cf9",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.33.4",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:56:20.708Z",
+  "chrome": "155.0.8059.79",
+  "capturedAt": "2026-10-15T08:05:41.808Z",
   "variants": {
     "en": {
       "hash8": "54fd38d6",
       "vdtHash": "f55297049f1e5f9ea49a89f52e109267aee3fbe3",
       "timings": {
-        "importMs": 337,
+        "importMs": 2886,
         "fontsMs": 3,
-        "buildMs": 110,
-        "totalMs": 1123,
+        "buildMs": 103,
+        "totalMs": 6008,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Vollkorn SC"
         ],
         "pages": 3,
-        "ownLines": 184
+        "ownLines": 195
       },
       "pages": [
         {
@@ -319,9 +319,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “The ruling fixed the lines as well as the frame.…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -335,10 +335,10 @@
       "hash8": "ecae0af0",
       "vdtHash": "18cb678cde83a6862dc2b5d160a0456d970249e3",
       "timings": {
-        "importMs": 150,
+        "importMs": 2170,
         "fontsMs": 3,
-        "buildMs": 79,
-        "totalMs": 910,
+        "buildMs": 69,
+        "totalMs": 6520,
         "builds": 1
       },
       "specimen": {
@@ -361,7 +361,7 @@
           "Vollkorn SC"
         ],
         "pages": 3,
-        "ownLines": 184
+        "ownLines": 195
       },
       "pages": [
         {
@@ -631,9 +631,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -647,10 +647,10 @@
       "hash8": "58aaa8d3",
       "vdtHash": "2acdd6b557c1c08659556959a5561aab4bda1812",
       "timings": {
-        "importMs": 204,
-        "fontsMs": 3,
-        "buildMs": 76,
-        "totalMs": 1038,
+        "importMs": 3113,
+        "fontsMs": 4,
+        "buildMs": 104,
+        "totalMs": 5997,
         "builds": 1
       },
       "specimen": {
@@ -673,7 +673,7 @@
           "Vollkorn SC"
         ],
         "pages": 3,
-        "ownLines": 184
+        "ownLines": 195
       },
       "pages": [
         {
@@ -943,9 +943,331 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          }
+        ]
+      }
+    },
+    "fr": {
+      "hash8": "8d9b5648",
+      "vdtHash": "71332f07970bfbd9fff78f945206a795088f1f07",
+      "timings": {
+        "importMs": 3246,
+        "fontsMs": 4,
+        "buildMs": 112,
+        "totalMs": 5906,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          280
+        ],
+        "dpi": 150,
+        "layoutType": "double",
+        "gutterMm": 6,
+        "mirror": true,
+        "body": {
+          "family": "Vollkorn",
+          "sizePt": 9.8,
+          "leadingPt": 13.4
+        },
+        "families": [
+          "Playfair Display",
+          "Vollkorn",
+          "Vollkorn SC"
+        ],
+        "pages": 3,
+        "ownLines": 195
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1333,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 149464,
+          "alt": "Page d’ouverture 9 : Le canon secret. Figure 1.1. Le canon sur une double page ouverte de pages 2:3. Les diagonales fixent les angles des deux blocs de texte ; le cercle, aussi large que la page, est exactement aussi haut que son bloc."
+        },
+        {
+          "n": 2,
+          "label": "10",
+          "role": "body",
+          "w": 1000,
+          "h": 1333,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 192320,
+          "alt": "Page 10 : Des lignes où se poser."
+        },
+        {
+          "n": 3,
+          "label": "11",
+          "role": "body",
+          "w": 1000,
+          "h": 1333,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 72534,
+          "alt": "Page 11. Figure 1.2. La page de 210 × 280 mm de ce livre, deux fois. À gauche, divisée en neuvièmes par le canon, avec un bloc de texte de 140 × 187 mm. À droite, telle que le livre la compose : marges de 16, 24, 32 et 48 mm et deux colonnes de 44 lignes."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "baseline-grid-book-page.postext",
+        "bytes": 42996,
+        "folio": "e8c31713",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "3e45fe58d7580726",
+            "lines": "a1d79b2497512c20"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "registerResourceImage",
+          "renderPageToCanvas"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceBold",
+          "bodyText.referenceColor",
+          "captionStyle",
+          "captionStyle.descriptionItalic",
+          "captionStyle.fontSize",
+          "captionStyle.labelColor",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].pages",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "headings",
+          "headings.balancing",
+          "headings.balancing.enabled",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontSize",
+          "headings.levels[].italic",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.columnRule",
+          "layout.columnRule.color",
+          "layout.columnRule.enabled",
+          "layout.columnRule.lineWidth",
+          "layout.gutterWidth",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.backgroundColor",
+          "page.baselineGrid",
+          "page.baselineGrid.color",
+          "page.baselineGrid.enabled",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].boldColor",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "unorderedLists",
+          "unorderedLists.bulletChar",
+          "unorderedLists.color",
+          "unorderedLists.fontWeight",
+          "unorderedLists.marginBottom",
+          "unorderedLists.marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "captionStyle",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles",
+          "unorderedLists"
+        ],
+        "configLeaves": 162,
+        "designElements": 5,
+        "directives": [
+          ":::paragraphs"
+        ],
+        "inline": [
+          ":ref"
+        ],
+        "resources": {
+          "svg": 2,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Playfair Display",
+            "weight": 700,
+            "style": "italic"
+          },
+          {
+            "family": "Playfair Display",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Vollkorn SC",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Vollkorn SC",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Vollkorn",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Vollkorn",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Vollkorn",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "baseline-grid",
+          "column-balancing",
+          "column-rule",
+          "figure-citations",
+          "page-background",
+          "page-role-filters",
+          "paragraph-styles",
+          "resources"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 3,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.99
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “la réglure elle-même, devenue une grille de lign…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
