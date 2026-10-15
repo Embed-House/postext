@@ -2,28 +2,45 @@
  * Numbers spelled out in words — "twenty-one", "twenty-first", "veintiuno",
  * "vigesimoprimero", 二十一, 第二十一, الحادي والعشرون — for heading numbering
  * templates (`{1:words}`, `{1:ordinal}`) and the `{numberWords}` /
- * `{numberOrdinalWords}` design placeholders. English, Spanish, Chinese
- * (in the document's script: 一万 / 一萬), Japanese (百一, where Chinese
- * writes 一百零一) and Arabic; any other language
- * takes the English words, like the other localised strings (table
- * continuation labels). Masculine forms by default, as a chapter or a part
- * is numbered ("capítulo primero", الفصل الأول); Arabic also has the
- * feminine (الليلة الأولى, see {@link NumberWordsOptions}).
+ * `{numberOrdinalWords}` design placeholders. English, Spanish, French,
+ * Italian, German, Catalan, Portuguese, Chinese (in the document's script:
+ * 一万 / 一萬), Japanese (百一, where Chinese writes 一百零一) and Arabic;
+ * any other language takes the English words, like the other localised
+ * strings (table continuation labels). Masculine forms by default, as a
+ * chapter or a part is numbered ("capítulo primero", « chapitre premier »,
+ * الفصل الأول); the Romance languages and Arabic also have the feminine
+ * ("lección primera", الليلة الأولى), German the strong endings of a
+ * heading without an article ("Erstes Kapitel", see
+ * {@link NumberWordsOptions}).
  */
 import { stringsKeyOf } from './locale';
 import { chineseNumeral } from './chineseNumerals';
 import { japaneseNumeral } from './japaneseNumerals';
-import { arabicCardinal, arabicOrdinal, type ArabicGender, type ArabicSpelling } from './arabicNumberWords';
+import { arabicCardinal, arabicOrdinal, type ArabicSpelling } from './arabicNumberWords';
+import {
+  catalanCardinal, catalanOrdinal, frenchCardinal, frenchOrdinal, italianCardinal, italianOrdinal,
+  portugueseCardinal, portugueseOrdinal, type RomanceGender,
+} from './romanceNumberWords';
+import { germanCardinal, germanOrdinal } from './germanNumberWords';
 
 /** Cardinal ("twenty-one") or ordinal ("twenty-first"). */
 export type NumberWordsKind = 'cardinal' | 'ordinal';
 
+/** The gender of the counted noun. `'neuter'` is German's; the other
+ *  languages read it as masculine. */
+export type NumberWordsGender = 'masculine' | 'feminine' | 'neuter';
+
 /** How a language that inflects its number words writes them. Arabic reads
- *  both fields; English, Spanish and Chinese ignore them. */
+ *  both fields, the Romance languages and German the gender; English,
+ *  Chinese and Japanese ignore them. */
 export interface NumberWordsOptions {
   /** The gender of the counted noun: الفصل الأول but الليلة الأولى, واحد
-   *  وعشرون but إحدى عشرة. Default `'masculine'`. */
-  gender?: ArabicGender;
+   *  وعشرون but إحدى عشرة; « chapitre premier » but « partie première »,
+   *  "capitolo primo" but "parte prima". Default `'masculine'`, except in
+   *  German, where no gender gives the weak ordinal after the article
+   *  ("das erste Kapitel") and a gender the strong one ("Erster Teil",
+   *  "Erste Lektion", "Erstes Kapitel"). */
+  gender?: NumberWordsGender;
   /** `'classical'` spells the Arabic hundreds مائة (Bulaq orthography);
    *  default `'modern'`, مئة. */
   spelling?: ArabicSpelling;
@@ -31,11 +48,23 @@ export interface NumberWordsOptions {
 
 /** Largest number spelled out; anything past it prints in digits. */
 const MAX_CARDINAL = 999_999;
-const MAX_ORDINAL_ES = 999;
+/** Largest Spanish, Catalan and Portuguese ordinal spelled out. */
+const MAX_ORDINAL_IBERIAN = 999;
 
-function language(locale: string | undefined): 'en' | 'es' | 'zh-hans' | 'zh-hant' | 'ja' | 'ar' {
+type Language = 'en' | 'es' | 'fr' | 'it' | 'de' | 'ca' | 'pt' | 'zh-hans' | 'zh-hant' | 'ja' | 'ar';
+
+const LANGUAGES: ReadonlySet<string> = new Set<Language>(['es', 'fr', 'it', 'de', 'ca', 'pt', 'zh-hans', 'zh-hant', 'ja', 'ar']);
+
+function language(locale: string | undefined): Language {
   const key = stringsKeyOf(locale ?? 'en');
-  return key === 'es' || key === 'zh-hans' || key === 'zh-hant' || key === 'ja' || key === 'ar' ? key : 'en';
+  return LANGUAGES.has(key) ? key as Language : 'en';
+}
+
+/** Portuguese as Portugal and Africa write it (`pt-PT`, `pt-AO`…): any
+ *  region but Brazil's; bare `pt` is Brazilian, as in CLDR. */
+function europeanPortuguese(locale: string | undefined): boolean {
+  const region = /^pt[-_]([a-z]{2})\b/i.exec(locale ?? '')?.[1];
+  return region !== undefined && region.toUpperCase() !== 'BR';
 }
 
 // --- English ---------------------------------------------------------------
@@ -90,6 +119,16 @@ const ES_HUNDREDS = [
   '', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos',
   'setecientos', 'ochocientos', 'novecientos',
 ];
+
+/** Each word of a Spanish cardinal in the feminine: una, veintiuna,
+ *  doscientas, veintiuna mil. */
+function esFeminineCardinal(words: string): string {
+  return words.replace(/[^ ]+/g, (w) => {
+    if (w === 'uno' || w === 'un') return 'una';
+    if (w === 'veintiuno' || w === 'veintiún') return 'veintiuna';
+    return w.endsWith('ientos') ? `${w.slice(0, -2)}as` : w;
+  });
+}
 
 function esBelow100(n: number): string {
   if (n < 30) return ES_BELOW_30[n]!;
@@ -155,18 +194,25 @@ function esOrdinal(n: number): string {
 
 /**
  * `n` spelled out in lower case, in the document language (`locale`:
- * `'es'` or a Spanish tag gives Spanish, a Chinese tag Chinese numerals in
- * its script, a Japanese tag Japanese kanji numerals, an Arabic tag Arabic
- * words in the gender and spelling of `options`, anything else English).
- * Numbers past 999 999 (Spanish ordinals: past 999; Chinese and Japanese:
- * past 10¹⁶ − 1; Arabic: cardinals past
- * 99 999, ordinals past 9 999) print in digits; zero and below print
- * nothing, like the other numeral formats.
+ * `'es'` or a Spanish tag gives Spanish, and likewise French, Italian,
+ * German, Catalan and Portuguese — Brazilian unless the tag names another
+ * region; German with *ss* in Switzerland — a Chinese tag Chinese numerals
+ * in its script, a Japanese tag Japanese kanji numerals, an Arabic tag
+ * Arabic words in the spelling of `options`, anything else English; the
+ * inflecting languages in the gender of `options`). Numbers past 999 999
+ * (Spanish, Catalan and Portuguese ordinals: past 999; Chinese and
+ * Japanese: past 10¹⁶ − 1; Arabic: cardinals past 99 999, ordinals past
+ * 9 999) print in digits; zero and below print nothing, like the other
+ * numeral formats.
  */
 export function numberToWords(n: number, kind: NumberWordsKind = 'cardinal', locale?: string, options: NumberWordsOptions = {}): string {
   if (!Number.isInteger(n) || n < 1) return n > 0 ? String(n) : '';
   const lang = language(locale);
-  if (lang === 'ar') return kind === 'ordinal' ? arabicOrdinal(n, options) : arabicCardinal(n, options);
+  const gender: RomanceGender = options.gender === 'feminine' ? 'feminine' : 'masculine';
+  if (lang === 'ar') {
+    const arabic = { ...options, gender };
+    return kind === 'ordinal' ? arabicOrdinal(n, arabic) : arabicCardinal(n, arabic);
+  }
   if (lang === 'zh-hans' || lang === 'zh-hant') {
     // Informal numerals; the ordinal is 第 before them (第十二).
     const numeral = chineseNumeral(n, 'informal', lang === 'zh-hant');
@@ -180,11 +226,31 @@ export function numberToWords(n: number, kind: NumberWordsKind = 'cardinal', loc
     return kind === 'ordinal' ? `第${numeral}` : numeral;
   }
   if (kind === 'ordinal') {
-    if (lang === 'es') return n <= MAX_ORDINAL_ES ? esOrdinal(n) : String(n);
-    return n <= MAX_CARDINAL ? enOrdinal(n) : String(n);
+    if (lang === 'es' || lang === 'ca' || lang === 'pt') {
+      if (n > MAX_ORDINAL_IBERIAN) return String(n);
+      if (lang === 'ca') return catalanOrdinal(n, gender);
+      if (lang === 'pt') return portugueseOrdinal(n, gender);
+      // Every word of a Spanish ordinal ends in -o: vigesimoprimera,
+      // trigésima cuarta.
+      return gender === 'feminine' ? esOrdinal(n).replace(/o(?= |$)/g, 'a') : esOrdinal(n);
+    }
+    if (n > MAX_CARDINAL) return String(n);
+    if (lang === 'fr') return frenchOrdinal(n, gender);
+    if (lang === 'it') return italianOrdinal(n, gender);
+    if (lang === 'de') return germanOrdinal(n, options.gender, locale);
+    return enOrdinal(n);
   }
   if (n > MAX_CARDINAL) return String(n);
-  return lang === 'es' ? esCardinal(n) : enCardinal(n);
+  switch (lang) {
+    case 'es': return gender === 'feminine' ? esFeminineCardinal(esCardinal(n)) : esCardinal(n);
+    case 'fr': return frenchCardinal(n, gender);
+    case 'it': return italianCardinal(n, gender);
+    case 'ca': return catalanCardinal(n, gender);
+    case 'pt': return portugueseCardinal(n, gender, europeanPortuguese(locale));
+    // The counting form, alike for every gender: eins, einundzwanzig.
+    case 'de': return germanCardinal(n, locale);
+    default: return enCardinal(n);
+  }
 }
 
 /** Letter case of spelled-out words: as spelled, first letter capital, or
@@ -193,7 +259,9 @@ export type WordsCase = 'lower' | 'capital' | 'upper';
 
 export function caseWords(words: string, wordsCase: WordsCase, locale?: string): string {
   // Han and Arabic characters have no case: the variants print alike.
-  const tag = language(locale) === 'es' ? 'es' : 'en';
+  // German capitals follow the language's own rules: ß becomes SS.
+  const lang = language(locale);
+  const tag = lang === 'zh-hans' || lang === 'zh-hant' || lang === 'ja' || lang === 'ar' ? 'en' : lang;
   if (wordsCase === 'upper') return words.toLocaleUpperCase(tag);
   if (wordsCase === 'capital') return words.charAt(0).toLocaleUpperCase(tag) + words.slice(1);
   return words;
