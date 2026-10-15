@@ -1,0 +1,98 @@
+---
+title: "Kapitelauftakt auf einem randabfallenden Farbband"
+summary: "Ein advancedDesign-Auftakt an der H1: ein randabfallendes Band, die Kapitelnummer auf seinem Fuß, Dachzeile und Vorspann aus den Attributen der Überschrift."
+plain: "Kapitelauftakte für ein Geologie-Lehrbuch. Ein farbiges Band mit großer Kapitelnummer läuft über den oberen Seitenrand hinaus, und die Gestaltung wird einmal für alle Kapitel angelegt."
+description: "Lehrbuch-Kapitelauftakt in Postext: randabfallendes Band, Kapitelnummer in 168 pt, Dachzeile und Vorspann aus der Überschrift, Stil färbt Kapitel 4 um."
+question: "Wie gestalte ich einen Kapitelauftakt mit Farbband im Anschnitt, großer Kapitelnummer und zweizeiligem Titel?"
+aliases: ["Kapitelauftakt", "Farbband", "große Kapitelnummer", "Kapitelnummer", "Vorspann", "Dachzeile", "Lehrbuch", "Kapitelfarben", "Registermarke", "chapter opener"]
+pageNotes: { "1": "Ein terrakottafarbenes Band füllt den oberen Teil der Seite, mit der Dachzeile „Chapter 3 · Plate tectonics“, dem Titel „The Restless Crust“ auf zwei Zeilen, einem kursiven Vorspann und einer weißen 3, die auf dem dunklen Fuß des Bands steht; am Fuß der Seite ein Querschnitt durch eine abtauchende Platte.", "3": "Kapitel 4, „Fire from Below“, beginnt mit derselben Gestaltung in Petrol.", "4": "Kapitel 4 endet mit Wiederholungsfragen, dem Impressum und einem petrolfarbenen Querschnitt durch einen Schildvulkan und einen Schichtvulkan über die ganze Seitenbreite, direkt unter den beiden Textspalten." }
+---
+
+## Was Sie setzen
+
+Die Kapitelauftakte von *Earth in Motion*, einem einführenden Geologie-Lehrbuch auf einer Seite von 210 × 280 mm. Kapitel 3 beginnt unter einem terrakottafarbenen Band, das über die Oberkante der Seite hinaus angeschnitten ist. Das Band trägt eine gesperrte Dachzeile, den Titel, umbrochen an der Stelle, die der Autor gewählt hat, einen kursiven Vorspann und eine Kapitelnummer in 168 pt, die am Außenrand auf dem dunklen Fuß des Bands steht. Unter dem Band beginnen zwei Spalten im Blocksatz, und ein Querschnitt durch eine abtauchende Platte nimmt den Fuß der Seite ein. Kapitel 4 wiederholt die Gestaltung in Petrol, bis hin zur Registermarke, den Abschnittsnummern, den Verweisen und der Bezeichnung seiner Abbildung. Die Gestaltung wird einmal angelegt, an der Überschrift der Ebene 1. Die Überschriftenzeile jedes Kapitels liefert das Thema der Dachzeile und den Vorspann als Attribute und nennt einen Stil, wenn das Kapitel eine andere Farbe bekommt.
+
+## Zubereitung
+
+### 1 · Band und Ziffer an der Seite aufhängen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Das Band und sein Fuß hängen an der oberen linken Ecke des Anschnitts. Wie jeder Kasten und jede Linie ohne Breitenangabe dehnen sie sich bis zum gegenüberliegenden Rand dieses Rahmens, reichen also bis zum Endformat und, sobald `BLEED` gesetzt ist, bis in den Anschnitt. Die Ziffer hängt an der oberen rechten Ecke der Seite: `y: BAND - 0.8 * NUMERAL * PT` setzt ihre Grundlinie auf den Fuß, und `BEARING` schiebt ihren Kasten 2 mm in den Rand, um die Vor- und Nachbreite der Ziffer auszugleichen, sodass die Farbe ungefähr mit der Textkante abschließt. Die Dachzeile hängt am Container. Der Titel hängt unter der Dachzeile und der Vorspann unter dem Titel, über `below`-Anker, und eine Überschriftengestaltung bricht ihren Text standardmäßig um, sodass ein längerer Titel den Vorspann nach unten schiebt. Der Vorspann ist ein Textelement, das aus dem Attribut `lead` der Überschrift gefüllt wird; eine Autorenzeile wäre ein weiteres, `{attr.author}`, auf dieselbe Weise verkettet. `minHeight: BAND - TOP + AIR` legt fest, wo der Grundtext beginnt. Der Kasten der Ziffer reicht das 0,2-Fache ihrer Größe (11,9 mm) unter den Fuß, und ein Auftakt reserviert Platz bis zu seinem untersten Element, also muss `AIR` mindestens 11,9 mm betragen; bei weniger würde der Kasten der Ziffer bestimmen, wo der Text beginnt.
+
+### 2 · Der Kapitelüberschrift die Seite geben
+
+<Excerpt region="levels" />
+
+`span: 'page'` beginnt jedes Kapitel auf einer neuen Seite und setzt die Überschrift der Ebene 1 über beide Spalten; `advancedDesign` zeichnet den Auftakt anstelle des Überschriftentexts, und der Grundtext beginnt unter der reservierten Höhe. `breakBefore` mit `parity: 'odd'` setzt jeden Auftakt auf eine rechte Seite, wo der rechte Anker der Ziffer der Außenrand ist. Auf Ebene 2 nummeriert `numberingTemplate: '{1}.{2}'` die Abschnitte 3.1, 3.2 … in der Farbe des Bands; eine Ebene 3 mit `'{1}.{2}.{3}'` ginge weiter mit 3.1.1.
+
+### 3 · Die Kapitelfarbe einmal benennen
+
+<Excerpt region="palette" />
+
+Jede Farbe der Konfiguration ist mit einem dieser Einträge verknüpft. Die eigenen Standardwerte der Engine sind mit `main-color` verknüpft, sodass dieser Eintrag, auf die Farbe des Bands gerichtet, auch jeden Standardwert umfärbt, den die Konfiguration nicht setzt. Die Überschriftenzeile von Kapitel 4, `# Fire from \\ Below {style="teal" topic="Volcanoes" lead="…"}`, wählt den Stil, der `band` bis zur nächsten Überschrift der Ebene 1 austauscht. Gestaltungsfelder folgen dem Tausch über ihre Palettenverknüpfung, und Textfarben, die dem Basiswert von `band` gleichen, werden neu eingefärbt, sodass Registermarke, Abschnitts- und Listennummern, Verweise, Abbildungsbezeichnung und die Seitenzahl am Fuß auf <PageRef page={3}>den Seiten 43 und 44</PageRef> petrolfarben werden. Dieselbe Zeile füllt `{attr.topic}` und `{attr.lead}`, und ihr `\\` bricht `{titleText}` dort um, wo der Autor es will ([Attribute von Überschriften](/de/docs/document-format#attribute-von-überschriften), [Zeilenumbrüche in Titeln](/de/docs/document-format#zeilenumbrüche-in-titeln)).
+
+### 4 · Den ersten Verweis jede Abbildung platzieren lassen
+
+<Excerpt region="figure" />
+
+Ein `:ref` nummeriert seine Abbildung und setzt sie an die erste freie Stelle nach dem Absatz, der sie zitiert. Abbildung 3.1 ist `auto`. Sie wird auf der Auftaktseite zitiert, solange beide Spalten noch Platz haben, und nimmt deshalb den Fuß dieser Seite ein; als Gleitobjekt `top` hätte sie Seite 42 eröffnet, weil ein Gleitobjekt nie über seinen eigenen Verweis steigt. Abbildung 4.1 wird weit unten in der zweiten Spalte von Seite 43 zitiert, wo ein Band über die ganze Seitenbreite nicht mehr passt, also schickt `bottom` sie auf Seite 44. Das ist die letzte Seite des Kapitels, und auf einer letzten Seite hebt die Engine Gleitobjekte am Fuß direkt unter die letzten Textzeilen, ohne Abstand darüber.
+
+### 5 · Kolumnentitel, Registermarke und Seitenzahl am Fuß
+
+<Excerpt region="heads" />
+
+Jedes Element der Kopfzeile hängt an einer oberen Ecke der Seite und wird über `parity` gefiltert, sodass Seitenzahl und Registermarke immer am Außenrand stehen. Der Kasten der Registermarke hängt dagegen an der Ecke des Anschnitts und wird mit `BLEED` breiter, sodass er auch nach dem Beschnitt randabfallend bleibt. `pages: 'body'` hält all diese Elemente von den Auftaktseiten fern, die eine Seitenzahl am Fuß aus der Fußzeile bekommen. Die linke Seite nennt das Kapitel mit `{chapterTitle}` auf einer Zeile, weil `\\` den Titel nur im Auftakt umbricht. Lehrbücher nennen auf der rechten Seite meist den Abschnitt. Postext hat keinen Platzhalter für den Abschnitt, deshalb druckt der Kolumnentitel der rechten Seite den `{title}` des Buchs; diese vier Seiten zeigen ihn nie, weil beide rechten Seiten Auftaktseiten sind.
+
+### 6 · Das Buch mit Kapitel 3 beginnen
+
+<Excerpt region="build" />
+
+Diese Seiten sind die Kapitel 3 und 4 eines längeren Buchs, deshalb bekommt `buildDocument` eine `continuation` mit den Zählern, wie die Kapitel 1 und 2 sie hinterlassen haben. Mit `h1: 2` in ihren `headings` ist das nächste `#` Kapitel 3: `{chapterNumber}` druckt 3, die Abschnitte zählen ab 3.1, und die erste Abbildung wird 3.1. `pageNumbering.startAt: 41` beginnt die Seitenzahlen bei 41. Die erste Seite bleibt unabhängig von ihrer Seitenzahl eine rechte Seite, weil die Parität an der physischen Seite gezählt wird und `pageIndexOffset` auf 0 bleibt; die erste Seitenzahl, 41, ist passend dazu ungerade.
+
+## Varianten
+
+### Das Band tiefer machen
+
+`BAND` legt die Tiefe des Bands fest, die Position der Ziffer und die über dem Text reservierte Höhe. Ein tieferes Band schiebt Text auf die nächste Seite; passen Sie also jedes Kapitel neu ein (siehe den letzten häufigen Fehler) oder lassen Sie die Kapitel fortlaufend beginnen.
+
+```diff
+-const BAND = 100; // mm from the trim to the foot of the band
++const BAND = 128; // mm from the trim to the foot of the band
+```
+
+### Mit Anschnitt drucken
+
+Mit 3 mm Anschnitt laufen Band, Fuß und Registermarke 3 mm über das Endformat hinaus, die Ziffer bleibt auf dem Fuß, und `page.cutLines` wird mit demselben Wert eingeschaltet.
+
+```diff
+-const BLEED = 0; // mm: 0 on screen; about 3 for print, which also switches on page.cutLines
++const BLEED = 3; // mm: 0 on screen; about 3 for print, which also switches on page.cutLines
+```
+
+### Eine Farbe für ein weiteres Kapitel hinzufügen
+
+Jede Kapitelfarbe ist ein weiterer Paletteneintrag und ein weiterer Stil; schreiben Sie `{style="slate"}` in die Überschriftenzeile dieses Kapitels.
+
+```diff
+   band2: '#2e6f73', // the second chapter colour, a teal; the sea in Figure 3.1
++  band3: '#3d4f6b', // a third chapter colour, a slate blue
+@@
+-const headingStyles = [{ id: 'teal', palette: { band: palette.band2 } }];
++const headingStyles = [{ id: 'teal', palette: { band: palette.band2 } },
++  { id: 'slate', palette: { band: palette.band3 } }];
+```
+
+### Kapitel fortlaufend beginnen lassen
+
+Mit `'any'` beginnt ein Kapitel auf der nächsten Seite. Nach einem Kapitel, das auf einer rechten Seite endet, beginnt es auf der linken, ohne Vakatseite davor, und seine Ziffer steht am Bund, weil sie am rechten Seitenrand hängt. Diese Seiten bleiben gleich, da Kapitel 3 ohnehin auf einer linken Seite endet.
+
+```diff
+-      { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' },
++      { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' },
+```
+
+## Häufige Fehler
+
+- Das Band hat eine feste Höhe, während Dachzeile, Titel und Vorspann am oberen Rand hängen und nach unten wachsen; ein längerer Vorspann oder ein dreizeiliger Titel läuft deshalb in den Fuß. Halten Sie Vorspanne bei etwa fünf Zeilen, wie es beide Ausgaben tun, oder leiten Sie `BAND` aus dem längsten Auftakt ab.
+- Die Formel für das `y` der Ziffer setzt `lineHeight: 1` voraus. Die Grundlinie eines Gestaltungstexts liegt bei 0,8 der Höhe seines Zeilenkastens, und `0.8 * NUMERAL` ist dieser Abstand nur, wenn der Kasten so hoch ist wie die Schrift. Ändern Sie Zeilenhöhe oder Anker, muss die Formel mitgehen. `BEARING` ist nach Augenmaß gesetzt, weil jede Ziffer ihre eigene Vor- und Nachbreite hat (hier enden die 3 und die 4 um 0,8 mm versetzt).
+- Die Palette eines Stils färbt Gestaltungselemente und Text um. Ein Bild behält die Farben, mit denen es gezeichnet wurde: Abbildung 4.1 ist petrolfarben, weil der Code sie aus `band2` zeichnet, und eine terrakottafarbene Abbildung in Kapitel 4 bliebe terrakottafarben.
+- Mit `parity: 'odd'` hinterlässt ein Kapitel, das ein paar Zeilen über seine letzte Seite hinausläuft, eine fast leere Seite und eine leere linke Seite vor dem nächsten Auftakt. Passen Sie den Text ein, wie es beide Ausgaben hier tun, und prüfen Sie die letzte Seite jedes Kapitels, sobald sich der Text oder `BAND` ändert.

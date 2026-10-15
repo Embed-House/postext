@@ -1,0 +1,78 @@
+---
+title: "Ein Bunko-Roman im vertikalen Satz, mit Furigana"
+summary: "Sōsekis Zehn Nächte der Träume auf einer A6-Bunko-Seite: 38 Zeichen hoch, 15 Zeilen, von rechts gelesen, Lesungen neben seltenen Kanji, Titel über drei Zeilen."
+plain: "Der Anfang eines klassischen japanischen Buchs als Taschenbuch: Der Text läuft in Spalten von oben nach unten, von rechts nach links gelesen, mit kleinen Kana neben den schwierigeren Zeichen."
+description: "Sōsekis Yume Jūya als japanisches Bunko in Postext: vertikale Zeilen, rechts gebunden, Aozora-Furigana, Titel über 3 Zeilen, Hashira am Außenrand, Kanji-Pagina."
+question: "Wie setze ich einen japanischen Roman vertikal und rechts gebunden, wie ein Bunko-Taschenbuch?"
+aliases: ["Bunko", "文庫", "文庫本", "Tategaki", "縦組", "縦書き", "vertikales Japanisch", "japanischer Roman", "Taschenbuch", "Furigana", "ルビ", "振り仮名", "3行取り", "Gyōdori", "Hashira", "柱", "Kanji-Seitenzahlen", "漢数字", "Aozora Bunko", "青空文庫", "夢十夜", "Zehn Nächte der Träume", "Natsume Sōseki", "夏目漱石"]
+pageNotes: { "1": "Die Titelseite, allein links vom Bund: 夢十夜 in großer, kräftiger Mincho mittig in einem dünnen zinnoberroten Rahmen, 夏目漱石 tiefer und links davon, und quer über den Fuß ein dreizeiliges Impressum auf Englisch.", "2": "Die erste Nacht beginnt auf einer rechten Seite: Der Titel 第一夜 steht fünf Zeichen tief in einem drei Zeilen breiten Band, dann folgen こんな夢を見た。 und der Text in Spalten zu 38 Zeichen, mit kleinen Kana-Lesungen neben Wörtern wie 仰向 und 輪郭.", "3": "Eine linke Seite: Absätze mit wörtlicher Rede beginnen mit 「 innerhalb des Einzugs von einem Zeichen, der Hashira 夢十夜 läuft den Außenrand hinunter, und an seinem Fuß steht die Seitenzahl 三.", "6": "Der Titel der zweiten Nacht, 第二夜, nimmt die ersten drei Zeilen der Seite ein, und der Text danach läuft im selben Zeilenraster weiter." }
+---
+
+## Was Sie setzen
+
+Neun Seiten eines japanischen Taschenbuchs (文庫, Bunko) von Natsume Sōsekis *Zehn Nächte der Träume*, die erste und die zweite Nacht, auf einer A6-Seite von 105 × 148 mm, rechts gebunden. Die Titelseite liegt allein links vom Bund; ab Seite 2 läuft der Text von oben nach unten in Zeilen, die von rechts gelesen werden, 38 Zeichen hoch und 15 Zeilen breit, Shippori Mincho B1 in 9 pt bei einem Zeilenabstand von 1,75 em. Die Lesungen, die Aozora Bunko für die schwierigeren Kanji angibt, stehen in halb großen Kana daneben, der Titel jeder Nacht nimmt drei Zeilen des Rasters ein, und die linken Seiten tragen den Buchtitel am Außenrand hinunter über einer Seitenzahl in Kanji-Ziffern. Das europäische Taschenbuch mit derselben Struktur ist <RecipeLink slug="catalan-pocket-novella">Nº 104</RecipeLink>, der chinesische vertikale Roman <RecipeLink slug="vertical-novel-right-bound">Nº 075</RecipeLink>.
+
+## Zubereitung
+
+### 1 · Die Seite drehen, in Zeichen zählen und mit `ja` auszeichnen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `layout.writingMode: 'vertical-rl'` legt jede Seite als horizontale Seite an, die eine Vierteldrehung im Uhrzeigersinn gedreht ist, und `page.binding`, auf `'auto'` belassen, bindet ein vertikales Buch rechts: Seite 1 ist weiterhin die rechte Seite (recto), liegt aber links vom Bund, und `mirror: true` legt ihren Bundsteg nach rechts ([Vertikaler Satz](/de/docs/configuration-page-layout#vertikale-schrift), [Bindung](/de/docs/configuration-page-layout#bindung)). Das [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster) macht den Satzspiegel 38 Zeichen zu 9 pt hoch (120,7 mm) und 15 Zeilen zu 15,75 pt breit (83,3 mm); die Ränder in `page` sind Mindestwerte, und das Raster vergrößert jedes Paar um denselben Betrag, sodass der Kopfsteg 4 mm tiefer bleibt als der Fußsteg. Verlangen Sie mehr Zeilen, als die Ränder zulassen, lässt das Raster stillschweigend eine weg (`cjkGridClamped` in `doc.configWarnings`): Erst der Bundsteg von 9 mm und der Außensteg von 12 mm lassen 15 Zeilen zu.
+
+`locale: 'ja'` stellt den Rest so ein, wie japanische Bücher gesetzt werden; die vier hier ausgeschriebenen Zeilen `cjk` ändern also nichts, sie zeigen, was die Sprachangabe wählt. `ja-very-strict` ist die Zeilenanfangsregel von JIS X 4051 (行頭禁則): Keine Zeile beginnt mit 、。」, ー oder einem kleinen Kana wie っ. `hangingPunctuation: 'allow'` lässt ein 、 oder 。, das sonst eine Zeile eröffnen würde, unter dem letzten Zeichen hängen (ぶら下げ), wie es Bunko tun, statt die Zeile zu stauchen. `paragraphStartBracket: 'half'` ist das Muster ③ aus JLReq: Ein Absatz, der mit 「 beginnt, setzt die Klammer in die zweite Hälfte seines Einzugs von einem Zeichen, sodass das erste Zeichen der Rede dort steht, wo jeder andere Absatz beginnt ([Ostasiatische Typografie](/de/docs/configuration-east-asian#ostasiatische-typografie)). Chinesische Bücher unterscheiden sich in beiden Punkten: Sie lassen standardmäßig kein Zeichen hängen und ziehen einen Absatz zwei Zeichen ein, ob mit Klammer oder ohne.
+
+### 2 · Jedem Titel einer Nacht drei Zeilen des Rasters geben
+
+<Excerpt region="nights" />
+
+Eine japanische Überschrift nimmt eine ganze Zahl von Grundtextzeilen ein, 行取り (Gyōdori), sodass die Zeilen danach im selben Raster stehen wie die Zeilen davor. `lineSpan: 3` setzt 第一夜 in ein Band aus drei Zeilen zu 15,75 pt, die Zeichen quer dazu zentriert; die 12,5 pt der Überschrift verschieben das Raster nicht, und auf Seite 6 nimmt 第二夜 die ersten drei Zeilen der Seite ein, sodass der Text danach auf der vierten Rasterzeile beginnt. `indent: em(5)` zählt in Grundtextzeichen (五字下げ); so kennzeichnet der Aozora-Text eine 中見出し, und so zählt JLReq Einzüge von Überschriften ([Abweichungen pro Ebene](/de/docs/configuration-text#überschreibungen-pro-ebene)).
+
+### 3 · Text und Lesungen von Aozora Bunko übernehmen
+
+Die beiden Nächte stammen von Karte 799 bei Aozora Bunko, umgewandelt mit `aozora.py` aus dem Skill postext-port. Der Konverter liest die Datei als CP932, macht aus jeder Lesung der Form `仰向《あおむき》` eine Gruppenlesung `{仰向|あおむき}`, eine Kana-Folge über dem ganzen Wort, und aus jedem `［＃５字下げ］…［＃「第一夜」は中見出し］` eine Überschrift. In einem Dokument mit `ja` folgen die Lesungen JIS X 4051: Eine Lesung, die kürzer ist als ihre Basis, wird im Verhältnis 1:2:1 darüber verteilt, und eine längere darf auf ein benachbartes Kana übergreifen, nie aber auf ein Kanji ([Markierungen, Ruby und Warichu](/de/docs/configuration-east-asian#zeichen-ruby-und-warichu)). Der Zeilenabstand von 1,75 em lässt 6,75 pt zwischen den Zeilen, Platz für die Lesungen in 4,5 pt.
+
+### 4 · Den Hashira an den Außenrand, die Seitenzahlen in Kanji
+
+<Excerpt region="hashira" />
+
+In einem vertikalen Bunko ist der Kolumnentitel (柱, Hashira) klein und steht im Außensteg. `anchor.to: 'outer'` setzt ein Element dorthin, in den linken Rand einer ungeraden und den rechten einer geraden Seite eines rechts gebundenen Buchs, und `writingMode: 'vertical-rl'` setzt es von oben nach unten ([Vertikale Textelemente](/de/docs/configuration-page-layout#vertikale-textelemente)). Der Titel 夢十夜 steht nur auf den linken Seiten (`parity: 'odd'`), und `pages: 'body'` würde ihn von jeder Seite fernhalten, die ein Kapitel eröffnet. `pageNumbering.format: 'japanese-informal'` druckt die Seitenzahlen 二, 三 … 九 ([Nummerierung](/de/docs/configuration-page-layout#seitennummerierung)).
+
+### 5 · Die Titelseite auf dem Endformat zentrieren
+
+<Excerpt region="title-page" />
+
+Die Titelseite ist eine Überschrift der Ebene 1 mit eigenem Stil, `# 夢十夜 {style="title" …}`, deren Gestaltung die Seite füllt. Ihre Elemente sind an der Seite selbst verankert, nicht am Satzspiegel, denn der Satzspiegel einer gespiegelten Seite sitzt 1,5 mm außermittig: `x` läuft die Seite hinunter und `y` quer von der rechten Kante aus, sodass `AXIS` auf beiden Seiten des Bunds die halbe Seitenbreite ist. Das Impressum in der Fußzeile steht in der Noto Sans JP: Shippori Mincho B1 hat kein ō und kein ū, und das PDF würde für Sōseki leere Kästchen zeichnen.
+
+### 6 · Jeden Schnitt mit den Zeichen laden, die er setzt
+
+<Excerpt region="voices" />
+
+Fontsource liefert jeden Schnitt einer japanischen Schrift als etwa 120 Dateien, jede für einen Zeichenbereich, und `loadCjkFonts` holt die Dateien, die der übergebene Text berührt. Der Textschnitt bekommt das ganze Beispiel mit `vertical: true`, was auch die vertikalen Formen der Schrift für das Canvas lädt: 、。「」 und ー sowie die kleinen Kana, die im vertikalen Satz oben rechts in ihrer Zelle stehen. `renderToPdf` nimmt `cjkPdfProvider`, der dieselben Dateien als Teilmengen einbettet.
+
+## Varianten
+
+### Die Wörter markieren, die die Quelle betont
+
+Sōsekis erste zwei Nächte haben keine 傍点, vieles bei Aozora aber schon, und der Konverter schreibt sie als `:dots[…]{style=sesame}`. In einem Dokument mit `ja` ergibt `*…*` dieselben Sesampunkte neben der Zeile, nie Kursivschrift.
+
+```diff
+-こんな夢を見た。
++こんな*夢*を見た。
+```
+
+### Jede Klammer ein volles Zeichen tief setzen
+
+Muster ① behält den Einzug von einem Zeichen und setzt die Klammer dahinter, wie viele Romane für jüngere Leser.
+
+```diff
+-  paragraphStartBracket: 'half', // ③: a 「 that opens a paragraph fills the indent cell
++  paragraphStartBracket: 'indent', // ①: the bracket after the one-character indent
+```
+
+### Stauchen statt hängen lassen
+
+Mit `hangingPunctuation: 'none'` wird ein 、 oder 。, das eine Zeile eröffnen würde, in die vorige Zeile hereingenommen, indem deren Klammern und Kommas gestaucht werden (追い込み), oder das letzte Zeichen der Zeile wandert mit ihm in die nächste Zeile (追い出し), und kein Zeichen steht unter der Zeile.
+
+```diff
+-  hangingPunctuation: 'allow', // ぶら下げ: a 、。 that would open a line hangs below the last
++  hangingPunctuation: 'none',
+```

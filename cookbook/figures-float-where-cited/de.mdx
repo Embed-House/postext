@@ -1,0 +1,78 @@
+---
+title: "Abbildungen, die dorthin gleiten, wo Sie sie zitieren"
+summary: "Zweispaltiges Kapitel mit sieben nummerierten Abbildungen: Sechs gleiten vom ersten :ref an den ersten erlaubten Platz, eine steht, wo ::resource sie setzt."
+plain: "Ein Kapitel eines Lehrbuchs über Gebirge, zweispaltig, mit sieben nummerierten Bildern. Es zeigt, wie jedes Bild an den ersten freien Platz rückt, nachdem der Text es zum ersten Mal erwähnt."
+description: "Ein zweispaltiges Lehrbuchkapitel in Postext: sieben Abbildungen in der Reihenfolge ihrer Nennung nummeriert, sechs gleiten an ihren ersten Platz, eine im Text."
+question: "Wie nummeriere und zitiere ich Abbildungen und lege fest, ob sie oben, am Fuß, quer oder genau hier landen?"
+aliases: ["Platzierung von Abbildungen", "Gleitobjekte", "Querverweise", "siehe Abbildung", "Abbildung zitieren", "Abbildungsnummern", "Bildunterschriften", "Abbildung im Text", "Seitenkopf", "beide Spalten", "Figura", "Lehrbuch", "figure placement"]
+pageNotes: { "1": "Der Kapitelauftakt: Ein blaues Band hängt vom Kopf mit einer weißen 2 an seinem Fuß, neben einer eisblauen Fläche, die über den Außenrand hinausläuft, mit der Dachzeile „Chapter 2 · Glacial geomorphology“, dem Titel „How glaciers carve mountain valleys“ und einem kursiven Vorspann; es folgen zwei Spalten Text, und Abbildung 2.1, ein V-förmiges Flusstal neben einem mit Eis gefüllten U-förmigen Gletschertal, füllt den Fuß der Seite.", "2": "Abbildung 2.3, ein Kar im Schnitt, eröffnet die rechte Spalte; Abbildung 2.2, das Längsprofil eines Talgletschers, steht über beide Spalten am Fuß der Seite.", "3": "Die Abbildungen 2.4 und 2.5, Abrasion und Detraktion, stehen nebeneinander an den Köpfen der beiden Spalten; Abbildung 2.6, ein Rundhöcker, sitzt in der linken Spalte genau dort, wo der Text sie einführt.", "4": "Die letzte Seite des Kapitels: eine Aufzählung von vier Spuren der Vergletscherung in der linken Spalte, der Schlussabschnitt und das Impressum in der rechten, und Abbildung 2.7, die Draufsicht zweier Gletscher, die sich oberhalb eines von ihrer Endmoräne aufgestauten Sees vereinen, steht zentriert in halber Satzbreite am Fuß." }
+---
+
+## Was Sie setzen
+
+Kapitel 2 von *Mountain Landforms*, ein Lehrbuch der Geomorphologie im Format 200 × 250 mm. Ein blaues Band mit der Kapitelnummer hängt vom Kopf des Auftakts, neben der eisblauen Fläche des Titels; es folgen zwei Spalten Blocksatz in der Faustina. Die sieben Abbildungen, mit Diffusionsmodellen erzeugte Gemälde, im Code beschriftet, sind in der Reihenfolge ihrer ersten Nennung nummeriert. Sechs gleiten an den ersten freien Platz, den ihre Platzierung erlaubt, gezählt ab dem Absatz, der sie zuerst zitiert. Abbildung 2.1, `auto`, landet am Fuß des Auftakts; 2.3 eröffnet die rechte Spalte von Seite 28, und 2.2 füllt den Fuß dieser Seite; 2.4 und 2.5 eröffnen die beiden Spalten von Seite 29. Abbildung 2.6 steht dort, wo der Text sie einbettet. Abbildung 2.7, ein Gleitobjekt `top`, zitiert auf Seite 30, würde auf Seite 31 warten, doch ein Gleitobjekt kann sein Kapitel nicht verlassen, also geht es an den Fuß von Seite 30.
+
+## Zubereitung
+
+### 1 · Eine Palette für die Seiten und die Abbildungen
+
+<Excerpt region="palette" />
+
+Jede Farbe der Konfiguration verweist auf einen dieser Einträge, und die Gemälde wurden im selben Schiefergrau, Gletscherblau und Moosgrün erzeugt, sodass die Abbildungen in den Farben der Seite stehen. Ein Gemälde behält seine eigenen Farben: Ein neuer Wert für `glacier` ändert das Band, die Fläche und die Beschriftungen, nicht das Eis in den Abbildungen. Der Akzent ist dunkel genug für kleine Schrift: 5,2:1 auf Weiß für Legendennummern und Zitate, 4,5:1 auf der Eisfläche für die Dachzeile. Jede Abbildung ist ein SVG, das sein Gemälde als JPEG-Data-URL einbettet und seine Beschriftungen als Text mit einem dünnen weißen Lichthof darübersetzt, sodass sie scharf bleiben und der Sprache der Ausgabe folgen. Die Beschriftungen nennen im SVG die IBM Plex Sans Condensed, und `loadSvg` aus dem Kit bettet die beiden Schnitte, die sie verwenden, über `inlineSvgFonts` der Engine ein, weil ein als Bild gezeigtes SVG die Schriften der Seite nicht selbst erreichen kann.
+
+### 2 · Die Abbildungen in der Sprache des Lesers benennen
+
+<Excerpt region="captions" />
+
+`locale` benennt die eingebauten Typen in der Sprache des Dokuments: Die Legenden lauten hier „Figure 2.3“ und in der spanischen Ausgabe „Figura 2.3“, wo dasselbe `'es'` die spanischen Trennmuster wählt. Jedes Zitat nimmt dann die Form an, die sein Satz braucht: `case="lower"` für „(fig. 2.1)“ und, mit `style="full"`, für „(figure 2.2)“; `style="number"` nach einem Plural („figures 2.4 and 2.5“); und `text="…"` für eine Wendung wie „the chapter’s first figure“, die keine Nummer druckt. Diese Wendung verweist auf eine bereits platzierte Abbildung zurück; als erste Nennung würde sie die Abbildung trotzdem nummerieren und platzieren.
+
+### 3 · Ein Band und eine Eisfläche für den Auftakt
+
+<Excerpt region="furniture" />
+
+Der Auftakt besteht aus zwei Kästen und vier Texten: einem Band, das vom Kopf hängt, mit der Kapitelnummer an seinem Fuß, einer Eisfläche, die über den Außenrand hinausläuft, der Dachzeile aus dem Attribut `topic` der Überschrift und dem darunter verketteten Titel und Vorspann. `minHeight` reserviert die Fläche und mindestens 5 mm darunter, aufgerundet auf ganze Rasterzeilen (hier etwa 7 mm), sodass Abbildung 2.1 noch in das Fußband derselben Seite passt. Die Kolumnentitel stehen in den äußeren Ecken über einer Haarlinie in der Farbe `rule`, und `pages: 'body'` hält sie vom Auftakt fern, der stattdessen eine Pagina am Fuß bekommt.
+
+### 4 · Bei einer unbekannten ID oder einer nicht zitierten Abbildung anhalten
+
+<Excerpt region="check" />
+
+Ein `:ref` oder ein `::resource` auf eine ID, die keine Ressource trägt, druckt „?“ und platziert nichts; der Build verzeichnet jeden solchen Fall in `doc.contentWarnings` als `unknownResourceId`, mit der ID und ihrer Stelle in der Quelle. Eine Abbildung, die niemand erwähnt, wird nie platziert und löst keine Warnung aus. Deshalb liest die Prüfung das Markdown mit `parseMarkdown`, dem eigenen Parser der Engine, und vergleicht die Nennungen mit den Abbildungen. Eine unbekannte ID, eine nicht zitierte Abbildung oder eine Abbildung `here` ohne Zeile `::resource` wird zu einem Fehler, bevor die Seiten gezeigt werden.
+
+### 5 · Die Zählung dort beginnen, wo das Buch steht
+
+<Excerpt region="build" />
+
+Dies ist Kapitel 2 eines längeren Buches, deshalb verzeichnet die Fortsetzung ein Kapitel davor: Abbildungen mit der Nummerierung `{h1}.{n}` beginnen bei 2.1 und die Paginas bei 27. Auf <PageRef page={2}>Seite 28</PageRef> steht Abbildung 2.3 über Abbildung 2.2, die die niedrigere Nummer hat, weil der Text sie zuerst zitiert. Das `![]()` von Markdown wird entfernt, deshalb ist jede Abbildung eine Ressource, deren SVG vor dem Build unter ihrer `svg.fileId` registriert wird. Jede Platzierung ergibt sich aus der Stelle, an der die Abbildung zitiert wird: `auto` für 2.1, weil die Fläche den Kopf des Auftakts füllt; `bottom` für das Profil, das noch den Fuß der zitierenden Seite einnehmen kann; `top` für die Spaltenabbildungen, die die nächsten freien Spaltenköpfe eröffnen; und `top` auch für 2.7, das am Fuß von Seite 30 landet, weil ein Gleitobjekt in seinem Kapitel bleibt.
+
+## Varianten
+
+### Die Abbildungen ohne das Kapitel nummerieren
+
+Lassen Sie das Kapitel aus den Nummern weg, und die Abbildungen tragen 1 bis 7; für eine durchgehende Zählung durch ein ganzes Buch setzen Sie die Kapitel mit `buildBundle` oder übergeben jedem Kapitel das `continuationAfter()` des vorigen.
+
+```diff
+-  inlineSvgFonts, parseMarkdown,
++  inlineSvgFonts, parseMarkdown, defaultResourceTypes,
+@@
+   locale: t({ en: 'en-us', es: 'es' }),
++  resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type,
++    numberingTemplate: '{n}', resetOn: 'never' })),
+```
+
+### Die Legenden oben auf einen Balken setzen
+
+Die Legende wandert über die Abbildung auf einen Balken im Eisblau der Palette, und die Quellenzeile bleibt unter der Abbildung; passen Sie den Text neu ein, denn beide Ausgaben laufen dann auf eine fünfte Seite.
+
+```diff
+   captionStyle: { // the text colour follows bodyText; the note is 0.85 × the caption size
++    position: 'above', backgroundEnabled: true, background: col('ice'),
+     fontFamily: LABEL, fontSize: pt(8.3), gap: mm(2.2),
+```
+
+### Eine Abbildung in den Rand setzen
+
+Eine Seite mit anderthalb Spalten gibt Abbildungen und ihren Legenden eine äußere Randspalte, die der Text nie betritt: siehe <RecipeLink slug="textbook-margin-column">das Lehrbuch mit Randspalte</RecipeLink>.
+
+### Tabellen genauso gleiten lassen
+
+Auch Tabellen sind Ressourcen, nach denselben Regeln zitiert und platziert, und eine lange Tabelle teilt sich über mehrere Seiten: siehe <RecipeLink slug="technical-datasheet">das technische Datenblatt</RecipeLink>.

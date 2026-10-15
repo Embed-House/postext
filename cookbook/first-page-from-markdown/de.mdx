@@ -1,0 +1,91 @@
+---
+title: "Von einem Markdown-String zur gestalteten Seite"
+summary: "Ein Markdown-String mit Frontmatter wird als zweispaltige Magazinseiten gesetzt und auf Canvas gezeichnet, mit sechs benannten Farben statt des Standardblaus."
+plain: "Die ersten zwei Seiten einer Reisereportage in einem kleinen Magazin, mit farbigem Band und einem Bild. Sie zeigen, wie aus schlichtem Text mit ein paar Überschriften eine gestaltete Seite in Ihren eigenen Farben wird."
+description: "Der Pen lädt seine Schriften vor dem ersten Build, erzeugt für jeden Build eine neue Konfiguration, setzt den Auftakt aus dem Frontmatter, zeichnet auf Canvas."
+question: "Wie setze ich Markdown auf gestaltete Seiten, ohne Standardblau in Überschriften, Fettem und Aufzählungen?"
+aliases: ["erstes Dokument", "Einstieg", "hello world", "Schnellstart", "Markdown auf Canvas", "Standardgestaltung", "Reisereportage"]
+pageNotes: { "1": "Ein Foto füllt den oberen Teil der Seite: Salzgärten in der Abenddämmerung und eine Spur von Fußabdrücken, die eine Düne zu einem Steinmännchen auf ihrem Kamm hinaufsteigt; auf dem dunklen Himmel die Rubrik UNTERWEGS, der Titel „Auf der Salzstraße“, der Vorspann „Vier Tage zu Fuß auf dem Pfad der Salzträger, von den Salzgärten bei Arvela bis zum Markt von Castrel.“ und die Autorenzeile VON LENA VARGA · MAI 2026. Darunter zwei Spalten im Blocksatz, die fett mit „Die Träger brachen am Deich von Arvela auf.“ beginnen, und am Fuß die Seitenzahl 1.", "2": "Die folgende linke Seite: die Seitenzahl 2 und AUF DER SALZSTRASSE als Kolumnentitel, zwei Spalten im Blocksatz mit den indigofarbenen Zwischenüberschriften „Was zurückkam“ und „Durch die Kiefern“, eine Liste mit Gedankenstrichen und fetten Anfangswörtern (Getreide, Kiefernharz, Wolle und Häute, Nägel und Angelhaken), ein quadratisches Schlusszeichen nach „ein Träger wurde in Getreide bezahlt“ und das Impressum unter einer Haarlinie: „Eine erfundene Geschichte: Arvela, Sorra, Orsa und Castrel gibt es nicht.“" }
+---
+
+## Was Sie setzen
+
+Die ersten Seiten einer Reisereportage in *Unterwegs*, einem kleinen Magazin. Seite 1 ist ein Auftakt auf einer rechten Seite: ein Foto von Salzpfannen und einer Düne in der Abenddämmerung über die oberen 58 % der Seite, der Titel in der Young Serif in 54 pt und darunter zwei Spalten im Blocksatz, die den Text mit einem fetten Einstieg beginnen. Seite 2, umseitig, läuft unter einem Kolumnentitel in gesperrten Versalien weiter und endet mit einem Schlusszeichen und einem Impressum. Die Gestaltung entsteht aus einer einzigen Konfigurationsfabrik und einer Palette von sechs Farben. Der Titel kommt aus der Überschrift der Ebene 1, Vorspann, Autor und Datum kommen aus dem Frontmatter des Markdown-Strings; derselbe Pen setzt also jeden Artikel, dessen Titel in zwei Zeilen passt, nur das Foto gehört zu diesem.
+
+## Zubereitung
+
+### 1 · Jede Schrift vor dem ersten Build
+
+<Excerpt region="fonts" />
+
+Postext misst Text mit den Schriften, die der Browser zum Zeitpunkt des Layouts bereithält; ein Build, der vor dem Eintreffen der Schriften liefe, behielte also die Zeilenumbrüche einer Ersatzschrift. `buildDocumentWithFonts` lädt vor dem ersten Build jede Schrift, die die Konfiguration nennt, und die in `FONTS`; `kitFonts(FONTS)` liefert ihm die Dateien von Fontsource, dieselben Dateien, die ein PDF einbetten würde. Danach geht es die Schriften durch, die die Seiten verwenden, lädt jede noch fehlende und baut erneut. Eine Schrift, die Fontsource nicht anbietet, bleibt bei einer Ersatzschrift und wird in `doc.contentWarnings` als `fontFallback` aufgeführt. Fett und Kursiv einer Textschrift werden nur geladen, wenn die Familie sie hat.
+
+### 2 · Die Farben benennen, dann auf die Namen verweisen
+
+<Excerpt region="palette" />
+
+Jede Farbe der Konfiguration ist `col('id')`, eine Paletten-ID mit ihrem Hexwert daneben. `bodyText.boldColor`, `italicColor`, `referenceColor` und `unorderedLists.color` nennen `ink`, und `headings.color` nennt die Akzentfarbe. Die Standardwerte der Engine für Überschriften, Fett, Kursiv und Aufzählungszeichen sind mit `main-color` verknüpft, und diese Palette richtet diesen Eintrag auf die Akzentfarbe, sodass jeder davon, den Sie weglassen, indigofarben statt blau erscheint. Die Gestaltungsobjekte sind Funktionen, die `config()` bei jedem Build aufruft, und `col()` kopiert jedes Mal den aktuellen Hexwert aus `palette`, sodass eine einzige Änderung an `palette` Text, Seitenzahlen und Auftakt gleichermaßen erreicht. Das Schlusszeichen ist ein Inline-Farbfeld, das `band` nennt, also erreicht eine Umfärbung auch es. Der Standard-Kolumnentitel ist ebenfalls mit `main-color` verknüpft und würde deshalb in der Akzentfarbe gedruckt, bis Sie ihn ersetzen (Schritt 5).
+
+### 3 · Ein Foto, auf seinen Rahmen zugeschnitten
+
+<Excerpt region="art" />
+
+Salzpfannen, Düne und Steinmann sind ein mit Diffusionsmodellen erzeugtes Foto, in der Abenddämmerung aufgenommen, damit sich der helle Titel vom dunklen Himmel abhebt. Das JPEG ist auf den Rahmen des Bands zugeschnitten, `PAGE.width` × `BAND` Millimeter, und die Ressource gibt ihre Pixel an, 1440 × 1120, sodass das Bild in voller Breite das Band genau füllt. Ein tieferes Band braucht ein auf den neuen Rahmen zugeschnittenes Bild. Der Auftakt zeigt es über ein Bildelement, das die Ressource per ID nennt.
+
+### 4 · Das Frontmatter schreibt den Auftakt
+
+<Excerpt region="opener" />
+
+Die Überschrift der Ebene 1 reicht über beide Spalten, und ihr Auftakt ist ein Feld aus Elementen: das Foto bis in den Anschnitt und vier untereinander verkettete Texte. Ein längerer Titel schiebt Vorspann und Autorenzeile nach unten, statt sie zu überlagern, doch ab mehr als zwei Zeilen landet die Autorenzeile auf den hellen Salzpfannen. `{titleText}` ist der Text der Überschrift; `{subtitle}`, `{author}` und `{publishDate}` sind Felder des Frontmatters. Das `\\` in der Überschrift bricht den Titel dort um, wo Sie es setzen ([Zeilenumbrüche in Titeln](/de/docs/document-format#zeilenumbrüche-in-titeln)). `minHeight` zählt ab dem oberen Rand, sodass die reservierte Höhe 5 mm unter dem Band endet.
+
+### 5 · Kolumnentitel statt des blauen Standards
+
+<Excerpt region="running-heads" />
+
+Lassen Sie `header` weg, kehrt der Standard der Engine zurück: Open Sans über einer Linie in voller Breite, auf jeder Seite. Hier ist jede Seitenzahl an der physischen Seite verankert und nach Parität gefiltert, sodass sie immer am Außenrand steht. Ihre Beschriftung ist an der Seitenzahl verankert, `GAP` Millimeter entfernt mit `right-of` oder `left-of`, und eine drei- oder vierstellige Seitenzahl schiebt die Beschriftung weiter, statt in sie hineinzulaufen. `pages: 'body'` hält alle vier Elemente vom Auftakt fern. Die Fußzeile enthält nur eine Seitenzahl am Fuß für den Auftakt, und da `footer` gesetzt ist, verlieren die Textseiten die zentrierte Standard-Seitenzahl.
+
+### 6 · Mit frischer Konfiguration bauen, dann zeichnen
+
+<Excerpt region="build" />
+
+`config()` ist eine Funktion, damit jeder Build die Palette in ihrem aktuellen Zustand liest: Sie ruft die Gestaltungsfunktionen aus Schritt 2 erneut auf. Ein einziges, an Ort und Stelle geändertes Konfigurationsobjekt ginge ebenso: Seit postext 1.25 erkennt die Engine die Änderung beim nächsten Build. `buildDocumentWithFonts` nimmt den Inhalt, diese Konfiguration und die Schriftoptionen des Kits und liefert das Dokument. `showPages` legt die Seiten so aus, wie sie in einem gebundenen Buch liegen, Seite 1 allein rechts, und zeichnet jede mit `renderPageToCanvas`.
+
+## Varianten
+
+### Sehen, was die Konfiguration ersetzt
+
+Bauen Sie mit einer leeren Konfiguration, und dasselbe Markdown erscheint auf einer Seite von 17 × 24 cm in der EB Garamond in 8 pt, mit blauen Überschriften aus der Open Sans und einem blauen Kolumnentitel über einer Linie; die Engine lädt auch diese beiden Familien, weil die Standardkonfiguration sie nennt.
+
+```diff
+-const doc = await buildDocumentWithFonts({ markdown, resources }, config(), kitFonts(FONTS));
++const doc = await buildDocumentWithFonts({ markdown, resources }, {}, kitFonts(FONTS));
+```
+
+### Die ganze Seite umfärben
+
+Ändern Sie die Akzentfarbe, und der nächste Lauf zeichnet Seitenzahlen, Zwischenüberschriften und Schlusszeichen in der neuen Farbe, weil `col()` bei jedem Aufruf von `config()` den neuen Hexwert neben die ID kopiert. Das Foto behält seine eigenen Farben.
+
+```diff
+-  band: '#2b3a67', // the one accent (an indigo): the folios, the subheads, the end mark
++  band: '#3f5b3a', // the one accent (a pine green): the folios, the subheads, the end mark
+```
+
+### Eine Seite auf Ihr eigenes Canvas zeichnen
+
+`renderPageToCanvas` bemisst das Canvas auf die Seite in Pixeln bei der dpi des Dokuments (standardmäßig 300) mal `scale`, sodass `scale: 0.5` etwa 150 dpi zeichnet, und CSS bestimmt, wie groß es auf dem Bildschirm erscheint.
+
+```diff
+-showPages(doc, {
+-  title: t({ en: 'From a Markdown string to a designed page',
+-    es: 'De una cadena Markdown a una página diseñada',
+-    pt: 'De uma string Markdown a uma página diagramada',
+-    fr: 'D’une chaîne Markdown à une page mise en forme',
+-    de: 'Von einem Markdown-String zur gestalteten Seite' }),
+-});
++const canvas = document.body.appendChild(document.createElement('canvas'));
++renderPageToCanvas(doc.pages[0], doc, canvas, { scale: 0.5 });
+```
+
+## Häufige Fehler
+
+- Die Young Serif gibt es nur in einer Schriftstärke. Überschriften sind standardmäßig fett, deshalb ist hier `headings.fontWeight: 400` nötig: Ohne diese Angabe verlangen die Zwischenüberschriften eine fette Young Serif, die Fontsource nicht hat, der Browser verdickt den normalen Schnitt, und `doc.contentWarnings` führt die Schrift als `fontFallback` auf.

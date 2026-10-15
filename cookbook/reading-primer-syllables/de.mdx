@@ -1,0 +1,62 @@
+---
+title: "Erstlesebuch mit Silben-Chips"
+summary: "Eine Fibeleinheit zum Buchstaben M: die Laute jedes Wortes als Chips in der Farbe seines Vokals, dazu ein Raster mit Bildwörtern, ein Aquarell in jeder Zelle."
+plain: "Drei Seiten eines Lesebuchs für kleine Kinder zum Buchstaben M. Jeder Laut eines Wortes steht in einem kleinen farbigen Etikett, und jedes Wort in einem Raster hat sein eigenes Bild."
+description: "Eine Einheit einer Lesefibel mit Postext: ein Chip-Stil pro Vokal, Wörter als aneinanderstoßende Laut-Chips, ein rundes Bilderraster und Zeilen zum Nachspuren."
+question: "Wie setze ich Silben als farbige Inline-Chips, eine Farbe pro Vokal, in einer Erstlesefibel?"
+aliases: ["Erstlesebuch", "Fibel", "Phonics", "Silben", "Silbenmethode", "Wortfamilien", "Lautknöpfe", "Lesefibel", "Arbeitsheft für Kinder", "Reimwörter", "cartilla", "early reader"]
+pageNotes: { "1": "Ein cremefarbenes Band mit einem riesigen Mm, einem Affen und einem Mond; darunter sechs Wörter, in ihre Laute zerlegt, „map“, „men“, „mop“ und „Sam“, „dim“, „gum“, jeder Laut ein Chip in der Farbe des Vokals des Wortes, das m gefüllt, dann vier Reimpaare: „mat“ und „sat“, „man“ und „pan“, „mug“ und „tug“, „mop“ und „top“.", "2": "Sechs Bildwörter, „map“, „mat“, „man“, „mug“, „mop“ und „mud“, in einem abgerundeten Raster cremefarbener Felder, jedes Bild über seinen Lauten; darunter Zeilen zum Nachspuren für m, M und die Wörter „man“, „mat“ und „men“.", "3": "Vier Sätze in 24 pt mit den neuen Wörtern „Tom“ und „Mum“ in Laut-Chips, ein cremefarbener Kasten mit umrandeten Wörtern zum Ausmalen, eine Notiz für Eltern und Betreuende und das Impressum." }
+---
+
+## Was Sie setzen
+
+Einheit 12 von *Letter by Letter*, einer erfundenen englischen Lautfibel: drei Seiten zum Laut m. Der Auftakt setzt ein Mm in DynaPuff zu 190 pt auf ein cremefarbenes Band neben zwei Dinge, deren Namen mit m beginnen, einen Affen (monkey) und einen Mond (moon). Jedes Wort ist in seine Laute zerlegt, und jeder Laut ist ein Chip in der Farbe des Vokals des Wortes: rotes a, oranges e, türkises i, blaues o, violettes u. Das m ist gefüllt, die anderen Laute sind umrandet, sodass ein Kind sieht, wo der Laut dieser Einheit in *map* und in *gum* steht. Seite 38 setzt sechs Bildwörter in ein abgerundetes Raster, ein Aquarell in jeder Zelle, dann drei Zeilen zum Nachspuren. Die Aquarelle wurden mit Diffusionsmodellen erzeugt; Band, Icons und Spurzeilen sind im Code gezeichnet. Seite 39 hat vier Sätze in 24 pt, einen Kasten mit Wörtern zum Ausmalen und eine Notiz für Eltern und Betreuende.
+
+Die spanische Ausgabe ist eine andere Einheit, keine Übersetzung: Einheit 7 von *Letra a letra*, zum selben Buchstaben. Spanisch wird über offene Silben gelehrt (ma, me, mi, mo, mu), daher enthalten seine Chips Silben, `{mi·mo·sa}`. Diese Silben sind keine englischen Wörter, und englische Fibeln arbeiten Laut für Laut, daher verbindet die englische Einheit die Laute kurzer Wörter, `{m·a·p}`, und gruppiert sie in Reimfamilien (-at, -an, -ug, -op). Beide Einheiten kommen aus demselben Pen: dieselben Chip-Stile, dieselbe Funktion `syllables()`, dasselbe Raster, dieselben Spurzeilen und Kästen.
+
+## Zubereitung
+
+### 1 · Ein Chip-Stil pro Vokal und eine Funktion, die die Chips schreibt
+
+[Die kurze Antwort](#die-kurze-antwort) baut 21 Chip-Stile, indem sie ein Objekt `syllable` ausbreitet. Es gibt einen gefüllten Stil pro Vokal für das m, einen umrandeten pro Vokal für die anderen Laute, einen Zwilling `-frase` zu jedem dieser zehn und `pinta`, den schwarzen Umriss, den ein Kind ausmalt. `syllables()` macht aus `{m·a·p}` drei `:chip[…]` ohne etwas dazwischen, sodass sich die Laute eines Wortes berühren und der weiße Rand die Naht zeichnet. Ein Chip nimmt die Farbe seines Vokals an, und ein Stück ohne Vokal, hier das m und das p, nimmt den Vokal seines Wortes, sodass *map* von Anfang bis Ende rot ist. Über einen Wortzwischenraum hinweg hält ein Chip mindestens seinen `gap`, und 0,5 em setzt die Wörter einer Zeile zu 24 pt 4,2 mm auseinander, wo das Leerzeichen allein 2,3 mm lässt. Innerhalb eines Satzes würde dieser Abstand den Raum vor dem neuen Wort fast verdoppeln, daher erhält ein Wort, das einem anderen Wort folgt, die Zwillinge `-frase`, deren `gap` von 0 das Leerzeichen von 2,3 mm unverändert lässt. In der spanischen Ausgabe sind die Stücke Silben, `{mi·mo·sa}`, und jede hat einen eigenen Vokal.
+
+### 2 · Ein Zeilenabstand, der die Chips freistellt
+
+<Excerpt region="reading" />
+
+Der vertikale Innenabstand und der Rand eines Chips werden außerhalb seiner Zeile gemalt und fügen keinen Zeilenabstand hinzu, sodass ein Chip, der höher ist als der Zeilenabstand, in die Chips der Zeile darunter läuft. Ein Chip zu 24 pt ist 10,4 mm hoch; bei 30 pt Zeilenabstand (10,6 mm) stünden die Chips zweier Sätze 0,1 mm auseinander. Die Zeilen, die ein Kind liest, erhalten 45 pt und die Zeilen zu 34 pt der ersten Übung 60 pt, drei und vier Zeilen des 15-pt-Rasters der Anweisungen.
+
+### 3 · Ein Bild in jeder Zelle
+
+<Excerpt region="pictures" />
+
+`setCellImage` setzt ein Bild über den Text einer Zelle, mit einem Bruchteil der Innenbreite der Zelle, hier 0,72 (36,5 mm), und die Zeile wächst, um es aufzunehmen. Jedes Bild ist ein JPEG, auf Weiß gemalt und mit dem Creme der Felder multipliziert, sodass es ohne Kasten auf dem Feld sitzt. Unter jedem Bild steht das Wort in Laut-Chips. Eine Tabellenzelle nimmt Chip-Markup an wie jeder Absatz. Der Tabellenstil `dibujos` rundet den Rahmen und seine Füllungen mit 5 mm und trennt die cremefarbenen Felder mit weißen Linien von 4 pt.
+
+### 4 · Eine Zeile Abstand vor dem Kasten
+
+<Excerpt region="boxes" />
+
+Das Markdown setzt `:::space{lines=1}` zwischen den letzten Satz und den Ausmalkasten, eine Zeile von 15 pt (5,3 mm). Das `marginTop` des Kastens ist 0, also ist diese Zeile der ganze Abstand; ohne sie begänne der Kasten dort, wo die Zeile des letzten Satzes endet. Ein `:::space`, das einen Kasten eröffnet, wird verworfen, daher beginnt der Kasten mit seiner Aufforderungszeile und den Chips der Farblegende, und sein eigenes `:::space` folgt danach, zwischen Legende und Ausmalaufgabe.
+
+### 5 · Der Auftakt des Buchstabens
+
+<Excerpt region="opener" />
+
+Das Mm ist der Text der Überschrift (`{titleText}`); die Nummer der Einheit, die Reihe und der Name unter dem Buchstaben sind Attribute in derselben Überschriftenzeile. Band, Affe und Mond sind Bilder. Das Band ist 104 mm hoch, und der Auftakt reserviert die Seite bis zur ersten Rasterlinie unter seinem Fuß, sodass der erste Übungstitel bei 118,5 mm beginnt, im Raster und 16,6 mm unter dem tiefsten Punkt der Welle (101,9 mm).
+
+### 6 · Icons neben den Übungstiteln
+
+<Excerpt region="activities" />
+
+Jeder Übungstitel nennt seinen Überschriftenstil, wie in `## Read the sentences {style="lee"}`, und der Stil zeichnet ein Icon mit dem Titel daneben zentriert. Die Titel sind weiterhin Überschriften der Ebene 2, daher bestimmt die Ebene `H2` ihre Abstände: zwei Rasterlinien `lineHeight` für den Titel und zwei weitere `marginTop` darüber.
+
+## Varianten
+
+### Die Chips zu Pillen runden
+
+Ein Radius über der halben Höhe des Chips wird auf diese Hälfte begrenzt, sodass ein großer Wert runde Enden zeichnet. Ein Chip mit einem Buchstaben wird fast ein Kreis, und die Nähte innerhalb eines Wortes werden zu Kerben.
+
+```diff
+-  paddingX: em(0.26), paddingY: em(0.05), gap: em(0.5) };
++  paddingX: em(0.26), paddingY: em(0.05), gap: em(0.5), borderRadius: em(1) };
+```

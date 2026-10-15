@@ -1,0 +1,854 @@
+{/* docs/configuration-notes-references-en.mdx */}
+
+export const metadata = {
+  title: 'Konfiguration: Anmerkungen und Verweise',
+  sidebarTitle: 'Anmerkungen und Verweise',
+  description: 'Fußnoten, Zeilennummern, Querverweise und Zitationen, das Inhaltsverzeichnis und das Register',
+  lang: 'de',
+  lastUpdated: '2026-10-10',
+  readingTime: '4 min',
+  order: 6,
+  parent: 'configuration',
+  plainSummary: "Diese Seite behandelt die Einstellungen für die Teile eines Buchs, die auf etwas anderes verweisen. Fußnoten stehen unten auf der Seite, Zeilennummern am Rand. Querverweise nennen eine Abbildung, einen Abschnitt oder eine Seite, Zitationen nennen die Werke, aus denen Sie zitieren. Das Inhaltsverzeichnis führt die Kapitel auf, das Register am Ende des Buchs die Begriffe mit ihren Seiten. Jeder Abschnitt erklärt, wie diese Teile aussehen und wie sie nummeriert werden.",
+};
+
+# Konfiguration: Anmerkungen und Verweise
+
+
+## Fußnoten
+
+Die Eigenschaft `footnotes` legt fest, wohin die mit `[^id]` zitierten Anmerkungen kommen, wie sie nummeriert werden und wie sie aussehen. Das Markup ist unter [Dokumentformat](/de/docs/document-format#fußnoten) beschrieben.
+
+```ts
+interface FootnotesConfig {
+  placement?: 'column' | 'chapterEnd' | 'spread'; // Foot of the citing column, after the chapter, or beside the text of a spread.
+  numbering?: 'chapter' | 'document' | 'page' | 'column' | 'spread'; // Start again at each chapter, run on, or start again on each page / column / spread.
+  numberFormat?: string;      // decimal, lower-roman, circled-decimal (①)…
+  symbols?: string[];         // The note symbols of numberFormat: 'symbols'.
+  markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Raised, on the baseline, beside the word, or right of a vertical line.
+  markerSize?: Dimension;     // Inline, side or right marker size; em is the text around it.
+  numberGap?: 'en' | 'em';    // Space after the note's own number.
+  chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notes at the column foot, or under the text.
+  fontSize?: Dimension;       // Note size; em is the body size.
+  lineHeight?: Dimension;     // Note leading; em is the note size.
+  color?: ColorValue;         // Note colour; the body colour when unset.
+  textAlign?: TextAlign;      // The body alignment when unset.
+  wordBreak?: 'normal' | 'keep-all'; // The document's cjk.wordBreak when unset.
+  hangingIndent?: Dimension;  // Indent of a note's turnover lines.
+  spaceBetween?: Dimension;   // Space between two notes.
+  spaceAbove?: Dimension;     // Space between the text and the rule; em is the body size.
+  spaceBelowRule?: Dimension; // Space between the rule and the first note.
+  separator?: {
+    enabled?: boolean;        // Draw the rule.
+    width?: number;           // Rule length, a fraction of the column width.
+    lineWidth?: Dimension;    // Rule thickness.
+    color?: ColorValue;       // The note colour when unset.
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '180px' }}>Eigenschaft</th>
+      <th style={{ width: '160px' }}>Typ</th>
+      <th style={{ width: '160px' }}>Standardwert</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>'column' | 'chapterEnd' | 'spread'</code></td>
+      <td><code>'column'</code> (japanische Bücher in vertikaler Schrift: <code>'chapterEnd'</code>)</td>
+      <td><code>'column'</code> setzt jede Anmerkung unter einer kurzen Linie an den Fuß der Spalte, die die zitierende Zeile enthält; in einem einspaltigen Layout ist das der Fuß der Seite. <code>'chapterEnd'</code> setzt alle Anmerkungen eines Kapitels in der Reihenfolge ihrer Zitierung hinter dessen letzten Block. <code>'spread'</code> (傍注, nur vertikale Schrift) setzt die auf beiden Seiten einer Doppelseite zitierten Anmerkungen unter der Linie ans Ende ihrer ungeraden Seite, also der linken Seite eines rechts gebundenen Buchs: Anmerkungen, die auf der geraden Seite zitiert werden, warten auf sie; eine Anmerkung, die auf der ungeraden Seite weniger als eine Textzeile übrig ließe, bleibt mit den folgenden am Fuß der geraden Seite, und ein Kapitel, das auf einer geraden Seite endet, behält dort seine wartenden Anmerkungen. In horizontaler Schrift fällt die Einstellung auf <code>'column'</code> zurück, mit einer Warnung <code>unknownConfigValue</code>. Seit postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>numbering</code></td>
+      <td><code>'chapter' | 'document' | 'page' | 'column' | 'spread'</code></td>
+      <td><code>'chapter'</code> (japanische Bücher in horizontaler Schrift: <code>'page'</code>; mit <code>placement: 'spread'</code>: <code>'spread'</code>; mit <code>numberFormat: 'symbols'</code> am Spaltenfuß: <code>'page'</code>)</td>
+      <td><code>'chapter'</code> beginnt unter jeder Überschrift der Ebene 1 und am Anfang jedes Dokuments wieder bei 1. <code>'document'</code> zählt durch das ganze Dokument weiter und, in einem Buch, das Kapitel für Kapitel umbrochen wird, von einem Kapitel zum nächsten (<code>continuationAfter</code> übergibt die letzte Nummer als <code>continuation.footnoteNumber</code>). <code>'page'</code> beginnt auf jeder Seite wieder bei 1 und <code>'column'</code> in jeder Spalte; gezählt werden die Anmerkungen dort, wo das Layout sie setzt (die Spalten einer Seite in Lesereihenfolge): die übliche 页下注 eines chinesischen Buchs. Das Dokument wird umbrochen, nach den Stellen nummeriert, an denen seine Anmerkungen gelandet sind, und erneut umbrochen, bis die Nummern feststehen (höchstens drei weitere Builds). Beide gelten für Anmerkungen am Spaltenfuß: Mit <code>placement: 'chapterEnd'</code> werden die Anmerkungen kapitelweise nummeriert. <code>'spread'</code> beginnt auf jeder Doppelseite (Seiten 2–3, 4–5 …) neu, in der Reihenfolge der Zitierung, für <code>placement: 'spread'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>numberFormat</code></td>
+      <td><code>string</code></td>
+      <td><code>'decimal'</code></td>
+      <td>Wie die Nummern geschrieben werden, in jeder Schreibweise, die die Nummerierungseinstellungen annehmen: <code>'decimal'</code>, <code>'lower-roman'</code>, <code>'lower-alpha'</code>, <code>'circled-decimal'</code> (oder <code>'①'</code>), <code>'cjk-decimal'</code>, <code>'一'</code> … Das Fußnotenzeichen im Text und die Nummer, mit der die Anmerkung beginnt, verwenden es beide. <code>circled-decimal</code> schreibt Nummern über 50 dezimal. Ein unbekannter Name nummeriert dezimal, mit einer Warnung <code>unknownNumberFormat</code>. <code>'symbols'</code> (oder <code>'&#42;'</code>) kennzeichnet die Anmerkungen mit Verweiszeichen, der Reihe nach aus <code>symbols</code>: &#42; † ‡ § ‖ ¶, dann doppelt (&#42;&#42; †† ‡‡ …) und dreifach; die Anmerkungen werden dann auf jeder Seite neu gezählt, sofern <code>numbering</code> nicht gesetzt ist. Seit postext 1.19.</td>
+    </tr>
+    <tr>
+      <td><code>symbols</code></td>
+      <td><code>string[]</code></td>
+      <td><code>['&#42;', '†', '‡', '§', '‖', '¶']</code></td>
+      <td>Die Folge, die <code>numberFormat: 'symbols'</code> schreibt, doppelt und dann dreifach, sobald sie aufgebraucht ist. Die lateinischen Dateien von Google Fonts und Fontsource enthalten &#42; † § ¶ (das Kreuz in <code>latin-ext</code>), aber weder ‡ noch ‖, die das PDF dann als Glyphe <code>.notdef</code> der Schrift zeichnet, mit einer Warnung <code>missingGlyph</code>: Lassen Sie sie bei einer solchen Schrift weg (<code>['&#42;', '†', '§', '¶']</code>) oder setzen Sie die Anmerkungen in einer Schrift, die sie enthält. Leere Zeichenketten werden verworfen, und eine leere Liste behält den Standardwert. Seit postext 1.19.</td>
+    </tr>
+    <tr>
+      <td><code>markerPosition</code></td>
+      <td><code>'auto' | 'superscript' | 'inline' | 'side' | 'right'</code></td>
+      <td><code>'auto'</code></td>
+      <td><code>'superscript'</code> stellt das Fußnotenzeichen im Text und die Nummer, mit der die Anmerkung beginnt, verkleinert hoch. <code>'inline'</code> setzt sie auf die Grundlinie: das Zeichen in <code>markerSize</code>, die Nummer der Anmerkung in deren Schriftgröße; in vertikaler Schrift steht ein eingekreistes Zeichen auf der Zeile aufrecht in einer eigenen Zelle. <code>'right'</code> setzt ein verkleinertes Zeichen bündig an die rechte Seite einer vertikalen Zeile, wie japanische Bücher in vertikaler Schrift （1） setzen; in horizontaler Schrift ist es hochgestellt. <code>'side'</code> (合印) setzt ein kleines Zeichen neben das markierte Wort, auf die Seite seiner Ruby, dort endend, wo das letzte Zeichen des Worts endet; es nimmt keinen Platz in der Zeile ein, die so umbrochen und ausgeschlossen wird, als wäre es nicht da, und ein Zeilenzwischenraum, der dafür zu schmal ist, wird als <code>rubyExceedsLeading</code> gemeldet. <code>'auto'</code> bedeutet auf der Zeile für <code>circled-decimal</code>, <code>'right'</code> in einem japanischen Buch in vertikaler Schrift und sonst hochgestellt. In jedem Fall bleibt das Zeichen beim vorangehenden Zeichen und eröffnet nie eine Zeile.</td>
+    </tr>
+    <tr>
+      <td><code>markerSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1em</code>; <code>0.6em</code> für <code>'side'</code>, <code>0.7em</code> für <code>'right'</code></td>
+      <td>Größe eines Fußnotenzeichens auf der Zeile, an der Seite oder rechts; <code>em</code> ist die Größe des umgebenden Texts (<code>0.75em</code> ist eine übliche Verkleinerung). Keine Wirkung auf ein hochgestelltes Zeichen.</td>
+    </tr>
+    <tr>
+      <td><code>numberGap</code></td>
+      <td><code>'en' | 'em'</code></td>
+      <td><code>'en'</code> (japanische Anmerkungen nach dem Kapitel: <code>'em'</code>)</td>
+      <td>Der Abstand nach der Nummer, mit der eine Anmerkung beginnt: ein Halbgeviert oder ein volles Geviert der Anmerkungsschrift (ein ideografisches Leerzeichen, wenn die Nummer oder die Anmerkung CJK-Text enthält), nie gedehnt oder umbrochen. Seit postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>markerTemplate</code></td>
+      <td><code>string</code></td>
+      <td><code>'&#123;n&#125;'</code> (japanische Bücher in vertikaler Schrift: <code>'（&#123;n&#125;）'</code>)</td>
+      <td>Wie die Nummer einer Anmerkung geschrieben wird; <code>&#123;n&#125;</code> steht für sie im Nummernformat und in den Ziffern des Dokuments: <code>'(&#123;n&#125;)'</code> ergibt die eingeklammerten Zeichen arabischer Bücher, «(١)». Die Vorlage schreibt das Zeichen im Text und die Nummer, mit der die Anmerkung beginnt, gleichermaßen. Eine Vorlage ohne <code>&#123;n&#125;</code> gilt als Standardwert.</td>
+    </tr>
+    <tr>
+      <td><code>noteNumberPosition</code></td>
+      <td><code>'auto' | 'superscript' | 'inline'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Wo die Nummer steht, mit der die Anmerkung beginnt: hochgestellt oder auf der Zeile in der Anmerkungsgröße. <code>'auto'</code> folgt <code>markerPosition</code>. Arabische Bücher stellen das Zeichen im Text hoch und setzen die Nummer der Anmerkung selbst auf die Zeile.</td>
+    </tr>
+    <tr>
+      <td><code>chapterEndAlign</code></td>
+      <td><code>'foot' | 'text'</code></td>
+      <td><code>'foot'</code></td>
+      <td>Mit <code>placement: 'chapterEnd'</code>: <code>'foot'</code> setzt die Anmerkungen, die eine Spalte abschließen, an ihren Fuß; die übrig gebliebenen Zeilen bleiben zwischen Text und Anmerkungen frei, so wie Anmerkungen am Spaltenfuß stehen. <code>'text'</code> setzt sie direkt unter den Text.</td>
+    </tr>
+    <tr>
+      <td><code>fontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.8em</code></td>
+      <td>Schriftgröße des Anmerkungstexts. <code>em</code> und <code>rem</code> sind die Grundschriftgröße. Die Anmerkungen verwenden Schriftfamilie und Schriftstärken des Fließtexts.</td>
+    </tr>
+    <tr>
+      <td><code>lineHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.25em</code></td>
+      <td>Zeilenabstand des Anmerkungstexts; <code>em</code> ist die Anmerkungsgröße. Die Anmerkungen liegen nicht auf dem Grundlinienraster: Sie stapeln sich vom Spaltenfuß nach oben, und der Text darüber bleibt im Raster.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Farbe des Fließtexts</td>
+      <td>Farbe des Anmerkungstexts.</td>
+    </tr>
+    <tr>
+      <td><code>textAlign</code></td>
+      <td><code>TextAlign</code></td>
+      <td>Ausrichtung des Fließtexts</td>
+      <td>Ausrichtung des Anmerkungstexts.</td>
+    </tr>
+    <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>Wo die Anmerkungen zwischen chinesischen, japanischen und koreanischen Zeichen umbrechen, unabhängig vom Fließtext (siehe <a href="/de/docs/configuration-east-asian#ostasiatische-typografie"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> hält eine Folge solcher Zeichen zusammen: Die Lesungen, die eine englische Anmerkung zitiert (<code>看月光</code>), brauchen dann keinen Wortverbinder mehr zwischen je zwei Zeichen, während die Gedichte der Seite weiterhin zwischen beliebigen zwei Zeichen umbrechen. <code>'normal'</code> bewirkt das Gegenteil in einem Dokument, das <code>'keep-all'</code> setzt. Anmerkungen am Spaltenfuß, am Kapitelende und neben einer Doppelseite übernehmen die Einstellung. Seit postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>hangingIndent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Einzug der zweiten und aller weiteren Zeilen einer Anmerkung, damit sie hinter deren Nummer fluchten.</td>
+    </tr>
+    <tr>
+      <td><code>spaceBetween</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Abstand zwischen zwei Anmerkungen.</td>
+    </tr>
+    <tr>
+      <td><code>spaceAbove</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5em</code></td>
+      <td>Abstand zwischen der letzten Textzeile und der Linie; <code>em</code> ist die Grundschriftgröße. Mit <code>'chapterEnd'</code> und <code>chapterEndAlign: 'text'</code> ist <code>spaceAbove</code> + <code>spaceBelowRule</code> der Abstand zwischen dem Text und der ersten Anmerkung.</td>
+    </tr>
+    <tr>
+      <td><code>spaceBelowRule</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.4em</code></td>
+      <td>Abstand zwischen der Linie und der ersten Anmerkung.</td>
+    </tr>
+    <tr>
+      <td><code>separator.enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Zeichnet die Linie über den Anmerkungen jeder Spalte. Mit <code>false</code> bleiben die Abstände darüber erhalten.</td>
+    </tr>
+    <tr>
+      <td><code>separator.width</code></td>
+      <td><code>number</code></td>
+      <td><code>0.3</code></td>
+      <td>Länge der Linie als Anteil der Spaltenbreite (0–1), ab dem linken Rand der Spalte.</td>
+    </tr>
+    <tr>
+      <td><code>separator.lineWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5pt</code></td>
+      <td>Stärke der Linie.</td>
+    </tr>
+    <tr>
+      <td><code>separator.color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Farbe der Anmerkungen</td>
+      <td>Farbe der Linie.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+footnotes: {
+  fontSize: { value: 7.5, unit: 'pt' },
+  lineHeight: { value: 9.5, unit: 'pt' },
+  hangingIndent: { value: 0.8, unit: 'em' },
+  separator: { width: 0.25, lineWidth: { value: 0.4, unit: 'pt' } },
+}
+```
+
+**Japanische Bücher.** Ein japanisches Dokument (`locale: 'ja'`, seit postext 1.16) gibt den Feldern, die es nicht setzt, die Werte aus JLReq §4.2. Ein Buch in vertikaler Schrift setzt seine Anmerkungen nach dem Kapitel (`placement: 'chapterEnd'`, 後注), kapitelweise nummeriert, mit den Zeichen `（{n}）` rechts der Zeile (`markerPosition: 'right'`, Ziffern aufrecht durch `cjk.uprightDigits`); ein Buch in horizontaler Schrift setzt sie an den Fuß der Seite, seitenweise nummeriert, mit hochgestellten Zeichen. Beide zeichnen die Linie mit einem Drittel der Satzbreite (`separator.width: 1/3`), und Anmerkungen nach dem Kapitel erhalten `numberGap: 'em'` und einen hängenden Einzug von zwei Geviert. Ein ausdrücklich gesetzter Wert hat Vorrang und wird beim Speichern beibehalten (`stripFootnotesDefaults` vergleicht mit den Standardwerten des jeweiligen Dokuments); chinesische, arabische und lateinische Dokumente werden wie bisher aufgelöst. `footnoteDocumentDefaults(locale, writingMode, placement?)` gibt diese Werte zurück. Setzen Sie ein Zeichen vor ein satzschließendes 。 (`先生[^1]。`): Es bleibt beim vorangehenden Zeichen, und 。 eröffnet nie eine Zeile. Siehe [Japanischer Satz › Anmerkungen](/de/docs/japanese-layout#anmerkungen).
+
+So werden die Anmerkungen am Spaltenfuß gesetzt:
+
+- **Anmerkung und Zitierstelle teilen sich eine Spalte.** Bevor das Layout eine Zeile platziert, addiert es die Höhe der Anmerkungen, die diese Zeile zum ersten Mal zitiert (und die Linie, bei der ersten Anmerkung der Spalte). Eine Zeile, deren Anmerkungen nicht darunter passen, wandert mit dem Rest ihres Absatzes in die nächste Spalte, nach den Regeln für Waisen und Witwen. Der Textbereich der Spalte verkleinert sich um die Höhe der Anmerkungen, sodass Spaltenausgleich und Schlussband eines Kapitels nur den Text zählen.
+- **Mehrere Anmerkungen** in einer Spalte stapeln sich in der Reihenfolge der Zitierung unter einer Linie. Eine Anmerkung, die später erneut zitiert wird, behält ihre Nummer und wird nicht noch einmal gesetzt.
+- **Gleitobjekte unten.** Eine Abbildung, die den Fuß einer Spalte einnimmt, nachdem deren Anmerkungen gesetzt wurden, kommt über sie; Anmerkungen, die nach der Abbildung gesetzt werden, kommen über die Abbildung.
+- **Kästen.** Eine Anmerkung, die in einem Kasten zitiert wird (im Textfluss, gleitend oder fest platziert), kommt an den Fuß der Spalte, in der der Text nach dem Kasten weitergeht, meist dieselbe Spalte. Ein Kasten, der das Dokument abschließt, lässt seine Anmerkungen am Fuß der Spalte, in der der Text endete.
+- **Grenzen.** Eine Anmerkung wird nie geteilt: Eine, die höher als eine Spalte ist, läuft über sie hinaus. Zeichen in Legenden, Tabellenzellen und Überschriften werden nicht ausgewertet (sie werden so gedruckt, wie sie geschrieben sind).
+- **Ausgabe.** Canvas, HTML und PDF zeichnen die Anmerkungen, die Zeichen (eine hochgestellte Nummer) und die Linie. Im PDF verlinkt jedes Zeichen auf seine Anmerkung, und ein getaggtes PDF legt jede Anmerkung als Element `Note` mit einer eindeutigen `/ID` an, die im `/IDTree` des Strukturbaums aufgeführt ist (PDF/UA-1). Die Anmerkungen sind `VDTBlock`s mit gesetztem `footnoteNote` in `page.floats`; die Linien liegen in `page.footnoteAreas`.
+- **Warnungen.** `undefinedFootnote` (ein Zeichen ohne Definition: Die Nummer wird über einer leeren Anmerkung gedruckt) und `unusedFootnote` (eine Definition, die kein Zeichen zitiert: Sie wird nicht gesetzt).
+
+Resolver und Stripper entsprechen denen der anderen Abschnitte:
+
+```ts
+import { DEFAULT_FOOTNOTES_CONFIG, resolveFootnotesConfig, stripFootnotesDefaults, footnoteDocumentDefaults } from 'postext';
+
+resolveFootnotesConfig(config.footnotes, 'ja', 'vertical-rl'); // unset fields take the Japanese vertical defaults
+```
+
+
+## Zeilennummern
+
+Die Eigenschaft `lineNumbers` druckt die Nummer jeder fünften (oder jeder n-ten) Zeile daneben auf den Rand, wie es kritische Ausgaben, Gedichtanthologien, Gesetzestexte und Schulausgaben tun. Sie zählt die Zeilen von Gedichten in `:::verse` oder jede Zeile des Texts. Standardmäßig ist sie ausgeschaltet. Jede Nummer wird auf die Grundlinie ihrer Zeile gesetzt, in einer eigenen Größe, und verschiebt nie eine Zeile: Die Seite wird genau so umbrochen, wie sie es ohne Nummern würde. Seit postext 1.23.
+
+```ts
+interface LineNumbersConfig {
+  enabled?: boolean;        // Off by default.
+  count?: 'verse' | 'all';  // The lines of poems, or every line of the text.
+  interval?: number;        // Print the multiples of N.
+  numberFirst?: boolean;    // Also print the first line after each restart.
+  restart?: 'document' | 'chapter' | 'section' | 'page' | 'poem'; // Where the count starts again.
+  startAt?: number;         // The number of the first line after a restart.
+  position?: 'outer' | 'inner' | 'left' | 'right' | 'start' | 'end' | 'side';
+  multiColumn?: 'each' | 'gutter' | 'outer-edges'; // Pages of two or more columns.
+  gap?: Dimension;          // From the text to the number; em is the number's size.
+  align?: 'auto' | 'left' | 'right';
+  fontFamily?: string;      // The body family when unset.
+  fontSize?: Dimension;     // em is the body size.
+  fontWeight?: number;      // The body weight when unset.
+  italic?: boolean;
+  color?: ColorValue;       // The body colour when unset.
+  format?: string;          // decimal, lower-roman, arabic-indic, 一…
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '160px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '160px' }}>Standardwert</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Druckt Zeilennummern. Ein Dokument in vertikaler Schrift (<code>layout.writingMode: 'vertical-rl'</code>) erhält keine, und <code>true</code> wird dort als <code>lineNumbersUnsupported</code> gemeldet.</td>
+    </tr>
+    <tr>
+      <td><code>count</code></td>
+      <td><code>'verse' | 'all'</code></td>
+      <td><code>'verse'</code></td>
+      <td><code>'verse'</code> zählt die Zeilen von Gedichten in <code>:::verse</code>, jeden Vers einmal: Ein Überlauf (der Rest eines Verses, der für die Satzbreite zu lang ist und in der nächsten Zeile steht) erhält keine Nummer, und der Abstand zwischen Strophen wird nicht gezählt. Ein Gedicht im klassischen arabischen Layout zählt eine Zeile pro Bait; die zweite Zeile eines versetzten Baits wird nicht gezählt. <code>'all'</code> zählt jede Zeile von Absätzen des Fließtexts, Listenpunkten, Blockzitaten und Versen in Lesereihenfolge: Seite für Seite, Spalte für Spalte, von oben nach unten.</td>
+    </tr>
+    <tr>
+      <td><code>interval</code></td>
+      <td><code>number</code></td>
+      <td><code>5</code></td>
+      <td>Druckt die Nummer jeder Zeile, die ein Vielfaches dieses Werts ist (5, 10, 15 …). Ein Gedicht, dessen erste Zeile die 37 ist, druckt 40, 45 … Der Zaun eines Gedichts kann einen eigenen Wert setzen (<code>interval=N</code>).</td>
+    </tr>
+    <tr>
+      <td><code>numberFirst</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Druckt zusätzlich die Nummer der ersten gezählten Zeile nach jedem Neubeginn.</td>
+    </tr>
+    <tr>
+      <td><code>restart</code></td>
+      <td><code>'document' | 'chapter' | 'section' | 'page' | 'poem'</code></td>
+      <td><code>'poem'</code> mit <code>count: 'verse'</code>, <code>'page'</code> mit <code>count: 'all'</code></td>
+      <td>Wo die Zählung neu beginnt: nie (<code>'document'</code>, das durch die Kapitel eines Buchs weiterzählt), bei jeder Überschrift der Ebene 1 (<code>'chapter'</code>), bei jeder Überschrift der Ebene 1 oder 2 (<code>'section'</code>), auf jeder Seite (<code>'page'</code>) oder bei jedem Gedicht in <code>:::verse</code> (<code>'poem'</code>). <code>lineStart=N</code> eines Gedichts und <code>lines=N</code> der Direktive <code>:::numbering</code> lassen sie an beliebiger Stelle und in jedem Modus neu beginnen.</td>
+    </tr>
+    <tr>
+      <td><code>startAt</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Die Nummer der ersten Zeile nach einem Neubeginn.</td>
+    </tr>
+    <tr>
+      <td><code>position</code></td>
+      <td><code>'outer' | 'inner' | 'left' | 'right' | 'start' | 'end' | 'side'</code></td>
+      <td><code>'outer'</code></td>
+      <td>Die Seite, auf der die Nummern stehen. <code>'outer'</code> liegt vom Bund abgewandt: rechts auf einer ungeraden Seite und links auf einer geraden, in einem rechts gebundenen Buch umgekehrt. <code>'inner'</code> ist die Bundseite. <code>'left'</code> und <code>'right'</code> sind auf jeder Seite gleich. <code>'start'</code> und <code>'end'</code> folgen der Schreibrichtung des Dokuments: <code>'start'</code> ist in einem Buch mit Schrift von rechts nach links die rechte Seite. <code>'side'</code> setzt sie in die Seitenspalte eines Layouts <code>'oneAndHalf'</code> mit <code>layout.sideColumnRole: 'floats'</code>, bündig an den Rand der Seitenspalte neben dem Text (<code>gap</code> wird nicht verwendet); auf einer Seite ohne Seitenspalte fällt die Einstellung auf <code>'outer'</code> zurück.</td>
+    </tr>
+    <tr>
+      <td><code>multiColumn</code></td>
+      <td><code>'each' | 'gutter' | 'outer-edges'</code></td>
+      <td><code>'outer-edges'</code></td>
+      <td>Seiten mit zwei oder mehr nebeneinanderliegenden Textspalten. <code>'outer-edges'</code> setzt die Nummern der ersten Spalte links von ihr und die der letzten Spalte rechts von ihr; die Spalten dazwischen folgen <code>'each'</code>. <code>'gutter'</code> setzt sie in die Spaltenzwischenräume: die der ersten Spalte rechts von ihr, die der übrigen links von ihnen. <code>'each'</code> setzt die Nummern jeder Spalte auf die Seite, die <code>position</code> angibt.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1em</code></td>
+      <td>Der Abstand vom Rand der Spalte bis zur Nummer; <code>em</code> ist die eigene Größe der Nummer.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'auto' | 'left' | 'right'</code></td>
+      <td><code>'auto'</code></td>
+      <td><code>'auto'</code> setzt jede Nummer bündig zum Text hin: rechtsbündig in einem linken Rand, linksbündig in einem rechten. <code>'left'</code> und <code>'right'</code> richten die Nummern innerhalb der Breite der breitesten Nummer der Seite aus.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>Schriftfamilie des Fließtexts</td>
+      <td>Schriftart der Nummern. Sie wird wie jede andere Schriftfamilie geladen und eingebettet.</td>
+    </tr>
+    <tr>
+      <td><code>fontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.8em</code></td>
+      <td>Größe der Nummern; <code>em</code> ist die Grundschriftgröße.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td>Schriftstärke des Fließtexts</td>
+      <td>Schriftstärke der Nummern.</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Setzt die Nummern kursiv.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Farbe des Fließtexts</td>
+      <td>Farbe der Nummern. Eine mit der Palette verknüpfte Farbe folgt den Paletten von Teilen und Abschnitten.</td>
+    </tr>
+    <tr>
+      <td><code>format</code></td>
+      <td><code>string</code></td>
+      <td>dezimal</td>
+      <td>Wie die Nummern geschrieben werden, in jeder der <a href="/de/docs/configuration-page-layout#schreibweisen-der-nummernformate">Schreibweisen der Nummernformate</a> (<code>'lower-roman'</code>, <code>'arabic-indic'</code>, <code>'一'</code> …). Dezimalzahlen werden in den Ziffern des Dokuments geschrieben (<code>numerals</code>). Ein unbekannter Name nummeriert dezimal, mit einer Warnung <code>unknownNumberFormat</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+lineNumbers: {
+  enabled: true,
+  count: 'verse',
+  interval: 5,
+  restart: 'document',          // one count through the whole book
+  position: 'outer',
+  fontSize: { value: 0.75, unit: 'em' },
+  italic: true,
+}
+```
+
+Was gezählt wird und was nicht:
+
+- **Nie gezählt** werden Überschriften, Legenden, Tabellen und Bilder, abgesetzte Formeln, Gestaltungstext (Kapitelauftakte, Kolumnentitel), Fußnoten und Anmerkungen am Kapitelende, das Inhaltsverzeichnis, die Einträge von Register und Literaturverzeichnis sowie Vakatseiten.
+- **Kästen und Prosa.** Der Text eines Kastens wird nicht gezählt, und unter `count: 'verse'` auch keine Prosa, es sei denn, das Absatzformat, in dem sie gesetzt ist, gibt `lineNumbers: true` an; ein Format mit `lineNumbers: false` wird nie gezählt (siehe [Absatzformate](/de/docs/configuration-styles#absatzformate)).
+- **Ein einzelnes Gedicht.** Der Zaun eines Gedichts nimmt `numbered=false` (seine Zeilen werden nicht gezählt), `lineStart=N` (seine erste Zeile ist N, und die Zählung beginnt dort neu) und `interval=N` an. `:::numbering{lines=N}` gibt der nächsten gezählten Zeile die Nummer N, wo immer sie steht. Siehe [Dokumentformat › `:::verse`](/de/docs/document-format#verse) und [`:::numbering`](/de/docs/document-format#numbering).
+
+In einem Buch, das Kapitel für Kapitel umbrochen wird, trägt `restart: 'document'` die Zählung über `continuation.lineNumber` von einem Kapitel ins nächste. `continuationAfter` zählt die Verse aus dem Text; mit `count: 'all'` hängt die Zählung vom Layout ab, deshalb gibt die Host-Anwendung das `lastLineNumber` aus dem Dokument des vorigen Kapitels weiter, wie es die Sandbox tut.
+
+Mit `position: 'side'` teilen sich die Nummern die Seitenspalte mit seitlichen Kästen, seitlichen Legenden und seitlichen Abbildungen. Eine Nummer, die eines dieser Elemente überlappt, wird trotzdem gezeichnet, keines von beiden verschiebt sich, und der Build meldet eine Inhaltswarnung `lineNumberOverlap`, die auf die nummerierte Zeile zeigt.
+
+**Ausgabe.** Canvas, PDF, HTML-Betrachter und EPUB mit festem Layout zeichnen die Nummern. In einem getaggten PDF sind sie Layout-Artefakte, und jede trägt ein leeres `/ActualText`, sodass kopierter oder extrahierter Text ohne sie von Zeile zu Zeile läuft. Die HTML-Ausgabe verbirgt sie vor assistiven Technologien (`aria-hidden`), vor der Auswahl und vor kopiertem Text. Das umfließende EPUB, dessen Zeilen das Lesesystem setzt, behält nur die Nummern von Versen: ein `pt-line-number`-Span (ebenfalls `aria-hidden`) im Anfangsrand der Strophe neben jeder Zeile, die im Druck eine Nummer trägt. Im VDT sind die Nummern ein Gestaltungsplatz jeder Seite (`page.lineNumbers`, ihre Textblöcke mit `artifact` gekennzeichnet) und eine Liste von Markierungen (`page.lineNumberMarks`: `number`, `label`, `columnIndex`, `blockId`, `lineIndex`); das Dokument verzeichnet `lastLineNumber`.
+
+**Nicht unterstützt** werden Zeilennummern in vertikaler Schrift, ein Querverweis, der die Nummer einer Zeile druckt, Anmerkungen, die sich auf Zeilennummern beziehen, und Nummern für die Zeilen von Tabellenzellen, Legenden oder Codelistings.
+
+In der Sandbox bilden diese Einstellungen den Abschnitt **Zeilennummern** im Bedienfeld Gestaltung. Resolver und Stripper entsprechen denen der anderen Abschnitte; Schrift, Schriftstärke und Farbe kommen vom Fließtext:
+
+```ts
+import { DEFAULT_LINE_NUMBERS_CONFIG, resolveLineNumbersConfig, stripLineNumbersDefaults } from 'postext';
+
+resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // unset font, weight and colour follow the body
+```
+
+
+## Querverweise
+
+Die Eigenschaft `crossRefs` legt die Wörter fest, die ein [Querverweis](/de/docs/document-format#querverweise-und-anker) um eine Nummer oder eine Seite herum druckt, sowie den Stil, den ein `:ref` ohne eigenen Stil erhält. Jede Vorlage enthält `{n}` an der Stelle der Nummer; eine Vorlage ohne `{n}` erhält die Nummer nach einem geschützten Leerzeichen (`"§"` druckt *§ 3.2*). Eine nicht gesetzte Vorlage folgt der Sprache des Dokuments: *chapter / section / p.* im Englischen, *capítulo / sección / pág.* im Spanischen, `第{n}章` / `第{n}节` / `第{n}页` im Chinesischen und entsprechend im Französischen, Deutschen, Italienischen, Portugiesischen, Katalanischen und Niederländischen.
+
+```ts
+interface CrossRefsConfig {
+  chapter?: string;  // Words around a level-1 heading's number: "chapter {n}".
+  section?: string;  // Around any other heading's number: "section {n}".
+  page?: string;     // Around a page number: "p. {n}".
+  defaultStyle?: 'default' | 'number' | 'title' | 'page'; // A :ref without style=.
+  breakLabels?: boolean; // A label of words breaks at its spaces.
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '180px' }}>Eigenschaft</th>
+      <th style={{ width: '160px' }}>Typ</th>
+      <th style={{ width: '160px' }}>Standardwert</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>chapter</code></td>
+      <td><code>string</code></td>
+      <td>je nach Sprache</td>
+      <td>Ein Verweis auf eine Überschrift der Ebene 1: <code>"chapter &#123;n&#125;"</code>. Eine Überschriftennummer, deren Vorlage das Wort bereits enthält (<code>Chapter &#123;1&#125;</code>, <code>第&#123;1:一&#125;章</code>), wird unverändert gedruckt.</td>
+    </tr>
+    <tr>
+      <td><code>section</code></td>
+      <td><code>string</code></td>
+      <td>je nach Sprache</td>
+      <td>Ein Verweis auf eine Überschrift der Ebenen 2 bis 6: <code>"section &#123;n&#125;"</code>, <code>"§ &#123;n&#125;"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>page</code></td>
+      <td><code>string</code></td>
+      <td>je nach Sprache</td>
+      <td>Ein Seitenverweis (<code>style=page</code>): <code>"p. &#123;n&#125;"</code>, <code>"page &#123;n&#125;"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>defaultStyle</code></td>
+      <td><code>'default' | 'number' | 'title' | 'page'</code></td>
+      <td><code>'default'</code></td>
+      <td>Was ein <code>:ref</code> auf eine Überschrift oder einen Anker ohne <code>style=</code> druckt. <code>'default'</code>: eine nummerierte Überschrift mit ihrem Wort und ihrer Nummer, eine nicht nummerierte mit ihrem Titel, einen Anker mit seinem Text. Ein Verweis, der <code>style</code> setzt, behält diesen Stil, und Verweise auf Abbildungen und Tabellen sind nicht betroffen.</td>
+    </tr>
+    <tr>
+      <td><code>breakLabels</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Erlaubt einen Zeilenumbruch an den Leerzeichen eines Verweises, dessen Beschriftung aus Wörtern besteht: der Text eines Ankers <code>[words]{'{#id}'}</code>, der Titel einer Überschrift oder eines Kastens, eine Überschreibung mit <code>text="…"</code> (auch bei einem Verweis auf eine Abbildung oder Tabelle). Die Leerzeichen der Beschriftung dehnen und stauchen sich dann mit der Zeile, und der Verweis bleibt ein einziger Link; seine Wörter werden nicht getrennt. Eine Zahl, eine römische Zahl oder ein einzelner Buchstabe in einer solchen Beschriftung bleibt beim vorangehenden Wort (<code>Fig. 1a</code>, <code>plate IV</code>). Eine Beschriftung mit einer Nummer oder einer Seite (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) bricht nie um, auch wenn ihre Vorlage ein gewöhnliches Leerzeichen enthält. <code>false</code> setzt jede Beschriftung als ein Wort, in dem keine Zeile umbricht, wie bis postext 1.27. Eine Konfiguration, die vor <code>configVersion</code> 12 gespeichert wurde und deren Text einen Verweis enthält, wird mit <code>false</code> gelesen, damit ihre Zeilen bleiben, wo sie waren (siehe <a href="/de/docs/configuration-programmatic-usage#pakete-die-postext-14-oder-früher-geschrieben-hat">Pakete, die postext 1.4 oder früher geschrieben hat</a>).</td>
+    </tr>
+  </tbody>
+</table>
+
+Verweise erhalten Farbe, Schriftstärke und Neigung, die für alle Verweise gelten (`bodyText.referenceColor`, `referenceBold`, `referenceItalic`).
+
+## Zitationen
+
+Die Eigenschaft `citations` wählt den Zitierstil und bestimmt, wie Zitationen und Literaturverzeichnis aussehen. Das Markup ist unter [Zitate und Literaturverzeichnis](/de/docs/document-format#zitate-und-literaturverzeichnis) beschrieben; den Stil wendet das Paket `postext-citeproc` an.
+
+```ts
+interface CitationsConfig {
+  style?: string;          // 'apa', 'ieee', 'chicago-notes-bibliography'… or 'custom'
+  customStyle?: string;    // a whole CSL style (.csl XML), used with style: 'custom'
+  locale?: string;         // CSL locale; the document language when unset
+  link?: boolean;          // citations link to their entries
+  marker?: 'style' | 'brackets' | 'parentheses' | 'superscript' | 'corner';
+  collapseRanges?: boolean;
+  notes?: 'footnote' | 'warichu';
+  numbering?: 'book' | 'chapter';
+  hyphenateNames?: boolean; // false: the cited authors' names are never divided
+  bibliography?: {
+    title?: string;        // unset: the document language's word; '' or ' ': none
+    scope?: 'book' | 'chapter';
+    auto?: boolean;
+    fontSize?: Dimension;
+    lineHeight?: Dimension;
+    hangingIndent?: Dimension;
+    entrySpacing?: Dimension;
+    labelWidth?: Dimension;
+    labelAlign?: 'left' | 'right';
+    doi?: 'link' | 'text' | 'hide';
+    includeUncited?: boolean;
+    groupByLanguage?: boolean;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '160px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standardwert</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td><code>'apa'</code></td>
+      <td>Die ID eines mitgelieferten Stils (siehe <a href="/de/docs/document-format#zitierstile">Zitierstile</a>) oder <code>'custom'</code>. Der Stil entscheidet, was Zitationen und Einträge enthalten: Namen, Daten, Reihenfolge, Zeichensetzung und ob Zitationen Anmerkungen sind.</td>
+    </tr>
+    <tr>
+      <td><code>customStyle</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Ein vollständiger CSL-Stil, das XML einer <code>.csl</code>-Datei, verwendet, wenn <code>style</code> den Wert <code>'custom'</code> hat. Die Sandbox lädt ihn aus einer Datei.</td>
+    </tr>
+    <tr>
+      <td><code>locale</code></td>
+      <td><code>string</code></td>
+      <td>Sprache des Dokuments</td>
+      <td>Das CSL-Locale, in dessen Wörtern der Stil schreibt (<code>en-US</code>, <code>es-ES</code>, <code>zh-CN</code>, <code>zh-TW</code>, <code>ja-JP</code> …). Ein japanisches Dokument gilt als <code>ja-JP</code>: Narrative Zitationen verbinden zwei Autoren mit と und kürzen mehr mit ほか ab.</td>
+    </tr>
+    <tr>
+      <td><code>link</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Eine Zitation verlinkt auf ihren Eintrag im Literaturverzeichnis (PDF-Link, HTML-Anker, Klick in der Sandbox).</td>
+    </tr>
+    <tr>
+      <td><code>marker</code></td>
+      <td><code>'style' | 'brackets' | 'parentheses' | 'superscript' | 'corner'</code></td>
+      <td><code>'style'</code></td>
+      <td>Wie ein nummerierter Stil eine Zitation kennzeichnet: so, wie der Stil es schreibt, <code>[1]</code>, <code>(1)</code>, hochgestellt oder <code>〔1〕</code> (aufrecht in vertikaler Schrift). Eine Stellenangabe folgt der Nummer.</td>
+    </tr>
+    <tr>
+      <td><code>collapseRanges</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Aufeinanderfolgende Nummern als Bereich: <code>1–3</code> in einer eigenen Kennzeichnung, <code>[2]–[4]</code> in der von IEEE. <code>false</code> hält sie getrennt.</td>
+    </tr>
+    <tr>
+      <td><code>notes</code></td>
+      <td><code>'footnote' | 'warichu'</code></td>
+      <td><code>'footnote'</code></td>
+      <td>Wohin ein Anmerkungsstil seine Zitationen setzt: in Fußnoten (platziert und nummeriert, wie <code>footnotes</code> es angibt) oder in zweizeilige Anmerkungen innerhalb der Zeile (夹注).</td>
+    </tr>
+    <tr>
+      <td><code>numbering</code></td>
+      <td><code>'book' | 'chapter'</code></td>
+      <td><code>'book'</code></td>
+      <td>Zitationen durch das ganze Buch oder jedes Kapitel für sich (jedes Dokument und jede Überschrift der Ebene 1 nach einer Zitation): Ein nummerierter Stil nummeriert jedes Kapitel ab 1, und ein Werk, das in zwei Kapiteln zitiert wird, erhält in jedem Kapitel dessen Nummer; ein Anmerkungsstil schreibt ein Werk bei seiner ersten Zitation in jedem Kapitel vollständig aus. Gedacht für <code>bibliography.scope: 'chapter'</code>, dessen Listen dann die Nummern des Kapitels übernehmen.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateNames</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Erlaubt dem Wörterbuch, die Namen der zitierten Autoren zu trennen. <code>false</code> hält den Familiennamen jeder Person in den Literaturangaben (Autoren, Herausgeber, Übersetzer) und jeden als eine Zeichenkette angegebenen Namen ungetrennt, wo immer er mit seinem Großbuchstaben steht: in einer Zitation, im Fließtext und in der Liste, sodass keine Zeile auf <code>(Lup-</code> endet. Ein Doppelname wird Teil für Teil gelesen, und ein Autor namens Baker hält das Wort <code>baker</code> nicht zusammen. Siehe <a href="/de/docs/configuration-text#ungetrennte-wörter">Ungetrennte Wörter</a>.</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.title</code></td>
+      <td><code>string</code></td>
+      <td>je nach Sprache</td>
+      <td>Titel über der Liste, ein fetter Absatz. Leer: keiner. Eine eigene Überschrift kommt über <code>:::bibliography</code>.</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.scope</code></td>
+      <td><code>'book' | 'chapter'</code></td>
+      <td><code>'book'</code></td>
+      <td>Eine Liste aller Werke, die das Buch zitiert, oder eine pro Kapitel mit den Werken, die es zitiert. In einem Dokument mit mehreren Kapiteln beginnt jede H1 eine neue Kapitelliste; mit <code>auto</code> erhält ein Kapitel, das kein <code>:::bibliography</code> platziert, seine Liste an seinem Ende.</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.auto</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Setzt die Liste nach dem Text (bei einer Liste für das ganze Buch nach dem letzten Kapitel), wenn kein <code>:::bibliography</code> sie platziert.</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.fontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.9em</code></td>
+      <td>Schriftgröße der Einträge; em ist die Grundschriftgröße.</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.lineHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>Zeilenabstand des Fließtexts</td>
+      <td>Zeilenabstand der Einträge.</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.hangingIndent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>2em</code></td>
+      <td>Einzug der Folgezeilen eines nicht nummerierten Eintrags.</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.entrySpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.3em</code></td>
+      <td>Abstand zwischen zwei Einträgen.</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.labelWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td>längste Beschriftung</td>
+      <td>Breite der Spalte, in der die Nummern einer nummerierten Liste stehen: Der Text jedes Eintrags beginnt um diesen Betrag eingerückt, in der ersten Zeile wie in den Folgezeilen, sodass <code>9.</code> und <code>10.</code> sich die Spalte teilen. Die Beschriftung bleibt Teil des Eintragstexts.</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.labelAlign</code></td>
+      <td><code>'left' | 'right'</code></td>
+      <td><code>'left'</code></td>
+      <td>Wo eine Beschriftung in ihrer Spalte steht: an deren linkem Rand oder am Text (<code>9.</code> und <code>10.</code> enden gemeinsam).</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.doi</code></td>
+      <td><code>'link' | 'text' | 'hide'</code></td>
+      <td><code>'link'</code></td>
+      <td>DOIs und URLs als Links, als reiner Text oder weggelassen.</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.includeUncited</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Führt jede Literaturangabe auf, ob zitiert oder nicht (wie <code>nocite: "@*"</code>).</td>
+    </tr>
+    <tr>
+      <td><code>bibliography.groupByLanguage</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Werke auf Chinesisch, Japanisch und Koreanisch zuerst, dann die übrigen. Nur Autor-Jahr- und Autor-Seite-Stile: Eine nummerierte Liste behält die Reihenfolge ihrer Nummern.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Inhaltsverzeichnis
+
+Die Eigenschaft `toc` konfiguriert, was eine Direktive `:::toc` druckt (siehe [Dokumentformat](/de/docs/document-format#toc)). Das Inhaltsverzeichnis wird aus der **Gliederung** des Dokuments zusammengestellt – jede Überschrift mit ihrer Nummer und ihrer Seitenbezeichnung, jeder `:::part` –, es folgt also den Kapiteln: Benennen Sie eines um, verschieben Sie es in einen anderen Teil, ändern Sie seine Autoren, und die Einträge ändern sich mit. Ein Eintrag besteht aus der Nummer der Überschrift in einer eigenen Spalte, dem Titel, Füllzeichen und der Seitenbezeichnung am rechten Rand, dann optional einer Untertitelzeile; ein Teil ist eine Zeile, die `parts.design` gestaltet.
+
+```ts
+const config: PostextConfig = {
+  toc: {
+    levels: [{ level: 1, fontWeight: 700, color: { hex: '#00507b', model: 'hex' }, numberWidth: { value: 7.4, unit: 'mm' } }],
+    unnumbered: { color: { hex: '#000000', model: 'hex' } },
+    pageNumber: { fontWeight: 400, width: { value: 8, unit: 'mm' } },
+    leader: { char: '.', gap: { value: 1, unit: 'mm' } },
+    subtitle: { enabled: true, attr: 'author', italic: true, fontSize: { value: 8.5, unit: 'pt' } },
+    parts: {
+      height: { value: 23, unit: 'pt' },
+      marginTop: { value: 11.5, unit: 'pt' },
+      design: { elements: [/* a band box, 'SECTION {number}', '{titleText}', '{pageNumber}' */] },
+    },
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '160px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standardwert</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>levels</code></td>
+      <td><code>TocLevelConfig[]</code></td>
+      <td>Ebene 1</td>
+      <td>Die aufgeführten Überschriftenebenen, jede mit der Typografie ihrer Einträge: <code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code> (standardmäßig der Zeilenabstand des Fließtexts, damit das Inhaltsverzeichnis im Raster steht), <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>indent</code> (des ganzen Eintrags), <code>numberWidth</code> / <code>numberGap</code> (die Nummernspalte, nach der der Titel beginnt; die Nummern stehen darin rechtsbündig, und eine Nummer, die breiter als <code>numberWidth</code> ist, etwa <code>الفصل الحادي عشر</code> oder <code>Chapter 12</code>, verbreitert die Spalte ihrer Ebene auf die breiteste), <code>numberFontFamily</code>, <code>numberFontSize</code>, <code>numberFontWeight</code>, <code>numberColor</code>, <code>marginTop</code>, <code>marginBottom</code>. Nicht gesetzte Felder erben vom Fließtext. Die Nummer steht auf der Grundlinie der ersten Titelzeile, gleich in welcher Schrift und Größe, im Canvas, im HTML und im PDF (bis postext 1.4 wurde sie wie ein Aufzählungszeichen auf der x-Höhe zentriert, sodass eine Display-Schrift oder ein größerer Grad über dem Titel schwebte). Ein eigener Renderer findet diese Grundlinie in <code>bulletBaselineY</code> des Eintragsblocks; <code>bulletY</code> ist weiterhin die Mitte des Geviertkastens der Nummer wie in 1.4, sodass ein Renderer, der älter als das neue Feld ist, die Nummern dort zeichnet, wo er es immer getan hat.</td>
+    </tr>
+    <tr>
+      <td><code>unnumbered</code></td>
+      <td><code>TocEntryStyleConfig</code></td>
+      <td>—</td>
+      <td>Überschreibungen für Überschriften, deren Format <code>numbered: false</code> hat (ein Vorwort): Sie drucken keine Nummer und beginnen bündig am <code>indent</code> ihrer Ebene.</td>
+    </tr>
+    <tr>
+      <td><code>pageNumber</code></td>
+      <td>Objekt</td>
+      <td>Schrift der Ebene 1, Schriftstärke des Fließtexts</td>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code> der Seitenbezeichnung sowie <code>width</code> (Standardwert <code>2em</code>): die Spalte, die dafür am rechten Rand reserviert ist und in der sie rechtsbündig steht.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td>Objekt</td>
+      <td><code>{"{ enabled: true, char: '.', gap: 0.5em }"}</code></td>
+      <td><code>char</code> wird über die Lücke zwischen Titel und Seitenzahl wiederholt, rechtsbündig, damit die Punkte aufeinanderfolgender Einträge fluchten (<code>'. '</code> setzt sie gesperrt); <code>gap</code> ist der kleinste Abstand zwischen Titel und Füllzeichen. Die Füllzeichen nehmen so viele Zeichen auf, wie hineinpassen, gemessen als zusammenhängende Folge in ihrer Schrift, sodass eine Schrift, die aufeinanderfolgende Punkte auseinanderkernt, weniger Punkte erhält statt Punkte, die bis zur Seitenzahl reichen. (Bis postext 1.4 wurde die Anzahl an einem einzelnen Punkt bemessen, und in einer solchen Schrift liefen die Füllzeichen vom Titel bis in die Nummer.) Ein Titel, der der Seitenbezeichnung keinen Platz ließe, bricht etwas früher um. Füllzeichen werden ab drei Zeichen gesetzt: Wo nur eines oder zwei passen, erhält die Zeile keine, denn ein einzelner Punkt vor der Seitenzahl liest sich wie ein Satzpunkt. In einem getaggten PDF sind die Punkte Artefakte und fehlen im extrahierten Text. Der Fließtext setzt dieselben Füllzeichen an seinen <a href="/de/docs/configuration-text#tabulatoren">Tabulatoren</a>.</td>
+    </tr>
+    <tr>
+      <td><code>subtitle</code></td>
+      <td>Objekt</td>
+      <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
+      <td>Eine zweite Zeile unter dem Eintrag, aus einem Attribut der Überschrift entnommen (<code>attr</code>) – die Autoren des Kapitels –, mit eigenen Werten für <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code>, <code>italic</code> (Standardwert <code>true</code>), <code>color</code> und zusätzlichem <code>indent</code>. Die Zeile teilt den Zeilenabstand des Eintrags und wird nie von ihrem Titel getrennt.</td>
+    </tr>
+    <tr>
+      <td><code>parts.enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Ob Teiltitel eine Zeile erhalten.</td>
+    </tr>
+    <tr>
+      <td><code>parts.breakBefore</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Beginnt vor jeder Teilzeile außer der ersten eine neue Seite, sodass die Kapitel jedes Teils auf einer eigenen Seite aufgeführt werden.</td>
+    </tr>
+    <tr>
+      <td><code>parts.design</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>leer</td>
+      <td>Gestaltung der Zeile; ihr Container ist die Zeile (Spaltenbreite × <code>height</code>). Platzhalter: <code>{'{number}'}</code>, <code>{'{numberDecimal}'}</code>, <code>{'{numberRoman}'}</code> …, <code>{'{titleText}'}</code> und <code>{'{pageNumber}'}</code> (die Bezeichnung der Teiltitelseite; mit <code>parts.page: false</code>, das keine Teiltitelseite öffnet, die Bezeichnung der Seite, auf der der Inhalt des Teils beginnt und seine Kolumnentitel zu ihm wechseln; in einem Buch, das Kapitel für Kapitel umbrochen wird, zeigt ein Zaun, der sein Kapitel abschließt, auf die erste Inhaltsseite des nächsten Kapitels). Mit der Palette verknüpfte Farben übernehmen die eigene <code>palette</code> des Teils, sodass die Zeile jedes Abschnitts in dessen Farbe erscheint. Ist sie leer, werden <code>{'{number} {titleText}'}</code> (dazwischen der <code>numberSeparator</code> der H1) und die Seitenzahl in der Typografie der Einträge der Ebene 1 gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>2em</code>, <code>0</code>, <code>0</code></td>
+      <td>Höhe der Zeile und der Abstand um sie herum. <code>em</code> ist die Grundschriftgröße, die Standardzeile ist also doppelt so hoch wie die Grundschrift, nicht zwei Zeilen des Fließtexts: Bei einem Fließtext von 9,5/13,5 pt sind das 19 pt. Für eine Zeile von zwei Fließtextzeilen geben Sie die Höhe in <code>pt</code> an (dort <code>27pt</code>).</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Seitenbezeichnungen sind diejenigen, die das Dokument druckt. `buildDocument()` umbricht ein Dokument mit einem `:::toc` erneut mit den Bezeichnungen des vorigen Durchgangs, bis sie feststehen (höchstens drei zusätzliche Durchgänge); eine Host-Anwendung, die ein Buch Kapitel für Kapitel umbricht, liefert stattdessen die Gliederung des ganzen Buchs als `PostextContent.outline`, zusammengestellt aus `contentOutline()` (Überschriften und Teile allein aus dem Text) und `outlineFromDoc()` (dieselben Einträge mit den Seitenbezeichnungen eines Layouts), und umbricht das Kapitel mit dem Inhaltsverzeichnis erneut, sobald sich `outlineKey()` dieser Gliederung ändert. Jeder Überschrifteneintrag trägt die `number`, die das Inhaltsverzeichnis druckt, und bei einer nummerierten Überschrift ihren `counter`: den laufenden Zähler der Ebene nach einem etwaigen `startAt`, gleich was die Vorlage druckt – das, was eine Host-Anwendung in ihren eigenen Listen neben einem Kapitel anzeigt.
+
+## Register
+
+Die Eigenschaft `index` konfiguriert, was eine Direktive `:::index` druckt (siehe [Dokumentformat](/de/docs/document-format#register)): die im Text mit `:index[…]` und `:index{term="…"}` markierten Begriffe, sortiert, nach Anfangsbuchstaben gruppiert (im Chinesischen nach Pinyin-Anlaut oder Strichzahl, im Japanischen nach Gojūon-Reihe, siehe `groupBy`), jeder mit den Seiten, auf die er fällt. Ein Eintrag besteht aus seinem Begriff, einem Trennzeichen und seinen Seitenzahlen; seine Untereinträge folgen, eine Einzugsstufe pro Ebene, und umbrochene Zeilen hängen um `turnoverIndent`, sodass sie nie mit einem Untereintrag fluchten.
+
+```ts
+const config: PostextConfig = {
+  headingStyles: [
+    // The index in two columns, under its own heading.
+    { id: 'index', numbered: false, layout: { layoutType: 'double', gutterWidth: { value: 6, unit: 'mm' } } },
+  ],
+  index: {
+    fontSize: { value: 8.5, unit: 'pt' },
+    lineHeight: { value: 11, unit: 'pt' },
+    rangeFormat: 'chicago',
+    groups: { fontFamily: 'Source Sans 3', fontWeight: 700, color: { hex: '#8a1c1c', model: 'hex' } },
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '160px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standardwert</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>color</code></td>
+      <td>—</td>
+      <td>der Fließtext</td>
+      <td>Typografie der Einträge. Jede Zeile des Registers, Buchstabenköpfe eingeschlossen, wird auf <code>lineHeight</code> gesetzt; das Register behält seinen eigenen Rhythmus und rastet nicht im Grundlinienraster ein.</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1em</code></td>
+      <td>Einzug jeder Ebene von Untereinträgen.</td>
+    </tr>
+    <tr>
+      <td><code>turnoverIndent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>2em</code></td>
+      <td>Zusätzlicher Einzug der umbrochenen Zeilen eines Eintrags über seine eigene Ebene hinaus.</td>
+    </tr>
+    <tr>
+      <td><code>entrySpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Abstand über jedem Haupteintrag.</td>
+    </tr>
+    <tr>
+      <td><code>separator</code>, <code>locatorSeparator</code>, <code>rangeSeparator</code></td>
+      <td><code>string</code></td>
+      <td><code>', '</code>, <code>', '</code>, <code>'–'</code>; die ersten beiden <code>'، '</code> in arabischer Schrift</td>
+      <td>Was zwischen dem Begriff und seiner ersten Seite, zwischen zwei Seiten und zwischen den Enden eines Bereichs gedruckt wird.</td>
+    </tr>
+    <tr>
+      <td><code>mergeRanges</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Fasst aufeinanderfolgende Seiten desselben Nummernformats zu einem Bereich zusammen: <code>12, 13, 14</code> druckt <code>12–14</code>. Hauptseiten werden nie zusammengefasst.</td>
+    </tr>
+    <tr>
+      <td><code>rangeFormat</code></td>
+      <td><code>'full' | 'chicago'</code></td>
+      <td><code>'full'</code></td>
+      <td>Wie die zweite Zahl eines Bereichs geschrieben wird: vollständig (<code>234–237</code>) oder ohne die Ziffern, die sie mit der ersten teilt, wie es <em>The Chicago Manual of Style</em> (9.64) verlangt: <code>71–72</code>, <code>100–104</code>, <code>101–8</code>, <code>321–28</code>, <code>1496–500</code>. Römische Bezeichnungen werden immer vollständig geschrieben.</td>
+    </tr>
+    <tr>
+      <td><code>main</code></td>
+      <td><code>{'{ bold?, italic? }'}</code></td>
+      <td>fett</td>
+      <td>Wie eine Hauptseite (<code>main</code> an der Markierung) gesetzt wird.</td>
+    </tr>
+    <tr>
+      <td><code>see</code></td>
+      <td><code>{'{ label?, alsoLabel?, italic? }'}</code></td>
+      <td>je nach Sprache, kursiv (aufrecht in arabischer Schrift)</td>
+      <td>Die Wörter vor einem Verweis. Nicht gesetzt, folgen sie der Sprache des Dokuments: <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 in traditionellem Chinesisch) … Ein chinesisches Register setzt den Verweis nach einem Satzpunkt, ohne Leerzeichen: <code>贾琏 12。见贾政</code>.</td>
+    </tr>
+    <tr>
+      <td><code>locale</code></td>
+      <td><code>string</code></td>
+      <td>die des Dokuments</td>
+      <td>Die Sprache, deren alphabetische Ordnung die Einträge sortiert (ein BCP-47-Tag, gelesen von <code>Intl.Collator</code>). Im Spanischen wird <em>ñ</em> nach <em>n</em> einsortiert und bildet eine eigene Gruppe; Akzente ändern die Reihenfolge nie.</td>
+    </tr>
+    <tr>
+      <td><code>groupBy</code></td>
+      <td><code>'auto' | 'letter' | 'pinyin' | 'stroke' | 'gojuon' | 'kana' | 'none'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Was die Gruppenköpfe sind. <code>'letter'</code>: der erste Buchstabe des Sortierschlüssels. <code>'pinyin'</code>: Ein Eintrag, der mit einem Han-Zeichen beginnt, wird unter dem lateinischen Anlaut seiner Pinyin-Lesung eingeordnet (贾宝玉 unter <code>J</code>), ein lateinischer Sortierschlüssel unter seinem Buchstaben, nach den chinesischen Einträgen dieses Buchstabens (die Sortierung stellt lateinische Buchstaben hinter chinesische Zeichen): <code>sort="jia mu"</code> beschließt das <code>J</code>. <code>'stroke'</code>: unter der Strichzahl des ersten Zeichens, <code>一畫</code>, <code>二畫</code> … (<code>一画</code> … in vereinfachtem Chinesisch). <code>'gojuon'</code>: Ein Kana-Eintrag wird unter seiner Gojūon-Reihe eingeordnet, あ行, か行 … わ行, und mit <code>'kana'</code> unter seinem ersten Kana (Katakana und Hiragana teilen sich die Köpfe), in der Reihenfolge eines japanischen Registers nach JIS X 4061: nach der Lesung (<code>yomi</code> der Markierung, sonst die Kana-Lesung ihrer Ruby, sonst <code>sort</code>, sonst der Text), Katakana wie Hiragana, kleine Kana wie große, ー wie der Vokal davor, 清 vor 濁 vor 半濁; Symbole, dann Zahlen nach ihrem Wert, dann lateinische Wörter unter ihren Buchstaben, dann Kana; ein Eintrag, der weiterhin mit einem Kanji beginnt, wird als <code>indexReadingMissing</code> gemeldet und nach den Kana ohne Kopf gesetzt. <code>'none'</code>: keine Köpfe; Symbole, Zahlen und Wörter werden nur durch <code>groups.marginTop</code> voneinander abgesetzt. <code>'auto'</code> gruppiert ein japanisches Register (<code>ja</code>, <code>ja-*</code>) nach Gojūon-Reihe, ein Register in vereinfachtem Chinesisch (<code>zh</code>, <code>zh-Hans</code>, <code>zh-CN</code>) nach Pinyin, eines in traditionellem Chinesisch (<code>zh-Hant</code>, <code>zh-TW</code>, <code>zh-HK</code>) nach Strichen und jede andere Sprache nach Buchstaben. Die Einträge werden in der Sortierfolge sortiert, aus der die Köpfe stammen: Ein Register <code>zh-Hant</code>, das nach Pinyin gruppiert ist, sortiert nach Pinyin. Lesungen und Strichzahlen stammen aus der Sortierung (CLDR); wo sie ein Zeichen falsch liest (重 als <em>zhòng</em> in 重阳, 行 als <em>xíng</em> in 行业), geben Sie der Markierung einen Schlüssel <code>sort</code> aus Zeichen, die nur die gewünschte Lesung haben und an derselben Stelle einsortiert werden: <code>sort="崇阳"</code> für 重阳, <code>sort="航业"</code> für 行业. Ein Browser ohne chinesische Sortierdaten druckt ein Pinyin- oder Strichregister ohne Köpfe.</td>
+    </tr>
+    <tr>
+      <td><code>ignoreArticle</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code> im Arabischen</td>
+      <td>Sortiert und gruppiert arabische Einträge so, als stünde ein vorangestellter Artikel <code>ال</code> (<code>ٱل</code>) nicht da: البصرة wird unter ب eingeordnet, zwischen بدر und بغداد, und so gedruckt, wie es geschrieben ist. <code>الله</code> behält seinen Artikel, und ein Eintrag mit eigenem Schlüssel <code>sort</code> wird genau nach diesem Schlüssel sortiert. Unabhängig von dieser Einstellung ignoriert ein arabisches Register die Vokalzeichen und das Tatweel, ordnet أ إ آ ٱ unter ا ein und sortiert ؤ als و, ئ und ى als ي, ة als ه.</td>
+    </tr>
+    <tr>
+      <td><code>groups.enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Druckt einen Kopf über jeder Gruppe von Einträgen (<code>A</code>, <code>B</code> … oder die Strichzahl, <code>0–9</code> für Zahlen, <code>Symbols</code> für den Rest; <code>数字</code> / <code>數字</code> und <code>符号</code> / <code>符號</code> im Chinesischen).</td>
+    </tr>
+    <tr>
+      <td><code>groups.fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code></td>
+      <td>—</td>
+      <td>die der Einträge, Schriftstärke <code>700</code></td>
+      <td>Die Schrift des Buchstabenkopfs. Er wird im Zeilenabstand der Einträge gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>groups.marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td>eine Zeile des Registers</td>
+      <td>Abstand über jeder Gruppe, mit oder ohne Kopf; keiner über der ersten Gruppe, deren Abstand zur Überschrift der der Überschrift ist, und keiner oben in einer Spalte.</td>
+    </tr>
+    <tr>
+      <td><code>groups.splitMinEntries</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Wenn eine Spalte oder Seite innerhalb einer Gruppe endet: die Mindestzahl an Einträgen der Gruppe, die am Fuß der Spalte bleiben, und die Mindestzahl, die an den Kopf der nächsten übertragen werden. Mit <code>2</code> steht kein Eintrag allein unter seinem Kopf am Fuß einer Spalte, und keiner eröffnet allein eine Spalte vor der nächsten Gruppe: Eine Gruppe aus zwei oder drei Einträgen wandert als Ganzes, und eine mit vier oder mehr wird nur dort geteilt, wo zwei bleiben und zwei gehen. Ein Eintrag ist ein Eintragsblock (ein Haupteintrag oder ein Untereintrag, mit dem Kopf und den Einträgen ohne Seite, die darüber gesetzt sind); eine Gruppe, die höher als eine Spalte ist, wird dort geteilt, wo es sein muss. Der Ausgleichsschnitt eines Schlussbands folgt ebenfalls der Regel, sodass eine letzte Gruppe, die sich nicht teilen lässt, die Spalten um ihre Zeilen ungleich lang lassen kann. <code>1</code> lässt eine Spalte zwischen zwei beliebigen Einträgen enden, wie bis postext 1.27. Seit postext 1.28; früher gespeicherte Dokumente, die ein Register drucken, behalten <code>1</code> (<code>pinLegacyIndexGroupSplit</code>).</td>
+    </tr>
+    <tr>
+      <td><code>groups.symbolsLabel</code>, <code>numbersLabel</code></td>
+      <td><code>string</code></td>
+      <td>je nach Sprache; <code>'0–9'</code>, <code>'数字'</code> / <code>'數字'</code> im Chinesischen</td>
+      <td>Die Köpfe der Einträge, die mit einem Symbol bzw. einer Ziffer beginnen.</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Seitenzahlen kommen aus der Gliederung des Buchs, wie die des Inhaltsverzeichnisses: `computeOutline()` und `contentOutline()` führen die Registermarkierungen eines Texts als Einträge der Art `'indexMark'` auf (mit `indexMark.path`, `sort`, `see`, `seeAlso`, `main`, `range` und `index`), und `outlineFromDoc()` gibt jedem die Seite, auf der er gelandet ist und die der Build in `doc.indexMarks` verzeichnet (`{ sourceStart, pageIndex }` pro Markierung). `buildDocument()` umbricht ein Dokument, das sein eigenes Register druckt, erneut, bis die Nummern feststehen; eine Host-Anwendung, die ein Buch Kapitel für Kapitel umbricht, übergibt dem Kapitel mit `:::index` die Gliederung des ganzen Buchs als `PostextContent.outline`. `tocOutline()` und `indexOutline()` teilen eine Gliederung in das auf, was Inhaltsverzeichnis und Register lesen, sodass eine Host-Anwendung jedes Kapitel an den Teil binden kann, den es druckt: Die Sandbox umbricht das Registerkapitel nur dann erneut, wenn sich eine Markierung verschiebt, und das Kapitel mit dem Inhaltsverzeichnis nur, wenn sich eine Überschrift verschiebt. `contentOutline()` gibt außerdem an, ob ein Text ein Register druckt (`hasIndex`).

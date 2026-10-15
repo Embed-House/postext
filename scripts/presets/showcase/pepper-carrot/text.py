@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Write the episode in postext's comics syntax, one file per language:
-`$PC_OUT/<lang>.md` for en, ja, es, fr, cn (zh), ca, ar, pt (pt-BR).
+`$PC_OUT/<lang>.md` for en, ja, es, fr, cn (zh), ca, ar, pt (pt-BR), de.
 
     # <episode title>
 
@@ -38,7 +38,7 @@ from common import LANGS, STORY_PAGES, load_json, out
 from slots import Slot, language_texts, page_slots, reading_order
 
 SPIKY = 1.25   # outline length / convex hull length above this: a shout balloon
-HEADINGS = {"en": "Credits", "ja": "クレジット", "es": "Créditos", "fr": "Crédits", "cn": "制作人员", "ca": "Crèdits", "ar": "الاعتمادات", "pt": "Créditos"}
+HEADINGS = {"en": "Credits", "ja": "クレジット", "es": "Créditos", "fr": "Crédits", "cn": "制作人员", "ca": "Crèdits", "ar": "الاعتمادات", "pt": "Créditos", "de": "Impressum"}
 LICENCE = {
     "en": "Licence: Creative Commons Attribution 4.0 (CC BY 4.0).",
     "ja": "ライセンス：クリエイティブ・コモンズ 表示 4.0（CC BY 4.0）",
@@ -48,6 +48,7 @@ LICENCE = {
     "ca": "Llicència: Creative Commons Reconeixement 4.0 (CC BY 4.0).",
     "ar": "الترخيص: المشاع الإبداعي – نسب المصنَّف 4.0 ‏(CC BY 4.0).",
     "pt": "Licença: Creative Commons Atribuição 4.0 (CC BY 4.0).",
+    "de": "Lizenz: Creative Commons Namensnennung 4.0 (CC BY 4.0).",
 }
 
 

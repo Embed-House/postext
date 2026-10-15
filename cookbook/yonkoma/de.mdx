@@ -1,0 +1,48 @@
+---
+title: "Zwei Yonkoma-Strips auf einer Seite"
+summary: "Eine Seite mit Gag-Strips aus vier Panels: zwei Spalten zu vier Panels, der rechte Strip zuerst gelesen, jeder mit Titel in schwarzem Kasten im ersten Panel."
+plain: "Eine Seite kurzer japanischer Comicstrips mit je vier Panels, nebeneinander gesetzt wie in einem Manga-Magazin: Man liest den rechten Strip von oben nach unten, dann den linken."
+description: "Zwei Yonkoma-Strips (4-koma) auf A5 in Postext: eine Aufteilung für beide Spalten, Leserichtung von rechts nach links, Titelkasten je Strip, neun Letterings."
+question: "Wie setze ich zwei Yonkoma-Strips mit vier Panels nebeneinander, den rechten zuerst gelesen?"
+aliases: ["Yonkoma", "4-koma", "四コマ", "4コマ漫画", "Comic mit vier Panels", "Gag-Strip", "Manga-Strip", "Katzencafé", "Chibi", "von rechts nach links", "Striptitel", "maxColumnChars"]
+pageNotes: { "1": "Das japanische Original: zwei Spalten zu vier Panels; die rechte Spalte, betitelt „朝ごはん“ in einem schwarzen Kasten, zeigt eine Cafébesitzerin, die drei Katzen füttert, die linke, betitelt „いやし“, eine Büroangestellte, die sich von den Katzen trösten lassen will.", "2": "Die deutsche Ausgabe: dieselben acht Panels, betitelt „Frühstück“ und „Therapie“, die Sprechblasen in horizontalen Zeilen gesetzt: „Guten Morgen, ihr alle!“, „Jeder einen Napf, ja?“, „Ich will mich von Katzen heilen lassen…“ und im letzten Panel „Kann nicht arbeiten. So glücklich!!“." }
+---
+
+## Was Sie setzen
+
+Eine Seite aus einer Yonkoma-Anthologie, ねこ喫茶まどろみ (*Café Schlummer*), für das Rezept geschrieben und in einem weichen Chibi-Stil gezeichnet: Mugi betreibt ein Katzencafé mit einer weißen, einer schwarzen und einer dreifarbigen Katze. Yonkoma, Strips aus vier Panels, sind der hochkant gestellte Gag-Strip der Zeitung: vier gleich große Panels übereinander, Einleitung, Entwicklung, Wendung, Pointe. Eine Magazinseite trägt zwei davon nebeneinander, und weil sich die Seite von rechts öffnet, kommt der rechte Strip zuerst. Die Seite ist A5, 148 × 210 mm, mit dem japanischen Original auf der einen Seite der Doppelseite und der Ausgabe in der Sprache dieser Seite auf der anderen (Englisch auf der japanischen Seite).
+
+## Zubereitung
+
+### 1 · Die Seite in zwei Spalten zu vier teilen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die ganze Seite ist ein einziges `:::page` mit `split="* [* / * / * / *] | * [* / * / * / *]"`: zwei gleich breite Spalten, jede in vier gleich hohe Reihen geteilt. Die acht Zeilen `::panel` füllen die Zellen in Lesereihenfolge, sodass die ersten vier zum ersten Strip gehören, und bei Leserichtung von rechts nach links liegt die erste Spalte rechts (<Feature id="comic-panel-split">Seitenaufteilung</Feature>). Der Zwischenraum zwischen den Strips misst 9 mm und der zwischen den Panels 3 mm, sodass das Auge einen Strip hinuntergeht, bevor es zum nächsten wechselt.
+
+### 2 · Jeden Strip im ersten Panel betiteln
+
+<Excerpt region="balloons" />
+
+Ein Yonkoma hat einen Titel, und eine Anthologie druckt ihn in einem Kasten am Kopf des Strips. Hier ist der Titel eine Skriptzeile, `caption{title}: 朝ごはん`, und `title` ist ein eigenes Sprechblasenformat: weiß auf schwarz, bündig an den Panelrand in der oberen Ecke am Zeilenanfang gesetzt, in diesem Buch oben rechts. Er wird in jeder Ausgabe wie jede andere Zeile gelettert, sodass auf der deutschen Seite *Frühstück* und *Therapie* in denselben Kästen stehen.
+
+### 3 · Auch die Katzen als Sprecher markieren
+
+<Excerpt region="art" />
+
+Die Katzen sprechen, `kuro: にゃ`, darum markiert jedes Bild ihre Mäuler und Gesichter, wie es die von Mugi markiert. Zwei kleine Hilfsfunktionen halten die Liste kurz: `cat()` für eine Katze, die zum Leser schaut, und `nose()` für eine, deren Gesicht in einem Napf oder einem Kissen steckt. Im dritten Panel ist Mugi nicht im Bild, und ihre Zeile `mugi{tail=top}` bekommt einen Dorn zum oberen Rand.
+
+### 4 · Die Schriften jeder Ausgabe mit ihren Wörtern laden
+
+<Excerpt region="fonts" />
+
+Jede Schrift bekommt die Wörter, die sie setzt: Zen Antique die Sprechblasen, Dela Gothic One die Soundeffekte (ガツガツ, じーっ, すやぁ, ずしっ). Ein Yonkoma-Panel ist breiter als hoch, darum enden die japanischen Spalten nach sechs Zeichen (`maxColumnChars: 6`), und das Lettering ist einen halben Punkt kleiner als auf einer Erzählseite.
+
+### 5 · Das Original neben jede Ausgabe stellen
+
+<Excerpt region="editions" />
+
+Jede Sprache der Website lettert die Strips in ihrer eigenen Datei, dem japanischen Original über die Doppelseite gegenüber; die japanische Seite steht der englischen Ausgabe gegenüber. Die Reihenfolge bleibt in jeder Sprache: der rechte Strip zuerst.
+
+## Häufige Fehler
+
+- In einem kleinen Panel geht einer vertikalen Sprechblase die Höhe aus, bevor ihr die Breite ausgeht: Die Engine setzt sie in mehr, kürzere Spalten und bricht zwischen Wörtern um. Der letzte Schrei der Büroangestellten ist auf Japanisch trotzdem zu hoch für das untere Panel, darum ist er mit `break` markiert (`kyaku{shout break}`): Er bricht nach oben durch den Rahmen ins Panel darüber, statt die Katzen zu verdecken, und bleibt aus dem Seitenrand heraus.
+- Ein großer Soundeffekt wird wie eine Sprechblase von Gesichtern ferngehalten, und sein festgesteckter Punkt liegt im Sicherheitsbereich des Panels, sodass jeder Ausschnitt ihn behält: PLUMPS sitzt bei `70% 80%`, auf den Pfoten der Katzen. Das japanische ずしっ ist vertikal gesetzt und höher; an diesem Punkt verdeckte es das Gesicht der dreifarbigen Katze, und der Build warnte `comicBalloonOverflow`, darum sitzt es dort bei `86% 84%`, neben ihr.

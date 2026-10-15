@@ -12,10 +12,10 @@ const preset = (extra: Partial<Parameters<typeof createPostextGuidePreset>[0]> =
 const svgFileIds = (resources: { kind: string; svg?: { fileId: string } }[]) =>
   resources.filter((r) => r.kind === 'svg').map((r) => r.svg!.fileId);
 
-describe('the built-in guide in eight languages', () => {
-  it('lists Spanish, Catalan, English, Arabic, Simplified Chinese, Japanese, Brazilian Portuguese and French, shown as ES, CA, EN, ع, 简, 日, PT and FR', () => {
+describe('the built-in guide in nine languages', () => {
+  it('lists Spanish, Catalan, English, Arabic, Simplified Chinese, Japanese, Brazilian Portuguese, French and German, shown as ES, CA, EN, ع, 简, 日, PT, FR and DE', () => {
     const { summary } = preset();
-    expect(summary.locales).toEqual(['es', 'ca', 'en', 'ar', 'zh-Hans', 'ja', 'pt-BR', 'fr']);
+    expect(summary.locales).toEqual(['es', 'ca', 'en', 'ar', 'zh-Hans', 'ja', 'pt-BR', 'fr', 'de']);
     expect([...BUILTIN_PRESET_LOCALES]).toEqual(summary.locales);
     expect(localeShortTag('zh-Hans', summary.locales!)).toEqual({ text: '简', lang: 'zh-Hans' });
     expect(localeShortTag('ar', summary.locales!)).toEqual({ text: 'ع', lang: 'ar' });
@@ -25,6 +25,7 @@ describe('the built-in guide in eight languages', () => {
     // Upper-cased by the row style: PT.
     expect(localeShortTag('pt-BR', summary.locales!).text).toBe('pt');
     expect(localeShortTag('fr', summary.locales!).text).toBe('fr');
+    expect(localeShortTag('de', summary.locales!).text).toBe('de');
   });
 
   it('loads the Brazilian Portuguese edition for any Portuguese tag, hyphenated in Portuguese, with its own figures', async () => {

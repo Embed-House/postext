@@ -1,0 +1,53 @@
+---
+title: "Voll vokalisierte klassische Prosa mit Koranklammern"
+summary: "Eine Maqāma mit einem Vokal auf jedem Buchstaben, mit doppelter Schriftgröße als Zeilenabstand, damit die Zeichen zweier Zeilen sich nie berühren."
+plain: "Eine alte arabische Erzählung, gedruckt mit allen kleinen Vokalzeichen über und unter den Buchstaben. Die Zeilen stehen so weit auseinander, dass die Zeichen einer Zeile nicht in die nächste hineinragen."
+description: "Eine voll vokalisierte arabische Maqāma in Postext: Amiri in 14 auf 28 pt, Kaschida-Ausgleich, Koranzitate in ﴿ ﴾ und die Warnung zum Zeilenabstand erklärt."
+question: "Wie viel Zeilenabstand braucht voll vokalisiertes Arabisch?"
+aliases: ["vokalisiertes Arabisch", "Taschkil", "tashkīl", "Harakat", "Vokalzeichen", "Schadda", "Kasra", "Zeilenabstand Arabisch", "Durchschuss", "Maqāma", "Makamen", "al-Hamadhānī", "Koranklammern", "verzierte Klammern", "مقامات", "تشكيل", "حركات"]
+pageNotes: { "2": "Die erste Seite der Maqāma: der Titel المقامة المارستانية in roter Ruqʿa, der Name des Autors in fettem Naskh, eine kleine graue lateinische Zeile, dann arabischer Text im Blocksatz mit einem Vokalzeichen auf jedem Buchstaben und am Fuß ein Koranzitat zwischen verzierten Klammern ﴿ ﴾." }
+---
+
+## Was Sie setzen
+
+Vier Seiten eines klassischen arabischen Buchs, in dem jeder Buchstabe seinen Vokal trägt: al-Hamadhānīs *Maqāma vom Irrenhaus*, in der ein Wahnsinniger im Spital von Basra einen Theologen in die Flucht schlägt und sich dann in Versen selbst nennt. Voll vokalisierter Text stapelt Fatḥa und Schadda über den Buchstaben und Kasra darunter, und die Zeichen wohnen im Raum zwischen den Zeilen. Deshalb steht die Seite in Amiri mit 14 pt auf 28 pt, der doppelten Größe, und sonst nichts: Der Zeilenabstand ist die Gestaltung. Der Text steht im Blocksatz mit Kaschidas, beginnt mit einem Einzug von 1,5 em rechts und setzt seine drei Koranzitate zwischen die verzierten Klammern ﴿ ﴾ des gedruckten Muṣḥaf. Nur die lateinische Titelzeile und die Anmerkung zum Text ändern sich mit der Ausgabe.
+
+## Zubereitung
+
+### 1 · Ein Zeilenabstand der doppelten Größe
+
+Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. Der Zeilenabstand wächst nie, um Platz für die Zeichen zu schaffen: Eine Kasra unter der einen Zeile und eine Schadda auf der nächsten teilen sich denselben Zwischenraum, also wird er nach der am stärksten vokalisierten Zeile des Buchs gewählt ([Vokalzeichen](/de/docs/arabic-layout#vokalzeichen)). Bei diesem Text lässt ein Zeilenabstand vom 1,6-Fachen der Größe sechs Absätze übrig, deren Zeichen kollidieren, beim 1,9-Fachen bleibt noch einer; beim Doppelten keiner. Der Build sagt es Ihnen: Wenn zwei Zeilen kollidieren, meldet er `arabicMarksExceedLeading` für den Absatz, mit dem Zeilenabstand, den er bräuchte ([Arabischer Text](/de/docs/configuration-text#arabischer-text)).
+
+<PageShot page={2} crop="0,0.3,1,0.45" caption="Seite 2: ein Vokal auf jedem Buchstaben und 28 pt zwischen den Grundlinien, sodass die Kasras einer Zeile die Schaddas der nächsten nicht berühren." />
+
+### 2 · Eine kleine Seite mit breiter Satzbreite
+
+<Excerpt region="page" />
+
+Eine Seite von 14 × 21 cm mit seitlichen Rändern von 16 und 18 mm lässt eine Satzbreite von 106 mm, etwa zwölf vokalisierte Wörter, und siebzehn Zeilen im Raster von 28 pt. Die Zeichen lassen die Zeilen grau wirken, also bleibt die Seite schlicht: keine Kolumnentitel, cremefarbenes Papier, ein roter Titel. `mirror: true` legt den breiteren Rand an den Bund, der in einem rechts gebundenen Buch die rechte Kante einer ungeraden Seite ist ([Seitenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)).
+
+### 3 · Titel, die das Raster halten
+
+<Excerpt region="titles" />
+
+Die Überschriften haben keine Gestaltung: Der Ruqʿa-Titel sitzt in einem Zeilenkasten, der drei Rasterzeilen tief ist, und Autor und lateinische Zeile nehmen je eine Zeile von 28 pt ein, sodass die erste Textzeile auf das Raster fällt. Die lateinische Zeile ist `{dir=ltr}`, eine Überschrift von links nach rechts in einem Buch, das von rechts nach links läuft ([Richtung von Dokument, Block und Zeile](/de/docs/arabic-layout#richtung-von-dokument-block-und-textlauf)).
+
+## Varianten
+
+### Die Vokale für eine Leseausgabe entfernen
+
+`tashkil: 'strip'` entfernt die kurzen Vokale und die Schadda aus dem Satz, sodass derselbe Text mit dem 1,6-Fachen der Größe gesetzt werden kann; `'strip-vowels'` behält die Schadda.
+
+```diff
+-  textAlign: 'justify', kashida: 'auto', kashidaPatterns: 'naskh',
++  textAlign: 'justify', kashida: 'auto', kashidaPatterns: 'naskh', tashkil: 'strip',
+```
+
+### Die Warnung sehen
+
+Setzen Sie den Zeilenabstand auf das 1,6-Fache der Größe, und der Build meldet sechs Absätze mit `arabicMarksExceedLeading`, jeden mit dem Zeilenabstand, den er braucht, bei diesem Text bis zu 1,89 em.
+
+```diff
+-const LEAD = 2 * SIZE; // pt: 28
++const LEAD = 1.6 * SIZE; // pt: 22.4
+```

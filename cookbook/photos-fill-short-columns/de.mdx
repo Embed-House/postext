@@ -1,0 +1,60 @@
+---
+title: "Fotos, die wachsen, um eine kurze Spalte zu füllen"
+summary: "Jedes Foto markiert einen Sicherheitsbereich; der Spaltenausgleich darf außerhalb beschneiden und das Foto höher setzen, sodass eine kurze Spalte bündig endet."
+description: "Eine zweispaltige Magazinreportage: Fotos mit Sicherheitsbereich wachsen um ganze Rasterzeilen und füllen kurze Spalten, neben denselben Seiten ohne."
+plain: "Sagen Sie dem Layout, welcher Teil jedes Fotos immer sichtbar sein muss. Fehlen einer Spalte ein paar Zeilen, wird das Foto höher, statt eine Lücke zu lassen."
+question: "Wie lasse ich ein Foto beschneiden, damit es eine kurze Spalte füllt, ohne sein Motiv zu verlieren?"
+aliases: ["Sicherheitsbereich", "Zuschnitt nach Bedarf", "flexibles Foto", "Spaltenlücke füllen", "Fokusbereich", "safe area"]
+---
+
+## Was Sie setzen
+
+Drei Seiten eines Küstenmagazins: eine Reportage über die Handwerke einer Stadt an einer Flussmündung, mit einem randabfallenden Foto über den Auftakt und fünf Fotos in den Spalten. Der Pen setzt die Reportage zweimal aus demselben Text. In der ersten Fassung behalten die Fotos das Format ihrer Dateien, und auf <PageRef page={2}>Seite 2</PageRef> enden beide Spalten eine Zeile vor dem Ende des Rasters: die linke unter ihrem letzten Absatz, die rechte über dem Foto an ihrem Fuß. In der zweiten nennt jedes Foto den Teil des Bildausschnitts, der immer sichtbar bleiben muss, und die Engine beschneidet außerhalb davon: Auf <PageRef page={5}>derselben Seite</PageRef> wachsen die Muschelsammlerin und der Netzflicker um je eine Zeile, und beide Spalten enden auf der letzten Rasterzeile. Niemand musste die Zuschnitte wählen.
+
+## Zubereitung
+
+### 1 · Markieren, was bleiben muss, sonst nichts
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Sicherheitsbereich besteht aus vier Bruchteilen des Bilds, gemessen von seiner oberen linken Ecke. Die Engine darf das Foto in jedem Format zwischen der ganzen Datei und diesem Rechteck zeigen, so breit wie seine Spalte: höher, indem sie die Seiten beschneidet, niedriger, indem sie oben und unten beschneidet. Was außerhalb des Sicherheitsbereichs liegt, fällt im Verhältnis zu den Rändern auf jeder Seite weg, sodass Rosa, rechts der Mitte auf dem Kai, rechts der Mitte bleibt, wenn die Seiten beschnitten werden.
+
+### 2 · Den Ausgleich den Spielraum nur über die Fotos nehmen lassen
+
+Dieselbe Region stellt den Ausgleich ein. Seine üblichen Hebel fügen Weißraum hinzu: eine Zeile über einer Überschrift, Luft unter einem Foto, einen Absatz, der eine Zeile länger läuft. Hier sind sie ausgeschaltet, sodass die schlichte Fassung jede kurze Spalte so zeigt, wie sie ist. Ein Foto mit Sicherheitsbereich wird ohnehin zuerst versucht, vor jedem dieser Hebel, weil ein höheres Foto kein Loch im Text hinterlässt.
+
+### 3 · Der Sicherheitsbereich gehört zur Ressource
+
+<Excerpt region="photos" />
+
+`safeArea` steht an der Ressource neben Datei, Bildunterschrift und Platzierung, sodass ein Foto sie behält, wohin es auch gleitet, und in jedem Dokument, das es verwendet. Der Pen übergibt sie oder lässt sie weg, und das ist der einzige Unterschied zwischen den beiden Fassungen. Die Flussmündung des Auftakts zeichnet der Überschriftenstil, sie gleitet nicht und braucht deshalb keine.
+
+### 4 · Beide bauen und vergleichen
+
+<Excerpt region="builds" />
+
+Beide Dokumente entstehen aus einer Konfiguration und einem Markdown-String. Nur die Seiten, auf denen der Text weiterläuft, werden bis zum Fuß gefüllt: <PageRef page={3}>Seite 3</PageRef> schließt die Reportage ab, und auf einer Schlussseite müssen die Spalten nur untereinander gleich hoch enden, was sie hier schon tun, also wächst dort kein Foto. Die PDF-Schaltfläche baut die Fassung, die gerade auf dem Tisch liegt, und das PDF beschneidet jedes Foto auf dieselbe Weise auf seinen Rahmen.
+
+## Varianten
+
+### Ein Foto im Textfluss bei seinem Text halten
+
+Ein mit `position: 'here'` gesetztes Foto mit Sicherheitsbereich wird oben und unten beschnitten, wenn es für den Platz, der in seiner Spalte bleibt, etwas zu hoch ist, statt in die nächste zu rücken.
+
+```diff
+-const PLACEMENT = { pulpeira: { position: 'here' } }; // the rest float to the first free slot
++const PLACEMENT = { pulpeira: { position: 'here' }, faro: { position: 'here' } };
+```
+
+### Dem Ausgleich seine übrigen Hebel zurückgeben
+
+Mit den Standardwerten kommen die Fotos weiterhin zuerst, und Überschriften und Gleitobjekte übernehmen, was der Sicherheitsbereich eines Fotos nicht schafft.
+
+```diff
+-const balancing = { enabled: true, maxLinesPerHeading: 0, stretchAfterLists: false,
+-  stretchAfterFloats: false, looseParagraphs: false };
++const balancing = { enabled: true };
+```
+
+## Häufige Fehler
+
+- Ein Sicherheitsbereich, der das ganze Bild abdeckt, oder einer mit einer Seite unter 2 % davon wird ignoriert: Das Foto wird ganz gezeigt, wie ohne Sicherheitsbereich.
+- Nur Gleitobjekte in einer Spalte und Fotos im Textfluss wachsen. Ein Foto, das über beide Spalten gleitet, behält sein Format, weil sein Wachsen jede Spalte darunter zugleich verschieben würde.

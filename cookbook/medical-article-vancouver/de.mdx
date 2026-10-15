@@ -1,0 +1,73 @@
+---
+title: "Ein medizinischer Fachartikel im Vancouver-Stil"
+summary: "Ein Studienbericht auf A4 in zwei Spalten: hochgestellte Zitatnummern, ein nummeriertes Literaturverzeichnis nach Vancouver und DOIs als Links im PDF."
+plain: "Ein kurzer medizinischer Forschungsartikel, wie eine Zeitschriftenseite gesetzt. Die Autoren zitieren mit Kürzeln; Postext druckt kleine hochgestellte Zahlen in den Text und baut am Ende das nummerierte Verzeichnis, jede DOI als Link."
+description: "Ein medizinischer Fachartikel in Postext: Vancouver (NLM) über citeproc-js, hochgestellte Zitatnummern, DOI-Links im PDF, strukturierte Zusammenfassung."
+question: "Wie setze ich hochgestellte Zitatnummern und aktive DOI-Links, wie es medizinische Fachzeitschriften tun?"
+aliases: ["Vancouver", "NLM", "ICMJE", "Citing Medicine", "medizinische Fachzeitschrift", "klinische Studie", "hochgestellte Zitate", "DOI", "strukturierte Zusammenfassung", "Kernaussagen", "BibTeX", "citeproc", "Literaturverzeichnis"]
+pageNotes: { "1": "Seite 181: ein türkisblaues Kopfband mit dem Namen der Zeitschrift und der Heftzeile in weißen Versalien, darunter „ORIGINAL ARTICLE“ in Türkisblau, ein dreizeiliger Titel über eine Pilotstudie zum apothekergeführten Telemonitoring des Blutdrucks, vier Autoren mit hochgestellten Affiliationsnummern, die Affiliationen und ein Hinweis, dass der Artikel nur zur Veranschaulichung dient. Die erste Spalte enthält die strukturierte Zusammenfassung auf blassem Türkis und den Beginn der Einleitung, mit hochgestellten Zitatnummern 1 bis 5 nach den Punkten; die zweite Spalte einen Kasten „Key points“ unter einer dicken türkisblauen Linie und den Beginn der Methoden.", "2": "Seite 182: das Ende der Methoden, Ergebnisse und Diskussion in der linken Spalte; Tabelle 1, Ausgangsmerkmale mit einer türkisblauen Kopfzeile, und Abbildung 1, ein Liniendiagramm des wöchentlichen systolischen Blutdrucks zu Hause, der von 158 auf 135 mm Hg fällt, am Kopf der rechten Spalte.", "3": "Seite 183: die Angaben zum Artikel und elf nummerierte Literaturangaben in zwei Spalten, die Nummern rechtsbündig in einer eigenen Spalte, jede mit ausgeschriebener DOI als https://doi.org/…" }
+---
+
+## Was Sie setzen
+
+Drei Seiten einer klinischen Fachzeitschrift: ein Originalartikel über eine Pilotstudie, auf A4 in zwei Spalten gesetzt, wie die ICMJE-Zeitschriften sie drucken. Ein türkisblauer Zeitschriftenkopf läuft über den oberen Rand der ersten Seite, über dem Artikeltyp, einem dreizeiligen Titel, den Autoren mit hochgestellten Affiliationsnummern und einer strukturierten Zusammenfassung auf blasser Tönung. Die Autoren zitieren mit BibTeX-Schlüsseln, und die Seiten zeigen, was eine medizinische Redaktion erwartet: kleine hochgestellte Zahlen nach dem Punkt, aufeinanderfolgende Werke verbunden als 6–8, zwei andere eng gesetzt als 6,9, und ein nummeriertes Literaturverzeichnis in der Form der NLM, *Lancet 2016;387(10022):957–67*, jeweils abgeschlossen mit der DOI des Werks. Im PDF springt jede Nummer zu ihrer Literaturangabe, und jede DOI öffnet den Artikel. Die Studie ist erfunden; die elf Werke, die sie zitiert, gibt es wirklich.
+
+## Zubereitung
+
+### 1 · Vancouver, hochgestellt und verlinkt
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Unter den mitgelieferten Stilen folgt `elsevier-vancouver` dem *Citing Medicine* der NLM (Reihenfolge der Zitate, Autoren als *Ettehad D, Emdin CA*, sechs Namen und dann *et al.*, abgekürzte Zeitschriftentitel), es ist also die Datei, von der man ausgeht. Zwei Zeichenkettenersetzungen bringen sein Verzeichnis auf die Musterangaben der NLM: Die Nummer lautet *1.* statt *[1]*, und das Heft folgt auf den Jahrgang. `marker: 'superscript'` setzt die Zitate als hochgestellte Zahlen, gleich was der Stil schreibt, und `doi: 'link'` behält jede Adresse `https://doi.org/` als Link. Zwei auseinanderliegende Werke stehen eng, *6,9*: Ein Leerzeichen nach dem Komma würde sich in einer Blocksatzzeile dehnen. Im Verzeichnis gibt `labelWidth` den Nummern eine eigene Spalte, und `labelAlign: 'right'` lässt *9.* und *10.* bündig enden, sodass der Text jedes Eintrags an derselben x-Position beginnt, in seiner ersten Zeile wie in den Folgezeilen. Der AMA-Stil ist ebenfalls mitgeliefert und stellt seine Zahlen von selbst hoch, sein Verzeichnis unterscheidet sich aber von Vancouver in Interpunktion und Seitenbereichen.
+
+### 2 · Ein Titelblock über beide Spalten
+
+<Excerpt region="title" />
+
+Der Artikeltitel ist die einzige Überschrift der Ebene 1, mit dem Stil `article`, der sich über die Seite erstreckt und den Titel aus seiner Gestaltung zeichnet. Artikeltyp, Autoren, Affiliationen und Hinweis kommen aus Attributen der Überschrift. `inlineMarks` macht aus `^1^` im Attribut eine hochgestellte Affiliationsnummer, und das `\n` in den Affiliationen beginnt für jede Einrichtung eine Zeile. Das Band ist am Endformat verankert und reicht deshalb bis zur Oberkante des Papiers.
+
+### 3 · Eine strukturierte Zusammenfassung und ein Kasten mit Kernaussagen
+
+<Excerpt region="abstract" />
+
+Beide Kästen teilen sich einen Textstil: Fira Sans in 8,3 pt mit fetten eingezogenen Bezeichnungen, der Ton, den Leser von zusammenfassenden Teilen erwarten. Die Zusammenfassung trägt eine Tönung und ihre Bezeichnungen in Türkisblau; die Kernaussagen stehen unter einem 2,5 pt starken Streifen, die Bezeichnungen in Textfarbe. `snapToGrid: false` hält den Innenabstand genau, sodass der Kasten der Zusammenfassung eng an seinem Text anliegt.
+
+### 4 · Tabelle 1 und Abbildung 1 am Kopf einer Spalte
+
+<Excerpt region="resources" />
+
+Die Tabelle wird aus tabulatorgetrenntem Text gelesen, wie ihn eine Tabellenkalkulation exportiert, und ihre Kopfzeile ist türkisblau gefüllt, mit weißen fetten Bezeichnungen. Beide Ressourcen gleiten an den Kopf einer Spalte nach dem Absatz, der sie zitiert. Ist `shortLabel` auf den vollen Namen des Typs gesetzt, druckt `:ref` *(Table 1)*, wie Fachzeitschriften es schreiben, und das `numbered: false` am Titel hält die Zählung bei 1 statt 1.1.
+
+<Excerpt region="palette" />
+
+## Varianten
+
+### Den AMA-Stil verwenden
+
+Der AMA-Stil stellt seine Zahlen selbst hoch und führt Werke mit *doi:10.1056/…* auf; lassen Sie die Änderungen und die Marke weg.
+
+```diff
+-  style: 'custom', customStyle: vancouver,
+-  marker: 'superscript', collapseRanges: true, // raised 1 and 6–8, not [1] and [6–8]
++  style: 'american-medical-association',
+```
+
+### Die DOIs ohne Links drucken
+
+Für ein reines Druck-PDF bleiben die Adressen schlichter schwarzer Text.
+
+```diff
+-    doi: 'link' }, // https://doi.org/… printed whole and clickable
++    doi: 'text' },
+```
+
+### Nummern in eckigen Klammern
+
+Manche Vancouver-Zeitschriften setzen die Nummern auf die Zeile, in eckige Klammern.
+
+```diff
+-  marker: 'superscript', collapseRanges: true, // raised 1 and 6–8, not [1] and [6–8]
++  marker: 'brackets', collapseRanges: true,
+```
+
+## Häufige Fehler
+
+- Der `header` eines Überschriftenstils gilt für den ganzen Abschnitt, den diese Überschrift eröffnet; `header: { elements: [] }` am Titel würde also die Kolumnentitel von jeder Seite bis zur nächsten Überschrift mit Stil entfernen. `pages: 'body'` an den Kolumnentiteln genügt, um sie von der ersten Seite fernzuhalten.

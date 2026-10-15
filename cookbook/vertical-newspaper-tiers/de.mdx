@@ -1,0 +1,80 @@
+---
+title: "Eine vertikale Zeitungsseite in Stufen"
+summary: "Zwei Blätter einer chinesischen Zeitung von 1912, vertikal gesetzt: Text in zwei Stufen mit Linie dazwischen, Telegramme in drei, Schlagzeile durch beide."
+plain: "Zwei Seiten einer chinesischen Zeitung von 1912, gedruckt in Spalten, die von oben nach unten gelesen werden. Die Seite ist in übereinanderliegende Bänder mit einer Linie dazwischen geteilt, wie es alte Zeitungen taten."
+description: "Vertikale chinesische Zeitung in Postext: zwei Stufen (欄) zu 25 Zeichen mit Linie dazwischen, Kopf und Schlagzeile in einer Gestaltung, Telegramme dreistufig."
+question: "Wie setze ich eine chinesische Zeitungsseite vertikal, in Stufen mit Linien dazwischen?"
+aliases: ["欄", "栏", "Stufen", "vertikale Zeitung", "chinesische Zeitung", "Shenbao", "申報", "Zeitungskopf", "Schlagzeile", "Ortszeile", "Telegramme", "1912"]
+pageNotes: { "1": "Das vordere Blatt: ein zinnoberroter Zeitungskopf am rechten Rand hinunter mit „民元舊聞“ negativ in einer Kai-Schrift und der Ausgabezeile, darunter „中華民國元年　歲次壬子“ und „今日出紙兩張“; daneben die Schlagzeile „西湖公宴孫中山紀事“ in kräftiger Song, zentriert über die ganze Höhe, und ihre Unterzeile; dann der Bericht in zwei Stufen mit einer schwarzen Linie dazwischen und die nächste Meldung, „浙都督追祭攻寧陣亡將士“, die in der unteren Stufe unter einer Haarlinie beginnt, mit Unterzeile und Ortszeile.", "2": "Das zweite Blatt: oben ein Kopf über die Breite mit dem Namen der Zeitung und „第二張“; der Gedenkbericht endet in der oberen Stufe, die Meldung über das Siegesdenkmal füllt den Rest, ihre Inschrift in Kai zwei Zeichen tiefer; links die Telegramme in einem Kasten mit drei Stufen unter einem zinnoberroten „電報“; das Impressum quer über den Fuß." }
+---
+
+## Was Sie setzen
+
+Zwei Blätter einer chinesischen Zeitung, wie sie 1912 aussah, im ersten Jahr der Republik, als die Zeitungen noch die Seite hinunter gesetzt wurden. Der Text stammt aus der Shanghaier *Shenbao*: Sun Yat-sen bei einem Bankett am Westsee, wo Chen Qimei aufstand, um gegen eine Rede Einspruch zu erheben, und wieder aufstand, um sich zu entschuldigen; die Gedenkfeier für die Soldaten aus Zhejiang, die bei der Einnahme Nanjings fielen; das Siegesdenkmal, das Hangzhou für die heimkehrende Armee errichtete. Vier Telegramme aus der ersten Ausgabe des Amtsblatts der Provisorischen Regierung füllen einen Kasten. Der Text läuft in zwei Stufen (欄) zu 25 Zeichen mit einer Linie dazwischen, die Telegramme in drei. Ein zinnoberroter Zeitungskopf und die Schlagzeile, über die ganze Seitenhöhe gesetzt, eröffnen das vordere Blatt. <RecipeLink slug="newspaper-front-page">Titelseite einer Zeitung</RecipeLink> baut dieselbe Seite horizontal.
+
+## Zubereitung
+
+### 1 · Zwei Spalten in zwei Stufen verwandeln
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Mit `writingMode: 'vertical-rl'` ist die Seite eine um eine Vierteldrehung gedrehte horizontale Seite, also stapelt `layoutType: 'double'` zwei Stufen, die obere wird zuerst gelesen, und die Spaltenlinie wird zu einer Linie quer über die Seite zwischen ihnen ([vertikale Schrift](/de/docs/configuration-page-layout#vertikale-schrift)). Das Zeichenraster setzt jede Stufe auf 25 Zeichen in 五號 (10,5 pt), das lange Ende einer Zeitungsspalte, und die Seite auf 29 Zeilen; es rundet den Spaltenabstand auf zwei Geviert und vergrößert die Ränder, sodass die Stufen mittig dazwischen sitzen ([Zeichenraster](/de/docs/configuration-east-asian#zeichenraster)).
+
+Der Text bleibt in zwei Stufen, und nur die Telegramme brauchen drei, darum kommen sie in einen Kasten: `span="page"` macht ihn so hoch wie den Satzspiegel, `placement="bottom"` lässt ihn an den Fuß des Flusses gleiten, der auf einer vertikalen Seite der linke Rand ist, und `:::columns{count=3}` teilt ihn in Stufen. `columnGap` ist das, was drei Stufen zu 18 Zeichen à 9 pt von den 546 pt des Satzspiegels übrig lassen, sodass jede Stufe ganze Zeichen fasst.
+
+<PageShot page={2} crop="0.04,0.12,0.36,0.78" caption="Seite 2: die Telegramme in drei Stufen, der Streifen an der Oberkante des Kastens als Linie an seiner rechten Seite hinunter gezeichnet." />
+
+### 2 · Zeitungskopf und Schlagzeile in eine Gestaltung setzen
+
+<Excerpt region="front" />
+
+Die Schlagzeile des Aufmachers musste unter dem Zeitungskopf beide Stufen überqueren. Eine Überschrift mit `span: 'page'` wird als Auftakt am Kopf einer Seite gesetzt, eine zweite nach dem Zeitungskopf hätte also eine eigene Seite begonnen. Die H1 der Seite ist darum der Aufmacher, und ihr Überschriftenformat zeichnet den Zeitungskopf über der Schlagzeile: einen zinnoberroten Block von 6,5 Zeilen Tiefe mit dem Namen der Zeitung negativ und darunter die Ausgabezeile: das Jahr der Republik und des Zyklus und 今日出紙兩張, „heute zwei Blätter“; dann die Schlagzeile in Noto Serif TC 900 zu 44 pt. Im Fluss ist die Breite der Gestaltung die Höhe des Satzspiegels auf dem Blatt, also zentriert `size: { width: 'fill' }` mit `align: 'center'` die Schlagzeile über beide Stufen. Die Gestaltung ist 13 Zeilen tief, eine ganze Zahl von Rasterzeilen, sodass der Text danach auf einer Rasterzeile beginnt.
+
+<PageShot page={1} crop="0.54,0.1,0.44,0.82" caption="Seite 1: der Zeitungskopf, die Schlagzeile zentriert durch beide Stufen, die Unterzeile daneben und die Ortszeile am Kopf ihrer Zeile." />
+
+### 3 · Jede Meldung mit einer Überschriftengestaltung eröffnen
+
+<Excerpt region="heads" />
+
+Eine Überschriftengestaltung in der Spalte lebt innerhalb ihrer Stufe. Ihre Linie ist im Fluss `direction: 'horizontal'` und läuft darum auf dem Blatt die Stufe hinunter, eine Haarlinie zwischen zwei Meldungen. Die Schlagzeile beginnt am Kopf der Stufe, die Unterzeile zwei Zeichen tiefer, und die Ortszeile nennt Ort, Zeitung und Tag, an dem der Bericht erschien. `minHeight` hält jeden Kopf vier Zeilen tief, sodass der Text unter jedem Kopf auf dem Raster beginnt.
+
+### 4 · Das zweite Blatt mit einem Kopf versehen und am Fuß zeichnen
+
+<Excerpt region="pagehead" />
+
+Kolumnentitel bleiben auf einer vertikalen Seite horizontal, wie es clreq beschreibt. Der Rahmen der Kopfzeile ist der Rand über den Stufen; das Raster vergrößert diesen Rand, und `HEAD` wiederholt die Summe des Rasters, sodass die Linie 6 mm über dem ersten Zeichen sitzt. `pages: 'body'` überlässt Seite 1 dem Zeitungskopf. Das Impressum ist ein Attribut der H1, sodass die englische und die spanische Ausgabe unter denselben chinesischen Seiten jeweils ihre eigene Zeile drucken.
+
+### 5 · Jede Stimme mit dem Text laden, den sie setzt
+
+<Excerpt region="voices" />
+
+Fontsource liefert jeden Schnitt dieser Schriften als etwa hundert Dateien, und `loadCjkFonts` holt diejenigen, die ein Text berührt. Noto Serif TC 400 bekommt das ganze Beispiel; ihre Schnitte 700 und 900 nur die Schlagzeilen und die Beschriftungen der Telegramme, Noto Sans TC die Zeilen des Zeitungskopfs, Ortszeilen und das Impressum, und LXGW WenKai TC die Unterzeilen, die Inschrift und den Namen der Zeitung. Eine Schrift, die zu wenig Text bekommt, lässt die Aufnahme scheitern (C12) und nennt die Zeichen, die sie von einer anderen Schrift geborgt hat.
+
+## Varianten
+
+### Den Telegrammen vier Stufen geben
+
+Vier Stufen zu 14 Zeichen passen in dieselbe Höhe, und der Kasten wird auf die Zeilen verschmälert, die sie brauchen.
+
+```diff
+-  columnGap: pt((HEIGHT - 3 * 18 * 9) / 2), // three tiers of 18 characters of 9 pt
++  columnGap: pt((HEIGHT - 4 * 14 * 9) / 3), // four tiers of 14 characters of 9 pt
+```
+
+Im Markdown `:::columns{count=4}`.
+
+### Die Meldungen in einer einzigen Stufe setzen
+
+Eine Stufe von 52 Zeichen läuft über die Höhe des Satzspiegels, 193 mm das Blatt hinunter für jede Zeile. Jeder Meldungskopf belegt nun vier Zeilen der ganzen Seite, und aus den zwei Blättern werden drei.
+
+```diff
+-  layoutType: 'double', writingMode: 'vertical-rl', // binding 'auto' becomes 'right'
++  layoutType: 'single', writingMode: 'vertical-rl', // binding 'auto' becomes 'right'
+```
+
+Mit `charsPerLine: 2 * CHARS + 2` im Raster.
+
+## Häufige Fehler
+
+- Die Noto Serif TC von Fontsource deklariert 爲, die Form, die die *Shenbao* druckte, im Bereich einer ihrer Dateien, aber diese Datei hat kein Glyph dafür: Der Canvas zeichnete es in einer Systemschrift, und das PDF hatte keines (C25). Die Berichte setzen 為.
+- Die Transkriptionen in Wikisource haben Fehler, die die Seite korrigiert: 己紀 für 已紀 und zweimal 倍侍 für 陪侍 im Bankettbericht; im Gedenkbericht 勸勵一番現在將土, mit 土 für 士 und dem Objekt nach 一番, hier gesetzt als 勸勵現在將士一番, „ermutigte die anwesenden Offiziere und Soldaten“. Die Seite setzt außerdem die Standardform von vier Varianten: 寧 für 寗, 總 für 縂 (dreimal) und 決 für 决 (zweimal) in den Telegrammen, 刊 für 刋 in der Inschrift.
+- LXGW WenKai TC zeichnet, so wie Fontsource sie ausliefert, 為 als 爲, sodass die Inschrift in Kai die ältere Form zeigt, die dem Song-Text fehlt.
+- Die drei Stufen des Kastens sind Drittel des Satzspiegels und fluchten nicht mit den zwei Stufen des Textes. Eine Zeitung setzt einen solchen Teil auf ein eigenes Raster; die Linie am rechten Rand des Kastens hält die beiden Raster auseinander.

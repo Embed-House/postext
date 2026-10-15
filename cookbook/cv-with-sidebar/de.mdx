@@ -1,0 +1,63 @@
+---
+title: "Einseitiger Lebenslauf mit Seitenleiste"
+summary: "Ein einseitiger Lebenslauf in A4, dessen pflaumenfarbene Seitenleiste ein Kasten in einer linken Spalte nur für Gleitobjekte ist, mit rechtsbündigen Daten."
+plain: "Ein einseitiger Lebenslauf für eine Buchgestalterin, mit einem farbigen Streifen am linken Rand für Kontaktdaten und Fähigkeiten. Die Daten jeder Stelle stehen rechtsbündig."
+description: "Ein einseitiger Lebenslauf mit anderthalb Spalten: Ein pflaumenfarbener Kasten füllt die Seitenspalte, Kästen der Kopfzeile tragen die Farbe bis zum Blattrand."
+question: "Wie gestalte ich einen einseitigen Lebenslauf mit farbiger Seitenleiste und rechtsbündigen Daten?"
+aliases: ["Lebenslauf", "CV", "résumé", "Curriculum Vitae", "zweispaltiger Lebenslauf", "Seitenleiste", "farbige Seitenleiste", "Daten rechtsbündig", "Fähigkeiten als Tags", "currículum"]
+pageNotes: { "1": "Ein Lebenslauf in A4. Ein pflaumenfarbenes Band läuft am linken Blattrand von oben bis unten; an seinem Kopf steht ein Stapel aus fünf leinengebundenen Büchern in Aprikose, Weiß, Beere und Flieder auf der Höhe der Grundlinie des Namens. Darunter eröffnen aprikosenfarbene Versalien die Abschnitte, deren Text weiß ist: „Contact“; „Skills“ und „Tools“, als abgerundete Pillen gesetzt; „Languages“, „Education“, „Teaching“ und „Outside work“. Rechts auf der weißen Seite „Irene Salcedo“ in einer großen Serifenschrift, „BOOK DESIGNER AND ART DIRECTOR“ in kleinen beerenfarbenen Versalien, ein fünfzeiliges Profil, dann „Experience“, eine beerenfarbene Serifenüberschrift mit einer Haarlinie bis zum Rand, drei Stellen, deren Titel links stehen, die Daten rechtsbündig auf derselben Zeile und der Arbeitgeber kursiv darunter, eine Liste „Selected books“ und ein einzeiliges Impressum." }
+---
+
+## Was Sie setzen
+
+Den Lebenslauf von Irene Salcedo, einer erfundenen Buchgestalterin in Madrid, auf einem A4-Blatt. Ein pflaumenfarbenes Band von 66 mm Breite läuft am linken Rand von der Oberkante des Blattes bis zu seinem Fuß. An seinem Kopf steht ein im Code gezeichneter Stapel leinengebundener Bücher auf der Höhe der Grundlinie ihres Namens. Darunter folgen ihre Kontaktdaten, ihre Fähigkeiten und Werkzeuge als Pillen, ihre Sprachen, Ausbildung und Lehrtätigkeit und was sie außerhalb der Arbeit tut. Ihr Name in der Hedvig Letters Serif zu 46 pt eröffnet eine Textspalte von 118 mm mit einem fünfzeiligen Profil, drei Stellen und einer Liste der Bücher, die sie gestaltet hat. Jeder Stellenkopf setzt den Titel links und die Daten rechtsbündig auf dieselbe Grundlinie, den Arbeitgeber kursiv darunter. Der erste Titel der Seitenleiste teilt sich eine Grundlinie mit der Funktion unter dem Namen.
+
+## Zubereitung
+
+### 1 · Die Abschnitte in einem Seitenkasten verschachteln
+
+<Excerpt region="sections" />
+
+Innerhalb der Spalte ist das Band der Kasten aus [der kurzen Antwort](#die-kurze-antwort). Sein Direktivenblock steht vor dem Namen, deshalb setzt `span="side"` ihn an den Kopf der Spalte nur für Gleitobjekte. Die Abschnitte sind darin verschachtelte Kästen ohne eigene Füllung, sodass die Pflaumenfarbe ohne Unterbrechung von „Contact“ bis „Outside work“ läuft. Als getrennte Seitenkästen stünden sie 4,7 bis 9,1 mm auseinander, selbst mit `marginBottom` auf 0. Die Pillen sind etwa 3,9 mm hoch. „Skills“ und „Tools“ verwenden ein eigenes Abschnittsformat, `chips`, dessen Zeilenabstand von 16 pt 1,8 mm zwischen den Reihen lässt; die 12,4 pt der anderen Abschnitte ließen einen halben Millimeter ([Chip-Formate](/de/docs/configuration-styles#chip-stile)).
+
+### 2 · Die Ränder um die Spalte bemalen
+
+<Excerpt region="margins" />
+
+Die Seitenspalte liegt innerhalb der Seitenränder, deshalb endet der Kasten der Seitenleiste 9 mm vor der linken Kante und 18 mm vor der Oberkante. Drei Kästen in der Kopfzeile füllen den oberen Rand über der Spalte, den linken Rand von oben bis unten und den unteren Rand unter der Spalte. Elemente der Kopfzeile werden nach dem Text und über ihm gemalt, deshalb hält das Rezept sie in den Rändern, wo kein Text läuft. Sie wiederholen sich außerdem auf jeder Seite, und eine zweite Seite trüge das Band ebenfalls ([Kopf- und Fußzeilen](/de/docs/configuration-page-layout#kopf--und-fußzeilen)). Der obere und der linke Kasten überlappen den Kasten der Seitenleiste um 0,5 mm, und der Fußkasten reicht 1 mm über den Fuß der Spalte hinauf, über das Ende des Seitenleistenkastens, sodass an den Stößen keine Haarlinie Papier durchscheint. Das `:::space`, das den Kasten der Seitenleiste schließt, führt ihn bis 278,0 mm hinunter, 0,8 mm über dem Fuß der Spalte, mit 2,76 Zeilen auf Englisch und 1,76 auf Spanisch.
+
+### 3 · Den Namen an den Kopf der Textspalte setzen
+
+<Excerpt region="name" />
+
+Die H1 behält den Standardwert `span: 'column'`. Mit `'page'` wird sie zu einem Auftakt über beide Spalten; nach dem Kasten der Seitenleiste gesetzt, wandert sie auf Seite 2, und dort beginnt die Seitenspalte unter dem Namen, 45,9 mm tiefer. `breakBefore` ist aus, weil der Kasten der Seitenleiste schon auf der Seite steht: Mit einem Umbruch wandern der Name und die ganze Textspalte auf Seite 2. Das `marginBottom` der Ebene von einer Rasterzeile lässt das Profil bei 45,9 mm statt bei 41,3 mm beginnen. Der obere Innenabstand des Seitenleistenkastens ist `ROLE_Y`, die Höhe des Namens plus der Abstand darunter, sodass der erste Titel der Seitenleiste und die Funktion eine Grundlinie teilen, 39,3 mm unter der Oberkante.
+
+### 4 · Die Daten auf die Zeile des Stellentitels setzen
+
+<Excerpt region="jobs" />
+
+Jede Stelle ist eine H3, deren Attribute Arbeitgeber und Daten tragen: `### Art director {org="Ediciones del Albardín, Madrid" dates="2021 – present"}` ([Überschriftenattribute](/de/docs/document-format#attribute-von-überschriften)). Titel und Daten sind am Kopf desselben Containers verankert, je an einer Ecke, in gleicher Größe und mit gleichem Zeilenabstand, sodass sie auf einer Grundlinie stehen. Der Titel ist auf 84 mm begrenzt und bricht um: Ein langer Titel geht auf eine zweite Zeile über, bevor er die Daten erreicht, und der Arbeitgeber rückt darunter. Mit dem Abstand darüber füllt jede Abschnittsüberschrift genau drei Rasterzeilen, was jeden Stellenkopf 9 pt unter eine Rasterzeile setzt, ob er einer Abschnittsüberschrift oder einer Liste folgt.
+
+## Varianten
+
+### Das Band umfärben
+
+Jede Farbe ist einmal in `palette` notiert, und die Kästen des Bandes, der Kasten der Seitenleiste, die Chips, die Funktion, die Überschriften und die Zeichnung nehmen sie von dort. Diese drei Zeilen färben Band, Akzent und Chips petrol.
+
+```diff
+-  band: '#3a2235', // the sidebar
++  band: '#1d3b3a', // the sidebar
+-  accent: '#8f3b62', // on paper: the role and the section heads (7.1:1)
++  accent: '#2b5f5b', // on paper: the role and the section heads (7.3:1)
+-  chip: '#744d6c', // on the band: the skill chips
++  chip: '#456d69', // on the band: the skill chips
+```
+
+### Abbildungen in dieselbe Spalte gleiten lassen
+
+Das <RecipeLink slug="textbook-margin-column">Lehrbuch mit Randspalte</RecipeLink> setzt Abbildungen, seitliche Bildunterschriften und Glossen in eine Spalte nur für Gleitobjekte am Außenrand jeder Seite.
+
+## Häufige Fehler
+
+- Passen Sie das `:::space` an die Seite an. In der englischen Ausgabe beenden 2,76 Zeilen den Kasten 0,8 mm über dem Fuß der Spalte. Bei 2,96 Zeilen läuft er 0,1 mm über den Fuß hinaus, und die ganze Seitenleiste wandert auf Seite 2; bei 2,66 öffnet sich ein Streifen Papier zwischen dem Kasten und dem Fußkasten.
+- Ein Kasten in der Gestaltung des Namens taugt nicht, um das Band zu malen. Die Überschrift reserviert die Höhe des Kastens, ein Kasten so hoch wie das Band ließe sie also mehr als die 260,8 mm der Spalte reservieren, und der Text wanderte auf Seite 2. Mit `reserve: false` reserviert der Kasten nichts, aber eine Gestaltung in der Spalte wird am Fuß der Spalte abgeschnitten, und der untere Rand bliebe weiß.

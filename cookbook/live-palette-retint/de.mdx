@@ -1,0 +1,65 @@
+---
+title: "Ein ganzes Dokument aus einer Palette umfärben"
+summary: "Jede Farbe der Konfiguration ist mit einem Paletteneintrag verknüpft, sodass ein Palettenwechsel ein Festivalprogramm in Rot, Petrol, Violett oder Sand setzt."
+plain: "Ein quadratisches Faltblatt für ein Musikfestival in vier Farbschemata. Es zeigt, wie Sie jede Farbe im Dokument auf einmal ändern, indem Sie einen neuen Satz Farben wählen."
+description: "Ein Festivalprogramm auf zwei Seiten: Überschriften, Fettes, Aufzählungszeichen, Chips, Farbfelder, Tabellen, Kolumnentitel und Pagina aus einer Palette."
+question: "Wie ersetze ich das Standardblau von Überschriften, Fettem und Aufzählungszeichen durch Farben meiner Palette?"
+aliases: ["Farbpalette", "umfärben", "neu einfärben", "Farbvariante", "Themenfarben", "Hausfarben", "Markenfarben", "main-color", "paletteId", "Standardblau", "Live-Vorschau", "Konfigurations-Cache", "colorPalette"]
+pageNotes: { "1": "Die Vorderseite des Programms: ein rotes Feld über der oberen Hälfte mit der Dachzeile „Almarén · 12–18 June 2027“, dem Titel „Riverside Music Week“ in Weiß und einer Wellenform aus blassen, abgerundeten Balken; darunter beginnen zwei Spalten im Flattersatz mit einer Einleitung und listen Samstag bis Montag auf, jede Veranstaltung mit einer fetten roten Uhrzeit und einem Chip: „Free“ rot umrandet oder der Preis in Weiß auf Rot.", "2": "Die Rückseite: ein roter Legendenbalken über einem Raster aus sechs Spielorten mal sieben Tagen, die Namen der Spielorte rechtsbündig an den Kacheln, rote Quadrate für Konzerte mit Eintritt und blassrosa für freie Veranstaltungen, mit einer Zeichenerklärung aus Farbfeldern; dann Dienstag bis Freitag in zwei Spalten, ein Kasten „Tickets“ unter einem roten Streifen, das Impressum und die Pagina 2 in einer roten Pille." }
+---
+
+## Was Sie setzen
+
+Das Programm der *Riverside Music Week*, eines erfundenen Festivals in einer Flussstadt, gedruckt als quadratisches Faltblatt von 200 mm. Die Vorderseite hat ein Farbfeld über der oberen Hälfte, mit dem Titel in Syne 800 mit 46 pt und einer Wellenform aus blassen, abgerundeten Balken; darunter listen zwei Spalten im Flattersatz die Woche Tag für Tag auf, jede Veranstaltung mit einer fetten Uhrzeit und einem Preis-Chip. Die Rückseite zeigt die Woche als Raster farbiger Kacheln unter einem Legendenbalken, listet dann Dienstag bis Freitag auf und endet mit einem Ticketkasten unter einem Streifen und dem Impressum. Über den Seiten zeigt der Pen vier Andrucke, in Rot, Petrol, Violett und Sand. Ihre Farben kommen aus sieben nach ihrer Rolle benannten Paletteneinträgen, dazu `main-color`, auf die Bandfarbe gesetzt. Klicken Sie einen Andruck an, und das ganze Dokument wird in dieser Palette neu gebaut.
+
+## Zubereitung
+
+### 1 · Farben nach ihrer Aufgabe benennen
+
+<Excerpt region="palette" />
+
+`band` füllt die Farbfelder, `onBand` färbt die darauf gesetzte Schrift, `deep` ist der Akzent für Schrift auf weißem Papier und `tint` die helle Füllung. Jede Farbvariante setzt diese vier und teilt die drei neutralen Farben. Gegen Weiß misst das Petrolband 3,3:1 und das Sandband 2,1:1, zu wenig für weiße Schrift auf dem Band oder für bandfarbene Schrift auf Papier. Diese beiden Paletten setzen `onBand` in Schwarz, und alle vier setzen Fettschrift und Überschriften in `deep`, einem dunkleren Ton, der auf Weiß zwischen 5,99:1 (Sand) und 8,40:1 (Violett) misst.
+
+### 2 · Alles verknüpfen, was die Engine blau drucken würde
+
+<Excerpt region="links" />
+
+Das Blau der Engine ist ein Paletteneintrag, `main-color` (#295AA3), und [ihre Voreinstellungen](/de/docs/configuration-fonts-colors-viewers#die-standardpalette) richten Überschriften, Fettes, Kursives, Verweise, Aufzählungszeichen und den Kolumnentitel darauf aus. Hier trägt jedes davon eine Paletten-ID: Uhrzeiten und Schlüsselbegriffe fett in `deep`, Kursives in Schwarz, Aufzählungszeichen in `band`, und auf Seite 2 ein Kolumnentitel in `deep` und die Pagina in `onBand` auf einer Pille in `band`. `retint()` richtet auch `main-color` auf das Band aus; da diese Konfiguration jede Farbe setzt, ändert das auf diesen Seiten nichts, aber ein später hinzugefügtes Format ohne Farbe nimmt dann das Band statt Blau. Der Ticketkasten setzt keine eigene Farbe für Fettes, also erbt er `bodyText.boldColor` mit seiner Paletten-ID, und sein Fettes ändert sich mit der Farbvariante.
+
+### 3 · Das Bildwerk mit Gestaltungskästen zeichnen
+
+<Excerpt region="opener" />
+
+Der Auftakt ist ein [Gestaltungsplatz](/de/docs/configuration-page-layout#kastenelemente) mit einem Kasten, der über die obere Kante randabfallend läuft, 29 abgerundeten Balken für die Wellenform und drei Textelementen: dem eigenen Text der Überschrift als Titel sowie Dachzeile und Vorspann aus ihren Attributen. Die Balken sind Kästen statt eines SVG, also ist ihre Füllung eine weitere Verknüpfung mit `tint`, die der Palette folgt; ein SVG müsste für jede Farbvariante neu gezeichnet und neu registriert werden. Für sich allein ließe der Bandkasten den Text auf der Rasterlinie 2,4 mm unter dem Band beginnen; `minHeight`, 18 Zeilen oder 85,1 mm unter dem oberen Rand, reserviert mehr und rückt die erste Zeile auf 7 mm darunter.
+
+### 4 · Die Palette die Tabelle füllen lassen
+
+<Excerpt region="grid" />
+
+Das Raster ist eine Tabellenressource außerhalb der Konfiguration. Ihre [Zellfüllungen](/de/docs/document-format#blockeinbettung-optional-ausdrückliche-platzierung-im-text) tragen dennoch Paletten-IDs, und die Engine löst sie aus der Palette des Dokuments auf, wenn sie die Tabelle setzt; `:swatch{color="band"}` und `:swatch{color="tint"}` der Legende in der Tabellennotiz werden genauso aufgelöst. Die Chips in den Auflistungen verwenden dieselben zwei IDs, sodass ein gefülltes Quadrat, der Chip neben einer Uhrzeit und das Farbfeld der Legende in jeder Farbvariante übereinstimmen.
+
+### 5 · Die Palette tauschen und neu bauen
+
+<Excerpt region="live" />
+
+Jede Schaltfläche ruft `retint()` auf, das die Einträge der Farbvariante dem `colorPalette` des einen Konfigurationsobjekts zuweist, und baut neu. Die Engine löst eine Konfiguration einmal auf und [speichert das Ergebnis zu diesem Objekt im Cache](/de/docs/configuration-programmatic-usage#globaler-zustand-innerhalb-einer-seite); seit postext 1.25 prüft jeder Build zuerst, ob das Objekt noch so lautet wie damals, sodass eine an Ort und Stelle gemachte Änderung erneut aufgelöst wird. Jede Verknüpfung folgt: Text, Listen, Chips und Legendenbalken, und mit ihnen Band, Wellenform, Kolumnentitel, Paginapille und „Table 1“. Die vier Andrucke behalten ihre Farben, wenn sich die Palette erneut ändert, weil jedes Dokument die Farben enthält, mit denen es gesetzt wurde. Der Pen baut sie mit `buildDocumentWithFonts`; wenn eine Schaltfläche angeklickt wird, sind die Schriften geladen, und `buildDocument` genügt.
+
+## Varianten
+
+### Fettschrift in Schwarz halten
+
+Überlassen Sie den Akzent den Überschriften, Aufzählungszeichen und Chips, und setzen Sie Uhrzeiten und Schlüsselbegriffe in der Textfarbe.
+
+```diff
+-  boldColor: col('deep'), referenceColor: col('deep'), textAlign: 'left', firstLineIndent: pt(0) };
++  boldColor: col('ink'), referenceColor: col('deep'), textAlign: 'left', firstLineIndent: pt(0) };
+```
+
+### Jedem Teil eines Buchs eine eigene Farbe geben
+
+Für Farben, die sich innerhalb eines Dokuments von Teil zu Teil ändern, siehe <RecipeLink slug="parts-in-colour">Teile in Farbe aus einem einzigen Attribut</RecipeLink>.
+
+## Häufige Fehler
+
+- Ein Bild behält die Farben, mit denen es gezeichnet wurde. Ein SVG oder ein Foto folgt der Palette nicht, deshalb besteht die Wellenform aus Gestaltungskästen.
+- Eine ID, die die Palette nicht enthält, fällt auf den daneben geschriebenen Hexwert zurück. Vertippen Sie sich bei einer `paletteId`, bleibt diese Farbe in jeder Farbvariante im Hausrot.

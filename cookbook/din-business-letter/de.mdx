@@ -1,0 +1,51 @@
+---
+title: "Geschäftsbrief nach DIN 5008"
+summary: "Ein zweiseitiges deutsches Angebot auf A4. Der Betreff ist die H1, und ihr Design setzt Briefkopf, Anschrift und Informationsblock an die Stellen von Form B."
+plain: "Ein zweiseitiges Preisangebot einer deutschen Fensterwerkstatt. Es zeigt, wie man Anschrift und die übrigen Teile eines Geschäftsbriefs dorthin setzt, wo die deutsche Norm sie vorsieht, damit er in einen Fensterumschlag passt."
+description: "Der Code für einen Geschäftsbrief nach DIN 5008 in Postext: Anschrift im Umschlagfenster, Informationsblock, Falzmarken, Geschäftsangaben und Seite 2 von 2."
+question: "Wie setze ich Anschrift und Informationsblock eines Briefs millimetergenau an die Stellen der DIN 5008?"
+aliases: ["Geschäftsbrief", "DIN 5008", "Form B", "Umschlagfenster", "Fensterbriefumschlag", "Anschriftfeld", "Briefkopf", "Rücksendeangabe", "Absenderzeile", "Informationsblock", "Falzmarken", "Lochmarke", "Seite 2 von 2", "Unterschrift", "Angebot", "business letter"]
+pageNotes: { "1": "Das erste Blatt eines deutschen Angebots der Fensterwerkstatt Tessin. Ein berlinblaues Band oben trägt die weiße Zeichnung eines Kastenfensters, den Namen „Tessin“ mit „FENSTERWERKSTATT · BERLIN“ darunter und rechts die drei Spezialgebiete der Werkstatt. Unter dem Band stehen die Rücksendezeile und eine vierzeilige Anschrift innerhalb von vier kleinen Eckwinkeln, und der Informationsblock läuft rechts hinab, das Datum abgesetzt. Der fette Betreff nennt das Angebot 2026-117 über 24 Kastenfenster. Der Text im Blocksatz ist nach deutschen Regeln getrennt („mundgebla-sene“ beendet die vierte Zeile des ersten Absatzes) und schließt mit einer Liste von sechs Leistungen. Graue Falz- und Lochmarken sitzen am linken Rand, und die Geschäftsangaben laufen am Fuß in drei Spalten.", "2": "Das zweite Blatt hat oben einen dünnen blauen Streifen und darunter eine Zeile mit dem Namen der Firma, dem Zeichen und dem Datum, rechts „Seite 2 von 2“. Der Text nennt Preis und Zeitplan und bietet an, einen restaurierten Flügel zur Eigentümerversammlung mitzubringen. Dann folgen „Mit freundlichen Grüßen“, eine Unterschrift in blauem Kugelschreiber, Name und Funktion sowie drei Anlagen unter „Anlagen“. Falz- und Lochmarken und die Geschäftsangaben wiederholen sich vom ersten Blatt." }
+---
+
+## Was Sie setzen
+
+Die Fensterwerkstatt Tessin, eine erfundene Berliner Werkstatt, die Kastenfenster restauriert, schickt der Hausverwaltung eines Mietshauses ein Angebot. Es umfasst zwei A4-Blätter auf Deutsch, angelegt nach Form B der DIN 5008. Ein berlinblaues Band oben trägt Logo und Namen der Werkstatt. Darunter steht jeder Teil dort, wo die Norm ihn vorsieht: Rücksendezeile und Anschrift im Feld von 85 × 45 mm, das durch das Fenster eines DL-Umschlags sichtbar ist, der Informationsblock 125 mm vom linken Rand, der fette Betreff zwei Leerzeilen unter dem Feld sowie Falz- und Lochmarken bei 105, 148,5 und 210 mm. Die Geschäftsangaben laufen am Fuß beider Blätter in drei Spalten. Das zweite Blatt wiederholt das Zeichen neben „Seite 2 von 2“ und endet mit einer in Code gezeichneten Unterschrift.
+
+## Zubereitung
+
+### 1 · Die erste Seite millimetergenau auf dem Blatt festlegen
+
+<Excerpt region="answer" highlight="1-4" />
+
+`at()` verankert ein Element mit seiner linken oberen Ecke an `'page'`, dem Endformat ([Platzierung von Elementen](/de/docs/configuration-page-layout#platzierung-von-elementen)), sodass jedes `x` und `y` ein Abstand von der Ecke des Blatts ist und die Maße der Norm unverändert übernommen werden: die Anschrift bei 25 mm von links und 62,7 mm von oben, das erste Label des Informationsblocks bei 125 und 50. Diese Elemente bilden das Design der H1. Der Text der Überschrift ist der Betreff (`{titleText}`), und ihre Attribute enthalten Anschrift und Bezugszeichen; so hält die Konfiguration das Briefpapier und das Markdown den Brief. Der Betreff bei 100,6 mm ist das unterste Element, daher reserviert die Überschrift das Blatt bis zum Fuß des Betreffs. `marginBottom` fügt die zwei Leerzeilen hinzu, und die Anrede beginnt auf der nächsten Rasterlinie, bei 117 mm.
+
+Die Anschrift ist ein einziges Attribut mit `\n` zwischen den Zeilen, und jedes `\n` beginnt im Designtext eine neue Zeile. Die Überschrift steht in der Textspalte, und ihr Design zeichnet trotzdem Band, Logo und Namen über dem Kopfsteg von 27 mm, da jedes Element an der Seite verankert ist.
+
+### 2 · Den Informationsblock an einem verankerten Label aufreihen
+
+<Excerpt region="info" />
+
+Nur das erste Label ist am Blatt verankert. Jedes weitere Label hängt `'below'` am vorigen und jeder Wert mit `'align-top'` und 29 mm Versatz an seinem Label, sodass eine zu `INFO` hinzugefügte Zeile keine Koordinaten braucht. Designtext setzt seine Grundlinie bei 80 % der Zeilenhöhe. Das Label zu 7 pt und der Wert zu 9 pt setzen beide `lineHeight: pt(ROW)`, eine Zeile von 12 pt, und teilen sich so auf jeder Zeile von 4,23 mm eine Grundlinie.
+
+### 3 · Den Briefkopf in dasselbe Design zeichnen
+
+<Excerpt region="letterhead" />
+
+Das Band ist ein Kasten, der an der Ecke des Blatts verankert ist. `width: 'fill'` zieht es von Kante zu Kante, und seine Tiefe von 32 mm reicht 5 mm über den Kopfsteg von 27 mm hinaus. Das Logo ist ein Bildelement, das eine Ressource 18 mm hoch zeichnet und seine Breite aus der Zeichnung nimmt ([Bildelemente](/de/docs/configuration-page-layout#bildelemente)). Der Name hängt `'right-of'` am Logo und die Gewerbezeile `'below'` am Namen. Acht Linien von 3 mm zeichnen an jeder Ecke des Anschriftfelds von 85 × 45 mm einen Winkel, den Teil des Blatts, den das Umschlagfenster zeigt.
+
+### 4 · Was alle Blätter teilen, in Kopf- und Fußzeile setzen
+
+<Excerpt region="furniture" />
+
+Ein Element im Design der H1, das unter dem Betreff verankert ist, vergrößert die Höhe, die die Überschrift reserviert. Mit der Falzmarke bei 210 mm im Design rutscht die Anrede auf 222,8 mm, und der Brief läuft auf drei Seiten. Der Platz der Kopfzeile wird auf jeder Seite gezeichnet und reserviert keinen Raum, deshalb kommen die drei Marken dorthin ([Kopf- und Fußzeilen](/de/docs/configuration-page-layout#kopf--und-fußzeilen)). Seite 1 beginnt mit der H1 und ist damit eine Seite vom Typ `'opener'`, sodass `pages: 'body'` den blauen Streifen, die Zeile mit dem Zeichen und `Seite {pageNumber} von {totalPages}` auf die folgenden Blätter beschränkt. Die Zeile mit dem Zeichen liest die Attribute der H1 über `{attr.unser-zeichen}` und `{attr.datum}`.
+
+### 5 · Die Unterschrift im Textfluss setzen
+
+<Excerpt region="signature" />
+
+`::resource{id="signature"}` setzt die Zeichnung unter „Mit freundlichen Grüßen“, und `width: 0.297` macht sie 49 mm breit und 21,1 mm tief, knapp unter vier Zeilen zu 15 pt. Der Text nach einer Ressource im Fluss kehrt zum Raster des Grundtexts zurück. Bei `0.25` war die Zeichnung 17,8 mm tief, und die 3,4 mm, die das Raster darunter hinzufügte, schoben den Namen von der Unterschrift weg. Der Ressourcentyp hat ein leeres `captionPrefix`, und Postext setzt keine Legende, wenn Präfix und Legende beide leer sind; unter der Unterschrift erscheinen also weder Label noch Nummer ([Ressourcentypen](/de/docs/configuration-resources#ressourcentypen)). Das Logo ist eine Ressource desselben Typs, die nur das Bildelement zeichnet. Kein `:ref` und kein `::resource` nennt es, daher gelangt es nie in den Fluss.
+
+## Häufige Fehler
+
+- `{totalPages}` zählt die Seiten des ganzen Dokuments; mit zwei Briefen in einer Markdown-Datei würde das zweite Blatt des ersten Briefs „Seite 2 von 4“ lauten. Bauen Sie jeden Brief für sich.

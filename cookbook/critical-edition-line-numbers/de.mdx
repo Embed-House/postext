@@ -1,0 +1,77 @@
+---
+title: "Kritische Ausgabe: Zeilenzählung und Noten nach Zeilen"
+summary: "Miltons „Lycidas“ im Text von 1645: lineNumbers druckt jede fünfte Zeilennummer in der Seitenspalte, und jede Note beginnt mit ihrer Zeilennummer als Chip."
+plain: "Eine wissenschaftliche Ausgabe eines Gedichts von Milton. Jede fünfte Zeile ist am Rand nummeriert, und die Noten nach dem Gedicht verweisen über ihre Nummer auf die Zeilen, die sie erklären."
+description: "Miltons Lycidas als kritische Ausgabe in Postext, jede fünfte Zeile in einer 6 mm breiten Spalte am Außensteg nummeriert, die Noten auf diese Nummern bezogen."
+question: "Wie nummeriere ich jede fünfte Zeile eines Gedichts am Rand und beziehe meine Noten auf diese Zeilennummern?"
+aliases: ["Zeilennummern", "Zeilenzählung", "nummerierte Zeilen", "Versnummern", "kritische Ausgabe", "Apparat", "Kommentar", "Noten nach Zeilen", "Lemma", "Randziffern", "alte Schreibung", "Milton", "Lycidas", "Hirtenelegie", "Lorbeer", "line numbers"]
+pageNotes: { "1": "Die erste Seite: Ein Lorbeerzweig mit unreifen Beeren ragt aus der oberen rechten Ecke herein; darunter „JOHN MILTON“ in kleinen grünen Versalien, „LYCIDAS“ in hohen, schmalen Versalien und die Vorbemerkung von 1645 kursiv, dann die Zeilen 1 bis 14 mit den Nummern 5 und 10 rechts in Grün.", "2": "Eine linke Seite: die Zeilen 15 bis 46, die Versabsätze durch eine Leerzeile getrennt und die kurzen Zeilen eingerückt, mit den Nummern 15 bis 45 in Grün links der Verse.", "8": "Die erste Seite der Noten: „NOTES“ in hohen Versalien, ein Absatz zum Text, dann Noten, die jeweils mit einer grünen Zeilennummer beginnen, gefolgt von den erklärten Wörtern in Kursiv und einer schließenden eckigen Klammer." }
+---
+
+## Was Sie setzen
+
+*Lycidas*, Miltons Elegie auf Edward King, als kleine kritische Ausgabe im Format 138 × 216 mm, in Text und Schreibung der *Poems* von 1645. Die erste Seite beginnt unter einem Lorbeerzweig, mit dem Titel in hohen Versalien der Imbue über der Vorbemerkung, die Milton 1645 hinzufügte. Die 193 Zeilen folgen je eine pro Satzzeile, mit einer Leerzeile zwischen den Versabsätzen und eingerückten kurzen Zeilen. Jede fünfte Zeile trägt ihre Nummer in Lorbeergrün, in einer 6 mm breiten Spalte am Außensteg: rechts der Verse auf einer rechten Seite, links davon auf einer linken. Die Verse tragen keine Notenzeichen. Die Noten füllen die beiden Seiten nach dem Gedicht, und jede beginnt mit der Nummer ihrer Zeile, in derselben grünen Libre Franklin wie die Nummern am Rand.
+
+## Zubereitung
+
+### 1 · Die Verszeilen zählen
+
+Der Code für diesen Schritt steht in [der kurzen Antwort](#die-kurze-antwort) oben. `lineNumbers` zählt die Zeilen des Gedichts und druckt die Nummer jeder fünften neben ihre Zeile, auf deren Grundlinie, in Libre Franklin mit 7,5 pt und in Lorbeergrün ([Zeilennummern](/de/docs/configuration-notes-references#zeilennummern)). `count: 'verse'` zählt nur die Zeilen von Gedichten in `:::verse`, sodass die Anmerkung zum Text und die Noten nach dem Gedicht keine Nummern erhalten, und eine für die Satzbreite zu lange Zeile zählte trotzdem nur einmal: Ihre Folgezeile bekommt keine Nummer. `restart: 'document'` hält eine Zählung durch das ganze Gedicht. Die Nummern werden neben Zeilen gemalt, die das Layout bereits gesetzt hat, also verschieben sie nie eine Zeile.
+
+### 2 · Ein Kanal von sechs Millimetern Breite
+
+<Excerpt region="page" />
+
+Mit `sideColumnRole: 'floats'` nimmt die schmale Spalte eines Layouts `oneAndHalf` nie Text auf ([Layouttypen](/de/docs/configuration-page-layout#layout-typen)), und `position: 'side'` setzt die Nummern hinein, bündig an der Kante zu den Versen; der Spaltenabstand von 4 mm ist der Raum zwischen einer Zeile und ihrer Nummer. `sideColumnPercent` ist ein Anteil am Satzspiegel, also leitet der Pen ihn aus Millimetern ab: 6 von 90 mm, genug für die breiteste Nummer. Die Ziffern der Libre Franklin sind proportional, und in 7,5 pt ist die Null die breiteste (1,8 mm gegenüber 1,2 mm für die Eins), daher ist 100 mit 4,9 mm die breiteste Nummer im Gedicht; 180 und 190 messen 4,8 mm. `'outer'` folgt den gespiegelten Rändern, sodass die Nummern auf einer rechten Seite rechts der Verse linksbündig stehen und auf einer linken Seite links davon rechtsbündig: Auf beiden beginnen oder enden sie im selben Abstand zu den Versen. Die Versspalte misst 80 mm, 1,9 mm mehr als Zeile 31, die längste, also bricht keine Zeile um.
+
+### 3 · Das Gedicht ist ein einziger Block `:::verse`
+
+<Excerpt region="verse" />
+
+Ein Block `:::verse` behält das Gedicht, wie es geschrieben ist: jede Markdown-Zeile eine Verszeile, eine Leerzeile zwischen den Versabsätzen und die Leerzeichen vor einer Zeile ihr Einzug ([`:::verse`](/de/docs/document-format#verse)). Der Direktivenblock nennt das Versformat und `align=start`, das das Gedicht bündig am Rand setzt, statt es auf seiner längsten Zeile zu zentrieren. Jeder Versabsatz ist eine Strophe, und zwischen zweien steht eine Leerzeile des Rasters (`stanzaSpace`, eine Zeile). Miltons vierzehn kurze Zeilen, darunter Zeile 4, beginnen mit zwei Leerzeichen, und `indentStep: em(1)` macht daraus 2 em. Ein Strophenabstand entfällt am Kopf einer Seite, sodass Seite 2 mit Zeile 15 oben im Satzspiegel beginnt und der Absatzwechsel zwischen den Zeilen 14 und 15 nicht sichtbar ist (siehe Häufige Fehler).
+
+### 4 · Der Lorbeer, der Titel und die Vorbemerkung
+
+<Excerpt region="opener" />
+
+Die Überschrift der ersten Ebene druckt statt ihres eigenen Textes eine Gestaltung ([Spannweite und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). `{author}` kommt aus dem Frontmatter und die Vorbemerkung aus einem Attribut in der Überschriftenzeile, `# Lycidas {headnote="In this Monody …"}` ([Attribute von Überschriften](/de/docs/document-format#attribute-von-überschriften)). Der Lorbeer endet über der Dachzeile, also ergibt sich die Tiefe des Auftakts aus den Texten darunter: Dachzeile, 50 mm unter dem oberen Rand des Satzspiegels, Titel und die vier Zeilen der Vorbemerkung reichen 20 der 34 Zeilen der Seite hinab, und der erste Versabsatz mit 14 Zeilen nimmt den Rest. `minHeight` ist eine Untergrenze in derselben Tiefe: Kürzen Sie die Vorbemerkung auf drei Zeilen, beginnen die Verse trotzdem auf Zeile 21, wo sie ohne die Untergrenze auf Zeile 20 hinaufrücken. `marginBottom: pt(0)` hält den Standardrand der Überschrift aus der Lücke heraus; mit ihm begännen die Verse auf Zeile 22 und schickten Zeile 14 auf Seite 2. Die Gestaltung bleibt in der Spalte, und der Lorbeer, an der oberen rechten Ecke der Seite verankert, wird dennoch vom Endformat aus gemalt: Nur der Fuß einer Spalte beschneidet eine in ihr gehaltene Gestaltung.
+
+### 5 · Noten nach Zeilennummern
+
+<Excerpt region="notes" />
+
+Die Noten beziehen sich auf Zeilennummern, also tragen die Verse keine Notenzeichen, und sie folgen dem Gedicht als Kommentar, ohne seinen Seiten Zeilen zu nehmen. Jede Note beginnt mit ihrer Zeilennummer, geschrieben als `:chip[8]{style="line"}`, dann folgen die erklärten Wörter kursiv und eine schließende eckige Klammer. Der Chip hat weder Füllung noch Umriss noch seitlichen Innenabstand, also ändern sich nur Schrift und Farbe: Libre Franklin in 7,7 pt und Lorbeergrün ([Chip-Formate](/de/docs/configuration-styles#chip-stile)). Die Linden Hill hat keinen fetten Schnitt, deshalb werden die Nummern stattdessen durch einen Schriftwechsel ausgezeichnet. Das Notenformat rückt jede Zeile nach der ersten um 1,6 em ein, was die Nummern links frei stehen lässt, und die Noten stehen im Flattersatz wie die Verse. `# Notes {style="notes"}` bricht auf Seite 8 um und setzt seinen Titel in den Versalien des Auftakts, in 30 pt.
+
+<PageShot page={8} crop="0.24,0.318,0.66,0.249" caption="Seite 8: Jede Note beginnt mit der grünen Nummer ihrer Zeile; die Verse auf den Seiten 1 bis 7 tragen keine Zeichen." />
+
+### 6 · Kolumnentitel nach gerader und ungerader Seite
+
+<Excerpt region="heads" />
+
+Jedes Element ist an der Seite verankert und nach `parity` und `pages: 'body'` gefiltert ([Textelemente](/de/docs/configuration-page-layout#textelemente)). Die linke Seite trägt den Autor und die rechte `{chapterTitle}`, das über dem Gedicht „LYCIDAS“ lautet und über den Noten „NOTES“, weil die Noten mit einer eigenen Überschrift beginnen. Die Pagina steht am Außenrand des Satzspiegels; die beiden Anfangsseiten, 1 und 8, tragen sie stattdessen am Fuß.
+
+## Varianten
+
+### Jede zehnte Zeile nummerieren
+
+Lange Gedichte werden oft in Zehnern gezählt; die Spalte von 6 mm braucht keine Änderung.
+
+```diff
+-  interval: 5,
++  interval: 10,
+```
+
+### Jede Nummer rechts der Verse halten
+
+Mit der Seitenspalte fest auf der rechten Seite stehen die Nummern auf jeder Seite rechts der Verse, auf einer linken Seite also am Bund.
+
+```diff
+-  sideColumnSide: 'outer', // right of the verse on a recto, left of it on a verso
++  sideColumnSide: 'right', // right of the verse on every page
+```
+
+## Häufige Fehler
+
+- Der Strophenabstand entfällt am Kopf einer Seite, sodass der Absatzwechsel zwischen den Zeilen 14 und 15, der auf den Übergang von Seite 1 zu Seite 2 fällt, nicht sichtbar ist. Muss Ihre Ausgabe jeden Wechsel zeigen, geben Sie stattdessen der ersten Zeile jedes Versabsatzes einen Einzug, wie es die Ausgabe von 1645 tut: zwei führende Leerzeichen in dieser Zeile.
+- Die Nummern teilen sich die Seitenspalte mit jedem Seitenkasten und jeder seitlichen Legende, die Sie hinzufügen. Eine Nummer, die auf einem solchen Element landet, wird trotzdem gedruckt, und die Sandbox meldet sie (`lineNumberOverlap`); verschieben Sie den Kasten oder setzen Sie die Nummern mit `position: 'outer'` in den Außenrand.
+- Die Noten tippen ihre Zeilennummern weiterhin selbst (`:chip[8]{style="line"}`): Eine Note kann noch nicht auf eine Zeile zeigen und deren Nummer drucken. Wenn Sie den Text ändern, prüfen Sie die Nummern in den Noten gegen den Rand.

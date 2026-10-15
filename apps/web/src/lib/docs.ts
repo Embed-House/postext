@@ -83,7 +83,7 @@ export function getAllDocs(): DocEntry[] {
   const grouped: Record<string, DocEntry> = {};
 
   for (const file of files) {
-    const match = file.match(/^(.+)-(en|es|ca|zh|ja|ar|pt|fr)\.mdx$/);
+    const match = file.match(/^(.+)-(en|es|ca|zh|ja|ar|pt|fr|de)\.mdx$/);
     if (!match) continue;
 
     const [, slug, locale] = match;

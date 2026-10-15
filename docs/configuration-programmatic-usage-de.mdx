@@ -1,0 +1,1789 @@
+{/* docs/configuration-programmatic-usage-en.mdx */}
+
+export const metadata = {
+  title: 'Konfiguration: programmatische Nutzung',
+  sidebarTitle: 'Programmatische Nutzung',
+  description: 'Postext aus Code aufrufen: buildDocument, Web Worker, der HTML-Betrachter, PDF-Dateien, das 3D-Buch, EPUB und .postext-Pakete',
+  lang: 'de',
+  lastUpdated: '2026-10-10',
+  readingTime: '8 min',
+  order: 12,
+  parent: 'configuration',
+  plainSummary: "Diese Seite richtet sich an Menschen, die Code schreiben. Sie zeigt, wie Sie ein Buch mit einem einzigen Funktionsaufruf erzeugen und wie Sie die Warnungen lesen, die dabei gemeldet werden. Sie erklärt, wie die Arbeit im Hintergrund läuft, damit die Seite schnell bleibt. Sie zeigt, wie Sie eine Webansicht, eine PDF-Datei, ein 3D-Buch und ein E-Book im Format EPUB erstellen. Der letzte Abschnitt erklärt die Datei, die ein ganzes Buch mit seinen Schriften und Bildern enthält.",
+};
+
+# Konfiguration: programmatische Nutzung
+
+
+## Programmatische Nutzung
+
+> **Empfohlener Weg: Nutzen Sie den Web Worker.** Im Browser sollte die weit überwiegende Zahl der Integrationen die Layout-Pipeline über `createLayoutWorker()` aus `postext/worker` steuern und `buildDocument` **nicht** direkt im Haupt-Thread aufrufen. Der Worker hält die Oberfläche während der Builds reaktionsfähig, speichert Textmessungen über inkrementelle Neuaufbauten hinweg im Cache und bringt einen Abbruch nach dem Prinzip „der letzte gewinnt“ mit, sodass ein neuer Tastendruck jeden veralteten Build abbricht, der noch läuft. Das maßgebliche Rezept finden Sie direkt unter [Layout in einem Web Worker ausführen](#layout-in-einem-web-worker-ausführen). Alles Weitere in diesem Abschnitt (direktes `buildDocument`, Resolver, Stripper, Caches) bleibt nützlich – der Worker bietet genau dieselben Ein- und Ausgaben –, doch für UI-Code ist die Worker-Hülle der richtige Ausgangspunkt. Rufen Sie `buildDocument` nur für einmalige Exporte, serverseitiges Rendern (Node) oder Tests im Haupt-Thread auf.
+
+### Ein Dokument erzeugen
+
+Die Funktion `buildDocument` durchläuft die gesamte Layout-Pipeline und gibt einen virtuellen Dokumentbaum (VDT) mit genauen Koordinaten für jedes Element zurück. Sie ist der Einstieg auf der untersten Ebene; UI-Code sollte die [Worker-Hülle](#layout-in-einem-web-worker-ausführen) vorziehen, die `buildDocument` mit denselben Argumenten in einem eigenen Worker-Thread aufruft.
+
+```ts
+import { buildDocument } from 'postext';
+
+const content = {
+  markdown: '# Chapter One\n\nThe story begins here...',
+};
+
+const config = {
+  page: { sizePreset: '17x24' },
+  layout: { layoutType: 'double' },
+  bodyText: { fontFamily: 'EB Garamond', fontSize: { value: 9, unit: 'pt' } }, // 9 pt overrides the 8 pt default
+};
+
+// Build the layout — produces a VDT with one entry per page in `vdt.pages`
+const vdt = buildDocument(content, config);
+console.log(`Document has ${vdt.pages.length} pages`);
+```
+
+### Warnungen im Dokument
+
+`buildDocument` bricht bei einem falschen Verweis oder einem unbekannten Format nicht ab: Es setzt einen Ersatzwert und hält in `doc.contentWarnings` fest, was es getan hat. Die Kästen, die das Layout erzwingen musste, stehen in `doc.warnings`, das die Form aus postext 1.4 beibehält: Jeder Eintrag dort ist ein `calloutOverflow` mit seinem `pageIndex`, `columnIndex` und `overflowPx`. Jedes Feld fehlt, wenn es nichts zu melden gibt. Jeder Eintrag hat ein `kind`. Die inhaltlichen Arten tragen den Quellbereich des Konstrukts – `sourceStart` / `sourceEnd`, Offsets im übergebenen Markdown einschließlich Frontmatter – und, wenn das Konstrukt auf einer Seite gelandet ist, dessen `pageIndex`.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Art</th>
+      <th>Ausgelöst, wenn</th>
+      <th>Was die Ausgabe tut</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>calloutOverflow</code></td>
+      <td>Ein Kasten <code>:::callout</code> passt in keine Spalte, und kein Schnitt kann ihn teilen. Ein Kasten mit <code>span: 'side'</code>, der höher ist als eine leere Seitenspalte, ebenfalls (seit postext 1.25).</td>
+      <td>Er wird trotzdem gesetzt und ragt um <code>overflowPx</code> über seine Spalte hinaus (auf <code>pageIndex</code> / <code>columnIndex</code>). Die einzige Art, die in <code>doc.warnings</code> steht; die folgenden Arten stehen in <code>doc.contentWarnings</code>.</td>
+    </tr>
+    <tr>
+      <td><code>invalidFrontmatter</code></td>
+      <td>Die Frontmatter ist kein gültiges YAML (ein nicht geschlossenes Anführungszeichen, Text nach einem Wert in Anführungszeichen). <code>message</code> ist die Begründung des Parsers mit Zeile und Spalte.</td>
+      <td>Das Dokument wird ohne seine Metadaten gesetzt; der Text nach dem schließenden <code>---</code> wird wie gewohnt umbrochen.</td>
+    </tr>
+    <tr>
+      <td><code>unknownResourceId</code></td>
+      <td>Eine Einbettung <code>::resource</code> (<code>usage: 'embed'</code>), ein Inline-<code>:ref</code> (<code>'ref'</code>) oder das Bild einer Tabellenzelle (<code>'cellImage'</code>) nennt eine ID, die keine Ressource hat.</td>
+      <td>Die Einbettung entfällt, der Verweis druckt <code>?</code> (oder seine Beschriftung <code>text=</code>) ohne Nummer und ohne Link, die Zelle bleibt reiner Text. <code>inResource</code> nennt die Ressource, deren Legende, Anmerkung oder Zelle den Verweis enthält.</td>
+    </tr>
+    <tr>
+      <td><code>unknownDirective</code></td>
+      <td>Eine Zeile <code>:::name</code>, deren Name weder eine Direktive noch ein Container ist.</td>
+      <td>Die Zeile wird als Text gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>malformedEmbed</code></td>
+      <td>Eine Zeile <code>::name</code>, die keine wohlgeformte, für sich stehende Einbettung ist: <code>::resource</code> mit einer ID ohne oder in einfachen Anführungszeichen oder mit einem anderen Attribut, oder eine Zeile, die ohne Leerzeile direkt unter einem Absatz klebt.</td>
+      <td>Die Zeile wird als Text gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>fullwidthMarkup</code></td>
+      <td>Eine Zeile enthält Auszeichnungen, die mit einer chinesischen oder japanischen Eingabemethode getippt wurden: einen Zaun <code>：：：</code>, eine Überschrift <code>＃</code>, ein Fußnotenzeichen <code>［＾…］</code>, Attribute <code>｛…｝</code> nach einem Zaun oder einer Überschrift oder Fettdruck <code>＊＊…＊＊</code>. <code>typed</code> ist die Auszeichnung wie geschrieben, <code>ascii</code> die Form, die zu tippen ist. Eine pro Zeile.</td>
+      <td>Die Zeile wird als Text gesetzt; nichts wird umgewandelt.</td>
+    </tr>
+    <tr>
+      <td><code>attributeKeyInvalid</code></td>
+      <td>Ein Attributschlüssel enthält Buchstaben außerhalb von ASCII (<code>作者=曹雪芹</code>); verweist auf den Schlüssel.</td>
+      <td>Das Attribut wird ignoriert.</td>
+    </tr>
+    <tr>
+      <td><code>unknownParagraphStyle</code></td>
+      <td><code>:::paragraphs{'{'}style{'}'}</code> nennt kein Absatzformat.</td>
+      <td>Die Absätze werden als Grundtext gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>unknownCalloutType</code></td>
+      <td><code>:::callout{'{'}type{'}'}</code> nennt keinen der <code>calloutStyles</code> – wird nur ausgelöst, wenn welche konfiguriert sind.</td>
+      <td>Der Kasten erhält das erste Kastenformat.</td>
+    </tr>
+    <tr>
+      <td><code>columnsFlowUnknown</code></td>
+      <td><code>:::columns{'{'}flow{'}'}</code> ist weder <code>snake</code> noch <code>parallel</code>; <code>value</code> ist der angegebene Wert.</td>
+      <td>Die Gruppe erhält den Standardwert: <code>parallel</code> mit <code>breaks</code>, <code>snake</code> ohne.</td>
+    </tr>
+    <tr>
+      <td><code>unknownChipStyle</code></td>
+      <td><code>:chip[…]{'{'}style{'}'}</code> nennt kein Chip-Format.</td>
+      <td>Der Chip erhält das erste Chip-Format.</td>
+    </tr>
+    <tr>
+      <td><code>undefinedFootnote</code></td>
+      <td>Ein Fußnotenzeichen <code>[^id]</code>, das kein Absatz <code>[^id]:</code> definiert (<code>id</code> ist die der Fußnote).</td>
+      <td>Die Nummer wird gedruckt; die Fußnote bleibt leer.</td>
+    </tr>
+    <tr>
+      <td><code>unusedFootnote</code></td>
+      <td>Eine Fußnotendefinition <code>[^id]:</code>, die kein Zeichen zitiert.</td>
+      <td>Die Fußnote wird nicht gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>indexMarkInvalid</code></td>
+      <td>Eine Registermarke ohne Begriff: <code>:index{'{}'}</code> oder Attribute ohne <code>term</code> an einer Marke ohne Text in eckigen Klammern.</td>
+      <td>Die Marke nimmt nichts ins Register auf.</td>
+    </tr>
+    <tr>
+      <td><code>indexSeeUnknown</code></td>
+      <td>Ein Ziel von <code>see</code> oder <code>seealso</code> (<code>target</code>), das kein Eintrag seines Registers ist (<code>index</code>, <code>''</code> für das Hauptregister). Verweist auf die Zeile <code>:::index</code>.</td>
+      <td>Der Querverweis wird trotzdem gedruckt.</td>
+    </tr>
+    <tr>
+      <td><code>indexRangeUnclosed</code></td>
+      <td>Eine Marke <code>range="start"</code> ohne passendes <code>range="end"</code> oder umgekehrt (<code>missing</code> sagt, welches Ende fehlt; <code>term</code> nennt den Eintrag). Verweist auf die Zeile <code>:::index</code>.</td>
+      <td>Der Bereich druckt seine eine Seite.</td>
+    </tr>
+    <tr>
+      <td><code>unknownHeadingStyle</code></td>
+      <td>Das <code>{'{'}style="…"{'}'}</code> einer Überschrift nennt kein Überschriftenformat (<code>level</code> ist die Ebene der Überschrift).</td>
+      <td>Die Überschrift und ihr Abschnitt behalten die Einstellungen ihrer Ebene.</td>
+    </tr>
+    <tr>
+      <td><code>unknownTableStyle</code></td>
+      <td>Das <code>table.styleId</code> einer Tabellenressource nennt keinen Eintrag von <code>tableStyles</code>.</td>
+      <td>Die Tabelle wird in <code>tableStyle</code> gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>raggedTableGrid</code></td>
+      <td>Das Raster einer Tabelle ist nicht rechteckig, sobald ihre verbundenen Zellen mitgezählt werden (siehe <a href="/de/docs/configuration-resources#tabellenmodelle-aufbauen">Tabellenmodelle aufbauen</a>).</td>
+      <td>Zellen rücken auf eine verbundene Zelle oder lassen eine Lücke. <code>reason</code> (<code>'spanOverlap'</code> / <code>'missingCells'</code>), <code>row</code> und <code>col</code> bezeichnen das erste Problem; <code>count</code> gibt an, wie viele es gibt.</td>
+    </tr>
+    <tr>
+      <td><code>lineNumberOverlap</code></td>
+      <td>Mit <code>lineNumbers.position: 'side'</code> überlappt eine Zeilennummer einen Seitenkasten, eine seitliche Legende oder eine Abbildung in der Seitenspalte. Verweist auf die nummerierte Zeile; <code>number</code> ist die Nummer, wie sie gedruckt wird.</td>
+      <td>Die Nummer wird trotzdem gezeichnet, und keines von beiden verschiebt sich.</td>
+    </tr>
+    <tr>
+      <td><code>dropCap</code></td>
+      <td>Ein Absatz, den eine <a href="/de/docs/configuration-text#initialen">Initiale</a> eröffnet und der sie so, wie sie konfiguriert ist, nicht aufnehmen kann. <code>reason</code>: <code>'shortParagraph'</code> (weniger Zeilen, als die Initiale tief ist; <code>handling</code> ist, was <code>shortParagraph</code> getan hat, <code>lines</code> die Zeilen, die eine verkleinerte Initiale überspannt), <code>'split'</code> (er bricht vor der letzten Zeile der Initiale um, allein in einer zu kurzen Spalte), <code>'joiningScript'</code> (sein erster Buchstabe verbindet sich mit dem nächsten), <code>'verticalText'</code> oder <code>'noLetter'</code> (er beginnt mit einem Verweis, einer Formel oder einem Fußnotenzeichen). <code>text</code> ist seine erste Zeile.</td>
+      <td>Der Raum bleibt frei, die Initiale wird verkleinert oder weggelassen, wie die Warnung sagt.</td>
+    </tr>
+    <tr>
+      <td><code>codeOverflow</code></td>
+      <td>Ein <a href="/de/docs/configuration-styles#code-listings">Code-Listing</a> hat Zeilen, die breiter sind als sein Kasten. <code>mode</code> ist, was <code>codeStyle.overflow</code> getan hat (<code>'wrap'</code>, <code>'shrink'</code>, <code>'clip'</code>), <code>lines</code>, wie viele Quellzeilen zu breit waren, <code>scale</code> die Größe, in der ein verkleinertes Listing gesetzt wurde (ein Anteil von <code>fontSize</code>), <code>lang</code> die Sprache des Codeblocks. Verweist auf das Listing.</td>
+      <td>Die Zeilen werden umbrochen, kleiner gesetzt oder abgeschnitten, wie <code>mode</code> sagt.</td>
+    </tr>
+    <tr>
+      <td><code>floatShrunk</code></td>
+      <td>Ein gleitendes Bild wurde kleiner als in seiner Größe gesetzt, damit es in den Raum seines Platzes passt (<code>placement.shrink</code>). <code>resourceId</code> nennt es, <code>scale</code> ist der Anteil seiner Breite, den es behält, und <code>overflowPx</code>, falls vorhanden, wie weit es bei seiner kleinsten Skalierung (<code>placement.minScale</code>) noch über den Fuß des Satzspiegels hinausragt, auf einer neuen Seite, auf der es keinen anderen Platz hatte. Verweist auf den Absatz, der es zuerst zitiert.</td>
+      <td>Das Bild wird in dieser Skalierung gedruckt; über den Satzspiegel hinaus nur, wenn <code>overflowPx</code> es sagt.</td>
+    </tr>
+    <tr>
+      <td><code>textWrap</code></td>
+      <td>Eine Ressource oder ein Kasten, die bzw. der vom Text umflossen werden soll (<code>placement.wrap</code>, das <code>wrap</code> eines Kastens), es aber nicht wie gewünscht wird. <code>reason</code>: <code>'tooNarrow'</code> (der Text daneben wäre schmaler als <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (das Objekt ist kürzer als <code>layout.wrap.minLinesBeside</code> Zeilen), <code>'moved'</code> (ein Inline-Objekt, zu hoch für den restlichen Raum seiner Spalte, rückte mit seinem Anker in die nächste) oder <code>'verticalText'</code>. <code>resourceId</code> nennt eine Ressource, <code>box</code> das Format eines Kastens. Verweist auf die Einbettung oder den Kasten.</td>
+      <td>Das Objekt nimmt sein Band ganz ein oder steht in der nächsten Spalte, wie der Grund sagt.</td>
+    </tr>
+    <tr>
+      <td><code>columnsTooNarrow</code></td>
+      <td>Die Unterspalten einer Gruppe <code>:::columns</code> sind schmaler als sechs Geviert ihres Textes: <code>columns</code> Spalten mit je <code>widthPx</code>. Verweist auf den Zaun der Gruppe.</td>
+      <td>Die Gruppe wird wie gewünscht gesetzt, mit wenigen Wörtern pro Zeile.</td>
+    </tr>
+    <tr>
+      <td><code>afterText</code></td>
+      <td>Ein Kasten mit <code>span: 'side'</code> oder eine Abbildung oder Tabelle der Seitenspalte (<code>resourceId</code>), gesetzt auf einer Seite ohne Text: Der Text seines Kapitels oder des Dokuments endete, während das Objekt noch auf Raum in der Seitenspalte wartete. Eine pro Kasten oder Gleitobjekt; verweist auf den Kasten (auf den Block, der das Gleitobjekt zitiert), mit seiner Seite. Seit postext 1.25.</td>
+      <td>Es steht in der Seitenspalte einer Seite, die nach dem Text geöffnet wird, die Kästen in der Reihenfolge ihrer Zäune.</td>
+    </tr>
+    <tr>
+      <td><code>unplaced</code></td>
+      <td>Ein Kasten oder eine gleitende Ressource (<code>resourceId</code>), die beim Ende des Layouts noch auf einen Platz wartet: Die dafür geöffneten Seiten konnten sie nicht aufnehmen (etwa ein Seitenkasten, wo diese Seiten keine Seitenspalte haben). Verweist auf den Kasten oder auf den Block, der die Ressource zitiert; keine Seite. Seit postext 1.25.</td>
+      <td>Es steht auf keiner Seite. Bis postext 1.24 fiel es ohne Warnung weg.</td>
+    </tr>
+    <tr>
+      <td><code>shortListSplit</code></td>
+      <td>Eine Liste mit <code>items</code> Punkten, kurz im Sinne von <code>bodyText.shortListMaxItems</code>, die zwischen zwei Spalten oder Seiten geteilt wird. Unter <code>bodyText.shortListSplit: 'warn'</code> wird jede solche Liste gemeldet; unter <code>'avoid'</code> nur eine, die keine Spalte ganz aufnehmen konnte. Eine pro Liste; verweist auf die Liste, mit der Seite ihres ersten Punkts. Seit postext 1.28.</td>
+      <td>Die Liste wird geteilt, wo die Spalte endet.</td>
+    </tr>
+    <tr>
+      <td><code>openerFloat</code></td>
+      <td>Ein Gleitobjekt, das unter <code>layout.openerFloats: 'warn'</code> auf einer Auftaktseite steht: eine Abbildung, eine Tabelle oder ein Streifen (<code>resourceId</code>) oder ein gleitender Kasten. Eine pro Gleitobjekt; verweist auf den Block, der es zitiert (auf den Kasten), mit seiner Seite. Seit postext 1.28.</td>
+      <td>Das Gleitobjekt steht auf der Auftaktseite; <code>'avoid'</code> verschiebt es auf den ersten Platz danach.</td>
+    </tr>
+    <tr>
+      <td><code>fontFallback</code></td>
+      <td>Ein Schnitt, in dem der Text gesetzt wurde (<code>family</code>, <code>weight</code>, <code>style</code>) und den das Font-Set beim Build nicht liefern konnte: <code>reason: 'missing'</code>, kein Schnitt der Familie war geladen oder installiert, oder derjenige, der für diese Stärke und Neigung einsteht, war noch nicht geladen; <code>'synthesized'</code>, die Familie hat keinen Schnitt dieser Stärke oder Neigung, und der Browser nimmt einen anderen, unverändert oder fetter bzw. schräg gezeichnet (eine 600 aus der 700, eine 700 kursiv von einer Familie, die nur eine 400 normal hat). Geprüft, wo es ein Font-Set gibt (<code>document.fonts</code>, das <code>self.fonts</code> eines Workers oder <code>BuildDocumentOptions.fontSet</code>), hinter <code>debug.warnings.missingFont</code>. Keine Seite und kein Quellbereich.</td>
+      <td>Der Text wird mit dem Ersatzschnitt oder mit einem anderen Schnitt der Familie gemessen und gezeichnet, unverändert oder fetter bzw. schräg gemacht; seine Zeilenumbrüche ändern sich, sobald der Schnitt eintrifft. Siehe <a href="#schriften-vor-dem-layout-laden">Schriften vor dem Layout laden</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Warnungen zu einer Ressource – ihr Tabellenformat, ihr Raster, ein Verweis in ihrer Legende, Anmerkung oder ihren Zellen – verweisen auf die erste Einbettung oder den ersten Verweis der Ressource im Text, und jede wird pro Ressource einmal aufgeführt. Geprüft werden nur die Ressourcen, die das Dokument verwendet: Ein Kapitel eines Buches meldet die Tabellen, die es zitiert, nicht jede Tabelle, die das Buch enthält.
+
+```ts
+import { buildDocument, formatWarning } from 'postext';
+
+const doc = buildDocument({ markdown: 'See :ref{id="fig-map"}.\n\n:::sidebar\nNotes.' }, config);
+for (const w of [...(doc.warnings ?? []), ...(doc.contentWarnings ?? []), ...(doc.configWarnings ?? [])]) console.warn(formatWarning(w));
+// Unknown resource id "fig-map" in :ref — it prints "?" (or its text= label), with no number or link (page 1, offset 4)
+// Unknown directive ":::sidebar" — the line is set as text (page 1, offset 25)
+
+// Narrow on `kind` to read the fields of a kind.
+const missing = (doc.contentWarnings ?? []).flatMap((w) => (w.kind === 'unknownResourceId' ? [w.resourceId] : []));
+```
+
+`formatWarning(w)` gibt eine einzeilige Beschreibung auf Englisch zurück. Ein Host, der seine Meldungen lokalisiert, unterscheidet stattdessen nach `kind` – und behält einen Standardzweig, da Nebenversionen neue Arten hinzufügen können. `collectContentWarnings(markdown, config, resources)` gibt die inhaltlichen Warnungen zurück, ohne etwas zu setzen (die Liste, die der Build hinzufügt, ohne `pageIndex`), für einen Editor, der den Text beim Tippen prüft. `collectHeadingDesignCuts(doc)` prüft ein fertiges Layout auf Überschriftengestaltungen, deren Text über den Fuß ihrer Seite oder Spalte hinausläuft (`kind: 'headingDesignCut'`; siehe [Reservierte Höhe](/de/docs/configuration-text#reservierte-höhe)), was das Layout selbst nicht meldet, und `formatWarning` beschreibt auch diese Ergebnisse. Das Bedienfeld **Prüfungen** der Sandbox listet sie alle auf.
+
+Die Renderer melden über eine Option `onWarning`, was sie nicht wie gewünscht zeichnen können: `renderPageToCanvas`, `renderPage` und `renderToCanvas` (`RenderPageOptions`), `renderToHtml` und `renderToHtmlIndexed` (`RenderHtmlOptions`) sowie `renderToPdf` (`RenderToPdfOptions`, auch über den PDF-Worker). Die wichtigste Render-Art ist `missingImage`: Ein Bild – eine Abbildung, das Bild einer Tabellenzelle, ein Kastensymbol, ein Gestaltungsbild –, für das nichts zu zeichnen da ist, wird als neutraler Platzhalter gezeichnet und gemeldet, einmal pro `fileId` und Render-Aufruf, mit seinem `pageIndex`, der `resourceId`, wenn der Zeichner sie kennt (Abbildungen und Zellbilder), und im PDF dem `documentIndex` eines Renderings mehrerer Dokumente. Nichts zu zeichnen bedeutet: kein `registerResourceImage` für die `fileId` auf dem Canvas, keine URL aus `resourceImageUrl` im HTML und keine Bytes aus `resourceBytes` – oder Bytes, die sich nicht dekodieren lassen – im PDF. Eine Bitmap- oder SVG-Ressource, die überhaupt keine `fileId` nennt, hat nichts anzufordern: Sie wird ohne Meldung als Platzhalter gezeichnet. Zwei weitere Arten stammen von den Hosts, die Schriften in SVG-Bilder einbetten (`registerSvgImage`, `registerBundleImages`, `bundleImageUrl`, `renderToHtml` mit `inlineSvgFonts`, postext-epub; siehe [Schriften in SVG-Text](/de/docs/configuration-resources#schriften-in-svg-text)), mit `fileId` und `resourceId` des Bildes: `svgFontUnavailable` (`family`, `weight`, `style`), eine Familie, die sein Text nennt, ohne einen Schnitt zum Einbetten, sodass das Bild diesen Text in einer Ersatzschrift setzt; und `svgFontsTooLarge` (`bytes`, `maxBytes`), Schnitte über der Größengrenze, von denen keiner eingebettet wird. Render-Warnungen werden nicht im VDT gespeichert: Was ein Host liefern kann, ändert sich nach dem Layout.
+
+```ts
+import { buildDocument, renderPage, type RenderWarning, type Resource } from 'postext';
+
+const map: Resource = {
+  id: 'fig-map', typeId: 'figure', kind: 'bitmap', caption: 'The route.', createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'map-file', format: 'png', width: 1200, height: 800 },
+};
+const doc = buildDocument({ markdown: 'See :ref{id="fig-map"}.', resources: [map] }, config);
+
+const warnings: RenderWarning[] = [];
+const canvas = renderPage(doc.pages[0], doc, { onWarning: (w) => warnings.push(w) });
+// Until 'map-file' is registered with registerResourceImage:
+// [{ kind: 'missingImage', fileId: 'map-file', resourceId: 'fig-map', pageIndex: 0 }]
+```
+
+### Eine Seite als Bitmap rendern
+
+Jede Seite lässt sich unabhängig rastern. Mit `renderPage(page, doc)` erhalten Sie ein `HTMLCanvasElement` für eine bestimmte Seitennummer – der Canvas ist eine Bitmap, die genau so groß ist wie die Seite in Pixeln (bei der konfigurierten DPI-Zahl), sodass Sie ihn anzeigen, exportieren oder in eine beliebige Bildverarbeitung geben können:
+
+```ts
+import { buildDocument, renderPage } from 'postext';
+
+const vdt = buildDocument(content, config);
+
+// Render page 3 (zero-indexed) to a bitmap canvas
+const pageNumber = 2;
+const page = vdt.pages[pageNumber];
+if (!page) throw new Error(`Page ${pageNumber} does not exist`);
+
+const canvas = renderPage(page, vdt);
+// canvas.width / canvas.height are the page bitmap size in pixels
+
+// Show it in the DOM
+document.body.appendChild(canvas);
+
+// …or export it as a PNG data URL
+const pngDataUrl = canvas.toDataURL('image/png');
+
+// …or get a Blob for download / upload
+canvas.toBlob((blob) => {
+  if (blob) saveAs(blob, `page-${pageNumber + 1}.png`);
+}, 'image/png');
+
+// …or grab raw RGBA pixels
+const ctx = canvas.getContext('2d')!;
+const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+```
+
+Wenn Sie lieber in einen Canvas zeichnen, den Sie bereits besitzen (etwa einen, der mit einem bestimmten Layout im DOM hängt), verwenden Sie `renderPageToCanvas(page, doc, canvas)` – die Funktion passt die Größe des übergebenen Canvas an und zeichnet hinein, statt einen neuen zu erzeugen.
+
+Um alle Seiten zu rendern, iterieren Sie über `vdt.pages`:
+
+```ts
+const bitmaps = vdt.pages.map((page) => renderPage(page, vdt));
+```
+
+#### Live-Beispiel: eine Seite als Bild
+
+All das oben, im Browser ausgeführt. Der Pen importiert die neueste Version von `postext` von einem CDN, wartet auf die Webschriften, setzt ein kurzes zweispaltiges Dokument, zeichnet seine erste Seite auf einen Canvas und bietet diese Bitmap als PNG an. Klicken Sie auf *Run on CodePen*, um den Editor zu laden und das Markdown oder die Konfiguration zu ändern; die Seite wird bei jeder Änderung neu gezeichnet.
+
+<CodePenExample name="render-page" title="Postext · eine Seite als Bild rendern" description="Ein Markdown-Dokument mit postext setzen und seine erste Seite auf einen Canvas bzw. als PNG rastern." height={600} />
+
+### React
+
+`postext/react` exportiert `createLayout(content, config?)`: eine Komponente, die das Dokument einmal setzt, wenn sie eingehängt wird, und jede Seite als `<canvas>` in einem `<div>` zeigt.
+
+```tsx
+import { createLayout } from 'postext/react';
+
+const Article = createLayout(
+  { markdown: '# Hello\n\nThe first paragraph of the article.' },
+  { page: { sizePreset: '17x24' } },
+);
+
+export function ArticlePage() {
+  return <Article className="pages" style={{ maxWidth: 480 }} />;
+}
+```
+
+- **Haupt-Thread, einmal.** Die Seiten werden in der Auflösung des Dokuments gezeichnet und auf die Breite des Containers skaliert. `content` und `config` liegen fest, sobald Sie `createLayout` aufrufen; um etwas anderes zu zeigen, erzeugen Sie eine weitere Komponente. Für eine Live-Vorschau setzen Sie im [Web Worker](#layout-in-einem-web-worker-ausführen) und zeichnen mit `renderPageToCanvas`, wie im dortigen React-Beispiel.
+- **Zuerst Schriften und Bilder.** Laden Sie die Webschriften des Dokuments, bevor die Komponente eingehängt wird, und registrieren Sie seine Bilder mit `registerResourceImage`. Enthält das Markdown ein `$`, startet die Komponente die [Mathe-Engine](/de/docs/configuration-text#die-mathematik-engine-starten) selbst.
+- **React bleibt aus dem Haupteinstieg heraus.** `postext` importiert React nie; das tut nur `postext/react`. `createLayout` wird weiterhin aus `postext` exportiert, damit bestehender Code funktioniert, ist dort aber veraltet: Es lädt `postext/react`, wenn Sie es aufrufen, und die Komponente suspendiert, bis das Modul eingetroffen ist (React rendert sie dann von selbst erneut). Importieren Sie es aus `postext/react`.
+- **Die veraltete Komponente suspendiert.** Bis `postext/react` eingetroffen ist, braucht `createLayout` aus `postext` eine nebenläufige Wurzel (`createRoot`) oder eine Grenze `<Suspense>` darüber. In einer Legacy-Wurzel mit `ReactDOM.render` oder in `renderToString` meldet React ohne eine solche Grenze stattdessen einen Fehler. `react` bleibt eine erforderliche Peer-Abhängigkeit, damit Bundler diesen verzögerten Import auflösen können.
+
+### Standardwerte auflösen
+
+Resolver-Funktionen ergänzen unvollständige Konfigurationsobjekte um Standardwerte. Das ist nützlich, wenn Sie eine vollständige Konfiguration zur Untersuchung oder zum Vergleich brauchen:
+
+```ts
+import { resolvePageConfig, resolveBodyTextConfig } from 'postext';
+
+const fullPage = resolvePageConfig({ sizePreset: '21x28' });
+// => { sizePreset: '21x28', width: { value: 21, unit: 'cm' }, height: { value: 28, unit: 'cm' },
+//      margins: { top: { value: 2, unit: 'cm' }, ... }, dpi: 300, cutLines: { enabled: false, ... }, ... }
+
+const fullBody = resolveBodyTextConfig({ fontFamily: 'Inter' });
+// => { fontFamily: 'Inter', fontSize: { value: 8, unit: 'pt' }, lineHeight: { value: 1.5, unit: 'em' }, ... }
+```
+
+Verfügbare Resolver, einer pro Abschnitt der obersten Ebene: `resolvePageConfig`, `resolveLayoutConfig`, `resolveBodyTextConfig`, `resolveHeadingsConfig`, `resolveHeadingStylesConfig`, `resolveTocConfig`, `resolvePartsConfig`, `resolveUnorderedListsConfig`, `resolveOrderedListsConfig`, `resolveMathConfig`, `resolveTableStyleConfig`, `resolveCaptionStyleConfig`, `resolveDiagramStyleConfig`, `resolveParagraphStylesConfig`, `resolveCalloutStylesConfig`, `resolveHeaderFooterConfig`, `resolveDebugConfig`, `resolveHtmlViewerConfig`, `resolvePdfGenerationConfig` – dazu `resolveDesignSlot` für einen einzelnen Gestaltungsplatz. Farbpaletten werden getrennt angewendet, über `applyPaletteToConfig(config)`, `applyPaletteToResolvedConfig(resolved, palette)` und `resolveColorValue(value, palette, fallback)` – siehe [Farbpalette](/de/docs/configuration-fonts-colors-viewers#farbpalette).
+
+Resolver, deren Standardwerte aus einem anderen Abschnitt übernommen werden, erhalten diesen Abschnitt bereits aufgelöst als weiteres Argument. `resolveUnorderedListsConfig` und `resolveOrderedListsConfig` erhalten den aufgelösten Grundtext, weil die Listen-Standardwerte für `fontFamily` und `color` aus ihm übernommen werden; `resolveCalloutStylesConfig` erhält den aufgelösten Grundtext, die Überschriften und die ungeordneten Listen (siehe das Beispiel unter [Kastenstile](/de/docs/configuration-styles#kastenstile)), und `resolveHeadingStylesConfig` die aufgelöste Seite, den Grundtext und beide Listenabschnitte. Die genaue Signatur jedes Resolvers finden Sie in den Typdeklarationen des Pakets:
+
+```ts
+import { resolveBodyTextConfig, resolveUnorderedListsConfig } from 'postext';
+
+const body = resolveBodyTextConfig({ fontFamily: 'Inter' });
+const lists = resolveUnorderedListsConfig({ bulletChar: '—' }, body);
+// => lists.fontFamily === 'Inter' (inherited)
+```
+
+Auch die statischen Standardwerte – die Werte, die gelten, wenn keine Übernahme beteiligt ist – werden exportiert: `DEFAULT_PAGE_CONFIG`, `DEFAULT_CUT_LINES`, `DEFAULT_PAGE_NUMBERING`, `PAGE_SIZE_PRESETS`, `DEFAULT_LAYOUT_CONFIG`, `DEFAULT_COLUMN_RULE`, `DEFAULT_COLUMN_BALANCING`, `DEFAULT_BODY_TEXT_CONFIG`, `DEFAULT_HYPHENATION_CONFIG`, `DEFAULT_HEADINGS_CONFIG`, `DEFAULT_UNORDERED_LISTS_STATIC`, `DEFAULT_ORDERED_LISTS_STATIC`, `DEFAULT_PARAGRAPH_STYLES`, `DEFAULT_CALLOUT_STYLES`, `DEFAULT_CALLOUT_STYLE_STATIC`, `DEFAULT_PARTS_CONFIG`, `DEFAULT_HEADING_STYLES`, `DEFAULT_TOC_CONFIG`, `DEFAULT_MATH_CONFIG`, `DEFAULT_DIAGRAM_STYLE_CONFIG`, `DEFAULT_DEBUG_CONFIG`, `DEFAULT_HTML_VIEWER_CONFIG`, `DEFAULT_PDF_GENERATION_CONFIG`, `DEFAULT_COLOR_PALETTE`, `DEFAULT_MAIN_COLOR`, `DEFAULT_MAIN_COLOR_ID`, `DEFAULT_MAIN_COLOR_NAME`, `DEFAULT_MAIN_COLOR_HEX`, dazu die Standardwerte der Kopf- und Fußzeilenelemente (`DEFAULT_HEADER_FOOTER_SLOT`, `DEFAULT_HEADER_SLOT`, `DEFAULT_FOOTER_SLOT`, `DEFAULT_TEXT_ELEMENT`, `DEFAULT_RULE_ELEMENT`, `DEFAULT_BOX_ELEMENT`) und das sprachabhängige `defaultResourceTypes(locale)` (siehe [Ressourcentypen](/de/docs/configuration-resources#ressourcentypen)).
+
+### Standardwerte entfernen
+
+Wenn Sie eine Konfiguration speichern (etwa in localStorage oder in einer Datei), entfernen Sie mit `stripConfigDefaults` die Werte, die den Standardwerten entsprechen. So bleiben gespeicherte Konfigurationen minimal – nur die beabsichtigten Abweichungen werden gesichert:
+
+```ts
+import { stripConfigDefaults } from 'postext';
+
+const minimal = stripConfigDefaults(fullConfig);
+// Only properties that differ from defaults remain
+```
+
+Es gibt auch einzelne Stripper, einen pro Resolver: `stripPageDefaults`, `stripLayoutDefaults`, `stripBodyTextDefaults`, `stripHeadingsDefaults`, `stripHeadingStylesDefaults`, `stripTocDefaults`, `stripPartsDefaults`, `stripUnorderedListsDefaults`, `stripOrderedListsDefaults`, `stripMathDefaults`, `stripTableStyleDefaults`, `stripCaptionStyleDefaults`, `stripDiagramStyleDefaults`, `stripParagraphStylesDefaults`, `stripCalloutStylesDefaults`, `stripHeaderFooterDefaults`, `stripDesignSlotDefaults`, `stripDebugDefaults`, `stripHtmlViewerDefaults`, `stripPdfGenerationDefaults`.
+
+Manche Standardwerte hängen vom Rest der Konfiguration ab: Der Spaltenausgleich ist auf einem Zeichenraster und bei vertikalem Text ausgeschaltet, `bodyText.avoidWidows` ist auf einem Zeichenraster ausgeschaltet (und `bodyText.avoidOrphans` in der Region `japan` ebenfalls), und die Fußnoten, die Legenden und das Register folgen der Sprache des Dokuments. `stripConfigDefaults` vergleicht jeden Wert mit dem Standardwert der übergebenen Konfiguration, sodass `headings.balancing.enabled: true` dort erhalten bleibt, wo der Ausgleich standardmäßig ausgeschaltet ist, und `false` dort entfällt. Ebenso bleibt `bodyText.avoidWidows: true` auf einem Zeichenraster erhalten. Ein einzeln aufgerufener Stripper erhält diesen Kontext als Argumente: `stripHeadingsDefaults(headings, balancingOnByDefault(config))`, `stripIndexDefaults(index, locale)`, `stripCaptionStyleDefaults(captionStyle, locale)`, `stripFootnotesDefaults(footnotes, locale, writingMode)`, `stripBodyTextDefaults(bodyText, locale, avoidWidowsByDefault(config), avoidOrphansByDefault(config))`.
+
+Ein Wert, der „nichts“ besagt, bleibt überall erhalten, wo „nichts“ nicht der Standardwert ist. Ein Überschriftenformat übernimmt Kopf- und Fußzeile des Dokuments, wenn es keine eigenen festlegt; ein Format, das sie leert (`footer: { elements: [] }` auf einem Umschlag), behält deshalb den leeren Platz, und seine `margins`, `layout` und `bodyStyle` bleiben auch dann erhalten, wenn sie leer sind. Eine Überschriftenebene, die auf ihren Standardwert zurückgesetzt wurde, behält den Wert, wenn die für alle Überschriften geltenden Werte davon abweichen. `calloutStyles: []` und `chipStyles: []` bleiben leere Listen: Würden sie weggelassen, käme das eingebaute Format zurück. In jedem Fall wird `resolveAllConfig(stripConfigDefaults(config))` genauso aufgelöst wie `resolveAllConfig(config)`.
+
+### Parsen
+
+Die Engine stellt ihren Markdown-Tokenizer und ihren Frontmatter-Leser bereit. Damit können Sie ein Dokument untersuchen, bevor Sie es setzen, oder andere Werkzeuge mit derselben Blockstruktur versorgen, die Postext sieht:
+
+```ts
+import { parseMarkdown, extractFrontmatter } from 'postext';
+
+const source = '---\ntitle: Chapter One\n---\n\n# Opening\n\nThe story begins here.';
+
+const { metadata, content } = extractFrontmatter(source);
+// metadata.title === 'Chapter One'
+
+const blocks = parseMarkdown(content);
+// => [ { type: 'heading', level: 1, text: 'Opening', … },
+//      { type: 'paragraph', text: 'The story begins here.', … } ]
+```
+
+Die vollständige Liste der Markdown-Konstrukte, die Postext erkennt, finden Sie auf der Seite [Dokumentformat](/de/docs/document-format).
+
+### Schriften vor dem Layout laden
+
+Das Layout misst Text mit den Schnitten, die das Font-Set zum Zeitpunkt der Ausführung hat. `prepareFonts` lädt vor dem ersten Build jeden Schnitt, den eine Konfiguration und ihr Text verlangen: Grundtext, Überschriften, Listen, Titel und Inhalte von Kästen, Tabellen, Gestaltungstexte, Kolumnentitel, Inhaltsverzeichnis, Code und Comic-Lettering, in jeder Stärke und Neigung, die die Konfiguration festlegt (die vier der Grundschrift, da `**` und `*` darin fett und kursiv setzen). Jeder Schnitt wird für die Zeichen geladen, die das Dokument setzt, sodass eine Familie, die in Teilen nach `unicode-range` ausgeliefert wird (Latin Extended, Griechisch, Arabisch, die CJK-Teile von Google Fonts und Fontsource), genau die Dateien mitbringt, die der Text braucht.
+
+```ts
+import { prepareFonts, buildDocument, buildDocumentWithFonts } from 'postext';
+
+// The host's files: the PDF font provider's contract, so one function serves both.
+async function resolve(family: string, weight: number, style: 'normal' | 'italic') {
+  const id = family.toLowerCase().replace(/\s+/g, '-');
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
+}
+
+const report = await prepareFonts(content, config, { resolve });
+// report.loaded, report.missing, report.synthesized: { family, weight, style }[]
+const doc = buildDocument(content, config);
+
+// Or in one call: prepare, build, load any face the pages used that was not there, build again.
+const same = await buildDocumentWithFonts(content, config, { resolve });
+```
+
+- **Schnitte, die die Seite deklariert** (eine Regel `@font-face`, ein bereits hinzugefügtes `FontFace`), werden über das Font-Set geladen (`document.fonts.load` oder in einem Worker `self.fonts`). **Schnitte, die sie nicht deklariert**, werden bei `resolve(family, weight, style, { text, codePoints })` angefragt; die Funktion antwortet mit einer Datei (Bytes oder eine URL), mehreren Dateien (den Teilen eines Schnitts), `{ source, unicodeRange, weight, style }` für einen Teil oder einen variablen Bereich oder mit `null`. Die Engine fügt sie als Objekte `FontFace` hinzu, sobald alle geladen sind, in der Reihenfolge der Konfiguration und jeder Antwort (latin, dann latin-ext, dann greek, wenn der Resolver so antwortet), sodass das Font-Set dasselbe ist, in welcher Reihenfolge die Dateien auch eintreffen. Sie registriert sie außerdem in der Schriftregistrierung, die [SVG-Bilder](/de/docs/configuration-resources#schriften-in-svg-text) und Layout-Worker lesen. Ein Resolver kann den Schnitt auch selbst deklarieren (ein Stylesheet hinzufügen) und `null` antworten.
+- **Der Bericht** listet die Schnitte, für die ein geladener Schnitt einsteht (oder eine installierte Familie), diejenigen, die noch `missing` sind, und diejenigen, die der Browser aus einer anderen Stärke oder Neigung synthetisieren würde (`synthesize`). `timeoutMs` (standardmäßig 10.000) begrenzt das Warten; ein Schnitt, der dann noch lädt, gilt als fehlend. Wo es kein Font-Set gibt (Node), tut `prepareFonts` nichts und meldet jeden Schnitt als geladen.
+- **`buildDocumentWithFonts(content, config, options)`** bereitet vor, setzt mit `buildDocumentAsync`, liest die Schnitte, in denen die Seiten tatsächlich Text setzen, lädt alle, die das Font-Set nicht liefern konnte (eine Stärke, die sich erst an den Seiten zeigt, wird bei `resolve` angefragt, auch wenn eine andere Stärke der Familie für sie einstehen würde), und setzt erneut (höchstens zwei zusätzliche Builds). `withLoadedFonts(build, options)` tut dasselbe rund um eine beliebige Build-Funktion, für ein Buch, das Kapitel für Kapitel gesetzt wird, oder ein Paket (`buildBundle`), das mehrere Dokumente zurückgibt. `options.onFonts` erhält den abschließenden Bericht.
+- **Nach dem Build** wird jeder Schnitt, in dem Text gesetzt wurde und den das Font-Set nicht liefern konnte, in `doc.contentWarnings` als `fontFallback` aufgeführt (siehe [Warnungen im Dokument](#warnungen-im-dokument)).
+
+Schnitte, die später eintreffen, werden von selbst berücksichtigt. Die Engine merkt sich pro Font-Set, welche Schnitte jeder Familie beim letzten Nachsehen geladen waren; ein Build sieht zu Beginn erneut nach (nur wenn das Set gewachsen oder geschrumpft ist, gerade lädt oder einen Schnitt fertig geladen hat) und verwirft, was in den Familien gemessen wurde, deren Schnitte sich geändert haben. `watchFonts(fontSet)` tut dasselbe, während Schnitte laden, höchstens einmal pro Animationsframe, wie viele Teile ein Schub auch bringt, und `onFontsChanged(listener)` teilt dem Host mit, welche Familien sich geändert haben, damit er die Seiten neu setzen kann:
+
+```ts
+import { watchFonts, onFontsChanged } from 'postext';
+
+const stop = watchFonts();                         // document.fonts by default
+const off = onFontsChanged((families) => relayout());
+```
+
+`prepareFonts` startet die Überwachung für das Set, in das es lädt (`watch: false` lässt sie aus).
+
+### Mess-Cache
+
+Das Messen von Text ist der aufwendige Schritt im Layout. Zwei Arten von Cache halten ihn günstig:
+
+- **Ein Block-Cache, der Ihnen gehört.** `createMeasurementCache()` gibt einen `MeasurementCache` zurück, der sich jeden gemessenen Absatz merkt, mit seinem Text, seinen Schriften, seiner Breite, den Umbruchoptionen und dem aktiven Silbentrennungswörterbuch als Schlüssel. Übergeben Sie ihn als drittes Argument von `buildDocument` (oder `buildDocumentAsync`), um Messungen über die Platzierungsdurchläufe eines Builds und über Builds hinweg wiederzuverwenden: Ein Editor, der das Dokument bei jedem Tastendruck neu setzt, misst dann nur die Absätze, die sich geändert haben. Ohne Cache misst jeder Durchlauf jeden Block erneut. Ein Absatz aus dem Cache gleicht einem neu gemessenen, sodass ein Build mit Cache jede Zeile so setzt wie ein Build ohne; in postext 1.4.1 verlor ein Absatz aus dem Cache die Markierung einer zu kurzen Ausgangszeile, und das Nachspannen zu kurzer Ausgangszeilen sowie der Spaltenausgleich konnten ihn dann anders umbrechen. Der Cache trägt die Messgeneration, unter der er gefüllt wurde: Treffen Schnitte einer Familie ein oder entfallen, verwirft sein nächster Zugriff die in dieser Familie gesetzten Blöcke, sodass ein über Schriftladevorgänge hinweg behaltener Cache nie Zeilen liefert, die mit einer Ersatzschrift gemessen wurden.
+- **Globale Breiten-Caches.** Wortbreiten werden pro Font-String in Modulzustand gespeichert, den jeder Build der Seite teilt, und pretext hat einen eigenen Cache. Die Engine verwirft die Breiten einer Familie, wenn sich deren Schnitte ändern (zu Beginn eines Builds, durch `watchFonts`, durch `prepareFonts` und `loadBundleFonts`); der Cache von pretext hat keinen Familienindex und wird ganz geleert.
+
+```ts
+import { buildDocument, createMeasurementCache, evictFontFamilies, clearMeasurementCache } from 'postext';
+
+const cache = createMeasurementCache();
+let doc = buildDocument(content, config, cache);
+
+// A face of "EB Garamond" was added to document.fonts: the next build sees it,
+// with the same cache, and measures that family again.
+doc = buildDocument(content, config, cache);
+
+// A host that changes faces the engine cannot see (a font set of its own) says so:
+evictFontFamilies(['EB Garamond']);   // that family's widths and cached blocks
+clearMeasurementCache();              // every family
+```
+
+Für Anwendungen, die Text Stück für Stück messen, nehmen `cachedMeasureBlock(text, font, maxWidthPx, lineHeightPx, options, cache)` und `cachedMeasureRichBlock(spans, normalFont, boldFont, italicFont, boldItalicFont, maxWidthPx, lineHeightPx, options, cache)` die Argumente von `measureBlock` und `measureRichBlock` und zuletzt den Cache.
+
+### Der Zeilenumbrecher (WebAssembly)
+
+Absätze werden nach Knuth-Plass in Zeilen umbrochen. Seit postext 1.33 führt die Engine das in einem Zeilenumbrecher aus, der in Rust geschrieben und nach WebAssembly kompiliert ist (30 KB, im Paket enthalten). Er wählt dieselben Umbrüche wie der Umbrecher in TypeScript, mit derselben Arithmetik in derselben Reihenfolge, und ein ganzes Buch wird etwa 15 % schneller gesetzt. Einzurichten ist nichts:
+
+- In einem Worker, in Node und in Bun wird das Modul beim ersten Absatz kompiliert.
+- Im Haupt-Thread einer Seite, wo ein Browser ein Modul dieser Größe nur asynchron kompiliert, geschieht das im Hintergrund, und bis dahin antwortet der TypeScript-Umbrecher. `await initLineBreaker()` vor dem ersten Layout setzt ihn ab dem ersten Absatz ein; das Promise löst sich zu `false` auf, wo WebAssembly nicht verfügbar ist.
+- Wo WebAssembly fehlt oder eine Content Security Policy es ablehnt (`script-src` ohne `'wasm-unsafe-eval'`), beantwortet der TypeScript-Umbrecher jeden Absatz.
+
+Beide wählen dieselben Umbrüche, sodass es ein Layout nie verändert, welcher geantwortet hat. `useWasmLineBreaker(false)` behält den TypeScript-Umbrecher bei, um die beiden zu vergleichen.
+
+```ts
+import { initLineBreaker, buildDocument } from 'postext';
+
+await initLineBreaker(); // optional: the first layout already uses it
+const doc = buildDocument({ markdown }, config);
+```
+
+
+### Globaler Zustand innerhalb einer Seite
+
+Ein Teil des Zustands von Postext liegt in Variablen auf Modulebene. Alles, was `postext` im selben JavaScript-Realm importiert, teilt ihn: Eine Seite und ihre Skripte teilen eine Kopie, während jedes iframe und jeder Worker eine eigene hat. Bei einem Dokument pro Seite merkt man davon nichts. Bei mehreren Dokumenten auf einer Seite – zwei Live-Vorschauen, eine Galerie von Beispielen – schon:
+
+- **Ressourcenbilder.** `registerResourceImage(fileId, image)` füllt eine einzige Registrierung mit `fileId` als Schlüssel, die `renderPage` und `renderPageToCanvas` lesen. Zwei Dokumente, die beide `figure.svg` registrieren, teilen diesen Eintrag: Die letzte Registrierung gewinnt, für beide. Versehen Sie Datei-IDs mit einem Präfix pro Dokument, und rufen Sie `unregisterResourceImage(fileId)` oder `clearResourceImages()` auf, wenn ein Dokument verschwindet. Die Raster, die das Canvas-Backend zwischenspeichert, haben dieselben Schlüssel und werden mit dem Bild verworfen.
+- **Textmessungen.** Gemessene Breiten werden pro Font-String und Text für den ganzen Realm zwischengespeichert. Treffen Schnitte einer Familie ein oder entfallen, verwirft die Engine die Breiten dieser Familie für jedes Dokument (siehe [Schriften vor dem Layout laden](#schriften-vor-dem-layout-laden)); `clearMeasurementCache()` verwirft sie alle.
+- **Aufgelöste Konfigurationen.** Jedes Konfigurationsobjekt wird einmal aufgelöst, und das Ergebnis wird zu diesem Objekt zwischengespeichert. Jeder Build vergleicht das Objekt zuerst mit dem Text, den es bei der Auflösung hatte (ein `JSON.stringify`, etwa 0,1 ms für eine Buchkonfiguration von 55 KB und 1,5 ms für eine von 240 KB), sodass eine an Ort und Stelle geänderte Konfiguration, in beliebiger Tiefe (`config.bodyText.fontSize = …`, eine Palettenfarbe), erneut aufgelöst wird. `invalidateConfig(config)` verwirft die Auflösung von Hand. `stableStringify` und `hashString` liefern einen Inhaltsschlüssel, der nicht von der Reihenfolge der Schlüssel abhängt, für Hosts, die Layouts nach Konfiguration zwischenspeichern.
+- **Silbentrennungssprache.** Jeder Build setzt die prozessweite Silbentrennungssprache auf das `bodyText.hyphenation.locale` seines Dokuments. Das exportierte `hyphenateText(text)` und `layoutDesignSlot` verwenden die Sprache des letzten Builds, sofern Sie keine übergeben: Rufen Sie `hyphenateText(text, 'es')` auf.
+- **Mathe-Engine.** Es gibt eine MathJax-Engine und einen Cache gerenderter Formeln für den Realm; `initMathEngine()` startet sie für alle.
+- **Zeilenumbrecher.** Es gibt einen WebAssembly-Zeilenumbrecher für den Realm, einmal kompiliert; `useWasmLineBreaker(false)` schaltet ihn für alle aus.
+
+Die einfachste Isolation ist ein Realm pro Dokument: ein iframe pro Live-Beispiel (eine CodePen-Einbettung ist eines) oder ein [Layout-Worker](#layout-in-einem-web-worker-ausführen) pro Dokument für die Messungen und die Silbentrennung (Bilder werden weiterhin auf der Seite registriert).
+
+
+## Layout in einem Web Worker ausführen
+
+**Das ist der empfohlene Weg, Postext im Browser zu nutzen.** Wenn Sie etwas Interaktives bauen – eine Live-Vorschau, einen Editor, einen Betrachter, der auf Größenänderungen reagiert, oder eine Spielwiese im Stil der Sandbox –, steuern Sie die Pipeline über `createLayoutWorker()` aus `postext/worker`. Rufen Sie `buildDocument` in UI-Code nicht direkt im Haupt-Thread auf.
+
+Ein Aufruf von `buildDocument` im Haupt-Thread führt die gesamte Pipeline – Parsen, Messen, Platzieren und jede Wiederholung des Platzierungsdurchlaufs, die das Layout braucht – in dem Thread aus, der sie aufgerufen hat. Für einen einmaligen Export ist das in Ordnung. Für eine interaktive Oberfläche ist es der falsche Thread: Ein Layout von 150 ms blockiert Eingabeereignisse, Tastendrücke stauen sich, und das Scrollen ruckelt. Der Worker verlagert jede dieser Millisekunden in einen Hintergrund-Thread.
+
+Postext liefert einen eigenen Einstiegspunkt für Web Worker – `postext/worker` –, der die Pipeline aus dem Haupt-Thread nimmt. Diesen Weg erwarten wir für die Mehrzahl der Integrationen: Die Ansichten Canvas, HTML und PDF der Sandbox teilen alle dasselbe Handle von `createLayoutWorker()` über einen einzigen Hook `useLayoutWorker` (`packages/postext-sandbox/src/worker/useLayoutWorker.ts`) und steuern es mit einem Abbruch nach dem Prinzip „der letzte gewinnt“ – ein neuer Tastendruck bricht den laufenden Build ab, noch bevor er fertig ist.
+
+Kurz gefasst sieht die maßgebliche Integration so aus:
+
+1. **Erzeugen** Sie mit `createLayoutWorker()` einen Worker pro Ansicht.
+2. **Registrieren** Sie Schriften einmal pro Familie, indem Sie mit `registerFonts(payloads)` übertragbare Objekte `ArrayBuffer` senden.
+3. **Setzen** Sie mit `build(content, config, { signal })` und übergeben Sie bei jedem Aufruf ein neues `AbortSignal`, damit veraltete Builds abgebrochen werden können.
+4. **Ersetzen** Sie jeden vorherigen Build, indem Sie sein Signal abbrechen, *bevor* Sie den nächsten starten – das ist das Muster „der letzte gewinnt“.
+5. **Entsorgen** Sie den Worker, wenn die Komponente, der er gehört, ausgehängt wird.
+
+Dasselbe `VDTDocument`, das von `build(...)` zurückkommt, speist jeden nachgelagerten Renderer: `renderPage`/`renderPageToCanvas` für den Canvas, `renderToHtmlIndexed` für HTML und `renderToPdf` (aus `postext-pdf`) für PDF. Sie setzen einmal im Worker und rastern im Haupt-Thread so oft, wie die Oberfläche es braucht.
+
+### Was der Worker Ihnen bietet
+
+- **Der Haupt-Thread bleibt frei.** Parsen, Messen und jeder Platzierungsdurchlauf laufen im Worker. Der Haupt-Thread wird erst berührt, wenn das fertige `VDTDocument` zurückgesendet wird.
+- **Abbruch nach dem Prinzip „der letzte gewinnt“.** `build(content, config, { signal })` reicht ein `AbortSignal` in den Worker. Ein Abbruch vor dem Abschluss löst auf der Hauptseite einen `AbortError` aus; im Worker wirft die Pipeline am nächsten Abbruchpunkt pro Block einen `BuildCancelledError` und hält sofort an.
+- **Mess-Cache pro Worker.** Der Worker hält für seine gesamte Lebensdauer einen einzigen `MeasurementCache`. Folgende Builds mit gleicher Schrift, gleichem Text und gleicher Breite verwenden die zwischengespeicherten Zeilenmessungen wieder – wer in einem langen Dokument ein einzelnes Zeichen tippt, lässt nur die Blöcke neu messen, deren Eingabe sich tatsächlich geändert hat.
+- **Dieselben Metriken wie im Haupt-Thread.** Schriften werden als übertragbare Objekte `ArrayBuffer` in den Worker geschickt und mit `new FontFace(...)` im eigenen `FontFaceSet` des Workers registriert. Der Worker misst mit denselben Canvas-Schriftmetriken, die der Haupt-Thread verwenden würde, sodass Zeilenumbrüche und Spaltenhöhen byte-genau übereinstimmen.
+- **Der Raster-Cache für Formeln überdauert Worker-Builds.** Der Mathe-Renderer bringt neben dem identitätsbasierten einen inhaltsbasierten Raster-Cache mit – ein per Structured Clone über die Worker-Grenze kopiertes `MathRender` würde den identitätsbasierten Cache sonst bei jedem Neuaufbau verfehlen.
+- **Dieselben Zeilen wie auf der Seite.** Ein in einem Worker erzeugter Canvas hat keine Seite, von der er eine Sprache übernehmen könnte, und eine Schrift antwortet unter einer Sprache mit anderen Glyphen. Die Engine setzt die Sprache des Dokuments (`locale`) auf jedem Kontext, mit dem sie misst, im Worker wie auf der Seite, sodass `build()` in jeder Sprache die Zeilen liefert, die `buildDocument` auf einer Seite ergibt ([`bodyText.shapingLanguage: 'document'`](/de/docs/configuration-text#fließtext), der Standard seit postext 1.30). Mit `'host'`, das eine vor 1.30 gespeicherte Konfiguration behält, misst ein Worker ohne Sprache und eine Seite mit ihrer eigenen, wie bis postext 1.28.
+
+### Öffentliche API
+
+Der Worker-Client liegt im Unterpfad `postext/worker` und besteht aus einer Handvoll Namen:
+
+- **`createLayoutWorker(opts?): LayoutWorkerHandle`** – startet einen eigenen Worker (oder umhüllt einen, den Sie über `opts.worker` übergeben, oder startet den Worker-Einstieg unter `opts.url`) und gibt ein typisiertes Handle zurück. Siehe [Den Worker von einem CDN laden](#den-worker-von-einem-cdn-laden).
+- **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`** – schickt Schriftbytes in den Worker. Die Puffer werden übertragen; behalten Sie also eine frische Kopie im Haupt-Thread, wenn Sie sie später erneut senden müssen.
+- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`** – führt die Pipeline aus. Ein Abbruch des Signals bricht den laufenden Build ab.
+- **`LayoutWorkerHandle.dispose(): void`** – beendet den Worker und weist alle ausstehenden Builds mit `AbortError` zurück.
+- **`FontPayload`** – `{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`. `weight` ist ein CSS-Stärkewert als String (`'700'`, `'bold'`); `registerFonts` akzeptiert ihn auch als Zahl (`700`). Der `buffer` wird an den Worker übertragen, wenn Sie `registerFonts` aufrufen.
+- **`BuildCancelledError`** (aus `postext` re-exportiert) – was `buildDocument` intern wirft, wenn `options.shouldCancel` `true` zurückgibt. Im Haupt-Thread sehen Sie ihn normalerweise nicht: Das Worker-Protokoll wandelt ihn in einen `AbortError` um, bevor er Ihren Code erreicht.
+
+Das Paket veröffentlicht außerdem einen Pfad `postext/worker/entry`, der auf das kompilierte Worker-Skript zeigt. `createLayoutWorker()` löst diese URL automatisch auf; Sie müssen sie nur dann ausdrücklich angeben, wenn Ihr Bundler einen von Hand gebauten Aufruf `new Worker(new URL(...), { type: 'module' })` verlangt oder wenn Sie den Einstieg selbst ausliefern (`opts.url`).
+
+### Minimale Integration
+
+```ts
+import { createLayoutWorker } from 'postext/worker';
+import type { FontPayload, LayoutWorkerHandle } from 'postext/worker';
+import type { PostextConfig, VDTDocument } from 'postext';
+
+// 1. Create the worker once and keep the handle for the lifetime of your viewport.
+const layout: LayoutWorkerHandle = createLayoutWorker();
+
+// 2. Register fonts once per family (transferable ArrayBuffers).
+//    getConfigFontFamilies(config) is a helper that lists the families your config will render.
+const payloads: FontPayload[] = await collectFontPayloadsForFamilies([
+  'EB Garamond',
+  'Open Sans',
+]);
+await layout.registerFonts(payloads);
+
+// 3. Drive builds with last-wins cancellation: abort the previous signal
+//    before starting a new build. A stale build is thrown away inside the worker.
+let pending: AbortController | null = null;
+
+async function rebuild(
+  markdown: string,
+  config: PostextConfig,
+): Promise<VDTDocument | null> {
+  pending?.abort();
+  pending = new AbortController();
+  try {
+    return await layout.build({ markdown }, config, { signal: pending.signal });
+  } catch (err) {
+    if ((err as { name?: string } | null)?.name === 'AbortError') return null;
+    throw err;
+  }
+}
+
+// 4. Dispose when the component that owns the worker unmounts.
+//    Pending builds reject with AbortError.
+layout.dispose();
+```
+
+In eine React-Komponente verpackt sieht das so aus:
+
+```tsx
+import { useEffect, useRef } from 'react';
+import { createLayoutWorker } from 'postext/worker';
+import type { LayoutWorkerHandle } from 'postext/worker';
+import { renderPageToCanvas } from 'postext';
+import type { PostextConfig } from 'postext';
+
+export function CanvasPreview({
+  markdown,
+  config,
+}: {
+  markdown: string;
+  config: PostextConfig;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const workerRef = useRef<LayoutWorkerHandle | null>(null);
+  const pendingRef = useRef<AbortController | null>(null);
+
+  // Mount: spin up the worker and ship the fonts once.
+  useEffect(() => {
+    const handle = createLayoutWorker();
+    workerRef.current = handle;
+    (async () => {
+      const payloads = await collectFontPayloadsForFamilies(
+        getConfigFontFamilies(config),
+      );
+      await handle.registerFonts(payloads);
+    })();
+    return () => {
+      pendingRef.current?.abort();
+      handle.dispose();
+    };
+  }, []); // fonts registered once; re-register only when the family set changes
+
+  // Every keystroke or config change: supersede the in-flight build and kick a new one.
+  useEffect(() => {
+    const handle = workerRef.current;
+    if (!handle) return;
+    pendingRef.current?.abort();
+    const ac = new AbortController();
+    pendingRef.current = ac;
+    (async () => {
+      try {
+        const vdt = await handle.build({ markdown }, config, { signal: ac.signal });
+        const canvas = canvasRef.current;
+        if (!canvas || !vdt.pages[0]) return;
+        renderPageToCanvas(vdt.pages[0], vdt, canvas); // rasterise on the main thread
+      } catch (err) {
+        if ((err as { name?: string } | null)?.name !== 'AbortError') throw err;
+      }
+    })();
+  }, [markdown, config]);
+
+  return <canvas ref={canvasRef} />;
+}
+```
+
+Das Muster ist immer dasselbe: **einmal erzeugen, Schriften einmal registrieren, viele Male mit AbortSignal setzen, beim Aushängen entsorgen.**
+
+### Den Worker von einem CDN laden
+
+Ein Worker-Skript muss vom eigenen Ursprung der Seite stammen, deshalb kann eine von einem CDN ausgelieferte Kopie von `postext/worker` die daneben liegende Datei `layout.worker.js` nicht starten. `createLayoutWorker()` kümmert sich darum:
+
+- **esm.sh, ohne Optionen.** Wurde `postext/worker` selbst von esm.sh geladen (seine Modul-URL sieht aus wie `https://esm.sh/postext@1.5.0/es2022/worker.mjs`), startet der Client das passende `https://esm.sh/postext@1.5.0/worker/entry` über ein einzeiliges Blob-Modul desselben Ursprungs, das es importiert. Dasselbe gilt für Importe, die `?deps=`, `?external=` oder `?alias=` hinzufügen, und für die Form `https://esm.sh/*postext@1.5.0/worker`. Der Worker erhält immer den einfachen Build dieser Version, denn ein Worker hat keine Import-Map, mit der er externe Abhängigkeiten auflösen könnte.
+- **Jeder andere Server, mit `url`.** Andere CDNs wie jsDelivr (`/+esm`) oder unpkg werden nicht erkannt. `createLayoutWorker({ url })` startet das Worker-Einstiegsmodul unter `url`: eine URL desselben Ursprungs direkt, eine URL eines anderen Ursprungs über dieselbe Blob-Hülle. Dieser Server muss ursprungsübergreifende Anfragen (CORS) erlauben.
+- **Bundler ändern nichts.** Mit Vite, webpack oder Next.js rufen Sie `createLayoutWorker()` weiterhin ohne Optionen auf: Sie geben den Worker als Chunk Ihrer App aus.
+
+```js
+import { createLayoutWorker } from 'https://esm.sh/postext/worker';
+
+const layout = createLayoutWorker();
+const face = async (weight, style) => ({
+  family: 'EB Garamond',
+  weight,
+  style,
+  buffer: await (await fetch(`https://cdn.jsdelivr.net/npm/@fontsource/eb-garamond@5/files/eb-garamond-latin-${weight}-${style}.woff2`)).arrayBuffer(),
+});
+await layout.registerFonts(await Promise.all([face(400, 'normal'), face(700, 'normal'), face(400, 'italic')]));
+const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garamond' } });
+```
+
+**Ein Worker sieht die Schriften der Seite nicht.** Er hat ein eigenes Font-Set, das nur die mit `registerFonts` gesendeten Schnitte und die im System installierten Schriften enthält. Setzt ein Build Text in einer Familie, die der Worker nicht findet, wird dieser Text mit einer Ersatzschrift gemessen, sodass seine Zeilenumbrüche nicht zur Seite passen. Der Client gibt dann eine Konsolenwarnung pro Familie aus (`"EB Garamond" is not available inside the layout worker…`) und listet die Familien in `BuildStats.missingFonts` auf, das der Callback `onStats` von `build` erhält. Das Dokument selbst trägt dieselben Schnitte als inhaltliche Warnungen `fontFallback`.
+
+`handle.prepareFonts(content, config, options)` führt [`prepareFonts`](#schriften-vor-dem-layout-laden) auf der Seite aus und schickt dem Worker dann die Dateien jedes gefundenen Schnitts, den die Schriftregistrierung enthält (die Dateien des Resolvers, die Schnitte eines Pakets, die lesbaren Regeln `@font-face` der Seite), und zwar nur die Teile, die die Zeichen des Dokuments enthalten. Wenn Schnitte den Worker erreichen, verwirft er nur die Messungen dieser Familien und seinen Cache fertiger Dokumente.
+
+Schnitte können den Worker auch nach einem Build erreichen: eine Stärke, die die Seiten doch brauchen, ein weiterer Teil eines Schnitts nach `unicode-range`, eine Datei, die unter demselben Familiennamen erneut hochgeladen wurde. Der nächste Build misst mit ihnen. Der Canvas eines Workers würde das nicht von selbst tun: In Chrome löst er eine Schrift beim ersten Setzen einer Font-Kurzschreibweise auf und sieht für diese Kurzschreibweise nicht mehr in das Font-Set, sodass der Text die Breiten des Schnitts behielte, der zuerst geantwortet hat. Der Worker nennt deshalb eine Familie in den Kurzschreibweisen, die er setzt, ein weiteres Mal, sobald ein Schnitt dieser Familie verspätet eingetroffen ist (`Geist, Geist`): eine andere Familienliste für den Canvas, dieselbe Schrift und dieselben Breiten. Die Dokumente, die er zurückgibt, behalten die Font-Strings so, wie die Engine sie schreibt, und ein Worker, der seine Schnitte vor seinem ersten Build hat, setzt jede Kurzschreibweise wie geschrieben.
+
+### Schriftdaten sammeln (Fontsource / Google Fonts)
+
+`registerFonts` nimmt rohe Schriftbytes. Der Haupt-Thread ist der richtige Ort, um sie abzurufen, weil ein zentraler Cache mehreren Worker-Instanzen erlaubt, dieselben Bytes zu teilen.
+
+`collectFontPayloadsForFamilies` aus der Sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) ist eine Referenzimplementierung. Die Funktion:
+
+1. fragt `https://api.fontsource.org/v1/fonts/{family-id}` nach den Stärken und Stilen ab, die die Familie hat.
+2. liest die Teilmengen der Familie und ihre `unicode-range` aus ihrem Paket auf jsDelivr (`@fontsource/{family-id}@5/400.css`), einmal pro Familie. Die Dateien werden dann bei genau der Version angefragt, aus der dieses Stylesheet beantwortet wurde (das `x-jsd-version` von jsDelivr), sodass eine Familie nie aus zwei Versionen ihres Pakets eintrifft.
+3. lädt jede Datei des normalen und des fetten Schnitts und ihrer Kursiven jeder Familie herunter (`files/{family-id}-{subset}-{weight}-{style}.woff2`); `collectFontPayloadsForConfig(config, markdown)` nimmt stattdessen die Stärken und Stile, die eine Konfiguration verlangt. Es sind statische Dateien, dieselben, die das PDF einbettet, sodass der Worker mit dem misst, was das PDF zeichnet. Eine variable Datei liefert zwischen zwei ihrer Master andere Dickten, und eine Zeile, die einen Bruchteil eines Pixels von ihrer Satzbreite entfernt ist, bricht dann anders um.
+4. gibt ein `FontPayload[]` zurück, in dem `buffer` bei jedem Aufruf ein frischer `ArrayBuffer` ist – wichtig, weil `registerFonts` den Puffer überträgt und die Kopie auf der Senderseite abgekoppelt zurücklässt.
+
+Die Dateien eines Schnitts kommen in der Reihenfolge, in der ein Pen sie deklariert, `latin` zuerst und die eigenen Dateien der Schrift zuletzt (`arabic`, die nummerierten Teile einer chinesischen oder japanischen Familie), denn die zuletzt hinzugefügte Datei steht für ein Zeichen ein, das zwei Dateien enthalten. Eine Familie, für die Fontsource keine Dateien hat, wird stattdessen aus dem CSS2-Stylesheet von Google gelesen, das WOFF2 nur an browserähnliche User-Agent-Strings ausliefert.
+
+Kombinieren Sie die Funktion mit `getConfigFontFamilies(config)`, um die Liste der Familien zu erhalten, die eine bestimmte `PostextConfig` tatsächlich rendert (Grundtext, Überschriften, Aufzählungszeichen, Nummern geordneter Listen).
+
+### Kooperativer Abbruch in der Engine
+
+Wenn Sie `buildDocument` selbst steuern – etwa in einem eigenen Worker –, bietet die Pipeline einen Hook `shouldCancel`, den Sie direkt nutzen können:
+
+```ts
+import { buildDocument, BuildCancelledError } from 'postext';
+
+let superseded = false;
+try {
+  const vdt = buildDocument(content, config, cache, {
+    shouldCancel: () => superseded,
+  });
+} catch (err) {
+  if (err instanceof BuildCancelledError) return; // a newer build took over
+  throw err;
+}
+```
+
+`shouldCancel` wird während der Platzierung einmal pro Block der obersten Ebene aufgerufen. Der Hook ist bewusst kooperativ – er kann den Layout-Aufruf von pretext nicht mitten in einer Zeile anhalten, hält die Abbruchgranularität aber klein genug (Millisekunden), dass auch wer schnell tippt nie auf einen veralteten Build wartet.
+
+### PDF-Export über den Worker
+
+Das PDF-Backend nimmt ein fertiges `VDTDocument` und macht daraus PDF-Bytes. Es führt das Layout **nicht** erneut aus. Deshalb passt der maßgebliche PDF-Ablauf im Browser sauber zum Worker: Setzen Sie den VDT im Worker (außerhalb des Haupt-Threads, abbrechbar, mit wiederverwendetem Cache) und rufen Sie dann `renderToPdf` im Haupt-Thread für denselben VDT auf.
+
+```ts
+import type { LayoutWorkerHandle } from 'postext/worker';
+import { renderToPdf } from 'postext-pdf';
+import type { PostextConfig } from 'postext';
+import { createPdfFontProvider } from './pdfFontProvider';
+
+const fontProvider = createPdfFontProvider();
+
+export async function exportPdf(
+  layout: LayoutWorkerHandle,
+  markdown: string,
+  config: PostextConfig,
+): Promise<Uint8Array> {
+  // 1. Build the VDT in the worker — UI stays responsive during the layout passes.
+  const vdt = await layout.build({ markdown }, config);
+
+  // 2. Rasterise to PDF on the main thread. renderToPdf is fast once the VDT exists
+  //    because it is walking precomputed coordinates, not remeasuring text.
+  return renderToPdf(vdt, {
+    fontProvider,
+    // pdfGeneration config on `vdt.config` is honoured automatically.
+  });
+}
+```
+
+Wenn Sie für die Live-Vorschau bereits ein Worker-Handle pflegen, verwenden Sie es für den Export wieder, statt einen zweiten Worker zu starten – der Mess-Cache im Worker macht einen PDF-Export, der auf eine Bildschirmvorschau folgt, praktisch kostenlos.
+
+Bei einem langen Buch dauert auch das Schreiben des PDFs selbst Sekunden; `postext-pdf/worker` führt diesen Schritt in einem eigenen Worker aus (siehe [Das PDF in einem Worker rendern](#das-pdf-in-einem-worker-rendern)).
+
+### Wann der Worker sinnvoll ist und wann nicht
+
+Verwenden Sie den Worker für:
+
+- **Live-Vorschauen, Editoren und Spielwiesen.** Alles, wobei das Dokument als Reaktion auf Benutzereingaben neu gesetzt wird.
+- **HTML-Betrachter, die auf Größenänderungen reagieren** und das Layout bei jedem Tick von `ResizeObserver` neu ausführen.
+- **PDF-Export im Browser**, ausgelöst aus einer Oberfläche, die bereits eine Live-Vorschau hat – verwenden Sie das vorhandene Worker-Handle wieder, damit der Export vom Mess-Cache profitiert.
+- **Mehrere Ausgabe-Tabs**, die alle denselben VDT brauchen (die Ansichten Canvas / HTML / PDF der Sandbox teilen ein Worker-Handle pro eingehängter Ansicht).
+
+Verzichten Sie auf den Worker bei:
+
+- **Serverseitiger Erzeugung** – Node hat kein browserseitiges `FontFaceSet`, und den Thread kontrollieren Sie dort ohnehin.
+- **Isolierten einmaligen Exporten** (eine CLI, ein Exportskript ohne Oberfläche, eine Cloud Function), bei denen keine interaktive Oberfläche blockiert werden kann. `buildDocument` direkt aufzurufen ist einfacher und spart die Kosten der anfänglichen Schriftübertragung.
+
+## Den HTML-Betrachter einbinden
+
+Der HTML-Betrachter ist der Renderer von Postext, der für den Bildschirm gedacht ist. Statt Seiten zu einer Bitmap zu rastern, gibt er absolut positionierte DOM-Knoten aus, deren Geometrie aus derselben Pipeline stammt, die auch die Druckausgabe erzeugt. Damit ist er die richtige Wahl, wenn Sie im Browser lesbare, auswählbare und auf Größenänderungen reagierende Typografie wollen – eine Lese-App, eine Vorschau im Produkt oder eine eingebettete Dokumentationsoberfläche –, ohne einen PDF-Betrachter einzubinden.
+
+Die wichtigsten Teile der öffentlichen API:
+
+- **`buildDocument(content, config, cache?)`** – durchläuft die gesamte Layout-Pipeline und gibt ein `VDTDocument` zurück.
+- **`renderToHtmlIndexed(doc, options)`** – macht aus dem VDT einen einzigen HTML-String sowie eine Aufschlüsselung pro Seite und pro Block. Die Aufschlüsselung erlaubt günstige DOM-Aktualisierungen, wenn sich zwischen zwei Renderings nur wenige Blöcke geändert haben.
+- **`resolveHtmlViewerConfig(partial)`** – ergänzt die Standardwerte des HTML-Betrachters (`maxCharsPerLine`, `columnGap`, `optimalLineBreaking`).
+- **`buildFontString` + `measureGlyphWidth` + `dimensionToPx`** – Messgrundfunktionen, mit denen sich aus einer Zielzahl von Zeichen eine tatsächliche Spaltenbreite in Pixeln ableiten lässt.
+- **`createMeasurementCache` / `clearMeasurementCache`** – austauschbare Caches, mit denen Sie Messungen über Neuaufbauten des Layouts hinweg wiederverwenden.
+- **`prepareFonts` / `buildDocumentWithFonts` / `watchFonts` / `onFontsChanged`** – laden die Schnitte des Dokuments vor dem Layout und setzen erneut, wenn Schnitte eintreffen (siehe [Schriften vor dem Layout laden](#schriften-vor-dem-layout-laden)).
+
+### Live-Beispiel: ein HTML-String
+
+Der ganze Ablauf in reinem JavaScript, vor der React-Integration weiter unten: das Dokument setzen, das `VDTDocument` an `renderToHtml` übergeben und den String in einen Container einfügen. `mode: 'single'` stapelt die Seiten untereinander; `background` gibt ihnen eine Farbe, da Seiten standardmäßig transparent sind. Der Pen gibt außerdem das erzeugte Markup aus, sodass Sie die absolut positionierten Zeilen sehen, die der Renderer ausgibt – der Browser zeichnet sie, bricht sie aber nie neu um.
+
+<CodePenExample name="render-html" title="Postext · ein Dokument als HTML rendern" description="Ein Markdown-Dokument mit postext setzen und als HTML-String rendern." height={600} />
+
+### Minimale Einbindung
+
+Das folgende Snippet ist die kürzeste brauchbare Integration: Es setzt das Dokument in der aktuellen Größe der Ansicht, rendert es in einen Container und wiederholt das bei Größenänderungen.
+
+```tsx
+import { useEffect, useRef } from 'react';
+import {
+  buildDocument,
+  renderToHtmlIndexed,
+  resolveHtmlViewerConfig,
+  buildFontString,
+  measureGlyphWidth,
+  dimensionToPx,
+  createMeasurementCache,
+  watchFonts,
+  onFontsChanged,
+} from 'postext';
+import type { PostextConfig, MeasurementCache } from 'postext';
+
+// Screen-friendly DPI: at 144 DPI, an 8pt body size resolves to 16 px.
+const HTML_DPI = 144;
+const PADDING_PX = 24;
+
+// Prose sample used to measure the target column width. Proportional fonts
+// make "N × average width" unreliable, so we measure a representative string.
+const SAMPLE =
+  'The quick brown fox jumps over the lazy dog. Sphinx of black quartz, judge my vow.';
+
+function sampleForChars(n: number): string {
+  let s = SAMPLE;
+  while (s.length < n) s += ' ' + SAMPLE;
+  return s.slice(0, n);
+}
+
+export function PostextHtmlViewer({
+  markdown,
+  config,
+  mode = 'multi',
+}: {
+  markdown: string;
+  config: PostextConfig;
+  mode?: 'single' | 'multi';
+}) {
+  const hostRef = useRef<HTMLDivElement | null>(null);
+  const cacheRef = useRef<MeasurementCache>(createMeasurementCache());
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+
+    const relayout = () => {
+      const rect = host.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      const viewer = resolveHtmlViewerConfig(config.htmlViewer);
+      const fontFamily = config.bodyText?.fontFamily ?? 'EB Garamond';
+      const fontWeight = config.bodyText?.fontWeight ?? 400;
+      const fontSize = config.bodyText?.fontSize ?? { value: 8, unit: 'pt' as const };
+      const fontSizePx = dimensionToPx(fontSize, HTML_DPI);
+
+      // Measure the *actual* column width for N characters of body prose.
+      const targetColumnPx = measureGlyphWidth(
+        sampleForChars(viewer.maxCharsPerLine),
+        buildFontString(fontFamily, fontSizePx, String(fontWeight), 'normal'),
+      );
+
+      const inner = Math.max(rect.width - PADDING_PX * 2, 100);
+      let columnWidthPx: number;
+      if (mode === 'single') {
+        columnWidthPx = Math.min(targetColumnPx, inner);
+      } else {
+        // Fit as many columns as we can at the target width.
+        const count = Math.max(
+          1,
+          Math.floor((inner + viewer.columnGap) / (targetColumnPx + viewer.columnGap)),
+        );
+        columnWidthPx = (inner - viewer.columnGap * (count - 1)) / count;
+      }
+      columnWidthPx = Math.max(Math.floor(columnWidthPx), 80);
+
+      // Single mode uses one very tall page; multi mode uses the viewport
+      // height so each VDT "page" becomes one column.
+      const pageHeightPx =
+        mode === 'single' ? Math.max(rect.height * 20, 200_000) : Math.max(rect.height - PADDING_PX * 2, 400);
+
+      const override: PostextConfig = {
+        ...config,
+        page: {
+          ...config.page,
+          dpi: HTML_DPI,
+          width: { value: columnWidthPx, unit: 'px' },
+          height: { value: pageHeightPx, unit: 'px' },
+          margins: {
+            top: { value: 0, unit: 'px' },
+            bottom: { value: 0, unit: 'px' },
+            left: { value: 0, unit: 'px' },
+            right: { value: 0, unit: 'px' },
+          },
+        },
+        layout: { ...config.layout, layoutType: 'single' },
+        bodyText: {
+          ...config.bodyText,
+          optimalLineBreaking: viewer.optimalLineBreaking,
+        },
+      };
+
+      const doc = buildDocument({ markdown }, override, cacheRef.current);
+      const { html } = renderToHtmlIndexed(doc, {
+        mode,
+        columnGap: viewer.columnGap,
+        padding: PADDING_PX,
+        background: 'transparent',
+      });
+
+      host.innerHTML = html;
+    };
+
+    relayout();
+
+    const ro = new ResizeObserver(() => relayout());
+    ro.observe(host);
+
+    // Re-measure when web fonts land so glyph widths aren't taken from fallbacks.
+    const stopWatching = watchFonts();
+    const off = onFontsChanged(() => relayout());
+
+    return () => {
+      ro.disconnect();
+      off();
+      stopWatching();
+    };
+  }, [markdown, config, mode]);
+
+  return <div ref={hostRef} style={{ width: '100%', height: '100%', overflow: 'auto' }} />;
+}
+```
+
+Einige Anmerkungen dazu, was dieses Beispiel tut:
+
+- **Die Spalte messen, nicht schätzen.** Da `maxCharsPerLine` ein *Zielwert* in Zeichen ist, hängt die tatsächliche Breite in Pixeln von der Grundschrift ab. `measureGlyphWidth` liefert eine echte Messung mit der gewählten Schrift, sodass die Satzbreite auch beim Wechsel der Schrift stimmig bleibt.
+- **Die Seite umschreiben.** Der HTML-Betrachter behandelt jede „Seite“ des VDT als eine Spalte auf dem Bildschirm. Das Beispiel überschreibt `page.width` mit der gemessenen Spaltenbreite, setzt die Ränder auf null (der Innenabstand liegt außerhalb der Seite im umhüllenden div `.pt-doc`) und verwendet `HTML_DPI = 144`, sodass Grundtext in `8pt` zu `16px` aufgelöst wird.
+- **Auf das Laden von Schriften achten.** `watchFonts` beobachtet `document.fonts` und verwirft einmal pro Frame, was in den Familien gemessen wurde, deren Schnitte eingetroffen sind; `onFontsChanged` setzt die Spalte dann erneut. Ohne diesen Neuaufbau verwendet das erste Rendering die Metriken einer Ersatzschrift und springt, wenn die echte Schrift eintrifft.
+- **Den Mess-Cache wiederverwenden.** Wird der Cache einmal pro Komponente erzeugt, verwenden Größenänderungen und Änderungen des Schriftmaßstabs die Messungen des vorherigen Renderings wieder, statt jeden Absatz neu zu messen.
+
+### Weiterführende Schritte
+
+Das Beispiel oben ist bewusst flach gehalten. Produktive Integrationen ergänzen meist:
+
+- **Isolation per Shadow DOM** – rendern Sie in `host.attachShadow({ mode: 'open' })`, damit kein CSS der umgebenden Seite in den Betrachter durchsickern kann.
+- **Inkrementelle Aktualisierung** – `renderToHtmlIndexed` gibt `pages[i].blocks` zurück, jeweils mit einer stabilen `id` und dem äußeren HTML des Blocks. Unterscheiden sich zwischen zwei Renderings nur wenige Blöcke, können Sie diese Block-Hüllen an Ort und Stelle ersetzen, statt `innerHTML` neu aufzubauen.
+- **Überlagerungen** – ein absolut positioniertes SVG über jeder `.pt-page` für Cursor, Auswahlen oder Grundlinienraster.
+- **Links** – die Wörter eines Markdown-Links werden in `<a href="…" rel="noopener noreferrer">` gehüllt, das die Textfarbe übernimmt und nicht unterstrichen ist; siehe [Dokumentformat › Links](/de/docs/document-format#links). Fangen Sie in einem editorähnlichen Betrachter Klicks auf `a[href]` ab, die nicht mit `#` beginnen, und öffnen Sie sie in einem neuen Tab (Anker von `:ref` verlinken innerhalb des Dokuments).
+- **Einfarbige Bilder** – mit eingeschaltetem `diagramStyle.singleInk` erhalten SVG-Elemente `<img>` einen CSS-Filter, sofern Sie nicht `singleInk: false` für URLs übergeben, die bereits umgefärbt sind; siehe [Einfarbmodus auf dem Canvas und in HTML](/de/docs/configuration-resources#einfarbmodus-auf-dem-canvas-und-in-html).
+
+Die Komponente `HtmlPreview` der Sandbox (`packages/postext-sandbox/src/viewport/HtmlPreview/index.tsx`) setzt all das auf derselben hier gezeigten API um und kann als Referenz dienen. Sie leitet außerdem jeden Build über einen gemeinsamen Layout-Worker (siehe [Layout in einem Web Worker ausführen](#layout-in-einem-web-worker-ausführen)), sodass Live-Bearbeitungen und Größenänderungen den Haupt-Thread nie blockieren – ersetzen Sie den direkten Aufruf `buildDocument(...)` im Snippet oben durch `layoutWorker.build(...)`, sobald Sie das Layout aus dem Haupt-Thread verlagern wollen.
+
+### Wie sich die HTML-Ausgabe von Canvas und PDF unterscheidet
+
+`renderToHtml` setzt jede Zeile, jede Abbildung und jedes Gestaltungselement genau dorthin, wo auch Canvas und PDF sie setzen, zeichnet aber weniger darum herum:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Merkmal</th>
+      <th>Canvas (<code>renderPage</code>)</th>
+      <th>HTML (<code>renderToHtml</code>)</th>
+      <th>PDF (<code>renderToPdf</code>)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Seitenhintergrund</td>
+      <td>Weiß, mit <code>page.backgroundColor</code> über Endformat und Anschnitt.</td>
+      <td><strong>Transparent</strong>, sofern Sie nicht <code>background</code> übergeben oder <code>page.backgroundColor</code> setzen (das dann den ganzen Seitenkasten einschließlich Infobereich füllt).</td>
+      <td>Weiß, mit <code>page.backgroundColor</code> über Endformat und Anschnitt.</td>
+    </tr>
+    <tr>
+      <td>Grundlinienraster (<code>page.baselineGrid</code>)</td>
+      <td>Gezeichnet</td>
+      <td>Nicht gezeichnet</td>
+      <td>Gezeichnet</td>
+    </tr>
+    <tr>
+      <td>Spaltenlinie (<code>layout.columnRule</code>)</td>
+      <td>Gezeichnet</td>
+      <td>Nicht gezeichnet</td>
+      <td>Gezeichnet</td>
+    </tr>
+    <tr>
+      <td>Schnittmarken (<code>page.cutLines</code>)</td>
+      <td>Gezeichnet</td>
+      <td>Nicht gezeichnet; der Seitenkasten umfasst aber weiterhin den Infobereich um das Endformat.</td>
+      <td>Gezeichnet</td>
+    </tr>
+    <tr>
+      <td>Seitennegativ</td>
+      <td>Option <code>pageNegative</code></td>
+      <td>Nicht verfügbar</td>
+      <td>Option <code>pageNegative</code></td>
+    </tr>
+    <tr>
+      <td>Text</td>
+      <td>Pixel</td>
+      <td>Auswählbarer Text in absolut positionierten Elementen, gesetzt in den CSS-Schriftfamilien: Die Seite muss dieselben Schnitte laden.</td>
+      <td>Eingebettete Schriften aus Ihrem <code>fontProvider</code>; auswählbar, durchsuchbar und getaggt.</td>
+    </tr>
+    <tr>
+      <td>Vertikaler Text (<code>layout.writingMode: 'vertical-rl'</code>)</td>
+      <td>Zeichen werden Zelle für Zelle gezeichnet und wieder aufgerichtet; vertikale Formen über einen Zwillingsschnitt (<code>loadVerticalAlternates</code>).</td>
+      <td>Der Fluss in einem Kasten, um eine Vierteldrehung gedreht; jede Zeile wieder aufgerichtet und mit <code>writing-mode: vertical-rl</code> gesetzt, sodass der Browser die vertikalen Formen nimmt und die Zeichen aufrichtet; kurze Zahlen in <code>text-combine-upright: all</code>; ein Strich, eine Auslassung, ein Mittelpunkt oder ein Wellenstrich in einem Kasten seiner Zelle (der Browser würde ihn um seine horizontale Breite vorrücken), ein Strich auf die Zellenlänge gestreckt durch <code>flow.dashAdvances</code>.</td>
+      <td>Aufrechte Zeichen über einen Zwilling jeder Schrift mit <code>Identity-V</code>; siehe <a href="#vertikaler-text-im-pdf">Vertikaler Text im PDF</a>.</td>
+    </tr>
+    <tr>
+      <td>Bilder</td>
+      <td><code>registerResourceImage</code></td>
+      <td>Die Option <code>resourceImageUrl(fileId)</code>; ohne sie ein grauer Platzhalterkasten.</td>
+      <td>Die Option <code>resourceBytes(fileId)</code>.</td>
+    </tr>
+    <tr>
+      <td>Formeln</td>
+      <td>Vektorpfade</td>
+      <td>Inline-<code>&lt;svg&gt;</code></td>
+      <td>Vektorpfade</td>
+    </tr>
+    <tr>
+      <td>Links</td>
+      <td>Keine</td>
+      <td>Zitate mit <code>:ref</code> verlinken auf ihre Ressource; Zeilen des Inhaltsverzeichnisses nicht.</td>
+      <td>Zitate mit <code>:ref</code> und Zeilen des Inhaltsverzeichnisses, dazu die Gliederung (Lesezeichen).</td>
+    </tr>
+  </tbody>
+</table>
+
+Die transparente Seite ist auf einer dunklen Website wichtig: Eine Vorschau ohne `background` zeigt schwarzen Text auf dem dunklen Hintergrund der Website. Übergeben Sie `renderToHtml(doc, { background: '#ffffff' })` oder geben Sie dem Dokument ein `page.backgroundColor`.
+
+**Die Textformate der Host-Seite bleiben draußen.** Jede Zeile wird in den Breiten gesetzt, die die Engine gemessen hat; ein `letter-spacing`, `word-spacing`, `text-transform` oder `font-variant`, das die Ausgabe von der umgebenden Seite erbt, würde die Glyphenfolgen verbreitern und die Zeilen übereinanderdrucken lassen. Die Wurzel `.pt-doc` setzt deshalb vor ihren eigenen Layout-Deklarationen die vererbten Texteigenschaften zurück – Buchstaben- und Wortabstand, Groß- und Kleinschreibung, Einzug, Leerraum, Schriftstil, Variante, Stärke, Breite, Features und Unterschneidung, Zeilenhöhe, Ausrichtung, Textschatten und Betonung, Trennstriche, Richtung, Schreibrichtung, Textkontur und -füllung sowie die Textvergrößerung auf Mobilgeräten –, sodass die Ausgabe in einer Shadow-Root oder unter einem gestalteten Element gleich aussieht. Die Liste wird als `HTML_TEXT_RESET` exportiert, ein String aus CSS-Deklarationen: Ein Host, der das `innerHtml` der Seiten (aus `renderToHtmlIndexed`) in eigene Container einhängt, setzt ihn auf deren Wurzel. Bis postext 1.4 setzte die Wurzel nichts zurück; der Behelf war eine Hülle mit `all: initial`.
+
+
+## PDFs erzeugen
+
+Die PDF-Ausgabe liegt in einem eigenen Paket, **`postext-pdf`**, damit reine Web-Integrationen nicht die Kosten von `pdf-lib` und `@pdf-lib/fontkit` tragen. Das PDF-Backend misst Text nicht neu: Es verarbeitet genau dasselbe `VDTDocument`, das Sie auch an `renderToCanvas` oder `renderToHtml` übergeben würden, und übersetzt dessen Koordinaten im Pixelraum in PDF-Punkte. Die drei Ausgaben stimmen deshalb garantiert in Zeilenumbrüchen, Spaltenhöhen und der Platzierung von Ressourcen überein.
+
+> **Setzen Sie den VDT im Browser über den [Web Worker](#layout-in-einem-web-worker-ausführen).** `renderToPdf` selbst ist schnell, sobald der VDT existiert – der aufwendige Teil ist die Layout-Pipeline, die ihn erzeugt hat. Läuft diese Pipeline im Worker, bleibt die Oberfläche reaktionsfähig, und ein PDF-Export kann denselben Mess-Cache wiederverwenden, den die Live-Vorschau bereits gefüllt hat. Den empfohlenen Ablauf finden Sie unter [PDF-Export über den Worker](#pdf-export-über-den-worker). Die Beispiele für den Haupt-Thread weiter unten dienen als Referenz dafür, *was die Argumente bedeuten* – setzen Sie in UI-Code den VDT zuerst im Worker und rufen Sie nur `renderToPdf` direkt auf.
+
+### Installation
+
+```bash
+npm install postext postext-pdf
+```
+
+`postext` ist eine Peer-Abhängigkeit von `postext-pdf`. Jede Version von `postext-pdf` braucht die Version von `postext`, mit der sie veröffentlicht wurde, oder eine spätere derselben Hauptversion (ihr Peer-Bereich ist `^` diese Version, `^1.5.0` für 1.5.0), weil sie Hilfsfunktionen importiert, die `postext` in dieser Version hinzugefügt hat. Aktualisieren Sie die beiden gemeinsam, und legen Sie sie auf einem CDN auf dieselbe Version fest.
+
+### Öffentliche API von postext-pdf
+
+Das Paket bietet einen einzigen Einstiegspunkt und eine Handvoll Typen:
+
+- **`renderToPdf(doc, options): Promise<Uint8Array>`** – nimmt ein `VDTDocument` (oder die Kapitel eines Buches als Array solcher Dokumente) und gibt die rohen PDF-Bytes zurück.
+- **`PdfFontProvider`** – die Callback-Signatur `(family, weight, style, request?) => Promise<Uint8Array | Uint8Array[]>`, mit der `renderToPdf` Schriftbytes anfordert, wenn es eine neue Kombination aus Familie, Stärke und Stil einbetten muss. `request.codePoints` enthält die Zeichen, die die Seiten in diesem Schnitt setzen; die Antwort ist eine Datei oder mehrere, die zusammen den Schnitt bilden (siehe [Chinesische, japanische und koreanische Schriften](#chinesische-japanische-und-koreanische-schriften)).
+- **`declaredFontFile(bytes, { unicodeRange?, order? }): PdfFontFile`** – eine Datei eines Schnitts, die angibt, wie die Seite sie deklariert hat: die `unicode-range` ihrer Regel `@font-face` und ihre Stelle in der Deklarationsreihenfolge. Ein `PdfFontFile` ist ein `Uint8Array` mit diesen beiden optionalen Eigenschaften (siehe [Chinesische, japanische und koreanische Schriften](#chinesische-japanische-und-koreanische-schriften)). Seit postext-pdf 1.30.
+- **`RenderToPdfOptions`** – `{ fontProvider, resourceBytes?, outlines?, accessible?, colorSpace?, pageNegative?, characterGrid?, onProgress?, onWarning?, rasterizeSvg?, harfbuzzWasm?, print?, outputProfile?, profileBaseUrl?, date? }`. `outlines`, `accessible` und `colorSpace` fallen auf das `pdfGeneration` des Dokuments zurück, wenn sie fehlen (siehe [PDF-Erzeugung (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#pdf-erzeugung-konfiguration)). `resourceBytes` ist unter [Ressourcenbytes und Druckoriginale](#ressourcenbytes-und-druckoriginale) beschrieben, `onWarning` unter [Welche Schnitte beim Provider angefragt werden](#welche-schnitte-beim-provider-angefragt-werden) und [Warnungen im Dokument](#warnungen-im-dokument). `characterGrid: true` druckt das Raster, das `cjk.grid.show` auf dem Bildschirm zeichnet und das PDF sonst weglässt (siehe [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster)). `harfbuzzWasm` gibt an, woher HarfBuzz’ `harfbuzz.wasm` geladen wird (eine URL, relativ zur Seite, oder die Bytes der Datei), für ein Dokument mit Text von rechts nach links oder verbundener Schrift; fehlt die Angabe, die Kopie neben dem Modul von postext-pdf, dann dieselbe Version von harfbuzzjs von jsDelivr und esm.sh. `print` nimmt die Einstellungen der Druckproduktion (PDF/X-Standard, Ausgabeprofil, Schwarz, Preflight) und fällt auf das `print` des Dokuments zurück; mit einem PDF/X-Standard oder `colorSpace: 'cmyk'` wird jede Farbe über das ICC-Ausgabeprofil separiert, dessen Bytes `outputProfile` liefert (sonst wird es von `profileBaseUrl` abgerufen, standardmäßig der Kopie des Ordners `icc/` von postext auf dem npm-CDN). `date` (ein `Date`, eine Zeit in Millisekunden oder ein Datumsstring, wie `mtime` von `createBundle`) ist das Erstellungs- und Änderungsdatum der Datei und in einer PDF/X-Datei auch das Datum ihres XMP-Pakets und die Quelle ihrer Dokument-ID: Dasselbe Dokument, zweimal mit einem `date` gerendert, ergibt dieselben Bytes. Fehlt es, trägt die Datei die Zeit des Aufrufs. Ein ungültiges Datum wirft einen Fehler.
+- **`PdfWarning`** – ein nicht fatales Problem, gemeldet über `onWarning`; unterscheiden Sie nach `kind`: `'fontFallback'` (`PdfFontFallbackWarning`), ein Schnitt, der in einem anderen Schnitt seiner Familie gesetzt wurde; `'missingGlyph'` (`PdfMissingGlyphWarning`), Zeichen, für die keine Datei eines Schnitts eine Glyphe hat; `'variableFontDefaultInstance'` (`PdfVariableFontWarning`), eine variable Schrift, die in einer anderen Stärke als ihrer Standardinstanz angefragt wurde; `'cffEmbeddedWhole'` (`PdfCffEmbeddedWholeWarning`), ein CFF-Schnitt über 2 MB, der ganz eingebettet wurde; `'complexShapingUnavailable'` (`PdfComplexShapingWarning`), Text von rechts nach links oder mit verbundener Schrift, gezeichnet ohne HarfBuzz, das nicht geladen werden konnte (`reason` nennt die durchsuchten Orte), sodass arabische Zeichen falsch platziert sind; `'outputProfileUnavailable'` (`PdfPrintWarning`), ein CMYK-Rendering, dessen Ausgabeprofil nicht geladen werden konnte und das mit der naiven Formel umgerechnet wurde; `'pageNegativeIgnored'` (`PdfPrintWarning`), das Seitennegativ, das in einer PDF/X-1a-Datei weggelassen wurde; oder `'missingImage'`, ein Bild ohne Bytes, als Platzhalter gezeichnet (nur an ein von Ihnen übergebenes `onWarning` gemeldet; die Schriftwarnungen gehen ohne ein solches an `console.warn`).
+- **`decompressWoff2(bytes): Uint8Array`** – Hilfsfunktion, die eine WOFF2-Datei in TTF-Bytes umwandelt, das Format, das `pdf-lib` direkt einbetten kann.
+- **`createPdfWorker(options?)`** aus `postext-pdf/worker` – dasselbe Rendering in einem Web Worker; siehe [Das PDF in einem Worker rendern](#das-pdf-in-einem-worker-rendern).
+
+### Minimales Beispiel
+
+```ts
+import { buildDocument } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+
+const vdt = buildDocument(
+  { markdown: '# Chapter One\n\nThe story begins here…' },
+  {
+    page: { sizePreset: '17x24' },
+    layout: { layoutType: 'double' },
+    bodyText: { fontFamily: 'EB Garamond', fontSize: { value: 9, unit: 'pt' } }, // 9 pt overrides the 8 pt default
+  },
+);
+
+const pdfBytes = await renderToPdf(vdt, {
+  fontProvider: async (family, weight, style) => {
+    // Return TTF bytes for this family/weight/style.
+    // See the "Font provider" section below for a real implementation.
+    const res = await fetch(`/fonts/${family}-${weight}${style === 'italic' ? 'i' : ''}.ttf`);
+    return new Uint8Array(await res.arrayBuffer());
+  },
+});
+
+// `pdfBytes` is a Uint8Array — save, download, or stream it.
+const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+const url = URL.createObjectURL(blob);
+window.open(url);
+```
+
+### Warum ein Font-Provider?
+
+`pdf-lib` bettet echte Schriftdateien in das PDF ein – die im Browser installierten Schriften stehen beim Rendern nicht zur Verfügung, und eine Schrift, die Sie nur für die Messung auf dem Bildschirm geladen haben, reicht für sich allein nicht aus, um ein in sich geschlossenes PDF zu erzeugen. `renderToPdf` durchsucht die Seiten nach jedem Schnitt, den sie zeichnen (einer pro Kombination `family|weight|style` – siehe [Welche Schnitte beim Provider angefragt werden](#welche-schnitte-beim-provider-angefragt-werden)), und ruft Ihren Provider einmal pro eindeutiger Kombination auf. Der Provider gibt ein `Uint8Array` mit **TTF- oder OTF**-Bytes zurück oder eine Liste davon für einen Schnitt, der als mehrere Dateien ausgeliefert wird (siehe [Chinesische, japanische und koreanische Schriften](#chinesische-japanische-und-koreanische-schriften)); `pdf-lib` bildet Teilmengen von TrueType-Konturen und bettet CFF-Dateien (`.otf`) ganz ein. Schnitte, auf die der Provider mit derselben Datei antwortet, etwa ein normaler Schnitt, der für den fehlenden fetten Schnitt einer Familie einspringt, teilen sich eine eingebettete Schrift. Ein Schnitt, mit dem am Ende keine Seite zeichnet, etwa der Schnitt des Textes einer SVG-Abbildung, die als Bild gezeichnet wird, bleibt aus der Datei heraus.
+
+**Verwenden Sie statische Schriften pro Stärke, keine einzelne variable Schrift.** Google Fonts liefert pro Familie oft eine variable WOFF2-Datei, die die ganze Stärkeachse abdeckt. `pdf-lib` kann aus einer variablen Datei nur die Standardinstanz einbetten, sodass ein fetter Absatz in normaler Stärke erschiene. Fontsource veröffentlicht statische WOFF2-Dateien pro Stärke, die dieses Problem sauber lösen – nach diesem Muster arbeitet die Sandbox. Eine variable Datei, die in einer anderen Stärke als ihrer Standardinstanz angefragt wird, wird als Warnung `variableFontDefaultInstance` gemeldet.
+
+**Jedes Wort des Textes landet dort, wo das Layout es hingesetzt hat.** In Absätzen, Listenpunkten, Zitaten, Kästen und anderem fließendem Text beginnt jedes Wort an der Position, die der VDT gemessen hat, sodass sich ein Unterschied zwischen den Breiten des Browsers und denen des eingebetteten Schnitts nie entlang einer Zeile aufsummiert. Eine Zeile ohne Inline-Formatierung wird als ein Textobjekt gezeichnet, das den Stift zwischen den Wörtern bewegt; Zeilen im Blocksatz, zentrierte Zeilen und Zeilen mit Formatierung werden Wort für Wort gezeichnet. Ein Zeichen, für das der Schnitt keine Glyphe hat, das der Browser in einer anderen Schrift gemessen hat und das das PDF als Kasten für fehlende Glyphen des Schnitts zeichnet, verschiebt keines der folgenden Wörter und wird einmal pro Schnitt als Warnung `missingGlyph` gemeldet. Ein Leerzeichen, das dem Schnitt fehlt, etwa ein schmales geschütztes Leerzeichen oder ein Ziffernleerzeichen, erhält die Breite, die der Browser ihm gegeben hat, und unsichtbare Zeichen wie der Word Joiner und das Leerzeichen ohne Breite werden nicht gezeichnet. Ein geschützter Bindestrich (U+2011), der dem Schnitt fehlt, wird mit dem Bindestrich des Schnitts (U+2010) gezeichnet oder, wenn dieser auch fehlt, mit dessen Hyphen-Minus, so wie der Browser ihn zeigt; Open Sans und Outfit etwa fehlen beide. Keiner der beiden Fälle zählt als fehlende Glyphe. Es gibt zwei Ausnahmen. Eine Zeile mit Buchstaben, die von rechts nach links laufen, wird weiterhin als eine Folge gezeichnet (siehe [Sprachen und Schriftsysteme](/de/docs/configuration-text#sprachen-und-schriftsysteme)). Text, den eine Gestaltung platziert (Kolumnentitel und Fußzeilen, Auftakte, Kastentitel und andere Gestaltungselemente), wird mit den eigenen Breiten des eingebetteten Schnitts gesetzt, sodass eine dort fehlende Glyphe den Rest ihrer Zeile weiterhin verschiebt.
+
+### Welche Schnitte beim Provider angefragt werden
+
+`renderToPdf` geht die Seiten so durch, wie es sie zeichnet, und fragt beim Provider nur die Schnitte an, die sie zeichnen:
+
+- den normalen Schnitt eines Blocks, der irgendeine Zeile setzt, und den fetten, kursiven oder fettkursiven Schnitt jeder Folge, die tatsächlich so gesetzt ist;
+- Chip-Folgen, Listenzeichen und den Text von Gestaltungsplätzen (Kolumnentitel, Paginas, Bänder von Auftakten und Teilen);
+- den Text von Legende, Anmerkung und Tabellenzellen jeder Ressource;
+- die Schnitte, die das `<text>` einer SVG-Abbildung nennt, wenn die Abbildung eingebettet wird. Eine Familie, die der Provider überhaupt nicht liefern kann, fällt auf die nächste Familie in der Liste `font-family` des SVG durch.
+
+Eine Überschriftenfamilie, die niemand kursiv setzt, wird also nie nach ihrer Kursiven gefragt, und eine Abbildung ohne Anmerkung braucht nie die Schnitte für Anmerkungen.
+
+Lehnt der Provider einen Schnitt ab, geht das Rendering weiter. Ein anderer Schnitt derselben Familie wird an seiner Stelle eingebettet, und eine `PdfWarning` wird gemeldet. Der Ersatz ist der erste Schnitt, der lädt; versucht werden die neun Standardstärken (100 bis 900) in der Reihenfolge, die der CSS-Schriftabgleich verwendet, was auch der Schnitt ist, den der Browser in der Vorschau zeigt:
+
+1. zuerst derselbe Stil. Bei einer Stärke von 400 bis 500 kommen zuerst die Stärken bis 500, dann die leichteren von der nächstgelegenen abwärts, dann die schwereren ab 600 aufwärts. Bei einer Stärke unter 400 kommen zuerst die leichteren Stärken, von der nächstgelegenen abwärts, dann die schwereren. Bei einer Stärke über 500 kommen zuerst die schwereren Stärken, dann die leichteren;
+2. dann der andere Stil, kursiv statt aufrecht und aufrecht statt kursiv, in der angefragten Stärke und den anderen Stärken in derselben Reihenfolge.
+
+Eine Familie ohne Kursive setzt ihre kursiven Folgen daher aufrecht, eine Familie, die nur 400 und 700 mitbringt, nimmt für eine 600 die 700, und eine Familie mit einem einzigen Schnitt setzt alles darin. Der Provider wird Schnitt für Schnitt in dieser Reihenfolge gefragt und nie zweimal nach demselben Schnitt, sodass ein Schnitt, den nichts verwendet, nie eingebettet wird. Eine Familie, die der Provider überhaupt nicht liefern kann, wird nach jedem dieser 18 Schnitte gefragt, bevor das Rendering fehlschlägt.
+
+```ts
+const bytes = await renderToPdf(doc, {
+  fontProvider,
+  onWarning: (w) => {
+    // { kind: 'fontFallback', family: 'Oswald', weight: 700, style: 'italic',
+    //   fallback: { weight: 700, style: 'normal' }, reason: '…', message: '…' }
+    console.info(w.message);
+  },
+});
+```
+
+Ohne `onWarning` geht die Meldung an `console.warn`. Der Text behält seine Positionen, die aus dem VDT stammen und mit den Schnitten gemessen wurden, die der Browser hatte; ein Ersatz mit anderen Breiten kann daher eng oder locker wirken. Liefern Sie den echten Schnitt, um das zu beheben. Ein Rendering schlägt (`postext-pdf: failed to load font(s): …`) nur dann noch fehl, wenn der Provider keinen einzigen Schnitt einer Familie in einer Standardstärke liefern kann, weder aufrecht noch kursiv.
+
+### Font-Provider im Browser (Fontsource + WOFF2)
+
+Die Sandbox liefert `createPdfFontProvider()` (`packages/postext-sandbox/src/viewport/pdfFontProvider.ts`), das Sie in jede Browser-App übernehmen können. Das Wesentliche:
+
+```ts
+import type { PdfFontProvider } from 'postext-pdf';
+import { decompressWoff2 } from 'postext-pdf';
+
+const bytesCache = new Map<string, Promise<Uint8Array>>();
+
+function fontsourceId(family: string): string {
+  return family.toLowerCase().replace(/\s+/g, '-');
+}
+
+function fontsourceWoff2Url(
+  family: string,
+  weight: number,
+  style: 'normal' | 'italic',
+): string {
+  const id = fontsourceId(family);
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
+}
+
+export function createPdfFontProvider(): PdfFontProvider {
+  return async (family, weight, style) => {
+    const key = `${family}|${weight}|${style}`;
+    const cached = bytesCache.get(key);
+    if (cached) return cached;
+
+    const promise = (async (): Promise<Uint8Array> => {
+      const url = fontsourceWoff2Url(family, weight, style);
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) throw new Error(`font fetch failed: ${res.status} ${url}`);
+      // pdf-lib needs TTF bytes, so decompress the WOFF2 wrapper client-side.
+      return decompressWoff2(new Uint8Array(await res.arrayBuffer()));
+    })();
+
+    bytesCache.set(key, promise);
+    return promise;
+  };
+}
+```
+
+Eine produktive Version sollte außerdem:
+
+- **die verfügbaren Stärken abfragen** (über `https://api.fontsource.org/v1/fonts/{id}`) und die angefragte Stärke auf die nächstgelegene einrasten, die die Familie tatsächlich mitbringt, sodass eine Anfrage nach `weight: 600` bei einer Familie, die nur `{400, 700}` hat, trotzdem gelingt.
+- **von kursiv auf normal zurückfallen**, wenn eine Familie für die angefragte Stärke keinen kursiven Schnitt hat, statt das ganze Rendering scheitern zu lassen.
+- **den Cache über Renderings hinweg wiederverwenden** (den `bytesCache` auf Modulebene halten, nicht pro Aufruf), sodass das erneute Erzeugen des PDFs nach einer Konfigurationsänderung praktisch nichts kostet.
+
+### Chinesische, japanische und koreanische Schriften
+
+Ein CJK-Schnitt kommt nicht als eine kleine Datei. Fontsource liefert Noto Serif SC als etwa hundert Dateien pro Stärke aus, von denen jede einen Teil der Zeichen enthält und im Stylesheet der Familie mit ihrer `unicode-range` deklariert ist (`@fontsource/noto-serif-sc/400.css`); der Browser lädt die Dateien herunter, die der Text einer Seite berührt. Die Datei `latin`, die der Provider oben abruft, enthält überhaupt keine Han-Zeichen, und die benannten Teilmengen sind unvollständig: `chinese-simplified` von Noto Serif SC fehlt 釵, und `chinese-traditional` von Noto Serif TC hat keines der Satzzeichen voller Breite （），！？：；.
+
+Ein Provider darf einen Schnitt daher mit mehreren Dateien beantworten. `renderToPdf` übergibt ihm die Zeichen, die die Seiten in diesem Schnitt setzen (`request.codePoints`), gesammelt aus allen Kapiteln, bevor irgendetwas gezeichnet wird, und der Provider gibt die Dateien zurück, die sie enthalten, in der Reihenfolge, in der der Browser sie nachschlägt. Jede Datei wird als eigene Teilmenge eingebettet, und jedes Zeichen wird aus der ersten Datei gezeichnet, die eine Glyphe dafür hat: Ein Kapitel, das 60 Teile berührt, bettet 60 kleine Teilmengen ein. Wird ein Schnitt erneut angefragt, etwa für den Text einer SVG-Abbildung, wird er nur nach den Zeichen gefragt, die seinen Dateien fehlen. Ein Provider, der ein einzelnes `Uint8Array` zurückgibt, funktioniert wie bisher. Der Provider der Sandbox liest das Fontsource-Stylesheet der Stärke und des Stils und ruft die Dateien ab, deren Bereiche den Text enthalten; sein Kern:
+
+```ts
+import type { PdfFontProvider } from 'postext-pdf';
+import { decompressWoff2 } from 'postext-pdf';
+
+type Slice = { url: string; ranges: Array<[number, number]> };
+
+async function fontsourceSlices(family: string, weight: number, style: 'normal' | 'italic'): Promise<Slice[]> {
+  const id = family.toLowerCase().replace(/\s+/g, '-');
+  const cssUrl = `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/${weight}${style === 'italic' ? '-italic' : ''}.css`;
+  const css = await (await fetch(cssUrl)).text();
+  return [...css.matchAll(/@font-face\s*{([^}]*)}/g)].map(([, rule]) => ({
+    url: new URL(/url\(\.?\/?([^)]+\.woff2)\)/.exec(rule)![1], cssUrl).href,
+    ranges: /unicode-range:\s*([^;]+);/.exec(rule)![1].split(',').map((part) => {
+      const [lo, hi = lo] = part.trim().slice(2).split('-');
+      return [parseInt(lo, 16), parseInt(hi, 16)] as [number, number];
+    }),
+  }));
+}
+
+export const sliceFontProvider: PdfFontProvider = async (family, weight, style, request) => {
+  // Where ranges overlap, the browser tries the last rule first.
+  const slices = (await fontsourceSlices(family, weight, style)).reverse();
+  const picked = new Set<Slice>();
+  for (const cp of request?.codePoints ?? []) {
+    const slice = slices.find((s) => s.ranges.some(([lo, hi]) => cp >= lo && cp <= hi));
+    if (slice) picked.add(slice);
+  }
+  if (picked.size === 0) picked.add(slices[0]!);
+  return Promise.all(slices.filter((s) => picked.has(s)).map(async (s) =>
+    decompressWoff2(new Uint8Array(await (await fetch(s.url)).arrayBuffer()))));
+};
+```
+
+Eine lateinische Familie durchläuft denselben Code: Englischer Text erhält nur seine Datei `latin`, Tschechisch erhält `latin` und `latin-ext`.
+
+Ein Browser hört nicht bei der ersten Datei mit einer Glyphe auf. Er setzt ein Zeichen in der zuletzt deklarierten Datei unter denen, deren `unicode-range` es enthält, und die Dateien einer Familie überschneiden sich: Fontsource wiederholt die ASCII-Buchstaben von Noto Serif JP in seiner Datei `latin` und in seinen nummerierten Teilen. Zwei Zeichen, die in zwei Dateien gesetzt sind, werden nicht unterschnitten, also entscheidet die Datei über die Breite: Chrome 154 setzt `Shift_JIS` mit den nach `latin` deklarierten Teilen 4,25 em breit, und die Datei `latin` allein, die `t_` und `_J` unterschneidet, setzt es 4,32 em breit. Seit postext-pdf 1.30 kann ein Provider angeben, wie die Seite jede Datei deklariert hat: `declaredFontFile(bytes, { unicodeRange, order })` gibt dieselben Bytes zurück, versehen mit der `unicode-range` der Regel der Datei, wie CSS sie schreibt, und der Stelle dieser Regel unter den Regeln des Schnitts, eine beliebige Zahl, die mit der Deklarationsreihenfolge wächst (die größte ist zuletzt deklariert).
+
+```ts
+import { declaredFontFile } from 'postext-pdf';
+
+declaredFontFile(bytes, { unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153', order: 0 });
+```
+
+Tragen die Dateien eines Schnitts ihre Bereiche, wird in einem Dokument, das in seiner eigenen Sprache geformt wird ([`bodyText.shapingLanguage: 'document'`](/de/docs/configuration-text#fließtext), der Standard), ein Zeichen aus der zuletzt deklarierten Datei gezeichnet, deren Bereich es enthält und die eine Glyphe dafür hat, so wie ein Browser zwischen Regeln `@font-face` wählt, und ein Buchstabe bleibt mit seinen kombinierenden Zeichen in einer Datei. Ein Zeichen, das kein Bereich enthält, wird aus der ersten Datei mit einer Glyphe gezeichnet. Einfache Dateien und jede Datei in einem Dokument mit `'host'` werden wie bisher in der angegebenen Reihenfolge gelesen, sodass ein Provider, der seine Dateien beschreibt, die zuletzt deklarierte weiterhin zuerst aufführt. Ein so beschriebener Schnitt wird erneut nach jedem Zeichen gefragt, nach dem er vorher nicht gefragt wurde, da eine später deklarierte Datei es enthalten kann. Der Provider der Sandbox beschreibt seine Dateien.
+
+Zeichen, für die keine Datei des Schnitts eine Glyphe hat, werden als Glyphe `.notdef` der Schrift gezeichnet (in den meisten Schriften ein leerer Kasten), und `renderToPdf` meldet sie einmal pro Schnitt, nachdem die Seiten gezeichnet sind:
+
+```ts
+// { kind: 'missingGlyph', family: 'Noto Serif TC', weight: 400, style: 'normal',
+//   characters: ['，', '！', '？'], message: '…' }
+```
+
+Die Sandbox listet diese und die beiden folgenden Warnungen nach jedem erzeugten PDF in ihrem Bedienfeld Prüfungen auf. Ändern sich das Buch, seine Einstellungen oder seine Ressourcen, werden sie als aus einem früheren PDF stammend markiert, bis das nächste sie ersetzt; das Öffnen eines anderen Buches löscht sie.
+
+- **Fett braucht eine statische Datei pro Stärke.** Fontsource liefert jede Stärke von Noto Serif SC und TC als eigene statische Dateien aus, sodass Fett in der Sandbox funktioniert. Die Dateien von Google Fonts (`NotoSerifSC[wght].ttf`, 25 MB) sind variable Schriften: pdf-lib bettet ihre Standardinstanz ein, sodass ein Schnitt 700 in 400 gedruckt wird, und `renderToPdf` meldet das als `variableFontDefaultInstance`. Schneiden Sie für ein Paket mit fontTools eine statische Instanz pro Stärke (`fonttools varLib.instancer NotoSerifSC[wght].ttf wght=700`) und reduzieren Sie sie mit `pyftsubset` auf die Zeichen des Buches.
+- **Verwenden Sie TrueType-Ausgaben.** Source Han Serif und die Dateien `.otf` von Noto Serif CJK haben CFF-Konturen, die postext-pdf ganz einbettet, 8 bis 25 MB pro Stärke; ein CFF-Schnitt über 2 MB wird als `cffEmbeddedWhole` gemeldet. Die TrueType-Ausgaben (Google Fonts, Fontsource) werden auf die verwendeten Glyphen reduziert. Für Japanisch liegen Noto Serif JP und Noto Sans JP (Google Fonts oder die nummerierten Teile von Fontsource), Shippori Mincho, Zen Old Mincho und BIZ UDMincho als TrueType vor; Source Han Serif JP und die Dateien `.otf` mit `JP` von Noto Serif CJK sind CFF.
+- **Japanische Formen eines pan-CJK-Schnitts.** Ein Codepunkt der Han-Zeichen, der Interpunktion oder der Anführungszeichen kann in Japan anders gezeichnet werden als in China, und ein pan-CJK-Schnitt (Source Han, Noto CJK) enthält beide Formen. Das PDF formt ein japanisches Dokument (`locale: 'ja'`) und eine japanische Isolierung (`:ltr[…]{lang=ja}`) in jedem Dokument mit dem OpenType-Sprachsystem `JAN `, sodass das Feature `locl` des Schnitts die japanischen Formen druckt, die Canvas und HTML über `lang` drucken. Eine Isolierung in einer anderen Sprache innerhalb eines japanischen Buches wird mit den Formen dieser Sprache geformt (für Chinesisch mit `'host'` mit den Standardformen der Schrift) und als `Span` mit ihrem `/Lang` getaggt. Mit [`bodyText.shapingLanguage: 'document'`](/de/docs/configuration-text#fließtext), dem Standard seit postext 1.30, wird jedes Dokument und jede Isolierung in ihrer eigenen Sprache geformt (`ZHS` für vereinfachtes Chinesisch), so wie das Layout es gemessen hat; mit `'host'` werden chinesische und andere Dokumente wie bisher mit den Standardformen der Schrift geformt. Ein für Japanisch gemachter Schnitt wie Noto Serif JP hat japanische Standardformen; er setzt die “ ” japanischen Textes dennoch in ihren Formen für `JAN `.
+
+Ein Zeichen, das einer Familie fehlt, wird nicht aus einer anderen genommen: Noto Serif TC borgt nicht bei Noto Serif SC. Klären Sie die Abdeckung, wenn Sie die Schriftdateien erstellen; das Schaustück 红楼梦 kopiert die Glyphen, die seinen TC-Teilmengen fehlen, aus dem SC-Schnitt.
+
+### Serverseitiger Font-Provider (Node, lokale Dateien)
+
+In Node können Sie den WOFF2-Schritt ganz überspringen und TTF/OTF-Dateien von der Festplatte lesen:
+
+```ts
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { PdfFontProvider } from 'postext-pdf';
+
+const FONT_DIR = '/path/to/fonts';
+
+function filename(family: string, weight: number, style: 'normal' | 'italic'): string {
+  const slug = family.replace(/\s+/g, '');
+  const styleSuffix = style === 'italic' ? 'Italic' : '';
+  const weightName =
+    weight >= 700 ? 'Bold'
+    : weight >= 600 ? 'SemiBold'
+    : weight >= 500 ? 'Medium'
+    : weight >= 300 ? 'Light'
+    : 'Regular';
+  return `${slug}-${weightName}${styleSuffix}.ttf`;
+}
+
+export const localFontProvider: PdfFontProvider = async (family, weight, style) => {
+  const buf = await readFile(join(FONT_DIR, filename(family, weight, style)));
+  return new Uint8Array(buf);
+};
+```
+
+### Ressourcenbytes und Druckoriginale
+
+`resourceBytes(fileId)` gibt die rohen Bytes eines Bildes zurück, und das Backend erkennt ihr Format:
+
+- PNG, JPEG, GIF und WebP werden als Bilder eingebettet;
+- SVG-Markup wird als Vektorpfade gezeichnet, sein `text` als echter Text in den eingebetteten Schriften des Dokuments gesetzt, oder im Browser mit 600 dpi gerastert, wenn es Funktionen außerhalb der Vektorteilmenge verwendet. Ein `<style>`, das nur Regeln `@font-face` enthält (von einer Autorin oder einem Autor eingebettete Schnitte), wird übersprungen und lässt die Abbildung vektoriell (seit postext-pdf 1.25); jedes andere Stylesheet macht sie zu einem Rasterbild, das mit den Schnitten erzeugt wird, die ihr Text nennt, eingebettet aus `fontProvider` (sofern nicht `diagramStyle.inlineFonts` oder das `svg.inlineFonts` der Ressource `false` ist);
+- bei einem PDF wird die erste Seite unverändert als Form-XObject eingebettet.
+
+Jedes Bild wird einmal in der Datei gespeichert, wie oft es auch gezeichnet wird. Ein als Vektorpfade gezeichnetes SVG wird zu einem Form-XObject, das jede Seite zeichnet, sodass ein Rahmen oder ein Logo in der Seitengestaltung eines dreißigseitigen Dokuments einmal geschrieben wird, nicht dreißigmal; jede weitere Seite fügt einige hundert Bytes hinzu. Bis postext-pdf 1.4 trug jede Seite ihre eigene Kopie der Pfade.
+
+Eine SVG-Abbildung kann in `svg.pdfFileId` ein **Druckoriginal** nennen: ein einseitiges PDF derselben Abbildung, typischerweise das Original, aus dem das SVG exportiert wurde. `renderToPdf` fragt `resourceBytes` zuerst nach der ID des Originals. Es bettet diese Seite anstelle des SVG ein, mit ihren Schriften, Verläufen und Farbräumen unversehrt, überall dort, wo das SVG gezeichnet wird: als Abbildung, als Bild einer Tabellenzelle (`TableCell.image`), als Gestaltungsbild oder als Kastensymbol (auch sein `marker`). Der VDT trägt die ID des Originals bei jeder dieser Verwendungen (`svg.pdfFileId` an der Ressource der Abbildung, `pdfFileId` an einem Zellbild und an einem Block für ein Gestaltungsbild), sodass in einem Buch jedes Kapitel das Original erhält. Die Backends für Canvas und HTML zeichnen weiterhin das SVG. Stattdessen werden in drei Fällen die eigenen Bytes des SVG verwendet: Das Original fehlt, es ist kein PDF, oder die Einfarbigkeit ist eingeschaltet (`diagramStyle.singleInk` färbt nur SVG-Markup um).
+
+```ts
+const resources: Resource[] = [{
+  id: 'map', typeId: 'figure', kind: 'svg', createdAt: 0, updatedAt: 0,
+  svg: { fileId: 'map.svg', width: 800, height: 600, pdfFileId: 'map.pdf' },
+}];
+const files = new Map([['map.svg', svgBytes], ['map.pdf', masterPdfBytes]]);
+const pdf = await renderToPdf(buildDocument({ markdown, resources }, config), {
+  fontProvider,
+  resourceBytes: (fileId) => files.get(fileId),
+});
+```
+
+Ein Host kann die Bytes des Originals auch für die eigene ID des SVG zurückgeben, wie es `bundleResourceBytes` tut; beide Wege funktionieren.
+
+### Vertikaler Text im PDF
+
+Eine vertikale Seite (`layout.writingMode: 'vertical-rl'`) wird über einen um eine Vierteldrehung gedrehten Rahmen gezeichnet, so wie der Canvas sie zeichnet, und ihr Text wird die Spalte hinab gesetzt:
+
+- **Aufrechte Zeichen** werden über eine zweite Type0-Schrift derselben eingebetteten Datei dargestellt: dieselbe CIDFont, dieselben Breiten und dieselbe ToUnicode-Tabelle, mit `Encoding /Identity-V` (vertikaler Modus). Eine Folge von Zeichen ist ein Textobjekt, dessen Glyphen von selbst je ein Geviert die Spalte hinab vorrücken (`DW2 [880 −1000]`), sodass Leseprogramme eine Spalte als eine Zeile auswählen und extrahieren. Die Glyphen werden mit den OpenType-Features `vert` und `fwid` geformt, die Klammern, Anführungszeichen, den Pausenzeichen des Festlands, Auslassungspunkten und Strichen ihre vertikalen Formen geben; ein Zeichen, das so, wie es ist, aufrecht steht, behält seine horizontale Glyphe. Nichts von der Schrift wird doppelt eingebettet.
+- **Lateinische Wörter und lange Zahlen** laufen mit der horizontalen Schrift seitwärts; **eine Zahl in einer Zelle** steht aufrecht und wird, wenn sie breiter ist, quer auf das Geviert gestaucht; ein Zeichen, für das die Schrift keine vertikale Form hat, wird gedreht oder verschoben, wie auf dem Canvas.
+- **Die Laufweite** zwischen Zeichen wird als Zahlen in `TJ` geschrieben, die im vertikalen Modus den Stift die Spalte hinab bewegen.
+- **Jede vertikale Zeile** ist mit einem `/ActualText` ihres Textes markiert, sodass Kopieren und Textextraktion sie wie geschrieben lesen. `pdftotext` und pdf.js lesen die Spalten von oben nach unten und von rechts nach links; pdf.js beginnt bei einer in einer Zelle gesetzten Zahl eine neue Zeile.
+- **Links, Lesezeichen und Sprungziele** werden auf den Bogen abgebildet: Ein Link über einer vertikalen Zeile ist ein hohes, schmales Rechteck, und ein Lesezeichen öffnet die Seite oben an der Spalte seiner Überschrift.
+- **Ein getaggtes PDF** deklariert die Schreibrichtung an seinem Element `Document` (das Layout-Attribut `WritingMode /TbRl`, das jedes Element erbt); die Validierung nach PDF/UA-1 (veraPDF) besteht ein vertikales Kapitel.
+- **Betrachter:** Acrobat, Vorschau, Chrome (PDFium), pdf.js und Poppler rendern die vertikalen Schriften. Ein rechts gebundenes Buch (`page.binding`) bittet die Betrachter außerdem, seine Doppelseiten von rechts nach links anzuordnen (`/Direction /R2L`, `/PageLayout /TwoPageRight`); Acrobat und Foxit folgen dem, Chrome nicht.
+
+Ein 43-seitiges Kapitel in Noto Serif TC (die Zeichen des Buches, TrueType) hat etwa 820 KB, wovon die beiden Schrift-Teilmengen den größten Teil ausmachen.
+
+### Links im PDF
+
+Die Wörter eines Markdown-Links (siehe [Dokumentformat › Links](/de/docs/document-format#links)) werden zu URI-Link-Annotationen, eine pro Folge verlinkter Wörter in einer Zeile. Jede deckt den Zeilenkasten ab und hat keinen Rahmen. In einem barrierefreien Rendering ist jede Folge ein Element `Link`, dessen `/Contents` sein Text ist. Verlinkt werden nur absolute Ziele mit `http:`, `https:`, `mailto:`, `tel:` und `ftp:`, weil eine relative URL innerhalb eines PDFs keine Basis hat. Zeichen außerhalb des druckbaren ASCII werden prozentkodiert. Zitate mit `:ref` und Zeilen des Inhaltsverzeichnisses behalten ihre Links innerhalb des Dokuments.
+
+### Vollständiges Browser-Beispiel: setzen, rendern, herunterladen
+
+Alles zusammengesetzt – den VDT setzen, als PDF rendern und im Browser einen Download auslösen:
+
+```tsx
+import { buildDocument, createMeasurementCache } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+import { createPdfFontProvider } from './pdfFontProvider';
+
+const fontProvider = createPdfFontProvider();
+
+export async function downloadPdf(markdown: string, config: PostextConfig) {
+  const cache = createMeasurementCache();
+  const vdt = buildDocument({ markdown }, config, cache);
+
+  const bytes = await renderToPdf(vdt, { fontProvider });
+
+  const blob = new Blob([bytes.slice().buffer], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'document.pdf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+```
+
+**Wichtig:** Rufen Sie `ensureConfigFontsLoaded(config)` (oder etwas Gleichwertiges) *vor* `buildDocument` auf, wenn Ihre Konfiguration Webschriften verwendet. Das Layout wird mit den Schriftmetriken gemessen, die der Browser gerade für diese Familie hat – ist die echte Schrift noch nicht eingetroffen, wird der VDT mit einer Ersatzschrift gemessen, und das PDF stimmt nicht mit der Ausgabe von Canvas oder HTML überein. Die Sandbox tut das vor jedem Rendering ausdrücklich (siehe `packages/postext-sandbox/src/viewport/PdfViewport.tsx`).
+
+### Live-Beispiel: ein PDF im Browser
+
+Der vollständige Ablauf von oben, im Browser ausgeführt: Der Pen importiert `postext` und `postext-pdf` von einem CDN, lädt die Webschriften, setzt das Dokument, bettet die Fontsource-Schnitte über den Font-Provider ein und übergibt die Bytes an einen Link, der die Datei in einem neuen Tab öffnet, und an einen Download-Link. Das PDF, das Sie erhalten, hat dieselben Zeilenumbrüche wie die Ausgabe von Canvas und HTML, echte eingebettete Schriften und Lesezeichen für die Gliederung.
+
+<CodePenExample name="render-pdf" title="Postext · ein PDF im Browser erzeugen" description="Ein Markdown-Dokument mit postext setzen und mit postext-pdf als PDF rendern." height={600} />
+
+### Das PDF in einem Worker rendern
+
+`postext-pdf/worker` verlagert `renderToPdf` aus dem Haupt-Thread. Der Worker schreibt den Text, die Vektorabbildungen, den Strukturbaum und die Datei selbst. Zwei Aufgaben brauchen die Seite, deshalb bittet der Worker den Haupt-Thread darum: das Abrufen von Schriften und das Rastern eines SVG über ein `<img>`. Bei einem Buch von Hunderten Seiten dauert das Rendern Sekunden, die sonst die Seite einfrieren würden; bei wenigen Seiten ist der direkte Aufruf von `renderToPdf` einfacher.
+
+```ts
+import { createPdfWorker } from 'postext-pdf/worker';
+
+const pdfWorker = createPdfWorker();
+const bytes = await pdfWorker.render(docs, {
+  fontProvider,                                     // runs on this thread
+  resourceBytes: new Map([['map.svg', svgBytes]]),  // a Map; its buffers move to the worker
+  onProgress: ({ phase, pages, totalPages }) => showProgress(phase, pages, totalPages),
+  onWarning: (w) => console.info(w.message),
+});
+pdfWorker.dispose();
+```
+
+- `render(docs, options)` nimmt ein Dokument oder das Array der Kapiteldokumente eines Buches. Es nimmt die Optionen von `renderToPdf`, mit zwei Unterschieden. `resourceBytes` ist eine `Map<string, Uint8Array>`, deren Puffer übertragen werden; übergeben Sie also Kopien von Bytes, die Sie behalten. `rasterizeSvg` läuft, wenn angegeben, im Haupt-Thread; standardmäßig erledigen das eigene `Image` und der Canvas der Seite diese Aufgabe.
+- Ein Handle rendert jeweils ein Dokument. `dispose()` beendet den Worker und weist jedes noch ausstehende Rendering zurück.
+- `createPdfWorker({ worker })` nimmt einen `Worker`, den Sie selbst erzeugen, für Build-Werkzeuge, die die URLs von Workern kontrollieren. Dieser Worker muss `postext-pdf/worker/entry` ausführen.
+
+**Von einem CDN.** Standardmäßig wird das Worker-Skript von der eigenen URL des Pakets geladen (`new URL('./pdf.worker.js', import.meta.url)`). Eine Seite eines anderen Ursprungs darf es unter Umständen nicht starten: Aus `esm.sh` importiert, wirft `createPdfWorker()` den Fehler `Failed to construct 'Worker': Script at 'https://esm.sh/postext-pdf@…/pdf.worker.js' cannot be accessed from origin …`. Starten Sie stattdessen einen Modul-Worker desselben Ursprungs, der den Einstieg importiert (wenn Sie eine Version festlegen, legen Sie in beiden URLs dieselbe fest):
+
+```js
+import { createPdfWorker } from 'https://esm.sh/postext-pdf/worker';
+
+const entry = URL.createObjectURL(new Blob(
+  ["import 'https://esm.sh/postext-pdf/worker/entry';"],
+  { type: 'text/javascript' },
+));
+const pdfWorker = createPdfWorker({ worker: new Worker(entry, { type: 'module' }) });
+```
+
+Der Layout-Worker aus `postext/worker` braucht dieselbe Hülle um `postext/worker/entry` (siehe [Layout in einem Web Worker ausführen](#layout-in-einem-web-worker-ausführen)).
+
+### Druckfertige PDFs
+
+Für produktive Druckabläufe stimmen Sie vor dem Rendern diese Konfigurationsoptionen ab:
+
+- **`page.cutLines.enabled: true`** – fügt um das Endformat einen Anschnittbereich und Schnittmarken hinzu und gibt jeder Seite eine TrimBox und eine BleedBox. Siehe [Schnittmarken](/de/docs/configuration-page-layout#schnittmarken).
+- **`print: { standard: 'pdfx4', outputProfile: 'fogra51' }`** (oder `'pdfx1a'`) – eine PDF/X-Datei mit dem Output Intent, der Kennung und den Boxen, die eine Druckerei prüft; jede Farbe und jedes RGB-Bild über das ICC-Profil separiert, 100 % K überdruckend und große schwarze Flächen in Tiefschwarz. Siehe [Druckvorstufe (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#druckvorstufe-konfiguration).
+- **`colorSpace: 'cmyk'`** (oder `pdfGeneration: { forceColorSpace: true, colorSpace: 'cmyk' }`) – dieselbe Separation ohne die PDF/X-Kennung (Schnittmarken stehen immer in Passerfarbe). PDF-Druckoriginale werden so eingebettet, wie sie sind.
+- **`page.dpi: 300`** – die px pro Zoll des Layouts: Eine Bitmap ohne eigene Auflösung wird in ihrer natürlichen Größe mit dieser Auflösung gedruckt. Der [Preflight](/de/docs/configuration-fonts-colors-viewers#preflight) meldet Bilder unter 300 ppi in ihrer gedruckten Größe.
+- **`ColorValue.cmyk`** – eine in CMYK angelegte Farbe wird mit ihren genauen Werten gedruckt.
+- **`{ pageNegative: true }`** in `RenderToPdfOptions` – kehrt den Bereich des Endformats mit dem Mischmodus Differenz um (Schnittmarken bleiben unverändert). Nützlich für Preflight-Prüfungen bei dunkler Typografie auf hellem Grund.
+
+### Referenzimplementierung
+
+Die Komponente `PdfViewport` der Sandbox (`packages/postext-sandbox/src/viewport/PdfViewport.tsx`) verbindet die Teile oben zu einer Live-Vorschau mit Schaltflächen zum Neuerzeugen, Herunterladen und Drucken und ist ein guter Ausgangspunkt für jede PDF-Integration im Browser. Sie setzt den VDT über den gemeinsamen Layout-Worker (siehe [Layout in einem Web Worker ausführen](#layout-in-einem-web-worker-ausführen)), sodass ein Klick auf *Neu berechnen* die Oberfläche nicht einfriert, während die Pipeline läuft – der Haupt-Thread übernimmt nur `renderToPdf` (das schnell ist, sobald der VDT existiert).
+
+## Ein 3D-Buch (`postext-folio`)
+
+`postext-folio` stellt ein gesetztes Dokument auf dem Bildschirm als gedrucktes Buch dar, das aufgeschlagen auf einem Schreibtisch liegt: Doppelseiten nach der Regel der rechten Seite und Blätter, die der Leser mit den Schaltflächen ‹ ›, den Pfeiltasten, einer Wischgeste, einem Klick auf eine Seite umblättert oder indem er eine Seite an ihrer Kante fasst und hinüberzieht. Jedes Blatt wölbt sich in three.js entsprechend seinem Papier und wirft einen echten Schatten auf die Seiten darunter. Der WebGL-Canvas zeichnet das Buch im Ruhezustand wie beim Umblättern, sodass eine Seite ihr Aussehen nie ändert, wenn sie aufliegt. Es ist der Betrachter der Rezepte im Rezeptbuch und des Tabs **Folio** der Sandbox.
+
+```bash
+npm install postext postext-folio three
+```
+
+```ts
+import { buildDocument } from 'postext';
+import { createFolioFromDocument } from 'postext-folio';
+
+const doc = buildDocument({ markdown }, config);
+const book = createFolioFromDocument(document.getElementById('book')!, doc, {
+  onChange: ({ pages }) => console.log('showing pages', pages),
+});
+
+// After an edit: the same viewer, on the same page.
+book.setDocument(buildDocument({ markdown: edited }, config));
+```
+
+- **Seiten werden gezeichnet, wenn sie gebraucht werden.** `createFolioFromDocument` zeichnet jede Seite mit `renderPageToCanvas` in genau den Gerätepixeln eines Seitenplatzes (WebGL zeigt sie dann Texel für Pixel, so scharf wie die Canvas-Vorschau), und nur die Doppelseiten um die aufgeschlagene herum (`window`, standardmäßig drei auf jeder Seite). Seiten, die aus diesem Fenster fallen, werden freigegeben, sodass ein Buch mit tausend Seiten den Speicher von wenigen kostet. Ein Sprung zu einer weit entfernten Seite zeichnet zuerst diese Doppelseite. Bis zu zehn Seiten weit wenden sich die Blätter einzeln; weiter entfernt hebt sich der Seitenblock dazwischen als eine Platte, so dick wie diese Seiten (ihre Papierstärken summiert), und landet auf der anderen Seite. `setDocument` behält die Zeichnung jeder Seite, die im neuen Layout gleich lautet (`{ repaint: true }` zeichnet sie alle neu, etwa nachdem ein Bild eingetroffen ist).
+- **Das Dokument bestimmt das Buch.** Seine erste Seite öffnet sich allein rechts, wenn sie eine rechte Seite ist (`pageIndexOffset` gerade), ein rechts gebundenes Buch (`page.binding: 'right'` oder ein vertikales Dokument) liegt gespiegelt und wird nach links umgeblättert, Vakatseiten erhalten die Hintergrundfarbe der Seite, und die Endformatbreite der Seite (`pageWidthMm`) skaliert die Papierstärke und die Buchdeckel. Ein mit einer `continuation` gesetztes Kapitel rechnet die übrigen Seiten des Buches (`pageIndexOffset` davor, `bookPageCount` danach) in die Dicke der beiden Seitenblöcke ein, ohne sie zu zeichnen (`extraPages`).
+- **Das Dokument bestimmt das Aussehen.** Papier, Bindung, Schreibtisch und Licht sind die [Einstellungen `folio`](/de/docs/configuration-fonts-colors-viewers#folio-betrachter-konfiguration) des Dokuments (`doc.config.folio`). Eine Seite, die innerhalb eines Abschnitts `:::paper` gesetzt ist, trägt ihr eigenes Papier (`VDTPage.paper`), und ihr Blatt wird mit Farbe, Oberfläche, Dicke und Steifigkeit dieses Papiers gezeichnet. Mit `binding.cover: 'pages'` ist die erste Seite der vordere Buchdeckel und die letzte, wenn sie eine linke Seite ist, der hintere (`covers`). Ein Zeitungsformat (`'broadsheet'`, `'berliner'`, `'tabloid'`, `'compact'`), dessen Einstellungen kein Papier und keine Bindung nennen, liegt als gefaltetes Zeitungspapier da, auch wenn der Host sein eigenes `folio` übergibt.
+- **Der Container bestimmt die Größe.** Das Buch füllt ihn, mit den Schaltflächen und der Seitenzahl in den Rändern; geben Sie dem Container also eine Höhe. Eine Größenänderung zeichnet die Seiten in der neuen Größe neu. Unter 560 px Breite zeigt er jeweils eine Seite (`mode: 'auto'`; `'single'` und `'double'` erzwingen das eine oder andere): Der Rücken verläuft entlang der Innenkante der Seite, und das Blatt wendet sich darüber, ein Ziehen zum Rücken hin blättert vorwärts, eine Wischgeste von ihm weg zurück, ein Tippen blättert um.
+- **Was der Zeiger tut.** `interaction` (und später `setInteraction`) legt fest, was die linke Maustaste, ein Finger oder ein Stift auf dem Buch tut: `'hand'` (der Standard) fasst und wendet die Seiten, `'orbit'` dreht die Ansicht wie ein Ziehen mit der rechten Maustaste (für Trackpads und Tablets), `'select'` überlässt den Zeiger dem Host, etwa um Text auszuwählen. `pageAt(event)` liefert die Seite unter einem Zeiger und die Stelle darauf (`{ page, x, y }`, Anteile der Seite ab ihrer linken oberen Ecke), auf dem Buch, wie es zu sehen ist, geneigt oder gedreht; `pointOnScreen(point)` geht den umgekehrten Weg, um eine Einfügemarke oder eine Auswahl über die Seite zu zeichnen. `refreshPage(src)` zeigt einen Seiten-Canvas erneut, den der Host an Ort und Stelle neu gezeichnet hat. Die Sandbox nutzt sie alle, um auf den 3D-Seiten Text auszuwählen und der Einfügemarke des Editors zu folgen.
+- **Eine Lupe für kleine Schrift.** `interaction: 'magnify'` hält eine runde Lupe mit schwarzem Rand dort über das Buch, wo der Zeiger ist (ein Finger hält sie über sich, solange er den Bildschirm berührt). Sie zeigt das Buch so, wie das Auge des Lesers es sieht, beleuchtet und gewölbt, wie es daliegt, in der Mitte am stärksten vergrößert und zum Rand hin gekrümmt. Das Mausrad, `+` und `−` ändern die Vergrößerung (`setMagnification(zoom)`, 1,5 bis 10; der Standard zeigt die Seite mit etwa 5,5 CSS-px pro Millimeter), und Esc legt sie weg; `magnifier: { zoom, diameter }` legt beides von Anfang an fest. `createFolioFromDocument` zeichnet die Seiten unter der Lupe erneut, scharf genug für ihre Mitte, sodass sich auch die Grundschrift einer Zeitung lesen lässt; `createFolio` nimmt solche Zeichnungen von `detail: { paint(index, deviceWidth), release() }`. Die Sandbox legt sie auf die Schaltfläche **Lupe** (M). Die Lupe wählt auch Text aus: Über den Seiten ist der Cursor ein Textcursor, `pageAt` gibt den Punkt unter der Mitte der Lupe zurück (auf einem Touchscreen über dem Finger), und in der Sandbox setzt ein Klick dort die Einfügemarke, und ein Ziehen wählt aus.
+- **Der Leser kann sich umsehen.** Ein Ziehen mit der rechten Maustaste dreht die Ansicht um das Buch (bis zu 70° von oben), auch während sich Blätter wenden; `resetView()` führt sie sanft zu `tilt` und `yaw` der Einstellungen zurück, und `getView()` liefert die Ansicht, wie sie gerade zu sehen ist (`{ tilt, yaw }`, in Grad), um sie als diese Einstellungen zu speichern. Die Sandbox legt das auf zwei Schaltflächen, **Ansicht zurücksetzen** und **Als Standardansicht speichern**.
+- **Videos laufen auf den Seiten.** Ein Klick auf das Vorschaubild eines Videos spielt es auf der Seite ab, in jedem Modus von `interaction`, und es läuft weiter, während sich sein Blatt wendet; ein weiterer Klick hält es an, und es stoppt, wenn das Buch auf einer Doppelseite zur Ruhe kommt, die es nicht zeigt. Ein Video mit `player.autoplay` startet von selbst, wenn seine Doppelseite zum ersten Mal gezeigt wird; eines, das außerdem neben den anderen läuft (`player.exclusive: false`), startet jedes Mal stumm und stoppt, wenn die Doppelseite weggeblättert wird, mehrere gleichzeitig. Die Optionen `videos`, `videoUrl` und `onVideo` sowie `stopVideo()` am Betrachter; siehe [Dokumentformat › Videos auf den Seiten von Folio](/de/docs/document-format#videos-auf-den-seiten-von-folio).
+- **Zuerst Schriften und Bilder.** Wie bei `renderPage` müssen die Schnitte, die das Dokument verwendet, in `document.fonts` geladen und seine Ressourcenbilder mit `registerResourceImage` registriert sein, bevor Seiten gezeichnet werden.
+- **Barrierefrei.** Der Betrachter ist eine fokussierbare Gruppe, die ←/→ (bei einem rechts gebundenen Buch gespiegelt), Bild auf/ab, Pos1 und Ende annimmt; seine Schaltflächen und die Seitenzahl sind beschriftet (`labels` übersetzt sie), und jeder Seiten-Canvas trägt einen Alternativtext `alt` (`alt: (index) => …`).
+- **Ohne WebGL2** oder wenn der Leser reduzierte Bewegung wünscht, wechseln die Doppelseiten einfach. WebGL-Bücher sind für ein Smartphone schwer (eine Textur pro Seitenfläche): Die Sandbox bietet ihren Tab Folio nur dort an, wo WebGL2 verfügbar ist und die kurze Seite des Bildschirms mindestens 600 px misst. `canFlip()` gibt an, ob sich die Blätter hier in 3D wenden: WebGL2 und keine reduzierte Bewegung.
+
+### Erscheinungsbild
+
+Die Option `appearance` und später `setAppearance` überschreiben, was das Dokument vorgibt. Alles, was fehlt, behält den Wert des Dokuments:
+
+```ts
+const book = createFolioFromDocument(container, doc, {
+  appearance: {
+    folio: {
+      tilt: 22,
+      paper: { type: 'bookWove', texture: 'laid' },
+      binding: { type: 'hardcover', coverColor: { hex: '#5a1f1f', model: 'hex' } },
+      surface: { type: 'walnut' },
+      lighting: { environment: 'lamp' },
+    },
+    // Photographed desks: a folder laid out as postext.dev's /folio/textures/
+    // (manifest.json and one folder per desk). Without it, procedural maps.
+    textureBaseUrl: '/folio/textures',
+    // The picture for `folio.binding.spineImage`: the resource's URL,
+    // or a drawn canvas or image.
+    spineImage: spineUrl,
+  },
+});
+
+// A settings panel: the book redrawn in place, nothing painted again.
+book.setAppearance({ folio: { ...folio, lighting: { environment: 'daylight' } } });
+book.resetView();
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Feld</th>
+      <th>Was es bewirkt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>folio</code></td><td>Die <a href="/de/docs/configuration-fonts-colors-viewers#folio-betrachter-konfiguration">Einstellungen <code>folio</code></a>: Neigung, Papier, Bindung, Oberfläche, Beleuchtung. Ersetzt die des Dokuments, wenn angegeben.</td></tr>
+    <tr><td><code>pageWidthMm</code></td><td>Die Endformatbreite einer Seite in mm, an der Papierstärke und Buchdeckel skaliert werden. Aus dem Dokument: die beschnittene Seite bei ihrer DPI-Zahl. Standardwert 150 für <code>createFolio</code>.</td></tr>
+    <tr><td><code>extraPages</code></td><td><code>{'{ before, after }'}</code>: Seiten des Buches außerhalb der übergebenen, mitgezählt für die Dicke der Seitenblöcke und nie gezeichnet.</td></tr>
+    <tr><td><code>covers</code></td><td><code>{'{ front, back }'}</code>: Die erste übergebene Seite ist der vordere Umschlag, die letzte der hintere (wenn sie auf eine linke Seite fällt). Sie wenden sich als Buchdeckel, und es wird keine Buchdecke gezeichnet. Aus dem Dokument: <code>binding.cover: 'pages'</code> bei einem Buch, das mit seiner ersten Seite beginnt und mit seiner letzten endet.</td></tr>
+    <tr><td><code>spineImage</code></td><td>Das Bild, das auf den Buchrücken gedruckt wird, als URL, Canvas oder Bild. <code>createFolioFromDocument</code> sucht keine Ressourcen heraus: Übergeben Sie das Bild der Ressource, die <code>folio.binding.spineImage</code> nennt. Bei einer Rückstichheftung ignoriert.</td></tr>
+    <tr><td><code>textureBaseUrl</code></td><td>Wo die fotografierten Schreibtischtexturen ausgeliefert werden. Bis sie geladen sind, oder ohne diese Angabe, wird der Schreibtisch mit prozeduralen Maps gezeichnet.</td></tr>
+  </tbody>
+</table>
+
+`createFolio(container, { pages })` ist derselbe Betrachter für beliebige Seiten: Bild-URLs, Elemente `<img>` oder `<canvas>` und `""` für eine Vakatseite; eine Seite kann `{ src, alt, paper }` sein, mit `paper` als Papier im Stil von `:::paper` für dieses Blatt. `PageFlipper` ist die three.js-Engine allein, für einen Host, der das DOM seiner Doppelseiten selbst aufbaut; `FlatPageFlipper` ist das flache Umblättern aus der Zeit vor dem 3D-Buch, beibehalten für den Leuchttisch des Rezeptbuchs. Die vollständige Liste der Optionen steht in der [README des Pakets](https://www.npmjs.com/package/postext-folio).
+
+### Live-Beispiel: ein Buch in 3D
+
+Der Pen importiert `postext` und `postext-folio` von einem CDN, setzt ein kurzes Dokument und öffnet es als Buch. Fassen Sie die rechte Seite an ihrer Kante und ziehen Sie sie hinüber.
+
+<CodePenExample name="render-folio" title="Postext · ein Dokument als 3D-Buch" description="Ein Markdown-Dokument mit postext setzen und seine Seiten mit postext-folio in 3D umblättern." height={640} />
+
+### Live-Beispiel: Seitenbilder
+
+`createFolio` mit auf Canvas gezeichneten Seiten, einer leeren letzten Seite und der Papierfarbe.
+
+<CodePenExample name="folio-images" title="Postext · ein 3D-Buch aus Bildern" description="Beliebige Seiten mit postext-folio in 3D umblättern: Bild-URLs, img- oder canvas-Elemente." height={600} />
+
+## EPUB-Bücher (`postext-epub`)
+
+`postext-epub` schreibt ein gesetztes Buch als EPUB-3.3-Datei, im Browser oder in Node, ohne Server. Es liest dieselben Kapiteldokumente, die `renderToPdf` für ein Buch nimmt, sodass Seitenzahlen, Anmerkungen, Zitate, Querverweise, das Inhaltsverzeichnis und das Register aufgelöst ankommen, und gibt die Datei als Bytes zurück. Es ist der Writer hinter dem Tab **EPUB 3** der Sandbox.
+
+```bash
+npm install postext postext-epub
+```
+
+`postext` ist eine Peer-Abhängigkeit, wie bei `postext-pdf`: Aktualisieren Sie die beiden gemeinsam, und legen Sie sie auf einem CDN auf dieselbe Version fest.
+
+### Festes Layout und umfließend
+
+EPUB 3 definiert zwei Darstellungen, festgelegt durch die Eigenschaft `rendition:layout` des Pakets; `layout` wählt eine davon:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '160px' }}></th>
+      <th><code>layout: 'fixed'</code></th>
+      <th><code>layout: 'reflowable'</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Name in EPUB</td><td><code>pre-paginated</code> (festes Layout, FXL)</td><td><code>reflowable</code>, der EPUB-Standard</td></tr>
+    <tr><td>Inhaltsdokumente</td><td>Ein XHTML-Dokument pro gedruckter Seite, im beschnittenen Seitenformat in CSS-px</td><td>Ein XHTML-Dokument pro Kapitel (ein Teil eröffnet ein eigenes)</td></tr>
+    <tr><td>Was erhalten bleibt</td><td>Die Seite: Spalten, Gleitobjekte, Kolumnentitel, Auftakte, Zeilenumbrüche und Positionen, in den eingebetteten Schriften. Text bleibt echter Text: auswählbar, durchsuchbar, vorlesbar</td><td>Der Text und seine Struktur: Überschriften, aus den Zeilen wiederhergestellte Absätze, Listen, Kästen als Asides, Abbildungen und Tabellen nach dem Text, der sie zitiert, Anmerkungen, Links, Marken der Druckseiten. Ein aus der Konfiguration abgeleitetes Stylesheet</td></tr>
+    <tr><td>Was aufgegeben wird</td><td>Die Wahl von Schrift, Größe und Rändern durch den Leser; auf einem kleinen Bildschirm wird die Seite verkleinert</td><td>Spalten, Kolumnentitel, Seitengestaltung und die genauen Zeilenumbrüche</td></tr>
+    <tr><td>Doppelseiten und Richtung</td><td><code>page-spread-left</code> / <code>page-spread-right</code> aus Seitenparität und Bindung; ein rechts gebundenes Buch liest sich von rechts nach links</td><td>Leserichtung aus der Bindung; vertikales Chinesisch behält <code>vertical-rl</code>, Arabisch ist <code>dir="rtl"</code></td></tr>
+    <tr><td>Geeignet für</td><td>Gestaltete Seiten: illustrierte Bücher, Lehrbücher, Kataloge, Zeitschriften; große Bildschirme</td><td>Fließtext: Romane, Essays, Berichte; Smartphones und E-Ink-Lesegeräte</td></tr>
+  </tbody>
+</table>
+
+Beide Darstellungen tragen dieselbe Navigation: ein Inhaltsverzeichnis aus den Überschriften und Teilseiten, eine Seitenliste mit den gedruckten Seitenbezeichnungen, Landmarks (Umschlag, gedrucktes Inhaltsverzeichnis, Beginn des Haupttextes) und eine NCX für ältere Lesesysteme.
+
+### Ein Buch schreiben
+
+```ts
+import { openBundle, buildBundle } from 'postext';
+import { renderToEpub } from 'postext-epub';
+
+const bundle = await openBundle(fileBytes);
+const docs = buildBundle(bundle); // one VDTDocument per chapter, in book order
+
+const bytes = await renderToEpub(docs, {
+  layout: 'reflowable',
+  metadata: { title: 'Lantern', creators: ['Ada Lovelace'], language: 'en' },
+  fonts: bundle.fonts.map((f) => ({ family: f.family, weight: f.weight, style: f.style, bytes: new Uint8Array(f.bytes), format: f.format })),
+  resourceBytes: (fileId) => {
+    const data = bundle.files.get(fileId);
+    return data ? { bytes: data, mediaType: '' } : undefined;
+  },
+  onWarning: (w) => console.warn(w),
+});
+```
+
+Ein einzelnes Dokument ist ein Buch mit einem Kapitel: `renderToEpub([doc], options)`.
+
+- **`renderToEpub(docs, options): Promise<Uint8Array>`** schreibt die Datei. `options` ist `{ layout, metadata, fonts?, svgFonts?, resourceBytes?, cover?, onProgress?, onWarning?, signal? }`.
+- **`metadata`**: `title` und `language` (ein BCP-47-Tag) sind erforderlich; `subtitle`, `creators`, `identifier`, `date`, `publisher`, `rights`, `description` und `modified` sind optional. Eine bloße ISBN wird zu `urn:isbn:…`. Ohne `identifier` erhält das Buch eine aus Titel, Urhebern und Sprache abgeleitete `urn:uuid:`, sodass eine neue Version desselben Buches ihren Platz in der Bibliothek eines Lesers behält. Übergeben Sie auch `modified`, um byte-identische Ausgaben zu erhalten.
+- **`fonts`**: die einzubettenden Schnitte, `{ family, weight, style, bytes, format, unicodeRange? }`, wobei `format` eines von `woff2`, `woff`, `ttf`, `otf` ist. Jeder Schnitt wird zu einer Datei und einer Regel `@font-face`; mehrere Dateien mit ihrem `unicodeRange` bilden einen Schnitt (die Teile von Google Fonts). Eine Familie, Stärke oder ein Stil, den die Seiten ohne eingebetteten Schnitt verwenden, wird als `missingFont` gemeldet, und Lesesysteme setzen dann eigene Schriften ein. Betten Sie nur Schriften ein, deren Lizenz das erlaubt: Ein Schnitt mit `redistributable: false` wird nie in die Datei geschrieben (das Buch darf damit gesetzt sein, aber seine Datei bleibt draußen, auch aus SVG-Bildern).
+- **`resourceBytes(fileId)`**: die Bilder, die die Seiten platzieren, synchron oder asynchron, als `{ bytes, mediaType }`; ein leerer `mediaType` wird aus den Bytes gelesen. Geben Sie Bitmaps so an, wie sie gespeichert sind, und SVGs als ihren Quelltext, nicht als PDF-Druckoriginal (`svg.pdfFileId`). Jedes Bild wird einmal gespeichert. Bei einem einfarbigen Buch (`diagramStyle.singleInk`) werden die SVGs in der Datei umgefärbt. In ein SVG werden die Schnitte eingebettet, die sein Text nennt, da ein Lesesystem es als Bild zeigt, das die Schriften des Buches nicht sieht (siehe [Schriften in SVG-Text](/de/docs/configuration-resources#schriften-in-svg-text)): aus `fonts` (die Teile, die seine Zeichen enthalten), dann aus **`svgFonts.provider`** für eine Familie, die der Text des Buches nicht verwendet. Familien von Schnitten mit der Markierung `redistributable: false` und solche, die `svgFonts.withhold(family)` nennt, bleiben draußen und werden jeweils einmal als `fontWithheld` gemeldet; eine Familie ohne Schnitt wird als `svgFontUnavailable` gemeldet, Schnitte über `svgFonts.maxBytes` (2 MiB) als `svgFontsTooLarge`. `svgFonts.inline: false`, `diagramStyle.inlineFonts: false` und das `svg.inlineFonts: false` einer Ressource behalten die Bytes so, wie sie übergeben wurden. Ein Bild ohne Bytes wird als `missingImage` gemeldet und als leerer Rahmen belassen.
+- **`cover`**: `{ bytes, mediaType, alt? }`, ein Bild im Format JPEG, PNG, WebP oder SVG. Das Buch öffnet sich dann mit einem Umschlagdokument, das es enthält, und es ist das `cover-image` des Pakets (das Vorschaubild in einer Bibliothek). Ohne Umschlag nennt das feste Layout seine erste Seite als Umschlag, und das umfließende Buch hat kein Umschlagbild.
+- **`onProgress({ phase, done, total })`**: `resources` (Schriften und Bilder), `documents` (Seiten bei festem Layout, Kapitel bei umfließendem), dann `package`. **`signal`** bricht zwischen den Schritten ab.
+- **`readEpub(bytes)`** liest eine Datei für einen Betrachter wieder ein, ohne `DOMParser`: Layout, Metadaten, Leserichtung, jede Datei nach Pfad, das Manifest, den Spine, das Inhaltsverzeichnis, die Seitenliste, den Viewport des festen Layouts und den Umschlag. Der Reader der Sandbox baut darauf auf.
+
+Beide Darstellungen tragen Metadaten nach EPUB Accessibility 1.1 (Zugriffsmodi, Merkmale wie das Inhaltsverzeichnis und die gedruckten Seitenzahlen, Gefahren und eine Zusammenfassung) und erheben standardmäßig keinen Anspruch auf WCAG-Konformität. Die vollständige Liste der Optionen und die Einschränkungen stehen in der [README des Pakets](https://www.npmjs.com/package/postext-epub).
+
+### Eine Datei mit EPUBCheck prüfen
+
+[W3C EPUBCheck](https://www.w3.org/publishing/epubcheck/) ist der Referenzvalidator für EPUB; E-Book-Shops prüfen die Dateien, die sie erhalten, damit. Ist er installiert (`brew install epubcheck` oder die Java-Version), listet `epubcheck book.epub` Fehler, Warnungen und Nutzungshinweise auf; die Nutzungshinweise, die eine Ausgabe von Postext übrig lässt (`CSS-028`, `OBS-001`, `HTM_062`), dienen nur der Information. Im Repository von Postext prüft `pnpm --filter postext-epub epubcheck` die Beispielbücher der Testsuite, `node packages/postext-epub/scripts/epubcheck.mjs book.postext --layout both` setzt eine `.postext`-Datei oder einen Vorlagenordner und prüft beide Darstellungen, und `pnpm --filter postext-epub validate` führt die ganze Matrix der Bücher aus (der Leitfaden, die Vorlagen der Schaustücke, chinesische, arabische und Bücher aus dem Rezeptbuch), von denen jedes ohne Fehler und Warnungen besteht.
+
+## Pakete (Dateien im Format `.postext`)
+
+Eine **`.postext`-Datei** ist ein ganzes Buch in einer Datei: ein Zip-Archiv mit einem Manifest `preset.json`, einer Markdown-Datei pro Kapitel, den Nutzdaten der Ressourcen (Bitmaps, SVGs, PDF-Druckoriginale) und den Schriftdateien, die die Konfiguration nennt. Die [Sandbox](/de/docs/sandbox#export-und-import) exportiert und importiert sie, und der [Agenten-Skill](/de/docs/skill) liefert sie. Auch das Paket `postext` kann sie erstellen und öffnen, sodass ein Buch zwischen diesen Werkzeugen und Ihrem eigenen Programm wechseln kann, ohne dass etwas verloren geht.
+
+```
+my-book.postext
+├── preset.json            manifest: name, locale, chapters, config, resources, fonts
+├── chapters/01-dusk.md
+├── chapters/02-night.md
+├── resources/lantern.svg
+└── fonts/ebgaramond-400-normal.woff2
+```
+
+Das Manifest ist Feld für Feld im Anhang [Format der Vorlagenpakete](/de/docs/sandbox#format-der-vorlagenpakete) der Sandbox beschrieben. Eine Datei kann auch `layouts.json` enthalten, die Seitenzahlen der Sandbox, sodass sich das Buch dort bereits paginiert öffnet, oder eine pro Ausgabe eines mehrsprachigen Buches (`layouts.zh-Hant.json`, wird zuerst gelesen). `openBundle` ignoriert sie.
+
+Die API wird aus `postext` selbst und aus dem Unterpfad `postext/bundle` exportiert, der die Hilfsfunktionen der unteren Ebene hinzufügt. Importieren Sie aus `postext`, wenn Sie auch rendern. So teilen sich die Paket-Adapter und die Renderer eine Modulinstanz, was auf einem CDN wie esm.sh wichtig ist, wo jeder Einstiegspunkt ein eigener Build ist.
+
+### Ein Paket öffnen
+
+`openBundle` nimmt die Bytes der Datei (ein `Uint8Array`, einen `ArrayBuffer` oder einen `Blob` / eine `File` aus einem `<input type="file">`) und gibt alles zurück, was die Engine und ihre Backends brauchen:
+
+```ts
+import { openBundle } from 'postext';
+
+const bundle = await openBundle(await file.arrayBuffer(), { locale: 'es' });
+
+bundle.chapters;   // [{ title, file, markdown }, …] in book order
+bundle.config;     // PostextConfig, ready for buildDocument
+bundle.resources;  // Resource[]
+bundle.files;      // Map<path, Uint8Array>: every file of the bundle
+```
+
+<table>
+  <thead>
+    <tr><th>Feld</th><th>Was es enthält</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>manifest</code></td><td>Die validierte <code>preset.json</code>.</td></tr>
+    <tr><td><code>id</code>, <code>name</code>, <code>description</code></td><td>Aus dem Manifest.</td></tr>
+    <tr><td><code>locale</code>, <code>locales</code></td><td>Die Sprache, in der der Inhalt gelesen wurde, und jede Sprache, die ein zweisprachiges Paket enthält. <code>options.locale</code> wählt eine aus: zuerst das genaue Tag, dann die Grundsprache, dann die eigene Sprache des Pakets.</td></tr>
+    <tr><td><code>chapters</code></td><td><code>&#123; title, file, markdown &#125;</code> pro Kapitel. Ein Kapitel ohne Titel im Manifest übernimmt den Text seiner ersten Überschrift <code>#</code>.</td></tr>
+    <tr><td><code>config</code></td><td>Die Standard-Farbpalette und die Ressourcentypen in der Sprache des Pakets, dann die <code>config</code> des Manifests, dann die Abweichungen der Sprache. Die Sprache des Pakets ist das obige <code>locale</code>, sodass ein Paket in einer Sprache seine eigenen Bezeichnungen erhält, gleich was <code>options.locale</code> verlangt. Ein Manifest, das keine Sprache nennt, übernimmt die, die seine <code>config</code> festlegt (<code>locale</code>, dann die Sprache der Silbentrennung), sonst <code>options.locale</code>. <code>customFonts</code> listet die Schriftfamilien des Pakets auf. Es ist dieselbe Konfiguration, mit der die Sandbox das Paket öffnet.</td></tr>
+    <tr><td><code>resources</code></td><td>Die Ressourcen, mit den Legenden der gewählten Sprache. Eine Größe, die im Manifest fehlt, wird aus der Datei gelesen.</td></tr>
+    <tr><td><code>fonts</code></td><td>Ein Eintrag pro Schnitt: <code>&#123; family, weight, style, format, file, bytes &#125;</code>.</td></tr>
+    <tr><td><code>files</code></td><td>Jede Datei im Archiv, mit ihrem Pfad als Schlüssel.</td></tr>
+    <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>Der Pfad des Umschlagbildes und wie das Paket angezeigt werden möchte: der <code>view</code> des Manifests, darüber der <code>localized[…].view</code> der ausgelieferten Sprache.</td></tr>
+    <tr><td><code>start</code></td><td>Wo das Buch beginnt, für ein Paket, das einen Teil eines längeren enthält: das <code>start</code> des Manifests oder das <code>localized[…].start</code> der ausgelieferten Sprache. Fehlt bei einem Buch, das an seinem Anfang beginnt.</td></tr>
+    <tr><td><code>warnings</code></td><td>Nicht fatale Probleme: eine nicht unterstützte Schriftdatei, ein fehlendes Druckoriginal.</td></tr>
+  </tbody>
+</table>
+
+Die **`fileId` von Nutzdaten ist ihr Pfad innerhalb des Pakets**. `resource.svg.fileId`, `resource.bitmap.fileId` und die `fileId` jeder Variante von `customFonts` lassen sich direkt in `bundle.files` nachschlagen. `openBundle` wirft einen Fehler, wenn die Bytes kein Zip sind, wenn es keine gültige `preset.json` gibt (in der Wurzel oder unter einem Ordner der obersten Ebene) oder wenn eine Datei fehlt, die das Manifest nennt.
+
+#### Pakete, die postext 1.4 oder früher geschrieben hat
+
+Jedes Manifest, das `createBundle` und die Sandbox schreiben, trägt `configVersion: 14`: die Konfigurationsregeln, für die seine `config` geschrieben wurde. Ein Manifest ohne diese Angabe stammt von postext 1.4 oder früher, das achtzehn Dinge anders handhabte:
+
+- **Umbrüche vor Überschriften** (Regeln 3): Bis 1.4 hatte ein Objekt `headings` ohne Umbruch vor H1 keinen (siehe [Überschreibungen pro Ebene](/de/docs/configuration-text#überschreibungen-pro-ebene)).
+- **Die Größe von Formeln** (Regeln 4): Bis 1.4 fielen Formeln 1,131-mal größer aus, als `fontSizeScale` angibt (siehe [Formelgröße](/de/docs/configuration-text#mathematik)).
+- **Der Raum unter einer Inline-Ressource** (Regeln 5): Bis 1.4 setzte der Text nach einer Abbildung oder Tabelle mit `placement.position: 'here'` an der nächsten Rasterlinie fort, ohne Abstand für Gleitobjekte darunter (siehe `layout.inlineResourceGap` unter [Layout](/de/docs/configuration-page-layout#layout)).
+- **Der Raum um eine Inline-Ressource in einem Kasten** (Regeln 6): Bis 1.4 saß eine solche Ressource direkt am Text des Kastens um sie herum (siehe `layout.inlineResourceGapInBoxes` unter [Layout](/de/docs/configuration-page-layout#layout)).
+- **Inline-Auszeichnungen in Überschriften** (Regeln 6): Bis 1.4 druckte eine Überschrift die Wörter ihrer Auszeichnungen `*italic*`, `**bold**` und anderer in ihrem eigenen einfachen Stil (siehe `headings.inlineMarks` unter [Überschriften](/de/docs/configuration-text#überschriften)).
+- **Die Größe einer Initiale** (Regeln 6): Bis 1.4 war das `dropCap` eines Gestaltungstextes ohne `fontSize` so hoch wie alle Zeilenkästen, die es überspannt, mit seiner Oberkante über der ersten Zeile (siehe `dropCap` unter [Textelemente](/de/docs/configuration-page-layout#textelemente)).
+- **Der Raum unter einer Doppelpunktzeile** (Regeln 6): Bis 1.4 hielt `keepColonWithList` eine Zeile Raum unter der Zeile, die mit einem Doppelpunkt endet, für die Liste für ausreichend, und ein zweizeiliger erster Listenpunkt, den die Regeln für Waisen und Witwen zusammenhalten, ging ohne sie in die nächste Spalte (siehe `bodyText.colonListRoom`).
+- **Die Zeilen, die ein Kastenschnitt übrig lässt** (Regeln 6): Bis 1.4 konnte ein Kasten, der innerhalb eines Absatzes oder Listenpunkts geteilt wurde, eine Zeile davon auf einer Seite lassen, solange jede Seite des Kastens insgesamt ihre `splitMinLines` Zeilen enthielt (siehe `layout.boxChildSplitMinLines` unter [Layout](/de/docs/configuration-page-layout#layout)).
+- **Zeilenumbrüche an einem Strich** (Regeln 7): Bis 1.4 beendete Knuth-Plass nie eine Zeile nach einem Geviert- oder Halbgeviertstrich, der ohne Abstand zwischen Wörtern stand (`say—that’s`), und der zeilenweise Umbrecher für formatierten Text nur zwischen zwei Buchstaben (siehe `bodyText.breakAfterDashes` unter [Fließtext](/de/docs/configuration-text#fließtext)).
+- **Flattersatz** (Regeln 7): Bis 1.4 wurde fließender Text im Flattersatz Zeile für Zeile gesetzt, jede Zeile vor der nächsten gefüllt, gleich was `optimalLineBreaking` besagte (siehe `bodyText.optimalRagged` unter [Fließtext](/de/docs/configuration-text#fließtext)).
+- **Die Teilung unter einer Überschrift** (Regeln 8): Bis 1.4 behielt der Absatz unter einer Überschrift am Fuß einer Spalte so viele Zeilen, wie dort Platz hatten, wie wenige auch in die nächste Spalte gingen (siehe `headings.keepWithNextSplit` unter [Überschriften](/de/docs/configuration-text#überschriften)).
+- **Der Raum unter einem Container `:::paragraphs`** (Regeln 8): Bis 1.4 wurde der Abstand des Formats vor dem Einrasten ins Raster unter den letzten Absatz gesetzt, der Abstand über dem nächsten Block (das `marginTop` einer Überschrift) wurde darunter addiert, und der Absatzabstand des Textes entfiel (siehe `bodyText.paragraphContainerSpacing` unter [Fließtext](/de/docs/configuration-text#fließtext)).
+- **Zeilenumbrüche am Bindestrich eines Kompositums** (Regeln 8): Bis 1.4 beendete Knuth-Plass in einem Absatz ohne Inline-Formatierung nie eine Zeile im Blocksatz nach einem Bindestrich zwischen zwei Buchstaben (`well-known`), in einem Absatz mit Formatierung dagegen schon (siehe `bodyText.breakAfterHyphens` unter [Fließtext](/de/docs/configuration-text#fließtext)).
+- **Gedichte ohne Trenner** (Regeln 9): Bis 1.22 wurde ein Gedicht `:::verse`, dessen Zeilen kein `||` trugen, als einzelne Halbverse gesetzt, jede Zeile zentriert (siehe `bodyText.verse.layout` unter [Vers](/de/docs/configuration-text#vers)).
+- **Ein Erstzeileneinzug neben einem hängenden Einzug** (Regeln 9): Bis 1.22 ersetzte das `hangingIndent` eines Absatzformats dessen `firstLineIndent`, und die erste Zeile begann bei `indent` (siehe [Absatzformate](/de/docs/configuration-styles#absatzformate)).
+- **Ein Backslash am Zeilenende** (Regeln 9): Bis 1.22 wurde ein Backslash, der eine Zeile eines Absatzes, eines Zitats oder eines Listenpunkts beendete, sowie `\\` vor einem Leerzeichen gedruckt, und die Zeilen wurden mit einem Leerzeichen verbunden (siehe `bodyText.hardLineBreaks` unter [Fließtext](/de/docs/configuration-text#fließtext)).
+- **Codezäune** (Regeln 9): Bis 1.22 wurden ein Codeblock ```` ``` ```` oder `~~~` und die Zeilen darin als Markdown gelesen: Zeilen wurden zu Absätzen verbunden, eine Zeile mit `#` wurde zur Überschrift, die Codezäune wurden gedruckt (siehe `codeStyle.blocks` unter [Code-Listings](/de/docs/configuration-styles#code-listings)).
+- **Umbrüche in Versen** (Regeln 10): In 1.23 wurde eine Zeile eines zeilenweise gesetzten Gedichts, die breiter als die Satzbreite war, mit ihren natürlichen Wortabständen umbrochen, wie wenig sie auch überstand (siehe `bodyText.verse.tighten` unter [Vers](/de/docs/configuration-text#vers)).
+
+`openBundle` und `readBundle` lesen die `config` eines solchen Manifests und die Konfiguration `localized` jeder Sprache über `migrateConfig`, das die Umbrüche, die 1.4 gesetzt hat, ausschreibt und den Formelmaßstab mit 1,131 multipliziert (seine Anzeigeränder in `em` durch diesen Wert geteilt). Ein Manifest mit dem Stempel `3` bis `7`, geschrieben von einer Vorabversion von 1.5, erhält nur die Fixierungen der Regeln nach seinem Stempel. Mit `3` sind das die Formelgröße, der Inline-Abstand, die fünf Fixierungen der Regeln 6, die zwei der Regeln 7 und die drei der Regeln 8; mit `4` der Inline-Abstand und die Fixierungen der Regeln 6, 7 und 8; mit `5` die Fixierungen der Regeln 6, 7 und 8; mit `6` die Fixierungen der Regeln 7 und 8; mit `7` nur die Fixierungen der Regeln 8. Die Teilung unter einer Überschrift (`pinLegacyHeadingSplit`) wird als `headings.keepWithNextSplit: 'fill'` in die `headings` geschrieben, die die Schichten gelten lassen, wenn ein gelesenes Kapitel eine Überschrift hat und die Konfiguration keinen eigenen Wert nennt, `headings.keepWithNext` eingeschaltet lässt und `bodyText.avoidOrphans` nicht ausschaltet. Die Umbrüche an Komposita (`pinLegacyHyphenBreaks`) werden als `bodyText.breakAfterHyphens: false` in das geltende `bodyText` geschrieben, wenn ein gelesenes Kapitel einen Bindestrich zwischen zwei Buchstaben setzt und die Konfiguration den Wert weder bereits festlegt noch `optimalLineBreaking` ausschaltet. Der Raum unter Containern (`pinLegacyParagraphContainerSpacing`) wird als `bodyText.paragraphContainerSpacing: 'add'` in das geltende `bodyText` geschrieben, wenn die Konfiguration ein Absatzformat deklariert (in `paragraphStyles` oder in den Abweichungen des HTML-Betrachters), ein gelesenes Kapitel einen Container `:::paragraphs` auf einer eigenen Zeile öffnet und die Konfiguration den Wert nicht bereits festlegt. Die Umbrüche an Strichen (`pinLegacyDashBreaks`) werden als `bodyText.breakAfterDashes: false` in das geltende `bodyText` geschrieben, wenn ein gelesenes Kapitel einen Geviert- oder Halbgeviertstrich ohne Abstand zwischen Wörtern setzt (davor ein Buchstabe, eine Ziffer oder ein schließendes Satzzeichen, danach ein Buchstabe, eine Ziffer oder eine öffnende Klammer oder ein öffnendes Anführungszeichen; ein Anführungszeichen davor zählt, wenn vor dem Anführungszeichen ein Buchstabe, eine Ziffer, ein schließendes Satzzeichen oder ein geschütztes Leerzeichen steht, wie in `"no"—and`, nicht in `said "—Hola`; eine Inline-Auszeichnung, die den Strich oder das Anführungszeichen berührt, etwa das `**` von `**riddles.**—I`, zählt auf beiden Seiten) und die Konfiguration den Wert nicht bereits festlegt. Der Umbruch im Flattersatz (`pinLegacyRaggedBreaking`) wird als `bodyText.optimalRagged: false` in das geltende `bodyText` geschrieben, wenn die Konfiguration fließenden Text im Flattersatz setzt (ein anderes `textAlign` als `'justify'` im Grundtext, einem Absatzformat, dem Inhalt eines Kastens, dem Inhalt eines Teils oder dem Inhalt eines Abschnittsformats (`headingStyles[].bodyStyle`) oder in den Abweichungen des HTML-Betrachters), den Wert nicht bereits festlegt und `optimalLineBreaking` nicht ausschaltet. Der Abstand in Kästen (`pinLegacyBoxResourceGap`) wird als `layout.inlineResourceGapInBoxes: false` in das geltende `layout` geschrieben, wenn eine Ressource auf einer eigenen Zeile in einem `:::callout` der gelesenen Kapitel eingebettet ist und die Konfiguration den Wert nicht bereits festlegt. Der Kastenschnitt (`pinLegacyBoxChildCut`) wird als `layout.boxChildSplitMinLines: 1` in das geltende `layout` geschrieben, wenn ein gelesenes Kapitel ein `:::callout` auf einer eigenen Zeile öffnet und die Konfiguration den Wert nicht bereits festlegt. Die Auszeichnungen in Überschriften (`pinLegacyHeadingMarks`) werden als `headings.inlineMarks: false` in die `headings` geschrieben, die die Schichten gelten lassen, wenn eine Überschrift der gelesenen Kapitel eine Auszeichnung trägt (`*`, `_`, `^`, `~`, `:smallcaps[` oder einen Link im Titel) und die Konfiguration keinen eigenen Wert nennt. Bei den Initialen (`pinLegacyDropCapSize`) wird ihre Größe aus 1.4 als `dropCap.fontSize` ausgeschrieben, wo immer sie stehen: in der Einheit des Zeilenabstands des Elements, wenn dieser eine Länge ist, sonst in der Einheit seiner Schriftgröße. Der Raum unter der Doppelpunktzeile (`pinLegacyColonListRoom`) wird als `bodyText.colonListRoom: 'line'` in das geltende `bodyText` geschrieben, wenn eine Liste der gelesenen Kapitel auf eine Zeile folgt, die mit einem Doppelpunkt endet (Leerzeilen dazwischen erlaubt), und die Konfiguration weder einen Raum nennt noch `keepColonWithList` ausschaltet. Der Inline-Abstand (`pinLegacyInlineGap`) wird als `layout.inlineResourceGap: 'above'` in das `layout` geschrieben, das die Schichten gelten lassen, wenn eine Zeile der gelesenen Kapitel eine Ressource einbettet (`::resource{id="…"}` allein auf seiner Zeile, so wie der Parser es liest: Eine Erwähnung im Fließtext oder in einem Code-Span zählt nicht) und die Konfiguration keinen eigenen Abstand nennt. Die Größe wird in der `math` fixiert, die die Schichten gelten lassen (eine eigene `math` einer Sprache ersetzt die gemeinsame), und nur, wenn die gelesenen Kapitel ein `$` enthalten: Ein Paket ohne Formeln behält seine `config` so, wie sie geschrieben ist. Nennen weder das Manifest noch die Sprache eine `math`, ist die geltende die der `baseConfig` von `readBundle` (die des Lesers selbst), und auch sie wird fixiert, da 1.4 die Formeln des Pakets in dieser Größe setzte: Ein Basiswert `fontSizeScale: 1.5` wird als 1,5 × 1,1312 gelesen. Die Umbrüche vor Überschriften aus der Basis werden so übernommen, wie sie sind. Ein altes Paket behält also, was diese Regeln gesetzt haben, und `bundle.config` zeigt die Umbrüche, die Formelgröße, die Abstände, die Auszeichnungen in Überschriften, die Größen der Initialen, den Raum unter der Doppelpunktzeile, den Kastenschnitt, die Umbrüche an Strichen, die Umbrüche an Komposita, den Umbruch im Flattersatz, die Teilung unter einer Überschrift und den Raum unter Containern, mit denen es gesetzt wird. Die Layout-Korrekturen von 1.5 haben keine Fixierung und gelten dafür wie für jedes Buch, sodass sich eine Seite, die sie betreffen, dennoch verschieben kann (die Liste finden Sie unter [Formelgröße](/de/docs/configuration-text#mathematik)). Eine von Hand für die heutigen Regeln geschriebene `preset.json` setzt `"configVersion": 14`; das Manifest eines alten Pakets damit zu stempeln ist auch der einzeilige Weg, es mit den heutigen Regeln zu lesen (ein Paket ohne Version verliert dann auch seine Fixierung der Umbrüche vor Überschriften). Ein Manifest mit dem Stempel `8`, geschrieben von postext 1.5 bis 1.22, erhält nur die vier Fixierungen der Regeln 9, wie auch jedes ältere: Die Versanordnung (`pinLegacyVerseLayout`) wird als `bodyText.verse.layout: 'bayt'` in das geltende `bodyText` geschrieben, wenn ein gelesenes Kapitel ein Gedicht `:::verse` setzt, dessen Zaun keine Anordnung nennt und dessen Zeilen keinen Halbverstrenner tragen, und die Konfiguration den Wert nicht bereits festlegt; die gepaarten Einzüge (`pinLegacyPairedIndents`) streichen das `firstLineIndent` jedes Absatzformats (in `paragraphStyles` oder in den Abweichungen des HTML-Betrachters), das auch ein `hangingIndent` ungleich null festlegt; die erzwungenen Zeilenumbrüche (`pinLegacyHardBreaks`) werden als `bodyText.hardLineBreaks: false` in das geltende `bodyText` geschrieben, wenn ein gelesenes Kapitel eine Zeile eines Absatzes, eines Zitats oder eines Listenpunkts mit einem Backslash beendet und der Block darunter weitergeht, oder `\\` vor einem Leerzeichen und weiterem Text setzt (Inline-Code und Inline-Formeln, abgesetzte Formeln, Überschriften und Gedichte `:::verse` ausgenommen), und die Konfiguration den Wert nicht bereits festlegt; und die Codezäune (`pinLegacyCodeBlocks`) werden als `codeStyle.blocks: false` geschrieben, wenn ein gelesenes Kapitel einen Codeblock ```` ``` ```` oder `~~~` öffnet (drei oder mehr Zeichen, bis zu drei Leerzeichen eingerückt) und die Konfiguration den Wert nicht bereits festlegt. Ein Manifest mit dem Stempel `9`, geschrieben von postext 1.23, erhält nur die Fixierung der Regeln 10, wie auch jedes ältere: Die Umbrüche in Versen (`pinLegacyVerseTightening`) werden als `bodyText.verse.tighten: false` in das geltende `bodyText` geschrieben, wenn ein gelesenes Kapitel ein Gedicht zeilenweise setzt (ein Zaun `:::verse`, der `layout=lines` nennt oder keine Anordnung über Zeilen ohne Halbverstrenner nennt, während die Konfiguration solche Gedichte nicht als Bayts setzt) und die Konfiguration den Wert nicht bereits festlegt. Ein Manifest mit dem Stempel `10`, geschrieben von postext 1.24, erhält nur die Fixierung der Regeln 11, wie auch jedes ältere: Der Ausgleich eines Zeichenrasters (`pinLegacyGridBalancing`) wird als `headings.balancing.enabled: true` in die geltenden `headings` geschrieben, wenn die zusammengeführte Konfiguration `cjk.grid.enabled` bei horizontalem Text festlegt und `enabled` nicht selbst festlegt, da 1.24 eine solche Seite standardmäßig ausglich. Die Regeln 11 bewahren außerdem Buchtitel vor Umbrüchen nach einem Zeichen, setzen eingekreiste Zahlen als chinesische Zeichen und setzen CJK-Gestaltungstext nach den Regeln des Grundtextes (#637): Ein Manifest mit dem Stempel `10` oder älter erhält `cjk.titleMinChars: 1` (`pinLegacyTitleBreaks`), wenn ein gelesenes Kapitel einen Titel setzt (《 〈 oder `:book[`), `cjk.circledNumbers: 'western'` (`pinLegacyCircledNumbers`), wenn eines eine eingekreiste Zahl setzt (U+2460–U+24FF, U+2776–U+2793), und `cjk.composeDesignText: false` (`pinLegacyDesignText`), wenn ein gelesenes Kapitel oder die Konfiguration selbst CJK-Text enthält, jeweils im geltenden `cjk` und nur, wenn die Konfiguration den Wert nicht bereits festlegt. Sie teilen außerdem Inline-Tabellen und setzen `:::columns` im Fließtext (#634): Ein Manifest mit dem Stempel `10` oder älter erhält `tableStyle.splitInline: false` (`pinLegacyInlineTableSplit`) im geltenden `tableStyle`, wenn ein gelesenes Kapitel eine Ressource einbettet, und `layout.flowColumns: false` (`pinLegacyFlowColumns`) im geltenden `layout`, wenn ein gelesenes Kapitel einen Zaun `:::columns` auf einer eigenen Zeile öffnet, jeweils nur, wenn die Konfiguration den Wert nicht bereits festlegt. Sie bieten einem Gleitobjekt auch den Kopf der eigenen Spalte eines Auftakts über die ganze Seitenbreite an (#639): Ein Manifest mit dem Stempel `10` oder älter erhält `layout.floatsUnderOpener: false` (`pinLegacyOpenerHeadFloats`) im geltenden `layout`, wenn die zusammengeführte Konfiguration eine Überschriftenebene oder ein Überschriftenformat mit `span: 'page'` festlegt und ein gelesenes Kapitel eine Überschrift hat, nur wenn die Konfiguration den Wert nicht bereits festlegt. Die Regeln 12 lassen eine Seite auf einem Zeichenraster ihre Zeilen halten (#717): Ein Manifest mit dem Stempel `11` oder älter, dessen zusammengeführte Konfiguration `cjk.grid.enabled` einschaltet, erhält `bodyText.avoidWidows: true` und in der Region `japan` `bodyText.avoidOrphans: true` (`pinLegacyGridBreakRules`) im geltenden `bodyText`, jeweils nur, wenn die Konfiguration den Wert nicht bereits festlegt. Sie halten außerdem zwei Zeichen einer zweireihigen Anmerkung auf jeder Seite eines Zeilenumbruchs zusammen (#720): Ein solches Manifest erhält `cjk.warichu.minChars: 1` (`pinLegacyNoteBreaks`) im geltenden `cjk`, wenn ein gelesenes Kapitel eine Anmerkung `:warichu[` setzt oder die zusammengeführte Konfiguration `citations.notes: 'warichu'` festlegt, nur wenn die Konfiguration den Wert nicht bereits festlegt. Und in der Region Japan erhält ein westliches Wort den Abstand zwischen Han und Latein auch neben seinen Klammern und Zeichen (#721): Ein Manifest mit dem Stempel `11` oder älter, dessen zusammengeführte Konfiguration zur Region Japan aufgelöst wird, erhält `cjk.latinSpacingEdge: 'letters'` (`pinLegacyLatinSpacingEdge`) im geltenden `cjk`, wenn ein gelesenes Kapitel Kana oder Kanji enthält, nur wenn die Konfiguration den Wert nicht bereits festlegt. Und eine im Text gesetzte Ressource übernimmt `placement.captionSide` so, wie es ein Spaltengleitobjekt tut (#729): Ein Manifest mit dem Stempel `11` oder älter, dessen zusammengeführte Konfiguration `layout.layoutType: 'oneAndHalf'` festlegt, erhält `layout.inlineCaptionSide: false` (`pinLegacyInlineCaptionSide`), wenn ein gelesenes Kapitel eine Ressource einbettet, nur wenn die Konfiguration den Wert nicht bereits festlegt.
+
+Die Regeln 12 ändern außerdem, wie eine kurze Spalte ausgeglichen wird, und ein Manifest mit dem Stempel `11` oder älter behält, womit es gesetzt wurde. Die Reihenfolge der Hebel (#707): Es erhält `headings.balancing.maxLinesBeforeLoose`, gesetzt auf sein eigenes `maxLinesPerHeading` oder auf `4`, wenn es keines festlegt (`pinLegacyLooseOrder`), in den geltenden `headings`, wenn ein gelesenes Kapitel eine Überschrift hat und die zusammengeführte Konfiguration ihre Spalten ausgleicht, einer Überschrift mehr als zwei Zeilen erlaubt und den Schlüssel nicht bereits festlegt. Die Zeile unter einer Abbildung über mehrere Spalten (#708): Es erhält `headings.balancing.stretchAfterWideFloats: 'always'` (`pinLegacyWideFloatStretch`) in den geltenden `headings`, wenn ein gelesenes Kapitel eine Ressource einbettet oder zitiert oder einen Kasten gleiten lässt und die zusammengeführte Konfiguration ihre Spalten ausgleicht, `stretchAfterFloats` nicht ausschaltet und den Schlüssel nicht bereits festlegt. Die Umbrüche innerhalb der Gruppen eines Registers (#712): Es erhält `index.groups.splitMinEntries: 1` (`pinLegacyIndexGroupSplit`) im geltenden `index`, wenn ein gelesenes Kapitel einen Zaun `:::index` auf einer eigenen Zeile setzt und die Konfiguration den Schlüssel nicht bereits festlegt. Die Einheit des Ebenenschnitts (#711): Es erhält `headings.balancing.trailingStep: 'grid'` (`pinLegacyTrailingStep`) in den geltenden `headings`, wenn ein gelesenes Kapitel Text abseits des Zeilenabstands des Grundtextes setzen kann (ein Zaun `:::`, ein Codeblock, ein Zitat, eine Liste, eine abgesetzte Formel oder ein Literaturzitat) und die zusammengeführte Konfiguration ihre Spalten ausgleicht, `trailing` oder `beforeSpan` eingeschaltet lässt und den Schlüssel nicht bereits festlegt.
+
+Die Regeln 12 brechen die Bezeichnung eines Verweises an ihren Leerzeichen um, wenn die Bezeichnung aus Wörtern besteht (#702). Ein Manifest mit dem Stempel `11` oder älter erhält `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) in den geltenden `crossRefs`, wenn ein gelesenes Kapitel einen Verweis enthält (`:ref{…}`, `\ref{…}`, `\eqref{…}` oder ein `@id` von pandoc-crossref) und die Konfiguration die Einstellung nicht nennt: Jede Bezeichnung bleibt das eine Wort, als das sie gesetzt wurde.
+
+Die Regeln 12 formen ein Wort ohne Buchstaben (`46.`, `1367)`) in der Schrift des umgebenden Textes (#725). Ein Manifest mit dem Stempel `11` oder älter erhält `bodyText.scriptContext: false` (`pinLegacyScriptContext`) im geltenden `bodyText`, gleich was seine Kapitel enthalten, wenn die Konfiguration die Einstellung nicht nennt: Ein solches Wort wird für sich allein geformt, so wie es gesetzt wurde. Die Regel wirkt in einem Schnitt, der seine Satzzeichen je nach Schriftsystem zeichnet, und welche Schnitte ein Buch lädt, ist beim Lesen seines Manifests nicht bekannt.
+
+Die Regeln 13 machen die Sprache, in der der Text geformt wird, zu einer Einstellung (#764), und die Regeln 14 machen die eigene Sprache des Dokuments zu ihrem Standard (#770). Ein Manifest mit dem Stempel `13` oder älter erhält `bodyText.shapingLanguage: 'host'` (`pinLegacyShapingLanguage`) im geltenden `bodyText`, gleich was seine Kapitel enthalten, wenn die Konfiguration die Einstellung nicht nennt; eines, das einen Wert nennt, behält ihn. Sein Text wird in der Sprache der Seite gemessen, die das Layout ausführt, und in einem Worker in keiner, so wie er gesetzt wurde. Ein Manifest mit dem Stempel `13` wurde von postext 1.29 geschrieben: 1.29.1 und 1.29.2 setzten ein Buch, das keinen Wert nennt, in der Sprache des Hosts, wie es die Fixierung tut; 1.29.0, dessen Standard `'document'` war, setzte es in der des Dokuments, mit einem Canvas und einem PDF, die der Messung nicht folgten, und es wird ebenfalls mit `'host'` gelesen. Ein Manifest mit dem Stempel `14`, das keinen Wert nennt, wird in der Sprache des Dokuments gesetzt.
+
+Die Regeln 13 zeichnen außerdem den Kasten eines Aufgabenpunkts (`- [ ]`, `- [x]`): ein Quadrat, das die Engine zeichnet, mit einem Häkchen, wenn der Punkt erledigt ist, und das vor dem Text des Punkts einen eigenen Raum einnimmt (#765). Ein Manifest mit dem Stempel `12` oder älter erhält `unorderedLists.taskBox: 'character'` (`pinLegacyTaskBox`) in den geltenden `unorderedLists`, wenn ein Kapitel einen Aufgabenpunkt enthält und die Konfiguration die Einstellung nicht nennt. Sein Kasten bleibt das Zeichen `☐` oder `☑` in der Schrift der Liste, und der Text des Punkts beginnt nach der Breite dieses Zeichens, so wie er gesetzt wurde. Diese Breite stammte von der Schrift, die das Zeichen gerade enthielt, in den meisten Büchern einer Systemschrift, und ist beim Lesen des Manifests nicht bekannt.
+
+```ts
+import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
+
+migrateConfig({ headings: { fontFamily: 'Georgia' } }, undefined, { content: 'A book with no maths.' });
+// => { headings: { fontFamily: 'Georgia', levels: [{ level: 1, breakBefore: { enabled: false } }] } }
+migrateConfig({ math: { fontSizeScale: 1.2 } }, 3);
+// => { math: { fontSizeScale: 1.35746…, marginTop: { value: 0.7072, unit: 'em' }, marginBottom: { value: 0.7072, unit: 'em' } },
+//      layout: { inlineResourceGap: 'above', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1 },
+//      headings: { inlineMarks: false, keepWithNextSplit: 'fill' }, bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false } }
+migrateConfig({ layout: { layoutType: 'single' } }, 4, { content: 'Text.\n\n::resource{id="fig"}' });
+// => { layout: { layoutType: 'single', inlineResourceGap: 'above' } }
+migrateConfig({ layout: { layoutType: 'single' } }, 5, { content: ':::callout\nText.\n\n::resource{id="fig"}\n:::' });
+// => { layout: { layoutType: 'single', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1 } }
+migrateConfig({ bodyText: { textAlign: 'left' } }, 6, { content: 'I say—that is all.' });
+// => { bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false } }
+migrateConfig({ paragraphStyles: [{ id: 'verse' }] }, 7, { content: ':::paragraphs{style="verse"}\nA line.\n:::' });
+// => { paragraphStyles: [{ id: 'verse' }], bodyText: { paragraphContainerSpacing: 'add' } }
+migrateConfig({ bodyText: { fontFamily: 'Georgia' } }, 7, { content: 'A well-known tale.' });
+// => { bodyText: { fontFamily: 'Georgia', breakAfterHyphens: false } }
+migrateConfig(config, CONFIG_VERSION); // today's rules: `config` itself
+```
+
+`content` ist das Markdown, das die Konfiguration setzt (ein String oder eine Liste von Kapiteln). Ohne diese Angabe wird die Formelgröße immer fixiert, wenn Formeln eingeschaltet sind, der Raum unter Containern immer, wenn die Konfiguration ein Absatzformat deklariert, und die beiden Abstände, die Auszeichnungen in Überschriften, der Raum unter der Doppelpunktzeile, der Kastenschnitt, die Umbrüche an Strichen, die Teilung unter einer Überschrift und die Umbrüche an Komposita immer, da die Engine nicht erkennen kann, ob das Buch eine Formel, einen Container `:::paragraphs`, eine Inline-Abbildung, eine ausgezeichnete Überschrift, eine durch einen Doppelpunkt eingeleitete Liste, einen Kasten, einen Strich ohne Abstand, eine Überschrift oder ein Kompositum enthält. Der Umbruch im Flattersatz wird allein nach der Konfiguration fixiert, mit oder ohne Inhalt. Migrieren Sie eine gespeicherte Konfiguration einmal und speichern Sie sie erneut unter `CONFIG_VERSION`: Die Fixierung der Formeln multipliziert den Maßstab, sodass eine zweimal migrierte Konfiguration zweimal wachsen würde. Die Versanordnung und die Codezäune werden ohne die Angabe ebenfalls fixiert, da das Buch ein Gedicht `:::verse` ohne Trenner oder einen Codeblock enthalten kann, und die gepaarten Einzüge werden allein nach der Konfiguration fixiert. Ebenso die Umbrüche in Versen aus 1.23, da das Buch ein Gedicht zeilenweise setzen kann.
+
+### Ein Paket setzen und rendern
+
+Vier Hilfsfunktionen verbinden ein geöffnetes Paket mit der Engine und den Backends:
+
+- **`loadBundleFonts(bundle)`** registriert die Schnitte des Pakets in `document.fonts` und ihre Bytes in der Schriftregistrierung der Engine für SVG-Bilder (`registerFontBytes`). Warten Sie vor dem Setzen darauf, denn das Layout misst Text mit den Schriften, die der Browser hat. Familien, die das Paket nennt, aber nicht mitbringt (Google Fonts), müssen Sie weiterhin selbst laden, wie bei jedem anderen Dokument.
+- **`registerBundleImages(bundle)`** dekodiert die Bilder für das Canvas-Backend (`renderPage`, `renderToCanvas`), Vorschaubilder von Videos eingeschlossen. **`bundleImageUrl(bundle)`** ist der Resolver `resourceImageUrl` für `renderToHtml` und **`bundleVideoUrl(bundle)`** sein Resolver `resourceVideoUrl` für die Videodateien, die ein Paket enthält. Beide färben SVG-Abbildungen um, wenn `diagramStyle.singleInk` eingeschaltet ist, und zwar einmal: Sie färben das Markup um und markieren die Bilder, damit kein Backend sie erneut tönt (siehe [Einfarbmodus auf dem Canvas und in HTML](/de/docs/configuration-resources#einfarbmodus-auf-dem-canvas-und-in-html)). Beide betten außerdem in jedes SVG die Schnitte ein, die sein Text nennt, zuerst aus den eigenen Schriften des Pakets, dann aus den in der Engine registrierten Schnitten (siehe [Schriften in SVG-Text](/de/docs/configuration-resources#schriften-in-svg-text)); `registerBundleImages(bundle, { onWarning })` und `bundleImageUrl(bundle, { onWarning })` melden eine Familie ohne Schnitt.
+- **`buildBundle(bundle)`** setzt die Kapitel der Reihe nach und gibt ein `VDTDocument` pro Kapitel zurück. Jedes Kapitel setzt das vorherige fort: Zähler für Überschriften und Ressourcen, den offenen Teil, die Seitenparität und die Seitennummerierung. Ein Kapitel, das das Inhaltsverzeichnis (`:::toc`) oder das Register (`:::index`) druckt, erhält die Gliederung des ganzen Buches. Die Funktion nimmt dieselben Optionen wie `buildDocument`, dazu `config`, um die Konfiguration des Pakets zu überschreiben, `cache`, um einen Mess-Cache zu teilen, und `metadata` (siehe unten).
+- **`bundleResourceBytes(bundle)`** und **`bundleFontProvider(bundle, { decodeWoff2, fallback })`** sind die Optionen `resourceBytes` und `fontProvider` von `renderToPdf` aus `postext-pdf`. Der Font-Provider wählt aus dem Paket die nächstgelegene Stärke des angefragten Stils. Für einen Schnitt `.woff2` braucht er `decompressWoff2`, und für eine Familie, die das Paket nicht mitbringt, ruft er `fallback` mit den Argumenten des Renderers auf, `request` eingeschlossen, und reicht weiter, was diese Funktion zurückgibt. Ein Fallback, der nur die Datei `latin` einer Familie abruft, druckt eine chinesische Familie, die das Paket nicht einbettet, als leere Kästen; einer, der mit Teilen antwortet, etwa `sliceFontProvider` unter [Chinesische, japanische und koreanische Schriften](#chinesische-japanische-und-koreanische-schriften), druckt sie vollständig.
+
+```ts
+import { openBundle, loadBundleFonts, registerBundleImages, buildBundle, renderPage,
+  bundleResourceBytes, bundleFontProvider } from 'postext';
+import { renderToPdf, decompressWoff2 } from 'postext-pdf';
+
+const bundle = await openBundle(bytes);
+await loadBundleFonts(bundle);
+await registerBundleImages(bundle);
+
+const docs = buildBundle(bundle);                        // one VDTDocument per chapter
+const firstPage = renderPage(docs[0].pages[0], docs[0]); // a <canvas>
+
+const pdf = await renderToPdf(docs, {                    // the whole book
+  fontProvider: bundleFontProvider(bundle, { decodeWoff2: decompressWoff2, fallback: fontsource }),
+  resourceBytes: bundleResourceBytes(bundle),
+});
+```
+
+Um ein einzelnes Kapitel selbst zu setzen, übergeben Sie `bundle.chapters[i].markdown`, `bundle.resources` und `bundle.config` an `buildDocument`, wie bei jedem anderen Dokument.
+
+**Die Metadaten des Buches.** Wie in der Sandbox ist die Frontmatter des ersten Kapitels die des Buches: `buildBundle` gibt ihr `title`, ihr `author` und den Rest an jedes Kapitel weiter, sodass Kolumnentitel mit `{title}` und `{author}` auf jeder Seite gelten und das `doc.metadata` jedes Kapitels sie trägt. Ein Frontmatter-Block am Anfang eines späteren Kapitels wird ignoriert: Er wird an seinen Zeilen `---` erkannt und ohne Parsen geleert, sodass YAML, das der Parser ablehnen würde, keinen Schaden anrichtet. `options.metadata` liefert Werte, die die Frontmatter nicht festlegt (die Frontmatter hat Vorrang). Auch die Seitenzahl des Buches erreicht jedes Kapitel: `{bookTotalPages}` druckt sie, während `{totalPages}` die Seiten des Kapitels zählt (siehe [Seitenzahl des ganzen Buchs](/de/docs/configuration-page-layout#seitenzahl-des-ganzen-buchs)).
+
+```ts
+const docs = buildBundle(bundle, { metadata: { author: 'A. Author' } });
+docs[3].metadata.title;   // the first chapter's `title:`
+```
+
+**Wo das Buch beginnt.** Ein Paket kann einen Teil einer längeren Veröffentlichung enthalten: die Seiten 58 bis 61 einer Ausgabe, Kapitel 4 eines Lehrbuchs. Sein `start` gibt an, was davor kommt, in den Begriffen der `continuation` von `buildDocument`: die Seiten vor der ersten (`pageIndexOffset`, das bestimmt, auf welche Seite Seite 1 fällt, und damit die gespiegelten Ränder und die Kolumnentitel ungerader und gerader Seiten), die geltende Seitennummerierung (`pageNumbering`), die Zähler der Überschriften (`headings`), den offenen Teil (`part`) und die Zähler für Ressourcen, Lehrsätze, Fußnoten und Zeilen. `createBundle` schreibt es als `start` der `preset.json`, `openBundle` gibt es als `bundle.start` zurück, und `buildBundle` setzt das erste Kapitel damit, wie es `buildDocument({ markdown, continuation: start }, config)` täte, und verkettet die folgenden Kapitel von dort aus; `{bookTotalPages}` zählt auch die Seiten vor dem Buch mit. Ein Manifest ohne `start` wird wie bisher gelesen, und ein Leser, der das Feld nicht kennt, ignoriert es. `bookPageCount` gehört nicht dazu: Der Leser zählt die Seiten. In einem Paket mit mehreren Sprachen gibt `localized[…].start` einer Ausgabe einen eigenen Beginn.
+
+```ts
+const { bytes } = await createBundle({
+  name: 'Field notes, chapter 4',
+  markdown,
+  config,
+  // Page 58, an even page, in chapter 4.
+  start: { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } },
+});
+const bundle = await openBundle(bytes);
+bundle.start;                 // { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, … } }
+const [doc] = buildBundle(bundle);
+doc.pages[0].pageLabel;       // '58'
+```
+
+### Live-Beispiel: ein Paket öffnen
+
+Der Pen lädt ein zweikapiteliges Beispielbuch (`lantern.postext`, mit eigener Schrift, einer SVG-Abbildung und einer Tabelle) aus dem Repository. Er registriert die Schriften und Bilder des Pakets, setzt das Buch mit `buildBundle` und zeichnet jede Seite. *Make the PDF* rendert dieselben Dokumente mit `postext-pdf` und bettet dabei die Schriften des Pakets ein. Wählen Sie eine eigene `.postext`-Datei, etwa eine aus der Sandbox exportierte, um sie auf dieselbe Weise zu sehen.
+
+<CodePenExample name="open-bundle" title="Postext · ein .postext-Paket öffnen" description="Eine .postext-Datei mit postext öffnen, das Buch setzen und auf Canvas und als PDF rendern." height={640} />
+
+### Ein Paket erstellen
+
+`createBundle` schreibt aus einem Dokument eine `.postext`-Datei: seine Kapitel, seine Konfiguration, seine Ressourcen und die Nutzdaten, auf die sie verweisen.
+
+```ts
+import { createBundle } from 'postext';
+
+const { bytes, manifest, warnings } = await createBundle({
+  name: 'The Lantern',
+  locale: 'en',
+  chapters: [
+    { markdown: '# Dusk\n\nIt is drawn in :ref{id="lantern"}.' },
+    { title: 'Night', markdown: '# Night\n\n…' },
+  ],
+  config,
+  resources: [{
+    id: 'lantern', typeId: 'figure', kind: 'svg', caption: 'The lantern.',
+    svg: { fileId: 'lantern.svg', width: 240, height: 150 },
+    createdAt: 0, updatedAt: 0,
+  }],
+  files: { 'lantern.svg': svgMarkup, 'garamond-regular': fontBytes },
+});
+```
+
+<table>
+  <thead>
+    <tr><th>Eingabe</th><th>Bedeutung</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>name</code>, <code>id</code>, <code>description</code>, <code>locale</code></td><td>Die Metadaten des Manifests. <code>id</code> ist standardmäßig ein Slug von <code>name</code>.</td></tr>
+    <tr><td><code>chapters</code> oder <code>markdown</code></td><td>Das Buch, ein <code>&#123; title?, markdown &#125;</code> pro Kapitel, oder ein einzelnes Dokument.</td></tr>
+    <tr><td><code>config</code></td><td>Die <code>PostextConfig</code>. Werte, die den Standardwerten entsprechen, bleiben aus dem Manifest heraus.</td></tr>
+    <tr><td><code>resources</code></td><td>Die Ressourcen. Ein Bild nennt seine Nutzdaten über <code>bitmap.fileId</code> / <code>svg.fileId</code> (und <code>svg.pdfFileId</code> für ein Druckoriginal).</td></tr>
+    <tr><td><code>files</code></td><td>Die Nutzdaten nach <code>fileId</code> (ein Objekt oder eine <code>Map</code>): die Bilder, auf die die Ressourcen verweisen, und die Schriftdateien, auf die die Varianten von <code>config.customFonts</code> verweisen. Werte können ein <code>Uint8Array</code>, ein <code>ArrayBuffer</code>, ein <code>Blob</code> oder ein String (SVG-Markup) sein.</td></tr>
+    <tr><td><code>thumbnail</code></td><td><code>&#123; data, mime &#125;</code>: ein Umschlagbild (PNG, JPEG, WebP, GIF oder SVG).</td></tr>
+    <tr><td><code>canvasScope</code></td><td><code>'book'</code> bittet Betrachter, das ganze Buch als einen Canvas zu setzen.</td></tr>
+    <tr><td><code>start</code></td><td>Wo das Buch beginnt, für ein Paket, das einen Teil eines längeren enthält: die <code>continuation</code>, mit der ein einzelnes Dokument gesetzt würde. Wird als <code>start</code> des Manifests geschrieben.</td></tr>
+    <tr><td><code>mtime</code></td><td>Das Änderungsdatum, das in jede Datei des Archivs geschrieben wird (ein <code>Date</code>, ein Zeitstempel oder ein Datumsstring). Fehlt es, ist es die Zeit des Aufrufs, sodass zwei Aufrufe mit derselben Eingabe unterschiedliche Bytes ergeben. Übergeben Sie ein festes Datum, ergibt dieselbe Eingabe dieselben Bytes, die Sie hashen oder vergleichen können. Ein Zip speichert Datum und Uhrzeit ohne Zeitzone, in Schritten von zwei Sekunden, von 1980 bis 2099, und das Datum wird in der Ortszeit des Rechners geschrieben. Für Bytes, die auf jedem Rechner übereinstimmen, bilden Sie das Datum aus lokalen Feldern, etwa <code>new Date(1980, 0, 1)</code>: Ein Zeitstempel oder ein String, der auf <code>Z</code> endet, bezeichnet einen Zeitpunkt, der in jeder Zeitzone auf eine andere Ortszeit fällt (<code>'1980-01-01T00:00:00Z'</code> ist westlich von UTC noch 1979). Ein Datum außerhalb dieser Jahre, in Ortszeit, wirft einen Fehler.</td></tr>
+    <tr><td><code>localized</code></td><td>Weitere Sprachen desselben Buches, nach Sprach-Tag: <code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>. Die obigen Eingaben sind dann der Inhalt von <code>locale</code>, das in diesem Fall erforderlich ist. Siehe <a href="#zweisprachige-pakete">Zweisprachige Pakete</a>.</td></tr>
+  </tbody>
+</table>
+
+Die Funktion gibt die `bytes` des Archivs zurück, das als `preset.json` geschriebene `manifest`, jede Datei als `files` (Pfad → Bytes) und eine Liste von `warnings`. Dateien werden nach der ID ihrer Ressource (`resources/lantern.svg`) oder dem Namen ihrer Schriftdatei (`fonts/…`) benannt, Kapitel nach ihrer Reihenfolge und ihrem Titel (`chapters/01-dusk.md`). Schriften werden in den `fonts` des Manifests deklariert, nie in `config.customFonts`. Manches bleibt draußen, jeweils mit einer Warnung:
+- eine Ressource oder ein Schnitt, deren Nutzdaten nicht in `files` stehen
+- ein Schnitt `.woff` (das PDF-Backend kann ihn nicht einbetten)
+- eine Familie mit der Markierung `redistributable: false`
+
+Übergeben Sie `bytes` im Browser an einen Download-Link: `URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }))`. In Node schreiben Sie sie mit `fs.writeFile`. `createBundle` und `openBundle` brauchen kein DOM. Die Distributionen verwenden Modulpfade ohne Dateiendung, deshalb brauchen sie unter reinem Node, ohne Bundler, einen Resolve-Hook. `docs/examples/open-bundle/build-sample.mjs` im Repository zeigt einen in wenigen Zeilen.
+
+### Zweisprachige Pakete
+
+Eine `.postext`-Datei kann ein Buch in mehreren Sprachen enthalten, und `openBundle(bytes, { locale })` liest es in jeder davon. `createBundle` schreibt eine solche Datei aus `localized`: ein Eintrag pro zusätzlicher Sprache, jeweils mit dem, was sich vom primären Inhalt (der Eingabe `locale`) unterscheidet:
+
+```ts
+const { bytes, manifest } = await createBundle({
+  name: 'The Lantern',
+  locale: 'en',
+  chapters: [{ markdown: '# Dusk\n\n…' }, { markdown: '# Night\n\n…' }],
+  config,
+  resources: [lanternFigure, hoursTable],
+  files: { 'lantern.svg': svgEn, 'lantern-es.svg': svgEs },
+  localized: {
+    es: {
+      chapters: [{ markdown: '# Anochecer\n\n…' }, { markdown: '# Noche\n\n…' }],
+      config: { headings: { levels: [{ level: 1, numberingTemplate: 'Capítulo {1}' }] } },
+      resources: [
+        { id: 'lantern', caption: 'El farol.', svg: { fileId: 'lantern-es.svg', width: 240, height: 150 } },
+        { id: 'hours', caption: 'Horas de luz.' },
+      ],
+    },
+  },
+});
+
+const es = await openBundle(bytes, { locale: 'es' });   // Spanish chapters, config and captions
+```
+
+- **`chapters`**: das Buch in dieser Sprache. Die Kapiteldateien kommen in einen Ordner pro Sprache (`chapters/en/01-dusk.md`, `chapters/es/01-anochecer.md`), und die `chapters` des Manifests werden zu einer Zuordnung Sprache → Kapitel. Eine Sprache ohne `chapters` liest die primären; hat keine Sprache eigene Kapitel, bleiben sie eine einzige Liste.
+- **`config`**: die Konfiguration für diese Sprache. Jeder Schlüssel der obersten Ebene ersetzt den gemeinsamen Schlüssel vollständig, wenn das Paket in dieser Sprache gelesen wird, sodass `headings` oben das ganze Objekt `headings` ersetzt. Weggelassene oder mit den gemeinsamen übereinstimmende Schlüssel werden geteilt und nicht geschrieben; die vollständige Konfiguration der Sprache zu übergeben funktioniert also ebenso gut wie die wenigen Schlüssel, die sich ändern. Ein Schlüssel, der auf seine Standardwerte gesetzt ist, während der gemeinsame es nicht ist (`layout: {}`), wird so geschrieben, wie er übergeben wurde, und setzt damit den gemeinsamen Wert zurück. Schriften werden geteilt: Die Familien aus den `customFonts` einer Sprache kommen zu den `fonts` des Pakets hinzu.
+- **`resources`**: der Wortlaut der gemeinsamen Ressourcen, zugeordnet über `id`: `caption`, `note`, `altText` und die `table` einer Tabelle. Ein Bild mit Wörtern darin kann eine eigene Grafik haben: `bitmap.fileId` oder `svg.fileId` (und `svg.pdfFileId`) nennen andere Nutzdaten in `files`, geschrieben als `resources/es/lantern.svg`. Andere Felder, etwa der Typ oder die Platzierung, werden geteilt. Eine ID, die nicht unter `resources` vorkommt, bleibt mit einer Warnung draußen, und ein fehlendes sprachspezifisches Bild belässt die Sprache beim gemeinsamen, ebenfalls mit einer Warnung.
+
+Das Manifest listet jede Sprache in `locales` auf (`['en', 'es']`), behält die primäre als `locale` und speichert die übrigen unter `localized`. `openBundle` ohne Sprache liest die primäre Sprache.
+
+**Welche Sprache ein Leser erhält.** `openBundle(bytes, { locale })` liefert die genaue Sprache, sonst ihre Grundsprache (`es-MX` liest `es`), sonst die primäre, und `bundle.locale` gibt an, welche geliefert wurde. Kapitel und Wortlaut stammen immer aus derselben Sprache. Die primäre Sprache behält den gemeinsamen Wortlaut, auch wenn `localized` eine regionale Variante davon enthält: Ein Paket `pt-PT` mit einem Eintrag `pt-BR` liest die brasilianischen Legenden nur für `pt-BR` und die gemeinsamen für `pt-PT` und `pt`.
+
+### Live-Beispiel: ein Paket erstellen
+
+Der Pen baut ein zweikapiteliges Buch mit einer SVG-Abbildung und listet die Dateien auf, die `createBundle` geschrieben hat, zusammen mit dem Manifest. Er bietet das Archiv zum Download an, öffnet es dann mit `openBundle` wieder und zeichnet seine erste Seite: der vollständige Hin- und Rückweg in wenigen Zeilen. Importieren Sie die heruntergeladene Datei in die Sandbox, um dort daran weiterzuarbeiten.
+
+<CodePenExample name="create-bundle" title="Postext · ein .postext-Paket erstellen" description="Eine .postext-Datei mit createBundle von postext schreiben, herunterladen und wieder öffnen." height={640} />
+
+### Mit Paketen arbeiten
+
+Da die Sandbox, der Agenten-Skill und das Paket `postext` alle dieselbe Datei lesen und schreiben, ist eine `.postext`-Datei ein bequemer Weg, ein Buch von einem Werkzeug an ein anderes weiterzugeben:
+
+- **Mit einem Paket beginnen.** Portieren Sie eine bestehende Veröffentlichung mit dem [Agenten-Skill](/de/docs/skill), oder gestalten Sie ein Buch in der [Sandbox](/de/sandbox) und exportieren Sie es (**Herunterladen (.postext)** im Menü ⋯ seiner Zeile im Bedienfeld Bücher). Laden Sie die Datei in Ihrem Programm mit `openBundle`, um sie auf Canvas, als HTML oder als PDF zu rendern. Behalten Sie die Datei als Quelle des Buches: Bearbeiten Sie die Kapitel, die Konfiguration oder die Ressourcen im Code und schreiben Sie sie mit `createBundle` zurück, oder laden Sie sie einfach neu, wann immer sie sich ändert.
+- **In der Sandbox Fehler suchen und feinabstimmen.** Wenn etwas in der Ausgabe Ihres Programms Nacharbeit braucht (eine Abbildung, die auf der falschen Seite landet, ein Überschriftenformat, der Spaltenausgleich), exportieren Sie mit `createBundle`, was Ihr Programm setzt. Importieren Sie diese Datei in die Sandbox (*Bücher → Neu → Eine .postext-Datei öffnen …*), korrigieren Sie Text, Gestaltung oder Abbildungen mit der Live-Vorschau, dem Bedienfeld Prüfungen und der PDF-Ansicht, und exportieren Sie sie dann erneut. Ihr Programm lädt danach die korrigierte Datei mit `openBundle`. Oder übernehmen Sie die Änderungen zurück in Ihren Code: Die `config` des Manifests enthält nur die Werte, die von den Standardwerten abweichen, und liest sich deshalb wie ein kurzer Diff.
+
+### API der unteren Ebene
+
+`postext/bundle` exportiert außerdem die Bausteine hinter `openBundle` und `createBundle`, für Hosts, die Pakete auf eigene Weise speichern oder ausliefern (ein entpacktes Verzeichnis über HTTP, Datensätze in einer Datenbank):
+
+- **`openBundleZip(bytes)` / `zipBundle(files, { mtime })`**: die Archivschicht. Beim Öffnen wird ein Ordner der obersten Ebene toleriert, und Einträge `__MACOSX` sowie Dotfiles werden ignoriert. Pfade, die aus dem Paket hinausführen, werden abgewiesen. `mtime` datiert die Dateien wie die gleichnamige Eingabe von `createBundle`.
+- **`readBundle(manifest, readFile, options)`** liest ein Manifest und einen Callback `readFile(path)` zu Kapiteln, Konfiguration, Ressourcen, Bildern und Schriften ein. `options` legt die Sprache fest, wie Datei-IDs benannt werden (`ids`), die Basiskonfiguration (`baseConfig`, unter der des Manifests; standardmäßig die Palette und die Ressourcentypen von `bundleBaseConfig` in der Sprache des Pakets, die `resolveBundleConfigLocale(manifest, locale)` zurückgibt, und ein Host, der eine eigene `baseConfig` übergibt, sollte sie in diese Sprache lokalisieren; unter einem Manifest älter als `configVersion: 4` wird ihre `math` mit der des Pakets fixiert, unter einem älter als 5 der Inline-Abstand ihres `layout`, unter einem älter als 6 der Abstand in Kästen ihres `layout`, der Raum unter der Doppelpunktzeile ihres `bodyText`, die Auszeichnungen in ihren `headings` und die Größen ihrer Initialen, unter einem älter als 7 die Umbrüche an Strichen und der Umbruch im Flattersatz ihres `bodyText` und unter einem älter als 8 die Teilung unter einer Überschrift ihrer `headings` sowie die Umbrüche an Komposita und der Raum unter Containern `:::paragraphs` ihres `bodyText`, siehe [Pakete, die postext 1.4 oder früher geschrieben hat](#pakete-die-postext-14-oder-früher-geschrieben-hat)) und wie Eigengrößen gemessen werden. `readResolution` liest die Auflösung jeder Bitmap aus ihrer Datei in `bitmap.fileResolution`; der Standardwert ist true, wenn das Paket `layout.bitmapResolution: 'file'` festlegt.
+- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**: die Schreibseite, aufgeteilt in einen reinen Plan (Dateinamen und Manifest) und das Auflösen der Bytes über die Callbacks `readBlob` / `readFont`.
+- **`isBundleManifest(value)`**, die Sprachwähler (`pickChapterSpecs`, `pickLocaleOverrides`, `pickBundleView`, `resolveBundleLocale`, `resolveBundleConfigLocale`), `svgSize` / `bitmapSize` / `bitmapInfo` (die Pixel einer Bitmap und die Auflösung, die ihre Datei angibt) und die Formattypen (`BundleManifest`, `BundleResourceSpec`, `BundleFontFamilySpec`, …).
+- **`CONFIG_VERSION`, `migrateConfig(config, configVersion, { content })`, `pinLegacyHeadingBreaks(config)`, `pinLegacyMathSize(config)`, `pinLegacyInlineGap(config)`, `pinLegacyBoxResourceGap(config)`, `pinLegacyHeadingMarks(config)`, `pinLegacyDropCapSize(config)`, `pinLegacyColonListRoom(config)`, `pinLegacyBoxChildCut(config)`, `pinLegacyDashBreaks(config)`, `pinLegacyRaggedBreaking(config)`, `pinLegacyHeadingSplit(config)`, `pinLegacyParagraphContainerSpacing(config)`, `pinLegacyHyphenBreaks(config)` und `LEGACY_MATH_SIZE`** (0,5 ÷ 0,442): eine gespeicherte Konfiguration in den Begriffen von heute (siehe [Pakete, die postext 1.4 oder früher geschrieben hat](#pakete-die-postext-14-oder-früher-geschrieben-hat)). `readBundle` wendet das an; ein Host, der Konfigurationen auf eigene Weise speichert, kann das ebenfalls tun, einmal pro gespeicherter Kopie.
+
+Die Sandbox baut darauf auf. Sie ergänzt eigene Speicher-IDs und die Seitendatensätze `layouts.json`.

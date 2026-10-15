@@ -68,8 +68,8 @@ function indexDescription(description: string, locale: string): string {
 /** The edition a book opens in: Catalan on Catalan pages when the bundle
  *  has it, Spanish on Spanish and Catalan pages, Simplified Chinese on
  *  Chinese pages, Arabic on Arabic pages, Japanese on Japanese pages and
- *  Brazilian Portuguese on Portuguese pages and French on French pages
- *  when the bundle has them, else
+ *  Brazilian Portuguese on Portuguese pages, French on French pages and
+ *  German on German pages when the bundle has them, else
  *  English (こころ names its own `openLocale`,
  *  Japanese, for every page). */
 function openLocale(locale: string, locales: readonly string[] | undefined): string {
@@ -80,6 +80,7 @@ function openLocale(locale: string, locales: readonly string[] | undefined): str
   if (locale.startsWith("ja") && locales?.some((l) => l === "ja" || l.startsWith("ja-"))) return "ja";
   if (locale.startsWith("pt") && locales?.includes("pt-BR")) return "pt-BR";
   if (locale.startsWith("fr") && locales?.some((l) => l === "fr" || l.startsWith("fr-"))) return "fr";
+  if (locale.startsWith("de") && locales?.some((l) => l === "de" || l.startsWith("de-"))) return "de";
   return "en";
 }
 
@@ -116,7 +117,7 @@ export async function ShowcaseSection() {
   const hero = await getTranslations("Hero");
   const locale = await getLocale();
   const presets = shelfOrder((presetIndex as { presets: PresetEntry[] }).presets);
-  const guideLang = locale.startsWith("zh") ? "zh-Hans" : locale.startsWith("es") ? "es" : locale.startsWith("ca") ? "ca" : locale.startsWith("ar") ? "ar" : locale.startsWith("ja") ? "ja" : locale.startsWith("pt") ? "pt-BR" : locale.startsWith("fr") ? "fr" : "en";
+  const guideLang = locale.startsWith("zh") ? "zh-Hans" : locale.startsWith("es") ? "es" : locale.startsWith("ca") ? "ca" : locale.startsWith("ar") ? "ar" : locale.startsWith("ja") ? "ja" : locale.startsWith("pt") ? "pt-BR" : locale.startsWith("fr") ? "fr" : locale.startsWith("de") ? "de" : "en";
 
   return (
     <section aria-labelledby="showcase-heading" className="relative isolate overflow-hidden bg-surface py-16 text-foreground md:py-20 dark:bg-night">

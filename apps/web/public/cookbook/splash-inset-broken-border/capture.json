@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "splash-inset-broken-border",
-  "sourceHash": "99120f21d9b6b343251639bdeccd693c9b1fe607a9b777e57e6c9e730a866de6",
+  "sourceHash": "8e659cd95ba07ae8cb599366290d608c9f2a08d23f9bca881d760214980486f4",
   "engine": {
-    "postext": "1.33.4",
-    "postextPdf": "1.33.4",
+    "postext": "1.33.5",
+    "postextPdf": "1.33.5",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T08:05:41.262Z",
+  "capturedAt": "2026-10-15T11:42:29.423Z",
   "variants": {
     "en": {
       "hash8": "5c52b98a",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 2691,
-        "fontsMs": 1255,
-        "buildMs": 98,
-        "totalMs": 8099,
+        "importMs": 2986,
+        "fontsMs": 2693,
+        "buildMs": 154,
+        "totalMs": 7551,
         "builds": 1
       },
       "specimen": {
@@ -37,7 +37,7 @@
           "Comic Neue"
         ],
         "pages": 2,
-        "ownLines": 114
+        "ownLines": 115
       },
       "pages": [
         {
@@ -238,23 +238,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "56f10119",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 6335,
-        "fontsMs": 2741,
-        "buildMs": 107,
-        "totalMs": 11763,
+        "importMs": 2418,
+        "fontsMs": 1410,
+        "buildMs": 119,
+        "totalMs": 5662,
         "builds": 1
       },
       "specimen": {
@@ -274,7 +268,7 @@
           "Comic Neue"
         ],
         "pages": 2,
-        "ownLines": 114
+        "ownLines": 115
       },
       "pages": [
         {
@@ -475,23 +469,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
       "hash8": "b021ab5e",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 6607,
-        "fontsMs": 2505,
-        "buildMs": 123,
-        "totalMs": 10712,
+        "importMs": 1819,
+        "fontsMs": 1172,
+        "buildMs": 117,
+        "totalMs": 4104,
         "builds": 1
       },
       "specimen": {
@@ -511,7 +499,7 @@
           "Comic Neue"
         ],
         "pages": 2,
-        "ownLines": 114
+        "ownLines": 115
       },
       "pages": [
         {
@@ -712,23 +700,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
       "hash8": "587d5354",
       "vdtHash": "69a714d811223c07ee4617800fe1b6c4129a8924",
       "timings": {
-        "importMs": 5482,
-        "fontsMs": 1978,
-        "buildMs": 143,
-        "totalMs": 10473,
+        "importMs": 2081,
+        "fontsMs": 3820,
+        "buildMs": 137,
+        "totalMs": 8069,
         "builds": 1
       },
       "specimen": {
@@ -748,7 +730,7 @@
           "ZCOOL KuaiLe"
         ],
         "pages": 2,
-        "ownLines": 114
+        "ownLines": 115
       },
       "pages": [
         {
@@ -950,23 +932,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
       "hash8": "490efdd1",
       "vdtHash": "7a907b581ba76903673d89d9523d7dd4926f3c7c",
       "timings": {
-        "importMs": 5202,
-        "fontsMs": 3970,
-        "buildMs": 107,
-        "totalMs": 11827,
+        "importMs": 2195,
+        "fontsMs": 1723,
+        "buildMs": 122,
+        "totalMs": 6880,
         "builds": 1
       },
       "specimen": {
@@ -986,7 +962,7 @@
           "Playpen Sans Arabic"
         ],
         "pages": 2,
-        "ownLines": 114
+        "ownLines": 115
       },
       "pages": [
         {
@@ -1191,23 +1167,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
       "hash8": "2a2e8348",
       "vdtHash": "a6e280cef897624f349f209d33e1f87e3bbbca57",
       "timings": {
-        "importMs": 5358,
-        "fontsMs": 4913,
-        "buildMs": 136,
-        "totalMs": 12248,
+        "importMs": 1945,
+        "fontsMs": 4697,
+        "buildMs": 141,
+        "totalMs": 10417,
         "builds": 1
       },
       "specimen": {
@@ -1227,7 +1197,7 @@
           "Zen Antique"
         ],
         "pages": 2,
-        "ownLines": 114
+        "ownLines": 115
       },
       "pages": [
         {
@@ -1431,23 +1401,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
       "hash8": "e880e439",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 3671,
-        "fontsMs": 1776,
-        "buildMs": 105,
-        "totalMs": 9193,
+        "importMs": 3450,
+        "fontsMs": 597,
+        "buildMs": 132,
+        "totalMs": 6404,
         "builds": 1
       },
       "specimen": {
@@ -1467,7 +1431,7 @@
           "Comic Neue"
         ],
         "pages": 2,
-        "ownLines": 114
+        "ownLines": 115
       },
       "pages": [
         {
@@ -1668,23 +1632,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "fr": {
       "hash8": "625b090f",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 5397,
-        "fontsMs": 2642,
-        "buildMs": 86,
-        "totalMs": 10690,
+        "importMs": 3521,
+        "fontsMs": 974,
+        "buildMs": 108,
+        "totalMs": 6419,
         "builds": 1
       },
       "specimen": {
@@ -1704,7 +1662,7 @@
           "Comic Neue"
         ],
         "pages": 2,
-        "ownLines": 114
+        "ownLines": 115
       },
       "pages": [
         {
@@ -1905,13 +1863,238 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
+        "findings": []
+      }
+    },
+    "de": {
+      "hash8": "ff3dafaa",
+      "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
+      "timings": {
+        "importMs": 2967,
+        "fontsMs": 269,
+        "buildMs": 87,
+        "totalMs": 4746,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          168,
+          259
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Comic Neue",
+          "sizePt": 10,
+          "leadingPt": 14
+        },
+        "families": [
+          "Comic Neue"
+        ],
+        "pages": 2,
+        "ownLines": 115
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 266644,
+          "alt": "Seite 1."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 222740,
+          "alt": "Seite 2."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "splash-inset-broken-border.pdf",
+        "bytes": 771971,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "splash-inset-broken-border.postext",
+        "bytes": 766535,
+        "chapters": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+            "pages": 2,
+            "hash": "3231e7c155760927",
+            "lines": "061318c49236a5d4"
           }
         ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "loadVerticalAlternates",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceColor",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontFamily",
+          "comics.balloonStyles[].halo",
+          "comics.balloonStyles[].haloColor",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].stroke",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.inset",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "comics.runningHeads",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.bleed",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page"
+        ],
+        "configLeaves": 82,
+        "designElements": 1,
+        "directives": [
+          ":::page"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 5,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Comic Neue",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "balloon-styles",
+          "comic-broken-borders",
+          "comic-lettering",
+          "comic-pages",
+          "comic-panel-art",
+          "comic-panel-split",
+          "comic-panel-styles",
+          "page-background",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "sound-effects"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

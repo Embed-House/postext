@@ -7,7 +7,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { buildDocument, resolveCjkConfig, type CjkRegion, type PostextConfig } from 'postext';
-import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_ZH_HANS } from '.';
+import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE, DEFAULT_MARKDOWN_ZH_HANS } from '.';
 import { createPostextGuideConfig } from '../context/guideConfig';
 import { GUIDE_FOLIO } from '../context/guideKit';
 import { SETTINGS_GROUPS, type SettingsGroupId } from '../sidebar/sections/registry';
@@ -36,14 +36,17 @@ const portuguese = (await import(/* @vite-ignore */ new URL('../../../../apps/we
 const french = (await import(/* @vite-ignore */ new URL('../../../../apps/web/messages/fr.json', import.meta.url).href)) as {
   default: { Sandbox: Record<string, string> };
 };
+const german = (await import(/* @vite-ignore */ new URL('../../../../apps/web/messages/de.json', import.meta.url).href)) as {
+  default: { Sandbox: Record<string, string> };
+};
 const siteLocales = (await import(/* @vite-ignore */ new URL('../../../../apps/web/src/i18n/locales.ts', import.meta.url).href)) as {
   LOCALE_INFO: Record<string, unknown>;
 };
 
-type Edition = 'en' | 'es' | 'ca' | 'zh-Hans' | 'ar' | 'ja' | 'pt-BR' | 'fr';
+type Edition = 'en' | 'es' | 'ca' | 'zh-Hans' | 'ar' | 'ja' | 'pt-BR' | 'fr' | 'de';
 const EDITIONS: Record<Edition, string> = {
   en: DEFAULT_MARKDOWN_EN, es: DEFAULT_MARKDOWN_ES, ca: DEFAULT_MARKDOWN_CA, 'zh-Hans': DEFAULT_MARKDOWN_ZH_HANS, ar: DEFAULT_MARKDOWN_AR,
-  ja: DEFAULT_MARKDOWN_JA, 'pt-BR': DEFAULT_MARKDOWN_PT_BR, fr: DEFAULT_MARKDOWN_FR,
+  ja: DEFAULT_MARKDOWN_JA, 'pt-BR': DEFAULT_MARKDOWN_PT_BR, fr: DEFAULT_MARKDOWN_FR, de: DEFAULT_MARKDOWN_DE,
 };
 
 const KANJI_DIGITS = '〇一二三四五六七八九';
@@ -70,7 +73,7 @@ function kanjiNumber(written: string): number {
 
 /** A number as an edition writes it — Arabic-Indic digits and the Arabic
  *  decimal separator ٫ in the Arabic one, a decimal comma in the Spanish,
- *  Catalan, Portuguese and French ones, kanji in the Japanese one — as a JavaScript number. */
+ *  Catalan, Portuguese, French and German ones, kanji in the Japanese one — as a JavaScript number. */
 const numberOf = (written: string | undefined): number =>
   /^[〇一二三四五六七八九十百千・]+$/.test(written ?? '')
     ? kanjiNumber(written!)
@@ -112,6 +115,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: /本書は([〇一二三四五六七八九十・]+)ポイントの文字を([〇一二三四五六七八九十・]+)ポイントの行送りで組/,
       'pt-BR': /este livro usa (\d+(?:,\d+)?) pontos sobre (\d+(?:,\d+)?)/,
       fr: /ce livre utilise (\d+(?:,\d+)?) points sur (\d+(?:,\d+)?)/,
+      de: /dieses Buch verwendet (\d+(?:,\d+)?) auf (\d+(?:,\d+)?) Punkt/,
     };
     for (const edition of Object.keys(stated) as Edition[]) {
       const [, size, leading] = claim(edition, stated[edition]);
@@ -138,6 +142,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: SETTINGS_GROUPS.map((g) => japanese.default.Sandbox[g.labelKey]!.toLowerCase()),
       'pt-BR': SETTINGS_GROUPS.map((g) => portuguese.default.Sandbox[g.labelKey]!.toLowerCase()),
       fr: SETTINGS_GROUPS.map((g) => french.default.Sandbox[g.labelKey]!.toLowerCase()),
+      de: SETTINGS_GROUPS.map((g) => german.default.Sandbox[g.labelKey]!.replace(/&/g, 'und').toLowerCase()),
     };
     const lists: Record<Edition, RegExp> = {
       en: /The \*\*Design\*\* panel edits[^:]*: ([^.]*)\./,
@@ -148,6 +153,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: /\*\*デザイン\*\*パネルは[^：]*：([^。]*)。/,
       'pt-BR': /O painel \*\*Design\*\* edita[^:]*: ([^.]*)\./,
       fr: /Le panneau \*\*Maquette\*\* édite[^:]*: ([^.]*)\./,
+      de: /Das Bedienfeld \*\*Gestaltung\*\* bearbeitet[^:]*: ([^.]*)\./,
     };
     for (const edition of Object.keys(lists) as Edition[]) {
       const list = claim(edition, lists[edition])[1]!.toLowerCase();
@@ -170,6 +176,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: japanese.default.Sandbox,
       'pt-BR': portuguese.default.Sandbox,
       fr: french.default.Sandbox,
+      de: german.default.Sandbox,
     };
     const COUNT: Record<Edition, string[]> = {
       en: ['four', 'five', 'six'],
@@ -180,6 +187,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: ['四', '五', '六'],
       'pt-BR': ['quatro', 'cinco', 'seis'],
       fr: ['quatre', 'cinq', 'six'],
+      de: ['vier', 'fünf', 'sechs'],
     };
     const said: Record<Edition, [RegExp, RegExp, RegExp]> = {
       en: [/shows the same layout in (\w+) tabs: ([^.]*)\./, /, | and /, /^## The (\w+) views$/m],
@@ -190,6 +198,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: [/同じ版面を(.)つのタブで表示する：([^。]*)。/, /、/, /^## (.)つのビュー$/m],
       'pt-BR': [/mostra a mesma diagramação em (\w+) abas: ([^.]*)\./, /, | e /, /^## As (\w+) visualizações$/m],
       fr: [/montre la même mise en page dans (\w+) onglets\u00a0: ([^.]*)\./, /, | et /, /^## Les (\w+) vues$/m],
+      de: [/zeigt dasselbe Layout in (\p{L}+) Tabs: ([^.]*)\./u, /, | und /, /^## Die (\p{L}+) Ansichten$/mu],
     };
     const count = (edition: Edition, word: string) => COUNT[edition].indexOf(word) + 4;
     for (const edition of Object.keys(said) as Edition[]) {
@@ -219,6 +228,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: { mainland: '中国大陸', taiwan: '台湾', hongkong: '香港' },
       'pt-BR': { mainland: 'China continental', taiwan: 'Taiwan', hongkong: 'Hong Kong' },
       fr: { mainland: 'Chine continentale', taiwan: 'Taïwan', hongkong: 'Hong Kong' },
+      de: { mainland: 'Festland', taiwan: 'Taiwan', hongkong: 'Hongkong' },
     };
     // The sentence that says so, up to the mark that ends it.
     const sentences: Record<Edition, RegExp> = {
@@ -230,6 +240,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: /([^。]*)ではすべての約物を全角で組/,
       'pt-BR': /([^.]*)cada sinal num quadrado inteiro/,
       fr: /([^.]*)chaque signe sur un carré entier/,
+      de: /([^.]*)jedem Zeichen ein volles Quadrat/,
     };
     for (const edition of Object.keys(sentences) as Edition[]) {
       const subject = claim(edition, sentences[edition])[1]!;
@@ -251,10 +262,10 @@ describe('what the guide says about itself and the Sandbox', () => {
       figures: figure?.name === '图' && figure.resetOn === 'h1',
     };
     const features: [keyof typeof uses, RegExp][] = [
-      ['grid', /\bgrid\b|retícula|\bgrade\b|grille|شبكة/],
-      ['pageNumbers', /page numbers|folios|folis|fólios|numéros de page|أرقام (?:ال)?صفح|ترقيم (?:ال)?صفح/],
-      ['chapters', /\bchapters\b|capítulos|capítols|chapitres|فصول/],
-      ['figures', /\bfigures\b|figuras|أشكال/],
+      ['grid', /\bgrid\b|retícula|\bgrade\b|grille|Raster|شبكة/],
+      ['pageNumbers', /page numbers|folios|folis|fólios|numéros de page|Paginas|Seitenzahlen|أرقام (?:ال)?صفح|ترقيم (?:ال)?صفح/],
+      ['chapters', /\bchapters\b|capítulos|capítols|chapitres|\bKapitel\b|فصول/],
+      ['figures', /\bfigures\b|figuras|Abbildungen|أشكال/],
     ];
     const sentences: Partial<Record<Edition, RegExp>> = {
       en: /The Chinese edition of this guide ([^.]*)\./,
@@ -263,11 +274,12 @@ describe('what the guide says about itself and the Sandbox', () => {
       ar: /(?:الطبعة|النسخة) الصينية من هذا الدليل ([^.]*)\./,
       'pt-BR': /A edição chinesa deste guia ([^.]*)\./,
       fr: /L’édition chinoise de ce guide ([^.]*)\./,
+      de: /Die chinesische Ausgabe dieses Leitfadens ([^.]*)\./,
     };
     for (const edition of Object.keys(sentences) as Edition[]) {
       const said = claim(edition, sentences[edition]!)[1]!;
       // “All of it”: everything the paragraph lists.
-      if (/\ball of it\b|lo usa todo|ho fa servir tot|usa tudo|utilise tout/.test(said)) expect(Object.values(uses).every(Boolean), `${edition}: “${said}”`).toBe(true);
+      if (/\ball of it\b|lo usa todo|ho fa servir tot|usa tudo|utilise tout|nutzt alles/.test(said)) expect(Object.values(uses).every(Boolean), `${edition}: “${said}”`).toBe(true);
       for (const [feature, words] of features) {
         if (words.test(said)) expect(uses[feature], `${edition}: ${feature} in “${said}”`).toBe(true);
       }
@@ -307,14 +319,15 @@ describe('what the guide says about itself and the Sandbox', () => {
     // The site's locales, as its language switcher offers them.
     const site = Object.keys(siteLocales.LOCALE_INFO);
     const names: Record<Edition, Record<string, string>> = {
-      en: { en: 'English', es: 'Spanish', ca: 'Catalan', pt: 'Brazilian Portuguese', zh: 'Simplified Chinese', ja: 'Japanese', ar: 'Arabic', fr: 'French' },
-      es: { en: 'inglés', es: 'español', ca: 'catalán', pt: 'portugués de Brasil', zh: 'chino simplificado', ja: 'japonés', ar: 'árabe', fr: 'francés' },
-      ca: { en: 'anglès', es: 'castellà', ca: 'català', pt: 'portuguès del Brasil', zh: 'xinès simplificat', ja: 'japonès', ar: 'àrab', fr: 'francès' },
-      'zh-Hans': { en: '英文', es: '西班牙文', ca: '加泰罗尼亚文', pt: '巴西葡萄牙文', zh: '简体中文', ja: '日文', ar: '阿拉伯文', fr: '法文' },
-      ar: { en: 'الإنجليزية', es: 'الإسبانية', ca: 'الكتالانية', pt: 'البرتغالية البرازيلية', zh: 'الصينية المبسّطة', ja: 'اليابانية', ar: 'العربية', fr: 'الفرنسية' },
-      ja: { en: '英語', es: 'スペイン語', ca: 'カタルーニャ語', pt: 'ブラジル・ポルトガル語', zh: '簡体字中国語', ja: '日本語', ar: 'アラビア語', fr: 'フランス語' },
-      'pt-BR': { en: 'inglês', es: 'espanhol', ca: 'catalão', pt: 'português do Brasil', zh: 'chinês simplificado', ja: 'japonês', ar: 'árabe', fr: 'francês' },
-      fr: { en: 'anglais', es: 'espagnol', ca: 'catalan', pt: 'portugais du Brésil', zh: 'chinois simplifié', ja: 'japonais', ar: 'arabe', fr: 'français' },
+      en: { en: 'English', es: 'Spanish', ca: 'Catalan', pt: 'Brazilian Portuguese', zh: 'Simplified Chinese', ja: 'Japanese', ar: 'Arabic', fr: 'French', de: 'German' },
+      es: { en: 'inglés', es: 'español', ca: 'catalán', pt: 'portugués de Brasil', zh: 'chino simplificado', ja: 'japonés', ar: 'árabe', fr: 'francés', de: 'alemán' },
+      ca: { en: 'anglès', es: 'castellà', ca: 'català', pt: 'portuguès del Brasil', zh: 'xinès simplificat', ja: 'japonès', ar: 'àrab', fr: 'francès', de: 'alemany' },
+      'zh-Hans': { en: '英文', es: '西班牙文', ca: '加泰罗尼亚文', pt: '巴西葡萄牙文', zh: '简体中文', ja: '日文', ar: '阿拉伯文', fr: '法文', de: '德文' },
+      ar: { en: 'الإنجليزية', es: 'الإسبانية', ca: 'الكتالانية', pt: 'البرتغالية البرازيلية', zh: 'الصينية المبسّطة', ja: 'اليابانية', ar: 'العربية', fr: 'الفرنسية', de: 'الألمانية' },
+      ja: { en: '英語', es: 'スペイン語', ca: 'カタルーニャ語', pt: 'ブラジル・ポルトガル語', zh: '簡体字中国語', ja: '日本語', ar: 'アラビア語', fr: 'フランス語', de: 'ドイツ語' },
+      'pt-BR': { en: 'inglês', es: 'espanhol', ca: 'catalão', pt: 'português do Brasil', zh: 'chinês simplificado', ja: 'japonês', ar: 'árabe', fr: 'francês', de: 'alemão' },
+      fr: { en: 'anglais', es: 'espagnol', ca: 'catalan', pt: 'portugais du Brésil', zh: 'chinois simplifié', ja: 'japonais', ar: 'arabe', fr: 'français', de: 'allemand' },
+      de: { en: 'Englisch', es: 'Spanisch', ca: 'Katalanisch', pt: 'brasilianisches Portugiesisch', zh: 'vereinfachtes Chinesisch', ja: 'Japanisch', ar: 'Arabisch', fr: 'Französisch', de: 'Deutsch' },
     };
     const lists: Record<Edition, RegExp> = {
       en: /The interface speaks ([^;.]*)/,
@@ -325,6 +338,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: /画面の言語は([^。]*?)で、/,
       'pt-BR': /A interface está em ([^;.]*)/,
       fr: /L’interface parle ([^;.]*)/,
+      de: /Die Oberfläche spricht ([^;.]*)/,
     };
     for (const edition of Object.keys(lists) as Edition[]) {
       const list = claim(edition, lists[edition])[1]!;
@@ -397,6 +411,21 @@ describe('what the guide says about itself and the Sandbox', () => {
     for (const [, name] of md.matchAll(/groupe \*\*([^*]+)\*\*/g)) expect(groupNames.has(name!), name).toBe(true);
   });
 
+  it('names the German interface’s panels and groups by their labels', () => {
+    const md = DEFAULT_MARKDOWN_DE;
+    const de = german.default.Sandbox;
+    // The activity bar's panels, in its order (`ActivityBar.tsx`).
+    const panels = ['navBooks', 'navChapters', 'navManuscript', 'navResources', 'navFonts', 'navDesign', 'navWarnings'];
+    const tour = claim('de', /wechselt zwischen sieben Bedienfeldern – ([^.]*?), das letzte/)[1]!;
+    expect(tour.split(/, | und /)).toEqual(panels.map((key) => de[key]));
+    // Every “Bedienfeld **…**” is a panel and every “Gruppe **…**” a group
+    // of the Design panel.
+    const panelNames = new Set(panels.map((key) => de[key]));
+    for (const [, name] of md.matchAll(/Bedienfeld(?:e?s)? \*\*([^*]+)\*\*/g)) expect(panelNames.has(name!), name).toBe(true);
+    const groupNames = new Set(SETTINGS_GROUPS.map((g) => de[g.labelKey]));
+    for (const [, name] of md.matchAll(/Gruppe \*\*([^*]+)\*\*/g)) expect(groupNames.has(name!), name).toBe(true);
+  });
+
   it('describes the book in 3D as the Folio settings set it', () => {
     // Paper weight, stock, binding, surface and light, as the chapter on the
     // Folio view states them.
@@ -410,6 +439,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: [/本ガイドは([^。]*)。/, /中綴じ/, /坪量([〇一二三四五六七八九十百]+)グラムのグロスコート紙/, /フェルト/, /スタジオの照明/],
       'pt-BR': [/Este guia está montado como ([^.]*)\./, /grampo canoa/, /couché brilho de (\d+) gramas/, /feltro/, /luz de estúdio/],
       fr: [/Ce guide est monté ([^.]*)\./, /piqûre à cheval/, /couché brillant de (\d+) grammes/, /feutre/, /lumière de studio/],
+      de: [/Dieser Leitfaden ist als ([^.]*)\./, /rückendrahtgeheftet/, /glänzend gestrichenem Papier von (\d+) Gramm/, /Filz/, /Studiolicht/],
     };
     for (const edition of Object.keys(said) as Edition[]) {
       const [sentence, binding, paper, surface, light] = said[edition];
@@ -455,6 +485,7 @@ describe('what the guide says about itself and the Sandbox', () => {
       ja: [new RegExp(`${vertical}HTMLビュー([^、。]*)`), /高さ/, /幅/],
       'pt-BR': [new RegExp(`${vertical}a visualização HTML ([^;.]*)`), /\baltura\b/, /\blargura\b/],
       fr: [new RegExp(`${vertical}la vue HTML ([^;.]*)`), /\bhauteur\b/, /\blargeur\b/],
+      de: [new RegExp(`${vertical}die HTML-Ansicht ([^;.]*)`), /Höhe/, /Breite/],
     };
     for (const edition of Object.keys(clauses) as Edition[]) {
       const [sentence, height, width] = clauses[edition];

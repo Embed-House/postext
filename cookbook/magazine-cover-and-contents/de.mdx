@@ -1,0 +1,70 @@
+---
+title: "Zeitschriftentitel und Inhaltsverzeichnis nach Rubriken"
+summary: "Ein Fototitel mit Titelzeilen unter dem Logo und ein erzeugtes Inhaltsverzeichnis mit farbiger Zeile je Rubrik. Jede Rubrik ist ein Teil ohne eigene Seite."
+plain: "Titel und erste Seiten einer Zeitschrift über Essen und Landwirtschaft, mit Fototitel und Inhaltsseite. Es zeigt, wie jede Rubrik ihre eigene Farbe bekommt, die sich durch ihre Seiten zieht."
+description: "Sechs Seiten eines Magazins in Postext: Der Titel ist ein Gestaltungsplatz über einem Foto, der Inhalt stellt jeden Beitrag unter einen Reiter in Rubrikfarbe."
+question: "Wie gestalte ich Titelseite und Impressum einer Zeitschrift, und was ersetzt Schmutztitel und Titelseite?"
+aliases: ["Zeitschriftentitel", "Titelseite", "Logo", "Titelzeilen", "Inhaltsseite", "Rubriken nach Farbe", "Rubrikfarben", "vorderer Heftteil", "Heftnummer", "Seitenzahlreiter", "Editorial", "Impressum", "magazine cover"]
+pageNotes: { "1": "Der Titel: ein toskanisches Tal unter blassem Himmel, „FALLOW“ in schwarzer Bodoni über den Kopf, eine papierfarbene Fläche mit drei Titelzeilen, deren Dachzeilen oliv, terrakotta und weinrot sind, und unten rechts ein Preisfeld mit einem erfundenen Strichcode.", "2": "Der Inhalt: eine große „14“ in Erdbraun, drei Rubrikzeilen mit farbigen Reitern, Titel, Seitenzahl und Vorspann jedes Beitrags, eine kleine Kopie des Titels und in der rechten Spalte das Editorial, die Mitwirkenden und ein kleines Impressum.", "3": "„Field notes“: Glaskolben mit grünen Trieben über den Kopf der Seite, mit einer terrakottafarbenen Fläche, die in ihren Fuß ragt und Titel und Vorspann trägt, dann zwei Spalten im Blocksatz und ein terrakottafarbener Seitenzahlreiter.", "4": "Der Auftakt der Titelgeschichte: ein Luftbild eines Flickenteppichs aus Feldern, eines davon brach, eine weiße Straße an einem Bauernhaus vorbei, mit einer olivfarbenen Fläche, die in seinen Fuß ragt.", "5": "Die Titelgeschichte geht unter einem Foto eines Bauernhauses zwischen Reben und Zypressen weiter, mit einem olivfarbenen Faktenkasten zur siebenjährigen Fruchtfolge und einem olivfarbenen Zitat.", "6": "„Kitchen“: reifer Weizen mit einer weinroten Fläche, die in seinen Fuß ragt, dann die Zutaten und die Zubereitung mit weinroten Strichen und Nummern." }
+---
+
+## Was Sie setzen
+
+Sechs Seiten aus einer Ausgabe von *FALLOW*, einer erfundenen Vierteljahresschrift über Essen und Land, auf einer Seite von 230 × 300 mm. Ein toskanisches Tal läuft randabfallend über den Titel unter einem Logo in der Bodoni zu 118 pt, und drei Titelzeilen stehen auf einer papierfarbenen Fläche, jede Dachzeile in der Farbe ihrer Rubrik, mit Preis und Strichcode in der Ecke. Seite 2 enthält das erzeugte Inhaltsverzeichnis: ein farbiger Reiter je Rubrik, darunter Titel, Seitenzahl und Vorspann jedes Beitrags. Die rechte Spalte trägt das Editorial, die Mitwirkenden und das Impressum. Die folgenden Rubriken sind terrakotta, oliv und weinrot. Jeder Beitrag beginnt mit einem Bild, das randabfallend über den Kopf der Seite läuft, und einer Fläche in der Rubrikfarbe, die hineinragt, und seine Seitenzahlreiter, Aufzählungszeichen und Kästen nehmen diese Farbe an. Die Farbe setzt der Direktivenblock `:::part` über jedem Beitrag, der keine Trennseite eröffnet.
+
+## Zubereitung
+
+### 1 · Den Titel am Logo aufhängen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Nur das Foto, die beiden Zeilen am Kopf und der Preis sind an der Seite verankert. Alles andere ist an einem anderen Element verankert ([Elementplatzierung](/de/docs/configuration-page-layout#platzierung-von-elementen)): das Logo unter der Oberzeile, die erste Dachzeile 8 mm unter dem Logo, dann jede Zeile unter ihrer Dachzeile und jede Dachzeile unter der Zeile davor, sodass eine längere Titelzeile oder ein größeres Logo das Darunterstehende nach unten schiebt, statt darüber zu drucken. Jede Dachzeile und jede Zeile trägt ihren eigenen papierfarbenen Kasten, 84 mm breit, und die sechs übereinandergestapelten Kästen bilden die Fläche, die mit den Wörtern wächst. Jeder Kasten nach dem ersten überlappt den darüber um 0,3 mm (`SEAM`), und der Strichcode überlappt den Preis auf dieselbe Weise, weil auf dem Canvas zwei Füllungen, die sich nur berühren, eine Haarlinie des Fotos zwischen sich lassen. Eine Zeitschrift hat weder Schmutztitel noch Titelseite; der Titel trägt ihren Namen, und die Inhaltsseite trägt Heftnummer, Jahreszeit und Impressum. Für die Titelei eines Buches siehe <RecipeLink slug="front-matter-roman-to-arabic">Titelei mit römischen Paginas, dann Seite 1</RecipeLink>.
+
+### 2 · Jede Rubrik zu einem Teil ohne Seite machen
+
+<Excerpt region="sections" />
+
+Mit `parts.page: false` eröffnet ein Direktivenblock wie `:::part{title="Features" palette="band=#5d6a2b"}` keine Trennseite und setzt nur Titel und Palette der Rubrik ab dem nächsten Block ([Der Container `:::part`](/de/docs/configuration-styles#der-container-part)). Die H1 jedes Beitrags nimmt ein [Überschriftenformat](/de/docs/configuration-styles#überschriftenstile) mit `numbered: false`, sodass das Inhaltsverzeichnis sie ohne Nummer aufführt. Das Format wählt das Bild des Auftakts, und der Teil liefert die Farbe.
+
+### 3 · Jede Rubrikfarbe mit einem Eintrag verknüpfen
+
+<Excerpt region="palette" />
+
+Ein Teil überschreibt Paletteneinträge über ihre ID, deshalb verweist alles, was sich mit der Rubrik ändert, auf `band`: die Fläche des Auftakts, der Seitenzahlreiter, die Aufzählungszeichen und Listennummern, das Zitat und Streifen und Titel des Faktenkastens. Im Text geht die Überschreibung nach Wert: Jede Farbe, deren Hexwert dem Grund-Hexwert von `band` (`#8b6a3e`) gleicht, nimmt die der Rubrik an, weshalb kein anderer Eintrag diesen Hexwert verwendet. Gestaltungselemente funktionieren umgekehrt: Die Überschreibung eines Teils erreicht sie über die `paletteId`, deshalb schreibt `col()` die ID neben den Hexwert.
+
+### 4 · Das Inhaltsverzeichnis sich selbst gruppieren lassen
+
+<Excerpt region="contents" />
+
+`:::toc` listet die Beiträge und gibt jedem `:::part` eine Zeile, angelegt aus `toc.parts.design` mit der Palette dieses Teils ([Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis)), sodass eine einzige Zeilengestaltung drei Reiter in drei Farben druckt. Linie und Reiter hängen beide an `mid`, der um 1 mm angehobenen Mitte der Zeile, was den Reiter vom Titel darunter freihält. Ohne Füllzeichen läuft nichts zwischen einem Titel und seiner Seitenzahl (3, 4 und 6), und `subtitle.attr` druckt das Attribut `standfirst` des Auftakts kursiv unter den Titel. Das Impressum am Ende der rechten Spalte ist ein Absatzformat, Jost 7 pt in `muted`, das das Markdown mit `:::paragraphs{style="colophon"}` anwendet.
+
+### 5 · Jedem Beitrag denselben Auftakt geben
+
+<Excerpt region="opener" />
+
+Das Bild läuft oben randabfallend aus der Seite und reicht 150 mm hinunter. Eine Fläche in `band` ragt 34 mm in seinen Fuß. Die Fläche besteht aus drei Textkästen von 136 mm Breite, jeder mit `below` an den vorigen gekettet, mit dem Namen der Rubrik aus `{partTitle}`, dem Titel und dem Vorspann. Fläche und Autorenzeile reichen unter den Fuß des Bildes, deshalb beginnt der Beitrag unter dem tiefsten Element, der Autorenzeile, deren leerer unterer Innenabstand von 5 mm die erste Zeile mindestens so weit darunter hält.
+
+### 6 · Die Rubrik in der Pagina nennen
+
+<Excerpt region="folios" />
+
+Die Seitenzahl steht in einem Quadrat aus `band` von 6,5 mm am äußeren Fuß. Der Name der Rubrik ist daneben verankert, zum Bund hin, und der Titel des Beitrags neben dem Namen; alle drei Kästen sind 6,5 mm hoch, ihr Text vertikal zentriert, sodass sie eine Mittellinie teilen. Zeitschriften drucken die Pagina auch auf einer Auftaktseite, deshalb hat die Fußzeile keinen Filter `pages`. Das Überschriftenformat des Titels leert die Fußzeile, und das Format des Inhaltsverzeichnisses setzt den Namen der Zeitschrift und die Jahreszeit der Ausgabe (`{title}` und `{publishDate}`) dorthin, wo Rubrik und Beitrag stehen.
+
+## Varianten
+
+### Das Logo in der Hausfarbe setzen
+
+Das Logo nimmt das Erdbraun der großen 14 auf der Inhaltsseite an.
+
+```diff
+-    textTransform: 'uppercase', align: 'center', color: col('ink') },
++    textTransform: 'uppercase', align: 'center', color: col('band') },
+```
+
+### Jede Rubrik auf einer Trennseite eröffnen
+
+Für Teile mit eigener Seite und einer Seitenzahl in jeder Teilzeile des Inhaltsverzeichnisses siehe <RecipeLink slug="parts-in-colour">Teile in Farbe aus einem einzigen Attribut</RecipeLink>.
+
+## Häufige Fehler
+
+- Ein Bildelement passt sein Bild in seinen Kasten ein und beschneidet es nie. Schneiden Sie jedes JPEG zuerst auf seinen Kasten zu, 23 : 30 für den Titel und 230 × 150 mm für die Auftakte, sonst schrumpft das Bild und lässt weiße Streifen an den Rändern.
+- Im Text färbt ein Teil jede Farbe um, deren Hexwert dem Grund-Hexwert von `band` gleicht, ob sie auf `band` verweist oder nicht. Behalten Sie diesen Hexwert dem vor, was sich mit der Rubrik ändern soll.
+- Die Beiträge sind in beiden Sprachen eingepasst: Einige Sätze der spanischen „Field notes“ wurden gekürzt, damit sie auf einer Seite bleiben, und ein Satz der englischen Titelgeschichte verlor drei Wörter, damit beide Spalten von Seite 4 auf gleicher Höhe enden. Prüfen Sie nach einer Änderung, dass kein Beitrag ein paar Zeilen auf eine neue Seite verschiebt und dass jede Seite außer der letzten eines Beitrags auf gleicher Höhe endet.

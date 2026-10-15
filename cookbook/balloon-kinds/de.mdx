@@ -1,0 +1,62 @@
+---
+title: "Alle Arten von Sprechblasen auf einer Leuchtturmseite"
+summary: "Eine Comicseite mit Sprech-, Denk-, Flüster-, Schrei- und Funkblase, Textkasten, innerer Stimme, Anmerkung und Soundeffekt, je in Klammern im Skript benannt."
+plain: "Eine Comicseite über eine Rettung im Sturm, die jede Art von Sprechblase verwendet, mit einem Musterblatt des Letterers, das zeigt, wie jede im Skript geschrieben wird."
+description: "Comicseite in Postext mit jeder Blasenart: Sprechen, Denken, Flüstern, Schreien, Funk, Textkasten, innere Stimme, Anmerkung, Soundeffekt, Stimme aus dem Off."
+question: "Wie letterere ich Denk-, Flüster-, Schrei- und Funkblasen und richte jeden Dorn auf seinen Sprecher?"
+aliases: ["Sprechblase", "speech bubble", "Denkblase", "Flüsterblase", "Schreiblase", "Funkblase", "Textkasten", "Soundeffekt", "SFX", "Lautmalerei", "Stimme aus dem Off", "Blasendorn", "bocadillo", "吹き出し", "对话框"]
+pageNotes: { "1": "Das Musterblatt: der Titel „Lettering-Musterblatt“ in roten Display-Versalien, dann zwölf Arten von Sprechblasen, jede mit ihrem Skript-Markup in einem gelben Chip.", "2": "Die Seite: ein Funkspruch im Laternenraum mit Textkasten, einer gezackten Funkblase und einer Anmerkung der Redaktion; Maya flüstert der Katze „Alles gut, Biscuit.“ zu, die in einer Wolke „Ach, wirklich?“ denkt; der Wärter schreit „Gannet! Kurs aufs Licht!“ in einer Explosionsblase; der Trawler im Sturm mit KRA-WUMM in Rot; Maya am Fenster mit „Komm schon. Komm schon. Komm schon.“ in einem grauen Kasten für die innere Stimme; der nächste Morgen auf den Felsen mit den verbundenen Sprechblasen „Sagen wir zwei.“ und „Eine ist für die Katze.“." }
+---
+
+## Was Sie setzen
+
+Seite 7 von *Der Leuchtturm von Porthcove*, einem Comic über eine Sturmnacht an einem Leuchtturm, mit dem Musterblatt des Letterers davor. Ein Trawler verliert seinen Motor, der Leuchtturmwärter lotst ihn über Funk herein, Maya wartet mit der Katze, und am Morgen bedankt sich der Kapitän. Die Seite verwendet jede Art von Sprechblase, die Postext zeichnet: Sprechblase, verbundene Sprechblasen, Denkblase, Flüsterblase, Schreiblase, Funkblase, erzählende Textkästen, eine innere Stimme, eine Anmerkung des Herausgebers, einen Soundeffekt, eine Stimme aus dem Off und eine festgesteckte Sprechblase. Das Endformat ist das eines amerikanischen Comicheftes, 168 × 259 mm, und die Seite liegt in neun Sprachen vor.
+
+## Zubereitung
+
+### 1 · Die Art in der Skriptzeile benennen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine Skriptzeile lautet `speaker{kind}: text`, und die Art ist die ID eines Sprechblasenformats. Die neun eingebauten Formate decken die üblichen Arten ab: ein Oval mit gebogenem Dorn für Sprache, eine Wolke mit Bläschen für Gedanken, eine gestrichelte Kontur zum Flüstern, eine Explosion mit Keildorn für einen Schrei, eine gezackte Kontur mit Zickzackdorn für eine Stimme aus dem Funkgerät ([Sprechblasenformate](/de/docs/comics#sprechblasenstile)). Ein Format mit derselben ID in der Konfiguration ändert nur, was es nennt: hier die Konturfarbe, das Gelb der Textkästen und die 16 Zacken der Explosion. `caption`, `note` und `sfx` sind reservierte Sprecher: in eine Ecke gestoßene Erzähltextkästen, die Anmerkung des Herausgebers in 0,8-facher Größe und Display-Buchstaben ohne Blase.
+
+<PageShot page={2} crop="0,0,1,0.34" caption="Der Funkspruch: ein Textkasten, die Funkblase des Kapitäns mit Dorn zum Funkgerät, die Antwort des Wärters und die Anmerkung des Herausgebers." />
+
+### 2 · Jeden Dorn auf einen Sprecher richten
+
+<Excerpt region="art" />
+
+Jedes Bild trägt Ankerpunkte in Bruchteilen des Bildes: den Mund, auf den ein Sprechdorn zielt, den Kopf, auf den ein Gedanke zielt, das Gesicht, das keine Blase verdecken darf ([Sprecher und Anker](/de/docs/comics#sprecher-und-anker)). Der Kapitän wird nie gezeichnet: Sein Anker ist im Sturmbild das Funkgerät, im Seebild sein Boot. Ist der Sprecher nicht im Panel, führt `tail=right` (oder `left`, `top`, `bottom`) den Dorn an diesen Rand, und `at="44% 22%"` steckt die Mitte einer Blase auf einen Punkt des Bildes fest, sodass sie dort bleibt, wie auch immer beschnitten wird. Zwei aufeinanderfolgende Zeilen desselben Sprechers verbinden sich zu einer Kontur mit einem Dorn. `left` und `right` sind Seiten des Bildes, darum schreiben die neun Ausgaben dieselbe Zeile für den Wärter im Seepanel, dessen Licht rechts im Bild steht: `tail=right`, ob von links nach rechts oder von rechts nach links gelesen. `start` und `end` folgen dagegen der Leserichtung der Seite.
+
+### 3 · Einer Figur eine eigene Stimme geben
+
+Die Besetzung in der kurzen Antwort gibt jeder Zeile `skipper:` das Funkformat, sodass das Skript `{radio}` nie wiederholt. Eine Zeile kann trotzdem anderes verlangen: Im Morgenpanel ruft der Kapitän von seinem Boot aus, `skipper{speech tail=bottom}:`, in einer gewöhnlichen Sprechblase, deren Dorn unten aus dem Panel läuft.
+
+### 4 · Jede Ausgabe in ihren eigenen Schriften lettern
+
+<Excerpt region="editions" />
+
+Dieselbe Seite liegt in neun Sprachen vor: `content.<lang>.md` enthält nur die Wörter. Die japanischen Sprechblasen sind vertikal in der Zen Antique gesetzt und ihre Soundeffekte in der Dela Gothic One, die arabischen in der Playpen Sans Arabic mit der Lalezar für den Donner. Kursiv und fett greifen dort, wo die Schrift sie hat: Die innere Stimme ist im Englischen kursiv, im Japanischen aufrecht ([Lettering](/de/docs/comics#lettering)).
+
+## Varianten
+
+### Eine Wellenblase für eine kranke oder schwache Stimme
+
+Jede andere ID wird zu einem eigenen Format, das über die Sprechblase gelegt wird.
+
+```diff
+ const balloonStyles = [
++  { id: 'weak', shape: 'wavy', stroke: col('ink'), fontScale: 0.9 }, // maya{weak}: …
+   { id: 'speech', stroke: col('ink') },
+```
+
+### Zwei Zeilen stattdessen mit einem Hals verbinden
+
+```diff
+-  lettering: { fontFamily: LETTERING, fontSize: pt(7.5), color: col('ink'), inset: mm(1) },
++  lettering: { fontFamily: LETTERING, fontSize: pt(7.5), color: col('ink'), inset: mm(1),
++    joinSameSpeaker: 'connector' },
+```
+
+## Häufige Fehler
+
+- Ein Pin ist ein Punkt des Bildes und bleibt bei jedem Beschnitt erhalten. Ein Soundeffekt, der so nah am Rand festgesteckt ist, dass er das Panel verlassen würde („KRA-WUMM“ bei `at="16% 28%"`), wird nach innen zurückgeschoben und kann darum etwas neben dem angegebenen Punkt sitzen.
+- Eine Stimme aus dem Off wird an dem Rand gelettert, auf den ihr Dorn zeigt: Der Dank des Kapitäns, `tail=bottom`, steht am Fuß des Morgenpanels, obwohl er die erste Zeile des Panels ist. Richten Sie den Dorn auf den oberen Rand, wenn eine solche Zeile zuerst gelesen werden muss.

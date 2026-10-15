@@ -1,0 +1,56 @@
+---
+title: "Arabischer Fachartikel mit Fußnoten, Zitaten und Register"
+summary: "Ein Artikel einer arabischen Fachzeitschrift: Fußnoten „(١)“ seitenweise gezählt, CSL-Zitate darunter in arabischer Locale und ein Register ohne den Artikel ال."
+plain: "Fünf Seiten einer arabischen Fachzeitschrift: der Artikel, seine Fußnoten, sein Literaturverzeichnis und ein Register. Das Register ordnet الكشيدة unter ك ein, wie es arabische Register tun, und nicht unter dem Artikel ال."
+description: "Ein arabischer Zeitschriftenartikel in Postext: Fußnoten „(١)“ pro Seite, Chicago-Noten in der Locale ar, Bibliografie und ein Register mit index.ignoreArticle."
+question: "Wie zitiere ich Quellen in einem arabischen Artikel, mit Fußnoten und Literaturverzeichnis?"
+aliases: ["arabischer Artikel", "arabische Fachzeitschrift", "arabische Fußnoten", "arabische Zitate", "CSL Arabisch", "arabisches Register", "ignoreArticle", "Artikel al-", "ال", "Hijāʾī-Reihenfolge", "Amiri", "فهرس", "حواشي", "المراجع", "Arabic article"]
+pageNotes: { "1": "Die erste Seite des Artikels: der Name der Zeitschrift in Dunkelrot und die Heftnummer, eine Haarlinie, der Titel in zwei zentrierten Zeilen aus fetter Amiri, die Autorin und ihre Universität, ein rosa Kasten mit der Zusammenfassung unter ملخص, dann die Abschnittsüberschrift ١- المقدمة und die ersten Zeilen Text.", "5": "Das Register auf einer eigenen Seite: der Titel فهرس الأعلام والموضوعات über die ganze Breite, dann zwei Spalten mit Einträgen, die rechts beginnen, gruppiert unter roten Buchstaben ا, ب, ت, ج…; الكشيدة steht unter ك mit fett gesetzter Seitenzahl und einem Siehe-auch-Verweis." }
+---
+
+## Was Sie setzen
+
+Fünf Seiten aus einem Heft einer erfundenen arabischen Fachzeitschrift, im Format 17 × 24 cm, beginnend mit Seite 87: ein Artikel über die Frage, ob Blocksatz mit Kaschida das Lesen verlangsamt, gesetzt in Amiri zu 12 pt mit Abschnittsüberschriften in Noto Kufi Arabic. Die Fußnoten stehen am Fuß jeder Seite und werden auf jeder Seite neu ab „(١)“, „(٢)“ gezählt, wie arabische Zeitschriften sie zählen; die Zitate, im Markdown als `[@ayalon2016]` geschrieben, sind ebenfalls Fußnoten und werden vom Chicago-Notenstil mit der arabischen CSL-Locale formatiert. Danach folgt ein Literaturverzeichnis, die arabischen Werke zuerst, und ein zweispaltiges Register schließt den Beitrag ab. Das Register ordnet الكشيدة unter ك und الصحف اليومية unter ص ein: Der Artikel ال zählt nicht. <RecipeLink slug="history-essay-chicago-notes">Der historische Essay mit Chicago-Noten</RecipeLink> macht dasselbe auf Englisch.
+
+## Zubereitung
+
+### 1 · Fußnoten, Zitate und Register an einer Stelle
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). Die Fußnoteneinstellungen sind die drei, die arabische Bücher verlangen: `markerTemplate: '({n})'` für die Klammern, `numbering: 'page'`, damit die Zählung auf jeder Seite neu beginnt, und `noteNumberPosition: 'inline'`, damit die Fußnote mit „(١)“ in ihrer Zeile beginnt; die Ziffern sind die des Dokuments, und der Fußnotenstrich steht rechts ([Fußnoten](/de/docs/arabic-layout#fußnoten)). Die Zitate teilen sich die Zählung mit den Fußnoten. `citations.locale: 'ar'` liefert die CSL-Begriffe auf Arabisch, etwa عدد für eine Heftnummer. `index.ignoreArticle` sortiert jeden Eintrag nach dem Wort hinter ال und fasst die Formen der Hamza zusammen, sodass أميري und الأعمدة beide unter ا stehen ([Inhaltsverzeichnis und Register](/de/docs/arabic-layout#inhaltsverzeichnis-und-register)); für ein arabisches Register ist die Option ohnehin eingeschaltet und steht hier nur, damit man sie sieht.
+
+<PageShot page={5} crop="0,0.12,1,0.6" caption="Das Register: zwei Spalten von rechts, Buchstaben in Rot, الكشيدة unter ك mit einem Siehe-auch-Verweis." />
+
+### 2 · Ein Zeitschriftenkopf ohne Band
+
+<Excerpt region="masthead" />
+
+Der Titel des Artikels ist die Überschrift der Ebene 1, gezeichnet von einem Design: Name und Heft der Zeitschrift, eine Haarlinie, der Titel in zwei zentrierten Zeilen und die Autorin. Die Heftzeile ist in arabisch-indischen Ziffern getippt, denn das Attribut eines Designs ist Text der Autorin, und die Engine schreibt ihn nicht um. Die Seitenzählung beginnt bei 87 (`page.pageNumbering.startAt`), sodass die Paginierung zeigt, wo der Artikel im Heft steht.
+
+### 3 · Kolumnentitel von der äußeren Ecke aus
+
+<Excerpt region="heads" />
+
+Die rechten Seiten tragen den Namen der Zeitschrift, die linken die Autorin und einen Kurztitel, jeweils mit der Pagina in der äußeren Ecke. Elemente der Kopfzeile behalten ihre physischen Seiten, daher wird die gerade Seite, die in dieser Bindung rechts liegt, an `top-right` verankert.
+
+## Varianten
+
+### Fußnoten durch den ganzen Artikel zählen
+
+Moderne arabische Zeitschriften zählen die Fußnoten oft pro Artikel statt pro Seite.
+
+```diff
+-  numbering: 'page', // from (١) again on every page, as Arabic journals number them
++  numbering: 'chapter',
+```
+
+### Nach Autor und Jahr zitieren
+
+```diff
+-  style: 'chicago-notes-bibliography', notes: 'footnote', locale: 'ar',
++  style: 'apa', locale: 'ar',
+```
+
+## Häufige Fehler
+
+- Die Interpunktion, die ein CSL-Stil schreibt, gehört dem Stil: Kommas, Semikolons und Anführungszeichen zwischen den Teilen einer Fußnote sind lateinisch, wie in الهاشمي, الحرف العربي. Daten und Zahlen kommen aus den Daten, daher tragen die arabischen Werke `issued: {literal: "٢٠١٩"}` und Fundstellen wie `[@hashimi2019, ٧٧]`; die lateinischen Werke behalten 0–9.
+- Eine Fußnote oder ein Verweis auf ein lateinisches Werk bleibt ein Absatz der arabischen Seite, von rechts gesetzt, und liest sich in seinem Inneren von links nach rechts: Die Engine setzt den Verweis als isolierten Abschnitt, sodass seine URL, seine Anführungszeichen und sein Schlusspunkt dort bleiben, wo er endet.

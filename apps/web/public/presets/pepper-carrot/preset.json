@@ -3,7 +3,7 @@
  "configVersion": 8,
  "id": "pepper-carrot",
  "name": "Pepper&Carrot · Pepper's Birthday Party",
- "description": "El episodio 8 del cómic de David Revoy en ocho idiomas: las viñetas originales sin texto, con los bocadillos y la rotulación que el motor compone a partir de las traducciones oficiales; la edición japonesa se rotula en vertical y, como la árabe, se lee de derecha a izquierda y se abre por la derecha · Episode 8 of David Revoy's webcomic in eight languages: the original text-free panels, with balloons and lettering the engine sets from the official translations; the Japanese edition is lettered vertically and, like the Arabic one, reads right to left and opens from the right",
+ "description": "El episodio 8 del cómic de David Revoy en nueve idiomas: las viñetas originales sin texto, con los bocadillos y la rotulación que el motor compone a partir de las traducciones oficiales; la edición japonesa se rotula en vertical y, como la árabe, se lee de derecha a izquierda y se abre por la derecha · Episode 8 of David Revoy's webcomic in nine languages: the original text-free panels, with balloons and lettering the engine sets from the official translations; the Japanese edition is lettered vertically and, like the Arabic one, reads right to left and opens from the right",
  "locale": "en",
  "locales": [
   "en",
@@ -11,6 +11,7 @@
   "ca",
   "fr",
   "pt-BR",
+  "de",
   "ja",
   "zh-Hans",
   "ar"
@@ -98,6 +99,20 @@
    {
     "title": "Créditos",
     "file": "chapters/pt-BR/02-credits.md"
+   }
+  ],
+  "de": [
+   {
+    "title": "Titelseite",
+    "file": "chapters/de/00-title.md"
+   },
+   {
+    "title": "Peppers Geburtstagsfeier",
+    "file": "chapters/de/01-episode-8.md"
+   },
+   {
+    "title": "Impressum",
+    "file": "chapters/de/02-credits.md"
    }
   ],
   "ja": [
@@ -985,6 +1000,35 @@
     {
      "id": "e08-cover",
      "altText": "Pepper, de braços erguidos de alegria, e Carrot diante de uma mesa baixa arrumada para uma festa: um bule, cupcakes e um bolo de aniversário com velas, sob varais de bandeirinhas."
+    }
+   ]
+  },
+  "de": {
+   "config": {
+    "locale": "de",
+    "resourceTypes": [
+     {
+      "id": "art",
+      "name": "Illustration",
+      "namePlural": "Illustrationen",
+      "shortLabel": "Illustration",
+      "captionPrefix": "",
+      "numberingTemplate": "",
+      "resetOn": "never",
+      "counterFormat": "decimal",
+      "defaultPlacement": {
+       "position": "auto",
+       "span": "page",
+       "width": 1,
+       "align": "center"
+      }
+     }
+    ]
+   },
+   "resources": [
+    {
+     "id": "e08-cover",
+     "altText": "Pepper, die Arme vor Freude hochgerissen, und Carrot an einem niedrigen, für ein Fest gedeckten Tisch: eine Teekanne, Muffins und ein Geburtstagskuchen mit Kerzen, darüber Wimpelketten."
     }
    ]
   },

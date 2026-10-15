@@ -1,0 +1,79 @@
+---
+title: "Ein Proteinartikel mit Methodenteil"
+summary: "Der AlphaFold-Artikel neu gesetzt auf A4: fette Zusammenfassung über die Seitenbreite, hochgestellte Zitate nach Nature, kleinere Methods mit Weiterzählung."
+plain: "Ein berühmter Biologieartikel, gekürzt und als Zeitschriftenaufsatz neu gesetzt. Der Methodenteil folgt dem Haupttext in kleinerer Schrift, und seine Literaturangaben zählen dort weiter, wo der Haupttext aufgehört hat."
+description: "Der AlphaFold-Artikel neu gesetzt in Postext: Zitate hochgestellt nach Nature, kleinere Methods mit fortlaufender Zählung, 34 Autoren, Abbildung aus PDB-Daten."
+question: "Wie setze ich die Methods kleiner hinter den Haupttext, mit Zitaten, die die Nummerierung fortsetzen?"
+aliases: ["Methodenteil", "Methods", "Nature-Stil", "hochgestellte Zitate", "Lebenswissenschaften", "Strukturbiologie", "computergestützte Biologie", "AlphaFold", "Proteinstruktur", "PDB", "pLDDT", "lange Autorenliste", "Zusammenfassungsabsatz", "Datenverfügbarkeit", "Codeverfügbarkeit", "Jumper et al. 2021"]
+pageNotes: { "1": "Seite 1: ein tiefblaues Band mit „ARTICLE · STRUCTURAL BIOLOGY“ in weißen Versalien, der zweizeilige Titel „Highly accurate protein structure prediction with AlphaFold“ in fetter Grotesk, alle 34 Autoren in kleiner Schrift mit hochgestellten Zugehörigkeitsnummern, eine Quellenzeile mit DOI und Lizenz, dann die Zusammenfassung fett über die Seitenbreite mit hochgestellten Zitaten 1–4 bis 15 und darunter „Fig. 1“ über die Seitenbreite: a, ein Balkendiagramm des medianen r.m.s.d.95, AlphaFold 0,96 und 1,5 Å gegen 2,8 und 3,5 Å für die nächstbeste Methode, mit gestrichelter Linie bei 1,4 Å; b, ein graues experimentelles Rückgrat des Targets T1049 mit der Spur des Modells darin in Blautönen und Gelb nach pLDDT. Fünf Zeilen zweispaltiger Text schließen die Seite.", "2": "Seite 2: die Einleitung endet, und die Abschnitte „The AlphaFold network“ und „Evoformer“ laufen in zwei Serifenspalten im Blocksatz, mit Grotesk-Überschriften und hochgestellten Zitatnummern.", "3": "Seite 3: „End-to-end structure prediction“ und die „Discussion“ in der linken Spalte; die „Discussion“ endet in der rechten Spalte, gefolgt von den Literaturangaben 1 bis 15 des Haupttextes unter einer kleinen blauen Überschrift.", "4": "Seite 4: Literaturangaben 15 bis 35, dann die „Methods“ unter einer größeren Überschrift in kleinerer Schrift, mit den Unterabschnitten „IPA“, „Inputs and data sources“ und „Inference regimen“ in Blau, „Table 1“ mit Inferenzzeiten und blauer Kopfzeile sowie dem Beginn von „Metrics“.", "5": "Seite 5: das Ende der „Methods“, „Data availability“ und „Code availability“, dann eine zweite Literaturliste, 36 bis 55, die zuerst in den Methods zitierten Werke, gefolgt von Danksagung, Zugehörigkeiten und einer Anmerkung zu dieser Ausgabe in kleiner Grotesk." }
+---
+
+## Was Sie setzen
+
+Fünf Seiten eines lebenswissenschaftlichen Zeitschriftenartikels auf A4: *Highly accurate protein structure prediction with AlphaFold* von Jumper et al., gekürzt aus Nature unter CC BY 4.0. Ein blaues Band eröffnet die erste Seite über dem Titel, alle 34 Autoren in 7,4 pt mit hochgestellten Zugehörigkeitsnummern und die Zusammenfassung fett über die Seitenbreite. Darunter reicht Fig. 1 über die Seite: ein Balkendiagramm der CASP14-Genauigkeiten, die der Text nennt, und das Rückgrat des Targets T1049, aus der PDB nachgezeichnet, mit dem AlphaFold-Modell darin, gefärbt nach Konfidenz. Der Text zitiert mit den hochgestellten Nummern von Nature. Der Haupttext schließt mit den Literaturangaben 1–35. Die Methods folgen in 8,2 pt, und ein Werk, das sie zum ersten Mal zitieren, erhält die nächste Nummer, sodass ihre eigene Liste wie in der Zeitschrift bei 36 beginnt.
+
+## Zubereitung
+
+### 1 · Zwei Literaturlisten, eine Nummerierung
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Zitate erhalten ihre Nummern in der Reihenfolge des ersten Zitats, Sie müssen also nichts tun, damit weitergezählt wird: jackhmmer, zuerst in den Methods zitiert, bekommt 36, während das Amber-Kraftfeld, früher im Haupttext zitiert, seine 30 behält. Die Listen stammen aus `:::bibliography{scope=new}`, das nur die Werke druckt, die keine frühere Liste gedruckt hat. Der Pen setzt denselben Block hinter die Discussion und hinter die Methods: Der erste setzt 1–35, der zweite 36–55, und Amber wird nicht noch einmal gedruckt. Die Überschrift der Methods ist eine Überschrift der Ebene 1 mit eigenem Format; ihr `bodyStyle` setzt den Abschnitt in 8,2 pt auf 10,8 pt, `breakBefore: { enabled: false }` hält ihn in der Spalte, und `runningChapter: false` hält die Kolumnentitel beim Titel des Artikels. Für Ihren eigenen Artikel fügen Sie Ihre exportierte Datei `.bib` in einen Block `:::references{format=bibtex}` ein, zitieren mit `[@key]` direkt nach dem Wort und ersetzen `nature` durch den Stil Ihrer Zeitschrift.
+
+### 2 · Ein Titelblock für 34 Autoren
+
+<Excerpt region="title" />
+
+Die Autorenliste ist ein einziges Überschriftenattribut, `authors="John Jumper^1,4^, Richard Evans^1,4^, …"`, gesetzt in Noto Sans zu 7,4 pt über die volle Satzbreite, wo 34 Namen fünf Zeilen belegen. `inlineMarks` stellt die Zugehörigkeitsnummern hoch. Die Zugehörigkeiten und der Hinweis auf gleichrangige Beiträge wandern ans Ende, unter *Author information*, wie Nature sie druckt, sodass die erste Seite Platz für Zusammenfassung und Abbildung behält. Kein Autor fällt weg: Der Kolumnentitel der linken Seiten kürzt die Liste auf *Jumper et al.*
+
+### 3 · Die Zusammenfassung über die Seitenbreite, Fig. 1 darunter
+
+<Excerpt region="resources" />
+
+Die Zusammenfassung ist ein Kasten mit `span: 'page'` ohne Rahmen, ihr Text in Noto Sans Halbfett. Fig. 1 folgt als `::resource{id="fig1"}`, und ihre Platzierung, `{ position: 'here', span: 'page' }`, setzt sie an dieser Stelle über beide Spalten; die beiden Textspalten beginnen unter ihrer Bildunterschrift. Die Bildunterschrift beginnt mit einem fetten Satz, wie die Legenden in Nature; das `captionPrefix` des Typs und der `labelSeparator` des Legendenstils lassen die Marke als *Fig. 1 |* erscheinen. Table 1 ist mit `position: 'here'` dort eingebettet, wo sie in den Methods steht, und bleibt in ihrer Spalte.
+
+### 4 · Ein Proteinrückgrat aus offenen Koordinaten
+
+<Excerpt region="art" />
+
+Die Koordinaten wurden einmal gelesen, als das Rezept geschrieben wurde, aus dem PDB-Eintrag 6Y4F (CC0) und aus dem Modell desselben Proteins in der AlphaFold Database (CC BY 4.0), über ihre Cα-Atome überlagert und auf die Hauptachsen des Experiments gedreht. Der Pen hält sie als drei kurze Arrays. Jede Spur ist eine Kette von Bézier-Segmenten durch die Cα-Positionen, von der fernsten zur nächsten gemalt, mit einem Papierhof, der Tiefe ohne Schattierung erzeugt. Die Farben des Modells sind die pLDDT-Bänder der AlphaFold Database, gelesen aus der B-Faktor-Spalte seiner Datei.
+
+### 5 · Griechische Buchstaben und Akzente im PDF
+
+Fontsource teilt jede Schrift nach Schriftsystem auf. `kitFonts(FONTS)` liest den übergebenen Text und lädt die latin-ext-Datei einer Schrift, wenn sie Ž oder Š setzt, und ihre greek-Datei, wenn sie α oder χ setzt; `fontsourceProvider` bettet dieselben Dateien anhand der Zeichen, die jede Schrift setzt, ins PDF ein. Cα, χ, Žídek und Šali brauchen keinen eigenen Code: Das Rezept übergibt das Markdown, das jeden Inhaltsplatz enthält, und den Schriftlieferanten des Kits.
+
+## Varianten
+
+### Die Methods in Textgröße halten
+
+Manche Zeitschriften setzen die Methods in derselben Schrift wie den Text; entfernen Sie das Textformat des Abschnitts und behalten Sie die Überschrift.
+
+```diff
+-  bodyStyle: { fontSize: pt(8.2), lineHeight: pt(SMALL) } };
++};
+```
+
+### In eckigen Klammern nummerieren
+
+Manche Zeitschriften desselben Fachs drucken [1] auf der Zeile.
+
+```diff
+-  style: 'nature', // raised 1–4, "Nature 577, 706–710 (2020)." entries
++  style: 'nature', marker: 'brackets',
+```
+
+### Eine Liste am Ende drucken
+
+Zeitschriften, die alle Literaturangaben hinter den Methods drucken, wie *Science*, behalten nur den zweiten Block.
+
+```diff
+-const markdown = [/* @content */ '', references, /* @content:methods */ '', references,
++const markdown = [/* @content */ '', /* @content:methods */ '', references,
+```
+
+### Die Vancouver-Liste verwenden
+
+Für eine medizinische Zeitschrift gehen Sie vom mitgelieferten NLM-Stil aus, wie der <RecipeLink slug="medical-article-vancouver">medizinische Fachartikel im Vancouver-Stil</RecipeLink>.
+
+## Häufige Fehler
+
+- Nature nennt bis zu fünf Autoren und kürzt eine längere Liste auf den ersten, gefolgt von *et al.* Wo die Liste des Artikels selbst das tut, schreiben Sie `and others` in den BibTeX-Eintrag (`{Senior, Andrew W. and others}`), und der Stil druckt *Senior, A. W. et al.*; in CSL-YAML beenden Sie die Liste mit `"others"`.
+- Das `bodyStyle` eines Überschriftenformats ändert Größe und Zeilenabstand des Textes, nicht das Grundlinienraster: Die Überschriften der Methods verwenden `snapToGrid: false`, sonst spränge die Zeile unter jeder von ihnen auf die nächste Zeile des Rasters des Haupttextes.

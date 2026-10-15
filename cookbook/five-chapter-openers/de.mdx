@@ -1,0 +1,80 @@
+---
+title: "Fünf Kapitelauftakte in einem Buch"
+summary: "Ein Auftakt auf Ebene 1 und vier im Markdown benannte Überschriftenstile; jeder tauscht die Akzentfarbe, manche ändern auch Ränder, Spalten oder Seitenzahlen."
+plain: "Ein kurzes Buch darüber, wie Kapitel beginnen können, in dem jedes Kapitel in einem anderen Stil anfängt. Es zeigt, wie ein Kapitel mit einer Einstellung eigene Farben, Ränder und Aufbau bekommt."
+description: "Fünf Kapitelauftakte in einem Postext-Buch: Romaninitiale, gerahmter Titel, gestapelter Plakattitel, Nummernbadge eines Handbuchs und Coda auf leerer Seite."
+question: "Wie gebe ich jedem Kapitel einen eigenen Auftakt, eine Farbe oder ein Foto und wähle ihn im Markdown aus?"
+aliases: ["Überschriftenstile", "Varianten von Kapitelauftakten", "Foto pro Kapitel", "Initiale", "Initiale im Kasten", "hochgestellte Initiale", "Nummernbadge", "gestapelter Titel", "Kartusche", "Abschnittspalette", "chapter opener", "apertura de capítulo"]
+pageNotes: { "1": "Kapitel eins, „The Voice“: eine kleine rote, gesperrte Dachzeile, ein leichter kursiver Titel, eine kurze rote Linie und ein erster Absatz, dessen fünfzeilige rote Initiale M auf Höhe der Versalien der ersten Zeile abschließt.", "2": "Das Kapitel läuft im Blocksatz aus der Lora weiter, unter dem Kolumnentitel des Buchs, Seitenzahl und Titel links.", "3": "Die letzte Seite des Kapitels: sieben Zeilen am Kopf der Seite, unter einem Kolumnentitel mit dem Kapiteltitel und der Seitenzahl rechts.", "4": "Kapitel zwei, „The Frame“: der Titel in einer cremefarbenen Kartusche aus einer kräftigen blauen Linie und einer Haarlinie, über einem blauen Fleuron, und ein erster Absatz mit einer dreizeiligen blauen Initiale.", "5": "Kapitel drei: „Say it out loud.“ auf drei Zeilen gestapelt in weißer Fraunces Black auf einem magentafarbenen Feld, das oben randabfallend ist, und darunter ein Absatz, dessen Initiale M weiß auf einem magentafarbenen Kasten steht.", "6": "Kapitel 4, „Number Everything“: dicktengleiche Kolumnentitel, eine kräftige Linie, ein oranges Nummernbadge neben einem fetten Grotesktitel und zwei Spalten im Flattersatz mit nummerierten Abschnitten.", "7": "Die Coda, „Leave Room“: eine graue Dachzeile und ein kleiner Titel auf halber Höhe einer leeren Seite, eine hochgestellte Initiale S, die über die erste Zeile hinausragt, und das Impressum." }
+---
+
+## Was Sie setzen
+
+*Five Ways to Begin* ist ein siebenseitiges Buch über Kapitelauftakte, 180 × 240 mm, und jedes Kapitel ist im Auftakt gesetzt, den es beschreibt. Kapitel eins hat den Auftakt eines Romans: eine gesperrte Dachzeile, ein leichter kursiver Titel und eine fünfzeilige rote Initiale, mit Kolumnentiteln auf den folgenden Seiten. Kapitel zwei setzt Titel und Fleuron in eine cremefarbene Kartusche aus zwei blauen Linien. Kapitel drei stapelt seinen Titel in weißer Fraunces Black auf einem magentafarbenen, randabfallenden Feld, über einer dicktengleichen Initiale, die negativ aus einem Kasten steht. Kapitel vier, das Handbuch, hat dicktengleiche Kolumnentitel, ein oranges Nummernbadge neben dem Titel und zwei Spalten aus der Geist. Die Coda setzt ihren Titel auf halbe Höhe einer leeren Seite, über eine hochgestellte Initiale. Kapitel eins verwendet den eigenen Auftakt der Ebene 1; die anderen vier nennen in ihrer Überschriftenzeile einen Überschriftenstil.
+
+## Zubereitung
+
+### 1 · Den eigenen Auftakt des Buchs an der Ebene festlegen
+
+<Excerpt region="literary" />
+
+Kapitel eins hat keinen Stil und nimmt deshalb die eigene Gestaltung der Ebene 1, von der jeder Stil ausgeht ([die kurze Antwort](#die-kurze-antwort) zeigt Ebene und Stile). Der erste Absatz des Kapitels steht im Markdown in einer Gruppe `:::paragraphs{style="lead"}`, einen Grad größer als der Text (12/17 pt gegenüber 10,8/14,5), und das `dropCap` der Ebene eröffnet ihn ([Initialen](/de/docs/configuration-text#initialen)): Das M steht auf der fünften Grundlinie, und ohne `fontSize` schließt seine Oberkante mit den Versalien der ersten Zeile ab, beide Versalhöhen aus Fraunces und Lora gemessen. Der Auftakt endet mit einem leeren Kasten, `room()`, 17 mm unter dem Titel, wo der Einstiegsabsatz beginnt; ein `:::space` unter dem Einstiegsabsatz lässt eine Zeile frei und beginnt den Text stumpf.
+
+### 2 · Den Titel in zwei Kästen rahmen
+
+<Excerpt region="framed" />
+
+Die Reihenfolge im Array ist die Zeichenreihenfolge, also kommen die Kästen zuerst und die Schrift obenauf; das Ornament ist ein Bildelement, das eine registrierte SVG-Ressource zeichnet, die nie nummeriert oder zitiert wird. Über ein Bildelement bekommt auch jedes Kapitel ein eigenes Foto: Seit postext 1.8 nimmt sein `resourceId` Platzhalter an, sodass ein Stil mit `resourceId: '{attr.photo}'` das Foto zeichnet, das jede Überschrift nennt, `# The Frame {style="framed" photo="lake"}`, so wie es die Gerichte der <RecipeLink slug="recipe-card">Rezeptkarte</RecipeLink> tun ([Bildelemente](/de/docs/configuration-page-layout#bildelemente)). Der Stil `framed` aus der kurzen Antwort setzt `palette`, um `accent` auf den Seiten dieses Kapitels blau zu färben, sodass Linien, Dachzeile und Seitenzahl am Fuß blau gedruckt werden, und seine `margins` zentrieren den Satzspiegel unter dem Rahmen. Das eigene `dropCap` des Stils nennt `col('accent')`, das die Palette ebenfalls blau färbt, sodass das dreizeilige L zum Rahmen passt.
+
+### 3 · Den Titel stapeln, die Initiale in einen Kasten setzen
+
+<Excerpt region="stacked" />
+
+Der Stapel steht im Markdown: `# Say it \\ out \\ loud.` bricht `{titleText}` an jedem `\\` um, während Kolumnentitel und PDF-Gliederung den Titel auf einer Zeile lesen ([Zeilenumbrüche in Titeln](/de/docs/document-format#zeilenumbrüche-in-titeln)). Das Feld hängt an der Oberkante des Anschnitts, in voller Breite und 130 mm tief, und der Einstiegsabsatz beginnt auf der ersten Rasterlinie 8 mm darunter (`TEXT_TOP`). Die Initiale im Kasten besteht aus zwei Teilen. Das `dropCap` des Stils setzt das M weiß über drei Zeilen des Einstiegsabsatzes, und der Auftakt zeichnet darunter einen magentafarbenen Kasten, platziert anhand von `TEXT_TOP`, dem Zeilenabstand des Einstiegsabsatzes und den Metriken der Geist Mono, sodass die Farbe über und unter dem M so breit ist wie seine Vor- und Nachbreite. Der Kasten nimmt im Auftakt keinen Platz ein (`reserve: false`); ein leerer Kasten `room` beendet den Auftakt dort, wo der Einstiegsabsatz beginnt.
+
+### 4 · Dem Handbuch ein Badge, zwei Spalten und eigene Kolumnentitel geben
+
+<Excerpt region="spec" />
+
+Das Badge ist ein Textelement mit Fläche und Innenabstand, aber ohne Breite, sodass seine Breite `{chapterNumber}` folgt, und der Titel steht `right-of` davon: Bei Kapitel 10 wächst das Badge um eine Ziffer, 5,5 mm, und der Titel rückt mit. Sein unterer Innenabstand ist 1 mm kleiner als der obere, weil der Zeilenkasten unter den Ziffern um so viel mehr Raum hat, sodass die 4 mittig sitzt. Im Stil `spec` setzt `layout` den Abschnitt zweispaltig, und das `span: 'page'` der Ebene zieht den Auftakt über beide Spalten. Seine `margins` verbreitern den Satzspiegel auf 144 mm, `bodyStyle` setzt die Geist im Flattersatz auf das 14,5-pt-Raster des Buchs, `header` ersetzt die Kolumnentitel des Buchs, und ein leeres `footer` lässt die Seitenzahl weg.
+
+### 5 · Der Coda Raum lassen
+
+<Excerpt region="quiet" />
+
+Die Dachzeile hängt 92 mm unter der Oberkante des Satzspiegels, und die hochgestellte Initiale ist die einzeilige Initiale des Stils `quiet`: Ihr Fuß steht auf der ersten Grundlinie, und in 46 pt ragt sie in den Weißraum darüber, statt in den Absatz einzusinken. Der Absatz hält diesen Überstand in ganzen Zeilen über sich frei, deshalb ist der `room` des Auftakts unter dem Titel nur 3 mm hoch. Im Stil `quiet` verengen `margins` die Satzbreite auf 106 mm, `bodyStyle` setzt den Text im Flattersatz in 12,5/17,5 pt, `footer` tauscht die Seitenzahl am Fuß gegen eine kleine an der Außenecke, und `palette` färbt die Dachzeile grau. Nichts auf dieser Seite druckt eine Kapitelnummer, deshalb zeigte sich `numbered: false` nur an einem Kapitel nach der Coda, das trotzdem das fünfte wäre.
+
+## Varianten
+
+### Jedes Kapitel auf eine rechte Seite setzen
+
+Mit `'odd'` beginnt jedes Kapitel auf einer rechten Seite, und die Kapitel zwei bis fünf bekommen jeweils eine leere linke Seite davor, sodass das Buch von 7 auf 11 Seiten wächst.
+
+```diff
+-  breakBefore: { enabled: true, parity: 'any' },
++  breakBefore: { enabled: true, parity: 'odd' },
+```
+
+### Die Initiale über drei Zeilen setzen
+
+Ohne `fontSize` folgt die Größe der Zeilenzahl, sodass auch eine dreizeilige Initiale mit den Versalien der ersten Zeile abschließt.
+
+```diff
+-  dropCap: { lines: 5, fontFamily: 'Fraunces', fontWeight: 400, color: col('accent'),
++  dropCap: { lines: 3, fontFamily: 'Fraunces', fontWeight: 400, color: col('accent'),
+```
+
+### Kapitälchen nach der Initiale
+
+`leadIn` setzt die ersten Wörter nach dem Buchstaben in Kapitälchen, wie viele Romane es tun; `words: 'line'` nimmt die ganze erste Zeile.
+
+```diff
+-    gap: mm(2.5) } });
++    gap: mm(2.5), leadIn: { words: 'line' } } });
+```
+
+## Häufige Fehler
+
+- Die Einstiegsabsätze stehen im Flattersatz wie im Auftakt eines Magazins; ein Einstiegsabsatz im Blocksatz neben einer fünfzeiligen Initiale kann auf einer Zeile mit wenigen Wörtern seine Wortabstände weit öffnen.
+- Der magentafarbene Kasten ist von Hand eingepasst: auf Lora 12/17, auf das M der Geist Mono und auf die Grundlinie der Zeile, 0,8 tief in ihrem Zeilenkasten (`BASE`). Ändern Sie Schrift, Größe oder Zeilenabstand des Einstiegsabsatzes, den Buchstaben, die Zeilenzahl oder die Tiefe des Felds, prüfen Sie den Kasten erneut an den Versalien der ersten Zeile.
+- Titel drehen sich nie und laufen nie vertikal: Gestaltungstext ist immer horizontal. Stapeln Sie die Wörter stattdessen mit `\\`, wie es Kapitel drei tut.

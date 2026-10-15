@@ -31,10 +31,10 @@ guide needs a fix.
 - **Permanent.** A recipe has a catalogue number (Nº) that is never reused and an English
   slug that never changes (renames go through `formerSlugs`).
 - **Bilingual where it can be.** Samples come in English and, most of them, Spanish; their
-  write-ups are required. The site is also in Catalan, French, Brazilian Portuguese, Simplified
-  Chinese, Japanese and Arabic: `ca.mdx`, `fr.mdx`, `pt.mdx`, `zh.mdx`, `ja.mdx` and `ar.mdx` translate
-  the Spanish and English write-ups, and their pages show the Spanish (Catalan), the English (French,
-  Portuguese) or the
+  write-ups are required. The site is also in Catalan, French, German, Brazilian Portuguese,
+  Simplified Chinese, Japanese and Arabic: `ca.mdx`, `fr.mdx`, `de.mdx`, `pt.mdx`, `zh.mdx`, `ja.mdx`
+  and `ar.mdx` translate the Spanish and English write-ups, and their pages show the Spanish (Catalan),
+  the English (French, German, Portuguese) or the
   first (Chinese, Japanese, Arabic) sample. A Chinese,
   Japanese or Arabic book is written in its own language in both samples (§6).
 
@@ -82,7 +82,7 @@ cookbook/
 └── <slug>/                   one folder per recipe; the folder name is the slug
     ├── recipe.json           metadata (§4)
     ├── en.mdx  es.mdx        the write-ups (§9); both are required
-    ├── ca.mdx  fr.mdx  pt.mdx  zh.mdx  ar.mdx  ja.mdx  their Catalan, French, Portuguese, Chinese, Arabic and Japanese translations (the lint asks for them)
+    ├── ca.mdx  fr.mdx  de.mdx  pt.mdx  zh.mdx  ar.mdx  ja.mdx  their Catalan, French, German, Portuguese, Chinese, Arabic and Japanese translations (the lint asks for them)
     ├── script.js             the pen, with markers (§5)
     ├── content.en.md         the sample document, one file per sample language
     ├── [content.es.md]

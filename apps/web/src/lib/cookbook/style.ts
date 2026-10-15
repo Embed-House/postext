@@ -41,6 +41,10 @@ const ptRule = (source: string, label = source): Rule => rule(`(?<!\\p{L})(?:${s
 /** A French phrase as a whole word or words, for the same reason. */
 const frRule = ptRule;
 
+/** A German phrase as a whole word or words: `\b` misses "überall" at the
+ *  umlaut, and German compounds would otherwise match inside a longer word. */
+const deRule = ptRule;
+
 const HARD: Record<Locale, Rule[]> = {
   en: [
     rule("\\bdelv(e|es|ed|ing)\\b", "delve"),
@@ -136,6 +140,21 @@ const HARD: Record<Locale, Rule[]> = {
     frRule("une (large |vaste )?(palette|gamme|panoplie) de (possibilités|options|outils|styles)", "une palette de possibilités"),
     frRule("tirer (le meilleur )?parti au maximum|tirer le meilleur parti", "tirer le meilleur parti"),
   ],
+  de: [
+    deRule("(tauchen|tauchen wir|taucht) (tief )?(ein|in)|eintauchen in", "tauchen wir ein"),
+    deRule("in der heutigen (digitalen |modernen |schnelllebigen )?(Welt|Zeit)", "in der heutigen Welt"),
+    deRule("sich (ständig|stetig) (weiter)?entwickelnd(e|en|er|es)?|im digitalen Zeitalter", "sich ständig weiterentwickelnd"),
+    deRule("mühelos(e|en|er|es)?|nahtlos(e|en|er|es)?", "mühelos / nahtlos"),
+    deRule("(das|ihr|sein|Ihr) (volle[sn]? )?Potenzial (entfalten|ausschöpfen|freisetzen)", "das volle Potenzial entfalten"),
+    deRule("(ein )?Zeugnis (für|von)", "ein Zeugnis für"),
+    deRule("spiel(t|en|en eine) (eine )?(entscheidende|zentrale|wichtige|wesentliche|Schlüssel)[a-z]* Rolle", "spielt eine entscheidende Rolle"),
+    deRule("es ist (wichtig|wesentlich|erwähnenswert)(,)? (zu beachten|hervorzuheben|zu betonen)", "es ist wichtig zu beachten"),
+    deRule("zusammenfassend (lässt sich sagen|gesagt)|abschließend lässt sich", "zusammenfassend lässt sich sagen"),
+    deRule("ein (wahres|echtes) Juwel", "ein wahres Juwel"),
+    deRule("auf die nächste (Stufe|Ebene)", "auf die nächste Stufe heben"),
+    deRule("eine (breite|vielfältige|große) (Palette|Vielfalt) (an|von)", "eine breite Palette an"),
+    deRule("das Beste (aus [^.!?]{1,40})?herausholen", "das Beste herausholen"),
+  ],
   // HARD_ZH, below, checks Chinese prose in every locale.
   zh: [],
   ar: [
@@ -223,6 +242,17 @@ const SOFT: Record<Locale, Rule[]> = {
     frRule("un voyage", "un voyage"),
     frRule("découvrez (comment|tout)", "découvrez comment"),
     frRule("ce n['’]est pas (seulement|simplement|qu['’])un", "ce n'est pas seulement un"),
+  ],
+  de: [
+    deRule("faszinierend(e|en|er|es)?|fesselnd(e|en|er|es)?|atemberaubend(e|en|er|es)?|akribisch(e|en|er|es)?", "faszinierend/akribisch"),
+    deRule("entscheidend(e|en|er|es)?|robust(e|en|er|es)?|hochmodern(e|en|er|es)?|bahnbrechend(e|en|er|es)?", "entscheidend/robust/hochmodern"),
+    deRule("ohne (jeden|jeglichen|den geringsten) Zweifel", "ohne jeden Zweifel"),
+    deRule("nicht nur[^.!?]{1,80}sondern auch", "nicht nur … sondern auch"),
+    rule("(Das|Die) (Ergebnis|Lösung|Antwort|Geheimnis|Trick)[\\s\\u00a0\\u202f]?\\?", "Das Ergebnis? (Enthüllung)"),
+    rule("(^|[.!?]\\s+)Stellen Sie sich vor\\b", "Stellen Sie sich vor …"),
+    deRule("im Herzen (von|des|der)|die Kunst (des|der)|die Magie (des|der)", "im Herzen von / die Kunst des"),
+    deRule("eine Reise (durch|in)", "eine Reise"),
+    deRule("entdecken Sie,? wie", "Entdecken Sie, wie"),
   ],
   // SOFT_ZH, below, checks Chinese prose in every locale.
   zh: [],

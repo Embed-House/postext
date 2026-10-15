@@ -1,0 +1,56 @@
+---
+title: "Eine Comicseite über eine Doppelseite"
+summary: "Ein :::page mit dem Flag spread legt eine Aufteilung über zwei Seiten: Ein Panorama läuft über den Bund, die Reihe darunter teilt sich am Falz."
+plain: "Ein Comic, über zwei gegenüberliegende Seiten gelegt, als wären sie eine: Ein breites Bild eines vollen Markts läuft über die Buchmitte, darunter stehen drei Panels."
+description: "Comic-Doppelseite in Postext: eine Aufteilung über beide Seiten, ein Panorama mit 1.900 px über den Bund, die untere Reihe am Falz geteilt, in neun Sprachen."
+question: "Wie lege ich eine Comicseite über eine Doppelseite?"
+aliases: ["Doppelseite", "doppelseitiges Bild", "Panorama", "Splash über zwei Seiten", "doble página", "見開き", "跨页", "spread", "Comic-Doppelseite", "comic spread", "pageIndexOffset"]
+---
+
+## Was Sie setzen
+
+Die zweite Geschichte des Albums aus <RecipeLink slug="tebeo-album-page">Nº 152</RecipeLink>, *¡Abuelo!*, erzählt über zwei gegenüberliegende Seiten. Ein Samstag im Dezember, der Markt ist voll; Lola verliert ihren Großvater im Gedränge. Die obere Hälfte der Doppelseite ist ein einziges Panorama, 432 mm breit: Lola, winzig, ganz links, Paco auf der Suche ganz rechts, und der Gang des Markts läuft zwischen ihnen in den Falz. Darunter drei Panels: Lola allein zwischen den Beinen, Paco pfeifend auf einer Obstkiste, das Wiedersehen mit seiner Baskenmütze in der Luft. Die Aufteilung ist einmal für beide Seiten geschrieben, sodass das Panorama über den Bund läuft und der Zwischenraum der unteren Reihe auf den Falz fällt. Spanisch ist das Original; die englische, katalanische, chinesische, arabische, japanische, portugiesische, französische und deutsche Ausgabe beschriften dieselbe Doppelseite.
+
+## Zubereitung
+
+### 1 · Eine Aufteilung über beide Seiten
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). Der ganze Comic ist eine Direktive mit dem Flag `spread`:
+
+```md
+:::page{spread split="55 / * [25 | 25 | *]"}
+::panel{art=ds1}
+caption: Un sábado de diciembre, el mercado estaba hasta los topes.
+lola: ¿Abuelo?
+paco{shout}: ¿Lola? ¡Lolaaa!
+```
+
+Der Rahmen reicht vom Außensteg der linken bis zu dem der rechten Seite; die Bundstege fallen weg. Die erste Reihe, 55 % der Höhe, ist ein einziges Panel über den Bund. In der zweiten setzt `25 | 25 | *` ihre erste Linie auf 25 % und ihre zweite auf 50 %, den Bund selbst: zwei quadratische Panels auf der linken Seite, das Wiedersehen auf der rechten. Eine Doppelseite beginnt auf einer geraden Seite, und Seite 1 eines Dokuments ist eine rechte Seite, daher übergibt der Build `continuation: { pageIndexOffset: 1 }`: Diese Episode setzt das Album auf Seite 2 fort, und keine Vakatseite geht ihr voraus.
+
+### 2 · Ein Panorama, groß genug für zwei Seiten
+
+<Excerpt region="art" />
+
+Das Panorama ist das einzige Bild, das über den Falz gedruckt wird, 432 × 144 mm, daher wird es mit 1.900 px (380 KB) ausgeliefert; die anderen drei haben 1.000–1.200 px. Sein Sicherheitsbereich ist ein Band über fast die ganze Breite, und seine zwei Sprecher stehen an den Rändern, bei 6 % und 92 % der Breite, weit weg vom Bund, wo die Bindung eine Sprechblase verschlucken würde. Das Bild ist so gezeichnet, dass die Mitte frei von Gesichtern bleibt: Der Gang des Markts läuft in den Falz. Eine Menge ist voller Gesichter, die nichts sagen: Der Fischhändler hinter Lola ist in `faces` markiert, der Liste der Gesichter von Personen ohne Text, sodass ihre erste Sprechblase neben ihm steht und nie auf seinem Gesicht oder seiner Mütze, und die japanische Ausgabe heftet ihre Spalte dort an (`at="2.8% 37%"`).
+
+### 3 · Die Sprechblasen des Albums
+
+<Excerpt region="balloons" />
+
+Die Stile der Sprechblasen sind die von Nº 152: weiße Sprechblasen, blassgelbe Textkästen, ein Zacken für Pacos Ruf, ein gestrichelter Umriss für Lolas Flüstern und der Pfiff in der Geräuschschrift des Albums, Bangers in den lateinischen Ausgaben. `cast` gibt PDF und EPUB die Namen, die sie vor jeder Zeile vorlesen.
+
+## Varianten
+
+### Das Buch mit der Doppelseite beginnen
+
+Lassen Sie die Fortsetzung weg, und die Engine lässt Seite 1 leer (Rolle `blank`), sodass die Doppelseite trotzdem auf die Seiten 2 und 3 fällt.
+
+```diff
+-const continuation = { pageIndexOffset: 1, pageNumbering: { startAt: 2 } };
++const continuation = {};
+```
+
+## Häufige Fehler
+
+- Sprechblasen halten sich aus einem Band von 8 mm um den Bund heraus, angeheftete eingeschlossen: Ein Sprecher, der auf dem Falz steht, bekommt eine zur Seite geschobene Sprechblase. Halten Sie die Sprecher eines Panels, das über den Bund läuft, von seiner Mitte fern.
+- Eine Sprechblase meidet zwei Figuren, deren Gesichter sich berühren, bei einer Umarmung oder einem Kampf, auch wenn ihr eigener Sprecher darunter ist. In der japanischen und der arabischen Ausgabe liest sich die Doppelseite von rechts, das Panel mit dem Wiedersehen wandert auf die linke Seite, und die fliegende Baskenmütze nimmt dessen obere rechte Ecke ein; Pacos zwei Sprechblasen stehen über dem Markt neben seinem Kopf, nicht über der Umarmung. Markieren Sie beide Gesichter in der Zeichnung (`face`), damit die Engine sieht, dass sie sich berühren.

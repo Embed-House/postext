@@ -1,0 +1,551 @@
+{/* docs/comics-en.mdx */}
+
+export const metadata = {
+  title: 'Comics',
+  sidebarTitle: 'Comics',
+  description: 'Wie Postext Comics und Manga aus Markdown setzt: Comicseiten, die ein Teilungsbaum zerschneidet, Panelbilder, die um ihren Sicherheitsbereich zugeschnitten werden, Lettering aus einem Skript (Rede, Gedanke, Flüstern, Schrei, Funk, Textkästen, Soundeffekte), Sprechblasenstile, Sprecheranker auf den Bildern, Strips im Text, Doppelseiten, Leserichtung von rechts nach links und senkrechtes Lettering, Übersetzungen sowie die Ausgaben Canvas, PDF, HTML und EPUB',
+  lang: 'de',
+  lastUpdated: '2026-10-07',
+  readingTime: '25 min',
+  order: 18,
+  plainSummary: "Diese Seite erklärt, wie Sie mit Postext einen Comic machen. Die Bilder sind die Panels, und alles, was die Figuren sagen, denken oder hören, steht als Text in der Markdown-Datei. Postext ordnet die Panels auf der Seite an und zeichnet die Sprechblasen, Textkästen und Soundeffekte selbst um die Wörter herum. Um den Comic zu übersetzen, schreiben Sie nur die Wörter neu, und Postext lettert die neue Sprache von Grund auf: Japanisch in Spalten, Arabisch von rechts nach links. Außerdem geht es um Comicstrips in einem Buch, Seiten über zwei gegenüberliegende Seiten, die Ausgaben und die Grenzen, die es noch gibt.",
+};
+
+# Comics
+
+**Die Bilder sind die Panels; alles Gesagte, Gedachte, Erzählte oder Gehörte ist Text im Markdown.**
+
+Ein Comic besteht in Postext aus einer Reihe von Bildern und einem Skript. Die Bilder sind gewöhnliche Bitmap- oder SVG-Ressourcen, ohne Lettering gezeichnet. Das Skript steht im Markdown des Kapitels: Ein `:::page`-Block zerschneidet eine Seite in Panels, gibt jedem Panel sein Bild und führt Zeile für Zeile die Sprechblasen, Textkästen und Soundeffekte dieses Panels auf. Postext ordnet die Panels an, schneidet jedes Bild auf seine Zelle zu, ohne in das Wesentliche zu schneiden, setzt den Text in der Lettering-Schrift des Buchs in einer einzigen Größe, zeichnet eine Sprechblase darum, richtet den Dorn (die Spitze, die zur sprechenden Figur zeigt) auf den Sprecher und platziert die Sprechblasen in Lesereihenfolge dort, wo sie kein Gesicht verdecken. Eine Übersetzung ist eine weitere Markdown-Datei mit denselben Panels und anderen Wörtern; Postext lettert sie von Grund auf neu, für Japanisch in Spalten und für Arabisch von rechts nach links.
+
+Comics sind optional: Ein Dokument ohne `:::page` oder `:::strip` wird genau wie zuvor umbrochen. Die Einstellungen stehen im [Abschnitt `comics` der Konfiguration](/de/docs/configuration-comics#comics), und die Auszeichnung ist in [Dokumentformat › Comics](/de/docs/document-format#comics) zusammengefasst.
+
+## Comicseiten
+
+Ein `:::page`-Block ist eine Comicseite. Er beginnt mit einer Zeile `:::page{…}`, enthält pro Panel eine Zeile `::panel`, auf die jeweils das Skript dieses Panels folgt, und endet mit einem einzelnen `:::`:
+
+```md
+:::page{split="30 [30 | 20 | *] / *" gutter=4mm}
+::panel{art=lh-arrive}
+caption: Every summer, Maya spent a week at the lighthouse.
+maya: Grandpa! I'm here!
+::panel{art=lh-radio}
+tomas: Just in time. The radio's gone deaf,
+tomas: and there's a storm on the way.
+::panel{art=lh-maya}
+maya{thought}: That valve looks loose…
+::panel{art=lh-beam bleed}
+sfx{rotate=-8}: KRAK
+tomas{shout}: Hold on to the rail!
+:::
+```
+
+Der Block beginnt immer auf einer neuen Seite und belegt sie ganz. Der Text nach dem Ende des Direktivenblocks beginnt auf der nächsten Seite; zwei `:::page`-Blöcke hintereinander ergeben also zwei Comicseiten, und ein `:::pagebreak` dazwischen fügt keine Seite hinzu. Die Engine liest den Inhalt selbst, Zeile für Zeile, so wie sie `:::verse` liest: Markdown-Blöcke, Container und andere Direktiven werden darin nicht erkannt, und `<!-- comments -->` werden ignoriert, auch über mehrere Zeilen.
+
+Die Rolle der Seite ist `'comic'` (`VDTPage.role`). Sie trägt keine Kolumnentitel und keine Pagina, da eine Comicseite ganz aus Panels besteht, zählt aber bei der Seitennummerierung mit; `comics.runningHeads: true` druckt sie. Die Panels werden aus dem **Rahmen** geschnitten, das ist der Textbereich der Seite innerhalb ihrer Ränder, es sei denn, `comics.frame.margins` gibt Comicseiten eigene Ränder.
+
+Die Attribute der öffnenden Zeile:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Attribut</th>
+      <th>Wirkung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>split="…"</code></td><td>Wie der Rahmen in Zellen geschnitten wird (siehe <a href="#die-seite-aufteilen">Die Seite aufteilen</a>). Ohne Angabe werden die Panels in Reihen gleicher Höhe gestapelt.</td></tr>
+    <tr><td><code>gutter=4mm</code>, <code>gutter="4mm 2mm"</code></td><td>Der Zwischenraum zwischen den Reihen und, wenn ein zweiter Wert angegeben ist, zwischen nebeneinanderstehenden Panels. Eine bloße Zahl gilt in Millimetern. Ohne Angabe: <code>comics.gutter</code> (4 mm und 2 mm).</td></tr>
+    <tr><td><code>style=…</code></td><td>Ein benannter Panelstil für jedes Panel der Seite (<code>comics.panelStyles</code>).</td></tr>
+    <tr><td><code>bleed</code></td><td>Jedes Panel, das den Rahmen berührt, läuft bis zum Endformat und in den Anschnitt hinaus.</td></tr>
+    <tr><td><code>direction=rtl</code>, <code>dir=ltr</code></td><td>Die Leserichtung dieser Seite, unabhängig von der Konfiguration (siehe <a href="#leserichtung">Leserichtung</a>).</td></tr>
+    <tr><td><code>spread</code></td><td>Die Seite über zwei gegenüberliegende Seiten legen (siehe <a href="#doppelseiten">Doppelseiten</a>).</td></tr>
+  </tbody>
+</table>
+
+## Die Seite aufteilen
+
+Das Attribut `split` beschreibt die Seite als Baum von Schnitten. Eine durch `/` getrennte Liste von Größen stapelt Zellen von oben nach unten (Reihen); eine durch `|` getrennte Liste stellt sie nebeneinander, beginnend auf der Seite, von der aus die Seite gelesen wird. Eine Größe mit einer nachfolgenden Liste in eckigen Klammern schneidet diese Zelle erneut auf der anderen Achse. Die Seite aus dem Beispiel oben, `30 [30 | 20 | *] / *`, ist eine Reihe mit 30 % der Rahmenhöhe, geschnitten in Panels mit 30 % und 20 % ihrer Breite und ein drittes, das den Rest einnimmt, über einer zweiten Reihe, die den Rest der Seite einnimmt:
+
+<Illustration name="ComicSplit" data='{"title": "Die Teilung 30 [30 | 20 | *] / *", "desc": "Ein Seitenrahmen, geschnitten durch die Teilung 30 [30 | 20 | *] / *. Eine erste Reihe nimmt 30 % der Höhe ein und ist in drei Panels geschnitten: 30 % der Breite, 20 % und der Rest. Eine zweite Reihe darunter nimmt den Rest der Seite als ein Panel ein. Die Zwischenräume liegen über den Teilungslinien. Neben der Seite ist die Teilung als Baum gezeichnet: eine Liste von Reihen mit zwei Einträgen; der erste enthält eine Liste von drei Spalten in eckigen Klammern. Die Blätter sind die Panels 1 bis 4 in Lesereihenfolge.", "caption": "Größen sind Prozentwerte der übergeordneten Zelle; * nimmt, was übrig bleibt. Die Panels sind in Lesereihenfolge nummeriert, der Reihenfolge des Baums.", "split": "30 [30 | 20 | *] / *", "rows": "/ Reihen, von oben nach unten", "columns": "| Spalten, von der Anfangsseite", "rest": "* der Rest", "order": "Panels in Lesereihenfolge", "gutter": "Zwischenraum"}' />
+
+Die vollständige Grammatik:
+
+```
+split := list
+list  := item ( "/" item )*  |  item ( "|" item )*
+item  := size [ "[" list "]" ]
+size  := number ["%"] [ "~" number ["%"] ]  |  "*"  |  (nothing)
+```
+
+- **Größen** sind Prozentwerte der übergeordneten Zelle entlang der Achse der Liste; `30` und `30%` sind dasselbe. Ein `*` oder eine leere Größe erhält einen gleichen Anteil dessen, was die angegebenen Größen übrig lassen. Der letzte Eintrag einer Liste reicht immer bis zum Ende, egal welche Größe er angibt.
+- **Ein Trennzeichen pro Liste.** `/` und `|` in derselben Liste zu mischen, eine nicht geschlossene `[` oder eine Liste in Klammern auf der eigenen Achse ihres Elternteils ist ein Syntaxfehler (`comicSplitSyntax`): Der lesbare Teil wird verwendet.
+- **Zu viel.** Größen, die zusammen mehr als 100 % ergeben, werden so verkleinert, dass jedes `*` 5 % behält, und die Seite meldet `comicSplitOverflow`.
+- **Lesereihenfolge** ist die Reihenfolge des Baums: Reihen von oben nach unten und innerhalb einer Reihe die Panels von der Anfangsseite aus. Die Zeilen `::panel` füllen die Zellen in dieser Reihenfolge. Eine Seite mit mehr Panels als Zellen lässt die überzähligen Panels weg; eine mit weniger lässt die letzten Zellen leer (`comicPanelCount`, nur gemeldet, wenn ein `split` angegeben ist).
+
+Einige Teilungen:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '260px' }}>Teilung</th>
+      <th>Seite</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&#42;</code></td><td>Eine Splash-Page: ein einziges Panel.</td></tr>
+    <tr><td><code>33 / 33 / &#42;</code></td><td>Drei Reihen.</td></tr>
+    <tr><td><code>&#42; / &#42; / &#42; / &#42;</code></td><td>Vier gleiche Reihen, das Yonkoma eines Gag-Strips mit vier Panels.</td></tr>
+    <tr><td><code>50 [&#42; | &#42;] / 50 [&#42; | &#42; | &#42;]</code></td><td>Zwei Panels über drei.</td></tr>
+    <tr><td><code>30 / 35 [&#42; | &#42; | &#42;] / &#42;</code></td><td>Ein breites Panel, drei in einer Reihe, ein breites Panel.</td></tr>
+    <tr><td><code>60 | &#42; [50 / &#42;]</code></td><td>Ein hohes Panel auf der Anfangsseite und zwei gestapelte daneben.</td></tr>
+    <tr><td><code>&#42; [40&#126;55 | &#42;] / 35</code></td><td>Eine Actionreihe, von einer schrägen Linie geschnitten, über einer Reihe von 35 % Höhe.</td></tr>
+  </tbody>
+</table>
+
+### Schräge Schnitte
+
+Eine als `a~b` geschriebene Größe ergibt eine schräge Linie: Die ferne Kante der Zelle verläuft von `a` % am Anfang der Querachse bis `b` % an ihrem anderen Ende. Bei nebeneinanderstehenden Panels ist der Anfang oben, `40~55 | *` zieht also eine Linie von 40 % der Breite oben bis 55 % unten; bei Reihen ist der Anfang die Seite, von der aus die Seite gelesen wird. Die Größen werden an jedem Ende getrennt addiert, und die Zellen bleiben konvexe Polygone. Abgerundete Ecken gelten nur für rechteckige Panels; ein schräges Panel behält spitze Ecken.
+
+### Zwischenräume
+
+Der Zwischenraum liegt über jeder Teilungslinie, zur Hälfte auf jeder Seite, sodass eine bei 30 % angegebene Linie genau bei 30 % ihrer Zelle liegt. Schräge Linien behalten den Zwischenraum ihrer Achse, quer zur Linie gemessen. Die Standardwerte folgen der üblichen Seite: 4 mm zwischen Reihen und 2 mm zwischen den Panels einer Reihe (`comics.gutter.horizontal` und `vertical` oder das Attribut `gutter` der Seite).
+
+### Anschnitt
+
+Ein angeschnittenes Panel läuft über den Rahmen hinaus: Jede seiner Seiten, die den Rahmen berührt, wird bis zum Endformat hinausgeschoben und, wenn die Seite einen hat, bis in den Anschnitt dahinter (`page.cutLines.bleed`). Das Attribut `bleed` der Seite lässt jedes Panel anschneiden; das eigene `bleed` eines Panels nur dieses, `bleed="top start"` nur diese Seiten (`top`, `bottom`, `start`, `end`, `left`, `right`), und `bleed=false` unterbindet es. Ein Panelstil mit `bleed: true` lässt seine Panels anschneiden.
+
+### Innenabstand und eingesetzte Panels
+
+`pad` macht ein Panel kleiner als seine Zelle: ein bis vier Werte in der Reihenfolge von CSS-Rändern mit logischen Seiten (oben, Ende, unten, Anfang), jeweils eine Länge oder ein Prozentwert der Zelle. `::panel{art=x pad="0 15%"}` ergibt ein Panel, das schmaler ist als seine Reihe und darin zentriert steht.
+
+Ein Panel mit `inset="x y w h"` belegt keine Zelle: Es wird über das Panel davor gelegt, an dieser Position und in dieser Größe in Prozent der Box dieses Panels, etwa als kleines Porträt in einer Ecke oder als Nahaufnahme über einer Totalen. Sein Skript wird darin gelettert.
+
+```md
+:::page{split="*"}
+::panel{art=storm-wide}
+caption{at=bottom-start}: The storm broke at midnight.
+::panel{art=maya-window inset="62% 6% 32% 30%"}
+maya{whisper}: Grandpa?
+:::
+```
+
+## Panels und Bilder
+
+Eine Zeile `::panel{…}` beginnt ein Panel; sein Skript reicht bis zur nächsten Zeile `::panel` oder bis zum Ende des Direktivenblocks. Ein Panel ohne `art` wird leer in seiner Hintergrundfarbe gezeichnet; so entsteht ein Panel nur mit Text. Text vor dem ersten `::panel` wird als Textkasten des ersten Panels gelettert und als `comicStrayText` gemeldet.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attribut</th>
+      <th>Wirkung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>art=&lt;id&gt;</code></td><td>Das Bild des Panels: die ID einer Bitmap- oder SVG-Ressource. Eine unbekannte ID lässt das Panel leer und meldet <code>comicUnknownArt</code>.</td></tr>
+    <tr><td><code>fit=cover</code>, <code>fit=contain</code></td><td><code>cover</code> schneidet das Bild so zu, dass es die Zelle füllt, nie in seinen Sicherheitsbereich hinein; <code>contain</code> zeigt es ganz, mit Streifen im Panelhintergrund. Ohne Angabe: der Wert des Panelstils (<code>cover</code>).</td></tr>
+    <tr><td><code>focus="70% 40%"</code></td><td>Der Punkt des Bilds, der zentriert bleiben soll, wo der Sicherheitsbereich Spielraum lässt.</td></tr>
+    <tr><td><code>style=…</code></td><td>Ein benannter Panelstil für dieses Panel.</td></tr>
+    <tr><td><code>border=none</code>, <code>border=0.5mm</code></td><td>Kein Rahmen oder ein Rahmen dieser Breite.</td></tr>
+    <tr><td><code>bg=#1b1b2f</code></td><td>Der Panelhintergrund: eine Farbe, eine Paletten-ID oder <code>none</code>.</td></tr>
+    <tr><td><code>bleed</code>, <code>bleed="top start"</code>, <code>bleed=false</code></td><td>Siehe <a href="#anschnitt">Anschnitt</a>.</td></tr>
+    <tr><td><code>pad="…"</code></td><td>Siehe <a href="#innenabstand-und-eingesetzte-panels">Innenabstand und eingesetzte Panels</a>.</td></tr>
+    <tr><td><code>inset="x y w h"</code></td><td>Dieses Panel über das vorige legen, statt ihm eine Zelle zu geben.</td></tr>
+    <tr><td><code>pop=&lt;id&gt;</code></td><td>Ein Freisteller, der über den Rahmen gezeichnet wird (siehe <a href="#herausragende-bildteile">Herausragende Bildteile</a>).</td></tr>
+    <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Das Bild dieses Panels spiegeln oder es wie gezeichnet lassen, wenn die Seite ihre Bilder spiegelt (siehe <a href="#leserichtung">Leserichtung</a>).</td></tr>
+    <tr><td><code>alt="…"</code></td><td>Der Alternativtext des Panels für getaggtes PDF, HTML und EPUB. Ohne Angabe: der <code>altText</code> der Ressource.</td></tr>
+    <tr><td><code>id=…</code></td><td>Eine ID für das Panel, die die HTML- und EPUB-Ausgabe als Anker verwenden.</td></tr>
+  </tbody>
+</table>
+
+### Das Bild auf seine Zelle zuschneiden
+
+Panelbilder werden ohne Rücksicht auf die Form der Zelle gezeichnet, in der sie landen: Eine Seite kann neu geteilt, eine Trennlinie verschoben werden, eine Übersetzung kann eine höhere Reihe brauchen. Der **Sicherheitsbereich** des Bilds (`Resource.safeArea`, siehe [Dokumentformat › Sicherheitsbereich](/de/docs/document-format#sicherheitsbereich)) gibt an, was sichtbar bleiben muss, und der Zuschnitt wird für jede Zelle berechnet:
+
+1. Mit `fit=cover` hat das sichtbare Fenster die Proportionen der Zelle und ist so groß, wie das Bild es zulässt.
+2. Es wird so platziert, dass der Sicherheitsbereich darin liegt. Wo das Spielraum lässt, wird das Fenster auf `focus` zentriert, wenn das Panel einen angibt; sonst werden die Ränder außerhalb des Sicherheitsbereichs im Verhältnis ihrer Größen beschnitten, sodass ein Motiv links der Mitte links der Mitte bleibt.
+3. Wenn kein Fenster mit den Proportionen der Zelle den Sicherheitsbereich fassen kann (eine sehr breite Zelle für ein hohes Motiv), wird das Bild mit vollständigem Sicherheitsbereich gezeigt und der Rest der Zelle mit dem Panelhintergrund gefüllt. Die Seite meldet `comicPanelLetterbox`. Eine Zelle hält den Sicherheitsbereich eines Bilds der Größe W × H vollständig, solange ihr Verhältnis von Breite zu Höhe zwischen `sw·W/H` und `W/(sh·H)` liegt, wobei `sw` und `sh` Breite und Höhe des Sicherheitsbereichs als Bruchteile sind.
+
+Ein Bild ohne Sicherheitsbereich wird um seine Mitte oder um `focus` zugeschnitten. Ein SVG ohne eigene Größe füllt die Zelle so, wie es ist. Die Renderer beschneiden auf das Polygon der Zelle und zeichnen das ganze Bild in seiner unbeschnittenen Größe, sodass der Zuschnitt das Bild nie neu berechnet.
+
+### Panelstile
+
+Das Aussehen eines Panels kommt aus `comics.panel` (ein schwarzer Rahmen von 1 pt, ein weißer Grund, `cover`), aus einem benannten Stil in `comics.panelStyles`, den eine Seite oder ein Panel mit `style=` wählt, und aus dem eigenen `border` und `bg` des Panels. Ein Rahmen kann `solid`, `none` oder `rough` sein: eine handgezeichnete Linie, die leicht wackelt, bei jedem Build gleich, da ihr Wackeln aus dem Panel abgeleitet wird. Siehe [Konfiguration › Comics](/de/docs/configuration-comics#comics) für jedes Feld.
+
+### Herausragende Bildteile
+
+Ein durchbrochener Rahmen, bei dem eine Figur oder ein Gegenstand aus ihrem Panel herauskommt, braucht zwei Bilder: das Bild des Panels, wie üblich auf die Zelle beschnitten, und einen transparenten Freisteller des herausragenden Teils, mit `pop` benannt. Der Freisteller wird genau wie das Bild zugeschnitten und platziert (er sollte dieselbe Größe haben wie das Panelbild) und nach dem Rahmen gezeichnet, unbeschnitten, sodass er Rahmen und Zwischenraum überdeckt. Die Freisteller einer Seite werden nach all ihren Panels gezeichnet; einer, der in das benachbarte Panel reicht, erscheint also auch über diesem Panel, aber unter jeder Sprechblase.
+
+```md
+::panel{art=gull-sky pop=gull-cutout bleed="top"}
+sfx{at="70% 20%"}: SKRAAW
+```
+
+## Lettering
+
+Unter jeder Zeile `::panel` folgt das Skript des Panels, eine Sprechblase pro Zeile:
+
+```md
+key{attributes}: text
+```
+
+Der **Schlüssel** ist eine Sprecher-ID (Buchstaben, Ziffern, `_`, `.` und `-`), in jeder Übersetzung gleich; er entspricht den Ankern der Bilder und der [Figurenliste](#die-figurenliste). Drei Schlüssel sind reserviert: `caption` (ein Erzähltextkasten), `sfx` (ein Soundeffekt, ohne Sprechblase) und `note` (eine Anmerkung der Redaktion). Der Doppelpunkt darf der Doppelpunkt voller Breite `：` sein, den eine chinesische oder japanische Eingabemethode tippt. Der Text ist Inline-Markdown: `*emphasis*` und `**strong**` werden fett kursiv gedruckt, wie im Lettering üblich (nur fett in Schriften ohne Kursive), `:tcy[12]` setzt Ziffern quer in eine senkrechte Spalte, `:ruby` setzt seine Lesung in halber Größe über die Basis (in einer Spalte daneben), und `:ltr` / `:rtl` halten einen Abschnitt in seiner eigenen Richtung innerhalb einer Sprechblase der anderen. Eine um zwei Leerzeichen oder einen Tabulator eingerückte Zeile setzt die Sprechblase darüber fort (mit einem Leerzeichen verbunden, ohne zwischen zwei chinesischen oder japanischen Zeichen); ein Backslash am Zeilenende bricht den Text der Sprechblase dort um. Leerzeilen werden ignoriert, und eine Zeile, die keine Skriptzeile ist, wird als Textkasten gelettert und als `comicStrayText` gemeldet.
+
+```md
+::panel{art=lh-radio}
+tomas: Just in time.
+  The radio's gone deaf,\
+  and there's a storm on the way.
+biscuit{to="40% 70%"}: Mrrp?
+note: Valve radios warm up for a minute before they speak.
+```
+
+Die Attribute einer Skriptzeile:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '230px' }}>Attribut</th>
+      <th>Wirkung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&#123;whisper&#125;</code>, <code>style=whisper</code></td><td>Der Sprechblasenstil. Ein bloßes Wort in den geschweiften Klammern benennt einen Stil: <code>thought</code>, <code>whisper</code>, <code>shout</code>, <code>radio</code>, <code>inner</code> oder einen eigenen des Buchs. Ein unbekannter Name meldet <code>comicUnknownBalloonStyle</code>, und die Zeile übernimmt den Stil ihres Schlüssels.</td></tr>
+    <tr><td><code>at="62% 40%"</code></td><td>Die Mitte der Sprechblase an diesem Punkt des Panelbilds fixieren (der Zelle, wenn das Panel keines hat). Der Punkt wird in Bruchteilen des Bilds angegeben, bleibt also über Zuschnitte und verschobene Trennlinien hinweg an derselben Stelle der Zeichnung.</td></tr>
+    <tr><td><code>at=top-start</code></td><td>Die Sprechblase an eine Ecke oder Kante des Panels setzen: <code>top-start</code>, <code>top-end</code>, <code>bottom-start</code>, <code>bottom-end</code>, <code>top</code>, <code>bottom</code>. Textkästen und Anmerkungen stoßen an den Rahmen.</td></tr>
+    <tr><td><code>to="40% 70%"</code></td><td>Den Dorn auf diesen Punkt des Bilds richten statt auf den Anker des Sprechers. Der Dorn wendet sich ihm zu und endet kurz davor, wie vor einem Mund.</td></tr>
+    <tr><td><code>tail=none</code>, <code>tail=start</code></td><td>Kein Dorn oder ein Dorn zu einem Sprecher außerhalb des Panels auf dieser Seite (<code>top</code>, <code>bottom</code>, <code>start</code>, <code>end</code>, <code>left</code>, <code>right</code>). <code>start</code> und <code>end</code> folgen der Leserichtung der Seite; <code>left</code> und <code>right</code> sind Seiten des Panelbilds. <code>tail=auto</code> ist der Standard.</td></tr>
+    <tr><td><code>join</code>, <code>join=false</code></td><td>Diese Sprechblase mit der vorigen desselben Sprechers verbinden oder getrennt halten, unabhängig von <code>comics.lettering.joinSameSpeaker</code>.</td></tr>
+    <tr><td><code>break</code></td><td>Die Sprechblase über den Panelrahmen in den Zwischenraum oder das nächste Panel ragen lassen. Das Überschreiten wird nicht als Überlauf gemeldet, da es gewünscht ist; was die Sprechblase auf der anderen Seite verdeckt (ein Gesicht, eine Sprechblase eines anderen Panels), dagegen schon, und ihre Mitte bleibt im eigenen Panel.</td></tr>
+    <tr><td><code>rotate=-8</code></td><td>Die Sprechblase oder den Soundeffekt drehen, in Grad, im Uhrzeigersinn.</td></tr>
+    <tr><td><code>skew=-8</code></td><td>Die Buchstaben um so viele Grad neigen (positiv nach vorn wie kursiv, negativ nach hinten), vor jeder Drehung: Text auf einem perspektivisch gesehenen Gegenstand, der Titel auf einem Buchumschlag, ein Schild. Mit <code>rotate</code> folgt das Lettering sowohl der Oberkante des Gegenstands als auch seinen Seiten. Ein Sprechblasenstil legt es mit <code>skew</code> für jede Zeile fest.</td></tr>
+    <tr><td><code>size=1.5</code></td><td>Das Lettering eines Soundeffekts skalieren.</td></tr>
+    <tr><td><code>color=#c0392b</code></td><td>Die Farbe des Letterings: eine Hex-Farbe oder eine Paletten-ID.</td></tr>
+    <tr><td><code>font="…"</code></td><td>Die Schrift dieser Zeile.</td></tr>
+    <tr><td><code>vertical</code>, <code>horizontal</code>, <code>mode=vertical</code></td><td>Die Schreibrichtung dieser Zeile, abweichend von der des Buchs: <code>vertical</code> setzt sie in einer waagerechten Ausgabe in eine Spalte (ein unübersetztes <code>ドン</code>), <code>horizontal</code> in einer senkrechten in eine Zeile (ein quer geschriebenes Schild). Eine Spalte in einem Buch einer anderen Sprache folgt den Regeln ihres eigenen Texts (mit Kana denen des Japanischen) und erhält den Zeilenabstand des senkrechten Letterings. In einem senkrechten Buch wird eine Zeile ohne chinesische oder japanische Zeichen trotzdem waagerecht gesetzt, es sei denn, sie gibt <code>vertical</code> an.</td></tr>
+  </tbody>
+</table>
+
+### Wie eine Sprechblase entsteht
+
+Das Lettering folgt den Gewohnheiten des Comic-Letterings, nicht denen eines Textrahmens:
+
+- **Eine Größe pro Buch.** Jede Sprechblase wird in `comics.lettering.fontFamily` in `comics.lettering.fontSize` gesetzt (standardmäßig 7,5 pt), nur skaliert durch das `fontScale` ihres Stils (ein Flüstern mit 0,9, ein Schrei mit 1,15). Text wird nie verkleinert, damit er passt: Eine Sprechblase, die nicht passt, ändert ihre Form, rückt weiter, überschreitet den Rahmen oder wird gemeldet.
+- **Erst der Text, dann die Sprechblase.** Die Wörter werden zuerst in Zeilen umbrochen, mit einer Raute als Ziel: kurze Zeilen oben und unten, die längste in der Mitte, keine letzte Zeile, die viel kürzer ist als die anderen, keine Zeile, die auf einem Artikel oder einer Präposition endet, wenn ein anderer Umbruch ebenso gut ist. Dann wird der Umriss um die Zeilen gezeichnet, mit gleich viel Luft auf jeder Seite.
+- **Hausregeln.** Drei Punkte werden zum Auslassungszeichen (in einer Schrift, die ihr Auslassungszeichen als einen einzigen Punkt zeichnet, bleiben es drei Punkte); `textTransform: 'uppercase'` setzt den Text in Versalien (Schriften ohne Groß- und Kleinschreibung bleiben unberührt, und das deutsche ß wird zu SS); im Japanischen und Chinesischen entfällt der Punkt am Ende einer Sprechblase (`dropFinalStop`), und ASCII-`!` und -`?` werden in Spalten zu ihren Formen voller Breite, zwei davon in einer Zelle (`!?` als ⁉); `doubleDash` lettert einen Geviertstrich als `--`, wie amerikanische Comics es tun.
+- **Platzierung.** Die Sprechblasen eines Panels werden in Lesereihenfolge im Panel platziert, mit `comics.lettering.inset` Abstand zum Rahmen (1,5 mm). Die erste sitzt oben auf der Anfangsseite, und jede weitere soll nicht höher sitzen als die vorige, es sei denn, sie liegt weiter in Leserichtung. Sprechblasen halten sich von Gesichtern und von Sperrzonen fern, die die Bilder markieren, von den Mündern der Sprecher und voneinander, sitzen eher über oder neben ihrem Sprecher als darunter, und ihre Dorne sollen sich nicht kreuzen. Ein Dorn läuft nie durch das Lettering einer anderen Sprechblase. Eine Sprechblase, die ihr Panel verlässt, mit `break` oder einer `at=`-Fixierung, hält sich von dem fern, was die Panels ringsum schützen, so wie von dem, was ihr eigenes schützt: deren Textkästen und Sprechblasen, die Dorne dieser Sprechblasen sowie die Gesichter und Sperrzonen ihrer Bilder; eine Sprechblase eines Panels, über dem ein eingesetztes Panel liegt, hält sich von diesem fern. Textkästen und Anmerkungen mit einer Ecke kommen zuerst, dann fixierte Sprechblasen, dann der Rest. Die Platzierung ist deterministisch: Dieselbe Seite ergibt immer dieselben Sprechblasen.
+- **Auf dem Blatt.** Lettering läuft nie über das Endformat hinaus. In einem angeschnittenen Panel bleiben die Sprechblasen in dem Teil des Panels innerhalb des Rahmens, wo der Beschnitt sie nicht treffen kann; nur ein mit `at=` fixierter oder mit `break` markierter Soundeffekt darf neben seinem Panel in den Anschnitt laufen.
+- **Wenn es nicht passt.** Eine Sprechblase, die sich nicht sauber platzieren lässt, darf zuerst den Rahmen überschreiten (nur mit `break`), dann eine Sperrzone verdecken (nie ein Gesicht) und dann eine breitere oder schmalere Form annehmen. Eine Form, die angenommen wird, damit es passt, trennt kein chinesisches Wort (`comics.lettering.strictPlacement`, standardmäßig eingeschaltet): Ein über zwei Zeilen geschnittenes Wort kostet mehr als eine außer der Reihe gelesene Sprechblase, also rückt die Sprechblase zuerst. Eine lange Zeile in einer schmalen Zelle wird etwa so breit wie die Zelle gesetzt und ragt in den Zwischenraum, statt als dünne Spalte über dem Gesicht ihres Sprechers zu stehen. Überdeckt die Sprechblase danach noch etwas, wird sie dort platziert, wo sie am wenigsten schadet, und die Seite meldet `comicBalloonOverflow` mit dem Panel und dem, was verdeckt wird. Ein gewünschtes Überschreiten, mit `break` oder mit einer `at=`-Fixierung, zählt nicht zu diesen Fehlern: Die Warnung nennt dann nur, was die Sprechblase verdeckt. Abhilfe schafft eine kürzere Zeile, ein größeres Panel oder eine `at=`-Fixierung.
+
+### Dorne
+
+Der Dorn einer Sprechblase zeigt auf den Mund ihres Sprechers, die Bläschen einer Gedankenblase auf den Kopf (siehe [Sprecher und Anker](#sprecher-und-anker)). Er verlässt den Umriss auf der dem Sprecher zugewandten Seite, biegt sich leicht und endet kurz vor dem Mund. Wenn der Anker des Sprechers aus dem Panel herausgeschnitten ist oder das Bild für diesen Sprecher keinen Anker markiert, zeigt der Dorn aus dem Panel hinaus, zum Anker oder zum nächstgelegenen Rahmen hin, und endet am Rahmen. Eine solche Sprechblase sitzt an dem Rahmen, von dem ihre Stimme kommt, mit kurzem Dorn: Ein quer durch das ganze Panel gezogener Dorn liest sich als Pfeil, also rückt die Sprechblase, statt dass der Dorn wächst. `to="x% y%"` richtet einen Dorn auf einen anderen Punkt des Bilds, `tail=start` (oder `top`, `bottom`, `end`, `left`, `right`) auf einen Sprecher jenseits dieser Seite. Textkästen, Anmerkungen und Soundeffekte haben keinen Dorn.
+
+### Verbundene Sprechblasen
+
+Zwei aufeinanderfolgende Zeilen desselben Sprechers werden verbunden, so wie eine Sprechpause gelettert wird: Mit `joinSameSpeaker: 'butt'` (Standard) überlappen sich die beiden Körper und teilen einen Umriss; mit `'connector'` verbindet sie ein schmaler Hals; mit `'none'` bleiben es zwei Sprechblasen mit zwei Dornen. Nur die erste Sprechblase einer Gruppe hat einen Dorn. Eine Zeile kann mit `join` oder `join=false` ihr eigenes Verhalten verlangen.
+
+### Soundeffekte
+
+Eine Zeile `sfx` hat keine Sprechblase: Ihr Text wird groß gesetzt (2,4-mal die Lettering-Größe), fett, in der Soundeffekt-Schrift der Dokumentsprache, mit einem weißen Lichthof um die Buchstaben, damit er sich über dem Bild lesen lässt. Er wird nahe dem `sfx`-Anker des Panels platziert, wenn das Bild einen markiert (ein Anker mit der ID `sfx`), sonst dort, wo er kein Gesicht verdeckt. `rotate`, `size`, `color` und `font` verändern ihn, und `at` fixiert ihn. Im senkrechten Lettering wird er in eine Spalte von höchstens fünf Zeichen gesetzt. Soundeffekte werden nach allen Sprechblasen der Seite gemalt.
+
+Eine Zeile kann ihre eigene Schreibrichtung festlegen. Eine waagerechte Ausgabe eines Manga, die einen Soundeffekt auf Japanisch behält, setzt ihn in eine Spalte:
+
+```md
+sfx{vertical size=2.6 font="Dela Gothic One"}: ドン
+```
+
+### Lettering-Einstellungen
+
+`comics.lettering` enthält Schrift, Größe, Zeilenabstand, Farbe und Hausregeln des ganzen Buchs. Standardmäßig richtet sich die Schrift nach der Dokumentsprache, ebenso die Soundeffekt-Schrift:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Sprache</th>
+      <th>Lettering</th>
+      <th>Soundeffekte</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Lateinisch, Griechisch, Kyrillisch und die übrigen</td><td>Comic Neue</td><td>Bangers</td></tr>
+    <tr><td>Japanisch</td><td>Zen Antique</td><td>Dela Gothic One</td></tr>
+    <tr><td>Chinesisch (Kurzzeichen)</td><td>Noto Sans SC</td><td>ZCOOL KuaiLe</td></tr>
+    <tr><td>Chinesisch (Langzeichen)</td><td>LXGW WenKai TC</td><td>LXGW WenKai TC</td></tr>
+    <tr><td>Arabisch, Persisch, Urdu</td><td>Playpen Sans Arabic</td><td>Lalezar</td></tr>
+  </tbody>
+</table>
+
+Alle sind bei Google Fonts verfügbar und werden wie jede andere Schrift über ihren Namen geladen. Mit dem Standard-Zeilenabstand werden senkrechte sowie chinesische und japanische Sprechblasen mit einem Zeilenabstand von 1,5 gesetzt, arabische mit 1,45. Japanisches, chinesisches und arabisches Lettering wird nie geneigt, was auch immer der Stil angibt, und Arabisch wird nie gesperrt.
+
+### Die Figurenliste
+
+`comics.cast` führt die Figuren auf: eine ID (der Sprecherschlüssel), einen `name` und optional den Sprechblasenstil, in dem sie sprechen (`balloonStyle`, etwa ein Roboter, der immer in `radio` spricht), die Textfarbe `color` und die Füllung `fill` der Sprechblase, die sie unterscheiden, sowie eine `fontFamily`. Der Name ist das, was die Ausgaben ansagen: Der HTML-Betrachter und das umfließende EPUB drucken für jede Zeile „Name: Wörter“. Ein Sprecher, der in der Figurenliste steht, wird nie als unbekannt gemeldet.
+
+```ts
+comics: {
+  cast: [
+    { id: 'maya', name: 'Maya' },
+    { id: 'tomas', name: 'Grandpa Tomás' },
+    { id: 'beacon', name: 'The beacon', balloonStyle: 'radio', fill: { hex: '#e8f4ff', model: 'hex' } },
+  ],
+}
+```
+
+## Sprechblasenstile
+
+Ein Sprechblasenstil ist eine Art von Sprechblase: ihr Umriss, ihr Dorn und ihr Lettering. Neun sind eingebaut, und eine Skriptzeile benennt einen mit einem bloßen Wort in geschweiften Klammern (`ben{whisper}: …`). Die reservierten Schlüssel nehmen ihren Stil aus ihrem Namen (`caption:`, `sfx:`, `note:`), und jede andere Zeile nimmt `speech` oder das `balloonStyle` ihres Sprechers aus der Figurenliste.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '120px' }}>Stil</th>
+      <th style={{ width: '170px' }}>Umriss</th>
+      <th style={{ width: '120px' }}>Dorn</th>
+      <th>Sonst</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>speech</code></td><td>oval</td><td>gebogen</td><td>Die Grundlage jedes Stils: weiße Füllung, schwarzer Umriss von 0,6 pt, 0,55 Geviert Luft.</td></tr>
+    <tr><td><code>thought</code></td><td>Wolke</td><td>Bläschen</td><td>Die Bläschen zeigen auf den Kopf, nicht auf den Mund.</td></tr>
+    <tr><td><code>whisper</code></td><td>oval, gestrichelt</td><td>gebogen</td><td>Text mit 0,9.</td></tr>
+    <tr><td><code>shout</code></td><td>Zacken</td><td>Keil</td><td>Text mit 1,15, fett; Umriss 0,8 pt.</td></tr>
+    <tr><td><code>radio</code></td><td>elektrisch (Zickzack)</td><td>Zickzack</td><td>Eine Stimme aus einem Funkgerät, einem Telefon oder einer Maschine.</td></tr>
+    <tr><td><code>caption</code></td><td>Rechteck</td><td>keiner</td><td>Blassgelb, an die obere Anfangsecke gestoßen, Text am Anfang ausgerichtet.</td></tr>
+    <tr><td><code>inner</code></td><td>abgerundeter Kasten</td><td>keiner</td><td>Graue Füllung, kursiv: die innere Stimme einer Figur.</td></tr>
+    <tr><td><code>note</code></td><td>Rechteck</td><td>keiner</td><td>An die untere Endecke gestoßen, Text mit 0,8.</td></tr>
+    <tr><td><code>sfx</code></td><td>keiner</td><td>keiner</td><td>Text mit 2,4, fett, in der Soundeffekt-Schrift, mit einem weißen Lichthof von 1,5 pt.</td></tr>
+  </tbody>
+</table>
+
+`comics.balloonStyles` verändert sie und fügt weitere hinzu. Ein Eintrag mit einer eingebauten ID wird über diesen Stil gelegt; ein Eintrag mit einer neuen ID geht von `speech` aus:
+
+```ts
+comics: {
+  balloonStyles: [
+    { id: 'caption', fill: { hex: '#ffffff', model: 'hex' }, textTransform: 'uppercase' },
+    { id: 'shout', burstPoints: 18, burstDepth: 0.3 },
+    { id: 'eerie', shape: 'wavy', stroke: { hex: '#5b4a8a', model: 'hex' }, italic: true },
+    { id: 'writing', shape: 'none', tail: 'none', fontFamily: 'Caveat', color: { hex: '#3b2a1a', model: 'hex' } },
+  ],
+}
+```
+
+```md
+ghost{eerie}: Leave this house…
+caption{at=bottom-end}: Three streets away.
+```
+
+Die Umrisse sind `oval` (eine an die Zeilen angepasste Superellipse, `roundness` 2,2), `rounded`, `rectangle`, `cloud` (Bögen, deren Zahl sich aus dem Umfang ergibt), `burst` (`burstPoints` Zacken, `burstDepth` tief), `wavy`, `electric` und `none`. `dash` zeichnet einen gestrichelten Umriss, `double` einen doppelten, und `wobble` (0–1) lässt ihn wie von Hand zittern, für dieselbe Sprechblase immer gleich. Die Dorne sind `curved`, `wedge`, `bubbles`, `zigzag` und `none`. Jedes Feld mit seinem Standardwert steht in [Konfiguration › Comics](/de/docs/configuration-comics#comics).
+
+Die Renderer zeichnen eine Sprechblase so, wie Letterer sie tuschen: Alle Umrisse einer Gruppe werden zuerst in doppelter Breite gezogen, dann gefüllt, dann wird der Text gesetzt. Zwei verbundene Körper und ihr Dorn ergeben so eine einzige Form ohne Linie dazwischen.
+
+## Sprecher und Anker
+
+Dorne zeigen auf Personen, und Sprechblasen halten sich von Gesichtern fern, weil die Bilder angeben, wo die Personen sind. Eine Bitmap- oder SVG-Ressource kann **Anker** tragen: einen Punkt pro Sprecher, einmal angegeben, in Bruchteilen des Bilds (0–1 von seiner linken oberen Ecke aus), wie der Sicherheitsbereich.
+
+```ts
+const arrive: Resource = {
+  id: 'lh-arrive', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'lh-arrive.jpg', format: 'jpeg', width: 1100, height: 733 },
+  altText: 'A girl in a yellow raincoat walks up a coastal path towards a lighthouse.',
+  safeArea: { x: 0.2, y: 0.08, width: 0.42, height: 0.82 },
+  anchors: [
+    { id: 'maya', x: 0.29, y: 0.52, head: { x: 0.27, y: 0.47 }, face: { x: 0.22, y: 0.42, width: 0.12, height: 0.16 } },
+    { id: 'biscuit', x: 0.4, y: 0.68 },
+  ],
+  avoid: [{ x: 0.51, y: 0.09, width: 0.1, height: 0.43 }], // the lighthouse
+  faces: [{ x: 0.7, y: 0.5, width: 0.06, height: 0.1 }], // a walker on the path, who says nothing
+};
+```
+
+- `id` ist der Sprecherschlüssel, den das Skript verwendet (`maya: …`). Ein Anker mit der ID `sfx` platziert die Soundeffekte des Panels.
+- `x`, `y` ist der Mund, auf den der Dorn einer Sprechblase zeigt.
+- `head` ist die Stelle, auf die die Bläschen einer Gedankenblase zeigen. Ohne Angabe: der Mund.
+- `face` ist ein Rechteck, das keine Sprechblase verdeckt. Ein Anker ohne Gesicht erhält einen Schutzbereich von einigen Gevierten über und um seinen Mund, sodass Sprechblasen auch von einem nicht umrissenen Gesicht fernbleiben.
+- `avoid` (an der Ressource) führt weitere Rechtecke auf, die keine Sprechblase verdeckt: eine Hand, einen wichtigen Gegenstand, ein Schild. Unter Druck darf eine Sprechblase eine Sperrzone verdecken, nie ein Gesicht.
+- `faces` (an der Ressource) führt die Gesichter von Personen auf, die nicht sprechen, als Rechtecke: ein Passant, die Menge hinter den Sprechern. Für jedes gilt die Regel eines Sprechergesichts. Keine Sprechblase verdeckt es auf irgendeiner Ausweichstufe, und eine, die es dennoch tut (eine fixierte), wird als `comicBalloonOverflow` gemeldet; das Haar darüber ist geschützt; kein Dorn wird quer darüber oder über die Figur darunter gezogen, wenn es einen anderen Weg gibt. Ein Anker, von dem keine Zeile gesprochen wird, schützt sein Gesicht ebenfalls, bleibt aber in allem anderen ein Sprecher (sein Mund ist ein Punkt, den keine Sprechblase berührt, und er wird gegen den Sicherheitsbereich geprüft): `faces` ist die Markierung für einen Unbeteiligten.
+
+Da Anker Bruchteile des Bilds sind, bewegen sie sich mit dem Zuschnitt: Die Engine bildet jeden über Zuschnitt und Spiegelung des Panels auf die Seite ab, sodass eine verschobene Trennlinie, eine andere Teilung oder eine Übersetzung einen Dorn nie von seinem Sprecher wegbringt. Ein Anker, den der Zuschnitt außerhalb des Panels lässt, bewirkt, dass der Dorn aus dem Panel heraus zu ihm zeigt. Der Sicherheitsbereich schützt Anker davor: Ein Anker außerhalb davon wird als `comicAnchorOutsideSafeArea` gemeldet, ein Hinweis für die Erstellung, da ein Zuschnitt ihn abschneiden kann. Ein Sprecherschlüssel, den kein Bild der Seite markiert und kein Eintrag der Figurenliste nennt, wird als `comicUnknownSpeaker` gemeldet, was meist eine falsch geschriebene ID aufdeckt; Seiten, deren Bilder überhaupt keine Anker markieren, melden nichts, sodass sich ein Comic auch ohne Anker lettern lässt.
+
+Anker und Sperrzonen gehören zum Bild und sind in jeder Sprache gleich. In der Sandbox werden sie im Bildeditor des [Bedienfelds Ressourcen](/de/docs/sandbox#bedienfeld-ressourcen) markiert: Das Feld **Sicherheitsbereich und Lettering** öffnet einen Dialog mit drei Modi: Sicherheitsbereich, Sprecher und Sperrzonen. Ein Klick auf das Bild fügt dort einen Sprecher hinzu; Mund, Kopf und Gesicht werden an ihren Platz gezogen und die ID daneben eingetippt; ein Ziehen auf einem leeren Teil des Bilds zeichnet eine Sperrzone. Der Modus Sperrzonen markiert auch die Gesichter von Personen, die nicht sprechen: Eine Schaltfläche fügt eines hinzu, und ein Schalter in jeder Zeile macht eine Zone zu einem solchen Gesicht oder wieder zurück. Jede Markierung lässt sich mit den Pfeiltasten verschieben (mit Umschalt in größeren Schritten) und mit Entf entfernen, und der Dialog hat ein eigenes Rückgängig.
+
+## Strips
+
+Ein `:::strip`-Block hat den Inhalt einer Comicseite, steht aber im Text, als Box in der Breite einer Spalte oder der Seite, in Panels geschnitten: der tägliche Strip einer Zeitung, ein Gag mit vier Panels in einer Zeitschrift, ein kurzer Comic in einem Prosabuch.
+
+```md
+:::strip{split="* | * | * | *" aspect=4 span=page placement=top}
+::panel{art=pip-1}
+pip: Otto, the ice is melting.
+::panel{art=pip-2}
+otto{thought}: Not the bakery…
+::panel{art=pip-3}
+::panel{art=pip-4}
+sfx: SPLOSH
+:::
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attribut</th>
+      <th>Wirkung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>span=column</code>, <code>span=page</code></td><td>Reicht über die Spalte, in die er fällt (Standard), oder über den Textbereich.</td></tr>
+    <tr><td><code>placement=here</code></td><td>Der Standard: im Text dort gesetzt, wo er steht. Ein Strip wird nie geteilt; einer, der nicht passt, rückt ganz in die nächste Spalte oder auf die nächste Seite und nimmt eine Überschrift direkt darüber mit. Ein seitenbreiter Strip mit <code>here</code> auf einer Seite mit mehreren Spalten schneidet die Spalten dort, wo er steht, wie ein seitenbreiter Kasten: Der Text darüber endet in jeder Spalte auf gleicher Höhe, der Strip läuft über die Seite, und der Text geht in den Spalten darunter weiter. Kann der Rest der Seite ihn nicht fassen, eröffnet er die nächste Seite.</td></tr>
+    <tr><td><code>placement=top</code>, <code>bottom</code>, <code>auto</code></td><td>Wie eine Abbildung an Kopf oder Fuß der ersten Seite ab dieser Stelle gleiten lassen, die Platz hat.</td></tr>
+    <tr><td><code>width=60%</code>, <code>width=12cm</code></td><td>Die Breite des Strips: ein Anteil der Satzbreite, über die er reicht (die Spalte oder mit <code>span=page</code> der Textbereich), oder eine Länge (eine bloße Zahl gilt in Millimetern). Nie breiter als diese Satzbreite. Ohne Angabe nimmt der Strip die ganze Satzbreite ein.</td></tr>
+    <tr><td><code>align=start</code>, <code>center</code>, <code>end</code></td><td>Wo ein schmalerer Strip in seiner Satzbreite steht. Der Standard ist <code>center</code>. <code>start</code> und <code>end</code> folgen der Textrichtung: Der Anfang ist auf einer Seite von rechts nach links der rechte Rand und auf einer senkrechten Seite der Kopf einer Spalte.</td></tr>
+    <tr><td><code>height=4cm</code></td><td>Die Höhe des Strips (eine bloße Zahl gilt in Millimetern).</td></tr>
+    <tr><td><code>aspect=4</code>, <code>aspect=4/1</code></td><td>Breite zu Höhe, bezogen auf die eigene Breite des Strips. Ohne Angabe nimmt der Strip die Proportionen an, bei denen seine Panels quadratisch werden (vier Panels in einer Reihe: 4).</td></tr>
+    <tr><td><code>caption="…"</code></td><td>Eine Legende unter dem Strip (oder darüber, mit <code>captionStyle.position: 'above'</code>), in der Breite des Strips im Legendenstil der Abbildungen gesetzt. Der Text ist Inline-Markdown, in der Sprache der jeweiligen Ausgabe geschrieben.</td></tr>
+    <tr><td><code>type=figure</code></td><td>Nummeriert einen Strip mit Legende als Ressource dieses Typs: Die Legende beginnt mit Bezeichnung und Nummer des Typs („Abbildung 3.“), und der Strip zählt in der Folge dieses Typs mit, in Lesereihenfolge zusammen mit den Ressourcen des Typs. Ohne <code>type</code> oder mit einem Typ, den kein Ressourcentyp hat, ist die Legende schlicht, und der Strip wird nicht gezählt.</td></tr>
+    <tr><td><code>id=…</code></td><td>Benennt einen nummerierten Strip: <code>:ref&#123;id="…"&#125;</code> druckt seine Bezeichnung und Nummer, wie bei einer Abbildung, und verlinkt auf ihn.</td></tr>
+  </tbody>
+</table>
+
+Ein Strip ohne `split` setzt seine Panels nebeneinander. Die Box des Strips ist sein Rahmen: Zwischenräume, Panelstile und Lettering sind die der Konfiguration, und nichts wird angeschnitten. Ein Strip, der höher ist als eine Spalte, wird auf die Spalte verkleinert, Legende eingeschlossen. Danach geht der Text in der nächsten Zeile des Grundlinienrasters weiter, mit dem Abstand, den `layout.inlineResourceGap` verlangt, wie nach einer Abbildung im Text. Auf einer senkrechten Seite wird der Strip in seiner gedrehten Box umbrochen, sodass ein Yonkoma `* / * / * / *` mit `aspect=0.25` eine senkrechte Spalte hinunterläuft und seine Legende ihm als Textspalte folgt.
+
+```md
+:::strip{split="* | * | *" width=70% caption="Pip and Otto on the ice." type=figure id=pip-ice}
+::panel{art=pip-1}
+::panel{art=pip-2}
+::panel{art=pip-3}
+:::
+
+As :ref{id="pip-ice"} shows, the ice was thin.
+```
+
+Die Legende übernimmt alles, was der Legendenstil festlegt: Schrift und Größe, die Farben von Bezeichnung und Text, Schriftstärke und Neigung der Bezeichnung, den Abstand zwischen Strip und Legende, die Ausrichtung und den Balken dahinter. Das eigene `captionStyle` eines Typs gilt für die darin nummerierten Strips.
+
+Im VDT ist ein Strip ein Block vom `type: 'resource'` mit einem Feld `comic` und ohne `resourceBlock`; seine Koordinaten beziehen sich auf die Box des Blocks auf dem Blatt, und ein schmalerer Strip oder einer unter seiner Legende steht innerhalb dieser Box (`comic.frame` beginnt dann nicht an ihrer Ecke). Eine Legende sind die eigenen `lines` des Blocks, in den Schriften und Farben der Legende gesetzt, und `stripCaption` gibt an, welche Zeilen es sind, wo sie stehen, Typ und Nummer sowie den Balken. `pageComics(page)` liefert den Comic einer Seite und die Strips ihrer Spalten und Gleitobjekte, alle auf das Blatt verschoben.
+
+## Doppelseiten
+
+`:::page{spread}` legt einen Teilungsbaum über zwei gegenüberliegende Seiten, für ein Panorama oder eine Schlacht, die das ganze aufgeschlagene Buch braucht. Der Rahmen besteht aus den beiden Textbereichen, über den Bund hinweg verbunden, ohne ihre Bundstege; Teilung, Zwischenräume und Zuschnitt funktionieren wie auf einer einzelnen Seite, und ein Panel oder ein Bild darf über den Bund laufen.
+
+```md
+:::page{spread split="25 [* | * | *] / *" bleed}
+::panel{art=market-1}
+::panel{art=market-2}
+::panel{art=market-3}
+::panel{art=market-panorama}
+caption: The Saturday market, from the clock tower.
+:::
+```
+
+Eine Doppelseite beginnt auf einer Verso-Seite, der geraden Seite, damit beide Hälften einander gegenüberstehen: Davor wird eine Vakatseite eingefügt, wenn der Comic auf einer Recto-Seite beginnen würde, auch ganz am Anfang eines Buchs, wo Seite 1 allein steht. In einem links gebundenen Buch ist die Verso-Seite die linke Seite; in einem rechts gebundenen Buch (Arabisch, senkrechtes Japanisch und Chinesisch, ein von rechts nach links gelesener Comic) die rechte. Jede Seite trägt ihre Hälfte: die Panels, die auf ihre Seite reichen, am Bund geschnitten, wobei das Bild eines Panels, das über den Bund läuft, auf beiden Seiten gezeichnet wird. Angeschnittene Panels laufen über Kopf, Fuß und Außenkanten hinaus, nie am Bund. In einem Streifen von 8 mm um den Bund, wo die Bindung es verschlucken würde, wird nichts gelettert: Eine dort fixierte Sprechblase rutscht zur näheren Seite. Jede Sprechblase sitzt auf der Seite, die ihre Mitte enthält.
+
+## Leserichtung
+
+Ein westlicher Comic wird von links nach rechts gelesen: Das erste Panel einer Reihe steht links. Manga und arabische Comics werden von rechts nach links gelesen. Postext liest die Richtung aus `comics.readingDirection`:
+
+- `'auto'` (Standard): die Richtung der Sprache der Ausgabe. Von rechts nach links in einem Dokument mit Schreibrichtung von rechts nach links, sodass eine arabische Ausgabe ihre Seiten spiegelt; in einem senkrechten Dokument; und im Japanischen und im Chinesischen mit Langzeichen (`ja`, `zh-Hant`, `zh-TW`, `zh-HK`, `zh-MO`), sodass eine japanische Ausgabe eines westlichen Comics wie Manga von rechts nach links gelesen wird. In jeder anderen Sprache, einschließlich Chinesisch mit Kurzzeichen und Koreanisch (Manhua und Manhwa werden heute von links nach rechts gelesen), ist es die Richtung, für die die Bilder gezeichnet wurden, `comics.artDirection` (standardmäßig `'ltr'`): Ein Manga mit `artDirection: 'rtl'` wird in jeder Sprache von rechts nach links gelesen.
+- `'ltr'` oder `'rtl'` erzwingt eine Richtung für das ganze Buch, und das Attribut `direction` einer Seite erzwingt sie für diese Seite.
+
+Die Bindung folgt den Comics. Mit `page.binding: 'auto'` wird ein Buch, dessen Abschnitt `comics` von rechts nach links liest, rechts gebunden: Seite 1 steht allein links vom Bund, Doppelseiten lauten `[3 | 2]`, Betrachter blättern die Seiten nach links um, das PDF verlangt eine Seitenfolge von rechts nach links, und das EPUB deklariert eine Seitenfolge von rechts nach links. Der Abschnitt `comics` entscheidet für das ganze Buch, sodass ein Kapitel ohne Comicseiten wie die übrigen gebunden wird; das eigene `direction` einer Seite verschiebt den Bund nicht. Ein Dokument, dessen Comicseiten die Standardwerte lesen, ohne Abschnitt `comics`, behält die Bindung seines Texts (`comics: {}` genügt, damit es so gebunden wird, wie seine Comics lesen). `page.binding: 'left'` oder `'right'` hat weiterhin Vorrang. Siehe [Bindung](/de/docs/configuration-page-layout#bindung).
+
+Dieselbe Quelle ergibt beide Seitenlayouts. Eine Seite von rechts nach links ordnet die Panels jeder Reihe von rechts an, sodass Panel 1 rechts oben sitzt; schräge Schnitte spiegeln sich mit, ebenso die logischen Seiten von `bleed`, `pad` und die Eckangaben (ein Textkasten bei `top-start` sitzt rechts oben). Die Reihen behalten ihre Reihenfolge von oben nach unten, und die Lesereihenfolge des Skripts ändert sich nicht. Auch das Lettering spiegelt seine Regeln: Die erste Sprechblase eines Panels neigt sich nach rechts, und die nächste darf nur weiter links höher sitzen.
+
+Bilder werden nur auf Verlangen gespiegelt: `comics.mirrorArt: true` spiegelt jedes Bild einer Seite, die in der anderen Richtung als `artDirection` gelesen wird, wie es westliche Ausgaben von Manga lange taten, und `::panel{mirror=false}` lässt ein Bild wie gezeichnet (in das Bild gezeichneter Text, ein rechtshändiger Schwertkämpfer). Anker und Sicherheitsbereiche folgen der Spiegelung. Ebenso ein mit `tail=left` oder `tail=right` gezielter Dorn aus dem Panel hinaus: Diese benennen eine Seite des Bilds, während `tail=start` und `tail=end` der Leserichtung der Seite folgen. Bleibt das Bild wie gezeichnet, endet `tail=right` in jeder Ausgabe am rechten Rahmen; bei gespiegeltem Bild am linken. Meist lässt man das Spiegeln besser aus: Die Reihenfolge der Panels folgt bereits dem Leser, und ein gespiegeltes Bild verändert, was der Zeichner gezeichnet hat.
+
+Die Schrift in den Sprechblasen folgt der Sprache, nicht der Reihenfolge der Panels. Mit `comics.lettering.writingMode: 'auto'` werden Japanisch und Chinesisch mit Langzeichen in senkrechten Spalten gelettert, die von rechts nach links gelesen werden, höchstens `maxColumnChars` Zeichen lang (8), mit den Kinsoku-Regeln des Japanischen, Ziffern mit `:tcy` quer in der Spalte und den Satzzeichen in ihren senkrechten Formen; ein senkrecht gesetztes Dokument lettert in jeder Sprache senkrecht. Chinesisch mit Kurzzeichen, Koreanisch und jede andere Sprache werden waagerecht gelettert, und `'horizontal'` oder `'vertical'` erzwingt das eine oder andere. Arabisch wird von rechts nach links gelettert, lateinische Wörter und Ziffern in ihrer eigenen Richtung, nie geneigt und nie gesperrt.
+
+## Einen Comic übersetzen
+
+Eine Übersetzung ist eine Markdown-Datei mit denselben Zeilen `:::page` und `::panel` und denselben Sprecherschlüsseln, aber anderen Wörtern. Die Bilder, ihre Sicherheitsbereiche, Anker und Sperrzonen, die Teilungen und die Fixierungen (`at=`-Punkte sind Bruchteile der Bilder) teilen sich alle Ausgaben. Jede Ausgabe lettert sich selbst: Der Text wird in seiner eigenen Sprache und Schrift gemessen, in seine eigenen Zeilen umbrochen, und jede Sprechblase wird um ihn herum neu geformt und platziert.
+
+```md
+:::page{split="30 [30 | 20 | *] / *"}
+::panel{art=lh-arrive}
+caption: Todos los veranos, Maya pasaba una semana en el faro.
+maya: ¡Abuelo! ¡Ya estoy aquí!
+::panel{art=lh-radio}
+tomas: Llegas justo a tiempo. La radio se ha quedado sorda,
+tomas: y viene tormenta.
+:::
+```
+
+Was sich von einer Ausgabe zur anderen ändert, folgt aus der `locale` des Dokuments: die Standardschriften für Lettering und Soundeffekte, senkrechtes Lettering für Japanisch und Chinesisch mit Langzeichen, die entfallenden Schlusspunkte im Chinesischen und Japanischen, der Zeilenabstand und die Seitenrichtung einer arabischen Ausgabe. Text läuft auf Spanisch oder Französisch etwa ein Fünftel länger als auf Englisch und auf Chinesisch oder Japanisch deutlich kürzer; die Sprechblasen wachsen und schrumpfen mit, und `comicBalloonOverflow` nennt die Panels, in denen eine Übersetzung eine kürzere Zeile oder eine Fixierung braucht. Soundeffekte sind Wörter wie alle anderen: Übersetzen Sie sie, oder behalten Sie das Original und fügen Sie darunter ein kleines als Untertitel hinzu.
+
+## Comic-Ausgabe
+
+Jede Ausgabe malt denselben Comic: Panelhintergründe, auf die Panels beschnittene Bilder, Rahmen, herausragende Bildteile, dann die Sprechblasen jeder verbundenen Gruppe (Umrisse gezogen, dann gefüllt, dann der Text) und zuletzt die Soundeffekte.
+
+- **Canvas.** Das Canvas der Sandbox, die 3D-Seiten von Folio und die Vorschaubilder malen alle über `renderPageToCanvas`.
+- **PDF.** `postext-pdf` malt Comicseiten mit Vektorumrissen und eingebetteten Lettering-Schriften, und SVG-Bilder mit einem PDF-Druckmaster (`svg.pdfFileId`) werden als dieser Master eingebettet. Ein getaggtes PDF gibt jeder Comicseite ein `Div`, jedem Panel eine `Figure` mit ihrem Alternativtext (das `alt` des Panels, sonst der `altText` der Ressource) und jeder Sprechblase ein `P` nach der Abbildung ihres Panels, in Lesereihenfolge; ein Soundeffekt ist ein `Span`, dessen `/ActualText` seine Wörter sind. Hintergründe, Rahmen und Umrisse sind Artefakte. Die Ausgabe besteht die PDF/UA-1-Prüfungen von veraPDF.
+- **HTML.** Jedes Panel ist eine `<figure>` mit einem Inline-SVG (Beschnitt, Bild, Rahmen, Freisteller) und dem Alternativtext des Panels, gefolgt von seinen Sprechblasen als `<p>`-Elemente in Lesereihenfolge. Eine Sprechblase beginnt mit dem Namen des Sprechers in einem visuell verborgenen Span, sodass ein Screenreader „Maya: Grandpa! I'm here!“ hört; ein Soundeffekt wird als Bild angesagt, dessen Beschriftung seine Wörter sind. Der HTML-Betrachter der Sandbox, dessen Seiten eine Bildschirmbreite breit und eine Scrolllänge hoch sind, setzt eine Comicseite als auf den Viewport skalierte Druckseite (`comics.viewerLeaf`), nie neu umbrochen.
+- **EPUB mit festem Layout.** Die Seiten sind die des gedruckten Buchs. Das Buch enthält außerdem eine **regionsbasierte Navigation** (`regions.xhtml`, EPUB Region-Based Navigation 1.0): eine Region `panel` pro Panel in Lesereihenfolge, darin verschachtelt ihre Sprechblasen, Textkästen und Soundeffekte, sodass ein Lesesystem Panel für Panel durch das Buch gehen kann. Die Seitenfolge folgt der Leserichtung der Comics. Die Option `kindlePanelView: true` von `renderToEpub` fügt Kindle Panel View hinzu: ein Tippziel pro Panel und eine vergrößerte Kopie, die den Bildschirm füllt, mit den Metadaten, die Kindle verlangt.
+- **Umfließendes EPUB.** Eine Comicseite hat dort keine Seite, die sie behalten könnte; jedes Panel wird daher zu seinem Bild, genau wie auf der Seite zugeschnitten, gefolgt von seinen Zeilen als Text: „**Maya**: Grandpa! I'm here!“, die Textkästen als Absätze, die Soundeffekte kursiv.
+
+Die Legende eines Strips wird mit dem Text gemalt, wie die einer Abbildung. In einem getaggten PDF ist sie die `Caption` des `Div` des Strips, nach seinen Panels gelesen (davor, wenn sie über dem Strip steht). Im HTML, im EPUB mit festem Layout und im umfließenden EPUB sind der Strip und seine Legende eine einzige `<figure>`, die Legende deren `<figcaption>`; auf einer senkrechten Seite oder einer Seite von rechts nach links, wo das Bild des Strips über dem Blatt liegt, behält das HTML die Legende für sich im Text.
+
+## Comics in der Sandbox bearbeiten
+
+Im Canvas, in den HTML-Seiten und im Auswahlmodus von Folio lässt sich eine Comicseite mit dem Zeiger bearbeiten, und jede Änderung wird in das Markdown des Kapitels zurückgeschrieben (der [Sandbox-Leitfaden](/de/docs/sandbox#comics-bearbeiten) hat die Einzelheiten):
+
+- **Trennlinien.** Über einem Zwischenraum wird der Zeiger zum Größenänderungscursor. Ziehen verschiebt die Teilungslinie; beim Loslassen wird der neue Prozentwert in den `split`-Wert der Seite geschrieben (das Attribut wird ergänzt, wenn die Seite keines hat), und die Seite wird neu umbrochen. Umschalt rastet in Schritten von 5 % ein, Alt verschiebt nur das nähere Ende und neigt so die Linie, und keine Zelle wird schmaler als 5 %. Beim Ziehen wird ein Panel markiert, dessen Bild nur mit Streifen ganz gezeigt werden könnte. Jede Trennlinie ist auch ein fokussierbarer Trenner: Die Pfeiltasten verschieben sie um 1 % (mit Umschalt um 5 %), Eingabe schreibt die Position, Escape setzt sie zurück.
+- **Panels.** Eine kleine Werkzeugleiste über einem Panel teilt es mit einer waagerechten oder senkrechten Linie und fügt dahinter ein leeres `::panel` für die neue Zelle ein, oder verbindet es mit dem nächsten Panel: Die Teilungslinie verschwindet, und das verbundene Panel behält das Bild des ersten Panels und beide Skripte.
+- **Sprechblasen.** Das Ziehen einer Sprechblase fixiert sie: Ihre Skriptzeile erhält `at="x% y%"` in Prozent des Panelbilds, wobei eine verbundene Gruppe sich als Ganzes bewegt. Während sie sich bewegt, wird die Sprechblase dort orange, wo sie ein Gesicht oder eine Sperrzone verdecken oder aus ihrem Panel laufen würde, und der Tooltip sagt, was davon. Die Pfeiltasten verschieben eine fokussierte Sprechblase um 1 %, und ein Doppelklick auf eine fixierte Sprechblase hebt die Fixierung auf.
+- **Dorne.** Das Ziehen der Spitze eines Dorns schreibt `to="x% y%"`, den Punkt, auf den der Dorn zielt, in die Zeile; ein Doppelklick auf die Spitze entfernt ihn, und der Dorn zeigt wieder auf seinen Sprecher. Von einer fokussierten Sprechblase aus wechselt T zu ihrem Dorn, dessen Ziel die Pfeiltasten verschieben.
+- **Tastatur.** Ein fokussiertes Panel wird mit H (waagerechte Linie) oder V (senkrechte Linie) geteilt und mit M mit dem nächsten Panel verbunden.
+- **Strips.** Jedes Werkzeug funktioniert auch bei `:::strip`-Blöcken, in einer Spalte, gleitend oder über die ganze Seitenbreite, schmaler als ihre Satzbreite oder unter einer Legende, und schreibt in den eigenen Direktivenblock des Strips.
+- **Bilder.** Sicherheitsbereich, Sprecher und Sperrzonen eines Bilds werden im Bedienfeld Ressourcen markiert (siehe [Sprecher und Anker](#sprecher-und-anker)).
+- **Einstellungen.** Das Bedienfeld Gestaltung hat eine Gruppe **Comics**: Leserichtung, Rahmen und Zwischenräume, das Standardpanel und die Panelstile, das Lettering und die Sprechblasenstile, jeweils mit Vorschau.
+- **Editor.** Der Texteditor färbt `:::page`, `::panel` und Skriptzeilen ein, und das Bedienfeld Prüfungen führt die Comic-Warnungen bei ihren Zeilen auf.
+
+## Comic-Warnungen
+
+Jede Warnung nennt die Zeile oder das Attribut, das sie betrifft, und das Bedienfeld Prüfungen der Sandbox führt sie dort unter dem Titel in der ersten Spalte auf.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '230px' }}>Warnung</th>
+      <th>Ursache</th>
+      <th>Abhilfe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Unlesbare Panel-Aufteilung<br /><code>comicSplitSyntax</code></td><td>Ein <code>split</code>-Wert lässt sich nicht vollständig lesen: ein verirrtes Zeichen, eine nicht geschlossene <code>[</code>, <code>/</code> und <code>|</code> in einer Liste gemischt oder eine Liste in Klammern auf der Achse ihres Elternteils. Der lesbare Teil wird verwendet; ein Wert ohne lesbaren Teil ergibt ein einziges Panel.</td><td>Korrigieren Sie den Wert anhand der <a href="#die-seite-aufteilen">Grammatik</a>: eine Art von Trennzeichen pro Liste und Klammern, um die Achse zu wechseln.</td></tr>
+    <tr><td>Panelgrößen über 100 %<br /><code>comicSplitOverflow</code></td><td>Die Größen einer Liste ergeben zusammen mehr als 100 %. Sie werden verkleinert, wobei jedes <code>&#42;</code> 5 % behält.</td><td>Verringern Sie die Größen, oder ersetzen Sie eine davon durch <code>&#42;</code>.</td></tr>
+    <tr><td>Panels und Zellen passen nicht zusammen<br /><code>comicPanelCount</code></td><td>Die Seite hat mehr Zeilen <code>::panel</code>, als ihre Teilung Zellen hat (die überzähligen Panels werden weggelassen), oder weniger (die letzten Zellen bleiben leer).</td><td>Fügen Sie in der Teilung Zellen hinzu oder entfernen Sie welche, oder Panels im Skript. Eine leere Zeile <code>::panel</code> ergibt absichtlich eine leere Zelle.</td></tr>
+    <tr><td>Text außerhalb einer Skriptzeile<br /><code>comicStrayText</code></td><td>Text vor der ersten Zeile <code>::panel</code> oder eine Zeile ohne <code>key:</code>, die nicht die Zeile darüber fortsetzt. Er wird als Textkasten gelettert.</td><td>Beginnen Sie die Zeile mit einem Schlüssel (<code>caption:</code>, <code>maya:</code>), oder rücken Sie sie um zwei Leerzeichen ein, um die Sprechblase darüber fortzusetzen.</td></tr>
+    <tr><td>Unbekannter Sprechblasen-Stil<br /><code>comicUnknownBalloonStyle</code></td><td>Eine Zeile nennt in ihren geschweiften Klammern einen Stil, den weder die eingebauten Stile noch <code>comics.balloonStyles</code> definieren, oft ein Tippfehler (<code>&#123;wisper&#125;</code>). Die Zeile übernimmt den Stil ihres Schlüssels.</td><td>Korrigieren Sie den Namen, oder fügen Sie den Stil zu <code>comics.balloonStyles</code> hinzu.</td></tr>
+    <tr><td>Panelbild nicht gefunden<br /><code>comicUnknownArt</code></td><td>Das <code>art</code> oder <code>pop</code> eines Panels nennt keine Ressource oder eine Ressource, die weder Bitmap noch SVG ist. Das Panel wird leer gezeichnet.</td><td>Korrigieren Sie die ID, oder fügen Sie das Bild den Ressourcen des Buchs hinzu.</td></tr>
+    <tr><td>Bild ganz in seinem Panel gezeigt<br /><code>comicPanelLetterbox</code></td><td>Die Proportionen der Zelle weichen zu stark von denen des Bilds ab: Kein Zuschnitt dieser Form fasst den ganzen Sicherheitsbereich, daher wird das Bild mit vollständigem Sicherheitsbereich gezeigt, zwischen Streifen im Panelhintergrund.</td><td>Verschieben Sie die Trennlinie, um der Zelle andere Proportionen zu geben (die Sandbox markiert solche Positionen beim Ziehen), zeichnen Sie einen kleineren Sicherheitsbereich, oder verwenden Sie ein anderes Bild.</td></tr>
+    <tr><td>Sprecherpunkt außerhalb des Sicherheitsbereichs<br /><code>comicAnchorOutsideSafeArea</code></td><td>Ein Anker eines Bilds liegt außerhalb seines Sicherheitsbereichs, sodass ein Zuschnitt den Sprecher abschneiden kann und der Dorn dann aus dem Panel hinauszeigen würde.</td><td>Vergrößern Sie den Sicherheitsbereich, sodass er den Mund einschließt, oder verschieben Sie den Anker. Nichts ist zu tun, wenn der Sprecher bisweilen außerhalb des Panels sein soll.</td></tr>
+    <tr><td>Sprechblase passt nicht<br /><code>comicBalloonOverflow</code></td><td>Nach jeder Ausweichstufe verdeckt eine Sprechblase noch ein Gesicht, eine andere Sprechblase, eine Sperrzone oder einen Mund, führt ihren Dorn durch eine andere Sprechblase oder läuft aus ihrem Panel (ein mit <code>break</code> oder einer <code>at=</code>-Fixierung gewünschtes Überschreiten zählt nicht). Die Warnung nennt das Panel und das, was verdeckt wird. Während eine Sprechblase in der Sandbox gezogen wird, ist ein Gesicht oder eine Sperrzone, die sie verdecken würde, oder ein Rahmen, über den sie hinauslaufen würde, schon vor dem Ablegen zu sehen.</td><td>Kürzen Sie die Zeile oder teilen Sie sie in zwei, geben Sie dem Panel mehr Raum, fixieren Sie die Sprechblase mit <code>at=</code>, oder lassen Sie sie mit <code>break</code> den Rahmen überschreiten. Der Text wird nie verkleinert.</td></tr>
+    <tr><td>Figur ohne Punkt<br /><code>comicUnknownSpeaker</code></td><td>Ein Sprecherschlüssel, den kein Bild der Seite mit einem Anker markiert und kein Eintrag der Figurenliste nennt, meist ein falsch geschriebener Schlüssel. Seine Dorne zeigen aus dem Panel hinaus. Nur auf Seiten gemeldet, deren Bilder Anker markieren; nur zur Information.</td><td>Korrigieren Sie den Schlüssel, markieren Sie den Sprecher auf dem Bild, oder fügen Sie für einen Sprecher, der nie zu sehen ist, einen Eintrag in <code>comics.cast</code> hinzu.</td></tr>
+  </tbody>
+</table>
+
+Die Warnungen kommen in den `contentWarnings` des Dokuments zurück, mit dem Quellbereich der Zeile oder des Attributs, das sie betreffen (siehe [Konfiguration › Warnungen im Dokument](/de/docs/configuration-programmatic-usage#warnungen-im-dokument)).
+
+Eine Comic-Einstellung, die eines von wenigen Wörtern annimmt und ein anderes enthält, etwa `shape: 'ovl'` in einem Sprechblasenstil oder `readingDirection: 'rlt'`, wird als ihr Standardwert gelesen und im Bedienfeld Prüfungen als **Unbekannter Einstellungswert** (`unknownConfigValue`) aufgeführt, mit dem Wert, den die Engine verwendet hat, und dem Wort, dem er am nächsten kommt. Geprüft werden `readingDirection`, `artDirection`, `borderStyle` und `fit` eines Panelstils, `writingMode`, `textTransform`, `dropFinalStop` und `joinSameSpeaker` des Letterings sowie `shape`, `tail`, `target`, `position`, `align` und `textTransform` eines Sprechblasenstils.
+
+## Aus dem Code
+
+Ein Comic braucht nichts außer `buildDocument`: Die Ressourcen tragen die Bilder mit ihren Sicherheitsbereichen, Ankern und Sperrzonen, und die Konfiguration kann `comics` enthalten. Das Lettering misst seinen Text mit den geladenen Schriften; die Lettering-Schriften müssen also vor dem Layout geladen sein, wie jede Schrift: `comicFontFamilies(config, markdown)` listet die Schriften auf, die die Comics eines Dokuments brauchen (die Lettering-Schrift, die Schriften jedes Sprechblasenstils und der Figurenliste sowie die, die seine Skriptzeilen mit `font=` nennen), und `markdownHasComics(markdown)` gibt an, ob ein Text Comicseiten oder Strips enthält. Im PDF wird der Font-Provider wie bei jeder anderen Schrift nach diesen Schriften gefragt.
+
+Der umbrochene Comic steht im VDT: `page.comic` (`VDTComicPage`) enthält den Rahmen, die Leserichtung, die Panels in Lesereihenfolge (Polygon, Rahmen, Hintergrund, den Zuschnitt des Bilds als `art.source` und `art.box`), die Trennlinien (mit dem Quellbereich des `split`-Werts, in den sie schreiben) und die Sprechblasen (Umrisspfad, Textblöcke, Dornspitze, Art, Sprecher). Die Teilungsgrammatik wird für Editoren exportiert: `parseComicSplit`, `serializeComicSplit`, `moveComicSplitLine`, `splitComicCell` und `mergeComicCells` lesen einen `split`-Wert und schreiben ihn neu, wobei sie sein `*` erhalten, wo sie können. `comicArtCrop` und `comicCropFeasibleRange` berechnen einen Zuschnitt, und `comicArtPointToPage` bildet einen Punkt eines Bilds auf die Seite ab.
+
+## Bekannte Grenzen
+
+- **Nur Teilungsbäume.** Eine Teilung schneidet jede Zelle mit einer Linie, die quer durch sie läuft, in zwei; Layouts, in denen keine Linie die ganze Seite durchquert, etwa ein Windrad aus vier Panels um ein fünftes, lassen sich daher nicht schreiben. Eingesetzte Panels und herausragende Bildteile decken das meiste ab, wofür solche Layouts gedacht sind.
+- **Panelformen.** Panels sind konvexe Polygone; runde, ausgefranste oder rahmenlose Vignetten-Panels, gedrehte oder gezoomte Bilder und Speedlines werden in den Bildern gezeichnet, nicht von Postext.
+- **Lettering.** Ruby über einer Basis von rechts nach links entfällt, und andere Annotationen werden in Sprechblasen als einfacher Text gedruckt. Die Platzierung erfolgt pro Panel: Dass sich Dorne nicht kreuzen, wird über Kosten erreicht, nicht indem sie umeinander herumgeführt werden, und der Fluss von einem Panel zum nächsten wird nicht ausgeglichen. Lange Zeilen in sehr kleinen Zellen werden gemeldet, nicht gelöst. Der Schutzbereich über einem nicht markierten Gesicht bemisst sich nach Mund und Kopfpunkt (einige Gevierte, wenn der Anker keinen Kopf hat), sodass er in einer Nahaufnahme eher den Mund als das Gesicht schützen kann; markieren Sie das Gesicht.
+- **Strips** können nicht über eine Anzahl von Spalten reichen, die kleiner ist als die der Seite (`columns=2` auf einer Seite mit drei), und werden nur auf der obersten Ebene eines Kapitels gelesen (nicht in einem Kasten, einer Tabelle oder einer Fußnote). Ein Literaturverweis in der Legende eines Strips wird so gedruckt, wie er geschrieben ist.
+- **Doppelseiten.** Ein abgerundetes Panel, das am Bund geschnitten wird, verliert alle seine runden Ecken. Ein Comic von rechts nach links in einem links gebundenen Buch beginnt weiterhin auf der linken Seite, sein erstes Panel landet also auf der zweiten Seite der Doppelseite.
+- **Herausragende Bildteile** übernehmen den Zuschnitt des Panelbilds; der Freisteller muss daher dieselbe Größe haben wie das Panelbild.
+- **Ausgaben.** Der Ersatz-Alternativtext eines Panels ohne `alt` und ohne `altText` lautet „Panel N“, auf Englisch. Die regionsbasierte Navigation beschreibt schräge Panels durch ihre umschließenden Rechtecke. Kindle Panel View kopiert den Comic einer Seite einmal pro Panel, was die Datei vergrößert, und wurde nicht im Kindle Previewer geprüft.
+
+## Quellen
+
+- Nate Piekos, [*Comic Book Grammar & Tradition*](https://blambot.com/pages/comic-book-grammar-tradition) (Blambot): Arten von Sprechblasen, Textkästen, Hervorhebung, der doppelte Strich.
+- John Roshell und Comicraft, [*Balloon Tales*](https://balloontales.com/creating-tails-and-joins/): Dorne und Verbindungen sowie [die Ebenenmethode](https://balloontales.com/the-layer-method/), erst ziehen, dann füllen.
+- Todd Klein, [*Digital lettering for comics*](https://kleinletters.com/Blog/digital-lettering-for-comics/).
+- David Kurlander, Tim Skelly und David Salesin, [*Comic Chat*](https://kurlander.net/DJ/Pubs/SIGGRAPH96.pdf), SIGGRAPH 96: Platzierung von Sprechblasen in Lesereihenfolge.
+- IDPF, [*EPUB Region-Based Navigation 1.0*](https://idpf.org/epub/renditions/region-nav/epub-region-nav.html), und Amazon KDP, [Kindle Panel View](https://kdp.amazon.com/en_US/help/topic/G9GSTY4LTRT39D4Z).

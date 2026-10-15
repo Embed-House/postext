@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-daily-strip",
-  "sourceHash": "8fa85fe5e8ee97090aa5927861a4c945f922002890788b7c9c791a4ff19a7440",
+  "sourceHash": "086cc5f78acbc7595d49b55c72c674c10d959fdcad9a65ae77771a1389a55950",
   "engine": {
-    "postext": "1.33.4",
-    "postextPdf": "1.33.4",
+    "postext": "1.33.5",
+    "postextPdf": "1.33.5",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T08:05:41.519Z",
+  "capturedAt": "2026-10-15T11:49:17.596Z",
   "variants": {
     "en": {
       "hash8": "acdfb288",
       "vdtHash": "d9c682beeac52135ee3e4c9c36073f95d284710d",
       "timings": {
-        "importMs": 4635,
-        "fontsMs": 4760,
-        "buildMs": 422,
-        "totalMs": 11441,
+        "importMs": 5443,
+        "fontsMs": 1749,
+        "buildMs": 586,
+        "totalMs": 9318,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 181
       },
       "pages": [
         {
@@ -333,23 +333,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "e1633dd9",
       "vdtHash": "c12bf47ba17eb0f6827eb5cd8e177234c24d5de7",
       "timings": {
-        "importMs": 5366,
-        "fontsMs": 2416,
-        "buildMs": 463,
-        "totalMs": 10964,
+        "importMs": 3851,
+        "fontsMs": 1425,
+        "buildMs": 566,
+        "totalMs": 7378,
         "builds": 1
       },
       "specimen": {
@@ -370,7 +364,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 181
       },
       "pages": [
         {
@@ -665,23 +659,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
       "hash8": "72e1327b",
       "vdtHash": "22dfffcadc3a976d72fd443f1b3b7d368879d0b9",
       "timings": {
-        "importMs": 5369,
-        "fontsMs": 2401,
-        "buildMs": 433,
-        "totalMs": 10544,
+        "importMs": 3929,
+        "fontsMs": 1341,
+        "buildMs": 441,
+        "totalMs": 7187,
         "builds": 1
       },
       "specimen": {
@@ -702,7 +690,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 181
       },
       "pages": [
         {
@@ -997,23 +985,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
       "hash8": "efb09123",
       "vdtHash": "aa42116175019bf67d19d2dfd06d4d33bf340ea9",
       "timings": {
-        "importMs": 3477,
-        "fontsMs": 12844,
-        "buildMs": 373,
-        "totalMs": 18636,
+        "importMs": 2230,
+        "fontsMs": 10226,
+        "buildMs": 448,
+        "totalMs": 14498,
         "builds": 1
       },
       "specimen": {
@@ -1034,7 +1016,7 @@
           "Noto Serif SC"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 181
       },
       "pages": [
         {
@@ -1330,23 +1312,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
       "hash8": "1673293c",
       "vdtHash": "6c016a25c753301988483d60448950e8670557a4",
       "timings": {
-        "importMs": 4101,
-        "fontsMs": 8798,
-        "buildMs": 442,
-        "totalMs": 16108,
+        "importMs": 4291,
+        "fontsMs": 5053,
+        "buildMs": 443,
+        "totalMs": 11671,
         "builds": 1
       },
       "specimen": {
@@ -1367,7 +1343,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 181
       },
       "pages": [
         {
@@ -1662,23 +1638,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
       "hash8": "cd3735e6",
       "vdtHash": "e2c852be5d879979d1bca8c565db57588298896a",
       "timings": {
-        "importMs": 4434,
-        "fontsMs": 11166,
-        "buildMs": 384,
-        "totalMs": 18769,
+        "importMs": 4322,
+        "fontsMs": 6747,
+        "buildMs": 507,
+        "totalMs": 13443,
         "builds": 1
       },
       "specimen": {
@@ -1699,7 +1669,7 @@
           "Noto Serif JP"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 181
       },
       "pages": [
         {
@@ -1997,23 +1967,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
       "hash8": "ebd9cc45",
       "vdtHash": "d9e0f3f92fbe5bf035ffe45dba0eec3d1102a6cf",
       "timings": {
-        "importMs": 3654,
-        "fontsMs": 4942,
-        "buildMs": 328,
-        "totalMs": 11302,
+        "importMs": 2036,
+        "fontsMs": 6004,
+        "buildMs": 413,
+        "totalMs": 9803,
         "builds": 1
       },
       "specimen": {
@@ -2034,7 +1998,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 181
       },
       "pages": [
         {
@@ -2339,11 +2303,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 2 −5‰ ““A regra é que a piada tem que cair no quarto qu…”, p. 2 −5‰ “Pip responde: Uma vez. Levei dois dias, e o Otto…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
@@ -2352,10 +2311,10 @@
       "hash8": "85477044",
       "vdtHash": "be42959c67b0b16d470858da695522e8056c8a4f",
       "timings": {
-        "importMs": 4897,
-        "fontsMs": 3964,
-        "buildMs": 382,
-        "totalMs": 11237,
+        "importMs": 3702,
+        "fontsMs": 2264,
+        "buildMs": 474,
+        "totalMs": 8193,
         "builds": 1
       },
       "specimen": {
@@ -2376,7 +2335,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 181
       },
       "pages": [
         {
@@ -2681,11 +2640,343 @@
             "check": "C35",
             "severity": "info",
             "detail": "4 paragraphs set a line short with tracking (worst −10‰, the cap): p. 2 −10‰ “À l’été 2016, elle a posté ses six premiers stri…”, p. 2 −10‰ “Cher Pip, as-tu déjà fini un croissant entier ? …”, p. 2 −5‰ “Enfant, Barlow vivait au-dessus de la boulangeri…”, p. 2 −5‰ “Le strip du dimanche fait exception à la règle d…”"
+          }
+        ]
+      }
+    },
+    "de": {
+      "hash8": "6bde2355",
+      "vdtHash": "63868a60c0170fe91ffbadc05d05fe8da9b7a247",
+      "timings": {
+        "importMs": 4017,
+        "fontsMs": 2303,
+        "buildMs": 495,
+        "totalMs": 8472,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          230,
+          310
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": false,
+        "body": {
+          "family": "Newsreader",
+          "sizePt": 9,
+          "leadingPt": 12.200000000000001
+        },
+        "families": [
+          "Archivo Narrow",
+          "Newsreader"
+        ],
+        "pages": 2,
+        "ownLines": 181
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "body",
+          "w": 1000,
+          "h": 1348,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 111924,
+          "alt": "Seite 1."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1348,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 185034,
+          "alt": "Kapitelauftakt, Seite 2: Zehn Winter auf der Scholle."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "newspaper-daily-strip.pdf",
+        "bytes": 883252,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "newspaper-daily-strip.postext",
+        "bytes": 812442,
+        "folio": "bebc74ee",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "8cc18dfa675665b8",
+            "lines": "2cba1d23154510f7"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].body.paragraphSpacing",
+          "calloutStyles[].body.textAlign",
+          "calloutStyles[].id",
+          "calloutStyles[].keepTogether",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].bold",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontFamily",
+          "comics.balloonStyles[].haloColor",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].stroke",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.inset",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "header.elements[].align",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].lineHeight",
+          "header.elements[].placement",
+          "header.elements[].thickness",
+          "headingStyles",
+          "headingStyles[].id",
+          "headingStyles[].layout",
+          "headingStyles[].layout.columnCount",
+          "headingStyles[].layout.columnRule",
+          "headingStyles[].layout.gutterWidth",
+          "headingStyles[].layout.layoutType",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].span",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].fontWeight",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginBottom",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].spaceBetween",
+          "paragraphStyles[].textAlign"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 203,
+        "designElements": 4,
+        "directives": [
+          ":::strip",
+          ":::paragraphs",
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 7,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Archivo Narrow",
+            "weight": 400,
+            "style": "normal"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+            "family": "Archivo Narrow",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Newsreader",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Newsreader",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Newsreader",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "balloon-styles",
+          "callout-splitting",
+          "callout-styles",
+          "comic-lettering",
+          "comic-panel-art",
+          "comic-panel-styles",
+          "comic-strips",
+          "heading-attributes",
+          "heading-styles",
+          "multiple-columns",
+          "opener-band",
+          "page-background",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "section-geometry",
+          "sound-effects"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 3,
+        "looseLines": {
+          "count": 1,
+          "share": 0.0132,
+          "worst": 2.72
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 2,
+          "tracked": 2,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 2 −5‰ “Ines Barlow zeichnet seit zehn Jahren an jedem W…”, p. 2 −5‰ “„Die Regel ist, dass die Pointe im vierten Bild …”"
           }
         ]
       }

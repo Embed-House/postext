@@ -1,0 +1,58 @@
+---
+title: "Wörterbuch mit wanderndem Daumenregister"
+summary: "Eine Schleife erzeugt ein Überschriftenformat pro Buchstabe, und die Kopfzeile jedes Formats setzt dessen dunkelblauen Reiter am Außenrand eine Stufe tiefer."
+plain: "Vier Seiten eines alten Seemannswörterbuchs. Buchstabenreiter laufen am Außenrand jeder Seite hinab, und der Reiter des aktuellen Buchstabens ist dunkel und rückt mit dem Alphabet tiefer."
+description: "Vier Seiten aus Smyths Sailor’s Word-Book, zweispaltig, mit dunkelblauen Stichwörtern, vierzeiligen Initialen und einem Reiter, der Stufe um Stufe sinkt."
+question: "Wie lasse ich den Reiter eines Wörterbuchs am Außenrand von Buchstabe zu Buchstabe tiefer rücken?"
+aliases: ["Wörterbuch", "Glossar", "Nachschlagewerk", "Daumenregister", "Griffregister", "Randregister", "randabfallende Reiter", "Stichwörter", "Buchstabenüberschriften", "Leitwörter", "thumb index"]
+pageNotes: { "1": "Seite 1 eröffnet das Wörterbuch unter einem Band: ein unklarer Anker, „THE SAILOR’S WORD-BOOK“ in dunkelblauen Kapitälchen, Untertitel und Verfasserzeile des Titelblatts von 1867 und eine Doppellinie. Darunter folgen die Anmerkung des Herausgebers und ein dunkelblaues A, vier Zeilen tief. Am rechten Rand läuft das Register aus 22 Reitern hinab, A in Dunkelblau.", "2": "Seite 2, eine linke Seite: Die Einträge zu A füllen die erste Spalte und enden in der zweiten, wo ein dunkelblaues B den nächsten Buchstaben eröffnet. Am linken Rand zeigt der dunkelblaue Reiter B, eine Stufe unter A, obwohl die Seite mit A beginnt.", "3": "Seite 3: Die Einträge zu B enden am Fuß der ersten Spalte, und ein dunkelblaues C steht über der zweiten. Am rechten Rand hebt sich der Reiter für C aus dem blassen Register ab, zwei Stufen unter A.", "4": "Seite 4: Die letzten Einträge zu C füllen beide Spalten, die bündig enden, und ein dreizeiliges Impressum schließt die zweite." }
+---
+
+## Was Sie setzen
+
+Vier Seiten aus einer neuen Ausgabe von Admiral Smyths *Sailor’s Word-Book* (1867), Buchstaben A bis C, auf einem Format von 150 × 200 mm. Die Einträge laufen in zwei Spalten im Blocksatz aus Alegreya in 8 pt, getrennt durch eine Haarlinie, jedes Stichwort fett in Dunkelblau und jede Folgezeile um 1 em eingezogen. Ein Buchstabe beginnt innerhalb seiner Spalte, als vierzeilige dunkelblaue Initiale über einer messingfarbenen Linie, und die Einträge laufen ohne Seitenumbruch weiter. Am Außenrand druckt jede Seite das ganze Daumenregister, 22 Reiter in einem blassen Ton. Der Reiter des aktuellen Buchstabens ist dunkelblau, 3,2 mm breiter als die anderen und steht für jeden Buchstaben eine Stufe tiefer. Die spanische Ausgabe behält Smyths englische Stichwörter und übersetzt die Einträge.
+
+## Zubereitung
+
+### 1 · Jedem Buchstaben ein Überschriftenformat mit eigenem Reiter geben
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `TABS` führt 22 Reiter, wobei sich seltene Buchstaben einen teilen (QR, UV, XYZ). Jeder Reiter ist zwei Grundtextzeilen (7,34 mm) hoch, zusammen füllen sie also die 44 Zeilen des Satzspiegels. Die Schleife gibt jedem Buchstaben ein Überschriftenformat, dessen `header` den dunkelblauen Reiter dieses Buchstabens, eine Stufe tiefer als den vorigen, zu den Kolumnentiteln und dem blassen Register hinzufügt ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Jede Zelle ist zweimal geschrieben, einmal pro `parity`, und am Außenrand der Seite verankert statt am eigenen Container der Kopfzeile. Dieser Container ist der Kopfsteg, so breit wie der Satzspiegel und von der Beschnittkante bis zum Text reichend, während die Reiter bis an den Außenrand reichen und alle 44 Zeilen hinablaufen müssen. Eine Seite übernimmt die Kopfzeile des letzten Abschnitts, der auf ihr beginnt, sodass <PageRef page={2}>Seite 2</PageRef> mit A beginnt und den Reiter für B zeigt.
+
+### 2 · Die Kolumnentitel von der ersten Seite fernhalten
+
+<Excerpt region="running-heads" />
+
+Die Kolumnentitel sind an der Seite verankerte Textelemente, gefiltert nach `parity` und `pages: 'body'` ([Textelemente](/de/docs/configuration-page-layout#textelemente)). Der Titel auf Seite 1 reicht über beide Spalten, was Seite 1 zu einem Auftakt macht. Die Kolumnentitel überspringen sie, und ihre Pagina kommt aus der Fußzeile, einem Element mit `pages: 'opener'`, das 6 mm unter dem Satzspiegel druckt. Auf einer rechten Seite druckt `{chapterTitle}` den Buchstaben der letzten Überschrift der Ebene 1 auf oder vor der Seite, *Letter C*. `{firstMark.<key>}` und `{lastMark.<key>}` drucken stattdessen das erste und letzte Stichwort einer Seite, die Leitwörter der meisten Wörterbücher; dieses Rezept behält den Buchstaben, denn den erschließen seine Reiter.
+
+### 3 · Die Stichwörter einfärben und sonst nichts
+
+<Excerpt region="entries" />
+
+Jeder Eintrag ist ein Absatz eines Blocks `:::paragraphs{style="entry"}`, seine Folgezeilen um 1 em eingezogen ([Absatzformate](/de/docs/configuration-styles#absatzformate)). `boldColor` des Grundtextes hält **Note.** auf Seite 1 in der Textfarbe, und `boldColor` des Eintragsformats druckt die Stichwörter in Dunkelblau. Ein Absatzformat hat kein `italicColor`, die kursiven Untereinträge behalten also die Farbe des Grundtextes.
+
+### 4 · Eine vierzeilige Initiale in die Spalte setzen
+
+<Excerpt region="letter-heads" />
+
+`LETTER`, 55,8 pt, ist die Größe, bei der eine Versalie der Alegreya SC 900 (0,652 em hoch) auf der vierten Grundlinie steht und bis zur Versalhöhe der ersten Grundtextzeile reicht. Buchstabe und messingfarbene Linie enden innerhalb der fünften Zeile, und der Überschriftenblock rastet auf der nächsten Rasterlinie ein; jede Buchstabenüberschrift ist also fünf Zeilen hoch, und die Einträge darunter bleiben auf dem Raster. Auf <PageRef page={3}>Seite 3</PageRef> steht das C am Kopf der zweiten Spalte auf der Höhe der ersten vier Zeilen der ersten Spalte. Ebene 1 setzt `breakBefore: { enabled: false }`, was den Seitenumbruch abschaltet, den eine Überschrift der Ebene 1 standardmäßig hat, und die Buchstabenformate erben das, sodass B und C mitten in der Spalte beginnen.
+
+### 5 · Den Titel über beide Spalten legen
+
+<Excerpt region="title" />
+
+Das Titelformat reicht über die ganze Seitenbreite, mit einem Band, das Anker, Namen, einen Untertitel und eine aus Überschriftenattributen gelesene Verfasserzeile enthält, und einer Doppellinie ([Span und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). Die dünne Linie endet 45,1 mm unter dem Kopf des Satzspiegels, das Band rastet also auf 13 Rasterzeilen ein, 47,7 mm. Die Spaltenlinie beginnt unter dem Band, auf der Zeile, auf der der Text der beiden Spalten beginnt.
+
+## Varianten
+
+### Nur den aktuellen Reiter drucken
+
+Gedruckte Daumenregister zeigen meist nur den Reiter des aktuellen Buchstabens; nehmen Sie `ladder` aus der Kopfzeile, und der dunkelblaue Reiter rückt weiterhin von A bis C tiefer.
+
+```diff
+-  header: { elements: [...runningHeads, ...ladder,
++  header: { elements: [...runningHeads,
+```
+
+## Häufige Fehler
+
+- Eine Spalte von 60 mm fasst etwa 50 Zeichen, und Smyths Englisch lässt sich nicht umformulieren. Allein über die Wortzwischenräume gesetzt, dehnten 18 der 218 englischen Blocksatzzeilen (8 %) sie über das 1,7-Fache der normalen Breite, gegenüber unter 2 % im Spanischen, dessen Übersetzung in die Spalte eingepasst wurde, und die erste Zeile von *Cross-trees* ließ sich gar nicht füllen. `maxJustifyTracking: 10` erlaubt einer Zeile bis zu 1 % Laufweite, bevor ihre Wortzwischenräume diese Grenze überschreiten: In der Aufnahme tragen 25 der 217 englischen und 9 der 223 spanischen Zeilen etwas davon, und keine überschreitet 1,7. Das Englische lag bei 17 %, bevor die fünf am schlechtesten gesetzten Einträge (*Aground*, *Aloft*, *Belay*, *Cockpit*, *Crow’s nest*) gegen andere getauscht wurden. Wählen Sie Einträge, die sich gut setzen lassen, oder verbreitern Sie die Spalte.

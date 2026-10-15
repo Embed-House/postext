@@ -1,0 +1,69 @@
+---
+title: "Ein Register chinesischer Namen, nach Pinyin und Strichzahl"
+summary: "Dieselben :index-Marken in zwei Ausgaben eines 紅樓夢-Lesebuchs: index.groupBy ordnet die Namen in zh-Hans nach Pinyin-Initialen, in zh-Hant nach Strichzahl."
+plain: "Ein kurzes Lesebuch eines klassischen chinesischen Romans mit einem Register der Figurennamen. Dieselben Marken ergeben zwei Ausgaben: eine nach dem Klang geordnet, eine nach der Zahl der Pinselstriche."
+description: "Ein chinesisches Namensregister in Postext: Dieselben :index-Marken ergeben Pinyin-Köpfe A–Z in der Kurzzeichen-, Strichköpfe 三畫, 四畫 in der Langzeichenausgabe."
+question: "Wie gliedere ich ein Register chinesischer Namen nach Pinyin oder wie in taiwanischen Büchern nach Strichzahl?"
+aliases: ["chinesisches Register", "Namensregister", "Personenregister", "人名索引", "Pinyin-Register", "拼音索引", "Register nach Strichzahl", "笔画索引", "筆畫索引", "index.groupBy", "chinesische Sortierung", "Der Traum der roten Kammer", "Dream of the Red Chamber", "紅樓夢", "Kurzzeichen und Langzeichen"]
+pageNotes: { "7": "Der Auftakt des Registers in der Kurzzeichenausgabe: die Dachzeile „按汉语拼音排列“ in Rot, der Titel „人名索引“ in einer Kai-Pinselschrift, eine Notiz aus einem Satz auf zwei Zeilen, dann zwei Spalten unter den Pinyin-Köpfen F, H, J, K, L und M; die Gruppe J listet sechzehn Mitglieder der Familie Jia und Jia Yucun, der nur ihren Namen teilt.", "8": "Der Rest des Registers, von N bis Z, und das englische Impressum mit der Revision der Quelle und den zwei Änderungen an ihrem Text am Fuß der zweiten Spalte.", "15": "Der Auftakt des Registers in der Langzeichenausgabe: die Dachzeile „依筆畫排列“ in Rot, „人名索引“, dieselbe Notiz in Langzeichen, dann zwei Spalten unter Strichzahl-Köpfen von „三畫“ bis „十三畫“, wo die Namen der Jia beginnen, da 賈 dreizehn Striche hat.", "16": "Der Rest des Strichregisters, von den Namen der Jia bis „二十八畫“ („鸚哥“), und das englische Impressum der Langzeichenausgabe am Fuß der zweiten Spalte." }
+---
+
+## Was Sie setzen
+
+Ein schmales Lesebuch zu 紅樓夢 (*Der Traum der roten Kammer*), das aus den Kapiteln 1 bis 3 die Stellen abdruckt, an denen die Figuren zum ersten Mal auftreten, und mit einem Register ihrer 47 Namen endet, dazu vier Verweise von anderen Namen. Es erscheint in zwei Ausgaben aus denselben Marken. Die festlandchinesische in Kurzzeichen ordnet die Namen nach ihrer Pinyin-Initiale ein, F, H, J …; die taiwanische in Langzeichen nach der Strichzahl des ersten Zeichens, 三畫, 四畫 … Beide sind Taschenbücher im Format 大32开, 140 × 203 mm, mit 26 Zeichen pro Zeile in Noto Serif, die Kapiteltitel in einer Kai-Schrift und Dachzeilen, Paginas und Registerköpfe in Noto Sans. Die Karte vergrößert die ersten Gruppen des Kurzzeichenregisters, F bis L. <RecipeLink slug="names-and-subjects-indexes">Ein Personenregister und ein Sachregister</RecipeLink> baut dieselbe Art von Register für eine englische Monografie.
+
+## Zubereitung
+
+### 1 · Jeden Namen dort markieren, wo der Leser ihm begegnet
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort); der Rest steht im Markdown. Eine Marke ordnet den vollen Namen ein, gleich was der Text druckt: `字:index[士隐]{term="甄士隐" main}` druckt 士隐 und verzeichnet eine Seite unter 甄士隐. `main` setzt die Seitenzahl fett, und die Notiz unter dem Registertitel sagt, was fett hier bedeutet: die Seite, auf der die Figur selbst auftritt. Jia Baoyu wird in Kapitel 2 geboren, ohne genannt zu werden (又生了一位公子), deshalb steht die Marke dort ohne zu druckenden Text, `:index{term="贾宝玉"}`, und sein Eintrag lautet 4, **6**. Andere Namen und Spitznamen erhalten einen eigenen Verweis, `:index[凤辣子]{term="凤辣子" see="王熙凤"}`, den Postext auf chinesische Weise druckt, nach einem Punkt und ohne Leerzeichen: 凤辣子。见王熙凤 ([Registermarken](/de/docs/document-format#registermarken)).
+
+### 2 · Die Sprache die Reihenfolge bestimmen lassen
+
+<Excerpt region="editions" />
+
+Die beiden Ausgaben teilen sich die Konfiguration, und `locale` ist der einzige Schalter, den das Register braucht: `groupBy: 'auto'` gliedert ein Register in `zh-Hans` nach Pinyin und eines in `zh-Hant` nach Strichen, und die kurze Antwort schreibt beide Werte aus, damit Sie sie sehen. Die Einträge sortieren sich in der Ordnung, aus der die Köpfe stammen, deshalb tauschen dieselben Namen die Plätze: 甄费 steht unter Z vor 甄士隐 (fèi vor shì) und unter 十四畫 dahinter (士 hat drei Striche, 費 zwölf); 宁国公 und 荣国公 trennen sich auf N und R, während 寧國公 und 榮國公 unter den Namen mit vierzehn Strichen beieinanderbleiben ([Register](/de/docs/configuration-notes-references#register)). Lesungen und Strichzahlen liefert die chinesische Sortierung des Browsers; ein Familienname, den sie falsch liest (曾, 单, 解), bekommt einen Schlüssel `sort` aus Zeichen mit der richtigen Lesung.
+
+### 3 · Jede Schrift mit den Zeichen laden, die sie setzt
+
+<Excerpt region="voices" />
+
+Fontsource zerlegt jeden chinesischen Schnitt in etwa hundert Dateien, und `loadCjkFonts` holt die, die sein Text berührt. Die Song-Schrift bekommt das ganze Buch, die Kolumnentitel kosten sie also nichts; ihr fetter Schnitt die Ziffern der Hauptseiten; die Hei-Schrift den Text der Attribute `kicker`, die Registerköpfe und die Ziffern der Paginas; die Kai-Schrift die drei Verspaare und 人名索引. Das PDF geht denselben Weg: `cjkPdfProvider` bettet diese Dateien ein, jede auf die Zeichen reduziert, die ihre Seiten verwenden, und kein Zeichen erscheint als leeres Kästchen. Die Kai-Schrift wechselt mit der Ausgabe. LXGW WenKai TC, die einzige Kai-Textschrift auf Fontsource, zeichnet überlieferte Formen, 冷 mit dem alten Fuß 卩 von 令, und setzt ihre Kommas und Punkte mittig, deshalb stehen die Titel der Kurzzeichenausgabe in Ma Shan Zheng, einer Kai-Pinselschrift mit den festlandchinesischen Formen ([chinesische, japanische und koreanische Schriften](/de/docs/configuration-programmatic-usage#chinesische-japanische-und-koreanische-schriften)).
+
+### 4 · Die Notiz in den Auftakt des Registers setzen
+
+<Excerpt region="opener" />
+
+Die Notiz ist ein Attribut der Überschrift, `# 人名索引 {style="index" kicker="按汉语拼音排列" note="…"}`, über die ganze Satzbreite oberhalb der beiden Spalten gesetzt. Als Absatz innerhalb der Spalten war sie ein Hebel für den Spaltenausgleich: Um die letzte Seite der Langzeichenausgabe auszugleichen, lockerte das Layout sie auf zwölf Zeichen pro Zeile in einer Spalte von vierzehn. Die Notiz ist ein Satz, `本索引收录前三回选文中的人物，粗体页码为人物出场之页；别名与原名另立参见条目。`, umbrochen von der Gestaltung: Gestaltungstext in einem chinesischen Buch übernimmt die Umbruchregeln und Zeichenbreiten des Grundtexts, deshalb sind ，； in der Kurzzeichenausgabe halbbreit und in der Langzeichenausgabe vollbreit, wie im Text, und keine Zeile der Notiz beginnt mit einem Satzzeichen. Die Kapitelauftakte verwenden dieselbe Gestaltung, mit `第{numberHan}回` als Dachzeile, die 第一回 in der Schrift des Dokuments druckt.
+
+### 5 · Beide Registerseiten nebeneinander zeigen
+
+<Excerpt region="side-by-side" />
+
+Der Pen baut beide Ausgaben und zeigt die Kurzzeichenausgabe auf der Arbeitsfläche. Die Schaltflächen 简体版 und 繁體版 wechseln die Arbeitsfläche, und jeder Wechsel bietet das PDF der dort liegenden Ausgabe an, `chinese-name-index-hans.pdf` oder `chinese-name-index-hant.pdf`. Die Erfassung zeichnet beide Builds auf (`capture.doc: ['first', 'last']`): Die ersten acht Seiten oben sind die Kurzzeichenausgabe, die vier danach stammen aus der Langzeichenausgabe, ihre erste Seite und ihr Strichregister. Der Streifen über der Arbeitsfläche enthält die erste Registerseite jeder Ausgabe. Das mit dem Rezept angebotene PDF ist das der Kurzzeichenausgabe.
+
+## Varianten
+
+### Ein Langzeichenregister nach Pinyin gliedern
+
+Eine Langzeichenausgabe für Leser, die Namen nach ihrer Lesung nachschlagen, kann sie nach Pinyin ordnen. Setzen Sie `groupBy: 'pinyin'` in beiden Ausgaben: Die Köpfe sind A–Z, und die Einträge behalten ihre Langzeichenformen. Die Dachzeile sagt, wie das Register geordnet ist, ändern Sie sie also auch im Markdown der Langzeichenausgabe, zu `kicker="依漢語拼音排列"`.
+
+```diff
+-  groupBy: e.locale === 'zh-Hans' ? 'pinyin' : 'stroke', // A B C… or 三畫 四畫…
++  groupBy: 'pinyin', // A B C… in both scripts
+```
+
+### Die Namen ohne Köpfe drucken
+
+Eine kurze Namensliste liest sich gut mit einer Leerzeile zwischen den Gruppen und ohne Kopf darüber. Behalten Sie die Gruppierung und schalten Sie die Köpfe aus. `groupBy: 'none'` täte es nicht: Es setzt nur Symbole, Zahlen und Wörter voneinander ab, und jeder Name hier beginnt mit einem Han-Zeichen, sodass die 47 als ein Block durchliefen.
+
+```diff
+-  groups: { fontFamily: e.sans, fontSize: pt(9.5), fontWeight: 700, color: col('cinnabar'),
+-    marginTop: pt(6.25) }, // the three names of 九畫 stay whole at the foot of their column
++  groups: { enabled: false, marginTop: pt(14) }, // no heads; a blank line between groups
+```
+
+## Häufige Fehler
+
+- Die Konfiguration `index` gehört zum Dokument, ein Dokument druckt also eine Ordnung. Ein Buch, das sowohl ein Pinyin-Register als auch eine Strichliste zum Nachschlagen will, wird zweimal gebaut, wie dieser Pen es tut.
+- Auf einem Zeichenraster ist der Spaltenausgleich standardmäßig aus, und die letzte Seite jedes Registers füllte ihre erste Spalte bis zum Fuß: Das Impressum der Kurzzeichenausgabe begänne unter Z und endete am Kopf der zweiten Spalte. `headings.balancing: { enabled: true }` kürzt die erste Spalte dieser Seite, sodass die Namen in die zweite weiterlaufen und das Impressum geschlossen darunter steht ([Spaltenausgleich](/de/docs/configuration-text#spaltenausgleich)). Der Schnitt fällt zwischen Einträge und lässt nie einen einzelnen Namen einer Gruppe allein am Fuß oder Kopf einer Spalte stehen (`index.groups.splitMinEntries`, standardmäßig 2), deshalb enden die beiden Spalten nur dort bündig, wo die Längen es erlauben. Hier trägt jedes Impressum einen Satz zur Ordnung seines Registers, und die Spalten beider Schlussseiten enden innerhalb einer Drittelzeile.

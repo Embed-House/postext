@@ -10,8 +10,8 @@
  */
 
 /** Site locales: the write-ups, the registries and the gallery. */
-export type Locale = "en" | "es" | "ca" | "zh" | "ar" | "ja" | "pt" | "fr";
-export const LOCALES: readonly Locale[] = ["en", "es", "ca", "zh", "ar", "ja", "pt", "fr"];
+export type Locale = "en" | "es" | "ca" | "zh" | "ar" | "ja" | "pt" | "fr" | "de";
+export const LOCALES: readonly Locale[] = ["en", "es", "ca", "zh", "ar", "ja", "pt", "fr", "de"];
 export type Localized<T = string> = Record<Locale, T>;
 
 /** Languages a recipe's sample document (the pen, its content.<locale>.md,

@@ -1,0 +1,63 @@
+---
+title: "Tagungsprogramm mit verbundenem Zeitplanraster"
+summary: "Ein zweitägiges Programm in Zeitplanrastern: mergeCells zieht ein Plenum über drei Säle und einen Workshop über zwei Zeitfenster, Vorträge in Themenfarben."
+plain: "Das gedruckte Programm einer zweitägigen Tagung über Druck und Schriftgestaltung. Im Zeitplan kann ein Vortrag über alle Säle oder über zwei Zeitfenster reichen, und jedes Thema hat seine eigene Farbe."
+description: "Ein katalanisches Tagungsprogramm in Postext: Zeitplanraster mit verbundenen Zellen und Themenfarben, über Seiten umbrochen, Tagesauftakte auf dunklen Bändern."
+question: "Wie verbinde ich Zellen eines Zeitplans, damit ein Plenum alle Säle und ein Workshop zwei Zeitfenster belegt?"
+aliases: ["Tagungsprogramm", "Konferenzprogramm", "Veranstaltungsprogramm", "Zeitplan", "Stundenplan", "Agenda", "rowspan", "colspan", "verbundene Zellen", "farbcodierte Tabelle", "Katalanisch"]
+pageNotes: { "1": "Der Umschlag auf Schwarz: die großgeschriebene ela geminada, „L·L“, gezeichnet als violettes L, bernsteinfarbener Punkt und petrolfarbenes L, jedes L ein hoher Stamm mit abgerundetem Fuß. Darunter „7es Jornades · Programa“ in kleinen bernsteinfarbenen Versalien, „Jornades de Tipografia i Edició Digital“ in einer breiten weißen Displayschrift, die Daten „12–13.11.2026“ in Violett und „Girona · La Impremta, Barri Vell“.", "2": "Der Donnerstag beginnt auf einem dunklen Band über den Seitenkopf: „Primera jornada · 12 de novembre“ in bernsteinfarbenen Versalien, eine weiße, etwa 39 mm hohe „12“ mit „Dijous“ daneben und eine Reihe violetter, petrolfarbener und bernsteinfarbener Formen am Fuß des Bandes. Darunter drei Absätze mit praktischen Hinweisen und drei Farbfeldern, die die Themenstränge benennen, dann „Qui parla dijous“ und die Notizen der ersten Vortragenden, jeder Name fett und die Zeilen darunter eingezogen.", "3": "„Taula 1“, der Zeitplan des Donnerstags, füllt die Seite: eine dunkle Kopfzeile mit der Uhrzeit und drei Sälen, die Tagesabschnitte in kleinen violetten Versalien, der Eröffnungsvortrag in einer dunklen Zelle über die drei Säle, zwei Workshops, die je zwei Zeitfenster füllen, und jeder Vortrag in einer violetten, petrolfarbenen oder bernsteinfarbenen Kachel. „Continua a la pàgina següent“ schließt die Seite.", "4": "Das Raster endet am Seitenkopf unter derselben Kopfzeile, seine Legende endet jetzt auf „(continuació)“: der Abendspaziergang und das Abendessen sowie ein Hinweis zur Dauer der Sitzungen. Darunter die übrigen Vortragenden des Donnerstags und „Al vespre“ in zwei ausgeglichenen Spalten.", "5": "Der Freitag beginnt auf demselben Band mit einer „13“ und „Divendres“. Eine kurze Einleitung und der erste Vortragende des Freitags stehen über „Taula 2“, die den Fuß der Seite ganz füllt: Plenum und Abschlusssitzung in Schwarz, ein Workshop über zwei Zeitfenster, die Vorträge in ihren Themenfarben.", "6": "Ein Grundriss von La Impremta über den Seitenkopf: die beiden Vortragssäle, die Halle mit der Garderobe daneben, die Treppe zum Workshopraum und der Hof mit zwei Bäumen, nummeriert von 1 bis 6 in schwarzen Kreisen und in der Anmerkung unter „Figura 1“ benannt. Darunter die letzten Vortragenden des Freitags, „Com arribar“ und das Impressum in zwei Spalten." }
+---
+
+## Was Sie setzen
+
+Das gedruckte Programm einer erfundenen Typografietagung in Girona, auf Katalanisch geschrieben. Der Umschlag zeichnet die großgeschriebene ela geminada, L·L, als drei farbige Module auf Schwarz. Jeder Tag beginnt auf einem 76 mm hohen dunklen Band mit dem Tag des Monats als Ziffer zu 144 pt. Der Zeitplan des Donnerstags ist eine Tabelle. Der Eröffnungsvortrag füllt eine dunkle Zelle über die drei Säle, und jeder Workshop belegt zwei Zeitfenster. Die Tagesabschnitte führen ihre Zeilen über das ganze Raster an, und jeder Vortrag ist eine Kachel in der Farbe seines Themenstrangs, erklärt durch die Farbfelder in der Legende. Das Raster ist höher als eine Seite, füllt also Seite 3 und endet auf Seite 4 unter seiner wiederholten Kopfzeile. Das kürzere Raster des Freitags passt ganz an den Fuß seiner Auftaktseite.
+
+## Zubereitung
+
+### 1 · Jede Programmzeile in eine Tabellenzeile verwandeln
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jeder Tag ist reiner Text in einer Inhaltsdatei, eine Zeile pro Zeitfenster: `|` trennt die Säle, ein Buchstabe benennt den Themenstrang, `*` markiert ein Plenum auf dunkler Füllung, `/` beginnt jede Zeile nach dem Titel, und `^` setzt die Sitzung des Zeitfensters darüber fort. `mergeCells` erzeugt jede Verbindung. Eine Zeile mit einer einzigen Sitzung, etwa dem Plenum oder einer Pause, belegt die drei Saalspalten. Ein Workshop belegt seine Zelle und die darunter, und ein Tagesabschnitt (MATÍ, TARDA), geschrieben als Zeile ohne `|`, belegt alle vier Spalten. Die Zellen, die eine Verbindung überdeckt, bleiben im Raster und sind mit `hiddenBy` markiert, denn die Spalte einer Zelle ist ihr Index in der Zeile ([Tabellenmodelle bauen](/de/docs/configuration-resources#tabellenmodelle-aufbauen)). `headerRowCount: 1` macht die Saalnamen zur Kopfzeile. Die `columnWidths` sind relative Gewichte, und 12 + 3 × 42 ergibt die Satzbreite von 138 mm, sodass die Stundenspalte 12 mm und jeder Saal 42 mm breit ist. `setAlignment(…, 'left', 'middle')` zentriert jeden Workshop senkrecht in seinen zwei Zeilen.
+
+### 2 · Den Donnerstag umbrechen und den Freitag ganz halten
+
+<Excerpt region="split" />
+
+Das Raster des Donnerstags wird auf Seite 2 zitiert und an den Kopf einer Seite gestellt. Ein Gleitobjekt steht nie über seinem Verweis, also eröffnet das Raster Seite 3. Es ist höher als die Seite, und `overflow: 'split'` teilt es zwischen zwei Zeilen, nie innerhalb einer verbundenen Zelle ([Tabellen, die höher als die Seite sind](/de/docs/configuration-resources#tabellen-die-höher-als-die-seite-sind)). Seite 3 endet mit der Zeile 17.30 und dem Hinweis darunter. Seite 4 wiederholt die Kopfzeile und die ganze Legende samt der Erklärung der Farbfelder, gefolgt von `(continuació)`, und die Anmerkung erscheint nur unter diesem letzten Teil. Das Raster des Freitags kommt an den Fuß einer Seite und passt unter den Text, der es auf Seite 5 zitiert. `defaultResourceTypes('ca')` benennt die Typen auf Katalanisch, Figura und Taula. Die eigenen katalanischen Texte der Engine für eine geteilte Tabelle sind `(cont.)` und `Continua`; das Tabellenformat schreibt stattdessen beide aus. `numberingTemplate: '{n}'` mit `resetOn: 'never'` zählt beide Raster in einer Reihe, Taula 1 und Taula 2.
+
+### 3 · Die Füllungen in Kacheln schneiden
+
+<Excerpt region="tiles" />
+
+`setCellBackground` in der kurzen Antwort gibt jeder Sitzung den Paletteneintrag ihres Themenstrangs, und 1,6 pt breite Rasterlinien in Papierfarbe schneiden die Füllungen in Kacheln mit weißen Zwischenräumen ([Tabellenformat](/de/docs/configuration-resources#tabellenstil)). Eine Tabelle hat für ihre Textzellen eine einzige Textfarbe, darum ist die weiße Schrift des Plenums ein Chip, dessen Format die Farbe setzt und Füllung, Rahmen und seitlichen Innenabstand des Chips abschaltet. Uhrzeiten und Tagesabschnitte sind ebenfalls Chips, in Chivo Mono ([Chip-Formate](/de/docs/configuration-styles#chip-stile)). Ein Chip bricht nie über Zeilen um; Titel und Sprecherzeile eines Plenums passen jeweils auf eine Zeile der Zelle über drei Säle. In der Anmerkung zum Grundriss lässt der Chip `sala` den Text, wie er ist, und hält Nummer und Namen jedes Saals auf einer Zeile, wie es ein geschütztes Leerzeichen zwischen den Wörtern täte.
+
+### 4 · Jeden Tag auf einem Band eröffnen
+
+<Excerpt region="opener" />
+
+Die Gestaltung der Überschrift erster Ebene zeichnet das Band: einen Kasten von 76 mm Höhe ab der Anschnittkante, mit dem Streifen aus Modulen an seinem Fuß. Das Datum kommt aus dem Attribut `date` der Überschrift und die Ziffer aus `day`. Die 1 der Unbounded 800 zu 144 pt beginnt mit ihrer Farbe 0,76 mm innerhalb ihres Kastens und die erste Versalie des Datums 0,1 bis 0,2 mm innerhalb des ihren, also rückt die Ziffer 0,6 mm nach links, und Datum, Ziffer und Text beginnen mit ihrer Farbe innerhalb von 0,2 mm voneinander. Der Name des Tages steht rechts neben der Ziffer, abgesenkt um `BASELINE` × (144 − 26) pt, damit sich die beiden Grundlinien treffen, denn ein Gestaltungstext mit `lineHeight: 1` hat seine Grundlinie bei 0,8 seiner Kastenhöhe. `minHeight` reserviert die Seite bis 7 mm unter das Band, und das Grundlinienraster rundet die Reserve auf 14 Zeilen auf, sodass der erste Zeilenkasten des Textes 10,2 mm unter dem Band beginnt. Mit `AIR = 0` bestimmt der eigene Kasten der Ziffer, der über den Fuß des Bandes hinausreicht, die Höhe, und der Text beginnt 5,6 mm unter dem Band.
+
+### 5 · Die Folgezeilen der Vortragenden einziehen
+
+<Excerpt region="bios" />
+
+Jeder Vortragende ist ein Absatz eines Blocks `:::paragraphs{style="bio"}`. Der fette Name beginnt am Spaltenrand, und die Zeilen darunter rücken 4 mm ein, sodass die Namen wie in einem Register die Spalte hinunter fluchten ([Absatzformate](/de/docs/configuration-styles#absatzformate)).
+
+## Varianten
+
+### Die Ecken des Rasters abrunden
+
+Eine geteilte Tabelle rundet die oberen Ecken ihres ersten Teils auf Seite 3 und die unteren Ecken ihres letzten Teils auf Seite 4 ab, wo nur die rechte zu sehen ist, weil die Stundenspalte keine Füllung hat.
+
+```diff
+-  cellPadding: mm(1.5) };
++  cellPadding: mm(1.5), borderRadius: mm(2.5) };
+```
+
+### Das Raster jedes Tages für sich nummerieren
+
+Eine Zählung pro Überschrift der Ebene 1, wie bei den eingebauten Typen, ergibt Taula 1.1 und Taula 2.1 und macht aus dem Grundriss Figura 2.1; das Format des Umschlags ist nicht nummeriert, also ist der Donnerstag Überschrift 1.
+
+```diff
+-  numberingTemplate: '{n}', resetOn: 'never' })); // Taula 1, Taula 2: one count, not per day
++  numberingTemplate: '{h1}.{n}', resetOn: 'h1' })); // Taula 1.1, Taula 2.1: per day
+```

@@ -1,0 +1,73 @@
+---
+title: "Ein KI-Preprint mit Prompt-Beispielen in Kästen"
+summary: "Das Chain-of-Thought-Paper neu gesetzt: Prompts und Modellantworten nebeneinander in Kästen mit Reiter, Autor-Jahr-Zitate aus BibTeX, Diagramme aus Tabellen."
+plain: "Ein bekanntes KI-Paper, gekürzt und neu gesetzt. Beispiel-Prompts und Antworten des Modells stehen nebeneinander in beschrifteten Kästen, jede Antwort mit Haken oder Kreuz; die Diagramme entstehen aus den Zahlen des Papers."
+description: "Das Chain-of-Thought-Paper von Wei et al. in Postext: Abbildung 1 aus verschachtelten Kästen in zwei Spalten, Zitate wie natbib, Tabelle 2 und Diagramme neu."
+question: "Wie setze ich Prompts und Modellantworten eines KI-Papers als Kästen nebeneinander?"
+aliases: ["Prompt-Abbildung", "Modelleingabe", "Modellausgabe", "Gedankenkette", "chain of thought", "Few-Shot-Beispiele", "LLM-Paper", "Paper über maschinelles Lernen", "NeurIPS", "arXiv", "natbib", "Autor-Jahr", "Preprint", "Vorabdruck", "Wei et al. 2022"]
+pageNotes: { "1": "Seite 1: eine blaue Zeile mit dem Tagungsnamen in Monospace, der zweizeilige Titel „Chain-of-Thought Prompting Elicits Reasoning in Large Language Models“ in fetter Serifenschrift, neun Autoren in zwei Reihen und „Google Research, Brain Team“; ein Hinweis auf die Kürzung; das Abstract auf hellblauem Grund; dann Abbildung 1 über die ganze Seitenbreite: „Standard Prompting“ links und „Chain-of-Thought Prompting“ rechts, jeweils mit einem Kasten „Model Input“ mit blauem Reiter und einem Kasten „Model Output“ mit grünem Reiter in einer Monospace-Schrift. Die Gedankenkette steht in der Eingabe fett in Blau und in der Ausgabe fett in Grün; die linke Antwort, 27, trägt an der Ecke ein rotes Kreuz, die rechte, 9, einen grünen Haken.", "2": "Seite 2: die Abschnitte 1, „Introduction“, und 2, „Chain-of-Thought Prompting“, in zwei Spalten im Blocksatz mit Zitaten wie „(Kaplan et al., 2020; Brown et al., 2020, inter alia)“.", "3": "Seite 3: Abbildung 2, ein horizontales Balkendiagramm der Lösungsquoten bei GSM8K (feinabgestimmtes GPT-3 33, bisher bestes Ergebnis 55, PaLM 540B standard 18, Gedankenkette 57), die nummerierte Liste der vier Eigenschaften der Methode und Abschnitt 3, „Arithmetic Reasoning“, mit dem Versuchsaufbau.", "4": "Seite 4: Abbildung 4 über die ganze Seitenbreite, neun kleine Liniendiagramme der Lösungsquote über der Modellgröße für LaMDA, GPT und PaLM bei GSM8K, SVAMP und MAWPS; die blaue Linie der Gedankenkette steigt bei den größten Modellen über die graue Standardlinie; darunter die Ergebnisse und Abschnitt 4.", "5": "Seite 5: Tabelle 2 über die ganze Seitenbreite mit blauem zweizeiligem Kopf, die Lösungsquoten jedes Modells und jeder Größe bei fünf Benchmarks, die Gewinne der Gedankenkette fett; dann die Ergebnisse zum Alltagswissen und Abschnitt 5, „Symbolic Reasoning“, mit einer Fußnote.", "6": "Seite 6: das Ende von Abschnitt 5, Abschnitt 6, „Discussion“, Abschnitt 7, „Conclusions“, und die Danksagung.", "7": "Seite 7: das Literaturverzeichnis in zwei Spalten, Autor-Jahr-Einträge nach Namen sortiert, und ein einzeiliges Impressum mit der Lizenz." }
+---
+
+## Was Sie setzen
+
+Sieben Seiten eines Preprints zum maschinellen Lernen im Format US Letter: *Chain-of-Thought Prompting Elicits Reasoning in Large Language Models* von Wei et al., gekürzt nach der arXiv-Fassung unter CC BY 4.0. Die erste Seite trägt die bekannteste Abbildung des Papers, als Kästen gesetzt statt als Bild eingefügt: links Standard-Prompting, rechts Chain-of-Thought-Prompting, jeder Prompt in einem Kasten mit dem Reiter *Model Input*, jede Antwort in einem Kasten mit dem Reiter *Model Output*, die Beispiele in IBM Plex Mono und die Gedankenkette fett und farbig, mit einem Kreuz an der falschen Antwort und einem Haken an der richtigen. Der Text zitiert wie NeurIPS-Paper, *(Brown et al., 2020)*, aus dem eigenen Literaturverzeichnis des Papers, das als BibTeX neu angelegt ist. Tabelle 2 und zwei Diagramme sind aus den Zahlen neu gezeichnet, die das Paper veröffentlicht.
+
+## Zubereitung
+
+### 1 · Abbildung 1 besteht aus drei Kastenformaten
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Abbildung ist ein Kasten über die ganze Seitenbreite ohne eigenen Rahmen; darin öffnet `:::columns{count=2 breaks="4"}` die rechte Spalte beim vierten Block, und jeder verschachtelte Kasten zählt als ein Block. Prompt- und Antwortkästen stammen aus derselben Formatfabrik und unterscheiden sich nur in der Füllung, der Farbe des Reiters und dem Abzeichen an der Ecke: Ein `icon` eines Kastens mit `position: 'corner'` nimmt eine SVG-Ressource auf, und so kommen ✓ und ✗ auf die Seite, obwohl die Schriften des Dokuments diese Glyphen nicht haben. In Ihrem eigenen Paper schreiben Sie jedes Beispiel als einfache Absätze in einen Kasten und markieren die Gedankenschritte mit `**…**`; `boldColor` im Kastenformat macht daraus die Hervorhebung.
+
+### 2 · Autor-Jahr-Zitate im Stil von natbib
+
+<Excerpt region="citations" />
+
+Tagungen zum maschinellen Lernen verwenden die Autor-Jahr-Form von natbib: ein Komma zwischen Namen und Jahr, *et al.* ab drei Autoren. Chicago Author-Date ist der mitgelieferte Stil, der dem am nächsten kommt; das Rezept ändert deshalb in dessen CSL eine einzige Gruppe, die Autor und Jahr verbindet, von einem Leerzeichen zu einem Komma. Ihre eigene `.bib`-Datei übernehmen Sie unverändert: Fügen Sie sie in einen Block `:::references{format=bibtex}` ein und zitieren Sie mit `[@key]` für *(Brown et al., 2020)* und mit `@key` für *Brown et al. (2020)*. Ein Suffix behält das davor geschriebene Komma und seine Auszeichnung, sodass `[@brown2020language, *inter alia*]` wie im Paper (Brown et al., 2020, *inter alia*) druckt. Bildunterschriften zitieren genauso: Die Unterschrift von Abbildung 4 schreibt `@jie2022learning` und `@lan2021mwptoolkit`, und beide Werke kommen ohne `nocite` ins Literaturverzeichnis.
+
+### 3 · Der Titelblock
+
+<Excerpt region="title" />
+
+Der Titel ist die einzige Überschrift der Ebene 1 im Dokument; ihr Format reicht über beide Spalten und zeichnet einen gestalteten Block: Tagungszeile, Titel, Autoren in zwei Reihen, Institution und ein Hinweis auf die Kürzung. Autoren und Hinweis sind Attribute der Überschrift, und `\n` in einem Attribut beginnt eine neue Reihe, wie `\\` in einem LaTeX-`\author`. Für Ihr eigenes Paper ändern Sie die Attribute; die Gestaltung bleibt.
+
+### 4 · Abbildungsnummern wie im Original
+
+<Excerpt region="figures" />
+
+Die Engine nummeriert Abbildungen in der Reihenfolge ihrer ersten Erwähnung, doch Abbildung 1 ist hier ein Kasten, den der Zähler nie sieht. Deshalb bekommen die neu gezeichneten Diagramme je einen eigenen Ressourcentyp mit der Nummer im Label und leerem `numberingTemplate` und behalten die Nummern der arXiv-Fassung: Abbildung 2, Abbildung 4 und Tabelle 2. In einem eigenen Paper, in dem jede Abbildung eine Ressource ist, übernimmt ein einziger Typ `figure` mit `numberingTemplate: '{n}'` das Zählen.
+
+### 5 · Tabelle 2 aus den Daten des Papers
+
+<Excerpt region="table" />
+
+Die Ergebnisse sind einmal erfasst, so wie sie im LaTeX-Quelltext stehen, und speisen sowohl Tabelle 2 als auch Abbildung 4, sodass das Diagramm nicht von der Tabelle abweichen kann. Die Namen der Benchmarks reichen jeweils über zwei Spalten; eine verbundene Zelle braucht dort, wo sie sich ausdehnt, einen mit `hiddenBy` markierten Platzhalter. Fett markiert die Zellen, in denen Chain-of-Thought-Prompting das Standard-Prompting schlägt, wie die grünen Zellen des Originals.
+
+## Varianten
+
+### Nach APA zitieren
+
+APA schreibt *(Roy & Roth, 2015)* und führt bis zu zwanzig Autoren auf, was das Literaturverzeichnis eines Papers über große Modelle selten will.
+
+```diff
+-const citations = { style: 'custom', customStyle: natbib, link: true,
++const citations = { style: 'apa', link: true,
+```
+
+### Das Paper einspaltig setzen
+
+Eine einspaltige Seite im Stil von NeurIPS braucht breitere Seitenränder, damit die Zeilen lesbar lang bleiben; die Kästen über die ganze Seitenbreite nehmen dann die eine Spalte ein.
+
+```diff
+-const [TRIM_W, TRIM_H, TOP, BOTTOM, SIDE, GUTTER] = [215.9, 279.4, 22, 22, 19, 7];
++const [TRIM_W, TRIM_H, TOP, BOTTOM, SIDE, GUTTER] = [215.9, 279.4, 24, 24, 38, 7];
+-  layout: { layoutType: 'double', gutterWidth: mm(GUTTER) },
++  layout: { layoutType: 'single' },
+```
+
+### Codelistings in Kästen
+
+Für Prompts mit Code darin zeigen die Listing-Kästen aus <RecipeLink slug="code-listings-and-keycaps">Codelistings und Tastenkappen</RecipeLink> Syntaxhervorhebung mit fetten und kursiven Passagen.
+
+## Häufige Fehler
+
+- Ein Kasten über die ganze Seitenbreite kommt in einem zweispaltigen Layout nur dann auf die aktuelle Seite, wenn darunter noch mindestens ein paar Zeilen Grundtext Platz haben. Abbildung 1 steht auf Seite 1, weil das Abstract in 9,3 pt mit knappem Innenabstand gesetzt ist; ein längeres Abstract schiebt die Abbildung auf Seite 2.

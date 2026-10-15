@@ -7,7 +7,7 @@ import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
 
-const LANG = 'en'; // @lang: the language of the sample document ('en' | 'es' | 'pt' | 'fr')
+const LANG = 'en'; // @lang: the sample document's language ('en' | 'es' | 'pt' | 'fr' | 'de')
 const RECIPE = 'baseline-grid-book-page';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -88,7 +88,7 @@ const balancing = { enabled: true };
 // #endregion
 
 const config = () => ({
-  locale: t({ en: 'en-us', es: 'es', pt: 'pt', fr: 'fr' }), // hyphenation and the caption labels
+  locale: t({ en: 'en-us', es: 'es', pt: 'pt', fr: 'fr', de: 'de' }), // hyphenation, caption labels
   colorPalette,
   page,
   layout,
@@ -206,6 +206,11 @@ const CAPTIONS = {
       + 'que son bloc.',
     'Deux pages en regard traversées de lignes de construction rouges, un bloc de texte réglé '
       + 'là où elles se croisent sur chaque page, et un cercle aussi large que la page de gauche.'],
+    de: ['Der Kanon auf einer aufgeschlagenen Doppelseite aus Seiten im Verhältnis 2:3. Die '
+      + 'Diagonalen legen die Ecken beider Satzspiegel fest; der Kreis, so breit wie die Seite, '
+      + 'ist genau so hoch wie ihr Satzspiegel.',
+    'Zwei gegenüberliegende Seiten mit roten Konstruktionslinien, auf jeder Seite ein linierter '
+      + 'Satzspiegel an ihren Schnittpunkten und ein Kreis so breit wie die linke Seite.'],
   },
   pages: {
     en: ['This book’s 210 × 280 mm page twice. Left, divided by the canon into ninths, with a '
@@ -228,6 +233,11 @@ const CAPTIONS = {
       + 'marges de 16, 24, 32 et 48 mm et deux colonnes de 44 lignes.',
     'Deux pages identiques : celle de gauche divisée en une grille de neuf sur neuf autour de '
       + 'son bloc de texte, celle de droite avec deux colonnes réglées.'],
+    de: ['Die Seite dieses Buches, 210 × 280 mm, zweimal. Links vom Kanon in Neuntel geteilt, mit '
+      + 'einem Satzspiegel von 140 × 187 mm. Rechts so, wie das Buch sie setzt: Stege von 16, 24, '
+      + '32 und 48 mm und zwei Spalten zu 44 Zeilen.',
+    'Zwei gleiche Seiten: die linke um ihren Satzspiegel in ein Raster von neun mal neun Feldern '
+      + 'geteilt, die rechte mit zwei linierten Spalten.'],
   },
 };
 
@@ -263,6 +273,7 @@ const doc = await buildDocumentWithFonts({ markdown, resources, continuation }, 
 showPages(doc, { title: t({ en: 'A book page on a baseline grid',
   es: 'Una página de libro sobre una rejilla base',
   pt: 'Uma página de livro sobre a grade de linhas de base',
-  fr: 'Une page de livre sur une grille de ligne de base' }) });
+  fr: 'Une page de livre sur une grille de ligne de base',
+  de: 'Eine Buchseite auf dem Grundlinienraster' }) });
 
 // @kit core fonts viewer images · the Cookbook inlines cookbook/_kit/*.js here

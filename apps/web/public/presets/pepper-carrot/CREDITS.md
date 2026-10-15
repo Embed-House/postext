@@ -1,6 +1,6 @@
 # Credits — Pepper&Carrot · Pepper's Birthday Party
 
-Showcase preset for the Postext sandbox: episode 8 of the webcomic Pepper&Carrot (June 2015), in eight
+Showcase preset for the Postext sandbox: episode 8 of the webcomic Pepper&Carrot (June 2015), in nine
 languages, re-lettered and re-laid out by Postext.
 
 ## The comic
@@ -21,6 +21,7 @@ Art & Scenario: David Revoy. Episode sources: https://www.peppercarrot.com/0_sou
 | `ca` | Episodi 8: La festa d'aniversari de la Pepper | Art & Scenario: David Revoy — Translation: Juan José Segura |
 | `fr` | Épisode 8 : L'anniversaire de Pepper | Art & Scenario: David Revoy (original version) — Proofreading: Aurélien Gâteau |
 | `pt-BR` | Episódio 8: A Festa de Aniversário da Pepper | Art & Scenario: David Revoy — Translation: Frederico Batista — Proofreading: Alexandre E. Almeida |
+| `de` | Episode 8: Peppers Geburtstagsfeier | Art & Scenario: David Revoy — Translation: Helmar Suschka — Proofreading: GunChleoc, Philipp (hapit) Hemmer |
 | `ja` | エピソード 8: ペッパーの誕生パーティー | Art & Scenario: David Revoy — Translation: guruguru — Contribution: Hồ Nhựt Châu |
 | `zh-Hans` | 第8集：小辣椒的生日 | Art & Scenario: David Revoy — Translation: Ran Zhuang |
 | `ar` | حلقة ٨ : حفلةُ عيدِ ميلادِ فُلفُل | Art & Scenario: David Revoy — Translation: Mahwiii |
@@ -36,8 +37,8 @@ marked for the port. The title page and the credits page are new.
 
 All under the SIL Open Font License 1.1, from google/fonts; the Chinese, Japanese and Arabic faces are
 subset. Comic Neue, Zen Antique, ZCOOL KuaiLe and Playpen Sans Arabic carry letters composed from
-their own glyphs (ồ ự for a translator's name, ŗ for the monsters' voice), which they lack; none
-of these faces has a Reserved Font Name.
+their own glyphs (ồ ự for a translator's name, ŗ for the monsters' voice, Ā for the German spell
+book's title), which they lack; none of these faces has a Reserved Font Name.
 
 - comicneue: `fonts/ComicNeue-OFL.txt`
 - bangers: `fonts/Bangers-OFL.txt`

@@ -47,6 +47,7 @@ const COLUMN_LAYOUTS = byLang(
   { aria: '使える段組の構成', labels: ['1段組', '2段組', '主段と脇段', '図版用の脇段'] },
   { aria: 'estruturas de colunas disponíveis', labels: ['Uma coluna', 'Duas colunas', 'Coluna e meia', 'Lateral de flutuantes'] },
   { aria: 'structures de colonnes disponibles', labels: ['Une colonne', 'Deux colonnes', 'Colonne et demie', 'Latérale à flottants'] },
+  { aria: 'verfügbare Spaltenaufbauten', labels: ['Eine Spalte', 'Zwei Spalten', 'Anderthalb Spalten', 'Gleitobjektspalte'] },
 );
 
 export function columnLayoutsSvg(lang: GuideLang): string {
@@ -88,6 +89,7 @@ const FLOAT_SLOTS = byLang(
   { aria: '参照のあとでフロートに差し出される場所の順序', ref: '参照箇所', taken: '最初の空きに入る', full: '入らない', next: '次のページ' },
   { aria: 'ordem dos espaços oferecidos a um flutuante depois da sua referência', ref: 'referência', taken: 'ocupa o primeiro espaço livre', full: 'não cabe', next: 'página seguinte' },
   { aria: 'ordre des emplacements offerts à un flottant après son renvoi', ref: 'renvoi', taken: 'prend le premier emplacement libre', full: 'pas de place', next: 'page suivante' },
+  { aria: 'Reihenfolge der Stellen, die einem Gleitobjekt nach seinem Verweis angeboten werden', ref: 'Verweis', taken: 'nimmt die erste freie Stelle', full: 'kein Platz', next: 'nächste Seite' },
 );
 
 export function floatSlotsSvg(lang: GuideLang): string {
@@ -149,6 +151,7 @@ const BALANCING = byLang(
   { aria: '段末をそろえる手段', before: '調整前', after: '調整後', legend: ['見出しの前のアキ', 'リストのあとの1行', '1行ゆるく組んだ段落'] },
   { aria: 'recursos do balanceamento de colunas', before: 'Antes', after: 'Depois', legend: ['Espaço acima do título', 'Uma linha após a lista', 'Parágrafo mais solto'] },
   { aria: 'leviers de l’équilibrage des colonnes', before: 'Avant', after: 'Après', legend: ['Espace avant le titre', 'Une ligne après la liste', 'Paragraphe plus lâche'] },
+  { aria: 'Hebel des Spaltenausgleichs', before: 'Vorher', after: 'Nachher', legend: ['Raum über der Überschrift', 'Eine Zeile nach der Liste', 'Lockerer gesetzter Absatz'] },
 );
 
 export function balancingSvg(lang: GuideLang): string {
@@ -222,6 +225,7 @@ const BOOK_ANATOMY = byLang(
   { aria: 'Postextで組んだ縦組みの本の構成。右から左へ読む', names: ['表紙', '目次', '部扉', '章扉', '本文', '本文'] },
   { aria: 'anatomia de um livro composto com o Postext', names: ['Capa', 'Sumário', 'Parte', 'Abertura', 'Miolo', 'Miolo'] },
   { aria: 'anatomie d’un livre composé avec Postext', names: ['Couverture', 'Sommaire', 'Partie', 'Ouverture', 'Page courante', 'Page courante'] },
+  { aria: 'Aufbau eines mit Postext gesetzten Buches', names: ['Umschlag', 'Inhalt', 'Teil', 'Auftakt', 'Textseite', 'Textseite'] },
 );
 
 /** Vertical text-line bars: columns from `right` leftward to `left`, each
@@ -458,6 +462,12 @@ const CJK_COMPOSITION = byLang(
     vertical: 'En vertical', ems: (n: number) => `${String(n).replace('.', ',')} cadratins`,
     legend: ['la moitié blanche d’un signe en pleine chasse', 'un signe composé sur un demi-cadratin'],
   },
+  {
+    aria: 'eine chinesische Zeile in voller Breite, im Kaiming-Stil und vertikal gesetzt',
+    full: 'Volle Breite: jedes Zeichen nimmt ein ganzes Quadrat ein', kaiming: 'Kaiming (Festland): Klammern und Schlusspunkt nehmen ein halbes Quadrat ein',
+    vertical: 'Vertikal', ems: (n: number) => `${String(n).replace('.', ',')} Quadrate`,
+    legend: ['die leere Hälfte eines Zeichens in voller Breite', 'ein Zeichen, auf ein halbes Quadrat gesetzt'],
+  },
 );
 
 /** One character of the sample, in the edition's body face (the Chinese
@@ -606,6 +616,11 @@ const SANDBOX_UI = byLang(
     aria: 'disposition de l’interface du Sandbox', chapter: '3 · Composer la ligne', scope: 'Livre entier',
     panels: ['Livres', 'Chapitres', 'Texte', 'Ressources', 'Polices', 'Maquette', 'Vérifications'],
   },
+  {
+    // The German interface's own words (messages/de.json).
+    aria: 'Aufbau der Sandbox-Oberfläche', chapter: '3 · Die Zeile setzen', scope: 'Ganzes Buch',
+    panels: ['Bücher', 'Kapitel', 'Text', 'Ressourcen', 'Schriften', 'Gestaltung', 'Prüfungen'],
+  },
 );
 
 /** The Sandbox interface: activity bar with its seven panels, the text
@@ -682,6 +697,7 @@ const ROSETTE = byLang(
   { aria: '花弁と円環と微小文字でできたベクターのロゼット', micro: 'Postext · ベクター · 拡大 · ' },
   { aria: 'roseta vetorial de pétalas, anéis e microtexto', micro: 'Postext · vetor · zoom · ' },
   { aria: 'rosace vectorielle de pétales, d’anneaux et de microtexte', micro: 'Postext · vectoriel · zoom · ' },
+  { aria: 'Vektorrosette aus Blütenblättern, Ringen und Mikroschrift', micro: 'Postext · Vektor · Zoom · ' },
 );
 
 export function vectorRosetteSvg(lang: GuideLang): string {
@@ -716,6 +732,7 @@ const CHART = byLang(
   { aria: '軸とラベルのあるベクターの面グラフと折れ線グラフ', months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月'], pages: '毎秒のページ数', chapters: '章数' },
   { aria: 'gráfico vetorial de área e linha com eixos e rótulos', months: ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.'], pages: 'páginas por segundo', chapters: 'capítulos' },
   { aria: 'graphique vectoriel en aires et en ligne avec axes et étiquettes', months: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août'], pages: 'pages par seconde', chapters: 'chapitres' },
+  { aria: 'Vektordiagramm mit Fläche und Linie, mit Achsen und Beschriftungen', months: ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.'], pages: 'Seiten pro Sekunde', chapters: 'Kapitel' },
 );
 
 export function vectorChartSvg(lang: GuideLang): string {
@@ -756,6 +773,7 @@ const CLIP = byLang(
   { aria: 'クリッピングパス、再利用する要素、透明度を使ったベクターの構成', clip: 'クリッピングパス', opacity: '不透明度' },
   { aria: 'composição vetorial com recortes, elementos reutilizados e transparências', clip: 'recorte', opacity: 'opacidade' },
   { aria: 'composition vectorielle avec détourages, éléments réutilisés et transparences', clip: 'détourage', opacity: 'opacité' },
+  { aria: 'Vektorkomposition mit Beschneidungspfaden, wiederverwendeten Elementen und Transparenz', clip: 'Beschneidungspfad', opacity: 'Deckkraft' },
 );
 
 export function vectorClipSvg(lang: GuideLang): string {
@@ -823,6 +841,10 @@ const EPUB_RENDITIONS = byLang(
   {
     aria: 'une même mise en page écrite en EPUB à mise en page fixe et en EPUB recomposable', page: 'La mise en page', pageNote: 'pages, colonnes, lignes',
     fixed: 'Mise en page fixe', fixedNote: 'un document par page imprimée', flow: 'Recomposable', flowNote: 'un document par chapitre', marker: 'p. 12',
+  },
+  {
+    aria: 'ein Layout, geschrieben als EPUB mit festem Layout und als umfließendes EPUB', page: 'Das Layout', pageNote: 'Seiten, Spalten, Zeilen',
+    fixed: 'Festes Layout', fixedNote: 'ein Dokument je gedruckter Seite', flow: 'Umfließend', flowNote: 'ein Dokument je Kapitel', marker: 'S. 12',
   },
 );
 

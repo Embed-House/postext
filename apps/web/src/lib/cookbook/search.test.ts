@@ -73,7 +73,7 @@ describe("processTerm", () => {
   });
 
   it("maps site locales to search locales", () => {
-    expect(["en", "es", "zh", "ja", "fr", "de"].map(searchLocale)).toEqual(["en", "es", "zh", "ja", "fr", "en"]);
+    expect(["en", "es", "zh", "ja", "fr", "de", "it"].map(searchLocale)).toEqual(["en", "es", "zh", "ja", "fr", "de", "en"]);
   });
 
   it("lowercases and strips diacritics", () => {
@@ -402,7 +402,7 @@ describe("Japanese", () => {
     }),
   ];
 
-  for (const locale of ["en", "es", "ca", "zh", "ar", "ja", "pt", "fr"] as const) {
+  for (const locale of ["en", "es", "ca", "zh", "ar", "ja", "pt", "fr", "de"] as const) {
     it(`finds recipes by their Japanese words in the ${locale} index`, () => {
       const mini = new MiniSearch<SearchDocument>(MINISEARCH_OPTIONS[locale]);
       mini.addAll(RECIPES_JA.map((r) => searchDocument(r, FACETS)));

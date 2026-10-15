@@ -1,0 +1,390 @@
+{/* docs/configuration-east-asian-en.mdx */}
+
+export const metadata = {
+  title: 'Konfiguration: ostasiatische Typografie',
+  sidebarTitle: 'Ostasiatische Typografie',
+  description: 'Die Einstellungen cjk: Zeilenumbruch, Breite der Satzzeichen, Abstände, das Zeichenraster, Ruby und die Zeichen von chinesischem, japanischem und koreanischem Text',
+  lang: 'de',
+  lastUpdated: '2026-10-10',
+  readingTime: '2 min',
+  order: 7,
+  parent: 'configuration',
+  plainSummary: "Diese Seite behandelt die Einstellungen für chinesischen, japanischen und koreanischen Text. Sie bestimmen, wo eine Zeile umbrechen darf und wie breit die Satzzeichen sind. Sie legen den Abstand zwischen diesen Schriftzeichen und lateinischen Buchstaben oder Ziffern fest. Außerdem steuern sie die kleinen Lesehilfen, die neben Schriftzeichen gedruckt werden, und die Zeichen, die neben Namen und Titeln stehen. Die Leitfäden zum chinesischen und zum japanischen Satz zeigen diese Einstellungen in der Praxis.",
+};
+
+# Konfiguration: ostasiatische Typografie
+
+
+## Ostasiatische Typografie
+
+Die Eigenschaft `cjk` legt fest, wie chinesischer, japanischer und koreanischer Text gesetzt wird: welchen regionalen Konventionen er folgt, wo seine Zeilen umbrechen dürfen, wie breit seine Satzzeichen gesetzt werden und ob sie überhängen, den Abstand zwischen Han- und lateinischen Zeichen, das Zeichenraster des Satzspiegels und wie Betonungszeichen, Seitenlinien, Ruby-Lesungen, Warichu-Anmerkungen und Kanbun-Zeichen des Texts gedruckt werden. Jedes Feld ist optional, und `'auto'` folgt der Region der Dokumentsprache (`locale`): Ein Buch mit `locale: 'zh-Hant'` bricht seine Zeilen um und setzt seine Satzzeichen nach taiwanischer Art, eines mit `locale: 'ja'` nach japanischer, ohne dass sonst etwas einzustellen wäre. [Chinesischer Satz](/de/docs/chinese-layout) und [Japanischer Satz](/de/docs/japanese-layout) erklären die Regeln hinter diesen Einstellungen, mit jeweils zwei vollständigen Konfigurationen. Die japanischen Felder und Werte gibt es seit postext 1.16.
+
+```ts
+interface CjkConfig {
+  region?: 'auto' | 'mainland' | 'taiwan' | 'hongkong' | 'japan'; // Regional conventions.
+  lineBreak?: 'auto' | 'none' | 'basic' | 'gb' | 'strict'
+    | 'ja-very-strict' | 'ja-strict' | 'ja-loose';      // Which marks may not open or close a line.
+  punctuationWidth?: 'auto' | 'fullwidth' | 'kaiming' | 'lineEndHalf' | 'halfwidth';
+  compressAdjacent?: 'auto' | boolean;      // Two marks that meet take 1.5 em.
+  trimLineStart?: 'auto' | boolean;         // Brackets at a line edge lose their outer half.
+  hangingPunctuation?: 'auto' | 'none' | 'allow' | 'force';
+  spaceAfterQuestion?: 'auto' | boolean;    // One em after ？！ inside a paragraph (Japan).
+  paragraphStartBracket?: 'auto' | 'indent' | 'half' | 'flush'; // A bracket opening an indented paragraph.
+  wordBreak?: 'normal' | 'keep-all';        // keep-all: break only at spaces (分かち書き, Korean).
+  titleMinChars?: number;                   // Characters of a book title on either side of a break; default 2.
+  circledNumbers?: 'cjk' | 'western';       // ① ② as Chinese characters (default) or Latin letters.
+  composeDesignText?: boolean;              // CJK rules in design text; default true.
+  latinSpacing?: Dimension;                 // Between Han and Latin; default 0.25 em.
+  latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Which side of a Western word takes it.
+  uprightDigits?: 0 | 2 | 3 | 4;            // Vertical text: numbers in one upright cell; default 2.
+  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean; fullLines?: boolean };
+  emphasis?: 'auto' | 'italic' | 'dots';    // What *…* does to CJK characters.
+  emphasisMark?: {                          // The mark *…* and :dots[…] draw when they do not say.
+    style?: 'auto' | 'dot' | 'circle' | 'sesame';
+    fill?: 'auto' | 'filled' | 'open';
+    position?: 'auto' | 'over' | 'under';
+  };
+  bookTitleMark?: 'auto' | 'brackets' | 'wavy' | 'none'; // What :book[…] prints.
+  bookTitleBrackets?: 'auto' | { open: string; close: string }[]; // The brackets, outermost first.
+  annotationColor?: ColorValue;             // Dots and name/title lines; default the text colour.
+  ruby?: {
+    fontFamily?: string; fontSize?: Dimension; color?: ColorValue;
+    position?: 'auto' | 'over' | 'under' | 'right';
+    overhang?: 'auto' | 'none' | 'kana' | 'any'; // How far a reading may run onto its neighbours.
+    align?: 'auto' | 'center' | 'jis' | 'start'; // How a reading shorter than its base is spaced.
+    smallKana?: 'keep' | 'full';                 // Small kana in readings as written, or full size.
+  };
+  warichu?: { fontSize?: Dimension; color?: ColorValue; open?: string; close?: string; minChars?: number };
+  kunten?: { fontSize?: Dimension; color?: ColorValue; placement?: 'inline' | 'interlinear' }; // Kanbun marks.
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '180px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>region</code></td>
+      <td><code>'auto' | 'mainland' | 'taiwan' | 'hongkong' | 'japan'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Die Konventionen, denen der Text folgt, nach den Regionen, die die <a href="https://www.w3.org/TR/clreq/">Requirements for Chinese Text Layout</a> (clreq) des W3C beschreiben. <code>'auto'</code> liest die Region aus <code>locale</code> oder, wenn <code>locale</code> nicht gesetzt ist, aus <code>bodyText.hyphenation.locale</code>: <code>zh</code>, <code>zh-Hans</code>, <code>zh-CN</code> und <code>zh-SG</code> ergeben <code>'mainland'</code>; <code>zh-Hant</code> und <code>zh-TW</code> ergeben <code>'taiwan'</code>; <code>zh-HK</code> und <code>zh-MO</code> ergeben <code>'hongkong'</code>; <code>ja</code> und jedes Tag <code>ja-*</code> ergeben <code>'japan'</code>, dessen Konventionen den <a href="https://www.w3.org/TR/jlreq/">Requirements for Japanese Text Layout</a> (JLReq) des W3C folgen; jede andere Sprache ergibt <code>'mainland'</code>. Die Region wählt die Standardwerte aller Felder <code>'auto'</code> weiter unten. Von Hand gesetztes <code>'japan'</code> setzt jedes Dokument nach japanischer Art; die eingebauten Texte und die Standardwerte der Anmerkungen und des Registers folgen weiter der Sprache.</td>
+    </tr>
+    <tr>
+      <td><code>lineBreak</code></td>
+      <td><code>'auto' | 'none' | 'basic' | 'gb' | 'strict' | 'ja-very-strict' | 'ja-strict' | 'ja-loose'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Welche Zeichen eine Zeile nicht beginnen oder beenden dürfen (clreq §6.1.1 und JLReq Anhang C.3; siehe die Tabellen unten). <code>'auto'</code>: <code>'gb'</code> für das Festland, <code>'basic'</code> für Taiwan und Hongkong, <code>'ja-very-strict'</code> für Japan. Jede Stufe lässt sich in jedem Dokument wählen.</td>
+    </tr>
+    <tr>
+      <td><code>punctuationWidth</code></td>
+      <td><code>'auto' | 'fullwidth' | 'kaiming' | 'lineEndHalf' | 'halfwidth'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Wie breit die Satzzeichen voller Breite gesetzt werden (siehe <a href="#breite-der-satzzeichen">Breite der Satzzeichen</a>). <code>'auto'</code>: <code>'kaiming'</code> für das Festland, <code>'fullwidth'</code> für Taiwan, Hongkong und Japan (in Japan mit den JLReq-Regeln für Paare, Zeilenenden und Mittelpunkte).</td>
+    </tr>
+    <tr>
+      <td><code>compressAdjacent</code></td>
+      <td><code>'auto' | boolean</code></td>
+      <td><code>'auto'</code></td>
+      <td>Zwei Satzzeichen, die aufeinandertreffen (<code>。」</code>, <code>》（</code>, <code>：“</code>), geben das halbe Geviert Leerraum zwischen sich auf, sodass das Paar 1,5 em statt 2 einnimmt. <code>'auto'</code>: an für das Festland, Hongkong und Japan, aus für Taiwan.</td>
+    </tr>
+    <tr>
+      <td><code>trimLineStart</code></td>
+      <td><code>'auto' | boolean</code></td>
+      <td><code>'auto'</code></td>
+      <td>Eine öffnende Klammer oder ein öffnendes Anführungszeichen am Zeilenanfang gibt ihr vorderes halbes Geviert auf, eine schließende am Zeilenende ihr hinteres. <code>'auto'</code>: an für das Festland, Hongkong und Japan, aus für Taiwan. In Japan behält ein schließendes Zeichen sein halbes Geviert am Zeilenende, bis die Zeile es braucht (siehe <a href="#breite-der-satzzeichen">Breite der Satzzeichen</a>).</td>
+    </tr>
+    <tr>
+      <td><code>hangingPunctuation</code></td>
+      <td><code>'auto' | 'none' | 'allow' | 'force'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Ob ein Pausen- oder Schlusszeichen über das Zeilenende hinaushängen darf (siehe <a href="#hängende-satzzeichen">Hängende Satzzeichen</a>). <code>'auto'</code>: <code>'allow'</code> in Japan (nur 、。，．), sonst <code>'none'</code>. Bis postext 1.15 war der Standardwert <code>'none'</code>, was <code>'auto'</code> außerhalb Japans weiterhin ist.</td>
+    </tr>
+    <tr>
+      <td><code>spaceAfterQuestion</code></td>
+      <td><code>'auto' | boolean</code></td>
+      <td><code>'auto'</code></td>
+      <td>Ein Geviert Abstand nach einem ？ oder ！ voller Breite (auch nach ‼⁇⁈⁉ und nach einem daran hängenden Anmerkungszeichen) innerhalb eines Absatzes, wie es der japanische Satz vorsieht (JLReq §3.1.6): nicht vor einer schließenden Klammer oder einem weiteren solchen Zeichen, nicht am Absatzende und am Zeilenende entfallend. Ein U+3000 oder ein Leerzeichen, das der Autor dort getippt hat, wird zu diesem Abstand. Er wird nie gedehnt oder gestaucht. <code>'auto'</code>: an in Japan, sonst aus.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStartBracket</code></td>
+      <td><code>'auto' | 'indent' | 'half' | 'flush'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Wie eine öffnende Klammer gesetzt wird, die einen Absatz mit Erstzeileneinzug beginnt (JLReq §3.1.5): <code>'indent'</code> behält den Einzug und gibt der Klammer danach ihr Geviert (Muster ①); <code>'half'</code> lässt die Klammer den Leerraum vor ihrer Glyphe aufgeben, die dann die zweite Hälfte eines Einzugs von einem Geviert füllt, sodass der Text dort beginnt, wo der Text der anderen Absätze beginnt (Muster ③); <code>'flush'</code> setzt die Klammer ohne Einzug an den Rand (天付き). Ein Absatz ohne Einzug oder mit hängendem Einzug bleibt unberührt. <code>'auto'</code>: <code>'half'</code> in Japan; anderswo wird die Klammer wie an jedem Zeilenanfang gesetzt, wie bisher.</td>
+    </tr>
+    <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>'normal'</code></td>
+      <td>Wo eine Zeile zwischen zwei Zeichen umbricht. <code>'keep-all'</code> bricht nur an einem Leerzeichen (U+0020, U+3000) und neben Satzzeichen, wo <code>lineBreak</code> es erlaubt (nach 、。」, vor 「), nie zwischen zwei Buchstaben (Kana, Kanji, Hangul, Latein): für Kana, die mit Leerzeichen zwischen den Phrasen geschrieben sind (分かち書き), wie in Bilderbüchern und Erstlesebüchern, und für Koreanisch. Eine Phrase, die länger als die Zeile ist, wird in sich so umbrochen, wie <code>'normal'</code> sie umbrechen würde. Die Regel gilt überall, wo solche Zeichen gesetzt werden: in einem chinesischen oder japanischen Absatz und für die wenigen Zeichen, die ein englischer oder spanischer Absatz zitiert und die dann zusammenbleiben (seit postext 1.28; zuvor brach ein lateinischer Absatz ein Zitat zwischen zwei beliebigen Zeichen um, unabhängig von dieser Einstellung). Ein Absatzformat kann einen eigenen Wert setzen (<code>wordBreak</code>), ebenso die Anmerkungen (<code>footnotes.wordBreak</code>). Seit postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>titleMinChars</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Wie viele Zeichen eines Buchtitels ein Zeilenumbruch auf jeder Seite mindestens stehen lässt: innerhalb von <code>《…》</code> oder <code>〈…〉</code>, getippt oder von <code>bookTitleMark</code> hinzugefügt, und innerhalb eines Titels <code>:book[…]</code>, der mit der Wellenlinie oder ohne Zeichen gesetzt ist. Bei 2 endet keine Zeile auf <code>《說</code>, während <code>文》</code> die nächste eröffnet, und ein Titel von drei oder weniger Zeichen wird nie umbrochen; ein Titel mit höchstens dem Doppelten dieses Werts minus eins wird nie umbrochen. Die Regel weicht, wenn eine Zeile keinen anderen Umbruch hat (ein Titel, der länger als die Zeile ist, bricht weiterhin in sich um, wo <code>lineBreak</code> es erlaubt). <code>1</code> lässt eine Zeile überall umbrechen, wo die Stufe es erlaubt. Eine vor postext 1.25 gespeicherte Konfiguration (<code>configVersion</code> 10 oder älter) in einem Buch, das einen Titel setzt, wird mit <code>1</code> gelesen. Seit postext 1.25.</td>
+    </tr>
+    <tr>
+      <td><code>circledNumbers</code></td>
+      <td><code>'cjk' | 'western'</code></td>
+      <td><code>'cjk'</code></td>
+      <td>Wie die eingekreisten, eingeklammerten und mit Punkt versehenen Zahlen und Buchstaben in einem CJK-Absatz gesetzt werden: ①–⑳, ⑴–⒇, ⒈–⒛, ⓐ–ⓩ und der Rest von U+2460–U+24FF sowie die Dingbat-Zahlen ❶–❿, ➀–➓. <code>'cjk'</code>: als chinesische Schriftzeichen, eine Zelle ohne Han-Latein-Abstand ringsum, und keine Zeile endet auf einem davon, weil es den folgenden Text nummeriert: auf jeder Stufe von <code>lineBreak</code>, die ein Währungszeichen vom Zeilenende fernhält (alle außer <code>none</code> und <code>ja-loose</code>). <code>'western'</code>: als lateinische Buchstaben, mit dem Han-Latein-Abstand auf beiden Seiten, und eine Zeile darf auf einem davon enden. Vertikaler Text stellt sie in beiden Fällen aufrecht. Eine vor postext 1.25 gespeicherte Konfiguration in einem Buch, das eines davon setzt, wird mit <code>'western'</code> gelesen. Seit postext 1.25.</td>
+    </tr>
+    <tr>
+      <td><code>composeDesignText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Ob Gestaltungstext auf Chinesisch oder Japanisch (Überschriftengestaltungen und Auftakte, Kolumnentitel und Paginas, Seitengestaltungen, Teilseiten) nach den Regeln des Grundtexts gesetzt wird: die Regeln für Zeilenanfang und Zeilenende von <code>lineBreak</code>, die Zeichenbreiten von <code>punctuationWidth</code> und <code>compressAdjacent</code>, <code>latinSpacing</code>, <code>hangingPunctuation</code> und <code>titleMinChars</code>. Eine Zeile des Texts (die Zeilen zwischen zwei <code>\n</code>) wird so gesetzt, wenn sie mehr CJK-Zeichen als Wortzwischenräume enthält, wie bei einem Absatz; andere Zeilen werden wie bisher an Leerzeichen umbrochen. Ausdrückliche Zeilenumbrüche, <code>paragraphIndent</code>, Initialen und Inline-Zeichen funktionieren weiter; die Zeilen bleiben im Flattersatz (nicht zwischen den Zeichen ausgetrieben), und Lesungen, Warichu und Betonungszeichen werden als einfacher Text gedruckt. <code>false</code> umbricht solchen Text an Leerzeichen, jedes Satzzeichen in der eigenen Breite der Schrift. Eine vor postext 1.25 gespeicherte Konfiguration, deren Text CJK enthält, wird mit <code>false</code> gelesen. Seit postext 1.25.</td>
+    </tr>
+    <tr>
+      <td><code>latinSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 0.25, unit: 'em' &#125;</code></td>
+      <td>Der Abstand zwischen einem Han-Zeichen und einem benachbarten lateinischen Buchstaben oder einer Ziffer, in em der Größe des CJK-Texts oder als beliebige Länge; <code>0</code> schaltet ihn ab (siehe <a href="#abstand-zwischen-han-und-latein">Abstand zwischen Han und Latein</a>).</td>
+    </tr>
+    <tr>
+      <td><code>latinSpacingEdge</code></td>
+      <td><code>'auto' | 'letters' | 'western'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Welche Seite eines westlichen Worts <code>latinSpacing</code> erhält. <code>'letters'</code>: eine Seite, die auf einen Buchstaben oder eine Ziffer endet (<code>abc関数</code>, nicht <code>normalize()関数</code>). <code>'western'</code>: jede Seite eines Worts, das einen Buchstaben oder eine Ziffer enthält, seine Klammern und Zeichen eingeschlossen. <code>'auto'</code>: <code>'western'</code> in der Region Japan, sonst <code>'letters'</code>. Eine vor postext 1.28 gespeicherte japanische Konfiguration wird mit <code>'letters'</code> gelesen. Seit postext 1.28 (siehe <a href="#abstand-zwischen-han-und-latein">Abstand zwischen Han und Latein</a>).</td>
+    </tr>
+    <tr>
+      <td><code>uprightDigits</code></td>
+      <td><code>0 | 2 | 3 | 4</code></td>
+      <td><code>2</code></td>
+      <td>Vertikaler Text: Eine Zahl mit höchstens so vielen Ziffern steht aufrecht in einer Zelle (Tate-chu-yoko), es sei denn, sie steht in einem lateinischen Satz, dessen Wörtern sie dann seitlich gedreht folgt; <code>0</code> schaltet das ab (siehe <a href="#zahlen-im-vertikalen-text">Zahlen im vertikalen Text</a>).</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show? &#125;</code></td>
+      <td>aus</td>
+      <td>Der Satzspiegel in Zeichen pro Zeile und Zeilen pro Seite (siehe <a href="#zeichenraster">Zeichenraster</a>).</td>
+    </tr>
+    <tr>
+      <td><code>emphasis</code></td>
+      <td><code>'auto' | 'italic' | 'dots'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Was die Markdown-Hervorhebung (<code>*…*</code>) mit chinesischen und japanischen Zeichen macht: <code>'dots'</code> setzt neben jedes ein Betonungszeichen, wie es <code>:dots[…]</code> tut (Form und Seite von <code>emphasisMark</code>), und lateinische Buchstaben in derselben Hervorhebung bleiben kursiv; <code>'italic'</code> neigt sie, was eine CJK-Schrift nur vortäuschen kann. <code>'auto'</code>: <code>'dots'</code>, wenn die Dokumentsprache Chinesisch oder Japanisch ist, sonst <code>'italic'</code> (siehe <a href="#zeichen-ruby-und-warichu">Zeichen, Ruby und Warichu</a>).</td>
+    </tr>
+    <tr>
+      <td><code>emphasisMark</code></td>
+      <td><code>&#123; style?, fill?, position? &#125;</code></td>
+      <td>jeweils <code>'auto'</code></td>
+      <td>Das Zeichen, das <code>*…*</code> und ein <code>:dots[…]</code> ohne Attribute zeichnen: <code>style</code> <code>'dot'</code>, <code>'circle'</code> oder <code>'sesame'</code> (﹅); <code>fill</code> <code>'filled'</code> oder <code>'open'</code> (auto: offen bei einem Kreis); <code>position</code> <code>'over'</code> (rechts von vertikalem Text) oder <code>'under'</code> (links davon). Auto: in Japan ein gefülltes Sesamzeichen über dem Text und rechts davon im vertikalen Text (JLReq §3.3.9); anderswo ein Punkt unter dem Text und rechts davon im vertikalen Text, wie bisher. Die eigenen Attribute eines Zeichens haben Vorrang.</td>
+    </tr>
+    <tr>
+      <td><code>bookTitleMark</code></td>
+      <td><code>'auto' | 'brackets' | 'wavy' | 'none'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Was <code>:book[…]</code> druckt: Klammern um den Titel (<code>bookTitleBrackets</code>), die Wellenlinie für Buchtitel darunter oder den Titel ohne Zeichen. <code>'auto'</code>: Klammern für das Festland und Japan, die Wellenlinie für Taiwan und Hongkong.</td>
+    </tr>
+    <tr>
+      <td><code>bookTitleBrackets</code></td>
+      <td><code>'auto' | &#123; open, close &#125;[]</code></td>
+      <td><code>'auto'</code></td>
+      <td>Die Klammern von <code>:book[…]</code> unter <code>'brackets'</code>, die äußersten zuerst; ein Titel, der tiefer verschachtelt ist, als die Liste reicht, erhält das letzte Paar. <code>'auto'</code> (oder eine leere Liste): 『』, dann 「」 in Japan, 《》, dann 〈〉 anderswo.</td>
+    </tr>
+    <tr>
+      <td><code>annotationColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>die Textfarbe</td>
+      <td>Farbe der Betonungspunkte und der Linien für Eigennamen und Buchtitel; Standardwert der Farben von Ruby und Warichu.</td>
+    </tr>
+    <tr>
+      <td><code>ruby</code></td>
+      <td><code>&#123; fontFamily?, fontSize?, color?, position?, overhang?, align?, smallKana? &#125;</code></td>
+      <td>halbe Größe, <code>'auto'</code></td>
+      <td>Die Lesungen von <code>:ruby[…]</code> und <code>&#123;紅樓|hóng|lóu&#125;</code>: Schrift (standardmäßig die des Texts), Größe (standardmäßig <code>&#123; value: 0.5, unit: 'em' &#125;</code> des Texts; Zhuyin mit 60 % davon), Farbe und wohin sie kommen, wenn ein Ruby es nicht angibt (<code>'auto'</code>: Zhuyin rechts von jedem Zeichen, Pinyin und Kana über dem Text im horizontalen Text und rechts davon im vertikalen). <code>overhang</code>: wie weit eine Lesung, die länger als ihre Basis ist, auf ihre Nachbarn übergreifen darf: <code>'kana'</code> ein Ruby-Zeichen auf Kana, ー und die leere Seite eines Satzzeichens, ein halbes auf eine öffnende Klammer, nichts auf Kanji (JLReq §3.3.8); <code>'any'</code> ein halbes Ruby-Zeichen auf jeden Nachbarn ohne Lesung; <code>'none'</code> nichts; auto <code>'kana'</code> in Japan, anderswo ein Viertel der Ruby-Größe auf jeden Nachbarn ohne Lesung, wie bisher. <code>align</code>: wie eine Lesung verteilt wird, die kürzer als ihre Basis ist: <code>'jis'</code> 1:2:1 (eine halbe Einheit an den Enden, eine dazwischen), <code>'center'</code> kompress und zentriert, <code>'start'</code> vom Anfang der Basis an; auto <code>'jis'</code> in Japan, anderswo <code>'center'</code>. <code>smallKana: 'full'</code> setzt die kleinen Kana der Lesungen in voller Größe (<code>'keep'</code>, der Standard, wie geschrieben). Eigene Werte <code>mode</code> und <code>align</code> eines Ruby haben Vorrang.</td>
+    </tr>
+    <tr>
+      <td><code>warichu</code></td>
+      <td><code>&#123; fontSize?, color?, open?, close? &#125;</code></td>
+      <td>halbe Größe; Klammern （） in Japan, sonst keine</td>
+      <td>Die zweizeiligen Anmerkungen von <code>:warichu[…]</code>: die Größe der Anmerkung (standardmäßig ein halbes Geviert, sodass die beiden Zeilen das Geviert der Zeile füllen), ihre Farbe und die Klammern, die in Textgröße vor ihrer ersten und nach ihrer letzten Zeile gesetzt werden (eigene <code>open</code> / <code>close</code> einer Anmerkung haben Vorrang). In Japan setzt ein leeres <code>open</code> oder <code>close</code> (<code>''</code>) die Anmerkung ohne diese Klammer. <code>minChars</code> (Standard <code>2</code>) gibt an, wie viele Zeichen einer Anmerkung ein Zeilenumbruch auf jeder Seite mindestens stehen lässt: Eine Anmerkung bis zu drei Zeichen wird nie geteilt, eine Zeile ohne anderen Umbruch greift auf die Umbrüche zurück, die <code>lineBreak</code> erlaubt, und <code>1</code> bricht überall um, wo diese es erlauben, wie bis postext 1.27. Eine vor postext 1.28 gespeicherte Konfiguration, deren Text eine Anmerkung enthält, wird mit <code>1</code> gelesen. Seit postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>kunten</code></td>
+      <td><code>&#123; fontSize?, color?, placement? &#125;</code></td>
+      <td>halbe Größe, <code>'inline'</code></td>
+      <td>Die Kanbun-Zeichen von <code>:kunten[…]</code> (返り点, 送り仮名, 竪点): ihre Größe (standardmäßig <code>&#123; value: 0.5, unit: 'em' &#125;</code>, JIS X 4051 §5.5), ihre Farbe (standardmäßig <code>annotationColor</code>, sonst die des Texts) und <code>placement</code>: <code>'inline'</code> setzt die Rücksprungzeichen hinter ihr Zeichen und nimmt ein halbes Geviert ein, wie JIS sie setzt; <code>'interlinear'</code> setzt jedes Zeichen in den Zeilenzwischenraum, ohne Vorschub. In jeder Region gleich (siehe <a href="#zeichen-ruby-und-warichu">Zeichen, Ruby und Warichu</a>).</td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '90px' }}>Stufe</th>
+      <th>Nie am Zeilenanfang</th>
+      <th>Nie am Zeilenende</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>none</code></td><td>Nichts: Eine Zeile darf zwischen zwei beliebigen Zeichen umbrechen, wie es Zeitungen in Taiwan und Hongkong tun.</td><td>Nichts.</td></tr>
+    <tr><td><code>basic</code></td><td>Pausen- und Schlusszeichen 、，；：。！？．‼⁇⁈⁉; schließende Anführungszeichen ” ’ 」 』 und Klammern ）〕］｝】〗》〉; Verbindungszeichen – ～ ~ und ein einzelnes — zwischen zwei Wörtern; Mittelpunkte · ‧ ・; Wiederholungszeichen 々〻ゝゞヽヾ und ー; Einheiten zu Zahlen % ‰ ° ℃ ％ und die Einheitenquadrate ㎡ ㎏ ㏄.</td><td>Öffnende Anführungszeichen “ ‘ 「 『 und Klammern （〔［｛【〖《〈; Währungszeichen ¥ $ € £.</td></tr>
+    <tr><td><code>gb</code></td><td><code>basic</code> sowie der Schrägstrich / ／ (GB/T 15834—2011 §5.1.9).</td><td><code>basic</code> sowie der Schrägstrich.</td></tr>
+    <tr><td><code>strict</code></td><td><code>gb</code> sowie der Doppelgeviertstrich —— ⸺ und die Auslassungspunkte …… ⋯⋯.</td><td><code>gb</code>.</td></tr>
+  </tbody>
+</table>
+
+Die japanischen Stufen folgen den drei Konventionen von JLReq Anhang C.3. Auf jeder von ihnen endet keine Zeile mit einer öffnenden Klammer oder einem öffnenden Anführungszeichen, ein Währungszeichen bleibt bei seiner Zahl (außer bei <code>ja-loose</code>), für den Schrägstrich gilt keine Regel, und ——, ―― und …… dürfen eine Zeile eröffnen, werden aber nie geteilt (ebenso wenig 〳〵):
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '130px' }}>Stufe</th>
+      <th>Nie am Zeilenanfang</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>ja-very-strict</code></td><td>Schließende Klammern und Anführungszeichen; 、，。．; die Bindestriche ‐ – ゠ 〜 ～; ？！‼⁇⁈⁉; ・：；; die Wiederholungszeichen ゝゞヽヾ〻 und 々; ー; die kleinen Kana ぁぃぅぇぉっゃゅょゎゕゖ ァィゥェォッャュョヮヵヶ ㇰ–ㇿ (und ihre Formen halber Breite); Einheiten ％ ℃. Der Standard von JIS X 4051.</td></tr>
+    <tr><td><code>ja-strict</code></td><td><code>ja-very-strict</code> ohne die kleinen Kana, ー und 々 (die allgemeinen Bücher nach JLReq).</td></tr>
+    <tr><td><code>ja-loose</code></td><td>Nur schließende Klammern und Anführungszeichen, 、， und 。． (Zeitungen).</td></tr>
+  </tbody>
+</table>
+
+Auf jeder Stufe gilt:
+
+- —— und …… sind eine Einheit von zwei Geviert Breite und werden nie geteilt; zwei solche Einheiten hintereinander dürfen zwischen sich getrennt werden.
+- Eine Zahl behält ihre Zeichen und ihre Einheit (¥5,999, 50%, 50％, 120㎡), auch über ein Leerzeichen hinweg (−3 ℃, 50 %), und ein lateinisches Wort bleibt ganz: Westlicher Text zwischen CJK-Zeichen wird als Abschnitt gesetzt, in dem eine Zeile nie umbricht, es sei denn, der Abschnitt allein ist breiter als die Zeile (er wird dann an einer Silbe mit Trennstrich geteilt oder am letzten Zeichen, das passt; eine Webadresse an ihren Fugen). Die Einheitenquadrate ㎡ ㎏ ㎞ ㏄ (U+3371–337A, U+3380–33DF, U+33FF) gehören zum Abschnitt ihrer Zahl und machen einen lateinischen Absatz nicht zu einem CJK-Absatz.
+- Eine Zahl oder ein Wort in Ziffern und Buchstaben voller Breite (１２３４５６, ５０％, ￥５９９, ３．１４, １２：３０, ＡＢＣ) wird ebenfalls nie geteilt; eine Zeile im Blocksatz treibt ihre Zeichen dennoch aus, wie sie Han austreibt.
+- Ein Wortzwischenraum ist nur dort ein Umbruch, wo die Regeln einen erlauben: Die Zeile bricht dort nicht um, wenn das nächste Zeichen keine Zeile eröffnen darf (`参见图表 （ 第三章 ）` eröffnet nie eine Zeile mit ）) oder das letzte davor keine beenden darf.
+- Ein Fußnotenzeichen, ein `:ref` und ein hoch- oder tiefgestelltes Zeichen bleiben bei dem Zeichen davor.
+- Das ideografische Leerzeichen U+3000 ist ein Zeichen von einem Geviert Breite: Eine Zeile darf danach umbrechen, nie davor; es wird nie gedehnt und am Zeilenanfang nie entfernt. Für den Einzug von zwei Zeichen in chinesischen Absätzen setzen Sie `bodyText.firstLineIndent: { value: 2, unit: 'em' }`, statt zwei U+3000 zu tippen (der Parser entfernt die, mit denen ein Absatz beginnt).
+
+Passt ein Zeichen nicht in die Zeile und darf es die nächste eröffnen, rückt es hinunter, und eine Zeile im Blocksatz treibt den Rest aus. Darf es die nächste Zeile nicht eröffnen (ein Komma, eine schließende Klammer, das Zeichen nach einer öffnenden), versucht die Zeile zuerst, es durch Stauchen aufzunehmen (Push-in, clreq §6.2.2.3): Deckt der Leerraum, den es aufgeben darf – siehe [Breite der Satzzeichen](#breite-der-satzzeichen) –, den Überlauf, kommt das Zeichen (mit den Zeichen, die bei ihm bleiben müssen, etwa einem schließenden Anführungszeichen nach einem Punkt) in die Zeile, und die Zeile wird auf die Satzbreite gesetzt. Andernfalls gibt die Zeile Zeichen an es ab (Push-out): Der Umbruch rückt zur letzten Stelle zurück, die die Regeln erlauben, und eine Zeile im Blocksatz treibt den Rest aus. In einer Zeile, die schmaler ist als eine Zahl mit ihrem Punkt, darf nichts die Zeile beenden, und sie bricht dann doch vor dem Punkt um.
+
+Für welche Absätze das gilt: für die, die mehr CJK-Zeichen (Han, Kana, Bopomofo, Hangul) als Wortzwischenräume enthalten, auch wenn keine zwei davon aufeinanderfolgen (`第1条、第2条`, `价¥5,999。好`). Ein Leerzeichen neben einem CJK-Zeichen oder Satzzeichen ist kein Wortzwischenraum: `2026 年 9 月 28 日` wird gesetzt wie `2026年9月28日`. Sie werden Zeile für Zeile gesetzt, auf dem einfachen wie auf dem formatierten Weg, sodass ein Absatz mit einem fetten Wort genau so umbricht wie derselbe Text ohne es. Ein lateinischer Absatz, der einen chinesischen Titel oder Namen zitiert, hat mehr Leerzeichen als Zeichen: Er behält den optimalen Zeilenumbruch, und eine Zeile darf neben seinen CJK-Zeichen nach denselben Regeln umbrechen. Legenden, Tabellenzellen, Anmerkungen und Kästen brechen ebenfalls auf der Stufe des Dokuments um. Die Silbentrennung nach Wörterbuch erreicht die lateinischen Wörter eines CJK-Absatzes nicht.
+
+Eine CJK-Zeile im Blocksatz, die nicht die letzte ihres Absatzes ist, wird in dieser Reihenfolge auf die Satzbreite ausgetrieben (clreq §6.2.2.4): die Zwischenräume zwischen westlichen Wörtern, bis zu je einem halben Geviert; die Abstände zwischen Han und Latein, bis zu je einem halben Geviert; dann jede Lücke zwischen den Zeichen und diese Abstände gleichmäßig. Kein Abstand kommt in ein lateinisches Wort, eine Zahl oder ein Zeichen von zwei Geviert, auch nicht neben ein Verbindungszeichen oder einen Schrägstrich. Die Sperrung wird je Segment der Zeile gesetzt (`VDTLineSegment.tracking`, px nach jedem Zeichen, Teil der `width` des Segments), die Canvas-, HTML- und PDF-Ausgabe als Laufweite malen; ein lateinisches Wort, auf das eine Lücke folgt, gibt seinem letzten Buchstaben ein eigenes Segment. Ein Segment enthält einen westlichen Abschnitt oder Zeichen gleichen Stils, gleichen Links und gleicher Sperrung, die gleich vorrücken; die Sandbox verteilt seine Breite daher gleichmäßig auf sie, wenn sie den Cursor platziert, und ein Link deckt nur seine eigenen Zeichen ab. Bräuchte eine Zeile mehr als ein halbes Geviert zwischen ihren Zeichen (oder mehr als `bodyText.maxJustifyTracking`, wenn das gesetzt ist), wird sie mit diesem Höchstwert gesetzt und endet vor der Satzbreite: Die Zeile wird als `cjkLoose` und `ragged` markiert, und der Build meldet eine Inhaltswarnung `cjkLooseLine` mit dem Text der Zeile. Die übliche Ursache ist ein langes lateinisches Wort oder eine Webadresse, die nicht heraufrücken kann. Eine Zeile ohne CJK-Zeichen (der Anfang einer langen Webadresse) wird ohne Warnung im Flattersatz gesetzt, wie eine lateinische Zeile aus einem Wort. Siehe [Silbentrennung und Blocksatz](/de/docs/justification#chinesisch-japanisch-und-koreanisch).
+
+### Breite der Satzzeichen
+
+Ein chinesisches Satzzeichen voller Breite besteht aus einem halben Geviert Glyphe und einem halben Geviert Leerraum, und was die Einstellungen anpassen, ist der Leerraum, nie die Glyphe (clreq §6.3.2). Der Leerraum liegt vor der Glyphe einer öffnenden Klammer oder eines öffnenden Anführungszeichens, nach der Glyphe einer schließenden und nach der Glyphe der Pausen- und Schlusszeichen des Festlands 、，。．；：？！, die in der Ecke ihres Kästchens sitzen; die Zeichen, die Taiwan und Hongkong zentrieren (、，。．；：), und Mittelpunkte behalten auf jeder Seite ein Viertelgeviert. `？！` bleiben im horizontalen Text Taiwans und Hongkongs ein Geviert breit, `：；？！` im vertikalen Text überall. Der Mittelpunkt des Festlands ist in jedem Stil ein halbes Geviert breit, zentriert, in beiden Schreibrichtungen (GB/T 15834, clreq §5.1): Eine Glyphe voller Breite gibt ihren Leerraum auf beiden Seiten auf, und im vertikalen Text ist ihre Zelle von vornherein ein halbes Geviert groß.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '130px' }}>Stil</th>
+      <th>Innerhalb der Zeile</th>
+      <th>Am Zeilenende</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>fullwidth</code> (全角式)</td><td>Jedes Zeichen ein Geviert.</td><td>Ein Geviert; eine schließende Klammer mit <code>trimLineStart</code> ein halbes.</td></tr>
+    <tr><td><code>kaiming</code> (开明式)</td><td>。．？！ ein Geviert; ，、；：, Klammern, Anführungszeichen und Mittelpunkte ein halbes Geviert. Die meisten Bücher des Festlands.</td><td>Jedes Zeichen ein halbes Geviert.</td></tr>
+    <tr><td><code>lineEndHalf</code> (行末半角)</td><td>Jedes Zeichen ein Geviert.</td><td>Jedes Zeichen ein halbes Geviert (GB/T 15834—2011 §5.1.10 wörtlich gelesen).</td></tr>
+    <tr><td><code>halfwidth</code> (半角式)</td><td>Jedes Zeichen ein halbes Geviert, wie in Wörterbüchern.</td><td>Ein halbes Geviert.</td></tr>
+  </tbody>
+</table>
+
+In Japan (`punctuationWidth: 'fullwidth'`, der Auto-Wert) folgen die Zeichen stattdessen JLReq §3.1: 、，。． behalten ihren Leerraum nach der Glyphe, ：； und ・ ein Viertelgeviert auf jeder Seite, und ？！ füllen ihr Geviert. Ein schließendes Zeichen am Zeilenende behält sein halbes Geviert und gibt es ganz und vor allem anderen auf, wenn die Zeile ein weiteres Zeichen aufnehmen muss; der Leerraum nach 。 wird innerhalb der Zeile nie verringert. Eine Zeile gibt Raum in der Reihenfolge von JLReq §3.8.3 zurück: Wortzwischenräume, der Leerraum des Zeichens am Zeilenende, Mittelpunkte, Klammern und 、，, dann der Abstand zwischen Japanisch und Latein; und sie wird ausgetrieben, ohne Raum nach einer öffnenden Klammer, vor einer schließenden oder neben 、。・：；？！ und U+3000 hinzuzufügen (§3.1.11). 、 und ・ zwischen zwei Kanji-Zahlzeichen werden kompress gesetzt und nie umbrochen (二、三日, 三・一四). Ein japanisches Dokument mit einem anderen `punctuationWidth` (`kaiming`, `halfwidth` …) folgt stattdessen den clreq-Regeln dieses Abschnitts.
+
+Mit `compressAdjacent` geben zwei Zeichen, die aufeinandertreffen, den Leerraum zwischen sich auf (die acht Regeln der früheren clreq-Entwürfe): eine schließende Klammer nach einer anderen schließenden oder nach einem Pausen- oder Schlusszeichen des Festlands (`。」`, nicht nach den zentrierten Zeichen Taiwans und Hongkongs), ein Pausen- oder Schlusszeichen nach einer schließenden Klammer (`」，`), eine öffnende Klammer nach einem dieser Zeichen oder nach einer anderen öffnenden (`，「`, `》（`, `「『`) und ein Viertelgeviert zwischen einem Mittelpunkt und einer schließenden Klammer davor oder einer öffnenden danach. Nie mehr, als das Paar auf 1,5 em bringt: Unter Kaiming nimmt `。”` bereits 1,5 em ein und behält sie, `》（` nimmt ein Geviert ein. Kaiming setzt den Leerraum eines Schlusszeichens hinter ein darauf folgendes schließendes Zeichen, mit oder ohne `compressAdjacent`: Die beiden Glyphen stehen zusammen, und das halbe Geviert kommt nach dem Anführungszeichen (`。”␣母`, nicht `。␣”母`), und am Zeilenende verhält es sich wie das eines Schlusszeichens. Mit `trimLineStart` gibt eine öffnende Klammer am Zeilenanfang ihren vorderen Leerraum auf, sodass ihre Farbe mit der Textkante fluchtet (in der ersten Zeile eines Absatzes sitzt sie ein halbes Geviert im Einzug), und eine schließende am Zeilenende ihren hinteren. Ein zentriertes Zeichen gibt auf jeder Seite ein Viertelgeviert auf, nie ein halbes auf einer. Bricht eine Zeile zwischen zwei Zeichen um, behält keines die Stauchung: Jedes wird als Zeichen an einer Zeilenkante gesetzt (ein `，` voller Breite, dessen `「` die nächste Zeile eröffnet, beendet seine eigene Zeile mit einem vollen Geviert).
+
+Eine Zeile nimmt ein Zeichen auf, das die nächste Zeile nicht eröffnen darf (Push-in), wenn der Leerraum, den sie noch aufgeben kann, den Überlauf deckt, in der Reihenfolge von clreq: Wortzwischenräume bis zu einem Viertelgeviert, dann Mittelpunkte, Klammern, Pausenzeichen, die Abstände zwischen Han und Latein bis zu einem Achtelgeviert und zuletzt Schlusszeichen, jeder Schritt gleichmäßig verteilt. `kaiming` lässt nur seine Schlusszeichen auf ein halbes Geviert schrumpfen, und nur in diesem Fall: Eine Zeile, der lediglich ein weiteres Zeichen fehlt, wird ausgetrieben, sodass 。？！ innerhalb der Zeile ihr Geviert behalten. `lineEndHalf` lässt jedes Zeichen auf ein halbes Geviert schrumpfen; Zeichen unter `fullwidth` geben nichts auf (ein Buch mit voller Breite behält sein Raster), und Zeichen unter `halfwidth` haben nichts mehr übrig.
+
+Die Zeichen, die lateinischer Text mit dem Chinesischen teilt (“ ” ‘ ’ … — ·), nehmen im chinesischen Text das Kästchen eines chinesischen Zeichens ein, unabhängig von der eigenen Dickte der Schrift: LXGW WenKai zeichnet “ ” 0,35 em breit, Noto Serif SC den Geviertstrich mit 0,89 em und · mit einem Drittelgeviert. Sie zählen als chinesisch, wenn das nächste Zeichen auf einer der beiden Seiten (über andere solche Zeichen hinweg) chinesisch ist oder wenn nichts neben ihnen westlich ist. Die Glyphe eines öffnenden Anführungszeichens sitzt am Ende ihres Kästchens von einem Geviert, die eines schließenden an seinem Anfang; ein Mittelpunkt, eine Auslassung und ein einzelner Strich sitzen in der Mitte; ein Paar Auslassungen (……) wird gesetzt, wie die Schrift die beiden zusammen setzt, und in seinen zwei Geviert zentriert. Ein 破折号 (——) ist eine durchgehende Linie: Jeder Strich wird von der eigenen Seitendickte der Schrift aus über sein Geviert gedehnt, die beiden Striche überlappen an der Fuge und werden auf die Mitte der Schriftzeichen angehoben (`VDTLineSegment.inkScale`, eine Skalierung nur beim Malen). Der Stil passt das Kästchen dann wie bei jedem anderen Zeichen an. Mit westlichem Text auf beiden Seiten (`他说：He said “yes” and left.`) behalten sie die Dickte der Schrift, und eine Glyphe, die schon ein Geviert breit ist, ändert nichts.
+
+Die Renderer halten die eigene Satzzeichen-Abstandsregelung des Browsers aus dem Text heraus. Chrome setzt das erste von zwei aufeinandertreffenden Zeichen in halber Breite, wenn es sie in einem Lauf misst oder malt (`本）》录` in Noto Serif SC ist so 3,5 em breit); daher werden zwei aufeinandertreffende Zeichen getrennt gemessen und gemalt, und HTML-Zeilen mit CJK-Text tragen `text-spacing-trim: space-all` und `text-autospace: no-autospace` mit abgeschalteten Features `chws`, `halt` und `vchw`.
+
+Im VDT ist ein Zeichen, das Leerraum aufgegeben hat, ein eigenes Segment, seine `width` die Dickte, die es behält, mit gesetztem `inkOffset` (px): Die Renderer malen seine Glyphe bei `x + inkOffset`, sodass ein Zeichen, das den Leerraum vor seiner Glyphe aufgegeben hat (eine öffnende Klammer am Zeilenanfang), so weit vor seinem Kästchen gezeichnet wird (ein negativer Versatz). Ein geteiltes Zeichen, das in einem chinesischen Kästchen gesetzt ist, trägt die Position seiner Glyphe im Kästchen, abzüglich eines davor aufgegebenen Leerraums, die positiv sein kann. Das PDF zeigt eine solche Glyphe mit einem Zeichenabstand, der ihre Dickte dort enden lässt, wo ihr Kästchen endet, sodass ein Leseprogramm sie nie in das nächste Zeichen laufen sieht, und legt ihre Zeile in eine Spanne `/ActualText` (siehe [Abstand zwischen Han und Latein](#abstand-zwischen-han-und-latein)). Die Region entscheidet, auf welcher Seite der Leerraum eines Zeichens liegt, nicht die Schrift: Setzen Sie ein Buch in einer Schrift seiner Region (Noto Serif SC für das Festland, TC für Taiwan, HK für Hongkong); eine traditionelle Schrift unter einem Tag des Festlands staucht ihre zentrierten Zeichen auf der falschen Seite.
+
+### Hängende Satzzeichen
+
+`hangingPunctuation: 'allow'`, der Auto-Wert in Japan, lässt eines von 、，。． (auf dem Festland, dessen Zeichen am Anfang ihres Kästchens sitzen, auch ；：？！) über das Zeilenende hinaushängen, wenn es sonst die nächste Zeile eröffnen würde und Stauchen der Zeile es nicht aufnehmen kann; nie im horizontalen Text Taiwans und Hongkongs, dessen zentrierte Zeichen abgeschnitten wirken würden (im vertikalen Text dürfen sie es). Im vertikalen Text sitzt das hängende Zeichen unter dem Fuß der Zeile. `'force'` hängt ein solches Zeichen immer aus, wenn es eine Zeile beendet (außer in der letzten Zeile eines Absatzes), und sofort, wenn es nicht passt. Ein Zeichen hängt nie, wenn ein anderes Zeichen es berührt (`。」`, `，「`). Das hängende Segment ist als `hangs` markiert; `bbox.width` der Zeile, ihr Blocksatz und ihre Ausrichtung lassen es außen vor, und Canvas und PDF erweitern den Spaltenausschnitt um das breiteste hängende Zeichen (`hangingPunctuationOverhang`), sodass es nie abgeschnitten wird. Die meisten chinesischen Bücher hängen Satzzeichen nicht aus; clreq empfiehlt es nur mit einem Zeichenraster. Japanische Bücher hängen 、。，． aus (Burasagari), nie ；：？！ oder Klammern, in beiden Schreibrichtungen und nur, wenn Stauchen der Zeile das Zeichen nicht aufnehmen kann.
+
+### Abstand zwischen Han und Latein
+
+`latinSpacing` (standardmäßig ein Viertelgeviert) setzt einen Abstand zwischen einem Han-Zeichen (oder Kana) und einem benachbarten lateinischen Buchstaben oder einer europäischen Ziffer: `用iPhone拍照` und `1999年` werden als `用 iPhone 拍照` und `1999 年` gesetzt. Es gibt keinen am Anfang oder Ende einer Zeile, keinen zwischen einem lateinischen Zeichen und einem chinesischen Satzzeichen (`用iPhone，` setzt nichts vor das Komma), keinen innerhalb chinesischer Klammern (`（iPhone）`) und keinen neben einem Zeichen, das weder Buchstabe noch Ziffer ist (`为¥5,999`). Ein Leerzeichen, das der Autor an einer solchen Grenze getippt hat (`用 iPhone 拍照`, wie es viele Webtexte haben), wird durch den Han-Latein-Abstand ersetzt, nicht ergänzt, sodass beide Schreibweisen gleich gesetzt werden; ein geschütztes Leerzeichen oder ein ideografisches Leerzeichen bleibt, wie es ist. In einer Zeile im Blocksatz wächst er auf bis zu ein halbes Geviert, bevor die Zeichen ausgetrieben werden; in einer Zeile, die ein Zeichen aufnimmt, das die nächste Zeile nicht eröffnen darf, schrumpft er auf bis zu ein Achtelgeviert. Eine Länge in einer anderen Einheit als em wird mit der dpi-Zahl der Seite umgerechnet. `0` schaltet ihn ab, und ein dort getipptes Leerzeichen bleibt ein Wortzwischenraum.
+
+Welche Seite eines westlichen Worts den Abstand erhält, folgt `latinSpacingEdge`. Unter `'letters'`, der Regel von clreq §6.3.3 und von CSS `text-autospace` und dem Standard der chinesischen Regionen, ist es eine Seite, die auf einen Buchstaben oder eine Ziffer endet. Unter `'western'`, dem Standard der Region Japan (JLReq §3.2.6), erhält ein westliches Wort, das einen Buchstaben oder eine Ziffer enthält, ihn auch auf einer Seite, die auf eine Klammer oder ein Zeichen endet: `normalize()関数`, `(abc)関数`, `A+関数` und `100%関数` werden mit dem Viertelgeviert auf beiden Seiten des Worts gesetzt, wie `abc関数`, und ein dort getipptes Leerzeichen wird ebenfalls ersetzt. Zwei Seiten bleiben kompress, wo das Zeichen über die Kante hinweg bindet: nach einer öffnenden Klammer oder einem Präfixzeichen, mit dem das Wort endet (`abc(関数`), und vor einer schließenden Klammer, einem Komma, einem Schlusszeichen oder einem Postfixzeichen, mit dem es beginnt (`関数)abc`). Eine Klammer oder ein Zeichen ohne Buchstabe oder Ziffer in seinem Wort, wie in `関数(かんすう)は`, steht in japanischem Kontext und erhält keinen. Eine vor postext 1.28 gespeicherte japanische Konfiguration behält `'letters'`.
+
+Der Abstand ist ein Segment mit `kind: 'space'`, markiert als `autospace`, mit leerem `text` (oder dem Leerzeichen, das der Autor getippt hat); seine `width` ist endgültig, und der eigene Wortabstands-Blocksatz der Renderer lässt ihn, wie er ist. Er steht nie im reinen Text, sodass Suche, Kopieren und Einfügen und Quellbereiche den Text so lesen, wie er geschrieben ist. Das PDF legt jede Zeile, die in Stücken gesetzt ist (ausgetriebene Zeichen, Han-Latein-Abstände, Zeichen, die Leerraum aufgegeben haben oder hängen), in eine `/Span`, deren `/ActualText` der Text der Zeile ist, sodass die Textextraktion `用iPhone拍照` liest, nicht `用 iPhone 拍 照`, und eine Zeile mit Zeichen halber Breite als eine Zeile liest.
+
+### Zahlen im vertikalen Text
+
+Im vertikalen Text wird ein lateinisches Wort oder eine lange Zahl seitlich gedreht, und eine kurze Zahl steht aufrecht, ihre Ziffern nebeneinander in einer Zelle von einem Geviert: Tate-chu-yoko (縱中橫, [clreq §2.1.3](https://www.w3.org/TR/clreq/#x2-1-3-mixed-text-composition-in-vertical-writing-mode), [CSS `text-combine-upright`](https://www.w3.org/TR/css-writing-modes-4/#text-combine-upright)). `uprightDigits` legt fest, wie viele Ziffern eine solche Zahl haben darf: `2` (der Standard), `3`, `4` oder `0` für keine. `2026年9月28日` ist unter `2` seitlich gedrehtes 2026, aufrechtes 9 und aufrechtes 28 in einer Zelle.
+
+- Die ganze Zahl oder nichts davon: Unter `2` bleibt eine dreistellige Zahl seitlich gedreht, nie geteilt.
+- Eine Zahl, die einen lateinischen Buchstaben berührt (`A4`, `mp3`, `3D`), bleibt seitlich gedreht in ihrem Wort; ebenso eine Zahl mit Dezimalpunkt oder Zifferngruppierung (`3.14`, `10,000`).
+- Eine Zahl in einem lateinischen Satz folgt dem Satz: Liegt auf beiden Seiten ein lateinisches Wort, läuft sie mit den Wörtern seitlich gedreht (`printed in 49 and 32 copies`, `chapters 49, 32 and (7) of`). Auf jeder Seite reicht der Blick über Leerzeichen, andere Zahlen, Anmerkungszeichen, die Satzzeichen eines seitlich gedrehten Laufs (`, . : ; ( ) ' " - /`), Halbgeviert- und Geviertstriche und typografische Anführungszeichen (`pages 3–5 of`, `the “49” copies`) hinweg bis zum ersten Buchstaben oder chinesischen Zeichen. Eine Zahl, deren Zeichen zu chinesischem Text führen, steht aufrecht (`上午12:30:45开会`, `比分为3:2:1`, `见图(3)所示`, `他住在"12"号楼`), ebenso eine neben einem chinesischen Zeichen oder Satzzeichen, mit oder ohne Leerzeichen (`第 3 回`, `用iPhone 15拍攝`, `第3 copies`), eine neben einem Zeichen, das aufrecht steht (`a 30×40 print`), und eine am Anfang oder Ende eines Absatzes, die nur auf einer Seite ein Wort hat (`49 copies were printed`, `on page 7.`: Schreiben Sie `:sideways[…]`, um sie zu drehen). Der Absatz wird als Ganzes gelesen, über Zeilenumbrüche, Hervorhebungen und Links hinweg.
+- Neben einem Zeichen, das Unicode aufrecht setzt, erhält jede Zahl ihre eigene Zelle: `30×40` ist 30, ×, 40, alle aufrecht.
+- Eine Zelle mit mehr Zeichen, als in ein Geviert passen, wird in der Breite auf das Geviert gestaucht; Laufweite und Blocksatz greifen nie in sie ein, nur nach ihr.
+- Für Umbruch und Blocksatz zählt die Zelle als ein chinesisches Zeichen, und um sie herum wird kein Han-Latein-Abstand gesetzt.
+- In Japan stehen auch die Paare `!!`, `!?`, `?!` und `??`, in halber oder voller Breite, aufrecht in einer Zelle (`すごい！？`), sofern kein lateinischer Buchstabe, keine Ziffer und kein drittes Zeichen sie berührt; ein Paar voller Breite wird mit den Zeichen halber Breite gemalt. Kleine Kana, ：；, “ ” (gemalt als 〝〟) und ・ nehmen die japanischen vertikalen Formen an (siehe [Japanischer Satz › Senkrechte Formen](/de/docs/japanese-layout#senkrechte-formen)).
+- Das Messwerkzeug und jeder Renderer finden dieselben Zellen: Das Canvas malt die Ziffern zurückgedreht aufrecht und gestaucht, das PDF ebenso mit der horizontalen Schrift, und das HTML umschließt sie mit `text-combine-upright: all`.
+
+Von Hand überschreiben drei Inline-Zeichen die Einstellung im vertikalen Text und ändern im horizontalen Text nichts (siehe [Dokumentformat › Ausrichtung in senkrechtem Text](/de/docs/document-format#ausrichtung-in-senkrechtem-text)):
+
+```markdown
+第:tcy[120]回、:upright[GDP]與:sideways[12]
+```
+
+`:tcy[…]` setzt seinen Text in eine aufrechte Zelle, `:upright[…]` stellt jedes Zeichen aufrecht in eine eigene Zelle (lateinische Buchstaben darin zentriert), `:sideways[…]` dreht den ganzen Lauf, chinesische Zeichen eingeschlossen. Im VDT ist ein Lauf `:tcy` ein Segment mit `tcy: true`, ein Geviert breit; ein Lauf `:upright` oder `:sideways` trägt `orientation`. Die Zahlen, die `uprightDigits` in eine Zelle setzt, tragen keine Markierung: `verticalRuns(graphemes, region, uprightDigits)` findet sie. In einem Absatz trägt eine kurze Zahl, die mit lateinischen Wörtern läuft, `orientation: 'sideways'`, als wäre sie als `:sideways[…]` geschrieben: Ihr Segment enthält nicht immer die Wörter, mit denen sie läuft.
+
+### Zeichenraster
+
+Ein chinesischer Satzspiegel wird in Zeichen angegeben (clreq §7.1.1): Schriftgröße × Zeichen pro Zeile × Zeilen pro Seite, dazu der Zeilenzwischenraum und bei zwei Spalten der Spaltenabstand. `grid` legt ihn so fest:
+
+```ts
+cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
+```
+
+Mit `enabled` wird die Konfiguration umgeschrieben, bevor irgendetwas sie liest: Jede Spalte ist `charsPerLine` Geviert von `bodyText.fontSize` breit und der Satzspiegel `linesPerPage` Zeilen von `bodyText.lineHeight` hoch; bei `layoutType: 'double'` ist der Spaltenabstand `layout.gutterWidth`, auf eine ganze Zahl von Geviert gerundet, mindestens eins. Die Ränder in `page.margins` wirken als Mindestwerte: Der Satzspiegel wird in die Mitte der Fläche gesetzt, die sie lassen, und jeder Rand wächst um die Hälfte des Platzes, der auf seiner Achse übrig bleibt (ein gespiegeltes Buch hält Bundsteg und Außensteg getrennt, beide wachsen um denselben Betrag). Bleiben `charsPerLine` und `linesPerPage` ungesetzt, nehmen sie so viele, wie passen. Eine größere Zahl, als passt, wird auf das Passende verringert und als Konfigurationswarnung `cjkGridClamped` gemeldet. Schriftgröße und Zeilenabstand bleiben, wie sie geschrieben sind. In einem Layout `oneAndHalf` gilt `charsPerLine` für die Hauptspalte; die Seitenspalte erhält die ganze Zahl von Geviert, die der Breite am nächsten kommt, die `sideColumnPercent` ihr innerhalb der konfigurierten Ränder gibt (mindestens eins), der Spaltenabstand wird wie bei zwei Spalten gerundet, und `sideColumnPercent` wird umgeschrieben, sodass beide Spalten in ganzen Geviert geschnitten sind. Im vertikalen Text (`layout.writingMode: 'vertical-rl'`) laufen die Zeichen einer Zeile die Seite hinunter und die Zeilen quer über sie, daher misst `charsPerLine` die Höhe der Seite, ein Layout `double` ergibt zwei von oben nach unten gestapelte Ebenen, und die Zellen der Überlagerung stehen auf der Achse, auf der die Zeichen zentriert sind.
+
+Eine Seite im Raster enthält die Zeilen, die ihr Raster zählt, daher folgen die beiden Regeln, die eine Spalte um eine Zeile kürzer lassen, dem Raster. `bodyText.avoidWidows`, das einen Absatz ganz weiterschiebt, wenn nur eine seiner Zeilen am Fuß einer Spalte Platz hat, ist dort standardmäßig aus. `bodyText.avoidOrphans`, das eine Zeile aus der vorigen Spalte nimmt, damit ein Absatz nicht mit einer Zeile am Kopf der nächsten endet, bleibt für ein chinesisches Dokument an (孤行, clreq §7.1.2) und ist in der Region `japan` aus: JLReq §3.5.4 zählt die Zeichen der letzten Zeile eines Absatzes, nicht seine Zeilen an einem Seitenumbruch. Eine Konfiguration, die einen der beiden Schlüssel setzt, behält ihren Wert, und eine vor postext 1.28 gespeicherte behält beide Regeln an (`configVersion` 12).
+
+Zwei Layouts aus der chinesischen Praxis, in 五号 (10,5 pt) mit 6 pt Zeilenzwischenraum (`lineHeight: 16.5pt`):
+
+- 大32开, 140 × 203 mm, 28 × 28: eine Satzbreite von 294 pt (103,7 mm) und ein Satzspiegel von 462 pt (163 mm); `page.margins` von 16/20 mm innen und außen und 18/20 mm oben und unten lassen Platz dafür.
+- 16开, 184 × 260 mm, zwei Spalten zu 23 Zeichen in 小五 (9 pt, Zeilen von 13,5 pt) mit einem Spaltenabstand von zwei Zeichen: 2 × 207 pt + 18 pt.
+
+`show` zeichnet das Raster (稿纸) über den Satzspiegel, ein hellgraues Quadrat je Zeichenposition in jeder Zeile (das Geviert des Zeichens um seine Grundlinie), in jeder Spalte der Seite (eine Seitenspalte von `oneAndHalf` auf der Seite, auf die die Seitenparität sie setzt), auf dem Canvas und im HTML. Das PDF zeichnet es nur, wenn `renderToPdf` `characterGrid: true` erhält: Es ist eine Bildschirmhilfe. `cjkGridGeometry(config)` gibt das Raster zurück, das eine Konfiguration festlegt (verwendete Zahlen, Ränder, Satzspiegel), und `applyCjkGrid(config)` die umgeschriebene Konfiguration.
+
+`fullLines` ist für Manuskriptpapier (原稿用紙) gedacht, auf dem jedes Quadrat einer vollen Zeile beschrieben wird. Ein Absatz endet nicht auf einem einzelnen Zeichen (siehe `bodyText.avoidRunts`): Die Zeile darüber gibt ihm ihr letztes Zeichen, und wenn diese Zeile nicht im Blocksatz steht, bleibt sie ein Quadrat kürzer. Mit `fullLines: true` behält eine Zeile, die nicht im Blocksatz steht, jedes Quadrat, und der Absatz darf auf einem Zeichen enden; eine Zeile im Blocksatz gibt ihr Zeichen weiterhin ab und wird auf die Satzbreite ausgetrieben. Standardmäßig aus. Seit postext 1.28.
+
+### Zeichen, Ruby und Warichu
+
+Das Markup für [chinesische Zeichen, Ruby und Warichu](/de/docs/document-format#chinesische-zeichen-ruby-und-warichu) belässt seinen Text im Absatz: Suche, Inhaltsverzeichnis, Registeranker und kopierter Text lesen die Zeichen, wie sie geschrieben sind, und nur was um sie herum gezeichnet wird, hängt von diesen Einstellungen ab.
+
+- **Betonungspunkte** (着重号, 傍点; `:dots[…]` sowie `*…*` auf CJK-Zeichen unter `emphasis: 'dots'`) setzen ein Zeichen je Schriftzeichen, darauf zentriert (ohne die Sperrung einer Zeile im Blocksatz), nie auf Satzzeichen oder Leerzeichen: unter dem Zeichen im horizontalen Text, rechts davon im vertikalen (clreq §5.3.1). `style` wählt einen gefüllten Punkt, einen offenen Kreis oder ein Sesamzeichen, `fill="open"` zeichnet die Kontur, `pos="over|under"` die Seite; `emphasisMark` legt fest, was ein Zeichen ungesetzt lässt (in Japan ein Sesamzeichen über dem Text, rechts davon im vertikalen Text). Ein Sesamzeichen steht in beiden Schreibrichtungen gleich auf dem Bogen, und Zeichen auf der Seite einer Ruby-Lesung kommen außerhalb davon.
+- **Seitenlinien** (傍線, `:sideline[…]{style pos}`) laufen neben dem Text, Satzzeichen und Leerzeichen eingeschlossen: `solid`, `double`, `wavy` oder `dotted`, standardmäßig unter dem Text quer über die Seite und rechts davon die Seite hinunter; zwei Linien, die aufeinandertreffen, geben je ein Achtelgeviert auf. Sie funktionieren in jedem Schriftsystem.
+- **Linien für Eigennamen und Buchtitel** (专名号 `:name[…]`, 书名号 `:book[…]` unter `bookTitleMark: 'wavy'`) laufen unter dem Geviert der Zeichen (links davon im vertikalen Text), über die Leerzeichen innerhalb des Laufs hinweg. Wo zwei Läufe aufeinandertreffen, gibt jedes Ende ein Achtelgeviert auf, sodass `:name[賈寶玉]:name[林黛玉]` als zwei Namen gelesen wird. Markieren Punkte und eine Linie denselben Text auf einer Seite, liegt die Linie näher am Text. Unter `'brackets'` sind die 《》 Text, mit dem die Zeilen umbrochen werden, gemalt und kopiert wie jedes andere Zeichen; sie belegen kein Zeichen des reinen Texts oder der Quellzuordnung (die Segmente sind als `inserted` markiert).
+- **Ruby**-Lesungen sitzen im Zeilenzwischenraum am Geviert der Basis, darauf zentriert; eine Lesung, die einen lateinischen Buchstaben enthält (Pinyin) und über ihrer Basis steht, wird um die Tiefe der Unterlängen ihrer Schrift (g, j, p, q, y) und 0,04 em des Texts angehoben, damit sie die Basis freigibt, und jede Lesung der Zeile behält eine gemeinsame Grundlinie; eine Lesung, die breiter als ihre Basis ist, verbreitert das Kästchen der Basis, abzüglich eines Viertels des Ruby-Gevierts, das sie auf einen Nachbarn ohne Lesung übergreifen darf, und zwei Lesungen halten ein Viertel des Ruby-Gevierts Abstand (zwei Zhuyin-Lesungen ein Viertel des Gevierts der Symbole, sodass drei Symbole neben jedem von zwei Zeichen in ihren Zellen bleiben). Ein Mono-Ruby (eine Lesung je Zeichen) darf zwischen seinen Zeichen umbrechen; ein Gruppen-Ruby bricht nie um. In Japan folgt eine Lesung stattdessen `ruby.align` und `ruby.overhang`: im Verhältnis 1:2:1 verteilt, wenn sie kürzer als ihre Basis ist, auf Kana, aber nicht auf Kanji übergreifend, wenn sie länger ist, wobei der restliche Platz durch Sperren der Basis entsteht; ein zeichenweises Ruby aus zwei oder mehr Zeichen ist ein Jukugo-Ruby, bei dem jedes Zeichen seine Lesung behält, die auf das nächste Zeichen des Worts übergreifen darf, aber nie eine andere Lesung überlappt, und die Zeile weiterhin zwischen ihnen umbricht (JLReq §3.3). Am Zeilenanfang oder -ende richten sich Basis und Lesung an der Kante aus (clreq §5.5.4). Zhuyin steht im horizontalen Text in einer Spalte rechts von jedem Zeichen, und das Kästchen des Zeichens wächst um die Spalte; im vertikalen Text läuft dieselbe Spalte rechts an den Zeichen hinunter. Das Tonzeichen kommt rechts neben die Spalte, mit der Hälfte seiner Farbe über der Oberkante des letzten Symbols (clreq §5.5.3.3), nach seiner Farbe platziert, weil Schriften diese Zeichen hoch in ihr Geviert setzen, und im vertikalen Text steht es aufrecht, wie der Punkt des neutralen Tons über dem ersten Symbol.
+- **Warichu**-Anmerkungen (双行夹注) falten sich in Anmerkungsgröße in zwei Zeilen, auf der Zeile zentriert, ohne Abstand dazwischen. Die obere Zeile nimmt Zeichen auf, bis sie mindestens die Hälfte des Teils enthält, damit die zweite Zeile nicht die längere ist, und noch eines, solange die untere Zeile mit einem Zeichen beginnen würde, das keine Zeile eröffnen darf. Würde jede solche Faltung die untere Zeile mit einem Satzzeichen eröffnen (`本名。`), wird die Faltung davor genommen, und die untere Zeile ist die längere: `本` über `名。`; ein Teil aus einem Zeichen und seinen Satzzeichen bleibt eine Zeile. Eine Anmerkung, die länger ist als der Platz, der auf einer Zeile bleibt, füllt ihn und setzt sich auf der nächsten Zeile, Spalte oder Seite fort, und eine Zeile bricht in ihr nur dort um, wo auf beiden Seiten `warichu.minChars` ihrer Zeichen stehen (standardmäßig 2; Satzzeichen und Wortzwischenräume zählen nicht), sodass keine Zeile, Spalte oder Seite mit einem kleinen Zeichen und seinem Schlusszeichen beginnt; ihre Klammern stehen nur vor ihrer ersten und nach ihrer letzten Zeile. Im vertikalen Text ist die obere Zeile die rechte, die zuerst gelesen wird.
+- **Kanbun-Zeichen** (`:kunten[字]{kaeri okuri tate}`) setzen die Rücksprungzeichen des letzten Zeichens an die Fußseite der Zeile danach (unten links im vertikalen Text), seine Okurigana von seiner Mitte aus an die Kopfseite, wobei längere das nächste Zeichen weiterschieben, und den Tatesen als kurze Linie zum nächsten Zeichen (JIS X 4051 §5). Kopierter Text und das `/ActualText` des PDFs lesen die Okurigana nach ihren Zeichen und lassen die Rücksprungzeichen weg; ein Zeilenzwischenraum, der zu schmal für sie ist, wird als `kuntenExceedsLeading` gemeldet.
+
+Der Zeilenabstand ändert sich nie: Zeichen und Lesungen leben im Durchschuss. Ein Absatz, dessen Zeilenzwischenraum (Zeilenabstand minus Textgröße) bei Zeichen auf einer Seite unter einem halben Geviert liegt oder bei Zeichen auf beiden Seiten unter fünf Achteln (clreq §5.6.1), wird als Inhaltswarnung `cjkMarksExceedLeading` gemeldet; einer, dessen Lesungen höher sind als sein Zwischenraum (eine Pinyin-Lesung mit ihrer Anhebung gezählt), als `rubyExceedsLeading`. Geben Sie solchen Absätzen ein Absatzformat mit mehr Durchschuss. Japanische Bücher mit Furigana setzen den Grundtext meist mit einem Zeilenabstand von etwa 1,75 em (JLReq §2.4.2).
+
+Im VDT trägt ein markiertes Segment `cjkMarks`, und das Layout setzt die Punkte und Linien auf seinen Zeilen als `VDTLine.marks` (Punkte, Kreise, Sesamzeichen, gerade, doppelte, gepunktete und gewellte Linien, im Flussrahmen der Zeile), die Canvas, HTML und PDF unverändert zeichnen (PDF: `Artifact /Layout`; HTML: Kästchen mit `aria-hidden`, punktierter Text in `<em>`). Das Segment einer Ruby-Basis trägt `ruby` (die Lesung und ihre Läufe; bei einer japanischen Lesung auch die `id`, die ihre Annotation mit den anderen Zeichen eines Jukugo-Worts teilt, und `jukugo`) und malt seine Basis bei `inkOffset`, mit `tracking`, wenn die Lesung sie gesperrt hat; ein Zeichen mit Kanbun-Zeichen trägt `kunten` (seine Läufe und seinen Tatesen); der Teil einer Warichu-Anmerkung auf einer Zeile ist ein Segment, dessen `text` seine obere und dann seine untere Zeile ist und dessen `warichu` die Zeilen enthält, die die Renderer stattdessen malen. Getaggtes PDF legt eine Lesung in das `RT` des `Ruby` ihrer Basis und eine Anmerkung in ein `Warichu`, und das `/ActualText` der Zeile liest den Basistext und die Anmerkung je einmal. Zeichen, Lesungen und Anmerkungen werden im Grundtext, in Überschriften, Listen und Kästen gezeichnet sowie in den Legenden, Tabellenzellen und Anmerkungen von Ressourcen, deren Zeilen `marks` und `ruby` wie Zeilen des Grundtexts tragen; Gestaltungstext behält den Text ohne sie.
+
+Resolver und Stripper entsprechen den anderen Abschnitten. `spaceAfterQuestion`, `paragraphStartBracket` und `wordBreak` sowie `overhang`, `align` und `smallKana` des Ruby stehen nur dann in der aufgelösten Konfiguration, wenn sie etwas ändern (in Japan oder wenn sie gesetzt sind). `setCjkLineBreak` und `setCjkComposition` legen die Stufe und den Satz (Breite der Satzzeichen, Überhang, Han-Latein-Abstand; `cjkCompositionOf(resolved.cjk, dpi)`) für Messungen außerhalb von `buildDocument` fest, das sie aus der Konfiguration setzt. Außerhalb eines Builds behalten Zeichen ihre volle Dickte, und es wird kein Han-Latein-Abstand gesetzt:
+
+```ts
+import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, setCjkLineBreak, setCjkComposition, cjkCompositionOf } from 'postext';
+
+resolveCjkConfig(undefined, 'zh-HK');
+// { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
+//   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
+//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
+//   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
+//   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
+//   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto' },
+//   warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '', close: '', minChars: 2 }, kunten: { … } }
+
+resolveCjkConfig(undefined, 'ja');
+// { region: 'japan', lineBreak: 'ja-very-strict', punctuationWidth: 'fullwidth', compressAdjacent: true,
+//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half', …,
+//   emphasisMark: { style: 'sesame', fill: 'auto', position: 'over' }, bookTitleMark: 'brackets',
+//   bookTitleBrackets: [{ open: '『', close: '』' }, { open: '「', close: '」' }],
+//   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'kana', align: 'jis' },
+//   warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '（', close: '）', minChars: 2 }, kunten: { … } }
+```
+
+In der Sandbox stehen diese Einstellungen unter **Gestaltung › Schriftsystem › Ostasiatische Typografie**.

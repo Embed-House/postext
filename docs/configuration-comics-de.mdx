@@ -1,0 +1,548 @@
+{/* docs/configuration-comics-en.mdx */}
+
+export const metadata = {
+  title: 'Konfiguration: Comics',
+  sidebarTitle: 'Comic-Einstellungen',
+  description: 'Die Comic-Einstellungen: Rahmen und Zwischenräume von Comicseiten, Panelstile, Lettering, Sprechblasenstile und die Figurenliste',
+  lang: 'de',
+  lastUpdated: '2026-10-10',
+  readingTime: '3 min',
+  order: 10,
+  parent: 'configuration',
+  plainSummary: "Diese Seite behandelt die Einstellungen für Comicseiten. Sie legen den Rahmen der Seite und den Abstand zwischen den Panels fest. Sie wählen Schrift und Größe des Letterings. Sie bestimmen, wie Sprechblasen, Textkästen und Soundeffekte gezeichnet werden. Außerdem können Sie die Figuren auflisten, damit jede in ihrem eigenen Stil spricht. Der Leitfaden zu Comics erklärt, wie Sie die Seiten selbst schreiben.",
+};
+
+# Konfiguration: Comics
+
+
+## Comics
+
+Die Eigenschaft `comics` konfiguriert Comicseiten (`:::page`), Strips (`:::strip`) und Doppelseiten: den Rahmen und die Zwischenräume, aus denen die Panels geschnitten werden, die Panelstile, das Lettering, die Sprechblasenstile und die Figurenliste. Nur Dokumente mit Comics lesen sie; ein Dokument ohne Comics wird genau wie zuvor umbrochen, und ein Dokument mit Comics und ohne Abschnitt `comics` übernimmt die Standardwerte seiner Sprache. Die Auszeichnung und die Art, wie Seiten gelettert werden, erklärt [Comics](/de/docs/comics).
+
+```ts
+const config: PostextConfig = {
+  comics: {
+    readingDirection: 'auto',
+    gutter: { horizontal: { value: 5, unit: 'mm' }, vertical: { value: 2.5, unit: 'mm' } },
+    panel: { borderWidth: { value: 0.8, unit: 'pt' }, borderStyle: 'rough' },
+    panelStyles: [{ id: 'night', background: { hex: '#14142b', model: 'hex' }, borderColor: { hex: '#ffffff', model: 'hex' } }],
+    lettering: { fontSize: { value: 8.5, unit: 'pt' }, textTransform: 'uppercase' },
+    balloonStyles: [{ id: 'eerie', shape: 'wavy', italic: true }],
+    cast: [{ id: 'maya', name: 'Maya' }, { id: 'tomas', name: 'Grandpa Tomás' }],
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>readingDirection</code></td>
+      <td><code>'auto' | 'ltr' | 'rtl'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Die Reihenfolge der Panels in einer Reihe. <code>'auto'</code> liest von rechts nach links in einem Dokument mit Schreibrichtung von rechts nach links, in einem senkrechten Dokument sowie im Japanischen und im Chinesischen mit Langzeichen, sonst in der Richtung von <code>artDirection</code> (einschließlich Chinesisch mit Kurzzeichen und Koreanisch). Das Attribut <code>direction</code> einer Seite überschreibt das. Mit <code>page.binding: 'auto'</code> wird ein Buch, dessen Comics von rechts nach links lesen, rechts gebunden.</td>
+    </tr>
+    <tr>
+      <td><code>artDirection</code></td>
+      <td><code>'ltr' | 'rtl'</code></td>
+      <td><code>'ltr'</code></td>
+      <td>Die Leserichtung, für die die Bilder gezeichnet wurden: <code>'rtl'</code> für Manga.</td>
+    </tr>
+    <tr>
+      <td><code>mirrorArt</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Die Bilder einer Seite spiegeln, die in der anderen Richtung als <code>artDirection</code> gelesen wird. Mit <code>mirror=false</code> behält ein Panel sein Bild wie gezeichnet.</td>
+    </tr>
+    <tr>
+      <td><code>frame.margins</code></td>
+      <td><code>PageMargins</code></td>
+      <td>die Seitenränder</td>
+      <td>Eigene Ränder für Comicseiten (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Die Panels werden aus der Box geschnitten, die sie lassen; ohne Angabe aus dem Textbereich der Seite.</td>
+    </tr>
+    <tr>
+      <td><code>gutter.horizontal</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>4mm</code></td>
+      <td>Der Zwischenraum zwischen den Reihen. Das Attribut <code>gutter</code> einer Seite überschreibt ihn.</td>
+    </tr>
+    <tr>
+      <td><code>gutter.vertical</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>2mm</code></td>
+      <td>Der Zwischenraum zwischen nebeneinanderstehenden Panels einer Reihe.</td>
+    </tr>
+    <tr>
+      <td><code>panel</code></td>
+      <td><code>PanelStyleConfig</code></td>
+      <td>siehe unten</td>
+      <td>Der Standard-Panelstil.</td>
+    </tr>
+    <tr>
+      <td><code>panelStyles</code></td>
+      <td><code>NamedPanelStyleConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Benannte Panelstile, gewählt mit <code>:::page&#123;style=…&#125;</code> oder <code>::panel&#123;style=…&#125;</code>. Jeder hat eine <code>id</code>, einen optionalen <code>name</code> (nur für Editor-Oberflächen) und die Felder eines Panelstils; nicht gesetzte Felder folgen <code>panel</code>.</td>
+    </tr>
+    <tr>
+      <td><code>lettering</code></td>
+      <td><code>LetteringConfig</code></td>
+      <td>siehe unten</td>
+      <td>Schrift, Größe und Hausregeln jeder Sprechblase des Buchs.</td>
+    </tr>
+    <tr>
+      <td><code>balloonStyles</code></td>
+      <td><code>BalloonStyleConfig[]</code></td>
+      <td>die neun eingebauten Stile</td>
+      <td>Sprechblasenstile nach Art. Die eingebauten sind immer vorhanden; ein Eintrag mit einer ihrer IDs verändert den betreffenden, ein Eintrag mit einer neuen ID fügt einen Stil hinzu, der über <code>speech</code> gelegt wird.</td>
+    </tr>
+    <tr>
+      <td><code>cast</code></td>
+      <td><code>ComicCastMember[]</code></td>
+      <td><code>[]</code></td>
+      <td>Die Figuren (siehe <a href="#figurenliste">Figurenliste</a>).</td>
+    </tr>
+    <tr>
+      <td><code>runningHeads</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Kolumnentitel und Paginas auf Comicseiten drucken. Ausgeschaltet besteht eine Comicseite ganz aus Panels, und ihre Nummer zählt trotzdem mit.</td>
+    </tr>
+    <tr>
+      <td><code>viewerLeaf</code></td>
+      <td><code>ComicViewerLeafConfig</code></td>
+      <td>nicht gesetzt</td>
+      <td>Für Hosts, deren Seiten keine Blätter sind: umbricht Comicseiten auf einem Druckblatt (<code>width</code>, <code>height</code>, <code>margins</code>), skaliert auf <code>fitWidth</code> px (und höchstens <code>fitHeight</code> px hoch), oben auf der Seite. Der HTML-Betrachter der Sandbox setzt es; es wird nie mit einem Dokument gespeichert.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Panelstile
+
+`comics.panel` und jeder Eintrag von `comics.panelStyles`:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>borderWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1pt</code></td>
+      <td>Rahmenbreite; <code>0</code> zeichnet keinen. Der Rahmen wird auf dem Umriss des Panels gezogen.</td>
+    </tr>
+    <tr>
+      <td><code>borderColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>schwarz</td>
+      <td>Rahmenfarbe (an die Palette koppelbar).</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Eckenradius eines rechteckigen Panels, begrenzt auf die Hälfte seiner kürzeren Seite. Ein von einer schrägen Linie geschnittenes Panel behält spitze Ecken.</td>
+    </tr>
+    <tr>
+      <td><code>borderStyle</code></td>
+      <td><code>'solid' | 'rough' | 'none'</code></td>
+      <td><code>'solid'</code></td>
+      <td>Eine saubere Linie, eine handgezeichnete Linie, die leicht wackelt (aus dem Panel abgeleitet, also bei jedem Build gleich), oder keine.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td>weiß</td>
+      <td>Die Füllung unter dem Bild: die Farbe eines leeren Panels und der Streifen um ein ganz gezeigtes Bild.</td>
+    </tr>
+    <tr>
+      <td><code>fit</code></td>
+      <td><code>'cover' | 'contain'</code></td>
+      <td><code>'cover'</code></td>
+      <td><code>cover</code> schneidet das Bild so zu, dass es das Panel füllt, nie in seinen Sicherheitsbereich hinein; <code>contain</code> zeigt es ganz.</td>
+    </tr>
+    <tr>
+      <td><code>bleed</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Panels in diesem Stil laufen auf jeder Seite, die den Rahmen berührt, über den Rahmen hinaus bis zum Endformat und in den Anschnitt.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Lettering
+
+`comics.lettering` legt jede Sprechblase des Buchs fest. Es gibt eine einzige Größe: Ein Sprechblasenstil kann sie skalieren (`fontScale`), und Text wird nie verkleinert, damit er in eine Sprechblase passt.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>nach Sprache</td>
+      <td>Die Lettering-Schrift. Ohne Angabe: <code>Comic Neue</code>; <code>Zen Antique</code> im Japanischen, <code>Noto Sans SC</code> im Chinesischen mit Kurzzeichen, <code>LXGW WenKai TC</code> im Chinesischen mit Langzeichen, <code>Playpen Sans Arabic</code> im Arabischen, Persischen und Urdu (<code>defaultComicFont(locale)</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>7.5pt</code></td>
+      <td>Die Größe des Sprechblasentexts. Comics werden auf der gedruckten Seite meist in 7 bis 9 pt gelettert.</td>
+    </tr>
+    <tr>
+      <td><code>lineHeight</code></td>
+      <td><code>number</code></td>
+      <td><code>1.15</code></td>
+      <td>Abstand zwischen den Zeilen, ein Vielfaches der Größe. Beim Standardwert erhalten senkrechte, chinesische und japanische Sprechblasen 1,5 und arabische 1,45.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>schwarz</td>
+      <td>Textfarbe.</td>
+    </tr>
+    <tr>
+      <td><code>bold</code>, <code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Das gesamte Lettering fett oder kursiv setzen. Chinesisches, japanisches und arabisches Lettering wird nie geneigt.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Zusätzlicher Raum zwischen den Buchstaben; <code>em</code> bezieht sich auf die Textgröße. Nie auf Arabisch angewendet. Die Glyphen ändern sich nicht: Ligaturen bleiben erhalten.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'auto' | 'horizontal' | 'vertical'</code></td>
+      <td><code>'auto'</code></td>
+      <td><code>'auto'</code> lettert Japanisch und Chinesisch mit Langzeichen sowie jedes senkrecht gesetzte Dokument in senkrechten Spalten und alles andere waagerecht. Die Markierung <code>vertical</code> oder <code>horizontal</code> einer Skriptzeile setzt diese Zeile anders (siehe <a href="/de/docs/comics#lettering">Comics › Lettering</a>).</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Nur Versalien, das klassische Aussehen des amerikanischen und europäischen Letterings. Schriften ohne Groß- und Kleinschreibung bleiben, wie sie sind.</td>
+    </tr>
+    <tr>
+      <td><code>dropFinalStop</code></td>
+      <td><code>'auto' | boolean</code></td>
+      <td><code>'auto'</code></td>
+      <td>Den Punkt am Ende einer Sprechblase weglassen (<code>。</code> in Manga). <code>'auto'</code>: nur im Japanischen und Chinesischen.</td>
+    </tr>
+    <tr>
+      <td><code>doubleDash</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Einen Geviertstrich als <code>--</code> lettern, eine Gewohnheit des amerikanischen Letterings.</td>
+    </tr>
+    <tr>
+      <td><code>inset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5mm</code></td>
+      <td>Abstand zwischen einer Sprechblase und dem Rahmen ihres Panels. Ein an den Rahmen gestoßener Textkasten ignoriert ihn.</td>
+    </tr>
+    <tr>
+      <td><code>joinSameSpeaker</code></td>
+      <td><code>'butt' | 'connector' | 'none'</code></td>
+      <td><code>'butt'</code></td>
+      <td>Zwei aufeinanderfolgende Sprechblasen desselben Sprechers: Körper zu einem Umriss verschmolzen, durch einen schmalen Hals verbunden oder getrennt gehalten. Eine Skriptzeile verlangt mit <code>join</code> oder <code>join=false</code> ihr eigenes Verhalten.</td>
+    </tr>
+    <tr>
+      <td><code>maxColumnChars</code></td>
+      <td><code>number</code></td>
+      <td><code>8</code></td>
+      <td>Senkrechtes Lettering: die höchste Zahl von Zeichen in einer Spalte einer Sprechblase. Soundeffekte brechen nach fünf um.</td>
+    </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Eine Sprechblase, die umgeformt wird, damit sie in ihr Panel passt, trennt dafür kein chinesisches Wort: Jedes Wort, das ihre neuen Zeilen zerschneiden und das ihre bevorzugte Form ganz lässt, kostet mehr als eine außer der Reihe gelesene Sprechblase, also verschiebt die Platzierung zuerst die Sprechblase oder ändert die Reihenfolge. Japanisches Lettering, das nach Phrasen umbrochen wird, bleibt unberührt. <code>false</code> lettert wie postext 1.27; ein vor 1.28 gespeichertes Dokument mit einem Comic wird damit gelesen.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Sprechblasenstile
+
+Jeder Eintrag von `comics.balloonStyles` wird über den eingebauten Stil mit derselben ID gelegt (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`) oder bei einer neuen ID über `speech`. Die Standardwerte unten sind die von `speech`; die [Seite Comics](/de/docs/comics#sprechblasenstile) führt auf, was jeder eingebaute Stil ändert. Längen in `em` beziehen sich auf die Textgröße der Sprechblase.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>erforderlich</td>
+      <td>Das Wort, mit dem eine Skriptzeile den Stil benennt: <code>ben&#123;whisper&#125;: …</code> oder <code>style=whisper</code>.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Lesbarer Name, nur für Editor-Oberflächen.</td>
+    </tr>
+    <tr>
+      <td><code>shape</code></td>
+      <td><code>'oval' | 'rounded' | 'rectangle' | 'cloud' | 'burst' | 'wavy' | 'electric' | 'none'</code></td>
+      <td><code>'oval'</code></td>
+      <td>Der Umriss um den Text. <code>'none'</code> setzt den Text direkt auf das Bild.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code></td>
+      <td><code>ColorValue</code></td>
+      <td>weiß</td>
+      <td>Füllung der Sprechblase.</td>
+    </tr>
+    <tr>
+      <td><code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>schwarz</td>
+      <td>Farbe des Umrisses.</td>
+    </tr>
+    <tr>
+      <td><code>strokeWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.6pt</code></td>
+      <td>Breite des Umrisses.</td>
+    </tr>
+    <tr>
+      <td><code>dash</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Ein gestrichelter Umriss (ein Flüstern).</td>
+    </tr>
+    <tr>
+      <td><code>double</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Ein doppelter Umriss.</td>
+    </tr>
+    <tr>
+      <td><code>wobble</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Handgezeichnetes Zittern des Umrisses, 0 bis 1, aus der Sprechblase abgeleitet, sodass es sich zwischen Builds nie ändert.</td>
+    </tr>
+    <tr>
+      <td><code>roundness</code></td>
+      <td><code>number</code></td>
+      <td><code>2.2</code></td>
+      <td>Der Exponent der Superellipse eines Ovals: 2 ist eine Ellipse, höhere Werte sind eckiger.</td>
+    </tr>
+    <tr>
+      <td><code>burstPoints</code></td>
+      <td><code>number</code></td>
+      <td><code>14</code></td>
+      <td>Die Zacken einer Zackenblase; <code>0</code> ermittelt ihre Zahl aus dem Umfang.</td>
+    </tr>
+    <tr>
+      <td><code>burstDepth</code></td>
+      <td><code>number</code></td>
+      <td><code>0.22</code></td>
+      <td>Die Tiefe der Zacken einer Zackenblase, ein Bruchteil des Radius des Körpers.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.55em</code></td>
+      <td>Die Luft zwischen Text und Umriss.</td>
+    </tr>
+    <tr>
+      <td><code>aspect</code></td>
+      <td><code>number</code></td>
+      <td><code>1.6</code></td>
+      <td>Das Verhältnis von Breite zu Höhe, das der Zeilenumbruch für den Textblock anstrebt (waagerechtes Lettering).</td>
+    </tr>
+    <tr>
+      <td><code>tail</code></td>
+      <td><code>'curved' | 'wedge' | 'bubbles' | 'zigzag' | 'none'</code></td>
+      <td><code>'curved'</code></td>
+      <td>Der Dorn.</td>
+    </tr>
+    <tr>
+      <td><code>tailWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.9em</code></td>
+      <td>Die Breite des Dorns dort, wo er den Umriss verlässt.</td>
+    </tr>
+    <tr>
+      <td><code>tailReach</code></td>
+      <td><code>number</code></td>
+      <td><code>0.55</code></td>
+      <td>Wie weit der Dorn zu seinem Sprecher reicht, ein Bruchteil des Abstands vom Umriss zum Mund.</td>
+    </tr>
+    <tr>
+      <td><code>target</code></td>
+      <td><code>'mouth' | 'head'</code></td>
+      <td><code>'mouth'</code></td>
+      <td>Worauf der Dorn zeigt: auf den Mund des Ankers oder auf seinen Kopf (Gedankenblasen).</td>
+    </tr>
+    <tr>
+      <td><code>position</code></td>
+      <td><code>'auto' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Wohin die Sprechblase kommt, wenn die Zeile keine Fixierung angibt: vom Lettering platziert oder an eine Ecke oder Kante des Panels.</td>
+    </tr>
+    <tr>
+      <td><code>butt</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Eine Sprechblase an einer Ecke oder Kante bündig an den Panelrahmen stoßen (Textkästen).</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>die Lettering-Schrift</td>
+      <td>Die Schrift dieses Stils. <code>sfx</code> verwendet standardmäßig die Soundeffekt-Schrift der Sprache: <code>Bangers</code>, <code>Dela Gothic One</code> im Japanischen, <code>ZCOOL KuaiLe</code> im Chinesischen mit Kurzzeichen, <code>LXGW WenKai TC</code> im Chinesischen mit Langzeichen, <code>Lalezar</code> im Arabischen (<code>defaultComicSfxFont(locale)</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Die Textgröße, ein Vielfaches der Lettering-Größe.</td>
+    </tr>
+    <tr>
+      <td><code>bold</code>, <code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td>die des Letterings</td>
+      <td>Fetter oder kursiver Text.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>die des Letterings</td>
+      <td>Textfarbe.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td>die des Letterings</td>
+      <td>Nur Versalien für diesen Stil.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td>die des Letterings</td>
+      <td>Zusätzlicher Raum zwischen den Buchstaben.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'center' | 'start'</code></td>
+      <td><code>'center'</code></td>
+      <td>Zeilenausrichtung in der Sprechblase.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>Dimension</code></td>
+      <td>keiner</td>
+      <td>Ein um die Buchstaben gezeichneter Umriss, seine Breite, damit sich der Text über dem Bild lesen lässt (Soundeffekte).</td>
+    </tr>
+    <tr>
+      <td><code>haloColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>weiß</td>
+      <td>Die Farbe des Lichthofs.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Drehung in Grad, im Uhrzeigersinn. Das Attribut <code>rotate</code> einer Zeile hat Vorrang.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Figurenliste
+
+Jeder Eintrag von `comics.cast` beschreibt eine Figur:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '140px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>erforderlich</td>
+      <td>Der Sprecherschlüssel des Skripts und der Anker der Bilder.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Der Name, den die HTML-Ausgabe und das umfließende EPUB vor die Zeilen der Figur drucken und den Editoren anzeigen.</td>
+    </tr>
+    <tr>
+      <td><code>balloonStyle</code></td>
+      <td><code>string</code></td>
+      <td><code>speech</code></td>
+      <td>Der Stil der Zeilen der Figur, die keinen nennen.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>die des Stils</td>
+      <td>Textfarbe der Sprechblasen der Figur.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code></td>
+      <td><code>ColorValue</code></td>
+      <td>die des Stils</td>
+      <td>Füllung der Sprechblasen der Figur.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>die des Stils</td>
+      <td>Die Schrift der Sprechblasen der Figur.</td>
+    </tr>
+  </tbody>
+</table>
+
+Das eigene `color` und `font` einer Zeile haben Vorrang vor der Figurenliste und die Figurenliste vor dem Sprechblasenstil. Jede Comic-Farbe kann ein Paletteneintrag sein, der wie jede gekoppelte Farbe der Palette folgt.
+
+```ts
+const resolved = resolveComicsConfig(config.comics, 'ja');
+// => every field filled; Zen Antique and Dela Gothic One as the faces
+
+const minimal = stripComicsDefaults(config.comics, 'ja');
+// => undefined when everything is a default
+
+const shout = pickBalloonStyle(resolved, 'shout'); // the built-in shout with the book's changes
+const night = pickPanelStyle(resolved, 'night');   // a named panel style, else the default panel
+```

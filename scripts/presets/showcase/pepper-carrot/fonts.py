@@ -169,11 +169,12 @@ def _add_composite(font: TTFont, name: str, codepoint: int, advance_of: str, par
 
 
 def patch_letters(font: TTFont) -> list[str]:
-    """Compose ồ (U+1ED3), ự (U+1EF1) and ŗ (U+0157) from glyphs the face
-    has, when it lacks them: the translators' credits name Hồ Nhựt Châu, the
-    monsters' "šeŗvice" carries a cedilla, and the engine sets a run in one
-    face (a missing glyph prints blank). ŗ is r over the face's combining
-    comma below. ồ is ô with the
+    """Compose ồ (U+1ED3), ự (U+1EF1), ŗ (U+0157) and Ā (U+0100) from glyphs
+    the face has, when it lacks them: the translators' credits name Hồ Nhựt
+    Châu, the monsters' "šeŗvice" carries a cedilla, the German spell book
+    is titled CHAOSĀH, and the engine sets a run in one face (a missing
+    glyph prints blank). ŗ is r over the face's combining comma below; Ā is
+    A with the face's spacing macron centred over it. ồ is ô with the
     grave set off to the right of the circumflex, as Vietnamese stacks it;
     ự is u with a horn (the face's right single quote, scaled down, on the
     right stem) and a dot below (its full stop under the letter). Returns
@@ -208,6 +209,14 @@ def patch_letters(font: TTFont) -> list[str]:
         dx = (bx0 + bx1) / 2 - (cx0 + cx1) / 2 - (bx1 - bx0) * 0.15
         _add_composite(font, "uni0157", 0x157, base, [_component(base, 0, 0), _component(comma, dx, 0)])
         added.append("ŗ")
+    if 0x100 not in cmap and 0x41 in cmap and 0xAF in cmap:
+        base, macron = cmap[0x41], cmap[0xAF]
+        bx0, by0, bx1, by1 = _bounds(font, base)
+        mx0, my0, mx1, my1 = _bounds(font, macron)
+        dx = (bx0 + bx1) / 2 - (mx0 + mx1) / 2
+        dy = by1 + 0.06 * upm - my0
+        _add_composite(font, "uni0100", 0x100, base, [_component(base, 0, 0), _component(macron, dx, dy)])
+        added.append("Ā")
     return added
 
 
@@ -221,7 +230,7 @@ def build_faces(text: str, out_dir: str) -> list[dict]:
     out: list[dict] = []
     for face in FACES:
         font = _load(face)
-        patched = patch_letters(font) if any(c in text for c in "ồựŗ") else []
+        patched = patch_letters(font) if any(c in text for c in "ồựŗĀ") else []
         cmap = font.getBestCmap()
         scope = face.get("scope")
         if scope:

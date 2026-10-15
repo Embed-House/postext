@@ -1,0 +1,61 @@
+---
+title: "Marginalüberschriften, hängende Nummern, eingebundene Titel"
+summary: "Eine Wettbewerbsauslobung mit Abschnittstiteln in einer Randspalte auf den Grundlinien des Textes, hängenden Unternummern und roten Anfangsbegriffen."
+plain: "Die Ausschreibung eines Stadtrats für Entwürfe, die eine alte Fischmarkthalle in eine Bibliothek verwandeln. Die Abschnittstitel stehen in einem breiten linken Rand, auf der Höhe der ersten Zeile des Textes daneben."
+description: "Eine fünfseitige Wettbewerbsauslobung in Postext, mit den Abschnittstiteln in einer Randspalte von 50 mm links und den Unterabschnittsnummern im Spaltenabstand."
+question: "Wie setze ich Abschnittstitel in eine Randspalte, lasse Nummern hängen und binde die kleinsten Titel ein?"
+aliases: ["Marginalüberschriften", "Randüberschriften", "Überschriften im Rand", "hängende Nummern", "hängende Abschnittsnummern", "eingebundene Überschriften", "Schweizer Bericht", "Wettbewerbsauslobung", "Auslobung", "Abschnittsnummer mit Linie", "Randspalte", "side heads"]
+pageNotes: { "1": "Die erste Seite der Auslobung: der Name des Rats in zwei Zeilen oben links, die Dachzeile „FILE BML-2026/04“ in Rot, der Titel „Competition brief“ in einer leichten Antiqua über zwei Zeilen und ein kursiver Vorspann. Ein Lageplan reicht über den ganzen Satzspiegel, mit den Gassen der Altstadt, einem Raster abgeschrägter Blöcke, der Promenade, dem Hafen und dem Grundstück in Rot. Darunter beginnt Abschnitt 1 mit einer roten 1 und einer schwarzen Linie; sein Titel, „The competition“, steht in der linken Randspalte auf der ersten Textzeile, und die Unterabschnitte 1.1 und 1.2 hängen ihre roten Nummern in den Spaltenabstand.", "2": "Abschnitt 2, „The site“, mit seinem Titel in der Randspalte und darunter ein kleiner Plan des Grundstücks: die Markthalle in Grau mit ihren dreizehn Jochen, sechs Bäume am Nordrand und rote Pfeile für die Eingänge. Die Unterabschnitte 2.1 bis 2.3 hängen ihre Nummern neben den Text; Abschnitt 3, „Schedule of accommodation“, beginnt weiter unten mit einem zweizeiligen Titel in der Randspalte, gefolgt von Unterabschnitt 3.1.", "3": "Ein Aufriss der Markthalle quert den Kopf der Seite: dreizehn Gewölbe, elf Bögen und vier rote Pilaster am Ostende. Darunter füllt die Tabelle der Flächen mit einer Kopfzeile in Schwarz die Textspalte, und ihre Legende, „Table 1“, steht in der Randspalte auf der Höhe der Tabellenoberkante. Es folgen die Unterabschnitte 3.2 und 3.3, dann Abschnitt 4, „Design criteria“, dessen Absätze mit roten fetten Begriffen beginnen.", "4": "Drei weitere Kriterien, die mit roten fetten Begriffen beginnen, dann die Abschnitte 5, „Submission of entries“, und 6, „Jury and timetable“, jeder mit Nummer und Linie und seinem Titel in der Randspalte, und die Unterabschnitte 5.1 bis 6.1 mit hängenden Nummern. Die Textspalte endet bündig mit dem Fuß der Seite.", "5": "Die Unterabschnitte 6.2 und 6.3, dann der Zeitplan des Wettbewerbs als Tabelle mit schwarzer Kopfzeile, ihre Legende, „Table 2“, in der Randspalte auf der Höhe der Tabellenoberkante, und ein kleines graues Impressum." }
+---
+
+## Was Sie setzen
+
+Fünf A4-Seiten einer Architekturwettbewerbsauslobung, in der der Rat von Puerto Lince, einem fiktiven spanischen Hafenort, Entwürfe sucht, um seine Fischmarkthalle von 1931 in die Stadtbibliothek zu verwandeln. Das Layout folgt Schweizer Gemeindeberichten. Eine Randspalte von 50 mm läuft links über jede Seite, und jeder Abschnitt beginnt mit einer roten Nummer und einer schwarzen Linie über den ganzen Satzspiegel. Der Titel des Abschnitts steht in der Randspalte in Noto Serif Display, auf der Höhe der ersten Textzeile. Unterabschnittsnummern hängen in roter DM Mono in den Spaltenabstand, sodass jeder Unterabschnittstitel die linke Kante des Textes hält. Die Beurteilungskriterien in Abschnitt 4 beginnen mit fetten Begriffen in Rot. Seite 1 setzt einen Titel in 58 pt über einen Lageplan, ein Plan des Grundstücks steht auf Seite 2 in der Randspalte, und ein Aufriss der Kaifront eröffnet Seite 3.
+
+## Zubereitung
+
+### 1 · Den Abschnittstitel aus einem Kasten in der Randspalte drucken
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine Überschrift reserviert Platz bis zum untersten Element ihrer Gestaltung; ein Titel, der in der Randspalte auf der Höhe der ersten Zeile des Abschnitts gezeichnet wird, schöbe den Text also eine Zeile nach unten, bei einem zweizeiligen Titel zwei. Die Gestaltung der Überschrift zeichnet daher nur Nummer und Linie, und `sideHeads()` kopiert den Text jedes `## Title` in einen Direktivenblock `:::callout` direkt nach der Überschrift. Mit `span="side"` verlässt dieser Kasten den Fluss und steht in der Randspalte auf der Rasterlinie, auf der der Text weiterläuft ([Kastenformate](/de/docs/configuration-styles#kastenstile)). Nummer und Linie setzen `reserve: false`: Sonst hielte ein Kasten in der Randspalte unter den dort stehenden Überschriftenelementen einen Gleitobjektabstand von einer Zeile ein, und der Titel fiele auf die zweite Textzeile. Kästen und Grundtext setzen die Grundlinie einer Zeile beide bei 0,8 der Zeilenhöhe, sodass ein Kasten mit dem Zeilenabstand von 14 pt des Textes jede Zeile eines zweizeiligen Titels auf eine Grundlinie des Absatzes daneben stellt. Das Markdown bleibt ein schlichtes `## Schedule of accommodation`. Da die Gestaltung der Überschrift kein `{titleText}` druckt, listet die Sandbox die Warnung *Überschriftentitel nicht referenziert*, obwohl der Kasten den Titel druckt.
+
+<PageShot page={2} crop="0,0.068,1,0.292" caption="Seite 2: Nummer und Linie stammen aus der Überschrift, der Titel aus dem Kasten in der Randspalte, auf der Höhe der ersten Textzeile. Der Grundstücksplan stapelt sich darunter." />
+
+### 2 · Die Randspalte für Titel und Abbildungen freihalten
+
+<Excerpt region="channel" />
+
+`sideColumnRole: 'floats'` hält den Text aus der Randspalte heraus ([Layouttypen](/de/docs/configuration-page-layout#layout-typen)). Nach dem Auftakt enthält die Randspalte nur die sechs Abschnittstitel und den Grundstücksplan, beide mit `span: 'side'` dorthin geschickt, und die Legenden der Tabellen 1 und 2. Die Seitenspalte steht standardmäßig `'right'`, und eine einseitig gedruckte Auslobung hält sie auf jeder Seite auf derselben Seite. `sideColumnSide: 'left'` setzt sie nach links, wo jeder Abschnittstitel vor seinem Text gelesen wird.
+
+### 3 · Die Nummern hängen lassen und die kleinsten Titel einbinden
+
+<Excerpt region="lower" />
+
+Der Unterabschnittstitel beginnt an der linken Kante der Spalte. Seine Nummer ist `'left-of'` des Titels verankert, rechtsbündig in einem Kasten von 12 mm, der 2 mm vor dem Text endet, sodass Nummern wie 2.1 und 3.3 in den Spaltenabstand hängen und jeder Titel mit dem Text darunter fluchtet ([Platzierung von Elementen](/de/docs/configuration-page-layout#platzierung-von-elementen)). Der Kasten braucht eine feste Breite. Eine Breite `'auto'` wird auf die Spalte beschränkt. Draußen im Spaltenabstand bleibt dann gar keine Breite, und die Nummer wird nicht gezeichnet. Ebene 2 druckt `'{2}'` und Ebene 3 `'{2}.{3}'`, denn mit `{1}` begänne jede Nummer mit der 1 der einzigen H1 der Auslobung. Die Kriterien in Abschnitt 4 sind eine vierte Ebene ohne Überschrift. Jeder Absatz beginnt mit einem fetten Begriff, und `bodyText.boldColor` druckt ihn in Rot ([Grundtext](/de/docs/configuration-text#fließtext)). Kein anderer Absatz enthält Fett, und Tabellenzellen nehmen ihre Farbe aus `tableStyle`, sodass die fette Summenzeile von Tabelle 1 schwarz bleibt.
+
+### 4 · Jeder Abbildung und Tabelle ihre eigene Platzierung geben
+
+<Excerpt region="resources" />
+
+Der Grundstücksplan geht mit `span: 'side'` in die Randspalte und stapelt sich unter dem Marginaltitel von Abschnitt 2 ([Platzierung](/de/docs/document-format#platzierung)). `width: PLAN_W / SIDE` macht ihn 44 mm breit, womit seine 88 Meter genau im Maßstab 1:2000 stehen. Der Fassadenaufriss ist ein Gleitobjekt `'top'` über die ganze Seitenbreite. Er wird auf Seite 2 zitiert und eröffnet Seite 3, da ein Gleitobjekt nie über seinem Verweis platziert wird. Die Tabelle der Flächen, ebenfalls auf Seite 2 zitiert, gleitet auf Seite 3 an den Kopf der Textspalte, unter den Aufriss. `captionSide: true` stellt ihre Legende in die Randspalte, auf die Höhe der Tabellenoberkante. Der Zeitplan steht dort, wo `::resource` ihn hinsetzt, am Ende der Auslobung, und `captionSide: true` stellt auch seine Legende in die Randspalte, neben Abschnitt 6.3.
+
+### 5 · Die Auslobung auf dem Lageplan eröffnen
+
+<Excerpt region="opener" />
+
+Mit `span: 'page'` ist der Container des Auftakts der ganze Satzspiegel, Randspalte eingeschlossen ([Span und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). Dachzeile und Titel stehen 57 mm weit innen, an der linken Kante der Textspalte, und der Plan läuft über Randspalte und Textspalte. Ohne diese Angabe ist der Container die Textspalte, jedes Element rückt 57 mm nach rechts, und Titel, Vorspann und Plan laufen über die rechte Kante der Seite hinaus. Die Gestaltung reserviert Platz bis zum Fuß des Plans, der zwischen zwei Rasterlinien fällt. Ein auf die nächste Rasterlinie aufgerundetes `minHeight` lässt die Linie von Abschnitt 1 so weit von ihrem Text entfernt wie die Linie jedes späteren Abschnitts. Dachzeile, Vorspann und Kartenlegende sind Attribute der Zeile `# Competition brief`.
+
+## Varianten
+
+### Nur die Textspalte mit einer Linie versehen
+
+Verankern Sie die Linie am eigenen Kasten der Überschrift statt an der Nummer, und sie läuft von der linken Kante des Textes bis zur rechten Kante der Spalte, und nur Nummer und Titel stehen in der Randspalte.
+
+```diff
+-        color: col('ink'), placement: { ...at('#number', 'right-of', mm(2), RULE_Y),
++        color: col('ink'), placement: { ...at('container', 'top-left', mm(0), RULE_Y),
+```
+
+## Häufige Fehler
+
+- Eine Randabbildung nimmt den Kopf der Randspalte auf der Seite ein, die sie zitiert, und ein Marginaltitel, dessen Direktivenblock danach steht, stapelt sich unter der Abbildung, unterhalb des Beginns seines eigenen Abschnitts. Zitieren Sie Randabbildungen nach dem Abschnittstitel ihrer Seite, wie Abschnitt 2 den Grundstücksplan zitiert.
+- Eine Inline-Einbettung (`position: 'here'`) übernimmt `captionSide` ab postext 1.28: Die Legende des Zeitplans steht auf Seite 5 in der Randspalte, wie die der Flächentabelle auf Seite 3. Die Legende braucht neben der Tabelle eine freie Randspalte. Wo dort bereits ein Marginaltitel oder eine Randabbildung steht, bleibt sie unter der Tabelle.

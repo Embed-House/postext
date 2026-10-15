@@ -36,6 +36,7 @@ const EDITIONS = {
   ca: { locale: 'ca', faces: ['Comic Neue', 'Bangers'] },
   pt: { locale: 'pt-BR', faces: ['Comic Neue', 'Bangers'] },
   fr: { locale: 'fr', faces: ['Comic Neue', 'Bangers'] },
+  de: { locale: 'de', faces: ['Comic Neue', 'Bangers'] },
   zh: { locale: 'zh-Hans', faces: ['Noto Sans SC', 'ZCOOL KuaiLe'] },
   ar: { locale: 'ar', faces: ['Playpen Sans Arabic', 'Lalezar'] },
 };
@@ -75,7 +76,7 @@ const config = () => ({
   // Each edition's language, written out (gotcha: ja-locale-tag); the original is built
   // with 'ja' in every edition (edition('ja') below).
   locale: t({ ja: 'ja', en: 'en-us', es: 'es', ca: 'ca', zh: 'zh-Hans', ar: 'ar', pt: 'pt-BR',
-    fr: 'fr' }),
+    fr: 'fr', de: 'de' }),
   colorPalette,
   page: {
     sizePreset: 'custom', width: mm(128), height: mm(182), dpi: 150, // B6, a tankōbon
@@ -116,6 +117,7 @@ const ART = { // fractions of the picture: the same in every language
       es: 'El viejo dojo de madera al anochecer, con las puertas abiertas e iluminadas.',
       ca: 'L’antic dojo de fusta al capvespre, amb les portes obertes i il·luminades.',
       fr: 'Le vieux dojo en bois au crépuscule, portes ouvertes et éclairées.',
+      de: 'Das alte Kendo-Dojo aus Holz in der Abenddämmerung, die Türen offen und erleuchtet.',
       pt: 'O velho dojô de madeira ao anoitecer, com as portas abertas e iluminadas.',
       zh: '黄昏时分的老木造剑道场，门敞开着，里面亮着灯。',
       ar: 'قاعة الكندو الخشبية القديمة عند الغسق، أبوابها مفتوحة ومضاءة.',
@@ -127,6 +129,7 @@ const ART = { // fractions of the picture: the same in every language
       es: 'Hana, sola en el dojo, alza la espada de bambú sobre la cabeza.',
       ca: 'La Hana, sola al dojo, aixeca l’espasa de bambú per sobre del cap.',
       fr: 'Hana, seule dans le dojo, lève son sabre de bambou au-dessus de sa tête.',
+      de: 'Hana, allein im Dojo, schwingt ihr Bambusschwert über dem Kopf.',
       pt: 'Hana, sozinha no dojô, ergue a espada de bambu acima da cabeça.',
       zh: '花独自在道场里，把竹剑高举过头。',
       ar: 'هانا وحدها في القاعة ترفع سيف الخيزران فوق رأسها.',
@@ -140,6 +143,7 @@ const ART = { // fractions of the picture: the same in every language
       es: 'Sora se asoma por la puerta corredera con un amuleto en la mano.',
       ca: 'En Sora treu el cap per la porta corredissa amb un amulet a la mà.',
       fr: 'Sora passe la tête par la porte coulissante, une amulette à la main.',
+      de: 'Sora späht mit einem Schreinamulett in der Hand um die Schiebetür.',
       pt: 'Sora espia pela porta de correr com um amuleto na mão.',
       zh: '空从拉门后探出头，手里攥着护身符。',
       ar: 'سورا يطلّ من وراء الباب المنزلق وفي يده تميمة.',
@@ -153,6 +157,7 @@ const ART = { // fractions of the picture: the same in every language
       es: 'Primer plano del rostro sudoroso y sobresaltado de Hana.',
       ca: 'Primer pla de la cara suada i sobresaltada de la Hana.',
       fr: 'Gros plan sur le visage en sueur et surpris de Hana.',
+      de: 'Nahaufnahme von Hanas verschwitztem, erschrockenem Gesicht.',
       pt: 'Primeiro plano do rosto suado e assustado de Hana.',
       zh: '花满脸是汗、吃了一惊的特写。',
       ar: 'لقطة قريبة لوجه هانا المتعرّق المذعور.',
@@ -165,6 +170,7 @@ const ART = { // fractions of the picture: the same in every language
       es: 'Sora le tiende el amuleto; Hana lo mira con la espada al hombro.',
       ca: 'En Sora li allarga l’amulet; la Hana el mira amb l’espasa a l’espatlla.',
       fr: 'Sora tend l’amulette ; Hana la regarde, le sabre sur l’épaule.',
+      de: 'Sora hält ihr das Amulett hin; Hana betrachtet es, das Schwert auf der Schulter.',
       pt: 'Sora estende o amuleto; Hana olha para ele com a espada no ombro.',
       zh: '空递出护身符，花扛着竹剑看着它。',
       ar: 'سورا يمدّ التميمة، وهانا تنظر إليها والسيف على كتفها.',
@@ -180,6 +186,7 @@ const ART = { // fractions of the picture: the same in every language
       es: 'El entrenador Mori en la puerta, a contraluz, de brazos cruzados.',
       ca: 'L’entrenador Mori a la porta, a contrallum, de braços plegats.',
       fr: 'L’entraîneur Mori sur le seuil, à contre-jour, bras croisés.',
+      de: 'Trainer Mori in der Tür, im Gegenlicht, mit verschränkten Armen.',
       pt: 'O treinador Mori na porta, contra a luz, de braços cruzados.',
       zh: '森老师站在门口，背着光，双臂抱在胸前。',
       ar: 'المدرّب موري عند الباب، والضوء خلفه، عاقدًا ذراعيه.',
@@ -192,6 +199,7 @@ const ART = { // fractions of the picture: the same in every language
       es: 'Primer plano del rostro severo de Mori, que esboza una sonrisa.',
       ca: 'Primer pla de la cara severa d’en Mori, que esbossa un somriure.',
       fr: 'Gros plan sur le visage sévère de Mori, qui esquisse un sourire.',
+      de: 'Nahaufnahme von Moris strengem Gesicht, das sich zu einem kleinen Lächeln löst.',
       pt: 'Primeiro plano do rosto severo de Mori, que esboça um sorriso.',
       zh: '森老师严肃的脸上露出一丝笑意的特写。',
       ar: 'لقطة قريبة لوجه موري الصارم وقد ارتسمت عليه ابتسامة.',
@@ -204,6 +212,7 @@ const ART = { // fractions of the picture: the same in every language
       es: 'De rodillas, Hana se ata el amuleto a la armadura; Sora se rasca la cabeza.',
       ca: 'De genolls, la Hana es lliga l’amulet a l’armadura; en Sora es grata el cap.',
       fr: 'À genoux, Hana attache l’amulette à son armure ; Sora se gratte la tête.',
+      de: 'Kniend bindet Hana das Amulett an ihre Rüstung; Sora kratzt sich am Kopf.',
       pt: 'De joelhos, Hana amarra o amuleto na armadura; Sora coça a cabeça.',
       zh: '花跪坐着把护身符系在护具上，空挠着头。',
       ar: 'هانا جاثية تربط التميمة بدرعها، وسورا يحكّ رأسه.',
@@ -219,6 +228,7 @@ const ART = { // fractions of the picture: the same in every language
       es: 'De espaldas, Hana y Sora sentados en la azotea del instituto al atardecer.',
       ca: 'D’esquena, la Hana i en Sora asseguts al terrat de l’institut a la posta.',
       fr: 'De dos, Hana et Sora assis sur le toit du lycée au coucher du soleil.',
+      de: 'Von hinten: Hana und Sora sitzen bei Sonnenuntergang auf dem Schuldach.',
       pt: 'De costas, Hana e Sora sentados no terraço da escola ao pôr do sol.',
       zh: '夕阳下，花和空坐在学校楼顶的背影。',
       ar: 'هانا وسورا جالسان على سطح المدرسة عند الغروب، من الخلف.',
@@ -276,6 +286,7 @@ const TITLE = t({
   en: 'A manga read right to left', es: 'Un manga que se lee de derecha a izquierda',
   ca: 'Un manga que es llegeix de dreta a esquerra', zh: '从右往左读的漫画',
   fr: 'Un manga qui se lit de droite à gauche',
+  de: 'Ein Manga, der von rechts nach links gelesen wird',
   pt: 'Um mangá lido da direita para a esquerda',
   ar: 'مانغا تُقرأ من اليمين إلى اليسار', ja: '右から左へ読む漫画' });
 showBook(docs, { title: TITLE });

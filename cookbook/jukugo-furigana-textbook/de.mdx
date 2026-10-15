@@ -1,0 +1,68 @@
+---
+title: "Ein Schullesebuch mit Furigana über jedem Kanji"
+summary: "Niimi Nankichis „Gon, der Fuchs“ auf einer Lesebuchseite: Furigana pro Zeichen, pro Wort und als Jukugo, im Verhältnis 1:2:1, Überhang auf Kana, nie auf Kanji."
+plain: "Eine Seite aus einem japanischen Schullesebuch, mit kleinen Kana über jedem Kanji, damit ein Kind laut vorlesen kann. Postext setzt jede Lesung über ihre Zeichen und lässt eine lange auf das Kana daneben überhängen, nie auf Kanji."
+description: "Furigana in Postext: Jukugo-Ruby {漢字|かん|じ}, Gruppen-Ruby {百舌鳥|もず}, Ausrichtung 1:2:1 nach JIS und Überhang nur auf Kana, auf einer japanischen Lesebuchseite."
+question: "Wie setze ich Furigana über Kanji, eine Lesung pro Zeichen oder eine für das ganze Wort?"
+aliases: ["Furigana", "振り仮名", "ルビ", "Ruby", "Jukugo-Ruby", "熟語ルビ", "Gruppen-Ruby", "グループルビ", "Mono-Ruby", "モノルビ", "熟字訓", "1:2:1", "Ruby nach JIS X 4051", "肩掛け", "Überhang der Ruby", "総ルビ", "Schullesebuch", "教科書", "ごんぎつね", "Niimi Nankichi", "furigana"]
+pageNotes: { "1": "Seite 24, eine linke Seite: ein strohgelbes Band über das obere Drittel mit einem roten abgerundeten Badge 4, dem Reihennamen よみもの　四年 und dem Titel ごんぎつね in großer runder Gothic, dem Namen des Autors in Kana und 新美南吉　作. Darunter die Abschnittsnummer 一 in Rot und der Anfang der Geschichte in einer Schulbuchschrift zu 14 pt, kleine Kana-Lesungen über jedem Kanji.", "3": "Seite 26: das Ende des ersten Abschnitts, dann ein strohgelber Kasten mit dem Titel ふりがなの つけかた und drei Zeilen: eine Lesung pro Kanji (村 城 森 穴), eine Lesung für ein Wort (百舌鳥 一人 黒子) und eine Lesung pro Kanji, als ein Wort gehalten (兵十 小川 菜種). Darunter ein kleines Impressum in lateinischer Schrift." }
+---
+
+## Was Sie setzen
+
+Die ersten Seiten von Niimi Nankichis „Gon, der Fuchs“ (ごんぎつね, 1932), wie ein Lesebuch für die vierte Klasse sie druckt: die Geschichte, der jedes japanische Kind mit neun oder zehn Jahren begegnet. Eine B5-Seite fasst 28 Zeichen auf 21 Zeilen in Klee One, einer Schrift nach der Hand der Schulbücher, zu 14 pt auf einer Zeile von 28 pt, mit einer Lesung in kleinen Kana über jedem Kanji. Die Lesungen sind das eigentliche Thema: eine pro Zeichen über 村 und 森, eine für das ganze Wort über 百舌鳥 (mozu), dessen Kanji keine eigene Lesung haben, und Jukugo-Lesungen über 兵十 (Hyōjū), jede über ihrem eigenen Kanji, bis eine zu lang ist. Ein Kasten am Ende zeigt der Lehrkraft die drei Fälle. <RecipeLink slug="pinyin-primer">Die Pinyin-Fibel</RecipeLink> setzt chinesische Lesungen auf dieselbe Weise über jedes Zeichen.
+
+## Zubereitung
+
+### 1 · Drei Arten, eine Lesung zu schreiben
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). Im Markdown setzt `{村|むら}` むら über 村; `{兵十|ひょう|じゅう}` gibt jedem Kanji seine eigene Lesung, und in einem mit `'ja'` ausgezeichneten Dokument ist das Jukugo-Ruby: Die Lesungen bleiben über ihren Kanji, wenn sie passen, und eine längere darf auf das nächste Kanji desselben Wortes überhängen, nie auf das eines anderen Wortes. `{百舌鳥|もず}`, eine Lesung für drei Kanji, ist Gruppen-Ruby, als Ganzes über das Wort verteilt. `:ruby[菜種]{rt="な たね" mode=jukugo}` schreibt das letzte Beispiel des Kastens in der Direktivenform, die auch `mode=mono` und `align` annimmt ([Zeichen, Ruby und Warichu](/de/docs/configuration-east-asian#zeichen-ruby-und-warichu)).
+
+<PageShot page={3} crop="0.1,0.492,0.8,0.15" caption="Seite 26: eine Lesung pro Kanji, eine für das Wort und Jukugo-Lesungen, die bei ihren Kanji bleiben." />
+
+### 2 · 1:2:1 und Lesungen, die nur auf Kana überhängen
+
+Die beiden Einstellungen unter `cjk.ruby` wählt `'ja'` von selbst. `align: 'jis'` setzt eine Lesung, die kürzer als ihre Basis ist, nach JIS X 4051: eine halbe Einheit Abstand an jedem Ende und eine ganze zwischen den Kana, sodass も und ず auf <PageRef page={2}>Seite 25</PageRef> über den Fugen von 百舌鳥 stehen, statt sich in seiner Mitte zu drängen. `overhang: 'kana'` lässt eine Lesung, die länger als ihre Basis ist, um bis zu ein Ruby-Zeichen auf ein Kana oder den Leerraum eines Satzzeichens daneben überhängen, nie auf ein Kanji: ぎつね über dem 狐 von 「ごん狐」 hängt auf ん und auf die Klammer danach über, und das じゅう von 兵十だな auf だ. Wo kein Kana zum Überhängen da ist, werden die Kanji auf die Breite der Lesung gesperrt. Am Zeilenrand bleibt die Lesung innerhalb der Satzbreite.
+
+<PageShot page={1} crop="0.08,0.63,0.84,0.09" caption="Seite 24: ぎつね über 狐 hängt auf ん und 」 über, und こぎつね über 小狐 bleibt bei seinen zwei Kanji." />
+
+### 3 · Ein Zeilenzwischenraum, der die Lesungen aufnimmt
+
+Die Lesungen haben 7 pt, die Hälfte der 14 pt des Textes, und die Zeile hat 28 pt, also nehmen die 14 pt zwischen zwei Zeilen sie mit reichlich Platz auf, und jede Rasterzeile bleibt, wo sie ist. Setzen Sie den Zeilenabstand enger als Text plus Lesungen, warnt der Build mit `rubyExceedsLeading`.
+
+### 4 · Der Auftakt setzt keine Lesungen
+
+<Excerpt region="opener" />
+
+Titel und Name des Autors sind Design-Text, der kein Ruby setzt, daher ist die Lesung von 新美南吉 eine eigene Zeile über dem Namen, in Kana, wie Lesebücher sie drucken. Der Titel selbst steht in Kana, ごんぎつね, wie die Lesebücher ihn schreiben, obwohl der Aozora-Text ihn ごん狐 überschreibt.
+
+### 5 · Eine Akzentfarbe und Lesungen eine Spur heller
+
+<Excerpt region="palette" />
+
+Die Lesungen nehmen `reading`, ein Braun eine Stufe heller als die Schrift, sodass das Auge die beiden Ebenen unterscheiden kann, ohne dass die Kana blass werden. Das Rot der Higanbana, die in der Geschichte blühen, kennzeichnet das Badge, die Abschnittsnummer und den Titel des Kastens.
+
+## Varianten
+
+### Kana in voller Größe in den Lesungen
+
+Ältere Bücher druckten っ und ょ in der Ruby in voller Größe, がつこう für がっこう; `smallKana: 'full'` tut dasselbe und lässt den vorgelesenen und kopierten Text unverändert.
+
+```diff
+-    smallKana: 'keep', // ひょう with its small ょ, as today's books print it
++    smallKana: 'full', // ひよう: the small kana at full size, as letterpress books printed them
+```
+
+### Jede Lesung zentrieren
+
+`align: 'center'` setzt eine kurze Lesung in die Mitte ihrer Basis, wie es die meisten chinesischen Bücher tun; 1:2:1 ist die japanische Vorgabe.
+
+```diff
+-    align: 'jis', // a reading shorter than its base: ½ unit at each end, 1 between (1:2:1)
++    align: 'center', // も ず together in the middle of 百舌鳥
+```
+
+## Häufige Fehler
+
+- Aozora Bunko schreibt eine Lesung für ein ganzes Wort, 兵十《ひょうじゅう》, und der Konverter behält sie als Gruppen-Ruby bei, `{兵十|ひょうじゅう}`. Für Jukugo-Ruby teilen Sie die Lesung von Hand nach Kanji auf: `{兵十|ひょう|じゅう}`.
+- Eine Lesung wird am senkrechten Strich nur dann in einen Teil pro Zeichen geteilt, wenn die Teile zur Basis passen; `{一人|ひ|と|り}` hat drei Teile für zwei Kanji und wird als eine Lesung für das Wort gesetzt, was 一人 ohnehin braucht.

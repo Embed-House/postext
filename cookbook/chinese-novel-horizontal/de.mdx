@@ -1,0 +1,78 @@
+---
+title: "Eine chinesische Romanseite auf einem Raster von 28 × 28"
+summary: "Lu Xuns „Die Heimat“ auf einer Seite 大32开: 28 Zeichen pro Zeile, 28 Zeilen pro Seite, Zeilenumbruch nach GB, Kaiming-Interpunktion und Abstand Han–Latein."
+plain: "Der Anfang einer Erzählung von Lu Xun, gesetzt als Seite eines chinesischen Taschenbuchs. Sie zeigt, wie genau 28 Zeichen in jede Zeile und 28 Zeilen auf jede Seite kommen, nach den Regeln chinesischer Interpunktion."
+description: "Eine Romanseite aus Festlandchina in Postext: cjk.grid setzt 28 × 28 Zeichen 五号 auf 大32开, mit Umbruch nach GB, Kaiming-Interpunktion und Einzug von 2 Geviert."
+question: "Wie setze ich eine chinesische Seite in Zeichen, 28 pro Zeile und 28 Zeilen pro Seite?"
+aliases: ["chinesischer Roman", "vereinfachtes Chinesisch", "horizontales Chinesisch", "Zeichenraster", "版心", "Satzspiegel in Zeichen", "Kaiming-Interpunktion", "开明式", "Zeilenumbruch nach GB", "避头尾", "Regeln für den Zeilenanfang", "Einschieben", "Abstand Han–Latein", "Einzug von zwei Zeichen", "大32开", "Lu Xun", "Chinese novel"]
+pageNotes: { "1": "Die Tafel: ein goldener Mond an tiefblauem Himmel über einem Streifen Meer, und unten im Sand, zwischen Reihen gestreifter Wassermelonen, ein Junge mit silbernem Halsreif, der eine Stahlgabel vor sich in den Sand stößt, während das Tier, auf das er zielte, zwischen seinen Beinen davonläuft. Oben drei Zeilen aus der Erzählung in weißer Pinselschrift.", "2": "Der Auftakt: der Titel 故乡 in schwarzen Song-Zeichen, ein halbes Zeichen auseinander, eine kurze blaue Linie und der Name des Autors 鲁迅; darunter zwanzig Zeilen im Blocksatz, jeder Absatz zwei Zeichen eingezogen, und die Pagina 71 am Fuß." }
+---
+
+## Was Sie setzen
+
+Der Anfang von Lu Xuns „Die Heimat“ (故乡, 1921), wie ihn ein Taschenbuch seiner ersten Sammlung in Festlandchina setzen würde: eine Seite 大32开, 140 × 203 mm, deren Satzspiegel in Zeichen gezählt wird, 28 pro Zeile und 28 Zeilen pro Seite, in Noto Serif SC zu 五号 (10,5 pt). Jeder Absatz beginnt zwei Zeichen eingezogen; Kommas und Anführungszeichen nehmen ein halbes Zeichen ein, wie in den meisten Büchern Festlandchinas; keine Zeile beginnt mit 。 oder ，, und keine endet mit “. Die Erzählung beginnt auf einer rechten Seite unter ihrem Titel im schwarzen Schnitt der Song. Gegenüber zeigt eine gemalte Tafel das mondbeschienene Melonenfeld, an das sich der Erzähler erinnert, mit den Worten, die es beschreiben, in der Pinselschrift Ma Shan Zheng. <RecipeLink slug="spanish-pocket-novel">Spanischer Blocksatz in einem Taschenbuchroman</RecipeLink> erledigt dieselbe Aufgabe für eine lateinische Schrift.
+
+## Zubereitung
+
+### 1 · Eine in Zeichen gezählte Seite
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). `cjk.grid` macht die Satzbreite zu 28 Geviert von `bodyText.fontSize` (294 pt, 103,7 mm) und den Satzspiegel zu 28 Zeilen von `lineHeight` (462 pt, 163 mm) und verschiebt dann die Ränder passend dazu, sodass eine volle Zeile Han genau 28 Zeichen fasst und jede volle Seite auf derselben Zeile endet ([Zeichenraster](/de/docs/configuration-east-asian#zeichenraster)). Die fünf Einstellungen unter dem Raster liefert `locale: 'zh-Hans'` von selbst; sie stehen ausgeschrieben da, damit Sie eine nach der anderen ändern können, wobei `compressAdjacent` nichts bewirkt, solange `punctuationWidth` nicht `'fullwidth'` ist: Unter Kaiming nehmen zwei aufeinandertreffende Zeichen nie mehr als 1,5 Geviert ein. Auf <PageRef page={2}>Seite 71</PageRef> passt das schließende 。 eines Absatzes nicht mehr, und die Regeln für den Zeilenanfang (jede Stufe von `lineBreak` außer `'none'`; `'gb'` fügt den Schrägstrich hinzu) verbieten ihm, eine Zeile zu eröffnen. Die Zeile nimmt es auf, indem sie das 。 nach 事 ein halbes Zeichen breit setzt (Einschieben), sodass 事。宏 zusammenrückt und der Absatz keine weitere Zeile braucht ([Breite der Satzzeichen](/de/docs/configuration-east-asian#breite-der-satzzeichen)). Zu kurze Zeilen werden zwischen den Zeichen ausgetrieben, nie zwischen Wörtern, und auf diesen Seiten um höchstens 0,05 Geviert ([Chinesisch, Japanisch und Koreanisch](/de/docs/justification#chinesisch-japanisch-und-koreanisch)).
+
+<PageShot page={2} crop="0.1,0.82,0.8,0.11" caption="Seite 71: die letzten Zeilen eines Absatzes. 事。宏 rückt zusammen, damit 看。 in der Zeile bleiben kann, statt eine neue zu eröffnen." />
+
+### 2 · Eine Seite 大32开 mit tieferem Kopfsteg
+
+<Excerpt region="page" />
+
+Mit eingeschaltetem Raster sind die Ränder Mindestwerte: Das Raster setzt den Satzspiegel in den Raum, den sie lassen, und verteilt den Überschuss. 22 und 18 mm lassen genau 163 mm, sodass der Kopfsteg 4 mm tiefer bleibt als der Fußsteg, wie chinesische Bücher es halten; die 18 mm auf beiden Seiten lassen 0,3 mm zum Verteilen. Verlangen Sie mehr Zeichen oder Zeilen, als hineinpassen, wird das Raster auf das Passende gekürzt, mit einer Warnung `cjkGridClamped`; Größe und Zeilenabstand bleiben wie angegeben.
+
+### 3 · Ein Titel, um ganze Zeilen abgesenkt
+
+<Excerpt region="opener" />
+
+`minHeight` beträgt acht Zeilen zu 16,5 pt, sodass der Text unter dem Titel auf der neunten Rasterzeile beginnt, auf denselben Grundlinien wie auf jeder anderen Seite. Die Sperrung von 23 pt setzt ein halbes Zeichen zwischen 故 und 乡, der übliche Abstand für einen zweizeichigen Titel; Postext lässt die Sperrung nach dem letzten Zeichen beim Zentrieren der Zeile weg, sodass der Titel auf der Mittelachse der Seite bleibt ([Überschriftenstile](/de/docs/configuration-styles#überschriftenstile)).
+
+### 4 · Das Buch auf der linken, die Erzählung auf der rechten Seite
+
+<Excerpt region="heads" />
+
+Romane in Festlandchina tragen den Buchtitel über den linken und den Titel der Erzählung über den rechten Seiten, zentriert, mit der Pagina am Außenrand und einer Haarlinie unter beiden. `pages: 'body'` hält sie vom Auftakt und von der Tafel fern, und der Auftakt erhält seine Pagina stattdessen am Fuß. Die Kolumnentitel stehen in Noto Sans SC, der Hei-Schrift, zu 8 pt: klein, aber eine andere Stimme als die Song des Textes.
+
+### 5 · Eine Tafel über den ganzen Bogen
+
+<Excerpt region="plate" />
+
+Das Bild gehört zu einer eigenen Überschrift, `# 月下的瓜地 {style="plate" …}`, deren Stil die Seite zeichnet und Kolumnentitel und Pagina entfernt. Die Tafel braucht `span: 'page'`, denn das Design einer Überschrift, das in der Spalte bleibt, wird am Fuß der Spalte abgeschnitten, 18 mm vor dem Endformat. `runningChapter: false` mit `toc: false` hält sie aus den PDF-Lesezeichen heraus, die mit 故乡 beginnen. Die drei Zeilen des Zitats sind drei Attribute und drei Textelemente, denn Design-Text hat einen eigenen Zeilenumbruch, der keine chinesischen Satzzeichenbreiten setzt; von Hand umbrochen, verlieren die Zeilen auch ihre Kommas, wie es chinesische Displayzeilen meist tun.
+
+### 6 · Lateinische Buchstaben und Ziffern im chinesischen Text
+
+<Excerpt region="styles" />
+
+Die Anmerkung und das Impressum auf <PageRef page={7}>Seite 76</PageRef> sind die Stellen, an denen Ziffern und lateinische Namen auf Han treffen. `latinSpacing` setzt ein Viertelgeviert, wo immer sie sich berühren, wie in 1921年 in der Anmerkung und 用Noto Serif SC五号 im Impressum, beides ganz ohne Leerzeichen getippt ([Abstand zwischen Han und Latein](/de/docs/configuration-east-asian#abstand-zwischen-han-und-latein)); in einer Blocksatzzeile wächst dieser Abstand zuerst, bis zu einem Halbgeviert. Die Anmerkung steht in 9,1875 pt, nicht in den 9 pt von 小五, damit 32 ihrer Zeichen die Satzbreite füllen: Bei 9 pt blieben in jeder Zeile zwei Drittel Geviert übrig, und die Abstände Han–Latein nahmen sie auf. Im Markdown sind die Schriftnamen mit geschützten Leerzeichen (U+00A0) verbunden, die der Abstand Han–Latein unangetastet lässt: Mit gewöhnlichen Leerzeichen brachen die Flatterzeilen des Impressums Noto Sans / SC um.
+
+## Varianten
+
+### Alle Satzzeichen in voller Breite (全角式)
+
+Kommas, Aufzählungskommas und Anführungszeichen nehmen ein ganzes Zeichen ein, 。” nimmt zwei, und jede Zeile fasst weniger Textzeichen.
+
+```diff
+-  punctuationWidth: 'kaiming', // ，、：； quotes, brackets ½ em; 。？！ one em, ½ at a line end
+-  compressAdjacent: true, // idle under Kaiming (no pair tops 1.5 em); 'fullwidth' needs it
++  punctuationWidth: 'fullwidth',
++  compressAdjacent: false,
+```
+
+### Das Raster beim Setzen der Seite zeigen
+
+Der Canvas zeichnet für jede Zeichenposition jeder Zeile ein hellgraues Quadrat (稿纸); das PDF lässt es weg, sofern `renderToPdf` nicht `characterGrid: true` erhält.
+
+```diff
+-  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES },
++  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES, show: true },
+```
+
+## Häufige Fehler
+
+- Die Tafel ist eine Überschrift, und eine Überschrift erhält ein PDF-Lesezeichen: Ohne `runningChapter: false` und `toc: false` im Stil der Tafel begänne die Gliederung mit 月下的瓜地, einem Lesezeichen erster Ebene vor 故乡. Jede der beiden Einstellungen allein hält es heraus. Das getaggte PDF behält den Titel der Tafel trotzdem als H1.
+- Die eigene Schrift der Überschriften muss eine sein, die `FONTS` lädt, selbst wenn ein Design jeden Titel zeichnet: Mit der vorgegebenen Schriftstärke 700 fand das Kit Noto Serif SC 700 im Layout und lud ihre lateinische Datei mit einer Warnung. `headings.fontWeight: 400` hält die Überschriftenblöcke in der Textschrift.

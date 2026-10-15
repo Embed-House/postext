@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-double-spread",
-  "sourceHash": "5241dfce7c1ea091500174e723bdaf5ec6342e31643c7d194c3592df057f5973",
+  "sourceHash": "d4a6b28c89efabb651935eb896bdfae17a6938061021c78e10d09b4c699a77a5",
   "engine": {
-    "postext": "1.33.4",
-    "postextPdf": "1.33.4",
+    "postext": "1.33.5",
+    "postextPdf": "1.33.5",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T08:05:40.581Z",
+  "capturedAt": "2026-10-15T11:42:29.174Z",
   "variants": {
     "en": {
       "hash8": "6818aa18",
       "vdtHash": "6d1ab509a3fcd3d3cd62c9cb4ec3083deec81511",
       "timings": {
-        "importMs": 3980,
-        "fontsMs": 1192,
-        "buildMs": 272,
-        "totalMs": 7320,
+        "importMs": 4603,
+        "fontsMs": 2826,
+        "buildMs": 375,
+        "totalMs": 9426,
         "builds": 1
       },
       "specimen": {
@@ -37,7 +37,7 @@
           "Patrick Hand"
         ],
         "pages": 2,
-        "ownLines": 128
+        "ownLines": 132
       },
       "pages": [
         {
@@ -257,11 +257,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -273,10 +268,10 @@
       "hash8": "8e4ba610",
       "vdtHash": "28c0aa1dddebc1a19af91ea4e5df75e8b5dd8a8e",
       "timings": {
-        "importMs": 3795,
-        "fontsMs": 1253,
-        "buildMs": 277,
-        "totalMs": 6763,
+        "importMs": 4600,
+        "fontsMs": 2750,
+        "buildMs": 385,
+        "totalMs": 9422,
         "builds": 1
       },
       "specimen": {
@@ -296,7 +291,7 @@
           "Patrick Hand"
         ],
         "pages": 2,
-        "ownLines": 128
+        "ownLines": 132
       },
       "pages": [
         {
@@ -516,11 +511,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -532,10 +522,10 @@
       "hash8": "fb0845dc",
       "vdtHash": "e051cb0bfac9ed7bda549de1dc7a909fb242d473",
       "timings": {
-        "importMs": 3513,
-        "fontsMs": 5905,
-        "buildMs": 252,
-        "totalMs": 12572,
+        "importMs": 3770,
+        "fontsMs": 1564,
+        "buildMs": 262,
+        "totalMs": 8173,
         "builds": 1
       },
       "specimen": {
@@ -555,7 +545,7 @@
           "Patrick Hand"
         ],
         "pages": 2,
-        "ownLines": 128
+        "ownLines": 132
       },
       "pages": [
         {
@@ -775,11 +765,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -791,10 +776,10 @@
       "hash8": "41a6f260",
       "vdtHash": "a95d6688e5763446c909ea3f306a081d82b8d8fa",
       "timings": {
-        "importMs": 5169,
-        "fontsMs": 6823,
-        "buildMs": 301,
-        "totalMs": 14399,
+        "importMs": 3177,
+        "fontsMs": 3866,
+        "buildMs": 324,
+        "totalMs": 8778,
         "builds": 1
       },
       "specimen": {
@@ -814,7 +799,7 @@
           "Noto Sans SC"
         ],
         "pages": 2,
-        "ownLines": 128
+        "ownLines": 132
       },
       "pages": [
         {
@@ -1035,11 +1020,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1051,10 +1031,10 @@
       "hash8": "9687cfe3",
       "vdtHash": "62186dc3c174a7a0486ed05494d986ce8953dc58",
       "timings": {
-        "importMs": 3833,
-        "fontsMs": 2349,
-        "buildMs": 274,
-        "totalMs": 10427,
+        "importMs": 3511,
+        "fontsMs": 2745,
+        "buildMs": 303,
+        "totalMs": 8016,
         "builds": 1
       },
       "specimen": {
@@ -1074,7 +1054,7 @@
           "Playpen Sans Arabic"
         ],
         "pages": 2,
-        "ownLines": 128
+        "ownLines": 132
       },
       "pages": [
         {
@@ -1298,11 +1278,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1314,10 +1289,10 @@
       "hash8": "73fc688e",
       "vdtHash": "e0fea0a1e39d501e8c605675983a84d3865583a3",
       "timings": {
-        "importMs": 3466,
-        "fontsMs": 5049,
-        "buildMs": 257,
-        "totalMs": 11995,
+        "importMs": 1755,
+        "fontsMs": 2267,
+        "buildMs": 253,
+        "totalMs": 7247,
         "builds": 1
       },
       "specimen": {
@@ -1337,7 +1312,7 @@
           "Zen Antique"
         ],
         "pages": 2,
-        "ownLines": 128
+        "ownLines": 132
       },
       "pages": [
         {
@@ -1560,11 +1535,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1576,10 +1546,10 @@
       "hash8": "d8974282",
       "vdtHash": "c4dea0ea56e8899c4f01360bf573ad13b84489c7",
       "timings": {
-        "importMs": 2722,
-        "fontsMs": 4070,
-        "buildMs": 310,
-        "totalMs": 10442,
+        "importMs": 2850,
+        "fontsMs": 1831,
+        "buildMs": 385,
+        "totalMs": 6517,
         "builds": 1
       },
       "specimen": {
@@ -1599,7 +1569,7 @@
           "Patrick Hand"
         ],
         "pages": 2,
-        "ownLines": 128
+        "ownLines": 132
       },
       "pages": [
         {
@@ -1819,11 +1789,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1835,10 +1800,10 @@
       "hash8": "8cc2f44d",
       "vdtHash": "df1f391aa3734776d7db4e8e04ed68389a29fc34",
       "timings": {
-        "importMs": 3080,
-        "fontsMs": 1067,
-        "buildMs": 328,
-        "totalMs": 6255,
+        "importMs": 2848,
+        "fontsMs": 1863,
+        "buildMs": 371,
+        "totalMs": 6436,
         "builds": 1
       },
       "specimen": {
@@ -1858,7 +1823,7 @@
           "Patrick Hand"
         ],
         "pages": 2,
-        "ownLines": 128
+        "ownLines": 132
       },
       "pages": [
         {
@@ -2078,9 +2043,258 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          }
+        ]
+      }
+    },
+    "de": {
+      "hash8": "e8e1a076",
+      "vdtHash": "360b8d5cdca9eed7818f6a2ab9512009f98a693c",
+      "timings": {
+        "importMs": 1650,
+        "fontsMs": 858,
+        "buildMs": 386,
+        "totalMs": 4754,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          230,
+          300
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Patrick Hand",
+          "sizePt": 11,
+          "leadingPt": 15
+        },
+        "families": [
+          "Patrick Hand"
+        ],
+        "pages": 2,
+        "ownLines": 132
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "2",
+          "role": "comic",
+          "w": 1000,
+          "h": 1304,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 228782,
+          "alt": "Seite 2."
+        },
+        {
+          "n": 2,
+          "label": "3",
+          "role": "comic",
+          "w": 1000,
+          "h": 1304,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 213698,
+          "alt": "Seite 3."
+        }
+      ],
+      "spreads": [
+        [
+          0,
+          1
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "comic-double-spread.pdf",
+        "bytes": 874477,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "comic-double-spread.postext",
+        "bytes": 893397,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "b7884143143b27f3",
+            "lines": "4040891d8fa5778f"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "defaultComicFont",
+          "defaultComicSfxFont",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceColor",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].aspect",
+          "comics.balloonStyles[].burstPoints",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontFamily",
+          "comics.balloonStyles[].fontScale",
+          "comics.balloonStyles[].halo",
+          "comics.balloonStyles[].haloColor",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].padding",
+          "comics.balloonStyles[].stroke",
+          "comics.balloonStyles[].strokeWidth",
+          "comics.cast",
+          "comics.cast[].id",
+          "comics.cast[].name",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.lineHeight",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "comics.runningHeads",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].pages",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page"
+        ],
+        "configLeaves": 107,
+        "designElements": 2,
+        "directives": [
+          ":::page"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 4,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Patrick Hand",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "balloon-styles",
+          "comic-lettering",
+          "comic-pages",
+          "comic-panel-art",
+          "comic-panel-split",
+          "comic-panel-styles",
+          "comic-speakers",
+          "comic-spreads",
+          "page-background",
+          "page-role-filters",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "sound-effects"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C20",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "card.webp weighs 133 KB (aim for ≤ 90 KB)"
+          },
+          {
+            "check": "C20",
+            "severity": "warn",
+            "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
             "check": "sandbox",

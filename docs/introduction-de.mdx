@@ -1,0 +1,209 @@
+{/* docs/introduction-en.mdx */}
+
+export const metadata = {
+  title: 'Einführung in Postext',
+  sidebarTitle: 'Einführung',
+  description: 'Was Postext ist, warum es existiert und welches Problem es löst',
+  lang: 'de',
+  lastUpdated: '2026-09-24',
+  readingTime: '7 min',
+  order: 1,
+  plainSummary: "Postext ist freie Software, die die Seiten von Büchern, Zeitschriften und Berichten im Web gestaltet. Gedruckte Bücher folgen seit Jahrhunderten sorgfältigen Satzregeln, etwa gleich hohen Spalten und Bildern nahe dem Text, der sie erwähnt. Webseiten hatten diese Regeln nie, und Postext fügt sie hinzu. Sie schreiben den Text, und Postext setzt jede Zeile, jedes Bild und jede Anmerkung für Sie auf die Seite. Diese Seite erzählt, warum es das Projekt gibt und wie es begann.",
+};
+
+# Einführung in Postext
+
+**Ein programmierbares Satzsystem für das Web.**
+
+Schlagen Sie ein schön gesetztes Buch auf. Achten Sie darauf, wie der Text auf der Seite steht: Spalten
+genau ausgeglichen, Bilder in den Textfluss eingebettet, keine unschönen Lücken, keine einsamen Zeilen
+oben in einer Spalte. Jahrhunderte handwerklicher Erfahrung stecken darin, dass das so selbstverständlich
+wirkt.
+
+Öffnen Sie nun eine Webseite. Selbst die besten wirken anders. Text prallt gegen Bilder. Spalten laufen
+über oder bleiben halb leer. Fußnoten verschwinden ans Seitenende, statt bei den Wörtern zu bleiben, die
+auf sie verweisen. Das Web hat uns responsives Layout gegeben – aber nie ein *verlegerisches* Layout.
+
+Postext schließt diese Lücke. Es ist eine Layout-Engine, die Ihre Inhalte entgegennimmt – Markdown-Text
+und deklarierte Ressourcen (Bitmap-Bilder, SVG-Diagramme und Tabellen), die per Verweis eingebunden
+werden – und dieselben Regeln anwendet wie ein professioneller Setzer: Vermeiden von Waisen und Witwen,
+Spaltenausgleich, Text, der um Hindernisse fließt, bewusst gesetzte Abstände. Das Ergebnis ist eine
+Layoutgeometrie in Verlagsqualität, für HTML wie für PDF.
+
+Aufgebaut auf [`@chenglou/pretext`](https://github.com/chenglou/pretext) für eine Textmessung ohne DOM,
+so schnell, dass all das erst möglich wird.
+
+
+## Die Kluft zwischen Druck und Web
+
+Seit Jahrhunderten folgen Setzer Regeln, die Text angenehm lesbar machen. Das sind keine ästhetischen
+Vorlieben – es sind hart erarbeitete Grundsätze, über Generationen gedruckter Bücher, Zeitungen und
+Zeitschriften verfeinert:
+
+- Keine Waisen (eine einzelne Zeile eines Absatzes, allein oben in einer Spalte gestrandet).
+- Keine Witwen (eine einzelne Zeile eines Absatzes, allein unten zurückgelassen).
+- Ausgeglichene Spalten (ungefähr gleiche Höhe der Spalten einer Doppelseite).
+- Text, der um Abbildungen, herausgestellte Zitate und eingesetzte Bilder fließt.
+- Fußnoten an der richtigen Stelle, unten in der Spalte, in der auf sie verwiesen wird.
+- Marginalien auf der Höhe des Absatzes, der sie anführt.
+- Einheitliche und bewusst gesetzte Abstände um Überschriften, Zitatblöcke und Abbildungen.
+- Eine Silbentrennung, die Gießbäche und einen übermäßig unruhigen Flattersatz vermeidet.
+
+Über diese Regeln hinaus zeigen zwei konkrete, messbare Größen, wie weit sich das Web vom Druck entfernt:
+
+- **Zeilenlänge.** Bringhurst gibt den angenehmen Bereich mit **45–75 Zeichen** je Zeile bei einer
+  Spalte an (und **40–50** bei mehreren Spalten); die Barrierefreiheitsrichtlinie
+  [WCAG 1.4.8](https://www.w3.org/WAI/WCAG21/Understanding/visual-presentation.html) begrenzt sie
+  auf 80. Die meisten Websites lassen Zeilen auf 100, 120 oder mehr Zeichen anwachsen – weit über den
+  Punkt hinaus, an dem das Auge einer Zeile folgen kann, ohne die Stelle zu verlieren.
+- **Zeilenabstand.** Die Tradition empfiehlt **das 1,3- bis 1,5-Fache der Schriftgröße**, und
+  [WCAG 1.4.12](https://www.w3.org/WAI/WCAG21/Understanding/text-spacing.html) verlangt, dass Inhalte
+  bei 1,5-fachem oder größerem Zeilenabstand benutzbar bleiben. Der richtige Wert hängt jedoch von der
+  Zeilenlänge ab: Ein Zeilenabstand, der sich bei 50 Zeichen gut liest, wirkt bei 90 eng. Setzer stimmen
+  das eine auf das andere ab; CSS bietet keinen automatischen Weg dazu.
+
+Und hier ist CSS am Ende: Sie bekommen `column-count` und wenig sonst. Keine Kontrolle über die
+Platzierung von Ressourcen, kein Gespür für Überlauf, keine spaltenübergreifende Vermeidung von Waisen
+und Witwen, kein eingebauter Weg, Text um ein beliebiges Hindernis fließen zu lassen. Mehrspaltige
+verlegerische Layouts im Web bleiben Handarbeit – statische Entwürfe, die zerbrechen, sobald sich die
+Bildschirmgröße ändert.
+
+Responsives Layout gibt es im Web seit über einem Jahrzehnt – Flexbox, Grid, Container, die sich jedem
+Bildschirm anpassen. Was es nie gab, ist responsives *verlegerisches* Layout: eines, bei dem der Inhalt
+klug durch Spalten, um Bilder und an Fußnoten vorbei umbricht und dabei den Regeln folgt, die Text
+*angenehm lesbar* machen.
+
+<Illustration name="CssGapVsEditorial" data='{"title": "Die Kluft zwischen CSS-Mehrspaltigkeit und verlegerischem Layout", "desc": "CSS bietet column-count und wenig sonst; verlegerisches Layout braucht die Kontrolle von Waisen und Witwen, Fluss um Hindernisse, Spaltenausgleich, die Platzierung von Fußnoten und eine Verfeinerung durch Konvergenz.", "caption": "Was CSS Ihnen gibt, und was verlegerisches Layout tatsächlich verlangt.", "cssTitle": "Was CSS Ihnen gibt", "cssLead": "column-count", "cssMore": "... und das war’s auch schon.", "cssCons": ["Keine Kontrolle von Waisen und Witwen", "Kein Fluss um Hindernisse", "Kein Spaltenausgleich", "Keine Platzierung von Fußnoten", "Keine Konvergenz oder Verfeinerung"], "gap": "die Kluft", "editorialTitle": "Was verlegerisches Layout braucht", "editorialPros": ["Vermeiden von Waisen &amp; Witwen", "Textfluss um Ressourcen", "Ausgeglichene Spalten", "Platzierung von Fußnoten", "Kontrolle der Silbentrennung", "Verfeinerung durch Konvergenz"], "equals": "= Postext"}' />
+
+
+## Ein Jahrzehnt auf der Suche nach dem fehlenden Teil
+
+Das Projekt [Content First](https://medium.com/binpar/el-arte-de-maquetar-para-ser-le%C3%ADdo-933be57cb293)
+begann 2014 als früher Versuch, die Qualität verlegerischen Layouts ins Web zu bringen. Spaltenbasierte
+Layouts, Experimente mit Textfluss, ein Prototyp nach dem anderen – und immer dieselbe Wand:
+**Ohne genau zu wissen, wie viel Platz ein Text einnehmen wird, lassen sich keine guten
+Layoutentscheidungen treffen.**
+
+Das klingt einfach, ist aber das ganze Problem. Jedes Mal, wenn Sie den Browser fragen: „Wie hoch ist
+dieser Absatz bei dieser Breite?“, lösen Sie einen vollständigen Reflow aus. Tun Sie das ein paar hundert
+Mal für ein komplexes mehrspaltiges Dokument, friert die Seite ein. Der Browser war nie für diese Art
+spekulativer Messung gebaut – zehn verschiedene Spaltenbreiten durchprobieren, um die beste zu finden,
+prüfen, wo ein Absatz umbrochen werden soll, testen, ob ein Bild hierher passt oder in die nächste
+Spalte wandern muss.
+
+Es fehlte ein Weg, Text so schnell zu messen, dass man frei experimentieren kann, ohne den Hauptthread
+zu blockieren. Ein Jahrzehnt lang gab es dieses Werkzeug nicht.
+
+
+## Das fehlende Teil
+
+2025 veröffentlichte Cheng Lou [`Pretext`](https://github.com/chenglou/pretext): eine Bibliothek zur
+Textmessung ohne DOM, 300- bis 600-mal schneller als der Reflow des Browsers und pixelgenau in Chrome,
+Safari und Firefox. Sie nutzt die Schriftmetriken des Canvas und reine Arithmetik, um Texthöhe und
+Zeilenumbrüche zu berechnen, ohne je das DOM zu berühren.
+
+Mit Pretext verschwindet der Engpass, der diese Arbeit zehn Jahre lang blockiert hat. Tausende
+Textblöcke in Millisekunden messen, zehn verschiedene Spaltenkonfigurationen ausprobieren und die beste
+behalten, den gesamten Layoutalgorithmus bei jeder Änderung der Fenstergröße ausführen, ohne den
+Hauptthread zu blockieren.
+
+Postext ist das, was danach kommt.
+
+
+## Pretext + Postext
+
+Die Namensgebung ist Absicht: zwei Hälften desselben Vorgangs. Dass beide getrennt bleiben, ist wichtig,
+weil es verschiedene Aufgaben sind – das eine misst, das andere entscheidet –, und eine isolierte Messung
+kann jedes Backend nutzen, ohne an verlegerische Regeln gebunden zu sein.
+
+**Pretext** ist das, was geschieht, *bevor* Text platziert wird: messen, wie viel Platz er brauchen wird.
+Ohne DOM, auf Canvas-Basis, mit reinen Zahlen.
+
+**Postext** ist das, was *nach* der Messung geschieht: die verlegerischen Entscheidungen. Mit den genauen
+Maßen jedes Textblocks bei jeder Breite entscheidet die Engine, wohin jedes Element kommt – in welche
+Spalte, an welche Position, um welche Ressourcen fließend, nach welchen typografischen Regeln.
+
+```ts
+import { prepare, layout } from '@chenglou/pretext';
+import { buildDocument, renderToCanvas, renderToHtml } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+
+// pretext: measure (the "pre" work)
+const prepared = prepare(paragraphText, '16px/1.5 Inter');
+const { height } = layout(prepared, columnWidth, 24);
+// => "This paragraph is 144px tall at this column width."
+
+// postext: decide (the "post" work)
+const vdt = buildDocument(content, config);
+// => A complete Virtual Document Tree with every paragraph,
+//     heading, and resource placed at exact coordinates.
+
+// One VDT, three output modes:
+const canvases = renderToCanvas(vdt);                       // pixel-accurate bitmap per page
+const html = renderToHtml(vdt);                             // selectable DOM for the web
+const pdfBytes = await renderToPdf(vdt, { fontProvider });  // print-ready PDF
+```
+
+Pretext liefert Ihnen die Maße. Postext liefert Ihnen das Layout.
+
+<Illustration name="PretextPostextPipeline" data='{"title": "Pretext misst, Postext entscheidet", "desc": "Pretext liefert eine Textmessung ohne DOM auf Canvas-Basis. Postext nutzt diese genauen Maße, um über Spalte, Position, Fluss um Ressourcen sowie die Regeln für Waisen, Witwen und Spaltenausgleich zu entscheiden.", "caption": "Zwei Hälften desselben Vorgangs: Pretext davor, Postext danach.", "pretextTitle": "Pretext", "pretextSubtitle": "messen", "pretextBullets": ["Ohne DOM, auf Canvas-Basis", "300- bis 600-mal schneller als Reflow", "pixelgenaue Zeilenumbrüche"], "bridge": ["genaue", "Maße"], "postextTitle": "Postext", "postextSubtitle": "entscheiden", "postextBullets": ["Welche Spalte, welche Position", "Fluss um Ressourcen", "Waisen, Witwen, Ausgleich"]}' />
+
+*Pretext wurde von [Cheng Lou](https://github.com/chenglou) entwickelt. Postext baut darauf auf.*
+
+
+## So funktioniert es
+
+Der Vorgang hat drei Stufen:
+
+1. **Sie liefern den Inhalt.** Markdown-Text und deklarierte Ressourcen – Bitmap-Bilder,
+   SVG-Diagramme und Tabellen. Ein Inline-`:ref{id="..."}` nummeriert eine Ressource und lässt sie
+   zugleich in einen Streifen oben oder unten nahe ihrem ersten Verweis gleiten, so wie ein Setzer im
+   Druck Abbildungen platziert. Der Inhalt bleibt rein semantisch: Er beschreibt, *was* dargestellt wird,
+   nicht *wie*; Layoutentscheidungen werden nie fest in die Quelle geschrieben. Der Abschnitt über
+   Ressourcen im Dokument [Dokumentformat](/de/docs/document-format) beschreibt die vollständige
+   Syntax.
+
+2. **Die Engine trifft die Entscheidungen.** Postext liest den Inhalt ein, ruft Pretext für eine
+   pixelgenaue Textmessung auf, ohne das DOM zu berühren, und führt dann eine Layout-Pipeline in
+   mehreren Durchgängen aus: Spalten ausgleichen, Ressourcen nummerieren und gleiten lassen, Witwen
+   und Waisen vermeiden, Grundlinien ausrichten, Abstände verfeinern. Jede Entscheidung folgt der
+   Konfiguration – Seiten- und Layoutgeometrie, Fließtext und Überschriften, dazu `tableStyle` für die
+   Typografie der Tabellenzellen, `captionStyle` für Legenden und `diagramStyle` mit
+   `singleInk`, das SVG-Diagramme in nach Helligkeit abgestufte Tönungen einer einzigen Farbe umfärbt,
+   für den Druck mit nur einer Sonderfarbe. Sie bestimmen die Regeln, die Engine wendet sie an.
+
+3. **Sie erhalten ein vollständiges Layout.** Genaue Koordinaten und Maße für jedes Element auf jeder
+   Seite. Renderer übertragen diese Geometrie in das Zielformat – **Canvas** für eine pixelgenaue
+   Bitmap-Vorschau (`renderToCanvas`, `renderPage`), **HTML** für auswählbare Typografie im Web, die auf
+   Größenänderungen reagiert (`renderToHtml`, `renderToHtmlIndexed`), und **PDF** für eine druckfertige
+   Ausgabe mit eingebetteten Schriften (`renderToPdf`, aus dem Paket `postext-pdf`). Derselbe Inhalt,
+   dieselben Regeln, drei austauschbare Ausgaben.
+
+<Illustration name="LayoutProcess" data='{"title": "Layout in drei Stufen", "desc": "Erweitertes Markdown samt Konfiguration geht in die Engine, die eine Layout-Pipeline in mehreren Durchgängen mit eingebauter Pretext-Messung ausführt und gerendertes HTML oder PDF ausgibt.", "caption": "Inhalt hinein, Geometrie heraus – dann im Zielformat gerendert.", "inputTitle": "Erweitertes Markdown", "inputSubtitle": "+ Konfiguration", "parse": "einlesen", "engineTitle": "Postext-Engine", "engineSub1": "mit Pretext-Messung", "engineSub2": "Layout in Durchgängen", "render": "rendern", "outputTitle": "HTML / PDF", "outputSubtitle": "gerenderte Ausgabe"}' />
+
+Einen genauen Blick in das Innere der Engine – den virtuellen Dokumentbaum, die Pipeline in mehreren
+Durchgängen und die Konvergenzschleife – bietet das Dokument [Architektur](/de/docs/architecture). Eine
+vollständige Referenz aller Konfigurationsoptionen – von der Seitengeometrie bis zur Gestaltung von
+Tabellen, Legenden und Diagrammen – finden Sie auf der Seite
+[Konfiguration](/de/docs/configuration). Und um alles live auszuprobieren – einen Texteditor für
+Kapitel, ein Bedienfeld Ressourcen mit Tabelleneditor und Upload von Bildern und SVGs, ein Bedienfeld
+Gestaltung, das jede Einstellung in verlegerischen Begriffen zeigt, und Live-Vorschauen als Canvas,
+HTML und PDF –, öffnen Sie die [Sandbox](/de/docs/sandbox).
+
+
+## Danksagung
+
+**[Pretext](https://github.com/chenglou/pretext)** von Cheng Lou – die grundlegende Bibliothek zur
+Textmessung, die Postext möglich macht. Ohne pixelgenaue Messung ohne DOM in weniger als einer
+Millisekunde wäre nichts davon praktikabel.
+
+**Content First** (~2014) – die ursprüngliche Erkundung hochwertigen verlegerischen Layouts im Web.
+Ein Jahrzehnt, in dem das Projekt gegen Wände lief, lernte, was nicht funktioniert, und die
+Überzeugung gewann, dass dieses Problem eine echte Lösung verdient.
+
+Postext steht auf Jahrhunderten typografischer Tradition. Die Regeln, die es umsetzt, sind nicht
+erfunden – sie sind aus der Arbeit von Setzern, Typografen und Gestaltern übernommen, die das Handwerk,
+Text lesbar zu machen, verfeinert haben, lange bevor es Bildschirme gab. Von Gutenbergs beweglichen
+Lettern über Tschicholds asymmetrische Typografie bis zu Bringhursts *Elements of Typographic Style*
+entwickelt sich das Handwerk, Text auf einer Seite anzuordnen, seit über fünfhundert Jahren weiter.
+Postext bringt dieses gesammelte Wissen ins Web, wo es bisher auffällig fehlte.

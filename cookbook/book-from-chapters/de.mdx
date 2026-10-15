@@ -1,0 +1,78 @@
+---
+title: "Ein Buch aus einzelnen Kapiteln"
+summary: "buildBundle setzt fünf Markdown-Dateien als ein Buch: Jedes Kapitel beginnt rechts, Seiten-, Kapitel- und Abbildungsnummern laufen über die Dateien weiter."
+plain: "Ein kleines Imkerhandbuch, geschrieben als einzelne Dateien, eine pro Kapitel. Postext fügt sie zu einem Buch zusammen, und Seiten-, Kapitel- und Bildnummern zählen von Datei zu Datei weiter."
+description: "Ein Imkerhandbuch in vier Jahreszeiten, mit buildBundle aus je einer Markdown-Datei pro Kapitel gesetzt; das Inhaltsverzeichnis nennt die Pagina jedes Kapitels."
+question: "Wie setze ich ein Buch Kapitel für Kapitel, sodass Seiten-, Kapitel- und Abbildungsnummern weiterzählen?"
+aliases: ["Buch mit mehreren Kapiteln", "Kapitel in getrennten Dateien", "durchgehende Seitenzahlen", "fortlaufend nummeriert", "Kapitel auf rechter Seite", "Inhaltsverzeichnis eines Buches", "PDF des ganzen Buches", "buildBundle"]
+pageNotes: { "6": "Seite 6 bleibt leer: „Winter“ füllt eine Seite, also beginnt „Spring“ auf Seite 7, der nächsten rechten Seite, und die linke Seite dazwischen hat weder Kolumnentitel noch Pagina.", "11": "Seite 11 ist die einzige rechte Textseite des Buches: Ihr Kolumnentitel lautet „SUMMER“, der Kapiteltitel, neben der Pagina." }
+---
+
+## Was Sie setzen
+
+*A Beekeeper’s Year* ist ein kleines Handbuch in vier Kapiteln, eines pro Jahreszeit. Es beginnt mit dem Herbst, denn das Jahr des Imkers fängt an, wenn der letzte Honig geerntet ist. Jedes Kapitel ist eine eigene Markdown-Datei ohne Seiten-, Kapitel- oder Abbildungsnummer. `buildBundle` trägt diese Zählungen von jeder Datei zur nächsten und setzt die Kapitel, mit einer fünften Datei für Titel und Inhaltsverzeichnis, als ein Buch von elf Seiten. Jedes Kapitel beginnt auf einer rechten Seite unter einer Ecke aus Honigwaben, die seine Nummer trägt. Das Inhaltsverzeichnis auf der linken Seite gegenüber dem Herbst spiegelt diesen Auftakt mit dem Titel bündig am Bund und nennt die Pagina jedes Kapitels. Ein im Code gezeichneter Brutrahmen erscheint in jedem Kapitel einmal, als Abbildung 1.1 bis 4.1. Seite 6 bleibt leer, weil der Winter eine einzige Seite füllt und der Frühling auf einer rechten Seite beginnen muss.
+
+## Zubereitung
+
+### 1 · Eine Datei pro Kapitel
+
+<Excerpt region="chapters" />
+
+Jede Jahreszeit ist ein eigenes Dokument, sodass Sie ein Kapitel umschreiben können, ohne die anderen zu öffnen. Das erste Dokument enthält das Frontmatter, den Titel und das Inhaltsverzeichnis. Seine Metadaten sind die des Buches: `{title}` und `{author}` drucken sie in jedem Kapitel, und das PDF übernimmt Titel und Autor daraus.
+
+### 2 · Regeln, die über Dokumente hinweg gelten
+
+Der Code dieses Schritts steht oben in [der kurzen Antwort](#die-kurze-antwort). [`buildBundle`](/de/docs/configuration-programmatic-usage#ein-paket-setzen-und-rendern) setzt die Dokumente der Reihe nach mit einer gemeinsamen Konfiguration und übergibt jedem eine `continuation` aus den vorherigen: die Zahl der bereits gesetzten physischen Seiten, damit gerade und ungerade Seiten, gespiegelte Ränder und die Kolumnentitel für gerade und ungerade Seiten weiterlaufen; die nächste Pagina; und die Kapitel- und Abbildungszähler. Mit `parity: 'odd'` beginnt ein Kapitel, dessen Vorgänger auf einer rechten Seite endet, mit einer Vakatseite, und diese Vakatseite gehört zu seinem eigenen Dokument ([Umbruch davor](/de/docs/configuration-text#umbruch-davor)). Titel und Inhaltsverzeichnis sind [Überschriftenformate](/de/docs/configuration-styles#überschriftenstile) mit `numbered: false`, der Herbst bleibt also Kapitel 1. Beide erben `span: 'page'` von der Kapitelebene, was jedes auf eine eigene Seite stellt, ohne `:::pagebreak`. Das Format des Inhaltsverzeichnisses schaltet die geerbte Seitenparität ab, die sonst Seite 2 leer ließe.
+
+### 3 · Ein Inhaltsverzeichnis für das ganze Buch
+
+<Excerpt region="contents" />
+
+`:::toc` steht im ersten Dokument, listet aber die Kapitel und Abschnitte des ganzen Buches. `buildBundle` setzt das Buch, sammelt jede Überschrift mit der Seitenbezeichnung, die sie erhalten hat, und setzt das Buch mit dieser Gliederung erneut, bis sich die Bezeichnungen nicht mehr ändern, höchstens dreimal ([Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis)). Die Monate unter jedem Titel stammen aus einem Überschriftenattribut, `{months="…"}`, das auch der Kapitelauftakt druckt.
+
+### 4 · Ein Auftakt, gespiegelt für das Inhaltsverzeichnis
+
+<Excerpt region="opener" />
+
+`{chapterNumber}` zählt von den zuvor gesetzten Dokumenten weiter, sodass der Auftakt des Frühlings eine 3 druckt, obwohl seine Datei keine Nummer enthält. Der Kasten der Nummer wird aus der Mitte ihrer Wabenzelle berechnet, und Nummer und Waben hängen beide an der oberen rechten Ecke des Anschnitts; ein anderes Endformat oder ein Anschnitt für den Druck verschiebt sie also gemeinsam. Auf der Seite des Inhaltsverzeichnisses stehen die Dachzeile, aus `{subtitle}` gelesen, und der Titel rechtsbündig am Bund, und die Waben wandern in die äußere Ecke der linken Seite. Der Titel steht dann auf derselben Höhe wie der des Herbstes auf der gegenüberliegenden Seite.
+
+### 5 · Kolumnentitel in jedem Dokument
+
+<Excerpt region="running-heads" />
+
+Nur das erste Dokument hat Frontmatter, und `buildBundle` reicht es an jedes Kapitel weiter, sodass der Kolumnentitel der linken Seite in allen fünf Dokumenten den `{title}` des Buches druckt. `{chapterTitle}` und `{pageNumber}` werden Seite für Seite aufgelöst und erscheinen in jedem Dokument; Seite 11, die einzige rechte Textseite, trägt „SUMMER“ neben ihrer Pagina. `pages: 'body'` hält alle Kolumnentitel von den Kapitelauftakten und der Vakatseite fern.
+
+### 6 · Doppelseiten am Bildschirm, ein PDF für das Buch
+
+<Excerpt region="build" />
+
+`buildBundle` gibt ein Array von Dokumenten zurück, eines pro Markdown-Datei. `showPages` paart die Seiten nach `pageIndexOffset + page.index`, sodass Seite 1 allein als rechte Seite steht und die Seiten 2 und 3, 4 und 5 und so weiter einander gegenüberstehen. `renderToPdf` nimmt dasselbe Array und schreibt eine Datei mit den Seitenbezeichnungen des Buches und einem Lesezeichen für jedes Kapitel und jeden Abschnitt.
+
+## Varianten
+
+### Ein Kapitel mit seinen Buchseitenzahlen drucken
+
+Übergeben Sie ein einzelnes Dokument an `renderToPdf`, um den Frühling für sich allein Korrektur zu lesen, weiterhin mit 6 bis 8 nummeriert wie im Buch. Die leere Seite 6 kommt mit, denn eine Vakatseite links vor einem Auftakt gehört zu dem Kapitel, das danach beginnt.
+
+```diff
+-offerPdf(() => renderToPdf(docs, { fontProvider: fontsourceProvider, resourceBytes: imageBytes }),
++offerPdf(() => renderToPdf(docs[3], { fontProvider: fontsourceProvider, resourceBytes: imageBytes }),
+```
+
+### Die Abbildungen durch das ganze Buch nummerieren
+
+Ein Abbildungszähler, der nie zurückgesetzt wird, nummeriert die vier Rahmen über die Dokumente hinweg von 1 bis 4 statt 1.1 bis 4.1.
+
+```diff
+   buildBundle, prepareFonts, withLoadedFonts, renderPageToCanvas, registerResourceImage,
++  defaultResourceTypes,
+@@
+   locale: t({ en: 'en-us', es: 'es' }),
++  resourceTypes: defaultResourceTypes(LANG)
++    .map((type) => ({ ...type, numberingTemplate: '{n}', resetOn: 'never' })),
+```
+
+## Häufige Fehler
+
+- Am Kopf einer Seite und unter einer Abbildung, die eine Seite anführt, verliert eine Zwischenüberschrift ihren `marginTop`. Eine Zwischenüberschrift, die ihren Abstand aus dem Rand bezieht, steht an diesen beiden Stellen eine Zeile über ihrem Text und überall sonst anderthalb Zeilen. Hier steckt der Abstand in der eigenen Zeile der Zwischenüberschrift: `lineHeight` beträgt anderthalb Zeilen und der Rand eine Zeile, sodass jede Zwischenüberschrift im Buch gleich weit über ihrem Text steht.
+- Standardmäßig darf eine Blocksatzzeile ihre Wortabstände auf die doppelte Breite dehnen, und der Zeilenumbruch zieht das einer Trennung vor. Bei diesem Standard hatte die englische Ausgabe überhaupt keine Trennungen, und Zeilen mit fast doppelt so breiten Wortabständen standen neben Zeilen, die auf 0,7 gestaucht waren. `maxWordSpacing: 1.7` lässt den Zeilenumbruch stattdessen trennen. Prüfen Sie nach der Änderung die letzte Zeile jedes Absatzes: Eine engere Grenze kann dort ein einzelnes Wort hinterlassen, und ein paar umformulierte Wörter im Absatz beheben das.

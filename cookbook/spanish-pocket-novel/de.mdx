@@ -1,0 +1,78 @@
+---
+title: "Spanischer Blocksatz in einem Taschenbuchroman"
+summary: "Der Anfang von Kapitel I der Marianela als Taschenausgabe: spanische Trennung, Wortabstände unter 1,7×, keine zu kurzen Ausgangszeilen, Initiale, Figura 1."
+plain: "Die ersten Seiten eines spanischen Romans von 1878 als Taschenbuch. Sie zeigen, wie man die Abstände zwischen den Wörtern gleichmäßig hält und Wörter an den richtigen spanischen Silben trennt."
+description: "Galdós’ Marianela als Taschenausgabe von 11,5 × 18 cm: spanische Silbentrennung, Wortabstände unter 1,7×, Rayas, Comillas latinas und eine Karte als Figura 1."
+question: "Wie setze ich Spanisch im Blocksatz mit Trennung, Dialogstrichen, Guillemets und „Figura“ statt „Figure“?"
+aliases: ["spanische Typografie", "spanische Silbentrennung", "Raya", "Dialogstrich", "Guillemets", "comillas latinas", "hochgestellte Initiale", "Initiale", "Figura statt Figure", "Grenze für Wortabstände", "getrennte Ausgangszeile", "Taschenbuchroman", "Karte als Frontispiz"]
+pageNotes: { "1": "Das Frontispiz: eine mutmaßliche Karte der Minen von Socartes mit der gepunkteten Route des Reisenden von der Stadt über die Fußgängerbrücke und den bewaldeten Hügel bis zum Rand der Grube.", "2": "Kapitel I: „CAPÍTULO PRIMERO“ in Kapitälchen über einer kurzen Linie und der kursive Titel „Perdido“; nach einem Viertel der Seite beginnt der Text mit einem ochsenblutroten, hochgestellten „S“." }
+---
+
+## Was Sie setzen
+
+Der Anfang von Galdós’ *Marianela* (1878) in einer Taschenausgabe von 11,5 × 18 cm, mit einer mutmaßlichen Karte der Minen von Socartes gegenüber Kapitel I. Über dem kursiven Kapiteltitel in Libre Bodoni steht *capítulo primero* in Kapitälchen ausgeschrieben; der Text in Gentium Book Plus beginnt nach einem Viertel der Seite mit einer ochsenblutroten hochgestellten Initiale. Wörter werden an spanischen Silben getrennt (*hie-rro*, *esta-blecimiento*), und Wortzwischenräume bleiben unter dem 1,7-Fachen ihrer normalen Breite; kein Absatz endet mit dem Rest eines getrennten Worts. Dialoge stehen mit *rayas*, den Geviertstrichen, die auch die Einschübe des Erzählers (*incisos*) öffnen und schließen. Die Losung des Reisenden steht in «comillas latinas», und in englischen doppelten Anführungszeichen, wo die Notiz der Ausgabe sie innerhalb eines Zitats zitiert. Die Karte ist *Figura 1*, im Text als [fig. 1] zitiert. Kolumnentitel in Marcellus SC nennen auf den linken Seiten den Autor und auf den rechten den Titel.
+
+## Zubereitung
+
+### 1 · Spanische Silben, gezügelte Wortabstände
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `locale: 'es'` wählt die spanischen Trennmuster, ebenso wie ein regionales Tag wie `'es-ES'` oder `'es-MX'`; die amerikanischen Regeln der voreingestellten Locale würden *cabal-los*, *hi-erro* und *establec-imiento* trennen ([unterstützte Locales](/de/docs/justification#unterstützte-sprachen)). Blocksatz, Knuth-Plass und die Regeln für Witwen und Waisen sind standardmäßig aktiv. Die Satzbreite von 86 mm braucht außerdem gezügelte Wortabstände: Bei der Voreinstellung `maxWordSpacing: 2` öffnen sich acht Zeilen über das 1,6-Fache, und die breiteste erreicht das 1,89-Fache; bei 1.7 liegt die breiteste beim 1,65-Fachen, weil der Umbruchalgorithmus stattdessen *hie-rro* und *ca-lles* trennt ([Grenzen der Wortabstände](/de/docs/justification#grenzen-des-wortabstands)). Jenseits der Grenze kostet eine Zeile weit mehr, bleibt aber zulässig; auf einer schmaleren Satzbreite ohne besseren Umbruch kann sie also trotzdem darüber hinausgehen. `runtMinCharacters: 26` fängt die getrennten Reste ab, die die Voreinstellung von 20 Leerzeichenbreiten durchlässt: Aus *siem- / pre adelante.* wird *Adelante, / siempre adelante.*, und aus *So- / cartes [fig. 1].* wird *de / Socartes [fig. 1].* ([zu kurze Ausgangszeilen](/de/docs/configuration-text#waisen-witwen-zu-kurze-ausgangszeilen-und-regeln-zum-zusammenhalten)).
+
+### 2 · Eine Taschenbuchseite aus ganzen Zeilen
+
+<Excerpt region="page" />
+
+Der Fußsteg wird aus Endformat, Kopfsteg und `LINES` berechnet, sodass der Satzspiegel genau 30 Zeilen zu 13,8 pt fasst und jede volle Seite auf derselben Grundlinie endet, wie <PageRef page={3}>die Seiten 10 und 11</PageRef>. Mit `mirror: true` bleibt der Bundsteg von 15 mm am Bund und der Außensteg von 14 mm am Vorderschnitt, auf beiden Seiten einer Doppelseite ([gespiegelte Ränder](/de/docs/configuration-page-layout#gespiegelte-ränder)), und die Satzbreite von 86 mm fasst etwa 57 Zeichen Gentium Book Plus zu 10 pt.
+
+### 3 · Das Kapitel in Worten und eine hochgestellte Initiale
+
+<Excerpt region="opener" />
+
+*capítulo primero* stammt aus dem eigenen Attribut `ordinal` der Überschrift ([Attribute von Überschriften](/de/docs/document-format#attribute-von-überschriften)). Eine mit `'{1:ordinal}'` nummerierte Ebene würde das Wort von selbst ausschreiben, doch die Tafel vor dem Kapitel ist ebenfalls eine Überschrift der Ebene 1; diese Ebene trägt daher keinen Zähler. Die Initiale gehört zur Kapitelebene: Ihr `dropCap` eröffnet den ersten Absatz nach jeder Überschrift der Ebene 1, und der Absatz steht im Markdown so, wie er gelesen wird ([Initialen](/de/docs/configuration-text#initialen)). `lines: 1` mit einer `fontSize` von drei Zeilenabständen macht daraus eine hochgestellte Initiale, die auf der ersten Grundlinie steht; die erste Zeile wird um ihre Breite und den voreingestellten Abstand gekürzt und mit dem Rest des Absatzes im Blocksatz gesetzt. Der Buchstabe ragt über die erste Zeile hinaus, und der Absatz hält diesen Überstand in ganzen Zeilen darüber frei: hier zwei (`RISE`), sodass `minHeight` den Auftakt bei `SINK - RISE` Zeilen enden lässt und die erste Textzeile dennoch auf Zeile `SINK` fällt, nach einem Viertel der Seite. `marginBottom: 0` der Kapitelebene ersetzt den voreingestellten Abstand, der eine Leerzeile hinzufügen würde. Ein Absatz mit Initiale verzichtet auf seinen Erstzeileneinzug.
+
+<PageShot page={2} crop="0.08,0.1,0.84,0.289" caption="Seite 9: Label und Titel des Kapitels und die hochgestellte Initiale neben der ersten Zeile des Texts im Blocksatz." />
+
+### 4 · Die Karte steht dem Kapitel als Figura 1 gegenüber
+
+<Excerpt region="figure" />
+
+`position: 'here'` setzt die Karte dorthin, wo `::resource{id="plano"}` steht, unter eine eigene Überschrift. Diese Überschrift macht Buchseite 8 zu einer Auftaktseite, und die Kolumnentitel überspringen Auftaktseiten. Ihr Format leert die Fußzeile und setzt einen eigenen Umbruch, was die Tafel gegenüber Kapitel I hält, ohne Kolumnentitel oder Pagina, selbst wenn Kapitel auf rechten Seiten beginnen ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Die spanischen Typen der kurzen Antwort drucken *Figura 1.* unter der Karte (ohne `resourceTypes` lautet sie *Figura 1.1*, nach Kapiteln nummeriert) und *Fig. 1* im Text, was `case="lower"` im `:ref` des Markdowns zu *fig. 1* macht. Der Verweis steht in eckigen Klammern, mit denen spanische Ausgaben kennzeichnen, was der Herausgeber dem Text des Autors hinzufügt.
+
+### 5 · Der Autor auf der linken, der Titel auf der rechten Seite
+
+<Excerpt region="heads" />
+
+`parity: 'even'` setzt den Autor auf die linken Seiten und `'odd'` den Titel auf die rechten, und `pages: 'body'` hält beide von der Auftaktseite fern, auf der nur die mit `pages: 'opener'` gesetzte Pagina am Fuß steht. Jeder Kolumnentitel ist an der Seite verankert und um `SHIFT` auf die Mitte des Satzspiegels verschoben, die einen halben Millimeter neben der Seitenmitte liegt, weil Bund- und Außensteg verschieden sind. Aus demselben Grund gibt es die Pagina am Fuß in zwei Paritäten. Die Paginas stehen in Gentium, weil Marcellus SC 1 und 0 wie I und O zeichnet.
+
+### 6 · Spanische Zeichensetzung im Markdown
+
+<Excerpt region="styles" />
+
+<PageRef page={5}>Seite 12</PageRef>, die letzte, endet mit drei Absatzformaten. Die Sternchen in ochsenblutroter Bodoni stehen zentriert nach einem [`:::space{lines=2}`](/de/docs/document-format#space), da Leerzeilen keinen Abstand hinzufügen. Die Notiz der Ausgabe steht in 8,3 pt auf 11 pt Zeilenabstand, und das Impressum in 7,5 pt im Grau der Kolumnentitel. Die Notiz bleibt in der Textfarbe; setzt man sie grau, braucht das Format auch eine `italicColor`, sonst druckt das kursive *Marianela* dunkler als die Wörter um es herum. Im Markdown beginnt ein Dialog mit einer Raya (—), nie mit einem Bindestrich, weil ein Bindestrich mit Leerzeichen am Zeilenanfang eine Liste eröffnet. *1878.* am Anfang der Notiz würde eine nummerierte Liste eröffnen; deshalb steht vor der Jahreszahl ein Wortverbinder (U+2060). Die Sternchen sind maskiert (`\*`); unmaskiert würde das erste eine Aufzählung eröffnen und die beiden anderen eine Kursivpassage, und die Zeile verschwände.
+
+## Varianten
+
+### Jedes Kapitel auf einer rechten Seite beginnen
+
+Mit `'odd'` erhält ein Kapitel, das auf einer linken Seite beginnen würde, eine leere Seite davor, wie in einer großzügigeren Ausgabe. Kapitel I beginnt bereits auf einer rechten Seite, und die Tafel behält ihre Seite, weil ihr Format einen eigenen Umbruch setzt.
+
+```diff
+-const chapter = { level: 1, breakBefore: { enabled: true, parity: 'any' },
++const chapter = { level: 1, breakBefore: { enabled: true, parity: 'odd' },
+```
+
+### Die Abbildungen nach Kapiteln nummerieren
+
+Unverändert nummerieren die eingebauten spanischen Typen Abbildungen innerhalb jeder Überschrift der Ebene 1: Die Karte wird zu *Figura 1.1* und der Verweis zu *fig. 1.1*.
+
+```diff
+-const resourceTypes = defaultResourceTypes(LOCALE)
+-  .map((type) => ({ ...type, numberingTemplate: '{n}', resetOn: 'never' }));
++const resourceTypes = defaultResourceTypes(LOCALE);
+```
+
+## Häufige Fehler
+
+- Ein Vorschlag von neun statt acht Zeilen ließ Seite 11 eine Zeile zu kurz, weil `avoidWidows` keinen Absatz in der letzten Zeile der Seite beginnen ließ. Prüfen Sie nach jeder Änderung an Einstellungen oder Text den Fuß jeder Seite.
+- `RISE` ist die Zahl der Zeilen, die die hochgestellte Initiale über dem Text freihält. Eine andere Schrift oder Größe ändert diesen Überstand: Eine kleinere Initiale braucht vielleicht nur eine Zeile, und der Text beginnt dann eine Zeile höher, sofern sich `minHeight` nicht mit ändert.
+- Keine dieser Schriften hat das Asterismus-Zeichen ⁂ (U+2042) in ihrer Latin-Datei von Fontsource, sodass der Browser es aus einer Systemschrift nähme. Spanische Bücher markieren den Einschnitt ohnehin mit drei gesperrten Sternchen.

@@ -1,0 +1,73 @@
+---
+title: "Eine chinesische Wörterbuchseite mit Leitwörtern"
+summary: "Vier Seiten einer Leseausgabe des Kangxi-Wörterbuchs in Pinyin-Folge: {firstMark.h2} und {lastMark.h2} setzen erstes und letztes Stichwort in den Kolumnentitel."
+plain: "Vier Seiten eines klassischen chinesischen Wörterbuchs. Die obere Ecke jeder Seite zeigt ihren ersten und letzten Eintrag, sodass man beim Blättern ein Wort findet."
+description: "Ein zweispaltiges chinesisches Wörterbuch in Postext: Stichwörter mit Pinyin darüber, Bedeutungen fortlaufend ① ② gezählt, Leitwörter im Seitenkopf, mit Code."
+question: "Wie setze ich das erste und letzte Stichwort jeder Seite in den Kolumnentitel eines chinesischen Wörterbuchs?"
+aliases: ["Wörterbuch", "chinesisches Wörterbuch", "字典", "康熙字典", "Kangxi-Wörterbuch", "Leitwörter", "Kustoden", "lebender Kolumnentitel", "书眉", "書眉", "Stichwörter", "Pinyin-Reihenfolge", "Pinyin über Stichwörtern", "反切", "fanqie", "eingekreiste Ziffern", "Bedeutungsnummern", "Daumenregister", "guide words"]
+pageNotes: { "1": "Seite 634, eine linke Seite. Der Kopf zeigt 634 und 天—殄 über einer Haarlinie. Zwei Spalten mit Einträgen von 天 tiān bis 殄 tiǎn: jedes Stichwort in roter Song Black mit seinem Pinyin darüber, dann fortlaufend die Lesungen aus den Reimwörterbüchern und die Bedeutungen, in Rot ① ② gezählt. Die Einträge folgen ohne Abstand aufeinander, und beide Spalten enden auf der letzten Rasterlinie. Ein rotes Register mit einem T am linken Rand.", "2": "Seite 635, eine rechte Seite: 腆—髫 und die Pagina oben rechts. Die erste Spalte beginnt mit dem Ende des Eintrags 殄, dann folgen die Einträge von 腆 tiǎn bis 髫 tiáo; das Register T am rechten Rand.", "3": "Seite 636: Die Seite beginnt mit dem Ende des Eintrags 髫, und der Kopf zeigt 挑—鐵, das erste und letzte Stichwort, die auf ihr beginnen; 挑 erscheint ein zweites Mal unter seiner Lesung tiǎo.", "4": "Seite 637: 餮—庭, das Ende von 鐵, die Einträge von 餮 tiè bis 庭 tíng und darunter ein Impressum: ein chinesischer Satz in Kai, zwei Zeilen, und sechs Zeilen englischer Nachweise." }
+---
+
+## Was Sie setzen
+
+Vier Seiten aus der Mitte einer Leseausgabe des Kangxi-Wörterbuchs (康熙字典, 1716), umgestellt in Pinyin-Reihenfolge von 天 tiān bis 庭 tíng. Jedes Stichwort steht in roter Song Black mit seinem Pinyin darüber; die Lesungen der Reimwörterbücher (反切) und die Bedeutungen folgen in einem Absatz, die Bedeutungen im selben Rot mit ① ② gezählt. Die Seite ist 大32开, 140 × 203 mm, zwei Spalten mit 17 Zeichen in 小五 (9 pt) auf einem Raster von 31 Zeilen, jede Spalte bis zur letzten Zeile gefüllt. In der äußeren Ecke jeder Seite nennt der Kolumnentitel das erste und das letzte Stichwort darauf, sodass ein Leser, der 蜩 sucht, die Seite mit dem Kopf 腆—髫 aufschlägt. <RecipeLink slug="dictionary-thumb-index">Das Sailor’s Word-Book</RecipeLink> ist das Wörterbuch in lateinischer Schrift zum Vergleich.
+
+## Zubereitung
+
+### 1 · Leitwörter aus den Stichwörtern
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). Jedes Stichwort ist eine Überschrift der Ebene 2, und `{firstMark.h2}` und `{lastMark.h2}` setzen den Text der ersten und der letzten Überschrift der Ebene 2, die auf der Seite beginnt ([Textelemente](/de/docs/configuration-page-layout#textelemente)). Die Marke sind die Zeichen der Überschrift: `## {天|tiān}` markiert 天, und die Lesung bleibt über dem Stichwort. Ein Eintrag, der von einer Seite auf die nächste läuft, zählt nur dort, wo sein Stichwort steht: <PageRef page={2}>Seite 635</PageRef> beginnt mit dem Ende von 殄 und trägt den Kopf 腆—髫. Ebene 1 bleibt den Buchstaben vorbehalten: In diesen vier Seiten beginnt keiner, doch ein Buchstabenkopf würde nicht als Leitwort zählen.
+
+### 2 · Pinyin über den Stichwörtern
+
+<Excerpt region="headwords" />
+
+`{天|tiān}` ist die Kurzform von `:ruby[天]{rt="tiān"}`, eine Lesung über einem Zeichen ([Chinesische Zeichen, Ruby und Warichu](/de/docs/document-format#chinesische-zeichen-ruby-und-warichu)). Eine Überschrift ohne eigenes Design setzt ihre Lesung; ein Überschriften-Design würde 天 allein setzen. Die Lesung übernimmt die Schrift der Überschrift, Black, sofern `cjk.ruby.fontFamily` keine andere nennt, deshalb wird die normale Song genannt. Die Hälfte von 15 pt ist 7,5 pt, und die Zeile der Überschrift von 30 pt lässt dafür Platz über dem Stichwort; die Überschrift belegt also zwei Rasterzeilen, und der Text darunter bleibt in beiden Spalten auf den Zeilen von 15 pt. Eine Pinyin-Lesung wird um die Tiefe der Unterlängen ihrer Schrift plus 0,04 em angehoben, sodass das g von tīng 0,6 pt über dem Geviert von 汀 endet.
+
+### 3 · Ein Absatz pro Eintrag
+
+<Excerpt region="senses" />
+
+Das Kangxi-Wörterbuch setzt einen Eintrag fortlaufend: erst die Lesungen der Reimwörterbücher, dann jede Bedeutung, eingeleitet mit 又. Hier wurde aus 又 eine eingekreiste Ziffer, getippt als `**②**`, und `boldColor` setzt sie im Zinnoberrot der Stichwörter; sonst gibt es im Text keinen Fettsatz. Eine Bedeutung, die das Kangxi anders liest, behält ihre eigene Lesung, wie 跳 ② mit 徒刀切. Der Setzer behandelt ① bis ⑳ als chinesische Zeichen: Eine Zeile endet nie auf einer Nummer, deren Bedeutung die nächste Zeile eröffnet, und zwischen Nummer und Text kommt kein Abstand zwischen Han- und lateinischer Schrift, daher werden die Nummern so getippt, wie sie sind. Der Spaltenausgleich ist ausgeschaltet (`headings.balancing.enabled: false`), sodass keine Spalte Raum über ihren Stichwörtern öffnet und jeder Eintrag dem vorigen im gleichen Abstand folgt.
+
+### 4 · Das Register des Buchstabens T
+
+<Excerpt region="tab" />
+
+Pinyin-Silben beginnen mit 23 der 26 Buchstaben (keine mit I, U oder V), daher wird die Höhe des Satzspiegels in 23 Stufen zu 7,13 mm geteilt, und T nimmt die 19. Das Register ist 9 mm breit und beginnt 3 mm jenseits des Endformats, sodass der Beschnitt es am Außenrand gerade abschneidet und nur die inneren Ecken ihre Rundung zeigen; eine Druckdatei mit `page.cutLines` trüge diese 3 mm in ihren Anschnitt. Der Buchstabe ist auf den 6 mm innerhalb der Seite zentriert. Alle vier Seiten liegen im T, daher bleibt das Register auf gleicher Höhe; <RecipeLink slug="dictionary-thumb-index">das Sailor’s Word-Book</RecipeLink> schiebt es von Buchstabe zu Buchstabe den Rand hinunter.
+
+### 5 · Jede Schrift lädt ihre eigenen Zeichen
+
+<Excerpt region="voices" />
+
+Fontsource teilt jede chinesische Schrift nach Zeichenbereichen in etwa hundert Dateien, und `loadCjkFonts` lädt die Dateien, die den übergebenen Text enthalten. Die normale Song erhält das ganze Beispiel, einschließlich des englischen Impressums. Die Black erhält die dreißig Stichwörter, der fette Schnitt die Bedeutungsnummern, die Hei die Stichwörter und die Ziffern der Kolumnentitel und die Kai den chinesischen Satz des Impressums. `cjkPdfProvider` bettet dieselben Dateien in das PDF ein, jede auf die Zeichen reduziert, die ihre Seiten verwenden.
+
+## Varianten
+
+### Erstes Stichwort links, letztes rechts
+
+Manche Wörterbücher setzen ein Leitwort pro Seite, das erste oben auf der linken Seite und das letzte oben auf der rechten, sodass die Doppelseite 天 … 髫 liest.
+
+```diff
+-  head('verso-guide', '{firstMark.h2}—{lastMark.h2}', 'even', SIDE + 8, GUIDE),
+-  head('recto-guide', '{firstMark.h2}—{lastMark.h2}', 'odd', SIDE + 8, GUIDE),
++  head('verso-guide', '{firstMark.h2}', 'even', SIDE + 8, GUIDE),
++  head('recto-guide', '{lastMark.h2}', 'odd', SIDE + 8, GUIDE),
+```
+
+### Pinyin mit ɑ und ɡ
+
+Chinesische Wörterbücher setzen ihr Pinyin in einer Schrift mit einstöckigem a und g. Nennen Sie Andika für die Lesungen und fügen Sie sie zu `FONTS` hinzu (`'Andika': ['400']`, mit ihrem OFL-Nachweis).
+
+```diff
+-  ruby: { fontFamily: SONG, fontSize: em(0.5), color: col('cinnabar') },
++  ruby: { fontFamily: 'Andika', fontSize: em(0.5), color: col('cinnabar') },
+```
+
+### Stichwörter in Textgröße
+
+Ein Kompaktwörterbuch setzt das Stichwort fett an den Anfang seines Absatzes. Setzen Sie die Einträge in `:::paragraphs{style="entry"}`, beginnen Sie jeden mit `**{天|tiān}**` und setzen Sie `{firstMark.entry}`: Ein Absatz, der mit einem fetten Abschnitt beginnt, markiert die Seite damit.
+
+## Häufige Fehler
+
+- Mit eingeschaltetem Spaltenausgleich endet eine Spalte, die das nächste Stichwort nicht mit zwei Zeilen seines Textes darunter aufnehmen kann (`bodyText.widowMinLines`), vorzeitig, und die übrigen Zeilen wandern über die Stichwörter, höchstens eine Zeile pro Stichwort: Ein Eintrag steht eine Zeile vom vorigen entfernt, der nächste nicht. Ausgeschaltet endet eine solche Spalte kürzer.

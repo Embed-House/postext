@@ -1,0 +1,89 @@
+---
+title: "Ein Holzdruckblatt: Doppelrahmen, Linien und Mittelsteg"
+summary: "Zhu Xis Kommentar zu den Gesprächen, gesetzt wie ein Holzdruck: ein Blatt je Doppelseite, Doppelrahmen, Linien zwischen den Spalten und der Mittelsteg im Falz."
+plain: "Ein klassisches chinesisches Buch, gesetzt wie alte Holzdrucke aussahen. Jede Seite hat einen doppelten Rahmen und dünne Linien zwischen den Spalten, und Anmerkungen laufen in kleiner Schrift innerhalb der Zeilen."
+description: "Drei Blätter von Zhu Xis Kommentar zu den Gesprächen in Postext als Holzdruck: vertikaler Text, zweizeilige Noten, Spaltenlinien und der Fischschwanz-Steg."
+question: "Wie gestalte ich ein Holzdruckblatt mit Doppelrahmen, Spaltenlinien und Mittelsteg über die Doppelseite?"
+aliases: ["Holzdruck", "Blockdruck", "fadengeheftetes Buch", "Titelseite", "chinesischer Klassiker", "Gespräche", "Lunyu", "Analekten", "Zhu Xi", "Fischschwanz", "Spaltenlinien", "Doppelrahmen", "Halbblatt", "Blattnummer", "woodblock print", "線裝書", "刻本", "內封", "版心", "魚尾", "界行", "四周雙邊", "半葉", "論語集註"]
+pageNotes: { "1": "Seite 1, die Titelseite, allein links vom Rücken: ein Doppelrahmen, durch zwei Haarlinien in drei Spalten geteilt. Die Verfasserzeile 宋 朱子 集註 am Kopf der rechten Spalte, der Titel 論語集註 in großen Kai-Zeichen durch die Mitte und am Fuß der linken Spalte drei kurze rote Spalten: die Notiz zu dieser Ausgabe. Ein zweizeiliges Impressum in kleiner grauer Schrift unter dem Rahmen.", "2": "Seite 2, die rechte Hälfte des ersten Blattes: neun Spalten in einer kräftigen äußeren und einer dünnen inneren Linie, eine Haarlinie zwischen je zwei Spalten. Von rechts: 論語卷一, die Verfasserzeile 宋 朱子 集註 tief in der zweiten Spalte, 學而第一 mit seiner Note in zwei kleinen Reihen, dann 子曰學而時習之不亦說乎 und Zhu Xis Noten, in die Spalten eingefaltet. Am linken Rand, auf dem Falz, die Hälfte des Mittelstegs: 論語集註, ein schwarzer Fischschwanz, 卷一 und die Blattnummer 一.", "3": "Seite 3, die linke Hälfte desselben Blattes, die andere Hälfte des Mittelstegs an ihrem rechten Rand, sodass die Seiten 2 und 3 nebeneinander das ganze Blatt mit dem Steg in der Mitte zeigen.", "6": "Seite 6, die rechte Hälfte des dritten Blattes. Ihre erste Spalte setzt eine Note in zwei kleinen Reihen fort, die dort abgeschnitten wurde, wo das zweite Blatt endete; die Blattnummer auf dem Falz ist 三.", "7": "Seite 7, die linke Hälfte des dritten Blattes. Der Text endet eine Spalte vor dem Rahmen." }
+---
+
+## Was Sie setzen
+
+Drei Blätter von Zhu Xis Kommentar zu den *Gesprächen* (論語集註), den Anfang des Buches 學而, gesetzt wie ein Holzdruck sie druckte, nach einer Titelseite. Jede Seite ist ein Halbblatt, 121 × 213 mm, und jede Doppelseite ist ein ganzes Blatt, von rechts gelesen: auf jeder Hälfte neun Spalten mit 17 Zeichen in Noto Serif TC zu 20 pt, ein Doppelrahmen, eine Haarlinie zwischen je zwei Spalten und auf dem Falz der Mittelsteg (版心) mit dem Titel, einem schwarzen Fischschwanz, dem Juan und der Nummer des Blattes. Zhu Xis Noten falten sich in zwei Reihen von Zeichen zu 10 pt innerhalb der Spalte ein, nach den Wörtern, die sie erklären. Der Kopfsteg ist doppelt so groß wie der Fußsteg.
+
+## Zubereitung
+
+### 1 · Ein Halbblatt je Seite, ein Blatt je Doppelseite
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Druckstock druckte ein ganzes Blatt (葉) auf einmal, seine beiden Hälften zu beiden Seiten des Mittelstegs; der Drucker faltete den Bogen entlang des Stegs, die bedruckte Seite nach außen, und nähte die offenen Kanten, sodass der Steg zum Vorderschnitt des Buches wurde. Diese Seiten liegen so, wie das Blatt vom Druckstock kam. Jede Seite ist ein Halbblatt. In einem [rechts gebundenen Buch](/de/docs/configuration-page-layout#bindung) steht Seite 1 allein links vom Rücken, und jede spätere Doppelseite paart eine gerade Seite rechts mit der ungeraden Seite danach, sodass mit dem Titel auf Seite 1 jede Doppelseite ein Blatt enthält. Das [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster) setzt das 行款 des Druckstocks, neun Spalten mit 17 Zeichen, und die Ränder, die es lässt, sind exakt: Der innere ist der halbe Steg.
+
+Postext nummeriert Seiten, nicht Blätter. Jedes Blatt beginnt mit einer Überschrift der Ebene 1, die [verborgen](/de/docs/configuration-text#überschreibungen-pro-ebene) ist: Sie druckt nichts und nimmt keinen Platz ein, aber ihr `breakBefore` mit `parity: 'even'` beginnt eine rechte Seite, und ihre Nummer, 一, 二, 三 durch `numberingTemplate: '{1:一}'`, ist `{chapterNumber}` für den Steg.
+
+### 2 · Den Text dort umbrechen, wo jedes Blatt endet
+
+Der Kopist, der einen Text für den Holzschneider abschrieb, passte ihn Blatt für Blatt dem Druckstock an. Das Markdown tut dasselbe: Die Überschrift eines Blattes steht dort, wo die neunte Spalte auf der linken Hälfte des vorigen Blattes endet, auch mitten in einem Satz oder einer Note. Eine dort abgeschnittene Note wird geschlossen und neu geöffnet, und da jede Spalte ihren eigenen Anteil an einer Note in zwei Reihen faltet, kommen die Reihen heraus wie im Original:
+
+```markdown
+子曰巧言令色鮮矣仁:warichu[巧好令善也好其言善其色致飾於]
+
+# 學而
+
+:warichu[外務以悦人則人欲肆而本心之德亡矣…]
+```
+
+Der Druckstock hat keine Satzzeichen, deshalb verschiebt keine Zeilenumbruchregel ein Zeichen, und jede Spalte endet auf ihrem 17. Zeichen: Die Blattumbrüche werden einmal gezählt und bleiben stehen. Zhu Xis Noten sind Spans [`:warichu[…]`](/de/docs/document-format#chinesische-zeichen-ruby-und-warichu) in der standardmäßigen halben Größe, 34 kleine Zeichen je Reihe, mit einem ○ zwischen Lesung und Glosse wie im Druckstock.
+
+### 3 · Den Druckstock aus den Zahlen des Rasters zeichnen
+
+<Excerpt region="frame" />
+
+Die Kopfzeile wird auf dem Bogen angelegt, deshalb werden Rahmen, Linien und Steg in Punkt von der Ecke der Seite aus platziert, mit den Zahlen, die das Raster setzen: ein [Linienelement](/de/docs/configuration-page-layout#linienelemente) alle 29 pt über den Satzspiegel, ein [Kasten](/de/docs/configuration-page-layout#kastenelemente) 4,5 pt um den Text für die dünne Linie und ein weiterer 4,5 pt weiter außen für die kräftige. Jede Zeichenspalte steht in der Mitte ihres Abstands, sodass die Linien auf halbem Weg zwischen den Spalten liegen. Der Text des Stegs wird durch [vertikale Textelemente](/de/docs/configuration-page-layout#vertikale-textelemente) die Seite hinunter gesetzt, und der Fischschwanz ist ein SVG-[Bildelement](/de/docs/configuration-page-layout#bildelemente), beide zentriert zwischen den zwei Linien des Stegs, auf dem Falz: Jede Seite zeigt 17 pt des Stegs. Jede Seite zeichnet den Text des Stegs und den Fischschwanz ganz und zeigt den Teil auf ihrer Seite, und nebeneinander treffen sich die Teile. Aus demselben Grund laufen die Rahmen über den Falz hinaus.
+
+### 4 · Der Titelseite ein eigenes Format geben
+
+<Excerpt region="title" />
+
+Die Titelseite (內封) ist eine Überschrift der Ebene 1 mit einem [Überschriftenformat](/de/docs/configuration-styles#überschriftenstile), das verborgen und unnummeriert ist, sodass die Blätter weiterhin ab 一 zählen. Ein Format bestimmt die Seiten seines Abschnitts, und sein `header` ersetzt dort den des Dokuments: Die Titelseite bekommt einen geschlossenen Rahmen, in drei Spalten geteilt, statt der Ausstattung eines Halbblatts. Verfasserzeile, die Notiz dieser Ausgabe in rotem Kai und das Impressum kommen aus den [Attributen](/de/docs/document-format#attribute-von-überschriften) der Überschrift; das Impressum ist die eine Zeile, die sich mit der Sprache der Ausgabe ändert. `\n` in einem Attribut beginnt eine neue Spalte.
+
+### 5 · Jede Schrift mit den Zeichen laden, die sie setzt
+
+<Excerpt region="voices" />
+
+Fontsource liefert jede chinesische Schrift in etwa hundert Dateien je Strichstärke. Song setzt die Blätter, den Steg und die Blattnummern, deshalb bekommt ihr Aufruf das Beispiel und diese Zeichen; Kai setzt nur den Titel und die Notiz. Der Druckstock hat keine Satzzeichen, deshalb braucht keine der beiden Schriften die vertikalen Formen von `loadCjkFonts(…, { vertical: true })`.
+
+### 6 · Eine Farbe auf warmem Papier
+
+<Excerpt region="palette" />
+
+Der Text und die Linien des Druckstocks drucken in einem warmen Schwarz, 14 : 1 auf dem Papier. Sie bleiben trotzdem zwei Paletteneinträge, `ink` und `rule`, sodass die Linien ihre Farbe wechseln können, ohne dass der Text sie wechselt. Das Rot bleibt dem vorbehalten, was diese Ausgabe ergänzt.
+
+## Varianten
+
+### Die Spalten rot linieren
+
+Die Abschriften für das 四庫全書 wurden auf rot liniertes Papier geschrieben (朱絲欄). Ändern Sie die Linienfarbe; der Fischschwanz folgt ihr.
+
+```diff
+-  rule: '#1f1b17', // the frame, the column rules and the fish tail: the same block, same ink
++  rule: '#b3412e', // 朱絲欄: red rules under black text
+```
+
+### Einen anderen Druckstock schneiden
+
+Druckstöcke gab es in vielen Aufteilungen, und 半葉十行，行二十字 ist eine der häufigsten. Rahmen, Steg, die drei Felder der Titelseite und der Einzug der Verfasserzeile werden alle aus diesen Zahlen berechnet, sie folgen also; die Blattumbrüche im Markdown müssen neu gezählt werden.
+
+```diff
+-const [BODY, PITCH, CHARS, LINES] = [20, 29, 17, 9];
++const [BODY, PITCH, CHARS, LINES] = [17, 24.5, 20, 10];
+```
+
+### Mit einer europäischen Seite auf einem Raster vergleichen
+
+<RecipeLink slug="baseline-grid-book-page">Eine Buchseite auf dem Grundlinienraster</RecipeLink> baut ihren Satzspiegel aus einer Zahl von Zeilen, so wie dieses Blatt seinen aus Spalten und Zeichen baut; <RecipeLink slug="certificate-single-page">die Urkunde</RecipeLink> zeichnet ihren Rahmen in der Kopfzeile eines Überschriftenformats, wie es hier die Titelseite tut.
+
+## Häufige Fehler
+
+- Die Blattumbrüche stehen im Markdown. Ändern Sie Text, Größe oder 行款, und ein Blatt, das überläuft, schiebt die nächste Überschrift eine Seite weiter, sodass die Doppelseiten nicht mehr zu den Blättern passen; eines, das zu kurz ist, lässt leere Spalten vor dem Falz. Prüfen Sie die letzte Spalte jeder linken Seite.
+- Die Transkription des 四庫全書 tippt 巳 gleichermaßen für 已 und 己; dieses Beispiel liest jedes aus seinem Satz. Die Seite bittet weiterhin darum, gegen die Scans Korrektur gelesen zu werden, und das merkt man: die Bemerkung von 張敬夫 lautet 必開其政, wo die *Gespräche*, die er wiederholt, 必聞其政 haben, und zwei Zeichen kommen als Bilder der Glyphe. Das Beispiel setzt 聞, 傳 und 邦. Prüfen Sie eine Passage gegen eine zweite Ausgabe, bevor Sie sie setzen.
+- Dieselbe Transkription enthält Formen, für die Noto Serif TC keine Glyphe hat (廹 徳 絶 逺 専 内). Fünf davon fallen in den Bereich einer Fontsource-Datei, deshalb lässt `loadCjkFonts` sie durch, und dann zeichnet der Canvas sie aus einer Systemschrift, und postext-pdf druckt ein leeres Kästchen und warnt. 廹 fällt in den Bereich keiner Datei, und `loadCjkFonts` bricht mit einem Fehler ab. Das Beispiel setzt 迫 德 絕 遠 專 內.

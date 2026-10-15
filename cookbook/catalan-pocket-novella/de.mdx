@@ -1,0 +1,79 @@
+---
+title: "Eine katalanische Novelle, getrennt nach den Regeln des IEC"
+summary: "Narcís Ollers El transplantat vollständig als Taschenbuch von 32 Seiten: katalanische Silben nach dem IEC, l·l getrennt als il- | lusió, ein Stich pro Kapitel."
+plain: "Ein ganzer kurzer Roman auf Katalanisch, gesetzt als kleines Taschenbuch. Wörter werden am Zeilenende so getrennt, wie es katalanische Stilregeln verlangen, auch das doppelte l mit Punkt."
+description: "Ollers El transplantat (Text von 1928) als Taschenbuch 12 × 18,5 cm: locale 'ca', Trennung nach IEC, l·l getrennt als il- | lusió, Kapitelauftakte mit Stich."
+question: "Wie trenne ich Katalanisch richtig, mit l·l, Apostrophen und per Bindestrich angehängten Pronomen?"
+aliases: ["Katalanisch", "català", "katalanische Silbentrennung", "ela geminada", "l·l", "punt volat", "Mittelpunkt", "IEC", "Institut d’Estudis Catalans", "enklitische Pronomen", "Narcís Oller", "Taschenbuch", "vollständige Novelle", "Frontispiz", "Kupferstich"]
+pageNotes: { "2": "Das Frontispiz: ein Stich eines stämmigen Bäckers in weißer Schürze an der Tür seiner Dorfbäckerei, hinter ihm das Feuer des Ofens; darunter „EL FORNER DE LES MONGES“ in Kapitälchen.", "3": "Die Titelseite: „NARCÍS OLLER“ in Kapitälchen, „El transplantat“ in großer roter Kursive, darunter „De «Croquis del natural»“ und eine kurze rote Linie.", "27": "Eine Textseite aus Kapitel IV. Auf halber Höhe endet eine Zeile auf „titil-“, und die nächste beginnt mit „laven“: Der Mittelpunkt von „titil·laven“ weicht dem Trennstrich." }
+---
+
+## Was Sie setzen
+
+Narcís Ollers *El transplantat* vollständig, im Text seiner *Obres completes* (Barcelona, 1928), als Taschenbuch von 12 × 18,5 cm und 32 Seiten. Schmutztitel, ein Frontispiz mit dem Bäcker an seinem Ofen, eine Titelseite in roter kursiver Cormorant Garamond und eine Anmerkung zur Ausgabe gehen den vier Kapiteln voraus. Jedes Kapitel beginnt unter einem zwölf Zeilen hohen Stich mit seiner römischen Zahl in Rot. Der Text, Gentium Book Plus zu 9,85 pt, trennt nach katalanischen Silben, wie es das Institut d’Estudis Catalans verlangt: mindestens zwei Buchstaben auf jeder Seite, keine Trennung zwischen Vokalen im Hiat, keine direkt nach einem Apostroph, und *titil·laven* trennt als *titil-* | *laven*, wobei der Trennstrich den Platz des Mittelpunkts einnimmt. Dialoge stehen mit Geviertstrichen, Zitate in «cometes baixes».
+
+## Zubereitung
+
+### 1 · Katalanisch über seinen Code
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `locale: 'ca'` wählt die katalanischen Trennmuster, und seit postext 1.14 folgen sie dem *Llibre d’estil* des IEC ([unterstützte Sprachen](/de/docs/justification#unterstützte-sprachen)). Es sind die Muster, die TeX verwendet, mit mindestens zwei Buchstaben auf jeder Seite einer Trennung statt der drei, mit denen das npm-Paket ausgeliefert wird, sodass *ter-ra*, *cai-xa* und *plu-ja* getrennt werden können. Vokale im Hiat bleiben zusammen (*cièn-cia*, *ca-mions*), aber ein *i* zwischen Vokalen eröffnet seine Silbe (*fe-ia*). Die *ela geminada* trennt zwischen ihren beiden *l*: Die Zeile endet auf *titil-*, die nächste beginnt mit *laven*, auf keiner Seite steht ein Mittelpunkt, und Knuth-Plass misst die Zeile ohne den Punkt.
+
+<PageShot page={27} crop="0.06,0.495,0.88,0.085" caption="Seite 27: titil·laven am Zeilenende, gesetzt als titil- | laven. Es ist das einzige l·l, das auf diesen 32 Seiten an ein Zeilenende fällt." />
+
+`compounds: false` hält ein Verb und sein Pronomen ganz, bis auf ihren eigenen Bindestrich (*arrossegar-* | *se*), was das IEC bevorzugt ([Silbentrennung](/de/docs/configuration-text#silbentrennung)). Das kostet eine zu lockere Zeile: Auf Seite 7 öffnet die Zeile vor *d’inaugurar-se* ihre Wortabstände auf das 1,88-Fache, obwohl `maxJustifyTracking: 10` den Überschuss auf den anderen Zeilen aufnimmt.
+
+### 2 · Eine Taschenbuchseite aus ganzen Zeilen
+
+<Excerpt region="page" />
+
+Der Fußsteg ergibt sich aus Endformat, Kopfsteg und `LINES`, sodass der Satzspiegel 29 Zeilen zu 14 pt fasst und jede volle Seite auf derselben Grundlinie endet. Die Satzbreite von 89 mm fasst etwa 63 Zeichen der Gentium Book Plus. `mirror: true` hält den 16-mm-Steg auf beiden Seiten einer Doppelseite am Bund ([gespiegelte Ränder](/de/docs/configuration-page-layout#gespiegelte-ränder)).
+
+### 3 · Ein Auftakt für vier Kapitel
+
+<Excerpt region="opener" />
+
+`resourceId: '{attr.art}'` zeichnet das Bild, das die Überschrift nennt, sodass `# II {style="capitol" art="cap2"}` Kapitel II unter seinem eigenen Stich eröffnet, mit demselben Format wie die anderen ([Überschriftenattribute](/de/docs/document-format#attribute-von-überschriften)). `minHeight` hält sechzehn Zeilen frei, zwölf für das Bild und vier für die Zahl und ihre Linie, sodass der Text auf der siebzehnten Zeile der Seite beginnt, in jedem Kapitel gleich.
+
+### 4 · Vier Seiten vor Kapitel I
+
+<Excerpt region="front" />
+
+Jedes Stück der Titelei ist eine Überschrift der Ebene 1 mit eigenem Format: `# El transplantat {style="portada"}` druckt Autor und Untertitel aus dem Frontmatter und die Überschrift als Titel. Jedes Format wiederholt seinen Seitenumbruch, da ein Format den seiner Ebene erbt, und leert Kopf- und Fußzeile, sodass diese Seiten weder Kolumnentitel noch Pagina tragen. Das Frontispiz fällt auf Seite 2, eine linke Seite, und steht so der Titelseite über die Doppelseite gegenüber.
+
+### 5 · Der Autor links, der Titel rechts
+
+<Excerpt region="heads" />
+
+`parity` setzt den Autor auf die linken und den Titel auf die rechten Seiten; `pages: 'body'` hält beide von den Kapitelauftakten fern, wo eine Pagina am Fuß mit `pages: 'opener'` ihren Platz einnimmt. `SHIFT` rückt jeden Kolumnentitel auf die Mitte des Satzspiegels, einen halben Millimeter neben der Seitenmitte, weil die beiden Stege verschieden sind.
+
+### 6 · Fünf Stiche, keine Beschriftungen
+
+<Excerpt region="pictures" />
+
+Die Bilder gehören zu einem Ressourcentyp mit leerem `captionPrefix`, sodass nichts sie nummeriert oder beschriftet. Jedes wird in seiner Pixelgröße deklariert und vor dem Build unter seiner Datei-ID geladen. Ihr Weiß wurde vor dem Speichern auf das Creme der Seite und ihr Schwarz auf deren Druckfarbe abgebildet, sodass sie als Teil der Seite drucken und nicht wie aufgeklebte Fotografien.
+
+## Varianten
+
+### Auch Pronomen trennen lassen
+
+Mit dem Standardwert `compounds: true` trennt *d’inaugurar-se* innerhalb des Verbs, als *d’i-* | *naugurar-se*, und Seite 7 verliert ihre zu lockere Zeile: Keine Zeile des Buches öffnet sich über das 1,6-Fache hinaus. Die Trennung `titil-` | `laven` bleibt auf Seite 27. Der Preis ist ein einzelnes *i* nach dem Apostroph am Zeilenende.
+
+```diff
+-  hyphenation: { compounds: false },
++  hyphenation: { compounds: true },
+```
+
+### Jedes Kapitel auf einer rechten Seite beginnen
+
+`parity: 'odd'` fügt vor einem Kapitel, das auf einer linken Seite beginnen würde, eine Vakatseite ein, wie in einer großzügigeren Ausgabe. Kapitel IV, das auf Seite 26 beginnt, rückt hinter einer Vakatseite auf Seite 27.
+
+```diff
+-  breakBefore: { enabled: true, parity: 'any' }, // a chapter opens on the next page, either side
++  breakBefore: { enabled: true, parity: 'odd' },
+```
+
+## Häufige Fehler
+
+- Prüfen Sie *l·l* in einer Textschrift, bevor Sie sich für sie entscheiden. Ab postext 1.30 ist die `locale` des Dokuments auch die Sprache, in der sein Text geformt wird (bis 1.29 war das die Sprache der Seite, die das Buch anzeigte), und jede Schrift antwortet auf Katalanisch auf ihre eigene Weise. Gentium Book Plus hat für alle Sprachen einen Mittelpunkt, 0,17 em zwischen den beiden *l*. Crimson Pro, in der dieses Buch bis 1.29 gesetzt war, verbreitert den Punkt im Katalanischen auf 0,59 em und reißt in *intel·ligent* eine Lücke. Alegreya und Literata zeichnen einen engeren Punkt nur dort, wo beide *l* sie in einem Stück erreichen, sodass *il·lustrats* in einem Absatz mit Kursiven anders ausfällt als in einem ohne.
+- Kopieren Sie den Text aus Viquitexts mit seinen Kursiven: Oller kennzeichnet *tentu*, *Ensanxe* und *palacio* als umgangssprachlich oder spanisch, und ein Export als reiner Text verliert sie. Prüfen Sie zweifelhafte Wörter am Scan des Bandes von 1928: Sechsmal hat die Transkription *tom-*, wo das Verb *tornar* lautet (*tomà*, *tomaré*, *tomar*), und einmal *jom* für *jorn*.
+- Mit 6.800 Wörtern machen die fünf Inhaltsdateien und das Kit das zusammengesetzte Skript etwa 69 KB groß. Ein ganzes Buch ist das größte Beispiel, das ein Pen tragen kann; ein längeres Werk gehört in ein Paket im Format `.postext`.

@@ -1,0 +1,70 @@
+---
+title: "Ein Lehrbuchregister, das dem Text folgt"
+summary: "Begriffe, markiert, wo der Text sie behandelt, von :::index zweispaltig gedruckt mit den Seiten, die buildBundle findet, mit Bereichen und Verweisen."
+plain: "Zwei Kapitel eines Physiologielehrbuchs mit einem Register am Ende. Die Wörter sind im Text markiert, und das Buch findet ihre Seitenzahlen selbst, keine wird von Hand getippt."
+description: "Zwei Kapitel eines Physiologielehrbuchs mit Register, gesetzt mit Postext: Marken im Text, Hauptseiten, Bereiche, siehe und siehe auch, zwei Spalten."
+question: "Wie baue ich ein Register, dessen Seitenzahlen dem Text folgen, wohin er sich auch verschiebt?"
+aliases: ["Register", "Stichwortverzeichnis", "Sachregister", "Index am Buchende", "siehe auch", "Seitenbereiche", "Chicago-Seitenbereiche", "back-of-book index", "índice analítico", ":::index"]
+pageNotes: { "9": "Das Register beginnt auf Seite 305 unter demselben roten Band wie die Kapitel: Buchstabenköpfe in der Akzentfarbe, Untereinträge um ein Geviert eingezogen, Hauptseiten fett und Querverweise kursiv.", "10": "Das Register läuft auf Seite 306 weiter, wo eine auf Seite 305 begonnene Liste von Untereinträgen am Kopf der ersten Spalte fortgesetzt wird, und das Impressum gleitet an den Fuß der Seite." }
+---
+
+## Was Sie setzen
+
+Teil IV von *Principles of Human Physiology*, ein Lehrbuch im Format 210 × 277 mm: Kapitel 14, *The heart as a pump*, und Kapitel 15, *Vessels and blood pressure*, beginnen auf rechten Seiten unter einem roten Band und setzen ihre klinischen Hinweise und Bildunterschriften in eine äußere Randspalte. Der Teil schließt mit einem Register von rund neunzig Einträgen und dreißig Untereinträgen in zwei Spalten, so wie ein medizinisches Lehrbuch es setzt: Einträge in Kleinbuchstaben, Buchstabenköpfe in der Akzentfarbe, Untereinträge um ein Geviert eingezogen, die definierende Seite fett, *see* und *see also* kursiv. Keine Seitenzahl darin wurde getippt. Jeder Begriff ist in dem Kapitel markiert, in dem der Text ihn erklärt, und das Register liest die Seiten, auf denen diese Marken gelandet sind, die Paginas 297 bis 304.
+
+## Zubereitung
+
+### 1 · Die Passage markieren, nicht das Wort
+
+<Excerpt region="answer" />
+
+Wer ein Register anlegt, markiert die Stellen, an denen ein Begriff erklärt wird, nicht jede Stelle, an der das Wort vorkommt. Die beiden Kapitel verwenden „stroke volume“ zwölfmal, und das Register schickt den Leser an zwei Stellen: auf Seite 298, wo der Begriff definiert wird, und auf 299–300, wo der Text erklärt, was ihn reguliert. Eine sichtbare Marke, `:index[cardiac output]{main}`, druckt ihre Wörter und legt sie ab. Eine unsichtbare, `mitral:index{term="heart!valves!mitral"}`, druckt nichts und übernimmt die Seite des Wortes davor; so legt die Passage über die vier Klappen „mitral“, „tricuspid“, „aortic“ und „pulmonary“ unter „heart“ ab, ohne den Satz umzuformulieren. Das `!` trennt die Ebenen, „heart“ bekommt also drei: valves und darunter jede einzelne Klappe. Eine Marke wirkt auch in einer Überschrift (die Bereiche von 14.1 und 15.6 beginnen dort) und in einem Kasten („heart failure“ wird in der Randnotiz auf Seite 300 definiert).
+
+### 2 · Hauptseiten, Bereiche und Querverweise
+
+<Excerpt region="answer" />
+
+`main` setzt die Seite, die einen Begriff definiert, fett, sodass eine Studentin, die „preload“ nachschlägt, zuerst auf Seite 299 geht. `range="start"` und `range="end"` mit demselben Begriff begrenzen eine Erörterung, die über einen Seitenumbruch läuft: „stroke volume, regulation, 299–300“, „baroreceptor reflex, 303–4“. Ein `main` am Anfang macht den ganzen Bereich fett. Eine innerhalb ihres eigenen Bereichs erneut markierte Seite geht in ihm auf, und ein `main` dort macht den Bereich fett. `see` tritt an die Stelle der Seitenzahlen („inotropy. See contractility“), und `seealso` folgt ihnen („heart failure, 300. See also ejection fraction“). Ein Ziel mit Ebenen wird mit `!` geschrieben und mit Doppelpunkt gedruckt: „See blood pressure: mean arterial“.
+
+### 3 · Ein Registerkapitel in zwei Spalten
+
+<Excerpt region="answer" />
+
+Das Register ist das letzte Markdown-Dokument des Buches, `# Index {style="index"}` gefolgt von `:::index`. Das Überschriftenformat tauscht die anderthalb Spalten der Kapitel gegen zwei Spalten mit 6 mm Abstand, nur in seinem eigenen Abschnitt, und gibt dem Register einen eigenen Auftakt und Kolumnentitel. Das Register steht in der Textschrift in 8,6/11,4 pt, ein Geviert pro Unterebene, und eine Folgezeile hängt um zwei Geviert ein, sodass eine umbrochene Zeile nie auf der Flucht eines Untereintrags steht. `rangeFormat: 'chicago'` lässt die Ziffern weg, die ein Bereich wiederholt („303–4“, aber „299–300“). Die spanische Ausgabe schreibt Bereiche vollständig mit Bindestrich („303-304“), wie es in spanischen Büchern üblich ist.
+
+### 4 · Warum die Zahlen dem Text folgen
+
+<Excerpt region="build" />
+
+`buildBundle` setzt die Kapitel der Reihe nach und stellt fest, dass das dritte `:::index` enthält. Nach dem ersten Durchgang sammelt es jede Marke jedes Kapitels mit der Seite, auf der sie gelandet ist, und übergibt diese Liste dem Registerkapitel als Gliederung. Dann setzt es das Buch erneut, bis zu drei Durchgänge, bis sich keine Seitenzahl mehr bewegt. Schreiben Sie einen Absatz von Kapitel 14 um, ändern Sie das Format oder die Grundschriftgröße, und das Register wird mit den neuen Seiten neu gedruckt. Im PDF verlinkt jede Seitenzahl auf ihre Seite.
+
+### 5 · Auftakte und Kolumnentitel
+
+<Excerpt region="opener" />
+
+Die Kapitel und das Register teilen sich einen Auftakt: ein Band vom Seitenrand bis 62 mm (46 mm beim Register), der Titel auf seinem Fuß gesetzt von einem unten ausgerichteten Kasten, sodass ein zweizeiliger und ein einzeiliger Titel auf derselben Zeile enden. Die Dachzeile druckt `{chapterNumber}`, das das Überschriftenattribut `{startAt=14}` auf 14 setzt, und `page.pageNumbering.startAt: 297` stellt den Teil dorthin, wo er im Buch stünde. Das Registerformat ist `numbered: false`, damit es nicht zu Kapitel 16 wird.
+
+## Varianten
+
+### Jeden Bereich vollständig schreiben
+
+Manche Hausstile drucken beide Zahlen eines Bereichs vollständig.
+
+```diff
+-  rangeFormat: t({ en: 'chicago', es: 'full' }), rangeSeparator: t({ en: '–', es: '-' }),
++  rangeFormat: 'full', rangeSeparator: t({ en: '–', es: '-' }),
+```
+
+### Ein Register ohne Buchstabenköpfe
+
+Ein kurzes Register lässt seine Gruppen oft ineinanderlaufen, nur durch eine Leerzeile getrennt.
+
+```diff
+-  groups: { ...label, fontSize: pt(9.5), letterSpacing: pt(0), color: col('accent') },
++  groups: { enabled: false },
+```
+
+## Häufige Fehler
+
+- Die Erfassung dieses Rezepts meldet kein `indexSeeUnknown`: Ein Querverweis, dessen Ziel anders geschrieben ist als der Eintrag („Reynolds number“ gegenüber „number, Reynolds“), wird ohne Beanstandung gedruckt. Lesen Sie im fertigen Register jedes „See“ gegen sein Ziel.
+- Eine Liste von Untereinträgen, die über Spalten umbricht, wiederholt ihren Haupteintrag nicht als Zeile „heart (cont.)“; ein Eintrag ohne eigene Seite bleibt immer bei seinem ersten Untereintrag, sodass ein Eintrag nie allein am Ende einer Spalte steht.

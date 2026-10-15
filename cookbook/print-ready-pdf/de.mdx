@@ -1,0 +1,73 @@
+---
+title: "Druckfertiges PDF: Anschnitt, Schnittmarken und PDF/X"
+summary: "Ein Ausstellungsfaltblatt mit 3 mm Anschnitt und Schnittmarken, exportiert als PDF/X-4 auf FOGRA51, mit Druckvorlagen und sauberem Preflight."
+plain: "Ein Faltblatt für eine Kartenausstellung, bereit für die Druckerei. Es zeigt, wie man zusätzlichen Raum über den Seitenrand hinaus und Schnittmarken anlegt und ein PDF in den Farben der Druckmaschinen speichert."
+description: "Ein vierseitiges Postext-Faltblatt mit 3 mm Anschnitt und Schnittmarken, exportiert als PDF/X-4 auf FOGRA51 mit Schriften, Lesezeichen und Druckvorlagen."
+question: "Wie exportiere ich druckfertiges PDF/X mit Anschnitt, Schnittmarken, ICC-Profil, Lesezeichen und Seitenlabels?"
+aliases: ["druckfertiges PDF", "Anschnitt", "Schnittmarken", "Beschnittmarken", "CMYK", "Druckvorlage", "Druckvorstufe", "Ausstellungsfaltblatt", "Saalblatt", "Ausstellungsführer", "Graustufenproof", "Daumenregister", "PDF/X-4", "FOGRA51", "PSO Coated v3", "Output Intent", "Preflight", "Tiefschwarz", "Überdrucken", "print-ready PDF"]
+pageNotes: { "1": "Der Umschlag, gezeigt mit seinen 3 mm Anschnitt und den Schnittmarken an den Ecken: ein dunkelgrünes Meer mit Inseln in abgestuften Grüntönen, eine gestrichelte orange Route mit vier Stationen, die über das Endformat hinaus in den Anschnitt läuft, der Titel in Space Grotesk zu 50 pt und am Fuß Daten und Ort.", "2": "Die erste Innenseite: der Vorspann, die Säle 1 und 2 unter ihren Wegpunkt-Dachzeilen mit je einem Objektschild danach und ein oranger Reiter mit der Pagina 2 am linken Rand.", "3": "Die Säle 3 und 4, auf gleicher Höhe wie Seite 2 endend, und der Reiter mit der Pagina 3 am rechten Rand.", "4": "Die Rückseite: praktische Hinweise, der Grundriss (Abbildung 1) mit der orangen Route vom Vestibül durch die Säle 1 bis 4 und ein Band aus grünem Relief, das an drei Seiten randabfallend ist, mit Ort, Daten und Impressum." }
+---
+
+## Was Sie setzen
+
+Das Saalblatt für *Cartografías imaginarias*, eine erfundene Ausstellung mit Karten erfundener Orte, so wie es in die Druckerei geht, in beiden Ausgaben dieser Seite auf Spanisch. Jede Seite von 170 × 227 mm liegt auf einem um 22 mm größeren Bogen, der Anschnitt und Schnittmarken trägt. Auf dem Umschlag kreuzt eine orange Route einen Archipel in abgestuften Grüntönen und läuft über das Endformat hinaus in den Anschnitt. Innen öffnen sich vier Säle in Karla im Flattersatz unter Wegpunkt-Dachzeilen, und ein oranger Reiter trägt die Pagina über den Außenrand hinaus; die Rückseite setzt einen Grundriss über ein Band aus Relief. Der Pen exportiert die Druckdatei, ein PDF/X-4, separiert für FOGRA51 (die Bedingung PSO Coated v3 des gestrichenen Papiers mit 150 g), mit Schriften, Lesezeichen und Seitenlabels, dazu einen Graustufenproof, und führt den Preflight am Layout aus, bevor er sie anbietet. In der Druckdatei kommen die Karten und der Grundriss aus Druckvorlagen in handverlesenen Farbaufbauten, und Schrift, Reiter und Wegpunktringe verwenden dieselben Farben über eine in CMYK angelegte Palette.
+
+## Zubereitung
+
+### 1 · Bildschirmfarben nach ihren Druckplatten wählen
+
+<Excerpt region="palette" />
+
+`print: { standard: 'pdfx4', outputProfile: 'fogra51' }` in der Konfiguration separiert jede Farbe über das FOGRA51-Profil, das mit postext ausgeliefert wird. Neutrale Grautöne drucken allein auf der Schwarzplatte, ihr K so gewählt, dass der Ton passt: `#161616` wird zu K95 und das `#666666` der Kolumnentitel zu K66, und Text in 100 % K überdruckt. Das Profil druckte das Waldgrün als C90 M43 Y71 K62 und das Orange als C0 M70 Y90 K0, eine Nuance neben der Route der Druckvorlagen (Schritt 5), deshalb sind diese beiden, das Salbeigrün und die Papierfarbe in CMYK angelegt: `ColorValue.cmyk` enthält den Farbaufbau, der Hexwert bleibt für den Bildschirm, und jede mit der Palette verknüpfte Verwendung druckt den Aufbau so, wie er notiert ist. Die Papierfarbe ist C0 M0 Y0 K0: Schrift, die aus dem Waldgrün ausgespart ist, druckt keine Farbe, sodass keine Platte sie verschieben kann.
+
+### 2 · Ein Daumenregister, das die Schneidemaschine übersteht
+
+<Excerpt region="tab" />
+
+Der Kasten des Reiters hängt am Rahmen des Anschnitts und ist um `BLEED` breiter als der fertige Reiter, sodass ein Schnitt, der einen Millimeter außerhalb des Endformats landet, am Rand trotzdem Orange lässt; die Pagina hängt am Rahmen der Seite, also am Endformat, und zentriert sich auf den verbleibenden 10 mm. `parity` wählt die Seiten, auf denen ein Element erscheint, und `edge` wechselt mit, um den Außenrand zu erreichen, während `pages: 'body'` den Reiter und die Kolumnentitel (`{title}` und `{subtitle}` aus dem Frontmatter) von beiden Umschlagseiten fernhält, die als Auftaktseiten zählen, weil jede mit einer Überschrift beginnt, die über die ganze Seitenbreite reicht oder auf eine neue Seite umbricht. Jedes Element der Kopf- oder Fußzeile wiederholt sich auf diese Weise, sodass ein `image` mit `parity` und `pages` ein Wasserzeichen oder ein Schmuckbild auf jede Seite setzt; Plätze malen über den Text, und eine Tönung dahinter gehört in `page.backgroundColor`.
+
+### 3 · Bilder bis in den Anschnitt, Schrift innerhalb des Endformats
+
+<Excerpt region="covers" />
+
+`cutLines` fügt an jeder Kante der Seite Anschnitt, Markenabstand und die 5-mm-Marke hinzu, hier 11 mm. Der Abstand beträgt standardmäßig 3 mm, so viel wie dieser Anschnitt, deshalb beginnen die Marken an der Kante des Anschnitts und laufen nach außen; bei einem breiteren Anschnitt begännen sie weiterhin an seiner Kante, nie innerhalb. Ein Bildelement, das mit `width: 'fill'` am Anschnitt verankert ist, nimmt die Breite dieses Rahmens an und behält seine eigenen Proportionen: Die Umschlagkarte ist in 176 × 233 mm gezeichnet, dem Endformat plus 3 mm je Seite, sodass sie die Kante des Anschnitts erreicht, wo die Schnittmarken beginnen, während die Schrift am Textbereich hängt, deutlich innerhalb des Endformats. Die Rückseite ist ein Überschriftenformat, dessen Fußzeile die des Dokuments ersetzt, mit einem Band aus demselben Generator, verankert am Fuß des Anschnitts, und einem unteren Rand, der den Text 8 mm darüber enden lässt.
+
+### 4 · Überschriften, die zu Lesezeichen werden
+
+<Excerpt region="levels" />
+
+`renderToPdf` baut die Lesezeichen aus den Überschriften, deshalb ist jeder Saal eine Überschrift der Ebene 1, die ohne Seitenumbruch folgt, und `numberingTemplate` gibt der Dachzeile ihre `{number}` und dem Lesezeichen sein Präfix: Das PDF listet den Umschlag, „Sala 1 Una isla en ninguna parte“ bis „Sala 4 La isla del tesoro“ und die praktischen Hinweise. Eine gestaltete Überschrift verbirgt ihren eigenen Text, behält ihn aber für Lesezeichen und Tags; ohne `fontFamily` wird dieser verborgene Text in Open Sans 700 gesetzt, die die Seiten laden und das PDF allein für diesen Text einbetten würde. Die Seitenlabels folgen `page.pageNumbering`, auf dem Standardwert belassen, dezimal ab 1, sodass Seite 3 in einem PDF-Betrachter die Seite ist, deren Reiter 3 zeigt.
+
+### 5 · Druckvorlagen in exakten Farben
+
+<Excerpt region="master" />
+
+Jede Zeichnung ist einmal definiert, als Pfade. Die Region „art“ macht daraus das SVG, das der Canvas malt, und diese Region schreibt dieselben Pfade in ein einseitiges CMYK-PDF mit Farbaufbauten, die so gewählt sind, dass ein Proof dem Bildschirm entspricht, was das Meer auf C100 M45 Y80 K55 setzt, das Waldgrün der Palette. Jede Ressource nennt ihre Druckvorlage in `svg.pdfFileId`; `renderToPdf` fragt nach dieser ID, `pressPdf()` in der kurzen Antwort antwortet mit den Bytes der Druckvorlage, und postext-pdf bettet diese Seite unverändert ein, als Vektoren in den eigenen Farben der Vorlage. Das gilt für den Grundriss, eine Abbildung, und für die Umschlagkarte und das Band der Rückseite, die Gestaltungsbilder sind. Der Graustufenproof bekommt stattdessen die SVGs, weil eine eingebettete Druckvorlage nie umgerechnet wird und farbig bliebe.
+
+## Varianten
+
+### 5 mm Anschnitt verlangen
+
+Bilder, Reiter und Maßstabsleiste sind aus `BLEED` bemessen, und die Schnittmarken beginnen an der Kante des Anschnitts, sodass eine Druckerei, die 5 mm verlangt, nur diese Änderung braucht, und jeder Bogen wächst auf 196 × 253 mm.
+
+```diff
+-const BLEED = 3; // mm of artwork past the trim: the cover, the tab and the back band reach it
++const BLEED = 5; // mm of artwork past the trim: the cover, the tab and the back band reach it
+```
+
+### Die Bilder aus ihren SVGs drucken
+
+Ohne `pdfFileId` zeichnet die Druckdatei jedes Bild aus seinem SVG, weiterhin als Vektoren und über das Profil: Das in CMYK angelegte Waldgrün behält C100 M45 Y80 K55, während die anderen Grüntöne der Inseln die Separationen des Profils statt der handverlesenen erhalten.
+
+```diff
+-  updatedAt: 0, ...extra, svg: { fileId: `${id}.svg`, pdfFileId: `${id}.pdf`,
++  updatedAt: 0, ...extra, svg: { fileId: `${id}.svg`,
+```
+
+## Häufige Fehler
+
+- Ein PDF/X-Standard schreibt immer CMYK, egal was `colorSpace` sagt, deshalb überschreibt der Graustufenproof `print` mit `{ standard: 'none' }` neben `colorSpace: 'grayscale'`.
+- Ein PDF/X-Rendering schlägt ohne sein Ausgabeprofil fehl. `renderToPdf` holt `fogra51.icc` von `profileBaseUrl` (hier `/icc/` von postext.dev); übergeben Sie die Bytes der Datei als `outputProfile`, um sie selbst bereitzustellen.
+- Der Preflight markiert Text unter 9 pt, der in mehr als einer Farbe gesetzt ist. Die fetten Beschriftungen zu 7,5 pt in Waldgrün halten auf gestrichenem Papier in vier Farben, deshalb ist `print.preflight.smallTextSize` 7 pt; das Impressum zu 6,3 pt, das in Salbeigrün drei Farben auf einem vierfarbigen Band wäre, ist stattdessen papierfarben ausgespart.
+- Eine PDF/X-Datei trägt keine Link-Annotationen, da eine Datei für die Druckmaschine sie nicht in ihrer Bleed-Box haben darf; die Lesezeichen bleiben.
+- Nach dem Bauen wird jede Schaltfläche zu einem Link „Open the PDF ↗“ und einem Download-Link, und nur die Download-Links tragen die Dateinamen.

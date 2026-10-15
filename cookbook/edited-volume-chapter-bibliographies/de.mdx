@@ -1,0 +1,74 @@
+---
+title: "Ein Sammelband mit Literaturliste pro Kapitel"
+summary: "Drei Aufsätze von drei Beiträgern, jeder ein eigenes Dokument in buildBundle, jeder mit einer Liste nach Chicago-Autor-Jahr nur der Werke, die er zitiert."
+plain: "Ein Band mit Aufsätzen verschiedener Autoren. Jeder Aufsatz nennt seinen Autor unter dem Titel und endet mit einer eigenen Literaturliste, wie es Sammelbände tun."
+description: "Ein Sammelband in Postext: Kapitel in buildBundle, Autorenzeilen aus Überschriftenattributen und eine Literaturliste pro Kapitel nach Chicago-Autor-Jahr."
+question: "Wie gebe ich jedem Kapitel eines Sammelbands eine eigene Autorenzeile und eine eigene Literaturliste?"
+aliases: ["Sammelband", "Aufsatzsammlung", "Tagungsband", "Beiträge", "Literatur pro Kapitel", "Kapitelbibliografie", "Chicago-Autor-Jahr", "Autorenzeile", "edited volume", "byline"]
+pageNotes: { "1": "Seite 1: das Titelblatt, ein Feld in Druckerrot über die oberen zwei Drittel mit „The Working Page“ in großer weißer Caslon und dem Untertitel kursiv; darunter die Herausgeber in roten Versalien und die drei Beiträger kursiv.", "2": "Seite 2: das Inhaltsverzeichnis, drei nummerierte Aufsätze mit Punktlinien und Seitenzahlen, jeder mit dem Namen seines Beiträgers in grauer Kursive unter dem Titel.", "5": "Seite 5: das Ende von Kapitel 1 und seine Liste „References“ mit vier Werken, darunter Eisenstein 1979 und Gaskell 1972.", "8": "Seite 8: das Ende von Kapitel 2 und seine eigene Liste „References“, die Eisenstein 1979 wiederholt, weil auch dieses Kapitel das Werk zitiert." }
+---
+
+## Was Sie setzen
+
+*The Working Page*, eine kleine Aufsatzsammlung zur Geschichte des Buchdrucks, herausgegeben von zwei Wissenschaftlern und geschrieben von dreien. Jeder Aufsatz kommt von seinem Beiträger als Markdown-Datei mit einem eigenen BibTeX-Block, und so behält ihn das Buch: ein Band im Format 155 × 235 mm in der Libre Caslon, ein rotes Titelblatt und Kapitel, die mit einer Nummer, einem Titel und dem Namen des Beiträgers beginnen. Jedes Kapitel schließt mit seiner eigenen Liste „References“ nach Chicago-Autor-Jahr, die nur die Werke enthält, die dieser Aufsatz zitiert. Eisensteins *Printing Press as an Agent of Change* wird von zwei Beiträgern zitiert und erscheint deshalb in beiden Listen; Gaskells *New Introduction to Bibliography* ebenso in den Kapiteln 1 und 3.
+
+## Zubereitung
+
+### 1 · Ein Dokument pro Beiträger
+
+<Excerpt region="chapters" />
+
+Der Geltungsbereich in [der kurzen Antwort](#die-kurze-antwort) ist der eines Dokuments. `buildBundle` setzt die vier Dokumente als ein Buch, sodass Seitenzahlen, Kapitelnummern und Inhaltsverzeichnis durchlaufen, während jede `:::bibliography` die Zitate ihrer eigenen Datei sammelt. Die Literaturangaben bleiben, wo der Beiträger sie geschrieben hat: Ein in irgendeinem Kapitel definierter Schlüssel gilt für das ganze Buch, ein gemeinsamer Eintrag hätte also genügt, doch in sich geschlossene Kapitel lassen sich austauschen oder umstellen, ohne die Liste eines anderen Aufsatzes zu zerstören.
+
+### 2 · Die Autorenzeile ist ein Überschriftenattribut
+
+<Excerpt region="byline" />
+
+Der Titel jedes Aufsatzes trägt `author="…"` und einen Kurztitel `short="…"` für den Kolumnentitel. Der Auftakt druckt den Autor unter dem Titel, der Kolumnentitel der linken Seite nennt den Autor des Aufsatzes, zu dem die Seite gehört, und das Inhaltsverzeichnis druckt den Namen als Zeile unter jedem Eintrag. Nirgends in der Titelei werden die Beiträger zweimal aufgeführt.
+
+### 3 · Der Auftakt
+
+<Excerpt region="opener" />
+
+Dachzeile, Titel und Autorenzeile stapeln sich vom Kopf des Satzspiegels an, jedes unter dem vorigen verankert, sodass ein zweizeiliger Titel wie der von Kapitel 3 Autorenzeile und Linie mit nach unten schiebt. Die Reserve senkt den Text unter einem einzeiligen Titel um 48 mm ab, zehn Zeilen; ein zweizeiliger Titel braucht eine Zeile mehr, sodass die Linie vom Text frei bleibt und Kapitel 3 eine Zeile tiefer beginnt als die anderen beiden.
+
+### 4 · Kolumnentitel für ein Buch mit vielen Autoren
+
+<Excerpt region="running-heads" />
+
+Ein Sammelband nennt den Beiträger auf der linken und das Kapitel auf der rechten Seite, wo eine Monografie den Buchtitel und das Kapitel drucken würde. Die Kolumnentitel sind auf `pages: 'body'` gefiltert, sodass die Auftakte nur eine Pagina am Fuß tragen.
+
+### 5 · Die Titelei
+
+<Excerpt region="front" />
+
+Titelblatt und Inhaltsverzeichnis sind zwei nicht nummerierte Überschriften im ersten Dokument, ohne Kolumnentitel und ohne Eintrag im Inhaltsverzeichnis. Ihre Gestaltungen lesen `{title}` und `{subtitle}` aus dem Frontmatter und die Herausgeber und Beiträger aus den Attributen der Überschrift selbst.
+
+## Varianten
+
+### Eine Liste für den ganzen Band
+
+Manche Verlage sammeln alle Werke in einer einzigen Bibliografie am Ende. Ändern Sie den Geltungsbereich und entfernen Sie die drei Überschriften `## References`; die Liste folgt dann dem letzten Kapitel.
+
+```diff
+-    scope: 'chapter',
+-    title: '', // no bold title paragraph: each chapter has its own ## References heading
++    scope: 'book',
++    title: 'Bibliography',
+```
+
+### Stattdessen nach APA zitieren
+
+Ein sozialwissenschaftlicher Band ändert den Stil und sonst nichts.
+
+```diff
+-  style: 'chicago-author-date', // the humanities' author-date: (Eisenstein 1979)
++  style: 'apa',
+```
+
+## Häufige Fehler
+
+- `scope: 'chapter'` listet, was das Dokument vor der `:::bibliography` zitiert, nicht, was sein H1-Abschnitt zitiert. Stehen alle Aufsätze in einer Markdown-Datei, wiederholt die zweite Liste die Werke des ersten Aufsatzes und die dritte beide.
+- Im ganzen Buch gilt die erste Definition eines Schlüssels. Verwenden zwei Beiträger `smith2001` für verschiedene Werke, zitiert der spätere Aufsatz stillschweigend das Buch des früheren Beiträgers: Geben Sie den Schlüsseln jedes Beiträgers ein Präfix, oder prüfen Sie die Listen gegen die Manuskripte.
+- Die Unterscheidung gleicher Autor-Jahr-Angaben wird für das ganze Buch berechnet. Zwei verschiedene Werke von Smith aus dem Jahr 2001 in verschiedenen Kapiteln können als 2001a und 2001b erscheinen, auch wenn die Liste eines Kapitels nur eines davon enthält.
+- Eine Zwischenüberschrift, die eine Seite eröffnet, verliert standardmäßig ihren ganzen Abstand darüber, und das Einrasten ins Raster setzt dann den Teil einer Zeile, den sie braucht, unter sie: „Whose letters“ am Kopf von Seite 10 stünde weiter von ihrem Text entfernt als „What the reader sees“ weiter unten auf der Seite. `headings.columnHeadSpace: 'remainder'` behält diesen Teil einer Zeile über der Zwischenüberschrift ([Überschriften](/de/docs/configuration-text#überschriften)). Das passt zu einem einspaltigen Buch, in dem keine benachbarte Spalte zeigt, dass die Zwischenüberschrift etwas tiefer beginnt.

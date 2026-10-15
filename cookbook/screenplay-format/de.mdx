@@ -1,0 +1,74 @@
+---
+title: "Drehbuchformat"
+summary: "Ein Drehbuch in Courier Prime 12 auf US Letter, jede Replik ein rahmenloser Kasten, eingerückt auf den Dialogblock, jede Szene in beiden Rändern nummeriert."
+plain: "Das Drehbuch eines Kurzfilms, so gestaltet, wie Filmstudios es erwarten. Es verwendet eine Schrift im Stil einer Schreibmaschine, mit Repliken und Szenennummern in festen Abständen vom Rand."
+description: "Ein Drehbuch in Courier 12 auf US Letter, gesetzt mit Postext: Jede Szene ist in beiden Rändern nummeriert, jede Replik ein rahmenloser Kasten aus 12-pt-Zeilen."
+question: "Wie setze ich ein Drehbuch mit nummerierten Szenen und jeder Replik in einem 3,5-Zoll-Block unter ihrem Namen?"
+aliases: ["Drehbuch", "Skript", "Drehfassung", "Filmskript", "Fernsehdrehbuch", "Slugline", "Szenenüberschrift", "Szenennummern", "Rollenname", "Dialogblock", "Regieanweisung in Klammern", "Übergang", "CUT TO", "Courier 12", "Musterbeutelklammern", "Dreifachlochung", "screenplay"]
+pageNotes: { "1": "Ein goldgelber Kartonumschlag mit zwei Messingklammern im oberen und unteren Loch einer Dreifachlochung und einem leeren mittleren Loch. Ein weißes Etikett trägt „LOST PROPERTY“ in Schreibmaschinenversalien, dann „written by Maren Arrieta“; darunter sagt ein dunkelroter Stempel mit doppelter Linie „SHOOTING DRAFT, OCT 14 2026“, und „Half-Light Pictures“ steht in gesperrten Versalien am Fuß.", "2": "Die Innenseite des Umschlags, im selben Goldgelb, mit den drei Löchern am rechten Rand und den Messingzinken der beiden Klammern, die hindurchgehen. Ein getippter Hinweis sagt, dass das Drehbuch Half-Light Pictures gehört, und bittet den Finder, es zurückzugeben; ein roter Stempel darunter lautet „COPY 07“, und das Impressum steht am Fuß.", "3": "Seite 1 des Drehbuchs, ohne Nummer, mit drei Stanzlöchern am linken Rand: der Titel in Versalien über „FADE IN:“, dann die Szenen 1 und 2 mit ihren Nummern in beiden Rändern neben fetten Szenenüberschriften in Versalien. Die Handlung läuft über die volle Satzbreite; acht Repliken von Toby und Dora stehen in einem schmaleren Block, jede unter dem Namen der Figur, zwei mit einer Regieanweisung in Klammern.", "4": "Seite 2, oben rechts mit „2.“ nummeriert: Toby füllt das Antragsformular aus, während Dora es kopfüber liest, eine Replik mit „DORA (CONT’D)“, Toby zählt auf, was in der Deckeltasche steckt, mit einem „(then)“ zwischen zwei Zeilen, Szene 3 im Lagerraum und Szene 4 bis zu Doras „Play me something.“ und Tobys „Here?“", "5": "Seite 3: Doras Geschichte von einem Mann, der eine Harfe abholte, dann spielt Toby für sie, eine Schlange hinter ihm, das Büro wird still, und sie stempelt das Formular „RETURNED“; „CUT TO:“ rechtsbündig, Szene 5 am Briefkasten vor dem Bahnhof und „FADE OUT.“ unter der letzten Handlungszeile." }
+---
+
+## Was Sie setzen
+
+Die Drehfassung von *Lost Property*, einem erfundenen dreiseitigen Kurzfilm, gebunden wie Studiodrehbücher: ein goldgelber Kartonumschlag mit zwei Messingklammern und einem getippten Etikett, innen mit „COPY 07“ gestempelt, dann das Drehbuch, 12 auf 12 in der Courier Prime auf gelochtem US Letter gesetzt. Die Satzbreiten sind die der Drehbuchsoftware: Handlung von 1,5 bis 7,5 Zoll, eine Replik von 2,5 bis 6 Zoll unter dem Namen der Figur bei 3,7, eine Regieanweisung in Klammern ab 3,1, und „CUT TO:“ und „FADE OUT.“ enden am rechten Rand. Jede Szenenüberschrift trägt ihre Nummer in beiden Rändern. Seite 1 des Drehbuchs ist nicht nummeriert; die übrigen drucken ihre Nummer oben rechts, mit Punkt. Jede Replik ist ein Kasten ohne Rahmen, mit dem Namen der Figur auf dem Zeilenabstand des Grundtextes von 12 pt, sodass Handlung und Dialog sechs Zeilen pro Zoll behalten.
+
+## Zubereitung
+
+### 1 · Einen Kasten ohne Rahmen bis zum Dialogblock einrücken
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Der Innenabstand eines Kastens wird vom Satzspiegel aus gemessen, sodass 1 Zoll links und 1,5 Zoll rechts den Block von 3,5 Zoll lassen, der 2,5 Zoll von der Blattkante beginnt ([Kastenformate](/de/docs/configuration-styles#kastenstile)). Der Name der Figur ist der Titel des Kastens, im Block als `title="Dora (cont’d)"` geschrieben. `textTransform` druckt ihn in Versalien, und `indent` rückt ihn 1,2 Zoll über den Innenabstand hinaus, auf 3,7 Zoll. `gap` ist 0, weil der Standardwert ein halbes Geviert, 6 pt, zwischen Name und Replik lässt. Standardmäßig steht ein Kastentitel auf einer Zeile vom 1,2-Fachen seines Grades, hier 14,4 pt. `titleStyle.lineHeight` setzt ihn stattdessen auf die 12 pt des Grundtextes, sodass der Name auf einer Rasterzeile steht und die Replik eine ganze Zahl von 12-pt-Zeilen umfasst; beim Standardwert schöbe jede Replik den Text danach 2,4 pt weiter vom Raster. Mit abgeschaltetem `snapToGrid` fallen der untere Abstand einer Replik und der obere der nächsten zu einer einzigen Leerzeile zusammen. Ein Kasten wird standardmäßig zusammengehalten, sodass eine Replik, die nicht mehr passt, mit ihrem Namen auf die nächste Seite wandert.
+
+### 2 · Die Seite in Zoll anlegen
+
+<Excerpt region="page" />
+
+US Letter mit dem linken Rand von 1,5 Zoll, durch den die Klammern gehen, und einem Zoll auf den anderen drei Seiten. Die Courier Prime ist eine dicktengleiche Schrift: In 12 pt ist jeder Buchstabe ein Zehntelzoll breit, sodass eine Handlungszeile 60 Zeichen fasst und eine Replik 35, und bei 12 pt Zeilenabstand fasst die Seite 54 Zeilen. Der Text steht linksbündig im Flattersatz, und `paragraphSpacing` setzt eine Leerzeile zwischen die Absätze. Flattersatz wird nur getrennt, wenn `bodyText.hyphenation.ragged` es verlangt, sodass im Drehbuch kein Wort getrennt wird, wie es das Format fordert.
+
+### 3 · Regieanweisungen und Übergänge zu Absatzformaten machen
+
+<Excerpt region="styles" />
+
+Ein Container `:::paragraphs{style="paren"}` in einer Replik zieht seine erste Zeile 0,6 Zoll über die Dialogkante hinaus ein, auf 3,1 Zoll ([Absatzformate](/de/docs/configuration-styles#absatzformate)). Halten Sie Regieanweisungen in Klammern bei einer Zeile: Das Format zieht nur die erste Zeile ein. `body.paragraphSpacing: false` im Dialogformat hält die Leerzeile der Handlungsabsätze aus dem Kasten heraus, sodass `(then)` direkt unter der Zeile davor steht. `CUT TO:` und `FADE OUT.` stehen in Containern `transition`, deren `textAlign: 'right'` sie bündig mit dem Ende der Handlungszeilen setzt. Ein Container führt den Fluss nach seinem letzten Absatz auf das Grundlinienraster zurück; dieses Drehbuch verlässt das Raster nie, deshalb behält die Überschrift nach `CUT TO:` ihre zwei Leerzeilen.
+
+### 4 · Die Szenennummern in beide Ränder hängen
+
+<Excerpt region="slugline" />
+
+`numberingTemplate: '{2}'` zählt die Überschriften der Ebene 2, und `{number}` druckt die Zählung in die Gestaltung ([Einstellungen pro Ebene](/de/docs/configuration-text#überschreibungen-pro-ebene)). Eine Überschrift mit erweiterter Gestaltung behält ihren Platz in der Spalte und zeichnet statt ihres Textes ihre Elemente ([Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)), sodass die beiden Nummern in den Rändern neben der fetten Überschrift stehen können. Jede ist am eigenen Kasten der Überschrift verankert und aus ihm hinausgeschoben, 0,6 Zoll nach links und rechts einen Viertelzoll hinter das Textende, in einem Kasten von einem halben Zoll Breite mit linksbündigem Text, sodass in einem Drehbuch mit mehr als neun Szenen ein- und zweistellige Nummern an derselben Stelle beginnen. Der eigene Text der Überschrift wird nicht gemalt, aber gemessen, deshalb steht die Ebene auf 12 pt: Bei den standardmäßigen 15 pt würde die Überschrift von Szene 1 umbrechen und eine zweite Zeile reservieren. Der Spaltenausgleich ist aus: Er würde über den Szenenüberschriften Leerzeilen einfügen, um eine kurze Seite zu füllen, und eine Drehbuchseite endet dort, wo ihre letzte Replik oder ihr letzter Absatz endet.
+
+### 5 · Nur die Seiten des Drehbuchs lochen und nummerieren
+
+<Excerpt region="furniture" />
+
+Das Titelformat des Drehbuchs trägt seine eigene Kopfzeile, `header`, die die des Dokuments auf den Seiten seines Abschnitts ersetzt, vom Titel bis zum Ende ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Die eigene Kopfzeile des Dokuments ist leer, deshalb erscheinen Löcher und Seitenzahl nur im Drehbuch. Die Seitenzahl ist einen halben Zoll unter der Oberkante des Blattes verankert, und `pages: 'body'` hält sie von Eröffnungsseiten fern ([Textelemente](/de/docs/configuration-page-layout#textelemente)). Der Titel ist eine Überschrift der Ebene 1, die einen Seitenumbruch auslöst, Seite 1 ist also eine Eröffnungsseite und druckt keine Nummer, wie es das Format verlangt. Auch die Umschlagseiten sind Überschriften der Ebene 1; `:::numbering{startAt=1}` zwischen der Innenseite des Umschlags und dem Titel gibt der Seite des Titels die Nummer 1, und die nächste Seite druckt 2. Das Titelformat setzt eine Zeile von 12 pt; mit den eigenen 18 pt der Ebene 1 säße die Überschrift auf einer Zeile von 21,6 pt und schöbe „FADE IN:“ 9,6 pt nach unten.
+
+## Varianten
+
+### Die Repliken wieder ins Raster einrasten lassen
+
+Jede Replik behält dann ihren unteren Abstand, und die nächste fügt ihren oberen hinzu, was zwei Leerzeilen zwischen Repliken lässt (drei vor einer Szenenüberschrift) und das Drehbuch auf eine vierte Seite schiebt.
+
+```diff
+-  snapToGrid: false,
+ };
+```
+
+### Die Szenenüberschriften in normaler Schriftstärke tippen
+
+Mit der Schreibmaschine geschriebene Drehbücher hatten ihre Szenenüberschriften in schlichten Versalien; Fett kam mit der Drehbuchsoftware.
+
+```diff
+-  fontSize: pt(12), fontWeight: 700, lineHeight: 1, color: col('ink'), align: 'left',
++  fontSize: pt(12), fontWeight: 400, lineHeight: 1, color: col('ink'), align: 'left',
+```
+
+```diff
+-      fontWeight: 700, lineHeight: 1, color: col('ink'), align: 'left', overflow: 'wrap',
++      fontWeight: 400, lineHeight: 1, color: col('ink'), align: 'left', overflow: 'wrap',
+```
+
+## Häufige Fehler
+
+- Postext druckt kein `(MORE)` unter eine Replik, die über Seiten umbricht, und wiederholt den Namen nicht über ihrem Rest. Lassen Sie `keepTogether` auf seinem Standardwert, damit eine Replik ganz auf die nächste Seite wandert.
+- Drehbuchsoftware fügt `(CONT'D)` automatisch an einen Namen an. Hier ist es Teil des `title` im Block, tippen Sie es also selbst, wo die Replik einer Figur nach einer Handlungszeile weitergeht.
+- `titleStyle.lineHeight` hält eine Replik nur so lange auf dem Raster, wie es dem Zeilenabstand des Grundtextes entspricht. Ein Name, der größer oder kleiner als der Text gesetzt ist, nimmt trotzdem diese 12 pt ein, sonst schiebt jede Replik die Zeilen danach vom Raster.

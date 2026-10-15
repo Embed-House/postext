@@ -1,0 +1,68 @@
+---
+title: "Ein Bericht über eine klinische Studie mit CONSORT-Diagramm"
+summary: "Ein realer, gekürzter Studienbericht: strukturierter Abstract über die Seitenbreite, ein CONSORT-Flussdiagramm aus seinen Zahlen, ausgerichtete Tabellen, APA."
+plain: "Eine veröffentlichte Studie über einen Chatbot mit Therapieübungen, gekürzt und neu gesetzt. Das Flussdiagramm der Teilnehmenden entsteht aus ihren Zahlen, die Tabellen halten die Dezimalstellen in einer Flucht, die Literatur folgt APA."
+description: "Bericht einer randomisierten Studie in Postext: strukturierter Abstract im Kasten, CONSORT-Diagramm als SVG aus den Zahlen, ausgerichtete Ergebnistabellen, APA."
+question: "Wie zeichne ich ein CONSORT-Flussdiagramm und setze einen strukturierten Abstract für einen Studienbericht?"
+aliases: ["CONSORT", "Flussdiagramm", "Teilnehmerfluss", "randomisierte kontrollierte Studie", "RCT", "klinische Studie", "strukturierter Abstract", "PHQ-9", "GAD-7", "APA", "Interessenkonflikte", "digitale psychische Gesundheit", "JMIR", "PubMed Central"]
+pageNotes: { "1": "Seite 1: oben eine indigofarbene Linie, die Dachzeile „RANDOMIZED CONTROLLED TRIAL · DIGITAL MENTAL HEALTH“, der vierzeilige Titel in fetter Lora, drei Autoren mit hochgestellten Zugehörigkeitsnummern, die Zugehörigkeiten, die Zeile mit der Manuskriptgeschichte und die Quellenzeile in Indigo. Darunter läuft ein blasslila Kasten über beide Spalten: „ABSTRACT“, dann „Background“, „Objective“ und „Methods“ in der linken und „Results“ und „Conclusions“ in der rechten Spalte, mit den Schlüsselwörtern und der Registrierungszeile über die Breite des Kastens. Darunter beginnt die „Introduction“ zweispaltig mit APA-Zitaten wie „(Kessler et al., 2007)“.", "3": "Seite 3: die Beschreibung des Bots und seine Liste von Prozessmerkmalen; in der rechten Spalte vereint ein Kasten unter einem indigofarbenen Streifen fünf abgerundete lila Blasen, jede eine Nachricht des Bots, wie sie im Artikel zitiert wird, dann die Kontrollbedingung und die Messinstrumente PHQ-9 und GAD-7 unter kursiven Zwischentiteln.", "5": "Seite 5: Abbildung 1, das CONSORT-Diagramm über die Seitenbreite: links die Stufenmarken „ENROLLMENT“, „ALLOCATION“, „FOLLOW-UP“ und „ANALYSIS“; 204 Anmeldungen, 115 bestätigt, 45 als von Bots erzeugt ausgeschlossen, 70 randomisiert in einem indigofarbenen Kasten; 34 Woebot und 36 der reinen Informationskontrolle zugeteilt; 3 und 11 nicht nachbeobachtet; 31 und 25 mit Daten zu T2; 34 und 36 nach Intention-to-treat ausgewertet in indigofarbenen Kästen. Darunter Tabelle 1 mit den Ausgangsmerkmalen, Mittelwerte und Standardabweichungen in getrennten Spalten, und die Completer-Analyse.", "6": "Seite 6: Tabelle 2 über die Seitenbreite, die Intention-to-treat-Ergebnisse zu T2 mit einem zweizeiligen indigofarbenen Kopf, Mittelwerte und Standardfehler in ausgerichteten Spalten, Konfidenzintervalle, F, P und d; die qualitativen Ergebnisse; am Fuß die Abbildungen 2 und 3, Balkendiagramme der von den Teilnehmenden genannten besten und schlechtesten Merkmale.", "7": "Seite 7: der Rest der „Limitations“, die „Conclusions“, die Erklärung zu Interessenkonflikten, die Abkürzungen mit fetten indigofarbenen Begriffen und die ersten APA-Literaturangaben mit ihren DOIs." }
+---
+
+## Was Sie setzen
+
+Eine randomisierte kontrollierte Studie aus dem Bereich digitaler psychischer Gesundheit, neu gesetzt aus ihrem frei zugänglichen Text: die Studie zu Woebot aus JMIR Mental Health von 2017, einem Gesprächsagenten, der kognitive Verhaltenstherapie vermittelt, gekürzt auf acht Seiten. Der Hausstil ist ein ruhiger Forschungsbericht auf 210 × 280 mm, Lora für den Text und Nunito Sans für jede Beschriftung und jede Zahl, mit einem einzigen Akzent in Indigo. Die Seiten tragen, was ein Studienbericht braucht: den strukturierten Abstract über beide Spalten, Schlüsselwörter und eine Registrierungszeile, den CONSORT-Teilnehmerfluss, im Code aus den Zahlen des Artikels neu gezeichnet, zwei Ergebnistabellen, deren Dezimalstellen in einer Flucht stehen, die Erklärung der Autoren zu Interessenkonflikten im Wortlaut und Autor-Jahr-Zitate nach APA 7 aus BibTeX.
+
+## Zubereitung
+
+### 1 · Der Kasten für den Abstract und das Diagramm als Ressource
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Kastenformat mit `span: 'page'` schließt die beiden Spalten darüber und öffnet sie darunter wieder, sodass der Abstract in jeder Höhe über die Seitenbreite stehen kann. Darin setzt `:::columns{count=2}` die Abschnitte von Background bis Conclusions in zwei Spalten, und die Schlüsselwörter und die Registrierungszeile folgen über die volle Breite des Kastens. Das CONSORT-Diagramm ist eine SVG-Ressource wie jede andere: Es erhält Nummer, Bildunterschrift und Quellenvermerk aus der Ressource, und sein erstes `:ref` stellt es an den Kopf der nächsten Seite.
+
+### 2 · Der Artikelkopf aus Überschriftenattributen
+
+<Excerpt region="title" />
+
+Der Titel ist die einzige Überschrift der Ebene 1 im Dokument, mit einem Format, das über die Seitenbreite reicht und sie aus Elementen zeichnet. Alles andere im Kopf stammt aus Überschriftenattributen: die Artikelart, die Autoren mit Zugehörigkeitsmarken `^1^`, die `inlineMarks` hochstellt, die durch `\n` getrennten Zugehörigkeiten, Eingangs- und Annahmedatum und die Quellenzeile. Für Ihren eigenen Artikel ändern Sie die Attribute und behalten die Gestaltung. `numbered: false` am Format hält die Abbildungen bei Abbildung 1, 2, 3 statt 1.1.
+
+### 3 · Der CONSORT-Fluss, aus den Zahlen gezeichnet
+
+<Excerpt region="art" />
+
+Jeder Kasten ist ein Aufruf von `node()` mit seinen Zeilen; die Stufen sind Marken am linken Rand, und die Pfeile bestehen aus einer Linie und einem gefüllten Dreieck, weil `<marker>` im PDF auf ein Bild zurückfällt. Die Zahlen sind die der Studie: 204 Anmeldungen, 115 Bestätigungen, 45 ausgeschlossene, von Bots erzeugte Anmeldungen, 34 und 36 zugeteilt, 3 und 11 verloren, 31 und 25 mit Daten zu T2. Für Ihre eigene Studie ersetzen Sie die Texte und Zahlen; das Layout folgt den Kastenhöhen. Text in einem als Bild gezeichneten SVG sieht die Schriften der Seite nicht, darum trägt die Zeichnung die Nunito Sans inline als Data-URL.
+
+### 4 · Zahlen, die in den Tabellen fluchten
+
+<Excerpt region="tables" />
+
+Nunito Sans setzt ihre Ziffern in einheitlicher Breite, sodass eine Spalte rechtsbündiger Mittelwerte am Dezimalpunkt fluchtet. Jeder Mittelwert und seine SD oder SE stehen in zwei Spalten, der Mittelwert rechtsbündig und die Klammer linksbündig daneben, und `mergeCells` baut die Gruppenköpfe („Information-only control“ über drei Spalten) und die Zeilen, die über die ganze Tabelle reichen. Tabelle 2 ist ein Gleitobjekt über die Seitenbreite; Tabelle 1 bleibt in einer Spalte.
+
+### 5 · Die eigenen Worte des Bots in verschachtelten Kästen
+
+<Excerpt region="boxes" />
+
+Der Artikel zitiert fünf Nachrichten, die der Bot geschickt hat. Das Rezept sammelt sie in einem Kasten mit indigofarbenem Streifen oben, jede ein verschachtelter Kasten mit abgerundeten Ecken und einer kleinen Marke, die das veranschaulichte Merkmal nennt. Dort stehen nur die Zitate des Artikels; ihnen wird nichts hinzugefügt.
+
+## Varianten
+
+### Nummeriert im Vancouver-Stil zitieren
+
+Medizinische Zeitschriften nummerieren ihre Zitate oft; BibTeX und Text bleiben, wie sie sind.
+
+```diff
+-  citations: { style: 'apa', link: true,
++  citations: { style: 'elsevier-vancouver', marker: 'superscript', link: true,
+```
+
+### Eine Nummer bei ClinicalTrials.gov ergänzen
+
+Diese Studie galt als von der Registrierung befreit und sagt das auch. Eine registrierte Studie nennt Register und Nummer in derselben Zeile des Abstract-Kastens, zum Beispiel `**Trial registration** ClinicalTrials.gov NCT01234567`, mit der Nummer Ihrer eigenen Registrierung.
+
+### Ein Diagramm ohne die Zeile Analysis
+
+Wenn ein Bericht nicht angibt, wer ausgewertet wurde, enden die Arme bei den Kästen der Nachbeobachtung: Entfernen Sie den Knoten `an` und seinen Pfeil und verringern Sie `CONSORT_H`.
+
+## Häufige Fehler
+
+- Der Artikel hat keine NCT-Nummer: Die Autoren schreiben, die Studie sei von der Registrierung befreit gewesen. Die Registrierungszeile sagt genau das und zitiert die Begründung des Artikels, statt eine Nummer zu erfinden.
+- Eine Tabelle, die sich eine Spalte mit einer Abbildung über die Seitenbreite teilt, endet drei Zeilen vor dem Fuß und läuft auf der nächsten Seite weiter. Tabelle 1 passt ganz, weil ihre Zeilen in 7,5 pt mit 0,45 mm Innenabstand gesetzt sind und die CONSORT-Zeichnung 107 mm hoch ist.
+- Der Artikel schreibt χ² für seine Chi-Quadrat-Tests, und diese Ausgabe auch, als Formel im Text: `$\chi^2_1$`. Keine der Fontsource-Dateien der Lora hat ein χ, nicht einmal ihre Mathematikdatei, die nur wenige griechische Buchstaben wie π und Ω enthält; stattdessen zeichnet MathJax das χ, als Pfade im PDF.

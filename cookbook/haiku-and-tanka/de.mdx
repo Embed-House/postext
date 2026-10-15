@@ -1,0 +1,63 @@
+---
+title: "Haiku und Tanka im vertikalen Satz"
+summary: "Bashōs Haiku in seiner Reiseprosa und elf dreizeilige Tanka von Takuboku auf einer Seite 四六判: ein Vers pro Zeile, vom Kopf eingerückt, Signaturen am Fuß."
+plain: "Ein kleines Buch japanischer Gedichte: Bashōs Reisetagebuch mit seinen Haiku auf eigenen Zeilen und Takubokus kurze Gedichte in je drei Zeilen, nie von einem Seitenwechsel zerschnitten."
+description: "Bashōs Oku no Hosomichi und Takubokus Eine Handvoll Sand vertikal mit Postext gesetzt: Haiku drei Zeichen eingerückt, dreizeilige Tanka ganz, Signaturen 地付き."
+question: "Wie setze ich Haiku und Tanka vertikal, jeden Vers auf eigener Zeile, vom Kopf eingerückt?"
+aliases: ["Haiku", "俳句", "Tanka", "短歌", "Waka", "Haibun", "俳文", "vertikale Lyrik", "japanische Lyrik", "句集", "歌集", "地付き", "jitsuki", "字取り", "jidori", "Oku no Hosomichi", "おくのほそ道", "Bashō", "芭蕉", "Ishikawa Takuboku", "石川啄木", "一握の砂", "Eine Handvoll Sand", "dreizeiliges Tanka", "haiku"]
+pageNotes: { "1": "Der erste Teil beginnt links vom Bund: おくのほそ道 in fetter Mincho rechts von oben nach unten mit （抄） dahinter und einer Linie in Kakifarbe, 松尾芭蕉 nahe am Fuß, dann die Überschrift 冒　頭 und der Anfang des Reisetagebuchs mit seinen Lesungen.", "2": "Bashōs erstes Haiku, 草の戸も住替る代ぞひなの家, auf eigener Zeile drei Zeichen tiefer, dann die Überschriften 旅　立 und 平　泉, jede auf drei Zeichen gesperrt, mit 行春や鳥啼魚の目は泪 dazwischen.", "3": "夏草や兵どもが夢の跡 und Soras 卯の花に兼房みゆる白毛かな, gezeichnet 曾良 tief in der Zeile, eröffnen die Seite; dann 立石寺 mit seiner Prosa und 閑さや岩にしみ入蝉の聲 und 最上川 mit 五月雨をあつめて早し最上川.", "5": "Der zweite Teil: 一握の砂 （抄） und 石川啄木, dann Takubokus erste zwei Tanka, jedes in drei Zeilen zwei Zeichen tiefer gesetzt, mit einer Leerzeile dazwischen." }
+---
+
+## Was Sie setzen
+
+Acht Seiten eines kleinen Gedichtbands auf einer Seite 四六判 von 127 × 188 mm, rechts gebunden. Der erste Teil sind sieben Stationen aus Bashōs *Auf schmalen Pfaden durchs Hinterland*, seine Prosa mit ihren Haiku; der zweite elf Tanka aus Ishikawa Takubokus *Eine Handvoll Sand*, jedes in den drei Zeilen, in denen er es schrieb. Die Prosa läuft von oben nach unten, 36 Zeichen pro Zeile, in Shippori Mincho zu 10 pt auf einem großzügigen Zeilenabstand von 1,9 Geviert. Jedes Haiku steht auf einer eigenen Zeile drei Zeichen tiefer, jedes Tanka zwei tiefer, und Soras Haiku ist nahe am Fuß der Zeile mit 曾良 gezeichnet. Ein Tanka wird nie über eine Seite umbrochen, und ein Sternchen ＊ in Kakifarbe trennt die Gruppen. Der europäische Gedichtband ist <RecipeLink slug="poetry-collection">Nº 015</RecipeLink>; Tang-Gedichte in vertikalem Chinesisch sind <RecipeLink slug="tang-poems-facing-english">Nº 083</RecipeLink>.
+
+## Zubereitung
+
+### 1 · Eine Verszeile ist ein Absatz, und ihr Stil sagt, wo sie beginnt
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). Ein Haiku ist eine Zeile, also ein eigener Absatz innerhalb einer Direktive `:::paragraphs`, und der Stil der Direktive setzt den Einzug: `indent: em(3)` stellt ein Haiku drei Zeichen unter den Kopf der Zeile (der Aozora-Text setzt sie zwei tiefer; drei geben den Gedichten mehr Luft), und `firstLineIndent: em(0)` verhindert, dass der Einzug des Textes von einem Zeichen hinzukommt. Die etwa 17 Zeichen eines Haiku passen in jede Zeile von 36, also bricht es nie um. Die Signatur ist ein eigener Absatz: `textAlign: 'end'` setzt sie an den Fuß der Zeile (地付き, jitsuki), und `endIndent: em(5)` hebt sie von dort um fünf Zeichen an (地から五字上げ), wie es die Ausgabe tut, aus der dieser Text stammt ([Absatzformate](/de/docs/configuration-styles#absatzformate)).
+
+### 2 · Jedes Tanka auf einer Seite halten
+
+<Excerpt region="tanka" />
+
+Takubokus Tanka sind ein Block `:::verse`, jedes Tanka eine Strophe: Seine drei Zeilen sind drei Zeilen des Markdowns, und die Leerzeile zwischen zwei Tanka in der Quelle lässt eine Rasterzeile zwischen den Gedichten frei. Der Stil des Gedichts gibt den Einzug von zwei Zeichen und die Linie unter der Gruppe vor, und die Zeilen hängen vom Kopf herab wie jede Spalte. `keepStanzas=3` hält jede dreizeilige Strophe zusammen: Auf Seite 5 passt das dritte Tanka nicht mehr unter den Teiltitel und die ersten beiden, also eröffnet es Seite 6 vollständig, statt seine erste Zeile zurückzulassen. Das Ornament zwischen zwei Gruppen leitet die nächste ein, daher geht es mit deren erstem Tanka mit, statt allein am Fuß einer Seite zu stehen ([`:::verse`](/de/docs/document-format#verse)).
+
+### 3 · Die Ortsnamen auf eine Breite sperren
+
+<Excerpt region="places" />
+
+Die Stationen von Bashōs Route sind Überschriften der Ebene 2, zwei Textzeilen hoch (2行取り), sodass Prosa und Haiku danach im Raster bleiben. `jidori: 3` sperrt einen kürzeren Namen auf drei seiner eigenen Zeichen (字取り): 平泉 wird als 平　泉 mit einem vollen Zeichen dazwischen gedruckt, und jeder Name endet auf derselben Höhe wie 立石寺 und 最上川. Ein Name, der schon drei Zeichen lang ist, bleibt unverändert ([Einstellungen pro Ebene](/de/docs/configuration-text#überschreibungen-pro-ebene)).
+
+### 4 · Jeden Teil auf eigener Seite beginnen
+
+<Excerpt region="part" />
+
+Jeder Teil ist eine Überschrift der Ebene 1, deren Design den Titel setzt, ein kleines （抄）, „Auswahl“, mit `anchor.to: '#title'` direkt dahinter platziert, eine kurze Linie in Kakifarbe neben dem Titel und den Dichter nahe am Fuß der Zeile. Das Design reserviert fünf Zeilen, und der Text beginnt danach im selben Raster.
+
+### 5 · Eine Schrift wählen, die die alten Zeichen hat
+
+<Excerpt region="voices" />
+
+Bashōs Prosa schreibt wiederholte Wörter mit dem alten Wiederholungszeichen 〻 (日〻, 人〻), und ältere Texte verwenden außerdem das lange くの字点 〳〵. Zen Old Mincho hat keines von beiden: Der Canvas würde sie aus einer Systemschrift borgen, und das PDF zeichnete leere Kästchen. Shippori Mincho, Noto Serif JP und Shippori Mincho B1 haben beide, daher sind die Gedichte in Shippori Mincho gesetzt ([Schriften für Chinesisch, Japanisch und Koreanisch](/de/docs/configuration-programmatic-usage#chinesische-japanische-und-koreanische-schriften)). Der Aozora-Text bewahrt auch die Anmerkungen des Herausgebers zu alten Schreibungen, `とら{え|（へ）}て`, die das erwartete Kana neben dasjenige setzen, das Bashō schrieb.
+
+## Varianten
+
+### Die drei Glieder des Haiku trennen
+
+Schulanthologien setzen manchmal ein ideografisches Leerzeichen zwischen die 5, 7 und 5 Silben, für Leser, die die Form lernen; das Leerzeichen ist ein Zeichen des Textes.
+
+```diff
+-{夏草|なつくさ}や{兵|つはもの}どもが夢の跡
++{夏草|なつくさ}や　{兵|つはもの}どもが　夢の跡
+```
+
+### Ein langes Tanka umbrechen lassen
+
+Ohne `keepStanzas` darf ein Tanka am Fuß einer Seite beginnen und auf der nächsten weiterlaufen, soweit die Regeln für Waisen und Witwen es erlauben, wie in einer dichten Anthologie von tausend Gedichten.
+
+```diff
+-:::verse{style="tanka" keepStanzas=3}
++:::verse{style="tanka"}
+```

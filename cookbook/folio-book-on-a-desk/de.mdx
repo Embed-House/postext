@@ -1,0 +1,54 @@
+---
+title: "Ein gesetztes Buch auf dem Schreibtisch, in 3D"
+summary: "createFolioFromDocument aus dem Paket postext-folio öffnet ein gesetztes Kapitel als leinengebundenes Buch auf einem Nussbaumtisch, gestaltet über config.folio."
+plain: "Das erste Kapitel eines kurzen Romans, gezeigt als echtes Buch, das aufgeschlagen auf einem Schreibtisch liegt. Sie blättern die Seiten mit der Maus um, und Papier, Einband und Tisch werden in den Einstellungen gewählt."
+description: "Ein Romankapitel, mit postext gesetzt und mit postext-folio in 3D geöffnet: Papier, Bindung, Tisch und Licht in config.folio, in einem minimalen CodePen."
+question: "Wie zeige ich mein gesetztes Dokument als 3D-Buch, das der Leser von Hand umblättert?"
+aliases: ["Folio", "postext-folio", "Blätterbuch", "Flipbook", "Umblättern", "3D-Buch", "Buchvorschau", "Seiten umblättern", "page flip"]
+pageNotes: { "1": "Der Kapitelauftakt: eine kleine grüne Dachzeile, der Titel „The Last Crossing“ und ein kurzer Strich, dann die erste Seite Text im Blocksatz.", "2": "Eine linke Seite mit dem Namen des Autors und der Pagina im Kolumnentitel und einer kursiven grünen Zwischenüberschrift." }
+---
+
+## Was Sie setzen
+
+Das erste Kapitel von *The Ferryman’s Ledger*, einem kurzen Roman auf einem Format von 129 × 198 mm, als Buch auf einem Nussbaumtisch aufgeschlagen. Die Decke ist flaschengrünes Leinen, die Seiten sind ein voluminöses cremefarbenes Romanpapier, und der Leser fasst die rechte Seite an ihrer Kante und blättert sie um, wobei sich das Blatt wölbt und seinen Schatten auf die Seite darunter wirft. Der Text wird einmal mit `buildDocument` gesetzt; ein Aufruf des Pakets `postext-folio` macht aus diesem Satz das Buch. Alles, woraus das Buch besteht (Papier, Bindung, Tisch, Licht, Blickwinkel), ist Teil der Konfiguration, sodass dasselbe Dokument sein Aussehen in den Tab Folio der Sandbox mitnimmt.
+
+## Zubereitung
+
+### 1 · Angeben, woraus das Buch besteht
+
+<Excerpt region="folio" />
+
+`config.folio` liest nur der 3D-Betrachter: Layout, Canvas, PDF und HTML-Ausgabe ignorieren es, sodass ein anderes Papier nie eine Zeile verschiebt. `bookWove` ist ein voluminöses Romanpapier, und 70 g/m² bei diesem Volumen ergeben ein Blatt von etwa 112 µm Dicke; der Betrachter multipliziert das mit der Seitenzahl für die Tiefe des Buchblocks. Die Leinenfarbe ist mit dem Akzent der Palette verknüpft, demselben Grün wie Dachzeile und Paginas.
+
+### 2 · Ein ruhiger Auftakt und Kolumnentitel
+
+<Excerpt region="opener" />
+
+Das Kapitel beginnt ein Drittel unterhalb des Kopfes einer rechten Seite, unter einer Dachzeile aus den Attributen der Überschrift. In 3D wirkt ein abgesenkter Auftakt wie in einem gedruckten Roman: Der Weißraum am Kopf der Seite ist das Erste, was der Leser beim Aufschlagen der Decke sieht.
+
+<Excerpt region="running-heads" />
+
+### 3 · Das Dokument als Buch öffnen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `createFolioFromDocument` nimmt einen Container und das gesetzte Dokument: Es malt jede Seite mit `renderPageToCanvas` in der genauen Größe eines Seitenplatzes, nur rund um die aufgeschlagene Doppelseite, und passt das Buch in den Container ein. Der Container braucht eine eigene Höhe, sonst hat das Buch keinen Platz. `textureBaseUrl` zeigt auf die fotografierten Tische auf postext.dev; ohne diese Angabe wird der Nussbaum mit prozeduralen Texturen gezeichnet.
+
+## Varianten
+
+### Ein Taschenbuch auf Eiche bei Tageslicht
+
+Ändern Sie drei Einstellungen, und dasselbe Kapitel ist ein Softcover auf einem hellen Tisch; nichts wird neu gesetzt.
+
+```diff
+-  binding: { type: 'hardcover', cover: 'case', coverMaterial: 'cloth',
+-    coverColor: col('accent') }, // the case wraps the pages; boards a little larger
+-  surface: { type: 'walnut' },
+-  lighting: { environment: 'studio', intensity: 1, shadows: true },
++  binding: { type: 'paperback', cover: 'case', coverMaterial: 'paper',
++    coverColor: col('accent') },
++  surface: { type: 'oak' },
++  lighting: { environment: 'daylight', intensity: 1, shadows: true },
+```
+
+### Jedes Blatt auf einem anderen Papier
+
+<RecipeLink slug="paper-swatch-book">Ein Papiermusterbuch</RecipeLink> druckt jedes Blatt mit `:::paper` auf einem eigenen Papier, und <RecipeLink slug="folio-settings-bench">der Prüfstand für die Einstellungen</RecipeLink> ändert jede Einstellung live mit `setAppearance`.

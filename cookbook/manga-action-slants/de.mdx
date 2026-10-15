@@ -1,0 +1,48 @@
+---
+title: "Eine Actionseite mit schrägen Zwischenräumen"
+summary: "Die Seite, die ein Kendo-Finale entscheidet: schräge Zwischenräume (40~55) in der Aufteilung, ein rahmenloses Trefferpanel, ドン japanisch mit Übersetzung."
+plain: "Eine Kampfseite aus einem japanischen Comic mit schrägen Zwischenräumen zwischen den Panels, sodass sich die Handlung zu neigen scheint, und dem großen japanischen Geräusch des Treffers an seinem Platz, mit kleiner Übersetzung daneben."
+description: "Manga-Actionseite in Postext: schräge Zwischenräume als 40~55 in der Aufteilung, ein rahmenloses Panel für den Treffer, ドン japanisch mit Untertitel je Ausgabe."
+question: "Wie neige ich die Zwischenräume zwischen Panels für eine Actionszene im Comic?"
+aliases: ["schräge Panels", "diagonale Zwischenräume", "斜めのコマ割り", "Actionseite", "Kampfszene", "Speedlines", "効果線", "Soundeffekte", "SFX", "描き文字", "Lautmalerei", "rahmenloses Panel", "枠なし", "SFX mit Untertitel", "ドン"]
+pageNotes: { "1": "Das japanische Original: eine Totale des Finales, ein Streifen mit Hanas Augen hinter ihrem Helmgitter, eine Reihe, die ein nach links geneigter Zwischenraum teilt, rechts der Stoß der Gegnerin und links Hanas Schlag unter einem riesigen senkrechten ドン, dann eine letzte, in die andere Richtung geneigte Reihe.", "2": "Die deutsche Ausgabe derselben Seite: ドン quer über dem Schlag, darunter klein „WUMM“; rechts „STAMPF“ und das „MEEEN!“ der Gegnerin, links Hanas „MEN!!“, in der letzten Reihe Soras „Geschafft!!“, das „Men! Punkt!“ des Kampfrichters und „…Hm. Nicht schlecht.“ in Moris Gedankenblase." }
+---
+
+## Was Sie setzen
+
+Die Seite, auf der das Kendo-Finale entschieden wird, aus demselben Manga wie <RecipeLink slug="manga-right-to-left">das Rezept von rechts nach links</RecipeLink>, in zwei Ausgaben nebeneinander: das japanische Original und sein Lettering in der Sprache dieser Seite (Englisch auf der japanischen Seite). Vier Reihen: die Halle, Hanas Augen durch das Gitter ihres Helms, der Schlagabtausch und die Reaktionen. Die dritte Reihe wird von einem geneigten Zwischenraum geteilt, sodass der Stoß der Gegnerin und Hanas Konter aufeinander zuzustürzen scheinen; die vierte neigt sich in die andere Richtung und bremst die Seite. Hanas Schlag hat überhaupt keinen Rahmen, und sein Soundeffekt, ドン, steht in einer kräftigen japanischen Grotesk, die jede Ausgabe beibehält, in den übersetzten Seiten mit einer kleinen Übersetzung darunter.
+
+## Zubereitung
+
+### 1 · Den Zwischenraum in der Aufteilung neigen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine Größe in der Form `40~55` gibt dem fernen Rand einer Zelle zwei Positionen: 40 % der Reihe oben, 55 % unten. Die Zellen bleiben konvexe Polygone, der Zwischenraum behält seine quer zur Neigung gemessene Breite, und bei Leserichtung von rechts nach links spiegelt sich die Neigung mit der Reihenfolge, sodass die erste Zelle weiterhin die rechte ist. Die Aufteilung der Seite ist `24 / 18 / * [40~55 | *] / 24 [58~64 | *]`: zwei gerade Reihen, die den Moment vorbereiten, eine schräge für den Treffer und eine letzte, die sich in die andere Richtung neigt (<Feature id="comic-panel-split">Seitenaufteilung</Feature>).
+
+### 2 · In Explosionsblasen schreien und die Effekte ausbrechen lassen
+
+<Excerpt region="balloons" />
+
+Die Kiai beider Kämpferinnen sind Schreie: eine Explosionsblase mit 18 Zacken, tiefer als der Standard. Die Soundeffekte haben überhaupt keine Blase; sie sind mit einem weißen Rand von 2,2 pt aufs Bild gelettert, damit sie über den Speedlines lesbar bleiben. Das Panel des Schlags lautet `::panel{art=strike border=none}`, und sein ドン trägt `break`, darf also den schrägen Zwischenraum ins Nachbarpanel überqueren, so wie ein Letterer ein Geräusch über den Rahmen hinausquellen lässt (<Feature id="sound-effects">Soundeffekte</Feature>).
+
+### 3 · ドン japanisch lassen und untertiteln
+
+<Excerpt region="fonts" />
+
+Im Manga gehören die Soundeffekte zur Zeichnung, und lizenzierte Ausgaben lassen sie meist an ihrem Platz und fügen daneben eine kleine Übersetzung hinzu. Das Skript macht es genauso: Jede Ausgabe hat die Zeile `sfx{… font="Dela Gothic One" break}: ドン`; die in Zeilen geletterten Ausgaben ergänzen darin `vertical`, damit ドン die Spalte behält, die es im Original hat, und setzen darunter einen zweiten, kleineren Effekt, WUMM oder WHAM. Weil die Schrift in der Zeile genannt wird, lädt jede Ausgabe die Dela Gothic One nur mit den Zeichen von ドン, gleich welche Lettering-Schrift sie selbst verwendet.
+
+### 4 · Die Sicherheitsbereiche auf schräge Zellen abstimmen
+
+<Excerpt region="art" />
+
+Eine schräge Zelle ist an einem Ende breiter als am anderen, und das Bild muss sie ganz bedecken. Jeder Sicherheitsbereich ist auf das zugeschnitten, was das Panel braucht, die Augen für die Nahaufnahme des Gitters und Soras Oberkörper für den Jubel, sodass er in den breitesten Ausschnitt der Zelle passt und die Engine das Bild nie mit Balken einpassen muss.
+
+### 5 · Das Original neben jede Ausgabe stellen
+
+<Excerpt region="editions" />
+
+Jede Sprache der Website lettert die Seite in ihrer eigenen Datei, und das japanische Original steht ihr auf der anderen Seite der Doppelseite gegenüber (die japanische Seite steht der englischen Ausgabe gegenüber). ドン bleibt in jeder Ausgabe, jede bringt ihren eigenen Untertitel mit (WUMM, WHAM, ZAS!, PÁ!, PAF !, 咚, بوم!), und die Neigungen bewegen sich nie.
+
+## Häufige Fehler
+
+- Ein Soundeffekt, der in einer in Zeilen geletterten Ausgabe japanisch bleibt, wird wie der Rest der Ausgabe in einer Zeile gesetzt, wenn seine Zeile nicht `vertical` sagt.
+- Soras Jubel ist auf Japanisch, Spanisch und Katalanisch länger als sein kleines Panel: Der Engine überlassen, überquerte er den Rand, und der Build warnte `comicBalloonOverflow`. Diese Ausgaben markieren ihn mit `break` (`sora{shout break}`): Er bricht absichtlich nach oben durch den Rahmen in den Zwischenraum und das Panel darüber, und nichts wird gemeldet. Eine Sprechblase mit `break` läuft nie in den Seitenrand, es sei denn, ihr Panel ist randabfallend; ein Pin (`at=`) stellt sie an jede andere Stelle.

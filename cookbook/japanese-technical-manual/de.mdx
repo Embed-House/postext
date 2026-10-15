@@ -1,0 +1,74 @@
+---
+title: "Ein japanisches Fachbuch: Kana, Kanji und Latein"
+summary: "A5-Kapitel eines japanischen Programmierbuchs: Umbruch und Satzzeichenabstände nach JLReq, ein Viertelgeviert vor Latein, Code, 図3-1, Fußnoten pro Seite."
+plain: "Ein Kapitel aus einem japanischen Programmierbuch, dessen Sätze voller englischer Wörter, Code und Zahlen sind. Postext setzt Satzzeichen und Umbrüche nach japanischen Regeln und setzt einen schmalen Abstand, wo Japanisch auf Latein trifft."
+description: "Ein japanisches Fachbuchkapitel in Postext: locale 'ja' setzt Kinsoku und Satzzeichenabstände nach JLReq, ein Viertelgeviert vor Latein, 図3-1 und Fußnoten."
+question: "Wie setze ich ein japanisches Fachbuch mit lateinischen Wörtern, Code und den japanischen Satzzeichenregeln?"
+aliases: ["japanisches Fachbuch", "技術書", "横組み", "horizontales Japanisch", "Kinsoku", "禁則処理", "Yakumono", "約物", "四分アキ", "Abstand Japanisch–Latein", "和欧間", "JLReq", "JIS X 4051", "ぶら下げ", "hängende Satzzeichen", "図3-1", "japanische Fußnoten", "Inline-Code", "Unicode-Normalisierung"]
+pageNotes: { "1": "Der Kapitelauftakt, Seite 41: ein blasses türkisblaues Band über dem oberen Drittel mit „CHAPTER“ in kleinen gesperrten Versalien, einer großen türkisblauen 3 und dem Titel 文字列の正規化 in fetter Gothic. Darunter ein Vorspann in Gothic, der erste Absatz in Mincho und Abschnitt 3.1 unter einer drei Zeilen tiefen Überschrift; die Seitenzahl 41 steht am Fuß.", "3": "Seite 43: die vier Normalisierungsformen als Liste mit türkisblauen Aufzählungszeichen, ein Absatz, der 表3-1 zitiert, die Tabelle mit einer türkisblauen Kopfzeile 入力 NFC NFD NFKC und fünf Zeilen (が, ｶﾞ, ＡＢＣ, ①, ㍻), ihre Legende 表3-1 in türkisblauer Gothic, dann Abschnitt 3.3 mit den Funktionsnamen unicodedata und normalize() in einer türkisblauen dicktengleichen Schrift." }
+---
+
+## Was Sie setzen
+
+Fünf Seiten aus Kapitel 3 eines erfundenen japanischen Programmierbuchs, 実践 日本語テキスト処理 (Japanische Textverarbeitung in der Praxis), über Unicode-Normalisierung. Es ist gesetzt, wie japanische Computerbücher gesetzt werden: A5, eine Spalte zu 36 Zeichen auf 29 Zeilen aus der Noto Serif JP in 9 pt, Überschriften in der Noto Sans JP, Code in der BIZ UDGothic. Der Text ist der schwierige Fall des japanischen Satzes, denn jeder zweite Satz enthält ein lateinisches Wort, einen Codepoint, eine Zahl oder einen Funktionsnamen: Die Zeilenumbrüche folgen dem strengsten 禁則処理 (Kinsoku Shori) aus JLReq, die Satzzeichen behalten ihre volle Breite, und ein Viertelgeviert trennt Japanisch von Latein, ohne dass jemand ein Leerzeichen tippt. Abbildung, Tabelle, Codelisting und Fußnoten tragen japanische Bezeichnungen: 図3-1, 表3-1, hochgestellte Fußnotennummern, pro Seite gezählt. <RecipeLink slug="code-listings-and-keycaps">Codelistings und Tastenkappen</RecipeLink> ist dieselbe Art Seite auf Englisch.
+
+## Zubereitung
+
+### 1 · Die japanischen Regeln kommen mit der Sprachangabe
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `locale: 'ja'` schaltet die Regeln von JLReq ein, den *Requirements for Japanese Text Layout* des W3C, und die unter `cjk` ausgeschriebenen Werte sind die, die `'auto'` für Japanisch wählt ([Ostasiatische Typografie](/de/docs/configuration-east-asian#ostasiatische-typografie)). Bei `ja-very-strict` beginnt keine Zeile mit ー, einem kleinen Kana, 々 oder einem schließenden Zeichen, und keine Zeile endet mit einer öffnenden Klammer. Die Satzzeichen (約物, Yakumono) behalten innerhalb der Zeile ihr volles Geviert, und zwei aufeinandertreffende Zeichen wie 」、 teilen sich ein Geviert. Auf <PageRef page={1}>Seite 41</PageRef> setzt die Zeile, die auf 実際に変換し、 endet, ihr 、 über den rechten Rand der Satzbreite hinaus: Das ist ぶら下げ (Burasage), und die Engine greift nur dann dazu, wenn die Zeile das Zeichen sonst in die nächste Zeile schieben müsste. `latinSpacing` setzt ein Viertelgeviert (四分アキ, Shibun Aki) zwischen Unicode und では und zwischen U+304C und を, obwohl das Markdown dort kein Leerzeichen hat. Es steht nur neben einem Buchstaben oder einer Ziffer: `normalize()` und `is_normalized()` enden mit einer Klammer, deshalb tippt das Markdown ein Leerzeichen zwischen sie und 関数.
+
+<PageShot page={1} crop="0.08,0.555,0.84,0.09" caption="Seite 41: ein Viertelgeviert um Unicode und Python, ohne getipptes Leerzeichen; das 、 am Ende der zweiten Zeile hängt über die Satzbreite hinaus." />
+
+Der Unterschied zum Chinesischen liegt in den Satzzeichen. Ein festlandchinesisches Buch setzt 、 und ， standardmäßig in halber Breite und 。 in voller (Kaiming); ein japanisches behält jedes Zeichen in voller Breite und staucht nur dort, wo zwei aufeinandertreffen. Der chinesische Zeilenumbruch kennt keine kleinen Kana und kein ー, die vom Zeilenanfang fernzuhalten wären, deshalb ist `ja-very-strict` eine eigene Stufe.
+
+### 2 · Code in einer dicktengleichen Schrift mit Kana
+
+<Excerpt region="listing" />
+
+Das Listing ist ein [Codeblock](/de/docs/document-format#codeblöcke): Postext setzt seine Zeilen so, wie sie getippt wurden, in der Schrift, die `codeStyle` nennt, in einem getönten Kasten unter dem Titel `normalize.py` aus der öffnenden Zeile des Codeblocks ([Codelistings](/de/docs/configuration-styles#code-listings)). `highlight: 'none'` hält das Listing in einer Farbe, wie den Rest der Seite, und `codeStyle.inline` setzt jedes `` `name` `` in derselben Schrift, in Türkisblau. Hier zählt die Schrift: Die Zeichenkette des Beispiels, ｶﾞｲﾄﾞ ＡＢＣ ①, braucht Katakana in halber Breite, Buchstaben in voller Breite und eingekreiste Ziffern, die einer westlichen Codeschrift fehlen. BIZ UDGothic setzt lateinische Zeichen in halber und Kana in voller Breite mit festem Schritt, und ein Listing zählt ein Zeichen voller Breite als zwei Zellen, sodass die Spalten halten.
+
+### 3 · 図3-1 und 表3-1
+
+<Excerpt region="resources" />
+
+`defaultResourceTypes('ja')` benennt die Typen 図 und 表 und nummeriert sie kapitelweise mit Bindestrich, und `continuation.headings` macht dieses Kapitel zu Kapitel 3, sodass die erste Abbildung 図3-1 ist. Ein Dokument mit `ja` setzt Bezeichnung und Nummer ohne Abstand und fügt nach der Nummer ein ideografisches Leerzeichen ein, wie japanische Bücher 図3-1　「が」の二つの表し方 drucken; der Legendenstil wählt also nur Schrift und Farben. Die Tabelle ist `'here'` platziert, unter dem Absatz, der sie zitiert. Die Beschriftungen der Abbildung sind rein lateinisch, U+304C und E3 81 8C: Das SVG nennt in seinem Stil die Codeschrift, und `loadSvg` bettet die Schriftdatei ein, bevor das Bild gezeichnet wird.
+
+### 4 · Fußnoten pro Seite, auf japanische Art
+
+<Excerpt region="notes" />
+
+Die Fußnoten brauchen außer ihrer Größe keine Einstellung: In einem horizontalen japanischen Dokument sind die Standardwerte die, die JLReq für horizontale Bücher beschreibt, eine Fußnote am Fuß der Spalte, in der sie zitiert wird, auf jeder Seite ab 1 nummeriert, eine hochgestellte Marke und eine Linie von einem Drittel der Satzbreite ([Fußnoten](/de/docs/configuration-notes-references#fußnoten)). Die Marke steht vor dem Punkt, `保存していた[^hfs]。`, sodass das 。 nie getrennt von ihr die nächste Zeile beginnt.
+
+### 5 · Eine dreizeilige Abschnittsüberschrift
+
+<Excerpt region="opener" />
+
+Der Kapitelauftakt ist eine Gestaltung an der H1: ein türkisblaues Band, die Kapitelnummer in 64 pt aus `{numberDecimal}` und der Titel. Die Abschnittsüberschriften verwenden `lineSpan: 3`, 行取り (Gyōdori): Jede nimmt genau drei Grundtextzeilen ein, ihr Text darin zentriert, sodass der Text danach im Gleichschritt mit dem Raster weiterläuft. `headings.balancing.enabled: false` hindert die Engine daran, über Überschriften Zeilen einzufügen, um eine Seite auszugleichen.
+
+## Varianten
+
+### Kleine Kana und ー am Zeilenanfang erlauben
+
+`ja-strict` ist die Regel von JLReq für allgemeine Bücher: っ, ゃ und ー dürfen eine Zeile eröffnen, was dem Zeilenumbruch mehr Trennstellen und weniger gesperrte Zeilen gibt.
+
+```diff
+-  lineBreak: 'ja-very-strict', // no line starts with ー, small kana, 々, 」、。？・ or ：
++  lineBreak: 'ja-strict', // small kana, ー and 々 may open a line
+```
+
+### Kein Abstand zwischen Japanisch und Latein
+
+Manche Verlage setzen lateinische Wörter ohne Viertelgeviert direkt an die Kana.
+
+```diff
+-  latinSpacing: em(0.25), // 四分アキ between kana or kanji and Latin letters or digits
++  latinSpacing: em(0), // Unicodeでは, set solid
+```
+
+## Häufige Fehler
+
+- Ein lateinisches Wort lässt sich in einer japanischen Zeile nicht trennen, deshalb hinterlässt ein langes am Zeilenende davor eine Zeile, die zwischen ihren Zeichen gesperrt ist. Der erste Entwurf dieses Kapitels erläuterte seine Fachbegriffe auf Englisch, 正準等価（canonical equivalence）, und zwei Zeilen fielen zu locker aus; die englischen Begriffe wurden gestrichen, wo sie dem Leser nicht halfen.
+- Wählen Sie die Codeschrift nach den Zeichen, die der Code enthält. M PLUS 1 Code, die hier zuerst versuchte Schrift, hat keine Katakana in halber Breite: Der Bildschirm wich für ｶﾞｲﾄﾞ auf eine Systemschrift aus, und dem PDF fehlten die Glyphen.
+- Ein Listing teilt sich seitenübergreifend zwischen seinen Zeilen, mit mindestens zwei Zeilen auf jeder Seite (`codeStyle.splitMinLines`). Auf Seite 43 fasst der Raum unter 3.3 den Titel und eine Zeile, nicht zwei, deshalb eröffnet das ganze Listing Seite 44; `keepTogether: true` hält jedes Listing in einem Stück.
+- In einem Zeichenraster nimmt eine Seite ihre 29 Zeilen auf, gleich was ein Absatz oder eine Liste am Seitenwechsel tut; die Liste der vier Formen würde deshalb ihren ersten Eintrag, NFC, allein am Fuß von Seite 42 lassen. `shortListSplit: 'avoid'` mit `shortListMaxItems: 4` rückt die ganze Liste auf Seite 43, und Seite 42 endet eine Zeile früher über ihren Fußnoten.

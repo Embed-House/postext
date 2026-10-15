@@ -1,0 +1,85 @@
+---
+title: "Kästen, die sich teilen, gleiten und festsitzen"
+summary: "Ein Laborarbeitsblatt: Der Kasten mit dem Ablauf teilt sich auf zwei Spalten, das Datenblatt wandert an den Kopf der nächsten Seite, ein Badge sitzt am Fuß."
+plain: "Ein naturwissenschaftliches Arbeitsblatt für die Schule zum Bau einer Sonnenuhr. Es zeigt Kästen, die sich über zwei Spalten teilen, an den Kopf der nächsten Seite wandern oder fest am Fuß einer Seite stehen."
+description: "Ein spanisches Schularbeitsheft in Postext: eine Warnung bleibt ganz, ein Ablauf teilt sich auf Spalten, ein Datenblatt gleitet auf S. 43, ein Badge sitzt fest."
+question: "Wie teile ich einen langen Kasten, schiebe einen anderen auf die Folgeseite und fixiere ein Badge am Fuß?"
+aliases: ["geteilter Kasten", "Kasten über Spalten", "keepTogether", "fortgesetzter Kasten", "gleitender Kasten", "fixiertes Badge", "Aufkleber", "fester Kasten", "Kasten über die ganze Breite", "dreispaltiger Kasten", "Arbeitsblatt", "Laborblatt", "worksheet"]
+pageNotes: { "1": "Der Auftakt von Práctica 4, Construye un reloj de sol (Baue eine Sonnenuhr): ein sonnengelbes Band mit dem Titel in Anthrazit und am Außenrand ein Fächer von Nachmittagsschatten, gezeichnet für die Breite von Madrid. Unter der Einleitung läuft ein gelber Kasten Necesitarás über beide Spalten, mit drei eigenen Spalten.", "2": "Ein anthrazitfarbener Sicherheitsbalken mit gelbem Warndreieck, dann der gelbe Kasten Procedimiento mit einem Kompass-Badge an der äußeren Ecke: Schritte 1 bis 4 unter seinem Titel am Fuß der linken Spalte, Schritte 5 bis 14 am Kopf der rechten, in gleicher Breite, ohne Titel und ohne Badge.", "3": "Der Kasten Hoja de datos, ein blassgelbes Blatt mit einer Tabelle des wahren Mittags in Madrid für zwölf Monate, an den Kopf der Seite geglitten; darunter laufen zwei Spalten Text.", "4": "Die Sonnenuhr im Profil am Mittag im Sommer und im Winter, die Messtabelle der Schüler neben dem Textende, ein dreispaltiges Zusammenfassungsband über die Seite und ein anthrazitfarbenes Badge Autoevaluación · 10 min fest am Fuß, mit einer zeigenden Hand im Rand." }
+---
+
+## Was Sie setzen
+
+Vier Seiten aus *Taller de ciencias*, einem spanischen Arbeitsheft für den naturwissenschaftlichen Unterricht: Práctica 4, „Construye un reloj de sol“ (Baue eine Sonnenuhr). Auf Seite 42 bleibt die Sicherheitswarnung in einem Stück, und der Versuchsablauf mit vierzehn Schritten, auf gelber Fläche mit einem Kompass-Badge an der Ecke, beginnt am Fuß der linken Spalte und läuft am Kopf der rechten weiter, in gleicher Breite und ohne seinen Titel. Das Datenblatt zu Madrid verlässt auf dieser Seite den Textfluss und steht oben auf Seite 43, über dem Text. Ein anthrazitfarbenes Badge „Autoevaluación · 10 min“ sitzt fest am Fuß der letzten Seite, daneben eine zeigende Hand im Rand. Auf der Auftaktseite trägt ein sonnengelbes Band ein Diagramm der Schatten eines Stabs von Mittag bis 17 Uhr auf der Breite von Madrid, und ein Kasten listet die Materialien in drei Spalten über die ganze Seitenbreite.
+
+## Zubereitung
+
+### 1 · Ein Grundstil für alle Kästen
+
+<Excerpt region="look" />
+
+Jeder Stil beginnt mit `box()`: der Titel in Monospace, 8,8 pt Schrift gegenüber den 9,4 pt des Textes und der Innenabstand. Jeder fügt dann ein Merkmal hinzu: einen anthrazitfarbenen Balken bei der Sicherheitswarnung, eine gelbe Fläche beim Versuchsablauf, einen Papierton beim Datenblatt, eine Linie oben bei der Zusammenfassung, eine anthrazitfarbene Pille beim Badge. Schüler unterscheiden die Kästen an diesem Merkmal, bevor sie einen Titel lesen. Beim Versuchsablauf markiert die Fläche zugleich die Fortsetzung: Der Teil am Kopf der rechten Spalte hat keinen Titel, also verbindet ihn nur das Gelb mit den Schritten 1 bis 4 am Fuß der linken.
+
+### 2 · Zusammenhalten, teilen, gleiten, festsetzen
+
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). Der Versuchsablauf misst 192 mm, eine Spalte fasst 211, also spränge ein zusammengehaltener Kasten an den Kopf der rechten Spalte und ließe am Fuß der linken 43 mm leer. `keepTogether: false` lässt ihn dort beginnen, wo er hinfällt, und in der nächsten Spalte weiterlaufen oder auf der nächsten Seite, wie die zweite Variante zeigt ([der Container `:::callout`](/de/docs/configuration-styles#der-container-callout)). Eine Fortsetzung lässt Titel und Icon weg. Ein Icon im Text nähme den Schritten in beiden Teilen eine eigene Spalte weg, deshalb sitzt der Kompass an der äußeren Ecke des Kastens, wo er keine Breite kostet. Die Direktive des Datenblatts trägt `placement="top"`, sodass der Kasten auf <PageRef page={2}>Seite 42</PageRef> den Textfluss verlässt und oben auf der nächsten Seite steht. Das Badge ist `fixed`, und ein negativer Wert für `offset.x` schiebt die Hand und ihre Linie in den Außensteg, sodass die linke Kante des Badges mit dem Text fluchtet.
+
+### 3 · Ein dreispaltiger Kasten über die Seite
+
+<Excerpt region="panel" />
+
+Mit `span: 'page'` läuft der Materialkasten über beide Spalten. Die Einleitung darüber wird auf gleicher Höhe abgeschlossen, und der Text setzt darunter zweispaltig wieder ein (<PageRef page={1}>Seite 41</PageRef>). Innerhalb der Direktive legt `:::columns{count=3 breaks="5,9"}` fest, wo jede Spalte beginnt, statt die Spalten auszugleichen. `breaks` zählt Kindblöcke, und jeder Listenpunkt ist einer, also beginnen die zweite und dritte Spalte beim fünften und neunten Block, den fetten Zwischentiteln. `columnGap` ist der Spaltenabstand der Seite von 7 mm, sodass die Spalten des Kastens so weit auseinanderstehen wie die Textspalten.
+
+```markdown
+:::callout{type="material" title="Necesitarás"}
+:::columns{count=3 breaks="5,9"}
+**Para la esfera**
+
+- Cartón pluma de 20 × 30 cm
+- La plantilla de la esfera
+- Pegamento y rotulador
+
+**Para el gnomon y la base**
+…
+:::
+:::
+```
+
+### 4 · Ein Gelb für Flächen, ein helleres für den langen Kasten
+
+<Excerpt region="palette" />
+
+Das Sonnengelb ist den Farbflächen vorbehalten, dem Band und dem Materialkasten, wo Anthrazit und Schwarz mit 7,4:1 und 8,6:1 lesbar sind. Als Schriftfarbe auf Weiß käme es auf 1,8:1, deshalb trägt es nie Schrift. Der Versuchsablauf nimmt `light`, ein blasseres Gelb: Schwarz liest sich darauf mit 11:1, und der Umbruch ist im Vorschaubild der Galerie noch zu sehen. Das Datenblatt nimmt `tint`, näher am Papier, damit es nicht mit dem Versuchsablauf verwechselt wird, dem anderen gefüllten Kasten der Doppelseite. `main-color` zeigt auf Anthrazit, sodass die Vorgaben, die die Konfiguration nicht überschreibt, in Anthrazit drucken statt im Blau der Engine.
+
+### 5 · Auftakt mit einem gelben Band
+
+<Excerpt region="opener" />
+
+Das Band ist ein an der Seite verankertes Kastenelement, die Zeichnung ein Bildelement am Außenrand; Dachzeile, Vorspann und Stundenzeile kommen aus Attributen in der Zeile der Überschrift. Weil das Band an der Seite verankert ist, reserviert der Auftakt bereits die Höhe bis zum Fuß des Bandes, und der Text begänne 3,6 mm darunter. `minHeight: BAND - TOP + AIR` verlangt 8 mm; die Reservierung rastet auf der nächsten Rasterlinie ein, und der Text beginnt 8,4 mm unter dem Band.
+
+## Varianten
+
+### Den Versuchsablauf in einem Stück halten
+
+Ohne die Einstellung wandert der Versuchsablauf, der in eine Spalte passt, als Ganzes an den Kopf der rechten Spalte und lässt am Fuß der linken 43 mm leer.
+
+```diff
+-  box('pasos', { keepTogether: false, background: col('light'),
++  box('pasos', { background: col('light'),
+```
+
+### Das Datenblatt an den Fuß gleiten lassen
+
+Mit `placement="bottom"` in `content.es.md` nimmt das Datenblatt den Fuß von Seite 42 ein, auf die seine Direktive fällt. Der Versuchsablauf, den es verdrängt, beginnt am Kopf der rechten Spalte und teilt sich über das Umblättern hinweg, bis er am Kopf von Seite 43 endet.
+
+```diff
+-:::callout{type="datos" placement="top" title="Hoja de datos · Madrid, 40,4° N · 3,7° O"}
++:::callout{type="datos" placement="bottom" title="Hoja de datos · Madrid, 40,4° N · 3,7° O"}
+```
+
+## Häufige Fehler
+
+- Ein Kasten, der höher ist als eine ganze Spalte, teilt sich, gleich was `keepTogether` sagt. Die Einstellung entscheidet nur bei Kästen, die in eine Spalte passen, wie hier der Versuchsablauf mit 192 mm in einer Spalte von 211 mm.
+- `splitMinLines` (Vorgabe 2) ist die Mindestzahl an Zeilen, die ein Schnitt auf jeder Seite stehen lässt, gezählt in dem Schritt, den er teilt, sodass kein Schritt eine Zeile allein zurücklässt. Der Text vor dem Versuchsablauf ist so eingepasst, dass der Schnitt zwischen die Schritte 4 und 5 fällt. Jede Änderung am Text über einem geteilten Kasten kann den Schnitt verschieben, also prüfen Sie nach jeder Änderung, wo er liegt.
+- Ein Icon im Text nimmt eine eigene Spalte ein, und eine Fortsetzung behält diese Spalte, leer: Die Schritte verlieren in beiden Teilen die Breite des Icons. Ein Icon an der Ecke oder ein Seitenstreifen, auf dem das Icon sitzt, lässt ihnen die volle Breite.
+- Ein mit `placement="top"` gleitender Kasten steht oben auf der Seite nach derjenigen, auf die seine Direktive fällt; der Direktivenblock gehört also auf die Seite vor der, die der Kasten anführen soll. Hier steht er direkt vor dem Versuchsablauf, auf Seite 42.

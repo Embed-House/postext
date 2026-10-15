@@ -1,0 +1,61 @@
+---
+title: "Eine japanische Erzählung in zwei Stufen, Titel über beide"
+summary: "Zwei Erzählungen Akutagawas in Gesammelten Werken: zwei Stufen zu 25 Zeichen auf A5, jeder Titel über beide auf ungerader Seite, letzte Seiten wie sie fallen."
+plain: "Zwei Erzählungen, wie japanische Gesammelte Werke sie drucken: Der Text läuft in zwei übereinanderliegenden Bändern hinunter, jede Erzählung beginnt links mit einem Titel über die ganze Höhe, die letzte Seite bleibt unausgeglichen."
+description: "Akutagawa in zwei vertikalen Stufen mit Postext: Titel über beide Stufen, Werke auf ungeraden Seiten, dreizeilige Abschnittsnummern, offene Schlussseiten."
+question: "Wie setze ich eine japanische Erzählung in zwei Stufen, mit Titel über beide, beginnend auf der linken Seite?"
+aliases: ["二段組", "nidangumi", "zwei Stufen", "zweistufig vertikal", "段", "dan", "Stufen", "zenshū", "全集", "Gesammelte Werke", "tankōbon", "単行本", "成り行き", "nariyuki", "unausgeglichene letzte Seite", "Titel über Stufen", "Akutagawa", "芥川龍之介", "蜘蛛の糸", "Der Faden der Spinne", "尾生の信"]
+pageNotes: { "1": "Seite 211 eines Bandes Gesammelter Werke, allein links vom Rücken: „蜘蛛の糸“ läuft groß rechts auf der Seite durch beide Stufen hinunter, „芥川龍之介“ nahe dem Fuß, dann der Text in zwei Stufen mit einer Haarlinie dazwischen, Abschnitt „一“ drei Zeilen breit in der oberen Stufe und am Fuß ein zweizeiliges Impressum auf Englisch.", "4": "Die letzte Seite von „The Spider's Thread“: Die obere Stufe enthält Abschnitt „三“ und das Ende der Erzählung in zwanzig ihrer einundzwanzig Zeilen, die letzte davon das Datum „（大正七年四月十六日）“, ein Zeichen vom Fuß abgesetzt; die untere Stufe bleibt leer.", "5": "Die nächste Erzählung, „尾生の信“, beginnt auf der gegenüberliegenden linken Seite mit ihrem Titel durch beide Stufen.", "7": "Die letzte Seite: Der Text endet nach einem Drittel der oberen Stufe, und die untere Stufe bleibt leer." }
+---
+
+## Was Sie setzen
+
+Sieben Seiten aus einem Band Gesammelter Werke (全集) auf einer rechts gebundenen A5-Seite: Akutagawa Ryūnosukes *The Spider's Thread* und *Bisei's Faith*, gesetzt in zwei Stufen (二段組) zu 25 Zeichen die Seite hinunter und 21 Zeilen quer, Noto Serif JP zu 9 pt mit einer Haarlinie zwischen den Stufen. Jede Erzählung beginnt auf einer ungeraden Seite, der linken, mit ihrem Titel zu 20 pt, der durch beide Stufen hinunterläuft, und dem Namen des Autors nahe dem Fuß; die Paginierung zählt ab Seite 211. Die Abschnitte 一 二 三 belegen drei Zeilen ihrer Stufe. Endet eine Erzählung, bleibt ihre letzte Seite so, wie der Text fällt, das japanische 成り行き (nariyuki): Auf Seite 214 endet die Erzählung in der oberen Stufe mit ihrem Datum, eine Zeile bevor die Stufe voll ist, und die untere Stufe bleibt leer. Die chinesische Zeitung in vertikalen Stufen ist <RecipeLink slug="vertical-newspaper-tiers">Nº 084</RecipeLink>, und ein Kapiteltitel über zwei horizontale Spalten ist <RecipeLink slug="five-chapter-openers">Nº 017</RecipeLink>.
+
+## Zubereitung
+
+### 1 · Zwei um eine Vierteldrehung gedrehte Spalten sind zwei Stufen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Auf einer Seite mit `writingMode: 'vertical-rl'` stapelt `layoutType: 'double'` die beiden Spalten: Die erste füllt die obere Stufe von rechts, dann die untere, und der Spaltenabstand ist das Band zwischen ihnen ([Vertikale Schrift](/de/docs/configuration-page-layout#vertikale-schrift)). Das [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster) zählt Zeichen eine Stufe hinunter, sodass jede Stufe 25 Zeichen zu 9 pt fasst und der Spaltenabstand auf ganze zwei Zeichen gerundet wird; die 21 Zeilen zu 15,75 pt quer passen in 116,7 mm der 148 mm breiten Seite. Die Linie zwischen den Stufen läuft quer über die Seite, 0,4 pt in einem warmen Grau.
+
+Der Spaltenausgleich von Postext würde beide Stufen auf der letzten Seite einer Erzählung auf derselben Zeile enden lassen, so wie chinesische Zeitungen und die meisten europäischen zweispaltigen Bücher ein Kapitel schließen. Ein japanisches Buch in Stufen lässt den Text fallen: Die obere Stufe läuft über die ganze Seite, bevor die untere beginnt. `balancing.trailing: false` ist diese Entscheidung, und vertikale Stufen werden überhaupt nicht ausgeglichen, es sei denn, `enabled: true` schaltet den Ausgleich ein ([Spaltenausgleich](/de/docs/configuration-text#spaltenausgleich)).
+
+### 2 · Den Titel des Werks durch beide Stufen laufen lassen
+
+<Excerpt region="opener" />
+
+Eine Überschriftenebene mit `span: 'page'` wird über die ganze Höhe der Seite gesetzt, über beide Stufen und den Spaltenabstand, am Kopf des Flusses, also rechts auf einer vertikalen Seite; die Stufen beginnen nach den sieben Zeilen, die ihre Gestaltung reserviert. Eine solche Überschrift eröffnet immer eine Seite, und `breakBefore.parity: 'odd'` macht daraus die linke: *The Spider's Thread* endet auf Seite 214, einer geraden Seite, also beginnt *Bisei's Faith* auf 215 ohne Vakatseite dazwischen ([Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). In der Gestaltung läuft `x` die Seite hinunter und `y` quer dazu vom rechten Rand des Satzspiegels; der Name des Autors wird vom Fuß der unteren Stufe aus platziert, drei Zeichen hoch.
+
+### 3 · Die Abschnitte in drei Zeilen ihrer Stufe nummerieren
+
+Die zweite Ebene, `lineSpan: 3` mit `indent: em(8)`, setzt 一 二 三 acht Zeichen tief in eine Stufe, in einem Band von drei Zeilen, wie der Aozora-Text sie markiert (八字下げ, 中見出し), sodass der Text nach einer Abschnittsnummer auf den Zeilen der Stufe daneben bleibt ([Überschreibungen je Ebene](/de/docs/configuration-text#überschreibungen-pro-ebene)). Die Daten, die die Erzählungen schließen, （大正七年四月十六日）, sind ein Zeichen vom Fuß ihrer Stufe abgesetzt (地から一字上げ), mit `:::paragraphs{align=end endIndent=1}`; der Aozora-Konverter schreibt sie als Format `aozora-end1`, das sie bündig an den Fuß setzt, und die Attribute des Direktivenblocks fügen den Abstand von einem Zeichen hinzu.
+
+### 4 · Band und Werk an den Außensteg stellen
+
+<Excerpt region="furniture" />
+
+`anchor.to: 'outer'` setzt die Hashira in den Außensteg, den Namen des Bandes 芥川龍之介集 auf die rechten Seiten und den Titel des Werks auf die linken, und `pages: 'body'` hält beide von den Seiten fern, auf denen ein Werk beginnt ([Vertikale Textelemente](/de/docs/configuration-page-layout#vertikale-textelemente)). Die Pagina steht quer über den Rand in arabischen Ziffern, wie viele Gesammelte Werke sie drucken: Am Außensteg hinunter lägen drei Ziffern auf der Seite. `pageNumbering.startAt: 211` nummeriert die Seiten wie der Band. Das Überschriftenformat des ersten Werks trägt das Impressum mit `pages: 'opener'`, denn die Fußzeile eines Formats dient jeder Seite seines Abschnitts.
+
+## Varianten
+
+### Die letzte Seite ausgleichen
+
+Schalten Sie den Ausgleich ein, und die letzte Seite jedes Werks wird auf gleiche Höhe geschnitten: Seite 214 endet mit 10 Zeilen in der oberen und 10 in der unteren Stufe, der Schluss, den ein chinesisches oder europäisches Buch in Spalten verwendet. Auf dem Zeichenraster fügt der Ausgleich nur ganze Zeilen hinzu, sodass jedes Zeichen seine Zelle behält.
+
+```diff
+-const balancing = { trailing: false };
++const balancing = { enabled: true }; // the closing band is cut level
+```
+
+### Jedes Werk auf der nächsten Seite beginnen
+
+`parity: 'any'` beginnt ein Werk auf der nächstfolgenden Seite, wie es Zeitschriften und Anthologien sehr kurzer Stücke tun.
+
+```diff
+-const work = { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' } };
++const work = { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' } };
+```
+
+### Die Erzählung in einer Stufe setzen
+
+Romane und Bunko setzen ihren Text in einer Stufe, ohne Spaltenabstand; <RecipeLink slug="bunko-novel-furigana">Nº 117</RecipeLink> setzt ein Bunko auf diese Weise.

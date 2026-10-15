@@ -1,0 +1,59 @@
+---
+title: "Eine zweispaltige arabische Zeitungsseite"
+summary: "Eine arabische Tageszeitung mit der Locale 'ar': Die erste Spalte ist die rechte, Schlagzeilen über beide, Kurzmeldungen in drei Spalten von rechts."
+plain: "Die Titelseite und eine Innenseite einer arabischen Zeitung. Der Artikel beginnt in der rechten Spalte und läuft in der linken weiter, so wie arabische Leser eine Seite lesen."
+description: "Eine arabische Zeitung in Postext: zwei Textspalten von rechts nach links, Schlagzeilen über die Seitenbreite, Kurzmeldungen in drei Spalten, Gebetszeiten."
+question: "Welche Spalte kommt auf einer arabischen Seite zuerst, und wie setze ich eine zweispaltige Zeitung?"
+aliases: ["arabische Zeitung", "Zeitungsspalten", "Spalten von rechts nach links", "Spaltenreihenfolge", "Zeitungskopf", "Titelkopf", "Aref Ruqaa", "Gebetszeiten", "صحيفة", "عمود", "مواقيت الصلاة"]
+pageNotes: { "1": "Die Titelseite: der Name الساحل in großen blauen Ruqʿa-Buchstaben zwischen zwei kleinen Ohren, darunter eine kräftige und eine dünne Linie, die Dachzeile النقل, eine zweizeilige Schlagzeile in schwarzer Kufi über die ganze Seitenbreite, ein Vorspann, die Karte einer Straßenbahnlinie entlang einer Küste, der Artikel in zwei Spalten, rechts beginnend, und am Fuß eine sandfarbene Leiste mit Kurzmeldungen in drei Spalten.", "2": "Die Innenseite: ein blauer Rubrikkopf محليات über einer kräftigen Linie, eine Schlagzeile über die ganze Seitenbreite, vier Artikel in zwei Spalten von rechts und am Fuß eine Tabelle der Gebetszeiten, deren erste Spalte, الفجر, rechts steht." }
+---
+
+## Was Sie setzen
+
+Zwei Seiten von *الساحل*, einer erfundenen Tageszeitung einer erfundenen Hafenstadt, im Kompaktformat 246 × 328 mm. Die Titelseite trägt den Namen der Zeitung in Aref Ruqaa zu 84 pt, den Aufmacher über die neue Straßenbahn der Stadt unter einer Schlagzeile über die ganze Seitenbreite mit einer in Code gezeichneten Karte und am Fuß eine Leiste mit drei Kurzmeldungen. Seite 2 eröffnet den Lokalteil unter einem blauen Rubrikkopf, mit vier Artikeln und den Gebetszeiten des Tages. Alles liest sich von rechts: die erste Textspalte, die Kurzmeldungen, die Spalten der Tabelle, die Ohren des Zeitungskopfs. <RecipeLink slug="newspaper-front-page">Die englische Titelseite</RecipeLink> setzt dieselben Elemente von links nach rechts.
+
+## Zubereitung
+
+### 1 · Zwei Spalten, die erste rechts
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `layoutType: 'double'` und die Spaltenlinie sind dieselben Einstellungen wie in einer englischen Zeitung; `locale: 'ar'` dreht die Seite, sodass der Artikel zuerst die rechte Spalte füllt und oben in der linken weiterläuft ([Seitenreihenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)). Eine Schlagzeile über beide Spalten ist ein Kasten über die ganze Seitenbreite ohne Rahmen, und die Spalten darunter beginnen auf gleicher Höhe. Die Leiste mit den Kurzmeldungen ist ein Kasten über die ganze Seitenbreite, der an den Fuß gleitet und `:::columns{count=3}` enthält; auch ihre Spalten laufen von rechts nach links, ebenso die Tabelle der Gebetszeiten auf Seite 2: Eine Tabelle in der Schreibrichtung des Dokuments setzt ihre erste Spalte rechts.
+
+### 2 · Ein Zeitungskopf zwischen zwei Ohren
+
+<Excerpt region="nameplate" />
+
+Die Überschrift der Ebene 1 auf der Titelseite ist der Name der Zeitung, gezeichnet von einem Überschriftenformat. Ihr Design ist in der gespiegelten Seite angelegt, daher ist `top-right` der Zeilenanfang: Dort stehen Ausgabe und Datum, Stadt und Preis am anderen Ende ([Was links, rechts, Anfang und Ende bedeuten](/de/docs/arabic-layout#was-links-rechts-anfang-und-ende-bedeuten)). Ruqʿa ist eine Auszeichnungsschrift für wenige Wörter in großem Grad; sie hat keine Kaschida, und der Grundtext verwendet sie nie.
+
+### 3 · Rubrikköpfe und Paginazeilen
+
+<Excerpt region="inside" />
+
+Eine Innenseite beginnt mit einer Überschrift der Ebene 1, gezeichnet als Rubrikkopf auf einer kräftigen Linie. Die Paginazeile ist eine Kopfzeile und behält daher ihre physischen Seiten: Seite 2, eine gerade Seite, hat ihre Nummer in der rechten Ecke, der äußeren bei einer Zeitung, die sich von rechts öffnet. Die Titelseite blendet die Kopfzeile in ihrem Überschriftenformat aus.
+
+### 4 · Eine in Code gezeichnete Karte
+
+<Excerpt region="art" />
+
+Die Straßenbahnkarte ist ein SVG aus Pfaden und Kreisen in den Farben der Palette, ohne Text darin: Die Ortsnamen stehen in der Bildunterschrift, in der Schrift der Seite. Der Bildtyp hat weder Zähler noch Label, denn Zeitungen nummerieren ihre Bilder nicht.
+
+## Varianten
+
+### Drei Spalten in den Kurzmeldungen, vier auf einer breiteren Seite
+
+Die Leiste ist ein Kasten mit eigenen Spalten und kann daher mehr haben als die zwei des Grundtexts.
+
+```diff
+-:::columns{count=3 breaks="2,3"}
++:::columns{count=4 breaks="2,3,4"}
+```
+
+### Europäische Ziffern für eine Zeitung aus dem Maghreb
+
+```diff
+-  locale: 'ar', // written out, never LANG (gotcha: arabic-locale-tag): rtl, digits ٠–٩
++  locale: 'ar-MA', // rtl, digits 0–9
+```
+
+## Häufige Fehler
+
+- Die Gebetszeiten sind in den Tabellenzellen in arabisch-indischen Ziffern geschrieben: `locale` ändert nur die Zahlen, die die Engine selbst schreibt, daher tippt eine Ausgabe für den Maghreb sie neu.

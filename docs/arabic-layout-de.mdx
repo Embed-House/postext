@@ -1,0 +1,485 @@
+{/* docs/arabic-layout-en.mdx */}
+
+export const metadata = {
+  title: 'Arabischer Satz',
+  sidebarTitle: 'Arabischer Satz',
+  description: 'Wie Postext Arabisch setzt: Schreibrichtung und bidirektionaler Algorithmus, rechts gebundene Bücher, verbundene Wörter, die nie getrennt oder gesperrt werden, Blocksatz mit Kaschida, Vokalzeichen, Hervorhebung, Ziffern und Zahlstile, Ordnungswörter, Fußnoten, klassische Verse, Inhaltsverzeichnis, Register, Zitate und Schriften',
+  lang: 'de',
+  lastUpdated: '2026-10-04',
+  readingTime: '24 min',
+  order: 16,
+  plainSummary: "Diese Seite erklärt, wie Postext Arabisch setzt. Arabisch wird von rechts nach links gelesen, deshalb laufen die Zeilen, die Spalten und die Seiten des Buches in diese Richtung, während Zahlen und englische Wörter im Text weiterhin von links nach rechts gelesen werden. Die Buchstaben eines Wortes sind miteinander verbunden, deshalb trennt Postext nie ein Wort, sperrt nie seine Buchstaben und dehnt eine Zeile stattdessen, indem es einige Verbindungen verlängert. Die Seite behandelt außerdem die Vokalzeichen über und unter den Buchstaben, die in jeder Region üblichen Ziffern, Anmerkungen und Gedichte. Sie endet mit zwei vollständigen Beispielen und den Grenzen, die noch bestehen.",
+};
+
+# Arabischer Satz
+
+**Ein arabisches Buch läuft von rechts nach links, von seinen Buchstaben bis zu seinen Doppelseiten, und seine Wörter sind verbundene Striche, die sich nicht trennen lassen.**
+
+Postext setzt modernes Hocharabisch und klassisches Arabisch aus demselben Markdown und derselben Konfiguration wie jede andere Sprache. Eine einzige Einstellung, die Dokumentsprache, dreht das ganze Buch um: Die Zeilen beginnen rechts, die erste Spalte ist die rechte, das Buch wird am rechten Rand gebunden und seine Doppelseiten lesen sich von rechts nach links, während lateinische Wörter und Zahlen innerhalb einer Zeile weiterhin von links nach rechts laufen. Wörter werden als Ganzes gemessen und gezeichnet, von der Schrift geformt, und eine Zeile im Blocksatz wird an ihren Wortzwischenräumen und durch Verlängern der Verbindungen zwischen Buchstaben (Kaschida) gedehnt, nie durch Sperren der Buchstaben. Diese Seite erklärt, was die Engine tut und welche Einstellungen das steuern. Die [Konfigurationsreferenz](/de/docs/configuration-text#schreibrichtung) führt jeden Schlüssel mit seinem Standardwert auf, und das [Dokumentformat](/de/docs/document-format#schreibrichtung-in-der-auszeichnung) beschreibt das Markup.
+
+Die Regeln folgen den *Arabic & Persian Layout Requirements* des W3C ([alreq](https://www.w3.org/TR/alreq/)) und dem Unicode Bidirectional Algorithm ([UAX #9](https://www.unicode.org/reports/tr9/)), bei den Buchkonventionen den gedruckten Büchern aus Kairo, Beirut und der Druckerei von Būlāq. Die Quellen stehen am Ende der Seite.
+
+## Ein arabisches Buch anlegen
+
+Legen Sie die Dokumentsprache und die Schrift fest; alles andere auf dieser Seite ergibt sich daraus oder hat einen Standardwert für Arabisch:
+
+```ts
+const config: PostextConfig = {
+  locale: 'ar',
+  bodyText: { fontFamily: 'Amiri', lineHeight: { value: 1.75, unit: 'em' } },
+  headings: { fontFamily: 'Amiri' },
+};
+```
+
+`locale` nimmt `ar`, `ar-EG`, `ar-MA` oder jedes andere arabische Sprach-Tag an. Die Sprache gibt dem Buch:
+
+- **die Richtung**, von rechts nach links (`direction: 'auto'` liest sie aus der Schrift der Sprache ab);
+- **die Bindung**, am rechten Rand (`page.binding: 'auto'`);
+- **die Ziffern** der erzeugten Zahlen, ٠–٩ im Maschrek und 0–9 im Maghreb (`numerals: 'auto'`, siehe unten);
+- **keine Silbentrennung**, keine Sperrung und keine Laufweitenänderung arabischer Wörter, dafür Blocksatz mit Kaschida;
+- **fette Hervorhebung** statt Kursivschrift, aufrechte Zitatblöcke;
+- **die eingebauten Wörter**: شكل und جدول für Abbildungen und Tabellen, nach Kapiteln nummeriert (شكل ٢-٣), الفصل und ص in Querverweisen, المراجع über dem Literaturverzeichnis, انظر und انظر أيضًا im Register, (تابع) hinter der Legende einer fortgesetzten Tabelle;
+- **die Registerordnung**, alphabetisch (hidschāʾī), wobei der Artikel ال übergangen wird;
+- **das Sprach-Tag** im HTML (`lang="ar" dir="rtl"`) und im PDF (`/Lang`), damit die sprachspezifischen Formen der Schrift greifen. Auch die Canvas und die Kontexte, mit denen das Layout misst, übernehmen es, auf einer Seite in beliebiger Sprache und in einem Layout-Worker ([`bodyText.shapingLanguage: 'document'`](/de/docs/configuration-text#fließtext), Standard seit postext 1.30); mit `'host'`, das ein vor 1.30 gespeichertes Buch beibehält, übernehmen sie die Sprache der Seite, in die das Layout eingebettet ist.
+
+Die Sandbox erledigt das in einem Schritt: Wählen Sie العربية unter **Gestaltung › Schriftsystem** und klicken Sie auf **Arabische Standards › Prüfen…** (siehe [In der Sandbox](#in-der-sandbox)).
+
+## Richtung und bidirektionaler Algorithmus
+
+Ein arabischer Absatz läuft von rechts nach links, Zahlen, lateinische Wörter und Zitate darin aber von links nach rechts. Der Unicode Bidirectional Algorithm bestimmt die Reihenfolge dieser Stücke in jeder Zeile anhand der Zeichen selbst; Postext setzt ihn vollständig um (UAX #9, Unicode 18, jeder Fall der Konformitätstests). Der Text wird in logischer Reihenfolge gespeichert und durchsucht, in der Reihenfolge, in der er getippt wurde; nur beim Zeichnen wird umgeordnet.
+
+### Richtung von Dokument, Block und Textlauf
+
+Die Richtung wird auf drei Ebenen festgelegt:
+
+- **Das Dokument**: `direction: 'auto' | 'ltr' | 'rtl'`. `'auto'`, der Standard, ist von rechts nach links, wenn die Schrift von `locale` von rechts nach links geschrieben wird (Arabisch, Persisch, Urdu, Hebräisch, Syrisch, Thaana, N’Ko, Adlam …), und sonst von links nach rechts. Setzen Sie den Wert nur, um eine Richtung zu erzwingen: Ein englisches Buch braucht ihn nicht, und ein arabisches Buch, das von links nach rechts gesetzt ist, ist fast immer ein Fehler.
+- **Ein Block**: `{dir=ltr}` oder `{dir=rtl}` hinter einer Überschrift oder an einem beliebigen `:::`-Container: `:::paragraphs{dir=ltr}`, `:::callout{dir=ltr}`, `:::columns`, `:::part`. Alles im Container übernimmt diese Richtung, bis hinunter zu einem verschachtelten Block, der eine andere setzt. Einfache Absätze, Listenpunkte und Zitate haben kein eigenes Attribut: Umschließen Sie sie mit `:::paragraphs{dir=…}`. Eine Tabellenressource nimmt `table.direction`.
+- **Ein Textlauf**: `:ltr[…]` und `:rtl[…]` isolieren ihren Text, optional mit `{lang=…}`, das den Lauf im HTML und im PDF auszeichnet.
+
+```markdown
+# Introduction {dir=ltr}
+
+:::paragraphs{dir=ltr}
+An English paragraph quoted in an Arabic book, set left to right with its indent on the left.
+:::
+
+نشر الكتاب في :ltr[The Arabian Nights, vol. 2]{lang=en} سنة ١٨٣٥.
+```
+
+Ein Block, der gegen die Richtung des Dokuments gesetzt ist, behält seine eigene Anfangsseite: Sein Erstzeileneinzug, seine Listenzeichen und das bündige Ende seiner letzten Zeile wandern auf die Seite, an der sein Text beginnt, und seine Zeilen werden in der Spalte so ausgerichtet, wie sein Text es erwartet. In einem arabischen Buch sollte ein englisches Zitat `{dir=ltr}` tragen: Ohne das gehört sein Schlusspunkt, ein neutrales Zeichen, zum Absatz von rechts nach links und wird am linken Zeilenende gedruckt, so wie ein Browser ihn zeigen würde. Ein Container kann auch seine Sprache nennen, `:::paragraphs{dir=ltr lang=en}`: Die nummerierten Listen darin zählen in den Ziffern dieser Sprache (1. 2. in einem arabischen Buch, ١. ٢. unter `lang=ar` in einem englischen). Fußnoten-, Abbildungs-, Tabellen- und Überschriftennummern im Block behalten die Ziffern des Dokuments: Sie gehören zu den eigenen Zählfolgen des Buches.
+
+### Isolate
+
+`:ltr[…]` und `:rtl[…]` sind bidirektionale Isolate (die LRI…PDI und RLI…PDI aus UAX #9): Ihr Text wird in ihnen geordnet, und der Absatz sieht jedes Isolat als ein einziges neutrales Zeichen. Verwenden Sie eines, wenn ein lateinischer Titel auf ein neutrales Zeichen endet (einen Punkt, eine schließende Klammer, ein Fragezeichen), das sonst mit dem umgebenden Arabisch gelesen würde, oder wenn ein Lauf mit einer Ziffer oder einem lateinischen Buchstaben beginnt, der die Vermutung eines First-Strong-Algorithmus kippen würde. Eine Fußnote, ein `:ref` oder eine Formel innerhalb eines Isolats gehört dazu. Die Unicode-Steuerzeichen selbst (U+2066–2069, U+202A–202E, U+200E und U+200F, die arabische Buchstabenmarke U+061C) werden beachtet, wenn die Quelle sie enthält, aber die Direktiven sind leichter zu lesen und zu bearbeiten.
+
+### Zahlen
+
+Eine Zahl liest sich in jedem Ziffernsystem von links nach rechts, mit der höchstwertigen Ziffer links: ١٤٤٥ ebenso wie 1445. Europäische Ziffern nach arabischen Buchstaben werden als arabische Zahlen gelesen (Regel W2), deshalb ordnen sich `سنة 1835م` und `سنة ١٨٣٥م` gleich. Eine Zahl, die einen Absatz eröffnet, ohne Buchstaben davor, wird in einem Buch von rechts nach links in arabischer Schrift genauso gelesen: Die Abschnittsnummer `3-1` einer Überschrift und die Legende `شكل 3-1` einer maghrebinischen Ausgabe drucken beide die 3 rechts, wie es `٣-١` tut. Zwei durch einen Schrägstrich verbundene Zahlen, etwa Band und Seite oder Sure und Vers (`١٣/٩٠`), bleiben ein Lauf; ein mit Bindestrich geschriebener Bereich (`١٢-١٥`) liest sich von rechts nach links, die 12 rechts, wie arabische Leser es erwarten. Das Prozentzeichen ٪ (U+066A) wird nach der Zahl getippt und erscheint links von ihr. Der Text, den die Autorin oder der Autor tippt, wird nie umgeschrieben: Nur die Zahlen, die die Engine erzeugt, übernehmen die Ziffern des Dokuments ([Ziffern](#ziffern-und-zahlstile)).
+
+### Klammern und Anführungszeichen
+
+Runde, eckige und geschweifte Klammern sowie Guillemets werden in Läufen von rechts nach links gespiegelt: Eine `(`, die vor einem arabischen Wort getippt wird, öffnet es auf seiner rechten Seite. Tippen Sie sie in logischer Reihenfolge, die öffnende zuerst, wie im Englischen; Canvas, HTML und PDF zeichnen die gespiegelte Glyphe (das Feature `rtlm` der Schrift oder den gespiegelten Codepunkt). « » öffnen und schließen ein arabisches Zitat auf dieselbe Weise. Der Text hinter den Glyphen bleibt der Text, den Sie getippt haben. Eine gespiegelte Klammer wird mit der Glyphe der Gegenklammer gezeichnet, und das PDF markiert jede Klammer, deren Glyphe die Schrift bereits als die andere liest, sodass `(Brill, 2017)` in einer mit `(١)` nummerierten Anmerkung mit beiden Klammern so kopiert, durchsucht und vorgelesen wird, wie sie geschrieben wurden.
+
+Die verzierten Klammern von Koranzitaten, ﴿ (U+FD3F) und ﴾ (U+FD3E), werden nicht gespiegelt: Seit Unicode 14 ist ﴿ die öffnende und ﴾ die schließende, und ihre Glyphen sind für Text von rechts nach links gezeichnet. Tippen Sie ﴿ zuerst: `﴿بسم الله الرحمن الرحيم﴾` wird mit ﴿ rechts gedruckt. Sie sind auch keine paarigen Klammern, deshalb übernehmen in einem Absatz von links nach rechts (ein arabischer Vers, der in einem englischen Buch zitiert wird) die Klammern neben einem lateinischen Wort die Richtung des Absatzes: ﴿ landet links vom Vers, und das Paar liest sich verkehrt herum, wie in einem Browser. Setzen Sie das Zitat als Isolat von rechts nach links, `:rtl[﴿بسم الله الرحمن الرحيم﴾]`, dann gehen beide Klammern mit dem Vers, ﴿ rechts davon.
+
+### Wörter ohne Buchstaben
+
+Ein Wort, das nur aus Ziffern, Satzzeichen oder Symbolen besteht (`46.`, `1367)`, `».`), hat keine eigene Schrift, und eine Schriftart kann ihre Zeichen je nach Schrift unterschiedlich zeichnen. Amiri setzt einen lateinischen Punkt, lateinische Klammern und Guillemets in lateinischem Text und arabische sonst: Ihr Punkt ist 0,20 em breit statt 0,32, eine Klammer 0,26 statt 0,46. Bekommt ein Shaper ein solches Wort allein, wählt jeder die Schrift nach einer eigenen Regel: Eine Chrome-Version nimmt die Standardformen der Schrift, eine spätere die lateinischen, das PDF die Standardformen. Dieselbe Anmerkung brach ihre Zeilen dann von einem Browser zum nächsten anders um, und ihr PDF setzte an den gemessenen Stellen Zeichen anderer Breite.
+
+Postext entscheidet stattdessen selbst (`bodyText.scriptContext`, standardmäßig aktiv). Ein solches Wort übernimmt die Schrift des Textes um es herum:
+
+- von links nach rechts gezeichnet die Schrift des nächsten Buchstabens davor in seinem Isolat, sonst die des nächsten danach: `46.` am Ende einer englischen Anmerkung ist lateinisch, die `1367` aus `(1367)` in einem arabischen Satz ist arabisch;
+- von rechts nach links gezeichnet (eine Klammer oder ein Punkt auf einer Ebene von rechts nach links) die Schrift des nächsten Buchstabens von rechts nach links: Die Klammern von `(1367)` in einem arabischen Satz bleiben arabisch;
+- ohne Buchstaben in der Nähe (ein Absatz oder ein Isolat nur aus Zahlen) die Schrift der Dokumentsprache.
+
+Das Layout misst das Wort in dieser Schrift, und Canvas, HTML, EPUB mit festem Layout und PDF zeichnen diese Formen in dieser Breite, in jedem Browser gleich. Eine lateinische Anmerkung, ein Zitat oder ein Eintrag im Literaturverzeichnis eines arabischen Buches braucht kein geschütztes Leerzeichen, um `46.` oder `(d. 1367)` in ihren lateinischen Formen zu halten: Schreiben Sie sie mit gewöhnlichen Leerzeichen. Ein in arabischer Schrift geformtes Wort wird nicht gesperrt, wie die arabischen Wörter um es herum.
+
+Ein Wort mit einem Buchstaben ist ein einziger Schriftlauf, und das gilt auch für die Stücke, in denen es gezeichnet wird. Ein DOI oder eine Webadresse darf an jeder ihrer Fugen eine Zeile beenden, und ein Wort, das breiter ist als seine Zeile, wird dort geteilt, wo die Zeile endet; ein Stück ohne Buchstaben (`10.1006/` und `.2001` aus `10.1006/ijhc.2001.0458`) übernimmt die Schrift, die es innerhalb seines Wortes hat: die des Buchstabens davor, sonst die des ersten Buchstabens des Wortes. Es wird in dieser Schrift gemessen und gezeichnet, sodass die Adresse auch in einer Schrift kompakt steht, deren Ziffern sich mit der Schrift ändern (Noto Serif SC zeichnet sie in lateinischem Text 0,55 em breit und sonst 0,47 em).
+
+In einem chinesischen oder japanischen Dokument (`locale` `zh` oder `ja`) ist eine doppelte Auslassung oder ein doppelter Strich (`……`, `——`, `――`) überall, wo er zitiert wird, das eigene Zeichen des Dokuments. Ein Wort ohne Buchstaben, das ein solches enthält, etwa `…….` am Ende eines englischen Satzes im Impressum, setzt das Paar in den Formen des Han-Textes (sechs zentrierte Punkte, ein zwei Geviert langer Strich) und das, was dabeisteht, den Punkt oder ein Anführungszeichen, in der Schrift des Satzes. Es braucht kein `:ltr[…]` und keinen Abschnitt in einem anderen Stil.
+
+Die Regel wirkt in lateinischen, griechischen, kyrillischen, arabischen und hebräischen Kontexten, und nur bei einer Schriftart, deren Satzzeichen oder Ziffern sich mit der Schrift ändern; jede andere Schriftart wird wie bisher gesetzt. Sie gilt für den Fließtext, Überschriften, Listen, Legenden, Anmerkungen, Tabellenzellen und die Punktlinie eines Eintrags im Inhaltsverzeichnis. Ein Wort von rechts nach links wird so gemessen, wie es gezeichnet wird, sodass eine Klammer oder ein Punkt an seinem Rand in jedem Browser seine Breite erhält. Eine von postext 1.27 oder früher gespeicherte Konfiguration wird mit `scriptContext: false` gelesen und behält die Formen, die ihr Browser ihr gab. Siehe [`bodyText.scriptContext`](/de/docs/configuration-text#fließtext).
+
+## Seitenfolge und Bindung rechts
+
+Ein arabisches Buch wird an seinem rechten Rand gebunden. Seine erste Seite ist eine linke Seite, seine Doppelseiten lesen sich von der rechten zur linken Seite, und seine Spalten füllen sich von rechts nach links. Postext setzt eine solche Seite als gespiegelte Seite von links nach rechts: Alles im Textfluss (Spalten, Zeilen, Einzüge, Listenzeichen, Gleitobjekte, Anmerkungen, Kästen, Tabellen) wird vom selben Code platziert wie in einem englischen Buch, dann wird die Seite als Ganzes gespiegelt, wobei jedes Wort, jedes Bild und jede Formel richtig herum gezeichnet wird.
+
+<Illustration name="ArabicSpread" data='{"title": "Eine arabische Doppelseite, rechts gebunden", "desc": "Eine Doppelseite aus zwei Seiten, die am Bund zusammentreffen. Seite 2 liegt rechts, Seite 3 links. Auf jeder Seite ist die erste Spalte die rechte, und die Zeilen laufen von rechts nach links; der Bundsteg liegt am Bund, der Außensteg am Vorderschnitt. Ein Pfeil zeigt die Leserichtung von Seite 2 zu Seite 3.", "caption": "Seite 2 rechts, Seite 3 links; Spalte 1 jeweils rechts auf der Seite.", "spine": "Bund", "pageOrder": "nächste Seite", "columnOrder": "Spalte 1 rechts", "lineDirection": "Zeilen laufen von rechts nach links", "inner": "innen", "outer": "außen", "sample": "كان في قديم الزمان"}' />
+
+- **Bindung.** `page.binding: 'auto'` ist bei einem Dokument von rechts nach links der rechte Rand. Seite 1 ist weiterhin ungerade und weiterhin die Recto-Seite, deshalb behalten `breakBefore.parity`, `:::pagebreak{parity="odd"}` und Seitenzählungen ihre Bedeutung; die Recto-Seite ist die linke Seite der Doppelseite, und ein Kapitel, das auf einer Recto-Seite beginnt, beginnt auf einer linken Seite. Mit `margins.mirror` liegt der Bundsteg ungerader Seiten rechts. Das PDF fordert Betrachter zu Doppelseiten von rechts nach links auf (`/Direction /R2L`, `/PageLayout /TwoPageRight`), die Sandbox zeigt die Doppelseiten als 3 | 2, und ihr HTML-Betrachter lässt die Seiten von rechts nach links laufen. Siehe [Bindung](/de/docs/configuration-page-layout#bindung).
+- **Spalten.** Auf einer zweispaltigen Seite ist die erste Spalte die rechte; Spaltenlinie, Seitenspalte und Spaltenabstand folgen dem. Ein Gleitobjekt oben erstreckt sich von rechts, Fußnoten stehen am Fuß jeder Spalte mit ihrer Trennlinie rechts.
+- **Kolumnentitel und Paginae** bleiben auf dem Blatt: Die Plätze von Kopf- und Fußzeile sind physisch, und ihr `left` und `right` sind die Seiten des Blattes, wie in jedem Buch. Richten Sie sie für den rechten Rand ein: den Kapiteltitel auf der linken (ungeraden) Seite, den Buchtitel auf der rechten (geraden) Seite, die Pagina in der äußeren Ecke (links auf ungeraden Seiten) oder mittig, wie es die meisten arabischen Bücher tun.
+
+### Was links, rechts, Anfang und Ende bedeuten
+
+Eine Einstellung, die eine Seite nennt, meint eine Seite des Textes, nicht des Blattes, sodass eine für ein englisches Buch gemachte Gestaltung unverändert funktioniert, wenn das Buch auf Arabisch umgestellt wird. `start` und `end` werden überall als ausdrückliche Namen für Anfang und Ende des Textes akzeptiert.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '260px' }}>Einstellung</th>
+      <th><code>left</code> / <code>right</code></th>
+      <th><code>start</code> / <code>end</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Textausrichtung: <code>bodyText.textAlign</code>, Überschriften, Absatz- und Teilformate, Fußnoten, <code>align</code> der Legende, Inhalt eines Kastens</td><td>Die Seiten des Textes: <code>left</code> ist die Seite, an der eine Zeile beginnt, bei einem arabischen Absatz die rechte. Die letzte Zeile eines Absatzes im Blocksatz steht dort.</td><td>Synonyme für <code>left</code> und <code>right</code>.</td></tr>
+    <tr><td>Tabellenzellen (<code>TableCell.align</code>)</td><td>Die Seiten des Zelltextes, gelesen in der Richtung der Tabelle (<code>table.direction</code>).</td><td>Synonyme, gelesen in der Richtung der Tabelle.</td></tr>
+    <tr><td><code>placement.align</code> eines Gleitobjekts oder einer schmalen Abbildung</td><td>Die Seiten des Textflusses: In einem arabischen Buch ist <code>left</code> die rechte Seite des Blattes.</td><td>Synonyme für <code>left</code> und <code>right</code>.</td></tr>
+    <tr><td><code>placement.wrap</code> eines Bildes oder Kastens, neben dem der Text läuft</td><td>Die Seiten des Textflusses, wie bei <code>align</code>: In einem arabischen Buch setzt <code>left</code> das Objekt an die rechte Seite des Blattes, den Text links davon.</td><td>Synonyme für <code>left</code> und <code>right</code>.</td></tr>
+    <tr><td><code>stripe.side</code>, <code>icon.cornerSide</code> und <code>position</code> der Beschriftung eines Kastens</td><td>Die Seiten des Textflusses, für jeden Kasten der Seite gleich.</td><td>Die eigene Richtung des Kastens: Der Anfang eines <code>:::callout&#123;dir=ltr&#125;</code> in einem arabischen Buch ist die linke Seite des Blattes.</td></tr>
+    <tr><td>Plätze von Kopf- und Fußzeile, Gestaltungselemente auf dem Blatt</td><td>Die Seiten des Blattes.</td><td>Nur Textelemente: Anfang und Ende in der eigenen Richtung des Elements.</td></tr>
+  </tbody>
+</table>
+
+Gestaltungselemente, die im Fluss gesetzt werden, etwa ein Band im Kapitelauftakt oder eine Überschriftengestaltung, werden mit ihm gespiegelt: Ihr `left` und `right` sind seine Anfangs- und Endseite, wie im Fließtext. Ein Textelement nimmt `direction: 'ltr' | 'rtl' | 'auto'` an (standardmäßig die Richtung des Dokuments; `'auto'` liest den ersten starken Buchstaben seines Textes), und sein `align: 'start'` und `'end'` folgen ihr. `placement.rotate` behält seine physische Bedeutung: Eine im Uhrzeigersinn gedrehte Abbildung ist auf dem Blatt im Uhrzeigersinn gedreht.
+
+## Formung und ganze Wörter
+
+Die Buchstaben eines arabischen Wortes verbinden sich, und jeder nimmt die Form an, die seine Nachbarn verlangen: Anfangs-, Mittel-, End- oder isolierte Form, mit Ligaturen wie Lām-Alif. Postext misst und zeichnet ein Wort als eine geformte Zeichenkette, nie Buchstabe für Buchstabe. Canvas und HTML überlassen das Formen dem Browser; das PDF formt mit HarfBuzz, das nur geladen wird, wenn ein Dokument Arabisch oder eine andere Schrift enthält, die es braucht, und ordnet jede Glyphe ihren Zeichen zu, sodass der aus dem PDF kopierte und von einem Screenreader gelesene Text der getippte Text ist. Kann HarfBuzz nicht geladen werden, wird das PDF trotzdem geschrieben, mit falsch platzierten Zeichen, und `renderToPdf` meldet eine Warnung `complexShapingUnavailable`; seine Option `harfbuzzWasm` verweist auf die Datei, wenn ein Host sie von einem eigenen Ort ausliefert.
+
+Aus den Verbindungen folgen drei Regeln, die für jedes Wort mit einem Buchstaben der arabischen Schrift gelten, in einem arabischen Buch ebenso wie zitiert in einem englischen:
+
+- **Keine Silbentrennung.** Arabisch wird am Zeilenende nicht getrennt, und in einem Dokument in arabischer Schrift ist die Silbentrennung ausgeschaltet. Wird sie mit einer lateinischen Mustersprache eingeschaltet (`hyphenation: { enabled: true, locale: 'en-us' }`), trennt sie die lateinischen Wörter des Buches und lässt die arabischen ganz.
+- **Keine Sperrung.** Verbundene Buchstaben zu sperren zerreißt die Verbindungen. Das `letterSpacing` eines Formats und die Laufweitenänderung des Blocksatzes überspringen arabische Wörter; der Build meldet ein Fließtext- oder Überschriftenformat, das arabischen Text sperrt (`joiningScriptLetterSpacing`).
+- **Keine Teilung.** Ein Wort, das breiter ist als die Zeile, wird nie zwischen seinen Buchstaben geteilt. Es ragt über die Satzbreite hinaus, die Zeile wird markiert (`VDTLine.wordOverflow`), und der Build meldet es (`unbreakableWordOverflow`). Das kommt in schmalen Tabellenzellen und Seitenspalten vor; verbreitern Sie diese oder formulieren Sie den Text um.
+
+Ein Formatwechsel innerhalb eines Wortes, etwa ein farbiger Buchstabe oder ein fettes Vokalzeichen (`كتا**ب**`), teilt das Wort nicht in zwei: Es wird als Ganzes gemessen und geformt, und der formatierte Teil wird darübergezeichnet. PDF und HTML färben genau die betroffenen Buchstaben; die Canvas schätzt, wo der Buchstabe im geformten Wort liegt, und eine Farbe kann um ein Haar in den Nachbarn reichen. Ein Gestaltungstext teilt ein arabisches Wort beim Umbrechen oder Kürzen nie, und eine Initiale, in einem Gestaltungstext oder am Anfang eines Absatzes, wird nicht gezeichnet, wenn der erste Buchstabe sich mit dem nächsten verbindet: Ein solcher Absatz löst eine Warnung `dropCap` aus (siehe [Initialen](/de/docs/configuration-text#initialen)). Ein Buchstabe, der sich nicht mit dem nächsten verbindet (ا, د, ر, و), und ein hebräischer Buchstabe werden als Initiale rechts gesetzt, die Zeilen auf dieser Seite verkürzt.
+
+## Blocksatz und Kaschida
+
+Arabische Bücher stehen im Blocksatz. Eine Zeile wird nicht durch Sperren ihrer Buchstaben gedehnt, sondern an ihren Wortzwischenräumen und durch Kaschida, die verlängerten Verbindungen, die ein Kalligraf zwischen zwei verbundenen Buchstaben zieht (كتاب → كتـاب). Postext fügt Kaschidas als ganze Tatwīl-Zeichen ein (U+0640, ـ), die die Schrift als einen Strich zeichnet; Amiri macht aus einer Folge davon eine geschwungene Verbindung.
+
+`bodyText.kashida` ist in einem Dokument in arabischer Schrift `'auto'` und in jedem anderen `'none'`. Jede Zeile im Blocksatz außer der letzten eines Absatzes öffnet zuerst ihre Wortzwischenräume um bis zu einem Viertel ihrer Breite und nimmt den Rest ihres Spielraums dann in Kaschidas auf, ein Tatwīl nach dem anderen, an den besten Verbindungen zuerst; was übrig bleibt, weniger als ein Tatwīl, geht an die Zwischenräume zurück. Knuth-Plass rechnet die mögliche Verlängerung jedes Wortes als Dehnbarkeit, wählt die Umbrüche also in dem Wissen, dass eine Zeile arabischer Wörter dort breiter werden kann. Lateinische Wörter, Ziffern, Überschriften, Zeilen im Flattersatz und die letzte Zeile eines Absatzes erhalten nie eine Kaschida.
+
+Wo eine Kaschida stehen darf, richtet sich nach den Regeln von [raqim-kashida](https://github.com/aliftype/raqim-kashida): nur zwischen zwei Buchstaben, die sich verbinden, nie nach einem Buchstaben, der sich nicht nach vorn verbindet (ا د ذ ر ز و ة), nie am Wortende, nie innerhalb von Lām-Alif. `kashidaPatterns` wählt den Regelsatz: `'naskh'` für die klassischen Naschī-Regeln, `'simple'` für die Prioritäten einfacher moderner Schriften, `'nastaliq'` für Nastaʿlīq, und `'auto'` liest die Fließtextschrift ab (gar keine Kaschida bei einer Ruqʿa-Schrift wie Aref Ruqaa, deren Stil sie verbietet). `kashidaPerWord` (standardmäßig 1) und `kashidaMaxLength` (0,6 em) begrenzen, wie stark sich ein Wort dehnt; ein Wort, das ein von der Autorin oder dem Autor getipptes Tatwīl enthält, wird dort verlängert. Die eingefügten Tatwīls werden gezeichnet, aber aus dem reinen Text, der Source-Map und dem aus dem PDF kopierten Text herausgelassen. [Kaschida in arabischem Text](/de/docs/justification#kaschida-in-arabischem-text) beschreibt die Regelsätze im Einzelnen.
+
+```ts
+bodyText: {
+  textAlign: 'justify',
+  kashida: 'auto',          // the default in an Arabic book
+  kashidaPatterns: 'naskh', // 'auto' reads it from the face
+}
+```
+
+## Vokalzeichen
+
+Die Vokalzeichen (Harakāt: Fatha, Damma, Kasra, Sukūn, Schadda, Tanwīn, das hochgestellte Alif) und die koranischen Zeichen stapeln sich über und unter den Buchstaben, im Zeilenabstand. Moderne Prosa setzt hier und da eine Schadda oder einen Vokal; eine klassische Ausgabe vokalisiert ihre Verse vollständig und ihre Prosa sparsam; der Koran ist immer vollständig vokalisiert. Der Zeilenabstand wächst für die Zeichen nie von selbst, wählen Sie ihn deshalb für den am stärksten vokalisierten Text, den das Buch enthält:
+
+<table>
+  <thead>
+    <tr>
+      <th>Text</th>
+      <th style={{ width: '200px' }}><code>lineHeight</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Unvokalisierte moderne Prosa</td><td>1,55–1,7 em</td></tr>
+    <tr><td>Teilweise vokalisierte Prosa</td><td>1,7–1,85 em</td></tr>
+    <tr><td>Vollständig vokalisierte Verse, der Koran</td><td>1,9–2,1 em</td></tr>
+  </tbody>
+</table>
+
+Jede Zeile mit Zeichen hält fest, wie weit deren Farbe über und unter die Grundlinie reicht (`VDTLine.markInk`), und der Spaltenzuschnitt von Canvas und PDF bezieht die Zeichen der ersten und letzten Zeile einer Spalte ein. Trifft ein Zeichen über einem Wort auf die Buchstaben oder Zeichen, die unter dem Wort darüber hängen, meldet der Build den Absatz (`arabicMarksExceedLeading`, im Bedienfeld Prüfungen der Sandbox) mit dem Zeilenabstand, den er bräuchte. Verglichen werden nur Wörter, die übereinanderstehen, ein vokalisiertes Wort unter einem kurzen besteht also. Geben Sie vokalisierten Passagen, besonders Versen, ein Absatzformat mit größerem Zeilenabstand.
+
+`bodyText.tashkil` nimmt Zeichen aus dem Text, den das Layout setzt, für eine unvokalisierte Ausgabe aus einer vokalisierten Quelle: `'strip'` entfernt die Vokale, Tanwīn, Sukūn, Schadda, das hochgestellte Alif (هٰذا wird als هذا gesetzt) und die koranischen Zeichen; `'strip-vowels'` behält die Schadda, wie die meisten modernen Bücher sie drucken. Hamza und Madda bleiben: أ إ آ sind Buchstaben. Die Quelle behält ihre Zeichen; Absätze, Überschriften und das Inhaltsverzeichnis werden ohne sie gesetzt.
+
+## Hervorhebung
+
+Arabische Schrift kennt keine Kursive, und eine schräggestellte arabische Schrift ist eine Verzerrung. In einem Dokument in arabischer Schrift wird `*…*` standardmäßig fett gesetzt (`bodyText.emphasis: 'auto'`); `'color'` setzt es aufrecht in `italicColor`, und `'overline'` zieht eine Linie über die Wörter, die Überstreichung älterer arabischer Bücher. Was auch immer gewählt wird, die Engine stellt arabische Buchstaben nie schräg: In einem kursiv gesetzten Lauf stehen die arabischen Wörter aufrecht, und die lateinischen Wörter behalten ihre Kursive, sodass `*Kitāb al-ʿIbar كتاب العبر*` die Transliteration kursiv und den arabischen Titel aufrecht druckt. Zitatblöcke sind in einem arabischen Buch standardmäßig aufrecht; ein Format, dessen eigene Schrift kursiv ist (`blockquote.italic: true`, eine kursiv gesetzte Überschriftenebene), setzt seine arabischen Wörter ebenfalls aufrecht, in seiner Schrift ohne Neigung, und seine lateinischen Wörter kursiv. Legenden, Tabellenzellen, Inhaltsverzeichnis und Register behalten ihre eigenen Kursiv-Einstellungen.
+
+```ts
+bodyText: { emphasis: 'overline', italicColor: { hex: '#8a1c1c', model: 'hex' } }
+```
+
+## Ziffern und Zahlstile
+
+Arabisch wird mit drei Ziffernsätzen geschrieben, je nach Region:
+
+<table>
+  <thead>
+    <tr>
+      <th>Region</th>
+      <th>Ziffern</th>
+      <th style={{ width: '170px' }}><code>numerals</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Der Maschrek: Ägypten, Sudan, die Levante, Irak, die Arabische Halbinsel (<code>ar</code>, <code>ar-EG</code>, <code>ar-SA</code> …)</td><td>٠ ١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩ (arabisch-indisch)</td><td><code>'arab'</code></td></tr>
+    <tr><td>Der Maghreb: Marokko, Algerien, Tunesien, Libyen, Mauretanien (<code>ar-MA</code>, <code>ar-DZ</code>, <code>ar-TN</code> …)</td><td>0 1 2 3 4 5 6 7 8 9 (europäisch)</td><td><code>'latn'</code></td></tr>
+    <tr><td>Persisch, Paschtu, Urdu in Indien (<code>fa</code>, <code>ps</code>, <code>ur-IN</code>)</td><td>۰ ۱ ۲ ۳ ۴ ۵ ۶ ۷ ۸ ۹ (persische Formen)</td><td><code>'arabext'</code></td></tr>
+  </tbody>
+</table>
+
+Das oberste `numerals` legt die Ziffern jeder Zahl fest, die die Engine schreibt: Paginae und die Seitenzahlen in Inhaltsverzeichnis und Register, Listen- und Fußnotennummern, Überschriften- und Kapitelzähler, Abbildungsnummern und die Verweise darauf, `{totalPages}`. `'auto'` übernimmt die Ziffern der Region aus `locale` (`ar` ohne Region und `ar-AE` sind maschrekisch, wie die Bücher dort sie drucken); ein Tag kann seine eigenen nennen (`ar-MA-u-nu-arab`). Zahlen, die die Autorin oder der Autor tippt, werden nie verändert und in jedem System gelesen: Ein Listenpunkt `٣.` beginnt bei 3, und `{startAt=٥}` ist 5. Siehe [Ziffern des Dokuments](/de/docs/configuration-text#ziffern-des-dokuments).
+
+Ein in der Konfiguration genanntes Format wird so gedruckt, wie es heißt, sodass ein Buch Systeme mischen kann. Die arabischen Zahlstile:
+
+<table>
+  <thead>
+    <tr>
+      <th>Stil</th>
+      <th>1, 2, 3 … 11, 1446</th>
+      <th style={{ width: '220px' }}>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Arabisch-indische Ziffern</td><td>١، ٢، ٣ … ١١، ١٤٤٦</td><td><code>arabic-indic</code>, <code>١</code></td></tr>
+    <tr><td>Persische Ziffern</td><td>۱، ۲، ۳ … ۱۱، ۱۴۴۶</td><td><code>persian</code>, <code>۱</code></td></tr>
+    <tr><td>Abdschad-Zahlen (additiv, maschrekische Werte)</td><td>ا، ب، ج … يا، غتمو</td><td><code>arabic-abjad</code></td></tr>
+    <tr><td>Abdschad-Zahlen, maghrebinische Werte</td><td>ا، ب، ج … يا (ص 60، ش 1000)</td><td><code>arabic-abjad-maghrebi</code></td></tr>
+    <tr><td>Buchstaben in Abdschad-Reihenfolge</td><td>أ، ب، ج، د، هـ، و …</td><td><code>abjad</code>, <code>أبجد</code></td></tr>
+    <tr><td>Buchstaben in alphabetischer (hidschāʾī) Reihenfolge</td><td>أ، ب، ت، ث، ج …</td><td><code>hijai</code>, <code>أبتث</code></td></tr>
+  </tbody>
+</table>
+
+Die Abdschad-Zahlen addieren die Werte ihrer Buchstaben, den höchsten zuerst, wie Handschriften und Chronogramme zählen: 11 ist يا, 1446 غتمو, 2000 بغ und 1002 غب. Die beiden Buchstabenstile nummerieren Listenpunkte und Seiten der Titelei mit einem Buchstaben pro Eintrag; beide schreiben den ersten Buchstaben mit seiner Hamza (أ) und ein alleinstehendes Hāʾ als هـ, sodass keiner als die Ziffern ١ und ٥ gelesen wird. Eine klassische Ausgabe paginiert ihre Titelei in Abdschad-Reihenfolge und beginnt die Ziffern mit dem Text:
+
+```markdown
+:::numbering{format="abjad" startAt=1}
+
+# المقدمة {style="front-matter"}
+
+…
+
+:::pagebreak{parity="odd"}
+:::numbering{format="decimal" startAt=1}
+```
+
+Nummerierte Listen folgen denselben Namen. Eine übliche arabische Hierarchie ist ١- , dann أ- , dann (١):
+
+```ts
+orderedLists: {
+  levels: [
+    { level: 1, numberFormat: 'arabic', separator: '-' },
+    { level: 2, numberFormat: 'abjad', separator: '-' },
+    { level: 3, numberFormat: 'arabic', prefix: '(', separator: ')' },
+  ],
+},
+```
+
+`arabic` ist das Dezimalformat, geschrieben in den Ziffern des Dokuments.
+
+### Ordnungs- und Grundzahlwörter
+
+`{1:ordinal}` in einer Überschriftenvorlage schreibt die bestimmte Ordnungszahl in arabischen Wörtern und `{1:words}` die Grundzahl. Arabische Ordnungszahlen richten sich nach dem Nomen, das sie zählen, deshalb nimmt die Vorlage das Genus nach einem Bindestrich an: `-feminine` (oder `-f`) für ein feminines Nomen wie الليلة, standardmäßig das Maskulinum für الفصل oder الباب. `-classical` schreibt مائة für مئة, wie die Drucke aus Būlāq. Eine Nacht hat keinen eigenen Titel: `numberPosition: 'replace'` druckt die Nummer als ganzen Titel, sodass `# Night` (oder jeder in der Quelle geschriebene Titel) als الليلة الثانية gedruckt wird, und Inhaltsverzeichnis, Kolumnentitel und PDF-Lesezeichen lauten genauso.
+
+```ts
+headings: {
+  levels: [{ level: 1, numberingTemplate: 'الليلة {1:ordinal-feminine}', numberPosition: 'replace' }],
+},
+```
+
+Das druckt الليلة الأولى, الليلة الحادية عشرة, الليلة الخامسة والأربعون بعد الثلاثمئة und bei 1001 الليلة الحادية بعد الألف; `'الفصل {1:ordinal}'` druckt الفصل الأول, الفصل الحادي عشر. Ordnungszahlen werden bis 9 999 ausgeschrieben, Grundzahlen bis 99 999; darüber wird die Zahl in Ziffern gedruckt. Die Gestaltungsplatzhalter `{numberWords}` und `{numberOrdinalWords}` liefern die maskulinen Formen. Siehe [Ausgeschriebene Zahlen](/de/docs/configuration-text#ausgeschriebene-zahlen).
+
+## Fußnoten
+
+Ein arabisches Buch kennzeichnet seine Anmerkungen mit der Nummer in Klammern, «(١)», hochgestellt im Text und auf der Zeile am Kopf der Anmerkung, und die meisten klassischen Ausgaben zählen sie auf jeder Seite neu. Trennlinie und Anmerkungsnummern stehen von selbst auf der Anfangsseite, der rechten.
+
+```ts
+footnotes: {
+  markerTemplate: '({n})',      // «(١)» in the text and in the note
+  numbering: 'page',            // ١ again on every page
+  noteNumberPosition: 'inline', // the note's own number on the line
+}
+```
+
+`markerTemplate` schreibt das Zeichen im Text und die Nummer, mit der die Anmerkung beginnt, gleichermaßen, in den Ziffern des Dokuments. Die Nummer einer Anmerkung hängt von der Seite ab, auf der sie landet, deshalb wird ein seitenweise nummeriertes Buch gesetzt, dort nummeriert, wo seine Anmerkungen hingefallen sind, und erneut gesetzt. Setzen Sie das Zeichen vor ein folgendes Satzzeichen, wie es arabische Bücher tun: Das `[^id]` folgt direkt auf das Wort, vor dem Komma oder dem Punkt. Siehe [Fußnoten](/de/docs/configuration-notes-references#fußnoten).
+
+## Klassische Verse
+
+Ein klassisches arabisches Gedicht (Qasīda, Qitʿa) wird mit einem Vers, dem *Bait*, pro Zeile gesetzt, in zwei Hälften: der erste Halbvers, der *Sadr*, rechts, der zweite, der *ʿAdschuz*, links, mit einer Lücke dazwischen. Jeder Halbvers des Gedichts wird auf eine gemeinsame Breite gebracht, sodass jeder Sadr an derselben Senkrechten beginnt und jeder ʿAdschuz an einer anderen endet, und die Reimbuchstaben stehen im ganzen Gedicht untereinander.
+
+<Illustration name="BaytLayout" data='{"title": "Ein Bait in zwei Halbversen", "desc": "Drei Verse eines Gedichts. Jede Zeile hat eine erste Hälfte rechts und eine zweite Hälfte links, getrennt durch eine Lücke. Alle Hälften haben dieselbe Breite w, sodass die rechten Hälften an einer Senkrechten beginnen und die linken an einer anderen enden, wo die Reimbuchstaben untereinanderstehen.", "caption": "Jeder Halbvers wird auf die gemeinsame Breite w gesetzt; die Reimbuchstaben stehen links untereinander.", "sadr": "Sadr (erster)", "ajuz": "ʿAdschuz (zweiter)", "gap": "Lücke", "width": "w", "rhyme": "Reim", "lines": [["يا حرقة الدهر كفي", "إن لم تكفي فعفي"], ["فلا بحظي أعطي", "ولا بصنعة كفي"], ["كم جاهل في الثريا", "وعالم متخفي"]]}' />
+
+Schreiben Sie das Gedicht in einen Block `:::verse`, einen Bait pro Zeile, die Halbverse durch `||` getrennt (ein `\\` mit je einem Leerzeichen davor und danach, wie in Wikisource-Transkriptionen, funktioniert ebenfalls). Eine Zeile ohne Trennzeichen ist ein einzelner Halbvers, auf das Gedicht zentriert.
+
+```markdown
+فأنشد يقول:
+
+:::verse{style="verse"}
+يَا حُرْقَةَ الدَّهْرِ كُفِّي || إِنْ لَمْ تَكُفِّي فَعِفِّي
+فَلَا بِحَظِّيَ أُعْطِي || وَلَا بِصَنْعَةِ كَفِّي
+:::
+```
+
+- **Die gemeinsame Breite** ist die des breitesten Halbverses, höchstens die halbe Satzbreite abzüglich der Lücke; `width` legt sie fest. Jeder Halbvers erreicht sie zuerst mit Kaschidas, die Verse freizügiger aufnehmen als Prosa, dann mit seinen Wortzwischenräumen.
+- **Die Lücke** beträgt standardmäßig 2 em (`gap`); `ornament` druckt in ihrer Mitte ein Zeichen, etwa ٭.
+- **Ein überlanger Halbvers** verengt zuerst seine Zwischenräume; passt er dann immer noch nicht, wird sein Bait versetzt gesetzt: der Sadr rechtsbündig auf einer eigenen Zeile, der ʿAdschuz linksbündig auf der nächsten.
+- **Zusammenhalten.** Ein Bait wird nie auf zwei Spalten oder Seiten aufgeteilt, ein Gedicht folgt den Witwen- und Waisenregeln der Absätze, und die Zeile, die es einleitet («فأنشد يقول:»), bleibt bei seinen ersten Baits.
+- **Schrift.** Das Gedicht übernimmt Schrift und Größe des Fließtextes; `style` nennt ein Absatzformat, über das ein vokalisiertes Gedicht den Zeilenabstand erhält, den seine Zeichen brauchen. Ein Gedicht in lateinischer Transliteration in einem englischen Buch wird genauso gesetzt, sein Sadr links.
+- **Zeilennummern.** Mit eingeschaltetem `lineNumbers` zählt ein Gedicht eine Nummer pro Bait, gedruckt im Rand daneben; der ʿAdschuz eines versetzten Baits, auf einer eigenen Zeile, erhält keine Nummer. `position: 'start'` setzt die Nummern in einem arabischen Buch auf jeder Seite rechts. Siehe [Konfiguration › Zeilennummern](/de/docs/configuration-notes-references#zeilennummern).
+
+Der reine Text behält das Gedicht so, wie es geschrieben wurde, einen Bait pro Zeile, ohne die Kaschidas und das Ornament. Siehe [`:::verse`](/de/docs/document-format#verse) im Dokumentformat.
+
+**Freie Verse und lateinische Gedichte.** Ein Gedicht, dessen Zeilen kein `||` enthalten – moderne freie Verse oder ein lateinisches Gedicht, das in einem arabischen Buch zitiert wird (`:::verse{dir=ltr lang=en}`) –, wird stattdessen Zeile für Zeile gesetzt: jede Quellzeile eine Verszeile, Leerzeilen zwischen den Strophen, führende Leerzeichen als Einzug, gemessen von der eigenen Anfangsseite des Gedichts, überlange Zeilen mit hängendem Einzug umbrochen. Siehe [`:::verse` › Zeile für Zeile](/de/docs/document-format#zeile-für-zeile).
+
+## Inhaltsverzeichnis und Register
+
+**Inhaltsverzeichnis.** Viele arabische Bücher, vor allem klassische Ausgaben, drucken ihr Inhaltsverzeichnis (فهرس oder فهرس المحتويات) am Ende. `:::toc` druckt das Inhaltsverzeichnis dort, wo es steht, setzen Sie es also in das letzte Kapitel unter eine Überschrift, die selbst nicht aufgenommen wird:
+
+```markdown
+# فهرس المحتويات {toc="false"}
+
+:::toc
+```
+
+Eine Zeile des Inhaltsverzeichnisses wird von rechts nach links gesetzt: Nummer und Titel rechts, die Füllpunkte, die Seitenzahl links. Ein lateinischer Titel in einem arabischen Buch behält seine Seitenzahl links, und seine eigenen Wörter lesen sich von links nach rechts.
+
+**Tabulatoren.** Tabulatoren im Fließtext funktionieren genauso (siehe [Tabulatoren und Tabstopps](/de/docs/document-format#tabulatoren-und-tabstopps)): Die Position eines Tabstopps wird vom rechten Rand der Satzbreite aus gemessen, ein Tabstopp `end` sitzt links, und eine Füllzeichenlinie läuft in visueller Reihenfolge zwischen den Teilen. Eine Preisliste oder ein als Absätze getipptes Inhaltsverzeichnis, `الفصل الأول :tab 12` unter einem Format mit dem Tabstopp `{ position: 'end', align: 'end', leader: '.' }`, setzt den Titel rechts und die Zahl links, hinter Punkten.
+
+**Register.** Das Register eines arabischen Buches sortiert seine Einträge in alphabetischer (hidschāʾī) Reihenfolge und gruppiert sie unter ihrem Anfangsbuchstaben. Es übergeht den bestimmten Artikel: البصرة steht unter ب, zwischen بدر und بغداد, und wird so gedruckt, wie es geschrieben ist (`index.ignoreArticle`, standardmäßig aktiv, wenn die Registersprache Arabisch ist; الله behält seinen Artikel). Es übergeht auch die Vokalzeichen und das Tatwīl, ordnet أ إ آ ٱ unter ا ein und sortiert ة mit ه und ى mit ي. Die Seitenzahlen werden mit dem arabischen Komma (، ) verbunden, und ein Querverweis lautet انظر oder انظر أيضًا. Ein Eintrag mit eigenem Schlüssel `sort` behält den Artikel dieses Schlüssels. Siehe [Register](/de/docs/configuration-notes-references#register).
+
+**Zitationen.** Ein Literaturverzeichnis in einem arabischen Buch übernimmt die arabischen Begriffe der Citation Style Language (CSL-Locale `ar`: ص für eine Seite, مج für einen Band, و zwischen zwei Autoren, وآخرون für et al.) und die Ziffern des Dokuments in nummerierten Verweisen: `[٢، ص ١٢]`. Der Titel des Literaturverzeichnisses ist المراجع. Kommas und Semikolons, die in einen CSL-Stil geschrieben sind, bleiben so, wie der Stil sie hat. Ein Werk in einer anderen Schrift behält seine eigene Reihenfolge: Eine lateinische Literaturangabe in einer arabischen Anmerkung oder einem arabischen Literaturverzeichnis wird als Isolat ihrer Richtung gesetzt, sodass ihre URL, ihre Anführungszeichen und ihr Schlusspunkt bei ihr bleiben und die Anmerkung ein Absatz von rechts nach links bleibt. Siehe [Zitationen](/de/docs/configuration-notes-references#zitationen).
+
+## Schriften
+
+Postext setzt jedes Format in einer Schriftfamilie und weicht für ein fehlendes Zeichen nicht auf eine andere aus, die Schrift muss also jeden arabischen Buchstaben, jedes Zeichen und jede Ziffer enthalten, die das Buch druckt. Freie Schriften für Bücher (alle unter der SIL Open Font License):
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '180px' }}>Schrift</th>
+      <th>Stil</th>
+      <th style={{ width: '240px' }}>Verwendung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Amiri</td><td>Naschī nach den Drucktypen von Būlāq und der Amīriyya-Druckerei des frühen 20. Jahrhunderts; geschwungene Kaschida, vollständige Vokalisierung, eine passende lateinische Schrift.</td><td>Klassische Ausgaben, vokalisierter Text, Verse. Normal und fett.</td></tr>
+    <tr><td>Noto Naskh Arabic</td><td>Neutrale moderne Naschī.</td><td>Moderne Prosa, Anmerkungen, Tabellen. Eine variable Schrift: Packen Sie eine statische Datei pro Schriftstärke ins Paket.</td></tr>
+    <tr><td>Scheherazade New</td><td>Vereinfachte traditionelle Naschī mit sehr deutlichen Zeichen, großer Standard-Zeilenabstand.</td><td>Vollständig vokalisierter Text, Sprachunterricht.</td></tr>
+    <tr><td>Reem Kufi</td><td>Kufi nach fatimidischen Inschriften.</td><td>Auszeichnungsüberschriften, Titel von Nächten und Kapiteln.</td></tr>
+    <tr><td>Aref Ruqaa</td><td>Ruqʿa.</td><td>Kurze Auszeichnungsüberschriften und Titelseiten. Keine Kaschida: Ruqʿa wird nicht gedehnt.</td></tr>
+  </tbody>
+</table>
+
+Markazi Text und Noto Kufi Arabic eignen sich für moderne Bücher (Text und Überschriften), El Messiri für moderne Auszeichnung. Bei gleicher nomineller Größe wirkt eine Naschī-Schrift kleiner als eine lateinische: Arabischer Buchtext steht üblicherweise in 13–15 pt, wo lateinischer Text 10–11 pt hätte.
+
+- **Im Browser und in der Sandbox** liefern Google Fonts und Fontsource jede Familie als eine Datei pro Teilmenge aus: `latin`, `latin-ext` und `arabic`. Der Browser lädt die Datei `arabic` erst, wenn ein Zeichen sie braucht, und ein Layout, das vorher gemessen wird, wird in einer Ersatzschrift gemessen. Die Sandbox lädt sie vor dem ersten Layout; ein Host prüft das mit einem Beispiel, das einen arabischen Buchstaben enthält (`document.fonts.load('16px Amiri', 'ب')`). Der PDF-Schriftanbieter muss `renderToPdf` für arabischen Text die Datei `arabic` übergeben; der Anbieter unter [Font-Provider im Browser](/de/docs/configuration-programmatic-usage#font-provider-im-browser-fontsource--woff2) wählt den Teil nach Codepunkt.
+- **In einem Paket** liefern Sie die Schriften vollständig oder auf die Zeichen des Buches reduziert aus und behalten dabei die OpenType-Layouttabellen (`GSUB`, `GPOS`): Dort liegen die Verbindungsformen, Ligaturen, Zeichenpositionen und die gespiegelten Klammern. Eine Teilmenge ohne sie druckt isolierte Buchstaben.
+- **Fehlende Glyphen** werden als leerer Kasten der Schrift gedruckt; `renderToPdf` meldet sie pro Schrift (`missingGlyph`), und die Sandbox listet sie im Bedienfeld Prüfungen auf.
+- **Lateinische Schrift in arabischem Text** wird in derselben Familie gesetzt. Amiri bringt eine eigene lateinische Schrift mit; bei einer Naschī-Schrift mit schwacher lateinischer Schrift setzen Sie längere lateinische Passagen in einem Absatzformat mit einer lateinischen Schrift.
+
+## In der Sandbox
+
+Unter **Gestaltung › Schriftsystem** bietet die Auswahl Dokumentsprache العربية, العربية (مصر) und العربية (المغرب) an, und **Textrichtung** und **Ziffern** zeigen, was *Auto* ergibt. **Arabische Standards › Prüfen…** listet auf, was die Einrichtung des Buches für Arabisch ändert, bevor es angewendet wird, mit einer Auswahl an Schriften (*Klassisch*, Amiri; *Modern*, Noto Naskh Arabic mit Überschriften in Noto Kufi Arabic): Richtung und Bindung zurück auf *Auto*, Kolumnentitel und Paginae in einer Schrift mit arabischen Buchstaben, ein Zeilenabstand von 1,75 em, Blocksatz, die Ziffern der Region, شكل und جدول nach Kapiteln nummeriert, Legenden in der Form شكل ١-١: العنوان, Kapitel nummeriert als الفصل الأول, Listen nummeriert mit ١- أ- (١) und Anmerkungen auf jeder Seite neu gezählt. Jede Schriftauswahl führt die arabischen Familien zuerst auf.
+
+Der Editor gibt jeder Zeile die Richtung ihres ersten Buchstabens: Eine Zeile Arabisch läuft von rechts, und Cursor und Pfeiltasten folgen der visuellen Reihenfolge, während das Markup darin (Attribute `{…}`, `[^id]`, ein `:ref[…]`, Formeln, Linkziele) von links nach rechts bleibt. Siehe [Sandbox](/de/docs/sandbox#bedienfeld-gestaltung).
+
+## Zwei vollständige Konfigurationen
+
+### Ein modernes Buch in modernem Hocharabisch
+
+Ein Buch im Format 14 × 21 cm in Noto Naskh Arabic in 13 pt, Überschriften in Noto Kufi Arabic, Kapitel nummeriert als الفصل الأول, Anmerkungen «(١)» auf jeder Seite neu gezählt, die Pagina mittig am Fuß. Richtung, Bindung rechts, die Ziffern ٠–٩, die Kaschida und die fette Hervorhebung ergeben sich aus `locale: 'ar-EG'`:
+
+```ts
+import type { PostextConfig } from 'postext';
+
+const pt = (value: number) => ({ value, unit: 'pt' as const });
+const mm = (value: number) => ({ value, unit: 'mm' as const });
+const em = (value: number) => ({ value, unit: 'em' as const });
+const ink = { hex: '#1a1a1a', model: 'hex' as const };
+
+const config: PostextConfig = {
+  locale: 'ar-EG',
+  page: {
+    sizePreset: 'custom', width: mm(140), height: mm(210),
+    margins: { top: mm(18), bottom: mm(22), left: mm(16), right: mm(20), mirror: true },
+  },
+  layout: { layoutType: 'single' },
+  bodyText: {
+    fontFamily: 'Noto Naskh Arabic', fontSize: pt(13), lineHeight: em(1.7),
+    textAlign: 'justify', firstLineIndent: em(1.5),
+    color: ink, boldColor: ink, italicColor: ink,
+  },
+  headings: {
+    fontFamily: 'Noto Kufi Arabic', color: ink,
+    levels: [
+      { level: 1, fontSize: pt(20), numberingTemplate: 'الفصل {1:ordinal}', numberSeparator: ': ',
+        breakBefore: { enabled: true, parity: 'odd' } },
+      { level: 2, fontSize: pt(15) },
+    ],
+  },
+  captionStyle: { labelSeparator: ': ' },
+  orderedLists: {
+    levels: [
+      { level: 1, numberFormat: 'arabic', separator: '-' },
+      { level: 2, numberFormat: 'abjad', separator: '-' },
+    ],
+  },
+  footnotes: { markerTemplate: '({n})', numbering: 'page', noteNumberPosition: 'inline' },
+  header: { elements: [] },
+  footer: { elements: [
+    { kind: 'text', id: 'folio', content: '{pageNumber}', fontFamily: 'Noto Naskh Arabic', fontSize: pt(11),
+      overflow: 'clip', color: ink, placement: { anchor: { to: 'container', edge: 'center' } } },
+  ] },
+};
+```
+
+`parity: 'odd'` lässt jedes Kapitel auf einer Recto-Seite beginnen, die in diesem Buch eine linke Seite ist. Ein Doppelpunkt trennt die Kennung einer Legende von ihrem Text (شكل ١-٢: …), da der standardmäßige Punkt nach arabisch-indischen Ziffern wie ein Dezimaltrennzeichen wirkt.
+
+### Eine vokalisierte klassische Ausgabe
+
+Eine Ausgabe eines klassischen Textes im Format 17 × 24 cm in Amiri in 14 pt, die Nächte in Worten nummeriert, die Verse vollständig vokalisiert, die Pagina am Kopf der Seite zwischen Strichen, die Titelei in Abdschad-Buchstaben paginiert und das Inhaltsverzeichnis am Ende:
+
+```ts
+const config: PostextConfig = {
+  locale: 'ar',
+  page: {
+    sizePreset: 'custom', width: mm(170), height: mm(240),
+    margins: { top: mm(24), bottom: mm(24), left: mm(18), right: mm(24), mirror: true },
+  },
+  layout: { layoutType: 'single' },
+  bodyText: {
+    fontFamily: 'Amiri', fontSize: pt(14), lineHeight: em(1.85),
+    textAlign: 'justify', firstLineIndent: em(1.5),
+    kashida: 'auto', kashidaPatterns: 'naskh',
+    color: ink, boldColor: ink, italicColor: ink,
+  },
+  headings: {
+    fontFamily: 'Amiri', color: ink, textAlign: 'center',
+    levels: [
+      { level: 1, fontSize: pt(18),
+        numberingTemplate: 'الليلة {1:ordinal-feminine}', numberSeparator: '',
+        breakBefore: { enabled: true, parity: 'any' } },
+    ],
+  },
+  paragraphStyles: [
+    { id: 'verse', lineHeight: em(2.1) },
+  ],
+  footnotes: { markerTemplate: '({n})', numbering: 'page', noteNumberPosition: 'inline' },
+  header: { elements: [
+    { kind: 'text', id: 'folio', content: '– {pageNumber} –', fontFamily: 'Amiri', fontSize: pt(12),
+      overflow: 'clip', color: ink, placement: { anchor: { to: 'container', edge: 'center' } } },
+  ] },
+  footer: { elements: [] },
+};
+```
+
+Die Kapitel beginnen mit `:::numbering{format="abjad" startAt=1}` vor der Einleitung und `:::numbering{format="decimal" startAt=1}` vor der ersten Nacht; die Gedichte sind Blöcke `:::verse{style="verse"}`; das letzte Kapitel ist `# فهرس المحتويات {toc="false"}`, gefolgt von `:::toc`. Das Register braucht keine Einstellung, um den Artikel ال zu übergehen: `index.ignoreArticle` ist bei einem arabischen Register aktiv. Für eine unvokalisierte Leseausgabe aus derselben Quelle ergänzen Sie `tashkil: 'strip'` in `bodyText`.
+
+## Bekannte Grenzen
+
+- **Persisch, Urdu und Hebräisch** erhalten die Richtung, die Ziffern, die Regeln für ganze Wörter und die Bindung rechts, aber keine eigenen eingebauten Wörter (Abbildungen, Tabellen und Register werden englisch beschriftet) und keinen Nastaʿlīq-Satz: Eine Nastaʿlīq-Schrift wird auf einer flachen Grundlinie gesetzt.
+- **Die Blockrichtung** wird an Überschriften und Containern festgelegt; ein einfacher Absatz braucht ein `:::paragraphs{dir=…}` um sich herum, und ein `{dir=auto}` gibt es nicht.
+- **Inseln in Gegenrichtung.** In einem Block, der gegen die Richtung des Buches gesetzt ist, folgen Legenden, Inhaltsverzeichnis- und Registerzeilen der Richtung des Dokuments, und Symbol, Zeichenspalte und Titel eines Kastens bleiben auf der Anfangsseite des Flusses.
+- **Gestaltungstext** (Kolumnentitel, Auftakte, Kastentitel) löst die bidirektionale Reihenfolge Zeile für Zeile auf, und ein Text, der einen arabischen Buchstaben enthält, verliert seine Sperrung vollständig, einschließlich seiner lateinischen Wörter.
+- **Kursiver Gestaltungstext.** Ein kursiv gesetzter Kolumnentitel oder Auftakttext stellt arabische Buchstaben weiterhin schräg.
+- **Vokalzeichen** können über den Rand eines Kastens oder einer Tabellenzelle hinausreichen, deren Zuschnitt für sie nicht wächst; `tashkil` lässt die Zeichen von Legenden, Tabellenzellen und Gestaltungstext stehen.
+- **Zahlen.** Zitatnummern werden in europäischen Ziffern gedruckt; Ordnungswörter werden im Nominativ in der bestimmten Form geschrieben, die Überschriften verwenden.
+- **Register**: ة wird unter ه eingeordnet, und Namen werden nicht über ابن oder أبو hinaus sortiert; Reim- oder Wurzelregister gibt es nicht.
+- **Verse**: keine fortlaufend in Prosa gesetzten Verse, keine strophischen Formen mit zentriertem Refrain über einzelne zentrierte Zeilen hinaus; ein Halbvers, der breiter ist als die Satzbreite, wird von der Anfangsseite aus umbrochen, ohne hängenden Einzug.
+- **Kaschida**: Der aus der HTML-Ausgabe kopierte Text enthält weiterhin die eingefügten Tatwīls, und Kaschidas auf benachbarten Zeilen werden nicht daran gehindert, sich übereinander zu stapeln.
+- **Code-Listings** lesen sich in einem Buch von rechts nach links von links nach rechts: Jede Zeile wird von der gegenüberliegenden Seite des Kastens aus gesetzt, wie ein englisches Zitat, ihre Zeilennummern im Rand links davon, ihr kopierter Text in logischer Reihenfolge. Siehe [Code-Listings](/de/docs/configuration-styles#code-listings).
+- **Wörter ohne Buchstaben** übernehmen im Fließtext, in Überschriften, Listen, Legenden, Anmerkungen und Zellen die Schrift ihres Kontexts. Ein Listenzeichen, die Kennung eines Querverweises, ein Anmerkungszeichen, Gestaltungstext (eine Pagina, ein Kolumnentitel aus Zahlen), Comic-Lettering und ein vom CJK-Satzmodul gesetzter Absatz werden allein geformt, so wie jeder Browser sie formt.
+
+## Quellen
+
+- W3C, [Arabic & Persian Layout Requirements (alreq)](https://www.w3.org/TR/alreq/), und die [Arabic script gap analysis](https://www.w3.org/International/alreq/gap-analysis/).
+- Unicode Standard Annex #9, [Unicode Bidirectional Algorithm](https://www.unicode.org/reports/tr9/); Unicode Technical Report #53, [Unicode Arabic Mark Rendering](https://www.unicode.org/reports/tr53/).
+- W3C, [Ready-made Counter Styles](https://www.w3.org/TR/predefined-counter-styles/), für `arabic-indic`, `persian` und die Abdschad-Reihen.
+- aliftype, [raqim-kashida](https://github.com/aliftype/raqim-kashida) (MIT), und die zugehörige [Einführung](https://aliftype.com/blog/introducing-raqim-kashida/english); M. Benatia, M. Elyaakoubi und A. Lazrek, „Arabic text justification“, *TUGboat* 27(2), 2006.
+- Titus Nemeth, [On Arabic justification](https://research.reading.ac.uk/typoarabic/on-arabic-justification-part-1/), TypoArabic, University of Reading; Khatt Foundation, [The Big Kashida Secret](https://www.khtt.net/en/page/1821/the-big-kashida-secret).
+- Aḥmad Zakī Pāshā, *al-Tarqīm wa-ʿalāmātuhu fī al-lugha al-ʿarabiyya*, 1912 ([Hindawi](https://www.hindawi.org/books/82047270/)), zur arabischen Zeichensetzung.
+- Dokumentation von [Amiri](https://www.amirifont.org) und [Scheherazade New](https://software.sil.org/scheherazade/), zu Kaschida, Stapelung von Zeichen und Stilsätzen.
+- Unicode CLDR, für die Standardziffern jeder Region.

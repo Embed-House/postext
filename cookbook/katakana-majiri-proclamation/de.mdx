@@ -1,0 +1,68 @@
+---
+title: "Eine Meiji-Proklamation in Kanji und Katakana"
+summary: "Die Verfassung von 1889 senkrecht in Kanji und Katakana: Artikel 第一條 aus einem Listenzähler japanese-informal, ein Linienrahmen, Gegenzeichnungen am Fuß."
+plain: "Die japanische Verfassung von 1889 in Kanji und Katakana, in Zeilen von oben nach unten gedruckt wie im Amtsblatt, die Artikel in Kanji nummeriert."
+description: "Ein Meiji-Dokument in Postext: Kanji-Katakana-Text senkrecht auf einem Raster von 40 Zeichen, Artikel 第一條 aus einem Listenzähler, Doppelrahmen und Siegelblock."
+question: "Wie setze ich einen Meiji-Text in Kanji und Katakana und nummeriere seine Artikel 第一條, 第二條?"
+aliases: ["Katakana", "Kanji-Katakana-Mischschrift", "kanji katakana majiri", "漢字カタカナ交じり文", "Meiji-Verfassung", "大日本帝國憲法", "官報", "Amtsblatt", "Artikelnummern in Kanji", "第一條", "Gesetzestext senkrecht", "alte Kanji-Formen"]
+pageNotes: { "1": "Die Titelseite: 大日本帝國憲法 in kräftiger Mincho mittig zwischen einer dicken und einer dünnen Linie, rechts davon das Datum in Zinnoberrot, links 官報號外, am Fuß die englische Zeile, auf die Seite gedreht.", "2": "Die Anmerkungen des Herausgebers, vier Punkte, jeder mit dem Zeichen 一 eröffnet, dann die Überschrift 上諭 und die ersten Zeilen des Edikts, alles in Kanji und Katakana.", "4": "御名　御璽 in Zinnoberrot, das Datum und zehn Gegenzeichnungen, an den Fuß ihrer Zeilen gesetzt.", "5": "Kapitel eins: 第一章　天皇 um zwei Zeichen eingerückt, dann die Artikel 第一條 bis 第八條 in Fett, der zweite Absatz von Artikel 8 um ein Zeichen eingerückt." }
+---
+
+## Was Sie setzen
+
+Ein achtseitiger Nachdruck der Meiji-Verfassung, so wie das Amtsblatt (官報) sie am 11. Februar 1889 druckte: das kaiserliche Edikt, die Gegenzeichnungen der Minister und die ersten beiden Kapitel, zweiunddreißig Artikel. Der Text ist 漢字カタカナ交じり文 (Kanji-Katakana-majiri-bun), die Schriftsprache des Meiji-Rechts: Kanji tragen die Wörter, Katakana die Endungen, und es gibt keine Stimmhaftigkeitszeichen, keine kleinen Kana und überhaupt keine Satzzeichen. Die Seiten sind A5, senkrecht gesetzt und rechts gebunden, mit einem Raster von 40 × 15 Zeichen innerhalb einer dicken und einer dünnen Linie. Die Artikel nummeriert ein Listenzähler in Kanji, 第一條 bis 第三十二條, und Siegel und Gegenzeichnungen stehen dort, wo das Amtsblatt sie hinsetzte.
+
+## Zubereitung
+
+### 1 · Einen Listenzähler 第十八條 schreiben lassen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jeder Artikel ist ein Punkt einer nummerierten Markdown-Liste, und `orderedLists` bringt seine Nummer in die Form des Amtsblatts: `numberFormat: 'japanese-informal'` schreibt 十八, nicht 一十八, `prefix: '第'` und `separator: '條'` umschließen sie, und `gap: em(1)` lässt den vollbreiten Leerraum des Originals. `numberWidth: 'item'` beginnt den Text jedes Artikels einen Abstand nach seinem eigenen Label, sodass auf 第九條 und auf 第十一條 je ein vollbreiter Leerraum folgt, wie im Amtsblatt, und ihre Texte ein Zeichen versetzt beginnen. Mit `hangingIndent: false` kehren die Folgezeilen an den Zeilenanfang zurück, statt unter dem Text zu hängen, wie im Amtsblatt. Kapitel zwei beginnt seine Liste mit `18.`, sodass der Zähler über die Kapitel weiterläuft, und die Kapitel selbst nummeriert die Überschriftenvorlage `第{2:一}章` als 第一章 und 第二章, im selben Zählerstil ([nummerierte Listen](/de/docs/configuration-text#nummerierte-listen)).
+
+<PageShot page={5} crop="0.1,0.12,0.8,0.76" caption="Seite 5: 第一章　天皇 um zwei Zeichen eingerückt, die Artikel 第一條 bis 第八條 in Fett, der zweite Absatz von Artikel 8 um ein Zeichen eingerückt." />
+
+### 2 · Die Katakana so lassen, wie das Amtsblatt sie schrieb
+
+`locale: 'ja'` setzt die japanischen Regeln, und keine davon schreibt den Text um. 侵スヘカラス bleibt ohne Stimmhaftigkeitszeichen (gelesen *okasu bekarazu*), 行フ behält seine historischen Kana und 奪ハルヽ sein Katakana-Wiederholungszeichen. Da der Text keine kleinen Kana und keine Satzzeichen hat, fallen die Zeilenumbrüche zwischen zwei beliebige Zeichen; die Kinsoku-Regeln halten ヽ und 々 dennoch vom Zeilenanfang fern. Die Anmerkungen des Herausgebers, in modernem Japanisch mit Hiragana, stehen auf Seite 2 neben dem Edikt, sodass sich die beiden Schreibweisen des Japanischen auf einer Seite vergleichen lassen.
+
+### 3 · Den Rahmen auf jede Seite zeichnen
+
+<Excerpt region="frame" />
+
+Der Platz der Kopfzeile zeichnet in einfachen Seitenmillimetern, nicht im senkrechten Fluss; der Rahmen besteht daher aus zwei Kästen, die mit denselben Zahlen platziert werden wie der Satzspiegel: `HEAD` von oben, `SIDE` von jeder Kante. Die Ränder werden aus dem Raster berechnet, nicht ihm überlassen, sodass der Satzspiegel genau 6 mm innerhalb der dünnen Linie liegt. Die Pagina, in Kanji aus `pageNumbering.format: 'japanese-informal'`, steht unter dem Rahmen.
+
+### 4 · Die Titelseite entlang der Achse setzen
+
+<Excerpt region="cover" />
+
+In einem senkrechten Fluss läuft `x` am Blatt hinab und `y` nach links quer darüber; die Spalte des Titels wird also nach ihrem Abstand von der rechten Kante des Satzspiegels platziert. Das Datum in der Akzentfarbe und der Name des Amtsblatts stehen zu beiden Seiten des Titels, 18 mm neben der Achse.
+
+### 5 · Jede Schrift mit dem Text laden, den sie setzt
+
+<Excerpt region="voices" />
+
+Shippori Mincho B1, eine Mincho mit den alten Formen 國, 條 und 權, lädt die Dateien für Text und Überschriften; Noto Sans JP lädt nur die Anmerkungen des Herausgebers, die Paginas und die englische Zeile. Eine Schrift, die weniger bekommt, als sie setzt, lässt die Aufnahme scheitern (C12).
+
+## Varianten
+
+### Die Folgezeilen unter den Text hängen
+
+Moderne Gesetzbücher setzen die zweite Zeile eines Artikels unter sein erstes Textzeichen, nicht unter 第.
+
+```diff
+-  indent: em(0), hangingIndent: false, fontFamily: MINCHO, fontWeight: 800,
++  indent: em(0), hangingIndent: true, fontFamily: MINCHO, fontWeight: 800,
+```
+
+### Die Artikel in Daiji nummerieren
+
+Manche Rechts- und Finanztexte schreiben 壱, 弐, 参: Das Token 壱 oder der Stil `japanese-formal` ergibt 第壱條, 第弐條.
+
+```diff
+-  numberFormat: 'japanese-informal', prefix: '第', separator: '條', gap: em(1),
++  numberFormat: 'japanese-formal', prefix: '第', separator: '條', gap: em(1),
+```
+
+## Häufige Fehler
+
+- Das Amtsblatt setzt die Katakana der Endungen kleiner als die Kanji und sperrt die Titel der Minister gleichmäßig auf eine Breite (字取り). Postext setzt jedes Zeichen im Grad des Grundtexts, und seine gleichmäßige Sperrung `jidori` gilt nur für Überschriften; die Gegenzeichnungen sind hier deshalb nur am Fuß der Zeile ausgerichtet.
+- Japanisch und Chinesisch verstehen diesen Zähler verschieden: In einem `ja`-Dokument bedeuten das Token `一` und `{2:一}` den Stil `japanese-informal` (百一, 十八), in einem chinesischen den chinesischen Stil (一百零一, 十八). Das chinesische Lesebuch aus <RecipeLink slug="chinese-dates-upright">Daten und Akronyme aufrecht im vertikalen Text</RecipeLink> tippt sein 第一條 von Hand.

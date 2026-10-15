@@ -1,0 +1,76 @@
+---
+title: "Datenblatt: Tabellen aus Daten, verbundene Köpfe"
+summary: "Als TSV eingefügte Tabellen, mit parseTSV gelesen und mit mergeCells, setAlignment und setCellBackground geformt; eine Registertabelle, die selbst umbricht."
+plain: "Ein vierseitiges Produktdatenblatt für einen elektronischen Temperatursensor. Es zeigt, wie man Tabellen aus Tabellenkalkulationsdaten baut, mit gemeinsamen Köpfen und einer langen Tabelle, die auf der nächsten Seite weiterläuft."
+description: "Vierseitiges Sensordatenblatt in Postext: zweizeiliger verbundener Tabellenkopf, Zebrafüllung, benannte Tabellenformate, Registertabelle über einen Umbruch."
+question: "Wie mache ich aus eingefügten Daten eine Tabelle mit verbundenen Köpfen, Spaltenbreiten und Zellausrichtung?"
+aliases: ["Datenblatt", "Spezifikationsblatt", "elektrische Kenndaten", "Registertabelle", "verbundene Zellen", "colspan", "rowspan", "Zebrastreifen", "gestreifte Tabelle", "TSV", "Tabelle aus Tabellenkalkulation", "wiederholter Tabellenkopf"]
+pageNotes: { "1": "Die Vorderseite: ein violettes Band mit der Teilenummer, einem Vorspann und drei Kennzahlen; darunter Merkmale und Anwendungen, die Pinbelegung, deren freiliegendes Pad gestrichelt ist, weil es unter dem Gehäuse liegt, und die typische Applikationsschaltung.", "2": "Die Tabelle der elektrischen Kenndaten reicht über die Seitenbreite unter einer Legende, die die Prüfbedingungen nennt: ein violetter zweizeiliger Kopf, in dem „Value“ über Min, Typ und Max steht, Parametergruppen nach unten verbunden in einer lila ersten Spalte, jeder zweite Parameter grau getönt.", "3": "Die Pintabelle führt die erste Spalte an; die Registertabelle, mit Adressen und Resetwerten in der Monospace-Schrift für Beschriftungen, füllt die zweite und endet mit „Continued on the next page“.", "4": "Die Registertabelle läuft mit wiederholtem Kopf und „(continued)“ in ihrer Legende weiter, neben den Bestellcodes in einem abgerundeten Rahmen; die Gehäusezeichnung läuft über den Fuß der Seite." }
+---
+
+## Was Sie setzen
+
+Das vierseitige Datenblatt des PX-7021, eines Temperatursensors eines erfundenen Herstellers, Pyxis Microdevices. Es besteht größtenteils aus Tabellen, mit Köpfen voller verbundener Zellen und einer Registertabelle, die länger ist als eine Spalte. Die Vorderseite beginnt mit einem violetten Band mit der Teilenummer und drei Kennzahlen. Auf Seite 2 reicht eine Tabelle über die Seitenbreite. Ihr zweizeiliger Kopf stellt Value über Min, Typ und Max; die Parametergruppen sind in der ersten Spalte nach unten verbunden, und jeder zweite Parameter ist grau getönt. Die Registertabelle bricht am Fuß von Seite 3 um und läuft auf Seite 4 mit wiederholtem Kopf weiter, neben den Bestellcodes und über der Gehäusezeichnung. Die Tabellen sind als TSV eingefügte Tabellenkalkulationsdaten, denn Postext liest keine Markdown-Tabellen.
+
+## Zubereitung
+
+### 1 · Die Daten einfügen, dann die Tabelle formen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `parseTSV(tsv, { headerRows: 2 })` markiert die beiden Kopfzeilen; würde die Tabelle geteilt, wiederholten sich beide auf jedem Teil. Die Gewichte in `columnWidths` ergeben zusammen 180, die Breite des Satzspiegels in Millimetern, sodass jedes Gewicht die Breite seiner Spalte auf der Seite ist. `mergeCells` lässt jede überdeckte Zelle an ihrem Platz und markiert sie mit `hiddenBy`, sodass sich keine Spalte verschiebt. `setAlignment` arbeitet Zelle für Zelle und löscht die senkrechte Ausrichtung, wenn Sie sie weglassen, darum übergeben die meisten Aufrufe erneut `'middle'`. Das Grau wechselt von Parameter zu Parameter, was beide Zeilen von Accuracy auf einer Füllung hält; ein Wechsel pro Zeile, wie ihn `bodyAlternateBackground` des Tabellenformats vornimmt, ließe die zweite weiß.
+
+### 2 · Jedes Modell wird zu einer Ressource
+
+<Excerpt region="resources" />
+
+Jede Tabelle und jede Zeichnung ist eine Ressource mit Legende, und die Tabellen fügen eine Anmerkung und ein benanntes Format hinzu. Legenden und Anmerkungen nehmen Kursive, Tief- und Hochstellungen auf: Die elektrische Tabelle nennt ihre Prüfbedingungen mit `*V*~DD~` in der Legende und nummeriert ihre Fußnoten mit `^1^` in der Anmerkung. Ein Gleitobjekt nimmt den ersten freien Platz nach seinem ersten `:ref`. Tabelle 1 wird auf Seite 1 zitiert und über den Kopf einer Seite gestellt, eröffnet also Seite 2. Die Gehäusezeichnung steht über dem Fuß einer Seite, und die übrigen Tabellen behalten die Standardplatzierung, ein Gleitobjekt in Spaltenbreite. Eine mit `here` platzierte Tabelle bleibt im Text; passt sie nicht in den Rest ihrer Spalte, wird auch sie zwischen Zeilen geteilt.
+
+### 3 · Eine lange Tabelle selbst umbrechen lassen
+
+<Excerpt region="split" />
+
+Die Pintabelle und die Registertabelle entstehen beide aus `groupedTable`. Eine Zeile, in der nur die erste Zelle gefüllt ist, wird über die Tabelle verbunden und als Gruppenkopf violett getönt. Eine TSV-Zelle kann keinen Zeilenumbruch enthalten, darum schreiben die Daten `\n`, und die Funktion macht daraus einen; eine Zeile, die mit `•` beginnt, wird dann als Listenpunkt gesetzt. Die kurzen Codes stehen im Chip-Format `code`, das keine Füllung, keinen Rahmen und keinen seitlichen Innenabstand hat und sie in Fira Mono zu 0,9 em setzt. Passt eine gleitende Tabelle nicht in die leere Spalte, die ihr angeboten wird, schneidet die Engine sie zwischen Zeilen und setzt den Rest auf den nächsten freien Platz, unter dem wiederholten Kopf, mit `(continued)` nach der Legende. Die Zeile `continuesMarker`, „Continued on the next page“, steht unter dem ersten Teil, und die Anmerkung wartet auf den letzten ([Tabellen, die höher als die Seite sind](/de/docs/configuration-resources#tabellen-die-höher-als-die-seite-sind)).
+
+### 4 · Ein Hausstil, eine Variante pro Tabelle
+
+<Excerpt region="styles" />
+
+`tableStyle` enthält, was alle Tabellen gemeinsam haben. Jeder Eintrag in `tableStyles` setzt nur, was seine Tabellen ändern, und eine Ressource wählt einen mit `table.styleId`. Die elektrische Tabelle tauscht die grauen Haarlinien gegen weiße Linien von 1,4 pt, die ihre Füllungen voneinander trennen und zeigen, wo jede Verbindung endet. Die Tabelle der Bestellcodes bekommt einen abgerundeten Außenrahmen und Fira Sans Condensed, sodass ihre vier Spalten in eine Textspalte passen.
+
+### 5 · Beschriftungen, die im PDF Text bleiben
+
+<Excerpt region="drawing" />
+
+Die Beschriftungen der Pinbelegung, der Schaltung und der Gehäusezeichnung sind Elemente `<text>`, die Fira Mono anfordern, die Beschriftungsschrift des Dokuments. Ein SVG erreicht den Canvas als Bild, darum schickt `loadSvg` des Kits das Markup zuerst durch `inlineSvgFonts`, das die Schriften, die sein Text nennt, ins SVG einbettet; der Canvas zeichnet die Beschriftungen dann in Fira Mono. Das PDF setzt jedes `<text>` als auswählbaren Text in den eingebetteten Schriften.
+
+### 6 · Auftakt, Kolumnentitel und Fußzeile
+
+<Excerpt region="furniture" />
+
+Die Teilenummer ist die Überschrift der ersten Ebene, und ihr Gestaltungsplatz zeichnet den Auftakt: einen violetten Kasten bis in den Anschnitt, das Logo sowie eine Dachzeile, einen Vorspann und drei Kennzahlen, gelesen aus den Attributen der Überschrift. Bildelemente funktionieren in mitlaufenden Plätzen genauso wie in Auftakten, darum beginnt die Fußzeile mit einem, das die Logo-Ressource nennt. Die Elemente des Kolumnentitels tragen `pages: 'body'`, sodass keines davon auf der Vorderseite erscheint.
+
+## Varianten
+
+### Jede Zeile grau linieren
+
+Halbpunktlinien in der grauen Palettenfarbe `rule` trennen jede Zeile, gefüllt oder nicht; die weißen verschwinden dort, wo zwei ungefüllte Zeilen aneinanderstoßen.
+
+```diff
+-    { id: 'electrical', borderColor: col('paper'), borderWidth: pt(1.4), cellPadding: mm(1.1) },
++    { id: 'electrical', borderColor: col('rule'), borderWidth: pt(0.5), cellPadding: mm(1.1) },
+```
+
+### Tabellenlegenden auf einen Balken setzen
+
+Der Legendenstil des Tabellentyps kann einen Balken hinter die Legende malen, hier in Schwarz mit der Bezeichnung im Warngelb.
+
+```diff
+-    ...(type.id === 'table' && { captionStyle: { position: 'above' } }) })),
++    ...(type.id === 'table' && { captionStyle: { position: 'above', backgroundEnabled: true,
++      background: col('ink'), color: col('paper'), labelColor: col('hazard') } }) })),
+```
+
+## Häufige Fehler
+
+- Der erste Teil einer geteilten Tabelle überlässt den Fuß seiner Spalte dem Text, wenn darunter drei oder mehr Zeilen passen, und tut das immer in einer Spalte, die bereits ein Gleitobjekt enthält. Beginnen Sie eine lange Tabelle dort, wo ihre Spalte kein anderes Gleitobjekt enthält, wie die Registertabelle, und passen Sie ihre Zeilen so ein, dass der erste Teil den Fuß der Spalte erreicht.
+- Textelemente der Gestaltung sind standardmäßig zentriert. Der Vorspann hat eine feste Breite und braucht darum `align: 'left'`, um unter der Teilenummer zu fluchten.
+- Auf der Schlussseite eines Kapitels rückt Postext die unter dem Text gesetzten Gleitobjekte über die Seitenbreite bis auf eine Grundtextzeile darunter hoch, sodass eine Abbildung mit `bottom` dort unter der letzten Textzeile statt am Seitenfuß steht. Seite 4 ist so formuliert, dass sie ihre Spalten füllt, und die Gehäusezeichnung ist 48,3 mm hoch gezeichnet, damit der Text darüber auf einer Rasterzeile endet. Die Zeichnung hat dann keinen Platz zum Hochrücken und endet auf Höhe des Fußes der anderen Seiten. `layout.hugClosingFloats: false` schaltet das Hochrücken ab.

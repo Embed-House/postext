@@ -1,0 +1,68 @@
+---
+title: "Ein Forschungsposter auf einer großen Seite"
+summary: "Konferenzposter von 600 × 800 mm: ein Titelband über drei Spalten mit Panels in seitenbreiter Gruppe, eine Heatmap mit Farbfeldern, −4,2 °C in 150 pt."
+plain: "Ein großes Poster für eine wissenschaftliche Konferenz über Straßenbäume und Sommerhitze. Es zeigt, wie Kästen mit Text und Diagrammen auf einer sehr großen Seite in Spalten angeordnet werden."
+description: "Ein Forschungsposter in Postext: eine Überschriftengestaltung als Titelband, drei Spalten mit Kästen in seitenbreiter Gruppe, Farbfelder, Chips, E-Poster-PNG."
+question: "Wie setze ich drei Spalten mit Panels über eine zweispaltige Seite, wie auf einem Konferenzposter?"
+aliases: ["Konferenzposter", "wissenschaftliches Poster", "Forschungsposter", "E-Poster", "A1-Poster", "Poster im Format A1", "drei Spalten mit Panels", "Posterraster", "conference poster"]
+pageNotes: { "1": "Ein grünes Band oben enthält die Tagungszeile, den Titel „Street trees and sidewalk heat“ in kräftigen weißen Buchstaben, die Autoren mit ihren Institutionen, einen Reiter „P-47“ und ein rundes Zeichen mit einem Baum und einer orangefarbenen Sonne. Unter einer zweispaltigen Zusammenfassung bilden sechs Panels drei Spalten, jedes unter einem farbigen Streifen: „Introduction“ und „Methods“ mit einem Plan der Straße; „Results“ unter einem orangefarbenen Streifen, mit −4.2 °C in sehr großen orangefarbenen Ziffern, einem vierfarbigen Schlüssel, einer Heatmap von 16 Blöcken nach Stunde und einem Balkendiagramm; „Conclusions“, „Planting plan“ und „References“. Ein blassgrüner Streifen am Fuß enthält die Schlagwörter in abgerundeten Rahmen." }
+---
+
+## Was Sie setzen
+
+Ein Konferenzposter für eine erfundene Studie über Straßenbäume und Gehweghitze, gesetzt auf einer Seite von 600 × 800 mm. Ein grünes Band trägt die Tagung, den Titel in Bitter in 110 pt, die Autoren mit ihren Institutionszeichen und das Zeichen der School of Geography. Unter einer zweispaltigen Zusammenfassung überquert eine Gruppe `:::columns` beide Textspalten und setzt sechs Panels in drei Spalten, jedes ein Kasten unter einem Streifen von 6 pt. Die mittlere Spalte beginnt mit −4,2 °C in Orange in 150 pt, dann folgen eine Heatmap der Lufttemperatur nach Block und Stunde, mit Farbfeldern erschlossen, und ein Balkendiagramm des Pflasters. Ein getönter Streifen mit Schlagwort-Chips sitzt auf dem unteren Rand. Dieselbe Datei setzt eine spanische Ausgabe, und der Pen bietet die Seite als PNG von 1.701 × 2.268 px an.
+
+## Zubereitung
+
+### 1 · Das Blatt mit 72 dpi setzen
+
+<Excerpt region="sheet" />
+
+Bei den voreingestellten 300 dpi bricht das Poster jede Zeile an derselben Stelle um wie bei 72 dpi, aber seine Seite misst 7.087 × 9.449 px, also 268 MB Pixel, sobald sie gemalt ist ([Vorlagen für Seitenformate](/de/docs/configuration-page-layout#vorgegebene-seitenformate)). Bei 72 dpi ist ein Punkt ein Pixel. Der Betrachter malt seine Miniaturen mit `renderPageToCanvas` und einem `scale`, und `renderPage` liefert das PNG von 1.701 × 2.268 px, das die Online-Galerie einer Tagung verlangt ([eine Seite als Bitmap rendern](/de/docs/configuration-programmatic-usage#eine-seite-als-bitmap-rendern)). Der Zeilenabstand teilt die 750 mm zwischen den Rändern in 56 Zeilen, sodass der an den Fuß der Seite gleitende Schlagwortstreifen auf dem unteren Rand endet. Bei runden 38 pt passen nur 55 Zeilen, die letzte 12,7 mm vor dem Rand; der Schlagwortstreifen passt nicht mehr unter die Panels und rückt auf eine zweite Seite.
+
+### 2 · Das Titelband aus der Überschrift zeichnen
+
+<Excerpt region="band" />
+
+Die H1 trägt Tagung, Posternummer, Autoren und Institutionen als Attribute, und ihre Gestaltung setzt sie über einen an der Seite verankerten grünen Kasten von 158 mm Höhe ([Span und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). Der Kasten endet 133 mm unter dem oberen Rand. Ohne `minHeight` begänne die Zusammenfassung 0,9 mm unter dem Grün; ein `minHeight` von elf Rasterzeilen lässt 14 mm. Die Institutionszeichen sind die Zeichen ¹ ² ³, die einzigen hochgestellten Ziffern im Bereich Latin-1.
+
+### 3 · Die Panels in einer Gruppe über die Seite setzen
+
+<Excerpt region="answer" highlight="3-10,19" />
+
+Der Grundtext läuft in zwei Spalten und die Panels in drei, das Raster ist also eine Gruppe `:::columns{count=3}`, als Direktivenblock direkt im Text, und `span="page"` setzt sie über beide Textspalten, unter die Zusammenfassung, mit dem Spaltenabstand der Seite zwischen ihren Spalten ([`:::columns`](/de/docs/document-format#columns)). Sich selbst überlassen folgt einer Gruppe im Text eine Zeile Absatzabstand, hier 38 pt, und der Schlagwortstreifen rückte auf eine zweite Seite; `marginBottom="0.75em"` am Direktivenblock tritt an die Stelle dieser Zeile (postext 1.28), und der Streifen passt an den Fuß der Seite. Jedes Panel ist ein Kasten in der Gruppe: Es nimmt sein eigenes Format, die Spaltenbreite von 175 mm und 18 mm `marginTop` unter dem Panel darüber ([der Container `:::callout`](/de/docs/configuration-styles#der-container-callout)). `breaks="3,4"` schickt das dritte Panel, „Results“, an den Kopf der mittleren Spalte und das vierte, „Conclusions“, an den Kopf der letzten. Ohne diese Angabe gleicht die Gruppe aus und schneidet beim Panel, das jedem Drittel des Stapels am nächsten liegt. Mit diesem Text fallen die Schnitte bei denselben zwei Panels; das Attribut hält sie dort, wenn sich der Text ändert.
+
+### 4 · Jede Abbildung in ihrem Panel halten
+
+<Excerpt region="figures" />
+
+Eine mit `'here'` platzierte Abbildung bleibt in dem Panel, in das `::resource` sie setzt; mit der voreingestellten Platzierung verlassen die drei Zeichnungen ihre Panels, und das Poster läuft auf eine zweite Seite. `numberingTemplate: '{n}'` nummeriert sie mit 1, 2, 3, wo das voreingestellte `{h1}.{n}` unter einem Titel, der eine H1 ist, „Figure 1.1“ drucken würde ([Ressourcentypen](/de/docs/configuration-resources#ressourcentypen)). Die Anmerkung unter jeder Bildunterschrift sagt, dass die Daten synthetisch sind.
+
+### 5 · Die Farben der Heatmap mit ihrem Schlüssel teilen
+
+<Excerpt region="palette" />
+
+Die Zellen der Heatmap und die vier Läufe `:swatch{color="…"}` ihres Schlüssels nennen dieselben Paletteneinträge, sodass ein neuer Wert für `cool` Karte und Schlüssel zugleich umfärbt ([Inline-Formatierung](/de/docs/document-format#inline-formatierung)). Der Schlüssel ist eine zweite Gruppe `:::columns`, zwei Einträge pro Spalte, im Panel „Results“.
+
+### 6 · Die Leitzahl in einem Absatzformat setzen
+
+<Excerpt region="type" />
+
+Absatzformate gelten auch in Kästen, −4,2 °C ist also ein Block `:::paragraphs{style="stat"}` in Bitter in 150 pt im Panel „Results“ ([Absatzformate](/de/docs/configuration-styles#absatzformate)). Die Zahl ist fett geschrieben, sie erscheint also in Bitter 700 und in der `boldColor` des Formats, dem Orange des Panels. Ein zweites Format gibt den Literaturangaben einen hängenden Einzug von 9 mm. Der Schlagwortstreifen ist ein getönter Kasten mit `placement="bottom"`, der unter dem Raster an den Fuß der Seite gleitet.
+
+## Varianten
+
+### Das E-Poster mit 150 dpi exportieren
+
+Eine Tagung, die eine größere Datei verlangt, erhält ein PNG von 3.543 × 4.724 px mit denselben Zeilenumbrüchen.
+
+```diff
+-  dpi: 72, backgroundColor: col('paper'),
++  dpi: 150, backgroundColor: col('paper'),
+```
+
+## Häufige Fehler
+
+- Rethink Sans zeichnet eine einzelne Ziffer in Klammern, etwa die Heftnummer in 11(3), auf dem Canvas als eingekreiste Ziffer; die Literaturangaben nennen daher nur Band und Seiten.
+- Ein seitenbreiter Kasten, der das Dokument beendet, rückt auf eine neue Seite, wenn darunter nicht zwei Grundtextzeilen Platz bleiben. Der Schlagwortstreifen gleitet daher mit `placement="bottom"`, was ihn auf den unteren Rand setzt, in die 50 mm, die unter dem Raster bleiben.
+- `containerSpacing: 'add'` an den Formaten `stat` und `refs` beendet ihre Gruppen `:::paragraphs` mit dem eigenen Abstand des Formats, was −4,2 °C auf der Zeile hält, die es erklärt; jede andere Gruppe des Posters folgt der Regel des Dokuments (seit postext 1.28; davor ließ sich die Regel nur für das ganze Dokument setzen, mit `bodyText.paragraphContainerSpacing`). Unter der letzten Literaturangabe ist dieser Abstand das `spaceBetween` des Formats, 2,8 mm, sodass ein `:::space{lines=0.75}` vor der Danksagung 10,8 mm öffnet, nahe an den 10,6 mm zwischen den anderen Absätzen eines Panels. Ohne ihn, unter dem `'collapse'` des Dokuments, folgt einer Gruppe eine Zeile des Absatzabstands des Panels: Die Danksagung braucht kein `:::space`, aber die Zeile, die das unter −4,2 °C hinzufügt, schiebt den Schlagwortstreifen auf eine zweite Seite.

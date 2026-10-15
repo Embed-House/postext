@@ -1,0 +1,63 @@
+---
+title: "Ein Papiermusterbuch, jedes Blatt auf eigenem Papier"
+summary: "Jedes Blatt im Musterbuch eines Papierhändlers steht in einem Block :::paper; postext-folio zeichnet es mit Ton, Grammatur, Oberfläche, Steifigkeit der Sorte."
+plain: "Ein kleines Musterbuch aus einem Papierladen. Jede Seite sagt, auf welchem Papier sie gedruckt ist, und im 3D-Betrachter sieht jede Seite wirklich so aus und blättert sich so wie dieses Papier."
+description: "Ein Block :::paper je Blatt gibt jeder Seite ihre Papiersorte; postext-folio blättert Glanz-, Vergé-, Velin- und Dünndruckpapier verschieden, in einem Pen."
+question: "Wie drucke ich Umschlag, Beilage oder Bildteil auf einem anderen Papier als den Rest des Buchs?"
+aliases: ["Papiersorte", "Papiermusterbuch", "Papiermuster", ":::paper", "Bildteil", "Tafelteil", "Beilage", "Dünndruckpapier", "Bibeldruckpapier", "Durchscheinen"]
+pageNotes: { "1": "Der vordere Umschlag: eine ochsenblutrote Fläche bis an jede Kante, eine kleine gesperrte Dachzeile, der Titel „The Stock Book“ in einer großen Caslon für Auszeichnungen und ein kursiver Untertitel.", "3": "Die Karte für „Book Wove, Natural“: eine Dachzeile, der Name der Sorte über einer Haarlinie, fünf Zeilen mit technischen Angaben und fetten Labels und zwei Absätze über das Papier.", "11": "Die Probeseite des Dünndruckpapiers: sechs Glossareinträge mit hängendem Einzug." }
+---
+
+## Was Sie setzen
+
+*The Stock Book* von Harwell & Daughters, einem erfundenen Papierhändler aus Bristol: zwölf Seiten im Endformat 120 × 176 mm, ein Kartonumschlag und vier Blätter, von denen jedes das Papier beschreibt, auf dem es gedruckt ist. Die Vorderseite eines Blatts ist die Karte der Sorte mit Grammatur, Volumen, Oberfläche, Ton und Opazität; die Rückseite ist eine Seite Text, gesetzt so, wie dieses Papier verwendet wird: ein Roman, ein Brief, eine Ausstellungsbeschriftung, ein Glossar. Flach auf dem Bildschirm sehen die zwölf Seiten gleich aus. In Folio hat jedes Blatt sein Papier: das cremefarbene Velinpapier, das gerippte Vergé, das Glanzpapier, das flach und steif umschlägt, und das Dünndruckpapier mit 40 g, das sofort umfällt und seine Rückseite durchscheinen lässt.
+
+## Zubereitung
+
+### 1 · Ein Block je Blatt
+
+<Excerpt region="paper-runs" />
+
+Ein Block `:::paper` beginnt auf einer neuen Seite, und der Text danach ebenfalls; jeder Abschnitt füllt hier also ein Blatt: die Karte auf der rechten Seite, ein `:::pagebreak`, die Probeseite auf der linken. Ein Blatt hat für beide Seiten dasselbe Papier, und zwar das seiner rechten Seite: Ein Abschnitt, der auf einer linken Seite begänne, würde diese Seite auf der Sorte des Blatts drucken, das sie teilt (siehe Häufige Fehler).
+
+### 2 · Das eigene Papier des Buchs und seine Umschlagseiten
+
+<Excerpt region="folio" />
+
+`folio.paper` ist das Papier jeder Seite außerhalb eines Blocks; die Attribute eines Blocks überschreiben es Feld für Feld, und die Voreinstellungen der Sorte ergänzen den Rest. `cover: 'pages'` macht Seite 1 zum vorderen und Seite 12 zum hinteren Deckel, sodass das Buch geschlossen daliegt, bis Sie es öffnen; dafür ist eine gerade Seitenzahl nötig, die der Umbruch `parity: 'even'` des hinteren Umschlags garantiert.
+
+### 3 · Umschlagseiten bis in den Anschnitt
+
+<Excerpt region="covers" />
+
+Jeder Umschlag ist ein Überschriftenformat, dessen Design eine Farbfläche in der Größe des Endformats enthält. Das Format setzt seine Ränder für die Länge seines Abschnitts, also allein für die Umschlagseite, auf null, sodass die Fläche jede Kante erreicht und die folgenden Seiten ihre Ränder behalten.
+
+### 4 · Die Karte der Sorte
+
+<Excerpt region="stock-card" />
+
+Jedes Blatt beginnt mit einer Überschrift der Ebene 1, die aus einem Platz gezeichnet wird: die Dachzeile aus den Attributen der Überschrift, der Name der Sorte und eine Haarlinie. Die Zeilen mit den technischen Angaben sind ein Absatzformat in der schmalen Labelschrift, mit fetten Labels in der Akzentfarbe.
+
+### 5 · Das Papier aus dem Layout zurücklesen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jede Seite, die innerhalb eines Blocks gesetzt wird, trägt die Attribute des Blocks in `page.paper`, so wie sie geschrieben sind: `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` reicht sie an den Betrachter weiter, der jedes Blatt mit seiner Sorte zeichnet; der Pen liest sie außerdem für die Statuszeile und für die Textalternative jeder Seite.
+
+## Varianten
+
+### Einen Bildteil auf schwererem Glanzpapier einfügen
+
+Ein Block im Text eines beliebigen Buchs druckt diese Seiten auf ihrer eigenen Sorte; die darin zitierten Abbildungen werden platziert, bevor er schließt.
+
+```diff
++:::paper{type=coatedGloss grammage=170 showThrough=false}
++
++# Plates {kicker="Between pages 64 and 65"}
++
++::resource{id="plate-1"}
++
++:::
+```
+
+### Ein geheftetes Heft mit Kartonumschlag
+
+<RecipeLink slug="saddle-stitched-card-cover">Das Zine-Rezept</RecipeLink> legt mit zwei Blöcken und einer Rückstichheftung einen Kartonumschlag um Seiten aus Zeitungspapier.

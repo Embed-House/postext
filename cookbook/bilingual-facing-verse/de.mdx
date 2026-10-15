@@ -1,0 +1,70 @@
+---
+title: "Übersetzung gegenüber, Strophe für Strophe"
+summary: "Jedes Gedicht ist ein randloser Kasten mit zwei Spalten: Ein fester Spaltenumbruch beginnt das Englische beim Titel, :::space hält die Strophen auf einer Höhe."
+plain: "Ein kleiner Gedichtband mit dem spanischen Text auf der einen Seite und der englischen Übersetzung daneben. Jede Gruppe von Versen in der Übersetzung beginnt auf gleicher Höhe wie das Original."
+description: "Zweisprachiger Gedichtband in Postext: jedes spanische Gedicht neben seiner englischen Fassung im Zweispaltenkasten, fester Spaltenumbruch, :::space je Strophe."
+question: "Wie setze ich ein Gedicht und seine Übersetzung nebeneinander, jede Strophe auf derselben Zeile beginnend?"
+aliases: ["Übersetzung gegenüber", "Paralleltext", "en face", "zweisprachige Ausgabe", "zweisprachige Lyrik", "Übersetzung neben dem Original", "Spalten in einem Kasten", "Attribut breaks", "Spaltenumbruch im Kasten", "Strophen ausrichten", "Strophenabstand", "Umbruchzeile", "hängender Einzug", "Verse", "Gedichtband", "edición bilingüe", "traducción enfrentada", "facing translation"]
+pageNotes: { "3": "Das Aquarell der Salinen reicht 84 mm weit auf die Seite herunter. Darunter beginnt Gedicht I mit seiner Ziffer; „LA SALINA AL ALBA“ steht über der spanischen Spalte und „THE SALT PANS AT DAWN“ über dem englischen Kursivtext. Die vierte englische Zeile bricht um, und die erste spanische Strophe endet mit zwei Leerzeilen, sodass beide zweiten Strophen auf derselben Zeile beginnen.", "4": "Die Gedichte II und III, jedes eine Ziffer über zwei Spalten, deren Strophen sich Zeile für Zeile gegenüberstehen." }
+---
+
+## Was Sie setzen
+
+Ein zweisprachiger Gedichtband mit fünf Gedichten über eine Saline im Süden Spaniens, 156 × 234 mm, links das Spanische, rechts die englische Fassung des Dichters selbst, Zeile für Zeile. Zuerst kommen eine Titelseite mit einem Flamingo und die Vorbemerkung des Autors; die Gedichte beginnen unter einem Aquarell mit rosa Becken, Salzhaufen und Flamingos bei Sonnenaufgang. Jedes Gedicht steht in einem rahmenlosen Kasten unter einer krapproten Ziffer in der Castoro Titling, das Spanische in der einen Spalte, das Englische in der anderen. Das Englische beginnt auf derselben Zeile wie das Spanische, und jede Strophe beginnt auf gleicher Höhe wie ihr Original. Ist eine englische Zeile zu lang für ihre Spalte, läuft ihr Rest um 2 em eingerückt in die nächste Zeile, und die spanische Strophe gegenüber endet mit einer zusätzlichen Leerzeile.
+
+## Zubereitung
+
+### 1 · Ein Gedicht ist ein Kasten mit festem Spaltenumbruch
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jedes Gedicht ist ein Kasten um eine Gruppe `:::columns`; sein Stil verzichtet auf Fläche und Innenabstand und druckt den `title` des Direktivenblocks, die Ziffer ([`:::columns`](/de/docs/document-format#columns)). Ohne `breaks` bricht die Gruppe dort um, wo ihre beiden Spalten gleich hoch ausgehen. Beide Hälften dieser Gedichte sind gleich hoch, also fällt der Umbruch ohnehin auf den englischen Titel; verlängern Sie zwei Zeilen von *The Rake*, bis sie umbrechen, und der Umbruch rückt einen Block nach unten und lässt THE RAKE am Fuß der spanischen Spalte stehen. `breaks="5"` nennt den Block, der die zweite Spalte eröffnet, sodass der englische Titel sie anführt, wie hoch die beiden Hälften auch sind.
+
+### 2 · Ein Block :::verse pro Spalte, eine Leerzeile pro Strophenwechsel
+
+<Excerpt region="verse" />
+
+Jede Hälfte eines Gedichts ist ein Block `:::verse`: ein Vers pro Markdown-Zeile, im Flattersatz und nie getrennt, und zwischen den Strophen eine Leerzeile, die in der Spalte eine Leerzeile lässt ([`:::verse`](/de/docs/document-format#verse)). Jede Strophe ist ein Block, also zählt `breaks` Strophen, nicht Zeilen. Das englische *each one standing on its own reflection.* ist zu lang für seine 55 mm breite Spalte und bricht um 2 em eingerückt um; die spanische Hälfte schließt ihren Block nach der gegenüberliegenden Strophe und setzt vor die nächste ein `:::space{lines=2}`, sodass die folgenden Strophen auf derselben Zeile beginnen. Ein `:::space` ist kein Block, und `breaks` zählt es nicht mit ([`:::space`](/de/docs/document-format#space)).
+
+<PageShot page={3} crop="0.1,0.385,0.8,0.248" caption="Gedicht I auf Seite 3: „reflection.“ bricht im Englischen um, und die spanische Strophe endet mit zwei Leerzeilen statt einer." />
+
+### 3 · Die Vorbemerkung wird in ihrer eigenen Sprache getrennt
+
+<Excerpt region="note" />
+
+`locale` wählt die Trennmuster. Mit `'es'` trennt die spanische Vorbemerkung *ori-ginal* und *Duna-liella*; mit den englischen Mustern gehen beide Wörter ganz in die nächste Zeile, und nur *arras-traba* wird in beiden Fällen getrennt ([unterstützte Locales](/de/docs/justification#unterstützte-sprachen)). Wortabstände dürfen auf das 0,8-Fache ihrer normalen Breite schrumpfen und sich auf das 1,35-Fache dehnen, und keine Blocksatzzeile in einer der beiden Vorbemerkungen dehnt sich darüber hinaus. Die Überschrift der Vorbemerkung ist eine Gestaltung, deren einziges Element, der Titel, 36 mm unter der Oberkante des Satzspiegels steht, sodass die Vorbemerkung 73 mm unter der Oberkante ihrer Seite beginnt.
+
+### 4 · Titelseite und Aquarell sind Überschriften
+
+<Excerpt region="front" />
+
+Beide sind Überschriften der Ebene 1 mit eigenem Stil ([Überschriftenstile](/de/docs/configuration-styles#überschriftenstile)): Die Gestaltung der Titelseite nimmt `{author}` aus dem Frontmatter, und beide Gestaltungen nehmen `{attr.other}` aus den Attributen der Überschrift. Das Aquarell ist an der Oberkante der Seite verankert, über dem Satzspiegel, und die Überschrift reserviert Platz bis zu seinem Fuß, 84 mm weit hinunter. Der Stil setzt `marginBottom: pt(0)`, sodass der Abstand unter dem Bild der eigene obere Rand des Gedichts von zwei Zeilen ist und Gedicht I auf der ersten Rasterlinie mindestens zwei Zeilen unter dem Bild beginnt.
+
+### 5 · Die Kolumnentitel nennen beide Sprachen
+
+<Excerpt region="heads" />
+
+Die linke Seite trägt den spanischen Titel, die rechte den englischen, in der Reihenfolge der Spalten. `pages: 'body'` hält sie von den drei Seiten fern, die mit einer Überschrift beginnen. Vorbemerkung und Aquarell bekommen stattdessen eine Seitenzahl am Fuß, und der Stil der Titelseite leert Kopf- und Fußzeile ([Textelemente](/de/docs/configuration-page-layout#textelemente)).
+
+## Varianten
+
+### Den Spaltenabstand vergrößern
+
+Bei 12 mm schrumpfen die Spalten auf 53 mm, und *Los turistas paran y hacen fotos:* bricht in Gedicht III um, sodass seine zweite Strophe eine Zeile unter der englischen beginnt; schließen Sie den englischen Block nach dieser Strophe und setzen Sie vor die nächste ein `:::space{lines=2}`, um beide anzugleichen.
+
+```diff
+-const GAP = 8; // mm between the original and the translation: each column is 55 mm wide
++const GAP = 12; // mm between the original and the translation: each column is 53 mm wide
+```
+
+### Umbruchzeilen tiefer einziehen
+
+Bei 3 em beginnt *reflection.* auf Seite 3 ein Geviert weiter innen.
+
+```diff
+-const verse = { id: 'verse', hangingIndent: em(2) };
++const verse = { id: 'verse', hangingIndent: em(3) };
+```
+
+## Häufige Fehler
+
+- Ein `:::space` vor dem englischen Titel verschwindet: Die zweite Spalte beginnt bei dem Block, den `breaks` nennt, und der Abstand fällt genau auf den Umbruch. Setzen Sie ihn nach den Titel, wie das `:::space{lines=0.5}` unter jedem Spaltentitel hier.
+- Zählen Sie `breaks` ab dem spanischen Titel: Bei einem Titel und drei Strophen ist der englische Titel Block 5. Jede Strophe ist ein Block, also schiebt eine spanische Strophe mehr den englischen Titel auf Block 6, und `breaks` muss mitwachsen; eine Zeile mehr innerhalb einer Strophe verschiebt nichts.

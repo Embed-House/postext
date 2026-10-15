@@ -61,7 +61,7 @@ describe('a new book and the built-in guide (#770)', () => {
   });
 
   it('every edition of the guide is shaped in its own language, whatever the interface', () => {
-    const tags: Record<string, string> = { es: 'es', ca: 'ca', en: 'en-US', ar: 'ar', 'zh-Hans': 'zh-Hans', ja: 'ja', 'pt-BR': 'pt-BR', fr: 'fr' };
+    const tags: Record<string, string> = { es: 'es', ca: 'ca', en: 'en-US', ar: 'ar', 'zh-Hans': 'zh-Hans', ja: 'ja', 'pt-BR': 'pt-BR', fr: 'fr', de: 'de' };
     expect([...BUILTIN_PRESET_LOCALES].sort()).toEqual(Object.keys(tags).sort());
     for (const edition of BUILTIN_PRESET_LOCALES) {
       const config = createPostextGuideConfig(edition);

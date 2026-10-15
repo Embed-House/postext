@@ -66,7 +66,8 @@
       "ar",
       "ja",
       "pt",
-      "fr"
+      "fr",
+      "de"
     ]
   },
   "capture": {
@@ -87,7 +88,8 @@
           "en": "Strip panel: Pip walks into the bakery",
           "es": "Viñeta de la tira: Pip entra en la panadería",
           "pt": "Quadro da tirinha: Pip entra na padaria",
-          "fr": "Case du strip : Pip entre dans la boulangerie"
+          "fr": "Case du strip : Pip entre dans la boulangerie",
+          "de": "Strip-Bild: Pip betritt die Bäckerei"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -98,7 +100,8 @@
           "en": "Strip panel: Otto and the big croissant",
           "es": "Viñeta de la tira: Otto y el cruasán grande",
           "pt": "Quadro da tirinha: Otto e o croissant grande",
-          "fr": "Case du strip : Otto et le grand croissant"
+          "fr": "Case du strip : Otto et le grand croissant",
+          "de": "Strip-Bild: Otto und das große Croissant"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -109,7 +112,8 @@
           "en": "Strip panel: Pip and the croissant on the counter",
           "es": "Viñeta de la tira: Pip y el cruasán en el mostrador",
           "pt": "Quadro da tirinha: Pip e o croissant no balcão",
-          "fr": "Case du strip : Pip et le croissant sur le comptoir"
+          "fr": "Case du strip : Pip et le croissant sur le comptoir",
+          "de": "Strip-Bild: Pip und das Croissant auf der Theke"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -120,7 +124,8 @@
           "en": "Strip panel: Otto eats the croissant",
           "es": "Viñeta de la tira: Otto se come el cruasán",
           "pt": "Quadro da tirinha: Otto come o croissant",
-          "fr": "Case du strip : Otto mange le croissant"
+          "fr": "Case du strip : Otto mange le croissant",
+          "de": "Strip-Bild: Otto isst das Croissant"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -131,7 +136,8 @@
           "en": "Strip panel: fishing on the floe",
           "es": "Viñeta de la tira: pescando en el témpano",
           "pt": "Quadro da tirinha: pescaria no gelo",
-          "fr": "Case du strip : la pêche sur la banquise"
+          "fr": "Case du strip : la pêche sur la banquise",
+          "de": "Strip-Bild: Angeln auf der Scholle"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -142,7 +148,8 @@
           "en": "Strip panel: Pip and his fish",
           "es": "Viñeta de la tira: Pip y su pez",
           "pt": "Quadro da tirinha: Pip e seu peixe",
-          "fr": "Case du strip : Pip et son poisson"
+          "fr": "Case du strip : Pip et son poisson",
+          "de": "Strip-Bild: Pip und sein Fisch"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -153,7 +160,8 @@
           "en": "Strip panel: Otto lands a boot",
           "es": "Viñeta de la tira: Otto pesca una bota",
           "pt": "Quadro da tirinha: Otto fisga uma bota",
-          "fr": "Case du strip : Otto pêche une botte"
+          "fr": "Case du strip : Otto pêche une botte",
+          "de": "Strip-Bild: Otto angelt einen Stiefel"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",

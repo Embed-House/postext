@@ -1,0 +1,59 @@
+---
+title: "Eine Qaṣīda im Diwan, jeder Bayt in zwei Halbversen"
+summary: "Ein einziger Block :::verse setzt die 46 Bayts von al-Mutanabbī in zwei Spalten aus Halbversen, jede Hälfte mit Kaschidas auf eine Breite gedehnt."
+plain: "Ein klassisches arabisches Gedicht, gedruckt wie in alten Gedichtbänden: Jeder Vers ist in zwei Hälften geteilt, die nebeneinanderstehen, und beide Hälften sind auf dieselbe Breite gedehnt, sodass ihre Enden die Seite hinab fluchten."
+description: "Eine Seite aus dem Dīwān von al-Mutanabbī in Postext: :::verse für Bayts in zwei Halbversen, Kaschida-Ausgleich, Ruqʿa-Kopfleiste und Bindung rechts."
+question: "Wie setze ich klassische arabische Verse, jeden Bayt in zwei Halbversen?"
+aliases: ["Qasida", "Qaṣīda", "Diwan", "Dīwān", "Bayt", "Halbvers", "Hemistichion", "ṣadr", "ʿajuz", "arabische Dichtung", "klassische arabische Verse", "al-Mutanabbī", "Sayf ad-Daula", "Kaschida", "Tatwil", "قصيدة", "ديوان", "شطر"]
+pageNotes: { "2": "Die erste Seite der Qaṣīda: oben ein blasses, rot liniertes Band mit dem Titel على قدر أهل العزم in roter Ruqʿa-Schrift, darunter das Versmaß من البحر الطويل in kleinem grauem Kufi, zwei Zeilen Prosa zum Anlass, dann die Bayts in zwei Spalten, rechte und linke Hälfte jeder Zeile auf dieselbe Breite gedehnt." }
+---
+
+## Was Sie setzen
+
+Vier Seiten eines Diwans, der gesammelten Gedichte von al-Mutanabbī, so gesetzt, wie Kairoer Drucker es vor einem Jahrhundert taten: ein Schmutztitel mit ديوان in roter Ruqʿa, dann die Qaṣīda, die er 954 vor Sayf ad-Daula vortrug, unter einer rot linierten Kopfleiste. Jeder der 46 Bayts ist eine Zeile aus zwei Halbversen, der ṣadr rechts und der ʿajuz links, beide mit Kaschidas auf eine Breite gedehnt, sodass die Reime auf ‑mu in gerader Linie den linken Rand hinablaufen. Das Buch ist rechts gebunden, und die Paginas zählen in arabisch-indischen Ziffern. Nur die Anmerkung zum Text am Ende ändert sich mit der Ausgabe. <RecipeLink slug="tang-poems-facing-english">Tang-Gedichte gegenüber ihren englischen Versen</RecipeLink> setzt klassische chinesische Verse auf ihr eigenes Raster.
+
+## Zubereitung
+
+### 1 · Ein Bayt pro Zeile, beide Hälften auf eine Breite
+
+Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. In `:::verse` ist jede Zeile ein Bayt, und `||` trennt die beiden Halbverse, sodass sich das Markdown wie der Wikisource-Text liest, aus dem es stammt ([:::verse](/de/docs/document-format#verse)). Das Gedicht misst jeden Halbvers, nimmt die breiteste Hälfte als Breite beider Spalten (höchstens die halbe Satzbreite abzüglich des Zwischenraums) und füllt jede Hälfte auf diese Breite, zuerst mit Kaschidas, danach mit den Wortabständen ([Klassische Verse](/de/docs/arabic-layout#klassische-verse)). Das Format `bayt` steht in 14 pt bei 26,6 pt Zeilenabstand, dem 1,9-Fachen der Größe, damit sich Schaddas und Kasras benachbarter Zeilen nicht berühren ([Vokalzeichen](/de/docs/arabic-layout#vokalzeichen)). Das Endformat ist 17 × 24 cm: Bei 14 × 21 cm passte ein Drittel der Bayts nicht in seine Hälfte der 104 mm Satzbreite und fiel auf einen versetzten Satz zurück, ṣadr und ʿajuz jeweils auf eigener Zeile.
+
+<PageShot page={2} crop="0,0.45,1,0.55" caption="Seite 2: Jeder Halbvers ist auf die Breite des breitesten gedehnt. Eine kurze Hälfte erhält mehr Kaschidas, sodass jeder Reim an derselben linken Kante endet." />
+
+### 2 · Eine Kopfleiste in Ruqʿa
+
+<Excerpt region="opener" />
+
+Die Überschrift der Ebene 1 wird von ihrer Gestaltung gezeichnet: ein getönter Kasten mit roten Linien oben und unten, der Titel mittig darüber in Aref Ruqaa und darunter das Versmaß aus einem Attribut der Überschrift, `{metre="من البحر الطويل"}`. Auszeichnungsschrift in Ruqʿa nimmt keine Kaschida, daher behält der Titel seine natürliche Breite ([Blocksatz und Kaschida](/de/docs/arabic-layout#blocksatz-und-kaschida)).
+
+### 3 · Kolumnentitel an den Seiten des Bogens
+
+<Excerpt region="heads" />
+
+Der Grundtext läuft von rechts nach links, und sein Links und Rechts bedeuten Anfang und Ende. Kolumnentitel bleiben physisch. In einem rechts gebundenen Buch liegt die Verso-Seite, eine gerade Seite, rechts in der Doppelseite, also steht ihre Pagina oben rechts und die der Recto-Seite oben links: Beide sitzen am Außenrand ([Seitenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)). Das Tag `locale: 'ar'` allein legt Richtung, Bindung und arabisch-indische Ziffern fest.
+
+### 4 · Ein Schmutztitel ohne Inhalt im Textfluss
+
+<Excerpt region="title" />
+
+Der Schmutztitel ist ein Überschriftenformat mit `span: 'page'` und eigener leerer Kopf- und Fußzeile. Der Text seiner Überschrift ist der Name des Dichters, daher ist das Wort ديوان Gestaltungstext, in 64 pt darüber gesetzt, und die lateinische Zeile unter der Linie kommt aus dem Attribut `latin`, das jede Ausgabe in ihrer Sprache schreibt.
+
+## Varianten
+
+### Den Zwischenraum mit einem Ornament markieren
+
+Manche Diwane drucken einen kleinen Stern zwischen die Halbverse. `ornament` setzt ein Zeichen in die Mitte des Zwischenraums, ohne es dem Text hinzuzufügen.
+
+```diff
+-:::verse{style="bayt"}
++:::verse{style="bayt" ornament="٭"}
+```
+
+### Jedem Halbvers dieselbe Breite geben
+
+Eine feste `width` setzt beide Spalten auf jeder Seite des Diwans auf ein Maß, gleich wie breit die breiteste Hälfte eines Gedichts ist.
+
+```diff
+-:::verse{style="bayt"}
++:::verse{style="bayt" width=58mm}
+```

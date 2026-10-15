@@ -1,0 +1,64 @@
+---
+title: "Prüfungsbogen mit Antwortblatt"
+summary: "Eine vierseitige Geschichtsprüfung auf US Letter: Kreise und Punkte als Chips, Punkte am Tabstopp, Fragen 1, a), i) und Antwortlinien aus einer Tabelle."
+plain: "Eine vierseitige Geschichtsprüfung mit Deckblatt, Antwortkreisen und linierten Seiten zum Schreiben. Sie zeigt, wie man Fragen und Teilfragen nummeriert und die Punkte für jede angibt."
+description: "Ein Prüfungsbogen in Postext mit Feldern für Prüflinge und Kreisraster auf dem Deckblatt, Fragen 1, a), i), Punkten in Chips, Antwortlinien aus einer Tabelle."
+question: "Wie setze ich einen Prüfungsbogen mit Kreisraster, Teilfragen a) und i), Punkten und linierten Antwortzeilen?"
+aliases: ["Prüfungsbogen", "Klausur", "Probeklausur", "Aufgabenblatt", "Antwortblatt", "Antwortraster", "Ankreuzbogen", "OMR", "Multiple Choice", "Antwortlinien", "Schreiblinien", "Punkte", "Punkte rechtsbündig", "Tabstopp", "Nummerierung der Fragen", "Prüfungsnummer", "bitte wenden", "exam paper"]
+pageNotes: { "1": "Ein karminrotes Band über das obere Drittel trägt die Prüfungszeile, „History“ in kräftiger weißer Schrift, „Paper 2 · Sources and interpretations“ und „The American Civil War, 1863“ kursiv, über der Jahreszahl 1863 als weiße Kontur, vom Fuß des Bandes abgeschnitten. Darunter: Datum und Bearbeitungszeit, ein abgerundetes Formular mit Feldern für Name, Klasse, Prüfungsnummer und Punktzahl von 25, ein blassrosa Kasten mit Anweisungen und Hinweisen in zwei Spalten und, unter dem karminroten Titel „Section A answer grid“, ein blassrosa Feld mit nummerierten Zeilen 1 bis 10, jede mit vier karminroten Kreisen A bis D. Am Fuß in karminroten Versalien: „Do not turn over until you are told to do so“.", "2": "Section A, 10 Punkte: zehn Multiple-Choice-Fragen zu 1863, jede mit großer fetter Nummer und karminrotem Punkt, und unter jeder Frage eine Zeile mit vier Antworten, die jeweils mit einem Buchstabenkreis beginnen.", "3": "Section B, 15 Punkte: die Gettysburg Address als „Source A“ neben einem karminroten Streifen, gezeichnet „Abraham Lincoln. November 19, 1863“, darunter eine kleine Nachweiszeile; dann Frage 11 mit den Teilen a) i), a) ii), b) und c), jeder mit einem rosa Chip, der seine Punkte bündig am rechten Textrand angibt, und „Turn over“ am Fuß.", "4": "Die Antwortseite: Gruppen grauer Linien im Abstand von zwei Textzeilen, die erste Zeile jeder Gruppe mit ihrem Teil in Karminrot, von einer Zeile für 11 a) i) bis acht für 11 c); „End of questions“ und das Impressum schließen die Seite." }
+---
+
+## Was Sie setzen
+
+Teil 2 einer Probeprüfung in Geschichte zum Amerikanischen Bürgerkrieg, gesetzt als vierseitiges Heft auf US Letter. Das Deckblatt ist ein karminrotes Band mit der Jahreszahl 1863 als Kontur, über den Feldern für die Prüflinge, den Anweisungen in zwei Spalten und einem Raster aus Buchstabenkreisen für Section A. Seite 2 enthält zehn Multiple-Choice-Fragen, jede gefolgt von ihren vier Antworten, und jede Antwort beginnt mit einem Buchstabenkreis wie im Raster. Seite 3 setzt die Gettysburg Address als „Source A“ und nummeriert die Fragen dazu mit 11, a), i), die Punkte für jeden Teil in einem Chip am rechten Rand. Seite 4 ist für die Antworten liniert, eine Linie alle zwei Textzeilen, und jede Liniengruppe beginnt mit der Nummer ihres Teils. Jede Seite nach dem Deckblatt trägt eine Pagina und einen linierten Rand für die Prüfenden, und die einzige rechte Seite darunter sagt „Turn over“.
+
+## Zubereitung
+
+### 1 · Fragen nummerieren und ihre Antworten einhängen
+
+<Excerpt region="numbering" />
+
+Jede Ebene von `orderedLists` wählt ihr eigenes `numberFormat` und ihren `separator`, und `separatorColor` färbt Punkt und Klammern in der Akzentfarbe, während die Nummer schwarz bleibt ([nummerierte Listen](/de/docs/configuration-text#nummerierte-listen)). Mit `numberWidth: 'level'` werden die Nummern an der breitesten ihrer Tiefe rechtsbündig ausgerichtet, sodass der Text jeder Frage 23 pt eingerückt beginnt: die 17 pt von „10.“ plus `GAP`. Die vier Antworten sind ein Aufzählungspunkt mit leerem `bulletChar`, auf derselben Tiefe wie die Fragen statt darunter verschachtelt. Sein Text beginnt beim `indent` der Liste, also „10.“ in der Schrift der Nummern gemessen plus `GAP`, sodass die Antworten in jeder Schrift unter dem ersten Buchstaben der Frage stehen; der Kasten mit den Anweisungen setzt `indent: pt(0)`, weil die Listen in einem Kasten den Einzug des Dokuments übernehmen. Zwischen zwei Einträgen derselben Tiefe gilt das `itemSpacing` des ersten: 5 pt nach einem nummerierten Eintrag, 15 pt nach einer Zeile mit Antworten. Unter ihrer Frage verschachtelt, bekäme die Antwortzeile auf beiden Seiten die 5 pt der Fragenliste.
+
+### 2 · Kreise und Punkte aus Chips bauen
+
+<Excerpt region="chips" />
+
+Ein Chip ist ein Kasten in der Zeile, und ein Zeilenumbruch fällt nie hinein ([Inline-Chips](/de/docs/document-format#inline-chips)). Mit einem Versal darin macht `paddingX: em(0.3)` den Kasten etwa so breit wie hoch: 4,5 bis 4,8 mm breit im Raster bei 4,7 mm Höhe. `borderRadius: em(1)` ist mehr als die Hälfte des Kastens, und der Radius eines Chips wird auf die Hälfte seiner kürzeren Seite begrenzt, sodass die Enden ganz rund sind. Ein Chip ohne `style` nimmt den ersten Eintrag von `chipStyles`, daher sind die achtzig Kreise, vierzig im Raster und vierzig bei den Antworten, schlichte Chips wie `:chip[A]`; nur das ausgefüllte Beispiel in den Anweisungen und die Punkte nennen einen Stil. Die Punkte stehen rechtsbündig: Jeder Teil endet mit `:tab` vor seinem Chip, und der einzige Tabstopp des Textes, am Ende der Satzbreite mit `align: 'end'`, lässt den Chip dort enden ([Tabulatoren und Tabstopps](/de/docs/document-format#tabulatoren-und-tabstopps)). Die Listeneinträge der Fragen übernehmen die Tabstopps des Textes, sodass die Chips von a) und von i) an derselben Stelle enden. Ein Teil, dessen letzte Zeile keinen Platz mehr für seinen Chip hat, nimmt sein letztes Wort mit in die nächste Zeile.
+
+### 3 · Jedem Formular einen eigenen Tabellenstil geben
+
+<Excerpt region="forms" />
+
+Die Felder für die Prüflinge, das Kreisraster und die Antwortlinien sind drei `tableStyles`, pro Tabelle mit `styleId` gewählt ([benannte Tabellenstile](/de/docs/configuration-resources#benannte-tabellenstile)). Die Antwortlinien unter [Die kurze Antwort](#die-kurze-antwort) verwenden `rules: 'horizontal'` und einen Innenabstand, der jede Zeile zwei Textzeilen tief macht, sodass jede Linie 30 pt (10,6 mm) unter der vorigen liegt, auf jeder zweiten Zeile des 15-pt-Rasters des Textes. Die leere mittlere Zeile der Zelle MARK enthält ein geschütztes Leerzeichen, denn eine Zellenzeile, die leer ist oder nur gewöhnliche Leerzeichen enthält, trägt nichts bei: Diese Zelle ist drei Zeilen tief und setzt die ganze Zeile auf 14,4 mm, gegenüber 10,8 mm mit zwei Zeilen. Das Raster zeichnet keine Linien, sodass der Farbton jeder Zelle an den der Nachbarzelle stößt und das Raster als eine Fläche wirkt. Sein Titel ist eine Legende 1,6 mm darüber ([Legendenstil](/de/docs/configuration-resources#legendenstil)). Eine Überschrift stünde mindestens eine Textzeile (5,3 mm) höher, weil jede „here“ platzierte Tabelle so viel Raum über sich hält. Der Typ `form` hat ein leeres `captionPrefix`, sodass kein Etikett „Form 1.“ vor dem Titel steht.
+
+### 4 · Das Deckblatt aus den Attributen der Überschrift zeichnen
+
+<Excerpt region="cover" />
+
+Das Deckblatt ist eine Überschrift, `# History {style="cover" …}`, und ihr Stil zeichnet ein Band, die Jahreszahl und vier Textzeilen, gefüllt aus den Attributen der Überschrift. Mit `span: 'page'` zählt die Seite als Auftakt, sodass Randlinie, Pagina und „Turn over“ der Textseiten draußen bleiben und der Hinweis an ihrem Fuß gedruckt wird. Ohne die Einstellung ist das Deckblatt eine Textseite wie die übrigen. Die `margins` des Stils verbreitern die Spalte des Deckblatts für die Formulare auf die vollen 168 mm, und die nächste Überschrift, eine Ebene 1 ohne Stil, bringt die Textseiten auf die Satzbreite von 134 mm zurück.
+
+### 5 · Pagina und „Turn over“ vom Deckblatt fernhalten
+
+<Excerpt region="furniture" />
+
+Jedes laufende Element der Textseiten trägt `pages: 'body'`, sodass das Deckblatt, ein Auftakt, nur seinen eigenen Hinweis zeigt (`pages: 'opener'`). Die Abschnitte beginnen deshalb mit `:::pagebreak` und einer Überschrift ohne `breakBefore`. Eine Überschrift, die die Seite umbricht, macht ihre Seite zum Auftakt, und die Seiten 2 und 3 verlören Pagina, Kolumnentitel und Rand. `parity: 'odd'` hält „Turn over“ auf der rechten Seite, da eine linke Seite der folgenden ohnehin gegenübersteht.
+
+## Varianten
+
+### Auf A4 drucken
+
+Band, Jahreszahl, Randlinie und Hinweis nehmen ihre Maße aus `PAGE`, daher ist A4 eine einzeilige Änderung. Die Blöcke des Deckblatts behalten ihre Plätze, und das Weiß unter dem Raster wächst in beiden Ausgaben um 17,6 mm.
+
+```diff
+-const [TEXT, LABEL, PAGE] = ['PT Serif', 'Inter Tight', { w: 215.9, h: 279.4 }]; // US Letter
++const [TEXT, LABEL, PAGE] = ['PT Serif', 'Inter Tight', { w: 210, h: 297 }]; // A4
+```
+
+### Eine Wortbank oder eine Checkliste hinzufügen
+
+Wortbänke, Lücken und auszumalende Kreise sind ebenfalls Chips: <RecipeLink slug="worksheet-answer-boxes">das Arbeitsblatt mit Antwortkästen und Wortspeicher</RecipeLink> setzt eine Bank gelber Chips in einen verschachtelten Kasten und eine Checkliste, die jede Zeile mit einem leeren Kreis beginnt.
+
+## Häufige Fehler
+
+- Antwortlinien zwischen den Teilen einer Frage teilen ihre Liste: Die Liste nach der Tabelle beginnt eine neue Folge, und eine Folge richtet ihre Nummern an ihrer eigenen breitesten aus, sodass der Text von ii) 1 mm rechts vom Text von i) begänne. Hier stehen die Antworten auf einer eigenen Seite, und jeder Teil bleibt in einer Liste.

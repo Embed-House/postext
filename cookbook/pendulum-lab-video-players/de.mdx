@@ -1,0 +1,75 @@
+---
+title: "Laborblatt, dessen Clips am Bildschirm und im EPUB laufen"
+summary: "Zwei Videoressourcen mit eigenen MP4-Dateien: Der Druck setzt jede als erstes Bild mit QR-Code, renderToHtml und postext-epub spielen die Dateien ab."
+plain: "Ein Physik-Arbeitsblatt mit zwei kurzen Filmen eines Pendels. Auf Papier ist jeder Film ein Standbild mit einem Code zum Scannen; am Bildschirm und im E-Book laufen die Filme auf der Seite."
+description: "Ein Physik-Laborblatt mit zwei MP4-Clips, gedruckt als Standbilder mit QR-Codes, abgespielt in den Videoplayern der HTML-Ausgabe und in einem festen EPUB."
+question: "Wie spielen Bildschirmausgabe und EPUB die Clips des Buchs ab, und wie blende ich den Download-Knopf aus?"
+aliases: ["Video", "MP4", "HTML5-Video", "Videoplayer", "Download-Knopf", "Download-Schaltfläche", "nodownload", "controlslist", "QR-Code", "EPUB-Video", "Laborblatt", "Arbeitsblatt", "resourceVideoUrl", "videoStyle"]
+pageNotes: { "1": "Der Auftakt von Laborblatt 4.2: ein rostrotes Band mit dem Titel „The period of a pendulum“ und drei weißen Feldern für Name, Gruppe und Datum, dann Ziel, die beiden Clips und der Hintergrund in zwei Spalten. Am Fuß die ersten Bilder von „Video 1“ und „Video 2“, jedes mit einem dunklen Abspielzeichen und einem QR-Code.", "2": "Die Durchführung in einem cremefarbenen Kasten, eine leere Messtabelle, eine Tabelle der exakten Perioden von 5° bis 90° und vier Fragen mit weißen Antwortkästen." }
+---
+
+## Was Sie setzen
+
+Laborblatt 4.2 aus *Bench Physics*, einem Arbeitsheft im Format A4 für Schülerinnen und Schüler von 16 bis 18 Jahren, über die Periode eines Pendels. Ein rostrotes Band trägt den Titel und die Felder für Name, Gruppe und Datum. Am Fuß der ersten Seite stehen nebeneinander zwei Clips desselben Pendels, losgelassen bei 10° und bei 80°. Auf Papier ist jeder Clip sein erstes Bild, mit einem Abspielzeichen und einem QR-Code, der das MP4 öffnet. In der Bildschirmausgabe neben den Seiten und im EPUB, das der Pen schreibt, laufen dieselben zwei Ressourcen im eigenen Videoplayer des Lesesystems. Die zweite Seite enthält die Durchführung, eine auszufüllende Tabelle, die vom Code berechneten exakten Perioden und vier Fragen mit Kästen für die Antworten.
+
+## Zubereitung
+
+### 1 · Jedem Clip eine Produktionsadresse und eine Datei geben
+
+Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. Ein eigener Clip hat zwei Adressen. `video.url` ist der Ort, an dem das veröffentlichte Buch ihn findet: Der QR-Code druckt sie, und das PDF verlinkt das Standbild darauf, also ist sie hier die jsDelivr-Adresse des Clips, die ein Telefon heute öffnen kann. `video.fileId` benennt die Datei selbst, getrennt gehalten wie eine Bitmap, für die Ausgaben, die sie mitführen oder von anderswo abspielen können (siehe [Dokumentformat › Videos](/de/docs/document-format#videos)). Die Player-Optionen in `videoStyle.player` gelten für jeden Clip: Sie laufen in Schleife, starten stumm, laden vollständig (27 und 61 KB) und bieten weder Download noch Bild-im-Bild noch Streaming an ein anderes Gerät, sodass die Clips auf dem Blatt bleiben.
+
+### 2 · Die Bildschirmausgabe aus derselben Quelle setzen
+
+<Excerpt region="screen" />
+
+Die Bildschirmausgabe steht in der Konfiguration als `htmlViewer.overrides`, die Canvas und PDF ignorieren. Bei 122 dpi fällt jede in Punkt angegebene Größe etwa ein Viertel größer aus als bei 96, sodass der Text von 9,4 pt im Bereich mit 16 px gelesen wird und Legenden, Kästen und Tabellen mitwachsen. Der Auftakt behält seinen Titel und lässt Band und Felder weg, die zum Papier gehören.
+
+### 3 · Die Clips im Bereich abspielen
+
+<Excerpt region="pane" />
+
+`renderToHtml` setzt jede Videoressource als HTML5-`<video>` mit den Player-Optionen als Attributen: `controls`, `muted`, `loop`, `playsinline`, `preload="auto"`, `disablepictureinpicture`, `disableremoteplayback` und `controlslist="nodownload"`. Das letzte blendet nur den Knopf aus. Wer die Adresse hat, kann die Datei weiterhin speichern, betrachten Sie es also als Ordnung, nicht als Schutz. `resourceVideoUrl` übergibt dem Backend für jede `fileId` eine abspielbare Adresse, so wie `resourceImageUrl` es für die Standbilder tut. Hier ist es das veröffentlichte Asset; eine Website, die Uploads anderswo ablegt, gibt ihre eigene URL zurück oder eine Blob-URL der Bytes. Ohne sie greift der Player auf `video.url` zurück, und ohne beides zeigt der Bereich das Standbild.
+
+### 4 · Die Clips in ein EPUB mit festem Layout packen
+
+<Excerpt region="epub" />
+
+Das Blatt ist um zwei nebeneinanderstehende Clips und leere Kästen zum Schreiben herum gebaut, also behält das feste Layout es bei: jede Seite wie gedruckt, mit einem Player dort, wo das Standbild war. Ein umfließendes EPUB würde die Clips ebenfalls abspielen, untereinander in der Breite des Textes. `resourceBytes` antwortet für jeden Clip mit `video/mp4` und für jedes Standbild mit einem JPEG, und der Writer packt sie unter `media/` und `images/`. Das EPUB behält nur die Attribute, die sein Schema kennt (`controls`, `autoplay`, `muted`, `loop`, `playsinline`, `preload`), also bleiben Download-Knopf und der Rest dem Lesesystem überlassen. Die Datei besteht EPUBCheck ohne Fehler oder Warnungen.
+
+### 5 · θ und π in Canvas, PDF und EPUB setzen
+
+Source Serif 4 hält ihre griechischen Buchstaben in einer eigenen Fontsource-Datei, `greek`, neben `latin`. `kitFonts(FONTS)` findet griechische Buchstaben im Text und lädt diese Datei für jeden Schnitt der Familie, und `fontsourceProvider` bettet sie für jeden Schnitt, der θ oder π setzt, neben der Latin-Datei ins PDF ein, sodass die beiden Buchstaben keinen Code brauchen. Das EPUB bettet nur die Schriften ein, die der Pen ihm übergibt, deshalb listet Schritt 4 die Greek-Dateien der Textschrift nach den Latin-Dateien, jede über ihre `unicodeRange` auf den griechischen Block beschränkt.
+
+### 6 · Die Tabelle im Code berechnen
+
+<Excerpt region="periods" />
+
+Die exakte Periode braucht das vollständige elliptische Integral *K*, und das arithmetisch-geometrische Mittel liefert es in einer Handvoll Schritte: *T* = *T*~0~ / AGM(1, cos ½θ~0~). Die Tabelle druckt drei Dezimalstellen mit Dezimalkomma im Spanischen, und die Zeilen für 10° und 80° entsprechen den Clips: 2,010 s und 2,282 s, 0,2 % und 13,8 % länger als *T*~0~ = 2,006 s. In 8 s sind das knapp vier volle Schwingungen beim ersten Clip und dreieinhalb beim zweiten.
+
+## Varianten
+
+### Einen Clip von selbst starten
+
+Der eigene `player` eines Videos wird über `videoStyle.player` gelegt. Autoplay startet immer stumm, wie Browser es verlangen.
+
+```diff
+ ];
++clips[0].video.player = { autoplay: true }; // the 10° clip starts as the pane opens
+```
+
+### Das gedruckte Standbild am Bildschirm zeigen
+
+Mit `html: 'poster'` setzt die HTML-Ausgabe statt des Players das Standbild mit Abspielzeichen und QR-Code, verlinkt auf die Produktionsadresse.
+
+```diff
+ const videoStyle = {
++  html: 'poster',
+```
+
+### Ein YouTube- oder Vimeo-Video verwenden
+
+`source: 'youtube'` mit der Adresse des Videos bettet den YouTube-Player von `youtube-nocookie.com` ein (`privacy` ist standardmäßig an). Dieser Player beachtet weniger Optionen: Steuerelemente, Vollbild, Autoplay, stumm und Schleife, und der von Vimeo fügt das Geschwindigkeitsmenü und Bild-im-Bild hinzu; keiner bietet einen Download. Ein EPUB darf den Player einer Webseite nicht einbetten, also ist das Video dort sein Standbild, verlinkt auf das Video. Die Optionen und ihre Reichweite stehen unter [Konfiguration › Videoformat](/de/docs/configuration-resources#videostil).
+
+## Häufige Fehler
+
+Die MP4-Dateien sind H.264. Chrome, Edge, Safari und Firefox spielen sie ab, ebenso das Chrome for Testing, mit dem die Aufnahme läuft. Ein Chromium, das ohne seine proprietären Codecs kompiliert wurde, die Open-Source-Voreinstellung, tut das nicht; kodieren Sie die Clips als WebM (`format: 'webm'`), wenn das für Ihre Leser zählt.

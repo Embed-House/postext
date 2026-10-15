@@ -9,7 +9,8 @@
       "ar": "كتل الشيفرة المسيّجة",
       "ja": "フェンス記法のコードブロック",
       "pt": "Blocos de código delimitados",
-      "fr": "Blocs de code délimités"
+      "fr": "Blocs de code délimités",
+      "de": "Eingezäunte Codeblöcke"
     },
     "aliases": {
       "en": [
@@ -72,6 +73,13 @@
         "texte préformaté",
         "bloc à chasse fixe",
         "code délimité"
+      ],
+      "de": [
+        "Codeblock",
+        "```",
+        "Code-Listing",
+        "vorformatierter Text",
+        "Monospace-Block"
       ]
     },
     "explanation": {
@@ -82,7 +90,8 @@
       "ar": "حُلّت في postext 1.23: السور ``` أو ~~~ قائمة شيفرة تُنضَّد سطرًا سطرًا كما كُتبت في إطار يصممه codeStyle: تُحفظ المسافات البادئة والجدولات وتتابع المسافات، وتنتقل الأسطر الطويلة إلى ما تحتها خلف علامة أو تُصغَّر أو تُقطع، ومعها ترقيم الأسطر والأسطر المميّزة وعنوان من سلسلة المعلومات. يقرأ codeStyle.indentedCode الشيفرة ذات المسافة البادئة أيضًا، ويضع codeStyle.inline `الشيفرة` بخط الشيفرة. حتى 1.22 كانت أسطر السور تُنضَّد فقرات عادية، فكانت القوائم أنماط فقرات بخط ثابت العرض داخل :::paragraphs أو إطار، مع محارف الهروب والمسافات غير الفاصلة.",
       "ja": "postext 1.23で解決しました。```または~~~のフェンスはコードリストで、codeStyleが設計する枠の中に、書いたとおり1行ずつ組まれます。インデント、タブ、連続する空白はそのまま残り、長い行は印の後ろで次の行へ送るか、小さく組むか、切り落とします。行番号、強調する行、情報文字列から取るタイトルも付けられます。codeStyle.indentedCodeはインデントしたコードも読み、codeStyle.inlineは`コード`をコードの書体で組みます。1.22までは、フェンスの各行は通常の段落として組まれたので、コードリストは:::paragraphsや囲みの中の等幅の段落スタイルで、エスケープとノーブレークスペースを使って組んでいました。",
       "pt": "Corrigido no postext 1.23: uma cerca ``` ou ~~~ é uma listagem de código, composta linha a linha como foi escrita numa caixa que o codeStyle desenha: recuos, tabulações e sequências de espaços são mantidos; as linhas longas passam para baixo atrás de uma marca, são compostas menores ou cortadas; há números de linha, linhas realçadas e um título tirado da string de informação. codeStyle.indentedCode lê também o código recuado, e codeStyle.inline compõe `código` na fonte do código. Até a 1.22 as linhas de uma cerca eram compostas como parágrafos comuns, então as listagens eram estilos de parágrafo monoespaçados dentro de :::paragraphs ou de um boxe, com escapes e espaços não separáveis.",
-      "fr": "Corrigé dans postext 1.23 : un bloc délimité par ``` ou ~~~ est un listing de code, composé ligne par ligne tel que saisi dans un encadré que codeStyle met en forme : retraits, tabulations et suites d’espaces conservés, lignes longues renvoyées derrière une marque, composées plus petit ou coupées, numéros de ligne, lignes surlignées et un titre tiré de la chaîne d’information. codeStyle.indentedCode lit aussi le code en retrait, et codeStyle.inline compose `code` dans le caractère du code. Jusqu’à la 1.22, les lignes d’un bloc délimité étaient composées comme des paragraphes ordinaires, si bien que les listings étaient des styles de paragraphe à chasse fixe dans :::paragraphs ou dans un encadré, avec des échappements et des espaces insécables."
+      "fr": "Corrigé dans postext 1.23 : un bloc délimité par ``` ou ~~~ est un listing de code, composé ligne par ligne tel que saisi dans un encadré que codeStyle met en forme : retraits, tabulations et suites d’espaces conservés, lignes longues renvoyées derrière une marque, composées plus petit ou coupées, numéros de ligne, lignes surlignées et un titre tiré de la chaîne d’information. codeStyle.indentedCode lit aussi le code en retrait, et codeStyle.inline compose `code` dans le caractère du code. Jusqu’à la 1.22, les lignes d’un bloc délimité étaient composées comme des paragraphes ordinaires, si bien que les listings étaient des styles de paragraphe à chasse fixe dans :::paragraphs ou dans un encadré, avec des échappements et des espaces insécables.",
+      "de": "Behoben in postext 1.23: ein ```- oder ~~~-Block ist ein Code-Listing, Zeile für Zeile wie getippt in einem Kasten gesetzt, den codeStyle gestaltet: Einzüge, Tabulatoren und Folgen von Leerzeichen bleiben erhalten, lange Zeilen werden hinter einem Zeichen umbrochen, kleiner gesetzt oder abgeschnitten, dazu Zeilennummern, hervorgehobene Zeilen und ein Titel aus dem Info-String. codeStyle.indentedCode liest auch eingerückten Code, und codeStyle.inline setzt `code` in der Codeschrift. Bis 1.22 wurden die Zeilen eines solchen Blocks als gewöhnliche Absätze gesetzt, Listings waren also Monospace-Absatzformate in :::paragraphs oder einem Kasten, mit Maskierungen und geschützten Leerzeichen."
     },
     "docs": {
       "slug": "document-format",
@@ -94,7 +103,8 @@
         "ar": "كتل الشيفرة",
         "ja": "コードブロック",
         "pt": "Blocos de código",
-        "fr": "Blocs de code"
+        "fr": "Blocs de code",
+        "de": "Codeblöcke"
       }
     },
     "fixedIn": "1.23.0"
@@ -108,7 +118,8 @@
       "ar": "تلوين الصياغة",
       "ja": "シンタックスハイライト",
       "pt": "Realce de sintaxe",
-      "fr": "Coloration syntaxique"
+      "fr": "Coloration syntaxique",
+      "de": "Syntaxhervorhebung"
     },
     "aliases": {
       "en": [
@@ -158,6 +169,11 @@
         "code en couleur",
         "coloration syntaxique",
         "syntax highlighting"
+      ],
+      "de": [
+        "Codefarben",
+        "hervorgehobener Code",
+        "farbiger Code"
       ]
     },
     "explanation": {
@@ -168,7 +184,8 @@
       "ar": "حُلّت في postext 1.23: لغة السور (```js و```python و```bash و```console …) تلوّن قائمتها بالمحلل المدمج، ويضبط codeStyle.tokens لون كل نوع من العناصر وثخانته وميله (keyword وstring وcomment وprompt وoutput …). يربط registerCodeHighlighter ملوِّنًا للغات أخرى؛ ويجعل highlight: 'none' كل القوائم بلا تلوين. حتى 1.22 لم يكن للقائمة إلا مقاطع عريضة ومائلة تُعلَّم يدويًا ويحدد النمط ألوانها.",
       "ja": "postext 1.23で解決しました。フェンスの言語（```js、```python、```bash、```consoleなど）に応じて、組み込みのトークナイザーがコードリストを色分けし、codeStyle.tokensがトークンの種類（keyword、string、comment、prompt、outputなど）ごとに色、太字、イタリックを決めます。registerCodeHighlighterでほかの言語のハイライターを組み込めます。highlight: 'none'にするとすべてのコードリストを色なしで組みます。1.22までは、手で付けた太字やイタリックの範囲に、スタイルで決めた色を付けることしかできませんでした。",
       "pt": "Corrigido no postext 1.23: a linguagem de uma cerca (```js, ```python, ```bash, ```console…) colore a listagem com o analisador embutido, e codeStyle.tokens define a cor, o negrito e o itálico de cada tipo de token (keyword, string, comment, prompt, output…). registerCodeHighlighter conecta um realçador para outras linguagens; highlight: 'none' compõe todas as listagens sem cor. Até a 1.22 uma listagem só podia usar trechos em negrito e itálico, marcados à mão, com as cores que o estilo definia.",
-      "fr": "Corrigé dans postext 1.23 : le langage d’un bloc délimité (```js, ```python, ```bash, ```console …) colore son listing avec le tokeniseur intégré, et codeStyle.tokens règle la couleur, le gras et l’italique de chaque sorte de jeton (keyword, string, comment, prompt, output …). registerCodeHighlighter branche un colorateur pour d’autres langages ; highlight: 'none' compose tous les listings sans couleur. Jusqu’à la 1.22, un listing ne pouvait utiliser que des passages en gras et en italique dont le style fixait les couleurs, écrits à la main."
+      "fr": "Corrigé dans postext 1.23 : le langage d’un bloc délimité (```js, ```python, ```bash, ```console …) colore son listing avec le tokeniseur intégré, et codeStyle.tokens règle la couleur, le gras et l’italique de chaque sorte de jeton (keyword, string, comment, prompt, output …). registerCodeHighlighter branche un colorateur pour d’autres langages ; highlight: 'none' compose tous les listings sans couleur. Jusqu’à la 1.22, un listing ne pouvait utiliser que des passages en gras et en italique dont le style fixait les couleurs, écrits à la main.",
+      "de": "Behoben in postext 1.23: die Sprache eines Blocks (```js, ```python, ```bash, ```console …) färbt sein Listing mit dem eingebauten Tokenizer, und codeStyle.tokens legt Farbe, Fett und Kursiv jeder Token-Art fest (keyword, string, comment, prompt, output …). registerCodeHighlighter bindet einen Highlighter für andere Sprachen ein; highlight: 'none' setzt jedes Listing ohne Farben. Bis 1.22 konnte ein Listing nur fette und kursive Passagen verwenden, deren Farben das Format festlegte, von Hand geschrieben."
     },
     "docs": {
       "slug": "configuration-styles",
@@ -180,7 +197,8 @@
         "ar": "تلوين الصياغة",
         "ja": "構文の色分け",
         "pt": "Coloração de sintaxe",
-        "fr": "Coloration syntaxique"
+        "fr": "Coloration syntaxique",
+        "de": "Syntaxhervorhebung"
       }
     },
     "fixedIn": "1.23.0"
@@ -194,7 +212,8 @@
       "ar": "جداول الخطوط العمودية",
       "ja": "パイプ記法の表",
       "pt": "Tabelas com barras verticais",
-      "fr": "Tableaux à barres verticales"
+      "fr": "Tableaux à barres verticales",
+      "de": "Pipe-Tabellen"
     },
     "aliases": {
       "en": [
@@ -244,6 +263,11 @@
         "| a | b |",
         "tableau GFM",
         "pipe table"
+      ],
+      "de": [
+        "Markdown-Tabelle",
+        "| a | b |",
+        "GFM-Tabelle"
       ]
     },
     "explanation": {
@@ -254,7 +278,8 @@
       "ar": "| a | b | يُطبع حرفيًّا. الجداول موارد ذات نموذج منظَّم؛ تحوّل parseTSV بيانات جدول بيانات ملصوقة إلى جدول، وتدمج mergeCells الخلايا.",
       "ja": "| a | b |は文字のまま印字されます。表は構造化されたモデルを持つリソースです。parseTSVで、貼り付けたスプレッドシートのデータを表にし、mergeCellsでセルを結合します。",
       "pt": "| a | b | é impresso literalmente. As tabelas são recursos com um modelo estruturado; parseTSV transforma em tabela os dados colados de uma planilha, e mergeCells mescla células.",
-      "fr": "| a | b | s’imprime tel quel. Les tableaux sont des ressources avec un modèle structuré ; parseTSV transforme en tableau des données collées depuis un tableur et mergeCells fusionne des cellules."
+      "fr": "| a | b | s’imprime tel quel. Les tableaux sont des ressources avec un modèle structuré ; parseTSV transforme en tableau des données collées depuis un tableur et mergeCells fusionne des cellules.",
+      "de": "| a | b | wird wörtlich gedruckt. Tabellen sind Ressourcen mit einem strukturierten Modell; parseTSV macht aus eingefügten Tabellenkalkulationsdaten eine Tabelle, und mergeCells verbindet Zellen."
     },
     "docs": {
       "slug": "document-format",
@@ -266,7 +291,8 @@
         "ar": "ما لا يدعمه Postext",
         "ja": "対応していない記法",
         "pt": "O que NÃO é suportado",
-        "fr": "Ce qui n’est PAS pris en charge"
+        "fr": "Ce qui n’est PAS pris en charge",
+        "de": "Was NICHT unterstützt wird"
       }
     }
   },
@@ -279,7 +305,8 @@
       "ar": "صور Markdown ![]()",
       "ja": "Markdownの画像 ![]()",
       "pt": "Imagens do Markdown ![]()",
-      "fr": "Images Markdown ![]()"
+      "fr": "Images Markdown ![]()",
+      "de": "Markdown-Bilder ![]()"
     },
     "aliases": {
       "en": [
@@ -331,6 +358,12 @@
         "image dans le texte",
         "image en markdown",
         "balise img"
+      ],
+      "de": [
+        "![alt](src)",
+        "Bild im Text",
+        "Bild in Markdown",
+        "img-Tag"
       ]
     },
     "explanation": {
@@ -341,7 +374,8 @@
       "ar": "تُحذف ![alt](src) عمدًا، لأن الصور يضعها محرّك العناصر العائمة، وهو يعمل مع الأعمدة. صرّح بالصورة موردًا وأحِل إليها بـ :ref أو ضمّنها بـ ::resource.",
       "ja": "![alt](src)は意図して取り除かれます。画像は段と連動するフロートエンジンが配置するためです。画像をリソースとして宣言し、:refで参照するか、::resourceで埋め込んでください。",
       "pt": "![alt](src) é removido de propósito, porque as imagens são posicionadas pelo motor de flutuantes, que trabalha com as colunas. Declare a imagem como recurso e cite-a com :ref ou insira-a com ::resource.",
-      "fr": "![alt](src) est supprimé volontairement, parce que les images sont placées par le moteur de flottants, qui travaille avec les colonnes. Déclarez l’image comme ressource et citez-la avec :ref ou intégrez-la avec ::resource."
+      "fr": "![alt](src) est supprimé volontairement, parce que les images sont placées par le moteur de flottants, qui travaille avec les colonnes. Déclarez l’image comme ressource et citez-la avec :ref ou intégrez-la avec ::resource.",
+      "de": "![alt](src) wird absichtlich entfernt, weil Bilder von der Gleitobjekt-Engine platziert werden, die mit den Spalten arbeitet. Deklarieren Sie das Bild als Ressource und verweisen Sie mit :ref darauf oder betten Sie es mit ::resource ein."
     },
     "docs": {
       "slug": "document-format",
@@ -353,7 +387,8 @@
         "ar": "ما لا يدعمه Postext",
         "ja": "対応していない記法",
         "pt": "O que NÃO é suportado",
-        "fr": "Ce qui n’est PAS pris en charge"
+        "fr": "Ce qui n’est PAS pris en charge",
+        "de": "Was NICHT unterstützt wird"
       }
     }
   },
@@ -366,7 +401,8 @@
       "ar": "ثلاثة أعمدة متن أو أكثر",
       "ja": "本文の3段以上の段組み",
       "pt": "Três ou mais colunas de texto",
-      "fr": "Trois colonnes de texte ou plus"
+      "fr": "Trois colonnes de texte ou plus",
+      "de": "Drei oder mehr Textspalten"
     },
     "aliases": {
       "en": [
@@ -419,6 +455,12 @@
         "3 colonnes",
         "journal multicolonne",
         "quatre colonnes"
+      ],
+      "de": [
+        "drei Spalten",
+        "3 Spalten",
+        "mehrspaltige Zeitung",
+        "vier Spalten"
       ]
     },
     "explanation": {
@@ -429,7 +471,8 @@
       "ar": "حُلّت في postext 1.18: يضع layoutType 'multiple' من 3 إلى 8 أعمدة متن متساوية، ويضع placement.columns شكلًا أو إطارًا عائمًا عبر عدة منها. وحتى 1.17 لم تكن ثلاثة أعمدة أو أكثر توجد إلا داخل صندوق: مجموعة :::columns في إطار بعرض الصفحة.",
       "ja": "postext 1.18で解決しました。layoutType 'multiple'で3〜8段の同じ幅の本文段を組み、placement.columnsで図やフロートする囲みを複数の段にまたがって置けます。1.17までは、3段以上を作れるのは囲みの中だけで、ページ幅の囲みに入れた:::columnsグループとして組んでいました。",
       "pt": "Resolvido no postext 1.18: layoutType 'multiple' compõe de 3 a 8 colunas de texto iguais, e placement.columns posiciona uma figura ou um boxe flutuante sobre várias delas. Até a 1.17, três ou mais colunas só existiam dentro de um boxe: um grupo :::columns em um boxe da largura da página.",
-      "fr": "Corrigé dans postext 1.18 : layoutType 'multiple' compose de 3 à 8 colonnes de texte égales, et placement.columns place une figure ou un encadré flottant sur plusieurs d’entre elles. Jusqu’à la 1.17, trois colonnes ou plus n’existaient qu’à l’intérieur d’un encadré : un groupe :::columns dans un encadré sur toute la largeur de la page."
+      "fr": "Corrigé dans postext 1.18 : layoutType 'multiple' compose de 3 à 8 colonnes de texte égales, et placement.columns place une figure ou un encadré flottant sur plusieurs d’entre elles. Jusqu’à la 1.17, trois colonnes ou plus n’existaient qu’à l’intérieur d’un encadré : un groupe :::columns dans un encadré sur toute la largeur de la page.",
+      "de": "Behoben in postext 1.18: layoutType 'multiple' setzt 3 bis 8 gleich breite Textspalten, und placement.columns setzt eine Abbildung oder einen gleitenden Kasten über mehrere davon. Bis 1.17 gab es drei oder mehr Spalten nur innerhalb eines Kastens: eine :::columns-Gruppe in einem Kasten über die ganze Seitenbreite."
     },
     "docs": {
       "slug": "configuration-page-layout",
@@ -441,7 +484,8 @@
         "ar": "أنواع التخطيط",
         "ja": "レイアウトの種類",
         "pt": "Tipos de layout",
-        "fr": "Types de mise en page"
+        "fr": "Types de mise en page",
+        "de": "Layout-Typen"
       }
     },
     "fixedIn": "1.18.0"
@@ -455,7 +499,8 @@
       "ar": "التفاف النص حول الصور",
       "ja": "画像の回り込み",
       "pt": "Texto contornando imagens",
-      "fr": "Habillage du texte autour des images"
+      "fr": "Habillage du texte autour des images",
+      "de": "Textumfluss um Bilder"
     },
     "aliases": {
       "en": [
@@ -510,6 +555,12 @@
         "texte autour de l’image",
         "habillage du texte",
         "flottant à gauche avec texte"
+      ],
+      "de": [
+        "Textumfluss",
+        "Text um Bild",
+        "Konturenführung",
+        "links mit Text umflossen"
       ]
     },
     "explanation": {
@@ -520,7 +571,8 @@
       "ar": "حُلّت في postext 1.24: يضع placement.wrap صورة أضيق من عمودها في أحد جانبيه، ويُصفّ النص الذي يليها بجانبها ثم بكامل العرض تحتها: ::resource موضوع 'here'، أو عنصر عائم بعرض عمود واحد في أعلى عمود أو أسفله. ويحفظ layout.wrap المسافة وأضيق نص بجانبها والعرض الافتراضي. ويقبل الصندوق :::callout{wrap=\"right\" width=0.4}. وحتى 1.23 كان وضع النص بجانب صورة يحتاج إلى مجموعة :::columns تضمّهما.",
       "ja": "postext 1.24で解決：placement.wrapは段より狭い図版を段の片側に置き、続く本文をその横に、下では全幅で組みます。'here'に置いた::resourceにも、段頭や段末に置く1段幅のフロートにも使えます。layout.wrapには間隔、横の本文の最小幅、既定の幅があります。ボックスは:::callout{wrap=\"right\" width=0.4}と書けます。1.23までは、図版の横に本文を組むには、両方を:::columnsグループにまとめる必要がありました。",
       "pt": "Resolvido no postext 1.24: placement.wrap põe uma imagem mais estreita que a coluna de um lado dela, e o texto seguinte é composto ao lado e depois na largura toda embaixo: um ::resource posto em 'here', ou um flutuante de uma coluna no alto ou no pé de uma coluna. layout.wrap guarda o espaço, o texto mais estreito ao lado e a largura padrão. Uma caixa aceita :::callout{wrap=\"right\" width=0.4}. Até a 1.23, pôr texto ao lado de uma imagem exigia um grupo :::columns com os dois.",
-      "fr": "Corrigé dans postext 1.24 : placement.wrap place une image plus étroite que sa colonne d’un côté de celle-ci, et le texte qui la suit court à côté, puis sur toute la largeur en dessous : une ::resource placée 'here', ou un flottant d’une colonne en tête ou en pied de colonne. layout.wrap contient l’écart, la justification minimale du texte à côté et la largeur par défaut. Un encadré prend :::callout{wrap=\"right\" width=0.4}. Jusqu’à la 1.23, le texte à côté d’une image demandait un groupe :::columns contenant les deux."
+      "fr": "Corrigé dans postext 1.24 : placement.wrap place une image plus étroite que sa colonne d’un côté de celle-ci, et le texte qui la suit court à côté, puis sur toute la largeur en dessous : une ::resource placée 'here', ou un flottant d’une colonne en tête ou en pied de colonne. layout.wrap contient l’écart, la justification minimale du texte à côté et la largeur par défaut. Un encadré prend :::callout{wrap=\"right\" width=0.4}. Jusqu’à la 1.23, le texte à côté d’une image demandait un groupe :::columns contenant les deux.",
+      "de": "Behoben in postext 1.24: placement.wrap setzt ein Bild, das schmaler als seine Spalte ist, an eine Seite der Spalte, und der Text danach läuft daneben und darunter wieder über die volle Breite: ein mit 'here' platziertes ::resource oder ein einspaltiges Gleitobjekt an Kopf oder Fuß einer Spalte. layout.wrap enthält den Abstand, die schmalste Textbreite daneben und die Standardbreite. Ein Kasten erhält :::callout{wrap=\"right\" width=0.4}. Bis 1.23 brauchte der Text neben einem Bild eine :::columns-Gruppe, die beides enthielt."
     },
     "docs": {
       "slug": "document-format",
@@ -532,7 +584,8 @@
         "ar": "التفاف النص",
         "ja": "回り込み",
         "pt": "Contorno de texto",
-        "fr": "Habillage du texte"
+        "fr": "Habillage du texte",
+        "de": "Textumfluss"
       }
     },
     "fixedIn": "1.24.0"
@@ -546,7 +599,8 @@
       "ar": "الحروف الاستهلالية في فقرات المتن",
       "ja": "本文段落のドロップキャップ",
       "pt": "Capitulares em parágrafos do texto",
-      "fr": "Lettrines dans les paragraphes"
+      "fr": "Lettrines dans les paragraphes",
+      "de": "Initialen in Textabsätzen"
     },
     "aliases": {
       "en": [
@@ -593,6 +647,11 @@
         "initiale",
         "lettrine ornée",
         "initiale montante"
+      ],
+      "de": [
+        "Initiale",
+        "Anfangsbuchstabe",
+        "Versal"
       ]
     },
     "explanation": {
@@ -603,7 +662,8 @@
       "ar": "حُلّت في postext 1.23: يفتتح dropCap في مستوى عنوان أو نمط عنوان أولَ فقرة بعد العنوان بحرفها الأول مكبّرًا، ويفتتح dropCap في نمط فقرة أولَ فقرة من كل مجموعة :::paragraphs (كل فقرة مع each: true). تُقصَّر الأسطر المجاورة للحرف وتُصفّ مع بقية النص: مضبوطة وموصولة، ولا تنقسم قبل آخر سطر يجاور الحرف. ومنها lines وsink (حرف بارز) وpunctuation وكلمات استهلال بحروف كبيرة صغيرة و{dropcap=false} أو {dropcap=2} على عنوان أو فاتحة مجموعة؛ وتُقاس ارتفاعات الحروف الكبيرة من الخطوط. وحتى 1.22 لم تكن الحروف الاستهلالية موجودة إلا في عناصر النص التصميمية: كانت الفقرة الافتتاحية تُكتب في سمة من سمات العنوان، ويرسمها تصميم الافتتاحية مع حرفها الاستهلالي.",
       "ja": "postext 1.23で解決しました。見出しレベルや見出しスタイルのdropCapは見出しのあとの最初の段落を、段落スタイルのdropCapは各:::paragraphsグループの最初の段落（each: trueならすべての段落）を、最初の文字を大きくして始めます。文字の横の行は短くなり、ほかの本文と同じく両端揃え・ハイフネーションで組まれ、文字の最後の行より前で分かれません。lines、sink（レイズドイニシャル）、punctuation、スモールキャピタルのリードイン、見出しやグループ開始行の{dropcap=false}や{dropcap=2}が使えます。大文字の高さはフォントから測ります。1.22までは、ドロップキャップはデザインのテキスト要素にしかなく、リード段落を見出しの属性に書き、オープナーのデザインが頭文字とともに描いていました。",
       "pt": "Corrigido no postext 1.23: o dropCap de um nível ou de um estilo de título abre o primeiro parágrafo após o título com a primeira letra em tamanho grande, e o de um estilo de parágrafo abre o primeiro parágrafo de cada grupo :::paragraphs (cada um com each: true). As linhas ao lado da letra são encurtadas e compostas com o resto do texto: justificadas, hifenizadas, sem se dividir antes da última linha da letra. lines, sink (uma inicial elevada), punctuation, uma abertura em versaletes e {dropcap=false} ou {dropcap=2} em um título ou na abertura de um grupo; as alturas das maiúsculas são medidas nas fontes. Até a 1.22 as capitulares só existiam nos elementos de texto de design: o parágrafo de abertura ia num atributo do título e o design da abertura o desenhava com a inicial.",
-      "fr": "Corrigé dans postext 1.23 : le dropCap d’un niveau de titre ou d’un style de titre ouvre le premier paragraphe qui suit le titre avec sa première lettre composée en grand, et celui d’un style de paragraphe ouvre le premier paragraphe de chaque groupe :::paragraphs (tous avec each: true). Les lignes à côté de la lettre sont raccourcies et composées avec le reste du texte : justifiées, avec césure, jamais coupées avant la dernière ligne de la lettre. lines, sink (une initiale montante), la ponctuation, une attaque en petites capitales et {dropcap=false} ou {dropcap=2} sur un titre ou un bloc ; les hauteurs de capitale sont mesurées sur les caractères. Jusqu’à la 1.22, une lettrine n’existait que dans un élément de texte de maquette : le paragraphe d’attaque allait dans un attribut de titre et la maquette d’ouverture le dessinait avec son initiale."
+      "fr": "Corrigé dans postext 1.23 : le dropCap d’un niveau de titre ou d’un style de titre ouvre le premier paragraphe qui suit le titre avec sa première lettre composée en grand, et celui d’un style de paragraphe ouvre le premier paragraphe de chaque groupe :::paragraphs (tous avec each: true). Les lignes à côté de la lettre sont raccourcies et composées avec le reste du texte : justifiées, avec césure, jamais coupées avant la dernière ligne de la lettre. lines, sink (une initiale montante), la ponctuation, une attaque en petites capitales et {dropcap=false} ou {dropcap=2} sur un titre ou un bloc ; les hauteurs de capitale sont mesurées sur les caractères. Jusqu’à la 1.22, une lettrine n’existait que dans un élément de texte de maquette : le paragraphe d’attaque allait dans un attribut de titre et la maquette d’ouverture le dessinait avec son initiale.",
+      "de": "Behoben in postext 1.23: dropCap einer Überschriftenebene oder eines Überschriftenformats eröffnet den ersten Absatz nach der Überschrift mit seinem ersten Buchstaben groß gesetzt, und dropCap eines Absatzformats den ersten Absatz jeder :::paragraphs-Gruppe (mit each: true jeden). Die Zeilen neben dem Buchstaben werden verkürzt und mit dem übrigen Text gesetzt: im Blocksatz, mit Silbentrennung, nie vor der letzten Zeile des Buchstabens umbrochen. Dazu lines, sink (eine hochgestellte Initiale), Interpunktion, ein Auftakt in Kapitälchen und {dropcap=false} oder {dropcap=2} an einer Überschrift oder einem Block; die Versalhöhen werden an den Schriften gemessen. Bis 1.22 gab es eine Initiale nur in einem gestalteten Textelement: der Einstiegsabsatz kam in ein Überschriftenattribut, und die Auftaktgestaltung zeichnete ihn mit seiner Initiale."
     },
     "docs": {
       "slug": "configuration-text",
@@ -615,7 +675,8 @@
         "ar": "الحروف الاستهلالية",
         "ja": "ドロップキャップ",
         "pt": "Capitulares",
-        "fr": "Lettrines"
+        "fr": "Lettrines",
+        "de": "Initialen"
       }
     },
     "fixedIn": "1.23.0"
@@ -629,7 +690,8 @@
       "ar": "مواضع الجدولة",
       "ja": "タブストップ",
       "pt": "Paradas de tabulação",
-      "fr": "Taquets de tabulation"
+      "fr": "Taquets de tabulation",
+      "de": "Tabulatoren"
     },
     "aliases": {
       "en": [
@@ -713,6 +775,17 @@
         "tabulation décimale",
         ":tab",
         "tabStops"
+      ],
+      "de": [
+        "Tabs",
+        "Tabstopps",
+        "Füllzeichen",
+        "ausgerichtete Textspalten",
+        "Füllpunkte",
+        "rechter Tabulator",
+        "Dezimaltabulator",
+        ":tab",
+        "tabStops"
       ]
     },
     "explanation": {
@@ -723,7 +796,8 @@
       "ar": "حُلّت في postext 1.23: تحاذي مواضع الجدولة النص داخل الفقرة. اكتب :tab حيث يقفز النص إلى موضع جدولة (حساء :tab 8.50)، وحدّد tabStops في نمط فقرة أو في bodyText أو في body الإطار. يقع الموضع على بُعد معيّن أو عند 'end' (نهاية السطر) أو عند نسبة مئوية، ويحاذي النص الذي يليه من بدايته أو نهايته أو وسطه أو فاصلته العشرية. وتملأ نقاط التوجيه الفراغ الذي قبله بنقاط ('.' أو '. ' أو '·') أو بخط ('rule') لخانة تُملأ في استمارة، وتصطف نقاط التوجيه في الأسطر المتتالية. ويضع :tab{at=120mm align=end leader=\".\"} موضعًا لهذه الجدولة وحدها دون نمط، ويكون حرف الجدولة جدولةً في كل فقرة لنمطها مواضع جدولة. وهكذا تُنضَّد قوائم الطعام وقوائم الأسعار وقوائم الممثلين ودرجات الامتحان والفهارس التي تقع أرقام صفحاتها في الهامش نصًّا. والفقرة التي فيها جدولة تُكسَر سطرًا سطرًا، والنص العمودي لا مواضع جدولة فيه. وحتى 1.22 كانت حروف الجدولة تُنضَّد مسافاتٍ بين الكلمات، وكانت محاذاة القيم تتطلب مورد جدول من عمودين، ولم تكن نقاط التوجيه موجودة إلا في جدول المحتويات.",
       "ja": "postext 1.23で解決しました。タブストップは段落の中で文字をそろえます。文字がタブ位置へ飛ぶところに:tabと書き（スープ :tab 8.50）、段落スタイル、bodyText、囲みのbodyにtabStopsを設定します。タブ位置は長さ、'end'（行の終わり）、割合のいずれかで決め、後ろの文字を先頭、末尾、中央、小数点のどれかでそろえます。リーダーは手前の空きを点（'.'、'. '、'·'）か線（'rule'、記入欄の下線）で埋め、複数行のリーダーは縦にそろいます。:tab{at=120mm align=end leader=\".\"}はスタイルなしでそのタブだけの位置を決め、スタイルにタブ位置がある段落ではタブ文字もタブになります。メニュー、価格表、配役表、試験の配点、ページ番号を行末に置く索引を文字として組めます。タブを含む段落は1行ずつ改行し、縦組みにはタブストップがありません。1.22までは、タブ文字は語間のスペースとして組まれ、値をそろえるには2列の表リソースが必要で、点線のリーダーは目次にしかありませんでした。",
       "pt": "Corrigido no postext 1.23: as paradas de tabulação alinham texto dentro de um parágrafo. Escreva :tab onde o texto salta para uma parada (Sopa :tab 8,50) e defina tabStops em um estilo de parágrafo, em bodyText ou no body de um boxe. Uma parada fica a uma distância, em 'end' (o fim da linha) ou em uma porcentagem, e alinha o texto seguinte pelo início, pelo fim, pelo centro ou pelo separador decimal. O pontilhado preenche o espaço anterior com pontos ('.', '. ', '·') ou com uma linha ('rule') para o espaço em branco de um formulário, e os pontilhados de várias linhas ficam alinhados. :tab{at=120mm align=end leader=\".\"} define uma parada só para aquela tabulação, sem estilo, e um caractere de tabulação é uma tabulação em qualquer parágrafo cujo estilo tenha paradas. Assim, cardápios, listas de preços, elencos, pontuações de prova e índices com o número da página na margem são compostos como texto. Um parágrafo com uma tabulação é quebrado linha a linha, e o texto vertical não tem paradas de tabulação. Até a 1.22 os caracteres de tabulação eram compostos como espaços entre palavras, valores alinhados exigiam um recurso de tabela de duas colunas e os pontilhados existiam apenas no sumário.",
-      "fr": "Corrigé dans postext 1.23 : les taquets de tabulation alignent le texte à l’intérieur d’un paragraphe. Écrivez :tab là où le texte saute à un taquet (Soup :tab 8.50) et réglez tabStops sur un style de paragraphe, sur bodyText ou sur le corps d’un encadré. Un taquet se place à une longueur, à 'end' (la fin de la ligne) ou à un pourcentage, et aligne le texte qui le suit par son début, sa fin, son centre ou son séparateur décimal. Ses points de conduite remplissent l’espace qui le précède avec des points ('.', '. ', '·') ou avec un trait ('rule') pour le blanc d’un formulaire, et les points de conduite de plusieurs lignes s’alignent. :tab{at=120mm align=end leader=\".\"} fixe un taquet pour cette seule tabulation sans style, et un caractère de tabulation est une tabulation dans tout paragraphe dont le style a des taquets. Menus, listes de prix, distributions, barèmes d’examen et index avec les numéros de page à la marge se composent en texte. Un paragraphe qui contient une tabulation est coupé ligne par ligne, et le texte vertical n’a pas de taquets de tabulation. Jusqu’à la 1.22, les caractères de tabulation étaient composés comme des espaces entre mots, les valeurs alignées demandaient une ressource tableau à deux colonnes, et les points de conduite n’existaient que dans la table des matières."
+      "fr": "Corrigé dans postext 1.23 : les taquets de tabulation alignent le texte à l’intérieur d’un paragraphe. Écrivez :tab là où le texte saute à un taquet (Soup :tab 8.50) et réglez tabStops sur un style de paragraphe, sur bodyText ou sur le corps d’un encadré. Un taquet se place à une longueur, à 'end' (la fin de la ligne) ou à un pourcentage, et aligne le texte qui le suit par son début, sa fin, son centre ou son séparateur décimal. Ses points de conduite remplissent l’espace qui le précède avec des points ('.', '. ', '·') ou avec un trait ('rule') pour le blanc d’un formulaire, et les points de conduite de plusieurs lignes s’alignent. :tab{at=120mm align=end leader=\".\"} fixe un taquet pour cette seule tabulation sans style, et un caractère de tabulation est une tabulation dans tout paragraphe dont le style a des taquets. Menus, listes de prix, distributions, barèmes d’examen et index avec les numéros de page à la marge se composent en texte. Un paragraphe qui contient une tabulation est coupé ligne par ligne, et le texte vertical n’a pas de taquets de tabulation. Jusqu’à la 1.22, les caractères de tabulation étaient composés comme des espaces entre mots, les valeurs alignées demandaient une ressource tableau à deux colonnes, et les points de conduite n’existaient que dans la table des matières.",
+      "de": "Behoben in postext 1.23: Tabstopps richten Text innerhalb eines Absatzes aus. Schreiben Sie :tab dort, wo der Text zu einem Tabstopp springt (Soup :tab 8.50), und legen Sie tabStops an einem Absatzformat, an bodyText oder am Inhalt eines Kastens fest. Ein Tabstopp steht bei einer Länge, bei 'end' (dem Zeilenende) oder bei einem Prozentwert und richtet den Text danach an dessen Anfang, Ende, Mitte oder Dezimaltrennzeichen aus. Sein Füllzeichen füllt den Raum davor mit Punkten ('.', '. ', '·') oder mit einer Linie ('rule') für ein Formularfeld, und die Füllzeichen mehrerer Zeilen fluchten. :tab{at=120mm align=end leader=\".\"} setzt einen Tabstopp nur für diesen einen Tabulator ohne Format, und ein Tabulatorzeichen ist in jedem Absatz, dessen Format Tabstopps hat, ein Tabulator. Speisekarten, Preislisten, Besetzungslisten, Prüfungspunkte und Register mit Seitenzahlen am Rand werden als Text gesetzt. Ein Absatz mit einem Tabulator wird Zeile für Zeile umbrochen, und senkrechter Text hat keine Tabstopps. Bis 1.22 wurden Tabulatorzeichen als Wortabstände gesetzt, ausgerichtete Werte brauchten eine zweispaltige Tabellenressource, und Füllpunkte gab es nur im Inhaltsverzeichnis."
     },
     "docs": {
       "slug": "configuration-text",
@@ -735,7 +809,8 @@
         "ar": "مواضع الجدولة",
         "ja": "タブ位置",
         "pt": "Paradas de tabulação",
-        "fr": "Taquets de tabulation"
+        "fr": "Taquets de tabulation",
+        "de": "Tabulatoren"
       }
     },
     "fixedIn": "1.23.0"
@@ -749,7 +824,8 @@
       "ar": "أكثر من ستة مستويات للعناوين",
       "ja": "6レベルを超える見出し",
       "pt": "Mais de seis níveis de título",
-      "fr": "Plus de six niveaux de titre"
+      "fr": "Plus de six niveaux de titre",
+      "de": "Mehr als sechs Überschriftenebenen"
     },
     "aliases": {
       "en": [
@@ -795,6 +871,11 @@
         "septième niveau de titre",
         "plan profond",
         "hiérarchie profonde"
+      ],
+      "de": [
+        "H7",
+        "siebte Überschriftenebene",
+        "tiefe Gliederung"
       ]
     },
     "explanation": {
@@ -805,7 +886,8 @@
       "ar": "تتوقف العناوين عند H6. ويمكن أن يكون المستوى السابع عنوان H6 نصه ملفوف بالعريض أو المائل، يُنسَّق على حدة عبر طباعة المستوى السادس.",
       "ja": "見出しはH6までです。7番目のレベルは、テキストを太字かイタリックで囲んだH6として作り、レベル6の文字組みで区別してスタイルを付けられます。",
       "pt": "Os títulos vão até H6. Um sétimo nível pode ser um H6 com o texto em negrito ou itálico, diferenciado pela tipografia do nível 6.",
-      "fr": "Les titres s’arrêtent à H6. Un septième niveau peut être un H6 dont le texte est en gras ou en italique, mis en forme à part grâce à la typographie du niveau 6."
+      "fr": "Les titres s’arrêtent à H6. Un septième niveau peut être un H6 dont le texte est en gras ou en italique, mis en forme à part grâce à la typographie du niveau 6.",
+      "de": "Überschriften enden bei H6. Eine siebte Ebene kann eine H6 sein, deren Text fett oder kursiv ausgezeichnet ist und über die Typografie der Ebene 6 eigens gestaltet wird."
     },
     "docs": {
       "slug": "document-format",
@@ -817,7 +899,8 @@
         "ar": "ما لا يدعمه Postext",
         "ja": "対応していない記法",
         "pt": "O que NÃO é suportado",
-        "fr": "Ce qui n’est PAS pris en charge"
+        "fr": "Ce qui n’est PAS pris en charge",
+        "de": "Was NICHT unterstützt wird"
       }
     }
   },
@@ -830,7 +913,8 @@
       "ar": "الإخراج على الخادم أو في Node",
       "ja": "サーバーサイドやNodeでのレイアウト",
       "pt": "Diagramação no servidor ou no Node",
-      "fr": "Mise en page côté serveur ou dans Node"
+      "fr": "Mise en page côté serveur ou dans Node",
+      "de": "Layout auf dem Server oder in Node"
     },
     "aliases": {
       "en": [
@@ -896,6 +980,13 @@
         "ligne de commande",
         "headless",
         "SSR"
+      ],
+      "de": [
+        "Node",
+        "serverseitiges Rendern",
+        "CLI",
+        "headless",
+        "SSR"
       ]
     },
     "explanation": {
@@ -906,7 +997,8 @@
       "ar": "يقيس الإخراج النص بلوحة Canvas، فحزمة postext تعمل في متصفح أو في Web Worker، واستيرادها في Node يحتاج إلى لوحة Canvas توفّرها أنت. وللمهام الدفعية استخدم سطر أوامر postext (postext-cli، منذ postext 1.22): ملف تنفيذي واحد يُخرج كتابًا ويكتب ملف PDF أو HTML أو EPUB أو صور الصفحات أو ملف Word بلا متصفح. ويبقى المتصفح بلا واجهة الطريق الآخر؛ ويستطيع postext-pdf قراءة الخطوط من القرص بعد وجود الإخراج.",
       "ja": "レイアウトはcanvasで文字を計測するため、postextパッケージはブラウザーかWeb Workerの中で動き、Nodeでimportするには自前のcanvasが必要です。バッチ処理にはpostextのコマンドライン（postext-cli、postext 1.22から）を使ってください。ブラウザーなしで本をレイアウトし、PDF、HTML、EPUB、ページ画像、Wordファイルを書き出す1つの実行ファイルです。ヘッドレスブラウザーを使う方法も残っています。レイアウトができていれば、postext-pdfはディスクからフォントを読み込めます。",
       "pt": "O layout mede o texto com um canvas, por isso o pacote postext roda em um navegador ou em um Web Worker, e importá-lo no Node exige um canvas fornecido por você. Para trabalhos em lote, use a linha de comando do postext (postext-cli, desde o postext 1.22): um executável que diagrama um livro e grava o PDF, o HTML, o EPUB, as imagens de página ou o arquivo do Word sem navegador. Um navegador headless continua sendo o outro caminho; o postext-pdf pode ler as fontes do disco depois que o layout estiver pronto.",
-      "fr": "La mise en page mesure le texte avec un canvas : le paquet postext s’exécute donc dans un navigateur ou un Web Worker, et l’importer dans Node demande votre propre canvas. Pour les traitements par lots, utilisez la ligne de commande postext (postext-cli, depuis postext 1.22) : un exécutable unique qui met un livre en page et écrit le PDF, le HTML, l’EPUB, les images des pages ou le fichier Word sans navigateur. Un navigateur headless reste l’autre solution ; postext-pdf peut lire les polices sur le disque une fois la mise en page faite."
+      "fr": "La mise en page mesure le texte avec un canvas : le paquet postext s’exécute donc dans un navigateur ou un Web Worker, et l’importer dans Node demande votre propre canvas. Pour les traitements par lots, utilisez la ligne de commande postext (postext-cli, depuis postext 1.22) : un exécutable unique qui met un livre en page et écrit le PDF, le HTML, l’EPUB, les images des pages ou le fichier Word sans navigateur. Un navigateur headless reste l’autre solution ; postext-pdf peut lire les polices sur le disque une fois la mise en page faite.",
+      "de": "Das Layout misst Text mit einem Canvas, deshalb läuft das Paket postext in einem Browser oder einem Web Worker, und um es in Node zu importieren, brauchen Sie ein eigenes Canvas. Für Stapelverarbeitung verwenden Sie die Postext-Kommandozeile (postext-cli, seit postext 1.22): ein einziges Programm, das ein Buch setzt und PDF, HTML, EPUB, Seitenbilder oder eine Word-Datei ohne Browser schreibt. Ein Headless-Browser bleibt der andere Weg; postext-pdf kann Schriften von der Festplatte lesen, sobald das Layout vorliegt."
     },
     "docs": {
       "slug": "architecture",
@@ -918,7 +1010,8 @@
         "ar": "خارج النطاق",
         "ja": "対象外とするもの",
         "pt": "Fora do escopo",
-        "fr": "Hors du périmètre"
+        "fr": "Hors du périmètre",
+        "de": "Nicht-Ziele"
       }
     }
   },
@@ -931,7 +1024,8 @@
       "ar": "تصغير العناصر العائمة الطويلة جدًّا",
       "ja": "高すぎるフロートの縮小",
       "pt": "Reduzir flutuantes altos demais",
-      "fr": "Réduire les flottants trop hauts"
+      "fr": "Réduire les flottants trop hauts",
+      "de": "Zu hohe Gleitobjekte verkleinern"
     },
     "aliases": {
       "en": [
@@ -978,6 +1072,11 @@
         "réduire la figure pour qu’elle tienne",
         "réduire une planche",
         "mise à l’échelle"
+      ],
+      "de": [
+        "Abbildung zu hoch",
+        "Abbildung passend skalieren",
+        "Tafel verkleinern"
       ]
     },
     "explanation": {
@@ -988,7 +1087,8 @@
       "ar": "حُلّت في postext 1.24: يصغّر placement.shrink الصورة العائمة، مع حفظ نِسَبها، إلى حيّز موضعها بدل نقلها إلى ما بعده. يصغّر 'page' العنصر العائم الأطول من شريط صفحة جديدة (مساحة المحتوى ناقص افتتاحية وأشكال عائمة أخرى وحواشٍ) إلى ذلك الشريط؛ ويصغّره 'slot' كذلك ليبقى في الصفحة التي تحيل إليه إن اتسع هناك بمقياس minScale (0.7 افتراضيًا) أو أكثر. وتُقصّ المنطقة الآمنة أولًا، ويصفّ captionMeasure: 'body' التعليق بعرض الصورة، ويعطي layout.floatShrink القيمة الافتراضية للمستند. وحتى 1.23 كان العنصر العائم إما يتسع بحجمه وإما ينتقل إلى ما بعده (لا تعمل fitFiguresToPage إلا على الأشكال الأطول من الصفحة)، فكانت اللوحات تُضيَّق بعرض يُحسب من نسبة أبعادها.",
       "ja": "postext 1.24で解決：placement.shrinkは、フロートの図版を次へ送らずに、縦横比を保って置き場所の空きまで縮小します。'page'は新しいページの帯（版面から扉、ほかのフロート、脚注を除いた部分）より高いフロートをその帯まで縮小し、'slot'はminScale（既定0.7）以上で収まるなら、引用しているページにとどめるためにも縮小します。セーフエリアがあればまずトリミングし、captionMeasure: 'body'でキャプションを図版の幅で組み、layout.floatShrinkでドキュメントの既定値を決めます。1.23までは、フロートは元の大きさで収まるか次へ送られるかのどちらかで（fitFiguresToPageが働くのはページより高い図だけ）、図版は縦横比から計算した幅で狭めていました。",
       "pt": "Resolvido no postext 1.24: placement.shrink reduz uma imagem flutuante, mantendo as proporções, ao espaço da sua posição em vez de levá-la adiante. 'page' reduz um flutuante alto demais para a faixa de uma página nova (a área de conteúdo menos uma abertura, outros flutuantes e as notas de rodapé) a essa faixa; 'slot' também o reduz para ficar na página que o cita quando cabe ali em minScale (0.7 por padrão) ou mais. Uma área segura é recortada primeiro, captionMeasure: 'body' compõe a legenda na largura da imagem e layout.floatShrink dá o padrão do documento. Até a 1.23 um flutuante cabia no seu tamanho ou seguia adiante (fitFiguresToPage só atua em figuras mais altas que a página), então as pranchas eram estreitadas com uma largura calculada a partir da proporção.",
-      "fr": "Corrigé dans postext 1.24 : placement.shrink met à l’échelle une image flottante, proportions conservées, à la place disponible dans son emplacement au lieu de la repousser plus loin. 'page' réduit un flottant trop haut pour la bande d’une page vierge (la zone de contenu moins une ouverture, les autres flottants et les notes de bas de page) à cette bande ; 'slot' le réduit aussi pour qu’il reste sur la page qui le cite quand il y tient à minScale (0.7 par défaut) ou plus. Une zone sûre est rognée d’abord, captionMeasure: 'body' compose la légende à la largeur de l’image, et layout.floatShrink donne la valeur par défaut du document. Jusqu’à la 1.23, un flottant soit tenait à sa taille, soit était repoussé (fitFiguresToPage n’agit que sur les figures plus hautes que la page), si bien que les planches étaient rétrécies avec une largeur calculée à partir de leurs proportions."
+      "fr": "Corrigé dans postext 1.24 : placement.shrink met à l’échelle une image flottante, proportions conservées, à la place disponible dans son emplacement au lieu de la repousser plus loin. 'page' réduit un flottant trop haut pour la bande d’une page vierge (la zone de contenu moins une ouverture, les autres flottants et les notes de bas de page) à cette bande ; 'slot' le réduit aussi pour qu’il reste sur la page qui le cite quand il y tient à minScale (0.7 par défaut) ou plus. Une zone sûre est rognée d’abord, captionMeasure: 'body' compose la légende à la largeur de l’image, et layout.floatShrink donne la valeur par défaut du document. Jusqu’à la 1.23, un flottant soit tenait à sa taille, soit était repoussé (fitFiguresToPage n’agit que sur les figures plus hautes que la page), si bien que les planches étaient rétrécies avec une largeur calculée à partir de leurs proportions.",
+      "de": "Behoben in postext 1.24: placement.shrink skaliert ein gleitendes Bild unter Beibehaltung der Proportionen auf den Raum seines Platzes, statt es weiterzuschieben. 'page' verkleinert ein Gleitobjekt, das für den Bereich einer frischen Seite zu hoch ist (die Inhaltsfläche abzüglich eines Auftakts, anderer Gleitobjekte und Fußnoten), auf diesen Bereich; 'slot' verkleinert es außerdem, damit es auf der Seite bleibt, die darauf verweist, sofern es dort mit minScale (Standard 0.7) oder mehr passt. Ein sicherer Bereich wird zuerst beschnitten, captionMeasure: 'body' setzt die Bildunterschrift in der Breite des Bildes, und layout.floatShrink gibt den Standard des Dokuments vor. Bis 1.23 passte ein Gleitobjekt entweder in seiner Größe oder wurde weitergeschoben (fitFiguresToPage wirkt nur auf Abbildungen, die höher als die Seite sind), deshalb wurden Tafeln mit einer aus ihrem Seitenverhältnis berechneten Breite schmaler gemacht."
     },
     "docs": {
       "slug": "document-format",
@@ -1000,7 +1100,8 @@
         "ar": "الموضع",
         "ja": "配置",
         "pt": "Posicionamento",
-        "fr": "Placement"
+        "fr": "Placement",
+        "de": "Platzierung"
       }
     },
     "fixedIn": "1.24.0"
@@ -1014,7 +1115,8 @@
       "ar": "الرياضيات في التعليقات أو الخلايا أو السمات",
       "ja": "キャプション、セル、属性の中の数式",
       "pt": "Matemática em legendas, células ou atributos",
-      "fr": "Mathématiques dans les légendes, les cellules ou les attributs"
+      "fr": "Mathématiques dans les légendes, les cellules ou les attributs",
+      "de": "Mathematik in Bildunterschriften, Zellen oder Attributen"
     },
     "aliases": {
       "en": [
@@ -1061,6 +1163,11 @@
         "LaTeX dans un tableau",
         "maths dans un attribut de titre",
         "maths dans une cellule"
+      ],
+      "de": [
+        "Formel in Bildunterschrift",
+        "LaTeX in Tabelle",
+        "Mathematik in Überschriftenattribut"
       ]
     },
     "explanation": {
@@ -1071,7 +1178,8 @@
       "ar": "حُلّت في postext 1.19: تُنضَّد الرياضيات السطرية $…$ في التعليقات والملاحظات وخلايا الجداول، في السطر مع النص وبمحاذاة الخلية؛ وفق قاعدة Pandoc، فتبقى أسعار مثل \"$5 to $10\" نصًّا. أما سمات العناوين فما زالت تطبع الصيغة كما كُتبت. وحتى 1.18 لم تكن الصيغ تُنضَّد إلا في نص المتن، وكانت التعليقات والخلايا تستعمل ^superscripts^ و~subscripts~ ورموز Unicode.",
       "ja": "postext 1.19で解決しました。インライン数式$…$は、キャプション、注記、表のセルの中でも、文字と同じ行に、セルの揃えに従って組まれます。Pandocの規則で読むので、「$5 to $10」のような価格は文字のままです。見出しの属性の中の数式は、書いたとおりに出力されます。1.18までは数式は本文の中だけで組まれ、キャプションやセルでは^上付き^、~下付き~とUnicodeの記号を使っていました。",
       "pt": "Corrigido no postext 1.19: a matemática em linha $…$ é composta nas legendas, nas notas e nas células de tabela, na mesma linha do texto e com o alinhamento da célula; pela regra do Pandoc, os preços de “$5 a $10” continuam sendo texto. Os atributos de título ainda imprimem a fórmula como foi escrita. Até a 1.18, as fórmulas só eram compostas no texto corrido, e legendas e células usavam ^sobrescritos^, ~subscritos~ e símbolos Unicode.",
-      "fr": "Corrigé dans postext 1.19 : les maths en ligne $…$ sont composées dans les légendes, les notes et les cellules de tableau, dans la ligne avec le texte et avec l’alignement de la cellule ; selon la règle de Pandoc, si bien que les prix de « $5 to $10 » restent du texte. Les attributs de titre impriment toujours une formule telle qu’elle est écrite. Jusqu’à la 1.18, les formules n’étaient composées que dans le texte courant, et les légendes et les cellules utilisaient ^exposants^, ~indices~ et des symboles Unicode."
+      "fr": "Corrigé dans postext 1.19 : les maths en ligne $…$ sont composées dans les légendes, les notes et les cellules de tableau, dans la ligne avec le texte et avec l’alignement de la cellule ; selon la règle de Pandoc, si bien que les prix de « $5 to $10 » restent du texte. Les attributs de titre impriment toujours une formule telle qu’elle est écrite. Jusqu’à la 1.18, les formules n’étaient composées que dans le texte courant, et les légendes et les cellules utilisaient ^exposants^, ~indices~ et des symboles Unicode.",
+      "de": "Behoben in postext 1.19: Mathematik im Text, $…$, wird in Bildunterschriften, Fußnoten und Tabellenzellen gesetzt, in der Zeile mit dem Text und mit der Ausrichtung der Zelle; nach der Regel von Pandoc, sodass die Preise in „$5 bis $10“ Text bleiben. Überschriftenattribute drucken eine Formel weiterhin wie geschrieben. Bis 1.18 wurden Formeln nur im Fließtext gesetzt, und Bildunterschriften und Zellen verwendeten ^Hochstellungen^, ~Tiefstellungen~ und Unicode-Symbole."
     },
     "docs": {
       "slug": "document-format",
@@ -1083,7 +1191,8 @@
         "ar": "الصيغ الرياضية",
         "ja": "数式",
         "pt": "Fórmulas matemáticas",
-        "fr": "Formules mathématiques"
+        "fr": "Formules mathématiques",
+        "de": "Mathematische Formeln"
       }
     },
     "fixedIn": "1.19.0"
@@ -1097,7 +1206,8 @@
       "ar": "نص مدوَّر في صفحة أفقية",
       "ja": "横組みページでの回転した文字",
       "pt": "Texto girado em página horizontal",
-      "fr": "Texte pivoté sur une page horizontale"
+      "fr": "Texte pivoté sur une page horizontale",
+      "de": "Gedrehter Text auf einer waagerechten Seite"
     },
     "aliases": {
       "en": [
@@ -1158,6 +1268,13 @@
         "titre de côté",
         "légende pivotée",
         "texte à 90 degrés"
+      ],
+      "de": [
+        "gedrehte Beschriftung",
+        "Rückentext",
+        "quergestellte Überschrift",
+        "gedrehte Bildunterschrift",
+        "Text um 90 Grad"
       ]
     },
     "explanation": {
@@ -1168,7 +1285,8 @@
       "ar": "في الصفحة الأفقية، تبقى العناصر النصية والفقرات أفقية؛ ولا يدور إلا العنصر العائم كاملًا. ويمكن تنضيد كتاب كامل أو قسم عموديًّا (layout.writingMode 'vertical-rl')، لكن تلك هي الكتابة العمودية الصينية أو اليابانية، لا سطر مدوَّر. ارسم التسمية المدوَّرة داخل مورد SVG، أو دوّر الجدول أو الشكل كاملًا في صفحة مستقلة.",
       "ja": "横組みのページでは、テキスト要素と段落は横向きのままで、回転できるのはフロート全体だけです。本全体や1つの節を縦組みにすることはできますが（layout.writingMode 'vertical-rl'）、それは中国語や日本語の縦組みであって、行を横倒しにすることではありません。横倒しのラベルはSVGリソースの中に描くか、表や図を丸ごと回転して専用のページに置いてください。",
       "pt": "Em uma página horizontal, os elementos de texto e os parágrafos ficam sempre na horizontal; só os flutuantes inteiros giram. Um livro inteiro ou uma seção podem ser compostos na vertical (layout.writingMode 'vertical-rl'), mas isso é a escrita vertical do chinês ou do japonês, não uma linha girada. Desenhe o rótulo girado dentro de um recurso SVG, ou gire a tabela ou a figura inteira para uma página própria.",
-      "fr": "Sur une page horizontale, les éléments de texte et les paragraphes restent horizontaux ; seuls des flottants entiers pivotent. Un livre entier ou une section peut être composé verticalement (layout.writingMode 'vertical-rl'), mais il s’agit de l’écriture verticale chinoise ou japonaise, pas d’une ligne tournée. Dessinez une étiquette tournée à l’intérieur d’une ressource SVG, ou faites pivoter le tableau ou la figure entière sur une page à part."
+      "fr": "Sur une page horizontale, les éléments de texte et les paragraphes restent horizontaux ; seuls des flottants entiers pivotent. Un livre entier ou une section peut être composé verticalement (layout.writingMode 'vertical-rl'), mais il s’agit de l’écriture verticale chinoise ou japonaise, pas d’une ligne tournée. Dessinez une étiquette tournée à l’intérieur d’une ressource SVG, ou faites pivoter le tableau ou la figure entière sur une page à part.",
+      "de": "Auf einer waagerechten Seite bleiben Textelemente und Absätze waagerecht; nur ganze Gleitobjekte werden gedreht. Ein ganzes Buch oder ein Abschnitt lässt sich senkrecht setzen (layout.writingMode 'vertical-rl'), aber das ist chinesische oder japanische senkrechte Schrift, keine gedrehte Zeile. Zeichnen Sie eine gedrehte Beschriftung in einer SVG-Ressource, oder drehen Sie die ganze Tabelle oder Abbildung auf eine eigene Seite."
     },
     "docs": {
       "slug": "document-format",
@@ -1180,7 +1298,8 @@
         "ar": "ما لا يدعمه Postext",
         "ja": "対応していない記法",
         "pt": "O que NÃO é suportado",
-        "fr": "Ce qui n’est PAS pris en charge"
+        "fr": "Ce qui n’est PAS pris en charge",
+        "de": "Was NICHT unterstützt wird"
       }
     }
   },
@@ -1193,7 +1312,8 @@
       "ar": "تحجيم الخط أفقيًّا",
       "ja": "文字の水平方向の伸縮",
       "pt": "Escala horizontal de fontes",
-      "fr": "Mise à l’échelle horizontale des caractères"
+      "fr": "Mise à l’échelle horizontale des caractères",
+      "de": "Horizontale Schriftskalierung"
     },
     "aliases": {
       "en": [
@@ -1243,6 +1363,11 @@
         "condensé",
         "échelle horizontale",
         "resserrer le texte"
+      ],
+      "de": [
+        "schmale Schrift",
+        "horizontale Skalierung",
+        "Text stauchen"
       ]
     },
     "explanation": {
@@ -1253,7 +1378,8 @@
       "ar": "لا يمكن مطّ الأشكال أو ضغطها. اختر عائلة مضغوطة، أو ابنِ نسخة محجَّمة من الخط.",
       "ja": "グリフを横に伸ばしたり縮めたりすることはできません。コンデンス体のファミリーを選ぶか、比率を変えたフォントの複製を作ってください。",
       "pt": "Os glifos não podem ser esticados nem comprimidos. Escolha uma família condensada ou crie uma cópia escalada da fonte.",
-      "fr": "Les glyphes ne peuvent être ni étirés ni resserrés. Choisissez une famille étroite, ou construisez une copie mise à l’échelle de la police."
+      "fr": "Les glyphes ne peuvent être ni étirés ni resserrés. Choisissez une famille étroite, ou construisez une copie mise à l’échelle de la police.",
+      "de": "Glyphen lassen sich weder dehnen noch stauchen. Wählen Sie eine schmal laufende Schriftfamilie oder erstellen Sie eine skalierte Kopie der Schrift."
     },
     "docs": {
       "slug": "document-format",
@@ -1265,7 +1391,8 @@
         "ar": "ما لا يدعمه Postext",
         "ja": "対応していない記法",
         "pt": "O que NÃO é suportado",
-        "fr": "Ce qui n’est PAS pris en charge"
+        "fr": "Ce qui n’est PAS pris en charge",
+        "de": "Was NICHT unterstützt wird"
       }
     }
   },
@@ -1278,7 +1405,8 @@
       "ar": "عناوين Setext والخطوط الأفقية والشطب والروابط التلقائية",
       "ja": "Setext見出し、罫線、取り消し線、自動リンク",
       "pt": "Títulos setext, fios, tachado, links automáticos",
-      "fr": "Titres Setext, filets, texte barré, liens automatiques"
+      "fr": "Titres Setext, filets, texte barré, liens automatiques",
+      "de": "Setext-Überschriften, Linien, Durchstreichung, Autolinks"
     },
     "aliases": {
       "en": [
@@ -1356,6 +1484,16 @@
         "setext",
         "lien automatique",
         "liens par référence"
+      ],
+      "de": [
+        "waagerechte Linie",
+        "---",
+        "Durchstreichung",
+        "durchgestrichen",
+        "~~text~~",
+        "Setext",
+        "Autolink",
+        "Referenzlinks"
       ]
     },
     "explanation": {
@@ -1366,7 +1504,8 @@
       "ar": "تُطبع صيغ Markdown هذه نصًّا. اكتب عناوين ATX (#)، وعلّم فاصل القسم بـ :::space أو بخط من التصميم، واكتب عناوين URL نصًّا عاديًّا.",
       "ja": "これらのMarkdownの書き方は文字のまま印字されます。見出しはATX形式（#）で書き、節の区切りは:::spaceかデザインの罫線で示し、URLはプレーンテキストで書いてください。",
       "pt": "Essas formas de Markdown são impressas como texto. Escreva títulos ATX (#), marque a quebra de seção com :::space ou com um fio de design e escreva as URLs como texto simples.",
-      "fr": "Ces formes de Markdown s’impriment comme du texte. Écrivez des titres ATX (#), marquez un changement de section avec :::space ou un filet de maquette, et écrivez les URL en texte simple."
+      "fr": "Ces formes de Markdown s’impriment comme du texte. Écrivez des titres ATX (#), marquez un changement de section avec :::space ou un filet de maquette, et écrivez les URL en texte simple.",
+      "de": "Diese Markdown-Formen werden als Text gedruckt. Schreiben Sie ATX-Überschriften (#), markieren Sie einen Abschnittswechsel mit :::space oder einer gestalteten Linie, und schreiben Sie URLs als einfachen Text."
     },
     "docs": {
       "slug": "document-format",
@@ -1378,7 +1517,8 @@
         "ar": "ما لا يدعمه Postext",
         "ja": "対応していない記法",
         "pt": "O que NÃO é suportado",
-        "fr": "Ce qui n’est PAS pris en charge"
+        "fr": "Ce qui n’est PAS pris en charge",
+        "de": "Was NICHT unterstützt wird"
       }
     }
   },
@@ -1391,7 +1531,8 @@
       "ar": "HTML وMDX الخام",
       "ja": "生のHTMLとMDX",
       "pt": "HTML e MDX brutos",
-      "fr": "HTML brut et MDX"
+      "fr": "HTML brut et MDX",
+      "de": "Rohes HTML und MDX"
     },
     "aliases": {
       "en": [
@@ -1445,6 +1586,12 @@
         "<br>",
         "<span>",
         "composants MDX"
+      ],
+      "de": [
+        "HTML-Tags",
+        "<br>",
+        "<span>",
+        "MDX-Komponenten"
       ]
     },
     "explanation": {
@@ -1455,7 +1602,8 @@
       "ar": "لا تُفسَّر الوسوم، لأن Postext لا يقرأ إلا Markdown وتوجيهاته الخاصة. استعمل سمات العناوين والشارات وأنماط الفقرات والإطارات لما كان HTML سيفعله.",
       "ja": "タグは解釈されません。PostextはMarkdownと独自のディレクティブしか読まないためです。HTMLで行うことには、見出しの属性、チップ、段落スタイル、囲みを使ってください。",
       "pt": "As tags não são interpretadas, porque o Postext só lê Markdown e as próprias diretivas. Para o que você faria com HTML, use atributos de título, chips, estilos de parágrafo e boxes.",
-      "fr": "Les balises ne sont pas interprétées, puisque Postext ne lit que le Markdown et ses propres directives. Utilisez les attributs de titre, les pastilles, les styles de paragraphe et les encadrés pour ce que ferait le HTML."
+      "fr": "Les balises ne sont pas interprétées, puisque Postext ne lit que le Markdown et ses propres directives. Utilisez les attributs de titre, les pastilles, les styles de paragraphe et les encadrés pour ce que ferait le HTML.",
+      "de": "Tags werden nicht interpretiert, da Postext nur Markdown und seine eigenen Direktiven liest. Verwenden Sie Überschriftenattribute, Chips, Absatzformate und Kästen für das, was HTML leisten würde."
     },
     "docs": {
       "slug": "document-format",
@@ -1467,7 +1615,8 @@
         "ar": "ما لا يدعمه Postext",
         "ja": "対応していない記法",
         "pt": "O que NÃO é suportado",
-        "fr": "Ce qui n’est PAS pris en charge"
+        "fr": "Ce qui n’est PAS pris en charge",
+        "de": "Was NICHT unterstützt wird"
       }
     }
   },
@@ -1480,7 +1629,8 @@
       "ar": "تقسيم الكلمات في النص غير المضبوط",
       "ja": "行末不ぞろいのテキストのハイフネーション",
       "pt": "Hifenização em texto alinhado à esquerda",
-      "fr": "Césure dans le texte en drapeau"
+      "fr": "Césure dans le texte en drapeau",
+      "de": "Silbentrennung im Flattersatz"
     },
     "aliases": {
       "en": [
@@ -1528,6 +1678,11 @@
         "zone de césure",
         "césure fer à gauche",
         "coupure des mots en drapeau"
+      ],
+      "de": [
+        "Flattersatz trennen",
+        "Trennzone",
+        "Silbentrennung linksbündig"
       ]
     },
     "explanation": {
@@ -1538,7 +1693,8 @@
       "ar": "حُلّت في postext 1.5: يقسّم bodyText.hyphenation.ragged: true النص غير المضبوط بالواصلة أيضًا، ضمن منطقة تقسيم (3 em افتراضيًا)، فلا تُقسَّم الكلمة إلا إذا كان إنزالها كاملة سيترك فارغًا أكثر من تلك المنطقة. وهو معطَّل افتراضيًا: يحتفظ النص غير المضبوط بكلماته كاملة إلى أن تطلب ذلك. وحتى 1.4 لم يكن يُقسَّم بالواصلة إلا النص المضبوط، وكانت الأسطر التي تنتهي قصيرة جدًّا تُضبط أو تُعاد صياغتها باليد.",
       "ja": "postext 1.5で解決しました。bodyText.hyphenation.ragged: trueで、行末不ぞろいのテキストもハイフネーションゾーン（既定で3 em）の範囲でハイフネーションされ、語が分割されるのは、丸ごと次の行に送るとゾーンより広い空きが残るときだけです。既定では無効で、指定するまで行末不ぞろいのテキストは語を分割しません。1.4までは、ハイフネーションされるのは両端そろえのテキストだけで、極端に短く終わる行は両端そろえにするか、手で書き換えていました。",
       "pt": "Resolvido no postext 1.5: bodyText.hyphenation.ragged: true hifeniza também o texto em bandeira, dentro de uma zona de hifenização (3 em por padrão), de modo que uma palavra só é dividida quando mandá-la inteira para a linha de baixo deixaria vazio mais do que a zona. Vem desativado por padrão: o texto em bandeira mantém as palavras inteiras até você pedir. Até a 1.4, só o texto justificado era hifenizado, e as linhas que ficavam muito curtas eram justificadas ou reescritas à mão.",
-      "fr": "Corrigé dans postext 1.5 : bodyText.hyphenation.ragged: true applique aussi la césure au texte en drapeau, dans une zone de césure (3 em par défaut), si bien qu’un mot n’est coupé que lorsque le renvoyer entier à la ligne laisserait vide plus que la zone. C’est désactivé par défaut : le texte en drapeau garde ses mots entiers tant que vous ne le demandez pas. Jusqu’à la 1.4, seul le texte justifié recevait la césure, et les lignes qui finissaient très court étaient justifiées ou reformulées à la main."
+      "fr": "Corrigé dans postext 1.5 : bodyText.hyphenation.ragged: true applique aussi la césure au texte en drapeau, dans une zone de césure (3 em par défaut), si bien qu’un mot n’est coupé que lorsque le renvoyer entier à la ligne laisserait vide plus que la zone. C’est désactivé par défaut : le texte en drapeau garde ses mots entiers tant que vous ne le demandez pas. Jusqu’à la 1.4, seul le texte justifié recevait la césure, et les lignes qui finissaient très court étaient justifiées ou reformulées à la main.",
+      "de": "Behoben in postext 1.5: bodyText.hyphenation.ragged: true trennt auch Flattersatz, innerhalb einer Trennzone (standardmäßig 3 em), sodass ein Wort nur dann getrennt wird, wenn es ganz in die nächste Zeile zu schicken mehr als die Zone leer ließe. Standardmäßig ist es aus: Flattersatz lässt seine Wörter ganz, bis Sie es anders verlangen. Bis 1.4 wurde nur Blocksatz getrennt, und Zeilen, die weit zu kurz endeten, wurden von Hand in Blocksatz gesetzt oder umformuliert."
     },
     "docs": {
       "slug": "configuration-text",
@@ -1550,7 +1706,8 @@
         "ar": "تقسيم الكلمات بالواصلة",
         "ja": "ハイフネーション",
         "pt": "Hifenização",
-        "fr": "Césure"
+        "fr": "Césure",
+        "de": "Silbentrennung"
       }
     },
     "fixedIn": "1.5.0"
@@ -1564,7 +1721,8 @@
       "ar": "خطوط Booktabs",
       "ja": "booktabs式の罫線",
       "pt": "Fios no estilo booktabs",
-      "fr": "Filets booktabs"
+      "fr": "Filets booktabs",
+      "de": "Booktabs-Linien"
     },
     "aliases": {
       "en": [
@@ -1617,6 +1775,12 @@
         "toprule midrule bottomrule",
         "filet sous l’en-tête seulement",
         "tableau à trois filets"
+      ],
+      "de": [
+        "booktabs",
+        "toprule midrule bottomrule",
+        "Linie nur unter dem Tabellenkopf",
+        "Tabelle mit drei Linien"
       ]
     },
     "explanation": {
@@ -1627,7 +1791,8 @@
       "ar": "حُلّت في postext 1.24: يرسم tableStyle.rules بالقيمة 'booktabs' خطًّا سميكًا فوق الجدول وتحت صفه الأخير، وخطًّا رفيعًا تحت صفوف الترويسة، ولا خطوط عمودية، مع خطوط قصيرة تحت الترويسات الممتدة على أكثر من عمود (مقصّرة من طرفيها افتراضيًّا)، ومع groupRules خطًّا رفيعًا فوق الصفوف التي ترأس مجموعة. القيم الافتراضية لـ heavyRuleWidth وlightRuleWidth وspanRuleWidth هي 0.08em و0.05em و0.03em من حجم خط خلايا المتن؛ ويُختم جزء الجدول المقسوم الذي يتبع بـ continuedFootRule. وحتى 1.23 كان أقرب نمط هو 'horizontal' بخطوط شعرية فاتحة، يرسم خطًّا بين كل الصفوف.",
       "ja": "postext 1.24で解決：tableStyle.rulesを'booktabs'にすると、表の上と最終行の下に太罫、見出し行の下に細罫を引き、縦罫は引きません。複数列にまたがる見出しの下には短い罫（既定で両端を詰める）を引き、groupRulesを有効にするとグループの見出し行の上に細罫を加えます。heavyRuleWidth、lightRuleWidth、spanRuleWidthの既定値は本文セルの文字サイズの0.08em、0.05em、0.03emです。分割した表の続く部分はcontinuedFootRuleで閉じます。1.23までは、薄いヘアラインの'horizontal'がいちばん近いパターンで、すべての行の間に罫線が入りました。",
       "pt": "Resolvido no postext 1.24: tableStyle.rules 'booktabs' traça um fio grosso acima da tabela e abaixo da última linha, um fino sob as linhas de cabeçalho e nenhum fio vertical, com fios curtos sob os cabeçalhos que abrangem várias colunas (encurtados nas duas pontas por padrão) e, com groupRules, um fio fino acima das linhas que abrem um grupo. heavyRuleWidth, lightRuleWidth e spanRuleWidth valem por padrão 0.08em, 0.05em e 0.03em do corpo das células; a parte de uma tabela dividida que continua fecha com continuedFootRule. Até a 1.23 o padrão mais próximo era 'horizontal' com fios finos de cor clara, que punha um fio entre todas as linhas.",
-      "fr": "Corrigé dans postext 1.24 : tableStyle.rules 'booktabs' trace un filet épais au-dessus du tableau et sous sa dernière ligne, un filet fin sous les lignes d’en-tête et aucun filet vertical, avec des filets courts sous les en-têtes qui couvrent plusieurs colonnes (raccourcis aux deux bouts par défaut) et, avec groupRules, un filet fin au-dessus des lignes d’en-tête de groupe. heavyRuleWidth, lightRuleWidth et spanRuleWidth valent par défaut 0.08em, 0.05em et 0.03em du corps des cellules ; une partie de tableau coupé qui continue se ferme avec continuedFootRule. Jusqu’à la 1.23, le motif le plus proche était 'horizontal' avec des filets fins pâles, qui réglaient chaque ligne."
+      "fr": "Corrigé dans postext 1.24 : tableStyle.rules 'booktabs' trace un filet épais au-dessus du tableau et sous sa dernière ligne, un filet fin sous les lignes d’en-tête et aucun filet vertical, avec des filets courts sous les en-têtes qui couvrent plusieurs colonnes (raccourcis aux deux bouts par défaut) et, avec groupRules, un filet fin au-dessus des lignes d’en-tête de groupe. heavyRuleWidth, lightRuleWidth et spanRuleWidth valent par défaut 0.08em, 0.05em et 0.03em du corps des cellules ; une partie de tableau coupé qui continue se ferme avec continuedFootRule. Jusqu’à la 1.23, le motif le plus proche était 'horizontal' avec des filets fins pâles, qui réglaient chaque ligne.",
+      "de": "Behoben in postext 1.24: tableStyle.rules 'booktabs' zeichnet eine kräftige Linie über der Tabelle und unter ihrer letzten Zeile, eine feine Linie unter den Kopfzeilen und keine senkrechten Linien, mit kurzen Linien unter Köpfen, die mehrere Spalten überspannen (standardmäßig an beiden Enden gekürzt), und mit groupRules einer feinen Linie über Gruppenkopfzeilen. heavyRuleWidth, lightRuleWidth und spanRuleWidth betragen standardmäßig 0.08em, 0.05em und 0.03em der Zellgröße des Tabellenkörpers; ein Teil einer geteilten Tabelle, der weitergeht, schließt mit continuedFootRule. Bis 1.23 war das nächstliegende Muster 'horizontal' mit blassen Haarlinien, das jede Zeile linierte."
     },
     "docs": {
       "slug": "configuration-resources",
@@ -1639,7 +1804,8 @@
         "ar": "خطوط booktabs",
         "ja": "booktabs の罫線",
         "pt": "Fios booktabs",
-        "fr": "Filets booktabs"
+        "fr": "Filets booktabs",
+        "de": "Booktabs-Linien"
       }
     },
     "fixedIn": "1.24.0"
@@ -1653,7 +1819,8 @@
       "ar": "PDF/X وصناديق القص وملفات تعريف ICC",
       "ja": "PDF/X、トリムボックス、ICCプロファイル",
       "pt": "PDF/X, caixas de refile e perfis ICC",
-      "fr": "PDF/X, zones de format et profils ICC"
+      "fr": "PDF/X, zones de format et profils ICC",
+      "de": "PDF/X, Trim-Boxen und ICC-Profile"
     },
     "aliases": {
       "en": [
@@ -1728,6 +1895,15 @@
         "output intent",
         "gestion des couleurs",
         "couleur de repérage"
+      ],
+      "de": [
+        "PDF/X",
+        "TrimBox",
+        "BleedBox",
+        "ICC-Profil",
+        "Output Intent",
+        "Farbmanagement",
+        "Passerfarbe"
       ]
     },
     "explanation": {
@@ -1738,7 +1914,8 @@
       "ar": "يكتب postext-pdf كل صفحة MediaBox واحدًا، هو الورقة بنزفها وعلامات قصها، بلا TrimBox ولا BleedBox ولا نية إخراج، ويحوّل الألوان إلى CMYK بصيغة بسيطة، بلا ملف تعريف ICC. علامات القص تبيّن أين يكون القطع؛ والنسخة الطباعية الأصلية تحمل أحبارًا دقيقة لشكل؛ وأداة ما قبل الطباعة تضيف الصناديق وملف التعريف حين تطلب المطبعة PDF/X.",
       "ja": "postext-pdfは各ページを1つのMediaBox（裁ち落としとトンボを含む用紙）として書き出し、TrimBox、BleedBox、出力インテントは付けません。色はICCプロファイルを使わず、単純な計算式でCMYKに変換します。断裁位置はトンボで示され、図の正確なインキは印刷用マスターが持ちます。印刷所からPDF/Xを求められたときは、プリプレスツールでボックスとプロファイルを追加します。",
       "pt": "O postext-pdf grava cada página como uma única MediaBox (a folha com a sangria e as marcas de corte), sem TrimBox, BleedBox nem output intent, e converte as cores para CMYK com uma fórmula simples, sem perfil ICC. As marcas de corte mostram onde cortar; um arquivo-mestre de impressão traz as tintas exatas de uma figura; uma ferramenta de pré-impressão acrescenta as caixas e o perfil quando a gráfica pede PDF/X.",
-      "fr": "postext-pdf écrit chaque page comme une seule MediaBox, la feuille avec son fond perdu et ses traits de coupe, sans TrimBox, BleedBox ni output intent, et convertit les couleurs en CMJN avec une formule simple, sans profil ICC. Les traits de coupe montrent où couper ; un original d’impression porte les encres exactes d’une figure ; un outil de prépresse ajoute les zones et le profil quand un imprimeur demande du PDF/X."
+      "fr": "postext-pdf écrit chaque page comme une seule MediaBox, la feuille avec son fond perdu et ses traits de coupe, sans TrimBox, BleedBox ni output intent, et convertit les couleurs en CMJN avec une formule simple, sans profil ICC. Les traits de coupe montrent où couper ; un original d’impression porte les encres exactes d’une figure ; un outil de prépresse ajoute les zones et le profil quand un imprimeur demande du PDF/X.",
+      "de": "postext-pdf schreibt jede Seite als einzelne MediaBox, den Bogen mit Anschnitt und Schnittmarken, ohne TrimBox, BleedBox oder Output Intent, und wandelt Farben mit einer einfachen Formel ohne ICC-Profil in CMYK um. Die Schnittmarken zeigen, wo geschnitten wird; eine Druckvorlage trägt exakte Farben für eine Abbildung; ein Druckvorstufenwerkzeug fügt die Boxen und das Profil hinzu, wenn eine Druckerei PDF/X verlangt."
     },
     "docs": {
       "slug": "configuration-programmatic-usage",
@@ -1750,7 +1927,8 @@
         "ar": "ملفات PDF جاهزة للطباعة",
         "ja": "印刷入稿用のPDF",
         "pt": "PDFs prontos para impressão",
-        "fr": "PDF prêts pour l’impression"
+        "fr": "PDF prêts pour l’impression",
+        "de": "Druckfertige PDFs"
       }
     },
     "fixedIn": "1.22.0"
@@ -1764,7 +1942,8 @@
       "ar": "كسر الأسطر والمسافات البادئة داخل الفقرة",
       "ja": "段落内の改行と行頭の空白",
       "pt": "Quebras de linha e espaços iniciais em um parágrafo",
-      "fr": "Sauts de ligne et espaces de début dans un paragraphe"
+      "fr": "Sauts de ligne et espaces de début dans un paragraphe",
+      "de": "Zeilenumbrüche und führende Leerzeichen in einem Absatz"
     },
     "aliases": {
       "en": [
@@ -1845,6 +2024,16 @@
         "vers en retrait",
         "retrait dans un poème",
         "barre oblique inverse en fin de ligne"
+      ],
+      "de": [
+        "harter Zeilenumbruch",
+        "manueller Zeilenumbruch",
+        "weicher Umbruch",
+        "Zeilenumbrüche im Vers",
+        "führende Leerzeichen",
+        "eingerückte Verszeile",
+        "Gedichteinzug",
+        "Backslash am Zeilenende"
       ]
     },
     "explanation": {
@@ -1855,7 +2044,8 @@
       "ar": "حُلّت في postext 1.23: تحفظ كتلة :::verse القصيدة كما كُتبت. كل سطر من Markdown سطر من الشعر، والسطر الفارغ يبدأ مقطعًا جديدًا، والمسافات البادئة تزيح السطر (مسافتان تساويان em واحدًا). والسطر الأطول من اللازم يُكمَل بإزاحة معلّقة، أو إلى الطرف بعد قوس معقوف، ويُبقي keepStanzas الهايكو أو التانكا كاملًا. ونمط الفقرة الذي يحدّد firstLineIndent بنفسه يجمعها مع hangingIndent. وفي النص الجاري تكسر الشرطة المائلة العكسية في آخر السطر، أو \\\\ المتبوعة بمسافة، السطرَ دون بدء فقرة جديدة (عنوان بريدي، تحية رسالة). وحتى 1.22 كان كل سطر من القصيدة يحتاج إلى فقرة مستقلة في حاوية :::paragraphs، وتُكتب إزاحته مسافاتِ em (U+2003) بعد رابط كلمات (U+2060)، وكانت الشرطة المائلة العكسية في آخر السطر تُطبع.",
       "ja": "postext 1.23で解決しました。:::verseブロックは詩を書いたとおりに保ちます。Markdownの1行が詩の1行、空行で次の連が始まり、行頭の空白で字下げします（空白2つで1 em）。長すぎる行はぶら下げて折り返すか、角括弧の後ろに置いて行末側に寄せ、keepStanzasは俳句や短歌を分けずに保ちます。段落スタイル自身が決めたfirstLineIndentは、そのhangingIndentと組み合わせて使えます。地の文では、行末のバックスラッシュ、または後ろにスペースのある\\\\で、新しい段落を始めずに段落の中で改行します（住所、手紙の宛名など）。1.22までは、詩の各行を:::paragraphsコンテナーの中の独立した段落にし、字下げを単語結合子（U+2060）の後ろのem幅の空白（U+2003）で書く必要があり、行末のバックスラッシュはそのまま印字されていました。",
       "pt": "Corrigido no postext 1.23: um bloco :::verse mantém o poema como foi escrito. Cada linha de Markdown é um verso, uma linha em branco abre outra estrofe e os espaços iniciais recuam o verso (dois espaços, um eme). Um verso longo demais se parte com recuo pendente, ou à direita depois de um colchete, e keepStanzas mantém inteiro um haicai ou um tanka. Um estilo de parágrafo que define o seu próprio firstLineIndent o combina com o seu hangingIndent. No texto corrido, uma barra invertida no fim de uma linha, ou \\\\ antes de um espaço, quebra a linha sem começar outro parágrafo (um endereço, a saudação de uma carta). Até a 1.22 cada verso de um poema precisava de um parágrafo próprio em um contêiner :::paragraphs, com o recuo escrito como espaços eme (U+2003) depois de um word joiner (U+2060), e uma barra invertida no fim de uma linha era impressa.",
-      "fr": "Corrigé dans postext 1.23 : un bloc :::verse garde un poème tel qu’il est écrit. Chaque ligne de Markdown est un vers, une ligne vide commence une nouvelle strophe et les espaces de début mettent la ligne en retrait (deux espaces pour un cadratin). Un vers trop long passe à la ligne avec un retrait suspendu, ou au fer à droite derrière un crochet, et keepStanzas garde un haïku ou un tanka entier. Un style de paragraphe qui fixe son propre firstLineIndent l’associe à son hangingIndent. Dans le texte courant, une barre oblique inverse en fin de ligne, ou \\\\ devant une espace, coupe la ligne sans commencer un nouveau paragraphe (une adresse, la formule d’appel d’une lettre). Jusqu’à la 1.22, chaque vers d’un poème demandait son propre paragraphe dans un conteneur :::paragraphs, son retrait écrit en espaces cadratin (U+2003) derrière un word joiner (U+2060), et une barre oblique inverse en fin de ligne s’imprimait."
+      "fr": "Corrigé dans postext 1.23 : un bloc :::verse garde un poème tel qu’il est écrit. Chaque ligne de Markdown est un vers, une ligne vide commence une nouvelle strophe et les espaces de début mettent la ligne en retrait (deux espaces pour un cadratin). Un vers trop long passe à la ligne avec un retrait suspendu, ou au fer à droite derrière un crochet, et keepStanzas garde un haïku ou un tanka entier. Un style de paragraphe qui fixe son propre firstLineIndent l’associe à son hangingIndent. Dans le texte courant, une barre oblique inverse en fin de ligne, ou \\\\ devant une espace, coupe la ligne sans commencer un nouveau paragraphe (une adresse, la formule d’appel d’une lettre). Jusqu’à la 1.22, chaque vers d’un poème demandait son propre paragraphe dans un conteneur :::paragraphs, son retrait écrit en espaces cadratin (U+2003) derrière un word joiner (U+2060), et une barre oblique inverse en fin de ligne s’imprimait.",
+      "de": "Behoben in postext 1.23: ein :::verse-Block bewahrt ein Gedicht so, wie es geschrieben ist. Jede Markdown-Zeile ist eine Verszeile, eine Leerzeile beginnt eine neue Strophe, und führende Leerzeichen rücken die Zeile ein (zwei Leerzeichen ein Geviert). Eine überlange Zeile bricht mit hängendem Einzug um oder rechtsbündig hinter einer Klammer, und keepStanzas hält ein Haiku oder Tanka zusammen. Ein Absatzformat, das seinen eigenen firstLineIndent festlegt, kombiniert ihn mit seinem hangingIndent. Im laufenden Text bricht ein Backslash am Zeilenende, oder \\\\ vor einem Leerzeichen, die Zeile um, ohne einen neuen Absatz zu beginnen (eine Anschrift, die Anrede eines Briefs). Bis 1.22 brauchte jede Zeile eines Gedichts einen eigenen Absatz in einem :::paragraphs-Container, ihr Einzug wurde als Geviert-Leerzeichen (U+2003) hinter einem Wortverbinder (U+2060) geschrieben, und ein Backslash am Zeilenende wurde gedruckt."
     },
     "docs": {
       "slug": "document-format",
@@ -1867,7 +2057,8 @@
         "ar": "`:::verse`",
         "ja": "`:::verse`",
         "pt": "`:::verse`",
-        "fr": "`:::verse`"
+        "fr": "`:::verse`",
+        "de": "`:::verse`"
       }
     },
     "fixedIn": "1.23.0"
@@ -1881,7 +2072,8 @@
       "ar": "أرقام الأسطر",
       "ja": "行番号",
       "pt": "Numeração de linhas",
-      "fr": "Numéros de ligne"
+      "fr": "Numéros de ligne",
+      "de": "Zeilennummern"
     },
     "aliases": {
       "en": [
@@ -1956,6 +2148,15 @@
         "une ligne sur cinq",
         "édition critique",
         "lineNumbers"
+      ],
+      "de": [
+        "Zeilenzählung",
+        "nummerierte Zeilen",
+        "Verszählung",
+        "Zeilennummern am Rand",
+        "jede fünfte Zeile",
+        "kritische Ausgabe",
+        "lineNumbers"
       ]
     },
     "explanation": {
@@ -1966,7 +2167,8 @@
       "ar": "حُلّت في postext 1.23: يطبع الإعداد lineNumbers رقم كل سطر خامس (أو كل N أسطر) في الهامش أو بين العمودين أو في العمود الجانبي. مع count 'verse' تُعدّ أسطر قصائد :::verse ولا تأخذ تتمة السطر رقمًا؛ ومع 'all' تُعدّ كل أسطر النص. ويبدأ العدّ من جديد عند كل قصيدة أو صفحة أو فصل أو قسم، أو يستمر على امتداد الكتاب؛ ويستأنف :::verse{lineStart=37} قصيدةً من منتصفها، ويستثني numbered=false قصيدةً، ويعيد :::numbering{lines=1} العدّ في أي موضع. لا تحرّك الأرقام أي سطر، ولا تدخل في النص المنسوخ، وهي عناصر غير محتوى (artifacts) في ملف PDF الموسوم. ولا يُرقَّم النص العمودي. وحتى 1.22 كان كل سطر من الشعر يحتاج إلى فقرة مستقلة، ويضيف معالج مسبق بعد كل سطر خامس صندوقًا جانبيًّا يحمل الرقم، في عمود جانبي مخصص للعناصر العائمة.",
       "ja": "postext 1.23で解決しました。lineNumbers設定は、5行ごと（またはN行ごと）の行番号を余白、段間、またはサイド段に印字します。countを'verse'にすると:::verseの詩の行を数え（折り返した部分には番号を振りません）、'all'にすると本文のすべての行を数えます。番号は詩、ページ、章、節ごとに振り直すか、本全体で通します。:::verse{lineStart=37}は途中から続く詩の番号を引き継ぎ、numbered=falseはその詩を数えず、:::numbering{lines=1}は任意の位置で数え直します。番号が行を動かすことはなく、コピーしたテキストには入らず、タグ付きPDFではアーティファクトになります。縦組みには番号を振りません。1.22までは、詩の各行を独立した段落にし、前処理スクリプトで5行ごとに番号入りのサイドボックスを加えて、フロート用に確保したサイド段に組む必要がありました。",
       "pt": "Corrigido no postext 1.23: a configuração lineNumbers imprime o número de cada quinta linha (ou de cada N) na margem, no intercolúnio ou na coluna lateral. Com count 'verse' ela conta os versos dos poemas :::verse, sem numerar as partes que passam para a linha seguinte; com 'all', todas as linhas do texto. A contagem recomeça a cada poema, página, capítulo ou seção, ou segue ao longo do livro; :::verse{lineStart=37} retoma um poema pela metade, numbered=false deixa um de fora e :::numbering{lines=1} reinicia a contagem em qualquer ponto. Os números nunca movem uma linha, ficam fora do texto copiado e são artefatos em um PDF etiquetado. O texto vertical não recebe números. Até a 1.22 cada verso precisava de um parágrafo próprio, e um pré-processador acrescentava depois de cada quinto verso um boxe lateral com o número, em uma coluna lateral reservada aos flutuantes.",
-      "fr": "Corrigé dans postext 1.23 : le réglage lineNumbers imprime le numéro d’une ligne sur cinq (ou d’une ligne sur N) dans la marge, la gouttière ou la colonne latérale. Avec count 'verse', il compte les vers des poèmes :::verse, un rejet ne prenant pas de numéro ; avec 'all', toutes les lignes du texte. Le compte recommence à chaque poème, page, chapitre ou section, ou continue sur tout le livre ; :::verse{lineStart=37} reprend un poème en cours de route, numbered=false en exclut un et :::numbering{lines=1} relance le compte n’importe où. Les numéros ne déplacent jamais une ligne, restent hors du texte copié et sont des artefacts dans un PDF balisé. Le texte vertical n’a pas de numéros. Jusqu’à la 1.22, chaque vers demandait son propre paragraphe, et un préprocesseur ajoutait toutes les cinq lignes un encadré latéral contenant le numéro, dans une colonne latérale réservée aux flottants."
+      "fr": "Corrigé dans postext 1.23 : le réglage lineNumbers imprime le numéro d’une ligne sur cinq (ou d’une ligne sur N) dans la marge, la gouttière ou la colonne latérale. Avec count 'verse', il compte les vers des poèmes :::verse, un rejet ne prenant pas de numéro ; avec 'all', toutes les lignes du texte. Le compte recommence à chaque poème, page, chapitre ou section, ou continue sur tout le livre ; :::verse{lineStart=37} reprend un poème en cours de route, numbered=false en exclut un et :::numbering{lines=1} relance le compte n’importe où. Les numéros ne déplacent jamais une ligne, restent hors du texte copié et sont des artefacts dans un PDF balisé. Le texte vertical n’a pas de numéros. Jusqu’à la 1.22, chaque vers demandait son propre paragraphe, et un préprocesseur ajoutait toutes les cinq lignes un encadré latéral contenant le numéro, dans une colonne latérale réservée aux flottants.",
+      "de": "Behoben in postext 1.23: die Einstellung lineNumbers druckt die Nummer jeder fünften (oder jeder n-ten) Zeile in den Rand, den Spaltenabstand oder die Nebenspalte. Mit count 'verse' zählt sie die Zeilen von :::verse-Gedichten, wobei eine umbrochene Fortsetzung keine Nummer erhält; mit 'all' jede Zeile des Texts. Die Zählung beginnt bei jedem Gedicht, jeder Seite, jedem Kapitel oder Abschnitt neu oder läuft durch das Buch; :::verse{lineStart=37} setzt ein Gedicht mittendrin fort, numbered=false lässt eines aus, und :::numbering{lines=1} beginnt die Zählung an beliebiger Stelle neu. Die Nummern verschieben nie eine Zeile, bleiben aus kopiertem Text heraus und sind Artefakte in einem getaggten PDF. Senkrechter Text erhält keine Nummern. Bis 1.22 brauchte jede Verszeile einen eigenen Absatz, und ein Präprozessor fügte nach jeder fünften Zeile einen Seitenkasten mit der Nummer ein, in einer für Gleitobjekte reservierten Nebenspalte."
     },
     "docs": {
       "slug": "configuration-notes-references",
@@ -1978,7 +2180,8 @@
         "ar": "ترقيم الأسطر",
         "ja": "行番号",
         "pt": "Numeração de linhas",
-        "fr": "Numéros de ligne"
+        "fr": "Numéros de ligne",
+        "de": "Zeilennummern"
       }
     },
     "fixedIn": "1.23.0"
@@ -1992,7 +2195,8 @@
       "ar": "قواعد التنضيد الكورية",
       "ja": "韓国語の組版規則",
       "pt": "Regras de composição do coreano",
-      "fr": "Règles de composition coréennes"
+      "fr": "Règles de composition coréennes",
+      "de": "Koreanische Satzregeln"
     },
     "aliases": {
       "en": [
@@ -2056,6 +2260,14 @@
         "한국어",
         "한글",
         "coupure des lignes en coréen"
+      ],
+      "de": [
+        "Koreanisch",
+        "KLREQ",
+        "Hangul",
+        "한국어",
+        "한글",
+        "koreanischer Zeilenumbruch"
       ]
     },
     "explanation": {
@@ -2066,7 +2278,8 @@
       "ar": "ينكسر النص الكوري بين المقاطع ويُضبط كالصيني، بالإعدادات الافتراضية للصينية في البر الرئيسي: لا توجد بعد قواعد كورية (KLREQ)، ولا تسميات ولا علامات ترقيم كورية. اضبط cjk.lineBreak وpunctuationWidth وlatinSpacing يدويًّا للاقتراب منها، وcjk.wordBreak 'keep-all' ليقتصر الكسر على الفراغات بين الكلمات (어절). أما اليابانية فلها قواعدها منذ الإصدار 1.16.0: اوسم المستند بـ 'ja'.",
       "ja": "韓国語のテキストは中国語と同じように音節の間で改行され、中国本土の既定値で両端そろえされます。韓国語（KLREQ）の規則はまだなく、韓国語のラベルや約物もありません。近づけるにはcjk.lineBreak、punctuationWidth、latinSpacingを手で設定し、語と語の間の空白（어절）でだけ改行するにはcjk.wordBreak 'keep-all'を設定してください。日本語は1.16.0から独自の規則を持っています。文書に'ja'を指定してください。",
       "pt": "O texto coreano quebra entre sílabas e é justificado como o chinês, com os padrões da China continental: ainda não há regras coreanas (KLREQ), nem rótulos ou pontuação coreanos. Ajuste à mão cjk.lineBreak, punctuationWidth e latinSpacing para chegar perto, e use cjk.wordBreak 'keep-all' para quebrar só nos espaços entre palavras (어절). O japonês tem regras próprias desde a 1.16.0: marque o documento como 'ja'.",
-      "fr": "Le texte coréen se coupe entre les syllabes et se justifie comme le chinois, avec les valeurs par défaut du chinois continental : il n’y a pas encore de règles coréennes (KLREQ), ni de libellés ou de ponctuation coréens. Réglez à la main cjk.lineBreak, punctuationWidth et latinSpacing pour s’en approcher, et cjk.wordBreak 'keep-all' pour ne couper qu’aux espaces entre les mots (어절). Le japonais a ses propres règles depuis la 1.16.0 : balisez le document 'ja'."
+      "fr": "Le texte coréen se coupe entre les syllabes et se justifie comme le chinois, avec les valeurs par défaut du chinois continental : il n’y a pas encore de règles coréennes (KLREQ), ni de libellés ou de ponctuation coréens. Réglez à la main cjk.lineBreak, punctuationWidth et latinSpacing pour s’en approcher, et cjk.wordBreak 'keep-all' pour ne couper qu’aux espaces entre les mots (어절). Le japonais a ses propres règles depuis la 1.16.0 : balisez le document 'ja'.",
+      "de": "Koreanischer Text bricht zwischen Silben um und wird wie Chinesisch in Blocksatz gesetzt, mit den Voreinstellungen für Festlandchinesisch: es gibt noch keine koreanischen Regeln (KLREQ), auch keine koreanischen Bezeichnungen oder Satzzeichen. Stellen Sie cjk.lineBreak, punctuationWidth und latinSpacing von Hand ein, um nahe heranzukommen, und cjk.wordBreak 'keep-all', um nur an den Leerzeichen zwischen Wörtern (어절) umzubrechen. Japanisch hat seit 1.16.0 eigene Regeln: zeichnen Sie das Dokument als 'ja' aus."
     },
     "docs": {
       "slug": "configuration-east-asian",
@@ -2078,7 +2291,8 @@
         "ar": "تنضيد نصوص شرق آسيا",
         "ja": "東アジアの組版",
         "pt": "Tipografia do Leste Asiático",
-        "fr": "Typographie d’Asie de l’Est"
+        "fr": "Typographie d’Asie de l’Est",
+        "de": "Ostasiatische Typografie"
       }
     }
   },
@@ -2091,7 +2305,8 @@
       "ar": "نص عمودي وأفقي في صفحة واحدة",
       "ja": "1ページ内の縦組みと横組み",
       "pt": "Texto vertical e horizontal na mesma página",
-      "fr": "Texte vertical et horizontal sur une même page"
+      "fr": "Texte vertical et horizontal sur une même page",
+      "de": "Senkrechter und waagerechter Text auf einer Seite"
     },
     "aliases": {
       "en": [
@@ -2151,6 +2366,13 @@
         "encadré vertical",
         "横排插图说明",
         "writing-mode dans un encadré"
+      ],
+      "de": [
+        "gemischte Ausrichtung",
+        "waagerechter Kasten in senkrechtem Text",
+        "senkrechter Kasten",
+        "横排插图说明",
+        "writing-mode in einem Kasten"
       ]
     },
     "explanation": {
@@ -2161,7 +2383,8 @@
       "ar": "اتجاه الكتابة يخص المستند أو قسمًا منه (تخطيط نمط عنوان): لا يمكن لصندوق أو شريط جانبي أو خلية جدول وحدها أن تجري عموديًّا في صفحة أفقية، أو أفقيًّا في نص عمودي. وتبقى الترويسات وأرقام الصفحات والتعليقات أفقية في الصفحة العمودية. أعطِ المقطع قسمًا مستقلًّا، أو ارسمه موردَ SVG.",
       "ja": "組み方向は文書または節（見出しスタイルのlayout）に属します。1つのボックス、サイドバー、表のセルだけを、横組みのページで縦に、あるいは縦組みのテキストの中で横に組むことはできません。縦組みのページでも、柱、ノンブル、キャプションは横組みのままです。その箇所を独立した節にするか、SVGリソースとして描いてください。",
       "pt": "A direção de escrita pertence ao documento ou a uma seção (o layout de um estilo de título): um boxe, um quadro lateral ou uma célula de tabela não podem correr na vertical em uma página horizontal, nem na horizontal dentro de um texto vertical. Cabeços, fólios e legendas continuam horizontais em uma página vertical. Dê ao trecho uma seção própria ou desenhe-o como recurso SVG.",
-      "fr": "Le mode d’écriture appartient au document ou à une section (la mise en page d’un style de titre) : un encadré, un encadré latéral ou une cellule de tableau isolés ne peuvent pas courir verticalement sur une page horizontale, ni horizontalement dans un texte vertical. Les titres courants, les folios et les légendes restent horizontaux sur une page verticale. Donnez au passage sa propre section, ou dessinez-le comme ressource SVG."
+      "fr": "Le mode d’écriture appartient au document ou à une section (la mise en page d’un style de titre) : un encadré, un encadré latéral ou une cellule de tableau isolés ne peuvent pas courir verticalement sur une page horizontale, ni horizontalement dans un texte vertical. Les titres courants, les folios et les légendes restent horizontaux sur une page verticale. Donnez au passage sa propre section, ou dessinez-le comme ressource SVG.",
+      "de": "Die Schreibrichtung gehört zum Dokument oder zu einem Abschnitt (dem Layout eines Überschriftenformats): ein einzelner Kasten, Infokasten oder eine Tabellenzelle kann auf einer waagerechten Seite nicht senkrecht laufen und in senkrechtem Text nicht waagerecht. Kolumnentitel, Seitenzahlen und Bildunterschriften bleiben auf einer senkrechten Seite waagerecht. Geben Sie der Passage einen eigenen Abschnitt, oder zeichnen Sie sie als SVG-Ressource."
     },
     "docs": {
       "slug": "configuration-page-layout",
@@ -2173,7 +2396,8 @@
         "ar": "الكتابة العمودية",
         "ja": "縦組み",
         "pt": "Escrita vertical",
-        "fr": "Écriture verticale"
+        "fr": "Écriture verticale",
+        "de": "Vertikale Schrift"
       }
     }
   },
@@ -2186,7 +2410,8 @@
       "ar": "الجداول في النص العمودي",
       "ja": "縦組みの表",
       "pt": "Tabelas em texto vertical",
-      "fr": "Tableaux composés en texte vertical"
+      "fr": "Tableaux composés en texte vertical",
+      "de": "Tabellen in senkrechtem Text"
     },
     "aliases": {
       "en": [
@@ -2238,6 +2463,12 @@
         "tableau lu depuis la droite",
         "竖排表格",
         "légendes à côté des figures"
+      ],
+      "de": [
+        "senkrechte Tabelle",
+        "von rechts gelesene Tabelle",
+        "竖排表格",
+        "Bildunterschriften neben Abbildungen"
       ]
     },
     "explanation": {
@@ -2248,7 +2479,8 @@
       "ar": "في الكتاب العمودي، تقف الأشكال والجداول قائمة وتُنضَّد تعليقاتها وخلاياها أفقيًّا، كما تطبعها معظم الكتب العمودية الحديثة. أما الجدول الذي تجري خلاياه من أعلى إلى أسفل ورأسه على اليمين، أو التعليق المنضَّد عموديًّا بجانب شكله، فغير متاح: ارسم مثل هذا الجدول موردَ SVG.",
       "ja": "縦組みの本では、図と表は正立し、キャプションとセルは横組みで組まれます。現代の縦組みの本の多くと同じ組み方です。セルが上から下へ流れ、見出しが右にある表や、図の横に縦組みで置くキャプションは使えません。そうした表はSVGリソースとして描いてください。",
       "pt": "Em um livro vertical, figuras e tabelas ficam em pé e suas legendas e células são compostas na horizontal, como a maioria dos livros verticais modernos as imprime. Não existe tabela com células que correm de cima para baixo e cabeçalho à direita, nem legenda composta na vertical ao lado da figura: desenhe uma tabela assim como recurso SVG.",
-      "fr": "Dans un livre vertical, les figures et les tableaux restent droits et leurs légendes et leurs cellules sont composées horizontalement, comme les impriment la plupart des livres verticaux modernes. Un tableau dont les cellules courent de haut en bas avec l’en-tête à droite, ou une légende composée verticalement à côté de sa figure, n’est pas disponible : dessinez un tel tableau comme ressource SVG."
+      "fr": "Dans un livre vertical, les figures et les tableaux restent droits et leurs légendes et leurs cellules sont composées horizontalement, comme les impriment la plupart des livres verticaux modernes. Un tableau dont les cellules courent de haut en bas avec l’en-tête à droite, ou une légende composée verticalement à côté de sa figure, n’est pas disponible : dessinez un tel tableau comme ressource SVG.",
+      "de": "In einem senkrecht gesetzten Buch stehen Abbildungen und Tabellen aufrecht, und ihre Bildunterschriften und Zellen werden waagerecht gesetzt, wie die meisten modernen senkrechten Bücher sie drucken. Eine Tabelle, deren Zellen von oben nach unten laufen und deren Kopf rechts steht, oder eine senkrecht neben ihrer Abbildung gesetzte Bildunterschrift ist nicht verfügbar: zeichnen Sie eine solche Tabelle als SVG-Ressource."
     },
     "docs": {
       "slug": "configuration-page-layout",
@@ -2260,7 +2492,8 @@
         "ar": "الكتابة العمودية",
         "ja": "縦組み",
         "pt": "Escrita vertical",
-        "fr": "Écriture verticale"
+        "fr": "Écriture verticale",
+        "de": "Vertikale Schrift"
       }
     }
   },
@@ -2273,7 +2506,8 @@
       "ar": "أحجام الحروف الصينية (号) ووحدات Q",
       "ja": "中国の号数とQ数",
       "pt": "Corpos chineses (号) e unidades Q",
-      "fr": "Corps chinois (号) et unités Q"
+      "fr": "Corps chinois (号) et unités Q",
+      "de": "Chinesische Schriftgrade (号) und Q-Einheiten"
     },
     "aliases": {
       "en": [
@@ -2342,6 +2576,14 @@
         "unités Q",
         "级数",
         "corps chinois"
+      ],
+      "de": [
+        "五号",
+        "小四",
+        "Hao-Größen",
+        "Q-Einheiten",
+        "级数",
+        "chinesische Schriftgrade"
       ]
     },
     "explanation": {
@@ -2352,7 +2594,8 @@
       "ar": "تُعطى الأحجام بـ pt أو mm أو px أو em: لا يوجد 五号 ولا 小四 ولا وحدة Q اليابانية. حوّلها كما تفعل برامج معالجة النصوص الصينية: 初号 42 pt، 二号 22 pt، 三号 16 pt، 四号 14 pt، 小四 12 pt، 五号 10.5 pt، 小五 9 pt؛ و1 Q يساوي 0.25 mm.",
       "ja": "サイズはpt、mm、px、emで指定します。五号や小四はなく、日本のQ数もありません。中国のワープロと同じように換算してください。初号42 pt、二号22 pt、三号16 pt、四号14 pt、小四12 pt、五号10.5 pt、小五9 pt。1 Qは0.25 mmです。",
       "pt": "Os tamanhos são dados em pt, mm, px ou em: não há 五号 nem 小四, nem o Q japonês. Converta-os como fazem os processadores de texto chineses: 初号 42 pt, 二号 22 pt, 三号 16 pt, 四号 14 pt, 小四 12 pt, 五号 10,5 pt, 小五 9 pt; 1 Q equivale a 0,25 mm.",
-      "fr": "Les tailles s’indiquent en pt, mm, px ou em : il n’y a ni 五号 ni 小四, ni Q japonais. Convertissez-les comme le font les traitements de texte chinois : 初号 42 pt, 二号 22 pt, 三号 16 pt, 四号 14 pt, 小四 12 pt, 五号 10,5 pt, 小五 9 pt ; 1 Q vaut 0,25 mm."
+      "fr": "Les tailles s’indiquent en pt, mm, px ou em : il n’y a ni 五号 ni 小四, ni Q japonais. Convertissez-les comme le font les traitements de texte chinois : 初号 42 pt, 二号 22 pt, 三号 16 pt, 四号 14 pt, 小四 12 pt, 五号 10,5 pt, 小五 9 pt ; 1 Q vaut 0,25 mm.",
+      "de": "Größen werden in pt, mm, px oder em angegeben: es gibt kein 五号 oder 小四 und kein japanisches Q. Rechnen Sie sie um wie chinesische Textverarbeitungen: 初号 42 pt, 二号 22 pt, 三号 16 pt, 四号 14 pt, 小四 12 pt, 五号 10,5 pt, 小五 9 pt; 1 Q sind 0,25 mm."
     },
     "docs": {
       "slug": "configuration-east-asian",
@@ -2364,7 +2607,8 @@
         "ar": "شبكة الحروف",
         "ja": "文字グリッド",
         "pt": "Grade de caracteres",
-        "fr": "Grille de caractères"
+        "fr": "Grille de caractères",
+        "de": "Zeichenraster"
       }
     }
   },
@@ -2377,7 +2621,8 @@
       "ar": "ملاحظات بين الأسطر",
       "ja": "行間の注",
       "pt": "Notas entre as linhas",
-      "fr": "Notes entre les lignes"
+      "fr": "Notes entre les lignes",
+      "de": "Anmerkungen zwischen den Zeilen"
     },
     "aliases": {
       "en": [
@@ -2450,6 +2695,15 @@
         "commentaires latéraux",
         "側批",
         "旁批"
+      ],
+      "de": [
+        "interlineare Anmerkungen",
+        "Interlinearglosse",
+        "Anmerkungen zwischen den Zeilen",
+        "Anmerkungen neben der Spalte",
+        "Seitenkommentare",
+        "側批",
+        "旁批"
       ]
     },
     "explanation": {
@@ -2460,7 +2714,8 @@
       "ar": "لا يُنضَّد شيء بين سطرين أو عمودين من النص: فالشرح المكتوب فوق كلمة في مخطوط من العصور الوسطى، أو التعليق الأحمر (側批) الذي يكتبه المخطوط الصيني بجانب عمود، ليس له موضع خاص. يحمل الروبي قراءة من بضعة حروف بجانب أصلها. أما الملاحظة الأطول فتدخل السطر واريتشو (:warichu[…]، صفّان بنصف الحجم)، أو تذهب إلى عمود جانبي في صندوق مسيَّج بـ span=\"side\".",
       "ja": "2行の間や2段の間には何も組めません。中世写本で語の上に書かれた注解や、中国の写本が段の横に書く朱の批評（側批）には、専用の場所がありません。ルビは親文字の横に数文字の読みを添えるものです。長い注は、割注として行の中に入れるか（:warichu[…]、半分のサイズで2行）、span=\"side\"で囲ったボックスとしてサイド段に入れてください。",
       "pt": "Nada é composto entre duas linhas ou duas colunas de texto: a glosa escrita sobre uma palavra de um manuscrito medieval, ou o comentário em vermelho (側批) que um manuscrito chinês escreve ao lado de uma coluna, não tem lugar próprio. O rubi leva uma leitura de poucos caracteres ao lado da base. Uma nota mais longa entra na linha como warichu (:warichu[…], duas linhas com metade do corpo) ou vai para uma coluna lateral como boxe com span=\"side\".",
-      "fr": "Rien ne se compose entre deux lignes ou deux colonnes de texte : la glose écrite au-dessus d’un mot d’un manuscrit médiéval, ou le commentaire rouge (側批) qu’un manuscrit chinois écrit à côté d’une colonne, n’a pas de place à lui. Le ruby porte une lecture de quelques caractères à côté de sa base. Une note plus longue va dans la ligne en warichu (:warichu[…], deux rangs à la moitié du corps), ou dans une colonne latérale comme encadré délimité avec span=\"side\"."
+      "fr": "Rien ne se compose entre deux lignes ou deux colonnes de texte : la glose écrite au-dessus d’un mot d’un manuscrit médiéval, ou le commentaire rouge (側批) qu’un manuscrit chinois écrit à côté d’une colonne, n’a pas de place à lui. Le ruby porte une lecture de quelques caractères à côté de sa base. Une note plus longue va dans la ligne en warichu (:warichu[…], deux rangs à la moitié du corps), ou dans une colonne latérale comme encadré délimité avec span=\"side\".",
+      "de": "Zwischen zwei Zeilen oder zwei Spalten Text wird nichts gesetzt: die über ein Wort einer mittelalterlichen Handschrift geschriebene Glosse oder der rote Kommentar (側批), den eine chinesische Handschrift neben eine Spalte schreibt, hat keinen eigenen Platz. Ruby trägt eine Lesung von wenigen Zeichen neben ihrer Basis. Eine längere Anmerkung kommt als Warichu in die Zeile (:warichu[…], zwei Reihen in halber Größe) oder als Kasten mit span=\"side\" in eine Nebenspalte."
     },
     "docs": {
       "slug": "document-format",
@@ -2472,7 +2727,8 @@
         "ar": "العلامات الصينية والقراءات (ruby) والتعليقات السطرية (warichu)",
         "ja": "中国語の記号、ルビ、割注",
         "pt": "Marcas chinesas, rubi e warichu",
-        "fr": "Marques chinoises, ruby et warichu"
+        "fr": "Marques chinoises, ruby et warichu",
+        "de": "Chinesische Zeichen, Ruby und Warichu"
       }
     }
   },
@@ -2485,7 +2741,8 @@
       "ar": "رقم واحد لورقة من صفحتين",
       "ja": "2ページの丁に1つのノンブル",
       "pt": "Um fólio por folha de duas páginas",
-      "fr": "Un folio pour un feuillet de deux pages"
+      "fr": "Un folio pour un feuillet de deux pages",
+      "de": "Eine Blattzahl für ein Blatt aus zwei Seiten"
     },
     "aliases": {
       "en": [
@@ -2556,6 +2813,16 @@
         "numéroter une page sur deux",
         "葉碼",
         "頁碼"
+      ],
+      "de": [
+        "Blattzahlen",
+        "Foliierung",
+        "Zählung je Blatt",
+        "Zählung je Doppelseite",
+        "Bogenzahlen",
+        "jede zweite Seite nummerieren",
+        "葉碼",
+        "頁碼"
       ]
     },
     "explanation": {
@@ -2566,7 +2833,8 @@
       "ar": "أرقام الصفحات تعدّ الصفحات: لا يوجد عدّاد يتقدم مرة واحدة لكل صفحتين متقابلتين أو لكل ورقة، كما تفعل أرقام الأوراق (葉碼) في كتاب الطباعة الخشبية. افتتح كل ورقة بعنوان مخفي من المستوى الأول ينكسر إلى الصفحة التي تبدأ فيها الورقة (parity 'even' في كتاب مجلَّد من اليمين) واطبع {chapterNumber} في التصميم؛ ثم يجب كسر النص في Markdown حيث تنتهي كل ورقة.",
       "ja": "ノンブルはページを数えます。木版本の丁付け（葉碼）のように、見開きや丁ごとに1つ進むカウンターはありません。各丁の頭に非表示のレベル1見出しを置いて、その丁が始まるページへ改ページさせ（右綴じの本ではparity 'even'）、デザインで{chapterNumber}を印字してください。その場合、Markdownのテキストを丁の終わりごとに区切る必要があります。",
       "pt": "Os números de página contam páginas: nenhum contador avança uma vez por página dupla ou por folha, como os números de folha (葉碼) de um livro xilográfico. Abra cada folha com um título de nível 1 oculto que salte para a página onde a folha começa (paridade 'even' em um livro encadernado pela direita) e imprima {chapterNumber} no design; o texto então precisa ser quebrado no Markdown onde cada folha termina.",
-      "fr": "Les numéros de page comptent des pages : aucun compteur n’avance une fois par double page ou par feuillet, comme le font les numéros de feuillet (葉碼) d’un livre xylographié. Ouvrez chaque feuillet avec un titre de niveau 1 masqué qui saute à la page où commence le feuillet (parité 'even' dans un livre relié à droite) et imprimez {chapterNumber} dans la maquette ; le texte doit alors être coupé dans le Markdown là où chaque feuillet se termine."
+      "fr": "Les numéros de page comptent des pages : aucun compteur n’avance une fois par double page ou par feuillet, comme le font les numéros de feuillet (葉碼) d’un livre xylographié. Ouvrez chaque feuillet avec un titre de niveau 1 masqué qui saute à la page où commence le feuillet (parité 'even' dans un livre relié à droite) et imprimez {chapterNumber} dans la maquette ; le texte doit alors être coupé dans le Markdown là où chaque feuillet se termine.",
+      "de": "Seitenzahlen zählen Seiten: kein Zähler rückt einmal pro Doppelseite oder pro Blatt vor, wie es die Blattzahlen (葉碼) eines Holzdruckbuchs tun. Eröffnen Sie jedes Blatt mit einer verborgenen Überschrift der Ebene 1, die auf die Seite umbricht, auf der das Blatt beginnt (Parität 'even' in einem rechts gebundenen Buch), und drucken Sie {chapterNumber} in der Gestaltung; der Text muss dann im Markdown dort umbrochen werden, wo jedes Blatt endet."
     },
     "docs": {
       "slug": "configuration-page-layout",
@@ -2578,7 +2846,8 @@
         "ar": "ترقيم الصفحات",
         "ja": "ノンブル",
         "pt": "Numeração",
-        "fr": "Numérotation"
+        "fr": "Numérotation",
+        "de": "Seitennummerierung"
       }
     }
   },
@@ -2591,7 +2860,8 @@
       "ar": "خط بين كل سطرين من النص",
       "ja": "行と行の間ごとの罫線",
       "pt": "Um fio entre cada duas linhas de texto",
-      "fr": "Un filet entre chaque paire de lignes de texte"
+      "fr": "Un filet entre chaque paire de lignes de texte",
+      "de": "Eine Linie zwischen je zwei Textzeilen"
     },
     "aliases": {
       "en": [
@@ -2665,6 +2935,15 @@
         "界行",
         "朱絲欄",
         "烏絲欄"
+      ],
+      "de": [
+        "Linien zwischen Zeilen",
+        "linierte Spalten",
+        "liniertes Papier",
+        "Linien zwischen senkrechten Spalten",
+        "界行",
+        "朱絲欄",
+        "烏絲欄"
       ]
     },
     "explanation": {
@@ -2675,7 +2954,8 @@
       "ar": "يجري الخط الفاصل بين الأعمدة، وطبقة شبكة الحروف (cjk.grid.show) مربع رمادي فاتح لكل حرف، وهي أداة مساعدة على الشاشة يحذفها ملف PDF ما لم يتلقَّ renderToPdf القيمة characterGrid: true. أما خطوط صفحة الطباعة الخشبية أو ورق المخطوطات المسطّر، خط بين كل سطرين، فتُرسم عناصرَ خطوط عمودية في الترويسة، توضع وفق خطوة الشبكة.",
       "ja": "段間罫は段と段の間に引かれます。文字グリッドの重ね表示（cjk.grid.show）は1文字ごとの薄い灰色の正方形で、画面用の補助です。renderToPdfにcharacterGrid: trueを渡さない限りPDFには出ません。木版のページや罫紙のように行と行の間ごとに引く罫線は、ヘッダーに縦罫の要素として置き、グリッドのピッチから位置を決めて描きます。",
       "pt": "O fio de coluna corre entre colunas, e a sobreposição da grade de caracteres (cjk.grid.show) é um quadrado cinza-claro para cada caractere, uma ajuda de tela que o PDF omite, a menos que renderToPdf receba characterGrid: true. Os fios de uma página xilográfica ou de um papel pautado de manuscrito, um entre cada duas linhas, são desenhados como elementos de fio verticais no cabeçalho, posicionados pelo passo da grade.",
-      "fr": "Le filet de colonne court entre les colonnes, et la surcouche de la grille de caractères (cjk.grid.show) est un carré gris clair pour chaque caractère, une aide à l’écran que le PDF omet sauf si renderToPdf reçoit characterGrid: true. Les filets d’une page xylographiée ou d’un papier à manuscrit réglé, un entre chaque paire de lignes, se dessinent comme des éléments filet verticaux dans l’en-tête, placés d’après le pas de la grille."
+      "fr": "Le filet de colonne court entre les colonnes, et la surcouche de la grille de caractères (cjk.grid.show) est un carré gris clair pour chaque caractère, une aide à l’écran que le PDF omet sauf si renderToPdf reçoit characterGrid: true. Les filets d’une page xylographiée ou d’un papier à manuscrit réglé, un entre chaque paire de lignes, se dessinent comme des éléments filet verticaux dans l’en-tête, placés d’après le pas de la grille.",
+      "de": "Die Spaltenlinie läuft zwischen Spalten, und die Überlagerung des Zeichenrasters (cjk.grid.show) ist ein hellgraues Quadrat für jedes Zeichen, eine Bildschirmhilfe, die das PDF weglässt, sofern renderToPdf nicht characterGrid: true erhält. Die Linien einer Holzdruckseite oder eines linierten Manuskriptpapiers, eine zwischen je zwei Zeilen, werden als senkrechte Linienelemente in der Kopfzeile gezeichnet, nach der Teilung des Rasters platziert."
     },
     "docs": {
       "slug": "configuration-page-layout",
@@ -2687,7 +2967,8 @@
         "ar": "الخط الفاصل بين الأعمدة",
         "ja": "段間罫",
         "pt": "Fio entre colunas",
-        "fr": "Filet entre colonnes"
+        "fr": "Filet entre colonnes",
+        "de": "Spaltenlinie"
       }
     }
   },
@@ -2700,7 +2981,8 @@
       "ar": "شرح يحيط بالمتن",
       "ja": "本文を囲む注釈",
       "pt": "Comentário em volta do texto",
-      "fr": "Commentaire composé autour du texte"
+      "fr": "Commentaire composé autour du texte",
+      "de": "Kommentar um den Text herum gesetzt"
     },
     "aliases": {
       "en": [
@@ -2787,6 +3069,18 @@
         "sharh en marge",
         "page glosée",
         "page du Talmud"
+      ],
+      "de": [
+        "Hashiya",
+        "ḥāshiya",
+        "Hamisch",
+        "Randkommentar",
+        "Kommentar um den Text",
+        "Bulaq-Seite",
+        "Rahmenkommentar",
+        "Scharh am Rand",
+        "glossierte Seite",
+        "Talmud-Seite"
       ]
     },
     "explanation": {
@@ -2797,7 +3091,8 @@
       "ar": "لا يمكن أن يلتف نص ثانٍ حول المتن من ثلاث جهات أو أربع، كما تفعل الحاشية في مطبوعات بولاق أو الشروح في صفحة التلمود: يجري المتن في عمود واحد أو عمودين أو عمود ونصف. ضع الشرح في العمود الجانبي لتخطيط oneAndHalf، في إطارات معلَّمة بـ span=\"side\" بجانب المواضع التي تشرحها، وارسم الإطار والشريط بعناصر تصميم الصفحة.",
       "ja": "ブーラーク版のハーシヤやタルムードのページの注釈のように、第2のテキストを本文の3辺や4辺に回して組むことはできません。本文は1段、2段、または1段半で流れます。注釈はoneAndHalfレイアウトのサイド段に、説明する箇所の横へspan=\"side\"で囲ったボックスとして組み、枠と帯はページのデザイン要素で描いてください。",
       "pt": "Um segundo texto não pode contornar o principal por três ou quatro lados, como a ḥāshiya de um impresso de Bulaq ou os comentários de uma página do Talmude: o texto corrido flui em uma coluna, em duas ou em coluna e meia. Coloque o comentário na coluna lateral de um layout oneAndHalf, como boxes com span=\"side\" ao lado dos trechos que explicam, e desenhe a moldura e a faixa com elementos de design de página.",
-      "fr": "Un second texte ne peut pas courir sur trois ou quatre côtés du texte principal, comme le font la ḥāshiya d’une impression de Boulaq ou les commentaires d’une page du Talmud : le texte courant s’écoule sur une colonne, deux, ou une colonne et demie. Composez le commentaire dans la colonne latérale d’une mise en page oneAndHalf, sous forme d’encadrés délimités avec span=\"side\" à côté des passages qu’ils expliquent, et dessinez le cadre et le bandeau avec des éléments de maquette de page."
+      "fr": "Un second texte ne peut pas courir sur trois ou quatre côtés du texte principal, comme le font la ḥāshiya d’une impression de Boulaq ou les commentaires d’une page du Talmud : le texte courant s’écoule sur une colonne, deux, ou une colonne et demie. Composez le commentaire dans la colonne latérale d’une mise en page oneAndHalf, sous forme d’encadrés délimités avec span=\"side\" à côté des passages qu’ils expliquent, et dessinez le cadre et le bandeau avec des éléments de maquette de page.",
+      "de": "Ein zweiter Text kann nicht um drei oder vier Seiten des Haupttexts herumlaufen, wie die Ḥāshiya eines Bulaq-Drucks oder die Kommentare einer Talmud-Seite: Fließtext fließt in einer Spalte, in zweien oder in anderthalb. Setzen Sie den Kommentar in die Nebenspalte eines oneAndHalf-Layouts, als Kästen mit span=\"side\" neben den Passagen, die sie erläutern, und zeichnen Sie Rahmen und Band mit Gestaltungselementen der Seite."
     },
     "docs": {
       "slug": "configuration-page-layout",
@@ -2809,7 +3104,8 @@
         "ar": "التخطيط",
         "ja": "レイアウト",
         "pt": "Diagramação",
-        "fr": "Mise en page"
+        "fr": "Mise en page",
+        "de": "Layout"
       }
     }
   }

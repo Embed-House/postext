@@ -1,0 +1,82 @@
+---
+title: "Anthologie mit Autorenzeilen"
+summary: "Drei Essays über das Gehen, deren Überschriften Autor, Jahr und Zeitschrift tragen: Der Auftakt druckt alle drei, linke Kolumnentitel und Inhalt den Autor."
+plain: "Ein kleines Buch mit drei Essays über das Gehen. Autor und Jahr jedes Essays werden einmal eingetippt und erscheinen dann überall, wo das Buch sie braucht, etwa im Inhaltsverzeichnis."
+description: "Eine Taschenanthologie mit Hazlitt, Thoreau und Stevenson in Postext: Überschriftenattribute füllen Autorenzeilen, linke Kolumnentitel und Inhalt."
+question: "Wie entsteht ein Inhaltsverzeichnis, das sich selbst füllt, mit Leitpunkten, Seiten und Autor jedes Essays?"
+aliases: ["Anthologie", "Sammelband", "Essaysammlung", "Beiträger", "Autorenzeile", "Autor unter dem Titel im Inhaltsverzeichnis", "Autor im Kolumnentitel", "Inhaltsverzeichnis mit Autoren", "Kapitelautor", "Untertitel im Inhaltsverzeichnis", "byline"]
+pageNotes: { "2": "Das Inhaltsverzeichnis: römische Ziffern in Rostrot, die Titel der Essays in Gloock mit gesperrten Leitpunkten zu den Seiten 3, 5 und 8, darunter der Name jedes Autors in heidefarbener Kursive, und die Anmerkung zu den Texten am Fuß der Seite.", "3": "Essay I beginnt unter Ziffer und Titel, mit der Autorenzeile „WILLIAM HAZLITT“ und der Herkunftszeile „The New Monthly Magazine, 1822“ über einer Haarlinie.", "6": "Eine linke Seite: die Pagina und „HENRY DAVID THOREAU“ im Kolumnentitel.", "7": "Eine rechte Seite: der Kolumnentitel „WALKING“ neben der Pagina; der Essay endet vier Zeilen vor dem Fuß." }
+---
+
+## Was Sie setzen
+
+Neun Seiten aus *Afoot*, einer Taschenanthologie mit drei Essays über das Gehen von Hazlitt (1822), Thoreau (1862) und Stevenson (1876). Das Gemälde einer Heide in der Abenddämmerung füllt den Umschlag, ein mit Diffusionsmodellen erzeugtes JPEG. Das Inhaltsverzeichnis gibt jedem Essay eine rostrote Ziffer, einen Titel in Gloock, gesperrte Leitpunkte zu seiner Seite und darunter den Namen des Autors in heidefarbener Kursive. Jeder Essay beginnt mit Ziffer und Titel, einer Autorenzeile in gesperrten Versalien und einer Herkunftszeile mit Zeitschrift und Jahr des Erstdrucks. Die linken Seiten tragen den Namen des Autors, die rechten den Titel des Essays. Die Überschrift jedes Essays trägt Autor, Jahr und Quelle als Attribute, und Auftakt, Kolumnentitel und Inhaltsverzeichnis drucken sie von dort; ein vierter Essay verlangt also keine Änderung an der Konfiguration.
+
+## Zubereitung
+
+### 1 · Die Essays nummerieren und ihren Text absenken
+
+<Excerpt region="opener" />
+
+`numberingTemplate: '{1:I}'` der Ebene nummeriert die Essays mit I, II und III, und `{number}` druckt die Ziffer über dem Titel ([Span und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). `minHeight` reserviert 12 Zeilen zu 14 pt, und die Haarlinie endet 7 mm darüber; unter einem einzeiligen Titel beginnt der Text daher auf jedem Auftakt 79 mm unter der Oberkante. Eine zweite Titelzeile in 26 pt fügt 9,9 mm hinzu und schiebt den Text eine Rasterzeile tiefer; mit `SINK = 14` beginnen ein- und zweizeilige Titel ihren Text auf derselben Zeile. `marginBottom: pt(0)` verhindert, dass der Standardabstand der Überschrift zur Reserve hinzukommt.
+
+### 2 · Das Inhaltsverzeichnis sich selbst füllen lassen
+
+<Excerpt region="contents" />
+
+`:::toc` im Markdown druckt einen Eintrag pro aufgeführter Überschrift: Nummer, Titel, Leitpunkte, Seitenbezeichnung und über `subtitle` den Autor. `buildDocument` setzt das Buch erneut, bis sich die Seitenbezeichnungen nicht mehr ändern, sodass ein umbenannter oder verlängerter Essay das Inhaltsverzeichnis aktualisiert ([Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis)). Die Ziffer eines Eintrags übernimmt Schrift und Größe des Titels, sofern `numberFontFamily` oder `numberFontSize` nichts anderes angeben, und sie steht in jeder Größe auf der Grundlinie der ersten Titelzeile. Ein Buch mit Teilen erhält außerdem eine Zeile für jeden `:::part`, gezeichnet von `toc.parts.design`, wie in <RecipeLink slug="parts-in-colour">Teile in Farbe</RecipeLink>.
+
+### 3 · Autor links, Essay rechts
+
+<Excerpt region="running-heads" />
+
+Jeder Kolumnentitel ist an der Seite verankert, 11 mm unter der Oberkante, und `parity` wählt die Seite: Die Pagina fluchtet mit der Außenkante des Textes, Name oder Titel stehen 7 mm weiter innen. `pages: 'body'` in `head()` hält die Kolumnentitel von den Auftakten fern, wo die Autorenzeile den Autor bereits nennt, und `pages: 'opener'` der Fußzeile druckt dort stattdessen eine Pagina am Fuß ([Textelemente](/de/docs/configuration-page-layout#textelemente)). `{chapterTitle}` druckt den Titel des Essays ohne seine Ziffer.
+
+### 4 · Umschlag und Inhaltsverzeichnis aus der Zählung nehmen
+
+<Excerpt region="front" />
+
+Mit `numbered: false` erhöhen Umschlag und Inhaltsverzeichnis den Zähler nicht, Hazlitt ist also I, und `toc: false` hält beide aus der Liste ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Beide Formate erben `breakBefore` der Ebene mit der Parität `'any'`; deshalb folgt das Inhaltsverzeichnis dem Umschlag auf Seite 2 ohne `:::pagebreak`. Das Format des Umschlags reicht in einem einspaltigen Buch über die ganze Seite, denn eine Gestaltung, die in ihrer Spalte bleibt, wird am Fuß der Spalte abgeschnitten, und das ließe 22 mm Papier unter der Landschaft.
+
+### 5 · Jede Farbe mit ihrer Palettenverknüpfung ausschreiben
+
+<Excerpt region="palette" />
+
+`col()` schreibt den Hexwert jeder Farbe neben ihre `paletteId`, und die Engine folgt dieser Verknüpfung: Autorenzeilen, Kolumnentitel und Umschlag nehmen, was `colorPalette` unter der ID hält, sodass eine zweite Palette mit denselben IDs das ganze Buch umfärbt. Wenn `main-color` auf die Druckfarbe zeigt, sind alle Standardwerte abgedeckt, die die Konfiguration nicht neu angibt; sie würden sonst im Blau der Engine gedruckt, `#295AA3`.
+
+## Varianten
+
+### Angeben, wo jeder Essay zuerst erschien
+
+`toc.subtitle` druckt jedes Attribut der Überschrift, sodass dasselbe Markdown unter jedem Titel die Zeitschrift des Erstdrucks aufführen kann.
+
+```diff
+-const authorLine = { enabled: true, attr: 'author', fontFamily: 'Spectral', fontSize: pt(10),
++const authorLine = { enabled: true, attr: 'source', fontFamily: 'Spectral', fontSize: pt(10),
+```
+
+### Den Buchtitel auf die linke Seite setzen
+
+Viele Bücher setzen ihren eigenen Titel auf die linke Seite und den des Kapitels auf die rechte; `{title}` liest ihn aus dem Frontmatter des Markdowns und druckt AFOOT.
+
+```diff
+-const versoAuthor = head('verso-author', '{attr.author}', 'even',
++const versoAuthor = head('verso-author', '{title}', 'even',
+```
+
+### Jeden Essay auf einer rechten Seite beginnen
+
+Mit der Parität `'odd'` rückt Stevenson hinter eine leere Seite 8 auf Seite 9. Die beiden Formate der Titelei brauchen dann ein eigenes `'any'`, sonst erbt das Inhaltsverzeichnis `'odd'` und beginnt auf Seite 3 hinter einer leeren linken Seite.
+
+```diff
+-  breakBefore: { enabled: true, parity: 'any' } }; // 'any': each piece opens on the next page
++  breakBefore: { enabled: true, parity: 'odd' } };
+-const bare = { numbered: false, toc: false, header: { elements: [] }, footer: { elements: [] } };
++const bare = { numbered: false, toc: false, breakBefore: { enabled: true, parity: 'any' },
++  header: { elements: [] }, footer: { elements: [] } };
+```
+
+## Häufige Fehler
+
+- Hazlitt zitiert Verse mitten in seinen Sätzen. Die Verszeilen gehören in einen Block `:::verse{style="verse" align=start}`, eine Markdown-Zeile pro Verszeile, um 8 mm eingezogen, und der Satz, der danach weiterläuft, in ein Format `runon` ohne Einzug. Ein Markdown-Blockzitat taugt nicht dafür: Seine Zeilen werden wie die eines Absatzes zusammengefügt, und die Verse liefen als Prosa weiter.
+- Ein Attribut, das einer Überschrift fehlt, druckt nichts und löst keine Warnung aus. Ohne `author="…"` bleiben Autorenzeile und linker Kolumnentitel eines Essays leer, und seine Zeile unter dem Titel verschwindet aus dem Inhaltsverzeichnis.

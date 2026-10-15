@@ -61,7 +61,8 @@
       "ar",
       "ja",
       "pt",
-      "fr"
+      "fr",
+      "de"
     ]
   },
   "capture": {
@@ -159,6 +160,16 @@
           "fr": "Le texte original en français de l’épisode 8, « L’anniversaire de Pepper » : les dialogues des pages 5 et 6 et les crédits"
         },
         "who": "David Revoy, proofread by Aurélien Gâteau",
+        "source": "https://www.peppercarrot.com/0_sources/ep08_Pepper-s-Birthday-Party/",
+        "license": "CC-BY-4.0"
+      },
+      {
+        "what": {
+          "en": "The German translation of episode 8, “Peppers Geburtstagsfeier”: the dialogue of pages 5 and 6 and the credits",
+          "es": "La traducción al alemán del episodio 8, «Peppers Geburtstagsfeier»: los diálogos de las páginas 5 y 6 y los créditos",
+          "de": "Die deutsche Übersetzung von Episode 8, „Peppers Geburtstagsfeier“: die Dialoge der Seiten 5 und 6 und das Impressum"
+        },
+        "who": "Helmar Suschka and Alexandra Jordan, with GunChleoc and Philipp (hapit) Hemmer",
         "source": "https://www.peppercarrot.com/0_sources/ep08_Pepper-s-Birthday-Party/",
         "license": "CC-BY-4.0"
       }

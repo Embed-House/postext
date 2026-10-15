@@ -1,0 +1,63 @@
+---
+title: "Eine Zeitung im Nordischen Format mit sechs Spalten"
+summary: "Vier Seiten einer großen Tageszeitung: sechs Spalten mit Linien, Fotos und Kästen über zwei bis fünf, breite Anzeigen, eine Meinungsseite in fünf Spalten."
+plain: "Vier Seiten einer großformatigen Tageszeitung in sechs schmalen Spalten. Das Rezept zeigt, wie ein Foto oder ein Kasten über mehrere Spalten läuft und wie eine Seite fünf Spalten bekommt."
+description: "Eine sechsspaltige Zeitung in Postext, mit Code: Layout multiple, Fotos und Kästen über k Spalten, seitenbreite Anzeigen und ein Teil in fünf Spalten."
+question: "Wie setze ich eine Zeitung in sechs Spalten, mit Fotos und Kästen über zwei, drei oder vier davon?"
+aliases: ["Nordisches Format", "broadsheet", "Zeitung", "sechs Spalten", "fünf Spalten", "mehrere Spalten", "Zeitungsraster", "Bild über mehrere Spalten", "Infokasten", "Faktenkasten", "Kurzmeldungen", "Meinungsseite", "Leserbriefe", "Fortsetzung", "Fortsetzung auf Seite 2"]
+pageNotes: { "1": "Die Titelseite von „The Corrington Despatch“: der Zeitungskopf zwischen einem Wetter- und einem Gezeitenfeld, ein getönter Streifen mit vier Anreißern, die Aufmacherzeile „Tram to the docks wins council vote after six-hour debate“ über vier Spalten über einem Foto eines gepflasterten Hafenkais mit Kränen bei Sonnenaufgang, darunter der Aufmacher in vier Spalten mit einer Finanzierungstabelle am Fuß der Spalten 3 und 4, ein zweiter Artikel über die Spalten 5 und 6 mit einem Foto von drei Ingenieuren an einem Flutor, sein Text in Spalte 5, eine Spalte „In brief“ in Spalte 6 über einem getönten Faktenkasten und am Fuß eine seitenbreite Anzeige für einen 10-km-Lauf.", "2": "Seite 2, „City“: eine seitenbreite Fortsetzungszeile „Market Street traders count the cost of two years of digging“ über sechs kurzen Spaltenstücken, dann der Wohnungsartikel „Rents rise 9% in a year as students return“ mit einem getönten Kasten aus fünf großen Zahlen über die Spalten 1 und 2 neben einem Foto einer Backsteinhauszeile über die Spalten 3 bis 6, darunter der Artikel in allen sechs Spalten und am Fuß ein großes Maklerinserat.", "3": "Seite 3, „Opinion“, in fünf Spalten: die beiden Leitartikel der Zeitung in Spalte 1, ein Kommentar mit der Überschrift „Close the Albert Baths and the city loses more than a pool“ über die Spalten 2 bis 4 über einem Foto eines viktorianischen Schwimmbads, sein Text in den Spalten 2 bis 4, die Leserbriefe in Spalte 5 und eine seitenbreite Konzertanzeige über die untere Hälfte.", "4": "Seite 4, „Arts & Weather“: eine seitenbreite Theaterüberschrift, ein Foto von drei Schauspielern in einem Reedereikontor der 1920er-Jahre über fünf Spalten, darunter die Kritik in fünf Spalten, eine Spalte „What’s on“ in Spalte 6 und am Fuß ein getönter Wetterkasten mit einer Fünftagestabelle und gezeichneten Himmelssymbolen." }
+---
+
+## Was Sie setzen
+
+Vier Seiten von *The Corrington Despatch*, einer erfundenen Tageszeitung, im Nordischen Format von 375 × 597 mm. Der Text läuft in sechs Spalten von 55,2 mm mit 4 mm Spaltenabstand und einer Haarlinie in jedem: eine Zeilenlänge von etwa 38 Zeichen bei 9 pt, die Zeilenlänge einer echten großformatigen Zeitung. Die Titelseite trägt einen Zeitungskopf mit zwei Ohren, einen Streifen mit Anreißern, einen Aufmacher, dessen Überschrift und Foto vier Spalten einnehmen, einen zweiten Artikel mit einem zweispaltigen Foto, eine Spalte mit Kurzmeldungen, eine Finanzierungstabelle und einen Faktenkasten über je zwei Spalten und am Fuß eine Anzeige. Seite 2 beginnt mit einer Fortsetzung von der Titelseite, Seite 3 wechselt für die Leitartikel, einen Kommentar und die Leserbriefe auf fünf Spalten, und die letzte Seite bringt eine Theaterkritik und das Wetter.
+
+## Zubereitung
+
+### 1 · Sechs Spalten im Nordischen Format
+
+Der Code dieses Schritts steht oben in [der kurzen Antwort](#die-kurze-antwort). `page.sizePreset: 'broadsheet'` setzt das Endformat von 375 × 597 mm, und `layoutType: 'multiple'` mit `columnCount: 6` teilt die 351 mm Satzbreite in sechs gleiche Spalten ([Layout-Typen](/de/docs/configuration-page-layout#layout-typen)). Jede ist (351 − 5 × 4) / 6 = 55,2 mm breit und fasst in der Newsreader zu 9 pt etwa 38 Zeichen, deshalb braucht der Text Silbentrennung, `minWordSpacing: 0.8`, damit die Wortzwischenräume offen bleiben, und `maxJustifyTracking: 15`, um eine zu lockere Zeile über ihre Buchstaben zu verteilen. Die Spaltenlinie zeichnet in jedem Spaltenabstand eine Haarlinie von 0,4 pt, unterbrochen, wo ein Gleitobjekt oder ein Kasten sie kreuzt. Bis postext 1.17 hatte ein Textkörper höchstens zwei Spalten, und <RecipeLink slug="newspaper-front-page">Nº 027</RecipeLink> setzte seine vier Spalten mit Kurzmeldungen deshalb in einen Kasten.
+
+### 2 · Ein Gleitobjekt über k Spalten nimmt die erste Folge leerer Spalten
+
+<Excerpt region="pictures" highlight="1-6" />
+
+`placement.columns` gibt einem Foto oder einer Tabelle seine Breite in Spalten, Spaltenabstände eingeschlossen: Vier Spalten der Titelseite sind 232,7 mm. Die Engine sucht den Platz von der Spalte aus, in der der Text steht, von links nach rechts. Ein Gleitobjekt `top` nimmt den Kopf der ersten Folge von k Spalten, die noch keinen Text enthalten und auf gleicher Höhe beginnen; ein Gleitobjekt `bottom` nimmt den Fuß der Spalte, in der der Text steht, und der leeren Spalten danach. Die Finanzierungstabelle, zitiert in einem Absatz von Spalte 3, steht deshalb am Fuß der Spalten 3 und 4, und auf <PageRef page={2}>Seite 2</PageRef> nimmt der Faktenkasten, der im Manuskript zuerst steht, die Spalten 1 und 2, sodass die Spalten 3 bis 6 die erste ebene Folge für das vierspaltige Foto danach bleiben. In umgekehrter Reihenfolge notiert, stünde der Kasten unter dem Foto. Ein k, das so groß ist wie die Spaltenzahl der Seite (oder größer), reicht über die ganze Seitenbreite, wie `span: 'page'`.
+
+### 3 · Überschriftenkästen, Faktenkästen und Anzeigen
+
+<Excerpt region="boxes" />
+
+Ein `:::callout` mit `placement="top"` und `columns="4"` gleitet wie ein Foto über vier Spalten. Überschrift und Unterzeile des Aufmachers sind ein solcher Kasten, der vor dem Text des Aufmachers steht; er nimmt also die Spalten 1 bis 4, und das Foto stellt sich darunter. Der Überschriftenkasten des zweiten Artikels folgt im Text nach dem Aufmacher, hinter einem `:::columnbreak`: Der Text steht dann in Spalte 5, und die Spalten 5 und 6 sind das erste leere Paar. Jede Anzeige ist ein Kasten mit `columns="6"`, seitenbreit und als Erstes auf ihrer Seite notiert, damit ihr Fuß reserviert ist, bevor Text ankommt, und die Fortsetzungszeilen auf den Seiten 2 und 4 sind Kästen über die ganze Seitenbreite, wie in Nº 027. `balancing.trailing: false` lässt jede Seite ihre Spalten bis zum Fuß füllen, da hier jede Seite einen Teil abschließt.
+
+### 4 · Der Zeitungskopf ist die H1 der Titelseite
+
+<Excerpt region="nameplate" />
+
+`# The Corrington Despatch` nimmt das Überschriftenformat `front`: der Name in der Playfair Display Black zu 64 pt, zwei Ohren, gefüllt aus den Attributen der Überschrift, die Datumszeile zwischen einer dünnen und einer kräftigen Linie. Der Auftakt ist neun Rasterzeilen tief. Der getönte Streifen mit Anreißern darunter ist ein Kasten über die ganze Seitenbreite, ein eigenes Element der Titelseite: Er schließt das Band des Auftakts, und der Überschriftenkasten des Aufmachers nimmt die Spalten 1 bis 4 des Bandes, das er eröffnet. Ohne den Streifen nähme der Kasten dieselben vier Spalten direkt unter dem Zeitungskopf, denn der Kopf von Spalte 1 unter einem Auftakt ist ein Platz wie die Köpfe der anderen Spalten (bis postext 1.24 war er es nicht, und der Kasten begann in Spalte 2).
+
+### 5 · Die Meinungsseite läuft in fünf Spalten
+
+<Excerpt region="sections" />
+
+`# Opinion {style="opinion"}` eröffnet einen Teil, dessen Überschriftenformat `layout: { layoutType: 'multiple', columnCount: 5 }` setzt. Der Teil behält den Spaltenabstand und die Spaltenlinie des Dokuments und ändert nur die Anzahl, sodass Leitartikel, Kommentar und Leserbriefe auf einer Zeilenlänge von 67 mm laufen, etwa 47 Zeichen. Der Überschriftenkasten des Kommentars ist `columns="3"` und steht im Manuskript erst, nachdem der Leitartikel in Spalte 1 begonnen hat; er landet also auf den Spalten 2 bis 4 mit seinem Foto darunter, und zwei Zeilen `:::columnbreak` schicken die Spalte in Spalte 2 und die Leserbriefe in Spalte 5.
+
+## Varianten
+
+### Ein Berliner Format in fünf Spalten setzen
+
+Dieselbe Zeitung im Berliner Format von 315 × 470 mm: fünf Spalten von 55 mm, die Zeilenlänge der sechs Spalten im Nordischen Format. Auch die Linie der Pagina übernimmt die schmalere Breite; danach passen Sie jede Seite neu ein.
+
+```diff
+-const layout = { layoutType: 'multiple', columnCount: 6, gutterWidth: mm(GUTTER),
++const layout = { layoutType: 'multiple', columnCount: 5, gutterWidth: mm(GUTTER),
+-      size: { width: mm(375 - 2 * MARGIN.side) } }] };
++      size: { width: mm(315 - 2 * MARGIN.side) } }] };
+-  page: { sizePreset: 'broadsheet', dpi: 150, backgroundColor: col('paper'), // 375 × 597 mm
++  page: { sizePreset: 'berliner', dpi: 150, backgroundColor: col('paper'), // 315 × 470 mm
+```
+
+## Häufige Fehler
+
+- Ein Gleitobjekt, das im Manuskript erst kommt, nachdem der Text seine Spalten passiert hat, findet auf der Seite keinen Platz und eröffnet die nächste. Auf der Titelseite muss der Aufmacher in Spalte 4 enden: Ein Absatz mehr, und Überschriftenkasten und Foto des zweiten Artikels wandern auf Seite 2.
+- Jede Seite ist hier von Hand eingepasst, wie ein Redakteur eine Zeitung einpasst: Die Zeilen `:::space` der Anzeigen und die Länge jedes Artikels bestimmen, wo die Spalten enden. Ändern Sie einen Artikel, passen Sie seine Seite neu ein.
