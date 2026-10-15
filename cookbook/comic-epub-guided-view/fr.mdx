@@ -1,0 +1,61 @@
+---
+title: "Un EPUB de BD lu case par case"
+summary: "Une courte BD exportée en PDF, en EPUB fixe avec navigation par régions pour lire case par case, en EPUB Kindle Panel View et en EPUB recomposable."
+plain: "Une BD de deux planches enregistrée en PDF pour l’impression et en livres numériques : l’un garde les pages et zoome de case en case, un autre est pour Kindle, le dernier donne les dialogues en texte."
+description: "Exporter une BD Postext en PDF et en EPUB 3 : une mise en page fixe avec navigation par régions (lecture guidée), Kindle Panel View et les dialogues en texte."
+question: "Comment exporter une BD en EPUB qu’un lecteur peut suivre case par case ?"
+aliases: ["lecture guidée", "case par case", "navigation par régions", "regions.xhtml", "Kindle Panel View", "EPUB de BD", "BD à mise en page fixe", "guided view", "panel by panel", "comic EPUB", "lectura viñeta a viñeta", "コマ送り"]
+pageNotes: { "1": "La page de titre : « Le phare de Porthcove » en capitales de titrage rouges, « Chapitre un : le câble » et la mention de l’éditeur.", "2": "Page 2 : Maya arrive au phare avec un long récitatif (« La dernière semaine d’août. Le bac avait du retard… ») et demande « Biscuit ! Où est Papi ? » ; le gardien à sa radio (« Allez, vieille carcasse. Parle-moi. ») et Maya qui montre le sol du doigt (« Papi ? Le câble de ta radio passe sous le bureau, c’est ça ? »).", "3": "Page 3 : le chat endormi sur le câble de la radio avec RONRON et le « Trouvé. » chuchoté par Maya ; puis le phare allumé dans la nuit, avec le récitatif « À neuf heures, la radio reparlait : coup de vent d’ouest, les petits bateaux restent au port. » et deux bulles, « Feu allumé. Personne n’ira à l’eau ce soir. » et « Sauf le chat. Il boude dans l’escalier. »" }
+---
+
+## Ce que vous allez composer
+
+Le premier chapitre du *Phare de Porthcove* : une page de titre et deux planches de BD, mises en page une fois et exportées de quatre façons. Le PDF est destiné à l’impression. L’EPUB à mise en page fixe garde les pages imprimées et embarque une navigation par régions : un système de lecture peut ainsi montrer le livre une case à la fois, en zoomant de la case de l’arrivée vers la radio, puis vers Maya. Un second EPUB fixe ajoute Kindle Panel View ; l’EPUB recomposable donne chaque case sous forme d’image recadrée suivie de ses répliques. La page présente chaque fichier tel qu’un lecteur l’ouvrira, avec un lien de téléchargement, en huit langues.
+
+## Préparation
+
+### 1 · Exporter le même document en EPUB
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `renderToEpub` prend les documents que `renderToPdf` imprime : les pages de l’EPUB sont donc celles du PDF ([sortie des BD](/fr/docs/comics#sorties-de-la-bande-dessinée)). Avec `layout: 'fixed'` et des planches de BD dans le livre, il écrit aussi `regions.xhtml` : une région `panel` par case dans l’ordre de lecture, chacune un rectangle en pourcentage de sa page, avec ses bulles, ses récitatifs et ses onomatopées comme régions à l’intérieur. Le sens de progression des pages suit le sens de lecture de la BD : les éditions japonaise et arabe se tournent de droite à gauche. `kindlePanelView: true` ajoute une zone tactile par case et une copie agrandie, avec les métadonnées qu’attend Kindle. L’édition recomposable n’a pas de pages à garder : chaque case est son image, recadrée comme sur la page, puis ses répliques, « **Maya**: Biscuit ! Où est Papi ? », avec les noms tirés de `comics.cast`.
+
+<PageShot page={2} crop="0,0,1,0.55" caption="Case 1 de la page 2 : dans la lecture guidée, la première région, avec le récitatif et la bulle de Maya imbriqués." />
+
+### 2 · Embarquer les caractères utilisés par les pages
+
+<Excerpt region="embed" />
+
+Un EPUB à mise en page fixe dessine son texte dans les caractères qu’il embarque, et un caractère omis est remplacé par celui du lecteur. Le lettrage demande un romain, un gras et un italique ; les polices de BD en proposent moins, si bien que chaque demande reçoit le fichier que `loadComicFonts` a choisi pour elle, et un fichier qui sert les deux graisses n’entre qu’une fois, avec la plage `'400 700'`. Les polices japonaises et chinoises ne prennent que les tranches qui contiennent les caractères de l’édition, ce qui maintient le livre japonais à 1,4 Mo.
+
+### 3 · Relire chaque fichier
+
+<Excerpt region="shelf" />
+
+`readEpub` ouvre les octets comme le ferait un système de lecture : mise en page, sens de progression, spine. La liste sous chaque fiche est la lecture guidée elle-même, lue dans `regions.xhtml` : cinq cases et leurs régions de texte, dans l’ordre où un lecteur les parcourt. Les trois fichiers passent EPUBCheck 5.4 sans erreur ni avertissement en anglais, en japonais et en arabe.
+
+### 4 · Une mise en page, huit éditions
+
+<Excerpt region="editions" />
+
+Chaque `content.<lang>.md` contient le texte d’une édition sous les mêmes identifiants de personnages. Les régions des cases sont les mêmes dans toutes les langues ; les régions des bulles se déplacent avec les bulles, relettrées autour du texte de chaque langue.
+
+## Variantes
+
+### Laisser de côté l’édition Kindle
+
+La navigation par régions est écrite dans tout EPUB fixe ; Kindle Panel View ne fait que s’y ajouter.
+
+```diff
+-  kindle: await renderToEpub(doc, { ...book, layout: 'fixed', kindlePanelView: true }),
+```
+
+### Donner une couverture au livre recomposable
+
+```diff
+-  reflowable: await renderToEpub(doc, { ...book, layout: 'reflowable' }),
++  reflowable: await renderToEpub(doc, { ...book, layout: 'reflowable',
++    cover: { bytes: imageBytes('lh-beam.jpg'), mediaType: 'image/jpeg' } }),
+```
+
+## Erreurs fréquentes
+
+- Un caractère embarqué une fois par graisse servie serait copié quatre fois ; l’édition chinoise pesait 5,3 Mo avant les plages de graisses.

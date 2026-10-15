@@ -1,0 +1,76 @@
+---
+title: "Des parties en couleur à partir d’un attribut"
+summary: "Un guide de terrain où chaque :::part fixe une entrée de palette : page de partie, verso peint, onglets, signes distinctifs et sommaire prennent sa couleur."
+plain: "Un guide de poche des oiseaux d’estuaire en deux parties, l’une brun vase, l’autre vert roseau. Il montre comment un seul réglage de couleur par partie teinte sa page d’ouverture, ses onglets, ses numéros de page et sa ligne de sommaire."
+description: "Un guide de terrain sur deux milieux d’estuaire, avec Postext. Chaque :::part fixe la couleur de sa page de partie, son verso peint, ses onglets, son sommaire."
+question: "Comment donner à chaque partie sa couleur, sa page de partie, son verso peint et son sommaire en couleur ?"
+aliases: ["guide de terrain", "parties", "couleurs de section", "sections codées par couleur", "page de partie", "verso peint", "onglet", "couleur de partie"]
+pageNotes: { "4": "La page 4 est le verso de la page de la partie I. Le texte la laisse blanche, et parts.versoDesign la peint de bord à bord dans le brun vase de la partie, avec l’onglet de la partie en réserve sur la tranche et son nom en pied.", "8": "La page 8 est le verso de la page de la partie II, peinte en vert roseau par la même maquette." }
+---
+
+## Ce que vous allez composer
+
+*Birds of the Estuary* est un guide de terrain de poche en deux parties, une par milieu. Les vasières s’impriment en brun vase et les roselières en vert roseau, et chaque couleur s’écrit une seule fois, dans le `:::part` qui ouvre son milieu. Chaque page de partie est un aplat à fond perdu avec un chiffre romain de 150 pt et les espèces du milieu listées en crème. Le verso du feuillet est peint assorti, avec l’onglet de la partie en réserve sur la tranche. Sur les pages d’espèces, l’onglet, le folio, le surtitre, le filet sous le nom latin, les signes distinctifs en gras, les puces et l’étiquette de la planche prennent la couleur de la partie. La table des matières s’ouvre sous un bandeau d’estuaire et donne à chaque partie un bandeau à sa couleur, avec le numéro de page de sa page de partie. La couverture, le bandeau et les quatre planches sont des peintures générées par des modèles de diffusion, chargées en images JPEG ; la palette d’une partie n’atteint pas les images, qui gardent leurs propres couleurs.
+
+## Préparation
+
+### 1 · Une entrée de palette que les parties remplacent
+
+<Excerpt region="palette" />
+
+Une partie remplace des entrées de palette par leur identifiant : tout ce qui doit changer avec le milieu est donc lié à une seule entrée, `band`. Sa propre valeur, un gris ardoise, ne s’imprime qu’hors des parties (le surtitre de la couverture et le titre de la note sous la table des matières), et aucune autre couleur de la configuration n’a le même code hexadécimal. `col()` donne à chaque couleur son `paletteId`, et c’est cet identifiant que suit le remplacement d’une partie, dans les styles de texte comme dans les éléments de maquette.
+
+### 2 · Une page de partie, son verso et sa liste
+
+Le code de cette étape est [la réponse courte](#la-réponse-courte) ci-dessus. Un `:::part` ouvre une [page de partie](/fr/docs/configuration-styles#parties) sur un recto, et `parts.design` la met en page sur tout le format. Le Markdown entre ses délimiteurs commence à 125 mm du bord supérieur, sous le titre : quelques lignes sur le milieu dans le style de paragraphe `habitat`, puis la liste de ses espèces en `bodyStyle`. `versoDesign` peint le verso du feuillet (l’aplat et l’onglet en réserve) seulement quand cette page est blanche, et `breakAfter: { parity: 'odd' }` la garde blanche en renvoyant la première espèce au recto suivant. `{numberRoman}` imprime le `number="I"` de la partie en chiffre romain (`"1"` imprimerait le même I), tandis que les espèces sont numérotées de 1 à 4 en chiffres arabes. Le `\\` du titre coupe la ligne sur la page de partie seulement ; la table des matières et les titres courants composent le titre sur une ligne.
+
+### 3 · Les accents du texte suivent la partie
+
+<Excerpt region="flow" />
+
+D’un `:::part` au suivant, toute couleur de texte égale à la valeur propre de `band` prend la valeur de la partie ([le conteneur `:::part`](/fr/docs/configuration-styles#le-conteneur-part)). Ici, ce sont les signes distinctifs en gras, les puces et les étiquettes des planches. Le texte courant et l’italique restent à l’encre. Les planches forment un type de ressource à part, étiqueté Plate et jamais remis à zéro : elles comptent de 1 à 4 au même rythme que les espèces.
+
+### 4 · L’ouverture d’espèce
+
+<Excerpt region="species" />
+
+L’ouverture d’espèce imprime trois attributs du titre : `status` dans le surtitre après le numéro, `size` à droite du surtitre et `latin` sous le nom. Le surtitre et le filet sous le nom latin sont liés à `band` : une seule maquette sert aux deux milieux. Le titre ne fixe pas de saut de page à lui : chaque espèce commence après un `:::pagebreak`, ou après le saut qui suit la partie, si bien que sa page compte comme page de texte et imprime les titres courants. La taille est composée sans les capitales de l’étiquette, parce que `cm` est un symbole d’unité.
+
+### 5 · Un bandeau par partie dans la table des matières
+
+<Excerpt region="contents" />
+
+`:::toc` donne une ligne à chaque `:::part` et y met en page `toc.parts.design` avec le numéro, le titre, la page de partie et la palette de cette partie ([table des matières](/fr/docs/configuration-notes-references#table-des-matières)) : le même encadré s’imprime en brun pour les vasières et en vert pour les roselières. Chaque ligne d’espèce sous un bandeau montre son numéro, des points de conduite et sa page, avec le nom latin tiré de l’attribut `latin` à la ligne suivante.
+
+### 6 · La partie dans les titres courants et l’onglet
+
+<Excerpt region="running-heads" />
+
+Avec `pages: 'body'`, les titres courants ne s’impriment que sur les pages de texte. Les pages de partie sont des pages `part` et leurs versos peints des pages `blank` ; la couverture et la table des matières s’ouvrent chacune sur un titre sur toute la largeur de la page, ce qui en fait des ouvertures. Le titre courant du recto imprime `{partTitle}` sur une ligne, et l’onglet sur la tranche imprime `{partNumber}` sur un encadré dont le fond est lié à `band`.
+
+## Variantes
+
+### Ajouter un troisième milieu
+
+Un bloc placé avant la première espèce des prés salés ajoute une troisième couleur, avec sa page de partie, son verso peint et sa ligne de sommaire, et la configuration ne change pas. Supprimez aussi la note sous la table des matières, car le troisième bandeau et ses espèces ont besoin de la place.
+
+```diff
++:::part{number="III" title="The \\ Saltmarsh" palette="band=#6b4a7a"}
++:::
++
++# Common Shelduck {latin="Tadorna tadorna" size="58–67 cm" status="Resident"}
+```
+
+### Mettre l’espèce en regard de la page de partie
+
+Sans le saut au recto suivant, la première espèce commence au verso de la page de partie : il ne reste aucun verso blanc à peindre pour `versoDesign`.
+
+```diff
+-  breakAfter: { parity: 'odd' },
+```
+
+## Erreurs fréquentes
+
+- Une partie recolore le texte en comparant des valeurs : toute couleur de texte égale à la valeur propre de `band` change avec la partie, même liée à une autre entrée ou à aucune. Réservez ce code hexadécimal à `band`.
+- L’onglet imprime `{partNumber}`, vide hors d’une partie : une page de texte placée avant le premier `:::part` reçoit un onglet ardoise vide. Gardez chaque page de texte à l’intérieur d’une partie.
+- Les images et les pastilles de couleur en ligne gardent les couleurs écrites en elles. Les planches tirent ici les couleurs de leur milieu de `HABITAT` dans le code : une nouvelle couleur dans un `:::part` doit y être ajoutée aussi.

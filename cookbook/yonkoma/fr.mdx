@@ -1,0 +1,48 @@
+---
+title: "Deux yonkoma sur une planche"
+summary: "Une planche de gags en quatre cases : deux colonnes de quatre cases, la bande de droite lue en premier, chacune titrée dans un cartouche noir en première case."
+plain: "Une planche de courtes bandes dessinées japonaises de quatre cases chacune, côte à côte comme les imprime un magazine de manga : on lit la bande de droite de haut en bas, puis celle de gauche."
+description: "Deux yonkoma (4 cases) sur une planche A5 dans Postext : un découpage pour les deux colonnes, lecture de droite à gauche, un titre par bande, huit lettrages."
+question: "Comment placer côte à côte deux yonkoma de quatre cases, la bande de droite lue en premier ?"
+aliases: ["yonkoma", "4 cases", "4-koma", "四コマ", "4コマ漫画", "bande en quatre cases", "strip", "gag en quatre cases", "manga en bandes", "café à chats", "neko café", "chibi", "de droite à gauche", "titre de bande", "maxColumnChars"]
+pageNotes: { "1": "L’original japonais : deux colonnes de quatre cases ; la colonne de droite, titrée 朝ごはん dans un cartouche noir, montre une patronne de café qui nourrit trois chats, celle de gauche, titrée いやし, une employée de bureau venue se faire apaiser par les chats.", "2": "L’édition française : les mêmes huit cases, titrées « Petit-déjeuner » et « Thérapie », les bulles composées en lignes horizontales : « Bonjour, tout le monde ! », « Un bol chacun, d’accord ? », « Je viens me faire soigner par les chats… » et, dans la dernière case, « Impossible de bosser. Trop heureux !! »." }
+---
+
+## Ce que vous allez composer
+
+Une planche d’une anthologie de yonkoma, ねこ喫茶まどろみ (*Café Roupillon*), écrite pour la recette et dessinée dans un style chibi tout en douceur : Mugi tient un café à chats avec un chat blanc, un chat noir et une chatte calico. Les yonkoma, bandes de quatre cases, sont le strip humoristique des journaux tourné d’un quart de tour : quatre cases égales empilées de haut en bas, exposition, développement, retournement, chute. Une planche de magazine en porte deux côte à côte, et comme la planche s’ouvre par la droite, la bande de droite vient en premier. La planche est en A5, 148 × 210 mm, avec l’original japonais d’un côté de la double page et l’édition dans la langue de cette page de l’autre (l’anglais sur la page japonaise).
+
+## Préparation
+
+### 1 · Découper la planche en deux colonnes de quatre cases
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Toute la planche est un seul `:::page` avec `split="* [* / * / * / *] | * [* / * / * / *]"` : deux colonnes égales, chacune découpée en quatre étages égaux. Les huit lignes `::panel` remplissent les cellules dans l’ordre de lecture : les quatre premières appartiennent donc à la première bande, et avec une lecture de droite à gauche la première colonne se place à droite (<Feature id="comic-panel-split">découpage de la planche</Feature>). La gouttière entre les bandes fait 9 mm et celle entre les cases 3 mm, si bien que l’œil descend une bande avant de passer à la suivante.
+
+### 2 · Titrer chaque bande dans sa première case
+
+<Excerpt region="balloons" />
+
+Un yonkoma a un titre, et une anthologie l’imprime dans un cartouche en tête de la bande. Ici, le titre est une ligne du script, `caption{title}: 朝ごはん`, et `title` est un style de bulle à part entière : blanc sur noir, collé à la bordure de la case dans le coin supérieur de début, qui est le coin supérieur droit dans ce livre. Il est lettré dans chaque édition comme n’importe quelle autre ligne : la page française affiche donc *Petit-déjeuner* et *Thérapie* dans les mêmes cartouches.
+
+### 3 · Marquer aussi les chats comme personnages qui parlent
+
+<Excerpt region="art" />
+
+Les chats parlent, `kuro: にゃ` : chaque image marque donc leur bouche et leur visage comme elle marque ceux de Mugi. Deux petites fonctions abrègent la liste : `cat()` pour un chat tourné vers le lecteur et `nose()` pour un chat dont le visage est enfoui dans une gamelle ou un coussin. Dans la troisième case, Mugi est hors champ, et sa réplique `mugi{tail=top}` reçoit un appendice qui va jusqu’au bord supérieur.
+
+### 4 · Charger les polices de chaque édition avec ses mots
+
+<Excerpt region="fonts" />
+
+Chaque police reçoit les mots qu’elle compose : Zen Antique les bulles, Dela Gothic One les onomatopées (ガツガツ, じーっ, すやぁ, ずしっ). Une case de yonkoma est plus large que haute : les colonnes japonaises s’arrêtent donc à six caractères (`maxColumnChars: 6`) et le lettrage est d’un demi-point plus petit que dans une planche de récit.
+
+### 5 · Placer l’original à côté de chaque édition
+
+<Excerpt region="editions" />
+
+Chaque langue du site lettre les bandes dans son propre fichier, face à l’original japonais sur la double page ; la page japonaise fait face à l’édition anglaise. L’ordre reste le même dans toutes les langues : la bande de droite d’abord.
+
+## Erreurs fréquentes
+
+- Dans une petite case, une bulle verticale manque de hauteur avant de manquer de largeur : le moteur la compose alors en colonnes plus nombreuses et plus courtes, en coupant entre les mots. Le dernier cri de l’employée reste trop haut pour la case du bas en japonais : il est donc marqué `break` (`kyaku{shout break}`), et il crève le cadre vers la case du dessus au lieu de couvrir les chats, sans entrer dans la marge de la page.
+- Une grande onomatopée se tient à l’écart des visages comme une bulle, et son point d’ancrage se trouve dans la zone sûre de la case, si bien que tout recadrage la garde : « POUF ! » se place à `70% 80%`, sur les pattes des chats. Le ずしっ japonais se compose à la verticale et il est plus haut ; à ce point-là, il couvrait le visage de la calico et la composition émettait l’avertissement `comicBalloonOverflow` : il se place donc à `86% 84%`, à côté d’elle.

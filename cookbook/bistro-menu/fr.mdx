@@ -1,0 +1,83 @@
+---
+title: "Carte de bistrot : les prix sur un taquet de tabulation"
+summary: "Une carte de bistrot recto verso : prix au fer à droite sur un taquet, vins dans un tableau sans filets et un filet laiton ancré de chaque côté des titres."
+plain: "Une carte recto verso pour un restaurant parisien imaginaire. On y voit comment pousser chaque prix contre le bord droit avec une tabulation, et comment composer une carte des vins dans un tableau sans lignes visibles."
+description: "La carte d’automne d’un bistrot parisien imaginaire, composée avec Postext : plats au recto, prix sur un taquet, vins au verso dans un tableau sans filets."
+question: "Comment aligner les prix d’une carte à droite, et composer les vins avec un en-tête et des rangs fusionnés ?"
+aliases: ["menu", "carte de restaurant", "carte", "carte des vins", "liste de prix", "taquets de tabulation", "taquet de tabulation", "tabulation à droite", "prix alignés à droite", "tableau sans filets", "tableau sans bordures", "pictogrammes alimentaires", "titre entre deux filets", "tab stop"]
+pageNotes: { "1": "Le recto de la carte sur papier crème : un store rayé lie-de-vin et paille sur une tringle en laiton, « Les Tanneurs » en Limelight lie-de-vin, et dessous « Bistrot parisien depuis 1931 » et « Carte d’automne 2026 ». Trois titres de service centrés, « Entrées », « Plats » et « Desserts », chacun entre deux filets laiton qui courent jusqu’aux marges et chacun au-dessus de quatre plats : le nom français en gras et sa garniture, une ligne anglaise en italique dessous et le prix en gras contre la marge droite. Quatre plats portent une pastille ronde vert foncé « V » et cinq une pastille au contour « SG ». En pied, deux petites lignes centrées : la légende des pastilles, puis l’origine du bœuf et une mention indiquant que le service est compris.", "2": "Le verso : deux verres, quatre bouteilles et une carafe sur une étagère en laiton au-dessus de « La Cave ». Une carte des vins aux colonnes « Appellation · cépage », « 12 cl » et « 75 cl », avec les régions « Bulles », « Blancs » et « Rouges » centrées sur toute sa largeur ; le saint-émilion a un tiret dans la colonne du verre. Dessous, « Le Comptoir », entre deux filets laiton, liste le kir, le pastis, la bière pression et le café, et un petit colophon centré court en pied." }
+---
+
+## Ce que vous allez composer
+
+La carte d’automne des Tanneurs, un bistrot parisien imaginaire : une feuille de 230 × 310 mm imprimée recto verso. Au recto, un store rayé surplombe le nom, composé en Limelight. Chaque titre de service se tient entre deux filets laiton qui courent jusqu’aux marges, avec quatre plats dessous. Un plat, c’est son nom français en gras avec la garniture, une ligne anglaise en italique dessous et le prix en gras, au fer à droite. Une pastille ronde vert foncé « V » signale les plats végétariens et une pastille au contour « SG » les plats sans gluten. Chaque plat est un paragraphe, et une tabulation envoie son prix sur un taquet placé contre la marge droite. Au verso, la carte des vins se trouve sous une étagère de bouteilles, avec les prix au verre et à la bouteille dans des colonnes intitulées « 12 cl » et « 75 cl », dans un tableau sans filets ni légende.
+
+## Préparation
+
+### 1 · Un taquet de tabulation là où va le prix
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque service est un groupe `:::paragraphs{style="dish"}`, un paragraphe par plat ([Styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)). Le style des plats a un seul taquet, à `'end'`, la fin de la longueur de ligne, avec `align: 'end'` : le texte qui suit une tabulation se termine sur le taquet. Ainsi, `:tab **7**` après la garniture et les pastilles envoie le prix au fer à droite, quelle que soit la longueur du plat ([Tabulations et taquets](/fr/docs/document-format#tabulations-et-taquets)). `:tab` absorbe les espaces qui l’entourent, et la barre oblique inverse en fin de ligne est un saut de ligne forcé : la ligne anglaise en italique commence donc une deuxième ligne du même paragraphe, et le prix reste sur la première. `spaceBetween` met une demi-ligne entre deux plats : chaque plat prend ainsi deux lignes et demie de l’interlignage de 14,5 pt. `indent` et `endIndent` d’un quart de ligne alignent les plats sur le texte des cellules de la carte des vins, au verso. Un paragraphe avec tabulations se compose ligne à ligne ; ici, de toute façon, chaque ligne est en drapeau.
+
+### 2 · Un type de ressource, sur place et jamais numéroté
+
+<Excerpt region="type" />
+
+Les types figure et tableau intégrés impriment une ligne de légende et font flotter chaque ressource jusqu’au premier emplacement libre après son premier renvoi. Le type `menu` n’a pas de préfixe de légende et ses pièces n’ont pas de légende : rien ne s’imprime sous les dessins ni sous la carte des vins. Donnez-lui `captionPrefix: 'Menu'` et une ligne numérotée s’imprime sous chaque pièce, en commençant par « Menu 1. » sous le store, ce qui porte la carte à quatre pages. `defaultPlacement` place la carte des vins et chaque dessin à leur ligne `::resource` ([Insertion en bloc](/fr/docs/document-format#insertion-en-bloc-facultative-placement-explicite-dans-le-texte)). Sans lui, la carte des vins flotte jusqu’au pied du verso, sous « Le Comptoir » et le colophon. Le store et les bouteilles sont des ressources SVG du même type, dessinées par le code et enregistrées avec le `loadSvg` du kit.
+
+### 3 · Fusionner les rangées des régions
+
+<Excerpt region="wines" />
+
+La carte des vins reste un tableau : ses deux prix se tiennent en colonnes sous leurs intitulés, « 12 cl » et « 75 cl », qu’une rangée de taquets laisserait sans en-tête. `parseTSV(tsv, { headerRows: 1 })` lit la première ligne comme rangée d’en-tête : « Appellation · cépage », « 12 cl » et « 75 cl » s’impriment au-dessus de leurs colonnes dans le caractère de l’en-tête, Josefin Sans. Une ligne à un seul champ nomme une région. Sa cellule devient une cellule d’en-tête centrée, et `mergeCells` l’étend sur les trois colonnes et marque `hiddenBy` les deux cellules qu’elle recouvre ([Construire des modèles de tableau](/fr/docs/configuration-resources#construire-des-modèles-de-tableau)). Centré dans la seule première colonne, « BLANCS » se tiendrait 22,6 mm à gauche de l’axe sur lequel sont centrés « La Cave » et « Le Comptoir ». Une ligne vide dans le TSV devient une rangée de cellules vides, haute d’une ligne et demie, et cette rangée forme le blanc au-dessus de « Blancs » et de « Rouges ».
+
+### 4 · Accrocher un filet de chaque côté du titre de service
+
+<Excerpt region="heads" />
+
+Un titre de service est une maquette dans la colonne. L’élément `{titleText}` n’a pas de largeur : sa boîte est donc aussi large que ses capitales, et l’ancre `'top'` la centre sur la colonne. Chaque filet s’accroche à un bord du titre avec `'left-of'` ou `'right-of'` et s’étend jusqu’au bord de la colonne ([Placement des éléments](/fr/docs/configuration-page-layout#placement-des-éléments)) : les filets de part et d’autre de « PLATS » mesurent ainsi 66,7 mm et ceux de « LE COMPTOIR » 56,2 mm, chacun à 4 mm des lettres. Le `lineHeight` du titre est un multiple, 0,96, qui donne à sa boîte 14,4 pt et la garde dans une seule ligne de grille de 14,5 pt. À 1, la boîte mesure 15 pt, chaque titre prend deux lignes et la carte passe à quatre pages.
+
+### 5 · Les pictogrammes en pastilles, les petites lignes en styles de paragraphe
+
+<Excerpt region="badges" />
+
+Une pastille dessine une boîte autour d’un passage de texte dans la ligne ([Styles de pastille](/fr/docs/configuration-styles#styles-de-pastille)) : `:chip[V]{style="veg"}` saisi après la garniture place donc le rond sur la ligne française du plat, avant la tabulation. Les styles de pastille règlent `bold: true` parce qu’une pastille prend la graisse du texte qui l’entoure, 400 après une garniture, et que `FONTS` ne charge Josefin Sans qu’en 700. Les notes sous les desserts et le colophon du verso sont des blocs `:::paragraphs` en 9 et 7,5 pt, et les deux styles portent une `marginTop` d’une ligne ([Styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)). Sans cette marge, les notes commencent à la ligne qui suit la ligne anglaise de l’assiette de fromages, comme si elles appartenaient au plat.
+
+### 6 · Centrer la carte sur un seul axe
+
+<Excerpt region="centred" />
+
+`headings.textAlign` et `bodyText.textAlign` placent tout sauf les plats et la carte des vins sur l’axe central de la carte. `lineHeight: pt(3 * LEAD)` donne au nom de 48 pt trois lignes de grille. Sans lui, le nom prend l’interlignage par défaut et quatre lignes, la deuxième ligne de notes passe sur une page à elle et la carte passe à quatre pages. Le niveau 1 désactive le saut avant le H1, `breakBefore: { enabled: false }`, parce que le nom et « La Cave » appartiennent à la page du dessin qui les surmonte. Gardez la valeur par défaut, `{ enabled: true, parity: 'always-odd' }`, et chaque dessin se retrouve seul sur une page, sept pages en tout. La configuration ne règle aucune `locale` : rien n’est justifié sur cette carte, et le texte en drapeau n’est coupé que si `bodyText.hyphenation.ragged` est actif.
+
+## Variantes
+
+### Arrêter les filets à une longueur fixe
+
+Une largeur fixe à la place de `'fill'` garde chaque filet à 20 mm de long et à 4 mm du titre : la paire se tient alors plus près du centre à côté de « PLATS » qu’à côté de « LE COMPTOIR ».
+
+```diff
+-    size: { width: 'fill' }, // to the column's edge
++    size: { width: mm(20) }, // 20 mm, wherever the title ends
+```
+
+### Mener des points de conduite jusqu’au prix
+
+Des points de conduite remplissent l’espace avant le taquet. `'. '` répète un point et une espace, d’un demi-em après la dernière pastille ou le dernier mot du plat jusqu’à un demi-em avant son prix.
+
+```diff
+-  tabStops: [{ position: 'end', align: 'end' }],
++  tabStops: [{ position: 'end', align: 'end', leader: '. ' }],
+```
+
+### Tracer des filets de registre sur la carte des vins
+
+`rules: 'horizontal'` trace un filet laiton de 0,5 pt au-dessus et au-dessous de chaque rangée de la carte des vins. Les filets ne prennent pas de place : les deux faces gardent leur mise en page, et les rangées vides au-dessus de « Blancs » et de « Rouges » reçoivent leur propre paire de filets.
+
+```diff
+-const tableStyle = { rules: 'none', cellPadding: pt(LEAD / 4), // a row: 1½ lines of LEAD
++const tableStyle = { rules: 'horizontal', borderColor: col('brass'),
++  borderWidth: pt(0.5), cellPadding: pt(LEAD / 4),
+```
+
+## Erreurs fréquentes
+
+Laissez de la place au prix sur la première ligne du plat. Quand le plat et la garniture dépassent l’endroit dont le prix a besoin, le taquet emporte le dernier mot du plat à la ligne suivante avec le prix, et la ligne anglaise vient après eux : le plat prend alors trois lignes et le service se termine une ligne plus bas.

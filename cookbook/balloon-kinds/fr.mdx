@@ -1,0 +1,62 @@
+---
+title: "Toutes les sortes de bulles sur une page de phare"
+summary: "Une page de BD avec parole, pensée, murmure, cri, radio, récitatif, voix intérieure, note de l’éditeur et onomatopées, chacune nommée entre accolades."
+plain: "Une page de bande dessinée sur un sauvetage dans la tempête qui emploie toutes les sortes de bulles, avec la feuille de style d’un lettreur qui montre comment chacune s’écrit dans le script."
+description: "Une page de BD dans Postext avec toutes les bulles : parole, pensée, murmure, cri, radio, récitatifs, voix intérieure, notes, onomatopées, hors champ, épinglée."
+question: "Comment lettrer pensée, murmure, cri et radio, et pointer chaque appendice vers son locuteur ?"
+aliases: ["bulle", "phylactère", "bulle de dialogue", "bulle de pensée", "bulle de murmure", "bulle d’explosion", "bulle radio", "récitatif", "cartouche", "onomatopée", "SFX", "hors champ", "appendice", "speech balloon", "bocadillo", "吹き出し", "对话框"]
+pageNotes: { "1": "La feuille de style : le titre « Feuille de style du lettrage » en capitales de titrage rouges, puis douze sortes de bulles, chacune avec son balisage de script dans une pastille jaune.", "2": "La page : un appel radio dans la chambre de la lanterne avec un récitatif, une bulle radio en dents de scie et une note de l’éditeur ; Maya qui chuchote « Tout va bien, Biscuit. » au chat, lequel pense « Tu es sûre ? » dans un nuage ; le gardien qui crie « Gannet ! Cap sur la lumière ! » dans une bulle en éclat ; le chalutier dans la tempête avec KRA-BOUM en rouge ; Maya à la fenêtre avec « Allez. Allez. Allez. » dans un cartouche gris de voix intérieure ; le lendemain matin sur les rochers, avec les bulles liées « Disons deux. » et « Une pour le chat. »." }
+---
+
+## Ce que vous allez composer
+
+La page 7 du *Phare de Porthcove*, une bande dessinée sur une nuit de tempête dans un phare, précédée de la feuille de style du lettreur. Un chalutier perd son moteur, le gardien le guide par radio, Maya attend avec le chat, et au matin le patron de pêche les remercie. La page emploie toutes les sortes de bulles que dessine Postext : parole, paroles jointes, pensée, murmure, cri, radio, récitatifs de narration, voix intérieure, note de l’éditeur, onomatopée, voix hors champ et bulle épinglée. Le format est celui d’un comic book américain, 168 × 259 mm, et la page existe en huit langues.
+
+## Préparation
+
+### 1 · Nommez la sorte de bulle dans la ligne du script
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Une ligne du script s’écrit `speaker{kind}: text`, et la sorte est l’id d’un style de bulle. Les neuf styles intégrés couvrent les sortes habituelles : un ovale à appendice courbe pour la parole, un nuage à bulles pour la pensée, un contour en tirets pour un murmure, une explosion à appendice en coin pour un cri, un contour en dents de scie à appendice en zigzag pour une voix qui passe par une radio ([styles de bulle](/fr/docs/comics#styles-de-bulles)). Un style de la configuration portant le même id ne change que ce qu’il nomme : ici la couleur du trait, le jaune des récitatifs et les 16 pointes de l’explosion. `caption`, `note` et `sfx` sont des locuteurs réservés : des cartouches de narration calés dans un coin, la note de l’éditeur à 0,8 fois la taille, et des lettres de titrage sans bulle.
+
+<PageShot page={2} crop="0,0,1,0.34" caption="L’appel radio : un récitatif, la bulle radio du patron pointée vers le poste, la réponse du gardien et la note de l’éditeur." />
+
+### 2 · Pointez chaque appendice vers un locuteur
+
+<Excerpt region="art" />
+
+Chaque image porte des ancres exprimées en fractions de l’image : la bouche que vise un appendice de parole, la tête que vise une pensée, le visage qu’aucune bulle ne doit couvrir ([locuteurs et ancres](/fr/docs/comics#locuteurs-et-ancres)). Le patron de pêche n’est jamais dessiné : son ancre dans l’image de la tempête est le poste de radio, dans l’image de la mer son bateau. Quand le locuteur n’est pas dans la case, `tail=right` (ou `left`, `top`, `bottom`) fait courir l’appendice jusqu’à ce bord, et `at="44% 22%"` épingle le centre d’une bulle à un point de l’image : elle y reste, quel que soit le recadrage. Deux lignes de suite d’un même locuteur se joignent en un seul contour avec un seul appendice. `left` et `right` sont des côtés de l’image : les huit éditions écrivent donc la même ligne pour le gardien dans la case de la mer, dont le phare se dresse à droite de l’image, `tail=right`, que la page se lise de gauche à droite ou de droite à gauche. `start` et `end` suivent au contraire le sens de lecture de la page.
+
+### 3 · Donnez à un personnage une voix bien à lui
+
+La distribution de la réponse courte donne à chaque ligne `skipper:` le style radio : le script ne répète donc jamais `{radio}`. Une ligne peut toujours en décider autrement : dans la case du matin, le patron appelle depuis son bateau, `skipper{speech tail=bottom}:`, dans une bulle ordinaire dont l’appendice sort par le pied de la case.
+
+### 4 · Lettrez chaque édition dans ses propres caractères
+
+<Excerpt region="editions" />
+
+La même page existe en huit langues : `content.<lang>.md` ne contient que les mots. Les bulles japonaises sont composées verticalement en Zen Antique et leurs onomatopées en Dela Gothic One, les bulles arabes en Playpen Sans Arabic avec Lalezar pour le tonnerre. L’italique et le gras s’appliquent là où le caractère les possède : la voix intérieure est en italique en français, en romain en japonais ([lettrage](/fr/docs/comics#lettrage)).
+
+## Variantes
+
+### Employez une bulle ondulée pour une voix malade ou faible
+
+Tout autre id devient un style à part entière, posé par-dessus la bulle de parole.
+
+```diff
+ const balloonStyles = [
++  { id: 'weak', shape: 'wavy', stroke: col('ink'), fontScale: 0.9 }, // maya{weak}: …
+   { id: 'speech', stroke: col('ink') },
+```
+
+### Joignez plutôt deux lignes par un col
+
+```diff
+-  lettering: { fontFamily: LETTERING, fontSize: pt(7.5), color: col('ink'), inset: mm(1) },
++  lettering: { fontFamily: LETTERING, fontSize: pt(7.5), color: col('ink'), inset: mm(1),
++    joinSameSpeaker: 'connector' },
+```
+
+## Erreurs fréquentes
+
+- Une épingle est un point de l’image, conservé quel que soit le recadrage. Une onomatopée épinglée si près du bord qu’elle sortirait de la case (« KRA-BOUM » à `at="16% 28%"`) est ramenée à l’intérieur : elle peut donc se trouver un peu à côté du point indiqué.
+- Une voix hors champ est lettrée près du bord vers lequel pointe son appendice : les remerciements du patron, `tail=bottom`, se placent au pied de la case du matin bien qu’ils soient la première ligne de la case. Pointez l’appendice vers le bord supérieur quand une telle ligne doit être lue en premier.

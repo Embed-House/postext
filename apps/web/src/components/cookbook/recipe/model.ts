@@ -188,9 +188,10 @@ export function formatDate(iso: string, locale: Locale): string {
   }).format(date);
 }
 
-/** Bytes as whole kilobytes ("212 KB"). */
+/** Bytes as whole kilobytes ("212 KB", French "212 Ko"). */
 export function formatKb(bytes: number, locale: Locale): string {
-  return `${new Intl.NumberFormat(locale).format(Math.max(1, Math.round(bytes / 1024)))} KB`;
+  const n = new Intl.NumberFormat(locale).format(Math.max(1, Math.round(bytes / 1024)));
+  return locale === "fr" ? `${n}\u00a0Ko` : `${n} KB`;
 }
 
 /** Licences by id: name and deed. */

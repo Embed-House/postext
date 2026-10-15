@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "manga-right-to-left",
-  "sourceHash": "19eaedbf3c66462877437f5d74a68e4158cce241b463a697cda608c6995fa997",
+  "sourceHash": "82153acc14b9ec03a98e49b7dccd168547ac46f4e5017165ebe5fde2061de47c",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.33.4",
+    "postextPdf": "1.33.4",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:43:56.594Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:01:22.682Z"
-  },
+  "chrome": "155.0.8059.79",
+  "capturedAt": "2026-10-15T08:05:41.627Z",
   "variants": {
     "en": {
-      "hash8": "06a79cfd",
+      "hash8": "f9197abc",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 680,
-        "fontsMs": 698,
-        "buildMs": 1033,
-        "totalMs": 3795,
+        "importMs": 3548,
+        "fontsMs": 5678,
+        "buildMs": 972,
+        "totalMs": 14021,
         "builds": 2
       },
       "specimen": {
@@ -42,7 +36,7 @@
         },
         "families": [],
         "pages": 4,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -120,7 +114,7 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410341,
+        "bytes": 1410362,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -260,6 +254,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -273,13 +272,13 @@
       }
     },
     "es": {
-      "hash8": "309ca278",
+      "hash8": "7c589497",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 433,
-        "fontsMs": 862,
-        "buildMs": 1154,
-        "totalMs": 3525,
+        "importMs": 3513,
+        "fontsMs": 5622,
+        "buildMs": 1005,
+        "totalMs": 13240,
         "builds": 2
       },
       "specimen": {
@@ -298,7 +297,7 @@
         },
         "families": [],
         "pages": 4,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -376,7 +375,7 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410472,
+        "bytes": 1410493,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -516,6 +515,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -529,13 +533,13 @@
       }
     },
     "ca": {
-      "hash8": "e672ace0",
+      "hash8": "7481e12c",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 377,
-        "fontsMs": 719,
-        "buildMs": 1155,
-        "totalMs": 3470,
+        "importMs": 3380,
+        "fontsMs": 3596,
+        "buildMs": 1069,
+        "totalMs": 13020,
         "builds": 2
       },
       "specimen": {
@@ -554,7 +558,7 @@
         },
         "families": [],
         "pages": 4,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -632,7 +636,7 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410463,
+        "bytes": 1410484,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -772,6 +776,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -785,13 +794,13 @@
       }
     },
     "zh": {
-      "hash8": "ff80d035",
+      "hash8": "22c8e1bd",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 377,
-        "fontsMs": 716,
-        "buildMs": 976,
-        "totalMs": 3543,
+        "importMs": 3543,
+        "fontsMs": 4859,
+        "buildMs": 1010,
+        "totalMs": 16697,
         "builds": 2
       },
       "specimen": {
@@ -810,7 +819,7 @@
         },
         "families": [],
         "pages": 4,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -883,12 +892,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1542676,
+        "bytes": 1542663,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410574,
+        "bytes": 1410595,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -1028,6 +1037,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1041,13 +1055,13 @@
       }
     },
     "ar": {
-      "hash8": "ce3b9579",
+      "hash8": "f7e8416a",
       "vdtHash": "c4f6386f59669ebec0168fbe2ea7e1b804875630",
       "timings": {
-        "importMs": 365,
-        "fontsMs": 480,
-        "buildMs": 969,
-        "totalMs": 2971,
+        "importMs": 4597,
+        "fontsMs": 4654,
+        "buildMs": 1028,
+        "totalMs": 16103,
         "builds": 2
       },
       "specimen": {
@@ -1066,7 +1080,7 @@
         },
         "families": [],
         "pages": 4,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -1144,7 +1158,7 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410789,
+        "bytes": 1410810,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -1284,6 +1298,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1297,13 +1316,13 @@
       }
     },
     "ja": {
-      "hash8": "902dcd69",
+      "hash8": "1f6eebd6",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 1027,
-        "fontsMs": 976,
-        "buildMs": 1304,
-        "totalMs": 4890,
+        "importMs": 2493,
+        "fontsMs": 2771,
+        "buildMs": 965,
+        "totalMs": 11544,
         "builds": 2
       },
       "specimen": {
@@ -1322,7 +1341,7 @@
         },
         "families": [],
         "pages": 4,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -1400,7 +1419,7 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410554,
+        "bytes": 1410557,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -1540,6 +1559,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1558,13 +1582,13 @@
       }
     },
     "pt": {
-      "hash8": "c181ead6",
+      "hash8": "fa9fc3d9",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 386,
-        "fontsMs": 339,
-        "buildMs": 941,
-        "totalMs": 2692,
+        "importMs": 3205,
+        "fontsMs": 4767,
+        "buildMs": 957,
+        "totalMs": 15119,
         "builds": 2
       },
       "specimen": {
@@ -1583,7 +1607,7 @@
         },
         "families": [],
         "pages": 4,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -1661,7 +1685,7 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410454,
+        "bytes": 1410475,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -1800,6 +1824,272 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          }
+        ]
+      }
+    },
+    "fr": {
+      "hash8": "74ca155e",
+      "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
+      "timings": {
+        "importMs": 4554,
+        "fontsMs": 4967,
+        "buildMs": 950,
+        "totalMs": 14733,
+        "builds": 2
+      },
+      "specimen": {
+        "trimMm": [
+          128,
+          182
+        ],
+        "dpi": 150,
+        "layoutType": "double",
+        "gutterMm": 7.5,
+        "mirror": true,
+        "body": {
+          "family": "Zen Antique",
+          "sizePt": 9,
+          "leadingPt": 15
+        },
+        "families": [],
+        "pages": 4,
+        "ownLines": 137
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "comic",
+          "w": 1000,
+          "h": 1422,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 175026,
+          "alt": "Page 1."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "comic",
+          "w": 1000,
+          "h": 1422,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 164510,
+          "alt": "Page 2."
+        },
+        {
+          "n": 3,
+          "label": "1",
+          "role": "comic",
+          "w": 1000,
+          "h": 1422,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 179222,
+          "alt": "Page 1."
+        },
+        {
+          "n": 4,
+          "label": "2",
+          "role": "comic",
+          "w": 1000,
+          "h": 1422,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 181934,
+          "alt": "Page 2."
+        }
+      ],
+      "spreads": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "binding": "right",
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "manga-right-to-left.pdf",
+        "bytes": 1522528,
+        "pages": 4
+      },
+      "sandbox": {
+        "file": "manga-right-to-left.postext",
+        "bytes": 1410545,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 2,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "a5dc34310710e4db",
+            "lines": "a5dc34310710e4db"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "loadVerticalAlternates",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceColor",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.artDirection",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].haloColor",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].italic",
+          "comics.balloonStyles[].roundness",
+          "comics.balloonStyles[].stroke",
+          "comics.balloonStyles[].strokeWidth",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.writingMode",
+          "comics.mirrorArt",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.binding",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headings",
+          "locale",
+          "page"
+        ],
+        "configLeaves": 79,
+        "designElements": 0,
+        "directives": [
+          ":::page"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 9,
+          "table": 0
+        },
+        "fonts": [],
+        "features": [
+          "balloon-styles",
+          "cjk-line-breaking",
+          "comic-lettering",
+          "comic-pages",
+          "comic-panel-art",
+          "comic-panel-split",
+          "comic-panel-styles",
+          "comic-reading-direction",
+          "furigana",
+          "page-background",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "right-binding",
+          "ruby",
+          "sound-effects",
+          "tate-chu-yoko"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

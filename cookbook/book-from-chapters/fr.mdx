@@ -1,0 +1,78 @@
+---
+title: "Un livre à partir de chapitres séparés"
+summary: "buildBundle compose cinq fichiers Markdown en un seul livre : chaque chapitre s’ouvre sur un recto, et les numéros de page, de chapitre et de figure se suivent."
+plain: "Un petit manuel d’apiculture écrit en fichiers séparés, un par chapitre. Postext les réunit en un seul livre, et les numéros de page, de chapitre et d’image continuent d’un fichier à l’autre."
+description: "Un manuel d’apiculture en quatre saisons, composé avec buildBundle à partir d’un fichier Markdown par chapitre ; sa table donne le folio de chaque chapitre."
+question: "Comment composer un livre chapitre par chapitre avec une numérotation suivie des pages, chapitres et figures ?"
+aliases: ["livre en plusieurs chapitres", "chapitres dans des fichiers séparés", "numérotation continue des pages", "numérotation suivie", "chapitre sur une belle page", "chapitre sur un recto", "table des matières du livre", "PDF du livre entier", "buildBundle"]
+pageNotes: { "6": "La page 6 est laissée blanche : « Winter » remplit une seule page, « Spring » s’ouvre donc à la page 7, la belle page suivante, et le verso qui les sépare n’a ni titre courant ni folio.", "11": "La page 11 est la seule belle page de texte du livre : son titre courant indique « SUMMER », le titre du chapitre, à côté du folio." }
+---
+
+## Ce que vous allez composer
+
+*A Beekeeper’s Year* est un petit manuel en quatre chapitres, un par saison. Il s’ouvre sur « Autumn », puisque l’année de l’apiculteur commence quand on retire le dernier miel. Chaque chapitre est un fichier Markdown séparé qui ne contient aucun numéro de page, de chapitre ni de figure. `buildBundle` reporte ces compteurs d’un fichier au suivant et compose les chapitres, avec un cinquième fichier pour la couverture et la table des matières, en un seul livre de onze pages. Chaque chapitre s’ouvre sur une belle page, sous un coin de rayon de miel qui porte son numéro. La table des matières, sur le verso en face d’« Autumn », reflète cette ouverture avec son titre contre le petit fond, et donne le folio de chaque chapitre. Un cadre de couvain, dessiné par le code, paraît une fois dans chaque chapitre, des figures 1.1 à 4.1. La page 6 reste blanche parce que « Winter » remplit une seule page et que « Spring » doit s’ouvrir sur un recto.
+
+## Préparation
+
+### 1 · Un fichier par chapitre
+
+<Excerpt region="chapters" />
+
+Chaque saison est un document à part : vous pouvez réécrire un chapitre sans ouvrir les autres. Le premier document contient le frontmatter, la couverture et la table des matières. Ses métadonnées sont celles du livre : `{title}` et `{author}` les impriment dans chaque chapitre, et le PDF en tire son titre et son auteur.
+
+### 2 · Des règles qui passent d’un document à l’autre
+
+Le code de cette étape est [la réponse courte](#la-réponse-courte) plus haut. [`buildBundle`](/fr/docs/configuration-programmatic-usage#mettre-en-page-et-rendre-un-paquet) met en page les documents dans l’ordre avec une même configuration et transmet à chacun une `continuation` issue des précédents : le nombre de pages physiques déjà composées, pour que la parité, les marges en miroir et les titres courants pairs et impairs se poursuivent ; le folio suivant ; et les compteurs de chapitres et de figures. Avec `parity: 'odd'`, un chapitre qui suit un chapitre terminé sur un recto commence par un verso blanc, et ce blanc appartient à son propre document ([saut avant](/fr/docs/configuration-text#saut-avant)). La couverture et la table des matières sont des [styles de titre](/fr/docs/configuration-styles#styles-de-titre) avec `numbered: false` : « Autumn » reste donc le chapitre 1. Toutes deux héritent `span: 'page'` du niveau des chapitres, ce qui place chacune sur sa propre page sans `:::pagebreak`. Le style de la table désactive la parité héritée, qui laisserait sinon la page 2 blanche.
+
+### 3 · Une table des matières pour tout le livre
+
+<Excerpt region="contents" />
+
+`:::toc` se trouve dans le premier document mais liste les chapitres et les sections de tout le livre. `buildBundle` met le livre en page, recueille chaque titre avec le libellé de page qu’il a reçu, et remet le livre en page avec ce plan jusqu’à ce que les libellés ne bougent plus, en trois passes au plus ([table des matières](/fr/docs/configuration-notes-references#table-des-matières)). Les mois sous chaque titre viennent d’un attribut du titre, `{months="…"}`, que l’ouverture imprime aussi.
+
+### 4 · Une ouverture, reflétée pour la table des matières
+
+<Excerpt region="opener" />
+
+`{chapterNumber}` poursuit le compte des documents mis en page avant : l’ouverture de « Spring » imprime 3 alors que son fichier ne contient aucun numéro. La boîte du numéro est calculée à partir du centre de son alvéole, et le numéro comme le rayon pendent du coin supérieur droit du fond perdu : changer le format ou ajouter un fond perdu pour l’impression les déplace ensemble. Sur la page de la table, le surtitre, lu dans `{subtitle}`, et le titre sont composés au fer à droite contre le petit fond, et le rayon passe au coin extérieur du verso. Son titre se place alors à la même hauteur que celui d’« Autumn » sur la page en vis-à-vis.
+
+### 5 · Des titres courants dans chaque document
+
+<Excerpt region="running-heads" />
+
+Seul le premier document a un frontmatter, et `buildBundle` le transmet à chaque chapitre : le titre courant du verso imprime donc le `{title}` du livre dans les cinq documents. `{chapterTitle}` et `{pageNumber}` sont résolus page par page et s’impriment dans chaque document ; la page 11, la seule belle page de texte, porte « SUMMER » à côté de son folio. `pages: 'body'` tient tous les titres courants à l’écart des ouvertures et de la page blanche.
+
+### 6 · Des doubles pages à l’écran, un seul PDF pour le livre
+
+<Excerpt region="build" />
+
+`buildBundle` renvoie un tableau de documents, un par fichier Markdown. `showPages` apparie les pages selon `pageIndexOffset + page.index` : la page 1 est seule, en recto, et les pages 2 et 3, 4 et 5, et ainsi de suite, se font face. `renderToPdf` prend le même tableau et écrit un seul fichier avec les libellés de pages du livre et un signet pour chaque chapitre et chaque section.
+
+## Variantes
+
+### Imprimer un chapitre avec ses folios du livre
+
+Passez un seul document à `renderToPdf` pour épreuver « Spring » seul, toujours numéroté de 6 à 8 comme dans le livre. La page blanche 6 vient avec lui, parce qu’un verso blanc devant une ouverture appartient au chapitre qui s’ouvre après lui.
+
+```diff
+-offerPdf(() => renderToPdf(docs, { fontProvider: fontsourceProvider, resourceBytes: imageBytes }),
++offerPdf(() => renderToPdf(docs[3], { fontProvider: fontsourceProvider, resourceBytes: imageBytes }),
+```
+
+### Numéroter les figures en continu dans tout le livre
+
+Un compteur de figures qui ne se remet jamais à zéro numérote les quatre cadres de 1 à 4 d’un document à l’autre, au lieu de 1.1 à 4.1.
+
+```diff
+   buildBundle, prepareFonts, withLoadedFonts, renderPageToCanvas, registerResourceImage,
++  defaultResourceTypes,
+@@
+   locale: t({ en: 'en-us', es: 'es' }),
++  resourceTypes: defaultResourceTypes(LANG)
++    .map((type) => ({ ...type, numberingTemplate: '{n}', resetOn: 'never' })),
+```
+
+## Erreurs fréquentes
+
+- En haut d’une page, et sous une figure qui en occupe la tête, un intertitre perd sa `marginTop`. Un intertitre qui tire son espace de la marge se tient une ligne au-dessus de son texte à ces deux endroits et une ligne et demie partout ailleurs. Ici, l’espace est dans la ligne même de l’intertitre : `lineHeight` vaut une ligne et demie et la marge une ligne, si bien que chaque intertitre du livre se tient à la même distance de son texte.
+- Par défaut, une ligne justifiée peut étirer ses espaces jusqu’au double de leur largeur, et l’algorithme de coupure préfère cela à une césure. Avec cette valeur par défaut, l’édition anglaise n’avait aucune césure, et des lignes aux espaces presque deux fois plus larges que la normale côtoyaient des lignes serrées à 0,7. `maxWordSpacing: 1.7` fait couper l’algorithme à la place. Après l’avoir modifié, vérifiez la dernière ligne de chaque paragraphe : une limite plus stricte peut y laisser un mot seul, et reformuler quelques mots du paragraphe règle le problème.

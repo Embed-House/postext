@@ -33,7 +33,8 @@ describe("recipeBundleCandidates (#737)", () => {
     expect(recipeBundleCandidates("a-recipe", null)).toEqual(urls("a-recipe", "en", "es"));
     expect(recipeBundleCandidates("a-recipe", "")).toEqual(urls("a-recipe", "en", "es"));
     expect(recipeBundleCandidates("a-recipe", "de")).toEqual(urls("a-recipe", "en", "es"));
-    expect(recipeBundleCandidates("a-recipe", "fr-CA")).toEqual(urls("a-recipe", "en", "es"));
+    expect(recipeBundleCandidates("a-recipe", "it-CH")).toEqual(urls("a-recipe", "en", "es"));
+    expect(recipeBundleCandidates("a-recipe", "fr-CA")).toEqual(urls("a-recipe", "fr", "en", "es"));
   });
 
   it("refuses a slug that is not a recipe's", () => {

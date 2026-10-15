@@ -1,0 +1,51 @@
+---
+title: "Lettre commerciale selon la norme DIN 5008"
+summary: "Un devis allemand de deux pages A4. L’objet est le H1, et sa maquette fixe l’en-tête, l’adresse et le bloc d’informations aux positions de la forme B."
+plain: "Un devis de deux pages d’un atelier allemand de fenêtres. Il montre comment placer l’adresse et les autres éléments d’une lettre commerciale là où la norme allemande les met, pour une enveloppe à fenêtre."
+description: "Lettre commerciale DIN 5008 avec Postext : adresse dans la fenêtre de l’enveloppe, bloc d’informations, repères de pliage, mentions légales, Seite 2 von 2."
+question: "Comment fixer l’adresse et le bloc d’informations d’une lettre aux positions en millimètres de la DIN 5008 ?"
+aliases: ["lettre commerciale", "DIN 5008", "forme B", "fenêtre d’enveloppe", "enveloppe à fenêtre", "zone d’adresse", "papier à en-tête", "adresse de l’expéditeur", "bloc d’informations", "repères de pliage", "repère de perforation", "page 2 sur 2", "signature", "devis", "business letter", "Geschäftsbrief"]
+pageNotes: { "1": "La première feuille d’un devis allemand de la Fensterwerkstatt Tessin. Un bandeau bleu de Berlin en haut porte le dessin blanc d’une fenêtre à double châssis, le nom « Tessin » avec « FENSTERWERKSTATT · BERLIN » dessous, et les trois spécialités de l’atelier à droite. Sous le bandeau, la ligne d’expéditeur et une adresse de quatre lignes se placent dans quatre petites équerres d’angle, et le bloc d’informations descend à droite, la date à part. L’objet en gras cite le devis 2026-117 pour 24 fenêtres à double châssis. Le texte justifié est coupé selon les règles allemandes (« mundgebla-sene » termine la quatrième ligne du premier paragraphe) et se clôt sur une liste de six prestations. Des repères gris de pliage et de perforation se trouvent sur le bord gauche, et les mentions légales de l’entreprise courent sur trois colonnes en pied de page.", "2": "La seconde feuille porte une fine bande bleue en haut et, dessous, une ligne avec le nom de l’entreprise, la référence et la date, et « Seite 2 von 2 » à droite. Le texte donne le prix et le calendrier, et propose d’apporter un châssis restauré à l’assemblée des copropriétaires. Viennent ensuite « Mit freundlichen Grüßen », une signature au stylo bille bleu, le nom et la fonction, et trois pièces jointes sous « Anlagen ». Les repères de pliage et de perforation et les mentions légales se répètent comme sur la première feuille." }
+---
+
+## Ce que vous allez composer
+
+La Fensterwerkstatt Tessin, un atelier berlinois imaginaire qui restaure des fenêtres à double châssis, envoie un devis au syndic d’un immeuble. Il tient sur deux feuilles A4 en allemand, mises en page selon la forme B de la DIN 5008. Un bandeau bleu de Berlin en haut porte le logo et le nom de l’atelier. Dessous, chaque élément se place là où la norme le met : la ligne d’expéditeur et l’adresse dans la zone de 85 × 45 mm visible par la fenêtre d’une enveloppe DL, le bloc d’informations à 125 mm du bord gauche, l’objet en gras deux lignes blanches sous la zone d’adresse, et les repères de pliage et de perforation à 105, 148,5 et 210 mm. Les mentions légales de l’entreprise courent sur trois colonnes au pied des deux feuilles. La seconde feuille répète la référence à côté de « Seite 2 von 2 » et se termine sur une signature dessinée en code.
+
+## Préparation
+
+### 1 · Fixer la première page sur la feuille, en millimètres
+
+<Excerpt region="answer" highlight="1-4" />
+
+`at()` ancre un élément par son coin supérieur gauche à `'page'`, le format rogné ([placement des éléments](/fr/docs/configuration-page-layout#placement-des-éléments)) : chaque `x` et chaque `y` est une distance depuis le coin de la feuille, et les cotes de la norme s’écrivent telles quelles : l’adresse à 25 mm en largeur et 62,7 mm en hauteur, la première étiquette du bloc d’informations à 125 et 50. Ces éléments forment la maquette du H1. Le texte du titre est l’objet (`{titleText}`) et ses attributs contiennent l’adresse et les références : la configuration contient le papier à en-tête, et le Markdown la lettre. L’objet, à 100,6 mm, est l’élément le plus bas : le titre réserve donc la feuille jusqu’au pied de l’objet. `marginBottom` ajoute les deux lignes blanches, et la formule d’appel commence sur la ligne suivante de la grille, à 117 mm.
+
+L’adresse est un seul attribut avec `\n` entre ses lignes, et chaque `\n` commence une nouvelle ligne dans le texte de la maquette. Le titre se trouve dans la colonne de texte, et sa maquette peint quand même le bandeau, le logo et le nom au-dessus de la marge haute de 27 mm, puisque chaque élément est fixé à la page.
+
+### 2 · Enchaîner le bloc d’informations à partir d’une étiquette fixée
+
+<Excerpt region="info" />
+
+Seule la première étiquette est fixée à la feuille. Chaque autre étiquette est ancrée `'below'` la précédente, et chaque valeur à son étiquette avec `'align-top'` et un décalage de 29 mm : une ligne ajoutée à `INFO` ne demande donc aucune coordonnée. Le texte de maquette place sa ligne de base à 80 % de la boîte de ligne. L’étiquette de 7 pt et la valeur de 9 pt règlent toutes deux `lineHeight: pt(ROW)`, une ligne de 12 pt : elles partagent donc une ligne de base à chaque rangée de 4,23 mm.
+
+### 3 · Dessiner l’en-tête dans la même maquette
+
+<Excerpt region="letterhead" />
+
+Le bandeau est une boîte fixée au coin de la feuille. `width: 'fill'` l’étire d’un bord à l’autre, et sa hauteur de 32 mm le fait dépasser de 5 mm la marge haute de 27 mm. Le logo est un élément image qui dessine une ressource haute de 18 mm et tire sa largeur du dessin ([éléments image](/fr/docs/configuration-page-layout#éléments-image)). Le nom se place `'right-of'` le logo, et la ligne d’activité `'below'` le nom. Huit filets de 3 mm dessinent une équerre à chaque coin de la zone d’adresse de 85 × 45 mm, la partie de la feuille que montre la fenêtre de l’enveloppe.
+
+### 4 · Mettre ce que partagent toutes les feuilles dans l’en-tête et le pied de page
+
+<Excerpt region="furniture" />
+
+Un élément de la maquette du H1 fixé sous l’objet s’ajoute à la hauteur que réserve le titre. Avec le repère de pliage de 210 mm dans la maquette, la formule d’appel descend à 222,8 mm et la lettre s’étend sur trois pages. L’emplacement d’en-tête est peint sur chaque page et ne réserve aucun espace : les trois repères y vont donc ([en-têtes et pieds de page](/fr/docs/configuration-page-layout#en-têtes-et-pieds-de-page)). La page 1 s’ouvre sur le H1, ce qui en fait une page `'opener'` : `pages: 'body'` limite donc la bande bleue, la ligne de référence et `Seite {pageNumber} von {totalPages}` aux feuilles suivantes. La ligne de référence lit les attributs du H1 par `{attr.unser-zeichen}` et `{attr.datum}`.
+
+### 5 · Placer la signature dans le flux
+
+<Excerpt region="signature" />
+
+`::resource{id="signature"}` place le dessin sous « Mit freundlichen Grüßen », et `width: 0.297` lui donne 49 mm de large et 21,1 mm de haut, un peu moins que quatre lignes de 15 pt. Le texte qui suit une ressource dans le flux revient sur la grille du texte courant. À `0.25`, le dessin faisait 17,8 mm de haut, et les 3,4 mm que la grille ajoutait dessous éloignaient le nom de la signature. Le type de ressource a un `captionPrefix` vide, et Postext ne compose aucune légende quand le préfixe et la légende sont tous deux vides : aucune étiquette ni aucun numéro n’apparaît sous la signature ([types de ressource](/fr/docs/configuration-resources#types-de-ressources)). Le logo est une ressource du même type, dessinée seulement par l’élément image. Aucun `:ref` ni `::resource` ne le nomme : il n’entre jamais dans le flux.
+
+## Erreurs fréquentes
+
+- `{totalPages}` compte les pages de tout le document : avec deux lettres dans un même fichier Markdown, la seconde feuille de la première lettre afficherait « Seite 2 von 4 ». Construisez chaque lettre séparément.

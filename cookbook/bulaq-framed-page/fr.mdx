@@ -1,0 +1,53 @@
+---
+title: "Une page de Boulaq : le texte encadré par son commentaire"
+summary: "Le commentaire grammatical d’Ibn ʿAqīl dans la colonne principale, les gloses dans la colonne latérale extérieure face aux passages, sous un double cadre filé."
+plain: "Une page faite comme les livres arabes imprimés au Caire au XIXe siècle : le texte principal au milieu, de courtes notes dans une colonne étroite au bord, et toute la page enfermée dans des filets imprimés."
+description: "Une page à la manière de Boulaq avec Postext : une colonne et demie avec des encadrés latéraux pour la ḥāshiya, un filet de colonne et un cadre filé par côté."
+question: "Comment mettre en page une page de Boulaq, avec le commentaire encadrant le texte ?"
+aliases: ["Boulaq", "Bulaq", "Būlāq", "ḥāshiya", "hashiya", "hamish", "commentaire marginal", "sharḥ", "page de commentaire", "Ibn ʿAqīl", "Alfiyya", "Ibn Mālik", "grammaire arabe", "cadre filé", "jadwal", "شرح ابن عقيل", "حاشية", "هامش"]
+pageNotes: { "2": "La première page de texte dans un double cadre filé : un titre de chapitre rouge en ruqʿa, les premiers vers de l’Alfiyya en rouge, deux par ligne, et le commentaire d’Ibn ʿAqīl en noir ; dans une colonne étroite au bord droit, derrière un filet vertical, trois gloses dont les premiers mots sont en rouge." }
+---
+
+## Ce que vous allez composer
+
+Six pages composées comme l’imprimerie de Boulaq et ses successeurs cairotes imprimaient un commentaire au XIXe siècle. L’explication par Ibn ʿAqīl des premiers vers de l’Alfiyya, la grammaire en mille vers d’Ibn Mālik, court dans la colonne principale, les vers en rouge ; dans la marge extérieure se tient une ḥāshiya, de courtes gloses qui s’ouvrent chacune sur les mots du texte qu’elles expliquent, à côté du passage auquel elles se rattachent. Un double filet encadre le bloc de texte, avec en tête une bande pour le chapitre et le folio, et un filet simple sépare le texte de sa marge. Une vraie page de Boulaq enroule la ḥāshiya sur trois côtés du texte ; Postext la compose d’un seul côté, et cette recette le dit.
+
+## Préparation
+
+### 1 · La ḥāshiya dans une colonne latérale à elle
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Une mise en page en colonne et demie dont la colonne latérale ne reçoit que des flottants tient le commentaire hors du flux du texte : chaque glose est un `:::callout{type="hashiya" span="side"}` écrit avant le passage qu’elle explique, et commence au niveau de la première ligne de ce passage ; `sideAtColumnEnd: 'after'` la garde à côté du passage quand celui-ci se poursuit à la page suivante ([Mise en page](/fr/docs/configuration-page-layout#mise-en-page)). L’encadré n’a ni fond, ni bordure, ni marge intérieure : il se lit comme du texte composé dans la marge, son lemme en gras, que `boldColor` passe en rouge. `sideColumnSide: 'outer'` place la colonne côté tranche sur les deux pages : à droite de la page paire, qui se trouve à droite dans un livre relié à droite.
+
+<PageShot page={2} crop="0,0.58,1,0.34" caption="Page 2 : la glose sur « كديز » commence au niveau du paragraphe qui emploie le mot, au bord extérieur, derrière le filet de colonne." />
+
+### 2 · Un cadre dessiné pour chaque côté de la double page
+
+<Excerpt region="frame" />
+
+Le cadre se compose de trois éléments de maquette de page dans l’en-tête : deux boîtes avec une bordure et sans fond, à 1,3 mm l’une de l’autre, et un filet sous la bande qui porte le titre courant. Les éléments de page sont physiques : le cadre est donc construit deux fois, une par parité, d’après les marges de ce côté ([Ordre des pages et reliure à droite](/fr/docs/arabic-layout#ordre-des-pages-et-reliure-à-droite)). Le folio se place à l’extrémité extérieure de la bande sur chaque page, ouvertures comprises ; le titre du chapitre est centré et absent de l’ouverture, où le titre lui-même se tient dessous.
+
+### 3 · Une page de titre dans le même cadre
+
+<Excerpt region="title" />
+
+La page de titre reprend le cadre sans sa bande. La maquette d’un titre se place dans le flux et se reflète avec la page : le cadre y est donc construit avec ses côtés inversés (`inFlow`), sa gauche étant la droite de la feuille. Ses lignes viennent d’attributs du titre, `on` et `margin` : toute la page de titre tient en une ligne de Markdown, et la ligne en caractères latins qui les suit change avec l’édition.
+
+## Variantes
+
+### Mettre le commentaire du côté intérieur
+
+Certaines imprimeries placent la ḥāshiya près du dos, pour que le texte garde la marge extérieure, plus large.
+
+```diff
+-const layout = { layoutType: 'oneAndHalf', sideColumnRole: 'floats', sideColumnSide: 'outer',
++const layout = { layoutType: 'oneAndHalf', sideColumnRole: 'floats', sideColumnSide: 'inner',
+```
+
+### Encadrer chaque glose
+
+Un filet fin autour de chaque glose, comme dans certaines impressions cairotes plus tardives, n’est autre que la bordure propre de l’encadré.
+
+```diff
+-  stripe: { enabled: false }, border: { enabled: false },
++  stripe: { enabled: false }, border: { enabled: true, width: pt(0.4), color: col('rule') },
+```

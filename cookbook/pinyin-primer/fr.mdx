@@ -1,0 +1,68 @@
+---
+title: "Un abécédaire en pinyin : la lecture sur chaque caractère"
+summary: "Ruby mono dans un livre de lecture de Hong Kong : {人之初|rén zhī chū} centre une syllabe pinyin sur chaque caractère, en Andika, dans un interligne de 28 pt."
+plain: "Des pages d’un premier livre de lecture pour les enfants de Hong Kong. Il montre comment imprimer la prononciation en lettres latines au-dessus de chaque caractère chinois, avec des cases pour s’exercer à écrire."
+description: "Un livre de lecture chinois avec Postext : une syllabe pinyin sur chaque caractère d’un Kai de 26 pt, titres avec lecture, cases d’écriture, code complet."
+question: "Comment imprimer le pinyin au-dessus de chaque caractère d’un texte chinois, comme un livre de lecture ?"
+aliases: ["pinyin", "注音版", "premier livre de lecture", "abécédaire chinois", "ruby", "三字經", "Classique des trois caractères", "Three Character Classic", "田字格", "cases d’écriture"]
+pageNotes: { "1": "Leçon un, 人之初 : un bandeau vert pâle avec une pastille rouge 第一課, une jeune pousse et le titre avec son pinyin rén zhī chū ; quatre distiques du Classique des trois caractères avec une syllabe pinyin sur chaque caractère ; six cases d’écriture contenant 人之本不相以 ; une note pour les familles.", "2": "Leçon deux, 昔孟母, sur l’histoire de la mère de Mencius : la même page avec une navette de métier à tisser qui traverse la chaîne, les cases contenant 子母山五方名 et une note sur Mencius et Dou Yanshan.", "3": "Leçon trois, 養不教 : un pinceau qui trace un trait dans une case d’écriture, quatre distiques, les cases contenant 父師學幼老何 et une note sur le ton de bù.", "4": "Leçon quatre, 玉不琢 : un disque de jade sculpté sur un cordon rouge, quatre distiques, les cases contenant 玉成知方友禮, une note pour les familles et le colophon." }
+---
+
+## Ce que vous allez composer
+
+Deux doubles pages de 《蒙學誦讀》, un premier livre de lecture imaginaire de Hong Kong, où les enfants lisent à voix haute le *Classique des trois caractères* en putonghua. Chaque page est une leçon de quatre distiques en Kai de corps 一号 (26 pt), chaque caractère sous sa syllabe pinyin. Les syllabes sont composées en Andika parce que ce caractère dessine le a et le g à un seul étage qu’impriment les manuels scolaires chinois. Un bandeau pâle porte une pastille rouge de leçon, une petite aquarelle et le titre en 初号 (42 pt) avec ses propres lectures. Sous le texte, six cases d’écriture (田字格) contiennent les caractères à recopier, et une note explique à la famille le sens des vers. Le pendant espagnol est <RecipeLink slug="reading-primer-syllables">l’abécédaire aux pastilles de syllabes</RecipeLink>, où chaque syllabe est une pastille de couleur au lieu d’une lecture au-dessus d’un caractère.
+
+Un abécédaire s’écarte volontairement des règles du livre chinois. Un enfant lit quelques grands caractères à la fois : une ligne en contient douze à 26 pt, là où un livre en compose 25 à 40 à 10,5 pt, et l’interlignage fait un peu plus de deux fois le corps pour loger les lectures. Chaque distique est centré sur une ligne à lui, ni justifié ni en retrait. Le texte est en Kai, le caractère qui suit le pinceau, parce qu’il montre les traits qu’un enfant apprend à écrire ; un livre le composerait en Song.
+
+## Préparation
+
+### 1 · Une syllabe au-dessus de chaque caractère
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. `{人之初|rén zhī chū}` donne trois lectures à trois caractères, séparées aux espaces : chaque syllabe est centrée au-dessus de son caractère, et une ligne peut se couper entre elles. Une lecture ne prend pas de place à elle. Elle se loge dans l’interligne, ici 54 − 26 = 28 pt, et un interligne plus étroit que la lecture est signalé par `rubyExceedsLeading`. Une syllabe plus large que son caractère, elle, prend de la place : elle élargit la boîte de ce caractère, et dans une ligne centrée les caractères suivants sortent de la grille. Les lectures sont composées au corps où les syllabes les plus larges ici, xiāng et zhuān, tiennent encore au-dessus d’un seul caractère, 0,38 em (9,9 pt) : chaque distique fait huit caractères et chaque caractère garde son carré. À 0,45 em, 性相近，習相遠 s’étirerait sur huit caractères et demi et ouvrirait des blancs autour de 相.
+
+### 2 · Le titre garde ses lectures
+
+<Excerpt region="opener" />
+
+Le texte de maquette n’imprime pas de lectures : le titre ne peut donc pas venir de la maquette de l’ouverture. Le titre de niveau 1, 第一課, dessine le bandeau, l’image et la pastille rouge ; le titre est le titre de niveau 2 en dessous, un titre simple en 初号 que le compositeur de texte compose avec son pinyin. `reserve: false` exclut le bandeau et l’image de la hauteur du titre, et `span: 'page'` les peint sous le texte.
+
+Une maquette de titre ignore `parity` : l’image a donc un élément de chaque côté de la page, `{attr.left}` à 14 mm du bord gauche et `{attr.right}` à 14 mm du bord droit. Les leçons placées sur un verso écrivent `# 第一課 {left="sprout"}` et celles placées sur un recto `{right="shuttle"}` : chaque image se trouve du côté extérieur de la double page ; l’élément dont l’attribut manque ne dessine rien.
+
+### 3 · Six cases à partir d’un attribut
+
+<Excerpt region="squares" />
+
+`### 我會寫 {write="人之本不相以"}` donne à la maquette les six caractères dans un seul attribut. Chaque caractère han de LXGW WenKai TC fait un cadratin de large : une approche égale au pas des cases moins un cadratin (18,4 − 10,6 mm) fait passer les caractères de case en case, et un seul élément de texte remplit la rangée. La case est un SVG dessiné dans le code : un cadre rouge et une croix en tirets.
+
+### 4 · Chaque caractère charge ses propres glyphes
+
+<Excerpt region="voices" />
+
+Fontsource découpe chaque caractère chinois en une centaine de fichiers par plage de caractères. Le Kai compose tout l’exemple et charge les fichiers qui contiennent ses caractères. Le Hei ne compose que les pastilles, les étiquettes et le pied de page : il reçoit ce texte-là et télécharge quelques fichiers. Andika vient de `loadFonts`, qui ajoute le fichier latin-ext quand le texte contient des lettres au-delà de Latin-1, comme ǎ et ǐ.
+
+### 5 · La ponctuation de Hong Kong par la locale
+
+<Excerpt region="locale" />
+
+`zh-HK` applique les règles de Hong Kong : ponctuation en pleine chasse et règles de base de coupure des lignes, dont aucun distique n’a besoin ici. LXGW WenKai TC dessine ses virgules et ses points au milieu du carré, comme on les imprime à Hong Kong et à Taïwan, et c’est pourquoi cet abécédaire vient de Hong Kong. Un premier livre de lecture de Chine continentale se compose lui aussi en Kai, en caractères simplifiés, avec la virgule et le point en bas à gauche du carré. Fontsource n’a cependant pas de Kai de texte pour le chinois simplifié, et le traditionnel collerait ces signes au caractère suivant : une page de Chine continentale prend donc dans ce livre de recettes le Noto Serif SC, le Song de <RecipeLink slug="chinese-novel-horizontal">la page de roman de Chine continentale</RecipeLink>.
+
+## Variantes
+
+### Afficher la grille pendant la composition
+
+`show: true` dessine sur le canvas les douze cases de chaque ligne ; le PDF les omet, sauf si `renderToPdf` reçoit `characterGrid: true`.
+
+```diff
+-  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: 11 },
++  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: 11, show: true },
+```
+
+### Placer le zhuyin à côté des caractères
+
+Les lectures en bopomofo se placent en colonne à droite de chaque caractère ; <RecipeLink slug="zhuyin-vertical-reader">le livre de lecture en zhuyin</RecipeLink> les compose sur une page verticale.
+
+## Erreurs fréquentes
+
+- Cette recette ne propose pas de PDF. Le `fontsourceProvider` du kit n’incorpore que le fichier latin d’un caractère, et les lettres à ton ā ǎ ǐ ǒ ǔ sont dans latin-ext : un PDF les perdrait et postext-pdf signalerait chacune comme `missingGlyph`. S’il vous en faut un, composez les lectures dans un caractère chinois, dont `cjkPdfProvider` choisit les fichiers caractère par caractère.
+
+- Vérifiez chaque caractère des cases d’après les formes standard de la région. LXGW WenKai TC dessine 為 avec le haut 爫 de 爲, une forme plus ancienne qui passe dans le texte courant, comme dans 老何為 et 為人子 ici, mais pas dans une case qu’un enfant de Hong Kong recopie. La leçon trois fait plutôt pratiquer 幼.

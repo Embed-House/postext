@@ -1,0 +1,80 @@
+---
+title: "Cinq ouvertures de chapitre dans un même livre"
+summary: "Une ouverture sur le niveau 1 et quatre styles de titre nommés dans le Markdown ; chaque style change l’accent, certains aussi les marges, colonnes ou folios."
+plain: "Un petit livre sur les façons d’ouvrir un chapitre, où chaque chapitre commence dans un style différent. Il montre comment donner à un chapitre ses propres couleurs, marges et mise en page avec un seul réglage."
+description: "Cinq ouvertures dans un livre Postext : la lettrine d’un roman, un titre encadré, un titre-affiche empilé, la pastille d’un manuel et une coda en bas de page."
+question: "Comment donner à chaque chapitre son ouverture, sa couleur ou sa photo, et la choisir depuis le Markdown ?"
+aliases: ["styles de titre", "variantes d’ouverture de chapitre", "une photo par chapitre", "lettrine", "lettrine encadrée", "lettrine montante", "pastille de numéro", "titre empilé", "cartouche", "palette de section", "apertura de capítulo"]
+pageNotes: { "1": "« Chapter One », « The Voice » : un petit surtitre rouge espacé, un titre en italique maigre, un court filet rouge et un paragraphe d’ouverture dont la lettrine rouge M sur cinq lignes s’aligne sur les capitales de la première ligne.", "2": "Le chapitre se poursuit en Lora justifié sous le titre courant du livre, avec le folio et le titre à gauche.", "3": "La dernière page du chapitre : sept lignes en haut de la page, sous un titre courant portant le titre du chapitre et le folio à droite.", "4": "« Chapter the Second », « The Frame » : le titre composé dans un cartouche crème fait d’un gros filet bleu et d’un filet fin, au-dessus d’un fleuron bleu, et un paragraphe d’ouverture avec une lettrine bleue sur trois lignes.", "5": "« Chapter Three » : « Say it out loud. » empilé sur trois lignes en Fraunces Black blanc sur un aplat magenta qui sort à fond perdu par le haut, et dessous un paragraphe dont la lettrine M est blanche sur une boîte magenta.", "6": "« Chapter 4 », « Number Everything » : des titres courants en chasse fixe, un gros filet, une pastille de numéro orange à côté d’un titre en sans grasse, et deux colonnes en drapeau avec des sections numérotées.", "7": "La coda, « Leave Room » : un surtitre gris et un petit titre à mi-hauteur d’une page vide, une lettrine montante S qui s’élève au-dessus de la première ligne, et le colophon." }
+---
+
+## Ce que vous allez composer
+
+*Five Ways to Begin* est un livre de sept pages sur les ouvertures de chapitre, au format 180 × 240 mm, et chaque chapitre est composé dans l’ouverture qu’il décrit. Le premier chapitre est celle d’un roman : un surtitre espacé, un titre en italique maigre et une lettrine rouge sur cinq lignes, avec des titres courants sur les pages suivantes. Le deuxième chapitre place son titre et un fleuron dans un cartouche crème tracé de deux filets bleus. Le troisième empile son titre en Fraunces Black blanc sur un aplat magenta à fond perdu, au-dessus d’une lettrine en chasse fixe défoncée dans une boîte. Le quatrième, le manuel, a des titres courants en chasse fixe, une pastille de numéro orange à côté de son titre et deux colonnes en Geist. La coda pose son titre à mi-hauteur d’une page vide, au-dessus d’une lettrine montante. Le premier chapitre emploie l’ouverture propre au niveau 1 ; les quatre autres nomment un style de titre sur leur ligne de titre.
+
+## Préparation
+
+### 1 · Placer l’ouverture du livre sur le niveau
+
+<Excerpt region="literary" />
+
+Le premier chapitre n’a pas de style : il prend la maquette propre au niveau 1, dont part chaque style ([la réponse courte](#la-réponse-courte) montre le niveau et les styles). Le premier paragraphe du chapitre est dans le Markdown, dans un groupe `:::paragraphs{style="lead"}` d’un corps plus grand que le texte (12/17 pt contre 10,8/14,5), et la `dropCap` du niveau l’ouvre ([lettrines](/fr/docs/configuration-text#lettrines)) : le M repose sur la cinquième ligne de base et, sans `fontSize`, son sommet s’aligne sur les capitales de la première ligne, les deux hauteurs de capitale étant mesurées dans Fraunces et Lora. L’ouverture se termine par une boîte vide, `room()`, à 17 mm sous le titre, là où commence le chapeau ; un `:::space` sous le chapeau laisse une ligne et fait partir le texte sans retrait.
+
+### 2 · Encadrer le titre dans deux boîtes
+
+<Excerpt region="framed" />
+
+L’ordre du tableau est l’ordre de peinture : les boîtes viennent d’abord et le texte par-dessus ; l’ornement est un élément image, qui dessine une ressource SVG enregistrée, jamais numérotée ni citée. C’est aussi par un élément image que chaque chapitre reçoit sa propre photo : depuis postext 1.8, son `resourceId` accepte des marqueurs, si bien qu’avec `resourceId: '{attr.photo}'` un seul style dessine la photo que nomme chaque titre, `# The Frame {style="framed" photo="lake"}`, comme le font les plats de <RecipeLink slug="recipe-card">la fiche de recette</RecipeLink> ([éléments image](/fr/docs/configuration-page-layout#éléments-image)). Le style `framed` de la réponse courte définit `palette` pour passer `accent` en bleu sur les pages de ce chapitre : les filets, le surtitre et le folio en pied s’impriment en bleu, et ses `margins` centrent le bloc de texte sous le cadre. La `dropCap` propre au style nomme `col('accent')`, que la palette passe aussi en bleu : le L sur trois lignes s’accorde au cadre.
+
+### 3 · Empiler le titre, encadrer la lettrine
+
+<Excerpt region="stacked" />
+
+L’empilement s’écrit dans le Markdown : `# Say it \\ out \\ loud.` coupe `{titleText}` à chaque `\\`, tandis que les titres courants et les signets du PDF lisent le titre sur une ligne ([sauts de ligne dans les titres](/fr/docs/document-format#sauts-de-ligne-dans-les-titres)). L’aplat pend du haut du fond perdu, sur toute la largeur et 130 mm de haut, et le chapeau commence sur la première ligne de grille 8 mm dessous (`TEXT_TOP`). La lettrine encadrée tient en deux pièces. La `dropCap` du style compose le M en blanc sur trois lignes du chapeau, et l’ouverture peint dessous une boîte magenta, placée à partir de `TEXT_TOP`, de l’interlignage du chapeau et des métriques de Geist Mono, pour que la couleur au-dessus et au-dessous du M soit aussi large que ses approches latérales. La boîte ne prend aucune place dans l’ouverture (`reserve: false`) ; une boîte `room` vide termine l’ouverture là où commence le chapeau.
+
+### 4 · Donner au manuel une pastille, deux colonnes et ses propres titres courants
+
+<Excerpt region="spec" />
+
+La pastille est un élément texte avec un fond et une marge intérieure mais sans largeur : sa largeur suit `{chapterNumber}`, et le titre est placé `right-of` elle. Au chapitre 10, la pastille grandit d’un chiffre, 5,5 mm, et le titre se déplace avec elle. Sa marge intérieure du bas fait 1 mm de moins que celle du haut, parce que la boîte de ligne contient d’autant plus sous les chiffres : le 4 se tient ainsi centré. Dans le style `spec`, `layout` compose la section en deux colonnes et le `span: 'page'` du niveau étend l’ouverture sur les deux. Ses `margins` élargissent le bloc de texte à 144 mm, `bodyStyle` compose du Geist en drapeau sur la grille de 14,5 pt du livre, `header` remplace les titres courants du livre et un `footer` vide supprime le folio.
+
+### 5 · Laisser de la place à la coda
+
+<Excerpt region="quiet" />
+
+Le surtitre pend 92 mm sous le haut du bloc de texte, et la lettrine montante est la lettrine sur une ligne du style `quiet` : son pied repose sur la première ligne de base et, à 46 pt, elle s’élève dans le blanc au-dessus au lieu de s’enfoncer dans le paragraphe. Le paragraphe garde cette montée dégagée au-dessus de lui en lignes entières : le `room` de l’ouverture sous le titre ne fait donc que 3 mm. Dans le style `quiet`, `margins` réduit la justification à 106 mm, `bodyStyle` compose le texte en drapeau à 12,5/17,5 pt, `footer` remplace le folio en pied par un petit folio à l’angle extérieur et `palette` passe le surtitre en gris. Rien sur cette page n’imprime de numéro de chapitre : `numbered: false` ne se verrait que dans un chapitre ajouté après la coda, qui serait toujours le cinquième.
+
+## Variantes
+
+### Envoyer chaque chapitre sur un recto
+
+Avec `'odd'`, chaque chapitre s’ouvre sur une page de droite et les chapitres deux à cinq reçoivent chacun un verso blanc avant eux : le livre passe de 7 à 11 pages.
+
+```diff
+-  breakBefore: { enabled: true, parity: 'any' },
++  breakBefore: { enabled: true, parity: 'odd' },
+```
+
+### Réduire la lettrine à trois lignes
+
+Sans `fontSize`, le corps suit le nombre de lignes : une lettrine sur trois lignes s’aligne donc toujours sur les capitales de la première ligne.
+
+```diff
+-  dropCap: { lines: 5, fontFamily: 'Fraunces', fontWeight: 400, color: col('accent'),
++  dropCap: { lines: 3, fontFamily: 'Fraunces', fontWeight: 400, color: col('accent'),
+```
+
+### Ajouter des petites capitales après la lettrine
+
+`leadIn` compose les premiers mots après la lettre en petites capitales, comme le font beaucoup de romans ; `words: 'line'` prend toute la première ligne.
+
+```diff
+-    gap: mm(2.5) } });
++    gap: mm(2.5), leadIn: { words: 'line' } } });
+```
+
+## Erreurs fréquentes
+
+- Les chapeaux sont composés en drapeau, comme dans une ouverture de magazine ; un chapeau justifié à côté d’une lettrine sur cinq lignes peut ouvrir grand ses espaces sur une ligne de peu de mots.
+- La boîte magenta est ajustée à la main au Lora 12/17, au M de Geist Mono et à la ligne de base, à 0,8 de la hauteur de sa boîte de ligne (`BASE`). Si vous changez la police, le corps ou l’interlignage du chapeau, la lettre, le nombre de lignes ou la hauteur de l’aplat, vérifiez de nouveau la boîte par rapport aux capitales de la première ligne.
+- Les titres ne pivotent jamais et ne se composent jamais à la verticale : le texte de maquette est toujours horizontal. Empilez plutôt les mots avec `\\`, comme le fait le troisième chapitre.

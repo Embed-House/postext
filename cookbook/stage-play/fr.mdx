@@ -1,0 +1,80 @@
+---
+title: "Texte de théâtre : distribution, répliques et didascalies"
+summary: "La pièce de Wilde en édition de jeu : noms en gras prune, didascalies en italique gris, distribution avec points de conduite jusqu’à chaque acteur."
+plain: "Le début d’une comédie célèbre d’Oscar Wilde, imprimé pour les comédiens. Les noms des personnages ressortent en gras et en couleur, et les didascalies sont en gris pour qu’on puisse les sauter."
+description: "Une édition de jeu de The Importance of Being Earnest avec Postext : une affiche prune en page de titre et la distribution de 1895 face au premier acte."
+question: "Comment composer une pièce : noms des personnages, didascalies, titres d’actes et de scènes, distribution ?"
+aliases: ["pièce de théâtre", "théâtre", "édition de jeu", "texte de théâtre", "didascalies", "indications scéniques", "noms des personnages", "répliques", "distribution", "liste des personnages", "points de conduite", "taquet de tabulation", "retrait suspendu", "affiche", "page de titre", "fleuron", "œillet", "Oscar Wilde", "The Importance of Being Earnest", "play script", "dramatis personae"]
+pageNotes: { "1": "La page de titre : une feuille prune dans un double cadre or dont les filets se croisent aux angles. Le sous-titre court en capitales or espacées au-dessus du titre, qui tient sur quatre lignes, en capitales grasses à fort contraste pour « Importance » et « Earnest » et en italique pour « The » et « of Being ». Dessous viennent un œillet or entre deux volutes, l’auteur en capitales espacées et, au pied, le théâtre et la date de la création.", "2": "Les personnages de la pièce sous une ligne prune centrée en petites capitales qui nomme la distribution d’origine, le théâtre et la date : chaque personnage en gras prune à gauche, une ligne de points, et l’acteur qui a créé le rôle contre la marge de droite. Dessous, les trois décors de la pièce, les numéros d’acte alignés à droite sur une colonne et les lieux commençant sur la suivante, l’époque de l’action en italique gris et un colophon.", "3": "Le premier acte commence par son titre en capitales prune et un œillet prune. Le décor est posé en italique gris centré sous une étiquette en petites capitales ; puis viennent les répliques, chacune avec le nom du personnage en gras prune et ses lignes suivantes en retrait suspendu.", "4": "Des répliques en retrait suspendu et trois didascalies centrées entre elles : l’entrée et la sortie de Lane, et l’entrée de Jack.", "5": "La page se termine sur la réplique d’Algernon sur les divorces, qu’une didascalie en italique gris coupe en deux." }
+---
+
+## Ce que vous allez composer
+
+Le début de *The Importance of Being Earnest* d’Oscar Wilde, composé en édition de jeu de cinq pages au format 140 × 216 mm. La page de titre est une affiche prune dans un double cadre or, avec *Importance* et *Earnest* en capitales grasses à fort contraste et un œillet or sous le titre. Face au premier acte, la distribution nomme l’acteur qui a créé chaque rôle au St James’s Theatre en 1895. Chaque réplique s’ouvre sur le nom du personnage en gras prune, et ses lignes suivantes sont en retrait suspendu de 5 mm : un comédien trouve sa prochaine réplique d’un coup d’œil. Les didascalies, dans une réplique ou entre deux, sont en italique gris, et l’œil peut les sauter quand on répète son texte. L’édition espagnole est une nouvelle traduction qui suit l’usage théâtral espagnol, avec un tiret après chaque nom et les didascalies entre parenthèses.
+
+## Préparation
+
+### 1 · Un acte est un simple titre
+
+<Excerpt region="acts" />
+
+Le titre de l’acte est un titre de niveau 1 en Abril Fatface à 24 pt, sans emplacement de maquette. `textTransform` le compose en capitales, et ses trois lignes de grille de 13,6 pt placent les capitales à 5,5 mm sous le haut du bloc de texte ([titres](/fr/docs/configuration-text#titres)). `textAlign: 'center'` ne se règle pas par niveau : il centre donc aussi les titres de la distribution et l’étiquette *Scene*. `breakBefore` avec la parité `'odd'` fait commencer l’acte sur un recto, face à la distribution. La valeur par défaut, `'always-odd'`, mettrait deux pages blanches entre les deux ([saut avant](/fr/docs/configuration-text#saut-avant)).
+
+### 2 · La distribution est une ligne de points jusqu’à chaque acteur
+
+<Excerpt region="cast" />
+
+Chaque personnage est un paragraphe du style `person`, l’acteur après `:tab` ([tabulations et taquets](/fr/docs/document-format#tabulations-et-taquets)). Le style a un seul taquet, à `'end'`, la fin de la justification, et avec `align: 'end'` le nom de l’acteur s’y termine. Son `leader: '.'` remplit l’espace avant le taquet de points, à un demi-cadratin du personnage et de l’acteur, et `spaceBetween` place un personnage toutes les lignes et demie. Les noms des personnages sont en gras : ils s’impriment donc en prune, comme les noms des personnages dans le dialogue. La distribution d’origine, le théâtre et la date coiffent la liste dans le style `bill-head`, centré en Playfair Display SC, dont les minuscules sont des petites capitales. Les décors prennent deux taquets : `:tab Act I :tab …` termine *Act I* sur le premier, à 15 mm, avec `align: 'end'`, si bien que les trois actes s’alignent à droite sur une colonne, et fait commencer le lieu sur le second, 2 mm plus loin. L’époque de l’action est une ligne centrée dans le style des didascalies.
+
+### 3 · Des ornements sans numéro ni légende
+
+<Excerpt region="ornament" />
+
+Un type de ressource avec `captionPrefix` et `shortLabel` vides imprime ses images nues ([types de ressources](/fr/docs/configuration-resources#types-de-ressources)). Son `defaultPlacement` place l’œillet là où se trouve `::resource{id="fleuron"}`, centré et large de 0,24 de la justification de 107 mm, soit environ 26 mm.
+
+### 4 · La page de titre est un style de titre
+
+<Excerpt region="playbill" />
+
+`# The Importance of Being Earnest {style="playbill" …}` porte le titre en quatre attributs, que la maquette compose en deux caractères : Abril Fatface à 40 et 60 pt pour les noms, Libre Baskerville italique à 17 pt pour *The* et *of Being* ([attributs de titre](/fr/docs/document-format#attributs-de-titre)). Le fond prune, le cadre et l’œillet forment un seul SVG dessiné en code et ancré au fond perdu ([éléments image](/fr/docs/configuration-page-layout#éléments-image)). Le style règle `span: 'page'` alors que le livre n’a qu’une colonne. Gardée dans la colonne, la maquette serait coupée au pied du bloc de texte, 23,3 mm au-dessus du pied de la feuille. L’`header` vide du style écarte les titres courants de la distribution, qui appartient à la même section, et son `footer` vide écarte le folio en pied de la page de titre, où il s’imprimerait prune sur prune ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)).
+
+Le fond est un élément image, et une ouverture réserve la place jusqu’au pied de ses images : le titre occupe donc toute la feuille. *The Persons of the Play* commence en page 2 sans `:::pagebreak` après le titre, quelle que soit la position des lignes de la page de titre. Une ligne centrée avec `letterSpacing` ne demande aucune correction non plus. L’approche après sa dernière lettre est exclue du centrage, et *OSCAR WILDE* tombe au centre de la page.
+
+### 5 · Des titres courants qui sautent la première page de l’acte
+
+<Excerpt region="heads" />
+
+Le verso porte le titre de la pièce, tiré du frontmatter, et le recto l’acte, tiré de `{chapterTitle}`, tous deux en capitales Playfair Display SC avec le folio en prune au bord extérieur ([éléments texte](/fr/docs/configuration-page-layout#éléments-de-texte)). La première page de l’acte compte comme une ouverture, car son premier bloc est un titre qui provoque un saut de page : `pages: 'body'` en écarte donc les titres courants, et le pied de page lui donne à la place un folio en pied.
+
+<Note>
+Un scénario met son dialogue en retrait des deux côtés au lieu de le suspendre : <RecipeLink slug="screenplay-format">Mise en page d’un scénario</RecipeLink> compose chaque réplique comme un encadré sans cadre, rembourré à la largeur du bloc de dialogue.
+</Note>
+
+## Variantes
+
+### Aligner les didascalies sur les lignes suivantes
+
+Composée au fer à gauche avec un alinéa de 5 mm, une didascalie d’une ligne commence là où commencent les lignes suivantes des répliques, et la description du décor devient deux paragraphes en alinéa sous son étiquette centrée.
+
+```diff
+ const direction = { id: 'direction', fontSize: pt(8.6),
+-  textAlign: 'center', firstLineIndent: pt(0) };
++  textAlign: 'left', firstLineIndent: mm(5) };
+```
+
+### Laisser une ligne entre les répliques
+
+`paragraphSpacing: true` ajoute une ligne de grille blanche après chaque réplique. L’acte anglais court alors sur cinq pages au lieu de trois, l’espagnol sur quatre.
+
+```diff
+   firstLineIndent: mm(5), hangingIndent: true, // the name at the margin, the turnovers hung
++  paragraphSpacing: true,
+ };
+```
+
+## Erreurs fréquentes
+
+- Tout passage en italique du dialogue prend `italicColor`, y compris l’emphase : le *is* appuyé de Lane s’imprime donc dans le gris des didascalies. Le gris est posé sur `bodyText` parce que la plupart des didascalies se trouvent dans une réplique, dans le même paragraphe que l’emphase ; seul le romain garderait le *is* à l’encre.
+- Trois répliques de Wilde se terminent sur un mot seul : *information.*, *you.* et *that?* La correction des fins de paragraphe trop courtes peut remonter la troisième sur la ligne précédente, mais seulement avec le 1 % d’approche négative que `bodyText.maxRuntTracking` autorise par défaut, et la réplique paraît alors plus sombre que ses voisines. `maxRuntTracking: 5` divise ce plafond par deux : *that?* passe à la ligne, et la ligne au-dessus s’ouvre à 1,78 fois l’espace normal, sous la limite de 1,8. Les pages anglaises gardent les trois fins courtes plutôt que de changer les mots de Wilde. La traduction espagnole a été reformulée partout où une ligne finissait sur un mot d’une lettre ou laissait une syllabe seule.
+- Les noms se coupent comme n’importe quel mot : *Au-gusta* et *Gwen-dolen* sont coupés en fin de ligne en page 5. Un gluon (U+2060) dans *Augusta* le garde entier, mais il étire la ligne au-dessus à 1,71 fois l’espace normal : le texte anglais garde donc les césures.
+- Playfair Display SC dessine *fi* comme une ligature minuscule sur le canvas : *first* s’imprimerait avec un *fi* minuscule parmi des petites capitales. C’est pourquoi l’en-tête de la distribution dit *The original cast*.

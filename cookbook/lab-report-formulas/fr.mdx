@@ -1,0 +1,79 @@
+---
+title: "Compte rendu de TP : formules, indices et courbe de titrage"
+summary: "Un compte rendu de chimie de quatre pages A4 qui note formules et unités du texte avec ~ et ^ et garde TeX pour la réaction et les équations."
+plain: "Un compte rendu de TP de chimie de lycée, en quatre pages, sur l’analyse d’un vinaigre. Il montre comment écrire formules chimiques et unités avec de petits chiffres surélevés ou abaissés, plus quelques équations complètes."
+description: "Un compte rendu de TP de chimie composé avec Postext. Formules en indices et exposants dans le caractère du texte ; tableau et courbe partagent les mesures."
+question: "Comment écrire formules chimiques et unités avec indices et exposants, en gardant TeX pour les équations ?"
+aliases: ["compte rendu de TP", "rapport de laboratoire", "travaux pratiques", "chimie", "formule chimique", "indice", "exposant", "unités", "mhchem", "courbe de titrage", "numéros en marge"]
+pageNotes: { "1": "Une bande rose pâle porte la ligne du cours, le titre avec le numéro de TP 4 suspendu dans la marge de gauche et la signature, dont les étiquettes sont suspendues de la même façon ; à droite, une burette dessinée goutte dans une fiole de liquide rose pâle, rose vif là où tombe la goutte. Sous la bande viennent le résumé avec un liseré rose à gauche, les sections 1 et 2 aux numéros suspendus, la réaction de neutralisation et l’équation du pH à l’équivalence.", "2": "L’équation de Henderson–Hasselbalch, la section 3 avec la liste du matériel et une consigne de sécurité dans un fin cadre rose, et la section 4 avec les six étapes numérotées du protocole.", "3": "La section 5, « Results » : le « Table 1 » des lectures de burette sous un en-tête ardoise, les chiffres alignés à droite dans un caractère à chasse fixe et les étiquettes de moyenne et d’écart type sur trois colonnes, la concentration du vinaigre calculée dans une équation hors texte, la sous-section 5.2 sur la courbe de pH et le début de la discussion.", "4": "La « Figure 1 », la courbe de titrage : des points roses pour les mesures du pH-mètre sur la courbe du modèle, la zone de virage de l’indicateur en bande rose, le point d’équivalence cerclé et le pKa lu à la moitié du volume d’équivalence ; puis la fin de la discussion, la section 7 avec la conclusion, trois références en retrait négatif et le colophon." }
+---
+
+## Ce que vous allez composer
+
+Trois élèves de première titrent un vinaigre de cidre par de la soude pour savoir combien d’acide acétique il contient, et rédigent leur travail comme le « Practical 4 » de leur cours de chimie. Le compte rendu tient sur quatre pages A4 imprimées au recto. Sa marge de gauche de 55 mm accueille les numéros de section, si bien que chaque titre et chaque paragraphe commencent sur le même bord. La burette et l’en-tête du tableau sont gris ardoise, et la seule couleur est le rose de la phénolphtaléine, pâle pour la bande de l’en-tête du compte rendu et la zone de virage sur la courbe, vif pour les numéros de section et les mesures de pH. Les formules et les unités du texte courant sont composées dans le caractère du texte avec indices et exposants ; TeX compose la réaction et trois équations hors texte. Le tableau 1 et la courbe de la figure 1 sont calculés tous deux à partir d’un même tableau de lectures de burette dans le pen.
+
+## Préparation
+
+### 1 · Écrire les formules comme du texte, garder TeX pour les équations
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. [`~…~` et `^…^`](/fr/docs/document-format#mise-en-forme-en-ligne) composent un passage à 58 % du corps du texte, dans le caractère même du texte : `CH~3~COOH`, `OH^−^` (son moins est un U+2212) et `cm^3^` gardent la graisse et la couleur de la phrase qui les entoure. Ces marques fonctionnent aussi dans les légendes et les cellules de tableau, dans le caractère propre de la légende ou de la cellule ; le `$…$` en ligne s’y compose aussi, dans le caractère des maths. La réaction, écrite avec le `\ce{…}` de mhchem, et les équations sont du TeX entre `$$`. `await initMathEngine()` démarre le [moteur mathématique](/fr/docs/configuration-text#démarrer-le-moteur-mathématique) avant la composition ; il vient du même import que tous les autres symboles. `math.fontSizeScale` vaut 0,495 / 0,442, soit environ 1,12 : la hauteur d’x d’une formule est celle de TeX, 0,442 em du corps, et celle d’Inria Serif est de 0,495 em, si bien que l’échelle met les bas-de-casse de la formule et du texte à la même hauteur.
+
+### 2 · Suspendre les numéros de section dans la marge
+
+<Excerpt region="hanging" />
+
+La maquette de chaque niveau de titre est un emplacement à deux éléments : le titre sur le bord du texte, et le `{number}` ancré `left-of` celui-ci, à 4 mm, dans une boîte de 33 mm alignée à droite. La boîte demande une largeur fixe. Une largeur automatique est limitée à la place que la colonne laisse sur sa gauche, et elle n’en laisse aucune : la boîte se réduit alors à 0 mm et les titres grandissent d’une à trois lignes. Le `fontSize` et le `lineHeight` du niveau ne règlent que la place qu’un titre occupe dans le flux, une ligne de 15 pt. C’est la maquette qui règle le caractère : sections numérotées `{2}` en rose de 13 pt, sous-sections `{2}.{3}` en gris au corps du texte.
+
+### 3 · Dessiner l’en-tête du compte rendu à partir du H1
+
+<Excerpt region="head" />
+
+L’unique H1 du compte rendu prend le [style de titre](/fr/docs/configuration-text#étendue-et-maquette-avancée) `report`, qui le remplace par un en-tête dessiné : une bande rose en haut de la page, la burette, la ligne du cours, le titre avec le numéro de TP suspendu comme un numéro de section, et la signature. Les valeurs de la signature viennent des [attributs du titre](/fr/docs/document-format#attributs-de-titre) et du `publishDate` de l’en-tête du document. La bande est une boîte, et les boîtes comptent dans la hauteur que réserve un titre : même sans `minHeight`, le texte commencerait donc sous le pied de la bande, à 104 mm du haut de la page. `minHeight` fixe un plancher 8 mm sous la bande ; avec la marge basse du H1 et la grille de 15 pt, cela laisse 15 mm de blanc au-dessus du résumé au lieu de 4,7 mm.
+
+### 4 · Nommer le tableau et la figure dans la langue du compte rendu
+
+<Excerpt region="labels" />
+
+Les types intégrés suivent la `locale` du document : l’édition espagnole dit « Tabla » et « Figura » sans aucun réglage. [`defaultResourceTypes(LANG)`](/fr/docs/configuration-resources#types-de-ressources) fournit ces types pour que la recette puisse en modifier un. Leur modèle `{h1}.{n}` imprime ici un simple 1, car le H1 du compte rendu n’est pas numéroté et un `{h1}` vide disparaît avec son point. La légende du tableau se place au-dessus du tableau, là où la mettent les comptes rendus. Le texte cite le tableau et la figure avec `:ref{id="lecturas" style="full"}`, dans l’encre et la graisse des mots qui l’entourent.
+
+### 5 · Calculer le tableau et la courbe à partir des mêmes mesures
+
+<Excerpt region="data" />
+
+Les quatre paires de lectures de burette donnent chaque cellule du tableau 1, la moyenne et l’écart type, et le volume moyen fixe le point d’équivalence du modèle de pH que trace la figure 1. La première ligne est l’en-tête (`headerRowCount: 1`), et `columnWidths` donne à la colonne des étiquettes 1,8 part de la largeur. Chaque cellule porte son propre `align`, et [`mergeCells`](/fr/docs/configuration-resources#construire-des-modèles-de-tableau) étend les étiquettes de moyenne et d’écart type sur les trois premières colonnes, alignées à droite contre leurs valeurs. Les chiffres sont en Sometype Mono, si bien que leurs séparateurs décimaux s’alignent. Les en-têtes de colonne sont des grandeurs sur des unités, comme `V~b~ used / cm^3^`, balisées comme le texte.
+
+### 6 · Finir sur des références en retrait négatif
+
+<Excerpt region="references" />
+
+Un bloc `:::paragraphs{style="references"}` applique le [style de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe) à chaque référence : 9 sur 12,5 pt, en drapeau, avec un retrait négatif de 6 mm et 4 pt entre les entrées. Les paragraphes en drapeau ne sont pas coupés, sauf si `bodyText.hyphenation.ragged` le demande : un titre long comme *Fundamentals of Analytical Chemistry* ne se coupe donc qu’entre les mots. Le colophon a son propre style, Inria Sans de 7,4 pt, avec une ligne de 15 pt d’espace au-dessus.
+
+## Variantes
+
+### Teinter la consigne de sécurité au lieu de l’encadrer
+
+Un fond dans le rose du virage remplace le cadre, si bien que l’encadré ne porte toujours qu’un seul procédé.
+
+```diff
+   box('safety', t({ es: 'Seguridad', en: 'Safety' }), {
+-    border: { enabled: true, color: col('phenol'), width: pt(0.75) },
++    backgroundEnabled: true, background: col('blush'),
+```
+
+### Numéroter tableaux et figures par section
+
+Les résultats deviennent Table 5.1 et Figure 5.1, comptés à nouveau dans chaque section.
+
+```diff
+-const resourceTypes = defaultResourceTypes(LANG).map((type) => (type.id === 'table'
+-  ? { ...type, captionStyle: { position: 'above' } } : type)); // a table's caption goes on top
++const resourceTypes = defaultResourceTypes(LANG).map((type) => ({ ...type,
++  numberingTemplate: '{h2}.{n}', resetOn: 'h2',
++  ...(type.id === 'table' && { captionStyle: { position: 'above' } }) }));
+```
+
+## Erreurs fréquentes
+
+- Par défaut, une formule hors texte ne reste pas solidaire de la ligne qui l’introduit : une phrase d’introduction finissant par « so » peut clore une page et laisser son équation sur la suivante ; `math.keepWithLeadIn: true` fait passer cette ligne avec la formule. Ici, le texte des deux éditions est calibré pour finir la page 1 sur l’équation de [OH⁻] sous sa phrase.
+- Les glyphes de TeX sont ceux de MathJax, et non d’Inria Serif : une équation paraît donc un peu plus claire que le texte qui l’entoure. Gardez les formules prises dans des phrases sous forme de marques `~` et `^`, et réservez TeX aux lignes qui en ont besoin.
+- Les étiquettes des graduations et les titres des axes de la courbe sont des contours MathJax : elles utilisent les mêmes glyphes que les équations et restent vectorielles dans le PDF. `tex()` demande à `renderMath` les tracés de chaque étiquette et les place dans le SVG. Elles ne peuvent être dessinées qu’une fois `initMathEngine()` résolu.

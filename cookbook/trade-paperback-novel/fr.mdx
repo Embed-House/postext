@@ -1,0 +1,87 @@
+---
+title: "Roman broché : ouvertures basses et chapitres au recto"
+summary: "Madame Gervaisais en broché de 140 × 216 mm : couverture peinte et colophon sans titres courants, puis chapitres ouverts bas au recto sous un chiffre italique."
+plain: "Les deux premiers chapitres d’un roman français en livre broché. Chaque chapitre commence sur une page de droite, plus bas, sous un grand numéro de chapitre."
+description: "Madame Gervaisais des Goncourt avec Postext : couverture peinte, colophon au verso, chapitres ouverts bas au recto, verso blanc sans folio et culs-de-lampe."
+question: "Comment ouvrir chaque chapitre sur une page de droite, au tiers de la hauteur, comme dans un roman broché ?"
+aliases: ["roman broché", "roman", "ouverture basse", "descente de chapitre", "ouverture de chapitre", "recto", "page de droite", "page impaire", "verso blanc", "page blanche", "parité", "attaque en petites capitales", "première phrase en petites capitales", "cul-de-lampe", "fleuron", "vignette typographique", "ornement", "colophon", "achevé d’imprimer", "page de copyright", "couverture", "titres courants de section", "carte de visite", "style de paragraphe", "Goncourt", "Edmond et Jules de Goncourt", "Madame Gervaisais", "Kate Chopin", "The Awakening", "L’Éveil", "trade paperback"]
+pageNotes: { "1": "La couverture : la mer vue entre les troncs de deux arbres, un voilier à l’horizon et une ombrelle blanche qui monte de la plage par un chemin entre des fleurs jaunes et blanches ; dessous, le titre Madame Gervaisais en grande italique et « Edmond et Jules de Goncourt » en petites capitales.", "2": "Le colophon, composé petit au pied de la page, sans titre courant ni folio : « Publié en volume par A. Lacroix, Verboeckhoven et Cie, à Paris, en 1869. »", "3": "Le chapitre I ouvert bas sur un recto : un I italique, un filet fin rouille et court, la première réplique, « — Quarante scudi ? », sur une ligne de petites capitales, et le dialogue à partir de 81 mm.", "5": "La fin du chapitre I, avec la carte de visite « madame gervaisais. » centrée en petites capitales, puis la dernière phrase, « avec lequel on fait à Rome la joie du pauvre. », et le cul-de-lampe à la camomille.", "6": "Un verso blanc sans titre courant ni folio, laissé pour que le chapitre II s’ouvre sur un recto.", "7": "Le chapitre II s’ouvre comme le chapitre I ; sa première phrase, trop longue, s’arrête à la virgule après « soir-là » et passe à la ligne après « Minerve », et le paragraphe reprend sur « et de place en place des touristes ».", "9": "Une neuvième page, un recto avec « Madame Gervaisais » en italique dans le titre courant ; le chapitre II finit sur « les puces de la Minerve… », suivi du cul-de-lampe." }
+---
+
+## Ce que vous allez composer
+
+Neuf pages d’un roman broché de 140 × 216 mm contiennent les deux premiers chapitres de *Madame Gervaisais* (1869), d’Edmond et Jules de Goncourt. La couverture, une peinture générée par des modèles de diffusion et chargée en JPEG, montre la mer entre les troncs de deux arbres : un voilier à l’horizon, et une ombrelle blanche qui monte de la plage par un chemin entre des fleurs jaunes et blanches. Le colophon se trouve au pied de son verso. Chaque chapitre s’ouvre sur un recto avec son texte à 81 mm du haut, sous un chiffre italique de 48 pt, un filet fin rouille de 18 mm et la première phrase du chapitre en petites capitales, centrée : la réplique qui ouvre le chapitre I tient sur une ligne, et la première phrase du chapitre II, coupée à la virgule, se répartit selon le sens sur deux lignes. En page 5, la carte de visite de l’héroïne, *madame gervaisais.*, est un paragraphe centré en petites capitales. Le chapitre I se termine sur cette page par un cul-de-lampe en camomille : la page 6 reste blanche, sans titre courant ni folio, et le chapitre II s’ouvre en page 7 et se termine en page 9. Les titres courants portent les auteurs sur les versos et le titre en italique sur les rectos.
+
+## Préparation
+
+### 1 · L’ouverture vient du titre et de son attribut
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Les chapitres des Goncourt n’ont pas de titre : chaque titre ne contient que son chiffre (`# I`), que `{titleText}` imprime. `{attr.lead}` imprime l’attribut `lead` du titre, qui contient la première phrase du chapitre ; le paragraphe Markdown sous le titre commence par la phrase suivante ([attributs de titre](/fr/docs/document-format#attributs-de-titre)). L’attaque est un texte de titrage centré. Celle du chapitre I, la réplique *— Quarante scudi ?*, tient sur une ligne et n’a pas de `\n`. La première phrase du chapitre II est trop longue pour une attaque : l’attribut s’arrête à la virgule après *soir-là*, son `\n` le coupe selon le sens après *Minerve*, et le paragraphe sous le titre reprend la phrase à *et de place en place*. La boîte de l’attaque commence neuf lignes de grille sous le haut du bloc de texte, et un `minHeight` de 12 lignes laisse une ligne blanche sous une attaque de deux lignes et deux sous une attaque d’une ligne : le texte des deux chapitres commence sur la même ligne de grille. Sans `minHeight`, le texte commence juste sous l’attaque ([largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). `marginBottom: pt(0)` remplace la marge par défaut d’un demi-cadratin du niveau, qui ferait descendre le texte d’une ligne.
+
+`breakBefore` avec la parité `'odd'` envoie chaque chapitre sur un recto, avec un verso blanc seulement après un chapitre qui finit sur un recto ([saut avant](/fr/docs/configuration-text#saut-avant)). Pour forcer un recto là où il n’y a pas de titre, écrivez `:::pagebreak{parity="odd"}` dans le Markdown ; dans une mise en page de deux colonnes ou plus, `:::columnbreak` fait passer le texte à la colonne suivante ([`:::pagebreak`](/fr/docs/document-format#pagebreak)).
+
+### 2 · Une page de broché en lignes entières
+
+<Excerpt region="page" />
+
+La marge de pied est ce que laisse le format de 216 mm après la marge de tête et 35 lignes de 14 pt : chaque page pleine finit sur la même ligne, comme les pages 3, 4 et 8. La page 7 finit une ligne plus haut, pour ne pas laisser seule en tête de la page 8 la dernière ligne d’un paragraphe. Avec `mirror: true`, la marge intérieure de 20 mm tombe du côté du dos sur les rectos comme sur les versos ([marges en miroir](/fr/docs/configuration-page-layout#marges-en-miroir)). La justification de 104,5 mm contient environ 69 caractères de Crimson Pro en 10,5 pt. Le texte courant garde des espaces entre 0,7 et 1,9 fois l’espace normal ; avec le minimum par défaut de 0,6, une ligne de l’édition anglaise se resserre à 0,62. Dans l’édition française, trois lignes des pages 3 et 4 dépassent quand même 1,9 (2,05 au plus).
+
+### 3 · Des titres courants qui sautent les ouvertures et les pages blanches
+
+<Excerpt region="heads" />
+
+`parity: 'even'` place les auteurs en petites capitales Cormorant SC sur les versos, et `'odd'` le titre en italique sur les rectos ; les folios se placent au bord extérieur du bloc de texte. `pages: 'body'` écarte les quatre éléments des ouvertures et de la page 6, le verso blanc qu’ajoute le saut de parité. Avec `pages: 'all'`, cette page imprimerait *6* et *Edmond et Jules de Goncourt*. Les ouvertures reçoivent à la place un folio en pied, un élément de pied de page que `pages: 'opener'` réserve à elles seules ([éléments texte](/fr/docs/configuration-page-layout#éléments-de-texte)).
+
+### 4 · La couverture est une section sans titres courants
+
+<Excerpt region="cover" />
+
+La couverture est un titre, `# Madame Gervaisais {style="cover"}`. Son style place la peinture sur les 134 mm du haut, le titre du frontmatter en 50 pt et les auteurs en petites capitales. Le style s’applique aussi à la section qu’ouvre le titre, les pages 1 et 2, jusqu’au chapitre I. Ses `header` et `footer` vides écartent le folio en pied de la couverture et les titres courants du colophon. Sa marge de tête place le colophon sur les six dernières lignes de grille du bloc de texte : la dernière ligne du colophon est au niveau de la dernière ligne de la page 3 ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)). La colonne de la section commence à 165 mm du haut, et la maquette, ancrée à la page et au fond perdu, peint quand même au-dessus : seul le pied d’une colonne coupe une maquette qui y est gardée.
+
+<PageShot page={2} crop="0,0.7,1,0.24" caption="Page 2 : le colophon au pied du verso de la couverture, sans titre courant ni folio." />
+
+Comme le colophon, la carte de visite du chapitre I a son style de paragraphe, `card`, que seule l’édition française emploie : `:::paragraphs{style="card"}` centre *madame gervaisais.* en Cormorant SC, sans alinéa ([styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)).
+
+### 5 · Un cul-de-lampe ferme chaque chapitre
+
+<Excerpt region="tailpiece" />
+
+Le type ornement n’a pas de préfixe de légende : la fleur de camomille s’imprime sans libellé, large de 17 % de la justification, là où se trouve `::resource{id="tailpiece-1"}` ([types de ressources](/fr/docs/configuration-resources#types-de-ressources)). Une image insérée dans le texte garde une ligne de grille au-dessus d’elle, et le `:::space` qui la précède en ajoute une deuxième entre la dernière ligne du chapitre et la fleur ([`:::space`](/fr/docs/document-format#space)). Les deux culs-de-lampe dessinent le même fichier, `fleuron.svg`, sous deux identifiants, car une ressource n’est placée qu’une fois.
+
+## Variantes
+
+### Laisser le chapitre II suivre à la page suivante
+
+Avec la parité `'any'`, le chapitre II s’ouvre en page 6, un verso, et le livre se termine en page 8 ; le folio en pied est centré sur le bloc de texte, pas sur la page : sur ce verso, il reste donc sous le milieu du texte.
+
+```diff
+-const chapter = { level: 1, breakBefore: { enabled: true, parity: 'odd' },
++const chapter = { level: 1, breakBefore: { enabled: true, parity: 'any' },
+```
+
+### Marquer un changement de scène dans un chapitre
+
+Placée entre deux lignes `:::space`, la même fleur marque un changement de scène, et le paragraphe suivant commence sans alinéa parce que `indentAfterHeading` est désactivé. Dans l’édition anglaise, placée après *seemed long to him.*, la fleur tombe au pied de la page 4 ; le second espace n’y tient plus et il est supprimé. Le changement de scène ajoute quatre lignes, qui repoussent seul le cul-de-lampe du chapitre I en page 6, sous un titre courant : réajustez donc le chapitre après en avoir ajouté un.
+
+```diff
+ const resources = [
++  svg('break-1', 'fleuron.svg', 40, 12, 'A scene break.'),
+```
+
+```md
+That was why the morning seemed long to him.
+
+:::space
+
+::resource{id="break-1"}
+
+:::space
+
+“You are burnt beyond recognition,” he added, …
+```
+
+## Erreurs fréquentes
+
+- Avec `'always-odd'`, une page blanche de séparation suit chaque section avant tout complément de parité : dans l’édition anglaise, le chapitre I passerait en page 5, après deux pages blanches, et le livre compterait dix pages.
+- Les pages de l’édition anglaise sont ajustées au texte. Avec une marge extérieure de 16 mm au lieu de 15,5, la page 7 coupe *after-din-ner* à un second trait d’union et finit une ligne plus tôt, la page 8 termine un paragraphe sur le bout de mot *spondent.*, et le second cul-de-lampe tombe sur une neuvième page. Vérifiez le pied de chaque page après avoir changé la justification, le corps ou la descente.
+- Dans l’édition anglaise, *Mr.* et *Mrs.* sont liés au nom par une espace insécable (U+00A0). Le paragraphe qui finit par *seemed long to him.* garde une espace ordinaire, car y lier le nom ouvre sa première ligne à 2,2 fois l’espace normal.

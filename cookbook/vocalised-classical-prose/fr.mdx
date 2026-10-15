@@ -1,0 +1,53 @@
+---
+title: "Prose classique entièrement vocalisée, crochets coraniques"
+summary: "Une maqāma avec une voyelle sur chaque lettre, composée sur un interlignage double du corps : les signes d’une ligne ne touchent jamais ceux de la suivante."
+plain: "Un vieux récit arabe imprimé avec tous ses petits signes de voyelle au-dessus et au-dessous des lettres. Les lignes sont assez espacées pour que les signes d’une ligne ne heurtent pas la ligne du dessous."
+description: "Une maqāma arabe entièrement vocalisée dans Postext : Amiri 14 pt sur 28 pt, justification par kashida, citations du Coran entre ﴿ ﴾, avertissement expliqué."
+question: "Quel interlignage demande un texte arabe entièrement vocalisé ?"
+aliases: ["arabe vocalisé", "tashkīl", "harakat", "signes de voyelle", "voyelles brèves", "shadda", "kasra", "interlignage arabe", "interlignage", "maqāma", "maqamat", "séances", "al-Hamadhānī", "crochets coraniques", "parenthèses ornées", "مقامات", "تشكيل", "حركات"]
+pageNotes: { "2": "La première page de la maqāma : le titre المقامة المارستانية en Ruqʿa rouge, le nom de l’auteur en Naskh gras, une petite ligne latine en gris, puis l’arabe justifié avec un signe de voyelle sur chaque lettre, et une citation du Coran entre les crochets ornés ﴿ ﴾ près du pied." }
+---
+
+## Ce que vous allez composer
+
+Quatre pages d’un livre arabe classique où chaque lettre porte sa voyelle : la *Maqāma de l’asile* d’al-Hamadhānī, où un fou de l’asile de Bassora met en déroute un théologien, puis se nomme en vers. Un texte entièrement vocalisé empile fatḥa et shadda au-dessus des lettres et kasra en dessous, et ces signes vivent dans l’espace entre les lignes. La page est donc composée en Amiri à 14 pt sur 28 pt, le double du corps, et rien d’autre : l’interlignage fait la maquette. Le texte est justifié par kashidas, s’ouvre sur un retrait de 1,5 cadratin à droite, et compose ses trois citations du Coran entre les crochets ornés ﴿ ﴾ du muṣḥaf imprimé. Seuls la ligne de titre latine et la note sur le texte changent selon l’édition.
+
+## Préparation
+
+### 1 · Un interlignage double du corps
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. L’interlignage ne grandit jamais pour faire place aux signes : une kasra sous une ligne et une shadda en haut de la suivante partagent le même espace, qui se choisit donc pour la ligne la plus vocalisée du livre ([Signes de voyelle](/fr/docs/arabic-layout#signes-vocaliques)). Sur ce texte, un interlignage de 1,6 × le corps laisse six paragraphes dont les signes se heurtent, et 1,9 × en laisse encore un ; à 2 ×, aucun. La composition vous le dit : quand deux lignes se heurtent, elle signale `arabicMarksExceedLeading` pour le paragraphe, avec l’interlignage qu’il lui faudrait ([Texte arabe](/fr/docs/configuration-text#texte-arabe)).
+
+<PageShot page={2} crop="0,0.3,1,0.45" caption="Page 2 : une voyelle sur chaque lettre, et 28 pt entre les lignes de base, si bien que les kasras d’une ligne passent au-dessus des shaddas de la suivante." />
+
+### 2 · Une petite page à la justification large
+
+<Excerpt region="page" />
+
+Une page de 14 × 21 cm avec des marges latérales de 16 et 18 mm laisse une justification de 106 mm, une douzaine de mots vocalisés, et dix-sept lignes au pas de 28 pt. Les signes donnent aux lignes un gris soutenu : la page reste donc sobre, sans titres courants, sur un papier crème, avec un seul titre rouge. `mirror: true` place la marge la plus large au petit fond, qui dans un livre relié à droite est le bord droit d’une page impaire ([Ordre des pages et reliure à droite](/fr/docs/arabic-layout#ordre-des-pages-et-reliure-à-droite)).
+
+### 3 · Des titres qui gardent la grille
+
+<Excerpt region="titles" />
+
+Les titres n’ont pas de maquette : le titre en Ruqʿa se place dans une boîte de ligne de trois lignes de la grille, et l’auteur et la ligne latine prennent chacun une ligne de 28 pt, si bien que la première ligne du texte tombe sur la grille. La ligne latine porte `{dir=ltr}`, un titre de gauche à droite dans un livre de droite à gauche ([Sens du document, des blocs et du texte en ligne](/fr/docs/arabic-layout#sens-du-document-des-blocs-et-du-texte-en-ligne)).
+
+## Variantes
+
+### Retirer les voyelles pour une édition de lecture
+
+`tashkil: 'strip'` retire de la composition les voyelles brèves et la shadda, si bien que le même texte peut se composer à 1,6 × le corps ; `'strip-vowels'` garde la shadda.
+
+```diff
+-  textAlign: 'justify', kashida: 'auto', kashidaPatterns: 'naskh',
++  textAlign: 'justify', kashida: 'auto', kashidaPatterns: 'naskh', tashkil: 'strip',
+```
+
+### Voir l’avertissement
+
+Réglez l’interlignage à 1,6 × le corps et la composition signale six paragraphes avec `arabicMarksExceedLeading`, chacun avec l’interlignage qu’il lui faut, jusqu’à 1,89 em sur ce texte.
+
+```diff
+-const LEAD = 2 * SIZE; // pt: 28
++const LEAD = 1.6 * SIZE; // pt: 22.4
+```

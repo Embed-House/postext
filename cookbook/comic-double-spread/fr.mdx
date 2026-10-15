@@ -1,0 +1,56 @@
+---
+title: "Une planche de BD sur une double page"
+summary: "Un :::page avec l’attribut spread pose un seul découpage sur deux pages en regard : un panoramique franchit le dos, la bande du bas se partage au pli."
+plain: "Une BD montée sur deux pages en regard comme si elles n’en faisaient qu’une : une large image d’un marché bondé traverse le milieu du livre, trois cases se placent dessous."
+description: "Double page de BD avec Postext : un découpage sur deux pages, un panoramique de 1 900 px à cheval sur le dos, la bande du bas coupée au pli, en huit langues."
+question: "Comment étendre une planche de BD sur une double page ?"
+aliases: ["double page", "planche double", "panoramique", "splash sur double page", "BD en double page", "double spread", "doble página", "見開き", "跨页", "spread", "pageIndexOffset"]
+---
+
+## Ce que vous allez composer
+
+La deuxième histoire de l’album de la <RecipeLink slug="tebeo-album-page">Nº 152</RecipeLink>, *¡Abuelo!*, racontée sur deux pages en regard. Un samedi de décembre, le marché est noir de monde ; Lola perd son grand-père dans la foule. La moitié haute de la double page est un seul panoramique de 432 mm de large : Lola, minuscule, tout à gauche, Paco qui la cherche tout à droite, et entre eux l’allée du marché qui file vers le pli. Dessous, trois cases : Lola seule au milieu des jambes, Paco qui siffle juché sur une cagette de fruits, les retrouvailles, béret en l’air. Le découpage est écrit une seule fois pour les deux pages : le panoramique franchit donc le dos, et la gouttière de la bande du bas tombe sur le pli. L’espagnol est l’original ; les éditions anglaise, catalane, chinoise, arabe, japonaise, portugaise et française lettrent la même double page.
+
+## Préparation
+
+### 1 · Un seul découpage pour les deux pages
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Toute la BD tient en une directive avec l’attribut `spread` :
+
+```md
+:::page{spread split="55 / * [25 | 25 | *]"}
+::panel{art=ds1}
+caption: Un sábado de diciembre, el mercado estaba hasta los topes.
+lola: ¿Abuelo?
+paco{shout}: ¿Lola? ¡Lolaaa!
+```
+
+Le cadre va de la marge extérieure du verso à celle du recto ; les marges intérieures disparaissent. La première bande, 55 % de la hauteur, est une seule case à cheval sur le dos. Dans la seconde, `25 | 25 | *` place sa première ligne de coupe à 25 % et la deuxième à 50 %, sur le dos lui-même : deux cases carrées sur le verso, les retrouvailles sur le recto. Une double page s’ouvre sur une page paire, et la page 1 d’un document est un recto ; le script passe donc `continuation: { pageIndexOffset: 1 }` : cet épisode poursuit l’album en page 2, et aucune page blanche ne le précède.
+
+### 2 · Un panoramique assez grand pour deux pages
+
+<Excerpt region="art" />
+
+Le panoramique est la seule image imprimée par-dessus le pli, 432 × 144 mm ; il est donc livré à 1 900 px (380 Ko), les trois autres faisant de 1 000 à 1 200 px. Sa zone de sécurité est une bande qui couvre presque toute sa largeur, et ses deux personnages qui parlent se tiennent aux bords, à 6 % et 92 % de la largeur, loin du dos, où la reliure avalerait une bulle. L’image a été dessinée sans visage au milieu : l’allée du marché file vers le pli. Une foule est pleine de visages qui ne disent rien : le poissonnier derrière Lola est marqué dans `faces`, la liste des visages des personnages muets, si bien que la première bulle de Lola se place à côté de lui et jamais sur son visage ni sur sa casquette, et l’édition japonaise y épingle sa colonne (`at="2.8% 37%"`).
+
+### 3 · Les bulles de l’album
+
+<Excerpt region="balloons" />
+
+Les styles de bulles sont ceux de la Nº 152 : bulles de dialogue blanches, récitatifs jaune pâle, une bulle en éclat pour le cri de Paco, un contour en tirets pour le murmure de Lola, et le sifflement dans le caractère des onomatopées de l’album, Bangers dans les éditions en alphabet latin. `cast` donne au PDF et à l’EPUB les noms qu’ils lisent avant chaque réplique.
+
+## Variantes
+
+### Ouvrir le livre sur la double page
+
+Supprimez la continuation et le moteur laisse la page 1 blanche (rôle `blank`) : la double page tombe toujours sur les pages 2 et 3.
+
+```diff
+-const continuation = { pageIndexOffset: 1, pageNumbering: { startAt: 2 } };
++const continuation = {};
+```
+
+## Erreurs fréquentes
+
+- Les bulles restent hors d’une bande de 8 mm autour du dos, épingles comprises : un personnage debout sur le pli voit sa bulle repoussée d’un côté. Éloignez du milieu les personnages qui parlent dans une case à cheval sur le dos.
+- Une bulle évite deux personnages dont les visages se touchent, dans une étreinte ou une bagarre, y compris celui qui parle. Dans les éditions japonaise et arabe, la double page se lit de droite à gauche, la case des retrouvailles passe sur la page de gauche et le béret qui s’envole en occupe le coin supérieur droit ; les deux bulles de Paco vont au-dessus du marché, à côté de sa tête, pas sur l’étreinte. Marquez les deux visages dans l’image (`face`) pour que le moteur voie qu’ils se touchent.

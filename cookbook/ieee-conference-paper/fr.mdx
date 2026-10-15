@@ -1,0 +1,64 @@
+---
+title: "Un article de conférence sur deux colonnes, style IEEE"
+summary: "Article d’atelier sur deux colonnes : bloc de titre sur toute la page, citations IEEE avec plages [2]–[4], renvois « Section II » et liste numérotée compacte."
+plain: "Un court article de recherche pour une conférence, sur deux colonnes. L’auteur écrit un code par source ; Postext numérote les citations entre crochets, renvoie aux sections par numéro et page et imprime la liste numérotée des références."
+description: "Un article de conférence IEEE dans Postext : deux colonnes en US Letter, citations numérotées par citeproc-js, plages regroupées, renvois de section et de page."
+question: "Comment composer un article de conférence avec des citations IEEE numérotées et une liste de références ?"
+aliases: ["IEEE", "IEEEtran", "article de conférence", "actes de colloque", "citations numérotées", "deux colonnes", "mots-clés", "résumé", "BibTeX", "citeproc"]
+pageNotes: { "1": "Page 1 : une bande bleu pâle en haut porte la ligne de l’atelier en petites capitales bleues, le titre sur deux lignes « Optimal Line Breaking in the Browser: What It Costs and When It Pays », centré, et trois blocs d’auteurs côte à côte. Sous la bande, le résumé et les mots-clés en gras sur toute la largeur, puis deux colonnes justifiées sous les titres centrés « I. INTRODUCTION » et « II. RELATED WORK », avec les citations [1] et [2]–[4] et les renvois « Section II », « Section III », « Section IV, on p. 2 ».", "2": "Page 2 : les sections III à VI, les remerciements et le titre « REFERENCES » au-dessus de sept entrées numérotées en 8 pt, chaque [n] dans sa propre colonne ; les deux colonnes finissent à la même hauteur." }
+---
+
+## Ce que vous allez composer
+
+Un article de deux pages pour un petit atelier d’ingénierie documentaire, composé comme les actes de conférence de l’IEEE : format US Letter, deux colonnes de trois pouces et demi, un caractère de type Times en 10 pt, des sections numérotées I, II, III en capitales centrées. Le titre, les trois blocs d’auteurs, le résumé et les mots-clés courent sur les deux colonnes, sous une bande pâle dans le bleu de l’atelier, seule couleur des pages. Les auteurs citent avec des clés BibTeX ; Postext imprime [1] dans l’ordre de première citation des ouvrages, réunit trois ouvrages consécutifs en [2]–[4], écrit « Knuth and Plass [1] » quand les noms font partie de la phrase et construit la liste numérotée de la fin en 8 pt. Les renvois aux sections impriment « Section IV, on p. 2 » et restent justes quand le texte bouge.
+
+## Préparation
+
+### 1 · Le style IEEE, avec ses plages
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Enregistré une seule fois, `postext-citeproc` met en forme chaque `[@key]` avec citeproc-js et le style CSL de l’IEEE, en numérotant les ouvrages dans l’ordre de leur première citation. Le fichier de style fourni avec le moteur liste trois ouvrages consécutifs sous la forme [2], [3], [4] ; le guide éditorial de l’IEEE les réunit en [2]–[4]. Ajouter `collapse="citation-number"` à l’élément `<citation>` du style et passer le résultat comme `customStyle` suffit pour que citeproc-js le fasse. `labelWidth` donne aux numéros de la liste une colonne à eux, de sorte que la deuxième ligne d’une entrée commence sous le premier mot et non sous le crochet.
+
+### 2 · Un bloc de titre sur les deux colonnes
+
+<Excerpt region="title" />
+
+Le titre est l’unique titre de niveau 1 du document, avec le style `paper`. Ce style s’étend sur toute la page et dessine le titre à partir de sa maquette : la ligne de la manifestation, le titre et trois blocs d’auteurs larges d’un tiers de la justification, chacun lu dans un attribut du titre où `\n` force les retours à la ligne. La bande est une boîte ancrée à la coupe, si bien qu’elle atteint le bord supérieur du papier.
+
+### 3 · Résumé et mots-clés en gras
+
+<Excerpt region="abstract" />
+
+Un encadré sur toute la largeur de la page porte le résumé et les mots-clés. Son corps est en 9 pt gras, comme chez l’IEEE, et `***Abstract*—**` dans le texte donne l’étiquette en italique avec son tiret cadratin. Le filet fin du haut est le liseré de l’encadré, et le remplissage réduit la justification à une centaine de caractères.
+
+### 4 · Sections numérotées et renvois
+
+<Excerpt region="sections" />
+
+`{2:I}.` numérote les sections I., II., III. Un renvoi imprime le numéro sans son point : `:ref{id="sec:results"}` donne « Section IV » à partir du modèle `crossRefs`, et `:ref{id="sec:results" style=page}` donne « p. 2 ». Les deux se calculent sur les pages composées, ils suivent donc le texte si l’on ajoute un paragraphe ou si une section se déplace. Les titres « Acknowledgment » et « References » prennent le style `back` et restent sans numéro.
+
+<Excerpt region="palette" />
+
+## Variantes
+
+### Garder le style tel qu’il est livré
+
+Sans la modification, trois ouvrages consécutifs s’impriment un par un, ce que préfèrent certaines revues.
+
+```diff
+-  style: 'custom', customStyle: ieee, // or style: 'ieee' for the file as it ships
++  style: 'ieee',
+```
+
+### Écrire les plages dans une seule paire de crochets
+
+Certains styles numériques impriment plutôt [2–4]. Le marqueur `brackets` écrit lui-même les numéros et réunit ceux qui se suivent.
+
+```diff
+-  style: 'custom', customStyle: ieee, // or style: 'ieee' for the file as it ships
++  style: 'ieee', marker: 'brackets', collapseRanges: true,
+```
+
+## Erreurs fréquentes
+
+- Quand les deux colonnes de la dernière page ne finissent pas à la même hauteur, regardez ce qui se trouve à l’endroit de la coupe : le moteur ne laisse pas un titre de section au pied d’une colonne loin de son texte, et renonce plutôt à la coupe. Une phrase de plus ou de moins dans les dernières sections fait passer la coupe au-delà du titre.
+- Les commandes BibTeX comme `{\TeX}` ne sont pas développées. Écrivez `The {TeX}book` ; les accolades conservent les capitales telles quelles.

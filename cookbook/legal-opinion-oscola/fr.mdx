@@ -1,0 +1,63 @@
+---
+title: "Un commentaire juridique cité selon OSCOLA"
+summary: "Commentaire d’arrêt de quatre pages dont les citations [@robinson2018, para 21] deviennent des notes OSCOLA : arrêts en italique, citation neutre, ibid, (n 1)."
+plain: "Un court commentaire d’une décision de justice anglaise sur la police. Chaque arrêt, loi ou article invoqué est cité dans une note numérotée en bas de page, dans le style des facultés de droit britanniques."
+description: "Un commentaire d’arrêt composé avec Postext : arrêts, lois et articles cités en notes OSCOLA, avec renvois précis, ibid, renvois (n 1) et un style CSL corrigé."
+question: "Comment citer arrêts et textes de loi en notes de bas de page, selon le style OSCOLA ?"
+aliases: ["OSCOLA", "citation juridique", "revue de droit", "note d’arrêt", "commentaire d’arrêt", "table des arrêts", "citation neutre", "recueils de jurisprudence", "ibid", "Bluebook", "droit britannique", "renvoi précis"]
+pageNotes: { "1": "Page 1 : une bande bordeaux sur la moitié haute avec la ligne de collection, le nom de l’affaire « Robinson » en grande italique, « v Chief Constable of West Yorkshire Police » et la citation « [2018] UKSC 4, [2018] AC 736 », puis le titre « Acts, Omissions and the Police » ; dessous, les faits de l’affaire et les notes 1 et 2, la seconde portant « ibid [21] ».", "2": "Page 2 : la section « There is no Caparo test » et le début de « Acts and omissions », avec les notes 3 à 10 : Donoghue v Stevenson, Anns, Murphy et Caparo en entier, un recueil australien entre parenthèses et « Robinson (n 1) [26–27] ».", "3": "Page 3 : « Acts and omissions », avec des notes sur Stovin v Wise, Hill, Michael, deux articles du Cambridge Law Journal et de la Law Quarterly Review, et le début de « The statutory route ».", "4": "Page 4 : le Human Rights Act 1998 cité par section, « ibid s 7 », le Compensation Act 2006, le « Comment » final, un petit colophon et les notes 18 à 23." }
+---
+
+## Ce que vous allez composer
+
+Un tiré à part de la série de commentaires d’arrêts d’une revue de droit : quatre pages sur *Robinson v Chief Constable of West Yorkshire Police*, la décision de 2018 de la Cour suprême sur les cas où la police est tenue d’un devoir de vigilance. La page mesure 162 × 240 mm, en miroir, en Libre Baskerville de 9,4/13,6 pt, et la première page s’ouvre sur une bande bordeaux avec le nom de l’affaire composé en italique de 60 pt. L’auteur écrit chaque source sous forme de clé avec son renvoi précis, `[@caparo1990, 617–18]`, et Postext compose 23 notes de bas de page selon OSCOLA, la norme de citation des facultés de droit britanniques : noms d’affaires en italique, lois en romain, pas de point après AC, HL ou edn, *ibid* pour la source de la note précédente, et *Robinson (n 1) [55]* au-delà. Les sources sont réelles ; l’auteur et la revue ne le sont pas.
+
+## Préparation
+
+### 1 · Une note OSCOLA pour chaque source
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. OSCOLA est un style à notes : `[@robinson2018, para 21]` laisse un numéro en exposant après le point, et ses mots vont au pied de la page. La note 1 donne l’affaire en entier, *Robinson v Chief Constable of West Yorkshire Police [2018] UKSC 4, [2018] AC 736* ; la note 2, qui la cite de nouveau aussitôt, se lit *ibid [21]* ; la note 8, après que d’autres affaires se sont intercalées, se lit *Robinson (n 1) [26–27]*. Un article de revue de droit ne cite que dans ses notes : `bibliography.auto: false` tient donc la liste des ouvrages hors de la dernière page.
+
+### 2 · Une affaire est une donnée, écrite comme l’impriment les recueils
+
+Une affaire est un élément CSL de `type: legal_case` : son nom dans `title`, la juridiction dans `authority`, la série du recueil dans `container-title` et la première page dans `page`. OSCOLA met l’année d’un recueil entre crochets quand l’année identifie le volume, comme pour les Appeal Cases : la recette écrit donc cette année dans `volume`, suivie du numéro de volume. `volume: "[1990] 2"` donne *[1990] 2 AC 605 (HL)*. Une affaire jugée après 2001 a aussi une citation neutre : `authority: UKSC`, `number: "4"` et `issued: 2018` donnent *[2018] UKSC 4*, suivi du recueil. Une loi est un `type: legislation` avec l’année dans son titre et sans `issued`, pour que l’année ne s’imprime pas deux fois, et `[@hra1998, § 6]` cite une section sous la forme *s 6*.
+
+### 3 · Deux correctifs au style fourni
+
+<Excerpt region="oscola" />
+
+Le fichier `oscola.csl` fourni ne met entre crochets un renvoi à un paragraphe que dans la première note d’une affaire. Les notes suivantes imprimaient *para 55* et *ibid 27*, et une seconde note renvoyant à la même loi perdait son *s*. Le correctif remplace une macro et une ligne du XML du style avant la composition et passe le résultat comme style personnalisé : le texte et les références ne changent pas.
+
+### 4 · Le nom de l’affaire sur la bande
+
+<Excerpt region="opener" />
+
+La bande descend de 124 mm depuis la coupe. Le nom de l’affaire, les parties et la citation sont des attributs du titre : un autre commentaire de la série ne change que son Markdown. *Robinson* est composé en Libre Baskerville Italic de 60 pt parce qu’OSCOLA met les noms d’affaires en italique, et la citation dessous reste en romain, comme dans les notes.
+
+<Excerpt region="palette" />
+
+## Variantes
+
+### Imprimer le style tel qu’il est livré
+
+Pour comparer avec la sortie non corrigée, utilisez l’identifiant du style fourni. Les renvois à un paragraphe dans les notes suivantes se lisent alors *para 55*.
+
+```diff
+-  style: 'custom', customStyle: OSCOLA, // the bundled 'oscola', patched above
++  style: 'oscola',
+```
+
+### Regrouper les notes à la fin
+
+Certaines revues impriment leurs notes après le texte. Les citations gardent leurs formes complète et abrégée et leurs numéros.
+
+```diff
+-  placement: 'column', numbering: 'chapter',
++  placement: 'chapterEnd', numbering: 'chapter',
+```
+
+## Erreurs fréquentes
+
+- Un recueil dont le volume est un simple nombre, `volume: "2"`, imprime l’année entre parenthèses, *(1990) 2 AC*, ce qu’OSCOLA réserve aux séries numérotées d’une année sur l’autre comme les Commonwealth Law Reports (note 7). Écrivez l’année entre crochets dans `volume` pour les Appeal Cases et les Weekly Law Reports.
+- `s` devant un localisateur désigne une page (*Seite* en allemand), et non une section : écrivez `§ 6`. Une sous-section comme `6(1)` n’est pas lue comme un localisateur ; nommez-la dans la phrase et citez la section.
+- OSCOLA ne prévoit pas de bibliographie dans un article, et le style n’a pas de tables séparées des arrêts et des lois. Une thèse qui a besoin de ces tables obtient de `:::bibliography` une seule liste triée, avec les sources secondaires d’abord, puis les arrêts et les lois mêlés.

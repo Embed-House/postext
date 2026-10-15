@@ -1,0 +1,75 @@
+---
+title: "Une page de livre sur une grille de ligne de base"
+summary: "Une page en miroir sur deux colonnes dont le bloc de texte mesure 44 lignes pile : le texte courant tient sur une seule grille, d’une colonne à l’autre."
+plain: "Trois pages d’un essai sur la mise en page des livres anciens. On y voit comment placer chaque ligne de texte à la même hauteur dans les deux colonnes et sur les deux pages en vis-à-vis."
+description: "Essai sur le canon des proportions de la page composé avec Postext : marges 2:3:4:6 en miroir, deux colonnes de 44 lignes, retour à la grille après les titres."
+question: "Comment monter une page de livre sur deux colonnes et garder chaque ligne sur une seule grille ?"
+aliases: ["rythme vertical", "lignes alignées d’une colonne à l’autre", "hauteur du bloc de texte", "empagement", "canon de Van de Graaf", "marges 2:3:4:6", "liste décalée par rapport à la grille", "pieds de colonne alignés", "baseline grid"]
+pageNotes: { "1": "L’ouverture : le titre « Le canon secret », en italique rouge, remplit la première colonne et le dessin du canon coiffe la seconde, avec la légende « Figure 1.1. Le canon sur une double page ouverte de pages 2:3 » ; de fines lignes rouge pâle courent sous chaque ligne de texte, et les titres « Tracer le canon » et « La figure de Villard » ouvrent les sections.", "2": "Un verso, marge extérieure à gauche, sous le titre courant « La page réglée ». La « Note d’atelier », en petit corps, tombe entre les lignes de la grille ; le titre « Des lignes où se poser », juste dessous, se place à une demi-ligne de la grille, et le texte qui le suit revient sur les lignes. Dans la seconde colonne, « Ce que garde une page de travail » et sa liste de trois éléments suivent la grille des paragraphes voisins.", "3": "Un recto, marge intérieure à gauche, sous le titre courant « Le canon secret » : la figure 1.2, les deux pages comparées, coiffe la page sur toute la largeur du bloc de texte, et l’essai se termine dessous sur deux colonnes de même hauteur, le colophon « Composé en Vollkorn, corps 9,8 sur 13,4 points » fermant la seconde." }
+---
+
+## Ce que vous allez composer
+
+Les pages 9 à 11 de *La page réglée*, un recueil consacré au livre, contiennent « Le canon secret », un essai sur les proportions que les copistes médiévaux donnaient à leurs pages. Ses marges suivent le canon qu’il décrit, 2:3:4:6 et en miroir, sur un format de 210 × 280 mm autour de deux colonnes de Vollkorn. Une grille de ligne de base est tracée sur les pages en rouge pâle, et le texte courant des deux colonnes et des deux pages en vis-à-vis repose dessus. Le titre en Playfair Display remplit la première colonne de l’ouverture et le dessin du canon coiffe la seconde. Les intertitres se placent à une demi-ligne de la grille, et le texte qui les suit y revient. Une note d’atelier en plus petit corps suit son propre interlignage de 10 pt. À la page 11, l’essai se termine sous une figure sur toute la largeur de la page, sur deux colonnes coupées à la même longueur, et le colophon ferme la seconde.
+
+## Préparation
+
+### 1 · Les titres peuvent quitter la grille, les listes jamais
+
+<Excerpt region="flow" />
+
+L’espace au-dessus d’un titre est conservé tel qu’il est réglé : 1,5 interligne place donc le titre entre deux lignes de la grille, et le texte qui le suit est calé sur la ligne suivante ([grille de ligne de base](/fr/docs/configuration-page-layout#grille-de-ligne-de-base)). Une liste n’est pas calée avant son premier élément : la réponse courte met donc ses marges à zéro (n’importe quel nombre entier d’interlignes conviendrait aussi) ; avec la valeur par défaut de 1,5 em, les trois éléments de la page 10 tomberaient 1,3 pt sous les lignes de la colonne voisine. Les deux lignes de 46 pt du titre prennent chacune quatre interlignes et sa marge inférieure un de plus : l’essai commence donc à la ligne 10.
+
+<PageShot page={2} crop="0.14,0.1373,0.795,0.3207" caption="Page 10 : la liste de la seconde colonne suit la grille des paragraphes voisins ; la note d’atelier tombe entre les lignes de la grille, et le titre qui la suit se place à une demi-ligne, son texte revenant sur la grille." />
+
+### 2 · Quitter la grille exprès, puis y revenir
+
+<Excerpt region="note" />
+
+La note est un conteneur `:::paragraphs` composé en 7,8 sur 10 pt, hors grille. Après son dernier paragraphe, la position est arrondie à la ligne de grille suivante, si bien que le titre qui vient ensuite se place là où il serait après du texte courant ([le conteneur `:::paragraphs`](/fr/docs/configuration-styles#le-conteneur-paragraphs)). Le colophon utilise le même conteneur en 7,5 sur 10 pt : ses quatre lignes prennent 40 pt, 0,2 pt de moins que trois interlignes, et la dernière colonne de l’essai se termine ainsi au même niveau que sa voisine.
+
+### 3 · Placer les figures là où la grille peut les absorber
+
+<Excerpt region="figures" />
+
+Un flottant ne se place jamais au-dessus du paragraphe qui le cite ([placement](/fr/docs/document-format#placement)). Le canon, cité dans la première colonne, peut encore prendre la tête de la seconde à la page 9 ; le dessin comparatif sur toute la largeur, cité à la page 10, attend la page 11. Chaque bande est arrondie à un nombre entier d’interlignes : le texte sous un dessin commence donc sur une ligne de la grille, au niveau de la colonne voisine et de la page en vis-à-vis. Dimensionnez un dessin en fonction de cet arrondi : à 61,8 mm, la bande du canon, légende comprise, prend 17 interlignes ; à 62,5 mm, elle en prendrait 18 et laisserait presque une ligne de blanc sous la légende.
+
+<PageShot page={3} crop="0.05,0.07,0.83,0.435" caption="Page 11 : le texte sous la figure sur toute la largeur commence sur une ligne de la grille, et l’essai se termine sur deux colonnes de même hauteur, le colophon fermant la seconde." />
+
+### 4 · Laisser l’équilibrage mettre les colonnes d’équerre
+
+<Excerpt region="balance" />
+
+Chaque colonne pleine des pages 9 et 10 se termine à la ligne 44, parce que le bloc de texte mesure exactement 44 interlignes et que le texte a été calibré pour lui. Le maintien avec le paragraphe suivant et les règles contre les veuves, les orphelines et les fins de paragraphe trop courtes sont actifs par défaut. Quand l’une d’elles termine une colonne avec une ligne de moins, l’équilibrage place l’espace manquant au-dessus d’un titre précédent ([équilibrage des colonnes](/fr/docs/configuration-text#équilibrage-des-colonnes)), où il se voit comme un trou : calibrez donc le texte jusqu’à ce que l’équilibrage n’ait plus rien à combler. Sur la dernière page, il répartit les lignes restantes pour que les deux colonnes se terminent sur la même ligne.
+
+### 5 · Mettre les marges en miroir et numéroter à partir de la page 9
+
+<Excerpt region="heads" />
+
+La réponse courte calcule la marge de pied : le format de 280 mm, moins la marge de tête de 24 mm et un bloc de texte d’exactement `LINES` interlignes (44 × 13,4 pt = 208 mm), laisse 48 mm, soit six unités, comme l’exige la progression 2:3:4:6. Avec `mirror: true`, les 16 mm réglés en `left` forment la marge intérieure, à gauche d’un recto et à droite d’un verso ([marges en miroir](/fr/docs/configuration-page-layout#marges-en-miroir)) : les titres courants ancrés à `OUTER` millimètres du bord de la page s’arrêtent donc là où s’arrête le bloc de texte, du côté de la tranche. `pages: 'body'` les tient à l’écart de l’ouverture. `startAt: 9` imprime les folios 9 à 11, et `pageIndexOffset: 8` compte les huit pages qui les précèdent : le miroir, la parité des titres courants et `breakBefore: 'odd'` suivent ainsi le livre relié. Avec un décalage de 7, la première page compterait comme un verso, et le saut sur page impaire placerait une page blanche avant l’essai.
+
+## Variantes
+
+### Masquer la grille pour l’imprimeur
+
+`enabled` ne contrôle que les lignes tracées sur les pages finies ; la mise en page reste sur la grille de 13,4 pt dans les deux cas, et aucune ligne ne bouge.
+
+```diff
+-  baselineGrid: { enabled: true, color: col('grid') },
++  baselineGrid: { enabled: false },
+```
+
+### Voir ce que fait l’équilibrage
+
+Sans équilibrage, la page 11 fait descendre ses huit dernières lignes et le colophon dans la première colonne et laisse la seconde vide.
+
+```diff
+-const balancing = { enabled: true };
++const balancing = { enabled: false };
+```
+
+## Erreurs fréquentes
+
+- La règle selon laquelle un flottant `top` ne se place jamais sur la page qui le cite vaut pour les flottants sur toute la largeur de la page. Un flottant `top` de colonne peut se placer sur sa page de citation, en tête d’une colonne suivante, comme le fait la figure 1.1 à la page 9.
+- Les formats de page, les marges et la gouttière se règlent en unités absolues (mm, pt, cm, in). Un `em` n’y a aucun corps de référence, et la composition s’arrête sur « dimensionToPx: baseFontSizePx is required for unit "em" ».
+- L’espace-mot du Vollkorn est étroit, 0,2 em : dans une colonne d’une cinquantaine de caractères, certaines lignes justifiées sortent lâches ou serrées. L’exemple a été calibré ligne à ligne d’après le rapport des lignes lâches de la capture ; vérifiez-le de nouveau après toute modification du texte ou de la longueur de ligne.

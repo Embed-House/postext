@@ -1,0 +1,70 @@
+---
+title: "Cahier de jeux : mots croisés, mots mêlés et labyrinthe"
+summary: "Mots croisés et mots mêlés construits en tableaux à partir de lignes de lettres : cases noires et mots trouvés en fonds de cellule, numéros en exposant."
+plain: "Un cahier de vacances de jeux pour les enfants de neuf à onze ans, avec des mots croisés, des mots mêlés et un labyrinthe. On y voit comment construire les grilles à partir de simples lignes de lettres."
+description: "Un cahier de jeux pour enfants, composé dans Postext : mots croisés et mots mêlés en tableaux, labyrinthe à graine, solutions tirées des mêmes données."
+question: "Comment donner à chaque tableau son propre style : filets de grille, fonds de cellule, tuiles, cadre arrondi ?"
+aliases: ["mots croisés", "mots mêlés", "mots cachés", "labyrinthe", "cahier d’activités", "cahier de jeux", "cahier de vacances", "livre pour enfants", "solutions", "grille à partir de texte", "crossword", "word search"]
+pageNotes: { "1": "La couverture : un ciel jaune pâle avec un grand soleil orange qui se couche dans une mer bleue rayée de vagues blanches, un voilier à l’horizon, deux mouettes et une tortue qui nage. « Summer Workbook » en grandes lettres bleu marine, « Puzzles from the sea », une étiquette corail « Ages 9 to 11 » et une zone blanche où écrire un nom.", "2": "Le jeu 1 sous un bandeau bleu mer au pied ondulé : une grille de mots croisés de neuf sur neuf avec des cases bleu marine et de petits numéros gras dans l’angle des cases où commencent les mots, puis les définitions dans un encadré jaune pâle, « Across » à gauche et « Down » à droite.", "3": "Le jeu 2 sous un bandeau menthe : deux rangées centrées de cinq pastilles de mots, la première, « UMBRELLA », remplie de corail, au-dessus d’une grille de douze sur douze de capitales sur des tuiles jaune pâle aux joints blancs et aux coins arrondis ; les lettres d’« UMBRELLA » sont sur des tuiles corail.", "4": "Le jeu 3 sous un bandeau corail : un labyrinthe sur sable pâle, d’un nid en haut à gauche, où une tortue vient d’éclore à côté de deux coquilles vides, jusqu’à une ouverture sur la mer bleue en bas à droite.", "5": "Les solutions côte à côte sous un bandeau jaune : les mots croisés résolus, les mots mêlés avec chaque mot sur fond menthe, et le labyrinthe sur sable avec sa sortie tracée en corail du nid vide jusqu’à la mer, où nage la jeune tortue. En dessous, un encadré « Did you know ? » place un dessin en coupe d’œufs de tortue enfouis dans le sable à côté d’un paragraphe sur la ponte des tortues caouannes. Le colophon court au pied, à côté du folio." }
+---
+
+## Ce que vous allez composer
+
+Un cahier de vacances pour les enfants de neuf à onze ans : une couverture, trois jeux sur la mer et une page de solutions. Les pages 2 à 5 s’ouvrent sous un aplat de couleur au pied ondulé (bleu mer, menthe, corail, puis jaune pour les solutions) et un titre de 46 pt en Lilita One. Le code construit les mots croisés et les mots mêlés comme des tableaux à partir de lignes de lettres et donne à chacun son propre style de tableau : des cases à filets pour les mots croisés, des tuiles pâles aux joints blancs et aux coins arrondis pour les mots mêlés. Les cases noires des mots croisés et le mot déjà trouvé dans les mots mêlés sont des fonds de cellule, et les numéros des définitions sont des exposants dans les angles. Le labyrinthe est un SVG dessiné à partir d’une graine. La dernière page imprime les trois solutions côte à côte à partir des mêmes données, au-dessus d’un encadré sur la ponte des tortues caouannes.
+
+## Préparation
+
+### 1 · Un style de tableau, trois aspects
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `tableStyle` fixe Chivo Mono pour toutes les grilles. Chaque style nommé de `tableStyles` règle son propre corps, ses marges intérieures et ses filets, et un tableau en choisit un avec `table.styleId`. La largeur d’une colonne est sa part de la largeur du tableau, mais une ligne est aussi haute que ses lignes de texte plus les marges intérieures : ce sont donc les marges intérieures qui fixent la hauteur de chaque case. Les mots mêlés gardent la case de 9,41 mm des mots croisés autour d’une ligne de capitales de 15 pt, et `pad()` calcule les 2,9 pt que cette ligne laisse au-dessus et au-dessous. Leurs filets, larges de 2,4 pt et couleur papier, découpent le fond pâle en tuiles, et `borderRadius` arrondit à 4 mm les angles du cadre en y rognant les fonds. Sur la page des solutions, `key()` fait tenir neuf ou douze cases dans 54 mm : des cases de 6 mm aux lettres de 8 pt pour les mots croisés, des cases de 4,5 mm aux lettres de 6 pt pour les mots mêlés. La solution du labyrinthe est dessinée en carré de 54 mm : les trois solutions ont donc la même hauteur et leurs légendes partagent une ligne de base à 106,4 mm du bord supérieur.
+
+### 2 · Neuf cases, quinze lignes
+
+<Excerpt region="crossword" />
+
+Une case blanche contient deux lignes de Chivo Mono en 8,9 pt (le numéro de définition et une ligne vide) dans 1 pt de marge intérieure, soit 26,7 pt en tout : 9,41 mm, un neuvième de la largeur du tableau. Neuf cases font 84,7 mm de haut, la hauteur de quinze lignes de texte courant de 16 pt, et l’encadré des définitions commence sur la grille de ligne de base une ligne plus bas. Une case reçoit un numéro, dans l’ordre de lecture, quand un mot horizontal ou vertical y commence. Le numéro est un exposant gras de 5,2 pt (58 % de 8,9 pt) surélevé de 3 pt (un tiers de 8,9 pt), ce qui le place dans l’angle supérieur de la case. La ligne vide est un gluon de mots (U+2060). Une ligne laissée vide n’ajoute aucune hauteur à la cellule, et la grille ne ferait que 45,5 mm de haut. Une case noire est une cellule vide avec son propre `background`, lié à `ink`.
+
+### 3 · Le code trouve les mots dans la grille
+
+<Excerpt region="search" />
+
+La grille tient en douze lignes de capitales dans son propre fichier de contenu, après la liste des mots à trouver. `locate()` cherche chaque mot dans huit directions et lève une erreur s’il n’y a pas exactement une occurrence : une faute de frappe dans la grille ou dans la liste arrête le rendu avant qu’il n’imprime un mot que personne ne peut trouver. `setCellBackground` renvoie un nouveau modèle de tableau avec une case remplie de plus. Le fond est lié à une entrée de la palette et recouvre la tuile du style : corail pour UMBRELLA en page 3, menthe pour les dix mots en page 5. La première variante raye une ligne sur deux à partir du style de tableau (`bodyAlternateBackground`), et le fond propre d’une cellule recouvre la rayure. La liste de mots au-dessus de la grille forme deux rangées centrées de pastilles : celle d’UMBRELLA est remplie de corail comme ses cases, et les neuf autres sont blanches avec un contour bleu marine.
+
+### 4 · Une ouverture, quatre couleurs
+
+<Excerpt region="openers" />
+
+Les pages 2 à 5 partagent une même maquette. Un aplat de couleur descend de 40 mm depuis le bord supérieur et se termine par un pied ondulé dessiné couleur papier ; le surtitre, le titre et le thème dans sa pilule blanche viennent de la ligne de titre et de ses attributs. L’aplat et le disque du folio sont liés à l’entrée de palette `band`, et le style de titre de chaque page donne à `band` sa propre valeur : `# Word Search {style="sopa"}` les fait passer tous deux au menthe en page 3. Le niveau 1 fixe `span: 'page'` alors que le cahier n’a qu’une colonne : une maquette gardée dans sa colonne est coupée au pied de la colonne, ce qui arrêterait l’image de couverture 16 mm avant le bord inférieur. Le bloc de l’aplat compte dans la hauteur que réserve l’ouverture : le texte commence donc sur la ligne de grille suivante, à 44,2 mm du bord supérieur et 4 mm sous les vagues.
+
+### 5 · Les solutions viennent des mêmes données
+
+<Excerpt region="answers" />
+
+La page des solutions appelle `crossword()` avec `solved` et `wordSearch()` avec les dix mots, sur les mêmes fichiers de contenu que les jeux : modifier une grille change aussi sa solution. Les jeux et les dessins emploient le type Plain, dont le `captionPrefix` vide n’imprime aucune légende pour une ressource sans texte de légende. Les solutions emploient le type Solution, numéroté de 1 à 3 dans l’ordre de lecture pour correspondre aux surtitres Puzzle 1 à Puzzle 3. Elles se trouvent dans un groupe `:::columns{count=3 breaks="2,3" gap=6mm}` du texte, sans encadré autour (postext 1.25) : `breaks` ouvre une nouvelle colonne à la deuxième et à la troisième solution, et `gap` espace les colonnes de 6 mm ; chaque solution fait 54 mm de large dans une colonne de 55,3 mm. L’encadré Did you know ? contient son propre groupe, avec `breaks="2"`, pour placer le dessin du nid à côté de son paragraphe.
+
+## Variantes
+
+### Rayer les lignes des mots mêlés
+
+Un jaune plus soutenu une ligne sur deux aide un jeune lecteur à suivre une ligne de lettres. Le fond propre d’une cellule recouvre la rayure, si bien qu’UMBRELLA reste corail ; la grille des solutions a son propre style et ne prend pas de rayures.
+
+```diff
+     bodyBackgroundEnabled: true, bodyBackground: col('tint'), // tiles with white joints
++    bodyAlternateBackgroundEnabled: true, // a shade deeper than the tiles on every other row
++    bodyAlternateBackground: { hex: '#ffdd80', model: 'hex' },
+     borderColor: col('paper'), borderWidth: pt(2.4), borderRadius: mm(4) },
+```
+
+### Dessiner un labyrinthe plus difficile
+
+Vingt et une cases sur onze tiennent dans la même largeur à 8,4 mm chacune, et la solution de la page 5 est tirée du nouveau labyrinthe.
+
+```diff
+-const theMaze = maze(17, 9, 2027);
++const theMaze = maze(21, 11, 2027);
+```
+
+## Erreurs fréquentes
+
+- Les numéros des définitions dans l’encadré sont tapés dans le fichier de contenu, alors que ceux de la grille sont calculés. Après avoir modifié une grille, vérifiez les définitions par rapport à elle, car le code ne les compare pas.
+- La palette d’un style de titre recolore les éléments de maquette, le texte, ainsi que les filets et les fonds des tableaux, mais pas l’intérieur d’un SVG : les vagues au pied de chaque aplat sont donc dessinées couleur papier, et un seul dessin sert aux quatre aplats.

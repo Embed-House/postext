@@ -1,0 +1,46 @@
+---
+title: "Un banc d’essai pour les réglages de la visionneuse Folio"
+summary: "Un formulaire de tous les réglages de config.folio pilote postext-folio via setAppearance : papier, reliure, couvertures, bureau, lumière, inclinaison changent."
+plain: "Un petit livre de poche montré en 3D à côté d’un panneau de commandes. Changez le papier, la reliure, le bureau ou la lumière et le livre change aussitôt, sans être recomposé."
+description: "Papier, grammage, texture, reliure, couvertures, bureau, lumière et inclinaison : chaque champ redessine un livre postext-folio avec setAppearance, dans un pen."
+question: "Comment prévisualiser la reliure, la couverture, le papier et l’éclairage d’un livre avant l’impression ?"
+aliases: ["réglages Folio", "setAppearance", "aperçu de reliure", "aperçu du papier", "maquette de livre", "couleur de couverture", "éclairage", "texture du bureau", "book mockup"]
+pageNotes: { "1": "La première de couverture : un aplat rouge brique jusqu’à chaque bord, le titre « Six Knots » dans une linéale géométrique crème, une accroche en italique et le nom de l’auteur au pied.", "3": "Une page de nœud : un petit surtitre rouge, le nom du nœud dans un titre en linéale et deux courts paragraphes justifiés.", "10": "La quatrième de couverture : l’aplat rouge brique avec une ligne en italique centrée." }
+---
+
+## Ce que vous allez composer
+
+*Six Knots*, un livre de poche de dix pages au format 110 × 160 mm, ouvert dans Folio à côté d’un panneau qui présente chaque réglage de `config.folio`. Choisissez un papier et les feuillets changent de couleur, de surface et de rigidité ; passez la reliure de broché à cartonné et une couverture rigide pousse autour du bloc ; choisissez la couverture rigide au lieu des couvertures imprimées, une toile ou un cuir, un bureau, une lumière, une inclinaison. Le livre est mis en page une seule fois. Chaque changement va à la visionneuse avec `setAppearance` : aucune ligne ne bouge, aucune page n’est repeinte, et les réglages s’affichent sous le formulaire comme le code à coller dans `config.folio`.
+
+## Préparation
+
+### 1 · Nommer les champs d’après la configuration
+
+<Excerpt region="form" />
+
+Chaque champ du formulaire porte le nom de son chemin dans `config.folio` (`paper.grammage`, `binding.cover`, `lighting.environment`) : une seule boucle transforme le formulaire en l’objet que prend la visionneuse, avec des nombres pour les curseurs, des booléens pour les cases à cocher et une couleur `{ hex, model }` pour le sélecteur. Ce même objet est la `config.folio` du document quand le pen le construit : le Sandbox ouvre donc le livre tel que le formulaire démarre.
+
+### 2 · Des couvertures que la visionneuse tourne comme des plats
+
+<Excerpt region="covers" />
+
+Avec `binding.cover: 'pages'`, la première page est le premier plat et la dernière le second plat, quand elle tombe sur un verso. Le style de titre de la quatrième de couverture passe à une page paire : le livre se termine toujours sur un verso et les deux couvertures tournent. Mettez le formulaire sur *A case round the pages* et les deux mêmes pages tournent comme des feuillets ordinaires dans une couverture toilée.
+
+### 3 · Rhabiller le livre sur place
+
+Le code est [la réponse courte](#la-réponse-courte) plus haut. `setAppearance({ folio })` remplace les réglages du document et redessine la scène : épaisseur et rigidité du papier, couverture rigide, textures du bureau et lumière. Les pages gardent leur peinture : un changement apparaît à l’image suivante. Un papier fixe son propre grammage, c’est pourquoi en choisir un déplace le curseur du grammage ; `resetView()` ramène la caméra après que le lecteur a fait tourner le livre en glissant avec le bouton droit.
+
+## Variantes
+
+### Partir d’un livre cartonné sous toile
+
+Changez les valeurs par défaut du formulaire dans `index.html` ; le document et le Sandbox les suivent.
+
+```diff
+-        <option value="hardcover">Hardcover</option><option value="paperback" selected>Paperback</option>
++        <option value="hardcover" selected>Hardcover</option><option value="paperback">Paperback</option>
+```
+
+### Un livre dont l’aspect est dans la configuration
+
+<RecipeLink slug="folio-book-on-a-desk">Un livre sur le bureau</RecipeLink> écrit les mêmes réglages une seule fois dans `config.folio`, sans formulaire, et <RecipeLink slug="paper-swatch-book">le nuancier de papiers</RecipeLink> pose un papier différent sur chaque feuillet.

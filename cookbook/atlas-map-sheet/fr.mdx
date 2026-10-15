@@ -1,0 +1,68 @@
+---
+title: "Planche d’atlas : cartes numérotées et vue générale tournée"
+summary: "Des cartes à numérotation propre et légende sur une barre bleue, une clé de pastilles aux couleurs des cartes, et une carte marine tournée en page 3."
+plain: "Quatre pages d’un atlas d’îles inventées. Il montre comment donner aux cartes leurs propres numéros et comment tourner une grande carte sur le côté pour qu’elle remplisse une page."
+description: "Quatre pages d’un atlas inventé composé avec Postext : cartes numérotées légendées sur une barre, clé aux couleurs des cartes, répertoire, carte à l’italienne."
+question: "Comment numéroter les cartes comme un type de figure propre, les légender sur une barre et les citer ?"
+aliases: ["atlas", "cartes", "figures cartographiques", "répertoire toponymique", "légende de carte", "clé de couleurs", "figure à l’italienne", "figure pivotée", "barre de légende", "carte marine", "mapa", "nomenclátor", "maps"]
+pageNotes: { "1": "L’ouverture : un bandeau bleu profond en tête de page avec le surtitre « Sheet 1 · The islands and their waters », le titre « The Solan Isles » et une rose des vents ; deux courtes colonnes de texte ; puis la carte 1 au pied de la page, sur toute la largeur, une carte du relief de quatre îles en teintes sable et ocre sur une eau bleu clair et bleu plus foncé, avec des routes rouges et dessous une clé de pastilles qui commence par « In metres ».", "2": "La carte 2, l’extrémité nord de Brannay avec ses courbes de niveau, les trois Hool Stacks au large de sa pointe nord-ouest et des disques rouges numérotés, et la carte 3, le plan du port de Kirkwick avec ses sondes et une clé de numéros cerclés, coiffent les deux colonnes ; le texte continue dessous.", "3": "La carte 4, une carte marine de tout l’archipel et de la côte continentale, tournée d’un quart pour que son haut regarde le dos, avec un quadrillage lettré de A à H et numéroté de 1 à 6 dans sa marge, des sondes en eau libre et dix-sept disques rouges.", "4": "Le tableau 1, le répertoire : dix-sept lignes avec un disque rouge numéroté, le lieu, sa nature, son île et sa case, une ligne sur deux teintée de bleu ; deux colonnes de texte de clôture et le colophon dessous, et une ligne d’adresse sous un filet fin au pied de la page." }
+---
+
+## Ce que vous allez composer
+
+La première planche d’un atlas des îles Solan, un archipel inventé pour cette recette et dessiné en code à partir d’un seul champ d’altitudes. La page 1 s’ouvre sur un bandeau bleu grand large avec le nom de l’atlas en 56 pt et une rose des vents, et la carte 1, le relief de tout l’archipel, remplit le pied de la page. L’extrémité nord de l’île principale et le plan de son port coiffent les deux colonnes de la page 2. En page 3, la carte marine des îles est tournée d’un quart pour que son quadrillage de cases de 8 km remplisse la page. La page 4 contient le répertoire, dix-sept lieux dans des disques rouges avec la case de chacun sur la carte, et une adresse d’imprimeur au pied. Chaque carte est légendée au-dessus du dessin, sur une barre bleue, et la clé de la carte 1 est une ligne de pastilles de couleur aux teintes de la carte.
+
+## Préparation
+
+### 1 · Une seule palette pour la page et les cartes
+
+<Excerpt region="palette" />
+
+Les six teintes des cartes sont des clés du même objet que les couleurs de la page : `colorPalette` les liste comme entrées de palette, et les dessins prennent leurs remplissages SVG dans `palette[id]`. Le texte blanc papier sur `band`, le bleu de l’ouverture, des barres de légende et de la ligne d’en-tête du tableau, a un contraste de 9,2:1 ; `road`, le seul rouge, est réservé aux routes, aux feux et aux numéros de lieux et atteint 5,4:1 contre le papier. `main-color` prend le code hexadécimal de `band`, et les valeurs par défaut lient les titres, les barres de légende et les puces de liste à cet id : tous ceux que la configuration ne règle pas s’impriment dans le bleu de l’atlas.
+
+### 2 · Où va chaque carte
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. La carte 1 est un flottant `bottom`, parce qu’un flottant `top` sur toute la largeur n’atterrit jamais sur la page qui le cite. Les cartes 2 et 3 sont des flottants de colonne `top` cités en page 1 : elles prennent la tête des deux colonnes de la page 2 ([placement](/fr/docs/document-format#placement)). `rotate: 'ccw'` met le haut de la carte marine sur le bord gauche et lui donne la page 3 pour elle seule. Tourné, le dessin mesure 247,6 mm dans le sens de la page, les 53 lignes de grille de la zone de texte moins une pour l’écart du flottant, et 182,2 mm en travers, ce qui reste de la justification de 196 mm après la barre de légende et la note. Un dessin plus haut serait réduit et laisserait du papier nu en tête de page.
+
+### 3 · Une clé dessinée à partir des mêmes ids
+
+<Excerpt region="legend" />
+
+`RELIEF` liste les tranches d’altitude avec leurs ids de palette et les hauteurs où elles commencent. Le dessin remplit chaque tranche avec `palette[id]` et la clé sous la carte 1 écrit un `:swatch` avec le même id : un nouveau code hexadécimal dans la palette change à la fois le dessin et la clé. La clé nomme l’unité une seule fois, en toutes lettres, parce que la note est composée en Alegreya Sans SC, qui imprime un *m* minuscule comme un M en petite capitale. En <PageRef page={2}>page 2</PageRef>, le texte place les mêmes pastilles à côté des deux profondeurs d’eau.
+
+### 4 · Les cartes sont des ressources, numérotées et placées par leurs citations
+
+<Excerpt region="resources" />
+
+Une ressource prend son numéro de sa première citation dans le texte, et `:ref{id="north"}` imprime l’étiquette courte du type et ce numéro, « Map 2 », dans le texte courant ou dans une note de légende. La carte marine et le répertoire sont cités pour la première fois en page 2, dans cet ordre : la carte marine prend donc la page 3 et le répertoire la tête de la page 4. La rose des vents est une ressource du même type, mais seule l’ouverture la dessine et le texte ne la cite jamais : les cartes comptent donc toujours de 1 à 4. Chaque entrée de la clé du port est une seule pastille sans fond, sans bordure ni remplissage, si bien que son numéro, son nom et le point qui le suit restent sur une même ligne.
+
+### 5 · Des numéros que partagent les cartes et le répertoire
+
+<Excerpt region="gazetteer" />
+
+`PLACES` est trié du nord au sud et numéroté dans cet ordre, et les cartes impriment les numéros dans des disques rouges, le tableau dans des pastilles rouges. `square()` calcule la case de la carte marine à partir des mêmes coordonnées kilométriques qui placent chaque repère sur les cartes : Kirkwick, numéro 6, est en D3 sur la carte comme dans le tableau. Une ligne sur deux prend son bleu pâle du style de tableau : `bodyAlternateBackgroundEnabled`, avec `bodyAlternateBackground` lié à `sea`.
+
+### 6 · Le nom de l’atlas sur un bandeau de son propre bleu
+
+<Excerpt region="opener" />
+
+Le bandeau est une boîte ancrée à `'bleed'` et sans largeur : il court donc d’un bord à l’autre. Le grand titre est `{title}`, le nom de l’atlas tiré du frontmatter, et le texte du titre lui-même suit le numéro de planche dans le surtitre. Seul, le bandeau réserve la place jusqu’à son pied, et le texte commencerait 3,9 mm sous lui ; `minHeight` porte la réserve à 14 lignes de grille sous la marge supérieure, ce qui fait commencer le texte 8,7 mm sous le bandeau.
+
+## Variantes
+
+### Tournez la carte marine dans l’autre sens
+
+Tournée dans le sens horaire, la carte marine a son haut et sa barre de légende du côté de la tranche de la page 3, et le lecteur tourne le livre à l’inverse de la convention habituelle, que suit `'ccw'`.
+
+```diff
+-  chart: { rotate: 'ccw' }, // turned a quarter, top to the left, on a page of its own
++  chart: { rotate: 'cw' }, // turned a quarter, top to the right, on a page of its own
+```
+
+### Tournez plutôt un tableau
+
+Un tableau tourne avec le même réglage et, quand il est trop large pour une page, continue tourné sur la suivante sous une ligne d’en-tête répétée : voir <RecipeLink slug="garden-almanac">l’almanach du jardin</RecipeLink>.
+
+### Placez une carte dans la marge
+
+Dans une mise en page à colonne et demie, la colonne extérieure peut accueillir des figures et leurs légendes, sans texte : voir <RecipeLink slug="textbook-margin-column">le manuel avec colonne marginale</RecipeLink>.

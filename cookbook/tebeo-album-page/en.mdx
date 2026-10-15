@@ -1,15 +1,15 @@
 ---
 title: "An album page in clear line, with narration captions"
 summary: "A Franco-Belgian album page in four tiers: square frames, yellow narration boxes in the corners, balloons lettered in mixed case, all from the comics config."
-plain: "A page of a European comic album, with the narrator's words in yellow boxes and the dialogue in balloons, written in plain text and drawn by Postext in six languages."
-description: "A Spanish tebeo page in Postext: four tiers of panels, yellow narration captions, a burst, a cloud and a sound effect, lettered again in six languages."
+plain: "A page of a European comic album, with the narrator's words in yellow boxes and the dialogue in balloons, written in plain text and drawn by Postext in eight languages."
+description: "A Spanish tebeo page in Postext: four tiers of panels, yellow narration captions, a burst, a cloud and a sound effect, lettered again in eight languages."
 question: "How do I set a European album page with narration captions?"
 aliases: ["tebeo", "bande dessinée", "BD", "ligne claire", "clear line", "album page", "narration caption", "cartouche", "cartela", "Franco-Belgian", "balloonStyles", "panelStyles"]
 ---
 
 ## What you'll build
 
-The first story of a Spanish comic album, *Las naranjas de Carmen*: a title page on the verso and, facing it, one page of seven panels in four tiers, the way Franco-Belgian albums are drawn. Lola, nine, and her grandfather Paco go to the market on Sunday; she pulls the bottom orange out of Carmen's pyramid. The pictures are flat-coloured clear line; the frames are thin and square, the narration sits in yellow boxes butted into the panel corners, and the dialogue is lettered in upper and lower case, as European letterers write it. The text lives in Markdown, one file per language: the Spanish original, then English, Catalan, Chinese, Arabic and Japanese, each lettered by the engine on the same split and the same art.
+The first story of a Spanish comic album, *Las naranjas de Carmen*: a title page on the verso and, facing it, one page of seven panels in four tiers, the way Franco-Belgian albums are drawn. Lola, nine, and her grandfather Paco go to the market on Sunday; she pulls the bottom orange out of Carmen's pyramid. The pictures are flat-coloured clear line; the frames are thin and square, the narration sits in yellow boxes butted into the panel corners, and the dialogue is lettered in upper and lower case, as European letterers write it. The text lives in Markdown, one file per language: the Spanish original, then English, Catalan, Chinese, Arabic, Japanese, Portuguese and French, each lettered by the engine on the same split and the same art.
 
 ## Method
 
@@ -35,7 +35,7 @@ paco{shout}: ¡Lola, esa no!
 
 <Excerpt region="art" />
 
-Each picture declares what every crop must keep (`safeArea`), where each speaker's mouth, head and face are (`anchors`) and what no balloon may cover (`avoid`), all in fractions of the picture. The crash panel spans the third tier, 200 mm by 63 mm, so its safe area is the band of faces and flying oranges; the square panels lose their floor. Nothing here depends on the language, so the six editions share it.
+Each picture declares what every crop must keep (`safeArea`), where each speaker's mouth, head and face are (`anchors`) and what no balloon may cover (`avoid`), all in fractions of the picture. The crash panel spans the third tier, 200 mm by 63 mm, so its safe area is the band of faces and flying oranges; the square panels lose their floor. Nothing here depends on the language, so the eight editions share it.
 
 ### 3 · A title page faces the story
 
@@ -57,4 +57,4 @@ Set the lettering in upper case; the narration and the dialogue follow, and the 
 ## Pitfalls
 
 - The lettering size is one for the whole book: a longer translation grows its balloons and moves them, it never shrinks the type. Check the Catalan and Arabic pages after a change to the split. Japanese columns are tall for these low panels: three lines of `content.ja.md` carry an `at=` pin that keeps them off Paco and off the oranges the last panel is about.
-- The alt text of each panel sits in the art manifest in six languages, picked with `t({ … })`; a language missing from the list reads the first one. `::panel{alt="…"}` in a content file replaces it for one panel.
+- The alt text of each panel sits in the art manifest in eight languages, picked with `t({ … })`; a language missing from the list reads the first one. `::panel{alt="…"}` in a content file replaces it for one panel.

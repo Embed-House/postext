@@ -1,0 +1,68 @@
+---
+title: "Un livre technique aux renvois d’un chapitre à l’autre"
+summary: "Un manuel solaire en trois chapitres dont le texte écrit @fig:sun, @tbl:loads et @sec:array-size ; buildBundle imprime numéros et pages d’un chapitre à l’autre."
+plain: "Un court manuel pour dimensionner les panneaux solaires et les batteries d’une cabane. Quand le chapitre 3 renvoie à un tableau du chapitre 1, ou le chapitre 1 à une section du chapitre 2, le bon numéro et la page s’impriment, en liens."
+description: "Un livre technique avec Postext : renvois pandoc-crossref vers des figures, tableaux et sections d’autres chapitres, numéros et pages résolus par buildBundle."
+question: "Comment renvoyer à une figure, un tableau ou une section d’un autre chapitre en gardant les bons numéros ?"
+aliases: ["pandoc-crossref", "renvoi", "renvois croisés", "crossref", "@fig", "@tbl", "@sec", "voir chapitre", "renvois entre chapitres", "livre technique", "manuel", "numéros de figure", "numéros de tableau", "renvoi de page", "cross-reference"]
+pageNotes: { "1": "Page 1, la couverture : une bande bleu nuit sur les deux tiers de la page avec les trajectoires du soleil en juin et en décembre dessinées en arcs ambre au-dessus d’un panneau solaire incliné, la ligne de collection « LARCH HILL TECHNICAL NOTES · NO. 4 », le titre « Power for a Cabin » en grand caractère blanc étroit et un sous-titre en italique ; l’auteur et l’édition sous la bande.", "2": "Page 2 : la table des matières sous la même bande, trois chapitres numérotés avec leurs sections et numéros de page, et un colophon.", "3": "Page 3 : le chapitre 1 s’ouvre sous la bande avec un grand 1 ambre ; le texte renvoie en avant au chapitre 2, au chapitre 3 et à la section 1.3, renvois composés en orange gras.", "4": "Page 4 : le tableau 1.1 des consommations journalières avec un en-tête bleu nuit, puis les sections 1.2 et 1.3 avec des renvois à la section 2.1 p. 6, à la fig. 1.1 et à la section 3.1.", "5": "Page 5 : la figure 1.1, un diagramme en barres de la consommation horaire avec les heures de jour ombrées, et la fin du chapitre 1.", "6": "Page 6 : le chapitre 2 commence ; sa première ligne renvoie au chapitre 1 et au tableau 1.1 ; figure 2.1, heures d’ensoleillement maximal par mois avec décembre en orange.", "7": "Page 7 : les sections 2.2 et 2.3, un renvoi en avant à la section 3.2 p. 8, une formule centrée et le tableau 2.1 des pertes.", "8": "Page 8 : le chapitre 3 s’ouvre ; son texte cite la section 2.3, la fig. 2.1, le tableau 1.1, la section 1.3 avec sa page, le tableau 2.1 et les tableaux 2.1 et 3.1 par leur seul numéro.", "9": "Page 9 : le tableau 3.1 qui compare les technologies de batterie, la section 3.3 et la figure 3.1, une courbe de la charge de la batterie sur cinq jours de décembre." }
+---
+
+## Ce que vous allez composer
+
+Un court manuel technique, *Power for a Cabin*, composé en IBM Plex sur une page de 178 × 233 mm : une couverture avec les trajectoires du soleil dessinées en code, une page de table des matières et trois chapitres sous une bande bleu nuit. Le livre dimensionne une petite installation solaire : chaque chapitre s’appuie donc sur les autres. Le chapitre 3 cite le tableau des consommations du chapitre 1 et le graphique d’ensoleillement du chapitre 2 ; le chapitre 1 envoie le lecteur en avant, à la section 2.3, et en donne la page. L’auteur écrit `@tbl:loads` et `@sec:array-size`, comme les lit pandoc-crossref, dans quatre fichiers Markdown distincts. `buildBundle` les met en page comme un seul livre : chaque renvoi imprime le numéro que la cible a reçu dans son propre chapitre, la page où elle est tombée et un lien vers elle.
+
+## Préparation
+
+### 1 · Nommer chaque cible une fois, pour tout le livre
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Les titres prennent un identifiant Pandoc avec son préfixe, `## Sizing the array {#sec:array-size}`. Les figures et les tableaux sont des ressources déclarées dans le script, et leurs identifiants s’écrivent de la même façon, `fig:sun` et `tbl:loads` : le texte écrit `@fig:sun`, que la figure soit deux paragraphes plus loin ou deux chapitres plus tôt. Un identifiant doit être unique dans tout le livre, pas seulement dans son chapitre.
+
+### 2 · Mettre en page les chapitres comme un seul livre
+
+<Excerpt region="answer" highlight="6" />
+
+`buildBundle` reporte les compteurs de figures et de tableaux d’un chapitre à l’autre : le premier tableau du chapitre 3 est le 3.1, et `@tbl:loads` dans le chapitre 3 imprime toujours *table 1.1*. Un chapitre dont le texte nomme un titre qu’il ne contient pas est mis en page avec le plan de tout le livre, puis remis en page (trois passes au plus) jusqu’à ce que les pages de ce plan ne bougent plus. C’est ainsi que le chapitre 1 peut imprimer *section 2.1 … p. 6* avant que le chapitre 2 n’existe sur le papier.
+
+### 3 · Choisir les mots qu’imprime un renvoi
+
+`crossRefs` règle *chapter*, *section* et *p.* (en espagnol *capítulo*, *apartado* et *pág.*). Un renvoi vers une figure ou un tableau imprime le `shortLabel` de son type, ici en minuscules comme les compose pandoc-crossref, *fig. 2.1* et *table 1.1*. Une capitale dans le préfixe, `@Tbl:loads` ou `@Sec:array`, met une capitale au libellé en début de phrase, et `[-@tbl:losses]` imprime le numéro seul pour *tables 2.1 and 3.1*.
+
+### 4 · Renvoyer en avant aux sections, en arrière aux figures
+
+Une figure ou un tableau est numéroté, et placé en flottant, là où il est cité pour la première fois. `@fig:soc` dans le chapitre 1 en ferait la figure 1.2 et la placerait dans le chapitre 1. Le chapitre 1 renvoie donc en avant à `@sec:autonomy`, et les figures et les tableaux sont cités d’abord dans leur propre chapitre ; chaque chapitre suivant y renvoie ensuite librement. Une page accompagne la section, `:ref{id="sec:sun-hours" style=page}` : un renvoi vers une ressource imprime son libellé et son numéro, jamais sa page.
+
+### 5 · Les ouvertures et la couverture viennent de la même bande
+
+<Excerpt region="opener" />
+
+La bande descend à 55 mm du haut du format sur chaque chapitre et sur la page de table des matières, qui reprennent les mêmes éléments ; le numéro de chapitre est `{chapterNumber}`, le chapeau un attribut du titre.
+
+<Excerpt region="cover" />
+
+## Variantes
+
+### Imprimer « Figure 2.1 » dans le texte
+
+Un livre qui écrit ses renvois en toutes lettres utilise le nom complet du type au lieu du libellé court.
+
+```diff
+-  shortLabel: type.id === 'table' ? t({ en: 'table', es: 'tabla' })
+-    : t({ en: 'fig.', es: 'figura' }),
++  shortLabel: type.id === 'table' ? t({ en: 'Table', es: 'Tabla' })
++    : t({ en: 'Figure', es: 'Figura' }),
+```
+
+### Numéroter les sections avec un signe de paragraphe
+
+```diff
+-  section: t({ en: 'section {n}', es: 'apartado {n}' }), // @sec:losses → "section 2.2"
++  section: '§ {n}',
+```
+
+## Erreurs fréquentes
+
+- Un renvoi vers un identifiant qu’aucun chapitre ne définit imprime *?*. Vérifiez les identifiants après avoir renommé un titre dans un chapitre : les renvois qui y mènent se trouvent dans les autres.
+- Mettre en page les chapitres un par un avec `buildDocument` perd à la fois les compteurs et le plan du livre : chaque chapitre renumérote ses figures à partir de 1 et un renvoi vers un autre chapitre imprime *?*. Utilisez `buildBundle`, ou enchaînez `continuation` et passez `outline` vous-même.
+- Les équations n’ont pas de numérotation propre dans Postext : `@eq:` ne trouve qu’une ancre que vous posez et imprime son texte ; ce livre écrit ses deux formules sans numéro.
+- Un titre de section qui ouvre une page, ou qui se trouve sous un tableau placé en tête de page comme le 3.3 en page 9, perd par défaut tout son espace au-dessus, et le calage sur la grille place alors la fraction de ligne dont il a besoin sous le titre, plus loin de son texte que les titres en milieu de page. `headings.columnHeadSpace: 'remainder'` garde cette fraction de ligne au-dessus du titre ([titres](/fr/docs/configuration-text#titres)). Ce réglage convient à un livre sur une colonne, où aucune colonne voisine ne montre que le titre commence un peu plus bas.

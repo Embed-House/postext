@@ -1,0 +1,75 @@
+---
+title: "Un article sur deux colonnes à équations numérotées"
+summary: "Un article de physique sur deux colonnes dont les formules en ligne et les sept équations numérotées, composées par MathJax, restent vectorielles dans le PDF."
+plain: "Un article de recherche en physique sur deux colonnes, avec des formules dans le texte et sept équations numérotées. Il montre comment composer des mathématiques qui restent nettes dans le PDF."
+description: "Un article de physique au bloc de titre dessiné par un style de titre, avec des équations MathJax numérotées, un tableau calculé et des références en retrait."
+question: "Comment composer un article à équations en ligne et numérotées, en gardant des maths vectorielles en PDF ?"
+aliases: ["article scientifique", "article de revue", "article de recherche", "prépublication", "équations", "équations numérotées", "numéros d’équation", "LaTeX", "MathJax", "formules", "tag", "résumé", "mots-clés", "bibliographie", "deux colonnes"]
+pageNotes: { "1": "Une bande vert bouteille porte le titre de revue « Measure », une image stroboscopique d’un pendule suspendu au filet du titre de revue, avec un seul poids rouge au bout de sa course, et le titre « The period of a pendulum at large amplitudes » ; la signature, les dates de réception, d’acceptation et de publication et la licence se trouvent dessous, puis un résumé teinté avec quatre pastilles de mots-clés, et deux colonnes avec la première équation numérotée.", "2": "La section 2, « Theory », avec les équations 2 à 7 numérotées au bord droit de leur colonne et la « Figure 1 », le pendule et ses symboles, en tête de la deuxième colonne.", "3": "La fin de la méthode, puis « Results », « Discussion » et le début de « Conclusions » : la « Figure 2 » trace la période en fonction de l’amplitude en tête de la deuxième colonne, et le « Table 1 » donne les mesures au pied de la première.", "4": "La « Figure 3 », le plan de phase, court en tête de page ; dessous, la fin des conclusions, les éléments de fin et les références se partagent les deux colonnes, qui commencent et finissent à la même hauteur." }
+---
+
+## Ce que vous allez composer
+
+Un article de recherche paru dans le numéro de septembre de *Measure*, une revue fictive de physique expérimentale en accès libre, composé en A4 sur deux colonnes. En haut, une bande vert bouteille porte le titre de la revue, une image stroboscopique d’un pendule en mouvement et le titre de l’article. La signature, les dates et la licence se trouvent sur fond blanc sous la bande, et un résumé teinté avec quatre pastilles de mots-clés court sur les deux colonnes. Suivent six sections numérotées, avec sept équations numérotées et 46 formules en ligne ; MathJax les compose, ainsi que les étiquettes à l’intérieur des figures. Le tableau 1 et les points de la figure 2 viennent d’un même tableau de mesures. Sur la dernière page, la fin des conclusions, les éléments de fin et les références se partagent les deux colonnes sous la figure 3, et les deux colonnes finissent à la même hauteur. Le PDF garde chaque formule sous forme de contours vectoriels, sans police mathématique à intégrer.
+
+## Préparation
+
+### 1 · Démarrer MathJax et numéroter les équations
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Les [mathématiques](/fr/docs/configuration-text#mathématiques) sont composées par MathJax, fourni dans le paquet : `initMathEngine` s’importe depuis `https://esm.sh/postext` avec tous les autres symboles, et `await initMathEngine()` doit s’exécuter avant la première composition, faute de quoi chaque formule s’affiche comme une boîte grise. Dès lors, `$…$` compose des maths en ligne et `$$…$$` des maths hors texte, et `renderToPdf` écrit chaque formule sous forme de tracés vectoriels. Un `\tag{1}` à la fin d’une formule hors texte la numérote : la formule prend la largeur de sa colonne, l’équation centrée et le numéro au fer à droite sur sa ligne. Les numéros sont tapés à la main ici, et le texte les cite tels qu’ils sont écrits, « Eq. (6) ».
+
+### 2 · Dessiner le bloc de titre avec un style de titre
+
+<Excerpt region="title" />
+
+Le titre de l’article est un titre de niveau 1 (`#`) : il coiffe donc le sommaire du PDF, avec les sections numérotées en dessous. Son [style de titre](/fr/docs/configuration-styles#styles-de-titre) `article` remplace le titre par un emplacement d’éléments de maquette : une bande à fond perdu en haut, le titre de la revue, l’image stroboscopique et le titre, coupé là où le titre Markdown porte son `\\`. La signature et deux des dates viennent des attributs du titre, et la date de publication du `publishDate` de l’en-tête du document. `minHeight` réserve 130 mm entre la marge du haut et le pied de la signature, et le résumé commence en dessous.
+
+### 3 · Numéroter les sections, pas le titre
+
+<Excerpt region="numbering" />
+
+Chaque niveau a son modèle et son type : `{2}` numérote les six sections de 1 à 6 en vert de la revue de 11,5 pt, `{2}.{3}` les sous-sections de « Theory » de 2.1 à 2.3 en demi-gras de 10 pt à l’encre du texte, et `numbered: false` tient le titre et les éléments de fin hors du compte. Chaque titre recale le texte qui le suit sur la grille de ligne de base de 12,6 pt, si bien que les lignes des deux colonnes restent alignées de part et d’autre de la gouttière. Les figures et les tableaux sont comptés sur tout l’article avec `{n}`. Le modèle par défaut `{h1}.{n}` imprimerait ici les mêmes numéros, car le titre non numéroté laisse `{h1}` vide et un compteur vide disparaît avec son point, mais `{n}` ne dépend pas de cela. Le type tableau place aussi sa légende au-dessus du tableau, là où les revues la mettent.
+
+### 4 · Faire courir le résumé sur les deux colonnes
+
+<Excerpt region="abstract" />
+
+Une boîte `span: 'page'` sous le bloc de titre compose le résumé sur toute la justification, et les deux colonnes commencent en dessous. Un remplissage de 22 mm de chaque côté maintient ses lignes autour de 90 caractères. Les mots-clés sont des [pastilles](/fr/docs/configuration-styles#styles-de-pastille), qui ne se coupent jamais d’une ligne à l’autre, chacune nommée avec `{style="keyword"}`. Leur style de paragraphe, `keywords`, est en drapeau, car une ligne justifiée de pastilles étire les espaces qui les séparent jusqu’à faire des trous.
+
+### 5 · Finir sur une bibliographie en retrait négatif
+
+<Excerpt region="references" />
+
+Un bloc `:::paragraphs` applique le [style de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe) `references` à chaque entrée, et son `hangingIndent` de 5 mm garde le numéro dans la marge et fait commencer chaque ligne suivante 5 mm plus à l’intérieur. L’équilibrage des colonnes met à niveau la dernière bande de l’article. Sur la <PageRef page={4}>page 216</PageRef>, la fin des conclusions, les éléments de fin et les références se partagent les deux colonnes sous la figure 3. L’équilibrage ne peut qu’ajouter de l’espace, et une référence de deux lignes ne se coupe pas : les éléments de fin ont donc été réécrits deux lignes plus courts, jusqu’à ce que les deux colonnes finissent à la même hauteur.
+
+### 6 · Calculer le tableau, étiqueter les figures avec MathJax
+
+<Excerpt region="figures" />
+
+Un même tableau, `runs`, alimente le tableau 1 et les points de la figure 2, et la colonne des valeurs prévues est l’éq. (6) évaluée à chaque amplitude. Le tableau prend les [filets booktabs](/fr/docs/configuration-resources#filets-booktabs) d’une revue, `rules: 'booktabs'` à l’encre du texte : un filet épais au-dessus et sous la dernière ligne, un filet fin sous l’en-tête, aucune ligne verticale. Le texte cite chaque ressource avec `:ref{id="…" style="full"}`, qui imprime « Figure 2 » en gras et fait flotter la ressource dans le premier emplacement libre après la citation. Les légendes et les cellules du tableau utilisent le balisage simple `~sub~` et `^sup^` (`*T*~0~`), qui reste dans leur propre linéale, et les symboles du texte courant s’écrivent `$T_0$`. Les étiquettes à l’intérieur des figures sont aussi des maths : `tex()` appelle `renderMath` pour chacune et écrit les contours dans le SVG sous forme de tracés. Le *θ*₀ de la figure 1 est le glyphe qu’emploient les formules, et il reste vectoriel dans le PDF.
+
+## Variantes
+
+### Numéroter les figures par section
+
+Les articles longs comptent les figures par section ; on obtient alors Figure 1.1 dans l’introduction et Table 4.1 dans les résultats.
+
+```diff
+-  numberingTemplate: '{n}', resetOn: 'never',
++  numberingTemplate: '{h2}.{n}', resetOn: 'h2',
+```
+
+### Laisser le moteur numéroter les équations
+
+Avec un `\label` à la place de chaque `\tag`, les équations sont numérotées dans l’ordre de lecture : une équation ajoutée au milieu renumérote les suivantes, et `\eqref{eq:small}` dans le texte imprime (1). Les pages restent identiques.
+
+```diff
+-$$T_0 = 2\pi\sqrt{\frac{L}{g}} \, . \tag{1}$$
++$$T_0 = 2\pi\sqrt{\frac{L}{g}} \, . \label{eq:small}$$
+```
+
+## Erreurs fréquentes
+
+- Le texte écrit après une ligne vide sous une formule hors texte forme un nouveau paragraphe, et il est rentré : chacun commence donc ici par une phrase à part entière (« Here *L* is… »). Pour un « where… » à la manière de LaTeX, écrivez le texte juste sous le `$$` fermant : il prolonge le paragraphe et se compose sans retrait.
+- Le balisage simple `~0~` descend son chiffre d’un tiers de cadratin, sous les jambages, et un `^2^` placé après suit le ₀ au lieu de se tenir au-dessus. Dans le texte courant, écrivez `$T_0$` et `$T_0^2$`, et gardez le balisage simple pour les légendes et les cellules de tableau, où il reste dans le caractère des étiquettes.
+- Vérifiez que le caractère des étiquettes contient ¹, ² et ±, et le grec si une légende en a besoin. Instrument Sans, essayé d’abord, n’a aucun des trois dans ses fichiers Fontsource, et Schibsted Grotesk n’a pas de grec : la légende de la figure 1 nomme donc l’amplitude en toutes lettres plutôt que *θ*₀.

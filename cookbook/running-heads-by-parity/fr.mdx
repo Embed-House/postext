@@ -1,0 +1,93 @@
+---
+title: "Titres courants selon la parité dans un recueil d’essais"
+summary: "En-têtes filtrés par parité et rôle de page : titre du livre au verso, titre de l’essai abrégé au recto, onglets de folio, folio en pied aux ouvertures."
+plain: "Cinq pages d’un petit recueil d’essais. On y voit comment imprimer le titre du livre en haut des pages de gauche et le titre de l’essai sur les pages de droite."
+description: "Un Montaigne de poche composé avec Postext : titres courants choisis selon la parité et le rôle de la page, onglets de folio en marge et points de suspension."
+question: "Comment mettre le titre du livre sur les pages de gauche, le chapitre à droite et le folio à l’extérieur ?"
+aliases: ["titre courant", "titres courants au verso et au recto", "pages paires et impaires", "numéro de page à l’extérieur", "onglet de folio", "titre de chapitre long", "abréger un titre avec des points de suspension", "masquer l’en-tête à l’ouverture de chapitre", "couleur de la page blanche", "en-tête bleu par défaut", "running heads"]
+pageNotes: { "3": "Le titre courant du recto coupe le titre de l’essai, long de 81 caractères, par des points de suspension avant un filet sépia de 0,5 pt et l’onglet du folio dans la marge extérieure.", "4": "La page 32, un verso, porte le titre du livre ; l’essai se termine au premier tiers de la page." }
+---
+
+## Ce que vous allez composer
+
+Les pages 29 à 33 d’une édition de poche des *Essais* de Montaigne dans l’anglais de Charles Cotton : tout le chapitre IV et le début du chapitre V. Les versos portent le titre du livre en capitales espacées. Les rectos portent le titre de l’essai en italique, abrégé par des points de suspension, car le titre du chapitre IV compte 81 caractères. Chaque folio se loge dans un onglet sépia de la marge extérieure, à 3 mm d’un filet de 0,5 pt posé sur le bord du bloc de texte. Une ouverture n’a pas de titre courant, seulement un folio en pied. Le texte est en Baskervville sur une page blanc cassé chaud, les titres en Libre Caslon Display, les folios et le titre du livre en Alegreya SC. Chaque titre courant est défini dans la configuration : le titre courant intégré du moteur, en Open Sans bleu de 8 pt, ne s’imprime jamais.
+
+## Préparation
+
+### 1 · Remplacer le titre courant bleu intégré
+
+<Excerpt region="palette" />
+
+Chaque couleur de la configuration est liée à l’une de ces entrées. Si vous laissez `header` non défini, le moteur dessine son titre courant intégré : `{title}` sur les rectos et `{chapterTitle}` sur les versos au-dessus d’un filet de 1 pt, en Open Sans 600 de 8 pt et en bleu `#295AA3` ([en-têtes et pieds de page](/fr/docs/configuration-page-layout#en-têtes-et-pieds-de-page)). Faire pointer `main-color` sur le sépia recolore les valeurs par défaut du texte et ce titre courant avec elles, mais son caractère, son filet et le côté où s’imprime chaque titre restent ceux du moteur. Chaque titre courant est donc écrit ici en entier, chaque couleur liée à une entrée de palette. Le gras, l’italique et les renvois suivent aussi `main-color` par défaut, et `bodyText` les ramène à l’encre.
+
+### 2 · Construire chaque titre courant à partir d’un onglet
+
+<Excerpt region="tab" />
+
+La réponse courte ancre l’onglet de chaque titre courant à `'page'` : ses décalages se mesurent donc depuis le bord de coupe. Depuis le coin `top-right`, un `x` positif sort de la page, d’où le décalage négatif de l’onglet du recto. Le filet de séparation est accroché à l’onglet, et le titre au filet ([placement des éléments](/fr/docs/configuration-page-layout#placement-des-éléments)). Les dimensions de l’onglet sont des constantes nommées, parce que les autres pièces se mesurent à partir d’elles. Le filet mesure `TAB_H` de haut. Le folio et les deux titres partagent une même boîte de ligne de 9 pt, et la ligne de base d’un texte de maquette se place aux 80 % de la hauteur de sa boîte de ligne : les trois reposent donc sur une même ligne de base, quel que soit le corps.
+
+<PageShot page={2} crop="0.04,0.045,0.6,0.05" caption="Page 30, un verso : l’onglet, le filet et le titre du livre, lus de la marge extérieure vers l’intérieur." />
+
+<PageShot page={3} crop="0.34,0.045,0.62,0.05" caption="Page 31, un recto : le titre de l’essai, coupé avant le filet et l’onglet de la marge extérieure." />
+
+### 3 · Marges en miroir et lignes entières
+
+<Excerpt region="page" />
+
+Avec `mirror: true`, la marge `right` est la marge extérieure sur un recto et passe à gauche sur un verso : `OUTER` est donc toujours la marge extérieure, côté tranche, où pendent les onglets. La marge du bas se déduit du format, de la marge du haut et de `LINES`, ce qui maintient le bloc de texte à exactement `LINES` lignes de `LEAD` (31 × 14 pt ici), quels que soient le format ou la marge du haut. Chaque page pleine se termine sur la 31e ligne, si bien que des pages en vis-à-vis comme <PageRef page={2}>30 et 31</PageRef> finissent au même niveau.
+
+### 4 · Laisser l’ouverture montrer le titre entier
+
+<Excerpt region="opener" />
+
+L’ouverture compose le titre en entier avec `overflow: 'wrap'` et le coupe à chaque `\\` de la ligne de titre. Seule une ouverture sur toute la largeur de la page respecte ces coupures : le niveau porte donc `span: 'page'` ([sauts de ligne dans les titres](/fr/docs/document-format#sauts-de-ligne-dans-les-titres)). Dans le titre courant, `{chapterTitle}` donne toujours le titre sur une seule ligne, et ce sont les points de suspension qui coupent cette ligne. Le chiffre romain vient de l’attribut `{num="IV"}` du titre, et les petites capitales à côté de la plaque viennent du `subtitle` du frontmatter.
+
+### 5 · Ouvrir chaque essai sur un recto
+
+<Excerpt region="levels" />
+
+Avec `'odd'`, un essai qui se termine sur un recto est suivi d’un verso blanc. L’édition espagnole en a un, car son chapitre IV se termine à la page 31 ; ici, le chapitre IV se termine à la page 32, un verso, et le chapitre V s’ouvre à la page 33. Le `pages: 'body'` des titres courants les écarte des pages blanches et des ouvertures (les pages dont le premier bloc est ce titre). Le `pages: 'opener'` du pied de page n’imprime le folio en pied que sur les ouvertures ([éléments de texte](/fr/docs/configuration-page-layout#éléments-de-texte)).
+
+### 6 · Commencer les folios à 29
+
+<Excerpt region="build" />
+
+`parity` suit la place de la page dans le livre et ignore son folio. `pageIndexOffset: 28` ajoute 28 à l’index de chaque page : recto et verso, les marges en miroir et les titres courants pairs et impairs suivent donc la page du livre. `pageNumbering.startAt` numérote ensuite ces pages de 29 à 33. Sans ce décalage, la première page produite est un recto, quel que soit le folio qu’elle imprime. Cela tombe bien pour la page 29, mais avec `startAt: 30` le titre du livre arriverait page 31 et celui de l’essai page 32, chacun du mauvais côté de la double page.
+
+## Variantes
+
+### Donner un titre courant abrégé aux titres longs
+
+Écrivez le titre courant sur la ligne du titre, `{num="IV" short="Of false objects"}`, et imprimez l’attribut au lieu du titre entier ; un chapitre sans `short` n’imprime rien à cet endroit.
+
+```diff
+-  { kind: 'text', id: 'essay', content: '{chapterTitle}', parity: 'odd', pages: 'body',
++  { kind: 'text', id: 'essay', content: '{attr.short}', parity: 'odd', pages: 'body',
+```
+
+### Ouvrir les essais d’un côté ou de l’autre
+
+Avec `'any'`, un essai commence à la page suivante, recto ou verso, et aucune page blanche n’est jamais ajoutée. La plaque est accrochée au coin supérieur gauche du bloc de texte et le folio en pied est centré dessous : les deux se placent donc de la même façon sur un verso que sur un recto.
+
+```diff
+-      { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' },
++      { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' },
+```
+
+### Peindre le verso blanc dans la couleur d’accent
+
+Une boîte avec `pages: 'blank'` ne s’imprime que sur les pages qu’ajoute le saut au recto : dans l’édition espagnole, elle remplit la page 32 de sépia, et l’édition anglaise, qui n’a pas de page blanche, ne change pas.
+
+```diff
+ const footer = { elements: [folio({ id: 'drop-folio', parity: 'all', pages: 'opener',
+-  anchor: { to: 'container', edge: 'bottom' }, y: -HEAD })] };
++  anchor: { to: 'container', edge: 'bottom' }, y: -HEAD }),
++  { kind: 'box', id: 'blank-leaf', pages: 'blank', style: { backgroundColor: col('sepia') },
++    placement: { anchor: page('top-left'),
++      size: { width: mm(TRIM.width), height: mm(TRIM.height) } } }] };
+```
+
+## Erreurs fréquentes
+
+- `CAP` est réglé dans chaque édition pour le titre de l’essai IV, le seul qu’un titre courant affiche ici. Les points de suspension suivent le dernier mot entier qui tient, et ce mot peut être une préposition : à 64 mm, le titre courant espagnol finirait par « …sus pasiones sobre… ». Un livre aux titres longs a besoin du titre courant abrégé décrit dans les variantes.
+- Dans l’édition anglaise, faire passer `minWordSpacing` de 0,7 à 0,75 laisse la première ligne de l’essai V (« Quintus Marcius, the Roman legate… ») sans coupure possible dans la bande, et ses espaces s’étirent à 2,4 fois leur largeur normale. L’édition espagnole n’a pas une telle ligne. Après tout changement, vérifiez les lignes les plus lâches que liste la capture.

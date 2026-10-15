@@ -78,7 +78,8 @@ Canvia l'accent i la següent execució pinta amb el nou color els folis, els su
 -showPages(doc, {
 -  title: t({ en: 'From a Markdown string to a designed page',
 -    es: 'De una cadena Markdown a una página diseñada',
--    pt: 'De uma string Markdown a uma página diagramada' }),
+-    pt: 'De uma string Markdown a uma página diagramada',
+-    fr: 'D’une chaîne Markdown à une page mise en forme' }),
 -});
 +const canvas = document.body.appendChild(document.createElement('canvas'));
 +renderPageToCanvas(doc.pages[0], doc, canvas, { scale: 0.5 });

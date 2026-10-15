@@ -1,0 +1,48 @@
+---
+title: "Une planche d’action aux gouttières inclinées"
+summary: "La planche d’une finale de kendo : gouttières inclinées (40~55) dans le découpage, case sans bordure pour le coup, et ドン gardé en japonais sous une traduction."
+plain: "Une planche de combat d’une bande dessinée japonaise, avec des espaces inclinés entre les cases pour que l’action semble pencher, et la grande onomatopée japonaise du coup laissée en place avec une petite traduction à côté."
+description: "Une planche d’action de manga dans Postext : gouttières inclinées notées 40~55 au découpage, case sans bordure pour le coup, ドン gardé en japonais et sous-titré."
+question: "Comment incliner les gouttières entre les cases pour une scène d’action en bande dessinée ?"
+aliases: ["cases inclinées", "gouttières en diagonale", "斜めのコマ割り", "planche d’action", "scène de combat", "lignes de vitesse", "効果線", "onomatopées", "SFX", "描き文字", "onomatopée", "case sans bordure", "枠なし", "onomatopée sous-titrée", "ドン"]
+pageNotes: { "1": "L’original japonais : un plan large de la finale, une bande avec les yeux de Hana derrière sa grille, une bande coupée par une gouttière qui penche vers la gauche, l’attaque de l’adversaire à droite et le coup de Hana à gauche sous un énorme ドン vertical, puis une dernière bande inclinée dans l’autre sens.", "2": "L’édition française de la même planche : ドン en travers du coup avec « PAF ! » en petit dessous ; « BAM ! » et le « MEEEN ! » de l’adversaire à droite, le « MEN !! » de Hana à gauche, et sur la dernière bande « Elle a réussi !! » de Sora, « Men ! Point ! » de l’arbitre et « …Hum. Pas mal. » dans la pensée de Mori." }
+---
+
+## Ce que vous allez composer
+
+La planche où se décide la finale de kendo, tirée du même manga que <RecipeLink slug="manga-right-to-left">la recette de droite à gauche</RecipeLink>, en deux éditions côte à côte : l’original japonais et son lettrage dans la langue de cette page (l’anglais sur la page japonaise). Quatre bandes : le gymnase, les yeux de Hana à travers la grille de son casque, l’échange, et les réactions. La troisième bande est coupée par une gouttière qui penche, si bien que l’attaque de l’adversaire et la riposte de Hana semblent se précipiter l’une vers l’autre ; la quatrième penche dans l’autre sens et ralentit la planche. Le coup de Hana n’a aucun cadre, et son onomatopée, ドン, est composée dans une gothique japonaise grasse que toutes les éditions conservent, avec une petite traduction dessous dans les planches traduites.
+
+## Préparation
+
+### 1 · Incliner la gouttière dans le découpage
+
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Une taille écrite `40~55` donne deux positions au bord opposé d’une case : 40 % de la bande en haut, 55 % en bas. Les cases restent des polygones convexes, la gouttière garde sa largeur mesurée perpendiculairement à l’inclinaison, et en lecture de droite à gauche l’inclinaison s’inverse avec l’ordre : la première case reste donc celle de droite. Le découpage de la planche est `24 / 18 / * [40~55 | *] / 24 [58~64 | *]` : deux bandes droites pour installer le moment, une inclinée pour le coup, et une dernière inclinée dans l’autre sens (<Feature id="comic-panel-split">découpage de la planche</Feature>).
+
+### 2 · Crier dans des bulles en éclat et laisser déborder les onomatopées
+
+<Excerpt region="balloons" />
+
+Les kiai des deux combattants sont des cris : une bulle en éclat à 18 pointes, plus profondes que par défaut. Les onomatopées n’ont pas de bulle du tout ; elles sont lettrées sur le dessin avec un contour blanc de 2,2 pt, pour rester lisibles sur les lignes de vitesse. La case du coup s’écrit `::panel{art=strike border=none}`, et son ドン porte `break` : il peut donc franchir la gouttière inclinée jusque dans la case voisine, comme un lettreur laisse une onomatopée déborder du cadre (<Feature id="sound-effects">onomatopées</Feature>).
+
+### 3 · Garder ドン en japonais et le sous-titrer
+
+<Excerpt region="fonts" />
+
+Dans le manga, les onomatopées font partie du dessin, et les éditions sous licence les laissent en général en place en ajoutant une petite traduction à côté. Le script fait de même : chaque édition a la ligne `sfx{… font="Dela Gothic One" break}: ドン` ; les éditions lettrées en lignes horizontales y ajoutent `vertical`, pour que ドン garde la colonne qu’il a dans l’original, et composent dessous une seconde onomatopée plus petite, PAF ! ou WHAM. Comme le caractère est nommé sur la ligne, chaque édition charge Dela Gothic One avec les seuls caractères de ドン, quel que soit son propre caractère de lettrage.
+
+### 4 · Ajuster les zones sûres aux cases inclinées
+
+<Excerpt region="art" />
+
+Une case inclinée est plus large à un bout qu’à l’autre, et l’image doit la couvrir entièrement. Chaque zone sûre est découpée selon ce dont la case a besoin, les yeux pour le gros plan sur la grille et le haut du corps de Sora pour l’encouragement : elle tient ainsi dans le recadrage le plus large de la case, et le moteur n’a jamais à ajouter de bandes autour de l’image.
+
+### 5 · Placer l’original en face de chaque édition
+
+<Excerpt region="editions" />
+
+Chaque langue du site lettre la planche dans son propre fichier, et l’original japonais lui fait face de l’autre côté de la double page (la page japonaise fait face à l’édition anglaise). ドン reste dans toutes les éditions, chacune apporte son propre sous-titre (PAF !, WHAM, ZAS!, PÁ!, 咚, بوم !), et les inclinaisons ne bougent jamais.
+
+## Erreurs fréquentes
+
+- Une onomatopée gardée en japonais dans une édition lettrée en lignes horizontales est composée en ligne, comme le reste de l’édition, sauf si sa ligne indique `vertical`.
+- L’encouragement de Sora est plus long que sa petite case en japonais, en espagnol et en catalan : laissé au moteur, il franchissait la bordure et la construction avertissait `comicBalloonOverflow`. Ces éditions le marquent `break` (`sora{shout break}`) : il jaillit volontairement à travers le cadre dans la gouttière et la case du dessus, et rien n’est signalé. Une bulle `break` ne déborde jamais dans la marge de la page, sauf si sa case est à fond perdu ; une épingle (`at=`) la place n’importe où ailleurs.

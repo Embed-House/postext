@@ -1,0 +1,48 @@
+---
+title: "Une planche lettrée en six langues"
+summary: "Une planche de BD, découpage et images fixes, lettrée par langue : la locale choisit le caractère ; japonais vertical, japonais et arabe de droite à gauche."
+plain: "La même planche de bande dessinée en anglais, espagnol, français, japonais, chinois et arabe : seuls les mots changent, et Postext redessine chaque bulle autour d’eux."
+description: "Une planche de BD relettrée avec Postext : un découpage, cinq images, un script par langue, bulles japonaises verticales, japonais et arabe de droite à gauche."
+question: "Comment relettrer une bande dessinée dans une autre langue ?"
+aliases: ["relettrage", "lettrage", "traduction", "traduction de bande dessinée", "localisation", "traduction de manga", "lettrage vertical", "BD de droite à gauche", "re-lettering", "rotulación", "写植", "嵌字", "defaultComicFont"]
+---
+
+## Ce que vous allez composer
+
+Une planche de bande dessinée, *The Lighthouse Radio* : Maya arrive au phare de son grand-père alors qu’une tempête se lève, la radio ne marche plus, et le coupable est Biscuit, endormi sur le câble. Le découpage et les cinq images à l’aquarelle sont fixes ; d’une édition à l’autre ne change qu’un script de neuf répliques. Chaque édition de cette recette compose sa propre langue, et chacune compose aussi la planche française à côté : anglais et français, espagnol et français, et ainsi de suite jusqu’au japonais, au chinois et à l’arabe. Le moteur redessine chaque bulle autour des mots qu’elle contient. Le japonais est lettré en colonnes verticales en Zen Antique. Les planches japonaise et arabe se lisent de droite à gauche : les trois cases de la bande du milieu échangent leurs places.
+
+## Préparation
+
+### 1 · Une configuration pour toutes les langues
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Rien dans la configuration ne nomme une langue, sauf `locale`. Sans `fontFamily`, le lettrage prend le caractère de bande dessinée de la langue du document (`defaultComicFont`) : Comic Neue, Zen Antique, Noto Sans SC ou Playpen Sans Arabic, et l’onomatopée le caractère de titrage assorti. `writingMode: 'auto'` transforme les bulles japonaises en colonnes verticales ; `readingDirection: 'auto'` lit les planches japonaise et arabe de droite à gauche, comme leurs langues, si bien que le même `split="30 / 35 [* | * | *] / *"` place la case de la radio à droite et le chat à gauche. Les identifiants des personnages (`maya`, `tomas`) sont les mêmes dans tous les scripts, et les ancrages des images y répondent.
+
+Le corps est le même pour tout le livre. Le script anglais compte 216 lettres, l’espagnol 220, le français 224, le chinois 74 caractères ; les scripts plus longs reçoivent des bulles plus grandes, jamais un texte plus petit.
+
+### 2 · Le français accompagne chaque édition
+
+<Excerpt region="editions" />
+
+Les éditions de cette recette n’ont pas de planche française à elles : chaque édition compose donc deux documents, sa propre planche, puis la française à partir de `content.fr.en.md`, avec la même configuration et une `locale` de `'fr'`. Le script français met l’espace fine insécable avant `!` et `?`, comme le veut la typographie française.
+
+### 3 · Les images ne changent pas
+
+<Excerpt region="art" />
+
+Les zones sûres sont plus étroites que les cases de ce découpage : la bande du milieu contient trois cases d’environ 46 mm de large et 80 mm de haut, si bien que chaque image carrée montre une colonne d’environ 58 % de sa largeur, tandis que sa zone sûre, le visage de celui qui parle et ce dont parle la réplique, en occupe 36 à 42 %. Les images ne sont pas retournées pour le japonais ni pour l’arabe (`mirrorArt` reste à false) : Maya monte toujours le sentier depuis la gauche, et seul l’ordre des cases suit le sens de lecture.
+
+## Variantes
+
+### Retourner les images dans les éditions de droite à gauche
+
+`mirrorArt: true` retourne chaque image quand la planche se lit dans le sens contraire de celui du dessin. Laissez une case contenant du lettrage ou une horloge non retournée avec `::panel{mirror=false}`.
+
+```diff
+   readingDirection: 'auto', // the default, written out: it is what an edition flips
++  mirrorArt: true,
+```
+
+## Erreurs fréquentes
+
+- Une réplique du script désigne celui qui parle par son identifiant, pas par son nom : écrivez `maya:` dans toutes les langues. Le nom qu’annonce un lecteur d’écran est `cast[].name`.
+- La planche française partage les images de l’édition : le texte alternatif de ses cases est donc dans la langue de l’édition ; donnez `::panel{alt="…"}` dans `content.fr.en.md` pour un texte alternatif en français.

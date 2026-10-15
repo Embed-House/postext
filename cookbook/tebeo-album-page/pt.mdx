@@ -1,15 +1,15 @@
 ---
 title: "Uma página de álbum em linha clara, com recordatórios"
 summary: "Uma página de álbum franco-belga em quatro faixas: quadros de canto vivo, recordatórios amarelos nos cantos e balões em caixa mista, tudo pela config comics."
-plain: "Uma página de um álbum de quadrinhos europeu, com a voz do narrador em caixas amarelas e os diálogos em balões, escrita em texto simples e letreirada pelo Postext em sete línguas."
-description: "Uma página de tebeo espanhol no Postext: quatro faixas de quadros, recordatórios amarelos, um grito, um pensamento e uma onomatopeia, em sete línguas."
+plain: "Uma página de um álbum de quadrinhos europeu, com a voz do narrador em caixas amarelas e os diálogos em balões, escrita em texto simples e letreirada pelo Postext em oito línguas."
+description: "Uma página de tebeo espanhol no Postext: quatro faixas de quadros, recordatórios amarelos, um grito, um pensamento e uma onomatopeia, em oito línguas."
 question: "Como faço para compor uma página de álbum europeu com recordatórios de narração?"
 aliases: ["tebeo", "quadrinhos", "HQ", "história em quadrinhos", "bande dessinée", "BD", "linha clara", "ligne claire", "página de álbum", "álbum franco-belga", "recordatório", "legenda de narração", "cartouche", "cartela", "franco-belga", "balões", "letreiramento", "balloonStyles", "panelStyles"]
 ---
 
 ## O que você vai compor
 
-A primeira história de um álbum de quadrinhos espanhol, *Las naranjas de Carmen* (*As laranjas da Carmen* na edição brasileira): uma folha de rosto na página par e, em frente, uma página de sete quadros em quatro faixas, como se desenham os álbuns franco-belgas. Lola, de nove anos, vai à feira no domingo com o avô Paco e puxa a laranja de baixo da pirâmide de Carmen. Os desenhos são em linha clara com cores chapadas; os quadros têm contorno fino e canto vivo, a narração fica em caixas amarelas encaixadas nos cantos do quadro, e os diálogos são letreirados em maiúsculas e minúsculas, como fazem os letristas europeus. O texto fica no Markdown, um arquivo por língua: o original em espanhol e depois inglês, catalão, chinês, árabe, japonês e português, cada um letreirado pelo motor sobre a mesma divisão e os mesmos desenhos.
+A primeira história de um álbum de quadrinhos espanhol, *Las naranjas de Carmen* (*As laranjas da Carmen* na edição brasileira): uma folha de rosto na página par e, em frente, uma página de sete quadros em quatro faixas, como se desenham os álbuns franco-belgas. Lola, de nove anos, vai à feira no domingo com o avô Paco e puxa a laranja de baixo da pirâmide de Carmen. Os desenhos são em linha clara com cores chapadas; os quadros têm contorno fino e canto vivo, a narração fica em caixas amarelas encaixadas nos cantos do quadro, e os diálogos são letreirados em maiúsculas e minúsculas, como fazem os letristas europeus. O texto fica no Markdown, um arquivo por língua: o original em espanhol e depois inglês, catalão, chinês, árabe, japonês, português e francês, cada um letreirado pelo motor sobre a mesma divisão e os mesmos desenhos.
 
 ## Preparo
 
@@ -35,7 +35,7 @@ paco{shout}: ¡Lola, esa no!
 
 <Excerpt region="art" />
 
-Cada desenho declara o que todo recorte precisa manter (`safeArea`), onde ficam a boca, a cabeça e o rosto de cada personagem (`anchors`) e o que nenhum balão pode cobrir (`avoid`), tudo em frações do desenho. O quadro do desmoronamento ocupa a terceira faixa, 200 mm por 63 mm, então a zona segura dele é a faixa dos rostos e das laranjas voando; os quadros quadrados perdem o chão. Nada disso depende da língua, por isso as sete edições compartilham tudo.
+Cada desenho declara o que todo recorte precisa manter (`safeArea`), onde ficam a boca, a cabeça e o rosto de cada personagem (`anchors`) e o que nenhum balão pode cobrir (`avoid`), tudo em frações do desenho. O quadro do desmoronamento ocupa a terceira faixa, 200 mm por 63 mm, então a zona segura dele é a faixa dos rostos e das laranjas voando; os quadros quadrados perdem o chão. Nada disso depende da língua, por isso as oito edições compartilham tudo.
 
 ### 3 · Uma folha de rosto diante da história
 
@@ -57,4 +57,4 @@ Ponha o letreiramento em maiúsculas; a narração e os diálogos acompanham, e 
 ## Erros comuns
 
 - O corpo do letreiramento é um só para o livro inteiro: uma tradução mais longa aumenta os balões e os move, nunca encolhe a letra. Confira as páginas em catalão e em árabe depois de mudar a divisão. As colunas japonesas são altas para esses quadros baixos: três linhas de `content.ja.md` levam um `at=` que as afasta de Paco e das laranjas de que fala o último quadro.
-- O texto alternativo de cada quadro fica no manifesto dos desenhos em sete línguas, escolhido com `t({ … })`; uma língua que falte na lista usa a primeira. `::panel{alt="…"}` num arquivo de conteúdo o substitui para um quadro.
+- O texto alternativo de cada quadro fica no manifesto dos desenhos em oito línguas, escolhido com `t({ … })`; uma língua que falte na lista usa a primeira. `::panel{alt="…"}` num arquivo de conteúdo o substitui para um quadro.

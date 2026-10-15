@@ -1,0 +1,75 @@
+---
+title: "Notes de fin sur une page à part, en deux colonnes"
+summary: "Un court préprocesseur numérote les notes [^1] et les rassemble sous un titre Notes, dont le style les compose sur une page à part en deux colonnes."
+plain: "Une petite édition d’une célèbre conférence scientifique sur une bougie. Elle montre comment rassembler les notes à la fin, sur une page à part en deux colonnes, au lieu de les mettre en bas de chaque page."
+description: "La première conférence de Faraday sur la bougie et six notes de fin : chaque appel [^1] s’imprime surélevé, et les notes suivent sur une page à part."
+question: "Comment composer des notes [^1] en notes de fin, sur une page à part sous un titre ?"
+aliases: ["notes de bas de page", "notes de fin", "section de notes", "appels de note", "chiffres en exposant", "[^1]", "notes GFM", "retrait suspendu", "édition critique", "notes de l’éditeur", "édition de lecture", "endnotes", "footnotes"]
+pageNotes: { "1": "L’ouverture de la conférence I : un aplat de suie sur la moitié haute de la page, avec la photographie d’une bougie allumée posée sur son bord inférieur, le surtitre « LECTURE I » en orange et le titre « A Candle » en crème. Le texte commence dessous, son premier appel de note un petit 1 surélevé orange foncé.", "4": "Un panneau sombre en tête de page : deux flammes de bougie, l’une sous un globe de verre, l’autre en coupe avec des flèches d’air ascendant, légendées « Figure 1 ». Dessous, la conférence court jusqu’à sa fin, avec le 6 surélevé dans le premier paragraphe.", "5": "Les notes : un bandeau de suie avec la photographie d’une bougie soufflée qui laisse une traînée de fumée, puis six notes sur deux colonnes en plus petit corps, chaque numéro en gras orange foncé dans le retrait, et un colophon ; les deux colonnes finissent sur la même ligne." }
+---
+
+## Ce que vous allez composer
+
+La conférence I de *The Chemical History of a Candle* de Michael Faraday, composée en petite édition de lecture sur une page de 156 × 234 mm. La conférence s’ouvre sur un aplat de suie avec une bougie allumée posée sur son bord inférieur, une photographie générée par des modèles de diffusion dont le noir se confond avec la suie, et le texte court sur une colonne justifiée en Libre Bodoni. Là où un livre mettrait des notes de bas de page, de petits chiffres surélevés orange foncé renvoient le lecteur à la fin de la conférence. Les notes suivent sur une page à part, sous un bandeau de suie avec la bougie éteinte, sur deux colonnes en drapeau de 8,2 pt, chaque numéro en gras dans le retrait. Trois des six sont de William Crookes, tirées de la réimpression de 1908 de son édition de 1861 ; les trois autres sont nouvelles et signées *Ed.* Les deux colonnes finissent sur la même ligne, et le colophon clôt la seconde.
+
+## Préparation
+
+### 1 · Transformer les notes de bas de page en notes de fin avant la construction
+
+Le préprocesseur est dans [la réponse courte](#la-réponse-courte) plus haut. Postext compose lui-même les notes `[^1]` ([notes de bas de page](/fr/docs/document-format#notes-de-bas-de-page)), au pied de la colonne qui les appelle ou, avec `placement: 'chapterEnd'`, après le dernier bloc du chapitre. Dans les deux cas, elles restent dans la colonne du chapitre, dans le caractère du texte, sous un filet court. Cette édition donne aux notes un titre, un bandeau et une page en deux colonnes, et un style de titre ne fait cela que pour un titre écrit dans le Markdown. Le pen réécrit donc le Markdown avant d’appeler `buildDocument`, et le moteur ne voit jamais de `[^1]`. Il numérote les appels dans l’ordre où le texte les cite pour la première fois et place toutes les définitions, dans cet ordre, à l’endroit où se trouve la première, sous `## Notes`. Chaque note commence par `**1**`, puisque `1. ` ouvrirait une liste numérotée. Un gluon (U+2060) ouvre chaque appel ; sans lui, les `**` de l’appel qui suit `*Royal George*` rencontreraient l’astérisque fermant de l’italique sous la forme `***`, et les astérisques s’imprimeraient.
+
+### 2 · Réserver le gras aux appels
+
+<Excerpt region="markers" />
+
+Le préprocesseur écrit chaque appel sous la forme `**^n^**`. Les accents circonflexes placent le chiffre à 58 % du corps du texte, surélevé d’un tiers de celui-ci ([mise en forme en ligne](/fr/docs/document-format#mise-en-forme-en-ligne)), et le gras lui donne `bodyText.boldColor`, qui est libre puisque Faraday n’emploie jamais le gras. Un chiffre de 5,8 pt demande un contraste de 4,5:1 sur le papier, et l’orange flamme n’atteint que 2,6:1 : les appels prennent donc la couleur braise, plus sombre. Le renvoi `[Fig. 1]` en <PageRef page={3}>page 17</PageRef> s’imprime dans la même couleur, en romain, parce que `referenceColor` reprend par défaut la couleur du gras et que `referenceBold: false` retire le gras.
+
+### 3 · Composer les notes plus petit, le numéro en retrait suspendu
+
+<Excerpt region="notes" />
+
+Les notes sont en 8,2 pt sur 10,7 pt, environ les quatre cinquièmes du corps du texte. Le pen mesure le `hangingIndent` du style en Libre Bodoni une fois les polices chargées : un 5 gras et une espace demi-cadratin font 1,12 em, si bien que le premier mot de chaque note s’aligne sur ses lignes suivantes ([styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)). Avec le numéro dans le retrait, les notes n’ont besoin d’aucun espace entre elles. Elles sont composées en drapeau parce que la justification étirerait cette espace demi-cadratin, et qu’une colonne justifiée de 55 mm en 8,2 pt devient lâche. Les tildes composent les indices comme les accents circonflexes composent les exposants, comme `C~25~H~52~` dans la note 4 et `H~2~O` dans la note 5.
+
+### 4 · Donner aux notes une page en deux colonnes
+
+<Excerpt region="section" />
+
+Le titre `## Notes {style="notes" …}` ouvre une section dont les pages prennent la mise en page et la maquette du style. `parity: 'any'` la fait commencer à la page suivante, paire ou impaire, et `span: 'page'` étend le bandeau sur les deux colonnes : il atteint ainsi le bord de coupe et la seconde colonne commence dessous ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)). Le bandeau fixe la réserve, mais la première ligne de la grille dégagée ne se trouve que 3 mm sous la suie : `BAND_GAP` ajoute donc 5 mm à `minHeight` et les notes commencent une ligne plus bas. Le filet fin entre les colonnes est le `columnRule` de la `layout` propre au style : seules les pages de notes le tracent. L’équilibrage des colonnes est actif par défaut et coupe la dernière page pour que les deux colonnes finissent sur la même ligne ([équilibrage des colonnes](/fr/docs/configuration-text#équilibrage-des-colonnes)).
+
+### 5 · Ouvrir la conférence sur un aplat de suie
+
+<Excerpt region="opener" />
+
+L’aplat est une boîte ancrée à la page, et la bougie, un élément image contenant un JPEG, se tient sur son bord inférieur. La conférence a une seule colonne, et une maquette contenue dans sa colonne peint quand même là où ses éléments sont ancrés : l’aplat va donc du bord de coupe à travers les marges haute et latérales. Le surtitre, le sous-titre et la mention d’auteur viennent de la ligne du titre, `# A Candle {kicker="Lecture I" subtitle="…" byline="…"}` : la conférence II ne demanderait aucun code nouveau. L’aplat descend sous le titre : c’est donc lui qui fixe la réserve. La marge basse par défaut du titre, 0,5 em, s’y ajoute, et le texte commence une ligne de la grille sous la première ligne dégagée de la suie. Le sous-titre fait 86 mm de large pour se couper après un tiret, jamais avant.
+
+### 6 · La flamme sur la suie, la braise sur le papier
+
+<Excerpt region="palette" />
+
+L’orange flamme a un contraste de 6:1 sur la suie mais seulement de 2,6:1 sur le papier. Il colore les surtitres sur les bandeaux sombres et la figure 1 ; tout ce qui est petit et imprimé en orange sur le papier (appels, numéros des notes, étiquette de la figure) prend la braise, plus sombre, à 5,1:1. `main-color` pointe vers la braise : une valeur par défaut que la configuration ne redéfinit pas suit ainsi la maquette au lieu de s’imprimer en bleu.
+
+<Note>Une courte digression peut rester dans le texte, entre parenthèses. Les gloses dont le lecteur a besoin à côté de la ligne peuvent aller dans une colonne latérale, comme dans <RecipeLink slug="textbook-margin-column">Manuel avec colonne marginale</RecipeLink>.</Note>
+
+## Variantes
+
+### Laisser Postext composer les notes
+
+Supprimez `endnotes()` et le titre `## Notes`, mettez une ligne blanche entre les définitions (le moteur lit une définition jusqu’à la ligne blanche suivante) et ajoutez `footnotes: { placement: 'chapterEnd' }` à la configuration. Le moteur numérote les appels et compose les notes à la fin de la conférence, après le colophon, dans son unique colonne ; <RecipeLink slug="novel-footnotes-column-foot">Des notes au pied de la colonne qui les appelle</RecipeLink> met en forme les notes que compose le moteur.
+
+### Imprimer les appels en noir
+
+Si le texte emploie le gras pour ses propres mises en relief, imprimez les appels en noir, puisque `boldColor` colore à la fois les appels et chaque mot en gras.
+
+```diff
+-const markers = { boldColor: col('ember'), // **^n^**: a superscript at 58 % of the text size
++const markers = { boldColor: col('ink'), // **^n^**: a superscript at 58 % of the text size
+```
+
+### Laisser les colonnes de notes inégales
+
+Désactivez l’équilibrage de la dernière page : la première colonne se remplit jusqu’en bas avant que la seconde ne commence.
+
+```diff
+-  headings: { fontFamily: DISPLAY, color: col('ink'), levels: [
++  headings: { fontFamily: DISPLAY, color: col('ink'), balancing: { trailing: false }, levels: [
+```

@@ -58,7 +58,8 @@
       "zh",
       "ar",
       "ja",
-      "pt"
+      "pt",
+      "fr"
     ]
   },
   "capture": {
@@ -78,7 +79,8 @@
         "what": {
           "en": "Panel picture: the lighthouse in the storm (splash)",
           "es": "Viñeta: el faro en la tormenta (splash)",
-          "pt": "Quadro: o farol na tempestade (splash)"
+          "pt": "Quadro: o farol na tempestade (splash)",
+          "fr": "Case : le phare dans la tempête (splash)"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -88,7 +90,8 @@
         "what": {
           "en": "Panel picture: Maya at the window (inset)",
           "es": "Viñeta: Maya en la ventana (viñeta insertada)",
-          "pt": "Quadro: Maya na janela (quadro inserido)"
+          "pt": "Quadro: Maya na janela (quadro inserido)",
+          "fr": "Case : Maya à la fenêtre (case incrustée)"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -98,7 +101,8 @@
         "what": {
           "en": "Panel picture: the wave on the rocks",
           "es": "Viñeta: la ola en las rocas",
-          "pt": "Quadro: a onda nas pedras"
+          "pt": "Quadro: a onda nas pedras",
+          "fr": "Case : la vague sur les rochers"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -108,7 +112,8 @@
         "what": {
           "en": "Panel picture: the keeper on the gallery",
           "es": "Viñeta: el farero en la galería",
-          "pt": "Quadro: o faroleiro na galeria"
+          "pt": "Quadro: o faroleiro na galeria",
+          "fr": "Case : le gardien sur la galerie"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -118,7 +123,8 @@
         "what": {
           "en": "Panel picture: the gull flying over the border (transparent layer)",
           "es": "Viñeta: la gaviota que vuela sobre el borde (capa transparente)",
-          "pt": "Quadro: a gaivota que voa sobre a borda (camada transparente)"
+          "pt": "Quadro: a gaivota que voa sobre a borda (camada transparente)",
+          "fr": "Case : la mouette qui vole par-dessus le bord (calque transparent)"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",

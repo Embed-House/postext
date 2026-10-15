@@ -17,7 +17,7 @@ describe("abbreviation dictionary", () => {
     const ids = ABBREVIATIONS.map((a) => a.id);
     expect(new Set(ids).size).toBe(ids.length);
     for (const a of ABBREVIATIONS) {
-      for (const l of ["en", "es", "zh", "ca", "ar", "ja", "pt"] as const) expect(a.expansion[l], `${a.id} ${l}`).toBeTruthy();
+      for (const l of ["en", "es", "zh", "ca", "ar", "ja", "pt", "fr"] as const) expect(a.expansion[l], `${a.id} ${l}`).toBeTruthy();
     }
   });
 
@@ -27,6 +27,7 @@ describe("abbreviation dictionary", () => {
     expect(find("生成PDF文件和SVG图")).toEqual(["PDF", "SVG"]);
     expect(find("e.g. a 10.5 pt size, i.e. 3.7 mm")).toEqual(["e.g.", "pt", "i.e.", "mm"]);
     expect(find("según el RGPD", "es")).toEqual(["RGPD"]);
+    expect(find("un PDF en CMJN à 300 ppp, selon le RGPD", "fr")).toEqual(["PDF", "CMJN", "ppp", "RGPD"]);
     expect(abbreviationsFor("es").get("RGPD")?.title).toMatch(/Reglamento General/);
   });
 });

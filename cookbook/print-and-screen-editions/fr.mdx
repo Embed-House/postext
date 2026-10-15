@@ -1,0 +1,71 @@
+---
+title: "Une seule source, une édition papier et une édition écran"
+summary: "Deux éditions, une configuration : htmlViewer.overrides porte la maquette écran sombre, qu’applyHtmlViewerOverrides fusionne avant chaque rendu HTML."
+plain: "La rubrique météo d’un magazine, composée deux fois avec le même texte. On y voit comment un seul jeu de réglages donne une version imprimée en colonnes et une version sombre sur une colonne, à lire à l’écran."
+description: "Une rubrique de magazine dans Postext, en numéro imprimé sur deux colonnes et en vue de lecture HTML sombre et redimensionnable, d’un Markdown et d’une config."
+question: "Comment afficher le même document en vue de lecture HTML adaptative, avec une maquette écran plus simple ?"
+aliases: ["édition écran", "vue de lecture", "mode lecture", "édition web", "mode sombre", "thème de nuit", "HTML adaptatif", "HTML responsive", "redimensionner", "ResizeObserver", "Shadow DOM", "htmlViewer overrides"]
+pageNotes: { "1": "La page de partie de « Notes on Weather » : un aplat bleu pluie traversé de traits de pluie blancs en diagonale qui laissent le texte dégagé, un grand chiffre romain I, le titre de partie « Autumn » et les trois notes listées en pied.", "2": "La note « Rain » : un bandeau clair couleur de brume avec le surtitre « Autumn · Note 1 », le titre en Gloock et un chapeau en italique, deux colonnes justifiées et un pluviomètre dessiné en coupe en tête de la seconde colonne.", "3": "La note « Fog » : deux colonnes équilibrées au-dessus d’un panorama qui court au pied de la page, la photographie d’une vallée noyée de brume au lever du soleil, où percent un clocher, des arbres et une rivière, avec une berge clôturée au premier plan.", "4": "La note « Wind » : une rose des vents ouvre la seconde colonne, ses plus longs pétales bleus pointés vers l’ouest et le sud-ouest, et la note se termine sur le colophon du numéro." }
+---
+
+## Ce que vous allez composer
+
+*Notes on Weather*, la rubrique d’automne d’un petit magazine, composée deux fois à partir du même Markdown. Sur papier, c’est un numéro de 225 × 297 mm : une page de partie bleu pluie, trois notes qui s’ouvrent sous un bandeau clair couleur de brume, deux colonnes justifiées, les dessins d’un pluviomètre et d’une rose des vents, et la photographie d’une vallée dans la brume. À l’écran, c’est une seule colonne en drapeau en Newsreader, gris pâle sur un fond presque noir, en texte HTML que le lecteur peut sélectionner et copier, sans page de partie, sans bandeaux ni folios. Le panneau s’ouvre sur le pluviomètre, réduit à la hauteur du panneau et dessiné aux couleurs de nuit, à côté de la page imprimée qui le porte. Remontez pour voir l’ouverture de « Rain », ou tirez le coin du panneau : le texte est remis en page à la nouvelle taille. La maquette écran tient en neuf clés sous `htmlViewer.overrides`, à l’intérieur de la configuration papier.
+
+## Préparation
+
+### 1 · Un jeu de noms de couleurs, deux jeux de valeurs
+
+<Excerpt region="palette" />
+
+Chaque couleur de la configuration désigne un id de la palette, et l’hexadécimal écrit à côté n’est que la valeur de secours de jour. L’édition écran passe donc aux couleurs de nuit en remplaçant un seul tableau. Les [overrides](/fr/docs/configuration-fonts-colors-viewers#visionneuse-html) de [la réponse courte](#la-réponse-courte) fusionnent les objets clé par clé et les niveaux de titre sur `level`, et remplacent en entier tout autre tableau, `colorPalette` compris. `main-color` fait partie de la palette, si bien que les valeurs par défaut du moteur qui s’en servent changent aussi. La nouvelle palette atteint toutes les couleurs qui lui sont liées : le texte, les légendes, les éléments de maquette des ouvertures et la couleur des renvois.
+
+### 2 · Ouvertures : un bandeau sur papier, les mots à l’écran
+
+<Excerpt region="opener" />
+
+Les éléments de surtitre, de titre et de chapeau sont définis une fois et repris dans les deux maquettes, si bien que les deux éditions affichent les mêmes attributs de titre : `{attr.kicker}`, `{attr.lead}` et le `{partTitle}` de la partie. Sur papier, un titre de niveau 1 passe à une nouvelle page et s’étend sur les deux colonnes, et sa maquette suspend un bandeau de brume depuis le fond perdu. `minHeight` réserve la hauteur du bandeau sous la marge de tête, plus `AIR`, les 9 mm entre le bandeau et la première ligne. Les titres imprimés sont composés en 54 pt parce que chacun tient en un mot court et que c’est le seul gros texte de sa page. À l’écran, le même niveau devient un titre dans la colonne, sans bandeau ni blanc. L’override fusionne sur `level` : tout réglage du titre qu’il ne reprend pas reste celui du papier.
+
+### 3 · Une page de partie qui n’existe que sur papier
+
+<Excerpt region="part" />
+
+À l’impression, `:::part` ouvre <PageRef page={1}>la page de partie bleu pluie</PageRef> : un bloc à fond perdu sur tous les bords, un élément image de traits de pluie qui laissent le texte dégagé, le chiffre et le titre tirés du bloc, et la liste des notes en blanc. Les overrides écran fixent `parts.page: false` : aucune page ne s’ouvre et la liste n’est pas composée. La [partie](/fr/docs/configuration-styles#parties) applique toujours son numéro et son titre aux notes qui la suivent, et le surtitre écran affiche « Autumn · Note 1 » comme sur papier.
+
+### 4 · Dessiner chaque figure deux fois
+
+<Excerpt region="figures" />
+
+Changer de palette ne recolore pas un SVG : chaque dessin est donc fait une fois par palette. La vallée est une photographie, un seul JPEG que partagent les deux éditions. `figures(edition)` construit les mêmes ressources pour les deux éditions, chacune pointant vers le fichier de son édition : `gauge-day.svg` sur papier, `gauge-night.svg` à l’écran. Les ids, les légendes, les textes alternatifs et les placements ne changent pas, si bien que chaque `:ref` du Markdown renvoie à la même figure et au même numéro dans l’une ou l’autre édition. Dans l’édition écran, le texte alternatif va dans chaque `<img alt>`, où un lecteur d’écran le trouve.
+
+### 5 · Héberger l’édition écran
+
+<Excerpt region="screen" />
+
+Chaque page écran a la hauteur du panneau : `fitFiguresToPage` réduit donc le pluviomètre jusqu’à ce qu’il tienne sur une page avec sa légende ([mise en page](/fr/docs/configuration-page-layout#mise-en-page)). À 96 dpi, la résolution que suppose CSS, les millimètres et les points hérités du papier s’affichent à leur taille nominale ([intégrer la visionneuse HTML](/fr/docs/configuration-programmatic-usage#intégrer-la-visionneuse-html)). Le pen écrit les lignes en position absolue de `renderToHtml` dans un Shadow DOM, hors de portée des sélecteurs de la page. Les propriétés héritées comme `letter-spacing` franchissent pourtant cette frontière, et la racine de l’édition les réinitialise elle-même, parce que le moteur a mesuré les lignes sans elles. Les pages HTML sont transparentes tant qu’on ne les peint pas : `page.backgroundColor` prend donc le papier de nuit dans la palette. Le ResizeObserver attend 150 ms et ne recompose, à partir d’un `config()` neuf, que si la largeur ou la hauteur du panneau a changé ; après la recomposition, le panneau revient à la même fraction de sa hauteur.
+
+## Variantes
+
+### Lire de jour
+
+Retirez la palette de nuit et utilisez les valeurs de jour pour le panneau et les figures ; l’édition écran affiche alors des pages blanches, une encre sombre et les dessins de jour.
+
+```diff
+-  colorPalette: paletteOf(night), // arrays are replaced whole: the night values
+   parts: { page: false }, // no divider page; the part still names the notes after it
+@@
+-pane.style.background = night.paper; // the pane's own ground, beside the pages and the scrollbar
++pane.style.background = day.paper; // the pane's own ground, beside the pages and the scrollbar
+@@
+-  const screenDoc = buildDocument({ markdown, resources: figures('night') },
++  const screenDoc = buildDocument({ markdown, resources: figures('day') },
+```
+
+### Donner aux ouvertures imprimées un numéro de chapitre sur un bandeau de couleur
+
+Pour une ouverture imprimée plus appuyée, avec un bandeau saturé et un grand numéro de chapitre, voyez <RecipeLink slug="chapter-opener-bleed-band">Ouverture de chapitre sur un bandeau à fond perdu</RecipeLink> ; les overrides écran restent les mêmes.
+
+## Erreurs fréquentes
+
+- Gardez au panneau au moins 400 px de hauteur (le `min-height` du pen). Dans un panneau étroit de moins de 350 px de haut environ, l’ouverture écran dépasse la zone de contenu de la page ; elle occupe alors toute la page, et le premier paragraphe de la note commence sur la suivante.
+- Donnez une taille au panneau avant de le mettre en page. Un panneau sans largeur, masqué ou écrasé dans une rangée flex, donnerait une page de largeur nulle : c’est pourquoi `showScreen()` ignore un panneau plus étroit ou plus bas que `FOLDED`, 200 px.

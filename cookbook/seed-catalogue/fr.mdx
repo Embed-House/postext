@@ -1,0 +1,68 @@
+---
+title: "Catalogue de vente par correspondance, images en cellules"
+summary: "Un catalogue de graines dont le tarif est un tableau lu depuis un TSV, un sachet peint dans la cellule de chaque variété, la liste coupée sur une double page."
+plain: "Un catalogue de graines de quatre pages avec une liste de prix. Chaque variété a une petite peinture de son sachet dans le tableau, et la liste continue sur deux pages en vis-à-vis."
+description: "Un catalogue de graines de quatre pages composé avec Postext. Son tarif, lu depuis un TSV, a un sachet peint dans chaque ligne et se coupe sur les pages 2 et 3."
+question: "Comment placer une image dans chaque ligne d’un tableau de produits, avec le nom dessous ?"
+aliases: ["catalogue de graines", "catalogue de produits", "liste de prix", "tarif", "vente par correspondance", "tableau de produits", "tableau avec images", "images dans un tableau", "vignettes dans un tableau", "bon de commande", "cellules fusionnées", "rowspan"]
+pageNotes: { "1": "La couverture sur papier chamois dans un cadre vert : « Brindlewood Seed Co. » en capitales vertes espacées, « Spring Seeds » dans une égyptienne rouge, une banderole jaune qui porte « Catalog No. 12 · Spring 2027 », et une peinture d’un tournesol et d’un plant de tomate tuteuré qui poussent dans une terre labourée. Dessous, la lettre « To Our Growers » sur deux colonnes, avec une pastille rouge « NEW » et une pastille verte « ORGANIC » dans le texte, signée par Ada Brindle et Tom Okafor.", "2": "Le tarif s’ouvre sous un bandeau rouge tomate qui porte « Vegetable Seeds » et une ligne d’en-tête sombre. Cinq variétés, chacune avec un sachet de graines peint au-dessus de son nom ; « Heirloom tomatoes » remplit une cellule crème fusionnée sur quatre lignes, les descriptions portent des pastilles « NEW » et « ORGANIC », et les prix au sachet et à l’once sont au fer à droite. « Continued on the facing page » ferme la page.", "3": "Le bandeau revient sous la forme « Vegetable Seeds (continued) » au-dessus de la ligne d’en-tête répétée : deux haricots et deux courges, chaque espèce dans une cellule fusionnée sur ses lignes, et une note sur le nombre de graines par sachet. Dessous, « From Our Trial Garden » sur deux colonnes de même hauteur.", "4": "Le bon de commande : l’adresse postale en capitales vertes, « Order Sheet » dans l’égyptienne rouge au-dessus d’un double filet, une consigne en italique, une grille « Ship to » arrondie et une grille de commande arrondie avec onze lignes vides et des lignes de total fusionnées, la garantie en petits caractères et le colophon." }
+---
+
+## Ce que vous allez composer
+
+Le tarif de printemps de Brindlewood Seed Co., une ferme semencière inventée, sous forme de livret de quatre pages sur papier chamois. La couverture compose « Spring Seeds » en Alfa Slab One au-dessus d’une peinture d’un tournesol et d’un plant de tomate, avec la lettre aux jardiniers sur deux colonnes dessous. Les pages 2 et 3 portent la liste. Chaque variété a une peinture de son sachet de graines en haut de sa cellule et son nom dessous, et les espèces de légumes descendent une première colonne fusionnée. Les prix sont au fer à droite dans un caractère étroit d’étiquette, et des pastilles rouges et vertes signalent les semences nouvelles et biologiques. La liste se coupe après le piment à frire et reprend sur la page en vis-à-vis sous le même bandeau rouge, marqué « (continued) ». La dernière page est le bon de commande, deux grilles arrondies avec des lignes vides où écrire.
+
+## Préparation
+
+### 1 · Ajouter ce que le TSV ne contient pas
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le TSV ne contient que des mots et des prix. `setCellImage` place le sachet de chaque variété, une ressource nommée d’après la variété, en haut de sa cellule à 55 % de la largeur intérieure : le nom se place donc sous une image de 20,3 × 27,1 mm et chaque ligne grandit jusqu’à 36 mm. `mergeCells` fait descendre chaque espèce dans la première colonne et marque `hiddenBy` les cellules qu’elle recouvre. Les cellules du corps d’un tableau partagent un même caractère, ici Gelasio : chaque prix est donc une pastille sans fond, sans bordure ni marge latérale, composée en Cabin Condensed gras à 1,12 em pour ses chiffres alignés.
+
+### 2 · Citer la liste et la couper sur la double page
+
+<Excerpt region="split" />
+
+La lettre de la page 1 cite la liste avec `:ref{id="vegetables" text="the price list"}`, et `text` imprime ces mots à la place d’un numéro. Un tableau cité flotte jusqu’au premier emplacement libre après la citation, ici le haut de la page 2. La liste n’y tient pas : le moteur la coupe entre deux lignes après Jimmy Nardello, jamais à l’intérieur d’une espèce fusionnée. La page 3 répète la ligne d’en-tête et le bandeau de légende avec le suffixe ; la mention de suite se place sous la première partie et la note sous la dernière ([tableaux plus hauts que la page](/fr/docs/configuration-resources#tableaux-plus-hauts-que-la-page)). `parseTSV(tsv, { headerRows: 1 })` fait de la première ligne la ligne d’en-tête, peinte comme telle et répétée en page 3. Le suffixe et la mention sont en italique et prennent le caractère de la légende : le bandeau reste donc en Gelasio, car Cabin Condensed n’a pas d’italique.
+
+### 3 · Une ressource pour chaque sachet
+
+<Excerpt region="pictures" />
+
+Une image de cellule nomme une ressource par son id : chaque sachet est donc une ressource bitmap à part, un JPEG de 360 × 480 px recadré aux proportions 3 : 4 du sachet, et le `loadImage` du kit l’enregistre sous le `fileId` avec `registerResourceImage`. Rien ne cite les sachets : aucun n’est donc numéroté ni placé hors de sa cellule. Les peintures ne portent aucun lettrage : le nom est composé comme texte de cellule, dans les polices de la page.
+
+### 4 · Un second style de tableau pour le bon de commande
+
+<Excerpt region="forms" />
+
+Les deux grilles utilisent le style nommé `form`, avec des filets de grille, un rayon de 2,5 mm sur le cadre extérieur et un fond crème où écrire. Le tarif garde le `tableStyle` du document ([styles de tableau nommés](/fr/docs/configuration-resources#styles-de-tableau-nommés)). Une cellule vide n’a besoin d’aucun texte de remplissage, car sa ligne prend quand même une hauteur, 7,3 mm ici. Chaque total fusionne quatre colonnes en une étiquette au fer à droite. Le style de titre du bon de commande fait passer la page 4 à une seule colonne : les deux grilles courent donc sur toute la justification de 157 mm.
+
+### 5 · Garder la lettre sous la peinture
+
+<Excerpt region="cover" />
+
+La couverture réserve la hauteur jusqu’au pied de sa peinture, à 164 mm du haut de la page, et sans `minHeight` la lettre commencerait sur la première ligne de grille en dessous, collée à la terre. `minHeight` est un plancher placé un peu plus bas : `SINK` ajoute 10 mm d’air sous la peinture et arrondit la profondeur sous la marge du haut à un nombre entier de lignes de 13 pt, 34 en tout, si bien que les deux colonnes de la lettre commencent sur la grille, à 177,9 mm du haut de la page. Le cadre de la couverture descend jusqu’au pied de la page ; `reserve: false` le tient hors de ce calcul.
+
+## Variantes
+
+### Ne garder que ce qui tient
+
+Avec `overflow: 'clip'`, la liste s’arrête après les cinq variétés qui tiennent en page 2, avec la note dessous, et la page 3 ne contient que les notes d’essai, dans sa première colonne.
+
+```diff
+-  overflow: 'split', continuedSuffix: '(continued)',
++  overflow: 'clip', continuedSuffix: '(continued)',
+```
+
+### Réduire les sachets
+
+À 40 %, les lignes descendent à 29 mm, mais les deux haricots partagent une cellule fusionnée et demandent 57 mm à eux deux, plus que les 44 mm qui restent en page 2. Les notes d’essai remontent dans cet espace, et la page 3 ne contient que le reste de la liste, la page restant blanche sous 157 mm.
+
+```diff
+-const PACKET = 0.55; // the packet picture's share of its cell's inner width
++const PACKET = 0.4; // the packet picture's share of its cell's inner width
+```
+
+## Erreurs fréquentes
+
+- Une ressource que rien ne cite n’est jamais placée. Retirez le `:ref` de la lettre et le catalogue n’a plus de tarif.
+- Dans des colonnes de 75 mm, Knuth–Plass peut laisser une ligne justifiée dont les espaces s’étirent au-delà de `maxWordSpacing` ; `bodyText.maxJustifyTracking` permet à une telle ligne de prendre un peu d’approche à la place. Ici, la lettre et les notes d’essai ont été reformulées jusqu’à ce que la ligne la plus lâche n’étire plus ses espaces qu’à 1,33 fois leur largeur normale.

@@ -279,11 +279,12 @@
               "zh",
               "ar",
               "ja",
-              "pt"
+              "pt",
+              "fr"
             ]
           },
           "minItems": 1,
-          "maxItems": 7,
+          "maxItems": 8,
           "uniqueItems": true
         }
       }
@@ -838,6 +839,10 @@
           "minLength": 1
         },
         "pt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fr": {
           "type": "string",
           "minLength": 1
         }

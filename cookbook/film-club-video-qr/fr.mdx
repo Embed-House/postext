@@ -1,0 +1,74 @@
+---
+title: "Programme de ciné-club avec des QR codes sur les affiches"
+summary: "Chaque film est une ressource vidéo : son affiche s’imprime avec un bouton de lecture et un QR code vers YouTube ; dans le PDF, l’affiche est aussi un lien."
+plain: "Un programme de six pages pour la saison d’automne d’un ciné-club, avec quatre courts métrages. Chaque page de film montre une image avec un code qu’un téléphone peut scanner pour voir le film ; dans le PDF, on peut cliquer sur l’image."
+description: "Programme de ciné-club avec Postext : quatre films YouTube en ressources vidéo, imprimés en cartons-titres avec bouton de lecture, QR code de 20 mm et lien PDF."
+question: "Comment imprimer une vidéo dans un programme pour qu’on la scanne sur la page ou la clique dans le PDF ?"
+aliases: ["vidéo imprimée", "QR code", "code QR", "YouTube", "bouton de lecture", "affiche de vidéo", "programme de cinéma", "ciné-club", "scanner pour regarder", "lien vidéo dans le PDF", "vídeo"]
+pageNotes: { "1": "La couverture : un bandeau noir écran sur la moitié haute avec le surtitre « Lumen Film Club · Autumn 2026 » en or, « OPEN MOVIES » en hautes capitales condensées, un chapeau en italique, quatre pastilles aux couleurs des films datées 6, 13, 20 et 27 Nov, et la ligne du lieu ; deux paragraphes d’introduction suivent sur papier crème, qui citent « Film 1 » à « Film 4 ».", "2": "Séance 1, « Elephants Dream » : le surtitre en rouge, le titre en capitales condensées et une ligne de générique, puis le carton-titre, des engrenages et des câbles cuivrés sur un sarcelle profond avec le nom du film, un bouton de lecture rouge arrondi dans l’angle supérieur gauche et un QR code sur une plaque crème dans l’angle inférieur droit ; dessous, la légende « Film 1 » et l’adresse courte youtu.be/TLkA0RELQ1g, puis deux paragraphes sur le film.", "3": "Séance 2, « Big Buck Bunny » : un carton-titre avec un soleil pêche sur des collines vertes et des papillons, le même bouton de lecture et le même QR code, la légende « Film 2 » et deux paragraphes.", "4": "Séance 3, « Tears of Steel » : un carton-titre avec une ligne d’horizon sombre, une flèche d’église et une lune cerclée d’or, avec le bouton de lecture, le QR code, la légende « Film 3 » et deux paragraphes.", "5": "Séance 4, « Spring » : un carton-titre avec des crêtes bleues dans la brume, des sapins sombres et une lumière rouge, avec le bouton de lecture, le QR code, la légende « Film 4 » et deux paragraphes.", "6": "Informations pratiques : horaires et tarifs, pourquoi le club peut projeter ces films, comment les voir chez soi, le générique des quatre films avec leurs licences, et le colophon." }
+---
+
+## Ce que vous allez composer
+
+Le programme d’automne du Lumen Film Club, un livret de 165 × 235 mm sur papier crème : un bandeau de couverture noir écran avec le titre de la saison en Big Shoulders Display, puis une page pour chacun des quatre films libres de la Blender Foundation. Chaque page de film s’ouvre sur un surtitre rouge pour la séance, le titre en capitales condensées et une ligne de générique, puis un carton-titre sur toute la justification de 125 mm. Un bouton de lecture rouge occupe l’angle supérieur gauche du carton et un QR code de 20 mm l’angle inférieur droit. Un membre qui a manqué un vendredi pointe son téléphone vers le code et le film s’ouvre sur YouTube ; dans le PDF, tout le carton est le lien. L’adresse courte sous chaque carton sert au téléphone qui ne lira pas le code.
+
+## Préparation
+
+### 1 · Faire de chaque film une ressource vidéo
+
+Le code est [la réponse courte](#la-réponse-courte) plus haut. Une ressource vidéo est placée, légendée et numérotée comme une figure, et l’impression la montre sous forme d’affiche avec deux surimpressions. Le bouton de lecture et le code vont dans des angles opposés, donc ils ne se rencontrent jamais, et l’affiche de 70 mm de haut laisse de la place aux deux. Le code mesure 20 mm avec une zone de silence de deux modules : `https://youtu.be/` plus un id de onze caractères donne 29 modules au niveau Q, donc chaque module mesure 0,61 mm, environ le double de ce dont un appareil photo de téléphone a besoin. Q est le niveau le plus élevé qui garde 29 modules pour cette longueur (le moteur y monte M de lui-même) ; H en demanderait 33 et réduirait les modules à 0,54 mm. Le type intégré `video` imprimerait *Video 1.1* ; renommé *Film* et compté avec `{n}` sur tout le document, il numérote les quatre séances de la saison de *Film 1* à *Film 4*, et les renvois de la couverture impriment les mêmes mots.
+
+### 2 · Garder l’adresse courte et laisser le moteur la développer
+
+<Excerpt region="films" />
+
+L’adresse de chaque entrée est celle imprimée sous le carton, `youtu.be/TLkA0RELQ1g`, qu’un lecteur peut taper. `parseVideoUrl` lit toutes les formes YouTube ou Vimeo, et `videoWatchUrl` écrit l’adresse canonique à partir de ce qu’il a lu : le QR code et le lien PDF contiennent tous deux `https://youtu.be/<id>`. Une faute de frappe qui ne laisse aucun id valide fait renvoyer `undefined` à `parseVideoUrl`, et le pen s’arrête avant la construction : un lien cassé n’atteint jamais l’imprimeur.
+
+### 3 · Dessiner un carton-titre pour l’affiche
+
+<Excerpt region="art" />
+
+Dans la plupart des projets, l’affiche est une image du film : le Sandbox la récupère quand vous saisissez l’adresse et, en code, `youtubePosterUrls(id)` liste les miniatures de YouTube de la plus grande (1280 × 720) à la plus petite. Les images des plateformes appartiennent aux films et à leurs licences, et un programme imprimé peut employer ses propres cartons-titres : chaque film reçoit donc ici un carton dessiné sur un canvas dans sa couleur, avec le motif du film, son titre, son année et son réalisateur. Le carton laisse libres les angles supérieur gauche et inférieur droit pour les surimpressions. Un canvas dessine chaque carton et compose son texte dans les caractères du livret, que la page a déjà chargés à ce moment-là. Le carton mesure 1600 × 900 pixels, le 16:9 des films, et `video.poster` déclare cette taille : sur la justification de 125 mm, il s’imprime à 325 dpi. Une vidéo sans affiche s’imprime comme une boîte sombre en 16:9 avec le même bouton et le même code, et la construction émet un avertissement.
+
+### 4 · Placer l’affiche sous l’ouverture
+
+<Excerpt region="furniture" />
+
+Chaque film est un titre de niveau 1 dont l’ouverture empile le surtitre de la séance, le titre et la ligne de générique, tous trois tirés d’attributs du titre. `::resource` place l’affiche juste dessous avec `position: 'here'`, si bien que chaque page de film suit le même ordre. La couverture est un style de titre dont le bandeau, le titre et les pastilles sont des éléments de maquette ; les quatre pastilles prennent les couleurs des films dans la palette, comme les cartons-titres.
+
+### 5 · Une palette pour les pages et les cartons
+
+<Excerpt region="palette" />
+
+L’encre, le rouge et le crème sont ceux du livret ; les quatre couleurs des films (nommées d’après les projets Blender Orange, Peach et Mango, plus Spring) peignent à la fois les pastilles de la couverture et les cartons. Le bouton de lecture a le même rouge que les surtitres, et la plaque du QR code est le crème de la page avec des modules à l’encre : un code sombre sur une plaque claire, le contraste qu’attend toute application de lecture.
+
+## Variantes
+
+### Imprimer une image du film
+
+Récupérez la plus grande miniature de YouTube au lieu de dessiner un carton, quand la licence du film et votre hébergeur le permettent, et déclarez la taille propre de l’image.
+
+```diff
+-for (const f of FILMS) await titleCard(f); // after the fonts: the cards set type too
++for (const f of FILMS) { // 1280 × 720, maxresdefault.jpg, the first of youtubePosterUrls
++  await loadImage(`${f.id}.png`, youtubePosterUrls(parseVideoUrl(f.address).id)[0]);
++}
+```
+
+### Lire les films dans l’édition HTML
+
+`renderToHtml` place chaque vidéo dans le lecteur de YouTube à confidentialité renforcée, et un EPUB montre l’affiche liée au film ; `videoStyle.html: 'poster'` garde aussi le carton imprimé à l’écran. Voir [Vidéos](/fr/docs/document-format#vidéos) et [Style des vidéos](/fr/docs/configuration-resources#style-des-vidéos).
+
+### Centrer un bouton de lecture plus grand
+
+Un bouton au milieu du carton se lit comme un lecteur vidéo depuis l’autre bout de la salle ; les cartons gardent leur bande centrale libre de texte, il ne couvre donc que le motif.
+
+```diff
+-  playMark: { shape: 'rounded', position: 'top-left', size: mm(8), inset: mm(4),
++  playMark: { shape: 'rounded', position: 'center', size: mm(14), inset: mm(4),
+```
+
+## Erreurs fréquentes
+
+- Le moteur limite le code à 45 % du petit côté de l’affiche et le bouton de lecture à 40 %. Sur une petite affiche, un code de 20 mm devient plus petit, et ses modules avec lui : un code de 20 mm demande une affiche d’au moins 45 mm de haut.
+- Deux surimpressions placées à la même position se couvrent. Donnez au bouton de lecture et au code des angles différents, et dessinez l’affiche avec ces angles libres.

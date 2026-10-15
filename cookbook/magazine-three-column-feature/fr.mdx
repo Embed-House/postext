@@ -1,0 +1,64 @@
+---
+title: "Article de magazine sur une grille de trois colonnes"
+summary: "layoutType 'multiple' découpe la page en trois colonnes ; placement.columns pose photos et citation flottante sur deux d’entre elles, ou sur les trois."
+plain: "Un reportage de voyage de six pages tiré d’un mensuel, composé en trois colonnes étroites. On y voit comment placer des photos et une grande citation sur deux colonnes ou toute la page, et un encadré de conseils pratiques sur une."
+description: "Un reportage de voyage dans Postext, sur trois colonnes : double page photo d’ouverture, photos sur une, deux ou trois colonnes, citation flottante et encadré."
+question: "Postext peut-il composer une page de magazine en trois colonnes, avec des photos sur deux d’entre elles ?"
+aliases: ["magazine en trois colonnes", "trois colonnes", "grille de magazine", "photo sur deux colonnes", "photo de deux colonnes", "citation sur plusieurs colonnes", "encadré latéral", "reportage de voyage", "double page d’ouverture", "double page photo", "lettrine", "chapeau", "signature", "signe de fin", "carte de situation"]
+pageNotes: { "1": "Le verso de la double page d’ouverture : des marais salants au lever du soleil remplissent la page, avec le surtitre « Islands · The Atlantic » et le titre « The Salt Rakers of Marisal » en blanc sur l’eau sombre, en pied de page.", "2": "Le recto : la même photo se poursuit en haut, un saunier avec son râteau de bois devant une rangée de tas de sel blancs ; dessous, un paragraphe d’attaque avec une lettrine bleue de quatre lignes dans la première colonne, le chapeau en italique et la signature sur les deux autres, puis trois colonnes de texte.", "3": "Trois colonnes justifiées avec des intertitres bleus ; une photo d’un râteau poussant un bourrelet de sel humide coiffe la deuxième et la troisième colonne.", "4": "Une photo aérienne des marais salants roses traverse la page ; dessous, une citation en exergue à filet bleu couvre la deuxième et la troisième colonne.", "5": "Une photo d’un tamis qui écume des cristaux de sel coiffe la deuxième et la troisième colonne ; le portrait d’un vieux saunier avec un panier se tient au pied de la première.", "6": "La page de fin : un encadré teinté, « Visiting Marisal », avec une petite carte de l’île, remplit la tête de la première colonne ; une haute photo du port au crépuscule couvre les deux autres ; l’article finit à hauteur égale dans les trois colonnes avec un petit carré bleu." }
+---
+
+## Ce que vous allez composer
+
+Six pages du numéro de novembre de *Meridian*, un mensuel de voyage, sur une page de 225 × 297 mm. Le reportage s’ouvre sur une double page : une seule photographie de marais salants au lever du soleil traverse les deux pages, avec le titre en réserve sur l’eau à gauche, et à droite, sous l’image, le paragraphe d’attaque, sa lettrine, le chapeau et la signature. L’article se poursuit ensuite en trois colonnes justifiées de 61,7 mm chacune. Les photographies occupent deux colonnes, toute la largeur ou une colonne ; une citation en exergue se place sur deux colonnes entre les paragraphes ; un encadré teinté avec une carte de l’île ouvre la page de fin. Un petit carré bleu termine le texte.
+
+## Préparation
+
+### 1 · Découper la page en trois colonnes, et laisser les flottants en prendre une, deux ou trois
+
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. `layoutType: 'multiple'` avec `columnCount: 3` divise le bloc de texte de 195 mm en trois colonnes égales : avec une gouttière de 5 mm, chacune mesure 61,7 mm, soit environ 40 caractères de Source Serif en 9,6 pt. Le `placement.columns` d’une image prend autant de colonnes voisines, avec les gouttières qui les séparent : la photo du râteau mesure 128,3 mm de large, et les marais, avec `span: 'page'`, les 195 mm entiers. Le style de la citation fait de même pour un encadré, avec `columns: 2` sur un style `placement: 'top'` : elle flotte en tête de deux colonnes libres et le texte continue autour. Une grille de trois colonnes convient à un reportage de magazine riche en images, car chaque image peut prendre une, deux ou trois colonnes. Un texte long avec peu d’images se lit mieux sur deux colonnes plus larges.
+
+### 2 · Ouvrir sur une double page, une seule photographie sur deux pages
+
+<Excerpt region="spread" />
+
+Chaque moitié de la photographie appartient à un style de titre avec `span: 'page'`, et un titre sur toute la largeur de la page ouvre toujours une nouvelle page : la page du titre et celle du chapeau se suivent donc. La moitié gauche remplit le verso et ne réserve rien (`reserve: false`), si bien que le titre peut se poser sur l’eau, en pied. La moitié droite est coupée à 165 mm, et le paragraphe d’attaque, le chapeau et la signature sont suspendus au conteneur sous elle. Le paragraphe d’attaque est un texte de maquette avec une `dropCap` de quatre lignes, large d’une colonne ; sa marge intérieure basse, vide, compte dans la hauteur de l’ouverture, si bien que les colonnes commencent 6 mm dessous. `continuation.pageIndexOffset: 83` fait de la page 84 un verso : les deux moitiés se font donc face.
+
+### 3 · Déclarer les photographies, et citer chacune là où elle doit tomber
+
+<Excerpt region="resources" />
+
+Un flottant va à la première tête (ou au premier pied) libre de ses colonnes après la ligne qui le cite : ce sont donc les lignes `::resource` qui décident des pages. La photo du tamis est citée en haut de la première colonne de la cinquième page, et la deuxième et la troisième colonne y sont encore vides : elle les coiffe donc sur la même page. La photo du port est citée tard sur cette page et coiffe deux colonnes de la suivante. Les photographies d’un même type ne se doublent jamais : leurs citations restent donc dans l’ordre de l’article. Les images matricielles sont mesurées aux 150 dpi de la page : 1500 px font 254 mm et sont réduits aux 128,3 mm de deux colonnes.
+
+### 4 · Titres courants et folios hors de la double page d’ouverture
+
+<Excerpt region="heads" />
+
+Les éléments d’en-tête se peignent par-dessus la page et ne réservent aucune place : le folio et l’étiquette sont donc ancrés à la page dans la marge de tête. `pages: 'body'` les tient à l’écart des deux pages de la double page, qui sont des pages d’ouverture puisque chacune commence par un titre sur toute la largeur. Le recto de la double page reçoit à la place son folio en pied, par `pages: 'opener'` et `parity: 'odd'` ; le verso, tout en photo, n’en porte aucun.
+
+### 5 · Dessiner la carte de l’encadré en code
+
+<Excerpt region="art" />
+
+La carte est une ressource SVG avec `placement: 'here'`, citée dans le bloc de l’encadré : elle se place donc sous le titre de l’encadré, à sa justification. Elle ne porte aucun texte : le texte d’un SVG ne peut pas utiliser les polices web de la page, et c’est la légende qui nomme les formes. La pointe de flèche sur la route du ferry est un tracé, car un `<marker>` ne survivrait pas à un export PDF.
+
+## Variantes
+
+### Poser la citation sur les trois colonnes
+
+Un encadré flottant fait passer l’attribut `columns` du bloc avant celui de son style : une citation peut ainsi occuper toute la largeur.
+
+```diff
+- :::callout{type="pull"}
++ :::callout{type="pull" columns="3"}
+```
+
+### Composer l’article sur deux colonnes
+
+Pour un reportage avec moins d’images et des paragraphes plus longs, voir <RecipeLink slug="magazine-feature-opener">Article de magazine : de l’ouverture photo au signe de fin</RecipeLink>, sur une mise en page `double`.
+
+## Erreurs fréquentes
+
+- Une photo sur deux colonnes coiffe deux colonnes encore vides. Citée dans la deuxième colonne, elle ne trouve pas une telle paire sur sa page, puisqu’il ne reste que la troisième colonne, et attend la page suivante.
+- L’article est calibré pour finir à hauteur égale sur la sixième page, sous la photo du port. Après une modification, vérifiez que la dernière page se remplit toujours : quelques lignes de moins, et la photo passe sur une page à elle.
+- Avec des lignes de 40 caractères, un paragraphe justifié a peu de points de coupure. `maxJustifyTracking: 15` permet à une ligne qui ne tient pas dans deux fois l’espace normale de prendre à la place jusqu’à 0,015 em d’approche. Corrigez une dernière ligne d’un seul mot en retouchant le texte, comme on l’a fait pour ces pages.

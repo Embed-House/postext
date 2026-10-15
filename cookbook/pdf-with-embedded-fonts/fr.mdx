@@ -1,0 +1,72 @@
+---
+title: "Un vrai PDF avec les mêmes polices incorporées"
+summary: "Un programme de récital exporté en PDF. Chaque caractère est téléchargé une fois, pour FontFace et pour le PDF, et chaque titre devient un signet."
+plain: "Un programme de quatre pages pour un concert du soir. Il montre comment l’enregistrer en PDF identique à l’écran, avec ses polices à l’intérieur et chaque titre listé pour y sauter vite."
+description: "Avec Postext, exportez dans le navigateur un PDF qui incorpore les fichiers WOFF2 de la page, convertis en TrueType, avec un signet pour chaque titre."
+question: "Comment exporter un vrai PDF dans le navigateur, avec des signets et exactement les polices de la page ?"
+aliases: ["incorporer des polices dans un PDF", "télécharger un PDF", "signets PDF", "plan du PDF", "fournisseur de polices", "FontFace depuis des octets", "decompressWoff2", "WOFF2 en TTF", "les polices du PDF ne correspondent pas", "programme de concert", "programme de récital"]
+pageNotes: { "1": "La couverture : bleu canard nuit jusqu’au bord du format, « The Harbour Consort » en petites capitales dorées, le titre « Home from Sea » en grand italique doré sur deux lignes, un sous-titre en italique pâle, la date et le lieu en capitales espacées, et des rangées d’écailles de vagues dorées qui montent du pied et s’estompent vers le titre.", "2": "Page 2 : le surtitre « Twilight recital » en capitales d’un or profond, le titre « Programme » au-dessus d’un court filet doré, l’ordre du concert en tableau avec un en-tête bleu canard en capitales blanches, des durées alignées à droite et une ligne de total pâle, puis les notes sur la musique en texte justifié.", "3": "Page 3 : le titre « The texts », puis deux poèmes composés vers à vers sous des titres en italique, avec les retraits de leurs éditions imprimées : « The Tide Rises, the Tide Falls » de Longfellow, dont le refrain est en retrait, et « Requiem » de Stevenson, dont les trois derniers vers sont en italique.", "4": "Page 4 : « Crossing the Bar » de Tennyson en quatre strophes avec ses vers courts en retrait, un paragraphe sur les interprètes et un colophon en petit Tenor Sans gris." }
+---
+
+## Ce que vous allez composer
+
+Le programme d’un récital au crépuscule, *Home from Sea* : quatre pages A5 pour un ensemble de soprano, violoncelle et harpe. La couverture est bleu canard nuit, avec le titre en Fraunces italique doré et des rangées d’écailles de vagues dorées qui montent du pied. À l’intérieur, l’ordre du concert est un tableau avec un en-tête bleu canard en capitales Tenor Sans et une ligne de total teintée. Les notes sont en Crimson Text justifié. Les paroles des trois mélodies sont des poèmes de Longfellow, Stevenson et Tennyson, composés avec les retraits de leurs éditions imprimées. Le bouton *Build the PDF* produit le fichier que vous enverriez au public par e-mail ou mettriez sur le site de la salle. Ses quatre pages correspondent à l’écran ligne à ligne. Il n’incorpore que les cinq fichiers de police chargés par le navigateur, et chaque titre est un signet. Pour l’impression commerciale, voyez <RecipeLink slug="print-ready-pdf">le PDF prêt pour l’impression</RecipeLink>.
+
+## Préparation
+
+### 1 · Un téléchargement par caractère, pour la page et pour le PDF
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Postext mesure chaque mot avec les caractères que le navigateur a chargés au moment de la composition, et le PDF dessine chaque ligne là où cette mise en page l’a placée. Si le PDF incorpore un autre fichier, comme l’instance par défaut d’une police variable ou une police de secours du système, chaque mot commence toujours à sa position mesurée, mais ses lettres ont d’autres largeurs : les mots se chevauchent ou laissent des trous. La recette télécharge donc chaque caractère une seule fois. Ses octets deviennent un `FontFace` avant la première composition, et le fournisseur de polices fait passer les mêmes octets par `decompressWoff2` pour le PDF : l’export ne télécharge aucune police de son côté.
+
+### 2 · Les polices d’abord, la mise en page ensuite
+
+<Excerpt region="build" />
+
+`registerFaces()` ne se résout que lorsque chaque caractère de `FONTS` est chargé : la première composition mesure donc avec les caractères que le PDF incorporera. C’est aussi la seule composition, parce que `FONTS` liste chaque caractère que composent les pages, et que `buildDocumentWithFonts` trouve déjà déclaré chaque caractère qu’il cherche ([Charger les polices avant la mise en page](/fr/docs/configuration-programmatic-usage#charger-les-polices-avant-la-mise-en-page)). Cette vérification ne sert qu’à l’écran. S’il manque un caractère à `FONTS`, le moteur le demande au kit, charge le fichier Fontsource et relance la mise en page sans avertissement dans la console, mais le PDF reçoit quand même le caractère le plus proche dont dispose le fournisseur.
+
+### 3 · L’export, et la liste de ce qu’il a incorporé
+
+<Excerpt region="pdf" />
+
+`renderToPdf` appelle `onProgress` en trois phases : `prepare` une fois les polices et la couverture incorporées, `pages` après chaque page, et `save` avant d’écrire le fichier. Il ne demande au fournisseur que les caractères que peignent les pages, ici cinq. La ligne d’état liste les cinq fichiers servis par le fournisseur, exactement ceux de `FONTS`, sans aucun remplaçant. Un remplaçant signale un caractère absent de `FONTS`. Si vous retirez Crimson Text 600, la ligne indique `Crimson Text 600 → 400` et le *The Harbour Consort* en gras de la page 4 s’imprime en graisse normale. L’aperçu de CodePen ne peut pas afficher un PDF : le `offerPdf` du kit remplace donc le bouton par deux liens, l’un qui ouvre le PDF dans un nouvel onglet et l’autre qui le télécharge ([Générer des PDF](/fr/docs/configuration-programmatic-usage#générer-des-pdf)).
+
+### 4 · L’arbre des titres est l’arbre des signets
+
+<Excerpt region="headings" />
+
+Dans le PDF, le panneau des signets montre le titre de la couverture, *Programme* avec *About the music* en dessous, *The texts* avec ses trois mélodies, et *The performers*. Le plan suit les niveaux de titre : choisissez-les en pensant aux signets, ici un H1 par section et un H2 par mélodie. *The performers* a son propre style de titre, un H1 sans saut de page ni ouverture : il partage la page 4 avec le poème de Tennyson et reçoit tout de même un signet de premier niveau. Le `\\` qui coupe en deux le titre de la couverture devient une espace dans le signet.
+
+### 5 · Titre et auteur tirés du frontmatter
+
+<Excerpt region="cover" />
+
+La couverture imprime deux valeurs du frontmatter avec `{author}` et `{subtitle}`, et les propriétés du document PDF prennent le titre *Home from Sea* et l’auteur *The Harbour Consort* dans le même bloc. La date et le lieu sont des attributs du titre de couverture. Le dessin derrière eux est un seul SVG de la largeur de la page, que le PDF garde en tracés vectoriels.
+
+## Variantes
+
+### Se passer des signets
+
+Un prospectus d’une page ou une affiche n’a rien à mettre en signet. Avec `outlines: false`, le PDF n’a pas de plan et s’ouvre avec le panneau latéral fermé.
+
+```diff
+-    outlines: true, // the default, spelled out: each heading becomes a bookmark
++    outlines: false,
+```
+
+### Servir les polices vous-même
+
+Faites pointer le téléchargement vers vos propres copies des mêmes fichiers WOFF2 statiques, un par graisse et par style, sous les noms de fichier de Fontsource. La page et le PDF partagent toujours chaque téléchargement.
+
+```diff
+-    files.set(file, fetch(`https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${file}.woff2`)
++    files.set(file, fetch(`/fonts/${file}.woff2`)
+       .then((res) => {
+-        if (!res.ok) throw new Error(`Fontsource has no ${family} ${weight} ${style}`);
++        if (!res.ok) throw new Error(`No font file ${file}.woff2`);
+```
+
+## Erreurs fréquentes
+
+Listez dans `FONTS` chaque caractère que composent vos pages, le gras et l’italique du texte compris. S’il en manque un, l’écran paraît toujours juste, parce que le kit charge le caractère sans avertissement, mais le PDF imprime le caractère le plus proche du fournisseur, et seuls les remplaçants de la ligne d’état trahissent la substitution.
+
+Utilisez des fichiers statiques, un par graisse et par style. D’un WOFF2 variable, le PDF n’incorpore que l’instance par défaut : un passage en gras s’imprimerait en graisse normale ([Pourquoi un fournisseur de polices ?](/fr/docs/configuration-programmatic-usage#pourquoi-un-fournisseur-de-polices)).

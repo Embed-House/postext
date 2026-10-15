@@ -1,0 +1,75 @@
+---
+title: "Des titres de section sur sept niveaux"
+summary: "Sections numérotées de 1.1 à 1.12 dans une pastille ambre qui s’élargit avec le numéro, quatre niveaux de plus dessous, et un septième fait d’un style de titre."
+plain: "Un chapitre d’un manuel de terrain pour les équipes d’entretien des sentiers, sur l’évacuation de l’eau. On y voit comment donner aux titres sept niveaux, chacun avec son allure, pour que le lecteur voie comment s’emboîtent les parties."
+description: "Manuel de terrain de sentiers avec Postext : titres numérotés en pastille, niveaux filetés et italiques, un 7e niveau, checklist sans numéro, listes imbriquées."
+question: "Comment numéroter les titres 1.1 et 1.1.1, styler chaque niveau à part et mettre le numéro dans une pastille ?"
+aliases: ["titres numérotés", "numéros de section", "numérotation des titres", "numérotation décimale", "niveaux de titre", "H7", "septième niveau de titre", "plus de six niveaux", "badge de numéro", "pastille de numéro", "section non numérotée", "titres en ligne", "liste ordonnée imbriquée", "numérotation a) i)", "liste de tâches", "case à cocher", "manuel de terrain", "manuel technique"]
+pageNotes: { "1": "L’ouverture du chapitre 1, « Drainage » : le numéro 1 dans une grande pastille ambre à côté du titre, un chapeau en italique, et le profil altimétrique d’un sentier qui monte vers la droite en travers du haut de la page, en bandes de vert avec douze points ambre pour les sites retenus pour de nouveaux renvois d’eau. Dessous, deux colonnes s’ouvrent sur les sections 1.1 à 1.3 dans de petites pastilles ambre, une liste à puces et le titre fileté 1.2.1.", "2": "Les sections 1.4 à 1.7 courent sur les deux colonnes ; la section 1.5, dont le titre passe sur deux lignes à côté de sa pastille, contient les titres les plus profonds du chapitre : les titres filetés 1.5.1 et 1.5.2, des titres en italique, le titre vert « Tools for the trench », l’étiquette en capitales à chasse fixe « Steel bars » et, dessous, deux noms d’outils en italique gris.", "3": "La fin de 1.7, puis les sections 1.8 à 1.12, la pastille qui s’élargit de 1.9 à 1.10, des règles de sécurité qui s’ouvrent sur des termes en gras vert, et une « Checklist » non numérotée à côté d’un carré ambre évidé, avec une liste numérotée 1., a) et i. et deux cases de tâche ; un petit colophon gris ferme le chapitre." }
+---
+
+## Ce que vous allez composer
+
+Le chapitre 1 du manuel de terrain d’une équipe d’entretien de sentiers, *Drainage*, sur trois pages B5 en deux colonnes : IBM Plex Serif pour le texte, IBM Plex Sans Condensed pour les titres et les numéros de section, IBM Plex Mono pour les étiquettes, les folios et les numéros de sous-section. L’ouverture place le numéro du chapitre dans une grande pastille ambre au-dessus du profil altimétrique d’un sentier, où des points ambre marquent douze sites retenus pour de nouveaux renvois d’eau. Des pastilles plus petites numérotent les sections 1.1 à 1.12 et s’élargissent à 1.10. Les titres 1.2.1, 1.5.1 et 1.5.2 sont en capitales interlettrées sous un filet vert. Les niveaux 4 à 6 restent sans numéro et changent plutôt de caractère (italique à empattements, linéale étroite grasse en vert, capitales à chasse fixe), et un septième niveau en italique gris nomme les outils. Les règles de sécurité s’ouvrent sur des termes en ligne en vert. Une liste de contrôle non numérotée, marquée d’un carré évidé, ferme le chapitre avec des listes numérotées 1., a) et i. et deux cases de tâche.
+
+## Préparation
+
+### 1 · Mettre le numéro dans une pastille qui grandit avec lui
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `numberingTemplate: '{1}.{2}'` réunit les compteurs du chapitre et de la section en 1.1 à 1.12 ([réglages par niveau](/fr/docs/configuration-text#réglages-par-niveau)). Un niveau doté d’une maquette avancée n’imprime plus le numéro avant son titre : c’est la maquette qui place elle-même `{number}`. Il se trouve ici dans un élément de texte avec une `box` remplie et arrondie, sans largeur : la pastille est donc aussi large que le numéro plus sa marge interne, 10,1 mm pour 1.9 et 12,7 mm pour 1.10. `'right-of'` accroche le titre au bord droit de la pastille et aligne ses lignes à gauche, ce qui explique que le long titre de 1.5 passe à la ligne à côté du numéro ([placement des éléments](/fr/docs/configuration-page-layout#placement-des-éléments)). La pastille mesure 3 pt de moins que deux lignes de la grille, et chaque titre de section commence sur une ligne de la grille : ces 3 pt font donc l’écart entre la pastille et le texte qui la suit, que le titre ouvre une colonne ou suive un paragraphe.
+
+<PageShot page={3} crop="0.07,0.3,0.44,0.215" caption="Page 3 : la pastille s’élargit de 1.9 à 1.10, et le titre se décale vers la droite de la largeur du chiffre supplémentaire." />
+
+### 2 · Fileter et interlettrer le troisième niveau
+
+<Excerpt region="ruled" />
+
+Le niveau 3 est lui aussi dessiné par une maquette : un filet vert de 0,75 pt, le numéro en IBM Plex Mono et le titre interlettré à côté. Le troisième compteur de `'{1}.{2}.{3}'` repart à zéro sous chaque section : 1.2.1 et 1.5.1 finissent donc tous deux par 1. `DROP` n’abaisse que le filet. Le numéro est placé `LEAD - DROP` sous lui, ce qui garde numéro et titre une ligne de grille sous le haut du titre, quel que soit `DROP`. Le filet étant plus près du numéro que du paragraphe précédent, il se lit comme une partie du titre.
+
+### 3 · Descendre les niveaux 4 à 6
+
+<Excerpt region="levels" />
+
+Un niveau sans `numberingTemplate` n’imprime aucun numéro : à partir du niveau 4, les titres se distinguent donc par le caractère, la couleur ou la casse, un italique à empattements au niveau 4, le caractère de titrage en vert au 5 et des capitales à chasse fixe demi-grasses au 6. La hauteur de ligne et les marges réglées sur `headings` lui-même s’appliquent à tous les niveaux et placent chaque titre sur la grille, avec une ligne blanche au-dessus et aucune en dessous. Le niveau 1 ouvre chaque chapitre sur un recto, avec `parity: 'odd'`.
+
+### 4 · Faire un septième niveau et une section non numérotée avec des styles
+
+<Excerpt region="styles" />
+
+Le Markdown s’arrête à `######`, et `###### *Rock bar*` ne serait qu’un niveau 6 de plus, en italique. Le style de titre `'level7'` compose les noms d’outils en italique étroit gris de graisse 500, plus léger que le 600 du niveau 6, et `textTransform: 'none'` désactive les capitales dont ils hériteraient sinon. Ils se lisent un cran sous l’étiquette à chasse fixe qui les précède, bien qu’en 8,4 pt ils soient plus grands que ses 7,8 pt ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)). `numbered: false` sort la liste de contrôle du compte : une section placée après elle serait toujours 1.13. Un `{number}` vide peindrait quand même la pastille ambre : le style apporte donc sa propre maquette, avec un carré évidé à la place de la pastille. Les termes en ligne verts des règles de sécurité viennent du `boldColor` d’un style de paragraphe.
+
+### 5 · Changer les marques de liste selon la profondeur
+
+<Excerpt region="lists" />
+
+Chaque profondeur prend sa marque, sa couleur et son séparateur dans `levels` : la liste de contrôle compte 1., a) et i. ([réglages par niveau des listes ordonnées](/fr/docs/configuration-text#réglages-par-niveau-des-listes-numérotées)) et les puces passent du vert au vert sauge ([réglages par niveau des listes non ordonnées](/fr/docs/configuration-text#réglages-par-niveau-des-listes-à-puces)). Le niveau 1 garde le format par défaut, `'arabic'`. Les deux éléments `- [ ]` qui ferment la liste de contrôle impriment `taskCheckboxChar`, ☐ par défaut, à la place de la puce, dans le vert des puces de premier niveau ([extensions des listes de tâches](/fr/docs/configuration-text#extensions-pour-les-listes-de-tâches)). Avec des marges nulles au-dessus et en dessous, chaque liste reste sur la grille de ligne de base.
+
+### 6 · Ouvrir le chapitre sur le profil du sentier
+
+<Excerpt region="opener" />
+
+Le profil est un élément image de l’ouverture, ancré à la page et aussi large qu’elle. Une figure pleine page flottée en haut et citée en page 1 aurait ouvert la page 2 à la place ([éléments image](/fr/docs/configuration-page-layout#éléments-image)). L’ouverture réserve la hauteur jusqu’au pied de l’image, et `minHeight` va 6 mm plus bas : le texte commence donc sur la première ligne de grille située au moins 6 mm sous le profil. La légende sur le vert est un texte de maquette, rempli à partir de l’attribut `profile` du titre. La grande pastille reprend le caractère et le remplissage de la pastille de section, et `{number}` imprime le numéro propre du chapitre, tiré de `numberingTemplate: '{1}'`.
+
+## Variantes
+
+### Retirer le numéro du chapitre des pastilles
+
+Retirez le compteur du chapitre du modèle et les pastilles affichent 1 à 12, en s’élargissant à 10 ; le niveau 3 imprime 1.5.1 tant que son propre modèle n’abandonne pas aussi `{1}`.
+
+```diff
+-const h2 = { level: 2, numberingTemplate: '{1}.{2}',
++const h2 = { level: 2, numberingTemplate: '{2}',
+```
+
+### Donner à toutes les pastilles la même largeur
+
+Une largeur fixe, celle de 1.10, centre chaque numéro dans une pastille égale et aligne les titres sur une même colonne.
+
+```diff
+-  placement: at('container', 'top-left') }; // plus its padding
++  placement: { ...at('container', 'top-left'), size: { width: mm(12.7) } } };
+```
+
+## Erreurs fréquentes
+
+- Le septième niveau est un titre de niveau 6 doté du style `level7` : aucun titre de l’exemple ne descend donc de plus d’un niveau sous le titre qui le précède. *The trench*, *Tools for the trench*, STEEL BARS et *Rock bar* se suivent en 4, 5, 6, 6. L’avertissement du Sandbox « Saut dans la hiérarchie des titres » signale exactement ce genre de saut : il n’apparaît donc jamais sur ce chapitre.

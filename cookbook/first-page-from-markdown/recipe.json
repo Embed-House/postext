@@ -23,7 +23,7 @@
   "related": ["magazine-feature-opener", "running-heads-by-parity", "chapter-opener-bleed-band"],
   "engine": { "postext": "1.25.0" },
   "kit": ["core", "fonts", "viewer", "images"],
-  "sample": { "locales": ["en", "es", "pt"] },
+  "sample": { "locales": ["en", "es", "pt", "fr"] },
   "capture": { "hero": 1, "card": "page", "expect": { "pages": [2, 2] } },
   "folio": {
     "paper": {"type": "coatedSilk", "grammage": 90},
@@ -39,7 +39,8 @@
         "what": {
           "en": "The salt pans and the dune at dusk on the opener, a photograph",
           "es": "Las salinas y la duna al anochecer de la apertura, una fotografía",
-          "pt": "As salinas e a duna ao anoitecer da abertura, uma fotografia"
+          "pt": "As salinas e a duna ao anoitecer da abertura, uma fotografia",
+          "fr": "Les salines et la dune au crépuscule de l’ouverture, une photographie"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",

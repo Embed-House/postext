@@ -8,10 +8,11 @@ import ca from "../../../../messages/ca.json";
 import ar from "../../../../messages/ar.json";
 import ja from "../../../../messages/ja.json";
 import pt from "../../../../messages/pt.json";
+import fr from "../../../../messages/fr.json";
 
-// A Sandbox string lives in ten places: the `SandboxLabels` interface, its
+// A Sandbox string lives in eleven places: the `SandboxLabels` interface, its
 // English defaults, this bridge, and the English, Spanish, Catalan, Chinese,
-// Arabic, Japanese and Brazilian Portuguese messages. A key missing from one of them shows the key itself (or
+// Arabic, Japanese, Brazilian Portuguese and French messages. A key missing from one of them shows the key itself (or
 // the English default) in that interface.
 
 const root = path.resolve(__dirname, "../../../../../..");
@@ -30,6 +31,7 @@ const caKeys = Object.keys((ca as { Sandbox: Record<string, string> }).Sandbox);
 const arKeys = Object.keys((ar as { Sandbox: Record<string, string> }).Sandbox);
 const jaKeys = Object.keys((ja as { Sandbox: Record<string, string> }).Sandbox);
 const ptKeys = Object.keys((pt as { Sandbox: Record<string, string> }).Sandbox);
+const frKeys = Object.keys((fr as { Sandbox: Record<string, string> }).Sandbox);
 
 describe("Sandbox labels", () => {
   it("are declared, defaulted, bridged and translated alike", () => {
@@ -47,15 +49,17 @@ describe("Sandbox labels", () => {
     expect(expected.filter((k) => !arKeys.includes(k)), "missing in ar.json").toEqual([]);
     expect(expected.filter((k) => !jaKeys.includes(k)), "missing in ja.json").toEqual([]);
     expect(expected.filter((k) => !ptKeys.includes(k)), "missing in pt.json").toEqual([]);
+    expect(expected.filter((k) => !frKeys.includes(k)), "missing in fr.json").toEqual([]);
     expect(sorted(esKeys)).toEqual(sorted(enKeys));
     expect(sorted(zhKeys)).toEqual(sorted(enKeys));
     expect(sorted(caKeys)).toEqual(sorted(enKeys));
     expect(sorted(arKeys)).toEqual(sorted(enKeys));
     expect(sorted(jaKeys)).toEqual(sorted(enKeys));
     expect(sorted(ptKeys)).toEqual(sorted(enKeys));
+    expect(sorted(frKeys)).toEqual(sorted(enKeys));
   });
 
-  it.each([["Chinese", zh], ["Catalan", ca], ["Arabic", ar], ["Japanese", ja], ["Brazilian Portuguese", pt]] as const)("keep every placeholder token in the %s messages", (_, messages) => {
+  it.each([["Chinese", zh], ["Catalan", ca], ["Arabic", ar], ["Japanese", ja], ["Brazilian Portuguese", pt], ["French", fr]] as const)("keep every placeholder token in the %s messages", (_, messages) => {
     // `__n__`-style tokens are replaced in code: a translation that drops
     // or renames one shows the raw token, or loses the value.
     const tokens = (s: string) => [...s.matchAll(/__[A-Za-z0-9]+__/g)].map((m) => m[0]).sort();

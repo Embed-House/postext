@@ -53,7 +53,7 @@ describe("the site's WebMCP tools", () => {
     const { call } = harness();
     const context = await call("site_get_context");
     expect(context.page).toEqual({ path: "/docs/sandbox", title: "The Sandbox" });
-    expect(context.languages).toHaveLength(7);
+    expect(context.languages).toHaveLength(8);
     expect(context.docs.map((d: { path: string }) => d.path)).toContain("/docs/configuration");
   });
 
@@ -119,6 +119,6 @@ describe("the site's WebMCP tools", () => {
     await call("site_set_preferences", { language: "ja" });
     expect(went).toEqual([{ path: "/docs/sandbox#props", locale: "ja" }]);
     expect((await call("site_set_preferences", {})).error).toMatch(/Give a language, a theme, or both/);
-    expect((await call("site_set_preferences", { language: "fr" })).error).toMatch(/Invalid arguments/);
+    expect((await call("site_set_preferences", { language: "de" })).error).toMatch(/Invalid arguments/);
   });
 });

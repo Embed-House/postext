@@ -1,0 +1,69 @@
+---
+title: "Un article de recherche japonais cité selon SIST 02"
+summary: "Une note de recherche japonaise sur deux colonnes A4 : citations [@key] numérotées (1), (2, 3) selon SIST 02, liste 参考文献 en japonais, notes de page, 表1 et 図1."
+plain: "Un court article de recherche d’une revue japonaise. L’auteure écrit un code pour chaque source ; Postext les numérote dans l’ordre de citation et imprime la liste des références comme le demandent les revues scientifiques japonaises."
+description: "Un article de revue japonaise avec Postext, cité selon SIST 02 en locale ja-JP : citations numérotées, liste 参考文献 aux noms japonais, notes de page, 表1 et 図1."
+question: "Comment citer des ouvrages selon SIST 02 dans un article japonais et imprimer une liste 参考文献 ?"
+aliases: ["SIST 02", "SIST02", "参照文献の書き方", "参考文献", "références japonaises", "bibliographie japonaise", "ja-JP", "CSL", "citeproc", "研究ノート", "article de revue japonaise", "学会誌", "japonais sur deux colonnes", "号数活字", "notes de bas de page japonaises", "と ほか"]
+pageNotes: { "1": "La page 23, première page d’une note de recherche dans une revue fictive, 活字と組版の研究 : un bandeau vert profond sur le quart supérieur porte le nom de la revue, le volume et le numéro, l’étiquette 研究ノート, le titre sur deux lignes en mincho blanc et sa traduction anglaise. Sous le bandeau, l’auteure 森川 啓 et son affiliation, un résumé sur les deux colonnes sous une bande verte avec les étiquettes 要　旨 et キーワード, puis deux colonnes de texte : les sections 1 à 3 avec des citations comme (1), (2, 3) et (4, 5), un tableau des neuf corps avec une ligne d’en-tête verte, et une note de page au pied de la colonne de gauche.", "2": "La page 24 : dans la colonne de gauche, trois rangées de carrés dessinés à l’échelle, de 42 à 5,25 pt, 27,5 et 13,75 pt, de 16 à 4 pt, légendées 図1, et la section 4. Dans la colonne de droite, la section 5, le titre 参考文献 et les entrées (1) à (9), des livres japonais et deux articles du 日本印刷学会誌, et un colophon en caractères latins." }
+---
+
+## Ce que vous allez composer
+
+Deux pages d’une note de recherche, 号数活字の三つの系列 (« Three series of gōsū type sizes »), tirée d’une revue inventée consacrée aux caractères et à la composition, composée comme les sociétés savantes japonaises composent leurs revues : A4, deux colonnes de 25 caractères sur 45 lignes de Noto Serif JP en 9 pt, le titre en Shippori Mincho B1 sur le bandeau vert de la revue. Les citations suivent SIST 02, le guide des références qu’utilisent les revues japonaises de science et de technologie : chaque ouvrage est numéroté dans l’ordre de sa première citation, (1), (2, 3), et la liste sous 参考文献 donne les noms japonais nom de famille en premier, le lieu avant l’éditeur et l’année à la fin. Un tableau des neuf corps, une figure qui les dessine à l’échelle et deux notes de page portent des libellés japonais. <RecipeLink slug="gbt7714-chinese-paper">L’article chinois cité selon GB/T 7714</RecipeLink> en est le pendant chinois.
+
+## Préparation
+
+### 1 · Le style, la locale et les notes
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `postext-citeproc` fournit SIST 02 sous le nom `'sist02'` et la locale CSL `ja-JP`, qui écrit les termes de la liste en japonais et relie deux auteurs japonais par と, et davantage par ほか, dans une citation narrative ([citations](/fr/docs/configuration-notes-references#citations)). Dans le texte, `[@kawada1949; @suzuki2015]` imprime (2, 3), et `高橋[@takahashi2012]が` place le numéro après le nom, 高橋(8)が, que la page compose avec un quart de cadratin de chaque côté des parenthèses, comme autour de tout mot occidental dans un texte japonais. Le style se distingue du GB/T 7714 chinois par la marque : SIST 02 met le numéro entre parenthèses sur la ligne, GB/T 7714 entre crochets en exposant. Les notes ne demandent rien : `locale: 'ja'` donne à un document horizontal des notes au pied de la colonne, numérotées à partir de 1 sur chaque page, avec une marque en exposant et un filet long d’un tiers de la colonne.
+
+### 2 · Les références dans un bloc CSL-YAML
+
+Les ouvrages sont listés à la fin du Markdown dans `:::references{format=csl-yaml}`, le format qu’exporte Zotero sous le nom CSL YAML ([citer](/fr/docs/document-format#citer)). Les noms japonais s’écrivent en `family` et `given`, `{family: 鈴木, given: 広光}`, et SIST 02 les imprime d’un bloc, 鈴木広光, tandis que Kornicki garde sa virgule : Kornicki, Peter. Une collection va dans `collection-title` et s’imprime entre parenthèses après l’année ; les deux articles du 日本印刷学会誌 donnent volume, numéro et pages sous la forme vol. 49, no. 2, p. 76–80. Tous les ouvrages existent ; leurs notices peuvent se vérifier dans CiNii.
+
+<PageShot page={2} crop="0.5,0.36,0.45,0.212" caption="Page 24 : les entrées (3) à (9), les noms japonais avec le nom de famille en premier, le lieu avant l’éditeur, l’année à la fin." />
+
+### 3 · Le titre sur le bandeau de la revue
+
+<Excerpt region="masthead" />
+
+Le bloc de titre est la maquette du H1, un style de titre sur les deux colonnes. Le bandeau est une boîte ancrée au format de la page ; l’étiquette, le titre et sa traduction anglaise s’y placent, chacun sous le précédent, si bien qu’un titre sur trois lignes fait descendre la ligne anglaise. L’auteure et son affiliation viennent d’attributs du titre et se placent sous le bandeau.
+
+### 4 · Le résumé et ses étiquettes
+
+<Excerpt region="abstract" />
+
+Le résumé est un encadré sur toute la largeur de la page sous une bande verte en haut, ses étiquettes des pastilles en gothique grasse dans la couleur de la revue. Une espace idéographique après chaque étiquette, saisie dans le Markdown, sépare 要　旨 du texte.
+
+### 5 · 表1 et 図1 là où ils sont cités
+
+<Excerpt region="resources" />
+
+`defaultResourceTypes('ja')` donne 図 et 表 ; l’article les numérote en continu, 表1 et 図1, et non par chapitre : le modèle est donc `'{n}'`. Les deux sont placés `'here'`, sous le paragraphe qui les cite, dans la colonne. Les carrés de la figure sont dessinés à la taille du corps qu’ils représentent, de 42 pt pour le 初号 à 4 pt pour le 八号 : on voit ainsi les divisions par deux sur la page.
+
+## Variantes
+
+### Numéros de citation en exposant
+
+Beaucoup de revues japonaises placent le numéro au-dessus de la ligne. `marker: 'superscript'` l’imprime en exposant, sans parenthèses, et ne touche pas à la liste.
+
+```diff
+   locale: 'ja-JP',
++  marker: 'superscript',
+```
+
+### Notes numérotées sur tout l’article
+
+Un article de quelques pages peut compter ses notes de 1 jusqu’à la fin au lieu de recommencer à chaque page.
+
+```diff
+-const footnotes = { fontSize: pt(7.5), lineHeight: pt(11.5), color: col('ink'),
++const footnotes = { numbering: 'document', fontSize: pt(7.5), lineHeight: pt(11.5),
++  color: col('ink'),
+```
+
+## Erreurs fréquentes
+
+- Écrivez un nom japonais en `family` et `given`, ou en un seul `literal` sans espace. Un nom saisi en une chaîne avec une espace entre nom de famille et prénom, comme le donne souvent BibTeX (`author = {夏目 漱石}`), est lu nom de famille en premier, mais un nom romanisé, `Natsume Soseki`, est lu prénom puis nom de famille, comme les noms anglais.
+- Le SIST 02 fourni n’imprime pas de DOI ; un article dont le DOI compte doit le porter dans le texte ou dans une note.

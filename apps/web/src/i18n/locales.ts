@@ -6,6 +6,7 @@ export const LOCALE_INFO = {
   en: { name: "English", code: "EN", htmlLang: "en", dir: "ltr", ogLocale: "en_US" },
   es: { name: "Español", code: "ES", htmlLang: "es", dir: "ltr", ogLocale: "es_ES" },
   ca: { name: "Català", code: "CA", htmlLang: "ca", dir: "ltr", ogLocale: "ca_ES" },
+  fr: { name: "Français", code: "FR", htmlLang: "fr", dir: "ltr", ogLocale: "fr_FR" },
   pt: { name: "Português", code: "PT", htmlLang: "pt-BR", dir: "ltr", ogLocale: "pt_BR" },
   zh: { name: "简体中文", code: "中", htmlLang: "zh-Hans", dir: "ltr", ogLocale: "zh_CN" },
   ja: { name: "日本語", code: "日", htmlLang: "ja", dir: "ltr", ogLocale: "ja_JP" },
@@ -25,17 +26,21 @@ const YOUTUBE_PLAYLIST: Record<SiteLocale, { video: string; list: string }> = {
   ar: { video: "CuI63kdIlK0", list: "PLft7wmxPkdGo" },
   // No Japanese playlist yet: the English one, with Japanese transcripts on the site.
   ja: { video: "pTVl1TWvu-A", list: "PLXV_YSL9ROv0" },
+  // No French playlist yet: the English one, with French transcripts on the site.
+  fr: { video: "pTVl1TWvu-A", list: "PLXV_YSL9ROv0" },
   // Brazilian Portuguese; tutorials 2, 6 and 9 are not on YouTube yet.
   pt: { video: "YAqLxlfTMoU", list: "PLQnmecBIhr0w" },
 };
 
 /** The cuts of the narrated videos on the media CDN: one per site locale
- *  (#510; Brazilian Portuguese since #611). */
-export type MediaLang = SiteLocale;
+ *  (#510; Brazilian Portuguese since #611) but French, which has no cut yet
+ *  and plays the English one with a French transcript (#822). */
+export type MediaLang = Exclude<SiteLocale, "fr">;
 
 /** The cut a route locale plays. */
 export function mediaLang(locale: string): MediaLang {
-  return siteLocale(locale);
+  const site = siteLocale(locale);
+  return site === "fr" ? "en" : site;
 }
 
 /** The header's YouTube link for a route locale. */

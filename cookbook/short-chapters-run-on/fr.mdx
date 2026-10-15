@@ -1,0 +1,76 @@
+---
+title: "Classique de poche : des chapitres courts qui s’enchaînent"
+summary: "Dom Casmurro en livre de poche : les chapitres courts s’enchaînent sous des titres dessinés dans la colonne, et aucun saut de page n’isole ligne ni titre."
+plain: "Cinq pages d’un roman classique brésilien en petit livre de poche. Chaque chapitre court commence juste après le précédent, et aucune page ne commence ni ne finit par une ligne isolée."
+description: "Cinq pages de Dom Casmurro en poche avec Postext, césure portugaise : chapitres enchaînés sous des titres centrés, aucune page ouverte sur une ligne seule."
+question: "Comment enchaîner des chapitres courts, chaque titre avec son texte, sans orpheline ni ligne finale d’un mot ?"
+aliases: ["chapitres enchaînés", "chapitres courts", "garder avec le suivant", "garder le titre avec le texte", "veuves et orphelines", "fins de paragraphe trop courtes", "livre de poche", "poche grand public", "césure portugaise", "Machado de Assis", "numéros de chapitre en chiffres romains", "extrait d’un livre", "compteurs de continuation"]
+pageNotes: { "1": "La couverture : « MACHADO DE ASSIS » en capitales crème sur un bandeau prune, « Dom Casmurro » en Abril Fatface prune sur un panneau crème au-dessus d’un court filet safran, et le médaillon safran au filao au-dessus de « COLEÇÃO CASUARINA » sur le bandeau prune du pied.", "2": "La planche, folio muet 212 : une peinture du Pain de Sucre et de l’Urca sous un ciel matinal ambre avec un soleil bas, une mer prune et lourde avec un nageur seul parmi les brisants, et « CAPÍTULO CXXIII » au-dessus d’une ligne de ce chapitre en italique crème.", "3": "La page 213 poursuit le chapitre CXVIII. Près du pied, le chapitre CXIX, « NÃO FAÇA ISSO, QUERIDA », commence sous un chiffre romain prune avec deux lignes de texte dessous ; le titre courant le nomme.", "4": "La page 214, sous le titre courant « DOM CASMURRO » : les deux dernières lignes de CXIX, puis le chapitre CXX, « OS AUTOS », et au pied le chapitre CXXI, « A CATASTROPHE », avec deux lignes sous son titre.", "5": "La page 215 : la fin de CXXI et le chapitre CXXII, « O ENTERRO », que nomme le titre courant.", "6": "La page 216, sous « DOM CASMURRO » : la fin de CXXII et le chapitre CXXIII, « OLHOS DE RESSACA ».", "7": "La page 217 : les cinq dernières lignes de CXXIII, qui finissent sur « o nadador da manhã », et au pied de la page le colophon en petits caractères gris à côté du médaillon au filao." }
+---
+
+## Ce que vous allez composer
+
+Cinq pages de texte tirées de la fin de *Dom Casmurro*, le roman de Machado de Assis paru en 1899, composées dans le portugais d’origine en livre de poche de 110 × 178 mm dans une collection inventée, Coleção Casuarina. Une couverture en bandes prune, crème et prune porte le titre en Abril Fatface et le médaillon safran de la collection, et une planche peinte de la mer lourde au large de Flamengo, générée avec des modèles de diffusion, fait face à la page 213. Le texte va de la fin du chapitre CXVIII à la fin de CXXIII, et aucun chapitre n’ouvre une page. Chacun commence deux lignes sous la fin du précédent (trois pour CXIX, afin de remplir la page 213), sous un chiffre romain prune, son titre en capitales interlettrées et un court filet safran. La page 214 porte deux titres de chapitre, les pages 215 et 216 un chacune. Chaque page de texte, sauf la dernière, se termine sur sa 33e ligne, et aucune ne s’ouvre sur une ligne isolée.
+
+## Préparation
+
+### 1 · Enchaîner les chapitres, chaque titre gardé avec son texte
+
+<Excerpt region="answer" highlight="17-24" />
+
+Le niveau des chapitres a son saut désactivé, et `marginTop` place chaque titre deux lignes sous la dernière ligne du chapitre précédent. Sa maquette n’a pas de `span` : le titre est donc dessiné dans la colonne, dans un bloc de trois lignes de haut, et le texte qui le suit reste sur la grille ([saut avant](/fr/docs/configuration-text#saut-avant), [largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Les règles de maintien gardent leurs valeurs par défaut. Les paragraphes de quatre lignes sous CXIX et CXXI laissent chacun deux lignes au pied de leur page et en reportent deux ; avec `avoidOrphans: false`, ils se couperaient en trois et une, et les pages 214 et 215 s’ouvriraient sur une ligne isolée ([orphelines, veuves, fins de paragraphe trop courtes](/fr/docs/configuration-text#orphelines-veuves-lignes-creuses-et-règles-de-maintien)). L’équilibrage des colonnes ajoute une troisième ligne de blanc au-dessus de CXIX, pour que la page 213 se termine sur la ligne 33 ([équilibrage des colonnes](/fr/docs/configuration-text#équilibrage-des-colonnes)).
+
+<PageShot page={3} crop="0,.683,1,.317" caption="Page 213 : le chapitre CXIX commence trois lignes sous la fin de CXVIII et garde deux lignes de son texte au pied." />
+
+### 2 · Régler une page de 33 lignes, avec la césure portugaise
+
+<Excerpt region="text" />
+
+La marge du bas mesure 16,3 mm, ce que laisse la hauteur de 178 mm après la marge du haut de 15 mm et 33 lignes de 12,6 pt : chaque page pleine se termine donc sur la même ligne. Tinos, qui a les chasses de Times New Roman, compose environ 59 caractères par ligne sur la justification de 84 mm en 9,5 pt. `locale: 'pt'` coupe avec les motifs portugais : *at-tracção*, *af-fluencia*, *genealogica-mente* ([langues prises en charge](/fr/docs/justification#langues-prises-en-charge)). Chaque paragraphe est en retrait, y compris le premier après un titre, comme c’est l’usage dans les éditions portugaises et brésiliennes : `indentAfterHeading` garde donc sa valeur par défaut.
+
+### 3 · Nommer le livre au verso et le chapitre au recto
+
+<Excerpt region="heads" />
+
+`{title}` imprime le titre du frontmatter, et `{chapterTitle}` le dernier chapitre qui commence sur la page ou avant elle : la page 217 nomme donc CXXIII, commencé en page 216 ([éléments de texte](/fr/docs/configuration-page-layout#éléments-de-texte)). La page 213 nomme CXIX, qui commence à son pied, bien que ses 25 premières lignes terminent CXVIII. `{chapterTitleAtTop}` nommerait plutôt le chapitre dans lequel s’ouvre la page, mais cet extrait ne contient aucun titre pour CXVIII. `SHIFT` place les titres courants sur le centre du bloc de texte, à 1 mm du centre de la page parce que la marge intérieure est plus large de 2 mm que la marge extérieure.
+
+### 4 · Dessiner la couverture et la planche comme des titres
+
+<Excerpt region="cover" />
+
+Les deux sont des [styles de titre](/fr/docs/configuration-styles#styles-de-titre) avec `numbered: false` : le premier chapitre numéroté reste donc CXIX. `span: 'page'` fait de chacune une page d’ouverture. Sans lui, le bandeau du pied de la couverture et l’image de la planche s’arrêtent au pied du bloc de texte, et le titre courant et le folio s’impriment sur les deux pages. La légende de la planche vient de son titre : « CAPÍTULO CXXIII » est le texte du titre, et la citation en italique est son attribut `quote` ([attributs des titres](/fr/docs/document-format#attributs-de-titre)). Chaque maquette descend jusqu’au pied de sa page : le titre réserve donc toute la page, et le texte commence à la suivante sans `:::pagebreak`.
+
+### 5 · Dire à l’extrait où il se situe dans le livre
+
+<Excerpt region="excerpt" />
+
+`continuation.headings` donne les compteurs de titres à partir desquels l’extrait commence. Avec `h1: 118`, le premier titre numéroté est le chapitre CXIX ; sans lui, les cinq chapitres sont numérotés de I à V. `numberingTemplate: '{1:I}'` dans le niveau des chapitres compose ces numéros en chiffres romains, et la maquette les imprime avec `{number}`. `:::numbering{startAt=212}`, après la couverture, numérote la planche 212 et les pages de texte de 213 à 217 ([numérotation](/fr/docs/document-format#numbering)).
+
+## Variantes
+
+### Ouvrir chaque chapitre sur une nouvelle page
+
+Avec un saut avant chaque chapitre, les cinq pages de texte deviennent sept : la page 214 ne contient que CXIX, son titre et quatre lignes, et la page 213, où aucun chapitre ne commence, prend pour titre courant celui de la planche, « CAPÍTULO CXXIII ».
+
+```diff
+-  breakBefore: { enabled: false }, marginTop: pt(2 * LEAD), advancedDesign: chapterHead };
++  breakBefore: { enabled: true, parity: 'any' }, marginTop: pt(2 * LEAD),
++  advancedDesign: chapterHead };
+```
+
+### Mettre le numéro du chapitre au recto
+
+`{chapterNumber}` imprime le chiffre romain du chapitre dont vient le titre : *CXIX · NÃO FAÇA ISSO, QUERIDA*.
+
+```diff
+-  head('recto-chapter', '{chapterTitle}', 'odd', SHIFT),
++  head('recto-chapter', '{chapterNumber} · {chapterTitle}', 'odd', SHIFT),
+```
+
+## Erreurs fréquentes
+
+- Faire passer `widowMinLines` à 3 ne laisse au paragraphe de quatre lignes sous CXIX aucun endroit où se couper : trois lignes et une ouvriraient la page 214 sur une ligne isolée. Le titre passe à la page suivante avec son texte, et la page 213 se termine six lignes trop tôt.
+- Si CXVIII s’allonge de quelques lignes, CXIX n’a plus la place que pour une ligne sous son titre. `keepWithNext` reporte alors le titre en page 214 et la page 213 se termine quatre ou cinq lignes trop tôt ; avec `keepWithNext: false`, le titre ferme la page 213 sans texte dessous.
+- La planche est un H1 : `{chapterTitle}` se rabat donc sur elle. Une page de texte où aucun chapitre n’a commencé depuis la planche, comme la page 213 une fois CXIX reporté, imprime « CAPÍTULO CXXIII » comme titre courant. Donnez au style de la planche `runningChapter: false` et les titres courants l’ignorent.
+- Désactivez `avoidRunts` et la dernière ligne du livre ne contient plus que *manhã.* au lieu de *nadador da manhã.*
+- Ces sauts de page ne valent que pour ce texte, en 9,5 sur 12,6 pt sur une justification de 84 mm. Après avoir changé le texte, le corps ou la justification, revérifiez le pied de chaque page et le blanc au-dessus de chaque titre.

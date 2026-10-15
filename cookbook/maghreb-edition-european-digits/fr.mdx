@@ -1,0 +1,51 @@
+---
+title: "Édition maghrébine d’un texte arabe, en chiffres européens"
+summary: "Un chapitre arabe imprimé pour le Maroc : la locale 'ar-MA' garde le texte de droite à gauche et relié à droite, et écrit chaque nombre généré en 1, 2, 3."
+plain: "Au Maroc, en Algérie et en Tunisie, les livres en arabe impriment leurs nombres avec les chiffres utilisés en Europe, 1, 2, 3, et non avec ١، ٢، ٣. Un seul réglage, la langue et le pays du document, donne ces chiffres à tout le livre."
+description: "Un chapitre arabe pour le Maroc dans Postext : ar-MA met en chiffres européens folios, titres, listes, notes et figures, et garde la reliure à droite."
+question: "Comment imprimer des chiffres européens (1, 2, 3) dans un livre arabe pour une édition maghrébine ?"
+aliases: ["Maghreb", "Maroc", "ar-MA", "chiffres européens", "chiffres arabes occidentaux", "chiffres arabes", "chiffres", "latn", "Fès", "zellige", "أرقام", "المغرب"]
+pageNotes: { "1": "L’ouverture du chapitre, page 41 : الفصل 3: أبواب فاس en lettres coufiques vertes, deux paragraphes d’arabe justifiés avec l’année 789 en chiffres européens, et sous eux un bandeau de zellige, des étoiles à huit branches cobalt sur fond vert avec des carrés ocre, légendé شكل 3-1." }
+---
+
+## Ce que vous allez composer
+
+Un chapitre d’un guide des vieilles villes du Maroc, consacré aux portes de Fès, tel qu’un éditeur marocain l’imprimerait : 13,5 × 21 cm, Noto Naskh Arabic en 12,5 pt, titres en Noto Kufi Arabic dans le vert des céramiques de Fès. Le texte court de droite à gauche et le livre est relié à droite, comme tout livre arabe, mais chaque nombre de la page s’écrit 1, 2, 3 : les folios 41 à 44, الفصل 3, les numéros de section 3-1 et 3-2, la liste des portes de 1- à 5-, les appels de note (1) et le numéro de figure شكل 3-1. C’est l’usage du Maghreb, du Maroc à la Tunisie, et la page le montre avec un seul réglage. <RecipeLink slug="arabic-novel-right-bound">Un roman arabe relié à droite</RecipeLink> montre le même livre avec les ١٢ du Machrek.
+
+## Préparation
+
+### 1 · Le pays choisit les chiffres
+
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. `numerals` reste à `'auto'`, et le moteur lit les chiffres dans l’étiquette de langue : `ar-MA`, `ar-DZ`, `ar-TN`, `ar-LY`, `ar-MR` et `ar-EH` donnent des chiffres européens, `ar` seul et les régions du Machrek donnent ١٢٣ ([Chiffres et styles de numération](/fr/docs/arabic-layout#chiffres-et-styles-de-numérotation)). Seuls changent les nombres que le moteur écrit : le folio, les compteurs de titres, les numéros de liste, les appels de note, les numéros de figure. Les années du texte, 789 et 1913, appartiennent à l’auteur, tapées dans les chiffres de l’édition, et le moteur ne les réécrit jamais. Le `{startAt=3}` du titre lit ٣ aussi bien que 3 : le même Markdown sert donc aux deux éditions.
+
+### 2 · Les signes autour des nombres
+
+<Excerpt region="marks" />
+
+Les livres arabes écrivent un numéro de liste suivi d’un trait d’union, 1-, et un appel de note entre parenthèses, (1) ; les deux modèles prennent les chiffres du document, si bien que l’édition du Machrek imprime ١- et (١) avec les mêmes réglages ([Notes de bas de page](/fr/docs/arabic-layout#notes-de-bas-de-page)). L’étiquette de la légende finit par deux-points, شكل 3-1:, car un point après un nombre se lit comme une virgule décimale. Les notes repartent à (1) à chaque page, comme les numérotent la plupart des livres arabes.
+
+### 3 · Un bandeau de carreaux dessiné en code
+
+<Excerpt region="art" />
+
+La figure est un SVG généré dans le pen : des étoiles à huit branches faites de deux carrés tournés de 45°, de petits carrés entre elles, dans le vert, le cobalt et l’ocre de la palette. Sa légende est en arabe dans les deux éditions, numérotée par chapitre, `{h1}-{n}`, comme les types de ressources arabes numérotent leurs figures.
+
+## Variantes
+
+### Imprimer les chiffres du Machrek
+
+L’édition égyptienne ou levantine du même chapitre : l’étiquette change, pas le Markdown.
+
+```diff
+-  locale: 'ar-MA',
++  locale: 'ar-EG',
+```
+
+### Garder une locale marocaine et imprimer ١٢٣
+
+Un réglage écrit explicitement l’emporte sur la valeur par défaut de la région.
+
+```diff
+   locale: 'ar-MA',
++  numerals: 'arab',
+```

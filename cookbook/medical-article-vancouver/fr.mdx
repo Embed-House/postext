@@ -1,0 +1,73 @@
+---
+title: "Un article médical au style Vancouver"
+summary: "Le compte rendu d’un essai clinique en A4 sur deux colonnes : appels numériques en exposant, bibliographie Vancouver numérotée et DOI cliquables dans le PDF."
+plain: "Un court article de recherche médicale, mis en page comme dans une revue. Les auteurs citent avec des codes ; Postext imprime de petits numéros surélevés dans le texte et dresse à la fin la liste numérotée des références, DOI en lien."
+description: "Un article de revue médicale dans Postext : références Vancouver (NLM) par citeproc-js, appels en exposant, liens DOI dans le PDF et résumé structuré."
+question: "Comment composer des appels de citation en exposant et des liens DOI actifs, comme les revues médicales ?"
+aliases: ["Vancouver", "NLM", "ICMJE", "Citing Medicine", "revue médicale", "essai clinique", "citations en exposant", "appels en exposant", "DOI", "résumé structuré", "points clés", "BibTeX", "citeproc"]
+pageNotes: { "1": "Page 181 : un bandeau de titre bleu-vert avec le nom de la revue et la ligne du numéro en capitales blanches, puis « ORIGINAL ARTICLE » en bleu-vert, un titre de trois lignes sur un essai pilote de télésurveillance de la pression artérielle menée par des pharmaciens, quatre auteurs avec des numéros d’affiliation surélevés, les affiliations et une note précisant que l’article est fictif. La première colonne porte le résumé structuré sur une teinte bleu-vert pâle et le début de « Introduction », avec les appels surélevés 1 à 5 après les points ; la seconde porte un encadré « Key points » sous un épais filet bleu-vert et le début de « Methods ».", "2": "Page 182 : la fin de « Methods », « Results » et « Discussion » dans la colonne de gauche ; « Table 1 », les caractéristiques initiales avec une ligne d’en-tête bleu-vert, et « Figure 1 », une courbe de la pression systolique hebdomadaire à domicile qui descend de 158 à 135 mm Hg, en tête de la colonne de droite.", "3": "Page 183 : les informations sur l’article et onze références numérotées en deux colonnes, les numéros alignés à droite dans une colonne à part, chacune avec son DOI écrit en entier sous la forme https://doi.org/…" }
+---
+
+## Ce que vous allez composer
+
+Trois pages d’une revue clinique : un article original qui rend compte d’un essai pilote, composé en A4 sur deux colonnes comme l’impriment les revues de l’ICMJE. Un bandeau de titre bleu-vert traverse le haut de la première page, au-dessus du type d’article, d’un titre de trois lignes, des auteurs avec leurs numéros d’affiliation surélevés et d’un résumé structuré sur une teinte pâle. Les auteurs citent avec des clés BibTeX, et les pages montrent ce qu’attend un secrétaire de rédaction médical : de petits numéros surélevés après le point, des travaux consécutifs réunis en 6–8, deux autres serrés en 6,9, et une liste de références numérotée au format NLM, *Lancet 2016;387(10022):957–67*, terminée par le DOI de chaque travail. Dans le PDF, chaque numéro mène à sa référence et chaque DOI ouvre l’article. L’essai est inventé ; les onze travaux qu’il cite sont réels.
+
+## Préparation
+
+### 1 · Vancouver, en exposant et avec des liens
+
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Parmi les styles fournis, `elsevier-vancouver` est celui qui suit le *Citing Medicine* de la NLM (ordre de citation, auteurs sous la forme *Ettehad D, Emdin CA*, six noms puis *et al.*, titres de revues abrégés) : c’est donc le fichier dont partir. Deux remplacements de chaînes alignent sa liste sur les références d’exemple de la NLM : le numéro s’écrit *1.* au lieu de *[1]*, et le numéro de fascicule suit le volume. `marker: 'superscript'` compose les appels en numéros surélevés quoi qu’écrive le style, et `doi: 'link'` garde chaque adresse `https://doi.org/` en lien. Deux travaux non consécutifs s’impriment serrés, *6,9* : une espace après la virgule s’étirerait sur une ligne justifiée. Dans la liste, `labelWidth` donne aux numéros une colonne à eux et `labelAlign: 'right'` aligne la fin de *9.* et de *10.*, si bien que le texte de chaque entrée commence au même x, sur sa première ligne comme sur ses lignes suivantes. Le style AMA est aussi fourni et surélève lui-même ses numéros, mais sa liste diffère de Vancouver par la ponctuation et les plages de pages.
+
+### 2 · Un bloc de titre sur les deux colonnes
+
+<Excerpt region="title" />
+
+Le titre de l’article est le seul titre de niveau 1, avec le style `article`, qui couvre toute la largeur de la page et le dessine d’après sa maquette. Le type d’article, les auteurs, les affiliations et la note viennent d’attributs du titre. `inlineMarks` transforme `^1^` dans l’attribut en numéro d’affiliation surélevé, et le `\n` des affiliations commence une ligne par établissement. Le bandeau est ancré au format rogné : il atteint donc le bord supérieur du papier.
+
+### 3 · Un résumé structuré et un encadré de points clés
+
+<Excerpt region="abstract" />
+
+Les deux encadrés partagent un même style de texte : Fira Sans en 8,3 pt avec des intitulés en gras dans la ligne, la voix qu’un lecteur attend pour un texte de synthèse. Le résumé porte une teinte et ses intitulés en bleu-vert ; les points clés se placent sous un filet de 2,5 pt, avec les intitulés à l’encre. `snapToGrid: false` garde les marges intérieures exactes, si bien que l’encadré du résumé épouse son texte.
+
+### 4 · Le tableau 1 et la figure 1 en tête de colonne
+
+<Excerpt region="resources" />
+
+Le tableau est lu à partir d’un texte séparé par des tabulations, tel qu’un tableur l’exporte, et sa ligne d’en-tête est remplie de bleu-vert avec des intitulés blancs en gras. Les deux ressources flottent en tête d’une colonne après le paragraphe qui les cite. Avec `shortLabel` réglé sur le nom complet du type, `:ref` imprime *(Table 1)* comme l’écrivent les revues, et le `numbered: false` du titre maintient le compteur à 1 plutôt qu’à 1.1.
+
+<Excerpt region="palette" />
+
+## Variantes
+
+### Utiliser le style AMA
+
+Le style AMA surélève lui-même ses numéros et liste les travaux avec *doi:10.1056/…* ; supprimez les modifications et le marqueur.
+
+```diff
+-  style: 'custom', customStyle: vancouver,
+-  marker: 'superscript', collapseRanges: true, // raised 1 and 6–8, not [1] and [6–8]
++  style: 'american-medical-association',
+```
+
+### Imprimer les DOI sans liens
+
+Pour un PDF destiné uniquement à l’impression, gardez les adresses en texte noir simple.
+
+```diff
+-    doi: 'link' }, // https://doi.org/… printed whole and clickable
++    doi: 'text' },
+```
+
+### Numéros entre crochets
+
+Certaines revues Vancouver écrivent les numéros sur la ligne, entre crochets.
+
+```diff
+-  marker: 'superscript', collapseRanges: true, // raised 1 and 6–8, not [1] and [6–8]
++  marker: 'brackets', collapseRanges: true,
+```
+
+## Erreurs fréquentes
+
+- Le `header` d’un style de titre vaut pour toute la section qu’ouvre ce titre : `header: { elements: [] }` sur le titre supprimerait donc les titres courants de toutes les pages jusqu’au prochain titre stylé. `pages: 'body'` sur les titres courants suffit à les tenir à l’écart de la première page.

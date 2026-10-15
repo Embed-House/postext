@@ -1,0 +1,73 @@
+---
+title: "PDF pour l’imprimeur : fond perdu, traits de coupe, PDF/X"
+summary: "Un dépliant d’exposition à 3 mm de fond perdu, avec traits de coupe, exporté en PDF/X-4 sur FOGRA51, avec masters d’impression et contrôle en amont sans erreur."
+plain: "Un dépliant pour une exposition de cartes, prêt à partir chez l’imprimeur. On y voit comment ajouter de la marge au-delà du bord de la page et des repères de coupe, et enregistrer un PDF dans les couleurs des presses."
+description: "Un dépliant de quatre pages dans Postext, avec 3 mm de fond perdu et des traits de coupe, exporté en PDF/X-4 sur FOGRA51 avec polices, signets et masters."
+question: "Comment exporter un PDF/X avec fond perdu, traits de coupe, profil ICC, signets et étiquettes de page ?"
+aliases: ["PDF prêt pour l’impression", "PDF imprimeur", "fond perdu", "traits de coupe", "repères de coupe", "CMJN", "CMYK", "master d’impression", "prépresse", "dépliant d’exposition", "feuille de salle", "guide d’exposition", "épreuve en niveaux de gris", "onglet", "PDF/X-4", "FOGRA51", "PSO Coated v3", "output intent", "contrôle en amont", "preflight", "noir riche", "surimpression"]
+pageNotes: { "1": "La couverture, montrée avec ses 3 mm de fond perdu et les traits de coupe aux angles : une mer vert sombre semée d’îles en verts étagés, un itinéraire orange en tirets à quatre étapes qui sort de la coupe vers le fond perdu, le titre en Space Grotesk 50 pt, et les dates et le lieu en pied.", "2": "La première page intérieure : le chapeau, les salles 1 et 2 sous leurs surtitres en forme de point d’étape, chacune suivie d’un cartel, et un onglet orange portant le folio 2 qui déborde du bord gauche.", "3": "Les salles 3 et 4, qui finissent à la même hauteur que la page 2, et l’onglet portant le folio 3 qui déborde du bord droit.", "4": "La quatrième de couverture : les informations pratiques, le plan des salles (figure 1) avec l’itinéraire orange du vestibule aux salles 1 à 4, et une bande de relief vert à fond perdu sur trois côtés, avec le lieu, les dates et le colophon." }
+---
+
+## Ce que vous allez composer
+
+La feuille de salle de *Cartografías imaginarias*, une exposition inventée de cartes de lieux imaginaires, telle qu’elle part chez l’imprimeur, en espagnol dans les deux éditions de cette page. Chaque page de 170 × 227 mm est posée sur une feuille plus grande de 22 mm qui porte le fond perdu et les traits de coupe. En couverture, un itinéraire orange traverse un archipel en verts étagés et sort de la coupe vers le fond perdu. À l’intérieur, quatre salles composées en Karla en drapeau s’ouvrent sous des surtitres en forme de point d’étape, et un onglet orange porte le folio jusqu’au bord extérieur ; la quatrième de couverture place un plan des salles au-dessus d’une bande de relief. Le pen exporte le fichier pour la presse, un PDF/X-4 séparé pour FOGRA51 (la condition PSO Coated v3 du couché 150 g) avec ses polices, ses signets et ses étiquettes de page, ainsi qu’une épreuve en niveaux de gris, et lance le contrôle en amont sur la mise en page avant de les proposer. Dans le fichier pour la presse, les cartes et le plan viennent de masters d’impression aux encres choisies à la main, et le texte, l’onglet et les anneaux des étapes emploient les mêmes encres grâce à une palette écrite en CMJN.
+
+## Préparation
+
+### 1 · Choisir les couleurs écran pour leurs plaques
+
+<Excerpt region="palette" />
+
+`print: { standard: 'pdfx4', outputProfile: 'fogra51' }` dans la configuration sépare chaque couleur à travers le profil FOGRA51 livré avec postext. Les gris neutres s’impriment sur la seule plaque noire, avec un K choisi pour que la valeur corresponde : `#161616` devient K95 et le `#666666` des titres courants K66, et le texte à 100 % de K est en surimpression. Le profil imprimerait la forêt en C90 M43 Y71 K62 et l’orange en C0 M70 Y90 K0, une nuance à côté de l’itinéraire des masters (étape 5) : ces deux couleurs, le vert sauge et la couleur du papier sont donc écrits en CMJN. `ColorValue.cmyk` porte la composition, l’hexadécimal reste pour l’écran, et chaque usage lié à la palette imprime la composition telle qu’écrite. La couleur du papier est C0 M0 Y0 K0 : le texte en réserve sur la forêt n’imprime aucune encre, et aucune plaque ne peut le décaler.
+
+### 2 · Un onglet qui résiste au massicot
+
+<Excerpt region="tab" />
+
+Le bloc de l’onglet est suspendu au cadre du fond perdu et dépasse l’onglet fini de `BLEED` : une coupe qui tombe un millimètre hors du format laisse encore de l’orange au bord. Le folio est suspendu au cadre de la page, c’est-à-dire au format, et se centre sur les 10 mm qui restent. `parity` choisit les pages où paraît chaque élément et `edge` change avec elle pour atteindre le bord extérieur, tandis que `pages: 'body'` tient l’onglet et les titres courants (`{title}` et `{subtitle}` du frontmatter) à l’écart des deux couvertures, qui comptent comme des ouvertures parce que chacune commence par un titre qui s’étend sur la page ou passe à une nouvelle page. Tout élément d’en-tête ou de pied de page se répète ainsi : une `image` avec `parity` et `pages` pose un filigrane ou une image décorative sur chaque page ; les emplacements peignent par-dessus le texte, et une teinte placée derrière lui va dans `page.backgroundColor`.
+
+### 3 · Les illustrations jusqu’au fond perdu, le texte dans le format
+
+<Excerpt region="covers" />
+
+`cutLines` ajoute de chaque côté de la page le fond perdu, le décalage des traits et le trait de 5 mm, soit 11 mm ici. Le décalage vaut 3 mm par défaut, comme ce fond perdu : les traits partent donc du bord du fond perdu et filent vers l’extérieur ; avec un fond perdu plus large, ils partiraient toujours de son bord, jamais de l’intérieur. Un élément image ancré au fond perdu avec `width: 'fill'` prend la largeur de ce cadre et garde ses propres proportions : la carte de couverture est dessinée en 176 × 233 mm, le format plus 3 mm par côté, si bien qu’elle atteint le bord du fond perdu où commencent les traits de coupe, tandis que le texte est suspendu au bloc de texte, bien à l’intérieur du format. La quatrième de couverture est un style de titre dont le pied de page remplace celui du document, avec une bande tirée du même générateur ancrée au pied du fond perdu et une marge de pied qui arrête le texte 8 mm au-dessus.
+
+### 4 · Des titres qui deviennent des signets
+
+<Excerpt region="levels" />
+
+`renderToPdf` construit les signets à partir des titres : chaque salle est donc un titre de niveau 1 qui suit sans saut de page, et `numberingTemplate` donne au surtitre son `{number}` et au signet son préfixe. Le PDF liste la couverture, de « Sala 1 Una isla en ninguna parte » à « Sala 4 La isla del tesoro », puis les informations pratiques. Un titre dessiné masque son propre texte mais le garde pour les signets et le balisage ; sans `fontFamily`, ce texte masqué est composé en Open Sans 700, que les pages chargeraient et que le PDF incorporerait pour ce seul texte. Les étiquettes de page suivent `page.pageNumbering`, laissé à sa valeur par défaut, décimale à partir de 1 : la page 3 d’une visionneuse PDF est celle dont l’onglet affiche 3.
+
+### 5 · Des masters d’impression aux encres exactes
+
+<Excerpt region="master" />
+
+Chaque dessin est défini une seule fois, sous forme de tracés. La région art en fait le SVG que peint le canvas, et cette région écrit les mêmes tracés dans un PDF CMJN d’une page, avec des compositions choisies pour qu’une épreuve corresponde à l’écran, ce qui met la mer en C100 M45 Y80 K55, la forêt de la palette. Chaque ressource nomme son master dans `svg.pdfFileId` ; `renderToPdf` demande cet id, `pressPdf()` dans la réponse courte répond avec les octets du master, et postext-pdf incorpore cette page telle quelle, en vectoriel, dans les encres du master. Cela vaut pour le plan, qui est une figure, comme pour la carte de couverture et la bande de quatrième, qui sont des images de maquette. L’épreuve en niveaux de gris reçoit les SVG à la place, car un master incorporé n’est jamais converti et resterait en couleur.
+
+## Variantes
+
+### Demander 5 mm de fond perdu
+
+Les illustrations, l’onglet et l’échelle sont dimensionnés d’après `BLEED`, et les traits de coupe partent du bord du fond perdu : une imprimerie qui demande 5 mm n’a besoin que de ce changement, et chaque feuille passe à 196 × 253 mm.
+
+```diff
+-const BLEED = 3; // mm of artwork past the trim: the cover, the tab and the back band reach it
++const BLEED = 5; // mm of artwork past the trim: the cover, the tab and the back band reach it
+```
+
+### Imprimer les illustrations depuis leurs SVG
+
+Sans `pdfFileId`, le fichier pour la presse dessine chaque image depuis son SVG, toujours en vectoriel et à travers le profil : la forêt, écrite en CMJN, garde C100 M45 Y80 K55, tandis que les autres verts des îles prennent les séparations du profil au lieu de celles choisies à la main.
+
+```diff
+-  updatedAt: 0, ...extra, svg: { fileId: `${id}.svg`, pdfFileId: `${id}.pdf`,
++  updatedAt: 0, ...extra, svg: { fileId: `${id}.svg`,
+```
+
+## Erreurs fréquentes
+
+- Une norme PDF/X écrit toujours en CMJN, quoi que dise `colorSpace` : l’épreuve en niveaux de gris remplace donc `print` par `{ standard: 'none' }` à côté de `colorSpace: 'grayscale'`.
+- Un rendu PDF/X échoue sans son profil de sortie. `renderToPdf` va chercher `fogra51.icc` à `profileBaseUrl` (ici le dossier `/icc/` de postext.dev) ; passez les octets du fichier dans `outputProfile` pour le servir vous-même.
+- Le contrôle en amont signale le texte de moins de 9 pt composé en plusieurs encres. Les étiquettes en gras de 7,5 pt couleur forêt tiennent en quatre encres sur papier couché : `print.preflight.smallTextSize` vaut donc 7 pt ; le colophon en 6,3 pt, qui en vert sauge ferait trois encres sur une bande à quatre encres, passe plutôt en réserve couleur papier.
+- Un fichier PDF/X ne porte aucune annotation de lien, car un fichier pour la presse ne peut pas en avoir dans sa zone de fond perdu ; les signets restent.
+- Une fois le fichier construit, chaque bouton devient un lien « Open the PDF ↗ » et un lien de téléchargement, et seuls les liens de téléchargement portent les noms de fichiers.

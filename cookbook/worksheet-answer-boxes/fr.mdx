@@ -1,0 +1,65 @@
+---
+title: "Fiche d’exercices avec cases réponse et banque de mots"
+summary: "Une fiche de sciences de quatre pages : cases réponse blanches dans des cartes vert pâle, 2 mm sous chaque question, hors grille ; mots et blancs en pastilles."
+plain: "Une fiche de sciences pour des enfants de huit ans, sur les parties d’une plante. Chaque question a une case en dessous pour la réponse, et certaines phrases ont des trous à remplir avec une liste de mots."
+description: "Une fiche de sciences pour l’école primaire dans Postext : cases réponse imbriquées dans des cartes, espacées en mm hors grille, pastilles pour mots et blancs."
+question: "Comment imbriquer des cases réponse dans des cartes à l’espacement exact, avec banques de mots et blancs ?"
+aliases: ["fiche d’exercices", "fiche d’activités", "worksheet", "case réponse", "espace d’écriture", "encadré imbriqué", "encadré dans un encadré", "banque de mots", "texte à trous", "exercice à trous", "exercice d’appariement", "relier", "liste à cocher", "je sais", "autoévaluation"]
+pageNotes: { "1": "Une bande vert feuille avec une pilule jaune « UNIT 3 », le titre « Plants and their parts », la ligne de la collection et des champs blancs pour le nom de l’élève et la date. À droite, un plant de pois à fleurs blanches pousse dans un disque blanc dont la terre déborde sous la bande ; six points jaunes numérotent sa fleur, sa gousse, ses pois, sa feuille, sa tige et ses racines. Sous une introduction de trois lignes, l’activité 1 dans un disque vert ouvre une carte vert pâle avec deux questions, chacune au-dessus d’une case réponse blanche qui commence par un petit « Write here » gris.", "2": "Activité 2 : une banque de mots blanche de pastilles jaunes et six blancs numérotés sur trois colonnes. Activité 3 : une seconde banque de mots et six phrases, chacune avec un blanc détouré, et une note « Did you know ? » sur les vrilles.", "3": "Activité 4 : dans sa carte, un tableau blanc arrondi de six rangées, chacune avec un aliment dessiné et son nom à gauche, une pastille jaune nommant une partie de la plante à droite et un large espace entre les deux avec un point vert à chaque bout. Activité 5 : une haute case réponse pour dessiner une plante et légender ses parties.", "4": "Activité 6, un pois à faire germer à la maison, avec une case « I think » et une case « I saw » ; « How did I do ? », sous une étoile, liste trois phrases « I can », chacune après un cercle vide à colorier ; sous la carte, deux lignes de colophon." }
+---
+
+## Ce que vous allez composer
+
+La fiche 3A de *Seedlings Science*, une collection inventée pour des enfants de huit ans, sur quatre pages de 200 × 260 mm imprimées au recto. Une bande vert feuille porte une pilule jaune d’unité, le titre et des champs blancs pour le nom et la date ; à côté, un plant de pois à l’aquarelle dans un disque blanc a ses six parties numérotées en jaune. L’aquarelle a été générée par des modèles de diffusion et arrive déjà placée dans son disque, sous forme de deux JPEG qui se rejoignent au bord de la bande : celui du haut a le vert de la bande dans ses coins, celui du pied du blanc ; les numéros et les lignes de rappel restent en code, par-dessus l’image. Chaque activité est un titre numéroté au-dessus d’une carte vert pâle. Les cartes contiennent des cases réponse blanches avec une petite consigne grise et la place de plusieurs lignes, des banques de mots en pastilles jaunes, des blancs détourés dans des phrases, un tableau d’aliments à relier aux parties de la plante et une liste de cercles à colorier. Chaque case réponse se place 2 mm sous sa question et 5 mm au-dessus de ce qui suit, et chaque carte se termine 9 mm au-dessus de ce qui vient ensuite sur sa page. Le texte est composé en Andika, un caractère dessiné par SIL pour les enfants qui apprennent à lire.
+
+## Préparation
+
+### 1 · Sortir aussi les titres de la grille
+
+<Excerpt region="grid" />
+
+Dans la réponse courte, les marges de chaque encadré fusionnent avec celles de ses voisins et la plus grande l’emporte. Les 5 mm d’une banque de mots l’emportent sur les 2 mm au-dessus de la liste qui la suit, et les 5 mm de la dernière case réponse tombent dans les 5 mm de marge intérieure du bas de la carte au lieu de s’y ajouter. Laissé sur la grille, un titre de niveau 2 réserve entre 10,8 et 14,1 mm au lieu des 8,6 mm de son disque, parce que ce qui le suit se recale sur la ligne de 17 pt suivante ; `headings.snapToGrid: false` le garde à 8,6 mm. Régler `snapToGrid` sur les styles imbriqués ne change rien, car seule la carte extérieure peut quitter la grille ([encadrés imbriqués](/fr/docs/configuration-styles#le-conteneur-callout)). L’équilibrage des colonnes est désactivé, parce qu’il ajoute de l’espace au-dessus des titres pour remplir une page ; en page 2, il mettrait 33 mm au-dessus de l’activité 3 au lieu de 9.
+
+### 2 · Faire de chaque blanc une pastille
+
+<Excerpt region="chips" />
+
+Une pastille est une boîte insécable dans la ligne, et sa marge intérieure se peint au-delà de la ligne sans la rendre plus haute. Une banque de mots est une rangée de pastilles dans un encadré `bank` imbriqué. Les blancs, les points à relier et les cercles à colorier sont aussi des pastilles, chacune écrite `:chip[ ]` : une pastille d’une espace est une boîte vide faite de marge intérieure et de contour ([pastilles](/fr/docs/document-format#pastilles-en-ligne)). `paddingX` fixe la largeur : un blanc fait 34 mm de large dans une phrase et 38 mm seul dans une colonne, et un cercle reçoit de chaque côté la moitié de ses 1,25 em de hauteur. Dans la liste à cocher, le cercle se tient là où serait la puce (`bulletChar: ''`). À 19,6 pt, un blanc est plus haut que la ligne de 17 pt : c’est pourquoi chacun a un élément de liste pour lui seul, à 24 pt du suivant.
+
+### 3 · Numéroter les activités avec une maquette de titre
+
+<Excerpt region="activity" />
+
+Un titre de niveau 2 avec un `advancedDesign` garde sa place dans la colonne, et la maquette se dessine à la place de son texte : un disque qui contient `{number}`, qui imprime le `numberingTemplate` du niveau, et `{titleText}` à sa droite ([emplacements et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Le disque et le titre font tous deux 8,6 mm de haut, et hors grille le titre réserve exactement cette hauteur : la maquette n’a donc pas besoin de `minHeight`. Comme les numéros viennent du compteur de niveau 2, une activité insérée dans le Markdown renumérote celles qui la suivent. Le titre de l’autoévaluation emploie un style avec `numbered: false`, qui le sort du décompte, et une étoile SVG se place là où serait le disque.
+
+### 4 · Placer les images dans les cellules du tableau
+
+<Excerpt region="tables" />
+
+`TableCell.image` dessine une ressource dans sa cellule, ici à 76 % de la largeur de la cellule, et la rangée grandit pour la contenir. `verticalAlign: 'middle'` centre le nom de l’aliment, les points et la pastille sur l’image. La colonne la plus large, 31 % du tableau, reste vide pour le trait de l’élève. Le style nommé arrondit le cadre du tableau et y découpe le fond blanc du corps. Il ne dessine aucun filet : le panneau n’est donc que le fond blanc ([styles de tableau nommés](/fr/docs/configuration-resources#styles-de-tableau-nommés)). Son type de ressource a un `captionPrefix` vide et le tableau n’a pas de texte de légende : aucune légende ne s’imprime dessous. `placement: { position: 'here' }` place le tableau là où se trouve sa ligne `::resource`, dans la carte. Un encadré garde une ligne de son propre texte au-dessus d’un tel tableau, ici 6 mm ; `layout.inlineResourceGapInBoxes: false` la supprime, et un `:::space{lines=0.33}` avant la ligne `::resource` fixe les 2 mm que les cases réponse gardent sous leurs questions.
+
+## Variantes
+
+### Remettre les cartes sur la grille
+
+Avec la valeur par défaut `snapToGrid: true`, ce qui suit une carte descend à la ligne de grille de 17 pt suivante, et les 9 mm sous chaque carte deviennent 14,5 mm sous l’activité 2, 13,2 mm sous l’activité 4 et 11,2 mm sous l’activité 6.
+
+```diff
+-  snapToGrid: false,
++  snapToGrid: true,
+```
+
+### Donner plus de place à une réponse
+
+`:::space` compte en lignes de 17 pt propres à la case réponse, et chaque ligne ajoutée donne à l’élève 6 mm de plus pour écrire.
+
+```diff
+ Write here
+-:::space{lines=4}
++:::space{lines=6}
+```
+
+## Erreurs fréquentes
+
+- Un encadré ne peut pas régler ses propres lignes d’écriture, car les styles d’encadré n’ont pas de fond réglé. Les cases réponse restent vierges et prennent leur hauteur de `:::space`, et les courtes lignes à remplir sont des pastilles détourées.
+- Un style de titre avec `numbered: false` dessine quand même la maquette de son niveau, avec `{number}` laissé vide. Sans maquette propre, l’autoévaluation s’ouvrirait sur un disque vert vide : `review` copie donc la maquette des activités et met l’étoile à la place du disque.

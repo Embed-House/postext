@@ -1,0 +1,91 @@
+---
+title: "Pages liminaires en chiffres romains, puis la page 1"
+summary: "La couverture et les pages liminaires sont des titres non numérotés comptés en romain bas de casse ; :::numbering repart à 1 sur le recto où s’ouvre le roman."
+plain: "Les premières pages d’une édition de poche de Frankenstein. La recette montre comment numéroter les pages avant l’histoire i, ii, iii, puis repartir à la page 1 là où l’histoire commence."
+description: "La couverture et les liminaires de Frankenstein comptent de i à x, et la lettre I, sur un recto, est la page 1. La table et les étiquettes du PDF concordent."
+question: "Comment numéroter les pages liminaires i, ii, iii et repartir à 1 sur le recto où commence le roman ?"
+aliases: ["folios en chiffres romains", "chiffres romains", "pages liminaires", "préliminaires", "couverture", "faux-titre", "page de titre", "page de copyright", "mentions légales", "dédicace", "épigraphe", "frontispice", "verso blanc", "signature d’une lettre", "repartir la numérotation", "étiquettes de page PDF", "front matter"]
+pageNotes: { "3": "Le faux-titre, page iii. Son style passe à une page de droite : le dos de la couverture, page ii, est blanc et n’imprime aucun folio.", "4": "Le frontispice, page iv, fait face à la page de titre, v ; aucune des deux n’imprime son folio.", "10": "La dernière page de la préface : son folio, x, est composé en petites capitales, centré en pied.", "11": "« Letter I » s’ouvre sur une page de droite sous les aurores boréales au-dessus de « St Petersburgh » ; son folio, 1, se trouve au même endroit que le x de la page en regard.", "13": "Page 3 : sur une page de droite, le titre courant compose le titre de la lettre à côté du folio, tous deux vers la marge extérieure.", "14": "Page 4, la fin de « Letter I » : le titre courant compose le titre du livre à côté du folio, et la signature de Walton est alignée à droite." }
+---
+
+## Ce que vous allez composer
+
+Les premiers feuillets de *Frankenstein* en classique de poche, au format 129 × 198 mm : une couverture avec la foudre sur le mont Blanc, son dos laissé blanc, un faux-titre, un frontispice du navire de Walton pris dans les glaces en regard de la page de titre, les mentions légales en bas de son verso, la dédicace à Godwin au-dessus de l’épigraphe de Milton, une page de table des matières et la préface de 1818. Ces dix pages sont numérotées de i à x, mais seules la table et la préface impriment leur numéro. La lettre I ouvre le roman sur une page de droite, sous les aurores boréales, et son folio indique 1 au même endroit que le x de la page en regard. La lettre se poursuit jusqu’à la signature de Walton. Le ix à côté de la préface dans la table et le 1 à côté de la lettre viennent des pages finies, et une visionneuse PDF étiquette les pages de la même façon. La couverture, le frontispice et les aurores boréales sont des peintures générées par des modèles de diffusion, chargées en bitmaps JPEG ; la marque de l’éditeur et le cristal de glace sont dessinés en code.
+
+## Préparation
+
+### 1 · Chaque feuillet est un titre doté d’une maquette
+
+<Excerpt region="leaves" />
+
+Un titre ouvre sa propre page et devient un signet du PDF ; la maquette de son style place le texte et les images du feuillet. Avec `numbered: false` et `toc: false`, les feuillets restent hors du compte des chapitres et de la table. Un en-tête et un pied de page vides leur donnent ce que les imprimeurs appellent des folios muets : la page de titre n’imprime aucun numéro mais reste la page v, et c’est pourquoi la préface peut être ix. Seul le faux-titre garde un saut vers une page impaire, et c’est ce qui laisse blanc le dos de la couverture. Les mentions légales, la dédicace, l’épigraphe et la formule finale de Walton sont des blocs `:::paragraphs` composés dans les styles de la fin de l’extrait.
+
+### 2 · La table prend ses numéros dans la mise en page
+
+<Excerpt region="contents" />
+
+`:::toc` liste chaque titre que son style admet, avec l’étiquette de la page où il tombe ([table des matières](/fr/docs/configuration-notes-references#table-des-matières)). La table et la préface partagent le style `front`, qui définit `toc: false`, et la préface le remplace par `{toc="true"}`. Ni la préface ni la lettre I ne sont numérotées : leurs entrées n’impriment aucun numéro de chapitre. La deuxième ligne de l’entrée de la lettre est son attribut `to="…"`. Les numéros de page sont composés dans le caractère des folios. Les entrées commencent sur la même ligne de base que la première ligne de la préface, pour que les deux pages en regard s’alignent.
+
+### 3 · Le roman s’ouvre sur un recto, sous les aurores boréales
+
+<Excerpt region="letter" />
+
+La peinture sort à fond perdu par le haut de la page et se fond dans le papier à son pied, là où commence la lettre. L’ouverture réserve la page jusqu’au pied de la peinture, à 104 mm du haut de la page, et `minHeight` fixe un plancher 2 mm plus bas, qui fait commencer la lettre une ligne de grille plus bas, à l’écart du fondu ([étendue et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Le surtitre et la ligne de date viennent des attributs `to` et `dateline` du titre. La lettre I porte aussi `{style="letter"}`, un style dont le seul réglage est `numbered: false`, parce que les lettres de Walton précèdent le chapitre I et n’ont pas de numéro de chapitre.
+
+### 4 · Les titres courants reviennent avec le roman
+
+<Excerpt region="heads" />
+
+Une section garde l’en-tête et le pied de page du document, sauf si son style les remplace. Les pages liminaires remplacent les deux et le style de la lettre non : à partir de la page 1, le roman imprime ces titres courants sur ses pages courantes et, sur son ouverture, le folio en pied défini dans la réponse courte. `{pageNumber}` imprime l’étiquette de la page où il se trouve : l’assistant `folio()` compose ainsi x d’un côté du dos et 1 de l’autre avec la même maquette.
+
+### 5 · Le PDF porte les mêmes numéros de page
+
+<Excerpt region="build" />
+
+`buildDocument` répète la mise en page jusqu’à ce que les étiquettes de page de la table ne changent plus : un seul appel suffit. `renderToPdf` écrit ces étiquettes dans le PDF : dans une visionneuse qui lit les étiquettes de page, le champ du numéro de page va de i à x puis repart de 1, et « aller à la page 1 » ouvre la lettre I. Chaque titre devient un signet nommé d’après son texte, et c’est pourquoi les feuillets ont des titres simples : « Cover », « Half title », « Frontispiece », « Title page », « Imprint », « Dedication ».
+
+## Variantes
+
+### Compter les pages liminaires en capitales
+
+Les chiffres en haut de casse s’impriment en capitales pleines dans le caractère des folios, plus hautes que les petites capitales que donnent les chiffres en bas de casse.
+
+```diff
+-const pageNumbering = { format: 'lower-roman', startAt: 1 }; // startAt spelled out: cover = i
++const pageNumbering = { format: 'upper-roman', startAt: 1 }; // startAt spelled out: cover = I
+```
+
+### Numéroter le livre d’un bout à l’autre
+
+Omettez `startAt` et le compte se poursuit en chiffres arabes : la lettre I devient la page 11, comme dans les livres qui comptent leurs pages liminaires avec le texte.
+
+```diff
+-:::numbering{format="decimal" startAt=1}
++:::numbering{format="decimal"}
+```
+
+### Retirer le frontispice
+
+Supprimez le titre `# Frontispiece` et envoyez la page de titre sur un recto : la page iv reste blanche, la préface est toujours ix et la lettre I toujours 1.
+
+```diff
+-  { id: 'title', ...blind, advancedDesign: design([ // v: four frontmatter fields, one attribute
++  { id: 'title', ...blind, breakBefore: { enabled: true, parity: 'odd' },
++    advancedDesign: design([ // v: four frontmatter fields, one attribute
+```
+
+### Ajouter un fond perdu et des traits de coupe pour l’imprimeur
+
+Avec `cutLines`, la couverture et l’ouverture, toutes deux ancrées au fond perdu, débordent de 3 mm au-delà de la coupe ; les folios et le nombre de pages ne changent pas ([traits de coupe](/fr/docs/configuration-page-layout#traits-de-coupe)).
+
+```diff
+     backgroundColor: col('paper'), pageNumbering,
++    cutLines: { enabled: true }, // a 3 mm bleed and crop marks
+```
+
+## Erreurs fréquentes
+
+- Les feuillets héritent du saut `'odd'` du niveau 1. Laissé tel quel, chacun attend une page de droite. Les pages liminaires passent alors à quatorze pages au lieu de dix, avec quatre versos blancs de plus, et le frontispice fait face à une page blanche au lieu de la page de titre. Redéfinissez le saut avec `parity: 'any'`, comme le fait cette recette, ou désactivez-le avec `breakBefore: { enabled: false }` ; un titre sur toute la largeur de la page ouvre sa propre page de toute façon.
+- Retirez le `:::pagebreak` avant `:::numbering` quand le niveau 1 saute avec `'always-odd'`, la valeur par défaut du moteur pour H1. Si le texte qui précède se termine sur une page de droite, le saut de page complète jusqu’au recto suivant, puis le titre ajoute sa page de séparation et complète de nouveau : on obtient trois pages blanches de suite au lieu d’une. Après un saut `'odd'`, comme ici, le saut de page ne change rien ; après `'any'`, c’est lui qui place la page 1 sur un recto.
+- Une préface qui s’allonge d’une page repousse la lettre I de deux pages, parce que le saut vers une page impaire ajoute un verso blanc avant elle. Vérifiez le nombre de pages chaque fois que vous modifiez les pages liminaires.
+- Les points de conduite de la table sont composés dans le caractère et la couleur des numéros de page, et `toc.leader` n’a pas de couleur propre : ici, ils s’impriment en bleu acier.

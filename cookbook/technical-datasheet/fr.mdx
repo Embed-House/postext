@@ -1,0 +1,76 @@
+---
+title: "Fiche technique : tableaux de données, en-têtes fusionnés"
+summary: "Des tableaux collés en TSV, lus par parseTSV, façonnés par mergeCells, setAlignment et setCellBackground ; une carte de registres qui se coupe seule."
+plain: "Une fiche produit de quatre pages pour un capteur de température électronique. Elle montre comment construire des tableaux à partir de données de tableur, avec des en-têtes communs et un long tableau qui continue page suivante."
+description: "Fiche technique de capteur sur quatre pages avec Postext : en-tête fusionné sur deux rangs, fonds alternés, styles de tableau nommés, registres coupés."
+question: "Comment faire de données collées un tableau à en-têtes fusionnés, avec largeurs et alignement par cellule ?"
+aliases: ["fiche technique", "datasheet", "caractéristiques électriques", "carte de registres", "cellules fusionnées", "colspan", "rowspan", "lignes alternées", "tableau zébré", "TSV", "tableau depuis un tableur", "en-tête de tableau répété", "spec sheet"]
+pageNotes: { "1": "La première page : une bande violette avec la référence du composant, un chapeau et trois chiffres clés ; dessous, les fonctionnalités et les applications, le dessin du brochage, son pad exposé en pointillé parce qu’il se trouve sous le boîtier, et le schéma d’application type.", "2": "Le tableau des caractéristiques électriques occupe toute la largeur de la page sous une légende qui donne les conditions de test : un en-tête violet sur deux rangs où « Value » couvre « Min », « Typ » et « Max », les groupes de paramètres fusionnés dans une première colonne lilas, un paramètre sur deux teinté de gris.", "3": "Le tableau des broches occupe le haut de la première colonne ; la carte de registres, avec ses adresses et ses valeurs de réinitialisation dans le caractère mono des étiquettes, remplit la seconde et se termine par « Continued on the next page ».", "4": "La carte de registres continue avec son en-tête répété et « (continued) » dans sa légende, à côté des références de commande dans un cadre arrondi ; le dessin du boîtier occupe toute la largeur du pied de la page." }
+---
+
+## Ce que vous allez composer
+
+Voici la fiche technique de quatre pages du PX-7021, un capteur de température d’un fabricant imaginaire, Pyxis Microdevices. Elle est faite surtout de tableaux, avec des en-têtes pleins de cellules fusionnées et une carte de registres plus longue qu’une colonne. La première page s’ouvre sur une bande violette avec la référence du composant et trois chiffres clés. En page 2, un tableau occupe toute la largeur de la page. Son en-tête sur deux rangs place Value au-dessus de Min, Typ et Max ; les groupes de paramètres sont fusionnés dans la première colonne, et un paramètre sur deux est teinté de gris. La carte de registres se coupe au pied de la page 3 et continue en page 4 avec son en-tête répété, à côté des références de commande et au-dessus du dessin du boîtier. Les tableaux sont des données de tableur collées en TSV, car Postext ne lit pas les tableaux Markdown.
+
+## Préparation
+
+### 1 · Coller les données, puis façonner le tableau
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `parseTSV(tsv, { headerRows: 2 })` marque les deux rangs d’en-tête ; si le tableau se coupait, les deux se répéteraient sur chaque partie. Les poids de `columnWidths` totalisent 180, la largeur du bloc de texte en millimètres : chaque poids est donc la largeur de sa colonne sur la page. `mergeCells` garde chaque cellule couverte à sa place et la marque `hiddenBy` : aucune colonne ne se décale. `setAlignment` agit cellule par cellule et efface l’alignement vertical quand vous l’omettez : la plupart des appels repassent donc `'middle'`. Le gris alterne d’un paramètre au suivant, ce qui garde les deux rangs d’Accuracy sur le même fond ; alterner par rang, comme le fait le `bodyAlternateBackground` du style de tableau, laisserait le second en blanc.
+
+### 2 · Chaque modèle devient une ressource
+
+<Excerpt region="resources" />
+
+Chaque tableau et chaque dessin est une ressource avec une légende, et les tableaux ajoutent une note et un style nommé. Légendes et notes acceptent l’italique, les indices et les exposants : le tableau électrique donne ses conditions de test avec `*V*~DD~` dans la légende et numérote ses notes avec `^1^` dans la note. Un flottant prend le premier emplacement libre après son premier `:ref`. Le tableau 1 est cité en page 1 et placé en tête de page sur toute la largeur : il ouvre donc la page 2. Le dessin du boîtier est placé au pied d’une page sur toute la largeur, et les autres tableaux gardent le placement par défaut, un flottant large d’une colonne. Un tableau placé `here` reste dans le texte ; quand il ne tient pas dans le reste de sa colonne, il se coupe lui aussi entre deux rangs.
+
+### 3 · Laisser un long tableau se couper seul
+
+<Excerpt region="split" />
+
+Le tableau des broches et la carte de registres sortent tous deux de `groupedTable`. Un rang dont seule la première cellule est remplie est fusionné sur toute la largeur du tableau et teinté de violet comme tête de groupe. Une cellule TSV ne peut pas contenir de saut de ligne : les données écrivent donc `\n` et la fonction le transforme en saut de ligne ; une ligne qui commence par `•` est alors composée comme un élément de liste. Les codes courts prennent le style de pastille `code`, sans fond, sans bordure ni marge latérale, qui les compose en Fira Mono à 0,9 em. Quand un tableau flottant ne tient pas dans la colonne vide qu’on lui propose, le moteur le coupe entre deux rangs et compose la suite dans l’emplacement libre suivant, sous l’en-tête répété, avec `(continued)` après la légende. La ligne `continuesMarker`, « Continued on the next page », se place sous la première partie, et la note attend la dernière ([tableaux plus hauts que la page](/fr/docs/configuration-resources#tableaux-plus-hauts-que-la-page)).
+
+### 4 · Un style maison, une variante par tableau
+
+<Excerpt region="styles" />
+
+`tableStyle` contient ce que partagent tous les tableaux. Chaque entrée de `tableStyles` ne règle que ce que ses tableaux changent, et une ressource en choisit une avec `table.styleId`. Le tableau électrique remplace les filets fins gris par des filets blancs de 1,4 pt, qui séparent ses fonds et montrent où finit chaque fusion. Le tableau des références de commande reçoit un cadre extérieur arrondi et Fira Sans Condensed, pour que ses quatre colonnes tiennent dans une colonne de texte.
+
+### 5 · Des étiquettes qui restent du texte dans le PDF
+
+<Excerpt region="drawing" />
+
+Les étiquettes du brochage, du schéma et du dessin du boîtier sont des éléments `<text>` qui demandent Fira Mono, le caractère des étiquettes du document. Un SVG arrive sur le canvas comme une image : le `loadSvg` du kit fait donc d’abord passer le balisage par `inlineSvgFonts`, qui incorpore dans le SVG les caractères que nomme son texte ; le canvas dessine alors les étiquettes en Fira Mono. Le PDF compose chaque `<text>` comme du texte sélectionnable dans les caractères qu’il incorpore.
+
+### 6 · Ouverture, titre courant et pied de page
+
+<Excerpt region="furniture" />
+
+La référence du composant est le titre de niveau 1, et son emplacement de maquette dessine l’ouverture : une boîte violette jusqu’au fond perdu, le logo, ainsi qu’un surtitre, un chapeau et trois chiffres clés lus dans les attributs du titre. Les éléments image fonctionnent dans les emplacements courants comme dans les ouvertures : le pied de page commence donc par l’un d’eux, qui nomme la ressource du logo. Les éléments du titre courant portent `pages: 'body'` : aucun ne s’imprime sur la première page.
+
+## Variantes
+
+### Séparer chaque rang par un filet gris
+
+Des filets d’un demi-point dans le gris `rule` de la palette séparent chaque rang, avec ou sans fond ; les filets blancs disparaissent là où deux rangs sans fond se touchent.
+
+```diff
+-    { id: 'electrical', borderColor: col('paper'), borderWidth: pt(1.4), cellPadding: mm(1.1) },
++    { id: 'electrical', borderColor: col('rule'), borderWidth: pt(0.5), cellPadding: mm(1.1) },
+```
+
+### Poser les légendes de tableau sur une barre
+
+Le style de légende du type tableau peut peindre une barre derrière la légende, ici à l’encre avec le libellé dans le jaune `hazard`.
+
+```diff
+-    ...(type.id === 'table' && { captionStyle: { position: 'above' } }) })),
++    ...(type.id === 'table' && { captionStyle: { position: 'above', backgroundEnabled: true,
++      background: col('ink'), color: col('paper'), labelColor: col('hazard') } }) })),
+```
+
+## Erreurs fréquentes
+
+- La première partie d’un tableau coupé laisse le pied de sa colonne au texte quand trois lignes ou plus y tiennent, et le fait toujours dans une colonne qui contient déjà un flottant. Faites commencer un long tableau là où sa colonne ne contient aucun autre flottant, comme la carte de registres, et ajustez ses rangs pour que la première partie atteigne le pied de la colonne.
+- Les éléments texte de maquette sont centrés par défaut. Le chapeau a une largeur fixe : il lui faut donc `align: 'left'` pour s’aligner sous la référence du composant.
+- Sur la dernière page d’un chapitre, Postext remonte les flottants pleine largeur placés sous le texte jusqu’à une ligne de texte sous lui : une figure `bottom` s’y place donc sous la dernière ligne du texte au lieu du pied de page. La page 4 est rédigée pour remplir ses colonnes, et le dessin du boîtier mesure 48,3 mm de haut pour que le texte au-dessus finisse sur une ligne de grille. Le dessin n’a alors plus de place pour remonter et finit au niveau du pied des autres pages. `layout.hugClosingFloats: false` désactive ce déplacement.

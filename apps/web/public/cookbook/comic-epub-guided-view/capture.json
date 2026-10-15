@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-epub-guided-view",
-  "sourceHash": "e4f4d3fc410536d06d07a4e9a1ef629de9cebfed264ddd144441fe103b8757f2",
+  "sourceHash": "76529cc5e5278bc2d14e8ae336d3722767c017408cf4947330e7fa775b570a99",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.33.4",
+    "postextPdf": "1.33.4",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:19.639Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T14:58:17.107Z"
-  },
+  "chrome": "155.0.8059.79",
+  "capturedAt": "2026-10-15T08:05:41.002Z",
   "variants": {
     "en": {
-      "hash8": "178c110d",
+      "hash8": "a501a61c",
       "vdtHash": "64c420f4051c59e7c12aca770d7ead2328540ded",
       "timings": {
-        "importMs": 3561,
-        "fontsMs": 163,
-        "buildMs": 202,
-        "totalMs": 4548,
+        "importMs": 4424,
+        "fontsMs": 925,
+        "buildMs": 240,
+        "totalMs": 8753,
         "builds": 1
       },
       "specimen": {
@@ -44,7 +38,7 @@
           "Comic Neue"
         ],
         "pages": 3,
-        "ownLines": 180
+        "ownLines": 183
       },
       "pages": [
         {
@@ -292,17 +286,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "92b4151f",
+      "hash8": "497257ac",
       "vdtHash": "e3390a1020791a0ab7ade1d7db54b176d75fcf9d",
       "timings": {
-        "importMs": 2745,
-        "fontsMs": 149,
-        "buildMs": 176,
-        "totalMs": 3709,
+        "importMs": 4412,
+        "fontsMs": 955,
+        "buildMs": 227,
+        "totalMs": 7750,
         "builds": 1
       },
       "specimen": {
@@ -323,7 +323,7 @@
           "Comic Neue"
         ],
         "pages": 3,
-        "ownLines": 180
+        "ownLines": 183
       },
       "pages": [
         {
@@ -571,17 +571,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "6d008a3e",
+      "hash8": "07b873a7",
       "vdtHash": "52378a5a6f5c12056b8aa0d4afd146f52762148e",
       "timings": {
-        "importMs": 538,
-        "fontsMs": 200,
-        "buildMs": 225,
-        "totalMs": 1650,
+        "importMs": 2463,
+        "fontsMs": 1781,
+        "buildMs": 252,
+        "totalMs": 7905,
         "builds": 1
       },
       "specimen": {
@@ -602,7 +608,7 @@
           "Comic Neue"
         ],
         "pages": 3,
-        "ownLines": 180
+        "ownLines": 183
       },
       "pages": [
         {
@@ -668,7 +674,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806997,
+        "bytes": 806996,
         "chapters": [
           {
             "pages": 3,
@@ -850,17 +856,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "56b418e1",
+      "hash8": "22892db5",
       "vdtHash": "1ae1a2a01eb6d5de92779490b23522a6747ebf11",
       "timings": {
-        "importMs": 621,
-        "fontsMs": 429,
-        "buildMs": 194,
-        "totalMs": 2172,
+        "importMs": 3400,
+        "fontsMs": 3867,
+        "buildMs": 198,
+        "totalMs": 11583,
         "builds": 1
       },
       "specimen": {
@@ -881,7 +893,7 @@
           "ZCOOL QingKe HuangYou"
         ],
         "pages": 3,
-        "ownLines": 180
+        "ownLines": 183
       },
       "pages": [
         {
@@ -947,7 +959,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807367,
+        "bytes": 807366,
         "chapters": [
           {
             "pages": 3,
@@ -1130,17 +1142,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
-      "hash8": "9cb593fe",
+      "hash8": "adaefd46",
       "vdtHash": "8bf6113f0eff83e357b09713e25ae9e612868aab",
       "timings": {
-        "importMs": 3962,
-        "fontsMs": 1108,
-        "buildMs": 221,
-        "totalMs": 8432,
+        "importMs": 3395,
+        "fontsMs": 1442,
+        "buildMs": 238,
+        "totalMs": 7786,
         "builds": 1
       },
       "specimen": {
@@ -1161,7 +1179,7 @@
           "Playpen Sans Arabic"
         ],
         "pages": 3,
-        "ownLines": 180
+        "ownLines": 183
       },
       "pages": [
         {
@@ -1228,7 +1246,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807688,
+        "bytes": 807687,
         "chapters": [
           {
             "pages": 3,
@@ -1413,17 +1431,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "fe77f625",
+      "hash8": "3cc0079d",
       "vdtHash": "4e664c70bd7729b7c091d697b398a62d48b3803a",
       "timings": {
-        "importMs": 2329,
-        "fontsMs": 3442,
-        "buildMs": 203,
-        "totalMs": 8351,
+        "importMs": 2647,
+        "fontsMs": 5998,
+        "buildMs": 192,
+        "totalMs": 14172,
         "builds": 1
       },
       "specimen": {
@@ -1444,7 +1468,7 @@
           "Zen Antique"
         ],
         "pages": 3,
-        "ownLines": 180
+        "ownLines": 183
       },
       "pages": [
         {
@@ -1511,7 +1535,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807698,
+        "bytes": 807697,
         "chapters": [
           {
             "pages": 3,
@@ -1695,17 +1719,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "pt": {
-      "hash8": "ad109e32",
+      "hash8": "8112764d",
       "vdtHash": "55f251632ca226235a26fa4dae410d75d1032b48",
       "timings": {
-        "importMs": 337,
-        "fontsMs": 94,
-        "buildMs": 180,
-        "totalMs": 1229,
+        "importMs": 4504,
+        "fontsMs": 2853,
+        "buildMs": 196,
+        "totalMs": 10035,
         "builds": 1
       },
       "specimen": {
@@ -1726,7 +1756,7 @@
           "Comic Neue"
         ],
         "pages": 3,
-        "ownLines": 180
+        "ownLines": 183
       },
       "pages": [
         {
@@ -1974,7 +2004,298 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
+      }
+    },
+    "fr": {
+      "hash8": "3559bd99",
+      "vdtHash": "2e51b8052fe5711c66cb316c21e348177e49fdd1",
+      "timings": {
+        "importMs": 4576,
+        "fontsMs": 1308,
+        "buildMs": 185,
+        "totalMs": 8292,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          168,
+          259
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Comic Neue",
+          "sizePt": 10.5,
+          "leadingPt": 15
+        },
+        "families": [
+          "Bangers",
+          "Comic Neue"
+        ],
+        "pages": 3,
+        "ownLines": 183
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1542,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 21364,
+          "alt": "Page d’ouverture 1 : Le phare de Porthcove."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 237734,
+          "alt": "Page 2."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 206484,
+          "alt": "Page 3."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "comic-epub-guided-view.pdf",
+        "bytes": 813212,
+        "pages": 3
+      },
+      "sandbox": {
+        "file": "comic-epub-guided-view.postext",
+        "bytes": 807053,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "db3dcdfc3fe2183a",
+            "lines": "d0ddfe015025301d"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "loadVerticalAlternates",
+          "readEpub",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToEpub",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontFamily",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].stroke",
+          "comics.cast",
+          "comics.cast[].id",
+          "comics.cast[].name",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.inset",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "comics.runningHeads",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].pages",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].fontWeight",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 98,
+        "designElements": 1,
+        "directives": [
+          ":::paragraphs",
+          ":::page"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 5,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Bangers",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Comic Neue",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Comic Neue",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "balloon-styles",
+          "comic-lettering",
+          "comic-pages",
+          "comic-panel-art",
+          "comic-panel-split",
+          "comic-panel-styles",
+          "comic-speakers",
+          "epub-export",
+          "page-background",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "sound-effects"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

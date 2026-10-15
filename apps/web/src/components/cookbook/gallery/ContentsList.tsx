@@ -37,7 +37,7 @@ export function ContentsRow({ item, labels }: { item: ContentsItem; labels: Plat
             <span className="flex shrink-0 items-center gap-2 font-sans text-[0.6rem] font-semibold tracking-[0.12em] text-foreground/80 uppercase max-sm:hidden">
               <LevelSquares level={recipe.level} />
               <span className="sr-only">
-                {labels.levelOf(recipe.level)}: {labels.levels[recipe.level]}
+                {labels.levelOf(recipe.level)}{labels.colon} {labels.levels[recipe.level]}
               </span>
               {recipe.pages > 0 && <span>{labels.pages(recipe.pages)}</span>}
             </span>

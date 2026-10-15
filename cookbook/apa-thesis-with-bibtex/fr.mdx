@@ -1,0 +1,61 @@
+---
+title: "Un chapitre de thèse cité en APA 7"
+summary: "Un chapitre de thèse dont les citations [@key, p. 33] passent en APA 7 grâce à citeproc-js, avec une liste de références construite à partir d’un bloc BibTeX."
+plain: "Un chapitre de thèse de doctorat. L’auteur écrit un code court pour chaque source ; Postext imprime les citations et, à la fin, la liste des références dans le style APA."
+description: "Un chapitre de thèse dans Postext : citations Pandoc en APA 7 par citeproc-js, références BibTeX en retrait suspendu et renvois de section cliquables."
+question: "Comment citer mes sources en APA 7 et obtenir la liste des références à partir de mon fichier BibTeX ?"
+aliases: ["APA", "APA 7", "thèse", "mémoire", "thèse de doctorat", "BibTeX", "Zotero", "liste des références", "bibliographie", "auteur-date", "citeproc"]
+pageNotes: { "1": "Page 1 : un bandeau bleu pâle en haut de la page avec l’étiquette « CHAPTER », le titre « Reading on Paper and on Screens: The State of the Evidence » et un grand 2 clair à droite ; dessous, les premiers paragraphes avec des citations auteur-date comme « (Tinker, 1963) » et des liens bleus en gras vers « Section 2.1 », « 2.2 » et « 2.3 ».", "2": "Page 2 : les sections 2.2 et 2.3 avec des citations narratives comme « Delgado et al. (2018) », une citation avec localisation « (Ibáñez Roca, 2023, pp. 12–15) » et le début de la liste « References », non numérotée.", "3": "Page 3 : la suite de la liste « References » en APA 7, chaque entrée en retrait suspendu avec son DOI imprimé en entier." }
+---
+
+## Ce que vous allez composer
+
+Le deuxième chapitre d’une thèse de doctorat en sciences de l’éducation, la revue de la littérature : ce que vingt ans d’études disent de la lecture sur papier et sur écran. Le chapitre est composé sur une page A4 reliée à gauche, en Literata avec un interlignage de 16 pt, sous un bandeau pâle dans le bleu de l’université. L’auteur garde ses sources dans Zotero et colle l’export en BibTeX ; dans le texte, chaque source est une clé. Postext met chaque citation en forme en APA 7, avec l’auteur, l’année et la page quand elle est donnée, écrit « Delgado et al. (2018) » quand le nom fait partie de la phrase, et construit la liste des références dans l’ordre et sous la forme que demande le style. Quand le directeur de thèse demande Chicago, le style est la seule ligne qui change.
+
+## Préparation
+
+### 1 · Un moteur, un style
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Postext lit les citations et laisse leur formulation à un moteur de citation, enregistré une fois avant la première composition ; `postext-citeproc` enveloppe citeproc-js, le moteur qu’utilisent Zotero et Mendeley, avec seize styles CSL et leurs fichiers de langue. `[@mangen2013]` donne « (Mangen et al., 2013) », `@delgado2018` sans crochets place les auteurs dans la phrase, et `[@ibanez2023, pp. 12–15]` reporte l’étendue de pages dans les parenthèses. Avec un document en espagnol, les mêmes clés prennent leurs mots de liaison et leurs abréviations dans le fichier de langue espagnol, car le moteur suit la langue du document.
+
+### 2 · Les références viennent d’un bloc BibTeX
+
+Le dernier bloc du chapitre est `:::references{format=bibtex}`, avec l’export de Zotero collé à l’intérieur et les accents écrits sous la forme `{\'a}`. `:::bibliography`, placé au-dessus, met la liste sous le titre « References » ; sans lui, Postext ajoute la liste à la fin. Seuls les travaux cités apparaissent, triés comme le veut l’APA, et chaque citation du texte renvoie à son entrée.
+
+### 3 · Un titre sans numéro, des renvois en toutes lettres
+
+<Excerpt region="refs" />
+
+Le titre des références prend le style `references`, qui le garde dans la table des matières mais hors de la numérotation : la liste ne devient pas la section 2.4. `:ref{id="sec-speed"}` imprime « Section 2.2 » à partir de l’étiquette de `crossRefs` et renvoie au titre ; les numéros viennent de `startAt=2` sur le titre du chapitre, le même compteur que celui des titres.
+
+### 4 · L’ouverture se loge dans un bandeau
+
+<Excerpt region="opener" />
+
+Le bandeau est une boîte ancrée au bord de coupe, et le texte commence 10 mm sous lui. Le numéro est composé en Literata Light de 96 pt, à droite, où il se lit comme une forme et laisse au titre toute sa justification.
+
+<Excerpt region="palette" />
+
+## Variantes
+
+### Changez de style
+
+Le même chapitre en Chicago auteur-date supprime la virgule après le nom et place l’année après les auteurs.
+
+```diff
+-  style: 'apa', // 'chicago-author-date', 'ieee', 'vancouver'… change nothing else
++  style: 'chicago-author-date',
+```
+
+### Composez la liste plus petit que le texte
+
+Beaucoup d’universités autorisent la liste des références un corps en dessous, en interligne simple.
+
+```diff
+-    fontSize: em(1), hangingIndent: mm(12.7), entrySpacing: pt(4),
++    fontSize: em(0.9), lineHeight: pt(13), hangingIndent: mm(12.7), entrySpacing: pt(3),
+```
+
+## Erreurs fréquentes
+
+- L’APA écrit les titres d’articles et de livres avec une majuscule initiale seulement, et citeproc-js imprime les titres tels que les donnent les données. Zotero enregistre la plupart des titres avec une majuscule à chaque mot : corrigez-les dans Zotero ou dans le BibTeX avant qu’ils n’arrivent sur la page.

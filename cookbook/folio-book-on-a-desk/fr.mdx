@@ -1,0 +1,54 @@
+---
+title: "Un livre mis en page posé sur le bureau, en 3D"
+summary: "createFolioFromDocument, du paquet postext-folio, ouvre un chapitre mis en page comme un livre relié toile sur un bureau en noyer, habillé par config.folio."
+plain: "Le premier chapitre d’un court roman, montré comme un vrai livre ouvert sur un bureau. Vous tournez ses pages à la souris, et le papier, la couverture et le bureau se choisissent dans les réglages."
+description: "Chapitre de roman mis en page avec postext et ouvert en 3D avec postext-folio : papier, reliure, bureau et lumière réglés dans config.folio, en un pen minimal."
+question: "Comment montrer mon document mis en page comme un livre en 3D que le lecteur feuillette à la main ?"
+aliases: ["Folio", "postext-folio", "livre feuilletable", "tourner les pages", "livre 3D", "aperçu du livre", "feuilleter", "flipbook"]
+pageNotes: { "1": "L’ouverture du chapitre : un petit surtitre vert, le titre « The Last Crossing » et un court filet, puis la première page de texte justifié.", "2": "Un verso avec le nom de l’auteur et le folio dans le titre courant, et un intertitre vert en italique." }
+---
+
+## Ce que vous allez composer
+
+Le premier chapitre de *The Ferryman’s Ledger*, un court roman au format 129 × 198 mm, ouvert comme un livre sur un bureau en noyer. La couverture est une toile vert bouteille, les pages sont un papier bouffant crème pour romans, et le lecteur prend la page de droite par sa tranche et la tourne : le feuillet se courbe et projette son ombre sur la page du dessous. Le texte est composé une seule fois avec `buildDocument` ; un appel au paquet `postext-folio` transforme cette mise en page en livre. Tout ce dont le livre est fait (papier, reliure, bureau, lumière, angle de vue) fait partie de la configuration : le même document emporte son aspect dans l’onglet Folio du Sandbox.
+
+## Préparation
+
+### 1 · Dire de quoi le livre est fait
+
+<Excerpt region="folio" />
+
+`config.folio` est lu par la visionneuse 3D et par rien d’autre : la mise en page, le canvas, le PDF et la sortie HTML l’ignorent, si bien que changer le papier ne déplace jamais une ligne. `bookWove` est un papier bouffant pour romans, et 70 g/m² à son épaisseur spécifique donne une feuille d’environ 112 µm ; la visionneuse multiplie cette valeur par le nombre de pages pour l’épaisseur du bloc. La couleur de la toile renvoie à l’accent de la palette, le même vert que le surtitre et les folios.
+
+### 2 · Une ouverture sobre et des titres courants
+
+<Excerpt region="opener" />
+
+Le chapitre s’ouvre au tiers de la hauteur d’un recto, sous un surtitre tiré des attributs du titre. En 3D, une ouverture basse se lit comme dans un roman imprimé : le blanc en haut de la page est la première chose que voit le lecteur à l’ouverture du livre.
+
+<Excerpt region="running-heads" />
+
+### 3 · Ouvrir le document comme un livre
+
+Le code est [la réponse courte](#la-réponse-courte) plus haut. `createFolioFromDocument` prend un conteneur et le document mis en page : il peint chaque page avec `renderPageToCanvas` à la taille exacte d’un emplacement de page, seulement autour de la double page ouverte, et ajuste le livre au conteneur. Le conteneur a besoin de sa propre hauteur, sinon le livre n’a pas de place. `textureBaseUrl` pointe vers les bureaux photographiés de postext.dev ; sans lui, le noyer est dessiné avec des textures procédurales.
+
+## Variantes
+
+### Un livre de poche sur du chêne à la lumière du jour
+
+Changez trois réglages et le même chapitre devient un livre broché sur un bureau clair ; rien n’est remis en page.
+
+```diff
+-  binding: { type: 'hardcover', cover: 'case', coverMaterial: 'cloth',
+-    coverColor: col('accent') }, // the case wraps the pages; boards a little larger
+-  surface: { type: 'walnut' },
+-  lighting: { environment: 'studio', intensity: 1, shadows: true },
++  binding: { type: 'paperback', cover: 'case', coverMaterial: 'paper',
++    coverColor: col('accent') },
++  surface: { type: 'oak' },
++  lighting: { environment: 'daylight', intensity: 1, shadows: true },
+```
+
+### Chaque feuillet sur un autre papier
+
+<RecipeLink slug="paper-swatch-book">Un nuancier de papiers</RecipeLink> imprime chaque feuillet sur son propre papier avec `:::paper`, et <RecipeLink slug="folio-settings-bench">le banc de réglages</RecipeLink> change chaque réglage en direct avec `setAppearance`.

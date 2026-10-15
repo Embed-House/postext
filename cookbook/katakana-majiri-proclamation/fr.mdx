@@ -1,0 +1,68 @@
+---
+title: "Une proclamation Meiji en kanji et katakana"
+summary: "La Constitution de 1889 en vertical, en kanji et katakana : articles 第一條 tirés d’un compteur de liste japanese-informal, cadre filet, contreseings en pied."
+plain: "La Constitution japonaise de 1889, écrite en kanji et katakana, imprimée en lignes de haut en bas comme l’a imprimée le journal officiel, avec ses articles numérotés en kanji."
+description: "Un texte Meiji dans Postext : kanji et katakana composés en vertical sur une grille de 40 caractères, articles 第一條 tirés d’un compteur, double cadre et sceau."
+question: "Comment composer un texte Meiji en kanji et katakana et numéroter ses articles 第一條, 第二條 ?"
+aliases: ["katakana", "kanji katakana majiri", "漢字カタカナ交じり文", "Constitution Meiji", "大日本帝國憲法", "官報", "numéros d’article en kanji", "第一條", "texte juridique vertical", "formes anciennes des kanji"]
+pageNotes: { "1": "La page de titre : 大日本帝國憲法 en Mincho gras au milieu d’un filet épais et d’un filet fin, la date en vermillon à sa droite, 官報號外 à sa gauche, la ligne anglaise couchée au pied.", "2": "Les notes de l’éditeur, quatre points ouverts chacun par le caractère 一, puis le titre 上諭 et les premières lignes de l’édit, le tout en kanji et katakana.", "4": "御名　御璽 en vermillon, la date et dix contreseings composés au pied de leurs lignes.", "5": "Le chapitre un : 第一章　天皇 en retrait de deux caractères, puis les articles 第一條 à 第八條 en gras, le second alinéa de l’article 8 en retrait d’un caractère." }
+---
+
+## Ce que vous allez composer
+
+Une réimpression en huit pages de la Constitution de Meiji telle que l’a imprimée le Journal officiel (官報) le 11 février 1889 : l’édit impérial, les contreseings des ministres et les deux premiers chapitres, trente-deux articles. Le texte est en 漢字カタカナ交じり文 (kanji-katakana majiri-bun), la langue écrite du droit de Meiji : les kanji portent les mots, les katakana les terminaisons, et il n’y a ni signes de sonorisation, ni petits kana, ni aucune ponctuation. Les pages sont en A5, verticales et reliées à droite, avec une grille de 40 × 15 caractères dans un filet épais et un filet fin. Les articles sont numérotés par un compteur de liste en kanji, de 第一條 à 第三十二條, et le sceau et les contreseings se trouvent là où le Journal officiel les plaçait.
+
+## Préparation
+
+### 1 · Laisser un compteur de liste écrire 第十八條
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque article est un élément d’une liste ordonnée Markdown, et `orderedLists` met son numéro dans la forme du Journal officiel : `numberFormat: 'japanese-informal'` écrit 十八, et non 一十八, `prefix: '第'` et `separator: '條'` l’encadrent, et `gap: em(1)` laisse l’espace pleine chasse de l’original. `numberWidth: 'item'` fait commencer le texte de chaque article un intervalle après sa propre étiquette : 第九條 et 第十一條 sont donc suivis chacun d’une espace pleine chasse, comme dans le Journal officiel, et leurs textes commencent à un caractère d’écart. Avec `hangingIndent: false`, les lignes suivantes reviennent en tête de ligne au lieu de s’aligner sous le texte, comme dans le Journal officiel. Le chapitre deux commence sa liste à `18.`, si bien que le compteur se poursuit d’un chapitre à l’autre, et les chapitres eux-mêmes sont numérotés 第一章 et 第二章 par le modèle de titre `第{2:一}章`, avec le même style de compteur ([listes ordonnées](/fr/docs/configuration-text#listes-numérotées)).
+
+<PageShot page={5} crop="0.1,0.12,0.8,0.76" caption="Page 5 : 第一章　天皇 en retrait de deux caractères, les articles 第一條 à 第八條 en gras, le second alinéa de l’article 8 en retrait d’un caractère." />
+
+### 2 · Laisser les katakana tels que les écrivait le Journal officiel
+
+`locale: 'ja'` applique les règles japonaises, et aucune ne récrit le texte. 侵スヘカラス reste sans ses signes de sonorisation (il se lit *okasu bekarazu*), 行フ garde ses kana historiques et 奪ハルヽ son signe d’itération katakana. Sans petits kana ni ponctuation dans le texte, les fins de ligne tombent entre deux caractères quelconques ; les règles de kinsoku tiennent toujours ヽ et 々 hors du début d’une ligne. Les notes de l’éditeur, en japonais moderne avec hiragana, se trouvent à côté de l’édit en page 2 : on peut ainsi comparer les deux façons d’écrire le japonais sur une même page.
+
+### 3 · Dessiner le cadre sur chaque page
+
+<Excerpt region="frame" />
+
+L’emplacement d’en-tête dessine en millimètres de page ordinaires, pas dans le flux vertical : le cadre est donc fait de deux boîtes placées par les mêmes nombres qui placent le bloc de texte, `HEAD` depuis le haut, `SIDE` depuis chaque bord. Les marges sont calculées à partir de la grille, et non laissées à celle-ci, si bien que le bloc de texte se trouve exactement 6 mm à l’intérieur du filet fin. Le folio, en kanji grâce à `pageNumbering.format: 'japanese-informal'`, se place sous le cadre.
+
+### 4 · Composer la page de titre le long de l’axe
+
+<Excerpt region="cover" />
+
+Dans un flux vertical, `x` descend le long de la feuille et `y` la traverse vers la gauche : la colonne du titre se place donc par sa distance au bord droit du bloc de texte. La date, dans la couleur d’accent, et le nom du Journal officiel se tiennent de part et d’autre du titre, à 18 mm de l’axe.
+
+### 5 · Charger chaque caractère avec le texte qu’il compose
+
+<Excerpt region="voices" />
+
+Shippori Mincho B1, un Mincho qui a les formes anciennes 國, 條 et 權, charge les fichiers du texte et des titres ; Noto Sans JP ne charge que les notes de l’éditeur, les folios et la ligne anglaise. Un caractère qui reçoit moins que ce qu’il compose fait échouer la capture (C12).
+
+## Variantes
+
+### Aligner les lignes suivantes sous le texte
+
+Les recueils de lois modernes placent la deuxième ligne d’un article sous son premier caractère de texte, et non sous 第.
+
+```diff
+-  indent: em(0), hangingIndent: false, fontFamily: MINCHO, fontWeight: 800,
++  indent: em(0), hangingIndent: true, fontFamily: MINCHO, fontWeight: 800,
+```
+
+### Numéroter les articles en daiji
+
+Certains textes juridiques et financiers écrivent 壱, 弐, 参 : le jeton 壱 ou le style `japanese-formal` donne 第壱條, 第弐條.
+
+```diff
+-  numberFormat: 'japanese-informal', prefix: '第', separator: '條', gap: em(1),
++  numberFormat: 'japanese-formal', prefix: '第', separator: '條', gap: em(1),
+```
+
+## Erreurs fréquentes
+
+- Le Journal officiel compose les katakana des terminaisons plus petits que les kanji, et espace régulièrement les titres des ministres sur une même largeur (字取り). Postext compose tous les caractères au corps du texte, et son espacement régulier, `jidori`, ne s’applique qu’aux titres : les contreseings ne sont donc ici alignés qu’au pied de la ligne.
+- Le japonais et le chinois divergent sur ce compteur : dans un document `ja`, le jeton `一` et `{2:一}` signifient `japanese-informal` (百一, 十八) ; dans un document chinois, ils signifient le style chinois (一百零一, 十八). Le livre de lecture chinois <RecipeLink slug="chinese-dates-upright">Dates et sigles debout en texte vertical</RecipeLink> tape son 第一條 à la main.

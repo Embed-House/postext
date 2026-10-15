@@ -1,0 +1,67 @@
+---
+title: "Un bulletin hebdomadaire : les premiers rapports sur le sida"
+summary: "Deux rapports du CDC de 1981 recomposés en US Letter : bandeau de titre, observations à intitulés, styles Reported by et Editorial Note, références numérotées."
+plain: "Un bulletin de santé publique de 1981, recomposé au format lettre. Chaque type de paragraphe (les cas, la liste des médecins déclarants, le commentaire de la rédaction) a son propre style, et les références sont numérotées pour vous."
+description: "Un bulletin épidémiologique hebdomadaire avec Postext : bandeau, observations, styles Reported by et Editorial Note, appels AMA entre parenthèses, tableaux TSV."
+question: "Comment composer un bulletin hebdomadaire, avec observations, Editorial Note et références numérotées ?"
+aliases: ["MMWR", "bulletin épidémiologique", "série de cas", "observation clinique", "rapport de surveillance", "rapport de santé publique", "Reported by", "Editorial Note", "maladies à déclaration obligatoire", "style AMA", "sida", "AIDS", "1981"]
+pageNotes: { "1": "Page 1 : un bandeau bleu profond avec le logotype « Surveillance Notes » en blanc, une ligne de numéro et un sommaire de trois entrées en dessous, un double filet, puis le premier rapport, « Pneumocystis Pneumonia — Los Angeles », daté « June 5, 1981 ». Deux colonnes de texte ouvrent les observations avec les intitulés bleus en gras « Patient 1 », « Patient 2 », « Patient 3 » ; une note sur les échantillons appariés se trouve au pied de la colonne de gauche. Au pied de la page, sur toute la largeur, la figure 1 : une chronologie des cinq patients de septembre 1980 à mai 1981, avec des barres grises pour la maladie antérieure à la pneumonie, des points bleus pour le mois du diagnostic, des losanges vides pour les résultats CMV datés et des croix pour les deux décès.", "2": "Page 2 : le tableau 1, les cinq observations en un coup d’œil (âge, mois du diagnostic, signes de CMV, autres résultats, évolution), sur les deux colonnes ; en dessous, les dernières observations, le paragraphe de synthèse, la ligne « Reported by » en petit italique gris et le début de l’« Editorial Note », son intitulé en bleu gras.", "3": "Page 3 : la fin de l’« Editorial Note » à gauche et cinq références numérotées à droite, les deux colonnes finissant à la même hauteur ; sous un double filet sur toute la largeur, le second rapport, « Kaposi's Sarcoma and Pneumocystis Pneumonia Among Homosexual Men — New York City and California », commence dans la moitié inférieure et se poursuit sur les deux colonnes ; son tableau 1, les symptômes initiaux de 20 patients, se trouve au pied de la colonne de droite.", "4": "Page 4 : le rapport de juillet se poursuit, avec une longue liste « Reported by » en petit italique et son « Editorial Note ».", "5": "Page 5 : les dernières lignes du rapport de juillet et ses références, numérotées de 1 à 19, équilibrées sur deux colonnes.", "6": "Page 6 : une dernière page sur une colonne, « Notifiable Diseases — United States », avec le tableau récapitulatif hebdomadaire de 29 maladies sous un en-tête de deux rangs, puis le colophon." }
+---
+
+## Ce que vous allez composer
+
+Six pages d’un bulletin épidémiologique hebdomadaire au format US Letter, qui reproduisent les deux rapports dans lesquels les Centers for Disease Control ont décrit pour la première fois ce qu’on a appelé ensuite le sida : cinq cas de pneumonie à *Pneumocystis* à Los Angeles (5 juin 1981) et les cas de sarcome de Kaposi qui ont suivi (3 juillet 1981). Le bandeau de titre est une création originale dans l’esprit d’un bulletin officiel de l’époque, un bandeau bleu avec un logotype étroit au-dessus de deux colonnes de Plex Serif. Chaque voix d’un rapport a son propre style : les observations sous des intitulés numérotés en gras, la ligne *Reported by* en petit italique, l’*Editorial Note*, les références entre parenthèses et une liste numérotée. Le texte, les références et les tableaux sont tels que le CDC les a imprimés ; la chronologie et le tableau des cas de la page 2 sont l’œuvre des éditeurs.
+
+## Préparation
+
+### 1 · Un style de paragraphe par voix
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Un rapport de bulletin s’écrit sur plusieurs registres : les observations, la liste des personnes qui les ont déclarées, le commentaire de la rédaction. Envelopper chaque passage dans `:::paragraphs{style="…"}` lui donne un style sans toucher aux mots : la ligne *Reported by* descend à un italique étroit de 7,8 pt hors de la grille de ligne de base, tandis que les observations gardent le gris typographique du texte courant, avec leurs intitulés `**Patient 1:**` dans la couleur d’accent. Les citations s’écrivent `[@walzer1974]` ; `american-medical-association` avec `marker: 'parentheses'` les imprime sous la forme (1) et liste les ouvrages dans l’ordre des citations, comme le faisait l’hebdomadaire ; `numbering: 'chapter'` compte les citations de chaque rapport à partir de 1, et `scope: 'chapter'` place sa liste en dessous avec les mêmes numéros.
+
+### 2 · Un bandeau de titre qui ouvre le premier rapport
+
+<Excerpt region="masthead" />
+
+Le bandeau de titre est la maquette du style de titre du premier rapport : il ne s’imprime qu’une fois, en page 1, et les titres courants sautent cette page (`pages: 'body'`). Le surtitre et la ligne de date viennent d’attributs du H1 de chaque rapport, et le titre est `{titleText}` : un élément de texte avec `inlineMarks: true` garde l’italique du genre dans le titre. Le rapport de juillet s’ouvre avec les trois mêmes éléments sous un double filet. Son style de titre s’étend sur toute la largeur de la page avec `spanBreak: false` : le titre s’ouvre là où finit le rapport de juin, les colonnes au-dessus finissent à la même hauteur et le texte se poursuit sur les deux colonnes en dessous, comme l’hebdomadaire enchaînait un rapport après l’autre.
+
+### 3 · Trois tableaux à partir de texte séparé par des tabulations
+
+<Excerpt region="resources" />
+
+Chaque tableau est un emplacement de contenu en texte séparé par des tabulations, le format que copie un tableur, et `parseTSV` le transforme en modèle. Une colonne d’effectifs s’aligne à droite avec son intitulé centré ; quatre appels à `mergeCells` construisent l’en-tête de deux rangs du récapitulatif des maladies à déclaration obligatoire. Le type de tableau remet son compteur à zéro à chaque H1 (`resetOn: 'h1'`) : chaque rapport a ainsi son propre tableau 1, comme en 1981.
+
+### 4 · Un seul bleu, lié partout
+
+<Excerpt region="palette" />
+
+Le bandeau, les intitulés, les folios, les en-têtes de tableau et le graphique désignent tous la même entrée de palette : un lecteur qui remplace `accent` par la couleur de son propre bulletin reteinte les six pages d’un coup.
+
+## Variantes
+
+### Numéros de référence en exposant
+
+La plupart des revues médicales mettent les numéros en exposant au lieu de les placer entre parenthèses.
+
+```diff
+-const citations = { style: 'american-medical-association', marker: 'parentheses',
++const citations = { style: 'american-medical-association', marker: 'superscript',
+```
+
+### Commencer chaque rapport sur une nouvelle page
+
+Une collection de tirés à part qui classe ses rapports séparément ouvre chacun sur une nouvelle page.
+
+```diff
+-    { id: 'report', span: 'page', spanBreak: false, advancedDesign: opener },
++    { id: 'report', span: 'page', advancedDesign: opener },
+```
+
+### Utiliser la liste Vancouver
+
+<RecipeLink slug="medical-article-vancouver">Un article médical au style Vancouver</RecipeLink> modifie le style `elsevier-vancouver` fourni pour obtenir la forme de référence NLM.
+
+## Erreurs fréquentes
+
+- Sans `numbering: 'chapter'`, les numéros de référence se poursuivent dans tout le document et `scope: 'chapter'` ne fait que séparer les listes : le rapport de juillet citerait les ouvrages 4 et 6 à 23, là où l’hebdomadaire imprimait 1 à 19.
+- La note de 1981 *Paired specimens not run in parallel* est appelée par un astérisque : `footnotes.numberFormat: 'symbols'` compose *, †, ‡ et les fait repartir à chaque page. De ces signes, seul l’astérisque figure dans le fichier latin d’un caractère Fontsource (la croix est dans latin-ext, la double croix dans aucun des deux) : une page avec deux ou trois notes demande un caractère qui les contient, ou `symbols: ['*', '§', '¶']`.
+- Le texte de 1981 reste tel qu’il a été imprimé, terminologie de l’époque comprise, et le colophon le signale. Une réimpression ne corrige rien du texte qu’elle reproduit ; ce que les éditeurs ajoutent (la chronologie, le tableau des cas, la ligne en italique bleu sous le premier paragraphe) est composé dans son propre style et signalé comme tel.

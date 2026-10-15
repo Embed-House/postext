@@ -10,7 +10,7 @@ import {
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
-const LANG = 'en'; // @lang: the album's language: 'es' | 'en' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt'
+const LANG = 'en'; // @lang: 'es' | 'en' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr'
 const RECIPE = 'comic-double-spread';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -31,8 +31,8 @@ const colorPalette = [
 // #endregion
 
 const LOCALE = t({ es: 'es', en: 'en-gb', ca: 'ca', zh: 'zh-Hans', ar: 'ar', ja: 'ja',
-  pt: 'pt-BR' });
-const LATIN = ['es', 'en', 'ca', 'pt'].includes(LANG);
+  pt: 'pt-BR', fr: 'fr' });
+const LATIN = ['es', 'en', 'ca', 'pt', 'fr'].includes(LANG);
 const LETTER = LATIN ? 'Patrick Hand' : defaultComicFont(LOCALE); // mixed-case hand lettering
 const DISPLAY = defaultComicSfxFont(LOCALE); // Bangers, Dela Gothic One, ZCOOL KuaiLe, Lalezar
 
@@ -66,7 +66,7 @@ comics.balloonStyles = [
 comics.cast = [
   { id: 'lola', name: 'Lola' },
   { id: 'paco', name: t({ es: 'el abuelo Paco', en: 'Grandpa Paco', ca: "l'avi Paco",
-    zh: '帕科爷爷', ar: 'الجد باكو', ja: 'パコおじいちゃん', pt: 'o vovô Paco' }) },
+    zh: '帕科爷爷', ar: 'الجد باكو', ja: 'パコおじいちゃん', pt: 'o vovô Paco', fr: 'papi Paco' }) },
 ];
 // #endregion
 
@@ -78,6 +78,8 @@ const COLOPHON = t({
   ar: 'الخطوط: Playpen Sans Arabic وLalezar (SIL OFL) · الرسوم: مولّدة بنماذج الانتشار',
   ja: '写植：Zen Antique、Dela Gothic One（SIL OFL）・ 作画：拡散モデルで生成',
   pt: 'Letreirado em Patrick Hand e Bangers (SIL OFL) · Arte: gerada com modelos de difusão',
+  fr: 'Lettrage en Patrick Hand et Bangers (SIL OFL) · Dessin : généré par des modèles de '
+    + 'diffusion',
 });
 const foot = (id, content, y, extra) => ({ kind: 'text', id, content, fontFamily: LETTER,
   align: 'center', pages: 'comic',
@@ -133,7 +135,9 @@ const ART = {
         + 'جدّها يبحث عنها بين الناس.',
       ja: '人でいっぱいの市場のパノラマ。左端に小さなローラが迷子になって立ち、右端では祖父が人ごみの中を探している。',
       pt: 'Panorama do mercado lotado: na ponta esquerda, a pequena Lola está perdida; na ponta '
-        + 'direita, o avô a procura no meio da multidão.' }),
+        + 'direita, o avô a procura no meio da multidão.',
+      fr: 'Panorama de la halle du marché bondée : tout à gauche, la petite Lola est perdue ; '
+        + 'tout à droite, son grand-père la cherche dans la foule.' }),
     anchors: [
       who('lola', .065, .58, [.063, .55], [.045, .51, .04, .11]),
       who('paco', .925, .38, [.925, .34], [.9, .3, .05, .12]),
@@ -149,7 +153,9 @@ const ART = {
       ar: 'لولا والدموع في عينيها واقفة بين سيقان الكبار وأكياس التسوّق.',
       ja: '涙ぐんだローラが、大人の足と買い物袋のあいだに立っている。',
       pt: 'Lola, com lágrimas nos olhos, está de pé entre pernas de adultos e sacolas '
-        + 'de compras.' }),
+        + 'de compras.',
+      fr: 'Lola, les larmes aux yeux, se tient entre des jambes d’adultes et des sacs de '
+        + 'courses.' }),
     anchors: [
       who('lola', .505, .24, [.48, .17], [.4, .1, .18, .19]),
     ],
@@ -163,7 +169,9 @@ const ART = {
       ar: 'باكو واقف على صندوق فاكهة ويصفّر بأصابعه، والمتسوّقون يلتفتون لينظروا.',
       ja: 'パコが果物の木箱に乗って指笛を吹き、買い物客がふり返る。',
       pt: 'Paco, em cima de um caixote de frutas, assobia com os dedos; as pessoas se viram '
-        + 'para olhar.' }),
+        + 'para olhar.',
+      fr: 'Paco, debout sur une cagette de fruits, siffle avec ses doigts ; les clients se '
+        + 'retournent.' }),
     anchors: [
       who('paco', .5, .2, [.47, .14], [.38, .08, .17, .16]),
       who('sfx', .62, .17),
@@ -177,7 +185,9 @@ const ART = {
       zh: '萝拉扑进爷爷怀里；他的贝雷帽飞了出去，摊主们都笑了。',
       ar: 'لولا تقفز إلى ذراعي جدّها، وقبعته تطير، والباعة يبتسمون.',
       ja: 'ローラが祖父の腕に飛びこむ。ベレー帽が飛び、店の人たちがほほえむ。',
-      pt: 'Lola pula nos braços do avô; a boina sai voando e os feirantes sorriem.' }),
+      pt: 'Lola pula nos braços do avô; a boina sai voando e os feirantes sorriem.',
+      fr: 'Lola saute dans les bras de son grand-père ; son béret s’envole et les marchands '
+        + 'sourient.' }),
     anchors: [
       who('lola', .51, .27, [.47, .2], [.42, .14, .13, .19]),
       who('paco', .595, .31, [.62, .22], [.55, .14, .15, .22]),
@@ -204,7 +214,8 @@ const doc = await withLoadedFonts(
 showBook(doc, { title: t({ es: 'Una página de cómic a doble página',
   en: 'One comic page across a double spread', ca: 'Una pàgina de còmic a doble pàgina',
   zh: '横跨两页的漫画', ar: 'صفحة قصص مصوّرة على صفحتين متقابلتين', ja: '見開きの漫画',
-  pt: 'Uma página de quadrinhos em página dupla' }) });
+  pt: 'Uma página de quadrinhos em página dupla',
+  fr: 'Une planche de BD sur une double page' }) });
 offerPdf(() => renderToPdf(doc, { fontProvider: comicPdfProvider, resourceBytes: imageBytes }),
   `${RECIPE}.pdf`);
 

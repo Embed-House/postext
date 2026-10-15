@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "yonkoma",
-  "sourceHash": "58138e65fea493bc74632b2f1a4a77607d7ac98bff729f6748fa61e59261117f",
+  "sourceHash": "a4ec60695ddf69b5c2d0c32487baf230f21ee261aed8755cd0305aebb8f54653",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.33.4",
+    "postextPdf": "1.33.4",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:52:28.450Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:06:54.625Z"
-  },
+  "chrome": "155.0.8059.79",
+  "capturedAt": "2026-10-15T08:05:41.752Z",
   "variants": {
     "en": {
-      "hash8": "27864b55",
+      "hash8": "ad981289",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 762,
-        "fontsMs": 547,
-        "buildMs": 359,
-        "totalMs": 2777,
+        "importMs": 2814,
+        "fontsMs": 3314,
+        "buildMs": 287,
+        "totalMs": 8945,
         "builds": 2
       },
       "specimen": {
@@ -42,7 +36,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -94,7 +88,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263377,
+        "bytes": 1263401,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -239,6 +233,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -252,13 +251,13 @@
       }
     },
     "es": {
-      "hash8": "f9871a8a",
+      "hash8": "21ef7740",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 414,
-        "fontsMs": 583,
-        "buildMs": 355,
-        "totalMs": 2241,
+        "importMs": 4162,
+        "fontsMs": 8976,
+        "buildMs": 319,
+        "totalMs": 15911,
         "builds": 2
       },
       "specimen": {
@@ -277,7 +276,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -329,7 +328,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263529,
+        "bytes": 1263525,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -474,6 +473,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -487,13 +491,13 @@
       }
     },
     "ca": {
-      "hash8": "aa580d84",
+      "hash8": "ad6dc655",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 442,
-        "fontsMs": 484,
-        "buildMs": 404,
-        "totalMs": 2655,
+        "importMs": 4983,
+        "fontsMs": 6719,
+        "buildMs": 346,
+        "totalMs": 14607,
         "builds": 2
       },
       "specimen": {
@@ -512,7 +516,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -564,7 +568,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263541,
+        "bytes": 1263526,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -709,6 +713,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -722,13 +731,13 @@
       }
     },
     "zh": {
-      "hash8": "d6f8b1c3",
+      "hash8": "2cf527c5",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 648,
-        "fontsMs": 475,
-        "buildMs": 324,
-        "totalMs": 3294,
+        "importMs": 3915,
+        "fontsMs": 3958,
+        "buildMs": 322,
+        "totalMs": 16377,
         "builds": 2
       },
       "specimen": {
@@ -747,7 +756,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -799,7 +808,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263654,
+        "bytes": 1263648,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -944,6 +953,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -957,13 +971,13 @@
       }
     },
     "ar": {
-      "hash8": "5b29df63",
+      "hash8": "dfaf383d",
       "vdtHash": "d61540f9adce65e201a2f033d6b41fbdbc3c42aa",
       "timings": {
-        "importMs": 694,
-        "fontsMs": 652,
-        "buildMs": 328,
-        "totalMs": 2823,
+        "importMs": 3735,
+        "fontsMs": 3807,
+        "buildMs": 427,
+        "totalMs": 13733,
         "builds": 2
       },
       "specimen": {
@@ -982,7 +996,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -1034,7 +1048,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263683,
+        "bytes": 1263681,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1179,6 +1193,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1192,13 +1211,13 @@
       }
     },
     "ja": {
-      "hash8": "3c53c3d0",
+      "hash8": "17ab0d5e",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 3866,
-        "fontsMs": 2509,
-        "buildMs": 542,
-        "totalMs": 10988,
+        "importMs": 3738,
+        "fontsMs": 5032,
+        "buildMs": 351,
+        "totalMs": 12101,
         "builds": 2
       },
       "specimen": {
@@ -1217,7 +1236,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -1269,7 +1288,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263624,
+        "bytes": 1263623,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1414,6 +1433,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1432,13 +1456,13 @@
       }
     },
     "pt": {
-      "hash8": "cc051033",
+      "hash8": "e40fd051",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 505,
-        "fontsMs": 592,
-        "buildMs": 363,
-        "totalMs": 2356,
+        "importMs": 3517,
+        "fontsMs": 4046,
+        "buildMs": 412,
+        "totalMs": 11685,
         "builds": 2
       },
       "specimen": {
@@ -1457,7 +1481,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 134
+        "ownLines": 137
       },
       "pages": [
         {
@@ -1509,7 +1533,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263871,
+        "bytes": 1263886,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1653,6 +1677,251 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          }
+        ]
+      }
+    },
+    "fr": {
+      "hash8": "a14de6ec",
+      "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
+      "timings": {
+        "importMs": 2488,
+        "fontsMs": 4220,
+        "buildMs": 299,
+        "totalMs": 10244,
+        "builds": 2
+      },
+      "specimen": {
+        "trimMm": [
+          148,
+          210
+        ],
+        "dpi": 150,
+        "layoutType": "double",
+        "gutterMm": 7.5,
+        "mirror": true,
+        "body": {
+          "family": "Zen Antique",
+          "sizePt": 9,
+          "leadingPt": 15
+        },
+        "families": [],
+        "pages": 2,
+        "ownLines": 137
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "comic",
+          "w": 1000,
+          "h": 1419,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 160602,
+          "alt": "Page 1."
+        },
+        {
+          "n": 2,
+          "label": "1",
+          "role": "comic",
+          "w": 1000,
+          "h": 1419,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 162190,
+          "alt": "Page 1."
+        }
+      ],
+      "spreads": [
+        [
+          0,
+          1
+        ]
+      ],
+      "binding": "right",
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "yonkoma.pdf",
+        "bytes": 1323635,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "yonkoma.postext",
+        "bytes": 1263556,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "b6678a975d971a11",
+            "lines": "b6678a975d971a11"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "loadVerticalAlternates",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceColor",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.artDirection",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].align",
+          "comics.balloonStyles[].bold",
+          "comics.balloonStyles[].burstPoints",
+          "comics.balloonStyles[].butt",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontScale",
+          "comics.balloonStyles[].haloColor",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].position",
+          "comics.balloonStyles[].roundness",
+          "comics.balloonStyles[].shape",
+          "comics.balloonStyles[].stroke",
+          "comics.balloonStyles[].strokeWidth",
+          "comics.balloonStyles[].tail",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.maxColumnChars",
+          "comics.lettering.writingMode",
+          "comics.mirrorArt",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.binding",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headings",
+          "locale",
+          "page"
+        ],
+        "configLeaves": 79,
+        "designElements": 0,
+        "directives": [
+          ":::page"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 8,
+          "table": 0
+        },
+        "fonts": [],
+        "features": [
+          "balloon-styles",
+          "cjk-line-breaking",
+          "comic-lettering",
+          "comic-pages",
+          "comic-panel-art",
+          "comic-panel-split",
+          "comic-panel-styles",
+          "comic-reading-direction",
+          "page-background",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "right-binding",
+          "sound-effects"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

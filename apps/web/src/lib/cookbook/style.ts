@@ -38,6 +38,9 @@ const arRule = (source: string, label = source): Rule => rule(`(?<!\\p{L})(?:${s
  *  "ênfase" at the accented letter. */
 const ptRule = (source: string, label = source): Rule => rule(`(?<!\\p{L})(?:${source})(?!\\p{L})`, label);
 
+/** A French phrase as a whole word or words, for the same reason. */
+const frRule = ptRule;
+
 const HARD: Record<Locale, Rule[]> = {
   en: [
     rule("\\bdelv(e|es|ed|ing)\\b", "delve"),
@@ -118,6 +121,21 @@ const HARD: Record<Locale, Rule[]> = {
     ptRule("uma infinidade de", "uma infinidade de"),
     ptRule("aproveit(e|ar) ao máximo", "aproveitar ao máximo"),
   ],
+  fr: [
+    frRule("plong(eons|ez|er|e) (dans|au cœur)", "plongeons dans"),
+    frRule("dans le monde (numérique |moderne )?(d['’]aujourd['’]hui|actuel)", "dans le monde d'aujourd'hui"),
+    frRule("en (constante|perpétuelle) évolution|à l['’]ère du numérique", "en constante évolution"),
+    frRule("sans effort|de (manière|façon) (parfaitement )?(fluide|transparente)", "sans effort / de manière fluide"),
+    frRule("(libérer|libère[zr]?|débloque[zr]?) (tout )?(le|son|votre) potentiel", "libérer le potentiel"),
+    frRule("(un |véritable )?témoignage de", "un témoignage de"),
+    frRule("jou(e|ent|er) un rôle (crucial|clé|essentiel|fondamental|central)", "joue un rôle crucial"),
+    frRule("il (convient|est important|est essentiel) de (noter|souligner|mentionner)", "il convient de noter"),
+    frRule("en (résumé|conclusion|somme)|pour conclure", "en résumé / en conclusion"),
+    frRule("un (véritable|vrai) joyau", "un véritable joyau"),
+    frRule("(au|à un) niveau supérieur", "passer au niveau supérieur"),
+    frRule("une (large |vaste )?(palette|gamme|panoplie) de (possibilités|options|outils|styles)", "une palette de possibilités"),
+    frRule("tirer (le meilleur )?parti au maximum|tirer le meilleur parti", "tirer le meilleur parti"),
+  ],
   // HARD_ZH, below, checks Chinese prose in every locale.
   zh: [],
   ar: [
@@ -193,6 +211,18 @@ const SOFT: Record<Locale, Rule[]> = {
     ptRule("descubra (como|tudo)", "descubra como"),
     ptRule("não é (só|apenas|simplesmente) um", "não é apenas um"),
     ptRule("potencializ(e|ar) (seu|sua|seus|suas)", "potencializar"),
+  ],
+  fr: [
+    frRule("fascinant(e|s|es)?|captivant(e|s|es)?|époustouflant(e|s|es)?|vibrant(e|s|es)?|méticuleu(x|se|ses|sement)", "fascinant/vibrant"),
+    frRule("crucia(l|le|ux|les)|robuste(s)?|de pointe|à la pointe", "crucial/robuste/de pointe"),
+    frRule("sans (l'ombre d'un|aucun) doute", "sans aucun doute"),
+    frRule("non seulement[^.!?]{1,80}mais (aussi|également)", "non seulement … mais aussi"),
+    rule("(Le|La) (résultat|clé|astuce|secret|réponse)[\\s\\u00a0\\u202f]?\\?", "Le résultat ? (révélation)"),
+    rule("(^|[.!?]\\s+)Imaginez\\b", "Imaginez…"),
+    frRule("au cœur d[eu]|l['’]art d[eu]|la magie d[eu]", "au cœur de / l'art de"),
+    frRule("un voyage", "un voyage"),
+    frRule("découvrez (comment|tout)", "découvrez comment"),
+    frRule("ce n['’]est pas (seulement|simplement|qu['’])un", "ce n'est pas seulement un"),
   ],
   // SOFT_ZH, below, checks Chinese prose in every locale.
   zh: [],
