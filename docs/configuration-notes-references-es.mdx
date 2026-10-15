@@ -796,9 +796,15 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td><code>{'{ label?, alsoLabel?, italic? }'}</code></td>
+      <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
       <td>según el idioma, en cursiva (redonda en escritura árabe)</td>
       <td>Las palabras que preceden a una remisión. Sin fijar, siguen el idioma del documento: <em>Véase</em> / <em>Véase también</em>, <em>See</em> / <em>See also</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 en chino tradicional)… Un índice en chino pone la remisión tras un punto y sin espacio: <code>贾琏 12。见贾政</code>.</td>
+    </tr>
+    <tr>
+      <td><code>see.separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'. '</code> según el idioma</td>
+      <td>Lo que se imprime antes de una remisión. Un punto en español, inglés y árabe, como lo pone <em>The Chicago Manual of Style</em> (<code>pedregal. Véase canchal</code>); una coma en francés, italiano y alemán (<code>pierrier, voir éboulis</code>, <code>Geröllhalde, siehe Schutthalde</code>); un espacio en portugués, como pide la norma ABNT NBR 6034 (<code>Aviação ver Aeronáutica</code>), y en catalán, como hace el <em>Manual d'estil</em> del IEC; <code>'。'</code> en chino y un espacio ideográfico en japonés. Decide el <code>locale</code> del índice y, si no lo tiene, el del documento. La etiqueta predeterminada toma la caja que pide el separador: mayúscula tras un punto, <code>!</code> o <code>?</code>, minúscula tras cualquier otra cosa (<code>pedregal, véase canchal</code> con <code>', '</code>). Una etiqueta propia se imprime tal como se escribe.</td>
     </tr>
     <tr>
       <td><code>locale</code></td>

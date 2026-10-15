@@ -796,9 +796,15 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td><code>{'{ label?, alsoLabel?, italic? }'}</code></td>
+      <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
       <td>conforme o idioma, itálico (redondo em escrita árabe)</td>
       <td>As palavras antes de uma referência cruzada. Sem valor, seguem o idioma do documento: <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 em chinês tradicional)… Um índice em chinês compõe a referência depois de um ponto final, sem espaço: <code>贾琏 12。见贾政</code>.</td>
+    </tr>
+    <tr>
+      <td><code>see.separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'. '</code> conforme o idioma</td>
+      <td>O que se imprime antes de uma remissiva. Um espaço em português, como pede a norma ABNT NBR 6034 (<code>Aviação ver Aeronáutica</code>), e em catalão, como faz o <em>Manual d'estil</em> do IEC; um ponto em inglês, espanhol e árabe, como o põe <em>The Chicago Manual of Style</em> (<code>Firearms. See weapons</code>); uma vírgula em francês, italiano e alemão (<code>pierrier, voir éboulis</code>); <code>'。'</code> em chinês e um espaço ideográfico em japonês. Decide o <code>locale</code> do índice; sem ele, o do documento. O texto padrão segue a caixa que o separador pede: maiúscula depois de um ponto, <code>!</code> ou <code>?</code>, minúscula depois de qualquer outro sinal. Um texto próprio é impresso como foi escrito.</td>
     </tr>
     <tr>
       <td><code>locale</code></td>

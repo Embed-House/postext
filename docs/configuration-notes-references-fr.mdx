@@ -796,9 +796,15 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td><code>{'{ label?, alsoLabel?, italic? }'}</code></td>
+      <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
       <td>selon la langue, italique (romain en écriture arabe)</td>
       <td>Les mots qui précèdent un renvoi. Non définis, ils suivent la langue du document : <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 en chinois traditionnel)… Un index chinois place le renvoi après un point, sans espace : <code>贾琏 12。见贾政</code>.</td>
+    </tr>
+    <tr>
+      <td><code>see.separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'. '</code> selon la langue</td>
+      <td>Ce qui est imprimé avant un renvoi. Une virgule en français, en italien et en allemand (<code>pierrier, voir éboulis</code>, <code>Geröllhalde, siehe Schutthalde</code>) ; un point en anglais, en espagnol et en arabe, comme le fait <em>The Chicago Manual of Style</em> (<code>Firearms. See weapons</code>) ; une espace en portugais, comme le demande la norme ABNT NBR 6034 (<code>Aviação ver Aeronáutica</code>), et en catalan, comme le fait le <em>Manual d'estil</em> de l’IEC ; <code>'。'</code> en chinois et une espace idéographique en japonais. C’est la <code>locale</code> de l’index qui décide, sinon celle du document. Le libellé par défaut prend la casse que demande le séparateur : une majuscule après un point, <code>!</code> ou <code>?</code>, une minuscule après tout autre signe (<code>pierrier. Voir éboulis</code> avec <code>'. '</code>). Un libellé personnel s’imprime tel quel.</td>
     </tr>
     <tr>
       <td><code>locale</code></td>

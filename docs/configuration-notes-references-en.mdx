@@ -796,9 +796,15 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td><code>{'{ label?, alsoLabel?, italic? }'}</code></td>
+      <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
       <td>by language, italic (upright in Arabic script)</td>
       <td>The words before a cross-reference. Unset, they follow the document language: <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 in Traditional Chinese)… A Chinese index sets the reference after a full stop, with no space: <code>贾琏 12。见贾政</code>.</td>
+    </tr>
+    <tr>
+      <td><code>see.separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'. '</code> by language</td>
+      <td>What is printed before a cross-reference. A full stop in English, Spanish and Arabic, as <em>The Chicago Manual of Style</em> sets it (<code>Firearms. See weapons</code>); a comma in French, Italian and German (<code>pierrier, voir éboulis</code>, <code>Geröllhalde, siehe Schutthalde</code>); a space in Portuguese, as ABNT NBR 6034 asks (<code>Aviação ver Aeronáutica</code>), and in Catalan, as the IEC's <em>Manual d'estil</em> does; <code>'。'</code> in Chinese and an ideographic space in Japanese. The index's own <code>locale</code> decides, else the document's. A built-in label takes the case the separator asks for: a capital after a full stop, <code>!</code> or <code>?</code>, a small letter after anything else (<code>scree, see talus</code> with <code>', '</code> in English). A label of your own prints as written.</td>
     </tr>
     <tr>
       <td><code>locale</code></td>

@@ -3050,6 +3050,7 @@ export interface SandboxLabels {
   indexSeeAlsoLabel: string;
   indexSeeAlsoLabelPlaceholder: string;
   indexSeeItalic: string;
+  indexSeeSeparator: string;
   indexLocale: string;
   indexLocaleTooltip: string;
   indexIgnoreArticle: string;
@@ -3347,6 +3348,7 @@ export interface SandboxLabels {
   chipStyleBackgroundTooltip: string;
   indexSeeAlsoLabelTooltip: string;
   indexSeeItalicTooltip: string;
+  indexSeeSeparatorTooltip: string;
   indexSymbolsLabelTooltip: string;
   indexNumbersLabelTooltip: string;
   headerFooterElementWidthTooltip: string;

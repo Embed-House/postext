@@ -796,9 +796,15 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td><code>{'{ label?, alsoLabel?, italic? }'}</code></td>
+      <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
       <td>je nach Sprache, kursiv (aufrecht in arabischer Schrift)</td>
       <td>Die Wörter vor einem Verweis. Nicht gesetzt, folgen sie der Sprache des Dokuments: <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 in traditionellem Chinesisch) … Ein chinesisches Register setzt den Verweis nach einem Satzpunkt, ohne Leerzeichen: <code>贾琏 12。见贾政</code>.</td>
+    </tr>
+    <tr>
+      <td><code>see.separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'. '</code> je nach Sprache</td>
+      <td>Was vor einem Verweis steht. Ein Komma im Deutschen, Französischen und Italienischen (<code>Geröllhalde, siehe Schutthalde</code>, <code>pierrier, voir éboulis</code>); ein Punkt im Englischen, Spanischen und Arabischen, wie ihn <em>The Chicago Manual of Style</em> setzt (<code>Firearms. See weapons</code>); ein Leerzeichen im Portugiesischen, wie es die Norm ABNT NBR 6034 verlangt (<code>Aviação ver Aeronáutica</code>), und im Katalanischen, wie im <em>Manual d'estil</em> des IEC; <code>'。'</code> im Chinesischen und ein ideografisches Leerzeichen im Japanischen. Es entscheidet die <code>locale</code> des Registers, sonst die des Dokuments. Der vorgegebene Text richtet seine Groß- und Kleinschreibung nach dem Trennzeichen: groß nach einem Punkt, <code>!</code> oder <code>?</code>, klein nach allem anderen. Ein eigener Text steht so, wie er geschrieben ist.</td>
     </tr>
     <tr>
       <td><code>locale</code></td>

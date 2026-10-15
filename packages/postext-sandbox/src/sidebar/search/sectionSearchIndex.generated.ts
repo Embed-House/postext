@@ -2607,6 +2607,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'indexSeeLabel',
       'indexSeeLabelPlaceholder',
       'indexSeeLabelTooltip',
+      'indexSeeSeparator',
+      'indexSeeSeparatorTooltip',
       'indexSeparator',
       'indexSeparatorTooltip',
       'indexSymbolsLabel',
