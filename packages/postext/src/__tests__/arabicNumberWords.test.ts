@@ -162,9 +162,10 @@ describe('templates in an Arabic document', () => {
     // Arabic has no capitals: the case variants print alike.
     expect(formatCounter(21, 'ORDINAL-F', 'ar')).toBe('الحادية والعشرون');
     expect(formatCounter(21, 'Ordinal', 'ar')).toBe('الحادي والعشرون');
-    // Other languages ignore the modifiers.
+    // English ignores the modifiers; the Romance languages read the gender
+    // and leave the spelling alone.
     expect(formatCounter(21, 'Ordinal-feminine', 'en')).toBe('Twenty-first');
-    expect(formatCounter(3, 'ordinal-f', 'es')).toBe('tercero');
+    expect(formatCounter(3, 'ordinal-f-classical', 'es')).toBe('tercera');
   });
 
   it('number the nights and the chapters', () => {

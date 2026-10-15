@@ -796,9 +796,15 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td><code>{'{ label?, alsoLabel?, italic? }'}</code></td>
+      <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
       <td>حسب اللغة، مائل (قائم في الخط العربي)</td>
       <td>الكلمات التي تسبق الإحالة. إن لم تُضبط تتبع لغة المستند: <em>See</em> / <em>See also</em>، <em>Véase</em> / <em>Véase también</em>، <em>Voir</em> / <em>Voir aussi</em>، 见 / 另见 (見 / 另見 في الصينية التقليدية)… يضع الفهرس الصيني الإحالة بعد نقطة، بلا مسافة: <code>贾琏 12。见贾政</code>.</td>
+    </tr>
+    <tr>
+      <td><code>see.separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'. '</code> حسب اللغة</td>
+      <td>ما يُطبع قبل الإحالة. نقطة في العربية والإنجليزية والإسبانية، كما يضعها <em>The Chicago Manual of Style</em> (<code>Firearms. See weapons</code>)؛ وفاصلة في الفرنسية والإيطالية والألمانية (<code>pierrier, voir éboulis</code>)؛ ومسافة في البرتغالية، كما تطلب المواصفة ABNT NBR 6034 (<code>Aviação ver Aeronáutica</code>)، وفي الكتالانية؛ و<code>'。'</code> في الصينية ومسافة إيديوغرافية في اليابانية. يقرّر ذلك <code>locale</code> الفهرس، وإلا فلغة المستند. تتبع التسمية المدمجة الفاصلَ في حالة الحرف: حرف كبير بعد النقطة أو <code>!</code> أو <code>?</code>، وصغير بعد غير ذلك. أما التسمية التي تضعها أنت فتُطبع كما كُتبت.</td>
     </tr>
     <tr>
       <td><code>locale</code></td>

@@ -92,10 +92,13 @@ type SpelledBase = 'words' | 'Words' | 'WORDS' | 'ordinal' | 'Ordinal' | 'ORDINA
  *  (`words`) or ordinal (`ordinal`), the case of the suffix picking the
  *  case of the words — `{1:words}` "twenty-one", `{1:Words}` "Twenty-one",
  *  `{1:WORDS}` "TWENTY-ONE". Modifiers after a hyphen choose the gender
- *  and the spelling of a language that inflects them (Arabic):
- *  `{1:ordinal-feminine}` (or `-f`) الأولى, `-masculine` (`-m`, the
- *  default) الأول, `-classical` مائة for مئة; `{1:ordinal-f-classical}`
- *  combines them. Other languages ignore the modifiers. */
+ *  and the spelling of a language that inflects them:
+ *  `{1:ordinal-feminine}` (or `-f`) الأولى, «prima», « première »,
+ *  `-masculine` (`-m`, the default) الأول, «primo»; `-neuter` (`-n`) the
+ *  German „erstes“ (`-m` „erster“, `-f` „erste“; none, the „erste“ after
+ *  the article); `-classical` مائة for مئة (Arabic);
+ *  `{1:ordinal-f-classical}` combines them. Other languages ignore the
+ *  modifiers. */
 export type SpelledNumeralStyle = SpelledBase | `${SpelledBase}-${string}`;
 
 /** Format of a counter in a heading numbering template. */
@@ -258,6 +261,8 @@ const SPELLED_MODIFIERS: Readonly<Record<string, NumberWordsOptions>> = {
   feminine: { gender: 'feminine' },
   m: { gender: 'masculine' },
   masculine: { gender: 'masculine' },
+  n: { gender: 'neuter' },
+  neuter: { gender: 'neuter' },
   classical: { spelling: 'classical' },
   modern: { spelling: 'modern' },
 };

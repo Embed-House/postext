@@ -795,9 +795,15 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td><code>{'{ label?, alsoLabel?, italic? }'}</code></td>
+      <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
       <td>segons la llengua, en cursiva (rodona en escriptura àrab)</td>
       <td>Les paraules que precedeixen una remissió. Sense fixar, segueixen la llengua del document: <em>Véase</em> / <em>Véase también</em>, <em>See</em> / <em>See also</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 en xinès tradicional)… Un índex en xinès posa la remissió després d'un punt i sense espai: <code>贾琏 12。见贾政</code>.</td>
+    </tr>
+    <tr>
+      <td><code>see.separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'. '</code> segons la llengua</td>
+      <td>El que s'imprimeix abans d'una remissió. Un espai en català, com fa el <em>Manual d'estil</em> de l'IEC (<code>abecedari vegeu alfabet</code>), i en portuguès, com demana la norma ABNT NBR 6034 (<code>Aviação ver Aeronáutica</code>); un punt en castellà, anglès i àrab, com el posa <em>The Chicago Manual of Style</em> (<code>Firearms. See weapons</code>); una coma en francès, italià i alemany (<code>pierrier, voir éboulis</code>); <code>'。'</code> en xinès i un espai ideogràfic en japonès. Decideix el <code>locale</code> de l'índex i, si no en té, el del document. L'etiqueta per defecte pren la caixa que demana el separador: majúscula després d'un punt, <code>!</code> o <code>?</code>, minúscula després de qualsevol altra cosa. Una etiqueta pròpia s'imprimeix tal com s'escriu.</td>
     </tr>
     <tr>
       <td><code>locale</code></td>

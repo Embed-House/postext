@@ -796,9 +796,15 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td><code>{'{ label?, alsoLabel?, italic? }'}</code></td>
+      <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
       <td>言語による。イタリック（アラビア文字では正体）</td>
       <td>相互参照の前に置く語です。未設定のときは文書の言語に従います。<em>See</em> / <em>See also</em>、<em>Véase</em> / <em>Véase también</em>、<em>Voir</em> / <em>Voir aussi</em>、见 / 另见（繁体字中国語では見 / 另見）…。中国語の索引では、参照を句点のあとに空白なしで置きます：<code>贾琏 12。见贾政</code>。</td>
+    </tr>
+    <tr>
+      <td><code>see.separator</code></td>
+      <td><code>string</code></td>
+      <td>言語による（既定は <code>'. '</code>）</td>
+      <td>相互参照の前に印字する区切りです。日本語は全角スペース（<code>夏目漱石 12　→漱石</code>）、中国語は <code>'。'</code>、英語・スペイン語・アラビア語はピリオド（<em>The Chicago Manual of Style</em> の <code>Firearms. See weapons</code>）、フランス語・イタリア語・ドイツ語はコンマ（<code>pierrier, voir éboulis</code>）、ポルトガル語（ABNT NBR 6034 の <code>Aviação ver Aeronáutica</code>）とカタルーニャ語は空白です。索引の <code>locale</code>、なければ文書の言語で決まります。既定のラベルは区切りに合わせて、ピリオド・<code>!</code>・<code>?</code> のあとでは大文字、それ以外では小文字で始まります。自分で設定したラベルは書いたとおりに印字されます。</td>
     </tr>
     <tr>
       <td><code>locale</code></td>

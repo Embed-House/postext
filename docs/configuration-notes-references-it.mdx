@@ -796,9 +796,15 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td><code>{'{ label?, alsoLabel?, italic? }'}</code></td>
+      <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
       <td>secondo la lingua, corsivo (tondo nella scrittura araba)</td>
       <td>Le parole prima di un rimando. Se non impostate, seguono la lingua del documento: <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 in cinese tradizionale)… Un indice cinese colloca il rimando dopo un punto fermo, senza spazio: <code>贾琏 12。见贾政</code>.</td>
+    </tr>
+    <tr>
+      <td><code>see.separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'. '</code> secondo la lingua</td>
+      <td>Ciò che si stampa prima di un rimando. Una virgola in italiano, francese e tedesco (<code>pietraia, vedi ghiaione</code>, <code>pierrier, voir éboulis</code>); un punto in inglese, spagnolo e arabo, come fa <em>The Chicago Manual of Style</em> (<code>Firearms. See weapons</code>); uno spazio in portoghese, come chiede la norma ABNT NBR 6034 (<code>Aviação ver Aeronáutica</code>), e in catalano, come fa il <em>Manual d'estil</em> dell’IEC; <code>'。'</code> in cinese e uno spazio ideografico in giapponese. Decide il <code>locale</code> dell’indice, altrimenti quello del documento. L’etichetta predefinita prende la maiuscola o la minuscola che chiede il separatore: maiuscola dopo un punto, <code>!</code> o <code>?</code>, minuscola dopo qualsiasi altro segno. Un’etichetta propria si stampa così com’è.</td>
     </tr>
     <tr>
       <td><code>locale</code></td>

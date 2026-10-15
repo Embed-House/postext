@@ -591,7 +591,10 @@ headings
   `{1:words}`/`{1:Words}`/`{1:WORDS}` spelled out, `{1:ordinal}`/`{1:Ordinal}`/`{1:ORDINAL}`
   ordinal words (English or Spanish by `locale`, else the hyphenation locale; Chinese documents: 十二 and
   第十二; Arabic: definite ordinals الفصل الأول, with `-feminine`/`-f` الليلة الأولى … الحادية بعد الألف,
-  `-classical` مائة; Japanese (≥ 1.16): 二十一 / 百一 and 第二十一; other languages take English); other text literal; `\{` escapes. Chinese numerals (≥ 1.9):
+  `-classical` مائة; Japanese (≥ 1.16): 二十一 / 百一 and 第二十一; French, Italian, German, Catalan, Portuguese
+  (> 1.33.9): vingt et un / premier, ventuno / primo, einundzwanzig / erste, vint-i-u / cinquè, vinte e um /
+  vigésimo primeiro, `-feminine` première / prima / primera, German `-m`/`-f`/`-neuter` Erster Teil / Erstes
+  Kapitel; other languages take English); other text literal; `\{` escapes. Chinese numerals (≥ 1.9):
   `{1:一}` informal in the document's script (`第{1:一}回` → 第一回 … 第一百二十回), `{1:〇}` cjk-decimal
   (一二〇), `{1:壹}` financial, `{1:①}` circled, `{1:甲}` stems, `{1:子}` branches, `{1:１}` fullwidth, or a
   CSS name (`{1:trad-chinese-informal}`). Design placeholder `{numberHan}`: the counter in informal numerals. Arabic: `{1:١}`
@@ -1486,7 +1489,8 @@ What `:::index` prints from the `:index` marks (document-format.md §10.5). An e
 | `mergeRanges` | `true` | 12, 13, 14 → 12–14 (main pages never joined) |
 | `rangeFormat` | `'full'` | `'chicago'` drops shared digits: 234–37, 101–8 (roman always full) |
 | `main` | `{bold:true}` | `{bold?, italic?}` for `main` pages |
-| `see` | by language, italic | `{label?, alsoLabel?, italic?}`: "See"/"See also", "Véase"/"Véase también"… |
+| `see` | by language, italic | `{label?, alsoLabel?, italic?, separator?}`: "See"/"See also", "Véase"/"Véase también"… |
+| `see.separator` | `'. '` by language | before a cross-reference (#836): `'. '` en/es/ar (Chicago: `Firearms. See weapons`), `', '` fr/it/de (`pierrier, voir éboulis`), `' '` pt/ca (NBR 6034: `Aviação ver Aeronáutica`), `'。'` zh, U+3000 ja; follows `index.locale`, else the document's. A built-in label is capitalised after `.`/`!`/`?` and lower-cased otherwise; an own label prints as written |
 | `locale` | the document's | collation (Intl.Collator) |
 | `ignoreArticle` | `true` for an Arabic index | sort/group Arabic entries ignoring a leading ال (البصرة under ب); vowel marks, tatweel and hamza seats are always ignored (أ إ آ ٱ → ا, ة → ه, ى → ي); separators become `، ` |
 | `groupBy` | `'auto'` | `'letter'` \| `'pinyin'` (Han under the pinyin initial, 贾宝玉 → J) \| `'stroke'` (一畫, 二畫…; 一画… in zh-Hans) \| `'gojuon'` (あ行 か行 … わ行 by the reading's first kana) \| `'kana'` (each first kana: か for が/カ) \| `'none'` (no heads); `auto` = pinyin for zh / zh-Hans / zh-CN, stroke for zh-Hant / zh-TW / zh-HK, gojuon for ja, letter otherwise (since 1.9). A Japanese index sorts by reading in JIS X 4061 order: symbols, digits, Latin (letter heads), kana rows, then unread kanji entries. A polyphonic character read wrongly takes a Han `sort` key with the wanted reading (`sort="崇阳"` for 重阳); a pinyin key sorts after its letter's Han entries |
