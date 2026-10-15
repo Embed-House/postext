@@ -1,0 +1,63 @@
+---
+title: "Un roman arabe de droite à gauche, relié à droite"
+summary: "Le début d’un roman arabe sur une page de 14 × 21 cm : la locale 'ar' compose le texte de droite à gauche, relie le livre à droite et imprime ١٢ en folio."
+plain: "Les premières pages d’un roman en arabe, mises en page comme chez un éditeur arabe : les lignes vont de droite à gauche, le livre s’ouvre par ce qu’un lecteur latin appelle la fin, et les pages sont numérotées en chiffres arabes orientaux."
+description: "Un roman arabe dans Postext : la locale 'ar' donne texte de droite à gauche, reliure à droite et folios en chiffres orientaux ; kashida, chapitres en lettres."
+question: "Comment composer un livre arabe de droite à gauche et le relier à droite ?"
+aliases: ["roman arabe", "de droite à gauche", "RTL", "livre relié à droite", "chiffres arabes orientaux", "chiffres indo-arabes", "kashida", "tatweel", "Markazi Text", "رواية", "الفصل الأول", "14 × 21 cm"]
+pageNotes: { "1": "Une page de droite bleu profond, d’un bord à l’autre, sous un treillis d’étoiles à huit branches tracées en lignes d’un bleu plus clair. Une grande étoile cernée de laiton contient l’étiquette de la partie القسم الأول, le mot الدرب en lettres coufiques blanches et une citation en blanc.", "2": "La page de gauche qui lui fait face : une petite étoile de laiton, le numéro du chapitre en lettres, الفصل الأول, le titre الباب الأزرق en lettres coufiques, puis le texte arabe justifié à partir de la marge de droite et le folio ١١ centré au pied." }
+---
+
+## Ce que vous allez composer
+
+Le début de *حروف من رصاص* (Lettres de plomb), un roman sur un petit-fils qui rouvre l’imprimerie de son grand-père dans une ruelle du Caire, composé comme un roman broché arabe : 14 × 21 cm, Markazi Text en 13,5 pt sur 22 pt d’interlignage, justifié, avec le retrait de première ligne à droite. L’extrait commence en page 10 par une page de partie dans le bleu de la porte de l’atelier, un treillis d’étoiles à huit branches dessiné en code, et le nom de la partie en Reem Kufi de 64 pt. L’ouverture de chapitre lui fait face sur la page de gauche, numérotée en lettres, الفصل الأول. Les folios impriment ١٠, ١١, ١٢ ; le titre du livre court au-dessus des pages de droite et le chapitre au-dessus des pages de gauche. <RecipeLink slug="trade-paperback-novel">Un roman broché</RecipeLink> compose le même genre de livre de gauche à droite.
+
+## Préparation
+
+### 1 · Une locale, trois décisions
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `locale: 'ar'` est tout ce que dit la configuration, et le moteur en tire trois choses : le texte va de droite à gauche (`direction: 'auto'`), le livre est relié à droite (`page.binding: 'auto'`), et chaque nombre qu’écrit le moteur emploie les chiffres arabes orientaux (`numerals: 'auto'`), folios compris ([commencer un livre arabe](/fr/docs/arabic-layout#commencer-un-livre-en-arabe)). Marges et alignements gardent les mots `left` et `right`, mais dans un livre de droite à gauche ils désignent les côtés du flux : `margins.left` est le côté du dos, et le retrait de première ligne se place à droite. Les lignes justifiées ouvrent d’abord leurs espaces, puis allongent les lettres liées avec le tatweel, la kashida des livres arabes ; le texte n’est jamais coupé par césure ([justification et kashida](/fr/docs/arabic-layout#justification-et-kashida)).
+
+<PageShot page={3} crop="0.1,0.12,0.8,0.3" caption="Page 12 : des lignes justifiées élargies par la kachida, le retrait à droite, le folio ١٢ au bord extérieur." />
+
+### 2 · Un numéro de chapitre en lettres
+
+<Excerpt region="opener" />
+
+Le `numberingTemplate` du niveau écrit الفصل et le numéro sous forme d’ordinal masculin : le deuxième chapitre est donc الفصل الثاني sans aucun changement dans le Markdown ; `{1:ordinal-feminine}` donne الأولى, الثانية pour un nom féminin comme الليلة ([mots ordinaux et cardinaux](/fr/docs/arabic-layout#ordinaux-et-cardinaux-en-toutes-lettres)). L’ouverture l’imprime avec `{number}` au-dessus du titre. Les ouvertures arabes sont d’ordinaire centrées : `align: 'center'` évite donc toute question sur le côté où commence la maquette.
+
+### 3 · Les titres courants restent sur leurs pages
+
+<Excerpt region="heads" />
+
+Le texte courant suit le flux, mais les titres courants et les folios gardent leurs côtés physiques. Dans ce livre, la page 12 est paire et c’est une page de droite : son folio va en haut à droite, avec le titre du livre à côté ; la page 13 est à gauche et porte le chapitre. Lisez une double page à partir de la droite, comme le fait un lecteur arabe, et le titre du livre vient en premier. `showBook` dispose les pages en miroir, la page 11 à gauche de la page 10, si bien que l’écran montre les doubles pages comme le livre s’ouvre.
+
+### 4 · Une page de partie dessinée en code
+
+<Excerpt region="plate" />
+
+La page de partie est un titre de niveau 1, `# الدرب {style="plate" …}`, dont le style peint toute la feuille et efface son titre courant et son folio. Le treillis est un SVG généré dans le pen à partir de deux carrés tournés de 45°, l’étoile khātam de l’ornement géométrique islamique, dans le bleu et le laiton de la palette : le PDF le garde sous forme de tracés vectoriels. `numbered: false` tient la page de partie hors du décompte des chapitres, et l’ouverture qui suit est الفصل الأول.
+
+## Variantes
+
+### Imprimez des chiffres européens
+
+Une édition maghrébine imprime 1, 2, 3 ; `locale: 'ar-MA'` le fait d’elle-même, et <RecipeLink slug="maghreb-edition-european-digits">l’édition maghrébine</RecipeLink> montre le livre entier.
+
+```diff
+-  locale: 'ar', // written out, never LANG (gotcha: arabic-locale-tag)
++  locale: 'ar', numerals: 'latn',
+```
+
+### Justifiez avec les seules espaces
+
+Certains éditeurs tiennent le tatweel hors du texte courant : les espaces absorbent alors toute la différence.
+
+```diff
+   textAlign: 'justify', optimalLineBreaking: true,
++  kashida: 'none',
+```
+
+## Erreurs fréquentes
+
+- Un colophon en anglais ou en espagnol à la fin d’un livre arabe a besoin de `{dir=ltr}` sur son bloc : sans lui, la ligne latine est alignée et ponctuée comme un paragraphe de droite à gauche, avec son point final à gauche.

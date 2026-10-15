@@ -1,0 +1,61 @@
+---
+title: "Titres en marge, numéros suspendus et titres en ligne"
+summary: "Un règlement de concours aux titres de section en colonne marginale, sur les lignes de base du texte, numéros pendus dans la gouttière, titres en ligne rouges."
+plain: "L’appel à projets d’une mairie pour transformer une ancienne halle aux poissons en bibliothèque. Les titres de section se placent dans une large marge gauche, au niveau de la première ligne du texte voisin."
+description: "Un règlement de concours de cinq pages avec Postext : les titres de section dans une colonne de 50 mm à gauche, les numéros de sous-section dans la gouttière."
+question: "Comment mettre les titres de section en marge, suspendre les numéros et composer en ligne les petits titres ?"
+aliases: ["titres en marge", "titres marginaux", "titres latéraux", "numéros suspendus", "numéros de section suspendus", "titres en ligne", "rapport suisse", "règlement de concours", "numéro de section et filet", "colonne marginale", "titre dans la marge", "side heads"]
+pageNotes: { "1": "La première page du règlement : le nom de la municipalité sur deux lignes en haut à gauche, le surtitre « FILE BML-2026/04 » en rouge, le titre « Competition brief » dans un caractère à empattements maigre sur deux lignes et un chapeau en italique. Un plan de situation court sur tout le bloc de texte, avec les ruelles de la vieille ville, une trame d’îlots aux angles coupés, la promenade, le port et la parcelle en rouge. Dessous, la section 1 s’ouvre sur un 1 rouge et un filet noir ; son titre, « The competition », se tient dans la colonne de gauche sur la première ligne du texte, et les sous-sections 1.1 et 1.2 suspendent leurs numéros rouges dans la gouttière.", "2": "La section 2, « The site », avec son titre dans la colonne marginale et, dessous, un petit plan de la parcelle : la halle en gris avec ses treize travées, six arbres le long du bord nord et des flèches rouges pour les entrées. Les sous-sections 2.1 à 2.3 suspendent leurs numéros à côté du texte ; la section 3, « Schedule of accommodation », s’ouvre plus bas avec un titre sur deux lignes dans la colonne marginale, suivie de la sous-section 3.1.", "3": "Une élévation de la halle traverse le haut de la page : treize voûtes, onze arcs et quatre pilastres rouges à l’extrémité est. Dessous, le tableau des surfaces, avec une ligne d’en-tête couleur encre, remplit la colonne de texte, et sa légende, « Table 1 », se tient dans la colonne marginale au niveau du haut du tableau. Suivent les sous-sections 3.2 et 3.3, puis la section 4, « Design criteria », dont les paragraphes s’ouvrent sur des termes en gras rouge.", "4": "Trois autres critères qui s’ouvrent sur des termes en gras rouge, puis les sections 5, « Submission of entries », et 6, « Jury and timetable », chacune avec son numéro, son filet et son titre dans la colonne marginale, et les sous-sections 5.1 à 6.1 avec des numéros suspendus. La colonne de texte se termine au niveau du pied de la page.", "5": "Les sous-sections 6.2 et 6.3, puis le calendrier du concours sous forme de tableau à en-tête couleur encre, sa légende, « Table 2 », dans la colonne marginale au niveau du haut du tableau, et un petit colophon gris." }
+---
+
+## Ce que vous allez composer
+
+Cinq pages A4 du règlement d’un concours d’architecture, dans lequel la municipalité de Puerto Lince, un port espagnol imaginaire, appelle à des projets pour transformer sa halle aux poissons de 1931 en bibliothèque municipale. La mise en page suit les rapports municipaux suisses. Une colonne marginale de 50 mm descend à gauche de chaque page, et chaque section s’ouvre sur un numéro rouge et un filet noir qui traverse tout le bloc de texte. Le titre de la section se tient dans la colonne marginale en Noto Serif Display, au niveau de la première ligne du texte. Les numéros de sous-section sont suspendus dans la gouttière en DM Mono rouge, si bien que chaque titre de sous-section garde le bord gauche du texte. Les critères de jugement de la section 4 s’ouvrent sur des termes en gras rouge. La page 1 compose un titre de 58 pt au-dessus d’un plan de situation, un plan de la parcelle se tient dans la colonne marginale en page 2, et une élévation de la façade sur le quai ouvre la page 3.
+
+## Préparation
+
+### 1 · Imprimer le titre de section depuis une boîte dans la colonne marginale
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Un titre réserve de la place jusqu’au plus bas élément de sa maquette : un titre dessiné dans la colonne marginale au niveau de la première ligne de la section repousserait donc le texte d’une ligne, et de deux pour un titre sur deux lignes. La maquette du titre ne dessine donc que le numéro et le filet, et `sideHeads()` copie le texte de chaque `## Title` dans un `:::callout` placé juste après le titre. Avec `span="side"`, cette boîte quitte le flux et se tient dans la colonne marginale sur la ligne de grille où le texte reprend ([styles d’encadré](/fr/docs/configuration-styles#styles-dencadré)). Le numéro et le filet règlent `reserve: false` : sans cela, une boîte dans la colonne marginale garde un écart de flottant, une ligne, sous les éléments de titre qui s’y trouvent, et le titre descendrait à la deuxième ligne du texte. Les boîtes comme le texte courant placent la ligne de base d’une ligne à 0,8 de sa hauteur : une boîte sur l’interlignage de 14 pt du texte pose donc chaque ligne d’un titre sur deux lignes sur une ligne de base du paragraphe voisin. Le Markdown reste un simple `## Schedule of accommodation`. Comme la maquette du titre n’imprime pas de `{titleText}`, le Sandbox affiche l’avertissement *Texte du titre non référencé*, bien que la boîte imprime le titre.
+
+<PageShot page={2} crop="0,0.068,1,0.292" caption="Page 2 : le numéro et le filet viennent du titre, le titre de la boîte dans la colonne marginale, au niveau de la première ligne du texte. Le plan de la parcelle s’empile dessous." />
+
+### 2 · Réserver la colonne marginale aux titres et aux figures
+
+<Excerpt region="channel" />
+
+`sideColumnRole: 'floats'` tient le texte hors de la colonne marginale ([types de mise en page](/fr/docs/configuration-page-layout#types-de-mise-en-page)). Après l’ouverture, la colonne ne contient que les six titres de section et le plan de la parcelle, tous deux envoyés là avec `span: 'side'`, et les légendes des tableaux 1 et 2. La colonne latérale est à `'right'` par défaut, et un règlement imprimé au recto seulement la garde du même côté sur chaque page. `sideColumnSide: 'left'` la place à gauche, où chaque titre de section se lit avant son texte.
+
+### 3 · Suspendre les numéros et mettre les plus petits titres en ligne
+
+<Excerpt region="lower" />
+
+Le titre de sous-section commence au bord gauche de la colonne. Son numéro est ancré `'left-of'` le titre, aligné à droite dans une boîte de 12 mm qui s’arrête 2 mm avant le texte : des numéros comme 2.1 et 3.3 pendent donc dans la gouttière, et chaque titre s’aligne sur le texte qui le suit ([placement des éléments](/fr/docs/configuration-page-layout#placement-des-éléments)). La boîte a besoin d’une largeur fixe. Une largeur `'auto'` est limitée à la colonne. Dans la gouttière, cela ne laisse aucune largeur, et le numéro n’est pas dessiné. Le niveau 2 imprime `'{2}'` et le niveau 3 `'{2}.{3}'`, car avec `{1}` chaque numéro commencerait par le 1 de l’unique H1 du règlement. Les critères de la section 4 forment un quatrième niveau composé sans titre. Chaque paragraphe s’ouvre sur un terme en gras, que `bodyText.boldColor` imprime en rouge ([texte courant](/fr/docs/configuration-text#texte-courant)). Aucun autre paragraphe n’a de gras, et les cellules de tableau prennent leur couleur dans `tableStyle` : la ligne de total en gras du tableau 1 reste donc noire.
+
+### 4 · Donner à chaque figure et à chaque tableau son propre placement
+
+<Excerpt region="resources" />
+
+Le plan de la parcelle va dans la colonne marginale avec `span: 'side'` et s’empile sous le titre marginal de la section 2 ([placement](/fr/docs/document-format#placement)). `width: PLAN_W / SIDE` lui donne 44 mm de large, ce qui met ses 88 mètres exactement au 1:2000. L’élévation de la façade est un flottant `'top'` sur toute la largeur de la page. Elle est citée en page 2 et ouvre la page 3, car un flottant ne se place jamais au-dessus de son renvoi. Le tableau des surfaces, cité lui aussi en page 2, flotte en tête de la colonne de texte de la page 3, sous l’élévation. `captionSide: true` place sa légende dans la colonne marginale, au niveau du haut du tableau. Le calendrier se trouve là où le place `::resource`, à la fin du règlement, et `captionSide: true` place aussi sa légende dans la colonne marginale, à côté de la section 6.3.
+
+### 5 · Ouvrir le règlement sur le plan de situation
+
+<Excerpt region="opener" />
+
+Avec `span: 'page'`, le conteneur de l’ouverture est tout le bloc de texte, colonne marginale comprise ([largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Le surtitre et le titre sont placés à 57 mm du bord, sur le bord gauche de la colonne de texte, et le plan traverse colonne marginale et colonne de texte. Sans cela, le conteneur est la colonne de texte, chaque élément se décale de 57 mm vers la droite, et le titre, le chapeau et le plan dépassent le bord droit de la page. La maquette réserve la place jusqu’au pied du plan, qui tombe entre deux lignes de la grille. Un `minHeight` arrondi à la ligne de grille suivante laisse le filet de la section 1 aussi loin de son texte que le filet de chaque section suivante. Le surtitre, le chapeau et la légende du plan sont des attributs de la ligne `# Competition brief`.
+
+## Variantes
+
+### Fileter la seule colonne de texte
+
+Ancrez le filet à la boîte du titre lui-même plutôt qu’au numéro : il va alors du bord gauche du texte au bord droit de la colonne, et seuls le numéro et le titre restent dans la colonne marginale.
+
+```diff
+-        color: col('ink'), placement: { ...at('#number', 'right-of', mm(2), RULE_Y),
++        color: col('ink'), placement: { ...at('container', 'top-left', mm(0), RULE_Y),
+```
+
+## Erreurs fréquentes
+
+- Une figure latérale prend la tête de la colonne marginale sur la page qui la cite, et un titre marginal placé après elle s’empile dessous, plus bas que le début de sa propre section. Citez les figures latérales après le titre de section de leur page, comme la section 2 cite le plan de la parcelle.
+- Une ressource intégrée au fil du texte (`position: 'here'`) prend en compte `captionSide` depuis postext 1.28 : la légende du calendrier se tient dans la colonne marginale en page 5, comme celle du tableau des surfaces en page 3. La légende a besoin que la colonne marginale soit libre à côté du tableau. Là où un titre marginal ou une figure latérale s’y trouve déjà, elle reste sous le tableau.

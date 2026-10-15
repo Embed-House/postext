@@ -1,0 +1,60 @@
+---
+title: "Un journal vivant dont les images bougent"
+summary: "Six ressources vidéo posées en photos de presse sur un tabloïd de quatre colonnes ; autoplay, loop et exclusive: false les font jouer ensemble dans Folio."
+plain: "Un journal local des années 1930 où chaque photographie est un court film muet. Sur le papier, ce sont des images fixes ; dans la visionneuse 3D, toutes bougent ensemble, encore et encore, comme un journal de conte de fées."
+description: "Un tabloïd de quatre pages en quatre colonnes dont les six images sont des boucles vidéo en noir et blanc, jouées ensemble sur papier journal plié dans Folio."
+question: "Comment faire jouer plusieurs boucles vidéo muettes en même temps sur une page de journal ?"
+aliases: ["journal vivant", "images qui bougent", "photos animées", "boucle vidéo", "lecture automatique", "autoplay", "loop", "plusieurs vidéos à la fois", "exclusive", "jouer ensemble", "tabloïd", "journal", "quatre colonnes", "Folio", "papier journal", "journal plié"]
+pageNotes: { "1": "La une de « The Wexcombe Lantern » du 10 juin 1933 : un titre de journal noir en caractères étroits, le gros titre « Trams run to the sea at last », une photo du maire parlant à un pupitre sur trois colonnes, une photo d’une femme saluant depuis un biplan sur deux, et un bandeau teinté « In brief » en pied de page.", "2": "« Town & Harbour » : une photo de tour d’horloge et un pêcheur hilare tenant une morue énorme, chacune sur deux colonnes, la fin de l’article sur les tramways, un encadré des tarifs, une table des marées, des notes du conseil municipal, des nouvelles du port et cinq brèves en quatre colonnes séparées par des filets.", "3": "« Stage & Screen » : une actrice dans un décor de jardin sur deux colonnes, une critique, des tableaux du cinéma et de la radio, le courrier des lecteurs et un encadré à filet de petites annonces.", "4": "« Sport » : un gardien de but accroupi sur sa ligne sur trois colonnes, le compte rendu de la coupe, des tableaux des rencontres, du cricket et du cyclisme, et l’ours." }
+---
+
+## Ce que vous allez composer
+
+*The Wexcombe Lantern*, un hebdomadaire balnéaire inventé de juin 1933, sur une page tabloïd de 280 × 430 mm en quatre colonnes séparées par des filets : un titre de journal en caractères étroits, un article principal avec sa photo sur trois colonnes, une deuxième sur deux, des tables des marées, des petites annonces et une page des sports. Chaque image est un film de cinq secondes en noir et blanc. À l’impression, et dans les pages à plat sous la visionneuse, chacune montre sa première image. Ouvertes dans Folio comme un journal plié sur un papier journal clair, les images des pages ouvertes bougent toutes en même temps et ne s’arrêtent pas : le maire parle, l’aviatrice salue, le pêcheur rit, le gardien plonge et se relève. La page ne dessine rien ; la mise en page est celle d’un journal ordinaire, et les clips font le reste.
+
+## Préparation
+
+### 1 · Faire de chaque image un clip qui boucle avec les autres
+
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Une ressource vidéo imprime son affiche comme une image : les clips prennent donc la place des photographies et reçoivent une légende comme elles. Trois options du lecteur donnent vie à la page : `autoplay` lance un clip quand sa page est affichée (toujours sans le son, comme l’exigent les navigateurs), `loop` le rejoue depuis le début, et `exclusive: false` le laisse tourner en même temps que les autres clips. Par défaut, une vidéo est exclusive : la lancer met en pause tout ce qui joue déjà, ce qui convient à un cours, pas à une page de photographies animées. Le symbole de lecture et le code QR sont désactivés, si bien que sur le papier les clips se lisent comme des photos de presse.
+
+### 2 · Donner à chaque boucle sa place dans la grille
+
+<Excerpt region="clips" />
+
+La mise en page utilise `layoutType: 'multiple'` avec `columnCount: 4`. Le réglage `columns` d’un flottant indique combien de colonnes il occupe : trois pour le maire et le gardien, deux pour l’aviatrice, la tour d’horloge, le pêcheur et l’actrice. Un flottant sur plusieurs colonnes prend la tête d’une suite de colonnes vides qui commencent au même niveau, ou le pied de la colonne où il est cité et des colonnes vides qui la suivent ; c’est donc la position de la ligne `::resource` qui décide de l’emplacement. Le maire est cité après le premier paragraphe, ce qui laisse la colonne 1 au texte et place la photo sur les colonnes 2 à 4.
+
+### 3 · Composer la manchette et les pages de rubrique
+
+<Excerpt region="nameplate" />
+
+Le titre de niveau 1 de la une est le nom du journal, tiré d’un emplacement de la maquette : deux oreilles au-dessus, le nom en capitales Oswald, et une ligne de date entre un filet maigre et un filet gras. Les pages intérieures s’ouvrent sur un drapeau de rubrique rouge posé sur une barre de 3 pt (la région `pages`), avec une ligne de folio en tête de chaque page sauf la première.
+
+### 4 · Ouvrir le journal dans Folio
+
+<Excerpt region="folio" />
+
+`config.folio` pose le journal sur du chêne, à la lumière du jour : un papier journal de 45 g/m², à travers lequel on devine la page suivante, et `binding.type: 'folded'`, des feuilles pliées une fois et glissées les unes dans les autres, sans agrafes ni dos, comme on assemble un journal. Folio dessine tous les clips de la double page ouverte dans une seule texture, jusqu’à huit à la fois, lance les boucles en lecture automatique chaque fois qu’un tournage de page s’arrête sur leur page et les arrête quand la page est tournée. Un clic sur une vidéo exclusive la joue toujours seule, avec son son, et les boucles attendent qu’elle s’arrête.
+
+## Variantes
+
+### Laisser le lecteur lancer chaque clip
+
+Sans `autoplay`, les images restent fixes jusqu’à ce que le lecteur clique sur l’une d’elles ; une fois lancées, les boucles jouent toujours ensemble.
+
+```diff
+-  player: { autoplay: true, loop: true, muted: true, exclusive: false, controls: false },
++  player: { loop: true, muted: true, exclusive: false, controls: false },
+```
+
+### Un seul clip exclusif, avec son son
+
+Une vidéo peut garder le comportement par défaut et jouer à ses propres conditions : réglez `player: { exclusive: true, muted: false }` dans le `video` de cette ressource, et la lancer suspend les boucles jusqu’à sa fin.
+
+### Un grand format en six colonnes
+
+<RecipeLink slug="newspaper-front-page">La une sur deux colonnes</RecipeLink> compose un journal plus petit avec des photographies fixes ; la même grille passe à six colonnes sur un format broadsheet avec `sizePreset: 'broadsheet'`.
+
+## Erreurs fréquentes
+
+Une rubrique de journal est un titre de niveau 1 qui ouvre une page, et un flottant ne la franchit jamais. Une image qui ne trouve pas de place sur la dernière page de sa rubrique est composée sur une page à part avant la rubrique suivante : ajustez donc le texte à la page. Ici, l’article sur les tramways se poursuit en page 2 plutôt que de chasser l’aviatrice de la une.

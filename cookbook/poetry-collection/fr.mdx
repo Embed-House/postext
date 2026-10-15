@@ -1,0 +1,99 @@
+---
+title: "Des poèmes composés vers à vers"
+summary: "Chaque poème est un bloc :::verse écrit tel qu’imprimé : retraits de 1918 en espaces de tête, renvois pendant 2 em plus loin, ligne blanche entre strophes."
+plain: "Un petit livre de quatre poèmes sur la nature de Gerard Manley Hopkins. Il montre comment garder chaque vers sur sa propre ligne, avec les retraits voulus par le poète et une ligne blanche entre les strophes."
+description: "Quatre poèmes de Hopkins avec Postext : blocs :::verse aux retraits de 1918, renvois en retrait, une ligne entre strophes, table à points de conduite."
+question: "Comment composer des poèmes vers à vers, avec retraits, strophes, renvois en retrait et sans césure ?"
+aliases: ["poésie", "poème", "vers", ":::verse", "strophe", "saut de strophe", "vers en retrait", "retrait", "renvoi à la ligne", "vers renvoyé", "vers longs", "retrait négatif", "sauts de ligne", "plaquette", "points de conduite", "dédicace", "ligne de date", "ornement", "fleuron", "cul-de-lampe", "frontispice", "faux-titre", "Gerard Manley Hopkins"]
+pageNotes: { "2": "Le frontispice : un photogramme d’une fronde de fougère et d’un rameau de sorbier en baies, laissés en blanc sur un fond vert sauge brossé, avec une légende en italique en dessous.", "4": "La table des matières : quatre titres en italique après leurs chiffres romains, des points de conduite espacés jusqu’aux numéros de page, puis une courte note sur le texte et le colophon.", "6": "« The Windhover » : sa dédicace se place au-dessus du premier vers, les vers qui riment en -iding et -illion commencent à 2 em, et quatre vers longs sont renvoyés à la ligne, en retrait de 4 em.", "7": "« Pied Beauty » : les vers rentrent de 1 ou 2 em selon leur rime, et le demi-vers final, « Praise him. », se place à 8 em." }
+---
+
+## Ce que vous allez composer
+
+Une plaquette de quatre poèmes sur la nature de Gerard Manley Hopkins, en 140 × 216 mm, dans le texte de la première édition de 1918. Après le faux-titre, un photogramme de fougère et de sorbier en frontispice fait face à une page de titre composée en Italiana. La table des matières liste chaque poème par son chiffre romain et son titre en italique, avec des points espacés jusqu’au numéro de page. Chaque poème ouvre une page sous un chiffre romain vert sauge et son titre en italique. Chaque poème est un bloc `:::verse`, avec les retraits de 1918 : les vers de *Pied Beauty* rentrent selon leur rime, et les vers longs de *The Windhover* sont renvoyés à la ligne avec un retrait de 4 em, deux fois plus profond que ses retraits. Les strophes sont séparées d’une ligne, et aucun mot n’est coupé, sauf là où Hopkins l’a coupé. La date se place sous chaque poème, alignée à droite, et un rameau de sorbier suit le dernier. Les pages des poèmes portent un folio centré en pied.
+
+## Préparation
+
+### 1 · Un poème est un bloc :::verse
+
+Un bloc `:::verse` garde chaque ligne du Markdown comme un vers : le poème s’écrit tel qu’il s’imprime ([`:::verse`](/fr/docs/document-format#verse)). Ses espaces en tête de ligne sont ses retraits, deux par cadratin : les vers qui riment entre eux commencent au même retrait, comme en 1918. Une ligne blanche entre les strophes laisse une ligne de la grille, et disparaît en haut de page. Un vers trop long pour la colonne est renvoyé à la ligne à une espace entre deux mots, et le renvoi pend du `hangingIndent` du style de vers, compté depuis le début du vers lui-même : 2 em plus loin pour un vers sans retrait, 4 em sous un vers en retrait de 2 em, si bien qu’un renvoi ne se lit jamais comme un vers à part. `align=start` aligne chaque poème sur la marge ; sans lui, un poème est centré sur son vers le plus long. Les vers ne sont pas coupés par la césure, et un vers ne se sépare jamais de son renvoi à un saut de page.
+
+<PageShot page={6} crop="0.08,0.22,0.86,0.48" caption="The Windhover, page 6 : les vers qui riment en -iding commencent à 2 em, et les quatre vers trop longs pour la page sont renvoyés à la ligne avec un retrait de 4 em." />
+
+### 2 · Les lignes autour d’un poème ont aussi leurs styles
+
+<Excerpt region="lines" />
+
+La dédicace au-dessus de *The Windhover* et le lieu et la date sous chaque poème ne sont pas des vers : chacun est donc un conteneur `:::paragraphs` d’un seul paragraphe, dans un style à lui. Aucun des deux styles ne fixe d’interlignage, et leurs marges valent une ligne (15 pt) : les vers restent sur la grille du texte. La date se place une ligne sous le poème, alignée à droite, en Marcellus SC de 8 pt, le caractère des folios.
+
+### 3 · Chaque poème ouvre une page sous son numéro
+
+<Excerpt region="poem-head" />
+
+Au lieu de son texte, le titre imprime une maquette dans la colonne. Dans cette maquette, `{number}` est le compteur tel que le met en forme `numberingTemplate: '{1:I}'`, de I à IV, et `{titleText}` est le titre ([étendue et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Le niveau n’a pas de marge inférieure, et `minHeight` donne à chaque tête de poème une hauteur de six lignes de la grille (31,75 mm). Le chiffre et un titre d’une ligne en occupent quatre, un titre sur deux lignes cinq : chaque poème commence sur la même ligne de sa page. En <PageRef page={6}>page 6</PageRef>, cette ligne porte la dédicace. La parité `'any'` passe à la page suivante, recto ou verso : il n’y a pas de page blanche entre les poèmes.
+
+### 4 · Les pages liminaires sont faites de titres
+
+<Excerpt region="front" />
+
+Un style de titre peut passer à une nouvelle page et y dessiner une maquette : le faux-titre, le frontispice et la page de titre sont donc chacun un titre, avec un style à lui. `numbered: false` les tient hors du compteur, et le premier poème reste I. `toc: false` les tient hors de la table des matières, et un pied de page vide laisse leurs pages sans folio ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)). Les styles s’étendent sur toute la largeur de la page parce que le pied du bloc de texte coupe une maquette gardée dans la colonne, ce qui rognerait à cet endroit la planche à fond perdu et ferait perdre sa légende. La légende vient de l’attribut `caption` du titre ; l’auteur, le titre et le sous-titre de la page de titre viennent du frontmatter.
+
+### 5 · La table des matières se remplit d’elle-même
+
+<Excerpt region="contents" />
+
+`:::toc` liste chaque titre dont le style l’autorise, avec le chiffre tiré du même gabarit et l’étiquette de la page où tombe le titre. La composition remet le livre en page jusqu’à ce que ces étiquettes de page ne changent plus ([table des matières](/fr/docs/configuration-notes-references#table-des-matières)). Le titre de la page elle-même, Contents, a un style avec `numbered: false` ; sans lui, Contents serait le poème I. Les points de conduite `'. '` mettent une espace après chaque point. Les points sont alignés à droite, si bien qu’ils s’alignent d’une entrée à l’autre, et ils s’impriment dans le caractère et la couleur des numéros de page, parce que `toc.leader` n’a pas de réglage de couleur.
+
+### 6 · Un ornement est un type de ressource sans étiquette
+
+<Excerpt region="ornament" />
+
+Une image dans le texte est une ressource, et toute ressource a un type. Le type ornement a un préfixe de légende vide et le rameau n’a pas de légende : aucune étiquette comme « Figure 1 » ne s’imprime dessous ([types de ressources](/fr/docs/configuration-resources#types-de-ressources)). Le `defaultPlacement` du type place le rameau là où se trouve `::resource{id="sprig"}`, centré et large d’un cinquième de la colonne : le cul-de-lampe sous *Inversnaid* tient en une ligne de Markdown. `resourceTypes` remplace la liste par défaut : ce livre n’a donc pas de type Figure ni Table. Pour les garder, étalez `defaultResourceTypes()` devant l’ornement.
+
+## Variantes
+
+### Mettre les renvois plus en retrait
+
+Un retrait plus profond place le reste d’un vers renvoyé plus loin de la marge, pour des poèmes dont les vers sont souvent renvoyés à la ligne.
+
+```diff
+-  hangingIndent: em(2), // a turnover hangs 2 em past its line's start: 4 em under a 2 em indent
++  hangingIndent: em(4), // a turnover hangs 2 em past its line's start: 4 em under a 2 em indent
+```
+
+### Aligner les renvois à droite
+
+Avec `turnover: 'right'` dans `bodyText.verse`, le reste d’un vers trop long pour la colonne passe à droite sur la ligne suivante, derrière un crochet ouvrant, comme le composent beaucoup d’éditions anglaises de poésie.
+
+```diff
+     indentAfterHeading: false, minWordSpacing: 0.8, maxWordSpacing: 1.6,
++    verse: { turnover: 'right' }, // a turnover flush right, behind [
+   },
+```
+
+### Ouvrir chaque poème sur une page de droite
+
+Avec la parité `'odd'`, chaque poème s’ouvre sur le recto suivant. Le livre passe de huit pages à onze, et les trois versos blancs n’impriment pas de folio, parce que les folios sont filtrés selon le rôle de la page.
+
+```diff
+ const poems = { level: 1, numberingTemplate: '{1:I}', advancedDesign: poemHead,
+-  marginBottom: pt(0), breakBefore: { enabled: true, parity: 'any' } };
++  marginBottom: pt(0), breakBefore: { enabled: true, parity: 'odd' } };
+```
+
+### Numéroter les poèmes en chiffres arabes
+
+Le style de compteur du gabarit change d’un coup le chiffre sur la page du poème et dans la table des matières.
+
+```diff
+-const poems = { level: 1, numberingTemplate: '{1:I}', advancedDesign: poemHead,
++const poems = { level: 1, numberingTemplate: '{1}', advancedDesign: poemHead,
+```
+
+## Erreurs fréquentes
+
+- Gardez ensemble les vers d’une strophe : une ligne blanche dans un bloc `:::verse` commence une nouvelle strophe, quel que soit le nombre de lignes blanches.
+- Une ligne qui commence par un signe plus et une espace est un vers en escalier, placé là où le vers précédent s’arrêtait ; écrivez `\+` pour imprimer le signe plus.
+- Sans `align=start`, chaque poème est centré sur son vers le plus long, et chaque poème se trouve alors à une distance différente de la marge.
+- Pour renvoyer deux mots ensemble, liez-les par une espace insécable (U+00A0), comme *the soil* et *bright wings.* en page 5.
+- Un élément de pied de page dont `pages` reste à `'all'` s’imprime aussi sur les pages blanches. Le folio est ici fait de deux éléments, l’un pour les ouvertures et l’autre pour les pages de texte : un verso blanc reste blanc.

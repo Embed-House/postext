@@ -1,0 +1,68 @@
+---
+title: "Un cahier économie sur papier saumon"
+summary: "Un quotidien berlinois de huit pages dont le cahier Business tient en un style de titre : papier saumon, six colonnes, accent pétrole, bloc :::paper pour Folio."
+plain: "Huit pages d’un quotidien inventé. Les quatre premières portent l’actualité sur un papier blanc grisé ; les pages économie qui suivent sont imprimées sur papier saumon, avec des colonnes plus étroites et leurs propres couleurs."
+description: "Un quotidien berlinois avec Postext, code compris : l’actualité sur cinq colonnes, puis un cahier Business saumon sur six, marchés, graphiques, papier Folio."
+question: "Comment imprimer les pages économie d’un journal sur papier saumon, avec leur grille, jusque dans la vue 3D ?"
+aliases: ["pages saumon", "papier rose", "cahier économie", "pages financières", "cahier de journal", "berlinois", "Berliner", "cours de la Bourse", "données de marché", "journal plié", "couleur de rubrique", "salmon pages", "papel salmón"]
+pageNotes: { "1": "La une de « The Marrowick Ledger » : le titre du journal entre une oreille météo grise et une oreille saumon qui renvoie aux pages économie, le gros titre « Barrier holds back the Marrow’s highest tide in forty years », une photo de portes anti-crue en acier dans la tempête sur les cinq colonnes, l’article sur cinq colonnes filetées, un second article sur les trams de nuit et une bande d’appels saumon en pied.", "5": "La une du cahier « Business » sur papier saumon : un titre « Business » pétrole, une bande de six clôtures de marché, le gros titre « Harbour board backs £640 million deep-water terminal », un port à conteneurs à l’aube sur toute la largeur de la page, un encadré de chiffres flottant sur deux colonnes, un graphique en barres sur deux autres, six colonnes de texte et une publicité bancaire en pied.", "8": "Les cours : une colonne « Your money » avec un tableau des meilleurs placements, puis dix secteurs de cours de bourse sur cinq colonnes étroites, au-dessus d’une publicité pour une société de crédit immobilier." }
+---
+
+## Ce que vous allez composer
+
+Huit pages de *The Marrowick Ledger*, un quotidien inventé, sur la feuille berlinoise de 315 × 470 mm. Les pages 1 à 4 portent l’actualité sur un papier journal blanc grisé, en cinq colonnes filetées, avec un bandeau de rubrique rouge sur chaque page. À partir de la page 5, le journal change. Le cahier « Business » est imprimé sur papier saumon, comme les pages financières le sont depuis bien plus d’un siècle : la page passe à #f2d3c0, la grille se resserre à six colonnes, l’accent passe du rouge au pétrole, et une bande des clôtures de marché du jour se place sous le titre du cahier. On y trouve une page marchés avec une année de l’indice de la ville, un graphique par secteur et quatre tableaux de données, des nouvelles des entreprises et une page de cours. Dans la vue 3D de Folio, les feuilles se plient l’une dans l’autre et les quatre dernières pages sortent sur un papier saumon.
+
+## Préparation
+
+### 1 · Deux papiers dans une palette
+
+<Excerpt region="palette" />
+
+Chaque couleur de la configuration est liée à l’une des huit entrées de la palette. Les pages d’actualité utilisent `paper` (#f6f4ef) pour la page et `accent` (#b3261e) pour les bandeaux de rubrique, les surtitres et les marques des graphiques. Les pages « Business » gardent ces liens et en changent les valeurs : la palette de la section règle `paper` sur le saumon, `accent` sur le pétrole (#0f4c5c) et `tint` sur un saumon plus soutenu. `salmon` a aussi son entrée à lui, pour l’oreille et la bande d’appels de la page 1, qui restent saumon sur les pages blanches.
+
+### 2 · Un style de titre fait d’une page une page Business
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `# Markets {style="business"}` ouvre une section, et ses pages prennent les `palette`, `layout` et `bodyStyle` du style : six colonnes avec une gouttière de 4 mm (45,2 mm chacune, contre 54,6 mm pour l’actualité), le texte en 8,8 pt sur le même interlignage de 11,4 pt. La couleur de la page suit elle aussi la palette. `page.backgroundColor` est lié à `paper`, et quand la palette d’une section donne une autre valeur à `paper`, chaque page de la section en est peinte : la page qu’ouvre son titre et toute page sur laquelle se poursuit son texte. Les pages « Business » passent ainsi au saumon d’un bord à l’autre, et le filet de colonne, que le `layout` du style laisse tel que le règle le document, court entre les six colonnes comme entre les cinq.
+
+### 3 · Chaque page s’ouvre sur un bandeau de rubrique
+
+<Excerpt region="flags" />
+
+Le H1 est une ouverture sur toute la largeur de la page avec la parité `'any'` pour `breakBefore` : chaque titre ouvre la page suivante, quel que soit son côté. Sa maquette est un bandeau sur une barre de 3 pt, profond de trois lignes de grille. La ligne de folio est un en-tête ancré à 9 mm du bord supérieur : numéro de page, journal et date côté extérieur, `{chapterTitle}` côté intérieur dans la couleur d’accent, que la palette passe au pétrole sur les pages saumon.
+
+### 4 · Photos et graphiques sur k colonnes
+
+<Excerpt region="floats" />
+
+`top(3)` équivaut à `placement: { position: 'top', columns: 3 }` : la photo du chantier naval prend trois des cinq colonnes de l’actualité, le ferry quatre, la boulangerie trois des six colonnes « Business » et le graphique du port deux. Un flottant cité depuis un paragraphe de la colonne 1 prend la tête des colonnes suivantes encore vides : ces images commencent donc en colonne 2, et l’article descend à côté d’elles. Une telle image ne reste avec son article que tant qu’aucun autre article n’est composé sous lui sur cette page : un article sur toute la largeur placé après elle peut l’entraîner dans sa propre bande ou sur la page suivante. C’est pourquoi les pages 2 et 3 se terminent sur une publicité flottée en pied plutôt que sur un article de plus. Les photos qui couvrent toute la largeur de la page se placent en ligne (`here`) dans l’encadré de gros titre, sous leur titre. Les tableaux sont aussi dans le flux, dans des encadrés sur toute la largeur de la page, en pied.
+
+### 5 · Titres, panneaux, données et publicités sont des encadrés
+
+<Excerpt region="boxes" />
+
+Un titre sur toute la largeur est un encadré sans cadre, sur toute la largeur de la page, qui contient un H2 dans l’une de trois tailles, et un filet de 1 pt au-dessus signale l’article suivant. À la page 5, le panneau *The terminal in numbers* flotte sur deux des six colonnes (`columns="2"` sur sa clôture), et la citation en exergue de la page 4 fait de même par `columns: 2` dans son style. Les encadrés de données contiennent deux à quatre tableaux côte à côte dans un groupe `:::columns`, et les publicités sont des encadrés sur toute la largeur de la page flottés en pied, encadrés d’un filet de 0,75 pt.
+
+### 6 · Le papier sur lequel imprime Folio
+
+Les pages d’actualité n’ont besoin de rien : `folio.paper` est un papier journal de 45 g/m², et `binding: { type: 'folded', cover: 'pages' }` emboîte les deux feuilles pliées avec la page 1 à l’extérieur et la page 8 au dos. Les pages « Business » se trouvent dans un seul bloc :
+
+```markdown
+:::paper{type="newsprint" shade="#faede6"}
+# Business {style="business-front"}
+…
+# Share prices {style="business"}
+…
+:::
+```
+
+Chaque page du bloc porte `page.paper` avec cette nuance, et Folio l’imprime sur ce papier. La nuance est la couleur de la page rapprochée du blanc à 60 % (README §4) : la page à plat peint déjà #f2d3c0, et un papier entièrement saumon dessous la teinterait deux fois. Le canvas, le HTML et le PDF ignorent `:::paper` et peignent la couleur de la page : c’est pourquoi la palette de la section règle aussi `paper`.
+
+## Variantes
+
+### Changer de papier en gardant la grille
+
+Un style de titre avec une `palette` et sans `layout` garde les cinq colonnes filetées du document et peint quand même chaque page de sa section : `{ id: 'weekend', palette: { paper: '#efe6cf' } }` met un supplément du week-end sur papier journal crème. Enveloppez aussi ses pages dans un bloc `:::paper`, avec la nuance rapprochée du blanc à 60 %, pour que Folio les imprime sur un papier assorti.
+
+### Faire du cahier Business un encart détachable
+
+Les huit pages se plient en deux feuilles, l’une dans l’autre : les pages 1–2 et 7–8 sur la feuille extérieure, 3–6 sur la feuille intérieure. Folio donne à chaque feuillet le papier de son recto : les pages 7–8 sortent donc saumon, alors qu’une rotative les imprimerait sur la même feuille que la une. Placez les pages « Business » en 3–6 et elles forment la feuille intérieure, qu’une rotative peut tirer sur papier saumon et qu’un lecteur peut détacher d’un bloc.

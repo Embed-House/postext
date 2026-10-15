@@ -1,0 +1,58 @@
+---
+title: "Un zine agrafé avec une feuille de couverture en carte"
+summary: "Deux blocs :::paper mettent une carte saumon en feuille extérieure d’un zine de huit pages, que postext-folio montre agrafé autour de pages en papier journal."
+plain: "Un petit magazine plié sur un estuaire, avec une couverture épaisse en couleur et du papier journal à l’intérieur. Dans la visionneuse 3D, il repose fermé sur le bureau et s’ouvre comme un vrai."
+description: "Zine de huit pages, couverture en carte, intérieur en papier journal : deux blocs :::paper, une piqûre à cheval et cover: 'pages' dans config.folio, en un pen."
+question: "Comment imprimer une couverture, un encart ou un cahier hors-texte sur un autre papier que le reste du livre ?"
+aliases: ["zine", "fanzine", "livret", "piqûre à cheval", "agrafé", "couverture en carte", "papier journal", "feuille de couverture", "riso", "saddle stitch"]
+pageNotes: { "1": "La couverture sur fond blanc : la ligne du numéro, « Low Tide » en grande linéale bleue, un sous-titre en italique et onze lignes de marée bleues de longueurs différentes en travers du pied de page.", "3": "L’article sur le bécasseau variable : un surtitre bleu, un titre noir, un court filet bleu et un texte justifié.", "8": "La quatrième de couverture : « Low Tide » en bleu et une petite ligne de capitales, centrés." }
+---
+
+## Ce que vous allez composer
+
+Le numéro 3 de *Low Tide*, un zine gratuit sur un estuaire : huit pages de 140 × 200 mm, deux feuilles pliées et agrafées dans le pli. La feuille extérieure, pages 1–2 et 7–8, est une carte saumon ; la feuille intérieure, pages 3–6, un papier journal bon marché. La couverture est imprimée dans un seul bleu riso sur la carte nue, sans aplat de couleur propre : sur les pages à plat ci-dessous, elle s’imprime donc sur blanc, et dans Folio elle repose fermée sur le bureau dans la couleur de sa carte jusqu’à ce que vous la tourniez. Les deux papiers sont deux blocs dans le Markdown, et la reliure tient en trois réglages dans `config.folio`.
+
+## Préparation
+
+### 1 · Encadrer la feuille extérieure
+
+<Excerpt region="cover-sheet" />
+
+Un livret piqué à cheval est une pile de feuilles pliées : la feuille de couverture porte donc les deux premières et les deux dernières pages. Un bloc contient les pages 1–2, un autre les pages 7–8, et les pages entre les deux restent hors de l’un et de l’autre, sur le papier propre du livre. Chaque bloc commence et se termine sur une nouvelle page, ce dont la couverture et le mot d’accueil ont besoin de toute façon ici.
+
+### 2 · Papier journal, agrafes, couvertures prises dans les pages
+
+<Excerpt region="folio" />
+
+`folio.paper` est le papier journal de chaque page hors d’un bloc. `saddleStitch` plie les feuilles autour des agrafes, sans dos plat, et `cover: 'pages'` fait tourner la page 1 et la page 8 comme couvertures. Dans une piqûre à cheval, la couverture tourne comme les autres feuilles, seulement plus raide, et un feuillet de couverture qui nomme son propre support (la carte) est dessiné sur ce support.
+
+### 3 · Une couverture en une seule encre
+
+<Excerpt region="covers" />
+
+La couverture est un style de titre aux marges nulles avec une maquette pleine page : la ligne du numéro, le titre en Bricolage Grotesque de 70 pt, le sous-titre en Newsreader italique et onze lignes de marée dont les longueurs viennent d’un générateur à graine fixe, si bien que chaque exécution dessine les mêmes. Rien ne peint le fond de la page : c’est la carte qui le donne.
+
+### 4 · Une seule ouverture pour chaque article
+
+<Excerpt region="features" />
+
+Chaque article est un titre de niveau 1 dans le style `feature` : une nouvelle page, un surtitre tiré de ses attributs, le titre et un court filet bleu. Faire passer les cinq articles par un seul style limite l’intérieur du zine à deux familles de caractères et une seule couleur d’accent.
+
+### 5 · L’ouvrir agrafé
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `createFolioFromDocument` lit la reliure et les couvertures dans `doc.config.folio`, et le papier de chaque feuillet dans `page.paper`. Le pen avertit quand le nombre de pages est impair, car la page 8 ne peut être la quatrième de couverture que si elle tombe sur un verso.
+
+## Variantes
+
+### Une couverture blanche plus lourde
+
+Modifiez les deux blocs et la feuille de couverture devient une carte blanche de 300 g ; les pages intérieures restent en papier journal.
+
+```diff
+-:::paper{type=cardStock grammage=250 shade=#f2c9b4}
++:::paper{type=cardStock grammage=300 shade=#fbfaf6}
+```
+
+### Un livret simple
+
+Supprimez les blocs et la couverture devient une feuille du papier journal des pages, un peu plus lourde. <RecipeLink slug="paper-swatch-book">Le nuancier de papiers</RecipeLink> fait l’inverse et donne à chaque feuillet son propre support.

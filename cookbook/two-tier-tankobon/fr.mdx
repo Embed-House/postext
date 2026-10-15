@@ -1,0 +1,61 @@
+---
+title: "Un récit japonais en deux étages, titre sur les deux"
+summary: "Deux récits d’Akutagawa en œuvres complètes : deux étages de 25 caractères sur une page A5, titres sur les deux en page impaire, fins laissées telles quelles."
+plain: "Deux nouvelles comme les imprime une édition japonaise d’œuvres complètes : le texte descend en deux bandes superposées, chaque récit s’ouvre en page de gauche avec son titre sur toute la hauteur, et sa dernière page n’est pas équilibrée."
+description: "Akutagawa en deux étages verticaux avec Postext : titres sur les deux étages, œuvres ouvertes en page impaire, sections sur 3 lignes, fins non équilibrées."
+question: "Comment composer un récit japonais en deux étages, son titre sur les deux, ouvert sur une page de gauche ?"
+aliases: ["二段組", "nidangumi", "deux étages", "deux étages verticaux", "段", "dan", "étages", "zenshū", "全集", "œuvres complètes", "tankōbon", "単行本", "成り行き", "nariyuki", "dernière page non équilibrée", "titre sur les étages", "Akutagawa", "芥川龍之介", "蜘蛛の糸", "Le Fil de l’araignée", "The Spider's Thread", "尾生の信", "two tiers"]
+pageNotes: { "1": "La page 211 d’un volume d’œuvres complètes, seule à gauche du dos : 蜘蛛の糸 descend en grand le long de la droite de la page à travers les deux étages, 芥川龍之介 près du pied, puis le texte en deux étages séparés d’un filet fin, la section 一 sur trois lignes de large dans l’étage supérieur, et un colophon de deux lignes en anglais au pied.", "4": "La dernière page de « The Spider's Thread » : l’étage supérieur contient la section 三 et la fin du récit sur vingt de ses vingt et une lignes, la dernière étant la date （大正七年四月十六日）, remontée d’un caractère depuis le pied ; l’étage inférieur reste vide.", "5": "Le récit suivant, 尾生の信, s’ouvre sur la page de gauche en regard avec son titre à travers les deux étages.", "7": "La dernière page : le texte finit au tiers de la largeur de l’étage supérieur et l’étage inférieur reste vide." }
+---
+
+## Ce que vous allez composer
+
+Sept pages d’un volume d’œuvres complètes (全集) sur une page A5 reliée à droite : *The Spider's Thread* et *Bisei's Faith* d’Akutagawa Ryūnosuke, composés en deux étages (二段組) de 25 caractères en hauteur et 21 lignes en largeur, en Noto Serif JP 9 pt avec un filet fin entre les étages. Chaque récit s’ouvre sur une page impaire, celle de gauche, avec son titre en 20 pt qui descend à travers les deux étages et le nom de l’auteur près du pied ; les folios partent de la page 211. Les sections 一 二 三 prennent trois lignes de leur étage. Quand un récit se termine, sa dernière page est laissée telle que tombe le texte, le 成り行き (nariyuki) japonais : en page 214, le récit se termine dans l’étage supérieur avec sa date, une ligne avant que l’étage soit plein, et l’étage inférieur reste vide. Le journal chinois en étages verticaux est la <RecipeLink slug="vertical-newspaper-tiers">Nº 084</RecipeLink>, et un titre de chapitre sur deux colonnes horizontales la <RecipeLink slug="five-chapter-openers">Nº 017</RecipeLink>.
+
+## Préparation
+
+### 1 · Deux colonnes tournées d’un quart de tour font deux étages
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Sur une page en `writingMode: 'vertical-rl'`, `layoutType: 'double'` superpose les deux colonnes : la première remplit l’étage supérieur depuis la droite, puis l’inférieur, et la gouttière est la bande qui les sépare ([écriture verticale](/fr/docs/configuration-page-layout#écriture-verticale)). La [grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères) compte les caractères sur la hauteur d’un étage : chaque étage fait 25 caractères de 9 pt et la gouttière est arrondie à deux caractères entiers ; les 21 lignes de 15,75 pt en largeur occupent 116,7 mm des 148 mm de la page. Le filet entre les étages traverse la page, 0,4 pt dans un gris chaud.
+
+L’équilibreur de Postext finirait les deux étages de la dernière page d’un récit sur la même ligne, comme les journaux chinois et la plupart des livres européens à deux colonnes ferment un chapitre. Un livre japonais en étages laisse tomber le texte : l’étage supérieur court sur toute la page avant que l’inférieur commence. `balancing.trailing: false` est ce choix, et les étages verticaux ne sont pas équilibrés du tout sauf si `enabled: true` active l’équilibreur ([équilibrage des colonnes](/fr/docs/configuration-text#équilibrage-des-colonnes)).
+
+### 2 · Faire descendre le titre de l’œuvre à travers les deux étages
+
+<Excerpt region="opener" />
+
+Un niveau de titre avec `span: 'page'` est mis en page sur toute la hauteur de la page, les deux étages et la gouttière, en tête du flux, à droite d’une page verticale ; les étages commencent après les sept lignes que réserve sa maquette. Un tel titre ouvre toujours une page, et `breakBefore.parity: 'odd'` en fait celle de gauche : *The Spider's Thread* se termine en page 214, une page paire, et *Bisei's Faith* s’ouvre donc en 215 sans page blanche entre les deux ([largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Dans la maquette, `x` descend la page et `y` la traverse depuis le bord droit du bloc de texte ; le nom de l’auteur est placé depuis le pied de l’étage inférieur, trois caractères plus haut.
+
+### 3 · Numéroter les sections sur trois lignes de leur étage
+
+Le deuxième niveau, `lineSpan: 3` avec `indent: em(8)`, place 一 二 三 huit caractères plus bas dans un étage, dans une bande de trois lignes, comme les marque le texte d’Aozora (八字下げ, 中見出し) : le texte qui suit un numéro de section reste sur les lignes de l’étage voisin ([réglages par niveau](/fr/docs/configuration-text#réglages-par-niveau)). Les dates qui ferment les récits, （大正七年四月十六日）, sont remontées d’un caractère depuis le pied de leur étage (地から一字上げ) avec `:::paragraphs{align=end endIndent=1}` ; le convertisseur d’Aozora les écrit comme un style `aozora-end1` qui les aligne sur le pied, et les attributs du bloc ajoutent la remontée d’un caractère.
+
+### 4 · Placer le volume et l’œuvre le long de la tranche
+
+<Excerpt region="furniture" />
+
+`anchor.to: 'outer'` place le hashira dans la marge de la tranche, le nom du volume 芥川龍之介集 sur les pages de droite et le titre de l’œuvre sur celles de gauche, et `pages: 'body'` les écarte tous deux des pages où s’ouvre une œuvre ([éléments texte verticaux](/fr/docs/configuration-page-layout#éléments-de-texte-vertical)). Le folio est composé en travers de la marge en chiffres arabes, comme l’impriment beaucoup d’œuvres complètes : le long de la tranche, trois chiffres seraient couchés sur le côté. `pageNumbering.startAt: 211` numérote les pages comme le volume. Le style de titre de la première œuvre porte le colophon avec `pages: 'opener'`, car le pied de page d’un style sert à toutes les pages de sa section.
+
+## Variantes
+
+### Équilibrer la dernière page
+
+Activez l’équilibrage et la dernière page de chaque œuvre est coupée à niveau : la page 214 finit avec 10 lignes dans l’étage supérieur et 10 dans l’inférieur, la fin qu’utilise un livre chinois ou européen en colonnes. Sur la grille de caractères, l’équilibreur n’ajoute que des lignes entières : chaque caractère garde sa cellule.
+
+```diff
+-const balancing = { trailing: false };
++const balancing = { enabled: true }; // the closing band is cut level
+```
+
+### Ouvrir chaque œuvre à la page suivante
+
+`parity: 'any'` fait commencer une œuvre sur la page qui vient, comme les revues et les anthologies de textes très courts.
+
+```diff
+-const work = { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' } };
++const work = { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' } };
+```
+
+### Composer le récit en un seul étage
+
+Les romans et les bunko composent leur texte en un seul étage, sans gouttière ; la <RecipeLink slug="bunko-novel-furigana">Nº 117</RecipeLink> compose ainsi un bunko.

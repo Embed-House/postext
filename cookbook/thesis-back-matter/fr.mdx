@@ -1,0 +1,68 @@
+---
+title: "Pages de fin de thèse : annexe, glossaire et index"
+summary: "Les dernières pages d’une thèse en noir et blanc : une annexe lettrée, un glossaire sur deux colonnes, des références APA et un index tiré du texte."
+plain: "Les dernières pages d’une thèse de doctorat, du dernier chapitre à l’index. Postext construit l’index à partir de mots marqués dans le texte et complète leurs numéros de page."
+description: "Des styles de titre composent la fin d’une thèse avec Postext : annexe A, glossaire sur deux colonnes, références suspendues et index tiré des marques :index."
+question: "Comment composer le glossaire, les références et l’index d’une thèse, en retrait suspendu et en petit corps ?"
+aliases: ["thèse", "mémoire", "pages de fin", "matière de fin", "annexe", "annexes", "annexe lettrée", "glossaire", "bibliographie", "références", "style APA", "index", "index de fin d’ouvrage", "retrait suspendu", "noir et blanc", "back matter"]
+pageNotes: { "1": "La page 171 ouvre le chapitre 6, « Conclusion », sous une bande noire de 62 mm de haut : le titre et un chiffre de 118 pt en blanc, le surtitre « CHAPTER » au-dessus. Le tableau 6.1 se trouve au pied, entre deux filets horizontaux.", "3": "Page 173, « Appendix A, Interview guide » : la bande porte la lettre A là où le chapitre avait son chiffre. Dessous, sept questions numérotées avec deux relances, puis le tableau A.1.", "4": "Page 174, le glossaire : le surtitre « BACK MATTER » et une note en italique dans la bande, puis deux colonnes en drapeau de termes en gras dont les définitions sont suspendues de 1 em.", "5": "Page 175, les références : une colonne de dix-sept entrées APA en 9,3 pt, chacune suspendue de 1,5 em.", "6": "Page 176, l’index : des lettres dans le caractère de titrage au-dessus de deux colonnes d’entrées et de sous-entrées en retrait. Des numéros de page en gras renvoient aux définitions du glossaire.", "7": "Page 177 : l’index se termine en deux colonnes de longueur presque égale sous le titre courant « INDEX », suivi d’un colophon." }
+---
+
+## Ce que vous allez composer
+
+Les sept dernières pages d’une thèse de doctorat sur la lecture à l’écran et sur papier, composées sur une page B5 en noir et blanc. Le chapitre 6, l’annexe A, le glossaire, les références et l’index s’ouvrent chacun sous la même bande noire de 62 mm de haut, avec le titre en réserve. Le chapitre montre son chiffre dans la bande et l’annexe sa lettre ; les sections de fin portent le surtitre BACK MATTER et une courte note en italique. Le chapitre court sur une seule colonne justifiée. Le glossaire et l’index passent à deux colonnes en drapeau et les références reviennent à une seule, avec les lignes suivantes de chaque entrée en retrait. L’index vient de marques dans le texte : le moteur trie les termes sous leurs lettres, trouve la page de chaque marque et regroupe les pages consécutives en intervalles comme 171–73. Des numéros en gras renvoient aux définitions du glossaire.
+
+## Préparation
+
+### 1 · Donner un style de titre à chaque partie des pages de fin
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `# Glossary {style="glossary" note="…"}` ouvre une section qui court jusqu’au titre de niveau 1 suivant, et ses pages prennent la mise en page, les titres courants et l’ouverture du style ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)) : le glossaire et l’index passent ainsi à deux colonnes, tandis que les références, dont le style ne règle aucune mise en page, reviennent à la colonne unique du document. `numbered: false` tient ces titres hors du compte des chapitres (supprimez-le et la bande du glossaire imprime 2), et chaque style nomme son saut de page, car un style qui n’en nomme aucun hérite du `'odd'` du chapitre et laisse des versos blancs. Les entrées du glossaire et des références sont des paragraphes d’un bloc `:::paragraphs{style="…"}` en 9,3 sur 12,4 pt, contre 11 sur 14,6 pour le texte, avec des lignes suivantes suspendues de 1 em dans le glossaire et de 1,5 em dans les références ([styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)).
+
+### 2 · Dessiner une bande pour toutes les ouvertures
+
+<Excerpt region="opener" />
+
+La marque est `{number}` : 6 sur le chapitre, A sur l’annexe et rien sur un titre non numéroté. Une seule maquette sert aux trois, et les sections de fin impriment leur `{attr.note}` là où serait le chiffre. `minHeight` réserve huit lignes de 14,6 pt, soit 41,2 mm depuis le haut du bloc de texte, ce qui dégage la bande de 3,2 mm et garde le texte sur sa grille. Le texte de maquette pose sa ligne de base à 0,8 de la ligne : une boîte alignée en bas dont le pied se place `below()` sous une ligne de base pose sa dernière ligne sur cette ligne de base. Le titre, le chiffre de 118 pt et la dernière ligne de la note reposent tous sur la ligne de base du titre, 52,5 mm sous le bord du format. La ligne du chiffre vaut 0,72 de son corps : la ligne tient donc dans sa boîte.
+
+### 3 · Lettrer l’annexe depuis son style
+
+<Excerpt region="appendix" />
+
+Le style de l’annexe règle `numberingTemplate: '{1:A}'`, qui imprime le compteur du niveau sous forme de lettre, et `# Interview guide {style="appendix" startAt=1}` relance ce compteur : la première annexe est A et non G ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)). La bande lit la lettre par `{number}` et le titre courant par `{chapterNumber}`. Le `{h1}` d’un type de ressource imprime le compteur sous forme de nombre sauf s’il nomme un style : les tableaux de l’annexe prennent donc un type dont le modèle est `'{h1:A}.{n}'`, soit A.1, A.2 et ainsi de suite, et B.1 dans une deuxième annexe ; avec le type par défaut, le tableau serait le Table 1.1. Les titres du chapitre lui-même comptent selon les modèles des niveaux : `'{1}.{2}'` imprime 6.1, et `continuation.headings.h1: 5` en fait le sixième chapitre.
+
+### 4 · Placer les titres courants sur le bord extérieur
+
+<Excerpt region="running-heads" />
+
+Les quatre éléments texte sont ancrés à la page et filtrés par `parity`, ce qui garde le folio sur le bord extérieur des deux pages ; chacun est placé par son haut, `above()` au-dessus d’une ligne de base à 17,5 mm sous le bord du format, si bien que le folio de 9,5 pt et les capitales de 7,5 pt reposent sur une même ligne. Le verso porte le titre de la thèse (`{title}`, tiré du frontmatter) et le recto celui de la section (`{chapterTitle}`), comme INDEX en <PageRef page={7}>page 177</PageRef>. `pages: 'body'` les écarte des ouvertures, dont le seul folio est celui du pied de page, centré sous le bloc de texte. Le recto du chapitre afficherait *Chapter 6. Conclusion* et celui de l’annexe *Appendix A. Interview guide*, mais dans cet exemple seul l’index court jusqu’à un recto.
+
+### 5 · Marquer les termes là où le texte en parle
+
+<Excerpt region="index" />
+
+`:index[tablet]` imprime son mot et le classe sous ce même mot ; `Rayner:index{term="Rayner, Keith"}` n’imprime rien et classe la page de *Rayner* sous le nom complet ; `term="interviews!timing of"` crée une sous-entrée. Les termes du glossaire portent `main` : leur page est donc composée en gras, comme le dit la note dans la bande de l’index. `:::index` sous `# Index {style="index"}` imprime les entrées dans les deux colonnes du style, et `buildDocument` remet le document en page jusqu’à ce que les numéros de page ne bougent plus. Les entrées sont en 9 sur 11,6 pt, avec des lignes suivantes suspendues de 2 em et des sous-entrées en retrait de 1 em ; les lettres sont en 13 pt dans le caractère de titrage. Les marques ne fonctionnent pas dans les cellules de tableau : les rangs du tableau 6.1 n’ajoutent donc aucune page, et *look-backs* renvoie au paragraphe qui en parle, pas au tableau.
+
+### 6 · Garder tous les réglages par défaut à l’encre
+
+<Excerpt region="palette" />
+
+Les couleurs par défaut du moteur pour le gras, l’italique, les marqueurs de liste et les renvois suivent l’entrée de palette `main-color` : la faire pointer vers l’encre les imprime en noir au lieu du bleu ([palette de couleurs](/fr/docs/configuration-fonts-colors-viewers#palette-de-couleurs)). `referenceBold: false` compose *Table 6.1* en romain, comme les citations auteur–date qui l’entourent.
+
+<Note>Une liste des tableaux reste manuelle. Dans une thèse complète mise en page chapitre par chapitre avec `buildBundle`, le chapitre qui contient `:::index` reçoit les marques de tous les chapitres.</Note>
+
+## Variantes
+
+### Commencer chaque section sur un recto
+
+Les thèses reliées pour une bibliothèque ouvrent souvent chaque section sur une page de droite. Le glossaire, les références et l’index passent alors en pages 175, 177 et 179, chacun après un verso blanc, et les numéros en gras de l’index renvoient à la page 175.
+
+```diff
+-const backMatter = (id, extra) => ({ id, numbered: false, breakBefore: { enabled: true,
+-  parity: 'any' }, advancedDesign: opener('Back matter'), header: sectionHeads, ...extra });
++const backMatter = (id, extra) => ({ id, numbered: false, breakBefore: { enabled: true,
++  parity: 'odd' }, advancedDesign: opener('Back matter'), header: sectionHeads, ...extra });
+```
+
+### Composer aussi le début de la thèse
+
+Les pages liminaires, numérotées en chiffres romains avant la page 1, sont dans <RecipeLink slug="front-matter-roman-to-arabic">Pages liminaires en chiffres romains, puis la page 1</RecipeLink>.

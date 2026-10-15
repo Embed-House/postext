@@ -73,7 +73,7 @@ export async function CookbookFrontispiece({ data, locale }: { data: GalleryData
               )}
             </Link>
             <figcaption className="mt-2 text-center">
-              <span className="sr-only">{t("frontispiece")}: </span>
+              <span className="sr-only">{t("frontispiece")}{t("colon")} </span>
               <Link
                 href={featured.href}
                 prefetch={false}

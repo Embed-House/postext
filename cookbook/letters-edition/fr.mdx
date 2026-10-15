@@ -1,0 +1,68 @@
+---
+title: "Une édition de lettres : dates de lieu et signatures"
+summary: "Des lettres qui se suivent sans saut de page ; chaque date vient d’attributs du titre, et des styles de paragraphe règlent appel, signature et post-scriptum."
+plain: "Un petit livre de trois lettres échangées entre le roi de Prusse et Voltaire. Il montre comment composer la date, la formule d’appel et la signature de chaque lettre, les lettres se suivant sans changer de page."
+description: "Trois lettres de Frédéric II et de Voltaire composées dans Postext en édition 14 × 21 cm, dates tirées d’attributs du titre et signatures alignées à droite."
+question: "Comment composer l’appel, la signature au fer à droite et le post-scriptum de chaque lettre d’un recueil ?"
+aliases: ["lettres", "correspondance", "épistolaire", "date de lieu", "signature", "formule d’appel", "post-scriptum", "vedette", "en-tête de lettre"]
+pageNotes: { "2": "La note liminaire en italique, puis la lettre I : « LETTRE I » en petites capitales rouges, « Frédéric à Voltaire » en italique Fell, la date « À Charlottembourg, le 6 juin 1740 » au fer à droite, l’appel « Mon cher ami, » et, au bas de la lettre, la signature « FÉDÉRIC » au fer à droite.", "3": "La lettre II ouvre la page sous le titre courant « 12 juin 1740 », avec les dix-huit vers de Frédéric en retrait de la marge.", "4": "La lettre II se termine sur « FÉDÉRIC » et un post-scriptum d’un corps plus petit ; plus bas, la lettre III s’ouvre sur sa date « À Paris, le 1er avril 1778 » et l’appel « Sire, ».", "5": "La lettre de Voltaire se termine sur « VOLTAIRE » au fer à droite, puis vient le colophon ; le titre courant porte « 1er avril 1778 »." }
+---
+
+## Ce que vous allez composer
+
+Cinq pages de *Mon sort est changé*, une édition au format 14 × 21 cm de trois lettres en français : les deux que Frédéric II écrivit à Voltaire six et douze jours après être devenu roi de Prusse, en juin 1740, et la lettre de Voltaire du 1er avril 1778, deux mois avant sa mort. Sur la couverture, une photographie de deux lettres pliées et d’un sceau de cire rouge, générée par des modèles de diffusion, repose sur un maroquin vert dessiné en code dans un double filet doré. À l’intérieur, les lettres se suivent sans saut de page. Chaque en-tête donne le numéro en petites capitales rouges et les deux correspondants en italique Fell, avec le lieu et la date au fer à droite en dessous. L’appel a sa propre ligne, et la signature, en petites capitales, termine la lettre contre la marge de droite ; le post-scriptum de Frédéric suit sa signature dans un corps plus petit. Le titre courant de chaque recto donne la date de la lettre.
+
+## Préparation
+
+### 1 · Lire la date dans le titre
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque lettre est un titre de niveau 1 dont les attributs contiennent le lieu et la date, et l’en-tête les imprime sous la forme `{attr.place}, le {attr.date}.` ([attributs de titre](/fr/docs/document-format#attributs-de-titre)). La boîte de la date atteint le bord droit de la colonne (`width: 'fill'`), et `align: 'right'` cale les mots contre ce bord ; sans cela, le texte de maquette est centré. L’appel, la signature et le post-scriptum sont des [styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe) appliqués avec `:::paragraphs{style="…"}`. La signature prend IM Fell DW Pica SC, une famille dont les bas-de-casse sont dessinés en petites capitales. `inlineMarks: true` fait lire à la date les marques de son attribut : `date="1^er^ avril 1778"` met l’ordinal en exposant.
+
+### 2 · Faire se suivre les lettres
+
+<Excerpt region="letters" />
+
+Avec `breakBefore` désactivé, une lettre commence deux lignes de grille (`marginTop`) sous la ligne de grille où finit la précédente. Sur la <PageRef page={4}>page 4</PageRef>, le post-scriptum, composé sur un interlignage de 12,6 pt, se termine entre deux lignes de grille, si bien qu’environ trois lignes de blanc se trouvent au-dessus de la lettre III. En page 2, la lettre I court jusqu’au pied de la page et la lettre II ouvre la page 3. Laissé à sa valeur par défaut, le niveau 1 ouvrirait chaque lettre sur un recto ([saut avant](/fr/docs/configuration-text#saut-avant)). `numberingTemplate: '{1:I}'` numérote les lettres de I à III, et l’en-tête imprime le chiffre par `{number}`.
+
+### 3 · Dater le recto avec la lettre
+
+<Excerpt region="running-heads" />
+
+Dans un en-tête de page, `{attr.date}` prend l’attribut du dernier titre de niveau 1 qui commence sur la page ou avant. La page 3 imprime « 12 juin 1740 », et la page 5, où se poursuit la lettre de Voltaire commencée en page 4, imprime « 1er avril 1778 » avec son ordinal en exposant ([éléments de texte](/fr/docs/configuration-page-layout#éléments-de-texte)). Les titres courants se placent 12 mm sous le bord supérieur de la page, le folio sur la marge extérieure et les mots 8 mm plus à l’intérieur. `pages: 'body'` les tient à l’écart de la couverture, qui compte comme une ouverture parce que son titre s’étend sur toute la page. La date est composée dans l’italique Crimson Pro de la date de lieu qu’elle répète, et les noms du verso dans les petites capitales des numéros de lettre.
+
+### 4 · Faire de la couverture un titre
+
+<Excerpt region="cover" />
+
+La couverture est le premier titre, dans le [style de titre](/fr/docs/configuration-styles#styles-de-titre) `cover` : un élément image ancré au fond perdu porte la reliure dessinée, un second place la photographie 72 mm plus bas, et le titre, les noms et le sous-titre viennent du titre et de l’en-tête du document. `numbered: false` la tient hors du compte, si bien que la première lettre de Frédéric est la I. L’image de la reliure remplit la page, et une ouverture réserve la place jusqu’à son élément le plus bas : la couverture occupe donc toute la page 1, et la note liminaire commence en page 2 sans `:::pagebreak`.
+
+### 5 · Couper le français, garder les espaces ouvertes
+
+<Excerpt region="text" />
+
+`locale: 'fr'` coupe avec les motifs français (*ou-vrage* en page 2, *représen-tation* en page 4). La justification, la coupure des lignes sur tout le paragraphe et les règles contre les veuves, les orphelines et les fins de paragraphe trop courtes sont actives par défaut. `minWordSpacing: 0.75` empêche une espace de se réduire sous les trois quarts de celle de Crimson Pro ; à la valeur par défaut de 0,6, la ligne justifiée la plus serrée de la page 5 composerait ses espaces à 0,70 de cette largeur. Avec un interlignage de 14,4 pt, la page contient 33 lignes, et la marge du bas est ce qui reste sous elles, 20,4 mm.
+
+### 6 · Lier chaque couleur à la palette
+
+<Excerpt region="palette" />
+
+`col()` lie chaque couleur à son entrée de palette, et ce lien vaut aussi bien dans les styles de texte que dans les éléments de maquette : les en-têtes de lettre, les titres courants et la couverture. L’italique de la note liminaire et du colophon prend la couleur d’italique par défaut, liée à `main-color` ; avec cette entrée réglée sur l’encre, il s’imprime à l’encre et non dans le bleu du moteur, #295AA3.
+
+## Variantes
+
+### Nommer le lieu dans le titre courant
+
+Les mêmes attributs peuvent donner au recto la date de lieu complète, *À Charlottembourg, le 12 juin 1740*.
+
+```diff
+-  head('recto-date', '{attr.date}', 'odd', at('page', 'top-right', -(MARGIN.outer + 8), HEAD_Y),
++  head('recto-date', '{attr.place}, le {attr.date}', 'odd',
++    at('page', 'top-right', -(MARGIN.outer + 8), HEAD_Y),
+```
+
+## Erreurs fréquentes
+
+- Le recto prend la date de la dernière lettre qui *commence* sur la page ou avant. Une page qui finit une lettre et ouvre la suivante porte la date de la nouvelle lettre, comme le titre courant d’un dictionnaire nomme la dernière entrée de la page.
+- Un titre sans l’attribut imprime une chaîne vide, sans avertissement : une lettre sans `place="…"` reçoit une date de lieu qui commence par une virgule. Vérifiez le titre de chaque lettre.
+- Les lettres gardent les signes ; : ? et ! sans espace de la transcription. L’usage français place devant eux une espace fine insécable (U+202F) ; tapée à cet endroit, elle garde chaque signe sur la ligne de son mot.
+- Crimson Pro n’a pas les lettres modificatives ᵉ (U+1D49) ni ʳ (U+02B3) : un 1ᵉʳ écrit en Unicode s’imprimerait dans une police de secours. Écrivez plutôt `1^er^` : la note liminaire, qui est du texte courant, le compose en exposant, tout comme la date de lieu et le titre courant du recto, dont les éléments de texte portent `inlineMarks: true`.

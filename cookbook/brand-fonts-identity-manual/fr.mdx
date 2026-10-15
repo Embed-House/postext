@@ -1,0 +1,70 @@
+---
+title: "Polices de marque : mise en page, PDF et paquet"
+summary: "La charte d’un métro fictif composée dans les fichiers de police de la marque, téléchargés une fois et repris par la mise en page, le PDF et un paquet .postext."
+plain: "Une charte graphique pour un réseau de métro imaginaire. On y voit comment télécharger une seule fois les polices propres à une marque et s’en servir pour l’aperçu des pages, le PDF et le fichier enregistré."
+description: "Enregistrez vos fichiers de police avant la mise en page, donnez au PDF les mêmes octets via un fournisseur de polices, mettez les partageables dans un paquet."
+question: "Comment composer des pages dans mes propres fichiers de police et intégrer ces mêmes fichiers au PDF ?"
+aliases: ["polices de marque", "polices sous licence", "caractère institutionnel", "polices auto-hébergées", "FontFace à partir d’octets", "customFonts", "redistribuable", "fournisseur de polices", "charte graphique", "manuel d’identité visuelle", "pastilles de couleur", "brand fonts", "fuentes corporativas"]
+pageNotes: { "1": "La couverture : « Metro de Alba » en capitales et bas de casse noires étroites sur une ligne, « Identity manual » et l’édition dessous, et sur la moitié inférieure de la page cinq lignes épaisses, rouge, bleu canard, jaune, violette et verte, qui partagent une voie depuis le coin inférieur gauche, franchissent une rivière grise et s’écartent en éventail vers la droite, avec des stations blanches cerclées de noir.", "2": "Page 2 : une bande d’encre en tête avec un carré rouge et le titre du manuel, un très grand « 01 » rouge à côté du titre « Colour » et de son chapeau, deux colonnes sur les couleurs des lignes avec de petits carrés de couleur dans le texte, et en pied, sur toute la largeur, un tableau dont la première colonne est faite de neuf blocs de couleur, suivis des noms et des valeurs HEX, RVB et CMJN en chasse fixe.", "3": "Page 3 : la bande avec un carré violet, un très grand « 02 » violet à côté du titre « Type », un texte sur les trois caractères sous les intertitres « Big Shoulders Display », « Public Sans », « Weights » et « Spline Sans Mono », avec des lignes de spécimen de Public Sans et de Spline Sans Mono, et en pied, sur toute la largeur, un panneau de quai noir portant « Puerta del Mercado » en blanc, avec des carrés bleu canard, jaune et vert avant « Lines 2, 3 and 5 ».", "4": "Page 4 : la bande avec un carré vert, un très grand « 03 » vert à côté du titre « Usage », deux colonnes de règles pour le plan du réseau (tracé, noms, géographie, épaisseur des lignes, fichiers pour les fournisseurs) qui se terminent par le colophon, et en pied, sur toute la largeur, deux dessins encadrés côte à côte : « Do », trois lignes qui tournent ensemble à 45 degrés avec des stations blanches, et « Don't », les mêmes lignes à des angles quelconques avec des points de couleur." }
+---
+
+## Ce que vous allez composer
+
+Quatre pages du manuel d’identité visuelle de Metro de Alba, un métro fictif de cinq lignes. Sur la couverture, les cinq lignes partent du coin inférieur gauche sur une voie commune et bifurquent vers la droite après avoir franchi une rivière grise, sous le nom en Big Shoulders Display. Chaque section s’ouvre sous une bande d’encre, avec un grand numéro à deux chiffres dans la couleur d’une ligne. Dans *01 Colour*, la première colonne du tableau est la couleur elle-même ; *02 Type* présente des lignes de spécimen et un panneau de quai, et *03 Usage* se termine sur deux dessins de plan encadrés, l’un tracé selon les règles (« Do ») et l’autre à leur encontre (« Don't »). Tout le texte est composé dans six fichiers de police que le script télécharge avant la première mise en page. Le PDF est dessiné avec les mêmes six fichiers, et le fichier `.postext` en porte cinq, parce que le caractère de titrage est marqué comme non redistribuable.
+
+## Préparation
+
+### 1 · Enregistrer les caractères de la marque, composer et donner au PDF les mêmes octets
+
+<Excerpt region="build" />
+
+La mise en page mesure chaque mot avec les caractères de `document.fonts` : `loadBrandFonts()`, dans [la réponse courte](#la-réponse-courte), télécharge donc chaque fichier une fois, garde ses octets et enregistre un `FontFace` construit à partir d’eux avant que `buildDocument` ne s’exécute. Le `kitFonts` du kit ne télécharge que depuis Fontsource, alors qu’une marque sert ses fichiers depuis son propre serveur. `renderToPdf` demande les caractères que peignent les pages, et `brandFontProvider` répond à chaque demande avec les octets déjà téléchargés ; une graisse ou une inclinaison absente de la marque recevrait le fichier le plus proche de la même famille ([Pourquoi un fournisseur de polices ?](/fr/docs/configuration-programmatic-usage#pourquoi-un-fournisseur-de-polices)). Le PDF intègre les six fichiers que le canvas a mesurés, chacun une fois.
+
+### 2 · Le système de couleurs tient dans une seule liste
+
+<Excerpt region="colours" />
+
+Comme la palette et le tableau 1.1 sont construits à partir des mêmes neuf rangées, le tableau ne peut pas lister une valeur que les pages n’utilisent pas. `setCellBackground` remplit la première cellule vide de chaque rangée avec la couleur de cette rangée, liée à la palette. Dans le texte, `:swatch{color="line-2"}` prend un id de palette et dessine un carré bordé de la couleur du texte. `main-color` porte l’hexadécimal de « Ink » : les titres et les passages en gras et en italique, dont les valeurs par défaut y sont liées, s’impriment donc en « Ink » au lieu du bleu du moteur. `bodyText.referenceColor: col('ink')` désigne aussi « Ink » pour les renvois ([Palette de couleurs](/fr/docs/configuration-fonts-colors-viewers#palette-de-couleurs)).
+
+### 3 · Une ouverture, trois couleurs de ligne
+
+<Excerpt region="sections" />
+
+`numberingTemplate: '{1:01}'` écrit le compteur sur deux chiffres, et `{number}` imprime 01, 02 et 03 dans l’ouverture ; le titre de couverture est `numbered: false` et ne reçoit pas de numéro. Les trois styles de section ne diffèrent que par l’entrée de palette `section`, que chacun règle sur la couleur de sa ligne. Le numéro et le carré de la bande sont liés à `section` : une seule maquette d’ouverture sert ainsi aux trois sections. `minHeight` réserve dix lignes de la grille de 14 pt à l’ouverture, et le texte de chaque section commence sur la même ligne de grille de sa page.
+
+### 4 · « Do » et « Don't » sont des types de figure
+
+<Excerpt region="do-dont" />
+
+Un type de ressource peut porter un `captionStyle` partiel, et ces deux-là ne règlent que la couleur de l’étiquette, « Signal green » pour « Do » et « Signal red » pour « Don't » ([Types de ressources](/fr/docs/configuration-resources#types-de-ressources)). Les couleurs de signalisation atteignent 5,1:1 et 5,5:1 sur blanc, alors que les lignes 1, 2, 3 et 5 restent sous le 4,5:1 qu’exige le texte en petit corps. Les deux dessins flottent avec `position: 'bottom'` et sont cités dans le même paragraphe, le premier sous « Drawing the map » : ils partagent donc le pied de la page 4, « Do » dans la colonne de gauche et « Don't » dans celle de droite.
+
+### 5 · Le paquet embarque les polices qu’il a le droit de partager
+
+<Excerpt region="bundle" />
+
+`createBundle` lit `config.customFonts`, cherche les octets de chaque variante dans `files` d’après son `fileId` et les écrit sous `fonts/`, avec une entrée `fonts` dans le manifeste. La famille de titrage porte `redistributable: false`, pour figurer une licence qui interdirait de transmettre les fichiers (Big Shoulders Display est en réalité sous OFL). Son fichier reste dehors, et `warnings` nomme la famille. Le fichier de 81 Ko contient le chapitre, la configuration, les trois dessins et cinq fichiers de police. La mise en page ne lit jamais `customFonts` ; les pages sortent identiques sans lui ([Créer un paquet](/fr/docs/configuration-programmatic-usage#créer-un-paquet)).
+
+## Variantes
+
+### Embarquer aussi le caractère de titrage
+
+Si la licence vous autorise à transmettre les fichiers, retirez l’indicateur, et le paquet porte les trois familles en 96 Ko.
+
+```diff
+-  name, redistributable: name !== DISPLAY, // the display face reaches suppliers another way
++  name,
+```
+
+### Utiliser un vrai gras
+
+`boldFontWeight: 600` compose les passages en gras, les en-têtes de tableau et les étiquettes de légende dans le SemiBold, parce que la marque n’a pas de Bold ; si votre famille en a un, ajoutez ses fichiers à `FONTS`, supprimez le réglage et réécrivez la ligne de spécimen de l’exemple et son « There is no Bold », qui ne serait plus vrai.
+
+```diff
+-    boldFontWeight: 600, // the brand has no Bold: its SemiBold sets **emphasis**
+-  'Public Sans': ['400', '400i', '600', '600i'],
++  'Public Sans': ['400', '400i', '600', '600i', '700', '700i'],
+```
+
+## Erreurs fréquentes
+
+Passez à `createBundle` les octets de chaque police sous le `fileId` que lui attribue `customFonts`. Une variante sans octets est laissée de côté avec un avertissement « missing file, skipped », et une famille qui perd toutes ses variantes disparaît du manifeste.

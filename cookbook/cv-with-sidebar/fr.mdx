@@ -1,0 +1,63 @@
+---
+title: "CV d’une page avec colonne latérale"
+summary: "CV A4 d’une page : la bande prune est un encadré dans une colonne gauche de flottants, prolongé dans les marges par l’en-tête ; dates alignées à droite."
+plain: "Un CV d’une page pour une graphiste du livre, avec une bande colorée sur le côté gauche pour les coordonnées et les compétences. Les dates de chaque poste s’alignent à droite."
+description: "Un CV d’une page en mise en page colonne et demie : un encadré prune remplit la colonne latérale et des boîtes d’en-tête portent sa couleur jusqu’aux bords."
+question: "Comment mettre en page un CV d’une page avec une colonne latérale colorée et les dates alignées à droite ?"
+aliases: ["CV", "curriculum vitae", "CV d’une page", "CV en deux colonnes", "colonne latérale", "barre latérale colorée", "dates alignées à droite", "compétences en pastilles", "résumé", "resume", "currículum"]
+pageNotes: { "1": "Un CV A4. Une bande prune descend le long du bord gauche de la feuille, du haut jusqu’en bas ; en tête, une pile de cinq livres reliés toile, abricot, blanc, framboise et lilas, se tient au niveau de la ligne de base du nom. Dessous, des capitales abricot titrent les sections, dont le texte est blanc : « Contact » ; « Skills » et « Tools », composés en pastilles arrondies ; « Languages », « Education », « Teaching » et « Outside work ». Sur la page blanche à droite, « Irene Salcedo » dans un grand caractère à empattements, « BOOK DESIGNER AND ART DIRECTOR » en petites capitales framboise, un profil de cinq lignes, puis « Experience », un titre à empattements framboise suivi d’un filet fin jusqu’à la marge, trois postes dont l’intitulé est à gauche et les dates alignées à droite sur la même ligne, l’employeur en italique dessous, une liste « Selected books » et un colophon d’une ligne." }
+---
+
+## Ce que vous allez composer
+
+Le CV d’Irene Salcedo, une graphiste du livre fictive installée à Madrid, sur une feuille A4. Une bande prune de 66 mm de large descend le long du bord gauche, du haut de la feuille jusqu’en bas. En tête, une pile de livres reliés toile, dessinée en code, se tient au niveau de la ligne de base de son nom. Dessous viennent ses coordonnées, ses compétences et ses outils composés en pastilles arrondies, ses langues, sa formation et son enseignement, et ce qu’elle fait en dehors du travail. Son nom, en Hedvig Letters Serif de 46 pt, ouvre une colonne de texte de 118 mm avec un profil de cinq lignes, trois postes et la liste des livres qu’elle a mis en page. Chaque titre de poste place l’intitulé à gauche et les dates à droite sur la même ligne de base, avec l’employeur en italique dessous. Le premier titre de la colonne latérale partage sa ligne de base avec le métier inscrit sous le nom.
+
+## Préparation
+
+### 1 · Imbriquer les sections dans un encadré latéral
+
+<Excerpt region="sections" />
+
+Dans la colonne, la bande est l’encadré de [la réponse courte](#la-réponse-courte). Sa clôture vient avant le nom : `span="side"` le place donc en tête de la colonne réservée aux flottants. Les sections sont des encadrés imbriqués dedans, sans fond propre, si bien que le prune court sans interruption de « Contact » à « Outside work ». En encadrés latéraux séparés, elles seraient espacées de 4,7 à 9,1 mm, même avec `marginBottom` à 0. Les pastilles font environ 3,9 mm de haut. « Skills » et « Tools » utilisent leur propre style de section, `chips`, dont l’interlignage de 16 pt laisse 1,8 mm entre les rangées ; les 12,4 pt des autres sections laisseraient un demi-millimètre ([styles de pastille](/fr/docs/configuration-styles#styles-de-pastille)).
+
+### 2 · Peindre les marges autour de la colonne
+
+<Excerpt region="margins" />
+
+La colonne latérale se trouve à l’intérieur des marges de la page : l’encadré de la bande s’arrête donc à 9 mm du bord gauche et à 18 mm du haut. Trois boîtes d’en-tête remplissent la marge du haut au-dessus de la colonne, la marge de gauche du haut jusqu’en bas et la marge du bas sous la colonne. Les éléments d’en-tête sont peints après le texte et par-dessus : la recette les garde donc dans les marges, où ne court aucun texte. Ils se répètent aussi sur chaque page, et une deuxième page porterait également la bande ([en-têtes et pieds de page](/fr/docs/configuration-page-layout#en-têtes-et-pieds-de-page)). Les boîtes du haut et de gauche chevauchent l’encadré de 0,5 mm, et la boîte du pied remonte de 1 mm au-dessus du pied de la colonne, sur la fin de l’encadré, si bien qu’aucun filet de papier ne paraît aux raccords. Le `:::space` qui ferme l’encadré le prolonge jusqu’à 278,0 mm, 0,8 mm au-dessus du pied de la colonne, avec 2,76 lignes en anglais et 1,76 en espagnol.
+
+### 3 · Placer le nom en tête de la colonne de texte
+
+<Excerpt region="name" />
+
+Le H1 garde la valeur par défaut `span: 'column'`. Avec `'page'`, il devient une ouverture sur les deux colonnes ; placé après l’encadré de la bande, il passe en page 2, et la colonne latérale y commence sous le nom, à 45,9 mm du haut. `breakBefore` est désactivé parce que l’encadré est déjà sur la page : avec un saut, le nom et toute la colonne de texte passent en page 2. La `marginBottom` du niveau, d’une ligne de la grille, fait commencer le profil à 45,9 mm au lieu de 41,3 mm. La marge intérieure haute de l’encadré vaut `ROLE_Y`, la hauteur du nom plus l’espace dessous : le premier titre de la colonne latérale et le métier partagent ainsi une ligne de base, à 39,3 mm du bord supérieur.
+
+### 4 · Mettre les dates sur la ligne de l’intitulé
+
+<Excerpt region="jobs" />
+
+Chaque poste est un H3 dont les attributs portent l’employeur et les dates : `### Art director {org="Ediciones del Albardín, Madrid" dates="2021 – present"}` ([attributs des titres](/fr/docs/document-format#attributs-de-titre)). L’intitulé et les dates sont ancrés en haut du même conteneur, chacun à un coin, avec le même corps et le même interlignage : ils tombent donc sur une seule ligne de base. L’intitulé est limité à 84 mm et peut passer à la ligne : un intitulé long se coupe sur une deuxième ligne avant d’atteindre les dates, et l’employeur descend sous lui. Avec l’espace au-dessus, chaque titre de section remplit exactement trois lignes de la grille, ce qui place chaque titre de poste 9 pt sous une ligne de la grille, qu’il suive un titre de section ou une liste.
+
+## Variantes
+
+### Changer la couleur de la bande
+
+Chaque couleur est écrite une seule fois, dans `palette`, et les boîtes de la bande, l’encadré, les pastilles, le métier, les titres et le dessin la reprennent de là. Ces trois lignes passent la bande, la couleur d’accent et les pastilles en bleu canard.
+
+```diff
+-  band: '#3a2235', // the sidebar
++  band: '#1d3b3a', // the sidebar
+-  accent: '#8f3b62', // on paper: the role and the section heads (7.1:1)
++  accent: '#2b5f5b', // on paper: the role and the section heads (7.3:1)
+-  chip: '#744d6c', // on the band: the skill chips
++  chip: '#456d69', // on the band: the skill chips
+```
+
+### Faire flotter des figures dans la même colonne
+
+Le <RecipeLink slug="textbook-margin-column">manuel avec colonne marginale</RecipeLink> place figures, légendes latérales et gloses dans une colonne réservée aux flottants, sur le bord extérieur de chaque page.
+
+## Erreurs fréquentes
+
+- Ajustez le `:::space` à la page. Dans l’édition anglaise, 2,76 lignes font finir l’encadré 0,8 mm au-dessus du pied de la colonne. À 2,96 lignes, il dépasse le pied de 0,1 mm et toute la colonne latérale passe en page 2 ; à 2,66, une bande de papier s’ouvre entre l’encadré et la boîte du pied.
+- Une boîte dans la maquette du nom ne permet pas de peindre la bande. Le titre réserve la hauteur de la boîte : une boîte aussi haute que la bande lui fait réserver plus que les 260,8 mm de la colonne, et le texte passe en page 2. Avec `reserve: false`, la boîte ne réserve rien, mais une maquette placée dans la colonne est coupée au pied de la colonne, et la marge du bas resterait blanche.

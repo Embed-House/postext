@@ -1,0 +1,66 @@
+---
+title: "Un manuel dont les renvois indiquent la page"
+summary: "Le manuel d’un vélo dont les renvois disent « see section 3.2 on page 3 », en avant comme en arrière, avec chaque numéro et page tirés de la mise en page."
+plain: "Un court manuel d’utilisation pour un vélo de randonnée. Quand le texte vous envoie à une autre section, il donne le numéro de cette section et la page où elle se trouve, et les deux sont des liens."
+description: "Un manuel produit dans Postext : sections numérotées, ancres sur paragraphes et étapes, et renvois par numéro, titre et page qui se mettent à jour et font lien."
+question: "Comment renvoyer à une section et à sa page, et garder les deux justes quand le livre change ?"
+aliases: ["renvoi", "voir page", "renvoi de page", "pageref", "ancre", "étiquette", "voir section", "manuel", "manuel d’utilisation", "notice", "liens internes", "pandoc-crossref"]
+pageNotes: { "1": "Page 1 : un bandeau bleu marine sur la moitié haute avec « OWNER’S MANUAL », le nom du modèle « Ardena T3 » en grandes capitales blanches étroites, un sous-titre et la ligne d’édition, puis une bande orange ; en dessous, une introduction et une table des matières dont les numéros de section, les titres et les numéros de page sont tous des renvois en orange.", "2": "Page 2 : la section 1 avec des renvois comme « section 3.2 on page 3 » et le passage « close the lever so that it points backwards », qui renvoie à une étape de la section 2.2 ; des étapes numérotées pour la hauteur de selle ; la section 2.1 sur la pression des pneus.", "3": "Page 3 : dépose et pose de la roue avant, la section 3 sur les freins avec un encadré « Wet weather » à filet latéral orange, et le début de 3.2.", "4": "Page 4 : le réglage du câble, la section 4 sur la chaîne avec un renvoi arrière à « Wet weather » en page 3, et le calendrier d’entretien, une liste d’intervalles qui renvoient chacun à une section et à une page." }
+---
+
+## Ce que vous allez composer
+
+Le manuel d’utilisation d’un vélo de randonnée imaginaire, l’Ardena T3 : quatre pages A5 composées en Archivo, avec le nom du modèle dans un bandeau bleu marine sur la première page. Un manuel se lit dans le désordre : chaque consigne qui dépend d’une autre dit donc où elle se trouve, *see section 3.2 on page 3*. Le rédacteur nomme un titre, un paragraphe ou un passage d’une étape avec un identifiant et écrit `:ref` partout où le texte y renvoie ; Postext imprime le numéro, le titre ou la page et en fait un lien. La table des matières de la couverture s’écrit de la même façon : déplacer une section, ou traduire le manuel et le laisser se recomposer, ne laisse jamais un numéro périmé.
+
+## Préparation
+
+### 1 · Nommer ce vers quoi le texte renvoie
+
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Les titres prennent un identifiant Pandoc, `### Checking pad wear {#sec-pad-wear}` ; l’avertissement sur la pression des pneus commence par `:anchor{#warn-pressure}`, une marque invisible ; la dernière étape du montage d’une roue est `[close the lever so that it points backwards]{#step-close-lever}`, qui garde ses mots et leur donne un nom ; et l’encadré s’ouvre par `:::callout{#box-wet type="note" title="Wet weather"}`. Un renvoi à l’étape imprime les mots de l’étape, un renvoi à l’encadré son titre.
+
+### 2 · Une cible, quatre façons de la nommer
+
+`:ref{id="sec-pad-wear"}` imprime *section 3.2* avec le mot de `crossRefs.section` ; `style=page` imprime *page 3* avec le mot de `crossRefs.page` ; `style=title` imprime *Checking pad wear* ; `style=pageNumber` imprime le *3* seul. La table des matières de la couverture combine le numéro seul, le titre et la page seule, et se lit donc comme une table des matières. En espagnol, les mêmes renvois impriment *apartado 3.2* et *página 3*, car les modèles suivent la langue de l’édition.
+
+### 3 · Les pages se fixent d’elles-mêmes
+
+Un numéro de page n’est connu qu’une fois le manuel mis en page. Le moteur le met en page, lit la page où chaque cible est tombée et recommence jusqu’à ce qu’aucun renvoi ne change : c’est la même boucle que celle qui remplit une table des matières. Un texte qui s’allonge à la traduction, ou une section déplacée vers le début, change les pages, et les renvois les suivent, en avant comme en arrière.
+
+### 4 · Les numéros viennent du compteur de niveau 2
+
+<Excerpt region="numbers" />
+
+Le manuel n’a qu’un titre de niveau 1, le nom du modèle sur la couverture : ses sections sont donc numérotées à partir du niveau 2. `{2}` donne 1 à 5 et `{2}.{3}` donne 1.1, 1.2.
+
+### 5 · La couverture est l’ouverture de ce titre
+
+<Excerpt region="cover" />
+
+Le bandeau fait 104 mm de haut, la moitié de la page, et une bande orange le ferme. Le surtitre, le sous-titre et la ligne d’édition sont des attributs du titre : l’édition espagnole les change donc dans son propre texte.
+
+<Excerpt region="palette" />
+
+## Variantes
+
+### Écrire « p. » dans les renvois
+
+Un ouvrage de référence riche en renvois de page gagne de la place avec l’abréviation.
+
+```diff
+-  page: t({ en: 'page {n}', es: 'página {n}' }), // spelt out: a manual is read by anyone
++  page: t({ en: 'p. {n}', es: 'pág. {n}' }),
+```
+
+### Laisser les renvois à l’encre
+
+Quand la page est faite surtout de renvois, gardez-les dans la couleur du texte et en gras ; ils restent des liens dans le PDF et à l’écran.
+
+```diff
+-const references = { referenceColor: col('orange'), referenceBold: true };
++const references = { referenceColor: col('ink'), referenceBold: true };
+```
+
+## Erreurs fréquentes
+
+- Un renvoi sans style vers un `:anchor` imprime la page, car une ancre invisible n’a pas de mots à elle. Utilisez `[words]{#id}` quand le renvoi doit citer le texte.
+- Un identifiant doit être unique dans le livre. Les renvois atteignent le premier `{#sec-brakes}`, et le panneau Vérifications du Sandbox signale le second comme `duplicateAnchor`.

@@ -1,0 +1,67 @@
+---
+title: "Un essai de lettres avec ses œuvres citées MLA"
+summary: "Un essai littéraire dont les citations [@key, 48] deviennent des références auteur-page MLA 9, avec une citation en bloc et des Works Cited tirés de BibTeX."
+plain: "Un essai sur un poème de Keats, tel que l’imprime une revue littéraire. L’auteur écrit un code court pour chaque source ; Postext imprime l’auteur et la page entre parenthèses et, à la fin, la liste des œuvres citées, au style MLA."
+description: "Un essai littéraire dans Postext : citations auteur-page MLA 9 par citeproc-js, titre court pour deux œuvres de Keats, citation en bloc et liste Works Cited."
+question: "Comment citer au style MLA et construire la liste des œuvres citées d’un essai littéraire ?"
+aliases: ["MLA", "MLA 9", "Works Cited", "œuvres citées", "auteur-page", "essai littéraire", "lettres", "sciences humaines", "citation en bloc", "trois tirets", "BibTeX", "shorttitle", "citeproc"]
+pageNotes: { "1": "Page 1 : un bandeau noir sur la moitié haute avec le surtitre « ESSAYS · ROMANTIC POETRY », le titre « Cold Pastoral » en grande italique maigre, un sous-titre sur l’« Ode on a Grecian Urn » de Keats et la signature « Helena Ward », au-dessus d’une bande rouge argile ; en dessous, les premiers paragraphes avec des citations comme « (Jack) » et « (McDermott) ».", "2": "Page 2 : des sections en petites capitales rouges ; des citations de l’ode avec des références MLA « (Keats, “Ode” 1–3) », puis des numéros de vers seuls comme « (8–9) », et la formule d’Eliot suivie de « (230) ».", "3": "Page 3 : la section sur les lettres, avec « (Keats, Letters 41) » et une citation en bloc composée en retrait de 2 em, dont la référence « (Keats, Letters 48) » suit le point final.", "4": "Page 4 : « Works Cited », par ordre alphabétique avec des retraits suspendus ; la deuxième œuvre de Keats commence par un tiret de trois cadratins ; un petit colophon en dessous." }
+---
+
+## Ce que vous allez composer
+
+Un essai tiré d’une revue littéraire trimestrielle : quatre pages sur la question de savoir qui prononce les deux derniers vers de l’« Ode on a Grecian Urn » de Keats. La page est une page de revue de 150 × 230 mm composée en Spectral, avec les titres de section et les titres courants en Spectral SC, et l’ouverture se loge dans un bandeau couleur de vernis noir posé sur une bande d’argile rouge, les deux couleurs d’un vase attique. Les citations suivent MLA 9, le style de la plupart des départements de lettres et d’histoire de l’art : l’auteur et la page entre parenthèses, la page seule quand la phrase nomme l’auteur, un titre court quand deux œuvres ont le même auteur, et une liste Works Cited sur sa propre page. Chaque citation est une clé dans le texte, et le style est un seul réglage.
+
+## Préparation
+
+### 1 · Le style est MLA, les données sont en BibTeX
+
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Le moteur de citations est enregistré une fois, et `citations.style` nomme le style MLA fourni ; citeproc-js en tire chaque citation et la liste. Les références se trouvent dans un bloc `:::references{format=bibtex}` à la fin de l’essai, écrites telles qu’un gestionnaire de références les exporte. MLA a besoin d’un titre court pour les deux œuvres de Keats, et le champ `shorttitle` de chaque entrée le fournit (en CSL, le champ s’appelle `title-short`).
+
+### 2 · Quatre sortes de citations
+
+Le texte cite une œuvre avec `[@jack1967]`, qui imprime « (Jack) » car l’essai renvoie au livre dans son ensemble. Avec une page, `[@keats-letters, 41]` imprime « (Keats, *Letters* 41) » : deux œuvres de Keats sont citées, et citeproc ajoute donc le titre court pour les distinguer. Quand la phrase nomme déjà le critique, `[-@eliot1932, 230]` omet le nom et imprime « (230) ». Une citation narrative sans page, `@stillinger1974 records`, imprime le nom seul, « Stillinger records », suivi d’une seule espace : MLA n’a rien à mettre entre parenthèses. Une fois l’ode citée avec ses numéros de vers, les citations suivantes ne portent que les numéros, tapés entre parenthèses ordinaires, comme MLA le permet.
+
+### 3 · Une citation en bloc, avec sa référence après le point final
+
+<Excerpt region="quotation" />
+
+La lettre sur la Negative Capability dépasse quatre lignes de prose : elle est donc détachée en bloc de citation Markdown, en romain, à l’encre, en retrait de 2 em et sans alinéa. MLA place la référence d’une citation en bloc après son point final, et la source fait de même : `…fact and reason. [@keats-letters, 48]`. Un `:::space{lines=0.5}` au-dessus et au-dessous sépare la citation des paragraphes qui l’entourent.
+
+### 4 · Works Cited sur une page à part
+
+<Excerpt region="works-cited" />
+
+Le titre prend un style qui passe à une nouvelle page, et `:::bibliography{title=""}` place la liste dessous sans second titre. La liste est alphabétique avec un retrait suspendu, et la deuxième œuvre de Keats commence par un tiret de trois cadratins à la place de son nom, comme MLA le demande pour les auteurs répétés. Un folio en pied s’imprime au bas de cette page et de l’ouverture, là où les titres courants se retirent.
+
+### 5 · L’ouverture aux deux couleurs d’un vase
+
+<Excerpt region="opener" />
+
+<Excerpt region="palette" />
+
+Le bandeau fait 116 mm de haut et porte le surtitre, le titre en Spectral Light italique de 56 pt, le sous-titre et la signature, tous tirés d’attributs du titre. La bande d’argile est une seconde boîte ancrée 3 mm au-dessus du pied du bandeau.
+
+## Variantes
+
+### Enchaîner la liste après l’essai
+
+Une revue qui compose les Works Cited après le dernier paragraphe, sans nouvelle page, retire le saut du style de titre.
+
+```diff
+-  headingStyles: [{ id: 'works-cited', breakBefore: { enabled: true, parity: 'any' } }],
++  headingStyles: [{ id: 'works-cited', breakBefore: { enabled: false } }],
+```
+
+### Citer en Chicago auteur-date
+
+Le même essai en Chicago place l’année après l’auteur, « (Brooks 1947, 165) », et la liste suit le mouvement.
+
+```diff
+-  style: 'modern-language-association', // MLA 9th edition, author-page
++  style: 'chicago-author-date',
+```
+
+## Erreurs fréquentes
+
+- citeproc-js imprime les titres tels que les données les donnent. MLA met une capitale initiale à chaque mot important des titres anglais : écrivez-les ainsi dans les références.

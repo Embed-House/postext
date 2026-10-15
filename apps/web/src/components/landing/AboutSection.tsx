@@ -119,6 +119,23 @@ como mostra :ref{id="fig-fluxo"}.
 Mude uma palavra: a página
 se compõe de novo.
 :::`,
+  fr: `:::part{number="I" title="Fondements"
+  palette="band=#2b4acb"}
+:::
+
+# Pourquoi Postext {lead="La typographie
+imprimée a mis cinq siècles…"}
+
+Postext est un **moteur de mise
+en page open source** qui apporte
+au web le savoir-faire de la
+typographie imprimée, comme le
+montre :ref{id="fig-flow"}.
+
+:::callout{type="try"}
+Changez un mot : la page se
+compose de nouveau.
+:::`,
 };
 
 export async function AboutSection() {

@@ -1,12 +1,15 @@
 /**
  * Text alternatives for the narrated videos (WCAG 1.2.3 and 1.2.8): what is said, verbatim from the captions, and
  * what is shown, from the animation sources. One list of blocks per video and locale; each follows its own cut. Every
- * site locale has a cut of its own (Catalan, Arabic and Japanese since #510, Brazilian Portuguese since #611), with its
- * own narration, timings and on-screen text: the Chinese and Japanese films are set vertically, with scenes of their
- * own where the English film is about space-separated text, and the Arabic film is mirrored right to left.
+ * site locale but French has a cut of its own (Catalan, Arabic and Japanese since #510, Brazilian Portuguese since
+ * #611), with its own narration, timings and on-screen text: the Chinese and Japanese films are set vertically, with
+ * scenes of their own where the English film is about space-separated text, and the Arabic film is mirrored right to
+ * left. French pages play the English cut (#822) with a French transcript: the `fr` lists follow the English blocks one
+ * for one, with the same times, the narration translated and the on-screen English text quoted as is in « », with a
+ * French gloss beside it.
  */
 export type TranscriptVideo = "showreel" | "tutorial";
-export type TranscriptLocale = "en" | "es" | "zh" | "ca" | "ar" | "ja" | "pt";
+export type TranscriptLocale = "en" | "es" | "zh" | "ca" | "ar" | "ja" | "pt" | "fr";
 export interface TranscriptBlock {
   /** Start time in the cut, "m:ss". */
   time: string;
@@ -520,6 +523,78 @@ export const TRANSCRIPTS: Record<TranscriptVideo, Record<TranscriptLocale, Trans
         time: "2:10",
         scene: "Fechamento: o logotipo do Postext com o lema “O tipógrafo programável para a web”, o endereço postext.dev, uma linha de terminal que digita “$ pnpm add postext” e o rodapé “Código aberto · MIT · github.com/drnachio/postext”.",
         narration: "Postext. Código aberto, em postext.dev.",
+      },
+    ],
+    fr: [
+      {
+        time: "0:00",
+        scene: "Une carte sombre affiche « MAINZ · 1455 » au-dessus d’un fin filet doré. Derrière le titre « For five centuries, print learned to set a page. » (« Pendant cinq siècles, l’imprimerie a appris à composer une page. »), l’année défile de 1455 à 2026 en immenses chiffres détourés, et des termes d’imprimerie, en anglais, se posent tout autour : justification, crénage (Kerning), veuves et orphelines, colonnes équilibrées, interlignage, grille de ligne de base, césure (écrite « hy·phen·a·tion »), longueur de ligne, flottants, titres courants, lézardes. La caméra plonge dans le point final, qui inonde l’écran d’or.",
+        narration: "Pendant cinq siècles, l’imprimerie a appris à composer une page.",
+      },
+      {
+        time: "0:05",
+        scene: "Titre : « The web learned to lay out interfaces. It never learned to set a page. » (« Le web a appris à mettre en page des interfaces. Il n’a jamais appris à composer une page. ») Une fenêtre de navigateur ouverte sur example.com/longform/article contient un article justifié sur trois colonnes, « Why the web can’t set a page » (« Pourquoi le web ne sait pas composer une page ») ; des étiquettes rouges signalent des lézardes de blanc, une veuve, une orpheline, une image qui tombe sur le texte et une dernière colonne déséquilibrée. À côté, une pastille de code affiche « column-count: 3; », puis « …and little else. » (« …et pas grand-chose de plus. ») et une liste barrée des cinq mêmes défauts. La fenêtre se brouille et s’effondre.",
+        narration: "Le web a appris à mettre en page des interfaces. Jamais des pages. Alors le texte long se casse encore : lézardes, veuves, orphelines, collisions.",
+      },
+      {
+        time: "0:18",
+        scene: "Après un éclair blanc et un balayage de bandes bleues, dorées et rouges, le logo et le nom de Postext se mettent en place avec le slogan « The programmable typesetter for the web » (« Le compositeur programmable pour le web »). En dessous : OPEN SOURCE · MIT LICENCE · v1.7.0 · RUNS IN YOUR BROWSER (open source, licence MIT, fonctionne dans votre navigateur).",
+        narration: "Voici Postext : le compositeur programmable pour le web.",
+      },
+      {
+        time: "0:24",
+        scene: "Section 01 sur 07, « Content in » (« Le contenu entre ») : « Markdown says what things are. » (« Markdown dit ce que sont les choses. ») Un fichier Markdown, 03-why-postext.md, s’écrit tout seul : une directive de partie, le titre « Why Postext » avec un chapeau, un paragraphe qui renvoie à la figure fig-flow avec :ref, une ligne ::resource et un bloc :::callout. À côté, config.ts appelle buildDocument avec une mise en page sur deux colonnes, un texte courant justifié et la césure en en-us, sous la phrase « Configuration decides how they look. Nothing about layout lives in the text. » (« La configuration décide de leur apparence. Rien de la mise en page ne vit dans le texte. »)",
+        narration: "Vous écrivez du Markdown sémantique, qui dit ce que sont les choses. Une configuration décide de leur apparence.",
+      },
+      {
+        time: "0:32",
+        scene: "Section 02, « Pretext measures » (« Pretext mesure ») : « Measured without touching the DOM. » (« Mesuré sans toucher au DOM. ») Un titre, un paragraphe et un encadré sont scannés l’un après l’autre, et des lignes de cote donnent leur hauteur en points ; un panneau de code montre prepare(text, '25px Lora') et layout(prepared, width, 38), qui renvoient une hauteur et un nombre de lignes. Deux barres font la course sur 10 000 paragraphes : « Browser reflow · DOM » (la recomposition par le navigateur) bouge à peine, tandis que « Pretext · canvas metrics + arithmetic » (métriques canvas et arithmétique) se remplit d’un coup, et un compteur grimpe jusqu’à 600× au-dessus de « faster text measurement than the DOM, so a whole book reflows as you type » (« une mesure du texte plus rapide que le DOM : tout un livre se recompose pendant la frappe ») et de « Powered by @chenglou/pretext ».",
+        narration: "Chaque paragraphe est mesuré sans toucher au DOM, jusqu’à six cents fois plus vite, grâce à Pretext, la bibliothèque qui a rendu cela possible.",
+      },
+      {
+        time: "0:42",
+        scene: "Section 03, « Postext decides » (« Postext décide ») : « Every line placed before a pixel is drawn. » (« Chaque ligne placée avant qu’un seul pixel soit dessiné. ») Un anneau de sept segments s’allume tour à tour, Structure, Measure, Place, Float, Refine, Balance et Rhythm (structurer, mesurer, placer, faire flotter, affiner, équilibrer, rythmer), chacun avec une description d’une ligne, tandis qu’une page sur deux colonnes du guide de Postext s’assemble à côté : des blocs étiquetés volent jusqu’à leurs colonnes, une figure glisse à sa place sous la note « :ref{id=\"fig-flow\"} → column foot » (pied de colonne), le bandeau d’ouverture descend, les lignes apparaissent, les colonnes s’égalisent et une grille de ligne de base balaie la page de haut en bas. L’anneau boucle sur les itérations 1 à 3 et affiche « Settled in 3 iterations » (« Stabilisé en 3 itérations ») avec une coche ; une bulle donne la boîte englobante et la ligne de base d’une ligne.",
+        narration: "Puis Postext décide. Sept passes placent chaque ligne, font flotter chaque figure et équilibrent chaque colonne, en boucle jusqu’à ce que plus rien ne bouge.",
+      },
+      {
+        time: "0:54",
+        scene: "Section 04, « The virtual document » (« Le document virtuel ») : « Change a word. Only what changed is set again. » (« Changez un mot. Seul ce qui a changé est recomposé. »), avec la note « Like React’s virtual DOM, but for pages: the VDT, a virtual document tree. » (« Comme le DOM virtuel de React, mais pour des pages : le VDT, un arbre de document virtuel. ») Sept pages, de p. 7 à p. 13, se tiennent en rang ; un curseur marque une modification à la page 11, le reste de cette colonne passe à l’or avec la mention DIRTY (à refaire) et un filet de texte déborde sur la page 12, qui reçoit une coche et SETTLED (stabilisée), tandis que les pages précédentes indiquent SKIPPED (ignorée) et les suivantes UNTOUCHED (intacte). Trois puces énoncent la règle, et un panneau intitulé renderToHtmlIndexed() marque PATCHED (corrigés) les nœuds modifiés de l’arbre du document.",
+        narration: "Tout cela vit dans un document virtuel, comme le DOM virtuel de React. Changez un mot, et seul ce qui a changé est recomposé.",
+      },
+      {
+        time: "1:03",
+        scene: "« A long document? Only what’s on screen gets painted. » (« Un long document ? Seul ce qui est à l’écran est peint. ») Une colonne de pages de livre défile dans un cadre doré marqué VIEWPORT (zone d’affichage), avec une marge de 200 pixels au-dessus et au-dessous : les pages à l’intérieur sont dessinées en entier, celles de l’extérieur ne sont que des contours en pointillés. Un grand compteur montre combien des 48 pages sont peintes à ce moment-là (IntersectionObserver · +200 px), à côté de « Geometry: every page. Pixels: only what you see. » (« Géométrie : chaque page. Pixels : seulement ce que vous voyez. »)",
+        narration: "Et dans un long livre, seules les pages à l’écran sont peintes.",
+      },
+      {
+        time: "1:10",
+        scene: "Section 05, « Knuth–Plass justification » (« Justification Knuth–Plass ») : « Every way to break the paragraph. At once. » (« Toutes les manières de couper le paragraphe. D’un coup. ») À gauche, un paragraphe sur la coupure des lignes est composé au premier ajustement, comme le fait un navigateur, et ses lignes les plus lâches virent au rouge. En dessous, chaque mot devient un point sur une ligne : des arcs rouges marquent les coupures gloutonnes, de pâles arcs bleus essaient toutes les coupures possibles et un chemin doré retient le meilleur ensemble. À droite, la version Knuth–Plass est espacée régulièrement, avec la laideur (badness) de chaque ligne, la formule « (1 + badness + penalty)² » et un total de démérites plus bas.",
+        narration: "Un navigateur coupe les lignes de façon gloutonne, une à une. Postext utilise Knuth–Plass, l’algorithme de TeX. Il pèse toutes les façons de couper le paragraphe entier et garde la plus régulière.",
+      },
+      {
+        time: "1:24",
+        scene: "Section 06, « One layout, five outputs » (« Une mise en page, cinq sorties ») : « What you see is what goes to press. » (« Ce que vous voyez est ce qui part à l’impression. ») Sous la ligne de code const vdt = buildDocument(content, config); une page se divise en cinq. Canvas (renderToCanvas(), images matricielles au pixel près) reçoit une loupe sur sa grille de pixels ; HTML (renderToHtml(), texte sélectionnable, sensible au redimensionnement) voit chaque bloc détouré et étiqueté <h1>, <p>, <figure>, etc. ; PDF (renderToPdf(), prêt pour l’impression, PDF/UA, CMJN) fait glisser quatre plaques de couleur jusqu’au repérage, puis apparaissent les traits de coupe et une gamme de contrôle. EPUB 3 (renderToEpub(), livre numérique, fixe ou recomposable) montre la page dans une liseuse étiquetée « Fixed layout » (mise en page fixe) ; l’écran se rétrécit à la taille d’un téléphone, le texte se recompose et l’étiquette devient « Reflowable » (recomposable). Folio (postext-folio, un livre en 3D aux pages qui tournent) ouvre la page en double page et tourne un feuillet par-dessus le dos.",
+        narration: "Une mise en page, cinq sorties : canvas, HTML, PDF prêt pour l’impression, EPUB 3, fixe ou recomposable, et un livre en 3D. Ce que vous voyez est ce qui part à l’impression.",
+      },
+      {
+        time: "1:41",
+        scene: "Section 07, « Why an open standard » (« Pourquoi un standard ouvert ») : « LaTeX set the bar for print. Publishing now lives on every screen, too. » (« LaTeX a placé la barre pour l’imprimé. L’édition vit désormais aussi sur tous les écrans. ») Deux cartes : LaTeX, 1984, avec des croix face à « Built for the printed page » (conçu pour la page imprimée), « Builds tied to one machine’s fonts & packages » (des compilations liées aux polices et aux paquets d’une machine), « Compile, wait, repeat » (compiler, attendre, recommencer) et « No editorial layout on the responsive web » (pas de mise en page éditoriale sur le web adaptatif) ; Postext, 2026, avec des coches face à « Web, print-ready PDF & EPUB 3 from one layout » (web, PDF prêt pour l’impression et EPUB 3 à partir d’une seule mise en page), « One portable .postext file carries it all » (un seul fichier .postext portable contient tout), « Reflows live, as you type » (se recompose en direct, pendant la frappe) et « Runs in any browser · zero servers · MIT » (fonctionne dans tout navigateur, sans serveur, sous licence MIT). La carte Postext s’illumine.",
+        narration: "LaTeX a fixé la norme pour l’imprimé. Mais l’édition vit désormais sur tous les écrans.",
+      },
+      {
+        time: "1:48",
+        scene: "Surtitre « One file, the whole book » (« Un fichier, tout le livre »), titre « An open standard for publishing, beyond where LaTeX reaches. » (« Un standard ouvert pour l’édition, qui va plus loin que LaTeX. ») Une icône de fichier .postext éclate en cinq parties : preset.json (configuration et maquette), chapters/*.md (un fichier Markdown par chapitre), fonts/*.woff2 (les polices elles-mêmes), images/ · SVG (chaque image, incorporée) et resources (tableaux, figures et légendes). Légende : « A plain ZIP: open, documented, MIT-licensed. Any tool can read and write it. » (« Un simple ZIP : ouvert, documenté, sous licence MIT. N’importe quel outil peut le lire et l’écrire. »)",
+        narration: "Postext est un standard ouvert : un fichier portable, documenté et sous licence MIT, que n’importe quel outil peut lire et écrire.",
+      },
+      {
+        time: "1:58",
+        scene: "« The showcase · set by the real engine » (« La vitrine, composée par le vrai moteur ») : un mur de pages de livre s’éloigne en perspective tandis qu’un compteur atteint 48 pages. Texte : « 12 chapters, 3 parts, a cover, laid out in about half a second. Every page of the Postext guide, computed in a browser by postext v1.7.0 for this film. Nothing placed by hand. » (« 12 chapitres, 3 parties, une couverture, mis en page en une demi-seconde environ. Chaque page du guide de Postext, calculée dans un navigateur par postext v1.7.0 pour ce film. Rien n’est placé à la main. ») Suivent des étiquettes : Textbooks, Magazines, Literary editions, Catalogues (manuels, magazines, éditions littéraires, catalogues).",
+        narration: "C’est pourquoi il peut mettre en page des livres de plusieurs centaines de pages en quelques dixièmes de seconde.",
+      },
+      {
+        time: "2:05",
+        scene: "Carte de fin : le logo de Postext avec le slogan « The programmable typesetter for the web » (« Le compositeur programmable pour le web »), l’adresse postext.dev, une ligne de terminal qui tape « $ pnpm add postext », et le pied « Open source · MIT · github.com/drnachio/postext ».",
+        narration: "Postext. Open source, sur postext.dev.",
       },
     ],
   },
@@ -1239,6 +1314,107 @@ export const TRANSCRIPTS: Record<TranscriptVideo, Record<TranscriptLocale, Trans
         time: "4:59",
         scene: "Fechamento: o logotipo do Postext, o lema “O tipógrafo programável para a web”, postext.dev, um chip com “Os prompts deste vídeo estão na descrição ↓” e o rodapé “Código aberto · MIT · github.com/drnachio/postext”.",
         narration: "Postext. Código aberto, em postext.dev. Os prompts de exemplo estão na descrição.",
+      },
+    ],
+    fr: [
+      {
+        time: "0:00",
+        scene: "Carte de titre : le logo de Postext, le surtitre « Tutorial · 5 steps » (« Tutoriel en 5 étapes ») et le titre « Turn your publication into Postext with an AI agent. No code. » (« Convertissez votre publication en Postext avec un agent d’IA. Sans code. »)",
+      },
+      {
+        time: "0:03",
+        scene: "« Your publication already exists. » (« Votre publication existe déjà. ») Trois pages composées par Postext, un livre, un manuel et un magazine, arrivent l’une après l’autre, étiquetées InDesign (IDML), Word (DOCX) et PDF. Elles se rassemblent à gauche, une flèche dorée en pointillés traverse un badge « AI agent » (agent d’IA) et une icône de fichier nommée my-book.postext apparaît, sous « An agent turns it into Postext. Five steps. A few well-written requests. » (« Un agent la convertit en Postext. Cinq étapes. Quelques demandes bien écrites. »)",
+        narration: "Vous avez déjà une publication : un livre, un manuel, un magazine. Elle vit dans InDesign, dans Word ou dans un PDF. Dans ce tutoriel, un agent d’IA va la convertir en Postext pour vous. Sans code : juste cinq étapes et quelques demandes bien écrites.",
+      },
+      {
+        time: "0:23",
+        scene: "« The plan » (« Le plan ») : cinq cartes numérotées apparaissent à mesure que chaque étape est nommée : 01 Prepare the folder, 02 Bring the vector originals, 03 Add a reference, 04 Ask the agent, 05 Check in the sandbox (préparer le dossier, apporter les originaux vectoriels, ajouter une référence, demander à l’agent, vérifier dans le Sandbox).",
+        narration: "Voici le plan : préparer le dossier, apporter les illustrations originales, ajouter une référence, demander à l’agent et vérifier le résultat.",
+      },
+      {
+        time: "0:33",
+        scene: "Étape 01, le dossier : « One project, one folder. » (« Un projet, un dossier. ») Un grand dossier, my-book/, flotte parmi dix fichiers épars comme MinionPro-Regular.otf, cover.jpg, fig-2-1.ai, chapter-01.docx, map.svg, book.idml et chart.pdf. Une fenêtre s’ouvre sur l’arborescence du dossier et chaque fichier s’envole vers son sous-dossier à mesure qu’il est nommé : reference.pdf (l’apparence à obtenir, étape 03), fonts/ (Minion Pro, Myriad…, .otf .ttf .woff2), images/ (photos, .jpg .png), artwork/ (originaux vectoriels, .ai .svg .pdf) et text/ (Word, InDesign IDML…).",
+        narration: "Première étape : mettez tout dans un seul dossier sur votre ordinateur. Un projet, un dossier. À l’intérieur, donnez à chaque type de matériel son propre sous-dossier : les polices, les images, les illustrations et les fichiers de texte.",
+      },
+      {
+        time: "0:50",
+        scene: "La ligne fonts/ est mise en évidence et une carte intitulée « Fonts » (« Polices ») montre un grand « Aa », les styles Regular, Italic et Bold, les formats OTF, TTF et WOFF2, et la note « Only the fonts you include can be used. » (« Seules les polices que vous fournissez peuvent être utilisées. ») Puis « The tidier the folder, the less it guesses. » (« Plus le dossier est rangé, moins il devine. »), tandis que chaque sous-dossier de l’arborescence reçoit une coche.",
+        narration: "N’oubliez pas les polices. Elles donnent sa voix à la maquette, et l’agent ne peut utiliser que celles que vous fournissez. Plus le dossier est rangé, moins l’agent a à deviner.",
+      },
+      {
+        time: "1:03",
+        scene: "Étape 02, les originaux vectoriels : « Bring the originals. » (« Apportez les originaux. ») Un schéma, un graphique et une carte sont tracés au trait, leurs points d’ancrage visibles, et trois icônes de fichier apparaissent : .ai Illustrator, .svg SVG et .pdf PDF.",
+        narration: "Deuxième étape : si vos illustrations sont des graphiques vectoriels, comme des schémas, des graphiques ou des cartes, retrouvez les fichiers originaux : Illustrator, SVG ou PDF.",
+      },
+      {
+        time: "1:14",
+        scene: "Deux panneaux montrent la même figure, un schéma où Manuscript et Template pointent tous deux vers Pages, avec la légende « Fig. 2.1 Content and design meet. » (« Le contenu et la maquette se rejoignent. ») À gauche, « Cut from the PDF: a photo of the drawing » (« Découpée dans le PDF : une photo du dessin ») devient floue et pixelisée à mesure que la vue zoome ; à droite, « The original: the drawing itself » (« L’original : le dessin lui-même ») reste net. Le panneau de gauche s’efface, les étiquettes de l’original sont retapées en espagnol (Manuscrito, Plantilla, Páginas), des traits de coupe l’encadrent et trois coches indiquent « Sharp at any size » (net à toute taille), « Labels are live text » (les étiquettes sont du vrai texte) et « Print master → press » (l’original d’impression part sous presse).",
+        narration: "Une figure découpée dans le PDF final n’est guère plus qu’une photo du dessin. L’original, c’est le dessin lui-même. Avec lui, l’agent reconstruit chaque figure : nette à toute taille, avec ses étiquettes toujours en texte réel, prêtes à être traduites. Et pour l’impression, l’original part sous presse intact.",
+      },
+      {
+        time: "1:37",
+        scene: "Étape 03, la référence : « Show how it should look. » (« Montrez à quoi cela doit ressembler. ») Dans l’arborescence, reference.pdf est mis en évidence et étiqueté « In the root » (« À la racine ») ; une page s’en échappe et devient une grande page de livre sur deux colonnes marquée reference.pdf.",
+        narration: "La troisième étape est essentielle : à la racine du dossier, placez un fichier qui montre clairement à quoi doit ressembler le produit fini. Un PDF est idéal.",
+      },
+      {
+        time: "1:47",
+        scene: "Des mesures apparaissent sur la page : les contours des colonnes, une gouttière de 9 mm, une marge de 20 mm, des étiquettes pour le titre (Fraunces 28 pt), le texte courant (Lora 9,4/13,6 pt) et un encadré (teinté, 1 filet), et des lignes de base avec un interlignage de 13,6 pt. Un fichier, spec-sheet.md, se remplit : page de 210 × 280 mm ; marges de 24 · 20 · 22 · 20 mm, en miroir ; 2 colonnes, gouttière de 9 mm ; grille de ligne de base de 13,6 pt ; texte courant en Lora 9,4/13,6 pt, justifié ; titres en Fraunces 28 pt · Geist ; ouvertures avec un bandeau de couleur de 101 mm ; encadrés avec une teinte et un filet à gauche. Puis le mot « Guess » (« Deviner ») est barré et « Measure. » (« Mesurer. ») s’allume en doré.",
+        narration: "L’agent lit la maquette dans ces pages. Il mesure les marges, les colonnes, les polices et les espacements, et les note sous forme de règles de mise en page. Sans référence, il devrait deviner. Avec une référence, il mesure.",
+      },
+      {
+        time: "2:03",
+        scene: "Étape 04, l’agent : « Ask for it in plain words. » (« Demandez-le avec des mots simples. ») Une fenêtre intitulée « Agent · ~/my-book » s’ouvre à côté des badges Claude Code, Codex et « or any other agent » (« ou tout autre agent »). Un message de YOU (vous) s’écrit : « Install the Postext skill: `npx skills add drnachio/postext --skill postext-port` » (« Installez le skill Postext »), et l’agent répond « ✓ Skill installed: postext-port » (skill installé). Une carte du skill postext-port énumère « A proven workflow » (une méthode éprouvée), « Everything about Postext » (tout sur Postext) et « Tools to check its own work » (des outils pour vérifier son propre travail).",
+        narration: "Quatrième étape : ouvrez votre agent, Claude Code, Codex ou celui que vous utilisez, dans ce dossier, et demandez-lui d’installer le skill Postext. Un skill est un paquet de savoir-faire expert. Celui-ci apprend à l’agent à faire entrer une publication dans Postext, et lui donne les outils pour vérifier son propre travail.",
+      },
+      {
+        time: "2:24",
+        scene: "La demande suivante s’écrit : « Use the postext-port skill to convert this book to Postext. The design is in reference.pdf, the fonts are in fonts/ and the original illustrations are in artwork/: use them instead of cutting figures out of the PDF. Start with chapter 1 only, and show me the spec sheet before you build it. » (« Utilisez le skill postext-port pour convertir ce livre en Postext. La maquette est dans reference.pdf, les polices dans fonts/ et les illustrations originales dans artwork/ : servez-vous-en au lieu de découper les figures dans le PDF. Commencez par le chapitre 1 seulement, et montrez-moi la fiche technique avant de le construire. ») À côté, reference.pdf, fonts/ et artwork/ s’allument dans l’arborescence à mesure que la demande les nomme, et une carte « Ch. 1 » surgit.",
+        narration: "Puis demandez ce que vous voulez, avec des mots simples. Dites-lui où se trouvent la référence, les polices et les originaux, et demandez-lui de commencer par un seul chapitre.",
+      },
+      {
+        time: "2:37",
+        scene: "Une grille de douze pages de livre estompées ; la première est cernée d’or. Une flèche circulaire y compte les tours de finition jusqu’à l’apparition d’une coche, puis les onze autres s’allument. En dessous : Sample chapter → Polish → Extend (chapitre d’essai, finition, extension).",
+        narration: "Si le contenu est long, commencez par un chapitre d’essai. Peaufinez-le jusqu’à ce qu’il soit parfait, et seulement ensuite étendez-le au reste.",
+      },
+      {
+        time: "2:46",
+        scene: "L’agent demande « Faithful copy or redesign? » (« Copie fidèle ou nouvelle maquette ? »), « Which languages? » (« Quelles langues ? ») et « Print, screen, or both? » (« Impression, écran ou les deux ? »). Une liste de contrôle déroule Take inventory, Measure the design, Extract the text, Fonts and images, Compare page by page et Pack the file (faire l’inventaire, mesurer la maquette, extraire le texte, polices et images, comparer page par page, empaqueter le fichier), et le fichier my-book.postext apparaît. Une troisième demande s’écrit : « Chapter 1 is approved. Convert the remaining chapters with the same design, compare each one with reference.pdf, and pack everything into a single .postext file. » (« Le chapitre 1 est validé. Convertissez les chapitres restants avec la même maquette, comparez chacun avec reference.pdf et réunissez le tout dans un seul fichier .postext. ») L’agent répond « ✓ 12 chapters · 0 warnings · my-book.postext » (12 chapitres, aucun avertissement).",
+        narration: "L’agent vous posera quelques questions : copie fidèle ou nouvelle maquette, quelles langues, impression ou écran. Puis il mesure, extrait, assemble et vérifie. Et il vous remet un fichier Postext. Une fois l’échantillon au point, il suffit d’une demande de plus pour l’étendre à tout le livre.",
+      },
+      {
+        time: "3:14",
+        scene: "Étape 05, le Sandbox : « Check it, page by page. » (« Vérifiez-le, page par page. ») Une fenêtre de navigateur tape l’adresse postext.dev/sandbox. Le pointeur clique sur Books (Livres) dans la barre latérale, puis sur New (Nouveau), puis sur « Open a .postext file… » (« Ouvrir un fichier .postext… ») ; le fichier arrive en volant, « My book, 12 chapters · 184 pages » apparaît en haut de la liste et ses premières pages s’ouvrent dans la vue Canvas ; les onglets de vue indiquent Canvas, HTML, PDF, Folio et EPUB 3.",
+        narration: "Cinquième étape : ouvrez le Sandbox de Postext sur postext.dev. Dans Livres, choisissez Nouveau, puis ouvrez votre fichier.",
+      },
+      {
+        time: "3:24",
+        scene: "La page de référence et la page Postext se tiennent côte à côte, étiquetées Reference et Postext, et une ligne dorée les parcourt de haut en bas. Le panneau Checks (Vérifications) s’ouvre avec un badge à 3 et liste Widow (p. 4), Loose line (p. 7) et Figure does not fit (p. 9), soit une veuve, une ligne lâche et une figure qui ne tient pas ; des cadres rouges marquent chaque problème sur la page Postext.",
+        narration: "Parcourez-le page par page, à côté de votre référence. Le panneau Vérifications vous signale les problèmes : veuves, lignes lâches, figures qui ne tiennent pas.",
+      },
+      {
+        time: "3:35",
+        scene: "Deux rangées de maquettes filaires de pages, « Reference · PDF » et « Postext · reflowed » (recomposé). Dans la rangée recomposée, une figure passe de la première page au haut de la deuxième, et une ligne pointillée relie ses deux positions. Texte : « Same rules, not the same pages. The content flows: a figure or a page break may land elsewhere. » (« Mêmes règles, pas les mêmes pages. Le contenu s’écoule : une figure ou un saut de page peut tomber ailleurs. ») Puis un signe égal relie chaque paire de pages sous « What must match » (« Ce qui doit correspondre ») : Margins and baseline grid, Typography, Figure and box styles, Clean pages: no widows, even columns (marges et grille de ligne de base, typographie, styles des figures et des encadrés, pages propres : pas de veuves, des colonnes égales). Un panneau rouge marqué ≠ indique « Hand-made craft decisions: not rules, so they can’t set changing content » (« Des décisions d’artisan prises à la main : ce ne sont pas des règles, elles ne peuvent donc pas composer un contenu qui change »).",
+        narration: "Une chose à garder en tête : les pages n’ont pas besoin d’être identiques à votre PDF. Postext a appris les règles de mise en page, et votre contenu s’écoule désormais, si bien qu’une figure ou un saut de page peut tomber ailleurs. Ce qui doit correspondre, c’est la qualité : le même niveau de finition. Quand on met en page à la main, on prend de petites décisions d’artisan qui ne sont pas des règles. Et seules des règles peuvent composer un contenu qui ne cesse de changer.",
+      },
+      {
+        time: "4:03",
+        scene: "La fenêtre de l’agent revient avec une quatrième demande : « In the sandbox, chapter 2, page 7: the “Remember” box is split across two columns, and the running head is missing. Checks shows 3 loose lines. Fix it and pack the file again. » (« Dans le Sandbox, chapitre 2, page 7 : l’encadré “Remember” est coupé sur deux colonnes, et le titre courant manque. Vérifications indique 3 lignes lâches. Corrigez-le et réempaquetez le fichier. ») Une capture d’écran est jointe, screenshot-ch2-p7.png. Puis une boucle entre Sandbox (check, vérifier) et Agent (fix, corriger) parcourt les tours 1 à 3 tandis que le nombre d’avertissements tombe de 3 à 0, et se termine par une coche et « Exactly right. » (« Exactement comme il faut. »)",
+        narration: "Puis dites à l’agent ce que vous voyez, aussi précisément que possible : le chapitre, la page et ce qui ne va pas. Une capture d’écran aide. Ouvrez la nouvelle version, vérifiez de nouveau, et recommencez. Chaque tour se rapproche du but, jusqu’à ce que ce soit exactement comme il faut.",
+      },
+      {
+        time: "4:23",
+        scene: "« Not just a Postext version. » (« Pas seulement une version Postext. ») Le fichier my-book.postext se scinde en deux le long d’une ligne dorée. À gauche, « Content (what it says) », le contenu : chapters/en/02-the-cell.md, avec le titre « The cell », une phrase qui renvoie à la figure fig-cell et un encadré « remember ». À droite, « Form (how it looks) », la forme : un modèle déduit de votre original, avec une page de 210 × 280 mm en miroir, 2 colonnes avec une gouttière de 9 mm, un texte courant en Lora 9,4/13,6 justifié, des titres en Fraunces numérotés, des encadrés « remember » avec teinte et filet, et des figures flottées en haut de colonne.",
+        narration: "Et voici le meilleur : vous n’avez pas seulement fait une version Postext de votre contenu. Vous avez séparé le fond de la forme. Le texte vit dans des chapitres propres. La maquette vit dans un modèle, avec des règles de mise en page déduites de votre original.",
+      },
+      {
+        time: "4:39",
+        scene: "Des pastilles s’allument pour Correct, Extend et Translate (corriger, étendre, traduire) au-dessus d’une rangée de pages de livre : une ligne est surlignée et un reflet traverse les pages, deux pages de plus arrivent en glissant, et les pages se retournent sur l’édition espagnole. Une demande s’écrit : « Add a Spanish edition: translate the chapters, captions and diagram labels, and keep the same design. » (« Ajoutez une édition espagnole : traduisez les chapitres, les légendes et les étiquettes des schémas, et gardez la même maquette. ») Légende : « Same rules. New content. Pages set themselves. » (« Mêmes règles. Nouveau contenu. Les pages se composent toutes seules. ») Puis « One file, the whole book. » (« Un fichier, tout le livre. ») : une icône .postext se ramifie vers une page avec des traits de coupe (Print-ready PDF, un PDF prêt pour l’impression), une liseuse dont le texte se recompose à la taille de son écran (EPUB e-book, un livre numérique EPUB), une fenêtre de navigateur (Web reader, un lecteur web) et une paire de pages (Every page, set : chaque page, composée).",
+        narration: "Alors, quand votre contenu change, quand vous le corrigez, l’étendez ou le traduisez, vous n’avez pas à penser à la mise en page. Postext le recompose en suivant les mêmes règles. Un seul fichier pour tout le livre : un PDF prêt pour l’impression, un livre numérique EPUB, un lecteur pour le web et des pages qui se composent toutes seules.",
+      },
+      {
+        time: "5:03",
+        scene: "Carte de fin : le logo de Postext, le slogan « The programmable typesetter for the web » (« Le compositeur programmable pour le web »), postext.dev, une pastille indiquant « The prompts from this video are in the description ↓ » (« Les demandes de cette vidéo sont dans la description ») et le pied « Open source · MIT · github.com/drnachio/postext ».",
+        narration: "Postext. Open source, sur postext.dev. Vous trouverez les exemples de demandes dans la description.",
       },
     ],
   },

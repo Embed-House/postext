@@ -1,0 +1,62 @@
+---
+title: "Livret de lecture avec pastilles de sons"
+summary: "Un livret de lecture sur la lettre M : chaque son en pastille de la couleur de sa voyelle, et une grille de mots illustrés, une aquarelle par case."
+plain: "Trois pages d’un livre de lecture pour jeunes enfants, sur la lettre M. Chaque son d’un mot est dans une petite étiquette de couleur, et chaque mot d’une grille a sa propre image."
+description: "Un livret de lecture dans Postext : un style de pastille par voyelle, des mots en pastilles de sons accolées, une grille d’images et des lignes à tracer."
+question: "Comment composer des syllabes en pastilles de couleur, une par voyelle, dans un livret de lecture ?"
+aliases: ["apprentissage de la lecture", "méthode syllabique", "phonétique", "syllabes", "familles de mots", "pastilles de sons", "livret de lecture", "abécédaire", "cahier pour enfants", "phonics", "cartilla"]
+pageNotes: { "1": "Un bandeau crème avec un Mm géant, un singe et une lune ; en dessous, six mots découpés en sons, « map », « men », « mop » et « Sam », « dim », « gum », chaque son dans une pastille de la couleur de la voyelle du mot, le m en plein, puis quatre paires de mots qui riment : « mat » et « sat », « man » et « pan », « mug » et « tug », « mop » et « top ».", "2": "Six mots illustrés, « map », « mat », « man », « mug », « mop » et « mud », dans une grille arrondie de tuiles crème, chaque image au-dessus de ses sons ; en dessous, des lignes à tracer pour m, M et les mots « man », « mat » et « men ».", "3": "Quatre phrases en 24 pt avec les nouveaux mots, « Tom » et « Mum », en pastilles de sons, un encadré crème de mots détourés à colorier, une note pour les parents et les accompagnants, et le colophon." }
+---
+
+## Ce que vous allez composer
+
+L’unité 12 de *Letter by Letter*, un livret de lecture anglais inventé fondé sur la méthode phonique : trois pages sur le son m. L’ouverture compose un Mm de 190 pt en DynaPuff sur un bandeau crème, à côté de deux choses dont le nom commence par m, un singe (*monkey*) et une lune (*moon*). Chaque mot est découpé en sons, et chaque son est une pastille de la couleur de la voyelle du mot : a rouge, e orange, i bleu canard, o bleu, u violet. Le m est en plein et les autres sons sont détourés : l’enfant voit où tombe le son de l’unité dans *map* et dans *gum*. La page 38 place six mots illustrés dans une grille arrondie, une aquarelle par case, puis trois lignes à tracer. Les aquarelles ont été générées avec des modèles de diffusion ; le bandeau, les icônes et les lignes à tracer sont dessinés en code. La page 39 porte quatre phrases en 24 pt, un encadré de mots à colorier et une note pour les parents et les accompagnants.
+
+L’édition espagnole est une autre unité, pas une traduction : l’unité 7 de *Letra a letra*, sur la même lettre. L’espagnol s’enseigne par syllabes ouvertes (ma, me, mi, mo, mu) : ses pastilles contiennent donc des syllabes, `{mi·mo·sa}`. Ces syllabes ne sont pas des mots anglais, et les livrets anglais avancent son par son : l’unité anglaise assemble donc les sons de mots courts, `{m·a·p}`, et les groupe en familles qui riment (-at, -an, -ug, -op). Les deux unités sortent du même pen : les mêmes styles de pastille, la même fonction `syllables()`, la même grille, les mêmes lignes à tracer et les mêmes encadrés.
+
+## Préparation
+
+### 1 · Un style de pastille par voyelle et une fonction qui écrit les pastilles
+
+[La réponse courte](#la-réponse-courte) construit 21 styles de pastille en reprenant un seul objet `syllable`. Il y a un style plein par voyelle pour le m, un style détouré par voyelle pour les autres sons, un jumeau `-frase` de chacun de ces dix, et `pinta`, le contour à l’encre qu’un enfant colorie. `syllables()` transforme `{m·a·p}` en trois `:chip[…]` sans rien entre eux : les sons d’un mot se touchent et c’est la bordure blanche qui dessine la jointure. Une pastille prend la couleur de sa voyelle, et un morceau sans voyelle, ici le m et le p, prend la voyelle de son mot : *map* est rouge d’un bout à l’autre. De part et d’autre d’une espace entre mots, une pastille garde au moins son `gap`, et 0,5 em écarte de 4,2 mm les mots d’une rangée de 24 pt, là où l’espace seule laisse 2,3 mm. Dans une phrase, cet écart doublerait presque l’espace avant le nouveau mot : un mot qui suit un autre mot reçoit donc les jumeaux `-frase`, dont le `gap` de 0 laisse l’espace de 2,3 mm telle quelle. Dans l’édition espagnole, les morceaux sont des syllabes, `{mi·mo·sa}`, et chacune a sa propre voyelle.
+
+### 2 · Un interlignage qui dégage les pastilles
+
+<Excerpt region="reading" />
+
+La marge intérieure verticale et la bordure d’une pastille se peignent hors de sa ligne et n’ajoutent pas d’interlignage : une pastille plus haute que le pas des lignes empiète sur les pastilles de la ligne du dessous. Une pastille de 24 pt mesure 10,4 mm de haut ; avec un interlignage de 30 pt (10,6 mm), les pastilles de deux phrases ne seraient qu’à 0,1 mm l’une de l’autre. Les lignes que lit l’enfant reçoivent 45 pt, et les rangées de 34 pt de la première activité 60 pt, soit trois et quatre lignes de la grille de 15 pt des consignes.
+
+### 3 · Une image dans chaque case
+
+<Excerpt region="pictures" />
+
+`setCellImage` place une image au-dessus du texte d’une cellule, à une fraction de la largeur intérieure de la cellule, ici 0,72 (36,5 mm), et la ligne grandit pour la contenir. Chaque image est un JPEG peint sur blanc et multiplié par le crème des tuiles : elle se pose sur la tuile sans former de bloc. Sous chaque image figure le mot en pastilles de sons. Une cellule de tableau accepte le balisage des pastilles comme n’importe quel paragraphe. Le style de tableau `dibujos` arrondit le cadre et ses fonds à 5 mm et sépare les tuiles crème par des filets blancs de 4 pt.
+
+### 4 · Une ligne d’espace avant l’encadré
+
+<Excerpt region="boxes" />
+
+Le Markdown place `:::space{lines=1}` entre la dernière phrase et l’encadré à colorier, une ligne de 15 pt (5,3 mm). La `marginTop` de l’encadré vaut 0 : cette ligne fait donc tout l’écart ; sans elle, l’encadré commencerait là où finit la ligne de la dernière phrase. Un `:::space` qui ouvre un encadré est supprimé : l’encadré commence donc par sa ligne de consigne et les pastilles de la légende des couleurs, et son propre `:::space` vient après, entre la légende et l’activité de coloriage.
+
+### 5 · L’ouverture de la lettre
+
+<Excerpt region="opener" />
+
+Le Mm est le texte du titre (`{titleText}`) ; le numéro de l’unité, la collection et le nom sous la lettre sont des attributs de la même ligne de titre. Le bandeau, le singe et la lune sont des images. Le bandeau fait 104 mm de haut, et l’ouverture réserve la page jusqu’à la première ligne de grille sous son pied : le premier titre d’activité commence donc à 118,5 mm, sur la grille, 16,6 mm sous le point le plus bas de la vague (101,9 mm).
+
+### 6 · Des icônes à côté des titres d’activité
+
+<Excerpt region="activities" />
+
+Chaque titre d’activité nomme son style de titre, comme dans `## Read the sentences {style="lee"}`, et le style dessine une icône avec le titre centré à côté. Les titres restent des titres de niveau 2 : c’est donc le niveau `H2` qui les espace, avec deux lignes de grille de `lineHeight` pour le titre et deux autres de `marginTop` au-dessus.
+
+## Variantes
+
+### Arrondir les pastilles en pilules
+
+Un rayon supérieur à la moitié de la hauteur de la pastille est ramené à cette moitié : une grande valeur dessine donc des bouts arrondis. Une pastille d’une seule lettre devient presque un cercle, et les jointures à l’intérieur d’un mot deviennent des encoches.
+
+```diff
+-  paddingX: em(0.26), paddingY: em(0.05), gap: em(0.5) };
++  paddingX: em(0.26), paddingY: em(0.05), gap: em(0.5), borderRadius: em(1) };
+```

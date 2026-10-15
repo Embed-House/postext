@@ -1,0 +1,76 @@
+---
+title: "Un roman chinois vertical, relié à droite"
+summary: "Le chapitre 1 du 三國演義 en 25開 taïwanais : 40 caractères sur 16 colonnes, ouverture 回目 filetée, titres en marge, folios chinois, lecture de droite à gauche."
+plain: "Le premier chapitre d’un roman chinois classique, en livre de poche taïwanais. Le texte court en colonnes de haut en bas, lues de droite à gauche, et le livre s’ouvre par la droite."
+description: "Les Trois Royaumes, chapitre 1, à la verticale avec Postext : grille de caractères, ouverture 第一回 filetée, titres en marge, folios chinois, reliure à droite."
+question: "Comment composer un roman chinois à la verticale, relié à droite, avec 第一回 et des folios en chiffres chinois ?"
+aliases: ["chinois vertical", "roman vertical", "直排", "豎排", "直書", "livre de droite à gauche", "doubles pages R2L", "édition taïwanaise", "章回小說", "回目", "distique de chapitre", "titre courant en marge extérieure", "邊峰", "folios chinois", "chiffres chinois", "25開", "繡像", "Les Trois Royaumes", "Romance of the Three Kingdoms", "三國演義", "tategaki"]
+pageNotes: { "1": "La page de titre, seule à gauche du dos : 三國演義 en grands caractères gras dans un double cadre vermillon, 羅貫中　著 et 毛宗崗　評 sur deux colonnes à sa gauche, et en pied une mention d’édition de cinq lignes en anglais, centrée sur l’axe du bandeau, le titre du livre en italique.", "2": "La planche : une gravure sur bois du serment du jardin des pêchers, 1592, avec les trois frères jurés devant un autel portant trois coupes, le bœuf noir et le cheval blanc derrière eux, dans un double cadre noir ; son titre 桃園結義 et une note sur l’édition descendent deux colonnes à sa gauche.", "3": "Le chapitre s’ouvre sur une page de gauche : en partant de la droite, une colonne vide, puis 第一回 et le distique 宴桃園豪傑三結義 / 斬黃巾英雄首立功 sur deux colonnes entre trois filets vermillon fins, puis 詞曰： et les quatre vers du ci en retrait de quatre caractères, puis le texte. Le folio 一 se place bas dans la marge gauche.", "4": "Une page de texte de droite, 16 colonnes de 40 caractères, avec 三國演義 qui descend la marge droite et le folio 二 bas dans la même marge.", "5": "Une page de gauche : le titre courant 第一回　宴桃園豪傑三結義　斬黃巾英雄首立功 descend la marge gauche, avec le folio 三 en dessous.", "11": "La dernière page : la colère de Zhang Fei contre Dong Zhuo, le quatrain final en retrait de quatre caractères, et 畢竟董卓性命如何，且聽下文分解。 Le reste de la page est laissé blanc." }
+---
+
+## Ce que vous allez composer
+
+Onze pages d’une édition de poche taïwanaise des *Trois Royaumes* : tout le chapitre 1, dans la recension de Mao Zonggang, composé de haut en bas en colonnes lues à partir de la droite, sur une page de 148 × 210 mm (25開) reliée à droite. La page de titre est seule à gauche du dos. Sur la double page suivante, une gravure sur bois du serment du jardin des pêchers, taillée en 1592, fait face à l’ouverture du chapitre, où 第一回 et son distique se tiennent entre des filets vermillon. Chaque page de texte contient 16 colonnes de 40 caractères, chaque signe centré dans sa case. Le titre du livre descend la marge extérieure des pages de droite et celui du chapitre celle des pages de gauche, au-dessus de folios en chiffres chinois. La même structure de livre dans un roman de poche européen se trouve dans <RecipeLink slug="trade-paperback-novel">Nº 038</RecipeLink>.
+
+## Préparation
+
+### 1 · Tourner la page d’un quart de tour et la relier à droite
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `layout.writingMode: 'vertical-rl'` compose chaque page comme une page horizontale tournée d’un quart de tour dans le sens des aiguilles d’une montre : une ligne du flux est une colonne de caractères, lue à partir de la droite, et la coupure des lignes, la justification et le retrait de deux caractères fonctionnent le long de la colonne ([Écriture verticale](/fr/docs/configuration-page-layout#écriture-verticale)). `page.binding` reste à `'auto'`, qui relie un livre vertical à droite : la page 1 est toujours le recto, mais c’est une page de gauche, et `mirror: true` place sa marge intérieure, `left`, à sa droite ([Reliure](/fr/docs/configuration-page-layout#reliure)). Le `showBook` du kit dispose les doubles pages comme le livre s’ouvre, la page 1 seule puis `[3 | 2]` ; le PDF demande le même ordre aux visionneuses avec `/Direction /R2L`, ce que suit Acrobat et qu’ignore la visionneuse de Chrome.
+
+La [grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères) fixe le bloc de texte à 40 caractères de 10,5 pt en hauteur et 16 colonnes de 19 pt en largeur, soit 148,2 × 107,2 mm. Les marges de `page` sont des minimums : la grille agrandit chaque paire de la même façon, jusqu’à 33,9 mm en tête et 27,9 en pied, 17,4 au petit fond et 23,4 en marge extérieure. `locale: 'zh-Hant'` donne aux réglages d’Asie orientale les valeurs de Taïwan, chaque signe sur un cadratin plein et centré dans sa case, sans compression entre les signes. `trad-chinese-informal` imprime les folios 一 à 九, et `第{1:一}回` numérote le chapitre ([Numérotation](/fr/docs/configuration-page-layout#numérotation)).
+
+### 2 · Fileter le 回目 sur deux colonnes
+
+<Excerpt region="opener" />
+
+Sur une page verticale, une maquette de titre se dessine dans le cadre du flux : `x` descend la colonne à partir de la tête du bloc de texte et `y` traverse la page à partir de son bord droit. Un filet `'horizontal'` est donc une ligne verticale sur la feuille, aussi longue que la colonne. Trois filets de 0,5 pt encadrent deux colonnes de titre espacées de 28,5 pt, 1,5 fois le pas des colonnes du texte. Chaque colonne est une ligne de 28,5 pt de haut dont les caractères se tiennent au milieu, à mi-chemin entre deux filets. `{number}` imprime 第一回 en Noto Serif TC Bold deux caractères plus bas ; `{titleText}` imprime le distique en LXGW WenKai TC, un caractère après. Le titre s’écrit `# 宴桃園豪傑三結義 \\ 斬黃巾英雄首立功`, et le saut forcé fait commencer la seconde moitié dans la colonne suivante, à la hauteur de la première. `minHeight` réserve cinq colonnes de 19 pt, si bien que le texte commence sur sa grille ([Emplacements et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Là où le titre se lit sur une seule ligne, dans les titres courants et les signets du PDF, le saut devient une espace idéographique.
+
+### 3 · Placer les titres courants et les folios le long de la marge extérieure
+
+<Excerpt region="fore-edge" />
+
+Les livres verticaux de Taïwan placent souvent le titre courant et le folio le long de la marge extérieure. `writingMode: 'vertical-rl'` compose un élément d’en-tête de haut en bas sur la feuille, et `anchor.to: 'outer'` le place dans la marge extérieure, la gauche d’une page impaire et la droite d’une page paire quand le livre est relié à droite ([Éléments en texte vertical](/fr/docs/configuration-page-layout#éléments-de-texte-vertical)). Les décalages sont en cadratins du corps propre de l’élément, 8,5 pt, environ 80 % du corps du texte : le titre courant commence quatre caractères sous la tête du bloc de texte et le folio se termine cinq caractères au-dessus de son pied. `parity` met 三國演義 sur les pages de droite et le chapitre sur les pages de gauche. `pages: 'body'` tient les deux titres courants à l’écart de la page d’ouverture, qui garde son folio.
+
+### 4 · Placer la planche avant le chapitre
+
+<Excerpt region="front" />
+
+La page de titre et la planche sont des titres de niveau 1 avec leurs propres styles, `# 三國演義 {style="title" …}` et `# 桃園結義 {style="plate" …}`. `numbered: false` les sort du décompte, si bien que le chapitre reste 第一回, et leur propre `header`, vide, remplace les titres courants en marge. Le `breakBefore` du chapitre demande une page impaire, la page 3, dont la double page porte la planche à droite : le lecteur voit l’image avant le texte, comme dans les éditions illustrées (繡像) ([Styles de titre](/fr/docs/configuration-styles#styles-de-titre)). Les folios laissent aussi ces deux pages de côté. Un éditeur chinois numérote le texte (正文) à partir de sa première page : une ligne `:::numbering{startAt=1}` juste avant le titre du chapitre fait donc repartir le décompte à 一 en page 3 ([`:::numbering`](/fr/docs/document-format#numbering)) ; la page de titre et la planche comptent toujours comme feuillets pour la parité, et la visionneuse et le PDF les étiquettent malgré tout 一 et 二 (une variante ci-dessous leur donne des étiquettes à part).
+
+三國演義 est centré le long de son bandeau : `RUN` est la longueur de quatre caractères de 40 pt et des trois espaces de 10 pt qui les séparent, sans l’approche qui suit le dernier. Le pied de page de la page de titre compose la mention d’édition en pied, dans la langue de l’édition, à partir de l’attribut `colophon` du titre. Noto Serif TC n’a pas d’italique : la mention d’édition est donc composée en Source Serif 4. `inlineMarks: true` lit les astérisques autour du titre du livre, et chaque `\n` de l’attribut commence une ligne, si bien que les lignes se coupent là où le sens le demande ([Éléments de texte](/fr/docs/configuration-page-layout#éléments-de-texte)). La boîte est deux fois plus large que la distance entre la gauche du bloc de texte et l’axe du bandeau, ce qui place le centre de chaque ligne sous 三國演義. La maquette de la planche suspend la gravure et son double cadre au coin supérieur droit du bloc de texte et compose la légende sur deux colonnes à sa gauche. Dans le cadre du flux, la largeur d’une boîte descend la page : la `width` de l’image est donc sa hauteur sur la feuille ; elle reste debout dans le canvas, le HTML et le PDF, et le PDF balisé la lit comme une figure avec son texte alternatif.
+
+### 5 · Charger chaque voix avec les caractères qu’elle compose
+
+<Excerpt region="voices" />
+
+Le livre a trois voix : Noto Serif TC (宋) pour le texte, LXGW WenKai TC (楷) pour le distique et les vers, Noto Sans TC (黑) pour la marge extérieure. Fontsource sert chaque graisse d’une police chinoise sous la forme d’une centaine de fichiers, chacun couvrant une plage de caractères, et `loadCjkFonts` télécharge les fichiers qui contiennent le texte qu’on lui donne ([Polices chinoises, japonaises et coréennes](/fr/docs/configuration-programmatic-usage#polices-chinoises-japonaises-et-coréennes)). La police du texte reçoit tout le chapitre et télécharge 67 fichiers ; la Kai reçoit les titres et les vers et en télécharge 25, la Hei 15 et le gras 4. Le gras compose sept caractères et aucune ponctuation : il ne charge donc aucune forme verticale. Le Source Serif 4 de la mention d’édition arrive par `loadFonts` comme n’importe quelle police latine, romain et italique. `renderToPdf` prend `cjkPdfProvider`, qui incorpore les mêmes fichiers en sous-ensembles, et `imageBytes` pour la gravure.
+
+## Variantes
+
+### Écrire les folios chiffre par chiffre
+
+`cjk-decimal` écrit un chiffre par position. Ce chapitre se termine au folio 九, où les deux formats s’accordent ; à partir de la dixième page de texte, 十 et 十一 deviendraient 一〇 et 一一.
+
+```diff
+-  pageNumbering: { format: 'trad-chinese-informal' }, // folios 一, 二 … 九, from the chapter
++  pageNumbering: { format: 'cjk-decimal' }, // folios 一, 二 … 九, 一〇, 一一
+```
+
+### Étiqueter à part les pages liminaires
+
+La page de titre et la planche n’impriment pas de folio, mais la visionneuse et le PDF les étiquettent 一 et 二, comme les deux premières pages du texte ; avec des étiquettes romaines pour les pages liminaires et les chiffres chinois déplacés sur la ligne `:::numbering`, le PDF compte i, ii, 一, 二…
+
+```diff
+-  pageNumbering: { format: 'trad-chinese-informal' }, // folios 一, 二 … 九, from the chapter
++  pageNumbering: { format: 'lower-roman' }, // i, ii: the title page and the plate
+```
+
+```diff
+-:::numbering{startAt=1}
++:::numbering{format="trad-chinese-informal" startAt=1}
+```
+
+### Composer le chapitre à l’horizontale
+
+L’usage du continent compose le même genre de chapitre à l’horizontale, relié à gauche, en caractères simplifiés avec la ponctuation Kaiming : <RecipeLink slug="chinese-novel-horizontal">Une page de roman chinois sur une grille de 28 × 28</RecipeLink>.

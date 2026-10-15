@@ -1,0 +1,72 @@
+---
+title: "Zine riso à deux encres : les dessins en un seul ton direct"
+summary: "Un zine de quatre pages pour risographe à deux tambours : les dessins en couleurs sortent en teintes de rose, recolorés par le moteur à l’écran et dans le PDF."
+plain: "Un petit magazine plié sur les bus de nuit, fait pour une machine qui n’imprime qu’avec deux encres. Les dessins en couleurs deviennent des nuances d’une seule encre rose."
+description: "Un zine riso dont les dessins SVG en couleurs s’impriment en teintes d’un ton direct, à l’écran et dans le PDF, grâce à diagramStyle.singleInk et une option."
+question: "Comment imprimer chaque dessin SVG en teintes d’un ton direct, et toutes les autres couleurs dans un second ?"
+aliases: ["risographie", "riso", "risographe", "impression en deux couleurs", "ton direct", "couleur d’accompagnement", "bichromie", "duotone", "encre unique", "zine", "fanzine", "défaut de repérage", "hors repère", "épreuve en niveaux de gris", "manuel en deux couleurs", "trame", "similigravure"]
+pageNotes: { "1": "La couverture : le numéro et la ligne « Six routes after midnight, three ridden end to end », puis une pleine lune tramée rose derrière deux câbles aériens bleus, un poteau d’arrêt de bus bleu dont le panneau indique « NIGHT », « N12 », « N27 » et « N41 », et « NIGHT BUSES » en hautes capitales étroites, en bleu sur une copie rose légèrement hors repère.", "2": "Page 2 : le surtitre « Brackwater, 00:10 to 06:00 » au-dessus de « AFTER THE LAST TRAIN », le paragraphe d’ouverture, la note sur la N12 après sa pastille de ligne rose, les mots d’un chauffeur en capitales étroites sous un bandeau rose, et le début de la note sur la N27.", "3": "Page 3 : le réseau de nuit en teintes de rose au-dessus d’une barre de légende rose pâle, la fin de la note sur la N27, la note sur la N41, et un petit médaillon de la même carte en six couleurs à côté de la note « As drawn ».", "4": "La quatrième de couverture : une girouette rose qui affiche « NOT IN SERVICE », l’annonce du numéro 5 avec trois endroits où le trouver, le colophon dans un caractère à chasse fixe et une lune tramée rose dans le coin inférieur." }
+---
+
+## Ce que vous allez composer
+
+*Night Buses* est un zine gratuit sur les bus de nuit d’une ville : quatre pages de 120 × 160 mm sur une feuille pliée en deux, pour un risographe à deux tambours, bleu et rose fluo. Chaque couleur de la configuration est l’une des deux encres, une trame à 25 % du rose ou le papier crème. Les dessins sont faits en couleurs (une carte des lignes en six couleurs, une lune en gris, une girouette ambre sur fond noir) et s’impriment depuis le tambour rose en teintes de rose, les couleurs sombres en teintes plus denses. <PageRef page={3}>La carte</PageRef> s’imprime en rose, et un petit médaillon plus bas sur la même page garde les six couleurs du dessin. Le titre de couverture est composé deux fois, la copie rose 0,8 mm à droite de la bleue et 0,5 mm plus haut. Le pen produit aussi un PDF en couleurs et une épreuve en gris.
+
+## Préparation
+
+### 1 · Deux tambours, et chaque couleur sur l’un d’eux
+
+<Excerpt region="inks" />
+
+Un risographe imprime chaque encre depuis son propre tambour : une troisième couleur, n’importe où dans la configuration, demanderait un troisième tambour. `screen()` mélange une part d’encre à la couleur du papier, comme une trame imprime une partie des points et laisse le papier entre eux. Une trame à 25 % du rose donne `#f2c7d3`, le fond des pastilles et de la légende. `main-color` pointe sur le rose : toute valeur par défaut que la configuration laisse telle quelle s’imprime donc depuis ce tambour, et non dans le bleu du moteur, `#295AA3`.
+
+### 2 · Recolorer chaque dessin une fois par sortie
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Avec `diagramStyle.singleInk`, `renderToPdf` transforme chaque couleur d’un SVG en une teinte de `inkColor` dont la force vaut 1 moins la luminance relative de la couleur ([style des diagrammes](/fr/docs/configuration-resources#style-des-diagrammes)) : la N12 bleu marine s’imprime à 84 % et la N50 jaune à 24 %. Le canvas teinte une image de la même façon quand elle est enregistrée avec `singleInk: true` ; le `loadSvg(fileId, svg, { singleInk: true })` du kit enregistre donc chaque dessin tel qu’il est dessiné, avec cette option, et garde le même balisage, que `imageBytes` transmet à `resourceBytes`. Mesurée sur le canvas et dans le PDF tramé à 300 dpi, la ligne N12 vaut (242, 109, 171), la teinte que donne la formule pour une force de 0,836. Chaque sortie recolore le dessin une seule fois : passée deux fois dans la formule, la ligne s’éclaircirait à 44 %.
+
+### 3 · Imprimer le titre deux fois, hors repère
+
+<Excerpt region="cover" />
+
+Un risographe imprime un tambour après l’autre, et la feuille ne retombe jamais deux fois exactement au même endroit. `twice()` renvoie deux copies d’un élément de texte, la rose d’abord, 0,8 mm à droite et 0,5 mm plus haut. L’ordre du tableau est l’ordre de peinture : la copie bleue couvre donc la rose, sauf un mince liseré le long des bords supérieur et droit de chaque lettre. Le canvas et le PDF peignent des couleurs opaques, si bien que le chevauchement reste bleu là où un riso imprimerait du violet. La maquette occupe toute la page parce que le poteau descend sous le pied du bloc de texte, où une maquette tenue dans sa colonne serait coupée.
+
+### 4 · Garder les petits corps dans l’encre sombre
+
+<Excerpt region="inside" />
+
+Sur le papier crème, le bleu atteint un contraste de 6,4:1 et le rose fluo de 2,9:1, trop pâle pour du texte en 8 ou 9 pt. Chaque mot composé par le moteur s’imprime donc depuis le tambour bleu. Les pastilles sont en Space Mono bleu sur la trame à 25 % (4,85:1), dans un contour rose, et la légende en Epilogue bleu sur la même trame. Le rose imprime le bandeau au-dessus de la citation, les contours des pastilles, les puces, les carrés des folios et les copies décalées des titres. Le lettrage à l’intérieur des dessins appartient à l’image et s’imprime en rose avec elle. Le nom de la personne qui parle est le titre de l’encadré, composé en capitales Space Mono grasses de 7,5 pt au-dessus de la citation.
+
+### 5 · Placer le médaillon à côté de sa note
+
+<Excerpt region="drawn" />
+
+Sur une seule colonne, un flottant prend toute la largeur de sa bande : une petite image flottée là laisserait le reste de la bande vide. Le médaillon est donc une maquette de titre : `### As drawn {style="drawn" note="…"}` imprime l’image et, à sa droite, le titre comme étiquette avec la note dessous. L’image compte dans la hauteur que réserve la maquette, si bien que le bloc suivant commence sous elle même quand la note est plus courte. `registerSnapshot()` dessine la même carte `network()` dans un PNG, et comme l’encre unique ne recolore que le SVG, le médaillon garde ses six couleurs à l’écran et dans le PDF.
+
+## Variantes
+
+### Charger un tambour orange
+
+La lune, la carte, la girouette, les pastilles, le bandeau et les copies décalées des deux titres passent à l’orange et le texte reste bleu ; la légende, la note et le colophon continuent de nommer le tambour rose tant que vous ne les modifiez pas.
+
+```diff
+-const DRUMS = { ink: '#1d4fb8', spot: '#f0509a' };
++const DRUMS = { ink: '#1d4fb8', spot: '#ff6c2f' };
+```
+
+### Imprimer un manuel en deux couleurs
+
+Avec un texte noir et un ton direct bleu sur papier blanc, les mêmes dessins s’impriment en teintes de bleu, comme les schémas d’un manuel scolaire en deux couleurs ; la légende, la note et le colophon nomment toujours le tambour rose tant que vous ne les modifiez pas.
+
+```diff
+-const DRUMS = { ink: '#1d4fb8', spot: '#f0509a' };
+-const PAPER = '#f3efe6'; // cream stock: where no ink falls
++const DRUMS = { ink: '#1f1f1f', spot: '#0078bf' };
++const PAPER = '#ffffff'; // white stock: where no ink falls
+```
+
+## Erreurs fréquentes
+
+- Dans le PDF, la recoloration réécrit le balisage : couleurs hexadécimales, `rgb()`, `rgba()`, `hsl()` et `hsla()`, et les mots-clés `white` et `black`. Une forme qui nomme `red` ou laisse son remplissage au noir par défaut garde cette couleur dans le PDF, ce qui demanderait un troisième tambour. Donnez une valeur hexadécimale à chaque remplissage et à chaque contour.
+- `colorSpace: 'grayscale'` passe en gris ce que postext peint et incorpore les images bitmap telles quelles : le médaillon PNG reste donc en couleurs dans l’épreuve en gris. Seul le second bouton du pen produit l’épreuve ; les pages ci-dessus viennent du canvas, et le PDF proposé sur cette page est celui en couleurs.
+- L’équilibrage des colonnes peut laisser une ligne de blanc sous un flottant en haut de page, avant la suite d’un paragraphe venu de la page précédente ; `headings.balancing.stretchAfterFloats: false` garde le texte juste sous le flottant. Le texte de cet exemple ne le déclenche pas. Après avoir modifié le texte, vérifiez la première ligne sous la carte : une ligne de plus peut repousser le médaillon sur une cinquième page.
+- Dans le pen, les deux boutons portent « Build the PDF ». Le premier produit le PDF en couleurs et le second l’épreuve en gris ; une fois un fichier produit, son bouton laisse la place à un lien « Open the PDF ↗ » et à un lien de téléchargement portant le nom du fichier.

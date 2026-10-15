@@ -1,0 +1,77 @@
+---
+title: "Dates et sigles debout dans un texte vertical"
+summary: "Deux textes fondateurs de 1912 composés à la verticale, reliés à droite : les nombres à deux chiffres tiennent debout seuls, :tcy et :upright marquent le reste."
+plain: "Deux documents chinois de 1912, imprimés en colonnes de haut en bas. La recette montre comment composer les dates, les nombres et les lettres latines pour qu’ils se lisent bien dans le texte vertical."
+description: "Recueil de documents chinois avec Postext : texte vertical sur grille de 44 signes, dates en tate-chu-yoko, sigle empilé, latin couché, titres au grand fond."
+question: "Comment garder les dates debout dans un texte chinois vertical, et que deviennent sigles et mots latins ?"
+aliases: ["tate-chu-yoko", "縱中橫", "dates en chinois vertical", "nombres dans un texte vertical", "sigles dans un texte vertical", "recueil de documents", "proclamation", "titres courants côté grand fond", "文告"]
+pageNotes: { "1": "La couverture : un aplat vermillon dans un filet épais et un filet fin vermillon pâle ; le titre 民國元年文告二種 descend à droite en blanc, les deux documents et leurs dates sur deux lignes à gauche, le 11 de 3月11日 debout dans une seule case.", "2": "L’ouverture de la proclamation : un bandeau vermillon le long du bord droit porte le titre, le sous-titre anglais couché sur le côté et la date en pied ; le chapeau dans un caractère Kai, composé deux caractères plus bas, puis la proclamation en Song.", "3": "La proclamation continue sur toute la page et se termine par sa ligne de date, composée douze caractères plus bas, et, à la ligne suivante, la mention du sceau en vermillon, qui commence un caractère sous la fin de la date.", "4": "Les notes de la proclamation dans le caractère Kai : 10月10日 debout, 1911 et « Sun Yat-sen » couchés sur le côté, « ROC » empilé lettre par lettre.", "5": "L’ouverture de la Constitution provisoire : le bandeau, le chapeau avec 3月8日 et 第35號 debout, le décret de promulgation avec sa mention du sceau et sa date, puis le chapitre premier.", "6": "Le chapitre deux de la Constitution : articles 5 à 15, les sept libertés de l’article 6 composées deux caractères plus bas.", "7": "Les notes de la Constitution et le colophon, en anglais, couché sur le côté." }
+---
+
+## Ce que vous allez composer
+
+Un recueil de sept pages réunissant deux textes fondateurs de la République de Chine : la proclamation de Sun Wen à sa prise de fonctions le 1er janvier 1912, et les deux premiers chapitres de la Constitution provisoire du 11 mars. Les pages sont composées à la verticale sur une page de 184 × 260 mm reliée à droite. Les documents gardent leurs propres chiffres chinois, 民國元年三月十一日. Les chapeaux et les notes, dans un caractère Kai, donnent les dates du calendrier occidental, les quantités et les numéros en chiffres arabes, et ce sont ces chiffres que compose la recette : 10月10日 tient debout, un nombre par case, 1912 et « Sun Yat-sen » sont couchés sur le côté, 民國115年 fait tenir trois chiffres dans une case et « ROC » empile ses lettres. Une couverture vermillon dans un double filet, un bandeau vermillon à l’ouverture de chaque document et des titres courants côté grand fond avec des folios en chiffres chinois encadrent le texte.
+
+## Préparation
+
+### 1 · Laisser le réglage prendre les nombres courts
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Avec `cjk.uprightDigits: 2`, toute suite d’un ou deux chiffres dans un texte vertical tient debout dans une case d’un cadratin, les deux chiffres côte à côte : 10月10日, 第35號 et 7章56條 n’ont besoin d’aucun balisage. Un nombre plus long est composé entier sur le côté, comme un mot latin, ce qui est la façon dont clreq compose les nombres de quatre chiffres : 1912 et 1644 se lisent le long de la ligne, tournés d’un quart de tour. Un nombre à trois chiffres qui doit tenir debout prend une marque : `民國:tcy[115]年` serre 115 dans le cadratin. `:upright[ROC]` met chaque lettre debout dans sa propre case, l’une sous l’autre, et la ligne ne se coupe jamais à l’intérieur ([nombres dans un texte vertical](/fr/docs/configuration-east-asian#nombres-en-texte-vertical)).
+
+<PageShot page={4} crop="0.43,0.145,0.45,0.74" caption="Page 4, les notes : 10月10日 et 2月12日 debout, 1911 et Sun Yat-sen sur le côté, 268 et 115 serrés par :tcy, ROC empilé par :upright." />
+
+Les textes de 1912 restent tels qu’ils ont été imprimés. Les notes de l’éditeur suivent les règles de Taïwan pour les nombres, le 公文書橫式書寫數字使用原則 du Yuan exécutif de 2004 : les dates, les numéros d’ordre et les quantités prennent des chiffres arabes (1912年3月8日, 第35號, 7章56條), tandis que les noms propres, les expressions figées et les nombres ronds gardent les chiffres chinois (東三省, 四萬萬, 四億), de même que la date lunaire, 辛亥年八月十九日. Quand une note cite un titre ou un terme des documents, elle garde leur forme, 第一章 et 二十二行省. Ces règles ont été écrites pour des documents horizontaux ; composés à la verticale, leurs chiffres sont justement ceux que la recette doit mettre debout.
+
+### 2 · Ouvrir chaque document par un bandeau à droite
+
+<Excerpt region="opener" />
+
+Dans un flux vertical, le haut de la page est le bord droit de la feuille, là où commence la lecture. Une maquette de titre ancrée en haut du fond perdu est donc un bandeau le long du bord droit, et son `size.height` est sa largeur sur la feuille. Les décalages tournent avec le flux : `x` se mesure vers le bas de la feuille, `y` vers la gauche. La grille centre le bloc de texte entre les marges, et `HEAD` reprend cette somme, si bien que le titre commence à la hauteur du premier caractère de chaque ligne. `align: 'right'` place la date au pied de sa ligne, là où finissent les lignes de texte, et `cjk.uprightDigits` atteint aussi le texte de la maquette : le 11 de 3月11日 tient dans une seule case, comme dans le texte courant. Le bandeau est celui de la recette <RecipeLink slug="chapter-opener-bleed-band">Une ouverture de chapitre sur un bandeau à fond perdu</RecipeLink>, tourné d’un quart de tour.
+
+Une maquette de titre n’a pas de parité, si bien que le bandeau descend toujours le long du bord droit de la feuille. En page 2, une page de droite, ce bord est le grand fond ; en page 5, une page de gauche d’un livre relié à droite, c’est le dos, et le titre commence à 8 mm du pli, à l’intérieur de la marge intérieure de 21,6 mm. Un recueil agrafé s’ouvre assez à plat pour cela. Pour un livre cousu ou collé, ouvrez chaque document sur une page de droite avec `breakBefore.parity: 'even'`, ce qui laisse la page 5 blanche.
+
+<PageShot page={2} crop="0.55,0.13,0.45,0.52" caption="Page 2 : le titre à partir de la tête du bloc de texte, la date au pied du bandeau, le 10 de 晚上10時 et le 29 de 同月29日 debout dans le chapeau." />
+
+### 3 · Placer les titres courants côté grand fond
+
+<Excerpt region="heads" />
+
+`anchor.to: 'outer'` désigne la marge opposée au dos, si bien que dans un livre relié à droite les titres courants descendent le long du bord gauche d’un recto et du bord droit d’un verso. Le titre se tient quatre caractères sous la tête du bloc de texte et le folio s’arrête cinq caractères au-dessus de son pied, tous deux composés à la verticale à 80 % du corps du texte ([éléments de texte verticaux](/fr/docs/configuration-page-layout#éléments-de-texte-vertical)). `pageNumbering.format: 'trad-chinese-informal'` imprime les folios 三, 四, 六 et 七, et `pages: 'body'` les tient à l’écart des deux ouvertures.
+
+### 4 · Faire déborder la couverture depuis une maquette pleine page
+
+<Excerpt region="cover" />
+
+Une maquette de titre dans une colonne est coupée au pied de la colonne, et sur une page verticale ce pied est la marge gauche : un aplat ancré au fond perdu s’arrêtait à 21,6 mm du bord de coupe gauche. Avec `span: 'page'`, le titre est mis en page comme une bande de page, qui n’est pas coupée, et l’aplat atteint les deux bords. Les deux cadres dessinent le double filet épais et fin des livres imprimés chinois, de 1,6 pt et 0,5 pt, à 2 mm l’un de l’autre.
+
+### 5 · Charger chaque voix avec le texte qu’elle compose
+
+<Excerpt region="voices" />
+
+Fontsource sert chaque graisse de ces caractères sous forme d’une centaine de fichiers, chacun couvrant une plage de caractères, et `loadCjkFonts` charge les fichiers que touche un texte. Avec seulement les titres, les mentions de sceau, le colophon, les lignes de couverture et les folios, chaque graisse de Noto Sans TC charge 10 fichiers ; avec tout l’exemple, elle en chargerait 35, et il y a trois graisses. LXGW WenKai TC reçoit les chapeaux et les notes et charge 16 fichiers. Un caractère qui reçoit trop peu de texte fait échouer la capture (C12), qui nomme les caractères qu’il a dû emprunter à une police de secours.
+
+## Variantes
+
+### Mettre aussi debout les nombres à trois chiffres
+
+Avec 3, le 268 et le 115 des notes prennent leur case sans balisage, comme le ferait tout numéro d’article ou de page jusqu’à 999 ; 1912 reste sur le côté.
+
+```diff
+-  uprightDigits: 2,
++  uprightDigits: 3,
+```
+
+### Coucher tous les nombres sur le côté
+
+Avec 0, aucun nombre ne tient debout de lui-même : 10月10日 se couche comme 1912, et seuls 268, 115 et ROC, qui sont marqués, restent debout.
+
+```diff
+-  uprightDigits: 2,
++  uprightDigits: 0,
+```
+
+## Erreurs fréquentes
+
+- Noto Serif TC, tel que le sert Fontsource, n’a ni 爲 ni 敎 : sa feuille de style liste les deux, mais aucun fichier ne contient de glyphe pour eux. L’impression de 1912 de la Constitution écrit 為 et 教 sous ces formes. Le canvas dessinait 敎 dans une police système et le PDF n’avait pas de glyphe pour lui, ce que la capture signalait (C25). Le recueil compose 為 et 教, ramène avec eux 靑 et 决 à 青 et 決, et son chapeau le signale.
+- LXGW WenKai TC, tel que le sert Fontsource, dessine 即, 為, 青 et 教 sous les formes anciennes 卽, 爲, 靑 et 敎, qui détonnent à côté des mêmes caractères dans le texte en Song. Les notes sont rédigées sans ces quatre caractères ; seul le chapeau qui liste les formes anciennes de la Constitution les demande. Relisez le texte en Kai de vos propres notes en taille réelle.
+- Un nombre composé sur le côté est espacé du chinois voisin comme un mot latin, d’un quart de cadratin de chaque côté (`cjk.latinSpacing`), si bien que les chapeaux se lisent `1912 年` ; un nombre dans une seule case ne prend aucune espace, comme un caractère chinois.

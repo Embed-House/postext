@@ -1,0 +1,73 @@
+---
+title: "Une page de dictionnaire chinois avec mots-repères"
+summary: "Quatre pages d’un Kangxi abrégé en ordre pinyin : {firstMark.h2} et {lastMark.h2} mettent en titre courant la première et la dernière entrée de la page."
+plain: "Quatre pages d’un dictionnaire chinois classique. Le coin supérieur de chaque page montre sa première et sa dernière entrée, pour qu’on trouve un mot en feuilletant."
+description: "Dictionnaire chinois sur deux colonnes avec Postext : pinyin au-dessus des entrées, sens numérotés ① ② à la suite, mots-repères en titre courant, avec le code."
+question: "Comment imprimer en titre courant d’un dictionnaire chinois la première et la dernière entrée de la page ?"
+aliases: ["dictionnaire", "dictionnaire chinois", "字典", "康熙字典", "dictionnaire de Kangxi", "mots-repères", "mots de renvoi", "书眉", "書眉", "entrées", "ordre pinyin", "pinyin au-dessus des entrées", "反切", "fanqie", "chiffres cerclés", "numéros de sens", "onglet"]
+pageNotes: { "1": "La page 634, un verso. Le titre courant indique 634 et 天—殄, au-dessus d’un filet fin. Deux colonnes d’entrées de 天 tiān à 殄 tiǎn : chaque entrée en Song Black rouge avec son pinyin au-dessus, puis les lectures des dictionnaires de rimes et les sens à la suite, numérotés ① ② en rouge. Les entrées se suivent sans espace entre elles, et les deux colonnes finissent sur la dernière ligne de la grille. Un onglet rouge portant un T sur le bord gauche.", "2": "La page 635, un recto : 腆—髫 et le folio en haut à droite. La première colonne s’ouvre sur la fin de l’entrée 殄, puis viennent les entrées de 腆 tiǎn à 髫 tiáo ; l’onglet T sur le bord droit.", "3": "La page 636 : elle s’ouvre sur la fin de l’entrée 髫, et le titre courant indique 挑—鐵, la première et la dernière entrée qui y commencent ; 挑 apparaît une seconde fois sous sa lecture tiǎo.", "4": "La page 637 : 餮—庭, la fin de 鐵, les entrées de 餮 tiè à 庭 tíng et, dessous, un colophon : une phrase en chinois en Kai, sur deux lignes, et six lignes de crédits en anglais." }
+---
+
+## Ce que vous allez composer
+
+Quatre pages prises au milieu d’une édition de lecture du dictionnaire de Kangxi (康熙字典, 1716), reclassé en ordre pinyin de 天 tiān à 庭 tíng. Chaque entrée se tient en Song Black rouge avec son pinyin au-dessus ; les lectures des dictionnaires de rimes (反切) et les sens suivent en un seul paragraphe, les sens numérotés ① ② dans le même rouge. La page est un 大32开 de 140 × 203 mm, avec deux colonnes de 17 caractères de 小五 (9 pt) sur une grille de 31 lignes, chaque colonne remplie jusqu’à sa dernière ligne. Au coin extérieur de chaque page, le titre courant nomme la première et la dernière entrée qui s’y trouvent, si bien qu’un lecteur qui cherche 蜩 va à la page titrée 腆—髫. <RecipeLink slug="dictionary-thumb-index">The Sailor’s Word-Book</RecipeLink> est le dictionnaire en écriture latine auquel le comparer.
+
+## Préparation
+
+### 1 · Des mots-repères tirés des entrées
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Chaque entrée est un titre de niveau 2, et `{firstMark.h2}` et `{lastMark.h2}` impriment le texte du premier et du dernier titre de niveau 2 qui commencent sur la page ([éléments texte](/fr/docs/configuration-page-layout#éléments-de-texte)). La marque est formée des caractères du titre : `## {天|tiān}` marque 天, et la lecture reste au-dessus de l’entrée. Une entrée qui se poursuit d’une page à l’autre ne compte que là où se tient son mot d’entrée : la <PageRef page={2}>page 635</PageRef> s’ouvre sur la fin de 殄 et porte le titre 腆—髫. Le niveau 1 est réservé aux lettres : aucune ne s’ouvre dans ces quatre pages, mais une tête de lettre ne compterait pas comme mot-repère.
+
+### 2 · Le pinyin au-dessus des entrées
+
+<Excerpt region="headwords" />
+
+`{天|tiān}` est la forme compacte de `:ruby[天]{rt="tiān"}`, une lecture au-dessus d’un caractère ([marques chinoises, ruby et warichu](/fr/docs/document-format#marques-chinoises-ruby-et-warichu)). Un titre sans maquette propre compose sa lecture ; une maquette de titre imprimerait 天 seul. La lecture prend le caractère du titre lui-même, Black, sauf si `cjk.ruby.fontFamily` en nomme un autre, d’où le Song regular nommé ici. La moitié de 15 pt fait 7,5 pt, et la ligne de 30 pt du titre lui laisse la place au-dessus de l’entrée, si bien que le titre occupe deux lignes de la grille et que le texte en dessous reste sur les lignes de 15 pt des deux colonnes. Une lecture en pinyin est relevée de la profondeur des descendantes de sa police plus 0,04 em, si bien que le g de tīng s’arrête 0,6 pt au-dessus du cadratin de 汀.
+
+### 3 · Un paragraphe par entrée
+
+<Excerpt region="senses" />
+
+Le dictionnaire de Kangxi compose une entrée d’un seul tenant : les lectures des dictionnaires de rimes, puis chaque sens introduit par 又. Ici, les 又 sont devenus des chiffres cerclés, saisis `**②**`, et `boldColor` les imprime dans le cinabre des entrées ; il n’y a pas d’autre gras dans le texte. Un sens que le Kangxi lit autrement garde sa propre lecture, comme 跳 ② avec 徒刀切. Le compositeur traite ① à ⑳ comme des caractères chinois : une ligne ne finit jamais sur un numéro dont le sens ouvre la ligne suivante, et aucune espace han–latin ne s’intercale entre le numéro et son texte, si bien que les numéros se saisissent tels quels. L’équilibrage des colonnes est désactivé (`headings.balancing.enabled: false`), si bien qu’aucune colonne n’ouvre d’espace au-dessus de ses entrées et que chaque entrée suit la précédente à la même distance.
+
+### 4 · L’onglet de la lettre T
+
+<Excerpt region="tab" />
+
+Les syllabes du pinyin commencent par 23 des 26 lettres (aucune par I, U ou V), si bien que la hauteur du bloc de texte est divisée en 23 crans de 7,13 mm, et que T prend le 19e. L’onglet fait 9 mm de large et commence 3 mm au-delà de la coupe, si bien que la page le coupe d’équerre au grand fond et que seuls ses coins intérieurs montrent leur arrondi ; un fichier d’impression avec `page.cutLines` porterait ces 3 mm dans son fond perdu. La lettre est centrée sur les 6 mm intérieurs à la page. Les quatre pages sont toutes à la lettre T, si bien que l’onglet reste à la même hauteur ; <RecipeLink slug="dictionary-thumb-index">The Sailor’s Word-Book</RecipeLink> le fait descendre le long du bord d’une lettre à l’autre.
+
+### 5 · Chaque caractère charge ses propres signes
+
+<Excerpt region="voices" />
+
+Fontsource découpe chaque caractère chinois en une centaine de fichiers par plage de signes, et `loadCjkFonts` charge les fichiers qui contiennent le texte qu’on lui donne. Le Song regular reçoit tout l’exemple, anglais du colophon compris. Le Black reçoit les trente entrées, la graisse grasse les numéros de sens, le Hei les entrées et les chiffres des titres courants, et le Kai la phrase chinoise du colophon. `cjkPdfProvider` incorpore les mêmes fichiers dans le PDF, chacun réduit aux signes qu’utilisent ses pages.
+
+## Variantes
+
+### Première entrée au verso, dernière au recto
+
+Certains dictionnaires impriment un seul mot-repère par page, le premier en haut du verso et le dernier en haut du recto, si bien que la double page se lit 天 … 髫.
+
+```diff
+-  head('verso-guide', '{firstMark.h2}—{lastMark.h2}', 'even', SIDE + 8, GUIDE),
+-  head('recto-guide', '{firstMark.h2}—{lastMark.h2}', 'odd', SIDE + 8, GUIDE),
++  head('verso-guide', '{firstMark.h2}', 'even', SIDE + 8, GUIDE),
++  head('recto-guide', '{lastMark.h2}', 'odd', SIDE + 8, GUIDE),
+```
+
+### Le pinyin avec ɑ et ɡ
+
+Les dictionnaires chinois composent leur pinyin dans un caractère au a et au g à un seul étage. Nommez Andika pour les lectures et ajoutez-le à `FONTS` (`'Andika': ['400']`, avec son crédit OFL).
+
+```diff
+-  ruby: { fontFamily: SONG, fontSize: em(0.5), color: col('cinnabar') },
++  ruby: { fontFamily: 'Andika', fontSize: em(0.5), color: col('cinnabar') },
+```
+
+### Les entrées au corps du texte
+
+Un dictionnaire compact compose l’entrée en gras au début de son paragraphe. Placez les entrées dans `:::paragraphs{style="entry"}`, ouvrez chacune par `**{天|tiān}**` et imprimez `{firstMark.entry}` : un paragraphe qui s’ouvre sur un passage en gras marque la page avec lui.
+
+## Erreurs fréquentes
+
+- Avec l’équilibrage des colonnes activé, une colonne qui ne peut pas prendre l’entrée suivante avec deux lignes de son texte dessous (`bodyText.widowMinLines`) finit plus tôt, et les lignes restantes vont au-dessus des entrées, une ligne chacune au plus : une entrée se tient à une ligne de la précédente, la suivante non. Désactivé, une telle colonne finit courte.

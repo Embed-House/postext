@@ -1,0 +1,65 @@
+---
+title: "Almanach du jardinier : calendrier et tableau à l’italienne"
+summary: "Semis de 38 cultures à l’italienne sur deux pages dédiées, calendrier calculé à partir de dates et matrice d’associations, aux cellules colorées par la palette."
+plain: "Les pages de mars d’un almanach de jardinier, avec un calendrier du mois et des tableaux colorés. Elles montrent comment construire des tableaux à partir de données et faire pivoter un tableau trop large pour la page."
+description: "Mars dans un almanach de jardinier italien : calendrier construit à partir de dates, matrice d’associations colorée et tableau des semis pivoté sur deux pages."
+question: "Comment composer un tableau large à l’italienne sur des pages dédiées, avec son en-tête répété à la suite ?"
+aliases: ["calendrier", "almanach", "tableau de plantation", "calendrier des semis", "tableau à l’italienne", "tableau pivoté", "diagramme de Gantt", "carte de chaleur", "phases de la lune", "italien", "landscape table"]
+pageNotes: { "1": "L’ouverture de mars : des semis dans une terre sombre sous un ciel pâle, « Marzo » en grand corps et un proverbe paysan, deux colonnes de texte, puis le mois en grille. Les dimanches sont en rouge sur une colonne crème, le dimanche et le lundi de Pâques sur du rose, et les quatre quartiers de lune sont dessinés à côté des 8, 15, 22 et 30.", "2": "Un encadré bleu pâle des travaux du mois sur deux colonnes, une courte section sur les associations de cultures avec des pastilles de couleur dans le texte, et une matrice de dix sur dix faite de carreaux verts marqués +, de carreaux roses marqués − et de carreaux crème vides, avec le dessin de chaque culture sur la diagonale.", "3": "Le tableau des semis, tourné d’un quart vers la gauche : tournez le livre dans le sens horaire pour le lire. Tel que la page se présente, les cultures sont des colonnes regroupées par famille, avec leurs noms le long du pied ; les quinzaines de l’année montent sur la page, de janvier juste au-dessus des noms à décembre en tête, et les en-têtes des saisons et des mois forment une bande le long du bord gauche. Les dates de semis et de plantation forment des barres de carreaux ocre, verts et bruns, et l’en-tête de mars est rouge.", "4": "Le tableau continue à partir de la famille « Liliacee », avec son en-tête répété et « (segue) » après sa légende, et se termine sur une note : semer plus tôt dans le Sud et plus tard en montagne." }
+---
+
+## Ce que vous allez composer
+
+Les pages de mars d’un almanach de jardinier écrit en italien. La page 27 s’ouvre sur une aquarelle de semis dans une terre sombre sous un ciel pâle, avec le nom du mois en 84 pt et un proverbe paysan. Sous deux colonnes de texte vient le calendrier du mois, que le pen calcule à partir de dates : les dimanches en rouge sur une colonne crème, le dimanche et le lundi de Pâques sur du rose, et les quatre quartiers de lune dessinés à côté de leurs jours. La page 28 liste les travaux du mois dans un encadré sur deux colonnes et colore en vert, rose ou crème une matrice d’associations de cultures de dix sur dix, avec le dessin de chaque culture sur la diagonale. Les dates de semis de l’année, 38 cultures par quinzaine, sont plus larges que la page : le tableau tourne donc d’un quart sur les pages 29 et 30 et répète son en-tête sur la seconde.
+
+## Préparation
+
+### 1 · Faire pivoter le tableau et le laisser continuer
+
+Le code est [la réponse courte](#la-réponse-courte) plus haut. `rotate: 'ccw'` fait du tableau un flottant sur toute la largeur de la page, sur des pages dédiées ([Placement](/fr/docs/document-format#placement)), avec son en-tête vers le bord gauche de la page, et il se cale contre le dos sur le recto comme sur le verso. Il est mis en page le long de la hauteur du bloc de texte, 227 de ses 237 mm : les 47 lignes de grille entières de 14 pt qui y tiennent, moins une ligne pour l’écart du flottant. Ses rangées s’empilent sur les 176 mm de largeur et, quand elles la dépassent, le tableau est coupé entre deux rangées et continue au verso sous ses deux rangées d’en-tête et sa légende, qui se termine par `(segue)` ([Tableaux plus hauts que la page](/fr/docs/configuration-resources#tableaux-plus-hauts-que-la-page)). Seul un flottant peut pivoter : en `position: 'here'`, la rotation est ignorée, et le tableau serait coupé debout, entre deux rangées, là où sa colonne se termine. L’en-tête est fusionné de trois façons : `Coltura` sur les deux rangées d’en-tête, chaque saison au-dessus de ses mois, et chaque mois au-dessus de ses deux quinzaines.
+
+### 2 · Un calendrier calculé à partir de dates
+
+<Excerpt region="calendar" />
+
+Les numéros de jour tirés de `Date.UTC` donnent à chaque date son jour de la semaine, et la grille commence le lundi 1er mars et s’étend sur cinq semaines. Pâques vient du comput et les quartiers de lune du mois synodique moyen. Calculé ainsi, un quartier peut tomber un jour trop tôt ou trop tard, comme l’indique la légende. La boucle qui dessine chaque lune écrit aussi sa date dans la légende. L’image d’une cellule se trouve toujours au-dessus de son texte, et c’est pourquoi chaque jour prend deux colonnes, celle de la lune et celle de la date : une lune dans la cellule même de la date ne repousserait la date vers le bas que sur quatre jours. Les dimanches et les fêtes sont en rouge grâce à un style de pastille qui ne change que la couleur, et les notes sont des pastilles à mi-corps. Un jour sans note reçoit un gluon de mots (U+2060) comme deuxième ligne, ce qui garde la même hauteur aux cinq semaines.
+
+### 3 · Colorer la matrice à partir de symboles collés
+
+<Excerpt region="matrix" />
+
+Les paires sont saisies en TSV, un symbole par cellule. `parseTSV(tsv, { headerRows: 1 })` fait de la rangée des noms de cultures l’en-tête. Les poids de `columnWidths` sont des millimètres de la justification de 176 mm : 26 pour les noms, 15 pour chaque culture. Chaque symbole nomme une entrée de la palette, que `setCellBackground` pose comme fond de la cellule ; les `+` et `−` sont aussi imprimés, dans une pastille à 1,4 em, pour que la matrice reste lisible dans une copie en niveaux de gris. La diagonale associe une culture à elle-même, et c’est là que `setCellImage` place le dessin de la culture, à 62 % de la largeur intérieure de la cellule.
+
+### 4 · Légender les couleurs avec des pastilles
+
+<Excerpt region="resources" />
+
+`:swatch{color="leaf"}` compose un carré des trois quarts du corps, rempli d’une entrée de la palette et cerné de la couleur du texte ; ces pages l’emploient dans le texte courant, dans deux légendes et dans une note. La clé du tableau des semis va dans sa légende, parce que chaque partie d’un tableau coupé répète la légende et que la note ne se compose que sous la dernière partie. Le calendrier est un type de ressource à part entière avec un préfixe de légende vide, et sa légende s’ouvre sur la clé au lieu d’une étiquette `Tabella`. `position: 'bottom'` avec `span: 'page'` place le calendrier et la matrice sur les deux colonnes au pied de leur page. La page 28 est la dernière page de texte. Sur la page de fin d’un chapitre, un flottant sur toute la largeur remonte jusqu’à une ligne sous le texte, et c’est pourquoi la matrice se termine 10 mm au-dessus de la marge du bas ; `layout.hugClosingFloats: false` la laisserait au pied.
+
+### 5 · Un style maison et une variante par tableau
+
+<Excerpt region="styles" />
+
+`tableStyle` définit le style maison : un en-tête à l’encre avec des libellés couleur papier en Commissioner, des filets fins entre les rangées, et la ligne qui termine chaque partie d’un tableau coupé. Un document italien termine une partie par `Continua` et ajoute `(segue)` à la légende de la partie suivante ; l’almanach écrit la première en toutes lettres, `Continua alla pagina seguente`. Chaque style nommé n’indique que ce que son tableau change. Le calendrier compose ses jours en Gilda Display de 15 pt ; la matrice retire le fond de l’en-tête ; la matrice et le tableau des semis tracent des filets de grille couleur papier, de 2 pt et 1 pt, qui découpent leurs fonds en carreaux.
+
+### 6 · Le mois s’ouvre sur une peinture
+
+<Excerpt region="opener" />
+
+Le titre de niveau 1 est dessiné à partir d’un emplacement d’éléments. L’aquarelle est un élément image en haut de la page, et le surtitre, le proverbe et sa source viennent des attributs du titre. L’ouverture réserve la place jusqu’au pied de la peinture, et `minHeight` est un plancher placé un peu plus bas : 92 mm de peinture plus 5 mm d’air, moins les 22 mm de marge du haut, font 75 mm, arrondis à 16 lignes de 14 pt (79 mm). La première ligne de texte se trouve à 101 mm du haut de la page, 9 mm sous la terre. Le titre se décale de 1,5 mm vers la gauche, l’approche latérale du M de Gilda Display à 84 pt, et l’empattement du M s’aligne sur le surtitre ; le proverbe revient d’autant.
+
+## Variantes
+
+### Faire pivoter le tableau dans le sens horaire
+
+L’en-tête fait alors face au bord droit de la page, et le lecteur tourne le livre dans l’autre sens.
+
+```diff
+-const chartPlacement = { rotate: 'ccw' }; // a float: 'here' ignores the turn
++const chartPlacement = { rotate: 'cw' }; // a float: 'here' ignores the turn
+```
+
+## Erreurs fréquentes
+
+- Une image dans une cellule de tableau est toujours dessinée au-dessus du texte de la cellule et alignée comme lui. Pour placer une icône à côté d’un nombre, donnez à l’icône sa propre colonne, comme le fait le calendrier avec la lune.
+- La note sous un tableau coupé n’apparaît que sur sa dernière partie : une clé dont chaque partie a besoin va dans la légende.

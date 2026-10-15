@@ -1,0 +1,59 @@
+---
+title: "Un taḥqīq : notes par page et pages liminaires en abjad"
+summary: "Pages liminaires foliotées أ ب ج د, texte à partir de ١, notes de l’éditeur numérotées (١) à chaque page, et un index qui trie les noms sans l’article ال."
+plain: "Le début de la Muqaddima d’Ibn Khaldūn en édition savante arabe moderne : l’introduction numérotée en lettres, le texte en chiffres, et des notes de bas de page qui repartent de un à chaque page."
+description: "Une édition critique arabe avec Postext : folios en abjad, :::numbering pour le texte, notes de bas de page par page en (١) et un index avec ignoreArticle."
+question: "Comment numéroter les pages liminaires d’un livre arabe en lettres abjad (أ، ب، ج) ?"
+aliases: ["taḥqīq", "tahqiq", "édition critique", "édition savante arabe", "abjad", "chiffres abjad", "أبجد", "numérotation des pages liminaires", "notes par page", "(١)", "notes de bas de page arabes", "Ibn Khaldūn", "Muqaddima", "مقدمة ابن خلدون", "index des noms", "فهرس الأعلام", "تحقيق", "critical edition"]
+pageNotes: { "4": "La dernière page de l’introduction de l’éditeur, avec le folio د au pied.", "5": "La page d’ouverture du texte, folio ١ : le titre de la section en naskh gras, son long sous-titre sous un filet court, le texte avec des appels de note surélevés entre parenthèses, et trois notes au pied sous un filet à droite, chacune ouverte par son numéro (١), (٢), (٣)." }
+---
+
+## Ce que vous allez composer
+
+Onze pages d’une édition critique arabe moderne, un taḥqīq, de la première section de la *Muqaddima* d’Ibn Khaldūn, sur l’excellence de l’histoire. Les pages liminaires sont foliotées en lettres abjad, comme dans les éditions du Caire et de Beyrouth : une page de titre أ, sa page de crédits ب, puis l’introduction de l’éditeur ج et د. Le texte repart de ١ au recto suivant. Les notes de l’éditeur sont au pied de chaque page, numérotées (١), (٢), (٣) et recommencées à chaque page, sous un filet court à droite ; elles expliquent les mots rares, identifient les personnes et les lieux que nomme Ibn Khaldūn et donnent la sourate et le verset de chaque citation du Coran. Un index des noms ferme le livre, trié comme le sont les index arabes, sans l’article ال. Les notes et l’introduction ont été écrites pour cette recette.
+
+## Préparation
+
+### 1 · Deux suites de folios et des notes par page
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `page.pageNumbering` fait commencer le livre en `'abjad'`, les lettres dans l’ordre abjad, avec هـ pour cinq. Avant le texte, deux directives font repartir le compte à la page impaire suivante, dans les chiffres du document ([`:::numbering`](/fr/docs/document-format#numbering), [chiffres et styles de numération](/fr/docs/arabic-layout#chiffres-et-styles-de-numérotation)). Les notes prennent `numbering: 'page'`, un `markerTemplate` de `'({n})'` et `noteNumberPosition: 'inline'` : l’appel est surélevé dans le texte et la note s’ouvre sur son numéro, sur la ligne ([notes de bas de page](/fr/docs/arabic-layout#notes-de-bas-de-page)).
+
+<PageShot page={5} crop="0,0.62,1,0.33" caption="Page ١ : les notes repartent de (١), sous un filet du côté du début de la page." />
+
+### 2 · Un index qui ignore l’article
+
+<Excerpt region="index" />
+
+Les noms sont marqués dans le texte, `:index[المسعودي]`, et `:::index` les imprime à la fin. Avec `ignoreArticle`, المسعودي se classe à م et الطبري à ط, tandis que ابن إسحاق reste à ا ; un renvoi « voir » envoie إسرائيل vers يعقوب ([table des matières et index](/fr/docs/arabic-layout#table-des-matières-et-index)). Les numéros de page de l’index sont les libellés des pages : un nom tiré de l’introduction renvoie donc à ج.
+
+### 3 · Des titres courants sur un filet
+
+<Excerpt region="furniture" />
+
+Le verso porte le titre du livre et le recto la section, au-dessus d’un filet fin de la largeur du bloc de texte, avec le folio à l’extrémité extérieure. Dans un livre relié à droite, le verso est la page de droite : son folio va donc en haut à droite ([ordre des pages et reliure à droite](/fr/docs/arabic-layout#ordre-des-pages-et-reliure-à-droite)). Les ouvertures et les pages liminaires prennent à la place un folio centré au pied.
+
+### 4 · Une page de titre et sa page de crédits
+
+<Excerpt region="title" />
+
+La page de titre et la page de crédits au dos sont des styles de titre sans rien dans le flux : leurs lignes viennent des attributs du titre, si bien que les lignes latines de la page de crédits, qui changent selon l’édition, tiennent en un attribut dans le Markdown.
+
+## Variantes
+
+### Utiliser les chiffres abjad
+
+`'arabic-abjad'` écrit les nombres abjad additifs au lieu de la simple suite de lettres : la onzième page est يا, et non ك.
+
+```diff
+-const pageNumbering = { format: 'abjad', startAt: 1 }; // أ ب ج د هـ و ز ح…
++const pageNumbering = { format: 'arabic-abjad', startAt: 1 }; // … ط ي يا يب
+```
+
+### Numéroter les notes sur toute la section
+
+`numbering: 'chapter'` poursuit le compte des notes d’une page à l’autre, comme le font certaines éditions anciennes.
+
+```diff
+-  numbering: 'page', markerTemplate: '({n})', noteNumberPosition: 'inline',
++  numbering: 'chapter', markerTemplate: '({n})', noteNumberPosition: 'inline',
+```

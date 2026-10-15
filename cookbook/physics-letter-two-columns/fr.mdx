@@ -1,0 +1,73 @@
+---
+title: "Une lettre de physique avec une figure de données en tête"
+summary: "La lettre GW150914 recomposée sur deux colonnes : déformation retracée d’après les données ouvertes en page 1, citations [1], équations numérotées, Table I."
+plain: "La lettre de 2016 qui annonçait les premières ondes gravitationnelles, abrégée et recomposée au format US Letter. Le signal des deux détecteurs, tiré des données publiques, couvre la page 1 ; les références sont numérotées entre crochets."
+description: "Une lettre de physique avec Postext : figure tirée des données ouvertes du GWOSC en page 1, citations [1] APS depuis BibTeX, MathJax jusque dans les cellules."
+question: "Comment composer une lettre de physique avec signature collective, résumé pleine largeur et figure en tête ?"
+aliases: ["lettre de physique", "Physical Review Letters", "PRL", "style APS", "LIGO", "GW150914", "ondes gravitationnelles", "signature collective", "et al.", "données ouvertes", "GWOSC", "courbe de déformation", "erreurs asymétriques", "barres d’erreur", "recomposer un article", "arXiv", "deux colonnes", "Table I"]
+pageNotes: { "1": "Page 1 : un surtitre bleu, « Letter · Gravitational-wave astronomy », et le titre « Observation of Gravitational Waves from a Binary Black Hole Merger », puis la figure 1 sur les deux colonnes : trois rangées de déformation en fonction du temps, Hanford en orange à gauche et Livingston en bleu à droite, données observées, forme d’onde de relativité numérique et résidu, avec le même chirp montant vers 0,42 s. Sous sa légende, un encadré bleu pâle contient la signature « B. P. Abbott et al. », la collaboration, les dates et le résumé sur toute la largeur de la page ; la section I commence sur deux colonnes avec une note appelée par une lettre au pied de la première.", "2": "Page 2 : la suite de l’introduction et la section II, « Observation », avec la masse de chirp en équation centrée (1) numérotée au bord droit ; la section III, « Detectors », commence dans la seconde colonne. Les citations sont des numéros entre crochets comme « [1,2] » et « [16,17] », et une seconde note appelée par une lettre explique l’abrègement.", "3": "Page 3 : la figure 2 en tête de la première colonne, la déformation en bande complète au-dessus de la séparation des trous noirs qui décroît et de leur vitesse qui croît, et la figure 3, un schéma de l’interféromètre avec ses bras de 4 km, en tête de la seconde. La section IV, « Searches », suit avec la statistique de détection en formule centrée non numérotée.", "4": "Page 4 : la figure 4 en haut sur toute la largeur, deux histogrammes en échelle logarithmique où le bruit de fond décroît vers la gauche et où GW150914 se détache seul à droite de chacun ; en dessous, la recherche de coalescences binaires et le début de la section V.", "5": "Page 5 : la Table I, les paramètres de la source avec les erreurs composées au-dessus et au-dessous de chaque valeur, en tête de la première colonne ; la fin de la section V, la conclusion et les remerciements, puis 43 références numérotées sur deux colonnes et un colophon." }
+---
+
+## Ce que vous allez composer
+
+Cinq pages de la lettre qui a annoncé les premières ondes gravitationnelles, *Observation of Gravitational Waves from a Binary Black Hole Merger* (Abbott et al., 2016), abrégée et recomposée au format US Letter sur deux colonnes. La page 1 s’ouvre sur la preuve : la déformation enregistrée à Hanford et à Livingston, retracée d’après les fichiers de données ouvertes du Gravitational Wave Open Science Center, s’étend sur les deux colonnes sous le titre. Viennent ensuite la signature de la collaboration avec sa note, le résumé sur toute la largeur de la page et le texte, avec des citations numérotées [1,2] et [25–27] comme les impriment les revues de l’APS. La masse de chirp est l’équation (1). La Table I compose ses erreurs asymétriques en exposants et indices superposés, écrits en mathématiques dans les cellules, et les légendes impriment les formules de la lettre elle-même. Apportez votre BibTeX et vos fichiers de données, et le même script compose votre lettre.
+
+## Préparation
+
+### 1 · Des citations numérotées de physique à partir du fichier IEEE
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. postext-citeproc ne fournit pas de style APS, et le style `ieee` fourni est le plus proche : ordre des citations, numéros entre crochets, initiales avant le nom de famille. Quatre remplacements de chaînes dans `STYLES.ieee` comblent l’écart. `collapse="citation-number"` regroupe les suites (*[25–27]*), une seule paire de crochets dans le gabarit imprime *[1,2]*, `et-al-min` monte à onze pour qu’une liste de dix auteurs reste entière, et un nouveau bloc `<bibliography>` imprime la référence comme le fait Physical Review, avec la revue, le volume en gras, la page et l’année : *Phys. Rev. Lett.* **74**, 3515 (1995). Les 43 ouvrages arrivent dans un bloc `:::references{format=bibtex}` à part ; un nom entre doubles accolades comme `{{J. Aasi et al.}}` s’imprime tel qu’il est écrit, et c’est ainsi que la lettre cite les longues listes d’auteurs de sa propre collaboration. Voir [Citations et bibliographie](/fr/docs/document-format#citations-et-bibliographie).
+
+### 2 · La figure 1 sous le titre, sur les deux colonnes
+
+<Excerpt region="title" />
+
+Un flottant ne se place jamais au-dessus de la ligne qui l’appelle, et le texte n’appelle la figure 1 pour la première fois qu’à la section II : en flottant, elle ne pourrait pas atteindre la page 1. La lettre l’y place directement : `::resource{id="fig1"}` vient juste après le titre, et son placement, `{ position: 'here', span: 'page' }`, la compose sur les deux colonnes à cet endroit, les colonnes se poursuivant en dessous. La signature et le résumé suivent dans un encadré sur toute la largeur de la page, `front`, dont les blocs `:::paragraphs` centrent la signature et composent les dates en petit. L’appel de note après *et al.* envoie sa note au pied de la première colonne, comme les revues de l’APS impriment la note sur les auteurs, et `footnotes.numberFormat: 'lower-alpha'` appelle les notes par des lettres pour qu’on ne les prenne jamais pour des références. Voir [Insertion en bloc](/fr/docs/document-format#insertion-en-bloc-facultative-placement-explicite-dans-le-texte) et [Notes de bas de page](/fr/docs/configuration-notes-references#notes-de-bas-de-page).
+
+### 3 · La Table I, avec des mathématiques dans ses cellules
+
+<Excerpt region="table" />
+
+Une cellule de tableau compose `$…$` comme le fait le texte (depuis postext 1.19) : chaque valeur s’écrit donc en TeX, `$36^{+5}_{-4}\,M_\odot$`, et ses deux erreurs s’empilent au-dessus et au-dessous du nombre, à l’échelle de la ligne de la cellule ; le `^+5^~−4~` du Markdown les imprimerait l’une après l’autre. Les légendes et les notes acceptent les mêmes mathématiques : la figure 2 écrit `$R_S = 2GM/c^2$` et la figure 4 `$5.1\sigma$`, composées avec les glyphes de MathJax, qui ont le grec qu’aucun des caractères de texte ne contient, et le PDF les garde en tracés vectoriels. Les types de ressource impriment *FIG. 1* et *TABLE I* dans les légendes et *Fig. 1* et *Table I* dans le texte : un `captionPrefix`, et `counterFormat: 'upper-roman'` pour les tableaux. Voir [Formules mathématiques](/fr/docs/document-format#formules-mathématiques).
+
+### 4 · Des figures tracées d’après les données ouvertes
+
+<Excerpt region="palette" />
+
+Les quatre figures sont tracées dans le code à partir des fichiers de données que le GWOSC publie avec la lettre, sous CC BY 4.0. Chaque courbe garde un échantillon sur huit, 430 points pour les 0,21 s de la figure 1, stockés à raison d’un caractère base 64 par point pour sa variation depuis le précédent, ce qui maintient les cinq courbes sous 3 Ko dans le script. La rangée des résidus est la donnée moins la forme d’onde, comme dans la publication. Hanford est en orange et Livingston en bleu dans chaque figure, et le texte garde l’encre de la page et un seul bleu. Les étiquettes sont des tracés MathJax dans son caractère sans empattement (`\textsf`) : un exposant ou un symbole sur un axe est composé comme les formules du texte, et le PDF garde chaque ligne et chaque étiquette en vectoriel.
+
+## Variantes
+
+### Utiliser le style IEEE fourni tel quel
+
+Supprimez les modifications, et les références se lisent *[2], [3], [4]* dans le texte et *A. Einstein, “title”, journal…* dans la liste.
+
+```diff
+-const citations = { style: 'custom', customStyle: aps, link: true,
++const citations = { style: 'ieee', link: true,
+```
+
+### Mettre les numéros en exposant comme Nature
+
+Le style de Nature compose des numéros en exposant et liste les titres ; il est fourni.
+
+```diff
+-const citations = { style: 'custom', customStyle: aps, link: true,
++const citations = { style: 'nature', link: true,
+```
+
+### Composer en A4
+
+Changez le format ; la longueur des lignes, les colonnes et chaque figure en découlent.
+
+```diff
+-const [TRIM_W, TRIM_H, TOP, BOTTOM, SIDE, GUTTER] = [215.9, 279.4, 21, 21, 16, 7];
++const [TRIM_W, TRIM_H, TOP, BOTTOM, SIDE, GUTTER] = [210, 297, 22, 22, 15, 7];
+```
+
+## Erreurs fréquentes
+
+- Jusqu’à postext 1.18, une ressource `'here'` avec `span: 'page'` était composée sur une seule colonne dans un flux à deux colonnes, et un `$` dans une légende ou une cellule s’imprimait tel quel. Fixez la version 1.19 ou ultérieure.
+- Une lettre grecque, ⊙ ou ≃ tapés comme caractères dans une légende ou une cellule se rabattent sur un caractère du système à l’écran et manquent dans le PDF, qui incorpore les fichiers latins de chaque caractère. Écrivez-les en mathématiques, `$\sigma$` ou `$M_\odot$`, et dessinez-les dans les figures.
+- Une liste de centaines d’auteurs n’a pas sa place dans un fichier BibTeX. Écrivez le nom tel que l’imprime la revue, entre doubles accolades : `author={{B. Abbott et al.}}`.
+- Gardez la mention de licence de l’article et des données. Ici, une note et le colophon disent ce qui a été coupé, et la note de chaque légende nomme les données et ce que la figure retracée laisse de côté.

@@ -1,0 +1,89 @@
+---
+title: "Une liste de lectures tirée d’un export BibTeX de Zotero"
+summary: "Une liste de lectures de séminaire : un export BibTeX de Zotero collé tel quel, cité en Chicago auteur-date, avec nocite pour les ouvrages jamais cités."
+plain: "La liste de lectures d’un séminaire universitaire. L’enseignant colle le fichier qu’exporte Zotero ; Postext imprime les citations et une liste qui contient aussi des livres que le texte ne mentionne pas."
+description: "Une liste de lectures dans Postext : export BibTeX de Zotero collé tel quel, citations Chicago auteur-date, et nocite pour les ouvrages de fond jamais cités."
+question: "Comment utiliser un export BibTeX de Zotero et lister des ouvrages que le texte ne cite jamais ?"
+aliases: ["Zotero", "BibTeX", "nocite", "ouvrages non cités", "liste de lectures", "bibliographie de cours", "plan de cours", "syllabus", "lectures complémentaires", "pour aller plus loin", "Chicago auteur-date", "Chicago author-date", "bibliographie"]
+pageNotes: { "1": "Page 1 : une bande vert profond sur la moitié supérieure avec le surtitre « HPS 214 · Seminar reading list · Autumn term 2026 », le titre « Science as a Social Practice » en grand caractère à empattements maigre, et un chapeau en italique ; dessous, deux colonnes avec l’introduction et les semaines 1 à 3, avec des citations comme « Kuhn (1970) » et « (Shapin 1984) ».", "2": "Page 2 : les semaines 4 à 6 et la section « Further reading », puis la bibliographie en Chicago auteur-date sur les deux colonnes : treize ouvrages, dont cinq jamais cités dans le texte, parmi lesquels Fleck, Merton et López Piñero." }
+---
+
+## Ce que vous allez composer
+
+La liste de lectures d’un séminaire de six semaines sur l’histoire et la sociologie des sciences, composée sur une page de 210 × 280 mm en deux colonnes. Un aplat vert profond occupe la moitié supérieure de la première page, avec le titre du cours en Spectral Light à 50 pt ; le texte en dessous est le guide de chaque semaine rédigé par le responsable du séminaire. Les références sont la collection Zotero du séminaire, exportée en BibTeX et collée dans le document sans toucher une ligne : les clés de citation de Zotero, ses accolades autour des capitales, ses accents `{\"o}`, `month = dec`, les champs `file`, `keywords` et `urldate`. Le texte cite huit des ouvrages. Les cinq autres, des lectures de fond dont le séminaire ne discute pas, entrent dans la liste par `nocite`.
+
+## Préparation
+
+### 1 · Nommer le style une seule fois
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le moteur de citations est enregistré avant la première composition et le style tient en un réglage : Chicago auteur-date écrit « (Shapin 1984) » pour `[@shapin_pump_1984]` et « Shapin and Schaffer (1985) » pour `@shapin_leviathan_1985` dans une phrase. Les clés sont celles que Zotero a construites à partir du premier auteur, du premier mot significatif du titre et de l’année : `gieryn_boundary-work_1983` garde donc son trait d’union ; Postext lit un trait d’union ou un tiret bas à l’intérieur d’une clé comme faisant partie de la clé.
+
+### 2 · Coller l’export tel que Zotero l’écrit
+
+Le dernier bloc du document contient l’export, une entrée par ouvrage, en retrait par tabulations comme l’écrit Zotero :
+
+```bibtex
+@article{gieryn_boundary-work_1983,
+	title = {Boundary-{Work} and the {Demarcation} of {Science} from {Non}-{Science}: …},
+	url = {https://www.jstor.org/stable/2095325},
+	doi = {10.2307/2095325},
+	urldate = {2026-08-21},
+	journal = {American Sociological Review},
+	author = {Gieryn, Thomas F.},
+	month = dec,
+	year = {1983},
+	keywords = {demarcation, week 4},
+	pages = {781--795},
+	file = {JSTOR Full Text PDF:/Users/hps214/Zotero/storage/2HJ8M6PA/Gieryn - 1983 - ….pdf:application/pdf},
+}
+```
+
+Le lecteur retire les accolades qui protègent les capitales, compose `{\"o}` et `{\'e}` en ö et é, transforme `--` en tiret demi-cadratin et lit `month = dec` comme un simple nom de mois. `urldate` devient la date de consultation et `language` la langue de l’ouvrage ; `file`, `keywords`, `abstract` et `shorttitle` sont ignorés, si bien que rien de votre disque dur n’arrive sur la page.
+
+### 3 · Faire entrer les ouvrages que le texte ne cite pas
+
+Le frontmatter les liste par clé :
+
+```yaml
+---
+title: "Science as a Social Practice"
+nocite: "@fleck_genesis_1979, @merton_sociology_1973, @latour_science_1987, @rheinberger_toward_1997, @lopez_pinero_ciencia_1979"
+---
+```
+
+La liste contient tous les ouvrages cités plus ces cinq-là, triés ensemble par auteur comme le demande Chicago ; rien ne signale une entrée comme non citée. `nocite: "@*"` liste tout l’export, et `bibliography.includeUncited: true` fait de même depuis la configuration, pour une maquette qui imprime toujours toute la bibliothèque.
+
+### 4 · Un aplat vert pour la fiche
+
+<Excerpt region="opener" />
+
+La bande est une boîte ancrée à la coupe, de 132 mm de haut, et les deux colonnes commencent 9 mm sous elle. Le titre, le filet et le chapeau sont enchaînés par des ancrages `below`, si bien qu’un titre de cours plus long repousse le chapeau vers le bas au lieu de le heurter.
+
+<Excerpt region="palette" />
+
+## Variantes
+
+### Lister toute la collection Zotero
+
+Quand l’export est la liste, passez-vous des clés : chaque entrée du bloc s’imprime, citée ou non.
+
+```diff
+-nocite: "@fleck_genesis_1979, @merton_sociology_1973, @latour_science_1987, …"
++nocite: "@*"
+```
+
+### Changer de style
+
+Les mêmes clés donnent une liste Harvard (Cite Them Right) sans aucun autre changement.
+
+```diff
+-  style: 'chicago-author-date', // '(Gieryn 1983)', 'Shapin and Schaffer (1985)'
++  style: 'harvard-cite-them-right',
+```
+
+## Erreurs fréquentes
+
+- Une clé de `nocite` qui ne correspond à aucune entrée est abandonnée sans avertissement. Copiez les clés depuis l’export au lieu de les taper, et comptez les entrées sur la page.
+- Zotero construit les clés à partir des données : corrigez le nom d’un auteur ou un titre dans Zotero et l’export suivant peut changer la clé, ce qui casse toutes ses citations. Figez les clés avant d’écrire le texte : Zotero lit une ligne `Citation Key: …` dans le champ Extra d’un document.
+- Zotero exporte par défaut en UTF-8, avec les accents tels quels. Le bloc d’ici a été exporté avec l’option d’encodage occidental, qui écrit `{\"o}` ; Postext lit les deux.
+- La 18e édition de Chicago omet le lieu de publication : le champ `address` ne s’imprime donc pas, et un article avec un DOI imprime le DOI et non l’`url` JSTOR.

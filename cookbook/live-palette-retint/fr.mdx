@@ -1,0 +1,65 @@
+---
+title: "Reteinter tout un document depuis une seule palette"
+summary: "Chaque couleur de la configuration est liée à une entrée de palette : changer de palette passe un programme de festival en rouge, sarcelle, violet ou sable."
+plain: "Un dépliant carré pour un festival de musique, montré dans quatre jeux de couleurs. Il montre comment changer d’un coup toutes les couleurs du document en choisissant un nouveau jeu de couleurs."
+description: "Un programme de festival de deux pages : titres, gras, puces, pastilles, échantillons, fonds de tableau, titre courant et folio suivent une seule palette."
+question: "Comment remplacer le bleu par défaut des titres, du gras et des puces par les couleurs de ma propre palette ?"
+aliases: ["palette de couleurs", "reteinter", "recolorer", "jeu de couleurs", "couleurs du thème", "couleurs de la marque", "main-color", "paletteId", "bleu par défaut", "aperçu en direct", "cache de configuration", "colorPalette"]
+pageNotes: { "1": "Le recto du programme : un aplat rouge sur la moitié haute avec le surtitre « Almarén · 12–18 June 2027 », le titre « Riverside Music Week » en blanc et une forme d’onde de barres arrondies pâles ; dessous, deux colonnes en drapeau s’ouvrent sur une introduction et listent les journées du samedi au lundi, chaque événement avec une heure en gras rouge et une pastille : « Free » au contour rouge, ou le prix en blanc sur rouge.", "2": "Le verso : une barre de légende rouge au-dessus d’une grille de six lieux sur sept jours, les noms des lieux alignés à droite contre les cases, des carrés rouges pour les concerts payants et rose pâle pour les événements gratuits, avec une légende à pastilles de couleur ; puis du mardi au vendredi sur deux colonnes, un encadré « Tickets » sous un liseré rouge, le colophon et le folio 2 dans une pilule rouge." }
+---
+
+## Ce que vous allez composer
+
+Le programme de *Riverside Music Week*, un festival fictif dans une ville au bord d’une rivière, imprimé en dépliant carré de 200 mm. Le recto porte un aplat de couleur sur sa moitié haute, avec le titre en Syne 800 de 46 pt et une forme d’onde de barres arrondies pâles ; dessous, deux colonnes en drapeau listent la semaine jour par jour, chaque événement avec une heure en gras et une pastille de prix. Le verso présente la semaine sous forme de grille de cases colorées sous une barre de légende, puis liste les journées du mardi au vendredi et se termine par un encadré des billets sous un liseré et par le colophon. Au-dessus des pages, le pen montre quatre épreuves, en rouge, sarcelle, violet et sable. Leurs couleurs viennent de sept entrées de palette nommées selon leur rôle, plus `main-color` réglé sur la couleur de la bande. Cliquez sur une épreuve, et tout le document se recompose dans cette palette.
+
+## Préparation
+
+### 1 · Nommer les couleurs selon leur fonction
+
+<Excerpt region="palette" />
+
+`band` remplit les aplats de couleur, `onBand` colore le texte composé dessus, `deep` est l’accent du texte sur papier blanc et `tint` le fond clair. Chaque jeu de couleurs règle ces quatre-là et partage les trois neutres. Sur blanc, la bande sarcelle mesure 3,3:1 et la bande sable 2,1:1, trop peu pour du texte blanc sur la bande ou pour du texte couleur de bande sur le papier. Ces deux palettes composent `onBand` à l’encre, et les quatre composent le gras et les titres en `deep`, une nuance plus sombre qui mesure entre 5,99:1 (sable) et 8,40:1 (violet) sur blanc.
+
+### 2 · Lier tout ce que le moteur imprimerait en bleu
+
+<Excerpt region="links" />
+
+Le bleu du moteur est une entrée de palette, `main-color` (#295AA3), et [ses valeurs par défaut](/fr/docs/configuration-fonts-colors-viewers#la-palette-par-défaut) y font pointer les titres, le gras, l’italique, les renvois, les puces et le titre courant. Ici, chacun de ces éléments porte un identifiant de palette : heures et mots-clés en gras `deep`, italiques à l’encre, puces en `band`, et en page 2 un titre courant en `deep` et le folio en `onBand` sur une pilule `band`. `retint()` fait aussi pointer `main-color` sur la bande ; comme cette configuration règle chaque couleur, cela ne change rien sur ces pages, mais un style ajouté plus tard sans couleur prendra la bande au lieu du bleu. L’encadré des billets ne règle pas sa propre couleur de gras : il hérite donc de `bodyText.boldColor` avec son identifiant de palette, et son gras change avec le jeu de couleurs.
+
+### 3 · Dessiner l’illustration avec des boîtes de maquette
+
+<Excerpt region="opener" />
+
+L’ouverture est un [emplacement de maquette](/fr/docs/configuration-page-layout#éléments-boîte) qui contient une boîte à fond perdu sur le bord supérieur, 29 barres arrondies pour la forme d’onde et trois éléments de texte : le texte même du titre comme titre, et le surtitre et le chapeau tirés de ses attributs. Les barres sont des boîtes plutôt qu’un SVG, si bien que leur fond est un lien `tint` de plus, qui suit la palette ; un SVG devrait être redessiné et enregistré de nouveau pour chaque jeu de couleurs. Seule, la boîte de la bande ferait commencer le texte sur la ligne de grille située 2,4 mm sous la bande ; `minHeight`, 18 lignes ou 85,1 mm sous la marge du haut, réserve davantage et place la première ligne 7 mm sous la bande.
+
+### 4 · Laisser la palette remplir le tableau
+
+<Excerpt region="grid" />
+
+La grille est une ressource tableau, en dehors de la configuration. Ses [fonds de cellule](/fr/docs/document-format#insertion-en-bloc-facultative-placement-explicite-dans-le-texte) portent quand même des identifiants de palette, et le moteur les résout à partir de la palette du document quand il compose le tableau ; les `:swatch{color="band"}` et `:swatch{color="tint"}` de la légende, dans la note du tableau, se résolvent de la même façon. Les pastilles des listes utilisent les deux mêmes identifiants : un carré plein, la pastille à côté d’une heure et l’échantillon de la légende concordent dans chaque jeu de couleurs.
+
+### 5 · Changer de palette et recomposer
+
+<Excerpt region="live" />
+
+Chaque bouton appelle `retint()`, qui affecte les entrées du jeu de couleurs à `colorPalette` sur l’unique objet de configuration, puis recompose. Le moteur résout une configuration une seule fois et [met le résultat en cache pour cet objet](/fr/docs/configuration-programmatic-usage#état-global-partagé-dans-une-page) ; depuis postext 1.25, chaque composition vérifie d’abord que l’objet se lit toujours comme à ce moment-là, si bien qu’une modification faite sur place est résolue de nouveau. Chaque lien suit : le texte, les listes, les pastilles et la barre de légende, et avec eux la bande, la forme d’onde, le titre courant, la pilule du folio et « Table 1 ». Les quatre épreuves gardent leurs couleurs quand la palette change de nouveau, car chaque document conserve les couleurs avec lesquelles il a été composé. Le pen les compose avec `buildDocumentWithFonts` ; au moment où l’on clique sur un bouton, les polices sont chargées, et `buildDocument` suffit.
+
+## Variantes
+
+### Garder le gras à l’encre
+
+Laissez l’accent aux titres, aux puces et aux pastilles, et composez les heures et les mots-clés dans la couleur du texte.
+
+```diff
+-  boldColor: col('deep'), referenceColor: col('deep'), textAlign: 'left', firstLineIndent: pt(0) };
++  boldColor: col('ink'), referenceColor: col('deep'), textAlign: 'left', firstLineIndent: pt(0) };
+```
+
+### Donner à chaque partie d’un livre sa propre couleur
+
+Pour des couleurs qui changent à l’intérieur d’un même document, partie par partie, voyez <RecipeLink slug="parts-in-colour">Des parties en couleur à partir d’un seul attribut</RecipeLink>.
+
+## Erreurs fréquentes
+
+- Une image garde les couleurs avec lesquelles elle a été dessinée. Un SVG ou une photographie ne suit pas la palette, et c’est pourquoi la forme d’onde est faite de boîtes de maquette.
+- Un identifiant absent de la palette se rabat sur la valeur hexadécimale écrite à côté. Faites une faute de frappe dans un `paletteId`, et cette couleur reste dans le rouge maison quel que soit le jeu de couleurs.

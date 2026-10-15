@@ -1,0 +1,98 @@
+---
+title: "Une ouverture de chapitre sur un bandeau à fond perdu"
+summary: "Une ouverture advancedDesign sur le titre de niveau 1 : bandeau à fond perdu, numéro de chapitre posé sur son pied, surtitre et chapeau tirés des attributs."
+plain: "Des pages d’ouverture de chapitre pour un manuel de géologie. Un bandeau de couleur portant un grand numéro de chapitre déborde du haut de la page, et la maquette se règle une seule fois pour tous les chapitres."
+description: "Ouverture de chapitre de manuel avec Postext : bandeau à fond perdu, numéro de 168 pt, surtitre et chapeau tirés du titre, style qui recolore le chapitre 4."
+question: "Comment faire une ouverture de chapitre avec bandeau à fond perdu, grand numéro et titre sur deux lignes ?"
+aliases: ["ouverture de chapitre", "bandeau de couleur", "grand numéro de chapitre", "numéro de chapitre", "chapeau", "surtitre", "manuel scolaire", "couleurs de chapitre", "onglet"]
+pageNotes: { "1": "Un bandeau terre cuite remplit le haut de la page avec le surtitre « Chapter 3 · Plate tectonics », le titre « The Restless Crust » sur deux lignes, un chapeau en italique et un 3 blanc debout sur le pied sombre du bandeau ; une coupe d’une plaque en subduction occupe le pied de la page.", "3": "Le chapitre 4, « Fire from Below », s’ouvre avec la même maquette en bleu canard.", "4": "Le chapitre 4 se termine par des questions de révision, le colophon et une coupe bleu canard d’un volcan bouclier et d’un stratovolcan sur toute la largeur de la page, juste sous les deux colonnes de texte." }
+---
+
+## Ce que vous allez composer
+
+Les ouvertures de chapitre de *Earth in Motion*, un manuel d’initiation à la géologie sur une page de 210 × 280 mm. Le chapitre 3 s’ouvre sous un bandeau terre cuite à fond perdu en haut de la page. Le bandeau porte un surtitre interlettré, le titre coupé là où l’auteur l’a voulu, un chapeau en italique et un numéro de chapitre de 168 pt debout sur le pied sombre du bandeau, côté grand fond. Deux colonnes justifiées commencent sous le bandeau, et une coupe d’une plaque qui s’enfonce occupe le pied de la page. Le chapitre 4 reprend la maquette en bleu canard, jusqu’à l’onglet, aux numéros de section, aux renvois et à l’étiquette de sa figure. La maquette se règle une seule fois, sur le titre de niveau 1. La ligne de titre de chaque chapitre fournit en attributs le sujet du surtitre et le chapeau, et nomme un style quand le chapitre prend une autre couleur.
+
+## Préparation
+
+### 1 · Accrocher le bandeau et le chiffre à la page
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Le bandeau et son pied sont accrochés au coin supérieur gauche du fond perdu. Comme toute boîte ou tout filet sans largeur, ils s’étirent jusqu’au bord opposé de ce cadre, si bien qu’ils atteignent la coupe, et le fond perdu dès que `BLEED` est réglé. Le chiffre est accroché au coin supérieur droit de la page : `y: BAND - 0.8 * NUMERAL * PT` pose sa ligne de base sur le pied, et `BEARING` décale sa boîte de 2 mm dans la marge pour compenser l’approche latérale du chiffre, si bien que l’encre s’aligne à peu près sur le bord du texte. Le surtitre est accroché au conteneur. Le titre est accroché sous le surtitre et le chapeau sous le titre, par des ancres `below`, et une maquette de titre renvoie son texte à la ligne par défaut, si bien qu’un titre plus long repousse le chapeau vers le bas. Le chapeau est un élément texte rempli à partir de l’attribut `lead` du titre ; une ligne d’auteur en serait un de plus, `{attr.author}`, enchaîné de la même façon. `minHeight: BAND - TOP + AIR` fixe l’endroit où commence le texte courant. La boîte du chiffre descend de 0,2 × son corps (11,9 mm) sous le pied, et une ouverture réserve la place jusqu’à son élément le plus bas, si bien que `AIR` doit valoir au moins 11,9 mm ; en dessous, ce serait la boîte du chiffre qui fixerait le début du texte.
+
+### 2 · Donner la page au titre de chapitre
+
+<Excerpt region="levels" />
+
+`span: 'page'` ouvre chaque chapitre sur une nouvelle page et compose le titre de niveau 1 sur les deux colonnes ; `advancedDesign` dessine l’ouverture à la place du texte du titre, et le texte courant commence sous la hauteur réservée. `breakBefore` avec `parity: 'odd'` place chaque ouverture sur un recto, où l’ancre de droite du chiffre est le grand fond. Au niveau 2, `numberingTemplate: '{1}.{2}'` numérote les sections 3.1, 3.2… dans la couleur du bandeau ; un niveau 3 avec `'{1}.{2}.{3}'` continuerait en 3.1.1.
+
+### 3 · Nommer une seule fois la couleur du chapitre
+
+<Excerpt region="palette" />
+
+Chaque couleur de la configuration est liée à l’une de ces entrées. Les valeurs par défaut du moteur sont liées à `main-color`, si bien que faire pointer cette entrée sur la couleur du bandeau recolore aussi toutes les valeurs par défaut que la configuration laisse non réglées. La ligne de titre du chapitre 4, `# Fire from \\ Below {style="teal" topic="Volcanoes" lead="…"}`, choisit le style, qui remplace `band` jusqu’au titre de niveau 1 suivant. Les emplacements de maquette suivent ce remplacement par leur lien de palette, et les couleurs de texte égales au `band` de base sont repeintes, si bien que l’onglet, les numéros de section et de liste, les renvois, l’étiquette de légende et le folio en pied passent au bleu canard sur les <PageRef page={3}>pages 43 et 44</PageRef>. La même ligne remplit `{attr.topic}` et `{attr.lead}`, et son `\\` coupe `{titleText}` là où le veut l’auteur ([attributs de titre](/fr/docs/document-format#attributs-de-titre), [sauts de ligne dans les titres](/fr/docs/document-format#sauts-de-ligne-dans-les-titres)).
+
+### 4 · Laisser le premier renvoi placer chaque figure
+
+<Excerpt region="figure" />
+
+Un `:ref` numérote sa figure et la place dans le premier emplacement libre après le paragraphe qui la cite. La figure 3.1 est en `auto`. Elle est citée sur l’ouverture pendant que les deux colonnes ont encore de la place, si bien qu’elle prend le pied de cette page ; en flottant `top`, elle aurait ouvert la page 42, car un flottant ne monte jamais au-dessus de son propre renvoi. La figure 4.1 est citée bas dans la deuxième colonne de la page 43, où une bande sur toute la largeur de la page ne tient plus, si bien que `bottom` l’envoie en page 44. C’est la dernière page du chapitre, et sur une dernière page le moteur remonte les flottants de pied juste sous les dernières lignes de texte, sans espace au-dessus.
+
+### 5 · Titres courants, onglet et folio en pied
+
+<Excerpt region="heads" />
+
+Chaque élément d’en-tête est accroché à un coin supérieur de la page et filtré par `parity`, si bien que le folio et l’onglet se trouvent toujours côté grand fond. La boîte de l’onglet est accrochée, elle, au coin du fond perdu et s’élargit avec `BLEED`, si bien qu’elle reste à fond perdu après la coupe. `pages: 'body'` tient tous ces éléments à l’écart des ouvertures, qui reçoivent un folio en pied depuis le pied de page. Le verso nomme le chapitre avec `{chapterTitle}`, sur une seule ligne, car le `\\` ne coupe le titre que dans l’ouverture. Les manuels nomment d’ordinaire la section au recto. Postext n’a pas d’espace réservé pour la section, si bien que le titre courant du recto imprime le `{title}` du livre ; ces quatre pages ne le montrent jamais, car leurs deux rectos sont des ouvertures.
+
+### 6 · Commencer le livre au chapitre 3
+
+<Excerpt region="build" />
+
+Ces pages sont les chapitres 3 et 4 d’un livre plus long, si bien que `buildDocument` reçoit une `continuation` avec les compteurs tels que les ont laissés les chapitres 1 et 2. Avec `h1: 2` dans ses `headings`, le `#` suivant est le chapitre 3 : `{chapterNumber}` imprime 3, les sections se numérotent à partir de 3.1 et la première figure devient 3.1. `pageNumbering.startAt: 41` fait commencer les folios à 41. La première page reste un recto quel que soit son folio, car la parité se compte sur la page physique et `pageIndexOffset` reste à 0 ; le premier folio, 41, est impair pour concorder.
+
+## Variantes
+
+### Approfondir le bandeau
+
+`BAND` fixe la hauteur du bandeau, la position du chiffre et la hauteur réservée au-dessus du texte. Un bandeau plus haut repousse du texte sur la page suivante : recalibrez chaque chapitre (voir la dernière erreur fréquente) ou laissez les chapitres s’enchaîner.
+
+```diff
+-const BAND = 100; // mm from the trim to the foot of the band
++const BAND = 128; // mm from the trim to the foot of the band
+```
+
+### L’imprimer avec un fond perdu
+
+Avec un fond perdu de 3 mm, le bandeau, son pied et l’onglet dépassent la coupe de 3 mm, le chiffre reste sur le pied, et `page.cutLines` s’active avec la même valeur.
+
+```diff
+-const BLEED = 0; // mm: 0 on screen; about 3 for print, which also switches on page.cutLines
++const BLEED = 3; // mm: 0 on screen; about 3 for print, which also switches on page.cutLines
+```
+
+### Ajouter une couleur pour un autre chapitre
+
+Chaque couleur de chapitre est une entrée de palette et un style de plus ; écrivez `{style="slate"}` sur la ligne de titre de ce chapitre.
+
+```diff
+   band2: '#2e6f73', // the second chapter colour, a teal; the sea in Figure 3.1
++  band3: '#3d4f6b', // a third chapter colour, a slate blue
+@@
+-const headingStyles = [{ id: 'teal', palette: { band: palette.band2 } }];
++const headingStyles = [{ id: 'teal', palette: { band: palette.band2 } },
++  { id: 'slate', palette: { band: palette.band3 } }];
+```
+
+### Laisser les chapitres s’enchaîner
+
+Avec `'any'`, un chapitre s’ouvre sur la page suivante. Après un chapitre qui finit sur un recto, il s’ouvre sur le verso, sans page blanche devant lui, et son chiffre se tient près du dos, puisqu’il est accroché au bord droit de la page. Ces pages-ci ne changent pas, puisque le chapitre 3 finit déjà sur un verso.
+
+```diff
+-      { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' },
++      { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' },
+```
+
+## Erreurs fréquentes
+
+- Le bandeau a une hauteur fixe, alors que le surtitre, le titre et le chapeau sont accrochés à la marge supérieure et grandissent vers le bas : un chapeau plus long ou un titre sur trois lignes empiète sur le pied. Limitez les chapeaux à environ cinq lignes, comme le font les deux éditions, ou calculez `BAND` d’après l’ouverture la plus longue.
+- La formule du `y` du chiffre suppose `lineHeight: 1`. La ligne de base d’un texte de maquette se trouve aux 0,8 de la hauteur de sa boîte de ligne, et `0.8 * NUMERAL` ne correspond à cette distance que si la boîte est aussi haute que le corps. Changez l’interlignage ou l’ancre, et la formule doit changer avec. `BEARING` se règle à l’œil, car chaque chiffre a sa propre approche latérale (ici, le 3 et le 4 se terminent à 0,8 mm d’écart).
+- La palette d’un style recolore les éléments de maquette et le texte. Une image garde les couleurs avec lesquelles elle a été dessinée : la figure 4.1 est bleu canard parce que le code la dessine à partir de `band2`, et une figure terre cuite placée dans le chapitre 4 resterait terre cuite.
+- Avec `parity: 'odd'`, un chapitre qui dépasse sa dernière page de quelques lignes laisse une page presque vide et un verso blanc avant l’ouverture suivante. Calibrez le texte, comme le font ici les deux éditions, et vérifiez la dernière page de chaque chapitre dès que le texte ou `BAND` change.

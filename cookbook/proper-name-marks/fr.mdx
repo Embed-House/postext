@@ -1,0 +1,66 @@
+---
+title: "Noms propres et titres marqués, en colonnes et en lignes"
+summary: "Les Annales fondamentales de Xiang Yu avec :name et :book, composées sur une page reliée à droite puis en lignes : traits à gauche des noms, puis dessous."
+plain: "Des pages d’essai d’un classique de l’histoire chinoise. On y voit comment marquer les noms d’un trait rouge droit et les titres de livres d’un trait ondulé, en texte vertical comme en texte horizontal."
+description: "Traits de noms propres et traits ondulés de titres dans un texte chinois classique, composé en vertical et en horizontal d’un seul Markdown avec Postext."
+aliases: ["trait de nom propre", "soulignement de nom propre", "trait de titre de livre", "soulignement ondulé", "專名號", "私名號", "書名號", "全式標點", "chinois classique", "Shiji", "Xiang Yu", "pages d’essai", "spécimen", "樣張"]
+pageNotes: { "1": "La page 1, composée en vertical : un bandeau indigo le long du bord droit avec 史記選讀 en grands caractères blancs, puis le chapeau et cinq conventions numérotées en caractère Kai, avec des traits rouges droits à gauche des noms, des traits rouges ondulés à gauche des titres et trois points rouges à droite de 萬人敵.", "2": "La page 2, composée en vertical : le bandeau avec 項羽本紀 et la signature, puis le passage en neuf colonnes lues à partir de la droite, un trait rouge à gauche de chaque nom.", "3": "La page 3, composée en horizontal : le bandeau en travers de la tête avec 項羽本紀, puis le même passage en lignes de 28 caractères, chaque nom souligné de rouge, et le colophon en petit corps gris." }
+---
+
+## Ce que vous allez composer
+
+Trois pages d’essai pour une anthologie des *Mémoires historiques*, au format de 140 × 203 mm d’un livre chinois 大32開. Le passage est le début des Annales fondamentales de Xiang Yu, avec la ponctuation complète d’une édition classique : un trait droit à côté de chaque personne, lieu, État et dynastie, un trait ondulé à côté de chaque titre de livre ou de chapitre, tous deux vermillon. La page 1 compose le chapeau et les conventions de l’éditeur en caractère Kai. Les pages 2 et 3 composent deux fois le même Markdown, en colonnes puis en lignes, si bien que la double page montre où vont les traits : à gauche des noms dans les lignes verticales, dessous dans les lignes horizontales. Le livre est relié à droite, et un bandeau indigo porte chaque titre. <RecipeLink slug="critical-edition-line-numbers">Nº 044, Lycidas dans le texte de 1645</RecipeLink>, distingue ses noms à l’européenne, en italique.
+
+## Préparation
+
+### 1 · Le balisage marque, le mode d’écriture place
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `:name[項梁]` et `:book[史記]` gardent leurs caractères dans le texte, si bien que la recherche, le texte copié et le PDF lisent 項梁 et 史記, et ajoutent les traits à côté ([marques chinoises, ruby et warichu](/fr/docs/document-format#marques-chinoises-ruby-et-warichu)). Le côté dépend du seul mode d’écriture : `layout.writingMode: 'vertical-rl'` place les traits à gauche des caractères, et le style de titre `across`, dont la mise en page est `'horizontal-tb'`, les place dessous. `bookTitleMark: 'wavy'` est ce que reçoit par défaut un document `zh-Hant` ; il est écrit en toutes lettres parce qu’un passage à `zh-Hans` imprimerait sinon les titres entre 《》. Deux traits du même type qui se touchent, comme dans 東漢班固 ou 史記項羽本紀, cèdent chacun un huitième de cadratin à leur point de rencontre, si bien qu’on lit deux noms.
+
+### 2 · Un interlignage qui laisse place aux traits
+
+<Excerpt region="type" />
+
+Les traits vivent dans l’espace entre les lignes et ne changent jamais le pas des lignes ([marques, ruby et warichu](/fr/docs/configuration-east-asian#signes-ruby-et-warichu)). En 10,5 pt sur 18 pt, l’espace vaut 0,71 em, ce qui loge les traits de noms d’une colonne et les points de la suivante, comme dans la cinquième convention de la page 1. La grille compte la page en caractères : 42 dans la hauteur de chaque ligne et 17 lignes en largeur, et elle déplace les marges pour que le bloc de texte mesure exactement cela : 25,7 mm de marge en tête, 21,7 mm en pied ([grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères)).
+
+### 3 · Une ouverture qui tourne avec la page
+
+<Excerpt region="opener" />
+
+La maquette d’un titre se met en page dans le sens d’écriture de sa page : un seul jeu d’éléments sert donc aux deux directions ([écriture verticale](/fr/docs/configuration-page-layout#écriture-verticale)). Ancré en haut à gauche du fond perdu, le bandeau se couche en travers de la tête de la page horizontale et descend le long du bord droit des pages verticales, là où commence la lecture. Le surtitre, le titre et la signature s’empilent eux aussi dans le sens d’écriture : l’un sous l’autre en lignes, l’un à gauche de l’autre en colonnes. La longueur du bandeau se mesure dans ce sens : 181,3 mm l’arrêtent au pied du texte vertical, à l’écart du folio, et le font dépasser du format sur la page horizontale.
+
+### 4 · Des folios pour un livre relié à droite
+
+<Excerpt region="folios" />
+
+Le texte vertical relie le livre à droite ([reliure](/fr/docs/configuration-page-layout#reliure)) : la page 1 se trouve à gauche du dos, et le bord extérieur d’un recto est son bord gauche. Le folio impair va en bas à gauche et le pair en bas à droite, à l’inverse d’un livre occidental, et `pageNumbering.format: 'trad-chinese-informal'` les imprime 一, 二, 三. La courte ligne de rappel entre eux vient d’un attribut de chaque titre, `slug="…"` ; avec le colophon, c’est tout ce qui change entre l’édition anglaise et l’édition espagnole.
+
+### 5 · Une deuxième encre
+
+<Excerpt region="palette" />
+
+Une édition classique imprime ses traits dans l’encre du texte. Une anthologie pour étudiants peut les imprimer dans une deuxième couleur, pour les détacher des traits des caractères : `annotationColor` les lie au `mark` de la palette, le vermillon d’un commentaire à l’encre rouge, et un seul changement de cette entrée reteinte chaque trait et chaque point du livre.
+
+## Variantes
+
+### Imprimer les titres entre 《》
+
+Les livres de Chine continentale hors classiques composent les titres entre crochets : le Markdown reste tel quel, et les crochets s’impriment comme une ponctuation du texte.
+
+```diff
+-  bookTitleMark: 'wavy', // zh-Hant's default; mainland editions of the classics use it too
++  bookTitleMark: 'brackets', // 《史記》《項羽本紀》
+```
+
+### Imprimer les traits dans l’encre du texte
+
+Laissez `annotationColor` non défini, et chaque trait prend la couleur du bloc qu’il marque.
+
+```diff
+-  annotationColor: col('mark'), // unset, the marks print in the colour of the text
+```
+
+## Erreurs fréquentes
+
+- Un titre dessiné par une maquette imprime son texte à travers la maquette, et le texte de maquette perd les traits : `# :book[項羽本紀]` n’afficherait aucun trait ondulé dans le bandeau. Les titres courants, les légendes et les cellules de tableau impriment eux aussi leur texte sans traits.
+- Postext ne s’arrête pas sur `cjkMarksExceedLeading` : le rendu le liste dans `doc.contentWarnings` et le panneau Vérifications du Sandbox l’affiche, mais les pages s’impriment quand même, les traits empiétant sur la ligne suivante. Quand vous changez l’interlignage, lisez cette liste ; à 15 pt, elle contient chaque paragraphe marqué de ces pages.

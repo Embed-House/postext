@@ -1,0 +1,65 @@
+---
+title: "Des notes au pied de la colonne qui les appelle"
+summary: "Les appels Markdown [^id] deviennent des notes numérotées au pied de la colonne qui les cite ; options : une colonne, fin de chapitre, numéros continus."
+plain: "Une édition scolaire d’un roman classique espagnol, en deux colonnes. Elle montre comment placer chaque note au pied de la colonne qui la mentionne : le lecteur n’a jamais à tourner la page pour la trouver."
+description: "Une édition scolaire du Lazarillo de Tormes en deux colonnes : chaque note au pied de la colonne qui la cite, sous un filet court, avec le code Postext complet."
+question: "Comment composer les notes de bas de page au pied de la colonne où elles sont appelées ?"
+aliases: ["notes de bas de page", "notes en pied de page", "[^1]", "appels de note", "notes de fin", "édition annotée", "édition scolaire"]
+---
+
+## Ce que vous allez composer
+
+Une édition scolaire du *Lazarillo de Tormes*, en 210 × 280 mm et deux colonnes d’EB Garamond : le prologue et le début du premier traité, où Lázaro naît dans un moulin sur le Tormes et part courir le monde avec un aveugle. Les notes expliquent ce qu’un lecteur de 1554 savait et qu’un lecteur d’aujourd’hui ignore : le village de Tejares, l’expédition de l’île de Los Gelves, le taureau de pierre du pont de Salamanque. Chacune se place au pied de la colonne qui l’appelle, en corps plus petit, sous un filet court lie-de-vin : l’œil descend du numéro à la note et remonte sans tourner la page. L’édition anglaise reprend les notes de Clements Markham pour sa traduction de 1908.
+
+## Préparation
+
+### 1 · Appeler la note là où elle se rapporte, la définir n’importe où
+
+La configuration est [la réponse courte](#la-réponse-courte) ci-dessus ; le reste est du Markdown. `natives of Tejares,[^9]` imprime un chiffre en exposant collé à la virgule, et un paragraphe qui commence par `[^9]:` contient la note. Les définitions sortent du flux où que vous les écriviez : cet exemple les regroupe toutes à la fin du chapitre, comme les notes de Markham dans le fichier source. Les numéros suivent l’ordre des appels, si bien que les identifiants Markdown peuvent être des mots (`[^tejares]` dans l’édition espagnole) et que renuméroter un chapitre n’oblige jamais à retoucher les notes.
+
+### 2 · Laisser à la colonne la place de ses notes
+
+Avant de composer une ligne, la mise en page ajoute la hauteur des notes que cette ligne appelle pour la première fois, et celle du filet quand il s’agit de la première note de la colonne. Une ligne dont la note ne tient pas en dessous passe à la colonne suivante avec son paragraphe, selon les règles des veuves et des orphelines : un numéro ne renvoie jamais à une note placée dans une autre colonne. Les notes s’empilent depuis le pied à leur propre corps et leur propre interlignage, hors de la grille de ligne de base, tandis que le texte au-dessus reste sur la grille ; l’équilibrage des colonnes ne compte que le texte.
+
+### 3 · Descendre chaque ouverture à la même ligne
+
+<Excerpt region="opener" />
+
+L’ouverture s’étend sur les deux colonnes et tire le surtitre du chapitre de l’attribut `kicker` du titre. `minHeight` réserve dix lignes de la grille, assez pour un titre de deux lignes en Bodoni et son filet : le texte de chaque chapitre commence ainsi sur la même ligne, et le filet ne tombe jamais sur la première ligne de texte.
+
+### 4 · Le livre au verso, le chapitre au recto
+
+<Excerpt region="running-heads" />
+
+Les titres courants sont ancrés à la page selon sa parité, avec le folio sur le bord extérieur ; `pages: 'body'` les écarte des ouvertures, qui reçoivent un folio centré en pied. Un titre de chapitre trop long se termine par des points de suspension à 120 mm au lieu d’empiéter sur le folio.
+
+### 5 · Essayer les autres placements
+
+<Excerpt region="live" />
+
+Chaque interrupteur recompose le chapitre avec une seule option modifiée. **One column** place les notes au pied de la page, qui fait alors office de colonne. **End of chapter** les place après le dernier paragraphe du chapitre et les descend au pied de la colonne qu’elles ferment, sous le même filet. **Continuous** poursuit la numérotation du prologue dans le premier chapitre au lieu de repartir de 1.
+
+## Variantes
+
+### Garder les notes de fin de chapitre sous le texte
+
+Avec `placement: 'chapterEnd'`, les notes se placent par défaut au pied de la dernière colonne ; `chapterEndAlign: 'text'` les compose juste sous le dernier paragraphe.
+
+```diff
+   placement: options.placement,
++  chapterEndAlign: 'text',
+```
+
+### Supprimer le filet
+
+Sans filet, les notes restent séparées du texte par `spaceAbove` et `spaceBelowRule`.
+
+```diff
+-  separator: { width: 0.25, lineWidth: pt(0.5), color: col('oxblood') },
++  separator: { enabled: false },
+```
+
+## Erreurs fréquentes
+
+- Un appel placé dans une légende, une cellule de tableau ou un titre s’imprime tel qu’il est écrit : les notes sont lues dans les paragraphes, les éléments de liste, les citations et les encadrés.
+- Une note n’est jamais coupée entre deux colonnes : une note plus haute que sa colonne déborde au-delà du pied. Limitez les notes à quelques lignes, comme le font les éditeurs.

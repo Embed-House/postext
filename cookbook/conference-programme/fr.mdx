@@ -1,0 +1,63 @@
+---
+title: "Programme de colloque avec grille horaire fusionnée"
+summary: "Programme de deux jours en grilles horaires : mergeCells étend une plénière sur trois salles et un atelier sur deux créneaux, aux couleurs de chaque thème."
+plain: "Le programme imprimé d’un colloque de deux jours sur l’imprimerie et le lettrage. Son tableau horaire permet à une intervention de s’étendre sur toutes les salles ou sur deux créneaux, chaque thème dans sa couleur."
+description: "Programme de colloque en catalan avec Postext : grille horaire à cellules fusionnées et couleurs de thème, coupée sur deux pages, journées ouvertes sur bandeau."
+question: "Comment fusionner des cellules pour qu’une plénière couvre toutes les salles et un atelier deux créneaux ?"
+aliases: ["programme de colloque", "programme d’événement", "grille horaire", "emploi du temps", "planning", "ordre du jour", "rowspan", "colspan", "cellules fusionnées", "tableau à code couleur", "catalan", "conference programme"]
+pageNotes: { "1": "La couverture sur fond encre : la capitale ela geminada, « L·L », dessinée en un L violet, un point ambre et un L sarcelle, chaque L une haute hampe au pied arrondi. Dessous, « 7es Jornades · Programa » en petites capitales ambre, « Jornades de Tipografia i Edició Digital » dans un caractère de titrage large et blanc, les dates « 12–13.11.2026 » en violet et « Girona · La Impremta, Barri Vell ».", "2": "Le jeudi s’ouvre sur un bandeau encre en tête de page : « Primera jornada · 12 de novembre » en capitales ambre, un 12 blanc d’environ 39 mm de haut avec « Dijous » à côté, et une rangée de formes violettes, sarcelle et ambre le long du pied du bandeau. Dessous, trois paragraphes d’informations pratiques avec trois pastilles de couleur nommant les thèmes, puis « Qui parla dijous » et les premières notices des intervenants, chaque nom en gras et les lignes suivantes en retrait.", "3": "« Taula 1 », la grille du jeudi, remplit la page : une rangée d’en-tête encre avec l’heure et trois salles, les moments de la journée en petites capitales violettes, la conférence d’ouverture dans une cellule encre sur les trois salles, deux ateliers qui remplissent chacun deux créneaux, et chaque intervention dans une tuile violette, sarcelle ou ambre. « Continua a la pàgina següent » clôt la page.", "4": "La grille se termine en tête de page sous la même rangée d’en-tête, sa légende finissant désormais par « (continuació) » : la promenade du soir et le dîner, et une note sur la durée des sessions. Dessous, le reste des intervenants du jeudi et « Al vespre » sur deux colonnes de même hauteur.", "5": "Le vendredi s’ouvre sur le même bandeau avec un 13 et « Divendres ». Une courte introduction et le premier intervenant du vendredi se placent au-dessus de « Taula 2 », qui remplit entière le pied de la page : la plénière et la séance de clôture en encre, un atelier sur deux créneaux, les interventions aux couleurs de leur thème.", "6": "Un plan de La Impremta en tête de page : les deux salles de conférence, le hall avec le vestiaire à côté, l’escalier vers la salle des ateliers et la cour aux deux arbres, numérotés de 1 à 6 dans des disques noirs et nommés dans la note sous « Figura 1 ». Dessous, les derniers intervenants du vendredi, « Com arribar » et le colophon sur deux colonnes." }
+---
+
+## Ce que vous allez composer
+
+Le programme imprimé d’un colloque de typographie imaginaire à Gérone, rédigé en catalan. La couverture dessine la capitale ela geminada, L·L, en trois modules colorés sur fond encre. Chaque journée s’ouvre sur un bandeau encre de 76 mm avec le jour du mois en chiffre de 144 pt. La grille du jeudi est un tableau. La conférence d’ouverture remplit une cellule encre sur les trois salles, et chaque atelier occupe deux créneaux. Les moments de la journée titrent leurs rangées sur toute la grille, et chaque intervention est une tuile à la couleur de son thème, expliquée par les pastilles de couleur de la légende. La grille est plus haute qu’une page : elle remplit la page 3 et se termine en page 4 sous sa rangée d’en-tête répétée. La grille du vendredi, plus courte, tient entière au pied de sa page d’ouverture.
+
+## Préparation
+
+### 1 · Faire de chaque ligne du programme une rangée
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque journée est du texte brut dans un fichier de contenu, une ligne par créneau : `|` sépare les salles, une lettre nomme le thème, `*` signale une plénière sur fond encre, `/` commence chaque ligne après le titre, et `^` prolonge la session du créneau du dessus. `mergeCells` crée chaque fusion. Une ligne avec une seule session, comme la plénière ou une pause, prend les trois colonnes de salle. Un atelier prend sa cellule et celle du dessous, et un moment de la journée (MATÍ, TARDA), écrit comme une ligne sans `|`, prend les quatre colonnes. Les cellules couvertes par une fusion restent dans la grille, marquées `hiddenBy`, parce que la colonne d’une cellule est son indice dans la rangée ([construire des modèles de tableau](/fr/docs/configuration-resources#construire-des-modèles-de-tableau)). `headerRowCount: 1` fait des noms de salle la rangée d’en-tête. Les `columnWidths` sont des poids relatifs, et 12 + 3 × 42 font les 138 mm de la justification : la colonne des heures fait 12 mm de large et chaque salle 42 mm. `setAlignment(…, 'left', 'middle')` centre verticalement chaque atelier dans ses deux rangées.
+
+### 2 · Laisser déborder le jeudi et garder le vendredi entier
+
+<Excerpt region="split" />
+
+La grille du jeudi est appelée en page 2 et placée en tête de page. Un flottant ne remonte jamais au-dessus de son appel : la grille ouvre donc la page 3. Elle est plus haute que la page, et `overflow: 'split'` la coupe entre deux rangées, jamais à l’intérieur d’une cellule fusionnée ([tableaux plus hauts que la page](/fr/docs/configuration-resources#tableaux-plus-hauts-que-la-page)). La page 3 se termine sur la rangée de 17.30 et la mention placée dessous. La page 4 répète la rangée d’en-tête et toute la légende, pastilles comprises, suivie de `(continuació)`, et la note ne s’imprime que sous cette dernière partie. La grille du vendredi va au pied d’une page et tient sous le texte qui l’appelle en page 5. `defaultResourceTypes('ca')` nomme les types en catalan, Figura et Taula. Les chaînes catalanes du moteur pour un tableau coupé sont `(cont.)` et `Continua` ; le style de tableau les écrit en entier. `numberingTemplate: '{n}'` avec `resetOn: 'never'` compte les deux grilles dans une seule série, Taula 1 et Taula 2.
+
+### 3 · Découper les fonds en tuiles
+
+<Excerpt region="tiles" />
+
+`setCellBackground`, dans la réponse courte, donne à chaque session l’entrée de palette de son thème, et des filets de grille de 1,6 pt dans la couleur du papier découpent les fonds en tuiles séparées par des gouttières blanches ([style de tableau](/fr/docs/configuration-resources#style-de-tableau)). Un tableau n’a qu’une couleur de texte pour ses cellules courantes : le texte blanc de la plénière est donc une pastille dont le style fixe la couleur et désactive le fond, la bordure et la marge latérale de la pastille. Les heures et les moments de la journée sont aussi des pastilles, en Chivo Mono ([styles de pastille](/fr/docs/configuration-styles#styles-de-pastille)). Une pastille ne se coupe jamais d’une ligne à l’autre ; le titre d’une plénière et la ligne de son intervenant tiennent chacun sur une ligne de la cellule à trois salles. Dans la note du plan, la pastille `sala` laisse le texte tel quel et garde le numéro et le nom de chaque salle sur une ligne, comme le ferait une espace insécable entre ses mots.
+
+### 4 · Ouvrir chaque journée sur un bandeau
+
+<Excerpt region="opener" />
+
+La maquette du titre de niveau 1 dessine le bandeau : une boîte de 76 mm de haut depuis le bord du fond perdu, avec la bande de modules le long de son pied. La date vient de l’attribut `date` du titre, et le chiffre de `day`. Le 1 d’Unbounded 800 à 144 pt commence son encre à 0,76 mm dans sa boîte, et la première capitale de la date à 0,1 à 0,2 mm dans la sienne : le chiffre est donc décalé de 0,6 mm vers la gauche, et la date, le chiffre et le texte commencent leur encre à moins de 0,2 mm les uns des autres. Le nom du jour se place à droite du chiffre, abaissé de `BASELINE` × (144 − 26) pt pour que les deux lignes de base se rejoignent, parce qu’un texte de maquette avec `lineHeight: 1` a sa ligne de base aux 0,8 de sa boîte. `minHeight` réserve la page jusqu’à 7 mm sous le bandeau, et la grille de ligne de base arrondit la réserve à 14 lignes : la première boîte de ligne du texte commence 10,2 mm sous le bandeau. Avec `AIR = 0`, c’est la boîte du chiffre lui-même, qui dépasse le pied du bandeau, qui fixe la hauteur, et le texte commence 5,6 mm sous le bandeau.
+
+### 5 · Mettre en retrait les lignes suivantes des notices
+
+<Excerpt region="bios" />
+
+Chaque intervenant est un paragraphe d’un bloc `:::paragraphs{style="bio"}`. Le nom en gras commence au bord de la colonne et les lignes suivantes sont en retrait de 4 mm : les noms s’alignent le long de la colonne comme dans un index ([styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)).
+
+## Variantes
+
+### Arrondir les coins de la grille
+
+Un tableau coupé arrondit les coins supérieurs de sa première partie, en page 3, et les coins inférieurs de sa dernière partie, en page 4, où seul celui de droite se voit, parce que la colonne des heures n’a pas de fond.
+
+```diff
+-  cellPadding: mm(1.5) };
++  cellPadding: mm(1.5), borderRadius: mm(2.5) };
+```
+
+### Numéroter la grille de chaque journée séparément
+
+Compter par titre de niveau 1, comme le font les types intégrés, donne Taula 1.1 et Taula 2.1 et fait du plan la Figura 2.1 ; le style de la couverture n’est pas numéroté : le jeudi est donc le titre 1.
+
+```diff
+-  numberingTemplate: '{n}', resetOn: 'never' })); // Taula 1, Taula 2: one count, not per day
++  numberingTemplate: '{h1}.{n}', resetOn: 'h1' })); // Taula 1.1, Taula 2.1: per day
+```

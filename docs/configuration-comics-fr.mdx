@@ -1,0 +1,548 @@
+{/* docs/configuration-comics-fr.mdx */}
+
+export const metadata = {
+  title: 'Configuration : bande dessinée',
+  sidebarTitle: 'Réglages de bande dessinée',
+  description: 'Les réglages de bande dessinée : cadre et gouttières des planches, styles de case, lettrage, styles de bulles et distribution',
+  lang: 'fr',
+  lastUpdated: '2026-10-10',
+  readingTime: '3 min',
+  order: 10,
+  parent: 'configuration',
+  plainSummary: "Cette page présente les réglages des planches de bande dessinée. Vous fixez le cadre de la page et l’espace entre les cases. Vous choisissez la police et la taille du lettrage. Vous définissez la façon dont sont dessinés les bulles, les récitatifs et les onomatopées. Vous pouvez aussi énumérer les personnages, pour que chacun parle dans son propre style. Le guide Bande dessinée explique comment écrire les planches elles-mêmes.",
+};
+
+# Configuration : bande dessinée
+
+
+## Bande dessinée
+
+La propriété `comics` configure les planches (`:::page`), les strips (`:::strip`) et les doubles pages : le cadre et les gouttières dans lesquels les cases sont découpées, les styles de case, le lettrage, les styles de bulles et la distribution. Seuls les documents qui contiennent de la bande dessinée la lisent ; un document sans BD se compose exactement comme avant, et un document avec BD mais sans section `comics` prend les valeurs par défaut de sa langue. Le balisage et la façon dont les planches sont lettrées sont expliqués dans [Bande dessinée](/fr/docs/comics).
+
+```ts
+const config: PostextConfig = {
+  comics: {
+    readingDirection: 'auto',
+    gutter: { horizontal: { value: 5, unit: 'mm' }, vertical: { value: 2.5, unit: 'mm' } },
+    panel: { borderWidth: { value: 0.8, unit: 'pt' }, borderStyle: 'rough' },
+    panelStyles: [{ id: 'night', background: { hex: '#14142b', model: 'hex' }, borderColor: { hex: '#ffffff', model: 'hex' } }],
+    lettering: { fontSize: { value: 8.5, unit: 'pt' }, textTransform: 'uppercase' },
+    balloonStyles: [{ id: 'eerie', shape: 'wavy', italic: true }],
+    cast: [{ id: 'maya', name: 'Maya' }, { id: 'tomas', name: 'Grandpa Tomás' }],
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Propriété</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '140px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>readingDirection</code></td>
+      <td><code>'auto' | 'ltr' | 'rtl'</code></td>
+      <td><code>'auto'</code></td>
+      <td>L’ordre des cases dans une bande. <code>'auto'</code> lit de droite à gauche dans un document de droite à gauche, dans un document vertical et en japonais et en chinois traditionnel, et dans le sens d’<code>artDirection</code> sinon (chinois simplifié et coréen compris). L’attribut <code>direction</code> d’une planche a la priorité. Avec <code>page.binding: 'auto'</code>, un livre dont la BD se lit de droite à gauche est relié à droite.</td>
+    </tr>
+    <tr>
+      <td><code>artDirection</code></td>
+      <td><code>'ltr' | 'rtl'</code></td>
+      <td><code>'ltr'</code></td>
+      <td>Le sens de lecture pour lequel le dessin a été fait : <code>'rtl'</code> pour le manga.</td>
+    </tr>
+    <tr>
+      <td><code>mirrorArt</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Retourner les dessins d’une planche lue dans le sens opposé à <code>artDirection</code>. Une case garde son dessin tel qu’il a été dessiné avec <code>mirror=false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frame.margins</code></td>
+      <td><code>PageMargins</code></td>
+      <td>les marges de la page</td>
+      <td>Des marges propres aux planches (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Les cases sont découpées dans la boîte qu’elles laissent ; sans ce réglage, dans le bloc de texte de la page.</td>
+    </tr>
+    <tr>
+      <td><code>gutter.horizontal</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>4mm</code></td>
+      <td>L’espace entre les bandes. L’attribut <code>gutter</code> d’une planche a la priorité.</td>
+    </tr>
+    <tr>
+      <td><code>gutter.vertical</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>2mm</code></td>
+      <td>L’espace entre les cases côte à côte dans une bande.</td>
+    </tr>
+    <tr>
+      <td><code>panel</code></td>
+      <td><code>PanelStyleConfig</code></td>
+      <td>voir ci-dessous</td>
+      <td>Le style de case par défaut.</td>
+    </tr>
+    <tr>
+      <td><code>panelStyles</code></td>
+      <td><code>NamedPanelStyleConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Des styles de case nommés, choisis avec <code>:::page&#123;style=…&#125;</code> ou <code>::panel&#123;style=…&#125;</code>. Chacun a un <code>id</code>, un <code>name</code> facultatif (pour les interfaces d’édition seulement) et les champs d’un style de case ; les champs non définis suivent <code>panel</code>.</td>
+    </tr>
+    <tr>
+      <td><code>lettering</code></td>
+      <td><code>LetteringConfig</code></td>
+      <td>voir ci-dessous</td>
+      <td>Le caractère, le corps et les règles maison de toutes les bulles du livre.</td>
+    </tr>
+    <tr>
+      <td><code>balloonStyles</code></td>
+      <td><code>BalloonStyleConfig[]</code></td>
+      <td>les neuf styles prédéfinis</td>
+      <td>Les styles de bulles par type. Les styles prédéfinis sont toujours présents ; une entrée qui porte l’un de leurs ids le modifie, une entrée avec un nouvel id ajoute un style superposé à <code>speech</code>.</td>
+    </tr>
+    <tr>
+      <td><code>cast</code></td>
+      <td><code>ComicCastMember[]</code></td>
+      <td><code>[]</code></td>
+      <td>Les personnages (voir <a href="#distribution">Distribution</a>).</td>
+    </tr>
+    <tr>
+      <td><code>runningHeads</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Imprimer les titres courants et les folios sur les planches. Désactivé, une planche n’est faite que de cases et son numéro compte quand même.</td>
+    </tr>
+    <tr>
+      <td><code>viewerLeaf</code></td>
+      <td><code>ComicViewerLeafConfig</code></td>
+      <td>non défini</td>
+      <td>Pour les hôtes dont les pages ne sont pas des feuillets : met les planches en page sur un feuillet imprimé (<code>width</code>, <code>height</code>, <code>margins</code>) mis à l’échelle sur <code>fitWidth</code> px (et au plus <code>fitHeight</code> px de haut) en haut de la page. La visionneuse HTML du Sandbox le définit ; il n’est jamais enregistré avec un document.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Styles de case
+
+`comics.panel` et chaque entrée de `comics.panelStyles` :
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Propriété</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '140px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>borderWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1pt</code></td>
+      <td>Épaisseur de la bordure ; <code>0</code> n’en trace aucune. La bordure est tracée sur le contour de la case.</td>
+    </tr>
+    <tr>
+      <td><code>borderColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>noir</td>
+      <td>Couleur de la bordure (peut être liée à la palette).</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Rayon des coins d’une case rectangulaire, limité à la moitié de son plus petit côté. Une case coupée par une ligne oblique garde des coins vifs.</td>
+    </tr>
+    <tr>
+      <td><code>borderStyle</code></td>
+      <td><code>'solid' | 'rough' | 'none'</code></td>
+      <td><code>'solid'</code></td>
+      <td>Un trait net, un trait à main levée qui tremble un peu (tiré d’une graine propre à la case, donc identique à chaque génération), ou aucun trait.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td>blanc</td>
+      <td>Le fond sous le dessin : la couleur d’une case vide et des bandes autour d’un dessin montré en entier.</td>
+    </tr>
+    <tr>
+      <td><code>fit</code></td>
+      <td><code>'cover' | 'contain'</code></td>
+      <td><code>'cover'</code></td>
+      <td><code>cover</code> recadre le dessin pour remplir la case, sans jamais entamer sa zone de sécurité ; <code>contain</code> le montre en entier.</td>
+    </tr>
+    <tr>
+      <td><code>bleed</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Les cases de ce style dépassent le cadre jusqu’à la coupe et au fond perdu, de chaque côté qui touche le cadre.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Lettrage
+
+`comics.lettering` règle toutes les bulles du livre. Il n’y a qu’un seul corps : un style de bulle peut le mettre à l’échelle (`fontScale`), et le texte n’est jamais réduit pour tenir dans une bulle.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Propriété</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '140px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>selon la langue</td>
+      <td>Le caractère de lettrage. Par défaut : <code>Comic Neue</code> ; <code>Zen Antique</code> en japonais, <code>Noto Sans SC</code> en chinois simplifié, <code>LXGW WenKai TC</code> en chinois traditionnel, <code>Playpen Sans Arabic</code> en arabe, en persan et en ourdou (<code>defaultComicFont(locale)</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>7.5pt</code></td>
+      <td>Le corps du texte des bulles. La bande dessinée est en général lettrée entre 7 et 9 pt sur la page imprimée.</td>
+    </tr>
+    <tr>
+      <td><code>lineHeight</code></td>
+      <td><code>number</code></td>
+      <td><code>1.15</code></td>
+      <td>Distance entre les lignes, en multiple du corps. Laissée à sa valeur par défaut, les bulles verticales, chinoises et japonaises prennent 1,5 et les bulles arabes 1,45.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>noir</td>
+      <td>Couleur du texte.</td>
+    </tr>
+    <tr>
+      <td><code>bold</code>, <code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Composer tout le lettrage en gras ou en italique. Le lettrage chinois, japonais et arabe n’est jamais incliné.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Espace supplémentaire entre les lettres ; <code>em</code> est relatif au corps du texte. Jamais appliqué à l’arabe. Il ne modifie pas les glyphes : les ligatures restent.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'auto' | 'horizontal' | 'vertical'</code></td>
+      <td><code>'auto'</code></td>
+      <td><code>'auto'</code> lettre le japonais et le chinois traditionnel, ainsi que tout document composé en écriture verticale, en colonnes verticales, et tout le reste horizontalement. L’indicateur <code>vertical</code> ou <code>horizontal</code> d’une ligne de script compose cette ligne autrement (voir <a href="/fr/docs/comics#lettrage">Bande dessinée › Lettrage</a>).</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Tout en capitales, l’aspect classique du lettrage américain et européen. Les écritures sans casse restent telles quelles.</td>
+    </tr>
+    <tr>
+      <td><code>dropFinalStop</code></td>
+      <td><code>'auto' | boolean</code></td>
+      <td><code>'auto'</code></td>
+      <td>Omettre le point qui termine une bulle (<code>。</code> dans le manga). <code>'auto'</code> : en japonais et en chinois seulement.</td>
+    </tr>
+    <tr>
+      <td><code>doubleDash</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Lettrer un tiret cadratin en <code>--</code>, une habitude du lettrage américain.</td>
+    </tr>
+    <tr>
+      <td><code>inset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5mm</code></td>
+      <td>Espace laissé entre une bulle et la bordure de sa case. Un récitatif collé contre la bordure l’ignore.</td>
+    </tr>
+    <tr>
+      <td><code>joinSameSpeaker</code></td>
+      <td><code>'butt' | 'connector' | 'none'</code></td>
+      <td><code>'butt'</code></td>
+      <td>Deux bulles à la suite du même locuteur : corps fusionnés en un seul contour, reliés par un col étroit, ou gardés séparés. Une ligne de script demande son propre comportement avec <code>join</code> ou <code>join=false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>maxColumnChars</code></td>
+      <td><code>number</code></td>
+      <td><code>8</code></td>
+      <td>Lettrage vertical : le nombre maximal de caractères dans une colonne d’une bulle. Les onomatopées passent à la colonne suivante après cinq.</td>
+    </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Une bulle redessinée pour tenir dans sa case ne sépare pas pour autant un mot chinois : chaque mot que coupent ses nouvelles lignes, et que sa forme préférée laisse entier, coûte plus cher qu’une bulle lue dans le désordre, de sorte que le placement déplace d’abord la bulle ou change l’ordre. Le lettrage japonais, coupé par groupes de mots, n’est pas concerné. <code>false</code> lettre comme le faisait postext 1.27 ; un document enregistré avant la 1.28 qui contient une BD est lu avec cette valeur.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Styles de bulles
+
+Chaque entrée de `comics.balloonStyles` se superpose au style prédéfini de même id (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`), ou à `speech` pour un nouvel id. Les valeurs par défaut ci-dessous sont celles de `speech` ; la [page Bande dessinée](/fr/docs/comics#styles-de-bulles) indique ce que change chaque style prédéfini. Les longueurs en `em` sont relatives au corps du texte de la bulle.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Propriété</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '140px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obligatoire</td>
+      <td>Le mot par lequel une ligne de script nomme le style : <code>ben&#123;whisper&#125;: …</code> ou <code>style=whisper</code>.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Nom lisible, pour les interfaces d’édition seulement.</td>
+    </tr>
+    <tr>
+      <td><code>shape</code></td>
+      <td><code>'oval' | 'rounded' | 'rectangle' | 'cloud' | 'burst' | 'wavy' | 'electric' | 'none'</code></td>
+      <td><code>'oval'</code></td>
+      <td>Le contour autour du texte. <code>'none'</code> compose le texte directement sur le dessin.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code></td>
+      <td><code>ColorValue</code></td>
+      <td>blanc</td>
+      <td>Remplissage de la bulle.</td>
+    </tr>
+    <tr>
+      <td><code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>noir</td>
+      <td>Couleur du contour.</td>
+    </tr>
+    <tr>
+      <td><code>strokeWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.6pt</code></td>
+      <td>Épaisseur du contour.</td>
+    </tr>
+    <tr>
+      <td><code>dash</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Un contour en tirets (un chuchotement).</td>
+    </tr>
+    <tr>
+      <td><code>double</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Un contour double.</td>
+    </tr>
+    <tr>
+      <td><code>wobble</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Tremblement à main levée du contour, de 0 à 1, tiré d’une graine propre à la bulle pour ne jamais changer d’une génération à l’autre.</td>
+    </tr>
+    <tr>
+      <td><code>roundness</code></td>
+      <td><code>number</code></td>
+      <td><code>2.2</code></td>
+      <td>L’exposant de superellipse d’un ovale : 2 donne une ellipse, des valeurs plus élevées une forme plus carrée.</td>
+    </tr>
+    <tr>
+      <td><code>burstPoints</code></td>
+      <td><code>number</code></td>
+      <td><code>14</code></td>
+      <td>Les pointes d’une explosion ; <code>0</code> les compte d’après le périmètre.</td>
+    </tr>
+    <tr>
+      <td><code>burstDepth</code></td>
+      <td><code>number</code></td>
+      <td><code>0.22</code></td>
+      <td>La profondeur des pointes d’une explosion, en fraction du rayon du corps.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.55em</code></td>
+      <td>Le blanc entre le texte et le contour.</td>
+    </tr>
+    <tr>
+      <td><code>aspect</code></td>
+      <td><code>number</code></td>
+      <td><code>1.6</code></td>
+      <td>Le rapport largeur sur hauteur que vise la coupure des lignes pour le bloc de texte (lettrage horizontal).</td>
+    </tr>
+    <tr>
+      <td><code>tail</code></td>
+      <td><code>'curved' | 'wedge' | 'bubbles' | 'zigzag' | 'none'</code></td>
+      <td><code>'curved'</code></td>
+      <td>L’appendice.</td>
+    </tr>
+    <tr>
+      <td><code>tailWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.9em</code></td>
+      <td>La largeur de l’appendice là où il quitte le contour.</td>
+    </tr>
+    <tr>
+      <td><code>tailReach</code></td>
+      <td><code>number</code></td>
+      <td><code>0.55</code></td>
+      <td>Jusqu’où l’appendice s’avance vers son locuteur, en fraction de l’écart entre le contour et la bouche.</td>
+    </tr>
+    <tr>
+      <td><code>target</code></td>
+      <td><code>'mouth' | 'head'</code></td>
+      <td><code>'mouth'</code></td>
+      <td>Ce que vise l’appendice : la bouche de l’ancre, ou sa tête (bulles de pensée).</td>
+    </tr>
+    <tr>
+      <td><code>position</code></td>
+      <td><code>'auto' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom'</code></td>
+      <td><code>'auto'</code></td>
+      <td>L’endroit où va la bulle quand la ligne ne l’épingle pas : placée par le lettrage, ou dans un coin ou contre un bord de la case.</td>
+    </tr>
+    <tr>
+      <td><code>butt</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Coller une bulle de coin ou de bord contre la bordure de la case (récitatifs).</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>le caractère de lettrage</td>
+      <td>Le caractère de ce style. <code>sfx</code> prend par défaut le caractère d’onomatopées de la langue : <code>Bangers</code>, <code>Dela Gothic One</code> en japonais, <code>ZCOOL KuaiLe</code> en chinois simplifié, <code>LXGW WenKai TC</code> en chinois traditionnel, <code>Lalezar</code> en arabe (<code>defaultComicSfxFont(locale)</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Le corps du texte, en multiple du corps du lettrage.</td>
+    </tr>
+    <tr>
+      <td><code>bold</code>, <code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td>ceux du lettrage</td>
+      <td>Texte en gras ou en italique.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>celle du lettrage</td>
+      <td>Couleur du texte.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td>celui du lettrage</td>
+      <td>Tout en capitales pour ce style.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td>celui du lettrage</td>
+      <td>Espace supplémentaire entre les lettres.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'center' | 'start'</code></td>
+      <td><code>'center'</code></td>
+      <td>Alignement des lignes dans la bulle.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>Dimension</code></td>
+      <td>aucun</td>
+      <td>Un contour tracé autour des lettres, ici son épaisseur, pour que le texte se lise sur le dessin (onomatopées).</td>
+    </tr>
+    <tr>
+      <td><code>haloColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>blanc</td>
+      <td>La couleur du halo.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Rotation en degrés, dans le sens des aiguilles d’une montre. L’attribut <code>rotate</code> d’une ligne l’emporte.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Distribution
+
+Chaque entrée de `comics.cast` décrit un personnage :
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Propriété</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '140px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obligatoire</td>
+      <td>La clé de locuteur du script et des ancres des dessins.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Le nom que la sortie HTML et l’EPUB recomposable impriment avant les répliques du personnage, et que les éditeurs affichent.</td>
+    </tr>
+    <tr>
+      <td><code>balloonStyle</code></td>
+      <td><code>string</code></td>
+      <td><code>speech</code></td>
+      <td>Le style des répliques du personnage qui n’en nomment aucun.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>celle du style</td>
+      <td>Couleur du texte des bulles du personnage.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code></td>
+      <td><code>ColorValue</code></td>
+      <td>celui du style</td>
+      <td>Remplissage des bulles du personnage.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>celui du style</td>
+      <td>Le caractère des bulles du personnage.</td>
+    </tr>
+  </tbody>
+</table>
+
+La `color` et la `font` propres à une ligne l’emportent sur la distribution, et la distribution sur le style de bulle. Toute couleur de BD peut être une entrée de la palette, qui suit alors la palette comme n’importe quelle couleur liée.
+
+```ts
+const resolved = resolveComicsConfig(config.comics, 'ja');
+// => every field filled; Zen Antique and Dela Gothic One as the faces
+
+const minimal = stripComicsDefaults(config.comics, 'ja');
+// => undefined when everything is a default
+
+const shout = pickBalloonStyle(resolved, 'shout'); // the built-in shout with the book's changes
+const night = pickPanelStyle(resolved, 'night');   // a named panel style, else the default panel
+```

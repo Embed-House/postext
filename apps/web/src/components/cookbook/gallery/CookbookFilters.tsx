@@ -377,7 +377,7 @@ function FilterBar({ locale, chapters, gallery, live }: FiltersProps & { gallery
                   aria-label={t("sort")}
                   className="h-10 min-h-10 gap-1 border-0 bg-surface font-sans text-[0.8rem] dark:bg-surface dark:hover:bg-surface-2"
                 >
-                  <span className="text-slate">{t("sort")}:</span>
+                  <span className="text-slate">{t("sort")}{t("colon")}</span>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent align="end" alignItemWithTrigger={false}>

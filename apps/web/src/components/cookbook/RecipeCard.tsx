@@ -24,6 +24,8 @@ export interface PlateLabels {
   badges: Partial<Record<OutputId, string>>;
   draft: string;
   workaround: string;
+  /** The colon after a label, as the language writes it ("\u00a0:" in French). */
+  colon: string;
 }
 
 const BADGE_ORDER: OutputId[] = ["pdf", "html", "epub", "bundle", "live"];
@@ -168,7 +170,7 @@ export function RecipeCard({
       <p className="order-6 mt-2.5 flex items-center gap-x-2 font-sans text-[0.6rem] font-semibold tracking-[0.12em] whitespace-nowrap text-foreground/80 uppercase">
         <LevelSquares level={recipe.level} />
         <span className="shrink-0">
-          <span className="sr-only">{labels.levelOf(recipe.level)}: </span>
+          <span className="sr-only">{labels.levelOf(recipe.level)}{labels.colon} </span>
           {labels.levels[recipe.level]}
         </span>
         {genre && (

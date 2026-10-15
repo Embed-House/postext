@@ -1,0 +1,63 @@
+---
+title: "Un récit sur genkō yōshi, un caractère par case"
+summary: "Le début de Botchan sur papier manuscrit de 400 cases : grille de 20 × 20 dessinée, un caractère ou signe par case, et les 、。 de tête de ligne suspendus."
+plain: "Le papier manuscrit japonais a une case pour chaque caractère. Cette page y écrit les premières lignes d’un roman célèbre, avec le titre, le nom de l’auteur et chaque signe de ponctuation là où les règles scolaires japonaises les placent."
+description: "Genkō yōshi avec Postext : grille de 20 × 20 dessinée, un caractère par case, lignes du titre et du nom, 、。 suspendus sous la dernière case, jamais resserrés."
+question: "Comment composer du japonais sur papier manuscrit, 20 cases sur 20 lignes, un caractère par case ?"
+aliases: ["genkō yōshi", "genkouyoushi", "原稿用紙", "papier manuscrit", "feuille de 400 caractères", "400字詰", "papier quadrillé", "grille de caractères", "マス目", "masume", "papier de rédaction japonais", "作文", "sakubun", "kinsoku sur papier manuscrit", "ぶら下げ", "burasage", "Botchan", "坊っちゃん", "Natsume Sōseki", "Klee One", "manuscript paper"]
+pageNotes: { "1": "La première feuille, seule à gauche : un double cadre brun-rouge autour de 20 lignes de 20 cases grises, 坊っちゃん dans la première ligne à partir de la troisième case, 夏目　漱石 dans la deuxième, se terminant une case au-dessus du pied, puis le texte de « Botchan » à partir de la troisième ligne, un caractère ou un signe par case ; un 、 qui tombe après la vingtième case est suspendu dessous. Le numéro de feuille （1） et la mention imprimée « 20×20 » se trouvent sous le cadre.", "3": "La troisième feuille : le paragraphe se termine sur sa douzième ligne, et les lignes restantes sont des cases vides." }
+---
+
+## Ce que vous allez composer
+
+Trois feuilles de papier manuscrit japonais (原稿用紙, genkō yōshi), le modèle à 400 cases, sur lesquelles les trois premiers paragraphes de *Botchan* de Natsume Sōseki sont recopiés comme le ferait un écrivain ou un élève : 20 lignes de 20 cases, lues de haut en bas en partant de la droite, en Klee One, un caractère dessiné à la plume. Le titre se place dans la première ligne à partir de la troisième case et le nom de l’auteur dans la deuxième, une case au-dessus du pied ; chaque paragraphe commence après une case vide. Chaque caractère, chaque petit kana et chaque signe a sa propre case, et un 、 ou un 。 qui commencerait une ligne s’écrit sous la dernière case de la ligne précédente. Un cadre brun-rouge, le numéro de feuille et la mention imprimée du papier, 20×20, font la feuille. La page chinoise comptée en caractères est la <RecipeLink slug="chinese-official-document">Nº 082</RecipeLink>.
+
+## Préparation
+
+### 1 · Dessiner les cases et donner à chaque signe une case entière
+
+Le code est [la réponse courte](#la-réponse-courte) plus haut. La [grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères) fait un bloc de texte de 20 caractères de 20 pt (7,1 mm) en hauteur et de 20 lignes de 27 pt (9,5 mm) en largeur, et `show: true` dessine ses cases dans un gris clair qui lui est propre, à l’écran, et dans le PDF quand `renderToPdf` reçoit `characterGrid: true` (dans un livre, une grille est une aide à la relecture : un PDF l’omet donc par défaut) ; la bande de 2,5 mm entre deux lignes est l’endroit où un écrivain ajoute lectures et corrections. Un signe japonais est un demi-glyphe et un demi-cadratin de blanc, et un livre resserre les blancs là où deux signes se rencontrent ou là où un crochet ouvre une ligne. Sur le papier manuscrit, chaque signe garde sa case : `compressAdjacent: false` compose 。」 sur deux cases et `trimLineStart: false` laisse à un crochet en début de ligne sa case entière ([Typographie d’Asie de l’Est](/fr/docs/configuration-east-asian#typographie-dasie-de-lest)).
+
+### 2 · Suivre les règles de ligne du manuscrit
+
+Le papier manuscrit a son propre kinsoku. Un petit kana ou un ー peut commencer une ligne, chacun dans sa propre case ; `ja-loose` l’autorise. Un 、 ou un 。 qui commencerait une ligne s’écrit dans la dernière case de la ligne précédente, avec le caractère qui s’y trouve, ou juste dessous ; `hangingPunctuation: 'force'` le suspend sous la vingtième case, et aucune ligne n’est jamais resserrée. Avec `'allow'`, la valeur par défaut pour le japonais, le moteur fait d’abord entrer le signe dans la ligne en y resserrant un 、 à une demi-case, ce que fait un livre imprimé et jamais un manuscrit : le reste de la ligne se décalerait d’une demi-case vers le haut, à cheval sur les lignes de la grille.
+
+La dernière ligne d’un paragraphe demande un réglage de plus. Postext évite qu’un paragraphe se termine sur un seul caractère : la ligne précédente lui cède son dernier caractère et, comme le texte n’est pas justifié ici, cette ligne s’arrêterait une case trop tôt. Sur le papier manuscrit, chaque case d’une ligne pleine est remplie : la grille définit donc `fullLines: true`. Sur la <PageRef page={3}>feuille 3</PageRef>, la ligne qui se termine par 来 garde ses vingt cases et le paragraphe se ferme sur た。 seul ([grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères)).
+
+### 3 · Écrire le titre et le nom là où les règles les placent
+
+<Excerpt region="heading" />
+
+Le titre est un titre du corps et du caractère du texte : il remplit des cases comme n’importe quelle autre ligne. `lineSpan: 1` le garde sur une ligne de la grille et `indent: em(2)` laisse deux cases vides au-dessus de lui ([Réglages par niveau](/fr/docs/configuration-text#réglages-par-niveau)). Le nom est un paragraphe avec `textAlign: 'end'` et `endIndent: em(1)`, qui le termine une case au-dessus du pied, et le Markdown écrit la case vide entre le nom de famille et le prénom comme une espace idéographique : `夏目　漱石`. Le texte commence sur la troisième ligne, chaque paragraphe après une case vide grâce à `firstLineIndent: em(1)`.
+
+### 4 · Imprimer la feuille autour des cases
+
+<Excerpt region="sheet" />
+
+Les éléments de l’en-tête sont dessinés sur la feuille elle-même : sur une page verticale, `x` va vers la droite et `y` vers le bas depuis l’angle supérieur gauche, contrairement à la maquette d’un titre, mise en page dans le repère tourné du texte. Le double cadre se tient à 1,5 mm des cases sur trois côtés et à 8 mm sous elles, là où tombent les signes suspendus. `GRID` et `MARGIN` le placent à partir des mêmes nombres que les marges de la page ; les marges transmises à la page sont plus petites d’un demi-millimètre, parce que la grille les traite comme des minimums et qu’un ajustement exact pourrait s’arrondir à 19 lignes.
+
+### 5 · Composer dans un caractère à la plume
+
+<Excerpt region="pen" />
+
+Klee One est dessiné à la plume et garde les formes japonaises des kanjis : les feuilles se lisent comme une écriture manuscrite, sans l’irrégularité d’un scan. Ses formes verticales placent 、。 en haut à droite de leur case et font pivoter ー et les crochets, là où un écrivain les met. Comme toute famille japonaise de Fontsource, il se présente en quelque 120 fichiers, et `loadCjkFonts` récupère ceux dont le texte a besoin ([Polices chinoises, japonaises et coréennes](/fr/docs/configuration-programmatic-usage#polices-chinoises-japonaises-et-coréennes)).
+
+## Variantes
+
+### Vérifier la grille d’un livre avec les mêmes cases
+
+`show: true` marche sur n’importe quelle grille de caractères : sur le bunko de la <RecipeLink slug="bunko-novel-furigana">Nº 117</RecipeLink>, il dessine les 38 × 15 cases par-dessus le texte, une vérification rapide que chaque ligne respecte la grille et chaque titre ses trois lignes.
+
+```diff
+-  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES },
++  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES, show: true },
+```
+
+### Laisser les signes se resserrer, comme sur une page imprimée
+
+Avec la valeur par défaut du japonais, les feuilles se lisent comme un livre tapé sur du papier quadrillé : un 、 qui commencerait une ligne est absorbé en en resserrant un autre, et le reste de la ligne se décale d’une demi-case par rapport à la grille.
+
+```diff
+-  hangingPunctuation: 'force',
++  hangingPunctuation: 'allow',
+```

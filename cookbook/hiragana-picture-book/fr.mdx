@@ -1,0 +1,57 @@
+---
+title: "Un livre d’images en hiragana, espacé par groupes"
+summary: "Un livre d’images vertical en hiragana, une espace entre les groupes (wakachigaki) : keep-all garde chaque groupe entier et ne coupe qu’aux espaces."
+plain: "Un livre d’images japonais pour les tout-petits, entièrement en hiragana, avec une espace après chaque groupe de mots et des lignes qui n’en coupent jamais un, sous une image à chaque page."
+description: "Un livre d’images japonais dans Postext : hiragana verticaux en 20 pt, espaces wakachigaki, groupes entiers grâce à keep-all, une bande d’image à chaque page."
+question: "Comment espacer un livre d’images japonais par groupes (wakachigaki) et ne couper ses lignes qu’aux espaces ?"
+aliases: ["wakachigaki", "分かち書き", "わかち書き", "livre d’images", "album jeunesse", "絵本", "hiragana", "ひらがな", "livre pour enfants japonais", "word-break", "cjk.wordBreak", "keep-all", "couper seulement aux espaces", "Klee One"]
+pageNotes: { "1": "La couverture : la scène de la rivière sur toute la page, un bateau de papier rouge sur l’eau bleue, le titre かみの ふね en rouge qui descend le ciel à droite.", "2": "Page 2 : une fillette plie le bateau rouge sur une table ; dessous, six courtes lignes verticales de hiragana, chacune coupée à une espace entre deux groupes.", "3": "Page 3 : le bateau posé sur la rivière, la fillette qui fait signe depuis la rive ; le texte commence par 「いって らっしゃい。」.", "8": "Page 8 : la nuit, la lune et son reflet sur l’eau ; le texte raconte comment la lune éclaire la route du bateau.", "10": "La dernière page : la fillette à une fenêtre regarde la mer, le texte, おしまい en rouge au pied de sa ligne, et le colophon couché sur le côté." }
+---
+
+## Ce que vous allez composer
+
+Un livre d’images de dix pages, かみの ふね (*Le bateau de papier*), écrit pour la recette et illustré de dix peintures : après la pluie, une fillette plie un bateau de papier rouge, et le bateau descend la rivière, passe devant une grenouille, un héron et la lune, jusqu’à la mer. Il est composé comme les livres japonais pour les plus jeunes lecteurs : uniquement en hiragana, en 20 pt de Klee One, une écriture dessinée sur le modèle des manuels scolaires, avec une espace entre les groupes de mots, 分かち書き (wakachigaki), pour que l’enfant lise un groupe à la fois. Les pages sont à l’italienne, 260 × 200 mm, verticales et reliées à droite : l’image occupe le haut de la page, de courtes lignes de huit caractères courent dessous, et le bateau avance vers la gauche à mesure que l’on tourne les pages.
+
+## Préparation
+
+### 1 · Garder chaque groupe entier
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le japonais peut se couper entre deux kana quelconques : une espace entre les groupes ajoute seulement de l’air et, seule, n’empêche pas une ligne de finir au milieu de あか|い. `cjk.wordBreak: 'keep-all'` ne garde que les coupures à une espace et à côté de la ponctuation, après 、。」 ou avant 「, comme le fait `word-break: keep-all` en CSS, et les règles de kinsoku s’appliquent toujours ([Typographie d’Asie orientale](/fr/docs/configuration-east-asian#typographie-dasie-de-lest)). L’espace est un U+0020 ordinaire, de 0,35 em en Klee One, et la ligne l’abandonne quand il tombe en fin de ligne. Un U+3000 sépare aussi les groupes, mais c’est un caractère fixe d’un cadratin de large, conservé en fin de ligne.
+
+<PageShot page={3} crop="0.45,0.52,0.55,0.48" caption="Page 3 : huit lignes, chacune finissant à une espace ou après 」 et 、 : 「いって / らっしゃい。」 / みいちゃんが / そっと てを…" />
+
+Le texte est composé en drapeau. Justifiée, une ligne courte étirerait ses espaces et les intervalles entre ses kana pour atteindre le pied de la bande ; un livre d’images arrête chaque ligne là où finit son dernier groupe.
+
+### 2 · Mettre les images dans une bande au-dessus du texte
+
+<Excerpt region="layout" />
+
+En écriture verticale, `'left'` désigne le haut de la page : une mise en page à colonne et demie dont la colonne latérale est à gauche devient donc deux bandes. Les images flottent dans la bande du haut (14 caractères de profondeur) et le texte court dans celle du bas (8 caractères). Chaque page cite son image avec `::resource{id="…"}` et se termine par `:::pagebreak`. Le type de ressource des images n’a pas de préfixe de légende, et les images sont 2,186 fois plus larges que hautes, la forme de la bande, si bien que chacune la remplit ([écriture verticale](/fr/docs/configuration-page-layout#écriture-verticale)).
+
+### 3 · Faire de la couverture une image pleine page
+
+<Excerpt region="cover" />
+
+La couverture est une maquette de titre sur toute la largeur de la page : l’image est ancrée au fond perdu avec la taille de la page elle-même (dans le flux vertical, sa `width` descend le long de la feuille), et le titre descend le ciel, à droite, en Zen Maru Gothic de 60 pt.
+
+### 4 · Charger les peintures comme bitmaps
+
+<Excerpt region="pictures" />
+
+Les dix images sont des peintures, des fichiers JPEG rangés dans le dossier `assets/` de la recette. Les neuf scènes sont taillées à la forme de la bande, 612 : 280, et la couverture à celle de la page, 260 : 200, de sorte que chacune remplit son cadre sans aucun recadrage. Chacune est une ressource `bitmap` déclarée à sa taille en pixels, avec un texte alternatif dans la langue du livre, et son fichier est chargé sous le `fileId` de la ressource avant la composition. Larges de 1 400 px, les scènes s’impriment à environ 165 dpi sur la largeur de la bande ([types de ressources](/fr/docs/configuration-resources#types-de-ressources)).
+
+## Variantes
+
+### Justifier les lignes
+
+Justifiée, chaque ligne atteint le pied de la bande : les espaces entre les groupes s’étirent d’abord, jusqu’à un demi-cadratin, puis les intervalles entre les kana (JLReq §3.8). Une ligne courte de kana de 20 pt montre alors de larges blancs, et c’est pourquoi la recette laisse ses lignes en drapeau.
+
+```diff
+-  textAlign: 'left', firstLineIndent: em(0),
++  textAlign: 'justify', firstLineIndent: em(0),
+```
+
+## Erreurs fréquentes
+
+- `keep-all` garde les coupures que le texte possède déjà : Postext ne trouve pas les groupes, c’est l’auteur qui tape les espaces. Un groupe plus long que la ligne se coupe quand même à l’intérieur, au dernier endroit que permettent les règles de kinsoku.
+- Le chinois n’espace jamais ses mots, et l’abécédaire chinois <RecipeLink slug="zhuyin-vertical-reader">Un livre de lecture vertical avec le zhuyin à droite</RecipeLink> aide plutôt ses jeunes lecteurs par des lectures ; un livre d’images japonais n’emploie aucun kanji, il n’a donc pas besoin de furigana, et ce sont les espaces entre les groupes qui guident la lecture.

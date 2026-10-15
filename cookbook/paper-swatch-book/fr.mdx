@@ -1,0 +1,63 @@
+---
+title: "Un nuancier, chaque feuillet sur son papier"
+summary: "Chaque feuillet d’un catalogue de papetier est un bloc :::paper ; postext-folio le dessine avec la teinte, le grammage, la surface et la rigidité de son papier."
+plain: "Un petit catalogue d’échantillons de papetier. Chaque page dit sur quel papier elle est imprimée, et dans la visionneuse 3D chaque page a vraiment l’aspect de ce papier et se tourne comme lui."
+description: "Un bloc :::paper par feuillet donne à chaque page son papier ; postext-folio tourne autrement couché, vergé, vélin et papier bible, dans un pen minimal."
+question: "Comment imprimer une couverture, un encart ou un cahier hors-texte sur un autre papier que le reste du livre ?"
+aliases: ["papier", "nuancier", "échantillons de papier", ":::paper", "cahier hors-texte", "encart", "papier bible", "transparence"]
+pageNotes: { "1": "La première de couverture : un aplat lie-de-vin jusqu’à chaque bord, un petit surtitre interlettré, le titre « The Stock Book » dans un grand caractère de titrage Caslon et un sous-titre en italique.", "3": "La fiche de « Book Wove, Natural » : un surtitre, le nom du papier au-dessus d’un filet fin, cinq lignes de caractéristiques à intitulés en gras et deux paragraphes sur le papier.", "11": "Le spécimen du papier bible : six entrées de glossaire avec retrait négatif." }
+---
+
+## Ce que vous allez composer
+
+*The Stock Book* de Harwell & Daughters, un marchand de papier fictif de Bristol : douze pages au format 120 × 176 mm, une couverture en carte et quatre feuillets qui décrivent chacun le papier sur lequel ils sont imprimés. Le recto d’un feuillet est la fiche du papier, avec grammage, main, fini, teinte et opacité ; le verso est une page de texte composée comme on utilise ce papier : un roman, une lettre, un cartel de galerie, un glossaire. À plat à l’écran, les douze pages s’impriment de la même façon. Dans Folio, chaque feuillet a son papier : le vélin crème, le vergé à vergeures, le couché brillant qui tourne à plat et raide, et le papier bible de 40 g qui retombe aussitôt et laisse voir son verso par transparence.
+
+## Préparation
+
+### 1 · Un bloc par feuillet
+
+<Excerpt region="paper-runs" />
+
+Un bloc `:::paper` commence sur une nouvelle page, et le texte qui le suit aussi : chaque passage remplit ici un feuillet, la fiche au recto, un `:::pagebreak`, le spécimen au verso. Un feuillet a un seul papier pour ses deux faces, celui de son recto : un passage commencé sur un verso imprimerait cette page sur le papier du feuillet qu’elle partage (voir Erreurs fréquentes).
+
+### 2 · Le papier du livre et ses couvertures
+
+<Excerpt region="folio" />
+
+`folio.paper` est le papier de toutes les pages hors d’un bloc ; les attributs d’un bloc le remplacent champ par champ, et les valeurs par défaut du papier complètent le reste. `cover: 'pages'` fait de la page 1 le plat avant et de la page 12 le plat arrière : le livre reste fermé jusqu’à ce que vous l’ouvriez ; il faut pour cela un nombre pair de pages, que garantit le saut `parity: 'even'` de la quatrième de couverture.
+
+### 3 · Des couvertures à fond perdu
+
+<Excerpt region="covers" />
+
+Chaque couverture est un style de titre dont la maquette contient un aplat de couleur aussi grand que le format. Le style ramène ses marges à zéro le temps de sa section, la seule page de couverture : l’aplat atteint chaque bord, et les pages suivantes gardent leurs marges.
+
+### 4 · La fiche du papier
+
+<Excerpt region="stock-card" />
+
+Chaque feuillet s’ouvre sur un titre de niveau 1 dessiné à partir d’un emplacement : le surtitre tiré des attributs du titre, le nom du papier et un filet fin. Les lignes de caractéristiques sont un style de paragraphe dans le caractère étroit des étiquettes, avec leurs intitulés en gras dans la couleur d’accent.
+
+### 5 · Relire le papier dans la mise en page
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Chaque page mise en page dans un bloc porte les attributs du bloc dans `page.paper`, tels qu’ils sont écrits : `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` les transmet à la visionneuse, qui dessine chaque feuillet avec son papier ; le pen les lit aussi pour la ligne d’état et pour le texte alternatif de chaque page.
+
+## Variantes
+
+### Ajouter un cahier hors-texte sur un couché brillant plus épais
+
+Un bloc placé dans le texte de n’importe quel livre imprime ces pages sur leur propre papier ; les figures appelées à l’intérieur sont placées avant qu’il se ferme.
+
+```diff
++:::paper{type=coatedGloss grammage=170 showThrough=false}
++
++# Plates {kicker="Between pages 64 and 65"}
++
++::resource{id="plate-1"}
++
++:::
+```
+
+### Une brochure piquée avec une couverture en carte
+
+<RecipeLink slug="saddle-stitched-card-cover">La recette du zine</RecipeLink> enveloppe des pages de papier journal dans une couverture en carte avec deux blocs et une piqûre à cheval.

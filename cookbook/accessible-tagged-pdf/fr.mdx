@@ -1,0 +1,62 @@
+---
+title: "PDF balisé accessible (PDF/UA)"
+summary: "Un guide du tri exporté en PDF/UA-1 balisé, avec textes alternatifs, cellules d’en-tête, sa langue et une table liée ; l’aperçu dessine les balises en page 3."
+plain: "Un guide du tri de quatre pages, édité par une mairie. Il montre comment faire un PDF qu’un lecteur d’écran sait suivre, avec des descriptions d’images et des tableaux qu’il peut lire à voix haute."
+description: "Un guide municipal du tri dans Postext, exporté en PDF balisé conforme PDF/UA-1, avec textes alternatifs, cellules d’en-tête, langue, signets et table liée."
+question: "Comment exporter un PDF balisé (PDF/UA) avec textes alternatifs, cellules d’en-tête et langue du document ?"
+aliases: ["PDF/UA", "PDF/UA-1", "PDF accessible", "PDF balisé", "lecteur d’écran", "texte alternatif", "ordre de lecture", "arbre de structure", "cellules d’en-tête de tableau", "langue du document", "veraPDF", "guide du tri", "tagged PDF"]
+pageNotes: { "1": "La couverture : un bandeau bleu marine sur les trois cinquièmes supérieurs, avec le titre « Reciclar en el barrio » en grands caractères blancs sur deux lignes et, à son pied, les cinq conteneurs de rue (jaune, bleu, vert, marron et gris, chacun avec un pictogramme blanc ou foncé) posés sur une bordure de trottoir jaune. Dessous, un chapeau en grands caractères, et le nom de la mairie en petits caractères à chasse fixe au pied de la page.", "2": "Page 2 : « Índice », la table des matières avec deux sections numérotées et leurs sous-sections, points de conduite et numéros de page, au-dessus de trois encadrés teintés : « Cómo usar esta guía », « Esta guía, en otros formatos » et « Datos útiles ». Dans la deuxième colonne, « Presentación », une lettre de cinq paragraphes composée un corps au-dessus du texte courant et signée par l’adjoint à l’environnement.", "3": "Page 3 avec son ordre de lecture dessiné : un bandeau bleu marine portant un chiffre 1 jaune et le titre « Qué va en cada contenedor », puis deux colonnes où chaque bloc balisé se trouve dans un cadre magenta, numéroté de 1 à 14 et nommé par sa balise (H1, P, Figure, H2, Table). La figure montre les cinq conteneurs ; chaque conteneur a un titre et un paragraphe ; le tableau 1.1 donne le conteneur de onze objets, avec un carré coloré à côté du nom de chaque conteneur et un carré vide à côté de la déchetterie. Le paragraphe sur le verre passe dans la deuxième colonne et garde son numéro, 9, dans un cadre en tirets, et le pied de page est marqué « Artifact ».", "4": "Page 4 : un bandeau bleu marine avec le chiffre 2 et « Lo que no va al contenedor », puis la déchetterie avec une liste à puces de ce qu’elle accepte, les jours de collecte dans le tableau 2.1, quatre étapes numérotées pour réserver l’enlèvement d’un meuble, et le colophon." }
+---
+
+## Ce que vous allez composer
+
+*Reciclar en el barrio* est un guide du tri de quatre pages A4, édité par une mairie espagnole inventée, à lire à l’écran ou à imprimer chez soi. La couverture bleu marine montre les cinq conteneurs de rue sur une bordure de trottoir jaune. La page 2 contient la table des matières et trois encadrés à côté d’une lettre de l’adjoint, et les pages 3 et 4 les deux sections, sur deux colonnes en drapeau composées en Atkinson Hyperlegible Next. Le pen exporte un PDF balisé qui passe les contrôles PDF/UA-1 de veraPDF, avec titres, listes, encadrés et tableaux dans l’ordre de lecture, un texte alternatif sur la figure et des cellules d’en-tête dans les deux tableaux. Le fichier déclare son titre et sa langue (`es`), et ses signets comme les lignes de la table des matières renvoient aux pages. Les balises ne s’impriment pas : le pen les dessine donc par-dessus la page 3 de son aperçu, montrée ici, chaque bloc balisé dans un cadre numéroté qui porte le nom de sa balise. Le PDF téléchargé n’a pas cette surcouche.
+
+## Préparation
+
+### 1 · La langue et le titre du document
+
+<Excerpt region="identity" />
+
+postext-pdf écrit la langue des balises à partir de `locale`, ici `/Lang es`, si bien qu’un lecteur d’écran lit le guide avec la prononciation espagnole ; sans elle, le fichier déclare `en-US`. Le `title` et l’`author` du frontmatter de `content.es.md` deviennent le titre et l’auteur du PDF, et le fichier demande aux visionneuses d’afficher ce titre dans la barre de la fenêtre au lieu du nom du fichier. La même `locale` donne aux légendes et aux renvois leurs noms espagnols : “Figura 1.1”, “tabla 1.1”. [La réponse courte](#la-réponse-courte) donne à la figure et aux tableaux leur texte accessible : `altText` devient la description alternative de la figure (`/Alt`) et le `/Summary` de chaque tableau, et la première ligne et la première colonne des deux tableaux sont balisées comme cellules d’en-tête.
+
+### 2 · Un seul plan, et un bandeau de couverture qui ne porte que le titre
+
+<Excerpt region="headings" />
+
+L’arbre des balises prend ses éléments H1 et H2 dans les titres Markdown, et les signets du PDF viennent de la même liste : la couverture, la table des matières, la lettre et les deux sections sont de niveau 1, les intertitres de niveau 2. postext-pdf balise chaque élément de texte de la maquette d’un titre comme partie de ce titre ; le bandeau de couverture ne contient donc que le titre, et le chapeau et le nom de la mairie sont composés dessous comme paragraphes. Les bandeaux bleu marine, la bordure de trottoir et la rangée de conteneurs sont des éléments de maquette, et le PDF marque les boîtes et les images de maquette comme artefacts : ils n’ont pas besoin de texte alternatif et un lecteur d’écran les saute.
+
+### 3 · Une table des matières qui renvoie aux pages
+
+<Excerpt region="contents" />
+
+`:::toc` liste les H1 et les H2 avec les numéros de page qu’ils impriment, et dans le PDF chacune de ses onze lignes renvoie au haut de sa page. Les renvois `:ref` “figura 1.1” et “tabla 1.1” en page 3 et “tabla 2.1” en page 4 pointent vers la figure et les tableaux. Les numéros de page sont composés dans le caractère du texte, Atkinson Hyperlegible Next Bold, et les points de conduite prennent le caractère des numéros, pas le Public Sans des entrées.
+
+### 4 · L’ordre de lecture, dessiné sur la page
+
+<Excerpt region="reading-order" />
+
+Un lecteur d’écran suit les balises. `renderToPdf` balise d’abord le titre du bandeau, puis chaque colonne de haut en bas, et il lit un flottant juste après le paragraphe qui le cite, où que la page le peigne. Cette fonction rejoue cet ordre pour numéroter les cadres de la page 3, et l’arbre de structure du PDF liste les mêmes quatorze éléments dans le même ordre. La figure et les deux tableaux restent dans le flux, avec `placement: { position: 'here' }` et une ligne `::resource`, si bien qu’un lecteur voyant trouve lui aussi chacun d’eux sous la phrase qui le cite. Le paragraphe sur le verre qui passe dans la deuxième colonne garde un seul numéro, 9, parce que le PDF balise ses deux parties comme un seul paragraphe.
+
+### 5 · Des couleurs choisies au rapport de contraste
+
+<Excerpt region="palette" />
+
+PDF/UA-1 ne contrôle pas la couleur, mais les WCAG 2.2 demandent 4,5:1 entre un texte et son fond. L’encre mesure 15,6:1 sur le blanc, le texte blanc 12,5:1 sur les bandeaux bleu marine et le gris du pied de page 7,0:1. Le jaune ne donne que 1,8:1 sur le blanc : il n’apparaît donc que sur le bleu marine (6,9:1) et comme aplat. Les pictogrammes suivent le seuil de 3:1 des WCAG pour les graphismes : blancs là où le blanc l’atteint contre le conteneur, couleur d’encre sur le jaune. `cell()` écrit le nom de chaque conteneur à côté de sa pastille de couleur et donne à la déchetterie un carré vide, si bien qu’aucune consigne ne dépend de la capacité à distinguer les couleurs.
+
+## Variantes
+
+### Laissez flotter la figure
+
+Retirez le placement et la figure 1.1 flotte au pied de la première colonne de la page 3. Le PDF la lit toujours après le paragraphe qui la cite : la surcouche garde son numéro, 3, et l’ordre des balises ne change pas.
+
+```diff
+-  { id: 'contenedores', typeId: 'figure', kind: 'svg', placement: { position: 'here' },
++  { id: 'contenedores', typeId: 'figure', kind: 'svg',
+```
+
+## Erreurs fréquentes
+
+Le pen ne peut pas valider son propre PDF, car veraPDF tourne hors du navigateur. Téléchargez le fichier et lancez `verapdf -f ua1 accessible-tagged-pdf.pdf` ; l’exemplaire capturé pour cette page passe. Le vérificateur ne peut pas savoir si un texte alternatif décrit bien son image : écoutez donc aussi le guide avec un lecteur d’écran.
+
+Le colophon imprime l’adresse web en entier parce que le guide a été écrit pour postext 1.4.1, où un lien Markdown imprimait ses mots sans ajouter de lien au PDF. Depuis postext 1.10, un lien `[text](url)` est actif dans le PDF, balisé comme élément `Link` dont le texte est celui des mots liés.

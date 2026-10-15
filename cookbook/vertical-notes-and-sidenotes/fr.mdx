@@ -1,0 +1,61 @@
+---
+title: "Notes à côté d’un texte japonais vertical, par double page"
+summary: "Le premier chapitre de Takekurabe d’Ichiyō avec sept notes en 傍注 : （1） à droite de la ligne, les notes des deux pages en marge extérieure de la page de gauche."
+plain: "Un récit japonais classique avec de courtes explications sur ses noms de lieux anciens. Les petits numéros sont à côté du texte, et les explications des deux pages ouvertes sont réunies au bord extérieur de la page de gauche."
+description: "Takekurabe d’Ichiyō dans Postext, notes par double page : appels （1） à droite de la ligne, notes en marge extérieure à gauche, points sésame, et aussi 後注."
+question: "Comment composer les notes d’un livre japonais vertical à côté du texte, sur la double page ?"
+aliases: ["傍注", "bōchū", "notes marginales", "notes latérales", "後注", "kōchū", "notes de fin", "notes japonaises", "注", "（1）", "割注", "appels de note", "notes par double page", "notes en marge extérieure", "傍点", "bōten", "sésame", "たけくらべ", "Takekurabe", "Child's Play", "Higuchi Ichiyō", "樋口一葉", "Yoshiwara"]
+pageNotes: { "1": "La page de titre, seule à gauche : たけくらべ en Mincho gras au milieu de la page avec un court filet prune à côté, 樋口一葉 plus bas, et le colophon en pied.", "2": "Le premier chapitre s’ouvre sur une page de droite : 一 se tient sept caractères plus bas dans une bande de trois lignes, et le texte porte les petits appels （1） à （6） à droite de la ligne, les quatre premiers dans la longue première phrase, après 見返り柳, お齒ぐろ溝, 三階 et 大音寺前.", "3": "La page de gauche : huit lignes de texte avec l’appel （7）, puis, en marge extérieure, un court filet prune et les sept notes de la double page en plus petits caractères, chacune ouverte par son numéro et une espace d’un cadratin.", "4": "La dernière page du chapitre, avec ぎつちよんちよん marqué de points sésame à droite des caractères." }
+---
+
+## Ce que vous allez composer
+
+Quatre pages d’une édition 四六判 de *Takekurabe* de Higuchi Ichiyō (たけくらべ, 1895–96), son premier chapitre, avec sept notes sur l’ancien quartier du Yoshiwara qu’il décrit. Les notes sont des 傍注 (bōchū), les notes latérales des classiques japonais en édition de poche : un petit （1） se tient à droite de la ligne après le mot qu’il explique, et les notes appelées sur les deux pages d’une double page se composent en marge extérieure de la page de gauche, sous un filet d’un tiers de la longueur de ligne, dans un corps plus petit d’un cinquième. Le lecteur trouve chaque note sans tourner la page. Le texte, 42 caractères sur 17 lignes en Shippori Mincho à 9,25 pt, garde l’unique long paragraphe d’Ichiyō et ses points sésame sur ぎつちよんちよん. Les notes au pied de la colonne d’un roman européen sont dans <RecipeLink slug="novel-footnotes-column-foot">Nº 071</RecipeLink>.
+
+## Préparation
+
+### 1 · Réunir les notes de la double page en marge extérieure de la page de gauche
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `footnotes.placement: 'spread'` compose les notes appelées pages 2 et 3 à la fin du texte de la page 3, qui dans un livre relié à droite est sa marge extérieure, et `numbering: 'spread'` fait repartir les notes de chaque double page à （1） ([Notes de bas de page](/fr/docs/configuration-notes-references#notes-de-bas-de-page)). Une note appelée sur la page de droite attend la page de gauche ; si les notes laissent à la page de gauche moins d’une ligne de texte, le reste demeure au pied de la page de droite, comme le permet JLReq. Un document étiqueté `ja` compose déjà les appels d’un livre vertical sous la forme `（{n}）` à droite de la ligne, à 0,7 em, chiffres debout : les deux lignes écrites en toutes lettres le montrent. `numberGap: 'em'` place un cadratin du corps des notes après le numéro, et `hangingIndent: em(2)` aligne les lignes de suite au-delà.
+
+### 2 · Écrire les appels là où le japonais les place
+
+Le Markdown écrit `見返り柳[^1]` après le mot que la note explique, et les notes sous forme de paragraphes `[^1]: …` à la fin du chapitre. L’appel suit le mot que la note explique ; un appel qui termine une phrase se place avant son 。 (`…先生[^1]。`), et le moteur ne laisse jamais un 。 ni un appel commencer une ligne. Les sept notes ont été écrites pour cette recette : ce qu’étaient le 見返り柳 et le お齒ぐろ溝, où se trouvait 大音寺前, ce qu’on vendait au 酉の市, en japonais moderne simple.
+
+### 3 · Garder les points sésame de la source
+
+`cjk.emphasisMark` décide de ce qu’impriment `*…*` et `:dots[…]` dans ce livre : des points sésame, à droite d’une ligne verticale. Un document `ja` les emploie déjà ; écrits en toutes lettres, ils activent les kenten dans la liste des fonctions. Le texte d’Aozora marque ぎつちよんちよん de 傍点, et `aozora.py` l’a écrit `:dots[ぎつちよんちよん]{style=sesame}` ; les livres chinois placent au contraire les points sous la ligne ([Signes, ruby et warichu](/fr/docs/configuration-east-asian#signes-ruby-et-warichu)).
+
+### 4 · Ouvrir sur une double page
+
+<Excerpt region="opener" />
+
+La première phrase du chapitre appelle quatre notes dans ses trois premières lignes. Composées sous un titre en page 1, elles laisseraient la place de trois lignes de texte : la page de gauche porte ses propres notes et celles de personne d’autre. Une page de titre seule en page 1 repousse le chapitre en page 2, une page de droite, si bien que la première double page contient le texte et toutes ses notes. La page de titre est un titre de niveau 1 dont la maquette remplit la page, ancrée à la coupe pour que le titre se tienne sur l’axe de la page.
+
+### 5 · Placer les hashira et les folios le long de la marge extérieure
+
+<Excerpt region="furniture" />
+
+Le titre descend la marge extérieure des pages de gauche, au-delà des notes, et les folios en kanji se placent au pied de chaque page sauf la page de titre.
+
+## Variantes
+
+### Réunir les notes à la fin du chapitre
+
+Sans `placement`, un livre `ja` vertical compose ses notes en 後注 (kōchū) : après le texte du chapitre, sous le même filet, numérotées sur tout le chapitre. Ici, elles remplissent la moitié gauche de la page 4.
+
+```diff
+-  placement: 'spread', // 傍注; 'chapterEnd' sets 後注 after the chapter instead
+-  numbering: 'spread',
++  placement: 'chapterEnd', // 後注, the default for a vertical ja book
++  numbering: 'chapter',
+```
+
+### Placer l’appel à côté du mot
+
+`markerPosition: 'side'` compose un appel plus petit dans l’espace à côté de la ligne, comme un ruby interlinéaire, si bien qu’il ne prend aucune place dans la ligne.
+
+```diff
+-  markerPosition: 'right', markerTemplate: '（{n}）', // written out: 'ja' sets them so
++  markerPosition: 'side', markerTemplate: '{n}',
+```

@@ -1,0 +1,68 @@
+---
+title: "Titres de contes en ordinaux arabes en toutes lettres"
+summary: "Un modèle de niveau écrit chaque nuit avec الليلة et un ordinal féminin, الليلة الأولى, الثانية, الثالثة : le Markdown ne porte jamais de numéro."
+plain: "Le début des Mille et Une Nuits, où chaque nuit a pour titre son numéro écrit en toutes lettres en arabe, « la première nuit », « la deuxième nuit », au féminin qui s’accorde avec le mot arabe pour nuit."
+description: "Les premières nuits d’Alf layla wa-layla dans Postext : modèle de numérotation {2:ordinal-feminine}, titres de nuit en Ruqʿa, ouvertures et titres courants."
+question: "Comment numéroter des chapitres en ordinaux arabes en toutes lettres, comme الليلة الأولى ?"
+aliases: ["Mille et Une Nuits", "Les Mille et Une Nuits", "Alf layla wa-layla", "ألف ليلة وليلة", "Shéhérazade", "Shahrazad", "ordinaux en toutes lettres", "ordinaux arabes", "ordinal féminin", "nombres en toutes lettres", "titres de nuit", "الليلة الأولى", "Le Marchand et le Génie", "Hindawi"]
+pageNotes: { "2": "L’ouverture du « Marchand et le Génie » : un bandeau pâle à filets dorés avec le titre du conte en Ruqʿa vert, un petit surtitre gris au-dessus et une ligne en caractères latins en dessous, puis les mots فلما كانت en petit coufique au-dessus de الليلة الأولى en Ruqʿa vert et d’un court filet doré, et le texte de la première nuit." }
+---
+
+## Ce que vous allez composer
+
+Dix pages du début des *Mille et Une Nuits* : un faux-titre, puis le Marchand et le Génie, le premier conte que raconte Shéhérazade, qui s’étend sur trois nuits. Chaque nuit s’ouvre sur la formule de Hindawi فلما كانت en petit coufique au-dessus de son numéro en Ruqʿa vert, الليلة الأولى, الليلة الثانية, الليلة الثالثة, écrit en toutes lettres comme l’impriment les livres. Aucun de ces numéros ne figure dans le Markdown : le niveau de titre compte les nuits et écrit chaque compte sous forme d’ordinal féminin, qui s’accorde avec ليلة. Le conte s’ouvre sous un bandeau à filets dorés, les histoires des trois vieillards ont leurs propres petits titres, et les titres courants portent le livre et le conte. Le texte est celui de l’édition 2022 de la Fondation Hindawi, sous licence CC BY 4.0.
+
+## Préparation
+
+### 1 · Des nuits comptées en toutes lettres
+
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Une nuit est un titre de niveau 2, `## الليلة`, et le `numberingTemplate` du niveau est `'الليلة {2:ordinal-feminine}'` : le modificateur `-feminine` écrit الأولى, الثانية, الحادية عشرة, الحادية بعد الألف ([Ordinaux et cardinaux en toutes lettres](/fr/docs/arabic-layout#ordinaux-et-cardinaux-en-toutes-lettres), [Nombres en toutes lettres](/fr/docs/configuration-text#numéros-en-toutes-lettres)). Avec `numberPosition: 'replace'`, le numéro constitue tout le titre : ce que le Markdown écrit après `##` est abandonné, et le titre, les signets du PDF et le texte alternatif se lisent الليلة الثانية. La maquette imprime ce titre, `{titleText}`, en grand, et la formule de Hindawi فلما كانت, un texte fixe, en petit au-dessus. Les titres de conte utilisent un style avec `numbered: false` : un niveau 1 numéroté remettrait le compte des nuits à zéro à chaque conte, alors qu’un niveau non numéroté laisse tranquilles les compteurs plus profonds, si bien que les nuits se suivent tout au long du livre.
+
+<PageShot page={5} crop="0,0.15,1,0.35" caption="Page 5 : la deuxième nuit, son numéro écrit en toutes lettres par le gabarit et imprimé comme titre entier." />
+
+### 2 · Un bandeau de tête pour chaque conte
+
+<Excerpt region="opener" />
+
+Le titre de niveau 1 est un bandeau teinté entre deux filets dorés, avec par-dessus le titre du conte en Ruqʿa, un surtitre et une ligne en caractères latins tirés d’attributs du titre, `{kicker="…" latin="…"}`. La ligne latine est la seule partie de l’ouverture qui change avec l’édition.
+
+### 3 · Des titres courants qui viennent avec le conte
+
+<Excerpt region="heads" />
+
+Les titres courants appartiennent au style de titre `tale` : chaque conte apporte donc les siens ; le faux-titre n’en a aucun. Le verso porte le titre du livre et le recto `{chapterTitle}`, le conte. Dans un livre relié à droite, le verso est la page de droite : son folio va donc en haut à droite ([Ordre des pages et reliure à droite](/fr/docs/arabic-layout#ordre-des-pages-et-reliure-à-droite)).
+
+### 4 · Un faux-titre en Ruqʿa
+
+<Excerpt region="title" />
+
+Le faux-titre est un style de titre avec `span: 'page'`, `numbered: false` et un en-tête et un pied de page vides : il ne compte pas et ne porte pas de titre courant.
+
+## Variantes
+
+### Commencer à la mille et unième nuit
+
+`{startAt=1001}` sur un titre de nuit règle son compteur, et le modèle écrit الليلة الحادية بعد الألف ([Attributs de titre](/fr/docs/document-format#attributs-de-titre)).
+
+```diff
+-## الليلة
++## الليلة {startAt=1001}
+```
+
+### Écrire les centaines à la manière de Boulaq
+
+`-classical` écrit مائة au lieu de مئة : la deux-centième nuit se lit donc الليلة المائتان.
+
+```diff
+-  level: 2, numberingTemplate: 'الليلة {2:ordinal-feminine}', numberPosition: 'replace',
++  level: 2, numberingTemplate: 'الليلة {2:ordinal-feminine-classical}', numberPosition: 'replace',
+```
+
+### Numéroter les chapitres au masculin
+
+Sans modificateur, l’ordinal est masculin, pour un nom comme الفصل : الفصل الأول، الفصل الثاني.
+
+```diff
+-  level: 2, numberingTemplate: 'الليلة {2:ordinal-feminine}', numberPosition: 'replace',
++  level: 2, numberingTemplate: 'الفصل {2:ordinal}', numberPosition: 'replace',
+```

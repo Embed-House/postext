@@ -1,0 +1,71 @@
+---
+title: "Un article chinois cité selon GB/T 7714"
+summary: "Un article de revue chinoise en deux colonnes : les citations [@key] s’impriment en exposant [1] et [2–4], les références portent [M], [J], [D] et [EB/OL]."
+plain: "Un court article de recherche d’une revue chinoise. L’auteur écrit un code pour chaque source ; Postext numérote les sources dans l’ordre où elles sont citées et imprime la liste des références comme l’exigent les revues chinoises."
+description: "Un article de revue chinoise avec Postext, cité selon GB/T 7714—2015 : appels numérotés en exposant, intervalles, codes de type, 等 et et al. selon la langue."
+question: "Comment citer selon GB/T 7714 dans un article chinois, avec des numéros en exposant et des codes de type ?"
+aliases: ["GB/T 7714", "GB/T 7714—2015", "参考文献著录规则", "顺序编码制", "références chinoises", "bibliographie chinoise", "文献类型标识", "[M] [J] [D]", "et al. 等", "article de revue chinoise", "学报", "appels en exposant", "CSL-YAML", "citeproc", "Chinese references"]
+pageNotes: { "1": "Page 1 d’un article dans une revue fictive, 示例出版研究. Un bandeau indigo en haut porte le nom de la revue en blanc, et le volume et le numéro à droite. Dessous, un titre centré sur deux lignes en Hei gras, les noms des deux auteurs, leurs affiliations en petits caractères gris, et le résumé sur les deux colonnes avec les étiquettes indigo 摘　要：, 关键词：, 文献标志码： et 文章编号：. Plus bas, deux colonnes de texte chinois sur une grille de caractères : le 引言 non numéroté, avec de petits appels en exposant [1], [2–4], [5,6], [7], [4] et [8], puis 1 实验方法 avec les sections 1.1 à 1.3.", "2": "Page 2 : le titre courant 42 示例出版研究 2026年第3期 au-dessus d’un filet fin ; les sections 2 结果 et 3 讨论 dans la colonne de gauche ; 4 结论 ouvre la colonne de droite, puis le titre 参考文献 et la liste numérotée [1] à [8] dans un corps plus petit : trois entrées anglaises en capitales avec « et al. » et les codes [M], [J/OL], des entrées chinoises avec 等 et [J], [M], [D], [EB/OL], [C]. Au pied de la liste, une note grise en caractères latins indique quelles œuvres sont fictives." }
+---
+
+## Ce que vous allez composer
+
+Deux pages d’un article de recherche dans une revue inventée d’études sur l’édition, 示例出版研究 (« Exemple de recherche éditoriale »), composées comme une revue universitaire chinoise compose ses articles. La page est au format 16开, 184 × 260 mm, avec deux colonnes de 23 caractères en 小五 sur une grille de 15 pt. Un bloc de titre court sur toute la page : le nom de la revue sur un bandeau indigo, le titre en Hei gras, les auteurs, leurs affiliations et un résumé avec ses mots-clés. Les citations suivent GB/T 7714—2015, la norme nationale des références, dans son système numérique (顺序编码制) : chaque œuvre prend un numéro dans l’ordre de sa première citation, le numéro s’imprime en exposant entre crochets, et trois numéros consécutifs ou plus deviennent un intervalle. La liste des références donne à chaque entrée son code de type de document et écrit 等 après trois auteurs d’une œuvre chinoise et « et al. » après ceux d’une œuvre occidentale. <RecipeLink slug="apa-thesis-with-bibtex">Un chapitre de thèse cité en APA 7</RecipeLink> emploie le même balisage de citation dans un style auteur-date.
+
+## Préparation
+
+### 1 · Le style, et sa présentation pour les œuvres occidentales
+
+Le code est [la réponse courte](#la-réponse-courte) plus haut. Le moteur de citations s’enregistre une fois, avant la première construction, et `postext-citeproc` fournit les trois styles GB/T 7714 : numérique, auteur-date et notes ([Citations](/fr/docs/configuration-notes-references#citations)). Dans le texte, une citation est une clé entre crochets. `[@tinker1963]` imprime un [1] en exposant, et `[@rayner2016; @dyson2001; @lin2023]` imprime [2–4]. Deux numéros qui se suivent restent une liste, [5,6]. Une œuvre citée de nouveau garde son premier numéro : [4] dans le troisième paragraphe, puis [1] et [2] plus loin dans l’article.
+
+La norme demande « et al. » après les trois premiers auteurs d’une œuvre occidentale et 等 après ceux d’une œuvre chinoise. Le fichier CSL fourni contient deux présentations pour cela, dont l’une pour les œuvres en anglais, et chaque entrée prend sa présentation d’après son propre champ `language` : Rayner et quatre coauteurs deviennent « RAYNER K, SCHOTTER E R, MASSON M E J, et al. », et 林岚 et trois coauteurs deviennent « 林岚, 周明远, 陈思齐, 等 ». `locale: 'zh-CN'` écrit en chinois les autres mots de la liste.
+
+### 2 · Les références dans un bloc CSL-YAML
+
+Les œuvres sont listées dans un bloc `:::references{format=csl-yaml}` à la fin du Markdown, dans le format que Zotero exporte en CSL YAML ([Références](/fr/docs/document-format#références)). Le type CSL décide du code : `book` imprime [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] après son `//` et les actes, et `webpage` [EB/OL] avec la date de consultation entre crochets. Un article de revue avec un DOI devient [J/OL] et garde son DOI, comme le demande la norme. Les noms chinois vont dans `literal`, pour que le style ne les sépare pas en nom de famille et prénom. `:::bibliography{title=""}` place la liste sous le titre non numéroté 参考文献, et `labelWidth` aligne les lignes suivantes sous le texte de l’entrée, et non au-delà.
+
+<PageShot page={2} crop="0.5,0.08,0.45,0.5" caption="Page 2 : entrées occidentales en capitales avec et al., entrées chinoises avec 等, chacune avec son code de type." />
+
+### 3 · Le bloc de titre sur un bandeau
+
+<Excerpt region="masthead" />
+
+Le bloc de titre est la maquette du H1, un style de titre qui s’étend sur les deux colonnes. Le bandeau est une boîte ancrée à la coupe, et le nom de la revue s’y pose en blanc. Le titre, les auteurs et les affiliations viennent du titre et de ses attributs, chacun placé sous le précédent (`#title`, `below`) : un titre sur trois lignes pousse donc le reste vers le bas ([Étendue et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)).
+
+### 4 · Le résumé et ses étiquettes
+
+<Excerpt region="abstract" />
+
+Le résumé est un encadré sur toute la largeur de la page, en retrait de deux caractères de chaque côté. Ses étiquettes sont des pastilles : `:chip[摘　要：]{style="label"}` compose le mot en Hei gras, dans l’indigo de la revue, sans boîte ([Styles de pastille](/fr/docs/configuration-styles#styles-de-pastille)). Les revues chinoises composent souvent le résumé en 楷体 ; celle-ci reste en Song, pour la raison donnée dans « Erreurs fréquentes ».
+
+<Excerpt region="palette" />
+
+## Variantes
+
+### Des crochets à la place des exposants
+
+Certaines revues impriment les numéros d’appel sur la ligne, au corps du texte. `marker` change la façon dont le numéro est marqué et ne touche pas au style : `'brackets'` donne [1] sur la ligne, `'corner'` donne 〔1〕.
+
+```diff
+   locale: 'zh-CN', // 等, 卷, 版 and the other terms of the list
++  marker: 'brackets',
+```
+
+### Les œuvres chinoises d’abord
+
+Les bibliographies mixtes sont parfois triées avec les œuvres chinoises avant les occidentales. Dans un style numérique, les numéros ne se suivent alors plus dans l’ordre de la liste : cela convient mieux au style auteur-date.
+
+```diff
+-  style: 'china-national-standard-gb-t-7714-2015-numeric',
++  style: 'china-national-standard-gb-t-7714-2015-author-date',
+   locale: 'zh-CN', // 等, 卷, 版 and the other terms of the list
+-  bibliography: { fontSize: em(7.5 / BODY), lineHeight: pt(12), entrySpacing: pt(1.5),
++  bibliography: { groupByLanguage: true, fontSize: em(7.5 / BODY), lineHeight: pt(12),
+```
+
+## Erreurs fréquentes
+
+- Une citation narrative, `@zhou2019` sans crochets, nomme les auteurs et ajoute le numéro, mais une clé se prolonge à travers les caractères chinois : `@zhou2019认为` se lit comme une clé qui n’existe pas. Écrivez le nom dans le texte et la citation après, `周明远[@zhou2019]认为`, comme le font de toute façon les articles chinois.
+- Le style numérique fourni n’imprime pas de localisateurs : `[@zhou2019, 页 45]` donne [5] sans la page. GB/T 7714 place la page après le crochet dans l’exposant, [5]45 ; tant que le style ne le fait pas, écrivez la page dans la phrase.
+- LXGW WenKai TC, le seul Kai de Fontsource, est un caractère taïwanais : il dessine ，et 。 au milieu de la cellule, et sous `zh-Hans` le moteur retire la moitié droite de la cellule, ce qui entame le glyphe. Le résumé est composé en Noto Serif SC, et le Kai est réservé aux noms des auteurs, qui n’ont pas de ponctuation.
+- Sur une grille de caractères, l’équilibrage des colonnes est désactivé par défaut : chaque ligne reste sur la grille, et une colonne qui ne peut pas recevoir le titre suivant se termine plus court. Sans lui, la seconde colonne de la page 1 se terminerait trois lignes plus court (le titre 2 结果 demande ses deux lignes et deux lignes de texte dessous, il ouvre donc la page 2), et la dernière page remplirait sa première colonne et laisserait la seconde à moitié vide. La recette définit `headings.balancing.enabled: true` : une colonne courte prend des lignes de grille entières au-dessus de ses titres, jamais en écartant les caractères de leurs cellules, et les deux colonnes de la dernière page se terminent au même niveau.

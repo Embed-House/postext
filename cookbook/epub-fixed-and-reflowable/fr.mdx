@@ -1,0 +1,61 @@
+---
+title: "Un livre, deux EPUB 3 : fixe et recomposable"
+summary: "renderToEpub (postext-epub) écrit les chapitres mis en page par buildBundle en EPUB fixe et en EPUB recomposable ; readEpub liste le contenu de chacun."
+plain: "Un petit recueil de fables, mis en page une fois pour l’impression et enregistré en deux livres numériques : l’un garde chaque page imprimée, l’autre laisse un téléphone ou une liseuse recomposer le texte à sa taille."
+description: "Un livre de trois chapitres mis en page avec buildBundle et écrit par postext-epub en EPUB 3 à mise en page fixe et recomposable, chacun relu avec readEpub."
+question: "Comment exporter mon livre en EPUB, avec des pages fixes ou un texte recomposable ?"
+aliases: ["EPUB", "EPUB 3", "livre numérique", "ebook", "e-book", "mise en page fixe", "EPUB fixe", "recomposable", "EPUB recomposable", "postext-epub", "renderToEpub", "readEpub", "Kindle", "Apple Books"]
+pageNotes: { "1": "La page de titre : l’auteur en petites capitales bleues, le titre « Fables of Aesop » dans un caractère de titrage à empattements, un filet court et un sous-titre en italique.", "3": "L’ouverture du livre I, « The Lion’s Court », avec la fable « The Lion and the Mouse » dessous." }
+---
+
+## Ce que vous allez composer
+
+*Fables of Aesop*, dix-huit fables en trois livres sur une page de 120 × 190 mm, avec une page de titre, une page de crédits à son verso et une ouverture en retrait pour chaque livre. L’édition espagnole compose *¡Adiós, Cordera!* de Clarín en trois chapitres sur la même page. Le livre est mis en page une fois, chapitre par chapitre, et cette mise en page devient deux fichiers EPUB 3. La mise en page fixe garde chaque page imprimée : les ouvertures, les titres courants et les fins de ligne, dans le Caslon embarqué. Le fichier recomposable garde le texte et sa structure, et le système de lecture le recompose sur un téléphone ou un écran à encre électronique. Les deux se téléchargent depuis la page, et les deux passent EPUBCheck du W3C.
+
+## Préparation
+
+### 1 · Mettre le livre en page par chapitres
+
+<Excerpt region="openers" />
+
+`buildBundle` met en page chaque chapitre comme un document à part, en reportant numéros de page et parité de l’un à l’autre : `docs` est donc le tableau que `renderToPdf` imprimerait. Le générateur d’EPUB lit le même tableau : chaque chapitre devient une entrée de navigation, et le fichier recomposable écrit un document XHTML par chapitre. La page de titre et sa page de crédits forment le premier chapitre, dont le frontmatter contient le titre, le sous-titre et l’auteur du livre.
+
+### 2 · Fournir les fichiers de police au générateur
+
+<Excerpt region="embed" />
+
+Les caractères chargés par le navigateur ne sont pas des fichiers que le générateur peut lire : le pen récupère donc à nouveau les mêmes fichiers woff2 de Fontsource, que le navigateur a en cache. Chacun devient un fichier de police dans l’EPUB et une règle `@font-face`. Sans eux, la mise en page fixe placerait le texte composé en Caslon dans le caractère du lecteur, et les lignes ne tiendraient plus dans leur justification.
+
+### 3 · Écrire les deux versions
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `layout: 'fixed'` écrit un document XHTML par page imprimée au format rogné, avec un vrai texte sélectionnable ; `layout: 'reflowable'` reconstruit les paragraphes à partir des lignes mises en page, supprime les traits d’union ajoutés par les coupures de ligne et dérive une feuille de style de la configuration. Une date `modified` fixe fait produire les mêmes octets à chaque exécution. Les métadonnées viennent du frontmatter du premier chapitre : le titre et l’auteur du fichier sont ceux imprimés sur la page de titre.
+
+### 4 · Relire chaque fichier
+
+<Excerpt region="shelf" />
+
+`readEpub` ouvre le fichier comme le fait un système de lecture : la spine dans l’ordre de lecture, la table des matières, la liste des pages et la mise en page. Le fichier fixe a une entrée de spine par page ; le recomposable en a quatre, une par chapitre. Les deux portent une liste des folios imprimés : un lecteur peut suivre une citation jusqu’à la page 9 dans l’un comme dans l’autre. Le lien `<a download>` donne un nom de fichier aux octets ; rien ne passe par un serveur.
+
+## Variantes
+
+### Donner une image de couverture à la mise en page fixe
+
+Peignez la page de titre sur un canvas et passez-la comme couverture ; `showsFirstPage` indique au générateur de ne pas l’ajouter comme page à part.
+
+```diff
++const canvas = document.createElement('canvas');
++renderPageToCanvas(docs[0].pages[0], docs[0], canvas, { scale: 2 });
++const png = await new Promise((done) => canvas.toBlob(done, 'image/png'));
++const cover = { bytes: new Uint8Array(await png.arrayBuffer()), mediaType: 'image/png',
++  showsFirstPage: true };
+-const fixed = await renderToEpub(docs, { ...book, layout: 'fixed' });
++const fixed = await renderToEpub(docs, { ...book, layout: 'fixed', cover });
+```
+
+### Imprimer les mêmes chapitres en PDF
+
+`renderToPdf(docs, …)` de `postext-pdf` prend le même tableau : le PDF, l’EPUB et l’écran viennent d’une seule mise en page. <RecipeLink slug="catalan-pocket-novella">Le court roman catalan</RecipeLink> montre le côté PDF.
+
+## Erreurs fréquentes
+
+Le fichier recomposable garde le texte d’un titre mais pas sa maquette : le surtitre de chaque ouverture (*Book I*) est un élément de maquette, il ne figure donc pas dans le texte. Mettez les mots que le lecteur doit voir dans le titre lui-même ou dans le texte.

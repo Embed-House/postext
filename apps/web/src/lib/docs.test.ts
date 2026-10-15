@@ -5,7 +5,7 @@ import { extractToc, getAllDocs, getDocSource } from "./docs";
 import { docPart } from "./docParts";
 import { fragmentId, oldAnchorUrl, resolveOldAnchor } from "./oldAnchors";
 
-const LOCALES = ["en", "es", "ca", "zh", "ja", "ar", "pt"] as const;
+const LOCALES = ["en", "es", "ca", "zh", "ja", "ar", "pt", "fr"] as const;
 
 /** The pages of the Configuration reference after its entry page (#655). */
 const CONFIGURATION_PAGES = [
@@ -43,7 +43,7 @@ describe("docs table of contents", () => {
       "webmcp",
     ]);
     for (const doc of docs) {
-      expect(Object.keys(doc.locales).sort(), doc.slug).toEqual(["ar", "ca", "en", "es", "ja", "pt", "zh"]);
+      expect(Object.keys(doc.locales).sort(), doc.slug).toEqual(["ar", "ca", "en", "es", "fr", "ja", "pt", "zh"]);
       expect(doc.locales.en!.order, doc.slug).toBe(doc.locales.es!.order);
       expect(doc.locales.en!.order, doc.slug).toBe(doc.locales.zh!.order);
       expect(doc.locales.zh!.lang, doc.slug).toBe("zh");
@@ -55,6 +55,8 @@ describe("docs table of contents", () => {
       expect(doc.locales.ja!.lang, doc.slug).toBe("ja");
       expect(doc.locales.en!.order, doc.slug).toBe(doc.locales.pt!.order);
       expect(doc.locales.pt!.lang, doc.slug).toBe("pt");
+      expect(doc.locales.en!.order, doc.slug).toBe(doc.locales.fr!.order);
+      expect(doc.locales.fr!.lang, doc.slug).toBe("fr");
     }
   });
 
@@ -119,7 +121,7 @@ describe("docs table of contents", () => {
   });
 
   it.each(["chinese-layout", "arabic-layout", "japanese-layout", "comics"])("gives every heading of the %s page its own title", (slug) => {
-    for (const locale of ["en", "es", "ca", "zh", "ja", "ar", "pt"] as const) {
+    for (const locale of LOCALES) {
       const texts = extractToc(getDocSource(slug, locale)!.source).map((t) => t.text);
       expect(texts.filter((t, i) => texts.indexOf(t) !== i), locale).toEqual([]);
     }
@@ -130,7 +132,7 @@ describe("docs table of contents", () => {
     // "…", and the docs pipeline drops JavaScript expressions (blockJS), so
     // <code>{'*…*'}</code> prints nothing. A character reference stays
     // literal in both the page and its Markdown rendition: <code>&#42;…&#42;</code>.
-    for (const locale of ["en", "es", "ca", "zh", "ja", "ar", "pt"] as const) {
+    for (const locale of LOCALES) {
       const { source } = getDocSource(slug, locale)!;
       for (const m of source.matchAll(/<code>([^<]*)<\/code>/g)) {
         expect(m[1], m[0]).not.toMatch(/[*~^{]|(?<![\w])_|_(?![\w])/);

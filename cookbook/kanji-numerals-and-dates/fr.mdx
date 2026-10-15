@@ -1,0 +1,64 @@
+---
+title: "Chiffres kanji, compteurs et dates en texte vertical"
+summary: "Un bulletin vertical qui écrit chaque nombre à la japonaise : 百二十 compté, 二〇二六 positionnel, daiji 壱萬弐阡, compteurs （一） イ あ et 8月22日 debout."
+plain: "Le bulletin japonais d’une association de quartier, imprimé en lignes de haut en bas. Il montre les différentes façons dont le japonais écrit les nombres, et comment les dates restent lisibles en texte vertical."
+description: "Un bulletin japonais dans Postext : chiffres kanji comptés et positionnels, montants en daiji, compteurs de liste kanji, iroha et hiragana, dates tate-chū-yoko."
+question: "Comment écrire les nombres en japonais vertical : 二千二十六 ou 二〇二六, 壱萬 sur un reçu, 8月22日 debout ?"
+aliases: ["chiffres kanji", "漢数字", "daiji", "大字", "壱弐参", "iroha", "イロハ", "compteur hiragana", "tate-chu-yoko", "縦中横", "dates japonaises", "bulletin de quartier", "町内会報", "formatNumeral"]
+pageNotes: { "1": "Le titre du bulletin : une bande verte le long du bord droit avec 東若葉台だより dans un caractère arrondi, 第百二十号 et la date 二〇二六年（令和八年）八月一日発行 ; puis la première section, 一、夏祭りのお知らせ, avec 8月22日 et 23日 debout et les éléments （一） et イ.", "2": "La suite du programme jusqu’à あ、い、う, le paragraphe avec !? dans une seule case, les sections 二 et 三.", "3": "Le reçu sur fond vert teinté avec 壱萬弐阡 en rouge, puis 四、町会の歩み : cinq années écrites chiffre par chiffre, 一九六〇年, et le colophon en latin, couché sur le côté.", "4": "La dernière page : le calendrier d’août 2026 en tableau debout, les jours de fête en rose, les autres événements en vert, avec la légende 表一." }
+---
+
+## Ce que vous allez composer
+
+Quatre pages verticales d’un bulletin de quartier, 東若葉台だより, numéro 第百二十号, sur une page B5 reliée à droite : l’annonce de la fête d’été, le calendrier d’août, les cotisations et un reçu de don, et un bref historique de l’association. L’association est inventée ; ses nombres sont écrits comme les écrit un éditeur japonais. Le numéro, le 第三十二回 de la fête et les 二千四百人 venus sont comptés avec 十 百 千 ; les années s’écrivent chiffre par chiffre, 二〇二六年 et 一九六〇年 ; le montant du reçu est en daiji (大字), 壱萬弐阡, qu’on ne peut pas falsifier d’un trait ; les heures et les dates sont en chiffres arabes, et 22 se tient debout dans une seule case. Les listes vont 一、 → （一） → イ → あ, et le calendrier occupe la dernière page.
+
+## Préparation
+
+### 1 · Choisir la graphie selon la place du nombre
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `formatNumeral` est le compteur avec lequel le moteur numérote les pages, les listes et les titres, et le pen l’appelle pour les nombres qu’il compose lui-même : `japanese-informal` compte (120 → 百二十, sans 一 devant 十 百 千), `cjk-decimal` écrit chiffre par chiffre (2026 → 二〇二六) et `japanese-formal` donne le daiji d’une somme (12000 → 壱萬弐阡). Un `{{daiji:12000}}` dans le texte devient le montant du reçu : le chiffre n’est tapé qu’une fois, en chiffres. Les mêmes styles nomment les compteurs : les sections sont `{2:一}、`, et `orderedLists.levels` règle （一）, puis `katakana-iroha` (イ ロ ハ), puis `hiragana` avec 、 (あ、い、う). `cjk.uprightDigits: 2` met 8月22日 et 23日 debout sans balisage, et le `!?` de 「雨が降ったら中止!?」 partage une seule case, comportement japonais par défaut ([nombres en texte vertical](/fr/docs/configuration-east-asian#nombres-en-texte-vertical)).
+
+<PageShot page={2} crop="0.3,0.06,0.7,0.6" caption="Page 2 : イ ロ ハ sous （三）, あ、い、う sous ハ, 23日 et 4時 debout, !? dans une seule case." />
+
+### 2 · Placer le titre du bulletin dans une bande le long du bord droit
+
+<Excerpt region="masthead" />
+
+Sur une page verticale, le haut du flux est le bord droit de la feuille : une maquette de titre ancrée en haut du fond perdu devient donc une bande le long de ce bord, et sa `size.height` est sa largeur sur la feuille. Le numéro et la date sont du texte de maquette construit avec `kan()` et `pos()`, et la date s’arrête au pied du bloc de texte avec `align: 'right'`.
+
+### 3 · Donner au calendrier sa propre page
+
+<Excerpt region="calendar" />
+
+Un tableau se tient debout sur une page verticale et se lit horizontalement, comme les livres japonais impriment leurs tableaux ; il occupe toutes les lignes de la page où il se trouve. Le calendrier est cité après le dernier paragraphe, en flottant sur toute la largeur de la page : il devient ainsi la dernière page, et le texte qui le précède remplit ses pages. `resourceTypes` le numérote avec le jeton `一` (表一), et un document `ja` compose de lui-même l’étiquette 表一　 : étiquette et numéro sans espace, une espace idéographique après.
+
+### 4 · Charger chaque voix avec le texte qu’elle compose
+
+<Excerpt region="voices" />
+
+Noto Serif JP compose le texte, Noto Sans JP les titres, les listes, le calendrier et l’étiquette du reçu, et Zen Maru Gothic seulement le titre. Chacun charge les fichiers Fontsource de ses propres caractères, plus les nombres que compose le pen.
+
+## Variantes
+
+### Écrire chaque année en la comptant
+
+Certains auteurs préfèrent 二千二十六年 à 二〇二六年 dans le texte courant ; changez le style de `pos`.
+
+```diff
+-const pos = (n) => formatNumeral(n, 'cjk-decimal'); // 2026 → 二〇二六: digit by digit
++const pos = (n) => formatNumeral(n, 'japanese-informal'); // 2026 → 二千二十六
+```
+
+### Mettre trois chiffres debout
+
+Avec 3, un 100 ou un 365 dans le texte occupe lui aussi une seule case.
+
+```diff
+-  uprightDigits: 2, // 8月22日: one or two Arabic digits stand in one cell (the default)
++  uprightDigits: 3,
+```
+
+## Erreurs fréquentes
+
+- Le calendrier occupe une page parce qu’un tableau debout prend toutes les lignes d’une page verticale (lacune : tableaux en texte vertical). Un tableau qui doit partager sa page avec du texte demande une page horizontale, ou un dessin SVG placé par une maquette de titre.
+- En chinois, le même compteur écrit 一百二十 et 一千零一 ; en japonais, 百二十 et 千一. Écrivez `locale: 'ja'`, sinon le jeton 一 choisit le style chinois. Le livre de lecture chinois <RecipeLink slug="chinese-dates-upright">Dates et sigles debout en texte vertical</RecipeLink> compose ses dates avec le même `uprightDigits`.

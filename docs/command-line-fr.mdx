@@ -1,0 +1,476 @@
+{/* docs/command-line-fr.mdx */}
+
+export const metadata = {
+  title: 'Ligne de commande : postext dans un terminal, un script ou un agent',
+  sidebarTitle: 'Ligne de commande',
+  description: 'Un exécutable autonome pour macOS, Linux et Windows qui transforme un livre .postext, un dossier de livre ou des fichiers Markdown isolés en PDF, HTML, EPUB, images de pages et Word, crée des paquets et vérifie des livres, avec une sortie JSON pour les scripts et les agents',
+  lang: 'fr',
+  lastUpdated: '2026-10-09',
+  readingTime: '10 min',
+  order: 22,
+  plainSummary: "Cette page s’adresse à ceux qui veulent faire des livres avec Postext depuis un terminal plutôt que depuis le site. Vous téléchargez un seul fichier pour votre ordinateur et vous le lancez, sans rien installer. Vous lui donnez votre livre, ou quelques fichiers texte, et il produit un PDF, une page web, un livre numérique, des images des pages ou un document Word. Il peut aussi vérifier qu’un livre n’a pas de problème et réunir ses fichiers en un seul. Les programmes et les assistants d’IA peuvent l’utiliser eux aussi, car il sait répondre dans un format qu’ils lisent facilement.",
+};
+
+# Ligne de commande
+
+**`postext` compose votre livre depuis un terminal, un script ou un agent.**
+
+Le [Sandbox](/fr/sandbox) est l’endroit où vous écrivez et mettez en page un
+livre à l’œil. La ligne de commande prend le même livre et en produit les
+fichiers sans navigateur : un PDF prêt pour l’impression, les pages en HTML, un
+EPUB, l’image d’une page ou de toutes les pages, un document Word. Elle crée et
+décompresse aussi les paquets `.postext`, importe des documents Word, décrit un
+livre et y cherche des problèmes.
+
+C’est **un exécutable autonome** par système. Le moteur postext, les
+générateurs PDF, EPUB, HTML et Word, le moteur de peinture des pages (Skia),
+HarfBuzz pour l’arabe et les autres écritures complexes, les profils ICC
+d’impression et les polices par défaut (EB Garamond et Open Sans) sont tous à
+l’intérieur. Il n’y a ni environnement d’exécution, ni paquet, ni bibliothèque à
+installer, et la mise en page est celle du Sandbox : le même livre se coupe en
+les mêmes pages.
+
+## L’obtenir
+
+Chaque version de Postext publie les exécutables sur sa
+[GitHub Release](https://github.com/drnachio/postext/releases/latest), avec
+leurs sommes de contrôle (`SHA256SUMS`) et un `readme.txt` :
+
+<table>
+  <thead>
+    <tr><th>Fichier</th><th>Système</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>postext-macos-arm64</code></td><td>macOS sur puce Apple (M1 et suivantes)</td></tr>
+    <tr><td><code>postext-macos-x64</code></td><td>macOS sur Intel</td></tr>
+    <tr><td><code>postext-linux-x64</code></td><td>Linux x86-64 avec glibc (Debian, Ubuntu, Fedora…)</td></tr>
+    <tr><td><code>postext-linux-arm64</code></td><td>Linux ARM64 avec glibc (Raspberry Pi OS 64 bits, serveurs ARM dans le cloud)</td></tr>
+    <tr><td><code>postext-linux-x64-musl</code></td><td>Linux x86-64 avec musl (Alpine ; lancez d’abord <code>apk add libstdc++ libgcc</code>)</td></tr>
+    <tr><td><code>postext-windows-x64.exe</code></td><td>Windows x64</td></tr>
+  </tbody>
+</table>
+
+Chaque fichier pèse entre 115 et 140 Mo. Le lien
+`https://github.com/drnachio/postext/releases/latest/download/<file>` donne
+toujours le plus récent.
+
+Sous Linux ou macOS :
+
+```bash
+curl -fL -o postext https://github.com/drnachio/postext/releases/latest/download/postext-linux-x64
+chmod +x postext
+./postext
+```
+
+Placez-le dans un dossier de votre `PATH` (`/usr/local/bin`, `~/.local/bin`)
+pour le lancer en tapant `postext` depuis n’importe où. macOS met en
+quarantaine un fichier téléchargé avec un navigateur ; retirez l’indicateur une
+fois pour toutes :
+
+```bash
+xattr -d com.apple.quarantine postext-macos-arm64
+```
+
+Sous Windows, dans PowerShell :
+
+```powershell
+Invoke-WebRequest https://github.com/drnachio/postext/releases/latest/download/postext-windows-x64.exe -OutFile postext.exe
+.\postext.exe
+```
+
+Si Node.js est installé, `npx postext-cli` télécharge depuis npm l’exécutable
+de votre système et le lance, et `npm install -g postext-cli` le garde comme
+commande `postext`.
+
+Lancé sans arguments, `postext` affiche son aide ; `postext help <command>`
+liste les options d’une commande.
+
+## Un premier livre
+
+Trois fichiers Markdown dans un dossier forment un livre, d’un chapitre
+chacun, dans l’ordre de leurs noms :
+
+```bash
+postext pdf chapters/ --name "Field notes" -o field-notes.pdf
+```
+
+Le front matter du premier chapitre donne au livre son titre et son auteur, et
+les valeurs par défaut du moteur font le reste : deux colonnes, une grille de
+ligne de base, un texte justifié avec césure, des titres courants. Ajoutez une
+configuration et des images quand vous en avez besoin :
+
+```bash
+postext pdf chapters/ --config design.json --resources pictures/ -o field-notes.pdf
+```
+
+Un livre fait dans le Sandbox (**Livres → Exporter .postext**) fonctionne tel
+quel :
+
+```bash
+postext pdf my-book.postext -o my-book.pdf
+postext image my-book.postext --page 1 -o cover.png
+```
+
+## Ce que peut être un livre
+
+Toute commande qui lit un livre accepte l’une de ces formes :
+
+- **Un fichier `.postext`** : le paquet que le Sandbox exporte et ouvre (voir
+  [Paquets](/fr/docs/configuration-programmatic-usage#paquets-fichiers-postext)).
+- **Un dossier de livre** : un paquet décompressé, avec son `preset.json`, ses
+  chapitres, ses ressources et ses polices. C’est ce que livre le skill pour
+  agents, et `postext unpack` en écrit un.
+- **Des fichiers Markdown isolés** : un ou plusieurs fichiers `.md`, un
+  chapitre chacun dans l’ordre donné, ou un dossier dont les fichiers `.md`
+  sont pris par ordre de nom (`01-intro.md`, `02-method.md`…). Avec eux :
+  - `--config design.json` : la configuration, soit un objet de configuration
+    seul, soit un `preset.json` complet ;
+  - `--resources pictures/` : les images, chacune étant une figure nommée
+    d’après son nom de fichier sans l’extension (`map.png` est
+    `::resource{id="map"}`) ; un `resources.json` dans le dossier les décrit à
+    la place (ids, types, légendes, texte de remplacement), sous la même forme
+    que les `resources` d’un `preset.json` ;
+  - `--fonts fonts/` : les fichiers de polices que porte le livre (TTF, OTF,
+    WOFF2), nommés d’après la famille qu’indiquent leurs tables ;
+  - `--name "Title"` : le nom du livre.
+
+`--config` fonctionne aussi sur un paquet ou un dossier : il est fusionné
+par-dessus la configuration propre du livre. Un paquet multilingue est lu dans
+sa propre langue, sauf si `--locale` en demande une autre (`--locale en`).
+
+## Commandes
+
+<table>
+  <thead>
+    <tr><th>Commande</th><th>Ce qu’elle fait</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>pdf</code></td><td>Le PDF, avec signets, liens, polices incorporées et, par défaut, balisé pour l’accessibilité (PDF/UA) ; PDF/X et CMJN pour l’impression.</td></tr>
+    <tr><td><code>html</code></td><td>Les pages en HTML avec du vrai texte : un seul fichier autonome, ou un dossier avec <code>index.html</code> et <code>assets/</code>.</td></tr>
+    <tr><td><code>epub</code></td><td>Un livre EPUB 3, avec des pages fixes comme à l’impression ou un texte recomposable.</td></tr>
+    <tr><td><code>image</code></td><td>Une page sous forme d’image PNG, JPEG ou WebP.</td></tr>
+    <tr><td><code>images</code></td><td>Toutes les pages, ou une plage, sous forme d’images dans un dossier.</td></tr>
+    <tr><td><code>docx</code></td><td>Les chapitres sous forme de document Word qui se réimporte sans changement.</td></tr>
+    <tr><td><code>import-docx</code></td><td>Un document Word sous forme de livre Postext (un dossier ou un <code>.postext</code>).</td></tr>
+    <tr><td><code>pack</code></td><td>Un dossier de livre ou des fichiers Markdown isolés réunis en un seul fichier <code>.postext</code>.</td></tr>
+    <tr><td><code>unpack</code></td><td>Un fichier <code>.postext</code> décompressé dans un dossier.</td></tr>
+    <tr><td><code>info</code></td><td>Les chapitres, les langues, les ressources et les polices du livre, et avec <code>--pages</code> son nombre de pages.</td></tr>
+    <tr><td><code>check</code></td><td>Met le livre en page et signale chaque problème ; pour l’impression, le contrôle prépresse.</td></tr>
+    <tr><td><code>build</code></td><td>Met le livre en page une fois et écrit plusieurs des sorties ci-dessus ; <code>--watch</code> continue et régénère à chaque enregistrement.</td></tr>
+  </tbody>
+</table>
+
+Chaque commande écrit dans le dossier d’où vous la lancez, sous le nom de
+l’entrée, sauf si `-o` donne le chemin. `-o -` écrit une sortie unique sur la
+sortie standard.
+
+### pdf
+
+```bash
+postext pdf book.postext -o book.pdf
+postext pdf book/ --pdfx x4 --profile fogra51 -o book-print.pdf
+postext pdf book/ --color-space grayscale --no-outlines
+```
+
+Le PDF suit les réglages propres du livre (voir
+[Génération du PDF](/fr/docs/configuration-fonts-colors-viewers#génération-pdf-configuration) et
+[Production pour l’impression](/fr/docs/configuration-fonts-colors-viewers#production-pour-limpression-configuration)) ; ces options
+les modifient le temps d’une exécution :
+
+- `--pdfx none|x1a|x4` : la norme PDF/X pour un imprimeur.
+- `--profile NAME|FILE` : le profil ICC de sortie, par son nom (`fogra39`,
+  `fogra51`, `fogra52`, `swop5`, `gracol2006`, `snap2007`, `ifra26` et les
+  autres profils des réglages d’impression) ou un fichier `.icc`.
+- `--color-space rgb|cmyk|grayscale`.
+- `--accessible` / `--no-accessible` : la structure balisée pour les lecteurs
+  d’écran.
+- `--no-outlines` : omettre les signets.
+- `--page-negative` : des pages en négatif, pour certains flux d’impression.
+
+### html
+
+```bash
+postext html book.postext -o book.html
+postext html book.postext -o site/ --mode single
+```
+
+Un chemin qui finit par `.html` donne un seul fichier contenant les images et
+les polices, facile à envoyer. Tout autre chemin est un dossier : `index.html`
+à côté de `assets/`, qui contient les images, les polices et les vidéos
+auto-hébergées. `--assets embed|folder` choisit l’une ou l’autre forme pour
+n’importe quel chemin. Les pages sont la mise en page imprimée, montrée à la
+taille de l’écran : côte à côte (`--mode multi`, par défaut) ou l’une sous
+l’autre (`--mode single`). Les polices marquées `redistributable: false` sont
+nommées mais pas copiées.
+
+### epub
+
+```bash
+postext epub book.postext -o book.epub
+postext epub book.postext --layout reflowable --cover cover.jpg
+```
+
+`--layout fixed` (par défaut) garde chaque page comme à l’impression, avec un
+texte sélectionnable ; `--layout reflowable` laisse le système de lecture
+recomposer le texte pour son écran (voir [Livres EPUB](/fr/docs/configuration-programmatic-usage#livres-epub-postext-epub)). La
+couverture est la vignette du livre, sauf si `--cover` donne une image. Les
+métadonnées du paquet EPUB (titre, auteurs, langue, identifiant) viennent du
+front matter du premier chapitre, comme dans le Sandbox.
+
+### image et images
+
+```bash
+postext image book.postext --page 12 -o page-12.png
+postext image book.postext --page "#1" --dpi 300 -f jpeg -o cover.jpg
+postext images book.postext -o pages/ --dpi 100
+postext images book.postext --pages 1-10,iv -f webp --pattern "{chapter}-{label}"
+```
+
+Les pages se désignent **telles qu’elles sont imprimées** (`12`, `iv`, une
+plage `7-9`) ou **par leur position** dans le livre avec `#` (`#1` est la
+première page quel que soit son numéro imprimé, `#10-#20`, `#30-` jusqu’à la
+fin). `--pages` accepte une liste séparée par des virgules. Le moteur de
+peinture est celui de la vue Canvas du Sandbox : une image montre donc la page
+exactement telle qu’elle a été mise en page, sans passer par un PDF.
+
+- `--format png|jpeg|webp` (ou l’extension de `-o`), `--quality 1-100` pour le
+  JPEG et le WebP.
+- `--dpi` : la résolution, 150 par défaut ; 72–100 suffit pour lire une page,
+  300 pour l’impression.
+- `--pattern` : les noms de fichiers d’`images`, à partir de `{n}` (la
+  position, `{n:03}` complétée à trois chiffres), `{label}` (le numéro
+  imprimé) et `{chapter}` ; `page-{n:03}` par défaut.
+- `--print-preview` : la page telle que l’imprimeur la reproduira, à travers le
+  profil de sortie, avec la coupe et le fond perdu dessinés.
+- `--jobs N` : le nombre d’images encodées en même temps.
+
+### docx et import-docx
+
+```bash
+postext docx book.postext -o book.docx
+postext import-docx manuscript.docx -o manuscript/ --locale es --report
+postext import-docx manuscript.docx -o manuscript.postext
+```
+
+`docx` écrit les chapitres avec des styles Word pour les titres, les
+paragraphes, les encadrés, les citations, les listes et les notes. Ce que Word
+ne sait pas exprimer reste tel quel dans les styles *Postext Markup*, et le
+modèle d’importation voyage dans le fichier : le document se réimporte donc
+sans changement après le passage d’un éditeur. `import-docx` transforme un
+document Word en livre : un chapitre à chaque titre de niveau 1 (`--no-split`
+en garde un seul), les images et les tableaux comme ressources, et `--report`
+affiche le rapport de qualité que montre le Sandbox (styles utilisés, mise en
+forme directe, numérotation tapée à la main…). `--template` accepte un modèle
+d’importation (un `.json` enregistré depuis le Sandbox ou un `.docx` qui en
+contient un).
+
+### pack et unpack
+
+```bash
+postext pack my-book/ -o my-book.postext
+postext pack 01.md 02.md --name "Notes" --config design.json --resources img/ -o notes.postext
+postext unpack my-book.postext -o my-book/
+```
+
+`pack` compresse un dossier de livre tel quel, ou construit un paquet à partir
+de fichiers Markdown isolés. La même entrée donne toujours les mêmes octets :
+un paquet peut donc être comparé ou haché. `unpack` refuse d’écrire dans un
+dossier qui n’est pas vide, sauf avec `--force`.
+
+### info et check
+
+```bash
+postext info book.postext --pages
+postext check book.postext
+postext check chapters/ --strict --json
+```
+
+`info` liste les chapitres (titre, mots, fichier et, avec `--pages`, leurs
+pages), les ressources et chaque famille de polices avec sa provenance (le
+livre, un dossier, l’exécutable, le cache de téléchargement ou la police de
+secours). Pour un livre qui indique où il commence (`start` dans `preset.json` : un extrait qui s’ouvre à la page 58, dans le chapitre 4), il l’affiche aussi, et chaque commande met le livre en page à partir de là.
+
+`check` met le livre en page et signale ce que montre le panneau Vérifications
+du Sandbox : du Markdown qui ne se ferme pas, des ressources, des directives et
+des styles inconnus, des encadrés que la mise en page a dû forcer, des polices
+manquantes, des réglages que le moteur a dû remplacer et, pour un livre préparé
+pour l’impression (ou avec `--preflight`), le contrôle prépresse : images de
+basse résolution, filets trop fins, petit texte en plusieurs encres, encrage
+au-delà de la limite, texte trop près de la coupe. Il liste aussi le texte qui
+ne se lit pas sur son fond (`contrast`), une fois par paire de couleurs, avec le
+rapport à l’écran et, pour l’impression, sur le papier du profil de sortie.
+Chaque problème nomme le fichier du chapitre, la ligne et la page. Le code de sortie est 3 quand une erreur est trouvée, ou n’importe quel avertissement
+avec `--strict`.
+
+### build et --watch
+
+```bash
+postext build book/ --pdf out/book.pdf --html out/book.html --images out/pages --pages 1-4
+postext build chapters/ --pdf book.pdf --watch
+```
+
+`build` met le livre en page une fois et écrit chaque sortie que vous nommez
+(`--pdf`, `--html`, `--epub`, `--images`, `--docx`), avec les options de chaque
+commande. `--watch` reste actif : quand un chapitre, la configuration ou une
+image change, le livre est remis en page avec les polices et le moteur toujours
+chargés, en général en une fraction de seconde pour un chapitre, et les sorties
+sont réécrites. Un enregistrement qui casse le livre affiche l’erreur et garde
+les derniers fichiers valides.
+
+## Options pour tous les livres
+
+<table>
+  <thead>
+    <tr><th>Option</th><th>Ce qu’elle fait</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>--locale TAG</code></td><td>La langue dans laquelle lire un livre multilingue (<code>es</code>, <code>en</code>, <code>pt-BR</code>…).</td></tr>
+    <tr><td><code>--chapters LIST</code></td><td>Ne met en page que certains chapitres : <code>2</code>, <code>1,3-5</code>, <code>4-</code>. Plus rapide sur un long livre ; leurs pages sont numérotées à partir de leur propre première page.</td></tr>
+    <tr><td><code>--set PATH=VALUE</code></td><td>Modifie un réglage le temps de cette exécution, sous forme de chemin pointé : <code>--set page.dpi=150</code>, <code>--set bodyText.fontFamily=Lora</code>, <code>--set headings.levels.0.italic=true</code>. La valeur est lue comme du JSON quand c’est possible (nombres, true et false, objets), sinon comme du texte. Répétable.</td></tr>
+    <tr><td><code>--config FILE</code></td><td>Une configuration (ou un <code>preset.json</code>) pour des fichiers Markdown isolés, ou fusionnée par-dessus celle d’un livre.</td></tr>
+    <tr><td><code>--resources DIR</code>, <code>--fonts DIR</code>, <code>--name TEXT</code></td><td>Images, polices et titre pour des fichiers Markdown isolés.</td></tr>
+    <tr><td><code>--font-dir DIR</code></td><td>Un dossier où chercher les polices que le livre ne porte pas. Répétable.</td></tr>
+    <tr><td><code>--offline</code></td><td>Ne jamais télécharger de polices.</td></tr>
+    <tr><td><code>--cache-dir DIR</code></td><td>L’endroit où sont conservées les polices téléchargées.</td></tr>
+  </tbody>
+</table>
+
+Et pour toutes les commandes : `--json`, `--quiet` (`-q`, erreurs seulement),
+`--verbose` (progression et tous les avertissements), `--no-color`, `--help`.
+
+## Polices
+
+Un livre qui porte ses polices (un paquet, ou `--fonts` avec des fichiers
+Markdown isolés) est composé avec elles et rien d’autre. Pour chaque famille
+que nomme la configuration et que le livre ne porte pas, `postext` cherche,
+dans l’ordre :
+
+1. dans les dossiers donnés avec `--font-dir` ;
+2. parmi les caractères compilés dans l’exécutable : EB Garamond et Open Sans,
+   les valeurs par défaut du moteur ;
+3. dans le cache de téléchargement ;
+4. sur [Google Fonts](https://fonts.google.com), qui fournit des fichiers
+   TrueType statiques complets, ou sur [Fontsource](https://fontsource.org)
+   pour une famille que Google Fonts n’a pas (Commit Mono, FiraGO) ; ils sont
+   conservés dans le cache, de sorte qu’une famille n’est téléchargée qu’une
+   fois.
+
+Une graisse qu’une famille ne fournit pas est composée dans le caractère qu’un
+navigateur choisirait à sa place (correspondance des polices CSS : les plus
+grasses d’abord au-dessus de 500, les plus maigres d’abord en dessous de 400 ;
+une graisse 600 d’une famille qui a un 400 et un 700 est donc son 700, tout
+comme une graisse 550), et une inclinaison qu’elle ne fournit pas dans son
+romain, chacun tel quel, dans les images de pages comme dans le PDF : un
+caractère de titrage à une seule graisse garde ses propres lettres pour un
+gras, et une famille droite pour un italique.
+
+Les graisses que nomme la configuration sont celles qui sont récupérées : le
+normal, le gras et leurs italiques pour chaque famille, et toute autre graisse
+qu’un réglage indique, y compris celle du gras (`bodyText.boldFontWeight: 600`
+demande le caractère 600). Quand une graisse que la famille fournit n’a pas pu
+être chargée (hors ligne sans fichier en cache, un téléchargement qui a échoué,
+un dossier de polices sans le fichier), le texte est composé dans le caractère
+de la famille qui le remplace selon la même règle, et `postext check` le liste
+comme avertissement `fontFallback` : ses lignes peuvent se couper autrement que dans le Sandbox.
+
+Le cache est `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` sous
+Windows) ; `POSTEXT_CACHE_DIR` ou `--cache-dir` le déplace. `--offline` saute
+le téléchargement. Une famille introuvable est composée en EB Garamond sous son
+propre nom, pour que la mise en page et le PDF restent d’accord, et un
+avertissement `missingFont` la nomme. `postext info` indique d’où vient chaque
+famille.
+
+## Pour les scripts et les agents
+
+La ligne de commande est conçue pour être pilotée par d’autres programmes, y
+compris des agents de programmation.
+
+- **`--json`** affiche un objet JSON sur la sortie standard à la fin de la
+  commande ; tous les messages vont sur la sortie d’erreur. Le rapport liste ce
+  qui a été écrit, les pages, chaque avertissement avec sa source et la durée
+  de chaque étape (en millisecondes) :
+
+```json
+{
+  "ok": true,
+  "command": "pdf",
+  "version": "1.22.1",
+  "book": { "name": "notes", "id": "notes", "locale": "en", "chapters": 2 },
+  "pages": 3,
+  "outputs": [{ "kind": "pdf", "path": "notes.pdf", "bytes": 29746, "pages": 3 }],
+  "warnings": [
+    {
+      "kind": "unknownResourceId",
+      "severity": "warning",
+      "message": "Unknown resource id \"map\" in ::resource — nothing is embedded (offset 26)",
+      "at": "notes/02-more.md:5"
+    }
+  ],
+  "timings": { "read": 13, "fonts": 8.4, "math": 28.2, "layout": 51.6, "pdf": 132.1, "total": 1638 },
+  "exitCode": 0
+}
+```
+
+- **Codes de sortie** : `0` terminé, `1` échec, `2` mauvaise utilisation (une
+  option inconnue, une entrée manquante), `3` `check` a trouvé des erreurs (ou
+  des avertissements avec `--strict`).
+- **Aucune question.** Il n’attend jamais de saisie ; un dossier qui n’est pas
+  vide est refusé au lieu de donner lieu à une question.
+- **Sortie standard** : `-o -` y écrit un PDF, une image ou un paquet, à
+  transmettre par un tube.
+- **Vitesse.** L’exécutable démarre en quelques centièmes de seconde. Un livre
+  court devient un PDF ou une image de page en bien moins d’une seconde ; un
+  long prend le temps que prend sa mise en page (un roman illustré de
+  140 pages, une dizaine de secondes). Pour regarder quelques pages d’un long
+  livre, combinez `--chapters` avec `image` ou `images --pages`. Pour
+  travailler sur un livre au fil de nombreuses modifications, laissez tourner
+  `postext build --watch` et lisez ses sorties.
+
+Le [skill pour agents](/fr/docs/skill) utilise la ligne de commande pour rendre
+les pages sur lesquelles il travaille et pour vérifier un portage.
+
+## Comment elle est faite
+
+La ligne de commande est le paquet `postext-cli` du
+[dépôt](https://github.com/drnachio/postext/tree/main/packages/postext-cli).
+[Bun](https://bun.sh) le compile, avec le moteur et ses générateurs, en un
+exécutable par système, et [Skia](https://skia.org) (via `@napi-rs/canvas`)
+mesure et peint le texte, comme le fait le canvas du navigateur dans le Sandbox. Une image SVG qui contient une image matricielle (un PNG ou un JPEG incorporé en URI de données, comme l’écrit `pdftocairo -svg` pour un dessin découpé dans un PDF) est dessinée par [resvg](https://github.com/linebender/resvg) à la place, parce que le moteur de rendu SVG de Skia omet ces images. À
+chaque version, les exécutables sont construits, lancés sous Linux, Alpine,
+macOS et Windows, et joints à la GitHub Release ; npm reçoit `postext-cli` et
+un paquet `postext-cli-<system>` par exécutable.
+
+Pour le lancer depuis une copie du dépôt :
+
+```bash
+pnpm install
+pnpm --filter postext-cli start pdf book.postext
+pnpm --filter postext-cli build:bin --current
+```
+
+La première commande le lance depuis ses sources ; la seconde écrit
+l’exécutable de cet ordinateur dans `packages/postext-cli/bin/`.
+
+## Différences avec le Sandbox
+
+- **Le HTML** est la mise en page imprimée montrée à la taille de l’écran.
+  L’onglet HTML du Sandbox recompose le texte pour la fenêtre.
+- **`--chapters`** met en page les chapitres isolément : leur numérotation des
+  pages recommence, là où le Sandbox poursuit la numérotation du livre.
+- **Les polices** viennent du livre, de vos dossiers, de l’exécutable, de
+  Google Fonts ou de Fontsource (pour une famille que Google Fonts n’a pas),
+  jamais des polices installées sur l’ordinateur : un livre sort donc
+  identique sur toutes les machines.
+- **La langue du texte** est celle du document dans un navigateur
+  (`bodyText.shapingLanguage: 'document'`, la valeur par défaut depuis
+  postext 1.30). Le canvas de Skia accepte une langue mais met en forme sans en
+  tenir compte : la ligne de commande mesure donc les formes de la langue par
+  défaut de chaque police et met toujours ses livres en page avec
+  `shapingLanguage: 'host'`, quoi que dise la configuration ; son PDF et ses
+  images peignent ces mêmes formes. Un livre dont le caractère a des formes
+  pour une langue (un `l·l` catalan, un `fi` turc, les chiffres d’un caractère
+  chinois dans un livre anglais) est composé ici avec les formes par défaut. Ce
+  que `'document'` mesure autrement (les parties d’un mot coupé en fin de
+  ligne, un mot de droite à gauche, un texte de maquette) est mesuré ici comme
+  le mesure `'host'` : une ligne peut donc se couper sur un autre mot que dans
+  le Sandbox.

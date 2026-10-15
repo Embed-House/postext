@@ -1,0 +1,58 @@
+---
+title: "Dictionnaire avec un index à onglets mobile"
+summary: "Une boucle crée un style de titre par lettre ; son en-tête imprime l’onglet bleu marine de la lettre un cran plus bas sur la tranche, sur un index pâle."
+plain: "Quatre pages d’un vieux dictionnaire de marine. Des onglets de lettres descendent le long du bord extérieur de chaque page, et celui de la lettre en cours est foncé et descend à mesure que l’alphabet avance."
+description: "Quatre pages du Sailor’s Word-Book de Smyth sur deux colonnes : mots-vedettes bleu marine, lettrines de quatre lignes et un onglet qui descend à chaque lettre."
+question: "Comment faire descendre l’onglet d’un dictionnaire le long de la tranche d’une lettre à l’autre ?"
+aliases: ["dictionnaire", "glossaire", "ouvrage de référence", "index à onglets", "onglets", "index sur la tranche", "onglets à fond perdu", "mots-vedettes", "têtes de lettre", "mots-repères", "thumb index", "dictionary"]
+pageNotes: { "1": "La page 1 ouvre le dictionnaire sous un bandeau : une ancre surjalée, « THE SAILOR’S WORD-BOOK » en petites capitales bleu marine, le sous-titre et la mention d’auteur de la page de titre de 1867, et un double filet. Dessous viennent la note de l’éditeur et un A bleu marine haut de quatre lignes. Le long du bord droit court l’index de 22 onglets, A en bleu marine.", "2": "La page 2, un verso : les entrées en A remplissent la première colonne et se terminent dans la seconde, où un B bleu marine ouvre la lettre suivante. Sur le bord gauche, l’onglet bleu marine porte B, un cran sous A, bien que la page commence en A.", "3": "La page 3 : les entrées en B se terminent au pied de la première colonne et un C bleu marine ouvre la seconde. Sur le bord droit, l’onglet de C se détache de l’index pâle, deux crans sous A.", "4": "La page 4 : les dernières entrées en C remplissent les deux colonnes, qui finissent à la même hauteur, et un colophon de trois lignes clôt la seconde." }
+---
+
+## Ce que vous allez composer
+
+Quatre pages d’une nouvelle édition du *Sailor’s Word-Book* (1867) de l’amiral Smyth, lettres A à C, sur une page de 150 × 200 mm. Les entrées courent sur deux colonnes justifiées en Alegreya de 8 pt séparées par un filet fin, chaque mot-vedette en gras bleu marine et les lignes suivantes en sommaire de 1 em. Une lettre s’ouvre à l’intérieur de sa colonne, sous forme de lettrine bleu marine de quatre lignes au-dessus d’un filet laiton, et les entrées continuent sans saut de page. Le long de la tranche, chaque page imprime l’index complet, 22 onglets d’une teinte pâle. L’onglet de la lettre en cours est bleu marine, 3,2 mm plus large que les autres, et descend d’un cran à chaque lettre. L’édition espagnole garde les mots-vedettes anglais de Smyth et traduit les entrées.
+
+## Préparation
+
+### 1 · Donner à chaque lettre un style de titre avec son onglet
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `TABS` liste 22 onglets, les lettres rares en partageant un (QR, UV, XYZ). Chaque onglet a la hauteur de deux lignes de texte (7,34 mm) : ensemble, ils remplissent les 44 lignes du bloc de texte. La boucle donne à chaque lettre un style de titre dont le `header` ajoute aux titres courants et à l’index pâle l’onglet bleu marine de cette lettre, un cran plus bas que le précédent ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)). Chaque cellule est écrite deux fois, une par `parity`, et ancrée au bord extérieur de la page plutôt qu’au conteneur de l’en-tête. Ce conteneur est la marge de tête, aussi large que le bloc de texte et allant du bord de coupe jusqu’au texte, alors que les onglets doivent atteindre la tranche et descendre sur les 44 lignes. Une page prend l’en-tête de la dernière section qui y commence : la <PageRef page={2}>page 2</PageRef> commence donc en A et montre l’onglet de B.
+
+### 2 · Écarter les titres courants de la première page
+
+<Excerpt region="running-heads" />
+
+Les titres courants sont des éléments de texte ancrés à la page et filtrés par `parity` et `pages: 'body'` ([éléments de texte](/fr/docs/configuration-page-layout#éléments-de-texte)). Le titre de la page 1 s’étend sur les deux colonnes, ce qui fait de la page 1 une page d’ouverture. Les titres courants l’ignorent, et son folio vient du pied de page, un élément réglé sur `pages: 'opener'` qui s’imprime 6 mm sous le bloc de texte. Sur un recto, `{chapterTitle}` imprime la lettre du dernier titre de niveau 1 placé sur la page ou avant elle, *Letter C*. `{firstMark.<key>}` et `{lastMark.<key>}` imprimeraient plutôt le premier et le dernier mot-vedette de la page, les mots-repères que portent la plupart des dictionnaires ; cette recette garde la lettre, puisque c’est elle qu’indexent les onglets.
+
+### 3 · Colorer les mots-vedettes et rien d’autre
+
+<Excerpt region="entries" />
+
+Chaque entrée est un paragraphe d’un bloc `:::paragraphs{style="entry"}`, ses lignes suivantes en sommaire de 1 em ([styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)). Le `boldColor` du texte courant garde **Note.** en noir sur la page 1, et le `boldColor` du style d’entrée imprime les mots-vedettes en bleu marine. Un style de paragraphe n’a pas d’`italicColor` : les sous-entrées en italique gardent donc l’encre du texte courant.
+
+### 4 · Placer une lettrine de quatre lignes dans la colonne
+
+<Excerpt region="letter-heads" />
+
+`LETTER`, 55,8 pt, est le corps auquel une capitale d’Alegreya SC 900 (haute de 0,652 em) repose sur la quatrième ligne de base et atteint la hauteur des capitales de la première ligne de texte. La lettre et le filet laiton finissent dans la cinquième ligne, et le bloc du titre se cale sur la ligne suivante de la grille : chaque tête de lettre fait donc cinq lignes, et les entrées qui suivent restent sur la grille. En <PageRef page={3}>page 3</PageRef>, le C en tête de la seconde colonne est aligné sur les quatre premières lignes de la première colonne. Le niveau 1 règle `breakBefore: { enabled: false }`, qui désactive le saut de page qu’un titre de niveau 1 a par défaut, et les styles de lettre en héritent : B et C s’ouvrent en milieu de colonne.
+
+### 5 · Étendre le titre sur les deux colonnes
+
+<Excerpt region="title" />
+
+Le style du titre s’étend sur toute la page avec un bandeau qui contient l’ancre, le nom, un sous-titre et une mention d’auteur lus dans les attributs du titre, et un double filet ([largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Le filet fin se termine 45,1 mm sous le haut du bloc de texte : le bandeau se cale donc sur 13 lignes de la grille, soit 47,7 mm. Le filet entre les colonnes commence sous le bandeau, sur la ligne où commence le texte des deux colonnes.
+
+## Variantes
+
+### N’imprimer que l’onglet en cours
+
+Les index à onglets imprimés ne montrent en général que l’onglet de la lettre en cours ; retirez `ladder` de l’en-tête et l’onglet bleu marine descend toujours de A à C.
+
+```diff
+-  header: { elements: [...runningHeads, ...ladder,
++  header: { elements: [...runningHeads,
+```
+
+## Erreurs fréquentes
+
+- Une colonne de 60 mm contient environ 50 caractères, et l’anglais de Smyth ne peut pas être reformulé. Composées par les seules espaces entre les mots, 18 des 218 lignes anglaises justifiées (8 %) les étiraient au-delà de 1,7 fois la largeur normale, contre moins de 2 % en espagnol, dont la traduction a été ajustée à la colonne, et la première ligne de *Cross-trees* ne pouvait pas être remplie du tout. `maxJustifyTracking: 10` permet à une ligne de prendre jusqu’à 1 % d’approche avant que ses espaces ne dépassent cette limite : dans la capture, 25 des 217 lignes anglaises et 9 des 223 lignes espagnoles en reçoivent, et aucune ne dépasse 1,7. L’anglais en était à 17 % avant que les cinq entrées les plus mal composées (*Aground*, *Aloft*, *Belay*, *Cockpit*, *Crow’s nest*) ne soient remplacées par d’autres. Choisissez des entrées qui se composent bien, ou élargissez la colonne.

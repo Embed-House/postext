@@ -1,0 +1,68 @@
+---
+title: "Rapport annuel aux colonnes alignées en pied"
+summary: "Le rapport annuel d’une coopérative d’énergie sur deux colonnes justifiées qui finissent sur la même ligne, un encadré de chiffres clés et une fin nivelée."
+plain: "Le rapport annuel d’un petit groupe local d’énergie, composé sur deux colonnes. Il montre comment faire finir les deux colonnes de texte exactement à la même hauteur."
+description: "Un rapport annuel de cinq pages composé avec Postext sur une grille de 50 lignes, où l’équilibrage amène chaque colonne à la dernière ligne et nivelle la fin."
+question: "Comment faire finir chaque colonne d’un rapport sur la dernière ligne de grille, et nivelée en dernière page ?"
+aliases: ["justification verticale", "colonnes alignées en pied", "colonnes équilibrées", "colonnes de même hauteur", "chiffres clés", "encadré de chiffres", "compte de résultat", "rapport annuel", "memoria anual", "couleurs par section", "encadré flottant", "annual report"]
+pageNotes: { "1": "La couverture : un fond bleu-noir avec « Tidewell Community Energy » en blanc, 2025 en très grands chiffres blancs, « Annual report and accounts » en jaune et la période en capitales à chasse fixe espacées. Sur la moitié inférieure, un ruban sarcelle et un ruban jaune enflent et se croisent de janvier à décembre, étiquetés « WIND » et « SUN », au-dessus d’une rangée d’initiales des mois, avec deux lignes de petits caractères au pied.", "2": "La lettre du président sous une bande bleu mer et le titre « The wind and the sun took turns ». Ses premiers paragraphes s’arrêtent au même niveau dans les deux colonnes au-dessus d’un encadré bleu-noir de trois chiffres en jaune, « 8.47 GWh », « 2,316 » et « £84,000 » ; la lettre continue sous l’encadré et se termine sur une signature manuscrite au pied de la colonne de droite.", "3": "Le rapport d’activité sous une bande sarcelle, deux colonnes avec des intertitres sarcelle, une courte liste des trois plus grands toits et, au pied de la page, un graphique de barres sarcelle et jaunes appariées pour les douze mois.", "4": "Une note sur la façon de compter un kilowattheure, sur deux colonnes sous un filet sarcelle en tête de page ; dessous, un tableau de la production par site et un graphique en anneau des heures des éoliennes en tête des deux colonnes, puis la suite du rapport d’activité jusqu’au pied.", "5": "Le rapport du trésorier sous une bande rouge brique : deux colonnes courtes qui s’arrêtent sur la même ligne et, dessous, le compte de résultat sur toute la largeur, avec une ligne d’en-tête bleu-noir, des intitulés de groupe en italique et des sous-totaux en gras sur une teinte pâle." }
+---
+
+## Ce que vous allez composer
+
+Le rapport annuel 2025 de Tidewell Community Energy, une coopérative inventée qui possède deux éoliennes, un champ solaire et des panneaux sur 21 toits. Cinq pages de 210 × 280 mm. Sur la couverture, la production éolienne et solaire de l’année court en deux rubans sous un « 2025 » de 150 pt. La lettre du président, le rapport d’activité et les comptes du trésorier suivent sur deux colonnes justifiées en Brygada 1918, sur une grille de 50 lignes. Les colonnes pleines finissent sur la dernière ligne de la grille, et les courtes au même niveau que leurs voisines. Un encadré de trois chiffres clés traverse la page du président, la lettre nivelée au-dessus, et une note sur le comptage flotte en tête de la page 4. En dernière page, les deux colonnes s’arrêtent sur une même ligne au-dessus du compte de résultat. Un attribut de palette passe les pages d’activité en sarcelle et la page financière en rouge brique.
+
+## Préparation
+
+### 1 · Gardez chaque ligne sur la grille et laissez les leviers combler les vides
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le bloc de texte mesure exactement 50 lignes de 13,4 pt de haut, et la marge inférieure (21,6 mm) se déduit de cette hauteur. Un intertitre prend une ligne de grille au-dessus de lui et une pour lui-même : une colonne qui finit court est donc courte de lignes entières, et ce sont des lignes entières qu’ajoute l’<Feature id="column-balancing">équilibrage des colonnes</Feature>. En <PageRef page={3}>page 3</PageRef>, le paragraphe de trois lignes sur la grêle passe en entier à la page 4 sous l’effet d’`avoidOrphans`, le nom que donne Postext à la règle qui empêche la dernière ligne d’un paragraphe de rester seule en tête de colonne, et la colonne de droite finit deux lignes trop tôt. `maxLinesPerHeading: 1` donne l’une de ces lignes à l’espace au-dessus de *The Saltings and the roofs* et laisse l’autre au levier suivant, qui l’ajoute après la liste des toits. Par défaut, un titre prend jusqu’à deux lignes avant qu’on essaie les leviers qui le suivent (`maxLinesBeforeLoose`), et jusqu’à quatre une fois qu’ils n’ont plus rien à donner : les deux lignes iraient donc au-dessus du titre.
+
+### 2 · Nivelez le texte au-dessus d’un encadré qui traverse la page
+
+<Excerpt region="figures" />
+
+Un encadré avec `span="page"` découpe une page à deux colonnes en bandes. En <PageRef page={2}>page 2</PageRef>, la lettre du président s’arrête à huit lignes dans chaque colonne au-dessus de l’encadré et reprend dans les deux colonnes en dessous. Dans l’encadré, `:::columns{count=3 breaks="3,5"}` ouvre la deuxième et la troisième colonne au deuxième et au troisième chiffre (les troisième et cinquième blocs du groupe) au lieu de couper la suite là où les colonnes s’équilibrent le mieux. Le style de paragraphe `figure` compose ces chiffres en 26 pt, et son `boldColor` les imprime en jaune.
+
+### 3 · Faites flotter un encadré en tête de la page suivante
+
+<Excerpt region="aside" />
+
+Dans le Markdown, la note sur le comptage suit le premier paragraphe sur Harrow Down, en page 3 ; `placement="top"` la sort du flux et la place en tête de la page suivante. Le rapport remplit le reste de la page 3, et la <PageRef page={4}>page 4</PageRef> s’ouvre sur l’encadré qui traverse les deux colonnes. Dessous, le tableau des sites et le graphique en anneau, tous deux en `position: 'top'`, coiffent chacun une colonne, une ligne de grille plus bas que sans les 3,5 mm de remplissage inférieur de l’encadré.
+
+### 4 · Donnez sa couleur à chaque section sans page de séparation
+
+<Excerpt region="palette" />
+
+Avec `parts: { page: false }`, une clôture comme `:::part{number="02" title="Operations" palette="band=#1c6e67"}` n’ouvre aucune page. Elle nomme la section pour la bande d’ouverture et les pieds courants, et change `band` sur chaque page jusqu’à la partie suivante. Les bandes, les intertitres, les puces, les étiquettes de légende et le filet de l’encadré prennent tous `band` : les pages d’activité s’impriment en sarcelle et la page financière en rouge brique, tandis que la lettre du président garde le bleu mer de base (<Feature id="part-palettes">couleurs par partie</Feature>).
+
+### 5 · Construisez les tableaux à partir des données, et nivelez la dernière page
+
+<Excerpt region="data" />
+
+`statement()` transforme `DATA.accounts` en compte de résultat, ligne par ligne. Un intitulé qui commence par `=` imprime en gras, sur la teinte, la somme cumulée de chaque année ; les charges sont négatives dans les données, si bien que *Operating surplus* sort de cette somme sans aucun total saisi à la main. Un intitulé sans chiffres, *Income* ou *Operating costs*, devient une cellule en italique sur toute la largeur du tableau, fusionnée avec `mergeCells`, qui écrit aussi les cellules de remplacement dont une fusion a besoin. En <PageRef page={5}>page 5</PageRef>, le compte flotte au pied de la page, sur toute la largeur, sous le rapport du trésorier, qui clôt le document. Sans équilibrage, les colonnes feraient 12 lignes à gauche et 9 à droite ; la coupe finale les règle toutes deux à 11, et le levier des titres ajoute au-dessus de *Cash and reserves* la ligne qui manque encore à la colonne de droite.
+
+## Variantes
+
+### Laissez les titres prendre tout le vide
+
+Les deux lignes libres de la page 3 vont alors au-dessus de *The Saltings and the roofs*, et aucune après la liste.
+
+```diff
+-const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
++const balancing = {}; // the default: two lines above a heading, then the other levers
+```
+
+### Désactivez l’équilibrage
+
+La colonne de droite de la page 3 finit alors deux lignes trop tôt. En page 5, la colonne de gauche fait 12 lignes et celle de droite 9, et le compte commence une ligne plus bas.
+
+```diff
+-const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
++const balancing = { enabled: false };
+```
+
+## Erreurs fréquentes
+
+- Quand les colonnes d’une dernière page diffèrent d’une ligne, elles restent telles quelles, la colonne de gauche plus longue d’une ligne, comme les composerait un typographe ; la coupe finale n’agit que sur un écart de deux lignes ou plus. Pour faire finir les deux ensemble, allongez ou raccourcissez le texte d’une ligne.
+- Le compte de résultat met les charges entre parenthèses. Pour aligner les chiffres positifs sur elles, le pen termine chaque chiffre positif par une espace insécable, qui, dans un caractère à chasse fixe, est aussi large que la parenthèse fermante ; une cellule de tableau garde cette espace en fin de texte.

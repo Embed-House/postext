@@ -1,0 +1,78 @@
+---
+title: "Un certificat à bordure guillochée"
+summary: "Des certificats de fin de stage dessinés par un style de titre : cadre guilloché dans l’en-tête, sceau et signatures dans le pied, nom dans l’ouverture."
+plain: "Des certificats de stage pour un atelier d’imprimerie, une page par élève, avec une bordure à motifs et un sceau. Écrire une seule fois le nom d’un élève donne un certificat entier."
+description: "Certificats de fin de stage avec Postext : bordure guillochée et sceau dessinés en code, nom en anglaise tiré de chaque titre, toute la classe en un PDF."
+question: "Comment placer une bordure guillochée, un sceau et des lignes de signature sur chaque page d’un certificat ?"
+aliases: ["diplôme", "certificat", "attestation", "guilloché", "bordure ornementale", "sceau", "lignes de signature", "publipostage", "liste de classe", "PDF par lots", "une page par enregistrement", "bordure décorative sur chaque page"]
+pageNotes: { "1": "Un certificat au format US Letter sur papier crème, encadré d’une bande bleu canard garnie de lentilles guillochées crème, avec une rosace crème à chaque coin. À l’intérieur, la ligne de capitales interlettrées « The Quoin Room · Letterpress workshop », « CERTIFICATE » en grandes capitales bleu canard et « OF COMPLETION », puis « This certifies that » en italique et le nom « Imogen Achterberg » en écriture anglaise noire sur un filet doré. Suivent quatre lignes centrées de mention et une ligne de date en italique. Vers le pied, un sceau rouge à deux rubans se tient entre les lignes de signature de Harriet Colfax, « master printer », et de Samuel Okoro, « course tutor », avec une ligne d’adresse d’imprimeur dessous ; le numéro de série « No. 26-031 » est imprimé en rouge en haut à droite.", "2": "Le même certificat pour Tomás Okafor, numéro de série 26-032.", "3": "Le même certificat pour Ruth Adair, numéro de série 26-033." }
+---
+
+## Ce que vous allez composer
+
+Des certificats de fin de stage pour le Quoin Room, un atelier de typographie au plomb fictif de Providence : une page US Letter par élève. L’édition espagnole les compose en diplômes A4 pour La Cuña, un atelier de Saragosse. Une bande bleu canard garnie de lentilles guillochées crème encadre la feuille, avec une rosace crème à chaque coin ; les deux sont dessinées en code à partir de sinusoïdes et d’hypotrochoïdes. Sous un titre en capitales interlettrées, le nom de l’élève est composé en Pinyon Script de 48 pt au-dessus d’un filet doré, et la mention est centrée en Rosarivo. Un sceau rouge à deux rubans se tient entre les lignes de signature, avec une ligne d’adresse d’imprimeur dessous. Comme un seul style de titre dessine toute la page, chaque élève est un titre Markdown, et le PDF contient la classe avec un signet par nom.
+
+## Préparation
+
+### 1 · Laisser un style de titre dessiner la page
+
+Le style lui-même est [la réponse courte](#la-réponse-courte) ci-dessus. Un style de titre gouverne les pages de sa section ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)) : son `header` et son `footer` remplacent ceux du document, vides ici, ses `margins` fixent la zone de texte et son `advancedDesign` dessine l’ouverture. La hauteur d’une ouverture s’arrondit au nombre supérieur de lignes entières de la grille de 17 pt du texte courant. Un `minHeight` de 106 mm devient 18 lignes, si bien que la mention commence à 140 mm du bord supérieur ; en A4, `y()` le porte à 112,7 mm, soit 19 lignes, et la mention commence à 146 mm. Le bloc de titre seul ferait commencer la mention à 128 mm (134 mm en A4). Sans `marginBottom: 0`, les 0,5 em par défaut sous un titre porteraient les mêmes 106 mm à 19 lignes.
+
+### 2 · Accrocher le cadre à la page dans l’en-tête
+
+<Excerpt region="frame" />
+
+Un élément image dessine une ressource à la taille de son placement ([éléments image](/fr/docs/configuration-page-layout#éléments-image)) : ancré au coin supérieur gauche de la page avec ses deux côtés à `'fill'`, le guilloché couvre la zone de coupe, et le SVG, déclaré aux proportions de la page, la remplit sans se déformer. L’en-tête le peint par-dessus `page.backgroundColor` et ne réserve aucune place, si bien que les marges suffisent à tenir le texte à 32 mm au moins de la coupe, à l’intérieur du filet intérieur placé à 26 mm. Un filigrane placé dans l’en-tête s’imprimerait par-dessus les mots, car l’en-tête est peint après le texte. Dans un en-tête, `{attr.serial}` lit l’attribut du titre dont relève la section de la page, si bien que chaque certificat imprime son propre numéro.
+
+### 3 · Ne garder que le bloc de titre dans l’ouverture
+
+<Excerpt region="title" />
+
+Chaque ligne est ancrée au bord `'top'` de la page, ce qui la centre, avec un `y` mesuré depuis la coupe, si bien que le bloc garde sa place quelles que soient les marges ; `y()` étire ces positions du format Letter vers l’A4. Le nom est le texte même du titre, lu par `{titleText}`, si bien que les signets et les balises du PDF le portent. Un nom long prend une deuxième ligne, puisqu’une maquette de titre renvoie son texte à la ligne (`overflow: 'wrap'`). Les lignes interlettrées n’ont besoin d’aucune correction : l’approche qui suit la dernière lettre n’entre pas dans la mesure, si bien que ce sont les lettres elles-mêmes qui sont centrées.
+
+### 4 · Accrocher le sceau et les signatures à un même bord
+
+<Excerpt region="signatures" />
+
+Tout ce que contient le pied de page se mesure depuis `SIGN`, le bord supérieur du sceau, et la marge inférieure du style termine la zone de texte sur ce même bord, si bien qu’une mention trop longue pour la page passe à la suivante au lieu de courir sous le sceau. Placés dans l’ouverture, les lignes et les noms compteraient dans sa hauteur ([largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)) ; comme ils descendent sous la zone de texte, l’ouverture réclamerait toute la page et renverrait la mention à la suivante. `LINE` prend la largeur entre les marges de la page, en retire le disque de 34 mm du sceau, divise le reste par deux et ôte 3 mm, si bien que chaque ligne s’arrête à 3 mm du sceau dans les deux formats (56 mm de long en Letter, 53 mm en A4). Chaque nom et chaque fonction est un élément texte aussi large que sa ligne, ce qui le centre sous la ligne.
+
+### 5 · Fusionner la liste de la classe en titres
+
+<Excerpt region="merge" />
+
+Chaque rangée devient un titre `#` qui nomme le style et porte le numéro de série en attribut ([attributs de titre](/fr/docs/document-format#attributs-de-titre)), suivi du texte de `content.en.md`, si bien que trois rangées donnent trois pages. Le `breakBefore` du niveau 1, avec la parité `'any'`, fait commencer chaque titre sur une nouvelle page, sans page blanche entre les certificats ; le style en hérite.
+
+### 6 · Composer un seul PDF pour toute la classe
+
+<Excerpt region="pdf" />
+
+La classe forme un seul document, si bien que `renderToPdf` écrit un unique fichier de trois pages avec un signet par titre, chacun au nom d’un élève. `renderToPdf` accepte aussi un tableau de documents, comme les chapitres d’un livre, mais un document par élève signifie un appel à `buildDocument` pour chacun. Sous forme de titres, toute la classe est mise en page en une seule composition, et la visionneuse montre les trois certificats issus de cette composition. Le PDF incorpore les quatre polices qu’impriment les pages, que le fournisseur de polices du kit va chercher sur Fontsource ([pourquoi un fournisseur de polices ?](/fr/docs/configuration-programmatic-usage#pourquoi-un-fournisseur-de-polices)).
+
+## Variantes
+
+### Imprimer un PDF par élève
+
+Un bouton par élève compose ce certificat comme un document à part, avec `buildDocumentWithFonts` comme composition propre du pen, et nomme le fichier d’après le numéro de série ; chaque fichier pèse environ 245 Ko.
+
+```diff
+-offerPdf(() => renderToPdf(doc, { fontProvider: fontsourceProvider, resourceBytes: imageBytes }),
+-  `${RECIPE}.pdf`); // bookmarks: one per heading, so one per student
+-document.querySelector('[data-postext-pdf]').textContent = t({ en: 'Class list → one PDF',
+-  es: 'Toda la clase en un PDF' });
++for (const [name, serial] of CLASS) {
++  const one = `# ${name} {style="certificate" serial="${serial}"}\n\n${markdown}`;
++  offerPdf(async () => renderToPdf(await buildDocumentWithFonts({ markdown: one, metadata,
++    resources }, config(), kitFonts(FONTS)), { fontProvider: fontsourceProvider,
++    resourceBytes: imageBytes }), `${serial}.pdf`);
++  document.querySelector(`[data-postext-pdf="${serial}.pdf"]`).textContent = name;
++}
+```
+
+### Imprimer le cadre et le titre en bleu marine
+
+Les dessins SVG et la configuration lisent le même objet `palette`, si bien que changer une entrée recolore la bande, les motifs des rosaces et les lignes du titre.
+
+```diff
+-  teal: '#1f5f5b', // the frame, the title lines
++  teal: '#2b3a67', // the frame, the title lines
+```

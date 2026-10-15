@@ -1,0 +1,85 @@
+---
+title: "Une famille d’encadrés de manuel codée par couleur"
+summary: "Six sortes d’encadrés de manuel en trois couleurs, distinguées par une bande à icône, un badge, un onglet numéroté, des pictogrammes ou un repère hors cadre."
+plain: "Un chapitre de manuel de biologie avec six sortes d’encadrés, comme des avertissements et des notes de TP. Chaque sorte a sa couleur et son symbole, pour que les élèves les distinguent d’un coup d’œil."
+description: "Le chapitre 2 d’un manuel de biologie avec Postext : objectifs sur une bande magenta, conseil sur un filet vert, un BOX 2.1 à onglet et un avertissement ambre."
+question: "Comment faire des encadrés d’objectif, de conseil ou d’alerte avec icône, bande, coins arrondis ou onglet ?"
+aliases: ["encadrés de manuel", "objectifs d’apprentissage", "conseil de méthode", "encadré d’avertissement", "BOX 2.1", "BOX 2-1", "encadré numéroté", "étiquette d’encadré", "badge d’angle", "bande d’icônes", "pictogrammes de sécurité", "autoévaluation", "mots clés", "admonition", "sidebar"]
+pageNotes: { "1": "L’ouverture du chapitre 2, « Cells and Membranes » : une cellule magenta au bord en bicouche perlée, coupée par l’angle supérieur droit de la page, avec un 2 blanc en son centre. Sous le premier paragraphe, un encadré d’objectifs d’apprentissage sur une bande magenta qui porte une icône de cible ; dans la colonne de droite, un conseil de méthode à côté d’un filet vert fin coiffé d’un badge en forme d’ampoule.", "2": "Un dessin pleine largeur de la mosaïque fluide, puis « BOX 2.1 » sur les deux colonnes : un onglet noir et une fiole sur son angle supérieur gauche, un filet qui part d’eux jusqu’à l’angle opposé, une figure de deux cellules qui fusionnent à gauche et le texte à droite. Dessous, dans la colonne de gauche, un encadré d’avertissement au cadre ambre arrondi avec un badge d’alerte accroché à son angle extérieur.", "3": "Trois vignettes de globules rouges dans des solutions salines en tête de page, une activité de TP avec un encadré de sécurité à trois pictogrammes et des étapes numérotées en vert, et un encadré d’autoévaluation rose placé en flottant au pied de la page, marqué par une tuile magenta cochée et un filet fin à côté de son cadre." }
+---
+
+## Ce que vous allez composer
+
+Le chapitre 2 de *Living Matter*, un manuel de biologie de lycée sur une page de 210 × 280 mm, s’ouvre sous le dessin d’une cellule coupée par l’angle supérieur de la page, avec le numéro du chapitre en son centre. Six sortes d’encadrés suivent, en trois couleurs, chacune avec son propre dispositif : un élève distingue un objectif d’un avertissement avant de le lire. Le magenta marque les objectifs d’apprentissage, posés sur une bande qui porte une cible, et l’autoévaluation, qui a une tuile cochée hors de son cadre. Le vert marque le conseil de méthode, posé à côté d’un filet fin coiffé d’un badge en forme d’ampoule, et l’encadré de TP avec ses trois pictogrammes de sécurité. L’avertissement est ambre, avec un badge d’alerte sur son angle extérieur. BOX 2.1 est lavande sous un onglet noir et une fiole. Les termes en gras prennent la couleur de leur encadré, magenta dans BOX 2.1.
+
+## Préparation
+
+### 1 · Donner une couleur à chaque sorte d’encadré
+
+<Excerpt region="palette" />
+
+Six sortes d’encadrés se partagent trois teintes : le magenta pour les objectifs et l’autoévaluation, le vert pour le conseil et le TP, l’ambre pour l’avertissement. BOX 2.1 a un fond lavande et utilise le magenta pour ses mots clés. Chaque teinte a une nuance pâle pour les fonds, et chaque réglage de couleur renvoie à une entrée de la palette : changer une teinte revient à modifier une seule valeur. Un texte aussi petit demande un contraste de 4,5:1. Le magenta sur la lavande atteint 4,9:1, mais l’ambre sur le fond de l’avertissement seulement 2,2:1 : l’avertissement garde donc l’ambre pour son cadre et son badge, et compose son titre et ses mots clés en `warnInk`, un ambre plus sombre à 5,2:1.
+
+### 2 · Partager tout le reste
+
+<Excerpt region="base" />
+
+`box()` contient les réglages que partagent tous les encadrés : marges, rembourrage, caractère du titre et du texte, espacement des listes. Son argument `hue` colore le titre, les puces et les numéros, et les passages en gras. `body.boldColor` passe **fluid mosaic model** en magenta dans les objectifs et **cell wall** en brun ambré dans l’avertissement ; le gras du texte courant reste à l’encre ([typographie dans un encadré](/fr/docs/configuration-styles#typographie-dans-un-encadré)). Déclarer `calloutStyles` remplace le seul style que fournit le moteur, un encadré gris appelé `note`. Un bloc dont le `type` manque ou est mal orthographié prend le premier style : la liste commence donc par les objectifs, que chaque chapitre contient.
+
+### 3 · Bande, onglet et badge
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. La bande des objectifs mesure 7,5 mm de large et sa cible 5 mm : l’icône se place dans la couleur avec de la marge de chaque côté. L’`offset` de l’onglet vaut sa `height`, ce qui pose l’onglet sur le bord supérieur de l’encadré, à l’écart du titre. `'top-left'` est l’angle extérieur de ce verso ; la fiole suit l’onglet, et le filet court le long du bord supérieur, de la fiole jusqu’à l’angle opposé. `position: 'corner'` accroche le badge de l’avertissement à cheval sur le bord, de la moitié de sa largeur, et `cornerSide: 'outer'` l’envoie du côté de la tranche, à gauche sur ce verso. De ce côté, le moteur met le titre en retrait pour dégager le badge, sauf si le rembourrage couvre déjà la moitié du badge plus l’écart du titre : l’avertissement rembourre donc ses deux côtés de `BADGE / 2 + GAP` et son titre s’aligne sur son texte. Seul cet encadré a un `borderRadius` : c’est le seul encadré avec un cadre, et un rayon de 1,4 mm adoucit ses angles. Un rayon sur un encadré à bande arrondirait avec lui les angles extérieurs de la bande ([styles d’encadré](/fr/docs/configuration-styles#styles-dencadré)).
+
+### 4 · Trois dispositifs de plus
+
+<Excerpt region="more" />
+
+La bande du conseil mesure 2,5 pt de large pour un badge d’ampoule de 6,4 mm : elle s’imprime comme un filet fin avec le badge sur son extrémité haute ; un rembourrage gauche de la moitié du badge plus 2 mm écarte le texte de l’ampoule. `icon.width` ajuste une image dans une boîte large au lieu d’un carré : les trois pictogrammes de sécurité, dessinés en une seule image de 24,5 mm, forment la colonne d’icône de l’encadré de TP, centrée sur son texte. Le repère de l’autoévaluation se trouve hors du cadre, dans l’ordre repère, filet, écart, encadré. Sa tuile carrée sur un filet de 0,75 pt le distingue du conseil, dont le badge est rond. Le bloc ajoute `span="page" placement="bottom"` pour placer l’autoévaluation en flottant au pied de la <PageRef page={3}>page 29</PageRef>.
+
+### 5 · Les icônes sont des ressources
+
+<Excerpt region="icons" />
+
+Chaque icône, la fiole à côté de l’onglet et la cellule de l’ouverture sont des ressources SVG déclarées avec le contenu et enregistrées par identifiant de fichier. Un style les nomme par identifiant de ressource, et comme le texte ne les cite jamais, aucune ne devient une figure numérotée. Des glyphes comme ✓ ou ☞ seraient plus courts à écrire, mais les fichiers latin de Fontsource que chargent les pages ne les contiennent pas : le canvas les emprunterait à une police système, et un PDF les perdrait. Les dessins ne portent aucun mot non plus : les légendes nomment les couleurs, si bien qu’un même dessin sert aux deux éditions.
+
+### 6 · Ouvrir le chapitre sur une cellule
+
+<Excerpt region="opener" />
+
+La cellule est un élément image ancré à l’angle supérieur droit de la page et poussé au-delà : on voit surtout son quart inférieur gauche, et le chiffre se place en son centre. Les deux restent dans les 66 mm que `minHeight` réserve à l’ouverture. Le surtitre et le chapeau viennent de la ligne du titre, `# Cells and \\ Membranes {unit="The cell" lead="…"}`, et le `\\` ne coupe le titre que dans l’ouverture.
+
+## Variantes
+
+### Poser un encadré sur les deux colonnes
+
+`span="page"` sur un bloc place n’importe quelle sorte d’encadré sur les deux colonnes ; BOX 2.1 imbrique en plus un groupe `:::columns` pour mettre sa figure à côté de son texte.
+
+```diff
+-:::callout{type="warning" title="Membrane or wall?"}
++:::callout{type="warning" title="Membrane or wall?" span="page"}
+```
+
+### Accrocher le badge côté dos
+
+`'inner'` déplace le badge du côté du dos, à gauche sur un recto et à droite sur un verso ; laissez de la place de ce côté pour la moitié qui dépasse de l’encadré.
+
+```diff
+-    icon: icon('caution', BADGE, { position: 'corner', cornerSide: 'outer' }) }),
++    icon: icon('caution', BADGE, { position: 'corner', cornerSide: 'inner' }) }),
+```
+
+### Poser l’onglet sur l’angle droit
+
+`'top-right'`, la valeur par défaut, inverse toute l’étiquette : l’onglet passe sur l’angle droit, la fiole à sa gauche, et le filet part de la gauche.
+
+```diff
+-      position: 'top-left', // this verso's outer corner, above the badge ('top-right' by default)
++      position: 'top-right',
+```
+
+## Erreurs fréquentes
+
+- L’onglet ne s’imprime que si le bloc a `label="BOX 2.1"` et le style un objet `label`. Un style qui n’en a pas ignore l’attribut.
+- Postext ne numérote pas les encadrés. L’étiquette est le texte littéral du bloc : vous tapez donc chaque numéro, BOX 2.1, BOX 2.2, à la main.
+- Un badge d’angle dépasse du côté de l’encadré de la moitié de sa largeur, dans la marge du côté extérieur de la page. Dans l’autre colonne de la même page, il dépasse dans la gouttière : gardez les encadrés à badge dans la colonne extérieure, ou laissez-leur de la place.
+- Le `lists.color` d’un encadré colore à la fois ses puces et les numéros de ses listes numérotées : les étapes et les questions numérotées s’impriment donc ici dans la teinte de leur encadré. Pour ne colorer que les puces d’un encadré, retirez `lists.color` de son style et réglez `unorderedLists.color` pour le document ; les numéros gardent alors `orderedLists.color`.

@@ -9,7 +9,8 @@ import {
 /** The text alternative under a narrated video (WCAG 1.2.3, 1.2.8): a
  *  disclosure, closed by default, with what is shown and what is said, block
  *  by block, timed against the cut each locale plays (one per site locale,
- *  each with its own narration). Server component. */
+ *  each with its own narration, but French, which plays the English cut
+ *  with a French transcript). Server component. */
 export async function VideoTranscript({
   video,
   locale,

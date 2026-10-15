@@ -1,0 +1,59 @@
+---
+title: "Une page de journal arabe sur deux colonnes"
+summary: "Un quotidien arabe en locale 'ar' : la première colonne est à droite, les titres couvrent les deux, les brèves vont sur trois colonnes de droite à gauche."
+plain: "La une et une page intérieure d’un journal arabe. L’article commence dans la colonne de droite et se poursuit dans celle de gauche, comme un lecteur arabe lit une page."
+description: "Un journal arabe dans Postext : deux colonnes ordonnées de droite à gauche, titres sur toute la largeur, brèves sur trois colonnes, horaires des prières."
+question: "Quelle colonne vient en premier sur une page arabe, et comment composer un journal sur deux colonnes ?"
+aliases: ["journal arabe", "colonnes de journal", "colonnes de droite à gauche", "ordre des colonnes", "titre du journal", "manchette", "Aref Ruqaa", "horaires des prières", "صحيفة", "عمود", "مواقيت الصلاة", "Arabic newspaper"]
+pageNotes: { "1": "La une : le nom الساحل en grandes lettres ruqʿa bleues entre deux petites oreilles, dessous un filet épais et un filet fin, le surtitre النقل, un titre de deux lignes en coufique noir sur toute la largeur, un chapeau, une carte d’une ligne de tramway le long d’une côte, l’article sur deux colonnes en commençant par la droite, et au pied un bandeau des brèves couleur sable sur trois colonnes.", "2": "La page intérieure : une bannière bleue محليات au-dessus d’un filet épais, un titre sur toute la largeur, quatre articles sur deux colonnes à partir de la droite, et un tableau des horaires des prières au pied, sur toute la largeur, sa première colonne, الفجر, à droite." }
+---
+
+## Ce que vous allez composer
+
+Deux pages d’*الساحل*, un quotidien imaginaire d’une ville portuaire imaginaire, au format compact de 246 × 328 mm. La une porte le nom du journal en Aref Ruqaa de 84 pt, l’article principal sur le nouveau tramway de la ville sous un titre sur toute la largeur et une carte dessinée en code, et un bandeau de trois brèves au pied. La page 2 ouvre la rubrique locale sous une bannière bleue, avec quatre articles et les horaires des prières du jour. Tout se lit à partir de la droite : la première colonne de texte, les brèves, les colonnes du tableau, les oreilles du titre du journal. <RecipeLink slug="newspaper-front-page">La une anglaise</RecipeLink> compose les mêmes éléments de gauche à droite.
+
+## Préparation
+
+### 1 · Deux colonnes, la première à droite
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `layoutType: 'double'` et le filet de colonne sont les mêmes réglages que dans un journal anglais ; `locale: 'ar'` retourne la page, si bien que l’article remplit d’abord la colonne de droite et se poursuit en tête de celle de gauche ([ordre des pages et reliure à droite](/fr/docs/arabic-layout#ordre-des-pages-et-reliure-à-droite)). Un titre sur les deux colonnes est un encadré sur toute la largeur de la page, sans cadre, et les colonnes qui le suivent partent au même niveau. Le bandeau des brèves est un encadré sur toute la largeur, flottant au pied, avec `:::columns{count=3}` à l’intérieur, et ses colonnes vont elles aussi de droite à gauche, comme le tableau des horaires des prières en page 2 : un tableau composé dans le sens du document place sa première colonne à droite.
+
+### 2 · Un titre de journal entre deux oreilles
+
+<Excerpt region="nameplate" />
+
+Le titre de niveau 1 de la une est le nom du journal, peint par un style de titre. Sa maquette est dessinée dans la page en miroir : `top-right` est donc le début de la ligne. Le numéro et la date y vont, la ville et le prix à l’autre bout ([ce que signifient gauche, droite, début et fin](/fr/docs/arabic-layout#ce-que-signifient-left-right-start-et-end)). Le ruqʿa est une écriture de titrage, faite pour quelques mots en grand corps ; il n’a pas de kashida et le texte courant ne l’utilise jamais.
+
+### 3 · Bannières de rubrique et lignes de folio
+
+<Excerpt region="inside" />
+
+Une page intérieure s’ouvre sur un titre de niveau 1 dessiné comme une bannière sur un filet épais. La ligne de folio est un en-tête : elle garde donc ses côtés physiques. La page 2, paire, a son numéro dans le coin droit, le coin extérieur dans un journal qui s’ouvre par la droite. La une efface l’en-tête dans son style de titre.
+
+### 4 · Une carte dessinée en code
+
+<Excerpt region="art" />
+
+La carte du tramway est un SVG fait de tracés et de cercles aux couleurs de la palette, sans aucun texte : les noms de lieux restent dans la légende, dans le caractère de la page. Le type d’image n’a ni compteur ni étiquette, parce que les journaux ne numérotent pas leurs images.
+
+## Variantes
+
+### Trois colonnes dans les brèves, quatre sur une page plus large
+
+Le bandeau est un encadré qui a ses propres colonnes : il peut en avoir plus que les deux du texte courant.
+
+```diff
+-:::columns{count=3 breaks="2,3"}
++:::columns{count=4 breaks="2,3,4"}
+```
+
+### Des chiffres européens pour un journal du Maghreb
+
+```diff
+-  locale: 'ar', // written out, never LANG (gotcha: arabic-locale-tag): rtl, digits ٠–٩
++  locale: 'ar-MA', // rtl, digits 0–9
+```
+
+## Erreurs fréquentes
+
+- Les horaires des prières sont saisis en chiffres arabes orientaux dans les cellules du tableau : `locale` ne change que les nombres qu’écrit le moteur, si bien qu’une édition maghrébine doit les ressaisir.

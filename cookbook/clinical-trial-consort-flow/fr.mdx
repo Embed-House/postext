@@ -1,0 +1,68 @@
+---
+title: "Un rapport d’essai clinique avec un diagramme CONSORT"
+summary: "Un vrai rapport d’essai, abrégé : résumé structuré sur toute la page, flux CONSORT dessiné en code d’après ses chiffres, tableaux alignés, citations APA."
+plain: "Une étude publiée sur un chatbot qui propose des exercices de thérapie, abrégée et remise en page. Le schéma des entrées et sorties de l’essai suit ses chiffres, les tableaux alignent leurs décimales et les références suivent l’APA."
+description: "Rapport d’essai randomisé avec Postext : encadré de résumé structuré, diagramme CONSORT dessiné en SVG d’après les chiffres, tableaux alignés, références APA."
+question: "Comment dessiner un diagramme de flux CONSORT et composer un résumé structuré pour un rapport d’essai ?"
+aliases: ["CONSORT", "diagramme de flux", "flux des participants", "essai contrôlé randomisé", "ECR", "essai clinique", "résumé structuré", "PHQ-9", "GAD-7", "APA", "conflits d’intérêts", "santé mentale numérique", "JMIR", "PubMed Central"]
+pageNotes: { "1": "La page 1 : un filet indigo en haut, le surtitre « RANDOMIZED CONTROLLED TRIAL · DIGITAL MENTAL HEALTH », le titre sur quatre lignes en Lora gras, trois auteurs avec leurs numéros d’affiliation en exposant, les affiliations, la ligne d’historique et la ligne de source en indigo. Dessous, un encadré lilas pâle s’étend sur les deux colonnes : « ABSTRACT », puis « Background », « Objective » et « Methods » dans la colonne de gauche et « Results » et « Conclusions » dans celle de droite, avec les mots-clés et la ligne d’enregistrement de l’essai sur toute la largeur de l’encadré. L’« Introduction » commence dessous sur deux colonnes, avec des citations APA comme (Kessler et al., 2007).", "3": "La page 3 : la description de l’agent et sa liste de fonctions de processus ; dans la colonne de droite, un encadré sous une bande indigo réunit cinq bulles lilas arrondies, chacune un message envoyé par l’agent tel que l’article le cite, puis la condition contrôle et les mesures PHQ-9 et GAD-7 sous des intertitres en italique.", "5": "La page 5 : la figure 1, le diagramme CONSORT sur toute la largeur de la page : les pastilles d’étape « ENROLLMENT », « ALLOCATION », « FOLLOW-UP » et « ANALYSIS » à gauche ; 204 inscriptions, 115 confirmées, 45 exclues comme générées par des robots, 70 randomisées dans un cadre indigo ; 34 attribuées à Woebot et 36 au contrôle par information seule ; 3 et 11 perdues de vue ; 31 et 25 avec des données à T2 ; 34 et 36 analysées en intention de traiter dans des cadres indigo. Dessous, le tableau 1 des caractéristiques initiales, avec moyennes et écarts-types dans des colonnes séparées, et l’analyse des participants ayant terminé l’essai.", "6": "La page 6 : le tableau 2 sur toute la largeur de la page, les résultats en intention de traiter à T2 avec un en-tête indigo sur deux rangées, moyennes et erreurs-types dans des colonnes alignées, intervalles de confiance, F, P et d ; les résultats qualitatifs ; les figures 2 et 3 en pied, des diagrammes en barres des meilleures et des pires fonctions citées par les participants.", "7": "La page 7 : la fin des « Limitations », les « Conclusions », la déclaration de conflits d’intérêts, les abréviations avec leurs termes en indigo gras et les premières références APA avec leurs DOI." }
+---
+
+## Ce que vous allez composer
+
+Un essai contrôlé randomisé en santé mentale numérique, recomposé à partir de son texte en libre accès : l’essai de Woebot publié en 2017 dans JMIR Mental Health, un agent conversationnel qui délivre une thérapie cognitivo-comportementale, abrégé à huit pages. Le style maison est celui d’un rapport de recherche sobre sur 210 × 280 mm, Lora pour le texte et Nunito Sans pour chaque étiquette et chaque nombre, avec une seule couleur d’accent indigo. Les pages portent ce dont a besoin un rapport d’essai : le résumé structuré sur les deux colonnes, les mots-clés et une ligne d’enregistrement, le flux des participants CONSORT redessiné en code d’après les chiffres de l’article, deux tableaux de résultats aux décimales alignées, la déclaration de conflits d’intérêts des auteurs reprise mot pour mot, et des citations auteur–date APA 7 construites à partir de BibTeX.
+
+## Préparation
+
+### 1 · L’encadré du résumé et le diagramme comme ressource
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Un style d’encadré avec `span: 'page'` ferme les deux colonnes au-dessus de lui et les rouvre dessous, si bien que le résumé peut s’étendre sur la page à n’importe quelle hauteur. À l’intérieur, `:::columns{count=2}` compose de « Background » à « Conclusions » sur deux colonnes, et les mots-clés et la ligne d’enregistrement suivent sur toute la largeur de l’encadré. Le diagramme CONSORT est une ressource SVG comme une autre : il tire de la ressource son numéro, sa légende et sa note de crédit, et son premier `:ref` le place en tête de la page suivante.
+
+### 2 · La tête de l’article tirée des attributs du titre
+
+<Excerpt region="title" />
+
+Le titre est le seul titre de niveau 1 du document, avec un style qui s’étend sur la page et le dessine à partir d’éléments. Tout le reste de la tête vient des attributs du titre : le type d’article, les auteurs avec les marques d’affiliation `^1^` que relève `inlineMarks`, les affiliations séparées par `\n`, les dates de réception et d’acceptation et la ligne de source. Pour votre propre article, vous changez les attributs et gardez la maquette. `numbered: false` sur le style garde les figures en Figure 1, 2, 3 au lieu de 1.1.
+
+### 3 · Le flux CONSORT, dessiné d’après les chiffres
+
+<Excerpt region="art" />
+
+Chaque cadre est un appel à `node()` avec ses lignes ; les étapes sont des pastilles au bord gauche, et les flèches sont une ligne et un triangle plein, car `<marker>` retombe sur une image dans le PDF. Les chiffres sont ceux de l’essai : 204 inscriptions, 115 confirmations, 45 inscriptions générées par des robots exclues, 34 et 36 attribués, 3 et 11 perdus de vue, 31 et 25 avec des données à T2. Pour votre propre essai, remplacez les chaînes et les effectifs ; la disposition suit la hauteur des cadres. Le texte d’un SVG dessiné comme image ne voit pas les polices de la page, si bien que le dessin embarque Nunito Sans en ligne sous forme d’URL data.
+
+### 4 · Des nombres alignés dans les tableaux
+
+<Excerpt region="tables" />
+
+Nunito Sans compose ses chiffres sur une chasse fixe, si bien qu’une colonne de moyennes alignées à droite s’aligne sur la virgule décimale. Chaque moyenne et son écart-type ou son erreur-type vont dans deux colonnes, la moyenne au fer à droite et la parenthèse au fer à gauche à côté, et `mergeCells` construit les en-têtes de groupe (« Information-only control » sur trois colonnes) et les rangées qui couvrent tout le tableau. Le tableau 2 est un flottant sur toute la largeur de la page ; le tableau 1 reste dans une colonne.
+
+### 5 · Les propres mots de l’agent dans des encadrés imbriqués
+
+<Excerpt region="boxes" />
+
+L’article cite cinq messages envoyés par l’agent. La recette les réunit dans un encadré avec une bande supérieure indigo, chacun dans un encadré imbriqué aux coins arrondis, avec une petite étiquette nommant la fonction qu’il illustre. Seules les citations de l’article y figurent ; rien ne leur est ajouté.
+
+## Variantes
+
+### Citer selon le style numérique de Vancouver
+
+Les revues médicales numérotent souvent leurs citations ; le BibTeX et le texte restent tels quels.
+
+```diff
+-  citations: { style: 'apa', link: true,
++  citations: { style: 'elsevier-vancouver', marker: 'superscript', link: true,
+```
+
+### Ajouter un numéro ClinicalTrials.gov
+
+Cet essai a été considéré comme dispensé d’enregistrement et le dit. Un essai enregistré donne son registre et son numéro sur la même ligne de l’encadré du résumé, par exemple `**Trial registration** ClinicalTrials.gov NCT01234567`, avec le numéro de votre propre enregistrement.
+
+### Un diagramme sans la rangée d’analyse
+
+Quand un rapport n’indique pas qui a été analysé, terminez chaque bras aux cadres de suivi : supprimez le nœud `an` et sa flèche, et diminuez `CONSORT_H`.
+
+## Erreurs fréquentes
+
+- L’article n’a pas de numéro NCT : les auteurs écrivent que l’essai était dispensé d’enregistrement. La ligne d’enregistrement le dit, en citant la raison donnée par l’article, au lieu d’inventer un numéro.
+- Un tableau qui partage une colonne avec une figure sur toute la largeur de la page s’arrête trois lignes avant le pied et continue sur la page suivante. Le tableau 1 tient entier parce que ses rangées sont composées à 7,5 pt avec 0,45 mm de marge intérieure et que le dessin CONSORT fait 107 mm de haut.
+- L’article écrit χ² pour ses tests du khi carré, et cette édition aussi, en mathématiques en ligne : `$\chi^2_1$`. Aucun des fichiers Fontsource de Lora ne contient χ, pas même son fichier mathématique, qui ne contient que quelques lettres grecques comme π et Ω ; c’est MathJax qui dessine le χ, sous forme de tracés dans le PDF.

@@ -1,0 +1,60 @@
+---
+title: "Des photos qui grandissent pour remplir une colonne courte"
+summary: "Chaque photo marque une zone sûre ; l’équilibrage peut rogner hors d’elle pour l’allonger, et une colonne raccourcie par un titre ou un flottant finit au pied."
+description: "Un article en deux colonnes : les photos à zone sûre grandissent de lignes entières pour remplir les colonnes courtes, à côté des mêmes pages sans zone sûre."
+plain: "Indiquez à la mise en page quelle partie de chaque photo doit toujours rester visible. Quand il manque quelques lignes à une colonne, la photo s’allonge au lieu de laisser un trou."
+question: "Comment laisser rogner une photo pour remplir une colonne courte sans perdre son sujet ?"
+aliases: ["zone sûre", "recadrer pour ajuster", "photo flexible", "combler une colonne", "zone d’intérêt", "safe area"]
+---
+
+## Ce que vous allez composer
+
+Trois pages d’un magazine du littoral : un reportage sur les métiers d’une ville d’estuaire, avec une photo à fond perdu sur l’ouverture et cinq photos dans les colonnes. Le pen compose le reportage deux fois à partir du même texte. Dans la première composition, les photos gardent la forme de leurs fichiers, et en <PageRef page={2}>page 2</PageRef> les deux colonnes finissent une ligne avant le bas de la grille : celle de gauche sous son dernier paragraphe, celle de droite au-dessus de la photo placée à son pied. Dans la seconde, chaque photo désigne la partie du cadre qui doit toujours rester visible, et le moteur rogne en dehors : sur <PageRef page={5}>la même page</PageRef>, la pêcheuse à pied et le ramendeur de filets grandissent chacun d’une ligne, et les deux colonnes finissent sur la dernière ligne de la grille. Personne n’a eu à choisir les recadrages.
+
+## Préparation
+
+### 1 · Marquer ce qui doit rester, rien d’autre
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Une zone sûre se compose de quatre fractions de l’image, mesurées depuis son coin supérieur gauche. Le moteur peut montrer la photo sous toute forme comprise entre le fichier entier et ce rectangle, à la largeur de sa colonne : plus haute en coupant les côtés, plus basse en coupant le haut et le bas. Ce qui se trouve hors de la zone disparaît en proportion des marges de chaque côté : Rosa, à droite du centre sur le quai, reste à droite du centre quand les côtés sont coupés.
+
+### 2 · Ne laisser l’équilibrage rattraper le jeu que par les photos
+
+La même région règle l’équilibrage. Ses leviers habituels ajoutent du blanc : une ligne au-dessus d’un titre, de l’air sous une photo, un paragraphe allongé d’une ligne. Ils sont désactivés ici, si bien que la composition simple montre chaque colonne courte telle qu’elle est. Une photo à zone sûre est de toute façon essayée en premier, avant tous ces leviers, parce qu’une photo plus haute ne laisse aucun trou dans le texte.
+
+### 3 · La zone sûre appartient à la ressource
+
+<Excerpt region="photos" />
+
+`safeArea` se trouve sur la ressource à côté de son fichier, de sa légende et de son placement : une photo la garde où qu’elle flotte et dans chaque document qui l’utilise. Le pen la transmet ou l’omet, et c’est la seule différence entre les deux compositions. L’estuaire de l’ouverture est dessiné par le style de titre, pas placé en flottant : il n’en a pas besoin.
+
+### 4 · Composer les deux et comparer
+
+<Excerpt region="builds" />
+
+Les deux documents viennent d’une seule configuration et d’une seule chaîne Markdown. Seules les pages où le texte continue sont remplies jusqu’au pied : la <PageRef page={3}>page 3</PageRef> ferme le reportage, et une page de fin se contente de colonnes de même hauteur, ce qui est déjà le cas ici : aucune photo n’y grandit. Le bouton PDF compose celle des deux versions qui est sur la table de travail, et le PDF découpe chaque photo à son cadre de la même façon.
+
+## Variantes
+
+### Garder une photo en ligne avec son texte
+
+Une photo placée avec `position: 'here'` et une zone sûre est rognée en haut et en bas quand elle est un peu trop haute pour la place restant dans sa colonne, au lieu de passer à la suivante.
+
+```diff
+-const PLACEMENT = { pulpeira: { position: 'here' } }; // the rest float to the first free slot
++const PLACEMENT = { pulpeira: { position: 'here' }, faro: { position: 'here' } };
+```
+
+### Rendre à l’équilibrage ses autres leviers
+
+Avec les valeurs par défaut, les photos passent toujours en premier, et les titres et les flottants prennent ce que la zone sûre d’une photo ne peut pas absorber.
+
+```diff
+-const balancing = { enabled: true, maxLinesPerHeading: 0, stretchAfterLists: false,
+-  stretchAfterFloats: false, looseParagraphs: false };
++const balancing = { enabled: true };
+```
+
+## Erreurs fréquentes
+
+- Une zone sûre qui couvre toute l’image, ou dont un côté fait moins de 2 % de celle-ci, est ignorée : la photo est montrée entière, comme sans zone sûre.
+- Seuls les flottants de colonne et les photos en ligne grandissent. Une photo flottante sur les deux colonnes garde sa forme, parce que l’agrandir repousserait d’un coup toutes les colonnes en dessous.

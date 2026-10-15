@@ -1,0 +1,74 @@
+---
+title: "Ouvrage collectif avec une bibliographie par chapitre"
+summary: "Trois essais de trois contributeurs, chacun document distinct dans buildBundle, chacun clos par une liste Chicago auteur-date des seuls ouvrages qu’il cite."
+plain: "Un recueil d’essais de plusieurs auteurs. Chaque essai montre son auteur sous le titre et se termine par sa propre liste de références, comme dans les ouvrages collectifs."
+description: "Ouvrage collectif avec Postext : chapitres buildBundle, signatures tirées des attributs des titres, bibliographie par chapitre en Chicago auteur-date."
+question: "Comment donner à chaque chapitre d’un ouvrage collectif sa propre signature et sa propre liste de références ?"
+aliases: ["ouvrage collectif", "recueil d’essais", "actes de colloque", "chapitres de contributeurs", "références par chapitre", "bibliographie de chapitre", "Chicago auteur-date", "signature", "nom de l’auteur", "edited volume", "byline"]
+pageNotes: { "1": "Page 1 : la page de titre, un aplat rouge imprimeur sur les deux tiers supérieurs avec « The Working Page » en grand Caslon blanc et le sous-titre en italique ; dessous, les directeurs de l’ouvrage en capitales rouges et les trois contributeurs en italique.", "2": "Page 2 : la table des matières, trois essais numérotés avec points de conduite et numéros de page, chacun avec le nom de son contributeur en italique gris sous le titre.", "5": "Page 5 : la fin du chapitre 1 et sa liste « References » de quatre ouvrages, dont Eisenstein 1979 et Gaskell 1972.", "8": "Page 8 : la fin du chapitre 2 et sa propre liste « References », qui reprend Eisenstein 1979 parce que ce chapitre le cite aussi." }
+---
+
+## Ce que vous allez composer
+
+*The Working Page*, un petit recueil d’essais sur l’histoire de l’imprimerie, dirigé par deux chercheurs et écrit par trois. Chaque essai arrive de son contributeur sous forme de fichier Markdown avec son propre bloc BibTeX, et le livre le garde ainsi : un volume de 155 × 235 mm en Libre Caslon, une page de titre rouge, et des chapitres qui s’ouvrent sur un numéro, un titre et le nom du contributeur. Chaque chapitre se termine sur sa propre liste « References » en Chicago auteur-date, qui ne contient que les ouvrages cités par l’essai. *Printing Press as an Agent of Change* d’Eisenstein est cité par deux contributeurs et figure donc dans leurs deux listes ; *New Introduction to Bibliography* de Gaskell fait de même dans les chapitres 1 et 3.
+
+## Préparation
+
+### 1 · Un document par contributeur
+
+<Excerpt region="chapters" />
+
+La portée de [la réponse courte](#la-réponse-courte) est celle d’un document. `buildBundle` met en page les quatre documents comme un seul livre : numéros de page, numéros de chapitre et table des matières se suivent sans interruption, tandis que chaque `:::bibliography` rassemble les citations de son propre fichier. Les références restent là où le contributeur les a écrites : une clé définie dans un chapitre vaut pour tout le livre, une seule entrée partagée aurait donc suffi, mais des chapitres autonomes peuvent être échangés ou réordonnés sans casser la liste d’un autre essai.
+
+### 2 · La signature est un attribut du titre
+
+<Excerpt region="byline" />
+
+Le titre de chaque essai porte `author="…"` et un titre `short="…"` pour le titre courant. L’ouverture imprime l’auteur sous le titre, le titre courant du verso nomme l’auteur de l’essai auquel appartient la page, et la table des matières imprime le nom sur une ligne sous chaque entrée. Rien dans les pages liminaires du livre ne liste les contributeurs deux fois.
+
+### 3 · L’ouverture
+
+<Excerpt region="opener" />
+
+Surtitre, titre et signature s’empilent depuis le haut de la zone de texte, chacun ancré sous le précédent : un titre de deux lignes, comme celui du chapitre 3, fait descendre avec lui la signature et le filet. La réserve fait descendre le texte de 48 mm, dix lignes, sous un titre d’une ligne ; un titre de deux lignes prend une ligne de plus, si bien que le filet reste à l’écart du texte et que le chapitre 3 commence une ligne plus bas que les deux autres.
+
+### 4 · Des titres courants pour un livre à plusieurs auteurs
+
+<Excerpt region="running-heads" />
+
+Un ouvrage collectif nomme le contributeur au verso et le chapitre au recto, là où une monographie imprimerait le titre du livre et le chapitre. Les titres courants sont filtrés sur `pages: 'body'` : les pages d’ouverture ne portent donc qu’un folio en pied.
+
+### 5 · Les pages liminaires
+
+<Excerpt region="front" />
+
+La page de titre et la table des matières sont deux titres non numérotés du premier document, sans titres courants ni entrée dans la table des matières. Leurs maquettes lisent `{title}` et `{subtitle}` dans le frontmatter, et les directeurs et contributeurs dans les attributs du titre lui-même.
+
+## Variantes
+
+### Une seule liste pour tout le volume
+
+Certains éditeurs rassemblent tous les ouvrages dans une seule bibliographie en fin de livre. Changez la portée et supprimez les trois titres `## References` ; la liste suit alors le dernier chapitre.
+
+```diff
+-    scope: 'chapter',
+-    title: '', // no bold title paragraph: each chapter has its own ## References heading
++    scope: 'book',
++    title: 'Bibliography',
+```
+
+### Citer en APA
+
+Un volume de sciences sociales change le style et rien d’autre.
+
+```diff
+-  style: 'chicago-author-date', // the humanities' author-date: (Eisenstein 1979)
++  style: 'apa',
+```
+
+## Erreurs fréquentes
+
+- `scope: 'chapter'` liste ce que cite le document avant le `:::bibliography`, pas ce que cite sa section H1. Avec tous les essais dans un seul fichier Markdown, la deuxième liste reprend les ouvrages du premier essai et la troisième ceux des deux premiers.
+- La première définition d’une clé l’emporte dans tout le livre. Si deux contributeurs utilisent tous deux `smith2001` pour des ouvrages différents, l’essai suivant cite sans avertissement le livre du premier contributeur : donnez un préfixe aux clés de chaque contributeur, ou vérifiez les listes par rapport aux manuscrits.
+- La désambiguïsation est calculée pour tout le livre. Deux ouvrages différents de Smith parus en 2001 dans des chapitres différents peuvent s’imprimer 2001a et 2001b, même quand la liste d’un chapitre n’en contient qu’un.
+- Un intertitre qui ouvre une page perd par défaut tout son espace au-dessus, et le calage sur la grille place alors dessous la fraction de ligne dont il a besoin : *Whose letters*, en haut de la page 10, serait plus éloigné de son texte que *What the reader sees*, plus bas sur la page. `headings.columnHeadSpace: 'remainder'` garde cette fraction de ligne au-dessus de l’intertitre ([titres](/fr/docs/configuration-text#titres)). Ce réglage convient à un livre sur une colonne, où aucune colonne voisine ne montre que l’intertitre commence un peu plus bas.

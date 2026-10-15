@@ -1,0 +1,76 @@
+---
+title: "Un classique annoté avec gloses marginales"
+summary: "Le thé chez les fous d’Alice en édition annotée : gloses vertes et rouges dans la marge extérieure, face aux lignes expliquées, appelées par une lettre."
+plain: "Quelques pages d’Alice au pays des merveilles avec les notes d’un éditeur dans la marge. Chaque note se place à côté des lignes qu’elle explique, signalée par une lettre de couleur."
+description: "Le chapitre VII d’Alice composé dans Postext en édition annotée, sur une page à colonne et demie dont la colonne latérale, côté tranche, n’a que les gloses."
+question: "Comment composer des gloses dans la marge, à côté du paragraphe qu’elles expliquent, plutôt qu’en notes ?"
+aliases: ["notes marginales", "gloses marginales", "manchettes", "marginalia", "édition annotée", "alternative aux notes de bas de page", "notes de l’éditeur", "lettres d’appel en couleur", "Alice au pays des merveilles", "Lewis Carroll", "chapeau avec lettrine", "sidenotes"]
+pageNotes: { "1": "Le chapitre VII s’ouvre sous une aquarelle de la table du thé sous un arbre, vue d’en haut : une longue nappe blanche garnie de tasses sur une pelouse verte, une théière rouge, du pain beurré et la montre du Chapelier au bout de sa chaîne, le Loir endormi dans une théière à un bout et un fauteuil rouge à l’autre. Dessous viennent le surtitre « CHAPTER VII » en rouge, le titre « A Mad Tea-Party » et un chapeau de quatre lignes en italique qui s’ouvre sur une lettrine verte. La note sur cette édition se tient dans la marge de droite, à côté du chapeau. La glose a (« The March Hare », en vert) se place à côté du premier paragraphe et la glose b (« The Hatter », en rouge) sous elle ; les lettres surélevées a et b de ce paragraphe s’impriment dans les mêmes couleurs.", "2": "Un verso : la colonne de texte à droite et les gloses à gauche, c sur les cheveux d’Alice et d sur la devinette en rouge, e sur la logique du Chapelier en vert et f sur la date en rouge au pied, chacune à côté du paragraphe qui porte sa lettre surélevée.", "3": "Un recto : les gloses à droite, g sur le meilleur beurre et h sur le Loir, toutes deux en vert et chacune à hauteur de la ligne qui porte sa lettre. L’extrait s’achève deux lignes au-dessus du pied, sur la réplique du Chapelier « I dare say you never even spoke to Time ! »" }
+---
+
+## Ce que vous allez composer
+
+Le début du chapitre VII d’*Alice au pays des merveilles*, le thé chez les fous, composé sur trois pages d’une édition annotée, dans un format de 156 × 234 mm. Le texte de Carroll court sur une seule colonne justifiée en Unna, environ 66 caractères par ligne. Un couloir de 33 mm du côté de la tranche accueille les huit gloses de l’éditeur, chacune à côté du paragraphe qui porte sa lettre : elles descendent à droite d’un recto et à gauche d’un verso. Les gloses sur les mots et les jeux de mots sont vertes, celles sur l’histoire rouges, et chaque lettre du texte prend la couleur de sa glose. Le chapitre s’ouvre sous une aquarelle de la table du thé vue d’en haut, suivie du numéro, du titre en Rozha One et d’un chapeau en italique avec une lettrine verte ; la note sur cette édition se tient dans la marge, à côté du chapeau.
+
+## Préparation
+
+### 1 · Donnez la marge de tranche aux gloses
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Dans une [mise en page à colonne et demie](/fr/docs/configuration-page-layout#types-de-mise-en-page), `sideColumnPercent: 26` donne à la colonne latérale 33 mm sur les 127 mm entre les marges, et le texte garde 89,5 mm après la gouttière de 4,5 mm. `sideColumnRole: 'floats'` tient Carroll hors de la colonne latérale, qui ne contient que ce qu’on y place avec `span: 'side'`. Une [note de bas de page](/fr/docs/document-format#notes-de-bas-de-page) attend au pied de la colonne, sous un filet ; dans la marge, chaque glose se tient à hauteur de la ligne qu’elle explique, et les gloses ne prennent aucune ligne à la colonne de texte. Les deux styles de glose ne diffèrent que par la couleur du filet fin et du titre : le lecteur distingue une glose sur un mot d’une glose sur l’histoire avant même de la lire.
+
+### 2 · Mettez la page en miroir pour que le couloir suive la tranche
+
+<Excerpt region="page" />
+
+Avec `mirror: true`, les marges s’inversent sur chaque verso, et `sideColumnSide: 'outer'` déplace le couloir avec elles : les gloses descendent à droite de la <PageRef page={1}>page 81</PageRef> et de la <PageRef page={3}>page 83</PageRef> et à gauche de la <PageRef page={2}>page 82</PageRef>. Des marges haute et basse de 22 mm laissent 190 mm, la place de 38 lignes de 14 pt, et chaque glose commence sur une ligne de la même grille.
+
+### 3 · Placez chaque glose dans une clôture avant le paragraphe qu’elle explique
+
+<Excerpt region="text" />
+
+Un encadré avec `span="side"` sur sa [clôture `:::callout`](/fr/docs/configuration-styles#le-conteneur-callout) quitte le flux et se tient dans le couloir à hauteur du bloc qui suit la clôture : chaque glose est donc écrite juste avant le paragraphe qui porte sa lettre, comme ci-dessous. Les gloses a et b vont à côté du premier paragraphe, ce qui place leurs clôtures entre le titre et ce paragraphe. Un encadré qui quitte le flux ne compte pas comme le bloc qui suit le titre : `indentAfterHeading: false` compose donc toujours ce paragraphe sans retrait. Le texte est calibré sur la colonne : en 9,5 pt, le paragraphe qui commence par « Have some wine, » tient sur une ligne de 89,5 mm, alors qu’en 10,4 pt chaque justification de 77 à 93 mm lui laissait une dernière ligne trop courte, comme « ing tone. » ou « tone. ». L’espace-mot d’Unna est étroit, 0,22 em, et avec le `minWordSpacing` par défaut de 0,6, une ligne de la page 83 voyait ses espaces réduites à 0,69 de cette largeur ; `minWordSpacing: 0.75` exclut cette ligne. En page 81, le dictionnaire coupait le nom de l’héroïne, « Al- » et « ice » : ce paragraphe est donc placé dans `:::paragraphs{style="whole"}`, un style avec `hyphenation: false` ; son unique coupure est un trait d’union conditionnel (U+00AD) saisi dans « together ».
+
+```markdown
+:::callout{type="context" span="side" title="c · Hair"}
+Tenniel drew Alice with long, loose hair. …
+:::
+
+“Your hair wants cutting,”:chip[^c^]{style="context"} said the Hatter. …
+```
+
+### 4 · Imprimez chaque lettre dans la couleur de sa glose
+
+<Excerpt region="letters" />
+
+Markdown n’a pas de marque pour le texte en couleur, mais un style de [pastille](/fr/docs/document-format#pastilles-en-ligne) règle une couleur de texte : chaque lettre est donc une pastille dont le style porte le même nom que le type de sa glose. `:chip[^c^]{style="context"}` imprime un c rouge, le rouge du filet et du titre de la glose c. Sans fond, contour, remplissage ni écart, la pastille n’ajoute aucune largeur, et chaque ligne se coupe là où elle se coupait avec un simple `^c^`.
+
+### 5 · Ouvrez le chapitre sous la table du thé
+
+<Excerpt region="opener" />
+
+L’[emplacement de maquette](/fr/docs/configuration-text#étendue-et-maquette-avancée) du titre s’étend sur toute la largeur de la page pour que la peinture puisse atteindre le bord de coupe. Le surtitre, le titre et le chapeau s’accrochent sous la peinture, et l’ouverture réserve la place jusqu’au plus bas d’entre eux, arrondie à la grille ; la marge inférieure par défaut du titre ajoute une ligne blanche. Avec un chapeau de quatre lignes, le texte commence à la ligne 23, et une cinquième ligne le ferait passer à la ligne 24. Le numéro, le chapeau et la note sur cette édition viennent d’[attributs de titre](/fr/docs/document-format#attributs-de-titre), `{num="VII" headnote="…" source="…"}`. Le numéro vient de là parce que `{chapterNumber}` imprimerait 1 dans un extrait qui est un document à part entière. La lettrine ouvre le chapeau de l’éditeur, composé en drapeau et en italique, et le texte de Carroll commence justifié dans le flux, sous lui. `dropSize()` dimensionne l’initiale pour que son sommet s’aligne sur les capitales de la première ligne du chapeau.
+
+### 6 · Colorez chaque glose selon ce qu’elle explique
+
+<Excerpt region="palette" />
+
+Le vert pelouse marque les gloses sur les mots, les dictons et les jeux de mots, et le rouge confiture les personnes, les dates et l’histoire du texte. Une nouvelle valeur pour `jam` dans le même objet `palette` recolore en une seule modification les gloses sur l’histoire, leurs lettres et le surtitre ; l’aquarelle qui les surmonte a été choisie pour ce même vert pelouse et ce même rouge confiture.
+
+## Variantes
+
+### Gardez les gloses à droite de chaque page
+
+Pour une édition lue page par page à l’écran, désactivez le miroir : `'outer'` désigne alors le bord droit de chaque page, et les titres courants gardent leur place, puisqu’ils sont ancrés au bord de coupe.
+
+```diff
+-    mirror: true } };
++    mirror: false } };
+```
+
+### Renvoyez les notes longues au pied de la page
+
+Écrivez une note trop longue pour la marge en note de bas de page, `[^1]` dans le texte et sa définition `[^1]:` sous le paragraphe : Postext la compose au pied de la colonne de texte, sur 89,5 mm de large sous un filet court, et les gloses gardent le couloir. <RecipeLink slug="novel-footnotes-column-foot">Notes au pied de la colonne qui les appelle</RecipeLink> met ces notes en forme.
+
+## Erreurs fréquentes
+
+- Les gloses s’empilent dans l’ordre du Markdown, l’une sous l’autre : une glose longue repousse donc la suivante vers le bas. En <PageRef page={1}>page 81</PageRef>, les deux lettres tombent dans la deuxième ligne du premier paragraphe : la glose a commence à hauteur du paragraphe et la glose b sous elle, cinq lignes sous sa lettre. Là où les lettres se suivent de près, faites des gloses courtes.

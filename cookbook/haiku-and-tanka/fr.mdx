@@ -1,0 +1,63 @@
+---
+title: "Haïkus et tankas composés à la verticale"
+summary: "Les haïkus de Bashō dans sa prose de voyage et onze tankas en trois lignes de Takuboku sur page 四六判 : un vers par ligne, retrait de tête, signatures en pied."
+plain: "Un petit livre de poèmes japonais : le journal de voyage de Bashō avec ses haïkus sur des lignes à part, et les courts poèmes de Takuboku en trois lignes chacun, jamais coupés par un changement de page."
+description: "Oku no Hosomichi de Bashō et Une poignée de sable de Takuboku en vertical avec Postext : haïkus en retrait de trois caractères, tankas entiers, signatures 地付き."
+question: "Comment composer haïkus et tankas à la verticale, chaque vers sur sa ligne, en retrait de la tête ?"
+aliases: ["haïku", "haiku", "俳句", "tanka", "短歌", "waka", "haïbun", "俳文", "poésie verticale", "poésie japonaise", "句集", "歌集", "地付き", "jitsuki", "字取り", "jidori", "Oku no Hosomichi", "おくのほそ道", "Bashō", "芭蕉", "Ishikawa Takuboku", "石川啄木", "一握の砂", "Une poignée de sable", "tanka en trois lignes"]
+pageNotes: { "1": "La première partie s’ouvre à gauche du dos : おくのほそ道 en Mincho gras le long du bord droit, suivi de （抄） et d’un filet couleur kaki, 松尾芭蕉 près du pied, puis le titre 冒　頭 et le début du journal de voyage avec ses lectures.", "2": "Le premier haïku de Bashō, 草の戸も住替る代ぞひなの家, sur une ligne à part à trois caractères de la tête, puis les titres 旅　立 et 平　泉, chacun espacé sur trois caractères, avec 行春や鳥啼魚の目は泪 entre eux.", "3": "夏草や兵どもが夢の跡 et le 卯の花に兼房みゆる白毛かな de Sora, signé 曾良 bas dans la ligne, ouvrent la page ; puis 立石寺 avec sa prose et 閑さや岩にしみ入蝉の聲, et 最上川 avec 五月雨をあつめて早し最上川.", "5": "La seconde partie : 一握の砂 （抄） et 石川啄木, puis les deux premiers tankas de Takuboku, chacun en trois lignes à deux caractères de la tête, séparés par une ligne blanche." }
+---
+
+## Ce que vous allez composer
+
+Huit pages d’un petit recueil de poésie sur une page 四六判 de 127 × 188 mm, reliée à droite. La première partie réunit sept étapes de *La Sente étroite du Bout-du-Monde* de Bashō, sa prose avec ses haïkus ; la seconde, onze tankas d’*Une poignée de sable* d’Ishikawa Takuboku, chacun dans les trois lignes où il l’a écrit. La prose court de haut en bas, 36 caractères par ligne, en Shippori Mincho de 10 pt avec un généreux pas de ligne de 1,9 em. Chaque haïku se tient sur une ligne à part, à trois caractères de la tête, chaque tanka à deux, et le haïku de Sora est signé 曾良 près du pied de la ligne. Un tanka n’est jamais coupé entre deux pages, et un ＊ couleur kaki sépare les groupes. Le recueil de poésie européen est la <RecipeLink slug="poetry-collection">Nº 015</RecipeLink> ; les poèmes Tang en chinois vertical sont la <RecipeLink slug="tang-poems-facing-english">Nº 083</RecipeLink>.
+
+## Préparation
+
+### 1 · Un vers est un paragraphe, et son style dit où il commence
+
+Le code est [la réponse courte](#la-réponse-courte) plus haut. Un haïku tient sur une ligne : c’est donc un paragraphe à part dans une clôture `:::paragraphs`, dont le style fixe le retrait. `indent: em(3)` place un haïku à trois caractères sous la tête de la ligne (le texte d’Aozora les place à deux ; trois donnent plus d’air aux poèmes), et `firstLineIndent: em(0)` empêche l’alinéa d’un caractère du texte courant de s’y ajouter. Les quelque 17 caractères d’un haïku tiennent sur n’importe quelle ligne de 36 : il ne passe jamais à la ligne. La signature est un paragraphe à part : `textAlign: 'end'` la place contre le pied de la ligne (地付き, jitsuki) et `endIndent: em(5)` la remonte de cinq caractères à partir de là (地から五字上げ), comme le fait l’édition dont provient ce texte ([Styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)).
+
+### 2 · Garder chaque tanka sur une page
+
+<Excerpt region="tanka" />
+
+Les tankas de Takuboku forment un bloc `:::verse`, chaque tanka une strophe : ses trois lignes sont trois lignes du Markdown, et la ligne blanche entre deux tankas dans la source laisse une ligne blanche de la grille entre les poèmes. Le style du poème donne le retrait de deux caractères et la ligne sous le groupe, et les lignes pendent de la tête comme dans toute colonne. `keepStanzas=3` garde entière chaque strophe de trois lignes : en page 5, le troisième tanka ne tient pas sous le titre de la partie et les deux premiers, il ouvre donc la page 6 en entier, au lieu d’abandonner sa première ligne derrière lui. L’ornement entre deux groupes introduit le suivant : il passe donc avec son premier tanka au lieu de rester seul au pied d’une page ([`:::verse`](/fr/docs/document-format#verse)).
+
+### 3 · Espacer les noms de lieux sur une même largeur
+
+<Excerpt region="places" />
+
+Les étapes de la route de Bashō sont des titres de niveau 2 hauts de deux lignes de texte (2行取り) : la prose et les haïkus qui les suivent restent sur la grille. `jidori: 3` espace un nom plus court sur trois de ses propres caractères (字取り) : 平泉 s’imprime 平　泉 avec un caractère plein entre les deux, et chaque nom se termine à la même hauteur que 立石寺 et 最上川. Un nom qui fait déjà trois caractères n’est pas touché ([Réglages par niveau](/fr/docs/configuration-text#réglages-par-niveau)).
+
+### 4 · Ouvrir chaque partie sur sa propre page
+
+<Excerpt region="part" />
+
+Chaque partie est un titre de niveau 1 dont la maquette compose le titre, un petit （抄）, « extraits », placé juste après lui avec `anchor.to: '#title'`, un court filet couleur kaki à côté du titre, et le poète près du pied de la ligne. La maquette réserve cinq lignes, et le texte commence après elles sur la même grille.
+
+### 5 · Choisir un caractère qui a les anciens signes
+
+<Excerpt region="voices" />
+
+La prose de Bashō écrit les mots répétés avec l’ancien signe d’itération 〻 (日〻, 人〻), et les textes plus anciens emploient aussi le long くの字点 〳〵. Zen Old Mincho n’a ni l’un ni l’autre : le canvas les emprunterait à une police système et le PDF dessinerait des boîtes vides. Shippori Mincho, Noto Serif JP et Shippori Mincho B1 ont les deux : les poèmes sont donc composés en Shippori Mincho ([Polices chinoises, japonaises et coréennes](/fr/docs/configuration-programmatic-usage#polices-chinoises-japonaises-et-coréennes)). Le texte d’Aozora garde aussi les notes de l’éditeur sur les graphies anciennes, `とら{え|（へ）}て`, qui impriment le kana attendu à côté de celui qu’a écrit Bashō.
+
+## Variantes
+
+### Espacer les trois segments du haïku
+
+Les anthologies scolaires placent parfois une espace idéographique entre les 5, 7 et 5 sons, pour les lecteurs qui apprennent la forme ; l’espace est un caractère du texte.
+
+```diff
+-{夏草|なつくさ}や{兵|つはもの}どもが夢の跡
++{夏草|なつくさ}や　{兵|つはもの}どもが　夢の跡
+```
+
+### Laisser un long tanka se couper
+
+Sans `keepStanzas`, un tanka peut commencer au pied d’une page et continuer au verso dans la limite des règles de veuves et d’orphelines, comme dans une anthologie dense de mille poèmes.
+
+```diff
+-:::verse{style="tanka" keepStanzas=3}
++:::verse{style="tanka"}
+```

@@ -9,7 +9,7 @@ describe("glossary", () => {
     const ids = [...GLOSSARY_TERMS.map((t) => t.id), ...ABBREVIATIONS.map((a) => `abbr-${a.id}`)];
     expect(new Set(ids).size).toBe(ids.length);
     for (const t of GLOSSARY_TERMS) {
-      for (const l of ["en", "es", "ca", "zh", "ar", "ja", "pt"] as const) {
+      for (const l of ["en", "es", "ca", "zh", "ar", "ja", "pt", "fr"] as const) {
         expect(t.text[l][0], `${t.id} ${l}`).toBeTruthy();
         expect(t.text[l][1], `${t.id} ${l}`).toMatch(/[.。]$/);
       }
@@ -43,6 +43,7 @@ describe("glossary", () => {
     const terms = es.categories[0]!.terms.map((t) => t.term);
     expect(terms).toEqual([...terms].sort(new Intl.Collator("es").compare));
     expect(es.abbreviations.find((a) => a.id === "gdpr")?.abbr).toBe("RGPD");
+    expect(glossarySections("fr").abbreviations.find((a) => a.id === "cmyk")?.abbr).toBe("CMJN");
     expect(glossarySections("zh").categories[1]!.terms.every((t) => !t.native)).toBe(true);
     const ar = glossarySections("ar");
     for (const { terms: list } of ar.categories) {
@@ -81,7 +82,7 @@ describe("glossary", () => {
     }
     // No site locale writes Japanese: the native name shows everywhere,
     // unless the Chinese name is the same characters (外字).
-    for (const l of ["en", "es", "ca", "zh", "ar"] as const) {
+    for (const l of ["en", "es", "ca", "zh", "ar", "fr"] as const) {
       const japanese = glossarySections(l).categories.find((c) => c.category === "japanese")!.terms;
       expect(japanese.length).toBeGreaterThanOrEqual(30);
       expect(japanese.filter((t) => !t.native).map((t) => t.id), l).toEqual(l === "zh" ? ["gaiji"] : []);
@@ -95,7 +96,7 @@ describe("glossary", () => {
   });
 
   it("has a Markdown rendition in every locale", () => {
-    for (const l of ["en", "es", "ca", "zh", "ar", "ja", "pt"]) {
+    for (const l of ["en", "es", "ca", "zh", "ar", "ja", "pt", "fr"]) {
       expect(markdownPaths(l)).toContain("/glossary");
       const md = pageMarkdown(l, "/glossary");
       expect(md).toMatch(/^# /);

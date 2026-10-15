@@ -1,0 +1,54 @@
+---
+title: "Le japonais en lettres latines : le Journal en rōmaji"
+summary: "Un texte en rōmaji étiqueté ja-Latn : règles japonaises pour ses kana, aucune césure pour son latin, et les macrons d’un caractère latin jusque dans le PDF."
+plain: "La première entrée d’un journal de 1909 que le poète Takuboku a écrit en japonais avec des lettres latines, avec sous chaque paragraphe sa lecture en écriture japonaise."
+description: "Le Journal en rōmaji de Takuboku avec Postext : japonais en lettres latines étiqueté ja-Latn, sans césure, lecture en kana sous chaque alinéa, ō ū dans le PDF."
+question: "Comment composer du japonais en rōmaji : quelle étiquette de langue, quelle césure, et les macrons du PDF ?"
+aliases: ["rōmaji", "romaji", "ローマ字", "ja-Latn", "japonais en lettres latines", "Takuboku", "石川啄木", "ローマ字日記", "Nippon-shiki", "Hepburn", "macrons", "ō ū", "latin-ext", "sans césure", "romanisation du japonais"]
+pageNotes: { "1": "La page de titre : les lignes d’en-tête du journal lui-même, « NIKKI. I. MEIDI 42 NEN. 1909. APRIL. TOKYO. », en capitales interlettrées sur un fond indigo, un filet court et une ligne sur l’édition.", "2": "L’entrée du 7 avril : « 7TH, WEDNESDAY. » et l’adresse en petites capitales, puis les paragraphes en rōmaji, chacun suivi de sa lecture en kana et en kanji, plus petite et en retrait.", "4": "La fin de l’entrée, « Kanasii koto da ! » et « 悲しいことだ！ », et la note sur le texte en petit caractère sans empattement." }
+---
+
+## Ce que vous allez composer
+
+Quatre pages du *Rōmaji nikki*, le journal qu’Ishikawa Takuboku tint à Tokyo au printemps 1909 en lettres latines, pour que sa femme ne puisse pas le lire : les lignes de titre de son carnet et la première entrée, le 7 avril, jusqu’à *Kanasii koto da!* Le journal est composé en édition d’étude sur une page A5 : le rōmaji en Source Serif 4, justifié et jamais coupé, et sous chaque paragraphe sa lecture en kana et en kanji en Noto Serif JP, plus petite, plus claire et en retrait. Takuboku écrit dans le système Nippon-shiki, *si*, *tu*, *hu*, avec des accents circonflexes sur les voyelles longues, *Tôkyô* ; les lignes de l’éditeur suivent le système Hepburn avec macrons, *Rōmaji*, et les deux arrivent jusqu’au PDF.
+
+## Préparation
+
+### 1 · Étiqueter le texte ja-Latn
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `ja-Latn` est l’étiquette BCP 47 du japonais écrit en alphabet latin. Sa langue est `ja` : la lecture sous chaque paragraphe reçoit donc les règles japonaises, le kinsoku, l’espacement de 、。 et l’espace cadratin que le moteur ajoute après ！ à l’intérieur d’une phrase, comme dans 「ええ！　ええ！」. Le japonais n’a pas de motifs de césure, si bien que le rōmaji n’est jamais coupé ; avec `en`, les motifs anglais couperaient des mots comme *tatinobotta* ou *Surigarasu* selon les syllabes anglaises, et non selon les mores qu’entend un lecteur japonais. Sans traits d’union, ce sont les espaces qui absorbent le jeu : la justification compte donc environ 70 caractères et `maxWordSpacing` vaut 1,8 ([césure](/fr/docs/configuration-text#césure)).
+
+<PageShot page={2} crop="0,0.1,1,0.45" caption="Page 2 : le jour, l’adresse, les deux premiers paragraphes en rōmaji et leurs lectures en kana, plus petites et en retrait." />
+
+### 2 · Faire entrer les macrons dans le PDF
+
+<Excerpt region="macrons" />
+
+Fontsource range ō ū ā dans un fichier `latin-ext` à part. L’écran le charge (`loadFonts` voit le ō de l’exemple), et le `cjkPdfProvider` du kit fait de même pour le PDF. Il sert Noto Serif JP à partir de ses tranches japonaises et, quand un caractère latin compose une lettre que seul `latin-ext` contient, il répond avec deux fichiers, `latin` puis `latin-ext` ; postext-pdf prend chaque glyphe dans le premier fichier qui l’a. Le simple `fontsourceProvider` du kit ne donne au PDF que le fichier `latin` : avec lui, le PDF n’aurait aucun glyphe pour ō.
+
+### 3 · Ouvrir sur les lignes du journal lui-même
+
+<Excerpt region="title" />
+
+Le carnet commence par « NIKKI. I. MEIDI 42 NEN. 1909. APRIL. TOKYO. », un élément par ligne. Le titre les prend dans un attribut, chaque `\n` ouvrant une nouvelle ligne, et les compose en capitales interlettrées sur un fond indigo, la toile d’une couverture de carnet. Sa page est une ouverture : les titres courants la sautent.
+
+### 4 · Des titres courants selon la parité
+
+<Excerpt region="heads" />
+
+Le verso porte le nom du journal et le recto le lieu et le mois, avec les folios aux angles extérieurs, en Source Sans 3 de 7,5 pt.
+
+## Variantes
+
+### Écrire le rōmaji en Hepburn
+
+Une édition moderne peut réécrire le journal en Hepburn avec macrons, *Tōkyō* pour *Tôkyô*. Le PDF porte déjà ō : seul le texte change ; gardez une note qui précise que la graphie est celle de l’éditeur.
+
+### Couper entre les mores
+
+Si une colonne étroite demande des traits d’union, placez dans le rōmaji des traits d’union conditionnels (U+00AD) entre les mores, `Su\u00adna-ho\u00adko\u00adri` dans le code ou un U+00AD saisi dans le texte : un document étiqueté `ja-Latn` ne fait jamais de césure de lui-même, mais il coupe à un trait d’union conditionnel quand un mot ne tient pas.
+
+## Erreurs fréquentes
+
+- Shippori Mincho n’a ni ō ni ū ; Noto Serif JP et Source Serif 4 les ont dans leurs fichiers `latin-ext`. Vérifiez le caractère avant de le choisir pour un texte en Hepburn.
+- Le chinois écrit en lettres latines, c’est le pinyin, composé en ruby au-dessus des caractères dans <RecipeLink slug="pinyin-primer">Un premier livre de lecture avec le pinyin sur chaque caractère</RecipeLink> ; le rōmaji de Takuboku est le texte lui-même : il est donc composé comme un texte latin, avec son propre espacement, et non comme une annotation.

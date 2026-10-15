@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { PostextSandbox, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_ZH_HANS, DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR } from "postext-sandbox";
+import { PostextSandbox, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_ZH_HANS, DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR } from "postext-sandbox";
 import { useTranslations, useLocale } from "next-intl";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { CompactLanguageSwitcher } from "@/components/sandbox/CompactLanguageSwitcher";
@@ -21,7 +21,8 @@ const PRESET_SOURCES: { url: string; private?: boolean }[] = [
 
 /** The guide's text for each interface language: the Chinese interface
  *  opens its Simplified Chinese edition, the Japanese one its Japanese
- *  edition (set vertically), the Portuguese one its Brazilian edition. */
+ *  edition (set vertically), the Portuguese one its Brazilian edition, the
+ *  French one its French edition. */
 const GUIDE_MARKDOWN: Record<SiteLocale, string> = {
   en: DEFAULT_MARKDOWN_EN,
   es: DEFAULT_MARKDOWN_ES,
@@ -30,6 +31,7 @@ const GUIDE_MARKDOWN: Record<SiteLocale, string> = {
   ja: DEFAULT_MARKDOWN_JA,
   ar: DEFAULT_MARKDOWN_AR,
   pt: DEFAULT_MARKDOWN_PT_BR,
+  fr: DEFAULT_MARKDOWN_FR,
 };
 
 /** `#recipe=<slug>&lang=<tag>` opens a Cookbook recipe's bundle: the edition

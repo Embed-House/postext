@@ -1,0 +1,77 @@
+---
+title: "Un document officiel chinois selon GB/T 9704"
+summary: "Un avis de quatre pages A4 selon la norme nationale : 28 × 22 caractères de 三号, en-tête rouge, titres 一、（一）1.（1）, une annexe et des folios « — 1 — »."
+plain: "Un avis chinois de quatre pages dans le style de l’administration. Il suit les règles nationales pour ce genre de document, avec un en-tête rouge, des sections numérotées et des numéros de page d’un style imposé."
+description: "Un document officiel chinois avec Postext, selon GB/T 9704—2012 : A4, grille de 28 × 22 caractères, en-tête rouge, titres numérotés, annexe, 版记 et folios."
+question: "Comment mettre en page un document officiel chinois selon GB/T 9704, avec en-tête rouge, grille et folios ?"
+aliases: ["document officiel", "avis administratif", "公文", "公文格式", "GB/T 9704", "党政机关公文格式", "document à en-tête rouge", "红头文件", "发文字号", "版记", "三号", "仿宋", "一、（一）1.（1）", "grille de caractères A4", "folio entre tirets", "en-tête de lettre"]
+pageNotes: { "1": "La page 1 d’un avis du fictif 示例市出版协会. Un tampon encadré de rouge portant 样张 se trouve en haut à droite, le numéro d’exemplaire 000001 en haut à gauche. Sur toute la largeur de la page, en grands caractères rouges, court le nom de l’émetteur suivi de 文件, puis le numéro du document 示出协〔2026〕7号 centré au-dessus d’un filet rouge sur toute la largeur, et le titre sur deux lignes centrées en caractères noirs épais, la ligne du haut plus courte. Dessous, le destinataire, 各会员单位, le paragraphe d’ouverture, le premier titre 一、培训时间 et trois lignes de texte. Le folio — 1 — se tient à droite sous le texte.", "2": "La page 2 : des titres sur quatre niveaux, 二、培训地点, （一）排版规范, 1.公文格式 et （1）版心与字体, chacun sur sa propre ligne et en retrait de deux caractères, au-dessus de paragraphes de 28 caractères par ligne. À la fin de l’avant-dernière ligne, une virgule déborde du bord droit du texte. Le folio — 2 — se tient à gauche.", "3": "La page 3 : les derniers titres de l’avis, puis la ligne d’annexe 附件：培训日程安排, le nom de l’émetteur et la date décalés vers la droite, la mention （此件公开发布） et le folio — 3 — à droite.", "4": "La page 4 : l’annexe. 附件 en haut à gauche, le titre centré 培训日程安排 et un tableau à filets des trois jours de la formation, avec les dates sur deux rangées chacune. En pied, entre un filet épais, un fin et un épais, la ligne de copie 抄送 et le service émetteur avec 2026年9月28日印发. Le folio — 4 — à gauche, et une petite ligne nommant les polices tout en bas." }
+---
+
+## Ce que vous allez composer
+
+Un avis d’une association d’éditeurs inventée dans une ville inventée, 示例市 (« Example City »), composé comme un bureau du continent compose ses documents selon GB/T 9704—2012, 《党政机关公文格式》. Il s’étend sur quatre pages A4 de 28 caractères par ligne et 22 lignes par page. La page 1 s’ouvre sur le nom de l’émetteur en rouge, le numéro du document au-dessus d’un filet rouge et un titre sur deux lignes en 二号. Les titres sont numérotés 一、（一）1.（1）, chaque niveau dans son propre caractère. La signature et la date se placent à droite, et une annexe sur une page à part porte le 版记 entre des filets à son pied. Les folios se lisent « — 1 — », à droite sur les pages impaires et à gauche sur les paires. Chaque feuille indique dans sa marge de tête qu’il s’agit d’un spécimen. <RecipeLink slug="din-business-letter">Une lettre commerciale selon DIN 5008</RecipeLink> fait le même travail selon une norme européenne.
+
+## Préparation
+
+### 1 · Un bloc de texte compté en cases
+
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. GB/T 9704 fixe la marge de tête à 37 mm et la marge de reliure à 28 mm, et remplit un bloc de texte de 156 × 225 mm avec 22 lignes de 28 caractères en 三号. `cjk.grid` prend les nombres tels quels : 28 cadratins de 15,75 pt font 155,6 mm, et 22 lignes de 29 pt font 225,1 mm ([grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères)). Le 三号 de Word fait 16 pt, ce qui porterait la ligne à 158 mm, plus large que le bloc de texte de la norme ; 15,75 pt est la valeur des tables des compositeurs. Avec la grille activée, les marges sont des minimums. Celles-ci laissent 0,02 mm à répartir, si bien que le bloc de texte reste là où la norme le place. La norme prescrit le 仿宋 pour le texte ; Fontsource n’a pas de caractère Fangsong, si bien que le texte est composé dans le Song de Noto Serif SC (voir Erreurs fréquentes).
+
+Chaque signe prend une case entière et n’en cède rien, si bien que dans une ligne de chinois les caractères se tiennent dans les colonnes de la grille que dessine la norme. Les chiffres arabes sont plus étroits qu’une case, si bien que dans une ligne comme 版心156毫米×225毫米 les caractères qui suivent les chiffres tombent entre les colonnes. Quand une virgule tombe sur la 29e case, `hangingPunctuation: 'allow'` la suspend dans la marge au lieu de repousser un caractère sur la ligne suivante et d’espacer le reste ([ponctuation suspendue](/fr/docs/configuration-east-asian#ponctuation-en-débord)).
+
+<PageShot page={2} crop="0.08,0.683,0.9,0.2" caption="Page 2 : la virgule après 各一份 remplit la 28e case ; celle après 可自愿报名 est suspendue dans une 29e, au-delà du bord du bloc de texte, et la ligne suivante commence à la marge." />
+
+### 2 · Quatre niveaux de titres, une ligne chacun
+
+<Excerpt region="levels" />
+
+La norme compose 一、 en 黑体, （一） en 楷体, et 1. et （1） dans le caractère du texte, tous au corps du texte. `{2:一}` imprime le chiffre chinois courant dans l’écriture de `locale` ([numérotation](/fr/docs/configuration-page-layout#numérotation)). Avec le corps et l’interlignage du texte et sans marges, un titre occupe une ligne de la grille, et le texte qui le suit reste lui aussi sur la grille. `firstLineIndent: em(2)` place chaque titre deux cases en retrait, comptées en cadratins du texte, et un titre qui déborde sur une deuxième ligne la commence à la marge, comme le veut la norme ; le numéro suit le retrait, si bien que la table des matières et les signets du PDF se lisent 一、 sans espace devant ([réglages par niveau](/fr/docs/configuration-text#réglages-par-niveau)).
+
+### 3 · L’en-tête, ligne par ligne
+
+<Excerpt region="letterhead" />
+
+L’en-tête est la maquette du H1, dont les attributs portent le numéro d’exemplaire, l’émetteur et le numéro du document : la configuration contient le papier à en-tête, le Markdown le document. `lineTop(n)` donne le haut de la ligne de grille *n*, si bien que chaque élément se tient là où la norme le compte : le numéro deux lignes blanches sous le nom de l’émetteur, le titre deux lignes blanches sous le filet rouge. À 46 pt, l’encre du nom va de 35 mm sous le haut du bloc de texte jusqu’au pied de la ligne 5, ce qui laisse les lignes 6 et 7 vides et place le numéro sur la ligne 8 ; à 48 pt, elle mordrait sur la ligne 6 et repousserait le reste de la page d’une ligne. Le `\\` du titre le coupe après 关于举办, une ligne courte au-dessus d’une longue : un trapèze, l’une des deux formes qu’autorise la norme (l’autre est un losange). `minHeight` réserve 13 lignes et `marginBottom` une de plus, si bien que le destinataire commence à la ligne 15 ([largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)).
+
+### 4 · Les folios sous le bloc de texte
+
+<Excerpt region="folios" />
+
+Dans le pied de page, le bord supérieur du conteneur est le pied du bloc de texte, si bien que `offset.y` se mesure vers le bas depuis le texte ([en-têtes et pieds de page](/fr/docs/configuration-page-layout#en-têtes-et-pieds-de-page)). Les tirets se tiennent 7 mm dessous, et à une case de 四号 du bord extérieur : `parity` place les folios impairs à droite et les pairs à gauche. La marge de tête imprime le `{subtitle}` du frontmatter. Cette ligne et le colophon sous le 版记 sont tout ce qui change entre l’édition anglaise et l’édition espagnole.
+
+### 5 · L’annexe et le 版记
+
+<Excerpt region="annex" />
+
+Le titre de l’annexe prend son propre style : une nouvelle page, 附件 sur la ligne 1, le titre sur la ligne 3, et aucune marge sous les trois lignes qu’il réserve. La ligne 4 vide est l’espace de flottant que toute ressource en ligne garde au-dessus d’elle (`inlineResourceGap`, sous [mise en page](/fr/docs/configuration-page-layout#mise-en-page)), si bien que le filet supérieur du tableau se trouve sur la ligne 5. Le 版记 fait partie de la même maquette, dessiné sur les deux lignes de grille qui finissent au pied du bloc de texte. Ses éléments ont `reserve: false`, si bien qu’ils n’ajoutent rien à la place que prend le titre et que le tableau n’est pas repoussé sous eux. La norme place le 版记 sur la dernière page, après les annexes ; avec une annexe d’une page, c’est la page de l’annexe. Une annexe plus longue demanderait que le 版记 soit dessiné par un titre sur sa dernière page.
+
+### 6 · Le bloc de signature
+
+<Excerpt region="styles" />
+
+Un avis sans sceau place le nom de l’émetteur à deux cases du bord droit et la date dessous, commençant deux cases plus à droite. Une date plus longue que le nom s’arrête plutôt à deux cases du bord droit, et le nom se décale vers la gauche pour garder l’écart de deux cases. La nôtre fait 6,9 cadratins, un rien de moins que les 7 du nom, si bien qu’à la lettre elle commencerait deux cases à droite du nom et finirait à 0,14 em de la marge. Nous lisons la règle selon son but, une date qui n’atteint jamais le bord, et prenons le second cas : la date s’arrête à un peu plus de deux cases du bord. `indent` place les deux lignes sur des cases entières, à 17 et 19 cadratins de la marge ([styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)).
+
+## Variantes
+
+### Resserrer les signes qui se rencontrent
+
+Des paires comme ），et 》（ prennent une case et demie au lieu de deux, comme dans la plupart des livres ; les caractères qui les suivent quittent les colonnes de la grille.
+
+```diff
+-  punctuationWidth: 'fullwidth', compressAdjacent: false, trimLineStart: false,
++  punctuationWidth: 'fullwidth', compressAdjacent: true, trimLineStart: true,
+```
+
+### Afficher la grille pendant la mise en page
+
+Le canvas dessine un carré gris pour chaque case de la grille de 28 × 22, et le PDF l’omet sauf si `renderToPdf` reçoit `characterGrid: true`.
+
+```diff
+-  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES },
++  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES, show: true },
+```
+
+## Erreurs fréquentes
+
+- Une ligne justifiée répartit son jeu entre les caractères chinois et les espaces qu’elle contient, et l’espace en prend plus que sa part : en page 2, celle de GB/T 15834 s’ouvrait presque deux fois plus que celle de GB/T 9704 au-dessus. Le contenu écrit les deux numéros avec une espace insécable (U+00A0), qui garde chaque numéro d’un seul tenant, si bien que le jeu va entre les caractères.

@@ -18,6 +18,7 @@ export function plateLabels(t: Translate, facets: Pick<Catalog["facets"], "level
     badges: { pdf: t("badgePdf"), html: t("badgeHtml"), epub: t("badgeEpub"), bundle: t("badgeBundle"), live: t("badgeLive") },
     draft: t("draft"),
     workaround: t("workaround"),
+    colon: t("colon"),
   };
 }
 

@@ -1,0 +1,66 @@
+---
+title: "Un index des noms et un index des matières"
+summary: "Les marques index=\"names\" font un index des personnes, les autres un index des matières ; :::index les imprime sur deux colonnes, et les pages se fixent."
+plain: "Un chapitre d’un livre savant sur l’histoire des caractères d’imprimerie. On y voit comment construire deux listes en fin d’ouvrage, l’une des personnes et l’autre des sujets, avec la page où chacun apparaît."
+description: "Un chapitre de monographie sur les caractères d’imprimerie qui finit par un index des noms et un des matières, tirés de marques :index dans un seul Markdown."
+question: "Comment imprimer un index des noms et un index des matières à partir du même texte ?"
+aliases: ["index des noms", "index des personnes", "index des matières", "index onomastique", "índice onomástico", "índice de materias", "index de fin d’ouvrage", ":index", ":::index"]
+pageNotes: { "6": "L’index des noms : noms de famille inversés sous des lettrines de groupe en Bodoni, pages principales en gras.", "7": "L’index des matières : sous-entrées, renvois « See » et « See also », la Bible à 42 lignes classée sous F." }
+---
+
+## Ce que vous allez composer
+
+Le chapitre quatre de *Letters of Metal*, une monographie savante sur les caractères d’imprimerie composée en 155 × 235 mm : une colonne de Crimson Pro, de l’italique Bodoni pour les titres, une couleur d’accent rouge brique. L’essai va de la textura de Gutenberg aux modernes de Bodoni, en passant par Jenson, Alde et Griffo, Garamond et Plantin, Caslon et Baskerville, les points de Fournier et les caractères espagnols que Pradell et Gil ont gravés et qu’Ibarra a imprimés. Il se termine comme ces livres se terminent, par deux index sur une double page : les imprimeurs, graveurs de poinçons et mécènes au verso, les caractères, outils et livres au recto. Les deux viennent du même texte balisé, et chaque numéro de page qu’ils portent est la page où la marque est tombée.
+
+## Préparation
+
+### 1 · Marquer chaque personne pour l’index des noms, et chaque sujet pour l’index principal
+
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut ; le reste est dans le Markdown. Une marque avec `index="names"` va dans l’index qu’imprime `:::index{index="names"}`, et toutes les autres vont dans l’index principal qu’imprime un `:::index` sans attribut. Ainsi, `:index[Aldus Manutius]{term="Manutius, Aldus" index="names" main}` imprime le nom dans le texte et range une page en gras sous *Manutius* dans l’index des noms, tandis que `:index[italic]{term="Italic" main}`, deux lignes plus loin, range la même page sous *Italic* dans l’index des matières. Une personne qui est aussi un sujet du chapitre peut porter les deux marques.
+
+### 2 · Inverser les noms, et trier selon les lettres où le lecteur cherchera
+
+Les noms sont rangés nom de famille en tête : `term="Garamond, Claude"`, `term="Dall’Aglio, Margherita"`. La virgule fait partie du terme : l’interclassement range donc *Didot, Firmin* avant *Didot, François-Ambroise*, comme le ferait un indexeur. Quand la forme imprimée se rangerait sous la mauvaise lettre, `sort` donne la clé : l’édition anglaise marque `term="42-line Bible" sort="Forty-two-line Bible"`, si bien que la Bible se place sous F au lieu d’ouvrir un groupe 0–9. Les sous-entrées (`term="Foundries!Plantin-Moretus"`), les pages principales en gras (`main`), `range="start"` et `range="end"` autour de la section sur Bodoni, et les renvois (`see="Italic"`, `seealso="Matrices"`) font le reste ; une cible `see` à plusieurs niveaux s’imprime avec deux-points, comme dans *Humanist type. See Roman type: Venetian*.
+
+### 3 · Construire une fois ; le document fixe ses propres numéros
+
+<Excerpt region="build" />
+
+L’index imprime des numéros de page qui n’existent qu’après la mise en page, et l’imprimer occupe des pages à lui. `buildDocument()` s’en charge : il met le chapitre en page, lit la page de chaque marque, imprime les deux index et recommence la mise en page chaque fois qu’un numéro a changé. Ici les index suivent le texte : une seconde passe confirme donc la première ; un index placé avant le texte décalerait toutes les pages qui le suivent, et les passes continueraient jusqu’à ce qu’elles concordent. Ajoutez un paragraphe à la section sur Bodoni, et l’index des noms donne de lui-même sa nouvelle page à Whittingham.
+
+### 4 · Donner à chaque index une ouverture sur deux colonnes
+
+<Excerpt region="opener" />
+
+Le style de titre de la réponse courte fait trois choses pour `# Index of Names {style="index"}` : il ouvre une page (`parity: 'any'`, pour que les deux index se suivent sans page blanche), il compose la section qui suit en deux colonnes espacées de 7 mm, et avec `numbered: false` il laisse le compteur de chapitres tranquille. Le style reprend l’ouverture de chapitre avec un blanc de tête de six lignes et un titre de 20 pt, et les lettres de groupe répètent son Bodoni dans la couleur d’accent, sur la hauteur d’une ligne d’index pour que les colonnes gardent leur pas.
+
+### 5 · Nommer l’index sur le recto
+
+<Excerpt region="running-heads" />
+
+Le titre courant du recto imprime `{chapterTitle}`, et un titre d’index est un titre de niveau 1 comme n’importe quel chapitre : les pages qui le suivent portent donc *Index of Subjects* en tête. `pages: 'body'` tient les titres courants à l’écart des deux ouvertures d’index, qui portent à la place un folio en pied.
+
+## Variantes
+
+### Imprimer un seul index combiné
+
+Retirez `index="names"` des marques de personnes ainsi que le second titre : chaque marque tombe alors dans l’index principal, noms et sujets dans un même ordre alphabétique.
+
+```diff
+-:index[Aldus Manutius]{term="Manutius, Aldus" index="names" main}
++:index[Aldus Manutius]{term="Manutius, Aldus" main}
+```
+
+### Supprimer les lettres de groupe
+
+Un index des noms aussi court se lit bien sans elles. `groups.enabled: false` retire les lettres et garde une ligne d’espace entre les groupes ; le réglage s’applique aux deux index.
+
+```diff
+-  groups: { fontFamily: 'Bodoni Moda', fontSize: pt(11), fontWeight: 600, color: col('brick') },
++  groups: { enabled: false },
+```
+
+## Erreurs fréquentes
+
+- La configuration `index` est partagée : les deux index prennent le même caractère, le même interlignage et les mêmes lettres de groupe.
+- Une marque dans une légende ou une cellule de tableau s’imprime telle qu’elle est écrite. Marquez la personne dans le paragraphe qui cite la figure.

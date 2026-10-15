@@ -1,0 +1,78 @@
+---
+title: "Des figures qui flottent là où vous les citez"
+summary: "Chapitre en deux colonnes, sept figures numérotées : six flottent du premier :ref à la première place permise ; une reste où ::resource la pose."
+plain: "Un chapitre de manuel sur les montagnes, en deux colonnes, avec sept images numérotées. Il montre comment chaque image va dans le premier espace libre après la première mention dans le texte."
+description: "Chapitre de manuel en deux colonnes avec Postext : sept figures numérotées à la première mention, six flottantes à la première place permise, une dans le texte."
+question: "Comment numéroter et citer mes figures, et choisir : en haut, en pied, sur toute la largeur ou ici même ?"
+aliases: ["placement des figures", "flottants", "renvois", "voir figure", "citer une figure", "numéros de figure", "légendes", "figure dans le texte", "haut de page", "deux colonnes", "Figura", "manuel scolaire", "figure placement"]
+pageNotes: { "1": "L’ouverture du chapitre : un ruban bleu pend du haut avec un 2 blanc à son pied, à côté d’une dalle bleu glacier qui sort par la tranche avec le surtitre « Chapter 2 · Glacial geomorphology », le titre « How glaciers carve mountain valleys » et un chapeau en italique ; deux colonnes de texte suivent, et la « Figure 2.1 », une vallée fluviale en V à côté d’une vallée glaciaire en U remplie de glace, occupe le pied de la page.", "2": "La « Figure 2.3 », un cirque en coupe, ouvre la colonne de droite ; la « Figure 2.2 », le profil en long d’un glacier de vallée, couvre les deux colonnes au pied de la page.", "3": "Les « Figures 2.4 » et 2.5, l’abrasion et l’arrachement, se tiennent côte à côte en tête des deux colonnes ; la « Figure 2.6 », une roche moutonnée, se trouve dans la colonne de gauche exactement là où le texte la présente.", "4": "La dernière page du chapitre : une liste à puces de quatre marques de glaciation dans la colonne de gauche, la section finale et le colophon dans celle de droite, et la « Figure 2.7 », un plan de deux glaciers qui se rejoignent au-dessus d’un lac retenu par leur moraine frontale, centrée sur la moitié de la largeur du texte, au pied." }
+---
+
+## Ce que vous allez composer
+
+Le chapitre 2 de *Mountain Landforms*, un manuel de géomorphologie au format 200 × 250 mm. Un ruban bleu portant le numéro du chapitre pend du haut de l’ouverture, à côté de la dalle bleu glacier du titre ; deux colonnes justifiées en Faustina suivent. Les sept figures, des peintures générées par des modèles de diffusion et légendées en code, sont numérotées par ordre de première mention. Six flottent jusqu’à la première place libre que permet leur position, en comptant à partir du paragraphe qui les cite pour la première fois. La figure 2.1, en `auto`, se pose au pied de l’ouverture ; la 2.3 ouvre la colonne de droite de la page 28 et la 2.2 remplit le pied de cette page ; la 2.4 et la 2.5 ouvrent les deux colonnes de la page 29. La figure 2.6 est placée là où le texte l’insère. La figure 2.7, un flottant `top` cité page 30, attendrait la page 31, mais un flottant ne peut pas quitter son chapitre : elle va donc au pied de la page 30.
+
+## Préparation
+
+### 1 · Une palette pour les pages et les figures
+
+<Excerpt region="palette" />
+
+Chaque couleur de la configuration renvoie à l’une de ces entrées, et les peintures ont été générées dans les mêmes tons d’ardoise, de bleu glacier et de mousse : les figures prennent les couleurs de la page. Une peinture garde ses propres couleurs : une nouvelle valeur pour `glacier` change le ruban, la dalle et les étiquettes, pas la glace des figures. L’accent est assez sombre pour les petits corps : 5,2:1 sur blanc pour les étiquettes des légendes et les renvois, 4,5:1 sur la dalle de glace pour le surtitre. Chaque figure est un SVG qui intègre sa peinture en JPEG dans une URL de données et pose ses étiquettes par-dessus en texte, avec un fin halo blanc, pour qu’elles restent nettes et suivent la langue de l’édition. Les étiquettes désignent IBM Plex Sans Condensed dans le SVG, et le `loadSvg` du kit intègre les deux graisses qu’elles emploient grâce à `inlineSvgFonts` du moteur, car un SVG affiché comme image ne peut pas atteindre seul les polices de la page.
+
+### 2 · Nommer les figures dans la langue du lecteur
+
+<Excerpt region="captions" />
+
+`locale` nomme les types intégrés dans la langue du document : les légendes indiquent *Figure 2.3* ici et *Figura 2.3* dans l’édition espagnole, où le même `'es'` choisit les motifs de césure espagnols. Chaque renvoi prend ensuite la forme dont sa phrase a besoin : `case="lower"` pour *(fig. 2.1)* et, avec `style="full"`, pour *(figure 2.2)* ; `style="number"` après un pluriel (*figures 2.4 and 2.5*) ; et `text="…"` pour une expression comme *the chapter’s first figure*, qui n’imprime aucun numéro. Cette expression renvoie à une figure déjà placée ; en première mention, elle la numéroterait et la placerait quand même.
+
+### 3 · Un ruban et une dalle de glace pour l’ouverture
+
+<Excerpt region="furniture" />
+
+L’ouverture se compose de deux boîtes et de quatre textes : un ruban qui pend du haut avec le numéro du chapitre à son pied, une dalle de glace qui sort par la tranche, le surtitre tiré de l’attribut `topic` du titre, puis le titre et le chapeau enchaînés dessous. `minHeight` réserve la dalle et au moins 5 mm sous elle, arrondis à des lignes de grille entières (environ 7 mm ici), pour que la figure 2.1 tienne encore dans la bande de pied de la même page. Les titres courants occupent les angles extérieurs au-dessus d’un filet dans la couleur `rule`, et `pages: 'body'` les écarte de l’ouverture, qui reçoit à la place un folio en pied.
+
+### 4 · S’arrêter sur un id inconnu ou une figure non citée
+
+<Excerpt region="check" />
+
+Un `:ref` ou un `::resource` vers un id qu’aucune ressource ne porte imprime « ? » et ne place rien ; la construction note chacun dans `doc.contentWarnings` comme `unknownResourceId`, avec l’id et sa place dans la source. Une figure que personne ne mentionne n’est jamais placée et ne lève aucun avertissement : la vérification lit donc le Markdown avec `parseMarkdown`, l’analyseur du moteur lui-même, et compare les mentions aux figures. Un id inconnu, une figure non citée ou une figure `here` sans ligne `::resource` devient une erreur avant l’affichage des pages.
+
+### 5 · Commencer le compte là où en est le livre
+
+<Excerpt region="build" />
+
+C’est le chapitre 2 d’un livre plus long : la continuation enregistre donc un chapitre avant lui, les figures numérotées `{h1}.{n}` commencent à 2.1 et les folios à 27. Sur la <PageRef page={2}>page 28</PageRef>, la figure 2.3 se tient au-dessus de la figure 2.2, qui a le numéro le plus bas parce que le texte la cite en premier. Le `![]()` de Markdown est retiré : chaque figure est donc une ressource dont le SVG est enregistré sous son `svg.fileId` avant la construction. Chaque position découle de l’endroit où la figure est citée : `auto` pour la 2.1, parce que la dalle remplit le haut de l’ouverture ; `bottom` pour le profil, qui peut encore prendre le pied de la page qui le cite ; `top` pour les figures de colonne, qui ouvrent les prochaines têtes de colonne libres ; et `top` aussi pour la 2.7, qui finit au pied de la page 30 parce qu’un flottant reste dans son chapitre.
+
+## Variantes
+
+### Numéroter les figures sans le chapitre
+
+Retirez le chapitre des numéros et les figures s’impriment de 1 à 7 ; pour un seul compte sur tout un livre, mettez les chapitres en page avec `buildBundle` ou passez à chaque chapitre le `continuationAfter()` du précédent.
+
+```diff
+-  inlineSvgFonts, parseMarkdown,
++  inlineSvgFonts, parseMarkdown, defaultResourceTypes,
+@@
+   locale: t({ en: 'en-us', es: 'es' }),
++  resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type,
++    numberingTemplate: '{n}', resetOn: 'never' })),
+```
+
+### Placer les légendes au-dessus, sur un bandeau
+
+La légende passe au-dessus de la figure, sur un bandeau dans le bleu glacier de la palette, et la ligne de crédit reste sous la figure ; réajustez le texte, car les deux éditions débordent alors sur une cinquième page.
+
+```diff
+   captionStyle: { // the text colour follows bodyText; the note is 0.85 × the caption size
++    position: 'above', backgroundEnabled: true, background: col('ice'),
+     fontFamily: LABEL, fontSize: pt(8.3), gap: mm(2.2),
+```
+
+### Mettre une figure dans la marge
+
+Une page à colonne et demie donne aux figures et à leurs légendes un couloir extérieur où le texte n’entre jamais : voir <RecipeLink slug="textbook-margin-column">le manuel avec une colonne de marge</RecipeLink>.
+
+### Faire flotter les tableaux de la même façon
+
+Les tableaux sont aussi des ressources, cités et placés selon les mêmes règles, et un long tableau se coupe d’une page à l’autre : voir <RecipeLink slug="technical-datasheet">la fiche technique</RecipeLink>.

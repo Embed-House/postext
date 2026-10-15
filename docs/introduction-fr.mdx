@@ -1,0 +1,218 @@
+{/* docs/introduction-fr.mdx */}
+
+export const metadata = {
+  title: 'Introduction à Postext',
+  sidebarTitle: 'Introduction',
+  description: 'Ce qu’est Postext, pourquoi il existe et le problème qu’il résout',
+  lang: 'fr',
+  lastUpdated: '2026-09-24',
+  readingTime: '7 min',
+  order: 1,
+  plainSummary: "Postext est un logiciel libre qui met en page des livres, des revues et des rapports sur le web. Depuis des siècles, les livres imprimés suivent des règles de mise en page précises, comme garder des colonnes de même hauteur et placer les images près du texte qui en parle. Les pages web n’ont jamais eu ces règles, et Postext les leur apporte. Vous écrivez le texte, et Postext place pour vous chaque ligne, chaque image et chaque note sur la page. Cette page explique pourquoi le projet existe et comment il est né.",
+};
+
+# Introduction à Postext
+
+**Un compositeur programmable pour le web.**
+
+Ouvrez un livre bien composé. Regardez comment le texte s’installe sur la page : des colonnes
+parfaitement équilibrées, des images logées dans le flux, aucun trou disgracieux, aucune ligne isolée
+en haut d’une colonne. Des siècles de métier ont été nécessaires pour que cela paraisse aller de soi.
+
+Ouvrez maintenant une page web. Même les meilleures donnent une autre impression. Le texte bute
+contre les images. Les colonnes débordent ou restent à moitié vides. Les notes de bas de page
+filent en bas de la page au lieu de rester près des mots qui les appellent. Le web nous a donné la
+mise en page adaptative, mais jamais la mise en page *éditoriale*.
+
+Postext comble cet écart. C’est un moteur de mise en page qui prend votre contenu (de la prose en
+Markdown accompagnée de ressources déclarées, images bitmap, diagrammes SVG et tableaux, intégrées
+par renvoi) et lui applique les règles que suivrait un compositeur professionnel : prévention des
+veuves et des orphelines, équilibrage des colonnes, texte qui contourne les obstacles, espacements
+choisis. Le résultat est une géométrie de mise en page de qualité éditoriale, pour le HTML comme
+pour le PDF.
+
+Construit sur [`@chenglou/pretext`](https://github.com/chenglou/pretext), qui mesure le texte sans
+DOM à une vitesse qui rend tout cela possible.
+
+
+## L’écart entre l’imprimé et le web
+
+Depuis des siècles, les compositeurs suivent des règles qui rendent le texte agréable à lire. Ce
+ne sont pas des préférences esthétiques : ce sont des principes durement acquis, affinés par des
+générations de livres, de journaux et de magazines imprimés :
+
+- Pas d’orphelines (une ligne isolée d’un paragraphe échouée en haut d’une colonne).
+- Pas de veuves (une ligne isolée d’un paragraphe laissée seule en bas).
+- Des colonnes équilibrées (une hauteur à peu près égale d’une colonne à l’autre sur une double
+  page).
+- Un texte qui contourne les figures, les citations en exergue et les images incrustées.
+- Des notes de bas de page placées au pied de la colonne où elles sont appelées.
+- Des notes marginales alignées sur le paragraphe qui les cite.
+- Des espacements réguliers et choisis autour des titres, des citations et des figures.
+- Une césure qui évite les lézardes et les drapeaux trop irréguliers.
+
+Au-delà de ces règles, deux dimensions concrètes et mesurables montrent combien le web s’éloigne
+de l’imprimé :
+
+- **La longueur de ligne.** Bringhurst situe la plage confortable entre
+  **45 et 75 caractères** par ligne sur une seule colonne (et **40 à 50** en plusieurs colonnes) ;
+  la règle d’accessibilité
+  [WCAG 1.4.8](https://www.w3.org/WAI/WCAG21/Understanding/visual-presentation.html) la plafonne
+  à 80. La plupart des sites laissent les lignes s’étirer jusqu’à 100, 120 caractères ou plus,
+  bien au-delà du point où l’œil peut suivre une ligne sans s’y perdre.
+- **L’interlignage.** La tradition recommande **1,3 à 1,5 fois le corps du caractère**, et
+  [WCAG 1.4.12](https://www.w3.org/WAI/WCAG21/Understanding/text-spacing.html) exige que le
+  contenu reste utilisable à 1,5 fois ou plus. Mais la bonne valeur dépend de la longueur de
+  ligne : un interlignage confortable à 50 caractères paraît serré à 90. Les compositeurs règlent
+  l’un en fonction de l’autre ; le CSS n’offre aucun moyen automatique de le faire.
+
+Et c’est là que le CSS s’arrête : vous avez `column-count`, et guère plus. Aucun contrôle sur le
+placement des ressources, aucune prise en compte du débordement, aucune prévention des orphelines
+ou des veuves d’une colonne à l’autre, aucun moyen natif de faire couler le texte autour d’un
+obstacle quelconque. Sur le web, les mises en page éditoriales en plusieurs colonnes restent faites
+à la main : des maquettes statiques qui cassent dès que la taille de l’écran change.
+
+Le web dispose de la mise en page adaptative depuis plus de dix ans : flexbox, grid, des
+conteneurs qui s’ajustent à n’importe quel écran. Ce qu’il n’a jamais eu, c’est une mise en page
+*éditoriale* adaptative : celle où le contenu se recompose intelligemment d’une colonne à l’autre,
+autour des images, au-delà des notes, en respectant les règles qui rendent le texte *agréable à
+lire*.
+
+<Illustration name="CssGapVsEditorial" data='{"title": "L’écart entre le multicolonne CSS et la mise en page éditoriale", "desc": "Le CSS offre column-count et guère plus ; la mise en page éditoriale exige le contrôle des veuves et des orphelines, le contournement des obstacles, l’équilibrage des colonnes, le placement des notes de bas de page et un affinage par convergence.", "caption": "Ce que donne le CSS, face à ce qu’exige réellement la mise en page éditoriale.", "cssTitle": "Ce que donne le CSS", "cssLead": "column-count", "cssMore": "... et c’est à peu près tout.", "cssCons": ["Aucun contrôle des veuves et orphelines", "Aucun contournement des obstacles", "Aucun équilibrage des colonnes", "Aucun placement des notes", "Aucune convergence ni affinage"], "gap": "l’écart", "editorialTitle": "Ce qu’exige la mise en page éditoriale", "editorialPros": ["Prévention des veuves et orphelines", "Texte qui contourne les ressources", "Colonnes équilibrées", "Placement des notes de bas de page", "Maîtrise de la césure", "Affinage par convergence"], "equals": "= Postext"}' />
+
+
+## Dix ans à chercher la pièce manquante
+
+Le projet [Content First](https://medium.com/binpar/el-arte-de-maquetar-para-ser-le%C3%ADdo-933be57cb293)
+a démarré en 2014, comme une première tentative d’amener la qualité de la mise en page éditoriale
+sur le web. Mises en page en colonnes, expériences de coulée du texte, prototypes successifs, et
+toujours le même mur : **on ne peut pas prendre de bonnes décisions de mise en page sans savoir
+exactement quelle place occupera le texte.**
+
+Cela paraît simple, mais tout le problème est là. Chaque fois que vous demandez au navigateur
+« quelle hauteur fait ce paragraphe à cette largeur ? », vous déclenchez un recalcul complet de la
+mise en page (reflow). Faites-le quelques centaines de fois pour un document complexe en plusieurs
+colonnes, et la page se fige. Le navigateur n’a jamais été conçu pour ce genre de mesure
+spéculative : essayer dix largeurs de colonne pour trouver la meilleure, tester où couper un
+paragraphe, vérifier si une image tient ici ou doit passer à la colonne suivante.
+
+Il manquait un moyen de mesurer le texte assez vite pour expérimenter librement, sans bloquer le
+thread principal. Pendant dix ans, cet outil n’a pas existé.
+
+
+## La pièce manquante
+
+En 2025, Cheng Lou a publié [`Pretext`](https://github.com/chenglou/pretext) : une bibliothèque de
+mesure du texte sans DOM, de 300 à 600 fois plus rapide que le reflow du navigateur et exacte au
+pixel près dans Chrome, Safari et Firefox. Elle s’appuie sur les métriques de police du canvas et
+sur de la pure arithmétique pour calculer la hauteur du texte et ses coupures de ligne sans jamais
+toucher au DOM.
+
+Avec Pretext, le goulot d’étranglement qui bloquait ce travail depuis dix ans disparaît. On mesure
+des milliers de blocs de texte en quelques millisecondes, on essaie dix configurations de colonnes
+pour garder la meilleure, on relance tout l’algorithme de mise en page à chaque redimensionnement
+de la fenêtre sans bloquer le thread principal.
+
+Postext, c’est la suite.
+
+
+## Pretext + Postext
+
+Le nom est voulu : ce sont les deux moitiés d’une même opération. Les garder séparées compte, car
+ce sont des responsabilités distinctes (l’une mesure, l’autre décide), et isoler la mesure permet à
+n’importe quel moteur de l’utiliser sans dépendre des règles éditoriales.
+
+**Pretext**, c’est ce qui se passe *avant* que le texte soit placé : mesurer la place dont il aura
+besoin. Sans DOM, à partir du canvas, avec des nombres et rien d’autre.
+
+**Postext**, c’est ce qui se passe *après* la mesure : les décisions éditoriales. Connaissant les
+dimensions exactes de chaque bloc de texte à n’importe quelle largeur, le moteur décide où va
+chaque élément : dans quelle colonne, à quelle position, autour de quelles ressources, selon
+quelles règles typographiques.
+
+```ts
+import { prepare, layout } from '@chenglou/pretext';
+import { buildDocument, renderToCanvas, renderToHtml } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+
+// pretext: measure (the "pre" work)
+const prepared = prepare(paragraphText, '16px/1.5 Inter');
+const { height } = layout(prepared, columnWidth, 24);
+// => "This paragraph is 144px tall at this column width."
+
+// postext: decide (the "post" work)
+const vdt = buildDocument(content, config);
+// => A complete Virtual Document Tree with every paragraph,
+//     heading, and resource placed at exact coordinates.
+
+// One VDT, three output modes:
+const canvases = renderToCanvas(vdt);                       // pixel-accurate bitmap per page
+const html = renderToHtml(vdt);                             // selectable DOM for the web
+const pdfBytes = await renderToPdf(vdt, { fontProvider });  // print-ready PDF
+```
+
+Pretext vous donne les mesures. Postext vous donne la mise en page.
+
+<Illustration name="PretextPostextPipeline" data='{"title": "Pretext mesure, Postext décide", "desc": "Pretext mesure le texte sans DOM, à partir du canvas. Postext utilise ces dimensions exactes pour décider de la colonne, de la position, du contournement des ressources et des règles de veuves, d’orphelines et d’équilibrage.", "caption": "Les deux moitiés d’une même opération : Pretext avant, Postext après.", "pretextTitle": "Pretext", "pretextSubtitle": "mesurer", "pretextBullets": ["Sans DOM, à partir du canvas", "300 à 600 fois plus rapide que le reflow", "Coupures de ligne exactes au pixel"], "bridge": ["dimensions", "exactes"], "postextTitle": "Postext", "postextSubtitle": "décider", "postextBullets": ["Quelle colonne, quelle position", "Contournement des ressources", "Veuves, orphelines, équilibrage"]}' />
+
+*Pretext a été créé par [Cheng Lou](https://github.com/chenglou). Postext s’appuie sur lui.*
+
+
+## Comment ça marche
+
+Le processus se déroule en trois étapes :
+
+1. **Vous fournissez le contenu.** De la prose en Markdown accompagnée de ressources déclarées :
+   images bitmap, diagrammes SVG et tableaux. Un renvoi `:ref{id="..."}` dans le texte numérote
+   une ressource et la fait flotter vers une bande en haut ou en bas, près de son premier appel,
+   comme un compositeur place les figures dans un livre imprimé. Le contenu reste purement
+   sémantique : il décrit *quoi* présenter, pas *comment* ; les décisions de mise en page ne sont
+   jamais figées dans la source. La section Ressources de la page
+   [Format du document](/fr/docs/document-format) détaille toute la syntaxe.
+
+2. **Le moteur prend les décisions.** Postext analyse le contenu, appelle Pretext pour mesurer le
+   texte au pixel près sans toucher au DOM, puis exécute une chaîne de mise en page en plusieurs
+   passes : il équilibre les colonnes, numérote et fait flotter les ressources, évite les veuves
+   et les orphelines, aligne les lignes de base, affine les espacements. Chaque décision dépend de
+   la configuration : géométrie de la page et de la mise en page, texte courant et titres, plus
+   `tableStyle` pour la typographie des cellules de tableau, `captionStyle` pour les légendes des
+   figures, et `diagramStyle` avec `singleInk`, qui recolore les diagrammes SVG en teintes d’une
+   seule encre selon leur luminance, pour l’impression en une seule couleur d’accompagnement. Vous
+   fixez les règles, le moteur les applique.
+
+3. **Vous obtenez une mise en page complète.** Les coordonnées et dimensions précises de chaque
+   élément sur chaque page. Les moteurs de rendu traduisent cette géométrie dans le format cible :
+   **canvas** pour un aperçu bitmap exact au pixel près (`renderToCanvas`, `renderPage`),
+   **HTML** pour une typographie sélectionnable sur le web, qui suit le redimensionnement
+   (`renderToHtml`, `renderToHtmlIndexed`), et **PDF** pour une sortie prête pour l’impression
+   avec polices incorporées (`renderToPdf`, du paquet `postext-pdf`). Le même contenu, les mêmes
+   règles, trois sorties interchangeables.
+
+<Illustration name="LayoutProcess" data='{"title": "Mise en page en trois étapes", "desc": "Le Markdown enrichi et la configuration entrent dans le moteur, qui exécute une chaîne de mise en page en plusieurs passes avec la mesure de Pretext à l’intérieur, et produit un rendu HTML ou PDF.", "caption": "Du contenu en entrée, de la géométrie en sortie, puis le rendu dans le format cible.", "inputTitle": "Markdown enrichi", "inputSubtitle": "+ configuration", "parse": "analyse", "engineTitle": "Moteur Postext", "engineSub1": "mesure Pretext intégrée", "engineSub2": "mise en page en plusieurs passes", "render": "rendu", "outputTitle": "HTML / PDF", "outputSubtitle": "sortie rendue"}' />
+
+Pour un regard détaillé sur les rouages du moteur (l’arbre de document virtuel, la chaîne en
+plusieurs passes et la boucle de convergence), consultez la page
+[Architecture](/fr/docs/architecture). Pour la référence complète de chaque option de
+configuration, de la géométrie de la page au style des tableaux, des légendes et des diagrammes,
+voyez la page [Configuration](/fr/docs/configuration). Et pour tout essayer en direct (un éditeur
+de texte par chapitre, un panneau Ressources avec un éditeur de tableaux et l’import d’images et
+de SVG, un panneau Maquette qui présente chaque réglage en termes éditoriaux, et des aperçus canvas,
+HTML et PDF en direct), ouvrez le [Sandbox](/fr/docs/sandbox).
+
+
+## Remerciements
+
+**[Pretext](https://github.com/chenglou/pretext)**, de Cheng Lou : la bibliothèque de mesure du
+texte sur laquelle repose Postext. Sans une mesure sans DOM, exacte au pixel près et plus rapide
+qu’une milliseconde, rien de tout cela ne serait praticable.
+
+**Content First** (vers 2014) : la première exploration d’une mise en page éditoriale de qualité
+sur le web. Dix ans à se heurter à des murs, à apprendre ce qui ne fonctionne pas, et à se
+convaincre que ce problème méritait une vraie solution.
+
+Postext repose sur des siècles de tradition typographique. Les règles qu’il applique ne sont pas
+inventées : elles sont héritées du travail des compositeurs, des typographes et des graphistes qui
+ont perfectionné la lisibilité du texte bien avant l’apparition des écrans. Des caractères mobiles
+de Gutenberg à la typographie asymétrique de Tschichold et aux *Elements of Typographic Style* de
+Bringhurst, la façon de disposer le texte sur une page évolue depuis plus de cinq cents ans.
+Postext apporte ce savoir accumulé au web, où il brillait par son absence.

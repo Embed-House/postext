@@ -1,0 +1,62 @@
+---
+title: "Chapitres d’album illustré avec vignettes et sommaires"
+summary: "Un seul style de titre ouvre chaque chapitre ; chaque titre nomme dans ses attributs sa vignette et son sommaire en italique, que l’ouverture peint."
+plain: "Les premières pages d’une édition italienne de Pinocchio pour enfants. Chaque chapitre s’ouvre sur sa propre image aux couleurs douces et un court résumé de ce qui s’y passe."
+description: "Le Pinocchio de Collodi en italien, avec Postext : chaque chapitre s’ouvre sous une vignette différente, avec la ligne de chapitre et un sommaire en italique."
+question: "Comment ouvrir chaque chapitre d’un livre pour enfants sur sa propre vignette et un sommaire en italique ?"
+aliases: ["livre pour enfants", "roman jeunesse", "vignette", "bandeau", "cul-de-lampe", "sommaire de chapitre", "frontispice", "Pinocchio", "children's book", "headpiece"]
+pageNotes: { "1": "La page de titre, un verso : une aquarelle de collines toscanes avec des cyprès et un village perché sous un ciel bleu pâle, où un vieil homme en chapeau de paille mène une charrette à âne chargée de bois jusqu’à l’atelier ouvert d’un menuisier ; dessous, « LE AVVENTURE DI », « Pinocchio » en grand caractère de titrage brun, « Storia di un burattino » en italique et « CARLO COLLODI ».", "2": "Le chapitre I s’ouvre sous une vignette à l’aquarelle qui se fond dans le papier : Maestro Ciliegia, chauve, le nez rouge comme une cerise, se fige la hache levée au-dessus de la bûche posée sur son établi, parmi les rabots, les scies et les copeaux. « CAPITOLO I », le sommaire de deux lignes de Collodi en italique centré, les premiers paragraphes et un folio dans un disque couleur bois, centré au pied.", "3": "Une pleine page du chapitre I sous le titre courant « LE AVVENTURE DI PINOCCHIO », avec le disque du folio au pied, côté extérieur.", "4": "La fin du chapitre I sous le titre courant « CAPITOLO I », fermée par deux cerises rouges sur une tige, centrées, sans légende.", "5": "Le chapitre II s’ouvre sous une vignette à l’aquarelle de Geppetto, avec sa perruque jaune frisée, qui prend la bûche des mains de Maestro Ciliegia, à côté d’une marmite rouge de polenta fumante ; « CAPITOLO II », un sommaire de trois lignes, les premiers paragraphes et le colophon." }
+---
+
+## Ce que vous allez composer
+
+Les premières pages d’une édition italienne pour enfants de *Le avventure di Pinocchio* de Collodi, composée en Averia Serif Libre 13 sur 19 pt sur une page de 190 × 240 mm. Une page de titre au verso fait face au chapitre I : une aquarelle des collines toscanes, où une charrette à âne apporte du bois à l’atelier d’un menuisier, au-dessus du titre en Fredericka the Great. Chaque chapitre s’ouvre sous une vignette à l’aquarelle qui se fond dans le papier (Maestro Ciliegia, la hache levée au-dessus de la bûche qui parle, pour le chapitre I ; Geppetto, dans sa perruque jaune, qui prend la bûche, pour le chapitre II), puis viennent la ligne de chapitre et le sommaire de Collodi en italique centré. Les quatre images ont été générées par des modèles de diffusion à partir d’une même description de style et de la palette de la page. Les titres courants ne s’impriment qu’en pages 8 et 9, les deux sans ouverture. Les folios sont posés dans des disques couleur bois, et deux cerises ferment le chapitre I sans légende ni numéro.
+
+## Préparation
+
+### 1 · Un style de titre, une vignette nommée sur chaque titre
+
+Le code de cette étape est [la réponse courte](#la-réponse-courte). Le `resourceId` d’un élément image accepte les mêmes variables qu’un texte de maquette : `'{attr.vignetta}'` dessine donc la ressource que nomme le titre, comme `{attr.summary}` imprime son sommaire. Les deux chapitres partagent le style `capitolo` et nomment leur image sur la ligne du titre : `# Capitolo II {style="capitolo" vignetta="polenta" summary="…"}`. Un troisième chapitre demande une ressource et un titre de plus, pas un autre style ([éléments image](/fr/docs/configuration-page-layout#éléments-image)). La ligne de chapitre est placée depuis le haut du conteneur, 6 mm sous la boîte de la vignette, et le sommaire est suspendu 5 mm en dessous ; l’ouverture réserve la place jusqu’à la dernière ligne du sommaire. Avec `minHeight` comme plancher de 14 lignes, le texte du chapitre I commence sur la même ligne que celui du chapitre II, dont le sommaire compte une ligne de plus ; sans lui, le texte du chapitre I commence 6,7 mm plus haut ([largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)).
+
+### 2 · Charger les peintures comme ressources bitmap
+
+<Excerpt region="pictures" />
+
+Chaque image est un JPEG du dossier `assets/` de la recette, déclaré à sa taille en pixels : la mise en page ne lit que ces tailles, et le canvas peint ce que `loadImage()` a enregistré sous chaque identifiant de fichier au moment où il dessine la page. Les vignettes et les cerises ont été générées sur fond blanc, puis multipliées par la couleur du papier `#fffaf0` : leurs marges s’impriment comme la page et les images n’ont aucun bord visible. Le frontispice est recadré en 190:150, la forme de son champ, si bien que l’image ajustée remplit le champ sans bande de papier. Le paysage et les vignettes sont peints par des éléments image des maquettes, les cerises par `::resource{id="ciliegie"}` dans le Markdown.
+
+### 3 · Faire de la page de titre un style de titre
+
+<Excerpt region="frontispiece" />
+
+La page de titre est le premier titre du Markdown, `# Pinocchio {style="frontespizio" kicker="Le avventure di"}`, et son style peint tout ce qui est sur la page : le paysage, sur 150 mm de haut depuis le bord supérieur, puis le surtitre tiré de l’attribut, le titre, et le sous-titre et l’auteur tirés du frontmatter. Chaque élément est accroché à la page, pas au bloc de texte : la peinture atteint le bord supérieur et les deux côtés de la feuille, alors que le titre lui-même reste dans l’unique colonne du livre. Le `footer` vide supprime le disque du folio qu’impriment les ouvertures de chapitre, et `pages: 'body'` écarte déjà les titres courants de la page ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)).
+
+### 4 · Titres courants sur les pages de texte, folios dans des disques
+
+<Excerpt region="folios" />
+
+`continuation` numérote l’extrait à partir de la page 6 du livre, un verso : la page de titre fait face au chapitre I et le premier folio imprimé est 7. `pages: 'body'` écarte les titres courants de la page de titre et des deux ouvertures : ils ne s’impriment qu’en pages 8 et 9, le titre du livre au verso et celui du chapitre au recto ([éléments texte](/fr/docs/configuration-page-layout#éléments-de-texte)). Le folio est un texte de maquette dans un carré fixe de 7,4 mm dont le rayon d’angle vaut la moitié du côté, ce qui en fait un cercle ; `verticalAlign: 'middle'` et la hauteur de ligne calculée dans le commentaire y centrent les chiffres. Les chiffres couleur papier ont un rapport de contraste de 4,98:1 sur le bois. Les étiquettes en approche ne demandent aucun décalage : l’approche après la dernière lettre d’une ligne est exclue quand la ligne est centrée.
+
+### 5 · Fermer le chapitre par un cul-de-lampe sans numéro
+
+<Excerpt region="tailpiece" />
+
+Un type de ressource imprime son `captionPrefix` et son numéro avant la légende. Avec un préfixe vide et sans légende, rien ne s’imprime sous les cerises ; avec `captionPrefix: 'Fregio'`, la même ressource imprime *Fregio 1.* sous le dessin et gagne 10 mm de hauteur ([types de ressources](/fr/docs/configuration-resources#types-de-ressources)). Le `defaultPlacement` du type place chaque ressource là où se trouve sa ligne `::resource`, large d’un sixième de la justification et centrée : le Markdown n’a besoin que de `::resource{id="ciliegie"}` après le dernier paragraphe du chapitre. Les autres images partagent le type, mais aucun `:ref` ni `::resource` ne les nomme : elles ne sont jamais placées ni comptées.
+
+## Variantes
+
+### Ouvrir chaque chapitre sur un recto
+
+Avec `'odd'`, le chapitre II passe en page 11 et la page 10 reste blanche ; la page de titre désactive son propre saut, car elle hérite de celui du niveau et passerait sinon en page 7 après une page 6 blanche.
+
+```diff
+@@ the frontispiece style @@
+   id: 'frontespizio',
++  breakBefore: { enabled: false },
+@@ headings, in config() @@
+-    levels: [{ level: 1, breakBefore: { enabled: true, parity: 'any' } }],
++    levels: [{ level: 1, breakBefore: { enabled: true, parity: 'odd' } }],
+```
+
+## Erreurs fréquentes
+
+- Dans le Markdown, une espace insécable (U+00A0) lie chaque tiret de dialogue de Collodi à son mot, pour qu’un tiret fermant n’ouvre jamais une ligne ; deux autres gardent *di legno* et *in piedi* ensemble en fin de paragraphe. Ces liaisons tiennent aussi dans un paragraphe avec du gras ou de l’italique, comme celui qui contient *ohi* en page 9, qui en compte quatre.

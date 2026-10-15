@@ -1,0 +1,64 @@
+---
+title: "Sujet d’examen avec grille de réponses"
+summary: "Examen d’histoire de quatre pages en US Letter : ronds et points en pastilles, points sur un taquet, questions 1, a), i), lignes tracées par un tableau."
+plain: "Un examen d’histoire de quatre pages avec une couverture, des ronds à noircir et des pages lignées pour écrire. Il montre comment numéroter les questions et leurs parties et afficher les points de chacune."
+description: "Un sujet d’examen avec Postext : cases du candidat et grille de ronds, questions numérotées 1, a), i), points en pastilles, lignes tracées par un tableau."
+question: "Comment composer un sujet d’examen avec grille de ronds, parties a) et i), points et lignes de réponse ?"
+aliases: ["sujet d’examen", "épreuve écrite", "examen blanc", "énoncé", "feuille de réponses", "grille de réponses", "ronds à noircir", "lecture optique", "QCM", "questionnaire à choix multiples", "lignes de réponse", "lignes d’écriture", "barème", "points alignés à droite", "taquet de tabulation", "numérotation des questions", "numéro de candidat", "tournez la page", "exam paper"]
+pageNotes: { "1": "Un bandeau cramoisi sur le tiers supérieur porte la ligne de session, « History » en gros caractères blancs, « Paper 2 · Sources and interpretations » et « The American Civil War, 1863 » en italique, au-dessus de l’année 1863 dessinée au trait blanc et coupée par le pied du bandeau. Dessous : la date et la durée de l’épreuve, un formulaire arrondi avec des cases pour le nom, la classe, le numéro de candidat et la note sur 25, un encadré rose pâle d’instructions et d’informations sur deux colonnes et, sous le titre cramoisi « Section A answer grid », un panneau rose pâle de rangées numérotées de 1 à 10, chacune avec quatre ronds cramoisis marqués A à D. En pied, en capitales cramoisies : « Do not turn over until you are told to do so ».", "2": "« Section A », 10 points : dix questions à choix multiples sur 1863, chacune avec un grand numéro gras et un point cramoisi, et sous chaque question une ligne de quatre options qui s’ouvrent chacune sur un rond marqué d’une lettre.", "3": "« Section B », 15 points : le discours de Gettysburg en « Source A » à côté d’une bande cramoisie, signé « Abraham Lincoln. November 19, 1863 », avec une petite ligne de crédit dessous ; puis la question 11 avec les parties a) i), a) ii), b) et c), chacune avec une pastille rose indiquant ses points alignée sur le bord droit du texte, et « Turn over » en pied.", "4": "La page de réponses : des groupes de filets gris espacés de deux lignes de texte, la première rangée de chaque groupe portant sa partie en cramoisi, d’une rangée pour 11 a) i) à huit pour 11 c) ; « End of questions » et le colophon closent la page." }
+---
+
+## Ce que vous allez composer
+
+L’épreuve 2 d’un examen blanc d’histoire sur la guerre de Sécession, composée en livret de quatre pages au format US Letter. La couverture est un bandeau cramoisi avec l’année 1863 dessinée au trait, au-dessus des cases du candidat, des instructions sur deux colonnes et d’une grille de ronds marqués de lettres pour la section A. La page 2 contient dix questions à choix multiples, chacune suivie de ses quatre options, et chaque option s’ouvre sur un rond marqué d’une lettre comme ceux de la grille. La page 3 compose le discours de Gettysburg en Source A et numérote les questions qui s’y rapportent 11, a), i), avec les points de chaque partie dans une pastille contre la marge de droite. La page 4 est lignée pour les réponses, un filet toutes les deux lignes de texte, et chaque groupe de filets s’ouvre sur le numéro de sa partie. Chaque page après la couverture porte un folio et une marge réservée au correcteur, délimitée par un filet, et la seule page de droite parmi elles indique « Turn over ».
+
+## Préparation
+
+### 1 · Numéroter les questions et suspendre leurs options
+
+<Excerpt region="numbering" />
+
+Chaque niveau d’`orderedLists` choisit son `numberFormat` et son `separator`, et `separatorColor` peint le point et les parenthèses dans la couleur d’accent pendant que le numéro reste en noir ([listes numérotées](/fr/docs/configuration-text#listes-numérotées)). Avec `numberWidth: 'level'`, les numéros s’alignent à droite sur le plus large de leur niveau : le texte de chaque question commence donc à 23 pt, les 17 pt de « 10. » plus `GAP`. Les quatre options forment un seul élément de liste à puce avec un `bulletChar` vide, au même niveau que les questions plutôt qu’imbriqué sous elles. Son texte commence à l’`indent` de la liste, soit « 10. » mesuré dans le caractère des numéros plus `GAP` : les options s’alignent sur la première lettre de la question, quelle que soit la police ; l’encadré des instructions règle `indent: pt(0)`, parce que les listes d’un encadré prennent le retrait du document. Entre deux éléments du même niveau, l’espace est l’`itemSpacing` du premier : 5 pt après un élément numéroté, 15 pt après une ligne d’options. Imbriquée sous sa question, la ligne d’options prendrait les 5 pt de la liste des questions de part et d’autre.
+
+### 2 · Faire les ronds et les points avec des pastilles
+
+<Excerpt region="chips" />
+
+Une pastille est une boîte à l’intérieur de la ligne, et un saut de ligne n’y tombe jamais ([pastilles en ligne](/fr/docs/document-format#pastilles-en-ligne)). Avec une seule capitale à l’intérieur, `paddingX: em(0.3)` rend la boîte à peu près aussi large que haute : de 4,5 à 4,8 mm de large dans la grille, pour une hauteur de 4,7 mm. `borderRadius: em(1)` dépasse la moitié de la boîte, et le rayon d’une pastille est limité à la moitié de son plus petit côté : les extrémités sont donc entièrement rondes. Une pastille sans `style` prend la première entrée de `chipStyles` : les quatre-vingts ronds, quarante dans la grille et quarante parmi les options, sont donc de simples pastilles comme `:chip[A]` ; seuls l’exemple noirci des instructions et les points nomment un style. Les points sont alignés à droite : chaque partie se termine par `:tab` avant sa pastille, et l’unique taquet de tabulation du texte courant, en fin de justification avec `align: 'end'`, y fait finir la pastille ([tabulations et taquets](/fr/docs/document-format#tabulations-et-taquets)). Les éléments de liste des questions prennent les taquets du texte courant : les pastilles de a) et de i) finissent donc au même endroit. Une partie dont la dernière ligne n’a plus de place pour sa pastille emmène son dernier mot avec elle à la ligne suivante.
+
+### 3 · Donner à chaque formulaire son style de tableau
+
+<Excerpt region="forms" />
+
+Les cases du candidat, la grille de ronds et les lignes de réponse sont trois `tableStyles`, choisis tableau par tableau avec `styleId` ([styles de tableau nommés](/fr/docs/configuration-resources#styles-de-tableau-nommés)). Les lignes de réponse de [la réponse courte](#la-réponse-courte) utilisent `rules: 'horizontal'` et une marge intérieure qui donne à chaque rangée la hauteur de deux lignes de texte : chaque filet tombe 30 pt (10,6 mm) sous le précédent, sur une ligne sur deux de la grille de 15 pt du texte. La ligne vide du milieu de la cellule MARK contient une espace insécable, parce qu’une ligne de cellule vide ou ne contenant que des espaces ordinaires n’ajoute rien : cette cellule a trois lignes de haut et fixe toute la rangée à 14,4 mm, contre 10,8 mm avec deux lignes. La grille ne trace aucun filet : la teinte de chaque cellule rejoint celle de sa voisine et la grille se lit comme un seul panneau. Son titre est une légende placée 1,6 mm au-dessus ([style de légende](/fr/docs/configuration-resources#style-de-légende)). Un titre se placerait au moins une ligne de texte (5,3 mm) plus haut, parce que tout tableau placé « here » garde cet espace au-dessus de lui. Le type `form` a un `captionPrefix` vide : aucune étiquette « Form 1. » ne précède le titre.
+
+### 4 · Dessiner la couverture à partir des attributs du titre
+
+<Excerpt region="cover" />
+
+La couverture est un seul titre, `# History {style="cover" …}`, et son style dessine un bandeau, l’année et quatre lignes de texte remplies à partir des attributs du titre. Avec `span: 'page'`, la page compte comme une page d’ouverture : le filet de marge, le folio et « Turn over » des pages courantes en restent écartés, et l’avis s’imprime à son pied. Sans lui, la couverture est une page courante comme les autres. Les `margins` du style élargissent la colonne de la couverture aux 168 mm complets pour les formulaires, et le titre suivant, un niveau 1 sans style, ramène les pages courantes à la justification de 134 mm.
+
+### 5 · Écarter folios et « Turn over » de la couverture
+
+<Excerpt region="furniture" />
+
+Chaque élément courant des pages de texte porte `pages: 'body'` : la couverture, une page d’ouverture, ne montre donc que son propre avis (`pages: 'opener'`). Les sections commencent par conséquent par `:::pagebreak` et un titre sans `breakBefore`. Un titre qui provoque un saut de page fait de sa page une page d’ouverture, et les pages 2 et 3 perdraient leur folio, leur titre courant et leur marge. `parity: 'odd'` garde « Turn over » sur le recto, puisqu’un verso fait déjà face à la page qui le suit.
+
+## Variantes
+
+### L’imprimer en A4
+
+Le bandeau, l’année, le filet de marge et l’avis tirent leurs dimensions de `PAGE` : passer en A4 tient en une ligne. Les blocs de la couverture gardent leur place, et le blanc sous la grille augmente de 17,6 mm dans les deux éditions.
+
+```diff
+-const [TEXT, LABEL, PAGE] = ['PT Serif', 'Inter Tight', { w: 215.9, h: 279.4 }]; // US Letter
++const [TEXT, LABEL, PAGE] = ['PT Serif', 'Inter Tight', { w: 210, h: 297 }]; // A4
+```
+
+### Ajouter une banque de mots ou une liste à cocher
+
+Banques de mots, blancs à remplir et ronds à colorier sont aussi des pastilles : <RecipeLink slug="worksheet-answer-boxes">la fiche d’exercices avec cases de réponse et banque de mots</RecipeLink> compose une banque de pastilles jaunes dans un encadré imbriqué et une liste à cocher dont chaque ligne s’ouvre sur un rond vide.
+
+## Erreurs fréquentes
+
+- Des lignes de réponse placées entre les parties d’une question coupent sa liste : la liste qui suit le tableau commence une nouvelle série, et une série aligne ses numéros à droite sur son propre numéro le plus large : le texte de ii) commencerait 1 mm à droite de celui de i). Ici, les réponses sont sur leur propre page, et toutes les parties restent dans une seule liste.

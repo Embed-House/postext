@@ -1,0 +1,70 @@
+---
+title: "Un index de manuel qui suit le texte"
+summary: "Des termes marqués là où le texte en traite, imprimés par :::index sur deux colonnes avec les pages que trouve buildBundle, des étendues et des renvois."
+plain: "Deux chapitres d’un manuel de physiologie avec un index à la fin. Les mots sont marqués dans le texte, et le livre trouve leurs numéros de page tout seul : aucun n’est saisi à la main."
+description: "Deux chapitres d’un manuel de physiologie et leur index, composés avec Postext : marques dans le texte, pages principales, étendues, renvois, deux colonnes."
+question: "Comment construire un index dont les numéros de page suivent le texte, où qu’il se déplace ?"
+aliases: ["index", "index de fin d’ouvrage", "index analytique", "index des matières", "index des termes", "voir aussi", "étendues de pages", "étendues de pages Chicago", "índice analítico", ":::index", "back-of-book index"]
+pageNotes: { "9": "L’index s’ouvre en page 305 sous le même bandeau rouge que les chapitres : lettres de groupe dans la couleur d’accent, sous-entrées en retrait d’un cadratin, pages principales en gras et renvois en italique.", "10": "L’index continue en page 306, où une liste de sous-entrées commencée en page 305 se poursuit en tête de la première colonne, et le colophon flotte au pied de la page." }
+---
+
+## Ce que vous allez composer
+
+La partie IV de *Principles of Human Physiology*, un manuel sur une page de 210 × 277 mm : le chapitre 14, *The heart as a pump*, et le chapitre 15, *Vessels and blood pressure*, s’ouvrent sur des rectos sous un bandeau rouge et composent leurs notes cliniques et leurs légendes dans un couloir extérieur. La partie se termine par un index d’environ quatre-vingt-dix entrées et trente sous-entrées sur deux colonnes, comme le compose un manuel de médecine : entrées en minuscules, lettres de groupe dans la couleur d’accent, sous-entrées en retrait d’un cadratin, page de définition en gras, *see* et *see also* en italique. Aucun numéro de page n’y a été saisi. Chaque terme est marqué dans le chapitre, là où le texte l’explique, et l’index lit les pages où ces marques sont tombées, folios 297 à 304.
+
+## Préparation
+
+### 1 · Marquez le passage, pas le mot
+
+<Excerpt region="answer" />
+
+Un indexeur marque les endroits où un terme est expliqué, pas chaque endroit où le mot apparaît. Les deux chapitres emploient *stroke volume* douze fois, et l’index renvoie le lecteur à deux endroits : la page 298, où le terme est défini, et 299–300, où le texte explique ce qui le régule. Une marque visible, `:index[cardiac output]{main}`, imprime ses mots et les classe. Une marque invisible, `mitral:index{term="heart!valves!mitral"}`, n’imprime rien et prend la page du mot qui la précède : c’est ainsi que le passage sur les quatre valves classe *mitral*, *tricuspid*, *aortic* et *pulmonary* sous *heart* sans reformuler la phrase. Le `!` sépare les niveaux : *heart* en reçoit donc trois, les valves, puis chaque valve. Une marque fonctionne aussi dans un titre (les étendues de 14.1 et 15.6 commencent là) et dans un encadré (*heart failure* est défini dans la note latérale de la page 300).
+
+### 2 · Pages principales, étendues et renvois
+
+<Excerpt region="answer" />
+
+`main` compose en gras la page qui définit un terme : un étudiant qui cherche *preload* va d’abord en page 299. `range="start"` et `range="end"`, avec le même terme, bornent une discussion qui passe un saut de page : *stroke volume, regulation, 299–300*, *baroreceptor reflex, 303–4*. Un `main` sur le début met toute l’étendue en gras. Une page marquée de nouveau à l’intérieur de sa propre étendue s’y fond, et un `main` à cet endroit met l’étendue en gras. `see` remplace les numéros de page (*inotropy. See contractility*), et `seealso` les suit (*heart failure, 300. See also ejection fraction*). Une cible à plusieurs niveaux s’écrit avec `!` et s’imprime avec un deux-points : *See blood pressure: mean arterial*.
+
+### 3 · Un chapitre d’index sur deux colonnes
+
+<Excerpt region="answer" />
+
+L’index est le dernier document Markdown du livre, `# Index {style="index"}` suivi de `:::index`. Le style de titre remplace la colonne et demie des chapitres par deux colonnes espacées de 6 mm, dans sa seule section, et donne à l’index sa propre ouverture et son propre titre courant. L’index est composé dans le caractère du texte en 8,6/11,4 pt, un cadratin par sous-niveau, et une ligne de suite se place en retrait de deux cadratins : une ligne renvoyée ne s’aligne jamais sur une sous-entrée. `rangeFormat: 'chicago'` supprime les chiffres qu’une étendue répète (*303–4*, mais *299–300*). L’édition espagnole écrit les étendues en entier avec un trait d’union (*303-304*), l’usage courant dans les livres espagnols.
+
+### 4 · Pourquoi les numéros suivent le texte
+
+<Excerpt region="build" />
+
+`buildBundle` met les chapitres en page dans l’ordre et découvre que le troisième contient `:::index`. Après la première passe, il rassemble chaque marque de chaque chapitre avec la page où elle est tombée, et transmet cette liste au chapitre d’index comme plan. Puis il remet le livre en page, jusqu’à trois passes, jusqu’à ce qu’aucun numéro de page ne bouge. Réécrivez un paragraphe du chapitre 14, changez le format ou le corps du texte, et l’index se réimprime avec les nouvelles pages. Dans le PDF, chaque numéro de page renvoie à sa page.
+
+### 5 · Ouvertures et titres courants
+
+<Excerpt region="opener" />
+
+Les chapitres et l’index partagent une même ouverture : un bandeau du bord de coupe jusqu’à 62 mm (46 mm pour l’index), le titre posé sur son pied par une boîte alignée en bas, si bien qu’un titre de deux lignes et un titre d’une ligne finissent sur la même ligne. Le surtitre imprime `{chapterNumber}`, que l’attribut de titre `{startAt=14}` règle à 14, et `page.pageNumbering.startAt: 297` place la partie là où elle se trouverait dans le livre. Le style d’index est `numbered: false` : il ne devient donc pas le chapitre 16.
+
+## Variantes
+
+### Écrivez chaque étendue en entier
+
+Certaines chartes maison impriment en entier les deux numéros d’une étendue.
+
+```diff
+-  rangeFormat: t({ en: 'chicago', es: 'full' }), rangeSeparator: t({ en: '–', es: '-' }),
++  rangeFormat: 'full', rangeSeparator: t({ en: '–', es: '-' }),
+```
+
+### Un index sans lettres de groupe
+
+Un index court enchaîne souvent ses groupes, séparés seulement par une ligne blanche.
+
+```diff
+-  groups: { ...label, fontSize: pt(9.5), letterSpacing: pt(0), color: col('accent') },
++  groups: { enabled: false },
+```
+
+## Erreurs fréquentes
+
+- La capture de cette recette ne signale pas `indexSeeUnknown` : un renvoi dont la cible s’écrit autrement que l’entrée (*Reynolds number* contre *number, Reynolds*) s’imprime sans protester. Relisez chaque *See* de l’index terminé en le comparant à sa cible.
+- Une liste de sous-entrées coupée entre deux colonnes ne répète pas son entrée principale sous forme de ligne *heart (cont.)* ; une entrée sans page propre reste toujours avec sa première sous-entrée, si bien qu’une entrée principale ne finit jamais seule une colonne.
