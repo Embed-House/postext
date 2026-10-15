@@ -125,7 +125,9 @@ export function hyphenateByDictionary(text: string, locale?: LocaleTag): string 
       // A word of a joining script (an Arabic word quoted in an English
       // book) is never divided: its letters connect (`measure/joining.ts`).
       hyphenated = joiningScriptIn(word) ? word : loc === 'ca' ? hyphenateCatalan(hyphenator, word) : hyphenator.hyphenateText(word);
-      if (loc === 'en-us' && APOSTROPHE_RE.test(word)) hyphenated = withoutApostropheBreaks(word, hyphenated, enUs.leftmin, enUs.rightmin);
+      if (APOSTROPHE_LOCALES.has(loc) && APOSTROPHE_RE.test(word)) {
+        hyphenated = withoutApostropheBreaks(word, hyphenated, PATTERNS[loc].leftmin, PATTERNS[loc].rightmin, ELISION_LOCALES.has(loc));
+      }
       if (memo.size >= WORD_MEMO_SLOTS) memo.clear();
       memo.set(word, hyphenated);
     }
@@ -312,18 +314,40 @@ function withHyphenationRules(word: string, hyphenated: string, rules: CompiledR
 
 const APOSTROPHE_RE = /['’]/;
 const LETTER_RE = /[\p{L}\p{M}]/u;
+/** Dictionaries whose divisions {@link withoutApostropheBreaks} checks.
+ *  Catalan has its own word runs ({@link hyphenateCatalan}). */
+const APOSTROPHE_LOCALES: ReadonlySet<HyphenationLocale> = new Set(['en-us', 'it', 'fr']);
+/** Languages whose apostrophe marks an elision (`dell’acqua`, `jusqu’à`):
+ *  the elided word stays with the word it leans on (#835). */
+const ELISION_LOCALES: ReadonlySet<HyphenationLocale> = new Set(['it', 'fr']);
+/** A vowel letter, accents stripped: the `u` of `qu` is not one. */
+const VOWEL_RE = /[aeiouy]/;
+
+/** Whether `letters` hold a vowel of their own, the `u` after `q` not
+ *  counted: `l`, `st`, `qu` do not; `jourd` does. */
+function syllabic(letters: string): boolean {
+  return VOWEL_RE.test(letters.normalize('NFD').toLowerCase().replace(/qu/g, 'q'));
+}
 
 /**
- * `hyphenated` — the English dictionary's division of `word` — without the
- * breaks that leave too few letters beside an apostrophe (#669). hypher
- * takes the apostrophe for a character of the word and counts it towards
- * the least it leaves on each side of a break, so `m's` passes for three
- * and the dictionary gives `ar-m's`, `is-n't`, `could-n't`, `o'-clock`.
- * A break stays when `leftmin` letters stand before it and `rightmin` after
- * it in its run of letters and apostrophes, the apostrophes not counted
- * (`per-son's`, `moth-er's`). A soft hyphen `word` carries stays.
+ * `hyphenated` — the dictionary's division of `word` — without the breaks
+ * that leave too few letters beside an apostrophe (#669). hypher takes the
+ * apostrophe for a character of the word and counts it towards the least it
+ * leaves on each side of a break, so `m's` passes for three and the English
+ * dictionary gives `ar-m's`, `is-n't`, `could-n't`, `o'-clock`. A break
+ * stays when `leftmin` letters stand before it and `rightmin` after it in
+ * its run of letters and apostrophes, the apostrophes not counted
+ * (`per-son's`, `moth-er's`).
+ *
+ * With `elision` (Italian, French) the apostrophe stands for a dropped
+ * vowel, and the patterns, reading `dellacqua`, split the consonants before
+ * it from their word: `del-l’acqua`, `que-st’anno`, `jus-qu’à`. A break is
+ * dropped when the letters between it and an apostrophe make no syllable,
+ * and right after an apostrophe; the next word divides as usual
+ * (`dell’ac-qua`, `au-jourd’hui`) (#835). A soft hyphen `word` carries
+ * stays.
  */
-function withoutApostropheBreaks(word: string, hyphenated: string, leftmin: number, rightmin: number): string {
+function withoutApostropheBreaks(word: string, hyphenated: string, leftmin: number, rightmin: number, elision = false): string {
   if (hyphenated.length === word.length) return hyphenated;
   /** Letters of the run of letters and apostrophes from `from` on, walking
    *  by `step`, and whether the run holds an apostrophe. */
@@ -338,6 +362,16 @@ function withoutApostropheBreaks(word: string, hyphenated: string, leftmin: numb
     }
     return { letters, apostrophe };
   };
+  /** Whether the letters from `from` up to an apostrophe make no syllable
+   *  (false when no apostrophe ends them). */
+  const elidedConsonants = (from: number): boolean => {
+    for (let k = from; k < word.length; k++) {
+      const ch = word[k]!;
+      if (APOSTROPHE_RE.test(ch)) return !syllabic(word.slice(from, k));
+      if (!LETTER_RE.test(ch)) return false;
+    }
+    return false;
+  };
   let out = '';
   let j = 0;
   for (let i = 0; i < hyphenated.length; i++) {
@@ -347,6 +381,7 @@ function withoutApostropheBreaks(word: string, hyphenated: string, leftmin: numb
       const before = run(j - 1, -1);
       const after = run(j, 1);
       if ((before.apostrophe || after.apostrophe) && (before.letters < leftmin || after.letters < rightmin)) continue;
+      if (elision && (APOSTROPHE_RE.test(word[j - 1] ?? '') || elidedConsonants(j))) continue;
       out += ch;
       continue;
     }

@@ -47,9 +47,8 @@ describe('English words with an apostrophe (#669)', () => {
     expect(hyphenateText(`is${SHY}n’t`, 'en-us')).toContain(SHY);
   });
 
-  it('leaves the other languages alone', () => {
-    expect(hyphenateText('aujourd’hui', 'fr').replaceAll(SHY, '-')).toBe('au-jour-d’hui');
-    expect(hyphenateText('dell’anno', 'it').replaceAll(SHY, '-')).toBe('del-l’an-no');
+  it('leaves Catalan to its own rules', () => {
+    // Italian and French elisions: elisionHyphenation.test.ts (#835).
     expect(hyphenateText('s’havia', 'ca').replaceAll(SHY, '-')).toBe('s’ha-via');
   });
 });
