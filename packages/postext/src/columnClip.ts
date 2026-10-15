@@ -2,6 +2,7 @@ import type { BoundingBox, VDTBlock, VDTColumn } from './vdt';
 import { dimensionToPx } from './units';
 import { lineInkExtent } from './lineInk';
 import { markInkOverhang } from './arabicMarks';
+import { fontEm } from './measure/vertical';
 
 /** How far the design overlays of `blocks` reach past `x0` on the left and
  *  `x1` on the right, in px (0 when they stay inside). */
@@ -81,6 +82,46 @@ function firstBlockAbove(blocks: readonly VDTBlock[], y0: number): number {
   return Math.max(0, y0 - first.bbox.y);
 }
 
+/** How far above its baseline, in ems of its largest font, the ink of a
+ *  text line may rise: past the tallest glyph of any face in use (Bangers'
+ *  `head.yMax` is 1.39 em, a Vietnamese capital with two stacked marks
+ *  about 1.3 em). The clip only shows ink, so it errs on the generous side. */
+const TEXT_INK_REACH_EM = 2;
+
+/** Blocks whose lines may show ink above the column's top: text set in the
+ *  flow outside any box. A box (a callout, a listing) is cut at the top. */
+const OPEN_TEXT_TYPES: ReadonlySet<string> = new Set(['paragraph', 'heading', 'listItem', 'blockquote']);
+
+/**
+ * How far the glyph ink of the lines at the head of a column may reach
+ * above `y0`, its top, in px (0 when none may). A line's box starts at its
+ * face's ascent, and the accented capitals of a display face rise past it
+ * (Bangers sets them about 0.2 em above its ascent, #826): the column clip
+ * takes in what the head lines may reach, {@link TEXT_INK_REACH_EM} above
+ * their baselines. Only the blocks of open text before the first other
+ * visible block are looked at: a box frame at the column's top stays cut
+ * there, with the text inside it.
+ */
+export function textInkOverhangAbove(blocks: readonly VDTBlock[], y0: number): number {
+  let above = 0;
+  for (const block of blocks) {
+    if (block.hidden) continue;
+    if (!OPEN_TEXT_TYPES.has(block.type) || block.containerId !== undefined || !block.lines) break;
+    const blockEm = block.fontString ? fontEm(block.fontString) : 0;
+    let any = false;
+    for (const line of block.lines) {
+      let em = blockEm;
+      for (const seg of line.segments ?? []) if (seg.fontString) em = Math.max(em, fontEm(seg.fontString));
+      const reach = y0 - (line.baseline - TEXT_INK_REACH_EM * em);
+      if (reach <= 0) break;
+      above = Math.max(above, reach);
+      any = true;
+    }
+    if (!any) break;
+  }
+  return above;
+}
+
 /**
  * The rectangle a renderer clips a column's blocks to. It is the column's
  * bbox widened horizontally by a small buffer (2pt) so that glyph ink
@@ -103,7 +144,9 @@ function firstBlockAbove(blocks: readonly VDTBlock[], y0: number): number {
  * (`collectHeadingDesignCuts`). Arabic vowel marks are the exception on
  * both edges: the marks of a column's first line may rise above its top
  * and those of its last line hang under its foot (`VDTLine.markInk`,
- * #376), and the clip grows to take them in.
+ * #376), and the clip grows to take them in. So does the ink of the text
+ * lines at the column's head, which may rise above their boxes (a display
+ * face's accented capitals, #826; `textInkOverhangAbove`).
  * A box frame (a callout) is cut at the column's top as well, with the text
  * inside it. Shared by the canvas and PDF backends so both paint the same
  * thing.
@@ -117,7 +160,12 @@ export function columnClipRect(col: VDTColumn, dpi: number, hanging = true): Bou
   // A mark hung past the measure is shown whole.
   const right = Math.max(overlayRight, captionRight, hanging ? hangingPunctuationOverhang(col.blocks, col.bbox.x + col.bbox.width) : 0);
   const [marksAbove, marksBelow] = markInkOverhang(col.blocks, col.bbox.y, col.bbox.y + col.bbox.height);
-  const above = Math.max(headingDesignOverhangAbove(col.blocks, col.bbox.y), firstBlockAbove(col.blocks, col.bbox.y), marksAbove);
+  const above = Math.max(
+    headingDesignOverhangAbove(col.blocks, col.bbox.y),
+    firstBlockAbove(col.blocks, col.bbox.y),
+    marksAbove,
+    textInkOverhangAbove(col.blocks, col.bbox.y),
+  );
   return {
     x: col.bbox.x - overhang - left,
     y: col.bbox.y - above,

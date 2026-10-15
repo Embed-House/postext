@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { columnClipRect, designOverlayOverhang } from '../columnClip';
+import { columnClipRect, designOverlayOverhang, textInkOverhangAbove } from '../columnClip';
 import type { VDTBlock, VDTColumn, VDTDesignBlock } from '../vdt';
 
 const DPI = 72; // 1pt = 1px: the 2pt glyph buffer reads as 2.
@@ -56,5 +56,55 @@ describe('columnClipRect above and below the column (EF-113)', () => {
     // A callout frame taller than its column is cut with its text.
     const frame = block([at(20, 400)], { type: 'callout' });
     expect(columnClipRect(column([frame]), DPI)).toEqual({ x: 58, y: 40, width: 204, height: 300 });
+  });
+});
+
+describe('columnClipRect above the head lines (#826)', () => {
+  // A 40px Bangers heading set at the column's top: its line box starts at
+  // the face's ascent (0.883 em), and its accented capitals rise to about
+  // 1.1 em above the baseline, past the column's top.
+  const line = (baseline: number, extra: Record<string, unknown> = {}) => ({
+    text: 'UNA PÁGINA',
+    bbox: { x: 60, y: baseline - 35.32, width: 200, height: 42.56 },
+    baseline,
+    ...extra,
+  });
+  const text = (type: string, lines: unknown[], extra: Partial<VDTBlock> = {}): VDTBlock =>
+    ({ type, fontString: '400 40px Bangers', lines, bbox: { x: 60, y: 40, width: 200, height: 50 }, ...extra }) as unknown as VDTBlock;
+
+  it('takes in the ink a display heading may raise above the column top', () => {
+    const heading = text('heading', [line(75.32)]);
+    // 2 em of 40px above the baseline: 75.32 − 80 = −4.68, 44.68 above the top.
+    expect(textInkOverhangAbove([heading], 40)).toBeCloseTo(44.68, 5);
+    const clip = columnClipRect(column([heading]), DPI);
+    expect(clip.y).toBeCloseTo(40 - 44.68, 5);
+    expect(clip.y + clip.height).toBeCloseTo(340, 5);
+    // The tallest accent (Ó, 1.118 em) is inside.
+    expect(clip.y).toBeLessThan(75.32 - 1.118 * 40);
+  });
+
+  it('reads the largest font of the line (a segment set bigger than its block)', () => {
+    const big = text('paragraph', [line(75.32, { segments: [{ kind: 'text', text: 'Á', width: 20, fontString: '400 60px Bangers' }] })]);
+    expect(textInkOverhangAbove([big], 40)).toBeCloseTo(120 - 35.32, 5);
+  });
+
+  it('leaves the top alone when the head lines stand well below it', () => {
+    expect(textInkOverhangAbove([text('paragraph', [line(200)])], 40)).toBe(0);
+    expect(columnClipRect(column([text('paragraph', [line(200)])]), DPI).y).toBe(40);
+  });
+
+  it('still cuts a box at the column top, with the text inside it', () => {
+    const frame = block([], { type: 'callout', lines: [] } as Partial<VDTBlock>);
+    const inner = text('paragraph', [line(75.32)], { containerId: 3 });
+    expect(columnClipRect(column([frame, inner]), DPI).y).toBe(40);
+    expect(textInkOverhangAbove([inner], 40)).toBe(0);
+    // A listing at the head stops the look as well.
+    expect(textInkOverhangAbove([text('code', [line(75.32)]), text('heading', [line(76)])], 40)).toBe(0);
+  });
+
+  it('skips hidden blocks at the head', () => {
+    const hidden = text('heading', [line(41)], { hidden: true });
+    const first = text('paragraph', [line(75.32)]);
+    expect(textInkOverhangAbove([hidden, first], 40)).toBeCloseTo(44.68, 5);
   });
 });

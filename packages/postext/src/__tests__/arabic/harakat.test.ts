@@ -167,9 +167,12 @@ describe('Arabic vowel marks — word by word', () => {
 
 describe('Arabic vowel marks — column clip', () => {
   it('grows the clip over the marks of the first line and under those of the last', () => {
-    const first = line(14, [{ x: 0, text: 'بِسْمِ' }]);
+    // The first line stands 2.5 em under the top, past the reach the clip
+    // gives any head line (2 em of 16px above its baseline, #826): only its
+    // marks rise above the top.
+    const first = line(40, [{ x: 0, text: 'بِسْمِ' }]);
     const last = line(96, [{ x: 0, text: 'الرَّحِيمِ' }]);
-    first.markInk = { above: 20, below: 6 };
+    first.markInk = { above: 46, below: 6 };
     last.markInk = { above: 20, below: 10 };
     const doc = docOf([first, last]);
     const col = doc.pages[0]!.columns[0]!;
@@ -180,7 +183,7 @@ describe('Arabic vowel marks — column clip', () => {
   });
 
   it('keeps the clip of a column without marks', () => {
-    const doc = docOf([line(14, [{ x: 0, text: 'alpha' }]), line(96, [{ x: 0, text: 'beta' }])]);
+    const doc = docOf([line(40, [{ x: 0, text: 'alpha' }]), line(96, [{ x: 0, text: 'beta' }])]);
     const clip = columnClipRect(doc.pages[0]!.columns[0]!, 96, false);
     expect(clip.y).toBe(0);
     expect(clip.height).toBe(100);
