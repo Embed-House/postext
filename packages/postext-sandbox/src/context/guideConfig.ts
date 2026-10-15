@@ -51,6 +51,7 @@ const WORDING: Record<LatinLang, { book: string; kicker: string; partLabel: stri
   es: { book: 'Guía de Postext', kicker: 'Capítulo {chapterNumber} · {partTitle}', partLabel: 'Parte', tocPart: 'Parte {number} · {titleText}' },
   ca: { book: 'Guia de Postext', kicker: 'Capítol {chapterNumber} · {partTitle}', partLabel: 'Part', tocPart: 'Part {number} · {titleText}' },
   'pt-BR': { book: 'Guia do Postext', kicker: 'Capítulo {chapterNumber} · {partTitle}', partLabel: 'Parte', tocPart: 'Parte {number} · {titleText}' },
+  fr: { book: 'Guide de Postext', kicker: 'Chapitre {chapterNumber} · {partTitle}', partLabel: 'Partie', tocPart: 'Partie {number} · {titleText}' },
 };
 
 /** How a small label is set: in capitals, spaced out (`tracking` in points). */
@@ -266,6 +267,7 @@ const CALLOUT_WORDS: Record<LatinLang, { try: [string, string]; note: [string, s
   es: { try: ['Pruébalo', 'Pruébalo en el Sandbox'], note: ['Nota técnica', 'Nota técnica'], quote: 'Cita destacada', figures: ['Cifras', 'En cifras'] },
   ca: { try: ['Prova-ho', 'Prova-ho al Sandbox'], note: ['Nota tècnica', 'Nota tècnica'], quote: 'Cita destacada', figures: ['Xifres', 'En xifres'] },
   'pt-BR': { try: ['Experimente', 'Experimente no Sandbox'], note: ['Nota técnica', 'Nota técnica'], quote: 'Citação em destaque', figures: ['Números', 'Em números'] },
+  fr: { try: ['Essayez', 'Essayez-le dans le Sandbox'], note: ['Note technique', 'Note technique'], quote: 'Citation en exergue', figures: ['Chiffres clés', 'En chiffres'] },
 };
 
 function calloutStyles(lang: LatinLang): CalloutStyleConfig[] {
@@ -360,7 +362,7 @@ function toc(lang: LatinLang) {
 }
 
 /** The Postext guide's configuration for `locale`: the English, Spanish,
- *  Catalan, Brazilian Portuguese, Chinese, Arabic or Japanese edition (any Chinese tag reads the
+ *  Catalan, Brazilian Portuguese, French, Chinese, Arabic or Japanese edition (any Chinese tag reads the
  *  Chinese one and any Japanese tag the Japanese one, both set vertically;
  *  any Arabic tag the Arabic one, set right to left). */
 export function createPostextGuideConfig(locale = 'en'): PostextConfig {

@@ -46,6 +46,7 @@ const COLUMN_LAYOUTS = byLang(
   { aria: 'بنى الأعمدة المتاحة', labels: ['عمود واحد', 'عمودان', 'عمود ونصف', 'عمود جانبي للعوائم'] },
   { aria: '使える段組の構成', labels: ['1段組', '2段組', '主段と脇段', '図版用の脇段'] },
   { aria: 'estruturas de colunas disponíveis', labels: ['Uma coluna', 'Duas colunas', 'Coluna e meia', 'Lateral de flutuantes'] },
+  { aria: 'structures de colonnes disponibles', labels: ['Une colonne', 'Deux colonnes', 'Colonne et demie', 'Latérale à flottants'] },
 );
 
 export function columnLayoutsSvg(lang: GuideLang): string {
@@ -86,6 +87,7 @@ const FLOAT_SLOTS = byLang(
   { aria: 'ترتيب الأماكن التي تُعرض على العنصر العائم بعد الإحالة إليه', ref: 'الإحالة', taken: 'يشغل أول مكان شاغر', full: 'لا يتسع', next: 'الصفحة التالية' },
   { aria: '参照のあとでフロートに差し出される場所の順序', ref: '参照箇所', taken: '最初の空きに入る', full: '入らない', next: '次のページ' },
   { aria: 'ordem dos espaços oferecidos a um flutuante depois da sua referência', ref: 'referência', taken: 'ocupa o primeiro espaço livre', full: 'não cabe', next: 'página seguinte' },
+  { aria: 'ordre des emplacements offerts à un flottant après son renvoi', ref: 'renvoi', taken: 'prend le premier emplacement libre', full: 'pas de place', next: 'page suivante' },
 );
 
 export function floatSlotsSvg(lang: GuideLang): string {
@@ -146,6 +148,7 @@ const BALANCING = byLang(
   { aria: 'روافع موازنة الأعمدة', before: 'قبل', after: 'بعد', legend: ['مسافة فوق العنوان', 'سطر بعد القائمة', 'فقرة أرحب بسطر'] },
   { aria: '段末をそろえる手段', before: '調整前', after: '調整後', legend: ['見出しの前のアキ', 'リストのあとの1行', '1行ゆるく組んだ段落'] },
   { aria: 'recursos do balanceamento de colunas', before: 'Antes', after: 'Depois', legend: ['Espaço acima do título', 'Uma linha após a lista', 'Parágrafo mais solto'] },
+  { aria: 'leviers de l’équilibrage des colonnes', before: 'Avant', after: 'Après', legend: ['Espace avant le titre', 'Une ligne après la liste', 'Paragraphe plus lâche'] },
 );
 
 export function balancingSvg(lang: GuideLang): string {
@@ -218,6 +221,7 @@ const BOOK_ANATOMY = byLang(
   { aria: 'بنية كتاب منضّد بـPostext، يُقرأ من اليمين إلى اليسار', names: ['الغلاف', 'المحتويات', 'الجزء', 'الافتتاحية', 'المتن', 'المتن'] },
   { aria: 'Postextで組んだ縦組みの本の構成。右から左へ読む', names: ['表紙', '目次', '部扉', '章扉', '本文', '本文'] },
   { aria: 'anatomia de um livro composto com o Postext', names: ['Capa', 'Sumário', 'Parte', 'Abertura', 'Miolo', 'Miolo'] },
+  { aria: 'anatomie d’un livre composé avec Postext', names: ['Couverture', 'Sommaire', 'Partie', 'Ouverture', 'Page courante', 'Page courante'] },
 );
 
 /** Vertical text-line bars: columns from `right` leftward to `left`, each
@@ -448,6 +452,12 @@ const CJK_COMPOSITION = byLang(
     vertical: 'Na vertical', ems: (n: number) => `${String(n).replace('.', ',')} quadratins`,
     legend: ['a metade em branco de um sinal de largura total', 'um sinal composto em meio quadratim'],
   },
+  {
+    aria: 'une ligne chinoise en pleine chasse, en style Kaiming et en vertical',
+    full: 'Pleine chasse : chaque signe occupe un cadratin', kaiming: 'Kaiming (Chine continentale) : parenthèses, signes de titre et point final, demi-cadratin',
+    vertical: 'En vertical', ems: (n: number) => `${String(n).replace('.', ',')} cadratins`,
+    legend: ['la moitié blanche d’un signe en pleine chasse', 'un signe composé sur un demi-cadratin'],
+  },
 );
 
 /** One character of the sample, in the edition's body face (the Chinese
@@ -591,6 +601,11 @@ const SANDBOX_UI = byLang(
     aria: 'disposição da interface do Sandbox', chapter: '3 · Compor a linha', scope: 'Livro inteiro',
     panels: ['Livros', 'Capítulos', 'Texto', 'Recursos', 'Fontes', 'Design', 'Verificações'],
   },
+  {
+    // The French interface's own words (messages/fr.json).
+    aria: 'disposition de l’interface du Sandbox', chapter: '3 · Composer la ligne', scope: 'Livre entier',
+    panels: ['Livres', 'Chapitres', 'Texte', 'Ressources', 'Polices', 'Maquette', 'Vérifications'],
+  },
 );
 
 /** The Sandbox interface: activity bar with its seven panels, the text
@@ -666,6 +681,7 @@ const ROSETTE = byLang(
   { aria: 'وردة متجهية من بتلات وحلقات ونص مجهري', micro: 'Postext · متجهي · تكبير · ' },
   { aria: '花弁と円環と微小文字でできたベクターのロゼット', micro: 'Postext · ベクター · 拡大 · ' },
   { aria: 'roseta vetorial de pétalas, anéis e microtexto', micro: 'Postext · vetor · zoom · ' },
+  { aria: 'rosace vectorielle de pétales, d’anneaux et de microtexte', micro: 'Postext · vectoriel · zoom · ' },
 );
 
 export function vectorRosetteSvg(lang: GuideLang): string {
@@ -699,6 +715,7 @@ const CHART = byLang(
   { aria: 'رسم بياني متجهي بمساحة وخط، بمحورين وتسميات', months: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس'], pages: 'صفحة في الثانية', chapters: 'فصول' },
   { aria: '軸とラベルのあるベクターの面グラフと折れ線グラフ', months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月'], pages: '毎秒のページ数', chapters: '章数' },
   { aria: 'gráfico vetorial de área e linha com eixos e rótulos', months: ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.'], pages: 'páginas por segundo', chapters: 'capítulos' },
+  { aria: 'graphique vectoriel en aires et en ligne avec axes et étiquettes', months: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août'], pages: 'pages par seconde', chapters: 'chapitres' },
 );
 
 export function vectorChartSvg(lang: GuideLang): string {
@@ -738,6 +755,7 @@ const CLIP = byLang(
   { aria: 'تركيب متجهي بمسار قص وعناصر معاد استخدامها وشفافية', clip: 'مسار القص', opacity: 'العتامة' },
   { aria: 'クリッピングパス、再利用する要素、透明度を使ったベクターの構成', clip: 'クリッピングパス', opacity: '不透明度' },
   { aria: 'composição vetorial com recortes, elementos reutilizados e transparências', clip: 'recorte', opacity: 'opacidade' },
+  { aria: 'composition vectorielle avec détourages, éléments réutilisés et transparences', clip: 'détourage', opacity: 'opacité' },
 );
 
 export function vectorClipSvg(lang: GuideLang): string {
@@ -801,6 +819,10 @@ const EPUB_RENDITIONS = byLang(
   {
     aria: 'uma mesma diagramação gravada como EPUB de layout fixo e como EPUB fluido', page: 'A diagramação', pageNote: 'páginas, colunas, linhas',
     fixed: 'Layout fixo', fixedNote: 'um documento por página impressa', flow: 'Layout fluido', flowNote: 'um documento por capítulo', marker: 'p. 12',
+  },
+  {
+    aria: 'une même mise en page écrite en EPUB à mise en page fixe et en EPUB recomposable', page: 'La mise en page', pageNote: 'pages, colonnes, lignes',
+    fixed: 'Mise en page fixe', fixedNote: 'un document par page imprimée', flow: 'Recomposable', flowNote: 'un document par chapitre', marker: 'p. 12',
   },
 );
 
