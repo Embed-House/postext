@@ -17,26 +17,48 @@ export const DEFAULT_INDEX_CONFIG = {
   mergeRanges: true,
   rangeFormat: 'full' as const,
   main: { bold: true, italic: false },
-  see: { italic: true },
+  see: { italic: true, separator: '. ' },
   groupBy: 'auto' as IndexGroupBy,
   groups: { enabled: true, fontWeight: 700, splitMinEntries: 2 },
 };
 
 const GROUP_BY: readonly IndexGroupBy[] = ['auto', 'letter', 'pinyin', 'stroke', 'gojuon', 'kana', 'none'];
 
+/** What precedes a cross-reference in the languages whose indexes do not
+ *  set it after a full stop (#836): a comma and a small letter in French,
+ *  Italian and German (`pierrier, voir éboulis`, `pietraia, vedi
+ *  ghiaione`, `Geröllhalde, siehe Schutthalde`); a bare space in
+ *  Portuguese (ABNT NBR 6034: `Aviação ver Aeronáutica`) and Catalan (the
+ *  IEC's *Manual d'estil*: `abecedari v. alfabet`); the full stop 。 with
+ *  no space in Chinese (`贾琏 12。见贾政`); an ideographic space in
+ *  Japanese (`夏目漱石 12, 45　→漱石`). */
+const SEE_SEPARATORS: Readonly<Record<string, string>> = {
+  fr: ', ',
+  it: ', ',
+  de: ', ',
+  pt: ' ',
+  ca: ' ',
+  zh: '。',
+  ja: '\u3000',
+};
+
 /** The defaults that follow the language the index sorts in: an index in
  *  Arabic script separates with the Arabic comma `،` and sets its
  *  cross-reference labels upright (Arabic fonts have no italics; a slanted
  *  Arabic word is a distortion, not an emphasis); an Arabic one ignores the
  *  article `ال`. A Japanese index sets its labels (→, も見よ) upright too:
- *  Japanese has no italics. Every other language takes the static
+ *  Japanese has no italics. The separator before a cross-reference follows
+ *  {@link SEE_SEPARATORS}. Every other language takes the static
  *  defaults. */
-function languageDefaults(locale: string | undefined): { separator: string; italicSee: boolean; ignoreArticle: boolean } {
+function languageDefaults(
+  locale: string | undefined,
+): { separator: string; italicSee: boolean; seeSeparator: string; ignoreArticle: boolean } {
   const arabicScript = locale !== undefined && localeScript(locale) === 'Arab';
   return {
     // J10 (#425): the Japanese page-number separator (、 or ，).
     separator: arabicScript ? '، ' : DEFAULT_INDEX_CONFIG.separator,
     italicSee: arabicScript || isJapaneseLanguage(locale) ? false : DEFAULT_INDEX_CONFIG.see.italic,
+    seeSeparator: SEE_SEPARATORS[languageOf(locale)] ?? DEFAULT_INDEX_CONFIG.see.separator,
     ignoreArticle: languageOf(locale) === 'ar',
   };
 }
@@ -75,6 +97,7 @@ export function resolveIndexConfig(
       ...(partial?.see?.label !== undefined ? { label: partial.see.label } : {}),
       ...(partial?.see?.alsoLabel !== undefined ? { alsoLabel: partial.see.alsoLabel } : {}),
       italic: partial?.see?.italic ?? byLanguage.italicSee,
+      separator: typeof partial?.see?.separator === 'string' ? partial.see.separator : byLanguage.seeSeparator,
     },
     ...(partial?.locale ? { locale: partial.locale } : {}),
     groupBy: partial?.groupBy !== undefined && GROUP_BY.includes(partial.groupBy) ? partial.groupBy : d.groupBy,
@@ -111,7 +134,8 @@ function definedFields<T extends object>(obj: T | undefined): T | undefined {
  *  for {@link resolveIndexConfig}: the separators and the italics of the
  *  cross-reference labels are kept where the static default is not the
  *  default of the index's language (`', '` in an Arabic index, `see.italic:
- *  true` in an Arabic or Japanese one, #651). */
+ *  true` in an Arabic or Japanese one, #651; `see.separator: '. '` in a
+ *  French one, #836). */
 export function stripIndexDefaults(index: IndexConfig | undefined, documentLocale?: string): IndexConfig | undefined {
   if (!index) return undefined;
   const d = DEFAULT_INDEX_CONFIG;
@@ -133,6 +157,7 @@ export function stripIndexDefaults(index: IndexConfig | undefined, documentLocal
   if (r.see) {
     const s = definedFields(r.see);
     if (s?.italic === d.see.italic && s.italic === byLanguage.italicSee) delete s.italic;
+    if (s?.separator === d.see.separator && s.separator === byLanguage.seeSeparator) delete s.separator;
     if (s && Object.keys(s).length > 0) r.see = s;
     else delete r.see;
   }

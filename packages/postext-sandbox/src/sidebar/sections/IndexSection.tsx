@@ -279,6 +279,14 @@ export const IndexSection = memo(function IndexSection() {
           onReset={() => resetSee('italic')}
         />
         <TextInput
+          label={labels.indexSeeSeparator} tooltip={labels.indexSeeSeparatorTooltip}
+          value={resolved.see.separator}
+          onChange={(v) => updateSee({ separator: v })}
+          isDefault={raw?.see?.separator === undefined}
+          onReset={() => resetSee('separator')}
+          widthCh={6}
+        />
+        <TextInput
           label={labels.indexLocale}
           value={raw?.locale ?? ''}
           placeholder={documentLocale ?? ''}

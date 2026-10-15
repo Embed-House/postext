@@ -77,22 +77,23 @@ interface IndexLabels {
   /** The head of the entries that open with a digit; `0–9` where not
    *  given. */
   numbers?: string;
-  /** Before a cross-reference, after the label, and between two targets.
-   *  Unset: `. `, a space and `; `. */
-  refPunctuation?: { lead: string; gap: string; join: string };
+  /** After the label and between two targets. Unset: a space and `; `.
+   *  What comes before a cross-reference is `index.see.separator` (#836),
+   *  whose default follows the language too. */
+  refPunctuation?: { gap: string; join: string };
 }
 
 /** Chinese cross-references: 贾琏 12。见贾政；王熙凤 */
-const CHINESE_REF_PUNCTUATION = { lead: '。', gap: '', join: '；' };
+const CHINESE_REF_PUNCTUATION = { gap: '', join: '；' };
 
 /** Japanese cross-references: 夏目漱石 12, 45　→漱石 (見よ) and
  *  漱石 3　→鷗外、子規も見よ (をも見よ), set off by an ideographic space,
  *  the targets joined by the enumeration comma 、. */
-const JAPANESE_REF_PUNCTUATION = { lead: '\u3000', gap: '', join: '、' };
+const JAPANESE_REF_PUNCTUATION = { gap: '', join: '、' };
 
 /** Arabic cross-references: the Arabic semicolon between two targets
  *  (الجاحظ ١٢. انظر أيضًا البصرة؛ الكوفة). */
-const ARABIC_REF_PUNCTUATION = { lead: '. ', gap: ' ', join: '؛ ' };
+const ARABIC_REF_PUNCTUATION = { gap: ' ', join: '؛ ' };
 
 /** Labels in the document language (English otherwise), keyed by
  *  `stringsKeyOf`. */
@@ -115,6 +116,22 @@ const LABELS: Record<string, IndexLabels> = {
 
 function labelsFor(locale: string): IndexLabels {
   return stringsFor(LABELS, locale);
+}
+
+/** Whether `separator` ends a sentence: a full stop, `!` or `?` (Latin,
+ *  full-width or ideographic), spaces after it aside. */
+function endsSentence(separator: string): boolean {
+  return /[.!?。．！？]\s*$/u.test(separator);
+}
+
+/** A built-in cross-reference label in the case `separator` asks for
+ *  (#836): `See` after a full stop, `see` after a comma or a space. A
+ *  label in a script without case is returned as is. */
+function seeLabelCase(label: string, separator: string, locale: string): string {
+  const first = label.match(/^\p{L}/u)?.[0];
+  if (!first) return label;
+  const cased = endsSentence(separator) ? first.toLocaleUpperCase(locale) : first.toLocaleLowerCase(locale);
+  return cased + label.slice(first.length);
 }
 
 /** The locale the index sorts in: its own, else the document's. */
@@ -377,9 +394,11 @@ function indexBlocksFor(
   const fine = collatorFor(sortLocale, { sensitivity: 'variant', numeric: true });
   if ((grouping === 'pinyin' || grouping === 'stroke') && !canGroupBy(base, grouping)) grouping = 'none';
   const localized = labelsFor(locale);
+  // A built-in label takes the case of the separator before it (#836); an
+  // author's own label prints as written.
   const labels = {
-    see: cfg.see.label ?? localized.see,
-    seeAlso: cfg.see.alsoLabel ?? localized.seeAlso,
+    see: cfg.see.label ?? seeLabelCase(localized.see, cfg.see.separator, locale),
+    seeAlso: cfg.see.alsoLabel ?? seeLabelCase(localized.seeAlso, cfg.see.separator, locale),
     // The trailing words belong to the built-in label: an author's own
     // label stands alone.
     ...(cfg.see.label === undefined && localized.seeAfter ? { seeAfter: localized.seeAfter } : {}),
@@ -519,10 +538,10 @@ function entrySpans(
       links: [{ start: 0, end: label.length, href: `${PAGE_HREF}${loc.from}` }],
     });
   });
-  const punctuation = labels.refPunctuation ?? { lead: '. ', gap: ' ', join: '; ' };
+  const punctuation = labels.refPunctuation ?? { gap: ' ', join: '; ' };
   const refs = (label: string, targets: readonly string[], after = ''): void => {
     if (targets.length === 0) return;
-    plain(punctuation.lead);
+    plain(cfg.see.separator);
     spans.push({ text: label, bold: false, italic: cfg.see.italic });
     plain(punctuation.gap);
     targets.forEach((target, i) => {

@@ -178,6 +178,58 @@ describe('index: building the entries', () => {
   });
 });
 
+describe('index: the separator before a cross-reference (#836)', () => {
+  const directive = parseMarkdown(':::index');
+  const outline = [
+    markEntry(['scree'], 1, { see: 'talus' }),
+    markEntry(['talus'], 2), markEntry(['talus'], 4, { seeAlso: 'rock' }), markEntry(['rock'], 6),
+  ];
+  const lines = (config: PostextConfig) =>
+    expanded(expandIndexDirectives(directive, outline, resolveAllConfig({ ...config, index: { ...config.index, groups: { enabled: false } } })).blocks);
+
+  it('follows the convention of the index language', () => {
+    expect(lines(base)).toEqual(['rock, 7', 'scree. See talus', 'talus, 3, 5. See also rock']);
+    expect(lines({ ...base, locale: 'es' })).toEqual(['rock, 7', 'scree. Véase talus', 'talus, 3, 5. Véase también rock']);
+    expect(lines({ ...base, locale: 'fr' })).toEqual(['rock, 7', 'scree, voir talus', 'talus, 3, 5, voir aussi rock']);
+    expect(lines({ ...base, locale: 'it-IT' })).toEqual(['rock, 7', 'scree, vedi talus', 'talus, 3, 5, vedi anche rock']);
+    expect(lines({ ...base, locale: 'de' })).toEqual(['rock, 7', 'scree, siehe talus', 'talus, 3, 5, siehe auch rock']);
+    expect(lines({ ...base, locale: 'pt-BR' })).toEqual(['rock, 7', 'scree ver talus', 'talus, 3, 5 ver também rock']);
+    expect(lines({ ...base, locale: 'ca' })).toEqual(['rock, 7', 'scree vegeu talus', 'talus, 3, 5 vegeu també rock']);
+    // The index's own language decides, not the document's.
+    expect(lines({ ...base, locale: 'en', index: { locale: 'fr' } })).toEqual(['rock, 7', 'scree, voir talus', 'talus, 3, 5, voir aussi rock']);
+  });
+
+  it('takes a separator of the author, and the built-in label follows its case', () => {
+    expect(lines({ ...base, index: { see: { separator: ', ' } } })).toEqual(['rock, 7', 'scree, see talus', 'talus, 3, 5, see also rock']);
+    expect(lines({ ...base, index: { see: { separator: '; ' } } })[1]).toBe('scree; see talus');
+    expect(lines({ ...base, locale: 'de', index: { see: { separator: '. ' } } })[1]).toBe('scree. Siehe talus');
+    expect(lines({ ...base, locale: 'fr', index: { see: { separator: ' ! ' } } })[1]).toBe('scree ! Voir talus');
+    // An author's own label prints as written.
+    expect(lines({ ...base, locale: 'fr', index: { see: { label: 'Voyez', alsoLabel: 'v. aussi' } } }))
+      .toEqual(['rock, 7', 'scree, Voyez talus', 'talus, 3, 5, v. aussi rock']);
+    // An empty separator is a separator too.
+    expect(lines({ ...base, index: { see: { separator: '' } } })[1]).toBe('screesee talus');
+  });
+
+  it('keeps the label italic and the separator plain', () => {
+    const fr = resolveAllConfig({ ...base, locale: 'fr' });
+    const scree = expandIndexDirectives(directive, outline, fr).blocks.find((b) => b.text.startsWith('scree'))!;
+    expect(scree.spans.map((s) => [s.text, s.italic])).toEqual([['scree', false], [', ', false], ['voir', true], [' ', false], ['talus', false]]);
+  });
+
+  it('resolves and strips by language', () => {
+    expect(resolveAllConfig(base).index.see.separator).toBe('. ');
+    expect(resolveAllConfig({ ...base, locale: 'fr-CA' }).index.see.separator).toBe(', ');
+    expect(resolveAllConfig({ ...base, locale: 'zh-Hant' }).index.see.separator).toBe('。');
+    expect(resolveAllConfig({ ...base, locale: 'ja' }).index.see.separator).toBe('\u3000');
+    expect(resolveAllConfig({ ...base, locale: 'ar' }).index.see.separator).toBe('. ');
+    expect(stripIndexDefaults({ see: { separator: '. ' } })).toBeUndefined();
+    expect(stripIndexDefaults({ see: { separator: '. ' } }, 'fr')).toEqual({ see: { separator: '. ' } });
+    expect(stripIndexDefaults({ see: { separator: ', ' } }, 'fr')).toEqual({ see: { separator: ', ' } });
+    expect(stripIndexDefaults({ see: { separator: ', ' } }, 'en')).toEqual({ see: { separator: ', ' } });
+  });
+});
+
 describe('index: page numbers that follow the text', () => {
   const md = (extra: number) => `# Chapter one
 

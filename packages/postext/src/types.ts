@@ -6805,8 +6805,18 @@ export interface IndexConfig {
   main?: { bold?: boolean; italic?: boolean };
   /** Cross-references. The labels default to `See` / `See also` (Spanish
    *  `Véase` / `Véase también`, Arabic `انظر` / `انظر أيضًا`), in italics
-   *  — upright in an Arabic-script index, whose fonts have no italics. */
-  see?: { label?: string; alsoLabel?: string; italic?: boolean };
+   *  — upright in an Arabic-script index, whose fonts have no italics.
+   *
+   *  `separator` is printed before the label (#836). Default `'. '`
+   *  (*The Chicago Manual of Style*: `Firearms. See weapons`), by the
+   *  index's language: `', '` in French, Italian and German (`pierrier,
+   *  voir éboulis`), a space in Portuguese (ABNT NBR 6034: `Aviação ver
+   *  Aeronáutica`) and Catalan (IEC: `abecedari v. alfabet`), `'。'` in
+   *  Chinese, an ideographic space in Japanese. A built-in label takes
+   *  the case the separator asks for: a capital after a full stop (or
+   *  `!`, `?`, `。`), a small letter after anything else (`Geröllhalde,
+   *  siehe Schutthalde`); a label of the author's own prints as written. */
+  see?: { label?: string; alsoLabel?: string; italic?: boolean; separator?: string };
   /** Language whose alphabetical order sorts the entries (a BCP 47 tag).
    *  Default: the document language. */
   locale?: string;
@@ -6875,7 +6885,7 @@ export interface ResolvedIndexConfig {
   rangeFormat: 'full' | 'chicago';
   main: { bold: boolean; italic: boolean };
   /** Unset labels follow the document language. */
-  see: { label?: string; alsoLabel?: string; italic: boolean };
+  see: { label?: string; alsoLabel?: string; italic: boolean; separator: string };
   locale?: string;
   groupBy: IndexGroupBy;
   ignoreArticle: boolean;
