@@ -5,7 +5,7 @@ What each picture shows, for a reader who cannot see it: one or two
 sentences, the balloons left out (the reader gets them as text). Pepper and
 Carrot carry the names each translation gives them (Pimienta and Zanahoria
 in Spanish, 小辣椒 and 萝卜头 in Chinese, فُلفُل and جزر in Arabic; Brazilian
-Portuguese and German keep Pepper and Carrot). The three witches of page 2 are named
+Portuguese, German and Italian keep Pepper and Carrot). The three witches of page 2 are named
 only in English and French, the languages
 whose names for them are David Revoy's own; this episode never names them,
 so the other editions describe them instead of guessing a translation.
@@ -29,6 +29,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "فُلفُل ترفع ذراعيها فرحًا، وجزر أمام طاولة منخفضة أُعدّت لحفلة: إبريق شاي وكعكات صغيرة وكعكة عيد ميلاد بشموعها، تحت أشرطة من الرايات الملوّنة.",
         "pt": "Pepper, de braços erguidos de alegria, e Carrot diante de uma mesa baixa arrumada para uma festa: um bule, cupcakes e um bolo de aniversário com velas, sob varais de bandeirinhas.",
         "de": "Pepper, die Arme vor Freude hochgerissen, und Carrot an einem niedrigen, für ein Fest gedeckten Tisch: eine Teekanne, Muffins und ein Geburtstagskuchen mit Kerzen, darüber Wimpelketten.",
+        "it": "Pepper, con le braccia alzate per la gioia, e Carrot davanti a un tavolino apparecchiato per una festa: una teiera, dei cupcake e una torta di compleanno con le candeline, sotto festoni di bandierine.",
     },
     "e08p01-1": {
         "en": "Pepper sits on the edge of her bed in an attic lit by a skylight, her hands on her knees. Carrot watches her from the floor.",
@@ -40,6 +41,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "فُلفُل جالسة على حافة سريرها في علّية يضيئها شبّاك في السقف، ويداها على ركبتيها، وجزر يراقبها من الأرض.",
         "pt": "Pepper está sentada na beirada da cama, num sótão iluminado por uma claraboia, com as mãos nos joelhos. Carrot a observa do chão.",
         "de": "Pepper sitzt auf der Bettkante in einer Dachkammer, die ein Dachfenster erhellt, die Hände auf den Knien. Carrot schaut vom Boden zu ihr auf.",
+        "it": "Pepper è seduta sul bordo del letto, in una soffitta illuminata da un lucernario, con le mani sulle ginocchia. Carrot la guarda dal pavimento.",
     },
     "e08p01-2": {
         "en": "Close-up: Pepper gazes into the distance, downcast. Carrot, at her shoulder, looks up at her.",
@@ -51,6 +53,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "لقطة قريبة: فُلفُل تحدّق في البعيد حزينة، وجزر عند كتفها يرفع عينيه إليها.",
         "pt": "Primeiro plano: Pepper olha para longe, abatida. Carrot, junto ao ombro dela, ergue os olhos para ela.",
         "de": "Nahaufnahme: Pepper blickt niedergeschlagen in die Ferne. Carrot an ihrer Schulter sieht zu ihr hoch.",
+        "it": "Primo piano: Pepper guarda lontano, abbattuta. Carrot, accanto alla sua spalla, alza gli occhi verso di lei.",
     },
     "e08p01-3": {
         "en": "Pepper buries her face in her hand, a few tears falling. Carrot clings to her arm, worried.",
@@ -62,6 +65,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "فُلفُل تدفن وجهها في يدها وتسقط منها دموع قليلة، وجزر يتشبّث بذراعها قلقًا.",
         "pt": "Pepper esconde o rosto na mão, e algumas lágrimas caem. Carrot se agarra ao braço dela, preocupado.",
         "de": "Pepper vergräbt das Gesicht in der Hand, ein paar Tränen fallen. Carrot klammert sich besorgt an ihren Arm.",
+        "it": "Pepper si copre il viso con la mano e le scende qualche lacrima. Carrot, preoccupato, le si aggrappa al braccio.",
     },
     "e08p01-4": {
         "en": "Carrot, wide-eyed, points at a framed drawing of the witches of the Potion Contest, propped beside the winner’s gold coin.",
@@ -73,6 +77,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "جزر، بعينين واسعتين، يشير إلى رسم مؤطَّر لساحرات مسابقة الجُرعات، وبجانبه عملة الفائزة الذهبية.",
         "pt": "Carrot, de olhos arregalados, aponta para um desenho emoldurado das bruxas do Torneio de Poções, apoiado ao lado da moeda de ouro da vencedora.",
         "de": "Carrot zeigt mit großen Augen auf ein gerahmtes Bild der Hexen vom Zaubertrank-Wettbewerb, das neben der Goldmünze der Siegerin lehnt.",
+        "it": "Carrot, con gli occhi sgranati, indica un disegno incorniciato delle streghe della Gara delle Pozioni, appoggiato accanto alla moneta d’oro della vincitrice.",
     },
     "e08p02-1": {
         "en": "Pepper sits up on her bed and lifts her hands, delighted by the idea. Carrot sits facing her, smiling.",
@@ -84,6 +89,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "فُلفُل جالسة على سريرها ترفع يديها مسرورة بالفكرة، وجزر جالس قبالتها مبتسمًا.",
         "pt": "Pepper, sentada na cama, levanta as mãos, encantada com a ideia. Carrot, sentado diante dela, sorri.",
         "de": "Pepper richtet sich auf dem Bett auf und hebt begeistert von der Idee die Hände. Carrot sitzt ihr lächelnd gegenüber.",
+        "it": "Pepper, seduta sul letto, alza le mani, entusiasta dell’idea. Carrot, seduto di fronte a lei, sorride.",
     },
     "e08p02-2": {
         "en": "Pepper, smiling, writes invitations with a quill while Carrot holds up an envelope. A small white bird waits on the windowsill.",
@@ -95,6 +101,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "فُلفُل تكتب الدعوات بريشة وهي تبتسم، وجزر يرفع ظرفًا. وعلى حافة النافذة طائر أبيض صغير ينتظر.",
         "pt": "Pepper, sorridente, escreve os convites com uma pena enquanto Carrot segura um envelope. Um passarinho branco espera no parapeito da janela.",
         "de": "Pepper schreibt lächelnd mit einer Feder Einladungen, während Carrot einen Umschlag hochhält. Auf dem Fensterbrett wartet ein kleiner weißer Vogel.",
+        "it": "Pepper, sorridente, scrive gli inviti con una penna d’oca mentre Carrot tiene in mano una busta. Un uccellino bianco aspetta sul davanzale.",
     },
     "e08p02-3": {
         "en": "Coriander, at her window with her invitation, gives a thumbs-up as Pepper and Carrot fly past on a broom. A grumpy black hen sits beside her.",
@@ -106,6 +113,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "ساحرة ذات شعر مجعّد عند نافذتها والدعوة في يدها، ترفع إبهامها بينما تمرّ فُلفُل وجزر طائرين على مكنسة. وبجانبها دجاجة سوداء عابسة.",
         "pt": "Uma bruxa de cabelos cacheados, na janela e com o convite na mão, faz sinal de positivo enquanto Pepper e Carrot passam voando numa vassoura. Ao lado dela, uma galinha preta de cara amarrada.",
         "de": "Eine Hexe mit lockigem Haar hält an ihrem Fenster die Einladung in der Hand und reckt den Daumen hoch, als Pepper und Carrot auf einem Besen vorbeifliegen. Neben ihr sitzt ein mürrisches schwarzes Huhn.",
+        "it": "Una strega dai capelli ricci, alla finestra con l’invito in mano, alza il pollice mentre Pepper e Carrot passano in volo su una scopa. Accanto a lei, una gallina nera imbronciata.",
     },
     "e08p02-4": {
         "en": "Seen from above, Shichimi waves from a green clearing by a steaming cauldron, her invitation in her other hand and her fox at her feet. Pepper waves back from her broom.",
@@ -117,6 +125,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "من الأعلى: ساحرة شابة فاتحة الشعر تلوّح من فسحة خضراء بجانب قِدر يتصاعد منه البخار، والدعوة في يدها الأخرى وثعلبها عند قدميها. وفُلفُل تردّ التحية من على مكنستها.",
         "pt": "Vista de cima: uma jovem bruxa de cabelos claros acena de uma clareira verde, ao lado de um caldeirão fumegante, com o convite na outra mão e a raposa aos pés. Pepper acena de volta da vassoura.",
         "de": "Von oben gesehen: Eine junge Hexe mit hellem Haar winkt von einer grünen Lichtung neben einem dampfenden Kessel, die Einladung in der anderen Hand, ihren Fuchs zu Füßen. Pepper winkt von ihrem Besen zurück.",
+        "it": "Vista dall’alto: una giovane strega dai capelli chiari saluta con la mano da una radura verde, accanto a un calderone fumante, con l’invito nell’altra mano e la sua volpe ai piedi. Pepper ricambia il saluto dalla scopa.",
     },
     "e08p02-5": {
         "en": "Saffron reads her invitation with a smile on a balcony above the rooftops, her white cat beside her. Pepper and Carrot fly off towards the setting sun.",
@@ -128,6 +137,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "ساحرة صهباء تقرأ دعوتها مبتسمة على شرفة تطلّ على أسطح المدينة، وقطّها الأبيض بجانبها. وتبتعد فُلفُل وجزر طائرين نحو الشمس الغاربة.",
         "pt": "Uma bruxa ruiva lê o convite sorrindo numa sacada acima dos telhados, com o gato branco ao lado. Pepper e Carrot se afastam voando rumo ao pôr do sol.",
         "de": "Eine rothaarige Hexe liest lächelnd ihre Einladung auf einem Balkon über den Dächern, ihre weiße Katze neben sich. Pepper und Carrot fliegen der untergehenden Sonne entgegen.",
+        "it": "Una strega dai capelli rossi legge l’invito sorridendo su un balcone sopra i tetti, con il suo gatto bianco accanto. Pepper e Carrot volano via verso il tramonto.",
     },
     "e08p03-1": {
         "en": "Pepper’s cottage, its roof overgrown with greenery, stands at the edge of a wood beside a pond on a fine day. Bunting hangs across the porch.",
@@ -139,6 +149,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "بيت فُلفُل الصغير، وقد كسا الخضار سقفه، قائم عند طرف غابة بجانب بركة في يوم صحو، والرايات تتدلّى عند مدخله.",
         "pt": "A casinha de Pepper, com o telhado coberto de plantas, fica na beira de um bosque, junto a um lago, num dia de sol. Bandeirinhas pendem da varanda.",
         "de": "Peppers Häuschen mit grün überwachsenem Dach steht an einem schönen Tag am Waldrand neben einem Teich. Über der Veranda hängen Wimpelketten.",
+        "it": "La casetta di Pepper, con il tetto coperto di verde, sorge al limitare di un bosco, accanto a uno stagno, in una bella giornata. Sotto il portico pendono le bandierine.",
     },
     "e08p03-2": {
         "en": "Inside, bunting hangs from the beams and cupcakes, a cake and a teapot wait on the low table. Pepper throws up her arms; Carrot grins.",
@@ -150,6 +161,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "في الداخل تتدلّى الرايات من العوارض، وعلى الطاولة المنخفضة كعكات صغيرة وكعكة وإبريق شاي. فُلفُل ترفع ذراعيها، وجزر يبتسم ملء وجهه.",
         "pt": "Lá dentro, bandeirinhas pendem das vigas, e cupcakes, um bolo e um bule esperam na mesa baixa. Pepper ergue os braços; Carrot sorri de orelha a orelha.",
         "de": "Drinnen hängen Wimpelketten von den Balken, und auf dem niedrigen Tisch warten Muffins, ein Kuchen und eine Teekanne. Pepper reißt die Arme hoch; Carrot grinst.",
+        "it": "All’interno, le bandierine pendono dalle travi; sul tavolino aspettano cupcake, una torta e una teiera. Pepper alza le braccia; Carrot è raggiante.",
     },
     "e08p03-3": {
         "en": "Later: Pepper waits at the table, chin in one hand, a cupcake in the other. Carrot dozes with his head on the table.",
@@ -161,6 +173,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "بعد حين: فُلفُل تنتظر إلى الطاولة، ذقنها على يدها وفي الأخرى كعكة صغيرة، وجزر يغفو ورأسه على الطاولة.",
         "pt": "Mais tarde: Pepper espera à mesa, com o queixo apoiado numa mão e um cupcake na outra. Carrot cochila com a cabeça sobre a mesa.",
         "de": "Später: Pepper wartet am Tisch, das Kinn in eine Hand gestützt, einen Muffin in der anderen. Carrot döst mit dem Kopf auf dem Tisch.",
+        "it": "Più tardi: Pepper aspetta al tavolo, il mento appoggiato a una mano e un cupcake nell’altra. Carrot sonnecchia con la testa sul tavolo.",
     },
     "e08p04-1": {
         "en": "Rain pours down around the awning over the party table. Pepper, anxious, holds out a hand to the rain; Carrot sits soaked beside the table.",
@@ -172,6 +185,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "المطر ينهمر حول المظلّة المنصوبة فوق طاولة الحفلة. فُلفُل تمدّ يدها إلى المطر قلقة، وجزر جالس بجانب الطاولة وقد ابتلّ تمامًا.",
         "pt": "Chove forte em volta do toldo armado sobre a mesa da festa. Pepper, aflita, estende a mão para a chuva; Carrot, encharcado, está sentado ao lado da mesa.",
         "de": "Rund um das Sonnensegel über dem Festtisch prasselt der Regen. Pepper streckt besorgt eine Hand in den Regen; Carrot sitzt durchnässt neben dem Tisch.",
+        "it": "Piove a dirotto intorno alla tenda tesa sopra il tavolo della festa. Pepper, inquieta, tende una mano verso la pioggia; Carrot, fradicio, è seduto accanto al tavolo.",
     },
     "e08p04-2": {
         "en": "Night and rain: Pepper sits alone by a lantern at the party table, scowling. Carrot sleeps curled up on the table.",
@@ -183,6 +197,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "ليل ومطر: فُلفُل وحدها عند فانوس على طاولة الحفلة، عابسة، وجزر نائم ملتفًّا على الطاولة.",
         "pt": "Noite e chuva: Pepper, sozinha junto a uma lanterna na mesa da festa, está de cara fechada. Carrot dorme enrolado sobre a mesa.",
         "de": "Nacht und Regen: Pepper sitzt allein und finster dreinblickend neben einer Laterne am Festtisch. Carrot schläft zusammengerollt auf dem Tisch.",
+        "it": "Notte e pioggia: Pepper, sola accanto a una lanterna al tavolo della festa, aggrotta la fronte. Carrot dorme acciambellato sul tavolo.",
     },
     "e08p04-3": {
         "en": "Close-up of Pepper’s face under her hat in the rain, her eyes burning red, her mouth set in anger.",
@@ -194,6 +209,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "لقطة قريبة لوجه فُلفُل تحت قبّعتها في المطر: عيناها تتّقدان احمرارًا، وفمها مطبق من الغضب.",
         "pt": "Primeiro plano do rosto de Pepper sob o chapéu, na chuva: os olhos ardem em vermelho e a boca se crispa de raiva.",
         "de": "Nahaufnahme von Peppers Gesicht unter dem Hut im Regen: Ihre Augen glühen rot, der Mund ist vor Wut verkniffen.",
+        "it": "Primo piano del viso di Pepper sotto il cappello, nella pioggia: gli occhi ardono di rosso e la bocca è serrata dalla rabbia.",
     },
     "e08p05-1": {
         "en": "Lightning. Pepper, furious, pulls a book with a demon’s face on its cover from the shelf. Carrot is terrified.",
@@ -205,6 +221,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "برق. فُلفُل غاضبة تسحب من الرفّ كتابًا على غلافه وجه شيطان، وجزر مذعور.",
         "pt": "Relâmpagos. Pepper, furiosa, tira da estante um livro com a cara de um demônio na capa. Carrot está apavorado.",
         "de": "Blitze. Pepper zieht wütend ein Buch mit einem Dämonengesicht auf dem Einband aus dem Regal. Carrot ist zu Tode erschrocken.",
+        "it": "Lampi. Pepper, furiosa, estrae dallo scaffale un libro con il volto di un demone sulla copertina. Carrot è terrorizzato.",
     },
     "e08p05-2": {
         "en": "From above, in the rain, Pepper draws three glowing red magic circles on the ground with her wand, the open book in her other hand. Carrot watches.",
@@ -216,6 +233,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "من الأعلى، تحت المطر، ترسم فُلفُل بعصاها ثلاث دوائر سحرية حمراء متوهّجة على الأرض، والكتاب مفتوح في يدها الأخرى، وجزر يراقب.",
         "pt": "Vista de cima, sob a chuva, Pepper traça com a varinha três círculos mágicos vermelhos e brilhantes no chão, com o livro aberto na outra mão. Carrot observa.",
         "de": "Von oben, im Regen: Pepper zieht mit ihrem Zauberstab drei rot leuchtende Zauberkreise auf den Boden, das aufgeschlagene Buch in der anderen Hand. Carrot sieht zu.",
+        "it": "Dall’alto, sotto la pioggia, Pepper traccia con la bacchetta tre cerchi magici rossi e luminosi sul terreno, con il libro aperto nell’altra mano. Carrot osserva.",
     },
     "e08p05-3": {
         "en": "Red light from the circles floods the scene. Pepper, grim, holds the open book in the rain.",
@@ -227,6 +245,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "ضوء الدوائر الأحمر يغمر المشهد، وفُلفُل متجهّمة تمسك الكتاب مفتوحًا تحت المطر.",
         "pt": "A luz vermelha dos círculos inunda a cena. Pepper, séria, segura o livro aberto na chuva.",
         "de": "Rotes Licht aus den Kreisen überflutet die Szene. Pepper hält mit grimmiger Miene das aufgeschlagene Buch in den Regen.",
+        "it": "La luce rossa dei cerchi inonda la scena. Pepper, cupa, tiene il libro aperto sotto la pioggia.",
     },
     "e08p06-1": {
         "en": "Seen from behind, Pepper, the book in her hand, faces three huge demons with glowing red eyes rising in the storm, one holding a trident. Carrot, at her feet, is terrified.",
@@ -238,6 +257,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "فُلفُل من الخلف، والكتاب في يدها، تواجه ثلاثة شياطين ضخمة بعيون حمراء متوهّجة تنهض في العاصفة، أحدها يحمل رمحًا ثلاثي الشُّعب، وجزر عند قدميها مذعور.",
         "pt": "De costas, Pepper, com o livro na mão, enfrenta três demônios enormes de olhos vermelhos e brilhantes que se erguem na tempestade; um deles empunha um tridente. Carrot, aos pés dela, está apavorado.",
         "de": "Von hinten gesehen: Pepper steht mit dem Buch in der Hand drei riesigen Dämonen mit rot glühenden Augen gegenüber, die sich im Sturm erheben; einer hält einen Dreizack. Carrot zu ihren Füßen ist zu Tode erschrocken.",
+        "it": "Vista di spalle, Pepper, con il libro in mano, affronta tre enormi demoni dagli occhi rossi e luminosi che si ergono nella tempesta; uno impugna un tridente. Carrot, ai suoi piedi, è terrorizzato.",
     },
     "e08p06-2": {
         "en": "Pepper, lit red, smiles a sly smile.",
@@ -249,6 +269,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "فُلفُل، والضوء الأحمر على وجهها، تبتسم ابتسامة ماكرة.",
         "pt": "Pepper, iluminada de vermelho, abre um sorriso malicioso.",
         "de": "Pepper, rot beleuchtet, lächelt verschmitzt.",
+        "it": "Pepper, illuminata di rosso, fa un sorriso furbo.",
     },
     "e08p06-3": {
         "en": "The party after all: by candlelight, Pepper clinks teacups with the biggest demon while Carrot laughs, and the other two demons smile around the table.",
@@ -260,6 +281,7 @@ ALT: dict[str, dict[str, str]] = {
         "ar": "الحفلة تُقام في النهاية: على ضوء الشموع تقرع فُلفُل فنجان شايها بفنجان أكبر الشياطين بينما يضحك جزر، والشيطانان الآخران يبتسمان حول الطاولة.",
         "pt": "No fim, a festa acontece: à luz de velas, Pepper brinda com sua xícara de chá com o maior dos demônios enquanto Carrot ri, e os outros dois demônios sorriem em volta da mesa.",
         "de": "Das Fest findet doch statt: Bei Kerzenschein stößt Pepper mit dem größten Dämon mit Teetassen an, während Carrot lacht, und die beiden anderen Dämonen lächeln am Tisch.",
+        "it": "Alla fine la festa si fa: a lume di candela, Pepper brinda con la tazza da tè insieme al demone più grande mentre Carrot ride, e gli altri due demoni sorridono intorno al tavolo.",
     },
 }
 

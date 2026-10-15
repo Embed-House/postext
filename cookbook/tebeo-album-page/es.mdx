@@ -1,15 +1,15 @@
 ---
 title: "Una página de álbum en línea clara con cartelas de narración"
 summary: "Una página de álbum francobelga en cuatro tiras: viñetas de marco fino, cartelas amarillas en las esquinas y bocadillos en minúsculas, desde la config comics."
-plain: "Una página de un álbum de tebeo europeo, con la voz del narrador en recuadros amarillos y los diálogos en bocadillos, escrita en texto plano y rotulada por Postext en nueve idiomas."
-description: "Una página de tebeo en Postext: cuatro tiras de viñetas, cartelas amarillas, un grito, un pensamiento y una onomatopeya, rotulada de nuevo en nueve idiomas."
+plain: "Una página de un álbum de tebeo europeo, con la voz del narrador en recuadros amarillos y los diálogos en bocadillos, escrita en texto plano y rotulada por Postext en diez idiomas."
+description: "Una página de tebeo en Postext: cuatro tiras de viñetas, cartelas amarillas, un grito, un pensamiento y una onomatopeya, rotulada de nuevo en diez idiomas."
 question: "¿Cómo compongo una página de álbum europeo con cartelas de narración?"
 aliases: ["tebeo", "historieta", "bande dessinée", "BD", "línea clara", "ligne claire", "página de álbum", "cartela", "cartucho", "francobelga", "bocadillos", "balloonStyles", "panelStyles"]
 ---
 
 ## Lo que vas a componer
 
-La primera historia de un álbum de tebeo, *Las naranjas de Carmen*: una portadilla en la página par y, enfrente, una página de siete viñetas en cuatro tiras, como se dibujan los álbumes francobelgas. Lola, de nueve años, va al mercado con su abuelo Paco un domingo y saca la naranja de abajo de la pirámide de Carmen. Los dibujos son de línea clara con colores planos; los marcos son finos y de esquina viva, la narración va en cartelas amarillas encajadas en las esquinas de la viñeta y los diálogos se rotulan en mayúsculas y minúsculas, como rotulan los europeos. El texto está en Markdown, un archivo por idioma: el original en castellano y luego inglés, catalán, chino, árabe, japonés, portugués, francés y alemán, que el motor rotula sobre la misma división y los mismos dibujos.
+La primera historia de un álbum de tebeo, *Las naranjas de Carmen*: una portadilla en la página par y, enfrente, una página de siete viñetas en cuatro tiras, como se dibujan los álbumes francobelgas. Lola, de nueve años, va al mercado con su abuelo Paco un domingo y saca la naranja de abajo de la pirámide de Carmen. Los dibujos son de línea clara con colores planos; los marcos son finos y de esquina viva, la narración va en cartelas amarillas encajadas en las esquinas de la viñeta y los diálogos se rotulan en mayúsculas y minúsculas, como rotulan los europeos. El texto está en Markdown, un archivo por idioma: el original en castellano y luego inglés, catalán, chino, árabe, japonés, portugués, francés, alemán e italiano, que el motor rotula sobre la misma división y los mismos dibujos.
 
 ## Elaboración
 
@@ -35,7 +35,7 @@ paco{shout}: ¡Lola, esa no!
 
 <Excerpt region="art" />
 
-Cada dibujo declara lo que todo recorte debe conservar (`safeArea`), dónde están la boca, la cabeza y la cara de cada personaje (`anchors`) y lo que ningún bocadillo puede tapar (`avoid`), siempre en fracciones del dibujo. La viñeta del derrumbe ocupa la tercera tira, 200 mm por 63 mm, así que su zona segura es la franja de las caras y las naranjas en el aire; las viñetas cuadradas pierden el suelo. Nada de esto depende del idioma, y las nueve ediciones lo comparten.
+Cada dibujo declara lo que todo recorte debe conservar (`safeArea`), dónde están la boca, la cabeza y la cara de cada personaje (`anchors`) y lo que ningún bocadillo puede tapar (`avoid`), siempre en fracciones del dibujo. La viñeta del derrumbe ocupa la tercera tira, 200 mm por 63 mm, así que su zona segura es la franja de las caras y las naranjas en el aire; las viñetas cuadradas pierden el suelo. Nada de esto depende del idioma, y las diez ediciones lo comparten.
 
 ### 3 · Una portadilla frente a la historia
 
@@ -57,4 +57,4 @@ Pon la rotulación en mayúsculas; narración y diálogos la siguen, y las escri
 ## Errores frecuentes
 
 - El cuerpo de la rotulación es uno para todo el libro: una traducción más larga agranda sus bocadillos y los mueve, nunca encoge la letra. Revisa las páginas en catalán y en árabe después de tocar la división. Las columnas japonesas son altas para estas viñetas bajas: tres líneas de `content.ja.md` llevan un `at=` que las aparta de Paco y de las naranjas de las que habla la última viñeta.
-- El texto alternativo de cada viñeta está en el manifiesto de los dibujos en nueve idiomas y se elige con `t({ … })`; un idioma que falte en la lista lee el primero. `::panel{alt="…"}` en un archivo de contenido lo sustituye para una viñeta.
+- El texto alternativo de cada viñeta está en el manifiesto de los dibujos en diez idiomas y se elige con `t({ … })`; un idioma que falte en la lista lee el primero. `::panel{alt="…"}` en un archivo de contenido lo sustituye para una viñeta.

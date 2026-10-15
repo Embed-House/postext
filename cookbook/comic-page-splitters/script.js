@@ -12,7 +12,7 @@ import {
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
-const LANG = 'en'; // @lang: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr' | 'de'
+const LANG = 'en'; // @lang: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr' | 'de' | 'it'
 const RECIPE = 'comic-page-splitters';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -40,7 +40,7 @@ const [LETTERING, SFX] = t({
   en: ['Comic Neue', 'Bangers'], es: ['Comic Neue', 'Bangers'], ca: ['Comic Neue', 'Bangers'],
   ja: ['Zen Antique', 'Dela Gothic One'], zh: ['ZCOOL KuaiLe', 'ZCOOL QingKe HuangYou'],
   ar: ['Playpen Sans Arabic', 'Lalezar'], pt: ['Comic Neue', 'Bangers'],
-  fr: ['Comic Neue', 'Bangers'], de: ['Comic Neue', 'Bangers'],
+  fr: ['Comic Neue', 'Bangers'], de: ['Comic Neue', 'Bangers'], it: ['Comic Neue', 'Bangers'],
 });
 // #endregion
 
@@ -72,7 +72,7 @@ const footer = { elements: [{ kind: 'text', id: 'folio', content: '{pageNumber}'
 
 const config = () => ({
   locale: t({ en: 'en-us', es: 'es', ca: 'ca', ja: 'ja', zh: 'zh-Hans', ar: 'ar',
-    pt: 'pt-BR', fr: 'fr', de: 'de' }),
+    pt: 'pt-BR', fr: 'fr', de: 'de', it: 'it' }),
   colorPalette, comics,
   // The trim of an American comic book, 6⅝ × 10³⁄₁₆ in; the type area is the panel frame.
   page: { sizePreset: 'custom', width: mm(168), height: mm(259), dpi: 150,
@@ -127,7 +127,9 @@ const ART = {
       fr: 'Une fillette en ciré jaune monte un sentier côtier vers un phare rouge et blanc, '
         + 'précédée d’un gros chat roux.',
       de: 'Ein Mädchen in gelbem Regenmantel geht einen Küstenpfad zu einem rot-weißen '
-        + 'Leuchtturm hinauf, eine dicke rote Katze vor ihr.' }) },
+        + 'Leuchtturm hinauf, eine dicke rote Katze vor ihr.',
+      it: 'Una bambina con l’impermeabile giallo sale per un sentiero costiero verso un faro '
+        + 'bianco e rosso, preceduta da un grosso gatto rosso.' }) },
   'lh-radio': { width: 1000, height: 1000,
     safeArea: { x: 0.27, y: 0.38, width: 0.24, height: 0.3 },
     anchors: [{ id: 'tomas', x: 0.345, y: 0.52, head: { x: 0.38, y: 0.44 },
@@ -148,7 +150,9 @@ const ART = {
       fr: 'Le vieux gardien, barbe blanche, pull bleu marine et casquette, tapote une radio à '
         + 'lampes, le micro à la main.',
       de: 'Der alte Wärter mit weißem Bart, marineblauem Pullover und Mütze klopft auf ein '
-        + 'Röhrenradio, das Mikrofon in der Hand.' }) },
+        + 'Röhrenradio, das Mikrofon in der Hand.',
+      it: 'Il vecchio guardiano, barba bianca, maglione blu e berretto, picchietta su una radio a '
+        + 'valvole con il microfono in mano.' }) },
   'lh-maya': { width: 1100, height: 1100, safeArea: { x: 0.25, y: 0.27, width: 0.41, height: 0.68 },
     anchors: [{ id: 'maya', x: 0.54, y: 0.565, head: { x: 0.5, y: 0.3 },
       face: { x: 0.4, y: 0.33, width: 0.24, height: 0.29 } }],
@@ -163,7 +167,8 @@ const ART = {
       fr: 'Gros plan sur Maya, sourcils froncés, qui fixe le sol et pointe le doigt vers le '
         + 'bas.',
       de: 'Nahaufnahme von Maya, die mit gerunzelter Stirn auf den Boden blickt und nach unten '
-        + 'zeigt.' }) },
+        + 'zeigt.',
+      it: 'Primo piano di Maya, accigliata, che fissa il pavimento e indica in basso.' }) },
   'lh-biscuit': { width: 1000, height: 1000,
     safeArea: { x: 0.58, y: 0.25, width: 0.42, height: 0.33 },
     anchors: [{ id: 'biscuit', x: 0.72, y: 0.355, head: { x: 0.73, y: 0.32 },
@@ -183,6 +188,8 @@ const ART = {
         + 'preto do rádio.',
       fr: 'Sous le bureau, le gros chat roux dort sur le dos, juste sur le câble noir de la '
         + 'radio.',
+      it: 'Sotto la scrivania, il grosso gatto rosso dorme a pancia in su, proprio sopra il cavo '
+        + 'nero della radio.',
       de: 'Unter dem Schreibtisch schläft die dicke rote Katze auf dem Rücken, genau auf dem '
         + 'schwarzen Kabel des Funkgeräts.' }) },
   'lh-beam': { width: 1200, height: 800, safeArea: { x: 0.15, y: 0.01, width: 0.25, height: 0.3 },
@@ -205,7 +212,9 @@ const ART = {
       fr: 'La nuit, le faisceau balaie une mer sombre ; Maya et son grand-père se tiennent sur '
         + 'la galerie de la lanterne et, au large, un bateau de pêche montre ses feux.',
       de: 'Nacht: Der Lichtstrahl streicht über ein dunkles Meer; Maya und ihr Großvater stehen '
-        + 'auf der Galerie der Laterne, und weit draußen zeigt ein Fischerboot seine Lichter.' }) },
+        + 'auf der Galerie der Laterne, und weit draußen zeigt ein Fischerboot seine Lichter.',
+      it: 'Di notte il fascio di luce spazza un mare scuro; Maya e suo nonno sono sulla balconata '
+        + 'della lanterna e, al largo, si vedono le luci di un peschereccio.' }) },
 };
 // #endregion
 
@@ -242,7 +251,8 @@ showBook(doc, { title: t({ en: 'One set of panels, three page splits',
   es: 'Las mismas viñetas en tres divisiones de página',
   pt: 'Os mesmos quadros em três divisões de página',
   fr: 'Les mêmes cases en trois découpages de page',
-  de: 'Dieselben Panels in drei Seitenaufteilungen' }) });
+  de: 'Dieselben Panels in drei Seitenaufteilungen',
+  it: 'Le stesse vignette in tre suddivisioni della pagina' }) });
 offerPdf(() => renderToPdf(doc, { fontProvider: comicPdfProvider, resourceBytes: imageBytes }),
   `${RECIPE}.pdf`);
 

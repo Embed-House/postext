@@ -1,0 +1,62 @@
+---
+title: "Una pagina di Pepper&Carrot riletterata dalla trascrizione"
+summary: "Due pagine di Pepper&Carrot (CC BY 4.0) ricomposte dalle tavole senza testo di David Revoy e dalle traduzioni ufficiali, nuvolette letterate in dieci lingue."
+plain: "Due pagine di un fumetto web con licenza libera, ricostruite dalle immagini dell’autore senza parole e dalle traduzioni fatte dai lettori, così le nuvolette si ridisegnano da capo in ogni lingua."
+description: "L’episodio 8 di Pepper&Carrot (CC BY 4.0) riletterato da Postext: vignette dalle tavole senza testo, personaggi dalle code originali, nove traduzioni."
+question: "Posso riletterare un fumetto libero dalla trascrizione invece di modificarne le pagine letterate?"
+aliases: ["Pepper&Carrot", "David Revoy", "riletterare", "rilettering", "scanlation", "traduzione di fumetti", "trascrizione", "fumetto libero", "fumetto CC BY", "写植し直し", "重新嵌字"]
+pageNotes: { "1": "Il frontespizio: «Episodio 8: Il compleanno di Pepper» in rosso, una breve nota su che cosa sono le pagine, e i crediti dei disegni, della storia e della traduzione di Carlo Gandolfi, con la licenza CC BY 4.0.", "2": "Pagina 5: tra i lampi, Pepper, furiosa, tira giù un libro di incantesimi dallo scaffale e grida «Come hanno osato farmi questo ?!! A me !!!» in una nuvoletta frastagliata; sulla copertina, in oro, «Incamtesimi per Demoni CHAOSAH Vol .1»; dall’alto, Pepper traccia tre cerchi magici rossi sotto la pioggia («... dal momento che non posso contare su di loro...»); «DZZZOOO» in rosso su un primo piano illuminato di rosso.", "3": "Pagina 6: tre demoni dagli occhi rossi si levano nella tempesta e parlano in nuvolette nere con lettere gotiche bianche («Moštri di Chaosāh à vostro šeŗvizio!», «Chi vôlere tu nôi àttaccare ? ...»); Pepper sorride sorniona; i demoni, Pepper e Carrot bevono il tè a lume di candela, con la didascalia «Episodio 8 : Il compleanno di Pepper FINE»." }
+---
+
+## Che cosa comporrai
+
+Le pagine 5 e 6 dell’episodio 8 di *Pepper&Carrot*, «Il compleanno di Pepper», di David Revoy, il fumetto web con licenza libera (CC BY 4.0) su una giovane strega e il suo gatto. Revoy pubblica le sue pagine senza le parole e la comunità traduce la trascrizione in decine di lingue. Qui Postext rimette insieme quei pezzi: le vignette sono ritagliate dalle sue pagine senza testo, la griglia della pagina è la sua, e ogni nuvoletta, grido, effetto sonoro e il titolo sul libro degli incantesimi sono letterati dal motore a partire dall’originale francese e dalle traduzioni ufficiali in inglese, spagnolo, catalano, cinese, giapponese, arabo, portoghese, tedesco e italiano. Un frontespizio porta i crediti che la licenza richiede.
+
+## Preparazione
+
+### 1 · Trasforma la trascrizione in un copione
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Uno script di conversione legge i file sorgente dell’episodio: taglia ogni pagina in vignette lungo i suoi canali bianchi e scrive la suddivisione che ha misurato (`29.9 / 49.3 / *` per pagina 5), prende le parole di ogni nuvoletta dall’SVG della traduzione e ne nomina il personaggio dalla trascrizione ([tradurre un fumetto](/it/docs/comics#tradurre-un-fumetto)). Il risultato è una riga per nuvoletta, `pepper{shout break}: …`, con la forma che aveva la nuvoletta originale: un contorno frastagliato è diventato `shout`, una nuvoletta che superava il bordo `break`. L’accento dei demoni, con le sue *š* e *ā*, è dei traduttori e resta.
+
+<PageShot page={2} crop="0,0,1,0.34" caption="Pagina 5, vignetta 1: il grido di Pepper, letterato dalla traduzione ufficiale italiana, e il titolo del libro in oro sulla copertina." />
+
+### 2 · Ancora i personaggi dove puntavano le code di Revoy
+
+<Excerpt region="art" />
+
+Le nuvolette di Revoy sono nei suoi file sorgente come forme vettoriali, code comprese. La conversione segue ogni coda fino alla punta e la registra come ancoraggio del personaggio in frazioni della vignetta, così le nuove nuvolette puntano dove puntavano le sue: alla bocca aperta di Pepper, al demone in mezzo ([personaggi e ancoraggi](/it/docs/comics#personaggi-e-ancore)). Le zone sicure conservano il soggetto di ogni vignetta quando le celle differiscono di qualche millimetro dalle sue.
+
+### 3 · Dai a ogni voce le sue lettere
+
+<Excerpt region="editions" />
+
+Il cast nella risposta breve dà ai demoni nuvolette nere con lettere bianche, come le disegna Revoy, e una voce tutta loro: Grenze Gotisch, un gotico, nelle edizioni in alfabeto latino. Lo stile `plate` compone testo su un oggetto: il titolo del libro degli incantesimi in Zen Antique dorato con un sottile alone scuro, ruotato con `rotate` e inclinato con `skew` per adagiarsi sulla copertina, spezzato in righe con `\` come lo spezza la copertina. Ogni edizione prende i caratteri della sua scrittura; le nuvolette giapponesi sono verticali, e le pagine giapponese e araba si leggono da destra a sinistra ([lettering](/it/docs/comics#lettering)).
+
+### 4 · Accredita ogni traduttore, con ogni lettera
+
+<Excerpt region="vietnamese" />
+
+La licenza chiede l’autore, la fonte, la licenza e una nota sulle modifiche; il frontespizio li stampa nelle parole di ogni edizione, presi dai crediti dell’episodio stesso. Uno dei collaboratori alle traduzioni spagnola e giapponese è Hồ Nhựt Châu, e le lettere vietnamite stanno in un file Fontsource a parte: la ricetta lo carica per il carattere dei crediti e lo passa al PDF.
+
+## Varianti
+
+### Porta tutte e sei le pagine
+
+La pipeline dell’episodio scrive le sei pagine; le 21 vignette pesano 1,8 MB. Aggiungi gli altri blocchi `:::page` e le loro vignette.
+
+```diff
+ const resources = await Promise.all([
++  panel('e08p01-1', asset('e08p01-1.jpg')), // … and the other fourteen panels of pages 1 to 4
+   panel('e08p05-1', asset('e08p05-1.jpg')), panel('e08p05-2', asset('e08p05-2.jpg')),
+```
+
+### Arrotonda le vignette come fa Revoy a pagina 2
+
+```diff
+   panel: { borderWidth: pt(0), background: col('paper') },
++  panelStyles: [{ id: 'rounded', borderRadius: mm(5.8) }], // ::panel{style=rounded}
+```
+
+## Errori frequenti
+
+- Tieni i crediti nel documento: le immagini viaggiano con il PDF, e CC BY 4.0 chiede che l’attribuzione viaggi con loro.

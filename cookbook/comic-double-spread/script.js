@@ -10,7 +10,7 @@ import {
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
-const LANG = 'en'; // @lang: 'es' | 'en' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr' | 'de'
+const LANG = 'en'; // @lang: 'es' | 'en' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr' | 'de' | 'it'
 const RECIPE = 'comic-double-spread';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -31,8 +31,8 @@ const colorPalette = [
 // #endregion
 
 const LOCALE = t({ es: 'es', en: 'en-gb', ca: 'ca', zh: 'zh-Hans', ar: 'ar', ja: 'ja',
-  pt: 'pt-BR', fr: 'fr', de: 'de' });
-const LATIN = ['es', 'en', 'ca', 'pt', 'fr', 'de'].includes(LANG);
+  pt: 'pt-BR', fr: 'fr', de: 'de', it: 'it' });
+const LATIN = ['es', 'en', 'ca', 'pt', 'fr', 'de', 'it'].includes(LANG);
 const LETTER = LATIN ? 'Patrick Hand' : defaultComicFont(LOCALE); // mixed-case hand lettering
 const DISPLAY = defaultComicSfxFont(LOCALE); // Bangers, Dela Gothic One, ZCOOL KuaiLe, Lalezar
 
@@ -67,7 +67,8 @@ comics.cast = [
   { id: 'lola', name: 'Lola' },
   { id: 'paco', name: t({ es: 'el abuelo Paco', en: 'Grandpa Paco', ca: "l'avi Paco",
     zh: '帕科爷爷', ar: 'الجد باكو', ja: 'パコおじいちゃん', pt: 'o vovô Paco', fr: 'papi Paco',
-    de: 'Opa Paco' }) },
+    de: 'Opa Paco',
+    it: 'nonno Paco' }) },
 ];
 // #endregion
 
@@ -83,6 +84,8 @@ const COLOPHON = t({
     + 'diffusion',
   de: 'Gelettert in Patrick Hand und Bangers (SIL OFL) · Zeichnungen: mit Diffusionsmodellen '
     + 'erzeugt',
+  it: 'Lettering in Patrick Hand e Bangers (SIL OFL) · Disegni: generati con modelli di '
+    + 'diffusione',
 });
 const foot = (id, content, y, extra) => ({ kind: 'text', id, content, fontFamily: LETTER,
   align: 'center', pages: 'comic',
@@ -142,7 +145,9 @@ const ART = {
       fr: 'Panorama de la halle du marché bondée : tout à gauche, la petite Lola est perdue ; '
         + 'tout à droite, son grand-père la cherche dans la foule.',
       de: 'Panorama der vollen Markthalle: Ganz links steht die kleine Lola verloren da; ganz '
-        + 'rechts sucht ihr Großvater die Menge ab.' }),
+        + 'rechts sucht ihr Großvater die Menge ab.',
+      it: 'Panoramica del mercato coperto pieno di gente: all’estrema sinistra la piccola Lola si '
+        + 'è persa; all’estrema destra suo nonno la cerca tra la folla.' }),
     anchors: [
       who('lola', .065, .58, [.063, .55], [.045, .51, .04, .11]),
       who('paco', .925, .38, [.925, .34], [.9, .3, .05, .12]),
@@ -161,7 +166,9 @@ const ART = {
         + 'de compras.',
       fr: 'Lola, les larmes aux yeux, se tient entre des jambes d’adultes et des sacs de '
         + 'courses.',
-      de: 'Lola steht mit Tränen in den Augen zwischen Erwachsenenbeinen und Einkaufstaschen.' }),
+      de: 'Lola steht mit Tränen in den Augen zwischen Erwachsenenbeinen und Einkaufstaschen.',
+      it: 'Lola, con le lacrime agli occhi, è in piedi tra gambe di adulti e borse della '
+        + 'spesa.' }),
     anchors: [
       who('lola', .505, .24, [.48, .17], [.4, .1, .18, .19]),
     ],
@@ -178,7 +185,9 @@ const ART = {
         + 'para olhar.',
       fr: 'Paco, debout sur une cagette de fruits, siffle avec ses doigts ; les clients se '
         + 'retournent.',
-      de: 'Paco steht auf einer Obstkiste und pfeift auf den Fingern; die Leute drehen sich um.' }),
+      de: 'Paco steht auf einer Obstkiste und pfeift auf den Fingern; die Leute drehen sich um.',
+      it: 'Paco, in piedi su una cassetta della frutta, fischia con le dita; la gente si volta a '
+        + 'guardare.' }),
     anchors: [
       who('paco', .5, .2, [.47, .14], [.38, .08, .17, .16]),
       who('sfx', .62, .17),
@@ -196,7 +205,8 @@ const ART = {
       fr: 'Lola saute dans les bras de son grand-père ; son béret s’envole et les marchands '
         + 'sourient.',
       de: 'Lola springt ihrem Großvater in die Arme; seine Baskenmütze fliegt davon, und die '
-        + 'Händler lächeln.' }),
+        + 'Händler lächeln.',
+      it: 'Lola salta in braccio al nonno; il basco gli vola via e i bancarellai sorridono.' }),
     anchors: [
       who('lola', .51, .27, [.47, .2], [.42, .14, .13, .19]),
       who('paco', .595, .31, [.62, .22], [.55, .14, .15, .22]),
@@ -225,7 +235,8 @@ showBook(doc, { title: t({ es: 'Una página de cómic a doble página',
   zh: '横跨两页的漫画', ar: 'صفحة قصص مصوّرة على صفحتين متقابلتين', ja: '見開きの漫画',
   pt: 'Uma página de quadrinhos em página dupla',
   fr: 'Une planche de BD sur une double page',
-  de: 'Eine Comicseite über eine Doppelseite' }) });
+  de: 'Eine Comicseite über eine Doppelseite',
+  it: 'Una tavola a fumetti su una doppia pagina' }) });
 offerPdf(() => renderToPdf(doc, { fontProvider: comicPdfProvider, resourceBytes: imageBytes }),
   `${RECIPE}.pdf`);
 

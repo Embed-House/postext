@@ -1,0 +1,75 @@
+---
+title: "Una pagina di libro sulla griglia della linea di base"
+summary: "Una pagina speculare a due colonne con una gabbia alta esattamente 44 interlinee, così il testo sta su un’unica griglia tra colonne e attraverso il dorso."
+plain: "Tre pagine di un saggio su come si impaginavano i libri antichi. Mostra come far stare ogni riga di testo alla stessa altezza in entrambe le colonne e in entrambe le pagine affiancate."
+description: "Un saggio sul canone delle proporzioni della pagina, in Postext: margini speculari 2:3:4:6, due colonne di 44 righe, testo che torna in griglia dopo i titoli."
+question: "Come imposto una pagina a due colonne e tengo ogni riga su un’unica griglia tra colonne e doppia pagina?"
+aliases: ["ritmo verticale", "righe allineate tra le colonne", "altezza della gabbia", "gabbia del testo", "canone di Van de Graaf", "margini 2:3:4:6", "spaziatura degli elenchi fuori griglia", "piedi di colonna allineati", "baseline grid"]
+pageNotes: { "1": "L’apertura: il titolo «Il canone segreto», in corsivo rosso, riempie la prima colonna e il disegno del canone sta in testa alla seconda, con la didascalia «Figura 1.1. Il canone su una doppia pagina aperta di pagine 2:3»; sottili linee rosso pallido corrono sotto ogni riga di testo, e i titoli «Tracciare il canone» e «La figura di Villard» aprono le sezioni.", "2": "Un verso, margine esterno a sinistra, sotto la testatina «La pagina rigata». La «Nota di bottega», in corpo minore, cade tra le linee della griglia; il titolo «Righe su cui posarsi», poco sotto, sta mezza riga fuori griglia e il testo che lo segue torna sulle linee. Nella seconda colonna, «Che cosa conserva una pagina di lavoro» e il suo elenco di tre voci seguono la griglia dei paragrafi accanto.", "3": "Un recto, margine interno a sinistra, sotto la testatina «Il canone segreto»: la figura 1.2, le due pagine a confronto, sta in testa alla pagina su tutta la larghezza della gabbia, e il saggio finisce sotto di essa in due colonne pareggiate, con il colophon «Composto in Vollkorn, corpo 9,8 su 13,4 punti» a chiudere la seconda." }
+---
+
+## Che cosa comporrai
+
+Le pagine da 9 a 11 di *La pagina rigata*, una raccolta dedicata al libro, contengono «Il canone segreto», un saggio sulle proporzioni che gli amanuensi medievali davano alle loro pagine. I margini seguono il canone che il saggio descrive, 2:3:4:6 e speculari, su un formato di 210 × 280 mm intorno a due colonne di Vollkorn. Sulle pagine è disegnata in rosso pallido una griglia della linea di base, e il testo corrente di entrambe le colonne e di entrambe le pagine affiancate poggia su di essa. Il titolo in Playfair Display riempie la prima colonna dell’apertura e il disegno del canone sta in testa alla seconda. I titoli di sezione stanno mezza riga fuori griglia, e il testo che li segue ci torna sopra. Una nota di bottega in corpo minore corre su un’interlinea propria di 10 pt. A pagina 11 il saggio finisce sotto una figura a tutta larghezza in due colonne tagliate alla stessa lunghezza, e il colophon chiude la seconda.
+
+## Preparazione
+
+### 1 · Fai uscire dalla griglia i titoli, mai gli elenchi
+
+<Excerpt region="flow" />
+
+Lo spazio sopra un titolo resta esattamente com’è impostato, quindi 1,5 interlinee mettono il titolo tra due linee della griglia, e il testo sotto viene agganciato alla linea successiva ([griglia della linea di base](/it/docs/configuration-page-layout#griglia-della-linea-di-base)). Un elenco non viene agganciato prima della sua prima voce, perciò la risposta breve azzera i margini degli elenchi (andrebbe bene anche qualunque numero intero di interlinee); con gli 1,5 em predefiniti, le tre voci di pagina 10 starebbero 1,3 pt sotto le linee della colonna accanto. Le due righe del titolo in corpo 46 prendono quattro interlinee ciascuna e il suo margine inferiore una in più, così il saggio comincia alla riga 10.
+
+<PageShot page={2} crop="0.14,0.1373,0.795,0.4" caption="Pagina 10: l’elenco nella seconda colonna resta sulla griglia dei paragrafi accanto; la nota di bottega cade tra le linee della griglia e il titolo sotto di essa sta mezza riga fuori, con il suo testo di nuovo in griglia." />
+
+### 2 · Lascia la griglia di proposito, e torna
+
+<Excerpt region="note" />
+
+La nota è un contenitore `:::paragraphs` composto in corpo 7,8 su 10 pt, fuori griglia. Dopo il suo ultimo paragrafo la posizione viene arrotondata per eccesso alla linea di griglia successiva, così il titolo che segue sta dove starebbe dopo il testo corrente ([il contenitore `:::paragraphs`](/it/docs/configuration-styles#il-contenitore-paragraphs)). Il colophon usa lo stesso contenitore in corpo 7,5 su 10 pt: le sue quattro righe occupano 40 pt, 0,2 pt meno di tre interlinee, così l’ultima colonna del saggio finisce alla pari con quella accanto.
+
+### 3 · Colloca le figure dove la griglia può assorbirle
+
+<Excerpt region="figures" />
+
+Un elemento flottante non va mai sopra il paragrafo che lo cita ([collocazione](/it/docs/document-format#collocazione)). Il canone, citato nella prima colonna, può comunque prendere la testa della seconda a pagina 9; il confronto a tutta larghezza, citato a pagina 10, aspetta la pagina 11. Ogni fascia viene arrotondata a interlinee intere, così il testo sotto un disegno comincia su una linea di griglia, alla pari con la colonna accanto e con la pagina a fronte. Dimensiona il disegno su quell’arrotondamento: a 61,8 mm la fascia del canone, didascalia compresa, prende 17 interlinee; a 62,5 mm ne prenderebbe 18 e lascerebbe quasi una riga di bianco sotto la didascalia.
+
+<PageShot page={3} crop="0.05,0.07,0.83,0.435" caption="Pagina 11: il testo sotto la figura a tutta larghezza comincia su una linea di griglia, e il saggio finisce in due colonne pareggiate, con il colophon a chiudere la seconda." />
+
+### 4 · Lascia che il bilanciamento pareggi le colonne
+
+<Excerpt region="balance" />
+
+Ogni colonna piena delle pagine 9 e 10 finisce alla riga 44, perché la gabbia è alta esattamente 44 interlinee e il testo è stato adattato a essa. Le regole che tengono il titolo con il paragrafo seguente e quelle su vedove, orfane e righe finali troppo corte sono attive per impostazione predefinita. Quando una di esse fa finire una colonna una riga prima, il bilanciamento mette lo spazio mancante sopra un titolo precedente ([bilanciamento delle colonne](/it/docs/configuration-text#bilanciamento-delle-colonne)), dove si vede come un vuoto: adatta quindi il testo finché il bilanciamento non ha più nulla da riempire. Nell’ultima pagina divide le righe rimaste in modo che entrambe le colonne finiscano sulla stessa riga.
+
+### 5 · Specchia i margini e numera da pagina 9
+
+<Excerpt region="heads" />
+
+La risposta breve calcola il margine di piede: il formato di 280 mm meno il margine di testa di 24 mm e una gabbia di esattamente `LINES` interlinee (44 × 13,4 pt = 208 mm) lascia 48 mm, sei unità, come vuole la progressione 2:3:4:6. Con `mirror: true` i 16 mm impostati come `left` sono il margine interno, a sinistra su un recto e a destra su un verso ([margini speculari](/it/docs/configuration-page-layout#margini-speculari)), così le testatine ancorate a `OUTER` millimetri dal bordo della pagina finiscono dove finisce la gabbia, dal lato del taglio esterno; `pages: 'body'` le tiene fuori dall’apertura. `startAt: 9` stampa i folii da 9 a 11, e `pageIndexOffset: 8` conta le otto pagine che li precedono, così la specularità, la parità delle testatine e `breakBefore: 'odd'` seguono il libro rilegato. Con uno scarto di 7 la prima pagina conterebbe come verso, e l’interruzione su pagina dispari metterebbe una pagina bianca prima del saggio.
+
+## Varianti
+
+### Nascondi la griglia per la tipografia
+
+`enabled` controlla solo le linee disegnate sulle pagine finite; l’impaginazione resta comunque sulla griglia di 13,4 pt, quindi nessuna riga si sposta.
+
+```diff
+-  baselineGrid: { enabled: true, color: col('grid') },
++  baselineGrid: { enabled: false },
+```
+
+### Guarda che cosa fa il bilanciamento
+
+Senza bilanciamento, la pagina 11 fa scendere le ultime otto righe e il colophon lungo la prima colonna e lascia vuota la seconda.
+
+```diff
+-const balancing = { enabled: true };
++const balancing = { enabled: false };
+```
+
+## Errori frequenti
+
+- La regola per cui un elemento flottante `top` non arriva mai sulla pagina che lo cita vale per gli elementi flottanti a tutta larghezza. Un elemento flottante `top` di colonna può arrivare sulla pagina che lo cita, in testa a una colonna successiva, come fa la figura 1.1 a pagina 9.
+- Formati di pagina, margini e intercolonna accettano unità assolute (mm, pt, cm, in). Un `em` lì non ha un corpo rispetto a cui misurarsi, e la costruzione si ferma con «dimensionToPx: baseFontSizePx is required for unit "em"».
+- Lo spazio tra parole di Vollkorn è stretto, 0,2 em, quindi in una colonna di circa 50 caratteri alcune righe giustificate risultano troppo spaziate o troppo strette. L’esempio è stato adattato riga per riga sul rapporto delle righe troppo spaziate della cattura; ricontrollalo dopo ogni modifica al testo o alla giustezza.

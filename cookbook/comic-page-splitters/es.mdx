@@ -2,7 +2,7 @@
 title: "Las mismas viñetas en tres divisiones de página"
 summary: "Cinco viñetas en tres árboles de división: split en :::page corta la página y la zona segura de cada imagen mantiene a la vista lo importante."
 plain: "Una página de cómic dibujada una vez y maquetada de tres maneras. Las mismas cinco imágenes y los mismos diálogos llenan tres rejillas de viñetas distintas, y cada imagen se recorta de nuevo para su viñeta."
-description: "Una prueba de maqueta de cómic con Postext: las mismas cinco viñetas en tres árboles de división, reencuadradas por su zona segura y rotuladas en nueve idiomas."
+description: "Una prueba de maqueta de cómic con Postext: las mismas cinco viñetas en tres árboles de división, reencuadradas por su zona segura y rotuladas en diez idiomas."
 question: "¿Cómo divido una página de cómic en viñetas sin perder la cara del personaje cuando la viñeta cambia de forma?"
 aliases: ["rejilla de viñetas", "maqueta de cómic", "división de página", "árbol de división", "tiras", "viñeta insertada", "zona segura", "encuadre", "recorte", "panel grid", "コマ割り", "分格"]
 pageNotes: { "1": "La portada de la prueba: el título en mayúsculas rojas y los tres planes, cada uno con su atributo split en rojo.", "2": "Plan A: una tira ancha con Maya subiendo al faro, tres viñetas en fila (el farero con la radio, Maya señalando el suelo, el gato dormido con PRRRR en rojo) y una escena ancha del faro encendido de noche.", "3": "Plan B: dos columnas; a la izquierda la llegada de Maya y el farero con la radio, en vertical; a la derecha Maya señalando, el gato y el faro de noche.", "4": "Plan C: una tira superior con tres viñetas estrechas y el gato en una viñeta insertada sobre la de Maya, y una viñeta alta del faro de noche con dos bocadillos junto a la galería." }
@@ -10,7 +10,7 @@ pageNotes: { "1": "La portada de la prueba: el título en mayúsculas rojas y lo
 
 ## Lo que vas a componer
 
-Una prueba de maqueta para una página de cómic, *La luz de Porthcove*: una portada y la misma página en tres planes, para que el autor elija. Las cinco imágenes (Maya subiendo al faro, su abuelo ante una radio muda, Maya señalando el suelo, el gato dormido sobre el cable, el faro encendido de noche) y los seis textos rotulados no cambian; solo cambia el `split` de cada `:::page`. Cada imagen se recorta otra vez para su viñeta y cada bocadillo se coloca otra vez junto a quien habla. El formato es el de un cómic americano, 168 × 259 mm, y la prueba sale en nueve ediciones, cada una rotulada en su idioma.
+Una prueba de maqueta para una página de cómic, *La luz de Porthcove*: una portada y la misma página en tres planes, para que el autor elija. Las cinco imágenes (Maya subiendo al faro, su abuelo ante una radio muda, Maya señalando el suelo, el gato dormido sobre el cable, el faro encendido de noche) y los seis textos rotulados no cambian; solo cambia el `split` de cada `:::page`. Cada imagen se recorta otra vez para su viñeta y cada bocadillo se coloca otra vez junto a quien habla. El formato es el de un cómic americano, 168 × 259 mm, y la prueba sale en diez ediciones, cada una rotulada en su idioma.
 
 ## Elaboración
 
@@ -30,7 +30,7 @@ Cada imagen se dibuja una vez y se recorta para llenar la celda que le toque. La
 
 La división del plan C da cuatro celdas para cinco viñetas. El gato entra con `inset="50 50 46 46"`: una viñeta del 46 % de ancho y de alto, colocada en el 50 %, 50 % de la viñeta anterior, la de Maya. Una viñeta insertada no ocupa celda, así que las siguientes conservan su sitio, y se lee justo después de la que tapa.
 
-### 4 · Rotula nueve ediciones con la misma maqueta
+### 4 · Rotula diez ediciones con la misma maqueta
 
 <Excerpt region="editions" />
 

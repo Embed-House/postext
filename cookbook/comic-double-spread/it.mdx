@@ -1,0 +1,56 @@
+---
+title: "Una tavola a fumetti su una doppia pagina"
+summary: "Un :::page con il flag spread stende un albero di divisione su due pagine affiancate: un panorama passa sulla piega e la striscia sotto si divide sul dorso."
+plain: "Un fumetto impaginato su due pagine affiancate come se fossero una sola: una grande immagine di un mercato affollato passa sopra il centro del libro, tre vignette stanno sotto."
+description: "Doppia pagina a fumetti in Postext: una divisione per due pagine, un panorama da 1.900 px sulla piega, la striscia sotto tagliata sul dorso, in dieci lingue."
+question: "Come impagino una tavola a fumetti su una doppia pagina?"
+aliases: ["doppia pagina", "doppia pagina a fumetti", "panorama", "splash su doppia pagina", "doble página", "見開き", "跨页", "spread", "comic spread", "pageIndexOffset"]
+---
+
+## Che cosa comporrai
+
+La seconda storia dell’albo di <RecipeLink slug="tebeo-album-page">Nº 152</RecipeLink>, *¡Abuelo!*, raccontata su due pagine affiancate. Un sabato di dicembre il mercato è pieno; Lola perde il nonno tra la folla. La metà superiore della doppia pagina è un unico panorama largo 432 mm: Lola, piccolissima, all’estrema sinistra, Paco che la cerca all’estrema destra, e la corsia del mercato che corre verso la piega tra i due. Sotto, tre vignette: Lola sola tra le gambe della gente, Paco che fischia in piedi su una cassetta di frutta, il ritrovarsi con il suo basco in aria. La divisione è scritta una sola volta per entrambe le pagine, così il panorama attraversa il dorso e l’intervallo della striscia inferiore cade sulla piega. L’originale è in spagnolo; le edizioni inglese, catalana, cinese, araba, giapponese, portoghese, francese, tedesca e italiana letterano la stessa doppia pagina.
+
+## Preparazione
+
+### 1 · Una sola divisione su entrambe le pagine
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. L’intero fumetto è una sola direttiva con il flag `spread`:
+
+```md
+:::page{spread split="55 / * [25 | 25 | *]"}
+::panel{art=ds1}
+caption: Un sábado de diciembre, el mercado estaba hasta los topes.
+lola: ¿Abuelo?
+paco{shout}: ¿Lola? ¡Lolaaa!
+```
+
+La cornice va dal margine esterno del verso a quello del recto; i margini interni scompaiono. La prima striscia, il 55 % dell’altezza, è una sola vignetta che attraversa il dorso. Nella seconda, `25 | 25 | *` mette la prima linea al 25 % e la seconda al 50 %, cioè sul dorso stesso: due vignette quadrate sul verso, il ritrovarsi sul recto. Una doppia pagina si apre su una pagina pari, e la pagina 1 di un documento è un recto, quindi la build passa `continuation: { pageIndexOffset: 1 }`: questo episodio prosegue l’albo da pagina 2 e non c’è nessuna pagina bianca prima.
+
+### 2 · Un panorama grande abbastanza per due pagine
+
+<Excerpt region="art" />
+
+Il panorama è l’unica immagine stampata attraverso la piega, 432 × 144 mm, quindi viene fornito a 1.900 px (380 KB); le altre tre sono da 1.000–1.200 px. La sua zona sicura è una fascia larga quasi quanto l’immagine, e i due personaggi che parlano stanno ai bordi, al 6 % e al 92 % della larghezza, lontano dal dorso, dove la rilegatura inghiottirebbe una nuvoletta. L’immagine è stata disegnata con il centro libero da volti: la corsia del mercato corre verso la piega. Una folla è piena di volti che non dicono nulla: il pescivendolo dietro Lola è segnato in `faces`, l’elenco dei volti delle persone che non parlano, così la prima nuvoletta di Lola sta accanto a lui e mai sul suo viso o sul suo berretto, e l’edizione giapponese vi fissa la sua colonna (`at="2.8% 37%"`).
+
+### 3 · Le nuvolette dell’albo
+
+<Excerpt region="balloons" />
+
+Gli stili delle nuvolette sono quelli di Nº 152: nuvolette bianche per il parlato, cartigli giallo chiaro, un’esplosione per il grido di Paco, un contorno tratteggiato per il sussurro di Lola e il fischio nel carattere delle onomatopee dell’albo, Bangers nelle edizioni in alfabeto latino. `cast` dà al PDF e all’EPUB i nomi che leggono prima di ogni battuta.
+
+## Varianti
+
+### Apri il libro con la doppia pagina
+
+Togli la continuazione e il motore lascia bianca la pagina 1 (ruolo `blank`), così la doppia pagina cade comunque sulle pagine 2 e 3.
+
+```diff
+-const continuation = { pageIndexOffset: 1, pageNumbering: { startAt: 2 } };
++const continuation = {};
+```
+
+## Errori frequenti
+
+- Le nuvolette restano fuori da una fascia di 8 mm attorno al dorso, punte comprese: un personaggio che sta sulla piega riceve una nuvoletta spostata di lato. Tieni i personaggi che parlano in una vignetta che attraversa il dorso lontano dal suo centro.
+- Una nuvoletta evita due figure i cui volti si toccano, in un abbraccio o in una lite, compreso il volto di chi parla. Nelle edizioni giapponese e araba la doppia pagina si legge da destra, la vignetta del ritrovarsi passa alla pagina sinistra e il basco in volo occupa il suo angolo in alto a destra; le due nuvolette di Paco vanno sopra il mercato accanto alla sua testa, non sopra l’abbraccio. Segna entrambi i volti nell’immagine (`face`) perché il motore veda che si toccano.

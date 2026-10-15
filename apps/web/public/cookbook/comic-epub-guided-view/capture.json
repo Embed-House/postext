@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-epub-guided-view",
-  "sourceHash": "206df1ee3c834cb64a1f8709805a23f69543b1a1c2d8cf72858fb5b0f2b51aa8",
+  "sourceHash": "a09c69f139cbc031108a022ed436d4ff6eebaaa95c3bab30d1541cc7dab1e042",
   "engine": {
     "postext": "1.33.7",
     "postextPdf": "1.33.7",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:24:20.745Z",
+  "capturedAt": "2026-10-15T13:40:29.846Z",
   "variants": {
     "en": {
       "hash8": "70e98044",
       "vdtHash": "64c420f4051c59e7c12aca770d7ead2328540ded",
       "timings": {
-        "importMs": 4135,
-        "fontsMs": 555,
-        "buildMs": 275,
-        "totalMs": 5751,
+        "importMs": 631,
+        "fontsMs": 142,
+        "buildMs": 271,
+        "totalMs": 1693,
         "builds": 1
       },
       "specimen": {
@@ -293,10 +293,10 @@
       "hash8": "5a46903a",
       "vdtHash": "e3390a1020791a0ab7ade1d7db54b176d75fcf9d",
       "timings": {
-        "importMs": 2475,
-        "fontsMs": 268,
-        "buildMs": 231,
-        "totalMs": 3698,
+        "importMs": 630,
+        "fontsMs": 160,
+        "buildMs": 248,
+        "totalMs": 1714,
         "builds": 1
       },
       "specimen": {
@@ -572,10 +572,10 @@
       "hash8": "4736d197",
       "vdtHash": "52378a5a6f5c12056b8aa0d4afd146f52762148e",
       "timings": {
-        "importMs": 1895,
-        "fontsMs": 1395,
-        "buildMs": 221,
-        "totalMs": 4851,
+        "importMs": 640,
+        "fontsMs": 170,
+        "buildMs": 259,
+        "totalMs": 1777,
         "builds": 1
       },
       "specimen": {
@@ -851,10 +851,10 @@
       "hash8": "fa8b11e1",
       "vdtHash": "1ae1a2a01eb6d5de92779490b23522a6747ebf11",
       "timings": {
-        "importMs": 1187,
-        "fontsMs": 1602,
-        "buildMs": 314,
-        "totalMs": 5496,
+        "importMs": 542,
+        "fontsMs": 570,
+        "buildMs": 208,
+        "totalMs": 2245,
         "builds": 1
       },
       "specimen": {
@@ -1131,10 +1131,10 @@
       "hash8": "2b428a32",
       "vdtHash": "8bf6113f0eff83e357b09713e25ae9e612868aab",
       "timings": {
-        "importMs": 1052,
-        "fontsMs": 578,
-        "buildMs": 289,
-        "totalMs": 2920,
+        "importMs": 545,
+        "fontsMs": 345,
+        "buildMs": 200,
+        "totalMs": 1750,
         "builds": 1
       },
       "specimen": {
@@ -1414,10 +1414,10 @@
       "hash8": "48d95e30",
       "vdtHash": "4e664c70bd7729b7c091d697b398a62d48b3803a",
       "timings": {
-        "importMs": 1038,
-        "fontsMs": 2013,
-        "buildMs": 310,
-        "totalMs": 5606,
+        "importMs": 666,
+        "fontsMs": 534,
+        "buildMs": 173,
+        "totalMs": 2380,
         "builds": 1
       },
       "specimen": {
@@ -1696,10 +1696,10 @@
       "hash8": "1af4b158",
       "vdtHash": "55f251632ca226235a26fa4dae410d75d1032b48",
       "timings": {
-        "importMs": 1610,
-        "fontsMs": 506,
-        "buildMs": 312,
-        "totalMs": 3674,
+        "importMs": 255,
+        "fontsMs": 138,
+        "buildMs": 175,
+        "totalMs": 1241,
         "builds": 1
       },
       "specimen": {
@@ -1975,10 +1975,10 @@
       "hash8": "a4064bd5",
       "vdtHash": "2e51b8052fe5711c66cb316c21e348177e49fdd1",
       "timings": {
-        "importMs": 1617,
-        "fontsMs": 1206,
-        "buildMs": 257,
-        "totalMs": 3906,
+        "importMs": 223,
+        "fontsMs": 98,
+        "buildMs": 184,
+        "totalMs": 1123,
         "builds": 1
       },
       "specimen": {
@@ -2254,10 +2254,10 @@
       "hash8": "eb40303a",
       "vdtHash": "f09781cbf15f0a0b04bab39cd8e3c66eefa5e0bf",
       "timings": {
-        "importMs": 1870,
-        "fontsMs": 426,
-        "buildMs": 219,
-        "totalMs": 3577,
+        "importMs": 281,
+        "fontsMs": 109,
+        "buildMs": 180,
+        "totalMs": 1199,
         "builds": 1
       },
       "specimen": {
@@ -2350,6 +2350,285 @@
             "pages": 3,
             "hash": "0ed8d21a43b58a88",
             "lines": "70fa1c366a679938"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "loadVerticalAlternates",
+          "readEpub",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToEpub",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontFamily",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].stroke",
+          "comics.cast",
+          "comics.cast[].id",
+          "comics.cast[].name",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.inset",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "comics.runningHeads",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].pages",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].fontWeight",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 98,
+        "designElements": 1,
+        "directives": [
+          ":::paragraphs",
+          ":::page"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 5,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Bangers",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Comic Neue",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Comic Neue",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "balloon-styles",
+          "comic-lettering",
+          "comic-pages",
+          "comic-panel-art",
+          "comic-panel-split",
+          "comic-panel-styles",
+          "comic-speakers",
+          "epub-export",
+          "page-background",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "sound-effects"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "it": {
+      "hash8": "b762d665",
+      "vdtHash": "3abb4fae7183fc416083851450f907e985f037f3",
+      "timings": {
+        "importMs": 210,
+        "fontsMs": 114,
+        "buildMs": 171,
+        "totalMs": 1069,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          168,
+          259
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Comic Neue",
+          "sizePt": 10.5,
+          "leadingPt": 15
+        },
+        "families": [
+          "Bangers",
+          "Comic Neue"
+        ],
+        "pages": 3,
+        "ownLines": 184
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1542,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 20402,
+          "alt": "Pagina d’apertura 1: Il faro di Porthcove."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 243622,
+          "alt": "Pagina 2."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 207260,
+          "alt": "Pagina 3."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "comic-epub-guided-view.pdf",
+        "bytes": 812559,
+        "pages": 3
+      },
+      "sandbox": {
+        "file": "comic-epub-guided-view.postext",
+        "bytes": 807087,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "16157ccbbabb3c95",
+            "lines": "49bb22965e4403f2"
           }
         ]
       },

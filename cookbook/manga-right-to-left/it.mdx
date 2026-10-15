@@ -1,0 +1,49 @@
+---
+title: "Un manga da destra a sinistra, letterato in verticale"
+summary: "Due pagine di manga disegnate da destra a sinistra: artDirection rtl tiene l’ordine delle vignette in ogni edizione, le nuvolette giapponesi vanno in colonne."
+plain: "Due pagine di un fumetto giapponese. Le pagine giapponesi sono letterate dall’alto in basso in colonne strette; le altre edizioni mantengono l’ordine giapponese delle vignette, a partire da quella in alto a destra."
+description: "Un manga di kendo di due pagine in Postext: l’originale giapponese letterato in colonne verticali e altre nove edizioni che si leggono da destra a sinistra."
+question: "Come impagino un manga che si legge da destra a sinistra, con il giapponese verticale nelle nuvolette?"
+aliases: ["manga", "漫画", "右綴じ", "da destra a sinistra", "manga non ribaltato", "tategaki", "縦書き", "nuvolette verticali", "ribaltamento", "artDirection", "readingDirection", "Zen Antique", "furigana", "tate-chu-yoko"]
+pageNotes: { "1": "L’originale giapponese, pagina 1: un dojo al tramonto lungo la striscia superiore con una didascalia nell’angolo in alto a destra, poi Hana che vibra la spada a destra e Sora sulla porta a sinistra, tutte le nuvolette in colonne verticali.", "3": "L’edizione italiana, pagina 1: le stesse vignette negli stessi posti, le nuvolette ricostruite attorno a righe orizzontali in italiano: la didascalia «Il giorno prima del 42º torneo di prefettura.», l’«Altri cinquanta…!» di Hana, il «Wow, Ichinose si allena ancora…» di Sora sulla porta e, nell’ultima vignetta, «S-scusa! È un amuleto del santuario di mia nonna.»" }
+---
+
+## Che cosa comporrai
+
+Le due pagine d’apertura di un manga di kendo, 前の晩 (*La vigilia*), scritto per la ricetta e disegnato in bianco e nero: Hana si allena da sola la sera prima del torneo della prefettura, Sora le porta un amuleto del santuario, il loro allenatore li manda a casa. Prima viene l’originale giapponese, letterato come lo lettera un settimanale: caratteri antichi (kana in un taglio Mincho, kanji in uno Gothic), nuvolette più alte che larghe, nessun punto alla fine di una nuvoletta. Di fronte, le stesse due pagine nella lingua di questa pagina (inglese sulla pagina giapponese), che si leggono ancora a partire dalla vignetta in alto a destra, come i manga in licenza fin dai primi anni 2000. Il formato è B6, 128 × 182 mm, quello del tankōbon.
+
+## Preparazione
+
+### 1 · Leggi nella direzione in cui è stata disegnata la tavola
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Un mangaka compone ogni pagina a partire dall’alto a destra: la prima vignetta, il primo a parlare e il percorso dell’occhio lungo una striscia cominciano lì. `artDirection: 'rtl'` lo dice al motore, e con la direzione di lettura lasciata su `'auto'` ogni edizione segue il disegno; un’edizione araba si leggerebbe comunque da destra a sinistra. La tavola non viene mai specchiata. Gli editori occidentali hanno ribaltato i manga fino al 2002 circa, e i lettori vedevano ogni spadaccino diventare mancino e ogni kimono chiudersi dalla parte sbagliata; lasciare le pagine come sono state disegnate costa al lettore un’abitudine, mentre ribaltarle costa il disegno. Ogni `:::page` porta la sua suddivisione, `30 / 34 [46 | *] / * [44 | *]`, e la prima cella di ogni striscia si impagina a destra (<Feature id="comic-reading-direction">direzione di lettura</Feature>).
+
+### 2 · Segna ogni personaggio una volta sola, sull’immagine
+
+<Excerpt region="art" />
+
+Le parole cambiano con la lingua; il disegno no. Ogni immagine di vignetta porta una zona sicura che ogni ritaglio conserva, e per ogni personaggio una bocca (dove punta la coda di una battuta), una testa (per le nuvolette di pensiero) e un volto che nessuna nuvoletta può coprire, tutto in frazioni dell’immagine. Una riga del copione nomina chi parla, `sora: …`, e il motore colloca la nuvoletta vicino a quel personaggio in qualunque lingua. Chi parla senza essere nell’immagine, come Sora quando l’allenatore compare sulla soglia, riceve una coda verso il bordo della vignetta: `sora{tail=bottom}`.
+
+### 3 · Dai a ogni lingua le sue nuvolette
+
+<Excerpt region="balloons" />
+
+Gli stili dicono che tipo di voce porta una nuvoletta: un ovale semplice per il parlato, un tratteggio per il sussurro, una nuvola per il pensiero, un riquadro grigio per la voce interiore di Hana. Come si dispongono le parole dentro è affare dell’edizione. In giapponese il motore compone colonne di al massimo otto caratteri, toglie il 。 che chiude una nuvoletta e mantiene il 、, mette in piedi le due cifre di 第42回 in un em (`:tcy[42]`), e compone `!?` affiancati in una sola cella. Il copione dà a ogni nome la sua lettura dove compare la prima volta, `{一ノ瀬|いちのせ}`, come i manga stampano il furigana sopra i nomi. In inglese le stesse nuvolette diventano ovali attorno a righe orizzontali, e il loro ordine parte ancora da destra.
+
+### 4 · Carica i caratteri di ogni edizione con le sue parole
+
+<Excerpt region="fonts" />
+
+Zen Antique e Dela Gothic One sono distribuiti in circa cento file ciascuno, uno per intervallo di caratteri: ogni carattere si carica con le parole che compone, le nuvolette per l’uno e gli effetti sonori per l’altro, così la pagina scarica solo i file che le servono. `loadComicFonts` dichiara il grassetto di un grido e il corsivo di una voce interiore a partire dai file che questi caratteri distribuiscono davvero, così lo schermo e il PDF disegnano le stesse lettere.
+
+### 5 · Metti l’originale accanto a ogni edizione
+
+<Excerpt region="editions" />
+
+Ogni lingua di questo sito ha la sua edizione delle due pagine, scritta nel suo `content.<lang>.md`, e ogni edizione sta di fronte all’originale giapponese: `/* @content@ja */` inserisce `content.ja.md` in ogni edizione, e la pagina giapponese affianca l’originale al lettering inglese. Anche l’edizione cinese è composta in colonne, perché un libro che si apre da destra non mescola nuvolette verticali e orizzontali; quella araba si legge da destra a sinistra per la sua stessa direzione.
+
+## Errori frequenti
+
+- Metti a destra il primo personaggio che parla in una vignetta. Le nuvolette seguono l’ordine di lettura, quindi nella vignetta in cui Sora consegna l’amuleto il copione dà la prima battuta a Hana, che sta a destra. Con Sora per primo, le sue nuvolette restano dalla sua parte della vignetta, ma le colonne giapponesi non lasciano spazio sotto di esse per la risposta di Hana: finisce accanto a loro sulla destra e viene letta per prima.
+- Una nuvoletta che non trova spazio nella sua vignetta può superarne il bordo, e il motore lo segnala (`comicBalloonOverflow`). Dai a una vignetta affollata una cella più grande nella suddivisione prima di accorciare il dialogo.
+- Una figura piccola in una vignetta alta non lascia spazio accanto a sé per due nuvolette impilate: nella vignetta della soglia la seconda battuta dell’allenatore gli finiva sopra dal petto alle ginocchia nelle edizioni composte in righe. I loro copioni fissano la sua prima battuta accanto alla testa (`mori{at="85% 19%"}`), e la battuta unita a essa la segue. La pagina cinese spezza a mano una nuvoletta, con una barra rovesciata alla fine di ogni riga, dove le colonne tagliavano in due 其实.

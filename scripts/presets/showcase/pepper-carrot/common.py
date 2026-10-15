@@ -30,7 +30,7 @@ STORY_PAGES = [f"P{n:02d}" for n in range(1, 7)]
 
 # Pepper&Carrot language code -> postext locale. `cn` is Simplified Chinese,
 # `pt` Brazilian Portuguese ("Português (Brasil)").
-LANGS = {"en": "en", "ja": "ja", "es": "es", "fr": "fr", "cn": "zh", "ca": "ca", "ar": "ar", "pt": "pt-BR", "de": "de"}
+LANGS = {"en": "en", "ja": "ja", "es": "es", "fr": "fr", "cn": "zh", "ca": "ca", "ar": "ar", "pt": "pt-BR", "de": "de", "it": "it"}
 RTL = {"ar"}
 
 # The art is 2481x3503 (A4 at 300 dpi); the SVGs share that canvas.

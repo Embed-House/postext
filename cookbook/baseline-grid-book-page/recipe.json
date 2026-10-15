@@ -30,7 +30,7 @@
   "workarounds": [],
   "engine": { "postext": "1.25.0" },
   "kit": ["core", "fonts", "viewer", "images"],
-  "sample": { "locales": ["en", "es", "pt", "fr", "de"] },
+  "sample": { "locales": ["en", "es", "pt", "fr", "de", "it"] },
   "capture": {
     "hero": 1,
     "card": "crop",
@@ -53,7 +53,8 @@
           "es": "El ensayo «El canon secreto» y su versión inglesa, «The Secret Canon», escritos para esta receta",
           "pt": "O ensaio “The Secret Canon” e suas versões em espanhol e português, “El canon secreto” e “O cânone secreto”, escritos para esta receta",
           "fr": "L’essai « The Secret Canon » et ses versions espagnole, portugaise et française, « El canon secreto », « O cânone secreto » et « Le canon secret », écrits pour cette recette",
-          "de": "Der Essay „The Secret Canon“ und seine spanische, portugiesische, französische und deutsche Fassung, „El canon secreto“, „O cânone secreto“, „Le canon secret“ und „Geheimer Kanon“, für dieses Rezept geschrieben"
+          "de": "Der Essay „The Secret Canon“ und seine spanische, portugiesische, französische und deutsche Fassung, „El canon secreto“, „O cânone secreto“, „Le canon secret“ und „Geheimer Kanon“, für dieses Rezept geschrieben",
+          "it": "Il saggio «The Secret Canon» e le sue versioni spagnola, portoghese, francese e italiana, «El canon secreto», «O cânone secreto», «Le canon secret» e «Il canone segreto», scritti per questa ricetta"
         },
         "who": "Postext Cookbook",
         "license": "CC-BY-4.0"
@@ -66,7 +67,8 @@
           "es": "Los dos dibujos, hechos en código con la paleta de la página",
           "pt": "Os dois desenhos, feitos em código com a paleta da página",
           "fr": "Les deux dessins, réalisés en code avec la palette de la page",
-          "de": "Die beiden Zeichnungen, in Code mit der Farbpalette der Seite erstellt"
+          "de": "Die beiden Zeichnungen, in Code mit der Farbpalette der Seite erstellt",
+          "it": "I due disegni, realizzati in codice con la tavolozza della pagina"
         },
         "who": "Postext Cookbook",
         "license": "CC-BY-4.0"

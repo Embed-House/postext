@@ -7,7 +7,7 @@ import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
 
-const LANG = 'en'; // @lang: the sample document's language ('en' | 'es' | 'pt' | 'fr' | 'de')
+const LANG = 'en'; // @lang: the sample document's language ('en' | 'es' | 'pt' | 'fr' | 'de' | 'it')
 const RECIPE = 'baseline-grid-book-page';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -88,7 +88,7 @@ const balancing = { enabled: true };
 // #endregion
 
 const config = () => ({
-  locale: t({ en: 'en-us', es: 'es', pt: 'pt', fr: 'fr', de: 'de' }), // hyphenation, caption labels
+  locale: t({ en: 'en-us', es: 'es', pt: 'pt', fr: 'fr', de: 'de', it: 'it' }), // hyphenation, caption labels
   colorPalette,
   page,
   layout,
@@ -211,6 +211,11 @@ const CAPTIONS = {
       + 'ist genau so hoch wie ihr Satzspiegel.',
     'Zwei gegenüberliegende Seiten mit roten Konstruktionslinien, auf jeder Seite ein linierter '
       + 'Satzspiegel an ihren Schnittpunkten und ein Kreis so breit wie die linke Seite.'],
+    it: ['Il canone su una doppia pagina aperta di pagine 2:3. Le diagonali fissano gli angoli '
+      + 'delle due gabbie; il cerchio, largo quanto la pagina, è alto esattamente quanto la sua '
+      + 'gabbia.',
+    'Due pagine affiancate attraversate da linee di costruzione rosse, una gabbia rigata dove '
+      + 'le linee si incrociano su ogni pagina e un cerchio largo quanto la pagina di sinistra.'],
   },
   pages: {
     en: ['This book’s 210 × 280 mm page twice. Left, divided by the canon into ninths, with a '
@@ -238,6 +243,11 @@ const CAPTIONS = {
       + '32 und 48 mm und zwei Spalten zu 44 Zeilen.',
     'Zwei gleiche Seiten: die linke um ihren Satzspiegel in ein Raster von neun mal neun Feldern '
       + 'geteilt, die rechte mit zwei linierten Spalten.'],
+    it: ['La pagina di 210 × 280 mm di questo libro, due volte. A sinistra, divisa in noni dal '
+      + 'canone, con una gabbia di 140 × 187 mm. A destra, come la compone il libro: margini di '
+      + '16, 24, 32 e 48 mm e due colonne di 44 righe.',
+    'Due pagine uguali: quella di sinistra divisa in una griglia di nove per nove attorno alla '
+      + 'sua gabbia, quella di destra con due colonne rigate.'],
   },
 };
 
@@ -274,6 +284,7 @@ showPages(doc, { title: t({ en: 'A book page on a baseline grid',
   es: 'Una página de libro sobre una rejilla base',
   pt: 'Uma página de livro sobre a grade de linhas de base',
   fr: 'Une page de livre sur une grille de ligne de base',
-  de: 'Eine Buchseite auf dem Grundlinienraster' }) });
+  de: 'Eine Buchseite auf dem Grundlinienraster',
+  it: 'Una pagina di libro sulla griglia della linea di base' }) });
 
 // @kit core fonts viewer images · the Cookbook inlines cookbook/_kit/*.js here

@@ -76,7 +76,8 @@
       "en",
       "pt",
       "fr",
-      "de"
+      "de",
+      "it"
     ]
   },
   "capture": {
@@ -121,7 +122,8 @@
           "es": "The Awakening (El despertar, 1899), capítulos I y II",
           "pt": "The Awakening (O despertar, 1899), capítulos I e II, na edição em inglês",
           "fr": "The Awakening (L’Éveil, 1899), chapitres I et II, dans l’édition anglaise",
-          "de": "The Awakening (Das Erwachen, 1899), Kapitel I und II, in der englischen Ausgabe"
+          "de": "The Awakening (Das Erwachen, 1899), Kapitel I und II, in der englischen Ausgabe",
+          "it": "The Awakening (Il risveglio, 1899), capitoli I e II, nell’edizione inglese"
         },
         "who": "Kate Chopin",
         "source": "https://www.gutenberg.org/ebooks/160",
@@ -133,7 +135,8 @@
           "es": "Quincas Borba (1891), capítulos I a III, el texto de la edición portuguesa, en ortografía actualizada",
           "pt": "Quincas Borba (1891), capítulos I a III, com a ortografia atualizada",
           "fr": "Quincas Borba (1891), chapitres I à III, dans l’édition portugaise, en orthographe modernisée",
-          "de": "Quincas Borba (1891), Kapitel I bis III, in der portugiesischen Ausgabe, in modernisierter Rechtschreibung"
+          "de": "Quincas Borba (1891), Kapitel I bis III, in der portugiesischen Ausgabe, in modernisierter Rechtschreibung",
+          "it": "Quincas Borba (1891), capitoli da I a III, nell’edizione portoghese, con la grafia aggiornata"
         },
         "who": "Machado de Assis",
         "source": "https://pt.wikisource.org/wiki/Quincas_Borba",
@@ -145,7 +148,8 @@
           "es": "Madame Gervaisais (1869), capítulos I y II, el texto de la edición francesa, con la ortografía de la primera edición",
           "pt": "Madame Gervaisais (1869), capítulos I e II, o texto da edição francesa, com a ortografia da primeira edição",
           "fr": "Madame Gervaisais (1869), chapitres I et II, avec l’orthographe de la première édition",
-          "de": "Madame Gervaisais (1869), Kapitel I und II, in der französischen Ausgabe, in der Schreibung der Erstausgabe"
+          "de": "Madame Gervaisais (1869), Kapitel I und II, in der französischen Ausgabe, in der Schreibung der Erstausgabe",
+          "it": "Madame Gervaisais (1869), capitoli I e II, nell’edizione francese, con la grafia della prima edizione"
         },
         "who": "Edmond et Jules de Goncourt",
         "source": "https://fr.wikisource.org/wiki/Madame_Gervaisais",
@@ -165,11 +169,24 @@
       },
       {
         "what": {
+          "en": "Le avventure di Pinocchio (The Adventures of Pinocchio, Felice Paggi, Florence, 1883), chapters I and II, the Italian edition’s text, in the first edition’s spelling, without the chapter summaries",
+          "es": "Le avventure di Pinocchio (Las aventuras de Pinocho, Felice Paggi, Florencia, 1883), capítulos I y II, el texto de la edición italiana, con la ortografía de la primera edición, sin los sumarios de los capítulos",
+          "pt": "Le avventure di Pinocchio (As aventuras de Pinóquio, Felice Paggi, Florença, 1883), capítulos I e II, o texto da edição italiana, com a ortografia da primeira edição, sem os sumários dos capítulos",
+          "fr": "Le avventure di Pinocchio (Les Aventures de Pinocchio, Felice Paggi, Florence, 1883), chapitres I et II, dans l’édition italienne, avec l’orthographe de la première édition, sans les sommaires des chapitres",
+          "it": "Le avventure di Pinocchio (Felice Paggi, Firenze, 1883), capitoli I e II, con la grafia della prima edizione, senza i sommari dei capitoli"
+        },
+        "who": "Carlo Collodi",
+        "source": "https://it.wikisource.org/wiki/Le_avventure_di_Pinocchio",
+        "license": "PD"
+      },
+      {
+        "what": {
           "en": "The colophon",
           "es": "El colofón",
           "pt": "O colofão",
           "fr": "Le colophon",
-          "de": "Das Impressum"
+          "de": "Das Impressum",
+          "it": "Il colophon"
         },
         "who": "Postext Cookbook",
         "license": "original"
@@ -182,7 +199,8 @@
           "es": "La vista del golfo de la cubierta, una pintura",
           "pt": "A vista do mar da capa, uma pintura",
           "fr": "La vue de la mer de la couverture, une peinture",
-          "de": "Der Blick aufs Meer auf dem Umschlag, ein Gemälde"
+          "de": "Der Blick aufs Meer auf dem Umschlag, ein Gemälde",
+          "it": "La vista del mare della copertina, un dipinto"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -190,11 +208,25 @@
       },
       {
         "what": {
+          "en": "The Italian edition’s cover: a detail of Settignano (c. 1880), oil on canvas; scan from Wikimedia Commons, a 1,744 × 1,669 px cut reduced to 1,190 px wide",
+          "es": "La cubierta de la edición italiana: un detalle de Settignano (h. 1880), óleo sobre lienzo; escaneado de Wikimedia Commons, un recorte de 1744 × 1669 px reducido a 1190 px de ancho",
+          "pt": "A capa da edição italiana: um detalhe de Settignano (c. 1880), óleo sobre tela; digitalização do Wikimedia Commons, um recorte de 1744 × 1669 px reduzido a 1190 px de largura",
+          "fr": "La couverture de l’édition italienne : un détail de Settignano (vers 1880), huile sur toile ; numérisation de Wikimedia Commons, une découpe de 1744 × 1669 px réduite à 1190 px de large",
+          "it": "La copertina dell’edizione italiana: un particolare di Settignano (1880 circa), olio su tela; scansione da Wikimedia Commons, un ritaglio di 1744 × 1669 px ridotto a 1190 px di larghezza"
+        },
+        "who": "Telemaco Signorini",
+        "source": "https://commons.wikimedia.org/wiki/File:Settignano_(c.1880),_by_Telemaco_Signorini.jpg",
+        "license": "PD",
+        "file": "cover-it-1190.jpg"
+      },
+      {
+        "what": {
           "en": "The camomile tailpiece, drawn in code in the page’s palette",
           "es": "El florón de manzanilla, dibujado en código con la paleta de la página",
           "pt": "A vinheta de camomila, desenhada em código com a paleta da página",
           "fr": "Le cul-de-lampe à la camomille, dessiné en code dans la palette de la page",
-          "de": "Die Kamillenvignette, in Code mit der Farbpalette der Seite gezeichnet"
+          "de": "Die Kamillenvignette, in Code mit der Farbpalette der Seite gezeichnet",
+          "it": "Il finalino alla camomilla, disegnato in codice con la tavolozza della pagina"
         },
         "who": "Ignacio Ferro",
         "license": "MIT"

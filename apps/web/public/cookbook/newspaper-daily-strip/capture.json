@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-daily-strip",
-  "sourceHash": "086cc5f78acbc7595d49b55c72c674c10d959fdcad9a65ae77771a1389a55950",
+  "sourceHash": "7040f2a1706a1e83c301372c2ece97be97632150bb0e0b5e8ec71539c77219a3",
   "engine": {
-    "postext": "1.33.5",
-    "postextPdf": "1.33.5",
+    "postext": "1.33.7",
+    "postextPdf": "1.33.7",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T11:49:17.596Z",
+  "capturedAt": "2026-10-15T13:40:59.171Z",
   "variants": {
     "en": {
-      "hash8": "acdfb288",
+      "hash8": "2412970a",
       "vdtHash": "d9c682beeac52135ee3e4c9c36073f95d284710d",
       "timings": {
-        "importMs": 5443,
-        "fontsMs": 1749,
-        "buildMs": 586,
-        "totalMs": 9318,
+        "importMs": 505,
+        "fontsMs": 276,
+        "buildMs": 342,
+        "totalMs": 1786,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 181
+        "ownLines": 183
       },
       "pages": [
         {
@@ -88,7 +88,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 879950,
+        "bytes": 879957,
         "pages": 2
       },
       "sandbox": {
@@ -337,13 +337,13 @@
       }
     },
     "es": {
-      "hash8": "e1633dd9",
+      "hash8": "588dd8a4",
       "vdtHash": "c12bf47ba17eb0f6827eb5cd8e177234c24d5de7",
       "timings": {
-        "importMs": 3851,
-        "fontsMs": 1425,
-        "buildMs": 566,
-        "totalMs": 7378,
+        "importMs": 511,
+        "fontsMs": 288,
+        "buildMs": 370,
+        "totalMs": 1883,
         "builds": 1
       },
       "specimen": {
@@ -364,7 +364,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 181
+        "ownLines": 183
       },
       "pages": [
         {
@@ -414,7 +414,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 884312,
+        "bytes": 884323,
         "pages": 2
       },
       "sandbox": {
@@ -663,13 +663,13 @@
       }
     },
     "ca": {
-      "hash8": "72e1327b",
+      "hash8": "5d6c5373",
       "vdtHash": "22dfffcadc3a976d72fd443f1b3b7d368879d0b9",
       "timings": {
-        "importMs": 3929,
-        "fontsMs": 1341,
-        "buildMs": 441,
-        "totalMs": 7187,
+        "importMs": 520,
+        "fontsMs": 302,
+        "buildMs": 325,
+        "totalMs": 1812,
         "builds": 1
       },
       "specimen": {
@@ -690,7 +690,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 181
+        "ownLines": 183
       },
       "pages": [
         {
@@ -740,7 +740,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 883701,
+        "bytes": 883706,
         "pages": 2
       },
       "sandbox": {
@@ -989,13 +989,13 @@
       }
     },
     "zh": {
-      "hash8": "efb09123",
+      "hash8": "2cfa2fa1",
       "vdtHash": "aa42116175019bf67d19d2dfd06d4d33bf340ea9",
       "timings": {
-        "importMs": 2230,
-        "fontsMs": 10226,
-        "buildMs": 448,
-        "totalMs": 14498,
+        "importMs": 482,
+        "fontsMs": 862,
+        "buildMs": 300,
+        "totalMs": 2408,
         "builds": 1
       },
       "specimen": {
@@ -1016,7 +1016,7 @@
           "Noto Serif SC"
         ],
         "pages": 2,
-        "ownLines": 181
+        "ownLines": 183
       },
       "pages": [
         {
@@ -1066,7 +1066,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1013600,
+        "bytes": 1013595,
         "pages": 2
       },
       "sandbox": {
@@ -1316,13 +1316,13 @@
       }
     },
     "ar": {
-      "hash8": "1673293c",
+      "hash8": "6c5a2817",
       "vdtHash": "6c016a25c753301988483d60448950e8670557a4",
       "timings": {
-        "importMs": 4291,
-        "fontsMs": 5053,
-        "buildMs": 443,
-        "totalMs": 11671,
+        "importMs": 484,
+        "fontsMs": 385,
+        "buildMs": 322,
+        "totalMs": 1887,
         "builds": 1
       },
       "specimen": {
@@ -1343,7 +1343,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 2,
-        "ownLines": 181
+        "ownLines": 183
       },
       "pages": [
         {
@@ -1394,7 +1394,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 895507,
+        "bytes": 895530,
         "pages": 2
       },
       "sandbox": {
@@ -1642,13 +1642,13 @@
       }
     },
     "ja": {
-      "hash8": "cd3735e6",
+      "hash8": "215cb3ad",
       "vdtHash": "e2c852be5d879979d1bca8c565db57588298896a",
       "timings": {
-        "importMs": 4322,
-        "fontsMs": 6747,
-        "buildMs": 507,
-        "totalMs": 13443,
+        "importMs": 569,
+        "fontsMs": 799,
+        "buildMs": 319,
+        "totalMs": 2305,
         "builds": 1
       },
       "specimen": {
@@ -1669,7 +1669,7 @@
           "Noto Serif JP"
         ],
         "pages": 2,
-        "ownLines": 181
+        "ownLines": 183
       },
       "pages": [
         {
@@ -1720,7 +1720,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1004863,
+        "bytes": 1004864,
         "pages": 2
       },
       "sandbox": {
@@ -1971,13 +1971,13 @@
       }
     },
     "pt": {
-      "hash8": "ebd9cc45",
+      "hash8": "5cfaa481",
       "vdtHash": "d9e0f3f92fbe5bf035ffe45dba0eec3d1102a6cf",
       "timings": {
-        "importMs": 2036,
-        "fontsMs": 6004,
-        "buildMs": 413,
-        "totalMs": 9803,
+        "importMs": 217,
+        "fontsMs": 183,
+        "buildMs": 299,
+        "totalMs": 1381,
         "builds": 1
       },
       "specimen": {
@@ -1998,7 +1998,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 181
+        "ownLines": 183
       },
       "pages": [
         {
@@ -2048,7 +2048,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 882810,
+        "bytes": 882813,
         "pages": 2
       },
       "sandbox": {
@@ -2308,13 +2308,13 @@
       }
     },
     "fr": {
-      "hash8": "85477044",
+      "hash8": "43d7f492",
       "vdtHash": "be42959c67b0b16d470858da695522e8056c8a4f",
       "timings": {
-        "importMs": 3702,
-        "fontsMs": 2264,
-        "buildMs": 474,
-        "totalMs": 8193,
+        "importMs": 294,
+        "fontsMs": 436,
+        "buildMs": 416,
+        "totalMs": 1767,
         "builds": 1
       },
       "specimen": {
@@ -2335,7 +2335,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 181
+        "ownLines": 183
       },
       "pages": [
         {
@@ -2385,7 +2385,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 881674,
+        "bytes": 881678,
         "pages": 2
       },
       "sandbox": {
@@ -2645,13 +2645,13 @@
       }
     },
     "de": {
-      "hash8": "6bde2355",
+      "hash8": "955738f0",
       "vdtHash": "63868a60c0170fe91ffbadc05d05fe8da9b7a247",
       "timings": {
-        "importMs": 4017,
-        "fontsMs": 2303,
-        "buildMs": 495,
-        "totalMs": 8472,
+        "importMs": 288,
+        "fontsMs": 271,
+        "buildMs": 391,
+        "totalMs": 1605,
         "builds": 1
       },
       "specimen": {
@@ -2672,7 +2672,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 181
+        "ownLines": 183
       },
       "pages": [
         {
@@ -2722,7 +2722,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 883252,
+        "bytes": 883262,
         "pages": 2
       },
       "sandbox": {
@@ -2977,6 +2977,343 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 2 −5‰ “Ines Barlow zeichnet seit zehn Jahren an jedem W…”, p. 2 −5‰ “„Die Regel ist, dass die Pointe im vierten Bild …”"
+          }
+        ]
+      }
+    },
+    "it": {
+      "hash8": "a0a90590",
+      "vdtHash": "e5db6c17de48ff64f84233903cacc7c01a80d0b2",
+      "timings": {
+        "importMs": 219,
+        "fontsMs": 154,
+        "buildMs": 386,
+        "totalMs": 1321,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          230,
+          310
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": false,
+        "body": {
+          "family": "Newsreader",
+          "sizePt": 9,
+          "leadingPt": 12.200000000000001
+        },
+        "families": [
+          "Archivo Narrow",
+          "Newsreader"
+        ],
+        "pages": 2,
+        "ownLines": 183
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "body",
+          "w": 1000,
+          "h": 1348,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 115050,
+          "alt": "Pagina 1."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1348,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 176684,
+          "alt": "Pagina d’apertura 2: Dieci inverni sulla banchisa."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "newspaper-daily-strip.pdf",
+        "bytes": 883637,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "newspaper-daily-strip.postext",
+        "bytes": 812804,
+        "folio": "bebc74ee",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "f1b7b4dcb01f6142",
+            "lines": "6d54110b07eae759"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].body.paragraphSpacing",
+          "calloutStyles[].body.textAlign",
+          "calloutStyles[].id",
+          "calloutStyles[].keepTogether",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].bold",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontFamily",
+          "comics.balloonStyles[].haloColor",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].stroke",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.inset",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "header.elements[].align",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].lineHeight",
+          "header.elements[].placement",
+          "header.elements[].thickness",
+          "headingStyles",
+          "headingStyles[].id",
+          "headingStyles[].layout",
+          "headingStyles[].layout.columnCount",
+          "headingStyles[].layout.columnRule",
+          "headingStyles[].layout.gutterWidth",
+          "headingStyles[].layout.layoutType",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].span",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].fontWeight",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginBottom",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].spaceBetween",
+          "paragraphStyles[].textAlign"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 203,
+        "designElements": 4,
+        "directives": [
+          ":::strip",
+          ":::paragraphs",
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 7,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Archivo Narrow",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Archivo Narrow",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Newsreader",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Newsreader",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Newsreader",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "balloon-styles",
+          "callout-splitting",
+          "callout-styles",
+          "comic-lettering",
+          "comic-panel-art",
+          "comic-panel-styles",
+          "comic-strips",
+          "heading-attributes",
+          "heading-styles",
+          "multiple-columns",
+          "opener-band",
+          "page-background",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "section-geometry",
+          "sound-effects"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 3,
+        "looseLines": {
+          "count": 1,
+          "share": 0.0141,
+          "worst": 2.22
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “L’abitudine è nata nel 2019, con l’edizione fran…”"
           }
         ]
       }

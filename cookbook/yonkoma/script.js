@@ -39,6 +39,7 @@ const EDITIONS = {
   pt: { locale: 'pt-BR', faces: ['Comic Neue', 'Bangers'] },
   fr: { locale: 'fr', faces: ['Comic Neue', 'Bangers'] },
   de: { locale: 'de', faces: ['Comic Neue', 'Bangers'] },
+  it: { locale: 'it', faces: ['Comic Neue', 'Bangers'] },
 };
 
 // #region answer: two columns of four, read from the right
@@ -78,7 +79,7 @@ const config = () => ({
   // Each edition's language, written out (gotcha: ja-locale-tag); the original is built
   // with 'ja' in every edition (edition('ja') below).
   locale: t({ ja: 'ja', en: 'en-us', es: 'es', ca: 'ca', zh: 'zh-Hans', ar: 'ar', pt: 'pt-BR',
-    fr: 'fr', de: 'de' }),
+    fr: 'fr', de: 'de', it: 'it' }),
   colorPalette,
   page: {
     sizePreset: 'custom', width: mm(148), height: mm(210), dpi: 150, // A5, a yonkoma anthology
@@ -125,6 +126,7 @@ const ART = { // fractions of the picture: the same in every language
       ja: '猫カフェのガラス戸を開けるむぎ。中で3匹の猫が待っている。',
       fr: 'Mugi ouvre la porte vitrée du café ; à l’intérieur, les trois chats attendent.',
       de: 'Mugi schließt die Glastür des Cafés auf; drinnen warten die drei Katzen.',
+      it: 'Mugi apre la porta a vetri del caffè; dentro aspettano i tre gatti.',
       pt: 'Mugi abre a porta de vidro do café; lá dentro, os três gatos esperam.' }),
   safeArea: { x: 0.09, y: 0.19, width: 0.81, height: 0.52 },
   anchors: [{ id: 'mugi', x: 0.205, y: 0.385, head: { x: 0.17, y: 0.25 },
@@ -140,6 +142,7 @@ const ART = { // fractions of the picture: the same in every language
       ja: '3匹の猫の前に、ご飯を盛った器を並べるむぎ。',
       fr: 'Mugi pose des bols pleins de nourriture devant les trois chats.',
       de: 'Mugi stellt den drei Katzen volle Futternäpfe hin.',
+      it: 'Mugi mette le ciotole piene di cibo davanti ai tre gatti.',
       pt: 'Mugi põe tigelas cheias de comida na frente dos três gatos.' }),
   safeArea: { x: 0.16, y: 0.26, width: 0.74, height: 0.65 },
   anchors: [{ id: 'mugi', x: 0.27, y: 0.465, head: { x: 0.25, y: 0.3 },
@@ -155,6 +158,7 @@ const ART = { // fractions of the picture: the same in every language
       ja: '3匹そろって同じ器に頭を突っこみ、ほかの器は手つかず。',
       fr: 'Les trois chats plongent la tête dans le même bol ; les autres restent pleins.',
       de: 'Alle drei Katzen stecken den Kopf in denselben Napf; die anderen bleiben voll.',
+      it: 'I tre gatti infilano la testa nella stessa ciotola; le altre restano piene.',
       pt: 'Os três gatos enfiam a cabeça na mesma tigela; as outras continuam cheias.' }),
   safeArea: { x: 0.05, y: 0.27, width: 0.88, height: 0.66 },
   anchors: [nose('shiro', 0.33, 0.66), nose('kuro', 0.5, 0.6), nose('mike', 0.66, 0.68),
@@ -169,6 +173,7 @@ const ART = { // fractions of the picture: the same in every language
       fr: 'Mugi croque sa tartine tandis que les trois chats la fixent, les yeux brillants.',
       de: 'Mugi beißt in ihren Toast, während die drei Katzen ihn mit leuchtenden Augen '
         + 'anstarren.',
+      it: 'Mugi addenta il suo toast e i tre gatti lo fissano con gli occhi che brillano.',
       pt: 'Mugi morde a torrada enquanto os três gatos olham para ela com olhos brilhando.' }),
   safeArea: { x: 0.09, y: 0.22, width: 0.85, height: 0.56 },
   avoid: [{ x: 0.6, y: 0.52, width: 0.15, height: 0.1 }],
@@ -187,6 +192,7 @@ const ART = { // fractions of the picture: the same in every language
         + 'comptoir.',
       de: 'Ein müder Büroangestellter kommt mit offenen Armen herein; Mugi begrüßt ihn '
         + 'von der Theke aus.',
+      it: 'Un impiegato stanco entra a braccia aperte; Mugi lo accoglie dal bancone.',
       pt: 'Um funcionário de escritório cansado entra de braços abertos; Mugi o recebe do '
         + 'balcão.' }),
   safeArea: { x: 0.13, y: 0.14, width: 0.74, height: 0.51 },
@@ -203,6 +209,7 @@ const ART = { // fractions of the picture: the same in every language
       ja: '丸いクッションの上で、ひとかたまりになって眠る3匹。',
       fr: 'Les trois chats dorment en tas sur un coussin rond.',
       de: 'Die drei Katzen schlafen auf einem Haufen auf einem runden Kissen.',
+      it: 'I tre gatti dormono ammucchiati su un cuscino rotondo.',
       pt: 'Os três gatos dormem amontoados numa almofada redonda.' }),
   safeArea: { x: 0.27, y: 0.21, width: 0.52, height: 0.55 },
   anchors: [nose('shiro', 0.4, 0.42), nose('kuro', 0.41, 0.7), nose('mike', 0.72, 0.58),
@@ -216,6 +223,7 @@ const ART = { // fractions of the picture: the same in every language
       ja: 'カフェのテーブルでため息をつき、ノートパソコンを開く会社員。',
       fr: 'L’employé soupire à une table du café et ouvre son ordinateur portable.',
       de: 'Der Büroangestellte seufzt an einem Cafétisch und klappt seinen Laptop auf.',
+      it: 'L’impiegato sospira a un tavolino del caffè e apre il portatile.',
       pt: 'O funcionário suspira numa mesa do café e abre o notebook.' }),
   safeArea: { x: 0.22, y: 0.25, width: 0.56, height: 0.55 },
   anchors: [{ id: 'kyaku', x: 0.45, y: 0.62, head: { x: 0.39, y: 0.4 },
@@ -229,6 +237,7 @@ const ART = { // fractions of the picture: the same in every language
       ja: 'キーボードの上に座る3匹と、うれし泣きする会社員。',
       fr: 'Les trois chats s’assoient sur le clavier ; l’employé pleure de joie.',
       de: 'Die drei Katzen setzen sich auf die Tastatur; der Angestellte weint vor Freude.',
+      it: 'I tre gatti si siedono sulla tastiera; l’impiegato piange di gioia.',
       pt: 'Os três gatos sentam no teclado; o funcionário chora de alegria.' }),
   safeArea: { x: 0.07, y: 0.1, width: 0.81, height: 0.78 },
   anchors: [{ id: 'kyaku', x: 0.29, y: 0.42, head: { x: 0.25, y: 0.2 },
@@ -283,7 +292,7 @@ const TITLE = t({
   ca: 'Dues tires yonkoma en una pàgina', zh: '一页并排两篇四格漫画', ar: 'شريطا يونكوما في صفحة واحدة',
   ja: '1ページに四コマを2本並べる', pt: 'Duas tiras yonkoma numa página',
   fr: 'Deux strips yonkoma sur une page',
-  de: 'Zwei Yonkoma-Strips auf einer Seite' });
+  de: 'Zwei Yonkoma-Strips auf einer Seite', it: 'Due strisce yonkoma su una pagina' });
 showBook(docs, { title: TITLE });
 offerPdf(() => renderToPdf(docs, { fontProvider: comicPdfProvider, resourceBytes: imageBytes }),
   `${RECIPE}.pdf`);

@@ -26,7 +26,7 @@ const manifest = ((await import(/* @vite-ignore */ new URL(`${BUNDLE}preset.json
   };
 }).default;
 
-const EDITIONS = ['en', 'es', 'ca', 'fr', 'pt-BR', 'de', 'ja', 'zh-Hans', 'ar'];
+const EDITIONS = ['en', 'es', 'ca', 'fr', 'it', 'pt-BR', 'de', 'ja', 'zh-Hans', 'ar'];
 
 const configOf = (locale: string): PostextConfig => ({ ...manifest.config, ...(manifest.localized[locale]?.config ?? {}) });
 

@@ -3,13 +3,14 @@
  "configVersion": 8,
  "id": "pepper-carrot",
  "name": "Pepper&Carrot · Pepper's Birthday Party",
- "description": "El episodio 8 del cómic de David Revoy en nueve idiomas: las viñetas originales sin texto, con los bocadillos y la rotulación que el motor compone a partir de las traducciones oficiales; la edición japonesa se rotula en vertical y, como la árabe, se lee de derecha a izquierda y se abre por la derecha · Episode 8 of David Revoy's webcomic in nine languages: the original text-free panels, with balloons and lettering the engine sets from the official translations; the Japanese edition is lettered vertically and, like the Arabic one, reads right to left and opens from the right",
+ "description": "El episodio 8 del cómic de David Revoy en diez idiomas: las viñetas originales sin texto, con los bocadillos y la rotulación que el motor compone a partir de las traducciones oficiales; la edición japonesa se rotula en vertical y, como la árabe, se lee de derecha a izquierda y se abre por la derecha · Episode 8 of David Revoy's webcomic in ten languages: the original text-free panels, with balloons and lettering the engine sets from the official translations; the Japanese edition is lettered vertically and, like the Arabic one, reads right to left and opens from the right",
  "locale": "en",
  "locales": [
   "en",
   "es",
   "ca",
   "fr",
+  "it",
   "pt-BR",
   "de",
   "ja",
@@ -85,6 +86,20 @@
    {
     "title": "Crédits",
     "file": "chapters/fr/02-credits.md"
+   }
+  ],
+  "it": [
+   {
+    "title": "Frontespizio",
+    "file": "chapters/it/00-title.md"
+   },
+   {
+    "title": "Il compleanno di Pepper",
+    "file": "chapters/it/01-episode-8.md"
+   },
+   {
+    "title": "Crediti",
+    "file": "chapters/it/02-credits.md"
    }
   ],
   "pt-BR": [
@@ -971,6 +986,35 @@
     {
      "id": "e08-cover",
      "altText": "Pepper, les bras levés de joie, et Carrot devant une table basse dressée pour une fête : une théière, des petits gâteaux et un gâteau d’anniversaire avec ses bougies, sous des guirlandes de fanions."
+    }
+   ]
+  },
+  "it": {
+   "config": {
+    "locale": "it",
+    "resourceTypes": [
+     {
+      "id": "art",
+      "name": "Illustrazione",
+      "namePlural": "Illustrazioni",
+      "shortLabel": "Illustrazione",
+      "captionPrefix": "",
+      "numberingTemplate": "",
+      "resetOn": "never",
+      "counterFormat": "decimal",
+      "defaultPlacement": {
+       "position": "auto",
+       "span": "page",
+       "width": 1,
+       "align": "center"
+      }
+     }
+    ]
+   },
+   "resources": [
+    {
+     "id": "e08-cover",
+     "altText": "Pepper, con le braccia alzate per la gioia, e Carrot davanti a un tavolino apparecchiato per una festa: una teiera, dei cupcake e una torta di compleanno con le candeline, sotto festoni di bandierine."
     }
    ]
   },

@@ -1,0 +1,60 @@
+---
+title: "Una tavola da album in linea chiara, con le didascalie"
+summary: "Una tavola franco-belga su quattro strisce: vignette squadrate, didascalie gialle negli angoli, balloon in maiuscolo e minuscolo, tutto dalla config comics."
+plain: "Una pagina di un album a fumetti europeo, con le parole del narratore in riquadri gialli e i dialoghi nei balloon, scritta in testo semplice e disegnata da Postext in dieci lingue."
+description: "Una tavola di tebeo spagnolo in Postext: quattro strisce di vignette, didascalie gialle, un’esplosione, una nuvoletta e un’onomatopea, in dieci lingue."
+question: "Come compongo una tavola da album europeo con le didascalie del narratore?"
+aliases: ["tebeo", "bande dessinée", "BD", "ligne claire", "linea chiara", "tavola da album", "didascalia", "cartouche", "cartela", "fumetto franco-belga", "balloonStyles", "panelStyles", "clear line"]
+---
+
+## Che cosa comporrai
+
+La prima storia di un album a fumetti spagnolo, *Le arance di Carmen*: una pagina del titolo sul verso e, di fronte, una tavola di sette vignette su quattro strisce, come si disegnano gli album franco-belgi. Lola, nove anni, e il nonno Paco vanno al mercato la domenica; lei tira fuori l’arancia in fondo alla piramide di Carmen. I disegni sono in linea chiara a tinte piatte; le cornici sono sottili e squadrate, la narrazione sta in riquadri gialli incastrati negli angoli delle vignette, e i dialoghi sono scritti in maiuscolo e minuscolo, come li scrivono i letteristi europei. Il testo vive nel Markdown, un file per lingua: l’originale spagnolo, poi inglese, catalano, cinese, arabo, giapponese, portoghese, francese, tedesco e italiano, ciascuno letterato dal motore sulla stessa suddivisione e sugli stessi disegni.
+
+## Preparazione
+
+### 1 · L’aspetto dell’album è una configurazione comics
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `comics.panel` imposta ogni cornice (un filo d’inchiostro di 0,75 pt, angoli vivi) e `panelStyles` aggiunge uno stile con nome senza bordo, che l’ultima vignetta prende con `style=open`: un epilogo su una panchina del parco, fuori dal mercato. Gli stili di balloon predefiniti si ridisegnano per id: `caption` diventa un riquadro giallo pallido con un contorno sottile, `shout` un’esplosione a sedici punte, `sfx` l’arancione delle arance con un contorno d’inchiostro. Il lettering mantiene `textTransform: 'none'`; una tavola americana lo imposterebbe su `'uppercase'`.
+
+La tavola in sé è una sola direttiva nel contenuto, un albero di suddivisione e sette vignette, ciascuna con la sua sceneggiatura:
+
+```md
+:::page{split="25 [60 | *] / 25 [55 | *] / 24 / * [50 | *]"}
+::panel{art=t1}
+caption: Los domingos, el abuelo Paco y yo íbamos al mercado.
+caption{at=bottom-end}: Siempre a la misma hora. Siempre por la misma puerta.
+::panel{art=t4}
+lola{thought}: La de abajo es la más gorda.
+paco{shout}: ¡Lola, esa no!
+```
+
+`caption` è un riquadro di narrazione (il primo va nell’angolo top-start), `{at=bottom-end}` manda il secondo nell’angolo opposto, e un id di personaggio come `lola` o `paco` disegna un balloon con la coda verso la bocca che il disegno dichiara.
+
+### 2 · I disegni portano con sé i personaggi
+
+<Excerpt region="art" />
+
+Ogni disegno dichiara ciò che ogni ritaglio deve conservare (`safeArea`), dove si trovano bocca, testa e viso di ogni personaggio (`anchors`) e ciò che nessun balloon può coprire (`avoid`), tutto in frazioni del disegno. La vignetta dello scontro occupa la terza striscia, 200 mm per 63 mm, quindi la sua zona sicura è la fascia dei visi e delle arance in volo; le vignette quadrate perdono il pavimento. Niente qui dipende dalla lingua, quindi le dieci edizioni lo condividono.
+
+### 3 · Una pagina del titolo di fronte alla storia
+
+<Excerpt region="title-page" />
+
+La pagina del titolo è uno stile di titolo: la riga della collana nel carattere del lettering, il titolo nel carattere delle onomatopee (Bangers, oppure Dela Gothic One, ZCOOL KuaiLe e Lalezar nelle altre scritture), e una vignetta della bancarella di Carmen nella sua forma 3 : 2. La composizione passa `continuation: { pageIndexOffset: 1 }`, così la pagina del titolo è un verso e la storia si apre sul recto di fronte, pagina 3.
+
+## Varianti
+
+### Letterare in maiuscolo, come un fumetto americano
+
+Imposta il lettering in maiuscolo; narrazione e dialoghi seguono, e le scritture senza maiuscole (cinese, giapponese, arabo) restano come sono.
+
+```diff
+-    color: col('ink'), textTransform: 'none' }, // European letterers write in mixed case
++    color: col('ink'), textTransform: 'uppercase' },
+```
+
+## Errori frequenti
+
+- Il corpo del lettering è uno solo per tutto il libro: una traduzione più lunga ingrandisce i suoi balloon e li sposta, non rimpicciolisce mai il testo. Controlla le pagine catalana e araba dopo una modifica alla suddivisione. Le colonne giapponesi sono alte per queste vignette basse: tre righe di `content.ja.md` portano un fermo `at=` che le tiene lontane da Paco e dalle arance di cui parla l’ultima vignetta.
+- Il testo alternativo di ogni vignetta sta nel manifesto dei disegni in dieci lingue, scelto con `t({ … })`; una lingua che manca dall’elenco legge la prima. `::panel{alt="…"}` in un file di contenuto lo sostituisce per una vignetta.

@@ -1,0 +1,61 @@
+---
+title: "Un fumetto in EPUB letto vignetta per vignetta"
+summary: "Un breve fumetto esportato in PDF, in EPUB a layout fisso con navigazione per regioni (lettura vignetta per vignetta), in Kindle Panel View e in EPUB fluido."
+plain: "Un fumetto di due pagine salvato come PDF per la stampa e come e-book: uno che mantiene le pagine e permette di ingrandire una vignetta dopo l’altra, uno per Kindle e uno in cui i dialoghi sono testo semplice."
+description: "Esporta un fumetto di Postext in PDF ed EPUB 3: layout fisso con navigazione per regioni (lettura guidata), Kindle Panel View e i dialoghi come testo."
+question: "Come esporto un fumetto in un EPUB che il lettore può seguire vignetta per vignetta?"
+aliases: ["lettura guidata", "vignetta per vignetta", "navigazione per regioni", "regions.xhtml", "Kindle Panel View", "fumetto EPUB", "EPUB di fumetti", "fumetto a layout fisso", "guided view", "コマ送り"]
+pageNotes: { "1": "Il frontespizio: «Il faro di Porthcove» in maiuscole rosse da titolo, «Capitolo primo: il cavo» e il marchio editoriale.", "2": "Pagina 2: Maya arriva al faro con una lunga didascalia («L’ultima settimana di agosto. Il traghetto era in ritardo…») e chiede «Biscuit! Dov’è il nonno?»; il guardiano alla sua radio («Su, vecchia carcassa. Parlami.») e Maya che indica il pavimento («Nonno? Il cavo della radio passa sotto la scrivania, vero?»).", "3": "Pagina 3: il gatto addormentato sul cavo della radio con «RRRRON» e il «Trovato.» sussurrato da Maya; poi il faro acceso di notte, con la didascalia «Alle nove la radio parlava di nuovo: burrasca da ovest, le piccole barche restano in porto.» e due nuvolette, «Lanterna accesa. Stanotte nessuno va in mare.» e «Tranne il gatto. Tiene il broncio sulle scale.»." }
+---
+
+## Che cosa comporrai
+
+Il primo capitolo del *Faro di Porthcove*: un frontespizio e due pagine di fumetto, impaginati una volta ed esportati in quattro modi. Il PDF è per la stampa. L’EPUB a layout fisso mantiene le pagine stampate e porta una navigazione per regioni, così un sistema di lettura può mostrare il libro una vignetta alla volta, passando con lo zoom dalla vignetta dell’arrivo alla radio, poi a Maya. Un secondo EPUB fisso aggiunge Kindle Panel View; quello fluido compone ogni vignetta come la sua immagine ritagliata seguita dalle sue battute. La pagina elenca ogni file come lo aprirà un lettore, con un link per scaricarlo, in dieci lingue.
+
+## Preparazione
+
+### 1 · Esporta lo stesso documento in EPUB
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `renderToEpub` riceve i documenti che stampa `renderToPdf`, quindi le pagine dell’EPUB sono quelle del PDF ([output dei fumetti](/it/docs/comics#output-dei-fumetti)). Con `layout: 'fixed'` e pagine di fumetto nel libro scrive anche `regions.xhtml`: una regione `panel` per ogni vignetta nell’ordine di lettura, ciascuna un rettangolo in percentuale della sua pagina, con le nuvolette, le didascalie e gli effetti sonori come regioni al suo interno. La progressione delle pagine segue la direzione di lettura del fumetto, quindi le edizioni giapponese e araba si sfogliano da destra a sinistra. `kindlePanelView: true` aggiunge un’area da toccare per ogni vignetta e una sua copia ingrandita, con i metadati che Kindle si aspetta. L’edizione fluida non ha pagine da mantenere: ogni vignetta è la sua immagine, ritagliata come sulla pagina, poi le sue battute, «**Maya**: Biscuit! Dov’è il nonno?», con i nomi presi da `comics.cast`.
+
+<PageShot page={2} crop="0,0,1,0.55" caption="Vignetta 1 di pagina 2: nella lettura guidata è la prima regione, con la didascalia e la nuvoletta di Maya annidate al suo interno." />
+
+### 2 · Incorpora i caratteri che le pagine usano
+
+<Excerpt region="embed" />
+
+Un EPUB a layout fisso disegna il testo con i caratteri che contiene, e un carattere lasciato fuori viene sostituito da quello del lettore. Il lettering chiede regolare, grassetto e corsivo; i caratteri da fumetto ne offrono meno, quindi ogni richiesta riceve il file che `loadComicFonts` ha scelto per lei, e un file che serve entrambi i pesi entra una volta sola con l’intervallo `'400 700'`. I caratteri giapponesi e cinesi prendono solo le porzioni che contengono i caratteri dell’edizione, e così il libro giapponese resta a 1,4 MB.
+
+### 3 · Rileggi ogni file
+
+<Excerpt region="shelf" />
+
+`readEpub` apre i byte come farebbe un sistema di lettura: layout, progressione delle pagine, spine. L’elenco sotto ogni scheda è la lettura guidata stessa, letta da `regions.xhtml`: cinque vignette e le loro regioni di testo, nell’ordine in cui un lettore le percorre. I tre file superano EPUBCheck 5.4 senza errori né avvisi in inglese, giapponese e arabo.
+
+### 4 · Un’impaginazione, dieci edizioni
+
+<Excerpt region="editions" />
+
+Ogni `content.<lang>.md` contiene le parole di un’edizione sotto gli stessi id dei personaggi. Le regioni delle vignette sono le stesse in ogni lingua; quelle delle nuvolette si spostano con le nuvolette, che vengono riletterate attorno al testo di ciascuna lingua.
+
+## Varianti
+
+### Lascia fuori l’edizione Kindle
+
+La navigazione per regioni si scrive in ogni EPUB fisso; Kindle Panel View si limita ad aggiungersi.
+
+```diff
+-  kindle: await renderToEpub(doc, { ...book, layout: 'fixed', kindlePanelView: true }),
+```
+
+### Dai una copertina al libro fluido
+
+```diff
+-  reflowable: await renderToEpub(doc, { ...book, layout: 'reflowable' }),
++  reflowable: await renderToEpub(doc, { ...book, layout: 'reflowable',
++    cover: { bytes: imageBytes('lh-beam.jpg'), mediaType: 'image/jpeg' } }),
+```
+
+## Errori frequenti
+
+- Un carattere incorporato una volta per ogni peso che serve verrebbe copiato quattro volte; l’edizione cinese pesava 5,3 MB prima degli intervalli di peso.

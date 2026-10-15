@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "pepper-and-carrot-page",
-  "sourceHash": "891ac87100b17d2310ac145eabb7ce3d528afed6c015b89c6c90ad645fac22f8",
+  "sourceHash": "16221a0473c9bc772dd35e9d758fc4f3111b226d57a43306a2965c5465912f88",
   "engine": {
-    "postext": "1.33.5",
-    "postextPdf": "1.33.5",
+    "postext": "1.33.7",
+    "postextPdf": "1.33.7",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T11:50:03.447Z",
+  "capturedAt": "2026-10-15T13:41:47.395Z",
   "variants": {
     "en": {
-      "hash8": "c5506070",
+      "hash8": "eb802c99",
       "vdtHash": "5b1c728f7fbbd533a4750aa355861202d1b3b50a",
       "timings": {
-        "importMs": 3803,
-        "fontsMs": 1830,
-        "buildMs": 223,
-        "totalMs": 7081,
+        "importMs": 560,
+        "fontsMs": 301,
+        "buildMs": 168,
+        "totalMs": 1725,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Source Serif 4"
         ],
         "pages": 3,
-        "ownLines": 172
+        "ownLines": 174
       },
       "pages": [
         {
@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676151,
+        "bytes": 676150,
         "chapters": [
           {
             "pages": 3,
@@ -290,13 +290,13 @@
       }
     },
     "es": {
-      "hash8": "895f2d53",
+      "hash8": "4f585c6d",
       "vdtHash": "a90c36d43fad75d592c989d7768284ce2a715a43",
       "timings": {
-        "importMs": 4041,
-        "fontsMs": 2049,
-        "buildMs": 250,
-        "totalMs": 7552,
+        "importMs": 562,
+        "fontsMs": 335,
+        "buildMs": 190,
+        "totalMs": 1782,
         "builds": 1
       },
       "specimen": {
@@ -317,7 +317,7 @@
           "Source Serif 4"
         ],
         "pages": 3,
-        "ownLines": 172
+        "ownLines": 174
       },
       "pages": [
         {
@@ -383,7 +383,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676175,
+        "bytes": 676174,
         "chapters": [
           {
             "pages": 3,
@@ -569,13 +569,13 @@
       }
     },
     "ca": {
-      "hash8": "5672bc88",
+      "hash8": "c9273483",
       "vdtHash": "c1acac32fe32e65510d5ce5e71eafdab2db766f6",
       "timings": {
-        "importMs": 4039,
-        "fontsMs": 2025,
-        "buildMs": 240,
-        "totalMs": 7514,
+        "importMs": 571,
+        "fontsMs": 305,
+        "buildMs": 185,
+        "totalMs": 1752,
         "builds": 1
       },
       "specimen": {
@@ -596,7 +596,7 @@
           "Source Serif 4"
         ],
         "pages": 3,
-        "ownLines": 172
+        "ownLines": 174
       },
       "pages": [
         {
@@ -657,12 +657,12 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 688762,
+        "bytes": 688760,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 675926,
+        "bytes": 675927,
         "chapters": [
           {
             "pages": 3,
@@ -848,13 +848,13 @@
       }
     },
     "zh": {
-      "hash8": "adf43a4b",
+      "hash8": "c1abb2ab",
       "vdtHash": "6d4640c02a77be2578270ee81f7c11cb359284d5",
       "timings": {
-        "importMs": 3049,
-        "fontsMs": 5949,
-        "buildMs": 234,
-        "totalMs": 10490,
+        "importMs": 458,
+        "fontsMs": 846,
+        "buildMs": 151,
+        "totalMs": 2155,
         "builds": 1
       },
       "specimen": {
@@ -875,7 +875,7 @@
           "ZCOOL KuaiLe"
         ],
         "pages": 3,
-        "ownLines": 172
+        "ownLines": 174
       },
       "pages": [
         {
@@ -936,7 +936,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 739296,
+        "bytes": 739300,
         "pages": 3
       },
       "sandbox": {
@@ -1128,13 +1128,13 @@
       }
     },
     "ar": {
-      "hash8": "4930e35d",
+      "hash8": "3e2f1d43",
       "vdtHash": "1b785ccdf3009d9a11a68bd1448b1a5d210bc58c",
       "timings": {
-        "importMs": 2391,
-        "fontsMs": 3950,
-        "buildMs": 229,
-        "totalMs": 9832,
+        "importMs": 459,
+        "fontsMs": 483,
+        "buildMs": 165,
+        "totalMs": 1736,
         "builds": 1
       },
       "specimen": {
@@ -1155,7 +1155,7 @@
           "Playpen Sans Arabic"
         ],
         "pages": 3,
-        "ownLines": 172
+        "ownLines": 174
       },
       "pages": [
         {
@@ -1166,7 +1166,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 29040,
+          "bytes": 29034,
           "alt": "صفحة الافتتاح ١: حلقة ٨ : حفلةُ عيدِ ميلادِ فُلفُل."
         },
         {
@@ -1222,7 +1222,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676845,
+        "bytes": 676846,
         "chapters": [
           {
             "pages": 3,
@@ -1411,13 +1411,13 @@
       }
     },
     "ja": {
-      "hash8": "9b3c7824",
+      "hash8": "4b3b7e5c",
       "vdtHash": "c6747e7d24ce903aafc04151730f7047754f962a",
       "timings": {
-        "importMs": 3354,
-        "fontsMs": 4086,
-        "buildMs": 261,
-        "totalMs": 9158,
+        "importMs": 555,
+        "fontsMs": 768,
+        "buildMs": 162,
+        "totalMs": 2113,
         "builds": 1
       },
       "specimen": {
@@ -1438,7 +1438,7 @@
           "Zen Antique"
         ],
         "pages": 3,
-        "ownLines": 172
+        "ownLines": 174
       },
       "pages": [
         {
@@ -1505,7 +1505,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 677112,
+        "bytes": 677111,
         "chapters": [
           {
             "pages": 3,
@@ -1693,13 +1693,13 @@
       }
     },
     "pt": {
-      "hash8": "f4910e40",
+      "hash8": "8328fb7c",
       "vdtHash": "760a4756a869fb1c7ad83e264894eebbb35ee21b",
       "timings": {
-        "importMs": 3554,
-        "fontsMs": 3162,
-        "buildMs": 225,
-        "totalMs": 8817,
+        "importMs": 238,
+        "fontsMs": 204,
+        "buildMs": 170,
+        "totalMs": 1319,
         "builds": 1
       },
       "specimen": {
@@ -1720,7 +1720,7 @@
           "Source Serif 4"
         ],
         "pages": 3,
-        "ownLines": 172
+        "ownLines": 174
       },
       "pages": [
         {
@@ -1972,13 +1972,13 @@
       }
     },
     "fr": {
-      "hash8": "b81ba410",
+      "hash8": "ac99d637",
       "vdtHash": "c4a08aa43daeb1f98e6ed88884dac59498881180",
       "timings": {
-        "importMs": 3631,
-        "fontsMs": 2941,
-        "buildMs": 212,
-        "totalMs": 8492,
+        "importMs": 287,
+        "fontsMs": 380,
+        "buildMs": 161,
+        "totalMs": 1463,
         "builds": 1
       },
       "specimen": {
@@ -1999,7 +1999,7 @@
           "Source Serif 4"
         ],
         "pages": 3,
-        "ownLines": 172
+        "ownLines": 174
       },
       "pages": [
         {
@@ -2060,12 +2060,12 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 689167,
+        "bytes": 689166,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 675981,
+        "bytes": 675980,
         "chapters": [
           {
             "pages": 3,
@@ -2251,13 +2251,13 @@
       }
     },
     "de": {
-      "hash8": "256d2760",
+      "hash8": "584f7ba6",
       "vdtHash": "dca67c9e01b572700f1f9e6a03379b6a98a361c3",
       "timings": {
-        "importMs": 2165,
-        "fontsMs": 1451,
-        "buildMs": 211,
-        "totalMs": 5055,
+        "importMs": 369,
+        "fontsMs": 269,
+        "buildMs": 175,
+        "totalMs": 1432,
         "builds": 1
       },
       "specimen": {
@@ -2278,7 +2278,7 @@
           "Source Serif 4"
         ],
         "pages": 3,
-        "ownLines": 172
+        "ownLines": 174
       },
       "pages": [
         {
@@ -2339,17 +2339,296 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 690403,
+        "bytes": 690402,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676467,
+        "bytes": 676468,
         "chapters": [
           {
             "pages": 3,
             "hash": "3507f9bc3cff6030",
             "lines": "e9aca79951a696ad"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "loadVerticalAlternates",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].align",
+          "comics.balloonStyles[].aspect",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontFamily",
+          "comics.balloonStyles[].fontScale",
+          "comics.balloonStyles[].halo",
+          "comics.balloonStyles[].haloColor",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].letterSpacing",
+          "comics.balloonStyles[].shape",
+          "comics.balloonStyles[].stroke",
+          "comics.balloonStyles[].strokeWidth",
+          "comics.balloonStyles[].tail",
+          "comics.cast",
+          "comics.cast[].color",
+          "comics.cast[].fill",
+          "comics.cast[].fontFamily",
+          "comics.cast[].id",
+          "comics.cast[].name",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.inset",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderWidth",
+          "comics.runningHeads",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].pages",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].spaceBetween"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 125,
+        "designElements": 1,
+        "directives": [
+          ":::paragraphs",
+          ":::page"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 6,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Comic Neue",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Source Serif 4",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "balloon-styles",
+          "comic-lettering",
+          "comic-pages",
+          "comic-panel-art",
+          "comic-panel-split",
+          "comic-panel-styles",
+          "comic-speakers",
+          "page-background",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "sound-effects"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "it": {
+      "hash8": "6bc9bfef",
+      "vdtHash": "4d0e3d5bf0c16dfcfb7f623cdf51768e616e004d",
+      "timings": {
+        "importMs": 173,
+        "fontsMs": 218,
+        "buildMs": 157,
+        "totalMs": 1156,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": false,
+        "body": {
+          "family": "Source Serif 4",
+          "sizePt": 10,
+          "leadingPt": 15
+        },
+        "families": [
+          "Comic Neue",
+          "Source Serif 4"
+        ],
+        "pages": 3,
+        "ownLines": 174
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 36438,
+          "alt": "Pagina d’apertura 1: Episodio 8: Il compleanno di Pepper."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "comic",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 166518,
+          "alt": "Pagina 2."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "comic",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 105978,
+          "alt": "Pagina 3."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "pepper-and-carrot-page.pdf",
+        "bytes": 687816,
+        "pages": 3
+      },
+      "sandbox": {
+        "file": "pepper-and-carrot-page.postext",
+        "bytes": 676091,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "407cfc54a636d6aa",
+            "lines": "3b03499d2fc06d93"
           }
         ]
       },

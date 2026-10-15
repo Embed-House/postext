@@ -2,7 +2,7 @@
 title: "Les mêmes cases, trois découpages de planche"
 summary: "Cinq cases de BD sous trois arbres de découpage : l’attribut split de :::page coupe la page, la zone de sécurité de chaque image garde le sujet en vue."
 plain: "Une planche de BD dessinée une fois et mise en page de trois façons. Les cinq mêmes images et les mêmes dialogues remplissent trois grilles de cases, et chaque image est recadrée pour sa nouvelle case."
-description: "Épreuve de mise en page de BD avec Postext : cinq cases sous trois arbres de découpage, recadrées selon leur zone de sécurité, lettrées en neuf langues."
+description: "Épreuve de mise en page de BD avec Postext : cinq cases sous trois arbres de découpage, recadrées selon leur zone de sécurité, lettrées en dix langues."
 question: "Comment découper une planche de BD en cases et garder un visage visible quand la case change de forme ?"
 aliases: ["grille de cases", "mise en page de BD", "découpage de planche", "arbre de découpage", "bandes", "case incrustée", "zone de sécurité", "recadrage", "panel grid", "split tree", "splitter", "viñetas", "コマ割り", "分格"]
 pageNotes: { "1": "La page de garde de l’épreuve : le titre « Une page, trois plans » en capitales de titrage rouges, puis les trois plans, chacun avec son attribut split en rouge.", "2": "Plan A : une large bande où Maya monte vers le phare (« Papi ! Me voilà ! »), trois cases côte à côte (le gardien à sa radio, « Juste à temps. La radio est devenue sourde, » ; Maya qui montre le sol, « Papi… je crois que j’ai trouvé le problème. » ; le chat endormi avec RONRON en rouge) et une large scène nocturne du phare allumé.", "3": "Plan B : deux colonnes ; à gauche l’arrivée de Maya et le gardien à sa radio, en hauteur ; à droite Maya qui montre le sol, le chat et le phare la nuit avec « Radio en marche, feu allumé. » et « Et Biscuit s’est trouvé un nouveau lit. ».", "4": "Plan C : une bande du haut de trois cases étroites, les deux bulles du gardien côte à côte sous sa casquette et le chat en incrustation sur la case de Maya, puis une grande case en hauteur du phare la nuit avec deux bulles près de la galerie." }
@@ -10,7 +10,7 @@ pageNotes: { "1": "La page de garde de l’épreuve : le titre « Une page, tr
 
 ## Ce que vous allez composer
 
-Une épreuve de mise en page pour une planche de BD, *Le phare de Porthcove* : une page de garde et la même planche selon trois plans, entre lesquels l’auteur choisira. Les cinq images (Maya qui grimpe au phare, son grand-père devant une radio muette, Maya qui montre le sol du doigt, le chat endormi sur le câble, la lanterne allumée la nuit) et les six répliques ne changent jamais ; seul le `split` de chaque `:::page` change. Chaque image est recadrée pour sa case et chaque bulle replacée autour de son personnage. Le format est celui d’un comic book américain, 168 × 259 mm, et l’épreuve existe en neuf éditions, chacune lettrée dans sa langue.
+Une épreuve de mise en page pour une planche de BD, *Le phare de Porthcove* : une page de garde et la même planche selon trois plans, entre lesquels l’auteur choisira. Les cinq images (Maya qui grimpe au phare, son grand-père devant une radio muette, Maya qui montre le sol du doigt, le chat endormi sur le câble, la lanterne allumée la nuit) et les six répliques ne changent jamais ; seul le `split` de chaque `:::page` change. Chaque image est recadrée pour sa case et chaque bulle replacée autour de son personnage. Le format est celui d’un comic book américain, 168 × 259 mm, et l’épreuve existe en dix éditions, chacune lettrée dans sa langue.
 
 ## Préparation
 
@@ -30,7 +30,7 @@ Chaque image est dessinée une fois et recadrée pour remplir la cellule où ell
 
 Le découpage du plan C crée quatre cellules pour cinq cases. Le chat entre avec `inset="50 50 46 46"` : une case de 46 % de large et 46 % de haut, placée à 50 %, 50 % de la case qui la précède, celle de Maya. Une incrustation ne prend pas de cellule : les cases suivantes gardent leur place, et elle se lit juste après la case qu’elle recouvre.
 
-### 4 · Lettrer neuf éditions à partir d’une mise en page
+### 4 · Lettrer dix éditions à partir d’une mise en page
 
 <Excerpt region="editions" />
 

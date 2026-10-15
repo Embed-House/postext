@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Write the `pepper-carrot` showcase bundle (apps/web/public/presets/
 pepper-carrot): episode 8 of David Revoy's webcomic Pepper&Carrot,
-"Pepper's Birthday Party" (CC BY 4.0), in nine editions — en, es, ca, fr,
-pt-BR (the `pt` translation), de, ja, zh-Hans (the `cn` translation) and
-ar — over the text-free art, with the balloons and the lettering laid out
-by the engine.
+"Pepper's Birthday Party" (CC BY 4.0), in ten editions — en, es, ca, fr,
+it, pt-BR (the `pt` translation), de, ja, zh-Hans (the `cn` translation)
+and ar — over the text-free art, with the balloons and the lettering laid
+out by the engine.
 
 Each edition is three chapters: a title page (the episode's cover art, the
 title, "Art & Scenario: David Revoy" and the translators from the
@@ -60,7 +60,7 @@ CONFIG_VERSION = 8
 
 # Edition locale -> Pepper&Carrot language code. The bundle opens in the
 # reader's language; English is its own locale (`locale`).
-EDITIONS = {"en": "en", "es": "es", "ca": "ca", "fr": "fr", "pt-BR": "pt", "de": "de", "ja": "ja", "zh-Hans": "cn", "ar": "ar"}
+EDITIONS = {"en": "en", "es": "es", "ca": "ca", "fr": "fr", "it": "it", "pt-BR": "pt", "de": "de", "ja": "ja", "zh-Hans": "cn", "ar": "ar"}
 DEFAULT = "en"
 
 EPISODE_SOURCE = "https://www.peppercarrot.com/0_sources/ep08_Pepper-s-Birthday-Party/"
@@ -222,6 +222,21 @@ WORDS: dict[str, dict] = {
         ),
         "fonts": "Lettrage en {f}, sous licence SIL Open Font License.",
         "source": "Fichiers sources de l'épisode : <" + EPISODE_SOURCE + ">",
+    },
+    "it": {
+        "titlePage": "Frontespizio", "credits": "Crediti",
+        "art": "Disegni e sceneggiatura: David Revoy", "translation": "Traduzione: {x}",
+        "contribution": "Contributi: {x}", "proofreading": "Revisione: {x}", "original": "Versione originale",
+        "and": " e ", "sep": ", ",
+        "episode": "*{t}* è l’episodio 8 del webcomic Pepper&Carrot, pubblicato nel giugno 2015.",
+        "attribution": (
+            "Basato sul webcomic Pepper&Carrot di David Revoy. <https://www.peppercarrot.com> "
+            "Con licenza Creative Commons Attribuzione 4.0 (CC BY 4.0). <" + LICENCE_URL + "deed.it> "
+            "Basato sull’universo di Hereva creato da David Revoy, con contributi di Craig Maloney. "
+            "Correzioni di Willem Sonke, Moini, Hali, CGand e Alex Gryson."
+        ),
+        "fonts": "Lettering in {f}, con licenza SIL Open Font License.",
+        "source": "File sorgente dell’episodio: <" + EPISODE_SOURCE + ">",
     },
     "pt-BR": {
         "titlePage": "Folha de rosto", "credits": "Créditos",
@@ -532,7 +547,7 @@ def title_design(loc: str) -> dict:
 # neither captioned nor numbered.
 ART_TYPE_NAMES = {
     "en": ("Artwork", "Artwork"), "es": ("Ilustración", "Ilustraciones"), "ca": ("Il·lustració", "Il·lustracions"),
-    "fr": ("Illustration", "Illustrations"), "pt-BR": ("Ilustração", "Ilustrações"), "de": ("Illustration", "Illustrationen"),
+    "fr": ("Illustration", "Illustrations"), "it": ("Illustrazione", "Illustrazioni"), "pt-BR": ("Ilustração", "Ilustrações"), "de": ("Illustration", "Illustrationen"),
     "ja": ("原画", "原画"), "zh-Hans": ("原画", "原画"), "ar": ("رسم", "رسوم"),
 }
 
@@ -613,7 +628,7 @@ def config(loc: str) -> dict:
         "avoidWidows": True,
         "avoidOrphans": True,
     }
-    if loc in ("en", "es", "ca", "fr", "pt-BR", "de"):
+    if loc in ("en", "es", "ca", "fr", "it", "pt-BR", "de"):
         body["hyphenation"] = {"enabled": False}
     return {
         "locale": loc,
@@ -728,10 +743,10 @@ META = {
     "id": PRESET_ID,
     "name": "Pepper&Carrot · Pepper's Birthday Party",
     "description": (
-        "El episodio 8 del cómic de David Revoy en nueve idiomas: las viñetas originales sin texto, con los "
+        "El episodio 8 del cómic de David Revoy en diez idiomas: las viñetas originales sin texto, con los "
         "bocadillos y la rotulación que el motor compone a partir de las traducciones oficiales; la edición "
         "japonesa se rotula en vertical y, como la árabe, se lee de derecha a izquierda y se abre por la "
-        "derecha · Episode 8 of David Revoy's webcomic in nine languages: the original text-free panels, "
+        "derecha · Episode 8 of David Revoy's webcomic in ten languages: the original text-free panels, "
         "with balloons and lettering the engine sets from the official translations; the Japanese edition "
         "is lettered vertically and, like the Arabic one, reads right to left and opens from the right"
     ),
@@ -770,7 +785,7 @@ def write_credits_md(out: str, credits: dict) -> None:
     faces = "\n".join(f"- {n}: `fonts/{lic}`" for n, lic in fontkit.LICENCES.items())
     text = (
         "# Credits — Pepper&Carrot · Pepper's Birthday Party\n\n"
-        "Showcase preset for the Postext sandbox: episode 8 of the webcomic Pepper&Carrot (June 2015), in nine\n"
+        "Showcase preset for the Postext sandbox: episode 8 of the webcomic Pepper&Carrot (June 2015), in ten\n"
         "languages, re-lettered and re-laid out by Postext.\n\n"
         "## The comic\n\n"
         "Based on the webcomic Pepper&Carrot by David Revoy. https://www.peppercarrot.com\n"
