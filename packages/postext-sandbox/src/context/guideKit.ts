@@ -102,6 +102,11 @@ export const PALETTE_NAMES: Record<GuideLang, Record<PaletteId, string>> = {
     'main-color': 'Postext-Blau', vermilion: 'Zinnoberrot', muted: 'Notizgrau', mist: 'Nebel', rule: 'Linien',
     tint: 'Warmer Grund', panel: 'Kühler Grund',
   },
+  it: {
+    ink: 'Inchiostro', night: 'Notte di copertina', paper: 'Carta', white: 'Bianco', band: 'Colore di parte', gilt: 'Oro',
+    'main-color': 'Blu Postext', vermilion: 'Vermiglione', muted: 'Grigio delle note', mist: 'Foschia', rule: 'Filetti',
+    tint: 'Fondo caldo', panel: 'Fondo freddo',
+  },
 };
 
 /** Part colours, as `:::part{palette="band=#…"}` in the guide's markdown. */

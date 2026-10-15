@@ -48,6 +48,7 @@ const COLUMN_LAYOUTS = byLang(
   { aria: 'estruturas de colunas disponíveis', labels: ['Uma coluna', 'Duas colunas', 'Coluna e meia', 'Lateral de flutuantes'] },
   { aria: 'structures de colonnes disponibles', labels: ['Une colonne', 'Deux colonnes', 'Colonne et demie', 'Latérale à flottants'] },
   { aria: 'verfügbare Spaltenaufbauten', labels: ['Eine Spalte', 'Zwei Spalten', 'Anderthalb Spalten', 'Gleitobjektspalte'] },
+  { aria: 'strutture di colonne disponibili', labels: ['Una colonna', 'Due colonne', 'Colonna e mezza', 'Laterale per flottanti'] },
 );
 
 export function columnLayoutsSvg(lang: GuideLang): string {
@@ -90,6 +91,7 @@ const FLOAT_SLOTS = byLang(
   { aria: 'ordem dos espaços oferecidos a um flutuante depois da sua referência', ref: 'referência', taken: 'ocupa o primeiro espaço livre', full: 'não cabe', next: 'página seguinte' },
   { aria: 'ordre des emplacements offerts à un flottant après son renvoi', ref: 'renvoi', taken: 'prend le premier emplacement libre', full: 'pas de place', next: 'page suivante' },
   { aria: 'Reihenfolge der Stellen, die einem Gleitobjekt nach seinem Verweis angeboten werden', ref: 'Verweis', taken: 'nimmt die erste freie Stelle', full: 'kein Platz', next: 'nächste Seite' },
+  { aria: 'ordine delle posizioni offerte a un elemento flottante dopo il suo rimando', ref: 'rimando', taken: 'prende la prima posizione libera', full: 'non c’è spazio', next: 'pagina seguente' },
 );
 
 export function floatSlotsSvg(lang: GuideLang): string {
@@ -152,6 +154,7 @@ const BALANCING = byLang(
   { aria: 'recursos do balanceamento de colunas', before: 'Antes', after: 'Depois', legend: ['Espaço acima do título', 'Uma linha após a lista', 'Parágrafo mais solto'] },
   { aria: 'leviers de l’équilibrage des colonnes', before: 'Avant', after: 'Après', legend: ['Espace avant le titre', 'Une ligne après la liste', 'Paragraphe plus lâche'] },
   { aria: 'Hebel des Spaltenausgleichs', before: 'Vorher', after: 'Nachher', legend: ['Raum über der Überschrift', 'Eine Zeile nach der Liste', 'Lockerer gesetzter Absatz'] },
+  { aria: 'leve del bilanciamento delle colonne', before: 'Prima', after: 'Dopo', legend: ['Spazio prima del titolo', 'Una riga dopo l’elenco', 'Paragrafo più lasco'] },
 );
 
 export function balancingSvg(lang: GuideLang): string {
@@ -226,6 +229,7 @@ const BOOK_ANATOMY = byLang(
   { aria: 'anatomia de um livro composto com o Postext', names: ['Capa', 'Sumário', 'Parte', 'Abertura', 'Miolo', 'Miolo'] },
   { aria: 'anatomie d’un livre composé avec Postext', names: ['Couverture', 'Sommaire', 'Partie', 'Ouverture', 'Page courante', 'Page courante'] },
   { aria: 'Aufbau eines mit Postext gesetzten Buches', names: ['Umschlag', 'Inhalt', 'Teil', 'Auftakt', 'Textseite', 'Textseite'] },
+  { aria: 'anatomia di un libro composto con Postext', names: ['Copertina', 'Indice', 'Parte', 'Apertura', 'Testo', 'Testo'] },
 );
 
 /** Vertical text-line bars: columns from `right` leftward to `left`, each
@@ -468,6 +472,12 @@ const CJK_COMPOSITION = byLang(
     vertical: 'Vertikal', ems: (n: number) => `${String(n).replace('.', ',')} Quadrate`,
     legend: ['die leere Hälfte eines Zeichens in voller Breite', 'ein Zeichen, auf ein halbes Quadrat gesetzt'],
   },
+  {
+    aria: 'una riga cinese a larghezza piena, in stile Kaiming e in verticale',
+    full: 'Larghezza piena: ogni segno occupa un quadratino', kaiming: 'Kaiming (Cina continentale): parentesi, segni di titolo e punto finale, mezzo quadratino',
+    vertical: 'In verticale', ems: (n: number) => `${String(n).replace('.', ',')} quadratini`,
+    legend: ['la metà bianca di un segno a larghezza piena', 'un segno composto su mezzo quadratino'],
+  },
 );
 
 /** One character of the sample, in the edition's body face (the Chinese
@@ -621,6 +631,11 @@ const SANDBOX_UI = byLang(
     aria: 'Aufbau der Sandbox-Oberfläche', chapter: '3 · Die Zeile setzen', scope: 'Ganzes Buch',
     panels: ['Bücher', 'Kapitel', 'Text', 'Ressourcen', 'Schriften', 'Gestaltung', 'Prüfungen'],
   },
+  {
+    // The Italian interface's own words (messages/it.json).
+    aria: 'disposizione dell’interfaccia della Sandbox', chapter: '3 · Comporre la riga', scope: 'Libro intero',
+    panels: ['Libri', 'Capitoli', 'Testo', 'Risorse', 'Font', 'Grafica', 'Verifiche'],
+  },
 );
 
 /** The Sandbox interface: activity bar with its seven panels, the text
@@ -698,6 +713,7 @@ const ROSETTE = byLang(
   { aria: 'roseta vetorial de pétalas, anéis e microtexto', micro: 'Postext · vetor · zoom · ' },
   { aria: 'rosace vectorielle de pétales, d’anneaux et de microtexte', micro: 'Postext · vectoriel · zoom · ' },
   { aria: 'Vektorrosette aus Blütenblättern, Ringen und Mikroschrift', micro: 'Postext · Vektor · Zoom · ' },
+  { aria: 'rosetta vettoriale di petali, anelli e microtesto', micro: 'Postext · vettoriale · zoom · ' },
 );
 
 export function vectorRosetteSvg(lang: GuideLang): string {
@@ -733,6 +749,7 @@ const CHART = byLang(
   { aria: 'gráfico vetorial de área e linha com eixos e rótulos', months: ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.'], pages: 'páginas por segundo', chapters: 'capítulos' },
   { aria: 'graphique vectoriel en aires et en ligne avec axes et étiquettes', months: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août'], pages: 'pages par seconde', chapters: 'chapitres' },
   { aria: 'Vektordiagramm mit Fläche und Linie, mit Achsen und Beschriftungen', months: ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.'], pages: 'Seiten pro Sekunde', chapters: 'Kapitel' },
+  { aria: 'grafico vettoriale ad area e a linea con assi ed etichette', months: ['gen.', 'feb.', 'mar.', 'apr.', 'mag.', 'giu.', 'lug.', 'ago.'], pages: 'pagine al secondo', chapters: 'capitoli' },
 );
 
 export function vectorChartSvg(lang: GuideLang): string {
@@ -774,6 +791,7 @@ const CLIP = byLang(
   { aria: 'composição vetorial com recortes, elementos reutilizados e transparências', clip: 'recorte', opacity: 'opacidade' },
   { aria: 'composition vectorielle avec détourages, éléments réutilisés et transparences', clip: 'détourage', opacity: 'opacité' },
   { aria: 'Vektorkomposition mit Beschneidungspfaden, wiederverwendeten Elementen und Transparenz', clip: 'Beschneidungspfad', opacity: 'Deckkraft' },
+  { aria: 'composizione vettoriale con tracciati di ritaglio, elementi riutilizzati e trasparenze', clip: 'ritaglio', opacity: 'opacità' },
 );
 
 export function vectorClipSvg(lang: GuideLang): string {
@@ -845,6 +863,10 @@ const EPUB_RENDITIONS = byLang(
   {
     aria: 'ein Layout, geschrieben als EPUB mit festem Layout und als umfließendes EPUB', page: 'Das Layout', pageNote: 'Seiten, Spalten, Zeilen',
     fixed: 'Festes Layout', fixedNote: 'ein Dokument je gedruckter Seite', flow: 'Umfließend', flowNote: 'ein Dokument je Kapitel', marker: 'S. 12',
+  },
+  {
+    aria: 'una stessa impaginazione scritta come EPUB a layout fisso e come EPUB fluido', page: 'L’impaginazione', pageNote: 'pagine, colonne, righe',
+    fixed: 'Layout fisso', fixedNote: 'un documento per pagina stampata', flow: 'Layout fluido', flowNote: 'un documento per capitolo', marker: 'p. 12',
   },
 );
 

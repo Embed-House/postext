@@ -185,6 +185,7 @@ const COVER_ARIA = byLang(
   'Uma página dupla aberta desenhada como o motor a vê: linhas justificadas de caixas de palavra sobre uma grade de linhas de base, uma faixa de capítulo, uma figura flutuante e uma linha aberta em caixas, colas e uma penalidade',
   'Une double page ouverte dessinée comme le moteur la voit : des lignes justifiées de boîtes de mots sur une grille de ligne de base, un bandeau de chapitre, une figure flottante et une ligne ouverte en boîtes, ressorts et une pénalité',
   'Eine aufgeschlagene Doppelseite, so gezeichnet, wie die Engine sie sieht: Zeilen im Blocksatz aus Wortboxen auf einem Grundlinienraster, ein Kapitelband, eine gleitende Abbildung und eine Zeile, aufgelöst in Boxen, Leim und einen Strafpunkt',
+  'Una doppia pagina aperta disegnata come la vede il motore: righe giustificate di scatole di parole su una griglia della linea di base, una fascia di capitolo, una figura flottante e una riga aperta in scatole, colle e una penalità',
 );
 
 /** The cover art of an edition. The Arabic edition's spread is the mirror
