@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid } from 'lucide-react';
+import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid, MapPin } from 'lucide-react';
 import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES, type PageTemplateWarningKind } from 'postext';
 import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
-import { Collapsible, EmptyState, ListRow, PanelBody, PanelHeader, cn } from '../ui';
+import { Collapsible, EmptyState, IconButton, ListRow, PanelBody, PanelHeader, cn } from '../ui';
+import { requestAnchorEditor } from '../panels/resources/anchorEditorRequest';
 import { WARNING_CATEGORY_ORDER, warningCategory, type WarningCategory } from '../warnings/categories';
 import type { Warning, WarningPayload } from '../warnings/types';
 import type { SandboxLabels } from '../types';
@@ -919,11 +920,15 @@ function WarningItem({
   labels,
   multiChapter,
   onClick,
+  onAnchor,
 }: {
   warning: Warning;
   labels: SandboxLabels;
   multiChapter: boolean;
   onClick: (w: Warning) => void;
+  /** A figure label's warning (#866): the anchor in the picture's anchor
+   *  editor (the row itself leads to the text). */
+  onAnchor?: (w: Warning) => void;
 }) {
   const Icon = iconFor(warning.payload.kind);
   // A preflight or contrast finding, a design text cut on a page (#628)
@@ -954,6 +959,13 @@ function WarningItem({
         <span className="ms-auto shrink-0 text-[10px] font-medium" style={{ color: 'var(--slate)', fontVariantNumeric: 'tabular-nums' }}>
           {lineTag}
         </span>
+      ) : undefined}
+      actions={onAnchor && (warning.payload.kind === 'labelAnchorUnknown' || warning.payload.kind === 'anchorUnlabelled') ? (
+        <IconButton
+          label={(warning.payload.kind === 'labelAnchorUnknown' ? labels.warningsPlaceAnchor : labels.warningsShowAnchor).replace('__id__', warning.payload.anchor)}
+          icon={<MapPin size={14} aria-hidden="true" />}
+          onClick={() => onAnchor(warning)}
+        />
       ) : undefined}
       className="mx-2 my-0.5"
     />
@@ -1001,6 +1013,13 @@ export function WarningsPanel() {
     });
   };
 
+  // A figure label's warning (#866): a name to place on the picture, or
+  // the anchor left without a label, in the picture's anchor editor.
+  const handleAnchor = (w: Warning) => {
+    if (w.payload.kind === 'labelAnchorUnknown') requestAnchorEditor(dispatch, { resourceId: w.payload.resourceId, place: w.payload.anchor });
+    else if (w.payload.kind === 'anchorUnlabelled') requestAnchorEditor(dispatch, { resourceId: w.payload.resourceId, anchor: w.payload.anchor });
+  };
+
   const listed = composedBook ? warnings.filter((w) => !isComposedCheckKind(w.payload.kind)) : warnings;
   const groups = WARNING_CATEGORY_ORDER
     .map((category) => ({ category, items: listed.filter((w) => warningCategory(w.payload.kind) === category) }))
@@ -1019,6 +1038,7 @@ export function WarningsPanel() {
             labels={labels}
             title={(w) => titleFor(w.payload, labels)}
             detail={(w) => detailFor(w.payload, labels)}
+            onAnchor={handleAnchor}
           />
         )}
         {total === 0 ? (
@@ -1028,7 +1048,7 @@ export function WarningsPanel() {
             <WarningGroup key={category} title={categoryLabel(category, labels)} count={items.length}>
               {items.map((w) => (
                 <li key={w.id}>
-                  <WarningItem warning={w} labels={labels} multiChapter={multiChapter} onClick={handleClick} />
+                  <WarningItem warning={w} labels={labels} multiChapter={multiChapter} onClick={handleClick} onAnchor={handleAnchor} />
                 </li>
               ))}
             </WarningGroup>

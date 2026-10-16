@@ -59,6 +59,9 @@ export function MarkdownEditor({ isDark = true }: MarkdownEditorProps) {
       return referencesOf(chapters.map((c) => (c.id === activeId ? markdown : c.markdown)));
     },
     referenceKind: state.labels.refPickerReference,
+    // A figure's anchors in `::label[…]{at="…"}` and the label styles (#866).
+    labelStyles: state.config.labelStyles ?? [],
+    labelWords: { labelled: state.labels.labelCompletionLabelled, noStyle: state.labels.labelCompletionNoStyle, label: state.labels.labelCompletionLine },
   };
 
   const hintId = useId();

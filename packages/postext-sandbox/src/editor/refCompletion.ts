@@ -20,6 +20,7 @@ import { indexCompletionSource } from './indexSyntax';
 import { directionCompletionSource } from './directionSyntax';
 import { verseCompletionSource } from './verseSyntax';
 import { tabCompletionSource } from './tabSyntax';
+import { labelCompletionSource, type LabelCompletionContext, type LabelStyleOption } from './labelCompletion';
 
 /** What the `@` picker needs from the sandbox: the current resources and the
  *  resource types that name them (figure/table/…) in the document locale.
@@ -44,6 +45,10 @@ export interface RefCompletionContext {
   references?: () => readonly ReferenceOption[];
   /** The kind name shown beside a reference option. */
   referenceKind?: string;
+  /** The label styles offered inside `::label[…]{style="…"}` (#866). */
+  labelStyles?: readonly LabelStyleOption[];
+  /** The words shown beside a figure's anchors in `at="…"`. */
+  labelWords?: LabelCompletionContext['words'];
 }
 
 /** A reference of the book, as the picker lists it. */
@@ -431,6 +436,10 @@ export function refCompletion(getContext: () => RefCompletionContext): Extension
         directionCompletionSource,
         verseCompletionSource,
         tabCompletionSource,
+        labelCompletionSource(() => {
+          const c = getContext();
+          return { resources: c.resources, labelStyles: c.labelStyles ?? [], ...(c.labelWords ? { words: c.labelWords } : {}) };
+        }),
       ],
       activateOnTyping: true,
       icons: false,
