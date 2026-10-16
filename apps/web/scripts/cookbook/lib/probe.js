@@ -974,6 +974,8 @@ export function facts({ select = 'last', hero = [] } = {}) {
     // A comic's body (:::page, :::strip) is read by the comic parser: its
     // ::panel lines and its script are not Markdown fences.
     let comicBody = false;
+    // A :::figure's ::label lines (#860) are its labels, not embeds.
+    let figureBody = false;
     body.split('\n').forEach((raw, i) => {
       const line = raw.trim();
       if (comicBody) {
@@ -985,16 +987,18 @@ export function facts({ select = 'last', hero = [] } = {}) {
         if (COMPOSED_OPEN_RE.test(line)) { directives.add('page'); return; }
         badFences.push({ chapter, line: i + 1, text: line.slice(0, 80), name: /^:+\s*([\w-]*)/.exec(line)?.[1] ?? '' });
       } else if (line.startsWith(':::')) {
-        if (CLOSE_RE.test(line)) return;
+        if (CLOSE_RE.test(line)) { figureBody = false; return; }
         const m = DIRECTIVE_RE.exec(line);
         if (m && fenceNames.has(m[1])) {
           directives.add(m[1]);
           if (COMIC_FENCES.has(m[1])) comicBody = true;
+          if (m[1] === 'figure') figureBody = true;
           return;
         }
         badFences.push({ chapter, line: i + 1, text: line.slice(0, 80), name: /^:::\s*([\w-]*)/.exec(line)?.[1] ?? '' });
       } else if (/^::[a-z]/i.test(line)) {
         if (RESOURCE_RE.test(line) || RESOURCE_SLOT_RE.test(line)) { directives.add('resource'); return; }
+        if (figureBody && line.startsWith('::label[')) { directives.add('label'); return; }
         badFences.push({ chapter, line: i + 1, text: line.slice(0, 80), name: /^::([\w-]*)/.exec(line)?.[1] ?? '' });
       }
     });
