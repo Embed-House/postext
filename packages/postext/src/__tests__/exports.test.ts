@@ -640,6 +640,7 @@ describe("package exports", () => {
       "frameBounds",
       "frameContentRect",
       "frameOfBlock",
+      "templateFrameRects",
       "layoutGroup",
       "composedOrder",
       "composedReflowLog",

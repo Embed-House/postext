@@ -312,3 +312,38 @@ export function frameOrder(template: Pick<ResolvedPageTemplate, 'frames' | 'grou
   for (const f of template.frames) visit(f.name);
   return out;
 }
+
+/**
+ * Where every frame of `template` stands on a page before any content is
+ * poured (#863: the Sandbox's template thumbnails and editor): the frames
+ * placed in {@link frameOrder}, a group without a box of its own taking the
+ * union of its frames. An `'auto'` height takes `natural(frame, width)`;
+ * left out, a fifth of the area's height.
+ */
+export function templateFrameRects(
+  template: Pick<ResolvedPageTemplate, 'frames' | 'groups' | 'grid'>,
+  ctx: FrameGeometryContext,
+  natural?: (frame: ResolvedFrame, width: number) => number,
+): Map<string, Rect> {
+  const rects = new Map<string, Rect>();
+  const groupRect = (name: string, seen: Set<string> = new Set()): Rect | undefined => {
+    const g = template.groups.find((gr) => gr.name === name);
+    if (!g || seen.has(name)) return undefined;
+    seen.add(name);
+    const own = groupPlaceable(g);
+    if (own) return placeBox(own, template, ctx, (n) => rects.get(n) ?? groupRect(n, seen), () => 0);
+    return unionRect(g.frames.flatMap((m) => (rects.has(m) ? [rects.get(m)!] : [])));
+  };
+  const fallback = ctx.areas.area.height / 5;
+  for (const frame of frameOrder(template)) {
+    const rect = placeBox(
+      framePlaceable(frame),
+      template,
+      ctx,
+      (n) => rects.get(n) ?? groupRect(n),
+      (width) => (natural ? natural(frame, width) : fallback),
+    );
+    rects.set(frame.name, rect);
+  }
+  return rects;
+}
