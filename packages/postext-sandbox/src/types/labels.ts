@@ -3341,6 +3341,9 @@ export interface SandboxLabels {
   pageTemplatesGutterTooltip: string;
   pageTemplatesArea: string;
   pageTemplatesAreaTooltip: string;
+  pageTemplatesOverflowTemplate: string;
+  pageTemplatesOverflowTemplateTooltip: string;
+  pageTemplatesOverflowTemplateSame: string;
   pageTemplatesAreaContent: string;
   pageTemplatesAreaTrim: string;
   pageTemplatesAreaBleed: string;

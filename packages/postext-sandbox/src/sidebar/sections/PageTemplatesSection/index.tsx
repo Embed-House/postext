@@ -316,6 +316,16 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
             isDefault={!has('area')}
             onReset={() => set({ area: undefined })}
           />
+          {/* The pages a frame's content goes on to (#859). */}
+          <SelectInput
+            label={labels.pageTemplatesOverflowTemplate}
+            value={resolved.overflowTemplate ?? ''}
+            options={[{ value: '', label: labels.pageTemplatesOverflowTemplateSame }, ...templates.filter((t) => t.id !== id).map((t) => ({ value: t.id, label: t.name || t.id }))]}
+            onChange={(v) => set({ overflowTemplate: v || undefined })}
+            tooltip={labels.pageTemplatesOverflowTemplateTooltip}
+            isDefault={!has('overflowTemplate')}
+            onReset={() => set({ overflowTemplate: undefined })}
+          />
           <NumberInput
             label={labels.pageTemplatesGridColumns}
             value={resolved.grid?.columns ?? 0}
