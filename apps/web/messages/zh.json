@@ -2254,6 +2254,7 @@
     "selectionDecoration": "装饰",
     "selectionHeader": "页眉",
     "selectionFooter": "页脚",
+    "selectionFrameDrag": "正在移动：距页面左上角 __x__、__y__ 毫米，__w__ × __h__ 毫米",
     "save": "保存",
     "load": "载入",
     "exportFile": "导出",

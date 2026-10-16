@@ -1653,6 +1653,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   selectionDecoration: 'decoration',
   selectionHeader: 'running head',
   selectionFooter: 'footer',
+  selectionFrameDrag: 'Moving: __x__, __y__ mm from the page’s top left corner, __w__ × __h__ mm',
   save: 'Save',
   load: 'Load',
   exportFile: 'Export',

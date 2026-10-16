@@ -4,7 +4,7 @@ import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTPage } from 'po
 import { atLevel, breadcrumb, breadcrumbText, climb, pickAt, resolveSelection, selectedElement, selectionAtSource, type CrumbLabels, type PageSelection } from './pageSelection';
 import { headingInChapters, sectionForConfigPath, selectionTarget } from './selectionTargets';
 import { pickedMarkFor } from './pickedOverlay';
-import { climbPageSelection, pageSelectionNow, resetPageSelection, selectPageLevel, setPageSelection, syncPageSelection } from './selectionStore';
+import { climbPageSelection, followFrameEditor, frameDragNow, pageSelectionNow, resetPageSelection, selectPageLevel, setPageSelection, syncPageSelection } from './selectionStore';
 
 class StubCtx {
   font = '';
@@ -199,7 +199,7 @@ describe('the page selection model (#865)', () => {
     expect(sel.chain.map((e) => e.level)).toEqual(['text', 'design', 'slot', 'template']);
     const caret = selectionTarget(doc, sel, 'content') as { offset: number };
     expect(md.slice(caret.offset, caret.offset + 5)).toBe('Retos');
-    expect(selectionTarget(doc, atLevel(sel, 1), 'content')).toEqual({ kind: 'settings', group: 'page', section: null, path: '/pageTemplates/0/decoration/elements/2' });
+    expect(selectionTarget(doc, atLevel(sel, 1), 'content')).toEqual({ kind: 'settings', group: 'page', section: 'pageTemplates', path: '/pageTemplates/0/decoration/elements/2' });
     expect(breadcrumbText(breadcrumb(doc, atLevel(sel, 1)), LABELS)).toBe(`Page ${page.pageLabel} › decoration › tema`);
 
     const folio = page.footer!.blocks[0]!;
@@ -298,6 +298,27 @@ describe('the selection survives a relayout and a locale switch (#865)', () => {
     climbPageSelection();
     climbPageSelection();
     expect(pageSelectionNow()).toBeNull();
+  });
+});
+
+describe('the template editor’s picks and drags (#863 events)', () => {
+  beforeEach(() => resetPageSelection());
+
+  it('a frame it picks is the selection at frame level; a drag moves the mark, a drop lets it go', () => {
+    const { doc } = page8('es');
+    const page = composedPage(doc);
+    const frame = page.composed!.frames.find((f) => f.name === 'gasto')!;
+    followFrameEditor({ type: 'select', pageIndex: page.index, templateId: 'tema-cajas', frame: 'gasto', frameId: frame.id }, doc, null);
+    const sel = pageSelectionNow()!.selection;
+    expect(selectedElement(sel)).toMatchObject({ level: 'frame', id: frame.id });
+    expect(breadcrumbText(breadcrumb(doc, sel), LABELS)).toBe(`Page ${page.pageLabel} › cajas › gasto`);
+    const rect = { x: frame.rect.x + 30, y: frame.rect.y + 12, width: frame.rect.width, height: frame.rect.height };
+    followFrameEditor({ type: 'drag', pageIndex: page.index, kind: 'move', handle: 'move', frame: 'gasto', rect }, doc, null);
+    expect(frameDragNow()).toMatchObject({ frame: 'gasto', rect });
+    expect(pickedMarkFor(doc, sel, page.index, frameDragNow())!.rect).toEqual(rect);
+    followFrameEditor({ type: 'drop', pageIndex: page.index, kind: 'move', handle: 'move', frame: 'gasto', rect }, doc, null);
+    expect(frameDragNow()).toBeNull();
+    expect(pickedMarkFor(doc, sel, page.index, frameDragNow())!.rect).toEqual(frame.rect);
   });
 });
 

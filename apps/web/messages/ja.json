@@ -2254,6 +2254,7 @@
     "selectionDecoration": "装飾",
     "selectionHeader": "柱",
     "selectionFooter": "ノンブル",
+    "selectionFrameDrag": "移動中：ページ左上から __x__、__y__ mm、__w__ × __h__ mm",
     "save": "保存",
     "load": "開く",
     "exportFile": "書き出し",

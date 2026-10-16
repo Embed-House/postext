@@ -1728,6 +1728,7 @@ export interface SandboxLabels {
   selectionDecoration: string;
   selectionHeader: string;
   selectionFooter: string;
+  selectionFrameDrag: string;
 
   // Persistence
   save: string;

@@ -2254,6 +2254,7 @@
     "selectionDecoration": "الزخرفة",
     "selectionHeader": "الترويسة",
     "selectionFooter": "التذييل",
+    "selectionFrameDrag": "جارٍ النقل: __x__، __y__ مم من الزاوية العليا اليسرى للصفحة، __w__ × __h__ مم",
     "save": "احفظ",
     "load": "تحميل",
     "exportFile": "تصدير",

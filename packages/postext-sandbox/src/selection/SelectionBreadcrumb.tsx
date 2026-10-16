@@ -2,10 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 import { ArrowUpLeft, X } from 'lucide-react';
-import { useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../context/SandboxContext';
+import { useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../context/SandboxContext';
+import { onFrameEditorEvent } from '../templates/frameEvents';
+import { createSelectionApply } from './applySelection';
 import { IconButton, announce, cn } from '../ui';
 import { breadcrumb, breadcrumbText, crumbText, type Crumb } from './pageSelection';
-import { clearPageSelection, climbPageSelection, pageSelectionNow, selectPageLevel, setSelectionChapters, usePageSelection } from './selectionStore';
+import { clearPageSelection, climbPageSelection, followFrameEditor, pageSelectionNow, selectPageLevel, setSelectionChapters, usePageSelection } from './selectionStore';
 import type { SandboxLabels } from '../types/labels';
 
 /** The viewers that show the book's pages and share the selection. */
@@ -48,6 +50,21 @@ export function SelectionBreadcrumb() {
     setSelectionChapters(() => getState().chapters);
     return () => setSelectionChapters(null);
   }, [getState]);
+
+  // The template editor's picks and drags on the canvas (#863) are the
+  // selection's too.
+  const dispatch = useSandboxDispatch();
+  const docRef = useSandboxDocRef();
+  const sourceRef = useSandboxDocSourceRef();
+  useEffect(() => {
+    const apply = createSelectionApply({
+      dispatch: () => dispatch,
+      activePanel: () => getState().activePanel,
+      sourceOfPage: () => sourceRef.current,
+      chapters: () => getState().chapters,
+    });
+    return onFrameEditorEvent((e) => followFrameEditor(e, docRef.current, apply));
+  }, [dispatch, docRef, sourceRef, getState]);
 
   // Esc climbs (the editor keeps its own Esc otherwise).
   useEffect(() => {

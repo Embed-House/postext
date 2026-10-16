@@ -21,7 +21,7 @@ import type { SourceElement, VDTBlock, VDTDocument, VDTFrame, VDTPage } from 'po
 import { extractFrontmatter } from 'postext';
 import { SETTINGS_SECTIONS, type SettingsGroupId, type SettingsSectionId } from '../sidebar/sections/registry';
 import type { EditMode } from '../editing/editMode';
-import { selectedElement, type PageSelection } from './pageSelection';
+import { idName, selectedElement, type PageSelection } from './pageSelection';
 
 /** Where a selection leads. Markdown offsets are the page's document
  *  offsets (its composed book's), as the VDT carries them. */
@@ -36,7 +36,7 @@ export type SelectionTarget =
    *  or its slot opened (Content, a frame with no content yet). */
   | { kind: 'frame'; frame: VDTFrame; template: string }
   /** A place of the Design panel: a section, at a config pointer. */
-  | { kind: 'settings'; group: SettingsGroupId; section: SettingsSectionId | null; path?: string; styleId?: string }
+  | { kind: 'settings'; group: SettingsGroupId; section: SettingsSectionId | null; path?: string; styleId?: string; template?: { id: string; group?: string } }
   | { kind: 'none' };
 
 /** The section of the Design panel that edits a config pointer
@@ -136,8 +136,12 @@ function designTarget(doc: VDTDocument, sel: PageSelection, el: SourceElement): 
       return frame && page?.composed ? { kind: 'frame', frame, template: page.composed.template } : { kind: 'none' };
     }
     case 'group':
-    case 'template':
-      return el.source.kind === 'config' ? settingsAt(el.source.path) : { kind: 'none' };
+    case 'template': {
+      const at = el.source.kind === 'config' ? settingsAt(el.source.path) : { kind: 'none' as const };
+      // The template editor opens on the page's template (and the group).
+      if (at.kind !== 'settings' || !page?.composed) return at;
+      return { ...at, template: { id: page.composed.template, ...(el.level === 'group' ? { group: idName(el.id) } : {}) } };
+    }
     case 'design':
     case 'slot':
       return el.source.kind === 'config' && el.source.path ? settingsAt(el.source.path) : { kind: 'none' };

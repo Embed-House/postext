@@ -2255,6 +2255,7 @@
     "selectionDecoration": "Dekoration",
     "selectionHeader": "Kolumnentitel",
     "selectionFooter": "Fußzeile",
+    "selectionFrameDrag": "Verschieben: __x__, __y__ mm von der linken oberen Ecke der Seite, __w__ × __h__ mm",
     "save": "Speichern",
     "load": "Laden",
     "exportFile": "Exportieren",

@@ -2254,6 +2254,7 @@
     "selectionDecoration": "decoração",
     "selectionHeader": "cabeço",
     "selectionFooter": "rodapé",
+    "selectionFrameDrag": "Movendo: __x__, __y__ mm a partir do canto superior esquerdo da página, __w__ × __h__ mm",
     "save": "Salvar",
     "load": "Carregar",
     "exportFile": "Exportar",

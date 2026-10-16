@@ -8,6 +8,7 @@
 import type { VDTDocument } from 'postext';
 import { SVG_NS } from '../viewport/CanvasPreview/dom';
 import { selectedElement, type PageSelection } from './pageSelection';
+import { frameDragNow, type FrameDrag } from './selectionStore';
 
 export interface PickedMark {
   rect: { x: number; y: number; width: number; height: number };
@@ -17,12 +18,14 @@ export interface PickedMark {
 }
 
 /** The mark of `sel` on page `pageIndex`, null when it has none there. */
-export function pickedMarkFor(doc: VDTDocument, sel: PageSelection | null, pageIndex: number): PickedMark | null {
+export function pickedMarkFor(doc: VDTDocument, sel: PageSelection | null, pageIndex: number, drag: FrameDrag | null = null): PickedMark | null {
   if (!sel || sel.pageIndex !== pageIndex) return null;
   const el = selectedElement(sel);
   const page = doc.pages[pageIndex];
   if (!page || el.level === 'text') return null;
   let rect = el.rect;
+  // A frame the template editor is dragging: where the pointer has it.
+  if (el.level === 'frame' && drag && drag.pageIndex === pageIndex && el.id.endsWith(`:${drag.frame}`)) rect = drag.rect;
   if (!rect && el.level === 'template') rect = { x: 0, y: 0, width: page.width, height: page.height };
   if (!rect && el.level === 'group' && page.composed) {
     // A group's box: the union of its frames on the page.
@@ -77,7 +80,7 @@ function groupOf(svg: SVGSVGElement): SVGGElement {
 
 /** Draw (or take off) the picked element's mark in a page overlay. */
 export function drawPickedMark(svg: SVGSVGElement, doc: VDTDocument, pageIndex: number, sel: PageSelection | null): void {
-  const mark = pickedMarkFor(doc, sel, pageIndex);
+  const mark = pickedMarkFor(doc, sel, pageIndex, frameDragNow());
   const existing = svg.querySelector<SVGGElement>('g[data-role="picked"]');
   if (!mark) {
     if (existing) while (existing.firstChild) existing.removeChild(existing.firstChild);

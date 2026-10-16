@@ -10,15 +10,16 @@
  * with its document and the selection is found there again by its stable
  * ids.
  *
- * It also carries the small event API the page-template editor's canvas
- * drag (#863) reports to, so the panel and the selection follow a frame
- * while it is dragged ({@link emitFrameDrag}, {@link onFrameDrag}).
+ * It also follows the page-template editor's canvas (#863) through its
+ * events: a frame it picks is the selection, a frame it drags moves the
+ * selection's mark and the panel's readout ({@link followFrameEditor}).
  */
 
 import { useSyncExternalStore } from 'react';
-import type { SourceMapOptions, VDTDocument } from 'postext';
+import { findElement, sourceAt, type SourceMapOptions, type VDTDocument } from 'postext';
 import type { Chapter } from '../book/types';
-import { climb, atLevel, resolveSelection, type ChapterOfPage, type PageSelection } from './pageSelection';
+import type { FrameEditorEvent } from '../templates/frameEvents';
+import { climb, climbable, atLevel, resolveSelection, type ChapterOfPage, type PageSelection } from './pageSelection';
 
 /** What carries a selection out (opens the editor or a panel at it): the
  *  viewer that made it. */
@@ -135,39 +136,62 @@ export function selectionChapters(): readonly Chapter[] {
 }
 
 // ---------------------------------------------------------------------------
-// A frame dragged on the page (#863's canvas editor reports here)
+// The page-template editor's canvas (#863): its picks and drags
 // ---------------------------------------------------------------------------
 
-/** A frame being moved or resized on a page: where it is now, sheet px. */
-export interface FrameDragEvent {
-  phase: 'start' | 'move' | 'end' | 'cancel';
+/** A frame being moved or resized by the template editor: where it is
+ *  now, page px of its page. */
+export interface FrameDrag {
   pageIndex: number;
-  /** `cp<fence>:<name>`. */
-  frameId: string;
-  /** JSON pointer of the template entry. */
-  configPath: string;
+  frame: string;
   rect: { x: number; y: number; width: number; height: number };
 }
 
-const dragListeners = new Set<(ev: FrameDragEvent) => void>();
-let dragging: FrameDragEvent | null = null;
+let dragging: FrameDrag | null = null;
 
-/** Report a frame drag: the panel showing the frame and the selection's
- *  mark follow it while the pointer moves, before anything is written. */
-export function emitFrameDrag(ev: FrameDragEvent): void {
-  dragging = ev.phase === 'end' || ev.phase === 'cancel' ? null : ev;
-  for (const l of [...dragListeners]) l(ev);
-  emit();
-}
-
-export function onFrameDrag(listener: (ev: FrameDragEvent) => void): () => void {
-  dragListeners.add(listener);
-  return () => { dragListeners.delete(listener); };
-}
-
-/** The frame being dragged now, null when none. */
-export function frameDragNow(): FrameDragEvent | null {
+/** The frame the template editor is dragging now, null when none. */
+export function frameDragNow(): FrameDrag | null {
   return dragging;
+}
+
+/** Follow the template editor's events (`templates/frameEvents.ts`): a
+ *  frame it picks on the page is the page selection, at frame level (its
+ *  path shows, Esc climbs to its group and template); while a frame is
+ *  dragged, its mark and the panel's readout follow it. `doc` is the
+ *  document the canvas shows; `by` carries a level picked in the path out. */
+export function followFrameEditor(e: FrameEditorEvent, doc: VDTDocument | null, by: SelectionApply | null): void {
+  switch (e.type) {
+    case 'select': {
+      if (!doc) return;
+      const found = findElement(doc, e.frameId);
+      const rect = found?.element.rect;
+      if (!found || !rect) return;
+      const point = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+      const chain = climbable(sourceAt(doc, found.pageIndex, point.x, point.y));
+      const level = chain.findIndex((el) => el.id === e.frameId && el.level === 'frame');
+      if (level < 0) return;
+      setPageSelection({ pageIndex: found.pageIndex, chain, level, point, origin: 'page' }, doc, by);
+      return;
+    }
+    case 'dragStart':
+    case 'drag':
+      if (!e.frame) return;
+      dragging = { pageIndex: e.pageIndex, frame: e.frame, rect: { ...e.rect } };
+      emit();
+      return;
+    case 'drop':
+    case 'cancel':
+      if (dragging === null) return;
+      dragging = null;
+      emit();
+      return;
+  }
+}
+
+/** The frame dragged now when it is `frame`, for a panel showing it. */
+export function useFrameDrag(frame: string | null): FrameDrag | null {
+  const now = useSyncExternalStore(subscribe, frameDragNow, () => null);
+  return now && frame !== null && now.frame === frame ? now : null;
 }
 
 /** Forget everything (tests). */

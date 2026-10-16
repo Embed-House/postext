@@ -2973,6 +2973,7 @@
     "selectionDecoration": "decoración",
     "selectionHeader": "cabecera",
     "selectionFooter": "pie de página",
+    "selectionFrameDrag": "Moviendo: __x__, __y__ mm desde la esquina superior izquierda de la página, __w__ × __h__ mm",
     "save": "Guardar",
     "load": "Cargar",
     "exportFile": "Exportar",

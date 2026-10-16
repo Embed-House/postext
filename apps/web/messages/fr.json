@@ -2254,6 +2254,7 @@
     "selectionDecoration": "décor",
     "selectionHeader": "en-tête",
     "selectionFooter": "pied de page",
+    "selectionFrameDrag": "Déplacement : __x__, __y__ mm depuis le coin supérieur gauche de la page, __w__ × __h__ mm",
     "save": "Enregistrer",
     "load": "Charger",
     "exportFile": "Exporter",

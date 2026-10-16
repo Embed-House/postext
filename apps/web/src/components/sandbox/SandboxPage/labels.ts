@@ -1636,6 +1636,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     selectionDecoration: t("selectionDecoration"),
     selectionHeader: t("selectionHeader"),
     selectionFooter: t("selectionFooter"),
+    selectionFrameDrag: t("selectionFrameDrag"),
     save: t("save"),
     load: t("load"),
     exportFile: t("exportFile"),

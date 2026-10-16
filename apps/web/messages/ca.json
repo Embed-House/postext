@@ -2254,6 +2254,7 @@
     "selectionDecoration": "decoració",
     "selectionHeader": "capçalera",
     "selectionFooter": "peu de pàgina",
+    "selectionFrameDrag": "Movent: __x__, __y__ mm des del cantó superior esquerre de la pàgina, __w__ × __h__ mm",
     "save": "Desar",
     "load": "Carregar",
     "exportFile": "Exportar",

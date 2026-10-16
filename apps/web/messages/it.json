@@ -2255,6 +2255,7 @@
     "selectionDecoration": "decorazione",
     "selectionHeader": "testatina",
     "selectionFooter": "piè di pagina",
+    "selectionFrameDrag": "Spostamento: __x__, __y__ mm dall’angolo in alto a sinistra della pagina, __w__ × __h__ mm",
     "save": "Salva",
     "load": "Carica",
     "exportFile": "Esporta",

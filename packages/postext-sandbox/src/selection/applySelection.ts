@@ -13,7 +13,9 @@ import type { PanelId } from '../types';
 import { toChapterFocus } from '../viewport/CanvasPreview/chapterFocus';
 import { editModeNow, selectFrame } from '../editing/editMode';
 import { requestSettingsSection } from '../context/settingsNavigation';
-import { saveSettingsGroup } from '../storage/persistence';
+import { saveSectionState, saveSettingsGroup } from '../storage/persistence';
+import { showPageTemplatesSection } from '../templates/showSection';
+import { templateEditor } from '../templates/editorStore';
 import { headingInChapters, selectionTarget, type SelectionTarget } from './selectionTargets';
 import type { PageSelection } from './pageSelection';
 import type { SelectionApply } from './selectionStore';
@@ -61,13 +63,22 @@ export function applyTarget(target: SelectionTarget, sel: PageSelection, doc: VD
       return true;
     case 'frame': {
       if (editModeNow() === 'design') {
+        // The template editor (#863) follows the frame picked.
         selectFrame({ pageIndex: sel.pageIndex, frameId: target.frame.id, name: target.frame.name, template: target.template, configPath: target.frame.configPath });
-        openSettings(deps, 'page', 'pageTemplates');
+        if (deps.activePanel() !== 'config') dispatch({ type: 'SET_PANEL', payload: 'config' });
+        showPageTemplatesSection(target.frame.name);
         return true;
       }
       return deps.openFrameSlot?.(sel.pageIndex, target.frame) ?? false;
     }
     case 'settings':
+      if (target.template) {
+        // A group or the template: the template editor opens on it.
+        templateEditor.select({ templateId: target.template.id, scope: 'base', frame: null, group: target.template.group ?? null, pageIndex: sel.pageIndex });
+        if (deps.activePanel() !== 'config') dispatch({ type: 'SET_PANEL', payload: 'config' });
+        showPageTemplatesSection();
+        return true;
+      }
       openSettings(deps, target.group, target.section);
       return true;
     case 'none':
@@ -78,6 +89,9 @@ export function applyTarget(target: SelectionTarget, sel: PageSelection, doc: VD
 /** Open the Design panel on a group, bringing a section into view. */
 function openSettings(deps: SelectionApplyDeps, group: Parameters<typeof requestSettingsSection>[0]['group'], section: string | null): void {
   const open = deps.activePanel() === 'config';
+  // The section opens unfolded (a top-level section's state is kept under
+  // `page:<id>`, see CollapsibleSection).
+  if (section) saveSectionState(`page:${section}`, true);
   requestSettingsSection({ group, section });
   if (!open) {
     saveSettingsGroup(group);
