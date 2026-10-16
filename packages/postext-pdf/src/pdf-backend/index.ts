@@ -575,7 +575,8 @@ function paintPage(
     for (const block of col.blocks) {
       if (block.tocPart && block.designOverlay) {
         // Painted below, but read in its place among the contents rows.
-        if (structure && !block.hidden && block.designOverlay.blocks.some((b) => b.kind === 'text')) {
+        // (A repeated head row of a cut block is an artifact, #850.)
+        if (structure && !block.hidden && !block.tocPart.continued && block.designOverlay.blocks.some((b) => b.kind === 'text')) {
           structure.blockElem(block);
         }
         continue;

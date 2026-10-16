@@ -851,9 +851,24 @@ export function renderBlock(
   if (block.hidden) return;
   const structure = resourceCtx?.structure;
   const linkRegistry = resourceCtx?.linkRegistry;
+  // The head row of a cut contents block repeated at the top of the column
+  // it goes on in (#850): pagination furniture, as a split box's repeated
+  // title is. A tagged render reads it as an artifact, not as a second
+  // `TOCI`, and it carries no link (the head row it repeats has one).
+  const repeatedTocHead = block.tocEntry?.continued === true || block.tocPart?.continued === true;
   // A row of the contents links to the page it lists: the whole row is
   // the annotation, its text the `Link` element in a tagged render.
-  const targetPage = block.tocEntry?.pageIndex ?? block.tocPart?.pageIndex;
+  const targetPage = repeatedTocHead ? undefined : block.tocEntry?.pageIndex ?? block.tocPart?.pageIndex;
+  if (block.designOverlay && repeatedTocHead) {
+    renderHeaderFooterSlot(ctx, block.designOverlay, fontCache, resourceCtx?.images, structure ? { artifact: { type: 'Pagination' } } : undefined);
+    return;
+  }
+  if (repeatedTocHead) {
+    if (structure) tagArtifact(ctx, { type: 'Pagination' });
+    if (block.type === 'listItem') renderBullet(ctx, block, fontCache, undefined);
+    for (const line of block.lines) renderLine(ctx, line, block, block.bbox.width, block.bbox.x, fontCache, linkRegistry, undefined);
+    return;
+  }
   if (block.designOverlay) {
     // A heading's advanced design or a callout frame: the overlay's text is
     // the heading / the callout title, its boxes and icons are decoration.
