@@ -179,6 +179,10 @@ export interface InlineSpan {
    *  stretches or shrinks when it is justified: the gap after a footnote's
    *  number, which keeps one width in every note. Set by the pipeline. */
   fixedSpace?: boolean;
+  /** One of a chip's own words set in the face of the text around the chip,
+   *  not the chip's: the Arabic, Hebrew or CJK characters of inline code
+   *  (#845), which code faces do not carry. Set by the pipeline. */
+  textFace?: boolean;
   /** A space inside inline code set in the code face (#845), between two
    *  pieces of it: the line may break there, but the space neither
    *  stretches nor shrinks, and on one line the pieces around it are one
@@ -488,6 +492,9 @@ export interface ChipBox {
   borderRadiusPx: number;
   paddingXPx: number;
   paddingYPx: number;
+  /** The chip's base direction when it has one of its own: inline code
+   *  reads left to right (#845). Unset: its first strong letter's. */
+  direction?: 'ltr';
   /** Set only when the style sets its own (`paddingTop`); `paddingYPx`
    *  otherwise. */
   paddingTopPx?: number;

@@ -731,7 +731,7 @@ Un resaltador registrado para un lenguaje tiene prioridad sobre uno registrado p
 
 ### Código en línea
 
-`codeStyle.inline` compone el texto entre comillas invertidas en una letra de código: como una unidad, igual que un chip, que una línea nunca parte. Sin fijar, el código en línea conserva la letra del texto.
+`codeStyle.inline` compone el texto entre comillas invertidas en una letra de código, dentro de una caja como la de un chip. Una línea puede partir el código en un espacio o tras un guion entre una letra o una cifra y una letra: la caja se corta en dos y no se añade nada. Los espacios del código conservan el ancho de la letra de código, y la justificación de la línea no los estira. Sin fijar, el código en línea conserva la letra del texto.
 
 <table>
   <thead>
@@ -751,6 +751,7 @@ Un resaltador registrado para un lenguaje tiene prioridad sobre uno registrado p
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>ninguno / <code>0.5pt</code></td><td>Un contorno.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> es el cuerpo del tramo.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> con fondo o contorno, si no <code>0</code> / <code>0.1em</code></td><td>El espacio dentro del fondo; el relleno vertical se pinta fuera de la caja de línea.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>La letra de los caracteres árabes, hebreos y CJK del código: la del texto (<code>'text'</code>), porque pocas letras de código los tienen, o la de código (<code>'code'</code>), si los tiene.</td></tr>
   </tbody>
 </table>
 

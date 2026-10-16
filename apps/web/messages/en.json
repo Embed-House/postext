@@ -1243,6 +1243,8 @@
     "codeInlineFontSizeTooltip": "em is the size of the text around it. Default 0.9 em.",
     "codeInlineFill": "Fill",
     "codeInlineFillTooltip": "A tint behind inline code, as many web pages set it.",
+    "codeInlineOtherScripts": "Other scripts in the text face",
+    "codeInlineOtherScriptsTooltip": "Arabic, Hebrew, Chinese, Japanese and Korean letters inside inline code are set in the face of the text around it, since few code faces have them. Turn it off when the code face carries them.",
     "codeInlinePaddingX": "Room inside the fill",
     "cjkSection": "East Asian typography",
     "writingSection": "Language and direction",

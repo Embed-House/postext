@@ -731,7 +731,7 @@ Un ressaltador registrat per a un llenguatge té preferència sobre un de regist
 
 ### Codi en línia
 
-`codeStyle.inline` compon el text entre accents greus en una lletra de codi: com una sola unitat, igual que un xip, que una línia no parteix mai. Sense fixar, el codi en línia conserva la lletra del text.
+`codeStyle.inline` compon el text entre accents greus en una lletra de codi, dins d'una capsa com la d'un xip. Una línia pot partir el codi en un espai o després d'un guionet entre una lletra o una xifra i una lletra: la capsa es talla en dues i no s'hi afegeix res. Els espais del codi conserven l'amplada de la lletra de codi, i la justificació de la línia no els estira. Sense fixar, el codi en línia conserva la lletra del text.
 
 <table>
   <thead>
@@ -751,6 +751,7 @@ Un ressaltador registrat per a un llenguatge té preferència sobre un de regist
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>cap / <code>0.5pt</code></td><td>Un contorn.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> és el cos del tram.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> amb fons o contorn, i si no <code>0</code> / <code>0.1em</code></td><td>L'espai dins del fons; el farciment vertical es pinta fora de la caixa de la línia.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>La lletra dels caràcters àrabs, hebreus i CJK del codi: la del text (<code>'text'</code>), perquè poques lletres de codi els tenen, o la de codi (<code>'code'</code>), si els té.</td></tr>
   </tbody>
 </table>
 

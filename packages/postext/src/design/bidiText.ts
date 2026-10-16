@@ -250,10 +250,13 @@ export function directChipRuns<R extends Run>(
   /** Every run takes its own advance, in the direction it is painted in
    *  ({@link measuresRunsAsPainted}): the chip is then as wide as its runs. */
   asPainted = false,
+  /** The base direction, when the chip has one of its own (inline code
+   *  reads left to right, #845); else that of its first strong letter. */
+  base?: 'ltr' | 'rtl',
 ): { runs: (R & { rtl?: true })[]; order?: number[] } {
   let text = '';
   for (const r of runs) text += r.text;
   if (!needsBidi(text)) return { runs };
-  const directed = directRuns(runs as (R & { fontString: string })[], firstStrongDirection(text) ?? 'ltr', false, (r, t, rtl) => measure(t, r.fontString, rtl), false, asPainted);
+  const directed = directRuns(runs as (R & { fontString: string })[], base ?? firstStrongDirection(text) ?? 'ltr', false, (r, t, rtl) => measure(t, r.fontString, rtl), false, asPainted);
   return directed ?? { runs };
 }

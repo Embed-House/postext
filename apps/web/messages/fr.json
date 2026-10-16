@@ -1242,6 +1242,8 @@
     "codeInlineFontSizeTooltip": "em est le corps du texte qui l’entoure. Par défaut 0.9 em.",
     "codeInlineFill": "Fond",
     "codeInlineFillTooltip": "Une teinte derrière le code en ligne, comme sur de nombreuses pages web.",
+    "codeInlineOtherScripts": "Autres écritures dans la police du texte",
+    "codeInlineOtherScriptsTooltip": "Les lettres arabes, hébraïques, chinoises, japonaises et coréennes du code en ligne sont composées dans la police du texte qui l’entoure, car peu de polices de code les possèdent. Désactivez-le si la police de code les contient.",
     "codeInlinePaddingX": "Espace intérieur du fond",
     "cjkSection": "Typographie d’Asie orientale",
     "writingSection": "Langue et sens d’écriture",

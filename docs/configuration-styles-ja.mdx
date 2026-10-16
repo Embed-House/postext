@@ -731,7 +731,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
 
 ### インラインコード
 
-`codeStyle.inline`は、バッククォートで囲んだテキストをコードの書体で組みます。チップと同じく1つのまとまりとして組み、行がその途中で分かれることはありません。未設定なら、インラインコードは本文の書体のままです。
+`codeStyle.inline`は、バッククォートで囲んだテキストをコードの書体で、チップと同じ枠に入れて組みます。行はコードの中のスペースか、文字または数字と文字のあいだのハイフンの後ろで分かれることがあり、そのとき枠は二つに切れて、何も足されません。コードの中のスペースはコードの書体の幅を保ち、行の両端揃えでも広がりません。未設定なら、インラインコードは本文の書体のままです。
 
 <table>
   <thead>
@@ -751,6 +751,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>なし / <code>0.5pt</code></td><td>枠線です。</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code>は範囲のサイズです。</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td>塗りか枠線があれば<code>0.2em</code>、なければ<code>0</code> / <code>0.1em</code></td><td>塗りの内側のアキです。上下のアキは行のボックスの外側に描かれます。</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>コードの中のアラビア文字、ヘブライ文字、CJKの文字の書体です。本文の書体（<code>'text'</code>）で組むか（それらを持つコードの書体は多くありません）、それらを持つコードの書体（<code>'code'</code>）で組みます。</td></tr>
   </tbody>
 </table>
 

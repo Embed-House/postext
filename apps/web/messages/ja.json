@@ -1242,6 +1242,8 @@
     "codeInlineFontSizeTooltip": "em は周囲の文字のサイズです。既定は 0.9 em。",
     "codeInlineFill": "背景",
     "codeInlineFillTooltip": "多くのウェブページのように、インラインコードの背後に敷く色。",
+    "codeInlineOtherScripts": "他の文字体系は本文の書体で",
+    "codeInlineOtherScriptsTooltip": "インラインコードの中のアラビア文字、ヘブライ文字、漢字、仮名、ハングルは、周りの本文の書体で組みます。それらを持つコード用書体は少ないためです。コード用書体が含んでいるときはオフにします。",
     "codeInlinePaddingX": "背景の内側のアキ",
     "cjkSection": "東アジアの組版",
     "writingSection": "言語と書字方向",

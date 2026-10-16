@@ -1242,6 +1242,8 @@
     "codeInlineFontSizeTooltip": "em 指周围文字的字号。默认 0.9 em。",
     "codeInlineFill": "底色",
     "codeInlineFillTooltip": "行内代码背后的底色，许多网页都这样排。",
+    "codeInlineOtherScripts": "其他文字用正文字体",
+    "codeInlineOtherScriptsTooltip": "行内代码中的阿拉伯文、希伯来文、汉字、假名和韩文字母用周围正文的字体排，因为很少有代码字体包含它们。代码字体包含这些字符时请关闭。",
     "codeInlinePaddingX": "底色内边距",
     "cjkSection": "东亚排版",
     "writingSection": "语言与方向",

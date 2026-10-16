@@ -1243,6 +1243,8 @@
     "codeInlineFontSizeTooltip": "em è il corpo del testo circostante. Predefinito 0.9 em.",
     "codeInlineFill": "Riempimento",
     "codeInlineFillTooltip": "Una tinta dietro il codice in linea, come la usano molte pagine web.",
+    "codeInlineOtherScripts": "Altre scritture nel carattere del testo",
+    "codeInlineOtherScriptsTooltip": "Le lettere arabe, ebraiche, cinesi, giapponesi e coreane del codice in linea si compongono nel carattere del testo intorno, perché pochi caratteri per il codice le hanno. Disattivalo se il carattere del codice le contiene.",
     "codeInlinePaddingX": "Spazio dentro il riempimento",
     "cjkSection": "Tipografia dell’Asia orientale",
     "writingSection": "Lingua e direzione",

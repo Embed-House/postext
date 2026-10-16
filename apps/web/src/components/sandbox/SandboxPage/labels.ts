@@ -619,6 +619,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     codeInlineFontSizeTooltip: t("codeInlineFontSizeTooltip"),
     codeInlineFill: t("codeInlineFill"),
     codeInlineFillTooltip: t("codeInlineFillTooltip"),
+    codeInlineOtherScripts: t("codeInlineOtherScripts"),
+    codeInlineOtherScriptsTooltip: t("codeInlineOtherScriptsTooltip"),
     codeInlinePaddingX: t("codeInlinePaddingX"),
     cjkSection: t("cjkSection"),
     writingSection: t("writingSection"),

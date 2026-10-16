@@ -62,7 +62,7 @@ function buildPlainCacheKey(
 /** A chip is one placeholder char in the span text: its words and resolved
  *  box decide its measure, so they join the key. */
 function chipCacheKey(chip: NonNullable<InlineSpan['chip']>): string {
-  const words = chip.spans.map((s) => `${s.text}~${s.bold}~${s.italic}~${s.script ?? ''}${s.smallCaps ? '~sc' : ''}`).join('~');
+  const words = chip.spans.map((s) => `${s.text}~${s.bold}~${s.italic}~${s.script ?? ''}${s.smallCaps ? '~sc' : ''}${s.textFace ? '~tf' : ''}`).join('~');
   return `|chip:${words}|${chip.box ? JSON.stringify(chip.box) : ''}${chip.joinNext ? '|jn' : ''}`;
 }
 

@@ -632,7 +632,8 @@ export function chipToken(
     if (s.text.length === 0) continue;
     const bold = s.bold || span.bold || !!box?.bold;
     const italic = s.italic || span.italic || !!box?.italic;
-    const base = withFace(pickSpanFont(bold, italic, normalFont, boldFont, italicFont, boldItalicFont), box?.fontFamily, sizePx);
+    // A word the chip's face has no letters for keeps the text's (#845).
+    const base = withFace(pickSpanFont(bold, italic, normalFont, boldFont, italicFont, boldItalicFont), s.textFace ? undefined : box?.fontFamily, sizePx);
     let font = base;
     let baselineShift: number | undefined;
     if (s.script) {
@@ -680,6 +681,7 @@ export function chipToken(
     runs,
     (t, f, rtl) => (asPainted ? paintedRunWidth(t, f, rtl) : measureTextWidth(t, f)) + wordLetterSpacing(t, letterSpacingPx) * graphemeCount(t),
     asPainted,
+    box?.direction,
   );
   const textWidth = (asPainted ? directed.runs : runs).reduce((sum, r) => sum + r.width, 0);
   const paddingX = box?.paddingXPx ?? 0;

@@ -731,7 +731,7 @@ Um realçador registrado para uma linguagem tem precedência sobre um registrado
 
 ### Código em linha
 
-`codeStyle.inline` compõe o texto entre acentos graves numa fonte de código: como uma unidade, como um chip, que uma linha nunca quebra por dentro. Sem definir, o código em linha mantém a fonte do texto.
+`codeStyle.inline` compõe o texto entre acentos graves numa fonte de código, dentro de uma caixa como a de um chip. Uma linha pode quebrar o código num espaço ou depois de um hífen entre uma letra ou um algarismo e uma letra: a caixa é cortada em duas e nada é acrescentado. Os espaços do código mantêm a largura da fonte de código, e a justificação da linha não os estica. Sem definir, o código em linha mantém a fonte do texto.
 
 <table>
   <thead>
@@ -751,6 +751,7 @@ Um realçador registrado para uma linguagem tem precedência sobre um registrado
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>nenhum / <code>0.5pt</code></td><td>Um contorno.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> é o tamanho do trecho.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> com preenchimento ou contorno, senão <code>0</code> / <code>0.1em</code></td><td>Espaço dentro do preenchimento; o espaçamento vertical é pintado fora da caixa da linha.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>A fonte dos caracteres árabes, hebraicos e CJK do código: a do texto (<code>'text'</code>), porque poucas fontes de código os têm, ou a de código (<code>'code'</code>), se os tiver.</td></tr>
   </tbody>
 </table>
 

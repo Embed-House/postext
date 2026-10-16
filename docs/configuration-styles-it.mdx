@@ -731,7 +731,7 @@ Un evidenziatore registrato per un linguaggio ha la precedenza su uno registrato
 
 ### Codice in linea
 
-`codeStyle.inline` compone il testo tra apici inversi in un carattere da codice: come un’unica unità, al modo di un chip, dentro la quale una riga non va mai a capo. Se non è impostato, il codice in linea mantiene il carattere del testo.
+`codeStyle.inline` compone il testo tra apici inversi in un carattere da codice, dentro un riquadro come quello di un chip. Una riga può spezzare il codice a uno spazio o dopo un trattino tra una lettera o una cifra e una lettera: il riquadro si divide in due e non si aggiunge nulla. Gli spazi del codice mantengono la larghezza del carattere da codice, e la giustificazione della riga non li allarga. Se non è impostato, il codice in linea mantiene il carattere del testo.
 
 <table>
   <thead>
@@ -751,6 +751,7 @@ Un evidenziatore registrato per un linguaggio ha la precedenza su uno registrato
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>nessuno / <code>0.5pt</code></td><td>Un contorno.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> è il corpo del tratto.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> con un riempimento o un contorno, altrimenti <code>0</code> / <code>0.1em</code></td><td>Spazio dentro il riempimento; il padding verticale si dipinge fuori dal riquadro della riga.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>Il carattere delle lettere arabe, ebraiche e CJK del codice: quello del testo (<code>'text'</code>), perché pochi caratteri da codice le hanno, o quello del codice (<code>'code'</code>), se le ha.</td></tr>
   </tbody>
 </table>
 

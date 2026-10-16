@@ -566,6 +566,22 @@ describe('inline code', () => {
     expect(p.lines.every((l) => !l.hyphenated)).toBe(true);
   });
 
+  it('sets the Arabic and CJK words of inline code in the text face', () => {
+    const doc = buildDocument({ markdown: 'Write `:index[الكشيدة]` or `{漢字|かん|じ}` here.' }, config(inline));
+    const runs = chipSegs(doc).flat().flatMap((c) => c.chip!.runs);
+    const face = (text: string) => runs.find((r) => r.text === text)?.fontString ?? '';
+    expect(face(':index[')).toContain('Source Code Pro');
+    expect(face('الكشيدة')).not.toContain('Source Code Pro');
+    expect(face('漢字')).not.toContain('Source Code Pro');
+    expect(face('|')).toContain('Source Code Pro');
+    // A code face that has those letters keeps them (otherScripts: 'code').
+    const own = buildDocument({ markdown: 'Write `:index[الكشيدة]` here.' }, config({ codeStyle: { inline: { otherScripts: 'code' } } }));
+    expect(chipSegs(own).flat().flatMap((c) => c.chip!.runs).every((r) => r.fontString.includes('Source Code Pro'))).toBe(true);
+    // Code reads left to right, whatever letter it starts with.
+    const doc2 = buildDocument({ markdown: 'A `## منهج {#method}` heading.' }, config(inline));
+    expect(chipSegs(doc2).flat().every((c) => c.chip!.order === undefined)).toBe(true);
+  });
+
   // A table's cells, its caption and its note take the same style (#845).
   const tableDoc = (extra: PostextConfig) => buildDocument({
     markdown: '::resource{id="t"}\n',

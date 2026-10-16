@@ -1946,6 +1946,8 @@
     "codeInlineFontSizeTooltip": "em es el tamaño del texto que lo rodea. Por defecto, 0,9 em.",
     "codeInlineFill": "Fondo",
     "codeInlineFillTooltip": "Un fondo detrás del código en línea, como lo ponen muchas páginas web.",
+    "codeInlineOtherScripts": "Otras escrituras en la letra del texto",
+    "codeInlineOtherScriptsTooltip": "Las letras árabes, hebreas, chinas, japonesas y coreanas del código en línea se componen con la fuente del texto que lo rodea, porque pocas fuentes de código las tienen. Desactívalo si la fuente de código las incluye.",
     "codeInlinePaddingX": "Espacio dentro del fondo",
     "cjkSection": "Tipografía de Asia oriental",
     "writingSection": "Idioma y dirección",

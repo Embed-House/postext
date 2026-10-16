@@ -105,6 +105,7 @@ function resolveInline(inline: InlineCodeStyleConfig | undefined, family: string
     borderRadius: inline.borderRadius ?? { value: 0.2, unit: 'em' },
     paddingX: inline.paddingX ?? (framed ? { value: 0.2, unit: 'em' } : { value: 0, unit: 'em' }),
     paddingY: inline.paddingY ?? { value: 0.1, unit: 'em' },
+    otherScripts: oneOf(['text', 'code'] as const, inline.otherScripts, 'text'),
   };
 }
 

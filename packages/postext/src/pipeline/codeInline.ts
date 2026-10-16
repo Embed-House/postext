@@ -38,6 +38,7 @@ function inlineCodeBox(inline: ResolvedInlineCodeStyleConfig, dpi: number, fontS
     paddingXPx: px(inline.paddingX),
     paddingYPx: px(inline.paddingY),
     gapPx: 0,
+    direction: 'ltr',
   };
 }
 
@@ -59,7 +60,7 @@ export function withInlineCode(block: ContentBlock, raw: ContentBlock, resolved:
     if (i < 0 || i >= map.length) return false;
     const at = map[i]!;
     return ranges.some((r) => at >= r.start && at < r.end);
-  }, inlineCodeBox(inline, resolved.page.dpi, fontSizePx));
+  }, inlineCodeBox(inline, resolved.page.dpi, fontSizePx), inline.otherScripts === 'text');
   return spans === block.spans ? block : { ...block, spans };
 }
 
@@ -92,7 +93,7 @@ export function withSnippetInlineCode(
   return codeChipSpans(spans, (p) => {
     const at = map[p];
     return at !== undefined && ranges.some((r) => at >= r.start && at < r.end);
-  }, inlineCodeBox(inline, dpi, fontSizePx));
+  }, inlineCodeBox(inline, dpi, fontSizePx), inline.otherScripts === 'text');
 }
 
 /** The spans of one run of inline code: a chip per piece between its
@@ -102,10 +103,10 @@ export function withSnippetInlineCode(
  *  break too, behind an empty code space: the hyphen stays the code's, and
  *  none is added. Spaces that open or close the run stay inside its first
  *  or last piece. */
-function codePieces(span: InlineSpan, text: string, box: ChipBox): InlineSpan[] {
+function codePieces(span: InlineSpan, text: string, box: ChipBox, textFace: boolean): InlineSpan[] {
   const chip = (t: string, joinNext: boolean): InlineSpan => ({
     text: t, bold: span.bold, italic: span.italic,
-    chip: { style: INLINE_CODE_CHIP_STYLE, spans: [{ text: t, bold: false, italic: false }], box, ...(joinNext ? { joinNext: true } : {}) },
+    chip: { style: INLINE_CODE_CHIP_STYLE, spans: textFace ? codeWords(t) : [{ text: t, bold: false, italic: false }], box, ...(joinNext ? { joinNext: true } : {}) },
   });
   const parts = /^(\s*)(.*?)(\s*)$/s.exec(text)!;
   const inner = parts[2]!.split(/( +)|(?<=[\p{L}\p{N}]-)(?=\p{L})/u).map((t) => t ?? '');
@@ -121,10 +122,37 @@ function codePieces(span: InlineSpan, text: string, box: ChipBox): InlineSpan[] 
   return out;
 }
 
+/** Letters a code face does not carry: Arabic, Hebrew, Syriac and Thaana,
+ *  and Chinese, Japanese and Korean, with their full-width marks. */
+const TEXT_FACE_RE = /[\p{Script=Arabic}\p{Script=Hebrew}\p{Script=Syriac}\p{Script=Thaana}\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Bopomofo}\u3000-\u303f\uff00-\uffef]/u;
+const MARK_RE = /\p{M}/u;
+
+/** The words of a piece of code: one span, or, when it holds letters a
+ *  code face does not carry (an Arabic word in `:index[…]`, kanji in a
+ *  ruby), a span per run, those runs set in the text's face (#845). A
+ *  combining mark goes with the letter before it. */
+function codeWords(text: string): InlineSpan[] {
+  if (!TEXT_FACE_RE.test(text)) return [{ text, bold: false, italic: false }];
+  const out: InlineSpan[] = [];
+  let run = '';
+  let face = false;
+  for (const ch of text) {
+    const own: boolean = MARK_RE.test(ch) && run ? face : TEXT_FACE_RE.test(ch);
+    if (run && own !== face) {
+      out.push({ text: run, bold: false, italic: false, ...(face ? { textFace: true } : {}) });
+      run = '';
+    }
+    face = own;
+    run += ch;
+  }
+  if (run) out.push({ text: run, bold: false, italic: false, ...(face ? { textFace: true } : {}) });
+  return out;
+}
+
 /** `spans` with every run of characters `isCode` names (by offset in the
  *  spans' joined text) set as one code chip in `box`; `spans` itself when
  *  none is. Objects (formulas, references, chips…) stay as they are. */
-function codeChipSpans(spans: InlineSpan[], isCode: (p: number) => boolean, box: ChipBox): InlineSpan[] {
+function codeChipSpans(spans: InlineSpan[], isCode: (p: number) => boolean, box: ChipBox, textFace: boolean): InlineSpan[] {
   const out: InlineSpan[] = [];
   let at = 0;
   let changed = false;
@@ -143,7 +171,7 @@ function codeChipSpans(spans: InlineSpan[], isCode: (p: number) => boolean, box:
       if (!code) {
         out.push(k === 0 && j === len ? span : sliceSpan(span, k, j));
       } else {
-        out.push(...codePieces(span, span.text.slice(k, j), box));
+        out.push(...codePieces(span, span.text.slice(k, j), box, textFace));
         changed = true;
       }
       k = j;

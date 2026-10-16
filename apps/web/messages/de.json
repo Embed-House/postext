@@ -1243,6 +1243,8 @@
     "codeInlineFontSizeTooltip": "em ist der Schriftgrad des umgebenden Textes. Standard 0.9 em.",
     "codeInlineFill": "Hinterlegung",
     "codeInlineFillTooltip": "Ein Farbton hinter Code im Fließtext, wie viele Webseiten ihn setzen.",
+    "codeInlineOtherScripts": "Andere Schriftsysteme in der Textschrift",
+    "codeInlineOtherScriptsTooltip": "Arabische, hebräische, chinesische, japanische und koreanische Zeichen in Code im Fließtext werden in der Schrift des umgebenden Textes gesetzt, weil nur wenige Codeschriften sie enthalten. Schalten Sie es aus, wenn die Codeschrift sie enthält.",
     "codeInlinePaddingX": "Innenabstand der Hinterlegung",
     "cjkSection": "Ostasiatische Typografie",
     "writingSection": "Sprache und Richtung",

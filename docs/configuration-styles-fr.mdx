@@ -731,7 +731,7 @@ Un surligneur enregistré pour un langage l’emporte sur un surligneur enregist
 
 ### Code en ligne
 
-`codeStyle.inline` compose le texte placé entre accents graves dans une police de code : d’un seul tenant, comme une pastille, qu’une ligne ne coupe jamais. S’il n’est pas défini, le code en ligne garde la police du texte.
+`codeStyle.inline` compose le texte placé entre accents graves dans une police de code, dans une boîte comme celle d’une pastille. Une ligne peut couper le code à une espace ou après un trait d’union entre une lettre ou un chiffre et une lettre : la boîte est coupée en deux et rien n’est ajouté. Les espaces du code gardent la chasse de la police de code, et la justification de la ligne ne les étire pas. S’il n’est pas défini, le code en ligne garde la police du texte.
 
 <table>
   <thead>
@@ -751,6 +751,7 @@ Un surligneur enregistré pour un langage l’emporte sur un surligneur enregist
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>aucune / <code>0.5pt</code></td><td>Un contour.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> vaut le corps du passage.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> avec un fond ou un contour, sinon <code>0</code> / <code>0.1em</code></td><td>Espace à l’intérieur du fond ; la marge verticale est peinte hors de la boîte de ligne.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>La police des caractères arabes, hébreux et CJK du code : celle du texte (<code>'text'</code>), car peu de polices de code les possèdent, ou celle du code (<code>'code'</code>), si elle les a.</td></tr>
   </tbody>
 </table>
 

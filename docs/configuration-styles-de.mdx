@@ -731,7 +731,7 @@ Ein für eine Sprache registrierter Highlighter hat Vorrang vor einem für `'*'`
 
 ### Inline-Code
 
-`codeStyle.inline` setzt Text zwischen Backticks in einer Code-Schrift: als eine Einheit, wie einen Chip, in der eine Zeile nie umbricht. Nicht gesetzt, behält Inline-Code die Schrift des Texts.
+`codeStyle.inline` setzt Text zwischen Backticks in einer Code-Schrift, in einem Kasten wie einen Chip. Eine Zeile darf den Code an einem Leerzeichen umbrechen oder nach einem Bindestrich zwischen einem Buchstaben oder einer Ziffer und einem Buchstaben: Der Kasten wird dort geteilt, und nichts wird hinzugefügt. Die Leerzeichen im Code behalten die Breite der Code-Schrift, und der Blocksatz der Zeile dehnt sie nicht. Nicht gesetzt, behält Inline-Code die Schrift des Texts.
 
 <table>
   <thead>
@@ -751,6 +751,7 @@ Ein für eine Sprache registrierter Highlighter hat Vorrang vor einem für `'*'`
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>keine / <code>0.5pt</code></td><td>Eine Umrisslinie.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> ist die Größe des Abschnitts.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> mit Fläche oder Umrisslinie, sonst <code>0</code> / <code>0.1em</code></td><td>Raum innerhalb der Fläche; der senkrechte Innenabstand wird außerhalb des Zeilenkastens gezeichnet.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>Die Schrift der arabischen, hebräischen und CJK-Zeichen im Code: die des Texts (<code>'text'</code>), weil nur wenige Code-Schriften sie haben, oder die Code-Schrift (<code>'code'</code>), wenn sie sie hat.</td></tr>
   </tbody>
 </table>
 

@@ -731,7 +731,7 @@ A highlighter registered for a language takes precedence over one registered for
 
 ### Inline code
 
-`codeStyle.inline` sets text between backticks in a code face: as one unit, as a chip is, which a line never breaks inside. Unset, inline code keeps the text's face.
+`codeStyle.inline` sets text between backticks in a code face, in a box as a chip is. A line may break at a space inside the code, or after a hyphen between a letter or digit and a letter: the box is cut in two there and nothing is added. The spaces inside the code keep the code face's width, and justifying the line never stretches them. Unset, inline code keeps the text's face.
 
 <table>
   <thead>
@@ -751,6 +751,7 @@ A highlighter registered for a language takes precedence over one registered for
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>none / <code>0.5pt</code></td><td>An outline.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> is the span's size.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> with a fill or outline, else <code>0</code> / <code>0.1em</code></td><td>Room inside the fill; the vertical padding paints outside the line box.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>The face of the Arabic, Hebrew and CJK letters the code holds: the text's (<code>'text'</code>), since few code faces have them, or the code face (<code>'code'</code>) for one that does.</td></tr>
   </tbody>
 </table>
 

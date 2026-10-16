@@ -730,7 +730,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
 
 ### 行内代码
 
-`codeStyle.inline`让反引号之间的文字用代码字体排：作为一个整体，与行内标签一样，行内不会在其中断开。未设置时，行内代码保持正文字体。
+`codeStyle.inline`让反引号之间的文字用代码字体排在一个与行内标签相同的框里。行可以在代码中的空格处断开，也可以在字母或数字与字母之间的连字符后断开：框在那里分成两个，不添加任何字符。代码中的空格保持代码字体的宽度，行两端对齐时也不会被拉宽。未设置时，行内代码保持正文字体。
 
 <table>
   <thead>
@@ -750,6 +750,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>无 / <code>0.5pt</code></td><td>轮廓。</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code>指片段的字号。</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td>有底色或轮廓时为<code>0.2em</code>，否则为<code>0</code> / <code>0.1em</code></td><td>底色内的空白；垂直内边距画在行框之外。</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>代码中阿拉伯文、希伯来文和中日韩文字的字体：正文的字体（<code>'text'</code>），因为很少有代码字体包含这些字符；或者包含它们的代码字体（<code>'code'</code>）。</td></tr>
   </tbody>
 </table>
 

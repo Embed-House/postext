@@ -731,7 +731,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
 
 ### الشيفرة المضمّنة
 
-يضبط `codeStyle.inline` النص الواقع بين علامتي الاقتباس المائلة بخط الشيفرة: وحدةً واحدة، كما الشارة، لا ينكسر السطر داخلها. وإن لم يُضبط احتفظت الشيفرة المضمّنة بخط النص.
+يضبط `codeStyle.inline` النص الواقع بين علامتي الاقتباس المائلة بخط الشيفرة، داخل إطار كإطار الشارة. ويجوز أن ينكسر السطر عند مسافة داخل الشيفرة، أو بعد واصلة بين حرف أو رقم وحرف، فينقسم الإطار هناك قسمين ولا يُضاف شيء. وتحتفظ المسافات داخل الشيفرة بعرضها في خط الشيفرة، ولا يمدّها ضبط السطر. وإن لم يُضبط احتفظت الشيفرة المضمّنة بخط النص.
 
 <table>
   <thead>
@@ -751,6 +751,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>لا شيء / <code>0.5pt</code></td><td>خط محيط.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> هو حجم المقطع.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> مع تعبئة أو خط محيط، وإلا <code>0</code> / <code>0.1em</code></td><td>المساحة داخل التعبئة؛ والحشوة العمودية تُرسم خارج مربع السطر.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>خط الحروف العربية والعبرية وحروف CJK داخل الشيفرة: خط النص (<code>'text'</code>)، لأن قليلًا من خطوط الشيفرة يحملها، أو خط الشيفرة (<code>'code'</code>) إن كان يحملها.</td></tr>
   </tbody>
 </table>
 

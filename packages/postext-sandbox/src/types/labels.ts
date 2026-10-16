@@ -698,6 +698,8 @@ export interface SandboxLabels {
   codeInlineFontSizeTooltip: string;
   codeInlineFill: string;
   codeInlineFillTooltip: string;
+  codeInlineOtherScripts: string;
+  codeInlineOtherScriptsTooltip: string;
   codeInlinePaddingX: string;
   cjkSection: string;
   writingSection: string;

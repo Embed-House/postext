@@ -1242,6 +1242,8 @@
     "codeInlineFontSizeTooltip": "em és la mida del text que l'envolta. Per defecte, 0,9 em.",
     "codeInlineFill": "Fons",
     "codeInlineFillTooltip": "Un fons darrere del codi en línia, com el posen moltes pàgines web.",
+    "codeInlineOtherScripts": "Altres escriptures amb la lletra del text",
+    "codeInlineOtherScriptsTooltip": "Les lletres àrabs, hebrees, xineses, japoneses i coreanes del codi en línia es componen amb la font del text que l'envolta, perquè poques fonts de codi les tenen. Desactiva-ho si la font de codi les inclou.",
     "codeInlinePaddingX": "Espai dins del fons",
     "cjkSection": "Tipografia de l'Àsia oriental",
     "writingSection": "Llengua i direcció",
