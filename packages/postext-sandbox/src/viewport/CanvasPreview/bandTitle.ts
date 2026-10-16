@@ -28,21 +28,35 @@ export interface BandLineBox {
 export function bandTitleBlocks(doc: VDTDocument, pageIndex: number): VDTDesignTextBlock[] {
   const page = doc.pages[pageIndex];
   if (!page) return [];
-  const slots = [page.openerBand, page.header, page.footer];
+  const slots: Array<{ slot: VDTBlock['designOverlay']; owner?: string }> = [page.openerBand, page.header, page.footer].map((slot) => ({ slot }));
   for (const b of doc.blocks) {
-    if (b.pageIndex === pageIndex && b.designOverlay) slots.push(b.designOverlay);
+    if (b.pageIndex === pageIndex && b.designOverlay) slots.push({ slot: b.designOverlay, owner: b.id });
   }
   for (const b of page.floats ?? []) {
-    if (b.designOverlay) slots.push(b.designOverlay);
+    if (b.designOverlay) slots.push({ slot: b.designOverlay, owner: b.id });
   }
   const out: VDTDesignTextBlock[] = [];
-  for (const slot of slots) {
+  for (const { slot, owner } of slots) {
     if (!slot) continue;
     for (const b of slot.blocks) {
-      if (b.kind === 'text' && b.sourceStart !== undefined && b.sourceEnd !== undefined) out.push(b);
+      if (b.kind !== 'text' || b.sourceStart === undefined || b.sourceEnd === undefined) continue;
+      out.push(b);
+      if (owner !== undefined) owners.set(b, owner);
     }
   }
   return out;
+}
+
+/** The block whose design overlay draws each title {@link bandTitleBlocks}
+ *  returned (a heading, a box), by title. */
+const owners = new WeakMap<VDTDesignTextBlock, string>();
+
+/** The id of the block whose design overlay draws `title` (one
+ *  {@link bandTitleBlocks} returned): the overlay is painted in that
+ *  block's composed frame, if any (#910). Undefined for the opener band
+ *  and the running heads. */
+export function bandTitleOwner(title: VDTDesignTextBlock): string | undefined {
+  return owners.get(title);
 }
 
 /** A flow heading rendered through an opener band keeps invisible lines

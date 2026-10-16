@@ -5,7 +5,8 @@ import { getSvgTextIndex } from '../../controls/svgTextIndex';
 import { svgSourceOffsetToCaret, svgSourceRangeToBoxes, type SvgCharBox } from '../../controls/svgSource';
 import { SVG_NS } from './dom';
 import { plainRangeInLine, sourceToPlainIndex, xForPlainInLine } from './geometry';
-import { bandLineBoxes, bandPrefixX, bandSourceToPlain, bandTitleBlocks, isHiddenUnderBand } from './bandTitle';
+import { bandLineBoxes, bandPrefixX, bandSourceToPlain, bandTitleBlocks, bandTitleOwner, isHiddenUnderBand } from './bandTitle';
+import { blockFrameMatrix, type FrameAffine } from '../composed/frameHit';
 import { documentShapingLanguage } from '../../controls/measureLanguage';
 import { balloonTextRangeRects } from '../comics/balloonText';
 import {
@@ -16,14 +17,25 @@ import {
   xForPlainInResourceLine,
 } from './resourceHit';
 
-function appendRect(group: SVGGElement, x: number, y: number, width: number, height: number, fill: string): void {
+function appendRect(group: SVGGElement, x: number, y: number, width: number, height: number, fill: string, matrix: FrameAffine | null = null): SVGRectElement {
   const rect = document.createElementNS(SVG_NS, 'rect');
   rect.setAttribute('x', String(x));
   rect.setAttribute('y', String(y));
   rect.setAttribute('width', String(width));
   rect.setAttribute('height', String(height));
   rect.setAttribute('fill', fill);
+  setMatrix(rect, matrix);
   group.appendChild(rect);
+  return rect;
+}
+
+/** Put an overlay element through a composed frame's matrix (#910: a
+ *  frame whose text is scaled or turned keeps its blocks in its own
+ *  coordinates), or take the matrix off. Inside the group's flow frame,
+ *  as the backends paint a frame inside the page's flow. */
+function setMatrix(el: SVGElement, matrix: FrameAffine | null): void {
+  if (matrix) el.setAttribute('transform', `matrix(${matrix.join(' ')})`);
+  else el.removeAttribute('transform');
 }
 
 /**
@@ -44,7 +56,10 @@ export function drawResourceSelection(
   if (!collapsed && !debug.selectionSync.enabled) return;
   const rangeFill = debug.selectionSync.color.hex;
   const caretFill = debug.cursorSync.color.hex;
-  const caret = (x: number, y: number, h: number) => appendRect(group, x - 1, y, 2, h, caretFill);
+  // The figure or table of a composed frame is drawn through its matrix.
+  const owner = resourceBlockOnPage(doc, pageIndex, sel.resourceId);
+  const matrix = owner ? blockFrameMatrix(doc.pages[pageIndex], owner.id) : null;
+  const caret = (x: number, y: number, h: number) => appendRect(group, x - 1, y, 2, h, caretFill, matrix);
 
   if (sel.target.kind === 'svgText') {
     const body = svgBodyRectFor(doc, pageIndex, sel.resourceId);
@@ -67,12 +82,12 @@ export function drawResourceSelection(
     }
     for (const b of svgSourceRangeToBoxes(index, sel.from, sel.to)) {
       const r = toPage(b);
-      appendRect(group, r.x, r.y, Math.max(1, r.w), Math.max(1, r.h), rangeFill);
+      appendRect(group, r.x, r.y, Math.max(1, r.w), Math.max(1, r.h), rangeFill, matrix);
     }
     return;
   }
 
-  const block = resourceBlockOnPage(doc, pageIndex, sel.resourceId);
+  const block = owner;
   if (!block) return;
   const rb = block.resourceBlock!;
   const run = resolveResourceRun(rb, sel.target);
@@ -82,11 +97,11 @@ export function drawResourceSelection(
   const runCaret = (x: number, y: number, h: number) => {
     if (!rb.rotation) { caret(x, y, h); return; }
     const r = resourceBlockRectToPage(rb, { x: x - 1, y, width: 2, height: h });
-    appendRect(group, r.x, r.y, r.width, r.height, caretFill);
+    appendRect(group, r.x, r.y, r.width, r.height, caretFill, matrix);
   };
   const runRect = (x: number, y: number, w: number, h: number) => {
     const r = resourceBlockRectToPage(rb, { x, y, width: w, height: h });
-    appendRect(group, r.x, r.y, Math.max(1, r.width), Math.max(1, r.height), rangeFill);
+    appendRect(group, r.x, r.y, Math.max(1, r.width), Math.max(1, r.height), rangeFill, matrix);
   };
 
   if (run.lines.length === 0) {
@@ -280,6 +295,12 @@ export function drawOverlay(
     else g.removeAttribute('transform');
   }
 
+  // The caret is set through the frame of the block it stands in (#910).
+  setMatrix(cursorRect, null);
+  const page = doc.pages[pageIndex];
+  const matrixOf = (blockId: string | undefined): FrameAffine | null =>
+    blockId === undefined ? null : blockFrameMatrix(page, blockId);
+
   // A resource editor's selection paints regardless of Markdown editor focus.
   if (resourceSelection) drawResourceSelection(selectionGroup, doc, pageIndex, resourceSelection, debug);
 
@@ -288,7 +309,7 @@ export function drawOverlay(
   if (looseLineGroup && debug.looseLineHighlight.enabled) {
     const fill = debug.looseLineHighlight.color.hex;
     for (const loose of findLooseLines(doc, { threshold: debug.looseLineHighlight.threshold, pageIndex })) {
-      appendRect(looseLineGroup, loose.x, loose.y, loose.width, loose.height, fill);
+      appendRect(looseLineGroup, loose.x, loose.y, loose.width, loose.height, fill, matrixOf(loose.block.id));
     }
   }
 
@@ -325,6 +346,7 @@ export function drawOverlay(
       cursorRect.setAttribute('width', '3');
       cursorRect.setAttribute('height', String(box.height));
       cursorRect.setAttribute('fill', debug.cursorSync.color.hex);
+      setMatrix(cursorRect, matrixOf(bandTitleOwner(bandCaretBlock)));
       cursorRect.style.display = '';
       cursorRect.style.visibility = cursorActive ? '' : 'hidden';
       cursorPositioned = true;
@@ -352,6 +374,7 @@ export function drawOverlay(
       cursorRect.setAttribute('width', '3');
       cursorRect.setAttribute('height', String(line.bbox.height));
       cursorRect.setAttribute('fill', debug.cursorSync.color.hex);
+      setMatrix(cursorRect, matrixOf(caretBlock.id));
       if (cursorActive) {
         cursorRect.style.display = '';
         cursorRect.style.visibility = '';
@@ -375,6 +398,7 @@ export function drawOverlay(
     if (tEnd <= from || tStart > to) continue;
     const plainFrom = bandSourceToPlain(title, from);
     const plainTo = bandSourceToPlain(title, to);
+    const titleMatrix = matrixOf(bandTitleOwner(title));
     for (const box of bandLineBoxes(title, bandLang)) {
       const lineStart = box.plainStart;
       const lineEnd = box.plainStart + box.text.length;
@@ -389,6 +413,7 @@ export function drawOverlay(
         rect.setAttribute('width', String(Math.max(1, x2 - x1)));
         rect.setAttribute('height', String(box.height));
         rect.setAttribute('fill', debug.selectionSync.color.hex);
+        setMatrix(rect, titleMatrix);
         selectionGroup.appendChild(rect);
       }
     }
@@ -398,7 +423,6 @@ export function drawOverlay(
   // each balloon's own frame, put on the sheet by its turn and lean; the
   // comics are laid out on the sheet, so the group's flow frame (a
   // vertical or mirrored page) is undone first.
-  const page = doc.pages[pageIndex];
   if (page) {
     const unframe = frameMatrix ? invertAffine(frameMatrix) : null;
     for (const comic of pageComics(page)) {
@@ -431,6 +455,7 @@ export function drawOverlay(
     const plainEnd = prefixLen + (block.sourceMap?.length ?? 0);
     const plainFrom = from <= block.sourceStart ? prefixLen : (sourceToPlainIndex(block, from) ?? prefixLen);
     const plainTo = to >= block.sourceEnd ? plainEnd : (sourceToPlainIndex(block, to) ?? plainEnd);
+    const blockMatrix = matrixOf(block.id);
 
     for (const line of block.lines) {
       const lineStart = line.plainStart;
@@ -449,6 +474,7 @@ export function drawOverlay(
           rect.setAttribute('width', String(Math.max(1, x2 - x1)));
           rect.setAttribute('height', String(line.bbox.height));
           rect.setAttribute('fill', debug.selectionSync.color.hex);
+          setMatrix(rect, blockMatrix);
           selectionGroup.appendChild(rect);
         }
       }

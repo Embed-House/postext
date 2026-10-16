@@ -7,7 +7,7 @@
  * Design mode). Pure: sheet px, no DOM.
  */
 
-import type { VDTComposedPage, VDTFrame, VDTPage } from 'postext';
+import { frameMatrix, frameOfBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from 'postext';
 
 /** Anything that may carry a composed page (a `VDTPage`, or a stand-in in a
  *  test). */
@@ -128,4 +128,38 @@ export function frameHandleAt(frame: Pick<VDTFrame, 'rect' | 'rotate'>, x: numbe
   const h = w ? 'w' : e ? 'e' : '';
   const handle = `${v}${h}`;
   return handle ? (handle as FrameHandle) : 'move';
+}
+
+/** A 2D affine matrix `[a b c d e f]` (canvas `transform` order, y down). */
+export type FrameAffine = [number, number, number, number, number, number];
+
+/** The matrix that puts the blocks of the frame holding block `blockId`
+ *  on the page (`frameMatrix`: the frame's text scale, #858, and its turn),
+ *  null when the block is in no frame or its frame is upright at full
+ *  size (#910). The blocks of a composed frame keep the frame's own
+ *  coordinates: the caret, the selection and a click read them through it. */
+export function blockFrameMatrix(page: ComposedPageLike | null | undefined, blockId: string): FrameAffine | null {
+  const composed = page?.composed;
+  if (!composed || composed.frames.length === 0) return null;
+  const frame = frameOfBlock(composed, blockId);
+  return (frame && (frameMatrix(frame) as FrameAffine | undefined)) ?? null;
+}
+
+/** A page point in the blocks' own coordinates of a frame whose matrix is
+ *  `m` (the inverse of {@link blockFrameMatrix}); the point itself when
+ *  `m` is null. */
+export function intoBlockSpace(m: FrameAffine | null, x: number, y: number): FramePoint {
+  if (!m) return { x, y };
+  const [a, b, c, d, e, f] = m;
+  const det = a * d - b * c;
+  if (!det) return { x, y };
+  const dx = x - e;
+  const dy = y - f;
+  return { x: (d * dx - c * dy) / det, y: (-b * dx + a * dy) / det };
+}
+
+/** A point of a frame's blocks on the page (through `m`, as painted). */
+export function fromBlockSpace(m: FrameAffine | null, x: number, y: number): FramePoint {
+  if (!m) return { x, y };
+  return { x: m[0] * x + m[2] * y + m[4], y: m[1] * x + m[3] * y + m[5] };
 }
