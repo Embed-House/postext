@@ -21,6 +21,9 @@ const ADVANCES = {
 const em = (font: string): number => Number(/(\d+(?:\.\d+)?)px/.exec(font)?.[1] ?? 16);
 function advance(text: string, font: string): number {
   const size = em(font);
+  // Inline code is set in Geist Mono (#845): 600 thousandths for every
+  // character it has (its CJK letters are set in the text's face).
+  if (/Geist Mono/.test(font)) return size * Array.from(text).length * 0.6;
   const face = /Noto Serif JP/.test(font) ? (/\b(700|bold)\b/.test(font) ? ADVANCES.serifBold : ADVANCES.serif) : ADVANCES.sans;
   let w = 0;
   for (const ch of text) {

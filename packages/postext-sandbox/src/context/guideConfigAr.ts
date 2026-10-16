@@ -7,7 +7,7 @@ import type {
 import { defaultResourceTypes } from 'postext';
 import {
   DISPLAY, GUIDE_COVER_RESOURCE_ID, GUIDE_FOLIO, M_BOTTOM, M_INNER, M_OUTER, M_TOP, PAGE_H, PAGE_W, TEXT_W,
-  at, box, col, colorPalette, em, image, mm, pt, rule, slot, text, type TextOpts,
+  at, box, col, colorPalette, em, guideCodeStyle, image, mm, pt, rule, slot, text, type TextOpts,
 } from './guideKit';
 
 // The Arabic edition of the Postext guide, in Modern Standard Arabic, set as
@@ -466,6 +466,7 @@ export function createArabicGuideConfig(): PostextConfig {
       headerBackgroundEnabled: true, headerBackground: col('ink'),
       borderColor: col('rule'), borderWidth: pt(0.5), cellPadding: mm(1.2), rules: 'horizontal',
     },
+    codeStyle: guideCodeStyle(),
     unorderedLists: { bulletChar: '•', color: col('band') },
     orderedLists: {
       color: col('band'),

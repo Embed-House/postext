@@ -1,7 +1,7 @@
 // Builds `apps/web/public/bundles/postext-guide.postext`: the Sandbox's first example — the bilingual
 // Postext guide — as one self-contained file. It holds the guide's
 // configuration, its chapters in English and Spanish, its figures and
-// tables, and the font files of its four typefaces (Fraunces, Lora, Geist,
+// tables, and the font files of its five typefaces (Fraunces, Lora, Geist, Geist Mono,
 // Bricolage Grotesque; SIL Open Font License, fetched from Fontsource). The
 // Sandbox's own export leaves these fonts out, since it takes them from
 // Google Fonts by name. Run it from the repository root whenever the guide
@@ -185,7 +185,7 @@ const manifest = {
   locale: 'en',
   locales: LOCALES,
   license: 'MIT',
-  credits: 'Postext · fonts: Fraunces, Lora, Geist, Bricolage Grotesque (SIL Open Font License)',
+  credits: 'Postext · fonts: Fraunces, Lora, Geist, Geist Mono, Bricolage Grotesque (SIL Open Font License)',
   chapters: chaptersByLocale,
   localized: { es: { config: configOverrides, resources: resourceOverrides } },
 };

@@ -12,7 +12,7 @@ publishDate: "2026-10-04"
 :::paragraphs{style="colophon"}
 **Guia de Postext** és el llibre de mostra que acompanya el Sandbox. És alhora un recorregut pel motor i una demostració del que fa: la coberta, l'índex que es numera sol, les portadelles de part, les obertures de capítol, les capçaleres, cada figura i cada taula que flota fins al seu lloc… tot ho maqueta Postext, al teu navegador, a partir del Markdown que pots obrir a l'editor.
 
-Compost en Fraunces, Lora, Bricolage Grotesque i Geist, servides per Google Fonts. Els diagrames són fitxers SVG senzills, que es dibuixen com a vectors al canvas, a la vista HTML i al PDF. Canvia el que vulguis —una paraula, un marge, un color de la paleta— i el llibre es torna a compondre.
+Compost en Fraunces, Lora, Bricolage Grotesque, Geist i Geist Mono, servides per Google Fonts. Els diagrames són fitxers SVG senzills, que es dibuixen com a vectors al canvas, a la vista HTML i al PDF. Canvia el que vulguis —una paraula, un marge, un color de la paleta— i el llibre es torna a compondre.
 
 Postext és de codi obert, amb llicència MIT. Text © 2026 Ignacio Ferro i les persones que contribueixen a Postext.
 :::
@@ -30,13 +30,13 @@ Postext és de codi obert, amb llicència MIT. Text © 2026 Ignacio Ferro i les 
 
 Postext és un **motor de maquetació de codi obert** que porta al web l'ofici de la tipografia impresa professional. Rep **contingut semàntic** escrit en Markdown enriquit i un objecte de configuració, i calcula una maquetació completament resolta en què cada línia, cada títol, cada figura i cada taula té una posició precisa, mesurada en unitats tipogràfiques reals. Després la dibuixen tres renderitzadors —una previsualització viva en canvas, HTML posicionat i un PDF a punt per a impremta— que llegeixen la mateixa geometria, de manera que el que veus a la pantalla és exactament el que va a impremta, i les mateixes pàgines s'escriuen com a llibre electrònic EPUB 3.
 
-Aquest llibre és la seva pròpia demostració. La coberta, l'índex que es numera sol, les portadelles en tres colors, la banda que obre cada capítol, les capçaleres d'aquestes pàgines i cada figura que flota fins al seu lloc les ha maquetat Postext, al teu navegador, fa un moment. Res no s'ha col·locat a mà: el Markdown només diu què és cada cosa, i la configuració decideix com es veu.
+Aquest llibre és la seva pròpia demostració. La coberta, l'índex que es numera sol, les portadelles en tres colors, la banda que obre cada capítol, les capçaleres d'aquestes pàgines i cada figura que flota fins al seu lloc les ha maquetat Postext, al teu navegador, fa un moment. Res no s'ha col·locat a mà: el Markdown només diu què és cada cosa, i la configuració decideix com es veu. Amb una altra configuració, el mateix text sortiria com una novel·la de butxaca o com una revista.
 
 :::callout{type="try"}
 Obre el tauler **Text** i tria aquest capítol al selector de capítols de la seva capçalera. Canvia una paraula d'aquest paràgraf o esborra una frase: la pàgina es torna a compondre, les columnes es reequilibren i els folis dels capítols següents s'actualitzen.
 :::
 
-Si prefereixes veure-ho abans de llegir-ho, :ref{id="postext-showreel"} ho recorre en dos minuts; a la vista Folio es reprodueix sobre la mateixa pàgina.
+Si t'estimes més veure-ho abans de llegir-ho, :ref{id="postext-showreel"} ho recorre en dos minuts, i a la vista Folio es reprodueix sobre la mateixa pàgina. Segueix un capítol des del Markdown de l'editor fins al PDF que en surt al final.
 
 ## Com llegir aquest llibre
 
@@ -277,7 +277,7 @@ Postext posa preu a totes tres. Quan un paràgraf travessa una columna, el motor
 
 ## Llistes
 
-Les llistes segueixen la mateixa disciplina que els paràgrafs, amb una tipografia pròpia. Les llistes amb pics trien el caràcter del pic, la mida, el pes i el color, i l'espai i el sagnat francès que mantenen alineat el text de cada element; les llistes numerades trien entre nombres aràbics, lletres minúscules o majúscules i nombres romans en minúscula o majúscula, amb un separador que pot tenir estil propi i nombres alineats a la dreta, perquè els elements 9 i 10 quedin alineats. La imbricació arriba a cinc nivells, cadascun amb el seu propi sagnat i les seves pròpies marques, i les llistes de tasques dibuixen una casella per a cada element, marcada o no. Els elements poden anar junts o espaiats, i el motor tracta el final d'una llista com una de les seves palanques en equilibrar les columnes.
+Les llistes segueixen la mateixa disciplina que els paràgrafs, amb una tipografia pròpia. Les llistes amb pics trien el caràcter del pic, la mida, el pes i el color, i l'espai i el sagnat francès que mantenen alineat el text de cada element; les llistes numerades trien entre nombres aràbics, lletres minúscules o majúscules i nombres romans en minúscula o majúscula, amb un separador que pot tenir estil propi i nombres alineats a la dreta, perquè els elements 9 i 10 quedin alineats. La imbricació arriba a cinc nivells, cadascun amb el seu propi sagnat i les seves pròpies marques, i les llistes de tasques dibuixen una casella per a cada element, marcada o no. Els elements poden anar junts o espaiats, i el motor tracta el final d'una llista com una de les seves palanques en equilibrar les columnes, com es veurà al capítol següent.
 
 :::callout{type="try"}
 Al tauler **Disseny**, cerca _fluixes_ i activa **Ressaltar línies fluixes**, al grup **Avançat**. Després estreny les columnes o puja \`maxWordSpacing\` i observa quines línies ha d'obrir el motor i com les redistribueix l'optimitzador.
@@ -333,7 +333,7 @@ Els folis segueixen seqüències: aràbigues, romanes en minúscula o majúscula
 
 Les dues xifres que més decideixen com es llegeix una pàgina són la longitud de les línies i la distància entre elles. La configuració fixa el cos i l'interlineat en unitats reals —aquest llibre fa servir 9,4 punts sobre 13,6—, i l'amplada de columna es dedueix de la pàgina, els marges, l'estructura de columnes i l'espai entre columnes. Una línia de 45 a 75 caràcters és l'objectiu clàssic; molt més curta i l'ull salta massa sovint, molt més llarga i perd el camí de tornada a la línia següent. Dues columnes en una pàgina de 21 cm queden de sobres dins d'aquest interval, i aquesta és una de les raons per les quals el format és tan comú en revistes i llibres tècnics.
 
-L'interlineat és a més la unitat de la retícula de base. Tota distància vertical que importa —l'espai sobre i sota un títol, al voltant d'una figura, entre els elements d'una llista— s'expressa millor com un nombre enter de línies de retícula, o es corregeix fins que ho sigui, perquè la pàgina mantingui un únic ritme de dalt a baix.
+L'interlineat és a més la unitat de la retícula de base. Tota distància vertical que importa —l'espai sobre i sota un títol, al voltant d'una figura, entre els elements d'una llista— s'expressa millor com un nombre enter de línies de retícula, o es corregeix fins que ho sigui, perquè la pàgina mantingui un únic ritme de dalt a baix. Així, les línies de dues columnes veïnes queden sempre a la mateixa altura, també a banda i banda d'una figura.
 
 ## Estructures de columnes
 
@@ -365,13 +365,13 @@ Quan una pàgina acaba enmig del text, les columnes haurien d'acabar a la mateix
 2. **Una línia després del final d'una llista**
 3. **Paràgrafs més solts**: un paràgraf compost una línia més llarg, la _looseness_ de TeX, acceptat només si cap de les seves línies no s'estira més enllà del límit d'espaiat; si ajuda, un toc d'espaiat entre lletres, com a molt deu mil·lèsimes de quadratí
 
-Cada arranjament es verifica maquetant la pàgina de nou, fins a vuit vegades, i guanya el millor resultat. Algunes columnes es deixen en pau a propòsit: l'última abans d'un salt de pàgina forçat o d'una obertura de capítol, l'última pàgina del document, una columna sense res a estirar. Dues regles afins igualen les columnes del final d'un capítol i les que queden sobre un requadre de pàgina completa que es mou o es parteix.
+Cada arranjament es verifica maquetant la pàgina de nou, fins a vuit vegades, i guanya el millor resultat. Un paràgraf compost amb una línia més conserva les paraules i només n'eixampla els espais, de manera que un paràgraf curt, amb pocs espais per eixamplar, poques vegades és l'escollit. Algunes columnes es deixen en pau a propòsit: l'última abans d'un salt de pàgina forçat o d'una obertura de capítol, l'última pàgina del document, una columna sense res a estirar. Dues regles afins igualen les columnes del final d'un capítol i les que queden sobre un requadre de pàgina completa que es mou o es parteix.
 
 ## Bandes i requadres de pàgina completa
 
 Una pàgina no sempre és un únic joc de columnes de dalt a baix. Una figura, una taula o un requadre de pàgina completa la talla en **bandes**: el text que queda a sobre del requadre omple les seves columnes com una banda pròpia, el requadre travessa la pàgina i les columnes tornen a començar a sota. Cada banda s'equilibra pel seu compte, de manera que el lector baixa per la primera columna i puja al capdamunt de la segona abans de travessar el requadre, com en un diari. Quan una banda acabaria desigual, un **topall de banda** escurça les columnes al mateix nombre de línies, i el text que ja no hi cap continua fluint per sota.
 
-Les columnes finals d'un capítol reben el mateix tracte. En lloc de deixar l'última pàgina amb una columna plena i una altra gairebé buida, un topall final reparteix entre elles les línies que queden, i les palanques d'equilibri fan la resta. L'última pàgina d'aquest capítol ho mostra: les dues columnes acaben a la mateixa altura. Els salts de columna explícits es respecten: \`:::columnbreak\` acaba una columna on vol l'autor, i l'equilibri deixa en pau el peu d'aquesta columna.
+Les columnes finals d'un capítol reben el mateix tracte. En lloc de deixar l'última pàgina amb una columna plena i una altra gairebé buida, un topall final reparteix entre elles les línies que queden, i les palanques d'equilibri fan la resta. L'última pàgina d'aquest capítol ho mostra: les dues columnes acaben a la mateixa altura. Els salts de columna explícits es respecten: \`:::columnbreak\` acaba una columna on vol l'autor, i l'equilibri deixa en pau el peu d'aquesta columna. Cap d'aquestes palanques no toca el text: només afegeixen espai o allarguen un paràgraf una línia.
 
 :::callout{type="try"}
 Al tauler **Disseny**, obre **Títols i índex** i desactiva **Equilibrar columnes**. Mira el peu de les columnes d'aquest capítol; després torna a activar-lo i observa quina palanca ha fet servir el motor a cada pàgina.
@@ -482,7 +482,7 @@ Les capçaleres són un disseny corrent, amb elements filtrats per paritat i per
 
 En aquest llibre cada part s'obre com un plec: una pàgina parella negra a l'esquerra i la portadella a la dreta. Les parts salten amb la paritat _sempre senar_, que col·loca un full en blanc davant de cada portadella i n'afegeix un segon quan el capítol anterior acaba en pàgina parella, de manera que la portadella cau sempre en pàgina senar amb una pàgina parella en blanc al davant. El primer capítol de la part s'obre llavors al dors de la portadella, en pàgina parella, com tots els capítols.
 
-Una part també pot canviar el color del llibre. Els colors de la configuració es poden enllaçar a entrades amb nom de la **paleta**, i l'atribut \`palette\` d'una part substitueix entrades fins a la part següent. Aquest llibre defineix una entrada, el _color de part_, i cada part li dona un valor: blau per als fonaments, or per a l'ofici, vermelló per a la pràctica. Les bandes dels capítols, els números dels títols, els folis i els peus el segueixen.
+Una part també pot canviar el color del llibre. Els colors de la configuració es poden enllaçar a entrades amb nom de la **paleta**, i l'atribut \`palette\` d'una part substitueix entrades fins a la part següent. Aquest llibre defineix una entrada, el _color de part_, i cada part li dona un valor: blau per als fonaments, or per a l'ofici, vermelló per a la pràctica. Les bandes dels capítols, els números dels títols, els folis i els peus el segueixen. Cada part es reconeix pel color.
 
 ## Un índex que es manté al dia
 
@@ -528,7 +528,7 @@ Les referències mereixen una mirada més atenta, perquè amb elles s'escriu la 
 
 El mateix \`:ref\` anomena qualsevol lloc del llibre que porti un identificador: un títol escrit \`## Método {#metodo}\`, un requadre obert amb \`{#id}\` o una frase marcada \`[estas palabras]{#clave}\`. Imprimeix _secció 3.2_ o _capítol 4_, el títol amb \`style=title\` o la pàgina amb \`style=page\`, i la pàgina és la correcta perquè el motor torna a compondre el llibre fins que no canvia. Cadascuna d'aquestes referències és un enllaç al PDF, a l'HTML i en aquestes previsualitzacions.
 
-Les obres es citen com les escriu Pandoc, \`[@garcia2020, pág. 33]\` o \`@garcia2020\` dins de la frase, amb les referències al front matter o en un bloc \`:::references\` de BibTeX. L'estil de cita és un ajust, no una propietat del text: APA, Chicago, MLA, IEEE, Vancouver, ISO 690, GB/T 7714 o un estil propi, que es tria a Disseny › Cites, on una previsualització mostra el resultat. La bibliografia va després de l'últim capítol, o allà on s'escrigui \`:::bibliography\`.
+Les obres es citen com ho fa Pandoc: entre claudàtors, \`[@garcia2020, pág. 33]\`, o dins de la frase, \`@garcia2020\`, amb les referències al front matter o en un bloc \`:::references\` de BibTeX. L'estil de cita és un ajust, no una propietat del text: APA, Chicago, MLA, IEEE, Vancouver, ISO 690, GB/T 7714 o un estil propi, que es tria a Disseny › Cites, on una previsualització mostra el resultat. La bibliografia va després de l'últim capítol, o allà on s'escrigui \`:::bibliography\`.
 
 ## Notes a peu de pàgina
 
@@ -613,7 +613,7 @@ La teva feina es desa al navegador mentre escrius. Els **projectes** són llibre
 
 Els presets segueixen el seu origen. Quan un paquet de preset canvia al servidor, el Sandbox ho detecta en qüestió de segons: un preset sense tocar es recarrega sol, i un que has editat mostra un avís que ofereix recarregar-lo, de manera que la feina en curs no se sobreescriu mai. Cada preset es pot obrir en qualsevol de les seves llengües quan en té més d'una, com aquesta guia, que es pot llegir en anglès, castellà, català, francès, alemany, francès, italià, portuguès del Brasil, xinès simplificat, àrab i japonès.
 
-Un llibre viatja com un únic fitxer **.postext**: els seus capítols, la seva configuració, els seus recursos i les seves fonts, a més de la paginació ja calculada, de manera que s'obre paginat. Les receptes del Receptari s'obren al Sandbox de la mateixa manera, com a llibres teus; una recepta que ja havies obert abans et pregunta si vols **Obrir la meva còpia**, amb els teus canvis, o **Substituir per la versió publicada**. I la barra d'adreces conté sempre un enllaç permanent al que estàs veient: el llibre, la llengua, el visor, el capítol i la pàgina.
+Un llibre viatja com un únic fitxer **.postext**: els seus capítols, la seva configuració, els seus recursos i les seves fonts, a més de la paginació ja calculada, de manera que s'obre paginat. Les receptes del Receptari s'obren al Sandbox de la mateixa manera, com a llibres teus; una recepta que ja havies obert abans et pregunta si vols **Obrir la meva còpia**, amb els teus canvis, o **Substituir per la versió publicada**. I la barra d'adreces conté sempre un enllaç permanent al que estàs veient: el llibre, la llengua, el visor, el capítol i la pàgina. L'enllaç es pot desar com a marcador per tornar més tard al punt exacte on eres: el Sandbox carrega el llibre i va directament al capítol i a la pàgina que indica. Els marcadors del navegador fan així de punts de llibre.
 
 :::callout{type="try"}
 Ves fins a una pàgina que t'agradi i copia l'adreça del navegador: en obrir aquest enllaç veuràs el mateix llibre, al mateix visor, a la mateixa pàgina.
@@ -621,7 +621,9 @@ Ves fins a una pàgina que t'agradi i copia l'adreça del navegador: en obrir aq
 
 ## Incrustar el Sandbox
 
-El Sandbox també és un paquet, _postext-sandbox_, un component de React que qualsevol aplicació web pot incrustar. Qui l'allotja decideix el Markdown i la configuració inicials, l'idioma i les etiquetes de la interfície i els presets que ofereix. El Sandbox que fas servir és exactament aquest component, incrustat al lloc web de Postext.
+El Sandbox també és un paquet, _postext-sandbox_, un component de React que qualsevol aplicació web pot incrustar. Qui l'allotja decideix el Markdown i la configuració inicials, l'idioma i les etiquetes de la interfície, d'on surten els presets que ofereix i si mostra el selector de tema, el de llengua i l'enllaç a la portada. El Sandbox que fas servir és exactament aquest component, incrustat al lloc web de Postext.
+
+A més, el component publica a la pàgina les seves eines per a agents: un assistent que treballi al navegador pot obrir un llibre, editar-ne el text, canviar la configuració i llegir-ne els avisos amb les mateixes ordres que fa servir qui escriu. Cada eina respon amb el que mostra la interfície: les pàgines a què arriba cada capítol i els avisos del tauler Revisió.
 
 # Sortida: canvas, HTML, PDF i EPUB {lead="Un arbre, quatre sortides. El canvas previsualitza, l'HTML es llegeix en pantalla, el PDF va a impremta i l'EPUB va al dispositiu de qui llegeix, i totes surten de la mateixa maquetació." summary="Els renderitzadors, el PDF accessible, els llibres EPUB i l'ús de la biblioteca"}
 
@@ -643,7 +645,7 @@ El renderitzador rep una funció que converteix l'identificador de fitxer d'un r
 
 El paquet _postext-pdf_ converteix el VDT en un PDF real, d'un document o d'un llibre sencer. No torna a mesurar mai: les mètriques del canvas són la referència i el PDF només les transporta, per això les línies es tallen exactament als mateixos llocs. Incrusta fonts reals, una d'estàtica per pes, així que la negreta és negreta, la cursiva és cursiva i el text es pot seleccionar. Sobre les pàgines hi afegeix marcadors a partir dels títols i les parts, etiquetes de pàgina que coincideixen amb els folis impresos, referències clicables, figures SVG com a vectors i una elecció d'espai de color —RGB, CMYK o escala de grisos— per a la impremta.
 
-Les fonts arriben al PDF a través d'un **proveïdor de fonts**, una funció que retorna els bytes d'una família en un pes i un estil donats. El proveïdor del Sandbox baixa cares estàtiques de Fontsource, un fitxer per pes, i les descomprimeix des de WOFF2; les fonts pròpies vénen del tauler Fonts. Els bytes dels recursos es lliuren de la mateixa manera, per identificador de fitxer. El renderitzat informa del seu progrés, s'executa en un worker propi quan se li demana i accepta un llibre sencer com una llista de documents de capítol, del qual produeix un únic PDF amb etiquetes de pàgina contínues, marcadors i enllaços que porten d'un capítol a qualsevol altre.
+Les fonts arriben al PDF a través d'un **proveïdor de fonts**, una funció que retorna els bytes d'una família en un pes i un estil donats. El proveïdor del Sandbox baixa cares estàtiques de Fontsource, un fitxer per pes, i les descomprimeix des de WOFF2; les fonts pròpies vénen del tauler Fonts. Els bytes dels recursos es lliuren de la mateixa manera, per identificador de fitxer. El renderitzat informa del seu progrés, s'executa en un worker propi quan se li demana i accepta un llibre sencer com una llista de documents de capítol, del qual produeix un únic PDF amb etiquetes de pàgina contínues, marcadors i enllaços que porten d'un capítol a qualsevol altre. També hi són les pàgines en blanc que demana la paritat dels capítols, de manera que el PDF es pot enviar a impremta sense retocar-ne la paginació.
 
 ## Accessible per defecte
 
@@ -685,7 +687,7 @@ Totes dues maquetacions porten la mateixa navegació: un índex fet a partir del
 
 Les quatre sortides comparteixen la maquetació, però serveixen a moments diferents de la vida d'un llibre. El **canvas** és la vista de treball: ràpida, fidel, la que el Sandbox manté oberta mentre escrius i dissenyes. L'**HTML** serveix per llegir en pantalla i per publicar dins d'una aplicació web: les mateixes pàgines com a marcatge posicionat, o el text reorganitzat en els modes de lectura del visor, aïllat dels estils de la pàgina que l'envolta. El **PDF** és l'objecte acabat: el fitxer que va a la impremta, a un arxiu o al dispositiu d'un lector, etiquetat, amb marcadors i amb cerca. L'**EPUB** és per als lectors i les botigues de llibres electrònics: una maquetació fixa quan el que compta és la pàgina, una de fluida quan el que compta és el text.
 
-Res no obliga a triar entre elles. Un llibre es pot escriure al Sandbox amb el canvas obert, el pot revisar al visor HTML algú que llegeix al mòbil i es pot enviar a impremta com a PDF i a una botiga de llibres electrònics com a EPUB aquella mateixa tarda, des de la mateixa font i la mateixa configuració, sense que cap s'aparti de les altres.
+Res no obliga a triar entre elles. Un llibre es pot escriure al Sandbox amb el canvas obert, el pot revisar al visor HTML algú que llegeix al mòbil i es pot enviar a impremta com a PDF i a una botiga de llibres electrònics com a EPUB aquella mateixa tarda, des de la mateixa font i la mateixa configuració, sense que cap s'aparti de les altres. Cap d'aquestes sortides no demana tornar a maquetar: totes llegeixen el mateix VDT.
 
 ## Fer servir la biblioteca
 

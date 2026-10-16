@@ -12,7 +12,7 @@ publishDate: "2026-10-04"
 :::paragraphs{style="colophon"}
 **O guia do Postext** é o livro de exemplo que acompanha o Sandbox. É ao mesmo tempo um passeio pelo motor e uma demonstração do que ele faz: a capa, o sumário que se numera sozinho, as folhas de rosto das partes, as aberturas de capítulo, os cabeços, cada figura e cada tabela que flutua até o seu lugar, tudo isso é diagramado pelo Postext, no seu navegador, a partir do Markdown que você pode abrir no editor.
 
-Composto em Fraunces, Lora, Bricolage Grotesque e Geist, servidas pelo Google Fonts. Os diagramas são arquivos SVG simples, desenhados como vetores no canvas, na visualização HTML e no PDF. Mude o que quiser (uma palavra, uma margem, uma cor da paleta) e o livro se compõe de novo.
+Composto em Fraunces, Lora, Bricolage Grotesque, Geist e Geist Mono, servidas pelo Google Fonts. Os diagramas são arquivos SVG simples, desenhados como vetores no canvas, na visualização HTML e no PDF. Mude o que quiser (uma palavra, uma margem, uma cor da paleta) e o livro se compõe de novo.
 
 O Postext é de código aberto, sob a licença MIT. Texto © 2026 Ignacio Ferro e os colaboradores do Postext.
 :::
@@ -334,7 +334,7 @@ Os números de página seguem sequências: arábicos, romanos minúsculos ou mai
 
 Os dois números que mais decidem como uma página se lê são o comprimento das suas linhas e a distância entre elas. A configuração define o corpo e a entrelinha em unidades reais (este livro usa 9,4 pontos sobre 13,6), e a largura da coluna decorre da página, das margens, da estrutura de colunas e da medianiz. Uma linha de 45 a 75 caracteres é o alvo clássico; muito mais curta, e o olho salta com frequência demais; muito mais longa, e ele se perde no caminho de volta para a linha seguinte. Duas colunas numa página de 21 cm ficam com folga dentro desse intervalo, e essa é uma das razões de o formato ser tão comum em revistas e livros técnicos.
 
-A entrelinha também é a unidade da grade de linhas de base. Toda distância vertical que importa (o espaço acima e abaixo de um título, em volta de uma figura, entre os itens de uma lista) é mais bem expressa como um número inteiro de linhas da grade, ou é corrigida até sê-lo, para que a página mantenha um único ritmo de cima a baixo.
+A entrelinha também é a unidade da grade de linhas de base. Toda distância vertical que importa (o espaço acima e abaixo de um título, em volta de uma figura, entre os itens de uma lista) é mais bem expressa como um número inteiro de linhas da grade, ou é corrigida até sê-lo, para que a página mantenha um único ritmo de cima a baixo. Assim, as linhas de duas colunas vizinhas ficam sempre na mesma altura, também dos dois lados de uma figura.
 
 ## Estruturas de colunas
 
@@ -366,7 +366,7 @@ Quando uma página termina no meio do texto, as suas colunas devem terminar na m
 2. **Uma linha depois do fim de uma lista**
 3. **Parágrafos mais frouxos**: um parágrafo composto com uma linha a mais, a _looseness_ do TeX, aceito só se nenhuma das suas linhas esticar além do limite de espaçamento entre palavras; se ajudar, um toque de espaçamento entre letras, no máximo dez milésimos de quadratim
 
-Cada correção é verificada diagramando a página de novo, até oito vezes, e o melhor resultado vence. Algumas colunas são deixadas em paz de propósito: a última coluna antes de uma quebra de página forçada ou de uma abertura de capítulo, a última página do documento, uma coluna sem nada para esticar. Duas regras relacionadas nivelam as colunas finais de um capítulo e as colunas acima de um boxe da largura da página que se move ou se divide.
+Cada correção é verificada diagramando a página de novo, até oito vezes, e o melhor resultado vence. Um parágrafo composto com uma linha a mais conserva as palavras e só alarga os espaços, por isso um parágrafo curto, com poucos espaços para alargar, raramente é o escolhido. Algumas colunas são deixadas em paz de propósito: a última coluna antes de uma quebra de página forçada ou de uma abertura de capítulo, a última página do documento, uma coluna sem nada para esticar. Duas regras relacionadas nivelam as colunas finais de um capítulo e as colunas acima de um boxe da largura da página que se move ou se divide.
 
 ## Faixas e boxes da largura da página
 
@@ -436,7 +436,7 @@ Os diagramas SVG são desenhados como vetores em toda parte. O PDF converte o su
 
 O texto dentro de um SVG continua sendo texto. No PDF ele é composto em fontes reais e pode ser selecionado e pesquisado, e no Sandbox pode ser editado no lugar: o painel Recursos abre o código do diagrama com só o texto editável (o desenho em si fica bloqueado, a menos que você o desbloqueie), de modo que um rótulo pode ser corrigido ou traduzido sem abrir um programa de desenho. Os diagramas deste livro são gerados para cada idioma, e é por isso que os seus rótulos estão em espanhol na edição espanhola, em catalão na catalã, em chinês na chinesa, em árabe na árabe e em português nesta.
 
-Três figuras compostas aqui comprovam isso. A roseta da :ref{id="vector-rosette"} é feita de curvas de Bézier, contornos finíssimos e uma linha de microtexto com dois pontos e meio de altura; o gráfico da :ref{id="vector-chart"} combina uma área preenchida, uma linha tracejada e rótulos de texto; e a :ref{id="vector-clip"} usa um traçado de recorte, um grupo desenhado com transparência e uma forma reutilizada cinco vezes. Abra o PDF, amplie várias vezes o tamanho delas e olhe as bordas: continuam tão nítidas quanto o texto ao redor, porque são desenhadas com os mesmos operadores, e não coladas como imagens. Experimente selecionar os rótulos do gráfico, ou pesquisá-los: são texto.
+Três figuras compostas aqui comprovam isso. A roseta da :ref{id="vector-rosette"} é feita de curvas de Bézier, contornos finíssimos e uma linha de microtexto com dois pontos e meio de altura; o gráfico da :ref{id="vector-chart"} combina uma área preenchida, uma linha tracejada e rótulos de texto; e a :ref{id="vector-clip"} usa um traçado de recorte, um grupo desenhado com transparência e uma forma reutilizada cinco vezes. Abra o PDF, amplie várias vezes o tamanho delas e olhe as bordas: continuam tão nítidas quanto o texto ao redor, porque são desenhadas com os mesmos operadores, e não coladas como imagens. Experimente selecionar os rótulos do gráfico, ou pesquisá-los: são texto. No papel, a diferença aparece nas linhas finas e no microtexto, que uma imagem de baixa resolução borraria. No canvas e na visualização HTML, as mesmas três figuras são o SVG original, desenhado pelo próprio navegador.
 
 :::callout{type="try"}
 Clique na legenda de qualquer figura no canvas: o painel Recursos se abre nesse recurso, com o campo da legenda pronto. Mude o posicionamento dele de _auto_ para _top_ e veja a figura se mover.
@@ -447,6 +447,8 @@ Clique na legenda de qualquer figura no canvas: o painel Recursos se abre nesse 
 Um vídeo é mais um recurso. Ele é mencionado, numerado à parte (Vídeo 1.1 ao lado de Figura 1.1) e flutua até o primeiro espaço livre como uma figura. Pode vir do YouTube ou do Vimeo, de um arquivo guardado no livro ou de um endereço web: um arquivo MP4 ou WebM num servidor, ou um stream HLS, a playlist \`.m3u8\` que serve um vídeo longo em segmentos e em várias qualidades.
 
 O impresso leva o seu pôster, um quadro escolhido, com um sinal de reprodução e um QR code que abre o vídeo; no PDF, o pôster também é um link. A visualização HTML e o EPUB o reproduzem no seu próprio player, exceto os vídeos do YouTube e do Vimeo e os streams HLS, para os quais um livro digital só pode apontar um link. Na visualização Folio, um clique no pôster reproduz o vídeo na página, e ele continua tocando enquanto a folha é virada. Os vídeos deste livro, como o :ref{id="postext-showreel"}, são streams HLS servidos a partir de uma rede de distribuição de conteúdo.
+
+Um vídeo pode tocar só um trecho, do segundo em que começa ao segundo em que termina, e o link impresso também abre nesse ponto. A marca de reprodução e o QR code vêm da configuração: a marca pode ser um círculo, um retângulo arredondado ou só o triângulo, e os dois podem ir para qualquer canto do pôster. O QR code mantém o tamanho escolhido e, quando o endereço é curto, aproveita a sobra para corrigir mais erros. Um vídeo guardado no livro sem endereço na web não imprime código nenhum, e o painel **Verificações** avisa.
 
 # Livros, partes e cabeços {lead="Um livro é mais que seus capítulos: uma capa, um sumário que se mantém em dia, divisórias de parte, aberturas que anunciam cada capítulo e cabeços que sabem onde o leitor está. Tudo isso é configuração." summary="Capítulos, estilos de título, blocos de design, partes, sumário e fólios"}
 
@@ -488,7 +490,7 @@ Uma parte também pode mudar as cores do livro. As cores da configuração podem
 
 ## Um sumário que se mantém em dia
 
-\`:::toc\` imprime o sumário: uma entrada para cada título dos níveis indicados e uma linha para cada parte, com números, títulos, linhas de pontos, números de página e, se você quiser, uma linha tirada de um atributo do título; neste livro, o resumo de cada capítulo. Os números de página são reais: o motor diagrama o livro, lê onde cada título caiu e compõe o sumário de novo até os números se estabilizarem, o que leva no máximo três passadas a mais. No PDF, as entradas são links.
+\`:::toc\` imprime o sumário: uma entrada para cada título dos níveis indicados e uma linha para cada parte, com números, títulos, linhas de pontos, números de página e, se você quiser, uma linha tirada de um atributo do título; neste livro, o resumo de cada capítulo. Os números de página são reais: o motor diagrama o livro, lê onde cada título caiu e compõe o sumário de novo até os números se estabilizarem, o que leva no máximo três passadas a mais. No PDF, as entradas são links. Basta mudar um título no Markdown para que o sumário o mostre na diagramação seguinte, com o número da página onde ele caiu. O mesmo vale para as partes, que entram no sumário com o seu número e o seu título.
 
 ## Quebras de página e numeração
 
@@ -688,7 +690,7 @@ As duas versões levam a mesma navegação: um sumário a partir dos títulos e 
 
 As quatro saídas compartilham a diagramação, mas servem a momentos diferentes da vida de um livro. O **canvas** é a visualização de trabalho: rápida, fiel, e a que o Sandbox mantém aberta enquanto você escreve e desenha. O **HTML** serve para ler na tela e para publicar dentro de uma aplicação web: as mesmas páginas como marcação posicionada, ou o texto refluído nos modos de leitura do visualizador, isolado dos estilos da página em volta. O **PDF** é o artefato acabado: o arquivo que vai para a gráfica, para um arquivo de guarda ou para o aparelho de um leitor, etiquetado, com marcadores e pesquisável. O **EPUB** é para os leitores de e-books e para as lojas: layout fixo quando o que importa é a página, refluível quando o que importa é o texto.
 
-Nada obriga a escolher entre elas. Um livro pode ser escrito no Sandbox com o canvas aberto, revisado no visualizador HTML por alguém que lê no celular e enviado na mesma tarde à gráfica como PDF e a uma loja de e-books como EPUB, a partir do mesmo original e da mesma configuração, sem que nenhuma saída se afaste das outras.
+Nada obriga a escolher entre elas. Um livro pode ser escrito no Sandbox com o canvas aberto, revisado no visualizador HTML por alguém que lê no celular e enviado na mesma tarde à gráfica como PDF e a uma loja de e-books como EPUB, a partir do mesmo original e da mesma configuração, sem que nenhuma saída se afaste das outras. Nenhuma dessas saídas pede uma nova diagramação: todas leem a mesma VDT, e só o desenho final muda de uma para outra.
 
 ## Usar a biblioteca
 
