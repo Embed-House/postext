@@ -903,8 +903,11 @@ def _get(node: Any, *keys: str) -> Any:
 def design_slots(config: Any) -> list[dict]:
     """The design slots the engine checks (configDesignSlots), in its order:
     `path` (`headingStyles[2].header`), `slot` (the key under the owner),
-    `owner` (`headingStyles[2]`, `headings.levels[0]`, else the slot itself),
-    `ownerId` (the heading style's id) and `elements`."""
+    `owner` (`headingStyles[2]`, `headings.levels[0]`, `pageTemplates[1]`,
+    else the slot itself), `ownerId` (the heading style's or template's id)
+    and `elements`. Page templates' decoration and running heads (and
+    their variants') count as the engine counts them from #874; an older
+    engine leaves them out of its warning, the lint never does."""
     out: list[dict] = []
 
     def from_(c: Any, prefix: str) -> None:
@@ -933,6 +936,26 @@ def design_slots(config: Any) -> list[dict]:
                 add(_get(s, "advancedDesign", "slot"), f"{owner}.advancedDesign.slot", owner, sid)
                 add(s.get("header"), f"{owner}.header", owner, sid)
                 add(s.get("footer"), f"{owner}.footer", owner, sid)
+        # Page templates (postext with #874): decoration and running heads,
+        # then each side's variant, under the template as owner.
+        templates = c.get("pageTemplates")
+        if isinstance(templates, list):
+            for i, t in enumerate(templates):
+                if not isinstance(t, dict):
+                    continue
+                owner = f"{prefix}pageTemplates[{i}]"
+                tid = t["id"] if isinstance(t.get("id"), str) else None
+
+                def patch(q: Any, at: str) -> None:
+                    if isinstance(q, dict):
+                        add(q.get("decoration"), f"{at}.decoration", owner, tid)
+                        add(q.get("header"), f"{at}.header", owner, tid)
+                        add(q.get("footer"), f"{at}.footer", owner, tid)
+                patch(t, owner)
+                variants = t.get("variants")
+                if isinstance(variants, dict):
+                    for side in ("recto", "verso"):
+                        patch(variants.get(side), f"{owner}.variants.{side}")
         add(_get(c, "parts", "design"), f"{prefix}parts.design")
         add(_get(c, "parts", "versoDesign"), f"{prefix}parts.versoDesign")
         add(_get(c, "toc", "parts", "design"), f"{prefix}toc.parts.design")

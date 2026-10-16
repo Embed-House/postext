@@ -68,6 +68,16 @@ INDEX_AFTER_COLON_RE = re.compile(r"(?<=[^\s:])::index[\[{]")
 FOOTNOTE_MARK_RE = re.compile(r"\[\^([\w.:-]+)\]")
 FOOTNOTE_DEF_RE = re.compile(r"^\[\^([\w.:-]+)\]:")
 RESOURCE_RE = re.compile(r'^::resource\s*\{id="([^"]+)"\}\s*$')
+# `::resource{id="x" slot="y"}` on a composed page (postext >= 1.34): the two
+# keys in either order, nothing else.
+RESOURCE_SLOT_RE = re.compile(r'^::resource\s*\{(?:id="([^"]+)"\s+slot="([^"]+)"|slot="([^"]+)"\s+id="([^"]+)")\}\s*$')
+# Composed pages (postext >= 1.34; laid out from 1.34.1): a page fence of four
+# or more colons, closed by a bare line of as many; `:::frame` and
+# `:::figure` with `::label` lines inside it.
+PAGE_FENCE_RE = re.compile(r"^(:{4,})page\b\s*(?:\{([^}]*)\})?\s*$")
+LABEL_RE = re.compile(r"^::label\[(.*)\](?:\{([^{}]*)\})?\s*$")
+PERCENT_AT_RE = re.compile(r"^\s*-?\d+(?:\.\d+)?%\s+-?\d+(?:\.\d+)?%\s*$")
+COMPOSED_CONTAINERS = {"frame", "figure"}
 ORDERED_RE = re.compile(r"^\s*\d+[.)]\s+")
 UNORDERED_RE = re.compile(r"^\s*[-*+]\s+")
 
@@ -1678,6 +1688,8 @@ def check_comic_block(name: str, kind: str, attrs: dict[str, str], body: list[tu
         w = f"{name}:{ln}"
         if not line or (line.startswith("<!--") and line.endswith("-->")):
             continue
+        if line.startswith("::label") and figure is None:
+            rep.warn(where, "::label outside a :::figure prints as text")
         if line.startswith("::panel"):
             m = COMIC_PANEL_RE.match(line)
             if not m:
@@ -1787,12 +1799,34 @@ def resource_kind(r: dict) -> str | None:
 
 
 def new_comic_ctx(cfg: dict, resources: list[dict], ids: dict[str, set[str]]) -> dict:
-    """What the comic checks of one edition share and collect."""
+    """What the comic and composed-page checks of one edition share and
+    collect."""
     balloons, panels = comic_style_ids(cfg)
+    templates = cfg.get("pageTemplates") if isinstance(cfg.get("pageTemplates"), list) else []
+    label_styles = {x.get("id") for x in cfg.get("labelStyles") or [] if isinstance(x, dict)} \
+        if isinstance(cfg.get("labelStyles"), list) else set()
     return {"res_kinds": {r.get("id"): resource_kind(r) for r in resources}, "balloon_styles": balloons,
             "panel_styles": panels, "palette": ids.get("palette", set()), "types": ids.get("types", {"figure", "table"}),
             "speakers": {}, "arts": set(),
-            "faces": set(), "blocks": []}
+            "faces": set(), "blocks": [],
+            "templates": templates, "label_styles": label_styles,
+            "anchors": {r.get("id"): {a.get("id") for a in r.get("anchors") or [] if isinstance(a, dict)}
+                        for r in resources if isinstance(r, dict)}}
+
+
+def _composed_frames(ctx: dict, template: str | None) -> tuple[list[str] | None, bool | None]:
+    """(frame names, spread) of a page template with its extends chain, or
+    (None, None) when the edition has no template of that id."""
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import composed_check  # noqa: PLC0415
+    except ImportError:
+        return None, None
+    tpl = ctx.get("templates") or []
+    frames = composed_check.resolve_frames(tpl, template or "") if template else None
+    if frames is None:
+        return None, None
+    return [f["name"] for f in frames], composed_check.template_spread(tpl, template)
 
 
 def style_ids(cfg: dict) -> dict[str, set[str]]:
@@ -1959,6 +1993,29 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
     fn_cited: dict[str, str] = {}
     fn_defined: dict[str, str] = {}
     comic: dict | None = None  # an open :::page / :::strip block, read raw to its closing :::
+    page: dict | None = None  # an open ::::page composed page: colons, line, template, frames, depth
+    figure: dict | None = None  # an open :::figure: its ::label lines up to :::
+
+    def check_slot(slot: str | None, where: str, what: str) -> None:
+        if slot is None:
+            return
+        if page is None:
+            rep.info(where, f"slot={slot!r} on {what} outside a ::::page changes nothing")
+        elif page["frames"] is not None and slot not in page["frames"]:
+            rep.error(where, f"slotUnknown: template {page['template']!r} has no frame {slot!r} (frames: "
+                             f"{sorted(page['frames'])}); the content goes to the flow frame")
+
+    def close_page(where_line: int, closed: bool) -> None:
+        nonlocal page, stack
+        if page is None:
+            return
+        for fname, ln in stack[page["depth"]:]:
+            rep.error(f"{name}:{ln}", f":::{fname} is never closed inside the ::::page of line {page['line']}")
+        stack = stack[:page["depth"]]
+        if not closed:
+            rep.error(f"{name}:{page['line']}", "a ::::page is never closed by a fence of as many colons "
+                                                f"({page['colons']}){'' if where_line < 0 else ': the next one closes it'}")
+        page = None
     for i in range(n, len(lines)):
         raw = lines[i]
         line = raw.strip()
@@ -2022,18 +2079,86 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
         # resource embeds
         if line.startswith("::resource"):
             m = RESOURCE_RE.match(line)
-            if not m:
-                rep.error(where, '::resource must be exactly ::resource{id="…"} (double quotes, no other attribute)')
+            ms = RESOURCE_SLOT_RE.match(line) if not m else None
+            rid = m.group(1) if m else (ms.group(1) or ms.group(4)) if ms else None
+            if rid is None:
+                rep.error(where, '::resource must be exactly ::resource{id="…"} (double quotes, no other attribute; '
+                                 'on a composed page also slot="…")')
             else:
-                embedded.add(m.group(1))
-                if m.group(1) not in res_ids:
-                    rep.error(where, f"unknown resource id {m.group(1)!r}")
+                if ms:
+                    check_slot(ms.group(2) or ms.group(3), where, "a ::resource")
+                embedded.add(rid)
+                if rid not in res_ids:
+                    rep.error(where, f"unknown resource id {rid!r}")
                 if prev_nonblank and prev_kind in ("para", "list"):
                     rep.error(where, "::resource glued to the text above is swallowed into it: add a blank line")
             prev_nonblank, prev_kind = True, "resource"
             continue
+        # a :::figure's ::label lines, up to its :::
+        if figure is not None:
+            if line == ":::":
+                figure = None
+                stack.pop()
+                prev_nonblank, prev_kind = True, "fence"
+                continue
+            lm = LABEL_RE.match(line)
+            if lm:
+                la = parse_attrs(lm.group(2))
+                at = la.get("at")
+                rid = figure["resource"]
+                if not lm.group(1).strip():
+                    rep.warn(where, "::label with no text draws nothing")
+                if not at:
+                    rep.error(where, "::label needs at=\"anchor\" (an anchor of the resource) or at=\"x% y%\"")
+                elif not PERCENT_AT_RE.match(at) and rid in comic_ctx.get("anchors", {}) and \
+                        at not in comic_ctx["anchors"][rid]:
+                    rep.error(where, f"labelAnchorUnknown: resource {rid!r} has no anchor {at!r} (anchors: "
+                                     f"{sorted(x for x in comic_ctx['anchors'][rid] if x)}); the label is not drawn")
+                st = la.get("style")
+                if st and st not in comic_ctx.get("label_styles", set()):
+                    rep.error(where, f"label style {st!r} is not in labelStyles {sorted(comic_ctx.get('label_styles', set()))}")
+                continue
+            rep.error(f"{name}:{figure['line']}", "a :::figure ends at its first line that is neither a ::label nor "
+                                                  "blank: close it with ::: before line " + str(i + 1))
+            figure = None
+            stack.pop()
+        # composed pages: four or more colons, closed by as many
+        pm = PAGE_FENCE_RE.match(line)
+        if pm:
+            if page is not None:
+                close_page(i + 1, False)
+            elif stack:
+                rep.warn(where, f"::::page inside :::{stack[-1][0]}: a composed page sits at the top level of a chapter")
+            pa = parse_attrs(pm.group(2))
+            t = pa.get("template")
+            frames, spread = _composed_frames(comic_ctx, t)
+            if not t:
+                rep.error(where, "templateUnknown: a ::::page needs template=\"…\" (a pageTemplates id)")
+            elif frames is None:
+                known = sorted(x.get("id") for x in comic_ctx.get("templates") or [] if isinstance(x, dict))
+                rep.error(where, f"templateUnknown: no pageTemplates entry {t!r} (templates: {known}); the page is "
+                                 "set in the running text")
+            elif spread is not None and spread != ("spread" in pa):
+                rep.warn(where, f"spreadMismatch: template {t!r} is {'a spread' if spread else 'a single page'}; "
+                                f"{'add' if spread else 'remove'} the spread flag on the fence")
+            page = {"colons": len(pm.group(1)), "line": i + 1, "template": t, "frames": frames, "depth": len(stack)}
+            prev_nonblank, prev_kind = True, "fence"
+            continue
+        if re.fullmatch(r":{4,}", line):
+            if page is not None and len(line) == page["colons"]:
+                close_page(i + 1, True)
+            elif page is not None:
+                rep.warn(where, f"a fence of {len(line)} colons does not close the ::::page of line {page['line']} "
+                                f"({page['colons']} colons): it prints as text")
+            else:
+                rep.warn(where, f"stray {line} with no open ::::page prints literally")
+            prev_nonblank, prev_kind = True, "fence"
+            continue
         # comic blocks: raw bodies up to the closing :::
         cm = COMIC_FENCE_RE.match(line)
+        if cm and cm.group(1) == "page" and "template" in parse_attrs(cm.group(2)):
+            rep.warn(where, "pageFenceLength: a composed page needs four colons (::::page{template=…} … ::::); "
+                            "with three it is read as a comic page")
         if cm:
             if stack:
                 rep.warn(where, f":::{cm.group(1)} inside :::{stack[-1][0]} is not read as a comic: comic pages and "
@@ -2056,7 +2181,33 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                 rep.error(where, "malformed fence (lowercase name, optional {attrs}, nothing after it on the line)")
                 continue
             fname, attrs = m.group(1), parse_attrs(m.group(2))
+            if fname in COMPOSED_CONTAINERS:
+                if fname == "frame":
+                    if "slot" not in attrs:
+                        rep.error(where, ':::frame needs slot="…" (the name of a frame of the page template)')
+                    elif page is None:
+                        rep.warn(where, ":::frame outside a ::::page: its slot changes nothing")
+                    else:
+                        check_slot(attrs["slot"], where, "a :::frame")
+                    if "title" in attrs and re.search(r"\*\*|\*[^*]+\*", attrs["title"]):
+                        rep.warn(where, "frame titles are plain text: ** / * print literally")
+                    stack.append((fname, i + 1))
+                else:
+                    rid = attrs.get("resource")
+                    if not rid:
+                        rep.error(where, ':::figure needs resource="…"')
+                    else:
+                        embedded.add(rid)
+                        if rid not in res_ids:
+                            rep.error(where, f"unknown resource id {rid!r}")
+                    check_slot(attrs.get("slot"), where, "a :::figure")
+                    figure = {"resource": rid, "line": i + 1}
+                    stack.append((fname, i + 1))
+                prev_nonblank, prev_kind = True, "fence"
+                continue
             if fname in KNOWN_CONTAINERS:
+                if "slot" in attrs:
+                    check_slot(attrs["slot"], where, f"a :::{fname}")
                 if fname == "callout":
                     t = attrs.get("type")
                     if t is not None and t not in ids["callout"]:
@@ -2156,7 +2307,8 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
             else:
                 rep.error(where, f":::{fname} is not a Postext container or directive (prints literally). "
                                  f"Containers: {sorted(KNOWN_CONTAINERS)}; directives: {sorted(KNOWN_DIRECTIVES - COMIC_BLOCKS)}; "
-                                 f"comic blocks: {sorted(COMIC_BLOCKS)}")
+                                 f"comic blocks: {sorted(COMIC_BLOCKS)}; composed pages (postext >= 1.34): "
+                                 f"::::page, {sorted(COMPOSED_CONTAINERS)}")
             prev_nonblank, prev_kind = True, "fence"
             continue
         # headings
@@ -2170,6 +2322,8 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                     rep.error(where, f"heading style {s!r} is not in headingStyles {sorted(ids['heading'])}")
                 if "numbered" in attrs:
                     rep.warn(where, "{numbered=…} is not a heading attribute: use a headingStyles entry with numbered:false")
+                if "slot" in attrs:
+                    check_slot(attrs["slot"], where, "a heading")
             elif re.search(r"\{[^{}]*\}\s*$", title):
                 rep.warn(where, "trailing {…} that does not parse as attributes, so it prints in the title (commas, "
                                 "a value holding }, a flag glued to the title?)")
@@ -2232,6 +2386,10 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                 rep.error(where, ":swatch needs color=")
             elif not re.fullmatch(r"#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6}", col) and col not in ids["palette"]:
                 rep.warn(where, f"swatch colour {col!r} is neither #hex nor a palette id (draws an empty outline)")
+    if figure is not None:
+        rep.error(f"{name}:{figure['line']}", ":::figure is never closed")
+    if page is not None:
+        close_page(-1, False)
     for fname, ln in stack:
         rep.error(f"{name}:{ln}", f":::{fname} is never closed")
     if comic is not None:
