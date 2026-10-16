@@ -5459,6 +5459,7 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'resourcePreviewNoContent',
       'resourceWrapContour',
       'resources',
+      'selectionFrameDrag',
       'uploadImageFailed',
       'uploadImageInvalid',
       'width',

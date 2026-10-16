@@ -19,6 +19,9 @@ import { useSyncExternalStore } from 'react';
 import { findElement, sourceAt, type SourceMapOptions, type VDTDocument } from 'postext';
 import type { Chapter } from '../book/types';
 import type { FrameEditorEvent } from '../templates/frameEvents';
+import { onFrameDragChange, setFrameDrag } from './frameDrag';
+
+export { frameDragNow, type FrameDrag } from './frameDrag';
 import { climb, climbable, atLevel, resolveSelection, type ChapterOfPage, type PageSelection } from './pageSelection';
 
 /** What carries a selection out (opens the editor or a panel at it): the
@@ -45,6 +48,9 @@ function subscribe(listener: () => void): () => void {
   listeners.add(listener);
   return () => listeners.delete(listener);
 }
+
+// A frame dragged moves the selection's mark: the viewers redraw.
+onFrameDragChange(emit);
 
 export function pageSelectionNow(): PageSelectionState | null {
   return state;
@@ -139,21 +145,6 @@ export function selectionChapters(): readonly Chapter[] {
 // The page-template editor's canvas (#863): its picks and drags
 // ---------------------------------------------------------------------------
 
-/** A frame being moved or resized by the template editor: where it is
- *  now, page px of its page. */
-export interface FrameDrag {
-  pageIndex: number;
-  frame: string;
-  rect: { x: number; y: number; width: number; height: number };
-}
-
-let dragging: FrameDrag | null = null;
-
-/** The frame the template editor is dragging now, null when none. */
-export function frameDragNow(): FrameDrag | null {
-  return dragging;
-}
-
 /** Follow the template editor's events (`templates/frameEvents.ts`): a
  *  frame it picks on the page is the page selection, at frame level (its
  *  path shows, Esc climbs to its group and template); while a frame is
@@ -175,29 +166,19 @@ export function followFrameEditor(e: FrameEditorEvent, doc: VDTDocument | null, 
     }
     case 'dragStart':
     case 'drag':
-      if (!e.frame) return;
-      dragging = { pageIndex: e.pageIndex, frame: e.frame, rect: { ...e.rect } };
-      emit();
+      if (e.frame) setFrameDrag({ pageIndex: e.pageIndex, frame: e.frame, rect: { ...e.rect } });
       return;
     case 'drop':
     case 'cancel':
-      if (dragging === null) return;
-      dragging = null;
-      emit();
+      setFrameDrag(null);
       return;
   }
-}
-
-/** The frame dragged now when it is `frame`, for a panel showing it. */
-export function useFrameDrag(frame: string | null): FrameDrag | null {
-  const now = useSyncExternalStore(subscribe, frameDragNow, () => null);
-  return now && frame !== null && now.frame === frame ? now : null;
 }
 
 /** Forget everything (tests). */
 export function resetPageSelection(): void {
   state = null;
   apply = null;
-  dragging = null;
+  setFrameDrag(null);
   emit();
 }

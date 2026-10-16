@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { DEFAULT_CALLOUT_STYLES, type AnchorEdge, type Dimension, type ElementPlacement, type FrameConfig, type FrameSize } from 'postext';
 import { useSandboxDocRef, useSandboxLabels } from '../../../context/SandboxContext';
-import { useFrameDrag } from '../../../selection/selectionStore';
+import { useFrameDrag } from '../../../selection/frameDrag';
 import { DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
 import { Button, ConfirmPopover } from '../../../ui';
 import { frameEntry, removeFrame, renameFrame, namesInUse, slugify, updateFrame, type TemplateScope } from '../../../templates/templateEdits';
