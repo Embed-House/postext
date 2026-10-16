@@ -3289,6 +3289,9 @@ export interface SandboxLabels {
   settingsGroupOutputDescription: string;
   settingsGroupFolio: string;
   settingsGroupFolioDescription: string;
+  pageTemplatesGroupBox: string;
+  pageTemplatesGroupBoxUnion: string;
+  pageTemplatesGroupBoxTooltip: string;
   pageTemplatesSection: string;
   pageTemplatesResetConfirm: string;
   pageTemplatesDesignMode: string;

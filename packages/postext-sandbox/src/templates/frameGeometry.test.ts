@@ -10,6 +10,7 @@ import {
   mmToPx,
   pageAreas,
   pxToMm,
+  spreadPageAreas,
   snapLines,
   snapRect,
   unrotatePoint,
@@ -141,5 +142,22 @@ describe('frameBoxPatch: the write-back', () => {
   it('draws a new frame anchored to the area', () => {
     const f = frameFromRect('caja', { x: area.x + px(5), y: area.y + px(6), width: px(70), height: px(40) }, area, DPI);
     expect(f).toEqual({ name: 'caja', placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: mm(5), y: mm(6) } }, width: mm(70), height: mm(40) });
+  });
+});
+
+describe('spreadPageAreas (#861)', () => {
+  const pg = { width: 200, height: 300, contentArea: { x: 20, y: 20, width: 160, height: 260 } };
+  const facing = { contentArea: { x: 30, y: 20, width: 150, height: 260 } };
+  it('lays the facing page one trim width to the right of the first page', () => {
+    const a = spreadPageAreas(pg, facing, 10, 0);
+    expect(a.shift).toBe(180);
+    expect(a.content).toEqual({ x: 20, y: 20, width: 180 + 30 + 150 - 20, height: 260 });
+    expect(a.trim).toEqual({ x: 10, y: 10, width: 360, height: 280 });
+  });
+  it('and to the left of the second', () => {
+    const a = spreadPageAreas(pg, facing, 10, 1);
+    expect(a.content.x).toBe(30 - 180);
+    expect(a.content.x + a.content.width).toBe(180);
+    expect(a.bleed).toEqual({ x: -180, y: 0, width: 380, height: 300 });
   });
 });

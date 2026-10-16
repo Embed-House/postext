@@ -64,6 +64,38 @@ export function pageAreas(page: { width: number; height: number; contentArea: Re
   };
 }
 
+const unionOf = (a: Rect, b: Rect): Rect => {
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  return { x, y, width: Math.max(a.x + a.width, b.x + b.width) - x, height: Math.max(a.y + a.height, b.y + b.height) - y };
+};
+
+/**
+ * The areas of a page of a spread (#861), in this page's px: the sheet is
+ * the two pages side by side, the trims meeting at the spine, so the
+ * facing page's boxes sit one trim width (`shift`) away, to the right of
+ * the first page (`side` 0) or to the left of the second (`side` 1).
+ * `content` is the union of both content areas; trim and bleed run outer
+ * edge to outer edge, as the engine lays the sheet (`spreadSheet`).
+ */
+export function spreadPageAreas(
+  page: { width: number; height: number; contentArea: Rect },
+  facing: { contentArea: Rect },
+  trimOffset: number,
+  side: 0 | 1,
+): PageAreas & { shift: number } {
+  const own = pageAreas(page, trimOffset);
+  const shift = own.trim.width;
+  const dx = side === 0 ? shift : -shift;
+  const moved = (r: Rect): Rect => ({ ...r, x: r.x + dx });
+  return {
+    content: unionOf(own.content, moved(facing.contentArea)),
+    trim: unionOf(own.trim, moved(own.trim)),
+    bleed: unionOf(own.bleed, moved(own.bleed)),
+    shift,
+  };
+}
+
 /** The template's `area` on the page. */
 export function templateAreaRect(area: 'content' | 'trim' | 'bleed' | undefined, areas: PageAreas): Rect {
   return area === 'trim' ? areas.trim : area === 'bleed' ? areas.bleed : areas.content;

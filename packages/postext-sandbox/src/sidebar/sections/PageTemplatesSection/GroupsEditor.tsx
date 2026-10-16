@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import type { Dimension, FrameGroupConfig } from 'postext';
+import type { AnchorEdge, Dimension, ElementPlacement, FrameGroupConfig } from 'postext';
 import { useSandboxLabels } from '../../../context/SandboxContext';
 import { DimensionInput, FieldRow, SelectInput, TextControl } from '../../../controls';
 import { Button, ConfirmPopover, IconButton } from '../../../ui';
@@ -45,6 +45,7 @@ export function GroupsEditor({ templateId, scope }: GroupsEditorProps) {
             group={g}
             entry={entry}
             frames={template.frames.map((f) => f.name)}
+            targets={[...template.frames.map((f) => ({ name: f.name, group: false })), ...template.groups.filter((o) => o.name !== g.name).map((o) => ({ name: o.name, group: true }))]}
             taken={inOther}
             onChange={(patch) => write(updateGroup(templates, templateId, scope, g.name, patch))}
             onRename={(next) => {
@@ -62,9 +63,12 @@ export function GroupsEditor({ templateId, scope }: GroupsEditorProps) {
 }
 
 interface GroupCardProps {
-  group: { name: string; kind: 'stack' | 'row'; frames: string[]; gap: Dimension; align: string };
+  group: { name: string; kind: 'stack' | 'row'; frames: string[]; gap: Dimension; align: string; placement?: ElementPlacement };
   entry: FrameGroupConfig | undefined;
   frames: string[];
+  /** What the group's own box may hang from: the frames and the other
+   *  groups. */
+  targets: { name: string; group: boolean }[];
   /** Frames that belong to another group (a frame is in one at most). */
   taken: Set<string>;
   onChange: (patch: Partial<Record<keyof FrameGroupConfig, unknown>>) => void;
@@ -72,7 +76,7 @@ interface GroupCardProps {
   onRemove: () => void;
 }
 
-function GroupCard({ group, entry, frames, taken, onChange, onRename, onRemove }: GroupCardProps) {
+function GroupCard({ group, entry, frames, targets, taken, onChange, onRename, onRemove }: GroupCardProps) {
   const labels = useSandboxLabels();
   const [draft, setDraft] = useState(group.name);
   useEffect(() => setDraft(group.name), [group.name]);
@@ -132,6 +136,7 @@ function GroupCard({ group, entry, frames, taken, onChange, onRename, onRemove }
         isDefault={!has('align')}
         onReset={() => onChange({ align: undefined })}
       />
+      <GroupBoxFields placement={group.placement} targets={targets} isSet={has('placement')} onChange={(p) => onChange({ placement: p })} />
       <fieldset className="m-0 mt-1 border-0 p-0">
         <legend className="mb-1 p-0 text-xs" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesGroupMembers}</legend>
         <div className="flex flex-wrap gap-x-3 gap-y-1">
@@ -144,5 +149,88 @@ function GroupCard({ group, entry, frames, taken, onChange, onRename, onRemove }
         </div>
       </fieldset>
     </div>
+  );
+}
+
+const NINE_POINT: AnchorEdge[] = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];
+const ELEMENT_EDGES: AnchorEdge[] = ['below', 'above', 'right-of', 'left-of', 'align-top', 'align-bottom', 'align-left', 'align-right'];
+
+/** A group's own box (#856): without one the group is the union of its
+ *  frames' boxes; with one, its spare room is shared out (`grow`, `align`)
+ *  and its frames yield inside it (`shrink`). */
+function GroupBoxFields({ placement, targets, isSet, onChange }: {
+  placement: ElementPlacement | undefined;
+  targets: { name: string; group: boolean }[];
+  isSet: boolean;
+  onChange: (p: ElementPlacement | undefined) => void;
+}) {
+  const labels = useSandboxLabels();
+  const to = placement?.anchor.to ?? 'none';
+  const element = to.startsWith('#');
+  const edges = element ? [...ELEMENT_EDGES, ...NINE_POINT] : NINE_POINT;
+  const edgeLabel: Record<string, string> = {
+    'top-left': labels.headerFooterFrameEdgeTopLeft, top: labels.headerFooterFrameEdgeTop, 'top-right': labels.headerFooterFrameEdgeTopRight,
+    left: labels.headerFooterFrameEdgeLeft, center: labels.headerFooterFrameEdgeCenter, right: labels.headerFooterFrameEdgeRight,
+    'bottom-left': labels.headerFooterFrameEdgeBottomLeft, bottom: labels.headerFooterFrameEdgeBottom, 'bottom-right': labels.headerFooterFrameEdgeBottomRight,
+    'right-of': labels.headerFooterElementEdgeRightOf, 'left-of': labels.headerFooterElementEdgeLeftOf, below: labels.headerFooterElementEdgeBelow,
+    above: labels.headerFooterElementEdgeAbove, 'align-top': labels.headerFooterElementEdgeAlignTop, 'align-bottom': labels.headerFooterElementEdgeAlignBottom,
+    'align-left': labels.headerFooterElementEdgeAlignLeft, 'align-right': labels.headerFooterElementEdgeAlignRight,
+  };
+  const options = [
+    { value: 'none', label: labels.pageTemplatesGroupBoxUnion },
+    { value: 'container', label: labels.pageTemplatesAnchorArea },
+    { value: 'page', label: labels.headerFooterAnchorToPage },
+    { value: 'bleed', label: labels.headerFooterAnchorToBleed },
+    ...targets.map((t) => ({ value: `#${t.name}`, label: (t.group ? labels.pageTemplatesAnchorGroup : labels.pageTemplatesAnchorFrame).replace('__name__', t.name) })),
+  ];
+  if (!options.some((o) => o.value === to)) options.push({ value: to, label: to });
+  const size = placement?.size;
+  const sizeField = (k: 'width' | 'height', label: string) => {
+    const v = size?.[k];
+    const fixed = typeof v === 'object' && v !== null;
+    return (
+      <>
+        <SelectInput
+          label={label}
+          value={fixed ? 'fixed' : 'fill'}
+          options={[{ value: 'fixed', label: labels.pageTemplatesSizeFixed }, { value: 'fill', label: labels.pageTemplatesSizeFill }]}
+          onChange={(m) => onChange({ ...placement!, size: { ...(size ?? {}), [k]: m === 'fixed' ? { value: k === 'width' ? 100 : 80, unit: 'mm' } : 'fill' } })}
+          isDefault={!fixed}
+        />
+        {fixed && <DimensionInput label={labels.pageTemplatesSizeValue} value={v as Dimension} onChange={(d) => onChange({ ...placement!, size: { ...(size ?? {}), [k]: d } })} />}
+      </>
+    );
+  };
+  return (
+    <>
+      <SelectInput
+        label={labels.pageTemplatesGroupBox}
+        value={to}
+        options={options}
+        onChange={(v) => {
+          if (v === 'none') return onChange(undefined);
+          const el = v.startsWith('#');
+          const keep = placement && placement.anchor.to.startsWith('#') === el;
+          onChange({ ...(placement ?? {}), anchor: { to: v as ElementPlacement['anchor']['to'], edge: keep ? placement!.anchor.edge : el ? 'below' : 'top-left' }, offset: placement?.offset ?? { x: MM0, y: MM0 } });
+        }}
+        tooltip={labels.pageTemplatesGroupBoxTooltip}
+        isDefault={!isSet}
+        onReset={() => onChange(undefined)}
+      />
+      {placement && (
+        <>
+          <SelectInput
+            label={element ? labels.headerFooterElementEdge : labels.headerFooterFrameEdge}
+            value={placement.anchor.edge}
+            options={edges.map((e) => ({ value: e, label: edgeLabel[e] ?? e }))}
+            onChange={(v) => onChange({ ...placement, anchor: { ...placement.anchor, edge: v as AnchorEdge } })}
+          />
+          <DimensionInput label={labels.headerFooterElementOffsetX} value={placement.offset?.x ?? MM0} min={-2000} onChange={(d) => onChange({ ...placement, offset: { x: d, y: placement.offset?.y ?? MM0 } })} />
+          <DimensionInput label={labels.headerFooterElementOffsetY} value={placement.offset?.y ?? MM0} min={-2000} onChange={(d) => onChange({ ...placement, offset: { x: placement.offset?.x ?? MM0, y: d } })} />
+          {sizeField('width', labels.pageTemplatesWidth)}
+          {sizeField('height', labels.pageTemplatesHeight)}
+        </>
+      )}
+    </>
   );
 }

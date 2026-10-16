@@ -43,6 +43,7 @@ import {
   mmToPx,
   pageAreas,
   rectBetween,
+  spreadPageAreas,
   snapLines,
   snapRect,
   templateAreaRect,
@@ -51,6 +52,7 @@ import {
 } from '../../templates/frameGeometry';
 import { templateEditor, templateEditorHost } from '../../templates/editorStore';
 import { showPageTemplatesSection } from '../../templates/showSection';
+import { emitFrameEditorEvent, type FrameDragKind } from '../../templates/frameEvents';
 import { addFrame, namesInUse, uniqueName } from '../../templates/templateEdits';
 import { changeFrameForPage, changeTemplateFrame, frameScopeOnPage, templateDisplayName } from '../../templates/pageEdits';
 import { countTemplatePages, fenceTemplateChange, templateFences } from '../../templates/templateUsage';
@@ -131,6 +133,8 @@ function pageTemplate(config: PostextConfig, composed: VDTComposedPage): Resolve
   return resolvePageTemplate(config, composed.template, composed.variant ? { parity: composed.variant } : {});
 }
 
+const dragKind = (d: { kind: 'frame' | 'draw'; handle: Handle }): FrameDragKind => (d.kind === 'draw' ? 'draw' : d.handle === 'move' ? 'move' : 'resize');
+
 export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidthPx: number, pageHeightPx: number, refs: FrameEditorRefs): void {
   const svg = svgEl('svg', { viewBox: `0 0 ${pageWidthPx} ${pageHeightPx}`, preserveAspectRatio: 'none', 'aria-hidden': 'true' });
   svg.dataset.role = 'templateMarks';
@@ -175,7 +179,10 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     const config = host.getState().config;
     const template = pageTemplate(config, c);
     if (!template) return null;
-    const areas = pageAreas(p, doc.trimOffset);
+    // A page of a spread (#861): the template's area is the sheet of two
+    // pages, which this page shows one half of.
+    const facing = c.spread && c.facingPage !== undefined ? doc.pages[c.facingPage] : undefined;
+    const areas = facing ? spreadPageAreas(p, facing, doc.trimOffset, c.spread === 'left' ? 0 : 1) : pageAreas(p, doc.trimOffset);
     const area = templateAreaRect(template.area, areas);
     const grid = template.grid ? gridGeometry(template.grid, area, dpi()) : undefined;
     return { p, c, host, config, template, areas, area, grid };
@@ -257,6 +264,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     templateEditor.select({ templateId, scope, frame: f.name, group: null, pageIndex });
     // The Design mode's pick (#864): its overlay draws the frame stronger.
     pickFrame({ pageIndex, frameId: f.id, name: f.name, template: c.template, configPath: f.configPath });
+    emitFrameEditorEvent({ type: 'select', pageIndex, templateId, frame: f.name, frameId: f.id });
     // The frame's properties, in the Design panel.
     if (host.getState().activePanel !== 'config') refs.dispatchRef.current({ type: 'SET_PANEL', payload: 'config' });
     showPageTemplatesSection(f.name);
@@ -363,6 +371,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       const min = MIN_DRAW_CSS_PX * sheetPerCss();
       if (d.rect.width < min || d.rect.height < min) return;
       const name = uniqueName(namesInUse(templates, g.c.template), 'frame');
+      emitFrameEditorEvent({ type: 'drop', pageIndex, kind: 'draw', handle: d.handle, frame: name, rect: { ...d.rect } });
       writeTemplates(addFrame(templates, g.c.template, 'base', frameFromRect(name, d.rect, g.area, dpi())));
       templateEditor.select({ templateId: g.c.template, scope: 'base', frame: name, group: null, pageIndex });
       const at = templates.findIndex((t) => t.id === g.c.template);
@@ -375,6 +384,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     const resolved = g.template.frames.find((rf) => rf.name === f.name);
     if (!resolved) return;
     const patch = frameBoxPatch({ resolved, from: f.rect, to: d.rect, area: g.area, dpi: dpi(), ...(g.grid ? { grid: g.grid } : {}) });
+    emitFrameEditorEvent({ type: 'drop', pageIndex, kind: dragKind(d), handle: d.handle, frame: f.name, rect: { ...d.rect }, patch });
     if (Object.keys(patch).length === 0) return;
     const state = g.host.getState();
     const spreadIds = new Set(templates.filter((t) => t.spread).map((t) => t.id));
@@ -454,6 +464,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
         const dy = ev.clientY - drag.startClientY;
         if (dx * dx + dy * dy < DRAG_START_CSS_PX * DRAG_START_CSS_PX) return;
         drag.started = true;
+        emitFrameEditorEvent({ type: 'dragStart', pageIndex, kind: dragKind(drag), handle: drag.handle, ...(drag.frame ? { frame: drag.frame.name } : {}), rect: { ...drag.rect } });
       }
       const g = geometry();
       const raw = drag.kind === 'draw'
@@ -472,6 +483,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
         drag.guideX = undefined;
         drag.guideY = undefined;
       }
+      emitFrameEditorEvent({ type: 'drag', pageIndex, kind: dragKind(drag), handle: drag.handle, ...(drag.frame ? { frame: drag.frame.name } : {}), rect: { ...drag.rect } });
       paint();
       return;
     }
@@ -490,6 +502,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     ev.stopPropagation();
     ev.preventDefault();
     const pointerId = drag.pointerId;
+    emitFrameEditorEvent({ type: 'cancel', pageIndex, ...(drag.frame ? { frame: drag.frame.name } : {}) });
     drag = null;
     window.removeEventListener('keydown', onEscape, true);
     try { slot.releasePointerCapture(pointerId); } catch { /* not captured */ }
@@ -504,6 +517,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     window.removeEventListener('keydown', onEscape, true);
     try { slot.releasePointerCapture(ev.pointerId); } catch { /* not captured */ }
     if (ev.type === 'pointerup' && d.started) commit(d);
+    else if (d.started) emitFrameEditorEvent({ type: 'cancel', pageIndex, ...(d.frame ? { frame: d.frame.name } : {}) });
     paint();
   };
   slot.addEventListener('pointerup', end, true);
