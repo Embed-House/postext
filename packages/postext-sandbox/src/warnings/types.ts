@@ -1,4 +1,4 @@
-import type { ContrastIssue, PageTemplateWarningKind, PreflightIssue, PreflightSeverity } from 'postext';
+import type { ContrastIssue, FrameFitStep, FrameOverflowProposal, PageTemplateWarningKind, PreflightIssue, PreflightSeverity } from 'postext';
 /** Which design slot a warning points at. `level` tags heading slots;
  *  the part opener is a single slot. */
 export type WarningSlotKind = 'header' | 'footer' | 'heading' | 'part';
@@ -235,14 +235,30 @@ export type WarningPayload =
    *  template lacks, a template frame left empty, a composed page written
    *  with three colons. */
   | { kind: 'templateUnknown'; template: string; fenceIndex: number }
-  | { kind: 'slotUnknown'; template: string; slot: string; fenceIndex: number }
+  | { kind: 'slotUnknown'; template: string; slot: string; frame?: string; fenceIndex: number }
   | { kind: 'slotEmpty'; template: string; frame: string; fenceIndex: number }
   | { kind: 'pageFenceLength' }
   /** The content poured into a frame of a composed page (#855) does not
    *  fit and has no `next` frame left: what does not fit is clipped at the
    *  frame's foot on paged output. `page` is the book page, `configPath`
-   *  the JSON pointer of the template frame (`/pageTemplates/0/frames/2`). */
-  | { kind: 'frameOverflow'; template: string; frame: string; fenceIndex: number; overflowMm: number; page: number; configPath: string }
+   *  the JSON pointer of the template frame (`/pageTemplates/0/frames/2`).
+   *  The reflow ladder (#858) tried `stepsTried` first and left the text
+   *  at `scale` (pictures at `imageScale`); `proposals` are the changes
+   *  that would make it fit, with their values. */
+  | {
+    kind: 'frameOverflow';
+    template: string;
+    frame: string;
+    fenceIndex: number;
+    overflowMm: number;
+    page: number;
+    configPath: string;
+    locale?: string;
+    stepsTried: FrameFitStep[];
+    scale: number;
+    imageScale?: number;
+    proposals: FrameOverflowProposal[];
+  }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): the template decides (`templateSpread`: laid over two facing
    *  pages; else on one); `fence` is the fence's own `spread`. */
