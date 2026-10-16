@@ -302,6 +302,9 @@ export interface SandboxLabels {
   warningsPageFenceLengthDetail: string;
   warningsFrameOverflowTitle: string;
   warningsFrameOverflowDetail: string;
+  warningsSpreadMismatchTitle: string;
+  warningsSpreadMismatchSpreadDetail: string;
+  warningsSpreadMismatchSingleDetail: string;
   warningsUnclosedComposedPageDetail: string;
   warningsUnknownChipStyleTitle: string;
   warningsUnknownChipStyleDetail: string;

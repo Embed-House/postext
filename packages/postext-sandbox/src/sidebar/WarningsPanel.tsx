@@ -89,6 +89,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'slotEmpty':
     case 'pageFenceLength':
     case 'frameOverflow':
+    case 'spreadMismatch':
     case 'unknownCalloutType':
     case 'unknownChipStyle':
     case 'unknownMarkStyle':
@@ -273,6 +274,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsPageFenceLengthTitle;
     case 'frameOverflow':
       return labels.warningsFrameOverflowTitle;
+    case 'spreadMismatch':
+      return labels.warningsSpreadMismatchTitle;
     case 'unknownChipStyle':
       return labels.warningsUnknownChipStyleTitle;
     case 'unknownMarkStyle':
@@ -595,6 +598,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
         .replace('__template__', payload.template)
         .replace('__mm__', payload.overflowMm.toFixed(1))
         .replace('__page__', String(payload.page))}`;
+    case 'spreadMismatch':
+      return `::::page{template="${payload.template}"${payload.fence ? ' spread' : ''}} — ${(payload.templateSpread ? labels.warningsSpreadMismatchSpreadDetail : labels.warningsSpreadMismatchSingleDetail).replace('__template__', payload.template)}`;
     case 'unknownChipStyle':
       return `${inResource(payload.inResource)}:chip[…]{style="${payload.style}"} — ${labels.warningsUnknownChipStyleDetail}`;
     case 'unknownMarkStyle':

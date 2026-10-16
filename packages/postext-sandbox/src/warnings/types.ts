@@ -43,6 +43,7 @@ export type WarningKind =
   | 'slotEmpty'
   | 'pageFenceLength'
   | 'frameOverflow'
+  | 'spreadMismatch'
   | 'unknownChipStyle'
   | 'unknownMarkStyle'
   | 'duplicateAnchor'
@@ -242,6 +243,10 @@ export type WarningPayload =
    *  frame's foot on paged output. `page` is the book page, `configPath`
    *  the JSON pointer of the template frame (`/pageTemplates/0/frames/2`). */
   | { kind: 'frameOverflow'; template: string; frame: string; fenceIndex: number; overflowMm: number; page: number; configPath: string }
+  /** A composed page's fence and its template disagree about spreads
+   *  (#861): the template decides (`templateSpread`: laid over two facing
+   *  pages; else on one); `fence` is the fence's own `spread`. */
+  | { kind: 'spreadMismatch'; template: string; fenceIndex: number; fence: boolean; templateSpread: boolean }
   /** A `:chip[…]{style="…"}` names a style that is not in
    *  `config.chipStyles`; the chip takes the first style. `inResource`
    *  names the resource whose caption, note or cell holds the chip. */

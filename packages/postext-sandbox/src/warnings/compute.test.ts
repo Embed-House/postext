@@ -36,6 +36,19 @@ describe('composed-page warnings (#854)', () => {
     for (const k of ['slotUnknown', 'slotEmpty', 'templateUnknown', 'pageFenceLength'] as const) expect(warningCategory(k)).toBe('markup');
   });
 
+  it('lists a fence and a template that disagree about spreads, at the attribute (#861)', () => {
+    const spread = { pageTemplates: [{ id: 'doble', spread: true, frames: [{ name: 'texto', flow: true }] }, { id: 'tema', frames: [{ name: 'texto', flow: true }] }] } as unknown as PostextConfig;
+    const md = '::::page{template="tema" spread}\nText.\n::::\n\n::::page{template="doble"}\nText.\n::::\n\n::::page{template="doble" spread}\nText.\n::::';
+    const found = find(md, 'spreadMismatch', spread);
+    expect(found.map((w) => w.payload)).toEqual([
+      { kind: 'spreadMismatch', template: 'tema', fenceIndex: 0, fence: true, templateSpread: false },
+      { kind: 'spreadMismatch', template: 'doble', fenceIndex: 1, fence: false, templateSpread: true },
+    ]);
+    expect(md.slice(found[0]!.sourceStart, found[0]!.sourceEnd)).toBe('spread');
+    expect(md.slice(found[1]!.sourceStart, found[1]!.sourceEnd)).toBe('doble');
+    expect(warningCategory('spreadMismatch')).toBe('markup');
+  });
+
   it('reads a frame the layout could not fit off the laid-out document (#855)', () => {
     const md = '::::page{template="tema"}\n:::frame{slot="caja"}\nA long box.\n:::\n::::';
     const doc = {
