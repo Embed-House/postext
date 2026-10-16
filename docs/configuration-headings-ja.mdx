@@ -248,7 +248,7 @@ headings: { fontFamily: 'Merriweather', levels: [{ level: 1, breakBefore: { enab
       <td><code>numberPosition</code></td>
       <td><code>'before' | 'replace'</code></td>
       <td><code>'before'</code></td>
-      <td>生成された番号を置く位置。<code>'before'</code>：タイトルの前に置き、<code>numberSeparator</code>でつなぎます。<code>'replace'</code>：番号がタイトル全体になり、ソースに書いたタイトルは出力しません。たとえば<code>numberingTemplate: 'الليلة &#123;1:ordinal-feminine&#125;'</code>のもとで<code># Night</code>はالليلة الثانيةと出力されます。目次は番号を項目のタイトルとして示し（番号の列はなし）、柱（<code>{chapterTitle}</code>、<code>{titleText}</code>）とPDFのしおりもそれを読みます。このような見出しでは<code>{number}</code>は空です。テンプレート（レベルのもの、またはスタイルのもの）を持つ番号付きの見出しにだけ適用し、それ以外はタイトルを保ちます。<a href="/ja/docs/configuration-styles#見出しスタイル">見出しスタイル</a>は独自の値を設定でき、<code>'before'</code>にすると、レベルが置き換えるはずのタイトルを残せます。</td>
+      <td>生成された番号を置く位置。<code>'before'</code>：タイトルの前に置き、<code>numberSeparator</code>でつなぎます。<code>'replace'</code>：番号がタイトル全体になり、ソースに書いたタイトルは出力しません。たとえば<code>numberingTemplate: 'الليلة &#123;1:ordinal-feminine&#125;'</code>のもとで<code># Night</code>はالليلة الثانيةと出力されます。目次は番号を項目のタイトルとして示し（番号の列はなし）、柱（<code>&#123;chapterTitle&#125;</code>、<code>&#123;titleText&#125;</code>）とPDFのしおりもそれを読みます。このような見出しでは<code>&#123;number&#125;</code>は空です。テンプレート（レベルのもの、またはスタイルのもの）を持つ番号付きの見出しにだけ適用し、それ以外はタイトルを保ちます。<a href="/ja/docs/configuration-styles#見出しスタイル">見出しスタイル</a>は独自の値を設定でき、<code>'before'</code>にすると、レベルが置き換えるはずのタイトルを残せます。</td>
     </tr>
     <tr>
       <td><code>breakBefore</code></td>

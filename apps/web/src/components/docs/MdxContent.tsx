@@ -6,6 +6,7 @@ import * as illustrations from "./illustrations";
 import { CodePenExample } from "./CodePenExample";
 import { TutorialVideo } from "./TutorialVideo";
 import { TableFit } from "./TableFit";
+import { literalStringExpressions } from "@/lib/mdxStrings";
 import { NewTabNote } from "@/components/ui/NewTabNote";
 
 /** The plain text of rendered children (inline code, emphasis and all). */
@@ -113,7 +114,7 @@ export async function MdxContent({ source, skipTitle, components: extra, locale,
     cleaned = cleaned.replace(/^# .+$/m, "");
   }
 
-  cleaned = wrapScrollableElements(cleaned);
+  cleaned = wrapScrollableElements(literalStringExpressions(cleaned));
 
   const { content } = await compileDocsMdx(cleaned, extra ? { ...components, ...extra } : components, {
     locale: locale ?? (await getLocale()),
