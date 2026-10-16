@@ -662,9 +662,14 @@ export type {
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,
 } from './composed/types';
-export { collectConfigWarnings, designTextLiteral } from './configWarnings';
+export { collectConfigWarnings, contentInConfigRule, designTextLiteral } from './configWarnings';
+export type { DesignTextVerdict } from './configWarnings';
 export type { ConfigWarningOptions } from './configWarnings';
 export { configDesignSlots } from './design/slots';
+// «Move the text to the Markdown» (#874): page designs held in heading
+// styles become page templates, their text `::::page` fences.
+export { moveTextToMarkdown } from './migrate/textToMarkdown';
+export type { TextMigrationChapter, TextMigrationInput, TextMigrationOptions, TextMigrationResult, TextMigrationReport, MigratedPage, ContentInConfigCount } from './migrate/textToMarkdown';
 export type { ConfigDesignSlot, ConfigDesignSlotKind } from './design/slots';
 export type { MathRender, MathPath, MathViewBox } from './math/types';
 export { initMathEngine, isMathReady, onMathReady, renderMath, placeholderRender, clearMathCache } from './math';
