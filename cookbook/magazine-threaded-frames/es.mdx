@@ -1,0 +1,66 @@
+---
+title: "Un reportaje de revista enhebrado de marco en marco"
+summary: "Una doble página compuesta cuyas dos columnas se enlazan con next y siguen con overflow.continueIn en las páginas que añade, alrededor de una cita y un recorte."
+plain: "Un reportaje de cuatro páginas maquetado desde una plantilla: el texto pasa solo de una columna a otra y a páginas nuevas, y rodea una cita y la silueta de una foto."
+description: "Un reportaje de revista en Postext: una página compuesta cuyas columnas enlazadas siguen en páginas añadidas, alrededor de una cita y un cesto recortado."
+question: "¿Cómo hago que un reportaje pase de un marco a otro a lo largo de varias páginas?"
+aliases: ["marcos enlazados", "texto enlazado", "salto de texto", "continúa en la página", "contorneo", "texto al contorno", "cita destacada", "foto recortada", "plantilla de página", "threaded frames", "verkettete Rahmen"]
+---
+
+## Lo que vas a componer
+
+Las páginas 46 a 49 de *Patio*, una revista trimestral inventada sobre la vida en la ciudad: un reportaje sobre una cajista jubilada que cuida catorce colmenas en la azotea de la imprenta donde trabajó treinta años. La página par de la apertura es la fotografía, con el título sobre la grava y un recuadro de cifras en el cielo. La impar lleva la entradilla y las dos primeras columnas, con una cita destacada sobre el medianil y un cesto de paja recortado, cuya cúpula siguen las líneas de la segunda columna. Después el texto ocupa las páginas que necesite, a tres columnas, y termina donde termina. Las ediciones en español, inglés y alemán son la misma plantilla con otras palabras, y el alemán pasa sus compuestos largos por columnas de 60 mm.
+
+## Elaboración
+
+### 1 · Una plantilla, un texto
+
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. Todo el reportaje es un único bloque `::::page{template="apertura" spread}`: el título va al marco que `takes: 'h1'`, las cifras y la entradilla a sus ranuras, y todo lo demás, que no nombra ninguna, al marco de flujo `col-1`. Cuando `col-1` se llena, el texto sigue en `col-2`, cortado de nuevo a su ancho, y lo que no cabe en `col-2` continúa en una página que se añade tras la doble (`overflow.continueIn: 'template:seguido-par'`), después de la palabra *Continúa* en el idioma del lector. El texto no nombra columnas ni páginas: si quitas un párrafo, todas las líneas siguientes retroceden.
+
+### 2 · Las páginas que añade el texto
+
+<Excerpt region="pages-after" />
+
+Cada página añadida tiene tres columnas enlazadas de 60,3 mm. Dos plantillas se pasan el texto porque lo que continúa cae en el marco que se llama como el que lo cortó: una plantilla que siguiera en sí misma volvería a llenar sólo su tercera columna. Con nombres distintos en las dos páginas, el texto empieza otra vez en el marco de flujo y recorre las tres. `KEEP` desactiva el paso de la escalera de ajuste que reduce texto e imágenes, que si no llega antes que una página nueva: a un texto al que le sobran cinco líneas lo compondría al 92,5 % en su última página.
+
+### 3 · Dos marcos que apartan las columnas
+
+<Excerpt region="push" />
+
+Ninguno de los dos marcos forma parte del texto: cada uno aparta las líneas de las columnas que pisa. La cita se ancla a la entradilla, 82 mm más abajo, y cabalga sobre el medianil, así que la primera columna pierde su lado derecho y la segunda el izquierdo. El marco del cesto lleva `wrap: 'contour'`: cada línea a su lado se acorta lo que mide la imagen a su altura, más un margen de 2,5 mm, de modo que la segunda columna sigue la cúpula y recupera el ancho entero bajo su base.
+
+### 4 · Una silueta que viaja con la imagen
+
+<Excerpt region="pictures" />
+
+La composición lee las imágenes por su tamaño, nunca por sus píxeles, así que la silueta sale una sola vez del canal alfa del PNG, con `traceResourceContour`, y viaja en el recurso como `contour.traced`. El cesto es un PNG de 720 px con 200 colores y fondo transparente (225 KB). La fotografía de la página par es una imagen de la decoración, `resourceId: '{attr.foto}'`: el bloque elige la foto y la plantilla su sitio.
+
+### 5 · Cabeceras que leen el bloque
+
+<Excerpt region="running-heads" />
+
+La doble página de apertura oculta las cabeceras (`header: false`); las páginas añadidas llevan el nombre de la revista en la par y la sección en la impar. La sección sale del bloque, `seccion="Ciudad"`, que `{attr.seccion}` lee en las páginas que añade el texto igual que en la propia apertura.
+
+## Variantes
+
+### Contornea el cesto por su caja
+
+Sin `wrap: 'contour'` el marco aparta el texto con su rectángulo, y las líneas junto a la cúpula se detienen en un borde recto.
+
+```diff
+-  { name: 'recorte', exclude: 'push', wrap: 'contour', layer: 2, width: mm(58),
++  { name: 'recorte', exclude: 'push', layer: 2, width: mm(58),
+```
+
+### Quita la marca de continuación
+
+`mark: false` termina el trozo cortado en su última línea, sin la palabra *Continúa*: la columna gana una línea.
+
+```diff
+-      overflow: { continueIn: 'template:seguido-par' } },
++      overflow: { continueIn: 'template:seguido-par', mark: false } },
+```
+
+## Errores frecuentes
+
+- Un párrafo dentro de un marco nunca lleva capitular, así que el reportaje abre sin ella: los marcos son recuadros, y el `dropCap` de un estilo de párrafo sólo se aplica al texto corrido.

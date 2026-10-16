@@ -1,0 +1,66 @@
+---
+title: "Un servizio di rivista che corre di cornice in cornice"
+summary: "Una doppia pagina composta: due colonne concatenate con next proseguono con overflow.continueIn su pagine aggiunte, attorno a una citazione e a uno scontorno."
+plain: "Un servizio di quattro pagine impaginato da un modello: il testo passa da solo da una colonna all’altra e su pagine nuove, e gira attorno a una citazione e alla sagoma di una foto."
+description: "Servizio di rivista in Postext: una pagina composta le cui colonne concatenate proseguono su pagine aggiunte, attorno a una citazione e a un bugno scontornato."
+question: "Come faccio scorrere un articolo di rivista in cornici concatenate su più pagine?"
+aliases: ["cornici concatenate", "cornici collegate", "testo concatenato", "continua a pagina", "scontorno", "testo attorno alla sagoma", "citazione in evidenza", "foto scontornata", "modello di pagina", "threaded frames", "marcos enlazados"]
+---
+
+## Che cosa comporrai
+
+Le pagine da 46 a 49 di *Patio*, un trimestrale inventato sulla vita in città: un servizio su una compositrice tipografa in pensione che cura quattordici arnie sul tetto della tipografia dove ha lavorato trent’anni. Il verso della doppia pagina d’apertura è la fotografia, con il titolo sulla ghiaia e un riquadro di cifre su fondo colorato nel cielo. Il recto porta il catenaccio e le prime due colonne, con una citazione in evidenza a cavallo dell’intercolonna e un bugno di paglia scontornato, la cui cupola guida le righe della seconda colonna. Poi il testo occupa le pagine che gli servono, a tre colonne, e finisce dove finisce. Le edizioni spagnola, inglese e tedesca sono lo stesso modello con altre parole, e il tedesco fa passare le sue lunghe parole composte in colonne da 60 mm.
+
+## Preparazione
+
+### 1 · Un modello, un testo
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. L’intero servizio è una sola direttiva `::::page{template="apertura" spread}`: il titolo va alla cornice che `takes: 'h1'`, le cifre e il catenaccio ai loro slot, e tutto il resto, che non nomina nessuno slot, alla cornice di flusso `col-1`. Quando `col-1` è piena il testo prosegue in `col-2`, spezzato di nuovo alla sua larghezza, e ciò che `col-2` non riesce a contenere passa a una pagina aggiunta dopo la doppia pagina (`overflow.continueIn: 'template:seguido-par'`), dietro la parola *Continued* nella lingua dell’edizione. Il testo non nomina colonne né pagine: togli un paragrafo e tutte le righe che lo seguono arretrano.
+
+### 2 · Le pagine che il testo aggiunge
+
+<Excerpt region="pages-after" />
+
+Ogni pagina aggiunta ha tre colonne concatenate da 60,3 mm. Due modelli si passano il testo perché ciò che prosegue cade nella cornice che porta il nome di quella che l’ha tagliato: un modello che proseguisse in sé stesso riempirebbe di nuovo solo la sua terza colonna. Con nomi diversi sulle due pagine, il testo riparte dalla cornice di flusso e scende per tutte e tre. `KEEP` disattiva il gradino della scala di adattamento che rimpicciolisce testo e immagini, che altrimenti verrebbe prima di una pagina nuova: un testo lungo cinque righe di troppo verrebbe composto al 92,5 % nella sua ultima pagina.
+
+### 3 · Due cornici che spostano le colonne
+
+<Excerpt region="push" />
+
+Nessuna delle due cornici fa parte del testo: ciascuna sposta le righe delle colonne che copre. La citazione è ancorata al catenaccio, 82 mm più in basso, e sta a cavallo dell’intercolonna, così la prima colonna perde il lato destro e la seconda il sinistro. La cornice del bugno ha `wrap: 'contour'`: ogni riga accanto si accorcia di quanto è larga l’immagine alla sua altezza, più un margine di 2,5 mm, e la seconda colonna segue così la cupola e torna a tutta larghezza sotto la base.
+
+### 4 · Una sagoma che viaggia con l’immagine
+
+<Excerpt region="pictures" />
+
+L’impaginazione legge un’immagine dalle sue dimensioni, mai dai suoi pixel, quindi la sagoma si ricava una volta sola dal canale alfa del PNG, con `traceResourceContour`, e resta nella risorsa come `contour.traced`. Il bugno è un PNG da 720 px con 200 colori e fondo trasparente (225 KB). La fotografia del verso è un’immagine della decorazione, `resourceId: '{attr.foto}'`: la direttiva sceglie la foto, il modello il suo posto.
+
+### 5 · Testatine che leggono la direttiva
+
+<Excerpt region="running-heads" />
+
+La doppia pagina d’apertura nasconde le testatine (`header: false`); le pagine aggiunte stampano il nome della rivista sul verso e la sezione sul recto. La sezione viene dalla direttiva, `seccion="City"`, che `{attr.seccion}` legge sulle pagine aggiunte come sulla doppia pagina d’apertura.
+
+## Varianti
+
+### Fai girare il testo attorno al riquadro del bugno
+
+Senza `wrap: 'contour'` la cornice sposta il testo con il suo rettangolo, e le righe accanto alla cupola si fermano su un bordo dritto.
+
+```diff
+-  { name: 'recorte', exclude: 'push', wrap: 'contour', layer: 2, width: mm(58),
++  { name: 'recorte', exclude: 'push', layer: 2, width: mm(58),
+```
+
+### Togli il segno di continuazione
+
+`mark: false` chiude il pezzo tagliato sulla sua ultima riga, senza la parola *Continued*: la colonna guadagna una riga.
+
+```diff
+-      overflow: { continueIn: 'template:seguido-par' } },
++      overflow: { continueIn: 'template:seguido-par', mark: false } },
+```
+
+## Errori frequenti
+
+- Un paragrafo dentro una cornice non prende mai il capolettera, quindi il servizio si apre senza: le cornici sono riquadri, e il `dropCap` di uno stile di paragrafo vale solo per il testo corrente.

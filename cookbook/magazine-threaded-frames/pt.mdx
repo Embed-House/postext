@@ -1,0 +1,66 @@
+---
+title: "Uma reportagem de revista que corre de bloco em bloco"
+summary: "Uma página dupla composta: duas colunas encadeadas com next seguem com overflow.continueIn nas páginas que ela acrescenta, em volta de um olho e de um recorte."
+plain: "Uma reportagem de quatro páginas montada a partir de um modelo: o texto passa sozinho de uma coluna para outra e para páginas novas, e contorna uma citação e a silhueta de uma foto."
+description: "Reportagem de revista no Postext: uma página composta cujas colunas encadeadas seguem em páginas acrescentadas, em volta de um olho e de uma colmeia recortada."
+question: "Como faço uma reportagem de revista correr por blocos encadeados ao longo de várias páginas?"
+aliases: ["blocos encadeados", "blocos de texto vinculados", "texto encadeado", "continua na página", "contorno de texto", "texto em volta da imagem", "olho", "foto recortada", "modelo de página", "threaded frames", "marcos enlazados"]
+---
+
+## O que você vai compor
+
+As páginas 46 a 49 de *Patio*, uma revista trimestral inventada sobre a vida na cidade: uma reportagem sobre uma tipógrafa aposentada que cuida de catorze colmeias no terraço da gráfica onde trabalhou trinta anos. O verso da página dupla de abertura é a fotografia, com o título sobre o cascalho e um box de números com fundo colorido no céu. O recto traz a linha fina e as duas primeiras colunas, com um olho sobre a medianiz e uma colmeia de palha recortada, cuja cúpula as linhas da segunda coluna acompanham. Depois o texto ocupa as páginas de que precisar, em três colunas, e termina onde termina. As edições em espanhol, inglês e alemão são o mesmo modelo com outras palavras, e o alemão passa os seus compostos longos por colunas de 60 mm.
+
+## Preparo
+
+### 1 · Um modelo, um texto
+
+O código é [a resposta curta](#a-resposta-curta) lá em cima. A reportagem inteira é uma única diretiva `::::page{template="apertura" spread}`: o título vai para o bloco que `takes: 'h1'`, os números e a linha fina para os seus slots, e todo o resto, que não nomeia nenhum, para o bloco de fluxo `col-1`. Quando `col-1` enche, o texto continua em `col-2`, quebrado de novo na largura dela, e o que não cabe em `col-2` segue numa página acrescentada depois da página dupla (`overflow.continueIn: 'template:seguido-par'`), após a palavra *Continued* no idioma da edição. O texto não nomeia colunas nem páginas: tire um parágrafo e todas as linhas seguintes recuam.
+
+### 2 · As páginas que o texto acrescenta
+
+<Excerpt region="pages-after" />
+
+Cada página acrescentada tem três colunas encadeadas de 60,3 mm. Dois modelos passam o texto um para o outro porque o que continua cai no bloco que tem o nome daquele que o cortou: um modelo que continuasse em si mesmo voltaria a encher só a sua terceira coluna. Com nomes diferentes nas duas páginas, o texto recomeça no bloco de fluxo e desce pelas três. `KEEP` desliga o degrau da escada de ajuste que reduz texto e imagens, que de outro modo viria antes de uma página nova: um texto com cinco linhas a mais seria composto a 92,5 % na sua última página.
+
+### 3 · Dois blocos que afastam as colunas
+
+<Excerpt region="push" />
+
+Nenhum dos dois blocos faz parte do texto: cada um afasta as linhas das colunas que cobre. O olho fica ancorado na linha fina, 82 mm abaixo, e atravessa a medianiz, então a primeira coluna perde o lado direito e a segunda o esquerdo. O bloco da colmeia tem `wrap: 'contour'`: cada linha ao lado dela encurta o quanto a imagem mede de largura naquela altura, mais uma margem de 2,5 mm, e assim a segunda coluna acompanha a cúpula e volta à largura inteira abaixo da base.
+
+### 4 · Uma silhueta que viaja com a imagem
+
+<Excerpt region="pictures" />
+
+A composição lê uma imagem pelo tamanho, nunca pelos pixels, então a silhueta sai uma única vez do canal alfa do PNG, com `traceResourceContour`, e vai no recurso como `contour.traced`. A colmeia é um PNG de 720 px com 200 cores e fundo transparente (225 KB). A fotografia do verso é uma imagem da decoração, `resourceId: '{attr.foto}'`: a diretiva escolhe a foto e o modelo, o lugar dela.
+
+### 5 · Cabeços que leem a diretiva
+
+<Excerpt region="running-heads" />
+
+A página dupla de abertura esconde os cabeços (`header: false`); as páginas acrescentadas imprimem o nome da revista no verso e a seção no recto. A seção vem da diretiva, `seccion="City"`, que `{attr.seccion}` lê nas páginas acrescentadas da mesma forma que na abertura.
+
+## Variações
+
+### Contornar a colmeia pela caixa
+
+Sem `wrap: 'contour'` o bloco afasta o texto com o seu retângulo, e as linhas ao lado da cúpula param numa borda reta.
+
+```diff
+-  { name: 'recorte', exclude: 'push', wrap: 'contour', layer: 2, width: mm(58),
++  { name: 'recorte', exclude: 'push', layer: 2, width: mm(58),
+```
+
+### Tirar a marca de continuação
+
+`mark: false` termina o trecho cortado na sua última linha, sem a palavra *Continued*: a coluna ganha uma linha.
+
+```diff
+-      overflow: { continueIn: 'template:seguido-par' } },
++      overflow: { continueIn: 'template:seguido-par', mark: false } },
+```
+
+## Erros comuns
+
+- Um parágrafo dentro de um bloco nunca leva capitular, então a reportagem abre sem ela: os blocos são caixas, e o `dropCap` de um estilo de parágrafo só vale para o texto corrido.

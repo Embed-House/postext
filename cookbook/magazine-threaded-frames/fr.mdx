@@ -1,0 +1,66 @@
+---
+title: "Un reportage de magazine qui court de bloc en bloc"
+summary: "Une double page composée : deux colonnes chaînées par next continuent par overflow.continueIn sur des pages ajoutées, autour d’une citation et d’un détourage."
+plain: "Un reportage de quatre pages monté à partir d’un modèle : le texte passe seul d’une colonne à l’autre puis sur de nouvelles pages, et contourne une citation et la silhouette d’une photo."
+description: "Reportage de magazine avec Postext : une page composée aux colonnes chaînées, prolongée sur des pages ajoutées, autour d’une citation et d’une ruche détourée."
+question: "Comment faire courir un article de magazine dans des blocs chaînés sur plusieurs pages ?"
+aliases: ["blocs chaînés", "blocs de texte liés", "chaînage de blocs", "suite page", "habillage", "habillage au contour", "citation en exergue", "photo détourée", "modèle de page", "threaded frames", "marcos enlazados"]
+---
+
+## Ce que vous allez composer
+
+Les pages 46 à 49 de *Patio*, un trimestriel imaginaire consacré à la vie en ville : un reportage sur une typographe à la retraite qui soigne quatorze ruches sur le toit de l’imprimerie où elle a travaillé trente ans. Le verso de la double page d’ouverture est la photographie, avec le titre posé sur le gravier et un encadré de chiffres sur fond teinté dans le ciel. Le recto porte le chapeau et les deux premières colonnes, avec une citation en exergue à cheval sur la gouttière et une ruche en paille détourée, dont la coupole guide les lignes de la deuxième colonne. Le texte continue ensuite sur autant de pages qu’il lui en faut, à trois colonnes, et s’arrête là où il s’arrête. Les éditions espagnole, anglaise et allemande sont le même modèle avec d’autres mots, et l’allemand fait passer ses longs mots composés dans des colonnes de 60 mm.
+
+## Préparation
+
+### 1 · Un modèle, un texte
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Tout le reportage tient en une seule directive `::::page{template="apertura" spread}` : le titre va au bloc qui `takes: 'h1'`, les chiffres et le chapeau à leurs emplacements, et tout le reste, qui ne nomme aucun emplacement, au bloc de flux `col-1`. Quand `col-1` est plein, le texte continue dans `col-2`, recoupé à sa largeur, et ce que `col-2` ne peut pas contenir passe sur une page ajoutée après la double page (`overflow.continueIn: 'template:seguido-par'`), derrière le mot *Continued* dans la langue de l’édition. Le texte ne nomme ni colonne ni page : supprimez un paragraphe et toutes les lignes qui le suivent remontent.
+
+### 2 · Les pages qu’ajoute le texte
+
+<Excerpt region="pages-after" />
+
+Chaque page ajoutée compte trois colonnes chaînées de 60,3 mm. Deux modèles se passent le texte, parce que la suite tombe dans le bloc qui porte le nom de celui qui l’a coupée : un modèle qui continuerait en lui-même ne remplirait de nouveau que sa troisième colonne. Avec des noms différents sur les deux pages, le texte repart du bloc de flux et descend les trois colonnes. `KEEP` désactive le palier de l’échelle d’ajustement qui réduit le texte et les images, et qui passerait sinon avant une nouvelle page : un texte trop long de cinq lignes serait composé à 92,5 % sur sa dernière page.
+
+### 3 · Deux blocs qui écartent les colonnes
+
+<Excerpt region="push" />
+
+Aucun des deux blocs ne fait partie du texte : chacun repousse les lignes des colonnes qu’il recouvre. La citation est ancrée au chapeau, 82 mm plus bas, et se tient à cheval sur la gouttière : la première colonne perd son côté droit, la seconde son côté gauche. Le bloc de la ruche a `wrap: 'contour'` : chaque ligne voisine est raccourcie de la largeur de l’image à sa hauteur, plus une marge de 2,5 mm, si bien que la deuxième colonne suit la coupole et retrouve toute sa largeur sous la base.
+
+### 4 · Un contour qui voyage avec l’image
+
+<Excerpt region="pictures" />
+
+La mise en page lit une image par sa taille, jamais par ses pixels : le contour est donc tiré une seule fois du canal alpha du PNG, avec `traceResourceContour`, et accompagne la ressource sous la forme `contour.traced`. La ruche est un PNG de 720 px à 200 couleurs sur fond transparent (225 Ko). La photographie du verso est une image de décor, `resourceId: '{attr.foto}'` : la directive choisit la photo, le modèle sa place.
+
+### 5 · Des titres courants qui lisent la directive
+
+<Excerpt region="running-heads" />
+
+La double page d’ouverture masque les titres courants (`header: false`) ; les pages ajoutées impriment le nom du magazine au verso et la rubrique au recto. La rubrique vient de la directive, `seccion="City"`, que `{attr.seccion}` lit sur les pages ajoutées comme sur la double page d’ouverture.
+
+## Variantes
+
+### Habiller la ruche par son rectangle
+
+Sans `wrap: 'contour'`, le bloc repousse le texte avec son rectangle, et les lignes voisines de la coupole s’arrêtent sur un bord droit.
+
+```diff
+-  { name: 'recorte', exclude: 'push', wrap: 'contour', layer: 2, width: mm(58),
++  { name: 'recorte', exclude: 'push', layer: 2, width: mm(58),
+```
+
+### Supprimer la mention de suite
+
+`mark: false` termine le morceau coupé sur sa dernière ligne, sans le mot *Continued* : la colonne gagne une ligne.
+
+```diff
+-      overflow: { continueIn: 'template:seguido-par' } },
++      overflow: { continueIn: 'template:seguido-par', mark: false } },
+```
+
+## Erreurs fréquentes
+
+- Un paragraphe placé dans un bloc ne prend jamais de lettrine, si bien que le reportage s’ouvre sans : les blocs sont des boîtes, et le `dropCap` d’un style de paragraphe ne s’applique qu’au texte courant.

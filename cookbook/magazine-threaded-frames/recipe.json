@@ -1,0 +1,127 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 160,
+  "status": "draft",
+  "chapter": "publications",
+  "order": 100,
+  "level": 3,
+  "genres": ["magazine"],
+  "outputs": ["canvas", "pdf"],
+  "features": {
+    "primary": ["threaded-frames", "frame-text-push", "composed-pages"],
+    "also": [
+      "mirrored-margins",
+      "design-images",
+      "hyphenation-languages",
+      "running-heads",
+      "paragraph-styles",
+      "callout-styles",
+      "color-palette",
+      "resources",
+      "canvas-rendering",
+      "pdf-export"
+    ]
+  },
+  "answers": ["Q183", "Q42", "Q78"],
+  "gotchas": ["continuation-lands-in-chain-tail", "frame-text-shrinks-before-continuing"],
+  "explainsWarnings": [],
+  "related": [
+    "magazine-cover-and-contents",
+    "magazine-three-column-feature",
+    "magazine-feature-opener"
+  ],
+  "engine": {
+    "postext": "1.37.0",
+    "postextPdf": "1.37.0"
+  },
+  "kit": ["core", "fonts", "viewer", "pdf", "images"],
+  "sample": {
+    "locales": ["es", "en", "de"]
+  },
+  "capture": {
+    "hero": [1, 2],
+    "card": "spread"
+  },
+  "downloads": {
+    "pdf": true
+  },
+  "folio": {
+    "paper": {
+      "type": "coatedGloss",
+      "grammage": 90,
+      "shade": "#fdfcf9"
+    },
+    "binding": {
+      "type": "saddleStitch",
+      "cover": "case",
+      "coverColor": "#a65a12"
+    },
+    "surface": {
+      "type": "walnut"
+    },
+    "lighting": {
+      "environment": "daylight"
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [],
+    "images": [
+      {
+        "what": {
+          "en": "Painted hives on a factory roof at sunrise (the opening spread)",
+          "es": "Colmenas pintadas en la azotea de una fábrica al amanecer (la doble página de apertura)"
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "rooftop-1400.jpg"
+      },
+      {
+        "what": {
+          "en": "A straw bee skep on a transparent ground (the cut-out the text runs round)",
+          "es": "Un cesto de paja para abejas sobre fondo transparente (el recorte que contornea el texto)"
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "skep-720.png"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Literata",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Fraunces",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Instrument Sans",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-17",
+  "updated": "2026-10-17",
+  "workarounds": [
+    {
+      "followup": "EF-879-1",
+      "package": "postext",
+      "note": "the pages after the spread alternate two templates (seguido-par, seguido-impar) whose column frames have other names: content that goes on lands in the frame with the name of the frame that cut it, so one template continuing into itself refills only its third column on every added page"
+    },
+    {
+      "package": "postext",
+      "note": "the body frames set fit: { shrinkText: false, scaleImages: false } so a story a few lines too long goes on to another page at full size instead of being set at 92.5 % (the reflow ladder tries shrinkText before continue)"
+    }
+  ]
+}

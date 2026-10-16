@@ -1,0 +1,66 @@
+---
+title: "Un reportatge de revista enfilat de marc en marc"
+summary: "Una doble pàgina composta amb dues columnes enllaçades amb next que continuen amb overflow.continueIn a les pàgines afegides, al voltant d'una cita i un retall."
+plain: "Un reportatge de quatre pàgines muntat des d'una plantilla: el text passa tot sol d'una columna a l'altra i a pàgines noves, i envolta una cita i la silueta d'una foto."
+description: "Un reportatge de revista amb Postext: una pàgina composta amb columnes enllaçades que continuen en pàgines afegides, al voltant d'una cita i un rusc retallat."
+question: "Com faig que un reportatge passi d'un marc a l'altre al llarg de diverses pàgines?"
+aliases: ["marcs enllaçats", "text enllaçat", "salt de text", "continua a la pàgina", "contorneig", "text al contorn", "cita destacada", "foto retallada", "plantilla de pàgina", "threaded frames", "marcos enlazados"]
+---
+
+## Què compondràs
+
+Les pàgines 46 a 49 de *Patio*, una revista trimestral inventada sobre la vida a la ciutat: un reportatge sobre una caixista jubilada que cuida catorze arnes al terrat de la impremta on va treballar trenta anys. La pàgina parella de l'obertura és la fotografia, amb el títol damunt la grava i un requadre de xifres al cel. La senar porta l'entradeta i les dues primeres columnes, amb una cita destacada sobre el mitjanser i un rusc de palla retallat, i les línies de la segona columna en resegueixen la cúpula. Després el text ocupa les pàgines que li calguin, a tres columnes, i s'acaba on s'acaba. Les edicions en castellà, anglès i alemany són la mateixa plantilla amb altres paraules, i l'alemany fa passar els seus compostos llargs per columnes de 60 mm.
+
+## Elaboració
+
+### 1 · Una plantilla, un text
+
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. Tot el reportatge és una sola directiva `::::page{template="apertura" spread}`: el títol va al marc que `takes: 'h1'`, les xifres i l'entradeta a les seves ranures, i tota la resta, que no n'anomena cap, al marc de flux `col-1`. Quan `col-1` és ple, el text continua a `col-2`, tallat de nou a la seva amplada, i el que no cap a `col-2` passa a una pàgina que s'afegeix després de la doble pàgina (`overflow.continueIn: 'template:seguido-par'`), darrere la paraula *Continúa* en la llengua de l'edició. El text no anomena columnes ni pàgines: si treus un paràgraf, totes les línies que el segueixen reculen.
+
+### 2 · Les pàgines que afegeix el text
+
+<Excerpt region="pages-after" />
+
+Cada pàgina afegida té tres columnes enllaçades de 60,3 mm. Dues plantilles es passen el text perquè el que continua cau al marc que es diu igual que el que l'ha tallat: una plantilla que continués en ella mateixa només tornaria a omplir la tercera columna. Amb noms diferents a les dues pàgines, el text torna a començar al marc de flux i baixa per les tres. `KEEP` desactiva el graó de l'escala de reajust que redueix el text i les imatges, que si no arribaria abans que una pàgina nova: un text amb cinc línies de més es compondria al 92,5 % a la seva última pàgina.
+
+### 3 · Dos marcs que aparten les columnes
+
+<Excerpt region="push" />
+
+Cap dels dos marcs no forma part del text: cadascun aparta les línies de les columnes que trepitja. La cita s'ancora a l'entradeta, 82 mm més avall, i cavalca sobre el mitjanser, de manera que la primera columna perd el costat dret i la segona l'esquerre. El marc del rusc porta `wrap: 'contour'`: cada línia del costat s'escurça tant com fa d'ample la imatge a la seva altura, més un marge de 2,5 mm, i així la segona columna ressegueix la cúpula i recupera l'amplada sencera sota la base.
+
+### 4 · Una silueta que viatja amb la imatge
+
+<Excerpt region="pictures" />
+
+La composició llegeix les imatges per la mida, mai pels píxels, així que la silueta surt una sola vegada del canal alfa del PNG, amb `traceResourceContour`, i va dins el recurs com a `contour.traced`. El rusc és un PNG de 720 px amb 200 colors i fons transparent (225 KB). La fotografia de la pàgina parella és una imatge de la decoració, `resourceId: '{attr.foto}'`: la directiva tria la foto i la plantilla, el lloc.
+
+### 5 · Capçaleres que llegeixen la directiva
+
+<Excerpt region="running-heads" />
+
+La doble pàgina d'obertura amaga les capçaleres (`header: false`); les pàgines afegides porten el nom de la revista a la parella i la secció a la senar. La secció surt de la directiva, `seccion="Ciudad"`, que `{attr.seccion}` llegeix a les pàgines que afegeix el text igual que a l'obertura.
+
+## Variants
+
+### Contorneja el rusc per la seva caixa
+
+Sense `wrap: 'contour'` el marc aparta el text amb el seu rectangle, i les línies del costat de la cúpula s'aturen en una vora recta.
+
+```diff
+-  { name: 'recorte', exclude: 'push', wrap: 'contour', layer: 2, width: mm(58),
++  { name: 'recorte', exclude: 'push', layer: 2, width: mm(58),
+```
+
+### Treu la marca de continuació
+
+`mark: false` acaba el tros tallat a la seva última línia, sense la paraula *Continúa*: la columna hi guanya una línia.
+
+```diff
+-      overflow: { continueIn: 'template:seguido-par' } },
++      overflow: { continueIn: 'template:seguido-par', mark: false } },
+```
+
+## Errors freqüents
+
+- Un paràgraf dins d'un marc no porta mai caplletra, així que el reportatge obre sense: els marcs són requadres, i el `dropCap` d'un estil de paràgraf només s'aplica al text corregut.
