@@ -8,6 +8,7 @@ import {
   formatWarning,
   initMathEngine,
   parseMarkdownWithIssues,
+  type ContentWarning,
   type MeasurementCache,
   type VDTDocument,
 } from 'postext';
@@ -137,6 +138,23 @@ export function pageLabelOf(doc: VDTDocument, pageIndex: number | undefined): st
   return page ? String(page.pageLabel ?? page.pageNumberValue ?? local + 1) : undefined;
 }
 
+/** A `frameOverflow`'s data for `--json` (#858): where, the steps of the
+ *  reflow ladder it tried, and the proposals with their values. */
+function frameOverflowData(w: Extract<ContentWarning, { kind: 'frameOverflow' }>): Record<string, unknown> {
+  return {
+    template: w.template,
+    frame: w.frame,
+    fenceIndex: w.fenceIndex,
+    ...(w.locale ? { locale: w.locale } : {}),
+    overflowMm: w.overflowMm,
+    configPath: w.configPath,
+    stepsTried: w.stepsTried,
+    scale: w.scale,
+    ...(w.imageScale !== undefined ? { imageScale: w.imageScale } : {}),
+    proposals: w.proposals,
+  };
+}
+
 function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Reporter): void {
   type Any = Parameters<typeof formatWarning>[0] & { sourceStart?: number; pageIndex?: number };
   const all: Any[] = [...(doc.warnings ?? []), ...(doc.contentWarnings ?? []), ...(doc.configWarnings ?? [])] as Any[];
@@ -150,6 +168,7 @@ function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Rep
       message: formatWarning(w),
       at: sourceAt(chapter, w.sourceStart),
       ...(local ? { page: String(local.pageLabel ?? local.pageNumberValue) } : {}),
+      ...(w.kind === 'frameOverflow' ? { data: frameOverflowData(w) } : {}),
     });
   }
 }
