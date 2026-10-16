@@ -50,7 +50,9 @@
     "nextChapter": "Successivo",
     "neighbours": "Capitoli precedente e successivo",
     "figureEnlarge": "Ingrandisci la figura",
-    "figureClose": "Chiudi la figura"
+    "figureClose": "Chiudi la figura",
+    "chapterPages": "Pagine di questo capitolo",
+    "inChapter": "Nel capitolo"
   },
   "CodePen": {
     "run": "Esegui su CodePen",

@@ -7,18 +7,39 @@ import { fragmentId, oldAnchorUrl, resolveOldAnchor } from "./oldAnchors";
 
 const LOCALES = ["en", "es", "ca", "zh", "ja", "ar", "pt", "fr", "de", "it"] as const;
 
-/** The pages of the Configuration reference after its entry page (#655). */
+/** The pages of the Configuration reference after its entry page (#655,
+ *  split further in #884). */
 const CONFIGURATION_PAGES = [
   "configuration-page-layout",
+  "configuration-headers-footers",
   "configuration-text",
+  "configuration-language",
+  "configuration-headings",
+  "configuration-page-flow",
+  "configuration-lists-math",
   "configuration-notes-references",
   "configuration-east-asian",
   "configuration-resources",
   "configuration-styles",
+  "configuration-callouts",
   "configuration-comics",
   "configuration-fonts-colors-viewers",
   "configuration-programmatic-usage",
+  "configuration-pdf-output",
+  "configuration-html-folio-epub",
+  "configuration-bundles",
 ];
+
+/** The pages split off a chapter in #884, after the page that opens it. */
+const CHAPTER_PAGES: Record<string, string[]> = {
+  architecture: ["architecture-layout-pipeline"],
+  "document-format": ["document-format-directives", "document-format-inline", "document-format-notes-references", "document-format-resources"],
+  sandbox: ["sandbox-design-checks", "sandbox-previews", "sandbox-books-saving", "sandbox-embedding"],
+};
+
+/** The chapter a page belongs to ("" for a chapter). */
+const parentOf = (slug: string) =>
+  CONFIGURATION_PAGES.includes(slug) ? CONFIGURATION_SLUG : (Object.entries(CHAPTER_PAGES).find(([, pages]) => pages.includes(slug))?.[0] ?? "");
 
 describe("docs table of contents", () => {
   const docs = getAllDocs();
@@ -28,16 +49,19 @@ describe("docs table of contents", () => {
     expect(docs.map((d) => d.slug)).toEqual([
       "introduction",
       "architecture",
+      ...CHAPTER_PAGES.architecture!,
       "configuration",
       ...CONFIGURATION_PAGES,
       "justification",
       "document-format",
+      ...CHAPTER_PAGES["document-format"]!,
       "chinese-layout",
       "arabic-layout",
       "japanese-layout",
       "comics",
       "contributing",
       "sandbox",
+      ...CHAPTER_PAGES.sandbox!,
       "skill",
       "command-line",
       "webmcp",
@@ -74,31 +98,28 @@ describe("docs table of contents", () => {
     }
   });
 
-  it("numbers the pages 1 to 23 and gives Part II the Configuration reference, the craft pages and Comics", () => {
+  it("numbers the pages 1 to 41 and gives Part II the Configuration reference, the craft pages and Comics", () => {
     expect(docs.map((d) => d.locales.en!.order)).toEqual(docs.map((_, i) => i + 1));
-    expect(order("configuration")).toBe(3);
-    expect(CONFIGURATION_PAGES.map((slug) => order(slug))).toEqual([4, 5, 6, 7, 8, 9, 10, 11, 12]);
-    expect([order("justification"), order("document-format")]).toEqual([13, 14]);
-    expect(order("chinese-layout")).toBe(15);
-    expect(order("arabic-layout")).toBe(16);
-    expect(order("japanese-layout")).toBe(17);
-    expect(order("comics")).toBe(18);
-    for (const slug of ["introduction", "architecture"]) {
+    expect(order("configuration")).toBe(4);
+    expect(CONFIGURATION_PAGES.map((slug) => order(slug))).toEqual(CONFIGURATION_PAGES.map((_, i) => 5 + i));
+    expect([order("justification"), order("document-format")]).toEqual([23, 24]);
+    expect(order("comics")).toBe(32);
+    for (const slug of ["introduction", "architecture", ...CHAPTER_PAGES.architecture!]) {
       expect(docPart(order(slug)!).key, slug).toBe("foundations");
     }
-    for (const slug of ["configuration", ...CONFIGURATION_PAGES, "justification", "document-format", "chinese-layout", "arabic-layout", "japanese-layout", "comics"]) {
+    for (const slug of ["configuration", ...CONFIGURATION_PAGES, "justification", "document-format", ...CHAPTER_PAGES["document-format"]!, "chinese-layout", "arabic-layout", "japanese-layout", "comics"]) {
       expect(docPart(order(slug)!).key, slug).toBe("craft");
     }
-    for (const slug of ["contributing", "sandbox", "skill", "command-line", "webmcp"]) {
+    for (const slug of ["contributing", "sandbox", ...CHAPTER_PAGES.sandbox!, "skill", "command-line", "webmcp"]) {
       expect(docPart(order(slug)!).key, slug).toBe("practice");
     }
-    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([19, 20, 21, 22, 23]);
+    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([33, 34, 39, 40, 41]);
   });
 
   it("sets the pages of the Configuration reference under its entry page, in every language", () => {
     for (const doc of docs) {
       for (const [locale, meta] of Object.entries(doc.locales)) {
-        expect(meta.parent, `${doc.slug}-${locale}`).toBe(CONFIGURATION_PAGES.includes(doc.slug) ? CONFIGURATION_SLUG : "");
+        expect(meta.parent, `${doc.slug}-${locale}`).toBe(parentOf(doc.slug));
         // No title is cut at an apostrophe (Catalan: "Línia d'ordres").
         expect(getDocSource(doc.slug, locale)!.source, `${doc.slug}-${locale}`).toContain(meta.title);
         expect(meta.title.length, `${doc.slug}-${locale}`).toBeGreaterThan(1);
@@ -106,7 +127,7 @@ describe("docs table of contents", () => {
     }
     // A page's title is not one of its section headings, which would move
     // that section's id to "…-1".
-    for (const slug of CONFIGURATION_PAGES) {
+    for (const slug of [...CONFIGURATION_PAGES, ...Object.values(CHAPTER_PAGES).flat()]) {
       for (const locale of LOCALES) {
         const toc = extractToc(getDocSource(slug, locale)!.source);
         expect(toc[0]!.level, `${slug}-${locale}`).toBe(1);
@@ -115,13 +136,13 @@ describe("docs table of contents", () => {
     }
   });
 
-  it("gives the language sections h3 headings that anchors can target", () => {
-    const en = extractToc(getDocSource("configuration-text", "en")!.source).map((t) => `${t.level} ${t.id}`);
-    expect(en).toContain("3 document-language");
-    expect(en).toContain("3 languages-and-scripts");
-    const es = extractToc(getDocSource("configuration-text", "es")!.source).map((t) => `${t.level} ${t.id}`);
-    expect(es).toContain("3 idioma-del-documento");
-    expect(es).toContain("3 idiomas-y-escrituras");
+  it("gives the language sections headings that anchors can target", () => {
+    const en = extractToc(getDocSource("configuration-language", "en")!.source).map((t) => `${t.level} ${t.id}`);
+    expect(en).toContain("2 document-language");
+    expect(en).toContain("2 languages-and-scripts");
+    const es = extractToc(getDocSource("configuration-language", "es")!.source).map((t) => `${t.level} ${t.id}`);
+    expect(es).toContain("2 idioma-del-documento");
+    expect(es).toContain("2 idiomas-y-escrituras");
   });
 
   it.each(["chinese-layout", "arabic-layout", "japanese-layout", "comics"])("gives every heading of the %s page its own title", (slug) => {
@@ -179,7 +200,7 @@ describe("the Configuration reference, split into pages (#655)", () => {
   it("resolves an old heading id to the page that holds it", () => {
     const en = oldConfigurationAnchors("en");
     expect(resolveOldAnchor(en, "table-style")).toEqual({ slug: "configuration-resources", id: "table-style" });
-    expect(resolveOldAnchor(en, "generating-pdfs")).toEqual({ slug: "configuration-programmatic-usage", id: "generating-pdfs" });
+    expect(resolveOldAnchor(en, "generating-pdfs")).toEqual({ slug: "configuration-pdf-output", id: "generating-pdfs" });
     expect(resolveOldAnchor(en, "table")).toBeNull();
     expect(resolveOldAnchor(en, "")).toBeNull();
     expect(resolveOldAnchor(en, "estilo-de-tablas")).toBeNull();
@@ -283,11 +304,16 @@ describe("the Configuration reference, split into pages (#655)", () => {
     }
   });
 
-  it("keeps every page of the reference near the size of the Document format page", () => {
-    const lines = (slug: string) => getDocSource(slug, "en")!.source.split("\n").length;
-    for (const slug of [CONFIGURATION_SLUG, ...CONFIGURATION_PAGES]) {
-      expect(lines(slug), slug).toBeLessThan(lines("document-format") * 1.5);
-    }
+  it("keeps every docs page under 11,000 words (#884)", () => {
+    // Words outside code fences and tags: the pages split in #884 ran to
+    // 25,000–30,000.
+    const words = (slug: string) =>
+      getDocSource(slug, "en")!
+        .source.replace(/^(`{3,}|~{3,})[\s\S]*?^\1\s*$/gm, " ")
+        .replace(/<[^>]+>/g, " ")
+        .split(/\s+/)
+        .filter((w) => /\p{L}/u.test(w)).length;
+    for (const doc of getAllDocs()) expect(words(doc.slug), doc.slug).toBeLessThan(11000);
   });
 });
 

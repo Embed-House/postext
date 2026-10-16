@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { getAllDocs } from "@/lib/docs";
 import { buildMetadata } from "@/lib/seo";
 import { docPart, partClass, type DocPart } from "@/lib/docParts";
+import { docNumbers } from "@/lib/docNumbers";
 import { Kicker } from "@/components/brand/Kicker";
 
 export async function generateMetadata({
@@ -42,11 +43,13 @@ export default async function DocsIndexPage({
   const t = await getTranslations("Docs");
 
   const docs = getAllDocs().filter((d) => d.locales[locale]);
-  const groups: { part: DocPart; items: { slug: string; n: number; title: string; description: string; readingTime: string; child: boolean }[] }[] = [];
-  docs.forEach((doc, i) => {
+  const numbers = docNumbers(docs, locale);
+  const groups: { part: DocPart; items: { slug: string; n: string; title: string; description: string; readingTime: string; child: boolean }[] }[] = [];
+  docs.forEach((doc) => {
     const meta = doc.locales[locale]!;
     const part = docPart(meta.order);
-    const item = { slug: doc.slug, n: i + 1, title: meta.sidebarTitle, description: meta.description, readingTime: meta.readingTime, child: Boolean(meta.parent) };
+    const n = numbers.get(doc.slug)!;
+    const item = { slug: doc.slug, n, title: meta.sidebarTitle, description: meta.description, readingTime: meta.readingTime, child: n.includes(".") };
     const last = groups[groups.length - 1];
     if (last && last.part.key === part.key) last.items.push(item);
     else groups.push({ part, items: [item] });
@@ -72,7 +75,7 @@ export default async function DocsIndexPage({
                 <li key={it.slug}>
                   {/* A page of a reference is set in under the page that opens it. */}
                   <Link href={`/docs/${it.slug}`} className={`group flex gap-4 md:gap-5 ${it.child ? "py-3 ps-6 md:ps-9" : "py-4"}`}>
-                    <span className="w-7 shrink-0 pt-1 text-end font-sans text-sm font-bold text-(--part-ink) tabular-nums">
+                    <span className="w-9 shrink-0 pt-1 text-end font-sans text-sm font-bold text-(--part-ink) tabular-nums">
                       {it.n}
                     </span>
                     <span className="min-w-0 flex-1">

@@ -50,7 +50,9 @@
     "nextChapter": "التالي",
     "neighbours": "الفصل السابق والفصل التالي",
     "figureEnlarge": "كبّر الشكل",
-    "figureClose": "أغلق الشكل"
+    "figureClose": "أغلق الشكل",
+    "chapterPages": "صفحات هذا الفصل",
+    "inChapter": "ضمن الفصل"
   },
   "CodePen": {
     "run": "شغّل على CodePen",

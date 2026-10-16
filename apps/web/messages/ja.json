@@ -50,7 +50,9 @@
     "nextChapter": "次の章",
     "neighbours": "前の章と次の章",
     "figureEnlarge": "図を拡大",
-    "figureClose": "図を閉じる"
+    "figureClose": "図を閉じる",
+    "chapterPages": "この章のページ",
+    "inChapter": "所属する章："
   },
   "CodePen": {
     "run": "CodePenで実行",

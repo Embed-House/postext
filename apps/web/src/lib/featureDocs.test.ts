@@ -13,6 +13,6 @@ describe("featureDocPath", () => {
 
   it("derives the anchor the doc page renders", () => {
     expect(featureDocPath("tables", "en")).toBe("/docs/configuration-resources#table-style");
-    expect(featureDocPath("math", "es")).toBe("/docs/document-format#fórmulas-matemáticas");
+    expect(featureDocPath("math", "es")).toBe("/docs/document-format-inline#fórmulas-matemáticas");
   });
 });

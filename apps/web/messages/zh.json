@@ -50,7 +50,9 @@
     "nextChapter": "下一章",
     "neighbours": "上一章和下一章",
     "figureEnlarge": "放大图示",
-    "figureClose": "关闭图示"
+    "figureClose": "关闭图示",
+    "chapterPages": "本章各页",
+    "inChapter": "所属章节："
   },
   "CodePen": {
     "run": "在CodePen中运行",

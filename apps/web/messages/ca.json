@@ -50,7 +50,9 @@
     "nextChapter": "Següent",
     "neighbours": "Capítols anterior i següent",
     "figureEnlarge": "Amplia la figura",
-    "figureClose": "Tanca la figura"
+    "figureClose": "Tanca la figura",
+    "chapterPages": "Pàgines d’aquest capítol",
+    "inChapter": "Al capítol"
   },
   "CodePen": {
     "run": "Executar a CodePen",
