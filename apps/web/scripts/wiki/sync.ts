@@ -225,7 +225,7 @@ function header(doc: Built, title: string, part: boolean): string {
   else lines.push(`> ${doc.description}`, "");
   lines.push(
     `*Generated from ${source}${doc.lastUpdated ? ` (updated ${doc.lastUpdated})` : ""}. ` +
-      `Read it on [postext.dev](${SITE}/en/docs/${doc.slug}), where it is also available in Spanish, Catalan, Chinese, Arabic, Japanese and Portuguese. ` +
+      `Read it on [postext.dev](${SITE}/en/docs/${doc.slug}), where it is also available in Spanish, Catalan, Portuguese, French, German, Italian, Chinese, Japanese and Arabic. ` +
       `To change this page, edit the MDX and run \`pnpm wiki\` in \`apps/web\`.*`,
     ""
   );
