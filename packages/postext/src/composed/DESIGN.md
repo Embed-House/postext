@@ -843,6 +843,63 @@ programme. P12 (later) re-implements them on templates: each split cell becomes 
 holding the panel art, lettering stays positioned by the comics code. Every comics fixture and
 Cookbook comics recipe must render unchanged before and after.
 
+### 7.1 What P12 built (#885)
+
+- **The split generates frames** (`comics/frames.ts`, `comicFrameSpecs`). The cells of the split
+  tree (`comicGeometry`, unchanged) in reading order, each with its panel's `pad` taken off, and
+  each `inset` panel over the frame laid before it (layer 2; cells are layer 1), are the page's
+  frames; `layoutComicFrame` builds each panel from its frame. Names: the panel's `id` when no
+  frame before took it, else `p<k>` (k = place in panel order, from 1). Ids follow §6:
+  `cm<n>` for the comic (`n` = the comic fence's ordinal in its chapter, `:::page` and `:::strip`
+  counted together, stamped by the block parser as `ComicPageSource.fenceIndex`),
+  `cm<n>:<name>` for a frame (also `VDTComicPanel.frameId`), `cm<n>:<name>:b<order>` for a balloon
+  (`VDTComicBalloon.elementId`; `id` keeps its layout-order value for the Sandbox).
+- **Decision: polygon on the frame.** `VDTFrame` gains `polygon?` (set only when the outline is
+  not the box: a cell cut by a slanted line) and `panel?` (the index in `VDTComicPage.panels`,
+  which marks a generated frame; its `configPath` is `''`). Content is clipped to the polygon in
+  canvas, PDF and HTML; hit-testing reads it. The comic keeps `VDTComicPanel.polygon` for its own
+  painters, so frames are a record beside the panels, not a second painter: `VDTComicPage.frames`
+  (pages, spread halves and strips; `translateComicPage` moves them, a spread half rebuilds them
+  from its cut panels with `comicFramesFor`). The comics VDT and the HTML of every existing comic
+  are unchanged (harness: 125 comic chapters of the public presets and the Cookbook bundles, all
+  locales, full page JSON with only the new keys ignored, 0 diffs; preset parity 583 chapters, 0
+  diffs).
+- **Text panels** (`comics/textPanels.ts`). `::panel{text}` makes the body Markdown
+  (`ComicPanelSource.text`, no script items). The block parser reads each body with the same
+  parser on a copy of the text blanked before the body (offsets stay absolute; `:::` lines in the
+  body are blanked, since a comic's body ends at its first bare `:::`) and emits its blocks right
+  after the comic directive, so outline, index marks, warnings and the flow fallback see ordinary
+  blocks. `wrapComicTextPanels` (beside `wrapComposedPages`) puts each body in a story box of
+  `FRAME_STYLE_ID` keyed `comic:<panel>`; the comic page branch of `build.ts` sets each story
+  with `layoutComposedPage` over a one-frame template whose area is the panel's text area (the
+  panel's box inside its border plus `comics.lettering.inset`, or the box itself with `box`),
+  `valign` → `verticalAlign`; ids are renamed `cp<n>:` → `cm<n>:`; the blocks go to `page.floats`
+  and `doc.blocks`, the frame record gets `blockIds`, `overflowPx`, `scale`. A `::resource` in a
+  story does not float (the float plan treats the text plans as composed pages). Not wrapped, so
+  set in the flow after the comic: strips, spreads, documents whose flow is vertical or mirrored
+  (`comicTextPanelsSupported`), comics inside a container.
+- **Paint order** (`comicPaintsUnderText`, `comicFramePaintOrder` in `composed/paint.ts`): on a
+  comic page holding text frames the panels are painted before the flow, the text frames after
+  the floats (their ids are in `composedFrameBlockIds`), the lettering after the flow; elsewhere
+  the comic paints whole as before. The HTML writes each text frame inside the comic's markup
+  after its panel's figure (`ComicHtmlPaint.overPanel`), `z-index:auto`. Tagged PDF reads a text
+  frame as one float after the comic's `Div`; the reflowable EPUB reads it after the panels.
+- **Box styles.** `::panel{box=<calloutStyle>}` maps the style's background, border colour and
+  width and radius onto the panel (its own `border`/`bg` win); on a text panel the frame draws the
+  box (frame style = that callout style) and the panel draws none. `VDTFrame.styleId` names it.
+- **Warning** `comicPanelFrame` (`reason`: `unknownBox`, `textOverflow` (layout), `strip`,
+  `spread`, `flow`; `panel` = source index).
+- **Source map** (`comics/sourceMap.ts`, called from `sourceAt`, `elementsForSource`,
+  `findElement`): balloon glyph (`text`) → balloon (`box`) → frame → comic (`template`); picture
+  (`resource`) → frame → comic; a text panel's words answer through the flow path with the frame
+  and the comic appended. Sandbox: `comicTextFrameAt` (frameHit.ts), text frames in
+  `frameTools` (Content mode: click off words → caret at the text, double click → in-place
+  edit), `panelArtAt` ignores a text panel's words. The template editor never sees comic frames
+  (they are not in `page.composed`).
+- **Not done:** text panels on vertical or right-to-left pages, on strips and spreads; lines
+  following a slanted edge (they are clipped); shrink-to-fit for text panels; reading a text
+  panel inside the comic's `Div` in tagged PDF; the comic frames in the template editor's views.
+
 ## 8. HTML and EPUB
 
 - Reflowable HTML/EPUB: reading order is Markdown order. A composed page becomes a `<section>` in
@@ -890,7 +947,7 @@ placeholders. Decoration text elements follow the same rule.
 <tr><td>Determinism</td><td>Fixed ladder order and step sizes, template-order ties (§5.4).</td></tr>
 <tr><td>Scope of a change</td><td>Its page or spread, plus continuation pages (§5.4, §6).</td></tr>
 <tr><td>Rotation</td><td>Any angle per frame (content and box), drawn with a matrix in every backend as comic balloons are.</td></tr>
-<tr><td>Comics</td><td>Unchanged now, generated frames later (P12).</td></tr>
+<tr><td>Comics</td><td>The split generates frames; text panels and box styles (P12, §7.1).</td></tr>
 </table>
 
 ## 11. Issue map
@@ -899,4 +956,4 @@ P2 #853 config types/validation (§2) · P3 #854 parser (§3) · P4 #855 layout 
 decoration, backends) · P14 #856 groups (§5.3, log) · P16 #857 source map and page-scoped relayout
 (§6) · P5 #858 ladder and warnings (§5.4, §5.7) · P15 #859 continuation (§5.6) · P6 #860 anchors
 and labels (§2.6, §3.3) · P7 #861 spreads (§2.1) · P9 #862 HTML/EPUB (§8) · P11 #883 contours (§5.12) ·
-P12 #885 comics on frames (§7).
+P12 #885 comics on frames (§7, §7.1).
