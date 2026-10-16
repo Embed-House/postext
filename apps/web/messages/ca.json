@@ -3192,6 +3192,8 @@
     "paragraphStyleLineNumbersTooltip": "Si la numeració de línies compta les línies d'aquest estil. Com el document: es compten quan es compten totes les línies. Es compten: també quan només es compten versos, i dins d'un requadre. No es compten: mai.",
     "paragraphStyleTextTransform": "Caixa del text",
     "paragraphStyleTextTransformTooltip": "Majúscules compon els paràgrafs en caixa alta, també les paraules d'un chip i l'etiqueta d'una referència. Una lletra la majúscula de la qual és més llarga (ß) queda tal com és, i les fórmules no canvien",
+    "paragraphStyleLetterSpacing": "Espaiat entre lletres",
+    "paragraphStyleLetterSpacingTooltip": "Espai addicional després de cada lletra dels paràgrafs (tracking). En em compta el cos de l'estil mateix: 0,015 em són +15/1000. Un valor positiu obre un títol en versals; un de negatiu estreny un cos gran. Entra en la mesura de les línies, de manera que un paràgraf espaiat talla on cauen les seves paraules més amples, i les línies justificades reparteixen els espais entre paraules a més d'ell. Les paraules en escriptura àrab no s'espaien",
     "calloutStylesSection": "Estils de requadre",
     "calloutStylesResetConfirm": "Vols suprimir tots els estils de requadre i tornar a l'estil de nota integrat?",
     "frameStylesListSeparator": ", ",

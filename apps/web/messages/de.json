@@ -3193,6 +3193,8 @@
     "paragraphStyleLineNumbersTooltip": "Ob Zeilennummern die Zeilen dieses Formats zählen. Wie das Dokument: gezählt, wenn jede Zeile gezählt wird. Gezählt: auch wenn nur Verse gezählt werden, und in einem Kasten. Nicht gezählt: nie.",
     "paragraphStyleTextTransform": "Schreibung",
     "paragraphStyleTextTransformTooltip": "Versalien setzt die Absätze in Großbuchstaben, die Wörter eines Chips und die Bezeichnung eines Querverweises eingeschlossen. Ein Buchstabe, dessen Großbuchstabe länger ist (ß), bleibt wie geschrieben, und Formeln bleiben unverändert",
+    "paragraphStyleLetterSpacing": "Laufweite",
+    "paragraphStyleLetterSpacingTooltip": "Zusätzlicher Raum nach jedem Buchstaben der Absätze (Sperrung). In em zählt der Schriftgrad des Stils selbst: 0,015 em sind +15/1000. Positive Werte öffnen einen Titel in Versalien, negative verengen einen Schaugrad. Die Laufweite geht in die Zeilenmessung ein: Ein gesperrter Absatz bricht dort um, wo seine breiteren Wörter es verlangen, und Blocksatzzeilen verteilen ihre Wortabstände zusätzlich dazu. Wörter in arabischer Schrift bleiben ungesperrt",
     "calloutStylesSection": "Kastenstile",
     "calloutStylesResetConfirm": "Alle Kastenstile entfernen und zum eingebauten Hinweisstil zurückkehren?",
     "frameStylesListSeparator": ", ",

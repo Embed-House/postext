@@ -201,6 +201,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>段落の大文字・小文字です。<code>'uppercase'</code>は段落を大文字で組み（配役表、ト書きの1行）、チップの語や<code>:ref</code>のラベルも対象になります。文字数は変わらないため、エディターのソースマップは1対1のままです。大文字にすると長くなる文字（<code>ß</code>）は書かれたとおりに残ります。数式はそのままで、段落をマークとして読む柱（<code>&#123;firstMark.<em>style</em>&#125;</code>）は書かれたとおりのテキストを取ります。柱を大文字にするには、デザインのテキスト自身の<code>textTransform</code>を使います。</td>
     </tr>
     <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>段落の各文字の後に加える字間で、CSS の <code>letter-spacing</code> と同じです。正の値は文字を広げ（大文字のページタイトルなら <code>&#123; value: 0.015, unit: 'em' &#125;</code> で +15/1000 em）、負の値は大きなサイズを詰めます。<code>em</code> の値はスタイル自身の <code>fontSize</code> を基準にします。行の幅の計算に含まれるので、字間を空けた段落は広がった語の位置で改行します。両端揃えの行はその上で語間を配分し、組版が短い最終行をなくすために詰める行（<code>bodyText.maxRuntTracking</code>）もこの値から詰めます。canvas、HTML、PDF、EPUB で同じように描かれ、Word に書き出すとスタイルの文字間隔になります。連結する文字（アラビア文字、シリア文字、ンコ文字）の語には字間を加えず、<code>joiningScriptLetterSpacing</code> の警告を出します。postext 1.37 から。</td>
+    </tr>
+    <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>

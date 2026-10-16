@@ -3192,6 +3192,8 @@
     "paragraphStyleLineNumbersTooltip": "Indique si les numéros de ligne comptent les lignes de ce style. Comme le document : comptées quand toutes les lignes le sont. Comptées : aussi quand seuls les vers sont comptés, et dans un encadré. Non comptées : jamais.",
     "paragraphStyleTextTransform": "Casse",
     "paragraphStyleTextTransformTooltip": "Majuscules compose les paragraphes en capitales, y compris les mots d’une pastille et le libellé d’un renvoi. Une lettre dont la capitale est plus longue (ß) reste telle qu’écrite, et les mathématiques ne sont pas modifiées",
+    "paragraphStyleLetterSpacing": "Interlettrage",
+    "paragraphStyleLetterSpacingTooltip": "Espace ajoutée après chaque lettre des paragraphes (approche). En em, elle compte le corps du style lui-même : 0,015 em vaut +15/1000. Une valeur positive aère un titre en capitales, une valeur négative resserre un grand corps. Elle entre dans la mesure des lignes : un paragraphe interlettré coupe là où tombent ses mots élargis, et les lignes justifiées répartissent leurs espaces entre mots en plus. Les mots en écriture arabe restent sans interlettrage",
     "calloutStylesSection": "Styles d’encadré",
     "calloutStylesResetConfirm": "Supprimer tous les styles d’encadré et revenir au style de note intégré ?",
     "frameStylesListSeparator": ", ",

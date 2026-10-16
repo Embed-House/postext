@@ -2582,6 +2582,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     paragraphStyleLineNumbersTooltip: t("paragraphStyleLineNumbersTooltip"),
     paragraphStyleTextTransform: t("paragraphStyleTextTransform"),
     paragraphStyleTextTransformTooltip: t("paragraphStyleTextTransformTooltip"),
+    paragraphStyleLetterSpacing: t("paragraphStyleLetterSpacing"),
+    paragraphStyleLetterSpacingTooltip: t("paragraphStyleLetterSpacingTooltip"),
     calloutStylesSection: t("calloutStylesSection"),
     calloutStylesResetConfirm: t("calloutStylesResetConfirm"),
     frameStylesListSeparator: t("frameStylesListSeparator"),

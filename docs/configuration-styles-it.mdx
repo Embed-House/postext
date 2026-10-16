@@ -201,6 +201,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>Maiuscolo o minuscolo dei paragrafi: <code>'uppercase'</code> li compone in maiuscolo (un elenco di personaggi, una riga di azione scenica), comprese le parole di un chip e l’etichetta di un <code>:ref</code>. Lettera per lettera, così la mappa del sorgente dell’editor resta uno a uno: una lettera la cui maiuscola è più lunga (<code>ß</code>) resta com’è scritta. La matematica non viene toccata, e una testatina che legge il paragrafo come marca (<code>&#123;firstMark.<em>style</em>&#125;</code>) prende il testo com’è scritto; il <code>textTransform</code> proprio di un testo di progetto grafico lo compone in maiuscolo.</td>
     </tr>
     <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Spazio dopo ogni lettera dei paragrafi, come il <code>letter-spacing</code> dei CSS: un valore positivo apre le lettere (un titolo di pagina in maiuscolo, <code>&#123; value: 0.015, unit: 'em' &#125;</code> per +15/1000 em), uno negativo stringe un corpo grande. Un valore in <code>em</code> conta il <code>fontSize</code> dello stile stesso. Entra nella misura delle righe, quindi un paragrafo spaziato va a capo dove cadono le sue parole più larghe; le righe giustificate distribuiscono gli spazi tra le parole in aggiunta, e una riga corta che l'impaginazione stringe (<code>bodyText.maxRuntTracking</code>) parte da questo valore. Canvas, HTML, PDF ed EPUB lo dipingono allo stesso modo, e un'esportazione Word lo scrive come spaziatura dei caratteri dello stile. Le parole di una scrittura legata (arabo, siriaco, n'ko) restano senza spaziatura e danno <code>joiningScriptLetterSpacing</code>. Da postext 1.37.</td>
+    </tr>
+    <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>

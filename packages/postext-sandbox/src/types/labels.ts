@@ -2782,6 +2782,8 @@ export interface SandboxLabels {
   paragraphStyleLineNumbersTooltip: string;
   paragraphStyleTextTransform: string;
   paragraphStyleTextTransformTooltip: string;
+  paragraphStyleLetterSpacing: string;
+  paragraphStyleLetterSpacingTooltip: string;
   calloutStylesSection: string;
   calloutStylesResetConfirm: string;
   frameStylesListSeparator: string;

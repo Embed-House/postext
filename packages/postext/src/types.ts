@@ -3002,6 +3002,17 @@ export interface ParagraphStyleConfig {
    *  is longer (`ß` → `SS`) is left as it is. Maths is left alone. Default
    *  `'none'`. */
   textTransform?: ParagraphTextTransform;
+  /** Tracking after every letter of the paragraphs, as CSS
+   *  `letter-spacing` (#907): positive spreads the letters (a title set
+   *  in capitals, `0.015em` for +15/1000 em), negative tightens a display
+   *  size. An `em` value is relative to the style's own `fontSize`.
+   *  Measured into the lines, so a tracked paragraph breaks where its
+   *  wider words put it; justified lines spread their word spaces on top
+   *  of it, and a runt the layout tightens takes its tracking from this
+   *  value. Painted the same by canvas, HTML, PDF and EPUB. Words of a
+   *  joining script (Arabic, Syriac, N'Ko) are left untracked
+   *  (`joiningScriptLetterSpacing`). Default `0`. */
+  letterSpacing?: Dimension;
   /** Where CJK lines of the paragraphs break between characters (see
    *  {@link CjkWordBreak}): `'keep-all'` only at spaces and next to
    *  punctuation (phrase-spaced kana text, 分かち書き), `'normal'` between
@@ -3097,6 +3108,8 @@ export interface ResolvedParagraphStyleConfig {
    *  `bodyText.paragraphContainerSpacing`. */
   containerSpacing?: ParagraphContainerSpacing;
   textTransform: ParagraphTextTransform;
+  /** Absent unless the style sets a non-zero one (#907). */
+  letterSpacing?: Dimension;
   /** Absent when the style sets none (the document's `cjk.wordBreak`). */
   wordBreak?: CjkWordBreak;
   /** Absent when the style sets none (see

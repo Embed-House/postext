@@ -3192,6 +3192,8 @@
     "paragraphStyleLineNumbersTooltip": "Se a numeração de linhas conta as linhas deste estilo. Como o documento: contadas quando todas as linhas são contadas. Contadas: também quando só os versos são contados, e dentro de uma caixa. Não contadas: nunca.",
     "paragraphStyleTextTransform": "Caixa do texto",
     "paragraphStyleTextTransformTooltip": "Maiúsculas compõe os parágrafos em caixa-alta, incluindo as palavras de um chip e o rótulo de uma referência. Uma letra cuja maiúscula é mais longa (ß) fica como está, e as fórmulas não mudam",
+    "paragraphStyleLetterSpacing": "Espaçamento entre letras",
+    "paragraphStyleLetterSpacingTooltip": "Espaço extra depois de cada letra dos parágrafos (tracking). Em em, conta o tamanho do próprio estilo: 0,015 em são +15/1000. Um valor positivo abre um título em maiúsculas; um negativo aperta um tamanho grande. Entra na medida das linhas, então um parágrafo espaçado quebra onde caem as palavras mais largas, e as linhas justificadas distribuem os espaços entre palavras além dele. Palavras em escrita árabe ficam sem espaçamento",
     "calloutStylesSection": "Estilos de boxe",
     "calloutStylesResetConfirm": "Remover todos os estilos de boxe e voltar ao estilo de nota embutido?",
     "frameStylesListSeparator": ", ",

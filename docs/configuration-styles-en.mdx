@@ -201,6 +201,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>Letter case of the paragraphs: <code>'uppercase'</code> sets them in capitals (a cast list, a line of stage business), the words of a chip and the label of a <code>:ref</code> included. Length for length, so the editor's source map stays one to one: a letter whose capital is longer (<code>ß</code>) is left as written. Maths is left alone, and a running head that reads the paragraph as a mark (<code>&#123;firstMark.<em>style</em>&#125;</code>) takes the text as written; a design text's own <code>textTransform</code> sets it in capitals.</td>
     </tr>
     <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Tracking after every letter of the paragraphs, as CSS <code>letter-spacing</code>: positive spreads the letters (a page title set in capitals, <code>&#123; value: 0.015, unit: 'em' &#125;</code> for +15/1000 em), negative tightens a display size. An <code>em</code> value counts the style's own <code>fontSize</code>. Measured into the lines, so a tracked paragraph breaks where its wider words fall; justified lines spread their word spaces on top of it, and a runt the layout tightens (<code>bodyText.maxRuntTracking</code>) takes its tracking from this value. Painted the same by canvas, HTML, PDF and EPUB, and written to a Word export as the style's character spacing. Words of a joining script (Arabic, Syriac, N'Ko) stay untracked and raise <code>joiningScriptLetterSpacing</code>. Since postext 1.37.</td>
+    </tr>
+    <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>

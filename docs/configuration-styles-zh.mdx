@@ -201,6 +201,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>段落的大小写：<code>'uppercase'</code>把段落排成大写（演员表、一行舞台动作说明），行内标签中的文字和<code>:ref</code>的标签也包括在内。转换逐字等长，使编辑器的源映射保持一一对应：大写形式更长的字母（<code>ß</code>）保持原样。数学公式不受影响；把段落当作标记读取的书眉（<code>&#123;firstMark.<em>style</em>&#125;</code>）取原文；设计文本用自己的<code>textTransform</code>排成大写。</td>
     </tr>
     <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>段落每个字母之后的字距，与 CSS 的 <code>letter-spacing</code> 相同：正值把字母拉开（大写的页面标题，<code>&#123; value: 0.015, unit: 'em' &#125;</code> 即 +15/1000 em），负值收紧大字号。<code>em</code> 按本样式自己的 <code>fontSize</code> 计算。字距计入行宽，加了字距的段落按变宽后的词换行；两端对齐的行在此基础上再分配词间距，排版为消除短末行而收紧的行（<code>bodyText.maxRuntTracking</code>）也从这个值出发。canvas、HTML、PDF 和 EPUB 画法一致，导出 Word 时写成该样式的字符间距。连写文字（阿拉伯文、叙利亚文、N'Ko）的词不加字距，并给出 <code>joiningScriptLetterSpacing</code> 警告。自 postext 1.37 起。</td>
+    </tr>
+    <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>

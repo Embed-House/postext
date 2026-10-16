@@ -391,6 +391,16 @@ function halfPoints(d: Dimension | undefined, base = 10): number | undefined {
   return pt > 4 && pt < 200 ? Math.round(pt * 2) : undefined;
 }
 
+/** A tracking as Word's character spacing (`w:spacing`, twentieths of a
+ *  point); `em` counts the style's size (10 pt when it sets none in pt). */
+function trackingTwips(d: Dimension | undefined, fontSize: Dimension | undefined): number | undefined {
+  if (!d || !Number.isFinite(d.value) || d.value === 0) return undefined;
+  const sizePt = fontSize?.unit === 'pt' ? fontSize.value : fontSize?.unit === 'px' ? fontSize.value * 0.75 : 10;
+  const pt = d.unit === 'pt' ? d.value : d.unit === 'px' ? d.value * 0.75 : d.unit === 'mm' ? d.value * 2.8346 : d.unit === 'cm' ? d.value * 28.346 : d.unit === 'in' ? d.value * 72 : d.value * sizePt;
+  const tw = pt === undefined ? 0 : Math.round(pt * 20);
+  return tw !== 0 ? tw : undefined;
+}
+
 function twips(d: Dimension | undefined, base = 10): number | undefined {
   const hp = halfPoints(d, base);
   return hp !== undefined ? hp * 10 : undefined;
@@ -517,6 +527,9 @@ class Styles {
       if (ps?.smallCaps) rPr += '<w:smallCaps/>';
       const c = hex(ps?.color);
       if (c) rPr += `<w:color w:val="${c}"/>`;
+      // Tracking (#907) in twentieths of a point, after the colour.
+      const spacing = trackingTwips(ps?.letterSpacing, ps?.fontSize);
+      if (spacing) rPr += `<w:spacing w:val="${spacing}"/>`;
       const sz = halfPoints(ps?.fontSize);
       if (sz) rPr += `<w:sz w:val="${sz}"/>`;
       const jc = ps?.textAlign === 'center' ? 'center' : ps?.textAlign === 'right' || ps?.textAlign === 'end' ? 'right' : ps?.textAlign === 'justify' ? 'both' : ps?.textAlign ? 'left' : undefined;

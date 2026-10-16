@@ -2733,6 +2733,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'paragraphStyleIndent',
       'paragraphStyleIndentTooltip',
       'paragraphStyleItalicColorTooltip',
+      'paragraphStyleLetterSpacing',
+      'paragraphStyleLetterSpacingTooltip',
       'paragraphStyleLineNumbers',
       'paragraphStyleLineNumbersAuto',
       'paragraphStyleLineNumbersOff',

@@ -1129,6 +1129,8 @@
     "paragraphStyleLineNumbersTooltip": "Si la numeración de líneas cuenta las líneas de este estilo. Como el documento: se cuentan cuando se cuentan todas las líneas. Se cuentan: también cuando solo se cuentan versos, y dentro de un recuadro. No se cuentan: nunca.",
     "paragraphStyleTextTransform": "Caja del texto",
     "paragraphStyleTextTransformTooltip": "Mayúsculas compone los párrafos en caja alta, también las palabras de un chip y la etiqueta de una referencia. Una letra cuya mayúscula es más larga (ß) se queda tal cual, y las fórmulas no cambian",
+    "paragraphStyleLetterSpacing": "Espaciado entre letras",
+    "paragraphStyleLetterSpacingTooltip": "Espacio adicional tras cada letra de los párrafos (tracking). En em cuenta el cuerpo del propio estilo: 0,015 em son +15/1000. Un valor positivo abre un título en versales; uno negativo aprieta un cuerpo grande. Entra en la medida de las líneas, así que un párrafo espaciado corta donde caen sus palabras más anchas, y las líneas justificadas reparten los espacios entre palabras además de él. Las palabras en escritura árabe no se espacian",
     "calloutStylesSection": "Estilos de recuadro",
     "calloutStylesResetConfirm": "¿Eliminar todos los estilos de recuadro y volver al estilo de nota integrado?",
     "frameStylesListSeparator": ", ",

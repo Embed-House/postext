@@ -3192,6 +3192,8 @@
     "paragraphStyleLineNumbersTooltip": "行号是否计入此样式的行。跟随文档：数所有行时计入。计入：只数诗行时也计入，框内也计入。不计入：一律不计。",
     "paragraphStyleTextTransform": "大小写",
     "paragraphStyleTextTransformTooltip": "大写会把段落用大写字母排，行内标签的文字和引用的标签也包括在内。大写形式更长的字母（ß）保持原样，公式不受影响",
+    "paragraphStyleLetterSpacing": "字距",
+    "paragraphStyleLetterSpacingTooltip": "在段落每个字母之后加的额外间距。以 em 为单位时按本样式自身的字号计算：0.015 em 即 +15/1000。正值让大写标题疏朗，负值收紧大字号。字距计入行宽，所以加了字距的段落会按变宽后的词换行；两端对齐的行在此基础上再分配词间距。阿拉伯文字的词不加字距",
     "calloutStylesSection": "标注框样式",
     "calloutStylesResetConfirm": "移除所有标注框样式，恢复内置的注释样式？",
     "frameStylesListSeparator": "、",

@@ -3192,6 +3192,8 @@
     "paragraphStyleLineNumbersTooltip": "このスタイルの行を行番号で数えるかどうか。文書に従う：すべての行を数えるときに数えます。数える：詩行だけを数えるときも、囲みの中でも数えます。数えない：数えません。",
     "paragraphStyleTextTransform": "大文字・小文字",
     "paragraphStyleTextTransformTooltip": "大文字にすると、チップの語や参照のラベルも含めて段落を大文字で組みます。大文字にすると長くなる文字（ß）は書いたまま残し、数式は変更しません。",
+    "paragraphStyleLetterSpacing": "字間",
+    "paragraphStyleLetterSpacingTooltip": "段落の各文字の後に加えるアキです（トラッキング）。em はこのスタイル自身の文字サイズを基準にします。0.015 em は +15/1000 です。正の値は大文字のタイトルをゆったりさせ、負の値は大きなサイズを詰めます。行の幅の計算に含まれるので、字間を空けた段落は広がった語の位置で改行し、両端揃えの行はその上で語間を配分します。アラビア文字の語には字間を加えません。",
     "calloutStylesSection": "囲みスタイル",
     "calloutStylesResetConfirm": "囲みスタイルをすべて削除し、組み込みのノートスタイルに戻しますか？",
     "frameStylesListSeparator": "、",

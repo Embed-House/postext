@@ -3193,6 +3193,8 @@
     "paragraphStyleLineNumbersTooltip": "Whether line numbers count the lines of this style. As the document: counted when every line is counted. Counted: also when only verse is counted, and inside a box. Not counted: never.",
     "paragraphStyleTextTransform": "Letter case",
     "paragraphStyleTextTransformTooltip": "Uppercase sets the paragraphs in capitals, the words of a chip and the label of a reference included. A letter whose capital is longer (ß) stays as written, and maths is left alone",
+    "paragraphStyleLetterSpacing": "Letter spacing",
+    "paragraphStyleLetterSpacingTooltip": "Extra space after every letter of the paragraphs (tracking). In em it counts the style's own size: 0.015 em is +15/1000. Positive spreads a title set in capitals, negative tightens a display size. Measured into the lines, so a tracked paragraph breaks where its wider words fall; justified lines spread their word spaces on top of it. Arabic-script words stay untracked",
     "calloutStylesSection": "Box styles",
     "calloutStylesResetConfirm": "Remove every callout style and go back to the built-in note style?",
     "frameStylesListSeparator": ", ",

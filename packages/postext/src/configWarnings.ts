@@ -486,7 +486,7 @@ const PARAGRAPH_STYLE_KEYS = {
   id: true, name: true, fontFamily: true, fontSize: true, lineHeight: true, color: true, textAlign: true,
   boldColor: true, italicColor: true, fontWeight: true, boldFontWeight: true, italic: true, smallCaps: true,
   hyphenation: true, indent: true, endIndent: true, firstLineIndent: true, hangingIndent: true, spaceBetween: true,
-  marginTop: true, marginBottom: true, snapToGrid: true, containerSpacing: true, textTransform: true, wordBreak: true, lineNumbers: true,
+  marginTop: true, marginBottom: true, snapToGrid: true, containerSpacing: true, textTransform: true, letterSpacing: true, wordBreak: true, lineNumbers: true,
   tabStops: true, tabInterval: true, dropCap: true,
 } satisfies Record<keyof ParagraphStyleConfig, true>;
 // A body paragraph's drop cap (#623) and its lead-in.

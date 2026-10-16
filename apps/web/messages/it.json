@@ -3193,6 +3193,8 @@
     "paragraphStyleLineNumbersTooltip": "Se i numeri di riga contano le righe di questo stile. Come il documento: contate quando si contano tutte le righe. Contate: anche quando si contano solo i versi, e dentro un riquadro. Non contate: mai.",
     "paragraphStyleTextTransform": "Maiuscole/minuscole",
     "paragraphStyleTextTransformTooltip": "Maiuscolo compone i paragrafi in maiuscole, comprese le parole di un chip e l’etichetta di un rimando. Una lettera la cui maiuscola è più lunga (ß) resta come scritta, e la matematica non viene toccata",
+    "paragraphStyleLetterSpacing": "Spaziatura lettere",
+    "paragraphStyleLetterSpacingTooltip": "Spazio in più dopo ogni lettera dei paragrafi (tracking). In em conta il corpo dello stile stesso: 0,015 em sono +15/1000. Un valore positivo apre un titolo in maiuscolo, uno negativo stringe un corpo grande. Entra nella misura delle righe, quindi un paragrafo spaziato va a capo dove cadono le sue parole più larghe, e le righe giustificate distribuiscono gli spazi tra le parole in aggiunta. Le parole in scrittura araba restano senza spaziatura",
     "calloutStylesSection": "Stili dei riquadri",
     "calloutStylesResetConfirm": "Rimuovere tutti gli stili dei riquadri e tornare allo stile nota predefinito?",
     "frameStylesListSeparator": ", ",
