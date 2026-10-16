@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: um agente trabalhando no Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'O que um agente de IA no navegador pode fazer com o Sandbox por meio das suas 37 ferramentas WebMCP (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
+  description: 'O que um agente de IA no navegador pode fazer com o Sandbox por meio das suas 39 ferramentas WebMCP (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
   lang: 'pt',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
@@ -24,7 +24,7 @@ interface: ele lê o livro, pede uma imagem da página 12, define
 páginas e volta ao valor anterior. Ele faz o que você faz a olho, com o seu
 livro e no seu navegador.
 
-São 37 ferramentas com nomes que começam por `sandbox_`, registradas enquanto
+São 39 ferramentas com nomes que começam por `sandbox_`, registradas enquanto
 o Sandbox está na tela, e 8 ferramentas do site, `site_*`, em todas as páginas
 do postext.dev. Esta página as organiza pelo que você pediria a um agente e
 mostra a chamada de cada uma.
@@ -41,7 +41,7 @@ configurar nada do lado do Postext.
 O WebMCP ainda é um rascunho. O Chrome o oferece como teste de origem e atrás
 da flag `chrome://flags/#enable-webmcp-testing`. As ferramentas acompanham a
 página: na página inicial ou na documentação o agente tem as ferramentas
-`site_*`; quando o Sandbox está na tela, aparecem também as 37 ferramentas
+`site_*`; quando o Sandbox está na tela, aparecem também as 39 ferramentas
 `sandbox_*`.
 
 ### Em qualquer outro navegador: `window.postextWebMcp`
@@ -314,6 +314,14 @@ coloca uma configuração inteira no lugar da do livro, como um
 As fontes também são ajustes: `sandbox_list_fonts` com `search: "Garamond"`
 encontra famílias no catálogo aberto, e escrever o nome em um ajuste
 `fontFamily` a carrega.
+
+Os estilos de boxe têm uma biblioteca própria: `sandbox_frame_styles` dá cada
+estilo com os lugares onde o livro o usa (quadros de modelo, páginas compostas,
+boxes `:::callout` por capítulo) e as fusões de estilos quase iguais que sugere,
+como Design › Boxes › Estilos de quadro. `sandbox_merge_styles` recebe `groups`
+(`{ keep, merge }`) ou `all: true` e reescreve cada quadro e cada bloco que
+nomeava um estilo fundido; com `lookOnly: true`, compara também estilos cujos
+boxes ficam em lugares diferentes, que então mudam de lugar.
 
 ### Editar o texto
 
@@ -620,7 +628,8 @@ cada uma vêm com `postextWebMcp.listTools()`.
   `sandbox_undo_text`, `sandbox_select_text`, `sandbox_search_text`,
   `sandbox_manage_chapters`, `sandbox_remove_chapter`.
 - **O design**: `sandbox_get_config`, `sandbox_set_config`,
-  `sandbox_find_setting`, `sandbox_reset_to_original`.
+  `sandbox_find_setting`, `sandbox_reset_to_original`,
+  `sandbox_frame_styles`, `sandbox_merge_styles`.
 - **Desfazer**: `sandbox_undo`.
 - **Como é mostrado**: `sandbox_set_view`, `sandbox_go_to_page`,
   `sandbox_run_viewer`.

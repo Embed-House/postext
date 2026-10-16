@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP：Sandboxで作業するエージェント',
   sidebarTitle: 'WebMCP',
-  description: 'ブラウザーで動くAIエージェントが、37のWebMCPツールでSandboxを相手にできること（ページを見る、任意の設定を変える、本文を編集する、画像、表、フォントを加える、検査を実行する、書き出す）と、各ツールの呼び出し方を、実際の引数と答えで示します',
+  description: 'ブラウザーで動くAIエージェントが、39のWebMCPツールでSandboxを相手にできること（ページを見る、任意の設定を変える、本文を編集する、画像、表、フォントを加える、検査を実行する、書き出す）と、各ツールの呼び出し方を、実際の引数と答えで示します',
   lang: 'ja',
   lastUpdated: '2026-10-17',
   readingTime: '13分',
@@ -17,7 +17,7 @@ export const metadata = {
 
 [Sandbox](/ja/docs/sandbox)は、[WebMCP](https://webmachinelearning.github.io/webmcp/)を通じてエージェントに専用のツールを渡します。WebMCPはWeb標準の草案で、ページがブラウザーとやり取りしているAIモデルにツールを渡せるようにするものです。エージェントはこのツールを使うので、画面をクリックしてたどる必要がありません。本を読み、12ページの画像を求め、`bodyText.fontSize`を10.5 ptにし、章が18ページから19ページに増えたのを見て、元に戻します。人が目で確かめながらすることを、あなたの本に対して、あなたのブラウザーの中で行います。
 
-ツールは、名前が`sandbox_`で始まるものが37個あり、Sandboxが画面にある間だけ登録されます。ほかに、postext.devのどのページにもあるサイトのツール`site_*`が8個あります。このページでは、エージェントに頼みたい内容ごとにツールを分け、それぞれの呼び出し方を示します。
+ツールは、名前が`sandbox_`で始まるものが39個あり、Sandboxが画面にある間だけ登録されます。ほかに、postext.devのどのページにもあるサイトのツール`site_*`が8個あります。このページでは、エージェントに頼みたい内容ごとにツールを分け、それぞれの呼び出し方を示します。
 
 ## エージェントをつなぐ
 
@@ -237,6 +237,8 @@ await browser.close();
 
 フォントも設定です。`sandbox_list_fonts`に`search: "Garamond"`を渡すと公開カタログからファミリーを探し、その名前を`fontFamily`の設定に書き込むとフォントが読み込まれます。
 
+囲みスタイルには専用のライブラリがあります。`sandbox_frame_styles`は、各スタイルが本のどこで使われているか（テンプレートの枠、テンプレートページ、章ごとの`:::callout`の囲み）と、ほぼ同じスタイルの統合の提案を返します。「デザイン › 囲み › 枠のスタイル」と同じ内容です。`sandbox_merge_styles`は`groups`（`{ keep, merge }`）か`all: true`を受け取り、統合したスタイルを指していた枠とブロックをすべて書き換えます。`lookOnly: true`にすると、置き場所の違う囲みのスタイルも比べ、統合するとその囲みは移動します。
+
 ### 本文を編集する
 
 各章の本文は、Postextの拡張を加えたMarkdownです（[文書形式](/ja/docs/document-format)を参照）。エージェントは行番号付きで本文を読み、該当する一節を探し、一節を厳密に指定して置き換えます。
@@ -447,7 +449,7 @@ Sandboxが登録するときのまとまりで並べています。各ツール�
 - **開いているもの**：`sandbox_get_state`。
 - **ページ**：`sandbox_render_page`、`sandbox_inspect_pages`、`sandbox_inspect_point`。
 - **本文**：`sandbox_read_text`、`sandbox_write_text`、`sandbox_edit_text`、`sandbox_undo_text`、`sandbox_select_text`、`sandbox_search_text`、`sandbox_manage_chapters`、`sandbox_remove_chapter`。
-- **デザイン**：`sandbox_get_config`、`sandbox_set_config`、`sandbox_find_setting`、`sandbox_reset_to_original`。
+- **デザイン**：`sandbox_get_config`、`sandbox_set_config`、`sandbox_find_setting`、`sandbox_reset_to_original`、`sandbox_frame_styles`、`sandbox_merge_styles`。
 - **取り消し**：`sandbox_undo`。
 - **表示**：`sandbox_set_view`、`sandbox_go_to_page`、`sandbox_run_viewer`。
 - **リソースとフォント**：`sandbox_list_resources`、`sandbox_save_resource`、`sandbox_delete_resource`、`sandbox_list_fonts`、`sandbox_save_font`。

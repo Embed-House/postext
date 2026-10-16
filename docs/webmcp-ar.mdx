@@ -23,7 +23,7 @@ export const metadata = {
 بعد أن كان 18، فيعيد القيمة كما كانت. يفعل ما تفعله أنت حين تنظر وتقارن،
 ويفعله بكتابك أنت وفي متصفحك.
 
-هناك 37 أداة تبدأ أسماؤها بـ`sandbox_`، تُسجَّل ما دام Sandbox على الشاشة، و8
+هناك 39 أداة تبدأ أسماؤها بـ`sandbox_`، تُسجَّل ما دام Sandbox على الشاشة، و8
 أدوات للموقع، `site_*`، في كل صفحة من postext.dev. وترتّب هذه الصفحة الأدوات
 بحسب ما قد تطلبه من الوكيل، وتعطي طريقة استدعاء كل واحدة منها.
 
@@ -296,6 +296,14 @@ await browser.close();
 والخطوط إعدادات أيضًا: يجد `sandbox_list_fonts` مع `search: "Garamond"`
 العائلات في فهرس الخطوط المفتوحة، وكتابة الاسم في إعداد `fontFamily` تحمّل
 الخط.
+
+ولأنماط الإطارات مكتبة خاصة بها: تعطي `sandbox_frame_styles` كل نمط مع
+المواضع التي يستعمله فيها الكتاب (أطر القوالب، والصفحات المركّبة، وإطارات
+`:::callout` في كل فصل) واقتراحات دمج الأنماط شبه المتطابقة، كما في التصميم ›
+الإطارات › أنماط الأطر. وتأخذ `sandbox_merge_styles` المعامل `groups`
+(`{ keep, merge }`) أو `all: true`، فتعيد كتابة كل إطار وكل كتلة كانت تسمّي
+نمطًا مدموجًا؛ ومع `lookOnly: true` تقارن أيضًا الأنماط التي تقع إطاراتها في
+مواضع مختلفة، فتنتقل تلك الإطارات.
 
 ### تحرير النص
 
@@ -583,7 +591,7 @@ Sandbox، ويواصل العمل هناك بأدوات `sandbox_*`.
   و`sandbox_undo_text`، و`sandbox_select_text`، و`sandbox_search_text`،
   و`sandbox_manage_chapters`، و`sandbox_remove_chapter`.
 - **التصميم**: `sandbox_get_config`، و`sandbox_set_config`،
-  و`sandbox_find_setting`، و`sandbox_reset_to_original`.
+  و`sandbox_find_setting`، و`sandbox_reset_to_original`، و`sandbox_frame_styles`، و`sandbox_merge_styles`.
 - **التراجع**: `sandbox_undo`.
 - **طريقة العرض**: `sandbox_set_view`، و`sandbox_go_to_page`،
   و`sandbox_run_viewer`.

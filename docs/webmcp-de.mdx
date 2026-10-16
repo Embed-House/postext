@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: ein Agent bei der Arbeit in der Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'Was ein KI-Agent im Browser mit den 37 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
+  description: 'Was ein KI-Agent im Browser mit den 39 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
   lang: 'de',
   lastUpdated: '2026-10-17',
   readingTime: '12 min',
@@ -24,7 +24,7 @@ Oberfläche: Er liest das Buch, fordert ein Bild von Seite 12 an, setzt
 gewachsen ist, und nimmt die Änderung zurück. Er tut, was Sie mit dem Auge tun,
 und er tut es mit Ihrem Buch, in Ihrem Browser.
 
-Es gibt 37 Werkzeuge, deren Namen mit `sandbox_` beginnen und die registriert
+Es gibt 39 Werkzeuge, deren Namen mit `sandbox_` beginnen und die registriert
 sind, solange die Sandbox auf dem Bildschirm ist, und 8 Werkzeuge der Website,
 `site_*`, auf jeder Seite von postext.dev. Diese Seite ordnet sie nach dem, was
 Sie einen Agenten tun lassen würden, und zeigt für jedes den Aufruf.
@@ -41,7 +41,7 @@ Postext muss nichts installiert oder eingerichtet werden.
 WebMCP ist noch ein Entwurf. Chrome bietet es als Origin Trial an und hinter
 dem Flag `chrome://flags/#enable-webmcp-testing`. Die Werkzeuge folgen der
 Seite: Auf der Startseite oder in der Dokumentation hat der Agent die
-Werkzeuge `site_*`; sobald die Sandbox auf dem Bildschirm ist, kommen die 37
+Werkzeuge `site_*`; sobald die Sandbox auf dem Bildschirm ist, kommen die 39
 Werkzeuge `sandbox_*` hinzu.
 
 ### In jedem anderen Browser: `window.postextWebMcp`
@@ -321,6 +321,15 @@ her, mit der das Buch begonnen hat.
 Auch Schriften sind Einstellungen: `sandbox_list_fonts` mit
 `search: "Garamond"` findet Familien im offenen Katalog, und wenn Sie den Namen in eine
 Einstellung `fontFamily` schreiben, wird die Schrift geladen.
+
+Kastenstile haben eine eigene Bibliothek: `sandbox_frame_styles` nennt jeden
+Stil mit den Stellen, an denen das Buch ihn verwendet (Rahmen von Vorlagen,
+zusammengesetzte Seiten, `:::callout`-Kästen je Kapitel), und die
+vorgeschlagenen Zusammenführungen fast gleicher Stile, wie Gestaltung › Kästen ›
+Rahmenstile. `sandbox_merge_styles` nimmt `groups` (`{ keep, merge }`) oder
+`all: true` und schreibt jeden Rahmen und jeden Block um, der einen
+zusammengeführten Stil nannte; mit `lookOnly: true` vergleicht es auch Stile,
+deren Kästen an verschiedenen Stellen stehen und sich dann verschieben.
 
 ### Den Text bearbeiten
 
@@ -637,7 +646,8 @@ und das Schema jedes Werkzeugs liefert `postextWebMcp.listTools()`.
   `sandbox_undo_text`, `sandbox_select_text`, `sandbox_search_text`,
   `sandbox_manage_chapters`, `sandbox_remove_chapter`.
 - **Die Gestaltung**: `sandbox_get_config`, `sandbox_set_config`,
-  `sandbox_find_setting`, `sandbox_reset_to_original`.
+  `sandbox_find_setting`, `sandbox_reset_to_original`,
+  `sandbox_frame_styles`, `sandbox_merge_styles`.
 - **Rückgängig**: `sandbox_undo`.
 - **Die Anzeige**: `sandbox_set_view`, `sandbox_go_to_page`,
   `sandbox_run_viewer`.

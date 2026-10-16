@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: un agent treballant al Sandbox',
   sidebarTitle: 'WebMCP',
-  description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 37 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
+  description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 39 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
   lang: 'ca',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
@@ -23,7 +23,7 @@ el llibre, demana una imatge de la pàgina 12, posa `bodyText.fontSize` a 10,5 p
 veu que el capítol ha passat de 18 a 19 pàgines i ho torna a deixar com estava.
 Fa el que tu fas a ull, i ho fa amb el teu llibre, al teu navegador.
 
-Hi ha 37 eines amb el nom començat per `sandbox_`, registrades mentre el Sandbox
+Hi ha 39 eines amb el nom començat per `sandbox_`, registrades mentre el Sandbox
 és a la pantalla, i 8 eines del lloc, `site_*`, a totes les pàgines de
 postext.dev. Aquesta pàgina les ordena segons el que demanaries a un agent i
 dona la crida de cadascuna.
@@ -39,7 +39,7 @@ pàgina les troba allà. A Postext no cal instal·lar ni configurar res.
 WebMCP encara és un esborrany. Chrome l'ofereix com a prova d'origen i darrere
 de l'indicador `chrome://flags/#enable-webmcp-testing`. Les eines depenen de la
 pàgina: a la pàgina d'inici o a la documentació, l'agent té les eines `site_*`;
-quan el Sandbox és a la pantalla, apareixen també les 37 eines `sandbox_*`.
+quan el Sandbox és a la pantalla, apareixen també les 39 eines `sandbox_*`.
 
 ### En qualsevol altre navegador: `window.postextWebMcp`
 
@@ -312,6 +312,15 @@ restaura el disseny amb què va començar el llibre.
 Les fonts també són ajustos: `sandbox_list_fonts` amb `search: "Garamond"`
 troba famílies al catàleg obert, i escriure el nom en un ajust `fontFamily` la
 carrega.
+
+Els estils de requadre tenen una biblioteca pròpia: `sandbox_frame_styles`
+dona cada estil amb on el fa servir el llibre (marcs de plantilla, pàgines
+compostes, requadres `:::callout` per capítol) i les fusions d'estils gairebé
+iguals que proposa, com Disseny › Requadres › Estils de marc.
+`sandbox_merge_styles` rep `groups` (`{ keep, merge }`) o `all: true` i
+reescriu cada marc i cada bloc que anomenava un estil fusionat; amb
+`lookOnly: true` compara també estils els requadres dels quals són en llocs
+diferents, que aleshores es mouen.
 
 ### Editar el text
 
@@ -618,7 +627,8 @@ de cadascuna s'obtenen amb `postextWebMcp.listTools()`.
   `sandbox_undo_text`, `sandbox_select_text`, `sandbox_search_text`,
   `sandbox_manage_chapters`, `sandbox_remove_chapter`.
 - **El disseny**: `sandbox_get_config`, `sandbox_set_config`,
-  `sandbox_find_setting`, `sandbox_reset_to_original`.
+  `sandbox_find_setting`, `sandbox_reset_to_original`,
+  `sandbox_frame_styles`, `sandbox_merge_styles`.
 - **Desfer**: `sandbox_undo`.
 - **Com es mostra**: `sandbox_set_view`, `sandbox_go_to_page`,
   `sandbox_run_viewer`.
