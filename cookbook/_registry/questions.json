@@ -5154,5 +5154,33 @@
       "it": "File di riquadri, divisione della larghezza"
     },
     "theme": "page"
+  },
+  "Q185": {
+    "kind": "how",
+    "text": {
+      "en": "How do I thread a magazine article through linked frames across several pages?",
+      "es": "¿Cómo hago que un reportaje de revista pase de un marco a otro a lo largo de varias páginas?",
+      "ca": "Com faig que un reportatge de revista passi d'un marc a un altre al llarg de diverses pàgines?",
+      "zh": "怎样让一篇杂志文章在几页之间顺着相连的框接续排下去？",
+      "ar": "كيف أجعل مقال مجلة يجري عبر إطارات مترابطة على عدة صفحات؟",
+      "ja": "雑誌の記事を、つないだ枠に流して何ページにもわたって続けるには？",
+      "pt": "Como faço uma matéria de revista correr por blocos encadeados ao longo de várias páginas?",
+      "fr": "Comment faire courir un article de magazine dans des blocs chaînés sur plusieurs pages ?",
+      "de": "Wie lasse ich einen Magazinartikel durch verkettete Rahmen über mehrere Seiten laufen?",
+      "it": "Come faccio scorrere un articolo di rivista in cornici concatenate su più pagine?"
+    },
+    "index": {
+      "en": "Magazine articles, threaded through frames",
+      "es": "Reportajes de revista, enlazados de marco en marco",
+      "ca": "Reportatges de revista, enllaçats de marc en marc",
+      "zh": "杂志文章，串接在多个框中",
+      "ar": "مقالات المجلات، عبر إطارات مترابطة",
+      "ja": "雑誌記事、枠をつないで流す",
+      "pt": "Matérias de revista, encadeadas de bloco em bloco",
+      "fr": "Articles de magazine, chaînés de bloc en bloc",
+      "de": "Magazinartikel, durch verkettete Rahmen",
+      "it": "Articoli di rivista, concatenati di cornice in cornice"
+    },
+    "theme": "publications"
   }
 }

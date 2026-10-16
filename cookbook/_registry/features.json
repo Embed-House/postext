@@ -23535,7 +23535,8 @@
         "frames",
         "slots",
         "composed page",
-        "pageTemplates"
+        "pageTemplates",
+        "layout template"
       ],
       "es": [
         "plantilla de página",
@@ -23543,13 +23544,16 @@
         "slots",
         "página compuesta",
         "pageTemplates",
-        "ranuras"
+        "ranuras",
+        "ranuras de contenido",
+        "maqueta"
       ],
       "ca": [
         "plantilla de pàgina",
         "marcs",
         "slots",
-        "pàgina composta"
+        "pàgina composta",
+        "pageTemplates"
       ],
       "zh": [
         "页面模板",
@@ -23562,7 +23566,9 @@
         "قالب الصفحة",
         "إطارات",
         "خانات",
-        "pageTemplates"
+        "pageTemplates",
+        "الإطارات",
+        "صفحة مركّبة"
       ],
       "ja": [
         "ページテンプレート",
@@ -23570,34 +23576,41 @@
         "slot",
         "pageTemplates",
         "枠",
-        "スロット"
+        "スロット",
+        "テンプレートページ"
       ],
       "pt": [
         "modelo de página",
         "quadros",
         "slots",
         "página composta",
-        "blocos"
+        "blocos",
+        "pageTemplates"
       ],
       "fr": [
         "gabarit de page",
         "blocs",
         "slots",
         "page composée",
-        "modèle de page"
+        "modèle de page",
+        "maquette",
+        "pageTemplates"
       ],
       "de": [
         "Seitenvorlage",
         "Rahmen",
         "Slots",
-        "pageTemplates"
+        "pageTemplates",
+        "zusammengesetzte Seite",
+        "Musterseite"
       ],
       "it": [
         "modello di pagina",
         "riquadri",
         "slot",
         "pagina composta",
-        "cornici"
+        "cornici",
+        "pageTemplates"
       ]
     },
     "group": "page",
@@ -24149,6 +24162,225 @@
     "detect": {
       "config": [
         "pageTemplates[].decoration"
+      ]
+    }
+  },
+  "threaded-frames": {
+    "label": {
+      "en": "Threaded text frames",
+      "es": "Marcos de texto enlazados",
+      "ca": "Marcs de text enllaçats",
+      "zh": "串接的文字框",
+      "ar": "إطارات نص متسلسلة",
+      "ja": "連結したテキスト枠",
+      "pt": "Blocos de texto encadeados",
+      "fr": "Blocs de texte chaînés",
+      "de": "Verkettete Textrahmen",
+      "it": "Cornici di testo concatenate"
+    },
+    "definition": {
+      "en": "A frame's next sends what it cannot hold to another frame of the page, broken again at that frame's width, and overflow.continueIn ('next-page' or 'template:<id>') carries the rest onto pages added after it, with a continuation mark, until the story ends.",
+      "es": "El next de un marco manda lo que no le cabe a otro marco de la página, cortado de nuevo al ancho de ese marco, y overflow.continueIn ('next-page' o 'template:<id>') lleva el resto a páginas que se añaden detrás, con una marca de continuación, hasta que acaba el texto.",
+      "ca": "El next d'un marc envia el que no hi cap a un altre marc de la pàgina, tallat de nou a l'amplada d'aquell marc, i overflow.continueIn ('next-page' o 'template:<id>') porta la resta a pàgines que s'afegeixen darrere, amb una marca de continuació, fins que s'acaba el text.",
+      "zh": "框的 next 把放不下的内容送到同页的另一个框，按那个框的宽度重新断行；overflow.continueIn（'next-page' 或 'template:<id>'）把剩下的带到其后新增的页上，并加接续标记，直到正文结束。",
+      "ar": "تُرسل خاصية next في الإطار ما لا يتسع له إلى إطار آخر في الصفحة، فيُقطع من جديد على عرض ذلك الإطار، وتحمل overflow.continueIn ('next-page' أو 'template:<id>') الباقي إلى صفحات تُضاف بعدها مع علامة متابعة حتى ينتهي النص.",
+      "ja": "枠の next は入りきらない分を同じページの別の枠へ送り、その枠の幅で改めて行を分けます。overflow.continueIn（'next-page' または 'template:<id>'）は残りを後ろに追加するページへ続きの印とともに運び、本文が終わるまで続けます。",
+      "pt": "O next de um bloco manda o que não cabe nele para outro bloco da página, quebrado de novo na largura desse bloco, e overflow.continueIn ('next-page' ou 'template:<id>') leva o resto para páginas acrescentadas depois, com uma marca de continuação, até o texto acabar.",
+      "fr": "Le next d'un bloc envoie ce qu'il ne peut contenir vers un autre bloc de la page, recoupé à la largeur de ce bloc, et overflow.continueIn ('next-page' ou 'template:<id>') porte le reste sur des pages ajoutées après lui, avec une mention de suite, jusqu'à la fin du texte.",
+      "de": "next schickt, was ein Rahmen nicht fasst, in einen anderen Rahmen der Seite und bricht es dort auf dessen Breite neu um; overflow.continueIn ('next-page' oder 'template:<id>') trägt den Rest mit einem Fortsetzungsvermerk auf Seiten, die dahinter eingefügt werden, bis der Text endet.",
+      "it": "Il next di una cornice manda ciò che non contiene in un'altra cornice della pagina, rispezzato alla larghezza di quella, e overflow.continueIn ('next-page' o 'template:<id>') porta il resto su pagine aggiunte dopo, con un segno di continuazione, finché il testo finisce."
+    },
+    "aliases": {
+      "en": [
+        "linked text frames",
+        "text threading",
+        "story jump",
+        "continued on page",
+        "overflow frame",
+        "next frame"
+      ],
+      "es": [
+        "marcos enlazados",
+        "texto enlazado",
+        "salto de texto",
+        "continúa en la página",
+        "desbordamiento"
+      ],
+      "ca": [
+        "marcs enllaçats",
+        "text enllaçat",
+        "continua a la pàgina"
+      ],
+      "zh": [
+        "文字框串接",
+        "串文",
+        "续排",
+        "接下页"
+      ],
+      "ar": [
+        "إطارات مترابطة",
+        "تسلسل النص",
+        "يتبع في الصفحة"
+      ],
+      "ja": [
+        "テキスト枠の連結",
+        "流し込み",
+        "続きのページ"
+      ],
+      "pt": [
+        "blocos encadeados",
+        "texto encadeado",
+        "continua na página"
+      ],
+      "fr": [
+        "blocs chaînés",
+        "chaînage de texte",
+        "suite page",
+        "renvoi de suite"
+      ],
+      "de": [
+        "verkettete Rahmen",
+        "Textverkettung",
+        "Fortsetzung auf Seite",
+        "Überlauf"
+      ],
+      "it": [
+        "cornici concatenate",
+        "testo concatenato",
+        "continua a pagina"
+      ]
+    },
+    "group": "page",
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Chaining frames",
+        "es": "Encadenar marcos",
+        "ca": "Encadenar marcs",
+        "zh": "串接框",
+        "ar": "ربط الإطارات بالتسلسل",
+        "ja": "枠をつなぐ",
+        "pt": "Encadear blocos",
+        "fr": "Chaîner des blocs",
+        "de": "Rahmen verketten",
+        "it": "Concatenare le cornici"
+      }
+    },
+    "since": "1.37.0",
+    "detect": {
+      "config": [
+        "pageTemplates[].frames[].next",
+        "pageTemplates[].frames[].overflow.continueIn"
+      ]
+    }
+  },
+  "frame-text-push": {
+    "label": {
+      "en": "Frames that push text, by box or contour",
+      "es": "Marcos que apartan el texto, por caja o por contorno",
+      "ca": "Marcs que aparten el text, per caixa o per contorn",
+      "zh": "推开文字的框（按框或按轮廓）",
+      "ar": "إطارات تزيح النص بصندوقها أو بمحيطها",
+      "ja": "テキストを押しのける枠（矩形または輪郭）",
+      "pt": "Blocos que afastam o texto, pela caixa ou pelo contorno",
+      "fr": "Blocs qui repoussent le texte, au cadre ou au contour",
+      "de": "Rahmen, die Text verdrängen, als Kasten oder entlang der Kontur",
+      "it": "Cornici che spostano il testo, per riquadro o per contorno"
+    },
+    "definition": {
+      "en": "A frame with exclude: 'push' sets the lines of the other frames short where they meet it, so a pull quote or a photo sits inside the columns; with wrap: 'contour' the lines follow the shape of the picture it holds, read from its alpha channel or its polygon.",
+      "es": "Un marco con exclude: 'push' acorta las líneas de los demás marcos donde lo tocan, de modo que una cita destacada o una foto queda dentro de las columnas; con wrap: 'contour' las líneas siguen la silueta de la imagen que contiene, leída de su canal alfa o de su polígono.",
+      "ca": "Un marc amb exclude: 'push' escurça les línies dels altres marcs on el toquen, de manera que una cita destacada o una foto queda dins de les columnes; amb wrap: 'contour' les línies segueixen la silueta de la imatge que conté, llegida del canal alfa o del polígon.",
+      "zh": "exclude: 'push' 的框让其他框碰到它的行变短，引语或照片就能嵌在栏中；加上 wrap: 'contour'，各行沿框中图片的轮廓排，轮廓取自图片的 alpha 通道或多边形。",
+      "ar": "الإطار ذو exclude: 'push' يقصّر أسطر الإطارات الأخرى حيث تلامسه، فيستقر اقتباس بارز أو صورة داخل الأعمدة؛ ومع wrap: 'contour' تتبع الأسطر شكل الصورة التي يحملها، مقروءًا من قناة ألفا أو من مضلّعها.",
+      "ja": "exclude: 'push' の枠は、ほかの枠の行がぶつかる所でその行を短くするので、引用や写真を段の中に置けます。wrap: 'contour' を加えると、行は枠の中の図版の輪郭（アルファチャンネルか多角形）に沿います。",
+      "pt": "Um bloco com exclude: 'push' encurta as linhas dos outros blocos onde elas o tocam, e assim um olho ou uma foto fica dentro das colunas; com wrap: 'contour' as linhas seguem a silhueta da imagem que ele contém, lida do canal alfa ou do polígono.",
+      "fr": "Un bloc avec exclude: 'push' raccourcit les lignes des autres blocs là où elles le touchent, si bien qu'une citation en exergue ou une photo se loge dans les colonnes ; avec wrap: 'contour' les lignes suivent la silhouette de l'image qu'il contient, lue dans sa couche alpha ou son polygone.",
+      "de": "Ein Rahmen mit exclude: 'push' verkürzt die Zeilen der anderen Rahmen, wo sie ihn berühren, sodass ein Zitat oder ein Foto in den Spalten steht; mit wrap: 'contour' folgen die Zeilen dem Umriss des Bildes darin, gelesen aus seinem Alphakanal oder seinem Polygon.",
+      "it": "Una cornice con exclude: 'push' accorcia le righe delle altre cornici dove la toccano, così una citazione in evidenza o una foto sta dentro le colonne; con wrap: 'contour' le righe seguono la sagoma dell'immagine che contiene, letta dal canale alfa o dal poligono."
+    },
+    "aliases": {
+      "en": [
+        "pull quote in columns",
+        "runaround",
+        "contour wrap",
+        "wrap around cut-out",
+        "text exclusion",
+        "exclude push"
+      ],
+      "es": [
+        "cita destacada entre columnas",
+        "contorneo",
+        "texto al contorno",
+        "silueta recortada",
+        "exclusión de texto"
+      ],
+      "ca": [
+        "cita destacada entre columnes",
+        "contorneig",
+        "text al contorn"
+      ],
+      "zh": [
+        "文字绕排",
+        "沿轮廓绕排",
+        "抠图绕排",
+        "引语"
+      ],
+      "ar": [
+        "اقتباس بارز بين الأعمدة",
+        "الالتفاف حول المحيط",
+        "إزاحة النص"
+      ],
+      "ja": [
+        "回り込み",
+        "輪郭に沿った回り込み",
+        "切り抜き写真",
+        "引用"
+      ],
+      "pt": [
+        "olho entre colunas",
+        "contorno de texto",
+        "texto contornando a silhueta"
+      ],
+      "fr": [
+        "citation en exergue",
+        "habillage",
+        "habillage au contour",
+        "détourage"
+      ],
+      "de": [
+        "Zitat in den Spalten",
+        "Konturenumfluss",
+        "Textumfluss",
+        "Freisteller"
+      ],
+      "it": [
+        "citazione in evidenza",
+        "scontorno",
+        "testo lungo il contorno",
+        "scontornato"
+      ]
+    },
+    "group": "figures",
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Frames that push text",
+        "es": "Marcos que apartan el texto",
+        "ca": "Marcs que aparten el text",
+        "zh": "推开文字的框",
+        "ar": "إطارات تزيح النص",
+        "ja": "テキストを押しのける枠",
+        "pt": "Blocos que afastam o texto",
+        "fr": "Les blocs qui repoussent le texte",
+        "de": "Rahmen, die Text verdrängen",
+        "it": "Cornici che spostano il testo"
+      }
+    },
+    "since": "1.36.0",
+    "detect": {
+      "config": [
+        "pageTemplates[].frames[].exclude"
       ]
     }
   }

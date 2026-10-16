@@ -3534,5 +3534,60 @@
       "it": "Un gruppo in fila senza un riquadro proprio è alto quanto la maggiore altezza chiesta dalle sue cornici, e un’altezza automatica chiede tutto il contenuto: nessuna cornice esce mai dalla fila, quindi nessuna prende larghezza dalle vicine e la fila cresce solo verso il basso. Dai alle cornici un’altezza fissa (con maxHeight per il testo che cresce) o al gruppo un riquadro (placement o grid): allora la cornice il cui testo esce prende dalle vicine con shrink i millimetri interi che le servono, e cresce fino al suo maxHeight solo quando loro non hanno più nulla da dare."
     },
     "feature": "frame-groups"
+  },
+  "continuation-lands-in-chain-tail": {
+    "title": {
+      "en": "A story that goes on lands in the frame of the same name",
+      "es": "Un texto que sigue en otra página cae en el marco del mismo nombre",
+      "ca": "Un text que continua en una altra pàgina cau al marc del mateix nom",
+      "zh": "接到别页的正文会落进同名的框",
+      "ar": "النص الذي يتابع في صفحة أخرى يقع في الإطار الذي يحمل الاسم نفسه",
+      "ja": "別のページへ続く本文は、同じ名前の枠に入る",
+      "pt": "Um texto que continua em outra página cai no bloco de mesmo nome",
+      "fr": "Un texte qui continue sur une autre page tombe dans le bloc du même nom",
+      "de": "Ein Text, der auf einer anderen Seite weiterläuft, landet im gleichnamigen Rahmen",
+      "it": "Un testo che continua su un'altra pagina finisce nella cornice con lo stesso nome"
+    },
+    "body": {
+      "en": "On a page added by overflow.continueIn, the rest of a story goes on in the frame with the name of the frame that cut it, and only then in the flow frame. When the last frame of a next chain continues into its own template ('template:page' on page-3), each added page refills page-3 alone and leaves page-1 and page-2 empty, with no warning. Hand the story between two templates whose frames have other names (page-a-3 → template:page-b, page-b-3 → template:page-a): no frame of the same name is found, so the story starts again in the flow frame and runs down the whole chain.",
+      "es": "En una página que añade overflow.continueIn, el resto del texto sigue en el marco que se llama como el que lo cortó, y sólo después en el marco de flujo. Si el último marco de una cadena next continúa en su propia plantilla ('template:pagina' en pagina-3), cada página añadida vuelve a llenar sólo pagina-3 y deja vacíos pagina-1 y pagina-2, sin ningún aviso. Pasa el texto entre dos plantillas cuyos marcos se llamen de otro modo (pagina-a-3 → template:pagina-b, pagina-b-3 → template:pagina-a): al no encontrar un marco del mismo nombre, el texto vuelve a empezar en el marco de flujo y recorre toda la cadena.",
+      "ca": "En una pàgina que afegeix overflow.continueIn, la resta del text continua al marc que es diu com el que l'ha tallat, i només després al marc de flux. Si l'últim marc d'una cadena next continua a la seva pròpia plantilla ('template:pagina' a pagina-3), cada pàgina afegida torna a omplir només pagina-3 i deixa buits pagina-1 i pagina-2, sense cap avís. Passa el text entre dues plantilles amb marcs de noms diferents (pagina-a-3 → template:pagina-b, pagina-b-3 → template:pagina-a): com que no hi ha cap marc del mateix nom, el text torna a començar al marc de flux i recorre tota la cadena.",
+      "zh": "在 overflow.continueIn 新增的页上，正文的余下部分先接进与切断它的框同名的框，找不到才进流文框。如果 next 链的最后一个框接到它自己的模板（page-3 上写 'template:page'），每张新增页只会重新填满 page-3，page-1 和 page-2 空着，也不报警告。让正文在两个框名不同的模板之间来回传递（page-a-3 → template:page-b，page-b-3 → template:page-a）：找不到同名的框，正文就从流文框重新开始，走完整条链。",
+      "ar": "في الصفحة التي تضيفها overflow.continueIn يتابع باقي النص في الإطار الذي يحمل اسم الإطار الذي قطعه، ثم في إطار التدفق إن لم يوجد. فإذا كان آخر إطار في سلسلة next يتابع في قالبه نفسه ('template:page' على page-3) ملأت كل صفحة مضافة الإطار page-3 وحده وتركت page-1 وpage-2 فارغين، دون أي تحذير. مرّر النص بين قالبين بأسماء إطارات مختلفة (page-a-3 ← template:page-b وpage-b-3 ← template:page-a): لا يوجد إطار بالاسم نفسه، فيبدأ النص من جديد في إطار التدفق ويجري في السلسلة كلها.",
+      "ja": "overflow.continueIn で追加されたページでは、本文の残りはまず切った枠と同じ名前の枠へ入り、それがなければ流し込み枠へ入ります。next でつないだ最後の枠が自分のテンプレートへ続くと（page-3 に 'template:page'）、追加ページごとに page-3 だけが埋まり、page-1 と page-2 は空のまま、警告も出ません。枠の名前が違う二つのテンプレートで本文を受け渡してください（page-a-3 → template:page-b、page-b-3 → template:page-a）。同じ名前の枠がないので、本文は流し込み枠から始まり、つないだ枠をすべて通ります。",
+      "pt": "Numa página acrescentada por overflow.continueIn, o resto do texto continua no bloco que tem o nome do bloco que o cortou, e só depois no bloco de fluxo. Se o último bloco de uma cadeia next continua no seu próprio modelo ('template:pagina' em pagina-3), cada página acrescentada volta a preencher só pagina-3 e deixa pagina-1 e pagina-2 vazios, sem aviso. Passe o texto entre dois modelos cujos blocos tenham outros nomes (pagina-a-3 → template:pagina-b, pagina-b-3 → template:pagina-a): sem bloco de mesmo nome, o texto recomeça no bloco de fluxo e percorre a cadeia inteira.",
+      "fr": "Sur une page ajoutée par overflow.continueIn, la suite du texte va dans le bloc qui porte le nom du bloc qui l'a coupé, et seulement ensuite dans le bloc de flux. Si le dernier bloc d'une chaîne next continue dans son propre gabarit ('template:page' sur page-3), chaque page ajoutée ne remplit que page-3 et laisse page-1 et page-2 vides, sans avertissement. Faites passer le texte entre deux gabarits dont les blocs portent d'autres noms (page-a-3 → template:page-b, page-b-3 → template:page-a) : faute de bloc du même nom, le texte repart du bloc de flux et parcourt toute la chaîne.",
+      "de": "Auf einer Seite, die overflow.continueIn anfügt, läuft der restliche Text im Rahmen weiter, der so heißt wie der Rahmen, der ihn abgeschnitten hat, und erst dann im Flussrahmen. Läuft der letzte Rahmen einer next-Kette in seiner eigenen Vorlage weiter ('template:seite' auf seite-3), füllt jede angefügte Seite nur seite-3 und lässt seite-1 und seite-2 leer, ohne Warnung. Reiche den Text zwischen zwei Vorlagen mit anders benannten Rahmen hin und her (seite-a-3 → template:seite-b, seite-b-3 → template:seite-a): Da kein gleichnamiger Rahmen gefunden wird, beginnt der Text wieder im Flussrahmen und läuft durch die ganze Kette.",
+      "it": "In una pagina aggiunta da overflow.continueIn, il resto del testo continua nella cornice che ha il nome di quella che l'ha tagliato, e solo dopo nella cornice di flusso. Se l'ultima cornice di una catena next continua nel proprio modello ('template:pagina' su pagina-3), ogni pagina aggiunta riempie solo pagina-3 e lascia vuote pagina-1 e pagina-2, senza avvisi. Passa il testo tra due modelli con cornici dai nomi diversi (pagina-a-3 → template:pagina-b, pagina-b-3 → template:pagina-a): non trovando una cornice con lo stesso nome, il testo riparte dalla cornice di flusso e percorre tutta la catena."
+    },
+    "feature": "threaded-frames",
+    "followup": "EF-879-1"
+  },
+  "frame-text-shrinks-before-continuing": {
+    "title": {
+      "en": "A story is set smaller before it goes on to another page",
+      "es": "Un texto se compone más pequeño antes de seguir en otra página",
+      "ca": "Un text es compon més petit abans de continuar en una altra pàgina",
+      "zh": "正文接到别页之前会先缩小字号",
+      "ar": "يُصفّ النص أصغر قبل أن يتابع في صفحة أخرى",
+      "ja": "本文は別のページへ続く前に、まず小さく組まれる",
+      "pt": "Um texto é composto menor antes de continuar em outra página",
+      "fr": "Un texte est composé plus petit avant de continuer sur une autre page",
+      "de": "Ein Text wird kleiner gesetzt, bevor er auf einer anderen Seite weiterläuft",
+      "it": "Un testo viene composto più piccolo prima di continuare su un'altra pagina"
+    },
+    "body": {
+      "en": "The reflow ladder tries shrinkText (down to fit.minScale, 90 %) before continue, so a story a few lines too long for its last frame is set at 92.5 % on that page instead of going on to a new one, and its columns no longer match the body of the pages before. Give the body frames fit: { shrinkText: false, scaleImages: false }: the text keeps its size and the rest goes on.",
+      "es": "La escalera de ajuste prueba shrinkText (hasta fit.minScale, el 90 %) antes que continue, así que un texto al que le sobran unas líneas en su último marco se compone al 92,5 % en esa página en vez de seguir en otra, y sus columnas dejan de coincidir con el cuerpo de las páginas anteriores. Da a los marcos del texto fit: { shrinkText: false, scaleImages: false }: el texto mantiene su cuerpo y el resto sigue.",
+      "ca": "L'escala d'ajust prova shrinkText (fins a fit.minScale, el 90 %) abans que continue, de manera que un text al qual sobren unes línies al seu últim marc es compon al 92,5 % en aquella pàgina en lloc de continuar en una altra, i les seves columnes ja no coincideixen amb el cos de les pàgines anteriors. Dona als marcs del text fit: { shrinkText: false, scaleImages: false }: el text manté el cos i la resta continua.",
+      "zh": "回排梯级先试 shrinkText（缩到 fit.minScale，即 90 %），再试 continue。所以最后一个框只多出几行的正文会在那页按 92.5 % 排，而不是接到新的一页，栏里的字号就和前面几页对不上。给正文框写 fit: { shrinkText: false, scaleImages: false }：字号不变，多出的部分接下去。",
+      "ar": "يجرّب سلّم إعادة التوزيع shrinkText (حتى fit.minScale، أي 90 %) قبل continue، فالنص الذي يزيد بضعة أسطر عن إطاره الأخير يُصفّ بنسبة 92.5 % في تلك الصفحة بدل أن يتابع في صفحة جديدة، فلا تعود أعمدته مطابقة لمتن الصفحات السابقة. أعطِ إطارات المتن fit: { shrinkText: false, scaleImages: false }: يحتفظ النص بحجمه ويتابع الباقي.",
+      "ja": "リフローの手順は continue より先に shrinkText（fit.minScale の 90 % まで）を試します。そのため最後の枠から数行あふれるだけの本文は、新しいページへ続かずにそのページで 92.5 % に縮められ、前のページの本文と大きさが揃わなくなります。本文の枠に fit: { shrinkText: false, scaleImages: false } を指定すれば、文字の大きさはそのままで、残りが次へ続きます。",
+      "pt": "A escada de ajuste tenta shrinkText (até fit.minScale, 90 %) antes de continue, e assim um texto que passa algumas linhas do seu último bloco é composto a 92,5 % naquela página em vez de continuar em outra, e as colunas deixam de bater com o corpo das páginas anteriores. Dê aos blocos do texto fit: { shrinkText: false, scaleImages: false }: o texto mantém o tamanho e o resto continua.",
+      "fr": "L'échelle de recomposition essaie shrinkText (jusqu'à fit.minScale, 90 %) avant continue : un texte qui dépasse de quelques lignes son dernier bloc est composé à 92,5 % sur cette page au lieu de continuer sur une nouvelle, et ses colonnes ne correspondent plus au corps des pages précédentes. Donnez aux blocs du texte fit: { shrinkText: false, scaleImages: false } : le texte garde son corps et le reste continue.",
+      "de": "Die Umbruchleiter versucht shrinkText (bis fit.minScale, 90 %) vor continue. Ein Text, der seinen letzten Rahmen um ein paar Zeilen überschreitet, wird deshalb auf dieser Seite mit 92,5 % gesetzt, statt auf einer neuen weiterzulaufen, und seine Spalten passen nicht mehr zum Grundtext der Seiten davor. Gib den Textrahmen fit: { shrinkText: false, scaleImages: false }: Der Text behält seine Größe, und der Rest läuft weiter.",
+      "it": "La scala di ricomposizione prova shrinkText (fino a fit.minScale, il 90 %) prima di continue, quindi un testo che supera di qualche riga la sua ultima cornice viene composto al 92,5 % su quella pagina invece di continuare su una nuova, e le sue colonne non corrispondono più al corpo delle pagine precedenti. Dai alle cornici del testo fit: { shrinkText: false, scaleImages: false }: il testo mantiene il corpo e il resto continua."
+    },
+    "feature": "threaded-frames"
   }
 }
