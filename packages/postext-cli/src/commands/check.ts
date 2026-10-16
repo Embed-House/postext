@@ -1,4 +1,4 @@
-import { bitmapInfo, contrastDocument, contrastMedia, outputTransform, parseIccProfile, preflightDocument, resolveContrastConfig, resolvePrintConfig, type ContrastIssue, type OutputTransform } from 'postext';
+import { bitmapInfo, composedReflowLog, contrastDocument, contrastMedia, outputTransform, parseIccProfile, preflightDocument, resolveContrastConfig, resolvePrintConfig, type ContrastIssue, type OutputTransform } from 'postext';
 import { iccProfile } from '../assets';
 import type { CommandContext } from '../context';
 import { pageLabelOf, sourceAt } from '../layout';
@@ -92,6 +92,15 @@ export default async function check(ctx: CommandContext): Promise<void> {
     }
     reporter.data.contrast = { level: contrast.level, issues: seen.size };
   }
+  // Composed pages (#856): what the layout changed from each template's
+  // drawing so the page's content fits («dinero grew 8 mm; gasto moved
+  // down 8 mm»), one line per page; the events themselves in --json.
+  const reflow = layout.docs.flatMap((doc, i) => composedReflowLog(doc).map((r) => {
+    const chapter = layout.chapters[i];
+    return { ...r, pageLabel: pageLabelOf(doc, r.pageIndex) ?? r.pageLabel, ...(chapter ? { chapter: chapter.file ?? chapter.title } : {}) };
+  }));
+  for (const r of reflow) reporter.info(`${style.dim('reflow')} p. ${r.pageLabel} (${r.template}): ${r.lines.join('; ')}`);
+  reporter.data.reflow = reflow;
   const errors = reporter.errorCount();
   const warnings = reporter.warnings.filter((w) => w.severity === 'warning').length;
   const failed = errors > 0 || (opts.flag('strict') === true && warnings > 0);
