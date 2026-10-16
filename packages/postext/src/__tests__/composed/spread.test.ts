@@ -6,6 +6,7 @@ import { renderToHtmlIndexed } from '../../html-backend';
 import { renderPageToCanvas } from '../../index';
 import { keepOffGutter, spreadSheet, splitSpreadDecoration } from '../../composed/spread';
 import { composedPaintOrder } from '../../composed/paint';
+import { flowRectToPage } from '../../vdt';
 import type { PageTemplate } from '../../composed/types';
 import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
 import { timelineFixture } from './fixtures/timeline';
@@ -291,6 +292,23 @@ describe('a spread template in a right-bound book (#861)', () => {
     // page, the recto.
     expect(frameOn(recto, 'left')).toBeDefined();
     expect(frameOn(verso, 'right')).toBeDefined();
+  });
+});
+
+describe('decoration anchored to a frame on a right-to-left page (#861)', () => {
+  it('reads the frame where the sheet shows it', () => {
+    const t: PageTemplate = {
+      id: 'one',
+      frames: [{ name: 'box', width: mm(40), height: mm(20), placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+      decoration: { elements: [{ kind: 'rule', id: 'under', placement: { anchor: { to: '#box', edge: 'below' }, size: { width: mm(40), height: mm(1) } } }] } as never,
+    };
+    const doc = build('::::page{template="one"}\n:::frame{slot="box"}\nText\n:::\n::::\n', [t], { direction: 'rtl' } as PostextConfig);
+    const page = doc.pages.find((p) => p.composed)!;
+    const box = flowRectToPage(page, frameOn(page, 'box')!.rect);
+    const rule = page.composed!.decoration!.blocks.find((b) => b.kind === 'rule')!;
+    // The frame stands at the flow's start, the sheet's right; the rule under it.
+    expect(box.x).toBeGreaterThan(page.width / 2);
+    expect(rule.bbox.x).toBeCloseTo(box.x, 3);
   });
 });
 
