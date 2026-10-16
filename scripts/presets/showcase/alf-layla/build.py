@@ -50,6 +50,10 @@ import ornaments  # noqa: E402
 import plates as platekit  # noqa: E402
 from _common import at, mm, pt  # noqa: E402
 
+# Phrases the design repeats that are form, not content: the title, the
+# author or a brand line in a running head (#849, `contentInConfig`).
+CONTENT_CHECKS = {"contentInConfig": {"allow": ["ألف ليلة وليلة"]}}
+
 SOURCE = os.path.join(HERE, "source")
 WORK = os.path.join(HERE, "work")
 PRESET_ID = "alf-layla"
@@ -914,7 +918,7 @@ def write_manifest(out: str, chapters: list[dict], shared: list[dict], fonts: li
         **META,
         "view": {"canvasScope": "chapter"},
         "chapters": {LANG: chapters},
-        "config": config(),
+        "config": {**config(), "checks": CONTENT_CHECKS},
         "localized": {LANG: {}},
         "resources": shared,
         "fonts": fonts,

@@ -6320,6 +6320,17 @@
    "lighting": {
     "environment": "daylight"
    }
+  },
+  "checks": {
+   "contentInConfig": {
+    "allow": [
+     "紅樓夢",
+     "红楼梦",
+     "Hung Lou Meng",
+     "The Dream of the Red Chamber",
+     "H. Bencraft Joly"
+    ]
+   }
   }
  },
  "localized": {

@@ -898,6 +898,13 @@
    "lighting": {
     "environment": "studio"
    }
+  },
+  "checks": {
+   "contentInConfig": {
+    "allow": [
+     "www.peppercarrot.com · CC BY 4.0"
+    ]
+   }
   }
  },
  "localized": {

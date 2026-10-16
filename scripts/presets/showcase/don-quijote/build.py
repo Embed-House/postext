@@ -27,6 +27,10 @@ import gutenberg as g  # noqa: E402
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from _common import build_spines as build_spines_of, spine_thickness_mm  # noqa: E402
 
+# Phrases the design repeats that are form, not content: the title, the
+# author or a brand line in a running head (#849, `contentInConfig`).
+CONTENT_CHECKS = {"contentInConfig": {"allow": ["Miguel de Cervantes"]}}
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 SOURCE = os.path.join(HERE, "source")
 REPO = os.path.abspath(os.path.join(HERE, "..", "..", "..", ".."))
@@ -1066,7 +1070,7 @@ def write_manifest(chapters: dict[str, list[dict]], resources: list[dict], wordi
         # opens it with the canvas laying out the whole book.
         "view": {"canvasScope": "book"},
         "chapters": chapters,
-        "config": shared_config(),
+        "config": {**shared_config(), "checks": CONTENT_CHECKS},
         "localized": {lang: {"config": localized_config(lang), "resources": wording[lang]} for lang in LANGS},
         "resources": resources,
         "fonts": fonts,
