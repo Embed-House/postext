@@ -182,6 +182,8 @@ La seva alçada és fixa (una longitud o un percentatge), `fill` (fins a la vora
 
 El contingut que no anomena cap slot va al marc marcat amb `flow`; el primer encapçalament d'un nivell va al marc que el pren amb `takes`. Els marcs d'una pàgina es llegeixen en l'ordre en què el seu contingut apareix per primer cop al Markdown, cadascun sencer: un lector de pantalla, el PDF etiquetat i les sortides de maquetació fluida llegeixen una caixa després del text que obre la pàgina, no pas al mig.
 
+Un encapçalament posat en un marc conserva el disseny del seu nivell o del seu estil d'encapçalament (una pestanya, una banda, `{titleText}` compost pel disseny), compost a l'amplada del marc com en una columna de la pàgina, i el marc guarda el lloc que el disseny ocupa; si el text del marc es redueix, el disseny es redueix amb ell, i si el marc està girat, gira amb ell. Vegeu [En caixes i marcs](/ca/docs/configuration-headings#en-caixes-i-marcs). Fins a postext 1.36 aquest encapçalament es componia sense disseny.
+
 ### Encadenar marcs
 
 `next` envia el que un marc no pot contenir a un altre marc de la mateixa pàgina, i aquest a un altre, com els marcs de text enllaçats de la maquetació de sempre:

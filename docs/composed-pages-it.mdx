@@ -182,6 +182,8 @@ La sua altezza è fissa (una lunghezza o una percentuale), `fill` (fino al bordo
 
 Il contenuto che non indica nessuno slot va nella cornice marcata `flow`; il primo titolo di un livello va nella cornice che lo prende con `takes`. Le cornici di una pagina si leggono nell’ordine in cui il loro contenuto compare per la prima volta nel Markdown, ciascuna per intero: un lettore di schermo, il PDF con tag e le uscite a layout fluido leggono un riquadro dopo il testo che apre la pagina, non nel mezzo.
 
+Un titolo messo in una cornice conserva il progetto grafico del suo livello o del suo stile di titolo (una linguetta, una fascia, `{titleText}` composto dal progetto), composto alla larghezza della cornice come in una colonna della pagina, e la cornice tiene lo spazio che il progetto occupa; una cornice con il testo ridotto riduce il progetto con sé, una cornice ruotata lo ruota. Vedi [Nei riquadri e nelle cornici](/it/docs/configuration-headings#nei-riquadri-e-nelle-cornici). Fino a postext 1.36 un titolo così si componeva senza progetto.
+
 ### Concatenare le cornici
 
 `next` manda ciò che una cornice non riesce a contenere in un’altra cornice della stessa pagina, e questa in un’altra ancora, come le cornici di testo concatenate dei programmi di impaginazione:

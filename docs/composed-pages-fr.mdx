@@ -182,6 +182,8 @@ Sa hauteur est fixe (une longueur ou un pourcentage), `fill` (jusqu’au bord de
 
 Le contenu qui ne nomme aucun slot va dans le bloc marqué `flow` ; le premier titre d’un niveau va au bloc qui le prend avec `takes`. Les blocs d’une page se lisent dans l’ordre où leur contenu apparaît pour la première fois dans le Markdown, chacun en entier : un lecteur d’écran, le PDF balisé et les sorties recomposables lisent un encadré après le texte qui ouvre la page, et non au milieu.
 
+Un titre placé dans un bloc garde la maquette de son niveau ou de son style de titre (un onglet, un bandeau, `{titleText}` composé par la maquette), composée à la largeur du bloc comme dans une colonne de la page, et le bloc garde la place qu’elle prend ; un bloc dont le texte est réduit réduit la maquette avec lui, un bloc pivoté la fait pivoter. Voir [Dans les encadrés et les blocs](/fr/docs/configuration-headings#dans-les-encadrés-et-les-blocs). Jusqu’à postext 1.36, un tel titre était composé sans maquette.
+
 ### Chaîner des blocs
 
 `next` envoie ce qu’un bloc ne peut pas contenir vers un autre bloc de la même page, et celui-ci vers un autre encore, comme des blocs de texte chaînés en PAO :

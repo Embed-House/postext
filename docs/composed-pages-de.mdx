@@ -182,6 +182,8 @@ Seine Höhe ist fest (eine Länge oder ein Prozentwert), `fill` (bis an den Rand
 
 Inhalt, der keinen Slot nennt, kommt in den mit `flow` markierten Rahmen; die erste Überschrift einer Ebene kommt in den Rahmen, der sie mit `takes` übernimmt. Die Rahmen einer Seite werden in der Reihenfolge gelesen, in der ihr Inhalt zum ersten Mal im Markdown auftaucht, jeder als Ganzes: Ein Screenreader, das getaggte PDF und die Ausgaben mit fließendem Layout lesen einen Kasten nach dem Text, mit dem die Seite beginnt, nicht mitten darin.
 
+Eine Überschrift in einem Rahmen behält die Gestaltung ihrer Ebene oder Überschriftenvorlage (einen Reiter, ein Band, `{titleText}` von der Gestaltung gesetzt), in der Breite des Rahmens gesetzt wie in einer Spalte der Seite, und der Rahmen hält den Platz frei, den sie braucht; ein Rahmen mit verkleinertem Text verkleinert die Gestaltung mit, ein gedrehter Rahmen dreht sie mit. Siehe [In Kästen und Rahmen](/de/docs/configuration-headings#in-kästen-und-rahmen). Bis postext 1.36 wurde eine solche Überschrift ohne Gestaltung gesetzt.
+
 ### Rahmen verketten
 
 `next` schickt, was ein Rahmen nicht fasst, in einen anderen Rahmen derselben Seite und von dort weiter in den nächsten, wie verkettete Textrahmen im Layoutprogramm:

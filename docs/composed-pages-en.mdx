@@ -182,6 +182,8 @@ Its height is fixed (a length or a percentage), `fill` (down to the edge of the 
 
 Content that names no slot goes to the frame marked `flow`; the first heading of a level goes to the frame that `takes` it. The frames of a page are read in the order their content first appears in the Markdown, each one whole: a screen reader, the tagged PDF and the reflowable outputs read a box after the text that opens the page, not in the middle of it.
 
+A heading set in a frame keeps the design of its level or heading style (a tab, a band, `{titleText}` set by the design), laid out at the frame's width as in a page column, and the frame keeps the room the design takes; a frame whose text is scaled scales the design with it, a turned frame turns it. See [In boxes and frames](/en/docs/configuration-headings#in-boxes-and-frames). Up to postext 1.36 such a heading was set plain.
+
 ### Chaining frames
 
 `next` sends what a frame cannot hold to another frame of the same page, and that frame to another, like threaded text frames:

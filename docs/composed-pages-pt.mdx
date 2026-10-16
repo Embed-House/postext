@@ -182,6 +182,8 @@ A sua altura é fixa (um comprimento ou uma porcentagem), `fill` (até a borda d
 
 O conteúdo que não nomeia nenhum slot vai para o bloco marcado com `flow`; o primeiro título de um nível vai para o bloco que o recebe com `takes`. Os blocos de uma página são lidos na ordem em que o seu conteúdo aparece pela primeira vez no Markdown, cada um inteiro: um leitor de tela, o PDF etiquetado e as saídas de layout fluido leem um boxe depois do texto que abre a página, e não no meio dele.
 
+Um título posto num bloco mantém o design do seu nível ou do seu estilo de título (uma aba, uma faixa, `{titleText}` composto pelo design), composto na largura do bloco como numa coluna da página, e o bloco reserva o espaço que o design ocupa; um bloco com o texto reduzido reduz o design junto, um bloco girado o gira. Veja [Em caixas e blocos](/pt/docs/configuration-headings#em-caixas-e-blocos). Até o postext 1.36 esse título era composto sem design.
+
 ### Encadear blocos
 
 `next` manda o que um bloco não consegue conter para outro bloco da mesma página, e esse para outro, como as caixas de texto encadeadas dos programas de diagramação:

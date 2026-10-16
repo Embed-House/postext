@@ -513,6 +513,14 @@ Um elemento ancorado num elemento que não reserva espaço continua contando, a 
 # Letter from the chair
 ```
 
+#### Em caixas e blocos
+
+Um título dentro de uma caixa (`:::callout`) ou de um bloco de uma [página composta](/pt/docs/composed-pages) também é desenhado pelo seu design: o `advancedDesign` do seu nível ou do seu estilo de título põe a aba, a faixa, os fios e `{titleText}` no lugar das suas linhas, como numa coluna da página. O design é composto sobre a própria caixa do título, tão larga quanto o texto da caixa, e a caixa reserva o espaço que o design ocupa: o mais alto entre o texto do título, o pé do conteúdo do design e `minHeight` ([Altura reservada](#altura-reservada)). Uma caixa não tem grade de linhas de base, então esse espaço não é arredondado para uma linha; depois vem o `marginBottom` do título, como depois de qualquer título da caixa. Um elemento ancorado ao contêiner com um deslocamento negativo sai da caixa do título, por cima do preenchimento ou da aba da caixa; a caixa não o corta, a não ser que o conteúdo de um bloco passe do pé dele (um bloco que transborda recorta tudo o que contém). Os elementos ancorados a `'page'` ou `'bleed'` continuam referidos à página.
+
+Um título `span: 'page'` dentro de uma caixa é composto como um de coluna, na largura da caixa: uma caixa não abre página nem faixa de abertura. O estilo de título continua dando a ele a sua aparência, mas um título dentro de uma caixa não abre uma seção com estilo: os cabeçalhos, o papel da página e os valores `{attr.…}` do capítulo continuam vindo dos títulos do fluxo. Uma caixa nunca é cortada entre as linhas de um título que o seu design desenha.
+
+Num bloco cujo texto a escada de reajuste reduz (`fit.minScale`), o design é reduzido junto com o texto e um elemento ancorado à página fica no canto da página, com os deslocamentos na mesma escala; um bloco girado gira o design junto; numa página dupla, a metade de um bloco mostrada na página da frente também mostra o design. Um clique no título que o design imprime leva ao Markdown do título (`sourceAt`). Até o postext 1.36 os títulos das caixas eram compostos sem design: uma caixa fixa, flutuante ou de página composta não desenhava nenhum, o design de um estilo de título não era desenhado em nenhuma caixa, e o de um nível, numa caixa da coluna, ficava espremido na altura do texto do título, por cima do que vinha depois. Desde o postext 1.37.
+
 ### Números por extenso
 
 Dois sufixos de modelo de numeração escrevem um contador por extenso, no idioma do documento (o `locale` de nível superior ou, na falta dele, o idioma de hifenização; veja [Idioma do documento](/pt/docs/configuration-language#idioma-do-documento)): `words` para o cardinal e `ordinal` para o ordinal. A caixa do sufixo define a caixa das palavras, como `A` / `a` faz com as letras:

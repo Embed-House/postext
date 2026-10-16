@@ -182,6 +182,8 @@ Su altura es fija (una longitud o un porcentaje), `fill` (hasta el borde del ár
 
 El contenido que no nombra ningún slot va al marco marcado con `flow`; el primer encabezado de un nivel va al marco que lo toma con `takes`. Los marcos de una página se leen en el orden en que su contenido aparece por primera vez en el Markdown, cada uno entero: un lector de pantalla, el PDF etiquetado y las salidas de maquetación fluida leen una caja después del texto que abre la página, no en medio de él.
 
+Un encabezado puesto en un marco conserva el diseño de su nivel o de su estilo de encabezado (una pestaña, una banda, `{titleText}` compuesto por el diseño), compuesto al ancho del marco como en una columna de la página, y el marco guarda el sitio que el diseño ocupa; si el texto del marco se reduce, el diseño se reduce con él, y si el marco está girado, gira con él. Véase [En cajas y marcos](/es/docs/configuration-headings#en-cajas-y-marcos). Hasta postext 1.36 ese encabezado se componía sin diseño.
+
 ### Encadenar marcos
 
 `next` envía lo que un marco no puede contener a otro marco de la misma página, y ese a otro, como los marcos de texto enlazados de la maquetación tradicional:
