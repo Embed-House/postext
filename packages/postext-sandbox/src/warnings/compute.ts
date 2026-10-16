@@ -716,10 +716,13 @@ function collectHeadingBreakParityWarnings(config: PostextConfig): Warning[] {
  *  font stack in a font-family field, an unknown numbering format, a
  *  one-and-a-half layout's side column that leaves a column with no width,
  *  a heading setting the engine does not know. */
-function collectConfigValueWarnings(config: PostextConfig, resources: readonly Resource[]): Warning[] {
-  return collectConfigWarnings(config, { resources }).map((w) => ({
+function collectConfigValueWarnings(config: PostextConfig, resources: readonly Resource[], metadata?: Record<string, unknown>): Warning[] {
+  return collectConfigWarnings(config, { resources, ...(metadata ? { metadata } : {}) }).map((w): Warning => ({
     id: `config-${w.kind}-${w.path}`,
-    payload: { kind: w.kind, path: w.path, value: w.value, used: w.used, ...(w.suggestion ? { suggestion: w.suggestion } : {}), ...(w.resourceId !== undefined ? { resourceId: w.resourceId } : {}) } as WarningPayload,
+    // Text held in a design (#849): the setting, its texts and a sample.
+    payload: w.kind === 'contentInConfig'
+      ? { kind: 'contentInConfig', path: w.path, ...(w.ownerId !== undefined ? { ownerId: w.ownerId } : {}), count: w.count ?? 1, chars: w.chars ?? 0, elements: w.elements ?? [], sample: w.value }
+      : { kind: w.kind, path: w.path, value: w.value, used: w.used, ...(w.suggestion ? { suggestion: w.suggestion } : {}), ...(w.resourceId !== undefined ? { resourceId: w.resourceId } : {}) } as WarningPayload,
   }));
 }
 
@@ -1394,7 +1397,9 @@ function computeDocumentWarnings(params: {
   warnings.push(...collectContainerWarnings(markdown, issues));
   warnings.push(...collectChipOverlapWarnings(markdown, doc));
   warnings.push(...collectHeadingBreakParityWarnings(config));
-  warnings.push(...collectConfigValueWarnings(config, resources));
+  // The book's title and author may stand in a design (#849): the book's
+  // metadata, else this chapter's own front matter.
+  warnings.push(...collectConfigValueWarnings(config, resources, bookMetadata ?? (extractFrontmatter(markdown).metadata as Record<string, unknown> | undefined)));
   warnings.push(...collectHyphenationLocaleWarnings(config));
   warnings.push(...collectParityCascadeWarnings(doc));
   warnings.push(...collectAlphaOverflowWarnings(doc));

@@ -4354,7 +4354,18 @@
     "wordExportDone": "نُزّل __file__.",
     "wordStyleCallout": "إطار: __name__",
     "wordStyleCalloutTitle": "إطار: __name__: عنوان",
-    "wordStyleChip": "شارة: __name__"
+    "wordStyleChip": "شارة: __name__",
+    "checksSection": "المحتوى في الإعدادات",
+    "checksContentEnabled": "التنبيه إلى النص المحفوظ في التصاميم",
+    "checksContentEnabledTooltip": "ينبّه حين يحمل رأس صفحة جارٍ أو تصميم عنوان أو صفحة جزء أو سطر في الفهرس نصَّ الكتاب بدل العناصر النائبة. مكان هذا النص هو ملف Markdown.",
+    "checksContentMaxWords": "الكلمات المسموح بها",
+    "checksContentMaxWordsTooltip": "أقصى عدد من الكلمات يحمله نص التصميم إلى جانب عناصره النائبة، مثل «الفصل» قبل رقم الفصل.",
+    "checksContentMaxChars": "الحروف المسموح بها",
+    "checksContentMaxCharsTooltip": "أقصى عدد من الحروف والأرقام يحمله نص التصميم إلى جانب عناصره النائبة. ويُحسب الحرف الصيني أو الياباني أو الكوري بثلاثة.",
+    "checksContentAllow": "العبارات المسموح بها",
+    "checksContentAllowTooltip": "عبارة في كل سطر: عبارات يجوز للتصميم تكرارها مهما طالت، مثل عنوان الكتاب أو اسم الناشر. والعنوان والعنوان الفرعي والمؤلف والناشر في البيانات الوصفية مسموح بها أصلًا.",
+    "warningsContentInConfigTitle": "نص محفوظ في الإعدادات",
+    "warningsContentInConfigDetail": "تحمل __count__ من نصوص التصميم __chars__ حرفًا من المحتوى («__sample__»). انقل النص إلى Markdown (عنوان أو إطار أو فقرة) واترك في التصميم العناصر النائبة وحدها، أو أضف العبارة في المحتوى في الإعدادات › العبارات المسموح بها."
   },
   "PlainLanguage": {
     "heading": "باختصار",

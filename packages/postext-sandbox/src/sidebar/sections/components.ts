@@ -33,6 +33,7 @@ import { HtmlViewerSection } from './HtmlViewerSection';
 import { PdfGenerationSection } from './PdfGenerationSection';
 import { PrintSection } from './PrintSection';
 import { ContrastSection } from './ContrastSection';
+import { ChecksSection } from './ChecksSection';
 import { FolioSection } from './FolioSection';
 import { DebugSection } from './DebugSection';
 import { WarningsConfigSection } from './WarningsConfigSection';
@@ -84,6 +85,7 @@ export const SECTION_COMPONENTS: Record<SettingsSectionId, ComponentType> = {
   'pdfGeneration': PdfGenerationSection,
   'print': PrintSection,
   'contrast': ContrastSection,
+  'checks': ChecksSection,
   'debug': DebugSection,
   'warnings': WarningsConfigSection,
 };

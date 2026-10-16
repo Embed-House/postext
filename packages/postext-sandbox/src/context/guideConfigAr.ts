@@ -477,6 +477,8 @@ export function createArabicGuideConfig(): PostextConfig {
       ],
     },
     colorPalette: colorPalette('ar'),
+    // The guide's site on the back cover is form, not content (#849).
+    checks: { contentInConfig: { allow: ['postext.dev · github.com/drnachio/postext'] } },
     resourceTypes: defaultResourceTypes('ar'),
     pdfGeneration: { outlines: true },
   };

@@ -4354,7 +4354,18 @@
     "wordExportDone": "S'ha baixat __file__.",
     "wordStyleCallout": "Requadre: __name__",
     "wordStyleCalloutTitle": "Requadre: __name__: títol",
-    "wordStyleChip": "Etiqueta: __name__"
+    "wordStyleChip": "Etiqueta: __name__",
+    "checksSection": "Contingut a la configuració",
+    "checksContentEnabled": "Avisar del text desat als dissenys",
+    "checksContentEnabledTooltip": "Avisa quan un títol corrent, el disseny d'un títol, una pàgina de part o una fila de l'índex desa el text del llibre en lloc de marcadors. Aquest text va al Markdown.",
+    "checksContentMaxWords": "Paraules permeses",
+    "checksContentMaxWordsTooltip": "Paraules que pot dur com a màxim un text de disseny a més dels marcadors, com ara «Capítol» davant del número.",
+    "checksContentMaxChars": "Lletres permeses",
+    "checksContentMaxCharsTooltip": "Lletres i xifres que pot dur com a màxim un text de disseny a més dels marcadors. Un caràcter xinès, japonès o coreà compta per tres.",
+    "checksContentAllow": "Frases permeses",
+    "checksContentAllowTooltip": "Una per línia: frases que un disseny pot repetir sense límit de llargada, com el títol del llibre o el nom de l'editorial. El títol, el subtítol, l'autor i l'editorial de les metadades ja hi són permesos.",
+    "warningsContentInConfigTitle": "Text desat a la configuració",
+    "warningsContentInConfigDetail": "__count__ textos de disseny desen __chars__ lletres de contingut («__sample__»). Porta el text al Markdown (un títol, un requadre o un paràgraf) i deixa només marcadors al disseny, o afegeix la frase a Contingut a la configuració › Frases permeses."
   },
   "PlainLanguage": {
     "heading": "En poques paraules",

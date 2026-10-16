@@ -9,6 +9,7 @@ import {
   effectiveResourceTypes,
   resolveCodeStyleConfig,
   resolveComicsConfig,
+  resolveChecksConfig,
   resolveContrastConfig,
   resolveDebugConfig,
   resolveFolioConfig,
@@ -26,7 +27,7 @@ const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 /** `config` as the engine resolves it for a book read in `locale`, with
  *  the sections the engine only resolves when a book sets them (print,
  *  the PDF, the Folio, line numbers, code, comics, the contrast check,
- *  page templates and label styles)
+ *  the checks of the configuration, page templates and label styles)
  *  and the ones the Sandbox reads itself (the guides, the HTML reader).
  *  Throws when the engine cannot resolve the configuration. */
 export function resolveEffectiveConfig(config: PostextConfig, locale: string, resources: readonly Resource[] = []): Record<string, unknown> {
@@ -42,6 +43,7 @@ export function resolveEffectiveConfig(config: PostextConfig, locale: string, re
     pdfGeneration: resolved.pdfGeneration ?? resolvePdfGenerationConfig(config.pdfGeneration),
     print: resolved.print ?? resolvePrintConfig(config.print),
     contrast: resolved.contrast ?? resolveContrastConfig(config.contrast),
+    checks: resolved.checks ?? resolveChecksConfig(config.checks),
     folio: resolved.folio ?? resolveFolioConfig(config.folio, resolved.page.sizePreset),
     lineNumbers: resolved.lineNumbers ?? resolveLineNumbersConfig(config.lineNumbers, resolved.bodyText),
     codeStyle: resolved.codeStyle ?? resolveCodeStyleConfig(config.codeStyle, resolved.bodyText),

@@ -4354,7 +4354,18 @@
     "wordExportDone": "已下载__file__。",
     "wordStyleCallout": "标注框: __name__",
     "wordStyleCalloutTitle": "标注框: __name__: 标题",
-    "wordStyleChip": "标签: __name__"
+    "wordStyleChip": "标签: __name__",
+    "checksSection": "配置中的正文",
+    "checksContentEnabled": "提示设计中存放的正文",
+    "checksContentEnabledTooltip": "页眉、标题设计、部分页或目录行中存放了书的正文而不是占位符时发出警告。这些文字应写在 Markdown 中。",
+    "checksContentMaxWords": "允许的词数",
+    "checksContentMaxWordsTooltip": "设计文字在占位符之外最多可含的词数，例如章号前的“Chapter”。",
+    "checksContentMaxChars": "允许的字数",
+    "checksContentMaxCharsTooltip": "设计文字在占位符之外最多可含的字母和数字。一个中文、日文或韩文字符按三个计。",
+    "checksContentAllow": "允许的短语",
+    "checksContentAllowTooltip": "每行一个：设计可以不限长度重复的短语，例如书名或出版社名称。元数据中的书名、副标题、作者和出版社已默认允许。",
+    "warningsContentInConfigTitle": "配置中存放的正文",
+    "warningsContentInConfigDetail": "__count__ 个设计文字含有 __chars__ 个字符的正文（“__sample__”）。请把文字移到 Markdown 中（标题、标注框或段落），设计里只保留占位符；或在“配置中的正文 › 允许的短语”中加入该短语。"
   },
   "PlainLanguage": {
     "heading": "简单来说",

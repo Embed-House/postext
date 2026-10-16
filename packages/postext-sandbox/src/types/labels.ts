@@ -462,6 +462,15 @@ export interface SandboxLabels {
   preflightSmallProcessText: string;
   preflightSmallProcessTextDetail: string;
   contrastSection: string;
+  checksSection: string;
+  checksContentEnabled: string;
+  checksContentEnabledTooltip: string;
+  checksContentMaxWords: string;
+  checksContentMaxWordsTooltip: string;
+  checksContentMaxChars: string;
+  checksContentMaxCharsTooltip: string;
+  checksContentAllow: string;
+  checksContentAllowTooltip: string;
   contrastEnabled: string;
   contrastEnabledTooltip: string;
   contrastLevel: string;
@@ -1924,6 +1933,8 @@ export interface SandboxLabels {
   warningsOverflowTargetUnknownDetail: string;
   warningsLabelStyleUnknownTitle: string;
   warningsLabelStyleUnknownDetail: string;
+  warningsContentInConfigTitle: string;
+  warningsContentInConfigDetail: string;
 
   // Color palette section
   colorPalette: string;

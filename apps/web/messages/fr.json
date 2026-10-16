@@ -4354,7 +4354,18 @@
     "wordExportDone": "__file__ téléchargé.",
     "wordStyleCallout": "Encadré : __name__",
     "wordStyleCalloutTitle": "Encadré : __name__ : titre",
-    "wordStyleChip": "Pastille : __name__"
+    "wordStyleChip": "Pastille : __name__",
+    "checksSection": "Contenu dans la configuration",
+    "checksContentEnabled": "Signaler le texte rangé dans les maquettes",
+    "checksContentEnabledTooltip": "Avertit quand un titre courant, la maquette d’un titre, une page de partie ou une ligne de la table des matières contient le texte du livre au lieu de variables. Ce texte a sa place dans le Markdown.",
+    "checksContentMaxWords": "Mots admis",
+    "checksContentMaxWordsTooltip": "Nombre de mots qu’un texte de maquette peut contenir en plus de ses variables, comme « Chapitre » devant le numéro.",
+    "checksContentMaxChars": "Lettres admises",
+    "checksContentMaxCharsTooltip": "Nombre de lettres et de chiffres qu’un texte de maquette peut contenir en plus de ses variables. Un caractère chinois, japonais ou coréen compte pour trois.",
+    "checksContentAllow": "Expressions admises",
+    "checksContentAllowTooltip": "Une par ligne : des expressions qu’une maquette peut répéter quelle que soit leur longueur, comme le titre du livre ou le nom de l’éditeur. Le titre, le sous-titre, l’auteur et l’éditeur des métadonnées sont déjà admis.",
+    "warningsContentInConfigTitle": "Texte rangé dans la configuration",
+    "warningsContentInConfigDetail": "__count__ textes de maquette contiennent __chars__ lettres de contenu (« __sample__ »). Déplacez le texte dans le Markdown (un titre, un encadré ou un paragraphe) et ne laissez que des variables dans la maquette, ou ajoutez l’expression à Contenu dans la configuration › Expressions admises."
   },
   "PlainLanguage": {
     "heading": "En bref",

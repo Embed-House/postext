@@ -4354,7 +4354,18 @@
     "wordExportDone": "__file__ baixado.",
     "wordStyleCallout": "Boxe: __name__",
     "wordStyleCalloutTitle": "Boxe: __name__: título",
-    "wordStyleChip": "Chip: __name__"
+    "wordStyleChip": "Chip: __name__",
+    "checksSection": "Conteúdo na configuração",
+    "checksContentEnabled": "Avisar do texto guardado nos designs",
+    "checksContentEnabledTooltip": "Avisa quando um cabeço, o design de um título, uma página de parte ou uma linha do sumário guarda o texto do livro em vez de marcadores. Esse texto vai no Markdown.",
+    "checksContentMaxWords": "Palavras permitidas",
+    "checksContentMaxWordsTooltip": "Quantas palavras um texto de design pode ter no máximo além dos marcadores, como “Capítulo” antes do número.",
+    "checksContentMaxChars": "Letras permitidas",
+    "checksContentMaxCharsTooltip": "Quantas letras e algarismos um texto de design pode ter no máximo além dos marcadores. Um caractere chinês, japonês ou coreano conta por três.",
+    "checksContentAllow": "Frases permitidas",
+    "checksContentAllowTooltip": "Uma por linha: frases que um design pode repetir de qualquer tamanho, como o título do livro ou o nome da editora. O título, o subtítulo, o autor e a editora dos metadados já são permitidos.",
+    "warningsContentInConfigTitle": "Texto guardado na configuração",
+    "warningsContentInConfigDetail": "__count__ textos de design guardam __chars__ letras de conteúdo (“__sample__”). Leve o texto para o Markdown (um título, um boxe ou um parágrafo) e deixe só marcadores no design, ou acrescente a frase em Conteúdo na configuração › Frases permitidas."
   },
   "PlainLanguage": {
     "heading": "Em poucas palavras",

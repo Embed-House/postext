@@ -4355,7 +4355,18 @@
     "wordExportDone": "__file__ heruntergeladen.",
     "wordStyleCallout": "Kasten: __name__",
     "wordStyleCalloutTitle": "Kasten: __name__: Titel",
-    "wordStyleChip": "Chip: __name__"
+    "wordStyleChip": "Chip: __name__",
+    "checksSection": "Inhalt in der Konfiguration",
+    "checksContentEnabled": "Text in Gestaltungen melden",
+    "checksContentEnabledTooltip": "Warnt, wenn ein Kolumnentitel, die Gestaltung einer Überschrift, eine Teilseite oder eine Zeile des Inhaltsverzeichnisses den Text des Buches statt Platzhaltern enthält. Dieser Text gehört ins Markdown.",
+    "checksContentMaxWords": "Erlaubte Wörter",
+    "checksContentMaxWordsTooltip": "So viele Wörter darf ein Gestaltungstext neben seinen Platzhaltern höchstens enthalten, etwa „Kapitel“ vor der Kapitelnummer.",
+    "checksContentMaxChars": "Erlaubte Buchstaben",
+    "checksContentMaxCharsTooltip": "So viele Buchstaben und Ziffern darf ein Gestaltungstext neben seinen Platzhaltern höchstens enthalten. Ein chinesisches, japanisches oder koreanisches Zeichen zählt dreifach.",
+    "checksContentAllow": "Erlaubte Wendungen",
+    "checksContentAllowTooltip": "Eine pro Zeile: Wendungen, die eine Gestaltung in jeder Länge wiederholen darf, etwa der Buchtitel oder der Name des Verlags. Titel, Untertitel, Autor und Verlag aus den Metadaten sind bereits erlaubt.",
+    "warningsContentInConfigTitle": "Text in der Konfiguration",
+    "warningsContentInConfigDetail": "__count__ Gestaltungstexte enthalten __chars__ Buchstaben Inhalt („__sample__“). Verschieben Sie den Text ins Markdown (eine Überschrift, ein Kasten oder ein Absatz) und lassen Sie in der Gestaltung nur Platzhalter, oder nehmen Sie die Wendung unter Inhalt in der Konfiguration › Erlaubte Wendungen auf."
   },
   "PlainLanguage": {
     "heading": "Kurz gesagt",

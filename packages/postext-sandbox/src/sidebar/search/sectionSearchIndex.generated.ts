@@ -5209,6 +5209,23 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'resetSectionConfirm',
     ],
   },
+  'checks': {
+    sources: [],
+    literals: [],
+    keys: [
+      'checksContentAllow',
+      'checksContentAllowTooltip',
+      'checksContentEnabled',
+      'checksContentEnabledTooltip',
+      'checksContentMaxChars',
+      'checksContentMaxCharsTooltip',
+      'checksContentMaxWords',
+      'checksContentMaxWordsTooltip',
+      'checksSection',
+      'reset',
+      'resetSectionConfirm',
+    ],
+  },
   'debug': {
     sources: ['color', 'dimension'],
     literals: [],

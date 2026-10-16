@@ -117,6 +117,7 @@ export type WarningKind =
   | 'frameChainLoop'
   | 'overflowTargetUnknown'
   | 'labelStyleUnknown'
+  | 'contentInConfig'
   | 'unsupportedHyphenationLocale'
   | 'missingGlyph'
   | 'variableFontDefaultInstance'
@@ -399,6 +400,11 @@ export type WarningPayload =
   /** A resource type's `defaultPlacement.wrap` in a vertical document
    *  (#627): ignored, the figures keep their bands whole. */
   | { kind: 'wrapUnsupported'; path: string; value: string; used: string }
+  /** Design texts of one setting (a heading style, a heading level, the
+   *  page header, a part design…) that hold the book's text instead of
+   *  placeholders (#849). `path` is the setting, `elements` the paths of
+   *  the texts (the first 20 of `count`), `sample` the start of the first. */
+  | { kind: 'contentInConfig'; path: string; ownerId?: string; count: number; chars: number; elements: string[]; sample: string }
   /** A resource or a box set to wrap text round it that does not (#627):
    *  the text beside it would be too narrow, it is too short for lines
    *  beside it, it moved on to the next column, or the text is vertical. */

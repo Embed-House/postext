@@ -151,6 +151,7 @@ function iconFor(kind: WarningPayload['kind']) {
       return List;
     case 'unknownConfigKey':
     case 'unknownConfigValue':
+    case 'contentInConfig':
       return FileWarning;
     case 'templateDuplicate':
     case 'templateExtendsCycle':
@@ -416,6 +417,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsOverflowTargetUnknownTitle;
     case 'labelStyleUnknown':
       return labels.warningsLabelStyleUnknownTitle;
+    case 'contentInConfig':
+      return labels.warningsContentInConfigTitle;
     case 'unsupportedHyphenationLocale':
       return labels.warningsUnsupportedHyphenationLocaleTitle;
     case 'missingGlyph':
@@ -759,6 +762,13 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
     case 'overflowTargetUnknown':
     case 'labelStyleUnknown':
       return pageTemplateDetail(payload, labels);
+    case 'contentInConfig': {
+      const where = `${payload.elements.slice(0, 3).join(', ')}${payload.count > 3 ? ` … (${payload.count})` : ''}`;
+      return `${payload.path}${payload.ownerId ? ` (${payload.ownerId})` : ''}: ${where} — ${labels.warningsContentInConfigDetail
+        .replace('__count__', String(payload.count))
+        .replace('__chars__', String(payload.chars))
+        .replace('__sample__', payload.sample)}`;
+    }
     case 'unsupportedHyphenationLocale':
       return labels.warningsUnsupportedHyphenationLocaleDetail
         .replace('__locale__', payload.locale)

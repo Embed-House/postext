@@ -4355,7 +4355,18 @@
     "wordExportDone": "__file__ scaricato.",
     "wordStyleCallout": "Riquadro: __name__",
     "wordStyleCalloutTitle": "Riquadro: __name__: titolo",
-    "wordStyleChip": "Chip: __name__"
+    "wordStyleChip": "Chip: __name__",
+    "checksSection": "Contenuto nella configurazione",
+    "checksContentEnabled": "Segnala il testo tenuto nei design",
+    "checksContentEnabledTooltip": "Avvisa quando un titolo corrente, il design di un titolo, una pagina di parte o una riga dell’indice contiene il testo del libro al posto dei segnaposto. Quel testo va nel Markdown.",
+    "checksContentMaxWords": "Parole ammesse",
+    "checksContentMaxWordsTooltip": "Quante parole al massimo può contenere un testo di design oltre ai segnaposto, come «Capitolo» davanti al numero.",
+    "checksContentMaxChars": "Lettere ammesse",
+    "checksContentMaxCharsTooltip": "Quante lettere e cifre al massimo può contenere un testo di design oltre ai segnaposto. Un carattere cinese, giapponese o coreano conta tre.",
+    "checksContentAllow": "Frasi ammesse",
+    "checksContentAllowTooltip": "Una per riga: frasi che un design può ripetere di qualsiasi lunghezza, come il titolo del libro o il nome dell’editore. Titolo, sottotitolo, autore ed editore dei metadati sono già ammessi.",
+    "warningsContentInConfigTitle": "Testo tenuto nella configurazione",
+    "warningsContentInConfigDetail": "__count__ testi di design contengono __chars__ lettere di contenuto («__sample__»). Sposta il testo nel Markdown (un titolo, un riquadro o un paragrafo) e lascia solo segnaposto nel design, oppure aggiungi la frase in Contenuto nella configurazione › Frasi ammesse."
   },
   "PlainLanguage": {
     "heading": "In breve",

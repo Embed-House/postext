@@ -70,6 +70,7 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'frameChainLoop':
     case 'overflowTargetUnknown':
     case 'labelStyleUnknown':
+    case 'contentInConfig':
     case 'headingDesignCut':
       return 'design';
     case 'looseLine':

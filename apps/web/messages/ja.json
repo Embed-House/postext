@@ -4354,7 +4354,18 @@
     "wordExportDone": "__file__をダウンロードしました。",
     "wordStyleCallout": "囲み: __name__",
     "wordStyleCalloutTitle": "囲み: __name__: 見出し",
-    "wordStyleChip": "チップ: __name__"
+    "wordStyleChip": "チップ: __name__",
+    "checksSection": "設定内の本文",
+    "checksContentEnabled": "デザインに置かれた本文を知らせる",
+    "checksContentEnabledTooltip": "柱、見出しのデザイン、部扉、目次の部の行に、プレースホルダーではなく本の本文が入っているときに警告します。その文章はMarkdownに書きます。",
+    "checksContentMaxWords": "許可する語数",
+    "checksContentMaxWordsTooltip": "デザインのテキストがプレースホルダー以外に含められる語数の上限です。章番号の前の「Chapter」などが該当します。",
+    "checksContentMaxChars": "許可する文字数",
+    "checksContentMaxCharsTooltip": "デザインのテキストがプレースホルダー以外に含められる文字と数字の上限です。中国語・日本語・韓国語の文字は1字を3として数えます。",
+    "checksContentAllow": "許可する語句",
+    "checksContentAllowTooltip": "1行に1つ：書名や出版社名など、デザインが長さに関係なく繰り返してよい語句です。メタデータの書名、副題、著者、出版社は最初から許可されています。",
+    "warningsContentInConfigTitle": "設定内に置かれた本文",
+    "warningsContentInConfigDetail": "__count__個のデザインのテキストに__chars__字の本文があります（「__sample__」）。文章をMarkdown（見出し、囲み、段落）に移し、デザインにはプレースホルダーだけを残してください。または「設定内の本文 › 許可する語句」に語句を加えてください。"
   },
   "PlainLanguage": {
     "heading": "かんたんな説明",
