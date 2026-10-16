@@ -2286,7 +2286,8 @@ def check_snippet(where: str, text: str, res_ids: set[str], rep: Report) -> None
 
 def check_content_in_config(m: dict, root: Path, rep: Report) -> None:
     """Text of the book typed into design text elements (preset_kit.py lint):
-    one error per slot that holds some, and the size of the config."""
+    one error per owner that holds some (counted as the engine's
+    contentInConfig warning), and the size of the config."""
     try:
         sys.path.insert(0, str(Path(__file__).resolve().parent))
         import preset_kit  # noqa: PLC0415
@@ -2298,17 +2299,20 @@ def check_content_in_config(m: dict, root: Path, rep: Report) -> None:
         return f.read_text(encoding="utf-8", errors="replace") if f.is_file() else None
 
     res = preset_kit.lint_manifest(m, read=read)
-    groups: dict[tuple[str, str], list[dict]] = {}
+    groups: dict[str, list[dict]] = {}
     for f in res["findings"]:
-        groups.setdefault((f["owner"], f["slot"]), []).append(f)
-    for (owner, slot), fs in groups.items():
+        groups.setdefault(f["owner"], []).append(f)
+    for owner, fs in groups.items():
         first = fs[0]
         sample = first["text"] if len(first["text"]) <= 50 else first["text"][:47] + "..."
-        rep.error(f"{owner} ({slot})",
-                  f"contentInConfig: {len(fs)} design text element(s) hold {sum(f['chars'] for f in fs)} characters "
-                  f"of the book's text ({first['path']}: \"{sample}\"). Content goes in the Markdown "
-                  "(headings, callouts, :::paragraphs, {attr.key} attributes); allow a publisher's name or "
-                  "running-head literal with config.checks.contentInConfig.allow. `preset_kit.py lint` lists them all")
+        oid = f" ({first['ownerId']})" if first.get("ownerId") else ""
+        eds = sorted({e for f in fs for e in f["editions"] if e})
+        rep.error(f"{owner}{oid}",
+                  f"contentInConfig: {len(fs)} design text(s) hold {sum(f['chars'] for f in fs)} letters and digits "
+                  f"of the book's text ({first['path']}: \"{sample}\"){' in ' + ', '.join(eds) if len(eds) > 1 else ''}. "
+                  "Content goes in the Markdown (headings, callouts, :::paragraphs, {attr.key} attributes); allow a "
+                  "publisher's name or running-head literal with config.checks.contentInConfig.allow. "
+                  "`preset_kit.py lint` lists them all")
     size = res["configBytes"]
     if size >= preset_kit.SIZE_WARN_BYTES:
         rep.warn("preset.json config", f"the config is {size / 1048576:.1f} MB: the Sandbox keeps a book in about "
