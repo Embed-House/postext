@@ -9,8 +9,10 @@
  */
 
 import type { ChipBox, ContentBlock, InlineSpan } from '../parse';
+import type { ResolvedInlineCodeStyleConfig } from '../types';
 import type { ResolvedConfig } from '../vdt';
 import { sliceSpan } from '../parse/links';
+import { computeSourceMap } from '../parse/sourceMapping';
 import { setsObject } from '../measure/rich';
 import { dimensionToPx } from '../units';
 
@@ -18,10 +20,7 @@ import { dimensionToPx } from '../units';
 export const INLINE_CODE_CHIP_STYLE = '__postext-code';
 
 /** The chip box of inline code in text of `fontSizePx`. */
-function inlineCodeBox(resolved: ResolvedConfig, fontSizePx: number): ChipBox | undefined {
-  const inline = resolved.codeStyle?.inline;
-  if (!inline) return undefined;
-  const dpi = resolved.page.dpi;
+function inlineCodeBox(inline: ResolvedInlineCodeStyleConfig, dpi: number, fontSizePx: number): ChipBox {
   const sizePx = dimensionToPx(inline.fontSize, dpi, fontSizePx);
   const px = (d: Parameters<typeof dimensionToPx>[0]) => Math.max(0, dimensionToPx(d, dpi, sizePx));
   const borderWidthPx = inline.borderColor ? px(inline.borderWidth) : 0;
@@ -51,21 +50,85 @@ function inlineCodeBox(resolved: ResolvedConfig, fontSizePx: number): ChipBox | 
  */
 export function withInlineCode(block: ContentBlock, raw: ContentBlock, resolved: ResolvedConfig, fontSizePx: number): ContentBlock {
   const ranges = raw.inlineCode;
-  if (!ranges || ranges.length === 0 || !resolved.codeStyle?.inline) return block;
-  const box = inlineCodeBox(resolved, fontSizePx);
-  if (!box) return block;
+  const inline = resolved.codeStyle?.inline;
+  if (!ranges || ranges.length === 0 || !inline) return block;
   const prefix = block.text.length - raw.text.length;
   const map = raw.sourceMap;
-  const isCode = (p: number): boolean => {
+  const spans = codeChipSpans(block.spans, (p) => {
     const i = p - prefix;
     if (i < 0 || i >= map.length) return false;
     const at = map[i]!;
     return ranges.some((r) => at >= r.start && at < r.end);
-  };
+  }, inlineCodeBox(inline, resolved.page.dpi, fontSizePx));
+  return spans === block.spans ? block : { ...block, spans };
+}
+
+/** Inline code between two backticks on one line, outside an escape, as
+ *  the block parser reads it. */
+const SNIPPET_CODE_RE = /(?<!\\)`([^`\n]+?)`/g;
+
+/**
+ * The spans of an inline snippet (a table cell, a caption, a note) with the
+ * characters of its inline code set as code chips, when `inline` is set and
+ * `content` (the snippet as written, which `spans` were parsed from) has
+ * inline code. Run on the spans {@link parseInlineSnippetSpans} returns,
+ * before formulas and references are resolved.
+ */
+export function withSnippetInlineCode(
+  spans: InlineSpan[],
+  content: string,
+  inline: ResolvedInlineCodeStyleConfig | undefined,
+  dpi: number,
+  fontSizePx: number,
+): InlineSpan[] {
+  if (!inline || !content.includes('`')) return spans;
+  const ranges: Array<{ start: number; end: number }> = [];
+  SNIPPET_CODE_RE.lastIndex = 0;
+  for (let m = SNIPPET_CODE_RE.exec(content); m; m = SNIPPET_CODE_RE.exec(content)) {
+    ranges.push({ start: m.index + 1, end: m.index + 1 + m[1]!.length });
+  }
+  if (ranges.length === 0) return spans;
+  const map = computeSourceMap(content, 0, content.length, spans.map((s) => s.text).join(''));
+  return codeChipSpans(spans, (p) => {
+    const at = map[p];
+    return at !== undefined && ranges.some((r) => at >= r.start && at < r.end);
+  }, inlineCodeBox(inline, dpi, fontSizePx));
+}
+
+/** The spans of one run of inline code: a chip per piece between its
+ *  inner spaces, each space a code space a line may break at (#845), so a
+ *  long piece of code never leaves a line it cannot fill. A hyphen between
+ *  a letter or digit and a letter (`simp-chinese-informal`) is a place to
+ *  break too, behind an empty code space: the hyphen stays the code's, and
+ *  none is added. Spaces that open or close the run stay inside its first
+ *  or last piece. */
+function codePieces(span: InlineSpan, text: string, box: ChipBox): InlineSpan[] {
+  const chip = (t: string, joinNext: boolean): InlineSpan => ({
+    text: t, bold: span.bold, italic: span.italic,
+    chip: { style: INLINE_CODE_CHIP_STYLE, spans: [{ text: t, bold: false, italic: false }], box, ...(joinNext ? { joinNext: true } : {}) },
+  });
+  const parts = /^(\s*)(.*?)(\s*)$/s.exec(text)!;
+  const inner = parts[2]!.split(/( +)|(?<=[\p{L}\p{N}]-)(?=\p{L})/u).map((t) => t ?? '');
+  if (inner.length === 1) return [chip(text, false)];
+  inner[0] = parts[1]! + inner[0]!;
+  inner[inner.length - 1] = inner[inner.length - 1]! + parts[3]!;
+  const out: InlineSpan[] = [];
+  for (let i = 0; i < inner.length; i += 2) {
+    const last = i === inner.length - 1;
+    out.push(chip(inner[i]!, !last));
+    if (!last) out.push({ text: inner[i + 1]!, bold: span.bold, italic: span.italic, codeSpace: box });
+  }
+  return out;
+}
+
+/** `spans` with every run of characters `isCode` names (by offset in the
+ *  spans' joined text) set as one code chip in `box`; `spans` itself when
+ *  none is. Objects (formulas, references, chips…) stay as they are. */
+function codeChipSpans(spans: InlineSpan[], isCode: (p: number) => boolean, box: ChipBox): InlineSpan[] {
   const out: InlineSpan[] = [];
   let at = 0;
   let changed = false;
-  for (const span of block.spans) {
+  for (const span of spans) {
     const len = span.text.length;
     if (setsObject(span) || span.tab || span.inserted || len === 0) {
       out.push(span);
@@ -80,13 +143,12 @@ export function withInlineCode(block: ContentBlock, raw: ContentBlock, resolved:
       if (!code) {
         out.push(k === 0 && j === len ? span : sliceSpan(span, k, j));
       } else {
-        const text = span.text.slice(k, j);
-        out.push({ text, bold: span.bold, italic: span.italic, chip: { style: INLINE_CODE_CHIP_STYLE, spans: [{ text, bold: false, italic: false }], box } });
+        out.push(...codePieces(span, span.text.slice(k, j), box));
         changed = true;
       }
       k = j;
     }
     at += len;
   }
-  return changed ? { ...block, spans: out } : block;
+  return changed ? out : spans;
 }

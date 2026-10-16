@@ -222,6 +222,10 @@ export interface VDTChip {
    *  letter) in a left-to-right frame, its reverse on a mirrored page.
    *  Absent on a chip with no right-to-left run. */
   order?: number[];
+  /** A piece of inline code that a code space continues (#845): the line
+   *  pass joins the pieces that share a line into one box. Never left on a
+   *  chip of a finished line. */
+  joinNext?: boolean;
 }
 
 export interface VDTLineSegment {

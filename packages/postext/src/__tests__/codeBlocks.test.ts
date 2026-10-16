@@ -514,6 +514,84 @@ describe('inline code', () => {
     expect(p.lines[0]!.text).toBe('Run ls -l now.');
     expect(p.lines[0]!.sourceEnd).toBe(md.length);
   });
+
+  // A long piece of code breaks at its own spaces (#845): one box on one
+  // line, a box per line when it breaks.
+  const long = 'Call `buildDocument(content, config)` now.';
+  const chipSegs = (doc: VDTDocument) => doc.blocks.filter((b) => b.type === 'paragraph').flatMap((b) => b.lines.map((l) => (l.segments ?? []).filter((s) => s.chip)));
+  const inline = { codeStyle: { inline: { background: hex('#eeeeee') } } };
+
+  it('sets a piece of code with spaces as one box on one line', () => {
+    const lines = chipSegs(buildDocument({ markdown: long }, config(inline)));
+    const chips = lines.flat();
+    expect(chips).toHaveLength(1);
+    const chip = chips[0]!.chip!;
+    expect(chips[0]!.text).toBe('buildDocument(content, config)');
+    expect(chip.runs.map((r) => r.text)).toEqual(['buildDocument(content,', ' ', 'config)']);
+    expect(chip.joinNext).toBeUndefined();
+    const runs = chip.runs.reduce((w, r) => w + r.width, 0);
+    expect(chip.boxWidth).toBeCloseTo(runs + 2 * (chip.paddingX + chip.borderWidth), 6);
+    expect(chips[0]!.width).toBeCloseTo(chip.boxWidth + chip.marginLeft + chip.marginRight, 6);
+  });
+
+  it('breaks a piece of code at its space when the line cannot hold it', () => {
+    const doc = buildDocument({ markdown: long }, config(inline, 230));
+    const chips = chipSegs(doc).flat();
+    expect(chips.map((c) => c.text)).toEqual(['buildDocument(content,', 'config)']);
+    expect(chips.every((c) => c.chip!.joinNext === undefined)).toBe(true);
+    const p = doc.blocks.find((b) => b.type === 'paragraph')!;
+    expect(p.lines.map((l) => l.text).join(' ')).toBe('Call buildDocument(content, config) now.');
+  });
+
+  it('joins the pieces of hyphenated code on one line, with either breaker', () => {
+    for (const optimalLineBreaking of [false, true]) {
+      const doc = buildDocument({ markdown: 'Say `simp-chinese-informal` and `a-b c` here, in justified text.' }, config({ ...inline, bodyText: { textAlign: 'justify', optimalLineBreaking } }));
+      expect(chipSegs(doc).flat().map((c) => c.text)).toEqual(['simp-chinese-informal', 'a-b c']);
+    }
+  });
+
+  it('breaks a piece of code after a hyphen, adding none', () => {
+    const md = 'Say `simp-chinese-informal` here.';
+    const wide = chipSegs(buildDocument({ markdown: md }, config(inline))).flat();
+    expect(wide.map((c) => c.text)).toEqual(['simp-chinese-informal']);
+    expect(wide[0]!.chip!.boxWidth).toBeCloseTo(wide[0]!.chip!.runs.reduce((w, r) => w + r.width, 0) + 2 * (wide[0]!.chip!.paddingX + wide[0]!.chip!.borderWidth), 6);
+    expect(wide[0]!.chip!.runs.map((r) => r.text)).toEqual(['simp-', 'chinese-', 'informal']);
+    // As wide as the code set whole: 21 characters of the stub's 7 px.
+    expect(wide[0]!.chip!.boxWidth).toBeCloseTo(21 * 7 + 2 * wide[0]!.chip!.paddingX, 6);
+    const doc = buildDocument({ markdown: md }, config(inline, 150));
+    const narrow = chipSegs(doc).flat();
+    expect(narrow.length).toBeGreaterThan(1);
+    expect(narrow.map((c) => c.text).join('')).toBe('simp-chinese-informal');
+    const p = doc.blocks.find((b) => b.type === 'paragraph')!;
+    expect(p.lines.every((l) => !l.hyphenated)).toBe(true);
+  });
+
+  // A table's cells, its caption and its note take the same style (#845).
+  const tableDoc = (extra: PostextConfig) => buildDocument({
+    markdown: '::resource{id="t"}\n',
+    resources: [{
+      id: 't', typeId: 'table', kind: 'table', createdAt: 0, updatedAt: 0, placement: { position: 'here' },
+      caption: 'The `:::toc` directive', note: 'See `[^id]`.',
+      table: { model: { headerRowCount: 0, rows: [[{ content: '`:::toc`' }, { content: 'Prints **the** `[^id]: note`' }]] } },
+    } as never],
+  }, config(extra));
+  const chipsOf = (doc: VDTDocument): string[] => {
+    const out: string[] = [];
+    JSON.stringify(doc, (key, value: unknown) => {
+      if (key === 'segments' && Array.isArray(value)) for (const s of value as Array<{ text: string; chip?: { runs: Array<{ fontString: string }> } }>) {
+        if (s.chip) out.push(`${s.text}|${s.chip.runs[0]!.fontString.includes('Source Code Pro')}`);
+      }
+      return value;
+    });
+    return out;
+  };
+
+  it('sets a table cell, caption and note in the code face', () => {
+    expect(chipsOf(tableDoc({}))).toEqual([]);
+    const chips = chipsOf(tableDoc({ codeStyle: { inline: { background: hex('#eeeeee') } } }));
+    expect(chips).toEqual(expect.arrayContaining([':::toc|true', '[^id]: note|true', '[^id]|true']));
+    expect(chips.some((c) => c.startsWith('the'))).toBe(false);
+  });
 });
 
 describe('codeStyle: settings', () => {

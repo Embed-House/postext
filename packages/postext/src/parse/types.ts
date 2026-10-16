@@ -179,6 +179,11 @@ export interface InlineSpan {
    *  stretches or shrinks when it is justified: the gap after a footnote's
    *  number, which keeps one width in every note. Set by the pipeline. */
   fixedSpace?: boolean;
+  /** A space inside inline code set in the code face (#845), between two
+   *  pieces of it: the line may break there, but the space neither
+   *  stretches nor shrinks, and on one line the pieces around it are one
+   *  box. `box` is the code's. Set by the pipeline. */
+  codeSpace?: ChipBox;
   /** A numbered bibliography entry's label column (#290): `'gap'` is the
    *  space after the label, widened when the entry is measured so the text
    *  starts at the column's edge (`MeasureBlockOptions.labelColumnPx`);
@@ -224,6 +229,9 @@ export interface InlineSpan {
     style?: string;
     spans: InlineSpan[];
     box?: ChipBox;
+    /** A piece of inline code that goes on after a space of its own
+     *  (`codeSpace`, #845): on one line the two pieces are one box. */
+    joinNext?: boolean;
   };
   /** Markdown links (`[text](url)`) inside this span, as ranges of its
    *  `text`. A link never splits a span — the spans are those of the text
