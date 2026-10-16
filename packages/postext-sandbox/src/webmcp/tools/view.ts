@@ -314,7 +314,7 @@ export function viewTools(host: SandboxToolHost): WebMcpTool[] {
           debugChanged = true;
         }
         if (debugChanged) patch.debug = debug;
-        await dispatchAndWait(host, { type: 'UPDATE_CONFIG', payload: patch });
+        await dispatchAndWait(host, { type: 'UPDATE_CONFIG', payload: patch, history: { merge: false } });
       }
 
       // The viewers take their settings on their next render.

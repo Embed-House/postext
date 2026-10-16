@@ -1689,6 +1689,16 @@ export interface SandboxLabels {
   editModeContentHint: string;
   editModeDesign: string;
   editModeDesignHint: string;
+  historyGroup: string;
+  historyUndo: string;
+  historyRedo: string;
+  historyStepText: string;
+  historyStepDesign: string;
+  historyStepDesignIn: string;
+  historyUndone: string;
+  historyRedone: string;
+  historyNothingToUndo: string;
+  historyNothingToRedo: string;
   editorDesignModeNotice: string;
   editorSwitchToContent: string;
   composedPageInsert: string;

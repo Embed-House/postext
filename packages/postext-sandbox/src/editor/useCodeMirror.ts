@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, type MutableRefObject } from 'react';
-import { EditorView, lineNumbers, highlightActiveLine, keymap } from '@codemirror/view';
+import { useCallback, useEffect, useRef, type MutableRefObject } from 'react';
+import { EditorView, lineNumbers, highlightActiveLine, keymap, type KeyBinding, type ViewUpdate } from '@codemirror/view';
 import { EditorState, Compartment, Transaction } from '@codemirror/state';
 import { markdown } from '@codemirror/lang-markdown';
-import { defaultKeymap, history, historyField, historyKeymap, isolateHistory } from '@codemirror/commands';
+import { defaultKeymap, history, historyField, isolateHistory, redo, redoSelection, undo, undoSelection } from '@codemirror/commands';
 import { bracketMatching } from '@codemirror/language';
 import { getEditorTheme } from './postextTheme';
 import { frontmatterHighlight, frontmatterParser, frontmatterTheme } from './frontmatterHighlight';
@@ -52,6 +52,31 @@ interface UseCodeMirrorOptions {
    *  still moves and the text can be selected and copied. Edits made on
    *  the previews still arrive. */
   readOnly?: boolean;
+  /** What Cmd/Ctrl+Z and Shift+Cmd/Ctrl+Z (Ctrl+Y) do: the Sandbox's one
+   *  history of text and configuration (#899). The editor's own history
+   *  when left out. */
+  historyCommands?: { undo: () => boolean; redo: () => boolean };
+  /** Every update of the view (the history follows its transactions). */
+  onUpdate?: (update: ViewUpdate) => void;
+}
+
+/** Undo and redo keys bound to `commands`; the selection-only history
+ *  keys (Mod-u, Alt-u) stay the editor's. */
+function historyKeys(commands: () => { undo: () => boolean; redo: () => boolean } | undefined): KeyBinding[] {
+  const run = (dir: 'undo' | 'redo') => (view: EditorView) => {
+    const c = commands();
+    if (!c) return dir === 'undo' ? undo(view) : redo(view);
+    c[dir]();
+    // Nothing to take back is still no browser undo inside the text.
+    return true;
+  };
+  return [
+    { key: 'Mod-z', run: run('undo'), preventDefault: true },
+    { key: 'Mod-Shift-z', run: run('redo'), preventDefault: true },
+    { key: 'Mod-y', run: run('redo'), preventDefault: true },
+    { key: 'Mod-u', run: undoSelection, preventDefault: true },
+    { key: 'Alt-u', mac: 'Mod-Shift-u', run: redoSelection, preventDefault: true },
+  ];
 }
 
 /** The read-only state of the editor, with the `aria-readonly` that says it. */
@@ -64,7 +89,7 @@ function langAttributes(lang: string | undefined) {
   return EditorView.contentAttributes.of(lang ? { lang } : {});
 }
 
-export function useCodeMirror({ initialValue, externalValue, onChange, onSelectionChange, onFocusChange, isDark = true, persistedStateRef, getRefContext, ariaLabel, ariaDescribedBy, rtl = false, lang, readOnly = false }: UseCodeMirrorOptions) {
+export function useCodeMirror({ initialValue, externalValue, onChange, onSelectionChange, onFocusChange, isDark = true, persistedStateRef, getRefContext, ariaLabel, ariaDescribedBy, rtl = false, lang, readOnly = false, historyCommands, onUpdate }: UseCodeMirrorOptions) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const themeCompartment = useRef(new Compartment());
@@ -78,12 +103,21 @@ export function useCodeMirror({ initialValue, externalValue, onChange, onSelecti
   onFocusChangeRef.current = onFocusChange;
   const getRefContextRef = useRef(getRefContext);
   getRefContextRef.current = getRefContext;
+  const historyCommandsRef = useRef(historyCommands);
+  historyCommandsRef.current = historyCommands;
+  const onUpdateRef = useRef(onUpdate);
+  onUpdateRef.current = onUpdate;
+  const readOnlyRef = useRef(readOnly);
+  readOnlyRef.current = readOnly;
+  /** The first sync of the external value happens on mount. */
+  const syncedRef = useRef(false);
 
   // Initialize editor
   useEffect(() => {
     if (!containerRef.current) return;
 
     const updateListener = EditorView.updateListener.of((update) => {
+      onUpdateRef.current?.(update);
       if (update.docChanged) {
         onChangeRef.current(update.state.doc.toString());
       }
@@ -136,7 +170,7 @@ export function useCodeMirror({ initialValue, externalValue, onChange, onSelecti
       bidiLines,
       rtlEditor.of(rtl),
       refCompletion(() => getRefContextRef.current?.() ?? { resources: [], types: [] }),
-      keymap.of([...defaultKeymap, ...historyKeymap]),
+      keymap.of([...historyKeys(() => historyCommandsRef.current), ...defaultKeymap]),
       themeCompartment.current.of(getEditorTheme(isDark)),
       updateListener,
       EditorView.lineWrapping,
@@ -198,17 +232,39 @@ export function useCodeMirror({ initialValue, externalValue, onChange, onSelecti
   // is replaced, as its own undo step, so the caret stays where it was and
   // Cmd/Ctrl+Z takes back just that edit.
   useEffect(() => {
+    const first = !syncedRef.current;
+    syncedRef.current = true;
     const view = viewRef.current;
     if (!view || externalValue === undefined) return;
     const current = view.state.doc.toString();
     if (current === externalValue) return;
     const exact = takeViewerChanges(current, externalValue);
     const changes = (exact ?? [minimalChange(current, externalValue)!]).map(({ from, to, insert }) => ({ from, to, insert }));
+    // On mount, the text the saved state left was changed by other means
+    // while the editor was closed (the edits made on the previews are in
+    // the saved history already, #899): the history is mapped over it.
     view.dispatch({
       changes,
-      annotations: [isolateHistory.of('full'), Transaction.userEvent.of('input.external')],
+      annotations: first
+        ? [Transaction.addToHistory.of(false), Transaction.userEvent.of('input.external')]
+        : [isolateHistory.of('full'), Transaction.userEvent.of('input.external')],
     });
   }, [externalValue]);
 
-  return { containerRef, viewRef };
+  /** One step of the editor's own history taken back or put back, also
+   *  in Design mode, where the text is read only to typing (#899). */
+  const runHistory = useCallback((dir: 'undo' | 'redo'): boolean => {
+    const view = viewRef.current;
+    if (!view) return false;
+    const command = dir === 'undo' ? undo : redo;
+    if (!view.state.readOnly) return command(view);
+    view.dispatch({ effects: readOnlyCompartment.current.reconfigure([]) });
+    try {
+      return command(view);
+    } finally {
+      view.dispatch({ effects: readOnlyCompartment.current.reconfigure(readOnlyExtensions(readOnlyRef.current)) });
+    }
+  }, []);
+
+  return { containerRef, viewRef, runHistory };
 }

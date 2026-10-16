@@ -1,20 +1,27 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import type { SandboxAction } from '../context/SandboxContext';
+import type { SandboxAction, SandboxState } from '../context/SandboxContext';
 import { applyTextChanges } from '../book/textChanges';
+import { createSandboxHistory, setActiveHistory } from '../history/sandboxHistory';
 import { applyViewerEdit, redoViewerEdit, resetViewerEdits, takeViewerChanges, undoViewerEdit } from './viewerEdits';
 
-afterEach(() => resetViewerEdits());
+afterEach(() => {
+  resetViewerEdits();
+  setActiveHistory(null);
+});
 
 describe('viewer edits', () => {
   it('hands the editor the exact changes, then undoes and redoes them without an editor', () => {
     let text = 'split="30 / *"\n::panel\n';
+    const state = () => ({ activeChapterId: 'c1', markdown: text, chapters: [{ id: 'c1', title: 'One', markdown: text }], config: {}, storeReady: true, booting: false }) as unknown as SandboxState;
     const sent: SandboxAction[] = [];
-    const dispatch = (a: SandboxAction) => {
+    const reduce = (a: SandboxAction) => {
       sent.push(a);
       if (a.type === 'EDIT_CHAPTER_MARKDOWN') text = applyTextChanges(text, a.payload.changes);
     };
+    const history = createSandboxHistory({ dispatch: reduce, getState: state, editorStates: (() => { const m = new Map(); return () => m; })() });
+    setActiveHistory(history);
     const before = text;
-    applyViewerEdit(dispatch, 'c1', [{ from: 7, to: 9, insert: '45', expect: '30' }, { from: 23, to: 23, insert: '::panel\n', expect: '' }], text.length);
+    applyViewerEdit(history.dispatch, 'c1', [{ from: 7, to: 9, insert: '45', expect: '30' }, { from: 23, to: 23, insert: '::panel\n', expect: '' }], text.length);
     const after = text;
     expect(after).toBe('split="45 / *"\n::panel\n::panel\n');
     // The editor syncing the new value gets the two changes, not a diff.

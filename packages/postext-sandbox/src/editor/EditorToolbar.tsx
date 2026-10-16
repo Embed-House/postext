@@ -25,9 +25,9 @@ import {
 } from 'lucide-react';
 import { isCjkLanguage } from 'postext';
 import type { EditorView } from '@codemirror/view';
-import { undo, redo } from '@codemirror/commands';
 import { useRef, useState, type ReactNode } from 'react';
 import { useSandbox } from '../context/SandboxContext';
+import { useHistoryAvailability, useHistoryCommands } from '../history/HistoryButtons';
 import type { ToolbarAction } from '../types';
 import { IconButton } from '../ui';
 import { composedPageInsertion } from './composedInsert';
@@ -149,17 +149,23 @@ export function EditorToolbar({ viewRef, extraActions, lang, readOnly = false }:
 
   const getView = () => viewRef.current;
 
-  const actions: { icon: ReactNode; label: string; action: () => void; separator?: boolean }[] = [
+  // Undo and redo run the Sandbox's one history (#899): also in Design
+  // mode, where the rest of the toolbar is off.
+  const history = useHistoryCommands();
+  const { canUndo, canRedo } = useHistoryAvailability();
+  const actions: { icon: ReactNode; label: string; action: () => void; separator?: boolean; enabled?: boolean }[] = [
     {
       icon: <Undo2 size={16} aria-hidden="true" />,
       label: labels.undo,
-      action: () => { const v = getView(); if (v) { undo(v); v.focus(); } },
+      action: () => { history.undo(); getView()?.focus(); },
+      enabled: canUndo,
     },
     {
       icon: <Redo2 size={16} aria-hidden="true" />,
       label: labels.redo,
-      action: () => { const v = getView(); if (v) { redo(v); v.focus(); } },
+      action: () => { history.redo(); getView()?.focus(); },
       separator: true,
+      enabled: canRedo,
     },
     {
       icon: <Bold size={16} aria-hidden="true" />,
@@ -282,7 +288,7 @@ export function EditorToolbar({ viewRef, extraActions, lang, readOnly = false }:
     >
       {actions.map((a, i) => (
         <span key={i} className="contents">
-          <ToolbarButton icon={a.icon} label={a.label} onClick={a.action} disabled={readOnly} />
+          <ToolbarButton icon={a.icon} label={a.label} onClick={a.action} disabled={a.enabled === undefined ? readOnly : !a.enabled} />
           {a.separator && (
             <div className="mx-1 h-5 w-px shrink-0" style={{ backgroundColor: 'var(--rule)' }} aria-hidden="true" />
           )}
