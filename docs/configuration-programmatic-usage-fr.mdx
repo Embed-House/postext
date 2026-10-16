@@ -104,6 +104,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>:::columns{'{'}flow{'}'}</code> ne vaut ni <code>snake</code> ni <code>parallel</code> ; <code>value</code> est la valeur indiquée.</td>
       <td>Le groupe prend la valeur par défaut : <code>parallel</code> avec <code>breaks</code>, <code>snake</code> sans.</td>
     </tr>
+    <tr>
       <td><code>templateUnknown</code></td>
       <td>Une page composée (<code>::::page&#123;template&#125;</code>) ne nomme aucune entrée de <code>pageTemplates</code>, ou aucun modèle ; <code>template</code> est l’id tel qu’il est écrit et <code>fenceIndex</code> la place de la page parmi les pages composées du chapitre.</td>
       <td>Ses slots ne sont pas vérifiés. Tant que les modèles ne sont pas mis en page, son contenu est placé dans le texte courant, sur des pages à part.</td>
@@ -123,7 +124,6 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Un <code>:::page</code> à trois deux-points porte <code>template=</code>.</td>
       <td>Il est lu comme une page de bande dessinée ; une page composée demande quatre deux-points.</td>
     </tr>
-    <tr>
     <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> ne nomme aucun style de pastille.</td>
