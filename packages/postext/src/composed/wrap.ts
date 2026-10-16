@@ -24,6 +24,7 @@ import type { ContentBlock } from '../parse/types';
 import type { CalloutStyleConfig } from '../types';
 import { composedPages, type ParsedComposedPage } from './document';
 import { resolvePageTemplate, type PageTemplateSource } from './templates';
+import { nextFrameOf } from './geometry';
 import type { ResolvedFrame, ResolvedPageTemplate } from './types';
 
 /** Style id of a story's box. Not a user style: no configuration can name
@@ -45,7 +46,7 @@ export function frameChain(template: ResolvedPageTemplate, head: string): Resolv
   const byName = new Map(template.frames.map((f) => [f.name, f]));
   const out: ResolvedFrame[] = [];
   const seen = new Set<string>();
-  for (let f = byName.get(head); f && !seen.has(f.name); f = f.next ? byName.get(f.next) : undefined) {
+  for (let f = byName.get(head); f && !seen.has(f.name); f = nextFrameOf(f) !== undefined ? byName.get(nextFrameOf(f)!) : undefined) {
     seen.add(f.name);
     out.push(f);
   }
@@ -55,7 +56,10 @@ export function frameChain(template: ResolvedPageTemplate, head: string): Resolv
 /** The head of the chain frame `name` belongs to. */
 function chainHead(template: ResolvedPageTemplate, name: string): string {
   const prev = new Map<string, string>();
-  for (const f of template.frames) if (f.next && !prev.has(f.next)) prev.set(f.next, f.name);
+  for (const f of template.frames) {
+    const n = nextFrameOf(f);
+    if (n && !prev.has(n)) prev.set(n, f.name);
+  }
   let at = name;
   const seen = new Set<string>([at]);
   for (let p = prev.get(at); p !== undefined && !seen.has(p); p = prev.get(at)) {

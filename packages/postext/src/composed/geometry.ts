@@ -18,7 +18,7 @@
  */
 import type { AnchorEdge, Dimension, ElementPlacement } from '../types';
 import { dimensionToPx } from '../units';
-import { anchorTarget } from './templates';
+import { anchorTarget, continueInFrame } from './templates';
 import type { FrameSize, ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from './types';
 
 export interface Rect {
@@ -249,6 +249,12 @@ export function groupPlaceable(group: ResolvedFrameGroup): Placeable | undefined
   };
 }
 
+/** The frame of the same page a frame's content goes on in: its `next`,
+ *  else an `overflow.continueIn` of the form `'#frame'` (the same thing). */
+export function nextFrameOf(frame: Pick<ResolvedFrame, 'next' | 'overflow'>): string | undefined {
+  return frame.next ?? continueInFrame(frame.overflow?.continueIn);
+}
+
 /** The smallest rectangle holding `rects` (undefined for none). */
 export function unionRect(rects: readonly Rect[]): Rect | undefined {
   if (rects.length === 0) return undefined;
@@ -270,7 +276,10 @@ export function frameOrder(template: Pick<ResolvedPageTemplate, 'frames' | 'grou
   const byName = new Map(template.frames.map((f) => [f.name, f]));
   const groups = new Map(template.groups.map((g) => [g.name, g]));
   const prev = new Map<string, string>();
-  for (const f of template.frames) if (f.next && byName.has(f.next) && !prev.has(f.next)) prev.set(f.next, f.name);
+  for (const f of template.frames) {
+    const n = nextFrameOf(f);
+    if (n && byName.has(n) && !prev.has(n)) prev.set(n, f.name);
+  }
   const deps = (name: string, seenGroups: Set<string> = new Set()): string[] => {
     const out: string[] = [];
     const addTarget = (target: string | undefined): void => {

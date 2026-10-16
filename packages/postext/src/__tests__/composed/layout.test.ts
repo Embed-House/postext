@@ -226,6 +226,17 @@ describe('composed pages laid out (#855)', () => {
     expect(blocksOf(doc, b)[0]!.id).toBe('cp0:a-cont-1');
   });
 
+  it('reads overflow.continueIn: "#frame" as next', () => {
+    const tpl: PageTemplate = { id: 'ci', frames: [
+      { name: 'a', flow: true, overflow: { continueIn: '#b' }, width: mm(70), height: mm(20), placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { name: 'b', width: mm(70), height: mm(150), placement: { anchor: { to: 'container', edge: 'top-right' } } },
+    ] };
+    const doc = build(`::::page{template="ci"}\n${words(100)}\n::::`, [tpl]);
+    expect(frame(doc, 'a').continuesTo).toBe('cp0:b');
+    expect(frame(doc, 'a').overflowPx).toBe(0);
+    expect(textOf(blocksOf(doc, frame(doc, 'b'))).length).toBeGreaterThan(0);
+  });
+
   it('clips what no frame can hold and says so (frameOverflow), keeping it in the document', () => {
     const story = words(200);
     const tpl: PageTemplate = { id: 'small', frames: [{ name: 'a', flow: true, width: mm(60), height: mm(20), placement: { anchor: { to: 'container', edge: 'top-left' } } }] };

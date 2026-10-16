@@ -1,6 +1,6 @@
 # Composed pages: design (P1, drnachio/postext#847)
 
-Status: proposal for approval. Programme tracker: drnachio/postext#846.
+Status: approved (P1); §5.8 records what P4 (#855) built. Programme tracker: drnachio/postext#846.
 Draft types: [`types.ts`](./types.ts) (no runtime effect).
 
 A composed page is a page whose form is a **template** (named frames, groups, decoration) held in
@@ -356,16 +356,17 @@ The parser emits (as built in P3, #854):
   `unclosedContainer`. A closing fence of another colon count stays text. A `:::figure` whose `:::` is
   missing ends at its first line that is neither a label nor blank (`unclosedContainer`, name
   `figure`).
-- Until P4, the layout sets a composed page's content in the flow, in Markdown order, on pages of its
-  own (the page fence breaks the page as `:::paper` does; `build.ts`, `pendingComposedBreak`).
+- Since P4 (#855) the layout sets a composed page on a page of its own from its template (§5.8). A
+  page whose template is unknown is still set in the flow, in Markdown order, on pages of its own.
 
 The layout emits (VDT):
 
 - `VDTPage.composed: VDTComposedPage { template, variant, spread?, frames: VDTFrame[], decoration:
   VDTDesignSlot, log: ReflowEvent[], fenceIndex, sourceStart, sourceEnd }`.
 - `VDTFrame { id, name, rect, rotate, layer, styleId, scale, overflowPx, continuedFrom?,
-  continuesTo?, blockIds, configPath }`. The frame's box and its children are ordinary callout
-  blocks in `page.floats` and `doc.blocks` (with `containerId = frame id`), so canvas, PDF
+  continuesTo?, blockIds, configPath, sourceStart?, sourceEnd?, push? }`. The frame's box and its
+  children are ordinary callout blocks in `page.floats` and `doc.blocks` (their `containerId` is the
+  story's synthetic container, shared by the pieces of a chain; `blockIds` ties them to the frame), so canvas, PDF
   (tagging), HTML, EPUB and Sandbox caret mapping handle them without new painters; `VDTFrame`
   adds what only templates know (name, config path, scale, log).
 - `VDTLabel` items on the figure block (text blocks with source maps, positioned on the page).
@@ -469,6 +470,54 @@ page numbering, running heads and parity rules (they are ordinary pages with `ro
 
 Each proposal is data (`{ kind, path, value }`) so the Sandbox can offer it as a one-click,
 confirmed config change (U8).
+
+### 5.8 What P4 built (#855)
+
+Recorded where the implementation settles a point the sections above leave open, or departs from them.
+
+- **Stories.** Before layout, `composed/wrap.ts` regroups a page's content into one frameless box
+  (`:::callout` of the synthetic style `__postext-frame`) per *story*: the content of a frame and of
+  the frames its chain continues into (`next`, or `overflow.continueIn: '#frame'`, read the same),
+  in chain order, each frame's pieces in Markdown order. The box typesetter (`pipeline/frameLayout.ts`,
+  factored out of `placeDocumentPass` with no change for callouts) sets a story at each frame's width
+  and cuts it at its height (`CalloutCut`); a later frame of the chain re-breaks the cut paragraph at
+  its own width. The regrouping reads the template without a side's variant (takes, flow frame,
+  chains, `columns`); a frame only a variant has keeps a story of its own, and on a side whose
+  variant lacks it that story is set in the flow after the page.
+- **Reading order.** Stories follow each other in the order of their first block, which is the
+  `contentIndex` order: a frame is read whole, in the order its content first appears in the
+  Markdown (flow text written after a box is read with the flow frame, before the box). Tagged PDF
+  keeps this order whatever the layers paint (`readFloat` takes a read index).
+- **Geometry** (`composed/geometry.ts`). A frame with no grid cell and no placement starts at the
+  area's top-left, as wide as the area; its height follows its rule (`'auto'`, the default: the
+  content's height; `'fill'`: the area's). An `'auto'` height never runs past the edge of the area
+  (or trim, bleed) the frame grows towards; what does not fit there overflows the frame. A nine-point
+  edge on another frame (`top-right` of `#dinero`) reads that point of its box. `'auto'` width reads
+  as `'fill'` (the picture-width rule is left to P14). A group with no box of its own is the union of
+  its frames' boxes; its frames keep their own placement until P14 negotiates them.
+- **Order of work.** Frames are placed and filled in dependency order (anchors, then the frame a
+  chain comes from), frames that push text as early as their anchors allow. When any frame pushes,
+  the page is composed twice: the second run starts with every pushing frame's box from the first,
+  so a box runs round a photo anchored to it.
+- **Content no frame takes** (no flow frame) and stories whose frame is missing are set in the flow
+  on the page after the composed page, never dropped. A `::resource` a story holds is set in its
+  frame and does not float; a `:ref` in a frame to a picture set elsewhere floats from the page's end.
+- **Decoration and running heads** are laid in `buildHeadersAndFooters`, on the sheet, after the
+  frames: decoration elements may anchor to `'#frame'` (`DesignFrames.named`), text placeholders use
+  the `'composed'` context kind, and `{attr.x}` reads the page fence's attributes before the chapter
+  heading's (also in the running heads of that page). The decoration is `VDTComposedPage.decoration`,
+  painted at layer 0.
+- **VDT.** `VDTComposedPage` also carries `role`, `attrs`, `attrSources` (absolute) and `configPath`.
+  A chained frame's box is the head's id plus `-cont-<n>` so tagged PDF and reflowable EPUB join the
+  pieces; `VDTFrame.id` stays `cp<fence>:<name>`.
+- **Overflow.** A frame that cannot hold its content and has no next frame lays it whole, draws its
+  box at the frame's height, and records `overflowPx`; backends clip it to the frame. `frameOverflow`
+  carries template, frame, fence index, overflow mm and the frame's config path (P5 adds the steps
+  tried and the proposals); the page log gets an `overflow` event.
+- **Not applied yet:** the template's `bodyStyle` and `palette`, a frame's `writingMode` and
+  `direction`, `fit`, group negotiation with `grow`/`shrink`/`priority`/`pin` (P14), `spread` (P7),
+  continuation to other pages (P15), labels (P6). A `exclude: 'push'` frame turned by `rotate` pushes
+  with its turned box's bounds.
 
 ## 6. Source map contract
 

@@ -19,7 +19,7 @@ import type { ContentWarning, ReflowEvent, VDTBlock, VDTComposedPage, VDTFrame, 
 import { dimensionToPx } from '../units';
 import { frameBounds } from '../composed/paint';
 import { FRAME_ATTR } from '../composed/wrap';
-import { frameOrder, framePlaceable, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
+import { frameOrder, framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
 import type { ResolvedFrame, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { offsetCalloutToAbsolute, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
@@ -87,7 +87,10 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
   const frameIdOf = (name: string): string => `cp${fi}:${name}`;
   const byName = new Map(template.frames.map((f) => [f.name, f]));
   const prev = new Map<string, string>();
-  for (const f of template.frames) if (f.next && byName.has(f.next) && !prev.has(f.next)) prev.set(f.next, f.name);
+  for (const f of template.frames) {
+    const n = nextFrameOf(f);
+    if (n && byName.has(n) && !prev.has(n)) prev.set(n, f.name);
+  }
   /** The head of the chain a frame belongs to. */
   const headOf = (name: string): string => {
     let at = name;
@@ -195,7 +198,8 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
           ...(exclusionsFor(frame, rect, false) ? { exclusions: exclusionsFor(frame, rect, false) } : {}),
         };
         const whole = st!.L.layoutRange(from, st!.L.end, rect.width, blockId, continuation, input.mirrored, opts);
-        const nextFrame = frame.next ? byName.get(frame.next) : undefined;
+        const nextName = nextFrameOf(frame);
+        const nextFrame = nextName !== undefined ? byName.get(nextName) : undefined;
         if ((whole.overflowPx ?? 0) > 0.5 && nextFrame && !vdtByName.has(nextFrame.name)) {
           // The rest goes on in the next frame of the chain.
           const minLines = Math.max(1, style.splitMinLines);
