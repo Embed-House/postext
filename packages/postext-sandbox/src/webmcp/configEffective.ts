@@ -25,7 +25,8 @@ const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 
 /** `config` as the engine resolves it for a book read in `locale`, with
  *  the sections the engine only resolves when a book sets them (print,
- *  the PDF, the Folio, line numbers, code, comics, the contrast check)
+ *  the PDF, the Folio, line numbers, code, comics, the contrast check,
+ *  page templates and label styles)
  *  and the ones the Sandbox reads itself (the guides, the HTML reader).
  *  Throws when the engine cannot resolve the configuration. */
 export function resolveEffectiveConfig(config: PostextConfig, locale: string, resources: readonly Resource[] = []): Record<string, unknown> {
@@ -48,6 +49,9 @@ export function resolveEffectiveConfig(config: PostextConfig, locale: string, re
     debug: resolveDebugConfig(config.debug),
     htmlViewer: resolveHtmlViewerConfig(config.htmlViewer),
     resourceTypes: effectiveResourceTypes(config, resources),
+    // Composed pages (#853): lists the engine resolves only when set.
+    pageTemplates: resolved.pageTemplates ?? [],
+    labelStyles: resolved.labelStyles ?? [],
     ...(config.customFonts ? { customFonts: config.customFonts } : {}),
   };
 }

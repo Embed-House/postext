@@ -1900,6 +1900,30 @@ export interface SandboxLabels {
   warningsUnknownConfigKeySuggestion: string;
   warningsUnknownConfigValueTitle: string;
   warningsUnknownConfigValueDetail: string;
+  warningsTemplateDuplicateTitle: string;
+  warningsTemplateDuplicateDetail: string;
+  warningsTemplateExtendsCycleTitle: string;
+  warningsTemplateExtendsCycleDetail: string;
+  warningsTemplateExtendsUnknownTitle: string;
+  warningsTemplateExtendsUnknownDetail: string;
+  warningsFrameDuplicateTitle: string;
+  warningsFrameDuplicateDetail: string;
+  warningsFrameStyleUnknownTitle: string;
+  warningsFrameStyleUnknownDetail: string;
+  warningsFrameAnchorUnknownTitle: string;
+  warningsFrameAnchorUnknownDetail: string;
+  warningsFrameMinMaxTitle: string;
+  warningsFrameMinMaxDetail: string;
+  warningsGroupFrameUnknownTitle: string;
+  warningsGroupFrameUnknownDetail: string;
+  warningsGroupFrameTwiceTitle: string;
+  warningsGroupFrameTwiceDetail: string;
+  warningsFrameChainLoopTitle: string;
+  warningsFrameChainLoopDetail: string;
+  warningsOverflowTargetUnknownTitle: string;
+  warningsOverflowTargetUnknownDetail: string;
+  warningsLabelStyleUnknownTitle: string;
+  warningsLabelStyleUnknownDetail: string;
 
   // Color palette section
   colorPalette: string;

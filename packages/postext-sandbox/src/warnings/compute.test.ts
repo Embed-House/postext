@@ -947,3 +947,24 @@ describe('comic page warnings (#570)', () => {
     expect(kindsFound).toEqual(['comicPanelLetterbox', 'comicBalloonOverflow']);
   });
 });
+
+describe('page template warnings (#853)', () => {
+  it('lists the engine\'s template warnings in the design group, with the resource of an anchor', () => {
+    const config: PostextConfig = {
+      calloutStyles: [{ id: 'caja' }],
+      pageTemplates: [{ id: 'tema', frames: [{ name: 'texto', flow: true, style: 'cja' }, { name: 'texto' }] }, { id: 'hijo', extends: 'tem' }],
+    };
+    const mapa = { id: 'mapa', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0, anchors: [{ id: 'madrid', x: 0.5, y: 0.5, style: 'ciudad' }] } as Resource;
+    const found = computeWarnings({ markdown: 'Text.', config, doc: null, resources: [mapa] })
+      .filter((w) => ['frameStyleUnknown', 'frameDuplicate', 'templateExtendsUnknown', 'labelStyleUnknown'].includes(w.payload.kind));
+    expect(found.map((w) => w.payload)).toEqual([
+      { kind: 'frameDuplicate', path: '/pageTemplates/0/frames/1', value: 'texto', used: '' },
+      { kind: 'frameStyleUnknown', path: '/pageTemplates/0/frames/0/style', value: 'cja', used: '', suggestion: 'caja' },
+      { kind: 'templateExtendsUnknown', path: '/pageTemplates/1/extends', value: 'tem', used: '', suggestion: 'tema' },
+      { kind: 'labelStyleUnknown', path: '/resources/0/anchors/0/style', value: 'ciudad', used: '', resourceId: 'mapa' },
+    ]);
+    for (const kind of ['templateDuplicate', 'templateExtendsCycle', 'templateExtendsUnknown', 'frameDuplicate', 'frameStyleUnknown', 'frameAnchorUnknown', 'frameMinMax', 'groupFrameUnknown', 'groupFrameTwice', 'frameChainLoop', 'overflowTargetUnknown', 'labelStyleUnknown'] as const) {
+      expect(warningCategory(kind), kind).toBe('design');
+    }
+  });
+});

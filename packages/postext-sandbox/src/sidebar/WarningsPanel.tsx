@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid } from 'lucide-react';
-import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES } from 'postext';
+import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES, type PageTemplateWarningKind } from 'postext';
 import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
 import { Collapsible, EmptyState, ListRow, PanelBody, PanelHeader, cn } from '../ui';
 import { WARNING_CATEGORY_ORDER, warningCategory, type WarningCategory } from '../warnings/categories';
@@ -152,6 +152,19 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'unknownConfigKey':
     case 'unknownConfigValue':
       return FileWarning;
+    case 'templateDuplicate':
+    case 'templateExtendsCycle':
+    case 'templateExtendsUnknown':
+    case 'frameDuplicate':
+    case 'frameStyleUnknown':
+    case 'frameAnchorUnknown':
+    case 'frameMinMax':
+    case 'groupFrameUnknown':
+    case 'groupFrameTwice':
+    case 'frameChainLoop':
+    case 'overflowTargetUnknown':
+    case 'labelStyleUnknown':
+      return LayoutGrid;
     case 'unsupportedHyphenationLocale':
     case 'missingGlyph':
     case 'variableFontDefaultInstance':
@@ -379,6 +392,30 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsUnknownConfigKeyTitle;
     case 'unknownConfigValue':
       return labels.warningsUnknownConfigValueTitle;
+    case 'templateDuplicate':
+      return labels.warningsTemplateDuplicateTitle;
+    case 'templateExtendsCycle':
+      return labels.warningsTemplateExtendsCycleTitle;
+    case 'templateExtendsUnknown':
+      return labels.warningsTemplateExtendsUnknownTitle;
+    case 'frameDuplicate':
+      return labels.warningsFrameDuplicateTitle;
+    case 'frameStyleUnknown':
+      return labels.warningsFrameStyleUnknownTitle;
+    case 'frameAnchorUnknown':
+      return labels.warningsFrameAnchorUnknownTitle;
+    case 'frameMinMax':
+      return labels.warningsFrameMinMaxTitle;
+    case 'groupFrameUnknown':
+      return labels.warningsGroupFrameUnknownTitle;
+    case 'groupFrameTwice':
+      return labels.warningsGroupFrameTwiceTitle;
+    case 'frameChainLoop':
+      return labels.warningsFrameChainLoopTitle;
+    case 'overflowTargetUnknown':
+      return labels.warningsOverflowTargetUnknownTitle;
+    case 'labelStyleUnknown':
+      return labels.warningsLabelStyleUnknownTitle;
     case 'unsupportedHyphenationLocale':
       return labels.warningsUnsupportedHyphenationLocaleTitle;
     case 'missingGlyph':
@@ -709,6 +746,19 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `${payload.path} — ${labels.warningsUnknownConfigKeyDetail}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
     case 'unknownConfigValue':
       return `${payload.path}: "${payload.value}" — ${labels.warningsUnknownConfigValueDetail.replace('__used__', payload.used)}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
+    case 'templateDuplicate':
+    case 'templateExtendsCycle':
+    case 'templateExtendsUnknown':
+    case 'frameDuplicate':
+    case 'frameStyleUnknown':
+    case 'frameAnchorUnknown':
+    case 'frameMinMax':
+    case 'groupFrameUnknown':
+    case 'groupFrameTwice':
+    case 'frameChainLoop':
+    case 'overflowTargetUnknown':
+    case 'labelStyleUnknown':
+      return pageTemplateDetail(payload, labels);
     case 'unsupportedHyphenationLocale':
       return labels.warningsUnsupportedHyphenationLocaleDetail
         .replace('__locale__', payload.locale)
@@ -917,3 +967,28 @@ function WarningGroup({ title, count, children }: { title: string; count: number
     </Collapsible.Root>
   );
 }
+
+/** A page-template warning (#853): the JSON pointer, the value at fault,
+ *  what the engine does, and the closest name that exists. */
+function pageTemplateDetail(payload: Extract<WarningPayload, { kind: PageTemplateWarningKind }>, labels: SandboxLabels): string {
+  const detail = PAGE_TEMPLATE_DETAIL[payload.kind](labels)
+    .replace('__used__', payload.used)
+    .replace('__resource__', payload.resourceId !== undefined ? `#${payload.resourceId}` : '');
+  const suggestion = payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : '';
+  return `${payload.path}: "${payload.value}" — ${detail}${suggestion}`;
+}
+
+const PAGE_TEMPLATE_DETAIL: Record<PageTemplateWarningKind, (labels: SandboxLabels) => string> = {
+  templateDuplicate: (l) => l.warningsTemplateDuplicateDetail,
+  templateExtendsCycle: (l) => l.warningsTemplateExtendsCycleDetail,
+  templateExtendsUnknown: (l) => l.warningsTemplateExtendsUnknownDetail,
+  frameDuplicate: (l) => l.warningsFrameDuplicateDetail,
+  frameStyleUnknown: (l) => l.warningsFrameStyleUnknownDetail,
+  frameAnchorUnknown: (l) => l.warningsFrameAnchorUnknownDetail,
+  frameMinMax: (l) => l.warningsFrameMinMaxDetail,
+  groupFrameUnknown: (l) => l.warningsGroupFrameUnknownDetail,
+  groupFrameTwice: (l) => l.warningsGroupFrameTwiceDetail,
+  frameChainLoop: (l) => l.warningsFrameChainLoopDetail,
+  overflowTargetUnknown: (l) => l.warningsOverflowTargetUnknownDetail,
+  labelStyleUnknown: (l) => l.warningsLabelStyleUnknownDetail,
+};

@@ -1,4 +1,4 @@
-import type { ContrastIssue, PreflightIssue, PreflightSeverity } from 'postext';
+import type { ContrastIssue, PageTemplateWarningKind, PreflightIssue, PreflightSeverity } from 'postext';
 /** Which design slot a warning points at. `level` tags heading slots;
  *  the part opener is a single slot. */
 export type WarningSlotKind = 'header' | 'footer' | 'heading' | 'part';
@@ -105,6 +105,18 @@ export type WarningKind =
   | 'floatShrunk'
   | 'unknownConfigKey'
   | 'unknownConfigValue'
+  | 'templateDuplicate'
+  | 'templateExtendsCycle'
+  | 'templateExtendsUnknown'
+  | 'frameDuplicate'
+  | 'frameStyleUnknown'
+  | 'frameAnchorUnknown'
+  | 'frameMinMax'
+  | 'groupFrameUnknown'
+  | 'groupFrameTwice'
+  | 'frameChainLoop'
+  | 'overflowTargetUnknown'
+  | 'labelStyleUnknown'
   | 'unsupportedHyphenationLocale'
   | 'missingGlyph'
   | 'variableFontDefaultInstance'
@@ -427,6 +439,14 @@ export type WarningPayload =
    *  `suggestion` names the word it is closest to, when one is (the
    *  comics settings, #590). */
   | { kind: 'unknownConfigValue'; path: string; value: string; used: string; suggestion?: string }
+  /** A page template problem (#853), from the engine's
+   *  `validatePageTemplates`: `path` is a JSON pointer
+   *  (`/pageTemplates/3/frames/2/style`), `value` the id, name, loop or
+   *  sizes at fault, `used` what the engine took instead (the size, for
+   *  `frameMinMax`; `container`, for `frameAnchorUnknown`), `suggestion`
+   *  the closest id or name that exists. `labelStyleUnknown` names the
+   *  resource whose anchor asks for the style. */
+  | { kind: PageTemplateWarningKind; path: string; value: string; used: string; suggestion?: string; resourceId?: string }
   /** The document's language (its hyphenation locale, else `locale`) has
    *  no bundled hyphenation patterns: the engine hyphenates it with en-us. */
   | { kind: 'unsupportedHyphenationLocale'; locale: string }

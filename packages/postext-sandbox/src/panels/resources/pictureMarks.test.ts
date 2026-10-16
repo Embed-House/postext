@@ -190,6 +190,13 @@ describe('saving onto the resource', () => {
     expect(m.faces).toEqual([{ x: 0.1235, y: 0.2, width: 0.1, height: 0.15 }]);
   });
 
+  it('keeps the label fields of an anchor (composed pages, #853)', () => {
+    const label = { width: 0.2, align: 'start' as const, verticalAlign: 'top' as const, rotate: -12, style: 'mar' };
+    const m = normalizeMarks({ anchors: [{ id: 'atlantico', x: 0.1, y: 0.4, ...label }], avoid: [], faces: [] });
+    expect(m.anchors).toEqual([{ id: 'atlantico', x: 0.1, y: 0.4, ...label }]);
+    expect(applyMarks(picture, m).anchors).toEqual(m.anchors);
+  });
+
   it('writes anchors and avoid zones, and leaves the keys out when empty', () => {
     const marks = { ...addAnchor(empty, { x: 0.4, y: 0.6 }), avoid: [{ x: 0, y: 0, width: 0.1, height: 0.1 }] };
     const saved = applyMarks(picture, marks);

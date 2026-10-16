@@ -524,5 +524,35 @@
       "de": "Comicseiten",
       "it": "Tavole a fumetti"
     }
+  },
+  "pageTemplates": {
+    "slug": "configuration-composed-pages",
+    "heading": {
+      "en": "Page templates",
+      "es": "Plantillas de página",
+      "ca": "Plantilles de pàgina",
+      "zh": "页面模板",
+      "ar": "قوالب الصفحات",
+      "ja": "ページテンプレート",
+      "pt": "Modelos de página",
+      "fr": "Gabarits de page",
+      "de": "Seitenvorlagen",
+      "it": "Modelli di pagina"
+    }
+  },
+  "labelStyles": {
+    "slug": "configuration-composed-pages",
+    "heading": {
+      "en": "Label styles",
+      "es": "Estilos de rótulo",
+      "ca": "Estils de rètol",
+      "zh": "注记样式",
+      "ar": "أنماط التسميات",
+      "ja": "ラベルスタイル",
+      "pt": "Estilos de rótulo",
+      "fr": "Styles d’étiquette",
+      "de": "Beschriftungsstile",
+      "it": "Stili delle etichette"
+    }
   }
 }

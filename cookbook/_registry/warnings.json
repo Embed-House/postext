@@ -6272,5 +6272,653 @@
         "it": "Avvisi"
       }
     }
+  },
+  "templateDuplicate": {
+    "source": "engine",
+    "label": {
+      "en": "Duplicate page template id",
+      "es": "Id de plantilla de página repetido",
+      "ca": "Id de plantilla de pàgina repetit",
+      "zh": "页面模板 id 重复",
+      "ar": "معرّف قالب صفحة مكرّر",
+      "ja": "ページテンプレートのidが重複",
+      "pt": "Id de modelo de página repetido",
+      "fr": "Identifiant de gabarit de page en double",
+      "de": "Doppelte ID einer Seitenvorlage",
+      "it": "Id di modello di pagina ripetuto"
+    },
+    "cause": {
+      "en": "Two page templates have the same `id`; the first is used and the later one is ignored.",
+      "es": "Dos plantillas de página tienen el mismo `id`; se usa la primera y la otra se ignora.",
+      "ca": "Dues plantilles de pàgina tenen el mateix `id`; es fa servir la primera i l'altra s'ignora.",
+      "zh": "两个页面模板使用了相同的`id`；使用前一个，后一个被忽略。",
+      "ar": "قالبا صفحة يحملان `id` نفسه؛ يُستخدم الأول ويُتجاهَل الآخر.",
+      "ja": "2つのページテンプレートが同じ`id`を使っています。先のものが使われ、後のものは無視されます。",
+      "pt": "Dois modelos de página têm o mesmo `id`; o primeiro é usado e o outro é ignorado.",
+      "fr": "Deux gabarits de page ont le même `id` ; le premier est utilisé et l’autre est ignoré.",
+      "de": "Zwei Seitenvorlagen haben dieselbe `id`; die erste gilt, die spätere wird ignoriert.",
+      "it": "Due modelli di pagina hanno lo stesso `id`; si usa il primo e l’altro viene ignorato."
+    },
+    "fix": {
+      "en": "Rename one of them, or delete the copy.",
+      "es": "Cambia el id de una de ellas o borra la copia.",
+      "ca": "Canvia l'id d'una de les dues o esborra la còpia.",
+      "zh": "给其中一个改名，或删除重复的那个。",
+      "ar": "غيّر معرّف أحدهما، أو احذف النسخة المكرّرة.",
+      "ja": "どちらかの名前を変えるか、重複したものを削除してください。",
+      "pt": "Renomeie um deles ou apague a cópia.",
+      "fr": "Renommez l’un des deux, ou supprimez la copie.",
+      "de": "Benennen Sie eine der beiden um oder löschen Sie die Kopie.",
+      "it": "Rinomina uno dei due, oppure elimina la copia."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "templateExtendsCycle": {
+    "source": "engine",
+    "label": {
+      "en": "Page templates extend each other in a loop",
+      "es": "Plantillas que se extienden en bucle",
+      "ca": "Plantilles que s'estenen en bucle",
+      "zh": "页面模板互相继承成环",
+      "ar": "قوالب يوسّع بعضها بعضًا في حلقة",
+      "ja": "ページテンプレートの継承が循環",
+      "pt": "Modelos que se estendem em círculo",
+      "fr": "Gabarits qui s’étendent en boucle",
+      "de": "Seitenvorlagen erweitern sich im Kreis",
+      "it": "Modelli che si estendono in cerchio"
+    },
+    "cause": {
+      "en": "Following `extends` from a template comes back to it (`a → b → a`); every template of the loop, and every template that extends one of them, is dropped.",
+      "es": "Siguiendo los `extends` de una plantilla se vuelve a ella (`a → b → a`); se descartan todas las plantillas del bucle y las que extienden alguna de ellas.",
+      "ca": "Seguint els `extends` d'una plantilla es torna a ella (`a → b → a`); es descarten totes les plantilles del bucle i les que n'estenen alguna.",
+      "zh": "沿着某个模板的`extends`又回到了它自己（`a → b → a`）；环中的所有模板，以及继承其中任何一个的模板，都被丢弃。",
+      "ar": "تتبُّع حقول `extends` لقالب يعيد إليه (`a → b → a`)؛ فتُسقَط كل قوالب الحلقة وكل قالب يوسّع أحدها.",
+      "ja": "テンプレートの`extends`をたどると自分に戻ってきます（`a → b → a`）。循環に含まれるテンプレートと、それらを継承するテンプレートはすべて使われません。",
+      "pt": "Seguindo os `extends` de um modelo, volta-se a ele (`a → b → a`); todos os modelos do círculo, e os que estendem algum deles, são descartados.",
+      "fr": "En suivant les `extends` d’un gabarit, on revient à lui (`a → b → a`) ; tous les gabarits de la boucle, et ceux qui étendent l’un d’eux, sont écartés.",
+      "de": "Folgt man den `extends` einer Vorlage, kommt man zu ihr zurück (`a → b → a`); alle Vorlagen des Kreises und alle, die eine davon erweitern, werden verworfen.",
+      "it": "Seguendo gli `extends` di un modello si torna a esso (`a → b → a`); tutti i modelli del cerchio, e quelli che ne estendono uno, vengono scartati."
+    },
+    "fix": {
+      "en": "Remove the `extends` of one template of the loop.",
+      "es": "Quita el `extends` de una de las plantillas del bucle.",
+      "ca": "Treu l'`extends` d'una de les plantilles del bucle.",
+      "zh": "去掉环中某个模板的`extends`。",
+      "ar": "احذف `extends` من أحد قوالب الحلقة.",
+      "ja": "循環に含まれるテンプレートのどれか1つから`extends`を外してください。",
+      "pt": "Retire o `extends` de um dos modelos do círculo.",
+      "fr": "Supprimez l’`extends` d’un des gabarits de la boucle.",
+      "de": "Entfernen Sie das `extends` einer Vorlage des Kreises.",
+      "it": "Togli l’`extends` di uno dei modelli del cerchio."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "templateExtendsUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Page template extends an unknown template",
+      "es": "La plantilla extiende otra que no existe",
+      "ca": "La plantilla estén una altra que no existeix",
+      "zh": "模板继承了不存在的模板",
+      "ar": "القالب يوسّع قالبًا غير موجود",
+      "ja": "存在しないテンプレートを継承",
+      "pt": "O modelo estende um modelo que não existe",
+      "fr": "Le gabarit étend un gabarit inconnu",
+      "de": "Vorlage erweitert eine unbekannte Vorlage",
+      "it": "Il modello estende un modello inesistente"
+    },
+    "cause": {
+      "en": "A template's `extends` names an id no template has; the template is used on its own, inheriting nothing.",
+      "es": "El `extends` de una plantilla nombra un id que ninguna plantilla tiene; la plantilla se usa sola, sin heredar nada.",
+      "ca": "L'`extends` d'una plantilla anomena un id que cap plantilla no té; la plantilla es fa servir sola, sense heretar res.",
+      "zh": "模板的`extends`指向一个不存在的id；该模板单独使用，不继承任何内容。",
+      "ar": "يذكر `extends` في قالب معرّفًا لا يحمله أي قالب؛ فيُستخدم القالب وحده دون أن يرث شيئًا.",
+      "ja": "テンプレートの`extends`が、どのテンプレートにもないidを指しています。テンプレートは何も継承せず単独で使われます。",
+      "pt": "O `extends` de um modelo cita um id que nenhum modelo tem; o modelo é usado sozinho, sem herdar nada.",
+      "fr": "L’`extends` d’un gabarit cite un identifiant qu’aucun gabarit ne porte ; le gabarit est utilisé seul, sans rien hériter.",
+      "de": "Das `extends` einer Vorlage nennt eine ID, die keine Vorlage hat; die Vorlage wird für sich genutzt und erbt nichts.",
+      "it": "L’`extends` di un modello nomina un id che nessun modello ha; il modello si usa da solo, senza ereditare nulla."
+    },
+    "fix": {
+      "en": "Correct the id (the warning suggests the closest one), or add the parent template.",
+      "es": "Corrige el id (el aviso propone el más parecido) o añade la plantilla madre.",
+      "ca": "Corregeix l'id (l'avís proposa el més semblant) o afegeix la plantilla mare.",
+      "zh": "改正id（警告会给出最接近的那个），或添加父模板。",
+      "ar": "صحّح المعرّف (يقترح التحذير أقربها)، أو أضف القالب الأب.",
+      "ja": "idを直す（警告がいちばん近いidを示します）か、親テンプレートを追加してください。",
+      "pt": "Corrija o id (o aviso sugere o mais próximo) ou adicione o modelo pai.",
+      "fr": "Corrigez l’identifiant (l’avertissement propose le plus proche), ou ajoutez le gabarit parent.",
+      "de": "Korrigieren Sie die ID (die Warnung schlägt die nächstliegende vor) oder legen Sie die Elternvorlage an.",
+      "it": "Correggi l’id (l’avviso propone il più vicino) oppure aggiungi il modello padre."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "frameDuplicate": {
+    "source": "engine",
+    "label": {
+      "en": "Duplicate frame or group name",
+      "es": "Nombre de marco o grupo repetido",
+      "ca": "Nom de marc o grup repetit",
+      "zh": "框架或组的名称重复",
+      "ar": "اسم خانة أو مجموعة مكرّر",
+      "ja": "フレームまたはグループの名前が重複",
+      "pt": "Nome de quadro ou grupo repetido",
+      "fr": "Nom de bloc ou de groupe en double",
+      "de": "Doppelter Name eines Rahmens oder einer Gruppe",
+      "it": "Nome di cornice o gruppo ripetuto"
+    },
+    "cause": {
+      "en": "Two frames or two groups of one list have the same `name`, or a group has the name of a frame; the later entry is ignored.",
+      "es": "Dos marcos o dos grupos de una misma lista tienen el mismo `name`, o un grupo se llama como un marco; la entrada posterior se ignora.",
+      "ca": "Dos marcs o dos grups d'una mateixa llista tenen el mateix `name`, o un grup es diu com un marc; l'entrada posterior s'ignora.",
+      "zh": "同一列表中两个框架或两个组的`name`相同，或某个组与某个框架同名；后面的条目被忽略。",
+      "ar": "خانتان أو مجموعتان في قائمة واحدة تحملان `name` نفسه، أو مجموعة تحمل اسم خانة؛ فيُتجاهَل العنصر اللاحق.",
+      "ja": "同じリストの2つのフレームまたはグループが同じ`name`を持つか、グループがフレームと同じ名前です。後の項目は無視されます。",
+      "pt": "Dois quadros ou dois grupos de uma mesma lista têm o mesmo `name`, ou um grupo tem o nome de um quadro; a entrada seguinte é ignorada.",
+      "fr": "Deux blocs ou deux groupes d’une même liste ont le même `name`, ou un groupe porte le nom d’un bloc ; l’entrée suivante est ignorée.",
+      "de": "Zwei Rahmen oder zwei Gruppen einer Liste haben denselben `name`, oder eine Gruppe heißt wie ein Rahmen; der spätere Eintrag wird ignoriert.",
+      "it": "Due cornici o due gruppi di una stessa lista hanno lo stesso `name`, oppure un gruppo si chiama come una cornice; la voce successiva viene ignorata."
+    },
+    "fix": {
+      "en": "Give each frame and group a name of its own; to change an inherited frame, write one entry with its name.",
+      "es": "Da a cada marco y grupo un nombre propio; para cambiar un marco heredado, escribe una sola entrada con su nombre.",
+      "ca": "Dona a cada marc i grup un nom propi; per canviar un marc heretat, escriu una sola entrada amb el seu nom.",
+      "zh": "给每个框架和组起不同的名称；要修改继承来的框架，只写一个同名条目。",
+      "ar": "أعطِ كل خانة ومجموعة اسمًا خاصًا بها؛ ولتغيير خانة موروثة اكتب عنصرًا واحدًا باسمها.",
+      "ja": "フレームとグループにはそれぞれ別の名前を付けてください。継承したフレームを変えるときは、その名前の項目を1つだけ書きます。",
+      "pt": "Dê a cada quadro e grupo um nome próprio; para mudar um quadro herdado, escreva uma única entrada com o nome dele.",
+      "fr": "Donnez à chaque bloc et à chaque groupe un nom à lui ; pour modifier un bloc hérité, écrivez une seule entrée à son nom.",
+      "de": "Geben Sie jedem Rahmen und jeder Gruppe einen eigenen Namen; um einen geerbten Rahmen zu ändern, schreiben Sie einen Eintrag mit seinem Namen.",
+      "it": "Dai a ogni cornice e a ogni gruppo un nome suo; per modificare una cornice ereditata, scrivi una sola voce con il suo nome."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "frameStyleUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Frame style not found",
+      "es": "Estilo de marco no encontrado",
+      "ca": "Estil de marc no trobat",
+      "zh": "找不到框架样式",
+      "ar": "نمط الخانة غير موجود",
+      "ja": "フレームのスタイルが見つからない",
+      "pt": "Estilo de quadro não encontrado",
+      "fr": "Style de bloc introuvable",
+      "de": "Rahmenstil nicht gefunden",
+      "it": "Stile di cornice non trovato"
+    },
+    "cause": {
+      "en": "A frame's `style` names no callout style; the frame is drawn without a box.",
+      "es": "El `style` de un marco no nombra ningún estilo de aviso; el marco se dibuja sin caja.",
+      "ca": "L'`style` d'un marc no anomena cap estil d'avís; el marc es dibuixa sense caixa.",
+      "zh": "框架的`style`没有对应的标注框样式；框架不画边框。",
+      "ar": "لا يطابق `style` في الخانة أي نمط إطار؛ فتُرسَم الخانة بلا إطار.",
+      "ja": "フレームの`style`に当たる囲みスタイルがありません。フレームは囲みなしで描かれます。",
+      "pt": "O `style` de um quadro não cita nenhum estilo de boxe; o quadro é desenhado sem caixa.",
+      "fr": "Le `style` d’un bloc ne cite aucun style d’encadré ; le bloc est dessiné sans cadre.",
+      "de": "Der `style` eines Rahmens nennt keinen Kastenstil; der Rahmen wird ohne Kasten gezeichnet.",
+      "it": "Lo `style` di una cornice non nomina alcuno stile dei riquadri; la cornice viene disegnata senza riquadro."
+    },
+    "fix": {
+      "en": "Correct the id, or add the style to `calloutStyles`.",
+      "es": "Corrige el id o añade el estilo a `calloutStyles`.",
+      "ca": "Corregeix l'id o afegeix l'estil a `calloutStyles`.",
+      "zh": "改正id，或在`calloutStyles`中添加该样式。",
+      "ar": "صحّح المعرّف، أو أضف النمط إلى `calloutStyles`.",
+      "ja": "idを直すか、`calloutStyles`にそのスタイルを追加してください。",
+      "pt": "Corrija o id ou adicione o estilo a `calloutStyles`.",
+      "fr": "Corrigez l’identifiant, ou ajoutez le style à `calloutStyles`.",
+      "de": "Korrigieren Sie die ID oder ergänzen Sie den Stil in `calloutStyles`.",
+      "it": "Correggi l’id oppure aggiungi lo stile a `calloutStyles`."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "frameAnchorUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Frame anchor not found",
+      "es": "Anclaje de marco no encontrado",
+      "ca": "Ancoratge de marc no trobat",
+      "zh": "找不到框架的锚定目标",
+      "ar": "مرجع ربط الخانة غير موجود",
+      "ja": "フレームのアンカー先が見つからない",
+      "pt": "Âncora de quadro não encontrada",
+      "fr": "Ancrage de bloc introuvable",
+      "de": "Rahmenanker nicht gefunden",
+      "it": "Ancoraggio di cornice non trovato"
+    },
+    "cause": {
+      "en": "A frame, group or decoration element is anchored to `'#name'` and the template has nothing of that name, or frames and groups are anchored to each other in a loop; the anchor reads as the area.",
+      "es": "Un marco, grupo o elemento de decoración se ancla a `'#nombre'` y la plantilla no tiene nada con ese nombre, o los marcos y grupos se anclan entre sí en bucle; el anclaje se lee como el área.",
+      "ca": "Un marc, grup o element de decoració s'ancora a `'#nom'` i la plantilla no té res amb aquest nom, o els marcs i grups s'ancoren entre ells en bucle; l'ancoratge es llegeix com l'àrea.",
+      "zh": "框架、组或装饰元素锚定到`'#名称'`，而模板中没有这个名称；或者框架和组之间的锚定关系成环。该锚定按区域本身处理。",
+      "ar": "خانة أو مجموعة أو عنصر زخرفة مربوط بـ`'#اسم'` وليس في القالب شيء بهذا الاسم، أو أن الخانات والمجموعات مربوط بعضها ببعض في حلقة؛ فيُقرأ الربط على أنه المساحة نفسها.",
+      "ja": "フレーム、グループ、装飾要素が`'#名前'`にアンカーされているのに、テンプレートにその名前のものがないか、フレームとグループのアンカーが循環しています。アンカーは領域そのものとして扱われます。",
+      "pt": "Um quadro, grupo ou elemento de decoração está ancorado em `'#nome'` e o modelo não tem nada com esse nome, ou quadros e grupos se ancoram uns nos outros em círculo; a âncora vale como a área.",
+      "fr": "Un bloc, un groupe ou un élément de décor est ancré à `'#nom'` et le gabarit n’a rien de ce nom, ou des blocs et des groupes s’ancrent les uns aux autres en boucle ; l’ancrage se lit comme la zone.",
+      "de": "Ein Rahmen, eine Gruppe oder ein Schmuckelement ist an `'#name'` verankert und die Vorlage hat nichts dieses Namens, oder Rahmen und Gruppen sind im Kreis aneinander verankert; der Anker gilt als der Bereich.",
+      "it": "Una cornice, un gruppo o un elemento decorativo è ancorato a `'#nome'` e il modello non ha nulla con quel nome, oppure cornici e gruppi sono ancorati l’uno all’altro in cerchio; l’ancoraggio vale come l’area."
+    },
+    "fix": {
+      "en": "Anchor to a frame or group that exists, or break the loop by anchoring one of them to the area.",
+      "es": "Ancla a un marco o grupo que exista, o rompe el bucle anclando uno de ellos al área.",
+      "ca": "Ancora a un marc o grup que existeixi, o trenca el bucle ancorant-ne un a l'àrea.",
+      "zh": "锚定到存在的框架或组，或把其中一个改为锚定到区域以打破环。",
+      "ar": "اربط بخانة أو مجموعة موجودة، أو اكسر الحلقة بربط إحداها بالمساحة.",
+      "ja": "存在するフレームかグループにアンカーするか、どれか1つを領域にアンカーして循環を断ってください。",
+      "pt": "Ancore em um quadro ou grupo que exista, ou quebre o círculo ancorando um deles na área.",
+      "fr": "Ancrez à un bloc ou un groupe qui existe, ou rompez la boucle en ancrant l’un d’eux à la zone.",
+      "de": "Verankern Sie an einem vorhandenen Rahmen oder einer vorhandenen Gruppe, oder lösen Sie den Kreis, indem Sie einen davon am Bereich verankern.",
+      "it": "Ancora a una cornice o a un gruppo che esiste, oppure spezza il cerchio ancorandone uno all’area."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "frameMinMax": {
+    "source": "engine",
+    "label": {
+      "en": "Frame size outside its limits",
+      "es": "Tamaño de marco fuera de sus límites",
+      "ca": "Mida de marc fora dels límits",
+      "zh": "框架尺寸超出上下限",
+      "ar": "مقاس الخانة خارج حدوده",
+      "ja": "フレームの大きさが上下限の外",
+      "pt": "Tamanho de quadro fora dos limites",
+      "fr": "Taille de bloc hors de ses limites",
+      "de": "Rahmengröße außerhalb ihrer Grenzen",
+      "it": "Dimensione di cornice fuori dai limiti"
+    },
+    "cause": {
+      "en": "A frame's minimum is larger than its maximum, or a fixed `width` or `height` lies outside them; the minimum wins and a fixed size is brought between the limits.",
+      "es": "El mínimo de un marco es mayor que su máximo, o un `width` o `height` fijo queda fuera de ellos; manda el mínimo y el tamaño fijo se lleva dentro de los límites.",
+      "ca": "El mínim d'un marc és més gran que el màxim, o un `width` o `height` fix queda fora dels límits; mana el mínim i la mida fixa es porta dins dels límits.",
+      "zh": "框架的最小值大于最大值，或固定的`width`、`height`超出上下限；以最小值为准，固定尺寸被限定在上下限之间。",
+      "ar": "الحدّ الأدنى للخانة أكبر من حدّها الأقصى، أو أن `width` أو `height` ثابتًا يقع خارج الحدّين؛ فيُقدَّم الحدّ الأدنى ويُحصَر المقاس الثابت بين الحدّين.",
+      "ja": "フレームの最小値が最大値より大きいか、固定の`width`や`height`が上下限の外にあります。最小値が優先され、固定の大きさは上下限の間に収められます。",
+      "pt": "O mínimo de um quadro é maior que o máximo, ou um `width` ou `height` fixo fica fora dos limites; o mínimo prevalece e o tamanho fixo é trazido para dentro dos limites.",
+      "fr": "Le minimum d’un bloc dépasse son maximum, ou un `width` ou un `height` fixe sort de ces limites ; le minimum l’emporte et la taille fixe est ramenée entre les limites.",
+      "de": "Das Minimum eines Rahmens liegt über seinem Maximum, oder eine feste `width` oder `height` liegt außerhalb der Grenzen; das Minimum geht vor und die feste Größe wird zwischen die Grenzen gesetzt.",
+      "it": "Il minimo di una cornice supera il massimo, oppure un `width` o un `height` fisso cade fuori dai limiti; prevale il minimo e la dimensione fissa viene riportata entro i limiti."
+    },
+    "fix": {
+      "en": "Make the minimum no larger than the maximum, or drop the limit the fixed size contradicts.",
+      "es": "Haz que el mínimo no supere al máximo, o quita el límite que contradice el tamaño fijo.",
+      "ca": "Fes que el mínim no superi el màxim, o treu el límit que contradiu la mida fixa.",
+      "zh": "让最小值不超过最大值，或去掉与固定尺寸矛盾的那个限值。",
+      "ar": "اجعل الحدّ الأدنى لا يتجاوز الأقصى، أو احذف الحدّ الذي يناقض المقاس الثابت.",
+      "ja": "最小値を最大値以下にするか、固定の大きさと食い違う上下限を外してください。",
+      "pt": "Faça o mínimo não passar do máximo, ou retire o limite que o tamanho fixo contradiz.",
+      "fr": "Faites en sorte que le minimum ne dépasse pas le maximum, ou supprimez la limite que la taille fixe contredit.",
+      "de": "Setzen Sie das Minimum nicht über das Maximum, oder entfernen Sie die Grenze, der die feste Größe widerspricht.",
+      "it": "Fai in modo che il minimo non superi il massimo, oppure togli il limite che la dimensione fissa contraddice."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "groupFrameUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Group lists an unknown frame",
+      "es": "El grupo nombra un marco que no existe",
+      "ca": "El grup anomena un marc que no existeix",
+      "zh": "组中列出了不存在的框架",
+      "ar": "المجموعة تذكر خانة غير موجودة",
+      "ja": "グループに存在しないフレーム",
+      "pt": "O grupo cita um quadro que não existe",
+      "fr": "Le groupe cite un bloc inconnu",
+      "de": "Gruppe nennt einen unbekannten Rahmen",
+      "it": "Il gruppo nomina una cornice inesistente"
+    },
+    "cause": {
+      "en": "A group's `frames` lists a name that is no frame of the template (perhaps one a child template or a variant removed); the group skips it.",
+      "es": "Los `frames` de un grupo nombran algo que no es un marco de la plantilla (quizá uno que quitó una plantilla hija o una variante); el grupo se lo salta.",
+      "ca": "Els `frames` d'un grup anomenen una cosa que no és cap marc de la plantilla (potser un que va treure una plantilla filla o una variant); el grup se'l salta.",
+      "zh": "组的`frames`列出的名称不是模板中的框架（可能已被子模板或变体去掉）；组会跳过它。",
+      "ar": "تذكر `frames` في مجموعة اسمًا ليس خانة في القالب (ربما خانة أزالها قالب ابن أو متغيّر)؛ فتتخطّاه المجموعة.",
+      "ja": "グループの`frames`に、テンプレートのフレームではない名前があります（子テンプレートやバリアントで外されたものかもしれません）。グループはそれを飛ばします。",
+      "pt": "Os `frames` de um grupo citam um nome que não é quadro do modelo (talvez um que um modelo filho ou uma variante retirou); o grupo o pula.",
+      "fr": "Les `frames` d’un groupe citent un nom qui n’est aucun bloc du gabarit (peut-être un bloc retiré par un gabarit enfant ou une variante) ; le groupe le saute.",
+      "de": "Die `frames` einer Gruppe nennen einen Namen, der kein Rahmen der Vorlage ist (vielleicht einer, den eine Kindvorlage oder eine Variante entfernt hat); die Gruppe überspringt ihn.",
+      "it": "I `frames` di un gruppo nominano qualcosa che non è una cornice del modello (forse una tolta da un modello figlio o da una variante); il gruppo la salta."
+    },
+    "fix": {
+      "en": "Correct the name, or remove it from the list.",
+      "es": "Corrige el nombre o quítalo de la lista.",
+      "ca": "Corregeix el nom o treu-lo de la llista.",
+      "zh": "改正名称，或将它从列表中删除。",
+      "ar": "صحّح الاسم، أو احذفه من القائمة.",
+      "ja": "名前を直すか、リストから外してください。",
+      "pt": "Corrija o nome ou retire-o da lista.",
+      "fr": "Corrigez le nom, ou retirez-le de la liste.",
+      "de": "Korrigieren Sie den Namen oder nehmen Sie ihn aus der Liste.",
+      "it": "Correggi il nome oppure toglilo dalla lista."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "groupFrameTwice": {
+    "source": "engine",
+    "label": {
+      "en": "Frame listed in two groups",
+      "es": "Marco en dos grupos",
+      "ca": "Marc en dos grups",
+      "zh": "框架同时属于两个组",
+      "ar": "خانة مذكورة في مجموعتين",
+      "ja": "二つのグループに属するフレーム",
+      "pt": "Quadro em dois grupos",
+      "fr": "Bloc cité dans deux groupes",
+      "de": "Rahmen in zwei Gruppen",
+      "it": "Cornice in due gruppi"
+    },
+    "cause": {
+      "en": "A frame is listed in two groups, or twice in one; a frame belongs to one group only, so the later listing is skipped.",
+      "es": "Un marco aparece en dos grupos, o dos veces en uno; un marco pertenece a un solo grupo, así que la mención posterior se omite.",
+      "ca": "Un marc apareix en dos grups, o dues vegades en un; un marc pertany a un sol grup, així que la menció posterior s'omet.",
+      "zh": "一个框架出现在两个组中，或在同一组中出现两次；框架只能属于一个组，后面那一处被跳过。",
+      "ar": "خانة مذكورة في مجموعتين، أو مرتين في مجموعة واحدة؛ ولا تنتمي الخانة إلا إلى مجموعة واحدة، فيُتخطّى الذكر اللاحق.",
+      "ja": "フレームが2つのグループに、または1つのグループに2回書かれています。フレームが属せるグループは1つだけなので、後の指定は飛ばされます。",
+      "pt": "Um quadro aparece em dois grupos, ou duas vezes no mesmo; um quadro pertence a um só grupo, então a menção seguinte é pulada.",
+      "fr": "Un bloc figure dans deux groupes, ou deux fois dans un même groupe ; un bloc n’appartient qu’à un groupe, la mention suivante est donc ignorée.",
+      "de": "Ein Rahmen steht in zwei Gruppen oder zweimal in einer; ein Rahmen gehört nur zu einer Gruppe, die spätere Nennung wird übersprungen.",
+      "it": "Una cornice compare in due gruppi, o due volte nello stesso; una cornice appartiene a un solo gruppo, quindi la menzione successiva viene saltata."
+    },
+    "fix": {
+      "en": "Keep the frame in the one group it moves with.",
+      "es": "Deja el marco solo en el grupo con el que se mueve.",
+      "ca": "Deixa el marc només al grup amb què es mou.",
+      "zh": "只把框架留在它跟随移动的那个组里。",
+      "ar": "أبقِ الخانة في المجموعة الوحيدة التي تتحرّك معها.",
+      "ja": "フレームは、一緒に動くグループ1つだけに入れてください。",
+      "pt": "Deixe o quadro só no grupo com o qual ele se move.",
+      "fr": "Gardez le bloc dans le seul groupe avec lequel il se déplace.",
+      "de": "Lassen Sie den Rahmen nur in der Gruppe, mit der er sich bewegt.",
+      "it": "Lascia la cornice nel solo gruppo con cui si sposta."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "frameChainLoop": {
+    "source": "engine",
+    "label": {
+      "en": "Frames continue in a loop",
+      "es": "Marcos que continúan en bucle",
+      "ca": "Marcs que continuen en bucle",
+      "zh": "框架接续成环",
+      "ar": "خانات يتّصل بعضها ببعض في حلقة",
+      "ja": "フレームの続き先が循環",
+      "pt": "Quadros que continuam em círculo",
+      "fr": "Blocs qui se suivent en boucle",
+      "de": "Rahmen setzen sich im Kreis fort",
+      "it": "Cornici che proseguono in cerchio"
+    },
+    "cause": {
+      "en": "Frames continue into each other in a loop through `next` or `overflow.continueIn: '#frame'`; the link that closes the loop is dropped.",
+      "es": "Los marcos continúan unos en otros en bucle mediante `next` u `overflow.continueIn: '#marco'`; se quita el enlace que cierra el bucle.",
+      "ca": "Els marcs continuen els uns en els altres en bucle amb `next` o `overflow.continueIn: '#marc'`; es treu l'enllaç que tanca el bucle.",
+      "zh": "框架通过`next`或`overflow.continueIn: '#框架'`互相接续成环；闭合这个环的链接被去掉。",
+      "ar": "تتّصل الخانات بعضها ببعض في حلقة عبر `next` أو `overflow.continueIn: '#خانة'`؛ فيُحذَف الرابط الذي يغلق الحلقة.",
+      "ja": "フレームが`next`や`overflow.continueIn: '#フレーム'`で循環して続いています。循環を閉じるつながりは外されます。",
+      "pt": "Os quadros continuam uns nos outros em círculo por `next` ou `overflow.continueIn: '#quadro'`; o vínculo que fecha o círculo é retirado.",
+      "fr": "Des blocs se poursuivent les uns dans les autres en boucle par `next` ou `overflow.continueIn: '#bloc'` ; le lien qui ferme la boucle est supprimé.",
+      "de": "Rahmen setzen sich über `next` oder `overflow.continueIn: '#rahmen'` im Kreis ineinander fort; die Verbindung, die den Kreis schließt, entfällt.",
+      "it": "Le cornici proseguono l’una nell’altra in cerchio con `next` o `overflow.continueIn: '#cornice'`; il collegamento che chiude il cerchio viene tolto."
+    },
+    "fix": {
+      "en": "End the chain at its last frame: remove its `next`, or make it continue on the next page.",
+      "es": "Termina la cadena en su último marco: quítale el `next` o haz que continúe en la página siguiente.",
+      "ca": "Acaba la cadena al darrer marc: treu-li el `next` o fes que continuï a la pàgina següent.",
+      "zh": "让链在最后一个框架处结束：去掉它的`next`，或让它接续到下一页。",
+      "ar": "أنهِ السلسلة عند آخر خانة فيها: احذف `next` منها، أو اجعلها تتابع في الصفحة التالية.",
+      "ja": "最後のフレームで連鎖を終えてください。そのフレームの`next`を外すか、次のページへ続けます。",
+      "pt": "Termine a cadeia no último quadro: tire o `next` dele ou faça-o continuar na página seguinte.",
+      "fr": "Terminez la chaîne sur son dernier bloc : retirez son `next`, ou faites-le continuer sur la page suivante.",
+      "de": "Beenden Sie die Kette an ihrem letzten Rahmen: Entfernen Sie dessen `next` oder lassen Sie ihn auf der nächsten Seite weiterlaufen.",
+      "it": "Chiudi la catena alla sua ultima cornice: togli il suo `next`, oppure falla proseguire nella pagina successiva."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "overflowTargetUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Continuation target not found",
+      "es": "Destino de continuación no encontrado",
+      "ca": "Destinació de continuació no trobada",
+      "zh": "找不到接续目标",
+      "ar": "وجهة المتابعة غير موجودة",
+      "ja": "続き先が見つからない",
+      "pt": "Destino da continuação não encontrado",
+      "fr": "Cible de suite introuvable",
+      "de": "Ziel der Fortsetzung nicht gefunden",
+      "it": "Destinazione del seguito non trovata"
+    },
+    "cause": {
+      "en": "A `next`, an `overflow.continueIn` or an `overflowTemplate` names no frame or template, or a `continueIn` is not `'#frame'`, `'next-page'` or `'template:<id>'`; content that does not fit does not continue there.",
+      "es": "Un `next`, un `overflow.continueIn` o un `overflowTemplate` no nombra ningún marco ni plantilla, o un `continueIn` no es `'#marco'`, `'next-page'` ni `'template:<id>'`; el contenido que no cabe no continúa ahí.",
+      "ca": "Un `next`, un `overflow.continueIn` o un `overflowTemplate` no anomena cap marc ni plantilla, o un `continueIn` no és `'#marc'`, `'next-page'` ni `'template:<id>'`; el contingut que no hi cap no continua allà.",
+      "zh": "`next`、`overflow.continueIn`或`overflowTemplate`没有对应的框架或模板，或`continueIn`不是`'#框架'`、`'next-page'`、`'template:<id>'`之一；放不下的内容不会在那里接续。",
+      "ar": "لا يذكر `next` أو `overflow.continueIn` أو `overflowTemplate` أي خانة أو قالب، أو أن `continueIn` ليس `'#خانة'` ولا `'next-page'` ولا `'template:<id>'`؛ فلا يتابع المحتوى الذي لا يتّسع هناك.",
+      "ja": "`next`、`overflow.continueIn`、`overflowTemplate`がどのフレームやテンプレートも指していないか、`continueIn`が`'#フレーム'`・`'next-page'`・`'template:<id>'`のどれでもありません。入りきらない内容はそこへ続きません。",
+      "pt": "Um `next`, um `overflow.continueIn` ou um `overflowTemplate` não cita nenhum quadro nem modelo, ou um `continueIn` não é `'#quadro'`, `'next-page'` nem `'template:<id>'`; o conteúdo que não cabe não continua ali.",
+      "fr": "Un `next`, un `overflow.continueIn` ou un `overflowTemplate` ne cite aucun bloc ni gabarit, ou un `continueIn` n’est ni `'#bloc'`, ni `'next-page'`, ni `'template:<id>'` ; le contenu qui ne tient pas ne s’y poursuit pas.",
+      "de": "Ein `next`, ein `overflow.continueIn` oder ein `overflowTemplate` nennt keinen Rahmen und keine Vorlage, oder ein `continueIn` ist weder `'#rahmen'` noch `'next-page'` noch `'template:<id>'`; Inhalt, der nicht passt, läuft dort nicht weiter.",
+      "it": "Un `next`, un `overflow.continueIn` o un `overflowTemplate` non nomina alcuna cornice né modello, oppure un `continueIn` non è `'#cornice'`, `'next-page'` o `'template:<id>'`; il contenuto che non ci sta non prosegue lì."
+    },
+    "fix": {
+      "en": "Correct the name or the id, or write one of the three forms.",
+      "es": "Corrige el nombre o el id, o escribe una de las tres formas.",
+      "ca": "Corregeix el nom o l'id, o escriu una de les tres formes.",
+      "zh": "改正名称或id，或写成这三种形式之一。",
+      "ar": "صحّح الاسم أو المعرّف، أو اكتب إحدى الصيغ الثلاث.",
+      "ja": "名前やidを直すか、3つの形のどれかで書いてください。",
+      "pt": "Corrija o nome ou o id, ou escreva uma das três formas.",
+      "fr": "Corrigez le nom ou l’identifiant, ou écrivez l’une des trois formes.",
+      "de": "Korrigieren Sie den Namen oder die ID, oder schreiben Sie eine der drei Formen.",
+      "it": "Correggi il nome o l’id, oppure scrivi una delle tre forme."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
+  },
+  "labelStyleUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Label style not found",
+      "es": "Estilo de rótulo no encontrado",
+      "ca": "Estil de rètol no trobat",
+      "zh": "找不到注记样式",
+      "ar": "نمط التسمية غير موجود",
+      "ja": "ラベルスタイルが見つからない",
+      "pt": "Estilo de rótulo não encontrado",
+      "fr": "Style d’étiquette introuvable",
+      "de": "Beschriftungsstil nicht gefunden",
+      "it": "Stile delle etichette non trovato"
+    },
+    "cause": {
+      "en": "An anchor of a picture names a `style` that `labelStyles` does not have; the labels at that anchor take the default look.",
+      "es": "Un anclaje de una imagen nombra un `style` que `labelStyles` no tiene; los rótulos de ese anclaje toman el aspecto por defecto.",
+      "ca": "Un ancoratge d'una imatge anomena un `style` que `labelStyles` no té; els rètols d'aquest ancoratge prenen l'aspecte per defecte.",
+      "zh": "图片的某个锚点指定的`style`不在`labelStyles`中；该锚点的注记采用默认外观。",
+      "ar": "تذكر مرساة في صورة `style` ليس في `labelStyles`؛ فتأخذ تسميات تلك المرساة المظهر الافتراضي.",
+      "ja": "画像のアンカーが、`labelStyles`にない`style`を指定しています。そのアンカーのラベルは既定の見た目になります。",
+      "pt": "Uma âncora de uma imagem cita um `style` que `labelStyles` não tem; os rótulos dessa âncora ficam com a aparência padrão.",
+      "fr": "Un ancrage d’une image cite un `style` absent de `labelStyles` ; les étiquettes de cet ancrage prennent l’aspect par défaut.",
+      "de": "Ein Anker eines Bildes nennt einen `style`, den `labelStyles` nicht hat; die Beschriftungen an diesem Anker sehen aus wie voreingestellt.",
+      "it": "Un ancoraggio di un’immagine nomina uno `style` che `labelStyles` non ha; le etichette di quell’ancoraggio prendono l’aspetto predefinito."
+    },
+    "fix": {
+      "en": "Correct the style id on the anchor, or add the style to `labelStyles`.",
+      "es": "Corrige el id del estilo en el anclaje o añade el estilo a `labelStyles`.",
+      "ca": "Corregeix l'id de l'estil a l'ancoratge o afegeix l'estil a `labelStyles`.",
+      "zh": "改正锚点上的样式id，或在`labelStyles`中添加该样式。",
+      "ar": "صحّح معرّف النمط في المرساة، أو أضف النمط إلى `labelStyles`.",
+      "ja": "アンカーのスタイルidを直すか、`labelStyles`にそのスタイルを追加してください。",
+      "pt": "Corrija o id do estilo na âncora ou adicione o estilo a `labelStyles`.",
+      "fr": "Corrigez l’identifiant du style sur l’ancrage, ou ajoutez le style à `labelStyles`.",
+      "de": "Korrigieren Sie die Stil-ID am Anker oder ergänzen Sie den Stil in `labelStyles`.",
+      "it": "Correggi l’id dello stile sull’ancoraggio oppure aggiungi lo stile a `labelStyles`."
+    },
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Page template warnings",
+        "es": "Avisos de las plantillas de página",
+        "ca": "Avisos de les plantilles de pàgina",
+        "zh": "页面模板警告",
+        "ar": "تحذيرات قوالب الصفحات",
+        "ja": "ページテンプレートの警告",
+        "pt": "Avisos dos modelos de página",
+        "fr": "Avertissements des gabarits de page",
+        "de": "Warnungen zu Seitenvorlagen",
+        "it": "Avvisi dei modelli di pagina"
+      }
+    }
   }
 }

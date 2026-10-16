@@ -19,7 +19,7 @@ const CONFIG_KEYS = [
   'paragraphStyles', 'calloutStyles', 'chipStyles', 'parts', 'headingStyles', 'toc', 'index', 'unorderedLists',
   'orderedLists', 'math', 'footnotes', 'crossRefs', 'citations', 'cjk', 'lineNumbers', 'codeStyle', 'header', 'footer',
   'locale', 'direction', 'numerals', 'debug', 'htmlViewer', 'folio', 'comics', 'pdfGeneration', 'print', 'contrast',
-  'colorPalette', 'customFonts', 'resourceTypes',
+  'colorPalette', 'customFonts', 'resourceTypes', 'pageTemplates', 'labelStyles',
 ] as const satisfies readonly (keyof PostextConfig)[];
 
 // A section the engine gains must be added above: this line stops

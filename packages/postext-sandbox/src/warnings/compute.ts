@@ -716,10 +716,10 @@ function collectHeadingBreakParityWarnings(config: PostextConfig): Warning[] {
  *  font stack in a font-family field, an unknown numbering format, a
  *  one-and-a-half layout's side column that leaves a column with no width,
  *  a heading setting the engine does not know. */
-function collectConfigValueWarnings(config: PostextConfig): Warning[] {
-  return collectConfigWarnings(config).map((w) => ({
+function collectConfigValueWarnings(config: PostextConfig, resources: readonly Resource[]): Warning[] {
+  return collectConfigWarnings(config, { resources }).map((w) => ({
     id: `config-${w.kind}-${w.path}`,
-    payload: { kind: w.kind, path: w.path, value: w.value, used: w.used, ...(w.suggestion ? { suggestion: w.suggestion } : {}) },
+    payload: { kind: w.kind, path: w.path, value: w.value, used: w.used, ...(w.suggestion ? { suggestion: w.suggestion } : {}), ...(w.resourceId !== undefined ? { resourceId: w.resourceId } : {}) } as WarningPayload,
   }));
 }
 
@@ -1394,7 +1394,7 @@ function computeDocumentWarnings(params: {
   warnings.push(...collectContainerWarnings(markdown, issues));
   warnings.push(...collectChipOverlapWarnings(markdown, doc));
   warnings.push(...collectHeadingBreakParityWarnings(config));
-  warnings.push(...collectConfigValueWarnings(config));
+  warnings.push(...collectConfigValueWarnings(config, resources));
   warnings.push(...collectHyphenationLocaleWarnings(config));
   warnings.push(...collectParityCascadeWarnings(doc));
   warnings.push(...collectAlphaOverflowWarnings(doc));

@@ -58,6 +58,18 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'wrapUnsupported':
     case 'unknownConfigKey':
     case 'unknownConfigValue':
+    case 'templateDuplicate':
+    case 'templateExtendsCycle':
+    case 'templateExtendsUnknown':
+    case 'frameDuplicate':
+    case 'frameStyleUnknown':
+    case 'frameAnchorUnknown':
+    case 'frameMinMax':
+    case 'groupFrameUnknown':
+    case 'groupFrameTwice':
+    case 'frameChainLoop':
+    case 'overflowTargetUnknown':
+    case 'labelStyleUnknown':
     case 'headingDesignCut':
       return 'design';
     case 'looseLine':
