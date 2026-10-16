@@ -1101,7 +1101,10 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // Page roles drive the per-element `pages` filter of every slot below.
   classifyPages(doc, resolved);
 
-  const chapterTitleByPageIndex = computeChapterTitles(doc.blocks, doc.pages.length, doc.pages);
+  // The headings a composed page's frames set (#874) count as running
+  // marks too: they live in the page's floats, not in `doc.blocks`.
+  const markBlocks = withComposedHeadings(doc);
+  const chapterTitleByPageIndex = computeChapterTitles(markBlocks, doc.pages.length, doc.pages);
   // A heading style with an empty `numberingTemplate` prints no number, not
   // even the chapter ordinal `{chapterNumber}` falls back to.
   const numberlessStyles = new Set(resolved.headingStyles.filter((s) => s.numberingTemplate === '').map((s) => s.id));
@@ -1111,7 +1114,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // The digits of the chapter ordinals and page counts the slots print.
   const numerals = resolved.numerals;
   const chapterNumberByPageIndex = computeChapterNumbers(
-    doc.blocks,
+    markBlocks,
     doc.pages.length,
     doc.pages,
     doc.chapterOrdinalOffset ?? 0,
@@ -1121,9 +1124,9 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // The chapter in force at the top of each page (`{chapterTitleAtTop}`,
   // `{chapterNumberAtTop}`): the one a page runs on from, even where a new
   // chapter starts lower down (EF-187).
-  const chapterTitleAtTopByPageIndex = computeChapterTitlesAtTop(doc.blocks, doc.pages.length, doc.pages);
+  const chapterTitleAtTopByPageIndex = computeChapterTitlesAtTop(markBlocks, doc.pages.length, doc.pages);
   const chapterNumberAtTopByPageIndex = computeChapterNumbersAtTop(
-    doc.blocks,
+    markBlocks,
     doc.pages.length,
     doc.pages,
     doc.chapterOrdinalOffset ?? 0,
@@ -1186,7 +1189,9 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     // and bleed boxes are the sheet's (centred, so their own mirror images).
     const frames = pageIsVertical(page) ? verticalFrames : physicalFrames;
     const extras: SlotLayoutExtras = {
-      frames, pageRole: page.role, resourceById,
+      // A composed page reports its template's role (`role`, default
+      // `'composed'`) to the `pages` filter of its slots' elements.
+      frames, pageRole: (page.composed?.role as PageRole | undefined) ?? page.role, resourceById,
       metadataSources: doc.metadataSources, metadata: doc.metadata as Record<string, unknown>,
       // Right-to-left text: the document's direction, and the mirror of a
       // right-to-left page's flow, which the slots below are painted in.
@@ -1660,4 +1665,47 @@ export function stampPageBackgrounds(
     const hex = overrides[id]!.startsWith('#') ? overrides[id]! : `#${overrides[id]}`;
     if (hex.toLowerCase() !== base) page.background = hex;
   }
+}
+
+/** `doc.blocks` as the running marks read them (#874): on a composed page
+ *  only its headings count, in frame order, so a chapter that opens in one
+ *  of its frames opens the page (`{chapterTitleAtTop}`) even though the
+ *  story boxes of the frames come first. The same array when the document
+ *  has no composed page. */
+function withComposedHeadings(doc: VDTDocument): VDTBlock[] {
+  const composed = new Set<number>();
+  for (const page of doc.pages) if (page.composed) composed.add(page.index);
+  if (composed.size === 0) return doc.blocks;
+  const out: VDTBlock[] = [];
+  const seen = new Set<string>();
+  let lastComposed = -1;
+  const pushFrames = (index: number) => {
+    const page = doc.pages[index];
+    if (!page?.composed) return;
+    const byId = new Map((page.floats ?? []).map((b) => [b.id, b]));
+    for (const f of page.composed.frames) {
+      for (const id of f.blockIds) {
+        const b = byId.get(id);
+        if (b && b.headingLevel !== undefined && !seen.has(b.id)) {
+          seen.add(b.id);
+          out.push(b);
+        }
+      }
+    }
+  };
+  for (const b of doc.blocks) {
+    if (!composed.has(b.pageIndex)) {
+      out.push(b);
+      continue;
+    }
+    if (b.pageIndex !== lastComposed) {
+      lastComposed = b.pageIndex;
+      pushFrames(b.pageIndex);
+    }
+    if (b.headingLevel !== undefined && !seen.has(b.id)) {
+      seen.add(b.id);
+      out.push(b);
+    }
+  }
+  return out;
 }
