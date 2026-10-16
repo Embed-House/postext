@@ -251,3 +251,45 @@ describe('captioned strips (#590)', () => {
   });
 });
 
+
+describe('text panels (#885)', () => {
+  const textPanelBook = async (): Promise<VDTDocument[]> => {
+    const { buildDocument } = await import('postext');
+    const md = [
+      '# A comic',
+      '',
+      ':::page{split="40 / *"}',
+      '::panel{text}',
+      'The narrator tells of the *storm*.',
+      '',
+      'A second paragraph of the panel.',
+      '::panel{art=f1}',
+      ':::',
+      '',
+      'After the page.',
+    ].join('\n');
+    return [buildDocument({ markdown: md, resources: [{ id: 'f1', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0, bitmap: { fileId: 'f1.png', format: 'png', width: 4, height: 3 } }] }, {})];
+  };
+
+  it('reads a text panel once in the reflowable book, after the page’s panels', async () => {
+    const book = readEpub(await renderToEpub(await textPanelBook(), options('reflowable')));
+    const all = book.spine.map((s) => text(book, s.path)).join('\n');
+    expect(all.split('The narrator tells of the').length - 1).toBe(1);
+    expect(all.split('A second paragraph of the panel.').length - 1).toBe(1);
+    expect(all.indexOf('The narrator tells of the')).toBeLessThan(all.indexOf('After the page.'));
+  });
+
+  it('writes the text frame inside the comic in the fixed layout', async () => {
+    const docs = await textPanelBook();
+    const book = readEpub(await renderToEpub(docs, options('fixed')));
+    const page = docs[0]!.pages.find((p) => p.comic)!;
+    const xhtml = text(book, book.spine[page.index]!.path);
+    const comicAt = xhtml.indexOf('<div class="pt-comic"');
+    const frameAt = xhtml.indexOf('data-frame-id="cm0:p1"');
+    expect(comicAt).toBeGreaterThan(-1);
+    expect(frameAt).toBeGreaterThan(comicAt);
+    // The panel's paragraphs, once, inside the frame.
+    expect(xhtml.split('data-block-id="cm0:p1-c0"').length - 1).toBe(1);
+    expect(xhtml.indexOf('data-block-id="cm0:p1-c0"')).toBeGreaterThan(frameAt);
+  });
+});
