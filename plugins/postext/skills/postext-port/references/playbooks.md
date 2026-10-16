@@ -458,6 +458,12 @@ source line by line.
 
 ### B10. Inline chips (word banks, keys, tags) and colour legends
 - `:chip[Ctrl]{style="key"}` with `chipStyles`.
+- A chip is one unbreakable box: it never breaks across lines. A chip that
+  does not fit moves to the next line, and one wider than the line
+  overflows. Keep chips to a word or two; a highlighted phrase the source
+  runs over a line end is split into two chips at that point, and a
+  translation of three words or more is two chips. #888 tracks an inline
+  highlight that breaks like text.
 - A colour key square: `:swatch{color="band"}` (a palette id or `#hex`), in
   text, captions or table notes.
 
@@ -1134,8 +1140,12 @@ Cookbook's comic recipes) are working pipelines.
 
 A children's textbook, a workbook or an infographic book sets many pages as
 **composed** pages: boxes, labels, maps and diagrams at set places, with
-little running text. Postext lays text out in flows and has no composed
-pages yet, so these books need the ladder below. What went wrong before: a
+little running text. Postext 1.34 reads page templates and composed-page
+blocks (`pageTemplates`, `::::page`, configuration.md §19g,
+document-format.md §12.2) but lays no composed page out yet; that comes with
+#855 in a later release. Check `postext --version` and the release notes:
+until the release that lays composed pages out, port them with the ladder
+below (round 1). What went wrong before: a
 28-page textbook ported with Postext 1.33 drew every page's diagram text as
 design text elements of a hidden heading style per page, at the source's
 coordinates, and built one bundle per language from them. The English
@@ -1151,7 +1161,9 @@ building whether the port is an **identical layout** (J2–J4 at the source's
 positions; edited or translated text must still fit its box; whatever
 Postext cannot place is a listed gap) or **editable, translatable text**
 (composed pages set as flow pages that keep the source's faces, colours and
-boxes, placed by the engine). Flow pages follow the rest of this file.
+boxes, placed by the engine). When the brief already says which, do not ask
+again: follow it and name the choice, with the count of composed pages, in
+the report. Flow pages follow the rest of this file.
 
 ### J2. Placed boxes: one fixed callout style per position
 A box at a set place on the page is a callout whose style pins it there.
@@ -1173,30 +1185,95 @@ The Sun rises in the **east** and sets in the **west**.
 ```
 
 - One style per **position** (or per kind of box at a position), shared by
-  every page that uses it, never one per page.
+  every page that uses it, never one per page. On a textbook where every
+  box has a place of its own this means about one style per box (117 styles
+  for 121 boxes in the 28-page port), named by kind and position
+  (`card-top-left`, `aside-right-mid`), never by page number. That is
+  expected in round 1 and is no content in the config: the style holds the
+  place, size and colours, the words stay in the fence. Page templates
+  replace them later with one template per page layout and a frame per box
+  (configuration.md §19g).
 - The box goes on the page where its fence falls in the flow; put the fence
-  after the `:::pagebreak` (or heading) that opens that page. If the place
-  is already taken there, it moves to the next page.
-- `width: "fill"` makes it as wide as the text column under its anchor
-  point; give the section the source's column grid (a heading style's
-  `layout`) for boxes narrower than the type area. Text columns it overlaps
-  are shortened around it. `width: "auto"` is a badge (title only).
+  after the `:::pagebreak` (or heading) that opens that page. If its place
+  is taken there, it moves to the next page. **Nothing warns: check the page
+  count and the page of every box.**
+- **Width.** The frame is laid out at the content area's width, placed by
+  its anchor, and then takes the width of the text column under that
+  probe's horizontal midpoint; when the midpoint falls on no column (the
+  gutter of a two-column page), it keeps the content area's width.
+  `width: "auto"` is a badge sized to its title; `span` is ignored for
+  fixed boxes. Any other measure is padding: a frame of the column's width
+  with asymmetric `padding` (and a transparent background, the fill drawn
+  in the page ground, J3) gives the source's measure.
+- **Collisions.** A fixed box that would overlap another fixed box, a float
+  or a page-span box moves one page on, silently, and is set there even if
+  it overlaps something on that page too. Every frame is a column
+  or the content area wide, so two boxes side by side collide unless their
+  frames grow in opposite directions: anchor one at `top-left` (it grows
+  right) and the other at `top-right` (it grows left, past the page edge if
+  need be), each padded to its measure. Three or more boxes in a row: one
+  callout holding `:::columns{count=3 breaks="…"}`.
+- **The box cuts the text column.** Its zone is the box plus its style's
+  `marginTop`/`marginBottom`, snapped outwards to the baseline grid. In a
+  column it overlaps, a zone whose centre is in the column's lower half
+  ends the column at the zone's top: no text continues below the box, and
+  a box that would sit over text already set goes to the next page. A zone
+  in the upper half starts the column below it, but only while the column
+  is still empty; with text in it the box goes to the next page. So on a
+  composed page put **every** text block in a fixed callout (the
+  introduction too) and give each style a `marginBottom` that runs its zone
+  to the page foot, so the column is cut once and later boxes never meet
+  text.
+- **Tab labels** (`label` of the style, printed when the fence has
+  `label="…"`, not on a continuation): fields `position` (`top-right`
+  default, `top-left`, `top-start`, `top-end`), `height`, `paddingX` (on
+  both sides of the text), `offset` (how far the tab rises above the box),
+  `inset` (from the side edge), `background`, `icon {resourceId, width,
+  gap}` and `rule`. The tab is square (no radius) and as wide as its text
+  plus twice `paddingX`. With an `offset` the whole box moves down by it:
+  the anchored frame starts at the tab's top and the box `offset` lower, so
+  measure the anchor to the tab. The icon sits beside the tab on the side
+  away from the corner (left of a `top-right` tab); a tab with a rounded
+  end or a ring at its left is a `top-right` tab whose icon picture draws
+  that end.
+- **Baselines.** A line's baseline sits 0.8 × its line height below the
+  line's top, in boxes as everywhere; the first block of a box loses its
+  top margin (the title's `gap` takes its place, 0 without a title). So the
+  first baseline is 0.8 × the line height under the content top (inside
+  `padding`): measure the source's first baseline and set the padding from
+  it (design-analysis.md).
+- **Headings inside a box** are listed by `:::toc` and the bookmarks (a
+  second topic on a page can be an `##` in its box), but their heading
+  style's design is not applied there: a title in a coloured tab inside a
+  box is the box's `label`, or the tab drawn in the page ground (J3).
+- **Lists inside a box** take the document's `unorderedLists` /
+  `orderedLists` `marginTop` and `marginBottom` (the style's `lists` has no
+  margin field); a list that opens the box drops its `marginTop`. A list
+  after a paragraph in a box starts lower by the document's margin: set it
+  in pt or grid lines with boxes in mind (B11).
 
 ### J3. Page backgrounds and furniture: image elements, no text
 A page ground, a card, a band or a frame cut from the source (with its text
-removed) is an `image` element in the running head of a heading style, or
-in a page-opening heading's design with `reserve: false`. One style for
-every page of the kind, the picture named by the heading:
+removed) is an `image` element in the **opener design of a page-span
+heading**: a heading style with `span: "page"` and `advancedDesign.slot`,
+the element marked `reserve: false` so the heading reserves no height for
+it. The opener design is painted before the columns, under the text. The
+running head and foot (`header`/`footer`, a heading style's own included)
+are painted after the columns and floats, on top of them: a full-page
+ground there hides every word, so keep them for furniture that never sits
+under text (chevrons, folio pictograms). One style serves every page of the
+kind, the picture named by the heading:
 
 ```jsonc
 "headingStyles": [{
-  "id": "topic", "breakBefore": { "enabled": true, "parity": "any" },
-  "header": { "elements": [
-    { "kind": "image", "id": "ground", "resourceId": "{attr.fondo}", "decorative": true,
+  "id": "topic", "span": "page", "breakBefore": { "enabled": true, "parity": "any" },
+  "advancedDesign": { "enabled": true, "slot": { "elements": [
+    { "kind": "image", "id": "ground", "resourceId": "{attr.fondo}", "decorative": true, "reserve": false,
       "placement": { "anchor": { "to": "page", "edge": "top-left" },
                      "size": { "width": { "value": 230, "unit": "mm" }, "height": { "value": 288, "unit": "mm" } } } },
-    { "kind": "text", "id": "folio", "content": "{pageNumber}", "…": "…" }
-  ] }
+    { "kind": "text", "id": "title", "content": "{titleText}", "…": "…" }
+  ] } },
+  "header": { "elements": [ { "kind": "text", "id": "folio", "content": "{pageNumber}", "…": "…" } ] }
 }]
 ```
 
@@ -1205,14 +1282,20 @@ every page of the kind, the picture named by the heading:
 ```
 
 - A design image's `resourceId` takes the placeholders a design text takes
-  (postext ≥ 1.8). In a running head `{attr.key}` reads the current
-  chapter's level-1 heading; in a heading design, that heading's own
-  attributes. An id that resolves empty draws nothing.
+  (postext ≥ 1.8). In a heading design `{attr.key}` reads that heading's
+  own attributes; in a running head, the current chapter's level-1
+  heading's. An id that resolves empty draws nothing.
+- The design replaces the heading's own lines: the title prints only where
+  the design places `{titleText}` (leave it out and nothing prints; the
+  heading still opens the page and stays in the contents and bookmarks).
+  The textbook port also set the H1 small, on one grid line, so the column
+  under it starts on the grid.
+- **Do not hide the heading that carries the ground.** `hidden: true` skips
+  the opener design too, so a hidden H1 draws no ground. A hidden heading
+  is for a page with no ground and no title in print; it stays in the
+  contents and the bookmarks.
 - A topic set on a spread: two elements with `parity: "even"` and
   `"odd"`, `resourceId: "{attr.verso}"` and `"{attr.recto}"`.
-- A page with no visible title still opens with a heading:
-  `# Map of Europe {style="topic" fondo="ground-p07" hidden="true"}` keeps it
-  in the contents and the bookmarks without printing it.
 - Pictures that overhang a box are image elements too (or `::resource`
   in the box); their captions and labels are not.
 
@@ -1222,8 +1305,25 @@ A map, a time line or a labelled diagram whose words sit at set places is a
 `::resource{id}` or `:ref`, and translated by
 `localized.<lang>.resources[].file` (`resources/en/map-europe.svg`).
 Translators edit the labels in the SVG (or the strings file your script
-builds it from), never a style. Text a box holds next to the map is a
-callout (J2), not part of the picture.
+builds it from, `labels/strings.<lang>.json`), never a style. Text a box
+holds next to the map is a callout (J2), not part of the picture.
+
+- In round 1 that strings file (or the SVG) is the **second place the
+  book's text lives**, besides the Markdown. Say so in the report, with the
+  number of words it holds (670 of 4,990 in the 28-page port), so whoever
+  corrects or translates the book knows where to look. `::label` lines in a
+  `:::figure` (postext 1.34, document-format.md §12.2) bring those words
+  into the Markdown once composed pages are laid out.
+- The `postext` command line draws SVGs differently from the Sandbox
+  (#890). With postext 1.33 an SVG whose `viewBox` did not start at `0 0`
+  printed empty in `postext images`: write `viewBox="0 0 w h"` and move the
+  art with `<g transform="translate(-x -y)">`. An SVG that embeds a raster
+  (`<image href="data:image/…">`) is drawn by resvg, which matches
+  `font-family` against each font file's internal family name, not the
+  bundle's family names: labels in a family whose bundle name differs fall
+  back to another face. Keep the map art in the page ground (J3) and the
+  SVG to the lettering alone, or check the command line's page images
+  against the Sandbox.
 
 ### J5. Contents
 `:::toc`, always (A3). A block (a part, a section) that must stay with its
@@ -1238,11 +1338,15 @@ captions, alt text, tables and the label SVGs, `localized.<lang>.config` for
 the locale, labels and faces only (F1). A translation that runs longer than
 the source reflows in its box or flow; it is never re-placed line by line
 at the source's coordinates. Run `postext check my-book --locale <lang>` and
-look at the pages of every locale.
+look at the pages of every locale. The Sandbox imports one edition of a
+multi-language bundle (it asks which), so import each edition to look at
+it; every edition is listed under the manifest `name`, since
+`localized.<lang>` has no `name` (#891).
 
 ### J7. Never
 - Literal text in design text elements beyond a label, the publisher's name
-  or the book title (`{title}`); `preset_kit.py lint` fails on it.
+  or the book title (`{title}`); `preset_kit.py lint` fails on it, counting
+  as the engine's `contentInConfig` warning does.
 - Heading styles that hold content: one hidden style per page carrying that
   page's text, styles named after page numbers.
 - One preset or one bundle per language.
@@ -1253,7 +1357,10 @@ look at the pages of every locale.
 The Sandbox keeps the working book in about 5 MB of browser storage. Aim for
 a config under 1 MB; `preset_kit.py lint` reports the size, warns from 3 MB
 and fails above `--max-size`. A config past 1 MB in a short book almost
-always means content or per-page styles in it.
+always means content or per-page styles in it. Pack with `preset_kit.py
+pack my-book --manifest-only`: the plain `pack` zips the whole folder (bar
+`source/`, scripts and caches), so a `work/` folder, label sources or tool
+outputs would ship in the bundle; `--exclude GLOB` leaves more out.
 
 ### J9. Stop and ask
 When the source needs something none of these rungs expresses (text that

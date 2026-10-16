@@ -65,21 +65,28 @@ in the config, and its bundle broke the Sandbox's import.
   `{chapterTitle}`, `{pageNumber}`, `{title}`, `{author}`, `{attr.key}`) and
   short literals: a label ("Chapter", "Contents"), the publisher's name.
   Write the book title as `{title}` (front matter), not typed. Literal text
-  of more than 2 words or 24 characters in one element is content: put it in
-  the Markdown, as a heading, a box, a paragraph or a heading attribute the
-  design prints with `{attr.key}`.
+  in one element that keeps more than 2 words or more than 24 letters and
+  digits (a Chinese, Japanese, Korean or Thai character counts 3, so about 8
+  of them pass) is content: put it in the Markdown, as a heading, a box, a
+  paragraph or a heading attribute the design prints with `{attr.key}`.
 - **Longer literals that are form** (a journal's name in the running head,
-  an imprint line) go in `config.checks.contentInConfig.allow`, a list of
-  strings. The book's own title, subtitle, author and manifest `name` are
-  allowed without listing them.
+  an imprint line, the licence line) go in
+  `config.checks.contentInConfig.allow`, a list of strings. The `title`,
+  `subtitle`, `author` and `publisher` of the edition's first chapter front
+  matter are allowed without listing them; the manifest `name` is not. Never
+  raise `checks.contentInConfig.maxWords`/`maxChars` to quiet a port.
 - **Check it** at every milestone: `python3 scripts/preset_kit.py lint my-book`
-  exits 1 on any offending element and prints its slot and JSON path;
-  `lint_project.py` reports the same as `contentInConfig` errors, and so does
-  `postext check` in the Postext releases that have the `contentInConfig`
-  warning.
+  counts exactly as the engine's `contentInConfig` warning (postext 1.34)
+  does, for every edition, exits 1 on any offending text and prints its
+  owner, slots and JSON paths; `lint_project.py` reports the same as
+  `contentInConfig` errors. When `postext --version` says 1.34 or later,
+  `postext check` warns too.
 - **One style per kind of page**, never one per page. Styles named after
-  page numbers (`page-05`, `tema--p13`) are the sign that content went into
-  the config.
+  page numbers (`page-05`, `tema--p13`) that carry text are the sign that
+  content went into the config. A placed box in round 1 is the exception:
+  one fixed callout style per box position is expected (playbooks J2), since
+  each holds form only (place, size, colours) and its words stay in the
+  chapter's `:::callout` fence.
 - **Size budget.** The Sandbox keeps the working book in about 5 MB of
   browser storage. Aim for a config under 1 MB; `preset_kit.py lint` warns
   from 3 MB and `--max-size 1` makes it fail above 1 MB.
@@ -95,25 +102,39 @@ in the config, and its bundle broke the Sandbox's import.
 In the inventory (step 1) classify every page as **flow** (running text with
 figures, boxes and floats the engine places) or **composed** (boxes, labels,
 diagrams and maps at set positions: a children's textbook, a worksheet, an
-infographic page). Postext has no composed pages yet. Until it does, set a
-composed page with this ladder, first rung first (playbooks J):
+infographic page). Postext 1.34 reads page templates (`pageTemplates`,
+`labelStyles`, configuration.md §19g) and the composed-page Markdown
+(`::::page{template}`, `:::frame{slot}`, `:::figure` + `::label`,
+document-format.md §12.2), but it does not lay a composed page out yet: that
+comes with #855, in a later release, and until then a `::::page` sets its
+content in the running text on pages of its own. Check the installed
+version (`postext --version`, and the release notes for "composed pages")
+before you choose. Until the release that lays composed pages out, set a
+composed page with this ladder (round 1), first rung first (playbooks J):
 
 1. **Placed boxes**: one callout style per position, `placement: "fixed"`
    with `fixed: {anchor, offset}`; the box's text is a `:::callout{type="…"}`
-   in the chapter, at the page it belongs to.
-2. **Page backgrounds and furniture**: image elements with no text in a
-   heading style's running head or design. One style serves every page of
-   its kind with `resourceId: "{attr.fondo}"`, the picture named by the
-   heading (`# Topic {style="topic" fondo="bg-p05"}`, postext ≥ 1.8).
+   in the chapter, at the page it belongs to. A box that cannot take its
+   place moves to the next page and nothing warns: check the page count.
+2. **Page backgrounds and furniture**: image elements with no text in the
+   opener design of a `span: "page"` heading style (`reserve: false`),
+   which is painted under the text; the running head and foot are painted
+   over it, so only furniture that never sits under text goes there. Keep
+   that heading visible (`hidden` skips its design). One style serves every
+   page of its kind with `resourceId: "{attr.fondo}"`, the picture named by
+   the heading (`# Topic {style="topic" fondo="bg-p05"}`, postext ≥ 1.8).
 3. **Maps and diagrams with many labels**: an SVG resource with live
    `<text>` labels, translated by `localized.<lang>.resources[].file`
-   (playbooks D6).
+   (playbooks D6). Its words live in the SVG or in the strings file your
+   script builds it from: that file is the second place the book's text
+   lives in round 1, and the report says how many words it holds.
 4. **Forbidden**: literal text in design elements; heading styles that hold
    content (a hidden style per page carrying its text); one preset or bundle
    per language; the source's line breaks copied into the paragraphs.
 
-With more than a third of the pages composed, go back to the brief and ask
-the user to choose: **identical layout** (rungs 1–3 at the source's
+With more than a third of the pages composed, go back to the brief and,
+unless it already says which (then follow it and name the choice in the
+report), ask the user to choose: **identical layout** (rungs 1–3 at the source's
 positions; edited or translated text must still fit its box, and what
 Postext cannot place is listed as a gap) or **editable, translatable text**
 (the composed pages set as flow pages with the source's type, colours and
@@ -679,13 +700,21 @@ and when you look at spreads, the source's odd page is the left one.
 
 ### 8. Deliver
 ```bash
-python3 scripts/preset_kit.py pack my-book        # my-book.postext
+python3 scripts/preset_kit.py pack my-book --manifest-only   # my-book.postext: preset.json and the files it names
 python3 scripts/preset_kit.py lint my-book.postext --max-size 1   # no content in the config, config under 1 MB
 ```
 
 and `postext check my-book.postext --locale <lang>` for each locale.
 
-Import it at https://postext.dev/en/sandbox (Books → New → Open a .postext file…), or
+`pack` without `--manifest-only` zips the whole folder except `source/`,
+scripts, dot files and caches: a `work/` folder, label sources or tool
+outputs would ship too (`--exclude GLOB` leaves more out).
+
+Import it at https://postext.dev/en/sandbox (Books → New → Open a .postext file…). A
+bundle with several languages asks which one, and the new book holds that
+edition only: import each edition to look at it. The Sandbox names the book
+after the manifest `name` in every language (`localized.<lang>` has no
+`name`, #891). Or
 serve a presets folder to a local sandbox (`preset_kit.py index <root>` +
 `POSTEXT_PRIVATE_PRESETS_DIR`). The same file loads in the user's own
 program through the `postext` npm package (`openBundle` → `buildBundle` →

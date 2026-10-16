@@ -13,8 +13,10 @@ Fix every ERROR. Common ones:
 
 - `contentInConfig`: the book's text typed into design text elements (a running head, an opener, a page
   style). Move it to the Markdown (playbooks J); allow a long label that is form with
-  `config.checks.contentInConfig.allow`. `preset_kit.py lint` prints every element's JSON path;
-  `--json` for a script;
+  `config.checks.contentInConfig.allow`. `preset_kit.py lint` counts exactly as the engine's warning
+  (configuration.md §19h), per edition, and prints each owner's slots and element paths; `--json` gives
+  each edition's warnings in the engine's shape. It also lists design texts the engine's check does not
+  read (a page template's decoration): move those too;
 
 - pipe tables, code fences or `---` left over from CommonMark;
 - a `[^id]` marker with no `[^id]:` definition, or a marker in a heading (prints as written);
@@ -168,6 +170,10 @@ those lines, or run the script.
 - `PARSE unclosedMath|unclosedContainer`: a stray `$` or a missing `:::`.
 - `WARN calloutOverflow`: a keep-together box does not fit a column. Set
   `keepTogether: false`, shorten it, or change the box's span.
+- Nothing warns when a **fixed** callout (`placement: "fixed"`) cannot take
+  its place and moves to the next page (it met another fixed box, a float, a
+  page-span box or the column's text; playbooks J2): check the page count
+  and the page of every placed box against the source.
 - `WARN afterText` (postext ≥ 1.25): a `span: "side"` box or a side figure
   stands on a page with no text, because its chapter ended while it waited
   for room in the side column. Fence it earlier or shorten it.
@@ -212,6 +218,35 @@ those lines, or run the script.
   ink clipped past its box), named by slot and element id. Compare with the source: a title the source
   breaks onto lines wants `overflow: 'wrap'` (the default in heading and part designs) or a wider box; a
   running head the source cuts may keep it.
+- `CONFIG contentInConfig` (postext ≥ 1.34): a design text holds the book's text, one warning per owner:
+  `headingStyles[3] (lesson-4): 30 design texts hold 1017 characters of content ("…") — move the text into
+  the Markdown and keep only placeholders in the design`. `--json` adds `path` (owner), `ownerId`, `count`,
+  `chars` (letters and digits left once the allowed phrases are out), `elements` (the first 20 paths,
+  `headingStyles[3].header.elements[12]`) and `value` (a sample). The same count as `preset_kit.py lint`.
+  Fix: the text into the Markdown (a heading, a callout, a paragraph, a heading attribute printed with
+  `{attr.key}`); only form phrases (book title, journal, publisher, licence line) in
+  `checks.contentInConfig.allow`; never raise `maxWords`/`maxChars`.
+- `CONFIG template…|frame…|group…|labelStyleUnknown` (postext ≥ 1.34, page templates, configuration.md
+  §19g): `path` is a JSON pointer (`/pageTemplates/3/frames/2/style`; an inherited field points at the
+  template that wrote it; `labelStyleUnknown` at `/resources/<i>/anchors/<j>/style` with `resourceId`).
+  `templateDuplicate` (rename or delete one), `templateExtendsCycle` (`value` "a → b → a": remove one
+  `extends`), `templateExtendsUnknown` (fix the id; see `suggestion`), `frameDuplicate` (one entry per
+  frame name, inherited ones included), `frameStyleUnknown` (fix the id or add the callout style),
+  `frameAnchorUnknown` (anchor to an existing frame or group, or break the loop; decoration elements too),
+  `frameMinMax` (`value` "minHeight 40mm > maxHeight 30mm", `used` what the frame takes),
+  `groupFrameUnknown`, `groupFrameTwice`, `frameChainLoop` (end the `next` chain),
+  `overflowTargetUnknown` (`'#frame'`, `'next-page'`, `'template:<id>'`; also `next` and
+  `overflowTemplate`), `labelStyleUnknown`. A misspelt key gives `unknownConfigKey` with `suggestion`; a
+  wrong word `unknownConfigValue`. Fix every one before handing a port back.
+- Composed pages (postext ≥ 1.34, document-format.md §12.2): `WARN templateUnknown` (`template="…"` names
+  no `pageTemplates` id, or the fence has none: fix the id or add the template); `WARN slotUnknown` (a slot
+  names no frame of the template, inherited and variant frames included; the content goes to the flow
+  frame: fix the name or add the frame); `NOTE slotEmpty` (info: a frame gets nothing on that page; write
+  its content or mark the frame `optional: true`; chain targets are never reported); `WARN
+  pageFenceLength` (`:::page{template=…}` with three colons, read as a comic page: use four);
+  `unclosedContainer` with `composedPage` (no closing fence of the same colon count: "a ::::page is never
+  closed by a fence of as many colons"). Until the release that lays composed pages out (#855), their
+  content is set in the running text on pages of its own: judge the warnings, not the page images.
 - `CONFIG cjkGridClamped`: `cjk.grid` asked for more characters or lines than the margins leave room for.
 - `PDF-WARN missingGlyph` (with `--out`): characters no file of a face has a glyph for; they print as
   empty boxes. `variableFontDefaultInstance`: a variable font printed at its default weight.
@@ -311,8 +346,11 @@ lettering, every page, every language.
 
 ## 4. The real viewer
 
-Open the project in the sandbox: import the `.postext` (`preset_kit.py pack`),
-or serve the presets folder. Check the canvas, the HTML viewer, the Folio
+Open the project in the sandbox: import the `.postext` (`preset_kit.py pack
+--manifest-only`), or serve the presets folder. A bundle in several languages
+asks which one to import, and the new book holds that edition only (named
+after the manifest `name` whatever the language: `localized.<lang>` has no
+`name`, #891): import each edition to check it. Check the canvas, the HTML viewer, the Folio
 tab (the book bound, on its `config.folio` paper: cover, spine image,
 `:::paper` plate sections, thickness) and the PDF tab. The sandbox shows its own warnings panel: loose lines, heading
 hierarchy, design anchors and placeholders, parity issues. The PDF tab's
