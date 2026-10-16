@@ -327,7 +327,7 @@ The numbers under **What changes** are the texts and letters moved, the pages wr
 
 The options: **Pages with frames in the same places share a template**, **A highlight box under bold words becomes a chip**, and, when there are some, **Delete the heading styles with text that no heading uses**.
 
-**Move the text** applies it in one step. The book as it was stays stored, across reloads too, until **Keep the move** in the Checks panel; until then **Put the book back as it was** restores the design and every chapter.
+**Move the text** writes the change into the book's one undo history: a step for each chapter rewritten, then one for the design. Cmd/Ctrl+Z takes the design back first, then the chapters, and the dialog's **Undo** takes back all of them while they are the latest. The book as it was also stays stored, across reloads, until **Keep the move** in the Checks panel; until then **Put the book back as it was** writes the old design and text back, as steps that can be undone in turn.
 
 Left in the configuration, and listed under **Left in the configuration**: a text that mixes words with placeholders (`Page {pageNumber}`), a text hung from its running head's own box or from another element, and the text of a heading design (not a page). On the pages, a heading design set in a frame (the tab of a boxed heading, bands drawn around a heading) is not drawn there, so a page with running text under such headings looks different. The contrast check reads a frame's text against the page and not against a box of the decoration under it, so it may list a white label on a coloured box.
 

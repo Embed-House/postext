@@ -327,7 +327,7 @@ Os números de **O que muda** são os textos e as letras levados, as páginas es
 
 As opções: **Páginas com blocos nos mesmos lugares compartilham um modelo**, **Uma caixa de destaque sob palavras em negrito vira um chip** e, quando houver, **Apagar os estilos de título com texto que nenhum título usa**.
 
-**Levar o texto** aplica tudo de uma vez. O livro de antes fica guardado, mesmo ao recarregar, até você escolher **Ficar com a mudança** no painel Verificações; até lá **Deixar o livro como estava** devolve o desenho e todos os capítulos.
+**Levar o texto** grava a mudança no histórico de desfazer do livro: um passo para cada capítulo reescrito e depois um para o desenho. Cmd/Ctrl+Z desfaz primeiro o desenho e depois os capítulos, e **Desfazer** na janela desfaz todos enquanto forem os últimos. Além disso, o livro de antes fica guardado, mesmo ao recarregar, até você escolher **Ficar com a mudança** no painel Verificações; até lá **Deixar o livro como estava** grava de novo o desenho e o texto anteriores, como passos que também podem ser desfeitos.
 
 Fica na configuração, e aparece em **Fica na configuração**: um texto que mistura palavras e marcadores (`Página {pageNumber}`), um texto preso à caixa do seu cabeçalho ou a outro elemento, e o texto de um desenho de título (que não é uma página). Nas páginas, o desenho de um título posto num bloco (a aba de um título com caixa, as faixas desenhadas em volta de um título) não é desenhado ali, então uma página com texto corrido sob títulos assim parece diferente. A verificação de contraste mede o texto de um bloco contra a página e não contra uma caixa da decoração que esteja embaixo, então pode apontar um rótulo branco sobre uma caixa colorida.
 

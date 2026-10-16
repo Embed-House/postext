@@ -4,7 +4,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
 import { AlertTriangle, CheckCircle2, X } from 'lucide-react';
 import { renderPageToCanvas, type PostextConfig, type TextMigrationReport, type VDTDocument } from 'postext';
-import { useBookPlan, useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../context/SandboxContext';
+import { useBookPlan, useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStateGetter, useSandboxStore } from '../context/SandboxContext';
 import { composeBookMemo } from '../book/compose';
 import type { Chapter } from '../book/types';
 import { withHyphenationLocale } from '../controls/hyphenation';
@@ -16,14 +16,16 @@ import { closeTextMigration, useTextMigrationRequest, type TextMigrationReason }
 import {
   PAGE_DIFFERENCE_THRESHOLD,
   bookKeyOf,
-  bookFromSnapshot,
   dropMigrationSnapshot,
   formatBytes,
   holdsContent,
   migrateBook,
-  migratedBook,
+  canUndoMigrationWrite,
+  undoMigrationWrite,
+  writeBook,
   pictureDifference,
   saveMigrationSnapshot,
+  type MigrationRecord,
   type MigrationSnapshot,
 } from './textMigration';
 
@@ -134,6 +136,8 @@ function TextMigrationPopup({ reason }: { reason: TextMigrationReason }) {
   // and the move applies to it.
   const [source] = useState(() => ({ config, chapters }));
   const [snapshotKey, setSnapshotKey] = useState<string | null>(null);
+  const [record, setRecord] = useState<MigrationRecord | null>(null);
+  const history = useSandboxStore().history;
 
   const result = useMemo(
     () => migrateBook(source, { shareTemplates: share, highlightsToChips: chips, unusedStyles: removeUnused ? 'remove' : 'keep' }),
@@ -228,17 +232,18 @@ function TextMigrationPopup({ reason }: { reason: TextMigrationReason }) {
       templates: report.templates.length,
     };
     await saveMigrationSnapshot(key, snap);
-    dispatch({ type: 'SET_CONFIG', payload: result.config });
-    dispatch({ type: 'SET_BOOK', payload: migratedBook({ ...s, chapters: source.chapters }, result) });
+    // Steps of the one history: the chapters, then the design.
+    setRecord(writeBook(dispatch, getState(), result.config, new Map(result.chapters.map((c) => [c.id, c.markdown]))));
     setSnapshotKey(key);
     setPhase('done');
     announce(labels.textMigrationDone.replace('__pages__', fmt(report.pages.length)).replace('__templates__', fmt(report.templates.length)));
   };
 
   const undo = async () => {
-    const s = getState();
-    dispatch({ type: 'SET_CONFIG', payload: source.config });
-    dispatch({ type: 'SET_BOOK', payload: bookFromSnapshot({ version: 1, savedAt: 0, config: source.config, chapters: source.chapters.slice(), activeChapterId: s.activeChapterId, movedChars: 0, templates: 0 }, s) });
+    // The move's own steps while they are the latest; else the book as it
+    // was written back as new steps (undoable in turn).
+    if (history && record && canUndoMigrationWrite(history, record)) undoMigrationWrite(history, record);
+    else writeBook(dispatch, getState(), source.config, new Map(source.chapters.map((c) => [c.id, c.markdown])));
     if (snapshotKey) await dropMigrationSnapshot(snapshotKey);
     setPhase('undone');
     announce(labels.textMigrationUndone);

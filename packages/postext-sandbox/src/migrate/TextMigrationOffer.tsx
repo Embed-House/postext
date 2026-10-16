@@ -5,7 +5,7 @@ import { FileInput, Undo2 } from 'lucide-react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../context/SandboxContext';
 import { Button, announce } from '../ui';
 import { openTextMigration } from './migrationRequest';
-import { bookFromSnapshot, bookKeyOf, dropMigrationSnapshot, loadMigrationSnapshot, onMigrationSnapshotsChanged, type MigrationSnapshot } from './textMigration';
+import { bookFromSnapshot, bookKeyOf, writeBook, dropMigrationSnapshot, loadMigrationSnapshot, onMigrationSnapshotsChanged, type MigrationSnapshot } from './textMigration';
 
 /** At the head of the Checks panel (#874): the way into «Move the text to
  *  the Markdown» when the book's configuration holds content, and the way
@@ -34,8 +34,16 @@ export function TextMigrationOffer({ contentWarnings }: { contentWarnings: numbe
   const restore = async () => {
     if (!snapshot) return;
     const s = getState();
-    dispatch({ type: 'SET_CONFIG', payload: snapshot.config });
-    dispatch({ type: 'SET_BOOK', payload: bookFromSnapshot(snapshot, s) });
+    const same = s.chapters.length === snapshot.chapters.length && snapshot.chapters.every((c) => s.chapters.some((x) => x.id === c.id));
+    if (same) {
+      // The same chapters: the old text and design as steps of the one
+      // history, so the restore can be undone in turn.
+      writeBook(dispatch, s, snapshot.config, new Map(snapshot.chapters.map((c) => [c.id, c.markdown])));
+    } else {
+      // Chapters added or removed since: the book as it was, whole.
+      dispatch({ type: 'SET_CONFIG', payload: snapshot.config, history: false });
+      dispatch({ type: 'SET_BOOK', payload: bookFromSnapshot(snapshot, s) });
+    }
     await dropMigrationSnapshot(key);
     announce(labels.textMigrationUndone);
   };

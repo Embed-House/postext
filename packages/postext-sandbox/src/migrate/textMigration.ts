@@ -6,8 +6,13 @@
  * comparison of a page before and after. Pure but for the snapshot store.
  */
 import { collectConfigWarnings, moveTextToMarkdown, type PostextConfig, type TextMigrationOptions, type TextMigrationResult } from 'postext';
+import type { Dispatch } from 'react';
 import type { BookContent, Chapter } from '../book/types';
+import type { SandboxAction } from '../context/SandboxContext';
 import { composeBookMemo } from '../book/compose';
+import { minimalChange, type TextChange } from '../book/textChanges';
+import { applyViewerEdit } from '../editor/viewerEdits';
+import type { HistoryStepInfo, SandboxHistory } from '../history/sandboxHistory';
 import { deleteBlob, getBlob, listBlobIds, putBlobAt } from '../storage/blobStore';
 
 /** What the migration reads of the Sandbox state. */
@@ -56,6 +61,91 @@ export function migratedBook(s: MigrationStateSlice, result: TextMigrationResult
     ...(s.canvasScope === 'book' ? { canvasScope: s.canvasScope } : {}),
     ...(s.bookStart ? { start: s.bookStart } : {}),
   };
+}
+
+// ---------------------------------------------------------------------------
+// On the one history (#899)
+// ---------------------------------------------------------------------------
+
+/** One chapter's text change: the smallest edit from what it holds to
+ *  what it should hold. */
+export interface ChapterEdit {
+  chapterId: string;
+  changes: TextChange[];
+  baseLength: number;
+}
+
+/** The edits that turn the chapters' text into `target`'s (by id; a
+ *  chapter `target` does not name is left alone). */
+export function chapterEdits(chapters: readonly Chapter[], target: ReadonlyMap<string, string>): ChapterEdit[] {
+  const out: ChapterEdit[] = [];
+  for (const c of chapters) {
+    const next = target.get(c.id);
+    if (next === undefined) continue;
+    const change = minimalChange(c.markdown, next);
+    if (change) out.push({ chapterId: c.id, changes: [change], baseLength: c.markdown.length });
+  }
+  return out;
+}
+
+/** What a write of the migration added to the history, to take it back. */
+export interface MigrationRecord {
+  chapters: string[];
+  /** Steps added: one per chapter rewritten, then the design. */
+  steps: number;
+}
+
+/** Write a book's text and design as steps of the Sandbox's one history
+ *  (#899), as a style merge does: one text step per chapter rewritten
+ *  (the chapter in the editor through its editor), then the design as a
+ *  step of its own. Cmd/Ctrl+Z then takes the design back first, then the
+ *  chapters; {@link undoMigrationWrite} takes them all. */
+export function writeBook(
+  dispatch: Dispatch<SandboxAction>,
+  s: Pick<MigrationStateSlice, 'chapters' | 'activeChapterId'>,
+  config: PostextConfig,
+  target: ReadonlyMap<string, string>,
+): MigrationRecord {
+  const edits = chapterEdits(s.chapters, target);
+  for (const e of edits) {
+    if (e.chapterId === s.activeChapterId) applyViewerEdit(dispatch, e.chapterId, e.changes, e.baseLength);
+    else dispatch({ type: 'EDIT_CHAPTER_MARKDOWN', payload: { chapterId: e.chapterId, changes: e.changes, baseLength: e.baseLength } });
+  }
+  dispatch({ type: 'SET_CONFIG', payload: config, history: { merge: false } });
+  return { chapters: edits.map((e) => e.chapterId), steps: edits.length + 1 };
+}
+
+/** The migration's own step on top of the history: its design step (the
+ *  first one met), or a chapter it rewrote. */
+function ownStep(step: HistoryStepInfo | null, chapters: ReadonlySet<string>, designDone: boolean): 'design' | 'text' | null {
+  if (!step) return null;
+  // The design step writes the templates and the heading styles.
+  if (step.kind === 'config') return !designDone && (step.keys.includes('pageTemplates') || step.keys.includes('headingStyles')) ? 'design' : null;
+  return chapters.has(step.chapterId) ? 'text' : null;
+}
+
+/** Whether the latest steps of the history are still `record`'s. */
+export function canUndoMigrationWrite(history: Pick<SandboxHistory, 'peek'> | null | undefined, record: MigrationRecord | null): boolean {
+  if (!history || !record) return false;
+  return ownStep(history.peek(), new Set(record.chapters), false) === 'design';
+}
+
+/** Take back `record`'s steps from the top of the history, and no other;
+ *  the number taken back. */
+export function undoMigrationWrite(history: Pick<SandboxHistory, 'peek' | 'undo'>, record: MigrationRecord): number {
+  const chapters = new Set(record.chapters);
+  let designDone = false;
+  let taken = 0;
+  while (taken < record.steps) {
+    const own = ownStep(history.peek(), chapters, designDone);
+    if (!own) break;
+    const step = history.undo();
+    if (!step) break;
+    if (own === 'design') designDone = true;
+    else if (step.kind === 'text') chapters.delete(step.chapterId);
+    taken++;
+  }
+  return taken;
 }
 
 // ---------------------------------------------------------------------------

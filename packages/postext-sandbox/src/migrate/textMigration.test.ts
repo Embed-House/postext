@@ -16,6 +16,11 @@ import {
   type MigrationSnapshot,
 } from './textMigration';
 import { closeTextMigration, openTextMigration, textMigrationRequestNow } from './migrationRequest';
+import { canUndoMigrationWrite, chapterEdits, undoMigrationWrite, writeBook } from './textMigration';
+import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext';
+import { createSandboxHistory, setActiveHistory } from '../history/sandboxHistory';
+import { resetViewerEdits } from '../editor/viewerEdits';
+import { state as baseState } from '../webmcp/tools/testHarness';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pt = (value: number) => ({ value, unit: 'pt' as const });
@@ -93,5 +98,41 @@ describe('text migration in the Sandbox (#874)', () => {
     expect(textMigrationRequestNow()!.serial).toBeGreaterThan(first.serial);
     closeTextMigration();
     expect(textMigrationRequestNow()).toBeNull();
+  });
+});
+
+describe('the move on the one history (#899)', () => {
+  it('is one step per chapter rewritten and one for the design, taken back together, the design first', () => {
+    let current: SandboxState = { ...baseState(), chapters: CHAPTERS.slice(), activeChapterId: 'c1', markdown: CHAPTERS[0]!.markdown, config: CONFIG };
+    const history = createSandboxHistory({
+      dispatch: (a: SandboxAction) => { current = sandboxReducer(current, a); },
+      getState: () => current,
+      editorStates: (() => { const m = new Map<string, unknown>(); return () => m; })(),
+    });
+    setActiveHistory(history);
+    try {
+      const result = migrateBook({ config: CONFIG, chapters: CHAPTERS });
+      const target = new Map(result.chapters.map((c) => [c.id, c.markdown]));
+      expect(chapterEdits(CHAPTERS, target).map((e) => e.chapterId)).toEqual(['c1']);
+      const record = writeBook(history.dispatch, current, result.config, target);
+      expect(record).toEqual({ chapters: ['c1'], steps: 2 });
+      expect(current.config).toBe(result.config);
+      expect(current.markdown).toContain('::::page{template="p1"}');
+      expect(history.peek()).toMatchObject({ kind: 'config' });
+      expect(canUndoMigrationWrite(history, record)).toBe(true);
+      expect(undoMigrationWrite(history, record)).toBe(2);
+      expect(current.markdown).toBe(CHAPTERS[0]!.markdown);
+      expect(holdsContent(current.config, current.chapters)).toBe(true);
+      // Redone, then something else changed: no longer the latest steps.
+      history.redo();
+      history.redo();
+      expect(current.markdown).toContain('::::page{template="p1"}');
+      history.dispatch({ type: 'UPDATE_CONFIG', payload: { bodyText: { fontSize: pt(13) } } as never, history: { merge: false } });
+      expect(canUndoMigrationWrite(history, record)).toBe(false);
+      expect(undoMigrationWrite(history, record)).toBe(0);
+    } finally {
+      setActiveHistory(null);
+      resetViewerEdits();
+    }
   });
 });
