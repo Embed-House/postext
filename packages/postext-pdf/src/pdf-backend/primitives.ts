@@ -256,11 +256,19 @@ export function outerRectMap(ctx: PageCtx): PageCtx['mapRectPt'] {
   return outer ? (r) => mapRectThrough(outer, r) : undefined;
 }
 
-/** Map a rect `[x1, y1, x2, y2]` through `m`, re-normalised to min / max. */
+/** Map a rect `[x1, y1, x2, y2]` through `m`: the box its four corners
+ *  cover, min / max (a frame turned by any angle, #910, covers more than
+ *  the box of two opposite corners). */
 export function mapRectThrough(m: PdfMatrix, rect: [number, number, number, number]): [number, number, number, number] {
-  const a = applyMatrix(m, rect[0], rect[1]);
-  const b = applyMatrix(m, rect[2], rect[3]);
-  return [Math.min(a.x, b.x), Math.min(a.y, b.y), Math.max(a.x, b.x), Math.max(a.y, b.y)];
+  const pts = [
+    applyMatrix(m, rect[0], rect[1]),
+    applyMatrix(m, rect[2], rect[1]),
+    applyMatrix(m, rect[0], rect[3]),
+    applyMatrix(m, rect[2], rect[3]),
+  ];
+  const xs = pts.map((p) => p.x);
+  const ys = pts.map((p) => p.y);
+  return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
 }
 
 /** Inline colour swatch (`:swatch{…}`): a square of `sidePx` on the
