@@ -117,8 +117,10 @@ automatically.
   gives one section per contents page.
 - A block that must stay on the same column and page as its entries (a part
   row, a section heading with its topics): `toc.groups` /
-  `:::toc{keep="part"}`, when the installed Postext supports `toc.groups`
-  (check with `postext --version` and the docs' contents settings).
+  `:::toc{keep="part"}` (`keep="1"` with `levels="1-2"` when the blocks are
+  chapters with sections), when the installed Postext supports `toc.groups`
+  (postext ≥ 1.34: check with `postext --version` and the docs' contents
+  settings). Style the rows with `toc.levels` and `toc.parts.design`.
   Otherwise write that contents by hand with
   `:ref{id="…" style="pageNumber"}` page numbers and list it in the report
   as a documented gap. Never retype the source's page numbers, and never
@@ -1226,7 +1228,7 @@ callout (J2), not part of the picture.
 ### J5. Contents
 `:::toc`, always (A3). A block (a part, a section) that must stay with its
 topics uses `toc.groups` / `:::toc{keep="part"}` when the installed
-Postext supports `toc.groups`; otherwise a hand-written contents with
+Postext supports `toc.groups` (≥ 1.34); otherwise a hand-written contents with
 `:ref{id="…" style="pageNumber"}` page numbers, listed in the report as a
 documented gap.
 

@@ -188,6 +188,10 @@ those lines, or run the script.
   Chinese input method (`：：：` fence, `＃` heading, `［＾…］` footnote, `｛…｝` attributes,
   `＊＊…＊＊`) is set as text, and an attribute key outside ASCII (`作者=曹雪芹`) is
   dropped. Retype the ASCII form the warning names; keys are ASCII, values any script.
+- `WARN tocGroupSplit` (postext ≥ 1.34): a kept block of the contents (`toc.groups`, `:::toc{keep}`) ran
+  over several columns: it is taller than a column, or its column is short (a page-span box, a float).
+  Fewer levels, a lower `toc.groups.head`, smaller or tighter entries; or accept it (the head row repeats
+  with its continuation mark).
 - `PROBLEM font families used but not bundled`: add the files to `fonts[]`.
 - `WARN raggedLine` (postext ≥ 1.28.0): a line of a justified paragraph was set ragged because its word
   spaces would have stretched past 3× (the message gives the ratio). The line that cannot take the next word

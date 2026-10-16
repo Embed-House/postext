@@ -544,10 +544,10 @@ Read each chapter against the source pages and apply
 - the contents as `:::toc`, always (playbooks A3), never retyped from the
   source. Where each block (a part, a section heading) must stay with its
   entries, use `toc.groups` / `:::toc{keep="part"}` when the installed
-  Postext supports `toc.groups` (check with `postext --version` and the
-  docs' contents settings); otherwise a hand-written contents with
-  `:ref{id="…" style="pageNumber"}` is allowed, listed as a documented gap
-  in the report;
+  Postext supports `toc.groups` (postext ≥ 1.34: check with
+  `postext --version` and the docs' contents settings); otherwise a
+  hand-written contents with `:ref{id="…" style="pageNumber"}` is allowed,
+  listed as a documented gap in the report;
 - openers as heading attributes (`# Title {author="…" lead="…"}`);
 - figures cited with `:ref` in the sentence that first mentions them
   (`style="full"`, `case="lower"` to keep the authored form);

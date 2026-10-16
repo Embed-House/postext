@@ -935,9 +935,19 @@ toc
 ├─ pageNumber   { fontFamily, fontSize (= level-1), fontWeight (= body weight), italic=false, color, width=2em }
 ├─ leader       { enabled=true, char='.', gap=0.5em }      ('. ' spaces the dots; the leader code body tab stops use, §4a; an artifact in tagged PDF ≥ 1.23)
 ├─ subtitle     { enabled=false, attr='author', fontFamily, fontSize, fontWeight, italic=true, color, indent=0 }
-└─ parts        { enabled=true, breakBefore=false, design: DesignSlot (row; placeholders {number} {numberRoman}… {titleText} {pageNumber}),
-                  height = 2em (twice the body size, not two body lines), marginTop=0, marginBottom=0 }
+├─ parts        { enabled=true, breakBefore=false, design: DesignSlot (row; placeholders {number} {numberRoman}… {titleText} {pageNumber}),
+│                 height = 2em (twice the body size, not two body lines), marginTop=0, marginBottom=0 }
+└─ groups       ≥ 1.34 blocks of the contents kept on one column/page
+   ├─ keepTogether   false     a head row + every entry under it moves whole when it does not fit
+   ├─ head           'part'    'part' | 1…6 — what heads a block (1 = chapter with its sections)
+   ├─ minEntriesAfterHead 2    a block taller than a column keeps its head with ≥ N entries
+   └─ continuation   { enabled: true, mark: <locale> }
+                               the head row repeated at the top of each column a tall block goes on in,
+                               title + mark ("(cont.)", "(suite)", "(Forts.)", "(segue)", "（续）", "（続き）", "(تابع)")
 ```
+`:::toc{keep="part"}` / `keep="1"`…`"6"` / `keep="none"` and `:::toc{levels="1-2"}` override `groups` and
+`levels` for one contents (≥ 1.34, document-format.md). A block that still runs over columns raises
+`tocGroupSplit`.
 
 ---------------------------------------------------------------------------------
 
