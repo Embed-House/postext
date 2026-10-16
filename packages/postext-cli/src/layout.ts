@@ -163,14 +163,19 @@ function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Rep
     reporter.warn({
       kind: w.kind,
       // A template frame left empty is a note (#854): a page may leave a
-      // frame unused on purpose.
-      severity: w.kind === 'slotEmpty' ? 'info' : 'warning',
+      // frame unused on purpose; so is an anchor this edition leaves
+      // without a word (#860).
+      severity: w.kind === 'slotEmpty' || w.kind === 'anchorUnlabelled' ? 'info' : 'warning',
       message: formatWarning(w),
       at: sourceAt(chapter, w.sourceStart),
       ...(local ? { page: String(local.pageLabel ?? local.pageNumberValue) } : {}),
       ...(w.kind === 'frameOverflow' ? { data: frameOverflowData(w) } : {}),
       // How far a frame's content went on (#859).
       ...(w.kind === 'frameContinuationLimit' ? { data: { template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, pages: w.pages, overflowMm: w.overflowMm, configPath: w.configPath } } : {}),
+      // A figure's label and its anchor (#860): where, in which locale.
+      ...(w.kind === 'labelAnchorUnknown' || w.kind === 'anchorUnlabelled'
+        ? { data: { resourceId: w.resourceId, anchor: w.anchor, ...(w.kind === 'labelAnchorUnknown' ? { known: w.known } : { style: w.style }), ...(w.locale ? { locale: w.locale } : {}) } }
+        : {}),
     });
   }
 }

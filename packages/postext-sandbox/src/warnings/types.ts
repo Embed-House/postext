@@ -45,6 +45,8 @@ export type WarningKind =
   | 'frameOverflow'
   | 'frameContinuationLimit'
   | 'spreadMismatch'
+  | 'labelAnchorUnknown'
+  | 'anchorUnlabelled'
   | 'unknownChipStyle'
   | 'unknownMarkStyle'
   | 'duplicateAnchor'
@@ -267,6 +269,13 @@ export type WarningPayload =
    *  (#861): the template decides (`templateSpread`: laid over two facing
    *  pages; else on one); `fence` is the fence's own `spread`. */
   | { kind: 'spreadMismatch'; template: string; fenceIndex: number; fence: boolean; templateSpread: boolean }
+  /** A `::label[…]{at="…"}` of a `:::figure` names an anchor its resource
+   *  does not have (#860): the label is not drawn. `known` lists the
+   *  resource's anchors; `page` is the book page the figure is on. */
+  | { kind: 'labelAnchorUnknown'; resourceId: string; anchor: string; known: string[]; page: number; locale?: string }
+  /** An anchor of a figure's resource names a label style and no label of
+   *  the figure stands at it in this locale (#860): a note. */
+  | { kind: 'anchorUnlabelled'; resourceId: string; anchor: string; style: string; page: number; locale?: string }
   /** A `:chip[…]{style="…"}` names a style that is not in
    *  `config.chipStyles`; the chip takes the first style. `inResource`
    *  names the resource whose caption, note or cell holds the chip. */

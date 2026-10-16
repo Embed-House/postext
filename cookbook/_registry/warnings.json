@@ -7244,5 +7244,113 @@
         "it": "Indice dei contenuti"
       }
     }
+  },
+  "labelAnchorUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Label at an unknown anchor",
+      "es": "Rótulo en un ancla que no existe",
+      "ca": "Rètol en una àncora que no existeix",
+      "zh": "标注指向不存在的锚点",
+      "ar": "تسمية على مرساة غير موجودة",
+      "ja": "存在しないアンカーのラベル",
+      "pt": "Rótulo numa âncora inexistente",
+      "fr": "Étiquette sur une ancre inconnue",
+      "de": "Beschriftung an einem unbekannten Anker",
+      "it": "Etichetta su un'ancora inesistente"
+    },
+    "cause": {
+      "en": "A ::label of a :::figure names, with at=, an anchor that the figure's resource does not have. The label is not drawn on the picture; the reflowable EPUB still lists it and the picture's alternative text names it.",
+      "es": "Un ::label de una :::figure nombra con at= un ancla que el recurso de la figura no tiene. El rótulo no se dibuja sobre la imagen; el EPUB adaptable lo sigue listando y el texto alternativo de la imagen lo nombra.",
+      "ca": "Un ::label d'una :::figure anomena amb at= una àncora que el recurs de la figura no té. El rètol no es dibuixa sobre la imatge; l'EPUB adaptable el continua llistant i el text alternatiu de la imatge l'anomena.",
+      "zh": "某个 :::figure 中的 ::label 用 at= 指向了该图资源中不存在的锚点。这个标注不会画在图片上；可重排 EPUB 仍会列出它，图片的替代文本也会提到它。",
+      "ar": "تسمّي ‎::label‎ في ‎:::figure‎ عبر at= مرساةً لا يملكها مورد الشكل. فلا تُرسم التسمية على الصورة؛ ويظل ملف EPUB المرن يدرجها ويذكرها النص البديل للصورة.",
+      "ja": ":::figure の ::label が at= で、図のリソースにないアンカーを指しています。ラベルは画像の上に描かれません。リフロー型 EPUB では引き続き一覧に出て、画像の代替テキストにも含まれます。",
+      "pt": "Um ::label de uma :::figure nomeia com at= uma âncora que o recurso da figura não tem. O rótulo não é desenhado sobre a imagem; o EPUB fluido continua a listá-lo e o texto alternativo da imagem o menciona.",
+      "fr": "Une ::label d'une :::figure désigne avec at= une ancre que la ressource de la figure n'a pas. L'étiquette n'est pas dessinée sur l'image ; l'EPUB recomposable la liste toujours et le texte alternatif de l'image la cite.",
+      "de": "Ein ::label einer :::figure nennt mit at= einen Anker, den die Ressource der Abbildung nicht hat. Die Beschriftung wird nicht auf das Bild gezeichnet; das umfließende EPUB führt sie weiter auf, und der Alternativtext des Bildes nennt sie.",
+      "it": "Una ::label di una :::figure indica con at= un'ancora che la risorsa della figura non ha. L'etichetta non viene disegnata sull'immagine; l'EPUB adattabile continua a elencarla e il testo alternativo dell'immagine la nomina."
+    },
+    "fix": {
+      "en": "Correct the anchor id in at= (the warning lists the resource's anchors), add the anchor to the resource, or place the label with at=\"x% y%\".",
+      "es": "Corrige el id del ancla en at= (el aviso lista las anclas del recurso), añade el ancla al recurso o coloca el rótulo con at=\"x% y%\".",
+      "ca": "Corregeix l'id de l'àncora a at= (l'avís llista les àncores del recurs), afegeix l'àncora al recurs o col·loca el rètol amb at=\"x% y%\".",
+      "zh": "修改 at= 中的锚点 id（警告会列出资源已有的锚点），在资源中添加该锚点，或用 at=\"x% y%\" 指定位置。",
+      "ar": "صحّح معرّف المرساة في at= (يذكر التحذير مراسي المورد)، أو أضف المرساة إلى المورد، أو ضع التسمية باستخدام at=\"x% y%\".",
+      "ja": "at= のアンカー id を直す（警告にリソースのアンカーが並びます）か、リソースにアンカーを追加するか、at=\"x% y%\" で位置を指定してください。",
+      "pt": "Corrija o id da âncora em at= (o aviso lista as âncoras do recurso), adicione a âncora ao recurso ou posicione o rótulo com at=\"x% y%\".",
+      "fr": "Corrigez l'id de l'ancre dans at= (l'avertissement liste les ancres de la ressource), ajoutez l'ancre à la ressource ou placez l'étiquette avec at=\"x% y%\".",
+      "de": "Korrigieren Sie die Anker-ID in at= (die Warnung listet die Anker der Ressource), legen Sie den Anker in der Ressource an oder setzen Sie die Beschriftung mit at=\"x% y%\".",
+      "it": "Correggi l'id dell'ancora in at= (l'avviso elenca le ancore della risorsa), aggiungi l'ancora alla risorsa o posiziona l'etichetta con at=\"x% y%\"."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "labelAnchorUnknown",
+        "es": "labelAnchorUnknown",
+        "ca": "labelAnchorUnknown",
+        "zh": "labelAnchorUnknown",
+        "ar": "labelAnchorUnknown",
+        "ja": "labelAnchorUnknown",
+        "pt": "labelAnchorUnknown",
+        "fr": "labelAnchorUnknown",
+        "de": "labelAnchorUnknown",
+        "it": "labelAnchorUnknown"
+      }
+    }
+  },
+  "anchorUnlabelled": {
+    "source": "engine",
+    "label": {
+      "en": "Anchor without a label",
+      "es": "Ancla sin rótulo",
+      "ca": "Àncora sense rètol",
+      "zh": "锚点缺少标注",
+      "ar": "مرساة بلا تسمية",
+      "ja": "ラベルのないアンカー",
+      "pt": "Âncora sem rótulo",
+      "fr": "Ancre sans étiquette",
+      "de": "Anker ohne Beschriftung",
+      "it": "Ancora senza etichetta"
+    },
+    "cause": {
+      "en": "An anchor of a figure's resource names a label style, and no ::label of the figure stands at it in this language: the word the map has room for is missing from this edition. A note, not an error: anchors without a style (a comic speaker's) are not reported.",
+      "es": "Un ancla del recurso de una figura nombra un estilo de rótulo y ningún ::label de la figura está en ella en este idioma: a esta edición le falta la palabra para la que el mapa tiene sitio. Es una nota, no un error; las anclas sin estilo (las de los personajes de un cómic) no se señalan.",
+      "ca": "Una àncora del recurs d'una figura anomena un estil de rètol i cap ::label de la figura no hi és en aquesta llengua: a aquesta edició li falta la paraula per a la qual el mapa té lloc. És una nota, no un error; les àncores sense estil (les dels personatges d'un còmic) no s'assenyalen.",
+      "zh": "图资源的某个锚点设置了标注样式，但在当前语言中图里没有任何 ::label 位于此处：地图为这个词留了位置，这一版本却缺了它。这只是提示，不是错误；没有样式的锚点（例如漫画角色的锚点）不会报告。",
+      "ar": "تسمّي مرساةٌ في مورد الشكل نمطَ تسمية، ولا توجد عندها أي ‎::label‎ من الشكل بهذه اللغة: الخريطة تتسع للكلمة لكن هذه الطبعة تخلو منها. هذه ملاحظة لا خطأ؛ ولا يُبلَّغ عن المراسي التي بلا نمط (مثل مراسي شخصيات القصص المصورة).",
+      "ja": "図のリソースのアンカーにラベルスタイルが設定されているのに、この言語ではそこに図の ::label がひとつもありません。地図に場所がある語がこの版では抜けています。エラーではなく注意です。スタイルのないアンカー（漫画の話者のものなど）は報告されません。",
+      "pt": "Uma âncora do recurso de uma figura nomeia um estilo de rótulo e nenhum ::label da figura fica nela neste idioma: falta a esta edição a palavra para a qual o mapa tem espaço. É uma nota, não um erro; âncoras sem estilo (as dos personagens de um quadrinho) não são indicadas.",
+      "fr": "Une ancre de la ressource d'une figure porte un style d'étiquette et aucune ::label de la figure ne s'y trouve dans cette langue : il manque à cette édition le mot pour lequel la carte a de la place. C'est une note, pas une erreur ; les ancres sans style (celles des personnages d'une BD) ne sont pas signalées.",
+      "de": "Ein Anker der Ressource einer Abbildung nennt einen Beschriftungsstil, und in dieser Sprache steht dort kein ::label der Abbildung: Dieser Ausgabe fehlt das Wort, für das die Karte Platz hat. Ein Hinweis, kein Fehler; Anker ohne Stil (etwa die von Comicfiguren) werden nicht gemeldet.",
+      "it": "Un'ancora della risorsa di una figura indica uno stile di etichetta e in questa lingua nessuna ::label della figura vi si trova: a questa edizione manca la parola per cui la mappa ha spazio. È una nota, non un errore; le ancore senza stile (quelle dei personaggi di un fumetto) non vengono segnalate."
+    },
+    "fix": {
+      "en": "Write the label in this language's Markdown (::label[…]{at=\"anchor\"}), or take the style off the anchor if this edition leaves the word out.",
+      "es": "Escribe el rótulo en el Markdown de este idioma (::label[…]{at=\"ancla\"}) o quita el estilo del ancla si esta edición prescinde de la palabra.",
+      "ca": "Escriu el rètol al Markdown d'aquesta llengua (::label[…]{at=\"àncora\"}) o treu l'estil de l'àncora si aquesta edició prescindeix de la paraula.",
+      "zh": "在该语言的 Markdown 中写上标注（::label[…]{at=\"锚点\"}）；如果这一版本不需要这个词，就删除锚点上的样式。",
+      "ar": "اكتب التسمية في Markdown هذه اللغة (‎::label[…]{at=\"مرساة\"}‎)، أو أزل النمط من المرساة إذا كانت هذه الطبعة تستغني عن الكلمة.",
+      "ja": "この言語の Markdown にラベルを書く（::label[…]{at=\"アンカー\"}）か、この版でその語を使わないならアンカーのスタイルを外してください。",
+      "pt": "Escreva o rótulo no Markdown deste idioma (::label[…]{at=\"âncora\"}) ou tire o estilo da âncora se esta edição dispensa a palavra.",
+      "fr": "Écrivez l'étiquette dans le Markdown de cette langue (::label[…]{at=\"ancre\"}), ou retirez le style de l'ancre si cette édition se passe du mot.",
+      "de": "Schreiben Sie die Beschriftung in das Markdown dieser Sprache (::label[…]{at=\"anker\"}), oder nehmen Sie dem Anker den Stil, wenn diese Ausgabe das Wort weglässt.",
+      "it": "Scrivi l'etichetta nel Markdown di questa lingua (::label[…]{at=\"ancora\"}), oppure togli lo stile all'ancora se questa edizione fa a meno della parola."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "anchorUnlabelled",
+        "es": "anchorUnlabelled",
+        "ca": "anchorUnlabelled",
+        "zh": "anchorUnlabelled",
+        "ar": "anchorUnlabelled",
+        "ja": "anchorUnlabelled",
+        "pt": "anchorUnlabelled",
+        "fr": "anchorUnlabelled",
+        "de": "anchorUnlabelled",
+        "it": "anchorUnlabelled"
+      }
+    }
   }
 }

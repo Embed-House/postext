@@ -92,6 +92,8 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'frameOverflow':
     case 'frameContinuationLimit':
     case 'spreadMismatch':
+    case 'labelAnchorUnknown':
+    case 'anchorUnlabelled':
     case 'unknownCalloutType':
     case 'unknownChipStyle':
     case 'unknownMarkStyle':
@@ -280,6 +282,10 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFrameContinuationLimitTitle;
     case 'spreadMismatch':
       return labels.warningsSpreadMismatchTitle;
+    case 'labelAnchorUnknown':
+      return labels.warningsLabelAnchorUnknownTitle;
+    case 'anchorUnlabelled':
+      return labels.warningsAnchorUnlabelledTitle;
     case 'unknownChipStyle':
       return labels.warningsUnknownChipStyleTitle;
     case 'unknownMarkStyle':
@@ -608,6 +614,16 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
         .replace('__template__', payload.template)}`;
     case 'spreadMismatch':
       return `::::page{template="${payload.template}"${payload.fence ? ' spread' : ''}} — ${(payload.templateSpread ? labels.warningsSpreadMismatchSpreadDetail : labels.warningsSpreadMismatchSingleDetail).replace('__template__', payload.template)}`;
+    case 'labelAnchorUnknown':
+      return `at="${payload.anchor}"${payload.locale ? ` (${payload.locale})` : ''} — ${labels.warningsLabelAnchorUnknownDetail
+        .replace('__resource__', payload.resourceId)
+        .replace('__page__', String(payload.page))
+        .replace('__known__', payload.known.length > 0 ? payload.known.slice(0, 8).join(', ') + (payload.known.length > 8 ? '…' : '') : '—')}`;
+    case 'anchorUnlabelled':
+      return `${payload.anchor}${payload.locale ? ` (${payload.locale})` : ''} — ${labels.warningsAnchorUnlabelledDetail
+        .replace('__resource__', payload.resourceId)
+        .replace('__page__', String(payload.page))
+        .replace('__style__', payload.style)}`;
     case 'unknownChipStyle':
       return `${inResource(payload.inResource)}:chip[…]{style="${payload.style}"} — ${labels.warningsUnknownChipStyleDetail}`;
     case 'unknownMarkStyle':

@@ -307,6 +307,10 @@ export interface SandboxLabels {
   warningsSpreadMismatchTitle: string;
   warningsSpreadMismatchSpreadDetail: string;
   warningsSpreadMismatchSingleDetail: string;
+  warningsLabelAnchorUnknownTitle: string;
+  warningsLabelAnchorUnknownDetail: string;
+  warningsAnchorUnlabelledTitle: string;
+  warningsAnchorUnlabelledDetail: string;
   warningsFrameOverflowTried: string;
   warningsFrameOverflowFixes: string;
   warningsFitStepFree: string;

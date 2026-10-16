@@ -220,6 +220,21 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       });
       return;
     }
+    if (w.kind === 'labelAnchorUnknown' || w.kind === 'anchorUnlabelled') {
+      // A figure's label at an anchor its picture lacks, or an anchor left
+      // without a word in this locale (#860), by its book page.
+      const page = (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0);
+      out.push({
+        id: `layout-${w.kind}-${w.resourceId}-${w.anchor}-${w.sourceStart ?? 'x'}-${i}`,
+        payload: w.kind === 'labelAnchorUnknown'
+          ? { kind: 'labelAnchorUnknown', resourceId: w.resourceId, anchor: w.anchor, known: w.known, page, ...(w.locale ? { locale: w.locale } : {}) }
+          : { kind: 'anchorUnlabelled', resourceId: w.resourceId, anchor: w.anchor, style: w.style, page, ...(w.locale ? { locale: w.locale } : {}) },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'fontFallback') {
       // A face the layout measured with a fallback (#629): one per face,
       // whatever chapter found it; no place in the text.

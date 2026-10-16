@@ -196,8 +196,13 @@ describe('a composed page in the fixed-layout EPUB (#862)', () => {
     expect(deco).not.toBeNull();
     expect(page.indexOf('pt-frame-decoration')).toBeLessThan(page.indexOf('data-frame-id="cp0:titulo"'));
     expect(page).toMatch(/<img src="\.\.\/images\/banda-tema\.png" alt="" role="presentation"/);
-    // The labels the picture does not carry follow its alternative text.
-    expect(page).toContain('alt="A family with a shopping basket (Rent, Electricity, Food)"');
+    // The labels are drawn over the picture as text (#860), after it in
+    // the markup, so its alternative text no longer repeats them.
+    expect(page).toContain('alt="A family with a shopping basket"');
+    const img = page.indexOf('alt="A family with a shopping basket"');
+    const words = ['Rent', 'Electricity', 'Food'].map((w) => page.indexOf(`>${w}<`, img));
+    expect(words.every((i) => i > img)).toBe(true);
+    expect([...words].sort((a, b) => a - b)).toEqual(words);
     expect(page).toContain('alt="A piggy bank beside some coins"');
   });
 
