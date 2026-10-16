@@ -11,7 +11,7 @@ import { createMeasurementCache } from '../../measure';
 import { frameMatrix } from '../../composed/paint';
 import { sourceAt } from '../../composed/sourceMap';
 import { framesInFrame } from '../../pipeline/headerFooter';
-import type { PageTemplate } from '../../composed/types';
+import type { FrameConfig, PageTemplate } from '../../composed/types';
 import type { PostextConfig, VDTBlock, VDTDesignTextBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
 import { page8Fixture } from './fixtures/page8';
 
@@ -78,7 +78,7 @@ const titleOf = (h: VDTBlock): VDTDesignTextBlock => h.designOverlay!.blocks.fin
 /** The overlay's boxes relative to the heading's top-left. */
 const relative = (h: VDTBlock) => h.designOverlay!.blocks.map((b) => [b.kind, b.bbox.x - h.bbox.x, b.bbox.y - h.bbox.y, b.bbox.width, b.bbox.height].map((v) => (typeof v === 'number' ? Math.round(v * 100) / 100 : v)));
 const words = (n: number, w = 'word'): string => Array.from({ length: n }, (_, i) => `${w}${i}`).join(' ');
-const flowTemplate = (width = 160, extra: Partial<PageTemplate['frames'][number]> = {}): PageTemplate =>
+const flowTemplate = (width = 160, extra: Partial<FrameConfig> = {}): PageTemplate =>
   ({ id: 't', frames: [{ name: 'text', flow: true, width: mm(width), placement: { anchor: { to: 'container', edge: 'top-left' } }, ...extra }] }) as PageTemplate;
 
 describe('heading designs inside frames and callouts (#906)', () => {
@@ -222,7 +222,7 @@ describe('heading designs inside frames and callouts (#906)', () => {
 
   it('sourceAt reads the title the design prints back to the heading’s Markdown, in a scaled frame too', () => {
     for (const tpl of [flowTemplate(), flowTemplate(80, { height: mm(60) })]) {
-      const md = `::::page{template="t"}\n## Situarse {style="pestana"}\n\n${words(tpl.frames[0]!.height ? 250 : 10)}\n::::`;
+      const md = `::::page{template="t"}\n## Situarse {style="pestana"}\n\n${words(tpl.frames![0]!.height ? 250 : 10)}\n::::`;
       const doc = build(md, [tpl]);
       const page = composedPage(doc);
       const f = frame(doc, 'text');
