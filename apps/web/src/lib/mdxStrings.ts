@@ -10,7 +10,8 @@
  * string, with the characters MDX would read as syntax (braces, tags,
  * emphasis, links, entities) written as character references. Fenced code
  * and backtick spans keep them as written, and so does an attribute value
- * (`name={'…'}`).
+ * (`name={'…'}`). The text of a JSX `<code>` keeps its Markdown marks
+ * (`*`, `_`, `~`, `^`, brackets) literal too.
  */
 
 /** Characters MDX reads as syntax inside JSX text. */
@@ -80,6 +81,17 @@ function line(text: string): string {
   return out;
 }
 
+/** Characters Markdown reads as emphasis, marks or links. */
+const MARKS: Record<string, string> = { "*": "&#42;", _: "&#95;", "~": "&#126;", "^": "&#94;", "[": "&#91;", "]": "&#93;" };
+
+/** The text of a JSX `<code>` (no tags inside) with its Markdown marks as
+ *  character references: MDX reads Markdown inside JSX, so
+ *  `<code>**bold**</code>` printed a bold "bold" and `<code>^x^</code>` a
+ *  superscript. */
+function literalCode(text: string): string {
+  return text.replace(/<code>([^<]*)<\/code>/g, (_, inner: string) => `<code>${inner.replace(/[*_~^[\]]/g, (c) => MARKS[c]!)}</code>`);
+}
+
 export function literalStringExpressions(source: string): string {
   let fence: { mark: string; size: number } | null = null;
   return source
@@ -91,7 +103,7 @@ export function literalStringExpressions(source: string): string {
         else if (m[1]![0] === fence.mark && m[1]!.length >= fence.size && m[2]!.trim() === "") fence = null;
         return text;
       }
-      return fence === null ? line(text) : text;
+      return fence === null ? literalCode(line(text)) : text;
     })
     .join("\n");
 }
