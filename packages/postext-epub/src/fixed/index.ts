@@ -273,7 +273,9 @@ export async function buildFixedPublication(docs: EpubSource, options: RenderToE
     // book's, on the left.
     const recto = plan.bookIndex % 2 === 0;
     const right = progression === 'rtl' ? !recto : recto;
-    spine.push({ idref: id, properties: [right ? 'page-spread-right' : 'page-spread-left'] });
+    // The two pages of a spread template (#861) are shown side by side
+    // whatever the device's orientation (`rendition:spread-both`).
+    spine.push({ idref: id, properties: [right ? 'page-spread-right' : 'page-spread-left', ...(page.composed?.spread ? ['rendition:spread-both'] : [])] });
     pageList.push({ label, href: `${PAGES_DIR}${file}` });
     onProgress?.({ phase: 'documents', done: n + 1, total: plans.length });
     if (n % 16 === 15) signal?.throwIfAborted();

@@ -11,7 +11,7 @@ import path from 'node:path';
 import { renderToEpub } from './index';
 import type { RenderToEpubOptions } from './types';
 import { page8Book, page8Bytes } from './__tests__/page8';
-import { AMIRI, LORA, MP4, PNG, arabicSampleBook, booktabsSampleBook, wrapSampleBook, comicSampleBook, sampleBook, stripCaptionSampleBook, stripSpreadSampleBook, videoSampleBook, japaneseSampleBook } from './__tests__/sampleBook';
+import { AMIRI, LORA, MP4, PNG, arabicSampleBook, booktabsSampleBook, wrapSampleBook, comicSampleBook, composedSpreadSampleBook, sampleBook, stripCaptionSampleBook, stripSpreadSampleBook, videoSampleBook, japaneseSampleBook } from './__tests__/sampleBook';
 
 const available = process.env.EPUBCHECK === '1' && spawnSync('epubcheck', ['--version'], { encoding: 'utf8' }).status === 0;
 
@@ -108,6 +108,9 @@ const samples: { name: string; options: RenderToEpubOptions; book?: () => Return
   // A composed page (#862): its frames as a section, a figure's labels.
   { name: 'composed-fixed', options: composed('fixed'), book: composedBook },
   { name: 'composed-reflowable', options: composed('reflowable'), book: composedBook },
+  // A spread template across two facing pages (#861).
+  { name: 'composed-spread-fixed', options: base('fixed'), book: composedSpreadSampleBook },
+  { name: 'composed-spread-reflowable', options: base('reflowable'), book: composedSpreadSampleBook },
 ];
 
 describe.skipIf(!available)('EPUBCheck', () => {

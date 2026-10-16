@@ -11,7 +11,7 @@ import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfi
 import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode';
 import { runPagePrintPass } from '../print/printPass';
 import { writePdfX } from '../print/pdfx';
-import { canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, composedFrameBlockIds, composedPaintOrder, computePageTextExtent, dimensionToPx, frameClips, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
+import { canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
 import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
 import {
   type PageCtx,
@@ -638,7 +638,13 @@ function paintPage(
     popFrame(ctx);
     delete ctx.vertical;
     delete ctx.mirror;
-    if (vdtPage.composed?.decoration) renderHeaderFooterSlot(ctx, vdtPage.composed.decoration, fontCache, resourceCtx.images, decorationMark);
+    if (vdtPage.composed?.decoration) {
+      // On a page of a spread (#861), its share of the sheet only.
+      const sheet = composedSheetClip(vdtPage);
+      if (sheet) pushClipRect(ctx, sheet.x, sheet.y, sheet.width, sheet.height);
+      renderHeaderFooterSlot(ctx, vdtPage.composed.decoration, fontCache, resourceCtx.images, decorationMark);
+      if (sheet) popClip(ctx);
+    }
   }
 
   // A comic page's panels and lettering (or its half of a spread), then
@@ -701,6 +707,26 @@ function paintComposedFrames(
   withDecoration: boolean,
 ): void {
   const structure = resourceCtx.structure;
+  // On a page of a spread (#861) the frames and the decoration show the
+  // page's share of the sheet only.
+  const sheet = composedSheetClip(vdtPage);
+  if (sheet) pushClipRect(ctx, sheet.x, sheet.y, sheet.width, sheet.height);
+  try {
+    paintComposedItems(ctx, vdtPage, fontCache, resourceCtx, mark, withDecoration, structure);
+  } finally {
+    if (sheet) popClip(ctx);
+  }
+}
+
+function paintComposedItems(
+  ctx: PageCtx,
+  vdtPage: VDTPage,
+  fontCache: FontCache,
+  resourceCtx: ResourceRenderContext,
+  mark: SlotMark | undefined,
+  withDecoration: boolean,
+  structure: ResourceRenderContext['structure'],
+): void {
   for (const item of composedPaintOrder(vdtPage)) {
     if (item.kind === 'decoration') {
       const decoration = vdtPage.composed?.decoration;
@@ -716,13 +742,21 @@ function paintComposedFrames(
     if (m) pushFrame(ctx, sheetMatrixToPdf(m, ctx.scale, ctx.pageHeightPt));
     if (clips) pushClipRect(ctx, frame.rect.x, frame.rect.y, frame.rect.width, frame.rect.height);
     try {
-      // A frame's blocks are read as one float (#862), so a list in it
-      // stays one list.
-      const paint = () => {
-        for (const fb of blocks) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
-      };
-      if (structure) structure.readFloat(blocks[0]!, paint, readAt);
-      else paint();
+      if (item.facing) {
+        // The facing page's half of a frame across a spread's spine: its
+        // text is read on the other page, so here it is an artifact.
+        tagArtifact(ctx, { type: 'Layout' });
+        const untagged: ResourceRenderContext = { ...resourceCtx, structure: undefined };
+        for (const fb of blocks) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, untagged);
+      } else {
+        // A frame's blocks are read as one float (#862), so a list in it
+        // stays one list.
+        const paint = () => {
+          for (const fb of blocks) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
+        };
+        if (structure) structure.readFloat(blocks[0]!, paint, readAt);
+        else paint();
+      }
     } finally {
       if (clips) popClip(ctx);
       if (m) popFrame(ctx);
