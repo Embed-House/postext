@@ -1,0 +1,178 @@
+/**
+ * The editions of the book on screen laid out behind the reader (#867),
+ * kept for the session: the Checks panel lists their composed checks, the
+ * side-by-side view paints their pages. One entry per book and locale,
+ * laid out again when what it was read from changes (the book on screen
+ * after an edit; another edition's draft after it was saved).
+ *
+ * The Sandbox holds one edition at a time. Another one is read the way
+ * opening it would read it: its draft when the reader edited it, else the
+ * bundle's text in that language. Its fonts are the book's (the editions
+ * of a bundle share their families); its pictures are stored and decoded
+ * for the side-by-side view.
+ */
+
+import type { LayoutService } from '../worker/LayoutService';
+import { ensureConfigFontsLoaded } from '../controls/fontLoader';
+import { ensureResourceImages } from '../controls/resourceImages';
+import { getBlob, putBlobsAt } from '../storage/blobStore';
+import { getPresetDraft, type PresetDraftSummary } from '../storage/presetDrafts';
+import { sameLocaleTag } from '../presets/locale';
+import type { LoadedPresetBlob, PresetProvider } from '../presets/types';
+import { layOutEdition, type EditionLayout, type EditionSource } from './editionLayout';
+
+export type EditionStatus = 'loading' | 'ready' | 'error';
+
+export interface EditionEntry {
+  locale: string;
+  status: EditionStatus;
+  /** The last layout (kept while a newer one is under way). */
+  layout: EditionLayout | null;
+  error?: string;
+  /** What the layout was read from (compared by identity). */
+  identity: readonly unknown[];
+}
+
+const entries = new Map<string, EditionEntry>();
+const running = new Map<string, AbortController>();
+const listeners = new Set<() => void>();
+let version = 0;
+
+function emit(): void {
+  version++;
+  for (const l of listeners) l();
+}
+
+export function subscribeEditions(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => { listeners.delete(listener); };
+}
+
+/** Changes whenever an entry does (for `useSyncExternalStore`). */
+export function editionsVersion(): number {
+  return version;
+}
+
+export function editionKey(bookKey: string, locale: string): string {
+  return `${bookKey}|${locale}`;
+}
+
+export function editionEntry(bookKey: string, locale: string): EditionEntry | undefined {
+  return entries.get(editionKey(bookKey, locale));
+}
+
+function sameIdentity(a: readonly unknown[], b: readonly unknown[]): boolean {
+  return a.length === b.length && a.every((v, i) => v === b[i]);
+}
+
+export interface EnsureEditionOptions {
+  bookKey: string;
+  locale: string;
+  /** What the edition is read from; a change lays it out again. */
+  identity: readonly unknown[];
+  load: () => Promise<{ source: EditionSource; blobs?: readonly LoadedPresetBlob[] }>;
+  service: LayoutService;
+  /** Another edition than the one on screen: its faces and pictures are
+   *  loaded first. */
+  other: boolean;
+}
+
+/** Lay an edition out unless its entry already holds (or is building) the
+ *  layout of the same inputs. */
+export function ensureEdition(opts: EnsureEditionOptions): void {
+  const key = editionKey(opts.bookKey, opts.locale);
+  const entry = entries.get(key);
+  if (entry && sameIdentity(entry.identity, opts.identity) && entry.status !== 'error') return;
+  running.get(key)?.abort();
+  const controller = new AbortController();
+  running.set(key, controller);
+  entries.set(key, { locale: opts.locale, status: 'loading', layout: entry?.layout ?? null, identity: opts.identity });
+  emit();
+  const clientId = `edition:${key}`;
+  void (async () => {
+    const { source, blobs } = await opts.load();
+    if (controller.signal.aborted) return;
+    if (opts.other) {
+      await ensureConfigFontsLoaded(source.config, source.chapters.map((c) => c.markdown)).catch(() => undefined);
+      await storeEditionPictures(source, blobs ?? []).catch(() => undefined);
+    }
+    const layout = await layOutEdition(source, (content, config, cacheKey) => opts.service.build({
+      clientId, priority: 'background', content, config, cacheKey,
+    }), { signal: controller.signal });
+    if (controller.signal.aborted) return;
+    entries.set(key, { locale: opts.locale, status: 'ready', layout, identity: opts.identity });
+    emit();
+  })().catch((err: unknown) => {
+    if (controller.signal.aborted || (err instanceof DOMException && err.name === 'AbortError')) return;
+    entries.set(key, { locale: opts.locale, status: 'error', layout: entries.get(key)?.layout ?? null, identity: opts.identity, error: err instanceof Error ? err.message : String(err) });
+    emit();
+  }).finally(() => {
+    if (running.get(key) === controller) running.delete(key);
+  });
+}
+
+/** Stop the layouts of a book (it left the screen). */
+export function cancelEditions(bookKey: string, service?: LayoutService): void {
+  for (const [key, controller] of running) {
+    if (!key.startsWith(`${bookKey}|`)) continue;
+    controller.abort();
+    running.delete(key);
+    service?.cancel(`edition:${key}`);
+  }
+}
+
+/** Another edition's pictures, for its pages to be painted: the payloads
+ *  the store lacks are written (a translated diagram has a file of its
+ *  own), then every picture is decoded. */
+async function storeEditionPictures(source: EditionSource, blobs: readonly LoadedPresetBlob[]): Promise<void> {
+  const missing: LoadedPresetBlob[] = [];
+  for (const b of blobs) {
+    if (!(await getBlob(b.fileId).catch(() => null))) missing.push(b);
+  }
+  if (missing.length > 0) await putBlobsAt(missing.map((b) => ({ fileId: b.fileId, contentType: b.mime, bytes: b.bytes })));
+  await ensureResourceImages(source.resources);
+}
+
+/** Read another edition of a preset as opening it would: the reader's
+ *  draft in that language when there is one, else the bundle's text. */
+export async function loadPresetEdition(
+  provider: PresetProvider,
+  locale: string,
+  drafts: readonly PresetDraftSummary[],
+): Promise<{ source: EditionSource; blobs?: readonly LoadedPresetBlob[] }> {
+  const summary = drafts.find((d) => d.presetId === provider.summary.id && sameLocaleTag(d.locale, locale));
+  if (summary) {
+    const draft = await getPresetDraft(summary.key).catch(() => null);
+    if (draft) {
+      return {
+        source: {
+          locale: draft.locale || locale,
+          chapters: draft.chapters,
+          config: draft.config,
+          resources: draft.resources,
+          ...(draft.start ? { start: draft.start } : {}),
+        },
+      };
+    }
+  }
+  const loaded = await provider.load(locale);
+  return {
+    source: {
+      locale: loaded.locale,
+      chapters: loaded.chapters,
+      config: loaded.config,
+      resources: loaded.resources,
+      ...(loaded.layouts ? { layouts: loaded.layouts } : {}),
+      ...(loaded.start ? { start: loaded.start } : {}),
+    },
+    blobs: loaded.blobs,
+  };
+}
+
+/** Forget every entry (tests). */
+export function resetEditions(): void {
+  for (const c of running.values()) c.abort();
+  running.clear();
+  entries.clear();
+  emit();
+}

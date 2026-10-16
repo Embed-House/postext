@@ -774,6 +774,9 @@ export interface SandboxStore {
    *  the viewer locale applies. Resolves to whether the preset was
    *  applied. */
   loadPreset: (id: string, locale?: string) => Promise<boolean>;
+  /** The provider of a preset (its bundle in every language), for reading
+   *  an edition that is not on screen (#867). */
+  presetProvider: (id: string) => PresetProvider | undefined;
   /** Re-fetch the active preset and re-apply the given parts. `all`
    *  restores the original (its draft is dropped). */
   reloadPreset: (parts: PresetApplyParts) => Promise<void>;
@@ -1040,6 +1043,12 @@ export function useSandboxBookActions(): {
     openHashBundle: store.openHashBundle,
     hashBundleKeys: store.hashBundleKeys,
   };
+}
+
+/** The provider of a preset, read on demand (see
+ *  `SandboxStore.presetProvider`). */
+export function useSandboxPresetProvider(): SandboxStore['presetProvider'] {
+  return useStore().presetProvider;
 }
 
 /** Stable ref to the most recently built VDT document. Does not subscribe
@@ -2354,6 +2363,7 @@ export function SandboxProvider({
     getWarnings: (s) => getWarningsRef.current(s),
     getPlan: (s) => getPlanRef.current(s),
     loadPreset: (id, locale) => openPresetRef.current(id, locale),
+    presetProvider: (id) => presetProvidersRef.current.find((p) => p.summary.id === id),
     reloadPreset: async (parts) => {
       if (stateRef.current.activeProjectId !== null) {
         await projectActions.resetToSource(parts);

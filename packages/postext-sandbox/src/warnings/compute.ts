@@ -53,6 +53,7 @@ import { contrastMediaFor, documentContrastPairs } from '../contrast/contrastSto
 import type { ComposedBook } from '../book/types';
 import { fromBookLine, fromBookOffset } from '../book/compose';
 import { frontmatterRange } from '../book/frontmatter';
+import { isComposedCheckKind } from './composedChecks';
 
 function lineNumberForOffset(markdown: string, offset: number): number {
   if (offset <= 0) return 1;
@@ -1110,6 +1111,28 @@ export function computeWarnings(params: {
   if (doc) warnings.push(...collectContrastWarnings(doc, config, preflight?.transform));
   if (!book) return warnings;
   return attributeToChapters(warnings, book, chapterTitles);
+}
+
+/** The checks of a composed book in one chapter (#867): frames that do
+ *  not fit, slots, fences, contents cut between columns, and the
+ *  configuration's templates and design texts that hold content. What the
+ *  Checks panel reads for every edition of a book, the one on screen and
+ *  the others it lays out behind it. With `book`, chapter-attributed. */
+export function computeComposedWarnings(params: {
+  markdown: string;
+  config: PostextConfig;
+  doc: VDTDocument | null;
+  resources?: Resource[];
+  book?: ComposedBook;
+}): Warning[] {
+  const { markdown, config, doc, resources = [], book } = params;
+  const metadata = book?.metadata ?? (extractFrontmatter(markdown).metadata as Record<string, unknown> | undefined);
+  const found = [
+    ...(doc ? collectLayoutWarnings(doc, markdown) : []),
+    ...collectEngineContentWarnings(markdown, config, resources),
+    ...collectConfigValueWarnings(config, resources, metadata),
+  ].filter((w) => isComposedCheckKind(w.payload.kind));
+  return book ? attributeToChapters(found, book) : found;
 }
 
 /** The contrast check (#748) of the laid-out document: the text and ground
