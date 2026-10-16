@@ -11,6 +11,7 @@ import type { SandboxLabels } from '../types';
 import { preflightDetail, preflightTitle } from '../print/preflightText';
 import { contrastDetail, contrastTitle } from '../contrast/contrastText';
 import { fill } from '../print/fillTokens';
+import { frameOverflowDetail } from '../warnings/frameOverflowText';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
 
 /** Open a book page in the viewer: the fragment names it, and the viewer
@@ -594,10 +595,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
     case 'pageFenceLength':
       return `:::page{template=…} — ${labels.warningsPageFenceLengthDetail}`;
     case 'frameOverflow':
-      return `${payload.frame} — ${labels.warningsFrameOverflowDetail
-        .replace('__template__', payload.template)
-        .replace('__mm__', payload.overflowMm.toFixed(1))
-        .replace('__page__', String(payload.page))}`;
+      // The steps the reflow ladder tried and what would make it fit (#858).
+      return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels)}`;
     case 'spreadMismatch':
       return `::::page{template="${payload.template}"${payload.fence ? ' spread' : ''}} — ${(payload.templateSpread ? labels.warningsSpreadMismatchSpreadDetail : labels.warningsSpreadMismatchSingleDetail).replace('__template__', payload.template)}`;
     case 'unknownChipStyle':
@@ -736,7 +735,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       const detail = payload.reason === 'tooNarrow' ? labels.warningsTextWrapTooNarrow
         : payload.reason === 'fewLines' ? labels.warningsTextWrapFewLines
           : payload.reason === 'moved' ? labels.warningsTextWrapMoved
-            : labels.warningsTextWrapVertical;
+            : payload.reason === 'noContour' ? labels.warningsTextWrapNoContour
+              : labels.warningsTextWrapVertical;
       return `${payload.resourceId !== undefined ? `#${payload.resourceId}` : `:::callout${payload.box ? ` (${payload.box})` : ''}`} — ${detail}`;
     }
     case 'lineNumberOverlap':

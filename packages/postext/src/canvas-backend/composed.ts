@@ -6,7 +6,7 @@
  * (#861) all of it is clipped to the page's share of the sheet.
  */
 import type { VDTDesignSlot, VDTPage } from '../vdt';
-import { composedPaintOrder, composedSheetClip, frameClips, frameMatrix } from '../composed/paint';
+import { composedPaintOrder, composedSheetClip, frameClips, frameContentRect, frameMatrix } from '../composed/paint';
 import { renderBlock } from './blockRender';
 import { renderHeaderFooterSlot } from './headerFooter';
 import { restoreContext, saveContext } from './contextState';
@@ -46,8 +46,11 @@ export function renderComposedFrames(
     saveContext(ctx);
     if (m) ctx.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
     if (clips) {
+      // In the blocks' own frame: a frame whose text is scaled (#858) was
+      // laid out larger than its box.
+      const box = frameContentRect(frame);
       ctx.beginPath();
-      ctx.rect(frame.rect.x, frame.rect.y, frame.rect.width, frame.rect.height);
+      ctx.rect(box.x, box.y, box.width, box.height);
       ctx.clip();
     }
     for (const b of blocks) renderBlock(ctx, b, b.bbox.width, b.bbox.x, inkHex);

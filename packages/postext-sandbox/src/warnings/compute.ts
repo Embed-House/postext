@@ -195,6 +195,12 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
           overflowMm: w.overflowMm,
           page: (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0),
           configPath: w.configPath,
+          // What the reflow ladder tried and what would make it fit (#858).
+          ...(w.locale ? { locale: w.locale } : {}),
+          stepsTried: w.stepsTried ?? [],
+          scale: w.scale ?? 1,
+          ...(w.imageScale !== undefined ? { imageScale: w.imageScale } : {}),
+          proposals: w.proposals ?? [],
         },
         sourceStart: w.sourceStart,
         sourceEnd: w.sourceEnd,

@@ -26,7 +26,7 @@ import {
 import type { SandboxLabels } from '../../types/labels';
 import { arabicNumberFormatOptions, eastAsianNumberFormatOptions } from '../settings/eastAsianOptions';
 import { CollapsibleSection, DimensionInput, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
-import { wrapSideOf } from '../settings/textWrap';
+import { wrapChoiceOf } from '../settings/textWrap';
 import { Button, ConfirmPopover, IconButton } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
@@ -425,18 +425,20 @@ export const ResourceTypesSection = memo(function ResourceTypesSection() {
                   <SelectInput
                     variant="segmented"
                     label={labels.resourceTypePlacementWrap}
-                    value={wrapSideOf(type.defaultPlacement?.wrap)}
+                    value={wrapChoiceOf(type.defaultPlacement?.wrap)}
                     options={[
                       { value: 'none', label: labels.resourceWrapNone },
                       { value: 'left', label: floatSide.left },
                       { value: 'right', label: floatSide.right },
+                      // The pictures' own shape (#883).
+                      { value: 'contour', label: labels.resourceWrapContour },
                     ]}
-                    onChange={(v) => updateTypePlacement(type, { wrap: v === 'left' || v === 'right' ? v : undefined })}
+                    onChange={(v) => updateTypePlacement(type, { wrap: v === 'left' || v === 'right' || v === 'contour' ? v : undefined })}
                     tooltip={labels.resourceTypePlacementWrapTooltip}
                     isDefault={type.defaultPlacement?.wrap === undefined}
                     onReset={() => updateTypePlacement(type, { wrap: undefined })}
                   />
-                  {wrapSideOf(type.defaultPlacement?.wrap) !== 'none' && (
+                  {wrapChoiceOf(type.defaultPlacement?.wrap) !== 'none' && (
                     <DimensionInput
                       label={labels.resourceTypePlacementWrapGap}
                       value={type.defaultPlacement?.wrapGap ?? config.layout?.wrap?.gap ?? resolveBodyTextConfig(config.bodyText).lineHeight}

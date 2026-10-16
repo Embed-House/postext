@@ -38,6 +38,19 @@ export { bitmapResolutionFor, effectiveBitmapResolution, bitmapLayoutSize, isPla
 export { bitmapResolutionOf } from './defaults/layout';
 export { bitmapInfo, bitmapSize } from './bundle';
 export type { BitmapInfo, BitmapFileResolution, BitmapResolutionSource } from './bundle';
+// Contour wrap (#883): the shape of a picture text runs round, traced by
+// the host from the file (the layout reads pictures by their size only).
+export {
+  traceResourceContour,
+  withContourTrace,
+  traceAlpha,
+  decodePngAlpha,
+  polygonRows,
+  contourRowsOf,
+  contourThreshold,
+  DEFAULT_CONTOUR_THRESHOLD,
+} from './contour';
+export type { AlphaRaster, ContourRows, RgbaPixels, TraceContourOptions } from './contour';
 export type { CropMarkSegment } from './cropMarks';
 export { columnClipRect, designOverlayOverhang, headingDesignOverhangAbove, hangingPunctuationOverhang } from './columnClip';
 export { lineInkExtent } from './lineInk';
@@ -152,6 +165,9 @@ export type {
   ResourceRotation,
   ResourcePlacement,
   ResourceSafeArea,
+  ResourceContour,
+  ContourTrace,
+  ResourceWrap,
   ResourceAnchor,
   ComicsConfig,
   ResolvedComicsConfig,
@@ -492,6 +508,8 @@ export type {
   VDTBlock,
   VDTColumn,
   VDTExclusion,
+  VDTExclusionContour,
+  VDTContourSpan,
   VDTColumnRule,
   VDTFootnoteArea,
   VDTPage,
@@ -551,6 +569,8 @@ export type {
   VDTFigureLabel,
   ReflowEvent,
   ReflowEventKind,
+  FrameOverflowProposal,
+  FrameFitStep,
   VDTStripCaption,
   VDTDropCap,
 } from './vdt';
@@ -602,18 +622,26 @@ export { validatePageTemplates } from './composed/validate';
 export type { ValidatePageTemplatesOptions } from './composed/validate';
 // Composed pages laid out (#855): the frames of a page and how backends paint them.
 export { altWithLabels } from './composed/labelText';
-export { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameMatrix, frameClips, frameBounds, frameOfBlock } from './composed/paint';
+export { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameMatrix, frameClips, frameBounds, frameContentRect, frameOfBlock } from './composed/paint';
+// The boxes of a template's frames before content is poured (#863: Sandbox thumbnails and editor).
+export { templateFrameRects } from './composed/geometry';
 export type { ComposedPaintItem } from './composed/paint';
 // Groups and the reflow log (#856): how frames negotiate space, and what the
 // layout changed from the template's drawing, in data and in words.
 export { layoutGroup, composedOrder } from './composed/groups';
 export type { GroupItem, GroupLayoutInput, ComposedStep } from './composed/groups';
-export { composedReflowLog, describeReflowEvent, reflowEvents } from './composed/reflowLog';
+export { composedReflowLog, describeReflowEvent, describeFitStep, describeFrameOverflowProposal, reflowEvents } from './composed/reflowLog';
 export type { ComposedPageReflow, FrameMotion } from './composed/reflowLog';
 // Where a template's frames stand (#855), for hosts that draw a template
 // without laying a page out (the Sandbox's template thumbnails, #864).
 export { frameOrder, framePlaceable, groupPlaceable, placeBox as placeFrameBox, unionRect as frameUnionRect } from './composed/geometry';
 export type { FrameAreas, FrameGeometryContext, Rect as FrameRect } from './composed/geometry';
+// The source map of a laid-out document and the stable ids of a composed
+// page's elements (#857).
+export { sourceAt, elementsForSource, findElement } from './composed/sourceMap';
+export type { SourceRef, SourceLevel, SourceElement, SourceMapOptions, SourceMatch } from './composed/sourceMap';
+export { composedPageElementId, frameElementId, groupElementId, labelElementId, designElementId } from './composed/ids';
+export { composedPagePaintKey } from './composed/pageMemo';
 export type {
   FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
   PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
@@ -656,7 +684,7 @@ export type { RegisterSvgImageOptions, PrepareSvgOptions } from './svg/image';
 
 // `.postext` bundles. The `postext/bundle` subpath carries the same API plus
 // the low-level manifest helpers.
-export { openBundle, createBundle, buildBundle, createBundleLayoutCache, loadBundleFonts, registerBundleImages, bundleImageUrl, bundleVideoUrl, bundleResourceBytes, bundleFontProvider, bundleSvgFontProvider, svgInlinesFonts, readBundle, planBundle, resolveBundleFiles, openBundleZip, zipBundle, isBundleManifest, pickBundleMeta, POSTEXT_EXTENSION } from './bundle';
+export { openBundle, createBundle, buildBundle, createBundleLayoutCache, loadBundleFonts, registerBundleImages, bundleImageUrl, bundleVideoUrl, bundleResourceBytes, bundleFontProvider, bundleSvgFontProvider, svgInlinesFonts, readBundle, traceBundleContours, planBundle, resolveBundleFiles, openBundleZip, zipBundle, isBundleManifest, pickBundleMeta, POSTEXT_EXTENSION } from './bundle';
 export type { PostextBundle, OpenBundleOptions, CreateBundleInput, CreateBundleLocale, CreatedBundle, BundleFileData, BuildBundleOptions, BundleLayoutCache, BundleLayoutStats, BundleSource, BundleFontProviderOptions, BundleFontRequest, BundleImageOptions, BundleManifest, BundleManifestV1, BundleManifestV2, BundleStart, BundleChapter, BundleFontFile, ReadBundleOptions, ReadBundleResult, ZipBundleOptions } from './bundle';
 
 // Citations (#267–#272): the engine registry and the data model a citation

@@ -179,7 +179,7 @@ Cada recurso tem um **posicionamento** que decide onde o flutuante fica, resolvi
     <tr>
       <td><code>wrap</code>, <code>wrapGap</code></td>
       <td><code>"none"</code> · <code>"left"</code> · <code>"right"</code> · <code>"start"</code> · <code>"end"</code>; um comprimento</td>
-      <td>Compõe o texto ao lado do recurso: ele fica naquele lado da coluna, e as linhas ao lado são ajustadas à medida que sobra, a <code>wrapGap</code> da caixa dele (legenda incluída), e voltam à medida inteira embaixo. Vale para uma inserção em linha (<code>"here"</code>) e para um flutuante de uma coluna no alto ou no pé de uma coluna; flutuantes de página, de várias colunas, da coluna lateral e girados mantêm a faixa. O recurso ocupa <code>width</code> da coluna, ou <code>layout.wrap.defaultWidth</code> (0,45). <code>wrapGap</code> tem como padrão <code>layout.wrap.gap</code>, ou uma linha do corpo. Veja <a href="#contorno-de-texto">Contorno de texto</a>. Desde o postext 1.24.</td>
+      <td>Compõe o texto ao lado do recurso: ele fica naquele lado da coluna, e as linhas ao lado são ajustadas à medida que sobra, a <code>wrapGap</code> da caixa dele (legenda incluída), e voltam à medida inteira embaixo. Vale para uma inserção em linha (<code>"here"</code>) e para um flutuante de uma coluna no alto ou no pé de uma coluna; flutuantes de página, de várias colunas, da coluna lateral e girados mantêm a faixa. O recurso ocupa <code>width</code> da coluna, ou <code>layout.wrap.defaultWidth</code> (0,45). <code>wrapGap</code> tem como padrão <code>layout.wrap.gap</code>, ou uma linha do corpo. <code>"contour"</code> faz o texto contornar a forma da própria imagem em vez da caixa dela, com a imagem no lado indicado por <code>align</code> (veja <a href="#contorno-pela-forma">Contorno pela forma</a>). Veja <a href="#contorno-de-texto">Contorno de texto</a>. Desde o postext 1.24.</td>
     </tr>
     <tr>
       <td><code>citingPage</code></td>
@@ -261,7 +261,27 @@ Uma imagem, uma tabela ou uma caixa mais estreita que a coluna pode ficar de um 
 - **Afastamento e limites.** `wrapGap` (ou `layout.wrap.gap`, ou uma linha do corpo) separa o elemento, legenda incluída, do texto ao lado e do texto embaixo. Se o texto ao lado ficasse mais estreito que `layout.wrap.minTextWidth` (12 em do corpo), ou o elemento fosse mais baixo que `layout.wrap.minLinesBeside` linhas (2), ele ocupa a faixa inteira e um aviso `textWrap` informa. Um em linha alto demais para o espaço que resta na coluna passa para a seguinte com a âncora, com o mesmo aviso.
 - **Lados.** `left` e `right` são lados do fluxo do texto, como em `align`: num livro da direita para a esquerda `left` é a direita da folha. `start` e `end` nomeiam os mesmos lados.
 - **Saídas.** O canvas, o visualizador HTML, o PDF e o EPUB de layout fixo compõem as linhas como foram diagramadas; um PDF etiquetado lê a imagem ou a caixa antes do parágrafo que vai ao lado. Um EPUB refluível faz o elemento flutuar para o seu lado com CSS, na mesma proporção da largura do texto.
-- **Ainda não.** Texto dos dois lados de uma imagem, contorno pela forma, contorno dentro do conteúdo de uma caixa e contorno na escrita vertical (o elemento mantém a faixa, com um aviso). Colunas com um elemento contornado ficam fora do balanceamento de colunas.
+- **Ainda não.** Texto dos dois lados de uma imagem, contorno dentro do conteúdo de uma caixa e contorno na escrita vertical (o elemento mantém a faixa, com um aviso). Colunas com um elemento contornado ficam fora do balanceamento de colunas.
+
+#### Contorno pela forma
+
+Uma ilustração recortada (uma figura sobre fundo transparente, um objeto desenhado, o mapa de uma ilha) fica melhor quando o texto acompanha a silhueta dela do que quando para na borda da caixa. `"wrap": "contour"` faz isso: cada linha ao lado da imagem é encurtada o quanto a forma da imagem ocupa na altura daquela linha, mais uma margem, e a linha que passa livre da forma fica com a medida inteira.
+
+```json
+{ "id": "pear", "typeId": "figure", "kind": "bitmap",
+  "bitmap": { "fileId": "pear.png", "format": "png", "width": 600, "height": 800 },
+  "placement": { "position": "here", "wrap": "contour", "align": "right", "width": 0.42 },
+  "contour": { "threshold": 0.5, "margin": { "value": 2, "unit": "mm" } } }
+```
+
+- **De onde vem a forma.** A forma de um bitmap é o canal alfa: os pixels com opacidade de pelo menos `contour.threshold` (de 0 a 1, padrão 0,5). Um polígono em `contour.points`, com no mínimo três pontos em frações da imagem inteira a partir do canto superior esquerdo (`{ "x": 0.5, "y": 0 }` é o meio da borda de cima), tem prioridade sobre o canal alfa e é o jeito de dar forma a um SVG. `"alpha": false` ignora o canal alfa. Um JPEG não tem transparência, então sem polígono o texto contorna a caixa dele.
+- **Margem.** `contour.margin` é o espaço mantido entre a forma e o texto, dos lados, acima e abaixo. Sem valor definido, é o afastamento do contorno (`placement.wrapGap`, depois `layout.wrap.gap`, depois uma linha do corpo).
+- **Lado.** A imagem fica no lado que o `align` dela indica (`"right"` ou `"end"`; qualquer outro valor é a esquerda), e as linhas correm do outro lado. O resto é como no contorno de um lado só: uma inserção em linha ou um flutuante de uma coluna, os mesmos limites e os mesmos avisos `textWrap`.
+- **Recorte e escala.** A forma acompanha a imagem como ela é composta: escalada junto com ela e cortada onde uma área segura a recorta. Uma legenda ou uma nota sob a imagem mantém a sua caixa.
+- **Da direita para a esquerda e CJK.** Numa página da direita para a esquerda a forma se espelha com a página, porque a imagem é pintada sem espelhar no seu lugar espelhado. Com uma grade de caracteres CJK o recuo de cada linha é um número inteiro de caracteres, e assim as linhas ficam na grade.
+- **O traçado.** A diagramação lê as imagens pelo tamanho, nunca pelos pixels, então o canal alfa viaja com o recurso: `contour.traced`, a forma em fileiras, que o hospedeiro gera a partir do arquivo com `traceResourceContour(resource, bytes, mime)` (o motor lê PNG sozinho, no navegador e no Node; outro formato passa pelo decodificador do navegador). A leitura de um pacote traça cada imagem que pede isso, e o Sandbox traça uma imagem quando o contorno, o arquivo ou o limiar dela mudam. Um pacote nunca guarda o traçado. Uma imagem de forma desconhecida (um SVG sem polígono, um bitmap sem transparência ou um não traçado) é contornada pela caixa, com um aviso `textWrap` de motivo `noContour`: dê a ela um polígono, use um PNG com transparência ou leia a imagem com `readBundle` ou com o Sandbox para que seja traçada.
+- **Blocos.** Um bloco de uma página composta que afasta o texto (`exclude: "push"`) também aceita `"wrap": "contour"`: veja [Páginas compostas › Blocos que afastam o texto](/pt/docs/composed-pages#blocos-que-afastam-o-texto).
+- **Ainda não.** Texto dos dois lados de uma forma que fica no meio da medida (o texto fica com o lado mais largo) e edição de polígonos no Sandbox.
 
 ### Tamanho do bitmap
 

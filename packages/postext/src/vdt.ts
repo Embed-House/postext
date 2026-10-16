@@ -51,6 +51,7 @@ import type {
   ResolvedCodeStyleConfig,
   PageTemplate,
   ResolvedLabelStyle,
+  Dimension,
 } from './types';
 import type { NumeralStyle } from './numbering';
 import type { MathRender } from './math/types';
@@ -268,6 +269,12 @@ export interface VDTChip {
    *  pass joins the pieces that share a line into one box. Never left on a
    *  chip of a finished line. */
   joinNext?: boolean;
+  /** Where each character of the chip's runs (joined, in logical order)
+   *  stands in the source, counted from the chip's leading `:` (#857): add
+   *  the source offset of the chip's plain character (its block's
+   *  `sourceMap`). Absent when the runs do not read as written (a chip in
+   *  small capitals is still mapped; one cut by direction is not). */
+  sourceOffsets?: number[];
 }
 
 export interface VDTLineSegment {
@@ -1541,6 +1548,20 @@ export interface VDTFigureLabel {
   /** The label's text in the source (absolute offsets). */
   sourceStart: number;
   sourceEnd: number;
+  /** The source offset of each character of `text` (absolute), when the
+   *  text reads as written (#857). */
+  sourceMap?: number[];
+  /** On a composed page, the label's stable id,
+   *  `cp<fence>:<slot>:label:<anchor>` (`@<k>` for the k-th label placed by
+   *  percentages): the same in every locale (#857). */
+  id?: string;
+  /** The anchor it is set at, as `resourceId#anchorId` (#857); absent for
+   *  a label placed by percentages. */
+  anchorRef?: string;
+  /** Where the label is painted (page px, upright), once labels are laid
+   *  out on the picture (#860); `sourceAt` answers a point inside it with
+   *  the label. Absent until then. */
+  rect?: BoundingBox;
 }
 
 /**
@@ -1688,8 +1709,9 @@ export interface VDTBlock {
    *  make the row a link to it. The contents keep their own rhythm:
    *  entries and part rows neither snap to the baseline grid nor serve as
    *  column-balancing stretch points. `continued`: a repeated head row (see
-   *  `tocPart`). */
-  tocEntry?: { pageIndex?: number; continued?: true };
+   *  `tocPart`). `headingSource`: where the heading the entry lists starts
+   *  in its chapter's Markdown body (`OutlineEntry.headingSource`, #857). */
+  tocEntry?: { pageIndex?: number; continued?: true; headingSource?: number };
   numberPrefix?: string;
   /** What joins {@link numberPrefix} to the title
    *  (`HeadingLevelConfig.numberSeparator`), when it is not one space:
@@ -2013,6 +2035,30 @@ export interface VDTExclusion {
   /** The id of the block that wraps the text: an inline figure's block, a
    *  float's, or a box's frame. */
   ownerId: string;
+  /** A contour wrap (#883): the picture's shape, which sets each line
+   *  beside it short by the shape's width there rather than by
+   *  {@link width}. Absent: the rectangle. */
+  contour?: VDTExclusionContour;
+}
+
+/** The shape a contour wrap runs round (#883), in page px: bands of the
+ *  page, each with the shape's extent across it, and the margin kept round
+ *  them (across, above and below). A line meets the shape where a band
+ *  lies within the margin of the line's own band. */
+export interface VDTExclusionContour {
+  spans: VDTContourSpan[];
+  margin: number;
+  /** The insets are rounded up to whole multiples of this (px): one body
+   *  character under a CJK character grid, so the lines keep to it. */
+  quantum?: number;
+}
+
+/** One band of a contour (`VDTExclusionContour.spans`). */
+export interface VDTContourSpan {
+  y: number;
+  height: number;
+  left: number;
+  right: number;
 }
 
 /** The notes set at the foot of one column (`footnotes.placement:
@@ -2131,7 +2177,24 @@ export interface VDTDesignBoxStyle {
 }
 
 /** Text block rendered inside a design slot (header / footer / heading). */
-export interface VDTDesignTextBlock {
+/** Where a design block comes from in the configuration (#857): the
+ *  element of its design slot (`DesignElement.id`) and the JSON pointer of
+ *  that element (`/pageTemplates/0/decoration/elements/2`,
+ *  `/footer/elements/0`). Set on the blocks of a composed page's decoration
+ *  and of the running heads; absent where the slot's origin is not known
+ *  (a heading style's design, a callout's own overlay). */
+export interface VDTDesignBlockOrigin {
+  elementId?: string;
+  configPath?: string;
+  /** The Markdown attribute the block shows: `x` for a text element whose
+   *  content is `{attr.x}` (its `sourceStart`/`sourceEnd` are the value's
+   *  in the page fence or the heading) and for an image whose `resourceId`
+   *  is `{attr.x}`; `label` / `title` for a frame's tab and title (the
+   *  `:::frame` fence's). Absent otherwise. */
+  attr?: string;
+}
+
+export interface VDTDesignTextBlock extends VDTDesignBlockOrigin {
   kind: 'text';
   bbox: BoundingBox;
   fontString: string;
@@ -2202,7 +2265,7 @@ export interface VDTVerticalText {
 }
 
 /** Rendered rule inside a design slot. */
-export interface VDTDesignRuleBlock {
+export interface VDTDesignRuleBlock extends VDTDesignBlockOrigin {
   kind: 'rule';
   bbox: BoundingBox;
   color: string;
@@ -2211,7 +2274,7 @@ export interface VDTDesignRuleBlock {
 }
 
 /** Decorative rounded box. */
-export interface VDTDesignBoxBlock {
+export interface VDTDesignBoxBlock extends VDTDesignBlockOrigin {
   kind: 'box';
   bbox: BoundingBox;
   box: VDTDesignBoxStyle;
@@ -2223,7 +2286,7 @@ export interface VDTDesignBoxBlock {
 }
 
 /** Image drawn from the resource image registry (e.g. a callout icon). */
-export interface VDTDesignImageBlock {
+export interface VDTDesignImageBlock extends VDTDesignBlockOrigin {
   kind: 'image';
   bbox: BoundingBox;
   /** Out-of-band binary id resolved at render time (canvas registry, HTML
@@ -2483,8 +2546,16 @@ export interface VDTFrame {
   layer: number;
   /** The callout style the frame is drawn with; absent = frameless. */
   styleId?: string;
-  /** Text scale the reflow ladder applied (1 = none; #858). */
+  /** Text scale the reflow ladder applied (1 = none; #858): the frame's
+   *  content is laid out `1 / scale` times as wide and tall as `rect` and
+   *  painted scaled by `scale` about the top-left of `rect`, so its font
+   *  sizes, leading and spacing shrink together. Its blocks' coordinates
+   *  are in that laid-out frame: {@link frameMatrix} (`composed/paint.ts`)
+   *  puts them on the sheet. */
   scale: number;
+  /** Scale the reflow ladder set the pictures of the frame's content at
+   *  (#858), below 1; absent when they keep their size. */
+  imageScale?: number;
   /** Height of content that did not fit in the frame, px (0 = it fits).
    *  Past the frame's foot it is clipped on paged output. */
   overflowPx: number;
@@ -2555,6 +2626,13 @@ export interface VDTComposedPage {
   /** The page fence, opening line to closing fence (absolute offsets). */
   sourceStart: number;
   sourceEnd: number;
+  /** A digest of everything the page's frames were laid out from (#857):
+   *  template, Markdown and blocks, styles, fonts, locale, side and
+   *  geometry. Two pages with the same key hold the same frames (their
+   *  source offsets aside), so a host may keep the pixels it painted for
+   *  one (with the same running heads and decoration). Absent when the
+   *  page reads what the key does not hold (a footnote, a reference). */
+  layoutKey?: string;
 }
 
 /** A comic page (`:::page`): its panels, the split lines between them and
@@ -2863,6 +2941,33 @@ export interface ConfigWarning {
   ownerId?: string;
 }
 
+/** A step of the reflow ladder (#858, DESIGN §5.4), in ladder order:
+ *  `free` (the frame grows into free space up to its `maxHeight`), `push`
+ *  (its group moves the frames after it and the ones that `shrink` yield),
+ *  `scaleImages` (pictures of the frame and its group, down to
+ *  `fit.imageMinScale`), `redistribute` (the other frames of its group go
+ *  down to their minimum or their content, a row's give width),
+ *  `shrinkText` (down to `fit.minScale`), `continue` (`overflow.continueIn`
+ *  to another page, #859). */
+export type FrameFitStep = 'free' | 'push' | 'scaleImages' | 'redistribute' | 'shrinkText' | 'continue';
+
+/** A change that would make a frame's content fit (#858): data, so the
+ *  Sandbox can offer it as a confirmed edit. `path` is the JSON pointer of
+ *  the config value to set to `value`; a Markdown change carries the
+ *  source range it is about instead. Values are worked out from the
+ *  shortfall: `allowShrink` the largest text scale (in 2.5 % steps) at
+ *  which the content fits (`also`: the switch to turn on with it),
+ *  `raiseMax` / `lowerMin` the height in whole millimetres, `useTemplate`
+ *  another template of the book with a frame of this name in which the
+ *  content fits, `shortenText` about how many characters to cut. */
+export type FrameOverflowProposal =
+  | { kind: 'allowShrink'; path: string; value: number; also?: { path: string; value: boolean }[] }
+  | { kind: 'raiseMax'; path: string; value: Dimension }
+  | { kind: 'lowerMin'; path: string; value: Dimension; frame: string }
+  | { kind: 'continueNextPage'; path: string; value: 'next-page' }
+  | { kind: 'useTemplate'; value: string; sourceStart?: number; sourceEnd?: number }
+  | { kind: 'shortenText'; value: number; sourceStart?: number; sourceEnd?: number };
+
 /** The kinds of {@link ConfigWarning} a page template gives (#853). */
 export type PageTemplateWarningKind =
   | 'templateDuplicate'
@@ -2942,8 +3047,8 @@ export type ContentWarning = ContentWarningBase & (
   | { kind: 'templateUnknown'; template: string; fenceIndex: number }
   /** Content of a composed page names a slot (`slot="…"`,
    *  `:::frame{slot=…}`) that is no frame of the page's template: it goes
-   *  to the template's flow frame. */
-  | { kind: 'slotUnknown'; template: string; slot: string; fenceIndex: number }
+   *  to the template's flow frame (`frame`, when the template has one). */
+  | { kind: 'slotUnknown'; template: string; slot: string; frame?: string; fenceIndex: number }
   /** A frame of a composed page's template receives no content: nothing
    *  names its slot, it takes no heading, and (the flow frame) no content
    *  is left without a slot. A frame marked `optional` is not reported. */
@@ -2958,7 +3063,27 @@ export type ContentWarning = ContentWarningBase & (
    *  on paged output; it stays in the document (reflowable output, the
    *  source map, this warning). `overflowMm` is the height that is cut.
    *  Provisional: #858 adds the steps tried and the fixes. */
-  | { kind: 'frameOverflow'; template: string; frame: string; fenceIndex: number; overflowMm: number; configPath: string }
+  | {
+    kind: 'frameOverflow';
+    template: string;
+    frame: string;
+    fenceIndex: number;
+    overflowMm: number;
+    configPath: string;
+    /** The document's locale (`config.locale`): the same page overflows in
+     *  one language and fits in another. */
+    locale?: string;
+    /** The steps of the reflow ladder (#858) that applied to the frame, in
+     *  the order they were tried; none made the content fit. */
+    stepsTried: FrameFitStep[];
+    /** The text scale the frame was left at (1 = none). */
+    scale: number;
+    /** The scale its pictures were left at, below 1. */
+    imageScale?: number;
+    /** Changes that would make the content fit, with their values worked
+     *  out from the shortfall (each tried on the page where it can be). */
+    proposals: FrameOverflowProposal[];
+  }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): `::::page{template spread}` names a template that is a single
    *  page (`fence: true`, `templateSpread: false`; it is laid as one
@@ -3181,9 +3306,14 @@ export type ContentWarning = ContentWarningBase & (
    *  its band whole; `'moved'`: an inline one was too tall for the room
    *  left in its column and moved on to the next, its anchor with it;
    *  `'verticalText'`: text wraps in horizontal text only, so in a
-   *  vertical flow it takes its band whole. `resourceId` names a
-   *  resource, `box` a box's style. Found by the layout. */
-  | { kind: 'textWrap'; reason: 'tooNarrow' | 'fewLines' | 'moved' | 'verticalText'; resourceId?: string; box?: string }
+   *  vertical flow it takes its band whole; `'noContour'` (#883): a
+   *  contour wrap (`wrap: 'contour'`, or a pushing frame's) round a
+   *  picture whose shape is not known (an SVG with no
+   *  `contour.points`, a bitmap with no transparency, or whose alpha
+   *  channel the host did not trace), so the text runs round its box.
+   *  `resourceId` names a resource, `box` a box's style. Found by the
+   *  layout. */
+  | { kind: 'textWrap'; reason: 'tooNarrow' | 'fewLines' | 'moved' | 'verticalText' | 'noContour'; resourceId?: string; box?: string }
   /** `columnsTooNarrow` (#634): the sub-columns of a `:::columns` group
    *  are narrower than six ems of its text, `widthPx` each, `columns` of
    *  them: few words fit a line. Found by the layout. */

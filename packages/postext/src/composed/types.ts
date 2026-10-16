@@ -88,6 +88,13 @@ export interface FrameConfig {
   padding?: CalloutPaddingConfig;
   /** `'push'`: text of other frames wraps around this one. Default `'none'`. */
   exclude?: 'none' | 'push';
+  /** What the text of other frames runs round when this frame pushes it
+   *  (`exclude: 'push'`, #883): `'box'` (the default), the frame's box;
+   *  `'contour'`, the shape of the pictures it holds (`Resource.contour`:
+   *  a polygon or the bitmap's alpha channel), each line set as short as
+   *  the shape is wide beside it. A frame whose pictures have no known
+   *  shape, or a turned frame, pushes with its box. */
+  wrap?: 'box' | 'contour';
   /** Receives content that names no slot. */
   flow?: boolean;
   /** Chain: content that does not fit continues in this frame. */
@@ -256,6 +263,9 @@ export interface ResolvedFrame {
   columnGap?: Dimension;
   padding?: CalloutPaddingConfig;
   exclude: 'none' | 'push';
+  /** `'contour'`: a pushing frame pushes with its pictures' shape (#883).
+   *  Absent: with its box. */
+  wrap?: 'contour';
   flow: boolean;
   next?: string;
   takes?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -301,6 +311,10 @@ export interface ResolvedPageTemplate {
   decorationPaths: string[];
   header?: DesignSlot | false;
   footer?: DesignSlot | false;
+  /** JSON pointers of the `header` / `footer` the template takes (its
+   *  own, or the one of the template it extends), when it sets one (#857). */
+  headerPath?: string;
+  footerPath?: string;
   overflowTemplate?: string;
   bodyStyle?: string;
   palette?: string;
@@ -360,21 +374,6 @@ export interface FigureLabelNode extends SourceRange {
 // in `vdt.ts` with the rest of the VDT (#855).
 export type { ReflowEventKind, ReflowEvent, VDTFrame, VDTComposedPage } from '../vdt';
 
-export type FrameOverflowProposal =
-  | { kind: 'allowShrink'; path: string; value: number }
-  | { kind: 'raiseMax'; path: string; value: Dimension }
-  | { kind: 'lowerMin'; path: string; value: Dimension }
-  | { kind: 'continueNextPage'; path: string }
-  | { kind: 'useTemplate'; template: string }
-  | { kind: 'shortenText'; chars: number };
-
-export interface FrameOverflowWarningData {
-  pageIndex: number;
-  template: string;
-  frame: string;
-  locale?: string;
-  overflowMm: number;
-  stepsTried: string[];
-  scale: number;
-  proposals: FrameOverflowProposal[];
-}
+// `FrameOverflowProposal` and `FrameFitStep` live in `vdt.ts` with the
+// `frameOverflow` warning that carries them (#858).
+export type { FrameOverflowProposal, FrameFitStep } from '../vdt';

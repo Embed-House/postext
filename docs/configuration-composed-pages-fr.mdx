@@ -246,6 +246,12 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>'push'</code> : le texte des autres blocs habille le rectangle de celui-ci.</td>
     </tr>
     <tr>
+      <td><code>wrap</code></td>
+      <td><code>'box' | 'contour'</code></td>
+      <td><code>'box'</code></td>
+      <td>Avec <code>exclude: 'push'</code> : ce que le texte des autres blocs habille. <code>'contour'</code> est la forme des images que contient le bloc (leur polygone ou leur canal alpha, voir <a href="/fr/docs/document-format-resources#habillage-au-contour">Habillage au contour</a>) ; un bloc pivoté, ou un bloc dont les images n’ont pas de forme connue, repousse le texte avec son rectangle.</td>
+    </tr>
+    <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -279,19 +285,19 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>fit.shrinkText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Quand rien d’autre ne fait tenir le contenu, son texte peut être composé plus petit.</td>
+      <td>Quand rien d’autre ne fait tenir le contenu, son texte peut être composé plus petit, par paliers de 2,5 % (voir <a href="#quand-le-contenu-ne-tient-pas">Quand le contenu ne tient pas</a>).</td>
     </tr>
     <tr>
       <td><code>fit.minScale</code></td>
       <td><code>number</code></td>
       <td><code>0.9</code></td>
-      <td>La plus petite échelle du texte, au-dessus de 0 et au plus 1 (une valeur plus grande est lue comme 1).</td>
+      <td>La plus petite échelle du texte, au-dessus de 0 et au plus 1 (une valeur plus grande est lue comme 1). Corps, interlignage et espacements suivent la même échelle.</td>
     </tr>
     <tr>
       <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
-      <td>Si les images du bloc peuvent être réduites, et jusqu’à quelle échelle.</td>
+      <td>Si les images du bloc et celles des autres blocs de son groupe peuvent être réduites quand le contenu de ce bloc ne tient pas, et jusqu’à quelle échelle.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -399,7 +405,7 @@ Un bloc déclare sa taille : une `height` fixe, ou `'auto'`, la hauteur de ce qu
 
 - Un groupe sans `placement` ni `grid` à lui commence là où le placement de son premier bloc le met et descend aussi loin que ses blocs l’exigent, jusqu’au pied de la zone du gabarit. Quand un bloc grandit, les blocs qui le suivent descendent d’autant.
 - Un groupe qui a sa propre boîte y dispose ses blocs. Quand ils demandent plus de place que la boîte n’en offre, les blocs dont le `shrink` dépasse 0 rendent de l’espace, ceux de plus basse `priority` en premier ; à priorité égale, chacun cède en proportion de son `shrink`, et aucun ne descend sous son `minHeight`. L’espace libre va aux blocs dont le `grow` dépasse 0, en proportion de cette valeur, jusqu’à leur `maxHeight` ; s’il n’y en a aucun, `align` place les blocs (`'end'` en pied, `'center'`, `'space-between'`). Un bloc du groupe sans placement propre prend la boîte du groupe pour zone.
-- Quand plus rien ne peut céder, aucun bloc ne dépasse le pied du groupe : le contenu qui ne tient pas y est coupé et signalé par `frameOverflow`.
+- Quand plus rien ne peut céder, aucun bloc ne dépasse le pied du groupe : le bloc dont le contenu ne tient pas passe par la cascade de recomposition (voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)), et ce qui ne tient toujours pas y est coupé et signalé par `frameOverflow`.
 - Un bloc en `height: 'fill'` demande son `minHeight` et prend l’espace libre comme s’il avait `grow: 1`.
 
 **Rangée.** Les blocs d’une rangée se placent côte à côte à leurs largeurs déclarées, tous à la hauteur de la rangée : celle de la boîte du groupe ou, si le groupe n’a pas de boîte à lui, la plus grande des hauteurs déclarées (un bloc de hauteur fixe garde la sienne). Quand le texte d’un bloc dépasse la hauteur de la rangée, le bloc s’élargit : d’abord sur la largeur libre de la rangée, puis sur celle des autres blocs dont le `shrink` dépasse 0, ceux de plus basse `priority` en premier, sans jamais rendre l’un d’eux plus étroit que la largeur où son propre texte tient encore. La largeur prise est le plus petit nombre de millimètres entiers qui fait tenir le texte ; si toute la place disponible n’y suffit pas, le bloc n’en prend aucune, et une rangée sans boîte à elle gagne en hauteur. La largeur libre va aux blocs dont le `grow` dépasse 0, puis à `align`. Les rangées vont de gauche à droite.
@@ -443,6 +449,25 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 Le résultat ne dépend que du contenu de la page, du gabarit et de la typographie : la même entrée donne la même page, mesurée dans le même ordre, par les mêmes étapes. La négociation ne lit jamais une autre page ; modifier une page composée laisse donc toutes les autres telles qu’elles étaient, tant que le contenu reste sur sa page.
 
+### Quand le contenu ne tient pas
+
+Quand le contenu d’un bloc est plus haut que la place que lui donne son groupe, la mise en page essaie dans l’ordre les étapes de la [cascade de recomposition](/fr/docs/composed-pages#quand-le-contenu-ne-tient-toujours-pas) et s’arrête à la première qui le fait tenir : l’espace libre jusqu’à `maxHeight`, le groupe qui pousse et qui cède, des images plus petites, les autres blocs du groupe ramenés à leur minimum, un texte plus petit, la suite sur une autre page. Ces réglages du bloc fixent jusqu’où chaque étape peut aller :
+
+- `maxHeight` sur un bloc de `height` fixe : le bloc peut grandir jusque-là avant toute réduction.
+- `minHeight` sur les autres blocs du groupe : jusqu’où ils rendent de l’espace ; un bloc ne descend jamais sous ce que demande son propre contenu.
+- `fit.scaleImages` et `fit.imageMinScale` : si les images du bloc et de son groupe peuvent être réduites, et jusqu’à quelle échelle (80 % par défaut).
+- `fit.shrinkText` et `fit.minScale` : si le texte du bloc peut être réduit, et jusqu’à quelle échelle (90 % par défaut). L’échelle est la même pour le corps, l’interlignage et les espacements ; le bloc garde sa taille.
+- `overflow.continueIn` : où le contenu se poursuit quand rien de tout cela ne suffit.
+
+Les échelles vont par paliers de 2,5 % et la mise en page prend la plus grande qui convient : un texte trop long d’une ligne est composé à 97,5 %, pas au minimum. Un encadré qui doit garder son corps prend `fit: { shrinkText: false }` ; une page dont les images doivent garder leur taille met `fit: { scaleImages: false }` sur les blocs de son groupe :
+
+```ts
+{ name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
+  fit: { minScale: 0.85, imageMinScale: 0.9 } }
+```
+
+Ce qui ne tient toujours pas est signalé par `frameOverflow`, avec les étapes essayées et des propositions qui portent leurs valeurs : voir [L’avertissement et ses propositions](/fr/docs/composed-pages#lavertissement-et-ses-propositions).
+
 ### Héritage et variantes
 
 Un gabarit doté d’`extends` part du gabarit qu’il nomme (qui peut lui-même en étendre un autre) et ne change que ce qu’il écrit :
@@ -468,7 +493,7 @@ Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit
 
 ### Ce que la mise en page applique
 
-La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` et `overflow.continueIn: "#frame"`, ainsi que l’`area`, la `grid`, le `decoration`, le `header`, le `footer` et les `variants` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` d’un groupe ; ses blocs gardent leur propre placement), `fit`, `overflow.continueIn: "next-page"` et `overflowTemplate`, le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
+La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next` et `overflow.continueIn: "#frame"`, ainsi que l’`area`, la `grid`, le `decoration`, le `header`, le `footer` et les `variants` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` d’un groupe ; ses blocs gardent leur propre placement), `fit`, `overflow.continueIn: "next-page"` et `overflowTemplate`, le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
 
 ### Doubles pages
 
@@ -639,7 +664,7 @@ Les ancrages d’une image (`Resource.anchors`, les points que la bande dessiné
 
 Ailleurs, le moteur ignore une clé qu’il ne connaît pas. Les gabarits de page et les styles d’étiquette sont au contraire vérifiés, et chaque problème devient un avertissement de configuration dans `postext check` et dans le panneau Vérifications du Sandbox. Le `path` de ces avertissements est un pointeur JSON vers le champ en cause : `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quand le champ a été hérité, le pointeur nomme le gabarit qui l’a écrit. Un avertissement qui nomme un id ou un nom inexistant propose aussi le plus proche qui existe.
 
-Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ.
+Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ.
 
 <table>
   <thead>

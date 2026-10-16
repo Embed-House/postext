@@ -314,7 +314,7 @@ describe("lintPen (fixture)", () => {
   it("checks the content files", () => {
     const content = { en: "# One\n\n::resource{id='photo'}\n\n:::sidebar\n", es: "# Uno\n" };
     const fails = lint(undefined, { sources: { content } }).fails;
-    expect(fails).toContain(`content.en.md: "::resource{id='photo'}" is not \`::resource{id="…"}\` (double quotes, id only)`);
+    expect(fails).toContain(`content.en.md: "::resource{id='photo'}" is not \`::resource{id="…"}\` (double quotes, id only) or, on a composed page, \`::resource{id="…" slot="…"}\``);
     expect(fails).toContain('content.en.md: ":::sidebar" is not a Postext directive (it prints as text)');
     const bare = lint(undefined, { sources: { content: { en: "---\ntitle: Bare\n---\n# One\n", es: "# Uno\n" } } }).fails;
     expect(bare).toContain('content.en.md: frontmatter line 2: quote the value ("…")');

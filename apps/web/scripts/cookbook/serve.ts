@@ -51,6 +51,8 @@ export interface PenServerOptions {
    *  live mode does) without live reload: the capture of worker recipes,
    *  which cannot use request interception. */
   rewriteFetch?: boolean;
+  /** Each content file as the pen inlines it (the stress test, #869). */
+  transformContent?: (text: string, key: string) => string;
 }
 
 export interface PenServer {
@@ -65,9 +67,17 @@ export interface PenServer {
 }
 
 /** Composes one edition from the files on disk. */
-export function composeVariant(slug: string, variant: SampleLocale): { pen: ComposedPen; meta: RecipeMeta } {
+export function composeVariant(
+  slug: string,
+  variant: SampleLocale,
+  transformContent?: (text: string, key: string) => string,
+): { pen: ComposedPen; meta: RecipeMeta } {
   const meta = readRecipeMeta(slug);
-  const pen = composePen(readRecipeSources(slug), meta, variant, { kit: readKit() });
+  const sources = readRecipeSources(slug);
+  if (transformContent) {
+    sources.content = Object.fromEntries(Object.entries(sources.content).map(([key, text]) => [key, transformContent(text, key)]));
+  }
+  const pen = composePen(sources, meta, variant, { kit: readKit() });
   return { pen, meta };
 }
 
@@ -271,7 +281,7 @@ export async function startSandboxServer({ buildDir, bundleFile, port }: { build
 export async function startPenServer(opts: PenServerOptions): Promise<PenServer> {
   const engine = resolveEngine(opts.engine);
   const live = opts.live === true;
-  let state = composeVariant(opts.slug, opts.variant);
+  let state = composeVariant(opts.slug, opts.variant, opts.transformContent);
   // A captured PDF is dated the day its recipe was written (#734).
   const shims = shimModules(engine, { pdfDate: pdfDateOf(state.meta.created) });
   const clients = new Set<http.ServerResponse>();
@@ -280,7 +290,7 @@ export async function startPenServer(opts: PenServerOptions): Promise<PenServer>
   const fresh = (): { pen: ComposedPen; meta: RecipeMeta } => {
     if (!live) return state;
     resetKitCache();
-    state = composeVariant(opts.slug, opts.variant);
+    state = composeVariant(opts.slug, opts.variant, opts.transformContent);
     return state;
   };
 

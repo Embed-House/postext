@@ -246,6 +246,12 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>'push'</code>: el text dels altres marcs envolta el rectangle d'aquest.</td>
     </tr>
     <tr>
+      <td><code>wrap</code></td>
+      <td><code>'box' | 'contour'</code></td>
+      <td><code>'box'</code></td>
+      <td>Amb <code>exclude: 'push'</code>: allò que envolta el text dels altres marcs. <code>'contour'</code> és la forma de les imatges que conté el marc (el seu polígon o el seu canal alfa, vegeu <a href="/ca/docs/document-format-resources#ajust-al-contorn">Ajust al contorn</a>); un marc girat, o un les imatges del qual no tenen una forma coneguda, aparta el text amb la seva caixa.</td>
+    </tr>
+    <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -279,19 +285,19 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>fit.shrinkText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Quan res més no aconsegueix que el contingut hi càpiga, el seu text es pot compondre més petit.</td>
+      <td>Quan res més no aconsegueix que el contingut hi càpiga, el seu text es pot compondre més petit, en passos del 2,5 % (vegeu <a href="#quan-el-contingut-no-hi-cap">Quan el contingut no hi cap</a>).</td>
     </tr>
     <tr>
       <td><code>fit.minScale</code></td>
       <td><code>number</code></td>
       <td><code>0.9</code></td>
-      <td>L'escala de text més petita, més gran que 0 i com a màxim 1 (un valor més gran es llegeix com a 1).</td>
+      <td>L'escala de text més petita, més gran que 0 i com a màxim 1 (un valor més gran es llegeix com a 1). El cos, l'interlineat i els espais s'escalen alhora.</td>
     </tr>
     <tr>
       <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
-      <td>Si les imatges del marc es poden compondre més petites, i fins a quina escala.</td>
+      <td>Si les imatges del marc i dels altres marcs del seu grup es poden compondre més petites quan el contingut d'aquest marc no hi cap, i fins a quina escala.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -399,7 +405,7 @@ Un marc declara la seva mida: un `height` fix, o `'auto'`, l'alçada del que con
 
 - Un grup sense `placement` ni `grid` propis comença allà on el situa la col·locació del seu primer marc i baixa tant com ho necessitin els marcs, fins al peu de l'àrea de la plantilla. Quan un marc creix, els marcs que el segueixen baixen la mateixa distància.
 - Un grup amb caixa pròpia col·loca els seus marcs dins d'aquesta caixa. Quan necessiten més espai del que hi ha, en tornen els marcs amb `shrink` més gran que 0, començant per la `priority` més baixa; els marcs d'una mateixa prioritat en cedeixen en proporció al seu `shrink`, i cap no baixa del seu `minHeight`. L'espai sobrant va als marcs amb `grow` més gran que 0, en proporció a aquest valor, fins al seu `maxHeight`; si no n'hi ha cap, `align` col·loca els marcs (`'end'` al peu, `'center'`, `'space-between'`). Un marc del grup sense col·locació pròpia pren la caixa del grup com a àrea.
-- Quan ja no pot cedir res més, cap marc no passa del peu del grup: el contingut que no hi cap es talla allà i es notifica com a `frameOverflow`.
+- Quan ja no pot cedir res més, cap marc no passa del peu del grup: el marc el contingut del qual no hi cap recorre l'escala d'ajust (vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)), i el que tot i així no hi cap es talla allà i es notifica com a `frameOverflow`.
 - Un marc amb `height: 'fill'` demana el seu `minHeight` i pren l'espai sobrant com si tingués `grow: 1`.
 
 **Filera.** Els marcs d'una filera van l'un al costat de l'altre a les amplades declarades, i tots fan l'alçada de la filera: la de la caixa del grup o, si el grup no en té de pròpia, la més gran de les alçades declarades (un marc d'alçada fixa conserva la seva). Quan el text d'un marc passa de l'alçada de la filera, el marc s'eixampla: primer amb l'amplada sobrant de la filera, després amb la dels altres marcs que tenen `shrink` més gran que 0, començant per la `priority` més baixa, sense deixar-ne cap més estret que l'amplada en què encara hi cap el seu text. L'amplada que pren és el mínim de mil·límetres sencers amb què el text hi cap; si ni tot l'espai disponible no n'hi ha prou, el marc no en pren gens, i una filera sense caixa pròpia es fa més alta. L'amplada sobrant va als marcs amb `grow` més gran que 0 i, després, a `align`. Les fileres van d'esquerra a dreta.
@@ -443,6 +449,25 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 El resultat només depèn del contingut de la pàgina, de la plantilla i de la tipografia: la mateixa entrada dona la mateixa pàgina, mesurada en el mateix ordre i amb els mateixos passos. La negociació mai no llegeix cap altra pàgina, de manera que un canvi en una pàgina composta deixa totes les altres com estaven, sempre que el contingut no surti de la seva pàgina.
 
+### Quan el contingut no hi cap
+
+Quan el contingut d'un marc és més alt que l'espai que li dona el seu grup, la maquetació prova per ordre els passos de l'[escala d'ajust](/ca/docs/composed-pages#quan-tot-i-així-no-hi-cap) i s'atura al primer que fa que hi càpiga: l'espai lliure fins a `maxHeight`, el grup que empeny i cedeix, imatges més petites, els altres marcs del grup fins al seu mínim, text més petit i continuació en una altra pàgina. Aquests paràmetres del marc decideixen fins on pot arribar cada pas:
+
+- `maxHeight` en un marc amb un `height` fix: el marc pot créixer fins aquí abans que es redueixi res.
+- `minHeight` en els altres marcs del grup: fins on tornen espai; un marc mai no baixa del que necessita el seu propi contingut.
+- `fit.scaleImages` i `fit.imageMinScale`: si les imatges del marc i del seu grup es poden compondre més petites, i fins a quina escala (80 % per defecte).
+- `fit.shrinkText` i `fit.minScale`: si el text del marc es pot compondre més petit, i fins a quina escala (90 % per defecte). L'escala és la mateixa per al cos, l'interlineat i els espais; el marc conserva la seva mida.
+- `overflow.continueIn`: on continua el contingut quan res d'això no n'hi ha prou.
+
+Les escales van en passos del 2,5 % i la maquetació pren la més gran amb què el contingut hi cap, de manera que un text que fa una línia de més es compon al 97,5 %, no al mínim. Una caixa que ha de conservar el cos de lletra porta `fit: { shrinkText: false }`; en una pàgina les imatges de la qual han de conservar la mida, els marcs del seu grup porten `fit: { scaleImages: false }`:
+
+```ts
+{ name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
+  fit: { minScale: 0.85, imageMinScale: 0.9 } }
+```
+
+El que tot i així no hi cap es notifica com a `frameOverflow`, amb els passos provats i propostes que porten el seu valor: vegeu [L'avís i les seves propostes](/ca/docs/composed-pages#lavís-i-les-seves-propostes).
+
 ### Herència i variants
 
 Una plantilla amb `extends` parteix de la plantilla que anomena (que al seu torn en pot estendre una altra) i canvia només el que escriu:
@@ -468,7 +493,7 @@ Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantill
 
 ### El que aplica la maquetació
 
-La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` i `overflow.continueIn: "#frame"`, i també l'`area`, la `grid`, la `decoration`, el `header`, el `footer` i les `variants` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup; els seus marcs conserven la seva pròpia col·locació), `fit`, `overflow.continueIn: "next-page"` i `overflowTemplate`, el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
+La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next` i `overflow.continueIn: "#frame"`, i també l'`area`, la `grid`, la `decoration`, el `header`, el `footer` i les `variants` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup; els seus marcs conserven la seva pròpia col·locació), `fit`, `overflow.continueIn: "next-page"` i `overflowTemplate`, el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
 
 ### Dobles pàgines
 
@@ -639,7 +664,7 @@ Els ancoratges d'una imatge (`Resource.anchors`, els punts que fan servir els c�
 
 A la resta de la configuració, el motor ignora una clau que no coneix. Les plantilles de pàgina i els estils de rètol, en canvi, es comproven, i cada problema és un avís de configuració a `postext check` i al tauler Revisió del Sandbox. El camp `path` d'aquests avisos és un punter JSON al camp que falla: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quan el camp és heretat, el punter anomena la plantilla que el va escriure. Un avís que anomena un id o un nom que no existeix proposa a més l'existent que s'hi assembla més.
 
-Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `overflow`, una variant o un estil de rètol és un `unknownConfigKey`; una paraula fora de les opcions d'un paràmetre (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) és un `unknownConfigValue`, i el paràmetre conserva el seu valor per defecte. Una plantilla sense `id`, o un marc o un grup sense `name`, s'ignora amb un `unknownConfigValue` en aquest camp.
+Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `overflow`, una variant o un estil de rètol és un `unknownConfigKey`; una paraula fora de les opcions d'un paràmetre (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) és un `unknownConfigValue`, i el paràmetre conserva el seu valor per defecte. Una plantilla sense `id`, o un marc o un grup sense `name`, s'ignora amb un `unknownConfigValue` en aquest camp.
 
 <table>
   <thead>

@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>模板页中的内容指定的<code>slot</code>不是该页模板中的任何框（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>）。</td>
+      <td>模板页中的内容指定的<code>slot</code>不是该页模板中的任何框（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>；<code>frame</code>为接收它的流文框）。</td>
       <td>这段内容进入模板的流文框。</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>模板页某个框的内容放不下，而这个框已没有可以接续的<code>next</code>框（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>；<code>overflowMm</code>为被裁掉的高度；<code>configPath</code>为模板中该框的JSON指针，如<code>/pageTemplates/0/frames/2</code>）。由排版给出，带有该页的<code>pageIndex</code>。</td>
+      <td>模板页某个框的内容经过逐级重排仍放不下，而这个框已没有可以接续的<code>next</code>框（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>locale</code>；<code>overflowMm</code>为被裁掉的高度；<code>configPath</code>为模板中该框的JSON指针，如<code>/pageTemplates/0/frames/2</code>；<code>stepsTried</code>；<code>scale</code>和<code>imageScale</code>为文字和图片最后停留的比例；<code>proposals</code>，每条为<code>{'{'} kind, path, value {'}'}</code>）。由排版给出，带有该页的<code>pageIndex</code>。</td>
       <td>分页输出在框底裁掉放不下的部分；它仍留在文档、源码映射和流式版式的EPUB中。</td>
     </tr>
     <tr>
@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>设置了让正文绕排的资源或框（<code>placement.wrap</code>、框的<code>wrap</code>）未能按要求排版。<code>reason</code>：<code>'tooNarrow'</code>（旁边的正文会窄于<code>layout.wrap.minTextWidth</code>）、<code>'fewLines'</code>（矮于<code>layout.wrap.minLinesBeside</code>行）、<code>'moved'</code>（行内对象高于所在栏剩余空间，已随锚点移到下一栏）或<code>'verticalText'</code>。<code>resourceId</code>指资源，<code>box</code>指框的样式。指向嵌入处或框。</td>
-      <td>按原因所述，对象占满整条，或放在下一栏。</td>
+      <td>设置了让正文绕排的资源或框（<code>placement.wrap</code>、框的<code>wrap</code>）未能按要求排版。<code>reason</code>：<code>'tooNarrow'</code>（旁边的正文会窄于<code>layout.wrap.minTextWidth</code>）、<code>'fewLines'</code>（矮于<code>layout.wrap.minLinesBeside</code>行）、<code>'moved'</code>（行内对象高于所在栏剩余空间，已随锚点移到下一栏）、<code>'verticalText'</code>，或<code>'noContour'</code>（沿形状绕排的图片形状未知：没有<code>contour.points</code>的SVG、没有透明度的位图，或宿主没有描摹的Alpha通道）。<code>resourceId</code>指资源，<code>box</code>指框的样式。指向嵌入处或框。</td>
+      <td>按原因所述，对象占满整条，或放在下一栏；为<code>'noContour'</code>时，正文绕图片的框排。给图片一个多边形，改用带透明度的PNG，或通过<code>readBundle</code>或沙盒读取它，两者都会描摹。</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
@@ -413,6 +413,10 @@ const blocks = parseMarkdown(content);
 ```
 
 Postext能识别的markdown结构完整列表见[文档格式](/zh/docs/document-format)页面。
+
+### 排版结果的来源映射
+
+`sourceAt(doc, pageIndex, x, y, options?)`由内向外返回页面上一点所显示的内容，每个元素都带有稳定的`id`、`source`（Markdown的一段范围、配置的JSON指针、页面围栏的属性或资源）和`rect`。`elementsForSource(doc, start, end, options?)`逐页返回Markdown的一段排成了什么，`findElement(doc, id)`在重新排版后再次找到某个元素。它们只读取排版留在VDT上的标记，自己不做任何排版。`composedPagePaintKey(page)`表明一个模板页画出的内容是否与之前相同。来源的种类、id，以及模板页如何只在改动处重新排版，见[模板页 › 来源映射](/zh/docs/composed-pages#来源映射)。
 
 ### 排版前加载字体
 

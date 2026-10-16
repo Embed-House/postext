@@ -162,8 +162,14 @@ export interface ResourcePlacement {
    *  when it sets none. Where the text left beside it would be narrower
    *  than `layout.wrap.minTextWidth`, or the resource shorter than
    *  `layout.wrap.minLinesBeside` lines, it takes its band whole and a
-   *  `textWrap` warning says so. Default `'none'`. */
-  wrap?: WrapSide;
+   *  `textWrap` warning says so. `'contour'` (#883) runs the text round
+   *  the picture's shape instead (`Resource.contour`: a polygon or the
+   *  bitmap's alpha channel), the picture at the side {@link align} names
+   *  (`'right'` / `'end'`, else the left): each line is set as short as the
+   *  shape is wide beside it, plus the contour's margin; a picture whose
+   *  shape is not known runs round its box (`textWrap` warning, reason
+   *  `noContour`). Default `'none'`. */
+  wrap?: ResourceWrap;
   /** The space between a wrapped resource's box (caption included) and
    *  the text beside it, and under it before the text runs full width
    *  again (rounded up to whole grid lines). Default `layout.wrap.gap`,
@@ -191,6 +197,12 @@ export interface ResourcePlacement {
 /** The side of its column a resource or a box sits on with text running
  *  beside it (see `ResourcePlacement.wrap`, #627). */
 export type WrapSide = 'none' | 'left' | 'right' | 'start' | 'end';
+
+/** `ResourcePlacement.wrap`: a side, or `'contour'` (#883), the text
+ *  running round the picture's shape (`Resource.contour`) rather than its
+ *  box, the picture at the side its `align` names (`'right'` / `'end'`;
+ *  anything else is the left). */
+export type ResourceWrap = WrapSide | 'contour';
 
 /** The document's text wrap settings (`LayoutConfig.wrap`, #627). */
 export interface TextWrapConfig {
@@ -444,6 +456,45 @@ export interface ResourceSafeArea {
   height: number;
 }
 
+/** The shape text runs round (`Resource.contour`, #883). */
+export interface ResourceContour {
+  /** The outline as a polygon, in fractions of the whole picture (0 to 1
+   *  across and down from its top-left corner), at least three points.
+   *  Wins over the alpha channel. */
+  points?: { x: number; y: number }[];
+  /** Read the shape from the bitmap's alpha channel: the pixels at least
+   *  {@link threshold} opaque. Default `true` (a bitmap with no alpha
+   *  channel, a JPEG, has no shape and runs round its box). */
+  alpha?: boolean;
+  /** The opacity from which a pixel belongs to the shape, 0 to 1. Default
+   *  0.5. */
+  threshold?: number;
+  /** The space kept between the shape and the text, across and above and
+   *  below it. Default: the wrap gap (`placement.wrapGap`, then
+   *  `layout.wrap.gap`, then one body line). */
+  margin?: Dimension;
+  /** The alpha channel as the host traced it from the file
+   *  (`traceResourceContour`): the layout reads pictures by their size
+   *  only, so the shape comes with the resource. A trace of another file or
+   *  at another threshold is ignored. Written by the host (the bundle
+   *  reader, the Sandbox); never by hand. */
+  traced?: ContourTrace;
+}
+
+/** A bitmap's alpha channel cut into rows (`ResourceContour.traced`). */
+export interface ContourTrace {
+  /** The file traced (`bitmap.fileId`). */
+  fileId: string;
+  /** The threshold it was traced at. */
+  threshold: number;
+  /** The rows the picture is cut into, top to bottom (at most 256). */
+  rows: number;
+  /** Two numbers per row: the leftmost and rightmost edge of its opaque
+   *  pixels, in fractions of the picture's width (`-1, -1` for a row with
+   *  none). */
+  spans: number[];
+}
+
 /** A point of a picture that the lettering of a comic refers to (#557):
  *  where a speaker's mouth is, so a balloon's tail points at it. Written
  *  once per picture, in fractions of the picture (0–1, top-left origin), so
@@ -592,6 +643,12 @@ export interface Resource {
    *  speaker's `face`; a balloon that still does is reported. In fractions
    *  of the picture. Only comic panels read them. */
   faces?: ResourceSafeArea[];
+  /** The shape of a bitmap or SVG that text runs round when its placement
+   *  says `wrap: 'contour'` (or the frame holding it, `wrap: 'contour'`,
+   *  #883): a polygon, or the bitmap's alpha channel. Without one, a
+   *  bitmap's alpha channel is read at the default threshold; an SVG with
+   *  no polygon runs round its box. */
+  contour?: ResourceContour;
   /** Optional per-resource placement override. When unset, the resource's
    *  type default (then `top` / `column`) applies. A `position` of `'top'` or
    *  `'bottom'` floats the resource to a band on the page near its first
@@ -724,6 +781,11 @@ export interface OutlineEntry {
   /** Source offset of an `'anchor'` entry's mark in its chapter's markdown
    *  body (front matter excluded): identifies it within the chapter. */
   anchorSource?: number;
+  /** Source offset of a `'heading'` entry's heading line in its chapter's
+   *  Markdown body (front matter excluded): what a contents entry points
+   *  back to (#857). Not part of `outlineKey`: an edit that moves the
+   *  heading does not lay the contents out again. */
+  headingSource?: number;
   /** The page-number format of the entry's page, once laid out (an index
    *  merges consecutive pages of one format into a range). */
   pageFormat?: string;

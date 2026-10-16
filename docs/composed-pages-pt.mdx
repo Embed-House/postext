@@ -181,6 +181,13 @@ O texto é cortado entre duas linhas e continua no bloco seguinte, quebrado de n
 
 Um bloco com `exclude: "push"` mantém o texto dos outros blocos fora do seu retângulo: a linha de outro bloco que esbarra nele é composta mais curta do lado que o retângulo cobre, do mesmo jeito que o texto contorna uma imagem no texto corrido. Uma foto ancorada no canto de uma caixa e marcada com `push` faz o texto da caixa correr ao lado dela. Uma caixa que precisa deixar livre uma coluna fixa para as suas imagens pode usar `padding` no lugar disso.
 
+Com `"wrap": "contour"` também, o bloco afasta o texto com a forma das imagens que contém em vez do retângulo: o canal alfa de uma ilustração recortada, ou o polígono no `contour` do recurso dela. Cada linha do outro bloco é encurtada o quanto a forma ocupa ao lado dela, e assim o texto de uma caixa acompanha a silhueta de um desenho posto por cima sem precisar definir regras por linha. Legendas e outros textos do bloco que afasta mantêm as suas caixas, um bloco girado afasta com a sua caixa, e uma imagem de forma desconhecida também afasta com a sua caixa, com um aviso `textWrap` (motivo `noContour`). Veja [Formato do documento › Contorno pela forma](/pt/docs/document-format-resources#contorno-pela-forma) para a forma, o limiar e a margem.
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### Decoração, cabeços e camadas
 
 A `decoration` do modelo (imagens, fios, caixas e textos curtos) é posicionada quando os blocos já têm a sua caixa definitiva, então um elemento pode se ancorar a um bloco (`"to": "#gasto"`) e acompanhá-lo. Os seus textos leem os atributos da própria página: `fondo="banda-retos"` na cerca de página dá `{attr.fondo}`, por exemplo para escolher página a página uma imagem de fundo com `"resourceId": "{attr.fondo}"`. Os cabeços e rodapés também leem esses atributos. O `header` ou o `footer` de um modelo substitui o da seção, `false` o esconde e, quando o modelo não define nenhum dos dois, saem os da seção.
@@ -222,7 +229,7 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Um <code>slot="…"</code> não nomeia nenhum bloco do modelo da página (contam os blocos herdados por <code>extends</code> e os de uma página de <code>variants</code>). O conteúdo vai para o bloco de fluxo.</td>
+      <td>Um <code>slot="…"</code> não nomeia nenhum bloco do modelo da página (contam os blocos herdados por <code>extends</code> e os de uma página de <code>variants</code>). O conteúdo vai para o bloco de fluxo, que o aviso nomeia (<code>frame</code>).</td>
       <td>Corrija o nome do slot ou acrescente ao modelo um bloco com esse nome.</td>
     </tr>
     <tr>
@@ -248,19 +255,109 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
   </tbody>
 </table>
 
+Depois que o livro é diagramado, cada um desses avisos traz também a página a que se refere (`pageIndex`), então o painel Verificações e o `postext check` mostram o número da página ao lado do modelo, do bloco ou do slot e do intervalo de origem.
+
 ### frameOverflow
 
 Este aviso vem da diagramação, não das verificações do código-fonte descritas acima: ele aparece quando a página já está composta, no painel Verificações, no `postext check` e nos `contentWarnings` do documento.
 
-**Causa.** O conteúdo que entra em um bloco (pelo slot dele, ou o que vai para o bloco de fluxo) é mais alto que o bloco, e o bloco não tem mais nenhum `next` onde continuar. Quase sempre há mais texto do que o bloco comporta: uma tradução mais longa que o original, ou um bloco preso a um `height` ou `maxHeight` fixo. O que não cabe é cortado no pé do bloco na saída paginada; continua no documento, no mapa de origem e no EPUB de layout fluido. O aviso informa o modelo, o bloco, a página, a altura cortada (`overflowMm`) e `configPath`, o ponteiro JSON do bloco na configuração (`/pageTemplates/0/frames/2`).
+**Causa.** O conteúdo que entra em um bloco (pelo slot dele, ou o que vai para o bloco de fluxo) é mais alto que o bloco, o bloco não tem mais nenhum `next` onde continuar, e nenhum dos passos da [escada de ajuste](#quando-ainda-assim-não-cabe) fez o conteúdo caber. Quase sempre há mais texto do que o bloco comporta: uma tradução mais longa que o original, ou um bloco preso a um `height` ou `maxHeight` fixo. O que não cabe é cortado no pé do bloco na saída paginada; continua no documento, no mapa de origem e no EPUB de layout fluido. O aviso informa o modelo, o bloco, a página, o `locale` do documento, a altura cortada (`overflowMm`), `configPath` (o ponteiro JSON do bloco na configuração, `/pageTemplates/0/frames/2`), os passos tentados (`stepsTried`), a escala em que o texto e as imagens ficaram (`scale`, `imageScale`) e `proposals`, as mudanças que fariam o conteúdo caber.
 
-**Correção.** Dê mais espaço ao bloco (aumente ou remova o `height` ou o `maxHeight` dele), encadeie-o a outro bloco com `next`, encurte o texto ou componha a página com outro modelo. Por enquanto a diagramação não reduz o texto para que ele caiba.
+**Correção.** Aplique uma das propostas: cada uma vem com o seu valor, calculado na página (veja [O aviso e suas propostas](#o-aviso-e-suas-propostas)). Se não, dê mais espaço ao bloco, encadeie-o a outro bloco com `next`, encurte o texto ou componha a página com outro modelo.
 
 ## Quando o texto cresce
 
 Uma página composta se reorganiza dentro dos limites que o seu modelo declara. Se você escrever um texto mais longo na primeira caixa de uma página cujas caixas formam um grupo em pilha, a caixa cresce para comportá-lo e as caixas de baixo descem, junto com as fotos e a decoração ancoradas nelas; nenhuma linha do modelo muda. Com um texto mais curto, a caixa volta à altura declarada. Um bloco ou um elemento de decoração marcado com `pin` fica onde o modelo o coloca, para uma caixa que precisa ficar sobre a arte. Como as pilhas e as fileiras dividem o espaço, e qual bloco cede primeiro, é definido no modelo: veja [Configuração › Como os grupos dividem o espaço](/pt/docs/configuration-composed-pages#como-os-grupos-dividem-o-espaço).
 
-Quando as caixas chegam ao pé da área e nenhum bloco do grupo pode ceder mais espaço, o último bloco é cortado no pé e a diagramação dá o aviso `frameOverflow` (veja [Avisos](#avisos)): encurte o texto, diminua o `minHeight` de outro bloco, deixe um bloco encolher ou dê mais espaço ao grupo. Os grupos não acrescentam nenhum outro aviso.
+Quando as caixas chegam ao pé da área e nenhum bloco do grupo pode ceder mais espaço, o bloco que não cabe percorre os passos da escada de ajuste descrita a seguir; os grupos não acrescentam nenhum aviso próprio.
+
+## Quando ainda assim não cabe
+
+Um bloco cujo conteúdo não cabe tenta, um depois do outro, os meios de abrir espaço que o modelo permite, e para no primeiro que funciona. Cada passo é tentado somado aos anteriores, nesta ordem:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Passo</th>
+      <th>O que a diagramação faz</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>O bloco ocupa espaço livre. Um bloco cuja altura acompanha o conteúdo já cresce até onde a sua área e o seu grupo deixam; um bloco com <code>height</code> fixo cresce até o seu <code>maxHeight</code>, quando tem um.</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>O grupo desce os blocos que vêm depois dele e os blocos com <code>shrink</code> devolvem espaço (veja <a href="/pt/docs/configuration-composed-pages#como-os-grupos-dividem-o-espaço">Como os grupos dividem o espaço</a>).</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>As imagens do bloco e dos outros blocos do grupo são diagramadas menores, em passos de 2,5 %, até <code>fit.imageMinScale</code> (80 % por padrão), na maior escala com que o conteúdo cabe. O texto que vem depois de uma imagem sobe com ela.</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>Os outros blocos do grupo devolvem espaço, tenham <code>shrink</code> ou não: cada um desce até o seu <code>minHeight</code>, nunca abaixo do que o próprio conteúdo precisa. Numa fileira, eles cedem largura, cada um até a largura mais estreita em que o seu texto ainda cabe.</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>O texto do bloco é diagramado menor, em passos de 2,5 %, até <code>fit.minScale</code> (90 % por padrão), na maior escala com que ele cabe. Corpo, entrelinha e espaçamento diminuem juntos, como se o bloco inteiro fosse composto num corpo menor. Um bloco encadeado com <code>next</code> diminui junto com os blocos da sua cadeia. Com <code>fit.shrinkText: false</code>, o texto mantém o tamanho.</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>O bloco continua em outra página (<code>overflow.continueIn: 'next-page'</code> ou <code>'template:&lt;id&gt;'</code>). Esta versão informa o passo; a página acrescentada será diagramada por uma versão futura.</td>
+    </tr>
+  </tbody>
+</table>
+
+Quando nenhum passo faz o conteúdo caber, o bloco é cortado no pé, mantém as escalas a que a escada chegou, e a diagramação dá o aviso `frameOverflow`. Cada passo diagrama a página inteira de novo, então o resultado depende só dessa página: a mesma entrada dá a mesma página, os blocos que transbordam são tratados na ordem do modelo, e uma mudança numa página composta deixa todas as outras como estavam. As configurações ficam em [Configuração › Quando o conteúdo não cabe](/pt/docs/configuration-composed-pages#quando-o-conteúdo-não-cabe).
+
+### O aviso e suas propostas
+
+O `frameOverflow` nomeia a página, o modelo, o bloco e o idioma do documento, de modo que uma página que cabe em espanhol e transborda em catalão diz isso, e lista os passos que tentou. Cada proposta é um dado, `{ kind, path, value }`: `path` é o ponteiro JSON da configuração a mudar e `value`, o valor a usar, calculado a partir do que falta.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proposta</th>
+      <th>O que muda</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td><code>fit.minScale</code> do bloco: a maior escala de texto, em passos de 2,5 % até 50 %, com que o conteúdo cabe, testada na página. Com <code>fit.shrinkText: false</code>, <code>also</code> o ativa.</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td><code>maxHeight</code> do bloco: a altura dele mais o que falta, em milímetros inteiros. Só é proposta quando a página tem espaço, o que é testado nela.</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td><code>minHeight</code> de outro bloco do grupo (<code>frame</code>) que está no mínimo com menos conteúdo do que isso: reduzido no que falta, nunca abaixo do conteúdo dele. Testada na página.</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td><code>overflow.continueIn</code> do bloco, com o valor <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>Outro modelo do livro com um bloco de mesmo nome em que o conteúdo cabe como está, testado na página na ordem de <code>pageTemplates</code>. É uma mudança no Markdown: <code>sourceStart</code> e <code>sourceEnd</code> dão o intervalo do valor <code>template</code> da cerca da página.</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>Quantos caracteres cortar, aproximadamente: as linhas que não cabem, contadas pelos caracteres por linha do bloco. O intervalo é o conteúdo do bloco.</td>
+    </tr>
+  </tbody>
+</table>
+
+O `postext check` imprime o aviso com os passos e as propostas por extenso, e `--json` traz os mesmos dados no `data` do aviso:
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+O painel Verificações mostra a mesma entrada no idioma da interface.
 
 ## Registro de reajustes
 
@@ -291,6 +388,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>A borda de cima do bloco (com <code>axis: 'x'</code>, a borda esquerda) se deslocou, em mm a partir da borda da folha; <code>cause</code> é o bloco cujo crescimento o deslocou.</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>A escada de ajuste diagramou as imagens do bloco em <code>scale</code>; <code>cause</code> é o bloco do grupo que precisava do espaço, quando é outro.</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>A escada de ajuste diagramou o texto do bloco em <code>scale</code>.</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>O conteúdo não coube: <code>toMm</code> é a altura cortada, como em <code>frameOverflow</code>.</td>
     </tr>
@@ -301,7 +406,7 @@ Mudanças de menos de meio milímetro ficam de fora, e cada mudança é arredond
 
 O `postext check` imprime uma linha `reflow` por página composta que tem eventos, depois dos avisos; com `--json`, o relatório traz uma lista `reflow` com uma entrada por página: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` e `lines` (os eventos por extenso).
 
-No código, o registro é `VDTPage.composed.log`, e cada bloco guarda em `VDTFrame.declaredRect` a caixa que o modelo declara para ele quando ela difere de `rect`. `composedReflowLog(doc)` devolve as entradas que o `postext check` imprime, e `describeReflowEvent(event)` descreve um evento por extenso.
+No código, o registro é `VDTPage.composed.log`, e cada bloco guarda em `VDTFrame.declaredRect` a caixa que o modelo declara para ele quando ela difere de `rect`. `composedReflowLog(doc)` devolve as entradas que o `postext check` imprime, e `describeReflowEvent(event)` descreve um evento por extenso; `describeFitStep(step)` e `describeFrameOverflowProposal(proposal)` fazem o mesmo com um passo da escada e com uma proposta. Um bloco cujo texto a escada reduziu tem `VDTFrame.scale` abaixo de 1: o conteúdo dele é diagramado numa caixa `1 / scale` vezes maior (`frameContentRect(frame)`) e `frameMatrix(frame)` o coloca na folha; a escala das imagens dele é `VDTFrame.imageScale`.
 
 ## Páginas duplas
 
@@ -340,3 +445,65 @@ Na tela, na visualização de página dupla do Sandbox e no Folio, as duas pági
 `composedPages(blocks)` lê os blocos analisados de um capítulo (`parseMarkdownWithIssues(markdown).blocks`) e devolve um nó por cerca de página, em ordem: o seu `template`, `spread`, `attrs` com o intervalo de origem de cada valor (`attrSources`), o seu `fenceIndex` (o ordinal da cerca no capítulo, o mesmo em todos os idiomas), `slots` (os índices dos blocos de cada slot, na ordem do Markdown), `unassigned` (os blocos sem slot) e o intervalo de origem da página inteira. Um bloco traz o slot que nomeia em `ContentBlock.slot`, com o intervalo de origem do valor; uma figura é um `resourceBlock` cujo `figure` guarda os seus atributos e rótulos, cada rótulo com o seu texto, os seus trechos em linha e um mapa de origem que leva de volta ao Markdown. `checkComposedSlots(pages, config)` devolve os três avisos de slot dessas páginas.
 
 Depois da diagramação, o `VDTPage.composed` de uma página composta registra o seu modelo, a variante aplicada, os atributos da cerca de página e, para cada bloco, o seu id (`cp0:dinero`: o ordinal da cerca de página e o nome do bloco, o mesmo em todos os idiomas), a sua caixa, a camada, o giro, a altura do conteúdo que não coube (`overflowPx`), o bloco de onde ele vem ou para onde continua, o seu caminho na configuração (`/pageTemplates/0/frames/2`) e os ids dos seus elementos. Esses elementos são boxes comuns em `page.floats` e `doc.blocks`, com os seus intervalos de origem, então um clique num bloco sem giro da prévia do Sandbox leva ao seu Markdown. `composedPaintOrder(page)` dá a ordem em que um renderizador pinta os blocos e a decoração, e `frameMatrix(frame)`, o giro de um bloco.
+
+## Mapa de origem
+
+Tudo o que uma página composta pinta sabe onde foi escrito: um editor pode ir de um ponto da página ao Markdown ou à configuração, e de um trecho do Markdown ao que ele virou na página.
+
+`sourceAt(doc, pageIndex, x, y)` recebe um ponto de uma página diagramada, em pixels de página a partir do canto superior esquerdo da folha, e devolve o que está ali, de dentro para fora: cada elemento seguido dos que o contêm. Um caractere de um box chega com a sua linha, o seu parágrafo, o seu bloco, os grupos do bloco e o modelo; uma palavra da decoração, com o seu elemento de design, a decoração e o modelo. Cada elemento tem um `level`, um `id` estável, uma `source` e, quase sempre, o seu `rect` na página (em pé, antes do `rotate` de um bloco girado).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Origem</th>
+      <th>Campos</th>
+      <th>Quem traz</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>, <code>end</code> (posições no arquivo do capítulo, contando o front matter), <code>file</code></td>
+      <td>um caractere (um chip, uma referência ou uma fórmula inteiros quando o caractere é um deles), uma linha, um parágrafo ou item de lista, o box em volta</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>, um ponteiro JSON</td>
+      <td>um bloco (<code>/pageTemplates/0/frames/2</code>), um grupo, o modelo, um elemento de design da decoração ou dos cabeçalhos e rodapés (<code>/footer/elements/0</code>) e o seu slot</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>, <code>start</code>, <code>end</code>, <code>file</code></td>
+      <td>o texto que um elemento mostra com <code>&#123;attr.x&#125;</code> (o valor na cerca da página), a aba e o título de um bloco (o <code>label</code> e o <code>title</code> da sua cerca <code>:::frame</code>), uma imagem escolhida com <code>&#123;attr.x&#125;</code></td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>, <code>anchor</code></td>
+      <td>uma imagem num bloco ou na decoração; um rótulo traz a sua âncora como <code>resourceId#anchorId</code></td>
+    </tr>
+  </tbody>
+</table>
+
+Os níveis, de dentro para fora: `text`, `attr`, `label`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. Um bloco e o modelo trazem também `content`, o trecho de Markdown que contêm: o conteúdo do slot do bloco, a cerca inteira da página. `file` é o nome que o host passa nas opções (`{ file: 'tema-1.md' }`, ou uma função do índice da página para um documento costurado a partir de vários capítulos).
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // linhas, blocos de texto, blocos do modelo, páginas e textos de design que o trecho toca
+findElement(doc, 'cp0:dinero');   // o mesmo bloco depois de uma nova diagramação, com o seu rect
+```
+
+`elementsForSource(doc, start, end)` faz o caminho inverso e devolve `{ pageIndex, element }` para cada linha, bloco de texto, bloco do modelo, página composta e texto de design que o trecho toca. Uma linha que fica abaixo do pé do seu bloco chega com `clipped: true`: na página é cortada, no mapa de origem continua. Numa página dupla, a metade de um bloco que atravessa a lombada e é lida na página da frente responde com os identificadores dos blocos de texto que mostra e `facing: true`, em `sourceAt` e em `elementsForSource`. Um rótulo de figura responde no nível `label`, com o seu identificador e a sua âncora, onde quer que seja desenhado sobre a imagem.
+
+**Identificadores estáveis.** Uma página composta é `cp<n>`, com `n` o ordinal da sua cerca no capítulo; um bloco é `cp<n>:<bloco>` (com `~<k>` para o k-ésimo pedaço do seu conteúdo que continua numa página seguinte), os seus blocos de texto `cp<n>:<bloco>-c0`, `-c1`…, um grupo `cp<n>:group:<nome>`, um elemento da decoração ou dos cabeçalhos e rodapés `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, e um rótulo de uma figura `cp<n>:<slot>:label:<âncora>`. Nenhum depende de posições nem das palavras, então um identificador é o mesmo depois de qualquer nova diagramação e em todos os idiomas do capítulo: uma seleção sobrevive a uma edição, e o mesmo bloco se encontra na tradução. `findElement(doc, id)` volta a encontrar o elemento.
+
+**Entradas do sumário.** Uma linha de `:::toc` traz em `tocEntry.headingSource` a posição do título que ela lista no corpo Markdown do seu capítulo (sem contar o front matter, como contam os esquemas); `sourceAt` a devolve como `heading` no bloco da linha.
+
+**Diagramar de novo uma só página.** A diagramação de cada página composta é guardada pelo que ela lê: o modelo, o Markdown da página, os estilos e as fontes, o idioma, o lado da folha e a sua geometria. Uma diagramação posterior que encontra a mesma página (a passada seguinte, uma edição em outra parte do capítulo, o capítulo paginado de novo no mesmo worker) a reaproveita como estava. Uma edição dentro de uma página, ou num atributo da sua cerca, diagrama de novo só essa página; uma mudança no modelo diagrama de novo todas as páginas que o usam. Uma página com notas de rodapé, referências, citações ou um sumário é diagramada de novo todas as vezes, porque o que ela imprime depende do resto do livro. Uma página dupla também é diagramada de novo todas as vezes: as suas duas páginas são uma só folha. `VDTComposedPage.layoutKey` é a chave dos blocos de uma página; `composedPagePaintKey(page)` soma a ela o que fica em volta (cabeçalhos e rodapés, decoração, número da página), para que um host possa manter os pixels que pintou enquanto a chave não muda. A tela do Sandbox faz isso: uma edição numa página repinta essa página.

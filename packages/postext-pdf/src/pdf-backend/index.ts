@@ -11,7 +11,7 @@ import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfi
 import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode';
 import { runPagePrintPass } from '../print/printPass';
 import { writePdfX } from '../print/pdfx';
-import { canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
+import { canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
 import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
 import {
   type PageCtx,
@@ -740,7 +740,10 @@ function paintComposedItems(
     const m = frameMatrix(frame);
     const clips = frameClips(frame);
     if (m) pushFrame(ctx, sheetMatrixToPdf(m, ctx.scale, ctx.pageHeightPt));
-    if (clips) pushClipRect(ctx, frame.rect.x, frame.rect.y, frame.rect.width, frame.rect.height);
+    // The clip is in the blocks' own frame (larger than the box when the
+    // frame's text is scaled, #858).
+    const box = frameContentRect(frame);
+    if (clips) pushClipRect(ctx, box.x, box.y, box.width, box.height);
     try {
       if (item.facing) {
         // The facing page's half of a frame across a spread's spine: its

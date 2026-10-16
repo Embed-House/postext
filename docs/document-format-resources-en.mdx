@@ -179,7 +179,7 @@ Each resource has a **placement** that decides where its float lands, resolved p
     <tr>
       <td><code>wrap</code>, <code>wrapGap</code></td>
       <td><code>"none"</code> · <code>"left"</code> · <code>"right"</code> · <code>"start"</code> · <code>"end"</code>; a length</td>
-      <td>Run the text beside the resource: it sits at that side of its column, and the lines beside it are set to the measure left over, <code>wrapGap</code> clear of its box (caption included), then return to the full measure under it. An inline (<code>"here"</code>) embed and a one-column float at the head or foot of a column take it; page-span, multi-column, side-column and turned floats keep their band. The resource takes <code>width</code> of the column, or <code>layout.wrap.defaultWidth</code> (0.45). <code>wrapGap</code> defaults to <code>layout.wrap.gap</code>, else one body line. See <a href="#text-wrap">Text wrap</a>. Since postext 1.24.</td>
+      <td>Run the text beside the resource: it sits at that side of its column, and the lines beside it are set to the measure left over, <code>wrapGap</code> clear of its box (caption included), then return to the full measure under it. An inline (<code>"here"</code>) embed and a one-column float at the head or foot of a column take it; page-span, multi-column, side-column and turned floats keep their band. The resource takes <code>width</code> of the column, or <code>layout.wrap.defaultWidth</code> (0.45). <code>wrapGap</code> defaults to <code>layout.wrap.gap</code>, else one body line. <code>"contour"</code> runs the text round the picture's own shape instead of its box, the picture at the side <code>align</code> names (see <a href="#contour-wrap">Contour wrap</a>). See <a href="#text-wrap">Text wrap</a>. Since postext 1.24.</td>
     </tr>
     <tr>
       <td><code>citingPage</code></td>
@@ -261,7 +261,27 @@ A picture, a table or a box narrower than its column can stand at one side of it
 - **Gap and limits.** `wrapGap` (else `layout.wrap.gap`, else one body line) separates the item, caption included, from the text beside it and from the text under it. Where the text beside it would be narrower than `layout.wrap.minTextWidth` (12 em of body text), or the item is shorter than `layout.wrap.minLinesBeside` lines (2), it takes its band whole and a `textWrap` warning says so. An inline one too tall for the room left in its column moves on to the next with its anchor, with the same warning.
 - **Sides.** `left` and `right` are sides of the body flow, as for `align`: in a right-to-left book `left` is the sheet's right. `start` and `end` name the same sides.
 - **Outputs.** The canvas, the HTML viewer, the PDF and the fixed-layout EPUB set the lines as they were laid out; a tagged PDF reads the picture or the box before the paragraph that runs beside it. A reflowable EPUB floats it to its side with CSS, at the same share of the text width.
-- **Not yet.** Text on both sides of a picture, contour wrapping, wrapping inside a box's own content, and wrapping in vertical text (the item keeps its band, with a warning). Columns with a wrapped item are left out of column balancing.
+- **Not yet.** Text on both sides of a picture, wrapping inside a box's own content, and wrapping in vertical text (the item keeps its band, with a warning). Columns with a wrapped item are left out of column balancing.
+
+#### Contour wrap
+
+A cut-out illustration (a figure on a transparent background, a drawn object, a map of an island) looks better when the text follows its outline than when it stops at the edge of its box. `"wrap": "contour"` does that: each line beside the picture is set as short as the picture's shape is wide at that line's height, plus a margin, and a line that passes clear of the shape takes the whole measure.
+
+```json
+{ "id": "pear", "typeId": "figure", "kind": "bitmap",
+  "bitmap": { "fileId": "pear.png", "format": "png", "width": 600, "height": 800 },
+  "placement": { "position": "here", "wrap": "contour", "align": "right", "width": 0.42 },
+  "contour": { "threshold": 0.5, "margin": { "value": 2, "unit": "mm" } } }
+```
+
+- **Where the shape comes from.** A bitmap's shape is its alpha channel: the pixels at least `contour.threshold` opaque (0 to 1, default 0.5). A polygon in `contour.points`, at least three points in fractions of the whole picture from its top-left corner (`{ "x": 0.5, "y": 0 }` is the middle of its top edge), wins over the alpha channel and is the way to give an SVG a shape. `"alpha": false` ignores the alpha channel. A JPEG has no transparency, so without a polygon it runs round its box.
+- **Margin.** `contour.margin` is the space kept between the shape and the text, at the sides and above and below it. Unset, it is the wrap gap (`placement.wrapGap`, then `layout.wrap.gap`, then one body line).
+- **Side.** The picture stands at the side its `align` names (`"right"` or `"end"`; anything else is the left), and the lines run on the other side. Everything else is as for a side wrap: an inline embed or a one-column float, the same limits and the same `textWrap` warnings.
+- **Crop and scale.** The shape follows the picture as it is set: scaled with it, and cut where a safe area crops it. A caption or a note under the picture keeps its box.
+- **Right to left and CJK.** On a right-to-left page the shape turns with the page, as the picture is painted unturned at its mirrored place. Under a CJK character grid each line's inset is a whole number of characters, so the lines keep to the grid.
+- **The trace.** The layout reads pictures by their size, never by their pixels, so the alpha channel travels with the resource: `contour.traced`, the shape in rows, which the host makes from the file with `traceResourceContour(resource, bytes, mime)` (the engine reads PNG itself, in the browser and in Node; another format goes through the browser's decoder). Reading a bundle traces every picture that asks for it, and the Sandbox traces a picture when its wrap, its file or its threshold changes. A bundle never stores the trace. A picture whose shape is not known (an SVG with no polygon, a bitmap with no transparency, or an untraced one) runs round its box, with a `textWrap` warning whose reason is `noContour`: give it a polygon, use a PNG with transparency, or read it through `readBundle` or the Sandbox so it is traced.
+- **Frames.** A frame of a composed page that pushes text (`exclude: "push"`) takes `"wrap": "contour"` too: see [Composed pages › Frames that push text](/en/docs/composed-pages#frames-that-push-text).
+- **Not yet.** Text on both sides of a shape that stands in the middle of the measure (the text takes the wider side), and polygon editing in the Sandbox.
 
 ### Bitmap size
 

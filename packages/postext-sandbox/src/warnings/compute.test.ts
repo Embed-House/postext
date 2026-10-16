@@ -27,7 +27,7 @@ describe('composed-page warnings (#854)', () => {
     const md = '::::page{template="tema"}\nText.\n:::frame{slot="cja"}\nBox.\n:::\n::::\n\n::::page{template="otra"}\n::::';
     const unknownSlot = find(md, 'slotUnknown', config);
     expect(unknownSlot).toHaveLength(1);
-    expect(unknownSlot[0]!.payload).toEqual({ kind: 'slotUnknown', template: 'tema', slot: 'cja', fenceIndex: 0 });
+    expect(unknownSlot[0]!.payload).toEqual({ kind: 'slotUnknown', template: 'tema', slot: 'cja', frame: 'texto', fenceIndex: 0 });
     expect(md.slice(unknownSlot[0]!.sourceStart, unknownSlot[0]!.sourceEnd)).toBe('cja');
     expect(find(md, 'slotEmpty', config).map((w) => w.payload.frame)).toEqual(['caja']);
     const unknown = find(md, 'templateUnknown', config);
@@ -55,7 +55,10 @@ describe('composed-page warnings (#854)', () => {
       config: { page: { dpi: 96 } },
       warnings: [],
       contentWarnings: [
-        { kind: 'frameOverflow', template: 'tema', frame: 'caja', fenceIndex: 0, overflowMm: 12.5, configPath: '/pageTemplates/0/frames/1', sourceStart: 48, sourceEnd: 59, pageIndex: 2 },
+        {
+          kind: 'frameOverflow', template: 'tema', frame: 'caja', fenceIndex: 0, overflowMm: 12.5, configPath: '/pageTemplates/0/frames/1', sourceStart: 48, sourceEnd: 59, pageIndex: 2,
+          locale: 'ca', stepsTried: ['free', 'shrinkText'], scale: 0.9, proposals: [{ kind: 'raiseMax', path: '/pageTemplates/0/frames/1/maxHeight', value: { value: 64, unit: 'mm' } }],
+        },
       ],
       pages: [],
       blocks: [],
@@ -63,7 +66,10 @@ describe('composed-page warnings (#854)', () => {
     } as unknown as VDTDocument;
     const found = computeWarnings({ markdown: md, config, doc }).filter((w) => w.payload.kind === 'frameOverflow');
     expect(found.map((w) => w.payload)).toEqual([
-      { kind: 'frameOverflow', template: 'tema', frame: 'caja', fenceIndex: 0, overflowMm: 12.5, page: 7, configPath: '/pageTemplates/0/frames/1' },
+      {
+        kind: 'frameOverflow', template: 'tema', frame: 'caja', fenceIndex: 0, overflowMm: 12.5, page: 7, configPath: '/pageTemplates/0/frames/1',
+        locale: 'ca', stepsTried: ['free', 'shrinkText'], scale: 0.9, proposals: [{ kind: 'raiseMax', path: '/pageTemplates/0/frames/1/maxHeight', value: { value: 64, unit: 'mm' } }],
+      },
     ]);
     expect(found[0]!.line).toBe(3);
     expect(warningCategory('frameOverflow')).toBe('typesetting');

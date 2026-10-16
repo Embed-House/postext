@@ -104,11 +104,13 @@ export function checkComposedSlots(
     const known = new Set(frames.map((f) => f.name));
     const variants = variantFrameNames(template);
     let strayContent = false;
+    // The frame stray content goes to (#858: named in the warning).
+    const flowFrame = frames.find((f) => f.flow === true)?.name;
     for (const slot of Object.keys(page.slots)) {
       if (known.has(slot) || variants.has(slot)) continue;
       strayContent = true;
       const at = page.slotSources[slot] ?? page.fence;
-      out.push({ kind: 'slotUnknown', template: template.id, slot, fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
+      out.push({ kind: 'slotUnknown', template: template.id, slot, ...(flowFrame !== undefined ? { frame: flowFrame } : {}), fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
     }
     // Headings a `takes` frame receives leave the flow frame's share.
     const taken = new Set<number>();

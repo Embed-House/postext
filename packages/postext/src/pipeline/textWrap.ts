@@ -29,6 +29,7 @@ import { lineInsetsAt } from '../measure/types';
 import { dimensionToPx } from '../units';
 import { wrapWidthOf } from '../defaults/layout';
 import { parseLengthText } from '../defaults/tabStops';
+import { contourInsetSteps } from '../contour';
 
 /** A `wrap` value as a side of the flow: `'start'` is `'left'`, `'end'` is
  *  `'right'`; `'none'` and anything else are no wrap. */
@@ -44,6 +45,8 @@ export interface ResolvedWrap {
   side: 'left' | 'right';
   width: number;
   gap?: Dimension;
+  /** `wrap: 'contour'` (#883): the text runs round the picture's shape. */
+  contour?: true;
 }
 
 /** The wrap a resource asks for: its own placement, then its type's
@@ -53,11 +56,17 @@ export function resolveResourceWrap(
   type: ResourceType | undefined,
   settings: ResolvedTextWrapConfig,
 ): ResolvedWrap | undefined {
-  const side = wrapSideOf(resource.placement?.wrap ?? type?.defaultPlacement?.wrap);
+  const wrap = resource.placement?.wrap ?? type?.defaultPlacement?.wrap;
+  // A contour wrap (#883) of a picture stands at the side its `align`
+  // names; a table has no shape and keeps no contour.
+  const contour = wrap === 'contour' && (resource.kind === 'bitmap' || resource.kind === 'svg');
+  const side = wrap === 'contour'
+    ? (wrapSideOf(resource.placement?.align ?? type?.defaultPlacement?.align) ?? 'left')
+    : wrapSideOf(wrap);
   if (!side) return undefined;
   const width = wrapWidthOf(resource.placement?.width ?? type?.defaultPlacement?.width) ?? settings.defaultWidth;
   const gap = resource.placement?.wrapGap ?? type?.defaultPlacement?.wrapGap ?? settings.gap;
-  return { side, width, ...(gap ? { gap } : {}) };
+  return { side, width, ...(gap ? { gap } : {}), ...(contour ? { contour: true as const } : {}) };
 }
 
 /** The gap of a wrap in px: its own, else one body line (`floatGapPx`). */
@@ -152,7 +161,8 @@ export function settleColumnWraps(col: VDTColumn): boolean {
  * apart: a line that meets an exclusion on a grid line (even in part) is
  * beside it. Line numbers count from `firstLine` (the lines of the block
  * already placed elsewhere). The insets are the exclusions' widths, from
- * the column's sides: they add to the block's own indents.
+ * the column's sides (a contour's width beside each line, #883): they add
+ * to the block's own indents.
  */
 export function wrapInsetSteps(col: VDTColumn, y0: number, lineHeight: number, firstLine: number): LineInsetStep[] {
   const steps: LineInsetStep[] = [];
@@ -164,6 +174,12 @@ export function wrapInsetSteps(col: VDTColumn, y0: number, lineHeight: number, f
     const from = Math.max(0, Math.floor((top - y0 + 0.01) / lineHeight));
     const to = Math.ceil((bottom - y0 - 0.01) / lineHeight) - 1;
     if (to < from) continue;
+    if (ex.contour) {
+      // A contour wrap (#883): each line as short as the shape is wide
+      // beside it.
+      steps.push(...contourInsetSteps(ex.contour, ex.side, col.bbox.x, col.bbox.width, y0, lineHeight, from, to, firstLine));
+      continue;
+    }
     steps.push({
       fromLine: firstLine + from,
       toLine: firstLine + to,

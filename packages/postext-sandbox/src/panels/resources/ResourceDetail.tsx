@@ -17,7 +17,8 @@ import { InlineMarkdownInput, type InlineSelection } from '../../controls/Inline
 import { ConfirmPopover, IconButton, PanelBody, PanelHeader } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { DimensionInput, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
-import { wrapSideOf } from '../../sidebar/settings/textWrap';
+import { wrapChoiceOf, wrapSideOf } from '../../sidebar/settings/textWrap';
+import { ContourFields } from './ContourFields';
 import { ResourcePreview } from './ResourcePreview';
 import { BitmapUploader, type BitmapUploadResult } from './BitmapUploader';
 import { BitmapResolutionField } from './BitmapResolutionField';
@@ -150,7 +151,9 @@ export function ResourceDetail({
   // `layout.wrap.defaultWidth`.
   const layoutWrap = useSandboxSelector((s) => s.config.layout?.wrap);
   const bodyLineHeight = useSandboxSelector((s) => s.config.bodyText?.lineHeight);
-  const placementWrap = wrapSideOf(currentPlacement.wrap ?? typePlacement.wrap);
+  const placementWrapChoice = wrapChoiceOf(currentPlacement.wrap ?? typePlacement.wrap);
+  // A contour wrap (#883) wraps at the side its align names.
+  const placementWrap = placementWrapChoice === 'contour' ? 'contour' : wrapSideOf(currentPlacement.wrap ?? typePlacement.wrap);
   const placementWidthPercent = Math.round((currentPlacement.width ?? typePlacement.width ?? (placementWrap !== 'none' ? layoutWrap?.defaultWidth ?? DEFAULT_TEXT_WRAP.defaultWidth : 1)) * 100);
   // An inline embed is never turned; a turned resource is a page-span float.
   const placementInline = placementPosition === 'here';
@@ -497,16 +500,23 @@ export function ResourceDetail({
               variant="segmented"
               label={labels.resourceTypePlacementWrap}
               tooltip={labels.resourceTypePlacementWrapTooltip}
-              value={placementWrap}
+              value={placementWrapChoice}
               options={[
                 { value: 'none', label: labels.resourceWrapNone },
                 { value: 'left', label: floatSide.left },
                 { value: 'right', label: floatSide.right },
+                // The picture's own shape (#883), at the side its align names.
+                ...(resource.kind === 'bitmap' || resource.kind === 'svg' ? [{ value: 'contour', label: labels.resourceWrapContour }] : []),
               ]}
-              onChange={(v) => setPlacementKey('wrap', v === 'left' || v === 'right' ? v : 'none')}
+              onChange={(v) => setPlacementKey('wrap', v === 'left' || v === 'right' || v === 'contour' ? v : 'none')}
               isDefault={currentPlacement.wrap === undefined}
               onReset={() => setPlacementKey('wrap', undefined)}
             />
+          )}
+          {/* Contour wrap (#883): the shape read from the bitmap's alpha
+              channel at a threshold, the margin kept round it. */}
+          {!placementRotated && placementWrapChoice === 'contour' && (
+            <ContourFields resource={resource} onChange={(contour) => onChange(touch({ contour }))} defaultMargin={currentPlacement.wrapGap ?? typePlacement.wrapGap ?? layoutWrap?.gap ?? resolveBodyTextConfig({ ...(bodyLineHeight ? { lineHeight: bodyLineHeight } : {}) }).lineHeight} />
           )}
           {!placementRotated && placementWrap !== 'none' && (
             <DimensionInput

@@ -295,4 +295,28 @@ describe('postext cli', () => {
     expect(reflow[0]!.lines[0]).toMatch(/^a grew [\d.]+ mm$/);
     expect(r.stderr).toMatch(/reflow p\. \S+ \(boxes\): a grew [\d.]+ mm; b moved down [\d.]+ mm/);
   }, 60_000);
+
+  // #858: a frame whose text still does not fit names the steps tried and
+  // the proposals, in words and, with their values, in --json.
+  it('check prints frameOverflow with its proposals', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'postext-cli-'));
+    mkdirSync(join(dir, 'ch'));
+    const mm = (value: number) => ({ value, unit: 'mm' });
+    writeFileSync(join(dir, 'config.json'), JSON.stringify({
+      locale: 'en',
+      pageTemplates: [{ id: 'small', frames: [{ name: 'a', flow: true, width: mm(60), height: mm(20) }] }],
+    }));
+    const text = 'Money lets us swap our work for the things we need, because everybody accepts what it is worth. '.repeat(8);
+    writeFileSync(join(dir, 'ch', '01.md'), `::::page{template="small"}\n${text}\n::::\n`);
+    const r = run(['check', 'ch', '--config', 'config.json', '--offline', '--json'], dir);
+    const w = (JSON.parse(r.stdout).warnings as { kind: string; message: string; data?: Record<string, unknown> }[]).find((x) => x.kind === 'frameOverflow')!;
+    expect(w.data).toMatchObject({ template: 'small', frame: 'a', locale: 'en', scale: 0.9, stepsTried: ['free', 'shrinkText'] });
+    const kinds = (w.data!.proposals as { kind: string }[]).map((p) => p.kind);
+    expect(kinds).toEqual(expect.arrayContaining(['allowShrink', 'raiseMax', 'continueNextPage', 'shortenText']));
+    const raise = (w.data!.proposals as { kind: string; path?: string; value?: { value: number } }[]).find((p) => p.kind === 'raiseMax')!;
+    expect(raise.path).toBe('/pageTemplates/0/frames/0/maxHeight');
+    expect(raise.value!.value).toBeGreaterThan(20);
+    expect(w.message).toContain('to fit: ');
+    expect(r.stderr).toMatch(/frameOverflow.*Frame "a" of template "small" \(en\) is [\d.]+ mm short of its content after free space, text down to 90 %/);
+  }, 60_000);
 });

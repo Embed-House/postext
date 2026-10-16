@@ -70,9 +70,21 @@ jobs:
           COOKBOOK_CHROME: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
         run: pnpm cookbook sandbox --site "$SITE" --report "$RUNNER_TEMP/sandbox-probe.json"
 
+      # The composed-page bench (#869) on the release just published, which
+      # the recipes' pens now import from npm: every check, the longer text
+      # and the approved layouts. A layout the release moved warns (C39) and
+      # is captured again; anything else that breaks fails here.
+      - name: pnpm cookbook bench
+        if: always()
+        env:
+          COOKBOOK_CHROME: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+        run: pnpm cookbook bench --no-pixels --report "$RUNNER_TEMP/cookbook-bench.json"
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: sandbox-probe
-          path: ${{ runner.temp }}/sandbox-probe.json
+          path: |
+            ${{ runner.temp }}/sandbox-probe.json
+            ${{ runner.temp }}/cookbook-bench.json
           retention-days: 30

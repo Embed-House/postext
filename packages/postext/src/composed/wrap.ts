@@ -172,6 +172,7 @@ function regroupPage(
   // The attributes of a slot's first `:::frame` fence (its `label`,
   // `title`): the frame's tab and title.
   const fenceAttrs = new Map<string, Record<string, string>>();
+  const fenceAttrSources = new Map<string, Record<string, { sourceStart: number; sourceEnd: number }>>();
   for (let i = 0; i < blocks.length; i++) {
     const b = blocks[i]!;
     if (b.type !== 'containerStart' || b.containerName !== 'frame' || i < 0) continue;
@@ -179,9 +180,10 @@ function regroupPage(
     const slot = b.slot?.name;
     if (slot === undefined || fenceAttrs.has(slot)) continue;
     fenceAttrs.set(slot, Object.fromEntries(Object.entries(b.containerAttrs ?? {}).filter(([k]) => k !== 'slot')));
+    if (b.containerAttrSources) fenceAttrSources.set(slot, Object.fromEntries(Object.entries(b.containerAttrSources).filter(([k]) => k !== 'slot')));
   }
   // Stories: each chain's frames' pieces, head first.
-  const stories: { head: string; indices: number[]; attrs: Record<string, string> }[] = [];
+  const stories: { head: string; indices: number[]; attrs: Record<string, string>; attrSources?: Record<string, { sourceStart: number; sourceEnd: number }> }[] = [];
   const done = new Set<string>();
   for (const name of pieces.keys()) {
     const head = names.has(name) ? story(name)! : name;
@@ -191,7 +193,8 @@ function regroupPage(
     const indices: number[] = [];
     for (const f of chain) indices.push(...(pieces.get(f) ?? []).slice().sort((a, b) => a - b));
     if (indices.length === 0) continue;
-    stories.push({ head, indices, attrs: fenceAttrs.get(head) ?? {} });
+    const attrSources = fenceAttrSources.get(head);
+    stories.push({ head, indices, attrs: fenceAttrs.get(head) ?? {}, ...(attrSources ? { attrSources } : {}) });
   }
   stories.sort((a, b) => Math.min(...a.indices) - Math.min(...b.indices));
   const out: ContentBlock[] = [];
@@ -205,6 +208,8 @@ function regroupPage(
       spans: [],
       containerName: 'callout',
       containerAttrs: { ...s.attrs, type: FRAME_STYLE_ID, placement: 'here', span: 'column', [FRAME_ATTR]: s.head },
+      // The frame fence's `label` and `title` keep their source (#857).
+      ...(s.attrSources ? { containerAttrSources: s.attrSources } : {}),
       containerId: id,
       sourceStart: first.sourceStart,
       sourceEnd: first.sourceStart,

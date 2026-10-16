@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { sandboxEntry } from "../../../scripts/cookbook/capture.ts";
 import { fontsourceRange, keptOnDisk, routeFor, withFontsourceVersion } from "../../../scripts/cookbook/net.ts";
-import { compareEdition, extraWarnings, variableFamilies } from "../../../scripts/cookbook/sandbox.ts";
+import { compareEdition, extraWarnings, variableFamilies, warningSince } from "../../../scripts/cookbook/sandbox.ts";
 import type { SandboxExpected, SandboxRun } from "../../../scripts/cookbook/sandbox.ts";
 import type { RecipeMeta } from "./types.ts";
 
@@ -50,6 +50,14 @@ describe("compareEdition (#736)", () => {
     }]);
     const pinned = { ...expected(), engine: "1.34.0" };
     expect(compareEdition(pinned, got, options)[0]).toMatchObject({ severity: "fail" });
+  });
+
+  it("reads a new reason of an older kind by its kind and reason (#883)", () => {
+    expect(warningSince("textWrap pear noContour")).toBe("1.36.0");
+    expect(warningSince("textWrap pear tooNarrow")).toBeUndefined();
+    expect(warningSince("contentInConfig header")).toBe("1.34.0");
+    const got = run({ chapters: [{ pages: 2, hash: "aaaa", warnings: ["textWrap pear noContour"] }] });
+    expect(compareEdition({ ...expected(), engine: "1.35.2" }, got, { ...options, sameEngine: false })[0]).toMatchObject({ severity: "warn" });
   });
 
   it("fails on an error of the page or the worker, and on a layout that brought nothing", () => {

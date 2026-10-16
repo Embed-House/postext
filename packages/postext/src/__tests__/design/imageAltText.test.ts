@@ -133,7 +133,8 @@ describe('design images carry alternative text (#213)', () => {
 
   it('lays out and paints a document whose design pictures have no text as before', () => {
     const plain = buildDocument({ markdown: md, resources: resources.map((r) => ({ ...r, altText: undefined, caption: undefined })) }, config([plate(), title]));
-    for (const p of plates(plain)) expect(Object.keys(p).sort()).toEqual(['bbox', 'fileId', 'imageKind', 'kind']);
+    // (Its element and the attribute that picks it are stamped since #857.)
+    for (const p of plates(plain)) expect(Object.keys(p).sort()).toEqual(['attr', 'bbox', 'elementId', 'fileId', 'imageKind', 'kind']);
     // Without image URLs (placeholders) the HTML is what it was.
     expect(renderToHtml(plain)).not.toContain('role="presentation"');
   });

@@ -37,6 +37,7 @@ import { resolvedComics } from '../defaults/comics';
 import { effectiveResourceTypes } from '../defaults/resourceTypes';
 import { composedPages } from '../composed/document';
 import { checkComposedSlots } from '../composed/slotChecks';
+import { describeFitStep, describeFrameOverflowProposal } from '../composed/reflowLog';
 import type { ComposedPagesConfigKeys } from '../composed/types';
 
 /** A `:::name` line: the name starts it, whatever follows (a line the parser
@@ -833,14 +834,20 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
         : `Unknown page template "${w.template}" — no pageTemplates entry has this id; the page's content is set in the flow`;
       break;
     case 'slotUnknown':
-      text = `Slot "${w.slot}" is no frame of template "${w.template}" — the content goes to the flow frame`;
+      text = `Slot "${w.slot}" is no frame of template "${w.template}" — the content goes to the flow frame${w.frame ? ` "${w.frame}"` : ''}`;
       break;
     case 'slotEmpty':
       text = `Frame "${w.frame}" of template "${w.template}" receives no content — give it a slot="${w.frame}" piece, or mark the frame optional`;
       break;
-    case 'frameOverflow':
-      text = `Frame "${w.frame}" of template "${w.template}" is ${w.overflowMm} mm short of its content — the rest is cut at the frame's foot; give it more height (height, maxHeight), chain it to another frame with next, or shorten the text`;
+    case 'frameOverflow': {
+      // The steps the reflow ladder tried and what would make it fit (#858).
+      const steps = (w.stepsTried ?? []).map((st) => describeFitStep(st, { scale: w.scale, imageScale: w.imageScale }));
+      const fixes = (w.proposals ?? []).map(describeFrameOverflowProposal);
+      text = `Frame "${w.frame}" of template "${w.template}"${w.locale ? ` (${w.locale})` : ''} is ${w.overflowMm} mm short of its content`
+        + `${steps.length > 0 ? ` after ${steps.join(', ')}` : ''} — the rest is cut at the frame's foot`
+        + (fixes.length > 0 ? `; to fit: ${fixes.join('; or ')}` : '; give it more height (height, maxHeight), chain it to another frame with next, or shorten the text');
       break;
+    }
     case 'spreadMismatch':
       text = w.templateSpread
         ? `Template "${w.template}" is a spread — the page is laid over two facing pages; write ::::page{template="${w.template}" spread}`
@@ -979,7 +986,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
           ? `${what} would leave the text beside it narrower than layout.wrap.minTextWidth — it takes its band whole, with no text beside it`
           : w.reason === 'verticalText'
             ? `${what} asks for text wrap, which is set in horizontal text only — in vertical text it takes its band whole`
-            : `${what} is shorter than layout.wrap.minLinesBeside lines — it takes its band whole, with no text beside it`;
+            : w.reason === 'noContour'
+              ? `${what} wraps text round its contour, but its shape is not known (no contour.points, no transparency, or an alpha channel the host did not trace) — the text runs round its box`
+              : `${what} is shorter than layout.wrap.minLinesBeside lines — it takes its band whole, with no text beside it`;
       break;
     }
     case 'floatShrunk':

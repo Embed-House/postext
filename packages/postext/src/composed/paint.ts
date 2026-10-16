@@ -1,9 +1,10 @@
 /**
  * How the backends paint a composed page (#855, DESIGN §4): the frames in
  * layer order with the template's decoration at layer 0, each frame's
- * blocks turned by its matrix and clipped to its box when its content
- * overflows; on a page of a spread (#861) all of it clipped to the page's
- * share of the sheet. Shared by canvas, PDF and HTML so the three agree.
+ * blocks turned (and scaled, #858) by its matrix and clipped to its box
+ * when its content overflows; on a page of a spread (#861) all of it
+ * clipped to the page's share of the sheet. Shared by canvas, PDF and HTML
+ * so the three agree.
  */
 import type { VDTBlock, VDTComposedPage, VDTFrame, VDTPage } from '../vdt';
 
@@ -94,18 +95,51 @@ export function composedSheetClip(page: Pick<VDTPage, 'composed'>): { x: number;
   return page.composed?.sheetClip;
 }
 
+type Affine = [number, number, number, number, number, number];
+
+/** `m` then `n` (canvas `transform` order): the matrix of applying `n`
+ *  first, then `m`. */
+const multiply = (m: Affine, n: Affine): Affine => [
+  m[0] * n[0] + m[2] * n[1],
+  m[1] * n[0] + m[3] * n[1],
+  m[0] * n[2] + m[2] * n[3],
+  m[1] * n[2] + m[3] * n[3],
+  m[0] * n[4] + m[2] * n[5] + m[4],
+  m[1] * n[4] + m[3] * n[5] + m[5],
+];
+
+/** The text scale of a frame, 1 when it has none (#858). */
+const scaleOf = (frame: Partial<Pick<VDTFrame, 'scale'>>): number => {
+  const s = frame.scale;
+  return s !== undefined && Number.isFinite(s) && s > 0 && Math.abs(s - 1) > 1e-9 ? s : 1;
+};
+
 /** The affine matrix `[a, b, c, d, e, f]` (canvas `transform` order,
- *  y down) that turns a frame `rotate` degrees clockwise about the centre
- *  of its box; undefined for an upright frame. */
-export function frameMatrix(frame: Pick<VDTFrame, 'rect' | 'rotate'>): [number, number, number, number, number, number] | undefined {
+ *  y down) that puts a frame's blocks on the sheet: scaled by the frame's
+ *  text `scale` about the top-left of its box (#858; the blocks are laid
+ *  out `1 / scale` as large), then turned `rotate` degrees clockwise about
+ *  the centre of its box. Undefined for an upright frame at full size. */
+export function frameMatrix(frame: Pick<VDTFrame, 'rect' | 'rotate'> & Partial<Pick<VDTFrame, 'scale'>>): Affine | undefined {
+  const s = scaleOf(frame);
+  const scaled: Affine | undefined = s === 1 ? undefined : [s, 0, 0, s, frame.rect.x * (1 - s), frame.rect.y * (1 - s)];
   const deg = frame.rotate % 360;
-  if (!Number.isFinite(deg) || Math.abs(deg) < 1e-9) return undefined;
+  if (!Number.isFinite(deg) || Math.abs(deg) < 1e-9) return scaled;
   const t = (deg * Math.PI) / 180;
   const cos = Math.cos(t);
   const sin = Math.sin(t);
   const cx = frame.rect.x + frame.rect.width / 2;
   const cy = frame.rect.y + frame.rect.height / 2;
-  return [cos, sin, -sin, cos, cx - cos * cx + sin * cy, cy - sin * cx - cos * cy];
+  const turn: Affine = [cos, sin, -sin, cos, cx - cos * cx + sin * cy, cy - sin * cx - cos * cy];
+  return scaled ? multiply(turn, scaled) : turn;
+}
+
+/** A frame's box in its blocks' own coordinates: `rect` itself, or, for a
+ *  frame whose text the reflow ladder scaled (#858), the larger box its
+ *  content was laid out in. Backends clip to it under {@link frameMatrix}. */
+export function frameContentRect(frame: Pick<VDTFrame, 'rect'> & Partial<Pick<VDTFrame, 'scale'>>): { x: number; y: number; width: number; height: number } {
+  const s = scaleOf(frame);
+  const r = frame.rect;
+  return s === 1 ? { ...r } : { x: r.x, y: r.y, width: r.width / s, height: r.height / s };
 }
 
 /** Whether a frame's content is clipped to its box: some of it runs past
@@ -115,9 +149,9 @@ export function frameClips(frame: Pick<VDTFrame, 'overflowPx'>): boolean {
 }
 
 /** The axis-aligned box a frame covers on the page once turned. */
-export function frameBounds(frame: Pick<VDTFrame, 'rect' | 'rotate'>): { x: number; y: number; width: number; height: number } {
+export function frameBounds(frame: Pick<VDTFrame, 'rect' | 'rotate'> & Partial<Pick<VDTFrame, 'scale'>>): { x: number; y: number; width: number; height: number } {
   const m = frameMatrix(frame);
-  const r = frame.rect;
+  const r = frameContentRect(frame);
   if (!m) return { ...r };
   const pts = [[r.x, r.y], [r.x + r.width, r.y], [r.x, r.y + r.height], [r.x + r.width, r.y + r.height]].map(([x, y]) => [
     m[0] * x! + m[2] * y! + m[4],

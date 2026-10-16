@@ -178,7 +178,7 @@ Cada recurs té una **col·locació** que decideix on aterra el seu flotant, res
     <tr>
       <td><code>wrap</code>, <code>wrapGap</code></td>
       <td><code>"none"</code> · <code>"left"</code> · <code>"right"</code> · <code>"start"</code> · <code>"end"</code>; una longitud</td>
-      <td>Compon el text al costat del recurs: aquest es col·loca en aquest costat de la columna, i les línies del costat s'ajusten a la mesura que queda, a <code>wrapGap</code> de la seva caixa (peu inclòs), i tornen a la mesura completa a sota. L'admeten una inserció en línia (<code>"here"</code>) i un flotant d'una columna al capdamunt o al peu d'una columna; els flotants de pàgina, de diverses columnes, de columna lateral i girats conserven la seva banda. El recurs ocupa <code>width</code> de la columna, o <code>layout.wrap.defaultWidth</code> (0,45). <code>wrapGap</code> val per defecte <code>layout.wrap.gap</code>, o una línia del cos. Vegeu <a href="#ajust-del-text">Ajust del text</a>. Des de postext 1.24.</td>
+      <td>Compon el text al costat del recurs: aquest es col·loca en aquest costat de la columna, i les línies del costat s'ajusten a la mesura que queda, a <code>wrapGap</code> de la seva caixa (peu inclòs), i tornen a la mesura completa a sota. L'admeten una inserció en línia (<code>"here"</code>) i un flotant d'una columna al capdamunt o al peu d'una columna; els flotants de pàgina, de diverses columnes, de columna lateral i girats conserven la seva banda. El recurs ocupa <code>width</code> de la columna, o <code>layout.wrap.defaultWidth</code> (0,45). <code>wrapGap</code> val per defecte <code>layout.wrap.gap</code>, o una línia del cos. <code>"contour"</code> compon el text al voltant de la forma pròpia de la imatge en lloc de la seva caixa, amb la imatge al costat que indica <code>align</code> (vegeu <a href="#ajust-al-contorn">Ajust al contorn</a>). Vegeu <a href="#ajust-del-text">Ajust del text</a>. Des de postext 1.24.</td>
     </tr>
     <tr>
       <td><code>citingPage</code></td>
@@ -260,7 +260,27 @@ Una imatge, una taula o una caixa més estreta que la columna es pot col·locar 
 - **Separació i límits.** `wrapGap` (o `layout.wrap.gap`, o una línia del cos) separa l'element, peu inclòs, del text del costat i del de sota. Si el text del costat quedés més estret que `layout.wrap.minTextWidth` (12 em del cos), o l'element fos més baix que `layout.wrap.minLinesBeside` línies (2), ocupa la banda sencera i un avís `textWrap` ho indica. Un en línia massa alt per a l'espai que queda a la columna passa a la següent amb la seva àncora, amb el mateix avís.
 - **Costats.** `left` i `right` són costats del flux del text, com a `align`: en un llibre de dreta a esquerra `left` és la dreta del full. `start` i `end` anomenen els mateixos costats.
 - **Sortides.** El llenç, el visor HTML, el PDF i l'EPUB de maquetació fixa componen les línies tal com es van maquetar; un PDF etiquetat llegeix la imatge o la caixa abans del paràgraf que va al costat. Un EPUB adaptable la fa flotar al seu costat amb CSS, amb la mateixa part de l'amplada del text.
-- **Encara no.** Text a tots dos costats d'una imatge, ajust al contorn, ajust dins el contingut d'una caixa i ajust en escriptura vertical (l'element conserva la banda, amb un avís). Les columnes amb un element ajustat queden fora de l'equilibrat de columnes.
+- **Encara no.** Text a tots dos costats d'una imatge, ajust dins el contingut d'una caixa i ajust en escriptura vertical (l'element conserva la banda, amb un avís). Les columnes amb un element ajustat queden fora de l'equilibrat de columnes.
+
+#### Ajust al contorn
+
+Una il·lustració retallada (una figura sobre fons transparent, un objecte dibuixat, el mapa d'una illa) queda millor quan el text en segueix la silueta que quan s'atura a la vora de la seva caixa. `"wrap": "contour"` fa això: cada línia al costat de la imatge s'escurça el que ocupa la forma de la imatge a l'altura d'aquesta línia, més un marge, i la línia que passa lliure de la forma pren la mesura completa.
+
+```json
+{ "id": "pear", "typeId": "figure", "kind": "bitmap",
+  "bitmap": { "fileId": "pear.png", "format": "png", "width": 600, "height": 800 },
+  "placement": { "position": "here", "wrap": "contour", "align": "right", "width": 0.42 },
+  "contour": { "threshold": 0.5, "margin": { "value": 2, "unit": "mm" } } }
+```
+
+- **D'on surt la forma.** La forma d'un mapa de bits és el seu canal alfa: els píxels amb una opacitat d'almenys `contour.threshold` (de 0 a 1, 0,5 per defecte). Un polígon a `contour.points`, d'almenys tres punts en fraccions de la imatge sencera des de l'angle superior esquerre (`{ "x": 0.5, "y": 0 }` és el centre de la vora superior), té prioritat sobre el canal alfa i és la manera de donar forma a un SVG. `"alpha": false` no fa cas del canal alfa. Un JPEG no té transparència, així que sense polígon el text n'envolta la caixa.
+- **Marge.** `contour.margin` és l'espai que es deixa entre la forma i el text, als costats, a sobre i a sota. Si no es fixa, és la separació de l'ajust (`placement.wrapGap`, després `layout.wrap.gap`, després una línia del cos).
+- **Costat.** La imatge es col·loca al costat que indica el seu `align` (`"right"` o `"end"`; qualsevol altre valor és l'esquerra), i les línies van per l'altre costat. La resta és com en l'ajust a un costat: una inserció en línia o un flotant d'una columna, els mateixos límits i els mateixos avisos `textWrap`.
+- **Retall i escala.** La forma segueix la imatge tal com es compon: escalada amb ella i tallada on la retalla una zona segura. Un peu o una nota sota la imatge conserva la seva caixa.
+- **De dreta a esquerra i CJK.** En una pàgina de dreta a esquerra la forma s'inverteix amb la pàgina, perquè la imatge es pinta sense invertir al seu lloc reflectit. Amb una retícula de caràcters CJK, el sagnat de cada línia és un nombre enter de caràcters, de manera que les línies es mantenen a la retícula.
+- **El traçat.** La maquetació llegeix les imatges per la mida, mai pels píxels, així que el canal alfa viatja amb el recurs: `contour.traced`, la forma per fileres, que l'amfitrió obté del fitxer amb `traceResourceContour(resource, bytes, mime)` (el motor llegeix PNG pel seu compte, al navegador i a Node; un altre format passa pel descodificador del navegador). En llegir un paquet es traça cada imatge que ho demana, i el Sandbox traça una imatge quan en canvien l'ajust, el fitxer o el llindar. Un paquet mai no guarda el traçat. Una imatge de forma desconeguda (un SVG sense polígon, un mapa de bits sense transparència o un sense traçar) s'envolta per la seva caixa, amb un avís `textWrap` de motiu `noContour`: dona-li un polígon, fes servir un PNG amb transparència o llegeix-la amb `readBundle` o amb el Sandbox perquè es traci.
+- **Marcs.** Un marc d'una pàgina composta que aparta el text (`exclude: "push"`) també admet `"wrap": "contour"`: vegeu [Pàgines compostes › Marcs que aparten el text](/ca/docs/composed-pages#marcs-que-aparten-el-text).
+- **Encara no.** Text a tots dos costats d'una forma situada al mig de la mesura (el text pren el costat més ample) i edició de polígons al Sandbox.
 
 ### Mida dels mapes de bits
 

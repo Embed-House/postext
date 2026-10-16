@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>O conteúdo de uma página composta nomeia um <code>slot</code> que não é nenhum bloco do modelo da página (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>O conteúdo de uma página composta nomeia um <code>slot</code> que não é nenhum bloco do modelo da página (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, o bloco de fluxo que o recebe).</td>
       <td>O conteúdo vai para o bloco de fluxo do modelo.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>O conteúdo de um bloco de uma página composta não cabe nele e o bloco não tem mais nenhum <code>next</code> onde continuar (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, a altura cortada; <code>configPath</code>, o ponteiro JSON do bloco do modelo, como <code>/pageTemplates/0/frames/2</code>). Vem da diagramação, com o <code>pageIndex</code> da página.</td>
+      <td>O conteúdo de um bloco de uma página composta não cabe nele depois da escada de ajuste e o bloco não tem mais nenhum <code>next</code> onde continuar (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, a altura cortada; <code>configPath</code>, o ponteiro JSON do bloco do modelo, como <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> e <code>imageScale</code>, onde o texto e as imagens dele ficaram; <code>proposals</code>, cada uma <code>{'{'} kind, path, value {'}'}</code>). Vem da diagramação, com o <code>pageIndex</code> da página.</td>
       <td>A saída paginada corta o que não cabe no pé do bloco; o texto continua no documento, no mapa de origem e no EPUB de layout fluido.</td>
     </tr>
     <tr>
@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>Um recurso ou caixa com o texto contornando-o (<code>placement.wrap</code>, o <code>wrap</code> de uma caixa) que não é composto como pedido. <code>reason</code>: <code>'tooNarrow'</code> (o texto ao lado ficaria mais estreito que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (é mais baixo que <code>layout.wrap.minLinesBeside</code> linhas), <code>'moved'</code> (um em linha alto demais para o espaço que resta na coluna passou para a seguinte, com a âncora) ou <code>'verticalText'</code>. <code>resourceId</code> nomeia um recurso, <code>box</code> o estilo de uma caixa. Aponta para a inserção ou a caixa.</td>
-      <td>O elemento ocupa a faixa inteira, ou fica na coluna seguinte, conforme o motivo.</td>
+      <td>Um recurso ou caixa com o texto contornando-o (<code>placement.wrap</code>, o <code>wrap</code> de uma caixa) que não é composto como pedido. <code>reason</code>: <code>'tooNarrow'</code> (o texto ao lado ficaria mais estreito que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (é mais baixo que <code>layout.wrap.minLinesBeside</code> linhas), <code>'moved'</code> (um em linha alto demais para o espaço que resta na coluna passou para a seguinte, com a âncora), <code>'verticalText'</code> ou <code>'noContour'</code> (um contorno pela forma de uma imagem cuja forma é desconhecida: um SVG sem <code>contour.points</code>, um bitmap sem transparência ou um canal alfa que o hospedeiro não traçou). <code>resourceId</code> nomeia um recurso, <code>box</code> o estilo de uma caixa. Aponta para a inserção ou a caixa.</td>
+      <td>O elemento ocupa a faixa inteira, ou fica na coluna seguinte, conforme o motivo; com <code>'noContour'</code> o texto contorna a caixa da imagem. Dê à imagem um polígono, use um PNG com transparência ou leia a imagem com <code>readBundle</code> ou com o Sandbox, que fazem o traçado.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
@@ -413,6 +413,10 @@ const blocks = parseMarkdown(content);
 ```
 
 Veja a página [Formato do documento](/pt/docs/document-format) para a lista completa das construções de markdown que o Postext reconhece.
+
+### Mapa de origem de um documento diagramado
+
+`sourceAt(doc, pageIndex, x, y, options?)` devolve o que um ponto de uma página mostra, de dentro para fora, cada elemento com o seu `id` estável, a sua `source` (um trecho do Markdown, um ponteiro JSON da configuração, um atributo da cerca da página ou um recurso) e o seu `rect`. `elementsForSource(doc, start, end, options?)` devolve o que um trecho do Markdown virou, página a página, e `findElement(doc, id)` volta a encontrar um elemento depois de uma nova diagramação. Elas leem o que a diagramação marcou no VDT e não diagramam nada. `composedPagePaintKey(page)` diz se uma página composta pinta o que pintou antes. Os tipos de origem, os identificadores e como uma página composta é diagramada de novo só onde mudou estão em [Páginas compostas › Mapa de origem](/pt/docs/composed-pages#mapa-de-origem).
 
 ### Carregar as fontes antes do layout
 

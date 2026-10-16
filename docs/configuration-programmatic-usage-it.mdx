@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Il contenuto di una pagina composta indica uno <code>slot</code> che non è alcuna cornice del modello della pagina (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>Il contenuto di una pagina composta indica uno <code>slot</code> che non è alcuna cornice del modello della pagina (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, la cornice di flusso che lo riceve).</td>
       <td>Il contenuto va nella cornice di flusso del modello.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>Il contenuto di una cornice di una pagina composta non ci entra e la cornice non ha più un <code>next</code> in cui proseguire (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, l’altezza tagliata; <code>configPath</code>, il puntatore JSON della cornice del modello, per esempio <code>/pageTemplates/0/frames/2</code>). Lo emette l’impaginazione, con il <code>pageIndex</code> della pagina.</td>
+      <td>Il contenuto di una cornice di una pagina composta non ci entra nemmeno dopo la sequenza di reimpaginazione e la cornice non ha più un <code>next</code> in cui proseguire (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, l’altezza tagliata; <code>configPath</code>, il puntatore JSON della cornice del modello, per esempio <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> e <code>imageScale</code>, le scale a cui sono rimasti il testo e le immagini; <code>proposals</code>, ciascuna <code>{'{'} kind, path, value {'}'}</code>). Lo emette l’impaginazione, con il <code>pageIndex</code> della pagina.</td>
       <td>L’uscita impaginata taglia al piede della cornice quello che non entra; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido.</td>
     </tr>
     <tr>
@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>Una risorsa o un riquadro impostato per far scorrere il testo attorno (<code>placement.wrap</code>, il <code>wrap</code> di un riquadro) che non lo fa come richiesto. <code>reason</code>: <code>'tooNarrow'</code> (il testo accanto sarebbe più stretto di <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (è più corto di <code>layout.wrap.minLinesBeside</code> righe), <code>'moved'</code> (uno nel testo troppo alto per lo spazio rimasto nella sua colonna è passato alla successiva, insieme alla sua ancora) o <code>'verticalText'</code>. <code>resourceId</code> indica una risorsa, <code>box</code> lo stile di un riquadro. Punta all’incorporazione o al riquadro.</td>
-      <td>L’elemento occupa la sua fascia per intero, o si colloca nella colonna successiva, come dice il motivo.</td>
+      <td>Una risorsa o un riquadro impostato per far scorrere il testo attorno (<code>placement.wrap</code>, il <code>wrap</code> di un riquadro) che non lo fa come richiesto. <code>reason</code>: <code>'tooNarrow'</code> (il testo accanto sarebbe più stretto di <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (è più corto di <code>layout.wrap.minLinesBeside</code> righe), <code>'moved'</code> (uno nel testo troppo alto per lo spazio rimasto nella sua colonna è passato alla successiva, insieme alla sua ancora), <code>'verticalText'</code> o <code>'noContour'</code> (uno scorrimento lungo il contorno di un’immagine di cui non si conosce la forma: un SVG senza <code>contour.points</code>, una bitmap senza trasparenza o un canale alfa che l’host non ha tracciato). <code>resourceId</code> indica una risorsa, <code>box</code> lo stile di un riquadro. Punta all’incorporazione o al riquadro.</td>
+      <td>L’elemento occupa la sua fascia per intero, o si colloca nella colonna successiva, come dice il motivo; con <code>'noContour'</code> il testo gira attorno al riquadro dell’immagine. Dai all’immagine un poligono, usa un PNG con trasparenza, oppure leggila con <code>readBundle</code> o nella Sandbox, che la tracciano.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
@@ -413,6 +413,10 @@ const blocks = parseMarkdown(content);
 ```
 
 Vedi la pagina [Formato del documento](/it/docs/document-format) per l’elenco completo dei costrutti Markdown che Postext riconosce.
+
+### Mappa delle origini di un documento impaginato
+
+`sourceAt(doc, pageIndex, x, y, options?)` restituisce ciò che mostra un punto di una pagina, dall’interno verso l’esterno, ogni elemento con il suo `id` stabile, la sua `source` (un tratto del Markdown, un puntatore JSON della configurazione, un attributo del recinto della pagina o una risorsa) e il suo `rect`. `elementsForSource(doc, start, end, options?)` restituisce ciò che è diventato un tratto del Markdown, pagina per pagina, e `findElement(doc, id)` ritrova un elemento dopo una nuova impaginazione. Leggono ciò che l’impaginazione ha annotato nel VDT e non impaginano nulla. `composedPagePaintKey(page)` dice se una pagina composta disegna ciò che ha disegnato prima. I tipi di origine, gli identificatori e il modo in cui una pagina composta si reimpagina solo dove è cambiata sono in [Pagine composte › Mappa delle origini](/it/docs/composed-pages#mappa-delle-origini).
 
 ### Caricare i font prima dell’impaginazione
 

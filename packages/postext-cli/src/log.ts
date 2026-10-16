@@ -32,6 +32,9 @@ export interface Warning {
   /** Where in the sources, when known: `chapters/02.md:14`. */
   at?: string;
   page?: string;
+  /** What `--json` carries besides the message: a `frameOverflow`'s steps
+   *  tried and proposals (#858). */
+  data?: Record<string, unknown>;
 }
 
 export interface OutputRecord {

@@ -153,6 +153,7 @@ function tocBlocksFor(
       ...(entry.pageIndex !== undefined ? { pageIndex: entry.pageIndex } : {}),
       ...(subtitle ? { subtitle } : {}),
       ...(entry.numbered && entry.number ? { levelNumbers: levelNumbers.get(entry.level) } : {}),
+      ...(entry.headingSource !== undefined ? { headingSource: entry.headingSource } : {}),
     };
     // Every character maps to the directive line, so a click on the
     // contents lands on `:::toc`.

@@ -98,6 +98,8 @@ export interface PlannedFloat {
   wrap?: 'left' | 'right';
   /** The wrap's own gap (`placement.wrapGap`, else `layout.wrap.gap`). */
   wrapGap?: Dimension;
+  /** The text runs round the picture's shape (`wrap: 'contour'`, #883). */
+  contour?: true;
   /** May head the page (page span) or column (column span) where its
    *  citing line lands (`placement.citingPage`, #633): the build proposes
    *  that slot after a pass and keeps it while the citing line stays
@@ -220,6 +222,7 @@ export function computeFloatPlan(
         resourceId, firstBlockIdx: blockIdx, position, span,
         widthFraction: wrap.width, align: wrap.side, wrap: wrap.side,
         ...(wrap.gap ? { wrapGap: wrap.gap } : {}),
+        ...(wrap.contour ? { contour: true as const } : {}),
         ...(shrink !== 'never' ? { shrink, minScale } : {}),
         ...(citingPage ? { citingPage } : {}),
       });

@@ -29,6 +29,12 @@ export const KNOWN_CONTAINERS: readonly string[] = ["callout", "paragraphs", "pa
 const DIRECTIVE_LINE = /^:::\s*([a-z][a-z0-9-]*)\s*(?:\{([^}]*)\})?\s*$/;
 /** The only form the parser accepts for an inline resource embed. */
 export const RESOURCE_EMBED = /^::resource\s*\{id="([^"]+)"\}\s*$/;
+/** The embed sent to a slot of a composed page (#854): `id` and `slot`
+ *  only, in either order. */
+export const RESOURCE_SLOT_EMBED = /^::resource\s*\{\s*(?:id="[^"]+"\s+slot=(?:"[^"]*"|'[^']*'|[\w-]+)|slot=(?:"[^"]*"|'[^']*'|[\w-]+)\s+id="[^"]+")\s*\}\s*$/;
+/** A composed page's fences (#854): `::::page{template=…}` and the bare
+ *  fence of four colons or more that closes it. */
+const COMPOSED_PAGE_LINE = /^:{4,}\s*page\s*(?:\{[^}]*\})?\s*$/;
 
 export const POSTEXT_URL = "https://esm.sh/postext";
 /** esm.sh's single-file build, which maths recipes needed up to postext 1.4
@@ -520,6 +526,11 @@ export function markdownConstructs(markdown: string): MarkdownConstructs {
       directives.add("::resource");
       continue;
     }
+    if (COMPOSED_PAGE_LINE.test(line)) {
+      directives.add("::::page");
+      continue;
+    }
+    if (/^:{4,}\s*$/.test(line)) continue;
     if (/^\$\$/.test(line)) directives.add("$$");
     if (/:ref\{/.test(line)) inline.add(":ref");
     if (/:chip\[/.test(line)) inline.add(":chip");
@@ -539,12 +550,13 @@ export function markdownConstructs(markdown: string): MarkdownConstructs {
 }
 
 /** Lines starting `::resource` that the parser would not accept (it wants
- *  exactly `::resource{id="…"}` with double quotes). */
+ *  exactly `::resource{id="…"}` with double quotes, or, on a composed page,
+ *  `::resource{id="…" slot="…"}`). */
 export function malformedResourceEmbeds(markdown: string): string[] {
   return markdown
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.startsWith("::resource") && !RESOURCE_EMBED.test(line));
+    .filter((line) => line.startsWith("::resource") && !RESOURCE_EMBED.test(line) && !RESOURCE_SLOT_EMBED.test(line));
 }
 
 // ─── Resources ──────────────────────────────────────────────────────────────

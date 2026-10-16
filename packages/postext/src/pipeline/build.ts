@@ -17,6 +17,7 @@ import {
   type VDTColumn,
   type VDTExclusion,
   type VDTComposedPage,
+  type VDTExclusionContour,
   type VDTPage,
   type BoundingBox,
   type ResolvedResourceBlock,
@@ -29,6 +30,7 @@ import {
   type VDTFigureLabel,
 } from '../vdt';
 import { figureLabels } from './buildMeasurement';
+import { contourOnPage } from '../contour';
 import { anchorBox } from '../design/layout';
 import { parseMarkdownMemo, spaceDirectiveLines } from '../parse';
 import {
@@ -83,7 +85,8 @@ import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowCo
 import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap';
 import { resolvePageTemplate } from '../composed/templates';
 import { layoutComposedSpread } from '../composed/spread';
-import { composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
+import { composedPageAt, frameStyleOf, planComposedPages, type PlannedComposedPage } from './composedLayout';
+import { configKeyOf, layoutComposedPageMemo, type ComposedMemoContext } from '../composed/pageMemo';
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline';
 import { expandTocDirectives } from './toc';
 import { expandIndexDirectives, locateIndexMarks } from './indexDirective';
@@ -895,7 +898,7 @@ function placeDocumentPass(
   // floats is laid out by its id alone.
   const figureLabelsById = new Map<string, VDTFigureLabel[]>();
   for (const b of contentBlocks) {
-    const labels = b.resourceId !== undefined && !figureLabelsById.has(b.resourceId) ? figureLabels(b) : undefined;
+    const labels = b.resourceId !== undefined && !figureLabelsById.has(b.resourceId) ? figureLabels(b, bodyOffset) : undefined;
     if (labels) figureLabelsById.set(b.resourceId!, labels);
   }
 
@@ -1715,6 +1718,36 @@ function placeDocumentPass(
   };
   /** The `textWrap` warnings of this pass (#627). */
   const textWrapNotes: ContentWarning[] = [];
+  /** Resources whose contour wrap fell back to the box this pass (#883):
+   *  said once each. */
+  const contourFallbacks = new Set<string>();
+  /** The shape a contour wrap (#883) of `resource`, set as `rb` in the
+   *  figure `box`, runs round on `page`: its polygon or traced alpha
+   *  channel through the picture's crop and scale, the contour's margin
+   *  round it (else the wrap's gap), its insets in whole body characters
+   *  under a CJK grid; `rb.bodyRect` is relative to `origin`, `box` is in
+   *  page px. `undefined` (and a `noContour` note) when the shape is not
+   *  known: the text runs round the box. */
+  const wrapContourOf = (
+    resource: Resource,
+    rb: ResolvedResourceBlock,
+    box: BoundingBox,
+    gapPx: number,
+    page: VDTPage,
+    origin: { x: number; y: number },
+    source?: { sourceStart: number; sourceEnd: number },
+  ): VDTExclusionContour | undefined => {
+    const own = resource.contour?.margin;
+    const margin = own ? Math.max(0, dimensionToPx(own, dpi, bodyStyle.fontSizePx)) : gapPx;
+    const quantum = resolved.cjk.grid.enabled && bodyStyle.fontSizePx > 0 ? bodyStyle.fontSizePx : undefined;
+    const c = contourOnPage(resource, rb, box, { margin, mirrored: pageIsMirrored(page), originX: origin.x, originY: origin.y, ...(quantum ? { quantum } : {}) });
+    if (c) return c;
+    if (!contourFallbacks.has(resource.id)) {
+      contourFallbacks.add(resource.id);
+      textWrapNotes.push({ kind: 'textWrap', reason: 'noContour', resourceId: resource.id, ...(source ?? {}), pageIndex: page.index });
+    }
+    return undefined;
+  };
   const floatWraps = new Map<VDTColumn, { position: FloatSlotPosition; need: number; ex: VDTExclusion }[]>();
   /** Give the bands of the wrapped floats of `col` back to the flow, as
    *  exclusions the text runs beside: a float at the head of a column the
@@ -2388,6 +2421,14 @@ function placeDocumentPass(
           gap: exWidth - width,
           ownerId: built.block.id,
         };
+        // A contour wrap (#883): the picture's shape where its block is
+        // set (`commitFloatBlock` puts it at `xLeft`, `y`).
+        const fRes = f.contour ? resourceById.get(f.resourceId) : undefined;
+        const fRb = built.block.resourceBlock;
+        if (fRes && fRb) {
+          const c = wrapContourOf(fRes, fRb, { x: xLeft, y, width, height: built.height }, wrapGap, page, { x: xLeft, y });
+          if (c) ex.contour = c;
+        }
         if (underOpener) {
           // The band was taken from the flow: the text placed next takes
           // it back and runs beside the float, as it does beside an inline
@@ -3405,7 +3446,7 @@ function placeDocumentPass(
     if (blk.type !== 'resource' && raw.direction !== undefined && raw.direction !== resolvedDirection(resolved)) blk.direction = raw.direction;
     const tocContinued = raw.toc?.group?.role === 'continuation' ? { continued: true as const } : {};
     if (raw.toc?.kind === 'entry') {
-      blk.tocEntry = { ...(raw.toc.pageIndex !== undefined ? { pageIndex: raw.toc.pageIndex } : {}), ...tocContinued };
+      blk.tocEntry = { ...(raw.toc.pageIndex !== undefined ? { pageIndex: raw.toc.pageIndex } : {}), ...(raw.toc.headingSource !== undefined ? { headingSource: raw.toc.headingSource } : {}), ...tocContinued };
     }
     if (raw.toc?.kind === 'part') {
       blk.tocPart = {
@@ -6158,6 +6199,47 @@ function placeDocumentPass(
   const composedLaid = new Set<number>();
   /** The composed pages' layout warnings (`frameOverflow`). */
   const composedNotes: ContentWarning[] = [];
+  /** What the composed pages' memo (#857) reads of this pass: the
+   *  numbers, part, section and pictures the blocks of a page are set
+   *  with, and the notes a page's layout leaves. */
+  const composedMemo: ComposedMemoContext = {
+    markdown: markdownBody,
+    bodyOffset,
+    configKey: () => configKeyOf(calloutResolved),
+    contextKey: (from, to) => {
+      const ids = new Set<string>();
+      for (let i = from; i <= to; i++) {
+        const b = contentBlocks[i]!;
+        if (b.resourceId) ids.add(b.resourceId);
+      }
+      const pictures = [...ids].sort().map((id) => {
+        const r = resourceById.get(id);
+        return [id, r ?? null, r ? resourceTypeById.get(r.typeId) ?? null : null, resourceNumberById.get(id) ?? null, floatedIds.has(id), captionCitations?.get(id) ?? null];
+      });
+      const parts: unknown[] = [];
+      const sections: unknown[] = [];
+      const out: number[] = [];
+      for (let i = from; i <= to; i++) {
+        const part = partPlan.byBlock[i];
+        parts.push(part ? [part.number, part.title, part.palette] : 0);
+        sections.push(sectionPlan.byBlock[i]?.id ?? 0);
+        if (calloutsOutOfFlow.has(i)) out.push(i - from);
+      }
+      return JSON.stringify([
+        headingPrefixes.slice(from, to + 1),
+        headingNumbers.slice(from, to + 1),
+        parts,
+        sections,
+        out,
+        paragraphContainers.byBlock.slice(from, to + 1).map((c) => (c ? c.style : 0)),
+        pictures,
+      ]);
+    },
+    sideEffectsIn: (from, to) => {
+      for (let i = from; i <= to; i++) if (dropCapNotes.has(i) || joiningLetterSpacing.has(i)) return true;
+      return false;
+    },
+  };
   /** Set the composed page `planned` on a fresh page (#855), or a spread
    *  template on the two facing pages from the next verso (#861). */
   const placeComposedPage = (planned: PlannedComposedPage, fence: ComposedPageFence): void => {
@@ -6166,7 +6248,11 @@ function placeDocumentPass(
     leaveCurrentPage();
     cursor.columnIndex = 0;
     const frameless = calloutStyles.find((st) => st.id === FRAME_STYLE_ID)!;
-    const common = (page: VDTPage) => ({
+    /** What every composed page or spread reads; `current` names the
+     *  template laid, so a `useTemplate` proposal (#858) tries the book's
+     *  other templates of the same kind (single pages for this side, or
+     *  spreads). */
+    const common = (page: VDTPage, current: { id: string; spread: boolean; parity?: 'recto' | 'verso' }) => ({
       pass: framePass,
       fence,
       startIdx: planned.startIdx,
@@ -6178,6 +6264,13 @@ function placeDocumentPass(
       bodyOffset,
       mirrored: mirroredOf(page),
       pushGapPx: wrapGapPx(resolved.layout.wrap?.gap, dpi, bodyStyle.fontSizePx, floatGapPx),
+      locale: resolvedLocale(resolved),
+      // The book's other templates, for a `useTemplate` proposal (#858).
+      alternatives: () => [...new Set((resolved.pageTemplates ?? []).map((t) => t?.id))].flatMap((id) => {
+        if (typeof id !== 'string' || id === current.id) return [];
+        const alt = resolvePageTemplate(templateSource, id, current.spread ? { spread: true } : { parity: current.parity });
+        return alt && alt.spread === current.spread ? [alt] : [];
+      }),
     });
     const placed: { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[] = [];
     let laid: Set<string>;
@@ -6202,7 +6295,7 @@ function placeDocumentPass(
       const left = versoIsLeft ? verso : recto;
       const right = versoIsLeft ? recto : verso;
       const out = layoutComposedSpread({
-        ...common(flowMirrored ? right : left),
+        ...common(flowMirrored ? right : left, { id: sheet.id, spread: true }),
         template: sheet,
         first: flowMirrored ? right : left,
         second: flowMirrored ? left : right,
@@ -6221,12 +6314,14 @@ function placeDocumentPass(
       const template = resolvePageTemplate(templateSource, fence.template, { parity })!;
       const frames = designFramesOn(page);
       const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
-      const out = layoutComposedPage({
-        ...common(page),
+      // Kept by what it reads (#857): a page met again is not set again.
+      // A spread is laid out afresh each time (its two sides are one sheet).
+      const out = layoutComposedPageMemo({
+        ...common(page, { id: template.id, spread: false, parity }),
         page,
         template,
         areas: { area, page: frames.page, bleed: frames.bleed },
-      });
+      }, composedMemo);
       placed.push({ page, composed: out.composed, blocks: out.blocks });
       composedNotes.push(...out.warnings);
       laid = out.laid;
@@ -6953,6 +7048,12 @@ function placeDocumentPass(
           pendingSpacing = 0;
           inlineGapOwed = null;
           const exWidth = wrapExclusionWidth(rCol.bbox.width, rCol.bbox.width * wrapSpec.width, wrapGap);
+          // A contour wrap (#883): the picture's shape where it was set.
+          const slotWidth = rCol.bbox.width * wrapSpec.width;
+          const slot = { x: wrapSpec.side === 'left' ? rCol.bbox.x : rCol.bbox.x + rCol.bbox.width - slotWidth, y: top, width: slotWidth, height: groupHeight };
+          const contour = wrapSpec.contour
+            ? wrapContourOf(kind.resource!, resourceBlock, slot, wrapGap, doc.pages[cursor.pageIndex]!, { x: blk.bbox.x, y: blk.bbox.y }, { sourceStart: rawBlock.sourceStart + bodyOffset, sourceEnd: rawBlock.sourceEnd + bodyOffset })
+            : undefined;
           pendingWrap = {
             col: rCol,
             blocks: rCol.blocks.length,
@@ -6965,6 +7066,7 @@ function placeDocumentPass(
               side: wrapSpec.side,
               gap: exWidth - rCol.bbox.width * wrapSpec.width,
               ownerId: blk.id,
+              ...(contour ? { contour } : {}),
             },
           };
           flushPendingNumberingAtBoundary();

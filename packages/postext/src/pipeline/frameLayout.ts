@@ -26,9 +26,9 @@ import {
 import { fillGalley, galleyBreaks } from './columnsGroup';
 
 /** What a frame of a composed page (#855) adds to a box's layout: its exact
- *  height, where content shorter than it sits, and the rectangles its text
- *  runs round. Absent for callouts. */
-export type FrameBoxOptions = Pick<CalloutLayoutInput, 'boxHeight' | 'verticalAlign' | 'exclusions'>;
+ *  height, where content shorter than it sits, the rectangles its text
+ *  runs round, and the scale of its pictures (#858). Absent for callouts. */
+export type FrameBoxOptions = Pick<CalloutLayoutInput, 'boxHeight' | 'verticalAlign' | 'exclusions' | 'pictureScale'>;
 
 /** What the box typesetter reads of a layout pass. */
 export interface FrameLayoutPass {

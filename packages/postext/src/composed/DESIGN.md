@@ -469,7 +469,7 @@ page numbering, running heads and parity rules (they are ordinary pages with `ro
 </table>
 
 Each proposal is data (`{ kind, path, value }`) so the Sandbox can offer it as a one-click,
-confirmed config change (U8).
+confirmed config change (U8). What P5 built is in §5.11.
 
 ### 5.8 What P4 built (#855)
 
@@ -613,6 +613,94 @@ Recorded where the implementation settles a point the sections above leave open,
   boxes, the flow is rotated); per-side `mirrored` for frames' outer-corner icons (the first page's
   is used); running-head placeholders in a spread's decoration read the first page met.
 
+### 5.11 What P5 built (#858)
+
+- **Where the ladder runs.** In `layoutComposedPage` (`pipeline/composedLayout.ts`), around one
+  laying out of the whole page (`composePage`, P4's and P14's work unchanged): a step is a *fit
+  state* (frame patches, text scale per story, picture scale per story, groups that redistribute)
+  and the page is composed again with it; compositions are memoised by state. Frames that overflow
+  climb the ladder one by one in template order, each step adopted on top of the ones before it
+  (a step that does not make the frame fit stays at its limit: less is cut), stopping at the first
+  that makes it fit. A budget of 96 compositions per page bounds the work. Same input, same VDT;
+  nothing reads another page.
+- **Steps as built.** `free`: P14 already lets an `'auto'` height take the room its area and group
+  leave, so the step adds only that a frame with a fixed `height` and a higher `maxHeight` grows up
+  to it (patched to `'auto'` with its height as `minHeight`). `push`: part of every composition
+  (groups move and yield, anchored frames follow); reported when the frame is in a group with
+  others or something anchors to it. `scaleImages`: bitmaps, SVGs and video posters of the stories
+  of the frame and of its group's frames are set at a share of their width
+  (`CalloutLayoutInput.pictureScale` → `figureMaxBodyWidth`), largest 2.5 % step that fits down to
+  `fit.imageMinScale`, found by checking the minimum and then bisecting; floats do not exist
+  inside frames (P4 sets a frame's pictures inline), so "re-place floats" is the text after a
+  picture moving up. `redistribute`: in the frame's group every unpinned frame yields (`shrink`
+  read as 1 when 0) down to `max(minHeight, its content's need)`, never above its height; in a
+  row they give width as in P14 (each down to the narrowest width its own text fits). `shrinkText`:
+  only for a frame whose story sets text; the whole story (all frames of a chain) at one scale.
+  `continue`: reported for `overflow.continueIn: 'next-page' | 'template:…'`; #859 lays it out.
+- **Text scale is geometric.** A scaled frame's story is laid out at `width / scale` and
+  `height / scale` and painted scaled by `scale` about the top-left of `rect`: `frameMatrix` now
+  composes the scale before the turn, `frameContentRect` is the box in the blocks' own coordinates
+  (backends clip to it). Font size, leading and every spacing shrink by exactly the same factor,
+  whatever the content (tables, formulas, nested boxes). The frame's chrome keeps its drawn size
+  (`keepChromeAt`: padding, border width, radius, stripe and tab dimensions laid out at
+  `1 / scale`), so padding that keeps room for photos set over a box stays that room. Blocks of a
+  scaled frame are in its laid-out coordinates: anything that reads block boxes directly instead of
+  painting through `frameMatrix` (the Sandbox's caret and selection overlay, tagged PDF bounding
+  boxes) sees them unscaled, as it sees a rotated frame's upright (follow-up). The source map
+  (`sourceAt`, `elementsForSource`, `findElement`) reads them where they are painted: a point goes
+  through the inverse of `frameMatrix` and is tested against `frameContentRect`, and the boxes it
+  returns inside the frame are scaled back upright (the turn stays in `rotate`).
+- **Spreads and the memo.** On a spread the ladder runs on the sheet: the gutter cut (`fitBox`)
+  narrows a frame first and the ladder works from that box; a frame of the second page keeps its
+  `scale` when it is moved onto its sheet. The gutter events come from the composition the ladder
+  settles on (`ComposedPageLayout.fitted`), not from the ones it tried. The page memo keys the
+  inputs the ladder reads (the resolved configuration holds the other templates and the locale), so
+  a reused page equals a fresh one, scales and proposals' source ranges included.
+- **Warning.** `frameOverflow` gains `locale`, `stepsTried`, `scale`, `imageScale`, `proposals`.
+  Proposals are data with set-the-pointer semantics (`path` → `value`); a Markdown change carries a
+  source range instead (`useTemplate`: the fence's `template` value; `shortenText`: the frame's
+  content). Values are tried on the page where the page can tell: `allowShrink` (largest 2.5 % step
+  down to 50 %, `also` turns `shrinkText` on), `raiseMax` (height + shortfall, whole mm; offered only
+  when it fits), `lowerMin` (a group sibling at its minimum with less content, lowered by the
+  shortfall, not below its content; offered when it fits), `useTemplate` (first other template, in
+  `pageTemplates` order, with a frame of that name where the content fits as it is; the stories
+  keep the page's own regrouping). `continueNextPage` and `shortenText` (lines over × characters of
+  a full line) are not tried. `slotUnknown` names the flow frame that takes the content; slot
+  warnings already carried page and source range after layout.
+- **Log.** `imageScaled` (with `cause` when another frame's ladder set it) and `textScaled`
+  events, per frame after its size and moves, before its `overflow`; words to the tenth of a
+  percent.
+### 5.12 What P11 built (#883)
+
+- **Config.** `ResourcePlacement.wrap: 'contour'` (the picture at the side its `align` names) and
+  `FrameConfig.wrap: 'box' | 'contour'` (with `exclude: 'push'`; `ResolvedFrame.wrap` is set only for
+  `'contour'`). The shape is `Resource.contour`: `points` (polygon in picture fractions, wins),
+  `alpha` (default on for bitmaps), `threshold` (0.5), `margin` (default: the wrap gap / push gap).
+- **No pixels at layout time.** The layout knows pictures by size only, so the alpha channel comes
+  with the resource as `contour.traced` (`ContourTrace`: up to 256 rows, leftmost/rightmost opaque
+  edge per row, the file id and threshold it was traced at; a stale trace is ignored). Hosts trace:
+  `traceResourceContour` (synchronous PNG decoding on fflate in every host, the browser decoder for
+  other formats), `readBundle` (`traceBundleContours`, every bitmap when a frame wraps by contour),
+  the Sandbox (`useContourTraces`, from the blob store). Bundles never store the trace.
+- **Engine.** `contour/index.ts`: rows from polygon or trace (`contourRowsOf`), mapped to page px
+  through `bodySource` (safe-area crop) and `bodyRect` (scale), turned on mirrored pages
+  (`contourOnPage` → `VDTExclusionContour {spans, margin, quantum?}`), and per-line insets
+  (`contourInsetSteps`: the extent of the spans within the margin of each line's band; a line clear
+  of the shape gets none; CJK grid rounds to whole characters). The flow keeps its rectangular
+  `VDTExclusion` (band, settling, epub) and adds `contour`; `wrapInsetSteps` reads it. Frames: the
+  pushing frame's shape is `composed/contour.ts` `frameContour` over its laid children (pictures by
+  shape, everything else by box); `exclusionsFor` passes it to `calloutLayout.exclusionInsets`,
+  which keeps its side choice (the wider side free) and sets each line by the shape. With the
+  reflow ladder (§5.11) the shape is the pictures as scaled (`fit.imageMinScale`), and a frame laid
+  out at a text scale maps its shape to the page by that scale (`scaleContourAbout`, as
+  `frameMatrix`), and the exclusions it receives back into its laid-out coordinates. The page memo
+  (§6, #857) keys the pictures' resources whole, so `contour` and its trace are in the key. Two shapes on
+  either side inset both sides; text on both sides of a shape in the middle of a measure (split
+  lines) is not done.
+- **Fallback.** A contour wrap with no known shape runs round the box with a `textWrap` warning,
+  reason `noContour` (once per resource per pass). Without contours the VDT is unchanged (preset
+  parity harness, 583 chapters, 0 diffs).
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:
@@ -631,6 +719,50 @@ label is `cp<fenceIndex>:<slot>:label:<anchor>`; same id in every locale and acr
 Relayout scope: the composed page's layout is memoised by (resolved template, slot content,
 fonts, locale, page parity); an edit inside one page re-sets that page (and its continuations).
 Budget (P16): < 100 ms for a property change on one page, < 300 ms with reflow.
+
+### 6.1 What P16 built (#857)
+
+- **Query API** (`composed/sourceMap.ts`): `sourceAt(doc, page, x, y, { file })` returns the
+  elements at a point innermost first (`text` → `line` → `block` → `box` → `frame` → `group` →
+  `template`; `design` → `slot` → `template` for decoration and running heads), each with a
+  stable `id`, a `source` (`markdown` | `config` | `attr` | `resource`), `content` (the Markdown a
+  frame or page holds) and `rect`. Hit order follows paint order: running heads, then frames and
+  decoration from the top layer down; a turned frame is hit in its upright box. Reverse:
+  `elementsForSource(doc, start, end)`; `findElement(doc, id)`. Nothing is laid out: the API reads
+  stamps.
+- **Stamps added.** `VDTChip.sourceOffsets` (relative to the chip's `:`, so the rich cache stays
+  valid), `containerAttrSources` on container fences carried to the story box so a frame's tab and
+  title map to `label` / `title`; every design block gets `elementId`, and `configPath` where the
+  slot's pointer is known (decoration through `decorationPaths`, template header/footer through
+  the new `headerPath` / `footerPath`, `/headingStyles/<i>/header`, `/header`); `attr` on a text or
+  image block that shows `{attr.x}`; `{attr.x}` in a composed page's running heads maps to the page
+  fence; `OutlineEntry.headingSource` → `TocBlockInfo` → `tocEntry.headingSource` (body offsets,
+  kept out of `outlineKey`); `FigureLabel.anchorRef` (`resourceId#anchorId`) and `FigureLabel.id`
+  (`cp<n>:<slot>:label:<anchor>`, `@<k>` for a percent label) for P6.
+- **Ids** (`composed/ids.ts`): `cp<n>`, `cp<n>:<frame>` (`~<k>` reserved for continuation pieces
+  on later pages, #859), blocks `cp<n>:<frame>-c<k>`, `cp<n>:group:<name>`,
+  `cp<n>:decoration|header|footer:<elementId>`. A chained piece on the same page keeps P4's
+  `-cont-<k>` block id.
+- **Memo** (`composed/pageMemo.ts`): `layoutComposedPageMemo` keys a page by a 64-bit digest of the
+  resolved config (once per pass), the measurement generation, the resolved template, the fence
+  index, the page's Markdown slice and blocks (offsets relative, container ids by order), the
+  geometry rounded to 1e-6 px, the side's `mirrored`, and a pass context from `build.ts` (heading
+  numbers, part, section, paragraph containers, boxes out of flow, the pictures' resources, types,
+  numbers and floats). Pages with footnotes, refs, citations, contents, index or strips are not
+  kept, nor pages whose layout left drop-cap or joining-script notes. A hit parses the stored JSON
+  and moves source offsets, `contentIndex`, container ids (`calloutPath` too) and `pageIndex`. The
+  digest is `VDTComposedPage.layoutKey`; `composedPagePaintKey(page)` adds what is laid round the
+  frames, and the Sandbox canvas keeps the bitmap of a page whose paint key is unchanged.
+- **After P7, P9, P14.** `VDTFigureLabel` carries `id`, `anchorRef` and an absolute `sourceMap`
+  (and its `sourceStart`/`sourceEnd` are now absolute: `figureLabels(block, bodyOffset)`); a
+  label with a `rect` (P6) answers `sourceAt` at level `label`. The half of a spread frame on the
+  facing page (`facingBlocks`) answers with the read blocks' ids and `facing: true`; points outside
+  `sheetClip` miss frames and decoration. Spreads are laid out afresh every time (no memo, no
+  `layoutKey`): the sheet's two pages depend on each other. Groups come from the resolved
+  template; the negotiation reads only the template and the page's content, both in the key.
+- **Cost.** A warm composed page sets in about 1 ms (stub measure), so the memo saves about half
+  of the composed-page work on a rebuild; the whole chapter build is dominated by the rest of the
+  pipeline. Bench: `__bench__/composedPage.bench.test.ts`.
 
 ## 7. Comics
 
@@ -679,7 +811,7 @@ placeholders. Decoration text elements follow the same rule.
 <tr><td>Variants</td><td><code>variants.recto/verso</code> patches; <code>spread</code> templates (§2.1).</td></tr>
 <tr><td>Header/footer</td><td>Per template, inherit by default, <code>false</code> hides.</td></tr>
 <tr><td>Decoration with text?</td><td>Only placeholders and whitelisted literals.</td></tr>
-<tr><td>Pushes other frames' text</td><td><code>exclude: 'push'</code>, rectangular, as <code>wrap</code> today; contours in P11.</td></tr>
+<tr><td>Pushes other frames' text</td><td><code>exclude: 'push'</code>, rectangular, as <code>wrap</code> today; by the pictures' contour with <code>wrap: 'contour'</code> (P11, §5.12).</td></tr>
 <tr><td>Flow frame and chaining</td><td><code>flow</code>, <code>next</code>, <code>overflow.continueIn</code>.</td></tr>
 <tr><td>Fence syntax vs comics</td><td>Four-colon <code>::::page{template}</code>; <code>:::page{split}</code> unchanged (§3.1).</td></tr>
 <tr><td>Geometry in Markdown?</td><td>Never; only <code>at="x% y%"</code> as a label fallback.</td></tr>
@@ -694,5 +826,5 @@ placeholders. Decoration text elements follow the same rule.
 P2 #853 config types/validation (§2) · P3 #854 parser (§3) · P4 #855 layout (§5.1–5.2, frames,
 decoration, backends) · P14 #856 groups (§5.3, log) · P16 #857 source map and page-scoped relayout
 (§6) · P5 #858 ladder and warnings (§5.4, §5.7) · P15 #859 continuation (§5.6) · P6 #860 anchors
-and labels (§2.6, §3.3) · P7 #861 spreads (§2.1) · P9 #862 HTML/EPUB (§8) · P11 #883 contours ·
+and labels (§2.6, §3.3) · P7 #861 spreads (§2.1) · P9 #862 HTML/EPUB (§8) · P11 #883 contours (§5.12) ·
 P12 #885 comics on frames (§7).

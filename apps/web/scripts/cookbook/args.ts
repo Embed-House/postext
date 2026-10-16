@@ -205,3 +205,13 @@ export function loadRecipes(): RecipeEntry[] {
     }
   });
 }
+
+/** The stress factor of `--stress`: from 1.05 to 3. */
+export function stressFactor(raw: string | undefined, command: string): number | undefined {
+  if (raw === undefined) return undefined;
+  const factor = Number(raw);
+  if (!/^\d+(\.\d+)?$/.test(raw) || !(factor >= 1.05 && factor <= 3)) {
+    throw new UsageError(`--stress expects a factor from 1.05 to 3 (1.3 = 30 % longer), not "${raw}"`, command);
+  }
+  return factor;
+}

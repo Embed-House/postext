@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>テンプレートページの内容が、ページのテンプレートのどの枠でもない<code>slot</code>を名乗っている（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>）。</td>
+      <td>テンプレートページの内容が、ページのテンプレートのどの枠でもない<code>slot</code>を名乗っている（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>。<code>frame</code>はその内容を受け取る流し込み枠）。</td>
       <td>その内容はテンプレートの流し込み枠に入ります。</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>テンプレートページの枠の内容が枠に収まらず、続きを流す<code>next</code>の枠も残っていない（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>。<code>overflowMm</code>は切れた高さ、<code>configPath</code>はテンプレートの枠を指すJSONポインタで、たとえば<code>/pageTemplates/0/frames/2</code>）。割り付けが出す警告で、ページの<code>pageIndex</code>が付きます。</td>
+      <td>テンプレートページの枠の内容が、収めるための手順を経ても枠に収まらず、続きを流す<code>next</code>の枠も残っていない（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>locale</code>。<code>overflowMm</code>は切れた高さ、<code>configPath</code>はテンプレートの枠を指すJSONポインタで、たとえば<code>/pageTemplates/0/frames/2</code>。<code>stepsTried</code>。<code>scale</code>と<code>imageScale</code>はテキストと画像が最後にとどまった縮小率。<code>proposals</code>はそれぞれ<code>{'{'} kind, path, value {'}'}</code>）。割り付けが出す警告で、ページの<code>pageIndex</code>が付きます。</td>
       <td>ページ単位の出力では、収まらない部分が枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
     </tr>
     <tr>
@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>本文を回り込ませる設定のリソースまたはボックス（<code>placement.wrap</code>、ボックスの<code>wrap</code>）が指定どおりに組まれなかったこと。<code>reason</code>：<code>'tooNarrow'</code>（横の本文が<code>layout.wrap.minTextWidth</code>より狭くなる）、<code>'fewLines'</code>（<code>layout.wrap.minLinesBeside</code>行より低い）、<code>'moved'</code>（段の残りに収まらない本文中の対象がアンカーとともに次の段へ移った）、<code>'verticalText'</code>。<code>resourceId</code>はリソース、<code>box</code>はボックスのスタイル。埋め込みまたはボックスを指します。</td>
-      <td>理由に応じて、対象は全幅を占めるか、次の段に置かれます。</td>
+      <td>本文を回り込ませる設定のリソースまたはボックス（<code>placement.wrap</code>、ボックスの<code>wrap</code>）が指定どおりに組まれなかったこと。<code>reason</code>：<code>'tooNarrow'</code>（横の本文が<code>layout.wrap.minTextWidth</code>より狭くなる）、<code>'fewLines'</code>（<code>layout.wrap.minLinesBeside</code>行より低い）、<code>'moved'</code>（段の残りに収まらない本文中の対象がアンカーとともに次の段へ移った）、<code>'verticalText'</code>、<code>'noContour'</code>（形がわからない画像に輪郭に沿った回り込みを指定した。<code>contour.points</code>のないSVG、透明部分のないビットマップ、ホストがトレースしていないアルファチャンネル）。<code>resourceId</code>はリソース、<code>box</code>はボックスのスタイル。埋め込みまたはボックスを指します。</td>
+      <td>理由に応じて、対象は全幅を占めるか、次の段に置かれます。<code>'noContour'</code>では、本文は画像の枠で回り込みます。画像に多角形を与えるか、透明部分のあるPNGを使うか、トレースを行う<code>readBundle</code>かSandboxで読み込んでください。</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
@@ -413,6 +413,10 @@ const blocks = parseMarkdown(content);
 ```
 
 Postextが認識するMarkdownの構文の全一覧は、[文書形式](/ja/docs/document-format)のページを参照してください。
+
+### 組版結果のソースマップ
+
+`sourceAt(doc, pageIndex, x, y, options?)`は、ページ上の一点に表示されているものを内側から順に返します。各要素は安定した`id`、`source`（Markdownの範囲、設定のJSONポインタ、ページフェンスの属性、リソースのいずれか）、`rect`を持ちます。`elementsForSource(doc, start, end, options?)`はMarkdownの範囲がページごとに何になったかを返し、`findElement(doc, id)`は組み直したあとで要素をもう一度見つけます。どれも組版がVDTに残した印を読むだけで、組版はしません。`composedPagePaintKey(page)`は、テンプレートページが前と同じものを描くかどうかを示します。ソースの種類、id、変わったところだけテンプレートページを組み直すしくみは、[テンプレートページ › ソースマップ](/ja/docs/composed-pages#ソースマップ)にあります。
 
 ### レイアウトの前にフォントを読み込む
 

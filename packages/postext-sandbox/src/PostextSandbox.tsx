@@ -21,6 +21,7 @@ import { HtmlViewport } from './viewport/HtmlViewport';
 import { PdfViewport } from './viewport/PdfViewport';
 import { ChapterPaginator } from './viewport/ChapterPaginator';
 import { useChapterHashSync } from './viewport/useChapterHashSync';
+import { useContourTraces } from './panels/resources/contourTraces';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { SandboxGlobalStyles, TooltipProvider, PortalProvider, PortalHost, uiDirectionOf, useUiRtl } from './ui';
 import { BundleReplaceDialog } from './BundleReplaceDialog';
@@ -83,6 +84,8 @@ function SandboxLayout({
   const labels = useSandboxSelector((s) => s.labels);
   const panelLabel = activePanel ? labels[PANEL_LABEL_KEYS[activePanel]] : undefined;
   useChapterHashSync();
+  // Contour wraps (#883): the alpha traces of the pictures they run round.
+  useContourTraces();
   const compact = useCompactLayout();
   // A phone opens on the pages: a panel there covers the whole preview, so
   // the one left open last time is not reopened over it.

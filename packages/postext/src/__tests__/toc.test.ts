@@ -161,8 +161,9 @@ describe(':::toc', () => {
     const partPageIndex = doc.pages.findIndex((p) => p.partInfo);
     expect(outline.map((e) => e.pageIndex)).toEqual([0, preface.pageIndex, partPageIndex, one.pageIndex, outline[4]!.pageIndex]);
     expect(part!.tocPart!.pageIndex).toBe(partPageIndex);
-    expect(lantern!.tocEntry).toEqual({ pageIndex: one.pageIndex });
-    expect(pref!.tocEntry).toEqual({ pageIndex: preface.pageIndex });
+    // And the heading it lists, by its offset in the chapter's body (#857).
+    expect(lantern!.tocEntry).toEqual({ pageIndex: one.pageIndex, headingSource: book.indexOf('# The *lantern*') });
+    expect(pref!.tocEntry).toEqual({ pageIndex: preface.pageIndex, headingSource: book.indexOf('# Preface') });
     // A continued chapter counts the pages before it.
     const continued = buildDocument({ markdown: '# Later', continuation: { pageIndexOffset: 10 } }, base);
     const laterOutline = outlineFromDoc(continued, computeOutline(parseMarkdown('# Later'), resolveAllConfig(base)));

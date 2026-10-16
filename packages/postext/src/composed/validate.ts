@@ -22,6 +22,7 @@ import { dimensionToPx } from '../units';
 import {
   FRAME_DIRECTIONS,
   FRAME_EXCLUDES,
+  FRAME_WRAPS,
   FRAME_GROUP_ALIGNS,
   FRAME_GROUP_KINDS,
   FRAME_TAKES,
@@ -56,7 +57,7 @@ const CELL_KEYS = { col: true, row: true, cols: true, rows: true } satisfies Rec
 const FRAME_KEYS = {
   name: true, placement: true, grid: true, width: true, height: true, minWidth: true, maxWidth: true, minHeight: true,
   maxHeight: true, style: true, layer: true, rotate: true, verticalAlign: true, columns: true, columnGap: true, padding: true,
-  exclude: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, fit: true,
+  exclude: true, wrap: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, fit: true,
   overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, remove: true,
 } satisfies Record<keyof FrameConfig, true>;
 const FIT_KEYS = { shrinkText: true, minScale: true, scaleImages: true, imageMinScale: true } satisfies Record<keyof FrameFitConfig, true>;
@@ -160,6 +161,7 @@ function checkFrameEntry(frame: unknown, path: string, push: Push): void {
   unknownKeys(frame.padding, PADDING_KEYS, `${path}/padding`, push);
   choice(frame, 'verticalAlign', FRAME_VERTICAL_ALIGNS, DEFAULT_FRAME.verticalAlign, path, push);
   choice(frame, 'exclude', FRAME_EXCLUDES, DEFAULT_FRAME.exclude, path, push);
+  choice(frame, 'wrap', FRAME_WRAPS, 'box', path, push);
   choice(frame, 'takes', FRAME_TAKES, '', path, push);
   choice(frame, 'writingMode', FRAME_WRITING_MODES, '', path, push);
   choice(frame, 'direction', FRAME_DIRECTIONS, '', path, push);

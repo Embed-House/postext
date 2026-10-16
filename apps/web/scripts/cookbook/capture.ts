@@ -36,6 +36,7 @@ import path from "node:path";
 import { styleText } from "node:util";
 import matter from "gray-matter";
 import { folioConfigOf, folioHash } from "../../src/lib/cookbook/folio.ts";
+import { declaresComposedPages, stretchedEdition, stretchMarkdown } from "../../src/lib/cookbook/bench.ts";
 import { hash8, sourceHash } from "../../src/lib/cookbook/hash.ts";
 import { captureDir, recipeDir, WEB_DIR } from "../../src/lib/cookbook/paths.ts";
 import { loadRegistry } from "../../src/lib/cookbook/registry.ts";
@@ -44,7 +45,7 @@ import { listRecipeSlugs, readRecipeMeta, readRecipeSources } from "../../src/li
 import type { CaptureManifest, CaptureVariant, SampleLocale, RecipeMeta, Registry, SemVer } from "../../src/lib/cookbook/types.ts";
 import { SAMPLE_LOCALES } from "../../src/lib/cookbook/types.ts";
 import { altText, sidesOf, spreadsOf } from "./cards.ts";
-import { detect, pdfPageCount, readBackFindings, runChecks } from "./checks.ts";
+import { compareFindings, detect, pdfPageCount, readBackFindings, runChecks, stressFindings } from "./checks.ts";
 import type { Finding } from "./checks.ts";
 import type { HarnessBrowser, PageChange, SandboxBundle, SandboxMeta, VariantRun } from "./harness.ts";
 import { launchBrowser, runVariant } from "./harness.ts";
@@ -74,6 +75,21 @@ export interface CaptureOptions {
   /** Write only `verified` records (#735): a recipe whose files would
    *  change is listed as needing a recapture, and fails the run. */
   verify?: boolean;
+  /** The stress test (#869, C38): each edition is laid out again with its
+   *  text this many times as long. Writes nothing. */
+  stress?: number;
+  /** Compare every published page with the approved capture (C39). */
+  compare?: boolean;
+  /** C39's threshold: the largest mean difference of a cell, of 255. */
+  maxDiff?: number;
+  /** C39 compares the layout hash only (`--no-pixels`): pages painted on
+   *  another system than the approved ones differ at every glyph edge. */
+  pixels?: boolean;
+  /** C39 fails on any engine, not only the one the capture records. */
+  strict?: boolean;
+  /** With no slugs: every recipe whose Markdown declares composed pages
+   *  (the bench), stale or not. */
+  composed?: boolean;
 }
 
 export interface CaptureResult {
@@ -170,7 +186,9 @@ function selectRecipes(opts: CaptureOptions, langs: readonly SampleLocale[], eng
       continue;
     }
     if (!named && task.meta.status === "retired") continue;
-    if (!named && !opts.all) {
+    if (!named && opts.composed) {
+      if (!declaresComposedPages(readRecipeSources(slug).content)) continue;
+    } else if (!named && !opts.all) {
       const prev = task.previous;
       const stale = !prev || prev.sourceHash !== task.sourceHash || task.variants.some((v) => !prev.variants?.[v]);
       if (!stale) continue;
@@ -822,9 +840,23 @@ export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]>
             hb, slug: task.slug, variant, meta: task.meta, engine: opts.engine, refreshNet: opts.refreshNet, png: !!opts.previewDir,
             sandbox: sandboxMeta(task.slug, variant, task.meta),
             ...(committed ? { committedDir: committed } : {}),
+            ...(opts.maxDiff !== undefined ? { maxDiff: opts.maxDiff } : {}),
           });
           sayFallbacks(run);
-          return { task, variant, ...evaluate(task, run, hb, engine, registry) };
+          const evaluated = evaluate(task, run, hb, engine, registry);
+          const bench = [
+            ...(opts.compare
+              ? compareFindings({
+                  approved: committed ? { vdtHash: task.previous?.variants?.[variant]?.vdtHash, engine: task.previous?.engine?.postext } : null,
+                  run: { vdtHash: run.facts?.vdt ? sha1(run.facts.vdt) : "", engine: engine.postext },
+                  changes: run.pageChanges, pages: run.pages.length, maxDiff: opts.maxDiff ?? PAGE_MAX_DIFF,
+                  pixels: opts.pixels !== false, strict: !!opts.strict,
+                })
+              : []),
+            ...(opts.stress ? await stressRun(task, variant, run, hb, opts) : []),
+          ];
+          addFindings(evaluated.result, bench);
+          return { task, variant, ...evaluated };
         } catch (error) {
           return { task, variant, result: failed(task.slug, variant, "harness", harnessDetail(error)), output: null };
         }
@@ -889,6 +921,40 @@ export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]>
   }
   if (opts.report) writeReport(opts.report, results, engine, hb.chrome);
   return results;
+}
+
+// ─── The composed-page bench (#869) ─────────────────────────────────────────
+
+/** lib/probe.js `PAGE_DIFFERENCE.max`: C39's threshold by default. */
+export const PAGE_MAX_DIFF = 12;
+
+/** Findings of the bench added to an edition's result: a failure makes it fail. */
+function addFindings(result: CaptureResult, findings: Finding[]): void {
+  for (const f of findings) {
+    if (f.severity === "fail") result.fails.push({ check: f.check, detail: f.detail });
+    else result.warns.push({ check: f.check, severity: f.severity, detail: f.detail });
+  }
+  result.ok = result.fails.length === 0;
+}
+
+/** C38: the edition once more, its text `opts.stress` times as long, facts only. */
+async function stressRun(task: Prepared, variant: SampleLocale, base: VariantRun, hb: HarnessBrowser, opts: CaptureOptions): Promise<Finding[]> {
+  const factor = opts.stress!;
+  const content = readRecipeSources(task.slug).content;
+  const stretch = stretchedEdition(content, variant, task.meta.sample.locales[0] ?? variant, factor);
+  process.stderr.write(dim(`  stretching ${task.slug} ${variant} · text × ${factor}\n`));
+  try {
+    const run = await runVariant({
+      hb, slug: task.slug, variant, meta: task.meta, engine: opts.engine, refreshNet: opts.refreshNet, factsOnly: true,
+      transformContent: (text) => stretchMarkdown(text, factor).markdown,
+    });
+    sayFallbacks(run);
+    return stressFindings({
+      meta: task.meta, factor, stretch, done: run.done, err: run.err, pageErrors: run.pageErrors, facts: run.facts, base: base.facts,
+    });
+  } catch (error) {
+    return [{ check: "C38", severity: "fail", detail: `the stretched edition: ${harnessDetail(error)}` }];
+  }
 }
 
 // ─── --sandbox-only ─────────────────────────────────────────────────────────

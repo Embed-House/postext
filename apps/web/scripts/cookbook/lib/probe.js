@@ -47,6 +47,12 @@ const CLOSE_RE = /^:::\s*$/;
 /** Raw-body fences whose lines belong to the comic parser. */
 const COMIC_FENCES = new Set(['page', 'strip']);
 const RESOURCE_RE = /^::resource\s*\{id="([^"]+)"\}\s*$/;
+/** The embed sent to a slot of a composed page (#854): `id` and `slot` only. */
+const RESOURCE_SLOT_RE = /^::resource\s*\{\s*(?:id="[^"]+"\s+slot=(?:"[^"]*"|'[^']*'|[\w-]+)|slot=(?:"[^"]*"|'[^']*'|[\w-]+)\s+id="[^"]+")\s*\}\s*$/;
+/** A composed page's fence (#854): four colons or more, `page` and its
+ *  attributes, and the bare fence that closes it. Its body is Markdown. */
+const COMPOSED_OPEN_RE = /^:{4,}\s*page\s*(?:\{[^}]*\})?\s*$/;
+const COMPOSED_CLOSE_RE = /^:{4,}\s*$/;
 
 // ─── The record ─────────────────────────────────────────────────────────────
 
@@ -694,6 +700,196 @@ function spansOf(blocks) {
   return out;
 }
 
+// ─── Composed pages (#869) ──────────────────────────────────────────────────
+
+/** Content warnings of composed pages that C37 reads (with `tocGroupSplit`). */
+export const COMPOSED_CONTENT_KINDS = ['frameOverflow', 'templateUnknown', 'slotUnknown', 'slotEmpty', 'pageFenceLength'];
+/** A Markdown that declares a composed page: a four-colon page fence naming a template. */
+export const COMPOSED_FENCE = /^::::\s*page\s*\{[^}\n]*\btemplate\s*=/m;
+
+const mmOf = (px, dpi) => Math.round((px / dpi) * 254) / 10;
+
+/** The points of a box a click may land on: its centre, then four points
+ *  inside its corners (a picture of a higher layer may cover the centre). */
+function probePoints(r) {
+  const at = (fx, fy) => [r.x + r.width * fx, r.y + r.height * fy];
+  return [at(0.5, 0.5), at(0.25, 0.5), at(0.75, 0.5), at(0.5, 0.25), at(0.5, 0.75), at(0.15, 0.5), at(0.85, 0.5)];
+}
+
+/** A point of a frame's own coordinates on the sheet, through `frameMatrix`. */
+function onSheet(engine, frame, [x, y]) {
+  const m = frame && typeof engine.frameMatrix === 'function' ? engine.frameMatrix(frame) : undefined;
+  return m ? [m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5]] : [x, y];
+}
+
+/** The Markdown range an element of the source map holds or comes from. */
+function rangeOf(el) {
+  const s = el?.source;
+  if (s && (s.kind === 'markdown' || s.kind === 'attr')) return { start: s.start, end: s.end };
+  return el?.content ? { start: el.content.start, end: el.content.end } : null;
+}
+
+/**
+ * The source-map round trip of one document's composed pages (#857): for
+ * every element the page fence laid out (`elementsForSource` over the
+ * fence), a point inside it is given to `sourceAt`, and the element is
+ * found again when the answer holds the same element (its stable id), or
+ * an element of its level whose Markdown range holds its text. Elements
+ * clipped at a frame's foot, shown on the facing page of a spread, turned,
+ * or under a pixel wide are passed over. Null when the engine has no
+ * source map.
+ *
+ * @param {any} engine
+ * @param {any} doc
+ * @param {{ pageOf?: (pageIndex: number) => number, markdown?: string }} [options]
+ */
+export function composedRoundTrip(engine, doc, { pageOf = (i) => i + 1, markdown = '' } = {}) {
+  if (typeof engine?.sourceAt !== 'function' || typeof engine?.elementsForSource !== 'function') return null;
+  const levels = {};
+  const misses = [];
+  for (const page of doc.pages ?? []) {
+    const composed = page.composed;
+    if (!composed) continue;
+    let matches;
+    try {
+      matches = engine.elementsForSource(doc, composed.sourceStart, composed.sourceEnd).filter((m) => m.pageIndex === page.index);
+    } catch (error) {
+      misses.push({ page: pageOf(page.index), level: 'template', id: `cp${composed.fenceIndex}`, text: `elementsForSource threw: ${error?.message ?? error}` });
+      continue;
+    }
+    const frameOfBlock = new Map();
+    for (const f of composed.frames ?? []) for (const id of f.blockIds ?? []) frameOfBlock.set(id, f);
+    for (const { element: el } of matches) {
+      const r = el.rect;
+      if (!r || el.clipped || el.facing || el.rotate || r.width < 1 || r.height < 1) continue;
+      const stat = (levels[el.level] ??= { checked: 0, missed: 0 });
+      stat.checked++;
+      // A frame and a page are on the sheet already; what a frame holds is
+      // in the frame's own coordinates when its text was scaled.
+      const inner = !['frame', 'group', 'template', 'slot', 'design'].includes(el.level);
+      const frame = inner ? frameOfBlock.get(String(el.id).replace(/:(l\d+|label:.*)$/, '')) : undefined;
+      const want = rangeOf(el);
+      const found = probePoints(r).some((point) => {
+        const [x, y] = onSheet(engine, frame, point);
+        let chain = [];
+        try {
+          chain = engine.sourceAt(doc, page.index, x, y) ?? [];
+        } catch {
+          return false;
+        }
+        return chain.some((hit) => {
+          if (hit.id === el.id) return true;
+          const got = rangeOf(hit);
+          return hit.level === el.level && want && got && got.start <= want.start && got.end >= want.end;
+        });
+      });
+      if (found) continue;
+      stat.missed++;
+      const text = want ? markdown.slice(want.start, want.end).replace(/\s+/g, ' ').trim().slice(0, 48) : '';
+      misses.push({ page: pageOf(page.index), level: el.level, id: String(el.id), text });
+    }
+  }
+  return { levels, misses };
+}
+
+/**
+ * What the composed pages of a build did (C37, C38, C40): each composed
+ * page with its template, its frames (the height each was given, what did
+ * not fit, the scale its text and pictures were left at, where it goes
+ * on) and the reflow log; the composed-page content warnings with their
+ * steps and proposals, in words when the engine says them; the contents
+ * blocks cut between columns (`tocGroupSplit`); and the source-map round
+ * trip, or `roundTrip: null` when the engine has none. `declared`: a
+ * Markdown of the build has a `::::page{template=…}` fence.
+ *
+ * @param {any} engine
+ * @param {any[]} docs
+ * @param {{ nOf?: (doc: any, pageIndex: number) => number, markdowns?: string[] }} [options]
+ */
+export function composedFacts(engine, docs, { nOf = (_doc, i) => i + 1, markdowns = [] } = {}) {
+  const pages = [];
+  const warnings = [];
+  const tocSplits = [];
+  let roundTrip = null;
+  const say = (fn, value) => {
+    try {
+      return typeof engine?.[fn] === 'function' ? String(engine[fn](value)) : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  docs.forEach((doc, d) => {
+    const dpi = doc.config?.page?.dpi ?? 300;
+    const pageOf = (i) => nOf(doc, i);
+    for (const page of doc.pages ?? []) {
+      const c = page.composed;
+      if (!c) continue;
+      pages.push({
+        n: pageOf(page.index),
+        template: c.template,
+        fenceIndex: c.fenceIndex,
+        frames: (c.frames ?? []).map((f) => ({
+          name: f.name,
+          heightMm: mmOf(f.rect.height, dpi),
+          ...(f.overflowPx > 0 ? { overflowMm: mmOf(f.overflowPx, dpi) } : {}),
+          ...(f.scale !== undefined && f.scale !== 1 ? { scale: round(f.scale, 0.001) } : {}),
+          ...(f.imageScale !== undefined ? { imageScale: round(f.imageScale, 0.001) } : {}),
+          ...(f.continuesTo ? { continuesTo: f.continuesTo } : {}),
+          ...(f.continuedFrom ? { continuedFrom: f.continuedFrom } : {}),
+          ...(f.sourceStart !== undefined ? { filled: true } : {}),
+        })),
+        events: (c.log ?? []).map((e) => ({
+          frame: e.frame, kind: e.kind,
+          ...(e.fromMm !== undefined ? { fromMm: e.fromMm } : {}),
+          ...(e.toMm !== undefined ? { toMm: e.toMm } : {}),
+          ...(e.axis ? { axis: e.axis } : {}),
+          ...(e.scale !== undefined ? { scale: e.scale } : {}),
+          ...(e.cause ? { cause: e.cause } : {}),
+          ...(say('describeReflowEvent', e) ? { text: say('describeReflowEvent', e) } : {}),
+        })),
+      });
+    }
+    for (const w of doc.contentWarnings ?? []) {
+      const page = w.pageIndex === undefined ? null : pageOf(w.pageIndex);
+      if (w.kind === 'tocGroupSplit') {
+        tocSplits.push({ page, title: w.title ?? '', columns: w.columns ?? 0 });
+        continue;
+      }
+      if (!COMPOSED_CONTENT_KINDS.includes(w.kind)) continue;
+      warnings.push({
+        kind: w.kind, page,
+        ...(w.template !== undefined ? { template: w.template } : {}),
+        ...(w.frame !== undefined ? { frame: w.frame } : {}),
+        ...(w.slot !== undefined ? { slot: w.slot } : {}),
+        ...(w.overflowMm !== undefined ? { overflowMm: w.overflowMm } : {}),
+        ...(w.locale ? { locale: w.locale } : {}),
+        ...(w.kind === 'frameOverflow'
+          ? {
+              steps: [...(w.stepsTried ?? [])],
+              proposals: (w.proposals ?? []).map((p) => ({ kind: p.kind, ...(p.path !== undefined ? { path: p.path } : {}), value: p.value, ...(say('describeFrameOverflowProposal', p) ? { text: say('describeFrameOverflowProposal', p) } : {}) })),
+            }
+          : {}),
+        ...(say('formatWarning', w) ? { text: say('formatWarning', w) } : {}),
+      });
+    }
+    const trip = composedRoundTrip(engine, doc, { pageOf, markdown: markdowns[d] ?? markdowns[0] ?? '' });
+    if (trip) {
+      roundTrip ??= { levels: {}, misses: [] };
+      for (const [level, s] of Object.entries(trip.levels)) {
+        const into = (roundTrip.levels[level] ??= { checked: 0, missed: 0 });
+        into.checked += s.checked;
+        into.missed += s.missed;
+      }
+      roundTrip.misses.push(...trip.misses);
+    }
+  });
+  return {
+    declared: markdowns.some((md) => COMPOSED_FENCE.test(md)),
+    pages, warnings, tocSplits,
+    roundTrip: roundTrip ?? (typeof engine?.sourceAt === 'function' ? { levels: {}, misses: [] } : null),
+  };
+}
+
 /**
  * Everything the checks need, as JSON. `select` is capture.doc; `hero` the
  * 1-based hero pages (for C26).
@@ -784,7 +980,11 @@ export function facts({ select = 'last', hero = [] } = {}) {
         if (CLOSE_RE.test(line)) comicBody = false;
         return;
       }
-      if (line.startsWith(':::')) {
+      if (line.startsWith('::::')) {
+        if (COMPOSED_CLOSE_RE.test(line)) return;
+        if (COMPOSED_OPEN_RE.test(line)) { directives.add('page'); return; }
+        badFences.push({ chapter, line: i + 1, text: line.slice(0, 80), name: /^:+\s*([\w-]*)/.exec(line)?.[1] ?? '' });
+      } else if (line.startsWith(':::')) {
         if (CLOSE_RE.test(line)) return;
         const m = DIRECTIVE_RE.exec(line);
         if (m && fenceNames.has(m[1])) {
@@ -794,7 +994,7 @@ export function facts({ select = 'last', hero = [] } = {}) {
         }
         badFences.push({ chapter, line: i + 1, text: line.slice(0, 80), name: /^:::\s*([\w-]*)/.exec(line)?.[1] ?? '' });
       } else if (/^::[a-z]/i.test(line)) {
-        if (RESOURCE_RE.test(line)) { directives.add('resource'); return; }
+        if (RESOURCE_RE.test(line) || RESOURCE_SLOT_RE.test(line)) { directives.add('resource'); return; }
         badFences.push({ chapter, line: i + 1, text: line.slice(0, 80), name: /^::([\w-]*)/.exec(line)?.[1] ?? '' });
       }
     });
@@ -1072,6 +1272,8 @@ export function facts({ select = 'last', hero = [] } = {}) {
     }
   }
   out.configWarnings = [...configWarnings.values()];
+  // C37, C38, C40: the composed pages, their warnings and the source map.
+  out.composed = composedFacts(engine, docs, { nOf, markdowns: source.markdowns ?? [] });
   out.converged = docs.every((doc) => doc.converged !== false);
   out.iterationCount = Math.max(...docs.map((doc) => doc.iterationCount ?? 0));
   let justified = 0;
@@ -1416,7 +1618,7 @@ async function rgbaOf(base64) {
 /** Each pair `{ n, committed, fresh }` (two WebP files, base64) decoded and
  *  compared: `{ n, differ, worst, cells }`, or `{ n, differ: true, error }`
  *  when one does not decode. */
-export async function comparePages(pairs) {
+export async function comparePages(pairs, { max = PAGE_DIFFERENCE.max } = {}) {
   const out = [];
   for (const { n, committed, fresh } of pairs) {
     try {
@@ -1426,7 +1628,7 @@ export async function comparePages(pairs) {
         out.push({ n, differ: true, worst: 255, cells: 0, error: `${a.width} × ${a.height} px committed, ${b.width} × ${b.height} px now` });
         continue;
       }
-      const d = pageDifference(a.data, b.data, a.width, a.height);
+      const d = pageDifference(a.data, b.data, a.width, a.height, { max });
       out.push({ n, differ: d.cells > 0, worst: round(d.worst, 0.1), cells: d.cells });
     } catch (error) {
       out.push({ n, differ: true, worst: 255, cells: 0, error: `${error?.message ?? error}` });

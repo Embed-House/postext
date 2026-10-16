@@ -2,7 +2,8 @@ name: Cookbook in the Sandbox
 
 # Every recipe bundle laid out by the Sandbox of the pull request: its font
 # loader, its layout service and its worker, built from the working tree
-# (`pnpm cookbook sandbox`, #736). It fails when the Sandbox raises a
+# (`pnpm cookbook sandbox`, #736); then the composed-page bench
+# (`pnpm cookbook bench`, #869). It fails when the Sandbox raises a
 # warning the recipe's pen does not, cannot lay a bundle out, or hangs. A
 # page count other than the recorded one is a warning here: a pull request
 # that moves lines on purpose cannot capture the recipes again before its
@@ -16,6 +17,7 @@ on:
       - cookbook/**
       - apps/web/public/cookbook/**
       - apps/web/scripts/cookbook/**
+      - apps/web/src/lib/cookbook/**
       - .github/workflows/cookbook-sandbox.yml
 
 # Read-only token: no job here writes to the repository (artifacts and
@@ -70,6 +72,34 @@ jobs:
           COOKBOOK_CHROME: /usr/bin/google-chrome
         run: pnpm cookbook sandbox --report "$RUNNER_TEMP/cookbook-sandbox.json"
 
+      # The composed-page bench (#869): every recipe whose Markdown declares
+      # composed pages, run on the pull request's engine (the packages'
+      # dist) in every sample language, then again with every text 30 %
+      # longer. It fails on a frameOverflow, tocGroupSplit or contentInConfig
+      # (C37), a page that neither rearranges nor goes on under the longer
+      # text, or warns without a proposal (C38), an element the source map
+      # does not bring back (C40) and a configuration over 1 MB (C41), with
+      # every capture check besides. C39 compares the layout hash with the
+      # approved capture (the pixels are left out: these pages are painted on
+      # Linux, the captures elsewhere); a layout moved on purpose warns here
+      # and is captured again after its release.
+      - name: pnpm cookbook bench
+        if: always()
+        env:
+          COOKBOOK_CHROME: /usr/bin/google-chrome
+        run: pnpm cookbook bench --engine local --no-pixels --report "$RUNNER_TEMP/cookbook-bench.json"
+
+      # The bench on its own fixture recipe (es, en, ca), which no site page
+      # publishes: the checks above run end to end on every pull request,
+      # before any published recipe has composed pages.
+      - name: pnpm cookbook bench (fixture)
+        if: always()
+        env:
+          COOKBOOK_CHROME: /usr/bin/google-chrome
+          COOKBOOK_RECIPES_DIR: ${{ github.workspace }}/apps/web/src/lib/cookbook/fixtures/recipes
+          COOKBOOK_CAPTURE_DIR: ${{ runner.temp }}/cookbook-bench-fixture
+        run: pnpm cookbook bench --engine local --no-pixels --report "$RUNNER_TEMP/cookbook-bench-fixture.json"
+
       # Kept when the check fails too, and only when this run fetched a
       # file the cache did not hold: the next run starts from it.
       - name: What the cache holds after the run
@@ -87,5 +117,8 @@ jobs:
         if: always()
         with:
           name: cookbook-sandbox
-          path: ${{ runner.temp }}/cookbook-sandbox.json
+          path: |
+            ${{ runner.temp }}/cookbook-sandbox.json
+            ${{ runner.temp }}/cookbook-bench.json
+            ${{ runner.temp }}/cookbook-bench-fixture.json
           retention-days: 14

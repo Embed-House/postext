@@ -111,7 +111,7 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>El contenido de una página compuesta nombra un <code>slot</code> que no es ningún marco de la plantilla de la página (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>El contenido de una página compuesta nombra un <code>slot</code> que no es ningún marco de la plantilla de la página (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, el marco de flujo que lo recibe).</td>
       <td>El contenido va al marco de flujo de la plantilla.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>El contenido de un marco de una página compuesta no cabe en él y el marco no tiene ningún <code>next</code> donde seguir (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, la altura cortada; <code>configPath</code>, el puntero JSON del marco de la plantilla, como <code>/pageTemplates/0/frames/2</code>). Lo da la maquetación, con el <code>pageIndex</code> de la página.</td>
+      <td>El contenido de un marco de una página compuesta no cabe en él después de la escalera de ajuste y el marco no tiene ningún <code>next</code> donde seguir (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, la altura cortada; <code>configPath</code>, el puntero JSON del marco de la plantilla, como <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> y <code>imageScale</code>, donde quedaron su texto y sus imágenes; <code>proposals</code>, cada una <code>{'{'} kind, path, value {'}'}</code>). Lo da la maquetación, con el <code>pageIndex</code> de la página.</td>
       <td>La salida paginada corta lo que no cabe al pie del marco; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida.</td>
     </tr>
     <tr>
@@ -206,8 +206,8 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>Un recurso o una caja con el texto ajustado a su alrededor (<code>placement.wrap</code>, el <code>wrap</code> de una caja) que no se compone como se pidió. <code>reason</code>: <code>'tooNarrow'</code> (el texto de al lado quedaría más estrecho que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (es más bajo que <code>layout.wrap.minLinesBeside</code> líneas), <code>'moved'</code> (uno en línea demasiado alto para el espacio que queda en su columna pasó a la siguiente, con su ancla) o <code>'verticalText'</code>. <code>resourceId</code> nombra un recurso, <code>box</code> el estilo de una caja. Señala la inserción o la caja.</td>
-      <td>El elemento ocupa su banda entera, o se coloca en la columna siguiente, según la razón.</td>
+      <td>Un recurso o una caja con el texto ajustado a su alrededor (<code>placement.wrap</code>, el <code>wrap</code> de una caja) que no se compone como se pidió. <code>reason</code>: <code>'tooNarrow'</code> (el texto de al lado quedaría más estrecho que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (es más bajo que <code>layout.wrap.minLinesBeside</code> líneas), <code>'moved'</code> (uno en línea demasiado alto para el espacio que queda en su columna pasó a la siguiente, con su ancla), <code>'verticalText'</code> o <code>'noContour'</code> (un ajuste al contorno alrededor de una imagen de forma desconocida: un SVG sin <code>contour.points</code>, un mapa de bits sin transparencia o un canal alfa que el anfitrión no trazó). <code>resourceId</code> nombra un recurso, <code>box</code> el estilo de una caja. Señala la inserción o la caja.</td>
+      <td>El elemento ocupa su banda entera, o se coloca en la columna siguiente, según la razón; con <code>'noContour'</code> el texto rodea la caja de la imagen. Dale a la imagen un polígono, usa un PNG con transparencia o léela con <code>readBundle</code> o con el Sandbox, que la trazan.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
@@ -413,6 +413,10 @@ const blocks = parseMarkdown(content);
 ```
 
 Consulta la página de [Formato del documento](/es/docs/document-format) para ver la lista completa de construcciones markdown que reconoce Postext.
+
+### Mapa de origen de un documento compuesto
+
+`sourceAt(doc, pageIndex, x, y, options?)` devuelve lo que muestra un punto de una página, de dentro afuera, cada elemento con su `id` estable, su `source` (un tramo del Markdown, un puntero JSON de la configuración, un atributo de la valla de la página o un recurso) y su `rect`. `elementsForSource(doc, start, end, options?)` devuelve lo que llegó a ser un tramo del Markdown, página a página, y `findElement(doc, id)` vuelve a encontrar un elemento tras recomponer. Leen lo que la maquetación dejó marcado en el VDT y no maquetan nada. `composedPagePaintKey(page)` dice si una página compuesta pinta lo mismo que pintó antes. Los tipos de origen, los identificadores y cómo se recompone una página compuesta solo donde cambió están en [Páginas compuestas › Mapa de origen](/es/docs/composed-pages#mapa-de-origen).
 
 ### Cargar las fuentes antes de componer
 

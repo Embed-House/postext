@@ -181,6 +181,13 @@ Si necesitas o quieres comprar algo muy caro…
 
 设了`exclude: "push"`的框不让其他框的文字进入自己的矩形：其他框中碰到它的行，在矩形遮住的那一侧缩短，就像正文中文字绕排图片一样。锚定在方框一角并标为`push`的照片，会让方框的文字从它旁边排过。如果方框要为图片留出一条固定的空栏，可以改用`padding`。
 
+再加上`"wrap": "contour"`，框就按其中图片的形状推开文字，而不是按它的矩形：抠图插画的Alpha通道，或资源`contour`中的多边形。另一个框的每一行，按形状在它旁边的宽度缩短，所以方框的文字会沿着压在上面的图画的轮廓排，方框自己不必设任何逐行的规则。推开文字的框里的题注和其他文字仍按各自的外框推开，旋转的框按它的外框推开，形状未知的图片也按它的外框推开，并给出`textWrap`警告（原因为`noContour`）。形状、阈值和间距见[文档格式 › 沿轮廓绕排](/zh/docs/document-format-resources#沿轮廓绕排)。
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### 装饰、书眉与层
 
 模板的装饰（`decoration`：图片、线条、方框和短文字）在各框的外框确定之后才排放，所以元素可以锚定到某个框（`"to": "#gasto"`）并跟着它走。装饰中的文字读取本页自己的属性：页面围栏上的`fondo="banda-retos"`给出`{attr.fondo}`，例如用`"resourceId": "{attr.fondo}"`逐页选择背景图。书眉和页脚也读取这些属性。模板的`header`或`footer`取代所在章节的设置，`false`把它隐藏，两者都没设时印出所在章节的书眉和页脚。
@@ -222,7 +229,7 @@ Si necesitas o quieres comprar algo muy caro…
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>某个<code>slot="…"</code>指定的名称不是该页模板中的任何框（通过<code>extends</code>继承的框和<code>variants</code>页面中的框都算在内）。这段内容进入流文框。</td>
+      <td>某个<code>slot="…"</code>指定的名称不是该页模板中的任何框（通过<code>extends</code>继承的框和<code>variants</code>页面中的框都算在内）。这段内容进入流文框，警告中写明是哪个框（<code>frame</code>）。</td>
       <td>改正槽位名，或者在模板中加一个同名的框。</td>
     </tr>
     <tr>
@@ -248,19 +255,109 @@ Si necesitas o quieres comprar algo muy caro…
   </tbody>
 </table>
 
+全书排好之后，这些警告还会带上所涉及的页（`pageIndex`），检查面板和`postext check`在模板、框或槽位以及源码范围旁边给出页码。
+
 ### frameOverflow
 
 这条警告来自排版，而不是上面那些读源码的检查：页面排好之后，它才出现在检查面板、`postext check`和文档的`contentWarnings`中。
 
-**原因**：灌入某个框的内容（通过它的槽位，或进入流文框的内容）比框高，而这个框已没有可以接续的`next`框。最常见的情况是文字比框能容纳的多：译文比原文长，或者框被固定的`height`或`maxHeight`限住了。放不下的部分在分页输出中于框底被裁掉；它仍留在文档、源码映射和流式版式的EPUB中。警告会给出模板、框、页码、被裁掉的高度（`overflowMm`）以及`configPath`，即该框在配置中的JSON指针（`/pageTemplates/0/frames/2`）。
+**原因**：灌入某个框的内容（通过它的槽位，或进入流文框的内容）比框高，这个框已没有可以接续的`next`框，而[逐级重排](#仍然放不下时)的各个步骤也都没能让它放下。最常见的情况是文字比框能容纳的多：译文比原文长，或者框被固定的`height`或`maxHeight`限住了。放不下的部分在分页输出中于框底被裁掉；它仍留在文档、源码映射和流式版式的EPUB中。警告会给出模板、框、页码、文档的`locale`、被裁掉的高度（`overflowMm`）、`configPath`（该框在配置中的JSON指针，`/pageTemplates/0/frames/2`）、尝试过的步骤（`stepsTried`）、文字和图片最后停留的缩放比例（`scale`、`imageScale`），以及`proposals`，即能让内容放下的修改。
 
-**解决**：给框更多空间（调高或去掉它的`height`或`maxHeight`），用`next`把它接到另一个框，缩短文字，或者换一个模板来排这一页。目前排版不会为了放下文字而自动缩小它。
+**解决**：采用其中一条建议，每条都附有在这一页上算出的取值（见[警告及其建议](#警告及其建议)）。否则就给框更多空间，用`next`把它接到另一个框，缩短文字，或者换一个模板来排这一页。
 
 ## 文字变长时
 
 模板页在模板声明的限度之内自行调整。如果一页上的各个框组成一个纵向组，在第一个框里写更长的文字，这个框就会变高来容纳它，下面的框以及锚定在它们上面的照片和装饰随之下移；模板一行也不用改。文字变短，框就回到声明的高度。标了`pin`的框或装饰元素留在模板放置它的地方，用于必须压在画面上的方框。纵向组和横向组怎样分配空间、哪个框先让步，都在模板中设定：见[配置 › 组如何分配空间](/zh/docs/configuration-composed-pages#组如何分配空间)。
 
-方框排到区域底边、组里再没有框能让出空间时，最后一个框在底边截断，排版报告`frameOverflow`（见[警告](#警告)）。这时可以缩短文字，调低另一个框的`minHeight`，允许某个框缩小，或者给组更多空间。组不会带来别的警告。
+方框排到区域底边、组里再没有框能让出空间时，放不下的那个框按下文的步骤逐级重排；组本身不带来别的警告。
+
+## 仍然放不下时
+
+内容放不下的框会依次尝试模板允许的各种腾出空间的办法，到第一个奏效的为止。每一步都叠加在前面各步之上，顺序如下：
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>步骤</th>
+      <th>排版做什么</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>框占用空闲的空间。高度随内容而定的框本来就会长进区域和组留给它的空间；高度固定（<code>height</code>）的框如果设了<code>maxHeight</code>，可以长到这个高度。</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>组把它后面的框往下推，设了<code>shrink</code>的框让出空间（见<a href="/zh/docs/configuration-composed-pages#组如何分配空间">组如何分配空间</a>）。</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>这个框以及同组其他框中的图片缩小排，每级2.5%，最小到<code>fit.imageMinScale</code>（默认80%），取能让内容放下的最大比例。图片后面的文字随之上移。</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>组中的其他框不论是否设了<code>shrink</code>，都让出空间：每个框缩到它的<code>minHeight</code>，但绝不小于它自己的内容所需。在横向组中，它们让出的是宽度，每个框最窄到它自己的文字仍能放下的宽度。</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>框中的文字缩小排，每级2.5%，最小到<code>fit.minScale</code>（默认90%），取能让它放下的最大比例。字号、行距和间距一起缩小，就像整个框改用小一号的字来排。用<code>next</code>串接的框与同一串中的其他框一起缩小。<code>fit.shrinkText: false</code>让文字保持原来的大小。</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>框到另一页上续排（<code>overflow.continueIn: 'next-page'</code>或<code>'template:&lt;id&gt;'</code>）。当前版本只报告这一步，添加的那一页要到以后的版本才会排出。</td>
+    </tr>
+  </tbody>
+</table>
+
+没有哪一步能让内容放下时，框在底边截断，保留逐级重排达到的缩放比例，排版报告`frameOverflow`。每一步都把整页重排一遍，所以结果只取决于这一页：同样的输入得到同样的页面，溢出的框按模板中的顺序处理，修改一个模板页不会改变其他任何页面。相关设置见[配置 › 内容放不下时](/zh/docs/configuration-composed-pages#内容放不下时)。
+
+### 警告及其建议
+
+`frameOverflow`写明页码、模板、框和文档的语言，所以一页西班牙语排得下、加泰罗尼亚语却溢出时，警告会写清楚；它还列出尝试过的步骤。每条建议都是数据`{ kind, path, value }`：`path`是要修改的设置的JSON指针，`value`是根据差额算出的应设值。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>建议</th>
+      <th>修改什么</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td>框的<code>fit.minScale</code>：在这一页上试出的、能让内容放下的最大文字比例，每级2.5%，最低到50%。设了<code>fit.shrinkText: false</code>时，<code>also</code>会把它打开。</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td>框的<code>maxHeight</code>：它的高度加上差额，取整毫米。只有这一页确有空间时才提出，这一点在页上试过。</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td>同组另一个框（<code>frame</code>）的<code>minHeight</code>，这个框停在最小高度，而它的内容用不了那么多：按差额调低，但不低于它的内容。在页上试过。</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td>框的<code>overflow.continueIn</code>，设为<code>'next-page'</code>。</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>书中另一个有同名框、能把内容原样放下的模板，按<code>pageTemplates</code>的顺序在这一页上试出。这是对Markdown的修改：<code>sourceStart</code>和<code>sourceEnd</code>给出页面围栏中<code>template</code>值的范围。</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>大约要删掉多少字符：放不下的行数乘以框的每行字符数。范围是框的内容。</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check`用文字打印警告及其步骤和建议，`--json`在警告的`data`下带有同样的数据：
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+检查面板以界面的语言显示同一条目。
 
 ## 重排记录
 
@@ -291,6 +388,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>框的上边（<code>axis: 'x'</code>时是左边）移动了，以距纸边的毫米数计；<code>cause</code>是因变高而推动它的那个框。</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>逐级重排把框中的图片排成<code>scale</code>的比例；需要空间的是组中另一个框时，<code>cause</code>就是那个框。</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>逐级重排把框中的文字排成<code>scale</code>的比例。</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>内容放不下：<code>toMm</code>是被截掉的高度，与<code>frameOverflow</code>中的相同。</td>
     </tr>
@@ -301,7 +406,7 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
 
 `postext check`在警告之后，为每个有事件的模板页打印一行`reflow`；加上`--json`时，报告中有一个`reflow`数组，每页一项，包括`pageIndex`、`pageLabel`、`template`、`fenceIndex`、`chapter`、`events`和`lines`（用文字写出的事件）。
 
-在代码中，这份记录是`VDTPage.composed.log`；框的`rect`与模板声明的矩形不同时，框在`VDTFrame.declaredRect`中保留声明的矩形。`composedReflowLog(doc)`返回`postext check`打印的那些条目，`describeReflowEvent(event)`把一个事件写成文字。
+在代码中，这份记录是`VDTPage.composed.log`；框的`rect`与模板声明的矩形不同时，框在`VDTFrame.declaredRect`中保留声明的矩形。`composedReflowLog(doc)`返回`postext check`打印的那些条目，`describeReflowEvent(event)`把一个事件写成文字；`describeFitStep(step)`和`describeFrameOverflowProposal(proposal)`分别对逐级重排的一步和一条建议做同样的事。文字经逐级重排缩放过的框，其`VDTFrame.scale`小于1：它的块排在放大到`1 / scale`倍的方框里（`frameContentRect(frame)`），再由`frameMatrix(frame)`放到纸面上；它的图片的缩放比例是`VDTFrame.imageScale`。
 
 ## 跨页
 
@@ -340,3 +445,65 @@ Con relojes de máquina
 `composedPages(blocks)`读取一章解析后的块（`parseMarkdownWithIssues(markdown).blocks`），按顺序为每个页面围栏返回一个节点，包括：`template`、`spread`、带有每个值源码范围（`attrSources`）的`attrs`、`fenceIndex`（该围栏在章中的序号，各语言相同）、`slots`（每个槽位的块索引，按Markdown中的顺序）、`unassigned`（没有槽位的块），以及整页的源码范围。块在`ContentBlock.slot`中记录它指定的槽位及该值的源码范围；插图是一个`resourceBlock`，其`figure`含有插图的属性和标注，每个标注带有文字、行内片段和指回Markdown的源码映射。`checkComposedSlots(pages, config)`为这些页面返回三种槽位警告。
 
 排版之后，模板页的`VDTPage.composed`记录它的模板、所套用的变体、页面围栏的属性，以及每个框的这些信息：id（`cp0:dinero`，即页面围栏的序号加框名，各语言相同）、外框、层、旋转、放不下的内容高度（`overflowPx`）、从哪个框接续而来或接续到哪个框、它在配置中的路径（`/pageTemplates/0/frames/2`）以及它的块的id。这些块是`page.floats`和`doc.blocks`中普通的标注框块，带有各自的源码范围，所以在Sandbox预览中点击一个未旋转的框，就会跳到它的Markdown。`composedPaintOrder(page)`给出渲染器绘制各框和装饰的顺序，`frameMatrix(frame)`给出框的旋转。
+
+## 来源映射
+
+模板页上画出的每样东西都知道自己写在哪里：编辑器可以从页面上的一点回到Markdown或配置，也可以从Markdown的一段找到它在页面上排成了什么。
+
+`sourceAt(doc, pageIndex, x, y)`接收排好的页面上的一个点（页面像素，从纸张左上角算起），返回那里的内容，由内向外：每个元素后面跟着包含它的元素。标注框里的一个字会带上它所在的行、段落、框、框所属的组和模板；装饰里的一个词会带上它的设计元素、装饰和模板。每个元素都有`level`、稳定的`id`、`source`，大多还有它在页面上的`rect`（转正的，即旋转框的`rotate`之前的位置）。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>来源</th>
+      <th>字段</th>
+      <th>适用于</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>、<code>end</code>（在章文件中的位置，包括front matter）、<code>file</code></td>
+      <td>一个字（若这个字是行内标签、引用或公式，则为整个行内标签、引用或公式）、一行、一个段落或列表项、包住它的标注框</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>，一个JSON指针</td>
+      <td>一个框（<code>/pageTemplates/0/frames/2</code>）、一个组、模板、装饰或页眉页脚中的设计元素（<code>/footer/elements/0</code>）及其所在的槽位</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>、<code>start</code>、<code>end</code>、<code>file</code></td>
+      <td>元素通过<code>&#123;attr.x&#125;</code>显示的文字（即页面围栏中的属性值）、框的标签和标题（其<code>:::frame</code>围栏的<code>label</code>和<code>title</code>）、由<code>&#123;attr.x&#125;</code>选定的图片</td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>、<code>anchor</code></td>
+      <td>框中或装饰中的图片；标注以<code>resourceId#anchorId</code>的形式带上它的锚点</td>
+    </tr>
+  </tbody>
+</table>
+
+层级由内向外为：`text`、`attr`、`label`、`resource`、`line`、`block`、`box`、`frame`、`group`、`design`、`slot`、`template`。框和模板还带有`content`，即它们包含的Markdown范围：框的槽位内容、整个页面围栏。`file`是宿主在选项中传入的名称（`{ file: 'tema-1.md' }`，或者对由多章拼接而成的文档，传一个以页码索引为参数的函数）。
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // 这段文字涉及的行、块、框、页面和设计文字
+findElement(doc, 'cp0:dinero');   // 重新排版后的同一个框，带有它的rect
+```
+
+`elementsForSource(doc, start, end)`反过来查，对这段Markdown涉及的每一行、每个块、框、模板页和设计文字，返回`{ pageIndex, element }`。排到框底之下的行带有`clipped: true`：在页面上被裁掉，在来源映射中仍然保留。在跨页上，跨过书脊、在对页上阅读的那半个框，在`sourceAt`和`elementsForSource`中都以它所显示的块的id作答，并带有`facing: true`。插图的标注在`label`层级作答，带有它的id和锚点，无论它画在图片的什么位置。
+
+**稳定的id。** 模板页是`cp<n>`，`n`是它的页面围栏在本章中的序号；框是`cp<n>:<框名>`（在后面页面上接续的第k段内容加`~<k>`），框中的块是`cp<n>:<框名>-c0`、`-c1`……，组是`cp<n>:group:<组名>`，装饰或页眉页脚中的元素是`cp<n>:decoration:<id>`、`cp<n>:header:<id>`、`cp<n>:footer:<id>`，插图的标注是`cp<n>:<槽位>:label:<锚点>`。这些id都不依赖位置，也不依赖文字，所以无论怎样重新排版，在本章的任何语言版本中都相同：编辑之后选区依然有效，在译本中也能找到同一个框。`findElement(doc, id)`可以重新找到该元素。
+
+**目录条目。** `:::toc`的每一行在`tocEntry.headingSource`中记录它所列标题在本章Markdown正文中的位置（不计front matter，与大纲的计法相同）；`sourceAt`在该行的块上以`heading`给出。
+
+**只重排一页。** 每个模板页的排版结果按它所读取的内容保存：模板、该页的Markdown、样式和字体、语言、纸张的正反面及其几何尺寸。之后的排版再次遇到同一页时（下一轮排版、本章别处的一次编辑、同一worker中再次分页），会直接沿用。在某一页内编辑，或修改它的页面围栏上的属性，只重排这一页；修改模板则重排所有使用该模板的页面。含有脚注、交叉引用、文献引用或目录的页面每次都重新排版，因为它印出的内容取决于书的其余部分。跨页也每次都重新排版：它的两页是同一张纸。`VDTComposedPage.layoutKey`是一页中各个框的键；`composedPagePaintKey(page)`再加上框周围的内容（页眉页脚、装饰、页码），宿主只要键不变，就可以保留已经画好的像素。沙盒的画布正是这样做的：在某一页上编辑，只重画这一页。

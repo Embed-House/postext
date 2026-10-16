@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Le contenu d’une page composée nomme un <code>slot</code> qui ne correspond à aucun bloc du modèle de la page (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>Le contenu d’une page composée nomme un <code>slot</code> qui ne correspond à aucun bloc du modèle de la page (<code>slot</code>, <code>template</code>, <code>fenceIndex</code> ; <code>frame</code>, le bloc de flux qui le reçoit).</td>
       <td>Le contenu va dans le bloc de flux du modèle.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>Le contenu d’un bloc d’une page composée ne tient pas dans le bloc, et le bloc n’a plus de <code>next</code> où continuer (<code>template</code>, <code>frame</code>, <code>fenceIndex</code> ; <code>overflowMm</code>, la hauteur coupée ; <code>configPath</code>, le pointeur JSON du bloc du modèle, par exemple <code>/pageTemplates/0/frames/2</code>). Émis par la mise en page, avec le <code>pageIndex</code> de la page.</td>
+      <td>Le contenu d’un bloc d’une page composée ne tient pas dans le bloc après la cascade de recomposition, et le bloc n’a plus de <code>next</code> où continuer (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code> ; <code>overflowMm</code>, la hauteur coupée ; <code>configPath</code>, le pointeur JSON du bloc du modèle, par exemple <code>/pageTemplates/0/frames/2</code> ; <code>stepsTried</code> ; <code>scale</code> et <code>imageScale</code>, les échelles où sont restés son texte et ses images ; <code>proposals</code>, chacune <code>{'{'} kind, path, value {'}'}</code>). Émis par la mise en page, avec le <code>pageIndex</code> de la page.</td>
       <td>La sortie paginée coupe ce qui ne tient pas au pied du bloc ; le texte reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable.</td>
     </tr>
     <tr>
@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>Une ressource ou un encadré réglé pour que le texte l’habille (<code>placement.wrap</code>, le <code>wrap</code> d’un encadré) et qui ne le fait pas comme demandé. <code>reason</code> : <code>'tooNarrow'</code> (le texte à côté serait plus étroit que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (il fait moins de <code>layout.wrap.minLinesBeside</code> lignes), <code>'moved'</code> (un élément en ligne trop haut pour la place restante dans sa colonne est passé à la suivante, avec son ancre) ou <code>'verticalText'</code>. <code>resourceId</code> nomme une ressource, <code>box</code> le style d’un encadré. Pointe sur l’insertion ou sur l’encadré.</td>
-      <td>L’élément occupe toute sa bande, ou se place dans la colonne suivante, selon la raison.</td>
+      <td>Une ressource ou un encadré réglé pour que le texte l’habille (<code>placement.wrap</code>, le <code>wrap</code> d’un encadré) et qui ne le fait pas comme demandé. <code>reason</code> : <code>'tooNarrow'</code> (le texte à côté serait plus étroit que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (il fait moins de <code>layout.wrap.minLinesBeside</code> lignes), <code>'moved'</code> (un élément en ligne trop haut pour la place restante dans sa colonne est passé à la suivante, avec son ancre), <code>'verticalText'</code> ou <code>'noContour'</code> (un habillage au contour autour d’une image dont la forme n’est pas connue : un SVG sans <code>contour.points</code>, un bitmap sans transparence, ou un canal alpha que l’hôte n’a pas tracé). <code>resourceId</code> nomme une ressource, <code>box</code> le style d’un encadré. Pointe sur l’insertion ou sur l’encadré.</td>
+      <td>L’élément occupe toute sa bande, ou se place dans la colonne suivante, selon la raison ; avec <code>'noContour'</code>, le texte habille le cadre de l’image. Donnez à l’image un polygone, prenez un PNG avec transparence, ou lisez-la avec <code>readBundle</code> ou dans le Sandbox, qui la tracent.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
@@ -413,6 +413,10 @@ const blocks = parseMarkdown(content);
 ```
 
 Voir la page [Format du document](/fr/docs/document-format) pour la liste complète des éléments de syntaxe markdown que Postext reconnaît.
+
+### Carte des sources d’un document mis en page
+
+`sourceAt(doc, pageIndex, x, y, options?)` renvoie ce que montre un point d’une page, de l’intérieur vers l’extérieur, chaque élément avec son `id` stable, sa `source` (un passage du Markdown, un pointeur JSON de la configuration, un attribut du délimiteur de page ou une ressource) et son `rect`. `elementsForSource(doc, start, end, options?)` renvoie ce qu’est devenu un passage du Markdown, page par page, et `findElement(doc, id)` retrouve un élément après une nouvelle mise en page. Ces fonctions lisent ce que la mise en page a inscrit dans le VDT et ne mettent rien en page. `composedPagePaintKey(page)` indique si une page composée peint ce qu’elle a peint auparavant. Les types de source, les identifiants et la façon dont une page composée n’est remise en page que là où elle a changé sont décrits dans [Pages composées › Carte des sources](/fr/docs/composed-pages#carte-des-sources).
 
 ### Charger les polices avant la mise en page
 

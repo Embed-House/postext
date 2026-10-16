@@ -410,6 +410,7 @@ export function measureContentBlock(
     const embedDx = frac < 1 ? (columnWidth - embedWidth) * (align === 'center' ? 0.5 : align === 'right' ? 1 : 0) : 0;
     const { resourceBlock, measured, tableRows, asideHeight } = runMeasurement({
       vdtType,
+      bodyOffset: ctx.bodyOffset,
       rawBlock,
       contentBlock,
       style,

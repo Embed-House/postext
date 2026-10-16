@@ -181,6 +181,13 @@ The text is cut between lines and goes on in the next frame, broken again at tha
 
 A frame with `exclude: "push"` keeps the text of the other frames out of its rectangle: a line of a frame that meets it is set short on the side the rectangle covers, as text wraps round a picture in the running text. A photo anchored to the corner of a box and marked `push` makes the box's text run beside it. A box that should keep a fixed column free for its pictures can use `padding` instead.
 
+With `"wrap": "contour"` as well, the frame pushes with the shape of the pictures it holds rather than its rectangle: the alpha channel of a cut-out illustration, or the polygon in its resource's `contour`. Each line of the other frame is set as short as the shape is wide beside it, so the text of a box follows the outline of a drawing laid over it, with no line breaks or indents written line by line. Captions and other text in the pushing frame keep their boxes, a turned frame pushes with its box, and a picture whose shape is not known pushes with its box too, with a `textWrap` warning (reason `noContour`). See [Document format › Contour wrap](/en/docs/document-format-resources#contour-wrap) for the shape, its threshold and its margin.
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### Decoration, running heads and layers
 
 The template's `decoration` (pictures, rules, boxes and short texts) is laid once the frames have their final boxes, so an element can anchor to a frame (`"to": "#gasto"`) and follow it. Its texts read the page's own attributes: `fondo="banda-retos"` on the page fence gives `{attr.fondo}`, for example a background picture chosen page by page with `"resourceId": "{attr.fondo}"`. The running heads read them too. A template's `header` or `footer` replaces the section's, `false` hides it, and with neither the section's running heads print.
@@ -222,7 +229,7 @@ The checks read the Markdown and the configuration before any layout, so they sh
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>A <code>slot="…"</code> names no frame of the page's template (frames inherited through <code>extends</code> and frames of a <code>variants</code> page count). The content goes to the flow frame.</td>
+      <td>A <code>slot="…"</code> names no frame of the page's template (frames inherited through <code>extends</code> and frames of a <code>variants</code> page count). The content goes to the flow frame, which the warning names (<code>frame</code>).</td>
       <td>Correct the slot name, or add a frame of that name to the template.</td>
     </tr>
     <tr>
@@ -248,19 +255,109 @@ The checks read the Markdown and the configuration before any layout, so they sh
   </tbody>
 </table>
 
+Once the book is laid out, each of these warnings also carries the page it concerns (`pageIndex`), so the Checks panel and `postext check` give the page number next to the template, the frame or slot, and the source range.
+
 ### frameOverflow
 
 This warning comes from the layout, not from the source checks above: it appears once the page has been set, in the Checks panel, in `postext check` and in the document's `contentWarnings`.
 
-**Cause.** The content poured into a frame (through its slot, or as the flow frame's content) is taller than the frame, and the frame has no `next` frame left to continue in. Most often there is more text than the frame holds: a translation that runs longer than the original, or a frame held to a fixed `height` or `maxHeight`. What does not fit is cut at the foot of the frame in paged output; it stays in the document, in the source map and in the reflowable EPUB. The warning gives the template, the frame, the page, the height cut (`overflowMm`) and `configPath`, the JSON pointer of the frame in the configuration (`/pageTemplates/0/frames/2`).
+**Cause.** The content poured into a frame (through its slot, or as the flow frame's content) is taller than the frame, the frame has no `next` frame left to continue in, and none of the steps of the [reflow ladder](#when-it-still-does-not-fit) made it fit. Most often there is more text than the frame holds: a translation that runs longer than the original, or a frame held to a fixed `height` or `maxHeight`. What does not fit is cut at the foot of the frame in paged output; it stays in the document, in the source map and in the reflowable EPUB. The warning gives the template, the frame, the page, the document's `locale`, the height cut (`overflowMm`), `configPath` (the JSON pointer of the frame in the configuration, `/pageTemplates/0/frames/2`), the steps it tried (`stepsTried`), the scale its text and pictures were left at (`scale`, `imageScale`) and `proposals`, the changes that would make it fit.
 
-**Fix.** Give the frame more room (raise or remove its `height` or `maxHeight`), chain it to another frame with `next`, shorten the text, or set the page with another template. The layout does not yet shrink the text to make it fit.
+**Fix.** Apply one of the proposals: each comes with its value, worked out on the page (see [The warning and its proposals](#the-warning-and-its-proposals)). Otherwise give the frame more room, chain it to another frame with `next`, shorten the text, or set the page with another template.
 
 ## When the text grows
 
 A composed page rearranges itself inside the limits its template declares. Write a longer text in the first box of a page whose boxes form a stack group, and the box grows to hold it while the boxes below, and the photos and decoration anchored to them, move down; no line of the template changes. A shorter text gives the box back its declared height. A frame or a decoration element marked `pin` stays where the template puts it, for a box that has to sit on the artwork. How stacks and rows share space, and which frame gives way first, is set in the template: see [Configuration › How groups share space](/en/docs/configuration-composed-pages#how-groups-share-space).
 
-When the boxes reach the foot of the area and no frame of the group can give more space, the last frame is cut at the foot and the layout reports `frameOverflow` (see [Warnings](#warnings)): shorten the text, lower another frame's `minHeight`, let a frame shrink, or give the group more room. Groups add no other warning.
+When the boxes reach the foot of the area and no frame of the group can give more space, the frame that does not fit climbs the reflow ladder below; groups add no warning of their own.
+
+## When it still does not fit
+
+A frame whose content does not fit tries, one after another, the ways its template allows to make room, and stops at the first that works. Each step is tried on top of the ones before it, in this order:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Step</th>
+      <th>What the layout does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>The frame takes free space. A frame whose height follows its content already grows into the room its area and its group leave; a frame with a fixed <code>height</code> grows up to its <code>maxHeight</code> when it has one.</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>Its group moves the frames after it down and the frames with <code>shrink</code> give space back (see <a href="/en/docs/configuration-composed-pages#how-groups-share-space">How groups share space</a>).</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>The pictures of the frame and of the other frames of its group are set smaller, in steps of 2.5 %, down to <code>fit.imageMinScale</code> (80 % by default), at the largest scale that makes the content fit. The text after a picture moves up with it.</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>The other frames of its group give space back whether they <code>shrink</code> or not: each goes down to its <code>minHeight</code>, never below what its own content needs. In a row, they give width, each down to the narrowest width its own text still fits in.</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>The frame's text is set smaller, in steps of 2.5 %, down to <code>fit.minScale</code> (90 % by default), at the largest scale that makes it fit. Font size, leading and spacing shrink together, as if the whole frame were set in a smaller size. A frame chained with <code>next</code> shrinks with the frames of its chain. <code>fit.shrinkText: false</code> leaves the text at its size.</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>The frame continues on another page (<code>overflow.continueIn: 'next-page'</code> or <code>'template:&lt;id&gt;'</code>). This release reports the step; the added page is laid out by a later one.</td>
+    </tr>
+  </tbody>
+</table>
+
+When no step makes the content fit, the frame is cut at its foot, keeps the scales the ladder reached, and the layout reports `frameOverflow`. Each step lays the whole page out again, so the result depends only on that page: the same input gives the same page, frames that overflow are taken in template order, and a change on one composed page leaves every other page as it was. The settings are in [Configuration › When content does not fit](/en/docs/configuration-composed-pages#when-content-does-not-fit).
+
+### The warning and its proposals
+
+`frameOverflow` names the page, the template, the frame and the document's language, so a page that fits in Spanish and overflows in Catalan says so, and it lists the steps it tried. Each proposal is data, `{ kind, path, value }`: `path` is the JSON pointer of the setting to change and `value` what to set it to, worked out from the shortfall.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proposal</th>
+      <th>What it changes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td><code>fit.minScale</code> of the frame: the largest text scale, in steps of 2.5 % down to 50 %, at which the content fits, tried on the page. With <code>fit.shrinkText: false</code>, <code>also</code> turns it on.</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td><code>maxHeight</code> of the frame: its height plus the shortfall, in whole millimetres. Proposed only when the page has the room, which is tried on it.</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td><code>minHeight</code> of another frame of its group (<code>frame</code>) that stands at its minimum with less content than that: lowered by the shortfall, never below its content. Tried on the page.</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td><code>overflow.continueIn</code> of the frame, set to <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>Another template of the book with a frame of the same name in which the content fits as it is, tried on the page in the order of <code>pageTemplates</code>. It is a change to the Markdown: <code>sourceStart</code> and <code>sourceEnd</code> give the range of the page fence's <code>template</code> value.</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>About how many characters to cut: the lines that do not fit, at the frame's characters per line. The range is the frame's content.</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check` prints the warning with its steps and proposals in words, and `--json` carries the same data under the warning's `data`:
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+The Checks panel shows the same entry in the language of the interface.
 
 ## Reflow log
 
@@ -291,6 +388,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>The frame's top edge (with <code>axis: 'x'</code>, its left edge) moved, in mm from the sheet's edge; <code>cause</code> is the frame whose growth moved it.</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>The reflow ladder set the frame's pictures at <code>scale</code>; <code>cause</code> is the frame of the group that needed the room, when it is another.</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>The reflow ladder set the frame's text at <code>scale</code>.</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>Content did not fit: <code>toMm</code> is the height cut, as in <code>frameOverflow</code>.</td>
     </tr>
@@ -301,7 +406,7 @@ Changes under half a millimetre are left out, and each change is rounded once to
 
 `postext check` prints one `reflow` line per composed page that has events, after the warnings; with `--json`, the report holds a `reflow` array with one entry per page: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` and `lines` (the events in words).
 
-From code, the log is `VDTPage.composed.log`, and each frame keeps the box its template declares in `VDTFrame.declaredRect` when it differs from `rect`. `composedReflowLog(doc)` returns the entries `postext check` prints, and `describeReflowEvent(event)` puts one event in words.
+From code, the log is `VDTPage.composed.log`, and each frame keeps the box its template declares in `VDTFrame.declaredRect` when it differs from `rect`. `composedReflowLog(doc)` returns the entries `postext check` prints, and `describeReflowEvent(event)` puts one event in words; `describeFitStep(step)` and `describeFrameOverflowProposal(proposal)` do the same for a step of the ladder and a proposal. A frame whose text the ladder scaled has `VDTFrame.scale` below 1: its blocks are laid out in a box `1 / scale` as large (`frameContentRect(frame)`) and `frameMatrix(frame)` puts them on the sheet; its pictures' scale is `VDTFrame.imageScale`.
 
 ## Spreads
 
@@ -340,3 +445,65 @@ On the canvas, in the Sandbox's spread view and in the Folio the two pages stand
 `composedPages(blocks)` reads the parsed blocks of a chapter (`parseMarkdownWithIssues(markdown).blocks`) and returns one node per page fence, in order: its `template`, `spread`, `attrs` with the source range of each value (`attrSources`), its `fenceIndex` (the ordinal of the fence in the chapter, the same in every language), `slots` (the indices of the blocks of each slot, in Markdown order), `unassigned` (the blocks with no slot) and the source range of the whole page. A block carries the slot it names in `ContentBlock.slot`, with the source range of the value; a figure is a `resourceBlock` whose `figure` holds its attributes and labels, each label with its text, its inline spans and a source map back to the Markdown. `checkComposedSlots(pages, config)` returns the three slot warnings for those pages.
 
 After layout, a composed page's `VDTPage.composed` records its template, the variant applied, the page fence's attributes and, for each frame, its id (`cp0:dinero`: the page fence's ordinal and the frame's name, the same in every language), its box, layer, turn, the height of content that did not fit (`overflowPx`), the frame it continues from or into, its config path (`/pageTemplates/0/frames/2`) and the ids of its blocks. Those blocks are ordinary callout blocks in `page.floats` and `doc.blocks`, with their source ranges, so a click in an upright frame of the Sandbox preview lands on its Markdown. `composedPaintOrder(page)` gives the order a renderer paints the frames and the decoration in, and `frameMatrix(frame)` the turn of a frame.
+
+## Source map
+
+Everything a composed page paints knows where it was written, so an editor can go from a point of the page to the Markdown or the configuration, and from a range of the Markdown to what it became on the page.
+
+`sourceAt(doc, pageIndex, x, y)` takes a point of a laid-out page, in page pixels from the sheet's top-left corner, and returns what is there, innermost first, each element followed by the ones that hold it. A glyph of a box comes with its line, its paragraph, its frame, the frame's groups and the template; a word of the decoration comes with its design element, the decoration and the template. Each element has a `level`, a stable `id`, a `source`, and, for most, its `rect` on the page (upright, before a turned frame's `rotate`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Source</th>
+      <th>Fields</th>
+      <th>Given for</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>, <code>end</code> (offsets in the chapter file, front matter counted), <code>file</code></td>
+      <td>a glyph (one character; a whole chip, reference or formula when the glyph is one), a line, a paragraph or list item, a box round it</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>, a JSON pointer</td>
+      <td>a frame (<code>/pageTemplates/0/frames/2</code>), a group, the template, a design element of the decoration or the running heads (<code>/footer/elements/0</code>) and its slot</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>, <code>start</code>, <code>end</code>, <code>file</code></td>
+      <td>text an element shows through <code>&#123;attr.x&#125;</code> (the value in the page fence), a frame's tab and title (the <code>label</code> and <code>title</code> of its <code>:::frame</code> fence), a picture chosen by <code>&#123;attr.x&#125;</code></td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>, <code>anchor</code></td>
+      <td>a picture in a frame or in the decoration; a label carries its anchor as <code>resourceId#anchorId</code></td>
+    </tr>
+  </tbody>
+</table>
+
+The levels, innermost first: `text`, `attr`, `label`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. A frame and the template also carry `content`, the range of the Markdown they hold: the frame's slot content, the whole page fence. `file` is the name the host passes in the options (`{ file: 'tema-1.md' }`, or a function of the page index for a document stitched from several chapters).
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // lines, blocks, frames, pages and design text the range touches
+findElement(doc, 'cp0:dinero');   // the same frame after a relayout, with its rect
+```
+
+`elementsForSource(doc, start, end)` goes the other way and returns `{ pageIndex, element }` for every line, block, frame, composed page and design text the range touches. A line set past its frame's foot comes with `clipped: true`: it is cut on the page and kept in the source map. On a spread, the half of a frame that crosses the spine and is read on the facing page answers with the ids of the blocks it shows and `facing: true`, in `sourceAt` and in `elementsForSource`. A figure label answers at level `label`, with its id and its anchor, wherever it is drawn on the picture.
+
+**Stable ids.** A composed page is `cp<n>`, `n` the ordinal of its page fence in the chapter; a frame is `cp<n>:<frame>` (with `~<k>` for the k-th piece of its content that goes on on a later page), its blocks `cp<n>:<frame>-c0`, `-c1`…, a group `cp<n>:group:<name>`, an element of the decoration or the running heads `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, and a label of a figure `cp<n>:<slot>:label:<anchor>`. None of them depends on positions or on the words, so an id is the same after any relayout and in every language of the chapter: a selection survives an edit, and the same frame can be found in the translation. `findElement(doc, id)` finds the element again.
+
+**Contents entries.** A row of `:::toc` carries in `tocEntry.headingSource` the offset of the heading it lists in its chapter's Markdown body (front matter not counted, as outlines count); `sourceAt` gives it as `heading` on the row's block.
+
+**Relayout of one page.** The layout of each composed page is kept by what it reads: the template, the Markdown of the page, the styles and fonts, the language, the side of the sheet and its geometry. A later build that meets the same page (the next pass of the layout, an edit elsewhere in the chapter, the chapter paginated again in the same worker) takes it as it was. An edit inside a page, or a change of an attribute of its fence, sets that page alone; a change of the template sets every page that uses it. A page holding footnotes, references, citations or a contents listing is set afresh every time, since what it prints depends on the rest of the book. A spread is laid out afresh every time too: its two pages are one sheet. `VDTComposedPage.layoutKey` is the key of a page's frames; `composedPagePaintKey(page)` adds what is laid round them (running heads, decoration, page number), so a host can keep the pixels it painted while the key stays the same. The Sandbox canvas does: an edit on one page repaints that page.

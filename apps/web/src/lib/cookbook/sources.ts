@@ -4,7 +4,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { COOKBOOK_DIR, KIT_DIR, recipeDir } from "./paths.ts";
+import { KIT_DIR, RECIPES_DIR, recipeDir } from "./paths.ts";
 import { penJson } from "./compose.ts";
 import type { KitBlock, RecipeMeta, RecipeSources } from "./types.ts";
 import { KIT_ORDER, SLUG_PATTERN } from "./types.ts";
@@ -13,14 +13,15 @@ function readOptional(file: string): string {
   return fs.existsSync(file) ? fs.readFileSync(file, "utf-8") : "";
 }
 
-/** Every folder under cookbook/ that holds a recipe.json (folders starting
- *  with `_` or `.` are tooling), sorted by name. */
+/** Every folder under cookbook/ (or `COOKBOOK_RECIPES_DIR`) that holds a
+ *  recipe.json (folders starting with `_` or `.` are tooling), sorted by
+ *  name. */
 export function listRecipeSlugs(): string[] {
-  if (!fs.existsSync(COOKBOOK_DIR)) return [];
+  if (!fs.existsSync(RECIPES_DIR)) return [];
   return fs
-    .readdirSync(COOKBOOK_DIR, { withFileTypes: true })
+    .readdirSync(RECIPES_DIR, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && !/^[_.]/.test(entry.name))
-    .filter((entry) => fs.existsSync(path.join(COOKBOOK_DIR, entry.name, "recipe.json")))
+    .filter((entry) => fs.existsSync(path.join(RECIPES_DIR, entry.name, "recipe.json")))
     .map((entry) => entry.name)
     .sort();
 }

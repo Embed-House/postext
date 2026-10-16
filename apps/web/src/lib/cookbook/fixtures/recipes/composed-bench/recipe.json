@@ -1,0 +1,30 @@
+{
+  "$schema": "../../../../../../../../cookbook/recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 999,
+  "status": "draft",
+  "chapter": "page",
+  "order": 999,
+  "level": 3,
+  "genres": ["textbook"],
+  "outputs": ["canvas"],
+  "features": {
+    "primary": ["color-palette"],
+    "also": ["chips", "callout-styles"]
+  },
+  "answers": [],
+  "gotchas": [],
+  "engine": { "postext": "1.35.0" },
+  "kit": ["core", "fonts", "viewer", "images"],
+  "sample": { "locales": ["es", "en", "ca"] },
+  "capture": { "hero": 1, "card": "page", "expect": { "pages": [1, 1] } },
+  "credits": {
+    "authors": [{ "name": "Ignacio Ferro", "github": "drnachio" }],
+    "text": [],
+    "images": [],
+    "fonts": [{ "family": "Source Sans 3", "license": "OFL-1.1" }]
+  },
+  "license": { "code": "MIT", "content": "CC-BY-4.0" },
+  "created": "2026-10-16",
+  "updated": "2026-10-16"
+}

@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Inhalt einer zusammengesetzten Seite nennt einen <code>slot</code>, der kein Rahmen der Vorlage der Seite ist (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>Inhalt einer zusammengesetzten Seite nennt einen <code>slot</code>, der kein Rahmen der Vorlage der Seite ist (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, der Flussrahmen, der ihn aufnimmt).</td>
       <td>Der Inhalt kommt in den Flussrahmen der Vorlage.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>Der Inhalt eines Rahmens einer zusammengesetzten Seite passt nicht hinein, und der Rahmen hat kein <code>next</code> mehr (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, die abgeschnittene Höhe; <code>configPath</code>, der JSON-Zeiger des Vorlagenrahmens, etwa <code>/pageTemplates/0/frames/2</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der Seite.</td>
+      <td>Der Inhalt eines Rahmens einer zusammengesetzten Seite passt auch nach den Umbruchstufen nicht hinein, und der Rahmen hat kein <code>next</code> mehr (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, die abgeschnittene Höhe; <code>configPath</code>, der JSON-Zeiger des Vorlagenrahmens, etwa <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> und <code>imageScale</code>, die Skalierung, bei der Text und Bilder geblieben sind; <code>proposals</code>, jeweils <code>{'{'} kind, path, value {'}'}</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der Seite.</td>
       <td>Die paginierte Ausgabe schneidet am Fuß des Rahmens ab, was nicht passt; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten.</td>
     </tr>
     <tr>
@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>Eine Ressource oder ein Kasten, die bzw. der vom Text umflossen werden soll (<code>placement.wrap</code>, das <code>wrap</code> eines Kastens), es aber nicht wie gewünscht wird. <code>reason</code>: <code>'tooNarrow'</code> (der Text daneben wäre schmaler als <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (das Objekt ist kürzer als <code>layout.wrap.minLinesBeside</code> Zeilen), <code>'moved'</code> (ein Inline-Objekt, zu hoch für den restlichen Raum seiner Spalte, rückte mit seinem Anker in die nächste) oder <code>'verticalText'</code>. <code>resourceId</code> nennt eine Ressource, <code>box</code> das Format eines Kastens. Verweist auf die Einbettung oder den Kasten.</td>
-      <td>Das Objekt nimmt sein Band ganz ein oder steht in der nächsten Spalte, wie der Grund sagt.</td>
+      <td>Eine Ressource oder ein Kasten, die bzw. der vom Text umflossen werden soll (<code>placement.wrap</code>, das <code>wrap</code> eines Kastens), es aber nicht wie gewünscht wird. <code>reason</code>: <code>'tooNarrow'</code> (der Text daneben wäre schmaler als <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (das Objekt ist kürzer als <code>layout.wrap.minLinesBeside</code> Zeilen), <code>'moved'</code> (ein Inline-Objekt, zu hoch für den restlichen Raum seiner Spalte, rückte mit seinem Anker in die nächste), <code>'verticalText'</code> oder <code>'noContour'</code> (ein Konturenumfluss um ein Bild, dessen Form nicht bekannt ist: ein SVG ohne <code>contour.points</code>, eine Bitmap ohne Transparenz oder ein Alphakanal, den der Host nicht abgetastet hat). <code>resourceId</code> nennt eine Ressource, <code>box</code> das Format eines Kastens. Verweist auf die Einbettung oder den Kasten.</td>
+      <td>Das Objekt nimmt sein Band ganz ein oder steht in der nächsten Spalte, wie der Grund sagt; bei <code>'noContour'</code> umfließt der Text den Kasten des Bildes. Geben Sie dem Bild ein Polygon, nehmen Sie ein PNG mit Transparenz, oder lesen Sie es mit <code>readBundle</code> oder in der Sandbox ein, die es abtasten.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
@@ -413,6 +413,10 @@ const blocks = parseMarkdown(content);
 ```
 
 Die vollständige Liste der Markdown-Konstrukte, die Postext erkennt, finden Sie auf der Seite [Dokumentformat](/de/docs/document-format).
+
+### Quellenzuordnung eines gesetzten Dokuments
+
+`sourceAt(doc, pageIndex, x, y, options?)` gibt zurück, was ein Punkt einer Seite zeigt, von innen nach außen, jedes Element mit seiner stabilen `id`, seiner `source` (ein Stück Markdown, ein JSON-Pointer der Konfiguration, ein Attribut der Seitenbegrenzung oder eine Ressource) und seinem `rect`. `elementsForSource(doc, start, end, options?)` gibt zurück, was aus einem Stück Markdown geworden ist, Seite für Seite, und `findElement(doc, id)` findet ein Element nach einem Neusatz wieder. Sie lesen, was der Satz im VDT vermerkt hat, und setzen nichts. `composedPagePaintKey(page)` sagt, ob eine zusammengesetzte Seite zeichnet, was sie zuvor gezeichnet hat. Die Quellenarten, die IDs und wie eine zusammengesetzte Seite nur dort neu gesetzt wird, wo sie sich geändert hat, stehen unter [Zusammengesetzte Seiten › Quellenzuordnung](/de/docs/composed-pages#quellenzuordnung).
 
 ### Schriften vor dem Layout laden
 

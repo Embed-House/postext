@@ -53,7 +53,7 @@ import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
 import { altWithLabels } from './composed/labelText';
-import { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameClips, frameMatrix } from './composed/paint';
+import { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameClips, frameContentRect, frameMatrix } from './composed/paint';
 import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
 /**
@@ -3406,7 +3406,7 @@ function composedFrameOpen(frame: VDTFrame, z: number, facing = false): string {
   const m = frameMatrix(frame);
   if (m) decls.push('transform-origin:0 0', `transform:matrix(${m.map(frameNum).join(',')})`);
   if (frameClips(frame)) {
-    const { x, y, width, height } = frame.rect;
+    const { x, y, width, height } = frameContentRect(frame);
     const [l, t, r, b] = [x, y, x + width, y + height].map(frameNum);
     decls.push(`clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px)`);
   }

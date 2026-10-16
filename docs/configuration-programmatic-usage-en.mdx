@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Content of a composed page names a <code>slot</code> that is no frame of the page's template (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>Content of a composed page names a <code>slot</code> that is no frame of the page's template (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, the flow frame that takes it).</td>
       <td>The content goes to the template's flow frame.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>The content laid into a frame of a composed page does not fit it, and the frame has no <code>next</code> frame left (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, the height cut; <code>configPath</code>, the JSON pointer of the template frame, such as <code>/pageTemplates/0/frames/2</code>). Raised by the layout, with the <code>pageIndex</code> of the page.</td>
+      <td>The content laid into a frame of a composed page does not fit it after the reflow ladder, and the frame has no <code>next</code> frame left (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, the height cut; <code>configPath</code>, the JSON pointer of the template frame, such as <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> and <code>imageScale</code>, where its text and pictures were left; <code>proposals</code>, each <code>{'{'} kind, path, value {'}'}</code>). Raised by the layout, with the <code>pageIndex</code> of the page.</td>
       <td>Paged output cuts what does not fit at the frame's foot; it stays in the document, the source map and the reflowable EPUB.</td>
     </tr>
     <tr>
@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>A resource or a box set to wrap the text round it (<code>placement.wrap</code>, a box's <code>wrap</code>) that does not as asked. <code>reason</code>: <code>'tooNarrow'</code> (the text beside it would be narrower than <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (it is shorter than <code>layout.wrap.minLinesBeside</code> lines), <code>'moved'</code> (an inline one too tall for the room left in its column moved on to the next, its anchor with it) or <code>'verticalText'</code>. <code>resourceId</code> names a resource, <code>box</code> a box's style. Points at the embed or the box.</td>
-      <td>The item takes its band whole, or stands in the next column, as the reason says.</td>
+      <td>A resource or a box set to wrap the text round it (<code>placement.wrap</code>, a box's <code>wrap</code>) that does not as asked. <code>reason</code>: <code>'tooNarrow'</code> (the text beside it would be narrower than <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (it is shorter than <code>layout.wrap.minLinesBeside</code> lines), <code>'moved'</code> (an inline one too tall for the room left in its column moved on to the next, its anchor with it) <code>'verticalText'</code>, or <code>'noContour'</code> (a contour wrap round a picture whose shape is not known: an SVG with no <code>contour.points</code>, a bitmap with no transparency, or an alpha channel the host did not trace). <code>resourceId</code> names a resource, <code>box</code> a box's style. Points at the embed or the box.</td>
+      <td>The item takes its band whole, or stands in the next column, as the reason says; with <code>'noContour'</code> the text runs round the picture's box. Give the picture a polygon, use a PNG with transparency, or read it through <code>readBundle</code> or the Sandbox, which trace it.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
@@ -413,6 +413,10 @@ const blocks = parseMarkdown(content);
 ```
 
 See the [Document Format](/en/docs/document-format) page for the full list of markdown constructs Postext recognises.
+
+### Source map of a laid-out document
+
+`sourceAt(doc, pageIndex, x, y, options?)` returns what a point of a page shows, innermost first, each element with its stable `id`, its `source` (a range of the Markdown, a JSON pointer of the configuration, an attribute of the page fence, or a resource) and its `rect`. `elementsForSource(doc, start, end, options?)` returns what a range of the Markdown became, page by page, and `findElement(doc, id)` finds an element again after a relayout. They read what the layout stamped on the VDT and lay nothing out. `composedPagePaintKey(page)` says whether a composed page paints what it painted before. The source kinds, the ids and how a composed page is laid out again only where it changed are in [Composed pages › Source map](/en/docs/composed-pages#source-map).
 
 ### Loading fonts before layout
 

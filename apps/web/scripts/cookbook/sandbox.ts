@@ -121,7 +121,9 @@ export function extraWarnings(expected: readonly string[], got: readonly string[
  * Warning kinds by the release that first raises them. A recipe pins the
  * engine of its capture; the Sandbox runs the tree's. A kind that came after
  * the pinned engine is one the pen could not raise: the edition is to be
- * captured again on the release that brings it (#887), not broken.
+ * captured again on the release that brings it (#887), not broken. A new
+ * reason of an older kind is keyed `"<kind> <reason>"` (a word of the
+ * warning after its kind).
  */
 export const WARNING_SINCE: Readonly<Record<string, string>> = {
   contentInConfig: "1.34.0",
@@ -145,7 +147,19 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   frameOverflow: "1.34.1",
   unknownMarkStyle: "1.34.1",
   spreadMismatch: "1.35.0",
+  "textWrap noContour": "1.36.0",
 };
+
+/** The release that first raises `warning` (its kind, or its kind and one
+ *  of its words: a reason added later), if it is in {@link WARNING_SINCE}. */
+export function warningSince(warning: string): string | undefined {
+  const [kind = "", ...words] = warning.split(" ");
+  for (const word of words) {
+    const since = WARNING_SINCE[`${kind} ${word}`];
+    if (since) return since;
+  }
+  return WARNING_SINCE[kind];
+}
 
 /** `a` is a later release than `b` ("1.34.0" against "1.33.11"). */
 export function laterRelease(a: string, b: string): boolean {
@@ -233,7 +247,7 @@ export function compareEdition(
     return out;
   }
   for (const warning of extraWarnings(expected.sandbox.warnings ?? [], raised)) {
-    const since = WARNING_SINCE[warning.split(" ")[0]!];
+    const since = warningSince(warning);
     if (since && laterRelease(since, expected.engine)) {
       add("warn", `the Sandbox raises ${warning}, a warning postext ${since} added after the recipe's ${expected.engine}: capture again on ${since} or later`);
       continue;

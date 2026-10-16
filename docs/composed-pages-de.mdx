@@ -181,6 +181,13 @@ Der Text wird zwischen zwei Zeilen geteilt und läuft im nächsten Rahmen weiter
 
 Ein Rahmen mit `exclude: "push"` hält den Text der anderen Rahmen aus seinem Rechteck heraus: Eine Zeile eines anderen Rahmens, die darauf trifft, wird auf der Seite, die das Rechteck abdeckt, kürzer gesetzt, so wie der Fließtext ein Bild umfließt. Ein Foto, das an der Ecke eines Kastens verankert und mit `push` markiert ist, lässt den Text des Kastens neben sich herlaufen. Ein Kasten, der eine feste Spalte für seine Bilder freihalten soll, kann stattdessen `padding` verwenden.
 
+Kommt `"wrap": "contour"` hinzu, verdrängt der Rahmen mit der Form der Bilder, die er enthält, statt mit seinem Rechteck: mit dem Alphakanal einer freigestellten Illustration oder dem Polygon im `contour` ihrer Ressource. Jede Zeile des anderen Rahmens wird um die Breite gekürzt, die die Form neben ihr einnimmt, sodass der Text eines Kastens dem Umriss einer darübergelegten Zeichnung folgt, ohne dass seine Zeilen einzeln geregelt werden müssen. Legenden und anderer Text im verdrängenden Rahmen behalten ihre Kästen, ein gedrehter Rahmen verdrängt mit seinem Rechteck, und ein Bild, dessen Form nicht bekannt ist, verdrängt ebenfalls mit seinem Kasten, mit einer Warnung `textWrap` (Grund `noContour`). Zur Form, ihrer Schwelle und ihrem Abstand siehe [Dokumentformat › Konturenumfluss](/de/docs/document-format-resources#konturenumfluss).
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### Dekor, Kolumnentitel und Ebenen
 
 Das Dekor der Vorlage (`decoration`: Bilder, Linien, Kästen und kurze Texte) wird gesetzt, sobald die Rahmen ihre endgültige Box haben; ein Element kann sich daher an einem Rahmen verankern (`"to": "#gasto"`) und ihm folgen. Seine Texte lesen die Attribute der Seite selbst: `fondo="banda-retos"` an der Seitenbegrenzung ergibt `{attr.fondo}`, etwa für ein Hintergrundbild, das Seite für Seite mit `"resourceId": "{attr.fondo}"` gewählt wird. Auch die Kolumnentitel lesen sie. Das `header` oder `footer` einer Vorlage ersetzt das des Abschnitts, `false` blendet es aus, und ohne beides erscheinen die Kolumnentitel des Abschnitts.
@@ -222,7 +229,7 @@ Die Prüfungen lesen Markdown und Konfiguration vor jedem Umbruch. Deshalb ersch
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Ein <code>slot="…"</code> nennt keinen Rahmen der Vorlage der Seite (über <code>extends</code> geerbte Rahmen und die Rahmen einer Seite aus <code>variants</code> zählen mit). Der Inhalt kommt in den Flussrahmen.</td>
+      <td>Ein <code>slot="…"</code> nennt keinen Rahmen der Vorlage der Seite (über <code>extends</code> geerbte Rahmen und die Rahmen einer Seite aus <code>variants</code> zählen mit). Der Inhalt kommt in den Flussrahmen, den die Warnung nennt (<code>frame</code>).</td>
       <td>Korrigieren Sie den Slot-Namen, oder fügen Sie der Vorlage einen Rahmen mit diesem Namen hinzu.</td>
     </tr>
     <tr>
@@ -248,19 +255,109 @@ Die Prüfungen lesen Markdown und Konfiguration vor jedem Umbruch. Deshalb ersch
   </tbody>
 </table>
 
+Ist das Buch umbrochen, trägt jede dieser Warnungen auch die Seite, die sie betrifft (`pageIndex`), sodass das Bedienfeld Prüfungen und `postext check` die Seitenzahl neben der Vorlage, dem Rahmen oder Slot und dem Quellbereich angeben.
+
 ### frameOverflow
 
 Diese Warnung kommt aus dem Umbruch, nicht aus den Quellprüfungen oben: Sie erscheint, sobald die Seite gesetzt ist, im Bedienfeld Prüfungen, in `postext check` und in den `contentWarnings` des Dokuments.
 
-**Ursache.** Der Inhalt, der in einen Rahmen fließt (über seinen Slot oder als Inhalt des Fließrahmens), ist höher als der Rahmen, und der Rahmen hat kein `next` mehr, in dem es weitergeht. Meist ist es mehr Text, als der Rahmen fasst: eine Übersetzung, die länger läuft als das Original, oder ein Rahmen mit festem `height` oder `maxHeight`. Was nicht passt, wird in der paginierten Ausgabe am Fuß des Rahmens abgeschnitten; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten. Die Warnung nennt die Vorlage, den Rahmen, die Seite, die abgeschnittene Höhe (`overflowMm`) und `configPath`, den JSON-Zeiger des Rahmens in der Konfiguration (`/pageTemplates/0/frames/2`).
+**Ursache.** Der Inhalt, der in einen Rahmen fließt (über seinen Slot oder als Inhalt des Fließrahmens), ist höher als der Rahmen, der Rahmen hat kein `next` mehr, in dem es weitergeht, und keine der [Umbruchstufen](#wenn-der-inhalt-immer-noch-nicht-passt) hat ihn passend gemacht. Meist ist es mehr Text, als der Rahmen fasst: eine Übersetzung, die länger läuft als das Original, oder ein Rahmen mit festem `height` oder `maxHeight`. Was nicht passt, wird in der paginierten Ausgabe am Fuß des Rahmens abgeschnitten; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten. Die Warnung nennt die Vorlage, den Rahmen, die Seite, die `locale` des Dokuments, die abgeschnittene Höhe (`overflowMm`), `configPath` (den JSON-Zeiger des Rahmens in der Konfiguration, `/pageTemplates/0/frames/2`), die versuchten Stufen (`stepsTried`), die Skalierung, bei der Text und Bilder geblieben sind (`scale`, `imageScale`), und `proposals`, die Änderungen, mit denen der Inhalt passen würde.
 
-**Behebung.** Geben Sie dem Rahmen mehr Platz (erhöhen oder entfernen Sie `height` oder `maxHeight`), verketten Sie ihn mit `next` mit einem weiteren Rahmen, kürzen Sie den Text oder setzen Sie die Seite mit einer anderen Vorlage. Der Umbruch verkleinert den Text bisher nicht, damit er passt.
+**Behebung.** Übernehmen Sie einen der Vorschläge: Jeder bringt seinen Wert mit, auf der Seite berechnet (siehe [Die Warnung und ihre Vorschläge](#die-warnung-und-ihre-vorschläge)). Andernfalls geben Sie dem Rahmen mehr Platz, verketten Sie ihn mit `next` mit einem weiteren Rahmen, kürzen Sie den Text oder setzen Sie die Seite mit einer anderen Vorlage.
 
 ## Wenn der Text wächst
 
 Eine zusammengesetzte Seite ordnet sich innerhalb der Grenzen neu an, die ihre Vorlage angibt. Schreiben Sie einen längeren Text in den ersten Kasten einer Seite, deren Kästen eine Stapelgruppe bilden, dann wächst der Kasten, bis der Text hineinpasst, und die Kästen darunter rücken nach unten, mitsamt den Fotos und dem Dekor, die an ihnen verankert sind; an der Vorlage ändert sich dabei keine Zeile. Mit einem kürzeren Text kehrt der Kasten zu seiner angegebenen Höhe zurück. Ein Rahmen oder ein Element des Dekors mit `pin` bleibt dort, wo die Vorlage ihn hinsetzt, etwa ein Kasten, der genau auf der Illustration liegen muss. Wie Stapel und Reihen den Platz teilen und welcher Rahmen zuerst nachgibt, legt die Vorlage fest: siehe [Konfiguration › Wie Gruppen den Platz teilen](/de/docs/configuration-composed-pages#wie-gruppen-den-platz-teilen).
 
-Erreichen die Kästen den Fuß des Bereichs und kann kein Rahmen der Gruppe mehr Platz abgeben, wird der letzte Rahmen am Fuß abgeschnitten, und der Umbruch meldet `frameOverflow` (siehe [Warnungen](#warnungen)). Kürzen Sie dann den Text, senken Sie das `minHeight` eines anderen Rahmens, lassen Sie einen Rahmen schrumpfen oder geben Sie der Gruppe mehr Raum. Weitere Warnungen erzeugen Gruppen nicht.
+Erreichen die Kästen den Fuß des Bereichs und kann kein Rahmen der Gruppe mehr Platz abgeben, durchläuft der Rahmen, dessen Inhalt nicht passt, die unten beschriebenen Umbruchstufen; eine eigene Warnung erzeugen Gruppen nicht.
+
+## Wenn der Inhalt immer noch nicht passt
+
+Ein Rahmen, dessen Inhalt nicht passt, probiert nacheinander die Wege aus, die ihm seine Vorlage lässt, um Platz zu gewinnen, und hört beim ersten auf, der genügt. Jede Stufe kommt zu den vorherigen hinzu, in dieser Reihenfolge:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Stufe</th>
+      <th>Was der Umbruch tut</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>Der Rahmen nimmt freien Platz. Ein Rahmen, dessen Höhe seinem Inhalt folgt, wächst ohnehin in den Raum, den ihm sein Bereich und seine Gruppe lassen; ein Rahmen mit fester <code>height</code> wächst bis zu seiner <code>maxHeight</code>, sofern er eine hat.</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>Seine Gruppe schiebt die Rahmen nach ihm nach unten, und die Rahmen mit <code>shrink</code> geben Platz ab (siehe <a href="/de/docs/configuration-composed-pages#wie-gruppen-den-platz-teilen">Wie Gruppen den Platz teilen</a>).</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>Die Bilder des Rahmens und der übrigen Rahmen seiner Gruppe werden verkleinert, in Schritten von 2,5 %, bis auf <code>fit.imageMinScale</code> (standardmäßig 80 %), und zwar auf die größte Skalierung, bei der der Inhalt passt. Der Text nach einem Bild rückt mit ihm nach oben.</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>Die übrigen Rahmen der Gruppe geben Platz ab, ob sie <code>shrink</code> haben oder nicht: jeder bis auf seine <code>minHeight</code>, nie unter das, was sein eigener Inhalt braucht. In einer Reihe geben sie Breite ab, jeder bis auf die schmalste Breite, in die sein Text noch passt.</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>Der Text des Rahmens wird verkleinert, in Schritten von 2,5 %, bis auf <code>fit.minScale</code> (standardmäßig 90 %), und zwar auf die größte Skalierung, bei der er passt. Schriftgröße, Zeilenabstand und Abstände schrumpfen gemeinsam, als wäre der ganze Rahmen in einem kleineren Grad gesetzt. Ein mit <code>next</code> verketteter Rahmen schrumpft mit den Rahmen seiner Kette. <code>fit.shrinkText: false</code> lässt den Text in seiner Größe.</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>Der Rahmen geht auf einer anderen Seite weiter (<code>overflow.continueIn: 'next-page'</code> oder <code>'template:&lt;id&gt;'</code>). Diese Version meldet die Stufe; die hinzugefügte Seite umbricht erst eine spätere Version.</td>
+    </tr>
+  </tbody>
+</table>
+
+Bringt keine Stufe den Inhalt unter, wird der Rahmen an seinem Fuß abgeschnitten, behält die Skalierungen, die die Stufen erreicht haben, und der Umbruch meldet `frameOverflow`. Jede Stufe umbricht die ganze Seite neu, deshalb hängt das Ergebnis nur von dieser Seite ab: Dieselbe Eingabe ergibt dieselbe Seite, überlaufende Rahmen werden in der Reihenfolge der Vorlage behandelt, und eine Änderung auf einer zusammengesetzten Seite lässt alle anderen Seiten, wie sie waren. Die Einstellungen stehen unter [Konfiguration › Wenn der Inhalt nicht passt](/de/docs/configuration-composed-pages#wenn-der-inhalt-nicht-passt).
+
+### Die Warnung und ihre Vorschläge
+
+`frameOverflow` nennt die Seite, die Vorlage, den Rahmen und die Sprache des Dokuments, sodass eine Seite, die auf Spanisch passt und auf Katalanisch überläuft, genau das sagt, und führt die versuchten Stufen auf. Jeder Vorschlag ist ein Datensatz, `{ kind, path, value }`: `path` ist der JSON-Zeiger der Einstellung, die zu ändern ist, und `value` der Wert, auf den sie zu setzen ist, berechnet aus dem fehlenden Platz.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Vorschlag</th>
+      <th>Was er ändert</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td><code>fit.minScale</code> des Rahmens: die größte Textskalierung, in Schritten von 2,5 % bis hinunter auf 50 %, bei der der Inhalt passt, auf der Seite ausprobiert. Mit <code>fit.shrinkText: false</code> schaltet <code>also</code> es ein.</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td><code>maxHeight</code> des Rahmens: seine Höhe plus der fehlende Platz, in ganzen Millimetern. Nur vorgeschlagen, wenn die Seite den Raum hat, was auf ihr ausprobiert wird.</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td><code>minHeight</code> eines anderen Rahmens seiner Gruppe (<code>frame</code>), der auf seinem Minimum steht, obwohl sein Inhalt weniger braucht: um den fehlenden Platz gesenkt, nie unter seinen Inhalt. Auf der Seite ausprobiert.</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td><code>overflow.continueIn</code> des Rahmens, auf <code>'next-page'</code> gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>Eine andere Vorlage des Buches mit einem Rahmen gleichen Namens, in den der Inhalt unverändert passt, auf der Seite in der Reihenfolge von <code>pageTemplates</code> ausprobiert. Das ist eine Änderung am Markdown: <code>sourceStart</code> und <code>sourceEnd</code> geben den Bereich des Werts <code>template</code> der Seitenbegrenzung an.</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>Wie viele Zeichen ungefähr zu kürzen sind: die Zeilen, die nicht passen, mal die Zeichen pro Zeile des Rahmens. Der Bereich ist der Inhalt des Rahmens.</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check` gibt die Warnung mit ihren Stufen und Vorschlägen in Worten aus, und `--json` trägt dieselben Daten unter `data` der Warnung:
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+Das Bedienfeld Prüfungen zeigt denselben Eintrag in der Sprache der Oberfläche.
 
 ## Umbruchprotokoll
 
@@ -291,6 +388,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>Die Oberkante des Rahmens (mit <code>axis: 'x'</code> seine linke Kante) hat sich verschoben, gemessen in mm vom Blattrand; <code>cause</code> ist der Rahmen, dessen Wachstum ihn verschoben hat.</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>Die Umbruchstufen haben die Bilder des Rahmens auf <code>scale</code> verkleinert; <code>cause</code> ist der Rahmen der Gruppe, der den Platz brauchte, wenn es ein anderer ist.</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>Die Umbruchstufen haben den Text des Rahmens auf <code>scale</code> verkleinert.</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>Der Inhalt hat nicht gepasst: <code>toMm</code> ist die abgeschnittene Höhe, wie bei <code>frameOverflow</code>.</td>
     </tr>
@@ -301,7 +406,7 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
 
 `postext check` gibt nach den Warnungen für jede zusammengesetzte Seite mit Ereignissen eine Zeile `reflow` aus. Mit `--json` enthält der Bericht ein Array `reflow` mit einem Eintrag je Seite: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` und `lines` (die Ereignisse in Worten).
 
-Im Code ist das Protokoll `VDTPage.composed.log`, und jeder Rahmen bewahrt den Kasten, den seine Vorlage angibt, in `VDTFrame.declaredRect` auf, sofern er von `rect` abweicht. `composedReflowLog(doc)` liefert die Einträge, die `postext check` ausgibt, und `describeReflowEvent(event)` fasst ein einzelnes Ereignis in Worte.
+Im Code ist das Protokoll `VDTPage.composed.log`, und jeder Rahmen bewahrt den Kasten, den seine Vorlage angibt, in `VDTFrame.declaredRect` auf, sofern er von `rect` abweicht. `composedReflowLog(doc)` liefert die Einträge, die `postext check` ausgibt, und `describeReflowEvent(event)` fasst ein einzelnes Ereignis in Worte; `describeFitStep(step)` und `describeFrameOverflowProposal(proposal)` tun dasselbe für eine Umbruchstufe und für einen Vorschlag. Ein Rahmen, dessen Text die Stufen verkleinert haben, hat ein `VDTFrame.scale` unter 1: Seine Blöcke werden in einem `1 / scale`-mal so großen Kasten umbrochen (`frameContentRect(frame)`), und `frameMatrix(frame)` bringt sie aufs Blatt; die Skalierung seiner Bilder ist `VDTFrame.imageScale`.
 
 ## Doppelseiten
 
@@ -340,3 +445,65 @@ Auf der Zeichenfläche, in der Doppelseitenansicht des Sandbox und im Folio steh
 `composedPages(blocks)` liest die geparsten Blöcke eines Kapitels (`parseMarkdownWithIssues(markdown).blocks`) und gibt der Reihe nach je Seitenbegrenzung einen Knoten zurück: `template`, `spread`, `attrs` mit dem Quellbereich jedes Werts (`attrSources`), `fenceIndex` (die Ordnungszahl der Begrenzung im Kapitel, in jeder Sprache dieselbe), `slots` (die Indizes der Blöcke jedes Slots, in der Reihenfolge des Markdowns), `unassigned` (die Blöcke ohne Slot) und den Quellbereich der ganzen Seite. Ein Block trägt den Slot, den er nennt, in `ContentBlock.slot`, mit dem Quellbereich des Werts; eine Abbildung ist ein `resourceBlock`, dessen `figure` ihre Attribute und Beschriftungen enthält, jede Beschriftung mit ihrem Text, ihren Inline-Spans und einer Zuordnung zurück zur Quelle im Markdown. `checkComposedSlots(pages, config)` gibt die drei Slot-Warnungen für diese Seiten zurück.
 
 Nach dem Umbruch hält `VDTPage.composed` einer zusammengesetzten Seite ihre Vorlage fest, die angewandte Variante, die Attribute der Seitenbegrenzung und für jeden Rahmen seine ID (`cp0:dinero`: die Ordnungszahl der Seitenbegrenzung und der Name des Rahmens, in jeder Sprache dieselbe), seine Box, Ebene und Drehung, die Höhe des Inhalts, der nicht hineinpasste (`overflowPx`), den Rahmen, aus dem er weiterläuft oder in den er weiterläuft, seinen Konfigurationspfad (`/pageTemplates/0/frames/2`) und die IDs seiner Blöcke. Diese Blöcke sind gewöhnliche Kastenblöcke in `page.floats` und `doc.blocks` mit ihren Quellbereichen, sodass ein Klick in einen ungedrehten Rahmen der Sandbox-Vorschau zu seinem Markdown führt. `composedPaintOrder(page)` liefert die Reihenfolge, in der ein Renderer Rahmen und Dekor zeichnet, und `frameMatrix(frame)` die Drehung eines Rahmens.
+
+## Quellenzuordnung
+
+Alles, was eine zusammengesetzte Seite zeichnet, weiß, wo es geschrieben steht. Ein Editor kommt so von einem Punkt der Seite zum Markdown oder zur Konfiguration und von einem Stück Markdown zu dem, was daraus auf der Seite geworden ist.
+
+`sourceAt(doc, pageIndex, x, y)` nimmt einen Punkt einer gesetzten Seite in Seitenpixeln, gemessen von der oberen linken Ecke des Bogens, und gibt zurück, was dort liegt, von innen nach außen: jedes Element, gefolgt von denen, die es enthalten. Ein Zeichen in einem Kasten kommt mit seiner Zeile, seinem Absatz, seinem Rahmen, den Gruppen des Rahmens und der Vorlage; ein Wort des Dekors mit seinem Gestaltungselement, dem Dekor und der Vorlage. Jedes Element hat ein `level`, eine stabile `id`, eine `source` und meist sein `rect` auf der Seite (aufrecht, vor dem `rotate` eines gedrehten Rahmens).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Quelle</th>
+      <th>Felder</th>
+      <th>Geliefert für</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>, <code>end</code> (Positionen in der Datei des Kapitels, Front Matter mitgezählt), <code>file</code></td>
+      <td>ein Zeichen (ein ganzer Chip, Verweis oder eine ganze Formel, wenn das Zeichen eines davon ist), eine Zeile, einen Absatz oder Listenpunkt, den Kasten darum</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>, ein JSON-Pointer</td>
+      <td>einen Rahmen (<code>/pageTemplates/0/frames/2</code>), eine Gruppe, die Vorlage, ein Gestaltungselement des Dekors oder der Kolumnentitel (<code>/footer/elements/0</code>) und seinen Slot</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>, <code>start</code>, <code>end</code>, <code>file</code></td>
+      <td>Text, den ein Element über <code>&#123;attr.x&#125;</code> zeigt (der Wert in der Seitenbegrenzung), Etikett und Titel eines Rahmens (<code>label</code> und <code>title</code> seiner <code>:::frame</code>-Begrenzung), ein Bild, das <code>&#123;attr.x&#125;</code> auswählt</td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>, <code>anchor</code></td>
+      <td>ein Bild in einem Rahmen oder im Dekor; eine Beschriftung trägt ihren Anker als <code>resourceId#anchorId</code></td>
+    </tr>
+  </tbody>
+</table>
+
+Die Ebenen, von innen nach außen: `text`, `attr`, `label`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. Ein Rahmen und die Vorlage tragen außerdem `content`, das Stück Markdown, das sie enthalten: den Inhalt des Slots des Rahmens, die ganze Seitenbegrenzung. `file` ist der Name, den der Host in den Optionen übergibt (`{ file: 'tema-1.md' }`, oder eine Funktion des Seitenindex für ein aus mehreren Kapiteln zusammengefügtes Dokument).
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // Zeilen, Blöcke, Rahmen, Seiten und Gestaltungstexte, die das Stück berührt
+findElement(doc, 'cp0:dinero');   // derselbe Rahmen nach einem Neusatz, mit seinem rect
+```
+
+`elementsForSource(doc, start, end)` geht den umgekehrten Weg und gibt `{ pageIndex, element }` für jede Zeile, jeden Block, Rahmen, jede zusammengesetzte Seite und jeden Gestaltungstext zurück, die das Stück berührt. Eine Zeile unterhalb des Fußes ihres Rahmens kommt mit `clipped: true`: Auf der Seite wird sie abgeschnitten, in der Quellenzuordnung bleibt sie. Auf einer Doppelseite antwortet die Hälfte eines Rahmens, der über den Bund reicht und auf der gegenüberliegenden Seite gelesen wird, mit den IDs der Blöcke, die sie zeigt, und `facing: true`, in `sourceAt` wie in `elementsForSource`. Eine Beschriftung einer Abbildung antwortet auf der Ebene `label`, mit ihrer ID und ihrem Anker, wo immer sie auf dem Bild steht.
+
+**Stabile IDs.** Eine zusammengesetzte Seite ist `cp<n>`, mit `n` als Ordnungszahl ihrer Begrenzung im Kapitel; ein Rahmen ist `cp<n>:<rahmen>` (mit `~<k>` für das k-te Stück seines Inhalts, das auf einer späteren Seite weitergeht), seine Blöcke `cp<n>:<rahmen>-c0`, `-c1`…, eine Gruppe `cp<n>:group:<name>`, ein Element des Dekors oder der Kolumnentitel `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, und eine Beschriftung einer Abbildung `cp<n>:<slot>:label:<anker>`. Keine hängt von Positionen oder Wörtern ab, also bleibt eine ID nach jedem Neusatz und in jeder Sprache des Kapitels dieselbe: Eine Auswahl übersteht eine Änderung, und derselbe Rahmen findet sich in der Übersetzung wieder. `findElement(doc, id)` findet das Element erneut.
+
+**Einträge des Inhaltsverzeichnisses.** Eine Zeile von `:::toc` trägt in `tocEntry.headingSource` die Position der Überschrift, die sie aufführt, im Markdown-Körper ihres Kapitels (ohne Front Matter, wie Gliederungen zählen); `sourceAt` gibt sie als `heading` am Block der Zeile aus.
+
+**Nur eine Seite neu setzen.** Der Satz jeder zusammengesetzten Seite wird nach dem aufbewahrt, was er liest: Vorlage, Markdown der Seite, Stile und Schriften, Sprache, Seite des Bogens und Geometrie. Ein späterer Satzlauf, der dieselbe Seite antrifft (der nächste Durchgang, eine Änderung an anderer Stelle im Kapitel, das Kapitel erneut im selben Worker umbrochen), übernimmt sie unverändert. Eine Änderung innerhalb einer Seite oder an einem Attribut ihrer Begrenzung setzt nur diese Seite neu; eine Änderung der Vorlage setzt alle Seiten neu, die sie verwenden. Eine Seite mit Fußnoten, Verweisen, Zitaten oder einem Inhaltsverzeichnis wird jedes Mal neu gesetzt, weil das, was sie druckt, vom Rest des Buches abhängt. Auch eine Doppelseite wird jedes Mal neu gesetzt: Ihre beiden Seiten sind ein Bogen. `VDTComposedPage.layoutKey` ist der Schlüssel der Rahmen einer Seite; `composedPagePaintKey(page)` nimmt hinzu, was um sie herum liegt (Kolumnentitel, Dekor, Seitenzahl), damit ein Host die gezeichneten Pixel behalten kann, solange sich der Schlüssel nicht ändert. Die Leinwand der Sandbox tut das: Eine Änderung auf einer Seite zeichnet nur diese Seite neu.
