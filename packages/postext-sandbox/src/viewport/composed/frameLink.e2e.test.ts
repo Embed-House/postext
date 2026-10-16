@@ -148,3 +148,23 @@ describe('frame ↔ slot on a laid-out composed page', () => {
     expect(design.map((m) => m.kind)).toEqual(['outline', 'selected', 'outline', 'outline', 'outline']);
   });
 });
+
+describe('a page added by continuation (#859)', () => {
+  const long = MD.replace('El dinero nos deja cambiar nuestro trabajo por cosas.', Array.from({ length: 12 }, (_, i) => `Párrafo ${i} ${'palabra '.repeat(40).trim()}.`).join('\n\n'));
+  const cont = { ...config, pageTemplates: [{ ...(config.pageTemplates![0] as object), frames: (config.pageTemplates![0] as { frames: { name: string }[] }).frames.map((f) => (f.name === 'sigue' ? { ...f, overflow: { continueIn: 'next-page' } } : f)) }] } as PostextConfig;
+  const doc = buildDocument({ markdown: long }, cont);
+  const pages = doc.pages.filter((p) => p.composed);
+
+  it('marks no empty frame to write in, and a click on its box goes to the slot that sent it', () => {
+    expect(pages.length).toBeGreaterThan(1);
+    const added = pages[1]!;
+    expect(added.composed!.continuationOf).toBe(pages[0]!.index);
+    const base = { markdown: long, caret: null, selectedFrameId: null, writeHere: 'Write here', continues: 'Continues __frame__' };
+    expect(frameMarksFor(doc, added, { ...base, mode: 'content' }).filter((m) => m.kind === 'empty')).toEqual([]);
+    const sigue = frameByName(added, 'sigue')!;
+    expect(sigue.id).toBe('cp0:sigue~1');
+    expect(frameIsEmpty(sigue)).toBe(false);
+    const template = resolvePageTemplate(doc.config as never, added.composed!.template);
+    expect(frameClickTarget(long, added.composed!, sigue, template)).toMatchObject({ kind: 'caret', slot: 'caja' });
+  });
+});
