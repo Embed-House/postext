@@ -606,8 +606,9 @@ function paintPage(
   // A composed page's frames (#855) are floats painted with their frames.
   const frameIds = composedFrameBlockIds(vdtPage);
   if (vdtPage.floats) {
-    for (const fb of vdtPage.floats) {
-      if (frameIds.has(fb.id)) continue;
+    const floats = vdtPage.floats.filter((fb) => !frameIds.has(fb.id));
+    for (let i = 0; i < floats.length; i++) {
+      const fb = floats[i]!;
       if (fb.comic) {
         // A floated strip: read after the text that comes before it,
         // painted on the sheet below.
@@ -616,7 +617,18 @@ function paintPage(
         else strips.push(readStrip(fb));
         continue;
       }
-      const paint = () => renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
+      // The blocks a floated (or fixed) box sets on the page are read as
+      // one float, anchored by its first block (#893), so a list in it
+      // stays one list, as in a composed frame (#862).
+      let end = i + 1;
+      if (fb.containerId !== undefined) {
+        while (end < floats.length && floats[end]!.containerId === fb.containerId && !floats[end]!.comic) end++;
+      }
+      const group = floats.slice(i, end);
+      i = end - 1;
+      const paint = () => {
+        for (const b of group) renderBlock(ctx, b, b.bbox.width, b.bbox.x, fontCache, resourceCtx);
+      };
       if (structure) structure.readFloat(fb, paint);
       else paint();
     }
