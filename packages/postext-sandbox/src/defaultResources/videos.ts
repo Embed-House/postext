@@ -2,9 +2,8 @@
 // tutorial, narrated cuts streamed as HLS from the media CDN (the
 // `postext-media` Worker in front of Cloudflare R2, the player the home
 // page and the docs use). Every edition plays its own language's cut
-// (Catalan, Arabic and Japanese since #510, Brazilian Portuguese since #611).
-// The French, German and Italian editions have no cut of their own: they
-// play the English one.
+// (Catalan, Arabic and Japanese since #510, Brazilian Portuguese since #611,
+// French, German and Italian since #843).
 
 import type { Resource, ResourcePlacement } from 'postext';
 import type { GuideLang } from './lang';
@@ -22,7 +21,7 @@ export const GUIDE_VIDEO_IDS = {
 type VideoLang = GuideLang;
 
 /** The cut each edition plays. */
-const CUT: Record<VideoLang, 'en' | 'es' | 'zh' | 'ca' | 'ar' | 'ja' | 'pt'> = { en: 'en', es: 'es', 'zh-Hans': 'zh', ca: 'ca', ar: 'ar', ja: 'ja', 'pt-BR': 'pt', fr: 'en', de: 'en', it: 'en' };
+const CUT: Record<VideoLang, 'en' | 'es' | 'zh' | 'ca' | 'ar' | 'ja' | 'pt' | 'fr' | 'de' | 'it'> = { en: 'en', es: 'es', 'zh-Hans': 'zh', ca: 'ca', ar: 'ar', ja: 'ja', 'pt-BR': 'pt', fr: 'fr', de: 'de', it: 'it' };
 
 /** Whether an edition of the guide carries the videos. */
 export function guideHasVideos(lang: GuideLang): lang is VideoLang {
@@ -44,7 +43,7 @@ const SPECS: VideoSpec[] = [
     id: GUIDE_VIDEO_IDS.showreel,
     path: 'showreel',
     placement: { position: 'auto', span: 'page' },
-    duration: { en: 130.65, es: 137.12, 'zh-Hans': 142.73, ca: 129.35, ar: 147.83, ja: 169.72, 'pt-BR': 136.57, fr: 130.65, de: 130.65, it: 130.65 },
+    duration: { en: 130.65, es: 137.12, 'zh-Hans': 142.73, ca: 129.35, ar: 147.83, ja: 169.72, 'pt-BR': 136.57, fr: 141.5, de: 134.73, it: 135.45 },
     caption: {
       en: 'Postext in two minutes: how it sets a page, the Sandbox and what comes out of it. In the Folio view a click plays it on the page; in print, the QR code opens it.',
       es: 'Postext en dos minutos: cómo compone una página, el Sandbox y lo que sale de él. En la vista Folio, un clic lo reproduce sobre la página; impreso, lo abre el código QR.',
@@ -53,9 +52,9 @@ const SPECS: VideoSpec[] = [
       ar: 'Postext في دقيقتين ونصف: كيف ينضّد الصفحة، وبيئة Sandbox، وما يخرج منها. في عرض Folio تشغّله نقرة فوق الصفحة؛ وفي النسخة المطبوعة يفتحه رمز QR.',
       ja: '三分で見るPostext。ページの組み方、Sandbox、そこから出てくるもの。Folioビューではクリックするとページの上で再生され、印刷物ではQRコードから開ける。',
       'pt-BR': 'O Postext em dois minutos: como ele compõe uma página, o Sandbox e o que sai dele. Na visualização Folio, um clique o reproduz sobre a página; no impresso, o código QR o abre.',
-      fr: 'Postext en deux minutes (en anglais) : comment il compose une page, le Sandbox et ce qui en sort. Dans la vue Folio, un clic la lit sur la page ; sur l’imprimé, le code QR l’ouvre.',
-      de: 'Postext in zwei Minuten (auf Englisch): wie es eine Seite setzt, die Sandbox und was aus ihr hervorgeht. In der Ansicht Folio spielt ein Klick das Video auf der Seite ab; im Druck öffnet es der QR-Code.',
-      it: 'Postext in due minuti (in inglese): come compone una pagina, la Sandbox e quello che ne esce. Nella vista Folio un clic lo riproduce sulla pagina; nella copia stampata lo apre il codice QR.',
+      fr: 'Postext en deux minutes : comment il compose une page, le Sandbox et ce qui en sort. Dans la vue Folio, un clic la lit sur la page ; sur l’imprimé, le code QR l’ouvre.',
+      de: 'Postext in zwei Minuten: wie es eine Seite setzt, die Sandbox und was aus ihr hervorgeht. In der Ansicht Folio spielt ein Klick das Video auf der Seite ab; im Druck öffnet es der QR-Code.',
+      it: 'Postext in due minuti: come compone una pagina, la Sandbox e quello che ne esce. Nella vista Folio un clic lo riproduce sulla pagina; nella copia stampata lo apre il codice QR.',
     },
     altText: {
       en: 'The closing card of the video: the Postext logo, the line "The programmable typesetter for the web", postext.dev and the command pnpm add postext.',
@@ -65,16 +64,16 @@ const SPECS: VideoSpec[] = [
       ar: 'البطاقة الختامية للفيديو: شعار Postext، وعبارة «المنضِّد القابل للبرمجة للويب»، وعنوان postext.dev، والأمر pnpm add postext.',
       ja: '動画の最後の画面。Postextのロゴ、「ウェブで動く、プログラムできる組版システム」という一文、postext.dev、インストールのコマンドpnpm add postext。',
       'pt-BR': 'O quadro final do vídeo: o logotipo do Postext, o lema “O tipógrafo programável para a web”, postext.dev e o comando pnpm add postext.',
-      fr: 'L’écran final de la vidéo : le logo de Postext, la phrase « The programmable typesetter for the web », postext.dev et la commande pnpm add postext.',
-      de: 'Die Schlusstafel des Videos: das Postext-Logo, die Zeile „The programmable typesetter for the web“, postext.dev und der Befehl pnpm add postext.',
-      it: 'La schermata finale del video: il logo di Postext, la frase «The programmable typesetter for the web», postext.dev e il comando pnpm add postext.',
+      fr: 'L’écran final de la vidéo : le logo de Postext, la phrase « Le compositeur programmable pour le web », postext.dev et la commande pnpm add postext.',
+      de: 'Die Schlusstafel des Videos: das Postext-Logo, die Zeile „Das programmierbare Satzsystem für das Web“, postext.dev und der Befehl pnpm add postext.',
+      it: 'La schermata finale del video: il logo di Postext, la frase «Il compositore programmabile per il web», postext.dev e il comando pnpm add postext.',
     },
   },
   {
     id: GUIDE_VIDEO_IDS.tutorial,
     path: 'tutorial',
     placement: { position: 'auto', span: 'page' },
-    duration: { en: 312.48, es: 308.1, 'zh-Hans': 318.68, ca: 300.6, ar: 332.55, ja: 391.1, 'pt-BR': 308.4, fr: 312.48, de: 312.48, it: 312.48 },
+    duration: { en: 312.48, es: 308.1, 'zh-Hans': 318.68, ca: 300.6, ar: 332.55, ja: 391.1, 'pt-BR': 308.4, fr: 299.78, de: 310.4, it: 302.82 },
     caption: {
       en: 'The postext-port skill at work: an agent brings a book that was already typeset into Postext, a chapter at a time, and checks every page it sets.',
       es: 'El skill postext-port trabajando: un agente pasa a Postext un libro que ya estaba maquetado, capítulo a capítulo, y revisa cada página que compone.',
@@ -83,9 +82,9 @@ const SPECS: VideoSpec[] = [
       ar: 'مهارة postext-port أثناء العمل: وكيل ينقل إلى Postext كتابًا كان منضَّدًا من قبل، فصلًا بعد فصل، ويفحص كل صفحة ينضّدها.',
       ja: '作業中のpostext-portスキル。エージェントが、すでに組まれた本を一章ずつPostextに移し、組んだページをすべて確かめる。',
       'pt-BR': 'A skill postext-port em ação: um agente traz para o Postext um livro que já estava diagramado, um capítulo de cada vez, e confere cada página que compõe.',
-      fr: 'Le skill postext-port à l’œuvre (en anglais) : un agent fait passer dans Postext un livre déjà mis en page, un chapitre à la fois, et vérifie chaque page qu’il compose.',
-      de: 'Der Skill postext-port bei der Arbeit (auf Englisch): Ein Agent überführt ein bereits gesetztes Buch Kapitel für Kapitel in Postext und prüft jede Seite, die er setzt.',
-      it: 'La skill postext-port al lavoro (in inglese): un agente porta in Postext un libro già impaginato, un capitolo alla volta, e controlla ogni pagina che compone.',
+      fr: 'Le skill postext-port à l’œuvre : un agent fait passer dans Postext un livre déjà mis en page, un chapitre à la fois, et vérifie chaque page qu’il compose.',
+      de: 'Der Skill postext-port bei der Arbeit: Ein Agent überführt ein bereits gesetztes Buch Kapitel für Kapitel in Postext und prüft jede Seite, die er setzt.',
+      it: 'La skill postext-port al lavoro: un agente porta in Postext un libro già impaginato, un capitolo alla volta, e controlla ogni pagina che compone.',
     },
     altText: {
       en: 'A frame of the tutorial: a request to the agent to convert a book with the postext-port skill, beside a folder holding the reference PDF, the fonts and the illustrations.',
@@ -111,6 +110,9 @@ const POSTERS: Record<(typeof CUT)[VideoLang], () => Promise<{ SHOWREEL_POSTER: 
   ar: () => import('./videoPosters/ar'),
   ja: () => import('./videoPosters/ja'),
   pt: () => import('./videoPosters/pt'),
+  fr: () => import('./videoPosters/fr'),
+  de: () => import('./videoPosters/de'),
+  it: () => import('./videoPosters/it'),
 };
 
 /** The blob id of a video's poster in one edition. */
