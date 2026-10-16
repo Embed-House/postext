@@ -1547,6 +1547,20 @@ export interface VDTFigureLabel {
   /** The label's text in the source (absolute offsets). */
   sourceStart: number;
   sourceEnd: number;
+  /** The source offset of each character of `text` (absolute), when the
+   *  text reads as written (#857). */
+  sourceMap?: number[];
+  /** On a composed page, the label's stable id,
+   *  `cp<fence>:<slot>:label:<anchor>` (`@<k>` for the k-th label placed by
+   *  percentages): the same in every locale (#857). */
+  id?: string;
+  /** The anchor it is set at, as `resourceId#anchorId` (#857); absent for
+   *  a label placed by percentages. */
+  anchorRef?: string;
+  /** Where the label is painted (page px, upright), once labels are laid
+   *  out on the picture (#860); `sourceAt` answers a point inside it with
+   *  the label. Absent until then. */
+  rect?: BoundingBox;
 }
 
 /**

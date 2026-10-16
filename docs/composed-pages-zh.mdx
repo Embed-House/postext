@@ -379,7 +379,7 @@ Con relojes de máquina
   </tbody>
 </table>
 
-层级由内向外为：`text`、`attr`、`resource`、`line`、`block`、`box`、`frame`、`group`、`design`、`slot`、`template`。框和模板还带有`content`，即它们包含的Markdown范围：框的槽位内容、整个页面围栏。`file`是宿主在选项中传入的名称（`{ file: 'tema-1.md' }`，或者对由多章拼接而成的文档，传一个以页码索引为参数的函数）。
+层级由内向外为：`text`、`attr`、`label`、`resource`、`line`、`block`、`box`、`frame`、`group`、`design`、`slot`、`template`。框和模板还带有`content`，即它们包含的Markdown范围：框的槽位内容、整个页面围栏。`file`是宿主在选项中传入的名称（`{ file: 'tema-1.md' }`，或者对由多章拼接而成的文档，传一个以页码索引为参数的函数）。
 
 ```ts
 import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
@@ -395,10 +395,10 @@ elementsForSource(doc, 677, 690); // 这段文字涉及的行、块、框、页�
 findElement(doc, 'cp0:dinero');   // 重新排版后的同一个框，带有它的rect
 ```
 
-`elementsForSource(doc, start, end)`反过来查，对这段Markdown涉及的每一行、每个块、框、模板页和设计文字，返回`{ pageIndex, element }`。排到框底之下的行带有`clipped: true`：在页面上被裁掉，在来源映射中仍然保留。
+`elementsForSource(doc, start, end)`反过来查，对这段Markdown涉及的每一行、每个块、框、模板页和设计文字，返回`{ pageIndex, element }`。排到框底之下的行带有`clipped: true`：在页面上被裁掉，在来源映射中仍然保留。在跨页上，跨过书脊、在对页上阅读的那半个框，在`sourceAt`和`elementsForSource`中都以它所显示的块的id作答，并带有`facing: true`。插图的标注在`label`层级作答，带有它的id和锚点，无论它画在图片的什么位置。
 
 **稳定的id。** 模板页是`cp<n>`，`n`是它的页面围栏在本章中的序号；框是`cp<n>:<框名>`（在后面页面上接续的第k段内容加`~<k>`），框中的块是`cp<n>:<框名>-c0`、`-c1`……，组是`cp<n>:group:<组名>`，装饰或页眉页脚中的元素是`cp<n>:decoration:<id>`、`cp<n>:header:<id>`、`cp<n>:footer:<id>`，插图的标注是`cp<n>:<槽位>:label:<锚点>`。这些id都不依赖位置，也不依赖文字，所以无论怎样重新排版，在本章的任何语言版本中都相同：编辑之后选区依然有效，在译本中也能找到同一个框。`findElement(doc, id)`可以重新找到该元素。
 
 **目录条目。** `:::toc`的每一行在`tocEntry.headingSource`中记录它所列标题在本章Markdown正文中的位置（不计front matter，与大纲的计法相同）；`sourceAt`在该行的块上以`heading`给出。
 
-**只重排一页。** 每个模板页的排版结果按它所读取的内容保存：模板、该页的Markdown、样式和字体、语言、纸张的正反面及其几何尺寸。之后的排版再次遇到同一页时（下一轮排版、本章别处的一次编辑、同一worker中再次分页），会直接沿用。在某一页内编辑，或修改它的页面围栏上的属性，只重排这一页；修改模板则重排所有使用该模板的页面。含有脚注、交叉引用、文献引用或目录的页面每次都重新排版，因为它印出的内容取决于书的其余部分。`VDTComposedPage.layoutKey`是一页中各个框的键；`composedPagePaintKey(page)`再加上框周围的内容（页眉页脚、装饰、页码），宿主只要键不变，就可以保留已经画好的像素。沙盒的画布正是这样做的：在某一页上编辑，只重画这一页。
+**只重排一页。** 每个模板页的排版结果按它所读取的内容保存：模板、该页的Markdown、样式和字体、语言、纸张的正反面及其几何尺寸。之后的排版再次遇到同一页时（下一轮排版、本章别处的一次编辑、同一worker中再次分页），会直接沿用。在某一页内编辑，或修改它的页面围栏上的属性，只重排这一页；修改模板则重排所有使用该模板的页面。含有脚注、交叉引用、文献引用或目录的页面每次都重新排版，因为它印出的内容取决于书的其余部分。跨页也每次都重新排版：它的两页是同一张纸。`VDTComposedPage.layoutKey`是一页中各个框的键；`composedPagePaintKey(page)`再加上框周围的内容（页眉页脚、装饰、页码），宿主只要键不变，就可以保留已经画好的像素。沙盒的画布正是这样做的：在某一页上编辑，只重画这一页。

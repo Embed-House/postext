@@ -89,8 +89,10 @@ describe('source map of a composed page (#857)', () => {
     const para = page.floats!.find((b) => b.id === f.blockIds[1])!;
     const line = para.lines[0]!;
     const chain = sourceAt(doc, page.index, line.bbox.x + 3, line.bbox.y + line.bbox.height / 2);
-    expect(levels(chain)).toEqual(['text', 'line', 'block', 'frame', 'template']);
-    const [text, , block, frame, template] = chain;
+    // The three boxes of the stand-in stack as one group (#856).
+    expect(levels(chain)).toEqual(['text', 'line', 'block', 'frame', 'group', 'template']);
+    const [text, , block, frame, group, template] = chain;
+    expect(group).toMatchObject({ id: 'cp0:group:cajas', source: { kind: 'config', path: '/pageTemplates/0/groups/0' } });
     expect(text!.source).toEqual({ kind: 'markdown', start: para.sourceStart, end: para.sourceStart! + 1 });
     expect(md[para.sourceStart!]).toBe('E');
     expect(block!.id).toBe('cp0:dinero-c0');
@@ -134,7 +136,7 @@ describe('source map of a composed page (#857)', () => {
     expect(md.slice(tab.sourceStart, tab.sourceEnd)).toBe('Para qué sirve el dinero');
     expect(label.start).toBeGreaterThanOrEqual(tab.sourceStart!);
     expect(label.end).toBeLessThanOrEqual(tab.sourceEnd!);
-    expect(levels(tabHit)).toEqual(['text', 'frame', 'template']);
+    expect(levels(tabHit)).toEqual(['text', 'frame', 'group', 'template']);
 
     const deco = page.composed!.decoration!.blocks;
     const tema = deco.find((b) => b.elementId === 'tema')!;
@@ -308,5 +310,83 @@ describe('contents entries point at their headings (#857)', () => {
     const one = entries.find((b) => b.tocEntry!.headingSource === md.indexOf('# One'))!;
     const chain = sourceAt(doc, one.pageIndex, one.bbox.x + 2, one.bbox.y + one.bbox.height / 2);
     expect(chain.find((e) => e.level === 'block')!.heading).toBe(md.indexOf('# One'));
+  });
+});
+
+describe('figure labels in the source map (#857)', () => {
+  const resources = [{ id: 'mapa', typeId: 'figure', kind: 'bitmap', caption: '', createdAt: 0, updatedAt: 0, bitmap: { fileId: 'm.png', format: 'png', width: 100, height: 80 } } as never];
+  const md = '---\ntitle: Mapas\n---\n::::page{template="m"}\n:::frame{slot="pic"}\n:::figure{resource="mapa"}\n::label[Madrid]{at="madrid"}\n::label[Mar]{at="62% 48%"}\n:::\n:::\n::::';
+  const cfg = { ...PAGE, pageTemplates: [{ id: 'm', frames: [{ name: 'pic', flow: true, width: mm(100) }] }] } as PostextConfig;
+  const laid = () => {
+    const doc = buildDocument({ markdown: md, resources }, cfg, createMeasurementCache());
+    const page = composed(doc);
+    const pic = page.floats!.find((b) => b.resourceBlock)!;
+    return { doc, page, pic };
+  };
+
+  it('each label carries its id, its anchor and the source of each character, in the chapter file', () => {
+    const { pic } = laid();
+    const labels = pic.resourceBlock!.labels!;
+    expect(labels.map((l) => [l.id, l.anchorRef])).toEqual([['cp0:pic:label:madrid', 'mapa#madrid'], ['cp0:pic:label:@1', undefined]]);
+    // Front matter counted: the offsets are the file's.
+    expect(md.slice(labels[0]!.sourceStart, labels[0]!.sourceEnd)).toBe('Madrid');
+    expect(labels[0]!.sourceMap!.map((o) => md[o]).join('')).toBe('Madrid');
+  });
+
+  it('a point on a laid label answers with its glyph, the label at its anchor, the picture and the frame', () => {
+    const { doc, page, pic } = laid();
+    // Where P6 (#860) will set the label: given here by hand.
+    const label = pic.resourceBlock!.labels![0]!;
+    label.rect = { x: pic.bbox.x + 10, y: pic.bbox.y + 10, width: 60, height: 20 };
+    const chain = sourceAt(doc, page.index, pic.bbox.x + 11, pic.bbox.y + 20);
+    expect(levels(chain).slice(0, 3)).toEqual(['text', 'label', 'resource']);
+    expect(md[(chain[0]!.source as { start: number }).start]).toBe('M');
+    expect(chain[1]).toMatchObject({ id: 'cp0:pic:label:madrid', source: { kind: 'resource', resourceId: 'mapa', anchor: 'madrid' } });
+    expect(chain.find((e) => e.level === 'frame')!.id).toBe('cp0:pic');
+    // Off the label, the picture.
+    expect(sourceAt(doc, page.index, pic.bbox.x + pic.bbox.width - 2, pic.bbox.y + pic.bbox.height - 2)[0]!.level).toBe('resource');
+  });
+
+  it('the label’s text finds the label; its id finds it again', () => {
+    const { doc } = laid();
+    const at = md.indexOf('Madrid');
+    expect(elementsForSource(doc, at, at + 3).map((h) => `${h.element.level}:${h.element.id}`)).toContain('label:cp0:pic:label:madrid');
+    expect(findElement(doc, 'cp0:pic:label:madrid')!.element).toMatchObject({ level: 'label', source: { kind: 'resource', resourceId: 'mapa', anchor: 'madrid' } });
+  });
+});
+
+describe('spreads in the source map (#857, #861)', () => {
+  const tpl: PageTemplate = {
+    id: 'tl', spread: true, gutter: mm(10), grid: { columns: 4, rows: 4, columnGap: mm(12) },
+    frames: [{ name: 'band', crossGutter: true, grid: { col: 1, row: 1, cols: 4 } }, { name: 'left', grid: { col: 1, row: 2 } }],
+  } as never;
+  const md = ['::::page{template="tl" spread}', ':::frame{slot="band"}', 'Band across the spine with words enough to reach the other page of the sheet', ':::', '', ':::frame{slot="left"}', 'Left card', ':::', '::::'].join('\n');
+  const doc = () => buildDocument({ markdown: md }, { ...PAGE, pageTemplates: [tpl] }, createMeasurementCache());
+
+  it('the half of a frame on the facing page answers with the blocks it shows, flagged facing', () => {
+    const d = doc();
+    const pages = d.pages.filter((p) => p.composed?.spread);
+    const facingPage = pages.find((p) => p.composed!.frames.some((f) => f.facingBlocks?.length))!;
+    const half = facingPage.composed!.frames.find((f) => f.facingBlocks?.length)!;
+    const para = half.facingBlocks!.find((b) => b.type !== 'callout' && b.lines.length > 0)!;
+    const line = para.lines[0]!;
+    // A point of that line inside the page's part of the sheet.
+    const clip = facingPage.composed!.sheetClip!;
+    const x = Math.max(line.bbox.x, clip.x) + 3;
+    const chain = sourceAt(d, facingPage.index, x, line.bbox.y + line.bbox.height / 2);
+    expect(chain[0]).toMatchObject({ level: 'text', facing: true });
+    const block = chain.find((e) => e.level === 'block')!;
+    expect(block.id.endsWith('-facing')).toBe(false);
+    expect(d.blocks.some((b) => b.id === block.id)).toBe(true);
+    expect(chain.find((e) => e.level === 'frame')!.id).toBe('cp0:band');
+    // The band's words are found on both pages of the sheet.
+    const at = md.indexOf('Band');
+    const hits = elementsForSource(d, at, at + 4).filter((h) => h.element.level === 'block');
+    expect(new Set(hits.map((h) => h.pageIndex)).size).toBe(2);
+    expect(hits.some((h) => h.element.facing)).toBe(true);
+  });
+
+  it('a spread is laid out afresh each time: no layout key', () => {
+    expect(doc().pages.filter((p) => p.composed?.spread).every((p) => p.composed!.layoutKey === undefined)).toBe(true);
   });
 });

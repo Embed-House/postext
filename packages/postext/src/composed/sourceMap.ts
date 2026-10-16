@@ -19,7 +19,7 @@
  * level and find the same element again after a relayout or in another
  * locale of the chapter.
  */
-import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
+import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
 import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
 import { resolvePageTemplate } from './templates';
 import { composedPaintOrder, frameMatrix } from './paint';
@@ -36,13 +36,14 @@ export type SourceRef =
 
 /** The selection level of a {@link SourceElement}, innermost first:
  *  `text` a glyph (or a chip, a reference, a formula: one unit of a line),
- *  `attr` an attribute an element shows, `resource` a picture,
+ *  `attr` an attribute an element shows, `label` a label of a figure (at
+ *  its anchor, `resourceId#anchorId`), `resource` a picture,
  *  `line` a line of text, `block` a paragraph, heading, list item, picture
  *  block…, `box` a callout around it, `frame` a frame of a composed page,
  *  `group` a group of frames, `design` an element of a design slot,
  *  `slot` that slot (decoration, header, footer), `template` the composed
  *  page and its template. */
-export type SourceLevel = 'text' | 'attr' | 'resource' | 'line' | 'block' | 'box' | 'frame' | 'group' | 'design' | 'slot' | 'template';
+export type SourceLevel = 'text' | 'attr' | 'label' | 'resource' | 'line' | 'block' | 'box' | 'frame' | 'group' | 'design' | 'slot' | 'template';
 
 export interface SourceElement {
   level: SourceLevel;
@@ -66,6 +67,10 @@ export interface SourceElement {
   /** Set on an element laid past its frame's foot: kept in the source map,
    *  clipped on the page (`frameOverflow`). */
   clipped?: true;
+  /** Set on the half of a spread frame shown on the page facing the one
+   *  that reads it (`VDTFrame.facingBlocks`, #861): its id is the read
+   *  block's. */
+  facing?: true;
 }
 
 export interface SourceMapOptions {
@@ -266,7 +271,11 @@ const blockElement = (block: VDTBlock, file: { file?: string }): SourceElement |
 function textChain(block: VDTBlock, p: Point, file: { file?: string }): SourceElement[] {
   const out: SourceElement[] = [];
   if (block.resourceBlock) {
-    out.push({ level: 'resource', id: `${block.id}:resource`, source: { kind: 'resource', resourceId: block.resourceBlock.resource.id }, rect: { ...block.bbox } });
+    const resourceId = block.resourceBlock.resource.id;
+    // A label laid on the picture (#860): its glyph, then the label.
+    const label = block.resourceBlock.labels?.find((l) => l.rect && inside(l.rect, p));
+    if (label) out.push(...labelChain(label, resourceId, block.id, p, file));
+    out.push({ level: 'resource', id: `${block.id}:resource`, source: { kind: 'resource', resourceId }, rect: { ...block.bbox } });
   } else {
     const hit = lineAt(block, p.y);
     if (hit) {
@@ -278,6 +287,28 @@ function textChain(block: VDTBlock, p: Point, file: { file?: string }): SourceEl
   }
   const el = blockElement(block, file);
   if (el) out.push(el);
+  return out;
+}
+
+/** A figure label's glyph at `p` (its text spread over its rect) and the
+ *  label itself, its source the resource at its anchor. */
+function labelChain(label: VDTFigureLabel, resourceId: string, blockId: string, p: Point, file: { file?: string }): SourceElement[] {
+  const id = label.id ?? `${blockId}:label:${'anchor' in label.at ? label.at.anchor : label.sourceStart}`;
+  const anchor = label.anchorRef ? label.anchorRef.slice(label.anchorRef.indexOf('#') + 1) : undefined;
+  const out: SourceElement[] = [];
+  const map = label.sourceMap;
+  if (label.rect && map && map.length > 0) {
+    const frac = label.rect.width > 0 ? Math.max(0, Math.min(0.9999, (p.x - label.rect.x) / label.rect.width)) : 0;
+    const at = map[Math.min(map.length - 1, Math.floor(frac * map.length))]!;
+    out.push({ level: 'text', id: `${id}@${at}`, source: { kind: 'markdown', start: at, end: at + 1, ...file } });
+  }
+  out.push({
+    level: 'label',
+    id,
+    source: { kind: 'resource', resourceId, ...(anchor !== undefined ? { anchor } : {}) },
+    content: { start: label.sourceStart, end: label.sourceEnd },
+    ...(label.rect ? { rect: { ...label.rect } } : {}),
+  });
   return out;
 }
 
@@ -424,9 +455,20 @@ function intoFrame(frame: VDTFrame, p: Point): Point {
 }
 
 /** What a frame shows at `p` (page px), innermost first. */
-function frameChain(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: readonly VDTBlock[], pagePoint: Point, file: { file?: string }): SourceElement[] | undefined {
+function frameChain(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: readonly VDTBlock[], pagePoint: Point, file: { file?: string }, facing = false): SourceElement[] | undefined {
+  const chain = frameChainOf(doc, page, frame, blocks, pagePoint, file);
+  // The half of a spread frame read on the facing page (#861): the ids of
+  // the blocks it copies, flagged.
+  return chain && facing ? chain.map((e) => (e.level === 'frame' || e.level === 'group' || e.level === 'template' ? e : { ...e, id: unfacing(e.id), facing: true as const })) : chain;
+}
+
+/** The id of the block a facing copy (`…-facing`) shows. */
+const unfacing = (id: string): string => id.replace(/-facing(?=$|[:@])/, '');
+
+function frameChainOf(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: readonly VDTBlock[], pagePoint: Point, file: { file?: string }): SourceElement[] | undefined {
   const p = intoFrame(frame, pagePoint);
-  const box = blocks.find((b) => b.id === frame.blockIds[0] && b.type === 'callout');
+  const box = blocks.find((b) => b.type === 'callout' && (b.id === frame.blockIds[0] || frame.blockIds.length === 0)) ;
+  const boxId = box?.id;
   // The tab and title of the frame's box (above its top edge, for a tab).
   const overlay = box?.designOverlay;
   if (overlay) {
@@ -446,7 +488,7 @@ function frameChain(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: re
     if (b.type === 'callout' || b.hidden) continue;
     if (!inside(b.bbox, p)) continue;
     const chain = textChain(b, p, file);
-    const nested = enclosingBoxes(b, boxes, file).filter((e) => e.id !== frame.blockIds[0]);
+    const nested = enclosingBoxes(b, boxes, file).filter((e) => e.id !== boxId);
     return [...chain, ...nested, ...frameAncestors(doc, page, frame)];
   }
   return frameAncestors(doc, page, frame);
@@ -481,12 +523,15 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
   const head = furniture(page.header, 'header') ?? furniture(page.footer, 'footer');
   if (head) return head;
   if (composed) {
-    const items = composedPaintOrder(page);
+    // A page of a spread paints its frames and decoration clipped to its
+    // part of the sheet (#861).
+    const clip = composed.sheetClip;
+    const items = clip && !inside(clip, p) ? [] : composedPaintOrder(page);
     // Topmost first: the paint order read backwards.
     for (let i = items.length - 1; i >= 0; i--) {
       const item = items[i]!;
       if (item.kind === 'frame') {
-        const chain = frameChain(doc, page, item.frame, item.blocks, p, file);
+        const chain = frameChain(doc, page, item.frame, item.blocks, p, file, item.facing);
         if (chain) return chain;
         continue;
       }
@@ -567,38 +612,60 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
       });
     }
   }
-  const seen = new Set<string>();
-  for (const block of doc.blocks) {
-    if (block.sourceStart === undefined || block.sourceEnd === undefined || block.pageIndex < 0 || seen.has(block.id)) continue;
-    seen.add(block.id);
-    if (block.type === 'callout') continue;
-    if (!meets({ start: block.sourceStart, end: block.sourceEnd }, start, end)) continue;
-    const file = fileOf(options, block.pageIndex);
-    const held = blockFrame.get(block.id);
+  /** The lines, block and labels of `block` the range touches. */
+  const blockMatches = (block: VDTBlock, pageIndex: number, held: { frame: VDTFrame } | undefined, facing: boolean): void => {
+    if (block.sourceStart === undefined || block.sourceEnd === undefined || block.type === 'callout') return;
+    if (!meets({ start: block.sourceStart, end: block.sourceEnd }, start, end)) return;
+    const file = fileOf(options, pageIndex);
     const foot = held ? held.frame.rect.y + held.frame.rect.height : Infinity;
+    const extra = {
+      ...(held?.frame.rotate ? { rotate: held.frame.rotate } : {}),
+      ...(facing ? { facing: true as const } : {}),
+    };
+    const id = facing ? unfacing(block.id) : block.id;
     block.lines.forEach((line, index) => {
       const range = lineRange(block, line);
       if (!range || !meets(range, start, end)) return;
       out.push({
-        pageIndex: block.pageIndex,
+        pageIndex,
         element: {
           level: 'line',
-          id: `${block.id}:l${index}`,
+          id: `${id}:l${index}`,
           source: { kind: 'markdown', ...range, ...file },
           rect: { ...line.bbox },
-          ...(held?.frame.rotate ? { rotate: held.frame.rotate } : {}),
+          ...extra,
           ...(line.bbox.y + line.bbox.height > foot + 0.5 ? { clipped: true as const } : {}),
         },
       });
     });
+    // The labels of a figure (#857), by their text.
+    const rb = block.resourceBlock;
+    for (const label of rb?.labels ?? []) {
+      if (!meets({ start: label.sourceStart, end: label.sourceEnd }, start, end)) continue;
+      const el = labelChain(label, rb!.resource.id, id, { x: 0, y: 0 }, file).find((e) => e.level === 'label')!;
+      out.push({ pageIndex, element: { ...el, ...extra } });
+    }
     const el = blockElement(block, file);
-    if (el) out.push({ pageIndex: block.pageIndex, element: { ...el, ...(held?.frame.rotate ? { rotate: held.frame.rotate } : {}) } });
+    if (el) out.push({ pageIndex, element: { ...el, id, ...extra } });
+  };
+  const seen = new Set<string>();
+  for (const block of doc.blocks) {
+    if (block.pageIndex < 0 || seen.has(block.id)) continue;
+    seen.add(block.id);
+    blockMatches(block, block.pageIndex, blockFrame.get(block.id), false);
+  }
+  // The halves of spread frames shown on the facing page (#861).
+  for (const page of doc.pages) {
+    for (const frame of page.composed?.frames ?? []) {
+      for (const b of frame.facingBlocks ?? []) blockMatches(b, page.index, { frame }, true);
+    }
   }
   return out.sort((a, b) => a.pageIndex - b.pageIndex);
 }
 
 /** The element of `doc` with stable id `id` (a frame `cp0:dinero`, a
- *  composed page `cp0`, a block, a design element `cp0:decoration:tema`),
+ *  composed page `cp0`, a block, a design element `cp0:decoration:tema`,
+ *  a figure label `cp0:mapa:label:madrid`),
  *  on its page: what a host looks up again after a relayout. */
 export function findElement(doc: VDTDocument, id: string, options?: SourceMapOptions): SourceMatch | undefined {
   for (const page of doc.pages) {
@@ -611,6 +678,10 @@ export function findElement(doc: VDTDocument, id: string, options?: SourceMapOpt
       const b = i >= 0 ? slot!.blocks[i]! : undefined;
       if (b) return { pageIndex: page.index, element: { level: 'design', id, source: b.configPath !== undefined ? { kind: 'config', path: b.configPath } : { kind: 'config', path: '' }, rect: { ...b.bbox } } };
     }
+  }
+  for (const b of doc.blocks) {
+    const label = b.pageIndex >= 0 ? b.resourceBlock?.labels?.find((l) => l.id === id) : undefined;
+    if (label) return { pageIndex: b.pageIndex, element: labelChain(label, b.resourceBlock!.resource.id, b.id, { x: 0, y: 0 }, fileOf(options, b.pageIndex)).find((e) => e.level === 'label')! };
   }
   const block = doc.blocks.find((b) => b.id === id && b.pageIndex >= 0);
   if (!block) return undefined;

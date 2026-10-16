@@ -665,6 +665,13 @@ Budget (P16): < 100 ms for a property change on one page, < 300 ms with reflow.
   and moves source offsets, `contentIndex`, container ids (`calloutPath` too) and `pageIndex`. The
   digest is `VDTComposedPage.layoutKey`; `composedPagePaintKey(page)` adds what is laid round the
   frames, and the Sandbox canvas keeps the bitmap of a page whose paint key is unchanged.
+- **After P7, P9, P14.** `VDTFigureLabel` carries `id`, `anchorRef` and an absolute `sourceMap`
+  (and its `sourceStart`/`sourceEnd` are now absolute: `figureLabels(block, bodyOffset)`); a
+  label with a `rect` (P6) answers `sourceAt` at level `label`. The half of a spread frame on the
+  facing page (`facingBlocks`) answers with the read blocks' ids and `facing: true`; points outside
+  `sheetClip` miss frames and decoration. Spreads are laid out afresh every time (no memo, no
+  `layoutKey`): the sheet's two pages depend on each other. Groups come from the resolved
+  template; the negotiation reads only the template and the page's content, both in the key.
 - **Cost.** A warm composed page sets in about 1 ms (stub measure), so the memo saves about half
   of the composed-page work on a rebuild; the whole chapter build is dominated by the rest of the
   pipeline. Bench: `__bench__/composedPage.bench.test.ts`.

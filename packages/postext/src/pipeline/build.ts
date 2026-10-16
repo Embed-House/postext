@@ -896,7 +896,7 @@ function placeDocumentPass(
   // floats is laid out by its id alone.
   const figureLabelsById = new Map<string, VDTFigureLabel[]>();
   for (const b of contentBlocks) {
-    const labels = b.resourceId !== undefined && !figureLabelsById.has(b.resourceId) ? figureLabels(b) : undefined;
+    const labels = b.resourceId !== undefined && !figureLabelsById.has(b.resourceId) ? figureLabels(b, bodyOffset) : undefined;
     if (labels) figureLabelsById.set(b.resourceId!, labels);
   }
 

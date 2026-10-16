@@ -16,6 +16,9 @@ import type { CaptionCitations } from './citations';
 
 export interface MeasurementInput {
   vdtType: VDTBlock['type'];
+  /** Offset of the Markdown body in the chapter file: a figure's labels
+   *  carry absolute offsets (#857). */
+  bodyOffset?: number;
   rawBlock: ContentBlock;
   contentBlock: ContentBlock;
   style: BlockStyle;
@@ -65,16 +68,21 @@ export interface MeasurementResult {
 }
 
 /** The labels of a `:::figure` block (#854) as the VDT carries them
- *  (`ResolvedResourceBlock.labels`); undefined when it has none. */
-export function figureLabels(block: Pick<ContentBlock, 'figure'>): VDTFigureLabel[] | undefined {
+ *  (`ResolvedResourceBlock.labels`), their offsets absolute in the
+ *  chapter file (`bodyOffset` added), with their stable id, their anchor
+ *  and the source of each character (#857); undefined when it has none. */
+export function figureLabels(block: Pick<ContentBlock, 'figure'>, bodyOffset = 0): VDTFigureLabel[] | undefined {
   const labels = block.figure?.labels;
   if (!labels || labels.length === 0) return undefined;
   return labels.map((l) => ({
     text: l.text,
     at: 'anchor' in l.at ? { anchor: l.at.anchor } : { x: l.at.x, y: l.at.y },
     ...(l.style !== undefined ? { style: l.style } : {}),
-    sourceStart: l.textStart,
-    sourceEnd: l.textEnd,
+    sourceStart: l.textStart + bodyOffset,
+    sourceEnd: l.textEnd + bodyOffset,
+    ...(l.id !== undefined ? { id: l.id } : {}),
+    ...(l.anchorRef !== undefined ? { anchorRef: l.anchorRef } : {}),
+    ...(l.sourceMap.length === l.text.length ? { sourceMap: l.sourceMap.map((o) => o + bodyOffset) } : {}),
   }));
 }
 
@@ -120,7 +128,7 @@ export function runMeasurement(input: MeasurementInput): MeasurementResult {
     };
     // A `:::figure`'s labels (#862) ride on its block: a copy, so a
     // cached layout of the same resource keeps none of them.
-    const labels = figureLabels(contentBlock);
+    const labels = figureLabels(contentBlock, input.bodyOffset);
     const resourceBlock = labels ? { ...block, labels } : block;
     return { measured, resourceBlock, ...(tableRows ? { tableRows } : {}), ...(asideHeight !== undefined ? { asideHeight } : {}) };
   }
