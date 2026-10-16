@@ -16,7 +16,7 @@ import { ToolError, type WebMcpTool } from '../modelContext';
  *  refused. */
 const CONFIG_KEYS = [
   'page', 'layout', 'bodyText', 'headings', 'tableStyle', 'tableStyles', 'captionStyle', 'diagramStyle', 'videoStyle',
-  'paragraphStyles', 'calloutStyles', 'chipStyles', 'parts', 'headingStyles', 'toc', 'index', 'unorderedLists',
+  'paragraphStyles', 'calloutStyles', 'chipStyles', 'markStyles', 'parts', 'headingStyles', 'toc', 'index', 'unorderedLists',
   'orderedLists', 'math', 'footnotes', 'crossRefs', 'citations', 'cjk', 'lineNumbers', 'codeStyle', 'header', 'footer',
   'locale', 'direction', 'numerals', 'debug', 'htmlViewer', 'folio', 'comics', 'pdfGeneration', 'print', 'contrast', 'checks',
   'colorPalette', 'customFonts', 'resourceTypes', 'pageTemplates', 'labelStyles',

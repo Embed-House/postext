@@ -211,7 +211,13 @@ export interface InlineTab {
 export interface InlineLink {
   start: number;
   end: number;
+  /** The link target; `''` on a highlight mark. */
   href: string;
+  /** Present on a highlight mark (`:mark[text]{style="…"}`, #888), which
+   *  rides on the link ranges so that every pass that cuts, joins or moves
+   *  spans keeps it: the style id (`''` when the mark names none) and the
+   *  mark's number in the text. Such a range is no link. */
+  mark?: { style: string; id: number };
 }
 
 export interface InlineSpan {

@@ -91,6 +91,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'frameOverflow':
     case 'unknownCalloutType':
     case 'unknownChipStyle':
+    case 'unknownMarkStyle':
     case 'duplicateAnchor':
     case 'unknownCitationKey':
     case 'citationsUnavailable':
@@ -274,6 +275,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFrameOverflowTitle;
     case 'unknownChipStyle':
       return labels.warningsUnknownChipStyleTitle;
+    case 'unknownMarkStyle':
+      return labels.warningsUnknownMarkStyleTitle;
     case 'duplicateAnchor':
       return labels.warningsDuplicateAnchorTitle;
     case 'unknownCitationKey':
@@ -594,6 +597,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
         .replace('__page__', String(payload.page))}`;
     case 'unknownChipStyle':
       return `${inResource(payload.inResource)}:chip[…]{style="${payload.style}"} — ${labels.warningsUnknownChipStyleDetail}`;
+    case 'unknownMarkStyle':
+      return `${inResource(payload.inResource)}:mark[…]{style="${payload.style}"} — ${labels.warningsUnknownMarkStyleDetail}`;
     case 'duplicateAnchor':
       return `{#${payload.anchorId}} — ${labels.warningsDuplicateAnchorDetail}`;
     case 'unknownCitationKey':

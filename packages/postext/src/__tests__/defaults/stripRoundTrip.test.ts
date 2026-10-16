@@ -48,13 +48,13 @@ const show = (path: Path) => path.map((s) => (typeof s === 'string' ? s : `[${s.
  *    head and folio are stored without it;
  *  - the slot of a heading design that is switched off, which nothing
  *    reads (one with no slot resolves to the running head's);
- *  - the display name of the built-in box or chip style listed alone and
+ *  - the display name of the built-in box, chip or highlight style listed alone and
  *    without one (`[{ id: 'note' }]` is the built-in list, whose style is
  *    named "Note"; given so, it is listed under its id). */
 function reading(value: unknown, named: boolean, key = '', builtIn = false): string {
   if (Array.isArray(value)) {
     const alone = value.length === 1 && isFields(value[0])
-      && ((key === 'calloutStyles' && value[0].id === 'note') || (key === 'chipStyles' && value[0].id === 'chip'));
+      && ((key === 'calloutStyles' && value[0].id === 'note') || (key === 'chipStyles' && value[0].id === 'chip') || (key === 'markStyles' && value[0].id === 'mark'));
     return `[${value.map((item) => reading(item, named, '', alone)).join(',')}]`;
   }
   if (!isFields(value)) return JSON.stringify(value) ?? 'null';
@@ -263,6 +263,7 @@ const RICH: PostextConfig = {
     { id: 'aside', name: 'Aside' },
   ],
   chipStyles: [{ id: 'key', name: 'Key', fontWeight: 700, background: hex('#eeeeaa') }, { id: 'tag', name: 'Tag' }],
+  markStyles: [{ id: 'key', name: 'Key idea', background: hex('#ccf0d0'), paddingTop: pt(1) }, { id: 'mark' }],
   unorderedLists: { color: hex('#aa0000'), indent: pt(20), itemSpacing: pt(3) },
   orderedLists: { color: hex('#0000aa'), indent: pt(22), fontWeight: 700 },
   toc: { title: 'Contents', leader: '·', levels: [{ level: 1, fontWeight: 700 }, { level: 2, italic: true }] },

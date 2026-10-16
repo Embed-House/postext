@@ -169,6 +169,21 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
 - **Where.** Paragraphs, list items, blockquotes, callouts, table cells, captions and notes. Headings keep `:chip[…]` as literal text.
 - **Output.** Canvas, HTML and PDF paint the box and set the words as real text: selectable in the HTML, extractable and in reading order in the PDF (in a tagged PDF the box is a layout artifact and the words belong to the paragraph).
 
+### Highlight marks
+
+`:mark[text]` lays a coloured band behind `text`, the way a textbook highlights its key words. Unlike a chip, the marked words stay ordinary text: they break at line ends, hyphenate and justify like the words around them, and the band follows each piece of the phrase on its line. `:mark[text]{style="key"}` picks a named style from `markStyles` (see the configuration reference); without `style`, or with an id no style declares, the mark takes the first style (a built-in pale yellow `mark` when the configuration has none; the sandbox warns about an unknown id).
+
+```markdown
+The sun warms the sea and :mark[water rises into the air as vapour, where it cools and forms clouds].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
+- **Line breaks.** A mark may hold several words and run over a line end; each line gets its own band. The horizontal padding and the rounded corners are drawn at the true start and end of the phrase only: where the phrase breaks, the band stops square at the last letter of the line and starts square at the first letter of the next.
+- **No room taken.** The band is painted under the text, 0.8 em above and 0.25 em below the baseline, grown by the vertical padding, and its horizontal padding reaches into the word spaces beside the phrase. The lines break exactly as they would without the mark, so marking a laid-out book moves none of its pages.
+- **Text.** The marked text takes its own inline marks (`:mark[the **key** word]`), links, chips and references. Brackets nest inside it (`:mark[see [the map]]`), `\]` writes a literal bracket, and the text may run over a soft line break of the source. A punctuation mark glued to the phrase outside the brackets (`:mark[land].`) stays out of the band; a style's text colour reaches the whole word that holds it. A mark inside another is set as its text.
+- **Where.** Paragraphs, headings set in the text, list items, blockquotes, callouts, footnotes, table cells, captions and notes, in left-to-right and right-to-left text and in Chinese and Japanese. The canvas, the PDF and the HTML paint the band; in a tagged PDF it is a layout artifact and the words belong to their paragraph. A heading drawn by a design (an opener) prints the words without the band, and so does the HTML viewer on a vertical page.
+
 ### Small capitals
 
 `:smallcaps[text]` sets `text` in small capitals — the names of the characters in a play, an acronym in running text, the first words of a chapter. Lowercase letters are set as capitals at 70% of the text size, while capitals, digits and punctuation keep the full size, so `:smallcaps[Hamlet]` prints a full-size H followed by a small-capital AMLET.

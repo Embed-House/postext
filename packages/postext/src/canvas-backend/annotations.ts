@@ -60,6 +60,38 @@ export function dottedCentres(mark: Pick<VDTLineMark, 'x' | 'length' | 'size' | 
   return out;
 }
 
+/** Trace a rectangle whose left and right ends are rounded by their own
+ *  radii (a highlight band, #888). */
+export function bandPath(ctx: Ctx, x: number, y: number, w: number, h: number, rl: number, rr: number): void {
+  ctx.beginPath();
+  ctx.moveTo(x + rl, y);
+  ctx.lineTo(x + w - rr, y);
+  if (rr > 0) ctx.arcTo(x + w, y, x + w, y + rr, rr);
+  else ctx.lineTo(x + w, y);
+  if (rr > 0) ctx.arcTo(x + w, y + h, x + w - rr, y + h, rr);
+  else ctx.lineTo(x + w, y + h);
+  ctx.lineTo(x + rl, y + h);
+  if (rl > 0) ctx.arcTo(x, y + h, x, y + h - rl, rl);
+  else ctx.lineTo(x, y + h);
+  if (rl > 0) ctx.arcTo(x, y, x + rl, y, rl);
+  else ctx.lineTo(x, y);
+  ctx.closePath();
+}
+
+/** Paint the highlight bands of a line (`VDTLine.highlights`, #888), under
+ *  its text: called before the line is painted. */
+export function paintLineHighlights(ctx: Ctx, line: VDTLine): void {
+  const bands = line.highlights;
+  if (!bands || bands.length === 0) return;
+  saveContext(ctx);
+  for (const b of bands) {
+    ctx.fillStyle = b.color;
+    bandPath(ctx, line.bbox.x + b.x, line.baseline + b.y, b.width, b.height, b.radiusLeft, b.radiusRight);
+    ctx.fill();
+  }
+  restoreContext(ctx);
+}
+
 /** Paint the marks of a line (`VDTLine.marks`) in `color` unless a mark
  *  has its own. On a vertical page a sesame turns back against the flow
  *  (see {@link sesamePath}). */

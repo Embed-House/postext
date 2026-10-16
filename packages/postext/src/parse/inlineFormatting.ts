@@ -738,6 +738,73 @@ const SMALLCAPS_CLOSE = '\uE1A2';
 
 const unescapeBrackets = (inner: string): string => inner.replace(/\\([[\]])/g, '$1');
 
+/** Opening of a highlight mark (`:mark[text]{style="…"}`, #888) in the
+ *  source. */
+export const MARK_OPENER = ':mark[';
+/** Private-use marks bracketing a highlight mark's text while the emphasis
+ *  scanners run; they become a range of the spans (`InlineSpan.links`,
+ *  with `mark`) and are dropped. */
+const MARK_OPEN = '\uE1AA';
+const MARK_CLOSE = '\uE1AB';
+
+/** Where the `:mark[` at `at` ends: past its closing `]` and the `{…}`
+ *  attributes right after it (on the same line), with the text between
+ *  the brackets and the attributes. The text may hold other inline marks,
+ *  links included (brackets nest), may run over a soft line break and
+ *  takes `\]` for a literal bracket; it may not be empty. Undefined when
+ *  the bracket does not close before a blank line or the end. */
+export function readMarkAt(text: string, at: number): { end: number; inner: string; attrs?: string } | undefined {
+  if (!text.startsWith(MARK_OPENER, at)) return undefined;
+  const from = at + MARK_OPENER.length;
+  let depth = 0;
+  let i = from;
+  for (; i < text.length; i++) {
+    const c = text[i]!;
+    if (c === '\\') { i++; continue; }
+    if (c === '\n' && text[i + 1] === '\n') return undefined;
+    if (c === '[') depth++;
+    else if (c === ']') {
+      if (depth === 0) break;
+      depth--;
+    }
+  }
+  if (i >= text.length || i === from) return undefined;
+  const inner = text.slice(from, i);
+  let end = i + 1;
+  let attrs: string | undefined;
+  if (text[end] === '{') {
+    let stop = end + 1;
+    while (stop < text.length && text[stop] !== '}' && text[stop] !== '\n') stop++;
+    if (text[stop] === '}') {
+      attrs = text.slice(end + 1, stop);
+      end = stop + 1;
+    }
+  }
+  return { end, inner, ...(attrs !== undefined ? { attrs } : {}) };
+}
+
+/** Every `:mark[…]{…}` of `text` replaced by `replace(inner, style)`, an
+ *  inner mark first (one inside another is read as its text). */
+function replaceMarkSyntax(text: string, replace: (inner: string, style: string) => string): string {
+  if (!text.includes(MARK_OPENER)) return text;
+  let out = '';
+  let pos = 0;
+  for (let at = text.indexOf(MARK_OPENER); at >= 0; ) {
+    const read = readMarkAt(text, at);
+    if (!read) {
+      at = text.indexOf(MARK_OPENER, at + 1);
+      continue;
+    }
+    const style = read.attrs !== undefined ? parseDirectiveAttrs(read.attrs).style?.trim() ?? '' : '';
+    // A mark inside the text is set as its text alone.
+    const inner = replaceMarkSyntax(unescapeBrackets(read.inner), (t) => t);
+    out += text.slice(pos, at) + replace(inner, style);
+    pos = read.end;
+    at = text.indexOf(MARK_OPENER, read.end);
+  }
+  return out + text.slice(pos);
+}
+
 /** Replace every `:smallcaps[…]` by its text between the private-use marks. */
 function markSmallCaps(text: string): string {
   if (!text.includes(SMALLCAPS_OPENER)) return text;
@@ -870,7 +937,7 @@ export function plainSpans(spans: readonly InlineSpan[]): InlineSpan[] {
 export function stripInlineFormatting(text: string): string {
   const b = MARKUP_BOUNDARY;
   const wrap = (_: string, inner: string): string => b + inner + b;
-  return restoreEscapes(stripOrientationMarks(replaceLinkSyntax(replaceLinkSyntax(stripAnnotations(protectEscapes(text), b), true, () => b), false, (label) => b + label + b), b)
+  return restoreEscapes(stripOrientationMarks(replaceLinkSyntax(replaceLinkSyntax(stripAnnotations(replaceMarkSyntax(protectEscapes(text), (inner) => b + inner + b), b), true, () => b), false, (label) => b + label + b), b)
     .replace(INLINE_SMALLCAPS_RE, (_, inner: string) => b + unescapeBrackets(inner) + b) // small caps
     .replace(/`(.+?)`/g, wrap)               // inline code
     .replace(/\*\*(.+?)\*\*/g, wrap)          // bold
@@ -1195,16 +1262,23 @@ export function protectDollarEscapes(text: string): string {
 /** Remove the link marks from parsed spans, recording each link as a
  *  range of the spans it covers (`InlineSpan.links`); a span left empty
  *  (it held marks only) is dropped. `hrefs` are the targets in order. */
-function takeLinkMarks(spans: InlineSpan[], hrefs: readonly string[]): InlineSpan[] {
+function takeLinkMarks(spans: InlineSpan[], hrefs: readonly string[], markStyles: readonly string[] = []): InlineSpan[] {
   const out: InlineSpan[] = [];
   let next = 0;
   let open: string | undefined;
+  // The highlight mark open (#888): its style and number.
+  let nextMark = 0;
+  let mark: { style: string; id: number } | undefined;
   for (const span of spans) {
     let text = '';
     let start = 0;
+    let markStart = 0;
     const links: InlineLink[] = [];
     const close = () => {
       if (open !== undefined && text.length > start) links.push({ start, end: text.length, href: open });
+    };
+    const closeMark = () => {
+      if (mark && text.length > markStart) links.push({ start: markStart, end: text.length, href: '', mark });
     };
     for (let i = 0; i < span.text.length; i++) {
       const ch = span.text[i]!;
@@ -1214,12 +1288,20 @@ function takeLinkMarks(spans: InlineSpan[], hrefs: readonly string[]): InlineSpa
       } else if (ch === LINK_CLOSE) {
         close();
         open = undefined;
+      } else if (ch === MARK_OPEN) {
+        mark = { style: markStyles[nextMark] ?? '', id: nextMark };
+        nextMark++;
+        markStart = text.length;
+      } else if (ch === MARK_CLOSE) {
+        closeMark();
+        mark = undefined;
       } else {
         text += ch;
       }
     }
-    // A link still open runs on into the next span.
+    // A link or a mark still open runs on into the next span.
     close();
+    closeMark();
     if (text.length === 0) continue;
     out.push(links.length > 0 ? { ...span, text, links } : text === span.text ? span : { ...span, text });
   }
@@ -1262,13 +1344,20 @@ export function parseInlineFormatting(text: string): InlineSpan[] {
   // run — so a link inside, across or around emphasis never changes how
   // the text splits into spans — and become ranges once the spans exist.
   const hrefs: string[] = [];
+  // Highlight marks (`:mark[…]{style}`, #888) keep their text between two
+  // marks too, their styles queued, and become ranges the same way.
+  const markStyles: string[] = [];
   // Chinese annotations (`:dots[…]`, `:ruby[…]{rt="…"}`, `{紅樓|hóng|lóu}`…)
   // become marks around their text, their attributes queued, before the
   // emphasis scanners run (#193, #194, #195); so do the orientation marks
   // of vertical text (`:tcy[…]`, `:upright[…]`, `:sideways[…]`, #190),
   // which may sit inside an annotation.
   const annotations: QueuedAnnotation[] = [];
-  const cleaned = stripNonEmphasisFormatting(markAnnotations(markOrientation(markSmallCaps(protectEscapes(text))), annotations, restoreEscapes), hrefs);
+  const highlighted = replaceMarkSyntax(protectEscapes(text), (inner, style) => {
+    markStyles.push(style);
+    return MARK_OPEN + inner + MARK_CLOSE;
+  });
+  const cleaned = stripNonEmphasisFormatting(markAnnotations(markOrientation(markSmallCaps(highlighted)), annotations, restoreEscapes), hrefs);
   const spans: InlineSpan[] = [];
 
   // Triple markers (bold+italic) first, then double (bold) — longest first.
@@ -1308,5 +1397,5 @@ export function parseInlineFormatting(text: string): InlineSpan[] {
   // Small caps first: its marks split spans without moving link ranges,
   // which are taken from the finished spans.
   const marked = applyAnnotationMarks(applyOrientationMarks(applySmallCapsMarks(dropMarkupBoundaries(spans))), annotations);
-  return hrefs.length > 0 ? takeLinkMarks(marked, hrefs) : marked;
+  return hrefs.length > 0 || markStyles.length > 0 ? takeLinkMarks(marked, hrefs, markStyles) : marked;
 }

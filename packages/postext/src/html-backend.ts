@@ -45,7 +45,7 @@ import { measureSpacedWidth, measureTextWidth, withMeasureLanguage } from './mea
 import { trackedLigaturePieces, type LigaturePiece } from './measure/trackedLigatures';
 import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces';
 import { fontFamilyOf } from './measure/vertical';
-import { lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
+import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
 import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay';
 import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url';
 import type { VDTResourceVideo } from './vdt';
@@ -1961,7 +1961,7 @@ function renderLine(
     strikethroughDecl +
     trackingDecl +
     (lineCjkDecl(line) ? cjkTextDecl(tracking !== 0) : '') +
-    `">${lead}${renderSegments(line, block, targets, rootDir, rootLang, lineEndText(line, next))}</div>`
+    `">${lineHighlightsHtml(line)}${lead}${renderSegments(line, block, targets, rootDir, rootLang, lineEndText(line, next))}</div>`
   );
 }
 
@@ -2506,7 +2506,7 @@ function renderResourceLine(
     // measured with the tracking in its widths.
     (line.letterSpacing ? `letter-spacing:${line.letterSpacing}px;${ligaturesDecl()}` : '') +
     (lineDecl ? cjkTextDecl(!!line.letterSpacing) : '') +
-    `">${parts.join('')}</div>`
+    `">${lineHighlightsHtml(line)}${parts.join('')}</div>`
   );
 }
 

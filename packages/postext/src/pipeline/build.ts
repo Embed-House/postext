@@ -241,6 +241,7 @@ import { annotateArabicMarks } from '../arabicMarks';
 import { literalBreaksFor } from './hardBreaks';
 import { tashkilFor } from './tashkil';
 import { overlineEmphasis } from '../emphasisOverline';
+import { highlightDocument } from '../highlightMarks';
 import { withBookTitleBrackets } from './annotations';
 import { paperByBlock, stampPagePaper } from './paper';
 import { headingLineSpanBand } from './lineSpan';
@@ -8574,6 +8575,8 @@ export function* buildDocumentGen(
   const harakat = annotateArabicMarks(doc);
   // The rules over `*…*` runs under `bodyText.emphasis: 'overline'`.
   overlineEmphasis(doc);
+  // The bands of the highlight marks (`:mark[…]`, #888).
+  highlightDocument(doc);
   // Faces the text was set in that the font set could not give (#629).
   const fallbacks: ContentWarning[] = fontSet && resolveDebugConfig(config?.debug).warnings.missingFont
     ? fontFallbacks(documentFontFaces(doc), fontSet).map((f) => ({ kind: 'fontFallback', family: f.family, weight: f.weight, style: f.style, reason: f.reason }))

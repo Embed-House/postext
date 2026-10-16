@@ -458,6 +458,105 @@ const style = pickChipStyle(resolved, 'key');
 ```
 
 
+## Estils de ressaltat
+
+La propietat `markStyles` declara els estils amb nom del `:mark[text]{style="…"}` en línia: la franja de color darrere d'una frase, com un llibre de text ressalta les seves paraules clau (la sintaxi i les seves regles de tall de línia són a la referència del format de document). Ve un estil per defecte, `mark` (una franja groc pàl·lid que sobresurt una mica de la frase, amb els extrems una mica arrodonits i el text amb el seu color), de manera que `:mark[…]` funciona sense configurar res; declarar `markStyles` substitueix aquesta llista. Una marca sense `style`, o amb un id que cap estil no declara, pren el primer estil.
+
+```ts
+const config: PostextConfig = {
+  markStyles: [
+    { id: 'mark', name: 'Key idea' },
+    {
+      id: 'key',
+      name: 'Definition',
+      background: { hex: '#cdebd5', model: 'hex' },
+      color: { hex: '#14532d', model: 'hex' },
+    },
+  ],
+};
+```
+
+```md
+The sun warms the sea and :mark[water rises into the air as vapour].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obligatori</td>
+      <td>Identificador al qual remet <code>:mark[…]&#123;style="…"&#125;</code>.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Nom llegible, només per a la interfície de l'editor.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#fff0a0</code></td>
+      <td>Color de la franja (enllaçable a la paleta).</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>el del text</td>
+      <td>Color de les paraules marcades.</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.2em</code></td>
+      <td>Radi dels dos extrems de la franja, limitat a la meitat de la seva alçada.</td>
+    </tr>
+    <tr>
+      <td><code>paddingX</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.15em</code></td>
+      <td>Quant sobresurt la franja de la primera i l'última lletra de la frase, cap a l'espai del costat.</td>
+    </tr>
+    <tr>
+      <td><code>paddingY</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.05em</code></td>
+      <td>Espai per sobre i per sota de la franja del text.</td>
+    </tr>
+    <tr>
+      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>paddingY</code></td>
+      <td>Espai per sobre i per sota, cadascun en lloc de <code>paddingY</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Les longituds en em (`paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `borderRadius`) es mesuren amb la mida del text marcat. La franja no ocupa lloc: el text es compon com sense la marca, la franja es pinta a sota i el farciment entra als espais entre paraules i a l'interlineat. Al VDT, els segments de les paraules marcades porten un `mark` (`{ style, id, start?, end?, from?, to? }`) i cada línia desa les seves franges a `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`, relatives al `bbox.x` i a la línia de base de la línia), que els motors de llenç, PDF i HTML pinten abans del text de la línia.
+
+```ts
+const resolved = resolveMarkStylesConfig(config.markStyles);
+// => the built-in `mark` style when unset; every field filled
+
+const minimal  = stripMarkStylesDefaults(config.markStyles);
+// => undefined for the built-in default; static defaults dropped
+
+const style = pickMarkStyle(resolved, 'key');
+// => the `key` style, else the first one
+```
+
+
 ## Llistats de codi
 
 La propietat `codeStyle` fixa l'aspecte dels llistats de codi: les tanques ```` ``` ```` i `~~~` del text (vegeu [Format del document › Blocs de codi](/ca/docs/document-format#blocs-de-codi)), i el codi en línia quan demana una lletra de codi. Un llistat es compon línia a línia tal com està escrit, en una lletra monoespaiada, dins d'una caixa: cap línia no es parteix amb guionet ni es justifica, cada espai conserva la seva amplada i un tabulador avança fins a la tabulació següent. La caixa surt del mateix mecanisme que la d'un `:::callout`, de manera que un llistat es divideix entre línies a través de columnes i pàgines, cada part en una caixa pròpia, i una tanca dins d'un avís és una caixa niada dins seu. Totes les propietats són opcionals. Des de postext 1.23.

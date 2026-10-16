@@ -268,6 +268,11 @@ function applyPaletteToListedResolvedColors(
       borderColor: resolveRequired(s.borderColor, palette),
       ...(s.color ? { color: resolveRequired(s.color, palette) } : {}),
     })),
+    markStyles: resolved.markStyles.map((s) => ({
+      ...s,
+      background: resolveRequired(s.background, palette),
+      ...(s.color ? { color: resolveRequired(s.color, palette) } : {}),
+    })),
     parts: {
       ...resolved.parts,
       bodyStyle: {
@@ -452,6 +457,14 @@ function applyPaletteToListedColors(config: PostextConfig, palette: ColorPalette
       ...s,
       background: resolveColor(s.background, palette),
       borderColor: resolveColor(s.borderColor, palette),
+      color: resolveColor(s.color, palette),
+    }));
+  }
+
+  if (config.markStyles) {
+    next.markStyles = config.markStyles.map((s) => ({
+      ...s,
+      background: resolveColor(s.background, palette),
       color: resolveColor(s.color, palette),
     }));
   }

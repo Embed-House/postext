@@ -31,7 +31,7 @@ import {
 import type { VDTAnnotationRun, VDTKunten, VDTLine, VDTLineMark, VDTLineSegment, VDTRuby, VDTWarichu } from 'postext';
 import { parseFontString } from '../fontString';
 import type { FontCache } from '../fontCache';
-import { type PageCtx, alphaOf, alphaStateOp, colorFromHex, drawTextPx } from './primitives';
+import { type PageCtx, alphaOf, alphaStateOp, colorFromHex, drawTextPx, fillOutlinePx } from './primitives';
 import { tagArtifact, tagContent, type StructElem } from './tagging';
 
 /** A sesame dot (﹅): a lens `size` long and 0.3 of it wide,
@@ -128,6 +128,24 @@ function markOps(ctx: PageCtx, m: VDTLineMark, xPx: number, yPx: number): { ops:
       }
       return { ops, filled: false };
     }
+  }
+}
+
+/** Draw the highlight bands of a line (`VDTLine.highlights`, `:mark[…]`,
+ *  #888) as artifacts, under its text: called before the line is
+ *  painted. */
+export function paintLineHighlights(ctx: PageCtx, line: VDTLine): void {
+  const bands = line.highlights;
+  if (!bands || bands.length === 0) return;
+  tagArtifact(ctx, { type: 'Layout' });
+  for (const b of bands) {
+    fillOutlinePx(ctx, {
+      x: line.bbox.x + b.x,
+      y: line.baseline + b.y,
+      width: b.width,
+      height: b.height,
+      radii: [b.radiusLeft, b.radiusRight, b.radiusRight, b.radiusLeft],
+    }, colorFromHex(b.color, ctx.colorSpace));
   }
 }
 

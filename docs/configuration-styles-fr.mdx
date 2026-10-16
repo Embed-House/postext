@@ -458,6 +458,105 @@ const style = pickChipStyle(resolved, 'key');
 ```
 
 
+## Styles de surlignage
+
+La propriété `markStyles` déclare les styles nommés du `:mark[texte]{style="…"}` en ligne : la bande de couleur derrière une phrase, comme un manuel surligne ses mots clés (la syntaxe et ses règles de coupure sont dans la référence du format de document). Un style est fourni par défaut, `mark` (une bande jaune pâle qui dépasse un peu de la phrase, aux extrémités légèrement arrondies, le texte dans sa propre couleur), si bien que `:mark[…]` fonctionne sans aucune configuration ; déclarer `markStyles` remplace cette liste. Une marque sans `style`, ou avec un identifiant qu’aucun style ne déclare, prend le premier style.
+
+```ts
+const config: PostextConfig = {
+  markStyles: [
+    { id: 'mark', name: 'Key idea' },
+    {
+      id: 'key',
+      name: 'Definition',
+      background: { hex: '#cdebd5', model: 'hex' },
+      color: { hex: '#14532d', model: 'hex' },
+    },
+  ],
+};
+```
+
+```md
+The sun warms the sea and :mark[water rises into the air as vapour].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obligatoire</td>
+      <td>Identifiant auquel renvoie <code>:mark[…]&#123;style="…"&#125;</code>.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Nom lisible, pour l’interface de l’éditeur seulement.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#fff0a0</code></td>
+      <td>Couleur de la bande (liable à la palette).</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>celle du texte</td>
+      <td>Couleur des mots marqués.</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.2em</code></td>
+      <td>Rayon des deux extrémités de la bande, limité à la moitié de sa hauteur.</td>
+    </tr>
+    <tr>
+      <td><code>paddingX</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.15em</code></td>
+      <td>De combien la bande dépasse la première et la dernière lettre de la phrase, dans l’espace voisin.</td>
+    </tr>
+    <tr>
+      <td><code>paddingY</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.05em</code></td>
+      <td>Espace au-dessus et au-dessous de la bande du texte.</td>
+    </tr>
+    <tr>
+      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>paddingY</code></td>
+      <td>Espace au-dessus et au-dessous, chacun à la place de <code>paddingY</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Les longueurs en em (`paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `borderRadius`) se rapportent à la taille du texte marqué. La bande ne prend aucune place : le texte est composé comme sans la marque, la bande est peinte dessous, et sa marge empiète sur les espaces entre les mots et sur l’interligne. Dans le VDT, les segments des mots marqués portent un `mark` (`{ style, id, start?, end?, from?, to? }`) et chaque ligne garde ses bandes dans `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`, relatives au `bbox.x` et à la ligne de base de la ligne), que les moteurs canevas, PDF et HTML peignent avant le texte de la ligne.
+
+```ts
+const resolved = resolveMarkStylesConfig(config.markStyles);
+// => the built-in `mark` style when unset; every field filled
+
+const minimal  = stripMarkStylesDefaults(config.markStyles);
+// => undefined for the built-in default; static defaults dropped
+
+const style = pickMarkStyle(resolved, 'key');
+// => the `key` style, else the first one
+```
+
+
 ## Listings de code
 
 La propriété `codeStyle` règle l’aspect des listings de code : les blocs délimités ```` ``` ```` et `~~~` du texte (voir [Format du document › Blocs de code](/fr/docs/document-format#blocs-de-code)), et le code en ligne quand il demande une police de code. Un listing est composé ligne par ligne tel qu’il est écrit, dans une police à chasse fixe, dans un cadre : aucune ligne n’est coupée par césure ni justifiée, chaque espace garde sa largeur, et une tabulation passe au taquet suivant. Le cadre vient de la même mécanique qu’un `:::callout` : un listing se coupe donc entre deux lignes d’une colonne et d’une page à l’autre, chaque partie dans son propre cadre, et un bloc délimité à l’intérieur d’un encadré est un cadre imbriqué dans celui-ci. Toutes les propriétés sont facultatives. Depuis postext 1.23.

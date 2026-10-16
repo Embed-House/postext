@@ -3676,6 +3676,59 @@ export interface ChipStyleConfig {
   gap?: Dimension;
 }
 
+/**
+ * A named highlight style, selected by the inline `:mark[text]{style="<id>"}`
+ * (#888; a mark without `style`, or with an id no style declares, takes the
+ * first style). A mark is a coloured band behind a phrase, as a textbook
+ * highlights its key words: unlike a chip it is ordinary text, set and
+ * broken over lines like the words around it, and the band follows each
+ * piece of it on its line. Its horizontal padding and rounded ends are
+ * drawn at the true start and end of the phrase only; where the phrase
+ * breaks, the band stops square at the last letter of the line.
+ *
+ * The band takes no room: it is painted under the text, from 0.8 em above
+ * the baseline to 0.25 em below it (the em of the marked text), grown by
+ * the vertical padding, and its horizontal padding reaches into the word
+ * spaces around the phrase. The layout of the text is the same as without
+ * the mark.
+ */
+export interface MarkStyleConfig {
+  id: string;
+  /** Human-readable name (editor UI only). Defaults to {@link id}. */
+  name?: string;
+  /** Band colour. Default a pale yellow (`#fff0a0`). */
+  background?: ColorValue;
+  /** Colour of the marked text. Default the text's own. */
+  color?: ColorValue;
+  /** Corner radius of the band's two ends, clamped to half its height.
+   *  Default `0.2em`. */
+  borderRadius?: Dimension;
+  /** How far the band reaches past the first and the last letter of the
+   *  phrase, into the space beside it. Default `0.15em`. */
+  paddingX?: Dimension;
+  /** Room above and below the text band. Default `0.05em`. */
+  paddingY?: Dimension;
+  /** Room above the text band, in place of {@link paddingY}. */
+  paddingTop?: Dimension;
+  /** Room below the text band, in place of {@link paddingY}. */
+  paddingBottom?: Dimension;
+}
+
+export interface ResolvedMarkStyleConfig {
+  id: string;
+  name: string;
+  background: ColorValue;
+  /** Unset: the text's own. */
+  color?: ColorValue;
+  borderRadius: Dimension;
+  paddingX: Dimension;
+  paddingY: Dimension;
+  /** Unset: `paddingY`. */
+  paddingTop?: Dimension;
+  /** Unset: `paddingY`. */
+  paddingBottom?: Dimension;
+}
+
 export interface ResolvedChipStyleConfig {
   id: string;
   name: string;
@@ -7385,6 +7438,9 @@ export interface PostextConfig {
   /** Named chip styles for the inline `:chip[text]{style="…"}`. Defaults
    *  to a single `chip` style when unset. */
   chipStyles?: ChipStyleConfig[];
+  /** Named highlight styles for the inline `:mark[text]{style="…"}`
+   *  (#888). Defaults to a single pale yellow `mark` style when unset. */
+  markStyles?: MarkStyleConfig[];
   /** Part dividers (`:::part` containers): page breaks, body area,
    *  opener design and body typography. */
   parts?: PartsConfig;

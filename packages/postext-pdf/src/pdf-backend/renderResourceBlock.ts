@@ -78,7 +78,7 @@ import {
 import { LinkRegistry, RefRun, refTarget, UriRuns } from './links';
 import { paintChip } from './chip';
 import { renderMathSegment } from './blockRender';
-import { paintKunten, paintLineMarks, paintRuby, paintWarichu } from './annotations';
+import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintWarichu } from './annotations';
 import { tagArtifact, tagContent, type StructAttrs, type StructElem } from './tagging';
 import type { StructureFlow } from './structureFlow';
 import {
@@ -623,6 +623,8 @@ function paintLine(
   elem?: StructElem,
 ): void {
   const tracking = line.letterSpacing ?? 0;
+  // Highlight bands (`:mark[…]`, #888), under the text.
+  if (line.highlights) paintLineHighlights(ctx, line);
   if (tracking !== 0) setTrackingPx(ctx, tracking);
   paintLineRuns(ctx, line, fonts, fontCache, color, linkColor, linkRegistry, resolveRefId, labelColor, elem, tracking);
   if (tracking !== 0) setTrackingPx(ctx, 0);

@@ -28,7 +28,7 @@ import { fillSegmentWord, type WordRun } from './wordRuns';
 import { paintedSegments } from './wordPieces';
 import { uncroppedPictureBox } from '../pipeline/safeArea';
 import { mirroredPaintActive } from './mirrorFrame';
-import { paintKunten, paintLineMarks, paintRuby, paintWarichu } from './annotations';
+import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintWarichu } from './annotations';
 import { rasterScaleOf } from './deviceScale';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
 import { fillContextText } from './contextText';
@@ -380,6 +380,8 @@ function paintLine(
   labelColor: string = color,
 ): void {
   const tracking = line.letterSpacing ?? 0;
+  // Highlight bands (`:mark[…]`, #888), under the text.
+  if (line.highlights) paintLineHighlights(ctx, line);
   if (tracking !== 0) setLetterSpacing(ctx, tracking);
   paintLineRuns(ctx, line, font, boldFont, italicFont, boldItalicFont, color, linkColor, labelColor, tracking);
   if (tracking !== 0) setLetterSpacing(ctx, 0);

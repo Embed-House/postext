@@ -44,6 +44,7 @@ export type WarningKind =
   | 'pageFenceLength'
   | 'frameOverflow'
   | 'unknownChipStyle'
+  | 'unknownMarkStyle'
   | 'duplicateAnchor'
   | 'unknownCitationKey'
   | 'citationsUnavailable'
@@ -245,6 +246,9 @@ export type WarningPayload =
    *  `config.chipStyles`; the chip takes the first style. `inResource`
    *  names the resource whose caption, note or cell holds the chip. */
   | { kind: 'unknownChipStyle'; style: string; inResource?: string }
+  /** A `:mark[…]{style="…"}` names a style that is not in
+   *  `config.markStyles` (#888); the mark takes the first style. */
+  | { kind: 'unknownMarkStyle'; style: string; inResource?: string }
   /** An identifier (`{#id}`, `:anchor{#id}`) set twice (#261). */
   | { kind: 'duplicateAnchor'; anchorId: string }
   /** A citation names a key no reference defines (#268). */

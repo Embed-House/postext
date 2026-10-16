@@ -21,6 +21,7 @@ import type {
   ResolvedParagraphStyleConfig,
   ResolvedCalloutStyleConfig,
   ResolvedChipStyleConfig,
+  ResolvedMarkStyleConfig,
   CalloutSpan,
   CalloutPlacement,
   ResolvedUnorderedListsConfig,
@@ -69,6 +70,31 @@ export interface BoundingBox {
 // Resolved config aggregate (all sub-configs fully resolved to non-optional)
 // ---------------------------------------------------------------------------
 
+/** See {@link VDTLineSegment.mark}. */
+export interface VDTSegmentMark {
+  style: string;
+  id: number;
+  start?: true;
+  end?: true;
+  from?: number;
+  to?: number;
+}
+
+/** A highlight band (`:mark[…]`, #888) of one line: a rectangle from `x`
+ *  (px from the line's `bbox.x`, in the flow frame of the line) `width`
+ *  wide, from `y` (px from the baseline, negative up) `height` high,
+ *  filled with `color`; `radiusLeft` / `radiusRight` round its left and
+ *  right ends (0 where the phrase goes on to the next line). */
+export interface VDTLineHighlight {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: string;
+  radiusLeft: number;
+  radiusRight: number;
+}
+
 export interface ResolvedConfig {
   page: ResolvedPageConfig;
   layout: ResolvedLayoutConfig;
@@ -85,6 +111,8 @@ export interface ResolvedConfig {
   calloutStyles: ResolvedCalloutStyleConfig[];
   /** Named chip styles (`:chip[…]{style="…"}`). */
   chipStyles: ResolvedChipStyleConfig[];
+  /** Highlight styles of `:mark[…]` (#888). */
+  markStyles: ResolvedMarkStyleConfig[];
   unorderedLists: ResolvedUnorderedListsConfig;
   orderedLists: ResolvedOrderedListsConfig;
   math: ResolvedMathConfig;
@@ -255,6 +283,14 @@ export interface VDTLineSegment {
    *  paints them as plain text. A word glued to the link text (its closing
    *  full stop) shares the link. */
   href?: string;
+  /** The highlight mark (`:mark[text]{style}`, #888) this segment is part
+   *  of: its style id (`''` for the first style), the mark's number in its
+   *  text (two marks side by side stay apart), and whether the segment
+   *  holds the mark's first and last character. `from` / `to` are the
+   *  characters of `text` the mark covers when it covers part of it (a
+   *  closing full stop glued to the phrase). The band itself is
+   *  `VDTLine.highlights`. */
+  mark?: VDTSegmentMark;
   /** Present when `kind === 'math'`. The rendered formula. */
   mathRender?: MathRender;
   /** Present when `kind === 'swatch'`: an inline colour swatch (`:swatch{…}`),
@@ -777,6 +813,9 @@ export interface VDTLine {
    *  book-title lines, #193), for renderers to draw as they are; absent on
    *  a line with none. */
   marks?: VDTLineMark[];
+  /** The bands of the highlight marks on this line (`:mark[…]`, #888),
+   *  painted under its text; absent on a line with none. */
+  highlights?: VDTLineHighlight[];
   /** How far the ink of the line's words that carry Arabic vowel marks
    *  (ḥarakāt, #376) reaches above (`above`) and below (`below`) its
    *  baseline, px: the marks stack past the letters and may leave the
@@ -2878,6 +2917,10 @@ export type ContentWarning = ContentWarningBase & (
   /** `:chip[…]{style}` names no chip style: the chip takes the first one.
    *  `inResource` names the resource whose caption, note or cell holds it. */
   | { kind: 'unknownChipStyle'; style: string; inResource?: string }
+  /** `:mark[…]{style}` (#888) names no highlight style: the mark takes the
+   *  first one. `inResource` names the resource whose caption, note or
+   *  cell holds it. */
+  | { kind: 'unknownMarkStyle'; style: string; inResource?: string }
   /** A footnote marker `[^id]` with no `[^id]: …` definition in the
    *  document: the number prints, the note is empty. Points at the first
    *  such marker. */

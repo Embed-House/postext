@@ -1512,6 +1512,60 @@
       }
     }
   },
+  "unknownMarkStyle": {
+    "source": "engine",
+    "label": {
+      "en": "Unknown highlight style",
+      "es": "Estilo de resaltado desconocido",
+      "ca": "Estil de ressaltat desconegut",
+      "zh": "未知高亮样式",
+      "ar": "نمط تظليل غير معروف",
+      "ja": "不明なハイライトのスタイル",
+      "pt": "Estilo de destaque desconhecido",
+      "fr": "Style de surlignage inconnu",
+      "de": "Unbekannter Hervorhebungsstil",
+      "it": "Stile di evidenziazione sconosciuto"
+    },
+    "cause": {
+      "en": "A mark names a style that markStyles does not define, so it takes the first style.",
+      "es": "Una marca nombra un estilo que markStyles no define, así que toma el primer estilo.",
+      "ca": "Una marca anomena un estil que markStyles no defineix, de manera que pren el primer estil.",
+      "zh": "某个高亮标记指定的样式没有在markStyles中定义，因此它套用第一个样式。",
+      "ar": "علامة تسمّي نمطًا لا تعرّفه markStyles، فتأخذ النمط الأول.",
+      "ja": "マークが、markStylesに定義されていないスタイルを指定しているため、最初のスタイルが使われます。",
+      "pt": "Uma marca cita um estilo que markStyles não define, então ela assume o primeiro estilo.",
+      "fr": "Une marque nomme un style que markStyles ne définit pas : elle prend le premier style.",
+      "de": "Eine Markierung nennt einen Stil, den markStyles nicht definiert, sie übernimmt daher den ersten Stil.",
+      "it": "Un segno indica uno stile che markStyles non definisce, quindi prende il primo stile."
+    },
+    "fix": {
+      "en": "Define the style in markStyles or correct the style attribute.",
+      "es": "Define el estilo en markStyles o corrige el atributo style.",
+      "ca": "Defineix l'estil a markStyles o corregeix l'atribut style.",
+      "zh": "在markStyles中定义该样式，或改正style属性。",
+      "ar": "عرّف النمط في markStyles أو صحّح السمة style.",
+      "ja": "markStylesにスタイルを定義するか、style属性を修正してください。",
+      "pt": "Defina o estilo em markStyles ou corrija o atributo style.",
+      "fr": "Définissez le style dans markStyles ou corrigez l’attribut style.",
+      "de": "Definieren Sie den Stil in markStyles oder korrigieren Sie das Attribut style.",
+      "it": "Definisci lo stile in markStyles oppure correggi l’attributo style."
+    },
+    "docs": {
+      "slug": "configuration-styles",
+      "heading": {
+        "en": "Highlight styles",
+        "es": "Estilos de resaltado",
+        "ca": "Estils de ressaltat",
+        "zh": "高亮样式",
+        "ar": "أنماط التظليل",
+        "ja": "ハイライトのスタイル",
+        "pt": "Estilos de destaque",
+        "fr": "Styles de surlignage",
+        "de": "Hervorhebungsstile",
+        "it": "Stili di evidenziazione"
+      }
+    }
+  },
   "duplicateAnchor": {
     "source": "engine",
     "label": {
