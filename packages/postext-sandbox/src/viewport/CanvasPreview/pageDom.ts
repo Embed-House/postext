@@ -7,6 +7,7 @@ import type { ComposedBook } from '../../book/types';
 import { createPageCanvas, createOverlaySvg } from './dom';
 import { attachSlotClickHandler, type PageNavigator } from './interaction';
 import { attachFrameEditor } from '../composed/frameEditor';
+import { attachLabelAnchorEditor } from '../composed/labelAnchorEditor';
 import {
   PAGE_GAP,
   PAGE_PADDING,
@@ -72,6 +73,9 @@ export function buildPagesDom(
     slot.appendChild(overlay);
     overlayMap.set(pageIndex, overlay);
     attachSlotClickHandler(slot, pageIndex, pageWidthPx, pageHeightPx, docRef, dispatchRef, activePanelRef, sourceRef, navigateRef, resourcesRef, pageSourceRef, labelsRef);
+    // The labels of figures in Design mode (#866): a press on one is theirs,
+    // before the page-template editor's.
+    attachLabelAnchorEditor(slot, pageIndex, pageWidthPx, pageHeightPx, { docRef, dispatchRef, ...(labelsRef ? { labelsRef } : {}) });
     // The page-template editor of Design mode (#863): first on the page's pointer.
     attachFrameEditor(slot, pageIndex, pageWidthPx, pageHeightPx, { docRef, dispatchRef, sourceRef, pageSourceRef, ...(labelsRef ? { labelsRef } : {}) });
     allSlots.push(slot);

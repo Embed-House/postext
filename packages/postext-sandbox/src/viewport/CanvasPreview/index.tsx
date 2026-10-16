@@ -23,6 +23,7 @@ import { onPageSelectionChange } from '../../selection/selectionStore';
 import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection';
 import { syncComicEditors } from '../comics/comicEditing';
 import { syncFrameEditors } from '../composed/frameEditor';
+import { syncLabelAnchorEditors } from '../composed/labelAnchorEditor';
 import { useTemplateEditorHost } from '../../templates/useTemplateEditorHost';
 import { findResourceLocation } from './geometry';
 import type { BookPageMap } from '../usePageHashSync';
@@ -912,8 +913,10 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     if (!doc) return;
     // The comic splitter handles follow the new layout (#568).
     syncComicEditors();
-    // So do the page-template marks of Design mode (#863).
+    // So do the page-template marks of Design mode (#863) and the figure
+    // labels' anchors (#866).
     syncFrameEditors();
+    syncLabelAnchorEditors();
     const debug = resolveDebugConfig(config.debug);
     // The editor selection is chapter-local; the document is the composed
     // book — or, stitched from every chapter, a document whose offsets are
