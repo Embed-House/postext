@@ -354,6 +354,24 @@ describe("C40: the source map round trip (#857)", () => {
       const { composed } = layOut(content(lang), lang);
       expect(composed.roundTrip?.misses).toEqual([]);
       expect(Object.keys(composed.roundTrip?.levels ?? {})).toEqual(expect.arrayContaining(["frame", "block", "line"]));
+      expect(roundTripFindings(facts(composed))).toEqual([
+        { check: "C40", severity: "info", detail: expect.stringMatching(/^every element came back to its source: .*\d+ frame.*\d+ line/) },
+      ]);
+    }
+  });
+
+  it.runIf(typeof (engine as Record<string, unknown>).sourceAt === "function")("fails the fixture when the source map answers for the wrong place", () => {
+    const real = engine as unknown as { sourceAt: (doc: unknown, page: number, x: number, y: number) => unknown[] };
+    // Every click answered as if it had landed in the page's top-left corner.
+    const shifted = { ...engine, sourceAt: (doc: unknown, page: number) => real.sourceAt(doc, page, 1, 1) };
+    for (const lang of LOCALES) {
+      const { doc } = layOut(content(lang), lang);
+      const composed = composedFacts(shifted, [doc], { markdowns: [content(lang)] }) as ComposedFacts;
+      expect(composed.roundTrip!.misses.length).toBeGreaterThan(5);
+      const out = roundTripFindings(facts(composed));
+      expect(out.every((f) => f.check === "C40" && f.severity === "fail")).toBe(true);
+      expect(out[0]!.detail).toMatch(/^p\. 1: a click inside (frame|block|line|text) /);
+      expect(out.at(-1)!.detail).toMatch(/^and \d+ more elements the source map does not find again$/);
     }
   });
 });
