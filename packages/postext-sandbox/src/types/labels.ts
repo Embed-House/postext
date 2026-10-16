@@ -3431,6 +3431,9 @@ export interface SandboxLabels {
   pageTemplatesFrameNextTooltip: string;
   pageTemplatesFramePush: string;
   pageTemplatesFramePushTooltip: string;
+  pageTemplatesFrameWrap: string;
+  pageTemplatesFrameWrapTooltip: string;
+  pageTemplatesFrameWrapBox: string;
   pageTemplatesFrameCrossGutter: string;
   pageTemplatesFrameCrossGutterTooltip: string;
   pageTemplatesFrameGroupFit: string;

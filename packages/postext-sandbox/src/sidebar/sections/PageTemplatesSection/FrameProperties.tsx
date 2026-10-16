@@ -303,6 +303,23 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
           onReset={reset('next')}
         />
         <ToggleSwitch label={labels.pageTemplatesFramePush} tooltip={labels.pageTemplatesFramePushTooltip} checked={frame.exclude === 'push'} onChange={(v) => set({ exclude: v ? 'push' : 'none' })} isDefault={!has('exclude')} onReset={reset('exclude')} />
+        {/* What a pushing frame pushes with (#883): its box, or the shape
+            of the pictures it holds. */}
+        {frame.exclude === 'push' && (
+          <SelectInput
+            variant="segmented"
+            label={labels.pageTemplatesFrameWrap}
+            tooltip={labels.pageTemplatesFrameWrapTooltip}
+            value={frame.wrap ?? 'box'}
+            options={[
+              { value: 'box', label: labels.pageTemplatesFrameWrapBox },
+              { value: 'contour', label: labels.resourceWrapContour },
+            ]}
+            onChange={(v) => set({ wrap: v === 'contour' ? 'contour' : 'box' })}
+            isDefault={!has('wrap')}
+            onReset={reset('wrap')}
+          />
+        )}
         {template.spread && (
           <ToggleSwitch label={labels.pageTemplatesFrameCrossGutter} tooltip={labels.pageTemplatesFrameCrossGutterTooltip} checked={frame.crossGutter} onChange={(v) => set({ crossGutter: v })} isDefault={!has('crossGutter')} onReset={reset('crossGutter')} />
         )}
