@@ -414,6 +414,10 @@ const blocks = parseMarkdown(content);
 
 Voir la page [Format du document](/fr/docs/document-format) pour la liste complète des éléments de syntaxe markdown que Postext reconnaît.
 
+### Carte des sources d’un document mis en page
+
+`sourceAt(doc, pageIndex, x, y, options?)` renvoie ce que montre un point d’une page, de l’intérieur vers l’extérieur, chaque élément avec son `id` stable, sa `source` (un passage du Markdown, un pointeur JSON de la configuration, un attribut du délimiteur de page ou une ressource) et son `rect`. `elementsForSource(doc, start, end, options?)` renvoie ce qu’est devenu un passage du Markdown, page par page, et `findElement(doc, id)` retrouve un élément après une nouvelle mise en page. Ces fonctions lisent ce que la mise en page a inscrit dans le VDT et ne mettent rien en page. `composedPagePaintKey(page)` indique si une page composée peint ce qu’elle a peint auparavant. Les types de source, les identifiants et la façon dont une page composée n’est remise en page que là où elle a changé sont décrits dans [Pages composées › Carte des sources](/fr/docs/composed-pages#carte-des-sources).
+
 ### Charger les polices avant la mise en page
 
 La mise en page mesure le texte avec les polices dont dispose le jeu de polices au moment où elle s’exécute. `prepareFonts` charge, avant la première construction, toutes les polices que demandent une configuration et son texte : le texte courant, les titres, les listes, les titres et le corps des encadrés, les tableaux, les textes de design, les titres courants, la table des matières, le code et le lettrage de bande dessinée, dans chaque graisse et chaque inclinaison que définit la configuration (les quatre de la famille du texte courant, puisque `**` et `*` y composent le gras et l’italique). Chaque police est chargée pour les caractères que le document compose, si bien qu’une famille servie en tranches `unicode-range` (latin étendu, grec, arabe, les tranches CJK de Google Fonts et de Fontsource) apporte les fichiers dont le texte a besoin.

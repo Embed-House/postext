@@ -340,3 +340,65 @@ Sur le canevas, dans la vue en double page du Sandbox et dans le Folio, les deux
 `composedPages(blocks)` lit les éléments analysés d’un chapitre (`parseMarkdownWithIssues(markdown).blocks`) et renvoie un nœud par délimiteur de page, dans l’ordre, avec son `template`, `spread`, `attrs` et la plage source de chaque valeur (`attrSources`), son `fenceIndex` (le rang du délimiteur dans le chapitre, le même dans toutes les langues), `slots` (les indices des éléments de chaque slot, dans l’ordre du Markdown), `unassigned` (les éléments sans slot) et la plage source de la page entière. Un élément porte le slot qu’il nomme dans `ContentBlock.slot`, avec la plage source de la valeur ; une figure est un `resourceBlock` dont `figure` contient les attributs et les étiquettes, chaque étiquette avec son texte, ses segments en ligne et une correspondance avec sa source dans le Markdown. `checkComposedSlots(pages, config)` renvoie les trois avertissements de slot pour ces pages.
 
 Après la mise en page, le `VDTPage.composed` d’une page composée consigne son modèle, la variante appliquée, les attributs du délimiteur de page et, pour chaque bloc, son id (`cp0:dinero` : le rang du délimiteur de page et le nom du bloc, le même dans toutes les langues), sa boîte, son calque, sa rotation, la hauteur du contenu qui n’a pas tenu (`overflowPx`), le bloc dont il est la suite ou dans lequel il continue, son chemin dans la configuration (`/pageTemplates/0/frames/2`) et les ids de ses éléments. Ces éléments sont des encadrés ordinaires dans `page.floats` et `doc.blocks`, avec leurs plages source, si bien qu’un clic dans un bloc non tourné de l’aperçu du Sandbox mène à son Markdown. `composedPaintOrder(page)` donne l’ordre dans lequel un moteur de rendu peint les blocs et le décor, et `frameMatrix(frame)` la rotation d’un bloc.
+
+## Carte des sources
+
+Tout ce que peint une page composée sait où il est écrit : un éditeur peut aller d’un point de la page au Markdown ou à la configuration, et d’un passage du Markdown à ce qu’il est devenu sur la page.
+
+`sourceAt(doc, pageIndex, x, y)` reçoit un point d’une page mise en page, en pixels de page depuis le coin supérieur gauche de la feuille, et renvoie ce qui s’y trouve, de l’intérieur vers l’extérieur : chaque élément suivi de ceux qui le contiennent. Un caractère d’un encadré arrive avec sa ligne, son paragraphe, son bloc, les groupes du bloc et le modèle ; un mot du décor, avec son élément de décor, le décor et le modèle. Chaque élément a un `level`, un `id` stable, une `source` et, presque toujours, son `rect` sur la page (droit, avant le `rotate` d’un bloc tourné).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Source</th>
+      <th>Champs</th>
+      <th>Portée par</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>, <code>end</code> (positions dans le fichier du chapitre, front matter compris), <code>file</code></td>
+      <td>un caractère (une pastille, un renvoi ou une formule entiers quand le caractère en est un), une ligne, un paragraphe ou un élément de liste, l’encadré qui l’entoure</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>, un pointeur JSON</td>
+      <td>un bloc (<code>/pageTemplates/0/frames/2</code>), un groupe, le modèle, un élément du décor ou des titres courants et folios (<code>/footer/elements/0</code>) et son slot</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>, <code>start</code>, <code>end</code>, <code>file</code></td>
+      <td>le texte qu’un élément affiche par <code>&#123;attr.x&#125;</code> (la valeur dans le délimiteur de page), l’onglet et le titre d’un bloc (le <code>label</code> et le <code>title</code> de son délimiteur <code>:::frame</code>), une image choisie par <code>&#123;attr.x&#125;</code></td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>, <code>anchor</code></td>
+      <td>une image dans un bloc ou dans le décor ; une étiquette porte son ancre sous la forme <code>resourceId#anchorId</code></td>
+    </tr>
+  </tbody>
+</table>
+
+Les niveaux, de l’intérieur vers l’extérieur : `text`, `attr`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. Un bloc et le modèle portent aussi `content`, le passage de Markdown qu’ils contiennent : le contenu du slot du bloc, le délimiteur de page tout entier. `file` est le nom que l’hôte passe dans les options (`{ file: 'tema-1.md' }`, ou une fonction de l’indice de page pour un document assemblé à partir de plusieurs chapitres).
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // lignes, blocs de texte, blocs du modèle, pages et textes de décor touchés
+findElement(doc, 'cp0:dinero');   // le même bloc après une nouvelle mise en page, avec son rect
+```
+
+`elementsForSource(doc, start, end)` fait le chemin inverse et renvoie `{ pageIndex, element }` pour chaque ligne, bloc de texte, bloc du modèle, page composée et texte de décor que touche le passage. Une ligne posée sous le pied de son bloc arrive avec `clipped: true` : coupée sur la page, elle reste dans la carte des sources.
+
+**Identifiants stables.** Une page composée est `cp<n>`, `n` étant le rang de son délimiteur dans le chapitre ; un bloc est `cp<n>:<bloc>` (avec `~<k>` pour le k-ième morceau de son contenu qui se poursuit sur une page suivante), ses blocs de texte `cp<n>:<bloc>-c0`, `-c1`…, un groupe `cp<n>:group:<nom>`, un élément du décor ou des titres courants `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, et une étiquette de figure `cp<n>:<slot>:label:<ancre>`. Aucun ne dépend des positions ni des mots : un identifiant reste le même après toute nouvelle mise en page et dans toutes les langues du chapitre. Une sélection survit à une modification, et le même bloc se retrouve dans la traduction. `findElement(doc, id)` retrouve l’élément.
+
+**Entrées de la table des matières.** Une ligne de `:::toc` porte dans `tocEntry.headingSource` la position du titre qu’elle cite dans le corps Markdown de son chapitre (front matter non compté, comme le comptent les plans) ; `sourceAt` la donne comme `heading` sur le bloc de la ligne.
+
+**Remettre en page une seule page.** La mise en page de chaque page composée est gardée selon ce qu’elle lit : le modèle, le Markdown de la page, les styles et les polices, la langue, le côté de la feuille et sa géométrie. Une mise en page ultérieure qui retrouve la même page (la passe suivante, une modification ailleurs dans le chapitre, le chapitre paginé de nouveau dans le même worker) la reprend telle quelle. Une modification dans une page, ou d’un attribut de son délimiteur, remet en page cette page seule ; une modification du modèle remet en page toutes les pages qui l’utilisent. Une page qui contient des notes de bas de page, des renvois, des citations ou une table des matières est mise en page à chaque fois, car ce qu’elle imprime dépend du reste du livre. `VDTComposedPage.layoutKey` est la clé des blocs d’une page ; `composedPagePaintKey(page)` y ajoute ce qui est posé autour (titres courants et folios, décor, numéro de page), afin qu’un hôte garde les pixels qu’il a peints tant que la clé ne change pas. Le canevas du Sandbox le fait : une modification sur une page repeint cette page.

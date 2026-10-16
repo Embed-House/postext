@@ -414,6 +414,10 @@ const blocks = parseMarkdown(content);
 
 Postext能识别的markdown结构完整列表见[文档格式](/zh/docs/document-format)页面。
 
+### 排版结果的来源映射
+
+`sourceAt(doc, pageIndex, x, y, options?)`由内向外返回页面上一点所显示的内容，每个元素都带有稳定的`id`、`source`（Markdown的一段范围、配置的JSON指针、页面围栏的属性或资源）和`rect`。`elementsForSource(doc, start, end, options?)`逐页返回Markdown的一段排成了什么，`findElement(doc, id)`在重新排版后再次找到某个元素。它们只读取排版留在VDT上的标记，自己不做任何排版。`composedPagePaintKey(page)`表明一个模板页画出的内容是否与之前相同。来源的种类、id，以及模板页如何只在改动处重新排版，见[模板页 › 来源映射](/zh/docs/composed-pages#来源映射)。
+
 ### 排版前加载字体
 
 排版用运行时字体集中已有的字体测量文本。`prepareFonts`在第一次构建之前，加载配置及其文本要求的所有字体：正文、标题、列表、标注框的标题和正文、表格、设计文字、书眉、目录、代码和漫画嵌字，配置设定的每种字重和倾斜都包括在内（正文字体族要四种，因为`**`和`*`在其中排出粗体和斜体）。每个字体只按文档排出的字符加载，所以以`unicode-range`切片提供的字体族（拉丁扩展、希腊、阿拉伯，以及Google Fonts和Fontsource的中日韩切片）只取回文本需要的文件。

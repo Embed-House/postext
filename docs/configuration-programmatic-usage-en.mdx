@@ -414,6 +414,10 @@ const blocks = parseMarkdown(content);
 
 See the [Document Format](/en/docs/document-format) page for the full list of markdown constructs Postext recognises.
 
+### Source map of a laid-out document
+
+`sourceAt(doc, pageIndex, x, y, options?)` returns what a point of a page shows, innermost first, each element with its stable `id`, its `source` (a range of the Markdown, a JSON pointer of the configuration, an attribute of the page fence, or a resource) and its `rect`. `elementsForSource(doc, start, end, options?)` returns what a range of the Markdown became, page by page, and `findElement(doc, id)` finds an element again after a relayout. They read what the layout stamped on the VDT and lay nothing out. `composedPagePaintKey(page)` says whether a composed page paints what it painted before. The source kinds, the ids and how a composed page is laid out again only where it changed are in [Composed pages › Source map](/en/docs/composed-pages#source-map).
+
 ### Loading fonts before layout
 
 Layout measures text with the faces the font set has when it runs. `prepareFonts` loads every face a configuration and its text ask for before the first build: the body, headings, lists, callout titles and bodies, tables, design texts, running heads, contents, code and comic lettering, in each weight and slant the configuration sets (the four of the body family, since `**` and `*` set bold and italic in it). Each face is loaded for the characters the document sets, so a family served as `unicode-range` slices (Latin Extended, Greek, Arabic, the CJK slices of Google Fonts and Fontsource) brings the files the text needs.

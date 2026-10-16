@@ -340,3 +340,65 @@ Al llenç, a la vista de doble pàgina del Sandbox i al Folio, les dues pàgines
 `composedPages(blocks)` llegeix els blocs analitzats d'un capítol (`parseMarkdownWithIssues(markdown).blocks`) i retorna un node per cada tanca de pàgina, en ordre: el seu `template`, `spread`, `attrs` amb l'interval d'origen de cada valor (`attrSources`), el seu `fenceIndex` (l'ordinal de la tanca dins del capítol, el mateix en totes les llengües), `slots` (els índexs dels blocs de cada slot, en l'ordre del Markdown), `unassigned` (els blocs sense slot) i l'interval d'origen de la pàgina sencera. Un bloc porta el slot que anomena a `ContentBlock.slot`, amb l'interval d'origen del valor; una figura és un `resourceBlock` el `figure` del qual guarda els seus atributs i els seus rètols, cada rètol amb el seu text, els seus trams en línia i un mapa d'origen que remet al Markdown. `checkComposedSlots(pages, config)` retorna els tres avisos de slot d'aquestes pàgines.
 
 Després de la maquetació, el `VDTPage.composed` d'una pàgina composta registra la seva plantilla, la variant aplicada, els atributs de la tanca de pàgina i, per a cada marc, el seu id (`cp0:dinero`: l'ordinal de la tanca de pàgina i el nom del marc, el mateix en totes les llengües), la seva caixa, la capa, el gir, l'alçada del contingut que no hi ha cabut (`overflowPx`), el marc del qual continua o en el qual continua, el seu camí a la configuració (`/pageTemplates/0/frames/2`) i els ids dels seus blocs. Aquests blocs són blocs de requadre corrents a `page.floats` i `doc.blocks`, amb els seus intervals d'origen, així que un clic en un marc sense girar de la previsualització del Sandbox porta al seu Markdown. `composedPaintOrder(page)` dona l'ordre en què un renderitzador pinta els marcs i la decoració, i `frameMatrix(frame)`, el gir d'un marc.
+
+## Mapa de procedència
+
+Tot el que pinta una pàgina composta sap on està escrit, de manera que un editor pot anar d'un punt de la pàgina al Markdown o a la configuració, i d'un tram del Markdown al que n'ha sortit a la pàgina.
+
+`sourceAt(doc, pageIndex, x, y)` rep un punt d'una pàgina compaginada, en píxels de pàgina des del cantó superior esquerre del full, i torna el que hi ha, de dins cap a fora: cada element seguit dels que el contenen. Un caràcter d'una caixa arriba amb la seva línia, el seu paràgraf, el seu marc, els grups del marc i la plantilla; una paraula de la decoració, amb el seu element de disseny, la decoració i la plantilla. Cada element té un `level`, un `id` estable, un `source` i, gairebé sempre, el seu `rect` a la pàgina (dret, abans del `rotate` d'un marc girat).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Procedència</th>
+      <th>Camps</th>
+      <th>La porten</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>, <code>end</code> (posicions al fitxer del capítol, comptant el front matter), <code>file</code></td>
+      <td>un caràcter (un xip, una referència o una fórmula sencers quan el caràcter n'és un), una línia, un paràgraf o element de llista, la caixa que l'envolta</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>, un punter JSON</td>
+      <td>un marc (<code>/pageTemplates/0/frames/2</code>), un grup, la plantilla, un element de disseny de la decoració o de les capçaleres i peus (<code>/footer/elements/0</code>) i el seu slot</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>, <code>start</code>, <code>end</code>, <code>file</code></td>
+      <td>el text que un element mostra amb <code>&#123;attr.x&#125;</code> (el valor a la tanca de la pàgina), la pestanya i el títol d'un marc (el <code>label</code> i el <code>title</code> de la seva tanca <code>:::frame</code>), una imatge triada amb <code>&#123;attr.x&#125;</code></td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>, <code>anchor</code></td>
+      <td>una imatge en un marc o a la decoració; un rètol porta la seva àncora com a <code>resourceId#anchorId</code></td>
+    </tr>
+  </tbody>
+</table>
+
+Els nivells, de dins cap a fora: `text`, `attr`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. Un marc i la plantilla porten a més `content`, el tram de Markdown que contenen: el contingut del slot del marc, la tanca sencera de la pàgina. `file` és el nom que l'amfitrió passa a les opcions (`{ file: 'tema-1.md' }`, o una funció de l'índex de pàgina per a un document cosit a partir de diversos capítols).
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // línies, blocs, marcs, pàgines i textos de disseny que toca el tram
+findElement(doc, 'cp0:dinero');   // el mateix marc després de recompondre, amb el seu rect
+```
+
+`elementsForSource(doc, start, end)` fa el camí invers i torna `{ pageIndex, element }` per cada línia, bloc, marc, pàgina composta i text de disseny que toca el tram. Una línia que queda per sota del peu del seu marc arriba amb `clipped: true`: a la pàgina es retalla, al mapa de procedència es conserva.
+
+**Identificadors estables.** Una pàgina composta és `cp<n>`, amb `n` l'ordinal de la seva tanca al capítol; un marc és `cp<n>:<marc>` (amb `~<k>` per al k-èsim tros del seu contingut que continua en una pàgina posterior), els seus blocs `cp<n>:<marc>-c0`, `-c1`…, un grup `cp<n>:group:<nom>`, un element de la decoració o de les capçaleres i peus `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, i un rètol d'una figura `cp<n>:<slot>:label:<àncora>`. Cap no depèn de posicions ni de les paraules, de manera que un identificador és el mateix després de qualsevol recomposició i en totes les llengües del capítol: una selecció sobreviu a una edició, i el mateix marc es troba a la traducció. `findElement(doc, id)` torna a trobar l'element.
+
+**Entrades de l'índex.** Una fila de `:::toc` porta a `tocEntry.headingSource` la posició de l'encapçalament que llista dins el cos Markdown del seu capítol (sense comptar el front matter, com compten els esquemes); `sourceAt` la dona com a `heading` al bloc de la fila.
+
+**Recompondre una sola pàgina.** La compaginació de cada pàgina composta es desa segons el que llegeix: la plantilla, el Markdown de la pàgina, els estils i les fonts tipogràfiques, la llengua, la cara del full i la seva geometria. Una compaginació posterior que es troba la mateixa pàgina (la passada següent, una edició en una altra part del capítol, el capítol paginat de nou al mateix worker) la pren tal com era. Una edició dins d'una pàgina, o un canvi en un atribut de la seva tanca, recompon aquella pàgina sola; un canvi a la plantilla recompon totes les pàgines que la fan servir. Una pàgina amb notes a peu de pàgina, referències, cites o un índex es compon de nou cada vegada, perquè el que imprimeix depèn de la resta del llibre. `VDTComposedPage.layoutKey` és la clau dels marcs d'una pàgina; `composedPagePaintKey(page)` hi suma el que es disposa al voltant (capçaleres i peus, decoració, número de pàgina), perquè un amfitrió pugui conservar els píxels que va pintar mentre la clau no canviï. El llenç del Sandbox ho fa: una edició en una pàgina repinta aquella pàgina.

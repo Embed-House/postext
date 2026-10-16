@@ -414,6 +414,10 @@ const blocks = parseMarkdown(content);
 
 Die vollständige Liste der Markdown-Konstrukte, die Postext erkennt, finden Sie auf der Seite [Dokumentformat](/de/docs/document-format).
 
+### Quellenzuordnung eines gesetzten Dokuments
+
+`sourceAt(doc, pageIndex, x, y, options?)` gibt zurück, was ein Punkt einer Seite zeigt, von innen nach außen, jedes Element mit seiner stabilen `id`, seiner `source` (ein Stück Markdown, ein JSON-Pointer der Konfiguration, ein Attribut der Seitenbegrenzung oder eine Ressource) und seinem `rect`. `elementsForSource(doc, start, end, options?)` gibt zurück, was aus einem Stück Markdown geworden ist, Seite für Seite, und `findElement(doc, id)` findet ein Element nach einem Neusatz wieder. Sie lesen, was der Satz im VDT vermerkt hat, und setzen nichts. `composedPagePaintKey(page)` sagt, ob eine zusammengesetzte Seite zeichnet, was sie zuvor gezeichnet hat. Die Quellenarten, die IDs und wie eine zusammengesetzte Seite nur dort neu gesetzt wird, wo sie sich geändert hat, stehen unter [Zusammengesetzte Seiten › Quellenzuordnung](/de/docs/composed-pages#quellenzuordnung).
+
 ### Schriften vor dem Layout laden
 
 Das Layout misst Text mit den Schnitten, die das Font-Set zum Zeitpunkt der Ausführung hat. `prepareFonts` lädt vor dem ersten Build jeden Schnitt, den eine Konfiguration und ihr Text verlangen: Grundtext, Überschriften, Listen, Titel und Inhalte von Kästen, Tabellen, Gestaltungstexte, Kolumnentitel, Inhaltsverzeichnis, Code und Comic-Lettering, in jeder Stärke und Neigung, die die Konfiguration festlegt (die vier der Grundschrift, da `**` und `*` darin fett und kursiv setzen). Jeder Schnitt wird für die Zeichen geladen, die das Dokument setzt, sodass eine Familie, die in Teilen nach `unicode-range` ausgeliefert wird (Latin Extended, Griechisch, Arabisch, die CJK-Teile von Google Fonts und Fontsource), genau die Dateien mitbringt, die der Text braucht.

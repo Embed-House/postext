@@ -340,3 +340,65 @@ Con relojes de máquina
 `composedPages(blocks)`读取一章解析后的块（`parseMarkdownWithIssues(markdown).blocks`），按顺序为每个页面围栏返回一个节点，包括：`template`、`spread`、带有每个值源码范围（`attrSources`）的`attrs`、`fenceIndex`（该围栏在章中的序号，各语言相同）、`slots`（每个槽位的块索引，按Markdown中的顺序）、`unassigned`（没有槽位的块），以及整页的源码范围。块在`ContentBlock.slot`中记录它指定的槽位及该值的源码范围；插图是一个`resourceBlock`，其`figure`含有插图的属性和标注，每个标注带有文字、行内片段和指回Markdown的源码映射。`checkComposedSlots(pages, config)`为这些页面返回三种槽位警告。
 
 排版之后，模板页的`VDTPage.composed`记录它的模板、所套用的变体、页面围栏的属性，以及每个框的这些信息：id（`cp0:dinero`，即页面围栏的序号加框名，各语言相同）、外框、层、旋转、放不下的内容高度（`overflowPx`）、从哪个框接续而来或接续到哪个框、它在配置中的路径（`/pageTemplates/0/frames/2`）以及它的块的id。这些块是`page.floats`和`doc.blocks`中普通的标注框块，带有各自的源码范围，所以在Sandbox预览中点击一个未旋转的框，就会跳到它的Markdown。`composedPaintOrder(page)`给出渲染器绘制各框和装饰的顺序，`frameMatrix(frame)`给出框的旋转。
+
+## 来源映射
+
+模板页上画出的每样东西都知道自己写在哪里：编辑器可以从页面上的一点回到Markdown或配置，也可以从Markdown的一段找到它在页面上排成了什么。
+
+`sourceAt(doc, pageIndex, x, y)`接收排好的页面上的一个点（页面像素，从纸张左上角算起），返回那里的内容，由内向外：每个元素后面跟着包含它的元素。标注框里的一个字会带上它所在的行、段落、框、框所属的组和模板；装饰里的一个词会带上它的设计元素、装饰和模板。每个元素都有`level`、稳定的`id`、`source`，大多还有它在页面上的`rect`（转正的，即旋转框的`rotate`之前的位置）。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>来源</th>
+      <th>字段</th>
+      <th>适用于</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>、<code>end</code>（在章文件中的位置，包括front matter）、<code>file</code></td>
+      <td>一个字（若这个字是行内标签、引用或公式，则为整个行内标签、引用或公式）、一行、一个段落或列表项、包住它的标注框</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>，一个JSON指针</td>
+      <td>一个框（<code>/pageTemplates/0/frames/2</code>）、一个组、模板、装饰或页眉页脚中的设计元素（<code>/footer/elements/0</code>）及其所在的槽位</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>、<code>start</code>、<code>end</code>、<code>file</code></td>
+      <td>元素通过<code>&#123;attr.x&#125;</code>显示的文字（即页面围栏中的属性值）、框的标签和标题（其<code>:::frame</code>围栏的<code>label</code>和<code>title</code>）、由<code>&#123;attr.x&#125;</code>选定的图片</td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>、<code>anchor</code></td>
+      <td>框中或装饰中的图片；标注以<code>resourceId#anchorId</code>的形式带上它的锚点</td>
+    </tr>
+  </tbody>
+</table>
+
+层级由内向外为：`text`、`attr`、`resource`、`line`、`block`、`box`、`frame`、`group`、`design`、`slot`、`template`。框和模板还带有`content`，即它们包含的Markdown范围：框的槽位内容、整个页面围栏。`file`是宿主在选项中传入的名称（`{ file: 'tema-1.md' }`，或者对由多章拼接而成的文档，传一个以页码索引为参数的函数）。
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // 这段文字涉及的行、块、框、页面和设计文字
+findElement(doc, 'cp0:dinero');   // 重新排版后的同一个框，带有它的rect
+```
+
+`elementsForSource(doc, start, end)`反过来查，对这段Markdown涉及的每一行、每个块、框、模板页和设计文字，返回`{ pageIndex, element }`。排到框底之下的行带有`clipped: true`：在页面上被裁掉，在来源映射中仍然保留。
+
+**稳定的id。** 模板页是`cp<n>`，`n`是它的页面围栏在本章中的序号；框是`cp<n>:<框名>`（在后面页面上接续的第k段内容加`~<k>`），框中的块是`cp<n>:<框名>-c0`、`-c1`……，组是`cp<n>:group:<组名>`，装饰或页眉页脚中的元素是`cp<n>:decoration:<id>`、`cp<n>:header:<id>`、`cp<n>:footer:<id>`，插图的标注是`cp<n>:<槽位>:label:<锚点>`。这些id都不依赖位置，也不依赖文字，所以无论怎样重新排版，在本章的任何语言版本中都相同：编辑之后选区依然有效，在译本中也能找到同一个框。`findElement(doc, id)`可以重新找到该元素。
+
+**目录条目。** `:::toc`的每一行在`tocEntry.headingSource`中记录它所列标题在本章Markdown正文中的位置（不计front matter，与大纲的计法相同）；`sourceAt`在该行的块上以`heading`给出。
+
+**只重排一页。** 每个模板页的排版结果按它所读取的内容保存：模板、该页的Markdown、样式和字体、语言、纸张的正反面及其几何尺寸。之后的排版再次遇到同一页时（下一轮排版、本章别处的一次编辑、同一worker中再次分页），会直接沿用。在某一页内编辑，或修改它的页面围栏上的属性，只重排这一页；修改模板则重排所有使用该模板的页面。含有脚注、交叉引用、文献引用或目录的页面每次都重新排版，因为它印出的内容取决于书的其余部分。`VDTComposedPage.layoutKey`是一页中各个框的键；`composedPagePaintKey(page)`再加上框周围的内容（页眉页脚、装饰、页码），宿主只要键不变，就可以保留已经画好的像素。沙盒的画布正是这样做的：在某一页上编辑，只重画这一页。

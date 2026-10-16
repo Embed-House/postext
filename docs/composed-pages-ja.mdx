@@ -340,3 +340,65 @@ Con relojes de máquina
 `composedPages(blocks)`は、章を解析したブロック（`parseMarkdownWithIssues(markdown).blocks`）を読み、ページフェンスごとに1つのノードを順に返します。ノードには、`template`、`spread`、各値のソース範囲（`attrSources`）を伴う`attrs`、`fenceIndex`（章の中でのフェンスの通し番号で、どの言語でも同じ）、`slots`（スロットごとのブロックの添字。Markdownの順）、`unassigned`（スロットのないブロック）、そしてページ全体のソース範囲が入ります。ブロックは、自分が名乗るスロットを、値のソース範囲とともに`ContentBlock.slot`に持ちます。図は`resourceBlock`で、その`figure`が属性とラベルを持ち、各ラベルにはテキスト、インラインのスパン、Markdownへ戻るソースマップがあります。`checkComposedSlots(pages, config)`は、それらのページについてスロットの警告3種を返します。
 
 割り付けの後、テンプレートページの`VDTPage.composed`には、テンプレート、適用されたバリアント、ページフェンスの属性が記録されます。枠ごとには、id（`cp0:dinero`。ページフェンスの通し番号と枠の名前で、どの言語でも同じ）、ボックス、レイヤー、回転、収まらなかった中身の高さ（`overflowPx`）、続きの元や先の枠、設定の中のパス（`/pageTemplates/0/frames/2`）、ブロックのidが入ります。これらのブロックは`page.floats`と`doc.blocks`にある通常の囲みのブロックで、ソース範囲も持っているので、Sandboxのプレビューで回転していない枠をクリックすると、そのMarkdownに移動します。`composedPaintOrder(page)`はレンダラーが枠と飾りを描く順序を、`frameMatrix(frame)`は枠の回転を返します。
+
+## ソースマップ
+
+テンプレートページに描かれるものは、どれも自分がどこに書かれているかを知っています。そのため、エディタはページ上の一点からMarkdownや設定へ、またMarkdownの一部からそれがページ上で何になったかへとたどれます。
+
+`sourceAt(doc, pageIndex, x, y)`は、組み上がったページ上の一点（用紙の左上を原点とするページピクセル）を受け取り、そこにあるものを内側から順に返します。各要素のあとに、それを含む要素が続きます。囲みの中の一文字なら、その行、段落、枠、枠の属するグループ、テンプレートが続き、飾りの中の一語なら、そのデザイン要素、飾り、テンプレートが続きます。各要素は`level`、安定した`id`、`source`を持ち、たいていはページ上の`rect`（回転した枠の`rotate`をかける前の、正立した位置）も持ちます。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>ソース</th>
+      <th>フィールド</th>
+      <th>対象</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>、<code>end</code>（章ファイル内の位置。front matterも数える）、<code>file</code></td>
+      <td>一文字（その文字がチップ、参照、数式なら、そのまとまり全体）、行、段落やリスト項目、それを囲む囲み</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>（JSONポインタ）</td>
+      <td>枠（<code>/pageTemplates/0/frames/2</code>）、グループ、テンプレート、飾りや柱とノンブルのデザイン要素（<code>/footer/elements/0</code>）とそのスロット</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>、<code>start</code>、<code>end</code>、<code>file</code></td>
+      <td>要素が<code>&#123;attr.x&#125;</code>で表示するテキスト（ページフェンス内の値）、枠のタブと見出し（その<code>:::frame</code>フェンスの<code>label</code>と<code>title</code>）、<code>&#123;attr.x&#125;</code>で選ばれた画像</td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>、<code>anchor</code></td>
+      <td>枠や飾りの中の画像。ラベルはアンカーを<code>resourceId#anchorId</code>の形で持ちます</td>
+    </tr>
+  </tbody>
+</table>
+
+レベルは内側から順に`text`、`attr`、`resource`、`line`、`block`、`box`、`frame`、`group`、`design`、`slot`、`template`です。枠とテンプレートは、含んでいるMarkdownの範囲である`content`も持ちます。枠ならそのスロットの内容、テンプレートならページフェンス全体です。`file`は、ホストがオプションで渡す名前です（`{ file: 'tema-1.md' }`。複数の章をつないだ文書なら、ページ番号を引数にとる関数）。
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // その範囲にかかる行、ブロック、枠、ページ、デザインのテキスト
+findElement(doc, 'cp0:dinero');   // 組み直したあとの同じ枠と、その rect
+```
+
+`elementsForSource(doc, start, end)`は逆向きにたどり、範囲にかかる行、ブロック、枠、テンプレートページ、デザインのテキストのそれぞれについて`{ pageIndex, element }`を返します。枠の下端より下に組まれた行には`clipped: true`が付きます。ページでは切り取られますが、ソースマップには残ります。
+
+**安定したid。** テンプレートページは`cp<n>`で、`n`は章の中でのページフェンスの順番です。枠は`cp<n>:<枠名>`（後のページへ続く内容のk番目の断片には`~<k>`が付きます）、枠の中のブロックは`cp<n>:<枠名>-c0`、`-c1`…、グループは`cp<n>:group:<名前>`、飾りや柱の要素は`cp<n>:decoration:<id>`、`cp<n>:header:<id>`、`cp<n>:footer:<id>`、図のラベルは`cp<n>:<スロット>:label:<アンカー>`です。どれも位置にも文字にもよらないので、何度組み直しても、章のどの言語版でも同じです。編集しても選択は残り、翻訳でも同じ枠が見つかります。`findElement(doc, id)`で要素をもう一度見つけられます。
+
+**目次の項目。** `:::toc`の各行は、挙げている見出しが章のMarkdown本文のどこにあるか（アウトラインと同じく、front matterは数えません）を`tocEntry.headingSource`に持ちます。`sourceAt`はそれを行のブロックの`heading`として返します。
+
+**一ページだけ組み直す。** テンプレートページの組版結果は、読んだものごとに保存されます。テンプレート、そのページのMarkdown、スタイルとフォント、言語、用紙の表裏、寸法です。後の組版で同じページに出会えば（次のパス、章の別の箇所の編集、同じworkerでの再ページ付け）、そのまま使います。ページの中を編集したり、ページフェンスの属性を変えたりすると、そのページだけが組み直されます。テンプレートを変えると、それを使うすべてのページが組み直されます。脚注、相互参照、文献引用、目次を含むページは、印刷する内容が本のほかの部分によって決まるため、毎回組み直されます。`VDTComposedPage.layoutKey`はページの枠のキーで、`composedPagePaintKey(page)`はそこに枠のまわりのもの（柱とノンブル、飾り、ページ番号）を加えます。キーが変わらないあいだ、ホストは描いたピクセルをそのまま残せます。サンドボックスのキャンバスはそうしています。一ページを編集すると、描き直すのはそのページだけです。

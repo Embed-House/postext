@@ -413,6 +413,10 @@ const blocks = parseMarkdown(content);
 ```
 
 Consulta la pàgina de [Format del document](/ca/docs/document-format) per veure la llista completa de construccions markdown que reconeix Postext.
+### Mapa de procedència d'un document compaginat
+
+`sourceAt(doc, pageIndex, x, y, options?)` torna el que mostra un punt d'una pàgina, de dins cap a fora, cada element amb el seu `id` estable, el seu `source` (un tram del Markdown, un punter JSON de la configuració, un atribut de la tanca de la pàgina o un recurs) i el seu `rect`. `elementsForSource(doc, start, end, options?)` torna el que n'ha sortit d'un tram del Markdown, pàgina a pàgina, i `findElement(doc, id)` torna a trobar un element després de recompondre. Llegeixen el que la compaginació ha deixat marcat al VDT i no compaginen res. `composedPagePaintKey(page)` diu si una pàgina composta pinta el mateix que va pintar abans. Els tipus de procedència, els identificadors i com es recompon una pàgina composta només on ha canviat són a [Pàgines compostes › Mapa de procedència](/ca/docs/composed-pages#mapa-de-procedència).
+
 ### Carregar les fonts abans de compondre
 
 La composició mesura el text amb les cares que té el conjunt de fonts en el moment en què s'executa. `prepareFonts` carrega abans del primer build totes les cares que demanen una configuració i el seu text: el cos, els encapçalaments, les llistes, els títols i els cossos dels requadres, les taules, els textos dels elements de disseny, els titolets, l'índex de continguts, el codi i la retolació dels còmics, en cada pes i inclinació que fixa la configuració (les quatre de la família del cos, perquè `**` i `*` hi componen la negreta i la cursiva). Cada cara es carrega per als caràcters que compon el document, de manera que una família servida en trams de `unicode-range` (llatí estès, grec, àrab, els trams CJK de Google Fonts i Fontsource) porta els fitxers que el text necessita.

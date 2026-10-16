@@ -414,6 +414,10 @@ const blocks = parseMarkdown(content);
 
 Vedi la pagina [Formato del documento](/it/docs/document-format) per l’elenco completo dei costrutti Markdown che Postext riconosce.
 
+### Mappa delle origini di un documento impaginato
+
+`sourceAt(doc, pageIndex, x, y, options?)` restituisce ciò che mostra un punto di una pagina, dall’interno verso l’esterno, ogni elemento con il suo `id` stabile, la sua `source` (un tratto del Markdown, un puntatore JSON della configurazione, un attributo del recinto della pagina o una risorsa) e il suo `rect`. `elementsForSource(doc, start, end, options?)` restituisce ciò che è diventato un tratto del Markdown, pagina per pagina, e `findElement(doc, id)` ritrova un elemento dopo una nuova impaginazione. Leggono ciò che l’impaginazione ha annotato nel VDT e non impaginano nulla. `composedPagePaintKey(page)` dice se una pagina composta disegna ciò che ha disegnato prima. I tipi di origine, gli identificatori e il modo in cui una pagina composta si reimpagina solo dove è cambiata sono in [Pagine composte › Mappa delle origini](/it/docs/composed-pages#mappa-delle-origini).
+
 ### Caricare i font prima dell’impaginazione
 
 L’impaginazione misura il testo con i caratteri che l’insieme dei font ha nel momento in cui viene eseguita. `prepareFonts` carica prima della prima generazione ogni carattere richiesto da una configurazione e dal suo testo: testo corrente, titoli, elenchi, titoli e corpi dei riquadri, tabelle, testi di design, testatine, indice, codice e lettering dei fumetti, in ogni peso e inclinazione che la configurazione imposta (i quattro della famiglia del testo corrente, perché `**` e `*` vi compongono grassetto e corsivo). Ogni carattere viene caricato per i caratteri che il documento compone, così una famiglia servita a fette `unicode-range` (Latin Extended, greco, arabo, le fette CJK di Google Fonts e Fontsource) porta i file di cui il testo ha bisogno.

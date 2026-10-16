@@ -414,6 +414,10 @@ const blocks = parseMarkdown(content);
 
 Consulta la página de [Formato del documento](/es/docs/document-format) para ver la lista completa de construcciones markdown que reconoce Postext.
 
+### Mapa de origen de un documento compuesto
+
+`sourceAt(doc, pageIndex, x, y, options?)` devuelve lo que muestra un punto de una página, de dentro afuera, cada elemento con su `id` estable, su `source` (un tramo del Markdown, un puntero JSON de la configuración, un atributo de la valla de la página o un recurso) y su `rect`. `elementsForSource(doc, start, end, options?)` devuelve lo que llegó a ser un tramo del Markdown, página a página, y `findElement(doc, id)` vuelve a encontrar un elemento tras recomponer. Leen lo que la maquetación dejó marcado en el VDT y no maquetan nada. `composedPagePaintKey(page)` dice si una página compuesta pinta lo mismo que pintó antes. Los tipos de origen, los identificadores y cómo se recompone una página compuesta solo donde cambió están en [Páginas compuestas › Mapa de origen](/es/docs/composed-pages#mapa-de-origen).
+
 ### Cargar las fuentes antes de componer
 
 La composición mide el texto con las caras que tiene el conjunto de fuentes en el momento en que se ejecuta. `prepareFonts` carga antes del primer build todas las caras que piden una configuración y su texto: el cuerpo, los encabezados, las listas, los títulos y cuerpos de los recuadros, las tablas, los textos de los elementos de diseño, los titulillos, el índice de contenidos, el código y la rotulación de los cómics, en cada peso e inclinación que fija la configuración (las cuatro de la familia del cuerpo, porque `**` y `*` componen en ella la negrita y la cursiva). Cada cara se carga para los caracteres que compone el documento, de modo que una familia servida en tramos de `unicode-range` (latín extendido, griego, árabe, los tramos CJK de Google Fonts y Fontsource) trae los archivos que el texto necesita.

@@ -340,3 +340,65 @@ Sulla tela, nella vista a doppia pagina del Sandbox e nel Folio le due pagine st
 `composedPages(blocks)` legge i blocchi analizzati di un capitolo (`parseMarkdownWithIssues(markdown).blocks`) e restituisce, in ordine, un nodo per ogni recinto di pagina: il suo `template`, `spread`, `attrs` con l’intervallo di sorgente di ogni valore (`attrSources`), il suo `fenceIndex` (il numero d’ordine del recinto nel capitolo, uguale in ogni lingua), `slots` (gli indici dei blocchi di ogni slot, nell’ordine del Markdown), `unassigned` (i blocchi senza slot) e l’intervallo di sorgente dell’intera pagina. Un blocco porta lo slot che indica in `ContentBlock.slot`, con l’intervallo di sorgente del valore; una figura è un `resourceBlock` il cui `figure` contiene i suoi attributi e le sue etichette, ciascuna con il suo testo, i suoi span in linea e una mappa che la riporta alla sua sorgente nel Markdown. `checkComposedSlots(pages, config)` restituisce i tre avvisi sugli slot per quelle pagine.
 
 Dopo l’impaginazione, il `VDTPage.composed` di una pagina composta registra il suo modello, la variante applicata, gli attributi del recinto della pagina e, per ogni cornice, il suo id (`cp0:dinero`: il numero d’ordine del recinto della pagina e il nome della cornice, uguale in ogni lingua), il suo riquadro, il livello, la rotazione, l’altezza del contenuto che non è entrato (`overflowPx`), la cornice da cui prosegue o in cui prosegue, il suo percorso nella configurazione (`/pageTemplates/0/frames/2`) e gli id dei suoi blocchi. Questi blocchi sono normali blocchi di riquadro in `page.floats` e `doc.blocks`, con i loro intervalli di sorgente, così un clic in una cornice non ruotata dell’anteprima del Sandbox porta al suo Markdown. `composedPaintOrder(page)` dà l’ordine in cui un renderer dipinge le cornici e la decorazione, e `frameMatrix(frame)` la rotazione di una cornice.
+
+## Mappa delle origini
+
+Tutto ciò che una pagina composta disegna sa dove è scritto: un editor può andare da un punto della pagina al Markdown o alla configurazione, e da un tratto del Markdown a ciò che è diventato sulla pagina.
+
+`sourceAt(doc, pageIndex, x, y)` riceve un punto di una pagina impaginata, in pixel di pagina dall’angolo superiore sinistro del foglio, e restituisce ciò che vi si trova, dall’interno verso l’esterno: ogni elemento seguito da quelli che lo contengono. Un carattere di un riquadro arriva con la sua riga, il suo paragrafo, la sua cornice, i gruppi della cornice e il modello; una parola della decorazione, con il suo elemento grafico, la decorazione e il modello. Ogni elemento ha un `level`, un `id` stabile, una `source` e, quasi sempre, il suo `rect` sulla pagina (diritto, prima del `rotate` di una cornice ruotata).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Origine</th>
+      <th>Campi</th>
+      <th>La portano</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>, <code>end</code> (posizioni nel file del capitolo, front matter compreso), <code>file</code></td>
+      <td>un carattere (un chip, un rimando o una formula interi quando il carattere è uno di essi), una riga, un paragrafo o una voce di elenco, il riquadro che lo racchiude</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>, un puntatore JSON</td>
+      <td>una cornice (<code>/pageTemplates/0/frames/2</code>), un gruppo, il modello, un elemento grafico della decorazione o delle testatine e dei piè di pagina (<code>/footer/elements/0</code>) e il suo slot</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>, <code>start</code>, <code>end</code>, <code>file</code></td>
+      <td>il testo che un elemento mostra con <code>&#123;attr.x&#125;</code> (il valore nel recinto della pagina), la linguetta e il titolo di una cornice (il <code>label</code> e il <code>title</code> del suo recinto <code>:::frame</code>), un’immagine scelta con <code>&#123;attr.x&#125;</code></td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>, <code>anchor</code></td>
+      <td>un’immagine in una cornice o nella decorazione; un’etichetta porta la sua ancora come <code>resourceId#anchorId</code></td>
+    </tr>
+  </tbody>
+</table>
+
+I livelli, dall’interno verso l’esterno: `text`, `attr`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. Una cornice e il modello portano anche `content`, il tratto di Markdown che contengono: il contenuto dello slot della cornice, l’intero recinto della pagina. `file` è il nome che l’host passa nelle opzioni (`{ file: 'tema-1.md' }`, oppure una funzione dell’indice di pagina per un documento cucito da più capitoli).
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // righe, blocchi, cornici, pagine e testi grafici toccati dal tratto
+findElement(doc, 'cp0:dinero');   // la stessa cornice dopo una nuova impaginazione, con il suo rect
+```
+
+`elementsForSource(doc, start, end)` fa il percorso inverso e restituisce `{ pageIndex, element }` per ogni riga, blocco, cornice, pagina composta e testo grafico che il tratto tocca. Una riga che finisce sotto il piede della sua cornice arriva con `clipped: true`: sulla pagina è tagliata, nella mappa delle origini resta.
+
+**Identificatori stabili.** Una pagina composta è `cp<n>`, con `n` l’ordinale del suo recinto nel capitolo; una cornice è `cp<n>:<cornice>` (con `~<k>` per il k-esimo pezzo del suo contenuto che prosegue su una pagina successiva), i suoi blocchi `cp<n>:<cornice>-c0`, `-c1`…, un gruppo `cp<n>:group:<nome>`, un elemento della decorazione o delle testatine `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, e un’etichetta di una figura `cp<n>:<slot>:label:<ancora>`. Nessuno dipende dalle posizioni o dalle parole, quindi un identificatore resta lo stesso dopo qualsiasi nuova impaginazione e in tutte le lingue del capitolo: una selezione sopravvive a una modifica, e la stessa cornice si ritrova nella traduzione. `findElement(doc, id)` ritrova l’elemento.
+
+**Voci dell’indice.** Una riga di `:::toc` porta in `tocEntry.headingSource` la posizione del titolo che elenca nel corpo Markdown del suo capitolo (senza contare il front matter, come contano gli schemi); `sourceAt` la restituisce come `heading` sul blocco della riga.
+
+**Reimpaginare una sola pagina.** L’impaginazione di ogni pagina composta si conserva in base a ciò che legge: il modello, il Markdown della pagina, gli stili e i font, la lingua, il lato del foglio e la sua geometria. Un’impaginazione successiva che ritrova la stessa pagina (il passaggio seguente, una modifica altrove nel capitolo, il capitolo impaginato di nuovo nello stesso worker) la riprende così com’era. Una modifica dentro una pagina, o a un attributo del suo recinto, reimpagina solo quella pagina; una modifica del modello reimpagina tutte le pagine che lo usano. Una pagina con note a piè di pagina, rimandi, citazioni o un indice si impagina di nuovo ogni volta, perché ciò che stampa dipende dal resto del libro. `VDTComposedPage.layoutKey` è la chiave delle cornici di una pagina; `composedPagePaintKey(page)` vi aggiunge ciò che sta loro intorno (testatine e piè di pagina, decorazione, numero di pagina), così un host può tenere i pixel che ha disegnato finché la chiave non cambia. La tela del Sandbox lo fa: una modifica su una pagina ridisegna quella pagina.

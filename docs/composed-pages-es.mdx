@@ -340,3 +340,65 @@ En el lienzo, en la vista de doble página del Sandbox y en el Folio, las dos p�
 `composedPages(blocks)` lee los bloques analizados de un capítulo (`parseMarkdownWithIssues(markdown).blocks`) y devuelve un nodo por cada valla de página, en orden: su `template`, `spread`, `attrs` con el rango de origen de cada valor (`attrSources`), su `fenceIndex` (el ordinal de la valla en el capítulo, el mismo en todos los idiomas), `slots` (los índices de los bloques de cada slot, en el orden del Markdown), `unassigned` (los bloques sin slot) y el rango de origen de la página entera. Un bloque lleva el slot que nombra en `ContentBlock.slot`, con el rango de origen del valor; una figura es un `resourceBlock` cuyo `figure` guarda sus atributos y sus rótulos, cada rótulo con su texto, sus tramos en línea y un mapa de origen que remite al Markdown. `checkComposedSlots(pages, config)` devuelve los tres avisos de slot de esas páginas.
 
 Tras la maquetación, el `VDTPage.composed` de una página compuesta registra su plantilla, la variante aplicada, los atributos de la valla de página y, para cada marco, su id (`cp0:dinero`: el ordinal de la valla de página y el nombre del marco, el mismo en todos los idiomas), su caja, su capa, su giro, la altura del contenido que no cupo (`overflowPx`), el marco del que continúa o en el que continúa, su ruta en la configuración (`/pageTemplates/0/frames/2`) y los ids de sus bloques. Esos bloques son bloques de recuadro corrientes en `page.floats` y `doc.blocks`, con sus rangos de origen, así que un clic en un marco sin girar de la vista previa del Sandbox lleva a su Markdown. `composedPaintOrder(page)` da el orden en que un renderizador pinta los marcos y la decoración, y `frameMatrix(frame)`, el giro de un marco.
+
+## Mapa de origen
+
+Todo lo que pinta una página compuesta sabe dónde está escrito, de modo que un editor puede ir de un punto de la página al Markdown o a la configuración, y de un tramo del Markdown a lo que llegó a ser en la página.
+
+`sourceAt(doc, pageIndex, x, y)` recibe un punto de una página compuesta, en píxeles de página desde la esquina superior izquierda del pliego, y devuelve lo que hay allí, de dentro afuera: cada elemento seguido de los que lo contienen. Un carácter de un recuadro llega con su línea, su párrafo, su marco, los grupos del marco y la plantilla; una palabra de la decoración, con su elemento de diseño, la decoración y la plantilla. Cada elemento tiene un `level`, un `id` estable, un `source` y, casi siempre, su `rect` en la página (derecho, antes del `rotate` de un marco girado).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Origen</th>
+      <th>Campos</th>
+      <th>Lo llevan</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>, <code>end</code> (posiciones en el archivo del capítulo, contando el front matter), <code>file</code></td>
+      <td>un carácter (un chip, una referencia o una fórmula enteros cuando el carácter es uno de ellos), una línea, un párrafo o elemento de lista, el recuadro que lo rodea</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>, un puntero JSON</td>
+      <td>un marco (<code>/pageTemplates/0/frames/2</code>), un grupo, la plantilla, un elemento de diseño de la decoración o de las cabeceras y pies (<code>/footer/elements/0</code>) y su slot</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>, <code>start</code>, <code>end</code>, <code>file</code></td>
+      <td>el texto que un elemento muestra con <code>&#123;attr.x&#125;</code> (el valor en la valla de la página), la pestaña y el título de un marco (el <code>label</code> y el <code>title</code> de su valla <code>:::frame</code>), una imagen elegida con <code>&#123;attr.x&#125;</code></td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>, <code>anchor</code></td>
+      <td>una imagen en un marco o en la decoración; un rótulo lleva su ancla como <code>resourceId#anchorId</code></td>
+    </tr>
+  </tbody>
+</table>
+
+Los niveles, de dentro afuera: `text`, `attr`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. Un marco y la plantilla llevan además `content`, el tramo de Markdown que contienen: el contenido de el slot del marco, la valla entera de la página. `file` es el nombre que el anfitrión pasa en las opciones (`{ file: 'tema-1.md' }`, o una función del índice de página para un documento cosido a partir de varios capítulos).
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // líneas, bloques, marcos, páginas y textos de diseño que toca el tramo
+findElement(doc, 'cp0:dinero');   // el mismo marco tras recomponer, con su rect
+```
+
+`elementsForSource(doc, start, end)` hace el camino inverso y devuelve `{ pageIndex, element }` por cada línea, bloque, marco, página compuesta y texto de diseño que toca el tramo. Una línea que queda por debajo del pie de su marco llega con `clipped: true`: en la página se recorta, en el mapa de origen se conserva.
+
+**Identificadores estables.** Una página compuesta es `cp<n>`, con `n` el ordinal de su valla en el capítulo; un marco es `cp<n>:<marco>` (con `~<k>` para el k-ésimo trozo de su contenido que sigue en una página posterior), sus bloques `cp<n>:<marco>-c0`, `-c1`…, un grupo `cp<n>:group:<nombre>`, un elemento de la decoración o de las cabeceras y pies `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, y un rótulo de una figura `cp<n>:<slot>:label:<ancla>`. Ninguno depende de posiciones ni de las palabras, así que un identificador es el mismo después de cualquier recomposición y en todos los idiomas del capítulo: una selección sobrevive a una edición, y el mismo marco se encuentra en la traducción. `findElement(doc, id)` vuelve a encontrar el elemento.
+
+**Entradas del índice.** Una fila de `:::toc` lleva en `tocEntry.headingSource` la posición del encabezado que lista en el cuerpo Markdown de su capítulo (sin contar el front matter, como cuentan los esquemas); `sourceAt` la da como `heading` en el bloque de la fila.
+
+**Recomponer una sola página.** La composición de cada página compuesta se guarda según lo que lee: la plantilla, el Markdown de la página, los estilos y las fuentes, el idioma, la cara del pliego y su geometría. Una composición posterior que se encuentra la misma página (la siguiente pasada, una edición en otra parte del capítulo, el capítulo paginado otra vez en el mismo worker) la toma tal como estaba. Una edición dentro de una página, o un cambio en un atributo de su valla, recompone esa página sola; un cambio en la plantilla recompone todas las páginas que la usan. Una página con notas al pie, referencias, citas o un índice se compone de nuevo cada vez, porque lo que imprime depende del resto del libro. `VDTComposedPage.layoutKey` es la clave de los marcos de una página; `composedPagePaintKey(page)` le suma lo que se dispone alrededor (cabeceras y pies, decoración, número de página), para que un anfitrión pueda conservar los píxeles que pintó mientras la clave no cambie. El lienzo del Sandbox lo hace: una edición en una página repinta esa página.

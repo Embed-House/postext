@@ -340,3 +340,65 @@ On the canvas, in the Sandbox's spread view and in the Folio the two pages stand
 `composedPages(blocks)` reads the parsed blocks of a chapter (`parseMarkdownWithIssues(markdown).blocks`) and returns one node per page fence, in order: its `template`, `spread`, `attrs` with the source range of each value (`attrSources`), its `fenceIndex` (the ordinal of the fence in the chapter, the same in every language), `slots` (the indices of the blocks of each slot, in Markdown order), `unassigned` (the blocks with no slot) and the source range of the whole page. A block carries the slot it names in `ContentBlock.slot`, with the source range of the value; a figure is a `resourceBlock` whose `figure` holds its attributes and labels, each label with its text, its inline spans and a source map back to the Markdown. `checkComposedSlots(pages, config)` returns the three slot warnings for those pages.
 
 After layout, a composed page's `VDTPage.composed` records its template, the variant applied, the page fence's attributes and, for each frame, its id (`cp0:dinero`: the page fence's ordinal and the frame's name, the same in every language), its box, layer, turn, the height of content that did not fit (`overflowPx`), the frame it continues from or into, its config path (`/pageTemplates/0/frames/2`) and the ids of its blocks. Those blocks are ordinary callout blocks in `page.floats` and `doc.blocks`, with their source ranges, so a click in an upright frame of the Sandbox preview lands on its Markdown. `composedPaintOrder(page)` gives the order a renderer paints the frames and the decoration in, and `frameMatrix(frame)` the turn of a frame.
+
+## Source map
+
+Everything a composed page paints knows where it was written, so an editor can go from a point of the page to the Markdown or the configuration, and from a range of the Markdown to what it became on the page.
+
+`sourceAt(doc, pageIndex, x, y)` takes a point of a laid-out page, in page pixels from the sheet's top-left corner, and returns what is there, innermost first, each element followed by the ones that hold it. A glyph of a box comes with its line, its paragraph, its frame, the frame's groups and the template; a word of the decoration comes with its design element, the decoration and the template. Each element has a `level`, a stable `id`, a `source`, and, for most, its `rect` on the page (upright, before a turned frame's `rotate`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Source</th>
+      <th>Fields</th>
+      <th>Given for</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>, <code>end</code> (offsets in the chapter file, front matter counted), <code>file</code></td>
+      <td>a glyph (one character; a whole chip, reference or formula when the glyph is one), a line, a paragraph or list item, a box round it</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>, a JSON pointer</td>
+      <td>a frame (<code>/pageTemplates/0/frames/2</code>), a group, the template, a design element of the decoration or the running heads (<code>/footer/elements/0</code>) and its slot</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>, <code>start</code>, <code>end</code>, <code>file</code></td>
+      <td>text an element shows through <code>&#123;attr.x&#125;</code> (the value in the page fence), a frame's tab and title (the <code>label</code> and <code>title</code> of its <code>:::frame</code> fence), a picture chosen by <code>&#123;attr.x&#125;</code></td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>, <code>anchor</code></td>
+      <td>a picture in a frame or in the decoration; a label carries its anchor as <code>resourceId#anchorId</code></td>
+    </tr>
+  </tbody>
+</table>
+
+The levels, innermost first: `text`, `attr`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. A frame and the template also carry `content`, the range of the Markdown they hold: the frame's slot content, the whole page fence. `file` is the name the host passes in the options (`{ file: 'tema-1.md' }`, or a function of the page index for a document stitched from several chapters).
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // lines, blocks, frames, pages and design text the range touches
+findElement(doc, 'cp0:dinero');   // the same frame after a relayout, with its rect
+```
+
+`elementsForSource(doc, start, end)` goes the other way and returns `{ pageIndex, element }` for every line, block, frame, composed page and design text the range touches. A line set past its frame's foot comes with `clipped: true`: it is cut on the page and kept in the source map.
+
+**Stable ids.** A composed page is `cp<n>`, `n` the ordinal of its page fence in the chapter; a frame is `cp<n>:<frame>` (with `~<k>` for the k-th piece of its content that goes on on a later page), its blocks `cp<n>:<frame>-c0`, `-c1`…, a group `cp<n>:group:<name>`, an element of the decoration or the running heads `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, and a label of a figure `cp<n>:<slot>:label:<anchor>`. None of them depends on positions or on the words, so an id is the same after any relayout and in every language of the chapter: a selection survives an edit, and the same frame can be found in the translation. `findElement(doc, id)` finds the element again.
+
+**Contents entries.** A row of `:::toc` carries in `tocEntry.headingSource` the offset of the heading it lists in its chapter's Markdown body (front matter not counted, as outlines count); `sourceAt` gives it as `heading` on the row's block.
+
+**Relayout of one page.** The layout of each composed page is kept by what it reads: the template, the Markdown of the page, the styles and fonts, the language, the side of the sheet and its geometry. A later build that meets the same page (the next pass of the layout, an edit elsewhere in the chapter, the chapter paginated again in the same worker) takes it as it was. An edit inside a page, or a change of an attribute of its fence, sets that page alone; a change of the template sets every page that uses it. A page holding footnotes, references, citations or a contents listing is set afresh every time, since what it prints depends on the rest of the book. `VDTComposedPage.layoutKey` is the key of a page's frames; `composedPagePaintKey(page)` adds what is laid round them (running heads, decoration, page number), so a host can keep the pixels it painted while the key stays the same. The Sandbox canvas does: an edit on one page repaints that page.

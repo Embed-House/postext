@@ -340,3 +340,65 @@ Auf der Zeichenfläche, in der Doppelseitenansicht des Sandbox und im Folio steh
 `composedPages(blocks)` liest die geparsten Blöcke eines Kapitels (`parseMarkdownWithIssues(markdown).blocks`) und gibt der Reihe nach je Seitenbegrenzung einen Knoten zurück: `template`, `spread`, `attrs` mit dem Quellbereich jedes Werts (`attrSources`), `fenceIndex` (die Ordnungszahl der Begrenzung im Kapitel, in jeder Sprache dieselbe), `slots` (die Indizes der Blöcke jedes Slots, in der Reihenfolge des Markdowns), `unassigned` (die Blöcke ohne Slot) und den Quellbereich der ganzen Seite. Ein Block trägt den Slot, den er nennt, in `ContentBlock.slot`, mit dem Quellbereich des Werts; eine Abbildung ist ein `resourceBlock`, dessen `figure` ihre Attribute und Beschriftungen enthält, jede Beschriftung mit ihrem Text, ihren Inline-Spans und einer Zuordnung zurück zur Quelle im Markdown. `checkComposedSlots(pages, config)` gibt die drei Slot-Warnungen für diese Seiten zurück.
 
 Nach dem Umbruch hält `VDTPage.composed` einer zusammengesetzten Seite ihre Vorlage fest, die angewandte Variante, die Attribute der Seitenbegrenzung und für jeden Rahmen seine ID (`cp0:dinero`: die Ordnungszahl der Seitenbegrenzung und der Name des Rahmens, in jeder Sprache dieselbe), seine Box, Ebene und Drehung, die Höhe des Inhalts, der nicht hineinpasste (`overflowPx`), den Rahmen, aus dem er weiterläuft oder in den er weiterläuft, seinen Konfigurationspfad (`/pageTemplates/0/frames/2`) und die IDs seiner Blöcke. Diese Blöcke sind gewöhnliche Kastenblöcke in `page.floats` und `doc.blocks` mit ihren Quellbereichen, sodass ein Klick in einen ungedrehten Rahmen der Sandbox-Vorschau zu seinem Markdown führt. `composedPaintOrder(page)` liefert die Reihenfolge, in der ein Renderer Rahmen und Dekor zeichnet, und `frameMatrix(frame)` die Drehung eines Rahmens.
+
+## Quellenzuordnung
+
+Alles, was eine zusammengesetzte Seite zeichnet, weiß, wo es geschrieben steht. Ein Editor kommt so von einem Punkt der Seite zum Markdown oder zur Konfiguration und von einem Stück Markdown zu dem, was daraus auf der Seite geworden ist.
+
+`sourceAt(doc, pageIndex, x, y)` nimmt einen Punkt einer gesetzten Seite in Seitenpixeln, gemessen von der oberen linken Ecke des Bogens, und gibt zurück, was dort liegt, von innen nach außen: jedes Element, gefolgt von denen, die es enthalten. Ein Zeichen in einem Kasten kommt mit seiner Zeile, seinem Absatz, seinem Rahmen, den Gruppen des Rahmens und der Vorlage; ein Wort des Dekors mit seinem Gestaltungselement, dem Dekor und der Vorlage. Jedes Element hat ein `level`, eine stabile `id`, eine `source` und meist sein `rect` auf der Seite (aufrecht, vor dem `rotate` eines gedrehten Rahmens).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Quelle</th>
+      <th>Felder</th>
+      <th>Geliefert für</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>markdown</code></td>
+      <td><code>start</code>, <code>end</code> (Positionen in der Datei des Kapitels, Front Matter mitgezählt), <code>file</code></td>
+      <td>ein Zeichen (ein ganzer Chip, Verweis oder eine ganze Formel, wenn das Zeichen eines davon ist), eine Zeile, einen Absatz oder Listenpunkt, den Kasten darum</td>
+    </tr>
+    <tr>
+      <td><code>config</code></td>
+      <td><code>path</code>, ein JSON-Pointer</td>
+      <td>einen Rahmen (<code>/pageTemplates/0/frames/2</code>), eine Gruppe, die Vorlage, ein Gestaltungselement des Dekors oder der Kolumnentitel (<code>/footer/elements/0</code>) und seinen Slot</td>
+    </tr>
+    <tr>
+      <td><code>attr</code></td>
+      <td><code>name</code>, <code>start</code>, <code>end</code>, <code>file</code></td>
+      <td>Text, den ein Element über <code>&#123;attr.x&#125;</code> zeigt (der Wert in der Seitenbegrenzung), Etikett und Titel eines Rahmens (<code>label</code> und <code>title</code> seiner <code>:::frame</code>-Begrenzung), ein Bild, das <code>&#123;attr.x&#125;</code> auswählt</td>
+    </tr>
+    <tr>
+      <td><code>resource</code></td>
+      <td><code>resourceId</code>, <code>anchor</code></td>
+      <td>ein Bild in einem Rahmen oder im Dekor; eine Beschriftung trägt ihren Anker als <code>resourceId#anchorId</code></td>
+    </tr>
+  </tbody>
+</table>
+
+Die Ebenen, von innen nach außen: `text`, `attr`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. Ein Rahmen und die Vorlage tragen außerdem `content`, das Stück Markdown, das sie enthalten: den Inhalt des Slots des Rahmens, die ganze Seitenbegrenzung. `file` ist der Name, den der Host in den Optionen übergibt (`{ file: 'tema-1.md' }`, oder eine Funktion des Seitenindex für ein aus mehreren Kapiteln zusammengefügtes Dokument).
+
+```ts
+import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
+
+const doc = buildDocument({ markdown, resources }, config);
+const chain = sourceAt(doc, 0, 640, 1180, { file: 'tema-1.md' });
+// [ { level: 'text', id: 'cp0:dinero-c0@12', source: { kind: 'markdown', start: 677, end: 678, file: 'tema-1.md' } },
+//   { level: 'line', … }, { level: 'block', id: 'cp0:dinero-c0', … },
+//   { level: 'frame', id: 'cp0:dinero', source: { kind: 'config', path: '/pageTemplates/0/frames/2' }, content: { start: 665, end: 942 } },
+//   { level: 'template', id: 'cp0', source: { kind: 'config', path: '/pageTemplates/0' } } ]
+
+elementsForSource(doc, 677, 690); // Zeilen, Blöcke, Rahmen, Seiten und Gestaltungstexte, die das Stück berührt
+findElement(doc, 'cp0:dinero');   // derselbe Rahmen nach einem Neusatz, mit seinem rect
+```
+
+`elementsForSource(doc, start, end)` geht den umgekehrten Weg und gibt `{ pageIndex, element }` für jede Zeile, jeden Block, Rahmen, jede zusammengesetzte Seite und jeden Gestaltungstext zurück, die das Stück berührt. Eine Zeile unterhalb des Fußes ihres Rahmens kommt mit `clipped: true`: Auf der Seite wird sie abgeschnitten, in der Quellenzuordnung bleibt sie.
+
+**Stabile IDs.** Eine zusammengesetzte Seite ist `cp<n>`, mit `n` als Ordnungszahl ihrer Begrenzung im Kapitel; ein Rahmen ist `cp<n>:<rahmen>` (mit `~<k>` für das k-te Stück seines Inhalts, das auf einer späteren Seite weitergeht), seine Blöcke `cp<n>:<rahmen>-c0`, `-c1`…, eine Gruppe `cp<n>:group:<name>`, ein Element des Dekors oder der Kolumnentitel `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, und eine Beschriftung einer Abbildung `cp<n>:<slot>:label:<anker>`. Keine hängt von Positionen oder Wörtern ab, also bleibt eine ID nach jedem Neusatz und in jeder Sprache des Kapitels dieselbe: Eine Auswahl übersteht eine Änderung, und derselbe Rahmen findet sich in der Übersetzung wieder. `findElement(doc, id)` findet das Element erneut.
+
+**Einträge des Inhaltsverzeichnisses.** Eine Zeile von `:::toc` trägt in `tocEntry.headingSource` die Position der Überschrift, die sie aufführt, im Markdown-Körper ihres Kapitels (ohne Front Matter, wie Gliederungen zählen); `sourceAt` gibt sie als `heading` am Block der Zeile aus.
+
+**Nur eine Seite neu setzen.** Der Satz jeder zusammengesetzten Seite wird nach dem aufbewahrt, was er liest: Vorlage, Markdown der Seite, Stile und Schriften, Sprache, Seite des Bogens und Geometrie. Ein späterer Satzlauf, der dieselbe Seite antrifft (der nächste Durchgang, eine Änderung an anderer Stelle im Kapitel, das Kapitel erneut im selben Worker umbrochen), übernimmt sie unverändert. Eine Änderung innerhalb einer Seite oder an einem Attribut ihrer Begrenzung setzt nur diese Seite neu; eine Änderung der Vorlage setzt alle Seiten neu, die sie verwenden. Eine Seite mit Fußnoten, Verweisen, Zitaten oder einem Inhaltsverzeichnis wird jedes Mal neu gesetzt, weil das, was sie druckt, vom Rest des Buches abhängt. `VDTComposedPage.layoutKey` ist der Schlüssel der Rahmen einer Seite; `composedPagePaintKey(page)` nimmt hinzu, was um sie herum liegt (Kolumnentitel, Dekor, Seitenzahl), damit ein Host die gezeichneten Pixel behalten kann, solange sich der Schlüssel nicht ändert. Die Leinwand der Sandbox tut das: Eine Änderung auf einer Seite zeichnet nur diese Seite neu.

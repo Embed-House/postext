@@ -414,6 +414,10 @@ const blocks = parseMarkdown(content);
 
 Veja a página [Formato do documento](/pt/docs/document-format) para a lista completa das construções de markdown que o Postext reconhece.
 
+### Mapa de origem de um documento diagramado
+
+`sourceAt(doc, pageIndex, x, y, options?)` devolve o que um ponto de uma página mostra, de dentro para fora, cada elemento com o seu `id` estável, a sua `source` (um trecho do Markdown, um ponteiro JSON da configuração, um atributo da cerca da página ou um recurso) e o seu `rect`. `elementsForSource(doc, start, end, options?)` devolve o que um trecho do Markdown virou, página a página, e `findElement(doc, id)` volta a encontrar um elemento depois de uma nova diagramação. Elas leem o que a diagramação marcou no VDT e não diagramam nada. `composedPagePaintKey(page)` diz se uma página composta pinta o que pintou antes. Os tipos de origem, os identificadores e como uma página composta é diagramada de novo só onde mudou estão em [Páginas compostas › Mapa de origem](/pt/docs/composed-pages#mapa-de-origem).
+
 ### Carregar as fontes antes do layout
 
 O layout mede o texto com as faces que o conjunto de fontes tem no momento em que roda. `prepareFonts` carrega, antes da primeira compilação, todas as faces que uma configuração e o seu texto pedem: o corpo, os títulos, as listas, os títulos e o corpo dos boxes, as tabelas, os textos de design, os cabeços, o sumário, o código e o letreiramento dos quadrinhos, em cada peso e inclinação que a configuração define (as quatro da família do corpo, já que `**` e `*` compõem negrito e itálico nela). Cada face é carregada para os caracteres que o documento compõe, de modo que uma família servida em fatias de `unicode-range` (latim estendido, grego, árabe, as fatias CJK do Google Fonts e do Fontsource) traz os arquivos de que o texto precisa.
