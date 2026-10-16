@@ -1,0 +1,135 @@
+import { describe, expect, it } from 'vitest';
+import { buildDocument, resolvePageTemplate } from 'postext';
+import type { PostextConfig, VDTDocument, VDTPage } from 'postext';
+import { frameByName, frameHitAt, frameIsEmpty } from './frameHit';
+import { chainHeadOf, frameAtCaret, frameClickTarget, frameTextChange, frameTextTargetAt } from './frameLink';
+
+class StubCtx {
+  font = '';
+  measureText(s: string): { width: number } {
+    return { width: s.length * 7 };
+  }
+}
+(globalThis as unknown as { OffscreenCanvas: unknown }).OffscreenCanvas = class {
+  getContext(): StubCtx { return new StubCtx(); }
+};
+
+const mm = (value: number) => ({ value, unit: 'mm' as const });
+const pt = (value: number) => ({ value, unit: 'pt' as const });
+
+const config: PostextConfig = {
+  page: { width: mm(160), height: mm(220), margins: { top: mm(15), bottom: mm(15), left: mm(15), right: mm(15) } } as never,
+  locale: 'es',
+  calloutStyles: [{
+    id: 'caja',
+    backgroundEnabled: true,
+    background: { hex: '#d8ecf9', model: 'hex' },
+    border: { enabled: false },
+    padding: { top: mm(3), right: mm(3), bottom: mm(3), left: mm(3) },
+    label: { position: 'top-left', background: { hex: '#ffffff', model: 'hex' }, color: { hex: '#231f20', model: 'hex' }, fontSize: pt(11), height: mm(6), paddingX: mm(2), offset: mm(6), inset: mm(0) },
+  } as never],
+  pageTemplates: [{
+    id: 'tema',
+    frames: [
+      { name: 'titulo', takes: 'h1', width: mm(120) },
+      { name: 'texto', flow: true, width: mm(120), placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: mm(2) } } },
+      { name: 'caja', style: 'caja', width: mm(120), height: mm(40), next: 'sigue', placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: mm(12) } } },
+      { name: 'sigue', width: mm(120), height: mm(30), placement: { anchor: { to: '#caja', edge: 'below' }, offset: { y: mm(4) } } },
+      { name: 'vacio', width: mm(60), height: mm(20), placement: { anchor: { to: 'container', edge: 'bottom-left' } } },
+    ],
+  }] as never,
+};
+
+const MD = [
+  'Antes de la página.',
+  '',
+  '::::page{template="tema"}',
+  '# El dinero',
+  '',
+  'Cada familia necesita alimentos y ropa.',
+  '',
+  ':::frame{slot="caja" label="Para qué sirve"}',
+  'El dinero nos deja cambiar nuestro trabajo por cosas.',
+  ':::',
+  '::::',
+  '',
+].join('\n');
+
+function composedPage(doc: VDTDocument): VDTPage {
+  const page = doc.pages.find((p) => p.composed);
+  if (!page) throw new Error('no composed page');
+  return page;
+}
+
+describe('frame ↔ slot on a laid-out composed page', () => {
+  const doc = buildDocument({ markdown: MD }, config);
+  const page = composedPage(doc);
+  const composed = page.composed!;
+  const template = resolvePageTemplate(config, 'tema')!;
+
+  it('lays the page with its frames', () => {
+    expect(composed.frames.map((f) => f.name)).toEqual(['titulo', 'texto', 'caja', 'sigue', 'vacio']);
+    expect(frameIsEmpty(frameByName(page, 'vacio')!)).toBe(true);
+    expect(frameIsEmpty(frameByName(page, 'caja')!)).toBe(false);
+  });
+
+  it('a click on a frame finds it, and its slot holds the caret target', () => {
+    const caja = frameByName(page, 'caja')!;
+    const hit = frameHitAt(page, caja.rect.x + caja.rect.width - 2, caja.rect.y + caja.rect.height - 2);
+    expect(hit?.name).toBe('caja');
+    const target = frameClickTarget(MD, composed, hit!, template);
+    expect(target).toEqual({ kind: 'caret', offset: MD.indexOf('El dinero nos deja'), slot: 'caja' });
+  });
+
+  it('a frame a chain continues into goes to the chain head', () => {
+    expect(chainHeadOf(template, 'sigue')).toBe('caja');
+    const target = frameClickTarget(MD, composed, frameByName(page, 'sigue')!, template);
+    expect(target?.slot).toBe('caja');
+  });
+
+  it('a takes frame goes to its heading; the flow frame to its paragraph', () => {
+    const titulo = frameClickTarget(MD, composed, frameByName(page, 'titulo')!, template);
+    expect(titulo).toMatchObject({ kind: 'caret', slot: 'titulo' });
+    expect(MD.slice((titulo as { offset: number }).offset).startsWith('# El dinero')).toBe(true);
+    const texto = frameClickTarget(MD, composed, frameByName(page, 'texto')!, template);
+    expect(MD.slice((texto as { offset: number }).offset).startsWith('Cada familia')).toBe(true);
+  });
+
+  it('an empty frame gets an empty slot fence to write in', () => {
+    const target = frameClickTarget(MD, composed, frameByName(page, 'vacio')!, template);
+    expect(target?.kind).toBe('insert');
+    const t = target as Extract<typeof target, { kind: 'insert' }>;
+    const next = MD.slice(0, t.at) + t.insert + MD.slice(t.at);
+    expect(next).toContain(':::frame{slot="vacio"}\n\n:::\n::::');
+    // Laid out again, the caret is in the new slot and the frame is found from it.
+    const doc2 = buildDocument({ markdown: next }, config);
+    const page2 = composedPage(doc2);
+    expect(frameAtCaret(next, page2, t.caret)?.name).toBe('vacio');
+  });
+
+  it('the caret in a slot names its frame', () => {
+    expect(frameAtCaret(MD, page, MD.indexOf('nos deja'))?.name).toBe('caja');
+    expect(frameAtCaret(MD, page, MD.indexOf(':::frame{slot="caja"') + 3)?.name).toBe('caja');
+    expect(frameAtCaret(MD, page, MD.indexOf('Cada familia') + 2)?.name).toBe('texto');
+    expect(frameAtCaret(MD, page, MD.indexOf('Antes'))).toBeNull();
+  });
+
+  it('a double click on the label tab edits the fence label; on a paragraph, its source', () => {
+    const caja = frameByName(page, 'caja')!;
+    // The tab rises above the box's top-left corner.
+    const box = page.floats!.find((b) => b.id === caja.blockIds[0])!;
+    const tab = box.designOverlay!.blocks.find((b) => b.kind === 'text')!;
+    const tx = tab.bbox.x + tab.bbox.width / 2;
+    const ty = tab.bbox.y + tab.bbox.height / 2;
+    const label = frameTextTargetAt(doc, page, MD, caja, tx, ty);
+    expect(label).toMatchObject({ kind: 'label', text: 'Para qué sirve' });
+    expect(MD.slice(label!.start, label!.end)).toBe('Para qué sirve');
+    const change = frameTextChange(label!, 'Para qué "sirve" el dinero');
+    expect(change).toEqual({ from: label!.start, to: label!.end, insert: 'Para qué ”sirve” el dinero' });
+
+    const para = page.floats!.find((b) => caja.blockIds.includes(b.id) && b.type === 'paragraph')!;
+    const body = frameTextTargetAt(doc, page, MD, caja, para.bbox.x + 4, para.bbox.y + 4);
+    expect(body).toMatchObject({ kind: 'block', text: 'El dinero nos deja cambiar nuestro trabajo por cosas.' });
+    expect(frameTextChange(body!, body!.text)).toBeNull();
+  });
+});
