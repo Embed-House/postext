@@ -50,6 +50,15 @@ describe('the built-in guide in ten languages', () => {
     }
   });
 
+  it('plays the French, German and Italian cuts in their editions (#843)', async () => {
+    for (const [tag, cut, duration] of [['fr', 'fr', 141.5], ['de', 'de', 134.73], ['it', 'it', 135.45]] as const) {
+      const loaded = await preset().load(tag);
+      const showreel = loaded.resources.find((r) => r.kind === 'video')!;
+      expect(showreel.video?.url).toContain(`/showreel/v1/${cut}/`);
+      expect(showreel.video?.duration).toBe(duration);
+    }
+  });
+
   it('loads the Catalan edition, hyphenated in Catalan, with its own figures', async () => {
     const loaded = await preset().load('ca-ES');
     expect(loaded.locale).toBe('ca');

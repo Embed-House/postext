@@ -17,37 +17,30 @@ export const LOCALE_INFO = {
 
 export type SiteLocale = keyof typeof LOCALE_INFO;
 
-/** Each locale's YouTube playlist, opened on its first video (the showreel,
- *  or the tutorial while that language's showreel is not public yet) so the
- *  rest of the list plays on in the same language. */
+/** Each locale's YouTube playlist, opened on its first video (the showreel)
+ *  so the rest of the list plays on in the same language. Ids come from the
+ *  motion-graphics repo's `youtube/playlist-<locale>.json`. */
 const YOUTUBE_PLAYLIST: Record<SiteLocale, { video: string; list: string }> = {
   en: { video: "pTVl1TWvu-A", list: "PLXV_YSL9ROv0" },
   es: { video: "X7DEVCVz5sk", list: "PLb9LUQYJSvyg" },
   ca: { video: "s18kxneB05w", list: "PLbA04WsEy-wQ" },
-  zh: { video: "z9OhKCK270M", list: "PLIfpGQLFoR8k" },
-  ar: { video: "CuI63kdIlK0", list: "PLft7wmxPkdGo" },
-  // No Japanese playlist yet: the English one, with Japanese transcripts on the site.
-  ja: { video: "pTVl1TWvu-A", list: "PLXV_YSL9ROv0" },
-  // No French playlist yet: the English one, with French transcripts on the site.
-  fr: { video: "pTVl1TWvu-A", list: "PLXV_YSL9ROv0" },
-  // No German playlist yet: the English one, with German transcripts on the site.
-  de: { video: "pTVl1TWvu-A", list: "PLXV_YSL9ROv0" },
-  // No Italian playlist yet: the English one, with Italian transcripts on the site.
-  it: { video: "pTVl1TWvu-A", list: "PLXV_YSL9ROv0" },
-  // Brazilian Portuguese; tutorials 2, 6 and 9 are not on YouTube yet.
+  de: { video: "hWSZAA8E99A", list: "PLL_dspLQRyVM" },
+  fr: { video: "dzDx0kxrYeM", list: "PLQtapzaWVIRw" },
+  it: { video: "NeWt96_fK4A", list: "PLDohi5agrPmY" },
   pt: { video: "YAqLxlfTMoU", list: "PLQnmecBIhr0w" },
+  zh: { video: "TZ6YM0t8QYw", list: "PLIfpGQLFoR8k" },
+  ja: { video: "yl-Um6VMDYo", list: "PLMVee1AjFr18" },
+  ar: { video: "TVRA-M8dhRE", list: "PLft7wmxPkdGo" },
 };
 
 /** The cuts of the narrated videos on the media CDN: one per site locale
- *  (#510; Brazilian Portuguese since #611) but French, German and Italian,
- *  which have no cut yet and play the English one with a transcript in
- *  their own language (#822, #824, #830). */
-export type MediaLang = Exclude<SiteLocale, "fr" | "de" | "it">;
+ *  (#510; Brazilian Portuguese since #611; French, German and Italian since
+ *  #843). */
+export type MediaLang = SiteLocale;
 
 /** The cut a route locale plays. */
 export function mediaLang(locale: string): MediaLang {
-  const site = siteLocale(locale);
-  return site === "fr" || site === "de" || site === "it" ? "en" : site;
+  return siteLocale(locale);
 }
 
 /** The header's YouTube link for a route locale. */
