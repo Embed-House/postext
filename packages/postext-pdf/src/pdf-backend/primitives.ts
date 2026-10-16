@@ -186,13 +186,19 @@ export function counterFlipPx(ctx: PageCtx, leftPx: number, widthPx: number, pai
     return;
   }
   const s = ctx.scale;
+  // The transform closes the open marked content (#900): the picture or
+  // formula is painted in the element (or artifact) it was routed to, and
+  // so is what its painter draws after it.
+  const open = ctx.tags?.current ?? null;
   pushTransform(ctx, [-1, 0, 0, 1, (2 * leftPx + widthPx) * s, 0]);
+  ctx.tags?.resume(open);
   ctx.mirror = false;
   try {
     paint();
   } finally {
     ctx.mirror = true;
     popTransform(ctx);
+    ctx.tags?.resume(open);
   }
 }
 

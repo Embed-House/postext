@@ -137,6 +137,22 @@ export class PageTagger {
     this.open = { artifact: spec };
   }
 
+  /** What the open sequence routes content to (an element or an
+   *  artifact class), for {@link resume}; null when none is open. */
+  get current(): { elem: StructElem } | { artifact: ArtifactSpec } | null {
+    return this.open;
+  }
+
+  /** Open again what {@link current} returned: after a graphics state is
+   *  pushed or popped (which closes marked content, as it must nest in
+   *  the state it was opened in), the content painted next goes on in the
+   *  same element (under a new MCID) or artifact. */
+  resume(state: { elem: StructElem } | { artifact: ArtifactSpec } | null): void {
+    if (!state) return;
+    if ('elem' in state) this.content(state.elem);
+    else this.artifact(state.artifact);
+  }
+
   /** End the open sequence, if any. */
   close(): void {
     if (!this.open) return;
