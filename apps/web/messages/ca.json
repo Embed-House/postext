@@ -902,6 +902,8 @@
     "warningsSlotEmptyDetail": "Aquest marc de la plantilla __template__ no rep contingut en aquesta pàgina. Escriu contingut amb el seu slot o marca el marc com a optional.",
     "warningsPageFenceLengthTitle": "Pàgina composta amb tres dos punts",
     "warningsPageFenceLengthDetail": "Una pàgina composta s'obre amb quatre dos punts (::::page) i es tanca amb un :::: sol. Amb tres es llegeix com una pàgina de còmic.",
+    "warningsFrameOverflowTitle": "El text no cap al seu marc",
+    "warningsFrameOverflowDetail": "pàgina __page__ · __mm__ mm per sota del peu d'aquest marc de la plantilla __template__, i el marc no té cap next on continuar: la sortida paginada talla el que no hi cap. Dona més espai al marc (height, maxHeight), encadena'l a un altre marc amb next, escurça el text o fes servir una altra plantilla.",
     "warningsUnclosedComposedPageDetail": "Aquesta pàgina composta no es tanca mai, així que arriba fins al final del document. Afegeix una línia de tancament amb tants dos punts com la d'obertura.",
     "warningsUnknownChipStyleTitle": "Estil de xip desconegut",
     "warningsUnknownChipStyleDetail": "No hi ha cap estil de xip amb aquest id; el xip pren el primer estil.",

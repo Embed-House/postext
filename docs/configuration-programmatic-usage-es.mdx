@@ -125,6 +125,11 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
       <td>Se lee como página de cómic; una página compuesta necesita cuatro dos puntos.</td>
     </tr>
     <tr>
+      <td><code>frameOverflow</code></td>
+      <td>El contenido de un marco de una página compuesta no cabe en él y el marco no tiene ningún <code>next</code> donde seguir (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, la altura cortada; <code>configPath</code>, el puntero JSON del marco de la plantilla, como <code>/pageTemplates/0/frames/2</code>). Lo da la maquetación, con el <code>pageIndex</code> de la página.</td>
+      <td>La salida paginada corta lo que no cabe al pie del marco; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> no nombra ningún estilo de chip.</td>
       <td>El chip toma el primer estilo de chip.</td>

@@ -193,6 +193,14 @@ Les comprovacions llegeixen el Markdown i la configuració abans de maquetar res
   </tbody>
 </table>
 
+### frameOverflow
+
+Aquest avís el dona la maquetació, no les comprovacions del codi font d'aquí dalt: apareix quan la pàgina ja està composta, al tauler Revisió, a `postext check` i als `contentWarnings` del document.
+
+**Causa.** El contingut que entra en un marc (pel seu slot, o el que rep el marc de flux) és més alt que el marc, i el marc no té cap `next` on continuar. Gairebé sempre hi ha més text del que hi cap: una traducció més llarga que l'original, o un marc subjecte a un `height` o un `maxHeight` fixos. El que no hi cap es talla al peu del marc a la sortida paginada; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida. L'avís indica la plantilla, el marc, la pàgina, l'alçada tallada (`overflowMm`) i `configPath`, el punter JSON del marc a la configuració (`/pageTemplates/0/frames/2`).
+
+**Solució.** Dona més espai al marc (puja o treu el seu `height` o el seu `maxHeight`), encadena'l a un altre marc amb `next`, escurça el text o compon la pàgina amb una altra plantilla. De moment la maquetació no redueix el text perquè hi càpiga.
+
 ## Des del codi
 
 `composedPages(blocks)` llegeix els blocs analitzats d'un capítol (`parseMarkdownWithIssues(markdown).blocks`) i retorna un node per cada tanca de pàgina, en ordre: el seu `template`, `spread`, `attrs` amb l'interval d'origen de cada valor (`attrSources`), el seu `fenceIndex` (l'ordinal de la tanca dins del capítol, el mateix en totes les llengües), `slots` (els índexs dels blocs de cada slot, en l'ordre del Markdown), `unassigned` (els blocs sense slot) i l'interval d'origen de la pàgina sencera. Un bloc porta el slot que anomena a `ContentBlock.slot`, amb l'interval d'origen del valor; una figura és un `resourceBlock` el `figure` del qual guarda els seus atributs i els seus rètols, cada rètol amb el seu text, els seus trams en línia i un mapa d'origen que remet al Markdown. `checkComposedSlots(pages, config)` retorna els tres avisos de slot d'aquestes pàgines.

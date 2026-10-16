@@ -6273,6 +6273,60 @@
       }
     }
   },
+  "frameOverflow": {
+    "source": "engine",
+    "label": {
+      "en": "Text does not fit its frame",
+      "es": "El texto no cabe en su marco",
+      "ca": "El text no cap al seu marc",
+      "zh": "框内放不下文字",
+      "ar": "نص لا يتّسع له إطاره",
+      "ja": "枠に収まらないテキスト",
+      "pt": "O texto não cabe no bloco",
+      "fr": "Le texte déborde de son bloc",
+      "de": "Text passt nicht in seinen Rahmen",
+      "it": "Il testo non entra nella cornice"
+    },
+    "cause": {
+      "en": "The content of a frame of a composed page is taller than the frame, and the frame has no next frame left to continue in: more text than it holds, a longer translation, or a fixed height or maxHeight. Paged output cuts what does not fit at the frame's foot.",
+      "es": "El contenido de un marco de una página compuesta es más alto que el marco, y el marco no tiene ningún next donde seguir: más texto del que cabe, una traducción más larga o un height o maxHeight fijos. La salida paginada corta lo que sobra al pie del marco.",
+      "ca": "El contingut d'un marc d'una pàgina composta és més alt que el marc, i el marc no té cap next on continuar: més text del que hi cap, una traducció més llarga o un height o maxHeight fixos. La sortida paginada talla el que sobra al peu del marc.",
+      "zh": "模板页某个框的内容比框高，而这个框没有可以接续的next框：文字比框能容纳的多、译文更长，或者height、maxHeight是固定值。分页输出会在框底裁掉放不下的部分。",
+      "ar": "محتوى إطار في صفحة مركّبة أطول من الإطار، ولم يبقَ للإطار next يُكمل فيه: نص أكثر مما يتّسع له، أو ترجمة أطول، أو قيمة ثابتة في height أو maxHeight. وتقصّ المخرجات المقسّمة إلى صفحات ما لا يتّسع عند أسفل الإطار.",
+      "ja": "テンプレートページの枠の内容が枠より高く、続きを流すnextの枠も残っていません。収まる以上のテキスト、長くなった翻訳、固定したheightやmaxHeightが原因です。ページ単位の出力では、収まらない部分が枠の下端で切れます。",
+      "pt": "O conteúdo de um bloco de uma página composta é mais alto que o bloco, e o bloco não tem nenhum next onde continuar: mais texto do que cabe, uma tradução mais longa ou um height ou maxHeight fixo. A saída paginada corta o que sobra no pé do bloco.",
+      "fr": "Le contenu d’un bloc d’une page composée est plus haut que le bloc, et le bloc n’a plus de next où continuer : plus de texte qu’il n’en contient, une traduction plus longue, ou un height ou maxHeight fixe. La sortie paginée coupe ce qui dépasse au pied du bloc.",
+      "de": "Der Inhalt eines Rahmens einer zusammengesetzten Seite ist höher als der Rahmen, und der Rahmen hat kein next mehr, in dem es weitergeht: mehr Text, als er fasst, eine längere Übersetzung oder ein festes height oder maxHeight. Die paginierte Ausgabe schneidet am Fuß des Rahmens ab, was nicht passt.",
+      "it": "Il contenuto di una cornice di una pagina composta è più alto della cornice, e la cornice non ha più un next in cui proseguire: più testo di quanto ne contenga, una traduzione più lunga o un height o maxHeight fissi. L’uscita impaginata taglia al piede della cornice quello che non entra."
+    },
+    "fix": {
+      "en": "Give the frame more room (height, maxHeight), chain it to another frame with next, shorten the text, or use another template.",
+      "es": "Da más sitio al marco (height, maxHeight), encadénalo a otro marco con next, acorta el texto o usa otra plantilla.",
+      "ca": "Dona més espai al marc (height, maxHeight), encadena'l a un altre marc amb next, escurça el text o fes servir una altra plantilla.",
+      "zh": "给框更多空间（height、maxHeight），用next把它接到另一个框，缩短文字，或换一个模板。",
+      "ar": "امنح الإطار مساحة أكبر (height وmaxHeight)، أو اربطه بإطار آخر عبر next، أو اختصر النص، أو استعمل قالبًا آخر.",
+      "ja": "枠を広げる（height、maxHeight）、nextで別の枠につなぐ、テキストを短くする、別のテンプレートを使う、のいずれかで直してください。",
+      "pt": "Dê mais espaço ao bloco (height, maxHeight), encadeie-o a outro bloco com next, encurte o texto ou use outro modelo.",
+      "fr": "Donnez plus de place au bloc (height, maxHeight), chaînez-le à un autre bloc avec next, raccourcissez le texte ou choisissez un autre modèle.",
+      "de": "Geben Sie dem Rahmen mehr Platz (height, maxHeight), verketten Sie ihn mit next mit einem weiteren Rahmen, kürzen Sie den Text oder wählen Sie eine andere Vorlage.",
+      "it": "Dai più spazio alla cornice (height, maxHeight), collegala a un’altra cornice con next, accorcia il testo o usa un altro modello."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "frameOverflow",
+        "es": "frameOverflow",
+        "ca": "frameOverflow",
+        "zh": "frameOverflow",
+        "ar": "frameOverflow",
+        "ja": "frameOverflow",
+        "pt": "frameOverflow",
+        "fr": "frameOverflow",
+        "de": "frameOverflow",
+        "it": "frameOverflow"
+      }
+    }
+  },
   "templateDuplicate": {
     "source": "engine",
     "label": {

@@ -272,6 +272,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   warningsSlotEmptyDetail: 'This frame of template __template__ receives no content on this page. Write content with its slot, or mark the frame optional.',
   warningsPageFenceLengthTitle: 'Composed page with three colons',
   warningsPageFenceLengthDetail: 'A composed page opens with four colons (::::page) and closes with a bare ::::. With three colons it is read as a comic page.',
+  warningsFrameOverflowTitle: 'Text does not fit its frame',
+  warningsFrameOverflowDetail: 'page __page__ · __mm__ mm past the foot of this frame of template __template__, and the frame has no next frame to carry on in: paged output cuts what does not fit. Give the frame more room (height, maxHeight), chain it to another frame with next, shorten the text or pick another template.',
   warningsUnclosedComposedPageDetail: 'This composed page is never closed, so it runs to the end of the document. Add a closing line with as many colons as the opening fence.',
   warningsUnknownChipStyleTitle: 'Unknown chip style',
   warningsUnknownChipStyleDetail: 'No chip style with this id exists; the chip takes the first style.',

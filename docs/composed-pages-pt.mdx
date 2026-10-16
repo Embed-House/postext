@@ -193,6 +193,14 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
   </tbody>
 </table>
 
+### frameOverflow
+
+Este aviso vem da diagramação, não das verificações do código-fonte descritas acima: ele aparece quando a página já está composta, no painel Verificações, no `postext check` e nos `contentWarnings` do documento.
+
+**Causa.** O conteúdo que entra em um bloco (pelo slot dele, ou o que vai para o bloco de fluxo) é mais alto que o bloco, e o bloco não tem mais nenhum `next` onde continuar. Quase sempre há mais texto do que o bloco comporta: uma tradução mais longa que o original, ou um bloco preso a um `height` ou `maxHeight` fixo. O que não cabe é cortado no pé do bloco na saída paginada; continua no documento, no mapa de origem e no EPUB de layout fluido. O aviso informa o modelo, o bloco, a página, a altura cortada (`overflowMm`) e `configPath`, o ponteiro JSON do bloco na configuração (`/pageTemplates/0/frames/2`).
+
+**Correção.** Dê mais espaço ao bloco (aumente ou remova o `height` ou o `maxHeight` dele), encadeie-o a outro bloco com `next`, encurte o texto ou componha a página com outro modelo. Por enquanto a diagramação não reduz o texto para que ele caiba.
+
 ## No código
 
 `composedPages(blocks)` lê os blocos analisados de um capítulo (`parseMarkdownWithIssues(markdown).blocks`) e devolve um nó por cerca de página, em ordem: o seu `template`, `spread`, `attrs` com o intervalo de origem de cada valor (`attrSources`), o seu `fenceIndex` (o ordinal da cerca no capítulo, o mesmo em todos os idiomas), `slots` (os índices dos blocos de cada slot, na ordem do Markdown), `unassigned` (os blocos sem slot) e o intervalo de origem da página inteira. Um bloco traz o slot que nomeia em `ContentBlock.slot`, com o intervalo de origem do valor; uma figura é um `resourceBlock` cujo `figure` guarda os seus atributos e rótulos, cada rótulo com o seu texto, os seus trechos em linha e um mapa de origem que leva de volta ao Markdown. `checkComposedSlots(pages, config)` devolve os três avisos de slot dessas páginas.

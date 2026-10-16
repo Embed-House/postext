@@ -193,6 +193,14 @@ The checks read the Markdown and the configuration before any layout, so they sh
   </tbody>
 </table>
 
+### frameOverflow
+
+This warning comes from the layout, not from the source checks above: it appears once the page has been set, in the Checks panel, in `postext check` and in the document's `contentWarnings`.
+
+**Cause.** The content poured into a frame (through its slot, or as the flow frame's content) is taller than the frame, and the frame has no `next` frame left to continue in. Most often there is more text than the frame holds: a translation that runs longer than the original, or a frame held to a fixed `height` or `maxHeight`. What does not fit is cut at the foot of the frame in paged output; it stays in the document, in the source map and in the reflowable EPUB. The warning gives the template, the frame, the page, the height cut (`overflowMm`) and `configPath`, the JSON pointer of the frame in the configuration (`/pageTemplates/0/frames/2`).
+
+**Fix.** Give the frame more room (raise or remove its `height` or `maxHeight`), chain it to another frame with `next`, shorten the text, or set the page with another template. The layout does not yet shrink the text to make it fit.
+
 ## From code
 
 `composedPages(blocks)` reads the parsed blocks of a chapter (`parseMarkdownWithIssues(markdown).blocks`) and returns one node per page fence, in order: its `template`, `spread`, `attrs` with the source range of each value (`attrSources`), its `fenceIndex` (the ordinal of the fence in the chapter, the same in every language), `slots` (the indices of the blocks of each slot, in Markdown order), `unassigned` (the blocks with no slot) and the source range of the whole page. A block carries the slot it names in `ContentBlock.slot`, with the source range of the value; a figure is a `resourceBlock` whose `figure` holds its attributes and labels, each label with its text, its inline spans and a source map back to the Markdown. `checkComposedSlots(pages, config)` returns the three slot warnings for those pages.

@@ -193,6 +193,14 @@ Les vérifications lisent le Markdown et la configuration avant toute mise en pa
   </tbody>
 </table>
 
+### frameOverflow
+
+Cet avertissement vient de la mise en page, pas des vérifications de la source décrites plus haut : il apparaît une fois la page composée, dans le panneau Vérifications, dans `postext check` et dans les `contentWarnings` du document.
+
+**Cause.** Le contenu versé dans un bloc (par son slot, ou celui que reçoit le bloc de flux) est plus haut que le bloc, et le bloc n’a plus de `next` où continuer. Le plus souvent, il y a plus de texte que le bloc n’en contient : une traduction plus longue que l’original, ou un bloc tenu par un `height` ou un `maxHeight` fixe. Ce qui ne tient pas est coupé au pied du bloc dans la sortie paginée ; il reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable. L’avertissement donne le modèle, le bloc, la page, la hauteur coupée (`overflowMm`) et `configPath`, le pointeur JSON du bloc dans la configuration (`/pageTemplates/0/frames/2`).
+
+**Correction.** Donnez plus de place au bloc (augmentez ou retirez son `height` ou son `maxHeight`), chaînez-le à un autre bloc avec `next`, raccourcissez le texte ou composez la page avec un autre modèle. Pour l’instant, la mise en page ne réduit pas le texte pour le faire tenir.
+
 ## Depuis le code
 
 `composedPages(blocks)` lit les éléments analysés d’un chapitre (`parseMarkdownWithIssues(markdown).blocks`) et renvoie un nœud par délimiteur de page, dans l’ordre, avec son `template`, `spread`, `attrs` et la plage source de chaque valeur (`attrSources`), son `fenceIndex` (le rang du délimiteur dans le chapitre, le même dans toutes les langues), `slots` (les indices des éléments de chaque slot, dans l’ordre du Markdown), `unassigned` (les éléments sans slot) et la plage source de la page entière. Un élément porte le slot qu’il nomme dans `ContentBlock.slot`, avec la plage source de la valeur ; une figure est un `resourceBlock` dont `figure` contient les attributs et les étiquettes, chaque étiquette avec son texte, ses segments en ligne et une correspondance avec sa source dans le Markdown. `checkComposedSlots(pages, config)` renvoie les trois avertissements de slot pour ces pages.

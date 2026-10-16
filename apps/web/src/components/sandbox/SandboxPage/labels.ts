@@ -275,6 +275,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     warningsSlotEmptyDetail: t("warningsSlotEmptyDetail"),
     warningsPageFenceLengthTitle: t("warningsPageFenceLengthTitle"),
     warningsPageFenceLengthDetail: t("warningsPageFenceLengthDetail"),
+    warningsFrameOverflowTitle: t("warningsFrameOverflowTitle"),
+    warningsFrameOverflowDetail: t("warningsFrameOverflowDetail"),
     warningsUnclosedComposedPageDetail: t("warningsUnclosedComposedPageDetail"),
     warningsUnknownChipStyleTitle: t("warningsUnknownChipStyleTitle"),
     warningsUnknownChipStyleDetail: t("warningsUnknownChipStyleDetail"),

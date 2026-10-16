@@ -125,6 +125,11 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td>Es llegeix com a pàgina de còmic; una pàgina composta necessita quatre dos punts.</td>
     </tr>
     <tr>
+      <td><code>frameOverflow</code></td>
+      <td>El contingut d'un marc d'una pàgina composta no hi cap i el marc no té cap <code>next</code> on continuar (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, l'alçada tallada; <code>configPath</code>, el punter JSON del marc de la plantilla, com ara <code>/pageTemplates/0/frames/2</code>). El dona la maquetació, amb el <code>pageIndex</code> de la pàgina.</td>
+      <td>La sortida paginada talla el que no hi cap al peu del marc; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> no anomena cap estil de xip.</td>
       <td>El xip pren el primer estil de xip.</td>

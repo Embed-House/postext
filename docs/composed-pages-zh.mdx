@@ -193,6 +193,14 @@ Si necesitas o quieres comprar algo muy caro…
   </tbody>
 </table>
 
+### frameOverflow
+
+这条警告来自排版，而不是上面那些读源码的检查：页面排好之后，它才出现在检查面板、`postext check`和文档的`contentWarnings`中。
+
+**原因**：灌入某个框的内容（通过它的槽位，或进入流文框的内容）比框高，而这个框已没有可以接续的`next`框。最常见的情况是文字比框能容纳的多：译文比原文长，或者框被固定的`height`或`maxHeight`限住了。放不下的部分在分页输出中于框底被裁掉；它仍留在文档、源码映射和流式版式的EPUB中。警告会给出模板、框、页码、被裁掉的高度（`overflowMm`）以及`configPath`，即该框在配置中的JSON指针（`/pageTemplates/0/frames/2`）。
+
+**解决**：给框更多空间（调高或去掉它的`height`或`maxHeight`），用`next`把它接到另一个框，缩短文字，或者换一个模板来排这一页。目前排版不会为了放下文字而自动缩小它。
+
 ## 在代码中使用
 
 `composedPages(blocks)`读取一章解析后的块（`parseMarkdownWithIssues(markdown).blocks`），按顺序为每个页面围栏返回一个节点，包括：`template`、`spread`、带有每个值源码范围（`attrSources`）的`attrs`、`fenceIndex`（该围栏在章中的序号，各语言相同）、`slots`（每个槽位的块索引，按Markdown中的顺序）、`unassigned`（没有槽位的块），以及整页的源码范围。块在`ContentBlock.slot`中记录它指定的槽位及该值的源码范围；插图是一个`resourceBlock`，其`figure`含有插图的属性和标注，每个标注带有文字、行内片段和指回Markdown的源码映射。`checkComposedSlots(pages, config)`为这些页面返回三种槽位警告。

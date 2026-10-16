@@ -36,6 +36,28 @@ describe('composed-page warnings (#854)', () => {
     for (const k of ['slotUnknown', 'slotEmpty', 'templateUnknown', 'pageFenceLength'] as const) expect(warningCategory(k)).toBe('markup');
   });
 
+  it('reads a frame the layout could not fit off the laid-out document (#855)', () => {
+    const md = '::::page{template="tema"}\n:::frame{slot="caja"}\nA long box.\n:::\n::::';
+    const doc = {
+      config: { page: { dpi: 96 } },
+      warnings: [],
+      contentWarnings: [
+        { kind: 'frameOverflow', template: 'tema', frame: 'caja', fenceIndex: 0, overflowMm: 12.5, configPath: '/pageTemplates/0/frames/1', sourceStart: 48, sourceEnd: 59, pageIndex: 2 },
+      ],
+      pages: [],
+      blocks: [],
+      pageIndexOffset: 4,
+    } as unknown as VDTDocument;
+    const found = computeWarnings({ markdown: md, config, doc }).filter((w) => w.payload.kind === 'frameOverflow');
+    expect(found.map((w) => w.payload)).toEqual([
+      { kind: 'frameOverflow', template: 'tema', frame: 'caja', fenceIndex: 0, overflowMm: 12.5, page: 7, configPath: '/pageTemplates/0/frames/1' },
+    ]);
+    expect(found[0]!.line).toBe(3);
+    expect(warningCategory('frameOverflow')).toBe('typesetting');
+    // Nothing is read from the source alone: the overflow needs a layout.
+    expect(kinds(md, config)).not.toContain('frameOverflow');
+  });
+
   it('flags a composed page written with three colons', () => {
     expect(kinds(':::page{template="tema"}\n::panel\nA: Hi.\n:::', config)).toContain('pageFenceLength');
   });

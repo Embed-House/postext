@@ -193,6 +193,14 @@ Die Prüfungen lesen Markdown und Konfiguration vor jedem Umbruch. Deshalb ersch
   </tbody>
 </table>
 
+### frameOverflow
+
+Diese Warnung kommt aus dem Umbruch, nicht aus den Quellprüfungen oben: Sie erscheint, sobald die Seite gesetzt ist, im Bedienfeld Prüfungen, in `postext check` und in den `contentWarnings` des Dokuments.
+
+**Ursache.** Der Inhalt, der in einen Rahmen fließt (über seinen Slot oder als Inhalt des Fließrahmens), ist höher als der Rahmen, und der Rahmen hat kein `next` mehr, in dem es weitergeht. Meist ist es mehr Text, als der Rahmen fasst: eine Übersetzung, die länger läuft als das Original, oder ein Rahmen mit festem `height` oder `maxHeight`. Was nicht passt, wird in der paginierten Ausgabe am Fuß des Rahmens abgeschnitten; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten. Die Warnung nennt die Vorlage, den Rahmen, die Seite, die abgeschnittene Höhe (`overflowMm`) und `configPath`, den JSON-Zeiger des Rahmens in der Konfiguration (`/pageTemplates/0/frames/2`).
+
+**Behebung.** Geben Sie dem Rahmen mehr Platz (erhöhen oder entfernen Sie `height` oder `maxHeight`), verketten Sie ihn mit `next` mit einem weiteren Rahmen, kürzen Sie den Text oder setzen Sie die Seite mit einer anderen Vorlage. Der Umbruch verkleinert den Text bisher nicht, damit er passt.
+
 ## Aus dem Code
 
 `composedPages(blocks)` liest die geparsten Blöcke eines Kapitels (`parseMarkdownWithIssues(markdown).blocks`) und gibt der Reihe nach je Seitenbegrenzung einen Knoten zurück: `template`, `spread`, `attrs` mit dem Quellbereich jedes Werts (`attrSources`), `fenceIndex` (die Ordnungszahl der Begrenzung im Kapitel, in jeder Sprache dieselbe), `slots` (die Indizes der Blöcke jedes Slots, in der Reihenfolge des Markdowns), `unassigned` (die Blöcke ohne Slot) und den Quellbereich der ganzen Seite. Ein Block trägt den Slot, den er nennt, in `ContentBlock.slot`, mit dem Quellbereich des Werts; eine Abbildung ist ein `resourceBlock`, dessen `figure` ihre Attribute und Beschriftungen enthält, jede Beschriftung mit ihrem Text, ihren Inline-Spans und einer Zuordnung zurück zur Quelle im Markdown. `checkComposedSlots(pages, config)` gibt die drei Slot-Warnungen für diese Seiten zurück.

@@ -1606,6 +1606,8 @@
     "warningsSlotEmptyDetail": "Este marco de la plantilla __template__ no recibe contenido en esta página. Escribe contenido con su slot o marca el marco como optional.",
     "warningsPageFenceLengthTitle": "Página compuesta con tres dos puntos",
     "warningsPageFenceLengthDetail": "Una página compuesta se abre con cuatro dos puntos (::::page) y se cierra con un :::: solo. Con tres se lee como una página de cómic.",
+    "warningsFrameOverflowTitle": "El texto no cabe en su marco",
+    "warningsFrameOverflowDetail": "página __page__ · __mm__ mm por debajo del pie de este marco de la plantilla __template__, y el marco no tiene un next donde seguir: la salida paginada corta lo que no cabe. Da más sitio al marco (height, maxHeight), encadénalo a otro marco con next, acorta el texto o usa otra plantilla.",
     "warningsUnclosedComposedPageDetail": "Esta página compuesta no se cierra nunca, así que llega hasta el final del documento. Añade una línea de cierre con tantos dos puntos como la de apertura.",
     "warningsUnknownChipStyleTitle": "Estilo de chip desconocido",
     "warningsUnknownChipStyleDetail": "No existe ningún estilo de chip con este id; el chip toma el primer estilo.",

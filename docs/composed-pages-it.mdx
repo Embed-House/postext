@@ -193,6 +193,14 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
   </tbody>
 </table>
 
+### frameOverflow
+
+Questo avviso viene dall’impaginazione, non dai controlli sul sorgente descritti sopra: compare quando la pagina è già composta, nel pannello Verifiche, in `postext check` e nei `contentWarnings` del documento.
+
+**Causa.** Il contenuto che entra in una cornice (con il suo slot, o quello che riceve la cornice di flusso) è più alto della cornice, e la cornice non ha più un `next` in cui proseguire. Di solito c’è più testo di quanto la cornice ne contenga: una traduzione più lunga dell’originale, o una cornice vincolata a un `height` o a un `maxHeight` fissi. Quello che non entra viene tagliato al piede della cornice nell’uscita impaginata; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido. L’avviso riporta il modello, la cornice, la pagina, l’altezza tagliata (`overflowMm`) e `configPath`, il puntatore JSON della cornice nella configurazione (`/pageTemplates/0/frames/2`).
+
+**Correzione.** Dai più spazio alla cornice (alza o togli il suo `height` o il suo `maxHeight`), collegala a un’altra cornice con `next`, accorcia il testo o componi la pagina con un altro modello. Per ora l’impaginazione non riduce il testo per farlo entrare.
+
 ## Dal codice
 
 `composedPages(blocks)` legge i blocchi analizzati di un capitolo (`parseMarkdownWithIssues(markdown).blocks`) e restituisce, in ordine, un nodo per ogni recinto di pagina: il suo `template`, `spread`, `attrs` con l’intervallo di sorgente di ogni valore (`attrSources`), il suo `fenceIndex` (il numero d’ordine del recinto nel capitolo, uguale in ogni lingua), `slots` (gli indici dei blocchi di ogni slot, nell’ordine del Markdown), `unassigned` (i blocchi senza slot) e l’intervallo di sorgente dell’intera pagina. Un blocco porta lo slot che indica in `ContentBlock.slot`, con l’intervallo di sorgente del valore; una figura è un `resourceBlock` il cui `figure` contiene i suoi attributi e le sue etichette, ciascuna con il suo testo, i suoi span in linea e una mappa che la riporta alla sua sorgente nel Markdown. `checkComposedSlots(pages, config)` restituisce i tre avvisi sugli slot per quelle pagine.

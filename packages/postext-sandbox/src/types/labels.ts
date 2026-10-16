@@ -300,6 +300,8 @@ export interface SandboxLabels {
   warningsSlotEmptyDetail: string;
   warningsPageFenceLengthTitle: string;
   warningsPageFenceLengthDetail: string;
+  warningsFrameOverflowTitle: string;
+  warningsFrameOverflowDetail: string;
   warningsUnclosedComposedPageDetail: string;
   warningsUnknownChipStyleTitle: string;
   warningsUnknownChipStyleDetail: string;

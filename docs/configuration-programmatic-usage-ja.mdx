@@ -125,6 +125,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>コミックのページとして読まれます。テンプレートページにはコロンが4つ要ります。</td>
     </tr>
     <tr>
+      <td><code>frameOverflow</code></td>
+      <td>テンプレートページの枠の内容が枠に収まらず、続きを流す<code>next</code>の枠も残っていない（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>。<code>overflowMm</code>は切れた高さ、<code>configPath</code>はテンプレートの枠を指すJSONポインタで、たとえば<code>/pageTemplates/0/frames/2</code>）。割り付けが出す警告で、ページの<code>pageIndex</code>が付きます。</td>
+      <td>ページ単位の出力では、収まらない部分が枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code>の名前に該当するチップスタイルがない。</td>
       <td>チップには最初のチップスタイルが使われます。</td>

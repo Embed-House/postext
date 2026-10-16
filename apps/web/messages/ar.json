@@ -902,6 +902,8 @@
     "warningsSlotEmptyDetail": "لا يتلقى هذا الإطار من القالب ⁦__template__⁩ أي محتوى في هذه الصفحة. اكتب محتوى باسم خانته، أو اجعل الإطار ⁦optional⁩.",
     "warningsPageFenceLengthTitle": "صفحة مركّبة بثلاث نقطتين رأسيتين",
     "warningsPageFenceLengthDetail": "تُفتح الصفحة المركّبة بأربع نقاط رأسية ⁦(::::page)⁩ وتُغلق بسطر فيه ⁦::::⁩ وحده. وبثلاث تُقرأ صفحةَ قصة مصوّرة.",
+    "warningsFrameOverflowTitle": "نص لا يتّسع له إطاره",
+    "warningsFrameOverflowDetail": "الصفحة __page__ · يتجاوز النص أسفل هذا الإطار من القالب ⁦__template__⁩ بمقدار __mm__ مم، وليس للإطار ⁦next⁩ يُكمل فيه، فتقصّ المخرجات المقسّمة إلى صفحات ما لا يتّسع. امنح الإطار مساحة أكبر (⁦height⁩ و⁦maxHeight⁩)، أو اربطه بإطار آخر عبر ⁦next⁩، أو اختصر النص، أو استعمل قالبًا آخر.",
     "warningsUnclosedComposedPageDetail": "هذه الصفحة المركّبة لا تُغلق أبدًا، لذا تمتد حتى نهاية المستند. أضف سطر إغلاق فيه من النقاط الرأسية بقدر ما في سطر الفتح.",
     "warningsUnknownChipStyleTitle": "نمط شارة غير معروف",
     "warningsUnknownChipStyleDetail": "لا يوجد نمط شارة بهذا المعرّف؛ تأخذ الشارة النمط الأول.",

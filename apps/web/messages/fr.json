@@ -902,6 +902,8 @@
     "warningsSlotEmptyDetail": "Ce bloc du modèle __template__ ne reçoit aucun contenu sur cette page. Écrivez du contenu avec son slot, ou marquez le bloc optional.",
     "warningsPageFenceLengthTitle": "Page composée avec trois deux-points",
     "warningsPageFenceLengthDetail": "Une page composée s’ouvre avec quatre deux-points (::::page) et se ferme par un :::: seul. Avec trois, elle est lue comme une page de bande dessinée.",
+    "warningsFrameOverflowTitle": "Le texte déborde de son bloc",
+    "warningsFrameOverflowDetail": "page __page__ · __mm__ mm sous le pied de ce bloc du modèle __template__, et le bloc n’a pas de next où continuer : la sortie paginée coupe ce qui ne tient pas. Donnez plus de place au bloc (height, maxHeight), chaînez-le à un autre bloc avec next, raccourcissez le texte ou choisissez un autre modèle.",
     "warningsUnclosedComposedPageDetail": "Cette page composée n’est jamais refermée : elle court donc jusqu’à la fin du document. Ajoutez une ligne de fermeture avec autant de deux-points que la ligne d’ouverture.",
     "warningsUnknownChipStyleTitle": "Style de pastille inconnu",
     "warningsUnknownChipStyleDetail": "Aucun style de pastille portant cet id n’existe ; la pastille prend le premier style.",

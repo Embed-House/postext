@@ -193,6 +193,14 @@ Si necesitas o quieres comprar algo muy caro…
   </tbody>
 </table>
 
+### frameOverflow
+
+この警告は上の検査のようにソースを読んで出るものではなく、割り付けから出ます。ページが組み上がってから、検査パネル、`postext check`、文書の`contentWarnings`に現れます。
+
+**原因**：枠に流し込んだ内容（スロットで指定したもの、または流し込み枠に入るもの）が枠より高く、続きを流す`next`の枠も残っていません。たいていは枠に収まる以上のテキストがある場合で、原文より長くなった翻訳や、`height`や`maxHeight`で高さを固定した枠がよくある例です。収まらない部分はページ単位の出力では枠の下端で切れますが、文書、ソースとの対応表、リフロー型のEPUBには残ります。警告にはテンプレート、枠、ページ、切れた高さ（`overflowMm`）、そして設定の中の枠を指すJSONポインタ`configPath`（`/pageTemplates/0/frames/2`）が付きます。
+
+**対処**：枠を広げる（`height`や`maxHeight`を大きくするか外す）、`next`で別の枠につなぐ、テキストを短くする、別のテンプレートでそのページを組む、のいずれかです。今のところ、割り付けがテキストを縮めて収めることはしません。
+
 ## コードから使う
 
 `composedPages(blocks)`は、章を解析したブロック（`parseMarkdownWithIssues(markdown).blocks`）を読み、ページフェンスごとに1つのノードを順に返します。ノードには、`template`、`spread`、各値のソース範囲（`attrSources`）を伴う`attrs`、`fenceIndex`（章の中でのフェンスの通し番号で、どの言語でも同じ）、`slots`（スロットごとのブロックの添字。Markdownの順）、`unassigned`（スロットのないブロック）、そしてページ全体のソース範囲が入ります。ブロックは、自分が名乗るスロットを、値のソース範囲とともに`ContentBlock.slot`に持ちます。図は`resourceBlock`で、その`figure`が属性とラベルを持ち、各ラベルにはテキスト、インラインのスパン、Markdownへ戻るソースマップがあります。`checkComposedSlots(pages, config)`は、それらのページについてスロットの警告3種を返します。

@@ -125,6 +125,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>It is read as a comic page; a composed page needs four colons.</td>
     </tr>
     <tr>
+      <td><code>frameOverflow</code></td>
+      <td>The content laid into a frame of a composed page does not fit it, and the frame has no <code>next</code> frame left (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, the height cut; <code>configPath</code>, the JSON pointer of the template frame, such as <code>/pageTemplates/0/frames/2</code>). Raised by the layout, with the <code>pageIndex</code> of the page.</td>
+      <td>Paged output cuts what does not fit at the frame's foot; it stays in the document, the source map and the reflowable EPUB.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> names no chip style.</td>
       <td>The chip takes the first chip style.</td>

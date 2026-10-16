@@ -902,6 +902,8 @@
     "warningsSlotEmptyDetail": "Este bloco do modelo __template__ não recebe conteúdo nesta página. Escreva conteúdo com o slot dele, ou marque o bloco como optional.",
     "warningsPageFenceLengthTitle": "Página composta com três dois-pontos",
     "warningsPageFenceLengthDetail": "Uma página composta abre com quatro dois-pontos (::::page) e fecha com um :::: sozinho. Com três, ela é lida como uma página de quadrinhos.",
+    "warningsFrameOverflowTitle": "O texto não cabe no bloco",
+    "warningsFrameOverflowDetail": "página __page__ · __mm__ mm além do pé deste bloco do modelo __template__, e o bloco não tem um next onde continuar: a saída paginada corta o que não cabe. Dê mais espaço ao bloco (height, maxHeight), encadeie-o a outro bloco com next, encurte o texto ou use outro modelo.",
     "warningsUnclosedComposedPageDetail": "Esta página composta nunca é fechada, então vai até o fim do documento. Acrescente uma linha de fechamento com tantos dois-pontos quanto a de abertura.",
     "warningsUnknownChipStyleTitle": "Estilo de chip desconhecido",
     "warningsUnknownChipStyleDetail": "Não existe nenhum estilo de chip com este id; o chip usa o primeiro estilo.",

@@ -34,6 +34,10 @@ describe('warningCategory', () => {
   it('files a tab in vertical text with the markup, where the row jumps to the :tab (#622)', () => {
     expect(warningCategory('tabInVerticalText')).toBe('markup');
   });
+  it('files a frame of a composed page that overflows with the typesetting (#855)', () => {
+    expect(warningCategory('frameOverflow')).toBe('typesetting');
+    expect(warningCategory('slotEmpty')).toBe('markup');
+  });
   it('lists every category once', () => {
     expect(new Set(WARNING_CATEGORY_ORDER).size).toBe(WARNING_CATEGORY_ORDER.length);
   });
