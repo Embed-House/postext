@@ -458,6 +458,105 @@ const style = pickChipStyle(resolved, 'key');
 ```
 
 
+## Hervorhebungsstile
+
+Die Eigenschaft `markStyles` deklariert die benannten Stile des Inline-`:mark[Text]{style="…"}`: das farbige Band hinter einer Wendung, so wie ein Schulbuch seine Schlüsselwörter hervorhebt (die Syntax und ihre Umbruchregeln stehen in der Referenz zum Dokumentformat). Ein Stil, `mark`, ist vorgegeben (ein blassgelbes Band, das ein wenig über die Wendung hinausreicht, mit leicht abgerundeten Enden, der Text in seiner eigenen Farbe), sodass `:mark[…]` ohne jede Konfiguration funktioniert; wer `markStyles` deklariert, ersetzt diese Liste. Eine Markierung ohne `style` oder mit einer ID, die kein Stil deklariert, nimmt den ersten Stil.
+
+```ts
+const config: PostextConfig = {
+  markStyles: [
+    { id: 'mark', name: 'Key idea' },
+    {
+      id: 'key',
+      name: 'Definition',
+      background: { hex: '#cdebd5', model: 'hex' },
+      color: { hex: '#14532d', model: 'hex' },
+    },
+  ],
+};
+```
+
+```md
+The sun warms the sea and :mark[water rises into the air as vapour].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Eigenschaft</th>
+      <th>Typ</th>
+      <th>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>erforderlich</td>
+      <td>Kennung, auf die <code>:mark[…]&#123;style="…"&#125;</code> verweist.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Lesbarer Name, nur für die Editoroberfläche.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#fff0a0</code></td>
+      <td>Farbe des Bandes (an die Palette koppelbar).</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>die des Textes</td>
+      <td>Farbe der markierten Wörter.</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.2em</code></td>
+      <td>Radius der beiden Enden des Bandes, begrenzt auf seine halbe Höhe.</td>
+    </tr>
+    <tr>
+      <td><code>paddingX</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.15em</code></td>
+      <td>Wie weit das Band über den ersten und den letzten Buchstaben der Wendung in den Zwischenraum daneben reicht.</td>
+    </tr>
+    <tr>
+      <td><code>paddingY</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.05em</code></td>
+      <td>Raum über und unter dem Textband.</td>
+    </tr>
+    <tr>
+      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>paddingY</code></td>
+      <td>Raum oben und unten, jeweils anstelle von <code>paddingY</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Em-Längen (`paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `borderRadius`) beziehen sich auf die Größe des markierten Textes. Das Band nimmt keinen Platz ein: Der Text wird gesetzt wie ohne Markierung, das Band darunter gemalt, und sein Innenabstand reicht in die Wortzwischenräume und den Zeilenzwischenraum. Im VDT tragen die Segmente der markierten Wörter ein `mark` (`{ style, id, start?, end?, from?, to? }`), und jede Zeile hält ihre Bänder in `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`, relativ zu `bbox.x` und Grundlinie der Zeile), die das Canvas-, PDF- und HTML-Backend vor dem Text der Zeile malen.
+
+```ts
+const resolved = resolveMarkStylesConfig(config.markStyles);
+// => the built-in `mark` style when unset; every field filled
+
+const minimal  = stripMarkStylesDefaults(config.markStyles);
+// => undefined for the built-in default; static defaults dropped
+
+const style = pickMarkStyle(resolved, 'key');
+// => the `key` style, else the first one
+```
+
+
 ## Code-Listings
 
 Die Eigenschaft `codeStyle` legt fest, wie Code-Listings aussehen: die Codezäune ```` ``` ```` und `~~~` des Texts (siehe [Dokumentformat › Codeblöcke](/de/docs/document-format#codeblöcke)) und Inline-Code, wenn er eine Code-Schrift verlangt. Ein Listing wird Zeile für Zeile so gesetzt, wie es geschrieben ist, in einer dicktengleichen Schrift, in einem Kasten: Keine Zeile wird getrennt oder im Blocksatz gesetzt, jedes Leerzeichen behält seine Breite, und ein Tabulator springt zum nächsten Tabstopp. Der Kasten stammt aus derselben Mechanik wie ein `:::callout`, sodass sich ein Listing zwischen Zeilen über Spalten und Seiten teilt, jeder Teil in einem eigenen Kasten, und ein Codeblock in einem Kasten ein darin verschachtelter Kasten ist. Jede Eigenschaft ist optional. Seit postext 1.23.
@@ -731,7 +830,7 @@ Ein für eine Sprache registrierter Highlighter hat Vorrang vor einem für `'*'`
 
 ### Inline-Code
 
-`codeStyle.inline` setzt Text zwischen Backticks in einer Code-Schrift: als eine Einheit, wie einen Chip, in der eine Zeile nie umbricht. Nicht gesetzt, behält Inline-Code die Schrift des Texts.
+`codeStyle.inline` setzt Text zwischen Backticks in einer Code-Schrift, in einem Kasten wie einen Chip. Eine Zeile darf den Code an einem Leerzeichen umbrechen oder nach einem Bindestrich zwischen einem Buchstaben oder einer Ziffer und einem Buchstaben: Der Kasten wird dort geteilt, und nichts wird hinzugefügt. Die Leerzeichen im Code behalten die Breite der Code-Schrift, und der Blocksatz der Zeile dehnt sie nicht. Nicht gesetzt, behält Inline-Code die Schrift des Texts.
 
 <table>
   <thead>
@@ -751,6 +850,7 @@ Ein für eine Sprache registrierter Highlighter hat Vorrang vor einem für `'*'`
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>keine / <code>0.5pt</code></td><td>Eine Umrisslinie.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> ist die Größe des Abschnitts.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> mit Fläche oder Umrisslinie, sonst <code>0</code> / <code>0.1em</code></td><td>Raum innerhalb der Fläche; der senkrechte Innenabstand wird außerhalb des Zeilenkastens gezeichnet.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>Die Schrift der arabischen, hebräischen und CJK-Zeichen im Code: die des Texts (<code>'text'</code>), weil nur wenige Code-Schriften sie haben, oder die Code-Schrift (<code>'code'</code>), wenn sie sie hat.</td></tr>
   </tbody>
 </table>
 

@@ -356,55 +356,9 @@ export interface FigureLabelNode extends SourceRange {
 // Layout (VDT)
 // ---------------------------------------------------------------------------
 
-export type ReflowEventKind =
-  | 'grew'
-  | 'moved'
-  | 'resized'
-  | 'imageScaled'
-  | 'textScaled'
-  | 'continued'
-  | 'overflow';
-
-export interface ReflowEvent {
-  frame: string;
-  kind: ReflowEventKind;
-  fromMm?: number;
-  toMm?: number;
-  scale?: number;
-  /** The frame whose growth caused this event. */
-  cause?: string;
-}
-
-export interface VDTFrame {
-  /** `cp<fenceIndex>:<slot>`, `~<n>` for the n-th continuation piece. */
-  id: string;
-  name: string;
-  rect: { x: number; y: number; width: number; height: number };
-  rotate: number;
-  layer: number;
-  styleId?: string;
-  /** Text scale the ladder applied (1 = none). */
-  scale: number;
-  /** Height the content still lacks (0 = fits). */
-  overflowPx: number;
-  continuedFrom?: string;
-  continuesTo?: string;
-  /** Ids of the blocks (in `page.floats` / `doc.blocks`) set in this frame. */
-  blockIds: string[];
-  /** `/pageTemplates/<i>/frames/<j>`. */
-  configPath: string;
-  sourceStart?: number;
-  sourceEnd?: number;
-}
-
-export interface VDTComposedPage extends SourceRange {
-  template: string;
-  variant?: 'recto' | 'verso';
-  spread?: 'left' | 'right';
-  fenceIndex: number;
-  frames: VDTFrame[];
-  log: ReflowEvent[];
-}
+// `ReflowEventKind`, `ReflowEvent`, `VDTFrame` and `VDTComposedPage` live
+// in `vdt.ts` with the rest of the VDT (#855).
+export type { ReflowEventKind, ReflowEvent, VDTFrame, VDTComposedPage } from '../vdt';
 
 export type FrameOverflowProposal =
   | { kind: 'allowShrink'; path: string; value: number }

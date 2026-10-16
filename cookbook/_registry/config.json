@@ -165,6 +165,21 @@
       "it": "Stili dei chip"
     }
   },
+  "markStyles": {
+    "slug": "configuration-styles",
+    "heading": {
+      "en": "Highlight styles",
+      "es": "Estilos de resaltado",
+      "ca": "Estils de ressaltat",
+      "zh": "高亮样式",
+      "ar": "أنماط التظليل",
+      "ja": "ハイライトのスタイル",
+      "pt": "Estilos de destaque",
+      "fr": "Styles de surlignage",
+      "de": "Hervorhebungsstile",
+      "it": "Stili di evidenziazione"
+    }
+  },
   "parts": {
     "slug": "configuration-styles",
     "heading": {

@@ -161,7 +161,7 @@ const config: PostextConfig = {
 
 框架是接收排好的内容的具名矩形。它的`name`就是Markdown所请求的槽位，在所属模板中唯一（组也不能使用框架的名称，因为锚点用同样的方式指向两者）。
 
-模板有网格时，框架按它的`grid`单元格放置，否则按它的`placement`放置，后者与设计元素的定位相同：一个锚点（`'container'`表示区域，`'page'`、`'bleed'`，或用`'#name'`表示另一个框架或组）、一条边、一个偏移和一个尺寸。锚定到另一个框架的框架随之移动。两者都没有时，框架占满整个区域。
+模板有网格时，框架按它的`grid`单元格放置，否则按它的`placement`放置，后者与设计元素的定位相同：一个锚点（`'container'`表示区域，`'page'`、`'bleed'`，或用`'#name'`表示另一个框架或组）、一条边、一个偏移和一个尺寸。锚定到另一个框架的框架随之移动。两者都没有时，框架从区域的左上角开始，宽度与区域相同，高度按它的高度规则确定。内容如何灌入各框架、如何串接和裁切，见[组合页面 › 页面如何排出](/zh/docs/composed-pages#页面如何排出)。
 
 <table>
   <thead>
@@ -413,6 +413,10 @@ pageTemplates: [
 沙盒保存模板时，从不丢掉等于默认值的值：在扩展另一个模板的模板中，或在变体中，这个值会覆盖父模板的值。
 
 在代码中，`resolvePageTemplate(config, id, { parity })`返回一个模板：继承链已合并，所在一面的变体已应用，所有默认值已填好，所有引用都已按下文警告所述处理；`validatePageTemplates(config)`返回这些警告。
+
+### 排版实际应用的设置
+
+排版会应用每个框架的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`layer`、`rotate`、`exclude`、`flow`、`takes`、`next`和`overflow.continueIn: "#frame"`，以及模板的`area`、`grid`、`decoration`、`header`、`footer`和`variants`。以下设置会被读取和检查，但还没有应用：组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`；组内框架保持各自的位置）、`fit`、`overflow.continueIn: "next-page"`和`overflowTemplate`、`spread`和`crossGutter`、框架的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`。宽度`'auto'`按`'fill'`处理。
 
 ## 注记样式
 

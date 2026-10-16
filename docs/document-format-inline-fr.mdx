@@ -169,6 +169,21 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
 - **Où.** Paragraphes, éléments de liste, citations, encadrés, cellules de tableau, légendes et notes. Les titres gardent `:chip[…]` comme texte littéral.
 - **Sortie.** Le canvas, le HTML et le PDF peignent la boîte et composent les mots comme du vrai texte : sélectionnable dans le HTML, extractible et dans l’ordre de lecture dans le PDF (dans un PDF balisé, la boîte est un artefact de mise en page et les mots appartiennent au paragraphe).
 
+### Surlignages
+
+`:mark[texte]` pose une bande de couleur derrière `texte`, comme un manuel scolaire surligne ses mots clés. Contrairement à une pastille, les mots marqués restent du texte ordinaire : ils se coupent en fin de ligne, se divisent et se justifient comme les mots voisins, et la bande suit chaque morceau de la phrase sur sa ligne. `:mark[texte]{style="cle"}` choisit un style nommé de `markStyles` (voir la référence de configuration) ; sans `style`, ou avec un identifiant qu’aucun style ne déclare, la marque prend le premier style (un `mark` jaune pâle intégré quand la configuration n’en a aucun ; le Sandbox signale un identifiant inconnu).
+
+```markdown
+Le soleil chauffe la mer et :mark[l’eau monte dans l’air sous forme de vapeur, où elle refroidit et forme des nuages].
+
+- :mark[Évaporation]{style="cle"} : l’eau devient vapeur.
+```
+
+- **Coupures de ligne.** Une marque peut couvrir plusieurs mots et passer d’une ligne à l’autre ; chaque ligne reçoit sa propre bande. La marge horizontale et les coins arrondis ne sont dessinés qu’au vrai début et à la vraie fin de la phrase : là où la phrase se coupe, la bande s’arrête net à la dernière lettre de la ligne et reprend net à la première lettre de la suivante.
+- **Aucune place prise.** La bande est peinte sous le texte, de 0,8 em au-dessus à 0,25 em au-dessous de la ligne de base, agrandie de la marge verticale, et sa marge horizontale empiète sur les espaces voisins de la phrase. Les lignes se coupent exactement comme sans la marque : marquer un livre déjà composé ne déplace aucune de ses pages.
+- **Texte.** Le texte marqué accepte ses propres marques en ligne (`:mark[le mot **clé**]`), des liens, des pastilles et des renvois. Les crochets s’y imbriquent (`:mark[voir [la carte]]`), `\]` écrit un crochet littéral et le texte peut franchir un retour à la ligne simple de la source. Une ponctuation collée à la phrase hors des crochets (`:mark[terre].`) reste hors de la bande ; la couleur de texte d’un style s’étend au mot entier qui la porte. Une marque dans une autre est composée comme son texte.
+- **Où.** Paragraphes, titres composés dans le texte, éléments de liste, citations, encadrés, notes de bas de page, cellules de tableau, légendes et notes, en texte de gauche à droite et de droite à gauche, et en chinois et en japonais. Le canevas, le PDF et le HTML peignent la bande ; dans un PDF balisé, c’est un artefact de mise en page et les mots appartiennent à leur paragraphe. Un titre dessiné par un design (une ouverture) imprime les mots sans bande, comme la visionneuse HTML sur une page verticale.
+
 ### Petites capitales
 
 `:smallcaps[text]` compose `text` en petites capitales : les noms des personnages d’une pièce de théâtre, un sigle dans le texte courant, les premiers mots d’un chapitre. Les minuscules sont composées en capitales à 70 % de la taille du texte, tandis que les capitales, les chiffres et la ponctuation gardent la taille entière, si bien que `:smallcaps[Hamlet]` imprime un H en pleine taille suivi de AMLET en petites capitales.

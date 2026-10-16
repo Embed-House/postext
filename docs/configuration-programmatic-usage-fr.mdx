@@ -125,9 +125,19 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Il est lu comme une page de bande dessinée ; une page composée demande quatre deux-points.</td>
     </tr>
     <tr>
+      <td><code>frameOverflow</code></td>
+      <td>Le contenu d’un bloc d’une page composée ne tient pas dans le bloc, et le bloc n’a plus de <code>next</code> où continuer (<code>template</code>, <code>frame</code>, <code>fenceIndex</code> ; <code>overflowMm</code>, la hauteur coupée ; <code>configPath</code>, le pointeur JSON du bloc du modèle, par exemple <code>/pageTemplates/0/frames/2</code>). Émis par la mise en page, avec le <code>pageIndex</code> de la page.</td>
+      <td>La sortie paginée coupe ce qui ne tient pas au pied du bloc ; le texte reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> ne nomme aucun style de pastille.</td>
       <td>La pastille prend le premier style de pastille.</td>
+    </tr>
+    <tr>
+      <td><code>unknownMarkStyle</code></td>
+      <td><code>:mark[…]{'{'}style{'}'}</code> ne nomme aucun style de surlignage.</td>
+      <td>La marque prend le premier style de surlignage.</td>
     </tr>
     <tr>
       <td><code>undefinedFootnote</code></td>

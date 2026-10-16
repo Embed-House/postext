@@ -74,6 +74,22 @@ export function lineMarksHtml(line: VDTLine, color: string): string {
     + `<span style="display:inline-block;position:relative;width:0;height:0;vertical-align:baseline;">${marks}</span></span>`;
 }
 
+/** The highlight bands of a line (`VDTLine.highlights`, `:mark[…]`, #888)
+ *  as boxes inside its box, placed from its top left corner: the first
+ *  markup of the line, so its text paints over them. '' when it has
+ *  none. */
+export function lineHighlightsHtml(line: VDTLine): string {
+  const bands = line.highlights;
+  if (!bands || bands.length === 0) return '';
+  const baseline = line.baseline - line.bbox.y;
+  return bands.map((b) => {
+    const radius = b.radiusLeft > 0 || b.radiusRight > 0
+      ? `border-radius:${n(b.radiusLeft)}px ${n(b.radiusRight)}px ${n(b.radiusRight)}px ${n(b.radiusLeft)}px;`
+      : '';
+    return `<span aria-hidden="true" style="position:absolute;left:${n(b.x)}px;top:${n(baseline + b.y)}px;width:${n(b.width)}px;height:${n(b.height)}px;background:${b.color};${radius}"></span>`;
+  }).join('');
+}
+
 /** The marks of a vertical line (`VDTLine.marks`) inside its box of the
  *  turned flow (see `renderVerticalLine` in the HTML backend): placed from
  *  the line's baseline in the flow frame, as the canvas draws them, so they

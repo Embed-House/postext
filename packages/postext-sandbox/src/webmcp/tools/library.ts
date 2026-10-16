@@ -2,6 +2,7 @@
 // and the files a book is exported to.
 
 import { emptyTemplate, postextToDocx } from 'postext/word';
+import { isBundleManifest, pickBundleMeta } from 'postext/bundle';
 import type { DuplicateSource, SandboxState } from '../../context/SandboxContext';
 import { slugify } from '../../panels/resources/slugify';
 import { isDocumentUntouched } from '../../presets';
@@ -325,6 +326,10 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
           ...(typeof manifest.name === 'string' && manifest.name ? { name: manifest.name } : {}),
           ...(typeof manifest.description === 'string' && manifest.description ? { description: manifest.description } : {}),
           languages,
+          // Each edition's own title (`localized.<lang>.name`, #891).
+          ...(isBundleManifest(manifest) && Object.values(manifest.localized ?? {}).some((l) => l.name)
+            ? { names: Object.fromEntries(languages.map((l) => [l, pickBundleMeta(manifest, l).name])) }
+            : {}),
           ...(own ? { writtenIn: own } : {}),
           ...(languages.length > 1 ? { note: 'Import it with language set to one of these.' } : {}),
         };

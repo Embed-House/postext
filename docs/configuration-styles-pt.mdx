@@ -458,6 +458,105 @@ const style = pickChipStyle(resolved, 'key');
 ```
 
 
+## Estilos de destaque
+
+A propriedade `markStyles` declara os estilos nomeados do `:mark[texto]{style="…"}` em linha: a faixa colorida atrás de uma frase, como um livro didático destaca suas palavras-chave (a sintaxe e suas regras de quebra de linha estão na referência do formato de documento). Um estilo, `mark`, vem por padrão (uma faixa amarelo-clara que passa um pouco da frase, com as pontas levemente arredondadas e o texto na sua própria cor), então `:mark[…]` funciona sem nenhuma configuração; declarar `markStyles` substitui essa lista. Uma marca sem `style`, ou com um id que nenhum estilo declara, usa o primeiro estilo.
+
+```ts
+const config: PostextConfig = {
+  markStyles: [
+    { id: 'mark', name: 'Key idea' },
+    {
+      id: 'key',
+      name: 'Definition',
+      background: { hex: '#cdebd5', model: 'hex' },
+      color: { hex: '#14532d', model: 'hex' },
+    },
+  ],
+};
+```
+
+```md
+The sun warms the sea and :mark[water rises into the air as vapour].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obrigatório</td>
+      <td>Identificador referido por <code>:mark[…]&#123;style="…"&#125;</code>.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Nome legível, só para a interface do editor.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#fff0a0</code></td>
+      <td>Cor da faixa (vinculável à paleta).</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>a do texto</td>
+      <td>Cor das palavras marcadas.</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.2em</code></td>
+      <td>Raio das duas pontas da faixa, limitado à metade da altura dela.</td>
+    </tr>
+    <tr>
+      <td><code>paddingX</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.15em</code></td>
+      <td>Quanto a faixa passa da primeira e da última letra da frase, entrando no espaço ao lado.</td>
+    </tr>
+    <tr>
+      <td><code>paddingY</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.05em</code></td>
+      <td>Espaço acima e abaixo da faixa do texto.</td>
+    </tr>
+    <tr>
+      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>paddingY</code></td>
+      <td>Espaço acima e abaixo, cada um no lugar de <code>paddingY</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+As medidas em em (`paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `borderRadius`) se referem ao tamanho do texto marcado. A faixa não ocupa espaço: o texto é composto como sem a marca, a faixa é pintada por baixo e o espaçamento avança pelos espaços entre palavras e pela entrelinha. No VDT, os segmentos das palavras marcadas trazem um `mark` (`{ style, id, start?, end?, from?, to? }`) e cada linha guarda suas faixas em `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`, relativas ao `bbox.x` e à linha de base da linha), que os motores de canvas, PDF e HTML pintam antes do texto da linha.
+
+```ts
+const resolved = resolveMarkStylesConfig(config.markStyles);
+// => the built-in `mark` style when unset; every field filled
+
+const minimal  = stripMarkStylesDefaults(config.markStyles);
+// => undefined for the built-in default; static defaults dropped
+
+const style = pickMarkStyle(resolved, 'key');
+// => the `key` style, else the first one
+```
+
+
 ## Listagens de código
 
 A propriedade `codeStyle` define a aparência das listagens de código: as cercas ```` ``` ```` e `~~~` do texto (veja [Formato do documento › Blocos de código](/pt/docs/document-format#blocos-de-código)) e o código em linha quando ele pede uma fonte de código. Uma listagem é composta linha a linha como foi escrita, numa fonte monoespaçada, dentro de uma caixa: nenhuma linha é hifenizada nem justificada, cada espaço mantém a sua largura, e uma tabulação avança até a parada seguinte. A caixa vem do mesmo mecanismo de um `:::callout`, de modo que uma listagem se divide entre linhas através de colunas e páginas, cada parte numa caixa própria, e uma cerca dentro de um boxe é uma caixa aninhada nele. Todas as propriedades são opcionais. Desde o postext 1.23.
@@ -731,7 +830,7 @@ Um realçador registrado para uma linguagem tem precedência sobre um registrado
 
 ### Código em linha
 
-`codeStyle.inline` compõe o texto entre acentos graves numa fonte de código: como uma unidade, como um chip, que uma linha nunca quebra por dentro. Sem definir, o código em linha mantém a fonte do texto.
+`codeStyle.inline` compõe o texto entre acentos graves numa fonte de código, dentro de uma caixa como a de um chip. Uma linha pode quebrar o código num espaço ou depois de um hífen entre uma letra ou um algarismo e uma letra: a caixa é cortada em duas e nada é acrescentado. Os espaços do código mantêm a largura da fonte de código, e a justificação da linha não os estica. Sem definir, o código em linha mantém a fonte do texto.
 
 <table>
   <thead>
@@ -751,6 +850,7 @@ Um realçador registrado para uma linguagem tem precedência sobre um registrado
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>nenhum / <code>0.5pt</code></td><td>Um contorno.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> é o tamanho do trecho.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> com preenchimento ou contorno, senão <code>0</code> / <code>0.1em</code></td><td>Espaço dentro do preenchimento; o espaçamento vertical é pintado fora da caixa da linha.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>A fonte dos caracteres árabes, hebraicos e CJK do código: a do texto (<code>'text'</code>), porque poucas fontes de código os têm, ou a de código (<code>'code'</code>), se os tiver.</td></tr>
   </tbody>
 </table>
 

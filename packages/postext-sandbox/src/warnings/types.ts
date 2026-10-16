@@ -42,7 +42,9 @@ export type WarningKind =
   | 'slotUnknown'
   | 'slotEmpty'
   | 'pageFenceLength'
+  | 'frameOverflow'
   | 'unknownChipStyle'
+  | 'unknownMarkStyle'
   | 'duplicateAnchor'
   | 'unknownCitationKey'
   | 'citationsUnavailable'
@@ -235,10 +237,18 @@ export type WarningPayload =
   | { kind: 'slotUnknown'; template: string; slot: string; fenceIndex: number }
   | { kind: 'slotEmpty'; template: string; frame: string; fenceIndex: number }
   | { kind: 'pageFenceLength' }
+  /** The content poured into a frame of a composed page (#855) does not
+   *  fit and has no `next` frame left: what does not fit is clipped at the
+   *  frame's foot on paged output. `page` is the book page, `configPath`
+   *  the JSON pointer of the template frame (`/pageTemplates/0/frames/2`). */
+  | { kind: 'frameOverflow'; template: string; frame: string; fenceIndex: number; overflowMm: number; page: number; configPath: string }
   /** A `:chip[…]{style="…"}` names a style that is not in
    *  `config.chipStyles`; the chip takes the first style. `inResource`
    *  names the resource whose caption, note or cell holds the chip. */
   | { kind: 'unknownChipStyle'; style: string; inResource?: string }
+  /** A `:mark[…]{style="…"}` names a style that is not in
+   *  `config.markStyles` (#888); the mark takes the first style. */
+  | { kind: 'unknownMarkStyle'; style: string; inResource?: string }
   /** An identifier (`{#id}`, `:anchor{#id}`) set twice (#261). */
   | { kind: 'duplicateAnchor'; anchorId: string }
   /** A citation names a key no reference defines (#268). */

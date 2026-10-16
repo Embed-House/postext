@@ -1,0 +1,380 @@
+/**
+ * The box typesetter (#855): lay a run of content blocks out as a box of a
+ * callout style at a width, and cut it at a height, resumably.
+ *
+ * Factored out of `placeDocumentPass` (`build.ts`) with an explicit pass
+ * context so callouts and the frames of composed pages (DESIGN §5.1) share
+ * it: a callout's fragments (`keepTogether: false`) and a frame's content
+ * cut at the frame's foot are the same operation. Nothing here reads the
+ * page or the cursor; the pass context hands in what the layout needs.
+ */
+import type { ContentBlock } from '../parse';
+import type { ResolvedCalloutStyleConfig } from '../types';
+import type { ResolvedConfig, VDTBlock } from '../vdt';
+import type { BlockMeasureContext } from './measureContentBlock';
+import type { ParagraphContainerPlan } from './paragraphContainers';
+import { isMarkerBlock } from './buildHelpers';
+import {
+  layoutCallout,
+  type CalloutLayoutInput,
+  type CalloutLayoutResult,
+  type CalloutLineWidth,
+  type CalloutUnit,
+  type GroupPos,
+  type PlannedCallout,
+} from './calloutLayout';
+import { fillGalley, galleyBreaks } from './columnsGroup';
+
+/** What a frame of a composed page (#855) adds to a box's layout: its exact
+ *  height, where content shorter than it sits, and the rectangles its text
+ *  runs round. Absent for callouts. */
+export type FrameBoxOptions = Pick<CalloutLayoutInput, 'boxHeight' | 'verticalAlign' | 'exclusions'>;
+
+/** What the box typesetter reads of a layout pass. */
+export interface FrameLayoutPass {
+  /** The pass's content blocks (after every block transform). */
+  readonly contentBlocks: readonly ContentBlock[];
+  /** The pass's configuration (`layout.flowColumns`,
+   *  `layout.boxChildSplitMinLines`). */
+  readonly resolved: ResolvedConfig;
+  /** The configuration boxes are laid out with: `resolved` plus the
+   *  synthetic box styles of the pass. */
+  readonly calloutResolved: ResolvedConfig;
+  readonly paragraphContainers: ParagraphContainerPlan;
+  /** The measure context the children of the box that opens at `startIdx`
+   *  are set with (a main-flow group's box sets its blocks as the text
+   *  around it is set). */
+  measureCtxFor(startIdx: number, style: ResolvedCalloutStyleConfig): BlockMeasureContext;
+  /** Lays out a comic strip among a box's children (see
+   *  `CalloutLayoutInput.stripBlock`). */
+  stripBlock(raw: ContentBlock, idx: number, width: number): VDTBlock | undefined;
+  /** The height of an empty, full-height column of the current page (see
+   *  {@link tallerThanColumn}). */
+  columnHeight(): number;
+}
+
+/** A position inside a box's children where a fragment starts or ends:
+ *  before child `child` (a position in `children`), past its first
+ *  `line` text lines. `line: 0` is the child's head; a cut with
+ *  `line > 0` falls inside that child, between two of its lines. */
+export interface CalloutCut {
+  child: number;
+  line: number;
+  /** For a cut inside a child (`line > 0`): the box widths that child's
+   *  lines up to `line` were counted at, from line `fromLine` on (see
+   *  `CalloutLayoutInput.lineWidths`). A box that goes on in a column of
+   *  another width breaks the child again from them. */
+  widths?: readonly CalloutLineWidth[];
+  /** A cut inside the `:::columns` group whose opening marker is at
+   *  position `open` (#634): where each of its streams stands (one for a
+   *  snake group). `child` is then the earliest of them, `line` 0. */
+  group?: { open: number; pos: readonly GroupPos[] };
+}
+/** The widths a child's lines are counted at in a fragment `width` wide
+ *  that opens `from` (see `CalloutCut.widths`). */
+export const cutWidths = (from: CalloutCut, width: number): readonly CalloutLineWidth[] => {
+  const before = from.line > 0 ? from.widths : undefined;
+  if (!before || before.length === 0) return [{ fromLine: 0, width }];
+  const last = before[before.length - 1]!;
+  return Math.abs(last.width - width) <= 0.5 ? before : [...before, { fromLine: from.line, width }];
+};
+export const CUT_START: CalloutCut = { child: 0, line: 0 };
+
+export interface CalloutLayouter {
+  /** Content blocks between the fence markers. */
+  children: readonly ContentBlock[];
+  /** Content index of `children[0]`. */
+  childBase: number;
+  /** Positions in `children` of the blocks the box lays out (marker
+   *  blocks of nested containers and directives are skipped). */
+  realAt: readonly number[];
+  /** The cut past the last child (the end of the box). */
+  end: CalloutCut;
+  /** `:::columns` groups among the children ([start, end] marker
+   *  positions): only the cuts the group itself offers fall inside one
+   *  (#634), and none inside a group of a nested box. */
+  groups: readonly [number, number][];
+  /** Lay out the children from cut `from` to cut `to` at `width` as one
+   *  box — a `continuation` (every fragment after the head) without
+   *  title / icon. A cut inside a child keeps only the lines on its side. */
+  layoutRange: (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored?: boolean, frame?: FrameBoxOptions) => CalloutLayoutResult;
+}
+
+export const makeCalloutLayouter = (
+  pass: FrameLayoutPass,
+  startIdx: number,
+  plan: PlannedCallout,
+  style: ResolvedCalloutStyleConfig,
+): CalloutLayouter => {
+  const contentBlocks = pass.contentBlocks;
+  const children = contentBlocks.slice(startIdx + 1, plan.endIdx);
+  const realAt: number[] = [];
+  children.forEach((c, k) => {
+    if ((c.type !== 'directive' || (c.directiveName === 'strip' && c.comic)) && !isMarkerBlock(c)) realAt.push(k);
+  });
+  // `:::columns` groups among the children, as [start marker, end marker]
+  // positions: a split never cuts inside one.
+  const groups: [number, number][] = [];
+  children.forEach((c, k) => {
+    if (c.type === 'containerStart' && c.containerName === 'columns') {
+      let e = k + 1;
+      while (e < children.length && !(children[e]!.type === 'containerEnd' && children[e]!.containerName === 'columns' && children[e]!.containerId === c.containerId)) e++;
+      groups.push([k, e]);
+    }
+  });
+  const layoutRange = (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored = false, frame?: FrameBoxOptions) => {
+    let n = 0;
+    // A fragment that opens inside a `:::columns` group starts at its
+    // opening marker and one that ends inside it at its closing marker:
+    // the group sets the part between the cut's positions (#634).
+    const fromChild = from.group ? from.group.open : from.child;
+    const closeOfGroup = (open: number): number => groups.find(([gs]) => gs === open)?.[1] ?? children.length - 1;
+    // A cut inside child `to.child` includes that child (its first
+    // `to.line` lines); a cut at a child's head excludes it.
+    const toChild = to.group ? closeOfGroup(to.group.open) + 1 : to.line > 0 ? to.child + 1 : to.child;
+    const inSlice = (pos: readonly GroupPos[]): GroupPos[] => pos.map((p) => ({ ...p, child: p.child - fromChild }));
+    // Nested boxes still open at `from` (their closing markers leading
+    // the range close them): the fragment opens inside them.
+    const open: { idx: number; block: ContentBlock }[] = [];
+    for (let k = 0; k < fromChild; k++) {
+      const c = children[k]!;
+      if (c.containerName !== 'callout') continue;
+      if (c.type === 'containerStart') open.push({ idx: startIdx + 1 + k, block: c });
+      else if (c.type === 'containerEnd') open.pop();
+    }
+    for (let k = fromChild; k < children.length && open.length > 0; k++) {
+      const c = children[k]!;
+      if (c.type !== 'containerEnd' || c.containerId !== open[open.length - 1]!.block.containerId) break;
+      open.pop();
+    }
+    return layoutCallout({
+      style,
+      attrs: plan.attrs,
+      ...(contentBlocks[startIdx]?.direction ? { direction: contentBlocks[startIdx]!.direction } : {}),
+      continuation,
+      // Any range short of the box's end is a fragment that goes on.
+      ...(to.child < children.length || to.line > 0 || to.group ? { continues: true } : {}),
+      children: children.slice(fromChild, toChild),
+      childStartIdx: startIdx + 1 + fromChild,
+      width,
+      // A main-flow group's box sets its blocks as the text around it is
+      // set: a styled section's or a part's body (#634).
+      ctx: pass.measureCtxFor(startIdx, style),
+      resolved: pass.calloutResolved,
+      containerId: plan.containerId,
+      frameId,
+      nextChildId: () => `${frameId}-c${n++}`,
+      paragraphContainers: pass.paragraphContainers,
+      ...(from.line > 0 && !from.group ? { lineFrom: from.line } : {}),
+      ...(from.line > 0 && !from.group && from.widths ? { lineWidths: from.widths } : {}),
+      ...(to.line > 0 && !to.group ? { lineTo: to.line } : {}),
+      ...(from.group ? { groupFrom: inSlice(from.group.pos) } : {}),
+      ...(to.group ? { groupTo: inSlice(to.group.pos) } : {}),
+      ...(open.length > 0 ? { openNested: open } : {}),
+      mirrored,
+      stripBlock: pass.stripBlock,
+      ...frame,
+    });
+  };
+  return { children, childBase: startIdx + 1, realAt, end: { child: children.length, line: 0 }, layoutRange, groups };
+};
+
+export interface CalloutFragment {
+  /** The cut the rest of the box starts at. */
+  to: CalloutCut;
+  result: CalloutLayoutResult;
+}
+
+/** The longest leading fragment of the box from cut `from` on whose box
+ *  is at most `roomPx` tall. Cuts fall between children or between the
+ *  lines of a text child. `splitMinLines` guards text: a cut between
+ *  children leaves on each side at least that many text lines or at least
+ *  one indivisible block (a figure, table, display formula or nested
+ *  box); a cut inside a text child counts every line on its side, a block
+ *  as one line, and leaves at least `layout.boxChildSplitMinLines` lines
+ *  of that child on each side (two by default, `splitMinLines` when that
+ *  is lower; EF-115). A nested box that may split
+ *  itself (`keepTogether: false`, or taller than a full column) offers the cuts
+ *  inside it too, by its own `splitMinLines` over its own children; the
+ *  fragments on both sides redraw its frame. The full layout's geometry
+ *  ranks the candidates (box bottom = content bottom at the cut + the
+ *  tails of the boxes closed below it); the deepest candidate that fits
+ *  is laid out for real and taken when it truly fits. `null` when none
+ *  does. */
+export const splitCalloutFragment = (
+  pass: FrameLayoutPass,
+  L: CalloutLayouter,
+  from: CalloutCut,
+  width: number,
+  roomPx: number,
+  frameId: string,
+  continuation: boolean,
+  minLines: number,
+  mirrored = false,
+  frame?: FrameBoxOptions,
+): CalloutFragment | null => {
+  const full = L.layoutRange(from, L.end, width, frameId, continuation, mirrored, frame);
+  /** Figures, tables and display formulas: never cut, not text lines. */
+  const indivisible = (c: VDTBlock): boolean => c.type === 'resource' || c.type === 'mathDisplay';
+  const unitBottom = (u: CalloutUnit): number => {
+    const b = u.kind === 'block' ? u.block.bbox : u.box.result.frame.bbox;
+    return b.y + b.height;
+  };
+  /** Room a box keeps under its last item (padding, border, icon growth). */
+  const tailOf = (r: CalloutLayoutResult): number => {
+    const last = r.units[r.units.length - 1];
+    return last ? r.frame.bbox.y + r.totalHeight - unitBottom(last) : 0;
+  };
+  if (full.units.length === 0) return null;
+  // A head that goes on also carries the style's continuation marker.
+  const tail = tailOf(full) + full.continuesMarkerPx;
+  /** Candidate cuts with the head's content bottom. A `soft` cut parts a
+   *  wrapped code line from its continuation (#624): taken only when no
+   *  other cut fits. */
+  const candidates: { cut: CalloutCut; bottom: number; soft?: true }[] = [];
+  /** Collect the cuts among `units` (one box's items; `below` = the tails
+   *  of the nested boxes around them), each side of a cut holding enough
+   *  by the box's `min` lines: a block counts as one line, a nested box
+   *  as one indivisible block. */
+  const collect = (units: readonly CalloutUnit[], minLines: number, below: number): void => {
+    const min = Math.max(1, minLines);
+    const lineCount = (u: CalloutUnit): number => (u.kind === 'block' ? Math.max(1, u.block.lines.length) : 1);
+    const isBlock = (u: CalloutUnit): boolean => u.kind === 'box' || indivisible(u.block);
+    const totalLines = units.reduce((n, u) => n + lineCount(u), 0);
+    const totalBlocks = units.filter(isBlock).length;
+    /** A side of a cut holds enough: `lines` (blocks included) of which
+     *  `blocks` are indivisible. Between children, one block suffices or
+     *  the text lines alone meet the minimum; inside a text child, the
+     *  lines do. */
+    const holds = (lines: number, blocks: number, betweenChildren: boolean): boolean =>
+      betweenChildren ? blocks > 0 || lines - blocks >= min : lines >= min;
+    const bothHold = (lines: number, blocks: number, betweenChildren: boolean): boolean =>
+      holds(lines, blocks, betweenChildren) && holds(totalLines - lines, totalBlocks - blocks, betweenChildren);
+    let linesBefore = 0;
+    let blocksBefore = 0;
+    units.forEach((u, i) => {
+      let next: number | undefined;
+      if (u.kind === 'block') {
+        const c = u.block;
+        const k = (c.contentIndex ?? L.childBase) - L.childBase;
+        next = k + 1;
+        if (!indivisible(c) && c.lines.length > 1) {
+          // The first laid-out child of a continuation opens after
+          // `from.line` lines: cuts inside it are counted from the
+          // child's own head. Each side of the box still counts all its
+          // lines against `min`, and a cut inside a child leaves at least
+          // `layout.boxChildSplitMinLines` lines of it on each side (2 by
+          // default, so no lone line: EF-115), or `min` when that is
+          // lower. The count is of this fragment's part of the child,
+          // since a part left behind already passed the test.
+          const childMin = Math.min(min, pass.resolved.layout.boxChildSplitMinLines);
+          const lineBase = k === from.child ? from.line : 0;
+          for (let l = childMin; l <= c.lines.length - childMin; l++) {
+            const line = c.lines[l - 1]!;
+            if (bothHold(linesBefore + l, blocksBefore, false)) {
+              candidates.push({
+                cut: { child: k, line: lineBase + l, widths: k === from.child ? cutWidths(from, width) : [{ fromLine: 0, width }] },
+                bottom: line.bbox.y + line.bbox.height + below,
+                ...(c.lines[l]?.codeLine?.continued ? { soft: true as const } : {}),
+              });
+            }
+          }
+        }
+      } else {
+        const { box } = u;
+        if (box.endIdx !== undefined) next = box.endIdx + 1 - L.childBase;
+        if (!box.style.keepTogether || tallerThanColumn(pass, box.result)) {
+          collect(box.result.units, box.style.splitMinLines, below + tailOf(box.result));
+        }
+      }
+      linesBefore += lineCount(u);
+      if (isBlock(u)) blocksBefore++;
+      if (i < units.length - 1 && next !== undefined && bothHold(linesBefore, blocksBefore, true)) {
+        candidates.push({ cut: { child: next, line: 0 }, bottom: unitBottom(u) + below });
+      }
+    });
+  };
+  collect(full.units, minLines, 0);
+  // Inside a `:::columns` group of the box (#634): the cut the group
+  // offers for the room, where each of its sub-columns (each stream, in
+  // a parallel group) ends when the galley fills them in turn; at least
+  // one stream goes on and one moves on. A group of a nested box is
+  // never cut, nor any group under 1.24's rules (`layout.flowColumns`).
+  if (pass.resolved.layout.flowColumns) {
+    const base = from.group ? from.group.open : from.child;
+    const childMin = Math.min(Math.max(1, minLines), pass.resolved.layout.boxChildSplitMinLines);
+    for (const g of full.groups ?? []) {
+      const h = roomPx - tail - g.top;
+      if (h <= 0.5) continue;
+      const reopened = from.group?.open === g.open + base ? from.group : undefined;
+      const pos: GroupPos[] = [];
+      let moved = false;
+      let left = false;
+      let used = 0;
+      g.streams.forEach((items, s) => {
+        const end: GroupPos = { child: (g.ends[s] ?? g.close) + base, line: 0 };
+        if (items.length === 0) { pos.push(end); return; }
+        const breaks = galleyBreaks(items, childMin);
+        const fill = fillGalley(items, breaks, g.flow === 'snake' ? g.columns : 1, h);
+        if (fill.end) {
+          moved = true;
+          used = Math.max(used, fill.used);
+          pos.push(end);
+          return;
+        }
+        left = true;
+        if (fill.cuts.length === 0) {
+          // This stream takes nothing in the fragment: it stays where it is.
+          pos.push(reopened?.pos[s] ?? { child: items[0]!.child + base, line: 0 });
+          return;
+        }
+        moved = true;
+        used = Math.max(used, fill.used);
+        const b = breaks[fill.cuts[fill.cuts.length - 1]!]!;
+        const it = items[b.item]!;
+        if (b.line === 0) {
+          pos.push({ child: it.child + base, line: 0 });
+          return;
+        }
+        // The sub-column widths the paragraph's lines are set at.
+        const before = it.lineBase > 0 ? reopened?.pos[s]?.widths : undefined;
+        const lastW = before?.[before.length - 1];
+        const widths = !before || before.length === 0
+          ? [{ fromLine: 0, width: g.columnWidth }]
+          : Math.abs(lastW!.width - g.columnWidth) <= 0.5 ? before : [...before, { fromLine: it.lineBase, width: g.columnWidth }];
+        pos.push({ child: it.child + base, line: it.lineBase + b.line, widths });
+      });
+      if (!moved || !left) continue;
+      candidates.push({
+        cut: { child: Math.min(...pos.map((p) => p.child)), line: 0, group: { open: g.open + base, pos } },
+        bottom: g.top + used,
+      });
+    }
+  }
+  const insideGroup = (cut: CalloutCut): boolean =>
+    !cut.group && L.groups.some(([gs, ge]) => (cut.line === 0 ? gs < cut.child && cut.child <= ge : gs < cut.child && cut.child < ge));
+  const viable = candidates
+    .filter((c) => !insideGroup(c.cut))
+    .sort((a, b) => b.bottom - a.bottom);
+  // A wrapped code line stays with its continuations when a cut
+  // elsewhere fits (#624).
+  viable.sort((a, b) => (a.soft ? 1 : 0) - (b.soft ? 1 : 0));
+  for (const c of viable) {
+    if (c.bottom + tail > roomPx + 0.01) continue;
+    const result = L.layoutRange(from, c.cut, width, frameId, continuation, mirrored, frame);
+    if (result.totalHeight <= roomPx + 0.01) return { to: c.cut, result };
+  }
+  return null;
+};
+
+/** Absolute content indices of the children a fragment from cut `from`
+ *  to cut `to` of `L` touches, for the fragment's source range. */
+export const fragmentRange = (L: CalloutLayouter, from: CalloutCut, to: CalloutCut) =>
+  ({ firstChildIdx: L.childBase + from.child, lastChildIdx: L.childBase + (to.line > 0 ? to.child : to.child - 1) });
+
+/** The (rest of the) box is taller than an empty, full-height column —
+ *  a whole page's content area for a page-span box: no column could
+ *  hold it, so even a keep-together box splits (with the rules of a
+ *  `keepTogether: false` one) rather than overflow. */
+export const tallerThanColumn = (pass: FrameLayoutPass, result: CalloutLayoutResult): boolean =>
+  result.totalHeight > pass.columnHeight() + 0.01;

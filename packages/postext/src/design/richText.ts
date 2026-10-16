@@ -23,6 +23,8 @@ import { hasJoiningScript } from '../bidi';
 export interface DesignTextRun {
   text: string;
   fontString: string;
+  /** A contents part row's leader (see `VDTDesignTextRun.leader`). */
+  leader?: true;
   /** Advance of the run, tracking included. */
   width: number;
   /** Script offset off the baseline (px, positive down). */

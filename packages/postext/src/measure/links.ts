@@ -7,7 +7,7 @@
 // target is stamped on every segment holding a linked character
 // (`VDTLineSegment.href`), for the HTML and PDF backends to make live.
 
-import type { VDTLine, VDTLineSegment } from '../vdt';
+import type { VDTLine, VDTLineSegment, VDTSegmentMark } from '../vdt';
 import type { InlineSpan } from '../parse';
 import { writtenText } from './kashida';
 import { SOFT_HYPHEN } from './types';
@@ -32,7 +32,24 @@ function hrefsByChar(spans: readonly InlineSpan[]): (string | undefined)[] | nul
     const base = out.length;
     for (let i = 0; i < span.text.length; i++) out.push(undefined);
     for (const link of span.links ?? []) {
+      if (link.mark) continue;
       for (let i = Math.max(0, link.start); i < Math.min(span.text.length, link.end); i++) out[base + i] = link.href;
+    }
+  }
+  return out;
+}
+
+/** The highlight mark (#888) of each character of the spans' joined text;
+ *  null when none carries one. */
+function marksByChar(spans: readonly InlineSpan[]): ({ style: string; id: number } | undefined)[] | null {
+  if (!spans.some((s) => s.links?.some((l) => l.mark))) return null;
+  const out: ({ style: string; id: number } | undefined)[] = [];
+  for (const span of spans) {
+    const base = out.length;
+    for (let i = 0; i < span.text.length; i++) out.push(undefined);
+    for (const link of span.links ?? []) {
+      if (!link.mark) continue;
+      for (let i = Math.max(0, link.start); i < Math.min(span.text.length, link.end); i++) out[base + i] = link.mark;
     }
   }
   return out;
@@ -55,22 +72,51 @@ function hrefsByChar(spans: readonly InlineSpan[]): (string | undefined)[] | nul
  */
 export function linkSegments(lines: VDTLine[], spans: readonly InlineSpan[]): VDTLine[] {
   const written = spans.some((s) => s.inserted) ? spans.filter((s) => !s.inserted) : spans;
-  const hrefs = hrefsByChar(written);
-  if (!hrefs) return lines;
+  const hrefs = hrefsByChar(written) ?? [];
+  // Highlight marks (#888) ride on the link ranges and are stamped here
+  // too (`VDTLineSegment.mark`).
+  const marks = marksByChar(written);
+  if (hrefs.length === 0 && !marks) return lines;
   const text = written.map((s) => s.text).join('');
+  // Each mark's first and last character in the text.
+  const markEdges = new Map<number, { first: number; last: number }>();
+  marks?.forEach((m, i) => {
+    if (!m) return;
+    const e = markEdges.get(m.id);
+    if (e) e.last = i;
+    else markEdges.set(m.id, { first: i, last: i });
+  });
   let p = 0;
   const same = (a: string, b: string) => a === b || a.toLowerCase() === b.toLowerCase();
+  /** The mark of the chunk last consumed (see {@link consume}). */
+  let chunkMark: VDTSegmentMark | undefined;
 
   /** Consume `chunk` from the text; its first link target, `null` when it
-   *  does not match. */
+   *  does not match. Sets {@link chunkMark} to the chunk's highlight mark:
+   *  the first one it holds, with the characters it covers when not all. */
   const consume = (chunk: string): string | undefined | null => {
     while (p < text.length && WHITESPACE.test(text[p]!) && !WHITESPACE.test(chunk[0] ?? '')) p++;
     let href: string | undefined;
+    chunkMark = undefined;
+    let markFrom = -1;
+    let markTo = -1;
+    let markId = -1;
     for (let i = 0; i < chunk.length; i++) {
       const c = chunk[i]!;
       while (p < text.length && INVISIBLE.test(text[p]!) && text[p] !== c) p++;
       if (p < text.length && same(text[p]!, c)) {
         href ??= hrefs[p];
+        const m = marks?.[p];
+        if (m && (markId < 0 || m.id === markId)) {
+          if (markId < 0) {
+            markId = m.id;
+            markFrom = i;
+            const edges = markEdges.get(m.id)!;
+            chunkMark = { style: m.style, id: m.id, ...(edges.first === p ? { start: true as const } : {}) };
+          }
+          markTo = i + 1;
+          if (markEdges.get(m.id)!.last === p) chunkMark!.end = true;
+        }
         p++;
         continue;
       }
@@ -84,6 +130,10 @@ export function linkSegments(lines: VDTLine[], spans: readonly InlineSpan[]): VD
         continue;
       }
       return null;
+    }
+    if (chunkMark && (markFrom > 0 || markTo < chunk.length)) {
+      chunkMark.from = markFrom;
+      chunkMark.to = markTo;
     }
     return href;
   };
@@ -117,15 +167,30 @@ export function linkSegments(lines: VDTLine[], spans: readonly InlineSpan[]): VD
       lead = false;
       const href = consume(written.slice(skip));
       if (href === null) return lines;
-      if (href === undefined) {
+      const mark = chunkMark ? markOf(chunkMark, skip, written === seg.text) : undefined;
+      if (href === undefined && !mark) {
         segments.push(seg);
         continue;
       }
-      segments.push({ ...seg, href });
+      segments.push({ ...seg, ...(href !== undefined ? { href } : {}), ...(mark ? { mark } : {}) });
       lineChanged = true;
     }
     out.push(lineChanged ? { ...line, segments } : line);
     if (lineChanged) changed = true;
   }
   return changed ? out : lines;
+}
+
+/** A segment's mark from its chunk's: the characters it covers counted in
+ *  the segment's text (past the `skip` of a repeated hyphen), dropped when
+ *  the text is not the one written (tatweels inserted). */
+function markOf(m: VDTSegmentMark, skip: number, plain: boolean): VDTSegmentMark {
+  if (m.from === undefined) return m;
+  if (!plain) {
+    const rest = { ...m };
+    delete rest.from;
+    delete rest.to;
+    return rest;
+  }
+  return { ...m, from: m.from + skip, to: (m.to ?? 0) + skip };
 }

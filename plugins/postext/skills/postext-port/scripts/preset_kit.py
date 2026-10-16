@@ -15,8 +15,15 @@ A bundle is a folder the Postext sandbox can open:
 Commands:
   preset_kit.py init <project> --id my-book --name "My book" --lang es [--lang en]
       Create the folders and a build_preset.py to fill in.
-  preset_kit.py pack <project> [--out my-book.postext]
-      Zip the bundle as a .postext file (Sandbox > Projects > Import .postext).
+  preset_kit.py pack <project> [--out my-book.postext] [--manifest-only] [--exclude GLOB]...
+      Zip the bundle as a .postext file (Sandbox > Books > New > Open a .postext
+      file). By default every file of the folder goes in except source/,
+      scripts (*.py), dot files, pagination caches (layouts*.json), the kit's
+      own lists and non-redistributable fonts. --manifest-only packs
+      preset.json and only the files it names (chapters, resources, print
+      masters, posters, fonts, thumbnail): a work/ folder, label sources,
+      translations or tool outputs stay out. --exclude leaves out the paths
+      a glob matches (a folder name leaves out what is under it); repeat.
   preset_kit.py index <presets-root>
       Write <presets-root>/index.json listing every preset.json below it (for
       POSTEXT_PRIVATE_PRESETS_DIR or a static host).
@@ -25,17 +32,25 @@ Commands:
       style read from the font files; needs fontTools, else guessed from names).
   preset_kit.py lint <project | preset.json | book.postext | config.json>
           [--allow TEXT]... [--max-chars N] [--max-size MB] [--json] [--quiet]
-      Content in the configuration: the literal text of every design text
-      element (placeholders removed) in every slot (running heads, footers,
-      heading and heading-style designs, part designs, contents rows), in the
-      shared config and in each `localized.<lang>.config`. An element whose
-      literal text is more than 2 words or more than 24 characters is content
-      (it belongs in the Markdown) unless an `allow` string covers it
-      (`config.checks.contentInConfig.allow` plus --allow). Fails (exit 1)
-      when the offending characters add up to more than --max-chars (default
-      0: any offending element fails). Also reports the size of the config:
-      a warning from 3 MB, a failure above --max-size when given (aim < 1 MB;
-      the Sandbox keeps books in ~5 MB of browser storage).
+      Content in the configuration, counted as the engine's `contentInConfig`
+      warning counts it (postext 1.34): for every edition (the shared config,
+      and the shared config under each `localized.<lang>.config`), the literal
+      text of each design text element (placeholders removed) in the running
+      heads, footers, heading and heading-style designs, part designs and
+      contents rows, with the allowed phrases taken out
+      (`checks.contentInConfig.allow`, the edition's front-matter title,
+      subtitle, author and publisher, and --allow). What is left is content
+      when it has more than 2 words or more than 24 letters and digits (a
+      Han, kana, Hangul or Thai character counts 3; text without spaces
+      counts no words); `checks.contentInConfig` changes the limits. One line
+      per owner (a heading style, a heading level, the header…) with its
+      slots and editions. Fails (exit 1) when the offending letters and
+      digits add up to more than --max-chars (default 0). Also lists design
+      texts the engine's check does not read (a page template's decoration)
+      and reports the size of the config: a warning from 3 MB, a failure
+      above --max-size when given (aim < 1 MB; the Sandbox keeps books in
+      ~5 MB of browser storage). --json prints each edition's warnings in
+      the engine's shape ({path, ownerId, count, chars, elements, value}).
 
 Library (import from build_preset.py):
   mm(12) / pt(9.5) / em(1.2)          Dimension objects
@@ -51,11 +66,14 @@ Library (import from build_preset.py):
 from __future__ import annotations
 
 import argparse
+import bisect
+import fnmatch
 import hashlib
 import json
 import os
 import re
 import sys
+import unicodedata
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -608,25 +626,73 @@ def cmd_init(args) -> None:
     print(f"created {project}/ (chapters/{', chapters/'.join(langs)}, resources/, fonts/, source/, build_preset.py)")
 
 
+def manifest_files(manifest: Any, project: Path) -> set[str]:
+    """The project files a manifest names: every string value of it that is
+    the relative path of a file in the project (chapters, resource files,
+    print masters, posters, font variants, the thumbnail, an output
+    profile)."""
+    root = project.resolve()
+    found: set[str] = set()
+
+    def walk(node: Any) -> None:
+        if isinstance(node, dict):
+            for v in node.values():
+                walk(v)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v)
+        elif isinstance(node, str) and 0 < len(node) < 512 and "\n" not in node and not node.startswith(("/", "{")):
+            rel = os.path.normpath(node).replace(os.sep, "/")
+            if not rel.startswith("../") and rel != ".." and (root / rel).is_file():
+                found.add(rel)
+    walk(manifest)
+    return found
+
+
+def _excluded(rel: str, patterns: list[str]) -> bool:
+    parts = rel.split("/")
+    for pat in patterns:
+        pat = pat.rstrip("/")
+        if fnmatch.fnmatch(rel, pat) or any(fnmatch.fnmatch("/".join(parts[:i]), pat) for i in range(1, len(parts))):
+            return True
+    return False
+
+
+def pack_files(project: Path, manifest: dict, manifest_only: bool = False, exclude: list[str] = ()) -> list[str]:
+    """The relative paths `pack` zips, sorted."""
+    skip_fonts = {v["file"] for f in manifest.get("fonts", []) if f.get("redistributable") is False for v in f["variants"]}
+    named = manifest_files(manifest, project) | {"preset.json"} if manifest_only else None
+    if named is not None:
+        return sorted(rel for rel in named if rel not in skip_fonts and not _excluded(rel, list(exclude))
+                      and not any(part.startswith(".") for part in rel.split("/")))
+    out = []
+    for p in sorted(project.rglob("*")):
+        rel = p.relative_to(project).as_posix()
+        if not p.is_file() or any(part.startswith(".") for part in rel.split("/")):
+            continue
+        if rel in skip_fonts or _excluded(rel, list(exclude)):
+            continue
+        # Pagination caches go stale with the engine: the sandbox lays out afresh.
+        if rel.startswith(("source/", "__pycache__/")) or (rel.startswith("layouts") and rel.endswith(".json")):
+            continue
+        if p.suffix in (".py",) or rel in ("resources.json", "chapters.json", "report.md", "roles.json"):
+            continue
+        out.append(rel)
+    return out
+
+
 def cmd_pack(args) -> None:
     project = Path(args.project).resolve()
     manifest = json.loads((project / "preset.json").read_text(encoding="utf-8"))
     out = Path(args.out or f"{manifest['id']}.postext").resolve()
     skip_fonts = {v["file"] for f in manifest.get("fonts", []) if f.get("redistributable") is False for v in f["variants"]}
+    files = pack_files(project, manifest, args.manifest_only, args.exclude or [])
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
-        for p in sorted(project.rglob("*")):
-            rel = p.relative_to(project).as_posix()
-            if not p.is_file() or any(part.startswith(".") for part in rel.split("/")):
-                continue
-            # Pagination caches go stale with the engine: the sandbox lays out afresh.
-            if rel.startswith(("source/", "__pycache__/")) or rel in skip_fonts or (rel.startswith("layouts") and rel.endswith(".json")):
-                continue
-            if p.suffix in (".py",) or rel in ("resources.json", "chapters.json", "report.md", "roles.json"):
-                continue
-            z.write(p, rel)
+        for rel in files:
+            z.write(project / rel, rel)
     if skip_fonts:
         print(f"left out {len(skip_fonts)} non-redistributable font file(s)")
-    print(f"wrote {out}")
+    print(f"wrote {out} ({len(files)} files)")
 
 
 def cmd_index(args) -> None:
@@ -653,19 +719,69 @@ def cmd_fonts(args) -> None:
 # lint: content in the configuration
 # ---------------------------------------------------------------------------
 
-# The rule the engine's `contentInConfig` warning applies (#849): a design text
-# element whose literal text (placeholders removed) is more than CONTENT_WORDS
-# words or more than CONTENT_CHARS characters holds content, not form.
+# The engine's `contentInConfig` warning (#849, postext 1.34:
+# packages/postext/src/configWarnings.ts), counted the same way: per edition,
+# one warning per owner (a heading style, a heading level, the page header, a
+# part design…) with the texts at fault (`count`) and their letters and digits
+# once the allowed phrases are taken out (`chars`). The defaults of
+# `checks.contentInConfig`: a text is content when what is left has more than
+# CONTENT_WORDS words or weighs more than CONTENT_CHARS, a letter or digit
+# weighing 1 and a Han, kana, Hangul or Thai character UNSPACED_CHAR_WEIGHT.
 CONTENT_WORDS = 2
 CONTENT_CHARS = 24
+UNSPACED_CHAR_WEIGHT = 3
+CONTENT_MAX_PATHS = 20   # element paths a warning lists
+CONTENT_SAMPLE = 40      # longest sample of the first literal a warning quotes
 SIZE_WARN_BYTES = 3 * 1024 * 1024    # warn from 3 MB of config
 SIZE_TARGET_BYTES = 1 * 1024 * 1024  # what a port aims for
 
+# JavaScript's `\s` (what the engine splits and trims on).
+_JS_SPACE = ("\t\n\v\f\r \u00a0\u1680" + "".join(chr(c) for c in range(0x2000, 0x200B))
+             + "\u2028\u2029\u202f\u205f\u3000\ufeff")
+_SPACES = re.compile("[" + re.escape(_JS_SPACE) + "]+")
+# A placeholder name the engine knows the shape of (PLACEHOLDER_NAME_RE).
+_PLACEHOLDER_NAME = re.compile(r"[a-zA-Z][a-zA-Z0-9]*(?:\.[a-zA-Z_][a-zA-Z0-9_-]*)?")
+# \p{Script=Han|Hiragana|Katakana|Hangul|Thai}, as Node 25 (Unicode 16) reads it.
+_UNSPACED_RANGES = (
+    (0xE01, 0xE3A), (0xE40, 0xE5B), (0x1100, 0x11FF), (0x2E80, 0x2E99), (0x2E9B, 0x2EF3), (0x2F00, 0x2FD5),
+    (0x3005, 0x3005), (0x3007, 0x3007), (0x3021, 0x3029), (0x302E, 0x302F), (0x3038, 0x303B), (0x3041, 0x3096),
+    (0x309D, 0x309F), (0x30A1, 0x30FA), (0x30FD, 0x30FF), (0x3131, 0x318E), (0x31F0, 0x321E), (0x3260, 0x327E),
+    (0x32D0, 0x32FE), (0x3300, 0x3357), (0x3400, 0x4DBF), (0x4E00, 0x9FFF), (0xA960, 0xA97C), (0xAC00, 0xD7A3),
+    (0xD7B0, 0xD7C6), (0xD7CB, 0xD7FB), (0xF900, 0xFA6D), (0xFA70, 0xFAD9), (0xFF66, 0xFF6F), (0xFF71, 0xFF9D),
+    (0xFFA0, 0xFFBE), (0xFFC2, 0xFFC7), (0xFFCA, 0xFFCF), (0xFFD2, 0xFFD7), (0xFFDA, 0xFFDC), (0x16FE2, 0x16FE3),
+    (0x16FF0, 0x16FF6), (0x1AFF0, 0x1AFF3), (0x1AFF5, 0x1AFFB), (0x1AFFD, 0x1AFFE), (0x1B000, 0x1B122),
+    (0x1B132, 0x1B132), (0x1B150, 0x1B152), (0x1B155, 0x1B155), (0x1B164, 0x1B167), (0x1F200, 0x1F200),
+    (0x20000, 0x2A6DF), (0x2A700, 0x2B81D), (0x2B820, 0x2CEAD), (0x2CEB0, 0x2EBE0), (0x2EBF0, 0x2EE5D),
+    (0x2F800, 0x2FA1D), (0x30000, 0x3134A), (0x31350, 0x33479),
+)
+_UNSPACED_STARTS = [a for a, _ in _UNSPACED_RANGES]
+
+
+def _unspaced(ch: str) -> bool:
+    """A character of a script written without spaces (Chinese, Japanese,
+    Korean, Thai)."""
+    i = bisect.bisect_right(_UNSPACED_STARTS, ord(ch)) - 1
+    return i >= 0 and ord(ch) <= _UNSPACED_RANGES[i][1]
+
+
+def _letter_or_digit(ch: str) -> bool:
+    return unicodedata.category(ch)[0] in "LN"
+
+
+def _collapse(text: str) -> str:
+    return _SPACES.sub(" ", text).strip(_JS_SPACE)
+
+
+def _js_length(text: str) -> int:
+    return len(text.encode("utf-16-le")) // 2
+
 
 def design_literal(content: str) -> str:
-    """The literal text of a design text template: `{placeholder}` removed,
-    `{{`/`}}` read as braces, the `\\n` escape and every run of white space
-    read as one space, trimmed."""
+    """The literal text a design text prints whatever the document (the
+    engine's designTextLiteral): every `{name}` placeholder taken out (a
+    brace pair holding something else stays as typed), `{{`/`}}` read as
+    braces, the `\\n` escape read as a break, white space collapsed to one
+    space, trimmed."""
     out: list[str] = []
     i, n = 0, len(content)
     while i < n:
@@ -676,87 +792,343 @@ def design_literal(content: str) -> str:
             out.append("}"); i += 2; continue
         if ch == "{":
             end = content.find("}", i + 1)
-            if end > i:
-                out.append(" "); i = end + 1; continue
+            if end == -1:
+                out.append(content[i:]); break
+            name = content[i + 1:end]
+            out.append(" " if _PLACEHOLDER_NAME.fullmatch(name) else content[i:end + 1])
+            i = end + 1
+            continue
         out.append(ch); i += 1
-    text = "".join(out).replace("\\n", " ")
-    return " ".join(text.split())
+    return _collapse("".join(out).replace("\\n", "\n"))
 
 
-def literal_words(text: str) -> int:
-    """Words of a literal: white-space separated runs holding a letter or a
-    digit (a lone `·`, `|` or `—` between two words is no word)."""
-    return sum(1 for w in text.split() if any(c.isalnum() for c in w))
+def comparable_literal(text: str) -> str:
+    """A literal as the allow list compares it: NFKC, lower case, the words
+    between spaces with the punctuation around them dropped (`·`, a comma,
+    quotes), one space between them. Punctuation inside a word stays, so an
+    address (`postext.dev`) is one word."""
+    words = []
+    for w in _SPACES.split(unicodedata.normalize("NFKC", text).lower()):
+        a, b = 0, len(w)
+        while a < b and not _letter_or_digit(w[a]):
+            a += 1
+        while b > a and unicodedata.category(w[b - 1])[0] not in "LNM":
+            b -= 1
+        if a < b:
+            words.append(w[a:b])
+    return " ".join(words)
+
+
+def without_phrase(text: str, phrase: str) -> str:
+    """`text` with every occurrence of the allowed `phrase` taken out (both
+    comparable): between spaces, or anywhere in text written without them."""
+    if not phrase or not text:
+        return text
+    if any(_unspaced(c) for c in phrase):
+        return _collapse(" ".join(text.split(phrase)))
+    return _collapse("  ".join(f" {text} ".split(f" {phrase} ")))
+
+
+def allowed_phrases(*lists: Any) -> list[str]:
+    """The allow list as the engine uses it: comparable, without repeats,
+    longest first."""
+    seen: dict[str, None] = {}
+    for lst in lists:
+        for a in lst:
+            c = comparable_literal(a) if isinstance(a, str) else ""
+            if c:
+                seen.setdefault(c, None)
+    return sorted(seen, key=_js_length, reverse=True)
+
+
+def literal_content(literal: str, allow: list[str] = (), max_words: int = CONTENT_WORDS,
+                    max_chars: int = CONTENT_CHARS) -> dict | None:
+    """How a literal counts (None when it is no content): `rest` (what is
+    left once the allowed phrases are out, comparable), `chars` (its letters
+    and digits), `weight` (unspaced-script characters weigh
+    UNSPACED_CHAR_WEIGHT) and `words` (runs of unspaced script are no
+    words). `allow` must come from allowed_phrases()."""
+    if not any(_letter_or_digit(c) for c in literal):
+        return None
+    rest = comparable_literal(literal)
+    for phrase in allow:
+        rest = without_phrase(rest, phrase)
+    chars = sum(1 for c in rest if _letter_or_digit(c))
+    if chars == 0:
+        return None
+    unspaced = sum(1 for c in rest if _unspaced(c))
+    weight = chars + unspaced * (UNSPACED_CHAR_WEIGHT - 1)
+    words = sum(1 for w in rest.split(" ") if any(_letter_or_digit(c) for c in w) and not any(_unspaced(c) for c in w))
+    if words <= max_words and weight <= max_chars:
+        return None
+    return {"rest": rest, "chars": chars, "weight": weight, "words": words}
 
 
 def literal_is_content(literal: str, allow: list[str] = ()) -> str:
-    """The part of `literal` that counts as content ('' when none): the text
-    left once every allowed string is taken out (whole words, ignoring case),
-    if it is more than CONTENT_WORDS words or more than CONTENT_CHARS
-    characters. Text with no
-    letter or digit (a leader of dots, an ornament) is never content."""
-    rest = literal
-    for a in sorted({" ".join(a.split()) for a in allow if a and a.strip()}, key=len, reverse=True):
-        rest = re.sub(r"(?<![\w./@-])" + re.escape(a) + r"(?![\w./@-])", " ", rest, flags=re.IGNORECASE)
-    rest = " ".join(rest.split())
-    if not any(c.isalnum() for c in rest):
-        return ""
-    if literal_words(rest) > CONTENT_WORDS or len(rest) > CONTENT_CHARS:
-        return rest
-    return ""
+    """The part of `literal` that counts as content ('' when none), with the
+    default limits; `allow` is a plain list of allowed strings."""
+    r = literal_content(literal, allowed_phrases(allow))
+    return r["rest"] if r else ""
 
 
-def _label(seg: Any, node: Any) -> str:
-    if isinstance(seg, int):
-        if isinstance(node, dict) and isinstance(node.get("id"), str) and node["id"]:
-            return f"[{node['id']}]"
-        if isinstance(node, dict) and isinstance(node.get("level"), int):
-            return f"[h{node['level']}]"
-        return f"[{seg}]"
-    return f".{seg}"
+def _limit(value: Any, fallback: int) -> int:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return fallback
+    return int(value) if float(value).is_integer() and value >= 0 else fallback
 
 
-def design_text_elements(config: Any, base: str = "config"):
-    """Yield (owner, slot, path, element) for every design text element of a
-    config: any {kind:'text', content} object in an `elements` list. `owner`
-    names the object holding the slot, with ids for list items
-    (`config.headingStyles[cover]`), `slot` the key holding the elements
-    (`header`, `footer`, `slot`, `design`), `path` the JSON path with indices
-    (`config.headingStyles[3].header.elements[0]`)."""
-    def walk(node: Any, path: str, labels: list[str], key: str):
+def content_check(config: Any) -> dict:
+    """`checks.contentInConfig` resolved as the engine does (bad limits and
+    allow entries fall back to the defaults)."""
+    checks = config.get("checks") if isinstance(config, dict) else None
+    c = checks.get("contentInConfig") if isinstance(checks, dict) else None
+    c = c if isinstance(c, dict) else {}
+    allow = c.get("allow")
+    return {
+        "enabled": c["enabled"] if isinstance(c.get("enabled"), bool) else True,
+        "allow": [a for a in allow if isinstance(a, str) and _collapse(a)] if isinstance(allow, list) else [],
+        "maxWords": _limit(c.get("maxWords"), CONTENT_WORDS),
+        "maxChars": _limit(c.get("maxChars"), CONTENT_CHARS),
+    }
+
+
+def _get(node: Any, *keys: str) -> Any:
+    for k in keys:
+        if not isinstance(node, dict):
+            return None
+        node = node.get(k)
+    return node
+
+
+def design_slots(config: Any) -> list[dict]:
+    """The design slots the engine checks (configDesignSlots), in its order:
+    `path` (`headingStyles[2].header`), `slot` (the key under the owner),
+    `owner` (`headingStyles[2]`, `headings.levels[0]`, else the slot itself),
+    `ownerId` (the heading style's id) and `elements`."""
+    out: list[dict] = []
+
+    def from_(c: Any, prefix: str) -> None:
+        if not isinstance(c, dict):
+            return
+
+        def add(slot: Any, path: str, owner: str | None = None, owner_id: str | None = None) -> None:
+            if isinstance(slot, dict) and isinstance(slot.get("elements"), list):
+                owner = owner or path
+                out.append({"path": path, "slot": path[len(owner) + 1:] if path != owner else path[len(prefix):],
+                            "owner": owner, "ownerId": owner_id, "elements": slot["elements"]})
+        add(c.get("header"), f"{prefix}header")
+        add(c.get("footer"), f"{prefix}footer")
+        levels = _get(c, "headings", "levels")
+        if isinstance(levels, list):
+            for i, lvl in enumerate(levels):
+                owner = f"{prefix}headings.levels[{i}]"
+                add(_get(lvl, "advancedDesign", "slot"), f"{owner}.advancedDesign.slot", owner)
+        styles = c.get("headingStyles")
+        if isinstance(styles, list):
+            for i, s in enumerate(styles):
+                if not isinstance(s, dict):
+                    continue
+                owner = f"{prefix}headingStyles[{i}]"
+                sid = s["id"] if isinstance(s.get("id"), str) else None
+                add(_get(s, "advancedDesign", "slot"), f"{owner}.advancedDesign.slot", owner, sid)
+                add(s.get("header"), f"{owner}.header", owner, sid)
+                add(s.get("footer"), f"{owner}.footer", owner, sid)
+        add(_get(c, "parts", "design"), f"{prefix}parts.design")
+        add(_get(c, "parts", "versoDesign"), f"{prefix}parts.versoDesign")
+        add(_get(c, "toc", "parts", "design"), f"{prefix}toc.parts.design")
+    from_(config, "")
+    from_(_get(config, "htmlViewer", "overrides"), "htmlViewer.overrides.")
+    return out
+
+
+def _is_text(el: Any) -> bool:
+    return isinstance(el, dict) and el.get("kind") == "text" and isinstance(el.get("content"), str)
+
+
+def content_in_config(config: Any, metadata: list[str] = (), allow: list[str] = ()) -> tuple[list[dict], list[dict]]:
+    """(warnings, findings) for one edition's config. `warnings` are the
+    engine's `contentInConfig` warnings ({path, ownerId?, count, chars,
+    elements, value}); `findings` one entry per text at fault. `metadata`
+    holds the edition's title, subtitle, author and publisher; `allow`
+    phrases come on top of `checks.contentInConfig.allow`."""
+    check = content_check(config)
+    if not check["enabled"]:
+        return [], []
+    phrases = allowed_phrases(check["allow"], metadata, allow)
+    groups: dict[str, dict] = {}
+    findings: list[dict] = []
+    for s in design_slots(config):
+        for i, el in enumerate(s["elements"]):
+            if not _is_text(el):
+                continue
+            literal = design_literal(el["content"])
+            r = literal_content(literal, phrases, check["maxWords"], check["maxChars"])
+            if not r:
+                continue
+            path = f"{s['path']}.elements[{i}]"
+            g = groups.get(s["owner"])
+            if g is None:
+                sample = literal if len(literal) <= CONTENT_SAMPLE else literal[:CONTENT_SAMPLE - 1].rstrip(" ") + "…"
+                g = {"path": s["owner"], **({"ownerId": s["ownerId"]} if s["ownerId"] is not None else {}),
+                     "count": 0, "chars": 0, "elements": [], "value": sample}
+                groups[s["owner"]] = g
+            g["count"] += 1
+            g["chars"] += r["chars"]
+            if len(g["elements"]) < CONTENT_MAX_PATHS:
+                g["elements"].append(path)
+            findings.append({"owner": s["owner"], "ownerId": s["ownerId"], "slot": s["slot"], "path": path,
+                             "id": el.get("id"), "chars": r["chars"], "weight": r["weight"], "words": r["words"],
+                             "text": literal})
+    return list(groups.values()), findings
+
+
+def other_text_elements(config: Any) -> list[tuple[str, dict]]:
+    """Design text elements in `elements` lists the engine's check does not
+    walk (a page template's decoration, …): (path, element)."""
+    checked = {id(s["elements"]) for s in design_slots(config)}
+    out: list[tuple[str, dict]] = []
+
+    def walk(node: Any, path: str) -> None:
         if isinstance(node, dict):
             els = node.get("elements")
-            if isinstance(els, list):
-                owner = "".join(labels[:-1]) or base
-                for i, el in enumerate(els):
-                    if isinstance(el, dict) and el.get("kind") == "text" and isinstance(el.get("content"), str):
-                        yield owner, key or base, f"{path}.elements[{i}]", el
+            if isinstance(els, list) and id(els) not in checked:
+                out.extend((f"{path}.elements[{i}]", el) for i, el in enumerate(els) if _is_text(el))
             for k, v in node.items():
-                if k != "elements" or not isinstance(v, list):
-                    yield from walk(v, f"{path}.{k}", labels + [f".{k}"], k)
+                walk(v, f"{path}.{k}" if path else k)
         elif isinstance(node, list):
             for i, v in enumerate(node):
-                yield from walk(v, f"{path}[{i}]", labels + [_label(i, v)], key)
-    yield from walk(config, base, [base], "")
+                walk(v, f"{path}[{i}]")
+    walk(config, "")
+    return out
 
 
-def lint_config(config: dict, allow: list[str] = (), base: str = "config") -> list[dict]:
-    """One finding per offending design text element."""
-    checks = config.get("checks") if isinstance(config, dict) else None
-    own_allow = []
-    if isinstance(checks, dict) and isinstance(checks.get("contentInConfig"), dict):
-        a = checks["contentInConfig"].get("allow")
-        if isinstance(a, list):
-            own_allow = [x for x in a if isinstance(x, str)]
-    allowed = list(allow) + own_allow
-    findings = []
-    for owner, slot, path, el in design_text_elements(config, base):
-        literal = design_literal(el["content"])
-        rest = literal_is_content(literal, allowed)
-        if rest:
-            findings.append({"owner": owner, "slot": slot, "path": path, "id": el.get("id"),
-                             "chars": len(literal), "words": literal_words(literal), "text": literal})
-    return findings
+# --- the book's metadata (front matter) -------------------------------------
+
+def _yaml_scalar(raw: str) -> Any:
+    """A YAML scalar as js-yaml reads it (the subset front matter uses)."""
+    v = raw.strip()
+    if not v:
+        return None
+    if v[0] == '"':
+        end = v.rfind('"')
+        body = v[1:end] if end > 0 else v[1:]
+        return re.sub(r'\\(u[0-9a-fA-F]{4}|.)', lambda m: chr(int(m.group(1)[1:], 16)) if m.group(1)[0] == "u"
+                      else {"n": "\n", "t": "\t", "0": "\0"}.get(m.group(1), m.group(1)), body)
+    if v[0] == "'":
+        end = v.rfind("'")
+        return (v[1:end] if end > 0 else v[1:]).replace("''", "'")
+    v = re.sub(r"\s+#.*$", "", v)
+    if v.startswith("[") and v.endswith("]"):
+        items = re.findall(r'"(?:[^"\\]|\\.)*"|\'(?:[^\']|\'\')*\'|[^,]+', v[1:-1])
+        return [_yaml_scalar(x) for x in items if x.strip()]
+    if v in ("~", "null", "Null", "NULL"):
+        return None
+    if v in ("true", "True", "TRUE", "false", "False", "FALSE"):
+        return v.lower() == "true"
+    if re.fullmatch(r"[-+]?[0-9]+", v):
+        return int(v)
+    if re.fullmatch(r"[-+]?(\.[0-9]+|[0-9]+(\.[0-9]*)?)([eE][-+]?[0-9]+)?", v):
+        return float(v)
+    m = re.fullmatch(r"(\d{4}-\d\d?-\d\d?)([Tt ].*)?", v)
+    if m:
+        y, mo, d = (int(x) for x in m.group(1).split("-"))
+        return f"{y:04d}-{mo:02d}-{d:02d}"   # a date: the engine prints its ISO day
+    return v
+
+
+def front_matter(markdown: str | None) -> dict:
+    """The top-level fields of a chapter's YAML front matter (scalars, flow
+    and block lists, `|`/`>` blocks); {} when there is none."""
+    m = re.match(r"\ufeff?---[ \t]*\r?\n(.*?)\r?\n---", markdown or "", re.S)
+    if not m:
+        return {}
+    out: dict[str, Any] = {}
+    lines = m.group(1).splitlines()
+    i = 0
+    while i < len(lines):
+        km = re.match(r"([A-Za-z_][\w-]*)\s*:(?:\s+(.*)|\s*)$", lines[i])
+        i += 1
+        if not km:
+            continue
+        key, raw = km.group(1), (km.group(2) or "").strip()
+        block = []
+        while i < len(lines) and (not lines[i].strip() or lines[i][:1] in " \t" or lines[i].startswith("- ")):
+            block.append(lines[i]); i += 1
+        if raw in ("|", ">", "|-", ">-", "|+", ">+"):
+            texts = [b.strip() for b in block]
+            out[key] = ("\n" if raw[0] == "|" else " ").join(texts).strip()
+        elif raw and not raw.startswith("#"):
+            out[key] = _yaml_scalar(raw)
+        else:
+            items = [re.sub(r"^\s*-\s?", "", b) for b in block if re.match(r"\s*-(\s|$)", b)]
+            out[key] = [_yaml_scalar(x) for x in items] if items else None
+    return out
+
+
+METADATA_KEYS = ("title", "subtitle", "author", "publisher")
+
+
+def _metadata_text(value: Any) -> str | None:
+    """A metadata value as the engine prints it (metadataText, no locale)."""
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, str):
+        return value
+    if isinstance(value, int):
+        return str(value)
+    if isinstance(value, float):
+        return str(int(value)) if value.is_integer() and abs(value) < 1e21 else repr(value)
+    if isinstance(value, list):
+        items = [t for t in (_metadata_text(v) for v in value) if t]
+        return ", ".join(items) if items else None
+    return None
+
+
+def metadata_phrases(fields: dict) -> list[str]:
+    """The phrases of the metadata a design may repeat: `title`, `subtitle`,
+    `author` and `publisher` (each item of a list on its own)."""
+    out = []
+    for key in METADATA_KEYS:
+        v = fields.get(key)
+        for one in v if isinstance(v, list) else [v]:
+            t = _metadata_text(one)
+            if t:
+                out.append(t)
+    return out
+
+
+def editions(data: dict, read: Any = None) -> list[dict]:
+    """The editions of a manifest as the engine opens them: the primary
+    locale with the shared `config`, then each other locale with the shared
+    config under its `localized.<lang>.config` (top-level keys replace), and
+    the front matter of the edition's first chapter. A bare config is one
+    edition with no metadata."""
+    is_manifest = isinstance(data.get("config"), dict) and ("chapters" in data or "version" in data)
+    if not is_manifest:
+        return [{"locale": None, "config": data, "own": set(), "metadata": {}}]
+    shared = data["config"]
+    chapters = data.get("chapters")
+    loc = data.get("localized") if isinstance(data.get("localized"), dict) else {}
+    primary = data.get("locale") if isinstance(data.get("locale"), str) else None
+    locales: list[str | None] = [primary]
+    for lang in [*(chapters.keys() if isinstance(chapters, dict) else []), *loc.keys()]:
+        if lang not in locales:
+            locales.append(lang)
+
+    def first_chapter(lang: str | None) -> str | None:
+        lst = chapters.get(lang) if isinstance(chapters, dict) else chapters
+        if isinstance(chapters, dict) and not lst:
+            lst = chapters.get(primary) or next(iter(chapters.values()), None)
+        if isinstance(lst, list) and lst and isinstance(lst[0], dict) and isinstance(lst[0].get("file"), str) and read:
+            return read(lst[0]["file"])
+        return None
+    out = []
+    for lang in locales:
+        own = _get(loc, lang, "config") if lang is not None and lang != primary else None
+        cfg = {**shared, **own} if isinstance(own, dict) else shared
+        out.append({"locale": lang, "config": cfg, "own": set(own) if isinstance(own, dict) else set(),
+                    "metadata": front_matter(first_chapter(lang))})
+    return out
 
 
 def read_target(target: str) -> tuple[dict, str, Any]:
@@ -788,72 +1160,56 @@ def read_target(target: str) -> tuple[dict, str, Any]:
     return json.loads(p.read_text(encoding="utf-8")), str(p), read_dir
 
 
-FRONT_MATTER_KEYS = ("title", "subtitle", "author")
-
-
-def book_metadata(data: dict, read: Any) -> list[str]:
-    """The book's own metadata, allowed as literals in design text: the
-    manifest `name` (and its ` · ` parts) and the `title`, `subtitle` and
-    `author` of each edition's first chapter front matter (what `{title}`,
-    `{subtitle}` and `{author}` print)."""
-    out: list[str] = []
-    name = data.get("name")
-    if isinstance(name, str):
-        out.append(name)
-        out += [part.strip() for part in name.split(" · ") if part.strip()]
-    chapters = data.get("chapters")
-    lists = chapters.values() if isinstance(chapters, dict) else [chapters] if isinstance(chapters, list) else []
-    for lst in lists:
-        if not isinstance(lst, list) or not lst or not isinstance(lst[0], dict):
-            continue
-        text = read(lst[0].get("file", "")) if read else None
-        m = re.match(r"\ufeff?---\r?\n(.*?)\r?\n---", text or "", re.S)
-        if not m:
-            continue
-        for line in m.group(1).splitlines():
-            k, sep, v = line.partition(":")
-            if sep and k.strip() in FRONT_MATTER_KEYS:
-                v = v.strip()
-                if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
-                    v = v[1:-1]
-                if v:
-                    out.append(v)
-    return out
-
-
 def _compact_size(obj: Any) -> int:
     return len(json.dumps(obj, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
 
 
 def lint_manifest(data: dict, allow: list[str] = (), read: Any = None, metadata: bool = True) -> dict:
-    """Findings and sizes for a manifest (with `config` and `localized`) or a
-    bare config. With `metadata`, the book's title, subtitle, author and
-    manifest name are allowed literals too (see book_metadata)."""
-    is_manifest = isinstance(data.get("config"), dict) and ("chapters" in data or "version" in data)
-    configs: list[tuple[str, dict]] = []
-    if is_manifest:
-        configs.append(("config", data["config"]))
-        loc = data.get("localized")
-        if isinstance(loc, dict):
-            for lang, entry in loc.items():
-                if isinstance(entry, dict) and isinstance(entry.get("config"), dict):
-                    cfg = entry["config"]
-                    # A localized config replaces top-level keys: it keeps the
-                    # shared `checks` unless it names its own.
-                    if "checks" not in cfg and isinstance(data["config"].get("checks"), dict):
-                        cfg = {**cfg, "checks": data["config"]["checks"]}
-                    configs.append((f"localized.{lang}.config", cfg))
-    else:
-        configs.append(("config", data))
-    if metadata and is_manifest:
-        allow = list(allow) + book_metadata(data, read)
-    findings: list[dict] = []
-    elements = 0
-    for base, cfg in configs:
-        elements += sum(1 for _ in design_text_elements(cfg, base))
-        findings += lint_config(cfg, allow, base)
-    config_bytes = sum(_compact_size(cfg) for _, cfg in configs)
-    return {"findings": findings, "textElements": elements, "configBytes": config_bytes,
+    """Content in the configuration of a manifest (every edition) or a bare
+    config, and its size. `editions[i].warnings` are what the engine's
+    `contentInConfig` warns for that edition; `findings` lists each text at
+    fault once (a shared one names the editions it fails in), with `owner`,
+    `path` and `slot` prefixed by where the manifest holds it (`config.`,
+    `localized.<lang>.config.`). With `metadata`, each edition's title,
+    subtitle, author and publisher are allowed, as in the engine."""
+    eds = editions(data, read)
+    is_manifest = eds[0]["locale"] is not None or "chapters" in data or "version" in data
+    out_eds: list[dict] = []
+    findings: dict[tuple, dict] = {}
+    others: dict[str, dict] = {}
+    text_elements = 0
+    for ed in eds:
+        cfg = ed["config"]
+        phrases = metadata_phrases(ed["metadata"]) if metadata else []
+        warnings, fs = content_in_config(cfg, phrases, allow)
+        n = sum(1 for s in design_slots(cfg) for el in s["elements"] if _is_text(el))
+        text_elements = max(text_elements, n)
+        out_eds.append({"locale": ed["locale"], "metadata": phrases, "textElements": n, "warnings": warnings})
+
+        def source(path: str) -> str:
+            top = re.match(r"[A-Za-z]+", path).group(0)
+            return f"localized.{ed['locale']}.config" if top in ed["own"] else "config"
+        for f in fs:
+            src = source(f["path"])
+            key = (src, f["path"], f["chars"])
+            if key in findings:
+                findings[key]["editions"].append(ed["locale"])
+                continue
+            findings[key] = {**f, "owner": f"{src}.{f['owner']}", "path": f"{src}.{f['path']}", "source": src,
+                             "editions": [ed["locale"]]}
+        check = content_check(cfg)
+        for path, el in other_text_elements(cfg) if check["enabled"] else []:
+            src = source(path)
+            r = literal_content(design_literal(el["content"]), allowed_phrases(check["allow"], phrases, allow),
+                                check["maxWords"], check["maxChars"])
+            if r and f"{src}.{path}" not in others:
+                others[f"{src}.{path}"] = {"path": f"{src}.{path}", "chars": r["chars"], "text": design_literal(el["content"])}
+    configs = [data["config"]] + [e["config"] for e in (data.get("localized") or {}).values()
+                                  if isinstance(e, dict) and isinstance(e.get("config"), dict)] if is_manifest else [data]
+    fl = list(findings.values())
+    return {"editions": out_eds, "findings": fl, "other": list(others.values()), "textElements": text_elements,
+            "offendingChars": sum(f["chars"] for f in fl),
+            "configBytes": sum(_compact_size(c) for c in configs),
             "manifestBytes": _compact_size(data) if is_manifest else None}
 
 
@@ -865,24 +1221,30 @@ def cmd_lint(args) -> int:
     data, where, read = read_target(args.target)
     res = lint_manifest(data, args.allow or [], read, metadata=not args.no_metadata)
     findings = res["findings"]
-    chars = sum(f["chars"] for f in findings)
+    chars = res["offendingChars"]
     failed = chars > args.max_chars
     size = res["configBytes"]
     size_fail = args.max_size is not None and size > args.max_size * 1024 * 1024
     if args.json:
-        print(json.dumps({"target": where, **res, "offendingChars": chars, "failed": failed or size_fail},
-                         ensure_ascii=False, indent=2))
+        print(json.dumps({"target": where, **res, "failed": failed or size_fail}, ensure_ascii=False, indent=2))
         return 1 if failed or size_fail else 0
-    groups: dict[tuple[str, str], list[dict]] = {}
+    groups: dict[str, list[dict]] = {}
     for f in findings:
-        groups.setdefault((f["owner"], f["slot"]), []).append(f)
-    print(f"{where}: {res['textElements']} design text elements, {len(findings)} hold content "
-          f"({chars} characters) in {len(groups)} slot(s)")
+        groups.setdefault(f["owner"], []).append(f)
+    langs = [e["locale"] for e in res["editions"] if e["locale"]]
+    in_eds = f" in {len(langs)} editions ({', '.join(langs)})" if len(langs) > 1 else ""
+    print(f"{where}: {res['textElements']} design text elements{in_eds}, {len(findings)} hold content "
+          f"({chars} letters and digits) under {len(groups)} owner(s)")
     ranked = sorted(groups.items(), key=lambda kv: -sum(f["chars"] for f in kv[1]))
     shown = ranked if args.slots <= 0 else ranked[: args.slots]
-    for (owner, slot), fs in shown:
+    for owner, fs in shown:
         n = sum(f["chars"] for f in fs)
-        print(f"  {'ERROR' if failed else 'WARN '} contentInConfig {owner} ({slot}): {len(fs)} element(s), {n} characters")
+        oid = f" ({fs[0]['ownerId']})" if fs[0].get("ownerId") else ""
+        slots = sorted({f["slot"] for f in fs})
+        eds = sorted({e for f in fs for e in f["editions"] if e})
+        in_eds = f" in {', '.join(eds)}" if len(langs) > 1 else ""
+        print(f"  {'ERROR' if failed else 'WARN '} contentInConfig {owner}{oid}: {len(fs)} design text(s), "
+              f"{n} letters and digits [{', '.join(slots)}]{in_eds}")
         if not args.quiet:
             for f in fs[: args.examples]:
                 sample = f["text"] if len(f["text"]) <= 60 else f["text"][:57] + "..."
@@ -891,7 +1253,11 @@ def cmd_lint(args) -> int:
                 print(f"      … {len(fs) - args.examples} more")
     if len(shown) < len(ranked):
         rest = ranked[len(shown):]
-        print(f"  … {len(rest)} more slot(s), {sum(f['chars'] for _, fs in rest for f in fs)} characters (--slots 0 lists them all)")
+        print(f"  … {len(rest)} more owner(s), {sum(f['chars'] for _, fs in rest for f in fs)} letters and digits (--slots 0 lists them all)")
+    if res["other"]:
+        print(f"  WARN  {len(res['other'])} design text(s) the engine's check does not read hold content too:")
+        for o in res["other"][: args.examples if args.quiet else max(args.examples, 5)]:
+            print(f"      {o['path']}: \"{o['text'][:57]}\"")
     level = "ERROR" if size_fail else ("WARN " if size >= SIZE_WARN_BYTES else "ok   ")
     note = ""
     if size_fail:
@@ -921,6 +1287,10 @@ def main() -> None:
     p = sub.add_parser("pack")
     p.add_argument("project")
     p.add_argument("--out")
+    p.add_argument("--manifest-only", action="store_true",
+                   help="pack preset.json and only the files it names (keeps work folders and tool outputs out)")
+    p.add_argument("--exclude", action="append", metavar="GLOB",
+                   help="leave out the paths (or folders) this glob matches; repeat")
     p = sub.add_parser("index")
     p.add_argument("root")
     p = sub.add_parser("fonts")

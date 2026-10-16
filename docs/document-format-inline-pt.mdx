@@ -169,6 +169,21 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
 - **Onde.** Parágrafos, itens de lista, citações em bloco, boxes, células de tabela, legendas e notas. Os títulos mantêm `:chip[…]` como texto literal.
 - **Saída.** Canvas, HTML e PDF pintam a caixa e compõem as palavras como texto real: selecionável no HTML, extraível e na ordem de leitura no PDF (num PDF com tags, a caixa é um artefato de layout e as palavras pertencem ao parágrafo).
 
+### Destaques
+
+`:mark[texto]` coloca uma faixa colorida atrás de `texto`, como um livro didático destaca suas palavras-chave. Ao contrário de um chip, as palavras marcadas continuam sendo texto comum: quebram no fim da linha, são hifenizadas e justificadas como as palavras ao redor, e a faixa acompanha cada pedaço da frase na sua linha. `:mark[texto]{style="chave"}` escolhe um estilo nomeado de `markStyles` (veja a referência de configuração); sem `style`, ou com um id que nenhum estilo declara, a marca usa o primeiro estilo (um `mark` amarelo-claro embutido quando a configuração não tem nenhum; o Sandbox avisa sobre um id desconhecido).
+
+```markdown
+O sol aquece o mar e :mark[a água sobe para o ar em forma de vapor, onde esfria e forma nuvens].
+
+- :mark[Evaporação]{style="chave"}: a água vira vapor.
+```
+
+- **Quebras de linha.** Uma marca pode abranger várias palavras e passar de uma linha para a outra; cada linha recebe sua própria faixa. O espaçamento horizontal e os cantos arredondados só aparecem no início e no fim reais da frase: onde a frase quebra, a faixa termina reta na última letra da linha e começa reta na primeira letra da linha seguinte.
+- **Não ocupa espaço.** A faixa é pintada sob o texto, de 0,8 em acima a 0,25 em abaixo da linha de base, aumentada pelo espaçamento vertical, e o espaçamento horizontal avança pelos espaços ao lado da frase. As linhas quebram exatamente como sem a marca, então marcar um livro já diagramado não move nenhuma de suas páginas.
+- **Texto.** O texto marcado aceita suas próprias marcações em linha (`:mark[a palavra **chave**]`), links, chips e referências. Os colchetes se aninham dentro dele (`:mark[veja [o mapa]]`), `\]` escreve um colchete literal e o texto pode atravessar uma quebra de linha simples do original. Um sinal de pontuação colado à frase fora dos colchetes (`:mark[terra].`) fica fora da faixa; a cor de texto de um estilo alcança a palavra inteira que o contém. Uma marca dentro de outra é composta como o seu texto.
+- **Onde.** Parágrafos, títulos compostos no texto, itens de lista, citações, quadros, notas de rodapé, células de tabela, legendas e notas, em texto da esquerda para a direita e da direita para a esquerda e em chinês e japonês. O canvas, o PDF e o HTML pintam a faixa; num PDF marcado ela é um artefato de layout e as palavras pertencem ao seu parágrafo. Um título desenhado por um design (uma abertura) imprime as palavras sem a faixa, assim como o visualizador HTML numa página vertical.
+
 ### Versaletes
 
 `:smallcaps[text]` compõe `text` em versaletes: os nomes das personagens numa peça de teatro, uma sigla no texto corrido, as primeiras palavras de um capítulo. As letras minúsculas são compostas como maiúsculas a 70% do tamanho do texto, enquanto maiúsculas, dígitos e pontuação mantêm o tamanho cheio, de modo que `:smallcaps[Hamlet]` imprime um H de tamanho cheio seguido de AMLET em versaletes.

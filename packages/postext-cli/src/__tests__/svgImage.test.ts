@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'bun:test';
 import { createCanvas, loadImage, type Canvas } from '@napi-rs/canvas';
-import { drawsSvgAtSize, holdsRasterImage, loadSvgImage, sizeSvgImage } from '../svgImage';
+import { drawsSvgAtSize, holdsRasterImage, loadSvgImage, noteSvgFont, sizeSvgImage, zeroViewBoxOrigin } from '../svgImage';
+import { faceFamilies, renameFace } from '../faceNames';
+import { EMBEDDED_FACES, readEmbedded } from '../assets';
+
+const face = (family: string) => readEmbedded(EMBEDDED_FACES.find((f) => f.family === family && f.weight === 400 && f.style === 'normal')!.path);
 
 // #678. Skia rasterises an SVG at load, at the size the SVG declares, and
 // stretches that bitmap when it is drawn larger: a hairline becomes a grey
@@ -140,5 +144,58 @@ describe('SVG images holding a raster', () => {
     expect(a).toBeGreaterThan(120);
     expect(a).toBeLessThan(136);
     expect([Math.abs(r! - 220) <= 2, Math.abs(g! - 30) <= 2, Math.abs(b! - 30) <= 2]).toEqual([true, true, true]);
+  });
+});
+
+// #890. Skia drew an SVG whose viewBox does not start at 0 0 empty once it
+// was rasterised again at the size it is drawn at.
+
+/** A map cut out of a page: red ground, a blue square at the cut's corner. */
+const CUT = '<svg xmlns="http://www.w3.org/2000/svg" width="178.8" height="108.1" viewBox="23 151 178.8 108.1"><rect x="23" y="151" width="178.8" height="108.1" fill="#dc1e1e"/><rect x="23" y="151" width="20" height="20" fill="#1e64dc"/></svg>';
+
+describe('SVG images with a viewBox origin off 0 0', () => {
+  it('are drawn whole at the size they are drawn at', async () => {
+    const canvas = drawsSvgAtSize(createCanvas(400, 242));
+    canvas.getContext('2d').drawImage(await loadSvgImage(CUT), 0, 0, 400, 242);
+    expect(centre(canvas)).toEqual([220, 30, 30, 255]);
+    // The blue square sits at the top left corner, 20 / 178.8 of the width.
+    expect([...canvas.getContext('2d').getImageData(10, 10, 1, 1).data]).toEqual([30, 100, 220, 255]);
+  });
+
+  it('keep the picture: the content moves to the origin', () => {
+    const moved = zeroViewBoxOrigin(CUT);
+    expect(moved).toContain('viewBox="0 0 178.8 108.1"');
+    expect(moved).toContain('<g transform="translate(-23 -151)"><rect');
+    expect(moved.endsWith('</g></svg>')).toBe(true);
+    expect(zeroViewBoxOrigin(SVG)).toBe(SVG);
+    expect(zeroViewBoxOrigin("<svg viewBox='-5,-5,10,10'><circle r='5'/></svg>")).toBe("<svg viewBox='0 0 10 10'><g transform=\"translate(5 5)\"><circle r='5'/></g></svg>");
+  });
+});
+
+// #890. resvg matches font-family against the family a face file names; a
+// book family named otherwise fell back to a serif.
+
+describe('faces handed to resvg', () => {
+  it('are renamed after the family the book registers them under', () => {
+    const bytes = face('Open Sans');
+    expect(faceFamilies(bytes)).toContain('Open Sans');
+    const renamed = renameFace(bytes, 'Bundle Sans Roman')!;
+    expect(faceFamilies(renamed)).toEqual(['Bundle Sans Roman']);
+    expect(renameFace(bytes, 'open sans')).toBeUndefined();
+  });
+
+  it('draw an SVG lettered in a book family whose files name another', async () => {
+    noteSvgFont(face('EB Garamond'), 'EB Garamond');
+    noteSvgFont(face('Open Sans'), 'Bundle Sans Roman');
+    const raster = `<image href="${await pngUri('#fff')}" width="1" height="1"/>`;
+    const lettered = (family: string) => `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60">${raster}<text x="4" y="44" font-family="${family}" font-size="40">Hamburg</text></svg>`;
+    const ink = async (family: string) => {
+      const canvas = drawsSvgAtSize(createCanvas(200, 60));
+      canvas.getContext('2d').drawImage(await loadSvgImage(lettered(family)), 0, 0, 200, 60);
+      return [...canvas.getContext('2d').getImageData(0, 0, 200, 60).data].filter((_, i) => i % 4 === 3).join(',');
+    };
+    const bundle = await ink('Bundle Sans Roman');
+    expect(bundle).toBe(await ink('Open Sans'));
+    expect(bundle).not.toBe(await ink('EB Garamond'));
   });
 });

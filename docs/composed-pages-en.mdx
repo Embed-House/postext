@@ -17,7 +17,7 @@ export const metadata = {
 
 A composed page is a page laid out from a template: named frames (a title band, a text, a box with its photo), groups that move together and a decoration, all defined in the configuration under `pageTemplates`. The Markdown of the page is a fenced block that names its template and pours content into the frames by name. No position or size is ever written in the Markdown, and no content text is ever written in the configuration, so a translation is the same template with other words.
 
-This page covers the Markdown. In this release the parser reads composed pages and the slot checks run, so the Checks panel and `postext check` report a page that does not match its template. Laying the template out on the page comes in the next release; until then the content of a composed page is set in the running text, in Markdown order, on pages of its own, so nothing written in it is lost. A document without composed pages lays out exactly as before.
+This page covers the Markdown and how the page is set from it. The template itself (its frames, sizes, styles and decoration) is described in [Configuration › Composed pages](/en/docs/configuration-composed-pages). A document without composed pages lays out exactly as before.
 
 ## The page fence
 
@@ -112,7 +112,7 @@ A `slot` outside a composed page is read and changes nothing.
 - `style` names a label style and overrides the anchor's.
 - The text in brackets is inline Markdown: bold, italic, chips.
 
-A figure works in the running text as well as in a frame. Labels are read and kept with their source; drawing them on the picture comes with the template layout, and until then a figure is set as its resource is. A line inside a figure that is neither a label nor blank ends a figure whose closing `:::` is missing, and is reported as an unclosed container.
+A figure works in the running text as well as in a frame. Labels are read and kept with their source; drawing them on the picture comes in a later release, and until then a figure is set as its resource is. A line inside a figure that is neither a label nor blank ends a figure whose closing `:::` is missing, and is reported as an unclosed container.
 
 ## Example
 
@@ -151,6 +151,45 @@ Si necesitas o quieres comprar algo muy caro…
 ```
 
 The title goes to the frame that takes `h1`; the subheading, the paragraph and the list go to the flow frame; each box and each photo go to the frame of their slot. The Catalan edition is the same lines with other words: the template, the slots and the photos do not change.
+
+## How the page is set
+
+A composed page takes a page of its own (role `composed` for the `pages` filter of design elements). The template is chosen for the side the page falls on, so its `variants.recto` or `variants.verso` applies. Then each frame is placed and filled, one after another, with the typography of the rest of the book: paragraph and heading styles, lists, chips, footnote markers and the callout style of the frame.
+
+### Placing the frames
+
+A frame stands in its grid cell, or where its `placement` puts it (an anchor, an edge and an offset, as for a design element), or, with neither, at the top-left corner of the template's area, as wide as the area. A frame anchored to another one (`"to": "#dinero"`) is placed after it and moves with it: `below` hangs it under the other frame, `right-of` beside it, and a corner such as `top-right` pins it to that corner of the other frame's box.
+
+Its height is fixed (a length or a percentage), `fill` (down to the edge of the area), or `auto`, the default: the height of the content it receives, between `minHeight` and `maxHeight`, and never past the foot of the area. A frame taller than its content places it as `verticalAlign` says (`top`, `middle`, `bottom`, or `justify` to spread the space between its blocks). The frame's callout style draws its background, border, rounded corners, stripe and icon at the frame's full size; the `label` of the `:::frame` fence prints in the style's tab.
+
+### The flow frame and headings
+
+Content that names no slot goes to the frame marked `flow`; the first heading of a level goes to the frame that `takes` it. The frames of a page are read in the order their content first appears in the Markdown, each one whole: a screen reader, the tagged PDF and the reflowable outputs read a box after the text that opens the page, not in the middle of it.
+
+### Chaining frames
+
+`next` sends what a frame cannot hold to another frame of the same page, and that frame to another, like threaded text frames:
+
+```json
+{ "name": "columna-1", "flow": true, "next": "columna-2", "height": { "value": 120, "unit": "mm" } },
+{ "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
+```
+
+The text is cut between lines and goes on in the next frame, broken again at that frame's width, with nothing lost or repeated. `overflow.continueIn: "#frame"` means the same. Continuing on the next page is planned (`"next-page"`).
+
+### Frames that push text
+
+A frame with `exclude: "push"` keeps the text of the other frames out of its rectangle: a line of a frame that meets it is set short on the side the rectangle covers, as text wraps round a picture in the running text. A photo anchored to the corner of a box and marked `push` makes the box's text run beside it. A box that should keep a fixed column free for its pictures can use `padding` instead.
+
+### Decoration, running heads and layers
+
+The template's `decoration` (pictures, rules, boxes and short texts) is laid once the frames have their final boxes, so an element can anchor to a frame (`"to": "#gasto"`) and follow it. Its texts read the page's own attributes: `fondo="banda-retos"` on the page fence gives `{attr.fondo}`, for example a background picture chosen page by page with `"resourceId": "{attr.fondo}"`. The running heads read them too. A template's `header` or `footer` replaces the section's, `false` hides it, and with neither the section's running heads print.
+
+Frames paint in the order of their `layer`: the decoration at layer 0, frames at 1 by default, a higher layer over a lower one, a negative layer under the decoration. `rotate` turns a frame and its content together by any angle, about the frame's centre, in the canvas, the PDF, the HTML viewer and the fixed-layout EPUB.
+
+### Content that does not fit
+
+A frame whose content is taller than the frame, with no next frame to go on in, keeps all of it in the document but shows only what fits: the rest is cut at the frame's foot on paged output, and the warning [`frameOverflow`](#frameoverflow) says how much. Content that no frame takes (no flow frame, or a frame missing on this side) is set in the running text on the page after the composed page.
 
 ## Warnings
 
@@ -193,6 +232,16 @@ The checks read the Markdown and the configuration before any layout, so they sh
   </tbody>
 </table>
 
+### frameOverflow
+
+This warning comes from the layout, not from the source checks above: it appears once the page has been set, in the Checks panel, in `postext check` and in the document's `contentWarnings`.
+
+**Cause.** The content poured into a frame (through its slot, or as the flow frame's content) is taller than the frame, and the frame has no `next` frame left to continue in. Most often there is more text than the frame holds: a translation that runs longer than the original, or a frame held to a fixed `height` or `maxHeight`. What does not fit is cut at the foot of the frame in paged output; it stays in the document, in the source map and in the reflowable EPUB. The warning gives the template, the frame, the page, the height cut (`overflowMm`) and `configPath`, the JSON pointer of the frame in the configuration (`/pageTemplates/0/frames/2`).
+
+**Fix.** Give the frame more room (raise or remove its `height` or `maxHeight`), chain it to another frame with `next`, shorten the text, or set the page with another template. The layout does not yet shrink the text to make it fit.
+
 ## From code
 
 `composedPages(blocks)` reads the parsed blocks of a chapter (`parseMarkdownWithIssues(markdown).blocks`) and returns one node per page fence, in order: its `template`, `spread`, `attrs` with the source range of each value (`attrSources`), its `fenceIndex` (the ordinal of the fence in the chapter, the same in every language), `slots` (the indices of the blocks of each slot, in Markdown order), `unassigned` (the blocks with no slot) and the source range of the whole page. A block carries the slot it names in `ContentBlock.slot`, with the source range of the value; a figure is a `resourceBlock` whose `figure` holds its attributes and labels, each label with its text, its inline spans and a source map back to the Markdown. `checkComposedSlots(pages, config)` returns the three slot warnings for those pages.
+
+After layout, a composed page's `VDTPage.composed` records its template, the variant applied, the page fence's attributes and, for each frame, its id (`cp0:dinero`: the page fence's ordinal and the frame's name, the same in every language), its box, layer, turn, the height of content that did not fit (`overflowPx`), the frame it continues from or into, its config path (`/pageTemplates/0/frames/2`) and the ids of its blocks. Those blocks are ordinary callout blocks in `page.floats` and `doc.blocks`, with their source ranges, so a click in an upright frame of the Sandbox preview lands on its Markdown. `composedPaintOrder(page)` gives the order a renderer paints the frames and the decoration in, and `frameMatrix(frame)` the turn of a frame.

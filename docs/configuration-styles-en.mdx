@@ -458,6 +458,105 @@ const style = pickChipStyle(resolved, 'key');
 ```
 
 
+## Highlight styles
+
+The `markStyles` property declares the named styles of the inline `:mark[text]{style="…"}`: the coloured band behind a phrase, as a textbook highlights its key words (the syntax and its line-breaking rules are in the document format reference). One style, `mark`, ships by default (a pale yellow band reaching a little past the phrase, its ends slightly rounded, the text in its own colour), so `:mark[…]` works without any configuration; declaring `markStyles` replaces that default list. A mark without `style`, or with an id no style declares, takes the first style.
+
+```ts
+const config: PostextConfig = {
+  markStyles: [
+    { id: 'mark', name: 'Key idea' },
+    {
+      id: 'key',
+      name: 'Definition',
+      background: { hex: '#cdebd5', model: 'hex' },
+      color: { hex: '#14532d', model: 'hex' },
+    },
+  ],
+};
+```
+
+```md
+The sun warms the sea and :mark[water rises into the air as vapour].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>required</td>
+      <td>Identifier referenced from <code>:mark[…]&#123;style="…"&#125;</code>.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Human-readable name, for editor UIs only.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#fff0a0</code></td>
+      <td>Band colour (palette-linkable).</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>the text's</td>
+      <td>Colour of the marked words.</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.2em</code></td>
+      <td>Radius of the band's two ends, clamped to half its height.</td>
+    </tr>
+    <tr>
+      <td><code>paddingX</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.15em</code></td>
+      <td>How far the band reaches past the first and the last letter of the phrase, into the space beside it.</td>
+    </tr>
+    <tr>
+      <td><code>paddingY</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.05em</code></td>
+      <td>Room above and below the text band.</td>
+    </tr>
+    <tr>
+      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>paddingY</code></td>
+      <td>Room above and below, each in place of <code>paddingY</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Em lengths (`paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `borderRadius`) are relative to the marked text's size. The band takes no room: the text is laid out as it would be without the mark, the band is painted under it, and its padding reaches into the word spaces and the line gap. In the VDT the marked words' segments carry a `mark` (`{ style, id, start?, end?, from?, to? }`) and each line holds its bands in `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`, relative to the line's `bbox.x` and baseline), which the canvas, PDF and HTML backends paint before the line's text.
+
+```ts
+const resolved = resolveMarkStylesConfig(config.markStyles);
+// => the built-in `mark` style when unset; every field filled
+
+const minimal  = stripMarkStylesDefaults(config.markStyles);
+// => undefined for the built-in default; static defaults dropped
+
+const style = pickMarkStyle(resolved, 'key');
+// => the `key` style, else the first one
+```
+
+
 ## Code listings
 
 The `codeStyle` property sets how code listings look: the ```` ``` ```` and `~~~` fences of the text (see [Document format › Code blocks](/en/docs/document-format#code-blocks)), and inline code when it asks for a code face. A listing is set line by line as written, in a monospaced face, in a box: no line is hyphenated or justified, every space keeps its width, and a tab goes on to the next tab stop. The box comes from the same machinery as a `:::callout`, so a listing splits between lines across columns and pages, each part in a box of its own, and a fence inside a callout is a box nested in it. Every property is optional. Since postext 1.23.
@@ -731,7 +830,7 @@ A highlighter registered for a language takes precedence over one registered for
 
 ### Inline code
 
-`codeStyle.inline` sets text between backticks in a code face: as one unit, as a chip is, which a line never breaks inside. Unset, inline code keeps the text's face.
+`codeStyle.inline` sets text between backticks in a code face, in a box as a chip is. A line may break at a space inside the code, or after a hyphen between a letter or digit and a letter: the box is cut in two there and nothing is added. The spaces inside the code keep the code face's width, and justifying the line never stretches them. Unset, inline code keeps the text's face.
 
 <table>
   <thead>
@@ -751,6 +850,7 @@ A highlighter registered for a language takes precedence over one registered for
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>none / <code>0.5pt</code></td><td>An outline.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> is the span's size.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> with a fill or outline, else <code>0</code> / <code>0.1em</code></td><td>Room inside the fill; the vertical padding paints outside the line box.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>The face of the Arabic, Hebrew and CJK letters the code holds: the text's (<code>'text'</code>), since few code faces have them, or the code face (<code>'code'</code>) for one that does.</td></tr>
   </tbody>
 </table>
 

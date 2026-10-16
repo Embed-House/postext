@@ -227,11 +227,19 @@ For each box family, record the elements below and map them to a
 `calloutStyles[]` entry (configuration.md §12):
 
 - background and border (hairline width, radius);
-- padding;
+- padding, from the first baseline: a line's baseline sits 0.8 × its line
+  height below the line's top, and a box's first block has no top margin
+  (the title's `gap` stands in, 0 without a title), so in a box without a
+  title, top padding = (first baseline − frame top) − 0.8 × the first
+  line's line height (the same rule for body text and headings in the box;
+  a titled box sets its title's first baseline by the same rule);
 - a stripe on one side, with its width and colour;
 - an icon: in the box, on a corner half outside, or outside the box with a
   rule (a "marker");
-- a numbered tab label ("BOX 1-1");
+- a numbered tab label ("BOX 1-1"): the tab is square, as wide as its text
+  plus `paddingX` each side; with `offset` it rises above the box and the
+  box moves down by as much, so a fixed box's anchor is the tab's top
+  (playbooks J2);
 - title typography: case, tracking, colour, gap;
 - body typography (it can differ from the book body), bold colour, lists;
 - width (fill or auto);

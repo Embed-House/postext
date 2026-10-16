@@ -524,7 +524,7 @@ const CODE_STYLE_KEYS = {
 const CODE_TOKEN_STYLE_KEYS = { color: true, bold: true, italic: true } satisfies Record<keyof CodeTokenStyle, true>;
 const INLINE_CODE_KEYS = {
   fontFamily: true, fontSize: true, color: true, bold: true, italic: true, background: true, borderColor: true,
-  borderWidth: true, borderRadius: true, paddingX: true, paddingY: true,
+  borderWidth: true, borderRadius: true, paddingX: true, paddingY: true, otherScripts: true,
 } satisfies Record<keyof InlineCodeStyleConfig, true>;
 const CODE_TOKEN_KIND_KEYS: Record<string, true> = Object.fromEntries(CODE_TOKEN_KINDS.map((k) => [k, true]));
 

@@ -458,6 +458,105 @@ const style = pickChipStyle(resolved, 'key');
 ```
 
 
+## ハイライトのスタイル
+
+`markStyles` プロパティは、インラインの `:mark[テキスト]{style="…"}` の名前付きスタイルを宣言します。教科書がキーワードに線を引くように語句の後ろに敷く色の帯です（構文と改行の規則は文書フォーマットのリファレンスにあります）。既定でスタイルが一つ、`mark` があります（語句から少しはみ出す淡い黄色の帯で、両端はわずかに丸く、文字は自分の色のまま）。そのため設定なしで `:mark[…]` が使えます。`markStyles` を宣言すると、この既定のリストを置き換えます。`style` のないマーク、またはどのスタイルにも宣言されていない id のマークは、最初のスタイルになります。
+
+```ts
+const config: PostextConfig = {
+  markStyles: [
+    { id: 'mark', name: 'Key idea' },
+    {
+      id: 'key',
+      name: 'Definition',
+      background: { hex: '#cdebd5', model: 'hex' },
+      color: { hex: '#14532d', model: 'hex' },
+    },
+  ],
+};
+```
+
+```md
+The sun warms the sea and :mark[water rises into the air as vapour].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>必須</td>
+      <td><code>:mark[…]&#123;style="…"&#125;</code> から参照する識別子。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>読みやすい名前。エディターの UI だけで使います。</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#fff0a0</code></td>
+      <td>帯の色（パレットにリンクできます）。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>本文の色</td>
+      <td>マークした語の色。</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.2em</code></td>
+      <td>帯の両端の角の半径。帯の高さの半分までに制限されます。</td>
+    </tr>
+    <tr>
+      <td><code>paddingX</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.15em</code></td>
+      <td>語句の最初と最後の文字から帯がはみ出して、隣の空白にかかる長さ。</td>
+    </tr>
+    <tr>
+      <td><code>paddingY</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.05em</code></td>
+      <td>文字の帯の上下の余白。</td>
+    </tr>
+    <tr>
+      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>paddingY</code></td>
+      <td>上と下の余白。それぞれ <code>paddingY</code> の代わりになります。</td>
+    </tr>
+  </tbody>
+</table>
+
+em 単位の長さ（`paddingX`、`paddingY`、`paddingTop`、`paddingBottom`、`borderRadius`）は、マークしたテキストの文字サイズが基準です。帯は場所を取りません。テキストはマークがないときと同じに組まれ、帯はその下に描かれ、余白は語間と行間にかかります。VDT では、マークした語のセグメントが `mark`（`{ style, id, start?, end?, from?, to? }`）を持ち、各行は帯を `highlights`（`{ x, y, width, height, color, radiusLeft, radiusRight }`。行の `bbox.x` とベースラインからの相対値）に持ちます。キャンバス、PDF、HTML のバックエンドは、行の文字より先にそれを描きます。
+
+```ts
+const resolved = resolveMarkStylesConfig(config.markStyles);
+// => the built-in `mark` style when unset; every field filled
+
+const minimal  = stripMarkStylesDefaults(config.markStyles);
+// => undefined for the built-in default; static defaults dropped
+
+const style = pickMarkStyle(resolved, 'key');
+// => the `key` style, else the first one
+```
+
+
 ## コードリスト
 
 `codeStyle`プロパティは、コードリストの見た目を設定します。対象はテキストの```` ``` ````と`~~~`のフェンス（[文書形式 › コードブロック](/ja/docs/document-format#コードブロック)を参照）と、コードの書体を求めるときのインラインコードです。コードリストは等幅の書体で、書いたとおり1行ずつ枠の中に組まれます。どの行もハイフネーションや両端そろえをせず、スペースはどれも幅を保ち、タブは次のタブ位置まで進みます。枠は`:::callout`と同じ仕組みで作られるので、コードリストは行と行の間で分かれて段やページをまたぎ、各部分がそれぞれの枠に入ります。囲みの中のフェンスは、その中に入れ子になった枠です。どのプロパティも省略できます。postext 1.23以降。
@@ -731,7 +830,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
 
 ### インラインコード
 
-`codeStyle.inline`は、バッククォートで囲んだテキストをコードの書体で組みます。チップと同じく1つのまとまりとして組み、行がその途中で分かれることはありません。未設定なら、インラインコードは本文の書体のままです。
+`codeStyle.inline`は、バッククォートで囲んだテキストをコードの書体で、チップと同じ枠に入れて組みます。行はコードの中のスペースか、文字または数字と文字のあいだのハイフンの後ろで分かれることがあり、そのとき枠は二つに切れて、何も足されません。コードの中のスペースはコードの書体の幅を保ち、行の両端揃えでも広がりません。未設定なら、インラインコードは本文の書体のままです。
 
 <table>
   <thead>
@@ -751,6 +850,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>なし / <code>0.5pt</code></td><td>枠線です。</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code>は範囲のサイズです。</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td>塗りか枠線があれば<code>0.2em</code>、なければ<code>0</code> / <code>0.1em</code></td><td>塗りの内側のアキです。上下のアキは行のボックスの外側に描かれます。</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>コードの中のアラビア文字、ヘブライ文字、CJKの文字の書体です。本文の書体（<code>'text'</code>）で組むか（それらを持つコードの書体は多くありません）、それらを持つコードの書体（<code>'code'</code>）で組みます。</td></tr>
   </tbody>
 </table>
 

@@ -10,6 +10,7 @@ import { stripVideoStyleDefaults } from './videoStyle';
 import { stripParagraphStylesDefaults } from './paragraphStyles';
 import { stripCalloutStylesDefaults } from './calloutStyles';
 import { stripChipStylesDefaults } from './chipStyles';
+import { stripMarkStylesDefaults } from './markStyles';
 import { stripUnorderedListsDefaults } from './unorderedLists';
 import { stripOrderedListsDefaults } from './orderedLists';
 import { stripMathDefaults } from './math';
@@ -48,6 +49,7 @@ export { DEFAULT_VIDEO_STYLE_CONFIG, DEFAULT_VIDEO_PLAYER_OPTIONS, resolveVideoS
 export { DEFAULT_PARAGRAPH_STYLES, resolveParagraphStylesConfig, stripParagraphStylesDefaults } from './paragraphStyles';
 export { DEFAULT_CALLOUT_STYLES, DEFAULT_CALLOUT_STYLE_STATIC, resolveCalloutStylesConfig, stripCalloutStylesDefaults } from './calloutStyles';
 export { DEFAULT_CHIP_STYLES, DEFAULT_CHIP_STYLE_STATIC, resolveChipStylesConfig, stripChipStylesDefaults, pickChipStyle } from './chipStyles';
+export { DEFAULT_MARK_STYLES, DEFAULT_MARK_STYLE_STATIC, resolveMarkStylesConfig, stripMarkStylesDefaults, pickMarkStyle } from './markStyles';
 export { DEFAULT_UNORDERED_LISTS_STATIC, resolveUnorderedListsConfig, stripUnorderedListsDefaults } from './unorderedLists';
 export { DEFAULT_ORDERED_LISTS_STATIC, resolveOrderedListsConfig, stripOrderedListsDefaults } from './orderedLists';
 export { DEFAULT_MATH_CONFIG, resolveMathConfig, stripMathDefaults } from './math';
@@ -168,6 +170,12 @@ export function stripConfigDefaults(config: PostextConfig): PostextConfig {
     result.chipStyles = strippedChipStyles;
   } else {
     delete result.chipStyles;
+  }
+  const strippedMarkStyles = stripMarkStylesDefaults(config.markStyles);
+  if (strippedMarkStyles) {
+    result.markStyles = strippedMarkStyles;
+  } else {
+    delete result.markStyles;
   }
   const strippedLists = stripUnorderedListsDefaults(config.unorderedLists);
   if (strippedLists) {

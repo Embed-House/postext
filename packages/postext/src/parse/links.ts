@@ -12,7 +12,7 @@ export function sliceLinks(links: readonly InlineLink[] | undefined, start: numb
   for (const l of links) {
     const s = Math.max(l.start, start);
     const e = Math.min(l.end, end);
-    if (e > s) out.push({ start: s - start, end: e - start, href: l.href });
+    if (e > s) out.push({ ...l, start: s - start, end: e - start });
   }
   return out.length > 0 ? { links: out } : {};
 }

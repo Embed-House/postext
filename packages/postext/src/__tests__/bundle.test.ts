@@ -12,6 +12,7 @@ import {
   migrateConfig,
   openBundle,
   openBundleZip,
+  pickBundleMeta,
   pickBundleView,
   pickLocaleOverrides,
   resolveBundleLocale,
@@ -384,6 +385,40 @@ describe('locale resolution', () => {
     expect(pickBundleView(m, 'en-GB')).toEqual({ canvasScope: 'chapter' });
     expect(pickBundleView({ ...m, view: undefined }, 'zh-Hant')).toBeUndefined();
     expect(isBundleManifest({ ...m, localized: { en: { view: { canvasScope: 'pages' } } } })).toBe(false);
+  });
+
+  it('names each edition with its own title and description (#891)', async () => {
+    const m: BundleManifestV2 = {
+      ...manifestOf('es', { ca: { name: 'Geografia 3', description: 'Llibre de text' }, en: { name: 'Geography 3' } }),
+      description: 'Libro de texto',
+    };
+    expect(isBundleManifest(m)).toBe(true);
+    expect(pickBundleMeta(m, 'ca')).toEqual({ name: 'Geografia 3', description: 'Llibre de text' });
+    // A description left out keeps the shared one; the primary locale and
+    // one the bundle does not carry keep the manifest's name.
+    expect(pickBundleMeta(m, 'en-GB')).toEqual({ name: 'Geography 3', description: 'Libro de texto' });
+    expect(pickBundleMeta(m, 'es')).toEqual({ name: m.name, description: 'Libro de texto' });
+    expect(pickBundleMeta(m, 'de')).toEqual({ name: m.name, description: 'Libro de texto' });
+    expect(pickBundleMeta({ ...m, localized: { ca: { name: '' } } }, 'ca').name).toBe(m.name);
+    expect(isBundleManifest({ ...m, localized: { ca: { name: 3 } } })).toBe(false);
+
+    const { bytes, manifest } = await createBundle({
+      name: 'Geografía 3',
+      description: 'Libro de texto',
+      locale: 'es',
+      chapters: [{ markdown: '# Ríos\n\nEl Ebro.\n' }],
+      localized: {
+        ca: { name: 'Geografia 3', description: 'Llibre de text', chapters: [{ markdown: '# Rius\n\nL\'Ebre.\n' }] },
+        en: { name: 'Geografía 3', chapters: [{ markdown: '# Rivers\n\nThe Ebro.\n' }] },
+      },
+    });
+    // A localized name equal to the shared one is not written.
+    expect(manifest.localized?.ca).toMatchObject({ name: 'Geografia 3', description: 'Llibre de text' });
+    expect(manifest.localized?.en?.name).toBeUndefined();
+    const ca = await openBundle(bytes, { locale: 'ca' });
+    expect([ca.name, ca.description]).toEqual(['Geografia 3', 'Llibre de text']);
+    const es = await openBundle(bytes, { locale: 'es' });
+    expect([es.name, es.description]).toEqual(['Geografía 3', 'Libro de texto']);
   });
 });
 

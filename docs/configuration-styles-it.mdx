@@ -458,6 +458,105 @@ const style = pickChipStyle(resolved, 'key');
 ```
 
 
+## Stili di evidenziazione
+
+La proprietà `markStyles` dichiara gli stili con nome del `:mark[testo]{style="…"}` in linea: la fascia colorata dietro una frase, come un libro di scuola evidenzia le sue parole chiave (la sintassi e le sue regole di a capo sono nella guida al formato del documento). Uno stile, `mark`, è fornito di serie (una fascia giallo pallido che sporge un poco dalla frase, con le estremità leggermente arrotondate e il testo nel suo colore), quindi `:mark[…]` funziona senza alcuna configurazione; dichiarare `markStyles` sostituisce questo elenco. Un segno senza `style`, o con un id che nessuno stile dichiara, prende il primo stile.
+
+```ts
+const config: PostextConfig = {
+  markStyles: [
+    { id: 'mark', name: 'Key idea' },
+    {
+      id: 'key',
+      name: 'Definition',
+      background: { hex: '#cdebd5', model: 'hex' },
+      color: { hex: '#14532d', model: 'hex' },
+    },
+  ],
+};
+```
+
+```md
+The sun warms the sea and :mark[water rises into the air as vapour].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obbligatorio</td>
+      <td>Identificatore a cui rimanda <code>:mark[…]&#123;style="…"&#125;</code>.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Nome leggibile, solo per l’interfaccia dell’editor.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#fff0a0</code></td>
+      <td>Colore della fascia (collegabile alla tavolozza).</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>quello del testo</td>
+      <td>Colore delle parole segnate.</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.2em</code></td>
+      <td>Raggio delle due estremità della fascia, limitato a metà della sua altezza.</td>
+    </tr>
+    <tr>
+      <td><code>paddingX</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.15em</code></td>
+      <td>Di quanto la fascia sporge oltre la prima e l’ultima lettera della frase, nello spazio accanto.</td>
+    </tr>
+    <tr>
+      <td><code>paddingY</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.05em</code></td>
+      <td>Spazio sopra e sotto la fascia del testo.</td>
+    </tr>
+    <tr>
+      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>paddingY</code></td>
+      <td>Spazio sopra e sotto, ciascuno al posto di <code>paddingY</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Le lunghezze in em (`paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `borderRadius`) si riferiscono alla dimensione del testo segnato. La fascia non occupa spazio: il testo si compone come senza il segno, la fascia si dipinge sotto e il suo margine entra negli spazi tra le parole e nell’interlinea. Nel VDT i segmenti delle parole segnate portano un `mark` (`{ style, id, start?, end?, from?, to? }`) e ogni riga tiene le sue fasce in `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`, relative al `bbox.x` e alla linea di base della riga), che i motori canvas, PDF e HTML dipingono prima del testo della riga.
+
+```ts
+const resolved = resolveMarkStylesConfig(config.markStyles);
+// => the built-in `mark` style when unset; every field filled
+
+const minimal  = stripMarkStylesDefaults(config.markStyles);
+// => undefined for the built-in default; static defaults dropped
+
+const style = pickMarkStyle(resolved, 'key');
+// => the `key` style, else the first one
+```
+
+
 ## Listati di codice
 
 La proprietà `codeStyle` stabilisce l’aspetto dei listati di codice: le recinzioni ```` ``` ```` e `~~~` del testo (vedi [Formato del documento › Blocchi di codice](/it/docs/document-format#blocchi-di-codice)), e il codice in linea quando chiede un carattere da codice. Un listato si compone riga per riga così com’è scritto, in un carattere monospaziato, dentro un riquadro: nessuna riga viene sillabata o giustificata, ogni spazio mantiene la sua larghezza e una tabulazione passa all’arresto successivo. Il riquadro nasce dallo stesso meccanismo di un `:::callout`, quindi un listato si divide tra una riga e l’altra attraverso colonne e pagine, ogni parte nel proprio riquadro, e una recinzione dentro un riquadro è un riquadro annidato in esso. Ogni proprietà è facoltativa. Da postext 1.23.
@@ -731,7 +830,7 @@ Un evidenziatore registrato per un linguaggio ha la precedenza su uno registrato
 
 ### Codice in linea
 
-`codeStyle.inline` compone il testo tra apici inversi in un carattere da codice: come un’unica unità, al modo di un chip, dentro la quale una riga non va mai a capo. Se non è impostato, il codice in linea mantiene il carattere del testo.
+`codeStyle.inline` compone il testo tra apici inversi in un carattere da codice, dentro un riquadro come quello di un chip. Una riga può spezzare il codice a uno spazio o dopo un trattino tra una lettera o una cifra e una lettera: il riquadro si divide in due e non si aggiunge nulla. Gli spazi del codice mantengono la larghezza del carattere da codice, e la giustificazione della riga non li allarga. Se non è impostato, il codice in linea mantiene il carattere del testo.
 
 <table>
   <thead>
@@ -751,6 +850,7 @@ Un evidenziatore registrato per un linguaggio ha la precedenza su uno registrato
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>nessuno / <code>0.5pt</code></td><td>Un contorno.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> è il corpo del tratto.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> con un riempimento o un contorno, altrimenti <code>0</code> / <code>0.1em</code></td><td>Spazio dentro il riempimento; il padding verticale si dipinge fuori dal riquadro della riga.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>Il carattere delle lettere arabe, ebraiche e CJK del codice: quello del testo (<code>'text'</code>), perché pochi caratteri da codice le hanno, o quello del codice (<code>'code'</code>), se le ha.</td></tr>
   </tbody>
 </table>
 

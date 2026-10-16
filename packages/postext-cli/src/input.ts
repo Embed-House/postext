@@ -13,6 +13,7 @@ import {
   isBitmapFile,
   isSvgFile,
   openBundle,
+  pickBundleMeta,
   readBundle,
   resourceFromSpec,
   svgSize,
@@ -345,11 +346,13 @@ export async function loadBook(inputs: readonly string[], opts: Options, reporte
       if (extra && existsSync(join(dir, extra))) readInBook(extra);
     }
     const m = read.manifest;
+    // The edition's own title (`localized.<lang>.name`, #891).
+    const meta = pickBundleMeta(m, read.locale);
     book = {
       kind,
-      name: m.name,
+      name: meta.name,
       id: m.id,
-      ...(m.description ? { description: m.description } : {}),
+      ...(meta.description ? { description: meta.description } : {}),
       locale: read.locale,
       ...(m.locales ? { locales: m.locales } : {}),
       chapters: read.chapters.map((c, i) => ({ title: c.title || chapterTitle(c.markdown, i + 1), file: c.file, markdown: c.markdown })),

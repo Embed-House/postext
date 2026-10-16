@@ -8,7 +8,7 @@ import type {
 import { defaultResourceTypes } from 'postext';
 import {
   GUIDE_FOLIO, M_BOTTOM, M_INNER, M_OUTER, M_TOP, PAGE_H, PAGE_W,
-  at, box, col, colorPalette, em, mm, pt, slot, type PaletteId,
+  at, box, col, colorPalette, em, guideCodeStyle, mm, pt, slot, type PaletteId,
 } from './guideKit';
 import {
   verticalBackCover, verticalCallouts, verticalChapterOpener, verticalContentsOpener, verticalCover, verticalPartDesign, verticalToc,
@@ -239,6 +239,7 @@ export function createChineseGuideConfig(): PostextConfig {
       headerBackgroundEnabled: true, headerBackground: col('ink'),
       borderColor: col('rule'), borderWidth: pt(0.5), cellPadding: mm(1.1), rules: 'horizontal',
     },
+    codeStyle: guideCodeStyle(),
     unorderedLists: { bulletChar: '•', color: col('band') },
     orderedLists: { color: col('band') },
     colorPalette: colorPalette('zh-Hans'),

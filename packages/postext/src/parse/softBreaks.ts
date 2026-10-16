@@ -169,7 +169,7 @@ function dropCharacters(spans: InlineSpan[], drop: readonly number[]): InlineSpa
       return i - lo;
     };
     const moved = (links ?? [])
-      .map((l) => ({ start: shift(l.start), end: shift(l.end), href: l.href }))
+      .map((l) => ({ ...l, start: shift(l.start), end: shift(l.end) }))
       .filter((l) => l.end > l.start);
     out.push(moved.length > 0 ? { ...rest, text, ...sliceLinks(moved, 0, text.length) } : { ...rest, text });
   }

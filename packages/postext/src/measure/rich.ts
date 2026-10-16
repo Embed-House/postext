@@ -151,6 +151,9 @@ export interface RichToken {
   /** The chip style's gap (px), read when the word spaces around the chip
    *  are sized (see {@link applyChipGaps}). */
   chipGap?: number;
+  /** A space inside inline code (`InlineSpan.codeSpace`, #845): the line
+   *  may break at it, but justification neither stretches nor shrinks it. */
+  fixedGlue?: true;
   /** Vertical text: a `:tcy[…]` run, one upright cell of one em (see
    *  `VDTLineSegment.tcy`). */
   tcy?: true;
@@ -629,7 +632,8 @@ export function chipToken(
     if (s.text.length === 0) continue;
     const bold = s.bold || span.bold || !!box?.bold;
     const italic = s.italic || span.italic || !!box?.italic;
-    const base = withFace(pickSpanFont(bold, italic, normalFont, boldFont, italicFont, boldItalicFont), box?.fontFamily, sizePx);
+    // A word the chip's face has no letters for keeps the text's (#845).
+    const base = withFace(pickSpanFont(bold, italic, normalFont, boldFont, italicFont, boldItalicFont), s.textFace ? undefined : box?.fontFamily, sizePx);
     let font = base;
     let baselineShift: number | undefined;
     if (s.script) {
@@ -677,6 +681,7 @@ export function chipToken(
     runs,
     (t, f, rtl) => (asPainted ? paintedRunWidth(t, f, rtl) : measureTextWidth(t, f)) + wordLetterSpacing(t, letterSpacingPx) * graphemeCount(t),
     asPainted,
+    box?.direction,
   );
   const textWidth = (asPainted ? directed.runs : runs).reduce((sum, r) => sum + r.width, 0);
   const paddingX = box?.paddingXPx ?? 0;
@@ -710,6 +715,7 @@ export function chipToken(
       ...(box?.background ? { background: box.background } : {}),
       ...(box?.borderColor ? { borderColor: box.borderColor } : {}),
       ...(box?.color ? { color: box.color } : {}),
+      ...(chip.joinNext ? { joinNext: true } : {}),
     },
     chipGap: box?.gapPx ?? 0,
   };
@@ -728,8 +734,9 @@ const TRAILING_NO_BREAK_RE = new RegExp(`[${NO_BREAK_SPACES}]+$`);
 function applyChipGaps(tokens: RichToken[], noBreakWidth: (token: RichToken, run: string) => number): void {
   for (let i = 0; i < tokens.length; i++) {
     const space = tokens[i]!;
-    // A tab makes its own room (#622).
-    if (space.kind !== 'space' || space.tab) continue;
+    // A tab makes its own room (#622), and a space inside inline code is
+    // the code's own.
+    if (space.kind !== 'space' || space.tab || space.fixedGlue) continue;
     const left = tokens[i - 1]?.chip ? tokens[i - 1]! : undefined;
     const right = tokens[i + 1]?.chip ? tokens[i + 1]! : undefined;
     if (!left && !right) continue;
@@ -1531,6 +1538,18 @@ function tokenizeSpans(
       continue;
     }
     const font = spanFont(span);
+    // A space inside inline code (#845): as wide as the code face's own
+    // spaces once the two pieces around it are one box, less the paddings
+    // and borders the two pieces' boxes have on that side, which the joined
+    // box drops (so an empty one, after a hyphen, is that much narrower
+    // than nothing). A line may end there, but justification leaves it be.
+    if (span.codeSpace) {
+      const box = span.codeSpace;
+      const codeFont = withFace(normalFont, box.fontFamily, box.fontSizePx);
+      const inner = 2 * (box.paddingXPx + box.borderWidthPx);
+      tokens.push({ text: span.text, bold: span.bold, italic: span.italic, kind: 'space', width: measureTextWidth(span.text, codeFont) - inner, fixedGlue: true });
+      continue;
+    }
     // A fixed space is set as text: no break, no justification glue.
     if (span.fixedSpace) {
       if (span.text.length > 0) {

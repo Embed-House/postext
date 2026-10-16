@@ -8,7 +8,7 @@ import { defaultResourceTypes } from 'postext';
 import { guideLang, type GuideLang } from '../defaultResources/lang';
 import {
   DISPLAY, GUIDE_COVER_RESOURCE_ID, GUIDE_FOLIO, HEAD, M_BOTTOM, M_INNER, M_OUTER, M_TOP, PAGE_H, PAGE_W, SANS, TEXT, TEXT_W,
-  at, box, col, colorPalette, image, mm, pt, rule, slot, text, type TextOpts,
+  at, box, col, colorPalette, guideCodeStyle, image, mm, pt, rule, slot, text, type TextOpts,
 } from './guideKit';
 import { createChineseGuideConfig } from './guideConfigZh';
 import { createArabicGuideConfig } from './guideConfigAr';
@@ -451,6 +451,7 @@ export function createPostextGuideConfig(locale = 'en'): PostextConfig {
       headerBackgroundEnabled: true, headerBackground: col('ink'),
       borderColor: col('rule'), borderWidth: pt(0.5), cellPadding: mm(1.1), rules: 'horizontal',
     },
+    codeStyle: guideCodeStyle(),
     unorderedLists: { bulletChar: '•', color: col('band') },
     orderedLists: { color: col('band') },
     colorPalette: colorPalette(lang),

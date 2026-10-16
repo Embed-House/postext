@@ -345,6 +345,11 @@ export interface BundleMeta {
 /** What another locale of a bilingual bundle brings on top of the shared
  *  content (see {@link BundleContent.localized}). */
 export interface BundleLocaleContent {
+  /** The book's title in this language, written as `localized[…].name`
+   *  when it is not the shared `name` (#891). */
+  name?: string;
+  /** The description in this language, likewise. */
+  description?: string;
   /** The locale's own chapters, in book order. Absent: it reads the
    *  shared (primary) chapters. */
   chapters?: readonly { title: string; markdown: string }[];
@@ -577,6 +582,8 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
   const byId = new Map(content.resources.map((r) => [r.id, r]));
   for (const [locale, entry] of Object.entries(localized ?? {})) {
     const overrides: BundleLocaleOverrides = {};
+    if (entry.name && entry.name !== meta.name) overrides.name = entry.name;
+    if (entry.description && entry.description !== meta.description) overrides.description = entry.description;
     if (entry.config) {
       const config = localizedConfig(entry.config, configWithoutFonts, content.config);
       if (Object.keys(config).length > 0) overrides.config = config;

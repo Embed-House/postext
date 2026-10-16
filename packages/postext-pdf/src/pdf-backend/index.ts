@@ -11,7 +11,7 @@ import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfi
 import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode';
 import { runPagePrintPass } from '../print/printPass';
 import { writePdfX } from '../print/pdfx';
-import { canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, computePageTextExtent, dimensionToPx, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
+import { canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, composedFrameBlockIds, composedPaintOrder, computePageTextExtent, dimensionToPx, frameClips, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
 import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
 import {
   type PageCtx,
@@ -43,8 +43,8 @@ import {
   renderCutLines,
 } from './pageDecorations';
 import { renderBlock, renderStripCaption, type ResourceRenderContext } from './blockRender';
-import { renderHeaderFooterSlot } from './headerFooter';
-import { renderComicPage } from './comic';
+import { renderHeaderFooterSlot, type SlotMark } from './headerFooter';
+import { renderComicPage, sheetMatrixToPdf } from './comic';
 import { addOutlines, numberedHeadingText } from './outlines';
 import { addPageLabels } from './pageLabels';
 import {
@@ -603,8 +603,11 @@ function paintPage(
   // Floated resources sit outside the column clip (a `span: 'page'` float can
   // cross the gutter); they carry an absolute bbox positioned at build time.
   // A tagged render reads each one after the text that cites it (EF-146).
+  // A composed page's frames (#855) are floats painted with their frames.
+  const frameIds = composedFrameBlockIds(vdtPage);
   if (vdtPage.floats) {
     for (const fb of vdtPage.floats) {
+      if (frameIds.has(fb.id)) continue;
       if (fb.comic) {
         // A floated strip: read after the text that comes before it,
         // painted on the sheet below.
@@ -618,6 +621,12 @@ function paintPage(
       else paint();
     }
   }
+  // A page painted through a flow frame paints its decoration on the
+  // sheet, after the flow.
+  const decorationMark: SlotMark | undefined = structure
+    ? { artifact: { type: 'Layout' }, figure: (alt, attributes, after) => structure.designFigure(alt, attributes, after) }
+    : undefined;
+  if (vdtPage.composed) paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, flowMatrix ? undefined : decorationMark, !flowMatrix);
 
   // The footnote separators are layout.
   if (vdtPage.footnoteAreas?.some((a) => a.rule)) {
@@ -629,6 +638,7 @@ function paintPage(
     popFrame(ctx);
     delete ctx.vertical;
     delete ctx.mirror;
+    if (vdtPage.composed?.decoration) renderHeaderFooterSlot(ctx, vdtPage.composed.decoration, fontCache, resourceCtx.images, decorationMark);
   }
 
   // A comic page's panels and lettering (or its half of a spread), then
@@ -672,6 +682,50 @@ function paintPage(
 
   renderCutLines(ctx, vdtPage, doc);
   ctx.tags?.close();
+}
+
+/**
+ * Paint a composed page's frames (#855) in layer order, the template's
+ * decoration at layer 0 (when `withDecoration`): each frame's blocks as
+ * floats are painted, turned by the frame's matrix and clipped to its box
+ * when its content overflows. Tagged, each frame is read in Markdown order
+ * (the lowest content index of its blocks), not in the order the layers
+ * paint it: `readFloat`'s `readAt`.
+ */
+function paintComposedFrames(
+  ctx: PageCtx,
+  vdtPage: VDTPage,
+  fontCache: FontCache,
+  resourceCtx: ResourceRenderContext,
+  mark: SlotMark | undefined,
+  withDecoration: boolean,
+): void {
+  const structure = resourceCtx.structure;
+  for (const item of composedPaintOrder(vdtPage)) {
+    if (item.kind === 'decoration') {
+      const decoration = vdtPage.composed?.decoration;
+      if (withDecoration && decoration) renderHeaderFooterSlot(ctx, decoration, fontCache, resourceCtx.images, mark);
+      continue;
+    }
+    const { frame, blocks } = item;
+    if (blocks.length === 0) continue;
+    let readAt: number | undefined;
+    for (const b of blocks) if (b.contentIndex !== undefined && (readAt === undefined || b.contentIndex < readAt)) readAt = b.contentIndex;
+    const m = frameMatrix(frame);
+    const clips = frameClips(frame);
+    if (m) pushFrame(ctx, sheetMatrixToPdf(m, ctx.scale, ctx.pageHeightPt));
+    if (clips) pushClipRect(ctx, frame.rect.x, frame.rect.y, frame.rect.width, frame.rect.height);
+    try {
+      for (const fb of blocks) {
+        const paint = () => renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
+        if (structure) structure.readFloat(fb, paint, readAt);
+        else paint();
+      }
+    } finally {
+      if (clips) popClip(ctx);
+      if (m) popFrame(ctx);
+    }
+  }
 }
 
 /** The output settings of a render: each one from `options` when given,

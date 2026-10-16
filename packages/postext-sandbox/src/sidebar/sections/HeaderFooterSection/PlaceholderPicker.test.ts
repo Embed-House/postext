@@ -16,11 +16,11 @@ const spanishMessages = ((await import(/* @vite-ignore */ new URL('../../../../.
   default: { Sandbox: Record<string, string> };
 }).default;
 
-function buttonLabels(slotKind: SlotKind, labels: SandboxLabels): Map<string, string> {
+function buttonLabels(slotKind: SlotKind, labels: SandboxLabels, extra?: string[]): Map<string, string> {
   const state = { labels };
   const store = { getSnapshot: () => state, subscribe: () => () => {}, dispatch: () => {} };
   const html = renderToString(
-    h(SandboxStoreContext, { value: store as never }, h(PlaceholderPicker, { onInsert: () => {}, slotKind })),
+    h(SandboxStoreContext, { value: store as never }, h(PlaceholderPicker, { onInsert: () => {}, slotKind, ...(extra ? { extra } : {}) })),
   );
   const out = new Map<string, string>();
   for (const m of html.matchAll(/<button[^>]*title="\{([^}"]+)\}"[^>]*>([^<]*)<\/button>/g)) out.set(m[1]!, m[2]!);
@@ -48,5 +48,14 @@ describe('PlaceholderPicker', () => {
     expect(shown.get('numberWords')).toBe(DEFAULT_LABELS.headerFooterPlaceholderNumberWords);
     expect(shown.get('numberOrdinalWordsLower')).toBe(DEFAULT_LABELS.headerFooterPlaceholderNumberOrdinalWordsLower);
     expect(shown.get('numberHan')).toBe(DEFAULT_LABELS.headerFooterPlaceholderNumberHan);
+  });
+
+  // #889: a contents part row lists its `{leader}` after the part set.
+  it('lists the extra placeholders of a slot, labelled', () => {
+    for (const [, labels] of locales) {
+      const shown = buttonLabels('part', labels, ['leader']);
+      expect(shown.get('leader')).toBe(labels.headerFooterPlaceholderLeader);
+      expect(buttonLabels('part', labels).has('leader')).toBe(false);
+    }
   });
 });

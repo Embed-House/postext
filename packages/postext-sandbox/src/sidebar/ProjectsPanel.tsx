@@ -2,6 +2,7 @@
 
 import { Check, ChevronDown, ChevronRight, Copy, Download, Eye, EyeOff, FilePlus, Files, ImagePlus, Pencil, Plus, RotateCcw, Trash2, Upload, X } from 'lucide-react';
 import { useRef, useState, type ReactNode } from 'react';
+import { pickBundleMeta } from 'postext/bundle';
 import {
   useSandboxDispatch,
   useSandboxLabels,
@@ -118,10 +119,12 @@ export function ProjectsPanel() {
     // original (in the language it is shown in, or the viewer's).
     const choice = choosePresetOpen({ summary: preset, current: isActive ? activeLocale : null, viewer: viewerLocale, drafts: presetDrafts });
     const locale = isActive && activeLocale ? activeLocale : undefined;
+    // The title of the edition the row opens (#891).
+    const names = preset.localized ? pickBundleMeta(preset, locale ?? choice.locale) : null;
     return (
       <PresetRow
         key={preset.id}
-        preset={preset}
+        preset={names ? { ...preset, name: names.name, description: names.description } : preset}
         isActive={isActive}
         activeLocale={isActive ? activeLocale : null}
         uiLocale={viewerLocale}

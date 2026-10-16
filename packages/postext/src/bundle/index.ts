@@ -32,6 +32,7 @@ export {
   pickMarkdownFile,
   pickLocaleOverrides,
   pickBundleView,
+  pickBundleMeta,
   pickBundleStart,
   bundleStart,
   resolveBundleLocale,
@@ -56,7 +57,7 @@ export {
   bitmapSize,
   bitmapInfo,
 } from './manifest';
-export type { BundleFontFiles } from './manifest';
+export type { BundleFontFiles, BundleNames } from './manifest';
 export type {
   BundleShowcaseMeta,
   BundleResourceSpec,

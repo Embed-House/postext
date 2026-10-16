@@ -1,5 +1,6 @@
 import type {
   AnchorEdge,
+  CodeStyleConfig,
   ColorValue,
   DesignBoxElement,
   DesignElement,
@@ -133,6 +134,32 @@ export const pt = (value: number): Dimension => ({ value, unit: 'pt' });
 export const em = (value: number): Dimension => ({ value, unit: 'em' });
 export const col = (id: PaletteId): ColorValue => ({ hex: COLOURS[id], model: 'hex', paletteId: id });
 export const at = (to: ElementAnchor['to'], edge: AnchorEdge): ElementAnchor => ({ to, edge });
+
+/** The face of the Postext syntax the guide quotes (`:::callout`,
+ *  `cjk.lineBreak`, `buildDocument(…)`): Geist Mono, the brand's sans in
+ *  its monospaced cut. */
+export const CODE = 'Geist Mono';
+
+/** Inline code in every edition (#845): the syntax set apart from the
+ *  sentence in the code face, on a pale fill outlined by a hairline, so it
+ *  reads as code on the page, on the warm tint of the "Try it" boxes and on
+ *  the cool panel of the notes. The fill and the outline are fixed colours,
+ *  not the part colour, which references already wear. */
+export function guideCodeStyle(): CodeStyleConfig {
+  return {
+    fontFamily: CODE,
+    inline: {
+      fontSize: em(0.84),
+      color: col('ink'),
+      background: { hex: '#ecebe6', model: 'hex' },
+      borderColor: { hex: '#d3d0c7', model: 'hex' },
+      borderWidth: pt(0.3),
+      borderRadius: em(0.25),
+      paddingX: em(0.25),
+      paddingY: em(0.12),
+    },
+  };
+}
 
 export interface Common {
   anchor: ElementAnchor;

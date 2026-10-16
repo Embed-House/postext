@@ -17,7 +17,7 @@ import {
 import { LinkRegistry, RefRun, refTarget, UriRuns } from './links';
 import { tagArtifact, tagContent, type StructElem } from './tagging';
 import type { StructureFlow } from './structureFlow';
-import { paintKunten, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations';
+import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations';
 import { inkScaleOperators } from './inkScale';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
@@ -835,6 +835,7 @@ export function renderStripCaption(
     fillRectPx(ctx, block.bbox.x + rect.x, block.bbox.y + rect.y, rect.width, rect.height, colorFromHex(background, ctx.colorSpace));
   }
   for (const line of block.lines.slice(caption.firstLine, caption.firstLine + caption.lineCount)) {
+    if (line.highlights) paintLineHighlights(ctx, line);
     renderLine(ctx, line, block, block.bbox.width, block.bbox.x, fontCache, linkRegistry, elem);
     if (line.marks) paintLineMarks(ctx, line, colorFromHex(block.color, ctx.colorSpace));
   }
@@ -924,6 +925,8 @@ export function renderBlock(
   void columnWidth;
   void columnX;
   block.lines.forEach((line, i) => {
+    // Highlight bands (`:mark[…]`, #888), under the text.
+    if (line.highlights) paintLineHighlights(ctx, line);
     renderLine(ctx, line, block, block.bbox.width, block.bbox.x, fontCache, linkRegistry, elem, i === 0 ? capLead : undefined);
     // Emphasis dots, proper-name and book-title lines (#193).
     if (line.marks) paintLineMarks(ctx, line, colorFromHex(block.color, ctx.colorSpace));

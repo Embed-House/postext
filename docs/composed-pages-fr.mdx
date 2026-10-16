@@ -17,7 +17,7 @@ export const metadata = {
 
 Une page composée est une page mise en page d’après un modèle : des blocs nommés (un bandeau de titre, un texte, un encadré avec sa photo), des groupes qui se déplacent ensemble et un décor, le tout défini dans la configuration sous `pageTemplates`. Le Markdown de la page est une section délimitée qui nomme son modèle et verse le contenu dans les blocs en les appelant par leur nom. Aucune position ni aucune taille ne s’écrit dans le Markdown, et aucun texte de contenu ne s’écrit dans la configuration : une traduction, c’est le même modèle avec d’autres mots.
 
-Cette page traite du Markdown. Dans cette version, l’analyseur lit les pages composées et les vérifications des slots s’exécutent, si bien que le panneau Vérifications et `postext check` signalent une page qui ne correspond pas à son modèle. La mise en page du modèle arrive dans la prochaine version ; d’ici là, le contenu d’une page composée est placé dans le texte courant, dans l’ordre du Markdown, sur des pages à part, et rien de ce qui y est écrit ne se perd. Un document sans pages composées se met en page exactement comme avant.
+Cette page traite du Markdown et de la façon dont la page en est composée. Le modèle lui-même (ses blocs, ses tailles, ses styles et son décor) est décrit dans [Configuration › Pages composées](/fr/docs/configuration-composed-pages). Un document sans pages composées se met en page exactement comme avant.
 
 ## Le délimiteur de page
 
@@ -112,7 +112,7 @@ Hors d’une page composée, un `slot` est lu et ne change rien.
 - `style` nomme un style d’étiquette et remplace celui de l’ancre.
 - Le texte entre crochets est du Markdown en ligne : gras, italique, pastilles.
 
-Une figure fonctionne aussi bien dans le texte courant que dans un bloc. Les étiquettes sont lues et conservées avec leur source ; leur dessin sur l’image viendra avec la mise en page des modèles, et d’ici là une figure est composée comme sa ressource. Dans une figure, une ligne qui n’est ni une étiquette ni une ligne vide termine une figure dont le `:::` de fermeture manque, et elle est signalée comme conteneur non fermé.
+Une figure fonctionne aussi bien dans le texte courant que dans un bloc. Les étiquettes sont lues et conservées avec leur source ; leur dessin sur l’image viendra dans une version ultérieure, et d’ici là une figure est composée comme sa ressource. Dans une figure, une ligne qui n’est ni une étiquette ni une ligne vide termine une figure dont le `:::` de fermeture manque, et elle est signalée comme conteneur non fermé.
 
 ## Exemple
 
@@ -151,6 +151,45 @@ Si necesitas o quieres comprar algo muy caro…
 ```
 
 Le titre va au bloc qui prend `h1` ; l’intertitre, le paragraphe et la liste vont au bloc de flux ; chaque encadré et chaque photo vont au bloc de leur slot. L’édition catalane reprend les mêmes lignes avec d’autres mots : le modèle, les slots et les photos ne changent pas.
+
+## Comment la page est composée
+
+Une page composée occupe une page à elle (rôle `composed` pour le filtre `pages` des éléments de maquette). Le modèle est choisi selon le côté où tombe la page, ce qui applique son `variants.recto` ou son `variants.verso`. Chaque bloc est ensuite placé puis rempli, l’un après l’autre, avec la typographie du reste du livre : styles de paragraphe et de titre, listes, pastilles, appels de note et style d’encadré du bloc.
+
+### Placer les blocs
+
+Un bloc se met dans sa cellule de grille, ou là où le met son `placement` (un ancrage, un bord et un décalage, comme pour un élément de maquette), ou, sans l’un ni l’autre, dans le coin supérieur gauche de la zone du modèle, sur toute la largeur de la zone. Un bloc ancré à un autre (`"to": "#dinero"`) est placé après lui et se déplace avec lui : `below` le suspend sous l’autre bloc, `right-of` le met à côté, et un coin comme `top-right` l’attache à ce coin de la boîte de l’autre bloc.
+
+Sa hauteur est fixe (une longueur ou un pourcentage), `fill` (jusqu’au bord de la zone) ou `auto`, la valeur par défaut : la hauteur du contenu qu’il reçoit, entre `minHeight` et `maxHeight`, sans jamais dépasser le pied de la zone. Dans un bloc plus haut que son contenu, `verticalAlign` dit où se place ce contenu (`top`, `middle`, `bottom`, ou `justify` pour répartir l’espace entre ses éléments). Le style d’encadré du bloc dessine le fond, la bordure, les coins arrondis, la bande et l’icône à la taille entière du bloc ; le `label` du délimiteur `:::frame` s’imprime dans l’onglet du style.
+
+### Le bloc de flux et les titres
+
+Le contenu qui ne nomme aucun slot va dans le bloc marqué `flow` ; le premier titre d’un niveau va au bloc qui le prend avec `takes`. Les blocs d’une page se lisent dans l’ordre où leur contenu apparaît pour la première fois dans le Markdown, chacun en entier : un lecteur d’écran, le PDF balisé et les sorties recomposables lisent un encadré après le texte qui ouvre la page, et non au milieu.
+
+### Chaîner des blocs
+
+`next` envoie ce qu’un bloc ne peut pas contenir vers un autre bloc de la même page, et celui-ci vers un autre encore, comme des blocs de texte chaînés en PAO :
+
+```json
+{ "name": "columna-1", "flow": true, "next": "columna-2", "height": { "value": 120, "unit": "mm" } },
+{ "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
+```
+
+Le texte est coupé entre deux lignes et continue dans le bloc suivant, recomposé à la largeur de ce bloc, sans rien perdre ni répéter. `overflow.continueIn: "#frame"` a le même effet. La suite sur la page suivante est prévue (`"next-page"`).
+
+### Les blocs qui repoussent le texte
+
+Un bloc avec `exclude: "push"` tient le texte des autres blocs hors de son rectangle : une ligne d’un autre bloc qui le rencontre est composée plus courte du côté que couvre le rectangle, comme le texte habille une image dans le texte courant. Une photo ancrée au coin d’un encadré et marquée `push` fait courir le texte de l’encadré à côté d’elle. Un encadré qui doit garder une colonne fixe libre pour ses images peut plutôt utiliser `padding`.
+
+### Décor, titres courants et calques
+
+Le décor du modèle (`decoration` : images, filets, boîtes et textes courts) est posé une fois que les blocs ont leur boîte définitive : un élément peut donc s’ancrer à un bloc (`"to": "#gasto"`) et le suivre. Ses textes lisent les attributs de la page elle-même : `fondo="banda-retos"` sur le délimiteur de page donne `{attr.fondo}`, par exemple pour choisir page par page une image de fond avec `"resourceId": "{attr.fondo}"`. Les titres courants les lisent aussi. Le `header` ou le `footer` d’un modèle remplace celui de la section, `false` le masque, et sans l’un ni l’autre ce sont les titres courants de la section qui s’impriment.
+
+Les blocs se peignent dans l’ordre de leur `layer` : le décor au calque 0, les blocs au calque 1 par défaut, un calque plus élevé par-dessus un calque plus bas, un calque négatif sous le décor. `rotate` fait tourner un bloc et son contenu ensemble, de n’importe quel angle, autour du centre du bloc, dans le canvas, le PDF, la visionneuse HTML et l’EPUB à mise en page fixe.
+
+### Le contenu qui ne tient pas
+
+Un bloc dont le contenu est plus haut que lui, sans bloc suivant où continuer, garde tout ce contenu dans le document mais n’en montre que ce qui tient : le reste est coupé au pied du bloc dans la sortie paginée, et l’avertissement [`frameOverflow`](#frameoverflow) dit de combien. Le contenu qu’aucun bloc ne prend (pas de bloc de flux, ou un bloc absent de ce côté) est composé dans le texte courant, sur la page qui suit la page composée.
 
 ## Avertissements
 
@@ -193,6 +232,16 @@ Les vérifications lisent le Markdown et la configuration avant toute mise en pa
   </tbody>
 </table>
 
+### frameOverflow
+
+Cet avertissement vient de la mise en page, pas des vérifications de la source décrites plus haut : il apparaît une fois la page composée, dans le panneau Vérifications, dans `postext check` et dans les `contentWarnings` du document.
+
+**Cause.** Le contenu versé dans un bloc (par son slot, ou celui que reçoit le bloc de flux) est plus haut que le bloc, et le bloc n’a plus de `next` où continuer. Le plus souvent, il y a plus de texte que le bloc n’en contient : une traduction plus longue que l’original, ou un bloc tenu par un `height` ou un `maxHeight` fixe. Ce qui ne tient pas est coupé au pied du bloc dans la sortie paginée ; il reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable. L’avertissement donne le modèle, le bloc, la page, la hauteur coupée (`overflowMm`) et `configPath`, le pointeur JSON du bloc dans la configuration (`/pageTemplates/0/frames/2`).
+
+**Correction.** Donnez plus de place au bloc (augmentez ou retirez son `height` ou son `maxHeight`), chaînez-le à un autre bloc avec `next`, raccourcissez le texte ou composez la page avec un autre modèle. Pour l’instant, la mise en page ne réduit pas le texte pour le faire tenir.
+
 ## Depuis le code
 
 `composedPages(blocks)` lit les éléments analysés d’un chapitre (`parseMarkdownWithIssues(markdown).blocks`) et renvoie un nœud par délimiteur de page, dans l’ordre, avec son `template`, `spread`, `attrs` et la plage source de chaque valeur (`attrSources`), son `fenceIndex` (le rang du délimiteur dans le chapitre, le même dans toutes les langues), `slots` (les indices des éléments de chaque slot, dans l’ordre du Markdown), `unassigned` (les éléments sans slot) et la plage source de la page entière. Un élément porte le slot qu’il nomme dans `ContentBlock.slot`, avec la plage source de la valeur ; une figure est un `resourceBlock` dont `figure` contient les attributs et les étiquettes, chaque étiquette avec son texte, ses segments en ligne et une correspondance avec sa source dans le Markdown. `checkComposedSlots(pages, config)` renvoie les trois avertissements de slot pour ces pages.
+
+Après la mise en page, le `VDTPage.composed` d’une page composée consigne son modèle, la variante appliquée, les attributs du délimiteur de page et, pour chaque bloc, son id (`cp0:dinero` : le rang du délimiteur de page et le nom du bloc, le même dans toutes les langues), sa boîte, son calque, sa rotation, la hauteur du contenu qui n’a pas tenu (`overflowPx`), le bloc dont il est la suite ou dans lequel il continue, son chemin dans la configuration (`/pageTemplates/0/frames/2`) et les ids de ses éléments. Ces éléments sont des encadrés ordinaires dans `page.floats` et `doc.blocks`, avec leurs plages source, si bien qu’un clic dans un bloc non tourné de l’aperçu du Sandbox mène à son Markdown. `composedPaintOrder(page)` donne l’ordre dans lequel un moteur de rendu peint les blocs et le décor, et `frameMatrix(frame)` la rotation d’un bloc.

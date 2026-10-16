@@ -44,9 +44,19 @@ function isNonEmptyString(v: unknown): v is string {
   return typeof v === 'string' && v.length > 0;
 }
 
+/** `localized` of an index entry: locale → `{ name?, description? }`,
+ *  each a string. */
+function isLocalizedNames(v: unknown): boolean {
+  if (v === undefined) return true;
+  if (!isRecord(v)) return false;
+  return Object.values(v).every((e) => isRecord(e)
+    && (e.name === undefined || typeof e.name === 'string')
+    && (e.description === undefined || typeof e.description === 'string'));
+}
+
 function isIndexEntry(v: unknown): v is PresetIndexEntry {
   return isRecord(v) && isNonEmptyString(v.id) && isNonEmptyString(v.dir) && isNonEmptyString(v.name)
-    && hasValidShowcaseMeta(v);
+    && hasValidShowcaseMeta(v) && isLocalizedNames(v.localized);
 }
 
 export function isPresetIndex(data: unknown): data is PresetIndex {

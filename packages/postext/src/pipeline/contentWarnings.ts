@@ -18,7 +18,7 @@ import { computeChapterTitles } from './placeholders';
 import type { ContentBlock } from '../parse';
 import { KNOWN_CONTAINERS, KNOWN_DIRECTIVES, parseInlineSnippetSpans, parseMarkdownMemo } from '../parse';
 import { invalidAttributeKeys } from '../parse/attrs';
-import { directiveAttrRanges } from '../parse/inlineFormatting';
+import { MARK_OPENER, directiveAttrRanges, readMarkAt } from '../parse/inlineFormatting';
 import { parsePaperAttrs } from './paper';
 import { extractFrontmatter } from '../frontmatter';
 import { tableGridIssues } from '../table/model';
@@ -26,6 +26,7 @@ import type { PostextConfig, Resource } from '../types';
 import type { ConfigWarning, ContentWarning, LayoutWarning, RenderWarning, VDTDesignSlot, VDTDocument } from '../vdt';
 import type { HeadingDesignCut } from './headingDesignCuts';
 import { DEFAULT_CHIP_STYLES } from '../defaults/chipStyles';
+import { DEFAULT_MARK_STYLES } from '../defaults/markStyles';
 import { DEFAULT_PARAGRAPH_STYLES } from '../defaults/paragraphStyles';
 import { DEFAULT_HEADING_STYLES } from '../defaults/headingStyles';
 import { resolveAllConfig } from './config';
@@ -180,6 +181,18 @@ export function collectContentWarnings(
   // a type is only wrong once there are styles to pick from.
   const calloutStyles = new Set((config?.calloutStyles ?? []).map((s) => s.id));
   const chipStyles = new Set((config?.chipStyles ?? DEFAULT_CHIP_STYLES).map((s) => s.id));
+  const markStyles = new Set((config?.markStyles ?? DEFAULT_MARK_STYLES).map((s) => s.id));
+  /** The style ids the highlight marks of a span name that no style
+   *  declares (#888). */
+  const unknownMarks = (span: { links?: { start: number; mark?: { style: string; id: number } }[] }): { style: string; id: number; start: number }[] =>
+    (span.links ?? []).flatMap((l) => (l.mark && l.mark.style !== '' && !markStyles.has(l.mark.style) ? [{ style: l.mark.style, id: l.mark.id, start: l.start }] : []));
+  /** The source of the `:mark[…]{…}` whose first character is at `at`. */
+  const markRange = (at: number, fallback: SourceRange): SourceRange => {
+    const open = body.lastIndexOf(MARK_OPENER, at);
+    const read = open >= 0 ? readMarkAt(body, open) : undefined;
+    return read && read.end > at ? { start: open, end: read.end } : fallback;
+  };
+  const markReported = new Set<string>();
   const headingStyles = new Set((config?.headingStyles ?? DEFAULT_HEADING_STYLES).map((s) => s.id));
   const tableStyles = new Set((config?.tableStyles ?? []).map((s) => s.id));
   // Whether a content block is laid out in a vertical flow: the document's
@@ -231,6 +244,14 @@ export function collectContentWarnings(
       const style = span.chip?.style;
       if (style !== undefined && !chipStyles.has(style)) {
         out.push({ kind: 'unknownChipStyle', style, ...abs(inlineRange(body, at, b.sourceEnd)) });
+      }
+      for (const mark of unknownMarks(span)) {
+        // Once per mark: its words may lie in several spans.
+        const key = `${b.sourceStart}:${mark.id}`;
+        if (markReported.has(key)) continue;
+        markReported.add(key);
+        const first = b.sourceMap[plain + mark.start] ?? at;
+        out.push({ kind: 'unknownMarkStyle', style: mark.style, ...abs(markRange(first, { start: b.sourceStart, end: b.sourceEnd })) });
       }
       // A `:tab` down a vertical page is a word space (#622).
       if (span.tab && !span.tab.literal && verticalAt(blockIdx)) {
@@ -412,6 +433,9 @@ export function collectContentWarnings(
         const style = span.chip?.style;
         if (style !== undefined && !chipStyles.has(style) && once(`chip:${style}`)) {
           out.push({ kind: 'unknownChipStyle', style, inResource: id, ...where });
+        }
+        for (const mark of unknownMarks(span)) {
+          if (once(`mark:${mark.style}`)) out.push({ kind: 'unknownMarkStyle', style: mark.style, inResource: id, ...where });
         }
       }
     };
@@ -813,6 +837,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'slotEmpty':
       text = `Frame "${w.frame}" of template "${w.template}" receives no content — give it a slot="${w.frame}" piece, or mark the frame optional`;
       break;
+    case 'frameOverflow':
+      text = `Frame "${w.frame}" of template "${w.template}" is ${w.overflowMm} mm short of its content — the rest is cut at the frame's foot; give it more height (height, maxHeight), chain it to another frame with next, or shorten the text`;
+      break;
     case 'pageFenceLength':
       text = 'A composed page needs four colons (::::page{template="…"} … ::::) — this :::page is read as a comic page';
       break;
@@ -824,6 +851,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       break;
     case 'unknownChipStyle':
       text = `Unknown chip style "${w.style}"${inRes} — the chip takes the first chip style`;
+      break;
+    case 'unknownMarkStyle':
+      text = `Unknown highlight style "${w.style}"${inRes} — the mark takes the first highlight style`;
       break;
     case 'undefinedFootnote':
       text = `Footnote [^${w.id}] has no definition — write [^${w.id}]: text on a line of its own`;

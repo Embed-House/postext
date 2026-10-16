@@ -88,6 +88,13 @@ export interface BundleChapterSpec {
  *  also name its own `file` for the locale, and a video its own `poster`
  *  and `video` (the cut in that language, at its own address, #478). */
 export interface BundleLocaleOverrides {
+  /** The book's title in this language, in place of the manifest's `name`
+   *  wherever the edition is listed (a library, `postext check`, the
+   *  site's shelf). */
+  name?: string;
+  /** The edition's description, in place of the manifest's
+   *  `description`. */
+  description?: string;
   config?: Partial<PostextConfig>;
   /** How this language's edition opens, over the manifest's `view` (a
    *  vertical edition read whole, its translation a chapter at a time). */

@@ -1,6 +1,6 @@
 import type { InlineSpan } from './types';
 import { MATH_PLACEHOLDER } from './inlineMath';
-import { BREAK_PLACEHOLDER, CHIP_PLACEHOLDER, FOOTNOTE_PLACEHOLDER, REF_PLACEHOLDER, SMALLCAPS_OPENER, SWATCH_PLACEHOLDER, TAB_PLACEHOLDER } from './inlineFormatting';
+import { BREAK_PLACEHOLDER, CHIP_PLACEHOLDER, FOOTNOTE_PLACEHOLDER, MARK_OPENER, REF_PLACEHOLDER, SMALLCAPS_OPENER, SWATCH_PLACEHOLDER, TAB_PLACEHOLDER, readMarkAt } from './inlineFormatting';
 import { sliceSpan } from './links';
 import { orientationOpenerAt } from './orientationMarks';
 import { annotationSourceSkips } from './annotations';
@@ -16,6 +16,20 @@ function isSmallCapsOpenerAt(markdown: string, r: number, end: number): boolean 
     if (c === ']') return j > r + SMALLCAPS_OPENER.length;
   }
   return false;
+}
+
+/** The markup of the highlight marks (`:mark[`, and `]{…}` after the
+ *  text, #888) of `[from, end)`, which prints nothing: `[start, end)`
+ *  source offsets in order. */
+function markSourceSkips(markdown: string, from: number, end: number): Array<[number, number]> {
+  const out: Array<[number, number]> = [];
+  for (let at = markdown.indexOf(MARK_OPENER, from); at >= 0 && at < end; at = markdown.indexOf(MARK_OPENER, at + 1)) {
+    const read = readMarkAt(markdown.slice(0, end), at);
+    if (!read) continue;
+    const close = at + MARK_OPENER.length + read.inner.length;
+    out.push([at, at + MARK_OPENER.length], [close, read.end]);
+  }
+  return out;
 }
 
 /** Whether a reference opens at `r`: `:ref{`, or LaTeX's `\ref{` or
@@ -45,7 +59,9 @@ export function computeSourceMap(
   // The markup of Chinese annotations (`:ruby[`, `]{rt="…"}`, a compact
   // ruby's `|hóng|lóu}`) prints nothing: plain characters never match
   // inside it (#193–#195).
-  const skips = annotationSourceSkips(markdown, blockSrcStart, blockSrcEnd);
+  const annotationSkips = annotationSourceSkips(markdown, blockSrcStart, blockSrcEnd);
+  const markSkips = markdown.includes(MARK_OPENER) ? markSourceSkips(markdown, blockSrcStart, blockSrcEnd) : [];
+  const skips = markSkips.length > 0 ? [...annotationSkips, ...markSkips].sort((a, b) => a[0] - b[0]) : annotationSkips;
   let si = 0;
   // Inline code spans, which the parser protects: an orientation mark
   // written inside one (`` `:tcy[…]` ``) is text, its opener printed.
@@ -302,7 +318,7 @@ function normalizeWhitespaceInSpans(spans: InlineSpan[]): InlineSpan[] {
     kept.push(text.length);
     const { links, ...rest } = span;
     const moved = (links ?? [])
-      .map((l) => ({ start: kept[l.start]!, end: kept[l.end]!, href: l.href }))
+      .map((l) => ({ ...l, start: kept[l.start]!, end: kept[l.end]! }))
       .filter((l) => l.end > l.start);
     out.push(moved.length > 0 ? { ...rest, text, links: moved } : { ...rest, text });
   }

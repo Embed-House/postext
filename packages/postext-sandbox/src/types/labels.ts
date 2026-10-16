@@ -300,6 +300,8 @@ export interface SandboxLabels {
   warningsSlotEmptyDetail: string;
   warningsPageFenceLengthTitle: string;
   warningsPageFenceLengthDetail: string;
+  warningsFrameOverflowTitle: string;
+  warningsFrameOverflowDetail: string;
   warningsUnclosedComposedPageDetail: string;
   warningsUnknownChipStyleTitle: string;
   warningsUnknownChipStyleDetail: string;
@@ -716,6 +718,8 @@ export interface SandboxLabels {
   codeInlineFontSizeTooltip: string;
   codeInlineFill: string;
   codeInlineFillTooltip: string;
+  codeInlineOtherScripts: string;
+  codeInlineOtherScriptsTooltip: string;
   codeInlinePaddingX: string;
   cjkSection: string;
   writingSection: string;
@@ -2652,6 +2656,21 @@ export interface SandboxLabels {
   chipStylePaddingBottomTooltip: string;
   chipStyleGap: string;
   chipStyleGapTooltip: string;
+  markStylesSection: string;
+  markStylesResetConfirm: string;
+  markStylesEmpty: string;
+  markStyleAdd: string;
+  markStyleNewName: string;
+  markStyleDeleteConfirm: string;
+  markStyleIdAria: string;
+  markStyleUsageHint: string;
+  markStyleNameAria: string;
+  markStyleBandColor: string;
+  markStyleColorTooltip: string;
+  markStylePaddingXTooltip: string;
+  markStylePaddingYTooltip: string;
+  warningsUnknownMarkStyleTitle: string;
+  warningsUnknownMarkStyleDetail: string;
   calloutStyleAdd: string;
   calloutStyleNewName: string;
   calloutStyleDuplicate: string;
@@ -2868,6 +2887,8 @@ export interface SandboxLabels {
   headerFooterPlaceholderNumberOrdinalWords: string;
   headerFooterPlaceholderNumberOrdinalWordsLower: string;
   headerFooterPlaceholderNumberHan: string;
+  /** `{leader}` in a contents part row (#889). */
+  headerFooterPlaceholderLeader: string;
   headerFooterPlaceholderAttrHint: string;
   headerFooterPlaceholderBookTotalPages: string;
   headerFooterPlaceholderMarkHint: string;

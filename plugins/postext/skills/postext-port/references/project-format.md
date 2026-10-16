@@ -120,6 +120,9 @@ only drops the print master). It does **not** check `kind`, `typeId` against
   paints whole too slowly while the original opens on the whole book).
   `pickBundleView(manifest, locale)` resolves it; `openBundle` returns it as
   `canvasScope`.
+- `localized.<lang>` has no `name`: the Sandbox's library and `postext check`
+  name every edition after the manifest `name` (#891). The edition's own
+  title is its first chapter's front matter `title` (what `{title}` prints).
 - `start` (postext after 1.26.3): where the book starts, for a bundle that
   holds part of a longer publication (an article that runs on pages 58 to 61
   of an issue, one chapter of a textbook ported on its own). It is the
@@ -287,10 +290,14 @@ embeds them with `::resource{id="…"}` (placement `here`).
 
 ## 5. Opening the project
 
-- **Import**: zip the folder (`preset_kit.py pack my-book`, or
-  `cd my-book && zip -r ../my-book.postext . -x '.*'`) and use Sandbox →
-  Books → New → *Open a .postext file…* at https://postext.dev/en/sandbox. The import
-  takes the chapters and wording of the sandbox UI language. The Sandbox
+- **Import**: zip the folder (`preset_kit.py pack my-book --manifest-only`
+  packs `preset.json` and only the files it names; without the flag, or with
+  `zip -r`, every file of the folder but `source/`, scripts and caches goes
+  in, so keep work folders and tool outputs outside the project or add
+  `--exclude GLOB`) and use Sandbox → Books → New → *Open a .postext file…*
+  at https://postext.dev/en/sandbox. A bundle with several languages asks
+  which one to import, and the new book holds that edition only: import
+  each edition to check it. The Sandbox
   keeps the working book in about 5 MB of browser storage: keep the config
   under 1 MB (`preset_kit.py lint` prints its size and warns from 3 MB; a
   config of several MB can break the import and the saves).
@@ -315,7 +322,9 @@ postext build my-book --locale es --images /tmp/pages --pages 12-15 -f jpeg --wa
 It reads only the files the manifest names (the generator, `source/` and the
 other project files are ignored, and so are their changes), and
 `postext pack my-book` leaves the same files out of the bundle as
-`preset_kit.py pack`.
+`preset_kit.py pack` without `--manifest-only` (it zips the rest of the
+folder: use `preset_kit.py pack --manifest-only` to ship only what the
+manifest names).
 
 `scripts/render.mjs` lays the project out in Node with the real engine and the
 bundle's own fonts, prints warnings, and writes chosen pages as JPEGs

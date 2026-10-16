@@ -12,6 +12,7 @@ import type {
   VDTChip,
   VDTChipRun,
   VDTDesignSlot,
+  VDTFrame,
   VDTDesignBlock,
   VDTDesignTextBlock,
   VDTDesignRuleBlock,
@@ -44,13 +45,14 @@ import { measureSpacedWidth, measureTextWidth, withMeasureLanguage } from './mea
 import { trackedLigaturePieces, type LigaturePiece } from './measure/trackedLigatures';
 import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces';
 import { fontFamilyOf } from './measure/vertical';
-import { lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
+import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
 import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay';
 import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url';
 import type { VDTResourceVideo } from './vdt';
 import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
+import { composedFrameBlockIds, composedPaintOrder, frameClips, frameMatrix } from './composed/paint';
 import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
 /**
@@ -1959,7 +1961,7 @@ function renderLine(
     strikethroughDecl +
     trackingDecl +
     (lineCjkDecl(line) ? cjkTextDecl(tracking !== 0) : '') +
-    `">${lead}${renderSegments(line, block, targets, rootDir, rootLang, lineEndText(line, next))}</div>`
+    `">${lineHighlightsHtml(line)}${lead}${renderSegments(line, block, targets, rootDir, rootLang, lineEndText(line, next))}</div>`
   );
 }
 
@@ -2504,7 +2506,7 @@ function renderResourceLine(
     // measured with the tracking in its widths.
     (line.letterSpacing ? `letter-spacing:${line.letterSpacing}px;${ligaturesDecl()}` : '') +
     (lineDecl ? cjkTextDecl(!!line.letterSpacing) : '') +
-    `">${parts.join('')}</div>`
+    `">${lineHighlightsHtml(line)}${parts.join('')}</div>`
   );
 }
 
@@ -2943,7 +2945,10 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
             // indents its text, and so would a box inside it.
             : run.inkOffset !== undefined ? esc(run.text)
             : wordsHtml(run.text, trackedIn(run.fontString, block.letterSpacingPx));
-          return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl ? `<span style="${fontDecl}${cjkDecl}${cellsDecl}${stackDecl}${shiftDecl}${boxDecl}">${text}</span>` : text;
+          // A contents part row's leader (#889): painted, hidden from
+          // assistive technology, as an entry row's is.
+          const hidden = run.leader ? ' aria-hidden="true"' : '';
+          return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl || hidden ? `<span${hidden} style="${fontDecl}${cjkDecl}${cellsDecl}${stackDecl}${shiftDecl}${boxDecl}">${text}</span>` : text;
         }).join('')
       : letterlessRunHtml(line.text, block.fontString, false, line.width, block.letterSpacingPx ?? 0) ?? wordsHtml(line.text, trackedIn(block.fontString, block.letterSpacingPx));
     // A line that carries directions (an order, a right-to-left run): a box
@@ -3264,11 +3269,39 @@ function renderPageDetailed(
     }
   }
   // Floated resources live in page bands outside the columns (a span:'page'
-  // float crosses the gutter); they carry absolute geometry already.
+  // float crosses the gutter); they carry absolute geometry already. A
+  // composed page's frames (#855) are floats painted with their frames.
+  const frameIds = composedFrameBlockIds(page);
   for (const fb of page.floats ?? []) {
+    if (frameIds.has(fb.id)) continue;
     blocks.push({ id: fb.id, html: renderBlock(fb, options, stripInBlock(fb)) });
   }
-  const blocksHtml = blocks.map((b) => b.html).join('');
+  // The frames in layer order, each in a box of its own that turns it and
+  // clips it, the template's decoration at layer 0; through a flow frame
+  // the decoration stands on the sheet, after the flow.
+  const composedFlow = page.composed !== undefined && !plainFlow;
+  const composedDecorationHtml = page.composed?.decoration ? renderDesignSlot(page.composed.decoration, composedFlow ? { ...options, vertical: undefined } : options) : '';
+  const composedParts: string[] = [];
+  /** The frames' boxes and the decoration: what a patcher of blocks must
+   *  also compare (`decorationHtml`). */
+  const composedShape: string[] = [];
+  for (const item of composedPaintOrder(page)) {
+    if (item.kind === 'decoration') {
+      if (!composedFlow) composedParts.push(composedDecorationHtml);
+      continue;
+    }
+    if (item.blocks.length === 0) continue;
+    const open = composedFrameOpen(item.frame);
+    composedShape.push(open);
+    composedParts.push(open);
+    for (const b of item.blocks) {
+      const html = renderBlock(b, options, stripInBlock(b));
+      blocks.push({ id: b.id, html });
+      composedParts.push(html);
+    }
+    composedParts.push('</div>');
+  }
+  const blocksHtml = blocks.filter((b) => !frameIds.has(b.id)).map((b) => b.html).join('') + composedParts.join('');
   // Same paint order as the canvas backend: the opener / part band goes
   // under the body (a part page's full-bleed background must not cover its
   // chapter list); header and footer paint on top.
@@ -3296,7 +3329,8 @@ function renderPageDetailed(
   // flow frame), under the running heads, as the canvas paints them.
   const comicHtml = page.comic ? comicMarkup(page.comic) : '';
   const sheetComicsHtml = comicHtml + (plainFlow ? '' : comics.filter((c) => c !== page.comic).map(comicMarkup).join(''));
-  const decorationHtml = defsHtml + gridHtml + openerHtml + footnoteRulesHtml + sheetComicsHtml + slotParts.join('');
+  const sheetComposedHtml = composedFlow ? composedDecorationHtml : '';
+  const decorationHtml = defsHtml + gridHtml + openerHtml + footnoteRulesHtml + sheetComicsHtml + composedShape.join('') + composedDecorationHtml + slotParts.join('');
   // A vertical page's flow: one box turned a quarter turn clockwise, its
   // text lines turned back and set vertically (see `renderVerticalLine`).
   const anchorsHtml = (options.anchors ?? [])
@@ -3312,7 +3346,7 @@ function renderPageDetailed(
     ? `<div class="pt-flow" style="position:absolute;left:0;top:0;width:${page.height}px;height:${page.width}px;transform:translate(${page.width}px,0) rotate(90deg);transform-origin:0 0;">${flowHtml}</div>`
     : page.flow?.writingMode === 'horizontal-tb'
       ? `<div class="pt-flow pt-flow-mirrored" style="position:absolute;left:0;top:0;width:${page.width}px;height:${page.height}px;transform:scaleX(-1);transform-origin:${page.flow.mirror.originX / 2}px 0;">${MIRRORED_FLOW_STYLE}${flowHtml}</div>`
-      : flowHtml) + sheetComicsHtml + slotParts.join('');
+      : flowHtml) + sheetComposedHtml + sheetComicsHtml + slotParts.join('');
   // A right-to-left document's pages say so, with its language, for a host
   // that mounts them apart from the document's root (#379); so do a
   // Japanese document's, whose glyph forms (a pan-CJK face's `locl`) and
@@ -3328,6 +3362,28 @@ function renderPageDetailed(
     clipDecl +
     `">${innerHtml}</div>`;
   return { outerHtml, innerHtml, blocks, decorationHtml, ...(comicHtml ? { comicHtml } : {}) };
+}
+
+/** A number of a frame's box, to four decimals. */
+function frameNum(v: number): string {
+  const r = Math.round(v * 1e4) / 1e4;
+  return String(Object.is(r, -0) ? 0 : r);
+}
+
+/** The opening tag of a composed page's frame (#855): an empty box at the
+ *  page's origin, so the frame's blocks keep their page coordinates, turned
+ *  about the frame's centre (`frameMatrix`) and, when the frame's content
+ *  overflows it, clipped to the frame's box (`frameClips`). */
+function composedFrameOpen(frame: VDTFrame): string {
+  const decls = ['position:absolute', 'left:0', 'top:0', 'width:0', 'height:0'];
+  const m = frameMatrix(frame);
+  if (m) decls.push('transform-origin:0 0', `transform:matrix(${m.map(frameNum).join(',')})`);
+  if (frameClips(frame)) {
+    const { x, y, width, height } = frame.rect;
+    const [l, t, r, b] = [x, y, x + width, y + height].map(frameNum);
+    decls.push(`clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px)`);
+  }
+  return `<div class="pt-frame" data-frame-id="${esc(frame.id)}" data-layer="${frame.layer}" style="${decls.join(';')};">`;
 }
 
 /** The markup of a comic on a page (its comic page, a half of a spread or

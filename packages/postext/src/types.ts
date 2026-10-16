@@ -2034,8 +2034,11 @@ export interface CodeTokenStyle {
   italic?: boolean;
 }
 
-/** Inline code (`` `x` ``) set in a code face (#624). The span is set as
- *  one unit, as a chip is: it never breaks across lines. */
+/** Inline code (`` `x` ``) set in a code face (#624). The span is set in
+ *  a box, as a chip is; since #845 a line may break at its spaces and
+ *  after a hyphen between a letter or digit and a letter (the box is cut
+ *  there, and nothing is added), and the spaces inside it keep the code
+ *  face's width. */
 export interface InlineCodeStyleConfig {
   /** Default: `codeStyle.fontFamily`. */
   fontFamily?: string;
@@ -2059,6 +2062,12 @@ export interface InlineCodeStyleConfig {
   /** Room above and below the text band; paints outside the line box.
    *  Default `0.1em`. */
   paddingY?: Dimension;
+  /** The face of the Arabic, Hebrew, Syriac, Thaana and CJK letters inline
+   *  code holds (`:index[الكشيدة]`, a ruby's kanji): `'text'` (the
+   *  default) sets them in the face of the text around the code, since a
+   *  code face rarely has them; `'code'` keeps them in the code face, for
+   *  one that does (#845). */
+  otherScripts?: 'text' | 'code';
 }
 
 /** Code listings (#624): ```` ``` ```` and `~~~` fences, and indented code
@@ -2170,6 +2179,7 @@ export interface ResolvedInlineCodeStyleConfig {
   borderRadius: Dimension;
   paddingX: Dimension;
   paddingY: Dimension;
+  otherScripts: 'text' | 'code';
 }
 
 export interface ResolvedCodeStyleConfig {
@@ -3664,6 +3674,59 @@ export interface ChipStyleConfig {
    *  not stretched by justification). Nothing is added at a line edge or
    *  against glued punctuation. Default `0.25em`. */
   gap?: Dimension;
+}
+
+/**
+ * A named highlight style, selected by the inline `:mark[text]{style="<id>"}`
+ * (#888; a mark without `style`, or with an id no style declares, takes the
+ * first style). A mark is a coloured band behind a phrase, as a textbook
+ * highlights its key words: unlike a chip it is ordinary text, set and
+ * broken over lines like the words around it, and the band follows each
+ * piece of it on its line. Its horizontal padding and rounded ends are
+ * drawn at the true start and end of the phrase only; where the phrase
+ * breaks, the band stops square at the last letter of the line.
+ *
+ * The band takes no room: it is painted under the text, from 0.8 em above
+ * the baseline to 0.25 em below it (the em of the marked text), grown by
+ * the vertical padding, and its horizontal padding reaches into the word
+ * spaces around the phrase. The layout of the text is the same as without
+ * the mark.
+ */
+export interface MarkStyleConfig {
+  id: string;
+  /** Human-readable name (editor UI only). Defaults to {@link id}. */
+  name?: string;
+  /** Band colour. Default a pale yellow (`#fff0a0`). */
+  background?: ColorValue;
+  /** Colour of the marked text. Default the text's own. */
+  color?: ColorValue;
+  /** Corner radius of the band's two ends, clamped to half its height.
+   *  Default `0.2em`. */
+  borderRadius?: Dimension;
+  /** How far the band reaches past the first and the last letter of the
+   *  phrase, into the space beside it. Default `0.15em`. */
+  paddingX?: Dimension;
+  /** Room above and below the text band. Default `0.05em`. */
+  paddingY?: Dimension;
+  /** Room above the text band, in place of {@link paddingY}. */
+  paddingTop?: Dimension;
+  /** Room below the text band, in place of {@link paddingY}. */
+  paddingBottom?: Dimension;
+}
+
+export interface ResolvedMarkStyleConfig {
+  id: string;
+  name: string;
+  background: ColorValue;
+  /** Unset: the text's own. */
+  color?: ColorValue;
+  borderRadius: Dimension;
+  paddingX: Dimension;
+  paddingY: Dimension;
+  /** Unset: `paddingY`. */
+  paddingTop?: Dimension;
+  /** Unset: `paddingY`. */
+  paddingBottom?: Dimension;
 }
 
 export interface ResolvedChipStyleConfig {
@@ -5999,8 +6062,10 @@ export type HeaderFooterHAlign = 'left' | 'center' | 'right';
  *  - `'opener'` — the first block in reading order is a heading whose level
  *    spans the page or forces a page break before it (a chapter opener);
  *  - `'comic'` — a comic page (`:::page`, `VDTPage.comic` set);
+ *  - `'composed'` — a composed page (`::::page{template}`, `VDTPage.composed`
+ *    set, #855);
  *  - `'body'` — everything else. */
-export type PageRole = 'body' | 'opener' | 'part' | 'blank' | 'comic';
+export type PageRole = 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed';
 
 /** Which page roles a design element renders on. `'all'` (default) renders
  *  on every page the parity filter admits. */
@@ -7373,6 +7438,9 @@ export interface PostextConfig {
   /** Named chip styles for the inline `:chip[text]{style="…"}`. Defaults
    *  to a single `chip` style when unset. */
   chipStyles?: ChipStyleConfig[];
+  /** Named highlight styles for the inline `:mark[text]{style="…"}`
+   *  (#888). Defaults to a single pale yellow `mark` style when unset. */
+  markStyles?: MarkStyleConfig[];
   /** Part dividers (`:::part` containers): page breaks, body area,
    *  opener design and body typography. */
   parts?: PartsConfig;

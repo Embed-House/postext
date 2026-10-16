@@ -722,7 +722,7 @@ $$
 
 ## 12. Single-line directives `:::name{attrs}`
 
-Known directives: `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index`; the raw-body blocks `:::references`, `:::verse`, `:::page` and `:::strip` (comics, below). Execution: . They must be alone on their line (same fence regex as §7).
+Known directives: `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index`; the raw-body blocks `:::references`, `:::verse`, `:::page` and `:::strip` (comics, below); `:::figure` (postext 1.34, §12.2). Execution: . They must be alone on their line (same fence regex as §7).
 
 | Directive | Attributes | Effect |
 |---|---|---|
@@ -760,6 +760,65 @@ A `:::page` owns a whole page (the text after it starts a new page);
 text flow (newspaper strips). Inside the block nothing is a paragraph,
 heading or list. Grammar, every attribute, the `comics` config, the
 pictures' speaker anchors and the warnings: [comics.md](comics.md).
+
+### 12.2 Composed pages: `::::page`, `:::frame`, `slot=`, `:::figure` + `::label` (postext 1.34)
+
+The Markdown side of page templates (configuration.md §19g). Check the
+installed version first (`postext --version`); in 1.34 the engine reads and
+checks these blocks but **does not lay a composed page out yet** (that comes
+with #855): the page's content is set in the running text on pages of its
+own. Judge the warnings, not the page images, until the release that lays
+them out; till then the round-1 ladder (playbooks J) stays the method.
+
+```md
+::::page{template="topic" fondo="banda-retos"}
+## Finding your position {slot="title"}
+
+The Sun rises in the **east** and sets in the **west**.
+
+:::frame{slot="aside" label="Remember" title="The cardinal points"}
+North, south, east and west.
+:::
+
+::resource{id="compass" slot="photo"}
+
+:::figure{resource="map-europe" slot="map"}
+::label[Madrid]{at="38% 72%" style="city"}
+::label[Atlantic Ocean]{at="anchor-ocean" style="sea"}
+:::
+::::
+```
+
+- `::::page{template="<pageTemplates id>" [spread] [id=…] [anyAttr=…]}` …
+  `::::`: **four or more colons**, closed by a bare line of the **same**
+  number of colons. `:::frame`, `:::callout`, `:::figure` and `:::columns`
+  nest inside with three; a bare `:::` never closes the page. Other
+  attributes are read by the template as `{attr.x}` (a ground picture per
+  page: `fondo="banda-retos"` with `resourceId: "{attr.fondo}"`).
+- `:::frame{slot="name" label="…" title="…"}` … `:::`: any Markdown, set in
+  the template's frame `name`. `label` and `title` give the frame's tab and
+  title their words (frames reuse callout styles): the words stay in the
+  Markdown, never in the template.
+- `slot="name"` on one block: `## Heading {slot="title"}`,
+  `::resource{id="x" slot="photo"}` (only these two keys),
+  ```` ```js {slot="code"} ````, `:::callout{… slot="aside"}` (the whole box).
+- Without a slot, a block goes to the template's flow frame; a heading
+  without one goes to the first frame that `takes` its level. The same slot
+  twice is joined in Markdown order.
+- `:::figure{resource="map" slot="map"}` holds one
+  `::label[TEXT]{at="anchor" style="labelStyle"}` per line, then `:::`.
+  `at` names an anchor of the resource or a point in percent of the picture
+  (`at="62% 48%"`); `style` is a `labelStyles` id. A figure in the flow is
+  set as `::resource` with its labels.
+- `:::page{split=…}` (three colons) is still a **comic** page (§12.1).
+  A composed page written with three colons warns `pageFenceLength`.
+
+Porting rule: a textbook page built by hand from fixed callouts,
+`:::pagebreak` and placed figures (title band, text, coloured boxes each
+with its photo) becomes one `::::page{template=…}` with a `:::frame{slot}`
+per box and `::resource{… slot=…}` per photo; positions, sizes and colours
+go to `pageTemplates`, never into the Markdown. Keep the slot names the same
+in every locale's chapter. Warnings: verification.md, "Composed pages".
 
 **Directives inside a `:::callout` are ignored** (except `:::space`). An unknown `:::word` is literal text (`unknownDirective`).
 

@@ -125,9 +125,19 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Es wird als Comicseite gelesen; eine zusammengesetzte Seite braucht vier Doppelpunkte.</td>
     </tr>
     <tr>
+      <td><code>frameOverflow</code></td>
+      <td>Der Inhalt eines Rahmens einer zusammengesetzten Seite passt nicht hinein, und der Rahmen hat kein <code>next</code> mehr (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, die abgeschnittene Höhe; <code>configPath</code>, der JSON-Zeiger des Vorlagenrahmens, etwa <code>/pageTemplates/0/frames/2</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der Seite.</td>
+      <td>Die paginierte Ausgabe schneidet am Fuß des Rahmens ab, was nicht passt; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> nennt kein Chip-Format.</td>
       <td>Der Chip erhält das erste Chip-Format.</td>
+    </tr>
+    <tr>
+      <td><code>unknownMarkStyle</code></td>
+      <td><code>:mark[…]{'{'}style{'}'}</code> nennt keinen Hervorhebungsstil.</td>
+      <td>Die Markierung nimmt den ersten Hervorhebungsstil.</td>
     </tr>
     <tr>
       <td><code>undefinedFootnote</code></td>

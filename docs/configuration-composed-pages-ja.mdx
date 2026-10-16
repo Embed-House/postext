@@ -161,7 +161,7 @@ const config: PostextConfig = {
 
 フレームは、組まれた中身を受け取る名前付きの長方形です。`name`がMarkdownの指定するスロットで、テンプレートの中で一意です（アンカーはフレームとグループを同じ書き方で指すので、グループもフレームの名前を使えません）。
 
-テンプレートにグリッドがあればフレームは`grid`のセルで、なければ`placement`で配置します。`placement`はデザイン要素の配置と同じしくみで、アンカー（`'container'`は領域、`'page'`、`'bleed'`、ほかのフレームやグループなら`'#name'`）、辺、オフセット、サイズからなります。ほかのフレームに固定したフレームは、そのフレームと一緒に動きます。どちらもなければ、フレームは領域全体を占めます。
+テンプレートにグリッドがあればフレームは`grid`のセルで、なければ`placement`で配置します。`placement`はデザイン要素の配置と同じしくみで、アンカー（`'container'`は領域、`'page'`、`'bleed'`、ほかのフレームやグループなら`'#name'`）、辺、オフセット、サイズからなります。ほかのフレームに固定したフレームは、そのフレームと一緒に動きます。どちらもなければ、フレームは領域の左上の角から始まり、幅は領域と同じで、高さは高さの指定に従います。中身をフレームに流し込み、つなぎ、切り詰める仕組みは、[テンプレートページ › ページの組み方](/ja/docs/composed-pages#ページの組み方)で説明しています。
 
 <table>
   <thead>
@@ -413,6 +413,10 @@ pageTemplates: [
 Sandboxがテンプレートを保存するとき、既定値と同じ値も捨てずに残します。ほかのテンプレートを拡張するテンプレートやバリアントの中では、その値が親の値を上書きするからです。
 
 コードからは、`resolvePageTemplate(config, id, { parity })`が、連鎖を統合し、その側のバリアントを適用し、すべての既定値を埋め、下の警告で説明するとおりにすべての参照を解決したテンプレートを返します。`validatePageTemplates(config)`は警告を返します。
+
+### 割り付けに反映される設定
+
+割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`、`flow`、`takes`、`next`、`overflow.continueIn: "#frame"`、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`です。次の設定は読み込まれて検査されますが、まだ割り付けには反映されません。グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。グループのフレームはそれぞれの配置を保ちます）、`fit`、`overflow.continueIn: "next-page"`と`overflowTemplate`、`spread`と`crossGutter`、フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`です。幅の`'auto'`は`'fill'`として扱います。
 
 ## ラベルスタイル
 

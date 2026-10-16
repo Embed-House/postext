@@ -77,6 +77,9 @@ describe('isPresetIndex', () => {
     expect(isPresetManifest(manifestV2(meta))).toBe(true);
     expect(isPresetIndex({ version: 1, presets: [{ id: 'a', dir: 'a', name: 'A', locales: 'es' }] })).toBe(false);
     expect(isPresetIndex({ version: 1, presets: [{ id: 'a', dir: 'a', name: 'A', tags: [1] }] })).toBe(false);
+    // #891: each edition's own title.
+    expect(isPresetIndex({ version: 1, presets: [{ id: 'a', dir: 'a', name: 'A', localized: { ca: { name: 'À', description: 'd' } } }] })).toBe(true);
+    expect(isPresetIndex({ version: 1, presets: [{ id: 'a', dir: 'a', name: 'A', localized: { ca: { name: 1 } } }] })).toBe(false);
     expect(isPresetManifest({ ...manifestV2(), license: 4 })).toBe(false);
   });
 

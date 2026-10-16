@@ -12,7 +12,7 @@ publishDate: "2026-10-04"
 :::paragraphs{style="colophon"}
 **The Postext Guide** is the sample book that ships with the Sandbox. It is both a tour of the engine and a demonstration of it: the cover, the self-numbering contents, the part dividers, the chapter openers, the running heads, every figure and table float — all of it is laid out by Postext, in your browser, from the Markdown you can open in the editor.
 
-Set in Fraunces, Lora, Bricolage Grotesque and Geist, served by Google Fonts. The diagrams are plain SVG files, drawn as vectors in the canvas, the HTML view and the PDF. Change anything — a word, a margin, a colour of the palette — and the book sets itself again.
+Set in Fraunces, Lora, Bricolage Grotesque, Geist and Geist Mono, served by Google Fonts. The diagrams are plain SVG files, drawn as vectors in the canvas, the HTML view and the PDF. Change anything — a word, a margin, a colour of the palette — and the book sets itself again.
 
 Postext is open source under the MIT licence. Text © 2026 Ignacio Ferro and the Postext contributors.
 :::
@@ -30,13 +30,13 @@ Postext is open source under the MIT licence. Text © 2026 Ignacio Ferro and the
 
 Postext is an **open-source layout engine** that brings the craft of professional print typography to the web. It takes **semantic content** written in enriched Markdown and a configuration object, and computes a fully resolved layout in which every line, heading, figure and table has a precise position, measured in real typographic units. That layout is then drawn by three renderers — a live canvas preview, positioned HTML and a print-ready PDF — which all read the same geometry, so what you see on screen is exactly what goes to press, and written as an EPUB 3 e-book from the same pages.
 
-This book is its own demonstration. Its cover, the contents page that numbers itself, the part dividers in three colours, the band that opens each chapter, the running heads at the top of these pages and every figure that floats into place were all laid out by Postext, in your browser, a moment ago. Nothing here was placed by hand: the Markdown only says what things are, and the configuration decides how they look.
+This book is its own demonstration. Its cover, the contents page that numbers itself, the part dividers in three colours, the band that opens each chapter, the running heads at the top of these pages and every figure that floats into place were all laid out by Postext, in your browser, a moment ago. Nothing here was placed by hand: the Markdown only says what things are, and the configuration decides how they look. Given another configuration, the same text would come out as a pocket paperback or a magazine.
 
 :::callout{type="try"}
 Open the **Text** panel and pick this chapter in the chapter switcher at its head. Change a word in this paragraph, or delete a sentence: the page sets itself again, the columns rebalance and the page numbers of the following chapters follow.
 :::
 
-If you would rather watch first, :ref{id="postext-showreel"} covers it in two minutes; in the Folio view it plays on the page itself.
+If you would rather watch first, :ref{id="postext-showreel"} covers it in two minutes; in the Folio view it plays on the page itself. It follows one chapter from the Markdown in the editor to the canvas preview, its pages turning in the Folio viewer and the PDF that comes out at the end.
 
 ## How to read this book
 
@@ -112,7 +112,7 @@ The fastest way to understand what Postext can do is to follow a document throug
 Two things enter the pipeline, and both are meant to be read and edited by people:
 
 1. **Content** in enriched Markdown
-   - Headings, paragraphs, lists, emphasis, block quotes and mathematics
+   - Headings, paragraphs, block quotes, lists, emphasis and mathematics
    - Directives for page breaks, page numbering, parts, callouts and the table of contents
    - References to resources — figures, SVG diagrams and tables — declared by id outside the text
    - Optional YAML front matter with the title, subtitle, author and date
@@ -246,7 +246,7 @@ Each Chinese punctuation mark sits in a square of its own, half of it ink and ha
 
 A justified Chinese line is filled in a fixed order: first the spaces between Western words, then the quarter of an em the engine sets between Chinese and Latin text (\`cjk.latinSpacing\`; it is never typed), and last every gap between two characters, never inside a Latin word or a number. When a character may not open the next line, the composer first tries to take it into the line by giving up blank from the marks already on it, and only when that fails carries the character before it down to the next line. A line that would need more than half an em between its characters is left short, and the **Checks** panel reports it as a CJK line set short.
 
-The rest of a Chinese book follows the same settings. Chapter templates, page numbers, lists and counters accept the Chinese numeral styles, among them \`simp-chinese-informal\`, \`trad-chinese-informal\` and \`cjk-decimal\`, so chapters can be named by their Chinese ordinals; figures and tables take their Chinese names and are numbered by chapter with a hyphen. \`cjk.grid\` sets the type area as a number of characters per line and lines per page, the grid Chinese books are designed on. The Chinese edition of this guide is set vertically and bound on the right, as Chinese books were printed for centuries: it names its chapters by their Chinese ordinals, prints its folios in Chinese numerals and numbers its figures and tables by chapter; its row in the **Books** panel has a language button of its own. Among the sample books, _Dream of the Red Chamber_ is a whole novel set in Chinese, and its Traditional edition is set vertically on a grid of 38 characters by 15 lines.
+The rest of a Chinese book follows the same settings. Chapter templates, page numbers, lists and counters accept the Chinese numeral styles, such as \`cjk-decimal\`, \`simp-chinese-informal\` and \`trad-chinese-informal\`, so chapters can be named by their Chinese ordinals; figures and tables take their Chinese names and are numbered by chapter with a hyphen. \`cjk.grid\` sets the type area as a number of characters per line and lines per page, the grid Chinese books are designed on. The Chinese edition of this guide is set vertically and bound on the right, as Chinese books were printed for centuries: it names its chapters by their Chinese ordinals, prints its folios in Chinese numerals and numbers its figures and tables by chapter; its row in the **Books** panel has a language button of its own. Among the sample books, _Dream of the Red Chamber_ is a whole novel set in Chinese, and its Traditional edition is set vertically on a grid of 38 characters by 15 lines.
 
 \`layout.writingMode: 'vertical-rl'\` sets a book vertically. Lines run from top to bottom and follow each other from right to left, two columns become two tiers stacked on the page, figures and tables stay upright, Latin words and long numbers turn on their side, and each mark takes the place or the form it has in vertical text: brackets and quotation marks take their vertical forms, and the full stop moves to the top right of its cell on the mainland and stays centred in Taiwan and Hong Kong. Such a book is bound on the right (\`page.binding\`): its first page stands alone to the left of the spine, and the Sandbox shows its spreads from right to left. The canvas and the PDF set the same vertical lines; the HTML view breaks its own lines to the height of its page, and stands each character upright or turns it as they do. By default \`cjk.uprightDigits\` stands a number of up to two digits upright in a single cell, and it can be raised to three or four; \`:tcy[…]\` does the same for any short run.
 
@@ -366,7 +366,7 @@ When a page ends in the middle of the text, its columns should end at the same h
 2. **A line after the end of a list**
 3. **Looser paragraphs**: a paragraph set one line longer, TeX's _looseness_, accepted only if none of its lines stretches beyond the word-spacing limit; if it helps, a touch of letter spacing, at most ten thousandths of an em
 
-Each fix is verified by laying the page out again, up to eight times, and the best result wins. Some columns are left alone on purpose: the last column before a forced page break or a chapter opener, the last page of the document, a column with nothing to stretch. Two related rules level the closing columns of a chapter, and the columns above a page-wide box that moves or splits.
+Each fix is verified by laying the page out again, up to eight times, and the best result wins. A paragraph set one line longer keeps its words and only widens its spaces, so a short paragraph, with few spaces to widen, is seldom the one chosen. Some columns are left alone on purpose: the last column before a forced page break or a chapter opener, the last page of the document, a column with nothing to stretch. Two related rules level the closing columns of a chapter, and the columns above a page-wide box that moves or splits.
 
 ## Bands and page-wide boxes
 
@@ -530,7 +530,7 @@ References deserve a closer look, because they are how most of a book's apparatu
 
 The same \`:ref\` names any place of the book that carries an identifier: a heading written \`## Method {#method}\`, a box opened with \`{#id}\`, or a phrase marked \`[these words]{#key}\`. It prints _section 3.2_ or _chapter 4_, the title with \`style=title\`, or the page with \`style=page\`, and the page is right because the engine lays the book out again until it settles. Every such reference is a link in the PDF, the HTML and these previews.
 
-Works are cited as Pandoc writes them, \`[@garcia2020, p. 33]\` or \`@garcia2020\` in the sentence, with the references in the front matter or in a \`:::references\` block of BibTeX. The citation style is a setting, not a property of the text: APA, Chicago, MLA, IEEE, Vancouver, ISO 690, GB/T 7714 or a style of your own, chosen under Design › Citations, where a preview shows the result. The bibliography follows the last chapter, or stands wherever \`:::bibliography\` is written. A citation of a work the references do not hold prints as written and is listed among the warnings.
+Works are cited as Pandoc writes them: in brackets, \`[@garcia2020, p. 33]\`, or in the sentence, \`@garcia2020\`, with the references in the front matter or in a \`:::references\` block of BibTeX. The citation style is a setting, not a property of the text: APA, Chicago, MLA, IEEE, Vancouver, ISO 690, GB/T 7714 or a style of your own, chosen under Design › Citations, where a preview shows the result. The bibliography follows the last chapter, or stands wherever \`:::bibliography\` is written. A citation of a work the references do not hold prints as written and is listed among the warnings.
 
 ## Footnotes
 
@@ -576,7 +576,7 @@ Everything described in this book can be tried right now, without writing code. 
 
 ## A tour of the interface
 
-The interface follows a familiar editor layout, sketched in :ref{id="sandbox-ui"}. An **activity bar** on the left switches between seven panels — Books, Chapters, Text, Resources, Fonts, Design and Checks, the last with a count of open issues. A resizable **sidebar** holds the active panel; clicking the active icon collapses it. The **viewport** on the right shows the same layout in five tabs: Canvas, PDF, Folio, HTML and EPUB 3. The interface speaks English, Spanish, Catalan, French, German, Italian, Brazilian Portuguese, Simplified Chinese, Japanese and Arabic, and runs from right to left in Arabic; a setting for large buttons and fields makes every control easier to reach by touch or with an unsteady hand.
+The interface follows the layout of a familiar code editor, sketched in :ref{id="sandbox-ui"}. An **activity bar** on the left switches between seven panels — Books, Chapters, Text, Resources, Fonts, Design and Checks, the last with a count of open issues. A resizable **sidebar** holds the active panel; clicking the active icon collapses it. The **viewport** on the right shows the same layout in five tabs: Canvas, PDF, Folio, HTML and EPUB 3. The interface speaks English, Spanish, Catalan, French, German, Italian, Brazilian Portuguese, Simplified Chinese, Japanese and Arabic, and runs from right to left in Arabic; a setting for large buttons and fields makes every control easier to reach by touch or with an unsteady hand.
 
 The sidebar and the viewport share the window, and the boundary between them can be dragged. Every panel and the viewport remember their state between visits: the zoom and view mode of the canvas, the column mode of the HTML view, the groups open in the Design panel. The theme and the interface language are switched from the foot of the activity bar, and the language of the interface is independent of the language of the book.
 
@@ -703,7 +703,7 @@ The layout engine runs in the browser, where it can measure with the fonts the r
 4. For print, pass the same document to \`renderToPdf\` with a font provider; for e-books, pass the chapters to \`renderToEpub\`
 :::
 
-The engine and its PDF renderer are released together, with the same version number, so the two always agree on the shape of the layout they share. The EPUB writer and the Folio viewer keep version numbers of their own and name the engine as a peer dependency, so a project upgrades them together.
+The engine and its PDF renderer are released together, with the same version number, so the two always agree on the shape of the layout they share. The EPUB writer and the Folio viewer keep version numbers of their own and name the engine as a peer dependency, so a project upgrades them together. Installing the packages in a single command picks versions that match.
 
 ## Pages as images, from a script
 

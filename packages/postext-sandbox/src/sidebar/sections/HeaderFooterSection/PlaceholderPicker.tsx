@@ -8,9 +8,12 @@ import type { SlotKind } from './placementAdapter';
 interface Props {
   onInsert: (placeholderName: string) => void;
   slotKind?: SlotKind;
+  /** Placeholders of this slot alone, listed after the slot kind's: the
+   *  `{leader}` of a contents part row (#889). */
+  extra?: readonly string[];
 }
 
-export function PlaceholderPicker({ onInsert, slotKind = 'header' }: Props) {
+export function PlaceholderPicker({ onInsert, slotKind = 'header', extra = [] }: Props) {
   const labels = useSandboxLabels();
 
   // Human labels for the names the engine knows. The list itself comes from
@@ -42,10 +45,11 @@ export function PlaceholderPicker({ onInsert, slotKind = 'header' }: Props) {
     numberOrdinalWords: labels.headerFooterPlaceholderNumberOrdinalWords,
     numberOrdinalWordsLower: labels.headerFooterPlaceholderNumberOrdinalWordsLower,
     numberHan: labels.headerFooterPlaceholderNumberHan,
+    leader: labels.headerFooterPlaceholderLeader,
   };
 
   const kind: DesignContextKind = slotKind;
-  const items = Array.from(allowedPlaceholdersFor(kind)).map((name) => ({
+  const items = [...allowedPlaceholdersFor(kind), ...extra].map((name) => ({
     name,
     label: LABELS[name] ?? name,
   }));

@@ -33,10 +33,13 @@ import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, withoutEd
 import { withLineEndHyphen } from '../measure/geminate';
 import { BREAKING_SPACE_RUNS_SPLIT_RE, NO_BREAK_SPACES, isBreakingSpaceRun } from '../measure/spaces';
 import {
+  LEADER_MARK,
   resolveDesignResourceId,
   resolveDesignText,
+  type DesignLeader,
   type DesignPlaceholderContext,
 } from './placeholders';
+import { fitLeader } from '../measure/leader';
 import { hasJoiningScript, joinsWithNext } from '../bidi';
 import { designBaseDirection, directRuns, directedTextWidth, measuresRunsAsPainted, paintedRunWidth } from './bidiText';
 import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from './cjkText';
@@ -264,6 +267,11 @@ export interface DesignFrames {
    *  stands upright on the sheet, so its box in the flow is sized with the
    *  picture's width and height swapped (`ResolvedImagePrimitive.upright`). */
   upright?: boolean;
+  /** Boxes outside the slot an element may anchor to as `'#name'`, with
+   *  the element-to-element edges: the frames of a composed page for its
+   *  template's decoration (#855). An element of the slot with the same id
+   *  wins. */
+  named?: Readonly<Record<string, { x: number; y: number; width: number; height: number }>>;
 }
 
 export interface LayoutContext {
@@ -408,6 +416,7 @@ function frameFor(placement: ElementPlacement, frames: DesignFrames | undefined)
 function topoSort(
   elements: ResolvedDesignElement[],
   issues: LayoutIssue[],
+  named?: DesignFrames['named'],
 ): ResolvedDesignElement[] {
   const byId = new Map<string, ResolvedDesignElement>();
   for (const el of elements) byId.set(el.id, el);
@@ -415,7 +424,7 @@ function topoSort(
   // Detect dangling
   for (const el of elements) {
     const target = anchorTargetId(el.placement);
-    if (target && !byId.has(target)) {
+    if (target && !byId.has(target) && !named?.[target]) {
       issues.push({ kind: 'danglingAnchor', elementId: el.id, targetId: target });
     }
   }
@@ -499,6 +508,8 @@ function resolveContainerAnchor(
       return { anchorX: ref.x, anchorY: ref.y, pinX: 'start', pinY: 'start' };
   }
 }
+
+const ELEMENT_TO_ELEMENT_EDGES: ReadonlySet<string> = new Set(['right-of', 'left-of', 'below', 'above', 'align-top', 'align-bottom', 'align-left', 'align-right']);
 
 function resolveElementAnchor(
   edge: AnchorEdge,
@@ -1064,7 +1075,7 @@ export function layoutDesignSlot(
 
   // Topologically sort (dependencies first) to resolve geometry; paint
   // order is still the array order (first = back), restored below.
-  const ordered = topoSort(candidates, issues);
+  const ordered = topoSort(candidates, issues, context.frames?.named);
 
   // Precompute: resolved text contents (placeholder-expanded), with the
   // `\n` escape of the template and of attribute values turned into a
@@ -1107,9 +1118,16 @@ export function layoutDesignSlot(
       fillRef = frame;
     } else if (target) {
       const dep = resolvedGeo.get(target);
+      const outside = dep ? undefined : context.frames?.named?.[target];
       if (dep) {
         refGeo = { x: dep.x, y: dep.y, width: dep.width, height: dep.height };
         useElementEdge = true;
+      } else if (outside) {
+        refGeo = { ...outside };
+        // A nine-point edge on a frame is that point of its box; an
+        // element edge (`below`, `right-of`…) reads as for an element.
+        useElementEdge = ELEMENT_TO_ELEMENT_EDGES.has(el.placement.anchor.edge);
+        if (!useElementEdge) fillRef = refGeo;
       }
     }
     const anchor = useElementEdge
@@ -1129,14 +1147,22 @@ export function layoutDesignSlot(
       // A vertical element in a frame whose text is horizontal (a running
       // head on the sheet, a design of a horizontal page); in a vertical
       // flow the text already runs down.
-      const prims = el.writingMode === 'vertical-rl' && getMeasureWritingMode() !== 'vertical-rl'
-        ? layoutVerticalTextElement(el, textContent.get(el.id) ?? '', pin, fillRef, context.dpi, useElementEdge, textSeams.get(el.id))
-        : layoutTextElement(el, textContent.get(el.id) ?? '', pin, fillRef, context.dpi, useElementEdge, context, textSeams.get(el.id));
+      const content = textContent.get(el.id) ?? '';
+      const turned = el.writingMode === 'vertical-rl' && getMeasureWritingMode() !== 'vertical-rl';
+      // A contents part row's `{leader}` (#889), on a horizontal line.
+      const leader = context.placeholders.leader;
+      const leadered = content.includes(LEADER_MARK) && leader && !turned && getMeasureWritingMode() !== 'vertical-rl';
+      const text = leadered ? content : content.split(LEADER_MARK).join('');
+      const prims = turned
+        ? layoutVerticalTextElement(el, text, pin, fillRef, context.dpi, useElementEdge, textSeams.get(el.id))
+        : leadered
+          ? layoutLeaderTextElement(el, text, leader, pin, fillRef, context.dpi, useElementEdge, context)
+          : layoutTextElement(el, text, pin, fillRef, context.dpi, useElementEdge, context, textSeams.get(el.id));
       resolvedGeo.set(el.id, prims[0]!);
       primsByElement.set(el, prims);
       const truncated = prims[0]!.truncated;
       if (truncated) {
-        const text = textContent.get(el.id) ?? '';
+        const text = content.split(LEADER_MARK).join('');
         issues.push({ kind: 'textTruncated', elementId: el.id, mode: truncated, text: el.inlineMarks ? plainDesignText(text) : text });
       }
     } else if (el.kind === 'rule') {
@@ -1684,6 +1710,104 @@ function layoutTextElement(
     ...(stroke ? { stroke: { ...stroke, color: el.stroke?.color ? stroke.color : cap.color } } : {}),
   };
   return [main, capPrim];
+}
+
+/**
+ * A text element of a contents part row whose text holds `{leader}`
+ * (#889): one line, as wide as the room its placement gives it (an `auto`
+ * width fills to the container's edge), the text before the mark at the
+ * line's start, the text after it at its end, and between them the
+ * contents' leader (`toc.leader`): its character repeated over the room
+ * left, `gap` from either text, flush with the end so the leaders of the
+ * rows line up, as an entry row's are (`pipeline/toc.ts`). The text before
+ * the mark gives way when the line is short of room (cut by the element's
+ * `overflow`, `'ellipsis-end'` for a wrapping one); fewer than three
+ * repeats, or a leader turned off, leave the room blank.
+ */
+function layoutLeaderTextElement(
+  el: ResolvedDesignTextElement,
+  text: string,
+  leader: DesignLeader,
+  pin: AnchorResult,
+  container: AnchorReference,
+  dpi: number,
+  anchoredToElement: boolean,
+  frame: { direction?: 'ltr' | 'rtl'; mirrored?: boolean; arabicNumbers?: boolean },
+): ResolvedTextPrimitive[] {
+  const at = text.indexOf(LEADER_MARK);
+  const before = text.slice(0, at).trimEnd();
+  const after = text.slice(at + LEADER_MARK.length).split(LEADER_MARK).join('').trimStart();
+  const autoWidth = el.placement.size?.width === undefined || el.placement.size.width === 'auto';
+  const single = { ...el, overflow: el.overflow === 'wrap' ? 'ellipsis-end' as const : el.overflow, dropCap: undefined, paragraphIndent: undefined };
+  // The row's box: the room the placement gives, one line high.
+  const [box] = layoutTextElement(
+    { ...single, overflow: 'clip', placement: autoWidth ? { ...el.placement, size: { ...el.placement.size, width: 'fill' } } : el.placement },
+    `${before} ${after}`.trim() || ' ', pin, container, dpi, anchoredToElement, frame,
+  );
+  const row = box!;
+  const room = row.contentWidth;
+  const fontSizePx = row.fontSizePx;
+  const gap = Math.max(0, dimPx(leader.gap, dpi, fontSizePx));
+  // Each text on its own, as wide as it is set (cut to the room left).
+  const part = (t: string, max: number): ResolvedTextPrimitive | undefined => (t
+    ? layoutTextElement(
+      { ...single, box: undefined, placement: { ...el.placement, size: { width: 'auto', maxWidth: { value: Math.max(0, max), unit: 'px' } } } },
+      t, pin, container, dpi, anchoredToElement, frame,
+    )[0]
+    : undefined);
+  const tail = part(after, room);
+  const tailW = tail?.lines[0]?.width ?? 0;
+  const gaps = (before ? gap : 0) + (after ? gap : 0);
+  const head = part(before, room - tailW - gaps);
+  const headW = head?.lines[0]?.width ?? 0;
+  const free = Math.max(0, room - headW - tailW - gaps);
+  const tracking = row.letterSpacingPx;
+  const dots = leader.enabled
+    ? fitLeader(leader.char, free, (t) => Math.max(0, flowTextWidth(t, row.fontString) + tracking * graphemeCount(t)))
+    : null;
+  const runsOf = (p: ResolvedTextPrimitive | undefined): { runs: DesignTextRun[]; order?: number[] } => {
+    const line = p?.lines[0];
+    if (!line || !line.text) return { runs: [] };
+    return { runs: line.runs ?? [{ text: line.text, fontString: p.fontString, width: line.width }], ...(line.order ? { order: line.order } : {}) };
+  };
+  const h = runsOf(head);
+  const t = runsOf(tail);
+  // The leader: blank room, the run, the gap before the text after it. A
+  // blank run is a box as wide as its room (`inkOffset` 0).
+  const blank = (width: number): DesignTextRun => ({ text: '', fontString: row.fontString, width, inkOffset: 0, leader: true });
+  const fill = blank((before ? gap : 0) + free - (dots?.width ?? 0));
+  const middle: DesignTextRun[] = dots
+    ? [fill, { text: dots.text, fontString: row.fontString, width: dots.width, leader: true }, blank(after ? gap : 0)]
+    : [blank(room - headW - tailW)];
+  const runs = [...h.runs, ...middle, ...t.runs];
+  // Paint order: the text before the mark at the line's start, which is on
+  // the right of a right-to-left row on the sheet and of a left-to-right
+  // one in a mirrored flow; each text keeps its own order.
+  const startRight = row.startRight === true;
+  const ids = (n: number, from: number, order?: number[]) => (order ?? Array.from({ length: n }, (_, i) => i)).map((i) => i + from);
+  const headIds = ids(h.runs.length, 0, h.order);
+  const middleIds = ids(middle.length, h.runs.length);
+  const tailIds = ids(t.runs.length, h.runs.length + middle.length, t.order);
+  const order = startRight ? [...tailIds, ...middleIds.reverse(), ...headIds] : [...headIds, ...middleIds, ...tailIds];
+  const identity = order.every((v, i) => v === i);
+  const first = row.lines[0];
+  const line: WrappedLine = {
+    text: runs.map((r) => r.text).join(''),
+    width: room,
+    baselineY: first?.baselineY ?? 0,
+    topY: first?.topY ?? 0,
+    height: first?.height ?? 0,
+    runs,
+    ...(identity ? {} : { order }),
+  };
+  const truncated = head?.truncated ?? tail?.truncated;
+  return [{
+    ...row,
+    lines: [line],
+    align: 'left',
+    needsClip: el.overflow === 'clip',
+    ...(truncated ? { truncated } : { truncated: undefined }),
+  }];
 }
 
 /**

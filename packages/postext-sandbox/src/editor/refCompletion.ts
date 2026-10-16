@@ -13,6 +13,7 @@ import { Prec, StateEffect, StateField, type EditorState, type Extension } from 
 import type { Resource, ResourceKind, ResourceType } from 'postext';
 import { bookCitationContexts, citationSourceOf, parseMarkdown } from 'postext';
 import { chipCompletionSource, type ChipStyleOption } from './chipSyntax';
+import { markCompletionSource, type MarkStyleOption } from './markSyntax';
 import { smallCapsCompletionSource } from './smallCapsSyntax';
 import { annotationCompletionSource } from './annotationSyntax';
 import { indexCompletionSource } from './indexSyntax';
@@ -29,6 +30,8 @@ export interface RefCompletionContext {
   types: readonly ResourceType[];
   /** The chip styles offered inside `:chip[…]{style="…"}`. */
   chipStyles?: readonly ChipStyleOption[];
+  /** The highlight styles offered inside `:mark[…]{style="…"}` (#888). */
+  markStyles?: readonly MarkStyleOption[];
   /** The book's index terms, offered inside `:index{term="…"}`. */
   indexTerms?: () => readonly string[];
   /** The book's headings with an identifier and its anchors (#262),
@@ -421,6 +424,7 @@ export function refCompletion(getContext: () => RefCompletionContext): Extension
       override: [
         refSource(getContext),
         chipCompletionSource(() => getContext().chipStyles ?? []),
+        markCompletionSource(() => getContext().markStyles ?? []),
         smallCapsCompletionSource,
         annotationCompletionSource,
         indexCompletionSource(() => getContext().indexTerms?.() ?? []),

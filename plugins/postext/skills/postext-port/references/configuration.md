@@ -119,7 +119,9 @@ Conversion at `page.dpi` (default 300):
 | `print` | PrintConfig | §21 | PDF/X standard, ICC output profile, black (K-only, overprint, rich black), preflight (≥ 1.22) |
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
-| `checks` | `{ contentInConfig?: { allow?: string[] } }` | — | literals allowed in design text elements (a journal name, an imprint line), read by `preset_kit.py lint` and `lint_project.py`, and by the engine's `contentInConfig` warning where the installed Postext has it; an older engine ignores the key (§7) |
+| `checks` | `{ contentInConfig?: { enabled?, allow?, maxWords?, maxChars? } }` | §19h | the `contentInConfig` check of design texts (postext 1.34; read by `preset_kit.py lint` on any version); out of the layout key; an older engine ignores the key |
+| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (postext 1.34: loaded and checked, laid out from #855) |
+| `labelStyles` | LabelStyle[] | §19g | styles of `::label` words on pictures (postext 1.34) |
 
 Not configurable (no config exists — don't look for it): margin notes (emulate with
 `span:'side'` callouts; footnotes and endnotes are `footnotes`, §19a), a blockquote's own family, size,
@@ -746,11 +748,12 @@ front matter with roman folios / single column, unnumbered appendix, index.
 Elements can anchor to later elements; the engine topo-sorts for geometry.
 
 **Form only.** A design text element's `content` holds placeholders and short labels; the book's
-text lives in the chapters. Literal text of more than 2 words or 24 characters in one element
-(placeholders removed) is content: `preset_kit.py lint` fails on it, `lint_project.py` reports
-`contentInConfig`, and so does `postext check` in releases with that warning. Longer literals
-that are form go in `checks.contentInConfig.allow` (a list of strings; the book's title, subtitle,
-author and manifest name are allowed without it). A design image's `resourceId` takes the same
+text lives in the chapters. Literal text that keeps more than 2 words or more than 24 letters and
+digits in one element (placeholders and allowed phrases removed; a Han, kana, Hangul or Thai
+character counts 3) is content: `preset_kit.py lint` fails on it, `lint_project.py` reports
+`contentInConfig`, and so does `postext check` from postext 1.34 (§19h). Longer literals that are
+form go in `checks.contentInConfig.allow` (the front matter's title, subtitle, author and
+publisher are allowed without it; the manifest name is not). A design image's `resourceId` takes the same
 placeholders (postext ≥ 1.8): one style draws a different picture per heading
 (`resourceId: '{attr.fondo}'`), so per-page pictures never need per-page styles.
 
@@ -1777,6 +1780,91 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
 8, "sideColumnRole": "floats", "sideColumnSide": "outer"}` (with
 `page.margins.mirror`) and `"lineNumbers": {"enabled": true, "position":
 "side"}`.
+
+## 19g. `pageTemplates[]` and `labelStyles[]` (postext 1.34)
+
+Composed pages (a textbook page of boxes, a worksheet): the template holds the frames' places,
+sizes and styles; the words come from the chapter's `::::page{template}` block
+(document-format.md §12.2). Check `postext --version`: **1.34 loads, resolves and checks
+templates but lays no composed page out**; layout comes with #855 in a later release. Until that
+release, port composed pages with the round-1 ladder (playbooks J) and write templates only when
+the brief asks to prepare for it. Both keys are in the layout key; `configVersion` 15 marks a
+config that may hold templates (14 and older load unchanged).
+
+```
+PageTemplate
+├─ id, name?, extends?          extends = another template's id (chain, root first)
+├─ area?        'content'|'trim'|'bleed'
+├─ grid?        { columns, rows, columnGap?, rowGap? }
+├─ frames?      Frame[]
+├─ groups?      Group[]          a group name must not equal a frame name
+├─ decoration?  DesignSlot       placeholders only, like every design text (§7)
+├─ header? / footer?  DesignSlot | false
+├─ spread?, gutter?, overflowTemplate?, bodyStyle?, palette?, role?
+└─ variants?    { recto?, verso? } partial templates applied per side (a spread takes none)
+
+Frame
+├─ name                         what `:::frame{slot="name"}` and `slot=` name
+├─ placement? | grid?: { col, row, cols?, rows? }
+├─ width?/height?  Dimension | { percent } | 'auto' | 'fill'   default 'fill' / 'auto'; unset → placement.size
+├─ minWidth?/maxWidth?/minHeight?/maxHeight?
+├─ style?       a calloutStyles id (tab, title, fill, border come from it)
+├─ layer? (1), rotate?, verticalAlign?, columns?, columnGap?, padding?
+├─ exclude?     'none'|'push'
+├─ flow?, next?                 the flow frame; `next` chains frames
+├─ takes?       'h1'…'h6'       a heading of that level with no slot goes here
+├─ pin?, grow?, shrink?, priority?
+├─ fit?         { shrinkText (true), minScale (0.9), scaleImages (true), imageMinScale (0.8) }
+├─ overflow?    { continueIn?: '#frame'|'next-page'|'template:<id>', mark?: string|false }
+└─ optional?, crossGutter?, writingMode?, direction?, remove?
+
+Group  { name, kind?: 'stack'|'row' ('stack'), frames?: string[], gap?, placement?, grid?,
+         align?: 'start'|'center'|'end'|'space-between', remove? }
+
+LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, fontStyle? ('normal'),
+              color?, textTransform? ('none'), letterSpacing?, halo?: { color, width }, background?,
+              padding?, minScale? (0.85) }
+```
+
+- **Merge** (`extends`): root first; scalars replace, `grid` per key, frames and groups by `name`
+  (the fields written override; `fit`, `overflow`, `padding` per key; `placement` whole;
+  `remove: true` drops; new names are appended), decoration elements by `id`; then
+  `variants[side]` of every template of the chain, root first. A default restated in a child
+  counts.
+- **Porting rule**: one template per recurring page layout, the variants derived with `extends`
+  and small patches, never whole copies. No text in templates: per-page words come from the
+  `::::page` attributes (`{attr.x}`) and from `:::frame{slot label title}` in the Markdown.
+- **Resource anchors** gain `width` (a fraction of the picture width), `align` ('center'),
+  `verticalAlign` ('middle'), `rotate` and `style` (a `labelStyles` id); comics ignore them.
+  Anchors live on the resource, so every locale shares them.
+- Scripts: `resolvePageTemplate(config, id, { parity: 'recto'|'verso' })` returns the merged
+  template with defaults (`configPath`, per-field `fieldPaths`); `validatePageTemplates(config,
+  { resources })` returns the warnings (verification.md, "Composed pages").
+
+## 19h. `checks` — the `contentInConfig` check (postext 1.34)
+
+```
+checks.contentInConfig
+├─ enabled   true
+├─ allow     []     phrases a design text may hold (a journal's name, an imprint or licence line)
+├─ maxWords  2      words left after the allowed phrases are taken out
+└─ maxChars  24     letters and digits left; a Han/kana/Hangul/Thai character counts 3
+```
+
+Out of the layout key (changing it lays nothing out again). A design text (every `text` element
+of `header`, `footer`, `headings.levels[i].advancedDesign.slot`, a heading style's
+`advancedDesign.slot`/`header`/`footer`, `parts.design`/`versoDesign`, `toc.parts.design`, and
+the same under `htmlViewer.overrides`) is content when its literal (the `content` with every
+`{placeholder}` removed, `{{`/`}}` read as braces, white space collapsed) still has more than
+`maxWords` words or weighs more than `maxChars` once the allowed phrases are out. Allowed: `allow`
+plus the document metadata `title`, `subtitle`, `author`, `publisher` (the first chapter's front
+matter); never the manifest `name`. Comparison: NFKC, any case, whole words between spaces with
+outer punctuation dropped (`·` is no word, `postext.dev` is one), anywhere inside unspaced
+script; a text with no letter or digit (a dot leader, an ornament) is never content. One warning
+per owner (`headingStyles[3]` with `ownerId`, `headings.levels[0]`, `header`…). A misspelt key
+under `checks` gives `unknownConfigKey`; a negative or fractional limit `unknownConfigValue` (the
+default is used). Never raise the limits to quiet a port: move the text into the Markdown.
+`preset_kit.py lint` applies the same rule on any installed version.
 
 ## 20. Fonts — `customFonts` and what goes in preset.json
 

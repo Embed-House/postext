@@ -44,6 +44,9 @@ interface RichToken {
   text: string;
   bold: boolean;
   italic: boolean;
+  /** A space inside inline code: no stretch, no shrink (see
+   *  `measure/rich.ts`). */
+  fixedGlue?: true;
   script?: 'sup' | 'sub';
   scriptFont?: string;
   baselineShift?: number;
@@ -132,8 +135,9 @@ export function richTokensToItems(
       items.push({
         type: 'glue',
         width: token.width,
-        stretch: stretchPerSpace,
-        shrink: shrinkPerSpace,
+        // A space inside inline code keeps its width (#845).
+        stretch: token.fixedGlue ? 0 : stretchPerSpace,
+        shrink: token.fixedGlue ? 0 : shrinkPerSpace,
         sourceIndex: t,
         meta: { ...meta },
       });

@@ -91,6 +91,7 @@ A `.postext` file exported from the sandbox's Projects panel is one `<preset-dir
       "name": "Acme Journal",
       "description": "Two-column journal article",   // optional
       "locale": "en",                 // optional
+      "localized": { "es": { "name": "Revista Acme" } },  // optional: each edition's own title and description (#891)
       "default": true                 // optional, at most one
     }
   ]

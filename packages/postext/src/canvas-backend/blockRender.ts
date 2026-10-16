@@ -15,7 +15,7 @@ import { markerSetText } from '../bidi';
 import { fillSegmentText, fillWordsText } from './segmentText';
 import { lineMarkCuts, type MarkCutRule } from '../measure/markCuts';
 import { hasCJK } from '../measure/cjk';
-import { paintKunten, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations';
+import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations';
 import { fillSegmentWord, paintsSegmentLanguage, type WordRun } from './wordRuns';
 import { shapedOtherwise } from './trackedText';
 import { joiningScriptIn } from '../measure/joining';
@@ -709,6 +709,7 @@ function renderStripCaption(ctx: CanvasRenderingContext2D, block: VDTBlock): voi
     refColor: block.refColor,
   };
   for (const line of block.lines.slice(caption.firstLine, caption.firstLine + caption.lineCount)) {
+    if (line.highlights) paintLineHighlights(ctx, line);
     renderLine(ctx, line, style, block.textAlign, block.bbox.width, block.bbox.x, lineTrailingTracking(line, line.letterSpacing ?? 0), line.letterSpacing ?? 0, false);
     if (line.marks) paintLineMarks(ctx, line, block.color);
   }
@@ -763,6 +764,8 @@ export function renderBlock(
   const tocEntry = block.tocEntry !== undefined;
   for (const line of block.lines) {
     const tracking = (block.letterSpacing ?? 0) + (line.letterSpacing ?? 0);
+    // Highlight bands (`:mark[…]`, #888), under the text.
+    if (line.highlights) paintLineHighlights(ctx, line);
     if (tracking !== 0) setLetterSpacing(ctx, tracking);
     renderLine(ctx, line, style, block.textAlign, block.bbox.width, block.bbox.x, lineTrailingTracking(line, tracking), tracking, tocEntry);
     if (tracking !== 0) setLetterSpacing(ctx, 0);

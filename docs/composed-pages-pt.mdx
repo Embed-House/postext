@@ -17,7 +17,7 @@ export const metadata = {
 
 Uma página composta é diagramada a partir de um modelo: blocos com nome (uma faixa de título, um texto, uma caixa com a sua foto), grupos que se movem juntos e uma decoração, tudo definido na configuração, em `pageTemplates`. O Markdown da página é um contêiner cercado que nomeia o seu modelo e distribui o conteúdo pelos blocos, pelo nome de cada um. Nenhuma posição ou tamanho é escrito no Markdown, e nenhum texto do conteúdo é escrito na configuração, então uma tradução é o mesmo modelo com outras palavras.
 
-Esta página trata do Markdown. Nesta versão o analisador já lê as páginas compostas e as verificações de slots rodam, de modo que o painel Verificações e o `postext check` apontam uma página que não bate com o seu modelo. A diagramação do modelo na página chega na próxima versão; até lá, o conteúdo de uma página composta é composto no texto corrido, na ordem do Markdown e em páginas próprias, então nada do que se escreve nela se perde. Um documento sem páginas compostas é diagramado exatamente como antes.
+Esta página trata do Markdown e de como a página é composta a partir dele. O modelo em si (os seus blocos, tamanhos, estilos e decoração) está descrito em [Configuração › Páginas compostas](/pt/docs/configuration-composed-pages). Um documento sem páginas compostas é diagramado exatamente como antes.
 
 ## A cerca de página
 
@@ -112,7 +112,7 @@ Um `slot` fora de uma página composta é lido e não muda nada.
 - `style` nomeia um estilo de rótulo e passa por cima do estilo da âncora.
 - O texto entre colchetes é Markdown em linha: negrito, itálico, chips.
 
-Uma figura funciona tanto no texto corrido quanto dentro de um bloco. Os rótulos são lidos e guardados junto com a sua posição no Markdown; desenhá-los sobre a imagem chega com a diagramação de modelos, e até lá a figura é composta como o seu recurso. Uma linha dentro de uma figura que não é um rótulo nem está em branco encerra uma figura que ficou sem o `:::` de fechamento, e é assinalada como contêiner não fechado.
+Uma figura funciona tanto no texto corrido quanto dentro de um bloco. Os rótulos são lidos e guardados junto com a sua posição no Markdown; desenhá-los sobre a imagem fica para uma versão futura, e até lá a figura é composta como o seu recurso. Uma linha dentro de uma figura que não é um rótulo nem está em branco encerra uma figura que ficou sem o `:::` de fechamento, e é assinalada como contêiner não fechado.
 
 ## Exemplo
 
@@ -151,6 +151,45 @@ Si necesitas o quieres comprar algo muy caro…
 ```
 
 O título vai para o bloco que recebe `h1`; o subtítulo, o parágrafo e a lista, para o bloco de fluxo; cada caixa e cada foto, para o bloco do seu slot. A edição em catalão são as mesmas linhas com outras palavras: o modelo, os slots e as fotos não mudam.
+
+## Como a página é composta
+
+Uma página composta ocupa uma página só sua (papel `composed` para o filtro `pages` dos elementos de design). O modelo é escolhido conforme o lado em que a página cai, então vale o seu `variants.recto` ou o seu `variants.verso`. Depois cada bloco é posicionado e preenchido, um após o outro, com a tipografia do resto do livro: estilos de parágrafo e de título, listas, chips, chamadas de nota e o estilo de boxe do bloco.
+
+### Posicionar os blocos
+
+Um bloco fica na sua célula da grade, ou onde o seu `placement` o coloca (uma âncora, uma borda e um deslocamento, como num elemento de design), ou, sem nenhum dos dois, no canto superior esquerdo da área do modelo, com a largura da área inteira. Um bloco ancorado a outro (`"to": "#dinero"`) é posicionado depois dele e se move com ele: `below` o pendura embaixo do outro bloco, `right-of` o põe ao lado, e um canto como `top-right` o prende a esse canto da caixa do outro bloco.
+
+A sua altura é fixa (um comprimento ou uma porcentagem), `fill` (até a borda da área) ou `auto`, o padrão: a altura do conteúdo que ele recebe, entre `minHeight` e `maxHeight`, e nunca além do pé da área. Num bloco mais alto que o seu conteúdo, `verticalAlign` diz onde esse conteúdo fica (`top`, `middle`, `bottom`, ou `justify` para distribuir o espaço entre os seus elementos). O estilo de boxe do bloco desenha o fundo, a borda, os cantos arredondados, a faixa e o ícone no tamanho inteiro do bloco; o `label` da cerca `:::frame` sai impresso na aba do estilo.
+
+### O bloco de fluxo e os títulos
+
+O conteúdo que não nomeia nenhum slot vai para o bloco marcado com `flow`; o primeiro título de um nível vai para o bloco que o recebe com `takes`. Os blocos de uma página são lidos na ordem em que o seu conteúdo aparece pela primeira vez no Markdown, cada um inteiro: um leitor de tela, o PDF etiquetado e as saídas de layout fluido leem um boxe depois do texto que abre a página, e não no meio dele.
+
+### Encadear blocos
+
+`next` manda o que um bloco não consegue conter para outro bloco da mesma página, e esse para outro, como as caixas de texto encadeadas dos programas de diagramação:
+
+```json
+{ "name": "columna-1", "flow": true, "next": "columna-2", "height": { "value": 120, "unit": "mm" } },
+{ "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
+```
+
+O texto é cortado entre duas linhas e continua no bloco seguinte, quebrado de novo na largura desse bloco, sem perder nem repetir nada. `overflow.continueIn: "#frame"` quer dizer o mesmo. Continuar na página seguinte está previsto (`"next-page"`).
+
+### Blocos que afastam o texto
+
+Um bloco com `exclude: "push"` mantém o texto dos outros blocos fora do seu retângulo: a linha de outro bloco que esbarra nele é composta mais curta do lado que o retângulo cobre, do mesmo jeito que o texto contorna uma imagem no texto corrido. Uma foto ancorada no canto de uma caixa e marcada com `push` faz o texto da caixa correr ao lado dela. Uma caixa que precisa deixar livre uma coluna fixa para as suas imagens pode usar `padding` no lugar disso.
+
+### Decoração, cabeços e camadas
+
+A `decoration` do modelo (imagens, fios, caixas e textos curtos) é posicionada quando os blocos já têm a sua caixa definitiva, então um elemento pode se ancorar a um bloco (`"to": "#gasto"`) e acompanhá-lo. Os seus textos leem os atributos da própria página: `fondo="banda-retos"` na cerca de página dá `{attr.fondo}`, por exemplo para escolher página a página uma imagem de fundo com `"resourceId": "{attr.fondo}"`. Os cabeços e rodapés também leem esses atributos. O `header` ou o `footer` de um modelo substitui o da seção, `false` o esconde e, quando o modelo não define nenhum dos dois, saem os da seção.
+
+Os blocos são pintados na ordem da sua `layer`: a decoração na camada 0, os blocos na 1 por padrão, uma camada mais alta por cima de uma mais baixa e uma camada negativa por baixo da decoração. `rotate` gira um bloco junto com o seu conteúdo, em qualquer ângulo e em torno do centro do bloco, no canvas, no PDF, no visualizador HTML e no EPUB de layout fixo.
+
+### Conteúdo que não cabe
+
+Um bloco cujo conteúdo é mais alto que ele, sem um bloco seguinte onde continuar, guarda todo esse conteúdo no documento, mas só mostra o que cabe: o resto é cortado no pé do bloco na saída paginada, e o aviso [`frameOverflow`](#frameoverflow) diz quanto. O conteúdo que nenhum bloco recebe (não há bloco de fluxo, ou falta um bloco nesse lado) é composto no texto corrido, na página que vem depois da página composta.
 
 ## Avisos
 
@@ -193,6 +232,16 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
   </tbody>
 </table>
 
+### frameOverflow
+
+Este aviso vem da diagramação, não das verificações do código-fonte descritas acima: ele aparece quando a página já está composta, no painel Verificações, no `postext check` e nos `contentWarnings` do documento.
+
+**Causa.** O conteúdo que entra em um bloco (pelo slot dele, ou o que vai para o bloco de fluxo) é mais alto que o bloco, e o bloco não tem mais nenhum `next` onde continuar. Quase sempre há mais texto do que o bloco comporta: uma tradução mais longa que o original, ou um bloco preso a um `height` ou `maxHeight` fixo. O que não cabe é cortado no pé do bloco na saída paginada; continua no documento, no mapa de origem e no EPUB de layout fluido. O aviso informa o modelo, o bloco, a página, a altura cortada (`overflowMm`) e `configPath`, o ponteiro JSON do bloco na configuração (`/pageTemplates/0/frames/2`).
+
+**Correção.** Dê mais espaço ao bloco (aumente ou remova o `height` ou o `maxHeight` dele), encadeie-o a outro bloco com `next`, encurte o texto ou componha a página com outro modelo. Por enquanto a diagramação não reduz o texto para que ele caiba.
+
 ## No código
 
 `composedPages(blocks)` lê os blocos analisados de um capítulo (`parseMarkdownWithIssues(markdown).blocks`) e devolve um nó por cerca de página, em ordem: o seu `template`, `spread`, `attrs` com o intervalo de origem de cada valor (`attrSources`), o seu `fenceIndex` (o ordinal da cerca no capítulo, o mesmo em todos os idiomas), `slots` (os índices dos blocos de cada slot, na ordem do Markdown), `unassigned` (os blocos sem slot) e o intervalo de origem da página inteira. Um bloco traz o slot que nomeia em `ContentBlock.slot`, com o intervalo de origem do valor; uma figura é um `resourceBlock` cujo `figure` guarda os seus atributos e rótulos, cada rótulo com o seu texto, os seus trechos em linha e um mapa de origem que leva de volta ao Markdown. `checkComposedSlots(pages, config)` devolve os três avisos de slot dessas páginas.
+
+Depois da diagramação, o `VDTPage.composed` de uma página composta registra o seu modelo, a variante aplicada, os atributos da cerca de página e, para cada bloco, o seu id (`cp0:dinero`: o ordinal da cerca de página e o nome do bloco, o mesmo em todos os idiomas), a sua caixa, a camada, o giro, a altura do conteúdo que não coube (`overflowPx`), o bloco de onde ele vem ou para onde continua, o seu caminho na configuração (`/pageTemplates/0/frames/2`) e os ids dos seus elementos. Esses elementos são boxes comuns em `page.floats` e `doc.blocks`, com os seus intervalos de origem, então um clique num bloco sem giro da prévia do Sandbox leva ao seu Markdown. `composedPaintOrder(page)` dá a ordem em que um renderizador pinta os blocos e a decoração, e `frameMatrix(frame)`, o giro de um bloco.

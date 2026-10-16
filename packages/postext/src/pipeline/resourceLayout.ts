@@ -44,6 +44,7 @@ import type {
   Dimension,
   ResolvedCaptionStyleConfig,
   ResolvedCjkConfig,
+  ResolvedInlineCodeStyleConfig,
   ResolvedMathConfig,
   Resource,
   ResourceSafeArea,
@@ -83,6 +84,7 @@ import { hasAnnotations, resolveAnnotationSpans } from './annotations';
 import { sliceSpan } from '../parse/links';
 import { indentColumn, listDepth, nestListItem } from '../parse/listNesting';
 import { chipContextOf, fontSizePxOf, resolveChipSpans, type ChipContext } from './chips';
+import { withSnippetInlineCode } from './codeInline';
 import { mergeCaptionStyle } from '../defaults/captionStyle';
 import { pickTableStyle } from '../defaults/tableStyle';
 import { resolveColorValue, startEndAsLeftRight } from '../defaults/shared';
@@ -456,6 +458,9 @@ interface TableLayoutStyle {
   palette?: ColorPaletteEntry[];
   /** Chip styles, for inline `:chip[…]` in cells. */
   chips?: ChipContext;
+  /** `codeStyle.inline`, for the inline code of cells; unset, inline code
+   *  is set in the cell's face. */
+  inlineCode?: ResolvedInlineCodeStyleConfig;
   /** The document's CJK settings, for the annotations of cells
    *  ({@link annotatedSpans}). */
   annotations: AnnotationScope;
@@ -1060,7 +1065,10 @@ function layoutTableIn(
       const isHeader = cellIsHeader(cell, r, model);
       const set = isHeader ? header : body;
       const cellWidth = spanWidth(c, colSpan) - cellPaddingPx * 2;
-      const parsed = snippetMathSpans(parseInlineSnippetSpans(cell.content), fontSizePxOf(set.fontString), set.lineHeightPx, style.math);
+      const parsed = snippetMathSpans(
+        withSnippetInlineCode(parseInlineSnippetSpans(cell.content), cell.content, style.inlineCode, style.dpi, fontSizePxOf(set.fontString)),
+        fontSizePxOf(set.fontString), set.lineHeightPx, style.math,
+      );
       const spans = annotatedSpans(resolveCellChips(resolveSwatchSpans(resolveRefSpans(
         set.uppercase ? parsed.map((s) => (s.ref || s.math ? s : { ...s, text: uppercasePreservingLength(s.text) })) : parsed,
         resourceNumbering,
@@ -1347,7 +1355,10 @@ function layoutCaptionTextIn(input: CaptionTextInput): CaptionTextLayout {
     // emphasis.
     const resolvedSpans = annotatedSpans(resolveChipSpans(resolveSwatchSpans(resolveRefSpans(
       snippetMathSpans(
-        resolveCitationSpans(parseInlineSnippetSpans(captionText, { citations: true }), input.citations),
+        resolveCitationSpans(
+          withSnippetInlineCode(parseInlineSnippetSpans(captionText, { citations: true }), captionText, resolved.codeStyle?.inline, dpi, captionFontPx),
+          input.citations,
+        ),
         captionFontPx,
         captionLineHeightPx,
         resolved.math,
@@ -1554,6 +1565,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
       listGapPx: dimensionToPx(resolved.unorderedLists.gap, dpi, bodyFontPx),
       palette,
       chips: chipContextOf(resolved),
+      ...(resolved.codeStyle?.inline ? { inlineCode: resolved.codeStyle.inline } : {}),
       annotations: { cjk: resolved.cjk, dpi },
       math: resolved.math,
     };
@@ -1631,7 +1643,10 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   if (noteText.trim().length > 0 && !slice?.continues) {
     const noteSpans = annotatedSpans(resolveChipSpans(resolveSwatchSpans(resolveRefSpans(
       snippetMathSpans(
-        resolveCitationSpans(parseInlineSnippetSpans(noteText, { citations: true }), input.captionCitations?.get(resource.id)?.note),
+        resolveCitationSpans(
+          withSnippetInlineCode(parseInlineSnippetSpans(noteText, { citations: true }), noteText, resolved.codeStyle?.inline, dpi, noteFontPx),
+          input.captionCitations?.get(resource.id)?.note,
+        ),
         noteFontPx,
         noteLineHeightPx,
         resolved.math,

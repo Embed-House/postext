@@ -161,7 +161,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
 
 A frame is a named rectangle that receives typeset content. Its `name` is the slot the Markdown asks for, and it is unique in its template (a group cannot take the name of a frame either, since anchors name both the same way).
 
-A frame is placed by its `grid` cell when the template has a grid, else by its `placement`, which works like a design element's: an anchor (`'container'` is the area, `'page'`, `'bleed'`, or `'#name'` for another frame or group), an edge, an offset and a size. A frame anchored to another one moves with it. Without either, the frame takes the whole area.
+A frame is placed by its `grid` cell when the template has a grid, else by its `placement`, which works like a design element's: an anchor (`'container'` is the area, `'page'`, `'bleed'`, or `'#name'` for another frame or group), an edge, an offset and a size. A frame anchored to another one moves with it. Without either, the frame starts at the top-left corner of the area, as wide as the area, and as tall as its height rule says. How the content is poured into the frames, chained and clipped is described in [Composed pages › How the page is set](/en/docs/composed-pages#how-the-page-is-set).
 
 <table>
   <thead>
@@ -413,6 +413,10 @@ pageTemplates: [
 A value equal to a default is never dropped when the Sandbox saves a template: in a template that extends another, or in a variant, it overrides the parent's value.
 
 From code, `resolvePageTemplate(config, id, { parity })` returns a template with its chain merged, the variant of the side applied, every default filled in and every reference settled as the warnings below describe; `validatePageTemplates(config)` returns the warnings.
+
+### What the layout applies
+
+The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` and `overflow.continueIn: "#frame"`, and the template's `area`, `grid`, `decoration`, `header`, `footer` and `variants`. Read and checked, but not yet applied: a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and a group's `gap` and `align`; its frames keep their own placement), `fit`, `overflow.continueIn: "next-page"` and `overflowTemplate`, `spread` and `crossGutter`, a frame's `writingMode` and `direction`, and the template's `bodyStyle` and `palette`. An `'auto'` width reads as `'fill'`.
 
 ## Label styles
 

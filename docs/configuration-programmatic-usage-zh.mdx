@@ -125,9 +125,19 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>它按漫画页读取；模板页需要四个冒号。</td>
     </tr>
     <tr>
+      <td><code>frameOverflow</code></td>
+      <td>模板页某个框的内容放不下，而这个框已没有可以接续的<code>next</code>框（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>；<code>overflowMm</code>为被裁掉的高度；<code>configPath</code>为模板中该框的JSON指针，如<code>/pageTemplates/0/frames/2</code>）。由排版给出，带有该页的<code>pageIndex</code>。</td>
+      <td>分页输出在框底裁掉放不下的部分；它仍留在文档、源码映射和流式版式的EPUB中。</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code>指定的行内标签样式不存在。</td>
       <td>该行内标签采用第一个行内标签样式。</td>
+    </tr>
+    <tr>
+      <td><code>unknownMarkStyle</code></td>
+      <td><code>:mark[…]{'{'}style{'}'}</code>指定的高亮样式不存在。</td>
+      <td>该标记采用第一个高亮样式。</td>
     </tr>
     <tr>
       <td><code>undefinedFootnote</code></td>

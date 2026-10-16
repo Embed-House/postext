@@ -215,6 +215,15 @@ def register(preset_id: str, meta: dict) -> None:
     index_path = os.path.join(PRESETS_ROOT, "index.json")
     index = json.load(open(index_path, encoding="utf-8")) if os.path.exists(index_path) else {"version": 1, "presets": []}
     entry = {"id": preset_id, "dir": preset_id, **{k: v for k, v in meta.items() if k != "id"}}
+    # Each edition's own title and description (`localized.<lang>.name`,
+    # #891); the rest of a manifest's `localized` stays out of the index.
+    if isinstance(entry.get("localized"), dict):
+        names = {lang: {f: o[f] for f in ("name", "description") if isinstance(o, dict) and o.get(f)} for lang, o in entry["localized"].items()}
+        names = {lang: o for lang, o in names.items() if o}
+        if names:
+            entry["localized"] = names
+        else:
+            del entry["localized"]
     index["presets"] = [e for e in index["presets"] if e.get("id") != preset_id] + [entry]
     index["presets"].sort(key=lambda e: e["id"])
     with open(index_path, "w", encoding="utf-8") as f:

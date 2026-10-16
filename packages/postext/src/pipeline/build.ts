@@ -2,7 +2,7 @@ import { withBitmapResolutions } from '../bitmapResolution';
 import { plainTitleBreaks } from '../parse/inlineFormatting';
 import type { PostextContent, PostextConfig, Resource, ResourceType, ResourceRotation, HeadingBreakParity, ResolvedCalloutStyleConfig, ResolvedHeadingLevelConfig, CalloutSpan } from '../types';
 import type { HeadingPlaceholderInfo } from '../design/placeholders';
-import type { ContentBlock, ListKind } from '../parse';
+import type { ComposedPageFence, ContentBlock, ListKind } from '../parse';
 import { dimensionToPx } from '../units';
 import {
   createVDTDocument,
@@ -77,6 +77,9 @@ import type { AnchorRefContext } from './resourceLayout';
 import { applyStatementNumbering, numberStatements, outlineLookup } from './statementNumbering';
 import { SPAN_EMBED_STYLE_ID, isPageSpanStrip, spanEmbedStyle, wrapPageSpanEmbeds } from './spanEmbeds';
 import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowColumns';
+import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap';
+import { resolvePageTemplate } from '../composed/templates';
+import { composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline';
 import { expandTocDirectives } from './toc';
 import { expandIndexDirectives, locateIndexMarks } from './indexDirective';
@@ -153,19 +156,25 @@ import {
 } from './footnotes';
 import { planParts, derivePartMeasureContext } from './parts';
 import {
-  layoutCallout,
   offsetBlock,
   offsetCalloutToAbsolute,
   pickCalloutStyle,
   planCallouts,
   resolveCalloutAttrs,
   type CalloutLayoutResult,
-  type CalloutUnit,
   type PlannedCallout,
-  type CalloutLineWidth,
-  type GroupPos,
 } from './calloutLayout';
-import { fillGalley, galleyBreaks } from './columnsGroup';
+import {
+  CUT_START,
+  fragmentRange,
+  makeCalloutLayouter as makeCalloutLayouterIn,
+  splitCalloutFragment as splitCalloutFragmentIn,
+  tallerThanColumn as tallerThanColumnIn,
+  type CalloutCut,
+  type CalloutFragment,
+  type CalloutLayouter,
+  type FrameLayoutPass,
+} from './frameLayout';
 import { chooseTableSlice, layoutCaptionText, layoutResourceBlock, MIN_TAIL_ROWS, type TableRowMetrics, type TableSliceSpec } from './resourceLayout';
 import {
   computeFloatPlan,
@@ -232,6 +241,7 @@ import { annotateArabicMarks } from '../arabicMarks';
 import { literalBreaksFor } from './hardBreaks';
 import { tashkilFor } from './tashkil';
 import { overlineEmphasis } from '../emphasisOverline';
+import { highlightDocument } from '../highlightMarks';
 import { withBookTitleBrackets } from './annotations';
 import { paperByBlock, stampPagePaper } from './paper';
 import { headingLineSpanBand } from './lineSpan';
@@ -820,7 +830,13 @@ function placeDocumentPass(
   // set by the span-block path like any other.
   // A `:::columns` group in the running text (#634): each in a frameless
   // box the callout machinery places, cuts and splits.
-  const flowGroups = resolved.layout.flowColumns ? wrapFlowColumns(numberedBlocks) : { blocks: numberedBlocks, wrapped: false };
+  // Composed pages (#855): each page's content regrouped into the stories
+  // its template's frames receive, one frameless box each (set at the
+  // page's template, below). Before the main-flow groups: a `:::columns`
+  // in a frame is a group of its box.
+  const templateSource = { pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles };
+  const composedWrap = wrapComposedPages(numberedBlocks, templateSource);
+  const flowGroups = resolved.layout.flowColumns ? wrapFlowColumns(composedWrap.blocks) : { blocks: composedWrap.blocks, wrapped: false };
   const spanEmbeds = wrapPageSpanEmbeds(flowGroups.blocks, content.resources ?? [], effectiveResourceTypes(config, content.resources ?? []));
   // Code listings (#624): each in a box of the code style, which the
   // callout machinery places and splits.
@@ -881,6 +897,8 @@ function placeDocumentPass(
   const syntheticBoxes = [
     ...(spanEmbeds.wrapped ? [spanEmbedStyle(bodyStyle.lineHeightPx, resolved.layout.inlineResourceGap !== 'above')] : []),
     ...(codeBoxes.wrapped ? [codeBoxStyle(resolved)] : []),
+    // The frameless box of a composed page's story (#855).
+    ...(composedWrap.wrapped ? [frameBoxStyle(Math.max(resolved.bodyText.avoidOrphans ? resolved.bodyText.orphanMinLines : 1, resolved.bodyText.avoidWidows ? resolved.bodyText.widowMinLines : 1))] : []),
     // The boxes of main-flow groups: sub-columns a body line apart in the
     // text column, a gutter apart across the page.
     ...(flowGroups.wrapped
@@ -897,7 +915,7 @@ function placeDocumentPass(
     : resolved.calloutStyles;
   // A box nested in another looks its style up in the configuration it is
   // laid out with: the listings' box among them.
-  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped ? { ...resolved, calloutStyles } : resolved;
+  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped ? { ...resolved, calloutStyles } : resolved;
   const blockquoteStyle = resolveBlockquoteStyle(resolved);
   const listLevelIndentsPx = computeLevelIndentsPx(resolved, bodyStyle.fontSizePx);
   const orderedMetrics = computeOrderedListRunMetrics(contentBlocks, resolved, bodyStyle.fontSizePx);
@@ -935,6 +953,20 @@ function placeDocumentPass(
   const floatPlan = computeFloatPlan(contentBlocks, resources, resourceTypes, incorporated,
     (blockIdx) => sectionWritingMode(sectionPlan, resolved, blockIdx) === 'vertical-rl', resolved.layout.floatShrink, resolved.layout.wrap,
     resolved.layout.floatsAtCitingPage);
+  // A composed page's pictures are set in its frames: a `::resource` a
+  // story holds does not float. A reference in a frame to a picture set
+  // elsewhere floats from the page's end, to the pages after it.
+  const composedPlans = planComposedPages(contentBlocks, calloutPlan, templateSource);
+  if (composedPlans.size > 0) {
+    for (let k = floatPlan.length - 1; k >= 0; k--) {
+      const f = floatPlan[k]!;
+      const page = composedPageAt(composedPlans, f.firstBlockIdx);
+      if (!page) continue;
+      const raw = contentBlocks[f.firstBlockIdx];
+      if (raw?.type === 'resourceBlock' && raw.resourceId === f.resourceId && page.storyAt(f.firstBlockIdx)) floatPlan.splice(k, 1);
+      else f.firstBlockIdx = page.endIdx;
+    }
+  }
   const floatedIds = floatedResourceIds(floatPlan, incorporated, resources, resourceTypes);
   const floatsByFirstBlock = new Map<number, PlannedFloat[]>();
   for (const f of floatPlan) {
@@ -3320,7 +3352,7 @@ function placeDocumentPass(
     // a chapter laid out on its own) opening with a styled heading.
     const page = doc.pages[cursor.pageIndex];
     if (
-      page && !page.partInfo && !page.comic && cursor.columnIndex === 0
+      page && !page.partInfo && !page.comic && !page.composed && cursor.columnIndex === 0
       && !pageHasContent(page) && !(page.floats && page.floats.length > 0)
     ) {
       const fresh = createPageWithColumns(page.index, geomResolved, contentArea, pageWidthPx, pageHeightPx, pageIndexOffset);
@@ -3683,7 +3715,7 @@ function placeDocumentPass(
    */
   const openSpanHeadingHere = (blockIdx: number, rawBlock: ContentBlock, level: ResolvedHeadingLevelConfig): boolean => {
     const page = doc.pages[cursor.pageIndex]!;
-    if (page.partInfo || page.comic || currentColumn(doc, cursor).kind === 'span') return false;
+    if (page.partInfo || page.comic || page.composed || currentColumn(doc, cursor).kind === 'span') return false;
     const band = currentBand(page, cursor);
     const cols = bandColumns(page, band);
     if (cols.length === 0) return false;
@@ -3810,7 +3842,7 @@ function placeDocumentPass(
     const balancingCfg = resolved.headings.balancing;
     if (!balancingCfg.enabled || !balancingCfg.trailing) return;
     const page = doc.pages[cursor.pageIndex]!;
-    if (page.columns[cursor.columnIndex]?.kind === 'span' || page.partInfo || page.comic) return;
+    if (page.columns[cursor.columnIndex]?.kind === 'span' || page.partInfo || page.comic || page.composed) return;
     const band = currentBand(page, cursor);
     const cols = bandColumns(page, band).filter((c) => c.bbox.height > 0.5);
     // A band where text wraps round something (#627) is not levelled.
@@ -4009,9 +4041,12 @@ function placeDocumentPass(
   /** A closed `:::paper` still owes a page break before the next placed
    *  block. */
   let pendingPaperBreak = false;
-  /** A composed page (`::::page`, #854) ended: the next placed block opens
-   *  a new page. */
-  let pendingComposedBreak = false;
+  /** A composed page (`::::page`, #854) owes a page break before the next
+   *  placed block: `'page'` once its template was laid on the current page
+   *  (nothing flowed on it), `'flow'` after content set in the flow (a page
+   *  of unknown template, or what no frame took), which closes as a
+   *  `:::paper` run does. */
+  let pendingComposedBreak: false | 'page' | 'flow' = false;
   /** A comic page (`:::page`) was laid out on the current page: the next
    *  placed block opens a new one (a page that ends the document leaves no
    *  empty page behind). */
@@ -4045,7 +4080,7 @@ function placeDocumentPass(
   /** A page holding something the reader sees: column content, a float, a
    *  part opener. A parity blank is not one. */
   const pageTakesNumbering = (page: VDTPage): boolean =>
-    pageHasContent(page) || (page.floats?.length ?? 0) > 0 || page.partInfo !== undefined || page.comic !== undefined;
+    pageHasContent(page) || (page.floats?.length ?? 0) > 0 || page.partInfo !== undefined || page.comic !== undefined || page.composed !== undefined;
 
   /** Commits a pending `:::numbering` change to the first page from the
    *  directive on that receives content: the page the directive opens (the
@@ -4216,52 +4251,7 @@ function placeDocumentPass(
   // fragment's frame shares the fence's `contentIndex` / `containerId` and
   // records its `callout.part` / `callout.continued`.
 
-  /** A position inside a box's children where a fragment starts or ends:
-   *  before child `child` (a position in `children`), past its first
-   *  `line` text lines. `line: 0` is the child's head; a cut with
-   *  `line > 0` falls inside that child, between two of its lines. */
-  interface CalloutCut {
-    child: number;
-    line: number;
-    /** For a cut inside a child (`line > 0`): the box widths that child's
-     *  lines up to `line` were counted at, from line `fromLine` on (see
-     *  `CalloutLayoutInput.lineWidths`). A box that goes on in a column of
-     *  another width breaks the child again from them. */
-    widths?: readonly CalloutLineWidth[];
-    /** A cut inside the `:::columns` group whose opening marker is at
-     *  position `open` (#634): where each of its streams stands (one for a
-     *  snake group). `child` is then the earliest of them, `line` 0. */
-    group?: { open: number; pos: readonly GroupPos[] };
-  }
-  /** The widths a child's lines are counted at in a fragment `width` wide
-   *  that opens `from` (see `CalloutCut.widths`). */
-  const cutWidths = (from: CalloutCut, width: number): readonly CalloutLineWidth[] => {
-    const before = from.line > 0 ? from.widths : undefined;
-    if (!before || before.length === 0) return [{ fromLine: 0, width }];
-    const last = before[before.length - 1]!;
-    return Math.abs(last.width - width) <= 0.5 ? before : [...before, { fromLine: from.line, width }];
-  };
-  const CUT_START: CalloutCut = { child: 0, line: 0 };
 
-  interface CalloutLayouter {
-    /** Content blocks between the fence markers. */
-    children: readonly ContentBlock[];
-    /** Content index of `children[0]`. */
-    childBase: number;
-    /** Positions in `children` of the blocks the box lays out (marker
-     *  blocks of nested containers and directives are skipped). */
-    realAt: readonly number[];
-    /** The cut past the last child (the end of the box). */
-    end: CalloutCut;
-    /** `:::columns` groups among the children ([start, end] marker
-     *  positions): only the cuts the group itself offers fall inside one
-     *  (#634), and none inside a group of a nested box. */
-    groups: readonly [number, number][];
-    /** Lay out the children from cut `from` to cut `to` at `width` as one
-     *  box — a `continuation` (every fragment after the head) without
-     *  title / icon. A cut inside a child keeps only the lines on its side. */
-    layoutRange: (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored?: boolean) => CalloutLayoutResult;
-  }
 
   /** A strip in a box (the box of a page-wide strip set `here`, #590):
    *  laid out at the box's inner width, as tall as a page allows, with its
@@ -4272,83 +4262,22 @@ function placeDocumentPass(
     withStripPlaceholder(blk, stripGeometry(idx, raw.comic, width, contentArea.height - 2 * floatGapPx, pageIsVertical(doc.pages[cursor.pageIndex]!)));
     return blk;
   };
-  const makeCalloutLayouter = (
-    startIdx: number,
-    plan: PlannedCallout,
-    style: ResolvedCalloutStyleConfig,
-  ): CalloutLayouter => {
-    const children = contentBlocks.slice(startIdx + 1, plan.endIdx);
-    const realAt: number[] = [];
-    children.forEach((c, k) => {
-      if ((c.type !== 'directive' || (c.directiveName === 'strip' && c.comic)) && !isMarkerBlock(c)) realAt.push(k);
-    });
-    // `:::columns` groups among the children, as [start marker, end marker]
-    // positions: a split never cuts inside one.
-    const groups: [number, number][] = [];
-    children.forEach((c, k) => {
-      if (c.type === 'containerStart' && c.containerName === 'columns') {
-        let e = k + 1;
-        while (e < children.length && !(children[e]!.type === 'containerEnd' && children[e]!.containerName === 'columns' && children[e]!.containerId === c.containerId)) e++;
-        groups.push([k, e]);
-      }
-    });
-    const layoutRange = (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored = false) => {
-      let n = 0;
-      // A fragment that opens inside a `:::columns` group starts at its
-      // opening marker and one that ends inside it at its closing marker:
-      // the group sets the part between the cut's positions (#634).
-      const fromChild = from.group ? from.group.open : from.child;
-      const closeOfGroup = (open: number): number => groups.find(([gs]) => gs === open)?.[1] ?? children.length - 1;
-      // A cut inside child `to.child` includes that child (its first
-      // `to.line` lines); a cut at a child's head excludes it.
-      const toChild = to.group ? closeOfGroup(to.group.open) + 1 : to.line > 0 ? to.child + 1 : to.child;
-      const inSlice = (pos: readonly GroupPos[]): GroupPos[] => pos.map((p) => ({ ...p, child: p.child - fromChild }));
-      // Nested boxes still open at `from` (their closing markers leading
-      // the range close them): the fragment opens inside them.
-      const open: { idx: number; block: ContentBlock }[] = [];
-      for (let k = 0; k < fromChild; k++) {
-        const c = children[k]!;
-        if (c.containerName !== 'callout') continue;
-        if (c.type === 'containerStart') open.push({ idx: startIdx + 1 + k, block: c });
-        else if (c.type === 'containerEnd') open.pop();
-      }
-      for (let k = fromChild; k < children.length && open.length > 0; k++) {
-        const c = children[k]!;
-        if (c.type !== 'containerEnd' || c.containerId !== open[open.length - 1]!.block.containerId) break;
-        open.pop();
-      }
-      return layoutCallout({
-        style,
-        attrs: plan.attrs,
-        ...(contentBlocks[startIdx]?.direction ? { direction: contentBlocks[startIdx]!.direction } : {}),
-        continuation,
-        // Any range short of the box's end is a fragment that goes on.
-        ...(to.child < children.length || to.line > 0 || to.group ? { continues: true } : {}),
-        children: children.slice(fromChild, toChild),
-        childStartIdx: startIdx + 1 + fromChild,
-        width,
-        // A main-flow group's box sets its blocks as the text around it is
-        // set: a styled section's or a part's body (#634).
-        ctx: isFlowColumnsStyle(style.id)
-          ? (partPlan.byBlock[startIdx] ? partMeasureCtx : sectionMeasureCtx(sectionPlan.byBlock[startIdx]))
-          : measureCtx,
-        resolved: calloutResolved,
-        containerId: plan.containerId,
-        frameId,
-        nextChildId: () => `${frameId}-c${n++}`,
-        paragraphContainers,
-        ...(from.line > 0 && !from.group ? { lineFrom: from.line } : {}),
-        ...(from.line > 0 && !from.group && from.widths ? { lineWidths: from.widths } : {}),
-        ...(to.line > 0 && !to.group ? { lineTo: to.line } : {}),
-        ...(from.group ? { groupFrom: inSlice(from.group.pos) } : {}),
-        ...(to.group ? { groupTo: inSlice(to.group.pos) } : {}),
-        ...(open.length > 0 ? { openNested: open } : {}),
-        mirrored,
-        stripBlock: calloutStripBlock,
-      });
-    };
-    return { children, childBase: startIdx + 1, realAt, end: { child: children.length, line: 0 }, layoutRange, groups };
+  /** What the box typesetter (`frameLayout.ts`) reads of this pass. */
+  const framePass: FrameLayoutPass = {
+    contentBlocks,
+    resolved,
+    calloutResolved,
+    paragraphContainers,
+    // A main-flow group's box sets its blocks as the text around it is
+    // set: a styled section's or a part's body (#634).
+    measureCtxFor: (startIdx, style) => (isFlowColumnsStyle(style.id) || style.id === FRAME_STYLE_ID
+      ? (partPlan.byBlock[startIdx] ? partMeasureCtx : sectionMeasureCtx(sectionPlan.byBlock[startIdx]))
+      : measureCtx),
+    stripBlock: calloutStripBlock,
+    columnHeight: () => contentArea.height,
   };
+  const makeCalloutLayouter = (startIdx: number, plan: PlannedCallout, style: ResolvedCalloutStyleConfig): CalloutLayouter =>
+    makeCalloutLayouterIn(framePass, startIdx, plan, style);
   /** Whether a page swaps its mirrored margins (a verso of a left-bound
    *  book, a recto of a right-bound one: an `'outer'` corner icon hangs on
    *  the left there). A vertical page has no outer side: a box's outer
@@ -4377,28 +4306,7 @@ function placeDocumentPass(
     return bandUsedBottom(withSide);
   };
 
-  interface CalloutFragment {
-    /** The cut the rest of the box starts at. */
-    to: CalloutCut;
-    result: CalloutLayoutResult;
-  }
 
-  /** The longest leading fragment of the box from cut `from` on whose box
-   *  is at most `roomPx` tall. Cuts fall between children or between the
-   *  lines of a text child. `splitMinLines` guards text: a cut between
-   *  children leaves on each side at least that many text lines or at least
-   *  one indivisible block (a figure, table, display formula or nested
-   *  box); a cut inside a text child counts every line on its side, a block
-   *  as one line, and leaves at least `layout.boxChildSplitMinLines` lines
-   *  of that child on each side (two by default, `splitMinLines` when that
-   *  is lower; EF-115). A nested box that may split
-   *  itself (`keepTogether: false`, or taller than a full column) offers the cuts
-   *  inside it too, by its own `splitMinLines` over its own children; the
-   *  fragments on both sides redraw its frame. The full layout's geometry
-   *  ranks the candidates (box bottom = content bottom at the cut + the
-   *  tails of the boxes closed below it); the deepest candidate that fits
-   *  is laid out for real and taken when it truly fits. `null` when none
-   *  does. */
   const splitCalloutFragment = (
     L: CalloutLayouter,
     from: CalloutCut,
@@ -4408,172 +4316,10 @@ function placeDocumentPass(
     continuation: boolean,
     minLines: number,
     mirrored = false,
-  ): CalloutFragment | null => {
-    const full = L.layoutRange(from, L.end, width, frameId, continuation, mirrored);
-    /** Figures, tables and display formulas: never cut, not text lines. */
-    const indivisible = (c: VDTBlock): boolean => c.type === 'resource' || c.type === 'mathDisplay';
-    const unitBottom = (u: CalloutUnit): number => {
-      const b = u.kind === 'block' ? u.block.bbox : u.box.result.frame.bbox;
-      return b.y + b.height;
-    };
-    /** Room a box keeps under its last item (padding, border, icon growth). */
-    const tailOf = (r: CalloutLayoutResult): number => {
-      const last = r.units[r.units.length - 1];
-      return last ? r.frame.bbox.y + r.totalHeight - unitBottom(last) : 0;
-    };
-    if (full.units.length === 0) return null;
-    // A head that goes on also carries the style's continuation marker.
-    const tail = tailOf(full) + full.continuesMarkerPx;
-    /** Candidate cuts with the head's content bottom. A `soft` cut parts a
-     *  wrapped code line from its continuation (#624): taken only when no
-     *  other cut fits. */
-    const candidates: { cut: CalloutCut; bottom: number; soft?: true }[] = [];
-    /** Collect the cuts among `units` (one box's items; `below` = the tails
-     *  of the nested boxes around them), each side of a cut holding enough
-     *  by the box's `min` lines: a block counts as one line, a nested box
-     *  as one indivisible block. */
-    const collect = (units: readonly CalloutUnit[], minLines: number, below: number): void => {
-      const min = Math.max(1, minLines);
-      const lineCount = (u: CalloutUnit): number => (u.kind === 'block' ? Math.max(1, u.block.lines.length) : 1);
-      const isBlock = (u: CalloutUnit): boolean => u.kind === 'box' || indivisible(u.block);
-      const totalLines = units.reduce((n, u) => n + lineCount(u), 0);
-      const totalBlocks = units.filter(isBlock).length;
-      /** A side of a cut holds enough: `lines` (blocks included) of which
-       *  `blocks` are indivisible. Between children, one block suffices or
-       *  the text lines alone meet the minimum; inside a text child, the
-       *  lines do. */
-      const holds = (lines: number, blocks: number, betweenChildren: boolean): boolean =>
-        betweenChildren ? blocks > 0 || lines - blocks >= min : lines >= min;
-      const bothHold = (lines: number, blocks: number, betweenChildren: boolean): boolean =>
-        holds(lines, blocks, betweenChildren) && holds(totalLines - lines, totalBlocks - blocks, betweenChildren);
-      let linesBefore = 0;
-      let blocksBefore = 0;
-      units.forEach((u, i) => {
-        let next: number | undefined;
-        if (u.kind === 'block') {
-          const c = u.block;
-          const k = (c.contentIndex ?? L.childBase) - L.childBase;
-          next = k + 1;
-          if (!indivisible(c) && c.lines.length > 1) {
-            // The first laid-out child of a continuation opens after
-            // `from.line` lines: cuts inside it are counted from the
-            // child's own head. Each side of the box still counts all its
-            // lines against `min`, and a cut inside a child leaves at least
-            // `layout.boxChildSplitMinLines` lines of it on each side (2 by
-            // default, so no lone line: EF-115), or `min` when that is
-            // lower. The count is of this fragment's part of the child,
-            // since a part left behind already passed the test.
-            const childMin = Math.min(min, resolved.layout.boxChildSplitMinLines);
-            const lineBase = k === from.child ? from.line : 0;
-            for (let l = childMin; l <= c.lines.length - childMin; l++) {
-              const line = c.lines[l - 1]!;
-              if (bothHold(linesBefore + l, blocksBefore, false)) {
-                candidates.push({
-                  cut: { child: k, line: lineBase + l, widths: k === from.child ? cutWidths(from, width) : [{ fromLine: 0, width }] },
-                  bottom: line.bbox.y + line.bbox.height + below,
-                  ...(c.lines[l]?.codeLine?.continued ? { soft: true as const } : {}),
-                });
-              }
-            }
-          }
-        } else {
-          const { box } = u;
-          if (box.endIdx !== undefined) next = box.endIdx + 1 - L.childBase;
-          if (!box.style.keepTogether || tallerThanColumn(box.result)) {
-            collect(box.result.units, box.style.splitMinLines, below + tailOf(box.result));
-          }
-        }
-        linesBefore += lineCount(u);
-        if (isBlock(u)) blocksBefore++;
-        if (i < units.length - 1 && next !== undefined && bothHold(linesBefore, blocksBefore, true)) {
-          candidates.push({ cut: { child: next, line: 0 }, bottom: unitBottom(u) + below });
-        }
-      });
-    };
-    collect(full.units, minLines, 0);
-    // Inside a `:::columns` group of the box (#634): the cut the group
-    // offers for the room, where each of its sub-columns (each stream, in
-    // a parallel group) ends when the galley fills them in turn; at least
-    // one stream goes on and one moves on. A group of a nested box is
-    // never cut, nor any group under 1.24's rules (`layout.flowColumns`).
-    if (resolved.layout.flowColumns) {
-      const base = from.group ? from.group.open : from.child;
-      const childMin = Math.min(Math.max(1, minLines), resolved.layout.boxChildSplitMinLines);
-      for (const g of full.groups ?? []) {
-        const h = roomPx - tail - g.top;
-        if (h <= 0.5) continue;
-        const reopened = from.group?.open === g.open + base ? from.group : undefined;
-        const pos: GroupPos[] = [];
-        let moved = false;
-        let left = false;
-        let used = 0;
-        g.streams.forEach((items, s) => {
-          const end: GroupPos = { child: (g.ends[s] ?? g.close) + base, line: 0 };
-          if (items.length === 0) { pos.push(end); return; }
-          const breaks = galleyBreaks(items, childMin);
-          const fill = fillGalley(items, breaks, g.flow === 'snake' ? g.columns : 1, h);
-          if (fill.end) {
-            moved = true;
-            used = Math.max(used, fill.used);
-            pos.push(end);
-            return;
-          }
-          left = true;
-          if (fill.cuts.length === 0) {
-            // This stream takes nothing in the fragment: it stays where it is.
-            pos.push(reopened?.pos[s] ?? { child: items[0]!.child + base, line: 0 });
-            return;
-          }
-          moved = true;
-          used = Math.max(used, fill.used);
-          const b = breaks[fill.cuts[fill.cuts.length - 1]!]!;
-          const it = items[b.item]!;
-          if (b.line === 0) {
-            pos.push({ child: it.child + base, line: 0 });
-            return;
-          }
-          // The sub-column widths the paragraph's lines are set at.
-          const before = it.lineBase > 0 ? reopened?.pos[s]?.widths : undefined;
-          const lastW = before?.[before.length - 1];
-          const widths = !before || before.length === 0
-            ? [{ fromLine: 0, width: g.columnWidth }]
-            : Math.abs(lastW!.width - g.columnWidth) <= 0.5 ? before : [...before, { fromLine: it.lineBase, width: g.columnWidth }];
-          pos.push({ child: it.child + base, line: it.lineBase + b.line, widths });
-        });
-        if (!moved || !left) continue;
-        candidates.push({
-          cut: { child: Math.min(...pos.map((p) => p.child)), line: 0, group: { open: g.open + base, pos } },
-          bottom: g.top + used,
-        });
-      }
-    }
-    const insideGroup = (cut: CalloutCut): boolean =>
-      !cut.group && L.groups.some(([gs, ge]) => (cut.line === 0 ? gs < cut.child && cut.child <= ge : gs < cut.child && cut.child < ge));
-    const viable = candidates
-      .filter((c) => !insideGroup(c.cut))
-      .sort((a, b) => b.bottom - a.bottom);
-    // A wrapped code line stays with its continuations when a cut
-    // elsewhere fits (#624).
-    viable.sort((a, b) => (a.soft ? 1 : 0) - (b.soft ? 1 : 0));
-    for (const c of viable) {
-      if (c.bottom + tail > roomPx + 0.01) continue;
-      const result = L.layoutRange(from, c.cut, width, frameId, continuation, mirrored);
-      if (result.totalHeight <= roomPx + 0.01) return { to: c.cut, result };
-    }
-    return null;
-  };
+  ): CalloutFragment | null => splitCalloutFragmentIn(framePass, L, from, width, roomPx, frameId, continuation, minLines, mirrored);
 
-  /** Absolute content indices of the children a fragment from cut `from`
-   *  to cut `to` of `L` touches, for the fragment's source range. */
-  const fragmentRange = (L: CalloutLayouter, from: CalloutCut, to: CalloutCut) =>
-    ({ firstChildIdx: L.childBase + from.child, lastChildIdx: L.childBase + (to.line > 0 ? to.child : to.child - 1) });
 
-  /** The (rest of the) box is taller than an empty, full-height column —
-   *  a whole page's content area for a page-span box: no column could
-   *  hold it, so even a keep-together box splits (with the rules of a
-   *  `keepTogether: false` one) rather than overflow. */
-  const tallerThanColumn = (result: CalloutLayoutResult): boolean =>
-    result.totalHeight > contentArea.height + 0.01;
+  const tallerThanColumn = (result: CalloutLayoutResult): boolean => tallerThanColumnIn(framePass, result);
 
   const markFragment = (result: CalloutLayoutResult, part: number, continued: boolean): void => {
     if (result.frame.callout) {
@@ -6395,6 +6141,56 @@ function placeDocumentPass(
     return out;
   };
 
+  /** Content indices a composed page set in its frames: the main loop
+   *  passes over them. */
+  const composedLaid = new Set<number>();
+  /** The composed pages' layout warnings (`frameOverflow`). */
+  const composedNotes: ContentWarning[] = [];
+  /** Set the composed page `planned` on a fresh page (#855). */
+  const placeComposedPage = (planned: PlannedComposedPage, fence: ComposedPageFence): void => {
+    pendingSpacing = 0;
+    closeFlowSegment(planned.startIdx);
+    leaveCurrentPage();
+    cursor.columnIndex = 0;
+    const page = doc.pages[cursor.pageIndex]!;
+    page.columns = [createVDTColumn(0, page.contentArea)];
+    // The physical side: a recto has an odd folio (in either binding).
+    const parity = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
+    const template = resolvePageTemplate(templateSource, fence.template, { parity })!;
+    const frameless = calloutStyles.find((st) => st.id === FRAME_STYLE_ID)!;
+    const frames = designFramesOn(page);
+    const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
+    const out = layoutComposedPage({
+      pass: framePass,
+      page,
+      template,
+      fence,
+      startIdx: planned.startIdx,
+      endIdx: planned.endIdx,
+      stories: planned.stories,
+      styleOf: (frame) => frameStyleOf((frame.style ? resolved.calloutStyles.find((st) => st.id === frame.style) : undefined) ?? frameless, frame),
+      areas: { area, page: frames.page, bleed: frames.bleed },
+      dpi,
+      emPx: bodyStyle.fontSizePx,
+      bodyOffset,
+      mirrored: mirroredOf(page),
+      pushGapPx: wrapGapPx(resolved.layout.wrap?.gap, dpi, bodyStyle.fontSizePx, floatGapPx),
+    });
+    page.composed = out.composed;
+    const floats = (page.floats ??= []);
+    for (const b of out.blocks) {
+      floats.push(b);
+      doc.blocks.push(b);
+    }
+    composedNotes.push(...out.warnings);
+    for (const [head, story] of planned.stories) {
+      if (!out.laid.has(head)) continue;
+      for (let i = story.startIdx; i <= story.plan.endIdx; i++) composedLaid.add(i);
+    }
+    pendingComposedBreak = 'page';
+    flushPendingNumberingAtBoundary();
+  };
+
   /** The first block of the document that sets something: a heading there
    *  opens the document's first page (`openerPages`, #749). */
   const firstFlowBlockIdx = contentBlocks.findIndex((b) => !isMarkerBlock(b) && b.type !== 'directive');
@@ -6403,6 +6199,8 @@ function placeDocumentPass(
     if (options?.shouldCancel?.()) throw new BuildCancelledError();
     options?.onProgress?.({ pass: 1, blocks: blockIdx, totalBlocks: contentBlocks.length, pages: doc.pages.length });
     const rawBlock = contentBlocks[blockIdx]!;
+    // Blocks a composed page set in its frames (#855) are done.
+    if (composedLaid.has(blockIdx)) continue;
 
     // The styled section this block sits in: its geometry applies to the
     // pages opened from here (a heading with `breakBefore` opens one).
@@ -6614,24 +6412,34 @@ function placeDocumentPass(
       pendingPaperBreak = false;
       breakForPaper(blockIdx);
     }
-    // A composed page (`::::page{template=…}`, #854). Until templates are
-    // laid out (P4, #855) its content is set in the flow, in Markdown order
-    // and on pages of its own: the page fence breaks the page as `:::paper`
-    // does, its frames are transparent containers (the generic marker branch
-    // below), and the block after the closing fence opens a new page. P4
-    // replaces this branch with the template layout (DESIGN §5.1).
-    if ((rawBlock.type === 'containerStart' || rawBlock.type === 'containerEnd') && rawBlock.containerName === 'composedPage') {
-      if (rawBlock.type === 'containerStart') {
-        pendingComposedBreak = false;
-        breakForPaper(blockIdx);
-      } else {
-        pendingComposedBreak = true;
-      }
+    // A composed page (`::::page{template=…}`, #855): it owns a fresh page,
+    // its template's frames filled with its stories (`layoutComposedPage`);
+    // nothing flows on it, and what follows starts on the next page. A
+    // story whose frame this side lacks, and content no frame takes, are
+    // set in the flow there. A page whose template is unknown is set in
+    // the flow on pages of its own (`templateUnknown`).
+    if (rawBlock.type === 'containerStart' && rawBlock.containerName === 'composedPage') {
+      const planned = composedPlans.get(blockIdx);
+      pendingComposedBreak = false;
+      if (planned && rawBlock.composedPage) placeComposedPage(planned, rawBlock.composedPage);
+      else breakForPaper(blockIdx);
       continue;
     }
-    if (pendingComposedBreak) {
+    if (rawBlock.type === 'containerEnd' && rawBlock.containerName === 'composedPage') {
+      // (Set to `'page'` by `placeComposedPage`, a closure the flow
+      // analysis does not follow.)
+      if ((pendingComposedBreak as false | 'page' | 'flow') !== 'page') pendingComposedBreak = 'flow';
+      continue;
+    }
+    const composedBreak = pendingComposedBreak as false | 'page' | 'flow';
+    if (composedBreak === 'flow') {
       pendingComposedBreak = false;
       breakForPaper(blockIdx);
+    } else if (composedBreak === 'page') {
+      pendingComposedBreak = false;
+      pendingSpacing = 0;
+      leaveCurrentPage();
+      flushPendingNumberingAtBoundary();
     }
     // `:::page`: a comic page owns a fresh page — its panels, split lines
     // and lettering laid out on the sheet (`layoutComicPage`); nothing
@@ -8642,6 +8450,8 @@ function placeDocumentPass(
   });
   if (shrunk.length > 0) floatShrinkWarningsByDoc.set(doc, shrunk);
   if (textWrapNotes.length > 0 || columnsNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes]);
+  // Composed pages (#855): frames whose content does not fit.
+  if (composedNotes.length > 0) composedWarningsByDoc.set(doc, composedNotes);
   // The composition rules (#749): short lists cut, floats on opener pages.
   const ruleNotes = [...shortListWarnings(), ...openerFloatNotes, ...tocGroupWarnings()];
   if (ruleNotes.length > 0) compositionWarningsByDoc.set(doc, ruleNotes);
@@ -8741,7 +8551,7 @@ export function* buildDocumentGen(
   // cap; words of a joining script that run past their line, and styles
   // whose letter-spacing such words do not take.
   // Line numbers set over a float of the side column (#621).
-  const loose = [...cjkLooseLineWarnings(doc), ...raggedLineWarnings(doc), ...wordOverflowWarnings(doc), ...(joiningSpacingWarnings.get(doc) ?? []), ...(dropCapWarningsByDoc.get(doc) ?? []), ...lineNumberWarnings(doc), ...codeOverflowWarnings(doc), ...(floatShrinkWarningsByDoc.get(doc) ?? []), ...(textWrapWarningsByDoc.get(doc) ?? []), ...(compositionWarningsByDoc.get(doc) ?? [])];
+  const loose = [...cjkLooseLineWarnings(doc), ...raggedLineWarnings(doc), ...wordOverflowWarnings(doc), ...(joiningSpacingWarnings.get(doc) ?? []), ...(dropCapWarningsByDoc.get(doc) ?? []), ...lineNumberWarnings(doc), ...codeOverflowWarnings(doc), ...(floatShrinkWarningsByDoc.get(doc) ?? []), ...(textWrapWarningsByDoc.get(doc) ?? []), ...(compositionWarningsByDoc.get(doc) ?? []), ...(composedWarningsByDoc.get(doc) ?? [])];
   // Side boxes and side floats set on pages after the text, and what the
   // layout could place nowhere (#639).
   loose.push(...afterTextWarnings(doc), ...(unplacedByDoc.get(doc) ?? []));
@@ -8765,6 +8575,8 @@ export function* buildDocumentGen(
   const harakat = annotateArabicMarks(doc);
   // The rules over `*…*` runs under `bodyText.emphasis: 'overline'`.
   overlineEmphasis(doc);
+  // The bands of the highlight marks (`:mark[…]`, #888).
+  highlightDocument(doc);
   // Faces the text was set in that the font set could not give (#629).
   const fallbacks: ContentWarning[] = fontSet && resolveDebugConfig(config?.debug).warnings.missingFont
     ? fontFallbacks(documentFontFaces(doc), fontSet).map((f) => ({ kind: 'fontFallback', family: f.family, weight: f.weight, style: f.style, reason: f.reason }))
@@ -8793,6 +8605,8 @@ const floatShrinkWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
 /** The `textWrap` warnings of a build (#627) and its `columnsTooNarrow`
  *  ones (#634), found by its last pass. */
 const textWrapWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
+/** The composed pages' layout warnings of a pass (`frameOverflow`, #855). */
+const composedWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
 /** The `shortListSplit` and `openerFloat` warnings of a build (#749),
  *  found by its last pass. */
 const compositionWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();

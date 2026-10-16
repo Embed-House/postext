@@ -125,9 +125,19 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Ele é lido como página de quadrinhos; uma página composta precisa de quatro dois-pontos.</td>
     </tr>
     <tr>
+      <td><code>frameOverflow</code></td>
+      <td>O conteúdo de um bloco de uma página composta não cabe nele e o bloco não tem mais nenhum <code>next</code> onde continuar (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, a altura cortada; <code>configPath</code>, o ponteiro JSON do bloco do modelo, como <code>/pageTemplates/0/frames/2</code>). Vem da diagramação, com o <code>pageIndex</code> da página.</td>
+      <td>A saída paginada corta o que não cabe no pé do bloco; o texto continua no documento, no mapa de origem e no EPUB de layout fluido.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> cita um estilo de chip que não existe.</td>
       <td>O chip recebe o primeiro estilo de chip.</td>
+    </tr>
+    <tr>
+      <td><code>unknownMarkStyle</code></td>
+      <td><code>:mark[…]{'{'}style{'}'}</code> não cita nenhum estilo de destaque.</td>
+      <td>A marca usa o primeiro estilo de destaque.</td>
     </tr>
     <tr>
       <td><code>undefinedFootnote</code></td>

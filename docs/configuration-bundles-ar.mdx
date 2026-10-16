@@ -53,7 +53,7 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
   </thead>
   <tbody>
     <tr><td><code>manifest</code></td><td>ملف <code>preset.json</code> بعد التحقق من صحته.</td></tr>
-    <tr><td><code>id</code>، <code>name</code>، <code>description</code></td><td>من البيان.</td></tr>
+    <tr><td><code>id</code>، <code>name</code>، <code>description</code></td><td>من البيان. و<code>name</code> و<code>description</code> هما ما للطبعة المقروءة: <code>localized[…].name</code> و<code>description</code> للغة المقدَّمة إن ذكرتهما، وإلا فما في البيان.</td></tr>
     <tr><td><code>locale</code>، <code>locales</code></td><td>اللغة التي قُرئ بها المحتوى، وكل لغة تحملها الحزمة الثنائية اللغة. يختار <code>options.locale</code> إحداها: الوسم المطابق تمامًا أولًا، ثم اللغة دون متغيرها الإقليمي، ثم لغة الحزمة نفسها.</td></tr>
     <tr><td><code>chapters</code></td><td><code>&#123; title, file, markdown &#125;</code> لكل فصل. الفصل الذي لا عنوان له في البيان يأخذ نص أول عنوان <code>#</code> فيه.</td></tr>
     <tr><td><code>config</code></td><td>لوحة الألوان الافتراضية وأنواع الموارد بلغة الحزمة، ثم <code>config</code> الموجود في البيان، ثم تجاوزات اللغة. لغة الحزمة هي <code>locale</code> أعلاه، فالحزمة المكتوبة بلغة واحدة تنال تسمياتها الخاصة أيًّا كان ما يطلبه <code>options.locale</code>. والبيان الذي لا يسمّي لغة يأخذ اللغة التي يضبطها <code>config</code> الخاص به (<code>locale</code>، ثم لغة تقسيم الكلمات بالواصلة)، وإلا فـ<code>options.locale</code>. ويسرد <code>customFonts</code> عائلات الخطوط التي في الحزمة. هذه هي الإعدادات نفسها التي يفتح بها Sandbox الحزمة.</td></tr>
@@ -223,7 +223,7 @@ const { bytes, manifest, warnings } = await createBundle({
     <tr><td><code>canvasScope</code></td><td>القيمة <code>'book'</code> تطلب من العارضين إخراج الكتاب كله لوحةً واحدة.</td></tr>
     <tr><td><code>start</code></td><td>موضع بداية الكتاب، في حزمة تضمّ جزءًا من كتاب أطول: هو <code>continuation</code> الذي يُبنى به مستند مفرد. يُكتب في البيان باسم <code>start</code>.</td></tr>
     <tr><td><code>mtime</code></td><td>تاريخ التعديل المكتوب على كل ملف في الأرشيف (<code>Date</code> أو طابع زمني أو سلسلة تاريخ). إذا أُغفل فهو وقت الاستدعاء، فيعطي استدعاءان بالمُدخل نفسه بايتات مختلفة. مرّر تاريخًا ثابتًا يعطِ المُدخل نفسه البايتات نفسها، فتستطيع حساب بصمتها (hash) أو مقارنتها. يحفظ ملف zip تاريخًا ووقتًا بلا منطقة زمنية، بخطوات من ثانيتين، من 1980 إلى 2099، ويُكتب التاريخ بالتوقيت المحلي للجهاز. وللحصول على بايتات متطابقة على كل جهاز، ابنِ التاريخ من حقول محلية، مثل <code>new Date(1980, 0, 1)</code>: فالطابع الزمني أو السلسلة المنتهية بـ<code>Z</code> يسمّيان لحظة بعينها، تقع في وقت محلي مختلف في كل منطقة زمنية (<code>'1980-01-01T00:00:00Z'</code> ما زال في 1979 غربَ UTC). والتاريخ الواقع خارج تلك السنوات، بالتوقيت المحلي، يرمي خطأً.</td></tr>
-    <tr><td><code>localized</code></td><td>لغات أخرى للكتاب نفسه، حسب وسم اللغة: <code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>. تصبح المُدخلات أعلاه حينئذٍ محتوى <code>locale</code>، وهو مطلوب. انظر <a href="#الحزم-الثنائية-اللغة">الحزم الثنائية اللغة</a>.</td></tr>
+    <tr><td><code>localized</code></td><td>لغات أخرى للكتاب نفسه، حسب وسم اللغة: <code>&#123; es: &#123; name?, description?, chapters?, config?, resources? &#125; &#125;</code>. تصبح المُدخلات أعلاه حينئذٍ محتوى <code>locale</code>، وهو مطلوب. انظر <a href="#الحزم-الثنائية-اللغة">الحزم الثنائية اللغة</a>.</td></tr>
   </tbody>
 </table>
 
@@ -248,6 +248,7 @@ const { bytes, manifest } = await createBundle({
   files: { 'lantern.svg': svgEn, 'lantern-es.svg': svgEs },
   localized: {
     es: {
+      name: 'El farol',
       chapters: [{ markdown: '# Anochecer\n\n…' }, { markdown: '# Noche\n\n…' }],
       config: { headings: { levels: [{ level: 1, numberingTemplate: 'Capítulo {1}' }] } },
       resources: [
@@ -264,6 +265,7 @@ const es = await openBundle(bytes, { locale: 'es' });   // Spanish chapters, con
 - **`chapters`**: الكتاب بتلك اللغة. تذهب ملفات الفصول إلى مجلد لكل لغة (`chapters/en/01-dusk.md`، `chapters/es/01-anochecer.md`) ويصبح `chapters` في البيان خريطة من اللغة إلى الفصول. اللغة التي لا `chapters` لها تقرأ الفصول الأساسية؛ وإذا لم يكن لأي لغة فصول خاصة بها، تبقى قائمة واحدة.
 - **`config`**: الإعدادات لتلك اللغة. يحلّ كل مفتاح من المستوى الأعلى محل المفتاح المشترك برمّته حين تُقرأ الحزمة بتلك اللغة، فـ`headings` أعلاه يحلّ محل كائن `headings` كله. والمفاتيح المُغفلة، أو المساوية للمشتركة، مشتركة ولا تُكتب، فتمرير إعدادات اللغة كاملة يصلح كما يصلح تمرير المفاتيح القليلة التي تتغير. والمفتاح المضبوط على قيمه الافتراضية بينما المشترك ليس كذلك (`layout: {}`) يُكتب كما هو، فيعيد ضبط القيمة المشتركة. الخطوط مشتركة: تنضم عائلات `customFonts` الخاصة بلغة ما إلى `fonts` في الحزمة.
 - **`resources`**: صياغة الموارد المشتركة، مطابَقةً بـ`id`: `caption` و`note` و`altText` و`table` في الجدول. والصورة التي فيها كلمات يمكن أن يكون لها عملها الفني الخاص: يسمّي `bitmap.fileId` أو `svg.fileId` (و`svg.pdfFileId`) ملفًا آخر في `files`، يُكتب على شكل `resources/es/lantern.svg`. أما الحقول الأخرى، كالنوع أو الموضع، فمشتركة. والمعرّف غير الموجود بين `resources` يُستبعد مع تحذير، والصورة المفقودة للغةٍ ما تُبقي تلك اللغة على الصورة المشتركة، مع تحذير أيضًا.
+- **`name`**، **`description`**: عنوان الكتاب ووصفه بتلك اللغة، ويُكتبان في `localized[…].name` و`description` حين يختلفان عن المشتركَين. يعيدهما `openBundle` بتلك اللغة في `bundle.name` و`bundle.description`، ويعرض Sandbox الطبعة بهذا العنوان عند الاستيراد وفي مكتبته، ويطبعهما `postext info` و`postext check`. ويمكن لمُدخَل في `index.json` لمصدر قوالب أن ينسخهما في `localized` (`localized.ca.name`) لتعرض المكتبة كل طبعة بعنوانها قبل فتحها. واللغة التي لا تذكرهما تحتفظ بـ`name` و`description` الواردين في البيان.
 
 يسرد البيان كل لغة في `locales` (`['en', 'es']`)، ويحتفظ باللغة الأساسية في `locale` ويخزّن البقية تحت `localized`. ويقرأ `openBundle` دون لغةٍ اللغةَ الأساسية.
 

@@ -457,6 +457,105 @@ const style = pickChipStyle(resolved, 'key');
 // => `key`样式，否则取第一个
 ```
 
+## 高亮样式
+
+`markStyles` 属性声明行内 `:mark[文字]{style="…"}` 的具名样式：铺在短语后面的色带，就像课本给关键词划重点（语法和换行规则见文档格式参考）。默认附带一个样式 `mark`（浅黄色色带，略超出短语，两端稍圆，文字保持自身颜色），因此不做任何配置 `:mark[…]` 也能用；声明 `markStyles` 会替换这份默认列表。没有 `style`，或 id 没有任何样式声明的标记，套用第一个样式。
+
+```ts
+const config: PostextConfig = {
+  markStyles: [
+    { id: 'mark', name: 'Key idea' },
+    {
+      id: 'key',
+      name: 'Definition',
+      background: { hex: '#cdebd5', model: 'hex' },
+      color: { hex: '#14532d', model: 'hex' },
+    },
+  ],
+};
+```
+
+```md
+The sun warms the sea and :mark[water rises into the air as vapour].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>必填</td>
+      <td><code>:mark[…]&#123;style="…"&#125;</code> 引用的标识符。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>便于阅读的名称，只用于编辑器界面。</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#fff0a0</code></td>
+      <td>色带颜色（可链接调色板）。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>沿用正文</td>
+      <td>被标记文字的颜色。</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.2em</code></td>
+      <td>色带两端的圆角半径，最大为其高度的一半。</td>
+    </tr>
+    <tr>
+      <td><code>paddingX</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.15em</code></td>
+      <td>色带超出短语首尾字母、伸进旁边空白的距离。</td>
+    </tr>
+    <tr>
+      <td><code>paddingY</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.05em</code></td>
+      <td>文字色带上下的留白。</td>
+    </tr>
+    <tr>
+      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>paddingY</code></td>
+      <td>上方和下方的留白，各自代替 <code>paddingY</code>。</td>
+    </tr>
+  </tbody>
+</table>
+
+以 em 为单位的长度（`paddingX`、`paddingY`、`paddingTop`、`paddingBottom`、`borderRadius`）相对于被标记文字的字号。色带不占位置：文字的排法与没有标记时相同，色带画在文字下面，留白伸进词间空白和行间。在 VDT 中，被标记词语的片段带有 `mark`（`{ style, id, start?, end?, from?, to? }`），每一行把它的色带存在 `highlights` 中（`{ x, y, width, height, color, radiusLeft, radiusRight }`，相对于该行的 `bbox.x` 和基线），画布、PDF 和 HTML 后端在画该行文字之前先画出它们。
+
+```ts
+const resolved = resolveMarkStylesConfig(config.markStyles);
+// => the built-in `mark` style when unset; every field filled
+
+const minimal  = stripMarkStylesDefaults(config.markStyles);
+// => undefined for the built-in default; static defaults dropped
+
+const style = pickMarkStyle(resolved, 'key');
+// => the `key` style, else the first one
+```
+
+
 ## 代码清单
 
 `codeStyle`属性设定代码清单的外观：正文中的```` ``` ````和`~~~`围栏（见[文档格式 › 代码块](/zh/docs/document-format#代码块)），以及要求用代码字体时的行内代码。清单按原样逐行排，用等宽字体，排在一个框中：任何一行都不断词、不两端对齐，每个空格保持自己的宽度，制表符前进到下一个制表位。这个框与`:::callout`出自同一套机制，所以清单可以在行与行之间断开，跨栏跨页，每部分各有一个框；标注框中的围栏是嵌套在其中的框。所有属性都是可选的。自postext 1.23起。
@@ -730,7 +829,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
 
 ### 行内代码
 
-`codeStyle.inline`让反引号之间的文字用代码字体排：作为一个整体，与行内标签一样，行内不会在其中断开。未设置时，行内代码保持正文字体。
+`codeStyle.inline`让反引号之间的文字用代码字体排在一个与行内标签相同的框里。行可以在代码中的空格处断开，也可以在字母或数字与字母之间的连字符后断开：框在那里分成两个，不添加任何字符。代码中的空格保持代码字体的宽度，行两端对齐时也不会被拉宽。未设置时，行内代码保持正文字体。
 
 <table>
   <thead>
@@ -750,6 +849,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>无 / <code>0.5pt</code></td><td>轮廓。</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code>指片段的字号。</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td>有底色或轮廓时为<code>0.2em</code>，否则为<code>0</code> / <code>0.1em</code></td><td>底色内的空白；垂直内边距画在行框之外。</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>代码中阿拉伯文、希伯来文和中日韩文字的字体：正文的字体（<code>'text'</code>），因为很少有代码字体包含这些字符；或者包含它们的代码字体（<code>'code'</code>）。</td></tr>
   </tbody>
 </table>
 

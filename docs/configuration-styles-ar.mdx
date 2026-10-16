@@ -458,6 +458,105 @@ const style = pickChipStyle(resolved, 'key');
 ```
 
 
+## أنماط التظليل
+
+تعلن الخاصية `markStyles` الأنماط المسمّاة لـ`:mark[نص]{style="…"}` المضمّن: الشريط الملوّن خلف العبارة، كما يظلّل الكتاب المدرسي كلماته المفتاحية (القواعد النحوية وقواعد انكسار الأسطر في مرجع صيغة المستند). ويأتي نمط واحد افتراضيًّا هو `mark` (شريط أصفر باهت يمتد قليلًا بعد العبارة، طرفاه مستديران قليلًا، والنص بلونه)، فيعمل `:mark[…]` بلا أي إعداد؛ وإعلان `markStyles` يستبدل هذه القائمة الافتراضية. والعلامة التي بلا `style`، أو بمعرّف لا يعلنه أي نمط، تأخذ النمط الأول.
+
+```ts
+const config: PostextConfig = {
+  markStyles: [
+    { id: 'mark', name: 'Key idea' },
+    {
+      id: 'key',
+      name: 'Definition',
+      background: { hex: '#cdebd5', model: 'hex' },
+      color: { hex: '#14532d', model: 'hex' },
+    },
+  ],
+};
+```
+
+```md
+The sun warms the sea and :mark[water rises into the air as vapour].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>مطلوب</td>
+      <td>المعرّف الذي يشير إليه <code>:mark[…]&#123;style="…"&#125;</code>.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>اسم مقروء، لواجهة المحرّر فقط.</td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#fff0a0</code></td>
+      <td>لون الشريط (قابل للربط بلوحة الألوان).</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>لون النص</td>
+      <td>لون الكلمات المعلَّمة.</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.2em</code></td>
+      <td>نصف قطر طرفي الشريط، ولا يتجاوز نصف ارتفاعه.</td>
+    </tr>
+    <tr>
+      <td><code>paddingX</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.15em</code></td>
+      <td>مقدار امتداد الشريط بعد أول حرف وآخر حرف من العبارة إلى المسافة المجاورة.</td>
+    </tr>
+    <tr>
+      <td><code>paddingY</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.05em</code></td>
+      <td>المسافة فوق شريط النص وتحته.</td>
+    </tr>
+    <tr>
+      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>paddingY</code></td>
+      <td>المسافة فوق وتحت، كلٌّ منهما بدل <code>paddingY</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+تُقاس الأطوال بوحدة em (`paddingX` و`paddingY` و`paddingTop` و`paddingBottom` و`borderRadius`) بحجم النص المعلَّم. ولا يشغل الشريط حيّزًا: يُنضَّد النص كما يُنضَّد بلا علامة، ويُرسم الشريط تحته، وتمتد حشوته في المسافات بين الكلمات وفي ما بين الأسطر. وفي VDT تحمل مقاطع الكلمات المعلَّمة `mark` (`{ style, id, start?, end?, from?, to? }`)، ويحفظ كل سطر أشرطته في `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`، منسوبة إلى `bbox.x` السطر وخط أساسه)، وترسمها محرّكات اللوحة وPDF وHTML قبل نص السطر.
+
+```ts
+const resolved = resolveMarkStylesConfig(config.markStyles);
+// => the built-in `mark` style when unset; every field filled
+
+const minimal  = stripMarkStylesDefaults(config.markStyles);
+// => undefined for the built-in default; static defaults dropped
+
+const style = pickMarkStyle(resolved, 'key');
+// => the `key` style, else the first one
+```
+
+
 ## قوائم الشيفرة
 
 تضبط الخاصية `codeStyle` مظهر قوائم الشيفرة: أسوار ```` ``` ```` و`~~~` في النص (انظر [صيغة المستند › كتل الشيفرة](/ar/docs/document-format#كتل-الشيفرة))، والشيفرة المضمّنة حين يُطلب لها خط شيفرة. تُنضَّد القائمة سطرًا سطرًا كما كُتبت، بخط ثابت العرض، داخل إطار: لا يُقسَّم أي سطر بالواصلة ولا يُضبط، وتحتفظ كل مسافة بعرضها، وتتقدّم الجدولة إلى موضع الجدولة التالي. ويأتي الإطار من الآلية نفسها التي تُخرج `:::callout`، فتنقسم القائمة بين أسطرها عبر الأعمدة والصفحات، ولكل جزء إطاره، والسور داخل إطار هو إطار متداخل فيه. كل الخصائص اختيارية. منذ postext 1.23.
@@ -731,7 +830,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
 
 ### الشيفرة المضمّنة
 
-يضبط `codeStyle.inline` النص الواقع بين علامتي الاقتباس المائلة بخط الشيفرة: وحدةً واحدة، كما الشارة، لا ينكسر السطر داخلها. وإن لم يُضبط احتفظت الشيفرة المضمّنة بخط النص.
+يضبط `codeStyle.inline` النص الواقع بين علامتي الاقتباس المائلة بخط الشيفرة، داخل إطار كإطار الشارة. ويجوز أن ينكسر السطر عند مسافة داخل الشيفرة، أو بعد واصلة بين حرف أو رقم وحرف، فينقسم الإطار هناك قسمين ولا يُضاف شيء. وتحتفظ المسافات داخل الشيفرة بعرضها في خط الشيفرة، ولا يمدّها ضبط السطر. وإن لم يُضبط احتفظت الشيفرة المضمّنة بخط النص.
 
 <table>
   <thead>
@@ -751,6 +850,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>لا شيء / <code>0.5pt</code></td><td>خط محيط.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> هو حجم المقطع.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> مع تعبئة أو خط محيط، وإلا <code>0</code> / <code>0.1em</code></td><td>المساحة داخل التعبئة؛ والحشوة العمودية تُرسم خارج مربع السطر.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>خط الحروف العربية والعبرية وحروف CJK داخل الشيفرة: خط النص (<code>'text'</code>)، لأن قليلًا من خطوط الشيفرة يحملها، أو خط الشيفرة (<code>'code'</code>) إن كان يحملها.</td></tr>
   </tbody>
 </table>
 

@@ -1,4 +1,4 @@
-import type { DigitSystem, DocumentMetadata, PostextConfig } from '../types';
+import type { Dimension, DigitSystem, DocumentMetadata, PostextConfig } from '../types';
 import { withDigits } from '../arabicNumerals';
 import type { VDTPage } from '../vdt';
 import { formatCounter, formatNumeral, hanInformalStyle } from '../numbering';
@@ -16,7 +16,11 @@ import {
 
 /** `'part'` is the opener design of a `:::part` page: it resolves the
  *  heading placeholder set with the part's number and title. */
-export type DesignContextKind = 'header' | 'footer' | 'heading' | 'part';
+/** Where a design slot is laid: a running head, a heading's or a part's
+ *  design, or a composed page's template decoration (`'composed'`, #855:
+ *  the running-head placeholders, with `{attr.x}` read from the page
+ *  fence's attributes before the chapter heading's). */
+export type DesignContextKind = 'header' | 'footer' | 'heading' | 'part' | 'composed';
 
 /** Heading-specific fields for placeholder resolution. */
 export interface HeadingPlaceholderInfo {
@@ -46,8 +50,28 @@ export interface HeadingPlaceholderInfo {
   attrs?: Record<string, string>;
 }
 
+/** What `{leader}` prints in place: a private-use character the layout
+ *  of a design text replaces with the leader run (#889,
+ *  `design/layout.ts`). Never painted. */
+export const LEADER_MARK = '\uE0A0';
+
+/** The contents' leader settings (`toc.leader`), for the `{leader}` of a
+ *  contents part row (#889). */
+export interface DesignLeader {
+  /** Off: the room between the texts stays blank, the page number still
+   *  flush with the row's end. */
+  enabled: boolean;
+  char: string;
+  /** Room kept on either side of the run. */
+  gap: Dimension;
+}
+
 export interface DesignPlaceholderContext {
   kind: DesignContextKind;
+  /** A contents part row (#889): `{leader}` fills the room between the
+   *  text before it and the text after it with this leader. Absent
+   *  elsewhere, where `{leader}` prints nothing. */
+  leader?: DesignLeader;
   page: VDTPage;
   allPages: VDTPage[];
   metadata: DocumentMetadata;
@@ -82,6 +106,10 @@ export interface DesignPlaceholderContext {
   marksFor?: (key: string) => PageMarks | undefined;
   /** Only present in heading and part contexts. */
   heading?: HeadingPlaceholderInfo;
+  /** A composed page's fence attributes (`::::page{template fondo=…}`),
+   *  for `{attr.<key>}` in its template's decoration and running heads
+   *  (#855). They win over the chapter heading's. */
+  pageAttrs?: Record<string, string>;
 }
 
 const HEADER_FOOTER_PLACEHOLDERS = new Set([
@@ -136,6 +164,8 @@ export function allowedPlaceholdersFor(kind: DesignContextKind): Set<string> {
  *  `lastMark.<key>` marks. */
 export function isAllowedPlaceholder(name: string, kind: DesignContextKind): boolean {
   if (allowedPlaceholdersFor(kind).has(name) || attrPlaceholderKey(name) !== undefined) return true;
+  // `{leader}`: the contents part rows' (#889), a part context.
+  if (name === 'leader') return kind === 'part';
   return (kind === 'header' || kind === 'footer') && markPlaceholder(name) !== undefined;
 }
 
@@ -230,7 +260,9 @@ export function resolveDesignPlaceholders(
       chapterTitleByPageIndex: ctx.chapterTitleByPageIndex,
       chapterTitleAtTopByPageIndex: ctx.chapterTitleAtTopByPageIndex,
       chapterNumberAtTopByPageIndex: ctx.chapterNumberAtTopByPageIndex,
-      chapterAttrsByPageIndex: ctx.chapterAttrsByPageIndex,
+      chapterAttrsByPageIndex: ctx.pageAttrs && Object.keys(ctx.pageAttrs).length > 0
+        ? withPageAttrs(ctx.chapterAttrsByPageIndex, ctx.page.index, ctx.pageAttrs)
+        : ctx.chapterAttrsByPageIndex,
       partTitleByPageIndex: ctx.partTitleByPageIndex,
       partNumberByPageIndex: ctx.partNumberByPageIndex,
       chapterNumberByPageIndex: ctx.chapterNumberByPageIndex,
@@ -262,6 +294,13 @@ export function resolveDesignPlaceholders(
       if (attrKey !== undefined) {
         const value = resolveAttrPlaceholder(attrKey, ctx);
         out += options?.attrValue ? options.attrValue(value) : value;
+        i = end + 1;
+        continue;
+      }
+      if (name === 'leader') {
+        // A contents part row's leader (#889): marked here, set by the
+        // layout over the room the row leaves.
+        if (ctx.leader) out += LEADER_MARK;
         i = end + 1;
         continue;
       }
@@ -312,4 +351,11 @@ export function resolveDesignText(
   const h = ctx.heading;
   const at = inlineMarks && h?.titleMarked !== undefined ? { ...ctx, heading: { ...h, titleText: h.titleMarked } } : ctx;
   return resolveDesignPlaceholders(unescapeLineBreaks(template), at, { attrValue: unescapeLineBreaks }).text;
+}
+
+/** `byPage` with the page `index`'s attributes merged under `attrs`. */
+function withPageAttrs(byPage: Record<string, string>[] | undefined, index: number, attrs: Record<string, string>): Record<string, string>[] {
+  const out = byPage ? byPage.slice() : [];
+  out[index] = { ...(byPage?.[index] ?? {}), ...attrs };
+  return out;
 }

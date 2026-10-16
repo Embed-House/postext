@@ -18,6 +18,7 @@ import {
   DEFAULT_BODY_TEXT_CONFIG,
   DEFAULT_CALLOUT_STYLES,
   DEFAULT_CHIP_STYLES,
+  DEFAULT_MARK_STYLES,
   DEFAULT_FOOTER_SLOT,
   DEFAULT_HEADER_SLOT,
   DEFAULT_HEADING_STYLES,
@@ -60,6 +61,7 @@ const DIMENSION_UNITS = ['cm', 'mm', 'in', 'pt', 'px', 'em', 'rem'];
 const DEFAULT_SLICES: Partial<Record<keyof PostextConfig, unknown>> = {
   calloutStyles: DEFAULT_CALLOUT_STYLES,
   chipStyles: DEFAULT_CHIP_STYLES,
+  markStyles: DEFAULT_MARK_STYLES,
   paragraphStyles: DEFAULT_PARAGRAPH_STYLES,
   headingStyles: DEFAULT_HEADING_STYLES,
   toc: DEFAULT_TOC_CONFIG,

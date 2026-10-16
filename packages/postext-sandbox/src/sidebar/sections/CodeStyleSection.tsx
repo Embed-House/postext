@@ -533,6 +533,14 @@ export const CodeStyleSection = memo(function CodeStyleSection() {
               fieldId="code-inline-color"
             />
             <ToggleSwitch
+              label={labels.codeInlineOtherScripts}
+              checked={inline.otherScripts === 'text'}
+              onChange={(v) => setInline({ otherScripts: v ? 'text' : 'code' })}
+              tooltip={labels.codeInlineOtherScriptsTooltip}
+              isDefault={inlineUnset('otherScripts')}
+              onReset={() => resetInline('otherScripts')}
+            />
+            <ToggleSwitch
               label={labels.codeInlineFill}
               checked={inline.background !== undefined}
               onChange={(v) => (v ? setInline({ background: { hex: '#eeeeee', model: 'hex' } }) : resetInline('background'))}

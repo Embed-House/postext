@@ -31,11 +31,18 @@ export interface PresetSourceSpec {
  *  summaries (the bundle format's own; see `postext/bundle`). */
 export type PresetShowcaseMeta = BundleShowcaseMeta;
 
+/** The title and description of each edition of a preset in several
+ *  languages, by locale tag: the manifest's `localized.<lang>.name` and
+ *  `description`, copied into its `index.json` entry (#891). */
+export type PresetLocalizedNames = Record<string, { name?: string; description?: string }>;
+
 export interface PresetSummary extends PresetShowcaseMeta {
   id: string;
   name: string;
   description?: string;
   locale?: string;
+  /** Each edition's own title and description (#891). */
+  localized?: PresetLocalizedNames;
   /** Auto-load this preset for a pristine sandbox (private sources only). */
   default?: boolean;
   source: PresetSource;
@@ -54,6 +61,8 @@ export interface PresetIndexEntry extends PresetShowcaseMeta {
   name: string;
   description?: string;
   locale?: string;
+  /** Each edition's own title and description (#891). */
+  localized?: PresetLocalizedNames;
   default?: boolean;
 }
 

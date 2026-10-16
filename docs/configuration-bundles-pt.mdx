@@ -53,7 +53,7 @@ bundle.files;      // Map<path, Uint8Array>: todos os arquivos do pacote
   </thead>
   <tbody>
     <tr><td><code>manifest</code></td><td>O <code>preset.json</code> validado.</td></tr>
-    <tr><td><code>id</code>, <code>name</code>, <code>description</code></td><td>Do manifesto.</td></tr>
+    <tr><td><code>id</code>, <code>name</code>, <code>description</code></td><td>Do manifesto. <code>name</code> e <code>description</code> são os da edição lida: <code>localized[…].name</code> e <code>description</code> do idioma servido quando ele os informa; caso contrário, os do manifesto.</td></tr>
     <tr><td><code>locale</code>, <code>locales</code></td><td>O idioma em que o conteúdo foi lido, e todos os idiomas que um pacote bilíngue traz. <code>options.locale</code> escolhe um: primeiro a tag exata, depois o idioma base e, por fim, o idioma do próprio pacote.</td></tr>
     <tr><td><code>chapters</code></td><td><code>&#123; title, file, markdown &#125;</code> por capítulo. Um capítulo sem título no manifesto recebe o texto do seu primeiro título <code>#</code>.</td></tr>
     <tr><td><code>config</code></td><td>A paleta de cores padrão e os tipos de recurso no idioma do pacote, depois o <code>config</code> do manifesto e, por fim, as substituições do idioma. O idioma do pacote é o <code>locale</code> acima, então um pacote em um único idioma recebe os seus próprios rótulos, seja qual for o <code>options.locale</code> pedido. Um manifesto que não nomeia idioma usa o que o seu <code>config</code> define (<code>locale</code> e, depois, o idioma de hifenização) ou, na falta dele, <code>options.locale</code>. <code>customFonts</code> lista as famílias de fontes do pacote. É a mesma configuração com que o Sandbox abre o pacote.</td></tr>
@@ -223,7 +223,7 @@ const { bytes, manifest, warnings } = await createBundle({
     <tr><td><code>canvasScope</code></td><td><code>'book'</code> pede aos visualizadores que diagramem o livro inteiro como um único canvas.</td></tr>
     <tr><td><code>start</code></td><td>Onde o livro começa, para um pacote que contém parte de um mais longo: a <code>continuation</code> com que um documento avulso seria composto. É gravado como <code>start</code> do manifesto.</td></tr>
     <tr><td><code>mtime</code></td><td>A data de modificação gravada em todos os arquivos do zip (um <code>Date</code>, um timestamp ou uma string de data). Se omitida, é o momento da chamada, então duas chamadas com a mesma entrada geram bytes diferentes. Passe uma data fixa e a mesma entrada gera os mesmos bytes, que você pode comparar ou calcular o hash. Um zip guarda data e hora sem fuso horário, em passos de dois segundos, de 1980 a 2099, e a data é gravada no horário local da máquina. Para bytes que coincidam em qualquer máquina, construa a data a partir de campos locais, como <code>new Date(1980, 0, 1)</code>: um timestamp ou uma string terminada em <code>Z</code> designa um instante, que cai em um horário local diferente em cada fuso (<code>'1980-01-01T00:00:00Z'</code> ainda é 1979 a oeste de UTC). Uma data fora desses anos, em horário local, lança um erro.</td></tr>
-    <tr><td><code>localized</code></td><td>Mais idiomas do mesmo livro, por tag de idioma: <code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>. As entradas acima passam então a ser o conteúdo de <code>locale</code>, que se torna obrigatório. Veja <a href="#pacotes-bilíngues">Pacotes bilíngues</a>.</td></tr>
+    <tr><td><code>localized</code></td><td>Mais idiomas do mesmo livro, por tag de idioma: <code>&#123; es: &#123; name?, description?, chapters?, config?, resources? &#125; &#125;</code>. As entradas acima passam então a ser o conteúdo de <code>locale</code>, que se torna obrigatório. Veja <a href="#pacotes-bilíngues">Pacotes bilíngues</a>.</td></tr>
   </tbody>
 </table>
 
@@ -248,6 +248,7 @@ const { bytes, manifest } = await createBundle({
   files: { 'lantern.svg': svgEn, 'lantern-es.svg': svgEs },
   localized: {
     es: {
+      name: 'El farol',
       chapters: [{ markdown: '# Anochecer\n\n…' }, { markdown: '# Noche\n\n…' }],
       config: { headings: { levels: [{ level: 1, numberingTemplate: 'Capítulo {1}' }] } },
       resources: [
@@ -264,6 +265,7 @@ const es = await openBundle(bytes, { locale: 'es' });   // capítulos, configura
 - **`chapters`**: o livro naquele idioma. Os arquivos de capítulo vão para uma pasta por idioma (`chapters/en/01-dusk.md`, `chapters/es/01-anochecer.md`) e o `chapters` do manifesto vira um mapa idioma → capítulos. Um idioma sem `chapters` lê os principais; quando nenhum idioma tem capítulos próprios, eles continuam sendo uma única lista.
 - **`config`**: a configuração para aquele idioma. Cada chave de primeiro nível substitui por inteiro a chave compartilhada quando o pacote é lido naquele idioma, então o `headings` acima substitui o objeto `headings` inteiro. As chaves omitidas, ou iguais às compartilhadas, são compartilhadas e não são gravadas, então passar a configuração completa do idioma funciona tão bem quanto passar só as poucas chaves que mudam. Uma chave definida com os seus padrões enquanto a compartilhada não está (`layout: {}`) é gravada como foi dada, de modo que redefine o valor compartilhado. As fontes são compartilhadas: as famílias do `customFonts` de um idioma se juntam ao `fonts` do pacote.
 - **`resources`**: o texto dos recursos compartilhados, associados pelo `id`: `caption`, `note`, `altText` e a `table` de uma tabela. Uma imagem com palavras pode ter a sua própria arte: `bitmap.fileId` ou `svg.fileId` (e `svg.pdfFileId`) nomeiam outro conteúdo em `files`, gravado como `resources/es/lantern.svg`. Os outros campos, como o tipo ou o posicionamento, são compartilhados. Um id que não está entre os `resources` fica de fora com um aviso, e uma imagem de idioma que falta deixa o idioma com a compartilhada, também com um aviso.
+- **`name`**, **`description`**: o título e a descrição do livro nesse idioma, gravados como `localized[…].name` e `description` quando diferem dos compartilhados. `openBundle` os devolve como `bundle.name` e `bundle.description` nesse idioma, o Sandbox lista a edição com esse título (na importação e na sua biblioteca) e `postext info` e `postext check` os mostram. Uma entrada do `index.json` de uma fonte de presets pode copiá-los em `localized` (`localized.ca.name`) para que a biblioteca mostre cada edição com o seu título antes de abri-la. Um idioma sem eles mantém o `name` e a `description` do manifesto.
 
 O manifesto lista todos os idiomas em `locales` (`['en', 'es']`), mantém o principal como `locale` e guarda o resto em `localized`. `openBundle` sem idioma lê o idioma principal.
 

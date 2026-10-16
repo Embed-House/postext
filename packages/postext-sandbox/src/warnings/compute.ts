@@ -10,7 +10,6 @@ import type {
   Resource,
   ResourceType,
   ResolvedDesignSlot,
-  DesignContextKind,
   SvgFontFaceReport,
 } from 'postext';
 import {
@@ -47,7 +46,7 @@ import {
   isKnownUnavailableGoogleFont,
   isRemovedCustomFontFamily,
 } from '../controls/fontLoader';
-import type { ContrastCheck, PreflightCheck, Warning, WarningPayload } from './types';
+import type { ContrastCheck, PreflightCheck, Warning, WarningPayload, WarningSlotKind } from './types';
 import type { PdfFontCheck } from '../controls/pdfFontWarnings';
 import type { PreflightInputs } from '../print/preflightInputs';
 import { contrastMediaFor, documentContrastPairs } from '../contrast/contrastStore';
@@ -177,6 +176,26 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
           : w.kind === 'tocGroupSplit'
             ? { kind: 'tocGroupSplit', page, title: w.title, columns: w.columns }
             : { kind: 'openerFloat', page, ...(w.resourceId !== undefined ? { resourceId: w.resourceId } : {}) },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
+    if (w.kind === 'frameOverflow') {
+      // Text poured into a composed page's frame that the frame and its
+      // chain cannot hold (#855), by its book page.
+      out.push({
+        id: `layout-frameOverflow-${w.fenceIndex}-${w.frame}-${w.pageIndex ?? 'x'}-${i}`,
+        payload: {
+          kind: 'frameOverflow',
+          template: w.template,
+          frame: w.frame,
+          fenceIndex: w.fenceIndex,
+          overflowMm: w.overflowMm,
+          page: (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0),
+          configPath: w.configPath,
+        },
         sourceStart: w.sourceStart,
         sourceEnd: w.sourceEnd,
         line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
@@ -1467,7 +1486,7 @@ function collectHeaderFooterWarnings(
   // namespace), so new placeholders never need a sandbox-side copy. Heading
   // and part slots accept the heading set (`{titleText}`, `{number}`…).
   const check = (
-    slot: DesignContextKind,
+    slot: WarningSlotKind,
     elements: ResolvedDesignSlot['elements'],
     where: { level?: number; styleId?: string; configPath?: 'parts.versoDesign' | 'toc.parts.design'; tag?: string } = {},
   ) => {

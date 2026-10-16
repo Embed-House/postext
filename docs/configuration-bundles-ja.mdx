@@ -53,7 +53,7 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
   </thead>
   <tbody>
     <tr><td><code>manifest</code></td><td>検証済みの<code>preset.json</code>。</td></tr>
-    <tr><td><code>id</code>, <code>name</code>, <code>description</code></td><td>マニフェストから取得した値。</td></tr>
+    <tr><td><code>id</code>, <code>name</code>, <code>description</code></td><td>マニフェストから取得した値。<code>name</code>と<code>description</code>は読み込んだ版のもので、提供する言語の<code>localized[…].name</code>と<code>description</code>があればそれを、なければマニフェストの値を使います。</td></tr>
     <tr><td><code>locale</code>, <code>locales</code></td><td>内容を読んだロケールと、多言語のバンドルが持つすべてのロケール。<code>options.locale</code>でどれを読むかを選びます。まず完全に一致するタグ、次に基本言語、最後にバンドル自身のロケールの順に探します。</td></tr>
     <tr><td><code>chapters</code></td><td>章ごとの<code>&#123; title, file, markdown &#125;</code>。マニフェストにタイトルがない章は、最初の<code>#</code>見出しのテキストをタイトルにします。</td></tr>
     <tr><td><code>config</code></td><td>既定のカラーパレットとバンドルの言語でのリソースタイプの上に、マニフェストの<code>config</code>、さらにロケールの上書きを重ねたもの。バンドルの言語は上の<code>locale</code>なので、1言語のバンドルは<code>options.locale</code>が何を求めても、その言語のラベルになります。言語を指定していないマニフェストでは、その<code>config</code>が設定する言語（<code>locale</code>、次にハイフネーションのロケール）を使い、それもなければ<code>options.locale</code>を使います。<code>customFonts</code>にはバンドルのフォントファミリーが並びます。Sandboxがバンドルを開くときと同じ設定です。</td></tr>
@@ -223,7 +223,7 @@ const { bytes, manifest, warnings } = await createBundle({
     <tr><td><code>canvasScope</code></td><td><code>'book'</code>にすると、本全体を1つのキャンバスとして組むようビューアーに求めます。</td></tr>
     <tr><td><code>start</code></td><td>バンドルがもっと長い本の一部だけを収めているときの、本の始まりの位置。単独の文書をビルドするときに渡す<code>continuation</code>と同じものです。マニフェストの<code>start</code>として書き込まれます。</td></tr>
     <tr><td><code>mtime</code></td><td>アーカイブのすべてのファイルに書き込む更新日時（<code>Date</code>、タイムスタンプ、日付文字列のいずれか）。省略すると呼び出した時刻になるので、同じ入力でも2回の呼び出しで異なるバイト列になります。固定の日付を渡せば同じ入力から同じバイト列が得られ、ハッシュを取ったり比較したりできます。zipが保持する日時はタイムゾーンを持たず、2秒刻みで、1980年から2099年までです。日付はマシンのローカル時刻で書き込まれます。どのマシンでも一致するバイト列を得るには、<code>new Date(1980, 0, 1)</code>のようにローカル時刻の各フィールドから日付を作ります。タイムスタンプや<code>Z</code>で終わる文字列は特定の瞬間を指すので、タイムゾーンごとに異なるローカル時刻になります（<code>'1980-01-01T00:00:00Z'</code>はUTCより西では1979年のままです）。ローカル時刻でこの範囲の外にある日付は例外になります。</td></tr>
-    <tr><td><code>localized</code></td><td>同じ本の別の言語。ロケールタグごとに<code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>の形で指定します。この場合、上の入力は、必須の<code>locale</code>の内容になります。<a href="#多言語のバンドル">多言語のバンドル</a>を参照してください。</td></tr>
+    <tr><td><code>localized</code></td><td>同じ本の別の言語。ロケールタグごとに<code>&#123; es: &#123; name?, description?, chapters?, config?, resources? &#125; &#125;</code>の形で指定します。この場合、上の入力は、必須の<code>locale</code>の内容になります。<a href="#多言語のバンドル">多言語のバンドル</a>を参照してください。</td></tr>
   </tbody>
 </table>
 
@@ -248,6 +248,7 @@ const { bytes, manifest } = await createBundle({
   files: { 'lantern.svg': svgEn, 'lantern-es.svg': svgEs },
   localized: {
     es: {
+      name: 'El farol',
       chapters: [{ markdown: '# Anochecer\n\n…' }, { markdown: '# Noche\n\n…' }],
       config: { headings: { levels: [{ level: 1, numberingTemplate: 'Capítulo {1}' }] } },
       resources: [
@@ -264,6 +265,7 @@ const es = await openBundle(bytes, { locale: 'es' });   // Spanish chapters, con
 - **`chapters`**：その言語での本。章のファイルはロケールごとに1つのフォルダーに入り（`chapters/en/01-dusk.md`、`chapters/es/01-anochecer.md`）、マニフェストの`chapters`はロケール → 章のマップになります。`chapters`のないロケールは主言語の章を読みます。独自の章を持つロケールが1つもなければ、章は1つのリストのままです。
 - **`config`**：その言語の設定。そのロケールでバンドルを読むと、トップレベルの各キーが共有のキーを丸ごと置き換えます。上の例の`headings`は`headings`オブジェクト全体を置き換えます。省略したキーや共有のものと同じキーは共有され、書き出されません。そのため、ロケールの設定全体を渡しても、変わる数個のキーだけを渡しても同じように動きます。共有のキーが既定値でないのにロケール側を既定値にしたキー（`layout: {}`）は指定どおり書き出されるので、共有の値をリセットします。フォントは共有です。ロケールの`customFonts`のファミリーはバンドルの`fonts`に加わります。
 - **`resources`**：共有のリソースの文言で、`id`で対応づけます。`caption`、`note`、`altText`、表の`table`です。文字を含む画像は独自のアートワークを持てます。`bitmap.fileId`や`svg.fileId`（と`svg.pdfFileId`）で`files`内の別のデータ本体を指定すると、`resources/es/lantern.svg`として書き出されます。タイプや配置などほかのフィールドは共有です。`resources`にないidは警告を出して除外し、ロケールの画像が欠けている場合も、警告を出してそのロケールは共有の画像を使います。
+- **`name`**、**`description`**：その言語での書名と説明。共有の値と異なるときに`localized[…].name`と`description`として書き出されます。その言語で読むと`openBundle`はこれを`bundle.name`と`bundle.description`として返し、Sandboxは読み込み時とライブラリでその版をこの書名で表示し、`postext info`と`postext check`もこれを出力します。プリセット配信元の`index.json`のエントリーに`localized`（`localized.ca.name`）として写しておくと、ライブラリは開く前から各版をそれぞれの書名で示します。指定のない言語はマニフェストの`name`と`description`を使います。
 
 マニフェストは`locales`にすべての言語を並べ（`['en', 'es']`）、主言語を`locale`に残し、それ以外を`localized`に格納します。ロケールを指定しない`openBundle`は主言語を読みます。
 

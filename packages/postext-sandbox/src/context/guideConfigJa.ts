@@ -8,7 +8,7 @@ import type {
 import { defaultResourceTypes } from 'postext';
 import {
   GUIDE_FOLIO, M_BOTTOM, M_INNER, M_OUTER, M_TOP, PAGE_H, PAGE_W,
-  at, box, col, colorPalette, em, mm, pt, slot, text, type PaletteId,
+  at, box, col, colorPalette, em, guideCodeStyle, mm, pt, slot, text, type PaletteId,
 } from './guideKit';
 import {
   verticalBackCover, verticalCallouts, verticalChapterOpener, verticalContentsOpener, verticalCover, verticalPartDesign, verticalToc,
@@ -272,6 +272,7 @@ export function createJapaneseGuideConfig(): PostextConfig {
       borderColor: col('rule'), borderWidth: pt(0.5), cellPadding: mm(1.1), rules: 'horizontal',
     },
     // ・ (katakana middle dot) for the bullets: the Japanese list mark.
+    codeStyle: guideCodeStyle(),
     unorderedLists: { bulletChar: '・', color: col('band') },
     orderedLists: { color: col('band') },
     colorPalette: colorPalette('ja'),

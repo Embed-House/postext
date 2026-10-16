@@ -132,7 +132,7 @@ describe('composed-page content warnings (#854)', () => {
     expect(formatWarning({ kind: 'slotEmpty', template: 't', frame: 'f', fenceIndex: 0 })).toContain('Frame "f" of template "t" receives no content');
   });
 
-  it('lays the page’s content in the flow on pages of its own, in Markdown order', () => {
+  it('sets the page on a page of its own, each frame read whole in the order its content first appears (#855)', () => {
     const md = [
       'Before the page.',
       '',
@@ -156,8 +156,11 @@ describe('composed-page content warnings (#854)', () => {
     expect(pageOf('Flow text')).toBe(1);
     expect(pageOf('After the page')).toBe(2);
     const order = doc.blocks.map((b) => b.lines.map((l) => l.text).join(' ')).filter(Boolean);
-    expect(order.findIndex((t) => t.includes('Page title'))).toBeLessThan(order.findIndex((t) => t.includes('Money text')));
-    expect(order.findIndex((t) => t.includes('Money text'))).toBeLessThan(order.findIndex((t) => t.includes('Flow text')));
+    // The flow frame's story (the title and the text after the box) comes
+    // first: its first block opens the page; the box's follows.
+    expect(order.findIndex((t) => t.includes('Page title'))).toBeLessThan(order.findIndex((t) => t.includes('Flow text')));
+    expect(order.findIndex((t) => t.includes('Flow text'))).toBeLessThan(order.findIndex((t) => t.includes('Money text')));
+    expect(doc.pages[1]!.role).toBe('composed');
     expect(doc.contentWarnings?.find((w) => w.kind === 'slotEmpty')?.pageIndex).toBe(1);
   });
 

@@ -4194,6 +4194,119 @@
       ]
     }
   },
+  "highlight-marks": {
+    "label": {
+      "en": "Highlight marks",
+      "es": "Marcas de resaltado",
+      "ca": "Marques de ressaltat",
+      "zh": "高亮标记",
+      "ar": "علامات التظليل",
+      "ja": "ハイライト",
+      "pt": "Destaques",
+      "fr": "Surlignages",
+      "de": "Hervorhebungen",
+      "it": "Evidenziazioni"
+    },
+    "definition": {
+      "en": "A coloured band behind a phrase, as a textbook highlights its key words: the words stay ordinary text and break across lines, the band follows each piece.",
+      "es": "Una franja de color detrás de una frase, como un libro de texto resalta sus palabras clave: las palabras siguen siendo texto corriente y pasan de línea, la franja acompaña cada trozo.",
+      "ca": "Una franja de color darrere d'una frase, com un llibre de text ressalta les seves paraules clau: les paraules continuen sent text corrent i passen de línia, la franja acompanya cada tros.",
+      "zh": "铺在短语后面的色带，就像课本给关键词划重点：文字仍是普通正文，可以跨行，色带跟着每一行上的那一段。",
+      "ar": "شريط ملوّن خلف العبارة كما يظلّل الكتاب المدرسي كلماته المفتاحية: تبقى الكلمات نصًّا عاديًّا وتنتقل بين الأسطر، ويتبع الشريط كل قطعة منها.",
+      "ja": "教科書がキーワードに線を引くように語句の後ろに敷く色の帯。語はふつうの本文のまま行をまたぎ、帯は行ごとの部分に付きます。",
+      "pt": "Uma faixa colorida atrás de uma frase, como um livro didático destaca suas palavras-chave: as palavras continuam sendo texto comum e passam de linha, a faixa acompanha cada pedaço.",
+      "fr": "Une bande de couleur derrière une phrase, comme un manuel surligne ses mots clés : les mots restent du texte ordinaire et passent à la ligne, la bande suit chaque morceau.",
+      "de": "Ein farbiges Band hinter einer Wendung, wie ein Schulbuch seine Schlüsselwörter hervorhebt: Die Wörter bleiben gewöhnlicher Text und brechen um, das Band folgt jedem Stück.",
+      "it": "Una fascia colorata dietro una frase, come un libro di scuola evidenzia le parole chiave: le parole restano testo normale e vanno a capo, la fascia segue ogni pezzo."
+    },
+    "aliases": {
+      "en": [
+        "highlight",
+        "highlighter",
+        "mark",
+        "key words",
+        "marker pen"
+      ],
+      "es": [
+        "resaltado",
+        "subrayado",
+        "fosforito",
+        "marca",
+        "palabras clave"
+      ],
+      "ca": [
+        "ressaltat",
+        "subratllat",
+        "retolador fluorescent",
+        "marca",
+        "paraules clau"
+      ],
+      "zh": [
+        "高亮",
+        "划重点",
+        "荧光笔",
+        "标记",
+        "关键词"
+      ],
+      "ar": [
+        "تظليل",
+        "قلم تظليل",
+        "علامة",
+        "كلمات مفتاحية"
+      ],
+      "ja": [
+        "ハイライト",
+        "マーカー",
+        "蛍光ペン",
+        "キーワード"
+      ],
+      "pt": [
+        "destaque",
+        "marca-texto",
+        "marcador",
+        "palavras-chave"
+      ],
+      "fr": [
+        "surlignage",
+        "surligneur",
+        "marque",
+        "mots clés"
+      ],
+      "de": [
+        "Hervorhebung",
+        "Textmarker",
+        "Markierung",
+        "Schlüsselwörter"
+      ],
+      "it": [
+        "evidenziazione",
+        "evidenziatore",
+        "segno",
+        "parole chiave"
+      ]
+    },
+    "group": "text",
+    "docs": {
+      "slug": "document-format-inline",
+      "heading": {
+        "en": "Highlight marks",
+        "es": "Marcas de resaltado",
+        "ca": "Marques de ressaltat",
+        "zh": "高亮标记",
+        "ar": "علامات التظليل",
+        "ja": "ハイライト",
+        "pt": "Destaques",
+        "fr": "Surlignages",
+        "de": "Hervorhebungen",
+        "it": "Evidenziazioni"
+      }
+    },
+    "detect": {
+      "markdown": [
+        ":mark\\["
+      ]
+    }
+  },
   "swatches": {
     "label": {
       "en": "Colour swatches",

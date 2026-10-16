@@ -20,6 +20,15 @@
 // five times faster on artwork cut from PDFs (the 40 such figures of a
 // 721-page book took 26 minutes of its page images). It reads faces from
 // files only: the ones it is handed are written to a folder of this process.
+// It matches `font-family` against the family a face file names itself, so
+// each face is handed also as a copy named after the family the book
+// registers it under (#890).
+//
+// Skia draws an SVG whose `viewBox` does not start at `0 0` (a map cut out
+// of a page, `viewBox="23 151 178.8 108.1"`) at the size it declares, and
+// empty once it is rasterised again at another size: the origin is applied
+// the wrong way round (#890). Such an SVG is given to Skia with its content
+// moved to the origin, a `viewBox` of `0 0 w h` and the same picture.
 
 import { createCanvas, ImageData, loadImage, type Canvas, type Image } from '@napi-rs/canvas';
 import { Resvg } from '@resvg/resvg-js';
@@ -28,6 +37,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { FALLBACK_FAMILY } from './assets';
+import { renameFace } from './faceNames';
 
 const svgImages = new WeakSet<object>();
 /** Past this many pixels on a side the image stays as it is. */
@@ -52,11 +62,37 @@ const svgFonts: Uint8Array[] = [];
 let svgFontFiles: string[] | undefined;
 let svgFontDir: string | undefined;
 
-/** A face registered with Skia, handed to resvg for the text of the SVGs
- *  it rasterises. */
-export function noteSvgFont(bytes: Uint8Array): void {
+/** A face registered with Skia (under `family`, the name the book gives
+ *  it), handed to resvg for the text of the SVGs it rasterises, and with
+ *  it a copy named `family` when the file names another family. */
+export function noteSvgFont(bytes: Uint8Array, family?: string): void {
   svgFonts.push(bytes);
+  const renamed = family ? renameFace(bytes, family) : undefined;
+  if (renamed) svgFonts.push(renamed);
   svgFontFiles = undefined;
+}
+
+const SVG_OPEN = /<svg\b[^>]*>/i;
+const VIEW_BOX = /\bviewBox\s*=\s*(["'])([^"']*)\1/i;
+
+/** `svgText` with its content moved to the origin when its `viewBox` does
+ *  not start at `0 0`: the root's `viewBox` becomes `0 0 w h` and its
+ *  children are wrapped in a `<g>` translated by the old origin. The same
+ *  picture; any other SVG is returned as it is. */
+export function zeroViewBoxOrigin(svgText: string): string {
+  const open = SVG_OPEN.exec(svgText);
+  if (!open || open[0].endsWith('/>')) return svgText;
+  const box = VIEW_BOX.exec(open[0]);
+  if (!box) return svgText;
+  const n = box[2]!.trim().split(/[\s,]+/).map(Number);
+  if (n.length !== 4 || n.some((v) => !Number.isFinite(v))) return svgText;
+  const [x, y, w, h] = n as [number, number, number, number];
+  if (x === 0 && y === 0) return svgText;
+  const close = svgText.lastIndexOf('</svg');
+  const end = open.index + open[0].length;
+  if (close < end) return svgText;
+  const tag = open[0].replace(VIEW_BOX, `viewBox=${box[1]}0 0 ${w} ${h}${box[1]}`);
+  return `${svgText.slice(0, open.index)}${tag}<g transform="translate(${-x} ${-y})">${svgText.slice(end, close)}</g>${svgText.slice(close)}`;
 }
 
 function fontFiles(): string[] {
@@ -107,7 +143,7 @@ export async function loadSvgImage(svgText: string): Promise<Image> {
     svgImages.add(image);
     return image;
   }
-  const image = await loadImage(Buffer.from(svgText));
+  const image = await loadImage(Buffer.from(zeroViewBoxOrigin(svgText)));
   svgImages.add(image);
   return image;
 }

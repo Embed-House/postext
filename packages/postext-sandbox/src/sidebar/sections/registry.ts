@@ -37,6 +37,7 @@ export type SettingsSectionId =
   | 'index'
   | 'paragraphStyles'
   | 'chipStyles'
+  | 'markStyles'
   | 'codeStyle'
   | 'unordered-lists'
   | 'ordered-lists'
@@ -114,6 +115,7 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
   { id: 'bodyText', group: 'text', labelKey: 'bodyText', configKeys: ['bodyText'] },
   { id: 'paragraphStyles', group: 'text', labelKey: 'paragraphStylesSection', configKeys: ['paragraphStyles'] },
   { id: 'chipStyles', group: 'text', labelKey: 'chipStylesSection', configKeys: ['chipStyles'] },
+  { id: 'markStyles', group: 'text', labelKey: 'markStylesSection', configKeys: ['markStyles'] },
   { id: 'codeStyle', group: 'text', labelKey: 'codeStyleSection', configKeys: ['codeStyle'] },
   { id: 'math', group: 'text', labelKey: 'mathSection', configKeys: ['math'] },
   { id: 'footnotes', group: 'text', labelKey: 'footnotesSection', configKeys: ['footnotes'] },

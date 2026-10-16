@@ -10,6 +10,7 @@ import { getEditorTheme } from './postextTheme';
 import { frontmatterHighlight, frontmatterParser, frontmatterTheme } from './frontmatterHighlight';
 import { mathHighlight, mathTheme } from './mathHighlight';
 import { chipHighlight, chipTheme } from './chipSyntax';
+import { markHighlight, markTheme } from './markSyntax';
 import { smallCapsHighlight, smallCapsTheme } from './smallCapsSyntax';
 import { orientationHighlight, orientationTheme } from './orientationSyntax';
 import { verseHighlight, verseTheme } from './verseSyntax';
@@ -99,6 +100,8 @@ export function useCodeMirror({ initialValue, externalValue, onChange, onSelecti
       mathHighlight,
       chipTheme,
       chipHighlight,
+      markTheme,
+      markHighlight,
       smallCapsTheme,
       smallCapsHighlight,
       orientationTheme,

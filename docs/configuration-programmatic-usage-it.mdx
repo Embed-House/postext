@@ -125,9 +125,19 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Viene letto come pagina di fumetto; una pagina composta richiede quattro due punti.</td>
     </tr>
     <tr>
+      <td><code>frameOverflow</code></td>
+      <td>Il contenuto di una cornice di una pagina composta non ci entra e la cornice non ha più un <code>next</code> in cui proseguire (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, l’altezza tagliata; <code>configPath</code>, il puntatore JSON della cornice del modello, per esempio <code>/pageTemplates/0/frames/2</code>). Lo emette l’impaginazione, con il <code>pageIndex</code> della pagina.</td>
+      <td>L’uscita impaginata taglia al piede della cornice quello che non entra; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> non indica alcuno stile di chip.</td>
       <td>Il chip prende il primo stile di chip.</td>
+    </tr>
+    <tr>
+      <td><code>unknownMarkStyle</code></td>
+      <td><code>:mark[…]{'{'}style{'}'}</code> non nomina alcuno stile di evidenziazione.</td>
+      <td>Il segno prende il primo stile di evidenziazione.</td>
     </tr>
     <tr>
       <td><code>undefinedFootnote</code></td>

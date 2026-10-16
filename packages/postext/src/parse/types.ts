@@ -211,7 +211,13 @@ export interface InlineTab {
 export interface InlineLink {
   start: number;
   end: number;
+  /** The link target; `''` on a highlight mark. */
   href: string;
+  /** Present on a highlight mark (`:mark[text]{style="…"}`, #888), which
+   *  rides on the link ranges so that every pass that cuts, joins or moves
+   *  spans keeps it: the style id (`''` when the mark names none) and the
+   *  mark's number in the text. Such a range is no link. */
+  mark?: { style: string; id: number };
 }
 
 export interface InlineSpan {
@@ -245,6 +251,15 @@ export interface InlineSpan {
    *  stretches or shrinks when it is justified: the gap after a footnote's
    *  number, which keeps one width in every note. Set by the pipeline. */
   fixedSpace?: boolean;
+  /** One of a chip's own words set in the face of the text around the chip,
+   *  not the chip's: the Arabic, Hebrew or CJK characters of inline code
+   *  (#845), which code faces do not carry. Set by the pipeline. */
+  textFace?: boolean;
+  /** A space inside inline code set in the code face (#845), between two
+   *  pieces of it: the line may break there, but the space neither
+   *  stretches nor shrinks, and on one line the pieces around it are one
+   *  box. `box` is the code's. Set by the pipeline. */
+  codeSpace?: ChipBox;
   /** A numbered bibliography entry's label column (#290): `'gap'` is the
    *  space after the label, widened when the entry is measured so the text
    *  starts at the column's edge (`MeasureBlockOptions.labelColumnPx`);
@@ -290,6 +305,9 @@ export interface InlineSpan {
     style?: string;
     spans: InlineSpan[];
     box?: ChipBox;
+    /** A piece of inline code that goes on after a space of its own
+     *  (`codeSpace`, #845): on one line the two pieces are one box. */
+    joinNext?: boolean;
   };
   /** Markdown links (`[text](url)`) inside this span, as ranges of its
    *  `text`. A link never splits a span — the spans are those of the text
@@ -546,6 +564,9 @@ export interface ChipBox {
   borderRadiusPx: number;
   paddingXPx: number;
   paddingYPx: number;
+  /** The chip's base direction when it has one of its own: inline code
+   *  reads left to right (#845). Unset: its first strong letter's. */
+  direction?: 'ltr';
   /** Set only when the style sets its own (`paddingTop`); `paddingYPx`
    *  otherwise. */
   paddingTopPx?: number;

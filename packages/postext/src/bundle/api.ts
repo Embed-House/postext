@@ -4,7 +4,7 @@
 import type { PostextConfig, Resource } from '../types';
 import { readBundle, planBundle, resolveBundleFiles } from './codec';
 import type { BundleCanvasScope, BundleChapter, BundleFontFile, BundleManifest, BundleManifestV2, BundleStart } from './types';
-import { mimeForFile, pickBundleView, slugify } from './manifest';
+import { mimeForFile, pickBundleMeta, pickBundleView, slugify } from './manifest';
 import { openBundleZip, zipBundle } from './zip';
 
 /** A `.postext` file, opened. Every `fileId` it hands out (in `resources`
@@ -14,7 +14,10 @@ export interface PostextBundle {
   /** The validated `preset.json`. */
   manifest: BundleManifest;
   id: string;
+  /** The title of the edition read: the manifest's `name`, or the
+   *  locale's `localized[…].name` (#891). */
   name: string;
+  /** The edition's description, likewise. */
   description?: string;
   /** The locale the content was read in. */
   locale: string;
@@ -71,11 +74,12 @@ export async function openBundle(
   });
   const { manifest } = read;
   const view = pickBundleView(manifest, read.locale);
+  const meta = pickBundleMeta(manifest, read.locale);
   return {
     manifest,
     id: manifest.id,
-    name: manifest.name,
-    ...(manifest.description ? { description: manifest.description } : {}),
+    name: meta.name,
+    ...(meta.description ? { description: meta.description } : {}),
     locale: read.locale,
     ...(manifest.locales ? { locales: manifest.locales } : {}),
     chapters: read.chapters.map((c, i) => ({ ...c, title: c.title || chapterTitle(c.markdown, i + 1) })),
@@ -202,6 +206,11 @@ export interface CreateBundleInput {
 
 /** One more language of a bundle (see {@link CreateBundleInput.localized}). */
 export interface CreateBundleLocale {
+  /** The book's title in this language, written as `localized[…].name`
+   *  when it differs from `name` (#891). */
+  name?: string;
+  /** The description in this language (`localized[…].description`). */
+  description?: string;
   /** The book in this language, one entry per chapter (a chapter without
    *  a title takes its first `# ` heading). Absent: the locale reads the
    *  primary chapters. */
@@ -250,6 +259,8 @@ export async function createBundle(input: CreateBundleInput): Promise<CreatedBun
   const chapters = titled(source);
   const localized = input.localized
     ? Object.fromEntries(Object.entries(input.localized).map(([locale, entry]) => [locale, {
+      ...(entry.name ? { name: entry.name } : {}),
+      ...(entry.description ? { description: entry.description } : {}),
       ...(entry.chapters && entry.chapters.length > 0 ? { chapters: titled(entry.chapters) } : {}),
       ...(entry.config ? { config: entry.config } : {}),
       ...(entry.resources ? { resources: entry.resources } : {}),

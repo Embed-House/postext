@@ -161,7 +161,7 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
 
 Una cornice è un rettangolo con un nome che riceve contenuto composto. Il suo `name` è lo slot che chiede il Markdown, ed è unico nel suo modello (nemmeno un gruppo può prendere il nome di una cornice, perché gli ancoraggi indicano entrambi allo stesso modo).
 
-Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia, altrimenti con il suo `placement`, che funziona come quello di un elemento di progetto grafico: un ancoraggio (`'container'` è l’area, `'page'`, `'bleed'`, o `'#name'` per un’altra cornice o un altro gruppo), un bordo, uno scostamento e una dimensione. Una cornice ancorata a un’altra si sposta con essa. Senza né l’una né l’altro, la cornice occupa tutta l’area.
+Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia, altrimenti con il suo `placement`, che funziona come quello di un elemento di progetto grafico: un ancoraggio (`'container'` è l’area, `'page'`, `'bleed'`, o `'#name'` per un’altra cornice o un altro gruppo), un bordo, uno scostamento e una dimensione. Una cornice ancorata a un’altra si sposta con essa. Senza né l’una né l’altro, la cornice parte dall’angolo in alto a sinistra dell’area, larga quanto l’area e alta quanto dice la sua regola di altezza. Come il contenuto viene versato nelle cornici, concatenato e tagliato è descritto in [Pagine composte › Come si compone la pagina](/it/docs/composed-pages#come-si-compone-la-pagina).
 
 <table>
   <thead>
@@ -413,6 +413,10 @@ pageTemplates: [
 Un valore uguale a un predefinito non viene mai scartato quando la Sandbox salva un modello: in un modello che ne estende un altro, o in una variante, sostituisce il valore del genitore.
 
 Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello con la catena unita, la variante del lato applicata, ogni valore predefinito compilato e ogni riferimento risolto come descrivono gli avvisi più sotto; `validatePageTemplates(config)` restituisce gli avvisi.
+
+### Che cosa applica l’impaginazione
+
+L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, oltre ad `area`, `grid`, `decoration`, `header`, `footer` e `variants` del modello. Vengono letti e controllati, ma non ancora applicati: la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` di un gruppo; le sue cornici mantengono la propria collocazione), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, `spread` e `crossGutter`, il `writingMode` e la `direction` di una cornice, e il `bodyStyle` e la `palette` del modello. Una larghezza `'auto'` si legge come `'fill'`.
 
 ## Stili delle etichette
 

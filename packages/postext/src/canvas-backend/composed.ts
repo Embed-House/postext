@@ -1,0 +1,48 @@
+/**
+ * A composed page's frames on the canvas (#855): each frame's blocks
+ * painted as floats are, turned by the frame's matrix and clipped to its
+ * box when its content overflows, in layer order, with the template's
+ * decoration at layer 0 (`composedPaintOrder`).
+ */
+import type { VDTDesignSlot, VDTPage } from '../vdt';
+import { composedPaintOrder, frameClips, frameMatrix } from '../composed/paint';
+import { renderBlock } from './blockRender';
+import { renderHeaderFooterSlot } from './headerFooter';
+import { restoreContext, saveContext } from './contextState';
+
+/**
+ * Paint the frames of `page.composed` in their paint order. With
+ * `decoration` the template's decoration is painted between the layers
+ * below 0 and the rest; without it (a page painted through a flow frame,
+ * whose decoration stands on the sheet) it is left to the caller.
+ */
+export function renderComposedFrames(
+  ctx: CanvasRenderingContext2D,
+  page: VDTPage,
+  inkHex: string | null,
+  decoration: VDTDesignSlot | undefined,
+): void {
+  for (const item of composedPaintOrder(page)) {
+    if (item.kind === 'decoration') {
+      if (decoration) renderHeaderFooterSlot(ctx, decoration, inkHex);
+      continue;
+    }
+    const { frame, blocks } = item;
+    if (blocks.length === 0) continue;
+    const m = frameMatrix(frame);
+    const clips = frameClips(frame);
+    if (!m && !clips) {
+      for (const b of blocks) renderBlock(ctx, b, b.bbox.width, b.bbox.x, inkHex);
+      continue;
+    }
+    saveContext(ctx);
+    if (m) ctx.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
+    if (clips) {
+      ctx.beginPath();
+      ctx.rect(frame.rect.x, frame.rect.y, frame.rect.width, frame.rect.height);
+      ctx.clip();
+    }
+    for (const b of blocks) renderBlock(ctx, b, b.bbox.width, b.bbox.x, inkHex);
+    restoreContext(ctx);
+  }
+}

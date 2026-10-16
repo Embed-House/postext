@@ -135,6 +135,27 @@ describe('postext cli', () => {
     expect(pages('s.postext', '--chapters', '2').chapters).toEqual(pages('b.postext', '--chapters', '2').chapters);
   }, 60_000);
 
+  // #891: each edition of a bundle in several languages under its own title.
+  it('names the edition read with its localized title', () => {
+    const dir = book();
+    expect(run(['pack', 'ch', '--name', 'Geografía', '-o', 'b.postext', '-q'], dir).code).toBe(0);
+    expect(run(['unpack', 'b.postext', '-o', 'u', '-q'], dir).code).toBe(0);
+    const path = join(dir, 'u', 'preset.json');
+    const manifest = JSON.parse(readFileSync(path, 'utf8'));
+    writeFileSync(path, JSON.stringify({ ...manifest, locale: 'es', description: 'Libro', localized: { ca: { name: 'Geografia', description: 'Llibre' }, en: { name: 'Geography' } } }));
+    expect(run(['pack', 'u', '-o', 's.postext', '-q'], dir).code).toBe(0);
+    const meta = (input: string, locale: string) => {
+      const { book: b } = JSON.parse(run(['info', input, '--locale', locale, '--json', '--offline'], dir).stdout);
+      return [b.name, b.description];
+    };
+    for (const input of ['u', 's.postext']) {
+      expect(meta(input, 'ca')).toEqual(['Geografia', 'Llibre']);
+      expect(meta(input, 'en')).toEqual(['Geography', 'Libro']);
+      expect(meta(input, 'es')).toEqual(['Geografía', 'Libro']);
+    }
+    expect(run(['info', 's.postext', '--locale', 'ca', '--offline'], dir).stdout.split('\n')[0]).toBe('Geografia — Llibre');
+  }, 60_000);
+
   // #696: a comic line may name its own face (`font=`). The book's fonts
   // are the configuration's and the ones its text names.
   it('resolves the face a comic line names in the text alone', () => {
