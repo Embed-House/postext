@@ -292,6 +292,15 @@ export interface SandboxLabels {
   warningsUnknownCalloutTypeDetail: string;
   warningsColumnsFlowUnknownTitle: string;
   warningsColumnsFlowUnknownDetail: string;
+  warningsTemplateUnknownTitle: string;
+  warningsTemplateUnknownDetail: string;
+  warningsSlotUnknownTitle: string;
+  warningsSlotUnknownDetail: string;
+  warningsSlotEmptyTitle: string;
+  warningsSlotEmptyDetail: string;
+  warningsPageFenceLengthTitle: string;
+  warningsPageFenceLengthDetail: string;
+  warningsUnclosedComposedPageDetail: string;
   warningsUnknownChipStyleTitle: string;
   warningsUnknownChipStyleDetail: string;
   warningsDuplicateAnchorTitle: string;

@@ -20,6 +20,36 @@ function find<K extends WarningPayload['kind']>(
   );
 }
 
+describe('composed-page warnings (#854)', () => {
+  const config = { pageTemplates: [{ id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'caja' }, { name: 'nota', optional: true }] }] } as unknown as PostextConfig;
+
+  it('lists unknown templates, unknown slots and empty frames from the source', () => {
+    const md = '::::page{template="tema"}\nText.\n:::frame{slot="cja"}\nBox.\n:::\n::::\n\n::::page{template="otra"}\n::::';
+    const unknownSlot = find(md, 'slotUnknown', config);
+    expect(unknownSlot).toHaveLength(1);
+    expect(unknownSlot[0]!.payload).toEqual({ kind: 'slotUnknown', template: 'tema', slot: 'cja', fenceIndex: 0 });
+    expect(md.slice(unknownSlot[0]!.sourceStart, unknownSlot[0]!.sourceEnd)).toBe('cja');
+    expect(find(md, 'slotEmpty', config).map((w) => w.payload.frame)).toEqual(['caja']);
+    const unknown = find(md, 'templateUnknown', config);
+    expect(unknown.map((w) => w.payload.template)).toEqual(['otra']);
+    expect(unknown[0]!.line).toBe(8);
+    for (const k of ['slotUnknown', 'slotEmpty', 'templateUnknown', 'pageFenceLength'] as const) expect(warningCategory(k)).toBe('markup');
+  });
+
+  it('flags a composed page written with three colons', () => {
+    expect(kinds(':::page{template="tema"}\n::panel\nA: Hi.\n:::', config)).toContain('pageFenceLength');
+  });
+
+  it('reports a page left open as an unclosed container', () => {
+    const found = find('::::page{template="tema"}\nText.', 'unclosedContainer', config);
+    expect(found.map((w) => w.payload.name)).toEqual(['composedPage']);
+  });
+
+  it('knows :::frame and :::figure', () => {
+    expect(kinds(':::frame{slot="x"}\nA.\n:::\n\n:::figure{resource="m"}\n:::')).not.toContain('unknownDirective');
+  });
+});
+
 describe('fenced-container warnings', () => {
   it('does not flag known containers as unknown directives', () => {
     const md = [

@@ -83,6 +83,10 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'unclosedCodeBlock':
     case 'unknownParagraphStyle':
     case 'columnsFlowUnknown':
+    case 'templateUnknown':
+    case 'slotUnknown':
+    case 'slotEmpty':
+    case 'pageFenceLength':
     case 'unknownCalloutType':
     case 'unknownChipStyle':
     case 'duplicateAnchor':
@@ -242,6 +246,14 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsUnknownCalloutTypeTitle;
     case 'columnsFlowUnknown':
       return labels.warningsColumnsFlowUnknownTitle;
+    case 'templateUnknown':
+      return labels.warningsTemplateUnknownTitle;
+    case 'slotUnknown':
+      return labels.warningsSlotUnknownTitle;
+    case 'slotEmpty':
+      return labels.warningsSlotEmptyTitle;
+    case 'pageFenceLength':
+      return labels.warningsPageFenceLengthTitle;
     case 'unknownChipStyle':
       return labels.warningsUnknownChipStyleTitle;
     case 'duplicateAnchor':
@@ -502,6 +514,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
     case 'unknownDirective':
       return `:::${payload.name} — ${labels.warningsUnknownDirectiveDetail.replace('__names__', KNOWN_FENCE_NAMES)}`;
     case 'unclosedContainer':
+      // A composed page closes with a bare fence of as many colons (#854).
+      if (payload.name === 'composedPage') return `::::page — ${labels.warningsUnclosedComposedPageDetail}`;
       return `:::${payload.name} — ${labels.warningsUnclosedContainerDetail}`;
     case 'unclosedCodeBlock':
       return `${payload.delimiter}${payload.lang ?? ''} — ${labels.warningsUnclosedCodeBlockDetail}`;
@@ -519,6 +533,14 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `:::callout{type="${payload.type}"} — ${labels.warningsUnknownCalloutTypeDetail}`;
     case 'columnsFlowUnknown':
       return `:::columns{flow="${payload.value}"} — ${labels.warningsColumnsFlowUnknownDetail}`;
+    case 'templateUnknown':
+      return `::::page{template="${payload.template}"} — ${labels.warningsTemplateUnknownDetail}`;
+    case 'slotUnknown':
+      return `slot="${payload.slot}" — ${labels.warningsSlotUnknownDetail.replace('__template__', payload.template)}`;
+    case 'slotEmpty':
+      return `${payload.frame} — ${labels.warningsSlotEmptyDetail.replace('__template__', payload.template)}`;
+    case 'pageFenceLength':
+      return `:::page{template=…} — ${labels.warningsPageFenceLengthDetail}`;
     case 'unknownChipStyle':
       return `${inResource(payload.inResource)}:chip[…]{style="${payload.style}"} — ${labels.warningsUnknownChipStyleDetail}`;
     case 'duplicateAnchor':

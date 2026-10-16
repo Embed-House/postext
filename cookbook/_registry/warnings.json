@@ -6056,5 +6056,221 @@
         "it": "Impaginazione"
       }
     }
+  },
+  "templateUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Unknown page template",
+      "es": "Plantilla de página desconocida",
+      "ca": "Plantilla de pàgina desconeguda",
+      "zh": "未知的页面模板",
+      "ar": "قالب صفحة غير معروف",
+      "ja": "不明なページテンプレート",
+      "pt": "Modelo de página desconhecido",
+      "fr": "Modèle de page inconnu",
+      "de": "Unbekannte Seitenvorlage",
+      "it": "Modello di pagina sconosciuto"
+    },
+    "cause": {
+      "en": "A ::::page fence names a template that no entry of pageTemplates has, or names none. Its slots are not checked, and until templates are laid out its content is set in the running text on pages of its own.",
+      "es": "La valla ::::page nombra una plantilla que no está en pageTemplates, o no nombra ninguna. Los slots de la página no se comprueban y su contenido se compone en el texto corrido, en páginas propias.",
+      "ca": "La tanca ::::page anomena una plantilla que no és a pageTemplates, o no n'anomena cap. Els slots de la pàgina no es comproven i el seu contingut es compon al text corregut, en pàgines pròpies.",
+      "zh": "页面围栏::::page指定的模板在pageTemplates中不存在，或者没有写模板。这一页的槽位不做检查，内容按顺序排进正文。",
+      "ar": "يسمّي سور الصفحة ::::page قالبًا ليس في pageTemplates، أو لا يسمّي قالبًا. لا تُفحص خانات الصفحة، ويُنضَّد محتواها في النص الجاري.",
+      "ja": "ページフェンス::::pageが指定したテンプレートがpageTemplatesにないか、テンプレートが指定されていません。そのページのスロットは検査されず、中身は本文の流れに組まれます。",
+      "pt": "A cerca ::::page nomeia um modelo que não está em pageTemplates, ou não nomeia nenhum. Os slots da página não são verificados e o conteúdo dela é composto no texto corrido, em páginas próprias.",
+      "fr": "La ligne ::::page nomme un modèle qui ne figure pas dans pageTemplates, ou n’en nomme aucun. Les slots de la page ne sont pas vérifiés, et son contenu est placé dans le texte courant, sur des pages à part.",
+      "de": "Die Zeile ::::page nennt eine Vorlage, die nicht in pageTemplates steht, oder gar keine. Die Slots der Seite werden nicht geprüft, und ihr Inhalt wird im Fließtext auf eigenen Seiten gesetzt.",
+      "it": "La riga ::::page indica un modello che non è in pageTemplates, oppure non ne indica nessuno. Gli slot della pagina non vengono controllati e il suo contenuto viene collocato nel testo corrente, su pagine proprie."
+    },
+    "fix": {
+      "en": "Correct the template id, or add the template to pageTemplates.",
+      "es": "Corrige el id de la plantilla o añade esa plantilla a pageTemplates.",
+      "ca": "Corregeix l'id de la plantilla o afegeix aquesta plantilla a pageTemplates.",
+      "zh": "改正模板id，或者把这个模板加入配置的pageTemplates。",
+      "ar": "صحّح معرّف القالب، أو أضف القالب إلى pageTemplates في الإعدادات.",
+      "ja": "テンプレートのIDを直すか、そのテンプレートを設定のpageTemplatesに加えてください。",
+      "pt": "Corrija o id do modelo ou acrescente esse modelo a pageTemplates.",
+      "fr": "Corrigez l’id du modèle, ou ajoutez ce modèle à pageTemplates.",
+      "de": "Korrigieren Sie die ID der Vorlage, oder fügen Sie die Vorlage zu pageTemplates hinzu.",
+      "it": "Correggi l’id del modello, oppure aggiungi quel modello a pageTemplates."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Warnings",
+        "es": "Avisos",
+        "ca": "Avisos",
+        "zh": "警告",
+        "ar": "التحذيرات",
+        "ja": "警告",
+        "pt": "Avisos",
+        "fr": "Avertissements",
+        "de": "Warnungen",
+        "it": "Avvisi"
+      }
+    }
+  },
+  "slotUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Slot with no frame",
+      "es": "Slot sin marco",
+      "ca": "Slot sense marc",
+      "zh": "槽位没有对应的框",
+      "ar": "خانة بلا إطار",
+      "ja": "枠のないスロット",
+      "pt": "Slot sem bloco",
+      "fr": "Slot sans bloc",
+      "de": "Slot ohne Rahmen",
+      "it": "Slot senza cornice"
+    },
+    "cause": {
+      "en": "Content of a composed page names a slot that is no frame of the page's template, so it goes to the template's flow frame.",
+      "es": "Un atributo slot de una página compuesta nombra un marco que la plantilla de la página no tiene. Ese contenido va al marco de flujo de la plantilla.",
+      "ca": "Un atribut slot d'una pàgina composta anomena un marc que la plantilla de la pàgina no té. Aquest contingut va al marc de flux de la plantilla.",
+      "zh": "某段内容的slot指定的名称不是该页模板中的任何框。这段内容改为进入模板的流文框。",
+      "ar": "تسمّي السمة slot في قطعة من المحتوى اسمًا ليس لأي إطار في قالب الصفحة. فيذهب هذا المحتوى إلى إطار التدفق.",
+      "ja": "内容のslotが、ページのテンプレートのどの枠の名前でもありません。その内容は流し込み枠に入ります。",
+      "pt": "Um atributo slot de uma página composta nomeia um bloco que o modelo da página não tem. Esse conteúdo vai para o bloco de fluxo do modelo.",
+      "fr": "Un attribut slot nomme un bloc que le modèle de la page n’a pas. Le contenu concerné va dans le bloc de flux du modèle.",
+      "de": "Ein Attribut slot nennt einen Rahmen, den die Vorlage der Seite nicht hat. Der betroffene Inhalt kommt in den Flussrahmen der Vorlage.",
+      "it": "Un attributo slot indica una cornice che il modello della pagina non ha. Il contenuto in questione va nella cornice di flusso del modello."
+    },
+    "fix": {
+      "en": "Correct the slot name, or add a frame of that name to the template.",
+      "es": "Corrige el nombre del slot o añade a la plantilla un marco con ese nombre.",
+      "ca": "Corregeix el nom del slot o afegeix a la plantilla un marc amb aquest nom.",
+      "zh": "改正槽位名，或者在模板中加一个同名的框。",
+      "ar": "صحّح اسم الخانة، أو أضف إلى القالب إطارًا بهذا الاسم.",
+      "ja": "スロット名を直すか、その名前の枠をテンプレートに加えてください。",
+      "pt": "Corrija o nome do slot ou acrescente ao modelo um bloco com esse nome.",
+      "fr": "Corrigez le nom du slot, ou ajoutez au modèle un bloc de ce nom.",
+      "de": "Korrigieren Sie den Slot-Namen, oder fügen Sie der Vorlage einen Rahmen mit diesem Namen hinzu.",
+      "it": "Correggi il nome dello slot, oppure aggiungi al modello una cornice con quel nome."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Warnings",
+        "es": "Avisos",
+        "ca": "Avisos",
+        "zh": "警告",
+        "ar": "التحذيرات",
+        "ja": "警告",
+        "pt": "Avisos",
+        "fr": "Avertissements",
+        "de": "Warnungen",
+        "it": "Avvisi"
+      }
+    }
+  },
+  "slotEmpty": {
+    "source": "engine",
+    "label": {
+      "en": "Empty frame",
+      "es": "Marco vacío",
+      "ca": "Marc buit",
+      "zh": "空框",
+      "ar": "إطار فارغ",
+      "ja": "空の枠",
+      "pt": "Bloco vazio",
+      "fr": "Bloc vide",
+      "de": "Leerer Rahmen",
+      "it": "Cornice vuota"
+    },
+    "cause": {
+      "en": "A frame of the page's template receives no content: no slot names it, it takes no heading, and for the flow frame nothing is left without a slot.",
+      "es": "Un marco de la plantilla no recibe nada en esta página, porque ningún slot lo nombra y no toma ningún encabezado. El marco queda vacío.",
+      "ca": "Un marc de la plantilla no rep res en aquesta pàgina, perquè cap slot no l'anomena i no pren cap encapçalament. El marc queda buit.",
+      "zh": "模板中的某个框在这一页上什么也没收到：没有槽位指向它，也没有标题或无槽位的内容进入它。这个框在页面上留空。",
+      "ar": "إطار من القالب لا يتلقى شيئًا في هذه الصفحة: لا تسمّيه خانة، ولا يدخله عنوان ولا محتوى بلا خانة. فيبقى الإطار فارغًا على الصفحة.",
+      "ja": "テンプレートの枠がこのページで何も受け取っていません。どのスロットもその枠を指さず、見出しもスロットのない内容も入らないので、枠は空のまま組まれます。",
+      "pt": "Um bloco do modelo não recebe nada nesta página, porque nenhum slot o nomeia e ele não recebe nenhum título. O bloco fica vazio.",
+      "fr": "Un bloc du modèle ne reçoit rien sur cette page : aucun slot ne le nomme et il ne prend aucun titre. Le bloc reste vide sur la page.",
+      "de": "Ein Rahmen der Vorlage erhält auf dieser Seite nichts: Kein Slot nennt ihn, und er übernimmt keine Überschrift. Der Rahmen bleibt auf der Seite leer.",
+      "it": "Una cornice del modello non riceve nulla in questa pagina: nessuno slot la indica e non prende alcun titolo. La cornice resta vuota sulla pagina."
+    },
+    "fix": {
+      "en": "Write content for the frame with its slot, or mark the frame optional in the template.",
+      "es": "Escribe contenido con el slot de ese marco o márcalo como optional en la plantilla.",
+      "ca": "Escriu contingut amb el slot d'aquest marc o marca'l com a optional a la plantilla.",
+      "zh": "为这个框写上带其槽位的内容，或者在模板中把它标为optional: true。",
+      "ar": "اكتب له محتوى بخانته، أو اجعله optional: true في القالب.",
+      "ja": "スロットを付けてその枠の内容を書くか、テンプレートでその枠をoptional: trueにしてください。",
+      "pt": "Escreva conteúdo com o slot desse bloco ou marque-o como optional no modelo.",
+      "fr": "Écrivez du contenu avec le slot de ce bloc, ou marquez le bloc optional: true dans le modèle.",
+      "de": "Schreiben Sie Inhalt mit dem Slot dieses Rahmens, oder markieren Sie den Rahmen in der Vorlage mit optional: true.",
+      "it": "Scrivi un contenuto con lo slot di quella cornice, oppure marca la cornice come optional: true nel modello."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Warnings",
+        "es": "Avisos",
+        "ca": "Avisos",
+        "zh": "警告",
+        "ar": "التحذيرات",
+        "ja": "警告",
+        "pt": "Avisos",
+        "fr": "Avertissements",
+        "de": "Warnungen",
+        "it": "Avvisi"
+      }
+    }
+  },
+  "pageFenceLength": {
+    "source": "engine",
+    "label": {
+      "en": "Composed page with three colons",
+      "es": "Página compuesta con tres dos puntos",
+      "ca": "Pàgina composta amb tres dos punts",
+      "zh": "模板页只写了三个冒号",
+      "ar": "صفحة مركّبة بثلاث نقطتين رأسيتين",
+      "ja": "コロン3つのテンプレートページ",
+      "pt": "Página composta com três dois-pontos",
+      "fr": "Page composée avec trois deux-points",
+      "de": "Zusammengesetzte Seite mit drei Doppelpunkten",
+      "it": "Pagina composta con tre due punti"
+    },
+    "cause": {
+      "en": "A three-colon :::page carries template=, so it is read as a comic page, as before.",
+      "es": "Un :::page escrito con tres dos puntos lleva el atributo template. Se lee como página de cómic y no como página compuesta.",
+      "ca": "Un :::page escrit amb tres dos punts porta l'atribut template. Es llegeix com a pàgina de còmic i no com a pàgina composta.",
+      "zh": "只有三个冒号的:::page带有template=属性。这一页按漫画页读取，模板不起作用。",
+      "ar": "تحمل :::page ذات النقاط الرأسية الثلاث السمة template=. فتُقرأ صفحة قصة مصوّرة، ولا يُستعمل القالب.",
+      "ja": "コロン3つの:::pageにtemplate=が付いています。このページはコミックのページとして読まれ、テンプレートは使われません。",
+      "pt": "Um :::page escrito com três dois-pontos traz o atributo template. Ele é lido como página de quadrinhos, e não como página composta.",
+      "fr": "Un :::page à trois deux-points porte template=. Il est lu comme une page de bande dessinée, pas comme une page composée.",
+      "de": "Ein :::page mit drei Doppelpunkten trägt template=. Es wird als Comicseite gelesen, nicht als zusammengesetzte Seite.",
+      "it": "Un :::page a tre due punti porta template=. Viene letto come pagina di fumetto, non come pagina composta."
+    },
+    "fix": {
+      "en": "Open the composed page with four colons and close it with a bare :::: line.",
+      "es": "Abre la página con cuatro dos puntos, ::::page, y ciérrala con una línea ::::.",
+      "ca": "Obre la pàgina amb quatre dos punts, ::::page, i tanca-la amb una línia ::::.",
+      "zh": "用四个冒号的::::page开启页面，并用单独一行::::结束。",
+      "ar": "افتح الصفحة بأربع نقاط رأسية (::::page) وأغلقها بسطر :::: مجرّد.",
+      "ja": "ページをコロン4つの::::pageで開き、コロン4つだけの行::::で閉じてください。",
+      "pt": "Abra a página com quatro dois-pontos, ::::page, e feche com uma linha ::::.",
+      "fr": "Ouvrez la page avec quatre deux-points, ::::page, et fermez-la avec ::::.",
+      "de": "Öffnen Sie die Seite mit vier Doppelpunkten, ::::page, und schließen Sie sie mit ::::.",
+      "it": "Apri la pagina con quattro due punti, ::::page, e chiudila con ::::."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Warnings",
+        "es": "Avisos",
+        "ca": "Avisos",
+        "zh": "警告",
+        "ar": "التحذيرات",
+        "ja": "警告",
+        "pt": "Avisos",
+        "fr": "Avertissements",
+        "de": "Warnungen",
+        "it": "Avvisi"
+      }
+    }
   }
 }

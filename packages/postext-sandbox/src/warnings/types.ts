@@ -38,6 +38,10 @@ export type WarningKind =
   | 'unknownParagraphStyle'
   | 'unknownCalloutType'
   | 'columnsFlowUnknown'
+  | 'templateUnknown'
+  | 'slotUnknown'
+  | 'slotEmpty'
+  | 'pageFenceLength'
   | 'unknownChipStyle'
   | 'duplicateAnchor'
   | 'unknownCitationKey'
@@ -210,6 +214,13 @@ export type WarningPayload =
   /** `:::columns{flow=…}` names neither `snake` nor `parallel` (#634): the
    *  group takes the default. */
   | { kind: 'columnsFlowUnknown'; value: string }
+  /** Composed pages (#854): a `::::page` naming no template, a slot the
+   *  template lacks, a template frame left empty, a composed page written
+   *  with three colons. */
+  | { kind: 'templateUnknown'; template: string; fenceIndex: number }
+  | { kind: 'slotUnknown'; template: string; slot: string; fenceIndex: number }
+  | { kind: 'slotEmpty'; template: string; frame: string; fenceIndex: number }
+  | { kind: 'pageFenceLength' }
   /** A `:chip[…]{style="…"}` names a style that is not in
    *  `config.chipStyles`; the chip takes the first style. `inResource`
    *  names the resource whose caption, note or cell holds the chip. */

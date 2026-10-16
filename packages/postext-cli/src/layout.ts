@@ -116,11 +116,13 @@ export async function layOut(
   return { docs, chapters, pageCount, laidOut };
 }
 
-function describeIssue(issue: { kind: string }): string {
+function describeIssue(issue: { kind: string; containerName?: string }): string {
   switch (issue.kind) {
     case 'unclosedMath':
       return 'a $ opens maths that never closes';
     case 'unclosedContainer':
+      // A composed page closes with a bare fence of as many colons (#854).
+      if (issue.containerName === 'composedPage') return 'a ::::page is never closed by a fence of as many colons';
       return 'a ::: block is never closed';
     default:
       return issue.kind;
@@ -142,7 +144,9 @@ function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Rep
     const local = w.pageIndex !== undefined ? doc.pages[w.pageIndex] : undefined;
     reporter.warn({
       kind: w.kind,
-      severity: 'warning',
+      // A template frame left empty is a note (#854): a page may leave a
+      // frame unused on purpose.
+      severity: w.kind === 'slotEmpty' ? 'info' : 'warning',
       message: formatWarning(w),
       at: sourceAt(chapter, w.sourceStart),
       ...(local ? { page: String(local.pageLabel ?? local.pageNumberValue) } : {}),
