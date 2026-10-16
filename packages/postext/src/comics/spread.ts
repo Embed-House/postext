@@ -17,6 +17,7 @@ import { clipPolygon, polygonBBox } from './geometry';
 import { comicPageFrame, comicPageLayoutWarnings, comicViewerLeaf, layoutComicFrame, setComicLayoutWarnings, type ComicPageContext } from './layoutPage';
 import { resolvedComics } from '../defaults/comics';
 import { translateComicBalloon, translateComicPanel, translateComicSplitter } from './transform';
+import { comicFramesFor } from './frames';
 import type { ComicPageSource } from './types';
 
 /** Whether a comic page asks for a spread (`:::page{spread}`). */
@@ -174,7 +175,11 @@ export function layoutComicSpread(source: ComicPageSource, given: ComicSpreadCon
       panels,
       splitters,
       balloons,
+      ...(whole.id ? { id: whole.id } : {}),
     };
+    // The frames of the panels the page shows, cut and moved as they are.
+    const frames = comicFramesFor(whole, panels);
+    if (frames) comic.frames = frames;
     // A panel's warning goes to the page holding its centre (once, even
     // for a panel across the spine).
     setComicLayoutWarnings(comic, warnings

@@ -17,7 +17,8 @@ import { dimensionToPx } from '../units';
 import { chineseScriptOf, directionOf, isCjkLanguage, isJapaneseLanguage, presentTag } from '../locale';
 import { comicReadingDirection, DEFAULT_LETTERING_STATIC, pickBalloonStyle, pickPanelStyle, resolvedComics } from '../defaults/comics';
 import { comicArtCrop, comicArtPointToPage, comicArtRectToPage } from './art';
-import { clipPolygon, comicGeometry, physicalSide, pointInPolygon, polygonBBox, type ComicCell, type ComicFrameSide } from './geometry';
+import { comicGeometry, physicalSide, pointInPolygon, type ComicFrameSide } from './geometry';
+import { comicBalloonElementId, comicElementId, comicFrameElementId, comicFrameSpecs, comicPanelFrame, type ComicFrameSpec } from './frames';
 import { parseComicPoint } from './script';
 import { letterPanelDetailed } from './lettering/letter';
 import type { LetteringAnchor, LetteringForeignArt, LetteringItem, LetteringPanel, LetteringStyle } from './lettering/types';
@@ -35,6 +36,9 @@ export interface ComicPageContext {
   /** Added to every source offset of `source` (the frontmatter's length:
    *  VDT offsets are in the whole Markdown). */
   sourceOffset?: number;
+  /** The comic fence's ordinal among the comic fences of its chapter
+   *  (#885): the stable ids of the comic, its frames and balloons. */
+  fenceIndex?: number;
   /** Whether this page swaps mirrored margins (a verso of a left-bound
    *  book), for `comics.frame.margins` with `mirror`. */
   mirrorMargins?: boolean;
@@ -173,18 +177,6 @@ function pictureOf(resources: ReadonlyMap<string, Resource>, id: string | undefi
   if (r.kind === 'bitmap' && r.bitmap) return { resource: r, kind: 'bitmap', fileId: r.bitmap.fileId, format: r.bitmap.format, width: r.bitmap.width, height: r.bitmap.height };
   if (r.kind === 'svg' && r.svg) return { resource: r, kind: 'svg', fileId: r.svg.fileId, width: r.svg.width ?? 0, height: r.svg.height ?? 0 };
   return undefined;
-}
-
-/** `inset="x y w h"`: percentages (or fractions) of the previous panel's
- *  box. */
-function insetBox(value: string | undefined, of: BoundingBox): BoundingBox | undefined {
-  if (!value) return undefined;
-  const parts = value.trim().split(/[\s,]+/).map((p) => Number(p.replace('%', '')));
-  if (parts.length !== 4 || parts.some((n) => !Number.isFinite(n))) return undefined;
-  const fractions = !value.includes('%') && parts.every((n) => n <= 1);
-  const [x, y, w, h] = parts.map((n) => (fractions ? n : n / 100)) as [number, number, number, number];
-  if (w <= 0 || h <= 0) return undefined;
-  return { x: of.x + x * of.width, y: of.y + y * of.height, width: w * of.width, height: h * of.height };
 }
 
 /** The frame of a page: the content area on the sheet, or the trim inset
@@ -680,6 +672,8 @@ export interface ComicFrameContext {
   /** Added to every source offset of `source` (see
    *  {@link ComicPageContext.sourceOffset}). */
   sourceOffset?: number;
+  /** See {@link ComicPageContext.fenceIndex}. */
+  fenceIndex?: number;
   /** The page the warnings are reported on. */
   pageIndex: number;
   /** Regions no balloon should cover, besides those of the pictures (the
@@ -712,6 +706,7 @@ export function layoutComicPage(source: ComicPageSource, given: ComicPageContext
     trimBox: ctx.trimBox,
     resources: ctx.resources,
     ...(ctx.sourceOffset !== undefined ? { sourceOffset: ctx.sourceOffset } : {}),
+    ...(ctx.fenceIndex !== undefined ? { fenceIndex: ctx.fenceIndex } : {}),
     pageIndex: ctx.page.index,
   });
   if (leaf) comic.leaf = leaf.box;
@@ -743,10 +738,15 @@ export function layoutComicFrame(source: ComicPageSource, ctx: ComicFrameContext
   const panelSources: (ComicPanelSource | undefined)[] = [];
   const mirrorDefault = comics.mirrorArt && direction !== comics.artDirection;
 
-  const buildPanel = (whole: Pick<ComicCell, 'polygon' | 'bbox' | 'rect'>, p: ComicPanelSource | undefined): VDTComicPanel => {
+  // The split generates the frames (#885): one per cell (its panel's
+  // `pad` taken off), and one per inset panel over the frame before it.
+  const specs = comicFrameSpecs(source.panels, geometry.cells, (p, box) => comicPanelPadding(p?.attrs.pad, box, direction, dpi));
+  const fence = ctx.fenceIndex ?? source.fenceIndex;
+
+  const buildPanel = (cell: ComicFrameSpec): VDTComicPanel => {
+    const p = cell.panel;
     const style = styleOf(p);
     const attrs = p?.attrs ?? {};
-    const cell = padCell(whole, comicPanelPadding(attrs.pad, whole.bbox, direction, dpi));
     const border = attrs.border?.trim();
     const borderWidth = border === 'none' ? 0 : border ? dimensionToPx(parseComicDimension(border) ?? style.borderWidth, dpi) : dimensionToPx(style.borderWidth, dpi);
     const bg = attrColor(attrs.bg, resolved.colorPalette) ?? style.background.hex;
@@ -754,6 +754,7 @@ export function layoutComicFrame(source: ComicPageSource, ctx: ComicFrameContext
     const panel: VDTComicPanel = {
       index,
       ...(attrs.id ? { id: attrs.id } : {}),
+      ...(fence !== undefined ? { frameId: comicFrameElementId(fence, cell.name) } : {}),
       sourceStart: (p?.sourceStart ?? source.sourceStart) + off,
       sourceEnd: (p?.sourceEnd ?? source.sourceStart) + off,
       polygon: cell.polygon,
@@ -787,34 +788,11 @@ export function layoutComicFrame(source: ComicPageSource, ctx: ComicFrameContext
     return panel;
   };
 
-  // Cells take the flow panels in reading order; inset panels sit over the
-  // panel before them.
-  let flowIndex = 0;
-  const pending = [...source.panels];
-  for (const cell of geometry.cells) {
-    // Inset panels that come before the next flow panel follow the panel
-    // laid out last.
-    while (pending.length > 0 && pending[0]!.attrs.inset) layInset(pending.shift()!);
-    const p = flowPanels[flowIndex];
-    if (p && pending[0] === p) pending.shift();
-    flowIndex++;
-    panels.push(buildPanel(cell, p));
-    panelSources.push(p);
-  }
-  while (pending.length > 0 && pending[0]!.attrs.inset) layInset(pending.shift()!);
-
-  function layInset(p: ComicPanelSource): void {
-    const prev = panels[panels.length - 1];
-    const box = prev ? insetBox(p.attrs.inset, prev.bbox) : undefined;
-    if (!box) return;
-    const polygon = [
-      { x: box.x, y: box.y },
-      { x: box.x + box.width, y: box.y },
-      { x: box.x + box.width, y: box.y + box.height },
-      { x: box.x, y: box.y + box.height },
-    ];
-    panels.push(buildPanel({ polygon, bbox: polygonBBox(polygon), rect: true }, p));
-    panelSources.push(p);
+  // Each frame holds its panel: cells take the flow panels in reading
+  // order, inset panels sit over the panel before them.
+  for (const spec of specs) {
+    panels.push(buildPanel(spec));
+    panelSources.push(spec.panel);
   }
 
   const splitRange = source.attrSources.split;
@@ -832,28 +810,17 @@ export function layoutComicFrame(source: ComicPageSource, ctx: ComicFrameContext
   };
   const lettered = letterPanels({ source, panels, panelSources, comics, resolved, resources, direction, sourceOffset: off, pageIndex: ctx.pageIndex, frame, bleedBox: ctx.bleedBox, ...(ctx.trimBox ? { trim: ctx.trimBox } : {}), ...(ctx.avoid ? { avoid: ctx.avoid } : {}) });
   comic.balloons = lettered.balloons;
+  if (fence !== undefined) {
+    comic.id = comicElementId(fence);
+    comic.frames = panels.map((panel, i) => comicPanelFrame(panel, specs[i]!.name, specs[i]!.layer));
+    for (const b of comic.balloons) {
+      const owner = panels[b.panelIndex];
+      if (owner?.frameId) b.elementId = comicBalloonElementId(owner.frameId, b.order);
+    }
+  }
   warnings.push(...lettered.warnings);
   if (warnings.length > 0) layoutWarnings.set(comic, warnings);
   return comic;
-}
-
-/** A cell inset by its panel's `pad`. */
-function padCell(
-  cell: Pick<ComicCell, 'polygon' | 'bbox' | 'rect'>,
-  pad: { top: number; right: number; bottom: number; left: number } | undefined,
-): Pick<ComicCell, 'polygon' | 'bbox' | 'rect'> {
-  if (!pad || (pad.top === 0 && pad.right === 0 && pad.bottom === 0 && pad.left === 0)) return cell;
-  const b = cell.bbox;
-  const x0 = b.x + pad.left;
-  const x1 = Math.max(x0, b.x + b.width - pad.right);
-  const y0 = b.y + pad.top;
-  const y1 = Math.max(y0, b.y + b.height - pad.bottom);
-  let poly = cell.polygon;
-  poly = clipPolygon(poly, { nx: -1, ny: 0, c: -x0 });
-  poly = clipPolygon(poly, { nx: 1, ny: 0, c: x1 });
-  poly = clipPolygon(poly, { nx: 0, ny: -1, c: -y0 });
-  poly = clipPolygon(poly, { nx: 0, ny: 1, c: y1 });
-  return { polygon: poly, bbox: polygonBBox(poly), rect: cell.rect };
 }
 
 function artOf(

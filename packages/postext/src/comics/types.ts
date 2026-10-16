@@ -146,6 +146,10 @@ export interface ComicPageSource {
   stray: ComicSourceRange[];
   /** The closing `:::` was found (an unclosed page runs to the end). */
   closed: boolean;
+  /** Ordinal of the fence among the comic fences of its text (`:::page`
+   *  and `:::strip` counted together, from 0), set by the block parser: the
+   *  stable ids of the comic's frames and balloons (#885). */
+  fenceIndex?: number;
   sourceStart: number;
   sourceEnd: number;
 }

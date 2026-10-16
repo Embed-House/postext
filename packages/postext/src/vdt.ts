@@ -2440,6 +2440,10 @@ export interface VDTComicPanel {
   index: number;
   /** The panel's `#id`, when it has one. */
   id?: string;
+  /** Id of the frame the split generated for the panel (#885,
+   *  `VDTComicPage.frames`): `cm<fence>:<name>`, the same in every locale
+   *  and across relayouts. */
+  frameId?: string;
   /** The panel's source: from its `::panel` line to the end of its last
    *  script line. */
   sourceStart: number;
@@ -2500,6 +2504,9 @@ export interface VDTComicSplitter {
  *  paint order. */
 export interface VDTComicBalloon {
   id: string;
+  /** Stable id (#885): `cm<fence>:<frame>:b<order>`, the same in every
+   *  locale and across relayouts (`id` counts panels of the layout). */
+  elementId?: string;
   panelIndex: number;
   order: number;
   /** What the script line is: a speaker's balloon, a caption, a sound
@@ -2643,6 +2650,15 @@ export interface VDTFrame {
   sourceEnd?: number;
   /** Other frames' text wraps round this frame's box (`exclude: 'push'`). */
   push?: true;
+  /** The frame's outline when it is not `rect` (#885): a comic panel cut
+   *  by a slanted split line, a convex polygon, clockwise, sheet px. Its
+   *  content is clipped to it and a point hits the frame inside it. */
+  polygon?: VDTPoint[];
+  /** Set on a frame a comic page's split generated (#885): the index of
+   *  the panel it holds in `VDTComicPage.panels`. Such a frame comes from
+   *  the Markdown (its `configPath` is empty); the template editor leaves
+   *  it alone. */
+  panel?: number;
   /** On a page of a spread (#861), a frame crossing the spine that is
    *  read on the facing page (the one holding its centre): this page
    *  shows its half. The blocks are copies of the facing page's, moved
@@ -2735,6 +2751,16 @@ export interface VDTComicPage {
   splitters: VDTComicSplitter[];
   /** Reading order, paint order. */
   balloons: VDTComicBalloon[];
+  /** Stable id of the comic (#885): `cm<n>`, `n` the comic fence's ordinal
+   *  in its chapter (`:::page` and `:::strip` counted together). */
+  id?: string;
+  /** The frames the split generates (#885, DESIGN §7): one per panel, in
+   *  panel order, each the panel's box (and `polygon` when slanted), with
+   *  the panel's id and source. A text panel's frame (`::panel{text}`)
+   *  lists the blocks its Markdown was set in (`blockIds`, in
+   *  `page.floats`), which backends paint over the panels, under the
+   *  lettering. */
+  frames?: VDTFrame[];
 }
 
 /** A column rule resolved to px and hex (see `VDTPage.columnRule`). */

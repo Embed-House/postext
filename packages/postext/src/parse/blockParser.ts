@@ -671,6 +671,8 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
   let nextContainerId = 1;
   /** Composed page fences read so far (`ComposedPageFence.fenceIndex`). */
   let pageFences = 0;
+  /** Comic fences read so far (`ComicPageSource.fenceIndex`, #885). */
+  let comicFences = 0;
 
   /** Emit the `containerEnd` of the innermost open container (at
    *  `srcStart`…`srcEnd`), reporting it as unclosed when `unclosed`. */
@@ -1138,6 +1140,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
     if (comicMatch && (comicMatch[1] === 'page' || comicMatch[1] === 'strip')) {
       const comic = parseComicFence(markdown, lineOffsets[i]!);
       if (comic) {
+        comic.source.fenceIndex = comicFences++;
         blocks.push({
           type: 'directive',
           text: '',

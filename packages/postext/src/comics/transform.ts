@@ -5,7 +5,7 @@
  * returns a new comic and leaves its input as it was.
  */
 
-import type { BoundingBox, VDTBlock, VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTDesignTextBlock, VDTPage, VDTPoint } from '../vdt';
+import type { BoundingBox, VDTBlock, VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTDesignTextBlock, VDTFrame, VDTPage, VDTPoint } from '../vdt';
 import { flowRectToPage } from '../vdt';
 
 /** Numbers a command of an SVG path takes, and which of them are x (`x`) or
@@ -114,7 +114,20 @@ export function translateComicBalloon(b: VDTComicBalloon, dx: number, dy: number
   };
 }
 
-/** A comic moved by `(dx, dy)`: frame, panels, split lines and balloons. */
+/** A frame the split generated (#885) moved by `(dx, dy)`: its box and
+ *  outline (a text frame's blocks are the page's, where they stand). */
+export function translateComicFrame(f: VDTFrame, dx: number, dy: number): VDTFrame {
+  return {
+    ...f,
+    rect: moveRect(f.rect, dx, dy),
+    ...(f.declaredRect ? { declaredRect: moveRect(f.declaredRect, dx, dy) } : {}),
+    ...(f.polygon ? { polygon: f.polygon.map((p) => movePoint(p, dx, dy)) } : {}),
+    blockIds: [...f.blockIds],
+  };
+}
+
+/** A comic moved by `(dx, dy)`: frame, panels, split lines, balloons and
+ *  the frames the split generated. */
 export function translateComicPage(comic: VDTComicPage, dx: number, dy: number): VDTComicPage {
   return {
     ...comic,
@@ -122,6 +135,7 @@ export function translateComicPage(comic: VDTComicPage, dx: number, dy: number):
     panels: comic.panels.map((p) => translateComicPanel(p, dx, dy)),
     splitters: comic.splitters.map((s) => translateComicSplitter(s, dx, dy)),
     balloons: comic.balloons.map((b) => translateComicBalloon(b, dx, dy)),
+    ...(comic.frames ? { frames: comic.frames.map((f) => translateComicFrame(f, dx, dy)) } : {}),
   };
 }
 
