@@ -618,7 +618,12 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
       for (const id of frame.blockIds) blockFrame.set(id, { frame, page });
       if (frame.sourceStart === undefined || frame.sourceEnd === undefined) continue;
       if (!meets({ start: frame.sourceStart, end: frame.sourceEnd }, start, end)) continue;
-      out.push({ pageIndex: page.index, element: frameAncestors(doc, page, frame)[0]! });
+      const el = frameAncestors(doc, page, frame)[0]!;
+      // On a spread, the part of the frame this page paints (#877): a band
+      // that crosses the spine has most of its box on the facing page.
+      const shown = composed.sheetClip && el.rect && !frame.rotate ? intersect(el.rect, composed.sheetClip) : el.rect;
+      if (!shown) continue;
+      out.push({ pageIndex: page.index, element: { ...el, rect: shown } });
     }
     for (const [name, slot] of [['decoration', composed.decoration], ['header', page.header], ['footer', page.footer]] as const) {
       slot?.blocks.forEach((b, i) => {
@@ -687,6 +692,15 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
     }
   }
   return out.sort((a, b) => a.pageIndex - b.pageIndex);
+}
+
+/** The overlap of two rectangles, or undefined when they do not meet. */
+function intersect(a: BoundingBox, b: BoundingBox): BoundingBox | undefined {
+  const x = Math.max(a.x, b.x);
+  const y = Math.max(a.y, b.y);
+  const right = Math.min(a.x + a.width, b.x + b.width);
+  const bottom = Math.min(a.y + a.height, b.y + b.height);
+  return right > x && bottom > y ? { x, y, width: right - x, height: bottom - y } : undefined;
 }
 
 /** The element of `doc` with stable id `id` (a frame `cp0:dinero`, a
