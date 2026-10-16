@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 093 · One text in four citation styles ════════════════
 // https://postext.dev/en/cookbook/one-text-four-citation-styles
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Source Serif 4, Source Sans 3 (SIL OFL 1.1) · Needs postext ≥ 1.28.0
+// Fonts: Source Serif 4, Source Sans 3 (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine,
 } from 'https://esm.sh/postext';
@@ -48,6 +48,9 @@ const citations = (style) => ({
 // #endregion
 
 // #region band: the style's name, large, in a band of its colour
+// The kicker names the build's citation style: a label of the design (#849).
+const kicker = (s, i) => `${t({ en: 'Citation style', es: 'Estilo de cita' })}`
+  + ` · ${i + 1} / ${SHOWN.length} · ${s.system}`;
 const opener = (s, i) => ({
   enabled: true,
   minHeight: mm(41), // from the top margin to under the title, 63 mm from the trim
@@ -55,8 +58,7 @@ const opener = (s, i) => ({
     { kind: 'box', id: 'band', style: { backgroundColor: col(s.band) },
       placement: { anchor: { to: 'page', edge: 'top-left' },
         size: { width: 'fill', height: mm(44) } } },
-    { kind: 'text', id: 'kicker', content: `${t({ en: 'Citation style', es: 'Estilo de cita' })}`
-      + ` · ${i + 1} / ${SHOWN.length} · ${s.system}`, fontFamily: SANS, fontSize: pt(8),
+    { kind: 'text', id: 'kicker', content: kicker(s, i), fontFamily: SANS, fontSize: pt(8),
     fontWeight: 600, letterSpacing: pt(1.4), textTransform: 'uppercase', color: col('paper'),
     align: 'left',
     placement: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: mm(18), y: mm(12) } } },
@@ -91,11 +93,10 @@ const config = () => ({
     { level: 1, breakBefore: { enabled: true, parity: 'any' }, // the essay opens a page
       advancedDesign: opener(SHOWN[at], at) },
   ] },
+  checks: { contentInConfig: { allow: [kicker(SHOWN[at], at)] } },
   header: { elements: [] },
-  footer: { elements: [
-    { kind: 'text', id: 'colophon', content: t({
-      en: 'Set in Source Serif 4 and Source Sans 3 (SIL OFL) · Text: original, CC BY 4.0',
-      es: 'Compuesto en Source Serif 4 y Source Sans 3 (SIL OFL) · Texto: original, CC BY 4.0' }),
+  footer: { elements: [ // the colophon is an attribute of the essay's H1
+    { kind: 'text', id: 'colophon', content: '{attr.colophon}',
     fontFamily: SANS, fontSize: pt(7), color: col('muted'),
     placement: { anchor: { to: 'page', edge: 'bottom-left' }, offset: { x: mm(18), y: mm(-11) } } },
   ] },

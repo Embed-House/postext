@@ -3,7 +3,7 @@ title: "The invisible page"
 author: "Postext Cookbook"
 ---
 
-# The page that is not seen
+# The page that is not seen {colophon="Set in Source Serif 4 and Source Sans 3 (SIL OFL) · Text: original, CC BY 4.0"}
 
 Good typography is meant to go unnoticed. @warde1955 put the idea in an image that printers still quote: a page should be a crystal goblet, a clear glass that shows the wine, rather than a cup of gold that hides it. Tschichold argued much the same about the book, which in his essays serves its reader before it serves its designer [-@tschichold1991]. The argument is moral as much as practical, and @bringhurst2004 [p. 17] makes it the first principle of his manual: typography exists to honour the content.
 

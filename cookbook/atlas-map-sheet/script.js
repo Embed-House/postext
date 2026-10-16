@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 067 · Atlas sheet: numbered maps and a rotated overview ═════
 // https://postext.dev/en/cookbook/atlas-map-sheet
 // Code: MIT · Text: original (CC BY 4.0) · Maps: generated in code from seed 1874 (CC BY 4.0)
-// Fonts: Marcellus, Alegreya Sans, Alegreya Sans SC (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Marcellus, Alegreya Sans, Alegreya Sans SC (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage, defaultResourceTypes,
   setAlignment,
@@ -107,13 +107,12 @@ const header = { elements: [head('verso-folio', '{pageNumber}', 'even', PAGE.out
 const footer = { elements: [{ ...head('drop-folio', '{pageNumber}', 'all', 0, folio),
   pages: 'opener', align: 'center', placement: { anchor: { to: 'container', edge: 'top' },
     offset: { x: mm(0), y: mm(9) } } }] }; // the opener's folio, under the text block
-// A styled heading swaps its section's footer: About this sheet sets a hairline and the edition.
+// A styled heading swaps its section's footer: About this sheet sets a hairline and the edition,
+// the H1's imprint attribute (a footer reads the attributes of its chapter's H1).
 const imprint = { id: 'imprint', footer: { elements: [
   { kind: 'rule', id: 'rule', direction: 'horizontal', color: col('rule'), thickness: pt(0.5),
     placement: pin('container', 'top-left', 0, 5, { width: 'fill' }) },
-  text('edition', t({ en: 'The Solan Isles, sheet 1 · first edition, 2024 · Kirkwick Harbour '
-    + 'Trust', es: 'Las islas Solan, hoja 1 · primera edición, 2024 · Junta del Puerto de '
-    + 'Kirkwick' }), LABEL, 8, 'muted', pin('#rule', 'below', 0, 2),
+  text('edition', '{attr.imprint}', LABEL, 8, 'muted', pin('#rule', 'below', 0, 2),
   { letterSpacing: pt(0.6) })] } };
 
 // #region gazetteer: the places numbered north to south, in a table with zebra rows

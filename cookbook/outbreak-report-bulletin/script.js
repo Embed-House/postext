@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 143 · A weekly bulletin report: the first AIDS reports ═══
 // https://postext.dev/en/cookbook/outbreak-report-bulletin
 // Code: MIT · Text: CDC, MMWR 1981;30:250–252 and 305–308 (public domain) · Chart: original
-// Fonts: IBM Plex Serif, Libre Franklin, Plex Sans Condensed (OFL) · Needs postext ≥ 1.25.0
+// Fonts: IBM Plex Serif, Libre Franklin, Plex Sans Condensed (OFL) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine, registerResourceImage,
   defaultResourceTypes, parseTSV, mergeCells, inlineSvgFonts,
@@ -48,20 +48,17 @@ const reportHead = (y, size) => [
 const masthead = { enabled: true, minHeight: mm(72), slot: { elements: [
   { kind: 'box', id: 'band', style: { backgroundColor: col('accent') }, placement: {
     anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: mm(49) } } },
-  text('series', 'A reprint series in public health history', LABEL, 8,
+  // The series line, the reprint's number, its description and contents are the first H1's.
+  text('series', '{attr.series}', LABEL, 8,
     { ...caps(8), color: col('paper'), placement: at('page', 'top-left', SIDE, 11, 120) }),
-  text('number', 'Reprint No. 1', LABEL, 8, { ...caps(8), color: col('paper'), align: 'right',
+  text('number', '{attr.reprint}', LABEL, 8, { ...caps(8), color: col('paper'), align: 'right',
     placement: at('page', 'top-right', -SIDE, 11, 50) }),
   text('wordmark', 'Surveillance Notes', DISPLAY, 50, { fontWeight: 800, color: col('paper'),
     letterSpacing: pt(-1), lineHeight: 1, placement: at('page', 'top-left', SIDE - 1, 18) }),
-  text('issue', 'Two reports of June 5 and July 3, 1981: the first published accounts of '
-    + 'what became known as AIDS, as the Centers for Disease Control printed them', TEXT, 9.5,
+  text('issue', '{attr.issue}', TEXT, 9.5,
   { fontStyle: 'italic', lineHeight: 1.3, placement: at('container', 'top-left', 0, 29, 92) }),
-  text('contents', '**1** *Pneumocystis* Pneumonia — Los Angeles\n**3** Kaposi’s Sarcoma '
-    + 'and *Pneumocystis* Pneumonia Among Homosexual Men — New York City and California\n'
-    + '**6** Notifiable diseases, week ending June 27, 1981',
-  LABEL, 8, { inlineMarks: true, lineHeight: 1.3, boldColor: col('accent'),
-    placement: at('container', 'top-right', 0, 29, 76), align: 'left' }),
+  text('contents', '{attr.contents}', LABEL, 8, { inlineMarks: true, lineHeight: 1.3,
+    boldColor: col('accent'), placement: at('container', 'top-right', 0, 29, 76), align: 'left' }),
   rule('rule-a', 46.5, 2), rule('rule-b', 48, 0.5), ...reportHead(52, 23),
 ] } };
 const opener = { enabled: true, minHeight: mm(26), slot: { elements: [rule('rule-a', 0, 2),
@@ -72,9 +69,11 @@ const head = (id, content, parity, edge, x, extra) => text(id, content, LABEL, 8
   parity, pages: 'body', fontWeight: 500, letterSpacing: pt(0.3), color: col('muted'),
   overflow: 'clip', placement: at('page', edge, x, 12, 150), ...extra });
 const folio = { fontWeight: 700, color: col('accent') };
+// The bulletin's name heads every verso, the July report's too: the check allows it (#849).
+const RUNNING = 'Surveillance Notes · Reprint No. 1';
 const header = { elements: [
   head('v-folio', '{pageNumber}', 'even', 'top-left', SIDE, folio),
-  head('v-title', 'Surveillance Notes · Reprint No. 1', 'even', 'top-left', SIDE + 8),
+  head('v-title', RUNNING, 'even', 'top-left', SIDE + 8),
   head('r-title', '{chapterTitleAtTop}', 'odd', 'top-right', -SIDE - 8, { align: 'right' }),
   head('r-folio', '{pageNumber}', 'odd', 'top-right', -SIDE, { ...folio, align: 'right' }),
 ] };
@@ -107,6 +106,7 @@ const citations = { style: 'american-medical-association', marker: 'parentheses'
 
 const config = () => ({
   locale: 'en-us', colorPalette, citations, paragraphStyles, header, footer,
+  checks: { contentInConfig: { allow: [RUNNING] } },
   resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type, shortLabel: type.name,
     resetOn: 'h1', numberingTemplate: '{n}', // each report counts its tables from 1
     ...(type.id === 'table' && { captionStyle: { position: 'above' } }) })),

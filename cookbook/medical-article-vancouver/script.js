@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 095 · A medical article in Vancouver style ══════════════
 // https://postext.dev/en/cookbook/medical-article-vancouver
 // Code: MIT · Text: original (CC BY 4.0) · Chart: generated in code (CC BY 4.0)
-// Fonts: PT Serif, Fira Sans, Fira Sans Condensed (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: PT Serif, Fira Sans, Fira Sans Condensed (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine, registerResourceImage,
   defaultResourceTypes, parseTSV, inlineSvgFonts,
@@ -55,15 +55,16 @@ const at = (to, edge, x, y, width) => ({ anchor: { to, edge }, offset: { x: mm(x
   ...(width && { size: { width: mm(width), height: 'auto' } }) });
 const caps = { fontFamily: COND, fontWeight: 600, letterSpacing: pt(1.3),
   textTransform: 'uppercase' };
+const JOURNAL = t({ en: 'Almenara Medical Journal', es: 'Revista Médica de Almenara' });
 const titleBlock = { enabled: true,
   minHeight: mm(62), // the abstract and the text start under the note, on both columns
   slot: { elements: [
     { kind: 'box', id: 'band', style: { backgroundColor: col('accent') },
       placement: { anchor: { to: 'page', edge: 'top-left' },
         size: { width: 'fill', height: mm(15) } } },
-    text('journal', t({ en: 'Almenara Medical Journal', es: 'Revista Médica de Almenara' }),
-      COND, 9.5, { ...caps, color: col('paper'), placement: at('page', 'top-left', INNER, 6) }),
-    text('issue', '2026 · 14(3) · 181–183', COND, 9.5, { ...caps, color: col('paper'),
+    text('journal', JOURNAL, COND, 9.5, { ...caps, color: col('paper'),
+      placement: at('page', 'top-left', INNER, 6) }),
+    text('issue', '{attr.issue}', COND, 9.5, { ...caps, color: col('paper'),
       align: 'right', placement: at('page', 'top-right', -OUTER, 6, 60) }),
     text('kind', '{attr.kind}', COND, 9, { ...caps, color: col('accent'),
       placement: at('container', 'top-left', 0, 0, MEASURE) }),
@@ -102,11 +103,8 @@ const folio = { fontWeight: 600, color: col('accent') };
 const right = { align: 'right' }; // anchored top-right, an element ends at its offset
 const header = { elements: [
   head('v-folio', '{pageNumber}', 'even', 'top-left', OUTER, folio),
-  head('v-title', t({ en: 'Almenara Med J 2026;14(3)', es: 'Rev Med Almenara 2026;14(3)' }),
-    'even', 'top-left', OUTER + 9),
-  head('r-title', t({ en: 'Ortega Ramos et al. · Telemonitoring after severe hypertension',
-    es: 'Ortega Ramos et al. · Telemonitorización tras una crisis hipertensiva' }),
-  'odd', 'top-right', -OUTER - 9, right),
+  head('v-title', '{attr.verso}', 'even', 'top-left', OUTER + 9), // the H1's attributes
+  head('r-title', '{attr.recto}', 'odd', 'top-right', -OUTER - 9, right),
   head('r-folio', '{pageNumber}', 'odd', 'top-right', -OUTER, { ...folio, ...right }),
 ] };
 const footer = { elements: [head('drop-folio', '{pageNumber}', 'all', 'bottom-right', -OUTER,
@@ -120,6 +118,7 @@ const config = () => ({
   resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type, shortLabel: type.name,
     ...(type.id === 'table' && { captionStyle: { position: 'above' } }) })),
   colorPalette, citations, calloutStyles, header, footer,
+  checks: { contentInConfig: { allow: [JOURNAL] } }, // the journal's name (#849)
   headingStyles: [
     // No header: [] here, it would hold for the whole section; pages: 'body' spares page 1
     { id: 'article', numbered: false, span: 'page', advancedDesign: titleBlock },

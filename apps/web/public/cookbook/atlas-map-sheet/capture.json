@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "atlas-map-sheet",
-  "sourceHash": "9d0725230c8b3b849bb184da3fabc0ad597a180fa2c13947a183b49cf07736c1",
+  "sourceHash": "9ff0e0467ae4ffdbc57393c9b524b0dd1eeb036cbb670dee9190cf91aae96b6f",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:55:41.410Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.683Z",
   "variants": {
     "en": {
-      "hash8": "036973fd",
+      "hash8": "86a9e13e",
       "vdtHash": "f72f19ab5bbd43934956780cd70f644ab365a901",
       "timings": {
-        "importMs": 257,
-        "fontsMs": 852,
-        "buildMs": 81,
-        "totalMs": 1942,
+        "importMs": 858,
+        "fontsMs": 925,
+        "buildMs": 90,
+        "totalMs": 2789,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Marcellus"
         ],
         "pages": 4,
-        "ownLines": 244
+        "ownLines": 243
       },
       "pages": [
         {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 512816,
+        "bytes": 512806,
         "folio": "415ce2a3",
         "chapters": [
           {
@@ -361,21 +361,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "9ef579f6",
+      "hash8": "53904836",
       "vdtHash": "5ba6ab722b92c3720a9778169d45ee9a8d8a558b",
       "timings": {
-        "importMs": 206,
-        "fontsMs": 829,
-        "buildMs": 74,
-        "totalMs": 1837,
+        "importMs": 919,
+        "fontsMs": 920,
+        "buildMs": 76,
+        "totalMs": 2977,
         "builds": 1
       },
       "specimen": {
@@ -398,7 +398,7 @@
           "Marcellus"
         ],
         "pages": 4,
-        "ownLines": 244
+        "ownLines": 243
       },
       "pages": [
         {
@@ -474,7 +474,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 513263,
+        "bytes": 513256,
         "folio": "415ce2a3",
         "chapters": [
           {
@@ -718,7 +718,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

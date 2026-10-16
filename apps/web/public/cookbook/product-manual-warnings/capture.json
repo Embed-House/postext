@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "product-manual-warnings",
-  "sourceHash": "b5151e1f3afdc6c737edbcb513a87c4aefe8cb8e87f1a93e17049895e3e63b8f",
+  "sourceHash": "595e6b96ec877be4edc1e223aaef249942db9a3e1764c3f605fde56a71543649",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:03:54.341Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.962Z",
   "variants": {
     "en": {
-      "hash8": "e8a22a11",
+      "hash8": "283df676",
       "vdtHash": "bfc240c842f1489d7062f7bdada09dd386ecb87a",
       "timings": {
-        "importMs": 930,
-        "fontsMs": 149,
-        "buildMs": 101,
-        "totalMs": 2028,
+        "importMs": 627,
+        "fontsMs": 93,
+        "buildMs": 99,
+        "totalMs": 2052,
         "builds": 1
       },
       "specimen": {
@@ -151,7 +151,7 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 35989,
+        "bytes": 35976,
         "folio": "6d89ead9",
         "chapters": [
           {
@@ -497,21 +497,21 @@
             "detail": "the hero is 14.2 % colour, pictures or display type (aim for 25 %+)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "692b1a98",
+      "hash8": "b3faaed6",
       "vdtHash": "bfc240c842f1489d7062f7bdada09dd386ecb87a",
       "timings": {
-        "importMs": 873,
-        "fontsMs": 158,
-        "buildMs": 111,
-        "totalMs": 1966,
+        "importMs": 777,
+        "fontsMs": 388,
+        "buildMs": 106,
+        "totalMs": 2311,
         "builds": 1
       },
       "specimen": {
@@ -646,7 +646,7 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 36012,
+        "bytes": 35998,
         "folio": "6d89ead9",
         "chapters": [
           {
@@ -992,9 +992,9 @@
             "detail": "the hero is 14.2 % colour, pictures or display type (aim for 25 %+)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

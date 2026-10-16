@@ -60,7 +60,7 @@ Un bouton par élève compose ce certificat comme un document à part, avec `bui
 -document.querySelector('[data-postext-pdf]').textContent = t({ en: 'Class list → one PDF',
 -  es: 'Toda la clase en un PDF' });
 +for (const [name, serial] of CLASS) {
-+  const one = `# ${name} {style="certificate" serial="${serial}"}\n\n${markdown}`;
++  const one = `${heading(name, serial)}\n\n${citation}`;
 +  offerPdf(async () => renderToPdf(await buildDocumentWithFonts({ markdown: one, metadata,
 +    resources }, config(), kitFonts(FONTS)), { fontProvider: fontsourceProvider,
 +    resourceBytes: imageBytes }), `${serial}.pdf`);

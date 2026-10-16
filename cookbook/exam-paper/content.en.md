@@ -3,7 +3,7 @@ title: "History Paper 2"
 subtitle: "The American Civil War, 1863"
 ---
 
-# History {style="cover" session="Mock examinations · Spring 2026" paper="Paper 2 · Sources and interpretations" topic="The American Civil War, 1863" date="Thursday 14 May 2026 · Morning · Time allowed: 1 hour 15 minutes"}
+# History {style="cover" notice="Do not turn over until you are told to do so" session="Mock examinations · Spring 2026" paper="Paper 2 · Sources and interpretations" topic="The American Civil War, 1863" date="Thursday 14 May 2026 · Morning · Time allowed: 1 hour 15 minutes"}
 
 ::resource{id="candidate"}
 

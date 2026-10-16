@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 140 · A physics letter with a data figure across the top ═══
 // https://postext.dev/en/cookbook/physics-letter-two-columns
 // Code: MIT · Text: Abbott et al., PRL 116, 061102 (CC BY 3.0) · Data: GWOSC (CC BY 4.0)
-// Fonts: Gelasio, Albert Sans (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Gelasio, Albert Sans (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage, registerCitationEngine,
   defaultResourceTypes, initMathEngine, renderMath,
@@ -95,17 +95,17 @@ const head = (id, content, parity, edge, x, extra) => text(id, content, SANS, 7.
   placement: at('page', edge, x, 12, 120), ...extra });
 const folio = { fontWeight: 700, color: col('accent') };
 const right = { align: 'right' };
+// The running heads are the letter's short forms: checks.contentInConfig allows them (#849).
+const RUNNING = ['B. P. Abbott et al. · Observation of gravitational waves',
+  'GW150914 · a binary black hole merger'];
 const header = { elements: [
   head('v-folio', '{pageNumber}', 'even', 'top-left', SIDE, folio),
-  head('v-title', 'B. P. Abbott et al. · Observation of gravitational waves', 'even',
-    'top-left', SIDE + 7),
-  head('r-title', 'GW150914 · a binary black hole merger', 'odd', 'top-right', -SIDE - 7,
-    right),
+  head('v-title', RUNNING[0], 'even', 'top-left', SIDE + 7),
+  head('r-title', RUNNING[1], 'odd', 'top-right', -SIDE - 7, right),
   head('r-folio', '{pageNumber}', 'odd', 'top-right', -SIDE, { ...folio, ...right }),
 ] };
 const footer = { elements: [
-  head('source', 'Re-set from Phys. Rev. Lett. 116, 061102 (2016) · CC BY 3.0 · '
-    + 'doi:10.1103/PhysRevLett.116.061102', 'all', 'bottom-left', SIDE,
+  head('source', '{attr.source}', 'all', 'bottom-left', SIDE, // from the H1's attributes
   { pages: 'opener', placement: at('page', 'bottom-left', SIDE, -12, 160) }),
   head('drop-folio', '{pageNumber}', 'all', 'bottom-right', -SIDE, { ...folio, ...right,
     pages: 'opener', placement: at('page', 'bottom-right', -SIDE, -12, 10) }),
@@ -114,6 +114,7 @@ const footer = { elements: [
 const sans = (size, weight) => ({ fontFamily: SANS, fontSize: pt(size), fontWeight: weight });
 const config = () => ({
   locale: 'en-us', colorPalette, citations, header, footer, paragraphStyles,
+  checks: { contentInConfig: { allow: RUNNING } },
   // FIG. 1 and TABLE I in the captions, Fig. 1 and Table I in the text: the APS convention
   resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type, numberingTemplate: '{n}',
     resetOn: 'never', ...(type.id === 'figure' ? { captionPrefix: 'FIG.' }

@@ -3,7 +3,7 @@ title: "Observation of Gravitational Waves from a Binary Black Hole Merger"
 author: "B. P. Abbott et al. (LIGO Scientific Collaboration and Virgo Collaboration)"
 ---
 
-# Observation of Gravitational Waves \\ from a Binary Black Hole Merger {style="letter" kicker="Letter · Gravitational-wave astronomy"}
+# Observation of Gravitational Waves \\ from a Binary Black Hole Merger {style="letter" kicker="Letter · Gravitational-wave astronomy" source="Re-set from Phys. Rev. Lett. 116, 061102 (2016) · CC BY 3.0 · doi:10.1103/PhysRevLett.116.061102"}
 
 ::resource{id="fig1"}
 

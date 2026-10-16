@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 047 · Walking guide with thumb tabs ═══════════════════
 // https://postext.dev/en/cookbook/walking-guide-thumb-tabs
 // Code: MIT · Text: original (CC BY 4.0) · Map and tiles: drawn in code (CC BY 4.0)
-// Fonts: Albert Sans, DM Serif Display, Asap Condensed (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Albert Sans, DM Serif Display, Asap Condensed (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 // A pocket guide to Lisbon. Each walk is a heading style that sets four colours, and the tab,
 // the stop numbers, the box's tint and title and the blank page before the walk take them.
 import {
@@ -146,7 +146,7 @@ const cover = { enabled: true, slot: { elements: [
   tileImage('wall', 'tiles-cover', 'top-left', 'fill', 'auto'),
   rim('plaque', 13, 88, 94, 62, { backgroundColor: col('paper'), borderWidth: pt(1.6) }),
   rim('frame', 15.2, 90.2, 89.6, 57.6, { borderWidth: pt(0.5) }), // the inner frame line
-  text('kicker', t({ en: 'A pocket guide', es: 'Guía de bolsillo' }), { ...label, align: 'center',
+  text('kicker', '{attr.kicker}', { ...label, align: 'center',
     fontSize: pt(8.5), letterSpacing: pt(2), color: col('bandInk') },
   { ...at('page', 'top-left', 13, 96), ...plaque }), // as wide as the plaque, and centred on it
   text('title', '{titleText}', { ...display, fontSize: pt(46), lineHeight: 0.98, align: 'center',

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 050 · Product manual with safety notices ════════════════
 // https://postext.dev/en/cookbook/product-manual-warnings
 // Code: MIT · Text: original, in German (CC BY 4.0) · Drawings: generated in code (CC BY 4.0)
-// Fonts: Red Hat Text, Red Hat Display, Red Hat Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Red Hat Text, Red Hat Display, Red Hat Mono (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, prepareFonts, renderPageToCanvas, registerResourceImage, parseTSV,
   mergeCells, defaultResourceTypes, inlineSvgFonts } from 'https://esm.sh/postext';
@@ -112,7 +112,7 @@ const cover = { id: 'cover', numbered: false, breakBefore: { enabled: false },
       words('product', '{attr.product}', DISPLAY, 17, 500, 'tint', pin('#title', 'below', 0.4, 1)),
       words('manual', 'Bedienungsanleitung', DISPLAY, 15, 800, 'ink',
         pin('page', 'top-left', PAGE.inner, COUNTER + 12)),
-      words('keep', 'Vor dem ersten Gebrauch lesen und aufbewahren.', TEXT, 8.6, 400, 'ink',
+      words('keep', '{attr.keep}', TEXT, 8.6, 400, 'ink',
         pin('#manual', 'below', 0, 1)),
       words('lang', 'DE', DISPLAY, 11, 800, 'paper', pin('page', 'top-right', -PAGE.outer,
         COUNTER + 12), { box: { backgroundColor: col('brand'), padding: pad(3, 5) } }),

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 138 · Machine-learning paper with theorems and proofs ═══
 // https://postext.dev/en/cookbook/ml-paper-theorems-proofs
 // Code: MIT · Text: Rafailov et al. 2023, arXiv:2305.18290 (CC BY 4.0), abridged · Art: code
-// Fonts: Spectral, Work Sans, JetBrains Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Spectral, Work Sans, JetBrains Mono (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 // DPO (NeurIPS 2023) re-set as a preprint: numbered equations with labels and references,
 // definition, lemma and theorem boxes, proofs that end in a square, author–year citations.
 import {
@@ -84,11 +84,11 @@ const titleBlock = {
         size: { width: 'fill', height: mm(BAND + 3) } } }, // + 3 mm of bleed
     { kind: 'image', id: 'curves', resourceId: 'sigmoids', // drawn in code: σ(βu)
       placement: at('page', 'top-left', 70, 3, 108) },
-    text('kicker', 'Preprint · Machine learning · Re-set and abridged', SANS, 7.5, 'mist',
+    text('kicker', '{attr.kicker}', SANS, 7.5, 'mist',
       at('page', 'top-left', INNER, 30, 120), caps(7.5)),
     text('title', '{titleText}', SERIF, 25, 'paper', at('#kicker', 'below', 0, 3.5, MEASURE),
       { fontWeight: 600, lineHeight: 1.08 }),
-    text('venue', 'NeurIPS 2023 · arXiv:2305.18290v3 · CC BY 4.0', MONO, 7, 'mist',
+    text('venue', '{attr.venue}', MONO, 7, 'mist',
       at('page', 'top-left', INNER, BAND - 7, 120), { overflow: 'clip' }),
     text('authors', '{attr.authors}', SANS, 9.5, 'ink', at('page', 'top-left', INNER, BAND + 6,
       MEASURE), { fontWeight: 500, lineHeight: 1.45 }),
@@ -100,16 +100,17 @@ const head = (id, content, parity, edge, x, extra) => text(id, content, SANS, 7.
   at('page', `top-${edge}`, x, 13), { overflow: 'clip', ...caps(7.5, 500), align: edge,
     parity, pages: 'body', ...extra });
 const folio = { fontWeight: 700, color: col('accent') };
+// The running heads are the paper's short forms: checks.contentInConfig allows them (#849).
+const RUNNING = ['Rafailov, Sharma, Mitchell, Ermon, Manning & Finn',
+  'Direct Preference Optimization'];
 const header = { elements: [
   head('v-folio', '{pageNumber}', 'even', 'left', OUTER, folio),
-  head('v-title', 'Rafailov, Sharma, Mitchell, Ermon, Manning & Finn', 'even', 'left', OUTER + 9),
-  head('r-title', 'Direct Preference Optimization', 'odd', 'right', -(OUTER + 9)),
+  head('v-title', RUNNING[0], 'even', 'left', OUTER + 9),
+  head('r-title', RUNNING[1], 'odd', 'right', -(OUTER + 9)),
   head('r-folio', '{pageNumber}', 'odd', 'right', -OUTER, folio),
 ] };
 const footer = { elements: [ // the first page: where the text comes from, and its licence
-  text('source', 'Abridged from Rafailov, R. et al. (2023), Advances in Neural Information '
-    + 'Processing Systems 36, arXiv:2305.18290v3, CC BY 4.0 · equations renumbered, '
-    + 'Figure 1 redrawn', MONO, 6.2,
+  text('source', '{attr.source}', MONO, 6.2, // the H1's attribute, as kicker and venue are
   'muted', at('page', 'bottom-left', INNER, -13, MEASURE - 10), { pages: 'opener' }),
   text('drop-folio', '{pageNumber}', SANS, 7.5, 'accent', at('page', 'bottom-right', -OUTER, -13),
     { ...folio, align: 'right', pages: 'opener', overflow: 'clip' }),
@@ -172,6 +173,7 @@ const config = () => ({
   captionStyle: { fontFamily: SANS, fontSize: pt(8), color: col('ink'), labelBold: true,
     labelColor: col('accent'), gap: mm(2.2), note: { fontSize: pt(7), color: col('muted') } },
   header, footer,
+  checks: { contentInConfig: { allow: RUNNING } },
 });
 // Figure 1, Table 1: numbered through the paper ("{n}"), the table captioned above.
 const resourceTypes = defaultResourceTypes(LANG).map((type) => ({ ...type,

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ml-paper-theorems-proofs",
-  "sourceHash": "31be5e4e029b95ed33c98b1c960264ca6233760b279b7df3ab809febadec50a1",
+  "sourceHash": "c45fe9f6736ce81e06085baeac296750ec581a3c7d1a3629d7a407454e793a5a",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:02:23.813Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.887Z",
   "variants": {
     "en": {
-      "hash8": "7a59e982",
+      "hash8": "fc24e1ac",
       "vdtHash": "19e8320d3f74f487ded3f754b0e48848187a07fc",
       "timings": {
-        "importMs": 1181,
-        "fontsMs": 327,
-        "buildMs": 319,
-        "totalMs": 2904,
+        "importMs": 750,
+        "fontsMs": 304,
+        "buildMs": 302,
+        "totalMs": 2689,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Work Sans"
         ],
         "pages": 10,
-        "ownLines": 218
+        "ownLines": 220
       },
       "pages": [
         {
@@ -193,12 +193,12 @@
       },
       "pdf": {
         "file": "ml-paper-theorems-proofs.pdf",
-        "bytes": 975853,
+        "bytes": 975851,
         "pages": 10
       },
       "sandbox": {
         "file": "ml-paper-theorems-proofs.postext",
-        "bytes": 86691,
+        "bytes": 86692,
         "folio": "70aa8698",
         "chapters": [
           {
@@ -294,6 +294,9 @@
           "captionStyle.note",
           "captionStyle.note.color",
           "captionStyle.note.fontSize",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.doi",
@@ -421,6 +424,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "citations",
           "colorPalette",
           "crossRefs",
@@ -436,7 +440,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 463,
+        "configLeaves": 464,
         "designElements": 13,
         "directives": [
           ":::callout",
@@ -567,9 +571,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 6 −5‰ “Lemma 1. Under the Plackett-Luce, and in particu…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

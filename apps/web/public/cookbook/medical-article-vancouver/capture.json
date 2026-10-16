@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "medical-article-vancouver",
-  "sourceHash": "3891e9de9b3c02eeae6f503313f4ad3df8c4769622529f302bfa9320df730941",
+  "sourceHash": "ef2f9126eb68eb917c655b1c2a189abb5b168c0542e1813999d9a6e7de02148b",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:02:23.800Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.879Z",
   "variants": {
     "en": {
-      "hash8": "a0242509",
+      "hash8": "89871e1b",
       "vdtHash": "b5a88b75988b0357901a1282d307f9902af9b1d7",
       "timings": {
-        "importMs": 1131,
-        "fontsMs": 282,
-        "buildMs": 186,
-        "totalMs": 2592,
+        "importMs": 963,
+        "fontsMs": 642,
+        "buildMs": 137,
+        "totalMs": 2456,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "PT Serif"
         ],
         "pages": 3,
-        "ownLines": 179
+        "ownLines": 178
       },
       "pages": [
         {
@@ -101,12 +101,12 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 122327,
+        "bytes": 122321,
         "pages": 3
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 53304,
+        "bytes": 53358,
         "folio": "b245c39c",
         "chapters": [
           {
@@ -194,6 +194,9 @@
           "captionStyle.note",
           "captionStyle.note.color",
           "captionStyle.note.fontSize",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.doi",
@@ -311,6 +314,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -323,7 +327,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 401,
+        "configLeaves": 402,
         "designElements": 14,
         "directives": [
           ":::callout",
@@ -422,21 +426,21 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “What is already known Self-monitoring lowers blo…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "98a98caa",
+      "hash8": "33e3122d",
       "vdtHash": "81cf1725dfd96bd2ca1e99f7b3b87c7579fa19f8",
       "timings": {
-        "importMs": 1356,
+        "importMs": 1319,
         "fontsMs": 90,
-        "buildMs": 168,
-        "totalMs": 2429,
+        "buildMs": 133,
+        "totalMs": 2609,
         "builds": 1
       },
       "specimen": {
@@ -459,7 +463,7 @@
           "PT Serif"
         ],
         "pages": 3,
-        "ownLines": 179
+        "ownLines": 178
       },
       "pages": [
         {
@@ -520,12 +524,12 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 131482,
+        "bytes": 131485,
         "pages": 3
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 54557,
+        "bytes": 54605,
         "folio": "b245c39c",
         "chapters": [
           {
@@ -613,6 +617,9 @@
           "captionStyle.note",
           "captionStyle.note.color",
           "captionStyle.note.fontSize",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.doi",
@@ -730,6 +737,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -742,7 +750,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 401,
+        "configLeaves": 402,
         "designElements": 14,
         "directives": [
           ":::callout",
@@ -831,9 +839,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

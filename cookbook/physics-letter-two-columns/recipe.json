@@ -56,8 +56,8 @@
     "figures-float-where-cited"
   ],
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "math": true
   },
   "kit": [
@@ -152,5 +152,5 @@
   },
   "workarounds": [],
   "created": "2026-10-06",
-  "updated": "2026-10-10"
+  "updated": "2026-10-16"
 }

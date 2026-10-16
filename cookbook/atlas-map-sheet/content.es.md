@@ -2,7 +2,7 @@
 title: "Las islas Solan"
 ---
 
-# Las islas y sus aguas {sheet="Hoja 1" lead="Brannay, Orrin, Kellay y el islote del faro, Skarra, quedan a unos 20 kilómetros de la costa de tierra firme, frente a Carrick. El levantamiento de 1874 trazó sus costas; esta hoja añade las profundidades, las carreteras y una cuadrícula para localizar cada topónimo."}
+# Las islas y sus aguas {sheet="Hoja 1" imprint="Las islas Solan, hoja 1 · primera edición, 2024 · Junta del Puerto de Kirkwick" lead="Brannay, Orrin, Kellay y el islote del faro, Skarra, quedan a unos 20 kilómetros de la costa de tierra firme, frente a Carrick. El levantamiento de 1874 trazó sus costas; esta hoja añade las profundidades, las carreteras y una cuadrícula para localizar cada topónimo."}
 
 Las islas Solan deben su nombre al *solan goose*, el antiguo nombre inglés del alcatraz, que anida por miles en los acantilados de Kellay. El grupo abarca 34 kilómetros de oeste a este. Solo dos de sus islas están habitadas: Brannay, con 612 vecinos en el censo de 2021, y Orrin, con 188. El :ref{id="relief" case="lower"} muestra el relieve en tres franjas de altura y las carreteras que unen los pueblos de las dos islas.
 

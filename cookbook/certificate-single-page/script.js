@@ -1,10 +1,10 @@
 // ═══ Postext Cookbook · Nº 063 · Certificate with a guilloche border ═══════════════
 // https://postext.dev/en/cookbook/certificate-single-page
 // Code: MIT · Text: original (CC BY 4.0) · Guilloche and seal: generated in code (CC BY 4.0)
-// Fonts: Rosarivo, Pinyon Script, Aboreto (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Rosarivo, Pinyon Script, Aboreto (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 // End-of-course certificates, one page per student, drawn by one heading style, in one PDF.
 import {
-  buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
+  buildDocumentWithFonts, renderPageToCanvas, registerResourceImage, extractFrontmatter,
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
@@ -79,14 +79,12 @@ const resources = [
 const centred = (top) => at('top', 0, y(top)); // tracked or not, the letters are centred
 const title = [
   { kind: 'text', id: 'kicker', ...caps, fontSize: pt(9.5), letterSpacing: pt(2.4),
-    content: t({ en: 'The Quoin Room · Letterpress workshop',
-      es: 'La Cuña · Taller de tipografía' }),
-    placement: centred(39) },
+    content: '{attr.workshop}', placement: centred(39) }, // the wording: see merge
   { kind: 'text', id: 'title', content: t({ en: 'Certificate', es: 'Diploma' }), ...caps,
     fontSize: pt(46), lineHeight: 1, letterSpacing: pt(3), placement: centred(48) },
   { kind: 'text', id: 'of', content: t({ en: 'of completion', es: 'de aprovechamiento' }),
     ...caps, fontSize: pt(11), letterSpacing: pt(4), placement: centred(68) },
-  { kind: 'text', id: 'lead', content: t({ en: 'This certifies that', es: 'Se otorga a' }),
+  { kind: 'text', id: 'lead', content: '{attr.lead}',
     fontFamily: 'Rosarivo', italic: true, fontSize: pt(13), color: col('muted'),
     placement: centred(90) },
   { kind: 'text', id: 'name', content: '{titleText}', fontFamily: 'Pinyon Script',
@@ -100,8 +98,6 @@ const title = [
 // #endregion
 
 // #region signatures: seal, signature lines, names and roles, hung from the seal's top edge
-const SIGNED = t({ en: [['Harriet Colfax', 'Master printer'], ['Samuel Okoro', 'Course tutor']],
-  es: [['Pilar Ansón', 'Directora del taller'], ['Julián Oteo', 'Profesor del curso']] });
 // mm: each signature line stops 3 mm short of the seal (56 on Letter, 53 on A4)
 const LINE = (W - 2 * MARGIN - 2 * SEAL.r) / 2 - 3;
 const under = (id, gap, x = 0) => ({ anchor: { to: `#${id}`, edge: 'below' },
@@ -109,20 +105,18 @@ const under = (id, gap, x = 0) => ({ anchor: { to: `#${id}`, edge: 'below' },
 const signatures = [
   { kind: 'image', id: 'seal', resourceId: 'seal',
     placement: { ...at('top', 0, SIGN), size: { width: mm(SEAL.w) } } },
-  ...SIGNED.flatMap(([who, role], i) => [
+  ...[1, 2].flatMap((n, i) => [ // signer1 and role1, signer2 and role2: the wording again
     { kind: 'rule', id: `line${i}`, direction: 'horizontal', thickness: pt(0.6), color: col('rule'),
       placement: { ...at('top-left', i ? W - MARGIN - LINE : MARGIN, SIGN + 23),
         size: { width: mm(LINE) } } },
-    { kind: 'text', id: `who${i}`, content: who, fontFamily: 'Rosarivo', fontSize: pt(10.5),
-      color: col('ink'), align: 'center', placement: under(`line${i}`, 1.6) },
-    { kind: 'text', id: `role${i}`, content: role, ...caps, fontSize: pt(7.5),
+    { kind: 'text', id: `who${i}`, content: `{attr.signer${n}}`, fontFamily: 'Rosarivo',
+      fontSize: pt(10.5), color: col('ink'), align: 'center', placement: under(`line${i}`, 1.6) },
+    { kind: 'text', id: `role${i}`, content: `{attr.role${n}}`, ...caps, fontSize: pt(7.5),
       letterSpacing: pt(1.4), color: col('muted'), align: 'center',
       placement: under(`who${i}`, 0.6) },
   ]),
   { kind: 'text', id: 'imprint', fontFamily: 'Rosarivo', italic: true, fontSize: pt(7),
-    content: t({ en: 'Printed at the Quoin Room · set in Rosarivo, Pinyon Script and Aboreto',
-      es: 'Impreso en La Cuña · compuesto en Rosarivo, Pinyon Script y Aboreto' }),
-    color: col('muted'), placement: at('top', 0, SIGN + 50) },
+    content: '{attr.imprint}', color: col('muted'), placement: at('top', 0, SIGN + 50) },
 ];
 // #endregion
 
@@ -153,13 +147,18 @@ const config = () => ({
 const markdown = /* @content */ ''; // content.<lang>.md: the wording every certificate shares
 
 // #region merge: the class list becomes one styled heading per student
-// Name and serial: {titleText} and {attr.serial} in the designs (gotcha: attr-values).
+// Name and serial: {titleText} and {attr.serial} in the designs (gotcha: attr-values). The
+// lines every certificate shares are the front matter of content.<lang>.md, written onto each
+// heading as attributes too: {attr.workshop}, {attr.lead}, the signers and the imprint.
+const { metadata: wording, content: citation } = extractFrontmatter(markdown);
+const shared = Object.entries(wording).map(([key, value]) => `${key}="${value}"`).join(' ');
+const heading = (name, serial) => `# ${name} {style="certificate" serial="${serial}" ${shared}}`;
 const CLASS = t({
   en: [['Imogen Achterberg', '26-031'], ['Tomás Okafor', '26-032'], ['Ruth Adair', '26-033']],
   es: [['Lucía Beltrán Ochoa', '26-017'], ['Íñigo Sarasola', '26-018'], ['Ana Rius', '26-019']],
 });
-const merged = CLASS.map(([name, serial]) =>
-  `# ${name} {style="certificate" serial="${serial}"}\n\n${markdown}`).join('\n\n');
+const merged = CLASS.map(([name, serial]) => `${heading(name, serial)}\n\n${citation}`)
+  .join('\n\n');
 const metadata = { // the PDF's title and author
   title: t({ en: 'Certificates of completion, fall 2026',
     es: 'Diplomas del curso de otoño de 2026' }),

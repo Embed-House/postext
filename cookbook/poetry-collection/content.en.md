@@ -8,7 +8,7 @@ author: "Gerard Manley Hopkins"
 
 # Fern and Rowan {style="plate" caption="Fern and rowan: the ‘flitches of fern’ and the ‘beadbonny ash’ of Inversnaid"}
 
-# Pied Beauty {style="title-page"}
+# Pied Beauty {style="title-page" press="The Herbarium Press"}
 
 # Contents {style="contents"}
 

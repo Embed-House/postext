@@ -4,7 +4,7 @@ subtitle: "Tres paseos por la ciudad vieja"
 author: "Postext Cookbook"
 ---
 
-# Lisboa \\ a pie {style="cover"}
+# Lisboa \\ a pie {style="cover" kicker="Guía de bolsillo"}
 
 :::pagebreak
 

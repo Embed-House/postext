@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "certificate-single-page",
-  "sourceHash": "cd0e6eef6c33a0d61cd8239e830a47b35e5518103d94264332f30175e39c195f",
+  "sourceHash": "e7349c3e5cb32c3a64c9723517882015626790a0673972e95c41d25afa4f0c12",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:38:45.246Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T14:57:00.583Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.728Z",
   "variants": {
     "en": {
-      "hash8": "7f68f71f",
+      "hash8": "d01deca9",
       "vdtHash": "9e7f834a65281cc1f4bc902a08b908f9f13a1e9b",
       "timings": {
-        "importMs": 2711,
-        "fontsMs": 58,
-        "buildMs": 57,
-        "totalMs": 5338,
+        "importMs": 655,
+        "fontsMs": 35,
+        "buildMs": 41,
+        "totalMs": 1544,
         "builds": 1
       },
       "specimen": {
@@ -45,7 +39,7 @@
           "Rosarivo"
         ],
         "pages": 3,
-        "ownLines": 174
+        "ownLines": 173
       },
       "pages": [
         {
@@ -106,12 +100,12 @@
       },
       "pdf": {
         "file": "certificate-single-page.pdf",
-        "bytes": 259497,
+        "bytes": 259503,
         "pages": 3
       },
       "sandbox": {
         "file": "certificate-single-page.postext",
-        "bytes": 30210,
+        "bytes": 30273,
         "folio": "a05bb7c0",
         "chapters": [
           {
@@ -125,6 +119,7 @@
         "apis": [
           "buildDocumentWithFonts",
           "decompressWoff2",
+          "extractFrontmatter",
           "registerResourceImage",
           "renderPageToCanvas",
           "renderToPdf"
@@ -251,17 +246,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "ec69379d",
+      "hash8": "92f9a00a",
       "vdtHash": "f89d7783c5c82acb318507363bd71fa7dfc00a82",
       "timings": {
-        "importMs": 3033,
-        "fontsMs": 52,
-        "buildMs": 46,
-        "totalMs": 4788,
+        "importMs": 598,
+        "fontsMs": 36,
+        "buildMs": 37,
+        "totalMs": 1554,
         "builds": 1
       },
       "specimen": {
@@ -283,7 +284,7 @@
           "Rosarivo"
         ],
         "pages": 3,
-        "ownLines": 174
+        "ownLines": 173
       },
       "pages": [
         {
@@ -344,12 +345,12 @@
       },
       "pdf": {
         "file": "certificate-single-page.pdf",
-        "bytes": 251234,
+        "bytes": 251241,
         "pages": 3
       },
       "sandbox": {
         "file": "certificate-single-page.postext",
-        "bytes": 28627,
+        "bytes": 28685,
         "folio": "a05bb7c0",
         "chapters": [
           {
@@ -363,6 +364,7 @@
         "apis": [
           "buildDocumentWithFonts",
           "decompressWoff2",
+          "extractFrontmatter",
           "registerResourceImage",
           "renderPageToCanvas",
           "renderToPdf"
@@ -489,7 +491,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

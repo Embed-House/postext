@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "poetry-collection",
-  "sourceHash": "f9aca0541f57390e692f27fccdbb9da2e0e71030957f3a9dccc0b72a17da58d6",
+  "sourceHash": "340e2613305d8606443e1a02e80d14f938f05a88b532355ced0efbbdd6aeb7a7",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:03.126Z",
-  "verified": {
-    "postext": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:03:18.166Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.956Z",
   "variants": {
     "en": {
-      "hash8": "ce1305d6",
+      "hash8": "c2f8b507",
       "vdtHash": "6f34e685fb292bf6fd80f59acad0e217d78802af",
       "timings": {
-        "importMs": 368,
-        "fontsMs": 47,
-        "buildMs": 81,
-        "totalMs": 1527,
+        "importMs": 530,
+        "fontsMs": 74,
+        "buildMs": 77,
+        "totalMs": 1509,
         "builds": 1
       },
       "specimen": {
@@ -171,7 +166,7 @@
       },
       "sandbox": {
         "file": "poetry-collection.postext",
-        "bytes": 370771,
+        "bytes": 370776,
         "folio": "6d3a2b7c",
         "chapters": [
           {
@@ -390,7 +385,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

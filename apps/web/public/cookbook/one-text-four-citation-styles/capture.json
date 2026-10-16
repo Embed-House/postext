@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "one-text-four-citation-styles",
-  "sourceHash": "156cf50d5c86a14e2bcd3a71836502b6856f7061a587f9ebc093c79e6d22520e",
+  "sourceHash": "539da0a8204ff126c5ad1a9f3a49a59eeeaf2ca360cfcfbfb1abc2b44a4fdf8c",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:02:23.939Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.930Z",
   "variants": {
     "en": {
-      "hash8": "03594731",
+      "hash8": "34919053",
       "vdtHash": "178a19ff9c1a2e821bb2cb07aae401ab53b81e1c",
       "timings": {
-        "importMs": 674,
-        "fontsMs": 5,
-        "buildMs": 311,
-        "totalMs": 2532,
+        "importMs": 672,
+        "fontsMs": 6,
+        "buildMs": 284,
+        "totalMs": 2731,
         "builds": 4
       },
       "specimen": {
@@ -37,7 +37,7 @@
           "Source Serif 4"
         ],
         "pages": 4,
-        "ownLines": 115
+        "ownLines": 116
       },
       "pages": [
         {
@@ -109,7 +109,7 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17129,
+        "bytes": 17189,
         "folio": "973c2e27",
         "keep": "first",
         "pages": 1,
@@ -148,6 +148,9 @@
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
           "bodyText.textAlign",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.doi",
@@ -197,6 +200,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -206,12 +210,14 @@
           "locale",
           "page"
         ],
-        "configLeaves": 132,
+        "configLeaves": 133,
         "designElements": 5,
         "directives": [
           ":::references"
         ],
-        "inline": [],
+        "inline": [
+          "{attrs}"
+        ],
         "resources": {
           "svg": 0,
           "bitmap": 0,
@@ -252,6 +258,7 @@
         "features": [
           "citation-styles",
           "generated-bibliography",
+          "heading-attributes",
           "opener-design"
         ],
         "suggestedLevel": 2
@@ -279,9 +286,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 4 −5‰ “LUPTON, Ellen, 2010. Thinking with Type. 2. New …”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -297,13 +304,13 @@
       }
     },
     "es": {
-      "hash8": "0d910e1b",
+      "hash8": "54462af2",
       "vdtHash": "b52aefae7a2325712114cbd2adba2a44ecfb222c",
       "timings": {
-        "importMs": 613,
-        "fontsMs": 5,
-        "buildMs": 291,
-        "totalMs": 2703,
+        "importMs": 1297,
+        "fontsMs": 6,
+        "buildMs": 267,
+        "totalMs": 2847,
         "builds": 4
       },
       "specimen": {
@@ -324,7 +331,7 @@
           "Source Serif 4"
         ],
         "pages": 4,
-        "ownLines": 115
+        "ownLines": 116
       },
       "pages": [
         {
@@ -396,7 +403,7 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17897,
+        "bytes": 17959,
         "folio": "973c2e27",
         "keep": "first",
         "pages": 1,
@@ -435,6 +442,9 @@
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
           "bodyText.textAlign",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.doi",
@@ -484,6 +494,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -493,12 +504,14 @@
           "locale",
           "page"
         ],
-        "configLeaves": 132,
+        "configLeaves": 133,
         "designElements": 5,
         "directives": [
           ":::references"
         ],
-        "inline": [],
+        "inline": [
+          "{attrs}"
+        ],
         "resources": {
           "svg": 0,
           "bitmap": 0,
@@ -539,6 +552,7 @@
         "features": [
           "citation-styles",
           "generated-bibliography",
+          "heading-attributes",
           "opener-design"
         ],
         "suggestedLevel": 2
@@ -556,9 +570,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
