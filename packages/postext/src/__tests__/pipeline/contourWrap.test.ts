@@ -413,6 +413,18 @@ describe('a frame that pushes with its picture’s contour (#883)', () => {
     for (const l of under) expect(l.measure).toBeUndefined();
   });
 
+  it('the page memo keys the contour: another margin, polygon or trace lays the page again (#857)', () => {
+    const cfg = { ...PAGE, pageTemplates: [tpl('contour')] };
+    const ends = (r: Resource) => lines(build(md, [r], cfg)).slice(0, 8).map((l) => Math.round(l.measure ? l.measure.x + l.measure.width : -1));
+    const base = ends(pic);
+    expect(ends(pic)).toEqual(base);
+    expect(ends({ ...pic, contour: { ...pic.contour, margin: mm(8) } })).not.toEqual(base);
+    expect(ends({ ...pic, contour: { ...pic.contour, points: DIAMOND } })).not.toEqual(base);
+    const bmp = (spans: number[]): Resource => ({ id: 'pic', typeId: 'figure', kind: 'bitmap', caption: '', createdAt: 0, updatedAt: 0,
+      bitmap: { fileId: 'p.png', format: 'png', width: 400, height: 400 }, contour: { traced: { fileId: 'p.png', threshold: 0.5, rows: 2, spans } } });
+    expect(ends(bmp([0.9, 1, 0, 1]))).not.toEqual(ends(bmp([0, 1, 0, 1])));
+  });
+
   it('scales a contour about a point (a frame laid out at another scale)', () => {
     const c: VDTExclusionContour = { spans: [{ y: 20, height: 10, left: 10, right: 30 }], margin: 4, quantum: 2 };
     expect(scaleContourAbout(c, 10, 20, 0.5)).toEqual({ spans: [{ y: 20, height: 5, left: 10, right: 20 }], margin: 2, quantum: 1 });

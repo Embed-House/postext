@@ -690,7 +690,11 @@ Recorded where the implementation settles a point the sections above leave open,
   `VDTExclusion` (band, settling, epub) and adds `contour`; `wrapInsetSteps` reads it. Frames: the
   pushing frame's shape is `composed/contour.ts` `frameContour` over its laid children (pictures by
   shape, everything else by box); `exclusionsFor` passes it to `calloutLayout.exclusionInsets`,
-  which keeps its side choice (the wider side free) and sets each line by the shape. Two shapes on
+  which keeps its side choice (the wider side free) and sets each line by the shape. With the
+  reflow ladder (§5.11) the shape is the pictures as scaled (`fit.imageMinScale`), and a frame laid
+  out at a text scale maps its shape to the page by that scale (`scaleContourAbout`, as
+  `frameMatrix`), and the exclusions it receives back into its laid-out coordinates. The page memo
+  (§6, #857) keys the pictures' resources whole, so `contour` and its trace are in the key. Two shapes on
   either side inset both sides; text on both sides of a shape in the middle of a measure (split
   lines) is not done.
 - **Fallback.** A contour wrap with no known shape runs round the box with a `textWrap` warning,
