@@ -90,6 +90,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'slotEmpty':
     case 'pageFenceLength':
     case 'frameOverflow':
+    case 'frameContinuationLimit':
     case 'spreadMismatch':
     case 'unknownCalloutType':
     case 'unknownChipStyle':
@@ -275,6 +276,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsPageFenceLengthTitle;
     case 'frameOverflow':
       return labels.warningsFrameOverflowTitle;
+    case 'frameContinuationLimit':
+      return labels.warningsFrameContinuationLimitTitle;
     case 'spreadMismatch':
       return labels.warningsSpreadMismatchTitle;
     case 'unknownChipStyle':
@@ -597,6 +600,12 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
     case 'frameOverflow':
       // The steps the reflow ladder tried and what would make it fit (#858).
       return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels)}`;
+    case 'frameContinuationLimit':
+      return `${payload.frame} — ${labels.warningsFrameContinuationLimitDetail
+        .replace('__page__', String(payload.page))
+        .replace('__pages__', String(payload.pages))
+        .replace('__mm__', payload.overflowMm.toFixed(1))
+        .replace('__template__', payload.template)}`;
     case 'spreadMismatch':
       return `::::page{template="${payload.template}"${payload.fence ? ' spread' : ''}} — ${(payload.templateSpread ? labels.warningsSpreadMismatchSpreadDetail : labels.warningsSpreadMismatchSingleDetail).replace('__template__', payload.template)}`;
     case 'unknownChipStyle':

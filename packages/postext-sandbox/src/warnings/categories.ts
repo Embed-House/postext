@@ -98,6 +98,7 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'unsupportedHyphenationLocale':
     case 'comicBalloonOverflow':
     case 'frameOverflow':
+    case 'frameContinuationLimit':
       return 'typesetting';
     case 'storageUnavailable':
       return 'system';

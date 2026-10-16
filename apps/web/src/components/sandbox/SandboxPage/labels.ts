@@ -277,6 +277,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     warningsPageFenceLengthDetail: t("warningsPageFenceLengthDetail"),
     warningsFrameOverflowTitle: t("warningsFrameOverflowTitle"),
     warningsFrameOverflowDetail: t("warningsFrameOverflowDetail"),
+    warningsFrameContinuationLimitTitle: t("warningsFrameContinuationLimitTitle"),
+    warningsFrameContinuationLimitDetail: t("warningsFrameContinuationLimitDetail"),
     warningsSpreadMismatchTitle: t("warningsSpreadMismatchTitle"),
     warningsSpreadMismatchSpreadDetail: t("warningsSpreadMismatchSpreadDetail"),
     warningsSpreadMismatchSingleDetail: t("warningsSpreadMismatchSingleDetail"),

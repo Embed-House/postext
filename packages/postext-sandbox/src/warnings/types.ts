@@ -43,6 +43,7 @@ export type WarningKind =
   | 'slotEmpty'
   | 'pageFenceLength'
   | 'frameOverflow'
+  | 'frameContinuationLimit'
   | 'spreadMismatch'
   | 'unknownChipStyle'
   | 'unknownMarkStyle'
@@ -259,6 +260,9 @@ export type WarningPayload =
     imageScale?: number;
     proposals: FrameOverflowProposal[];
   }
+  /** A frame's content went on to as many added pages as a composed page
+   *  may add (#859) and still does not fit there. */
+  | { kind: 'frameContinuationLimit'; template: string; frame: string; fenceIndex: number; pages: number; overflowMm: number; page: number; configPath: string }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): the template decides (`templateSpread`: laid over two facing
    *  pages; else on one); `fence` is the fence's own `spread`. */

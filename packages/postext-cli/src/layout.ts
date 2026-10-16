@@ -169,6 +169,8 @@ function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Rep
       at: sourceAt(chapter, w.sourceStart),
       ...(local ? { page: String(local.pageLabel ?? local.pageNumberValue) } : {}),
       ...(w.kind === 'frameOverflow' ? { data: frameOverflowData(w) } : {}),
+      // How far a frame's content went on (#859).
+      ...(w.kind === 'frameContinuationLimit' ? { data: { template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, pages: w.pages, overflowMm: w.overflowMm, configPath: w.configPath } } : {}),
     });
   }
 }

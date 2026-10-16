@@ -148,6 +148,7 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   unknownMarkStyle: "1.34.1",
   spreadMismatch: "1.35.0",
   "textWrap noContour": "1.36.0",
+  frameContinuationLimit: "1.36.0",
 };
 
 /** The release that first raises `warning` (its kind, or its kind and one

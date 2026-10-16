@@ -208,6 +208,18 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       });
       return;
     }
+    if (w.kind === 'frameContinuationLimit') {
+      // A frame's content that went on to the most pages a composed page
+      // may add and still does not fit (#859), by its book page.
+      out.push({
+        id: `layout-frameContinuationLimit-${w.fenceIndex}-${w.frame}-${i}`,
+        payload: { kind: 'frameContinuationLimit', template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, pages: w.pages, overflowMm: w.overflowMm, page: (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0), configPath: w.configPath },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'fontFallback') {
       // A face the layout measured with a fallback (#629): one per face,
       // whatever chapter found it; no place in the text.

@@ -6381,6 +6381,60 @@
       }
     }
   },
+  "frameContinuationLimit": {
+    "source": "engine",
+    "label": {
+      "en": "Text still runs past its last added page",
+      "es": "El texto sigue sin caber tras las páginas añadidas",
+      "ca": "El text encara no cap després de les pàgines afegides",
+      "zh": "追加页之后文字仍放不下",
+      "ar": "نص لا يتّسع حتى بعد الصفحات المضافة",
+      "ja": "追加したページでも収まらないテキスト",
+      "pt": "O texto ainda não cabe depois das páginas acrescentadas",
+      "fr": "Le texte déborde encore après les pages ajoutées",
+      "de": "Text passt auch nach den angefügten Seiten nicht",
+      "it": "Il testo non entra nemmeno dopo le pagine aggiunte"
+    },
+    "cause": {
+      "en": "A frame whose overflow.continueIn is 'next-page' or 'template:<id>' sent what it could not hold to a page added after its composed page, and that page's frame sent the rest on again, page after page, until the composed page had added the most pages it may (16). What is left is cut at the foot of the frame on the last added page; it stays in the document, the source map and the reflowable EPUB. Most often the frame that takes the content on the added page is far smaller than the text, or the text is much longer than the page was drawn for.",
+      "es": "Un marco con overflow.continueIn 'next-page' o 'template:<id>' mandó lo que no le cabía a una página añadida tras su página compuesta, y el marco de esa página volvió a mandar el resto, página tras página, hasta que la página compuesta añadió las páginas que como mucho puede añadir (16). Lo que queda se corta al pie del marco de la última página añadida; sigue en el documento, en el mapa de origen y en el EPUB adaptable. Casi siempre el marco que recibe el contenido en la página añadida es mucho más pequeño que el texto, o el texto es mucho más largo de lo que se previó al dibujar la página.",
+      "ca": "Un marc amb overflow.continueIn 'next-page' o 'template:<id>' va enviar el que no hi cabia a una pàgina afegida després de la seva pàgina composta, i el marc d'aquella pàgina va tornar a enviar la resta, pàgina rere pàgina, fins que la pàgina composta va afegir les pàgines que com a màxim pot afegir (16). El que queda es talla al peu del marc de l'última pàgina afegida; continua al document, al mapa d'origen i a l'EPUB adaptable. Gairebé sempre el marc que rep el contingut a la pàgina afegida és molt més petit que el text, o el text és molt més llarg del que es va preveure en dibuixar la pàgina.",
+      "zh": "overflow.continueIn为'next-page'或'template:<id>'的框把放不下的内容送到组合页之后追加的一页，那一页的框又把剩下的继续往后送，一页接一页，直到这个组合页追加到最多可追加的页数（16页）。剩下的部分在最后一页追加页的框底被裁掉，但仍保留在文档、源映射和可重排EPUB中。多半是追加页上接收内容的框比文字小得多，或者文字比设计页面时预想的长得多。",
+      "ar": "إطار قيمة overflow.continueIn فيه 'next-page' أو 'template:<id>' أرسل ما لا يتّسع له إلى صفحة تُضاف بعد صفحته المركّبة، ثم أرسل إطار تلك الصفحة الباقي من جديد، صفحة بعد صفحة، حتى أضافت الصفحة المركّبة أقصى عدد من الصفحات يحقّ لها (16). يُقصّ ما يبقى عند أسفل الإطار في آخر صفحة مضافة، ويبقى في المستند وخريطة المصدر وEPUB المرن. في الغالب يكون الإطار الذي يستقبل المحتوى في الصفحة المضافة أصغر بكثير من النص، أو يكون النص أطول بكثير ممّا رُسمت له الصفحة.",
+      "ja": "overflow.continueInが'next-page'または'template:<id>'の枠が、収まらない部分を組版ページの後ろに追加したページへ送り、そのページの枠がさらに残りを次へ送り、組版ページが追加できる上限（16ページ）に達しました。残りは最後の追加ページの枠の下端で切れますが、文書、ソースマップ、リフロー型EPUBには残ります。たいていは、追加ページで内容を受ける枠がテキストに比べてずっと小さいか、ページを設計したときの想定よりテキストがずっと長いかのどちらかです。",
+      "pt": "Um bloco com overflow.continueIn 'next-page' ou 'template:<id>' mandou o que não cabia para uma página acrescentada depois da sua página composta, e o bloco dessa página mandou o resto adiante de novo, página após página, até a página composta acrescentar o máximo de páginas que pode (16). O que sobra é cortado no pé do bloco da última página acrescentada; continua no documento, no mapa de origem e no EPUB refluível. Quase sempre o bloco que recebe o conteúdo na página acrescentada é muito menor que o texto, ou o texto é bem mais longo do que se previu ao desenhar a página.",
+      "fr": "Un bloc dont overflow.continueIn vaut 'next-page' ou 'template:<id>' a envoyé ce qu’il ne pouvait contenir sur une page ajoutée après sa page composée, et le bloc de cette page a renvoyé la suite plus loin, page après page, jusqu’à ce que la page composée ait ajouté le maximum de pages permis (16). Ce qui reste est coupé au pied du bloc de la dernière page ajoutée ; il reste dans le document, la carte des sources et l’EPUB recomposable. Le plus souvent, le bloc qui reçoit le contenu sur la page ajoutée est bien plus petit que le texte, ou le texte est bien plus long que ce que la page prévoyait.",
+      "de": "Ein Rahmen mit overflow.continueIn 'next-page' oder 'template:<id>' hat, was er nicht fassen konnte, auf eine nach seiner komponierten Seite angefügte Seite geschickt, und der Rahmen dieser Seite hat den Rest weitergeschickt, Seite um Seite, bis die komponierte Seite so viele Seiten angefügt hatte, wie sie darf (16). Was übrig bleibt, wird am Fuß des Rahmens auf der letzten angefügten Seite abgeschnitten; im Dokument, in der Quellzuordnung und im umfließenden EPUB bleibt es erhalten. Meist ist der Rahmen, der den Inhalt auf der angefügten Seite aufnimmt, viel kleiner als der Text, oder der Text ist viel länger, als die Seite vorsah.",
+      "it": "Una cornice con overflow.continueIn 'next-page' o 'template:<id>' ha mandato ciò che non conteneva su una pagina aggiunta dopo la sua pagina composta, e la cornice di quella pagina ha mandato avanti il resto, pagina dopo pagina, finché la pagina composta ha aggiunto il massimo di pagine consentito (16). Ciò che resta viene tagliato al piede della cornice dell’ultima pagina aggiunta; rimane nel documento, nella mappa delle sorgenti e nell’EPUB adattabile. Quasi sempre la cornice che riceve il contenuto sulla pagina aggiunta è molto più piccola del testo, o il testo è molto più lungo di quanto la pagina prevedesse."
+    },
+    "fix": {
+      "en": "Give the frame that takes the content on the added page more room (its height, or a page from overflowTemplate with a larger frame), or shorten the text. A box that runs to more than a few pages usually belongs in the running text, not in a frame.",
+      "es": "Da más sitio al marco que recibe el contenido en la página añadida (su altura, o una página de overflowTemplate con un marco más grande) o acorta el texto. Un recuadro que ocupa más de unas pocas páginas suele estar mejor en el texto corrido que en un marco.",
+      "ca": "Dona més espai al marc que rep el contingut a la pàgina afegida (la seva alçada, o una pàgina d'overflowTemplate amb un marc més gran) o escurça el text. Un requadre que ocupa més d'unes poques pàgines sol estar millor al text corrent que en un marc.",
+      "zh": "给追加页上接收内容的框更多空间（加大它的高度，或者用overflowTemplate指定一个框更大的页面），或者缩短文字。一个要排好几页的文本框，通常更适合放进正文，而不是放在框里。",
+      "ar": "أعطِ الإطار الذي يستقبل المحتوى في الصفحة المضافة مساحة أكبر (ارتفاعه، أو صفحة من overflowTemplate بإطار أكبر)، أو اختصر النص. والمربّع الذي يمتدّ إلى أكثر من بضع صفحات يكون مكانه في الغالب النص الجاري لا الإطار.",
+      "ja": "追加ページで内容を受ける枠を大きくする（高さを上げる、またはoverflowTemplateで枠の大きいページを指定する）か、テキストを短くしてください。数ページにわたる囲みは、たいてい枠ではなく本文に置くほうが合っています。",
+      "pt": "Dê mais espaço ao bloco que recebe o conteúdo na página acrescentada (a altura dele, ou uma página de overflowTemplate com um bloco maior) ou encurte o texto. Um quadro que ocupa mais do que algumas páginas costuma ficar melhor no texto corrido do que num bloco.",
+      "fr": "Donnez plus de place au bloc qui reçoit le contenu sur la page ajoutée (sa hauteur, ou une page d’overflowTemplate au bloc plus grand), ou raccourcissez le texte. Un encadré qui court sur plus de quelques pages a en général sa place dans le texte courant plutôt que dans un bloc.",
+      "de": "Geben Sie dem Rahmen, der den Inhalt auf der angefügten Seite aufnimmt, mehr Platz (seine Höhe, oder eine Seite aus overflowTemplate mit einem größeren Rahmen), oder kürzen Sie den Text. Ein Kasten, der über mehr als ein paar Seiten läuft, gehört meist in den Fließtext, nicht in einen Rahmen.",
+      "it": "Dai più spazio alla cornice che riceve il contenuto sulla pagina aggiunta (la sua altezza, o una pagina di overflowTemplate con una cornice più grande) o accorcia il testo. Un riquadro che occupa più di qualche pagina di solito sta meglio nel testo corrente che in una cornice."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "frameContinuationLimit",
+        "es": "frameContinuationLimit",
+        "ca": "frameContinuationLimit",
+        "zh": "frameContinuationLimit",
+        "ar": "frameContinuationLimit",
+        "ja": "frameContinuationLimit",
+        "pt": "frameContinuationLimit",
+        "fr": "frameContinuationLimit",
+        "de": "frameContinuationLimit",
+        "it": "frameContinuationLimit"
+      }
+    }
+  },
   "spreadMismatch": {
     "source": "engine",
     "label": {
