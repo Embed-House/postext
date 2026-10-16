@@ -142,8 +142,9 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   frameChainLoop: "1.34.0",
   overflowTargetUnknown: "1.34.0",
   labelStyleUnknown: "1.34.0",
-  frameOverflow: "1.35.0",
-  spreadMismatch: "1.35.0",
+  frameOverflow: "1.34.1",
+  unknownMarkStyle: "1.34.1",
+  spreadMismatch: "1.34.2",
 };
 
 /** `a` is a later release than `b` ("1.34.0" against "1.33.11"). */
