@@ -178,15 +178,19 @@ export function layoutComposedSpread(input: ComposedSpreadInput): ComposedSpread
     const dx = owner === 0 ? 0 : -sheet.shift;
     const own = owner === 0 ? blocks : movedCopies(blocks, dx, second.index, '');
     for (const blk of own) blk.pageIndex = pages[owner].index;
-    sideFrames[owner].push({ ...frame, rect: { ...frame.rect, x: frame.rect.x + dx } });
+    const moved = (by: number): VDTFrame => ({
+      ...frame,
+      rect: { ...frame.rect, x: frame.rect.x + by },
+      ...(frame.declaredRect ? { declaredRect: { ...frame.declaredRect, x: frame.declaredRect.x + by } } : {}),
+    });
+    sideFrames[owner].push(moved(dx));
     sideBlocks[owner].push(...own);
     if (onFirst && onSecond) {
       const other: 0 | 1 = owner === 0 ? 1 : 0;
       const odx = other === 0 ? 0 : -sheet.shift;
       sideFrames[other].push({
-        ...frame,
+        ...moved(odx),
         blockIds: [],
-        rect: { ...frame.rect, x: frame.rect.x + odx },
         facingBlocks: movedCopies(blocks, odx, pages[other].index, '-facing'),
       });
     }

@@ -267,6 +267,56 @@ describe('a spread template in a left-to-right book (#861)', () => {
   });
 });
 
+describe('groups on a spread (#861, #856)', () => {
+  const words = (n: number, w: string): string => Array.from({ length: n }, (_, i) => `${w}${i}`).join(' ');
+  const md = (a: string, c = a) => `::::page{template="g" spread}\n:::frame{slot="a"}\n${a}\n:::\n\n:::frame{slot="b"}\nB.\n:::\n\n:::frame{slot="c"}\n${c}\n:::\n\n:::frame{slot="d"}\nD.\n:::\n::::\n`;
+  const t: PageTemplate = {
+    id: 'g', spread: true, gutter: mm(20),
+    // a and b take the sheet's width: the band keeps them on the left page.
+    frames: [{ name: 'a', minHeight: mm(20) }, { name: 'b', minHeight: mm(20) }, { name: 'c', minHeight: mm(20) }, { name: 'd', minHeight: mm(20) }],
+    groups: [
+      { name: 'left', frames: ['a', 'b'], gap: mm(5) },
+      { name: 'right', frames: ['c', 'd'], gap: mm(5), placement: { anchor: { to: 'container', edge: 'top-right' }, size: { width: mm(120), height: mm(200) } } },
+    ],
+  };
+
+  it('stacks its frames off the spine band, measured at the width the band leaves them', () => {
+    const doc = build(md(words(160, 'grow')), [t]);
+    const [verso] = spreadPages(doc) as [VDTPage];
+    const a = frameOn(verso, 'a')!;
+    const b = frameOn(verso, 'b')!;
+    expect(a.rect.x + a.rect.width).toBeCloseTo(W - px(10), 3);
+    expect(b.rect.x + b.rect.width).toBeCloseTo(W - px(10), 3);
+    // The stack lays b under a, a grown for its text at the narrower width.
+    expect(b.rect.y - (a.rect.y + a.rect.height)).toBeCloseTo(px(5), 0);
+    expect(a.overflowPx).toBe(0);
+    expect(a.rect.height).toBeGreaterThan(px(20) + 1);
+    // The band's cut is the template's: the log has it once, from the
+    // gutter, beside what the group changed.
+    const log = verso.composed!.log.map((e) => `${e.frame} ${e.kind}${e.cause ? ` ${e.cause}` : ''}`);
+    expect(log).toContain('a resized gutter');
+    expect(log).toContain('a grew');
+    expect(log).toContain('b moved a');
+    // The declared boxes are on the left page too.
+    expect(b.declaredRect!.x + b.declaredRect!.width).toBeCloseTo(W - px(10), 3);
+  });
+
+  it('negotiates a group with its own box on the right page and logs it there', () => {
+    const doc = build(md('A.', words(300, 'grow')), [t]);
+    const [verso, recto] = spreadPages(doc) as [VDTPage, VDTPage];
+    const c = frameOn(recto, 'c')!;
+    const d = frameOn(recto, 'd')!;
+    expect(frameOn(verso, 'c')).toBeUndefined();
+    expect(c.rect.x + c.rect.width).toBeCloseTo(W - px(20), 3);
+    expect(d.rect.y - (c.rect.y + c.rect.height)).toBeCloseTo(px(5), 0);
+    // The declared box moved with the frame onto the right page.
+    expect(d.declaredRect!.x).toBeCloseTo(d.rect.x, 3);
+    const log = recto.composed!.log.map((e) => `${e.frame} ${e.kind}${e.cause ? ` ${e.cause}` : ''}`);
+    expect(log).toEqual(['c grew', 'd moved c']);
+    expect(verso.composed!.log.some((e) => e.frame === 'c' || e.frame === 'd')).toBe(false);
+  });
+});
+
 describe('a spread template in a right-bound book (#861)', () => {
   it('right to left: opens on the right page, the verso, which holds the start of the sheet', () => {
     const doc = build(MD, [TEMPLATE], { direction: 'rtl' } as PostextConfig);
@@ -400,6 +450,13 @@ describe('painting a spread (#861)', () => {
     expect(html.decorationHtml).toContain('-facing');
     const owner = out.pages[verso.index]!.innerHtml;
     expect(owner).not.toContain('data-facing');
+    // Reading order on the right page: its own frames in Markdown order,
+    // the facing half (hidden) where its content falls; the band is read
+    // on the left page, before the left card.
+    const at = (h: string, id: string) => h.indexOf(`data-frame-id="${id}"`);
+    expect(at(owner, 'cp0:band')).toBeLessThan(at(owner, 'cp0:left'));
+    expect(at(html.innerHtml, 'cp0:band')).toBeLessThan(at(html.innerHtml, 'cp0:right'));
+    expect(html.innerHtml).toMatch(/data-frame-id="cp0:band"[^>]*style="[^"]*z-index:\d+/);
   });
 });
 

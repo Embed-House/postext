@@ -510,7 +510,9 @@ class DocWalker {
       if (box !== undefined && !this.frameBoxes.has(box)) this.frameBoxes.set(box, item.frame);
     }
     for (const item of order) {
-      if (item.kind !== 'frame') continue;
+      // The facing page's half of a frame across a spread's spine (#861)
+      // is a painted copy: the frame is read on the other page.
+      if (item.kind !== 'frame' || item.facing) continue;
       for (const block of item.blocks) this.place(block, section);
     }
     this.lastContainer = undefined;

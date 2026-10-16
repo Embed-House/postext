@@ -297,6 +297,14 @@ describe('fixed layout of a spread template (#861)', () => {
     expect((await props(docs)).slice(1, 3)).toEqual([['page-spread-right', 'rendition:spread-both'], ['page-spread-left', 'rendition:spread-both']]);
   });
 
+  it('reads the band once in the reflowable book', async () => {
+    const docs = layOutBook([md], { pageTemplates: [template] } as never);
+    const made = readEpub(await renderToEpub(docs, { layout: 'reflowable', metadata: { title: 'T', language: 'en', modified: MODIFIED }, fonts: [{ family: 'Lora', weight: 400, style: 'normal', bytes: LORA, format: 'ttf' }] }));
+    const text = made.spine.map((s) => new TextDecoder().decode(made.files.get(s.path)!)).join('\n');
+    expect(text.split('Band across the spine').length - 1).toBe(1);
+    expect(text).toContain('Text under it.');
+  });
+
   it('paints the facing half of the band hidden from assistive technology', async () => {
     const docs = layOutBook([md], { pageTemplates: [template] } as never);
     const pub = await buildFixedPublication(docs, { layout: 'fixed', metadata: { title: 'T', language: 'en' } });
