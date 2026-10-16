@@ -6220,6 +6220,13 @@ function placeDocumentPass(
       bodyOffset,
       mirrored: mirroredOf(page),
       pushGapPx: wrapGapPx(resolved.layout.wrap?.gap, dpi, bodyStyle.fontSizePx, floatGapPx),
+      locale: resolvedLocale(resolved),
+      // The book's other templates, for a `useTemplate` proposal (#858).
+      alternatives: () => [...new Set((resolved.pageTemplates ?? []).map((t) => t?.id))].flatMap((id) => {
+        if (typeof id !== 'string' || id === template.id) return [];
+        const alt = resolvePageTemplate(templateSource, id, { parity });
+        return alt && !alt.spread ? [alt] : [];
+      }),
     });
     const placed: { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[] = [];
     let laid: Set<string>;

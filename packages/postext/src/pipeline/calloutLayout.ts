@@ -345,6 +345,11 @@ export interface CalloutLayoutInput {
    *  side the rectangle covers. Applied to the text children that open in
    *  the range laid out; a figure or a formula is not moved. */
   exclusions?: readonly { x: number; y: number; width: number; height: number }[];
+  /** A frame of a composed page whose pictures the reflow ladder scales
+   *  (#858, `fit.imageMinScale`): each bitmap, SVG or video poster among
+   *  the children is set at this share of the width it would take, below
+   *  1. */
+  pictureScale?: number;
 }
 
 /** The measures of `layoutCallout`'s first child across widths (see
@@ -980,10 +985,18 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         ...(Math.abs(groupWidths[groupWidths.length - 1]!.width - width) > 0.5 ? [{ fromLine: lineCut.from, columnWidth: width }] : []),
       ])
       : undefined;
-    const measuredBlock = acrossGroup
+    let measuredBlock = acrossGroup
       ?? (lineCut ? undefined : measureFirstChildAcrossWidths(raw, blockIdx, k, width, styleOverride))
       ?? measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride });
     if (!measuredBlock) return undefined;
+    // A picture the reflow ladder scales (#858): set again at that share of
+    // its width.
+    const pictureScale = input.pictureScale;
+    const picture = measuredBlock.resourceBlock;
+    if (pictureScale !== undefined && pictureScale > 0 && pictureScale < 1 && picture && picture.kind !== 'table' && !picture.rotation) {
+      const smaller = measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride, figureMaxBodyWidth: picture.bodyRect.width * pictureScale });
+      if (smaller) measuredBlock = smaller;
+    }
     const { kind, mathDisplayRender, resourceBlock, code } = measuredBlock;
     let { measured, prefixLen, absoluteSourceMap, letterSpacingPx, runtTracking } = measuredBlock;
     const { vdtType, headingLevel, numberPrefix, numberSeparator, headingNumber, listBullet, listDepth, listKind, bulletXOffsetInColumn, strikethroughText } = kind;

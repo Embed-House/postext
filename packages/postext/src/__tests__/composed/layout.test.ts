@@ -247,7 +247,8 @@ describe('composed pages laid out (#855)', () => {
     const w = doc.contentWarnings!.find((x) => x.kind === 'frameOverflow')!;
     expect(w).toMatchObject({ kind: 'frameOverflow', template: 'small', frame: 'a', fenceIndex: 0, configPath: '/pageTemplates/0/frames/0', pageIndex: 0 });
     expect(w.kind === 'frameOverflow' && w.overflowMm).toBeCloseTo((a.overflowPx / DPI) * 25.4, 0);
-    expect(composedPage(doc).composed!.log).toEqual([{ frame: 'a', kind: 'overflow', toMm: (w as { overflowMm: number }).overflowMm }]);
+    // The reflow ladder (#858) shrank its text to fit.minScale first.
+    expect(composedPage(doc).composed!.log).toEqual([{ frame: 'a', kind: 'textScaled', scale: 0.9 }, { frame: 'a', kind: 'overflow', toMm: (w as { overflowMm: number }).overflowMm }]);
     expect(formatWarning(w)).toContain('Frame "a" of template "small"');
   });
 

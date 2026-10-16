@@ -1,0 +1,336 @@
+import { describe, it, expect } from 'vitest';
+import { buildDocument } from '../../pipeline/build';
+import { createMeasurementCache } from '../../measure';
+import { formatWarning } from '../../pipeline/contentWarnings';
+import { describeFitStep, describeFrameOverflowProposal } from '../../composed/reflowLog';
+import { frameBounds, frameContentRect, frameMatrix } from '../../composed/paint';
+import type { FrameConfig, PageTemplate } from '../../composed/types';
+import type { ContentWarning, FrameOverflowProposal, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
+import { page8Fixture } from './fixtures/page8';
+
+// Deterministic text measurement stub (no DOM in the node test env): seven
+// px per character, whatever the face.
+class StubCtx {
+  font = '';
+  measureText(s: string): { width: number } {
+    return { width: s.length * 7 };
+  }
+}
+(globalThis as unknown as { OffscreenCanvas: unknown }).OffscreenCanvas = class {
+  getContext(): StubCtx {
+    return new StubCtx();
+  }
+};
+
+const mm = (value: number) => ({ value, unit: 'mm' as const });
+const DPI = 300;
+const MM = DPI / 25.4;
+const toMm = (v: number): number => v / MM;
+
+type Locale = 'es' | 'en';
+type Overflow = Extract<ContentWarning, { kind: 'frameOverflow' }>;
+
+/** The stand-in (#855) with its frames patched, its Markdown changed, and
+ *  other templates added after its own. */
+function standIn(opts: {
+  locale?: Locale;
+  frames?: Record<string, Partial<FrameConfig>>;
+  groups?: PageTemplate['groups'];
+  markdown?: (md: string) => string;
+  more?: PageTemplate[];
+} = {}): { markdown: string; config: PostextConfig; resources: ReturnType<typeof page8Fixture>['resources'] } {
+  const { markdown, config, resources } = page8Fixture(opts.locale ?? 'es');
+  const base = config.pageTemplates![0]! as PageTemplate;
+  const patch = opts.frames ?? {};
+  const tpl: PageTemplate = {
+    ...base,
+    frames: base.frames!.map((f) => (patch[f.name] ? { ...f, ...patch[f.name] } : f)),
+    ...(opts.groups ? { groups: opts.groups } : {}),
+  };
+  return { markdown: (opts.markdown ?? ((m) => m))(markdown), config: { ...config, pageTemplates: [tpl, ...(opts.more ?? [])] }, resources };
+}
+const build = (f: ReturnType<typeof standIn>): VDTDocument => buildDocument({ markdown: f.markdown, resources: f.resources }, f.config, createMeasurementCache());
+const page0 = (doc: VDTDocument): VDTPage => doc.pages.find((p) => p.composed)!;
+const frameOf = (doc: VDTDocument, name: string): VDTFrame => page0(doc).composed!.frames.find((f) => f.name === name)!;
+const overflowsOf = (doc: VDTDocument): Overflow[] => (doc.contentWarnings ?? []).filter((w): w is Overflow => w.kind === 'frameOverflow');
+const eventsOf = (doc: VDTDocument, frame?: string): string[] =>
+  page0(doc).composed!.log.filter((e) => !frame || e.frame === frame).map((e) => `${e.frame} ${e.kind}`);
+
+/** `n` more paragraphs at the head of the first box (`dinero`). */
+const moreMoney = (n: number, word = 'Más dinero') => (md: string): string =>
+  md.replace(/(:::frame\{slot="dinero"[^\n]*\n)/, `$1${Array.from({ length: n }, (_, i) => `${word} ${i} `.repeat(30).trim()).join('\n\n')}\n\n`);
+/** `k` more words at the head of the first box (one short paragraph). */
+const moreWords = (k: number) => (md: string): string =>
+  md.replace(/(:::frame\{slot="dinero"[^\n]*\n)/, `$1${'Más dinero '.repeat(k).trim()}\n\n`);
+/** The first box's photo set inside the box (its story) instead of in a
+ *  frame of its own. */
+const photoInBox = (md: string): string => md.replace('slot="dinero-fotos"', 'slot="dinero"');
+
+describe('the reflow ladder on the page-8 stand-in (#858)', () => {
+  it('1. free space: a fixed height grows to its maxHeight, and the ladder stops there', () => {
+    const fixed = { height: mm(36), minHeight: undefined };
+    const capped = build(standIn({ frames: { dinero: fixed }, markdown: moreMoney(3) }));
+    // Without a maximum the height is the template's: the text shrinks.
+    expect(frameOf(capped, 'dinero').rect.height).toBeCloseTo(36 * MM, 3);
+    expect(frameOf(capped, 'dinero').scale).toBeLessThan(1);
+    const free = build(standIn({ frames: { dinero: { ...fixed, maxHeight: mm(90) } }, markdown: moreMoney(3) }));
+    const d = frameOf(free, 'dinero');
+    expect(toMm(d.rect.height)).toBeGreaterThan(36.5);
+    expect(toMm(d.rect.height)).toBeLessThanOrEqual(90);
+    expect(d.scale).toBe(1);
+    expect(d.overflowPx).toBe(0);
+    expect(eventsOf(free, 'dinero')).toEqual(['dinero grew']);
+    expect(eventsOf(free)).toContain('gasto moved');
+    expect(overflowsOf(free)).toEqual([]);
+  });
+
+  it('2. push siblings: a longer box moves the boxes below; nothing is scaled', () => {
+    const doc = build(standIn({ markdown: moreMoney(3) }));
+    expect(eventsOf(doc).some((e) => /imageScaled|textScaled/.test(e))).toBe(false);
+    expect(eventsOf(doc)).toContain('gasto moved');
+    for (const f of page0(doc).composed!.frames) expect(f.scale).toBe(1);
+    expect(overflowsOf(doc)).toEqual([]);
+  });
+
+  it('3. pictures: the box’s photo is set smaller, the largest 2.5 % step that fits, within imageMinScale', () => {
+    const atNatural = build(standIn({ markdown: photoInBox }));
+    const natural = frameOf(atNatural, 'dinero').rect.height;
+    // The box 4 mm shorter than its text and photo need.
+    const height = mm(Math.floor(toMm(natural)) - 4);
+    const doc = build(standIn({ frames: { dinero: { height, minHeight: undefined } }, markdown: photoInBox }));
+    const d = frameOf(doc, 'dinero');
+    expect(d.overflowPx).toBe(0);
+    expect(d.scale).toBe(1);
+    expect(d.imageScale).toBeGreaterThanOrEqual(0.8);
+    expect(d.imageScale).toBeLessThan(1);
+    expect(Math.round(((1 - d.imageScale!) / 0.025) * 1e6) % 1e6).toBe(0);
+    expect(page0(doc).composed!.log).toContainEqual({ frame: 'dinero', kind: 'imageScaled', scale: d.imageScale });
+    // One step larger does not fit: the box would overflow at imageMinScale + 2.5 %.
+    const larger = build(standIn({ frames: { dinero: { height, minHeight: undefined, fit: { imageMinScale: d.imageScale! + 0.025, shrinkText: false } } }, markdown: photoInBox }));
+    expect(frameOf(larger, 'dinero').overflowPx).toBeGreaterThan(0);
+    // With scaleImages off, the text shrinks instead.
+    const off = build(standIn({ frames: { dinero: { height, minHeight: undefined, fit: { scaleImages: false } } }, markdown: photoInBox }));
+    expect(frameOf(off, 'dinero').imageScale).toBeUndefined();
+    expect(frameOf(off, 'dinero').scale).toBeLessThan(1);
+  });
+
+  it('4. redistribute: a sibling above its minimum gives space back, down to its minimum', () => {
+    const gasto = { height: mm(62), minHeight: mm(40) };
+    const doc = build(standIn({ frames: { gasto }, markdown: moreMoney(6) }));
+    expect(overflowsOf(doc)).toEqual([]);
+    expect(toMm(frameOf(doc, 'gasto').rect.height)).toBeLessThan(62);
+    expect(toMm(frameOf(doc, 'gasto').rect.height)).toBeGreaterThanOrEqual(40 - 1e-6);
+    expect(frameOf(doc, 'ahorro').scale).toBe(1);
+    expect(eventsOf(doc, 'gasto')).toContain('gasto resized');
+    // Without the step (a fixed height of 62 with nothing under it), ahorro
+    // would not fit: the same text with the minimum at the height does not.
+    const rigid = build(standIn({ frames: { gasto: { height: mm(62), minHeight: mm(62) } }, markdown: moreMoney(6) }));
+    expect(frameOf(rigid, 'ahorro').scale < 1 || frameOf(rigid, 'ahorro').overflowPx > 0).toBe(true);
+  });
+
+  it('5. shrink text: down to fit.minScale in 2.5 % steps, the largest that fits; shrinkText: false turns it off', () => {
+    const fixed = { height: mm(36), minHeight: undefined };
+    const doc = build(standIn({ frames: { dinero: fixed }, markdown: moreWords(40) }));
+    const d = frameOf(doc, 'dinero');
+    expect(d.overflowPx).toBe(0);
+    expect(d.scale).toBeLessThan(1);
+    expect(d.scale).toBeGreaterThanOrEqual(0.9);
+    expect(Math.round(((1 - d.scale) / 0.025) * 1e6) % 1e6).toBe(0);
+    expect(page0(doc).composed!.log).toContainEqual({ frame: 'dinero', kind: 'textScaled', scale: d.scale });
+    // Laid out larger and painted at the scale: the matrix maps its content box onto its box.
+    expect(frameContentRect(d).width).toBeCloseTo(d.rect.width / d.scale, 6);
+    expect(frameBounds(d).x).toBeCloseTo(d.rect.x, 6);
+    expect(frameBounds(d).y).toBeCloseTo(d.rect.y, 6);
+    expect(frameBounds(d).width).toBeCloseTo(d.rect.width, 6);
+    expect(frameBounds(d).height).toBeCloseTo(d.rect.height, 6);
+    expect(frameMatrix(d)).toEqual([d.scale, 0, 0, d.scale, d.rect.x * (1 - d.scale), d.rect.y * (1 - d.scale)]);
+    // One step larger overflows.
+    if (d.scale < 0.975) {
+      const larger = build(standIn({ frames: { dinero: { ...fixed, fit: { minScale: d.scale + 0.025 } } }, markdown: moreWords(40) }));
+      expect(frameOf(larger, 'dinero').overflowPx).toBeGreaterThan(0);
+    }
+    const off = build(standIn({ frames: { dinero: { ...fixed, fit: { shrinkText: false } } }, markdown: moreWords(40) }));
+    expect(frameOf(off, 'dinero').scale).toBe(1);
+    expect(frameOf(off, 'dinero').overflowPx).toBeGreaterThan(0);
+    expect(overflowsOf(off)[0]!.stepsTried).not.toContain('shrinkText');
+  });
+
+  it('6. continuation: a frame that continues on another page reports the step (laid out by #859)', () => {
+    const doc = build(standIn({ frames: { dinero: { height: mm(36), minHeight: undefined, overflow: { continueIn: 'next-page' } } }, markdown: moreMoney(4) }));
+    const [w] = overflowsOf(doc);
+    expect(w!.frame).toBe('dinero');
+    expect(w!.stepsTried[w!.stepsTried.length - 1]).toBe('continue');
+    expect(w!.proposals.some((p) => p.kind === 'continueNextPage')).toBe(false);
+  });
+});
+
+describe('frameOverflow: the steps tried and the proposals (#858)', () => {
+  const tooLong = { frames: { dinero: { height: mm(36), minHeight: undefined } }, markdown: moreMoney(4) };
+  const proposal = <K extends FrameOverflowProposal['kind']>(w: Overflow, kind: K) =>
+    w.proposals.find((p): p is Extract<FrameOverflowProposal, { kind: K }> => p.kind === kind);
+
+  for (const locale of ['es', 'en'] as const) {
+    it(`${locale}: names page, template, frame and locale, the steps tried and the final scale`, () => {
+      const doc = build(standIn({ ...tooLong, locale, markdown: moreMoney(4, locale === 'es' ? 'Más dinero' : 'More money') }));
+      const ws = overflowsOf(doc);
+      expect(ws).toHaveLength(1);
+      const w = ws[0]!;
+      expect(w).toMatchObject({ kind: 'frameOverflow', template: 'tema-cajas', frame: 'dinero', fenceIndex: 0, pageIndex: 0, locale, scale: 0.9, configPath: '/pageTemplates/0/frames/2' });
+      expect(w.stepsTried).toEqual(['free', 'push', 'redistribute', 'shrinkText']);
+      expect(w.overflowMm).toBeCloseTo(toMm(frameOf(doc, 'dinero').overflowPx), 1);
+      expect(w.sourceStart).toBeGreaterThan(0);
+      const text = formatWarning(w);
+      expect(text).toContain(`Frame "dinero" of template "tema-cajas" (${locale})`);
+      expect(text).toContain('text down to 90 %');
+      expect(text).toContain('to fit:');
+      expect(page0(doc).composed!.log.slice(-2)).toEqual([{ frame: 'dinero', kind: 'textScaled', scale: 0.9 }, { frame: 'dinero', kind: 'overflow', toMm: w.overflowMm }]);
+    });
+  }
+
+  it('allowShrink: the largest text scale that fits, worked out on the page', () => {
+    const w = overflowsOf(build(standIn(tooLong)))[0]!;
+    const p = proposal(w, 'allowShrink')!;
+    expect(p.path).toBe('/pageTemplates/0/frames/2/fit/minScale');
+    expect(p.value).toBeLessThan(0.9);
+    const fitted = build(standIn({ ...tooLong, frames: { dinero: { ...tooLong.frames.dinero, fit: { minScale: p.value } } } }));
+    expect(overflowsOf(fitted)).toEqual([]);
+    expect(frameOf(fitted, 'dinero').scale).toBe(p.value);
+    const short = build(standIn({ ...tooLong, frames: { dinero: { ...tooLong.frames.dinero, fit: { minScale: p.value + 0.025 } } } }));
+    expect(overflowsOf(short)).toHaveLength(1);
+    // With shrinkText off, the proposal turns it on as well.
+    const off = overflowsOf(build(standIn({ ...tooLong, frames: { dinero: { ...tooLong.frames.dinero, fit: { shrinkText: false } } } })))[0]!;
+    expect(proposal(off, 'allowShrink')!.also).toEqual([{ path: '/pageTemplates/0/frames/2/fit/shrinkText', value: true }]);
+  });
+
+  it('raiseMax: the frame’s height plus the shortfall, in whole millimetres, and it fits', () => {
+    const w = overflowsOf(build(standIn(tooLong)))[0]!;
+    const p = proposal(w, 'raiseMax')!;
+    expect(p.path).toBe('/pageTemplates/0/frames/2/maxHeight');
+    expect(p.value.unit).toBe('mm');
+    expect(Number.isInteger(p.value.value)).toBe(true);
+    expect(p.value.value).toBe(Math.ceil(36 + w.overflowMm - 0.05));
+    const fitted = build(standIn({ ...tooLong, frames: { dinero: { ...tooLong.frames.dinero, maxHeight: p.value } } }));
+    expect(overflowsOf(fitted)).toEqual([]);
+  });
+
+  it('lowerMin: a sibling at its minimum with less content gives the shortfall; fits once applied', () => {
+    // An own-box stack: the three boxes share 140 mm; gasto stands at its 62 mm minimum.
+    const groups: PageTemplate['groups'] = [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: mm(12), placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: mm(9) }, size: { width: mm(186), height: mm(150) } } }];
+    const opts = { groups, frames: { dinero: { minHeight: mm(36) }, gasto: { minHeight: mm(62) }, ahorro: { minHeight: mm(30), fit: { shrinkText: false } } }, markdown: moreMoney(2) };
+    const w = overflowsOf(build(standIn(opts))).find((x) => x.frame === 'dinero' || x.frame === 'ahorro');
+    expect(w).toBeDefined();
+    const p = proposal(w!, 'lowerMin')!;
+    expect(p).toMatchObject({ frame: 'gasto', path: '/pageTemplates/0/frames/4/minHeight' });
+    expect(p.value.value).toBeLessThan(62);
+    const fitted = build(standIn({ ...opts, frames: { ...opts.frames, gasto: { minHeight: p.value } } }));
+    expect(overflowsOf(fitted).filter((x) => x.frame === w!.frame)).toEqual([]);
+  });
+
+  it('useTemplate: another template of the book with a frame of that name where it fits', () => {
+    const roomy: PageTemplate = {
+      id: 'tema-amplio',
+      frames: [
+        { name: 'titulo', takes: 'h1' },
+        { name: 'texto', flow: true, placement: { anchor: { to: '#titulo', edge: 'below' } } },
+        { name: 'dinero', placement: { anchor: { to: '#texto', edge: 'below' } } },
+      ],
+    };
+    const tight: PageTemplate = { id: 'otra', frames: [{ name: 'dinero', height: mm(10) }] };
+    const w = overflowsOf(build(standIn({ ...tooLong, more: [tight, roomy] })))[0]!;
+    expect(proposal(w, 'useTemplate')).toMatchObject({ kind: 'useTemplate', value: 'tema-amplio' });
+    const at = proposal(w, 'useTemplate')!;
+    const md = standIn(tooLong).markdown;
+    expect(md.slice(at.sourceStart!, at.sourceEnd!)).toBe('tema-cajas');
+  });
+
+  it('shortenText: about the characters of the lines that do not fit; cutting them makes it fit', () => {
+    const f = standIn(tooLong);
+    const w = overflowsOf(build(f))[0]!;
+    const p = proposal(w, 'shortenText')!;
+    expect(p.value).toBeGreaterThan(0);
+    expect(p.sourceStart).toBe(w.sourceStart);
+    // The same box with that many characters cut from the end of its added text.
+    const added = Array.from({ length: 4 }, (_, i) => `Más dinero ${i} `.repeat(30).trim()).join('\n\n');
+    const cut = added.slice(0, added.length - p.value).trim();
+    const after = build(standIn({ ...tooLong, markdown: (md) => md.replace(/(:::frame\{slot="dinero"[^\n]*\n)/, `$1${cut}\n\n`) }));
+    expect(overflowsOf(after)).toEqual([]);
+  });
+
+  it('continueNextPage: overflow.continueIn of the frame', () => {
+    const w = overflowsOf(build(standIn(tooLong)))[0]!;
+    expect(proposal(w, 'continueNextPage')).toEqual({ kind: 'continueNextPage', path: '/pageTemplates/0/frames/2/overflow/continueIn', value: 'next-page' });
+  });
+
+  it('words every step and proposal', () => {
+    expect(describeFitStep('shrinkText', { scale: 0.9 })).toBe('text down to 90 %');
+    expect(describeFitStep('scaleImages', { imageScale: 0.825 })).toBe('pictures down to 82.5 %');
+    expect(describeFitStep('free')).toBe('free space');
+    expect(describeFitStep('redistribute')).toBe('the other frames of its group down to their minimum');
+    expect(describeFitStep('continue')).toContain('another page');
+    expect(describeFrameOverflowProposal({ kind: 'allowShrink', path: '/x', value: 0.85 })).toBe('let its text shrink to 85 % (fit.minScale: 0.85)');
+    expect(describeFrameOverflowProposal({ kind: 'raiseMax', path: '/x', value: mm(64) })).toBe('raise maxHeight to 64 mm');
+    expect(describeFrameOverflowProposal({ kind: 'lowerMin', path: '/x', value: mm(40), frame: 'gasto' })).toBe('lower the minHeight of "gasto" to 40 mm');
+    expect(describeFrameOverflowProposal({ kind: 'continueNextPage', path: '/x', value: 'next-page' })).toBe('continue on the next page (overflow.continueIn: "next-page")');
+    expect(describeFrameOverflowProposal({ kind: 'useTemplate', value: 'b' })).toBe('set the page with template "b"');
+    expect(describeFrameOverflowProposal({ kind: 'shortenText', value: 120 })).toBe('cut about 120 characters');
+  });
+});
+
+describe('the ladder is deterministic and stays on its page (#858)', () => {
+  it('the same input gives the same VDT, scales included', () => {
+    const f = standIn({ frames: { dinero: { height: mm(36), minHeight: undefined } }, markdown: moreWords(40) });
+    const a = build(f);
+    const b = build(f);
+    expect(frameOf(a, 'dinero').scale).toBeLessThan(1);
+    expect(JSON.stringify(b.pages)).toBe(JSON.stringify(a.pages));
+    expect(JSON.stringify(b.contentWarnings)).toBe(JSON.stringify(a.contentWarnings));
+  });
+
+  it('frames that overflow are taken in template order', () => {
+    // Two frames that both overflow: the warnings follow the template.
+    const t: PageTemplate = {
+      id: 'two',
+      frames: [
+        { name: 'b', height: mm(10), width: mm(60), placement: { anchor: { to: 'container', edge: 'top-right' } } },
+        { name: 'a', height: mm(10), width: mm(60), placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      ],
+    };
+    const long = 'word '.repeat(300);
+    const md = `::::page{template="two"}\n:::frame{slot="a"}\n${long}\n:::\n\n:::frame{slot="b"}\n${long}\n:::\n::::`;
+    const doc = buildDocument({ markdown: md }, { page: { width: mm(200), height: mm(260), margins: { top: mm(20), bottom: mm(20), left: mm(20), right: mm(20) } } as never, pageTemplates: [t] }, createMeasurementCache());
+    expect(overflowsOf(doc).map((w) => w.frame)).toEqual(['b', 'a']);
+  });
+
+  it('what one composed page scales leaves the next one as it was', () => {
+    const one = standIn({ frames: { dinero: { height: mm(36), minHeight: undefined } } });
+    const page = one.markdown;
+    const longer = moreWords(40)(page);
+    const twice = (first: string) => ({ ...one, markdown: `${first}\n\n${page.replace('::::page{template="tema-cajas"', '::::page{template="tema-cajas"')}` });
+    const before = build(twice(page));
+    const after = build(twice(longer));
+    const pages = (d: VDTDocument) => d.pages.filter((p) => p.composed);
+    expect(pages(before)).toHaveLength(2);
+    expect(pages(after)).toHaveLength(2);
+    expect(pages(after)[0]!.composed!.frames.find((f) => f.name === 'dinero')!.scale).toBeLessThan(1);
+    const boxes = (p: VDTPage) => p.composed!.frames.map((f) => ({ name: f.name, rect: f.rect, scale: f.scale, imageScale: f.imageScale, overflowPx: f.overflowPx }));
+    expect(boxes(pages(after)[1]!)).toEqual(boxes(pages(before)[1]!));
+    expect(pages(after)[1]!.composed!.log).toEqual(pages(before)[1]!.composed!.log);
+  });
+});
+
+describe('slot warnings carry their location (#858)', () => {
+  it('slotUnknown names the flow frame that takes the content; both have page, frame and source range', () => {
+    const t: PageTemplate = { id: 't', frames: [{ name: 'a', flow: true }, { name: 'b' }, { name: 'c' }] };
+    const md = `# Intro\n\n${'Some text. '.repeat(400)}\n\n::::page{template="t"}\nflow\n\n:::frame{slot="nope"}\nStray.\n:::\n\n:::frame{slot="b"}\nB.\n:::\n::::\n`;
+    const doc = buildDocument({ markdown: md }, { page: { width: mm(200), height: mm(260), margins: { top: mm(20), bottom: mm(20), left: mm(20), right: mm(20) } } as never, pageTemplates: [t] }, createMeasurementCache());
+    const composed = doc.pages.find((p) => p.composed)!;
+    expect(composed.index).toBeGreaterThan(0);
+    const unknown = doc.contentWarnings!.find((w) => w.kind === 'slotUnknown')!;
+    expect(unknown).toMatchObject({ kind: 'slotUnknown', slot: 'nope', frame: 'a', template: 't', pageIndex: composed.index });
+    expect(md.slice(unknown.sourceStart!, unknown.sourceEnd!)).toBe('nope');
+    const empty = doc.contentWarnings!.find((w) => w.kind === 'slotEmpty')!;
+    expect(empty).toMatchObject({ kind: 'slotEmpty', frame: 'c', template: 't', pageIndex: composed.index });
+    expect(md.slice(empty.sourceStart!, empty.sourceEnd!)).toMatch(/^::::page\{template="t"\}/);
+    expect(formatWarning(unknown)).toContain('the flow frame "a"');
+  });
+});

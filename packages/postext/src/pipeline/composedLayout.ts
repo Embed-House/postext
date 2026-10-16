@@ -8,25 +8,36 @@
  * height measured with the content the frame will hold), then its content:
  * the story from where the frame before it in the chain stopped, cut at the
  * frame's foot when a `next` frame takes the rest, else laid whole and
- * clipped at the foot (`frameOverflow`). Text runs round the frames that
- * push it (`exclude: 'push'`) already placed. The groups' negotiation
- * (#856), the reflow ladder (#858) and continuation on other pages (#859)
- * build on this.
+ * clipped at the foot. Text runs round the frames that push it (`exclude:
+ * 'push'`) already placed; groups negotiate their frames' space (#856).
+ *
+ * A frame whose content still does not fit climbs the reflow ladder (#858,
+ * DESIGN §5.4), frame by frame in template order, each step on top of the
+ * ones before it, stopping at the first that makes it fit: free space (a
+ * fixed height grows to its `maxHeight`), its group pushing and yielding
+ * (already part of every layout), smaller pictures in the frame and its
+ * group (`fit.imageMinScale`), the group's other frames down to their
+ * minimum or their content, smaller text (`fit.minScale`), continuation on
+ * another page (#859). Each step lays the whole page again, so a change
+ * stays on the page. What still does not fit is clipped and reported
+ * (`frameOverflow`) with the steps tried and proposals worked out on the
+ * page. Continuation on other pages (#859) builds on this.
  */
 import type { ComposedPageFence, ContentBlock } from '../parse/types';
-import type { ResolvedCalloutStyleConfig } from '../types';
-import type { ContentWarning, ReflowEvent, VDTBlock, VDTComposedPage, VDTFrame, VDTPage } from '../vdt';
+import type { Dimension, ResolvedCalloutStyleConfig } from '../types';
+import type { ContentWarning, FrameFitStep, FrameOverflowProposal, ReflowEvent, VDTBlock, VDTComposedPage, VDTFrame, VDTPage } from '../vdt';
 import { dimensionToPx } from '../units';
 import { frameBounds } from '../composed/paint';
 import { FRAME_ATTR } from '../composed/wrap';
 import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
 import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups';
 import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
-import { anchorTarget } from '../composed/templates';
+import { anchorTarget, continueInTemplate } from '../composed/templates';
 import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { frameElementId } from '../composed/ids';
 import { offsetCalloutToAbsolute, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
+import { isMarkerBlock } from './buildHelpers';
 import { CUT_START, fragmentRange, makeCalloutLayouter, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
 
 /** A story of the page: the box `composed/wrap.ts` made of a chain's
@@ -62,6 +73,12 @@ export interface ComposedPageInput {
    *  crosses the gutter. An `'auto'` height is measured at the width it
    *  returns. */
   fitBox?: (frame: ResolvedFrame, rect: Rect) => Rect;
+  /** The document's locale (`config.locale`), named by `frameOverflow`. */
+  locale?: string;
+  /** The book's other templates, resolved for this page's side, in
+   *  `pageTemplates` order: a `useTemplate` proposal (#858) lays the page
+   *  with each that has the overflowing frame's name. */
+  alternatives?: () => readonly ResolvedPageTemplate[];
 }
 
 export interface ComposedPageLayout {
@@ -90,8 +107,413 @@ interface StoryState {
   lastFrameId?: string;
 }
 
+/** What the reflow ladder (#858) changed from the template as written, for
+ *  one composition of the page. */
+interface FitState {
+  /** Frames whose fields the ladder (or a proposal tried) replaces:
+   *  `free` lets a fixed height grow to `maxHeight`. */
+  patches: ReadonlyMap<string, Partial<ResolvedFrame>>;
+  /** Text scale per story (by its head frame), below 1. */
+  text: ReadonlyMap<string, number>;
+  /** Picture scale per story (by its head frame), below 1, with the frame
+   *  whose ladder set it. */
+  pictures: ReadonlyMap<string, { scale: number; by: string }>;
+  /** Groups whose frames give space back down to their minimum or their
+   *  content, whether they `shrink` or not (`redistribute`). */
+  yieldAll: ReadonlySet<string>;
+}
+
+const NO_FIT: FitState = { patches: new Map(), text: new Map(), pictures: new Map(), yieldAll: new Set() };
+
+/** One laying out of the page's frames. */
+interface Composition {
+  frames: VDTFrame[];
+  blocks: VDTBlock[];
+  log: ReflowEvent[];
+  laid: Set<string>;
+  /** Each frame's content height at its final width (page px), for the
+   *  frames that hold content, measured when asked. */
+  needs: Map<string, () => number>;
+  /** The template laid (with the ladder's patches). */
+  template: ResolvedPageTemplate;
+}
+
+/** Step of the text and picture scales the ladder tries (DESIGN §5.4). */
+const FIT_STEP = 0.025;
+/** Lowest text scale an `allowShrink` proposal goes to. */
+const PROPOSAL_MIN_SCALE = 0.5;
+/** Most compositions of one page the ladder and its proposals may run. */
+const COMPOSE_BUDGET = 96;
+
+/** The scales from just under 1 (or under `from`) down to `min`, in
+ *  {@link FIT_STEP} steps, `min` last. */
+function scaleSteps(min: number, from = 1): number[] {
+  const out: number[] = [];
+  for (let k = 1; ; k++) {
+    const s = Math.round((from - k * FIT_STEP) * 1e4) / 1e4;
+    if (s <= min + 1e-6) break;
+    out.push(s);
+  }
+  if (min < from - 1e-6) out.push(Math.round(min * 1e4) / 1e4);
+  return out;
+}
+
+/** The template with the ladder's patches on its frames. */
+function patchTemplate(template: ResolvedPageTemplate, patches: ReadonlyMap<string, Partial<ResolvedFrame>>): ResolvedPageTemplate {
+  if (patches.size === 0) return template;
+  return { ...template, frames: template.frames.map((f) => (patches.has(f.name) ? { ...f, ...patches.get(f.name)! } : f)) };
+}
+
+/** A fixed height (a length, not a percentage). */
+const fixedHeight = (f: ResolvedFrame): Dimension | undefined => {
+  const h = f.height as unknown;
+  return h !== null && typeof h === 'object' && 'value' in (h as object) && 'unit' in (h as object) ? (f.height as Dimension) : undefined;
+};
+
 export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout {
-  const { pass, page, template, fence, dpi } = input;
+  const { template, fence, dpi } = input;
+  const fi = fence.fenceIndex;
+  const mmPx = dpi / MM_PER_IN;
+  const byName = new Map(template.frames.map((f) => [f.name, f]));
+  const groupOf = groupOfFrames(template);
+  const prev = new Map<string, string>();
+  for (const f of template.frames) {
+    const n = nextFrameOf(f);
+    if (n && byName.has(n) && !prev.has(n)) prev.set(n, f.name);
+  }
+  const headOf = (name: string): string => {
+    let at = name;
+    const seen = new Set([at]);
+    for (let p = prev.get(at); p !== undefined && !seen.has(p); p = prev.get(at)) {
+      seen.add(p);
+      at = p;
+    }
+    return at;
+  };
+
+  // Compositions by fit state: the ladder and its proposals ask for some
+  // twice.
+  const memo = new Map<string, Composition>();
+  let runs = 0;
+  const keyOf = (tpl: ResolvedPageTemplate, fit: FitState): string =>
+    JSON.stringify([tpl.id, [...fit.patches], [...fit.text], [...fit.pictures], [...fit.yieldAll]]);
+  const compose = (fit: FitState, tpl: ResolvedPageTemplate = template): Composition => {
+    const key = keyOf(tpl, fit);
+    const known = memo.get(key);
+    if (known) return known;
+    runs++;
+    const c = composePage(input, patchTemplate(tpl, fit.patches), fit);
+    memo.set(key, c);
+    return c;
+  };
+  const frameIn = (c: Composition, name: string): VDTFrame | undefined => c.frames.find((f) => f.name === name);
+  const overflows = (c: Composition, name: string): boolean => (frameIn(c, name)?.overflowPx ?? 0) > 0.5;
+
+  // The ladder, frame by frame in template order (ties break there).
+  let fit = NO_FIT;
+  let cur = compose(fit);
+  const tried = new Map<string, FrameFitStep[]>();
+  const patched = (f: FitState, name: string, patch: Partial<ResolvedFrame>): FitState => ({ ...f, patches: new Map([...f.patches, [name, { ...f.patches.get(name), ...patch }]]) });
+  const withText = (f: FitState, head: string, s: number): FitState => ({ ...f, text: new Map([...f.text, [head, s]]) });
+  const withPictures = (f: FitState, heads: readonly string[], s: number, by: string): FitState => {
+    const pictures = new Map(f.pictures);
+    for (const h of heads) pictures.set(h, { scale: s, by });
+    return { ...f, pictures };
+  };
+  /** Take `next` when it makes `name` fit; else keep it anyway (each step
+   *  builds on the ones before it at their limit) and say so. */
+  const attempt = (next: FitState, name: string): boolean => {
+    fit = next;
+    cur = compose(fit);
+    return !overflows(cur, name);
+  };
+  /** The largest scale among `steps` (descending) at which `name` fits,
+   *  checked at the lowest first, then by bisection; adopted. */
+  const searchScale = (steps: readonly number[], make: (s: number) => FitState, name: string): boolean => {
+    if (steps.length === 0) return false;
+    if (!attempt(make(steps[steps.length - 1]!), name)) return false;
+    let lo = 0;
+    let hi = steps.length - 1; // fits at hi
+    while (lo < hi && runs < COMPOSE_BUDGET) {
+      const mid = Math.floor((lo + hi) / 2);
+      if (!overflows(compose(make(steps[mid]!)), name)) hi = mid;
+      else lo = mid + 1;
+    }
+    fit = make(steps[hi]!);
+    cur = compose(fit);
+    return true;
+  };
+  /** Story heads of the frame and of its group's frames whose content holds
+   *  a picture. */
+  const pictureHeads = (frame: ResolvedFrame): string[] => {
+    const g = groupOf.get(frame.name);
+    const names = g ? [frame.name, ...g.frames.filter((m) => m !== frame.name)] : [frame.name];
+    const heads: string[] = [];
+    for (const n of names) {
+      const head = headOf(n);
+      const story = input.stories.get(head);
+      if (!story || heads.includes(head)) continue;
+      for (let i = story.startIdx + 1; i < story.plan.endIdx; i++) {
+        if (input.pass.contentBlocks[i]?.type === 'resourceBlock') {
+          heads.push(head);
+          break;
+        }
+      }
+    }
+    return heads;
+  };
+  /** The frame's story sets text (not only pictures): its text can
+   *  shrink. */
+  const holdsText = (frame: ResolvedFrame): boolean => {
+    const story = input.stories.get(headOf(frame.name));
+    if (!story) return false;
+    for (let i = story.startIdx + 1; i < story.plan.endIdx; i++) {
+      const b = input.pass.contentBlocks[i];
+      if (b && b.type !== 'resourceBlock' && b.type !== 'directive' && !isMarkerBlock(b)) return true;
+    }
+    return false;
+  };
+  const movesOthers = (frame: ResolvedFrame): boolean => {
+    const g = groupOf.get(frame.name);
+    if (g && g.frames.filter((m) => byName.has(m)).length > 1) return true;
+    return template.frames.some((f) => f.name !== frame.name && !f.grid && anchorTarget(f.placement) === frame.name);
+  };
+  /** `free` applies: a fixed height with room up to a higher `maxHeight`. */
+  const growPatch = (frame: ResolvedFrame): Partial<ResolvedFrame> | undefined => {
+    const h = fixedHeight(frame);
+    if (!h || !frame.maxHeight) return undefined;
+    if (dimensionToPx(frame.maxHeight, dpi, input.emPx) <= dimensionToPx(h, dpi, input.emPx) + 0.5) return undefined;
+    const min = frame.minHeight && dimensionToPx(frame.minHeight, dpi, input.emPx) > dimensionToPx(h, dpi, input.emPx) ? frame.minHeight : h;
+    return { height: 'auto', minHeight: min };
+  };
+
+  for (const frame of template.frames) {
+    const name = frame.name;
+    if (!overflows(cur, name) || runs >= COMPOSE_BUDGET) continue;
+    const steps: FrameFitStep[] = [];
+    tried.set(name, steps);
+    // 1. Free space: a fixed height grows to its maximum ('auto' heights
+    //    already take the room their area and group leave).
+    steps.push('free');
+    const grow = growPatch(frame);
+    if (grow && attempt(patched(fit, name, grow), name)) continue;
+    // 2. Push siblings: the group moved the frames after it and the frames
+    //    that shrink gave space back when it was laid.
+    if (movesOthers(frame)) steps.push('push');
+    // 3. Pictures of the frame and its group, down to imageMinScale.
+    const heads = frame.fit.scaleImages ? pictureHeads(frame) : [];
+    if (heads.length > 0 && frame.fit.imageMinScale < 1) {
+      steps.push('scaleImages');
+      if (searchScale(scaleSteps(frame.fit.imageMinScale), (s) => withPictures(fit, heads, s, name), name)) continue;
+    }
+    // 4. Redistribute: every other frame of the group gives space (or
+    //    width) back, down to its minimum or its content.
+    const g = groupOf.get(name);
+    if (g && g.frames.filter((m) => byName.has(m)).length > 1) {
+      steps.push('redistribute');
+      if (attempt({ ...fit, yieldAll: new Set([...fit.yieldAll, g.name]) }, name)) continue;
+    }
+    // 5. The frame's text (its whole story), down to fit.minScale.
+    if (frame.fit.shrinkText && frame.fit.minScale < 1 && holdsText(frame)) {
+      steps.push('shrinkText');
+      const head = headOf(name);
+      if (searchScale(scaleSteps(frame.fit.minScale), (s) => withText(fit, head, s), name)) continue;
+    }
+    // 6. Continuation on another page (`overflow.continueIn: 'next-page'`
+    //    or `'template:<id>'`) is #859's: the step is reported, the content
+    //    still stops here.
+    if (continueOnOtherPage(frame)) steps.push('continue');
+  }
+
+  // 7. Warn, with what would make each frame that still overflows fit.
+  const warnings: ContentWarning[] = [];
+  const templateAttr = fence.attrSources.template;
+  for (const frame of template.frames) {
+    const vdt = frameIn(cur, frame.name);
+    if (!vdt || vdt.overflowPx <= 0.5) continue;
+    const overflowMm = Math.round((vdt.overflowPx / mmPx) * 10) / 10;
+    const proposals = overflowProposals({
+      frame,
+      vdt,
+      cur,
+      fit,
+      compose,
+      overflows,
+      headOf,
+      withText,
+      patched,
+      groupOf,
+      byName,
+      mmPx,
+      dpi,
+      emPx: input.emPx,
+      alternatives: input.alternatives,
+      templateSource: templateAttr ? { sourceStart: templateAttr.sourceStart + input.bodyOffset, sourceEnd: templateAttr.sourceEnd + input.bodyOffset } : undefined,
+      budgetLeft: () => runs < COMPOSE_BUDGET,
+      holdsText: holdsText(frame),
+    });
+    warnings.push({
+      kind: 'frameOverflow',
+      template: template.id,
+      frame: frame.name,
+      fenceIndex: fi,
+      overflowMm,
+      configPath: frame.configPath,
+      ...(input.locale ? { locale: input.locale } : {}),
+      stepsTried: tried.get(frame.name) ?? ['free'],
+      scale: vdt.scale,
+      ...(vdt.imageScale !== undefined ? { imageScale: vdt.imageScale } : {}),
+      proposals,
+      ...(vdt.sourceStart !== undefined ? { sourceStart: vdt.sourceStart, sourceEnd: vdt.sourceEnd } : {}),
+      pageIndex: input.page.index,
+    });
+  }
+
+  const { frames, blocks, log, laid } = cur;
+  // Template order on the page record.
+  const order = new Map(template.frames.map((f, i) => [f.name, i]));
+  frames.sort((a, b) => order.get(a.name)! - order.get(b.name)!);
+  const contentBlocks = input.pass.contentBlocks;
+  const composed: VDTComposedPage = {
+    template: template.id,
+    ...(template.variant ? { variant: template.variant } : {}),
+    fenceIndex: fi,
+    role: template.role,
+    attrs: { ...fence.attrs },
+    attrSources: Object.fromEntries(Object.entries(fence.attrSources).map(([k, v]) => [k, { sourceStart: v.sourceStart + input.bodyOffset, sourceEnd: v.sourceEnd + input.bodyOffset }])),
+    frames,
+    log,
+    configPath: template.configPath,
+    sourceStart: contentBlocks[input.startIdx]!.sourceStart + input.bodyOffset,
+    sourceEnd: contentBlocks[input.endIdx]!.sourceEnd + input.bodyOffset,
+  };
+  return { composed, blocks, warnings, laid };
+}
+
+/** The frame sends what does not fit to another page (#859). */
+function continueOnOtherPage(frame: ResolvedFrame): boolean {
+  const to = frame.overflow.continueIn;
+  return to === 'next-page' || continueInTemplate(to) !== undefined;
+}
+
+interface ProposalContext {
+  frame: ResolvedFrame;
+  vdt: VDTFrame;
+  cur: Composition;
+  fit: FitState;
+  compose(fit: FitState, tpl?: ResolvedPageTemplate): Composition;
+  overflows(c: Composition, name: string): boolean;
+  headOf(name: string): string;
+  withText(f: FitState, head: string, s: number): FitState;
+  patched(f: FitState, name: string, patch: Partial<ResolvedFrame>): FitState;
+  groupOf: ReadonlyMap<string, ResolvedFrameGroup>;
+  byName: ReadonlyMap<string, ResolvedFrame>;
+  mmPx: number;
+  dpi: number;
+  emPx: number;
+  alternatives?: () => readonly ResolvedPageTemplate[];
+  templateSource?: { sourceStart: number; sourceEnd: number };
+  budgetLeft(): boolean;
+  /** The frame sets text, which a smaller scale would shrink. */
+  holdsText: boolean;
+}
+
+const mmDim = (value: number): Dimension => ({ value, unit: 'mm' });
+
+/** What would make `frame`'s content fit, each value worked out from the
+ *  shortfall and, where the page can tell, tried on it (DESIGN §5.7). */
+function overflowProposals(c: ProposalContext): FrameOverflowProposal[] {
+  const { frame, vdt, cur, fit, mmPx } = c;
+  const name = frame.name;
+  const out: FrameOverflowProposal[] = [];
+  const path = (key: string): string => frame.fieldPaths[key] ?? `${frame.configPath}/${key}`;
+  const fits = (next: FitState, tpl?: ResolvedPageTemplate): boolean => c.budgetLeft() && !c.overflows(c.compose(next, tpl), name);
+
+  // More shrink: the largest text scale, in 2.5 % steps, at which it fits.
+  const head = c.headOf(name);
+  const from = frame.fit.shrinkText ? Math.min(frame.fit.minScale, vdt.scale) : 1;
+  const steps = scaleSteps(PROPOSAL_MIN_SCALE, from);
+  if (c.holdsText && steps.length > 0 && fits(c.withText(fit, head, steps[steps.length - 1]!))) {
+    let lo = 0;
+    let hi = steps.length - 1;
+    while (lo < hi && c.budgetLeft()) {
+      const mid = Math.floor((lo + hi) / 2);
+      if (fits(c.withText(fit, head, steps[mid]!))) hi = mid;
+      else lo = mid + 1;
+    }
+    out.push({
+      kind: 'allowShrink',
+      path: path('fit/minScale'),
+      value: steps[hi]!,
+      ...(frame.fit.shrinkText ? {} : { also: [{ path: path('fit/shrinkText'), value: true }] }),
+    });
+  }
+
+  // A higher maximum: the frame's height plus the shortfall, in whole mm.
+  const fixed = fixedHeight(frame);
+  if (frame.maxHeight || fixed) {
+    const want = Math.ceil((vdt.rect.height + vdt.overflowPx) / mmPx - 1e-6);
+    const patch: Partial<ResolvedFrame> = { maxHeight: mmDim(want), ...(fixed ? { height: 'auto' as const, minHeight: fixed } : {}) };
+    if (fits(c.patched(fit, name, patch))) out.push({ kind: 'raiseMax', path: path('maxHeight'), value: mmDim(want) });
+  }
+
+  // A lower minimum on a frame of its group that stands at its minimum
+  // with less content than that: lowered by the shortfall, not below its
+  // content.
+  const g = c.groupOf.get(name);
+  if (g) {
+    for (const other of g.frames) {
+      const f = c.byName.get(other);
+      if (!f || other === name || f.pin || !f.minHeight) continue;
+      const box = cur.frames.find((x) => x.name === other);
+      if (!box) continue;
+      const minPx = dimensionToPx(f.minHeight, c.dpi, c.emPx);
+      const need = cur.needs.get(other)?.() ?? 0;
+      if (Math.abs(box.rect.height - minPx) > 0.5 || need >= minPx - mmPx) continue;
+      const lowered = Math.max(Math.ceil(need / mmPx - 1e-6), Math.floor((minPx - vdt.overflowPx) / mmPx + 1e-6));
+      if (lowered * mmPx >= minPx - 0.5) continue;
+      if (fits(c.patched(fit, other, { minHeight: mmDim(lowered) }))) {
+        out.push({ kind: 'lowerMin', path: f.fieldPaths.minHeight ?? `${f.configPath}/minHeight`, value: mmDim(lowered), frame: other });
+      }
+    }
+  }
+
+  // Continue on the next page (#859 lays it out).
+  if (!frame.overflow.continueIn) out.push({ kind: 'continueNextPage', path: path('overflow/continueIn'), value: 'next-page' });
+
+  // Another template of the book with a frame of this name, where the
+  // content fits as it is.
+  for (const alt of c.alternatives?.() ?? []) {
+    if (!c.budgetLeft()) break;
+    if (!alt.frames.some((f) => f.name === name)) continue;
+    const trial = c.compose(NO_FIT, alt);
+    const laidThere = trial.frames.find((f) => f.name === name);
+    if (laidThere && laidThere.blockIds.length > 0 && laidThere.overflowPx <= 0.5) {
+      out.push({ kind: 'useTemplate', value: alt.id, ...(c.templateSource ?? {}) });
+      break;
+    }
+  }
+
+  // Shorter text: the lines that do not fit, at the frame's characters a
+  // line.
+  const lines = cur.blocks.filter((b) => vdt.blockIds.includes(b.id) && b.type !== 'resource').flatMap((b) => b.lines.filter((l) => l.text.length > 0));
+  if (lines.length > 0) {
+    // Characters of a full line: the lines that do not end their paragraph.
+    const full = lines.filter((l) => !l.isLastLine);
+    const sample = full.length > 0 ? full : lines;
+    const perLine = sample.reduce((n, l) => n + l.text.length, 0) / sample.length;
+    const lineH = (lines.reduce((h, l) => h + l.bbox.height, 0) / lines.length) * vdt.scale;
+    if (lineH > 0) {
+      const over = Math.ceil(vdt.overflowPx / lineH - 1e-6);
+      out.push({ kind: 'shortenText', value: Math.ceil(over * perLine), ...(vdt.sourceStart !== undefined ? { sourceStart: vdt.sourceStart, sourceEnd: vdt.sourceEnd! } : {}) });
+    }
+  }
+  return out;
+}
+
+/** Lay out every frame of the page once, with the reflow ladder's `fit`. */
+function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, fit: FitState): Composition {
+  const { pass, fence, dpi } = input;
   const fi = fence.fenceIndex;
   const frameIdOf = (name: string): string => frameElementId(fi, name);
   const byName = new Map(template.frames.map((f) => [f.name, f]));
@@ -110,6 +532,14 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
     }
     return at;
   };
+  /** The text scale of a frame's story (#858). */
+  const textScale = (frame: ResolvedFrame): number => fit.text.get(headOf(frame.name)) ?? 1;
+  /** The scale of a frame's pictures (#858), below 1, or undefined. */
+  const pictureScale = (frame: ResolvedFrame): number | undefined => fit.pictures.get(headOf(frame.name))?.scale;
+  /** Rectangles in a frame's box coordinates, in its laid-out (scaled)
+   *  coordinates. */
+  const unscale = (rs: FrameBoxOptions['exclusions'], s: number): FrameBoxOptions['exclusions'] =>
+    rs && s !== 1 ? rs.map((r) => ({ x: r.x / s, y: r.y / s, width: r.width / s, height: r.height / s })) : rs;
   /** Place and fill every frame. `seed`: the boxes of the frames that push
    *  text, from a first run, so a frame placed before one that pushes it
    *  (the photo anchored to its box) still runs round it. */
@@ -159,8 +589,9 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
     const frames: VDTFrame[] = [];
     const vdtByName = new Map<string, VDTFrame>();
     const blocks: VDTBlock[] = [];
-    const warnings: ContentWarning[] = [];
     const overflowLog: ReflowEvent[] = [];
+    const fitLog: ReflowEvent[] = [];
+    const needs = new Map<string, () => number>();
     const laid = new Set<string>();
     const pushed: { name: string; box: Rect }[] = seed ? [...seed].map(([name, box]) => ({ name, box })) : [];
 
@@ -204,18 +635,24 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
       return { frame, st, before, holds, continuation, blockId };
     };
     /** The content's height at `width`, running round the pushing frames
-     *  below the top of `at` (the frame's box as first placed). */
+     *  below the top of `at` (the frame's box as first placed). A frame
+     *  whose text the ladder scales (#858) is laid out `1 / scale` as
+     *  wide and is `scale` as tall as that. */
     const naturalOf = (p: Prep, at?: Rect) => {
       const memo = new Map<number, number>();
+      const s = textScale(p.frame);
+      const pic = pictureScale(p.frame);
       return (width: number): number => {
         if (!p.holds) return 0;
         const key = Math.round(width * 1000);
         const known = memo.get(key);
         if (known !== undefined) return known;
-        const exclusions = at ? exclusionsFor(p.frame, { ...at, width }, true) : undefined;
-        const r = p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, width, p.blockId, p.continuation, input.mirrored, exclusions ? { exclusions } : undefined);
-        memo.set(key, r.totalHeight);
-        return r.totalHeight;
+        const exclusions = at ? unscale(exclusionsFor(p.frame, { ...at, width }, true), s) : undefined;
+        const opts: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}) };
+        const r = p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, width / s, p.blockId, p.continuation, input.mirrored, opts.exclusions || opts.pictureScale !== undefined ? opts : undefined);
+        const h = r.totalHeight * s;
+        memo.set(key, h);
+        return h;
       };
     };
     /** `placeBox`, then the box the page lets the frame take (`fitBox`:
@@ -258,10 +695,13 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
     };
 
     /** Lay a group: its frames' boxes as the template declares them and as
-     *  their content needs (`composed/groups.ts`). */
+     *  their content needs (`composed/groups.ts`). With the ladder's
+     *  `redistribute` (#858) every frame gives space back, down to its
+     *  minimum or its content, whether it `shrink`s or not. */
     const placeGroup = (group: ResolvedFrameGroup, members: readonly ResolvedFrame[]): Map<string, Rect> => {
       const own = groupPlaceable(group);
       const mmPx = dpi / MM_PER_IN;
+      const yieldAll = fit.yieldAll.has(group.name);
       const preps = members.map(prepare);
       const solve = (mode: 'final' | 'declared', naturals: ((w: number) => number)[]): { rects: Map<string, Rect>; box: Rect } => {
         const refs = mode === 'final' ? refOf : declaredRefOf;
@@ -281,12 +721,13 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
           const fill = f.height === 'fill';
           const minH = f.minHeight ? dimensionToPx(f.minHeight, dpi, input.emPx) : 0;
           const want = fill ? minH : auto ? (mode === 'final' ? natural(box.width) : declaredNatural(f, natural)(box.width)) : box.height;
-          return {
+          const max = f.maxHeight ? dimensionToPx(f.maxHeight, dpi, input.emPx) : Infinity;
+          const item: GroupItem = {
             name: f.name,
             own: box,
             want,
             min: minH,
-            max: f.maxHeight ? dimensionToPx(f.maxHeight, dpi, input.emPx) : Infinity,
+            max,
             minWidth: f.minWidth ? dimensionToPx(f.minWidth, dpi, input.emPx) : 0,
             maxWidth: f.maxWidth ? dimensionToPx(f.maxWidth, dpi, input.emPx) : Infinity,
             grow: fill ? Math.max(1, f.grow) : f.grow,
@@ -296,6 +737,16 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
             fixedHeight: !auto && !fill,
             need: natural,
           };
+          if (yieldAll && mode === 'final' && !f.pin) {
+            // Down to its minimum, never under what its content needs, never
+            // over the height it has.
+            const height = Math.min(Math.max(want, minH), max);
+            item.shrink = f.shrink > 0 ? f.shrink : 1;
+            // (A row's frames give width, each down to the narrowest width
+            // its content still fits: their heights stay the row's.)
+            if (group.kind === 'stack') item.min = Math.min(height, Math.max(minH, natural(box.width)));
+          }
+          return item;
         });
         const firstFree = items.find((it) => !it.pin) ?? items[0];
         const start = firstFree?.own ?? input.areas.area;
@@ -336,39 +787,49 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
       return fin.rects;
     };
 
-    /** Pour a frame's content into its box and record the frame. */
+    /** Pour a frame's content into its box and record the frame. A frame
+     *  whose text the ladder scales (#858) is laid out in a box `1 / scale`
+     *  as large, painted at `scale` (`frameMatrix`). */
     const fill = (p: Prep, rect: Rect): void => {
       const { frame, st, holds, continuation, blockId, before } = p;
       const style = input.styleOf(frame);
+      const s = textScale(frame);
+      const pic = pictureScale(frame);
+      const laidW = rect.width / s;
+      const laidH = rect.height / s;
       let result: CalloutLayoutResult | undefined;
       let overflowPx = 0;
       const from = st?.cut ?? CUT_START;
       if (holds) {
-        const opts: FrameBoxOptions = {
-          boxHeight: rect.height,
-          verticalAlign: frame.verticalAlign,
-          ...(exclusionsFor(frame, rect, false) ? { exclusions: exclusionsFor(frame, rect, false) } : {}),
-        };
-        const whole = st!.L.layoutRange(from, st!.L.end, rect.width, blockId, continuation, input.mirrored, opts);
+        // What its content needs at its width, measured only when a
+        // proposal asks (`lowerMin`), from where the frame starts.
+        const width = rect.width;
+        const startAt: Prep = { ...p, st: { ...st!, cut: from } };
+        let known: number | undefined;
+        needs.set(frame.name, () => (known ??= naturalOf(startAt)(width)));
+        const exclusions = unscale(exclusionsFor(frame, rect, false), s);
+        const extra: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}) };
+        const opts: FrameBoxOptions = { boxHeight: laidH, verticalAlign: frame.verticalAlign, ...extra };
+        const whole = st!.L.layoutRange(from, st!.L.end, laidW, blockId, continuation, input.mirrored, opts);
         const nextName = nextFrameOf(frame);
         const nextFrame = nextName !== undefined ? byName.get(nextName) : undefined;
         if ((whole.overflowPx ?? 0) > 0.5 && nextFrame && !vdtByName.has(nextFrame.name)) {
           // The rest goes on in the next frame of the chain.
           const minLines = Math.max(1, style.splitMinLines);
-          const frag = splitCalloutFragment(pass, st!.L, from, rect.width, rect.height, blockId, continuation, minLines, input.mirrored, opts.exclusions ? { exclusions: opts.exclusions } : undefined);
+          const frag = splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, input.mirrored, extra.exclusions || extra.pictureScale !== undefined ? extra : undefined);
           const to = frag?.to ?? from;
           result = frag
-            ? st!.L.layoutRange(from, to, rect.width, blockId, continuation, input.mirrored, opts)
+            ? st!.L.layoutRange(from, to, laidW, blockId, continuation, input.mirrored, opts)
             : undefined;
           st!.cut = to;
         } else {
           result = whole;
-          overflowPx = whole.overflowPx ?? 0;
+          overflowPx = (whole.overflowPx ?? 0) * s;
           st!.cut = st!.L.end;
         }
       } else if (st && frame.style) {
         // A styled frame with nothing (left) to hold still draws its box.
-        result = st.L.layoutRange(st.L.end, st.L.end, rect.width, blockId, true, input.mirrored, { boxHeight: rect.height });
+        result = st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, true, input.mirrored, { boxHeight: laidH });
       }
       const vdt: VDTFrame = {
         id: frameIdOf(frame.name),
@@ -377,7 +838,8 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
         rotate: frame.rotate,
         layer: frame.layer,
         ...(frame.style ? { styleId: frame.style } : {}),
-        scale: 1,
+        scale: s,
+        ...(pic !== undefined && holds ? { imageScale: pic } : {}),
         overflowPx,
         blockIds: [],
         configPath: frame.configPath,
@@ -396,20 +858,16 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
         st.pieces++;
         st.lastFrameId = vdt.id;
         laid.add(headOf(frame.name));
+        // What the ladder changed in the frame's content (#858).
+        const pictures = fit.pictures.get(headOf(frame.name));
+        if (pictures && result.children.some((b) => b.type === 'resource')) {
+          fitLog.push({ frame: frame.name, kind: 'imageScaled', scale: pictures.scale, ...(pictures.by !== frame.name ? { cause: pictures.by } : {}) });
+        }
+        if (s !== 1 && holds) fitLog.push({ frame: frame.name, kind: 'textScaled', scale: s });
       }
       if (overflowPx > 0.5) {
         const overflowMm = Math.round((overflowPx / dpi) * MM_PER_IN * 10) / 10;
         overflowLog.push({ frame: frame.name, kind: 'overflow', toMm: overflowMm });
-        warnings.push({
-          kind: 'frameOverflow',
-          template: template.id,
-          frame: frame.name,
-          fenceIndex: fi,
-          overflowMm,
-          configPath: frame.configPath,
-          ...(vdt.sourceStart !== undefined ? { sourceStart: vdt.sourceStart, sourceEnd: vdt.sourceEnd } : {}),
-          pageIndex: page.index,
-        });
       }
       if (frame.exclude === 'push') {
         const box = frameBounds({ rect, rotate: frame.rotate });
@@ -431,29 +889,12 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
       // before it was filled: each is prepared again as it is filled.
       for (const f of step.frames) fill(prepare(f), solved.get(f.name)!);
     }
-    const log = mergeLog(reflowEvents(motionsOf(template, rects, declared), dpi / MM_PER_IN), overflowLog, template);
-    return { frames, blocks, warnings, log, laid, pushRects };
+    const log = mergeLog(reflowEvents(motionsOf(template, rects, declared), dpi / MM_PER_IN), [...fitLog, ...overflowLog], template);
+    return { frames, blocks, log, laid, needs, pushRects };
   };
   const first = run();
-  const { frames, blocks, warnings, log, laid } = first.pushRects.size > 0 ? run(first.pushRects) : first;
-  // Template order on the page record.
-  const order = new Map(template.frames.map((f, i) => [f.name, i]));
-  frames.sort((a, b) => order.get(a.name)! - order.get(b.name)!);
-  const contentBlocks = pass.contentBlocks;
-  const composed: VDTComposedPage = {
-    template: template.id,
-    ...(template.variant ? { variant: template.variant } : {}),
-    fenceIndex: fi,
-    role: template.role,
-    attrs: { ...fence.attrs },
-    attrSources: Object.fromEntries(Object.entries(fence.attrSources).map(([k, v]) => [k, { sourceStart: v.sourceStart + input.bodyOffset, sourceEnd: v.sourceEnd + input.bodyOffset }])),
-    frames,
-    log,
-    configPath: template.configPath,
-    sourceStart: contentBlocks[input.startIdx]!.sourceStart + input.bodyOffset,
-    sourceEnd: contentBlocks[input.endIdx]!.sourceEnd + input.bodyOffset,
-  };
-  return { composed, blocks, warnings, laid };
+  const { frames, blocks, log, laid, needs } = first.pushRects.size > 0 ? run(first.pushRects) : first;
+  return { frames, blocks, log, laid, needs, template };
 }
 
 const sameRect = (a: Rect, b: Rect): boolean =>

@@ -51,6 +51,7 @@ import type {
   ResolvedCodeStyleConfig,
   PageTemplate,
   ResolvedLabelStyle,
+  Dimension,
 } from './types';
 import type { NumeralStyle } from './numbering';
 import type { MathRender } from './math/types';
@@ -2521,8 +2522,16 @@ export interface VDTFrame {
   layer: number;
   /** The callout style the frame is drawn with; absent = frameless. */
   styleId?: string;
-  /** Text scale the reflow ladder applied (1 = none; #858). */
+  /** Text scale the reflow ladder applied (1 = none; #858): the frame's
+   *  content is laid out `1 / scale` times as wide and tall as `rect` and
+   *  painted scaled by `scale` about the top-left of `rect`, so its font
+   *  sizes, leading and spacing shrink together. Its blocks' coordinates
+   *  are in that laid-out frame: {@link frameMatrix} (`composed/paint.ts`)
+   *  puts them on the sheet. */
   scale: number;
+  /** Scale the reflow ladder set the pictures of the frame's content at
+   *  (#858), below 1; absent when they keep their size. */
+  imageScale?: number;
   /** Height of content that did not fit in the frame, px (0 = it fits).
    *  Past the frame's foot it is clipped on paged output. */
   overflowPx: number;
@@ -2908,6 +2917,33 @@ export interface ConfigWarning {
   ownerId?: string;
 }
 
+/** A step of the reflow ladder (#858, DESIGN §5.4), in ladder order:
+ *  `free` (the frame grows into free space up to its `maxHeight`), `push`
+ *  (its group moves the frames after it and the ones that `shrink` yield),
+ *  `scaleImages` (pictures of the frame and its group, down to
+ *  `fit.imageMinScale`), `redistribute` (the other frames of its group go
+ *  down to their minimum or their content, a row's give width),
+ *  `shrinkText` (down to `fit.minScale`), `continue` (`overflow.continueIn`
+ *  to another page, #859). */
+export type FrameFitStep = 'free' | 'push' | 'scaleImages' | 'redistribute' | 'shrinkText' | 'continue';
+
+/** A change that would make a frame's content fit (#858): data, so the
+ *  Sandbox can offer it as a confirmed edit. `path` is the JSON pointer of
+ *  the config value to set to `value`; a Markdown change carries the
+ *  source range it is about instead. Values are worked out from the
+ *  shortfall: `allowShrink` the largest text scale (in 2.5 % steps) at
+ *  which the content fits (`also`: the switch to turn on with it),
+ *  `raiseMax` / `lowerMin` the height in whole millimetres, `useTemplate`
+ *  another template of the book with a frame of this name in which the
+ *  content fits, `shortenText` about how many characters to cut. */
+export type FrameOverflowProposal =
+  | { kind: 'allowShrink'; path: string; value: number; also?: { path: string; value: boolean }[] }
+  | { kind: 'raiseMax'; path: string; value: Dimension }
+  | { kind: 'lowerMin'; path: string; value: Dimension; frame: string }
+  | { kind: 'continueNextPage'; path: string; value: 'next-page' }
+  | { kind: 'useTemplate'; value: string; sourceStart?: number; sourceEnd?: number }
+  | { kind: 'shortenText'; value: number; sourceStart?: number; sourceEnd?: number };
+
 /** The kinds of {@link ConfigWarning} a page template gives (#853). */
 export type PageTemplateWarningKind =
   | 'templateDuplicate'
@@ -2987,8 +3023,8 @@ export type ContentWarning = ContentWarningBase & (
   | { kind: 'templateUnknown'; template: string; fenceIndex: number }
   /** Content of a composed page names a slot (`slot="…"`,
    *  `:::frame{slot=…}`) that is no frame of the page's template: it goes
-   *  to the template's flow frame. */
-  | { kind: 'slotUnknown'; template: string; slot: string; fenceIndex: number }
+   *  to the template's flow frame (`frame`, when the template has one). */
+  | { kind: 'slotUnknown'; template: string; slot: string; frame?: string; fenceIndex: number }
   /** A frame of a composed page's template receives no content: nothing
    *  names its slot, it takes no heading, and (the flow frame) no content
    *  is left without a slot. A frame marked `optional` is not reported. */
@@ -3003,7 +3039,27 @@ export type ContentWarning = ContentWarningBase & (
    *  on paged output; it stays in the document (reflowable output, the
    *  source map, this warning). `overflowMm` is the height that is cut.
    *  Provisional: #858 adds the steps tried and the fixes. */
-  | { kind: 'frameOverflow'; template: string; frame: string; fenceIndex: number; overflowMm: number; configPath: string }
+  | {
+    kind: 'frameOverflow';
+    template: string;
+    frame: string;
+    fenceIndex: number;
+    overflowMm: number;
+    configPath: string;
+    /** The document's locale (`config.locale`): the same page overflows in
+     *  one language and fits in another. */
+    locale?: string;
+    /** The steps of the reflow ladder (#858) that applied to the frame, in
+     *  the order they were tried; none made the content fit. */
+    stepsTried: FrameFitStep[];
+    /** The text scale the frame was left at (1 = none). */
+    scale: number;
+    /** The scale its pictures were left at, below 1. */
+    imageScale?: number;
+    /** Changes that would make the content fit, with their values worked
+     *  out from the shortfall (each tried on the page where it can be). */
+    proposals: FrameOverflowProposal[];
+  }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): `::::page{template spread}` names a template that is a single
    *  page (`fence: true`, `templateSpread: false`; it is laid as one

@@ -364,21 +364,6 @@ export interface FigureLabelNode extends SourceRange {
 // in `vdt.ts` with the rest of the VDT (#855).
 export type { ReflowEventKind, ReflowEvent, VDTFrame, VDTComposedPage } from '../vdt';
 
-export type FrameOverflowProposal =
-  | { kind: 'allowShrink'; path: string; value: number }
-  | { kind: 'raiseMax'; path: string; value: Dimension }
-  | { kind: 'lowerMin'; path: string; value: Dimension }
-  | { kind: 'continueNextPage'; path: string }
-  | { kind: 'useTemplate'; template: string }
-  | { kind: 'shortenText'; chars: number };
-
-export interface FrameOverflowWarningData {
-  pageIndex: number;
-  template: string;
-  frame: string;
-  locale?: string;
-  overflowMm: number;
-  stepsTried: string[];
-  scale: number;
-  proposals: FrameOverflowProposal[];
-}
+// `FrameOverflowProposal` and `FrameFitStep` live in `vdt.ts` with the
+// `frameOverflow` warning that carries them (#858).
+export type { FrameOverflowProposal, FrameFitStep } from '../vdt';

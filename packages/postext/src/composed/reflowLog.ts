@@ -5,7 +5,7 @@
  * template declares it (its fixed size, or its `minHeight` when its height
  * follows its content) is compared with the box the layout gave it.
  */
-import type { ReflowEvent, VDTDocument } from '../vdt';
+import type { FrameFitStep, FrameOverflowProposal, ReflowEvent, VDTDocument } from '../vdt';
 import type { Rect } from './geometry';
 
 /** A frame's declared and final boxes, and the names whose change moves
@@ -116,6 +116,53 @@ export function describeReflowEvent(e: ReflowEvent): string {
       return `${e.frame} continued${e.cause ? ` in ${e.cause}` : ''}`;
     default:
       return `${e.frame} ${String(e.kind)}`;
+  }
+}
+
+const pct = (v: number): string => `${Math.round(v * 1000) / 10} %`;
+
+/** A step of the reflow ladder in words, in English (#858): «text down to
+ *  90 %». `scale` / `imageScale`: where the frame's text and pictures were
+ *  left. */
+export function describeFitStep(step: FrameFitStep, at: { scale?: number; imageScale?: number } = {}): string {
+  switch (step) {
+    case 'free':
+      return 'free space';
+    case 'push':
+      return 'room from its group (frames moved, shrink frames yielding)';
+    case 'scaleImages':
+      return at.imageScale !== undefined ? `pictures down to ${pct(at.imageScale)}` : 'smaller pictures';
+    case 'redistribute':
+      return 'the other frames of its group down to their minimum';
+    case 'shrinkText':
+      return at.scale !== undefined && at.scale < 1 ? `text down to ${pct(at.scale)}` : 'smaller text';
+    case 'continue':
+      return 'continuing on another page (not laid out yet)';
+    default:
+      return String(step);
+  }
+}
+
+const dim = (d: { value: number; unit: string }): string => `${Math.round(d.value * 10) / 10} ${d.unit}`;
+
+/** A fix of a `frameOverflow` in words, in English (#858): «raise
+ *  maxHeight to 64 mm». */
+export function describeFrameOverflowProposal(p: FrameOverflowProposal): string {
+  switch (p.kind) {
+    case 'allowShrink':
+      return `let its text shrink to ${pct(p.value)} (fit.minScale: ${p.value}${p.also?.length ? ', fit.shrinkText: true' : ''})`;
+    case 'raiseMax':
+      return `raise maxHeight to ${dim(p.value)}`;
+    case 'lowerMin':
+      return `lower the minHeight of "${p.frame}" to ${dim(p.value)}`;
+    case 'continueNextPage':
+      return 'continue on the next page (overflow.continueIn: "next-page")';
+    case 'useTemplate':
+      return `set the page with template "${p.value}"`;
+    case 'shortenText':
+      return `cut about ${p.value} characters`;
+    default:
+      return (p as { kind: string }).kind;
   }
 }
 
