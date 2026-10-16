@@ -1937,6 +1937,7 @@ export interface SandboxLabels {
   warningsTextWrapFewLines: string;
   warningsTextWrapMoved: string;
   warningsTextWrapVertical: string;
+  warningsTextWrapNoContour: string;
   warningsWrapUnsupportedTitle: string;
   warningsWrapUnsupportedDetail: string;
   warningsUnclosedCodeBlockTitle: string;
@@ -3000,6 +3001,14 @@ export interface SandboxLabels {
   resourceTypePlacementWrap: string;
   resourceTypePlacementWrapTooltip: string;
   resourceWrapNone: string;
+  resourceWrapContour: string;
+  resourceContourAlpha: string;
+  resourceContourAlphaTooltip: string;
+  resourceContourThreshold: string;
+  resourceContourThresholdTooltip: string;
+  resourceContourMargin: string;
+  resourceContourMarginTooltip: string;
+  resourceContourNoShape: string;
   resourceTypePlacementWrapGap: string;
   resourceTypePlacementWrapGapTooltip: string;
   htmlViewerOverrides: string;

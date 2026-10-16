@@ -3663,6 +3663,7 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'resourceTypesEmpty',
       'resourceTypesResetConfirm',
       'resourceTypesSection',
+      'resourceWrapContour',
       'resourceWrapNone',
       'separatorColon',
       'separatorCustom',

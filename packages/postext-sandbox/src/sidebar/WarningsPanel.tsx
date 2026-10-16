@@ -735,7 +735,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       const detail = payload.reason === 'tooNarrow' ? labels.warningsTextWrapTooNarrow
         : payload.reason === 'fewLines' ? labels.warningsTextWrapFewLines
           : payload.reason === 'moved' ? labels.warningsTextWrapMoved
-            : labels.warningsTextWrapVertical;
+            : payload.reason === 'noContour' ? labels.warningsTextWrapNoContour
+              : labels.warningsTextWrapVertical;
       return `${payload.resourceId !== undefined ? `#${payload.resourceId}` : `:::callout${payload.box ? ` (${payload.box})` : ''}`} — ${detail}`;
     }
     case 'lineNumberOverlap':
