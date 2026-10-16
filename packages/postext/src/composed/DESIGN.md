@@ -609,6 +609,22 @@ Cookbook comics recipe must render unchanged before and after.
 - Fixed-layout EPUB and the HTML viewer: the template is applied (they render the paged VDT).
 - Tagged PDF: structure order follows the Markdown (`contentIndex`), not paint order.
 
+What P9 (#862) built:
+
+- **Reading order** is `composedReadingOrder(composedPaintOrder(page))`: the decoration first, then the
+  frames by the lowest content index of their blocks (a frame a chain continues into after the frame
+  before it). The HTML viewer (and so the fixed-layout EPUB) writes frames in that order inside one
+  stacking context (`pt-composed`, `z-index: 0`) and paints them by `z-index` = place in the paint
+  order; tagged PDF reads each frame in one `readFloat` call (a list stays one `L`).
+- **Reflowable EPUB**: `ComposedNode` (`<section class="pt-composed pt-composed-<template>">`, the page
+  break first), each story a `CalloutNode` with `frame` (`<div class="pt-frame pt-frame-<name>">`, plus
+  `pt-callout pt-callout-<style>` when the frame has a style); frame CSS only in books that have
+  composed pages. Decoration dropped.
+- **Labels** ride on the VDT as `ResolvedResourceBlock.labels` (`VDTFigureLabel`: text, at, style,
+  source range). Reflowable EPUB: a visually hidden `<ul class="pt-figure-labels pt-hidden">` after the
+  picture, no `aria-describedby` (read once). HTML `alt` and PDF `Alt`: `altWithLabels` (`Alt (A, B)`,
+  `（A、B）` for CJK, `،` for Arabic).
+
 ## 9. Literals allowed in the config
 
 The `contentInConfig` whitelist (§2.8): book title, author and publisher (from metadata or
