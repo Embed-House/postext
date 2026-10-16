@@ -105,6 +105,26 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
       <td>El grupo toma el valor por defecto: <code>parallel</code> con <code>breaks</code>, <code>snake</code> sin él.</td>
     </tr>
     <tr>
+      <td><code>templateUnknown</code></td>
+      <td>Una página compuesta (<code>::::page&#123;template&#125;</code>) no nombra ninguna entrada de <code>pageTemplates</code>, o no nombra ninguna plantilla; <code>template</code> es el id tal como está escrito y <code>fenceIndex</code>, el lugar de la página entre las páginas compuestas del capítulo.</td>
+      <td>Sus slots no se comprueban. Mientras las plantillas no se maqueten, su contenido se compone en el texto corrido, en páginas propias.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>El contenido de una página compuesta nombra un <code>slot</code> que no es ningún marco de la plantilla de la página (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>El contenido va al marco de flujo de la plantilla.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>Un marco de la plantilla no recibe nada en la página (<code>frame</code>, <code>template</code>, <code>fenceIndex</code>). No se registra para un marco <code>optional</code> ni para uno que solo recibe lo que otro marco continúa en él.</td>
+      <td>El marco queda vacío. <code>postext check</code> lo lista como nota.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>Un <code>:::page</code> de tres dos puntos lleva <code>template=</code>.</td>
+      <td>Se lee como página de cómic; una página compuesta necesita cuatro dos puntos.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> no nombra ningún estilo de chip.</td>
       <td>El chip toma el primer estilo de chip.</td>

@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'ca',
   lastUpdated: '2026-10-16',
   readingTime: '40 min',
-  order: 35,
+  order: 36,
   parent: 'sandbox',
   plainSummary: "Aquesta pàgina explica dos taulers del Sandbox. El tauler Disseny reuneix tots els paràmetres del llibre, com ara la mida de pàgina, les tipografies i els colors, ordenats en grups i amb un cercador. El tauler Revisió enumera els problemes que Postext troba mentre treballes, com ara una imatge que falta o una línia massa espaiada. Cada problema diu on és i t'hi porta quan hi fas clic.",
 };
@@ -205,7 +205,8 @@ Diagnòstics en viu, recalculats a partir del text, el disseny, les figures i l'
   - *Tabulador en text vertical*: un `:tab` en text compost en vertical, que es compon com un espai entre paraules, perquè les tabulacions només s'apliquen al text horitzontal (`tabInVerticalText`);
   - *Tanca de codi sense tancar*: una tanca ```` ``` ```` o `~~~` sense tanca de tancament, de manera que la resta del text es compon com a codi (`unclosedCodeBlock`; en fer-hi clic s'enfoca la tanca);
   - *Metadades ignorades*: un capítol diferent del primer que comença amb un bloc de metadades (només les metadades del primer capítol són les del llibre);
-  - *Flux de columnes desconegut*: un `:::columns{flow=…}` que no és ni `snake` ni `parallel`; el grup pren el valor per defecte (`columnsFlowUnknown`).
+  - *Flux de columnes desconegut*: un `:::columns{flow=…}` que no és ni `snake` ni `parallel`; el grup pren el valor per defecte (`columnsFlowUnknown`);
+  - *Plantilla de pàgina desconeguda*, *Slot sense marc*, *Marc buit* i *Pàgina composta amb tres dos punts*: un `::::page` la plantilla del qual no és a `pageTemplates`, un `slot` que no anomena cap marc de la plantilla de la pàgina, un marc de la plantilla que no rep res a la pàgina (un marc `optional` no s'assenyala) i un `:::page` amb `template=` escrit amb tres dos punts (`templateUnknown`, `slotUnknown`, `slotEmpty`, `pageFenceLength`; vegeu [Pàgines compostes](/ca/docs/composed-pages#avisos)).
 - **Disseny**:
   - noms de marcador de capçaleres i peus fora de la llista permesa del motor (s'accepten `{attr.…}` i els marcadors de part), i marcadors les metadades del document dels quals falten;
   - ancoratges cíclics entre elements de disseny, o ancoratges a un element que no existeix. Aquesta comprovació i la dels marcadors recorren totes les ranures de disseny: les capçaleres i peus, l'obertura de part, el verso en blanc que segueix una pàgina de part, les files de part de l'índex, el disseny de cada nivell de títol, i el disseny de cada estil de títol i les capçaleres i peus de la seva secció. Una entrada d'un estil de títol anomena l'estil, com a `{style="index"} header · #rh → #missing`, i una del verso o de les files de part de l'índex anomena el seu ajust, com a `toc.parts.design · #row → #missing`;

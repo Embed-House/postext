@@ -711,3 +711,12 @@ A `:::strip` has the body of a page but sits in the text as one unbreakable box,
 ### Spreads
 
 `:::page{spread}` lays one page across two facing pages: the split covers both text areas joined at the spine, without their inner margins, and a panel may cross the spine. The spread opens on an even page, after a blank page when needed. See [Comics › Spreads](/en/docs/comics#spreads).
+
+## Composed pages
+
+A composed page is laid out from a page template of the configuration (`pageTemplates`), its content poured into the template's frames by name. The guide, with the warnings, is [Composed pages](/en/docs/composed-pages).
+
+- `::::page{template="…"}` … `::::` is the page: four or more colons, closed by a bare fence of as many. Three-colon fences inside it (`:::frame`, `:::callout`, `:::figure`…) work as they do everywhere, and a bare `:::` never closes the page. A three-colon `:::page` stays a comic page.
+- `:::frame{slot="…" label="…"}` … `:::` holds the content of the frame of that name: any Markdown.
+- `slot="…"` on a heading (`## Retos {slot="retos-titulo"}`), on `::resource{id="…" slot="…"}`, on a code fence or on a `:::` container sends that block alone. Content with no slot goes to the template's flow frame.
+- `:::figure{resource="…" slot="…"}` … `:::` places one resource with its `::label[TEXT]{at="…" style="…"}` lines, `at` being an anchor of the picture or a point `"x% y%"`. A figure works in the running text too.

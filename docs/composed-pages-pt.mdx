@@ -1,0 +1,198 @@
+{/* docs/composed-pages-pt.mdx */}
+
+export const metadata = {
+  title: 'Páginas compostas',
+  sidebarTitle: 'Páginas compostas',
+  description: 'O Markdown das páginas compostas: a cerca de página de quatro dois-pontos que nomeia um modelo de página, os blocos e o atributo slot que levam o conteúdo aos blocos do modelo, as figuras com rótulos nas âncoras de uma imagem e os avisos que conferem o conteúdo com o modelo',
+  lang: 'pt',
+  lastUpdated: '2026-10-16',
+  readingTime: '9 min',
+  order: 33,
+  plainSummary: "Algumas páginas não são uma coluna de texto corrido, e sim um conjunto de caixas, como a página de um livro didático com uma faixa para o título, um texto e três caixas coloridas com fotos. O Postext chama essas páginas de páginas compostas. A forma da página é um modelo que fica na configuração, e o Markdown só diz qual trecho de texto vai em cada caixa. Esta página mostra como escrever esse Markdown: a cerca da página, os blocos, os nomes de slot e as imagens com rótulos, como os nomes de um mapa. Ela também lista os avisos que o Postext dá quando o texto e o modelo não batem.",
+};
+
+# Páginas compostas
+
+**O modelo guarda a forma da página; o Markdown guarda o conteúdo e diz para qual bloco vai cada trecho.**
+
+Uma página composta é diagramada a partir de um modelo: blocos com nome (uma faixa de título, um texto, uma caixa com a sua foto), grupos que se movem juntos e uma decoração, tudo definido na configuração, em `pageTemplates`. O Markdown da página é um contêiner cercado que nomeia o seu modelo e distribui o conteúdo pelos blocos, pelo nome de cada um. Nenhuma posição ou tamanho é escrito no Markdown, e nenhum texto do conteúdo é escrito na configuração, então uma tradução é o mesmo modelo com outras palavras.
+
+Esta página trata do Markdown. Nesta versão o analisador já lê as páginas compostas e as verificações de slots rodam, de modo que o painel Verificações e o `postext check` apontam uma página que não bate com o seu modelo. A diagramação do modelo na página chega na próxima versão; até lá, o conteúdo de uma página composta é composto no texto corrido, na ordem do Markdown e em páginas próprias, então nada do que se escreve nela se perde. Um documento sem páginas compostas é diagramado exatamente como antes.
+
+## A cerca de página
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+::::
+```
+
+Uma página composta abre com uma linha de **quatro dois-pontos** seguida de `page` e dos seus atributos, e fecha com uma linha que só tem o **mesmo número de dois-pontos**. Dentro dela, os contêineres de três dois-pontos (`:::frame`, `:::callout`, `:::figure`, `:::columns`, `:::paper`) abrem e fecham como sempre, então um `:::` sozinho fecha o mais interno deles e nunca a página. Uma página escrita com cinco dois-pontos (`:::::page`) fecha com cinco, e uma linha de quatro dois-pontos dentro dela passa a ser texto comum.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Atributo</th>
+      <th>Efeito</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>template="…"</code></td><td>Obrigatório. O id de uma entrada de <code>pageTemplates</code>.</td></tr>
+    <tr><td><code>spread</code></td><td>A página é uma página dupla, que ocupa duas páginas frente a frente; o modelo também precisa ser de página dupla.</td></tr>
+    <tr><td><code>id="…"</code>, <code>#id</code></td><td>Uma âncora: um <code>:ref</code> que aponta para ela imprime a página em que a página composta cai.</td></tr>
+    <tr><td>qualquer outro</td><td>Um valor que o modelo lê como <code>&#123;attr.name&#125;</code>, por exemplo uma imagem de fundo escolhida página a página: <code>fondo="banda-retos"</code> com <code>resourceId: "&#123;attr.fondo&#125;"</code> na decoração.</td></tr>
+  </tbody>
+</table>
+
+Uma página composta sempre começa uma página nova (ou uma página dupla), e o texto depois da sua cerca de fechamento começa na seguinte.
+
+O `:::page{split=…}` de três dois-pontos é uma página de quadrinhos (veja [Quadrinhos](/pt/docs/comics)) e mantém esse sentido. Um `:::page` de três dois-pontos que traz `template=` continua sendo lido como página de quadrinhos, e o aviso `pageFenceLength` diz que uma página composta precisa de quatro dois-pontos.
+
+Quando falta uma cerca, o analisador se recupera sem perder texto:
+
+- uma página que fica aberta vai até o fim do capítulo e é assinalada como contêiner não fechado na sua linha de abertura;
+- uma linha `::::page` encontrada com uma página aberta fecha antes, ali mesmo, a página aberta (e é assinalada do mesmo jeito);
+- a cerca de fechamento fecha qualquer bloco ou boxe que ainda esteja aberto dentro da página, e assinala cada um;
+- uma cerca de fechamento com outro número de dois-pontos não é a da página: ela fica no texto, à vista.
+
+## Blocos e slots
+
+```md
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago…
+
+Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
+:::
+```
+
+Um **slot** é o nome que um trecho de conteúdo pede, e corresponde ao nome de um bloco do modelo. `:::frame{slot="…"}` manda para esse bloco tudo o que está dentro dele. O seu corpo é Markdown completo: parágrafos, listas, títulos, chips, inserções `::resource`, referências `:ref`, notas de rodapé, `:::columns` e boxes aninhados. `label` e `title` dão as palavras da aba ou do título do bloco, como num `:::callout`; a aparência do bloco vem do estilo de boxe que o modelo atribui a ele.
+
+Um elemento avulso também pode nomear o seu próprio slot:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '280px' }}>Elemento</th>
+      <th>Como se escreve</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Um título</td><td><code>## Retos &#123;slot="retos-titulo"&#125;</code></td></tr>
+    <tr><td>Uma inserção de recurso</td><td><code>::resource&#123;id="dinero-pago" slot="dinero-fotos"&#125;</code> (os dois atributos, em qualquer ordem)</td></tr>
+    <tr><td>Uma listagem de código</td><td><code>&#96;&#96;&#96;js &#123;slot="codigo"&#125;</code></td></tr>
+    <tr><td>Um boxe ou qualquer outro contêiner</td><td><code>:::callout&#123;type="nota" slot="aside"&#125;</code>: o boxe inteiro vai para o slot</td></tr>
+    <tr><td>Uma figura</td><td><code>:::figure&#123;resource="mapa" slot="mapa"&#125;</code> (veja abaixo)</td></tr>
+  </tbody>
+</table>
+
+Como o conteúdo é distribuído:
+
+- Vários trechos com o mesmo slot são juntados na ordem do Markdown.
+- O conteúdo sem slot vai para o **bloco de fluxo** do modelo (o que está marcado com `flow`).
+- Um título sem slot vai primeiro para o bloco que recebe o seu nível (`takes: "h1"`), se o modelo tiver um, então o título de um tema de livro didático é só um `# Título` no alto da página.
+- O conteúdo que nomeia um slot que o modelo não tem vai para o bloco de fluxo e é assinalado (`slotUnknown`).
+
+Um `slot` fora de uma página composta é lido e não muda nada.
+
+## Figuras com rótulos
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}` coloca um recurso, com a sua legenda e o seu número, como faz `::resource`, e lista os rótulos que vão sobre a imagem: uma linha `::label[TEXTO]{…}` por rótulo, com linhas em branco permitidas entre elas.
+
+- `at` nomeia uma âncora do recurso (um ponto definido uma única vez sobre a imagem e compartilhado por todos os idiomas), ou dá um ponto em porcentagens da imagem, `at="x% y%"`, para um rótulo sem âncora.
+- `style` nomeia um estilo de rótulo e passa por cima do estilo da âncora.
+- O texto entre colchetes é Markdown em linha: negrito, itálico, chips.
+
+Uma figura funciona tanto no texto corrido quanto dentro de um bloco. Os rótulos são lidos e guardados junto com a sua posição no Markdown; desenhá-los sobre a imagem chega com a diagramação de modelos, e até lá a figura é composta como o seu recurso. Uma linha dentro de uma figura que não é um rótulo nem está em branco encerra uma figura que ficou sem o `:::` de fechamento, e é assinalada como contêiner não fechado.
+
+## Exemplo
+
+A página de um livro didático, com uma faixa de título, um texto com a sua lista e três caixas coloridas, cada uma com a sua foto ao lado:
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+## La actividad económica
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+
+- Las :chip[empresas.]{style="clave"} Ofrecen bienes y servicios a cambio de un beneficio.
+- Las :chip[personas y familias.]{style="clave"} Adquieren lo que ofrecen las empresas…
+
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago, ya que su valor es conocido…
+:::
+
+::resource{id="dinero-pago" slot="dinero-fotos"}
+
+:::frame{slot="gasto" label="El gasto"}
+- **Fijo:** es el que se produce todos los meses…
+- **Variable:** puede cambiar según las necesidades…
+:::
+
+::resource{id="gasto-compras" slot="gasto-fotos"}
+
+:::frame{slot="ahorro" label="Préstamos y ahorro"}
+Si necesitas o quieres comprar algo muy caro…
+:::
+
+::resource{id="ahorro-balanza" slot="ahorro-fotos"}
+::::
+```
+
+O título vai para o bloco que recebe `h1`; o subtítulo, o parágrafo e a lista, para o bloco de fluxo; cada caixa e cada foto, para o bloco do seu slot. A edição em catalão são as mesmas linhas com outras palavras: o modelo, os slots e as fotos não mudam.
+
+## Avisos
+
+As verificações leem o Markdown e a configuração antes de qualquer diagramação, então aparecem no painel Verificações enquanto você digita, no `postext check` e nos `contentWarnings` do documento, cada uma com o intervalo de origem daquilo que aponta (veja [Configuração › Avisos no documento](/pt/docs/configuration-programmatic-usage#avisos-no-documento)).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Tipo</th>
+      <th>Causa</th>
+      <th>Correção</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateUnknown</code></td>
+      <td>A cerca da página nomeia um modelo que não está em <code>pageTemplates</code>, ou não nomeia nenhum. Os slots da página não são verificados.</td>
+      <td>Corrija o id ou acrescente o modelo à configuração.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>Um <code>slot="…"</code> não nomeia nenhum bloco do modelo da página (contam os blocos herdados por <code>extends</code> e os de uma página de <code>variants</code>). O conteúdo vai para o bloco de fluxo.</td>
+      <td>Corrija o nome do slot ou acrescente ao modelo um bloco com esse nome.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>Um bloco do modelo não recebe nada nesta página: nenhum slot o nomeia, ele não recebe nenhum título e, se for o bloco de fluxo, não sobra conteúdo sem slot. Um bloco que só recebe o que outro bloco continua nele (<code>next</code>) não é assinalado. O <code>postext check</code> o lista como nota.</td>
+      <td>Escreva conteúdo para esse bloco com o slot dele, ou marque-o como <code>optional: true</code> no modelo.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>Um <code>:::page</code> de três dois-pontos traz <code>template=</code>. Ele é lido como página de quadrinhos, como antes.</td>
+      <td>Abra a página com quatro dois-pontos, <code>::::page&#123;template="…"&#125;</code>, e feche com <code>::::</code>.</td>
+    </tr>
+    <tr>
+      <td><code>unclosedContainer</code></td>
+      <td>Uma página composta, um bloco ou uma figura fica sem fechamento (veja as regras de recuperação acima). O painel Verificações chama a página composta de <code>::::page</code>.</td>
+      <td>Acrescente a cerca de fechamento: tantos dois-pontos quanto a linha de abertura da página, ou <code>:::</code> para um bloco ou uma figura.</td>
+    </tr>
+  </tbody>
+</table>
+
+## No código
+
+`composedPages(blocks)` lê os blocos analisados de um capítulo (`parseMarkdownWithIssues(markdown).blocks`) e devolve um nó por cerca de página, em ordem: o seu `template`, `spread`, `attrs` com o intervalo de origem de cada valor (`attrSources`), o seu `fenceIndex` (o ordinal da cerca no capítulo, o mesmo em todos os idiomas), `slots` (os índices dos blocos de cada slot, na ordem do Markdown), `unassigned` (os blocos sem slot) e o intervalo de origem da página inteira. Um bloco traz o slot que nomeia em `ContentBlock.slot`, com o intervalo de origem do valor; uma figura é um `resourceBlock` cujo `figure` guarda os seus atributos e rótulos, cada rótulo com o seu texto, os seus trechos em linha e um mapa de origem que leva de volta ao Markdown. `checkComposedSlots(pages, config)` devolve os três avisos de slot dessas páginas.

@@ -59,6 +59,7 @@ describe("docs table of contents", () => {
       "arabic-layout",
       "japanese-layout",
       "comics",
+      "composed-pages",
       "contributing",
       "sandbox",
       ...CHAPTER_PAGES.sandbox!,
@@ -98,22 +99,23 @@ describe("docs table of contents", () => {
     }
   });
 
-  it("numbers the pages 1 to 41 and gives Part II the Configuration reference, the craft pages and Comics", () => {
+  it("numbers the pages 1 to 42 and gives Part II the Configuration reference, the craft pages, Comics and Composed pages", () => {
     expect(docs.map((d) => d.locales.en!.order)).toEqual(docs.map((_, i) => i + 1));
     expect(order("configuration")).toBe(4);
     expect(CONFIGURATION_PAGES.map((slug) => order(slug))).toEqual(CONFIGURATION_PAGES.map((_, i) => 5 + i));
     expect([order("justification"), order("document-format")]).toEqual([23, 24]);
     expect(order("comics")).toBe(32);
+    expect(order("composed-pages")).toBe(33);
     for (const slug of ["introduction", "architecture", ...CHAPTER_PAGES.architecture!]) {
       expect(docPart(order(slug)!).key, slug).toBe("foundations");
     }
-    for (const slug of ["configuration", ...CONFIGURATION_PAGES, "justification", "document-format", ...CHAPTER_PAGES["document-format"]!, "chinese-layout", "arabic-layout", "japanese-layout", "comics"]) {
+    for (const slug of ["configuration", ...CONFIGURATION_PAGES, "justification", "document-format", ...CHAPTER_PAGES["document-format"]!, "chinese-layout", "arabic-layout", "japanese-layout", "comics", "composed-pages"]) {
       expect(docPart(order(slug)!).key, slug).toBe("craft");
     }
     for (const slug of ["contributing", "sandbox", ...CHAPTER_PAGES.sandbox!, "skill", "command-line", "webmcp"]) {
       expect(docPart(order(slug)!).key, slug).toBe("practice");
     }
-    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([33, 34, 39, 40, 41]);
+    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([34, 35, 40, 41, 42]);
   });
 
   it("sets the pages of the Configuration reference under its entry page, in every language", () => {
@@ -145,14 +147,14 @@ describe("docs table of contents", () => {
     expect(es).toContain("2 idiomas-y-escrituras");
   });
 
-  it.each(["chinese-layout", "arabic-layout", "japanese-layout", "comics"])("gives every heading of the %s page its own title", (slug) => {
+  it.each(["chinese-layout", "arabic-layout", "japanese-layout", "comics", "composed-pages"])("gives every heading of the %s page its own title", (slug) => {
     for (const locale of LOCALES) {
       const texts = extractToc(getDocSource(slug, locale)!.source).map((t) => t.text);
       expect(texts.filter((t, i) => texts.indexOf(t) !== i), locale).toEqual([]);
     }
   });
 
-  it.each(["chinese-layout", "arabic-layout", "japanese-layout", "comics"])("keeps Markdown markers literal in the %s page's code spans", (slug) => {
+  it.each(["chinese-layout", "arabic-layout", "japanese-layout", "comics", "composed-pages"])("keeps Markdown markers literal in the %s page's code spans", (slug) => {
     // MDX reads Markdown inside JSX, so <code>*…*</code> prints an italic
     // "…", and the docs pipeline drops JavaScript expressions (blockJS), so
     // <code>{'*…*'}</code> prints nothing. A character reference stays

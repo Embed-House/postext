@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'pt',
   lastUpdated: '2026-10-16',
   readingTime: '38 min',
-  order: 35,
+  order: 36,
   parent: 'sandbox',
   plainSummary: "Esta página trata de dois painéis do Sandbox. O painel Design reúne todos os ajustes do livro, como o tamanho da página, as fontes e as cores, organizados em grupos e com uma caixa de busca. O painel Verificações lista os problemas que o Postext encontra enquanto você trabalha, como uma imagem que falta ou uma linha frouxa demais. Cada problema diz onde está e leva você até lá quando você clica nele.",
 };
@@ -205,7 +205,8 @@ Diagnósticos ao vivo, recalculados a partir do texto, do design, das figuras e 
   - *Cerca de código não fechada*: uma cerca ```` ``` ```` ou `~~~` sem cerca de fechamento, de modo que o resto do texto é composto como código (`unclosedCodeBlock`; clicar nela dá foco à cerca);
   - *Tabulação em texto vertical*: um `:tab` em texto composto na vertical, que é composto como um espaço entre palavras, já que as paradas de tabulação só valem para texto horizontal (`tabInVerticalText`);
   - *Front matter ignorado*: um capítulo que não é o primeiro e começa com um bloco de front matter (só o front matter do primeiro capítulo pertence ao livro);
-  - *Fluxo de colunas desconhecido*: um `:::columns{flow=…}` que não é nem `snake` nem `parallel`; o grupo recebe o padrão (`columnsFlowUnknown`).
+  - *Fluxo de colunas desconhecido*: um `:::columns{flow=…}` que não é nem `snake` nem `parallel`; o grupo recebe o padrão (`columnsFlowUnknown`);
+  - *Modelo de página desconhecido*, *Slot sem bloco*, *Bloco vazio* e *Página composta com três dois-pontos*: um `::::page` cujo modelo não está em `pageTemplates`, um `slot` que não nomeia nenhum bloco do modelo da página, um bloco do modelo que não recebe nada na página (um bloco `optional` não é assinalado) e um `:::page` com `template=` escrito com três dois-pontos (`templateUnknown`, `slotUnknown`, `slotEmpty`, `pageFenceLength`; veja [Páginas compostas](/pt/docs/composed-pages#avisos)).
 - **Design**:
   - nomes de marcadores de cabeçalho e rodapé fora da lista permitida pelo motor (`{attr.…}` e os marcadores de parte são aceitos), e marcadores cujos metadados do documento estão faltando;
   - âncoras cíclicas entre elementos de design, ou âncoras para um elemento que não existe. Esta verificação e a dos marcadores cobrem todos os blocos de design: os cabeços, a abertura de parte, o verso em branco depois de uma página de parte, as linhas de parte do sumário, o design de cada nível de título, e o design e os cabeços da seção de cada estilo de título. Uma entrada que vem de um estilo de título nomeia o estilo, como em `{style="index"} header · #rh → #missing`, e uma que vem do verso ou das linhas de parte do sumário nomeia a configuração, como em `toc.parts.design · #row → #missing`;

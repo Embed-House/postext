@@ -105,6 +105,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Il gruppo prende il valore predefinito: <code>parallel</code> con <code>breaks</code>, <code>snake</code> senza.</td>
     </tr>
     <tr>
+      <td><code>templateUnknown</code></td>
+      <td>Una pagina composta (<code>::::page&#123;template&#125;</code>) non indica alcuna voce di <code>pageTemplates</code>, o nessun modello; <code>template</code> è l’id così come è scritto e <code>fenceIndex</code> la posizione della pagina fra le pagine composte del capitolo.</td>
+      <td>I suoi slot non vengono controllati. Finché i modelli non vengono impaginati, il suo contenuto è collocato nel testo corrente, su pagine proprie.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>Il contenuto di una pagina composta indica uno <code>slot</code> che non è alcuna cornice del modello della pagina (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>Il contenuto va nella cornice di flusso del modello.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>Una cornice del modello non riceve nulla nella pagina (<code>frame</code>, <code>template</code>, <code>fenceIndex</code>). Non viene emesso per una cornice <code>optional</code>, né per una che riceve solo il seguito di un’altra cornice.</td>
+      <td>La cornice resta vuota. <code>postext check</code> la elenca come nota.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>Un <code>:::page</code> a tre due punti porta <code>template=</code>.</td>
+      <td>Viene letto come pagina di fumetto; una pagina composta richiede quattro due punti.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> non indica alcuno stile di chip.</td>
       <td>Il chip prende il primo stile di chip.</td>

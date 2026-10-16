@@ -711,3 +711,12 @@ Um `:::strip` tem o corpo de uma página, mas fica no texto como uma única caix
 ### Páginas duplas
 
 `:::page{spread}` estende uma página por duas páginas frente a frente: a divisão cobre as duas manchas de texto unidas na lombada, sem as margens internas, e um quadro pode atravessar a lombada. A página dupla começa numa página par, depois de uma página em branco quando necessário. Veja [Quadrinhos › Páginas duplas](/pt/docs/comics#páginas-duplas).
+
+## Páginas compostas
+
+Uma página composta é diagramada a partir de um modelo de página da configuração (`pageTemplates`), e o seu conteúdo é distribuído pelos blocos do modelo, pelo nome de cada um. O guia, com os avisos, está em [Páginas compostas](/pt/docs/composed-pages).
+
+- `::::page{template="…"}` … `::::` é a página: quatro dois-pontos ou mais, fechada por uma cerca sozinha com o mesmo número. As cercas de três dois-pontos dentro dela (`:::frame`, `:::callout`, `:::figure`…) funcionam como em qualquer outro lugar, e um `:::` sozinho nunca fecha a página. Um `:::page` de três dois-pontos continua sendo uma página de quadrinhos.
+- `:::frame{slot="…" label="…"}` … `:::` guarda o conteúdo do bloco com esse nome: qualquer Markdown.
+- `slot="…"` num título (`## Retos {slot="retos-titulo"}`), em `::resource{id="…" slot="…"}`, numa cerca de código ou num contêiner `:::` manda só esse elemento. O conteúdo sem slot vai para o bloco de fluxo do modelo.
+- `:::figure{resource="…" slot="…"}` … `:::` coloca um recurso com as suas linhas `::label[TEXTO]{at="…" style="…"}`, em que `at` é uma âncora da imagem ou um ponto `"x% y%"`. Uma figura também funciona no texto corrido.

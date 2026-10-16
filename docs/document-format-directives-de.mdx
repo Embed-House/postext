@@ -711,3 +711,12 @@ Ein `:::strip` hat den Inhalt einer Seite, steht im Text aber als ein unteilbare
 ### Doppelseiten
 
 `:::page{spread}` legt eine Seite über zwei gegenüberliegende Seiten: Die Teilung umfasst beide Satzspiegel, am Bund verbunden, ohne ihre Bundstege, und ein Panel darf den Bund überqueren. Die Doppelseite beginnt auf einer geraden Seite, nötigenfalls nach einer Vakatseite. Siehe [Comics › Doppelseiten](/de/docs/comics#doppelseiten).
+
+## Zusammengesetzte Seiten
+
+Eine zusammengesetzte Seite wird nach einer Seitenvorlage der Konfiguration (`pageTemplates`) umbrochen, und ihr Inhalt wird über die Namen auf die Rahmen der Vorlage verteilt. Die Anleitung mit den Warnungen ist [Zusammengesetzte Seiten](/de/docs/composed-pages).
+
+- `::::page{template="…"}` … `::::` ist die Seite: vier oder mehr Doppelpunkte, geschlossen von einer Zeile, die nur ebenso viele enthält. Begrenzungen mit drei Doppelpunkten darin (`:::frame`, `:::callout`, `:::figure` …) wirken wie überall, und ein bloßes `:::` schließt nie die Seite. Ein `:::page` mit drei Doppelpunkten bleibt eine Comicseite.
+- `:::frame{slot="…" label="…"}` … `:::` enthält den Inhalt des Rahmens mit diesem Namen: beliebiges Markdown.
+- `slot="…"` an einer Überschrift (`## Retos {slot="retos-titulo"}`), an `::resource{id="…" slot="…"}`, an einem Codeblock oder an einem `:::`-Container schickt nur diesen einen Block. Inhalt ohne Slot kommt in den Flussrahmen der Vorlage.
+- `:::figure{resource="…" slot="…"}` … `:::` setzt eine Ressource mit ihren Zeilen `::label[TEXT]{at="…" style="…"}`, wobei `at` ein Anker des Bilds oder ein Punkt `"x% y%"` ist. Eine Abbildung funktioniert auch im Fließtext.

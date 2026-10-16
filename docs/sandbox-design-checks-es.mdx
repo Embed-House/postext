@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'es',
   lastUpdated: '2026-10-16',
   readingTime: '39 min',
-  order: 35,
+  order: 36,
   parent: 'sandbox',
   plainSummary: "Esta página explica dos paneles del Sandbox. El panel Diseño reúne todos los ajustes del libro, como el tamaño de página, las tipografías y los colores, ordenados en grupos y con un buscador. El panel Revisión enumera los problemas que Postext encuentra mientras trabajas, como una imagen que falta o una línea demasiado abierta. Cada problema dice dónde está y te lleva allí cuando haces clic en él.",
 };
@@ -205,7 +205,8 @@ Diagnósticos en vivo, recalculados a partir del texto, el diseño, las figuras 
   - *Valla de código sin cerrar*: una valla ```` ``` ```` o `~~~` sin valla de cierre, así que el resto del texto se compone como código (`unclosedCodeBlock`; al hacer clic se enfoca la valla);
   - *Tabulador en texto vertical*: un `:tab` en texto compuesto en vertical, que se compone como un espacio entre palabras, porque las tabulaciones solo se aplican al texto horizontal (`tabInVerticalText`);
   - *Metadatos ignorados*: un capítulo distinto del primero que empieza con un bloque de metadatos (solo los metadatos del primer capítulo son los del libro);
-  - *Flujo de columnas desconocido*: un `:::columns{flow=…}` que no es ni `snake` ni `parallel`; el grupo toma el valor por defecto (`columnsFlowUnknown`).
+  - *Flujo de columnas desconocido*: un `:::columns{flow=…}` que no es ni `snake` ni `parallel`; el grupo toma el valor por defecto (`columnsFlowUnknown`);
+  - *Plantilla de página desconocida*, *Slot sin marco*, *Marco vacío* y *Página compuesta con tres dos puntos*: un `::::page` cuya plantilla no está en `pageTemplates`, un `slot` que no nombra ningún marco de la plantilla de la página, un marco de la plantilla que no recibe nada en la página (un marco `optional` no se señala) y un `:::page` con `template=` escrito con tres dos puntos (`templateUnknown`, `slotUnknown`, `slotEmpty`, `pageFenceLength`; véase [Páginas compuestas](/es/docs/composed-pages#avisos)).
 - **Diseño**:
   - nombres de marcador de cabeceras y pies fuera de la lista permitida del motor (se aceptan `{attr.…}` y los marcadores de parte), y marcadores cuyos metadatos del documento faltan;
   - anclajes cíclicos entre elementos de diseño, o anclajes a un elemento que no existe. Esta comprobación y la de los marcadores recorren todas las ranuras de diseño: las cabeceras y pies, la apertura de parte, el reverso en blanco que sigue a una página de parte, las filas de parte del índice, el diseño de cada nivel de título, y el diseño de cada estilo de título y las cabeceras y pies de su sección. Una entrada de un estilo de título nombra el estilo, como en `{style="index"} header · #rh → #missing`, y una del reverso o de las filas de parte del índice nombra su ajuste, como en `toc.parts.design · #row → #missing`;

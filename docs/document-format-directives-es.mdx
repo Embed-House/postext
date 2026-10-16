@@ -711,3 +711,12 @@ Un `:::strip` tiene el cuerpo de una página pero va en el texto como una sola c
 ### Dobles páginas
 
 `:::page{spread}` extiende una página sobre dos páginas enfrentadas: la división cubre las dos cajas de texto unidas en el lomo, sin sus márgenes interiores, y una viñeta puede cruzar el lomo. La doble página se abre en una página par, tras una página en blanco si hace falta. Véase [Cómics › Dobles páginas](/es/docs/comics#dobles-páginas).
+
+## Páginas compuestas
+
+Una página compuesta se maqueta a partir de una plantilla de página de la configuración (`pageTemplates`), y su contenido se vierte en los marcos de la plantilla por su nombre. La guía, con los avisos, está en [Páginas compuestas](/es/docs/composed-pages).
+
+- `::::page{template="…"}` … `::::` es la página: cuatro dos puntos o más, y se cierra con una valla suelta del mismo número. Las vallas de tres dos puntos que hay dentro (`:::frame`, `:::callout`, `:::figure`…) funcionan como en cualquier otro sitio, y un `:::` suelto nunca cierra la página. Un `:::page` de tres dos puntos sigue siendo una página de cómic.
+- `:::frame{slot="…" label="…"}` … `:::` guarda el contenido del marco de ese nombre: cualquier Markdown.
+- `slot="…"` en un encabezado (`## Retos {slot="retos-titulo"}`), en `::resource{id="…" slot="…"}`, en una valla de código o en un contenedor `:::` envía solo ese bloque. El contenido sin slot va al marco de flujo de la plantilla.
+- `:::figure{resource="…" slot="…"}` … `:::` coloca un recurso con sus líneas `::label[TEXTO]{at="…" style="…"}`, donde `at` es un ancla de la imagen o un punto `"x% y%"`. Una figura también funciona en el texto corrido.

@@ -105,6 +105,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>O grupo recebe o padrão: <code>parallel</code> com <code>breaks</code>, <code>snake</code> sem.</td>
     </tr>
     <tr>
+      <td><code>templateUnknown</code></td>
+      <td>Uma página composta (<code>::::page&#123;template&#125;</code>) não nomeia nenhuma entrada de <code>pageTemplates</code>, ou não nomeia modelo nenhum; <code>template</code> é o id como foi escrito e <code>fenceIndex</code>, a posição da página entre as páginas compostas do capítulo.</td>
+      <td>Os slots da página não são verificados. Enquanto os modelos não são diagramados, o conteúdo dela é composto no texto corrido, em páginas próprias.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>O conteúdo de uma página composta nomeia um <code>slot</code> que não é nenhum bloco do modelo da página (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>O conteúdo vai para o bloco de fluxo do modelo.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>Um bloco do modelo não recebe nada na página (<code>frame</code>, <code>template</code>, <code>fenceIndex</code>). Não é registrado para um bloco <code>optional</code>, nem para um que só recebe o que outro bloco continua nele.</td>
+      <td>O bloco fica vazio. O <code>postext check</code> o lista como nota.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>Um <code>:::page</code> de três dois-pontos traz <code>template=</code>.</td>
+      <td>Ele é lido como página de quadrinhos; uma página composta precisa de quatro dois-pontos.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> cita um estilo de chip que não existe.</td>
       <td>O chip recebe o primeiro estilo de chip.</td>

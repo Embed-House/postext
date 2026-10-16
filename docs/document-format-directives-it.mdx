@@ -711,3 +711,12 @@ Una `:::strip` ha lo stesso contenuto di una pagina ma si colloca nel testo come
 ### Doppie pagine
 
 `:::page{spread}` distende una pagina su due pagine affiancate: la divisione copre entrambe le gabbie unite al dorso, senza i loro margini interni, e una vignetta può attraversare il dorso. La doppia pagina si apre su una pagina pari, dopo una pagina bianca se serve. Vedi [Fumetti › Doppie pagine](/it/docs/comics#doppie-pagine).
+
+## Pagine composte
+
+Una pagina composta si impagina a partire da un modello di pagina della configurazione (`pageTemplates`), e il suo contenuto viene versato per nome nelle cornici del modello. La guida, con gli avvisi, è [Pagine composte](/it/docs/composed-pages).
+
+- `::::page{template="…"}` … `::::` è la pagina: quattro o più due punti, chiusi da una riga che ne contiene soltanto lo stesso numero. I recinti a tre due punti al suo interno (`:::frame`, `:::callout`, `:::figure`…) funzionano come ovunque, e un `:::` da solo non chiude mai la pagina. Un `:::page` a tre due punti resta una pagina di fumetto.
+- `:::frame{slot="…" label="…"}` … `:::` contiene il contenuto della cornice con quel nome: qualsiasi Markdown.
+- `slot="…"` su un titolo (`## Retos {slot="retos-titulo"}`), su `::resource{id="…" slot="…"}`, su un recinto di codice o su un contenitore `:::` manda solo quel blocco. Il contenuto senza slot va nella cornice di flusso del modello.
+- `:::figure{resource="…" slot="…"}` … `:::` colloca una risorsa con le sue righe `::label[TEXT]{at="…" style="…"}`, dove `at` è un’ancora dell’immagine o un punto `"x% y%"`. Una figura funziona anche nel testo corrente.

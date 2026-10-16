@@ -1,0 +1,198 @@
+{/* docs/composed-pages-ja.mdx */}
+
+export const metadata = {
+  title: 'テンプレートページ',
+  sidebarTitle: 'テンプレートページ',
+  description: 'テンプレートページのMarkdown。ページテンプレートを指定するコロン4つのページフェンス、テンプレートの枠へ内容を送る枠とslot属性、絵のアンカーにラベルを置く図、そして内容をテンプレートと照らし合わせる警告',
+  lang: 'ja',
+  lastUpdated: '2026-10-16',
+  readingTime: '9分',
+  order: 33,
+  plainSummary: "ページの中には、1段の本文ではなく、いくつもの枠を組み合わせてできているものがあります。たとえば教科書のページで、題名の帯と本文があり、写真の付いた色付きの囲みが3つ並んでいるようなものです。Postextはこうしたページをテンプレートページと呼びます。ページの形は設定の中のテンプレートが決め、Markdownにはどの文章をどの枠に入れるかだけを書きます。このページでは、ページフェンス、枠、スロットの名前、地図の地名のようにラベルを付けた絵という、そのMarkdownの書き方を説明し、文章とテンプレートが合わないときにPostextが出す警告も挙げます。",
+};
+
+# テンプレートページ
+
+**ページの形はテンプレートが持ち、Markdownは中身を持って、それぞれをどの枠に入れるかを示します。**
+
+テンプレートページは、テンプレートから組むページです。テンプレートには名前の付いた枠（題名の帯、本文、写真の付いた囲み）、まとめて動くグループ、飾りがあり、すべて設定の`pageTemplates`に定義します。ページのMarkdownはフェンスで囲んだブロックで、使うテンプレートを名指しし、内容を名前で各枠に流し込みます。Markdownに位置や大きさを書くことはなく、設定に本文の文章を書くこともありません。ですから翻訳は、同じテンプレートに別の言葉を入れたものになります。
+
+このページではMarkdownを扱います。今回のリリースでは、パーサーがテンプレートページを読み、スロットの検査が働くので、テンプレートに合わないページは検査パネルと`postext check`に報告されます。テンプレートをページに割り付ける処理は次のリリースで入ります。それまでは、テンプレートページの中身はMarkdownの順に本文の流れに組まれ、専用のページに置かれるので、書いたものは何も失われません。テンプレートページのない文書は、これまでとまったく同じに組まれます。
+
+## ページフェンス
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+::::
+```
+
+テンプレートページは、**コロン4つ**に`page`と属性を続けた行で始まり、**同じ数のコロン**だけの行で閉じます。中では、コロン3つのコンテナー（`:::frame`、`:::callout`、`:::figure`、`:::columns`、`:::paper`）がいつもどおり開いて閉じるので、単独の`:::`はそのうちいちばん内側のものを閉じ、ページを閉じることはありません。コロン5つで書いたページ（`:::::page`）は5つで閉じ、その中ではコロン4つの行はただのテキストです。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>属性</th>
+      <th>働き</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>template="…"</code></td><td>必須。<code>pageTemplates</code>の項目のIDです。</td></tr>
+    <tr><td><code>spread</code></td><td>ページを向かい合う2ページの見開きにします。テンプレートも見開き用でなければなりません。</td></tr>
+    <tr><td><code>id="…"</code>、<code>#id</code></td><td>アンカーです。これを指す<code>:ref</code>は、テンプレートページが入ったページの番号を印字します。</td></tr>
+    <tr><td>その他の属性</td><td>テンプレートが<code>&#123;attr.name&#125;</code>として読む値です。たとえばページごとに選ぶ背景の絵なら、ページに<code>fondo="banda-retos"</code>、飾りに<code>resourceId: "&#123;attr.fondo&#125;"</code>と書きます。</td></tr>
+  </tbody>
+</table>
+
+テンプレートページはいつも新しいページ（または見開き）から始まり、閉じるフェンスの後のテキストは次のページから始まります。
+
+コロン3つの`:::page{split=…}`はコミックのページで（[漫画](/ja/docs/comics)を参照）、その意味は変わりません。`template=`を持つコロン3つの`:::page`もコミックのページとして読まれ、警告`pageFenceLength`がテンプレートページにはコロンが4つ要ることを知らせます。
+
+フェンスが欠けていても、パーサーはテキストを失わずに立て直します。
+
+- 開いたままのページは章の終わりまで続き、開始行で閉じていないコンテナーとして報告されます。
+- ページが開いている間に`::::page`の行が現れると、まずそこで開いているページを閉じます（同じように報告されます）。
+- 閉じるフェンスは、ページの中でまだ開いている枠やボックスをすべて閉じ、その一つ一つを報告します。
+- コロンの数が違う閉じるフェンスは、そのページのものではありません。テキストに残るので、目で確かめられます。
+
+## 枠とスロット
+
+```md
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago…
+
+Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
+:::
+```
+
+**スロット**は、内容が求める行き先の名前で、テンプレートの枠の名前と対応します。`:::frame{slot="…"}`は、中のものをすべてその枠に送ります。中身には、段落、リスト、見出し、チップ、`::resource`の埋め込み、`:ref`の参照、脚注、`:::columns`、入れ子の囲みなど、どんなMarkdownでも書けます。`label`と`title`は、`:::callout`と同じく、枠のタブや見出しの文字を与えます。枠の見た目は、テンプレートがその枠に割り当てた囲みスタイルで決まります。
+
+1つのブロックが自分でスロットを名乗ることもできます。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '280px' }}>ブロック</th>
+      <th>書き方</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>見出し</td><td><code>## Retos &#123;slot="retos-titulo"&#125;</code></td></tr>
+    <tr><td>リソースの埋め込み</td><td><code>::resource&#123;id="dinero-pago" slot="dinero-fotos"&#125;</code>（2つの属性はどの順でもかまいません）</td></tr>
+    <tr><td>コードブロック</td><td><code>&#96;&#96;&#96;js &#123;slot="codigo"&#125;</code></td></tr>
+    <tr><td>ボックスやその他のコンテナー</td><td><code>:::callout&#123;type="nota" slot="aside"&#125;</code>：ボックス全体がスロットに入ります</td></tr>
+    <tr><td>図</td><td><code>:::figure&#123;resource="mapa" slot="mapa"&#125;</code>（下記を参照）</td></tr>
+  </tbody>
+</table>
+
+内容は次のように振り分けられます。
+
+- 同じスロットを持つ複数の内容は、Markdownの順につながります。
+- スロットのない内容は、テンプレートの**流し込み枠**（`flow`の付いた枠）に入ります。
+- スロットのない見出しは、テンプレートにその見出しのレベルを受け取る枠（`takes: "h1"`）があれば、まずそこに入ります。ですから教科書の単元の題名は、ページの頭に`# 題名`と書くだけで済みます。
+- テンプレートにないスロットを名乗る内容は、流し込み枠に入り、報告されます（`slotUnknown`）。
+
+テンプレートページの外にある`slot`は読まれますが、何も変えません。
+
+## ラベル付きの図
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}`は、`::resource`と同じく1つのリソースをキャプションと番号付きで置き、絵の上に置くラベルを並べます。ラベル1つにつき`::label[テキスト]{…}`を1行書き、間に空行をはさんでもかまいません。
+
+- `at`は、リソースのアンカー（絵の上に一度だけ定義し、すべての言語で共有する点）を指定します。アンカーのないラベルには、絵に対するパーセントで点を`at="x% y%"`と指定します。
+- `style`はラベルスタイルを指定し、アンカーのスタイルより優先します。
+- 角かっこの中のテキストはインラインのMarkdownで、ボールド、イタリック、チップが使えます。
+
+図は、枠の中だけでなく本文の流れの中でも使えます。ラベルは読み取られ、ソースの位置とともに保持されます。絵の上にラベルを描く処理はテンプレートの割り付けと同時に入り、それまで図はリソースのとおりに組まれます。図の中にラベルでも空行でもない行が現れると、閉じる`:::`のない図はそこで終わり、閉じていないコンテナーとして報告されます。
+
+## 作例
+
+教科書の1ページです。題名の帯、リスト付きの本文、そしてそれぞれ横に写真を添えた色付きの囲みが3つあります。
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+## La actividad económica
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+
+- Las :chip[empresas.]{style="clave"} Ofrecen bienes y servicios a cambio de un beneficio.
+- Las :chip[personas y familias.]{style="clave"} Adquieren lo que ofrecen las empresas…
+
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago, ya que su valor es conocido…
+:::
+
+::resource{id="dinero-pago" slot="dinero-fotos"}
+
+:::frame{slot="gasto" label="El gasto"}
+- **Fijo:** es el que se produce todos los meses…
+- **Variable:** puede cambiar según las necesidades…
+:::
+
+::resource{id="gasto-compras" slot="gasto-fotos"}
+
+:::frame{slot="ahorro" label="Préstamos y ahorro"}
+Si necesitas o quieres comprar algo muy caro…
+:::
+
+::resource{id="ahorro-balanza" slot="ahorro-fotos"}
+::::
+```
+
+題名は`h1`を受け取る枠に、小見出し、段落、リストは流し込み枠に、囲みと写真はそれぞれのスロットの枠に入ります。カタルーニャ語版は、同じ行に別の言葉を入れたものです。テンプレートもスロットも写真も変わりません。
+
+## 警告
+
+検査は割り付けの前にMarkdownと設定を読むので、入力するそばから検査パネルに表示され、`postext check`と文書の`contentWarnings`にも現れます。どの警告にも、対象となる箇所のソース範囲が付きます（[設定 › 文書の中の警告](/ja/docs/configuration-programmatic-usage#文書の中の警告)を参照）。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>種類</th>
+      <th>原因</th>
+      <th>対処</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateUnknown</code></td>
+      <td>ページフェンスが<code>pageTemplates</code>のどの項目にもないテンプレートを指定しているか、テンプレートを指定していない。スロットは検査されません。</td>
+      <td>IDを直すか、テンプレートを設定に加えます。</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td><code>slot="…"</code>の名前が、ページのテンプレートのどの枠にも当たらない（<code>extends</code>で受け継いだ枠と<code>variants</code>のページの枠も数えます）。その内容は流し込み枠に入ります。</td>
+      <td>スロット名を直すか、その名前の枠をテンプレートに加えます。</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>テンプレートの枠が、このページで何も受け取らない。どのスロットもその枠を指さず、見出しも受け取らず、流し込み枠の場合はスロットのない内容も残っていない。ほかの枠からの続き（<code>next</code>）を受け取るだけの枠は報告されません。<code>postext check</code>では注記として挙がります。</td>
+      <td>スロットを付けてその枠の内容を書くか、テンプレートでその枠を<code>optional: true</code>にします。</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>コロン3つの<code>:::page</code>が<code>template=</code>を持っている。これまでどおりコミックのページとして読まれます。</td>
+      <td>ページをコロン4つの<code>::::page&#123;template="…"&#125;</code>で開き、<code>::::</code>で閉じます。</td>
+    </tr>
+    <tr>
+      <td><code>unclosedContainer</code></td>
+      <td>テンプレートページ、枠、図のどれかが閉じられていない（上の立て直しの規則を参照）。検査パネルではテンプレートページを<code>::::page</code>と呼びます。</td>
+      <td>閉じるフェンスを加えます。テンプレートページには開始行と同じ数のコロン、枠や図には<code>:::</code>です。</td>
+    </tr>
+  </tbody>
+</table>
+
+## コードから使う
+
+`composedPages(blocks)`は、章を解析したブロック（`parseMarkdownWithIssues(markdown).blocks`）を読み、ページフェンスごとに1つのノードを順に返します。ノードには、`template`、`spread`、各値のソース範囲（`attrSources`）を伴う`attrs`、`fenceIndex`（章の中でのフェンスの通し番号で、どの言語でも同じ）、`slots`（スロットごとのブロックの添字。Markdownの順）、`unassigned`（スロットのないブロック）、そしてページ全体のソース範囲が入ります。ブロックは、自分が名乗るスロットを、値のソース範囲とともに`ContentBlock.slot`に持ちます。図は`resourceBlock`で、その`figure`が属性とラベルを持ち、各ラベルにはテキスト、インラインのスパン、Markdownへ戻るソースマップがあります。`checkComposedSlots(pages, config)`は、それらのページについてスロットの警告3種を返します。

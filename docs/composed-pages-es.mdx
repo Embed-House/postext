@@ -1,0 +1,198 @@
+{/* docs/composed-pages-es.mdx */}
+
+export const metadata = {
+  title: 'Páginas compuestas',
+  sidebarTitle: 'Páginas compuestas',
+  description: 'El Markdown de las páginas compuestas: la valla de página de cuatro dos puntos que nombra una plantilla de página, los marcos y el atributo slot que llevan el contenido a los marcos de la plantilla, las figuras con rótulos en las anclas de una imagen y los avisos que comprueban el contenido frente a la plantilla',
+  lang: 'es',
+  lastUpdated: '2026-10-16',
+  readingTime: '9 min',
+  order: 33,
+  plainSummary: "Algunas páginas no son una columna de texto corrido, sino un conjunto de cajas, como la página de un libro de texto escolar con una banda para el título, un texto y tres cajas de colores con fotos. Postext las llama páginas compuestas. La forma de la página es una plantilla de la configuración, y el Markdown solo dice qué trozo de texto va en cada caja. Esta página enseña a escribir ese Markdown: la valla de la página, los marcos, los nombres de slot y las imágenes con rótulos, como los nombres de un mapa. También recoge los avisos que da Postext cuando el texto y la plantilla no casan.",
+};
+
+# Páginas compuestas
+
+**La plantilla guarda la forma de la página; el Markdown guarda su contenido y dice a qué marco va cada trozo.**
+
+Una página compuesta se maqueta a partir de una plantilla: marcos con nombre (una banda de título, un texto, una caja con su foto), grupos que se mueven juntos y una decoración, todo ello definido en la configuración, en `pageTemplates`. El Markdown de la página es un bloque con valla que nombra su plantilla y vierte el contenido en los marcos por su nombre. En el Markdown nunca se escribe una posición ni un tamaño, y en la configuración nunca se escribe texto del contenido, así que una traducción es la misma plantilla con otras palabras.
+
+Esta página trata del Markdown. En esta versión el analizador ya lee las páginas compuestas y las comprobaciones de slots se ejecutan, de modo que el panel Revisión y `postext check` señalan una página que no casa con su plantilla. La maquetación de la plantilla sobre la página llega en la próxima versión; hasta entonces, el contenido de una página compuesta se compone en el texto corrido, en el orden del Markdown y en páginas propias, así que no se pierde nada de lo que se escribe en ella. Un documento sin páginas compuestas se maqueta exactamente igual que antes.
+
+## La valla de página
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+::::
+```
+
+Una página compuesta se abre con una línea de **cuatro dos puntos** seguida de `page` y sus atributos, y se cierra con una línea que solo lleva el **mismo número de dos puntos**. Dentro, los contenedores de tres dos puntos (`:::frame`, `:::callout`, `:::figure`, `:::columns`, `:::paper`) se abren y se cierran como siempre, así que un `:::` suelto cierra el más interior de ellos y nunca la página. Una página escrita con cinco dos puntos (`:::::page`) se cierra con cinco, y una línea de cuatro dos puntos dentro de ella pasa a ser texto normal.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Atributo</th>
+      <th>Efecto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>template="…"</code></td><td>Obligatorio. El id de una entrada de <code>pageTemplates</code>.</td></tr>
+    <tr><td><code>spread</code></td><td>La página es una doble página que ocupa dos páginas enfrentadas; la plantilla también tiene que ser de doble página.</td></tr>
+    <tr><td><code>id="…"</code>, <code>#id</code></td><td>Un ancla: un <code>:ref</code> que apunta a ella imprime la página en la que cae la página compuesta.</td></tr>
+    <tr><td>cualquier otro</td><td>Un valor que la plantilla lee como <code>&#123;attr.name&#125;</code>, por ejemplo una imagen de fondo elegida página a página: <code>fondo="banda-retos"</code> con <code>resourceId: "&#123;attr.fondo&#125;"</code> en la decoración.</td></tr>
+  </tbody>
+</table>
+
+Una página compuesta empieza siempre una página nueva (o una doble página), y el texto que sigue a su valla de cierre empieza en la siguiente.
+
+El `:::page{split=…}` de tres dos puntos es una página de cómic (véase [Cómics](/es/docs/comics)) y conserva ese sentido. Un `:::page` de tres dos puntos que lleva `template=` se sigue leyendo como página de cómic, y el aviso `pageFenceLength` indica que una página compuesta necesita cuatro dos puntos.
+
+Cuando falta una valla, el analizador se recupera sin perder texto:
+
+- una página que se queda abierta llega hasta el final del capítulo y se señala como contenedor sin cerrar en su línea de apertura;
+- una línea `::::page` que aparece con una página abierta cierra antes ahí la página abierta (y se señala de la misma manera);
+- la valla de cierre cierra cualquier marco o caja que siga abierto dentro de la página, y señala cada uno;
+- una valla de cierre con otro número de dos puntos no es la de la página: se queda en el texto, a la vista.
+
+## Marcos y slots
+
+```md
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago…
+
+Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
+:::
+```
+
+Un **slot** es el nombre que pide un trozo de contenido, y coincide con el nombre de un marco de la plantilla. `:::frame{slot="…"}` envía a ese marco todo lo que contiene. Su cuerpo es Markdown completo: párrafos, listas, encabezados, chips, inserciones `::resource`, referencias `:ref`, notas al pie, `:::columns` y recuadros anidados. `label` y `title` ponen las palabras de la pestaña o del título del marco, como en un `:::callout`; el aspecto del marco sale del estilo de recuadro que le asigna la plantilla.
+
+Un bloque suelto también puede nombrar su propio slot:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '280px' }}>Bloque</th>
+      <th>Cómo se escribe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Un encabezado</td><td><code>## Retos &#123;slot="retos-titulo"&#125;</code></td></tr>
+    <tr><td>Una inserción de recurso</td><td><code>::resource&#123;id="dinero-pago" slot="dinero-fotos"&#125;</code> (los dos atributos, en cualquier orden)</td></tr>
+    <tr><td>Un listado de código</td><td><code>&#96;&#96;&#96;js &#123;slot="codigo"&#125;</code></td></tr>
+    <tr><td>Un recuadro o cualquier otro contenedor</td><td><code>:::callout&#123;type="nota" slot="aside"&#125;</code>: el recuadro entero va al slot</td></tr>
+    <tr><td>Una figura</td><td><code>:::figure&#123;resource="mapa" slot="mapa"&#125;</code> (véase más abajo)</td></tr>
+  </tbody>
+</table>
+
+Cómo se reparte el contenido:
+
+- Varios trozos con el mismo slot se juntan en el orden del Markdown.
+- El contenido sin slot va al **marco de flujo** de la plantilla (el que lleva `flow`).
+- Un encabezado sin slot va primero al marco que toma su nivel (`takes: "h1"`), si la plantilla tiene alguno, así que el título de un tema de un libro de texto es un simple `# Título` al principio de la página.
+- El contenido que nombra un slot que la plantilla no tiene va al marco de flujo y se señala (`slotUnknown`).
+
+Un `slot` fuera de una página compuesta se lee y no cambia nada.
+
+## Figuras con rótulos
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}` coloca un recurso, con su pie y su número, como hace `::resource`, y enumera los rótulos que van sobre la imagen: una línea `::label[TEXTO]{…}` por rótulo, con líneas en blanco permitidas entre ellas.
+
+- `at` nombra un ancla del recurso (un punto que se define una sola vez sobre la imagen y que comparten todos los idiomas), o da un punto en porcentajes de la imagen, `at="x% y%"`, para un rótulo sin ancla.
+- `style` nombra un estilo de rótulo y se impone al del ancla.
+- El texto entre corchetes es Markdown en línea: negrita, cursiva, chips.
+
+Una figura funciona tanto en el texto corrido como en un marco. Los rótulos se leen y se guardan junto con su posición en el Markdown; dibujarlos sobre la imagen llega con la maquetación de plantillas, y hasta entonces la figura se compone igual que su recurso. Una línea dentro de una figura que no es un rótulo ni está en blanco termina una figura a la que le falta el `:::` de cierre, y se señala como contenedor sin cerrar.
+
+## Ejemplo
+
+La página de un libro de texto escolar, con una banda de título, un texto con su lista y tres cajas de colores, cada una con su foto al lado:
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+## La actividad económica
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+
+- Las :chip[empresas.]{style="clave"} Ofrecen bienes y servicios a cambio de un beneficio.
+- Las :chip[personas y familias.]{style="clave"} Adquieren lo que ofrecen las empresas…
+
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago, ya que su valor es conocido…
+:::
+
+::resource{id="dinero-pago" slot="dinero-fotos"}
+
+:::frame{slot="gasto" label="El gasto"}
+- **Fijo:** es el que se produce todos los meses…
+- **Variable:** puede cambiar según las necesidades…
+:::
+
+::resource{id="gasto-compras" slot="gasto-fotos"}
+
+:::frame{slot="ahorro" label="Préstamos y ahorro"}
+Si necesitas o quieres comprar algo muy caro…
+:::
+
+::resource{id="ahorro-balanza" slot="ahorro-fotos"}
+::::
+```
+
+El título va al marco que toma `h1`; el subtítulo, el párrafo y la lista, al marco de flujo; cada caja y cada foto, al marco de su slot. La edición en catalán son las mismas líneas con otras palabras: la plantilla, los slots y las fotos no cambian.
+
+## Avisos
+
+Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, así que aparecen en el panel Revisión mientras escribes, en `postext check` y en los `contentWarnings` del documento, cada una con el rango de origen de lo que señala (véase [Configuración › Avisos del documento](/es/docs/configuration-programmatic-usage#avisos-del-documento)).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Tipo</th>
+      <th>Causa</th>
+      <th>Solución</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateUnknown</code></td>
+      <td>La valla de la página nombra una plantilla que no está en <code>pageTemplates</code>, o no nombra ninguna. Sus slots no se comprueban.</td>
+      <td>Corrige el id o añade la plantilla a la configuración.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>Un <code>slot="…"</code> no nombra ningún marco de la plantilla de la página (cuentan los marcos heredados con <code>extends</code> y los de una página de <code>variants</code>). El contenido va al marco de flujo.</td>
+      <td>Corrige el nombre del slot o añade a la plantilla un marco con ese nombre.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>Un marco de la plantilla no recibe nada en esta página: ningún slot lo nombra, no toma ningún encabezado y, si es el marco de flujo, no queda contenido sin slot. No se señala un marco que solo recibe lo que otro marco continúa en él (<code>next</code>). <code>postext check</code> lo lista como nota.</td>
+      <td>Escribe contenido para ese marco con su slot, o márcalo como <code>optional: true</code> en la plantilla.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>Un <code>:::page</code> de tres dos puntos lleva <code>template=</code>. Se lee como página de cómic, igual que antes.</td>
+      <td>Abre la página con cuatro dos puntos, <code>::::page&#123;template="…"&#125;</code>, y ciérrala con <code>::::</code>.</td>
+    </tr>
+    <tr>
+      <td><code>unclosedContainer</code></td>
+      <td>Una página compuesta, un marco o una figura no se cierra nunca (véanse las reglas de recuperación de más arriba). El panel Revisión llama <code>::::page</code> a la página compuesta.</td>
+      <td>Añade la valla de cierre: tantos dos puntos como la línea de apertura de la página, o <code>:::</code> para un marco o una figura.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Desde el código
+
+`composedPages(blocks)` lee los bloques analizados de un capítulo (`parseMarkdownWithIssues(markdown).blocks`) y devuelve un nodo por cada valla de página, en orden: su `template`, `spread`, `attrs` con el rango de origen de cada valor (`attrSources`), su `fenceIndex` (el ordinal de la valla en el capítulo, el mismo en todos los idiomas), `slots` (los índices de los bloques de cada slot, en el orden del Markdown), `unassigned` (los bloques sin slot) y el rango de origen de la página entera. Un bloque lleva el slot que nombra en `ContentBlock.slot`, con el rango de origen del valor; una figura es un `resourceBlock` cuyo `figure` guarda sus atributos y sus rótulos, cada rótulo con su texto, sus tramos en línea y un mapa de origen que remite al Markdown. `checkComposedSlots(pages, config)` devuelve los tres avisos de slot de esas páginas.

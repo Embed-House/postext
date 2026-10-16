@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'fr',
   lastUpdated: '2026-10-16',
   readingTime: '40 min',
-  order: 35,
+  order: 36,
   parent: 'sandbox',
   plainSummary: "Cette page présente deux panneaux du Sandbox. Le panneau Maquette contient tous les réglages du livre, comme le format de la page, les polices et les couleurs, rangés en groupes avec un champ de recherche. Le panneau Vérifications liste les problèmes que Postext trouve pendant que vous travaillez, comme une image manquante ou une ligne aux mots trop espacés. Chaque problème indique où il se trouve, et un clic vous y emmène.",
 };
@@ -205,7 +205,8 @@ Des diagnostics en direct, recalculés à partir du texte, de la maquette, des f
   - *Bloc de code non fermé* : un délimiteur ```` ``` ```` ou `~~~` sans délimiteur de fermeture, si bien que le reste du texte est composé comme du code (`unclosedCodeBlock` ; cliquer dessus donne le focus au délimiteur) ;
   - *Tabulation dans un texte vertical* : un `:tab` dans un texte composé verticalement, qui est composé comme une espace entre mots, puisque les taquets de tabulation ne s’appliquent qu’au texte horizontal (`tabInVerticalText`) ;
   - *Front matter ignoré* : un chapitre autre que le premier qui commence par un bloc de front matter (seul le front matter du premier chapitre appartient au livre) ;
-  - *Flux de colonnes inconnu* : un `:::columns{flow=…}` qui n’est ni `snake` ni `parallel` ; le groupe prend la valeur par défaut (`columnsFlowUnknown`).
+  - *Flux de colonnes inconnu* : un `:::columns{flow=…}` qui n’est ni `snake` ni `parallel` ; le groupe prend la valeur par défaut (`columnsFlowUnknown`) ;
+  - *Modèle de page inconnu*, *Slot sans bloc*, *Bloc vide* et *Page composée avec trois deux-points* : un `::::page` dont le modèle ne figure pas dans `pageTemplates`, un `slot` qui ne nomme aucun bloc du modèle de la page, un bloc du modèle qui ne reçoit rien sur la page (un bloc `optional` n’est pas signalé) et un `:::page` portant `template=` écrit avec trois deux-points (`templateUnknown`, `slotUnknown`, `slotEmpty`, `pageFenceLength` ; voir [Pages composées](/fr/docs/composed-pages#avertissements)).
 - **Maquette** :
   - les noms de variables d’en-tête et de pied de page hors de la liste autorisée du moteur (`{attr.…}` et les variables de partie sont acceptées), et les variables dont la métadonnée du document manque ;
   - les ancres cycliques entre éléments de maquette, ou les ancres vers un élément qui n’existe pas. Cette vérification et celle des variables couvrent chaque emplacement de maquette : les titres courants, l’ouverture de partie, le verso blanc qui suit une page de partie, les lignes de partie de la table des matières, la maquette de chaque niveau de titre, et la maquette de chaque style de titre ainsi que les titres courants de sa section. Une entrée issue d’un style de titre nomme le style, comme dans `{style="index"} header · #rh → #missing`, et une entrée issue du verso ou des lignes de partie de la table des matières nomme son réglage, comme dans `toc.parts.design · #row → #missing` ;

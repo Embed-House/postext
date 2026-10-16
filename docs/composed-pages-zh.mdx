@@ -1,0 +1,198 @@
+{/* docs/composed-pages-zh.mdx */}
+
+export const metadata = {
+  title: '模板页',
+  sidebarTitle: '模板页',
+  description: '模板页的Markdown：用四个冒号的页面围栏指定页面模板，用框和slot属性把内容送进模板中的各个框，在图片锚点上放标注的插图，以及对照模板检查内容的警告',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '9分钟',
+  order: 33,
+  plainSummary: "有些页面不是一栏连续的正文，而是由一组框拼成，比如课本里的一页：顶上一条标题色带，下面一段课文，再加三个配有照片的彩色方框。Postext把这样的页面叫作模板页。页面的样子由配置中的模板决定，Markdown只说明哪段文字放进哪个框。本页介绍这种Markdown的写法：页面围栏、框、槽位名，以及像地图上的地名那样带标注的图片。本页还列出文字与模板对不上时Postext给出的警告。",
+};
+
+# 模板页
+
+**模板决定页面的形式；Markdown提供内容，并说明每一部分进哪个框。**
+
+模板页是按模板排出的页面。模板里有命名的框（标题色带、一段课文、一个配有照片的方框）、一起移动的组和装饰，全部定义在配置的`pageTemplates`下。页面的Markdown是一个围栏块，写明所用的模板，并按名称把内容倒进各个框。Markdown里从不写位置和尺寸，配置里也从不写正文文字，所以译本就是同一个模板配上另一种语言的文字。
+
+本页讲的是Markdown。在这一版中，解析器已经能读取模板页，槽位检查也已生效，所以检查面板和`postext check`会报告与模板不符的页面。把模板真正排到页面上要等到下一版；在那之前，模板页的内容按Markdown中的顺序排进正文，单独占用自己的页面，写进去的东西一样不丢。没有模板页的文档，排版结果与以前完全相同。
+
+## 页面围栏
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+::::
+```
+
+模板页以一行**四个冒号**开头，后接`page`和它的属性，以单独一行**同样数目的冒号**结束。页面内部，三个冒号的容器（`:::frame`、`:::callout`、`:::figure`、`:::columns`、`:::paper`）照常开启和关闭，所以单独的`:::`关闭的是其中最内层的那个，永远不会关闭页面。用五个冒号写的页面（`:::::page`）用五个冒号结束，这时页面里的四冒号行只是普通文字。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>属性</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>template="…"</code></td><td>必填。<code>pageTemplates</code>中某一项的id。</td></tr>
+    <tr><td><code>spread</code></td><td>这一页是由两个对页组成的跨页；模板也必须是跨页模板。</td></tr>
+    <tr><td><code>id="…"</code>、<code>#id</code></td><td>锚点：指向它的<code>:ref</code>印出模板页所在的页码。</td></tr>
+    <tr><td>其他任何属性</td><td>模板以<code>&#123;attr.name&#125;</code>读取的值，例如逐页选择的背景图：页面上写<code>fondo="banda-retos"</code>，装饰中写<code>resourceId: "&#123;attr.fondo&#125;"</code>。</td></tr>
+  </tbody>
+</table>
+
+模板页总是从新的一页（或跨页）开始，结束围栏之后的文字从下一页开始。
+
+三个冒号的`:::page{split=…}`是漫画页（见[漫画](/zh/docs/comics)），意思不变。带有`template=`的三冒号`:::page`仍按漫画页读取，同时警告`pageFenceLength`提示模板页需要四个冒号。
+
+缺了围栏时，解析器会自行恢复，不丢文字：
+
+- 没有结束的页面一直延续到章末，并在开始行报告为未闭合的容器；
+- 页面尚未结束时遇到一行`::::page`，先在那里结束前一页（以同样的方式报告）；
+- 结束围栏会关闭页面内仍未关闭的框或标注框，并逐一报告；
+- 冒号数目不同的结束围栏不属于这一页：它留在文字中，一眼就能看到。
+
+## 框与槽位
+
+```md
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago…
+
+Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
+:::
+```
+
+**槽位**是一段内容要去的地方的名称，与模板中某个框的名称对应。`:::frame{slot="…"}`把其中的全部内容送进那个框。框里可以写任何Markdown：段落、列表、标题、行内标签、`::resource`嵌入、`:ref`引用、脚注、`:::columns`和嵌套的标注框。`label`和`title`为框的标签或标题提供文字，与`:::callout`相同；框的外观来自模板给它指定的标注框样式。
+
+单个块也可以自己写明槽位：
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '280px' }}>块</th>
+      <th>写法</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>标题</td><td><code>## Retos &#123;slot="retos-titulo"&#125;</code></td></tr>
+    <tr><td>资源嵌入</td><td><code>::resource&#123;id="dinero-pago" slot="dinero-fotos"&#125;</code>（两个属性的先后不限）</td></tr>
+    <tr><td>代码清单</td><td><code>&#96;&#96;&#96;js &#123;slot="codigo"&#125;</code></td></tr>
+    <tr><td>标注框或其他任何容器</td><td><code>:::callout&#123;type="nota" slot="aside"&#125;</code>：整个框进入该槽位</td></tr>
+    <tr><td>插图</td><td><code>:::figure&#123;resource="mapa" slot="mapa"&#125;</code>（见下文）</td></tr>
+  </tbody>
+</table>
+
+内容按以下规则分配：
+
+- 槽位相同的几段内容按Markdown中的顺序合在一起。
+- 没有槽位的内容进入模板的**流文框**（标为`flow`的框）。
+- 没有槽位的标题，如果模板里有接收其级别的框（`takes: "h1"`），就先进入那个框；所以课本里一课的标题只需在页首写`# 标题`。
+- 写了模板中没有的槽位的内容进入流文框，并给出报告（`slotUnknown`）。
+
+模板页之外的`slot`会被读取，但不起任何作用。
+
+## 带标注的插图
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}`像`::resource`一样放置一个资源，带有题注和编号，并列出要放在图上的标注：每个标注一行`::label[文字]{…}`，行与行之间可以有空行。
+
+- `at`指定资源的一个锚点（在图上定义一次、各语言共用的点），或者为没有锚点的标注用图片的百分比给出一个点：`at="x% y%"`。
+- `style`指定一种标注样式，优先于锚点自带的样式。
+- 方括号中的文字是行内Markdown：粗体、斜体、行内标签。
+
+插图在正文中和在框中都能用。标注会被读取，并与其源码位置一起保留；在图上画出标注要和模板排版一起实现，在那之前插图按其资源原样排出。插图内部出现既不是标注也不是空行的一行时，缺少结束`:::`的插图就在那里结束，并报告为未闭合的容器。
+
+## 示例
+
+课本中的一页，有标题色带、一段带列表的课文，以及三个彩色方框，每个方框旁边配一张照片：
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+## La actividad económica
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+
+- Las :chip[empresas.]{style="clave"} Ofrecen bienes y servicios a cambio de un beneficio.
+- Las :chip[personas y familias.]{style="clave"} Adquieren lo que ofrecen las empresas…
+
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago, ya que su valor es conocido…
+:::
+
+::resource{id="dinero-pago" slot="dinero-fotos"}
+
+:::frame{slot="gasto" label="El gasto"}
+- **Fijo:** es el que se produce todos los meses…
+- **Variable:** puede cambiar según las necesidades…
+:::
+
+::resource{id="gasto-compras" slot="gasto-fotos"}
+
+:::frame{slot="ahorro" label="Préstamos y ahorro"}
+Si necesitas o quieres comprar algo muy caro…
+:::
+
+::resource{id="ahorro-balanza" slot="ahorro-fotos"}
+::::
+```
+
+标题进入接收`h1`的框；小标题、段落和列表进入流文框；每个方框和每张照片进入各自槽位对应的框。加泰罗尼亚语版就是同样的这些行换上另一种语言的文字：模板、槽位和照片都不变。
+
+## 警告
+
+这些检查在任何排版之前读取Markdown和配置，所以在你输入时就会出现在检查面板中，也会出现在`postext check`和文档的`contentWarnings`中，每条都带有所涉内容的源码范围（见[配置 › 文档中的警告](/zh/docs/configuration-programmatic-usage#文档中的警告)）。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>类型</th>
+      <th>原因</th>
+      <th>解决办法</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateUnknown</code></td>
+      <td>页面围栏指定的模板在<code>pageTemplates</code>中没有对应的项，或者根本没有指定模板。它的槽位不做检查。</td>
+      <td>改正id，或者把这个模板加入配置。</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>某个<code>slot="…"</code>指定的名称不是该页模板中的任何框（通过<code>extends</code>继承的框和<code>variants</code>页面中的框都算在内）。这段内容进入流文框。</td>
+      <td>改正槽位名，或者在模板中加一个同名的框。</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>模板中的某个框在这一页上什么也没收到：没有槽位指向它，它不接收标题；如果它是流文框，也没有剩下无槽位的内容。只接收另一个框延续过来的内容（<code>next</code>）的框不报告。<code>postext check</code>把它列为提示。</td>
+      <td>为它写上带其槽位的内容，或者在模板中把这个框标为<code>optional: true</code>。</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>三冒号的<code>:::page</code>带有<code>template=</code>。它仍像以前一样按漫画页读取。</td>
+      <td>用四个冒号开启页面，写成<code>::::page&#123;template="…"&#125;</code>，并用<code>::::</code>结束。</td>
+    </tr>
+    <tr>
+      <td><code>unclosedContainer</code></td>
+      <td>模板页、框或插图始终没有结束（见上文的恢复规则）。检查面板把模板页称为<code>::::page</code>。</td>
+      <td>补上结束围栏：模板页用与开始行同样数目的冒号，框或插图用<code>:::</code>。</td>
+    </tr>
+  </tbody>
+</table>
+
+## 在代码中使用
+
+`composedPages(blocks)`读取一章解析后的块（`parseMarkdownWithIssues(markdown).blocks`），按顺序为每个页面围栏返回一个节点，包括：`template`、`spread`、带有每个值源码范围（`attrSources`）的`attrs`、`fenceIndex`（该围栏在章中的序号，各语言相同）、`slots`（每个槽位的块索引，按Markdown中的顺序）、`unassigned`（没有槽位的块），以及整页的源码范围。块在`ContentBlock.slot`中记录它指定的槽位及该值的源码范围；插图是一个`resourceBlock`，其`figure`含有插图的属性和标注，每个标注带有文字、行内片段和指回Markdown的源码映射。`checkComposedSlots(pages, config)`为这些页面返回三种槽位警告。

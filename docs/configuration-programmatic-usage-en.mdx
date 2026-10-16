@@ -105,6 +105,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>The group takes the default: <code>parallel</code> with <code>breaks</code>, <code>snake</code> without.</td>
     </tr>
     <tr>
+      <td><code>templateUnknown</code></td>
+      <td>A composed page (<code>::::page&#123;template&#125;</code>) names no <code>pageTemplates</code> entry, or no template at all; <code>template</code> is the id as written and <code>fenceIndex</code> the page's place among the chapter's composed pages.</td>
+      <td>Its slots are not checked. Until templates are laid out, its content is set in the running text on pages of its own.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>Content of a composed page names a <code>slot</code> that is no frame of the page's template (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>The content goes to the template's flow frame.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>A frame of the template receives nothing on the page (<code>frame</code>, <code>template</code>, <code>fenceIndex</code>). Not raised for an <code>optional</code> frame, nor for one that only receives what another frame continues into it.</td>
+      <td>The frame stays empty. <code>postext check</code> lists it as a note.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>A three-colon <code>:::page</code> carries <code>template=</code>.</td>
+      <td>It is read as a comic page; a composed page needs four colons.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> names no chip style.</td>
       <td>The chip takes the first chip style.</td>

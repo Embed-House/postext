@@ -1,0 +1,198 @@
+{/* docs/composed-pages-de.mdx */}
+
+export const metadata = {
+  title: 'Zusammengesetzte Seiten',
+  sidebarTitle: 'Zusammengesetzte Seiten',
+  description: 'Das Markdown zusammengesetzter Seiten: die Seitenbegrenzung aus vier Doppelpunkten, die eine Seitenvorlage nennt, Rahmen und das Attribut slot, die Inhalt in die Rahmen der Vorlage schicken, Abbildungen mit Beschriftungen an den Ankern eines Bilds und die Warnungen, die den Inhalt mit der Vorlage abgleichen',
+  lang: 'de',
+  lastUpdated: '2026-10-16',
+  readingTime: '9 min',
+  order: 33,
+  plainSummary: "Manche Seiten bestehen nicht aus einer Spalte Fließtext, sondern aus mehreren Feldern, so wie eine Schulbuchseite mit einem Titelband, einem Text und drei farbigen Kästen mit Fotos. Postext nennt sie zusammengesetzte Seiten. Die Form der Seite ist eine Vorlage in der Konfiguration, und das Markdown sagt nur, welches Stück Text in welches Feld gehört. Diese Seite zeigt, wie Sie dieses Markdown schreiben: die Seitenbegrenzung, die Rahmen, die Slot-Namen und Bilder mit Beschriftungen wie den Namen auf einer Landkarte. Sie führt außerdem die Warnungen auf, die Postext ausgibt, wenn Text und Vorlage nicht zusammenpassen.",
+};
+
+# Zusammengesetzte Seiten
+
+**Die Vorlage bestimmt die Form der Seite; das Markdown liefert den Inhalt und sagt, in welchen Rahmen jedes Stück kommt.**
+
+Eine zusammengesetzte Seite wird nach einer Vorlage umbrochen: benannte Rahmen (ein Titelband, ein Text, ein Kasten mit seinem Foto), Gruppen, die sich gemeinsam verschieben, und ein Dekor, alles in der Konfiguration unter `pageTemplates` festgelegt. Das Markdown der Seite ist ein abgegrenzter Block, der seine Vorlage nennt und den Inhalt über die Namen auf die Rahmen verteilt. Im Markdown stehen nie Positionen oder Größen, und in der Konfiguration steht nie Inhaltstext; eine Übersetzung ist deshalb dieselbe Vorlage mit anderen Wörtern.
+
+Diese Seite behandelt das Markdown. In dieser Version liest der Parser zusammengesetzte Seiten, und die Slot-Prüfungen laufen, sodass das Bedienfeld Prüfungen und `postext check` eine Seite melden, die nicht zu ihrer Vorlage passt. Den Umbruch der Vorlage auf der Seite bringt die nächste Version; bis dahin wird der Inhalt einer zusammengesetzten Seite im Fließtext gesetzt, in der Reihenfolge des Markdowns und auf eigenen Seiten, sodass nichts von dem verloren geht, was darin steht. Ein Dokument ohne zusammengesetzte Seiten wird genau wie zuvor umbrochen.
+
+## Die Seitenbegrenzung
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+::::
+```
+
+Eine zusammengesetzte Seite beginnt mit einer Zeile aus **vier Doppelpunkten**, gefolgt von `page` und den Attributen, und endet mit einer Zeile, die nur **ebenso viele Doppelpunkte** enthält. Darin öffnen und schließen sich Container mit drei Doppelpunkten (`:::frame`, `:::callout`, `:::figure`, `:::columns`, `:::paper`) wie immer; ein bloßes `:::` schließt also den innersten von ihnen und nie die Seite. Eine Seite mit fünf Doppelpunkten (`:::::page`) endet mit fünf; eine Zeile aus vier Doppelpunkten ist darin dann gewöhnlicher Text.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attribut</th>
+      <th>Wirkung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>template="…"</code></td><td>Pflicht. Die ID eines Eintrags von <code>pageTemplates</code>.</td></tr>
+    <tr><td><code>spread</code></td><td>Die Seite ist eine Doppelseite aus zwei gegenüberliegenden Seiten; auch die Vorlage muss eine Doppelseitenvorlage sein.</td></tr>
+    <tr><td><code>id="…"</code>, <code>#id</code></td><td>Ein Anker: Ein <code>:ref</code> darauf druckt die Seite, auf der die zusammengesetzte Seite landet.</td></tr>
+    <tr><td>jedes andere</td><td>Ein Wert, den die Vorlage als <code>&#123;attr.name&#125;</code> liest, etwa ein Hintergrundbild, das Seite für Seite gewählt wird: <code>fondo="banda-retos"</code> mit <code>resourceId: "&#123;attr.fondo&#125;"</code> im Dekor.</td></tr>
+  </tbody>
+</table>
+
+Eine zusammengesetzte Seite beginnt immer eine neue Seite (oder Doppelseite), und der Text nach ihrer schließenden Zeile beginnt auf der nächsten.
+
+Das `:::page{split=…}` mit drei Doppelpunkten ist eine Comicseite (siehe [Comics](/de/docs/comics)) und behält diese Bedeutung. Ein `:::page` mit drei Doppelpunkten, das `template=` trägt, wird weiterhin als Comicseite gelesen, und die Warnung `pageFenceLength` weist darauf hin, dass eine zusammengesetzte Seite vier Doppelpunkte braucht.
+
+Fehlt eine Begrenzung, fängt sich der Parser, ohne Text zu verlieren:
+
+- eine offen gelassene Seite reicht bis zum Ende des Kapitels und wird an ihrer öffnenden Zeile als nicht geschlossener Container gemeldet;
+- eine Zeile `::::page`, die bei offener Seite auftaucht, schließt dort zuerst die offene Seite (und wird ebenso gemeldet);
+- die schließende Zeile schließt jeden Rahmen und jeden Kasten, der in der Seite noch offen ist, und meldet jeden davon;
+- eine schließende Zeile mit einer anderen Zahl von Doppelpunkten gehört nicht zur Seite und bleibt im Text stehen, wo Sie sie sehen.
+
+## Rahmen und Slots
+
+```md
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago…
+
+Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
+:::
+```
+
+Ein **Slot** ist der Name, den ein Stück Inhalt anfordert; er entspricht dem Namen eines Rahmens der Vorlage. `:::frame{slot="…"}` schickt alles, was darin steht, in diesen Rahmen. Der Inhalt ist vollständiges Markdown: Absätze, Listen, Überschriften, Chips, `::resource`-Einbettungen, `:ref`-Verweise, Fußnoten, `:::columns` und verschachtelte Kästen. `label` und `title` geben dem Etikett oder dem Titel des Rahmens den Wortlaut, wie bei einem `:::callout`; das Aussehen des Rahmens bestimmt das Kastenformat, das die Vorlage ihm zuweist.
+
+Ein einzelner Block kann seinen Slot selbst nennen:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '280px' }}>Block</th>
+      <th>Schreibweise</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Eine Überschrift</td><td><code>## Retos &#123;slot="retos-titulo"&#125;</code></td></tr>
+    <tr><td>Eine Ressourceneinbettung</td><td><code>::resource&#123;id="dinero-pago" slot="dinero-fotos"&#125;</code> (die beiden Attribute in beliebiger Reihenfolge)</td></tr>
+    <tr><td>Ein Code-Listing</td><td><code>&#96;&#96;&#96;js &#123;slot="codigo"&#125;</code></td></tr>
+    <tr><td>Ein Kasten oder ein anderer Container</td><td><code>:::callout&#123;type="nota" slot="aside"&#125;</code>: Der ganze Kasten kommt in den Slot.</td></tr>
+    <tr><td>Eine Abbildung</td><td><code>:::figure&#123;resource="mapa" slot="mapa"&#125;</code> (siehe unten)</td></tr>
+  </tbody>
+</table>
+
+So wird der Inhalt verteilt:
+
+- Mehrere Stücke mit demselben Slot werden in der Reihenfolge des Markdowns aneinandergefügt.
+- Inhalt ohne Slot kommt in den **Flussrahmen** der Vorlage (den mit `flow` markierten Rahmen).
+- Eine Überschrift ohne Slot kommt zuerst in den Rahmen, der ihre Ebene übernimmt (`takes: "h1"`), sofern die Vorlage einen solchen hat; der Titel eines Schulbuchthemas ist also einfach `# Titel` oben auf der Seite.
+- Inhalt, der einen Slot nennt, den die Vorlage nicht kennt, kommt in den Flussrahmen und wird gemeldet (`slotUnknown`).
+
+Außerhalb einer zusammengesetzten Seite wird ein `slot` gelesen und ändert nichts.
+
+## Abbildungen mit Beschriftungen
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}` setzt eine Ressource mit Legende und Nummer, wie `::resource` es tut, und führt die Beschriftungen auf, die auf das Bild kommen: je Beschriftung eine Zeile `::label[TEXT]{…}`, Leerzeilen dazwischen sind erlaubt.
+
+- `at` nennt einen Anker der Ressource (einen Punkt, der einmal auf dem Bild festgelegt wird und für alle Sprachen gilt) oder gibt für eine Beschriftung ohne Anker einen Punkt in Prozent des Bilds an, `at="x% y%"`.
+- `style` nennt ein Beschriftungsformat und hat Vorrang vor dem des Ankers.
+- Der Text in den eckigen Klammern ist Inline-Markdown: fett, kursiv, Chips.
+
+Eine Abbildung funktioniert im Fließtext ebenso wie in einem Rahmen. Die Beschriftungen werden gelesen und mit ihrer Quelle aufbewahrt; auf das Bild gezeichnet werden sie erst mit dem Umbruch der Vorlagen, und bis dahin wird eine Abbildung so gesetzt wie ihre Ressource. Eine Zeile in einer Abbildung, die weder eine Beschriftung noch leer ist, beendet eine Abbildung, deren schließendes `:::` fehlt, und wird als nicht geschlossener Container gemeldet.
+
+## Beispiel
+
+Die Seite eines Schulbuchs mit einem Titelband, einem Text mit seiner Liste und drei farbigen Kästen, jeder mit seinem Foto daneben:
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+## La actividad económica
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+
+- Las :chip[empresas.]{style="clave"} Ofrecen bienes y servicios a cambio de un beneficio.
+- Las :chip[personas y familias.]{style="clave"} Adquieren lo que ofrecen las empresas…
+
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago, ya que su valor es conocido…
+:::
+
+::resource{id="dinero-pago" slot="dinero-fotos"}
+
+:::frame{slot="gasto" label="El gasto"}
+- **Fijo:** es el que se produce todos los meses…
+- **Variable:** puede cambiar según las necesidades…
+:::
+
+::resource{id="gasto-compras" slot="gasto-fotos"}
+
+:::frame{slot="ahorro" label="Préstamos y ahorro"}
+Si necesitas o quieres comprar algo muy caro…
+:::
+
+::resource{id="ahorro-balanza" slot="ahorro-fotos"}
+::::
+```
+
+Der Titel kommt in den Rahmen, der `h1` übernimmt; die Zwischenüberschrift, der Absatz und die Liste kommen in den Flussrahmen; jeder Kasten und jedes Foto kommt in den Rahmen seines Slots. Die katalanische Ausgabe besteht aus denselben Zeilen mit anderen Wörtern: Vorlage, Slots und Fotos bleiben unverändert.
+
+## Warnungen
+
+Die Prüfungen lesen Markdown und Konfiguration vor jedem Umbruch. Deshalb erscheinen sie schon beim Tippen im Bedienfeld Prüfungen, außerdem in `postext check` und in den `contentWarnings` des Dokuments, jede mit dem Quellbereich dessen, was sie betrifft (siehe [Konfiguration › Warnungen im Dokument](/de/docs/configuration-programmatic-usage#warnungen-im-dokument)).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Art</th>
+      <th>Ursache</th>
+      <th>Abhilfe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateUnknown</code></td>
+      <td>Die Seitenbegrenzung nennt eine Vorlage, die es unter den Einträgen von <code>pageTemplates</code> nicht gibt, oder gar keine. Ihre Slots werden nicht geprüft.</td>
+      <td>Korrigieren Sie die ID, oder fügen Sie die Vorlage der Konfiguration hinzu.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>Ein <code>slot="…"</code> nennt keinen Rahmen der Vorlage der Seite (über <code>extends</code> geerbte Rahmen und die Rahmen einer Seite aus <code>variants</code> zählen mit). Der Inhalt kommt in den Flussrahmen.</td>
+      <td>Korrigieren Sie den Slot-Namen, oder fügen Sie der Vorlage einen Rahmen mit diesem Namen hinzu.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>Ein Rahmen der Vorlage erhält auf dieser Seite nichts: Kein Slot nennt ihn, er übernimmt keine Überschrift, und beim Flussrahmen bleibt kein Inhalt ohne Slot übrig. Ein Rahmen, der nur die Fortsetzung eines anderen Rahmens aufnimmt (<code>next</code>), wird nicht gemeldet. <code>postext check</code> führt ihn als Hinweis auf.</td>
+      <td>Schreiben Sie Inhalt mit seinem Slot für ihn, oder markieren Sie den Rahmen in der Vorlage mit <code>optional: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>Ein <code>:::page</code> mit drei Doppelpunkten trägt <code>template=</code>. Es wird wie bisher als Comicseite gelesen.</td>
+      <td>Öffnen Sie die Seite mit vier Doppelpunkten, <code>::::page&#123;template="…"&#125;</code>, und schließen Sie sie mit <code>::::</code>.</td>
+    </tr>
+    <tr>
+      <td><code>unclosedContainer</code></td>
+      <td>Eine zusammengesetzte Seite, ein Rahmen oder eine Abbildung wird nie geschlossen (siehe oben, wie sich der Parser fängt). Das Bedienfeld Prüfungen nennt die zusammengesetzte Seite <code>::::page</code>.</td>
+      <td>Ergänzen Sie die schließende Zeile: so viele Doppelpunkte wie in der öffnenden Zeile der Seite, oder <code>:::</code> für einen Rahmen oder eine Abbildung.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Aus dem Code
+
+`composedPages(blocks)` liest die geparsten Blöcke eines Kapitels (`parseMarkdownWithIssues(markdown).blocks`) und gibt der Reihe nach je Seitenbegrenzung einen Knoten zurück: `template`, `spread`, `attrs` mit dem Quellbereich jedes Werts (`attrSources`), `fenceIndex` (die Ordnungszahl der Begrenzung im Kapitel, in jeder Sprache dieselbe), `slots` (die Indizes der Blöcke jedes Slots, in der Reihenfolge des Markdowns), `unassigned` (die Blöcke ohne Slot) und den Quellbereich der ganzen Seite. Ein Block trägt den Slot, den er nennt, in `ContentBlock.slot`, mit dem Quellbereich des Werts; eine Abbildung ist ein `resourceBlock`, dessen `figure` ihre Attribute und Beschriftungen enthält, jede Beschriftung mit ihrem Text, ihren Inline-Spans und einer Zuordnung zurück zur Quelle im Markdown. `checkComposedSlots(pages, config)` gibt die drei Slot-Warnungen für diese Seiten zurück.

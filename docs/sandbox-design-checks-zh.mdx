@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'zh',
   lastUpdated: '2026-10-16',
   readingTime: '25分钟',
-  order: 35,
+  order: 36,
   parent: 'sandbox',
   plainSummary: "本页介绍沙盒的两个面板。版面设计面板放着书的每一项设置，比如页面大小、字体和颜色，分成若干组，还有一个搜索框。检查面板列出你工作时Postext发现的问题，比如缺了一张图片，或者某一行太松。每个问题都标明位置，点一下就会跳过去。",
 };
@@ -205,7 +205,8 @@ export const metadata = {
   - *代码围栏未闭合*：一个```` ``` ````或`~~~`围栏没有结束围栏，其后的全部文字都按代码排版（`unclosedCodeBlock`；点击它会让编辑器聚焦到该围栏）；
   - *竖排文字中的制表符*：竖排文字中的`:tab`，它排成词间空格，因为制表位只用于横排文字（`tabInVerticalText`）；
   - *前置元数据被忽略*：除第一章外，某一章以前置元数据块开头（只有第一章的前置元数据属于整本书）；
-  - *未知的分栏走向*：`:::columns{flow=…}`既不是`snake`也不是`parallel`，该组采用默认值（`columnsFlowUnknown`）。
+  - *未知的分栏走向*：`:::columns{flow=…}`既不是`snake`也不是`parallel`，该组采用默认值（`columnsFlowUnknown`）；
+  - *未知的页面模板*、*槽位没有对应的框*、*空框*和*模板页只写了三个冒号*：模板不在`pageTemplates`中的`::::page`，指定的名称不是该页模板中任何框的`slot`，在这一页上什么也没收到的模板框（`optional`框不报告），以及带有`template=`却只写了三个冒号的`:::page`（`templateUnknown`、`slotUnknown`、`slotEmpty`、`pageFenceLength`；见[模板页](/zh/docs/composed-pages#警告)）。
 - **版面设计**：
   - 不在引擎允许列表中的页眉和页脚占位符名称（`{attr.…}`和篇的占位符是允许的），以及所需文档元数据缺失的占位符；
   - 版面设计元素之间的循环锚定，或锚定到不存在的元素。这一检查和占位符检查覆盖每个版面设计槽位：书眉、篇首页、篇名页之后的空白左页、目录中篇的行、每一级标题的版面设计，以及每种标题样式的版面设计和其所在部分的书眉。来自标题样式的条目会写出样式名，如`{style="index"} header · #rh → #missing`；来自空白左页或目录中篇的行的条目会写出其设置，如`toc.parts.design · #row → #missing`；

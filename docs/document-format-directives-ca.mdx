@@ -711,3 +711,12 @@ Un `:::strip` té el cos d'una pàgina però va dins del text com una sola caixa
 ### Dobles pàgines
 
 `:::page{spread}` estén una pàgina per dues pàgines encarades: la divisió cobreix les dues caixes de text unides al llom, sense els seus marges interiors, i una vinyeta pot travessar el llom. La doble pàgina s'obre en una pàgina parella, després d'una pàgina en blanc si cal. Vegeu [Còmics › Dobles pàgines](/ca/docs/comics#dobles-pàgines).
+
+## Pàgines compostes
+
+Una pàgina composta es maqueta a partir d'una plantilla de pàgina de la configuració (`pageTemplates`), i el seu contingut s'aboca als marcs de la plantilla pel seu nom. La guia, amb els avisos, és a [Pàgines compostes](/ca/docs/composed-pages).
+
+- `::::page{template="…"}` … `::::` és la pàgina: quatre dos punts o més, i es tanca amb una tanca sola del mateix nombre. Les tanques de tres dos punts que hi ha a dins (`:::frame`, `:::callout`, `:::figure`…) funcionen com a tot arreu, i un `:::` solt mai no tanca la pàgina. Un `:::page` de tres dos punts continua sent una pàgina de còmic.
+- `:::frame{slot="…" label="…"}` … `:::` guarda el contingut del marc d'aquest nom: qualsevol Markdown.
+- `slot="…"` en un encapçalament (`## Retos {slot="retos-titulo"}`), a `::resource{id="…" slot="…"}`, en una tanca de codi o en un contenidor `:::` envia només aquell bloc. El contingut sense slot va al marc de flux de la plantilla.
+- `:::figure{resource="…" slot="…"}` … `:::` col·loca un recurs amb les seves línies `::label[TEXT]{at="…" style="…"}`, on `at` és una àncora de la imatge o un punt `"x% y%"`. Una figura també funciona al text corregut.

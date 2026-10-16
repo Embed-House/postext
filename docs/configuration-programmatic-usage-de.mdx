@@ -105,6 +105,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Die Gruppe erhält den Standardwert: <code>parallel</code> mit <code>breaks</code>, <code>snake</code> ohne.</td>
     </tr>
     <tr>
+      <td><code>templateUnknown</code></td>
+      <td>Eine zusammengesetzte Seite (<code>::::page&#123;template&#125;</code>) nennt keinen Eintrag von <code>pageTemplates</code> oder gar keine Vorlage; <code>template</code> ist die ID, wie sie geschrieben ist, und <code>fenceIndex</code> die Stelle der Seite unter den zusammengesetzten Seiten des Kapitels.</td>
+      <td>Ihre Slots werden nicht geprüft. Solange Vorlagen nicht umbrochen werden, wird ihr Inhalt im Fließtext auf eigenen Seiten gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>Inhalt einer zusammengesetzten Seite nennt einen <code>slot</code>, der kein Rahmen der Vorlage der Seite ist (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>Der Inhalt kommt in den Flussrahmen der Vorlage.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>Ein Rahmen der Vorlage erhält auf der Seite nichts (<code>frame</code>, <code>template</code>, <code>fenceIndex</code>). Nicht ausgelöst für einen Rahmen mit <code>optional</code> und auch nicht für einen, der nur die Fortsetzung eines anderen Rahmens aufnimmt.</td>
+      <td>Der Rahmen bleibt leer. <code>postext check</code> führt ihn als Hinweis auf.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>Ein <code>:::page</code> mit drei Doppelpunkten trägt <code>template=</code>.</td>
+      <td>Es wird als Comicseite gelesen; eine zusammengesetzte Seite braucht vier Doppelpunkte.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> nennt kein Chip-Format.</td>
       <td>Der Chip erhält das erste Chip-Format.</td>

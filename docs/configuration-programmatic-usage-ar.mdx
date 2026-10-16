@@ -105,6 +105,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>تأخذ المجموعة القيمة الافتراضية: <code>parallel</code> مع <code>breaks</code>، و<code>snake</code> من دونها.</td>
     </tr>
     <tr>
+      <td><code>templateUnknown</code></td>
+      <td>صفحة مركّبة (<code>::::page&#123;template&#125;</code>) لا تسمّي أي مدخل من <code>pageTemplates</code>، أو لا تسمّي قالبًا أصلًا؛ و<code>template</code> هو المعرّف كما كُتب، و<code>fenceIndex</code> موضع الصفحة بين الصفحات المركّبة في الفصل.</td>
+      <td>لا تُفحص خاناتها. وإلى أن تُنضَّد القوالب، يُنضَّد محتواها في النص الجاري على صفحات خاصة به.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>محتوى في صفحة مركّبة يسمّي <code>slot</code> ليست إطارًا من قالب الصفحة (<code>slot</code> و<code>template</code> و<code>fenceIndex</code>).</td>
+      <td>يذهب المحتوى إلى إطار التدفق في القالب.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>إطار من القالب لا يتلقى شيئًا في الصفحة (<code>frame</code> و<code>template</code> و<code>fenceIndex</code>). ولا يُطلَق لإطار <code>optional</code>، ولا لإطار لا يتلقى إلا ما يُكمله فيه إطار آخر.</td>
+      <td>يبقى الإطار فارغًا. ويسرده <code>postext check</code> ملاحظةً.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td><code>:::page</code> بثلاث نقاط رأسية تحمل <code>template=</code>.</td>
+      <td>تُقرأ صفحة قصة مصوّرة؛ والصفحة المركّبة تحتاج إلى أربع نقاط رأسية.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> يذكر نمط شارة غير موجود.</td>
       <td>تأخذ الشارة أول نمط شارة.</td>

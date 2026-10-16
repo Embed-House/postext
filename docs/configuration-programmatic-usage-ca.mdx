@@ -105,6 +105,26 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td>El grup pren el valor per defecte: <code>parallel</code> amb <code>breaks</code>, <code>snake</code> sense.</td>
     </tr>
     <tr>
+      <td><code>templateUnknown</code></td>
+      <td>Una pàgina composta (<code>::::page&#123;template&#125;</code>) no anomena cap entrada de <code>pageTemplates</code>, o no anomena cap plantilla; <code>template</code> és l'id tal com està escrit i <code>fenceIndex</code>, el lloc de la pàgina entre les pàgines compostes del capítol.</td>
+      <td>Els seus slots no es comproven. Mentre les plantilles no es maquetin, el seu contingut es compon al text corregut, en pàgines pròpies.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>El contingut d'una pàgina composta anomena un <code>slot</code> que no és cap marc de la plantilla de la pàgina (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>El contingut va al marc de flux de la plantilla.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>Un marc de la plantilla no rep res a la pàgina (<code>frame</code>, <code>template</code>, <code>fenceIndex</code>). No es registra per a un marc <code>optional</code> ni per a un que només rep el que un altre marc hi continua.</td>
+      <td>El marc queda buit. <code>postext check</code> el llista com a nota.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>Un <code>:::page</code> de tres dos punts porta <code>template=</code>.</td>
+      <td>Es llegeix com a pàgina de còmic; una pàgina composta necessita quatre dos punts.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> no anomena cap estil de xip.</td>
       <td>El xip pren el primer estil de xip.</td>

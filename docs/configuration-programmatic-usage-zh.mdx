@@ -105,6 +105,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>该组采用默认值：有<code>breaks</code>时为<code>parallel</code>，没有时为<code>snake</code>。</td>
     </tr>
     <tr>
+      <td><code>templateUnknown</code></td>
+      <td>模板页（<code>::::page&#123;template&#125;</code>）指定的模板不在<code>pageTemplates</code>中，或者根本没有指定模板；<code>template</code>是写下的id，<code>fenceIndex</code>是这一页在本章各模板页中的序号。</td>
+      <td>它的槽位不做检查。在模板排版实现之前，它的内容排进正文，单独占用自己的页面。</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>模板页中的内容指定的<code>slot</code>不是该页模板中的任何框（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>）。</td>
+      <td>这段内容进入模板的流文框。</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>模板中的某个框在这一页上什么也没收到（<code>frame</code>、<code>template</code>、<code>fenceIndex</code>）。<code>optional</code>框不触发，只接收另一个框延续过来的内容的框也不触发。</td>
+      <td>该框留空。<code>postext check</code>把它列为提示。</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>三冒号的<code>:::page</code>带有<code>template=</code>。</td>
+      <td>它按漫画页读取；模板页需要四个冒号。</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code>指定的行内标签样式不存在。</td>
       <td>该行内标签采用第一个行内标签样式。</td>

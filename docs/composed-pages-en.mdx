@@ -1,0 +1,198 @@
+{/* docs/composed-pages-en.mdx */}
+
+export const metadata = {
+  title: 'Composed pages',
+  sidebarTitle: 'Composed pages',
+  description: 'The Markdown of composed pages: the four-colon page fence that names a page template, frames and the slot attribute that send content to the frames of the template, figures with labels at the anchors of a picture, and the warnings that check the content against the template',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '9 min',
+  order: 33,
+  plainSummary: "Some pages are not one column of running text but a set of boxes, like a page of a school textbook with a title band, a text and three coloured boxes with photos. Postext calls them composed pages. The shape of the page is a template in the configuration, and the Markdown only says which piece of text goes into which box. This page shows how to write that Markdown: the page fence, the frames, the slot names, and pictures with labels such as the names on a map. It also lists the warnings Postext gives when the text and the template do not match.",
+};
+
+# Composed pages
+
+**The template holds the form of the page; the Markdown holds its content and says which frame each piece goes to.**
+
+A composed page is a page laid out from a template: named frames (a title band, a text, a box with its photo), groups that move together and a decoration, all defined in the configuration under `pageTemplates`. The Markdown of the page is a fenced block that names its template and pours content into the frames by name. No position or size is ever written in the Markdown, and no content text is ever written in the configuration, so a translation is the same template with other words.
+
+This page covers the Markdown. In this release the parser reads composed pages and the slot checks run, so the Checks panel and `postext check` report a page that does not match its template. Laying the template out on the page comes in the next release; until then the content of a composed page is set in the running text, in Markdown order, on pages of its own, so nothing written in it is lost. A document without composed pages lays out exactly as before.
+
+## The page fence
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+::::
+```
+
+A composed page opens with a line of **four colons** followed by `page` and its attributes, and closes with a bare line of the **same number of colons**. Inside, three-colon containers (`:::frame`, `:::callout`, `:::figure`, `:::columns`, `:::paper`) open and close as they always do, so a bare `:::` closes the innermost of them and never the page. A page written with five colons (`:::::page`) closes with five; a four-colon line inside it is then ordinary text.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attribute</th>
+      <th>Effect</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>template="…"</code></td><td>Required. The id of an entry of <code>pageTemplates</code>.</td></tr>
+    <tr><td><code>spread</code></td><td>The page is a spread of two facing pages; the template must be a spread template too.</td></tr>
+    <tr><td><code>id="…"</code>, <code>#id</code></td><td>An anchor: a <code>:ref</code> to it prints the page the composed page lands on.</td></tr>
+    <tr><td>any other</td><td>A value the template reads as <code>&#123;attr.name&#125;</code>, such as a background picture chosen page by page: <code>fondo="banda-retos"</code> with <code>resourceId: "&#123;attr.fondo&#125;"</code> in the decoration.</td></tr>
+  </tbody>
+</table>
+
+A composed page always starts a new page (or spread), and the text after its closing fence starts on the next one.
+
+The three-colon `:::page{split=…}` is a comic page (see [Comics](/en/docs/comics)) and keeps that meaning. A three-colon `:::page` that carries `template=` is still read as a comic page, and the warning `pageFenceLength` says that a composed page needs four colons.
+
+When a fence is missing, the parser recovers without losing text:
+
+- a page left open runs to the end of the chapter and is reported as an unclosed container at its opening line;
+- a `::::page` line met while a page is open closes the open page there first (reported the same way);
+- the closing fence closes any frame or box still open inside the page, reporting each one;
+- a closing fence with another number of colons is not the page's: it stays in the text, where you can see it.
+
+## Frames and slots
+
+```md
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago…
+
+Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
+:::
+```
+
+A **slot** is the name a piece of content asks for; it matches the name of a frame of the template. `:::frame{slot="…"}` sends everything inside it to that frame. Its body is full Markdown: paragraphs, lists, headings, chips, `::resource` embeds, `:ref` references, footnotes, `:::columns` and nested callouts. `label` and `title` give the frame's tab or title its words, as they do for a `:::callout`; the frame's look comes from the callout style the template gives it.
+
+A single block can name its slot itself:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '280px' }}>Block</th>
+      <th>Written</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>A heading</td><td><code>## Retos &#123;slot="retos-titulo"&#125;</code></td></tr>
+    <tr><td>A resource embed</td><td><code>::resource&#123;id="dinero-pago" slot="dinero-fotos"&#125;</code> (the two attributes, in any order)</td></tr>
+    <tr><td>A code listing</td><td><code>&#96;&#96;&#96;js &#123;slot="codigo"&#125;</code></td></tr>
+    <tr><td>A box or any other container</td><td><code>:::callout&#123;type="nota" slot="aside"&#125;</code>: the whole box goes to the slot</td></tr>
+    <tr><td>A figure</td><td><code>:::figure&#123;resource="mapa" slot="mapa"&#125;</code> (see below)</td></tr>
+  </tbody>
+</table>
+
+How the content is shared out:
+
+- Several pieces with the same slot are joined in Markdown order.
+- Content with no slot goes to the template's **flow frame** (the frame marked `flow`).
+- A heading with no slot goes first to the frame that `takes` its level (`takes: "h1"`), if the template has one, so the title of a textbook topic is just `# Title` at the top of the page.
+- Content that names a slot the template does not have goes to the flow frame and is reported (`slotUnknown`).
+
+A `slot` outside a composed page is read and changes nothing.
+
+## Figures with labels
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}` places one resource, with its caption and number, as `::resource` does, and lists the labels to set on the picture: one `::label[TEXT]{…}` line each, blank lines allowed between them.
+
+- `at` names an anchor of the resource (a point defined once on the picture, shared by every language), or gives a point in percentages of the picture, `at="x% y%"`, for a label with no anchor.
+- `style` names a label style and overrides the anchor's.
+- The text in brackets is inline Markdown: bold, italic, chips.
+
+A figure works in the running text as well as in a frame. Labels are read and kept with their source; drawing them on the picture comes with the template layout, and until then a figure is set as its resource is. A line inside a figure that is neither a label nor blank ends a figure whose closing `:::` is missing, and is reported as an unclosed container.
+
+## Example
+
+The page of a school textbook, with a title band, a text with its list and three coloured boxes, each with its photo beside it:
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+## La actividad económica
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+
+- Las :chip[empresas.]{style="clave"} Ofrecen bienes y servicios a cambio de un beneficio.
+- Las :chip[personas y familias.]{style="clave"} Adquieren lo que ofrecen las empresas…
+
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago, ya que su valor es conocido…
+:::
+
+::resource{id="dinero-pago" slot="dinero-fotos"}
+
+:::frame{slot="gasto" label="El gasto"}
+- **Fijo:** es el que se produce todos los meses…
+- **Variable:** puede cambiar según las necesidades…
+:::
+
+::resource{id="gasto-compras" slot="gasto-fotos"}
+
+:::frame{slot="ahorro" label="Préstamos y ahorro"}
+Si necesitas o quieres comprar algo muy caro…
+:::
+
+::resource{id="ahorro-balanza" slot="ahorro-fotos"}
+::::
+```
+
+The title goes to the frame that takes `h1`; the subheading, the paragraph and the list go to the flow frame; each box and each photo go to the frame of their slot. The Catalan edition is the same lines with other words: the template, the slots and the photos do not change.
+
+## Warnings
+
+The checks read the Markdown and the configuration before any layout, so they show in the Checks panel as you type, in `postext check` and in the document's `contentWarnings`, each with the source range of what it concerns (see [Configuration › Warnings in the document](/en/docs/configuration-programmatic-usage#warnings-in-the-document)).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Kind</th>
+      <th>Cause</th>
+      <th>Fix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateUnknown</code></td>
+      <td>The page fence names a template that no entry of <code>pageTemplates</code> has, or names none. Its slots are not checked.</td>
+      <td>Correct the id, or add the template to the configuration.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>A <code>slot="…"</code> names no frame of the page's template (frames inherited through <code>extends</code> and frames of a <code>variants</code> page count). The content goes to the flow frame.</td>
+      <td>Correct the slot name, or add a frame of that name to the template.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>A frame of the template receives nothing on this page: no slot names it, it takes no heading, and, for the flow frame, no content is left without a slot. A frame that only receives what another frame continues into it (<code>next</code>) is not reported. <code>postext check</code> lists it as a note.</td>
+      <td>Write content for it with its slot, or mark the frame <code>optional: true</code> in the template.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>A three-colon <code>:::page</code> carries <code>template=</code>. It is read as a comic page, as before.</td>
+      <td>Open the page with four colons, <code>::::page&#123;template="…"&#125;</code>, and close it with <code>::::</code>.</td>
+    </tr>
+    <tr>
+      <td><code>unclosedContainer</code></td>
+      <td>A composed page, a frame or a figure is never closed (see the recovery rules above). The Checks panel names the composed page <code>::::page</code>.</td>
+      <td>Add the closing fence: as many colons as the page's opening line, or <code>:::</code> for a frame or a figure.</td>
+    </tr>
+  </tbody>
+</table>
+
+## From code
+
+`composedPages(blocks)` reads the parsed blocks of a chapter (`parseMarkdownWithIssues(markdown).blocks`) and returns one node per page fence, in order: its `template`, `spread`, `attrs` with the source range of each value (`attrSources`), its `fenceIndex` (the ordinal of the fence in the chapter, the same in every language), `slots` (the indices of the blocks of each slot, in Markdown order), `unassigned` (the blocks with no slot) and the source range of the whole page. A block carries the slot it names in `ContentBlock.slot`, with the source range of the value; a figure is a `resourceBlock` whose `figure` holds its attributes and labels, each label with its text, its inline spans and a source map back to the Markdown. `checkComposedSlots(pages, config)` returns the three slot warnings for those pages.

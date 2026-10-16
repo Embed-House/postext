@@ -711,3 +711,12 @@ Un `:::strip` a le corps d’une planche, mais se place dans le texte comme un s
 ### Doubles pages
 
 `:::page{spread}` étend une planche sur deux pages en regard : la découpe couvre les deux blocs de texte réunis au dos, sans leurs marges intérieures, et une case peut franchir le pli. La double page s’ouvre sur une page paire, après une page blanche si nécessaire. Voir [Bandes dessinées › Doubles pages](/fr/docs/comics#doubles-pages).
+
+## Pages composées
+
+Une page composée est mise en page d’après un modèle de page de la configuration (`pageTemplates`), et son contenu est versé par nom dans les blocs du modèle. Le guide, avec les avertissements, est [Pages composées](/fr/docs/composed-pages).
+
+- `::::page{template="…"}` … `::::` est la page : quatre deux-points ou plus, fermés par une ligne qui n’en contient que le même nombre. Les délimiteurs à trois deux-points qu’elle renferme (`:::frame`, `:::callout`, `:::figure`…) fonctionnent comme partout, et un `:::` seul ne ferme jamais la page. Un `:::page` à trois deux-points reste une page de bande dessinée.
+- `:::frame{slot="…" label="…"}` … `:::` renferme le contenu du bloc de ce nom : n’importe quel Markdown.
+- `slot="…"` sur un titre (`## Retos {slot="retos-titulo"}`), sur `::resource{id="…" slot="…"}`, sur un délimiteur de code ou sur un conteneur `:::` envoie ce seul élément. Le contenu sans slot va dans le bloc de flux du modèle.
+- `:::figure{resource="…" slot="…"}` … `:::` place une ressource avec ses lignes `::label[TEXT]{at="…" style="…"}`, `at` étant une ancre de l’image ou un point `"x% y%"`. Une figure fonctionne aussi dans le texte courant.

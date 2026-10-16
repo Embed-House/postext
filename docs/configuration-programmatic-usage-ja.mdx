@@ -105,6 +105,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>グループには既定値が使われます。<code>breaks</code>があれば<code>parallel</code>、なければ<code>snake</code>です。</td>
     </tr>
     <tr>
+      <td><code>templateUnknown</code></td>
+      <td>テンプレートページ（<code>::::page&#123;template&#125;</code>）が<code>pageTemplates</code>のどの項目も指していないか、テンプレートを指定していない。<code>template</code>は書かれているID、<code>fenceIndex</code>は章のテンプレートページの中でのそのページの位置です。</td>
+      <td>スロットは検査されません。テンプレートが割り付けられるようになるまでは、中身は本文の流れに組まれ、専用のページに置かれます。</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>テンプレートページの内容が、ページのテンプレートのどの枠でもない<code>slot</code>を名乗っている（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>）。</td>
+      <td>その内容はテンプレートの流し込み枠に入ります。</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>テンプレートの枠が、そのページで何も受け取らない（<code>frame</code>、<code>template</code>、<code>fenceIndex</code>）。<code>optional</code>の枠と、ほかの枠からの続きを受け取るだけの枠では発生しません。</td>
+      <td>枠は空のままです。<code>postext check</code>では注記として挙がります。</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>コロン3つの<code>:::page</code>が<code>template=</code>を持っている。</td>
+      <td>コミックのページとして読まれます。テンプレートページにはコロンが4つ要ります。</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code>の名前に該当するチップスタイルがない。</td>
       <td>チップには最初のチップスタイルが使われます。</td>

@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'en',
   lastUpdated: '2026-10-16',
   readingTime: '34 min',
-  order: 35,
+  order: 36,
   parent: 'sandbox',
   plainSummary: "This page covers two panels of the Sandbox. The Design panel holds every setting of the book, such as the page size, the fonts and the colours, sorted into groups with a search box. The Checks panel lists the problems Postext finds while you work, such as a missing picture or a line that is too loose. Each problem says where it is and takes you there when you click it.",
 };
@@ -205,7 +205,8 @@ Live diagnostics, recomputed from the text, the design, the figures and the last
   - *Unclosed code fence*: a ```` ``` ```` or `~~~` fence with no closing fence, so the rest of the text is set as code (`unclosedCodeBlock`; clicking it focuses the fence);
   - *Tab in vertical text*: a `:tab` in text set vertically, which is set as a word space, since tab stops are set in horizontal text only (`tabInVerticalText`);
   - *Front matter ignored*: a chapter other than the first that starts with a front-matter block (only the first chapter's front matter belongs to the book);
-  - *Unknown column flow*: a `:::columns{flow=…}` that is neither `snake` nor `parallel`; the group takes the default (`columnsFlowUnknown`).
+  - *Unknown column flow*: a `:::columns{flow=…}` that is neither `snake` nor `parallel`; the group takes the default (`columnsFlowUnknown`);
+  - *Unknown page template*, *Slot with no frame*, *Empty frame* and *Composed page with three colons*: a `::::page` whose template is not in `pageTemplates`, a `slot` that names no frame of the page's template, a template frame that receives nothing on the page (an `optional` frame is not reported), and a `:::page` with `template=` written with three colons (`templateUnknown`, `slotUnknown`, `slotEmpty`, `pageFenceLength`; see [Composed pages](/en/docs/composed-pages#warnings)).
 - **Design**:
   - header and footer placeholder names outside the engine allow-list (`{attr.…}` and the part placeholders are accepted), and placeholders whose document metadata is missing;
   - cyclic anchors between design elements, or anchors to an element that does not exist. This check and the placeholder check cover every design slot: the running heads, the part opener, the blank verso after a part page, the part rows of the contents, each heading level's design, and each heading style's design and the running heads of its section. An entry from a heading style names the style, as in `{style="index"} header · #rh → #missing`, and one from the verso or the contents' part rows names its setting, as in `toc.parts.design · #row → #missing`;
