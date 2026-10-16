@@ -96,7 +96,8 @@ export function digest(parts: readonly string[]): string {
   return `${(h1 >>> 0).toString(36)}.${(h2 >>> 0).toString(36)}.${len}`;
 }
 
-/** A key of a resolved configuration, computed once per object. */
+/** A key of a resolved configuration (or any plain object the layout
+ *  does not change, a resolved template), computed once per object. */
 export function configKeyOf(resolved: object): string {
   const known = configKeys.get(resolved);
   if (known !== undefined) return known;
@@ -147,7 +148,9 @@ function blocksKey(blocks: readonly ContentBlock[], base: number, ids: readonly 
       if (SOURCE_KEYS.has(key)) return value - base;
       if (key === 'containerId') return `#${ordinal.get(value) ?? value}`;
     }
-    if (key === 'sourceMap' && Array.isArray(value)) return value.map((v) => (typeof v === 'number' ? v - base : v));
+    // A block's character map follows from the page's Markdown, which the
+    // key holds whole.
+    if (key === 'sourceMap') return undefined;
     if (key === 'attrSources' && value && typeof value === 'object') {
       // A heading's `{ start, end }` per attribute (the `{ sourceStart,
       // sourceEnd }` of the others are read as any source offset).
@@ -241,7 +244,7 @@ export function layoutComposedPageMemo(input: ComposedPageInput, ctx: ComposedMe
     '1',
     ctx.configKey(),
     String(measurementGeneration()),
-    JSON.stringify(input.template),
+    configKeyOf(input.template),
     String(input.fence.fenceIndex),
     ctx.markdown.slice(first.sourceStart, last.sourceEnd),
     blocksKey(range, first.sourceStart, ids),
