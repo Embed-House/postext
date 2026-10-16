@@ -222,7 +222,7 @@ Si necesitas o quieres comprar algo muy caro…
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td><code>slot="…"</code>の名前が、ページのテンプレートのどの枠にも当たらない（<code>extends</code>で受け継いだ枠と<code>variants</code>のページの枠も数えます）。その内容は流し込み枠に入ります。</td>
+      <td><code>slot="…"</code>の名前が、ページのテンプレートのどの枠にも当たらない（<code>extends</code>で受け継いだ枠と<code>variants</code>のページの枠も数えます）。その内容は流し込み枠に入り、警告がその枠の名前を示します（<code>frame</code>）。</td>
       <td>スロット名を直すか、その名前の枠をテンプレートに加えます。</td>
     </tr>
     <tr>
@@ -248,19 +248,109 @@ Si necesitas o quieres comprar algo muy caro…
   </tbody>
 </table>
 
+本の割り付けが済むと、これらの警告には対象のページ（`pageIndex`）も付きます。検査パネルと`postext check`は、テンプレート、枠またはスロット、ソース範囲と並べてページ番号を示します。
+
 ### frameOverflow
 
 この警告は上の検査のようにソースを読んで出るものではなく、割り付けから出ます。ページが組み上がってから、検査パネル、`postext check`、文書の`contentWarnings`に現れます。
 
-**原因**：枠に流し込んだ内容（スロットで指定したもの、または流し込み枠に入るもの）が枠より高く、続きを流す`next`の枠も残っていません。たいていは枠に収まる以上のテキストがある場合で、原文より長くなった翻訳や、`height`や`maxHeight`で高さを固定した枠がよくある例です。収まらない部分はページ単位の出力では枠の下端で切れますが、文書、ソースとの対応表、リフロー型のEPUBには残ります。警告にはテンプレート、枠、ページ、切れた高さ（`overflowMm`）、そして設定の中の枠を指すJSONポインタ`configPath`（`/pageTemplates/0/frames/2`）が付きます。
+**原因**：枠に流し込んだ内容（スロットで指定したもの、または流し込み枠に入るもの）が枠より高く、続きを流す`next`の枠も残っておらず、[収めるための手順](#それでも収まらないとき)のどれを試しても収まりません。たいていは枠に収まる以上のテキストがある場合で、原文より長くなった翻訳や、`height`や`maxHeight`で高さを固定した枠がよくある例です。収まらない部分はページ単位の出力では枠の下端で切れますが、文書、ソースとの対応表、リフロー型のEPUBには残ります。警告にはテンプレート、枠、ページ、文書の`locale`、切れた高さ（`overflowMm`）、`configPath`（設定の中の枠を指すJSONポインタで、`/pageTemplates/0/frames/2`）、試した手順（`stepsTried`）、テキストと画像が最後にとどまった縮小率（`scale`、`imageScale`）、そして収めるための変更の案である`proposals`が付きます。
 
-**対処**：枠を広げる（`height`や`maxHeight`を大きくするか外す）、`next`で別の枠につなぐ、テキストを短くする、別のテンプレートでそのページを組む、のいずれかです。今のところ、割り付けがテキストを縮めて収めることはしません。
+**対処**：修正案のどれかを適用します。どの案にも、そのページで割り出した値が付いています（[警告と修正案](#警告と修正案)を参照）。そうでなければ、枠を広げる、`next`で別の枠につなぐ、テキストを短くする、別のテンプレートでそのページを組む、のいずれかです。
 
 ## 文章が増えたとき
 
 テンプレートページは、テンプレートが宣言した範囲の中で形を組み替えます。枠が積み重ねのグループになっているページで、最初の枠に長い文章を書くと、枠はそれが収まるまで高くなり、下の枠と、そこに固定した写真や飾りが下へずれます。テンプレートは1行も変わりません。文章を短くすれば、枠は宣言した高さに戻ります。`pin`を付けた枠や飾りの要素は、テンプレートが置いた位置にとどまるので、絵柄の上に載せておく必要のある囲みに使えます。積み重ねと並びが空間をどう分け合い、どの枠が先に譲るかはテンプレートで決めます。[設定 › グループが空間を分け合うしくみ](/ja/docs/configuration-composed-pages#グループが空間を分け合うしくみ)を参照してください。
 
-枠が領域の下端に届き、グループのどの枠もそれ以上空間を譲れないときは、最後の枠が下端で切れ、組版が`frameOverflow`を報告します（[警告](#警告)を参照）。文章を短くする、ほかの枠の`minHeight`を下げる、縮められる枠を作る、グループに広い場所を与える、のいずれかで直します。グループがこれ以外の警告を出すことはありません。
+枠が領域の下端に届き、グループのどの枠もそれ以上空間を譲れないときは、収まらない枠が次の節の手順を順に試します。グループが独自の警告を出すことはありません。
+
+## それでも収まらないとき
+
+中身が収まらない枠は、テンプレートが許す場所の空け方を1つずつ試し、最初にうまくいったところで止まります。各手順は前の手順を残したまま、次の順に試されます。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>手順</th>
+      <th>割り付けがすること</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>枠が空いている場所を使います。中身に合わせて高さが決まる枠は、もともと領域とグループが残した場所まで伸びます。<code>height</code>を固定した枠は、<code>maxHeight</code>があればそこまで伸びます。</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>グループがその枠より後の枠を下へ押し、<code>shrink</code>を持つ枠が空間を返します（<a href="/ja/docs/configuration-composed-pages#グループが空間を分け合うしくみ">グループが空間を分け合うしくみ</a>を参照）。</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>その枠とグループのほかの枠の画像を、2.5%刻みで<code>fit.imageMinScale</code>（既定は80%）まで小さくし、中身が収まるもっとも大きな縮小率で組みます。画像の後のテキストも一緒に上がります。</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>グループのほかの枠が、<code>shrink</code>の有無にかかわらず空間を返します。それぞれ<code>minHeight</code>まで縮みますが、自分の中身に必要な高さより小さくはなりません。並びのグループでは幅を返し、それぞれ自分のテキストがまだ収まるいちばん狭い幅まで細くなります。</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>枠のテキストを、2.5%刻みで<code>fit.minScale</code>（既定は90%）まで小さくし、収まるもっとも大きな縮小率で組みます。文字サイズ、行送り、アキが一緒に縮み、枠全体を一回り小さな文字で組んだのと同じ結果になります。<code>next</code>でつないだ枠は、つながったほかの枠と一緒に縮みます。<code>fit.shrinkText: false</code>ならテキストは元のサイズのままです。</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>枠の続きを別のページに流します（<code>overflow.continueIn: 'next-page'</code>または<code>'template:&lt;id&gt;'</code>）。このリリースではこの手順を報告するだけで、追加するページの割り付けは今後のリリースで行います。</td>
+    </tr>
+  </tbody>
+</table>
+
+どの手順でも中身が収まらないときは、枠が下端で切れ、手順の中で到達した縮小率を保ったまま、割り付けが`frameOverflow`を報告します。手順のたびにページ全体を組み直すので、結果はそのページだけで決まります。同じ入力からは同じページができ、あふれる枠はテンプレートの順に扱われ、あるテンプレートページを変えてもほかのページは元のままです。設定は[設定 › 内容が収まらないとき](/ja/docs/configuration-composed-pages#内容が収まらないとき)にあります。
+
+### 警告と修正案
+
+`frameOverflow`はページ、テンプレート、枠、文書の言語を示すので、スペイン語では収まりカタルーニャ語ではあふれるページなら、そのことがわかります。試した手順も挙げます。修正案はどれも`{ kind, path, value }`というデータです。`path`は変える設定のJSONポインタ、`value`は設定する値で、足りない量から割り出します。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>修正案</th>
+      <th>変えるもの</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td>枠の<code>fit.minScale</code>です。中身が収まるもっとも大きなテキストの縮小率を、2.5%刻みで50%まで、そのページで試して求めます。<code>fit.shrinkText: false</code>のときは、<code>also</code>でそれも有効にします。</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td>枠の<code>maxHeight</code>です。枠の高さに足りない量を足し、mm単位の整数にします。ページにその場所があるときだけ出し、それはページで試して確かめます。</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td>グループのほかの枠（<code>frame</code>）の<code>minHeight</code>です。対象は、最小の高さにとどまっていて、中身がそれより少ない枠です。足りない量だけ下げますが、中身より低くはしません。ページで試して確かめます。</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td>枠の<code>overflow.continueIn</code>を<code>'next-page'</code>にします。</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>同じ名前の枠を持ち、中身がそのまま収まる本の別のテンプレートです。<code>pageTemplates</code>の順にそのページで試して選びます。これはMarkdownの変更で、<code>sourceStart</code>と<code>sourceEnd</code>がページフェンスの<code>template</code>の値の範囲を示します。</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>削るおよその文字数です。収まらない行数に、枠の1行あたりの文字数を掛けて求めます。範囲は枠の中身です。</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check`は警告を、手順と修正案とともに文章で出力します。`--json`では、同じデータが警告の`data`に入ります。
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+検査パネルは、同じ項目を画面の表示言語で示します。
 
 ## リフローの記録
 
@@ -291,6 +381,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>枠の上端（<code>axis: 'x'</code>なら左端）が動きました。値は紙の端からのmmです。<code>cause</code>は、高くなってこの枠を動かした枠です。</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>収めるための手順が、枠の画像を<code>scale</code>の縮小率で組みました。場所を必要としたのがグループの別の枠なら、<code>cause</code>がその枠です。</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>収めるための手順が、枠のテキストを<code>scale</code>の縮小率で組みました。</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>中身が収まりませんでした。<code>toMm</code>は切れた高さで、<code>frameOverflow</code>と同じです。</td>
     </tr>
@@ -301,7 +399,7 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
 
 `postext check`は、警告の後に、イベントのあるテンプレートページごとに`reflow`の行を1行出力します。`--json`を付けると、報告に`reflow`配列が入ります。1ページにつき1項目で、`pageIndex`、`pageLabel`、`template`、`fenceIndex`、`chapter`、`events`、`lines`（イベントを文章にしたもの）を持ちます。
 
-コードからは、記録は`VDTPage.composed.log`にあります。枠の`rect`がテンプレートの宣言した矩形と違うときは、宣言された矩形が`VDTFrame.declaredRect`に残ります。`composedReflowLog(doc)`は`postext check`が出力する項目を返し、`describeReflowEvent(event)`は1つのイベントを文章にします。
+コードからは、記録は`VDTPage.composed.log`にあります。枠の`rect`がテンプレートの宣言した矩形と違うときは、宣言された矩形が`VDTFrame.declaredRect`に残ります。`composedReflowLog(doc)`は`postext check`が出力する項目を返し、`describeReflowEvent(event)`は1つのイベントを文章にします。`describeFitStep(step)`と`describeFrameOverflowProposal(proposal)`は、手順の1つと修正案の1つを同じように文章にします。手順の中でテキストが縮小された枠は`VDTFrame.scale`が1より小さくなります。その枠のブロックは`1 / scale`倍の大きさのボックス（`frameContentRect(frame)`）で組まれ、`frameMatrix(frame)`が紙面に置きます。画像の縮小率は`VDTFrame.imageScale`です。
 
 ## 見開き
 

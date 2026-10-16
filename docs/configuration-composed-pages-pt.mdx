@@ -279,19 +279,19 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>fit.shrinkText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Quando nada mais faz o conteúdo caber, o texto pode ser diagramado menor.</td>
+      <td>Quando nada mais faz o conteúdo caber, o texto pode ser diagramado menor, em passos de 2,5 % (veja <a href="#quando-o-conteúdo-não-cabe">Quando o conteúdo não cabe</a>).</td>
     </tr>
     <tr>
       <td><code>fit.minScale</code></td>
       <td><code>number</code></td>
       <td><code>0.9</code></td>
-      <td>A menor escala de texto, acima de 0 e no máximo 1 (um valor maior é lido como 1).</td>
+      <td>A menor escala de texto, acima de 0 e no máximo 1 (um valor maior é lido como 1). Corpo, entrelinha e espaçamento mudam de escala juntos.</td>
     </tr>
     <tr>
       <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
-      <td>Se as imagens do quadro podem ser diagramadas menores, e até que escala.</td>
+      <td>Se as imagens do quadro e dos outros quadros do grupo podem ser diagramadas menores quando o conteúdo deste quadro não cabe, e até que escala.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -399,7 +399,7 @@ Um quadro declara o seu tamanho: um `height` fixo, ou `'auto'`, a altura do que 
 
 - Um grupo sem `placement` nem `grid` próprios começa onde o posicionamento do seu primeiro quadro o coloca e desce o quanto os quadros precisarem, até o pé da área do modelo. Quando um quadro cresce, os quadros que vêm depois dele descem o mesmo tanto.
 - Um grupo com caixa própria arranja os seus quadros dentro dela. Quando eles precisam de mais do que ela comporta, os quadros com `shrink` acima de 0 devolvem espaço, primeiro os de `priority` mais baixa; quadros da mesma prioridade cedem na proporção do seu `shrink`, e nenhum fica abaixo do seu `minHeight`. O espaço que sobra vai para os quadros com `grow` acima de 0, na proporção desse valor, até o `maxHeight` de cada um; se não houver nenhum, `align` posiciona os quadros (`'end'` no pé, `'center'`, `'space-between'`). Um quadro do grupo sem posicionamento próprio usa a caixa do grupo como área.
-- Quando nada mais pode ceder, nenhum quadro passa do pé do grupo: o conteúdo que não cabe é cortado ali e aparece como `frameOverflow`.
+- Quando nada mais pode ceder, nenhum quadro passa do pé do grupo: o quadro cujo conteúdo não cabe percorre a escada de ajuste (veja [Quando o conteúdo não cabe](#quando-o-conteúdo-não-cabe)), e o que ainda assim não cabe é cortado ali e aparece como `frameOverflow`.
 - Um quadro com `height: 'fill'` pede o seu `minHeight` e fica com o espaço que sobra como se tivesse `grow: 1`.
 
 **Fileira.** Os quadros de uma fileira ficam lado a lado nas larguras declaradas, todos com a altura da fileira: a da caixa do grupo ou, se o grupo não tiver caixa própria, a maior altura declarada entre eles (um quadro de altura fixa mantém a sua). Quando o texto de um quadro passa da altura da fileira, o quadro ganha largura: primeiro a que sobra na fileira, depois a dos outros quadros com `shrink` acima de 0, primeiro os de `priority` mais baixa, sem que nenhum fique mais estreito que a largura em que o seu próprio texto ainda cabe. A largura tomada é o menor número de milímetros inteiros com que o texto cabe; se nem todo o espaço disponível bastar, o quadro não toma nada, e uma fileira sem caixa própria fica mais alta. A largura que sobra vai para os quadros com `grow` acima de 0 e depois para `align`. As fileiras vão da esquerda para a direita.
@@ -442,6 +442,25 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 O resultado depende só do conteúdo da página, do modelo e da tipografia: a mesma entrada dá a mesma página, medida na mesma ordem e com os mesmos passos. A negociação nunca lê outra página, então uma mudança numa página composta deixa todas as outras como estavam, desde que o conteúdo continue na sua página.
+
+### Quando o conteúdo não cabe
+
+Quando o conteúdo de um quadro é mais alto que o espaço que o grupo lhe dá, a diagramação tenta, em ordem, os passos da [escada de ajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) e para no primeiro que faz o conteúdo caber: espaço livre até `maxHeight`, o grupo empurrando e cedendo, imagens menores, os outros quadros do grupo até o mínimo, texto menor, continuação em outra página. Estas configurações do quadro decidem até onde cada passo pode ir:
+
+- `maxHeight` num quadro com `height` fixo: o quadro pode crescer até esse valor antes que algo seja reduzido.
+- `minHeight` nos outros quadros do grupo: até onde eles devolvem espaço; um quadro nunca fica abaixo do que o próprio conteúdo precisa.
+- `fit.scaleImages` e `fit.imageMinScale`: se as imagens do quadro e do grupo podem ser diagramadas menores, e até que escala (80 % por padrão).
+- `fit.shrinkText` e `fit.minScale`: se o texto do quadro pode ser diagramado menor, e até que escala (90 % por padrão). A escala é a mesma para o corpo, a entrelinha e o espaçamento; o quadro mantém o seu tamanho.
+- `overflow.continueIn`: onde o conteúdo continua quando nada disso basta.
+
+As escalas vão em passos de 2,5 % e a diagramação usa a maior com que o conteúdo cabe, então um texto que passa uma linha do limite fica em 97,5 %, não no mínimo. Uma caixa que precisa manter o corpo do texto usa `fit: { shrinkText: false }`; numa página cujas imagens precisam manter o tamanho, os quadros do grupo usam `fit: { scaleImages: false }`:
+
+```ts
+{ name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
+  fit: { minScale: 0.85, imageMinScale: 0.9 } }
+```
+
+O que ainda assim não cabe aparece como `frameOverflow`, com os passos tentados e propostas que trazem os seus valores: veja [O aviso e suas propostas](/pt/docs/composed-pages#o-aviso-e-suas-propostas).
 
 ### Herança e variantes
 

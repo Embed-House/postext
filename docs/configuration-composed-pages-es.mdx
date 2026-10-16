@@ -279,19 +279,19 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>fit.shrinkText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Cuando nada más consigue que el contenido quepa, su texto se puede componer más pequeño.</td>
+      <td>Cuando nada más consigue que el contenido quepa, su texto se puede componer más pequeño, en pasos del 2,5 % (véase <a href="#cuando-el-contenido-no-cabe">Cuando el contenido no cabe</a>).</td>
     </tr>
     <tr>
       <td><code>fit.minScale</code></td>
       <td><code>number</code></td>
       <td><code>0.9</code></td>
-      <td>La escala de texto más pequeña, mayor que 0 y como mucho 1 (un valor mayor se lee como 1).</td>
+      <td>La escala de texto más pequeña, mayor que 0 y como mucho 1 (un valor mayor se lee como 1). El cuerpo, el interlineado y los espacios se escalan a la vez.</td>
     </tr>
     <tr>
       <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
-      <td>Si las imágenes del marco se pueden componer más pequeñas, y hasta qué escala.</td>
+      <td>Si las imágenes del marco y de los demás marcos de su grupo se pueden componer más pequeñas cuando el contenido de este marco no cabe, y hasta qué escala.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -399,7 +399,7 @@ Un marco declara su tamaño: una `height` fija, o `'auto'`, la altura de lo que 
 
 - Un grupo sin `placement` ni `grid` propios empieza donde lo deja la colocación de su primer marco y baja todo lo que necesiten sus marcos, hasta el pie del área de la plantilla. Cuando un marco crece, los que van detrás bajan lo mismo.
 - Un grupo con caja propia coloca sus marcos dentro de ella. Si necesitan más de lo que cabe, los marcos con `shrink` mayor que 0 devuelven espacio, primero los de `priority` más baja; los de la misma prioridad ceden en proporción a su `shrink`, y ninguno baja de su `minHeight`. El espacio sobrante va a los marcos con `grow` mayor que 0, en proporción, hasta su `maxHeight`; si no hay ninguno, `align` coloca los marcos (`'end'` al pie, `'center'`, `'space-between'`). Un marco del grupo sin colocación propia toma la caja del grupo como área.
-- Cuando ya no puede ceder nadie, ningún marco pasa del pie del grupo: lo que no cabe se corta ahí y se avisa con `frameOverflow`.
+- Cuando ya no puede ceder nadie, ningún marco pasa del pie del grupo: el marco cuyo contenido no cabe recorre la escalera de ajuste (véase [Cuando el contenido no cabe](#cuando-el-contenido-no-cabe)), y lo que aun así no cabe se corta ahí y se avisa con `frameOverflow`.
 - Un marco con `height: 'fill'` pide su `minHeight` y toma espacio sobrante como si tuviera `grow: 1`.
 
 **Fila.** Los marcos de una fila van uno al lado de otro con su anchura declarada y todos con la altura de la fila: la de la caja del grupo o, si el grupo no tiene caja propia, la mayor altura declarada de sus marcos (un marco de altura fija conserva la suya). Cuando el texto de un marco pasa de la altura de la fila, el marco gana anchura: primero la que sobra en la fila y después la de los hermanos con `shrink` mayor que 0, primero los de `priority` más baja, sin dejar a ninguno más estrecho que la anchura en la que todavía cabe su propio texto. Toma los milímetros enteros justos para que el texto quepa; si ni con todo el espacio disponible cabría, no toma nada, y una fila sin caja propia crece en altura. La anchura sobrante va a los marcos con `grow` mayor que 0 y después a `align`. Las filas se colocan de izquierda a derecha.
@@ -442,6 +442,25 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 El resultado depende solo del contenido de la página, de la plantilla y de la tipografía: la misma entrada da la misma página, medida en el mismo orden y con los mismos pasos. El reparto nunca lee otra página, así que un cambio en una página compuesta deja todas las demás como estaban, mientras su contenido no salga de ella.
+
+### Cuando el contenido no cabe
+
+Cuando el contenido de un marco es más alto que el sitio que le da su grupo, la maquetación prueba por orden los pasos de la [escalera de ajuste](/es/docs/composed-pages#cuando-aun-así-no-cabe) y se detiene en el primero que consigue que quepa: espacio libre hasta `maxHeight`, el grupo que empuja y cede, imágenes más pequeñas, los demás marcos del grupo hasta su mínimo, texto más pequeño y continuación en otra página. Estos ajustes del marco deciden hasta dónde puede llegar cada paso:
+
+- `maxHeight` en un marco con una `height` fija: el marco puede crecer hasta ahí antes de que se reduzca nada.
+- `minHeight` en los demás marcos del grupo: hasta dónde devuelven espacio; un marco nunca baja de lo que necesita su propio contenido.
+- `fit.scaleImages` y `fit.imageMinScale`: si las imágenes del marco y de su grupo se pueden componer más pequeñas, y hasta qué escala (80 % por defecto).
+- `fit.shrinkText` y `fit.minScale`: si el texto del marco se puede componer más pequeño, y hasta qué escala (90 % por defecto). La escala es la misma para el cuerpo, el interlineado y los espacios; el marco conserva su tamaño.
+- `overflow.continueIn`: dónde sigue el contenido cuando nada de esto basta.
+
+Las escalas van en pasos del 2,5 % y la maquetación toma la mayor con la que cabe, así que un texto al que le sobra una línea se compone al 97,5 %, no al mínimo. Una caja que debe conservar su cuerpo de letra lleva `fit: { shrinkText: false }`; en una página cuyas imágenes deben conservar su tamaño, los marcos de su grupo llevan `fit: { scaleImages: false }`:
+
+```ts
+{ name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
+  fit: { minScale: 0.85, imageMinScale: 0.9 } }
+```
+
+Lo que aun así no cabe se avisa con `frameOverflow`, con los pasos probados y propuestas que traen su valor: véase [El aviso y sus propuestas](/es/docs/composed-pages#el-aviso-y-sus-propuestas).
 
 ### Herencia y variantes
 

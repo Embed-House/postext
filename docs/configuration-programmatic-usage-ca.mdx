@@ -111,7 +111,7 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>El contingut d'una pàgina composta anomena un <code>slot</code> que no és cap marc de la plantilla de la pàgina (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>El contingut d'una pàgina composta anomena un <code>slot</code> que no és cap marc de la plantilla de la pàgina (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, el marc de flux que el rep).</td>
       <td>El contingut va al marc de flux de la plantilla.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>El contingut d'un marc d'una pàgina composta no hi cap i el marc no té cap <code>next</code> on continuar (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, l'alçada tallada; <code>configPath</code>, el punter JSON del marc de la plantilla, com ara <code>/pageTemplates/0/frames/2</code>). El dona la maquetació, amb el <code>pageIndex</code> de la pàgina.</td>
+      <td>El contingut d'un marc d'una pàgina composta no hi cap després de l'escala d'ajust i el marc no té cap <code>next</code> on continuar (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, l'alçada tallada; <code>configPath</code>, el punter JSON del marc de la plantilla, com ara <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> i <code>imageScale</code>, on han quedat el text i les imatges; <code>proposals</code>, cadascuna <code>{'{'} kind, path, value {'}'}</code>). El dona la maquetació, amb el <code>pageIndex</code> de la pàgina.</td>
       <td>La sortida paginada talla el que no hi cap al peu del marc; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida.</td>
     </tr>
     <tr>

@@ -222,7 +222,7 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Uno <code>slot="…"</code> non indica alcuna cornice del modello della pagina (contano anche le cornici ereditate tramite <code>extends</code> e quelle di una pagina di <code>variants</code>). Il contenuto va nella cornice di flusso.</td>
+      <td>Uno <code>slot="…"</code> non indica alcuna cornice del modello della pagina (contano anche le cornici ereditate tramite <code>extends</code> e quelle di una pagina di <code>variants</code>). Il contenuto va nella cornice di flusso, che l’avviso indica (<code>frame</code>).</td>
       <td>Correggi il nome dello slot, oppure aggiungi al modello una cornice con quel nome.</td>
     </tr>
     <tr>
@@ -248,19 +248,109 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
   </tbody>
 </table>
 
+Una volta impaginato il libro, ciascuno di questi avvisi riporta anche la pagina a cui si riferisce (`pageIndex`), così il pannello Verifiche e `postext check` danno il numero di pagina accanto al modello, alla cornice o allo slot e all’intervallo del sorgente.
+
 ### frameOverflow
 
 Questo avviso viene dall’impaginazione, non dai controlli sul sorgente descritti sopra: compare quando la pagina è già composta, nel pannello Verifiche, in `postext check` e nei `contentWarnings` del documento.
 
-**Causa.** Il contenuto che entra in una cornice (con il suo slot, o quello che riceve la cornice di flusso) è più alto della cornice, e la cornice non ha più un `next` in cui proseguire. Di solito c’è più testo di quanto la cornice ne contenga: una traduzione più lunga dell’originale, o una cornice vincolata a un `height` o a un `maxHeight` fissi. Quello che non entra viene tagliato al piede della cornice nell’uscita impaginata; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido. L’avviso riporta il modello, la cornice, la pagina, l’altezza tagliata (`overflowMm`) e `configPath`, il puntatore JSON della cornice nella configurazione (`/pageTemplates/0/frames/2`).
+**Causa.** Il contenuto che entra in una cornice (con il suo slot, o quello che riceve la cornice di flusso) è più alto della cornice, la cornice non ha più un `next` in cui proseguire e nessuno dei passi della [sequenza di reimpaginazione](#quando-il-contenuto-ancora-non-entra) è riuscito a farlo entrare. Di solito c’è più testo di quanto la cornice ne contenga: una traduzione più lunga dell’originale, o una cornice vincolata a un `height` o a un `maxHeight` fissi. Quello che non entra viene tagliato al piede della cornice nell’uscita impaginata; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido. L’avviso riporta il modello, la cornice, la pagina, la `locale` del documento, l’altezza tagliata (`overflowMm`), `configPath` (il puntatore JSON della cornice nella configurazione, `/pageTemplates/0/frames/2`), i passi tentati (`stepsTried`), la scala a cui sono rimasti il testo e le immagini (`scale`, `imageScale`) e `proposals`, le modifiche che lo farebbero entrare.
 
-**Correzione.** Dai più spazio alla cornice (alza o togli il suo `height` o il suo `maxHeight`), collegala a un’altra cornice con `next`, accorcia il testo o componi la pagina con un altro modello. Per ora l’impaginazione non riduce il testo per farlo entrare.
+**Correzione.** Applica una delle proposte: ciascuna arriva con il suo valore, calcolato sulla pagina (vedi [L’avviso e le sue proposte](#lavviso-e-le-sue-proposte)). Altrimenti dai più spazio alla cornice, collegala a un’altra cornice con `next`, accorcia il testo o componi la pagina con un altro modello.
 
 ## Quando il testo cresce
 
 Una pagina composta si risistema entro i limiti che il suo modello dichiara. Se scrivi un testo più lungo nel primo riquadro di una pagina i cui riquadri formano un gruppo a pila, il riquadro cresce quanto serve a contenerlo e i riquadri sottostanti scendono, insieme alle foto e alla decorazione ancorate a essi; il modello non cambia di una riga. Con un testo più breve il riquadro torna alla sua altezza dichiarata. Una cornice o un elemento della decorazione marcato `pin` resta dove lo mette il modello, come un riquadro che deve stare esattamente sull’illustrazione. Come pile e file si dividono lo spazio, e quale cornice cede per prima, lo stabilisce il modello: vedi [Configurazione › Come i gruppi si dividono lo spazio](/it/docs/configuration-composed-pages#come-i-gruppi-si-dividono-lo-spazio).
 
-Quando i riquadri arrivano al piede dell’area e nessuna cornice del gruppo può cedere altro spazio, l’ultima cornice viene tagliata al piede e l’impaginazione segnala `frameOverflow` (vedi [Avvisi](#avvisi)). In quel caso accorcia il testo, abbassa il `minHeight` di un’altra cornice, lascia che una cornice si restringa oppure dai più spazio al gruppo. I gruppi non producono altri avvisi.
+Quando i riquadri arrivano al piede dell’area e nessuna cornice del gruppo può cedere altro spazio, la cornice in cui il contenuto non entra percorre la sequenza di reimpaginazione descritta qui sotto; i gruppi non hanno un avviso proprio.
+
+## Quando il contenuto ancora non entra
+
+Una cornice il cui contenuto non entra prova, uno dopo l’altro, i modi che il suo modello le concede per guadagnare spazio, e si ferma al primo che funziona. Ogni passo si somma ai precedenti, in quest’ordine:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Passo</th>
+      <th>Che cosa fa l’impaginazione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>La cornice occupa lo spazio libero. Una cornice la cui altezza segue il contenuto cresce già nello spazio che le lasciano la sua area e il suo gruppo; una cornice con <code>height</code> fisso cresce fino al suo <code>maxHeight</code>, se ne ha uno.</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>Il suo gruppo sposta in basso le cornici che la seguono e le cornici con <code>shrink</code> restituiscono spazio (vedi <a href="/it/docs/configuration-composed-pages#come-i-gruppi-si-dividono-lo-spazio">Come i gruppi si dividono lo spazio</a>).</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>Le immagini della cornice e delle altre cornici del suo gruppo vengono rimpicciolite, a passi del 2,5 %, fino a <code>fit.imageMinScale</code> (80 % per impostazione predefinita), alla scala più grande che fa entrare il contenuto. Il testo che segue un’immagine risale insieme a essa.</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>Le altre cornici del gruppo restituiscono spazio, che abbiano <code>shrink</code> o no: ciascuna scende fino al suo <code>minHeight</code>, mai sotto quanto richiede il suo contenuto. In una fila cedono larghezza, ciascuna fino alla larghezza più stretta in cui il suo testo entra ancora.</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>Il testo della cornice viene rimpicciolito, a passi del 2,5 %, fino a <code>fit.minScale</code> (90 % per impostazione predefinita), alla scala più grande che lo fa entrare. Corpo, interlinea e spaziature si riducono insieme, come se l’intera cornice fosse composta in un corpo minore. Una cornice collegata con <code>next</code> si riduce insieme alle cornici della sua catena. <code>fit.shrinkText: false</code> lascia il testo alla sua dimensione.</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>La cornice prosegue in un’altra pagina (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>). Questa versione segnala il passo; la pagina aggiunta verrà impaginata da una versione successiva.</td>
+    </tr>
+  </tbody>
+</table>
+
+Quando nessun passo fa entrare il contenuto, la cornice viene tagliata al piede, conserva le scale raggiunte e l’impaginazione segnala `frameOverflow`. Ogni passo reimpagina l’intera pagina, quindi il risultato dipende solo da quella pagina: lo stesso input dà la stessa pagina, le cornici che traboccano vengono trattate nell’ordine del modello e una modifica a una pagina composta lascia tutte le altre come erano. Le impostazioni sono in [Configurazione › Quando il contenuto non entra](/it/docs/configuration-composed-pages#quando-il-contenuto-non-entra).
+
+### L’avviso e le sue proposte
+
+`frameOverflow` indica la pagina, il modello, la cornice e la lingua del documento, così una pagina che entra in spagnolo e trabocca in catalano lo dice, ed elenca i passi tentati. Ogni proposta è un dato, `{ kind, path, value }`: `path` è il puntatore JSON dell’impostazione da cambiare e `value` il valore da darle, calcolato su quanto manca.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proposta</th>
+      <th>Che cosa cambia</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td><code>fit.minScale</code> della cornice: la scala del testo più grande, a passi del 2,5 % fino al 50 %, con cui il contenuto entra, provata sulla pagina. Con <code>fit.shrinkText: false</code>, <code>also</code> la attiva.</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td><code>maxHeight</code> della cornice: la sua altezza più quanto manca, in millimetri interi. Proposta solo quando la pagina ha lo spazio, cosa che viene provata sulla pagina.</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td><code>minHeight</code> di un’altra cornice del gruppo (<code>frame</code>) che sta al suo minimo anche se il suo contenuto richiede meno spazio: abbassato di quanto manca, mai sotto il suo contenuto. Provata sulla pagina.</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td><code>overflow.continueIn</code> della cornice, impostato a <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>Un altro modello del libro, con una cornice dello stesso nome, in cui il contenuto entra così com’è, provato sulla pagina nell’ordine di <code>pageTemplates</code>. È una modifica al Markdown: <code>sourceStart</code> e <code>sourceEnd</code> danno l’intervallo del valore <code>template</code> del recinto della pagina.</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>Quanti caratteri tagliare, all’incirca: le righe che non entrano, per i caratteri per riga della cornice. L’intervallo è il contenuto della cornice.</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check` stampa l’avviso con i passi e le proposte descritti a parole, e `--json` riporta gli stessi dati nel campo `data` dell’avviso:
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+Il pannello Verifiche mostra la stessa voce nella lingua dell’interfaccia.
 
 ## Registro di reimpaginazione
 
@@ -291,6 +381,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>Il bordo superiore della cornice (con <code>axis: 'x'</code>, quello sinistro) si è spostato, in mm dal bordo del foglio; <code>cause</code> è la cornice la cui crescita l’ha spostata.</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>La sequenza di reimpaginazione ha portato le immagini della cornice a <code>scale</code>; <code>cause</code> è la cornice del gruppo che aveva bisogno dello spazio, quando è un’altra.</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>La sequenza di reimpaginazione ha portato il testo della cornice a <code>scale</code>.</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>Il contenuto non è entrato: <code>toMm</code> è l’altezza tagliata, come in <code>frameOverflow</code>.</td>
     </tr>
@@ -301,7 +399,7 @@ Le variazioni inferiori al mezzo millimetro non compaiono, e ogni variazione vie
 
 `postext check` stampa, dopo gli avvisi, una riga `reflow` per ogni pagina composta che ha eventi. Con `--json` il rapporto contiene un array `reflow` con una voce per pagina: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` e `lines` (gli eventi descritti a parole).
 
-Dal codice, il registro è `VDTPage.composed.log`, e ogni cornice conserva in `VDTFrame.declaredRect` il riquadro dichiarato dal suo modello, quando è diverso da `rect`. `composedReflowLog(doc)` restituisce le voci che stampa `postext check`, e `describeReflowEvent(event)` descrive a parole un singolo evento.
+Dal codice, il registro è `VDTPage.composed.log`, e ogni cornice conserva in `VDTFrame.declaredRect` il riquadro dichiarato dal suo modello, quando è diverso da `rect`. `composedReflowLog(doc)` restituisce le voci che stampa `postext check`, e `describeReflowEvent(event)` descrive a parole un singolo evento; `describeFitStep(step)` e `describeFrameOverflowProposal(proposal)` fanno lo stesso per un passo della sequenza e per una proposta. Una cornice il cui testo è stato ridotto dalla sequenza ha `VDTFrame.scale` minore di 1: i suoi blocchi sono impaginati in un riquadro `1 / scale` volte più grande (`frameContentRect(frame)`) e `frameMatrix(frame)` li porta sul foglio; la scala delle sue immagini è `VDTFrame.imageScale`.
 
 ## Doppie pagine
 

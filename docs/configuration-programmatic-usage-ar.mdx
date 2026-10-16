@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>محتوى في صفحة مركّبة يسمّي <code>slot</code> ليست إطارًا من قالب الصفحة (<code>slot</code> و<code>template</code> و<code>fenceIndex</code>).</td>
+      <td>محتوى في صفحة مركّبة يسمّي <code>slot</code> ليست إطارًا من قالب الصفحة (<code>slot</code> و<code>template</code> و<code>fenceIndex</code>؛ و<code>frame</code> إطار التدفق الذي يأخذه).</td>
       <td>يذهب المحتوى إلى إطار التدفق في القالب.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>محتوى إطار في صفحة مركّبة لا يتّسع له الإطار، ولم يبقَ للإطار <code>next</code> يُكمل فيه (<code>template</code> و<code>frame</code> و<code>fenceIndex</code>؛ و<code>overflowMm</code> الارتفاع المقصوص؛ و<code>configPath</code> مؤشر JSON إلى إطار القالب، مثل <code>/pageTemplates/0/frames/2</code>). يصدر عن التنضيد، ومعه <code>pageIndex</code> الصفحة.</td>
+      <td>محتوى إطار في صفحة مركّبة لا يتّسع له الإطار بعد خطوات الملاءمة، ولم يبقَ للإطار <code>next</code> يُكمل فيه (<code>template</code> و<code>frame</code> و<code>fenceIndex</code> و<code>locale</code>؛ و<code>overflowMm</code> الارتفاع المقصوص؛ و<code>configPath</code> مؤشر JSON إلى إطار القالب، مثل <code>/pageTemplates/0/frames/2</code>؛ و<code>stepsTried</code>؛ و<code>scale</code> و<code>imageScale</code>، المقياس الذي انتهى إليه نصه وصوره؛ و<code>proposals</code>، وكل منها <code>{'{'} kind, path, value {'}'}</code>). يصدر عن التنضيد، ومعه <code>pageIndex</code> الصفحة.</td>
       <td>تقصّ المخرجات المقسّمة إلى صفحات ما لا يتّسع عند أسفل الإطار، لكنه يبقى في المستند وفي خريطة المصدر وفي EPUB ذي التخطيط المتدفق.</td>
     </tr>
     <tr>

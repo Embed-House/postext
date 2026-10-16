@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Il contenuto di una pagina composta indica uno <code>slot</code> che non è alcuna cornice del modello della pagina (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>Il contenuto di una pagina composta indica uno <code>slot</code> che non è alcuna cornice del modello della pagina (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, la cornice di flusso che lo riceve).</td>
       <td>Il contenuto va nella cornice di flusso del modello.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>Il contenuto di una cornice di una pagina composta non ci entra e la cornice non ha più un <code>next</code> in cui proseguire (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, l’altezza tagliata; <code>configPath</code>, il puntatore JSON della cornice del modello, per esempio <code>/pageTemplates/0/frames/2</code>). Lo emette l’impaginazione, con il <code>pageIndex</code> della pagina.</td>
+      <td>Il contenuto di una cornice di una pagina composta non ci entra nemmeno dopo la sequenza di reimpaginazione e la cornice non ha più un <code>next</code> in cui proseguire (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, l’altezza tagliata; <code>configPath</code>, il puntatore JSON della cornice del modello, per esempio <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> e <code>imageScale</code>, le scale a cui sono rimasti il testo e le immagini; <code>proposals</code>, ciascuna <code>{'{'} kind, path, value {'}'}</code>). Lo emette l’impaginazione, con il <code>pageIndex</code> della pagina.</td>
       <td>L’uscita impaginata taglia al piede della cornice quello che non entra; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido.</td>
     </tr>
     <tr>

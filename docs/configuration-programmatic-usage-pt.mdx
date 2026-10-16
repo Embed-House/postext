@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>O conteúdo de uma página composta nomeia um <code>slot</code> que não é nenhum bloco do modelo da página (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>O conteúdo de uma página composta nomeia um <code>slot</code> que não é nenhum bloco do modelo da página (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, o bloco de fluxo que o recebe).</td>
       <td>O conteúdo vai para o bloco de fluxo do modelo.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>O conteúdo de um bloco de uma página composta não cabe nele e o bloco não tem mais nenhum <code>next</code> onde continuar (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, a altura cortada; <code>configPath</code>, o ponteiro JSON do bloco do modelo, como <code>/pageTemplates/0/frames/2</code>). Vem da diagramação, com o <code>pageIndex</code> da página.</td>
+      <td>O conteúdo de um bloco de uma página composta não cabe nele depois da escada de ajuste e o bloco não tem mais nenhum <code>next</code> onde continuar (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, a altura cortada; <code>configPath</code>, o ponteiro JSON do bloco do modelo, como <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> e <code>imageScale</code>, onde o texto e as imagens dele ficaram; <code>proposals</code>, cada uma <code>{'{'} kind, path, value {'}'}</code>). Vem da diagramação, com o <code>pageIndex</code> da página.</td>
       <td>A saída paginada corta o que não cabe no pé do bloco; o texto continua no documento, no mapa de origem e no EPUB de layout fluido.</td>
     </tr>
     <tr>

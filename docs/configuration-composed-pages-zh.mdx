@@ -279,19 +279,19 @@ const config: PostextConfig = {
       <td><code>fit.shrinkText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>别的办法都无法让内容放下时，可以把文字排小。</td>
+      <td>别的办法都无法让内容放下时，可以把文字排小，每级2.5%（见<a href="#内容放不下时">内容放不下时</a>）。</td>
     </tr>
     <tr>
       <td><code>fit.minScale</code></td>
       <td><code>number</code></td>
       <td><code>0.9</code></td>
-      <td>文字的最小缩放比例，大于0且不超过1（更大的值按1处理）。</td>
+      <td>文字的最小缩放比例，大于0且不超过1（更大的值按1处理）。字号、行距和间距一起缩放。</td>
     </tr>
     <tr>
       <td><code>fit.scaleImages</code>、<code>fit.imageMinScale</code></td>
       <td><code>boolean</code>、<code>number</code></td>
       <td><code>true</code>、<code>0.8</code></td>
-      <td>框架中的图片是否可以缩小，以及最小缩到多少。</td>
+      <td>这个框架的内容放不下时，它和同组其他框架中的图片是否可以缩小，以及最小缩到多少。</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -399,7 +399,7 @@ const config: PostextConfig = {
 
 - 没有自己的`placement`或`grid`的组，从第一个框架的定位所在之处开始，按框架的需要往下排，最远到模板区域的底边。一个框架变高时，后面的框架下移同样的距离。
 - 有自己方框的组把框架排在这个方框之内。框架需要的空间超出方框时，`shrink`大于0的框架让出空间，`priority`最低的先让；优先级相同的框架按各自`shrink`的比例让出；任何框架都不会小于它的`minHeight`。多余的空间按比例分给`grow`大于0的框架，最多到它们的`maxHeight`；没有这样的框架时，由`align`决定框架的位置（`'end'`靠底边，`'center'`居中，`'space-between'`首尾贴边、中间均分）。组中没有自己定位的框架以组的方框作为它的区域。
-- 再也没有框架能让出空间时，也没有框架会越过组的底边：放不下的内容在那里截断，并报告为`frameOverflow`。
+- 再也没有框架能让出空间时，也没有框架会越过组的底边：内容放不下的框架按逐级重排的步骤依次尝试（见[内容放不下时](#内容放不下时)），仍然放不下的部分在那里截断，并报告为`frameOverflow`。
 - `height: 'fill'`的框架请求它的`minHeight`，并像设了`grow: 1`一样分得多余空间。
 
 **横向组（`row`）**：横向组中的框架按声明的宽度左右并排，高度都与这一行相同。行高就是组的方框的高度；组没有自己的方框时，取各框架声明高度中最大的一个（固定高度的框架保持自己的高度）。某个框架的文字超出行高时，这个框架会加宽：先用行中多余的宽度，再按`priority`从低到高，向`shrink`大于0的同组框架借宽度，每个框架都不会窄过它自己的文字仍能放下的宽度。加宽的量是让文字放下所需的最少整毫米数；即使把能用的空间全部给它也放不下时，它不加宽，没有自己方框的行改为加高。多余的宽度先分给`grow`大于0的框架，剩下的交给`align`。行中的框架从左向右排列。
@@ -442,6 +442,25 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 结果只取决于页面的内容、模板和排版设置：同样的输入得到同样的页面，测量的顺序和步骤也都相同。这种协调从不读取别的页面，所以只要内容还留在自己的页上，修改一个组合页面不会改变其他任何页面。
+
+### 内容放不下时
+
+框架的内容比组给它的空间高时，排版按顺序尝试[逐级重排](/zh/docs/composed-pages#仍然放不下时)的各个步骤，到第一个能让内容放下的为止：先占用空闲空间（最多到`maxHeight`），再由组推挤和让位，然后缩小图片，把组中其他框架压到最小高度，缩小文字，最后到另一页续排。下面这些框架设置决定每一步能走多远：
+
+- 固定`height`的框架上的`maxHeight`：在缩放任何东西之前，框架可以先长到这个高度。
+- 组中其他框架的`minHeight`：它们最多让出多少空间；框架绝不会小于它自己的内容所需。
+- `fit.scaleImages`和`fit.imageMinScale`：这个框架及其所在组中的图片是否可以缩小，以及最小缩到多少（默认80%）。
+- `fit.shrinkText`和`fit.minScale`：框架中的文字是否可以缩小，以及最小缩到多少（默认90%）。字号、行距和间距使用同一个比例；框架本身的尺寸不变。
+- `overflow.continueIn`：这些都不够时，内容到哪里续排。
+
+缩放比例每级2.5%，排版取能放下的最大比例，所以只多出一行的文字排成97.5%，而不是直接降到最小值。必须保持字号的方框设`fit: { shrinkText: false }`；图片必须保持原大的页面，在其组中的各个框架上设`fit: { scaleImages: false }`：
+
+```ts
+{ name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
+  fit: { minScale: 0.85, imageMinScale: 0.9 } }
+```
+
+仍然放不下的部分报告为`frameOverflow`，附有尝试过的步骤和带取值的建议：见[警告及其建议](/zh/docs/composed-pages#警告及其建议)。
 
 ### 继承与变体
 

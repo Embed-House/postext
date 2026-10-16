@@ -222,7 +222,7 @@ Les comprovacions llegeixen el Markdown i la configuració abans de maquetar res
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Un <code>slot="…"</code> no anomena cap marc de la plantilla de la pàgina (compten els marcs heretats amb <code>extends</code> i els d'una pàgina de <code>variants</code>). El contingut va al marc de flux.</td>
+      <td>Un <code>slot="…"</code> no anomena cap marc de la plantilla de la pàgina (compten els marcs heretats amb <code>extends</code> i els d'una pàgina de <code>variants</code>). El contingut va al marc de flux, que l'avís anomena (<code>frame</code>).</td>
       <td>Corregeix el nom del slot o afegeix a la plantilla un marc amb aquest nom.</td>
     </tr>
     <tr>
@@ -248,19 +248,109 @@ Les comprovacions llegeixen el Markdown i la configuració abans de maquetar res
   </tbody>
 </table>
 
+Un cop maquetat el llibre, cadascun d'aquests avisos porta també la pàgina a què es refereix (`pageIndex`), de manera que el tauler Revisió i `postext check` donen el número de pàgina al costat de la plantilla, el marc o el slot i l'interval d'origen.
+
 ### frameOverflow
 
 Aquest avís el dona la maquetació, no les comprovacions del codi font d'aquí dalt: apareix quan la pàgina ja està composta, al tauler Revisió, a `postext check` i als `contentWarnings` del document.
 
-**Causa.** El contingut que entra en un marc (pel seu slot, o el que rep el marc de flux) és més alt que el marc, i el marc no té cap `next` on continuar. Gairebé sempre hi ha més text del que hi cap: una traducció més llarga que l'original, o un marc subjecte a un `height` o un `maxHeight` fixos. El que no hi cap es talla al peu del marc a la sortida paginada; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida. L'avís indica la plantilla, el marc, la pàgina, l'alçada tallada (`overflowMm`) i `configPath`, el punter JSON del marc a la configuració (`/pageTemplates/0/frames/2`).
+**Causa.** El contingut que entra en un marc (pel seu slot, o el que rep el marc de flux) és més alt que el marc, el marc no té cap `next` on continuar i cap dels passos de l'[escala d'ajust](#quan-tot-i-així-no-hi-cap) no ha aconseguit que hi càpiga. Gairebé sempre hi ha més text del que hi cap: una traducció més llarga que l'original, o un marc subjecte a un `height` o un `maxHeight` fixos. El que no hi cap es talla al peu del marc a la sortida paginada; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida. L'avís indica la plantilla, el marc, la pàgina, el `locale` del document, l'alçada tallada (`overflowMm`), `configPath` (el punter JSON del marc a la configuració, `/pageTemplates/0/frames/2`), els passos que ha provat (`stepsTried`), l'escala a què han quedat el text i les imatges (`scale`, `imageScale`) i `proposals`, els canvis que farien que hi cabés.
 
-**Solució.** Dona més espai al marc (puja o treu el seu `height` o el seu `maxHeight`), encadena'l a un altre marc amb `next`, escurça el text o compon la pàgina amb una altra plantilla. De moment la maquetació no redueix el text perquè hi càpiga.
+**Solució.** Aplica una de les propostes: cadascuna porta el seu valor, calculat sobre la pàgina (vegeu [L'avís i les seves propostes](#lavís-i-les-seves-propostes)). Si no, dona més espai al marc, encadena'l a un altre marc amb `next`, escurça el text o compon la pàgina amb una altra plantilla.
 
 ## Quan el text creix
 
 Una pàgina composta es reorganitza dins dels límits que declara la seva plantilla. Si escrius un text més llarg a la primera caixa d'una pàgina les caixes de la qual formen un grup de tipus pila, la caixa creix per encabir-lo i les caixes de sota baixen, amb les fotos i la decoració que hi estan ancorades; cap línia de la plantilla no canvia. Amb un text més curt, la caixa recupera l'alçada declarada. Un marc o un element de decoració marcat amb `pin` es queda on el posa la plantilla, per a una caixa que ha de quedar damunt de la il·lustració. Com es reparteixen l'espai les piles i les fileres, i quin marc cedeix primer, es fixa a la plantilla: vegeu [Configuració › Com es reparteixen l'espai els grups](/ca/docs/configuration-composed-pages#com-es-reparteixen-lespai-els-grups).
 
-Quan les caixes arriben al peu de l'àrea i cap marc del grup no pot cedir més espai, l'últim marc es talla al peu i la maquetació dona l'avís `frameOverflow` (vegeu [Avisos](#avisos)): escurça el text, abaixa el `minHeight` d'un altre marc, deixa que un marc s'encongeixi o dona més espai al grup. Els grups no afegeixen cap altre avís.
+Quan les caixes arriben al peu de l'àrea i cap marc del grup no pot cedir més espai, el marc que no hi cap recorre els passos de l'escala d'ajust que ve a continuació; els grups no afegeixen cap avís propi.
+
+## Quan tot i així no hi cap
+
+Un marc el contingut del qual no hi cap prova, l'una darrere l'altra, les maneres de fer lloc que li permet la plantilla, i s'atura a la primera que funciona. Cada pas es prova sumat als anteriors, en aquest ordre:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Pas</th>
+      <th>Què fa la maquetació</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>El marc pren espai lliure. Un marc que té l'alçada del seu contingut ja creix fins on li deixen la seva àrea i el seu grup; un marc amb un <code>height</code> fix creix fins al seu <code>maxHeight</code>, si en té.</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>El seu grup fa baixar els marcs que el segueixen i els marcs amb <code>shrink</code> tornen espai (vegeu <a href="/ca/docs/configuration-composed-pages#com-es-reparteixen-lespai-els-grups">Com es reparteixen l'espai els grups</a>).</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>Les imatges del marc i dels altres marcs del seu grup es componen més petites, en passos del 2,5 %, fins a <code>fit.imageMinScale</code> (80 % per defecte), a l'escala més gran amb què el contingut hi cap. El text que segueix una imatge puja amb ella.</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>Els altres marcs del seu grup tornen espai, tinguin <code>shrink</code> o no: cadascun baixa fins al seu <code>minHeight</code>, mai per sota del que necessita el seu propi contingut. En una filera cedeixen amplada, cadascun fins a l'amplada més estreta en què encara hi cap el seu text.</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>El text del marc es compon més petit, en passos del 2,5 %, fins a <code>fit.minScale</code> (90 % per defecte), a l'escala més gran amb què hi cap. El cos, l'interlineat i els espais es redueixen alhora, com si tot el marc es compongués en un cos més petit. Un marc encadenat amb <code>next</code> es redueix amb els marcs de la seva cadena. Amb <code>fit.shrinkText: false</code>, el text conserva la seva mida.</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>El marc continua en una altra pàgina (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>). Aquesta versió informa del pas; la pàgina afegida la maquetarà una versió posterior.</td>
+    </tr>
+  </tbody>
+</table>
+
+Si cap pas no aconsegueix que el contingut hi càpiga, el marc es talla al peu, es queda amb la reducció a què ha arribat l'escala d'ajust i la maquetació dona l'avís `frameOverflow`. Cada pas torna a maquetar la pàgina sencera, de manera que el resultat només depèn d'aquesta pàgina: la mateixa entrada dona la mateixa pàgina, els marcs que desborden es tracten en l'ordre de la plantilla i un canvi en una pàgina composta deixa totes les altres com estaven. Els paràmetres són a [Configuració › Quan el contingut no hi cap](/ca/docs/configuration-composed-pages#quan-el-contingut-no-hi-cap).
+
+### L'avís i les seves propostes
+
+`frameOverflow` anomena la pàgina, la plantilla, el marc i la llengua del document, de manera que una pàgina que hi cap en castellà i desborda en català ho diu, i llista els passos que ha provat. Cada proposta és una dada, `{ kind, path, value }`: `path` és el punter JSON del paràmetre que cal canviar i `value`, el valor que cal donar-li, calculat a partir del que falta.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proposta</th>
+      <th>Què canvia</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td><code>fit.minScale</code> del marc: l'escala de text més gran, en passos del 2,5 % fins al 50 %, amb què el contingut hi cap, provada sobre la pàgina. Amb <code>fit.shrinkText: false</code>, <code>also</code> l'activa.</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td><code>maxHeight</code> del marc: la seva alçada més el que falta, en mil·límetres sencers. Només es proposa si la pàgina té lloc, i això s'hi prova.</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td><code>minHeight</code> d'un altre marc del seu grup (<code>frame</code>) que és al seu mínim amb menys contingut que això: rebaixat en el que falta, mai per sota del seu contingut. Es prova sobre la pàgina.</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td><code>overflow.continueIn</code> del marc, amb el valor <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>Una altra plantilla del llibre amb un marc del mateix nom en què el contingut cap tal com és, provada sobre la pàgina en l'ordre de <code>pageTemplates</code>. És un canvi al Markdown: <code>sourceStart</code> i <code>sourceEnd</code> donen l'interval del valor <code>template</code> de la tanca de la pàgina.</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>Quants caràcters cal retallar, aproximadament: les línies que no hi caben, pels caràcters per línia del marc. L'interval és el contingut del marc.</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check` imprimeix l'avís amb els passos i les propostes redactats en paraules, i `--json` porta les mateixes dades al `data` de l'avís:
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+El tauler Revisió mostra la mateixa entrada en la llengua de la interfície.
 
 ## Registre de reajustament
 
@@ -291,6 +381,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>La vora superior del marc (amb <code>axis: 'x'</code>, la vora esquerra) s'ha desplaçat, en mm des de la vora del full; <code>cause</code> és el marc que, en créixer, l'ha desplaçat.</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>L'escala d'ajust ha compost les imatges del marc a <code>scale</code>; <code>cause</code> és el marc del grup que necessitava l'espai, quan és un altre.</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>L'escala d'ajust ha compost el text del marc a <code>scale</code>.</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>El contingut no hi cabia: <code>toMm</code> és l'alçada tallada, com a <code>frameOverflow</code>.</td>
     </tr>
@@ -301,7 +399,7 @@ Els canvis de menys de mig mil·límetre no hi consten, i cada canvi s'arrodonei
 
 `postext check` imprimeix una línia `reflow` per cada pàgina composta que té esdeveniments, després dels avisos; amb `--json`, l'informe porta una llista `reflow` amb una entrada per pàgina: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` i `lines` (els esdeveniments redactats en paraules).
 
-Des del codi, el registre és `VDTPage.composed.log`, i cada marc guarda a `VDTFrame.declaredRect` la caixa que li declara la plantilla quan és diferent de `rect`. `composedReflowLog(doc)` retorna les entrades que imprimeix `postext check`, i `describeReflowEvent(event)` redacta un esdeveniment en paraules.
+Des del codi, el registre és `VDTPage.composed.log`, i cada marc guarda a `VDTFrame.declaredRect` la caixa que li declara la plantilla quan és diferent de `rect`. `composedReflowLog(doc)` retorna les entrades que imprimeix `postext check`, i `describeReflowEvent(event)` redacta un esdeveniment en paraules; `describeFitStep(step)` i `describeFrameOverflowProposal(proposal)` fan el mateix amb un pas de l'escala d'ajust i amb una proposta. Un marc el text del qual ha reduït l'escala d'ajust té `VDTFrame.scale` per sota d'1: els seus blocs es maqueten en una caixa `1 / scale` vegades més gran (`frameContentRect(frame)`) i `frameMatrix(frame)` els col·loca al full; l'escala de les seves imatges és `VDTFrame.imageScale`.
 
 ## Dobles pàgines
 

@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>テンプレートページの内容が、ページのテンプレートのどの枠でもない<code>slot</code>を名乗っている（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>）。</td>
+      <td>テンプレートページの内容が、ページのテンプレートのどの枠でもない<code>slot</code>を名乗っている（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>。<code>frame</code>はその内容を受け取る流し込み枠）。</td>
       <td>その内容はテンプレートの流し込み枠に入ります。</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>テンプレートページの枠の内容が枠に収まらず、続きを流す<code>next</code>の枠も残っていない（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>。<code>overflowMm</code>は切れた高さ、<code>configPath</code>はテンプレートの枠を指すJSONポインタで、たとえば<code>/pageTemplates/0/frames/2</code>）。割り付けが出す警告で、ページの<code>pageIndex</code>が付きます。</td>
+      <td>テンプレートページの枠の内容が、収めるための手順を経ても枠に収まらず、続きを流す<code>next</code>の枠も残っていない（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>locale</code>。<code>overflowMm</code>は切れた高さ、<code>configPath</code>はテンプレートの枠を指すJSONポインタで、たとえば<code>/pageTemplates/0/frames/2</code>。<code>stepsTried</code>。<code>scale</code>と<code>imageScale</code>はテキストと画像が最後にとどまった縮小率。<code>proposals</code>はそれぞれ<code>{'{'} kind, path, value {'}'}</code>）。割り付けが出す警告で、ページの<code>pageIndex</code>が付きます。</td>
       <td>ページ単位の出力では、収まらない部分が枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
     </tr>
     <tr>

@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>模板页中的内容指定的<code>slot</code>不是该页模板中的任何框（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>）。</td>
+      <td>模板页中的内容指定的<code>slot</code>不是该页模板中的任何框（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>；<code>frame</code>为接收它的流文框）。</td>
       <td>这段内容进入模板的流文框。</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>模板页某个框的内容放不下，而这个框已没有可以接续的<code>next</code>框（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>；<code>overflowMm</code>为被裁掉的高度；<code>configPath</code>为模板中该框的JSON指针，如<code>/pageTemplates/0/frames/2</code>）。由排版给出，带有该页的<code>pageIndex</code>。</td>
+      <td>模板页某个框的内容经过逐级重排仍放不下，而这个框已没有可以接续的<code>next</code>框（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>locale</code>；<code>overflowMm</code>为被裁掉的高度；<code>configPath</code>为模板中该框的JSON指针，如<code>/pageTemplates/0/frames/2</code>；<code>stepsTried</code>；<code>scale</code>和<code>imageScale</code>为文字和图片最后停留的比例；<code>proposals</code>，每条为<code>{'{'} kind, path, value {'}'}</code>）。由排版给出，带有该页的<code>pageIndex</code>。</td>
       <td>分页输出在框底裁掉放不下的部分；它仍留在文档、源码映射和流式版式的EPUB中。</td>
     </tr>
     <tr>

@@ -222,7 +222,7 @@ Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, 
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Un <code>slot="…"</code> no nombra ningún marco de la plantilla de la página (cuentan los marcos heredados con <code>extends</code> y los de una página de <code>variants</code>). El contenido va al marco de flujo.</td>
+      <td>Un <code>slot="…"</code> no nombra ningún marco de la plantilla de la página (cuentan los marcos heredados con <code>extends</code> y los de una página de <code>variants</code>). El contenido va al marco de flujo, que el aviso nombra (<code>frame</code>).</td>
       <td>Corrige el nombre del slot o añade a la plantilla un marco con ese nombre.</td>
     </tr>
     <tr>
@@ -248,19 +248,109 @@ Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, 
   </tbody>
 </table>
 
+Una vez maquetado el libro, cada uno de estos avisos lleva además la página a la que se refiere (`pageIndex`), así que el panel Revisión y `postext check` dan el número de página junto a la plantilla, el marco o el slot y el rango de origen.
+
 ### frameOverflow
 
 Este aviso lo da la maquetación, no las comprobaciones del código fuente de arriba: aparece cuando la página ya está compuesta, en el panel Revisión, en `postext check` y en los `contentWarnings` del documento.
 
-**Causa.** El contenido que entra en un marco (por su slot, o el que recibe el marco de flujo) es más alto que el marco, y el marco no tiene ningún `next` donde seguir. Casi siempre hay más texto del que cabe: una traducción más larga que el original, o un marco sujeto a un `height` o un `maxHeight` fijos. Lo que no cabe se corta al pie del marco en la salida paginada; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida. El aviso indica la plantilla, el marco, la página, la altura cortada (`overflowMm`) y `configPath`, el puntero JSON del marco en la configuración (`/pageTemplates/0/frames/2`).
+**Causa.** El contenido que entra en un marco (por su slot, o el que recibe el marco de flujo) es más alto que el marco, el marco no tiene ningún `next` donde seguir y ninguno de los pasos de la [escalera de ajuste](#cuando-aun-así-no-cabe) ha conseguido que quepa. Casi siempre hay más texto del que cabe: una traducción más larga que el original, o un marco sujeto a un `height` o un `maxHeight` fijos. Lo que no cabe se corta al pie del marco en la salida paginada; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida. El aviso indica la plantilla, el marco, la página, el `locale` del documento, la altura cortada (`overflowMm`), `configPath` (el puntero JSON del marco en la configuración, `/pageTemplates/0/frames/2`), los pasos que ha probado (`stepsTried`), la escala a la que han quedado su texto y sus imágenes (`scale`, `imageScale`) y `proposals`, los cambios que harían que cupiera.
 
-**Solución.** Da más sitio al marco (sube o quita su `height` o su `maxHeight`), encadénalo a otro marco con `next`, acorta el texto o compón la página con otra plantilla. Por ahora la maquetación no reduce el texto para que quepa.
+**Solución.** Aplica una de las propuestas: cada una trae su valor, calculado sobre la página (véase [El aviso y sus propuestas](#el-aviso-y-sus-propuestas)). Si no, da más sitio al marco, encadénalo a otro marco con `next`, acorta el texto o compón la página con otra plantilla.
 
 ## Cuando el texto crece
 
 Una página compuesta se recoloca dentro de los límites que declara su plantilla. Si el texto de la primera caja de una página cuyas cajas forman un grupo apilado se alarga, la caja crece para darle cabida y las cajas de debajo, con las fotos y la decoración ancladas a ellas, bajan; no cambia ni una línea de la plantilla. Con un texto más corto, la caja recupera la altura declarada. Un marco o un elemento de decoración con `pin` se queda donde lo pone la plantilla, para una caja que tiene que caer sobre la ilustración. Cómo se reparten el espacio las pilas y las filas, y qué marco cede primero, se decide en la plantilla: consulta [Configuración › Cómo se reparten el espacio los grupos](/es/docs/configuration-composed-pages#cómo-se-reparten-el-espacio-los-grupos).
 
-Cuando las cajas llegan al pie del área y ningún marco del grupo puede ceder más, el último se corta al pie y la composición avisa con `frameOverflow` (consulta [Avisos](#avisos)): acorta el texto, baja el `minHeight` de otro marco, deja que un marco encoja o da más sitio al grupo. Los grupos no añaden ningún otro aviso.
+Cuando las cajas llegan al pie del área y ningún marco del grupo puede ceder más, el marco que no cabe recorre los pasos de la escalera de ajuste que se describe a continuación; los grupos no añaden ningún aviso propio.
+
+## Cuando aun así no cabe
+
+Un marco cuyo contenido no cabe prueba, uno tras otro, los modos de hacer sitio que le permite su plantilla, y se detiene en el primero que funciona. Cada paso se prueba sumado a los anteriores, en este orden:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Paso</th>
+      <th>Qué hace la maquetación</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>El marco toma espacio libre. Un marco cuya altura sigue a su contenido ya crece hasta donde le dejan su área y su grupo; un marco con un <code>height</code> fijo crece hasta su <code>maxHeight</code>, si lo tiene.</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>Su grupo baja los marcos que van detrás y los marcos con <code>shrink</code> devuelven espacio (véase <a href="/es/docs/configuration-composed-pages#cómo-se-reparten-el-espacio-los-grupos">Cómo se reparten el espacio los grupos</a>).</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>Las imágenes del marco y de los demás marcos de su grupo se componen más pequeñas, en pasos del 2,5 %, hasta <code>fit.imageMinScale</code> (80 % por defecto), a la mayor escala con la que el contenido cabe. El texto que sigue a una imagen sube con ella.</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>Los demás marcos de su grupo devuelven espacio, tengan <code>shrink</code> o no: cada uno baja hasta su <code>minHeight</code>, nunca por debajo de lo que necesita su propio contenido. En una fila ceden anchura, cada uno hasta la anchura más estrecha en la que todavía cabe su propio texto.</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>El texto del marco se compone más pequeño, en pasos del 2,5 %, hasta <code>fit.minScale</code> (90 % por defecto), a la mayor escala con la que cabe. El cuerpo, el interlineado y los espacios se reducen a la vez, como si todo el marco se compusiera en un cuerpo menor. Un marco encadenado con <code>next</code> se reduce junto con los marcos de su cadena. Con <code>fit.shrinkText: false</code>, el texto conserva su tamaño.</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>El marco sigue en otra página (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>). Esta versión informa del paso; la página añadida la compondrá una versión posterior.</td>
+    </tr>
+  </tbody>
+</table>
+
+Si ningún paso consigue que el contenido quepa, el marco se corta al pie, se queda con las escalas a las que llegó la escalera y la maquetación avisa con `frameOverflow`. Cada paso vuelve a maquetar la página entera, así que el resultado depende solo de esa página: la misma entrada da la misma página, los marcos que desbordan se tratan en el orden de la plantilla y un cambio en una página compuesta deja todas las demás como estaban. Los ajustes están en [Configuración › Cuando el contenido no cabe](/es/docs/configuration-composed-pages#cuando-el-contenido-no-cabe).
+
+### El aviso y sus propuestas
+
+`frameOverflow` nombra la página, la plantilla, el marco y el idioma del documento, de modo que una página que cabe en español y desborda en catalán lo dice, y enumera los pasos que ha probado. Cada propuesta es un dato, `{ kind, path, value }`: `path` es el puntero JSON del ajuste que hay que cambiar y `value`, el valor que hay que darle, calculado a partir de lo que falta.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propuesta</th>
+      <th>Qué cambia</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td><code>fit.minScale</code> del marco: la mayor escala de texto, en pasos del 2,5 % hasta el 50 %, con la que el contenido cabe, probada sobre la página. Con <code>fit.shrinkText: false</code>, <code>also</code> lo activa.</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td><code>maxHeight</code> del marco: su altura más lo que falta, en milímetros enteros. Solo se propone si la página tiene sitio, y eso se prueba sobre ella.</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td><code>minHeight</code> de otro marco de su grupo (<code>frame</code>) que está en su mínimo con menos contenido que eso: baja lo que falta, nunca por debajo de su contenido. Se prueba sobre la página.</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td><code>overflow.continueIn</code> del marco, con el valor <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>Otra plantilla del libro con un marco del mismo nombre en el que el contenido cabe tal como está, probada sobre la página en el orden de <code>pageTemplates</code>. Es un cambio en el Markdown: <code>sourceStart</code> y <code>sourceEnd</code> dan el rango del valor <code>template</code> de la valla de la página.</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>Cuántos caracteres hay que recortar, más o menos: las líneas que no caben, por los caracteres por línea del marco. El rango es el contenido del marco.</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check` escribe el aviso con sus pasos y sus propuestas en palabras, y `--json` lleva los mismos datos en el `data` del aviso:
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+El panel Revisión muestra la misma entrada en el idioma de la interfaz.
 
 ## Registro de recomposición
 
@@ -291,6 +381,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>El borde superior del marco (con <code>axis: 'x'</code>, el izquierdo) se ha movido, en mm desde el borde de la hoja; <code>cause</code> es el marco cuyo crecimiento lo ha desplazado.</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>La escalera de ajuste ha compuesto las imágenes del marco a <code>scale</code>; <code>cause</code> es el marco del grupo que necesitaba el sitio, cuando es otro.</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>La escalera de ajuste ha compuesto el texto del marco a <code>scale</code>.</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>El contenido no cabía: <code>toMm</code> es la altura cortada, como en <code>frameOverflow</code>.</td>
     </tr>
@@ -301,7 +399,7 @@ Los cambios de menos de medio milímetro no se registran, y cada cambio se redon
 
 `postext check` escribe una línea `reflow` por cada página compuesta con sucesos, después de los avisos; con `--json`, el informe lleva una lista `reflow` con una entrada por página: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` y `lines` (los sucesos en palabras).
 
-Desde el código, el registro es `VDTPage.composed.log`, y cada marco guarda en `VDTFrame.declaredRect` la caja que le declara su plantilla cuando no coincide con `rect`. `composedReflowLog(doc)` devuelve las entradas que escribe `postext check`, y `describeReflowEvent(event)` pone un suceso en palabras.
+Desde el código, el registro es `VDTPage.composed.log`, y cada marco guarda en `VDTFrame.declaredRect` la caja que le declara su plantilla cuando no coincide con `rect`. `composedReflowLog(doc)` devuelve las entradas que escribe `postext check`, y `describeReflowEvent(event)` pone un suceso en palabras; `describeFitStep(step)` y `describeFrameOverflowProposal(proposal)` hacen lo mismo con un paso de la escalera y con una propuesta. Un marco cuyo texto ha reducido la escalera tiene `VDTFrame.scale` menor que 1: sus bloques se maquetan en una caja `1 / scale` veces mayor (`frameContentRect(frame)`) y `frameMatrix(frame)` los coloca en la hoja; la escala de sus imágenes es `VDTFrame.imageScale`.
 
 ## Dobles páginas
 

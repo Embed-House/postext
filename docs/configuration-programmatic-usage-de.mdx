@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Inhalt einer zusammengesetzten Seite nennt einen <code>slot</code>, der kein Rahmen der Vorlage der Seite ist (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>Inhalt einer zusammengesetzten Seite nennt einen <code>slot</code>, der kein Rahmen der Vorlage der Seite ist (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, der Flussrahmen, der ihn aufnimmt).</td>
       <td>Der Inhalt kommt in den Flussrahmen der Vorlage.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>Der Inhalt eines Rahmens einer zusammengesetzten Seite passt nicht hinein, und der Rahmen hat kein <code>next</code> mehr (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, die abgeschnittene Höhe; <code>configPath</code>, der JSON-Zeiger des Vorlagenrahmens, etwa <code>/pageTemplates/0/frames/2</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der Seite.</td>
+      <td>Der Inhalt eines Rahmens einer zusammengesetzten Seite passt auch nach den Umbruchstufen nicht hinein, und der Rahmen hat kein <code>next</code> mehr (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, die abgeschnittene Höhe; <code>configPath</code>, der JSON-Zeiger des Vorlagenrahmens, etwa <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> und <code>imageScale</code>, die Skalierung, bei der Text und Bilder geblieben sind; <code>proposals</code>, jeweils <code>{'{'} kind, path, value {'}'}</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der Seite.</td>
       <td>Die paginierte Ausgabe schneidet am Fuß des Rahmens ab, was nicht passt; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten.</td>
     </tr>
     <tr>

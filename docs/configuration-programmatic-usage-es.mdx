@@ -111,7 +111,7 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>El contenido de una página compuesta nombra un <code>slot</code> que no es ningún marco de la plantilla de la página (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>El contenido de una página compuesta nombra un <code>slot</code> que no es ningún marco de la plantilla de la página (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, el marco de flujo que lo recibe).</td>
       <td>El contenido va al marco de flujo de la plantilla.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>El contenido de un marco de una página compuesta no cabe en él y el marco no tiene ningún <code>next</code> donde seguir (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, la altura cortada; <code>configPath</code>, el puntero JSON del marco de la plantilla, como <code>/pageTemplates/0/frames/2</code>). Lo da la maquetación, con el <code>pageIndex</code> de la página.</td>
+      <td>El contenido de un marco de una página compuesta no cabe en él después de la escalera de ajuste y el marco no tiene ningún <code>next</code> donde seguir (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, la altura cortada; <code>configPath</code>, el puntero JSON del marco de la plantilla, como <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> y <code>imageScale</code>, donde quedaron su texto y sus imágenes; <code>proposals</code>, cada una <code>{'{'} kind, path, value {'}'}</code>). Lo da la maquetación, con el <code>pageIndex</code> de la página.</td>
       <td>La salida paginada corta lo que no cabe al pie del marco; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida.</td>
     </tr>
     <tr>

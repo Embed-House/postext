@@ -279,19 +279,19 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>fit.shrinkText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Quando nient’altro fa entrare il contenuto, il suo testo si può comporre più piccolo.</td>
+      <td>Quando nient’altro fa entrare il contenuto, il suo testo si può comporre più piccolo, a passi del 2,5 % (vedi <a href="#quando-il-contenuto-non-entra">Quando il contenuto non entra</a>).</td>
     </tr>
     <tr>
       <td><code>fit.minScale</code></td>
       <td><code>number</code></td>
       <td><code>0.9</code></td>
-      <td>La scala minima del testo, sopra 0 e al massimo 1 (un valore maggiore vale 1).</td>
+      <td>La scala minima del testo, sopra 0 e al massimo 1 (un valore maggiore vale 1). Corpo, interlinea e spaziature seguono la stessa scala.</td>
     </tr>
     <tr>
       <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
-      <td>Se le immagini della cornice si possono rimpicciolire, e fino a quale scala.</td>
+      <td>Se le immagini della cornice e quelle delle altre cornici del suo gruppo si possono rimpicciolire quando il contenuto di questa cornice non entra, e fino a quale scala.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -399,7 +399,7 @@ Una cornice dichiara la sua dimensione: un `height` fisso, oppure `'auto'`, cio�
 
 - Un gruppo senza `placement` né `grid` propri comincia dove lo porta la collocazione della sua prima cornice e scende quanto serve alle sue cornici, fino al piede dell’area del modello. Quando una cornice cresce, quelle che la seguono scendono della stessa misura.
 - Un gruppo con un riquadro proprio dispone le sue cornici dentro quel riquadro. Se le cornici richiedono più spazio di quanto il riquadro ne offra, cedono spazio quelle con `shrink` maggiore di 0, a cominciare da quelle con la `priority` più bassa; le cornici con la stessa priorità cedono in proporzione al loro `shrink`, e nessuna scende sotto il suo `minHeight`. Lo spazio libero va alle cornici con `grow` maggiore di 0, in proporzione a quel valore e fino al loro `maxHeight`; se nessuna ha `grow`, le cornici vengono collocate secondo `align` (`'end'` al piede, `'center'`, `'space-between'`). Una cornice del gruppo senza una collocazione propria prende come area il riquadro del gruppo.
-- Quando più niente può cedere, nessuna cornice oltrepassa comunque il piede del gruppo: il contenuto che non entra viene tagliato lì e segnalato come `frameOverflow`.
+- Quando più niente può cedere, nessuna cornice oltrepassa comunque il piede del gruppo: la cornice il cui contenuto non entra percorre la sequenza di reimpaginazione (vedi [Quando il contenuto non entra](#quando-il-contenuto-non-entra)), e quello che ancora non entra viene tagliato lì e segnalato come `frameOverflow`.
 - Una cornice con `height: 'fill'` chiede il suo `minHeight` e prende lo spazio libero come se avesse `grow: 1`.
 
 **Fila.** Le cornici di una fila si affiancano alle larghezze dichiarate e sono tutte alte quanto la fila, cioè quanto il riquadro del gruppo o, se il gruppo non ne ha uno proprio, quanto la maggiore fra le loro altezze dichiarate (una cornice con altezza fissa tiene la sua). Quando il testo di una cornice supera l’altezza della fila, la cornice si allarga: prima prende la larghezza libera della fila, poi quella delle cornici vicine con `shrink` maggiore di 0, a cominciare da quelle con la `priority` più bassa, e nessuna di queste diventa più stretta della larghezza in cui il suo testo entra ancora. La cornice prende il minor numero di millimetri interi che basta a far entrare il testo; se non basterebbe nemmeno tutto lo spazio disponibile, non prende nulla, e una fila senza riquadro proprio diventa invece più alta. La larghezza libera va alle cornici con `grow` maggiore di 0, e quella che resta si distribuisce secondo `align`. Le file vanno da sinistra a destra.
@@ -442,6 +442,25 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 Il risultato dipende solo dal contenuto della pagina, dal modello e dalla tipografia: a parità di dati si ottiene la stessa pagina, misurata nello stesso ordine e con gli stessi passi. Mentre divide lo spazio, l’impaginazione non legge mai un’altra pagina, quindi una modifica su una pagina composta lascia invariate tutte le altre, purché il contenuto resti sulla sua pagina.
+
+### Quando il contenuto non entra
+
+Quando il contenuto di una cornice è più alto dello spazio che le dà il suo gruppo, l’impaginazione prova in ordine i passi della [sequenza di reimpaginazione](/it/docs/composed-pages#quando-il-contenuto-ancora-non-entra) e si ferma al primo che lo fa entrare: lo spazio libero fino a `maxHeight`, il gruppo che spinge e cede, immagini più piccole, le altre cornici del gruppo portate al loro minimo, testo più piccolo, la prosecuzione in un’altra pagina. Queste impostazioni della cornice stabiliscono fin dove può spingersi ciascun passo:
+
+- `maxHeight` su una cornice con `height` fisso: la cornice può crescere fin lì prima di qualsiasi riduzione.
+- `minHeight` sulle altre cornici del gruppo: fin dove restituiscono spazio; una cornice non scende mai sotto quanto richiede il suo contenuto.
+- `fit.scaleImages` e `fit.imageMinScale`: se le immagini della cornice e del suo gruppo si possono rimpicciolire, e fino a quale scala (80 % per impostazione predefinita).
+- `fit.shrinkText` e `fit.minScale`: se il testo della cornice si può rimpicciolire, e fino a quale scala (90 % per impostazione predefinita). La scala è la stessa per il corpo, l’interlinea e le spaziature; la cornice mantiene la sua dimensione.
+- `overflow.continueIn`: dove prosegue il contenuto quando tutto questo non basta.
+
+Le scale vanno a passi del 2,5 % e l’impaginazione sceglie la più grande che funziona, così un testo che sfora di una riga viene composto al 97,5 %, non al minimo. Un riquadro che deve mantenere il suo corpo imposta `fit: { shrinkText: false }`; una pagina le cui immagini devono mantenere la loro dimensione imposta `fit: { scaleImages: false }` sulle cornici del suo gruppo:
+
+```ts
+{ name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
+  fit: { minScale: 0.85, imageMinScale: 0.9 } }
+```
+
+Quello che ancora non entra viene segnalato come `frameOverflow`, con i passi tentati e proposte che portano i loro valori: vedi [L’avviso e le sue proposte](/it/docs/composed-pages#lavviso-e-le-sue-proposte).
 
 ### Ereditarietà e varianti
 

@@ -279,19 +279,19 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>fit.shrinkText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Wenn nichts anderes den Inhalt passend macht, darf sein Text kleiner gesetzt werden.</td>
+      <td>Wenn nichts anderes den Inhalt passend macht, darf sein Text kleiner gesetzt werden, in Schritten von 2,5 % (siehe <a href="#wenn-der-inhalt-nicht-passt">Wenn der Inhalt nicht passt</a>).</td>
     </tr>
     <tr>
       <td><code>fit.minScale</code></td>
       <td><code>number</code></td>
       <td><code>0.9</code></td>
-      <td>Der kleinste Textmaßstab, über 0 und höchstens 1 (ein größerer Wert gilt als 1).</td>
+      <td>Der kleinste Textmaßstab, über 0 und höchstens 1 (ein größerer Wert gilt als 1). Schriftgröße, Zeilenabstand und Abstände folgen demselben Maßstab.</td>
     </tr>
     <tr>
       <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
-      <td>Ob die Bilder im Rahmen kleiner gesetzt werden dürfen, und bis zu welchem Maßstab.</td>
+      <td>Ob die Bilder im Rahmen und in den übrigen Rahmen seiner Gruppe kleiner gesetzt werden dürfen, wenn der Inhalt dieses Rahmens nicht passt, und bis zu welchem Maßstab.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -399,7 +399,7 @@ Ein Rahmen gibt seine Größe an: eine feste `height` oder `'auto'`, die Höhe s
 
 - Eine Gruppe ohne eigenes `placement` oder `grid` beginnt dort, wo die Platzierung ihres ersten Rahmens sie hinsetzt, und reicht so weit nach unten, wie ihre Rahmen es brauchen, höchstens bis zum Fuß des Bereichs der Vorlage. Wächst ein Rahmen, rücken die Rahmen nach ihm um dasselbe Maß nach unten.
 - Eine Gruppe mit eigenem Kasten legt ihre Rahmen in diesen Kasten. Brauchen sie mehr Platz, als er bietet, geben die Rahmen mit `shrink` über 0 Platz ab, die mit der niedrigsten `priority` zuerst; Rahmen derselben Priorität geben im Verhältnis ihres `shrink` nach, und keiner wird niedriger als sein `minHeight`. Freier Platz geht an die Rahmen mit `grow` über 0, im Verhältnis zu diesem Wert und bis zu ihrem `maxHeight`; hat kein Rahmen `grow`, verteilt `align` die Rahmen (`'end'` am Fuß, `'center'`, `'space-between'`). Ein Rahmen der Gruppe ohne eigene Platzierung nimmt den Kasten der Gruppe als seinen Bereich.
-- Kann nichts mehr nachgeben, läuft trotzdem kein Rahmen über den Fuß der Gruppe hinaus: Der Inhalt, der nicht passt, wird dort abgeschnitten und als `frameOverflow` gemeldet.
+- Kann nichts mehr nachgeben, läuft trotzdem kein Rahmen über den Fuß der Gruppe hinaus: Der Rahmen, dessen Inhalt nicht passt, durchläuft die Umbruchstufen (siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)), und was dann noch nicht passt, wird dort abgeschnitten und als `frameOverflow` gemeldet.
 - Ein Rahmen mit `height: 'fill'` verlangt sein `minHeight` und nimmt freien Platz, als hätte er `grow: 1`.
 
 **Reihe.** Die Rahmen einer Reihe stehen in ihren angegebenen Breiten nebeneinander und sind alle so hoch wie die Reihe: so hoch wie der Kasten der Gruppe oder, wenn die Gruppe keinen eigenen Kasten hat, wie die größte angegebene Höhe unter ihnen (ein Rahmen mit fester Höhe behält seine). Läuft der Text eines Rahmens über die Höhe der Reihe hinaus, holt sich der Rahmen Breite: zuerst die freie Breite der Reihe, dann Breite von Nachbarn mit `shrink` über 0, die mit der niedrigsten `priority` zuerst, wobei kein Nachbar schmaler wird als die Breite, in die sein eigener Text noch passt. Der Rahmen nimmt so wenige ganze Millimeter, wie sein Text zum Passen braucht; reicht selbst der gesamte verfügbare Platz nicht, nimmt er gar nichts, und eine Reihe ohne eigenen Kasten wird stattdessen höher. Freie Breite geht an die Rahmen mit `grow` über 0, was dann noch bleibt, verteilt `align`. Reihen laufen von links nach rechts.
@@ -442,6 +442,25 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 Das Ergebnis hängt nur vom Inhalt der Seite, von der Vorlage und von der Typografie ab: Aus derselben Eingabe entsteht dieselbe Seite, in derselben Reihenfolge und mit denselben Schritten gemessen. Bei dieser Aufteilung liest der Umbruch nie eine andere Seite. Eine Änderung auf einer zusammengesetzten Seite lässt deshalb alle anderen Seiten unverändert, solange der Inhalt auf seiner Seite bleibt.
+
+### Wenn der Inhalt nicht passt
+
+Ist der Inhalt eines Rahmens höher als der Platz, den ihm seine Gruppe gibt, probiert der Umbruch der Reihe nach die [Umbruchstufen](/de/docs/composed-pages#wenn-der-inhalt-immer-noch-nicht-passt) durch und hört bei der ersten auf, mit der er passt: freier Platz bis `maxHeight`, die Gruppe, die schiebt und nachgibt, kleinere Bilder, die übrigen Rahmen der Gruppe bis auf ihr Minimum, kleinerer Text, Fortsetzung auf einer anderen Seite. Diese Rahmeneinstellungen bestimmen, wie weit jede Stufe gehen darf:
+
+- `maxHeight` an einem Rahmen mit fester `height`: Bis dahin darf der Rahmen wachsen, bevor irgendetwas verkleinert wird.
+- `minHeight` an den übrigen Rahmen der Gruppe: wie weit sie Platz abgeben; ein Rahmen wird nie kleiner als das, was sein eigener Inhalt braucht.
+- `fit.scaleImages` und `fit.imageMinScale`: ob die Bilder des Rahmens und seiner Gruppe kleiner gesetzt werden dürfen, und bis zu welchem Maßstab (standardmäßig 80 %).
+- `fit.shrinkText` und `fit.minScale`: ob der Text des Rahmens kleiner gesetzt werden darf, und bis zu welchem Maßstab (standardmäßig 90 %). Der Maßstab gilt gleichermaßen für Schriftgröße, Zeilenabstand und Abstände; der Rahmen behält seine Größe.
+- `overflow.continueIn`: wo der Inhalt weitergeht, wenn all das nicht reicht.
+
+Die Maßstäbe gehen in Schritten von 2,5 %, und der Umbruch nimmt den größten, der passt: Ein Text, der eine Zeile zu lang ist, wird mit 97,5 % gesetzt, nicht mit dem Minimum. Ein Kasten, der seinen Schriftgrad behalten muss, setzt `fit: { shrinkText: false }`; eine Seite, deren Bilder ihre Größe behalten müssen, setzt `fit: { scaleImages: false }` an den Rahmen ihrer Gruppe:
+
+```ts
+{ name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
+  fit: { minScale: 0.85, imageMinScale: 0.9 } }
+```
+
+Was dann noch nicht passt, wird als `frameOverflow` gemeldet, mit den versuchten Stufen und Vorschlägen, die ihre Werte mitbringen: siehe [Die Warnung und ihre Vorschläge](/de/docs/composed-pages#die-warnung-und-ihre-vorschläge).
 
 ### Vererbung und Varianten
 

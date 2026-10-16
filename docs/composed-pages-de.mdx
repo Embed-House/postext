@@ -222,7 +222,7 @@ Die Prüfungen lesen Markdown und Konfiguration vor jedem Umbruch. Deshalb ersch
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Ein <code>slot="…"</code> nennt keinen Rahmen der Vorlage der Seite (über <code>extends</code> geerbte Rahmen und die Rahmen einer Seite aus <code>variants</code> zählen mit). Der Inhalt kommt in den Flussrahmen.</td>
+      <td>Ein <code>slot="…"</code> nennt keinen Rahmen der Vorlage der Seite (über <code>extends</code> geerbte Rahmen und die Rahmen einer Seite aus <code>variants</code> zählen mit). Der Inhalt kommt in den Flussrahmen, den die Warnung nennt (<code>frame</code>).</td>
       <td>Korrigieren Sie den Slot-Namen, oder fügen Sie der Vorlage einen Rahmen mit diesem Namen hinzu.</td>
     </tr>
     <tr>
@@ -248,19 +248,109 @@ Die Prüfungen lesen Markdown und Konfiguration vor jedem Umbruch. Deshalb ersch
   </tbody>
 </table>
 
+Ist das Buch umbrochen, trägt jede dieser Warnungen auch die Seite, die sie betrifft (`pageIndex`), sodass das Bedienfeld Prüfungen und `postext check` die Seitenzahl neben der Vorlage, dem Rahmen oder Slot und dem Quellbereich angeben.
+
 ### frameOverflow
 
 Diese Warnung kommt aus dem Umbruch, nicht aus den Quellprüfungen oben: Sie erscheint, sobald die Seite gesetzt ist, im Bedienfeld Prüfungen, in `postext check` und in den `contentWarnings` des Dokuments.
 
-**Ursache.** Der Inhalt, der in einen Rahmen fließt (über seinen Slot oder als Inhalt des Fließrahmens), ist höher als der Rahmen, und der Rahmen hat kein `next` mehr, in dem es weitergeht. Meist ist es mehr Text, als der Rahmen fasst: eine Übersetzung, die länger läuft als das Original, oder ein Rahmen mit festem `height` oder `maxHeight`. Was nicht passt, wird in der paginierten Ausgabe am Fuß des Rahmens abgeschnitten; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten. Die Warnung nennt die Vorlage, den Rahmen, die Seite, die abgeschnittene Höhe (`overflowMm`) und `configPath`, den JSON-Zeiger des Rahmens in der Konfiguration (`/pageTemplates/0/frames/2`).
+**Ursache.** Der Inhalt, der in einen Rahmen fließt (über seinen Slot oder als Inhalt des Fließrahmens), ist höher als der Rahmen, der Rahmen hat kein `next` mehr, in dem es weitergeht, und keine der [Umbruchstufen](#wenn-der-inhalt-immer-noch-nicht-passt) hat ihn passend gemacht. Meist ist es mehr Text, als der Rahmen fasst: eine Übersetzung, die länger läuft als das Original, oder ein Rahmen mit festem `height` oder `maxHeight`. Was nicht passt, wird in der paginierten Ausgabe am Fuß des Rahmens abgeschnitten; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten. Die Warnung nennt die Vorlage, den Rahmen, die Seite, die `locale` des Dokuments, die abgeschnittene Höhe (`overflowMm`), `configPath` (den JSON-Zeiger des Rahmens in der Konfiguration, `/pageTemplates/0/frames/2`), die versuchten Stufen (`stepsTried`), die Skalierung, bei der Text und Bilder geblieben sind (`scale`, `imageScale`), und `proposals`, die Änderungen, mit denen der Inhalt passen würde.
 
-**Behebung.** Geben Sie dem Rahmen mehr Platz (erhöhen oder entfernen Sie `height` oder `maxHeight`), verketten Sie ihn mit `next` mit einem weiteren Rahmen, kürzen Sie den Text oder setzen Sie die Seite mit einer anderen Vorlage. Der Umbruch verkleinert den Text bisher nicht, damit er passt.
+**Behebung.** Übernehmen Sie einen der Vorschläge: Jeder bringt seinen Wert mit, auf der Seite berechnet (siehe [Die Warnung und ihre Vorschläge](#die-warnung-und-ihre-vorschläge)). Andernfalls geben Sie dem Rahmen mehr Platz, verketten Sie ihn mit `next` mit einem weiteren Rahmen, kürzen Sie den Text oder setzen Sie die Seite mit einer anderen Vorlage.
 
 ## Wenn der Text wächst
 
 Eine zusammengesetzte Seite ordnet sich innerhalb der Grenzen neu an, die ihre Vorlage angibt. Schreiben Sie einen längeren Text in den ersten Kasten einer Seite, deren Kästen eine Stapelgruppe bilden, dann wächst der Kasten, bis der Text hineinpasst, und die Kästen darunter rücken nach unten, mitsamt den Fotos und dem Dekor, die an ihnen verankert sind; an der Vorlage ändert sich dabei keine Zeile. Mit einem kürzeren Text kehrt der Kasten zu seiner angegebenen Höhe zurück. Ein Rahmen oder ein Element des Dekors mit `pin` bleibt dort, wo die Vorlage ihn hinsetzt, etwa ein Kasten, der genau auf der Illustration liegen muss. Wie Stapel und Reihen den Platz teilen und welcher Rahmen zuerst nachgibt, legt die Vorlage fest: siehe [Konfiguration › Wie Gruppen den Platz teilen](/de/docs/configuration-composed-pages#wie-gruppen-den-platz-teilen).
 
-Erreichen die Kästen den Fuß des Bereichs und kann kein Rahmen der Gruppe mehr Platz abgeben, wird der letzte Rahmen am Fuß abgeschnitten, und der Umbruch meldet `frameOverflow` (siehe [Warnungen](#warnungen)). Kürzen Sie dann den Text, senken Sie das `minHeight` eines anderen Rahmens, lassen Sie einen Rahmen schrumpfen oder geben Sie der Gruppe mehr Raum. Weitere Warnungen erzeugen Gruppen nicht.
+Erreichen die Kästen den Fuß des Bereichs und kann kein Rahmen der Gruppe mehr Platz abgeben, durchläuft der Rahmen, dessen Inhalt nicht passt, die unten beschriebenen Umbruchstufen; eine eigene Warnung erzeugen Gruppen nicht.
+
+## Wenn der Inhalt immer noch nicht passt
+
+Ein Rahmen, dessen Inhalt nicht passt, probiert nacheinander die Wege aus, die ihm seine Vorlage lässt, um Platz zu gewinnen, und hört beim ersten auf, der genügt. Jede Stufe kommt zu den vorherigen hinzu, in dieser Reihenfolge:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Stufe</th>
+      <th>Was der Umbruch tut</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>Der Rahmen nimmt freien Platz. Ein Rahmen, dessen Höhe seinem Inhalt folgt, wächst ohnehin in den Raum, den ihm sein Bereich und seine Gruppe lassen; ein Rahmen mit fester <code>height</code> wächst bis zu seiner <code>maxHeight</code>, sofern er eine hat.</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>Seine Gruppe schiebt die Rahmen nach ihm nach unten, und die Rahmen mit <code>shrink</code> geben Platz ab (siehe <a href="/de/docs/configuration-composed-pages#wie-gruppen-den-platz-teilen">Wie Gruppen den Platz teilen</a>).</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>Die Bilder des Rahmens und der übrigen Rahmen seiner Gruppe werden verkleinert, in Schritten von 2,5 %, bis auf <code>fit.imageMinScale</code> (standardmäßig 80 %), und zwar auf die größte Skalierung, bei der der Inhalt passt. Der Text nach einem Bild rückt mit ihm nach oben.</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>Die übrigen Rahmen der Gruppe geben Platz ab, ob sie <code>shrink</code> haben oder nicht: jeder bis auf seine <code>minHeight</code>, nie unter das, was sein eigener Inhalt braucht. In einer Reihe geben sie Breite ab, jeder bis auf die schmalste Breite, in die sein Text noch passt.</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>Der Text des Rahmens wird verkleinert, in Schritten von 2,5 %, bis auf <code>fit.minScale</code> (standardmäßig 90 %), und zwar auf die größte Skalierung, bei der er passt. Schriftgröße, Zeilenabstand und Abstände schrumpfen gemeinsam, als wäre der ganze Rahmen in einem kleineren Grad gesetzt. Ein mit <code>next</code> verketteter Rahmen schrumpft mit den Rahmen seiner Kette. <code>fit.shrinkText: false</code> lässt den Text in seiner Größe.</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>Der Rahmen geht auf einer anderen Seite weiter (<code>overflow.continueIn: 'next-page'</code> oder <code>'template:&lt;id&gt;'</code>). Diese Version meldet die Stufe; die hinzugefügte Seite umbricht erst eine spätere Version.</td>
+    </tr>
+  </tbody>
+</table>
+
+Bringt keine Stufe den Inhalt unter, wird der Rahmen an seinem Fuß abgeschnitten, behält die Skalierungen, die die Stufen erreicht haben, und der Umbruch meldet `frameOverflow`. Jede Stufe umbricht die ganze Seite neu, deshalb hängt das Ergebnis nur von dieser Seite ab: Dieselbe Eingabe ergibt dieselbe Seite, überlaufende Rahmen werden in der Reihenfolge der Vorlage behandelt, und eine Änderung auf einer zusammengesetzten Seite lässt alle anderen Seiten, wie sie waren. Die Einstellungen stehen unter [Konfiguration › Wenn der Inhalt nicht passt](/de/docs/configuration-composed-pages#wenn-der-inhalt-nicht-passt).
+
+### Die Warnung und ihre Vorschläge
+
+`frameOverflow` nennt die Seite, die Vorlage, den Rahmen und die Sprache des Dokuments, sodass eine Seite, die auf Spanisch passt und auf Katalanisch überläuft, genau das sagt, und führt die versuchten Stufen auf. Jeder Vorschlag ist ein Datensatz, `{ kind, path, value }`: `path` ist der JSON-Zeiger der Einstellung, die zu ändern ist, und `value` der Wert, auf den sie zu setzen ist, berechnet aus dem fehlenden Platz.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Vorschlag</th>
+      <th>Was er ändert</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td><code>fit.minScale</code> des Rahmens: die größte Textskalierung, in Schritten von 2,5 % bis hinunter auf 50 %, bei der der Inhalt passt, auf der Seite ausprobiert. Mit <code>fit.shrinkText: false</code> schaltet <code>also</code> es ein.</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td><code>maxHeight</code> des Rahmens: seine Höhe plus der fehlende Platz, in ganzen Millimetern. Nur vorgeschlagen, wenn die Seite den Raum hat, was auf ihr ausprobiert wird.</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td><code>minHeight</code> eines anderen Rahmens seiner Gruppe (<code>frame</code>), der auf seinem Minimum steht, obwohl sein Inhalt weniger braucht: um den fehlenden Platz gesenkt, nie unter seinen Inhalt. Auf der Seite ausprobiert.</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td><code>overflow.continueIn</code> des Rahmens, auf <code>'next-page'</code> gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>Eine andere Vorlage des Buches mit einem Rahmen gleichen Namens, in den der Inhalt unverändert passt, auf der Seite in der Reihenfolge von <code>pageTemplates</code> ausprobiert. Das ist eine Änderung am Markdown: <code>sourceStart</code> und <code>sourceEnd</code> geben den Bereich des Werts <code>template</code> der Seitenbegrenzung an.</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>Wie viele Zeichen ungefähr zu kürzen sind: die Zeilen, die nicht passen, mal die Zeichen pro Zeile des Rahmens. Der Bereich ist der Inhalt des Rahmens.</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check` gibt die Warnung mit ihren Stufen und Vorschlägen in Worten aus, und `--json` trägt dieselben Daten unter `data` der Warnung:
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+Das Bedienfeld Prüfungen zeigt denselben Eintrag in der Sprache der Oberfläche.
 
 ## Umbruchprotokoll
 
@@ -291,6 +381,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>Die Oberkante des Rahmens (mit <code>axis: 'x'</code> seine linke Kante) hat sich verschoben, gemessen in mm vom Blattrand; <code>cause</code> ist der Rahmen, dessen Wachstum ihn verschoben hat.</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>Die Umbruchstufen haben die Bilder des Rahmens auf <code>scale</code> verkleinert; <code>cause</code> ist der Rahmen der Gruppe, der den Platz brauchte, wenn es ein anderer ist.</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>Die Umbruchstufen haben den Text des Rahmens auf <code>scale</code> verkleinert.</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>Der Inhalt hat nicht gepasst: <code>toMm</code> ist die abgeschnittene Höhe, wie bei <code>frameOverflow</code>.</td>
     </tr>
@@ -301,7 +399,7 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
 
 `postext check` gibt nach den Warnungen für jede zusammengesetzte Seite mit Ereignissen eine Zeile `reflow` aus. Mit `--json` enthält der Bericht ein Array `reflow` mit einem Eintrag je Seite: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` und `lines` (die Ereignisse in Worten).
 
-Im Code ist das Protokoll `VDTPage.composed.log`, und jeder Rahmen bewahrt den Kasten, den seine Vorlage angibt, in `VDTFrame.declaredRect` auf, sofern er von `rect` abweicht. `composedReflowLog(doc)` liefert die Einträge, die `postext check` ausgibt, und `describeReflowEvent(event)` fasst ein einzelnes Ereignis in Worte.
+Im Code ist das Protokoll `VDTPage.composed.log`, und jeder Rahmen bewahrt den Kasten, den seine Vorlage angibt, in `VDTFrame.declaredRect` auf, sofern er von `rect` abweicht. `composedReflowLog(doc)` liefert die Einträge, die `postext check` ausgibt, und `describeReflowEvent(event)` fasst ein einzelnes Ereignis in Worte; `describeFitStep(step)` und `describeFrameOverflowProposal(proposal)` tun dasselbe für eine Umbruchstufe und für einen Vorschlag. Ein Rahmen, dessen Text die Stufen verkleinert haben, hat ein `VDTFrame.scale` unter 1: Seine Blöcke werden in einem `1 / scale`-mal so großen Kasten umbrochen (`frameContentRect(frame)`), und `frameMatrix(frame)` bringt sie aufs Blatt; die Skalierung seiner Bilder ist `VDTFrame.imageScale`.
 
 ## Doppelseiten
 

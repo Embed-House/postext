@@ -222,7 +222,7 @@ Les vérifications lisent le Markdown et la configuration avant toute mise en pa
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Un <code>slot="…"</code> ne nomme aucun bloc du modèle de la page (les blocs hérités par <code>extends</code> et ceux d’une page de <code>variants</code> comptent). Le contenu va dans le bloc de flux.</td>
+      <td>Un <code>slot="…"</code> ne nomme aucun bloc du modèle de la page (les blocs hérités par <code>extends</code> et ceux d’une page de <code>variants</code> comptent). Le contenu va dans le bloc de flux, que l’avertissement nomme (<code>frame</code>).</td>
       <td>Corriger le nom du slot, ou ajouter au modèle un bloc de ce nom.</td>
     </tr>
     <tr>
@@ -248,19 +248,109 @@ Les vérifications lisent le Markdown et la configuration avant toute mise en pa
   </tbody>
 </table>
 
+Une fois le livre mis en page, chacun de ces avertissements porte aussi la page qu’il concerne (`pageIndex`) : le panneau Vérifications et `postext check` donnent le numéro de page à côté du modèle, du bloc ou du slot, et de la plage source.
+
 ### frameOverflow
 
 Cet avertissement vient de la mise en page, pas des vérifications de la source décrites plus haut : il apparaît une fois la page composée, dans le panneau Vérifications, dans `postext check` et dans les `contentWarnings` du document.
 
-**Cause.** Le contenu versé dans un bloc (par son slot, ou celui que reçoit le bloc de flux) est plus haut que le bloc, et le bloc n’a plus de `next` où continuer. Le plus souvent, il y a plus de texte que le bloc n’en contient : une traduction plus longue que l’original, ou un bloc tenu par un `height` ou un `maxHeight` fixe. Ce qui ne tient pas est coupé au pied du bloc dans la sortie paginée ; il reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable. L’avertissement donne le modèle, le bloc, la page, la hauteur coupée (`overflowMm`) et `configPath`, le pointeur JSON du bloc dans la configuration (`/pageTemplates/0/frames/2`).
+**Cause.** Le contenu versé dans un bloc (par son slot, ou celui que reçoit le bloc de flux) est plus haut que le bloc, le bloc n’a plus de `next` où continuer, et aucune étape de la [cascade de recomposition](#quand-le-contenu-ne-tient-toujours-pas) ne l’a fait tenir. Le plus souvent, il y a plus de texte que le bloc n’en contient : une traduction plus longue que l’original, ou un bloc tenu par un `height` ou un `maxHeight` fixe. Ce qui ne tient pas est coupé au pied du bloc dans la sortie paginée ; il reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable. L’avertissement donne le modèle, le bloc, la page, la `locale` du document, la hauteur coupée (`overflowMm`), `configPath` (le pointeur JSON du bloc dans la configuration, `/pageTemplates/0/frames/2`), les étapes essayées (`stepsTried`), l’échelle à laquelle son texte et ses images sont restés (`scale`, `imageScale`) et `proposals`, les changements qui le feraient tenir.
 
-**Correction.** Donnez plus de place au bloc (augmentez ou retirez son `height` ou son `maxHeight`), chaînez-le à un autre bloc avec `next`, raccourcissez le texte ou composez la page avec un autre modèle. Pour l’instant, la mise en page ne réduit pas le texte pour le faire tenir.
+**Correction.** Appliquez l’une des propositions : chacune arrive avec sa valeur, calculée sur la page (voir [L’avertissement et ses propositions](#lavertissement-et-ses-propositions)). Sinon, donnez plus de place au bloc, chaînez-le à un autre bloc avec `next`, raccourcissez le texte ou composez la page avec un autre modèle.
 
 ## Quand le texte s’allonge
 
 Une page composée se réorganise dans les limites que déclare son modèle. Si vous écrivez un texte plus long dans le premier encadré d’une page dont les encadrés forment un groupe en pile, l’encadré grandit pour le contenir et les encadrés du dessous descendent, avec les photos et le décor qui leur sont ancrés ; aucune ligne du modèle ne change. Avec un texte plus court, l’encadré retrouve sa hauteur déclarée. Un bloc ou un élément de décor marqué `pin` reste là où le modèle le place, pour un encadré qui doit tomber juste sur l’illustration. La façon dont les piles et les rangées se partagent l’espace, et le bloc qui cède le premier, se règlent dans le modèle : voir [Configuration › Comment les groupes se partagent l’espace](/fr/docs/configuration-composed-pages#comment-les-groupes-se-partagent-lespace).
 
-Quand les encadrés atteignent le pied de la zone et qu’aucun bloc du groupe ne peut céder plus d’espace, le dernier bloc est coupé au pied et la mise en page signale `frameOverflow` (voir [Avertissements](#avertissements)) : raccourcissez le texte, baissez le `minHeight` d’un autre bloc, laissez un bloc rétrécir ou donnez plus de place au groupe. Les groupes n’ajoutent aucun autre avertissement.
+Quand les encadrés atteignent le pied de la zone et qu’aucun bloc du groupe ne peut céder plus d’espace, le bloc qui ne tient pas passe par la cascade de recomposition décrite plus bas ; les groupes n’ont pas d’avertissement propre.
+
+## Quand le contenu ne tient toujours pas
+
+Un bloc dont le contenu ne tient pas essaie l’un après l’autre les moyens que son modèle lui laisse pour gagner de la place, et s’arrête au premier qui suffit. Chaque étape s’ajoute aux précédentes, dans cet ordre :
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Étape</th>
+      <th>Ce que fait la mise en page</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>Le bloc prend l’espace libre. Un bloc dont la hauteur suit son contenu grandit déjà dans la place que lui laissent sa zone et son groupe ; un bloc de <code>height</code> fixe grandit jusqu’à son <code>maxHeight</code> s’il en a un.</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>Son groupe fait descendre les blocs qui le suivent, et les blocs dotés de <code>shrink</code> rendent de l’espace (voir <a href="/fr/docs/configuration-composed-pages#comment-les-groupes-se-partagent-lespace">Comment les groupes se partagent l’espace</a>).</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>Les images du bloc et des autres blocs de son groupe sont réduites, par paliers de 2,5 %, jusqu’à <code>fit.imageMinScale</code> (80 % par défaut), à la plus grande échelle qui fait tenir le contenu. Le texte qui suit une image remonte avec elle.</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>Les autres blocs du groupe rendent de l’espace, qu’ils aient <code>shrink</code> ou non : chacun descend jusqu’à son <code>minHeight</code>, jamais en dessous de ce que demande son propre contenu. Dans une rangée, ils cèdent de la largeur, chacun jusqu’à la largeur la plus étroite où son texte tient encore.</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>Le texte du bloc est réduit, par paliers de 2,5 %, jusqu’à <code>fit.minScale</code> (90 % par défaut), à la plus grande échelle qui le fait tenir. Corps, interlignage et espacements diminuent ensemble, comme si tout le bloc était composé dans un corps plus petit. Un bloc chaîné par <code>next</code> se réduit avec les blocs de sa chaîne. <code>fit.shrinkText: false</code> laisse le texte à sa taille.</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>Le bloc continue sur une autre page (<code>overflow.continueIn: 'next-page'</code> ou <code>'template:&lt;id&gt;'</code>). Cette version signale l’étape ; la page ajoutée sera mise en page par une version ultérieure.</td>
+    </tr>
+  </tbody>
+</table>
+
+Quand aucune étape ne fait tenir le contenu, le bloc est coupé à son pied, garde les échelles atteintes par la cascade, et la mise en page signale `frameOverflow`. Chaque étape remet en page toute la page, si bien que le résultat ne dépend que de cette page : la même entrée donne la même page, les blocs qui débordent sont traités dans l’ordre du modèle, et un changement sur une page composée laisse toutes les autres pages telles quelles. Les réglages se trouvent dans [Configuration › Quand le contenu ne tient pas](/fr/docs/configuration-composed-pages#quand-le-contenu-ne-tient-pas).
+
+### L’avertissement et ses propositions
+
+`frameOverflow` nomme la page, le modèle, le bloc et la langue du document, de sorte qu’une page qui tient en espagnol et déborde en catalan le dit, et il liste les étapes essayées. Chaque proposition est une donnée, `{ kind, path, value }` : `path` est le pointeur JSON du réglage à modifier et `value` la valeur à lui donner, calculée d’après ce qui manque.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proposition</th>
+      <th>Ce qu’elle change</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td><code>fit.minScale</code> du bloc : la plus grande échelle de texte, par paliers de 2,5 % jusqu’à 50 %, à laquelle le contenu tient, essayée sur la page. Avec <code>fit.shrinkText: false</code>, <code>also</code> l’active.</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td><code>maxHeight</code> du bloc : sa hauteur plus ce qui manque, en millimètres entiers. Proposée seulement quand la page a la place, ce qui est essayé sur elle.</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td><code>minHeight</code> d’un autre bloc de son groupe (<code>frame</code>) qui est à son minimum alors que son contenu demande moins : abaissé de ce qui manque, jamais en dessous de son contenu. Essayée sur la page.</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td><code>overflow.continueIn</code> du bloc, réglé sur <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>Un autre modèle du livre, avec un bloc du même nom, dans lequel le contenu tient tel quel, essayé sur la page dans l’ordre de <code>pageTemplates</code>. C’est un changement du Markdown : <code>sourceStart</code> et <code>sourceEnd</code> donnent la plage de la valeur <code>template</code> du délimiteur de page.</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>Combien de caractères couper, à peu près : les lignes qui ne tiennent pas, au nombre de caractères par ligne du bloc. La plage est le contenu du bloc.</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check` affiche l’avertissement avec ses étapes et ses propositions rédigées en clair, et `--json` porte les mêmes données sous le `data` de l’avertissement :
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+Le panneau Vérifications affiche la même entrée dans la langue de l’interface.
 
 ## Journal de recomposition
 
@@ -291,6 +381,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>Le bord supérieur du bloc (avec <code>axis: 'x'</code>, son bord gauche) s’est déplacé, en mm depuis le bord de la feuille ; <code>cause</code> est le bloc dont l’agrandissement l’a déplacé.</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>La cascade de recomposition a réduit les images du bloc à <code>scale</code> ; <code>cause</code> est le bloc du groupe qui avait besoin de la place, quand c’en est un autre.</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>La cascade de recomposition a réduit le texte du bloc à <code>scale</code>.</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>Le contenu ne tenait pas : <code>toMm</code> est la hauteur coupée, comme dans <code>frameOverflow</code>.</td>
     </tr>
@@ -301,7 +399,7 @@ Les changements de moins d’un demi-millimètre sont omis, et chaque changement
 
 `postext check` affiche une ligne `reflow` par page composée qui a des événements, après les avertissements ; avec `--json`, le rapport contient un tableau `reflow` avec une entrée par page : `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` et `lines` (les événements rédigés en clair).
 
-Depuis le code, le journal est `VDTPage.composed.log`, et chaque bloc garde dans `VDTFrame.declaredRect` la boîte que son modèle lui déclare quand elle diffère de `rect`. `composedReflowLog(doc)` renvoie les entrées qu’affiche `postext check`, et `describeReflowEvent(event)` rédige un événement en clair.
+Depuis le code, le journal est `VDTPage.composed.log`, et chaque bloc garde dans `VDTFrame.declaredRect` la boîte que son modèle lui déclare quand elle diffère de `rect`. `composedReflowLog(doc)` renvoie les entrées qu’affiche `postext check`, et `describeReflowEvent(event)` rédige un événement en clair ; `describeFitStep(step)` et `describeFrameOverflowProposal(proposal)` font de même pour une étape de la cascade et pour une proposition. Un bloc dont la cascade a réduit le texte a un `VDTFrame.scale` inférieur à 1 : ses éléments sont mis en page dans une boîte `1 / scale` fois plus grande (`frameContentRect(frame)`) et `frameMatrix(frame)` les place sur la feuille ; l’échelle de ses images est `VDTFrame.imageScale`.
 
 ## Doubles pages
 

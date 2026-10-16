@@ -222,7 +222,7 @@ Si necesitas o quieres comprar algo muy caro…
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>某个<code>slot="…"</code>指定的名称不是该页模板中的任何框（通过<code>extends</code>继承的框和<code>variants</code>页面中的框都算在内）。这段内容进入流文框。</td>
+      <td>某个<code>slot="…"</code>指定的名称不是该页模板中的任何框（通过<code>extends</code>继承的框和<code>variants</code>页面中的框都算在内）。这段内容进入流文框，警告中写明是哪个框（<code>frame</code>）。</td>
       <td>改正槽位名，或者在模板中加一个同名的框。</td>
     </tr>
     <tr>
@@ -248,19 +248,109 @@ Si necesitas o quieres comprar algo muy caro…
   </tbody>
 </table>
 
+全书排好之后，这些警告还会带上所涉及的页（`pageIndex`），检查面板和`postext check`在模板、框或槽位以及源码范围旁边给出页码。
+
 ### frameOverflow
 
 这条警告来自排版，而不是上面那些读源码的检查：页面排好之后，它才出现在检查面板、`postext check`和文档的`contentWarnings`中。
 
-**原因**：灌入某个框的内容（通过它的槽位，或进入流文框的内容）比框高，而这个框已没有可以接续的`next`框。最常见的情况是文字比框能容纳的多：译文比原文长，或者框被固定的`height`或`maxHeight`限住了。放不下的部分在分页输出中于框底被裁掉；它仍留在文档、源码映射和流式版式的EPUB中。警告会给出模板、框、页码、被裁掉的高度（`overflowMm`）以及`configPath`，即该框在配置中的JSON指针（`/pageTemplates/0/frames/2`）。
+**原因**：灌入某个框的内容（通过它的槽位，或进入流文框的内容）比框高，这个框已没有可以接续的`next`框，而[逐级重排](#仍然放不下时)的各个步骤也都没能让它放下。最常见的情况是文字比框能容纳的多：译文比原文长，或者框被固定的`height`或`maxHeight`限住了。放不下的部分在分页输出中于框底被裁掉；它仍留在文档、源码映射和流式版式的EPUB中。警告会给出模板、框、页码、文档的`locale`、被裁掉的高度（`overflowMm`）、`configPath`（该框在配置中的JSON指针，`/pageTemplates/0/frames/2`）、尝试过的步骤（`stepsTried`）、文字和图片最后停留的缩放比例（`scale`、`imageScale`），以及`proposals`，即能让内容放下的修改。
 
-**解决**：给框更多空间（调高或去掉它的`height`或`maxHeight`），用`next`把它接到另一个框，缩短文字，或者换一个模板来排这一页。目前排版不会为了放下文字而自动缩小它。
+**解决**：采用其中一条建议，每条都附有在这一页上算出的取值（见[警告及其建议](#警告及其建议)）。否则就给框更多空间，用`next`把它接到另一个框，缩短文字，或者换一个模板来排这一页。
 
 ## 文字变长时
 
 模板页在模板声明的限度之内自行调整。如果一页上的各个框组成一个纵向组，在第一个框里写更长的文字，这个框就会变高来容纳它，下面的框以及锚定在它们上面的照片和装饰随之下移；模板一行也不用改。文字变短，框就回到声明的高度。标了`pin`的框或装饰元素留在模板放置它的地方，用于必须压在画面上的方框。纵向组和横向组怎样分配空间、哪个框先让步，都在模板中设定：见[配置 › 组如何分配空间](/zh/docs/configuration-composed-pages#组如何分配空间)。
 
-方框排到区域底边、组里再没有框能让出空间时，最后一个框在底边截断，排版报告`frameOverflow`（见[警告](#警告)）。这时可以缩短文字，调低另一个框的`minHeight`，允许某个框缩小，或者给组更多空间。组不会带来别的警告。
+方框排到区域底边、组里再没有框能让出空间时，放不下的那个框按下文的步骤逐级重排；组本身不带来别的警告。
+
+## 仍然放不下时
+
+内容放不下的框会依次尝试模板允许的各种腾出空间的办法，到第一个奏效的为止。每一步都叠加在前面各步之上，顺序如下：
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>步骤</th>
+      <th>排版做什么</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>框占用空闲的空间。高度随内容而定的框本来就会长进区域和组留给它的空间；高度固定（<code>height</code>）的框如果设了<code>maxHeight</code>，可以长到这个高度。</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>组把它后面的框往下推，设了<code>shrink</code>的框让出空间（见<a href="/zh/docs/configuration-composed-pages#组如何分配空间">组如何分配空间</a>）。</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>这个框以及同组其他框中的图片缩小排，每级2.5%，最小到<code>fit.imageMinScale</code>（默认80%），取能让内容放下的最大比例。图片后面的文字随之上移。</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>组中的其他框不论是否设了<code>shrink</code>，都让出空间：每个框缩到它的<code>minHeight</code>，但绝不小于它自己的内容所需。在横向组中，它们让出的是宽度，每个框最窄到它自己的文字仍能放下的宽度。</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>框中的文字缩小排，每级2.5%，最小到<code>fit.minScale</code>（默认90%），取能让它放下的最大比例。字号、行距和间距一起缩小，就像整个框改用小一号的字来排。用<code>next</code>串接的框与同一串中的其他框一起缩小。<code>fit.shrinkText: false</code>让文字保持原来的大小。</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>框到另一页上续排（<code>overflow.continueIn: 'next-page'</code>或<code>'template:&lt;id&gt;'</code>）。当前版本只报告这一步，添加的那一页要到以后的版本才会排出。</td>
+    </tr>
+  </tbody>
+</table>
+
+没有哪一步能让内容放下时，框在底边截断，保留逐级重排达到的缩放比例，排版报告`frameOverflow`。每一步都把整页重排一遍，所以结果只取决于这一页：同样的输入得到同样的页面，溢出的框按模板中的顺序处理，修改一个模板页不会改变其他任何页面。相关设置见[配置 › 内容放不下时](/zh/docs/configuration-composed-pages#内容放不下时)。
+
+### 警告及其建议
+
+`frameOverflow`写明页码、模板、框和文档的语言，所以一页西班牙语排得下、加泰罗尼亚语却溢出时，警告会写清楚；它还列出尝试过的步骤。每条建议都是数据`{ kind, path, value }`：`path`是要修改的设置的JSON指针，`value`是根据差额算出的应设值。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>建议</th>
+      <th>修改什么</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td>框的<code>fit.minScale</code>：在这一页上试出的、能让内容放下的最大文字比例，每级2.5%，最低到50%。设了<code>fit.shrinkText: false</code>时，<code>also</code>会把它打开。</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td>框的<code>maxHeight</code>：它的高度加上差额，取整毫米。只有这一页确有空间时才提出，这一点在页上试过。</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td>同组另一个框（<code>frame</code>）的<code>minHeight</code>，这个框停在最小高度，而它的内容用不了那么多：按差额调低，但不低于它的内容。在页上试过。</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td>框的<code>overflow.continueIn</code>，设为<code>'next-page'</code>。</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>书中另一个有同名框、能把内容原样放下的模板，按<code>pageTemplates</code>的顺序在这一页上试出。这是对Markdown的修改：<code>sourceStart</code>和<code>sourceEnd</code>给出页面围栏中<code>template</code>值的范围。</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>大约要删掉多少字符：放不下的行数乘以框的每行字符数。范围是框的内容。</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check`用文字打印警告及其步骤和建议，`--json`在警告的`data`下带有同样的数据：
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+检查面板以界面的语言显示同一条目。
 
 ## 重排记录
 
@@ -291,6 +381,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>框的上边（<code>axis: 'x'</code>时是左边）移动了，以距纸边的毫米数计；<code>cause</code>是因变高而推动它的那个框。</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>逐级重排把框中的图片排成<code>scale</code>的比例；需要空间的是组中另一个框时，<code>cause</code>就是那个框。</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>逐级重排把框中的文字排成<code>scale</code>的比例。</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>内容放不下：<code>toMm</code>是被截掉的高度，与<code>frameOverflow</code>中的相同。</td>
     </tr>
@@ -301,7 +399,7 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
 
 `postext check`在警告之后，为每个有事件的模板页打印一行`reflow`；加上`--json`时，报告中有一个`reflow`数组，每页一项，包括`pageIndex`、`pageLabel`、`template`、`fenceIndex`、`chapter`、`events`和`lines`（用文字写出的事件）。
 
-在代码中，这份记录是`VDTPage.composed.log`；框的`rect`与模板声明的矩形不同时，框在`VDTFrame.declaredRect`中保留声明的矩形。`composedReflowLog(doc)`返回`postext check`打印的那些条目，`describeReflowEvent(event)`把一个事件写成文字。
+在代码中，这份记录是`VDTPage.composed.log`；框的`rect`与模板声明的矩形不同时，框在`VDTFrame.declaredRect`中保留声明的矩形。`composedReflowLog(doc)`返回`postext check`打印的那些条目，`describeReflowEvent(event)`把一个事件写成文字；`describeFitStep(step)`和`describeFrameOverflowProposal(proposal)`分别对逐级重排的一步和一条建议做同样的事。文字经逐级重排缩放过的框，其`VDTFrame.scale`小于1：它的块排在放大到`1 / scale`倍的方框里（`frameContentRect(frame)`），再由`frameMatrix(frame)`放到纸面上；它的图片的缩放比例是`VDTFrame.imageScale`。
 
 ## 跨页
 
