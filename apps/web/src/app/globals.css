@@ -851,13 +851,16 @@ html {
 }
 /* One block per highlighted line (whitespace between grid items is not
    drawn), so a wrapped line can hang: its continuation starts two columns
-   in from the line's own indent (`--indent`, set by rehypeCodeIndent). */
+   in from the line's own indent (`--indent`, set by rehypeCodeIndent),
+   never more than 40% of the block (a deeply indented comment on a
+   phone). */
 .docs-content pre code:has(> [data-line]) {
   display: grid;
 }
 .docs-content pre code > [data-line] {
-  padding-inline-start: calc((var(--indent, 0) + 2) * 1ch);
-  text-indent: calc((var(--indent, 0) + 2) * -1ch);
+  --hang: min(calc((var(--indent, 0) + 2) * 1ch), 40%);
+  padding-inline-start: var(--hang);
+  text-indent: calc(-1 * var(--hang));
 }
 /* rehype-pretty-code: use shiki dual-theme CSS variables */
 .docs-content pre code span {
