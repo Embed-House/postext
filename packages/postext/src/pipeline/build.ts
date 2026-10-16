@@ -17,6 +17,7 @@ import {
   type VDTColumn,
   type VDTExclusion,
   type VDTComposedPage,
+  type VDTExclusionContour,
   type VDTPage,
   type BoundingBox,
   type ResolvedResourceBlock,
@@ -29,6 +30,7 @@ import {
   type VDTFigureLabel,
 } from '../vdt';
 import { figureLabels } from './buildMeasurement';
+import { contourOnPage } from '../contour';
 import { anchorBox } from '../design/layout';
 import { parseMarkdownMemo, spaceDirectiveLines } from '../parse';
 import {
@@ -1716,6 +1718,36 @@ function placeDocumentPass(
   };
   /** The `textWrap` warnings of this pass (#627). */
   const textWrapNotes: ContentWarning[] = [];
+  /** Resources whose contour wrap fell back to the box this pass (#883):
+   *  said once each. */
+  const contourFallbacks = new Set<string>();
+  /** The shape a contour wrap (#883) of `resource`, set as `rb` in the
+   *  figure `box`, runs round on `page`: its polygon or traced alpha
+   *  channel through the picture's crop and scale, the contour's margin
+   *  round it (else the wrap's gap), its insets in whole body characters
+   *  under a CJK grid; `rb.bodyRect` is relative to `origin`, `box` is in
+   *  page px. `undefined` (and a `noContour` note) when the shape is not
+   *  known: the text runs round the box. */
+  const wrapContourOf = (
+    resource: Resource,
+    rb: ResolvedResourceBlock,
+    box: BoundingBox,
+    gapPx: number,
+    page: VDTPage,
+    origin: { x: number; y: number },
+    source?: { sourceStart: number; sourceEnd: number },
+  ): VDTExclusionContour | undefined => {
+    const own = resource.contour?.margin;
+    const margin = own ? Math.max(0, dimensionToPx(own, dpi, bodyStyle.fontSizePx)) : gapPx;
+    const quantum = resolved.cjk.grid.enabled && bodyStyle.fontSizePx > 0 ? bodyStyle.fontSizePx : undefined;
+    const c = contourOnPage(resource, rb, box, { margin, mirrored: pageIsMirrored(page), originX: origin.x, originY: origin.y, ...(quantum ? { quantum } : {}) });
+    if (c) return c;
+    if (!contourFallbacks.has(resource.id)) {
+      contourFallbacks.add(resource.id);
+      textWrapNotes.push({ kind: 'textWrap', reason: 'noContour', resourceId: resource.id, ...(source ?? {}), pageIndex: page.index });
+    }
+    return undefined;
+  };
   const floatWraps = new Map<VDTColumn, { position: FloatSlotPosition; need: number; ex: VDTExclusion }[]>();
   /** Give the bands of the wrapped floats of `col` back to the flow, as
    *  exclusions the text runs beside: a float at the head of a column the
@@ -2389,6 +2421,14 @@ function placeDocumentPass(
           gap: exWidth - width,
           ownerId: built.block.id,
         };
+        // A contour wrap (#883): the picture's shape where its block is
+        // set (`commitFloatBlock` puts it at `xLeft`, `y`).
+        const fRes = f.contour ? resourceById.get(f.resourceId) : undefined;
+        const fRb = built.block.resourceBlock;
+        if (fRes && fRb) {
+          const c = wrapContourOf(fRes, fRb, { x: xLeft, y, width, height: built.height }, wrapGap, page, { x: xLeft, y });
+          if (c) ex.contour = c;
+        }
         if (underOpener) {
           // The band was taken from the flow: the text placed next takes
           // it back and runs beside the float, as it does beside an inline
@@ -7008,6 +7048,12 @@ function placeDocumentPass(
           pendingSpacing = 0;
           inlineGapOwed = null;
           const exWidth = wrapExclusionWidth(rCol.bbox.width, rCol.bbox.width * wrapSpec.width, wrapGap);
+          // A contour wrap (#883): the picture's shape where it was set.
+          const slotWidth = rCol.bbox.width * wrapSpec.width;
+          const slot = { x: wrapSpec.side === 'left' ? rCol.bbox.x : rCol.bbox.x + rCol.bbox.width - slotWidth, y: top, width: slotWidth, height: groupHeight };
+          const contour = wrapSpec.contour
+            ? wrapContourOf(kind.resource!, resourceBlock, slot, wrapGap, doc.pages[cursor.pageIndex]!, { x: blk.bbox.x, y: blk.bbox.y }, { sourceStart: rawBlock.sourceStart + bodyOffset, sourceEnd: rawBlock.sourceEnd + bodyOffset })
+            : undefined;
           pendingWrap = {
             col: rCol,
             blocks: rCol.blocks.length,
@@ -7020,6 +7066,7 @@ function placeDocumentPass(
               side: wrapSpec.side,
               gap: exWidth - rCol.bbox.width * wrapSpec.width,
               ownerId: blk.id,
+              ...(contour ? { contour } : {}),
             },
           };
           flushPendingNumberingAtBoundary();

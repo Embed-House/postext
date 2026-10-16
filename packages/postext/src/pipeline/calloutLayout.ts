@@ -64,7 +64,9 @@ import {
   type VDTDesignBlock,
   type VDTDesignSlot,
   type VDTDesignTextBlock,
+  type VDTExclusionContour,
 } from '../vdt';
+import { contourInsetSteps, shiftContour } from '../contour';
 import { buildFontString, measureBlock, measureRichBlock } from '../measure';
 import { graphemeCount } from '../measure/graphemes';
 import { applyStyleAttrs, isMarkerBlock, widthLessEndIndent } from './buildHelpers';
@@ -343,8 +345,10 @@ export interface CalloutLayoutInput {
    *  its marker column and tab), that the box's text runs round (#855,
    *  `exclude: 'push'` frames): a line meeting one is set short on the
    *  side the rectangle covers. Applied to the text children that open in
-   *  the range laid out; a figure or a formula is not moved. */
-  exclusions?: readonly { x: number; y: number; width: number; height: number }[];
+   *  the range laid out; a figure or a formula is not moved. One with a
+   *  `contour` (#883, in the same coordinates) sets each line short by the
+   *  shape's width beside it instead. */
+  exclusions?: readonly BoxExclusion[];
   /** A frame of a composed page whose pictures the reflow ladder scales
    *  (#858, `fit.imageMinScale`): each bitmap, SVG or video poster among
    *  the children is set at this share of the width it would take, below
@@ -686,7 +690,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   // The label tab's rise (see "Label tab" below), known here so a frame's
   // exclusions and exact height (#855) are read in box coordinates.
   const riseAhead = style.label && !input.continuation && labelText.trim().length > 0 ? Math.max(0, px(style.label.offset)) : 0;
-  const exclusions = (input.exclusions ?? []).map((e) => ({ x: e.x - markerColumn, y: e.y - riseAhead, width: e.width, height: e.height }));
+  const exclusions = (input.exclusions ?? []).map((e): BoxExclusion => ({
+    x: e.x - markerColumn, y: e.y - riseAhead, width: e.width, height: e.height,
+    ...(e.contour ? { contour: shiftContour(e.contour, -markerColumn, -riseAhead) } : {}),
+  }));
 
   // --- Title -----------------------------------------------------------------
   // A continuation repeats the title, with its suffix, only when the style
@@ -2054,12 +2061,22 @@ function buildIconBlock(
   };
 }
 
+/** A rectangle a box's text runs round (`CalloutLayoutInput.exclusions`),
+ *  with the shape inside it a contour wrap runs round (#883). */
+export interface BoxExclusion {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  contour?: VDTExclusionContour;
+}
+
 /** The line insets of a text set from `y0` in `[x, x + width]` with lines
  *  `lineHeight` apart, beside the rectangles of `exclusions` (#855): a line
  *  that meets one, even in part, is set short on the side the rectangle
  *  covers (the wider side left free when it stands inside the measure). */
 export function exclusionInsets(
-  exclusions: readonly { x: number; y: number; width: number; height: number }[],
+  exclusions: readonly BoxExclusion[],
   x: number,
   width: number,
   y0: number,
@@ -2079,6 +2096,11 @@ export function exclusionInsets(
     const roomLeft = ex.x - x;
     const roomRight = right - exRight;
     const coversLeft = roomLeft <= roomRight;
+    if (ex.contour) {
+      // A contour (#883): each line as short as the shape is wide beside it.
+      steps.push(...contourInsetSteps(ex.contour, coversLeft ? 'left' : 'right', x, width, y0, lineHeight, from, to));
+      continue;
+    }
     steps.push({
       fromLine: from,
       toLine: to,

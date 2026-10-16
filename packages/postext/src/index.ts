@@ -38,6 +38,19 @@ export { bitmapResolutionFor, effectiveBitmapResolution, bitmapLayoutSize, isPla
 export { bitmapResolutionOf } from './defaults/layout';
 export { bitmapInfo, bitmapSize } from './bundle';
 export type { BitmapInfo, BitmapFileResolution, BitmapResolutionSource } from './bundle';
+// Contour wrap (#883): the shape of a picture text runs round, traced by
+// the host from the file (the layout reads pictures by their size only).
+export {
+  traceResourceContour,
+  withContourTrace,
+  traceAlpha,
+  decodePngAlpha,
+  polygonRows,
+  contourRowsOf,
+  contourThreshold,
+  DEFAULT_CONTOUR_THRESHOLD,
+} from './contour';
+export type { AlphaRaster, ContourRows, RgbaPixels, TraceContourOptions } from './contour';
 export type { CropMarkSegment } from './cropMarks';
 export { columnClipRect, designOverlayOverhang, headingDesignOverhangAbove, hangingPunctuationOverhang } from './columnClip';
 export { lineInkExtent } from './lineInk';
@@ -152,6 +165,9 @@ export type {
   ResourceRotation,
   ResourcePlacement,
   ResourceSafeArea,
+  ResourceContour,
+  ContourTrace,
+  ResourceWrap,
   ResourceAnchor,
   ComicsConfig,
   ResolvedComicsConfig,
@@ -492,6 +508,8 @@ export type {
   VDTBlock,
   VDTColumn,
   VDTExclusion,
+  VDTExclusionContour,
+  VDTContourSpan,
   VDTColumnRule,
   VDTFootnoteArea,
   VDTPage,
@@ -666,7 +684,7 @@ export type { RegisterSvgImageOptions, PrepareSvgOptions } from './svg/image';
 
 // `.postext` bundles. The `postext/bundle` subpath carries the same API plus
 // the low-level manifest helpers.
-export { openBundle, createBundle, buildBundle, createBundleLayoutCache, loadBundleFonts, registerBundleImages, bundleImageUrl, bundleVideoUrl, bundleResourceBytes, bundleFontProvider, bundleSvgFontProvider, svgInlinesFonts, readBundle, planBundle, resolveBundleFiles, openBundleZip, zipBundle, isBundleManifest, pickBundleMeta, POSTEXT_EXTENSION } from './bundle';
+export { openBundle, createBundle, buildBundle, createBundleLayoutCache, loadBundleFonts, registerBundleImages, bundleImageUrl, bundleVideoUrl, bundleResourceBytes, bundleFontProvider, bundleSvgFontProvider, svgInlinesFonts, readBundle, traceBundleContours, planBundle, resolveBundleFiles, openBundleZip, zipBundle, isBundleManifest, pickBundleMeta, POSTEXT_EXTENSION } from './bundle';
 export type { PostextBundle, OpenBundleOptions, CreateBundleInput, CreateBundleLocale, CreatedBundle, BundleFileData, BuildBundleOptions, BundleLayoutCache, BundleLayoutStats, BundleSource, BundleFontProviderOptions, BundleFontRequest, BundleImageOptions, BundleManifest, BundleManifestV1, BundleManifestV2, BundleStart, BundleChapter, BundleFontFile, ReadBundleOptions, ReadBundleResult, ZipBundleOptions } from './bundle';
 
 // Citations (#267–#272): the engine registry and the data model a citation

@@ -74,6 +74,7 @@ export const DEFAULT_LABEL_STYLE = {
 
 export const FRAME_VERTICAL_ALIGNS = ['top', 'middle', 'bottom', 'justify'] as const;
 export const FRAME_EXCLUDES = ['none', 'push'] as const;
+export const FRAME_WRAPS = ['box', 'contour'] as const;
 export const FRAME_TAKES = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
 export const FRAME_GROUP_KINDS = ['stack', 'row'] as const;
 export const FRAME_GROUP_ALIGNS = ['start', 'center', 'end', 'space-between'] as const;
@@ -358,6 +359,7 @@ export function normalizeFrame(
     verticalAlign: oneOf(FRAME_VERTICAL_ALIGNS, f.verticalAlign) ? f.verticalAlign : DEFAULT_FRAME.verticalAlign,
     columns: finite(f.columns) && f.columns >= 1 ? Math.round(f.columns) : DEFAULT_FRAME.columns,
     exclude: oneOf(FRAME_EXCLUDES, f.exclude) ? f.exclude : DEFAULT_FRAME.exclude,
+    ...(f.wrap === 'contour' ? { wrap: 'contour' as const } : {}),
     flow: f.flow === true,
     pin: f.pin === true,
     grow: nonNegative(f.grow, DEFAULT_FRAME.grow),

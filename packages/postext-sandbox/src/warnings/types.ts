@@ -440,7 +440,7 @@ export type WarningPayload =
   /** A resource or a box set to wrap text round it that does not (#627):
    *  the text beside it would be too narrow, it is too short for lines
    *  beside it, it moved on to the next column, or the text is vertical. */
-  | { kind: 'textWrap'; reason: 'tooNarrow' | 'fewLines' | 'moved' | 'verticalText'; resourceId?: string; box?: string }
+  | { kind: 'textWrap'; reason: 'tooNarrow' | 'fewLines' | 'moved' | 'verticalText' | 'noContour'; resourceId?: string; box?: string }
   /** The sub-columns of a `:::columns` group are narrower than six ems of
    *  their text (#634). */
   | { kind: 'columnsTooNarrow'; columns: number; widthPx: number }

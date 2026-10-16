@@ -31,6 +31,7 @@ import {
   uniqueSlug,
 } from './manifest';
 import { CONFIG_VERSION, migrateBundleConfig } from './configVersion';
+import { contourRowsOf, contourWantsAlpha, traceResourceContour, withContourTrace, type TraceContourOptions } from '../contour';
 import type {
   BundleBlob,
   BundleCanvasScope,
@@ -104,6 +105,14 @@ export interface ReadBundleOptions {
    *  resources come back as the manifest declares them. */
   readResolution?: boolean;
   onWarning?: (message: string) => void;
+  /** Trace the alpha channel of the pictures a contour wrap runs round
+   *  (#883) into `contour.traced`: those whose `contour` is set or whose
+   *  placement (or type) says `wrap: 'contour'`, and every bitmap when a
+   *  page template has a frame with `wrap: 'contour'`. Default `true`. */
+  traceContours?: boolean;
+  /** Decode a picture the engine does not read itself (a WebP, a GIF) for
+   *  the trace (see `traceResourceContour`). */
+  decodeContour?: TraceContourOptions['decode'];
 }
 
 export interface ReadBundleResult {
@@ -329,7 +338,10 @@ export async function readBundle(
   }
 
   const start = pickBundleStart(manifest, locale);
-  return { manifest, locale: served, chapters, config, resources, blobs, fonts, ...(start ? { start } : {}) };
+  const traced = options.traceContours === false
+    ? resources
+    : await traceBundleContours(resources, blobs, config, options.decodeContour ? { decode: options.decodeContour } : {});
+  return { manifest, locale: served, chapters, config, resources: traced, blobs, fonts, ...(start ? { start } : {}) };
 }
 
 // ---------------------------------------------------------------------------
@@ -409,13 +421,54 @@ export interface BundlePlan {
   warnings: string[];
 }
 
-/** A resource minus the fields that only make sense in storage. */
+/** Whether a configuration has a page-template frame that pushes with its
+ *  pictures' contour (#883). */
+function configWrapsContours(config: PostextConfig): boolean {
+  const frames = (patch: { frames?: { wrap?: string }[] } | undefined): boolean => (patch?.frames ?? []).some((f) => f?.wrap === 'contour');
+  return (config.pageTemplates ?? []).some((t) => frames(t) || frames(t.variants?.recto) || frames(t.variants?.verso));
+}
+
+/**
+ * Trace the alpha channel of the bitmaps a contour wrap runs round (#883):
+ * those with a `contour`, or whose placement or type wraps by contour, and
+ * all of them when a frame of the configuration does. A picture whose
+ * trace is already there (this file, this threshold) keeps it.
+ */
+export async function traceBundleContours(
+  resources: Resource[],
+  blobs: readonly BundleBlob[],
+  config: PostextConfig,
+  options: TraceContourOptions = {},
+): Promise<Resource[]> {
+  const all = configWrapsContours(config);
+  const types = new Map((config.resourceTypes ?? []).map((t) => [t.id, t]));
+  const bytesOf = new Map(blobs.map((b) => [b.fileId, b]));
+  return Promise.all(resources.map(async (r) => {
+    if (!r.bitmap || !contourWantsAlpha(r)) return r;
+    const wants = all || r.contour !== undefined || (r.placement?.wrap ?? types.get(r.typeId)?.defaultPlacement?.wrap) === 'contour';
+    if (!wants) return r;
+    if (r.contour?.traced && contourRowsOf(r)) return r;
+    const blob = bytesOf.get(r.bitmap.fileId);
+    if (!blob) return r;
+    const trace = await traceResourceContour(r, blob.bytes, blob.mime, options);
+    return trace ? withContourTrace(r, trace) : r;
+  }));
+}
+
+/** A resource minus the fields that only make sense in storage, and the
+ *  alpha trace of its contour (#883), which the reader makes again from
+ *  the file. */
 function omitStorageFields(r: Resource): Omit<Resource, 'createdAt' | 'updatedAt' | 'bitmap' | 'svg'> {
   const copy: Partial<Resource> = { ...r };
   delete copy.createdAt;
   delete copy.updatedAt;
   delete copy.bitmap;
   delete copy.svg;
+  if (copy.contour?.traced) {
+    const { traced: _t, ...contour } = copy.contour;
+    void _t;
+    copy.contour = contour;
+  }
   return copy as Omit<Resource, 'createdAt' | 'updatedAt' | 'bitmap' | 'svg'>;
 }
 

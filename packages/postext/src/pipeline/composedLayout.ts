@@ -25,7 +25,9 @@
  */
 import type { ComposedPageFence, ContentBlock } from '../parse/types';
 import type { Dimension, ResolvedCalloutStyleConfig } from '../types';
-import type { ContentWarning, FrameFitStep, FrameOverflowProposal, ReflowEvent, VDTBlock, VDTComposedPage, VDTFrame, VDTPage } from '../vdt';
+import { pageIsMirrored, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt';
+import { contourBounds, scaleContourAbout, shiftContour } from '../contour';
+import { frameContour } from '../composed/contour';
 import { dimensionToPx } from '../units';
 import { frameBounds } from '../composed/paint';
 import { FRAME_ATTR } from '../composed/wrap';
@@ -36,7 +38,7 @@ import { anchorTarget, continueInTemplate } from '../composed/templates';
 import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { frameElementId } from '../composed/ids';
-import { offsetCalloutToAbsolute, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
+import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { isMarkerBlock } from './buildHelpers';
 import { CUT_START, fragmentRange, makeCalloutLayouter, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
 
@@ -143,6 +145,8 @@ interface Composition {
   fitted: Map<string, { placed: Rect; kept: Rect }>;
   /** The template laid (with the ladder's patches). */
   template: ResolvedPageTemplate;
+  /** `textWrap` notes of the contour pushes (#883, `noContour`). */
+  notes?: ContentWarning[];
 }
 
 /** Step of the text and picture scales the ladder tries (DESIGN §5.4). */
@@ -333,7 +337,7 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
   }
 
   // 7. Warn, with what would make each frame that still overflows fit.
-  const warnings: ContentWarning[] = [];
+  const warnings: ContentWarning[] = [...(cur.notes ?? [])];
   const templateAttr = fence.attrSources.template;
   for (const frame of template.frames) {
     const vdt = frameIn(cur, frame.name);
@@ -570,12 +574,18 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
   /** Rectangles in a frame's box coordinates, in its laid-out (scaled)
    *  coordinates. */
   const unscale = (rs: FrameBoxOptions['exclusions'], s: number): FrameBoxOptions['exclusions'] =>
-    rs && s !== 1 ? rs.map((r) => ({ x: r.x / s, y: r.y / s, width: r.width / s, height: r.height / s })) : rs;
+    rs && s !== 1
+      ? rs.map((r) => ({ x: r.x / s, y: r.y / s, width: r.width / s, height: r.height / s, ...(r.contour ? { contour: scaleContourAbout(r.contour, 0, 0, 1 / s) } : {}) }))
+      : rs;
   /** Place and fill every frame. `seed`: the boxes of the frames that push
    *  text, from a first run, so a frame placed before one that pushes it
    *  (the photo anchored to its box) still runs round it. */
-  const run = (seed?: ReadonlyMap<string, Rect>) => {
+  const run = (seed?: ReadonlyMap<string, Rect>, seedShapes?: ReadonlyMap<string, VDTExclusionContour>) => {
     const pushRects = new Map<string, Rect>();
+    /** The shapes of the frames that push with their pictures' contour (#883). */
+    const pushShapes = new Map<string, VDTExclusionContour>();
+    /** Pictures of a contour push whose shape is not known (#883). */
+    const notes: ContentWarning[] = [];
     const states = new Map<string, StoryState>();
     const stateOf = (frame: ResolvedFrame): StoryState | undefined => {
       const head = headOf(frame.name);
@@ -626,19 +636,27 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
     /** What `fitBox` did to each frame (#861), last placement wins. */
     const fitted = new Map<string, { placed: Rect; kept: Rect }>();
     const laid = new Set<string>();
-    const pushed: { name: string; box: Rect }[] = seed ? [...seed].map(([name, box]) => ({ name, box })) : [];
+    const pushed: { name: string; box: Rect; contour?: VDTExclusionContour }[] = seed
+      ? [...seed].map(([name, box]) => ({ name, box, ...(seedShapes?.get(name) ? { contour: seedShapes.get(name)! } : {}) }))
+      : [];
 
     /** The rectangles of the pushing frames placed so far that `rect`
      *  meets, in the frame block's coordinates. */
     const exclusionsFor = (frame: ResolvedFrame, rect: Rect, open: boolean): FrameBoxOptions['exclusions'] => {
-      const out: { x: number; y: number; width: number; height: number }[] = [];
+      const out: BoxExclusion[] = [];
       const g = input.pushGapPx;
       for (const p of pushed) {
         if (p.name === frame.name) continue;
-        const b = p.box;
+        // A contour (#883) pushes with its shape, its margin round it.
+        const cb = p.contour ? contourBounds(p.contour) : undefined;
+        const b = cb ?? p.box;
+        const e = cb ? 0 : g;
         const below = open ? true : b.y < rect.y + rect.height;
-        if (b.x - g >= rect.x + rect.width || b.x + b.width + g <= rect.x || !below || b.y + b.height + g <= rect.y) continue;
-        out.push({ x: b.x - g - rect.x, y: b.y - g - rect.y, width: b.width + 2 * g, height: b.height + 2 * g });
+        if (b.x - e >= rect.x + rect.width || b.x + b.width + e <= rect.x || !below || b.y + b.height + e <= rect.y) continue;
+        out.push({
+          x: b.x - e - rect.x, y: b.y - e - rect.y, width: b.width + 2 * e, height: b.height + 2 * e,
+          ...(cb && p.contour ? { contour: shiftContour(p.contour, -rect.x, -rect.y) } : {}),
+        });
       }
       return out.length > 0 ? out : undefined;
     };
@@ -911,7 +929,18 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       if (frame.exclude === 'push') {
         const box = frameBounds({ rect, rotate: frame.rotate });
         pushRects.set(frame.name, box);
-        if (!seed) pushed.push({ name: frame.name, box });
+        // `wrap: 'contour'` (#883): the shape of the pictures it holds; a
+        // turned frame pushes with its box.
+        const shape = frame.wrap === 'contour' && frame.rotate === 0 && result
+          ? frameContour(result.children, { gapPx: input.pushGapPx, dpi, emPx: input.emPx, mirrored: pageIsMirrored(input.page), pageIndex: input.page.index })
+          : undefined;
+        if (shape) notes.push(...shape.notes);
+        // A frame whose text the ladder scaled (#858) holds its pictures in
+        // its laid-out coordinates: on the page they are `s` as large, from
+        // its box's corner (`frameMatrix`).
+        const contour = shape?.contour && s !== 1 ? scaleContourAbout(shape.contour, rect.x, rect.y, s, false) : shape?.contour;
+        if (contour) pushShapes.set(frame.name, contour);
+        if (!seed) pushed.push({ name: frame.name, box, ...(contour ? { contour } : {}) });
       }
       frames.push(vdt);
       vdtByName.set(frame.name, vdt);
@@ -929,11 +958,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       for (const f of step.frames) fill(prepare(f), solved.get(f.name)!);
     }
     const log = mergeLog(reflowEvents(motionsOf(template, rects, declared), dpi / MM_PER_IN), [...fitLog, ...overflowLog], template);
-    return { frames, blocks, log, laid, needs, pushRects, fitted };
+    return { frames, blocks, log, laid, needs, pushRects, pushShapes, fitted, notes };
   };
   const first = run();
-  const { frames, blocks, log, laid, needs, fitted } = first.pushRects.size > 0 ? run(first.pushRects) : first;
-  return { frames, blocks, log, laid, needs, template, fitted };
+  const { frames, blocks, log, laid, needs, fitted, notes } = first.pushRects.size > 0 ? run(first.pushRects, first.pushShapes) : first;
+  return { frames, blocks, log, laid, needs, template, fitted, ...(notes.length > 0 ? { notes } : {}) };
 }
 
 const sameRect = (a: Rect, b: Rect): boolean =>

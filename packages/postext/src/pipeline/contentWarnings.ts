@@ -986,7 +986,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
           ? `${what} would leave the text beside it narrower than layout.wrap.minTextWidth — it takes its band whole, with no text beside it`
           : w.reason === 'verticalText'
             ? `${what} asks for text wrap, which is set in horizontal text only — in vertical text it takes its band whole`
-            : `${what} is shorter than layout.wrap.minLinesBeside lines — it takes its band whole, with no text beside it`;
+            : w.reason === 'noContour'
+              ? `${what} wraps text round its contour, but its shape is not known (no contour.points, no transparency, or an alpha channel the host did not trace) — the text runs round its box`
+              : `${what} is shorter than layout.wrap.minLinesBeside lines — it takes its band whole, with no text beside it`;
       break;
     }
     case 'floatShrunk':

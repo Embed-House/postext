@@ -88,6 +88,13 @@ export interface FrameConfig {
   padding?: CalloutPaddingConfig;
   /** `'push'`: text of other frames wraps around this one. Default `'none'`. */
   exclude?: 'none' | 'push';
+  /** What the text of other frames runs round when this frame pushes it
+   *  (`exclude: 'push'`, #883): `'box'` (the default), the frame's box;
+   *  `'contour'`, the shape of the pictures it holds (`Resource.contour`:
+   *  a polygon or the bitmap's alpha channel), each line set as short as
+   *  the shape is wide beside it. A frame whose pictures have no known
+   *  shape, or a turned frame, pushes with its box. */
+  wrap?: 'box' | 'contour';
   /** Receives content that names no slot. */
   flow?: boolean;
   /** Chain: content that does not fit continues in this frame. */
@@ -256,6 +263,9 @@ export interface ResolvedFrame {
   columnGap?: Dimension;
   padding?: CalloutPaddingConfig;
   exclude: 'none' | 'push';
+  /** `'contour'`: a pushing frame pushes with its pictures' shape (#883).
+   *  Absent: with its box. */
+  wrap?: 'contour';
   flow: boolean;
   next?: string;
   takes?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';

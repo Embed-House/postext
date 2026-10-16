@@ -2035,6 +2035,30 @@ export interface VDTExclusion {
   /** The id of the block that wraps the text: an inline figure's block, a
    *  float's, or a box's frame. */
   ownerId: string;
+  /** A contour wrap (#883): the picture's shape, which sets each line
+   *  beside it short by the shape's width there rather than by
+   *  {@link width}. Absent: the rectangle. */
+  contour?: VDTExclusionContour;
+}
+
+/** The shape a contour wrap runs round (#883), in page px: bands of the
+ *  page, each with the shape's extent across it, and the margin kept round
+ *  them (across, above and below). A line meets the shape where a band
+ *  lies within the margin of the line's own band. */
+export interface VDTExclusionContour {
+  spans: VDTContourSpan[];
+  margin: number;
+  /** The insets are rounded up to whole multiples of this (px): one body
+   *  character under a CJK character grid, so the lines keep to it. */
+  quantum?: number;
+}
+
+/** One band of a contour (`VDTExclusionContour.spans`). */
+export interface VDTContourSpan {
+  y: number;
+  height: number;
+  left: number;
+  right: number;
 }
 
 /** The notes set at the foot of one column (`footnotes.placement:
@@ -3282,9 +3306,14 @@ export type ContentWarning = ContentWarningBase & (
    *  its band whole; `'moved'`: an inline one was too tall for the room
    *  left in its column and moved on to the next, its anchor with it;
    *  `'verticalText'`: text wraps in horizontal text only, so in a
-   *  vertical flow it takes its band whole. `resourceId` names a
-   *  resource, `box` a box's style. Found by the layout. */
-  | { kind: 'textWrap'; reason: 'tooNarrow' | 'fewLines' | 'moved' | 'verticalText'; resourceId?: string; box?: string }
+   *  vertical flow it takes its band whole; `'noContour'` (#883): a
+   *  contour wrap (`wrap: 'contour'`, or a pushing frame's) round a
+   *  picture whose shape is not known (an SVG with no
+   *  `contour.points`, a bitmap with no transparency, or whose alpha
+   *  channel the host did not trace), so the text runs round its box.
+   *  `resourceId` names a resource, `box` a box's style. Found by the
+   *  layout. */
+  | { kind: 'textWrap'; reason: 'tooNarrow' | 'fewLines' | 'moved' | 'verticalText' | 'noContour'; resourceId?: string; box?: string }
   /** `columnsTooNarrow` (#634): the sub-columns of a `:::columns` group
    *  are narrower than six ems of its text, `widthPx` each, `columns` of
    *  them: few words fit a line. Found by the layout. */
