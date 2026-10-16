@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 141 · A metascience essay in English and Spanish ═══════
 // https://postext.dev/en/cookbook/bilingual-metascience-essay
 // Code: MIT · Text: J. P. A. Ioannidis, PLoS Med 2005 (CC BY) · Figures: drawn in code (CC BY 4.0)
-// Fonts: Gelasio, Sofia Sans Semi Condensed (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Gelasio, Sofia Sans Semi Condensed (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, prepareFonts, renderPageToCanvas, registerResourceImage,
   registerCitationEngine, defaultResourceTypes, initMathEngine, parseTSV, mergeCells, setAlignment,
@@ -86,12 +86,12 @@ const head = (id, content, parity, edge, x, extra) => text(id, content, SANS, 7.
   at('page', `top-${edge}`, x, 13), { overflow: 'clip', ...caps(7.5, 600), align: edge,
     parity, pages: 'body', ...extra });
 const folio = { fontWeight: 800, color: col('accent'), letterSpacing: pt(0.4) };
+const RUNNING = ['Ioannidis · PLoS Medicine 2005', t({ en: 'Why most published research '
+  + 'findings are false', es: 'Por qué la mayoría de los resultados publicados son falsos' })];
 const header = { elements: [
   head('v-folio', '{pageNumber}', 'even', 'left', OUTER, folio),
-  head('v-title', 'Ioannidis · PLoS Medicine 2005', 'even', 'left', OUTER + 9),
-  head('r-title', t({ en: 'Why most published research findings are false',
-    es: 'Por qué la mayoría de los resultados publicados son falsos' }), 'odd', 'right',
-  -(OUTER + 9)),
+  head('v-title', RUNNING[0], 'even', 'left', OUTER + 9),
+  head('r-title', RUNNING[1], 'odd', 'right', -(OUTER + 9)),
   head('r-folio', '{pageNumber}', 'odd', 'right', -OUTER, folio),
 ] };
 const footer = { elements: [text('drop-folio', '{pageNumber}', SANS, 7.5, 'accent',
@@ -100,6 +100,8 @@ const footer = { elements: [text('drop-folio', '{pageNumber}', SANS, 7.5, 'accen
 
 const config = () => ({
   ...edition, colorPalette, header, footer,
+  // The running heads are the journal's short forms of the paper's name (#849).
+  checks: { contentInConfig: { allow: RUNNING } },
   page: { sizePreset: 'custom', width: mm(TRIM_W), height: mm(TRIM_H), dpi: 150,
     margins: { top: mm(TOP), bottom: mm(BOTTOM), left: mm(INNER), right: mm(OUTER),
       mirror: true } },

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "protein-paper-methods-section",
-  "sourceHash": "3277a1b10aeb1f71fabfb9e9327945775124158cfec0182a13e019d5c9c52a19",
+  "sourceHash": "d310cc030cbd15fb9d0f0e42244b31b27ce7964440f42f5181f8bbb995b3b840",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:03:54.369Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.982Z",
   "variants": {
     "en": {
-      "hash8": "5a7e5a43",
+      "hash8": "e11ebbe7",
       "vdtHash": "c6a91251811d0b7f32b17d49934df966dc76f9d4",
       "timings": {
-        "importMs": 979,
-        "fontsMs": 361,
-        "buildMs": 827,
-        "totalMs": 3254,
+        "importMs": 1039,
+        "fontsMs": 270,
+        "buildMs": 377,
+        "totalMs": 2980,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Noto Serif"
         ],
         "pages": 5,
-        "ownLines": 173
+        "ownLines": 175
       },
       "pages": [
         {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 189428,
+          "bytes": 189406,
           "alt": "Opening page 1: Highly accurate protein structure prediction with AlphaFold. Fig. 1 | AlphaFold produces highly accurate structures. a, Median accuracy on the CASP14 domains of AlphaFold and of the next best method, as r.m.s.d.95 over Cα atoms (backbone) and over all atoms, wi…"
         },
         {
@@ -126,12 +126,12 @@
       },
       "pdf": {
         "file": "protein-paper-methods-section.pdf",
-        "bytes": 203707,
+        "bytes": 203712,
         "pages": 5
       },
       "sandbox": {
         "file": "protein-paper-methods-section.postext",
-        "bytes": 77602,
+        "bytes": 77640,
         "folio": "9eaee533",
         "chapters": [
           {
@@ -206,6 +206,9 @@
           "captionStyle.note",
           "captionStyle.note.color",
           "captionStyle.note.fontSize",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.entrySpacing",
@@ -329,6 +332,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -342,7 +346,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 323,
+        "configLeaves": 324,
         "designElements": 11,
         "directives": [
           ":::callout",
@@ -443,9 +447,9 @@
             "detail": "4 paragraphs set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Since CASP14, we have found that the accuracy of…”, p. 5 −10‰ “53. Lim, C. J. et al. The structure of human CST…”, p. 5 −10‰ “Acknowledgements We thank A. Rrustemi, A. Gu, A.…”, p. 5 −5‰ “All input data are freely available from public …”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

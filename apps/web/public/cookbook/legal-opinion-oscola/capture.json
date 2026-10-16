@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "legal-opinion-oscola",
-  "sourceHash": "60c1bb5420726e1f5d19cccde02dad81c87e8afd7994a034dd25cc74f136cea7",
+  "sourceHash": "1c4a6c1f3296723042cd0391fc7e0a4e9e7d9e45b625460f7697bfaeb0788edc",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:43:56.367Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:01:22.601Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.868Z",
   "variants": {
     "en": {
-      "hash8": "8cf741b4",
+      "hash8": "c9421087",
       "vdtHash": "befe6b0e5fca16cba211cfd372710d730d74c63a",
       "timings": {
-        "importMs": 475,
-        "fontsMs": 35,
-        "buildMs": 241,
-        "totalMs": 1506,
+        "importMs": 1984,
+        "fontsMs": 33,
+        "buildMs": 132,
+        "totalMs": 3223,
         "builds": 1
       },
       "specimen": {
@@ -45,7 +39,7 @@
           "Libre Franklin"
         ],
         "pages": 4,
-        "ownLines": 162
+        "ownLines": 163
       },
       "pages": [
         {
@@ -126,7 +120,7 @@
       },
       "sandbox": {
         "file": "legal-opinion-oscola.postext",
-        "bytes": 23004,
+        "bytes": 23057,
         "folio": "223edec1",
         "chapters": [
           {
@@ -165,6 +159,9 @@
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
           "bodyText.textAlign",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.auto",
@@ -258,6 +255,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -269,7 +267,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 280,
+        "configLeaves": 281,
         "designElements": 13,
         "directives": [
           ":::paragraphs",
@@ -343,17 +341,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "3c5491b6",
+      "hash8": "66c6fd24",
       "vdtHash": "1411220aaa1cd2cebf6c32ef4c490c732961644b",
       "timings": {
-        "importMs": 650,
-        "fontsMs": 47,
-        "buildMs": 720,
-        "totalMs": 2294,
+        "importMs": 974,
+        "fontsMs": 35,
+        "buildMs": 241,
+        "totalMs": 2188,
         "builds": 1
       },
       "specimen": {
@@ -375,7 +379,7 @@
           "Libre Franklin"
         ],
         "pages": 4,
-        "ownLines": 162
+        "ownLines": 163
       },
       "pages": [
         {
@@ -456,7 +460,7 @@
       },
       "sandbox": {
         "file": "legal-opinion-oscola.postext",
-        "bytes": 23002,
+        "bytes": 23039,
         "folio": "223edec1",
         "chapters": [
           {
@@ -495,6 +499,9 @@
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
           "bodyText.textAlign",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.auto",
@@ -588,6 +595,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -599,7 +607,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 280,
+        "configLeaves": 281,
         "designElements": 13,
         "directives": [
           ":::paragraphs",
@@ -685,9 +693,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “7 Lord Bridge hizo suyas las palabras del juez B…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 137 · An AI preprint with prompt exemplars in boxes ═══════
 // https://postext.dev/en/cookbook/ai-preprint-prompt-exemplars
 // Code: MIT · Text: Wei et al. 2022, arXiv:2201.11903 (CC BY 4.0) · Charts: drawn in code
-// Fonts: Newsreader, IBM Plex Sans, IBM Plex Mono (SIL OFL 1.1) · Needs postext ≥ 1.28.0
+// Fonts: Newsreader, IBM Plex Sans, IBM Plex Mono (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine, registerResourceImage,
   inlineSvgFonts,
@@ -109,11 +109,13 @@ const head = (id, content, parity, edge, x, extra) => text(id, content, SANS, 7.
     size: { width: mm(110) } }, ...extra });
 const folio = { fontWeight: 600, color: col('accent') };
 const right = { align: 'right' };
+// The running heads are the journal's furniture: checks.contentInConfig allows them (#849).
+const RUNNING = ['Wei et al. · Chain-of-Thought Prompting',
+  'Abridged from arXiv:2201.11903 · CC BY 4.0'];
 const header = { elements: [
   head('v-folio', '{pageNumber}', 'even', 'top-left', SIDE, folio),
-  head('v-title', 'Wei et al. · Chain-of-Thought Prompting', 'even', 'top-left', SIDE + 8),
-  head('r-title', 'Abridged from arXiv:2201.11903 · CC BY 4.0', 'odd', 'top-right',
-    -SIDE - 8, right),
+  head('v-title', RUNNING[0], 'even', 'top-left', SIDE + 8),
+  head('r-title', RUNNING[1], 'odd', 'top-right', -SIDE - 8, right),
   head('r-folio', '{pageNumber}', 'odd', 'top-right', -SIDE, { ...folio, ...right }),
 ] };
 const footer = { elements: [head('drop-folio', '{pageNumber}', 'all', 'bottom', 0, {
@@ -123,6 +125,7 @@ const footer = { elements: [head('drop-folio', '{pageNumber}', 'all', 'bottom', 
 const sans = (size) => ({ fontFamily: SANS, fontSize: pt(size), fontWeight: 600 });
 const config = () => ({
   locale: 'en-us', colorPalette, citations, resourceTypes, header, footer,
+  checks: { contentInConfig: { allow: RUNNING } },
   crossRefs: { section: 'Section {n}' }, // \cref prints "Section 3"
   calloutStyles: [...promptBoxes,
     { id: 'abstract', span: 'page', background: col('tint'), marginTop: ZERO,

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "front-matter-roman-to-arabic",
-  "sourceHash": "5ebb3449ab6e42fb9f9249380899311917a14de2b9777711537ca070ee669b2a",
+  "sourceHash": "a09f2ed4d7ab2ba6de3e7f8a19d75b2df99b297bb8fa43ee071b1cb5607939af",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:59:09.730Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.831Z",
   "variants": {
     "en": {
-      "hash8": "f33d2df8",
+      "hash8": "c901e4d7",
       "vdtHash": "782d96fdaadab180c625a3cf0c8de908c464fa48",
       "timings": {
-        "importMs": 1019,
-        "fontsMs": 235,
-        "buildMs": 157,
-        "totalMs": 2598,
+        "importMs": 335,
+        "fontsMs": 95,
+        "buildMs": 99,
+        "totalMs": 1505,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Playfair Display SC"
         ],
         "pages": 14,
-        "ownLines": 242
+        "ownLines": 245
       },
       "pages": [
         {
@@ -223,12 +223,12 @@
       },
       "pdf": {
         "file": "front-matter-roman-to-arabic.pdf",
-        "bytes": 814116,
+        "bytes": 814128,
         "pages": 14
       },
       "sandbox": {
         "file": "front-matter-roman-to-arabic.postext",
-        "bytes": 713677,
+        "bytes": 713710,
         "folio": "ba949066",
         "chapters": [
           {
@@ -261,6 +261,9 @@
           "bodyText.referenceColor",
           "bodyText.runtMinCharacters",
           "bodyText.runtPenalty",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -376,6 +379,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "colorPalette",
           "footer",
           "header",
@@ -387,7 +391,7 @@
           "paragraphStyles",
           "toc"
         ],
-        "configLeaves": 545,
+        "configLeaves": 546,
         "designElements": 29,
         "directives": [
           ":::paragraphs",
@@ -483,9 +487,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 14 −5‰ “This is the most favourable period for travellin…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

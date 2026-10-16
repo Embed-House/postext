@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "business-section-on-salmon",
-  "sourceHash": "5b58062570b80ff89769a5d15e8c0dc7f5675a929cff276c745b7d00c1f3c814",
+  "sourceHash": "42ac862a8168394f621d0aa37ec4ec73f23e52e9387ea95376a1ab9ef841bd0d",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:57:00.552Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.719Z",
   "variants": {
     "en": {
-      "hash8": "20f0f265",
+      "hash8": "72098f60",
       "vdtHash": "a237f56bf659bc50de2e3f6dbaba793088bb7e4b",
       "timings": {
-        "importMs": 233,
-        "fontsMs": 126,
-        "buildMs": 460,
-        "totalMs": 1546,
+        "importMs": 513,
+        "fontsMs": 96,
+        "buildMs": 342,
+        "totalMs": 1802,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Source Serif 4"
         ],
         "pages": 8,
-        "ownLines": 242
+        "ownLines": 244
       },
       "pages": [
         {
@@ -153,7 +153,7 @@
       },
       "sandbox": {
         "file": "business-section-on-salmon.postext",
-        "bytes": 1218753,
+        "bytes": 1218833,
         "folio": "77d83e3b",
         "chapters": [
           {
@@ -235,6 +235,9 @@
           "captionStyle.note",
           "captionStyle.note.color",
           "captionStyle.note.fontSize",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -367,6 +370,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "colorPalette",
           "folio",
           "footer",
@@ -381,7 +385,7 @@
           "tableStyle",
           "tableStyles"
         ],
-        "configLeaves": 990,
+        "configLeaves": 991,
         "designElements": 46,
         "directives": [
           ":::callout",
@@ -513,9 +517,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 7 −5‰ “Flour costs, which rose by almost half in 2023, …”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

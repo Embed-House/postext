@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 154 · One comic page across a double spread ═══════════════
 // https://postext.dev/en/cookbook/comic-double-spread
 // Code: MIT · Story: written for the recipe (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Patrick Hand, Bangers, the comic faces of each script (OFL) · Needs postext ≥ 1.28.0
+// Fonts: Patrick Hand, Bangers, the comic faces of each script (OFL) · Needs postext ≥ 1.34.0
 // One split tree laid across two facing pages: a panorama runs over the spine, and the
 // tier under it splits at the spine's gutter. Same album, same lettering as Nº 152.
 import {
@@ -105,6 +105,10 @@ const config = () => ({
   headings: { fontFamily: DISPLAY, color: col('orange'),
     levels: [{ level: 1, breakBefore: { enabled: true, parity: 'any' } }] }, // the H1 break
   comics,
+  // The colophon names the lettering faces and the art's source. A comic page has no heading
+  // whose attributes a footer could read, and a paragraph after the spread would set a page
+  // of its own, so the line stays in the design and the check allows it (#849).
+  checks: { contentInConfig: { allow: [COLOPHON] } },
   header: { elements: [] },
   footer: { elements: [
     foot('folio', '{pageNumber}', -13, { fontSize: pt(10), color: col('ink') }),

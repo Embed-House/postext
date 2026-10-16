@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "sist02-research-paper",
-  "sourceHash": "1a757ab7064ebf6b7b8072952c87c4c362fbdfd2baae839aa51e3eda6559eebb",
+  "sourceHash": "8906c9dcbd6d4cafdf1c8104d3fb56d100a835dfc0b8c6fb0d03bdfb4879b792",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:48:46.165Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:04:42.129Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.988Z",
   "variants": {
     "en": {
-      "hash8": "70385cc1",
+      "hash8": "eae8677a",
       "vdtHash": "5952d7e7ba5a11716c051c1d1a377a700c5a5059",
       "timings": {
-        "importMs": 1116,
-        "fontsMs": 642,
-        "buildMs": 266,
-        "totalMs": 4006,
+        "importMs": 1150,
+        "fontsMs": 1343,
+        "buildMs": 168,
+        "totalMs": 3644,
         "builds": 1
       },
       "specimen": {
@@ -46,7 +40,7 @@
           "Shippori Mincho B1"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 180
       },
       "pages": [
         {
@@ -96,12 +90,12 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 226699,
+        "bytes": 226706,
         "pages": 2
       },
       "sandbox": {
         "file": "sist02-research-paper.postext",
-        "bytes": 32362,
+        "bytes": 32396,
         "folio": "5f42a5f6",
         "chapters": [
           {
@@ -168,6 +162,9 @@
           "captionStyle.fontSize",
           "captionStyle.labelBold",
           "captionStyle.labelColor",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "chipStyles",
           "chipStyles[].backgroundEnabled",
           "chipStyles[].bold",
@@ -287,6 +284,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "chipStyles",
           "citations",
           "cjk",
@@ -303,7 +301,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 302,
+        "configLeaves": 303,
         "designElements": 12,
         "directives": [
           ":::callout",
@@ -402,21 +400,21 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “A specimen article written for the Postext Cookb…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e7a776a7",
+      "hash8": "2daa3e28",
       "vdtHash": "f3218b0fa5e1bb8f0cb8f16daf7a4c60af76d94d",
       "timings": {
-        "importMs": 2050,
-        "fontsMs": 1082,
-        "buildMs": 202,
-        "totalMs": 4028,
+        "importMs": 787,
+        "fontsMs": 879,
+        "buildMs": 157,
+        "totalMs": 2543,
         "builds": 1
       },
       "specimen": {
@@ -439,7 +437,7 @@
           "Shippori Mincho B1"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 180
       },
       "pages": [
         {
@@ -489,12 +487,12 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 226345,
+        "bytes": 226350,
         "pages": 2
       },
       "sandbox": {
         "file": "sist02-research-paper.postext",
-        "bytes": 32432,
+        "bytes": 32465,
         "folio": "5f42a5f6",
         "chapters": [
           {
@@ -561,6 +559,9 @@
           "captionStyle.fontSize",
           "captionStyle.labelBold",
           "captionStyle.labelColor",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "chipStyles",
           "chipStyles[].backgroundEnabled",
           "chipStyles[].bold",
@@ -680,6 +681,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "chipStyles",
           "citations",
           "cjk",
@@ -696,7 +698,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 302,
+        "configLeaves": 303,
         "designElements": 12,
         "directives": [
           ":::callout",
@@ -785,9 +787,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

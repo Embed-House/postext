@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ai-preprint-prompt-exemplars",
-  "sourceHash": "5f5c2e16494e7e34246d6513cda57cdd61c8ee66c58d4090ffde6bb3da98bcdc",
+  "sourceHash": "b5a30acd6d44e4f848ca78c2575cc9a26631c0ae0c11726ae0fcb911c06968b8",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:55:41.381Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.650Z",
   "variants": {
     "en": {
-      "hash8": "f6d6c836",
+      "hash8": "8f8409ad",
       "vdtHash": "2c74b1a0b3e09208cb79243121a098ea29159c0f",
       "timings": {
-        "importMs": 29275,
-        "fontsMs": 105,
-        "buildMs": 896,
-        "totalMs": 31093,
+        "importMs": 1340,
+        "fontsMs": 173,
+        "buildMs": 717,
+        "totalMs": 3279,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Newsreader"
         ],
         "pages": 7,
-        "ownLines": 240
+        "ownLines": 243
       },
       "pages": [
         {
@@ -153,12 +153,12 @@
       },
       "pdf": {
         "file": "ai-preprint-prompt-exemplars.pdf",
-        "bytes": 255613,
+        "bytes": 255617,
         "pages": 7
       },
       "sandbox": {
         "file": "ai-preprint-prompt-exemplars.postext",
-        "bytes": 153354,
+        "bytes": 153397,
         "folio": "055119a2",
         "chapters": [
           {
@@ -267,6 +267,9 @@
           "captionStyle.note",
           "captionStyle.note.color",
           "captionStyle.note.fontSize",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.doi",
@@ -405,6 +408,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "citations",
           "colorPalette",
           "crossRefs",
@@ -422,7 +426,7 @@
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 484,
+        "configLeaves": 485,
         "designElements": 11,
         "directives": [
           ":::callout",
@@ -542,14 +546,9 @@
             "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 7 pages)"
           },
           {
-            "check": "C21",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the pen took 31.1 s to finish (warning at 30 s)"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

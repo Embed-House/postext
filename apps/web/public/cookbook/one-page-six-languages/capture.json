@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "one-page-six-languages",
-  "sourceHash": "cabd6533754e602b9241f5ed4d9afe72efc64fae23d4d7a5fba996942e10d1e9",
+  "sourceHash": "d81a776302887b0e6899cb6099e0e390cd99d90dc3ce12a695213fb9137940f9",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:45:15.109Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:02:23.938Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.896Z",
   "variants": {
     "en": {
-      "hash8": "308a3aec",
+      "hash8": "66522b57",
       "vdtHash": "f449370ee3262648d8ec670b3847b33451c2fdda",
       "timings": {
-        "importMs": 1435,
-        "fontsMs": 323,
-        "buildMs": 265,
-        "totalMs": 3077,
+        "importMs": 776,
+        "fontsMs": 663,
+        "buildMs": 155,
+        "totalMs": 2602,
         "builds": 2
       },
       "specimen": {
@@ -43,7 +37,7 @@
           "Comic Neue"
         ],
         "pages": 2,
-        "ownLines": 107
+        "ownLines": 111
       },
       "pages": [
         {
@@ -98,7 +92,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794302,
+        "bytes": 794338,
         "pages": 1,
         "chapters": [
           {
@@ -128,6 +122,9 @@
           "bodyText.italicColor",
           "bodyText.lineHeight",
           "bodyText.referenceColor",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -192,6 +189,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "colorPalette",
           "comics",
           "footer",
@@ -201,7 +199,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 74,
+        "configLeaves": 75,
         "designElements": 1,
         "directives": [
           ":::page"
@@ -247,17 +245,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "3407f47d",
+      "hash8": "b335d3b3",
       "vdtHash": "a17aabb0ecf88ff14b0fcb36da2997ab31273c85",
       "timings": {
-        "importMs": 872,
-        "fontsMs": 757,
-        "buildMs": 237,
-        "totalMs": 2771,
+        "importMs": 757,
+        "fontsMs": 487,
+        "buildMs": 167,
+        "totalMs": 2233,
         "builds": 2
       },
       "specimen": {
@@ -277,7 +281,7 @@
           "Comic Neue"
         ],
         "pages": 2,
-        "ownLines": 107
+        "ownLines": 111
       },
       "pages": [
         {
@@ -332,7 +336,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794491,
+        "bytes": 794528,
         "pages": 1,
         "chapters": [
           {
@@ -362,6 +366,9 @@
           "bodyText.italicColor",
           "bodyText.lineHeight",
           "bodyText.referenceColor",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -426,6 +433,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "colorPalette",
           "comics",
           "footer",
@@ -435,7 +443,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 74,
+        "configLeaves": 75,
         "designElements": 1,
         "directives": [
           ":::page"
@@ -481,17 +489,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "129f7e59",
+      "hash8": "760cd1dc",
       "vdtHash": "965e9d9f675437e307a4f6b60577836d19cc3680",
       "timings": {
-        "importMs": 552,
-        "fontsMs": 632,
-        "buildMs": 252,
-        "totalMs": 2338,
+        "importMs": 1230,
+        "fontsMs": 1090,
+        "buildMs": 168,
+        "totalMs": 3678,
         "builds": 2
       },
       "specimen": {
@@ -512,7 +526,7 @@
           "Noto Sans SC"
         ],
         "pages": 2,
-        "ownLines": 107
+        "ownLines": 111
       },
       "pages": [
         {
@@ -567,7 +581,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794643,
+        "bytes": 794690,
         "pages": 1,
         "chapters": [
           {
@@ -597,6 +611,9 @@
           "bodyText.italicColor",
           "bodyText.lineHeight",
           "bodyText.referenceColor",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -661,6 +678,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "colorPalette",
           "comics",
           "footer",
@@ -670,7 +688,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 74,
+        "configLeaves": 75,
         "designElements": 1,
         "directives": [
           ":::page"
@@ -722,17 +740,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
-      "hash8": "c6112c46",
+      "hash8": "31f9bc5b",
       "vdtHash": "1d414c377facb28050190ad6c02af58bbc3e0a09",
       "timings": {
-        "importMs": 1059,
-        "fontsMs": 1800,
-        "buildMs": 231,
-        "totalMs": 3901,
+        "importMs": 1346,
+        "fontsMs": 686,
+        "buildMs": 145,
+        "totalMs": 3169,
         "builds": 2
       },
       "specimen": {
@@ -753,7 +777,7 @@
           "Playpen Sans Arabic"
         ],
         "pages": 2,
-        "ownLines": 107
+        "ownLines": 111
       },
       "pages": [
         {
@@ -809,7 +833,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794907,
+        "bytes": 794953,
         "pages": 1,
         "chapters": [
           {
@@ -839,6 +863,9 @@
           "bodyText.italicColor",
           "bodyText.lineHeight",
           "bodyText.referenceColor",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -903,6 +930,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "colorPalette",
           "comics",
           "footer",
@@ -912,7 +940,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 74,
+        "configLeaves": 75,
         "designElements": 1,
         "directives": [
           ":::page"
@@ -966,17 +994,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "da28b8eb",
+      "hash8": "a2bc6911",
       "vdtHash": "6b576972cb22932447af736fc3e9eeeb34cf423d",
       "timings": {
-        "importMs": 1100,
-        "fontsMs": 1096,
-        "buildMs": 179,
-        "totalMs": 3298,
+        "importMs": 1052,
+        "fontsMs": 1984,
+        "buildMs": 149,
+        "totalMs": 4203,
         "builds": 2
       },
       "specimen": {
@@ -997,7 +1031,7 @@
           "Zen Antique"
         ],
         "pages": 2,
-        "ownLines": 107
+        "ownLines": 111
       },
       "pages": [
         {
@@ -1053,7 +1087,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794909,
+        "bytes": 794956,
         "pages": 1,
         "chapters": [
           {
@@ -1083,6 +1117,9 @@
           "bodyText.italicColor",
           "bodyText.lineHeight",
           "bodyText.referenceColor",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -1147,6 +1184,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "colorPalette",
           "comics",
           "footer",
@@ -1156,7 +1194,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 74,
+        "configLeaves": 75,
         "designElements": 1,
         "directives": [
           ":::page"
@@ -1209,7 +1247,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

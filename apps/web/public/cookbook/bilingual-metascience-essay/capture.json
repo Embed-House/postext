@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-metascience-essay",
-  "sourceHash": "359c03734414b9a8d3e4f2288a9f40306faa3e8091719da10e669ce9986f86a0",
+  "sourceHash": "40c19a7d2e9d7356c9c9a530da012ef8ea1f3dc15e67ea9a9873d292f729e4b0",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:56:20.743Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.704Z",
   "variants": {
     "en": {
-      "hash8": "15f77178",
+      "hash8": "f5dd3bb6",
       "vdtHash": "e5c62e19f30871186585ad147e30cacb1c3c8d84",
       "timings": {
-        "importMs": 215,
-        "fontsMs": 2991,
-        "buildMs": 523,
-        "totalMs": 4373,
+        "importMs": 659,
+        "fontsMs": 835,
+        "buildMs": 304,
+        "totalMs": 2671,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Sofia Sans Semi Condensed"
         ],
         "pages": 7,
-        "ownLines": 220
+        "ownLines": 222
       },
       "pages": [
         {
@@ -141,12 +141,12 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 393142,
+        "bytes": 393147,
         "pages": 7
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 123968,
+        "bytes": 124002,
         "folio": "a418809e",
         "chapters": [
           {
@@ -238,6 +238,9 @@
           "captionStyle.note",
           "captionStyle.note.color",
           "captionStyle.note.fontSize",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "chipStyles",
           "chipStyles[].backgroundEnabled",
           "chipStyles[].bold",
@@ -376,6 +379,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "chipStyles",
           "citations",
           "colorPalette",
@@ -391,7 +395,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 373,
+        "configLeaves": 374,
         "designElements": 12,
         "directives": [
           ":::callout",
@@ -512,21 +516,21 @@
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e488a5c6",
+      "hash8": "e2d0ae15",
       "vdtHash": "e98ec382113fd2f776867edf43342fecd5d46fe1",
       "timings": {
-        "importMs": 434,
-        "fontsMs": 1601,
-        "buildMs": 483,
-        "totalMs": 3290,
+        "importMs": 827,
+        "fontsMs": 494,
+        "buildMs": 283,
+        "totalMs": 2402,
         "builds": 1
       },
       "specimen": {
@@ -548,7 +552,7 @@
           "Sofia Sans Semi Condensed"
         ],
         "pages": 7,
-        "ownLines": 220
+        "ownLines": 222
       },
       "pages": [
         {
@@ -650,12 +654,12 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 423875,
+        "bytes": 423886,
         "pages": 7
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 126679,
+        "bytes": 126720,
         "folio": "a418809e",
         "chapters": [
           {
@@ -747,6 +751,9 @@
           "captionStyle.note",
           "captionStyle.note.color",
           "captionStyle.note.fontSize",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "chipStyles",
           "chipStyles[].backgroundEnabled",
           "chipStyles[].bold",
@@ -885,6 +892,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "chipStyles",
           "citations",
           "colorPalette",
@@ -900,7 +908,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 373,
+        "configLeaves": 374,
         "designElements": 12,
         "directives": [
           ":::callout",
@@ -1009,6 +1017,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

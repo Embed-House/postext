@@ -50,7 +50,7 @@
   ],
   "workarounds": [],
   "engine": {
-    "postext": "1.25.0"
+    "postext": "1.34.0"
   },
   "kit": [
     "core",
@@ -127,6 +127,6 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-09-25",
-  "updated": "2026-10-11",
+  "updated": "2026-10-16",
   "related": ["spanish-pocket-novel", "proof-sheet-diagnostics", "baseline-grid-book-page", "section-heads-field-manual"]
 }

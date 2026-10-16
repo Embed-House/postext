@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 055 · A galley proof with every fault marked in red ══════
 // https://postext.dev/en/cookbook/proof-sheet-diagnostics
 // Code: MIT · Text: original (CC BY 4.0) · Map: code (CC BY 4.0) · Photo: diffusion models
-// Fonts: Charis SIL, Chivo, Fragment Mono (SIL OFL 1.1) · Needs postext ≥ 1.28.0
+// Fonts: Charis SIL, Chivo, Fragment Mono (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import { buildDocumentWithFonts, prepareFonts, renderPageToCanvas, registerResourceImage,
   parseMarkdownWithIssues, KNOWN_DIRECTIVES, KNOWN_CONTAINERS, lineWordSpacing,
 } from 'https://esm.sh/postext';
@@ -42,11 +42,11 @@ const opener = { enabled: true, slot: { elements: [ // the drawing, then the wor
 const head = (id, content, parity, edge, x, y = 12) => text(id, content, MONO, 7.5, 'muted',
   { anchor: { to: 'page', edge }, offset: { x: mm(x), y: mm(y) } }, { ...caps(7.5), parity,
     pages: 'body', align: edge.split('-')[1] ?? 'center' }); // y: mm from the trim
+const RUNNING = t({ en: ['The Tideline · issue 41', 'News · the night ferry'],
+  es: ['La Marea · número 41', 'Noticias · la barcaza nocturna'] });
 const header = { elements: [
-  head('verso', t({ en: '{pageNumber}   The Tideline · issue 41',
-    es: '{pageNumber}   La Marea · número 41' }), 'even', 'top-left', OUTER),
-  head('recto', t({ en: 'News · the night ferry   {pageNumber}',
-    es: 'Noticias · la barcaza nocturna   {pageNumber}' }), 'odd', 'top-right', -OUTER)] };
+  head('verso', `{pageNumber}   ${RUNNING[0]}`, 'even', 'top-left', OUTER),
+  head('recto', `${RUNNING[1]}   {pageNumber}`, 'odd', 'top-right', -OUTER)] };
 const footer = { elements: [{ ...head('drop', '{pageNumber}', 'all', 'bottom', 0, -11),
   pages: 'opener' }] }; // the opener's folio drops to its foot
 
@@ -91,8 +91,8 @@ const config = () => ({
   headings: { fontFamily: DISPLAY, color: col('ink'), levels: [
     { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' }, // a recto
       advancedDesign: opener },
-  ] },
-  calloutStyles, header, footer,
+  ] }, calloutStyles, header, footer,
+  checks: { contentInConfig: { allow: RUNNING } }, // the paper's running heads (#849)
   captionStyle: { fontFamily: DISPLAY, fontSize: pt(8), lineHeight: pt(11), color: col('ink'),
     labelBold: true, labelColor: col('proof') },
 });

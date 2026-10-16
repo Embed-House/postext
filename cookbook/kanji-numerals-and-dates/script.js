@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 129 · Kanji numerals, counters and dates in vertical text ═══
 // https://postext.dev/en/cookbook/kanji-numerals-and-dates
 // Code: MIT · Text: written for the recipe (CC BY 4.0)
-// Fonts: Noto Serif JP, Noto Sans JP, Zen Maru Gothic (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Noto Serif JP, Noto Sans JP, Zen Maru Gothic (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 // A neighbourhood newsletter set vertically: every way Japanese writes a number.
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, loadVerticalAlternates, formatNumeral,
@@ -69,6 +69,9 @@ const BAND = 46; // mm from the right trim edge
 const at = (x, y, extra = {}) => ({ anchor: { to: 'page', edge: 'top-left' },
   offset: { x: mm(x), y: mm(y) }, ...extra }); // x down the sheet, y leftward from its right
 const onBand = { color: col('paper'), overflow: 'wrap', align: 'left' };
+// The date of issue, composed from kan() and pos() as the issue number is: design text the
+// contentInConfig check allows, since spelling it is what the recipe shows (#849).
+const ISSUED = `${pos(2026)}年（令和${kan(8)}年）${kan(8)}月${kan(1)}日発行`;
 const masthead = {
   id: 'masthead', numbered: false, toc: false, runningChapter: false,
   breakBefore: { enabled: true, parity: 'any' },
@@ -80,7 +83,7 @@ const masthead = {
       placement: at(HEAD, 9) },
     { kind: 'text', id: 'issue', content: `第${kan(ISSUE)}号`, ...onBand, fontFamily: GOTHIC,
       fontWeight: 700, fontSize: pt(12), letterSpacing: pt(2), placement: at(HEAD, 26) },
-    { kind: 'text', id: 'date', content: `${pos(2026)}年（令和${kan(8)}年）${kan(8)}月${kan(1)}日発行`,
+    { kind: 'text', id: 'date', content: ISSUED,
       ...onBand, fontFamily: GOTHIC, fontSize: pt(10), align: 'right',
       placement: at(HEAD, 26, { size: { width: mm(LINE) } }) },
     { kind: 'text', id: 'publisher', content: '{author}', ...onBand, fontFamily: GOTHIC,
@@ -131,6 +134,7 @@ const config = () => ({
   headings: { fontFamily: GOTHIC, color: col('ink'),
     levels: [{ level: 1, breakBefore: { enabled: true, parity: 'any' } }, sectionLevel] },
   headingStyles: [masthead],
+  checks: { contentInConfig: { allow: [ISSUED] } },
   orderedLists,
   paragraphStyles: [
     { id: 'item', firstLineIndent: em(0), indent: em(1), hangingIndent: em(3) },

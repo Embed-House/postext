@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "kanji-numerals-and-dates",
-  "sourceHash": "65f7974aa8abaa80c9b97bba30afa6f2494652606db63434cf5e0ea1c9071228",
+  "sourceHash": "a43124abb657185a69272856f4a074ce1d34dfe80ba99b467ad46465a0851c46",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:42:48.003Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:00:04.780Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.863Z",
   "variants": {
     "en": {
-      "hash8": "e0d7c6b7",
+      "hash8": "045d79c2",
       "vdtHash": "53061b2de6c10bcd2205f7be9f3e4975e589b28c",
       "timings": {
-        "importMs": 267,
-        "fontsMs": 433,
-        "buildMs": 92,
-        "totalMs": 1413,
+        "importMs": 1074,
+        "fontsMs": 2264,
+        "buildMs": 97,
+        "totalMs": 4212,
         "builds": 1
       },
       "specimen": {
@@ -45,7 +39,7 @@
           "Zen Maru Gothic"
         ],
         "pages": 4,
-        "ownLines": 171
+        "ownLines": 175
       },
       "pages": [
         {
@@ -122,12 +116,12 @@
       },
       "pdf": {
         "file": "kanji-numerals-and-dates.pdf",
-        "bytes": 172974,
+        "bytes": 172978,
         "pages": 4
       },
       "sandbox": {
         "file": "kanji-numerals-and-dates.postext",
-        "bytes": 14695,
+        "bytes": 14756,
         "folio": "5113964e",
         "chapters": [
           {
@@ -186,6 +180,9 @@
           "captionStyle.fontFamily",
           "captionStyle.fontSize",
           "captionStyle.labelColor",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "cjk",
           "cjk.grid",
           "cjk.grid.charsPerLine",
@@ -300,6 +297,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "cjk",
           "colorPalette",
           "footer",
@@ -314,7 +312,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 231,
+        "configLeaves": 232,
         "designElements": 7,
         "directives": [
           ":::paragraphs",
@@ -407,18 +405,23 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 3 −5‰ “Set in Noto Serif JP, Noto Sans JP and Zen Maru …”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "0e05be7d",
+      "hash8": "6845788f",
       "vdtHash": "7961f07ca2dea68669b6bbb183fba9facfeeebe0",
       "timings": {
-        "importMs": 298,
-        "fontsMs": 435,
-        "buildMs": 101,
-        "totalMs": 1472,
+        "importMs": 1137,
+        "fontsMs": 2229,
+        "buildMs": 96,
+        "totalMs": 4256,
         "builds": 1
       },
       "specimen": {
@@ -440,7 +443,7 @@
           "Zen Maru Gothic"
         ],
         "pages": 4,
-        "ownLines": 171
+        "ownLines": 175
       },
       "pages": [
         {
@@ -517,12 +520,12 @@
       },
       "pdf": {
         "file": "kanji-numerals-and-dates.pdf",
-        "bytes": 173088,
+        "bytes": 173091,
         "pages": 4
       },
       "sandbox": {
         "file": "kanji-numerals-and-dates.postext",
-        "bytes": 14674,
+        "bytes": 14726,
         "folio": "5113964e",
         "chapters": [
           {
@@ -581,6 +584,9 @@
           "captionStyle.fontFamily",
           "captionStyle.fontSize",
           "captionStyle.labelColor",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "cjk",
           "cjk.grid",
           "cjk.grid.charsPerLine",
@@ -695,6 +701,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "cjk",
           "colorPalette",
           "footer",
@@ -709,7 +716,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 231,
+        "configLeaves": 232,
         "designElements": 7,
         "directives": [
           ":::paragraphs",
@@ -792,7 +799,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

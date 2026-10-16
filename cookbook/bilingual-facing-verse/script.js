@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 043 · Facing translation, stanza by stanza ═══════════════════
 // https://postext.dev/en/cookbook/bilingual-facing-verse
 // Code: MIT · Text: original (CC BY 4.0) · Salt pans and flamingo: diffusion models
-// Fonts: Castoro, Castoro Titling, Tenor Sans (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Castoro, Castoro Titling, Tenor Sans (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -120,10 +120,11 @@ const head = (id, content, parity, placement, extra = {}) => ({ kind: 'text', id
   parity, pages: 'body', fontFamily: 'Tenor Sans', fontSize: pt(7.5), color: col('muted'),
   ...tracked, letterSpacing: pt(1.5), placement, ...extra });
 const folio = { color: col('ink'), letterSpacing: pt(0) };
+const TITLES = ['Sal de agosto', 'August Salt']; // the book's title in its two languages
 const header = { elements: [
   head('verso-folio', '{pageNumber}', 'even', edgeAt('top-left', OUTER, 12), folio),
-  head('verso-title', 'Sal de agosto', 'even', edgeAt('top-left', OUTER + 8, 12)),
-  head('recto-title', 'August Salt', 'odd', edgeAt('top-right', -(OUTER + 8), 12)),
+  head('verso-title', TITLES[0], 'even', edgeAt('top-left', OUTER + 8, 12)),
+  head('recto-title', TITLES[1], 'odd', edgeAt('top-right', -(OUTER + 8), 12)),
   head('recto-folio', '{pageNumber}', 'odd', edgeAt('top-right', -OUTER, 12), folio),
 ] };
 // The note and the picture open their pages ('opener'): a folio at the foot instead.
@@ -158,6 +159,8 @@ const config = () => ({
   ],
   header,
   footer,
+  // Each edition's front matter names one title; the running heads print both (#849).
+  checks: { contentInConfig: { allow: TITLES } },
 });
 
 // ─── 2 · Content ────────────────────────────────────────────────────────────

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 125 · A Japanese research paper cited to SIST 02 ═══════════
 // https://postext.dev/en/cookbook/sist02-research-paper
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: drawn in code
-// Fonts: Noto Serif JP, Noto Sans JP, Shippori Mincho B1 (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Noto Serif JP, Noto Sans JP, Shippori Mincho B1 (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, registerCitationEngine, defaultResourceTypes,
   parseTSV, registerResourceImage, inlineSvgFonts,
@@ -134,6 +134,7 @@ const config = () => ({
     color: col('muted'), firstLineIndent: pt(0), textAlign: 'left', marginTop: pt(PITCH) }],
   header,
   footer: { elements: [] },
+  checks: { contentInConfig: { allow: ['活字と組版の研究'] } }, // the journal's name (#849)
 });
 
 // ─── 2 · Content ────────────────────────────────────────────────────────────
