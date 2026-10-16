@@ -515,7 +515,7 @@ Recorded where the implementation settles a point the sections above leave open,
   carries template, frame, fence index, overflow mm and the frame's config path (P5 adds the steps
   tried and the proposals); the page log gets an `overflow` event.
 - **Not applied yet:** the template's `bodyStyle` and `palette`, a frame's `writingMode` and
-  `direction`, `fit`, group negotiation with `grow`/`shrink`/`priority`/`pin` (P14, §5.9), `spread` (P7),
+  `direction`, `fit`, group negotiation with `grow`/`shrink`/`priority`/`pin` (P14, §5.9), `spread` (P7, §5.10),
   continuation to other pages (P15), labels (P6). A `exclude: 'push'` frame turned by `rotate` pushes
   with its turned box's bounds.
 
@@ -573,6 +573,45 @@ Recorded where the implementation settles a point the sections above leave open,
   boxes, logs and pages after it are unchanged by an edit on it as long as its content stays on it.
   Fixed iteration order, whole-millimetre widths and memoised measures give the same VDT for the same
   input.
+
+### 5.10 Spreads (#861)
+
+- **Where.** `placeComposedPage` (build.ts) resolves the template once as a sheet
+  (`resolvePageTemplate(…, { spread: true })`); a `spread` template takes `breakToEvenPage`, the
+  verso and the recto after it (one empty column each), as `placeComicSpread` does, and
+  `layoutComposedSpread` (`composed/spread.ts`) lays it. The template decides; the fence's flag
+  only feeds `spreadMismatch` (source check in `slotChecks.ts`, `spread` read through `extends`).
+- **Sheet.** One `layoutComposedPage` run on spread coordinates: the first page's frame, the
+  second's set `shift` (= the trim's width) along so the trims meet at the spine. The first page is
+  the flow's left: the left page, or the right one on a mirrored (right-to-left) flow, whose frames
+  are in flow coordinates; a right-bound left-to-right book starts the sheet on its left page, the
+  recto. `content` is the union of both content areas (inner margins inside); `trim`/`bleed` run
+  outer edge to outer edge, no bleed at the spine.
+- **Gutter.** `ComposedPageInput.fitBox` (one hook in composedLayout.ts, `placeFitted`) gives
+  `keepOffGutter`. It fits a frame's declared box and its final box alike (the band is the
+  template's, not a reflow, so P14's log does not report it as one), and a group member's own box
+  before the group negotiates (§5.9), so a stack on a spread lays its frames off the band;
+  a frame without `crossGutter` that meets the band is cut at the band's edge (it reached across) or
+  moved out whole (its inner edge was inside), on its centre's side (ties: the first page); an
+  `'auto'` height is re-measured at the new width; the log gets `resized`/`moved` with cause
+  `'gutter'`. A 0 gutter still keeps frames off the spine line.
+- **Cut.** A frame goes to the page holding its bounds; a crossing frame is read on the page of its
+  centre (ties: first page). The facing page gets a frame record with the same id, empty
+  `blockIds` and `facingBlocks`: deep copies moved by `-shift`/`0`, ids `<id>-facing`, in no
+  `page.floats` and no `doc.blocks`, so reflowable output, search, selection and source maps meet
+  the text once. Blocks of frames on the second page are cloned before they are moved.
+- **Paint.** `VDTComposedPage.sheetClip` (the page's bleed box) clips all of a spread page's frames
+  and decoration (canvas, HTML `pt-sheet-clip`, PDF `re W n`); `composedPaintOrder` yields
+  `facing: true` items, which the PDF tags as Layout artifacts and the HTML (written in reading order,
+  §8) marks `aria-hidden`/`data-facing` and leaves out of the patchable blocks. Fixed EPUB adds `rendition:spread-both` to both pages; the
+  page-spread side follows parity as before.
+- **Decoration** is laid once (headerFooter.ts, on the first page of the pair met) over the
+  physical sheet (left page at 0), `#frame` anchors read the frames' physical boxes
+  (`flowRectToPage`, which also fixes `#frame` decoration on single right-to-left pages), then
+  `splitSpreadDecoration` keeps the blocks that reach each page's bleed box, moved onto its sheet.
+- **Not done:** spreads on vertical (`vertical-rl`) pages (the sheet is laid in physical
+  boxes, the flow is rotated); per-side `mirrored` for frames' outer-corner icons (the first page's
+  is used); running-head placeholders in a spread's decoration read the first page met.
 
 ## 6. Source map contract
 
