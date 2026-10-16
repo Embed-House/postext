@@ -3,7 +3,7 @@
  * a callout style (`box`) and Markdown text (`::panel{text}`).
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml, collectContentWarnings, parseMarkdown, comicPaintsUnderText, composedFrameBlockIds, comicFramePaintOrder, pageComics } from '../../index';
+import { buildDocument, renderPageToCanvas, renderToHtml, collectContentWarnings, parseMarkdown, comicPaintsUnderText, composedFrameBlockIds, comicFramePaintOrder, pageComics, sourceAt, elementsForSource, findElement } from '../../index';
 import type { PostextConfig, Resource } from '../../types';
 import type { VDTDocument, VDTPage } from '../../vdt';
 
@@ -206,5 +206,42 @@ describe('text panels', () => {
     expect(comicPage(rdoc).comic!.frames![0]!.blockIds).toEqual([]);
     expect(rdoc.blocks.some((b) => b.lines.some((l) => l.text.includes('كلمات')))).toBe(true);
     expect(collectContentWarnings(single, rtl).find((x) => x.kind === 'comicPanelFrame')).toMatchObject({ reason: 'flow' });
+  });
+});
+
+describe('source map of comics', () => {
+  const md = ':::page{split="40 / *"}\n::panel{text}\nWords of the panel.\n::panel{art=pic}\nana: Hello there!\n:::\n';
+
+  it('answers a balloon, a panel and a text panel with stable ids', () => {
+    const doc = buildDocument({ markdown: md, resources: [pic] }, {});
+    const page = comicPage(doc);
+    const comic = page.comic!;
+    const b = comic.balloons[0]!;
+    const atBalloon = sourceAt(doc, page.index, b.bbox.x + b.bbox.width / 2, b.bbox.y + b.bbox.height / 2);
+    const levels = atBalloon.map((e) => [e.level, e.id]);
+    expect(levels.slice(-3)).toEqual([['box', 'cm0:p2:b0'], ['frame', 'cm0:p2'], ['template', 'cm0']]);
+    expect(md.slice(atBalloon.at(-3)!.source.kind === 'markdown' ? (atBalloon.at(-3)!.source as { start: number }).start : 0)).toMatch(/^ana: Hello there!/);
+    // Off the balloon, on the picture: the art, the frame, the comic.
+    const panel = comic.panels[1]!;
+    const atArt = sourceAt(doc, page.index, panel.bbox.x + 4, panel.bbox.y + panel.bbox.height - 4);
+    expect(atArt.map((e) => e.level)).toEqual(['resource', 'frame', 'template']);
+    expect(atArt[0]!.source).toEqual({ kind: 'resource', resourceId: 'pic' });
+    // On a text panel's words: the text, its line and paragraph, the story box, the frame, the comic.
+    const para = page.floats!.find((x) => x.type === 'paragraph')!;
+    const line = para.lines[0]!;
+    const atText = sourceAt(doc, page.index, line.bbox.x + 10, line.bbox.y + line.bbox.height / 2);
+    expect(atText.map((e) => e.level)).toEqual(['text', 'line', 'block', 'box', 'frame', 'template']);
+    expect(atText.slice(-2).map((e) => e.id)).toEqual(['cm0:p1', 'cm0']);
+  });
+
+  it('finds the comic, its frames and balloons by id and by source', () => {
+    const doc = buildDocument({ markdown: md, resources: [pic] }, {});
+    const page = comicPage(doc);
+    expect(findElement(doc, 'cm0')).toMatchObject({ pageIndex: page.index, element: { level: 'template' } });
+    expect(findElement(doc, 'cm0:p2')).toMatchObject({ pageIndex: page.index, element: { level: 'frame' } });
+    expect(findElement(doc, 'cm0:p2:b0')).toMatchObject({ element: { level: 'box' } });
+    const at = md.indexOf('Hello');
+    const found = elementsForSource(doc, at, at + 1).map((m) => m.element.id);
+    expect(found).toEqual(expect.arrayContaining(['cm0', 'cm0:p2', 'cm0:p2:b0']));
   });
 });

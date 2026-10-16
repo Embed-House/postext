@@ -257,7 +257,9 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       });
       return;
     }
-    if (!LAYOUT_CONTENT_KINDS.has(w.kind)) return;
+    // A text panel's text clipped (#885) is the layout's; the panel frame's
+    // other reasons are read from the source.
+    if (!LAYOUT_CONTENT_KINDS.has(w.kind) && !(w.kind === 'comicPanelFrame' && w.reason === 'textOverflow')) return;
     const payload: Record<string, unknown> = { ...w };
     delete payload.sourceStart;
     delete payload.sourceEnd;

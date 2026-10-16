@@ -43,6 +43,7 @@
  * `comicDrag.ts`, the source edits in `comicSource.ts`.
  */
 
+import { comicTextFrameAt } from '../composed/frameHit';
 import type { Dispatch, MutableRefObject } from 'react';
 import { pageComics, type Resource, type VDTComicBalloon, type VDTComicPage, type VDTComicPanel, type VDTComicSplitter, type VDTDocument, type VDTPoint } from 'postext';
 import type { SandboxAction } from '../../context/SandboxContext';
@@ -1371,6 +1372,16 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
   };
   /** What a press under a point does (#594, #595): the hit refined to a
    *  balloon's words (`text`) or a panel's picture (`art`). */
+  /** Whether a point lies on the words of a text panel (#885): one of the
+   *  blocks its frame holds, past the frame's own box. */
+  const onComicText = (at: ComicPointer): boolean => {
+    const page = docRef.current?.pages[at.pageIndex];
+    const frame = page ? comicTextFrameAt(page, at.x, at.y) : null;
+    if (!page || !frame) return false;
+    const ids = new Set(frame.blockIds.slice(1));
+    return (page.floats ?? []).some((b) => ids.has(b.id) && at.x >= b.bbox.x && at.x <= b.bbox.x + b.bbox.width && at.y >= b.bbox.y && at.y <= b.bbox.y + b.bbox.height);
+  };
+
   const pressAt = (at: ComicPointer | null): ComicPress | null => {
     if (!at || !textEnabled()) return null;
     const comics = comicsOf(at.pageIndex);
@@ -1543,6 +1554,8 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
       };
     },
     panelArtAt(at) {
+      // A text panel's words (#885) are text: a click there places the caret.
+      if (at && onComicText(at)) return null;
       const press = pressAt(at);
       return press?.kind === 'art' ? press.art.resourceId : null;
     },

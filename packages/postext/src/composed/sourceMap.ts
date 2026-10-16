@@ -25,6 +25,7 @@ import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
 import { resolvePageTemplate } from './templates';
 import { composedPaintOrder, frameContentRect, frameMatrix, frameOfBlock } from './paint';
 import { composedPageElementId, designElementId, groupElementId } from './ids';
+import { comicChainAt, comicElementsForSource, comicTextAncestors, findComicElement } from '../comics/sourceMap';
 
 /** Where something painted comes from. Markdown offsets are absolute in
  *  the chapter file (front matter counted), as every `sourceStart` of the
@@ -570,6 +571,11 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
   // The running heads paint over everything else.
   const head = furniture(page.header, 'header') ?? furniture(page.footer, 'footer');
   if (head) return head;
+  // A comic's balloons and panels (#885), on the sheet over the flow; a
+  // text panel's words answer below, as the page's blocks.
+  const onText = (frame: VDTFrame): boolean => (page.floats ?? []).some((b) => b.type !== 'callout' && frame.blockIds.includes(b.id) && inside(b.bbox, p));
+  const comic = comicChainAt(page, p, file, designTextSource, onText);
+  if (comic) return comic;
   if (composed) {
     // A page of a spread paints its frames and decoration clipped to its
     // part of the sheet (#861).
@@ -608,7 +614,7 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
   for (const b of all) {
     if (b.type === 'callout' || b.hidden || b.designOverlay) continue;
     if (!inside(b.bbox, fp)) continue;
-    return [...textChain(b, fp, file), ...enclosingBoxes(b, boxes, file)];
+    return [...textChain(b, fp, file), ...enclosingBoxes(b, boxes, file), ...comicTextAncestors(page, b.id, file)];
   }
   for (const b of boxes) {
     if (!inside(b.bbox, fp)) continue;
@@ -641,6 +647,8 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
   const out: SourceMatch[] = [];
   const blockFrame = new Map<string, { frame: VDTFrame; page: VDTPage }>();
   for (const page of doc.pages) {
+    // Comics (#885): the comic, its frames and its balloons.
+    for (const element of comicElementsForSource(page, (r) => meets(r, start, end), fileOf(options, page.index))) out.push({ pageIndex: page.index, element });
     const composed = page.composed;
     if (!composed) continue;
     const file = fileOf(options, page.index);
@@ -746,6 +754,9 @@ function intersect(a: BoundingBox, b: BoundingBox): BoundingBox | undefined {
  *  on its page: what a host looks up again after a relayout. */
 export function findElement(doc: VDTDocument, id: string, options?: SourceMapOptions): SourceMatch | undefined {
   for (const page of doc.pages) {
+    // A comic, its frames and balloons (`cm<n>…`, #885).
+    const comicEl = findComicElement(page, id, fileOf(options, page.index));
+    if (comicEl) return { pageIndex: page.index, element: comicEl };
     const composed = page.composed;
     if (!composed) continue;
     if (composedPageElementId(composed.fenceIndex) === id) return { pageIndex: page.index, element: templateElement(composed) };

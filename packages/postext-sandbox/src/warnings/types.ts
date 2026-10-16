@@ -139,7 +139,8 @@ export type WarningKind =
   | 'comicPanelLetterbox'
   | 'comicAnchorOutsideSafeArea'
   | 'comicBalloonOverflow'
-  | 'comicUnknownSpeaker';
+  | 'comicUnknownSpeaker'
+  | 'comicPanelFrame';
 
 export type WarningPayload =
   | { kind: 'missingFont'; family: string }
@@ -546,6 +547,11 @@ export type WarningPayload =
   | { kind: 'comicBalloonOverflow'; panel?: number; panelIndex?: number; reasons?: string[] }
   /** A speaker no picture marks and the cast does not list. */
   | { kind: 'comicUnknownSpeaker'; speaker: string }
+  /** A panel's frame (#885) falls back: an unknown `box` style, a text
+   *  panel's text clipped (found by the layout), or a text panel set in
+   *  the flow (a strip, a spread, a vertical or right-to-left document).
+   *  `panel` is 0-based, in source order. */
+  | { kind: 'comicPanelFrame'; reason: 'unknownBox' | 'textOverflow' | 'strip' | 'spread' | 'flow'; panel: number; style?: string; overflowMm?: number }
   /** A print preflight finding (#605): the engine's check, or what a
    *  placed PDF brings in. `page` is the book page number to jump to. */
   | { kind: 'preflight'; check: PreflightCheck; page?: number }

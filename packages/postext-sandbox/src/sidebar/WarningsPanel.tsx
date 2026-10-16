@@ -186,6 +186,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'comicSplitSyntax':
     case 'comicSplitOverflow':
     case 'comicPanelCount':
+    case 'comicPanelFrame':
       return LayoutGrid;
     case 'comicUnknownArt':
     case 'comicPanelLetterbox':
@@ -475,6 +476,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsComicBalloonOverflowTitle;
     case 'comicUnknownSpeaker':
       return labels.warningsComicUnknownSpeakerTitle;
+    case 'comicPanelFrame':
+      return labels.warningsComicPanelFrameTitle;
   }
 }
 
@@ -874,6 +877,17 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
     }
     case 'comicUnknownSpeaker':
       return `${payload.speaker}: — ${labels.warningsComicUnknownSpeakerDetail}`;
+    case 'comicPanelFrame': {
+      const detail = payload.reason === 'unknownBox' ? labels.warningsComicPanelFrameUnknownBoxDetail
+        : payload.reason === 'textOverflow' ? labels.warningsComicPanelFrameTextOverflowDetail
+          : payload.reason === 'strip' ? labels.warningsComicPanelFrameStripDetail
+            : payload.reason === 'spread' ? labels.warningsComicPanelFrameSpreadDetail
+              : labels.warningsComicPanelFrameFlowDetail;
+      return detail
+        .replace('__panel__', String(payload.panel + 1))
+        .replace('__style__', payload.style ?? '')
+        .replace('__mm__', String(payload.overflowMm ?? 0));
+    }
   }
 }
 

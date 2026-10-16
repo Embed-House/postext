@@ -4141,6 +4141,12 @@ export interface SandboxLabels {
   warningsComicBalloonOverflowDetail: string;
   warningsComicUnknownSpeakerTitle: string;
   warningsComicUnknownSpeakerDetail: string;
+  warningsComicPanelFrameTitle: string;
+  warningsComicPanelFrameUnknownBoxDetail: string;
+  warningsComicPanelFrameTextOverflowDetail: string;
+  warningsComicPanelFrameStripDetail: string;
+  warningsComicPanelFrameSpreadDetail: string;
+  warningsComicPanelFrameFlowDetail: string;
 
   // Comic page tools on the previews (#568)
   comicSplitterLabel: string;

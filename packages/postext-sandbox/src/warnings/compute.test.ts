@@ -996,15 +996,18 @@ describe('comic page warnings (#570)', () => {
       contentWarnings: [
         { kind: 'comicPanelLetterbox', resourceId: 'p1', panel: 1, sourceStart: 10, sourceEnd: 20 },
         { kind: 'comicBalloonOverflow', panelIndex: 0, sourceStart: 30, sourceEnd: 40 },
+        // A text panel's text clipped (#885) is the layout's.
+        { kind: 'comicPanelFrame', reason: 'textOverflow', panel: 0, overflowMm: 4.2, sourceStart: 41, sourceEnd: 45 },
         // Source-level kinds come from the source, not twice.
         { kind: 'comicUnknownArt', resourceId: 'x', sourceStart: 0, sourceEnd: 5 },
+        { kind: 'comicPanelFrame', reason: 'unknownBox', panel: 0, style: 'nope', sourceStart: 0, sourceEnd: 5 },
       ],
       pages: [],
       blocks: [],
     } as unknown as VDTDocument;
     const md = 'a'.repeat(50);
     const kindsFound = computeWarnings({ markdown: md, config: {}, doc }).map((w) => w.payload.kind).filter((k) => k.startsWith('comic'));
-    expect(kindsFound).toEqual(['comicPanelLetterbox', 'comicBalloonOverflow']);
+    expect(kindsFound).toEqual(['comicPanelLetterbox', 'comicBalloonOverflow', 'comicPanelFrame']);
   });
 });
 
