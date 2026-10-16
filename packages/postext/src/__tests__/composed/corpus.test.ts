@@ -22,9 +22,14 @@ describe('corpus (#854)', () => {
       }
     })
     : [];
+  // The composed-page recipes (#875–#879) write page fences on purpose; every other text
+  // must read as it did before the syntax existed.
+  const COMPOSED = /^::::+\s*page\s*\{/m;
   it.runIf(files.length > 0)('no Cookbook text reads as a composed page', () => {
     for (const f of files) {
-      const { blocks } = parseMarkdownWithIssues(extractFrontmatter(readFileSync(f, 'utf8')).content);
+      const text = readFileSync(f, 'utf8');
+      if (COMPOSED.test(text)) continue;
+      const { blocks } = parseMarkdownWithIssues(extractFrontmatter(text).content);
       const hit = blocks.find((b) => b.composedPage || b.slot || b.figure || b.containerName === 'frame');
       expect(hit, f).toBeUndefined();
     }

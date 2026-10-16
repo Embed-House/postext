@@ -240,6 +240,21 @@ describe('the reflow log (#856)', () => {
     expect(events.map(describeReflowEvent).join('; ')).toBe('dinero grew 8 mm; gasto moved down 8 mm; gasto-fotos moved down 8 mm');
   });
 
+  it('in a row, the cards that give width name the card that grew, not each other (#877)', () => {
+    const r = (x: number, w: number) => ({ x: x * MM, y: 0, width: w * MM, height: 100 * MM });
+    // c3 took 12 mm: c1 gave 9 and c2 gave 3, and each card depends on the others of its row.
+    const events = reflowEvents([
+      { name: 'c1', declared: r(0, 56), final: r(0, 47), deps: ['c2', 'c3'] },
+      { name: 'c2', declared: r(61, 56), final: r(52, 53), deps: ['c1', 'c3'] },
+      { name: 'c3', declared: r(122, 56), final: r(110, 68), deps: ['c1', 'c2'] },
+    ], MM);
+    expect(events.map(describeReflowEvent)).toEqual([
+      'c1 narrowed 9 mm for c3', 'c2 narrowed 3 mm for c3', 'c2 moved left 9 mm',
+      'c3 grew 12 mm wider', 'c3 moved left 12 mm',
+    ]);
+    expect(events.filter((e) => e.kind === 'resized').every((e) => e.cause === 'c3')).toBe(true);
+  });
+
   it('words every kind', () => {
     expect(describeReflowEvent({ frame: 'a', kind: 'resized', fromMm: 60, toMm: 52, cause: 'b' })).toBe('a gave up 8 mm for b');
     expect(describeReflowEvent({ frame: 'a', kind: 'resized', fromMm: 60, toMm: 52, axis: 'x', cause: 'b' })).toBe('a narrowed 8 mm for b');

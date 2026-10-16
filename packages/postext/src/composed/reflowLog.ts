@@ -30,21 +30,25 @@ const round = (mm: number): number => Math.round(mm * 10 + (mm >= 0 ? 1e-6 : -1e
 export function reflowEvents(motions: readonly FrameMotion[], pxPerMm: number): ReflowEvent[] {
   const mm = (v: number): number => v / pxPerMm;
   const sized = new Set<string>();
+  const grew = new Set<string>();
   const moved = new Set<string>();
   for (const m of motions) {
     if (Math.abs(mm(m.final.height - m.declared.height)) >= MIN_MM || Math.abs(mm(m.final.width - m.declared.width)) >= MIN_MM) sized.add(m.name);
+    if (mm(m.final.height - m.declared.height) >= MIN_MM || mm(m.final.width - m.declared.width) >= MIN_MM) grew.add(m.name);
     if (Math.abs(mm(m.final.y - m.declared.y)) >= MIN_MM || Math.abs(mm(m.final.x - m.declared.x)) >= MIN_MM) moved.add(m.name);
   }
   const byName = new Map(motions.map((m) => [m.name, m]));
   const causes = new Map<string, string | undefined>();
   /** The frame whose change set this one off: the nearest dependency that
-   *  changed size, else the cause of the nearest one that moved. */
+   *  grew, else the nearest that changed size, else the cause of the
+   *  nearest one that moved. In a row, the cards that give width to a
+   *  sibling name that sibling, not each other (#877). */
   const causeOf = (name: string, seen: Set<string> = new Set()): string | undefined => {
     if (causes.has(name)) return causes.get(name);
     if (seen.has(name)) return undefined;
     seen.add(name);
     const deps = byName.get(name)?.deps ?? [];
-    let found = deps.find((d) => sized.has(d) && d !== name);
+    let found = deps.find((d) => grew.has(d) && d !== name) ?? deps.find((d) => sized.has(d) && d !== name);
     if (!found) {
       const via = deps.find((d) => moved.has(d) && d !== name);
       if (via) found = causeOf(via, seen) ?? via;
