@@ -469,7 +469,7 @@ page numbering, running heads and parity rules (they are ordinary pages with `ro
 </table>
 
 Each proposal is data (`{ kind, path, value }`) so the Sandbox can offer it as a one-click,
-confirmed config change (U8).
+confirmed config change (U8). What P5 built is in §5.11.
 
 ### 5.8 What P4 built (#855)
 
@@ -612,6 +612,55 @@ Recorded where the implementation settles a point the sections above leave open,
 - **Not done:** spreads on vertical (`vertical-rl`) pages (the sheet is laid in physical
   boxes, the flow is rotated); per-side `mirrored` for frames' outer-corner icons (the first page's
   is used); running-head placeholders in a spread's decoration read the first page met.
+
+### 5.11 What P5 built (#858)
+
+- **Where the ladder runs.** In `layoutComposedPage` (`pipeline/composedLayout.ts`), around one
+  laying out of the whole page (`composePage`, P4's and P14's work unchanged): a step is a *fit
+  state* (frame patches, text scale per story, picture scale per story, groups that redistribute)
+  and the page is composed again with it; compositions are memoised by state. Frames that overflow
+  climb the ladder one by one in template order, each step adopted on top of the ones before it
+  (a step that does not make the frame fit stays at its limit: less is cut), stopping at the first
+  that makes it fit. A budget of 96 compositions per page bounds the work. Same input, same VDT;
+  nothing reads another page.
+- **Steps as built.** `free`: P14 already lets an `'auto'` height take the room its area and group
+  leave, so the step adds only that a frame with a fixed `height` and a higher `maxHeight` grows up
+  to it (patched to `'auto'` with its height as `minHeight`). `push`: part of every composition
+  (groups move and yield, anchored frames follow); reported when the frame is in a group with
+  others or something anchors to it. `scaleImages`: bitmaps, SVGs and video posters of the stories
+  of the frame and of its group's frames are set at a share of their width
+  (`CalloutLayoutInput.pictureScale` → `figureMaxBodyWidth`), largest 2.5 % step that fits down to
+  `fit.imageMinScale`, found by checking the minimum and then bisecting; floats do not exist
+  inside frames (P4 sets a frame's pictures inline), so "re-place floats" is the text after a
+  picture moving up. `redistribute`: in the frame's group every unpinned frame yields (`shrink`
+  read as 1 when 0) down to `max(minHeight, its content's need)`, never above its height; in a
+  row they give width as in P14 (each down to the narrowest width its own text fits). `shrinkText`:
+  only for a frame whose story sets text; the whole story (all frames of a chain) at one scale.
+  `continue`: reported for `overflow.continueIn: 'next-page' | 'template:…'`; #859 lays it out.
+- **Text scale is geometric.** A scaled frame's story is laid out at `width / scale` and
+  `height / scale` and painted scaled by `scale` about the top-left of `rect`: `frameMatrix` now
+  composes the scale before the turn, `frameContentRect` is the box in the blocks' own coordinates
+  (backends clip to it). Font size, leading and every spacing shrink by exactly the same factor,
+  whatever the content (tables, formulas, nested boxes). The frame's chrome keeps its drawn size
+  (`keepChromeAt`: padding, border width, radius, stripe and tab dimensions laid out at
+  `1 / scale`), so padding that keeps room for photos set over a box stays that room. Blocks of a
+  scaled frame are in its laid-out coordinates: anything that reads block boxes directly instead of
+  painting through `frameMatrix` (the Sandbox's caret and selection overlay, tagged PDF bounding
+  boxes) sees them unscaled, as it sees a rotated frame's upright (follow-up).
+- **Warning.** `frameOverflow` gains `locale`, `stepsTried`, `scale`, `imageScale`, `proposals`.
+  Proposals are data with set-the-pointer semantics (`path` → `value`); a Markdown change carries a
+  source range instead (`useTemplate`: the fence's `template` value; `shortenText`: the frame's
+  content). Values are tried on the page where the page can tell: `allowShrink` (largest 2.5 % step
+  down to 50 %, `also` turns `shrinkText` on), `raiseMax` (height + shortfall, whole mm; offered only
+  when it fits), `lowerMin` (a group sibling at its minimum with less content, lowered by the
+  shortfall, not below its content; offered when it fits), `useTemplate` (first other template, in
+  `pageTemplates` order, with a frame of that name where the content fits as it is; the stories
+  keep the page's own regrouping). `continueNextPage` and `shortenText` (lines over × characters of
+  a full line) are not tried. `slotUnknown` names the flow frame that takes the content; slot
+  warnings already carried page and source range after layout.
+- **Log.** `imageScaled` (with `cause` when another frame's ladder set it) and `textScaled`
+  events, per frame after its size and moves, before its `overflow`; words to the tenth of a
+  percent.
 
 ## 6. Source map contract
 
