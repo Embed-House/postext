@@ -88,6 +88,7 @@ export function reflowEvents(motions: readonly FrameMotion[], pxPerMm: number): 
 }
 
 const num = (v: number): string => String(Math.round(v * 10) / 10);
+const pct = (v: number): string => `${Math.round(v * 1000) / 10} %`;
 
 /** One event in words, in English (the command line's language):
  *  «dinero grew 8 mm», «gasto moved down 8 mm», «foto narrowed 4 mm». */
@@ -109,17 +110,15 @@ export function describeReflowEvent(e: ReflowEvent): string {
     case 'overflow':
       return `${e.frame} overflows by ${num(e.toMm ?? 0)} mm`;
     case 'imageScaled':
-      return `${e.frame}: picture at ${Math.round((e.scale ?? 1) * 100)} %`;
+      return `${e.frame}: picture at ${pct(e.scale ?? 1)}`;
     case 'textScaled':
-      return `${e.frame}: text at ${Math.round((e.scale ?? 1) * 100)} %`;
+      return `${e.frame}: text at ${pct(e.scale ?? 1)}`;
     case 'continued':
       return `${e.frame} continued${e.cause ? ` in ${e.cause}` : ''}`;
     default:
       return `${e.frame} ${String(e.kind)}`;
   }
 }
-
-const pct = (v: number): string => `${Math.round(v * 1000) / 10} %`;
 
 /** A step of the reflow ladder in words, in English (#858): «text down to
  *  90 %». `scale` / `imageScale`: where the frame's text and pictures were

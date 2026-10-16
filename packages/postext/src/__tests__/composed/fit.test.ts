@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/build';
 import { createMeasurementCache } from '../../measure';
 import { formatWarning } from '../../pipeline/contentWarnings';
-import { describeFitStep, describeFrameOverflowProposal } from '../../composed/reflowLog';
+import { describeFitStep, describeFrameOverflowProposal, describeReflowEvent } from '../../composed/reflowLog';
 import { frameBounds, frameContentRect, frameMatrix } from '../../composed/paint';
 import type { FrameConfig, PageTemplate } from '../../composed/types';
 import type { ContentWarning, FrameOverflowProposal, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
@@ -272,6 +272,8 @@ describe('frameOverflow: the steps tried and the proposals (#858)', () => {
     expect(describeFitStep('shrinkText', { scale: 0.9 })).toBe('text down to 90 %');
     expect(describeFitStep('scaleImages', { imageScale: 0.825 })).toBe('pictures down to 82.5 %');
     expect(describeFitStep('free')).toBe('free space');
+    expect(describeReflowEvent({ frame: 'a', kind: 'textScaled', scale: 0.925 })).toBe('a: text at 92.5 %');
+    expect(describeReflowEvent({ frame: 'a', kind: 'imageScaled', scale: 0.8 })).toBe('a: picture at 80 %');
     expect(describeFitStep('redistribute')).toBe('the other frames of its group down to their minimum');
     expect(describeFitStep('continue')).toContain('another page');
     expect(describeFrameOverflowProposal({ kind: 'allowShrink', path: '/x', value: 0.85 })).toBe('let its text shrink to 85 % (fit.minScale: 0.85)');
