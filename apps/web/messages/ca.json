@@ -4365,7 +4365,7 @@
     "checksContentAllow": "Frases permeses",
     "checksContentAllowTooltip": "Una per línia: frases que un disseny pot repetir sense límit de llargada, com el títol del llibre o el nom de l'editorial. El títol, el subtítol, l'autor i l'editorial de les metadades ja hi són permesos.",
     "warningsContentInConfigTitle": "Text desat a la configuració",
-    "warningsContentInConfigDetail": "__count__ textos de disseny desen __chars__ lletres de contingut («__sample__»). Porta el text al Markdown (un títol, un requadre o un paràgraf) i deixa només marcadors al disseny, o afegeix la frase a Contingut a la configuració › Frases permeses."
+    "warningsContentInConfigDetail": "Textos de disseny amb contingut: __count__, __chars__ lletres («__sample__»). Porta el text al Markdown (un títol, un requadre o un paràgraf) i deixa només marcadors al disseny, o afegeix la frase a Contingut a la configuració › Frases permeses."
   },
   "PlainLanguage": {
     "heading": "En poques paraules",

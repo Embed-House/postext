@@ -4366,7 +4366,7 @@
     "checksContentAllow": "Allowed phrases",
     "checksContentAllowTooltip": "One per line: phrases a design may repeat at any length, such as the book's title or the publisher's name. The title, subtitle, author and publisher of the front matter are allowed already.",
     "warningsContentInConfigTitle": "Text held in the configuration",
-    "warningsContentInConfigDetail": "__count__ design texts hold __chars__ letters of content (“__sample__”). Move the text into the Markdown (a heading, a callout or a paragraph) and keep only placeholders in the design, or add the phrase to Content in the configuration › Allowed phrases."
+    "warningsContentInConfigDetail": "Design texts with content: __count__, __chars__ letters (“__sample__”). Move the text into the Markdown (a heading, a callout or a paragraph) and keep only placeholders in the design, or add the phrase to Content in the configuration › Allowed phrases."
   },
   "PlainLanguage": {
     "heading": "In short",

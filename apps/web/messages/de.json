@@ -4366,7 +4366,7 @@
     "checksContentAllow": "Erlaubte Wendungen",
     "checksContentAllowTooltip": "Eine pro Zeile: Wendungen, die eine Gestaltung in jeder Länge wiederholen darf, etwa der Buchtitel oder der Name des Verlags. Titel, Untertitel, Autor und Verlag aus den Metadaten sind bereits erlaubt.",
     "warningsContentInConfigTitle": "Text in der Konfiguration",
-    "warningsContentInConfigDetail": "__count__ Gestaltungstexte enthalten __chars__ Buchstaben Inhalt („__sample__“). Verschieben Sie den Text ins Markdown (eine Überschrift, ein Kasten oder ein Absatz) und lassen Sie in der Gestaltung nur Platzhalter, oder nehmen Sie die Wendung unter Inhalt in der Konfiguration › Erlaubte Wendungen auf."
+    "warningsContentInConfigDetail": "Gestaltungstexte mit Inhalt: __count__, __chars__ Buchstaben („__sample__“). Verschieben Sie den Text ins Markdown (eine Überschrift, ein Kasten oder ein Absatz) und lassen Sie in der Gestaltung nur Platzhalter, oder nehmen Sie die Wendung unter Inhalt in der Konfiguration › Erlaubte Wendungen auf."
   },
   "PlainLanguage": {
     "heading": "Kurz gesagt",

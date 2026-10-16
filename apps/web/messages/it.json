@@ -4366,7 +4366,7 @@
     "checksContentAllow": "Frasi ammesse",
     "checksContentAllowTooltip": "Una per riga: frasi che un design può ripetere di qualsiasi lunghezza, come il titolo del libro o il nome dell’editore. Titolo, sottotitolo, autore ed editore dei metadati sono già ammessi.",
     "warningsContentInConfigTitle": "Testo tenuto nella configurazione",
-    "warningsContentInConfigDetail": "__count__ testi di design contengono __chars__ lettere di contenuto («__sample__»). Sposta il testo nel Markdown (un titolo, un riquadro o un paragrafo) e lascia solo segnaposto nel design, oppure aggiungi la frase in Contenuto nella configurazione › Frasi ammesse."
+    "warningsContentInConfigDetail": "Testi di design con contenuto: __count__, __chars__ lettere («__sample__»). Sposta il testo nel Markdown (un titolo, un riquadro o un paragrafo) e lascia solo segnaposto nel design, oppure aggiungi la frase in Contenuto nella configurazione › Frasi ammesse."
   },
   "PlainLanguage": {
     "heading": "In breve",

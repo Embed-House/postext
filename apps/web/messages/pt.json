@@ -4365,7 +4365,7 @@
     "checksContentAllow": "Frases permitidas",
     "checksContentAllowTooltip": "Uma por linha: frases que um design pode repetir de qualquer tamanho, como o título do livro ou o nome da editora. O título, o subtítulo, o autor e a editora dos metadados já são permitidos.",
     "warningsContentInConfigTitle": "Texto guardado na configuração",
-    "warningsContentInConfigDetail": "__count__ textos de design guardam __chars__ letras de conteúdo (“__sample__”). Leve o texto para o Markdown (um título, um boxe ou um parágrafo) e deixe só marcadores no design, ou acrescente a frase em Conteúdo na configuração › Frases permitidas."
+    "warningsContentInConfigDetail": "Textos de design com conteúdo: __count__, __chars__ letras (“__sample__”). Leve o texto para o Markdown (um título, um boxe ou um parágrafo) e deixe só marcadores no design, ou acrescente a frase em Conteúdo na configuração › Frases permitidas."
   },
   "PlainLanguage": {
     "heading": "Em poucas palavras",

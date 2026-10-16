@@ -4365,7 +4365,7 @@
     "checksContentAllow": "Frases permitidas",
     "checksContentAllowTooltip": "Una por línea: frases que un diseño puede repetir sin límite de largo, como el título del libro o el nombre de la editorial. El título, el subtítulo, el autor y la editorial de los metadatos ya están permitidos.",
     "warningsContentInConfigTitle": "Texto guardado en la configuración",
-    "warningsContentInConfigDetail": "__count__ textos de diseño guardan __chars__ letras de contenido («__sample__»). Lleva el texto al Markdown (un título, un recuadro o un párrafo) y deja solo marcadores en el diseño, o añade la frase en Contenido en la configuración › Frases permitidas."
+    "warningsContentInConfigDetail": "Textos de diseño con contenido: __count__, __chars__ letras («__sample__»). Lleva el texto al Markdown (un título, un recuadro o un párrafo) y deja solo marcadores en el diseño, o añade la frase en Contenido en la configuración › Frases permitidas."
   },
   "PlainLanguage": {
     "heading": "En pocas palabras",

@@ -1827,7 +1827,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   warningsLabelStyleUnknownTitle: 'Label style not found',
   warningsLabelStyleUnknownDetail: 'An anchor of __resource__ names a label style that labelStyles does not have. Its labels take the default look.',
   warningsContentInConfigTitle: "Text held in the configuration",
-  warningsContentInConfigDetail: "__count__ design texts hold __chars__ letters of content (“__sample__”). Move the text into the Markdown (a heading, a callout or a paragraph) and keep only placeholders in the design, or add the phrase to Content in the configuration › Allowed phrases.",
+  warningsContentInConfigDetail: "Design texts with content: __count__, __chars__ letters (“__sample__”). Move the text into the Markdown (a heading, a callout or a paragraph) and keep only placeholders in the design, or add the phrase to Content in the configuration › Allowed phrases.",
   colorPalette: 'Palette',
   colorPaletteTooltip: 'Named colors reusable across all color fields. Changing an entry updates every reference.',
   colorPaletteEntryName: 'Name',
