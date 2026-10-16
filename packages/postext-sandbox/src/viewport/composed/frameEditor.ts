@@ -56,6 +56,7 @@ import { changeFrameForPage, changeTemplateFrame, frameScopeOnPage, templateDisp
 import { countTemplatePages, fenceTemplateChange, templateFences } from '../../templates/templateUsage';
 import { nextFrameName } from '../../templates/frameChain';
 import { frameHitAt } from './frameHit';
+import { selectFrame as pickFrame } from '../../editing/editMode';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 /** CSS px a pointer may travel before a press becomes a drag. */
@@ -211,20 +212,8 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     }
     const selected = selectedHere();
     const byName = new Map(c.frames.map((f) => [f.name, f]));
-    for (const f of c.frames) {
-      const isSel = selected?.name === f.name;
-      const r = f.rect;
-      const group = svgEl('g', f.rotate ? { transform: `rotate(${f.rotate} ${r.x + r.width / 2} ${r.y + r.height / 2})` } : {});
-      group.appendChild(svgEl('rect', { x: r.x, y: r.y, width: r.width, height: r.height, fill: 'none', stroke: isSel ? COLORS.frame : COLORS.frameMuted, 'stroke-width': (isSel ? 2 : 1) * lw, ...(isSel ? {} : { 'stroke-dasharray': `${5 * k} ${3 * k}` }) }));
-      // The name, on a tab at the top-left corner.
-      const fontSize = 10 * k;
-      const tabW = (f.name.length * 0.6 + 1) * fontSize;
-      group.appendChild(svgEl('rect', { x: r.x, y: r.y - fontSize * 1.4, width: tabW, height: fontSize * 1.4, fill: isSel ? COLORS.frame : COLORS.frameMuted }));
-      const text = svgEl('text', { x: r.x + fontSize * 0.5, y: r.y - fontSize * 0.4, 'font-size': fontSize, 'font-family': 'system-ui, sans-serif', fill: COLORS.label });
-      text.textContent = f.name;
-      group.appendChild(text);
-      svg.appendChild(group);
-    }
+    // Every frame's outline and name are the Design mode overlay's (#864,
+    // `frameOverlay.ts`); these marks add the chains, the handles and the drag.
     // Chains: an arrow from each frame to the one its content goes on in.
     const host = templateEditorHost();
     const template = host ? pageTemplate(host.getState().config, c) : undefined;
@@ -266,6 +255,8 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     if (!c || !host) return;
     const { templateId, scope } = frameScopeOnPage(host.getState().config.pageTemplates ?? [], c, f);
     templateEditor.select({ templateId, scope, frame: f.name, group: null, pageIndex });
+    // The Design mode's pick (#864): its overlay draws the frame stronger.
+    pickFrame({ pageIndex, frameId: f.id, name: f.name, template: c.template, configPath: f.configPath });
     // The frame's properties, in the Design panel.
     if (host.getState().activePanel !== 'config') refs.dispatchRef.current({ type: 'SET_PANEL', payload: 'config' });
     showPageTemplatesSection(f.name);

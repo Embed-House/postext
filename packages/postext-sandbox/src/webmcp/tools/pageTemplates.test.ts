@@ -16,7 +16,7 @@ const CONFIG: PostextConfig = {
       id: 'tema',
       name: 'Tema',
       header: false,
-      decoration: { elements: [{ kind: 'text', id: 'tema', content: '{attr.tema}', placement: { anchor: { to: 'page', edge: 'top-right' }, offset: { x: mm(-10), y: mm(6) } } }] },
+      decoration: { elements: [{ kind: 'text', id: 'tema', content: '{attr.tema}', fontSize: { value: 9, unit: 'pt' }, placement: { anchor: { to: 'page', edge: 'top-right' }, offset: { x: mm(-10), y: mm(6) } } }] },
       frames: [
         { name: 'titulo', takes: 'h1', width: mm(110), placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: mm(-4), y: mm(-2) } } },
         { name: 'texto', flow: true, next: 'caja', placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { x: mm(4), y: mm(2) } } },

@@ -5,14 +5,15 @@
  * selected), the template and frame being edited, and the scope.
  *
  * A small external store, so the canvas's DOM controllers read it without
- * React and the panel subscribes with `useSyncExternalStore`. Until the
- * editor's Content/Design switch (#864) owns the mode, the Page templates
- * section sets it with a switch of its own.
+ * React and the panel subscribes with `useSyncExternalStore`. The mode is
+ * the Sandbox's Content / Design mode (#864, `editing/editMode.ts`), and a
+ * frame picked there (`selectFrame`) is picked here too.
  */
 
 import { useSyncExternalStore, type Dispatch } from 'react';
 import type { SandboxAction, SandboxState } from '../context/SandboxContext';
 import type { TemplateScope } from './templateEdits';
+import { editModeNow, onEditModeChange, selectedFrameNow, setEditMode } from '../editing/editMode';
 
 export interface TemplateEditorSelection {
   templateId: string;
@@ -36,16 +37,45 @@ function emit(): void {
   for (const l of [...listeners]) l();
 }
 
+const SCOPE_RE = /^\/pageTemplates\/\d+\/variants\/(recto|verso)\//;
+
+/** The Content / Design mode and the frame picked in it, read into the
+ *  editor's state. */
+function syncFromEditMode(): void {
+  const designMode = editModeNow() === 'design';
+  const picked = selectedFrameNow();
+  let selection = state.selection;
+  if (picked && (selection?.templateId !== picked.template || selection.frame !== picked.name || selection.pageIndex !== picked.pageIndex)) {
+    const scope = (SCOPE_RE.exec(picked.configPath)?.[1] as TemplateScope | undefined) ?? 'base';
+    selection = { templateId: picked.template, scope, frame: picked.name, group: null, pageIndex: picked.pageIndex };
+  }
+  if (designMode === state.designMode && selection === state.selection) return;
+  state = { designMode, selection };
+  emit();
+}
+
+let linked = false;
+function link(): void {
+  if (linked) return;
+  linked = true;
+  state = { ...state, designMode: editModeNow() === 'design' };
+  onEditModeChange(syncFromEditMode);
+}
+
 export const templateEditor = {
-  getSnapshot: (): TemplateEditorState => state,
+  getSnapshot: (): TemplateEditorState => {
+    link();
+    return state;
+  },
   subscribe(listener: () => void): () => void {
+    link();
     listeners.add(listener);
     return () => listeners.delete(listener);
   },
+  /** The Sandbox's mode: Design (`on`) or Content. */
   setDesignMode(on: boolean): void {
-    if (state.designMode === on) return;
-    state = { ...state, designMode: on };
-    emit();
+    link();
+    setEditMode(on ? 'design' : 'content');
   },
   select(selection: TemplateEditorSelection | null): void {
     const a = state.selection;
@@ -60,7 +90,7 @@ export const templateEditor = {
   },
   /** Back to the start (tests). */
   reset(): void {
-    state = { designMode: false, selection: null };
+    state = { designMode: editModeNow() === 'design', selection: null };
     emit();
   },
 };
