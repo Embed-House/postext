@@ -15,6 +15,7 @@ import { frameOverflowDetail } from '../warnings/frameOverflowText';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
 import { ComposedChecksSection, useComposedChecks } from './ComposedChecks';
 import { isComposedCheckKind } from '../warnings/composedChecks';
+import { TextMigrationOffer } from '../migrate/TextMigrationOffer';
 
 /** Open a book page in the viewer: the fragment names it, and the viewer
  *  follows a fragment change (see `usePageHashSync`). */
@@ -987,6 +988,7 @@ export function WarningsPanel() {
     <div className="flex h-full flex-col">
       <PanelHeader title={labels.navWarnings} count={total} />
       <PanelBody>
+        <TextMigrationOffer contentWarnings={warnings.filter((w) => w.payload.kind === 'contentInConfig').length} />
         {composedBook && (
           <ComposedChecksSection
             checks={composed.checks}

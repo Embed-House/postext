@@ -36,6 +36,7 @@ import { loadResources, saveResource, deleteResource } from '../storage/resource
 import { customFontsSignature, setCustomFonts } from '../controls/fontLoader';
 import { pruneFontFiles } from '../storage/fontStorage';
 import { pruneBlobs } from '../storage/blobStore';
+import { keepMigrationSnapshots } from '../migrate/textMigration';
 import { collectProjectFileIds, generateChapterId, listProjects, referencedFileIds, toSummary, updateProject } from '../storage/projects';
 import {
   decideDraftSave,
@@ -2169,6 +2170,8 @@ export function SandboxProvider({
       for (const id of refs.blobIds) live.blobIds.add(id);
       for (const id of refs.fontIds) live.fontIds.add(id);
     }
+    // The book as it was before a move of its text to the Markdown (#874).
+    await keepMigrationSnapshots(live.blobIds);
     if (gcSuspendedRef.current > 0) return;
     await Promise.all([pruneFontFiles(live.fontIds), pruneBlobs(live.blobIds)]);
   };

@@ -26,6 +26,7 @@ import { useContourTraces } from './panels/resources/contourTraces';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { SandboxGlobalStyles, TooltipProvider, PortalProvider, PortalHost, uiDirectionOf, useUiRtl } from './ui';
 import { BundleReplaceDialog } from './BundleReplaceDialog';
+import { TextMigrationDialog } from './migrate/TextMigrationDialog';
 import { useCompactLayout } from './hooks/useCompactLayout';
 import { SandboxAnnouncer } from './ui/announcer';
 import { LargeTargetsProvider, useLargeTargets } from './ui/largeTargets';
@@ -229,6 +230,7 @@ function SandboxLayout({
         </div>
         <PortalHost />
         <BundleReplaceDialog />
+        <TextMigrationDialog />
       </main>
     );
   }
@@ -285,6 +287,7 @@ function SandboxLayout({
           <SandboxAnnouncer />
           <PortalHost />
           <BundleReplaceDialog />
+          <TextMigrationDialog />
         </main>
         {activePanel !== null && (
           <section aria-label={panelLabel} className="absolute inset-0 z-30 flex flex-col" style={{ backgroundColor: 'var(--background)' }}>
@@ -330,6 +333,7 @@ function SandboxLayout({
         <SandboxAnnouncer />
         <PortalHost />
         <BundleReplaceDialog />
+        <TextMigrationDialog />
       </main>
     </div>
   );
