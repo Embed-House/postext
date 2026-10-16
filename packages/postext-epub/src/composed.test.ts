@@ -25,16 +25,21 @@ const text = (book: ReadEpubResult, path: string): string => new TextDecoder().d
 const chapter = (book: ReadEpubResult): string => text(book, book.spine.find((s) => s.path.includes('chapter-'))!.path);
 
 /** Plain text of markup: tags dropped, entities read, spaces collapsed. */
-const plain = (xml: string): string =>
-  xml
-    .replace(/<\/?(?:span|strong|em|b|i|a)\b[^>]*>/g, '')
-    .replace(/<[^>]*>/g, ' ')
-    // Whatever is left of a broken tag is no text to compare.
-    .replace(/[<>]/g, ' ')
-    // `&amp;` last, so an escaped entity is read once.
-    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&')
-    .replace(/\s+/g, ' ')
-    .trim();
+const plain = (xml: string): string => {
+  // Read the markup piece by piece instead of rewriting it with patterns: an
+  // inline tag (span, strong, em, b, i, a) joins its text to its neighbours,
+  // any other tag stands for a space.
+  const pieces = xml.split('<');
+  let out = pieces[0]!;
+  for (const piece of pieces.slice(1)) {
+    const end = piece.indexOf('>');
+    if (end < 0) continue;
+    const inline = /^\/?(?:span|strong|em|b|i|a)(?:\s|$)/.test(piece.slice(0, end));
+    out += (inline ? '' : ' ') + piece.slice(end + 1);
+  }
+  // `&amp;` last, so an escaped entity is read once.
+  return out.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+};
 
 /** The text runs of the page fence's Markdown, in order: its paragraphs,
  *  list items, headings and box titles, marks and directives taken out. */
