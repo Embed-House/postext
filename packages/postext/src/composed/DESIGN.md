@@ -872,7 +872,8 @@ Cookbook comics recipe must render unchanged before and after.
   blocks. `wrapComicTextPanels` (beside `wrapComposedPages`) puts each body in a story box of
   `FRAME_STYLE_ID` keyed `comic:<panel>`; the comic page branch of `build.ts` sets each story
   with `layoutComposedPage` over a one-frame template whose area is the panel's text area (the
-  panel's box inside its border plus `comics.lettering.inset`, or the box itself with `box`),
+  panel's box inside its border plus `comics.lettering.inset`, or the box itself with `box`; in a
+  slanted cell the widest straight-sided box inside the polygon, `innerBox`),
   `valign` → `verticalAlign`; ids are renamed `cp<n>:` → `cm<n>:`; the blocks go to `page.floats`
   and `doc.blocks`, the frame record gets `blockIds`, `overflowPx`, `scale`. A `::resource` in a
   story does not float (the float plan treats the text plans as composed pages). Not wrapped, so
@@ -897,7 +898,7 @@ Cookbook comics recipe must render unchanged before and after.
   edit), `panelArtAt` ignores a text panel's words. The template editor never sees comic frames
   (they are not in `page.composed`).
 - **Not done:** text panels on vertical or right-to-left pages, on strips and spreads; lines
-  following a slanted edge (they are clipped); shrink-to-fit for text panels; reading a text
+  following a slanted edge (they keep to the inner box); shrink-to-fit for text panels; reading a text
   panel inside the comic's `Div` in tagged PDF; the comic frames in the template editor's views.
 
 ## 8. HTML and EPUB

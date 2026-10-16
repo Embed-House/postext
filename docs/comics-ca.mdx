@@ -526,7 +526,7 @@ El text que no cap al seu marc es retalla a la vora del marc i s'avisa amb `comi
 
 ### Estils de caixa
 
-`box=<id>` vesteix una vinyeta amb un estil de requadre de `calloutStyles`, els estils amb què les pàgines compostes dibuixen els seus marcs: la vinyeta pren el fons de l'estil, el color i el gruix de la vora i el radi de les cantonades, i els `border` i `bg` propis de la vinyeta continuen manant. En una vinyeta de text la caixa es dibuixa al voltant del text, com la caixa d'un marc, amb el farciment de l'estil, i la vinyeta no dibuixa ni vora ni fons propis. Una caixa en una cel·la inclinada es talla seguint la inclinació. Un `box` que no anomena cap estil de requadre deixa la vinyeta amb el seu estil de vinyeta i s'avisa amb `comicPanelFrame` (motiu `unknownBox`).
+`box=<id>` vesteix una vinyeta amb un estil de requadre de `calloutStyles`, els estils amb què les pàgines compostes dibuixen els seus marcs: la vinyeta pren el fons de l'estil, el color i el gruix de la vora i el radi de les cantonades, i els `border` i `bg` propis de la vinyeta continuen manant. En una vinyeta de text la caixa es dibuixa al voltant del text, com la caixa d'un marc, amb el farciment de l'estil, i la vinyeta no dibuixa ni vora ni fons propis. En una cel·la inclinada, el text i la seva caixa s'ajusten a la caixa de costats rectes més ampla que hi cap. Un `box` que no anomena cap estil de requadre deixa la vinyeta amb el seu estil de vinyeta i s'avisa amb `comicPanelFrame` (motiu `unknownBox`).
 
 ### Els marcs al mapa de procedència i al Sandbox
 
@@ -591,7 +591,7 @@ El còmic compost és al VDT: `page.comic` (`VDTComicPage`) conté el marc, el s
 - Les **tires** no poden abastar un nombre de columnes inferior al de la pàgina (`columns=2` en una pàgina de tres), i només es llegeixen al nivell superior d'un capítol (no dins d'un requadre, una taula o una nota a peu de pàgina). Una citació al peu d'una tira s'imprimeix tal com està escrita.
 - **Dobles pàgines.** Una vinyeta arrodonida tallada al llom perd totes les cantonades arrodonides. Un còmic de dreta a esquerra en un llibre enquadernat per l'esquerra continua obrint-se a la pàgina esquerra, de manera que la seva primera vinyeta cau a la segona pàgina de la doble pàgina.
 - Els **dibuixos que trenquen la vora** prenen el retall del dibuix de la vinyeta, així que el retall transparent ha de tenir la mateixa mida que el dibuix.
-- **Vinyetes de text**: només es componen en pàgines de còmic senzilles de documents horitzontals d'esquerra a dreta. Les seves línies no segueixen una vora inclinada (s'hi retallen), el text no es redueix mai per cabre-hi, i un PDF etiquetat el llegeix després de les vinyetes de la pàgina i no dins el `Div` del còmic.
+- **Vinyetes de text**: només es componen en pàgines de còmic senzilles de documents horitzontals d'esquerra a dreta. En una cel·la inclinada les seves línies s'ajusten a la caixa de costats rectes més ampla que hi cap en lloc de seguir la inclinació, el text no es redueix mai per cabre-hi, i un PDF etiquetat el llegeix després de les vinyetes de la pàgina i no dins el `Div` del còmic.
 - **Sortides.** L'alternativa textual de reserva d'una vinyeta sense `alt` ni `altText` és «Panel N», en anglès. La navegació per regions descriu les vinyetes inclinades amb les seves caixes contenidores. Kindle Panel View copia el còmic d'una pàgina una vegada per vinyeta, cosa que fa el fitxer més gran, i no s'ha comprovat a Kindle Previewer.
 
 ## Referències

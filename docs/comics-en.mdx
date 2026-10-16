@@ -514,7 +514,7 @@ Text that does not fit its frame is clipped at the frame's edge and reported as 
 
 ### Box styles
 
-`box=<id>` dresses a panel in a callout style of `calloutStyles`, the styles composed pages draw their frames with: the panel takes the style's background, its border colour and width and its corner radius, and the panel's own `border` and `bg` still win. On a text panel the box is drawn round the text as a frame's box is, with the style's padding, and the panel draws no border or ground of its own. A box on a slanted cell is cut along the slant. A `box` that names no callout style leaves the panel in its panel style and is reported as `comicPanelFrame` (reason `unknownBox`).
+`box=<id>` dresses a panel in a callout style of `calloutStyles`, the styles composed pages draw their frames with: the panel takes the style's background, its border colour and width and its corner radius, and the panel's own `border` and `bg` still win. On a text panel the box is drawn round the text as a frame's box is, with the style's padding, and the panel draws no border or ground of its own. In a slanted cell the text and its box keep to the widest box with straight sides that fits inside the cell. A `box` that names no callout style leaves the panel in its panel style and is reported as `comicPanelFrame` (reason `unknownBox`).
 
 ### Frames in the source map and the Sandbox
 
@@ -591,7 +591,7 @@ The laid-out comic is in the VDT: `page.comic` (`VDTComicPage`) holds the frame,
 - **Strips** cannot span a number of columns short of the page (`columns=2` on a page of three), and are read only at the top level of a chapter (not inside a callout, a table or a footnote). A citation in a strip's caption prints as written.
 - **Spreads.** A rounded panel cut at the spine loses all its round corners. A right-to-left comic in a left-bound book still opens on the left page, so its first panel lands on the second page of the spread.
 - **Pop-out art** takes the crop of the panel's art, so the cut-out must be the same size as the art picture.
-- **Text panels** are set only on single comic pages of horizontal, left-to-right documents. Their lines are not set round a slanted edge (they are clipped to it), the text is never made smaller to fit, and a tagged PDF reads it after the page's panels rather than inside the comic's `Div`.
+- **Text panels** are set only on single comic pages of horizontal, left-to-right documents. In a slanted cell their lines keep to the widest straight-sided box inside the cell rather than following the slant, the text is never made smaller to fit, and a tagged PDF reads it after the page's panels rather than inside the comic's `Div`.
 - **Outputs.** The fallback alternative text of a panel with no `alt` and no `altText` is "Panel N", in English. Region-based navigation describes slanted panels by their bounding boxes. Kindle Panel View copies the comic of a page once per panel, which makes the file larger, and has not been checked in Kindle Previewer.
 
 ## Sources

@@ -173,6 +173,28 @@ describe('text panels', () => {
     expect(next).toBeGreaterThan(frameAt);
   });
 
+  it('keeps the text of a slanted panel inside its outline', () => {
+    const slanted = md.replace('split="40 / *"', 'split="30~60 / *"').replace('::panel{text}', '::panel{text valign=bottom}');
+    const doc = buildDocument({ markdown: slanted, resources: [] }, {});
+    const page = comicPage(doc);
+    const poly = page.comic!.panels[0]!.polygon;
+    const inPoly = (x: number, y: number): boolean => {
+      // Convex, clockwise on the sheet: every edge has the point on its right.
+      for (let i = 0; i < poly.length; i++) {
+        const a = poly[i]!;
+        const b = poly[(i + 1) % poly.length]!;
+        if ((b.x - a.x) * (y - a.y) - (b.y - a.y) * (x - a.x) < -0.5) return false;
+      }
+      return true;
+    };
+    for (const b of page.floats!.filter((x) => x.type === 'paragraph')) {
+      for (const l of b.lines) {
+        expect(inPoly(l.bbox.x, l.bbox.y + l.bbox.height)).toBe(true);
+        expect(inPoly(l.bbox.x + l.bbox.width, l.bbox.y + l.bbox.height)).toBe(true);
+      }
+    }
+  });
+
   it('lays a text panel with a box style in that style, the panel drawing none', () => {
     const boxed = md.replace('::panel{text}', '::panel{text box=caja valign=middle}');
     const doc = buildDocument({ markdown: boxed, resources: [] }, boxes);

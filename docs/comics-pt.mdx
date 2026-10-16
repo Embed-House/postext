@@ -526,7 +526,7 @@ O texto que não cabe no seu bloco é cortado na borda do bloco e avisado como `
 
 ### Estilos de caixa
 
-`box=<id>` veste um quadro com um estilo de destaque de `calloutStyles`, os estilos com que as páginas compostas desenham os seus blocos: o quadro toma o fundo do estilo, a cor e a espessura da borda e o raio dos cantos, e os `border` e `bg` próprios do quadro continuam valendo. Num quadro de texto a caixa é desenhada em volta do texto como a de um bloco, com o recuo interno do estilo, e o quadro não desenha borda nem fundo próprios. Uma caixa numa célula inclinada é cortada ao longo da inclinação. Um `box` que não nomeia nenhum estilo de destaque deixa o quadro no seu estilo de quadro e é avisado como `comicPanelFrame` (motivo `unknownBox`).
+`box=<id>` veste um quadro com um estilo de destaque de `calloutStyles`, os estilos com que as páginas compostas desenham os seus blocos: o quadro toma o fundo do estilo, a cor e a espessura da borda e o raio dos cantos, e os `border` e `bg` próprios do quadro continuam valendo. Num quadro de texto a caixa é desenhada em volta do texto como a de um bloco, com o recuo interno do estilo, e o quadro não desenha borda nem fundo próprios. Numa célula inclinada, o texto e a sua caixa se limitam à caixa de lados retos mais larga que cabe na célula. Um `box` que não nomeia nenhum estilo de destaque deixa o quadro no seu estilo de quadro e é avisado como `comicPanelFrame` (motivo `unknownBox`).
 
 ### Os blocos no mapa de origem e no Sandbox
 
@@ -591,7 +591,7 @@ A HQ diagramada fica no VDT: `page.comic` (`VDTComicPage`) guarda a moldura, o s
 - **As tiras** não podem ocupar um número de colunas menor que o da página (`columns=2` numa página de três), e só são lidas no nível superior de um capítulo (não dentro de um boxe, de uma tabela ou de uma nota de rodapé). Uma citação na legenda de uma tira sai como foi escrita.
 - **Páginas duplas.** Um quadro arredondado cortado na lombada perde todos os cantos arredondados. Uma HQ da direita para a esquerda num livro com encadernação à esquerda continua abrindo na página da esquerda, então o seu primeiro quadro cai na segunda página da página dupla.
 - **A arte que sai do quadro** usa o recorte da arte do quadro, então o recorte transparente precisa ter o mesmo tamanho do desenho da arte.
-- **Quadros de texto** só são compostos em páginas de quadrinhos simples de documentos horizontais, da esquerda para a direita. As suas linhas não seguem uma borda inclinada (são cortadas nela), o texto nunca é reduzido para caber, e um PDF etiquetado o lê depois dos quadros da página em vez de dentro do `Div` dos quadrinhos.
+- **Quadros de texto** só são compostos em páginas de quadrinhos simples de documentos horizontais, da esquerda para a direita. Numa célula inclinada as suas linhas se limitam à caixa de lados retos mais larga que cabe nela em vez de seguir a inclinação, o texto nunca é reduzido para caber, e um PDF etiquetado o lê depois dos quadros da página em vez de dentro do `Div` dos quadrinhos.
 - **Saídas.** O texto alternativo de reserva de um quadro sem `alt` e sem `altText` é “Panel N”, em inglês. A navegação por regiões descreve os quadros inclinados pelas suas caixas delimitadoras. O Kindle Panel View copia a HQ de uma página uma vez por quadro, o que aumenta o arquivo, e não foi verificado no Kindle Previewer.
 
 ## Referências

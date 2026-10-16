@@ -195,7 +195,9 @@ export function layoutComicTextFrames(input: ComicTextFramesInput): ComicTextFra
     const panel = comic.panels[panelIndex]!;
     const box = comicBoxStyle(resolved, src.attrs.box);
     const edge = box ? 0 : panel.border.width + insetPx;
-    const r = panel.bbox;
+    // A slanted cell: the widest box with straight sides inside its outline,
+    // so that no line runs past the slant.
+    const r = frame.polygon ? innerBox(frame.polygon, panel.bbox) : panel.bbox;
     const area = { x: r.x + edge, y: r.y + edge, width: Math.max(1, r.width - 2 * edge), height: Math.max(1, r.height - 2 * edge) };
     const valign = src.attrs.valign?.trim().toLowerCase();
     const padding: CalloutPaddingConfig | undefined = box ? undefined : { top: px(0), right: px(0), bottom: px(0), left: px(0) };
@@ -271,6 +273,60 @@ export function layoutComicTextFrames(input: ComicTextFramesInput): ComicTextFra
   });
   if (warnings.length > 0) setComicLayoutWarnings(comic, [...comicPageLayoutWarnings(comic), ...warnings]);
   return { blocks, laid };
+}
+
+/** Where a horizontal (`axis: 'y'`, at height `at`) or vertical line
+ *  crosses a convex polygon: the interval it lies in, or undefined. */
+function crossing(poly: readonly { x: number; y: number }[], axis: 'x' | 'y', at: number): [number, number] | undefined {
+  let lo = Infinity;
+  let hi = -Infinity;
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i]!;
+    const b = poly[(i + 1) % poly.length]!;
+    const [a0, a1, b0, b1] = axis === 'y' ? [a.y, a.x, b.y, b.x] : [a.x, a.y, b.x, b.y];
+    if ((a0 - at) * (b0 - at) > 0 || a0 === b0) {
+      if (a0 === at) { lo = Math.min(lo, a1); hi = Math.max(hi, a1); }
+      continue;
+    }
+    const v = a1 + ((at - a0) / (b0 - a0)) * (b1 - a1);
+    lo = Math.min(lo, v);
+    hi = Math.max(hi, v);
+  }
+  return lo <= hi ? [lo, hi] : undefined;
+}
+
+/** The box with straight sides inside a convex polygon (a cell cut by
+ *  slanted lines), so that text keeps off the slants: the larger of the box
+ *  that keeps the whole height and the width every row of it shares (then
+ *  the height every column of that width shares), and the box that keeps
+ *  the whole width first. Falls back to `box` when both are degenerate. */
+export function innerBox(poly: readonly { x: number; y: number }[], box: { x: number; y: number; width: number; height: number }): { x: number; y: number; width: number; height: number } {
+  const N = 16;
+  /** The interval every line across `axis` shares, sampled over [a, b]. */
+  const shared = (axis: 'x' | 'y', a: number, b: number, lo: number, hi: number): [number, number] => {
+    for (let i = 0; i <= N && hi > lo; i++) {
+      const c = crossing(poly, axis, a + 0.001 + ((b - a - 0.002) * i) / N);
+      if (!c) continue;
+      lo = Math.max(lo, c[0]);
+      hi = Math.min(hi, c[1]);
+    }
+    return [lo, hi];
+  };
+  const X0 = box.x;
+  const X1 = box.x + box.width;
+  const Y0 = box.y;
+  const Y1 = box.y + box.height;
+  // Rows first: the width all rows share, then the height its columns share.
+  const [ax0, ax1] = shared('y', Y0, Y1, X0, X1);
+  const [ay0, ay1] = ax1 - ax0 > 1 ? shared('x', ax0, ax1, Y0, Y1) : [0, 0];
+  // Columns first.
+  const [by0, by1] = shared('x', X0, X1, Y0, Y1);
+  const [bx0, bx1] = by1 - by0 > 1 ? shared('y', by0, by1, X0, X1) : [0, 0];
+  const area = (w: number, h: number) => (w > 1 && h > 1 ? w * h : 0);
+  const a = area(ax1 - ax0, ay1 - ay0);
+  const b = area(bx1 - bx0, by1 - by0);
+  if (a === 0 && b === 0) return { ...box };
+  return a >= b ? { x: ax0, y: ay0, width: ax1 - ax0, height: ay1 - ay0 } : { x: bx0, y: by0, width: bx1 - bx0, height: by1 - by0 };
 }
 
 /** The source warnings of a comic's frames (#885): a `box` that names no

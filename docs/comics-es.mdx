@@ -526,7 +526,7 @@ El texto que no cabe en su marco se recorta en el borde del marco y se avisa con
 
 ### Estilos de caja
 
-`box=<id>` viste una viñeta con un estilo de recuadro de `calloutStyles`, los estilos con los que las páginas compuestas dibujan sus marcos: la viñeta toma el fondo del estilo, el color y el grosor de su borde y su radio de esquina, y los `border` y `bg` propios de la viñeta siguen mandando. En una viñeta de texto la caja se dibuja alrededor del texto, como la caja de un marco, con el relleno del estilo, y la viñeta no dibuja ni borde ni fondo propios. Una caja en una celda inclinada se corta siguiendo la inclinación. Un `box` que no nombra ningún estilo de recuadro deja la viñeta con su estilo de viñeta y se avisa con `comicPanelFrame` (motivo `unknownBox`).
+`box=<id>` viste una viñeta con un estilo de recuadro de `calloutStyles`, los estilos con los que las páginas compuestas dibujan sus marcos: la viñeta toma el fondo del estilo, el color y el grosor de su borde y su radio de esquina, y los `border` y `bg` propios de la viñeta siguen mandando. En una viñeta de texto la caja se dibuja alrededor del texto, como la caja de un marco, con el relleno del estilo, y la viñeta no dibuja ni borde ni fondo propios. En una celda inclinada, el texto y su caja se ciñen a la caja de lados rectos más ancha que cabe dentro de la celda. Un `box` que no nombra ningún estilo de recuadro deja la viñeta con su estilo de viñeta y se avisa con `comicPanelFrame` (motivo `unknownBox`).
 
 ### Los marcos en el mapa de origen y en el Sandbox
 
@@ -591,7 +591,7 @@ El cómic compuesto está en el VDT: `page.comic` (`VDTComicPage`) guarda el mar
 - **Las tiras cómicas** no pueden ocupar menos columnas que las de la página (`columns=2` en una página de tres) y solo se leen en el nivel superior de un capítulo (no dentro de un recuadro, una tabla o una nota al pie). Una cita en el pie de una tira se imprime tal como está escrita.
 - **Dobles páginas.** Una viñeta redondeada cortada en el lomo pierde todas sus esquinas redondeadas. Un cómic de derecha a izquierda en un libro encuadernado por la izquierda sigue abriéndose en la página izquierda, así que su primera viñeta cae en la segunda página de la doble página.
 - **Las imágenes que rompen la viñeta** toman el recorte de la imagen de la viñeta, así que el recorte transparente debe tener el mismo tamaño que esa imagen.
-- **Viñetas de texto**: solo se componen en páginas de cómic sencillas de documentos horizontales de izquierda a derecha. Sus líneas no siguen un borde inclinado (se recortan contra él), el texto nunca se reduce para caber, y un PDF etiquetado lo lee después de las viñetas de la página y no dentro del `Div` del cómic.
+- **Viñetas de texto**: solo se componen en páginas de cómic sencillas de documentos horizontales de izquierda a derecha. En una celda inclinada sus líneas se ciñen a la caja de lados rectos más ancha que cabe en ella en lugar de seguir la inclinación, el texto nunca se reduce para caber, y un PDF etiquetado lo lee después de las viñetas de la página y no dentro del `Div` del cómic.
 - **Salidas.** El texto alternativo de reserva de una viñeta sin `alt` ni `altText` es «Panel N», en inglés. La navegación por regiones describe las viñetas inclinadas por sus cajas envolventes. Kindle Panel View copia el cómic de una página una vez por viñeta, lo que agranda el archivo, y no se ha comprobado en Kindle Previewer.
 
 ## Referencias

@@ -526,7 +526,7 @@ Le texte qui ne tient pas dans son bloc est rogné au bord du bloc et signalé p
 
 ### Styles de boîte
 
-`box=<id>` habille une case d'un style d'encadré de `calloutStyles`, les styles avec lesquels les pages composées dessinent leurs blocs : la case prend le fond du style, la couleur et l'épaisseur de son bord et son rayon d'angle, et les `border` et `bg` propres à la case l'emportent toujours. Sur une case de texte, la boîte est dessinée autour du texte comme celle d'un bloc, avec la marge intérieure du style, et la case ne dessine ni bord ni fond à elle. Une boîte sur une cellule oblique est coupée selon la pente. Un `box` qui ne nomme aucun style d'encadré laisse la case dans son style de case et est signalé par `comicPanelFrame` (motif `unknownBox`).
+`box=<id>` habille une case d'un style d'encadré de `calloutStyles`, les styles avec lesquels les pages composées dessinent leurs blocs : la case prend le fond du style, la couleur et l'épaisseur de son bord et son rayon d'angle, et les `border` et `bg` propres à la case l'emportent toujours. Sur une case de texte, la boîte est dessinée autour du texte comme celle d'un bloc, avec la marge intérieure du style, et la case ne dessine ni bord ni fond à elle. Dans une cellule oblique, le texte et sa boîte s'en tiennent à la plus large boîte à côtés droits qui tient dans la cellule. Un `box` qui ne nomme aucun style d'encadré laisse la case dans son style de case et est signalé par `comicPanelFrame` (motif `unknownBox`).
 
 ### Les blocs dans la carte des sources et le Sandbox
 
@@ -591,7 +591,7 @@ La BD mise en page se trouve dans le VDT : `page.comic` (`VDTComicPage`) contie
 - **Les strips** ne peuvent pas occuper un nombre de colonnes inférieur à la page (`columns=2` sur une page de trois), et ne sont lus qu’au premier niveau d’un chapitre (pas dans un encadré, un tableau ou une note de bas de page). Une citation dans la légende d’un strip s’imprime telle qu’elle est écrite.
 - **Doubles pages.** Une case arrondie coupée au dos perd tous ses coins arrondis. Une BD de droite à gauche dans un livre relié à gauche s’ouvre quand même sur la page de gauche : sa première case tombe donc sur la seconde page de la double page.
 - **Les dessins qui sortent des cases** prennent le recadrage du dessin de la case : la découpe doit donc avoir la même taille que le dessin.
-- **Cases de texte** : elles ne sont composées que sur des planches simples de documents horizontaux, de gauche à droite. Leurs lignes ne suivent pas un bord oblique (elles y sont rognées), le texte n'est jamais réduit pour tenir, et un PDF balisé le lit après les cases de la page plutôt que dans le `Div` de la bande dessinée.
+- **Cases de texte** : elles ne sont composées que sur des planches simples de documents horizontaux, de gauche à droite. Dans une cellule oblique, leurs lignes s'en tiennent à la plus large boîte à côtés droits qui y tient au lieu de suivre la pente, le texte n'est jamais réduit pour tenir, et un PDF balisé le lit après les cases de la page plutôt que dans le `Div` de la bande dessinée.
 - **Sorties.** Le texte de remplacement de secours d’une case sans `alt` ni `altText` est « Panel N », en anglais. La navigation par régions décrit les cases obliques par leurs boîtes englobantes. Kindle Panel View copie la BD d’une page une fois par case, ce qui alourdit le fichier, et n’a pas été vérifié dans Kindle Previewer.
 
 ## Sources

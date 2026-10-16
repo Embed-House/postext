@@ -526,7 +526,7 @@ Text, der nicht in seinen Rahmen passt, wird am Rahmenrand abgeschnitten und als
 
 ### Kastenstile
 
-`box=<id>` kleidet ein Panel in einen Kastenstil aus `calloutStyles`, die Stile, mit denen zusammengesetzte Seiten ihre Rahmen zeichnen: Das Panel übernimmt Hintergrund, Randfarbe und Randstärke sowie den Eckenradius des Stils, und die eigenen `border` und `bg` des Panels haben weiterhin Vorrang. Bei einem Textpanel wird der Kasten wie der Kasten eines Rahmens um den Text gezeichnet, mit dem Innenabstand des Stils, und das Panel zeichnet weder eigenen Rand noch eigenen Hintergrund. Ein Kasten in einer schrägen Zelle wird entlang der Schräge beschnitten. Ein `box`, das keinen Kastenstil nennt, lässt das Panel in seinem Panelstil und wird als `comicPanelFrame` (Grund `unknownBox`) gemeldet.
+`box=<id>` kleidet ein Panel in einen Kastenstil aus `calloutStyles`, die Stile, mit denen zusammengesetzte Seiten ihre Rahmen zeichnen: Das Panel übernimmt Hintergrund, Randfarbe und Randstärke sowie den Eckenradius des Stils, und die eigenen `border` und `bg` des Panels haben weiterhin Vorrang. Bei einem Textpanel wird der Kasten wie der Kasten eines Rahmens um den Text gezeichnet, mit dem Innenabstand des Stils, und das Panel zeichnet weder eigenen Rand noch eigenen Hintergrund. In einer schrägen Zelle halten sich Text und Kasten an das breiteste Rechteck mit geraden Seiten, das in die Zelle passt. Ein `box`, das keinen Kastenstil nennt, lässt das Panel in seinem Panelstil und wird als `comicPanelFrame` (Grund `unknownBox`) gemeldet.
 
 ### Rahmen in der Quellenzuordnung und im Sandbox
 
@@ -591,7 +591,7 @@ Der umbrochene Comic steht im VDT: `page.comic` (`VDTComicPage`) enthält den Ra
 - **Strips** können nicht über eine Anzahl von Spalten reichen, die kleiner ist als die der Seite (`columns=2` auf einer Seite mit drei), und werden nur auf der obersten Ebene eines Kapitels gelesen (nicht in einem Kasten, einer Tabelle oder einer Fußnote). Ein Literaturverweis in der Legende eines Strips wird so gedruckt, wie er geschrieben ist.
 - **Doppelseiten.** Ein abgerundetes Panel, das am Bund geschnitten wird, verliert alle seine runden Ecken. Ein Comic von rechts nach links in einem links gebundenen Buch beginnt weiterhin auf der linken Seite, sein erstes Panel landet also auf der zweiten Seite der Doppelseite.
 - **Herausragende Bildteile** übernehmen den Zuschnitt des Panelbilds; der Freisteller muss daher dieselbe Größe haben wie das Panelbild.
-- **Textpanels** werden nur auf einfachen Comicseiten horizontaler, linksläufiger Dokumente gesetzt. Ihre Zeilen folgen keiner schrägen Kante (sie werden daran beschnitten), der Text wird nie verkleinert, damit er passt, und ein getaggtes PDF liest ihn nach den Panels der Seite statt innerhalb des `Div` des Comics.
+- **Textpanels** werden nur auf einfachen Comicseiten horizontaler, linksläufiger Dokumente gesetzt. In einer schrägen Zelle halten sich ihre Zeilen an das breiteste Rechteck mit geraden Seiten darin, statt der Schräge zu folgen, der Text wird nie verkleinert, damit er passt, und ein getaggtes PDF liest ihn nach den Panels der Seite statt innerhalb des `Div` des Comics.
 - **Ausgaben.** Der Ersatz-Alternativtext eines Panels ohne `alt` und ohne `altText` lautet „Panel N“, auf Englisch. Die regionsbasierte Navigation beschreibt schräge Panels durch ihre umschließenden Rechtecke. Kindle Panel View kopiert den Comic einer Seite einmal pro Panel, was die Datei vergrößert, und wurde nicht im Kindle Previewer geprüft.
 
 ## Quellen
