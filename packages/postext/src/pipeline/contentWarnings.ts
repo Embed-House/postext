@@ -33,6 +33,7 @@ import { resolveAllConfig } from './config';
 import { codeParseOptions } from './codeBlocks';
 import { planHeadingSections, sectionWritingMode } from './headingStyles';
 import { comicSourceWarnings } from '../comics/warnings';
+import { comicFrameSourceWarnings, comicTextPanelsSupported } from '../comics/textPanels';
 import { resolvedComics } from '../defaults/comics';
 import { effectiveResourceTypes } from '../defaults/resourceTypes';
 import { composedPages } from '../composed/document';
@@ -317,6 +318,11 @@ export function collectContentWarnings(
         if (b.comic) {
           comics ??= resolvedComics(resolveAllConfig(config));
           for (const w of comicSourceWarnings(b.comic, comics, byId)) {
+            out.push({ ...w, ...abs({ start: w.sourceStart ?? b.sourceStart, end: w.sourceEnd ?? b.sourceEnd }) });
+          }
+          // Its frames (#885): a `box` style, text panels set in the flow.
+          const all = resolveAllConfig(config);
+          for (const w of comicFrameSourceWarnings(b.comic, new Set(all.calloutStyles.map((st) => st.id)), comicTextPanelsSupported(all))) {
             out.push({ ...w, ...abs({ start: w.sourceStart ?? b.sourceStart, end: w.sourceEnd ?? b.sourceEnd }) });
           }
         }
@@ -1138,6 +1144,13 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       break;
     case 'comicUnknownSpeaker':
       text = `No picture of this comic page marks the speaker "${w.speaker}" and no cast entry names it — its tails point off the panel`;
+      break;
+    case 'comicPanelFrame':
+      text = w.reason === 'unknownBox'
+        ? `Panel ${w.panel + 1} names the box style "${w.style ?? ''}", which no callout style defines — the panel keeps its panel style`
+        : w.reason === 'textOverflow'
+          ? `The text of panel ${w.panel + 1} does not fit its frame (${w.overflowMm ?? 0} mm over) — the rest is clipped; shorten it or give the panel a larger cell`
+          : `Panel ${w.panel + 1} is a text panel ${w.reason === 'strip' ? 'of a strip' : w.reason === 'spread' ? 'of a spread' : 'in a vertical or right-to-left document'} — its frame takes no text there, and the text is set in the flow after the comic`;
       break;
     case 'comicAnchorOutsideSafeArea':
       text = `The anchor "${w.anchorId}" of "${w.resourceId}" lies outside the picture's safe area — a crop may cut it off`;

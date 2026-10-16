@@ -18,7 +18,7 @@ import { chineseScriptOf, directionOf, isCjkLanguage, isJapaneseLanguage, presen
 import { comicReadingDirection, DEFAULT_LETTERING_STATIC, pickBalloonStyle, pickPanelStyle, resolvedComics } from '../defaults/comics';
 import { comicArtCrop, comicArtPointToPage, comicArtRectToPage } from './art';
 import { comicGeometry, physicalSide, pointInPolygon, type ComicFrameSide } from './geometry';
-import { comicBalloonElementId, comicElementId, comicFrameElementId, comicFrameSpecs, comicPanelFrame, type ComicFrameSpec } from './frames';
+import { comicBalloonElementId, comicBoxStyle, comicElementId, comicFrameElementId, comicFrameSpecs, comicPanelFrame, isComicTextPanel, type ComicFrameSpec } from './frames';
 import { parseComicPoint } from './script';
 import { letterPanelDetailed } from './lettering/letter';
 import type { LetteringAnchor, LetteringForeignArt, LetteringItem, LetteringPanel, LetteringStyle } from './lettering/types';
@@ -215,6 +215,17 @@ const layoutWarnings = new WeakMap<VDTComicPage, ContentWarning[]>();
  *  `comicBalloonOverflow`). */
 export function comicPageLayoutWarnings(comic: VDTComicPage): readonly ContentWarning[] {
   return layoutWarnings.get(comic) ?? [];
+}
+
+/** The script (or text) each laid-out panel of a comic was set from, by
+ *  the comic laid out (#885): what fills a text panel's frame. */
+const panelSourcesOf = new WeakMap<VDTComicPage, readonly (ComicPanelSource | undefined)[]>();
+
+/** The source of each panel of a comic laid out by {@link layoutComicFrame}
+ *  (undefined for an empty cell), in panel order. Internal to the comics
+ *  modules. */
+export function comicPanelSources(comic: VDTComicPage): readonly (ComicPanelSource | undefined)[] {
+  return panelSourcesOf.get(comic) ?? [];
 }
 
 /** Set the layout warnings of a comic laid out in parts (each page of a
@@ -747,9 +758,20 @@ export function layoutComicFrame(source: ComicPageSource, ctx: ComicFrameContext
     const p = cell.panel;
     const style = styleOf(p);
     const attrs = p?.attrs ?? {};
+    // A callout style named by `box` (#885) dresses the panel: its
+    // background, border and corner radius over the panel style's (the
+    // panel's own `border` and `bg` still win). A text panel's box is drawn
+    // by its frame, round its text: the panel then draws none.
+    const box = comicBoxStyle(resolved, attrs.box);
+    const boxDraws = box !== undefined && isComicTextPanel(p);
     const border = attrs.border?.trim();
-    const borderWidth = border === 'none' ? 0 : border ? dimensionToPx(parseComicDimension(border) ?? style.borderWidth, dpi) : dimensionToPx(style.borderWidth, dpi);
-    const bg = attrColor(attrs.bg, resolved.colorPalette) ?? style.background.hex;
+    const boxBorder = box ? (box.border.enabled ? dimensionToPx(box.border.width, dpi) : 0) : undefined;
+    const borderWidth = boxDraws ? 0
+      : border === 'none' ? 0 : border ? dimensionToPx(parseComicDimension(border) ?? style.borderWidth, dpi) : boxBorder ?? dimensionToPx(style.borderWidth, dpi);
+    const bg = boxDraws ? undefined
+      : attrColor(attrs.bg, resolved.colorPalette) ?? (box ? (box.backgroundEnabled ? box.background.hex : 'transparent') : style.background.hex);
+    const borderColor = box && !border ? box.border.color.hex : style.borderColor.hex;
+    const radiusPx = dimensionToPx(box ? box.borderRadius : style.borderRadius, dpi);
     const index = panels.length;
     const panel: VDTComicPanel = {
       index,
@@ -759,8 +781,8 @@ export function layoutComicFrame(source: ComicPageSource, ctx: ComicFrameContext
       sourceEnd: (p?.sourceEnd ?? source.sourceStart) + off,
       polygon: cell.polygon,
       bbox: cell.bbox,
-      radius: cell.rect ? Math.min(dimensionToPx(style.borderRadius, dpi), cell.bbox.width / 2, cell.bbox.height / 2) : 0,
-      border: { width: borderWidth, color: style.borderColor.hex, style: borderWidth > 0 ? style.borderStyle : 'none' },
+      radius: cell.rect ? Math.min(radiusPx, cell.bbox.width / 2, cell.bbox.height / 2) : 0,
+      border: { width: borderWidth, color: borderColor, style: borderWidth > 0 ? (box && !border ? 'solid' : style.borderStyle) : 'none' },
       ...(bg && bg !== 'transparent' ? { background: bg } : {}),
     };
     const fit = attrs.fit === 'contain' || attrs.fit === 'cover' ? attrs.fit : style.fit;
@@ -812,7 +834,11 @@ export function layoutComicFrame(source: ComicPageSource, ctx: ComicFrameContext
   comic.balloons = lettered.balloons;
   if (fence !== undefined) {
     comic.id = comicElementId(fence);
-    comic.frames = panels.map((panel, i) => comicPanelFrame(panel, specs[i]!.name, specs[i]!.layer));
+    comic.frames = panels.map((panel, i) => {
+      const f = comicPanelFrame(panel, specs[i]!.name, specs[i]!.layer);
+      const box = comicBoxStyle(resolved, specs[i]!.panel?.attrs.box);
+      return box ? { ...f, styleId: box.id } : f;
+    });
     for (const b of comic.balloons) {
       const owner = panels[b.panelIndex];
       if (owner?.frameId) b.elementId = comicBalloonElementId(owner.frameId, b.order);
@@ -820,6 +846,7 @@ export function layoutComicFrame(source: ComicPageSource, ctx: ComicFrameContext
   }
   warnings.push(...lettered.warnings);
   if (warnings.length > 0) layoutWarnings.set(comic, warnings);
+  panelSourcesOf.set(comic, panelSources);
   return comic;
 }
 

@@ -389,6 +389,19 @@ function joinedLines(
   return joinEastAsianLines(markdown, mapping.text, mapping.spans, mapping.sourceMap) ?? mapping;
 }
 
+/**
+ * The text a text panel's body is read from (#885): `markdown` up to the
+ * body's end with everything before the body blanked (line feeds kept), so
+ * every offset the reading gives is the body's own in `markdown`. Fence
+ * lines in the body (`:::name`, `::::page`) are blanked too: a comic's body
+ * ends at its first bare `:::`, so a container could never close in it.
+ */
+function comicTextSource(markdown: string, start: number, end: number): string {
+  const blank = (t: string): string => t.replace(/[^\n]/g, ' ');
+  const body = markdown.slice(start, end).split('\n').map((line) => (line.trimStart().startsWith(':::') ? blank(line) : line)).join('\n');
+  return blank(markdown.slice(0, start)) + body;
+}
+
 function parseBlocks(markdown: string, options?: ParseOptions): { blocks: ContentBlock[]; issues: ParseIssue[] } {
   const fences = options?.fences !== false;
   const indentedCode = options?.indentedCode === true;
@@ -1152,6 +1165,16 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
           sourceEnd: comic.source.sourceEnd,
           sourceMap: [],
         });
+        // The Markdown of its text panels (`::panel{text}`, #885), read as
+        // any text is and set after it: the layout pours it into the
+        // panels' frames (`wrapComicTextPanels`), or sets it in the flow
+        // where it cannot.
+        for (const panel of comic.source.panels) {
+          if (!panel.text || panel.text.end <= panel.text.start) continue;
+          const body = parseBlocks(comicTextSource(markdown, panel.text.start, panel.text.end), options);
+          blocks.push(...body.blocks);
+          issues.push(...body.issues);
+        }
         // Past the closing fence line.
         while (i < rawLines.length && lineOffsets[i]! <= comic.end) i++;
         continue;

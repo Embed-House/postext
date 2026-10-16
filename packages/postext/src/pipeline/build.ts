@@ -19,6 +19,7 @@ import {
   type VDTComposedPage,
   type VDTExclusionContour,
   type VDTPage,
+  type VDTComicPage,
   type BoundingBox,
   type ResolvedResourceBlock,
   type VDTBalancing,
@@ -137,6 +138,7 @@ import { chooseParagraphSplit } from './orphanWidow';
 import { layoutComicPage, comicPageLayoutWarnings } from '../comics/layoutPage';
 import { comicStripExtent, comicStripOffset, comicStripPlacement, comicStripWidth, layoutComicStrip } from '../comics/strip';
 import { isComicSpread, layoutComicSpread } from '../comics/spread';
+import { comicTextPanelsSupported, layoutComicTextFrames, planComicTextPanels, wrapComicTextPanels } from '../comics/textPanels';
 import type { ComicPageSource } from '../comics/types';
 import {
   applyStyleAttrs,
@@ -849,7 +851,10 @@ function placeDocumentPass(
   // in a frame is a group of its box.
   const templateSource = { pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles };
   const composedWrap = wrapComposedPages(numberedBlocks, templateSource);
-  const flowGroups = resolved.layout.flowColumns ? wrapFlowColumns(composedWrap.blocks) : { blocks: composedWrap.blocks, wrapped: false };
+  // A comic page's text panels (#885): each panel's Markdown in a story
+  // box of the same kind, set in the panel's frame (below).
+  const comicText = wrapComicTextPanels(composedWrap.blocks, comicTextPanelsSupported(resolved));
+  const flowGroups = resolved.layout.flowColumns ? wrapFlowColumns(comicText.blocks) : { blocks: comicText.blocks, wrapped: false };
   const spanEmbeds = wrapPageSpanEmbeds(flowGroups.blocks, content.resources ?? [], effectiveResourceTypes(config, content.resources ?? []));
   // Code listings (#624): each in a box of the code style, which the
   // callout machinery places and splits.
@@ -918,7 +923,7 @@ function placeDocumentPass(
     ...(spanEmbeds.wrapped ? [spanEmbedStyle(bodyStyle.lineHeightPx, resolved.layout.inlineResourceGap !== 'above')] : []),
     ...(codeBoxes.wrapped ? [codeBoxStyle(resolved)] : []),
     // The frameless box of a composed page's story (#855).
-    ...(composedWrap.wrapped ? [frameBoxStyle(Math.max(resolved.bodyText.avoidOrphans ? resolved.bodyText.orphanMinLines : 1, resolved.bodyText.avoidWidows ? resolved.bodyText.widowMinLines : 1))] : []),
+    ...(composedWrap.wrapped || comicText.wrapped ? [frameBoxStyle(Math.max(resolved.bodyText.avoidOrphans ? resolved.bodyText.orphanMinLines : 1, resolved.bodyText.avoidWidows ? resolved.bodyText.widowMinLines : 1))] : []),
     // The boxes of main-flow groups: sub-columns a body line apart in the
     // text column, a gutter apart across the page.
     ...(flowGroups.wrapped
@@ -935,7 +940,7 @@ function placeDocumentPass(
     : resolved.calloutStyles;
   // A box nested in another looks its style up in the configuration it is
   // laid out with: the listings' box among them.
-  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped ? { ...resolved, calloutStyles } : resolved;
+  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped || comicText.wrapped ? { ...resolved, calloutStyles } : resolved;
   const blockquoteStyle = resolveBlockquoteStyle(resolved);
   const listLevelIndentsPx = computeLevelIndentsPx(resolved, bodyStyle.fontSizePx);
   const orderedMetrics = computeOrderedListRunMetrics(contentBlocks, resolved, bodyStyle.fontSizePx);
@@ -977,10 +982,12 @@ function placeDocumentPass(
   // story holds does not float. A reference in a frame to a picture set
   // elsewhere floats from the page's end, to the pages after it.
   const composedPlans = planComposedPages(contentBlocks, calloutPlan, templateSource);
-  if (composedPlans.size > 0) {
+  // A comic page's text panels (#885) likewise.
+  const comicTextPlans = comicText.wrapped ? planComicTextPanels(contentBlocks, calloutPlan) : new Map<number, PlannedComposedPage>();
+  if (composedPlans.size > 0 || comicTextPlans.size > 0) {
     for (let k = floatPlan.length - 1; k >= 0; k--) {
       const f = floatPlan[k]!;
-      const page = composedPageAt(composedPlans, f.firstBlockIdx);
+      const page = composedPageAt(composedPlans, f.firstBlockIdx) ?? composedPageAt(comicTextPlans, f.firstBlockIdx);
       if (!page) continue;
       const raw = contentBlocks[f.firstBlockIdx];
       if (raw?.type === 'resourceBlock' && raw.resourceId === f.resourceId && page.storyAt(f.firstBlockIdx)) floatPlan.splice(k, 1);
@@ -6486,6 +6493,38 @@ function placeDocumentPass(
     flushPendingNumberingAtBoundary();
   };
 
+  /**
+   * The text panels of a comic page (#885): each story set in its panel's
+   * frame (`layoutComicTextFrames`), its blocks floats of the page; the
+   * stories laid are done for the main loop.
+   */
+  const placeComicText = (page: VDTPage, comic: VDTComicPage, plan: PlannedComposedPage): void => {
+    const frameless = calloutStyles.find((st) => st.id === FRAME_STYLE_ID)!;
+    const out = layoutComicTextFrames({
+      pass: framePass,
+      resolved,
+      page,
+      comic,
+      plan,
+      styleOf: (frame) => frameStyleOf((frame.style ? resolved.calloutStyles.find((st) => st.id === frame.style) : undefined) ?? frameless, frame),
+      dpi,
+      emPx: bodyStyle.fontSizePx,
+      bodyOffset,
+      mirrored: mirroredOf(page),
+      pushGapPx: wrapGapPx(resolved.layout.wrap?.gap, dpi, bodyStyle.fontSizePx, floatGapPx),
+      locale: resolvedLocale(resolved),
+    });
+    const floats = (page.floats ??= []);
+    for (const b of out.blocks) {
+      floats.push(b);
+      doc.blocks.push(b);
+    }
+    for (const [key, story] of plan.stories) {
+      if (!out.laid.has(key)) continue;
+      for (let i = story.startIdx; i <= story.plan.endIdx; i++) composedLaid.add(i);
+    }
+  };
+
   /** The first block of the document that sets something: a heading there
    *  opens the document's first page (`openerPages`, #749). */
   const firstFlowBlockIdx = contentBlocks.findIndex((b) => !isMarkerBlock(b) && b.type !== 'directive');
@@ -6759,6 +6798,8 @@ function placeDocumentPass(
             sourceOffset: bodyOffset,
             mirrorMargins: pageMirrored(resolved, page.index, pageIndexOffset, true),
           });
+          const textPlan = comicTextPlans.get(blockIdx);
+          if (textPlan) placeComicText(page, page.comic, textPlan);
         }
         pendingComicBreak = true;
         flushPendingNumberingAtBoundary();

@@ -16,7 +16,8 @@
  * locale and across relayouts.
  */
 
-import type { BoundingBox, VDTComicPage, VDTComicPanel, VDTFrame, VDTPoint } from '../vdt';
+import type { BoundingBox, ResolvedConfig, VDTComicPage, VDTComicPanel, VDTFrame, VDTPoint } from '../vdt';
+import type { ResolvedCalloutStyleConfig } from '../types';
 import { clipPolygon, polygonBBox, type ComicCell } from './geometry';
 import type { ComicPanelSource } from './types';
 
@@ -52,6 +53,14 @@ export function isComicTextPanel(panel: Pick<ComicPanelSource, 'attrs'> | undefi
   if (v === undefined) return false;
   const t = v.trim().toLowerCase();
   return !(t === 'false' || t === 'no' || t === '0' || t === 'none');
+}
+
+/** The callout style a panel's `box` names (#885), or undefined (unset,
+ *  or no such style: `comicPanelFrame`, reason `unknownBox`). */
+export function comicBoxStyle(resolved: Pick<ResolvedConfig, 'calloutStyles'>, value: string | undefined): ResolvedCalloutStyleConfig | undefined {
+  const id = value?.trim();
+  if (!id) return undefined;
+  return resolved.calloutStyles.find((s) => s.id === id);
 }
 
 /** A frame the split generates, before its panel is built: where it is
@@ -188,8 +197,10 @@ export function comicFramesFor(whole: Pick<VDTComicPage, 'frames'>, panels: read
     const f = byPanel.get(p.index);
     if (!f) continue;
     const g = comicPanelFrame(p, f.name, f.layer);
-    const { polygon: _whole, ...rest } = f;
-    out.push({ ...rest, rect: g.rect, ...(g.polygon ? { polygon: g.polygon } : {}) });
+    const cut: VDTFrame = { ...f, rect: g.rect };
+    if (g.polygon) cut.polygon = g.polygon;
+    else delete cut.polygon;
+    out.push(cut);
   }
   return out;
 }

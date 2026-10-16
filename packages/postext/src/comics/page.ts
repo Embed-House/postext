@@ -18,6 +18,7 @@
 import { parseDirectiveAttrs } from '../parse/attrs';
 import { attrValueSources, parseComicScript, type ComicScriptLine } from './script';
 import { parseComicSplit } from './split';
+import { isComicTextPanel } from './frames';
 import type { ComicPageSource, ComicPanelSource, ComicSourceRange } from './types';
 
 /** `:::page` / `:::strip` with an optional attribute block. */
@@ -110,8 +111,12 @@ export function parseComicFence(markdown: string, fenceStart: number): { source:
   let current: { panel: ComicPanelSource; lines: ComicScriptLine[] } | undefined;
   const finish = (): void => {
     if (!current) return;
-    current.panel.items = parseComicScript(markdown, current.lines);
     const last = [...current.lines].reverse().find((l) => l.text.trim() !== '');
+    // A text panel's body is Markdown, poured into its frame (#885).
+    if (isComicTextPanel(current.panel)) {
+      const first = current.lines.find((l) => l.text.trim() !== '');
+      current.panel.text = first && last ? { start: first.start, end: last.start + last.text.trimEnd().length } : { start: current.panel.lineEnd, end: current.panel.lineEnd };
+    } else current.panel.items = parseComicScript(markdown, current.lines);
     current.panel.sourceEnd = last ? last.start + last.text.trimEnd().length : current.panel.lineEnd;
     panels.push(current.panel);
     current = undefined;
@@ -272,6 +277,7 @@ export function remapComicSource(source: ComicPageSource, toOriginal: (offset: n
     panel.lineStart = toOriginal(panel.lineStart);
     panel.lineEnd = toOriginal(panel.lineEnd);
     Object.values(panel.attrSources).forEach(range);
+    if (panel.text) range(panel.text);
     for (const item of panel.items) {
       for (const k of ['sourceStart', 'sourceEnd', 'keyStart', 'keyEnd', 'textStart', 'textEnd', 'attrsStart', 'attrsEnd'] as const) {
         const v = item[k];

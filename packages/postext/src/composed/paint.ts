@@ -21,6 +21,8 @@ export type ComposedPaintItem =
 export function composedFrameBlockIds(page: VDTPage): Set<string> {
   const ids = new Set<string>();
   for (const f of page.composed?.frames ?? []) for (const id of f.blockIds) ids.add(id);
+  // A comic page's text panels (#885) are painted with their frames too.
+  for (const f of page.comic?.frames ?? []) for (const id of f.blockIds) ids.add(id);
   return ids;
 }
 
@@ -29,6 +31,25 @@ export function composedFrameBlockIds(page: VDTPage): Set<string> {
  *  apart (a page painted through a flow frame, whose decoration stands on
  *  the sheet). */
 export type ComposedPaintPart = 'below' | 'above';
+
+/** The frames of a comic page that hold text (`::panel{text}`, #885), with
+ *  their blocks, in panel order: painted over the panels and under the
+ *  lettering ({@link comicPaintsUnderText}). Empty on any other page. */
+export function comicFramePaintOrder(page: VDTPage): ComposedPaintItem[] {
+  const frames = page.comic?.frames?.filter((f) => f.blockIds.length > 0) ?? [];
+  if (frames.length === 0) return [];
+  const byId = new Map<string, VDTBlock>();
+  for (const b of page.floats ?? []) byId.set(b.id, b);
+  return frames.map((frame) => ({ kind: 'frame' as const, frame, blocks: frame.blockIds.map((id) => byId.get(id)).filter((b): b is VDTBlock => b !== undefined), facing: false }));
+}
+
+/** Whether a page's comic holds text panels (#885): its panels are then
+ *  painted before the page's flow, the text frames after the floats, and
+ *  its lettering last, so the text lies over its panel's ground and under
+ *  the balloons. */
+export function comicPaintsUnderText(page: VDTPage): boolean {
+  return page.comic?.frames?.some((f) => f.blockIds.length > 0) === true;
+}
 
 /** The paint order of a composed page: frames of a layer below 0, the
  *  decoration (layer 0), then the frames of layer 0 and up; frames of

@@ -11,7 +11,7 @@ import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfi
 import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode';
 import { runPagePrintPass } from '../print/printPass';
 import { writePdfX } from '../print/pdfx';
-import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
+import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
 import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
 import {
   type PageCtx,
@@ -44,7 +44,7 @@ import {
 } from './pageDecorations';
 import { renderBlock, renderStripCaption, type ResourceRenderContext } from './blockRender';
 import { renderHeaderFooterSlot, type SlotMark } from './headerFooter';
-import { renderComicPage, sheetMatrixToPdf } from './comic';
+import { pushClipPolygon, renderComicLetteringPdf, renderComicPage, renderComicPanelsPdf, sheetMatrixToPdf, type ComicPanelTags } from './comic';
 import { addOutlines, numberedHeadingText } from './outlines';
 import { addPageLabels } from './pageLabels';
 import {
@@ -473,6 +473,11 @@ function paintPage(
   // picture is turned back about its own box (`pushTextObject`,
   // `counterFlipPx`), so the geometry lands mirrored and the text reads as
   // written. Link and structure rects map through the frame too.
+  // A comic page with text panels (#885): its panels first, the text over
+  // them with the floats, its lettering after the flow.
+  const comicUnder = comicPaintsUnderText(vdtPage) ? vdtPage.comic : undefined;
+  const comicTags: ComicPanelTags = comicUnder ? renderComicPanelsPdf(ctx, comicUnder, resourceCtx.images, structure) : undefined;
+
   let flowMatrix: PdfMatrix | undefined;
   const vflow = verticalFlowOf(vdtPage);
   if (vflow) flowMatrix = quarterTurnMatrix(vflow.rotation, scale, pageHeightPt);
@@ -662,6 +667,7 @@ function paintPage(
     enterFlow();
     paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, undefined, false, 'above');
   } else if (vdtPage.composed) paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, decorationMark, true);
+  if (comicUnder) paintComicTextFrames(ctx, vdtPage, fontCache, resourceCtx);
 
   // The footnote separators are layout.
   if (vdtPage.footnoteAreas?.some((a) => a.rule)) {
@@ -674,7 +680,8 @@ function paintPage(
   // A comic page's panels and lettering (or its half of a spread), then
   // the strips the page holds, on the sheet (never through the flow
   // frame), under the running heads.
-  if (vdtPage.comic) renderComicPage(ctx, vdtPage.comic, fontCache, resourceCtx.images, structure);
+  if (comicUnder) renderComicLetteringPdf(ctx, comicUnder, fontCache, comicTags);
+  else if (vdtPage.comic) renderComicPage(ctx, vdtPage.comic, fontCache, resourceCtx.images, structure);
   for (const strip of strips) {
     renderComicPage(ctx, comicBlockOnSheet(vdtPage, strip.block)!, fontCache, resourceCtx.images, structure, strip.div);
     // A caption set under the strip is read after its panels.
@@ -759,37 +766,61 @@ function paintComposedItems(
       if (withDecoration && decoration) renderHeaderFooterSlot(ctx, decoration, fontCache, resourceCtx.images, mark);
       continue;
     }
-    const { frame, blocks } = item;
-    if (blocks.length === 0) continue;
-    let readAt: number | undefined;
-    for (const b of blocks) if (b.contentIndex !== undefined && (readAt === undefined || b.contentIndex < readAt)) readAt = b.contentIndex;
-    const m = frameMatrix(frame);
-    const clips = frameClips(frame);
-    if (m) pushFrame(ctx, sheetMatrixToPdf(m, ctx.scale, ctx.pageHeightPt));
-    // The clip is in the blocks' own frame (larger than the box when the
-    // frame's text is scaled, #858).
-    const box = frameContentRect(frame);
-    if (clips) pushClipRect(ctx, box.x, box.y, box.width, box.height);
-    try {
-      if (item.facing) {
-        // The facing page's half of a frame across a spread's spine: its
-        // text is read on the other page, so here it is an artifact.
-        tagArtifact(ctx, { type: 'Layout' });
-        const untagged: ResourceRenderContext = { ...resourceCtx, structure: undefined };
-        for (const fb of blocks) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, untagged);
-      } else {
-        // A frame's blocks are read as one float (#862), so a list in it
-        // stays one list.
-        const paint = () => {
-          for (const fb of blocks) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
-        };
-        if (structure) structure.readFloat(blocks[0]!, paint, readAt);
-        else paint();
-      }
-    } finally {
-      if (clips) popClip(ctx);
-      if (m) popFrame(ctx);
+    paintFrameItem(ctx, item, fontCache, resourceCtx, structure);
+  }
+}
+
+/** The text frames of a comic page (`::panel{text}`, #885), over its
+ *  panels: each read as one float, as a composed page's frame is. */
+function paintComicTextFrames(ctx: PageCtx, vdtPage: VDTPage, fontCache: FontCache, resourceCtx: ResourceRenderContext): void {
+  for (const item of comicFramePaintOrder(vdtPage)) {
+    if (item.kind === 'frame') paintFrameItem(ctx, item, fontCache, resourceCtx, resourceCtx.structure);
+  }
+}
+
+/** One frame of a paint order: its blocks, turned (and scaled) by its
+ *  matrix, clipped to its box when its content overflows and to its
+ *  outline when it has one (a comic panel cut by a slanted line, #885). */
+function paintFrameItem(
+  ctx: PageCtx,
+  item: Extract<ReturnType<typeof composedPaintOrder>[number], { kind: 'frame' }>,
+  fontCache: FontCache,
+  resourceCtx: ResourceRenderContext,
+  structure: ResourceRenderContext['structure'],
+): void {
+  const { frame, blocks } = item;
+  if (blocks.length === 0) return;
+  let readAt: number | undefined;
+  for (const b of blocks) if (b.contentIndex !== undefined && (readAt === undefined || b.contentIndex < readAt)) readAt = b.contentIndex;
+  const m = frameMatrix(frame);
+  const clips = frameClips(frame);
+  const outline = frame.polygon && frame.polygon.length >= 3 ? frame.polygon : undefined;
+  if (outline) pushClipPolygon(ctx, outline);
+  if (m) pushFrame(ctx, sheetMatrixToPdf(m, ctx.scale, ctx.pageHeightPt));
+  // The clip is in the blocks' own frame (larger than the box when the
+  // frame's text is scaled, #858).
+  const box = frameContentRect(frame);
+  if (clips) pushClipRect(ctx, box.x, box.y, box.width, box.height);
+  try {
+    if (item.facing) {
+      // The facing page's half of a frame across a spread's spine: its
+      // text is read on the other page, so here it is an artifact.
+      tagArtifact(ctx, { type: 'Layout' });
+      const untagged: ResourceRenderContext = { ...resourceCtx, structure: undefined };
+      for (const fb of blocks) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, untagged);
+    } else {
+      // A frame's blocks are read as one float (#862), so a list in it
+      // stays one list.
+      const paint = () => {
+        for (const fb of blocks) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
+      };
+      if (structure) structure.readFloat(blocks[0]!, paint, readAt);
+      else paint();
     }
+  } finally {
+    if (clips) popClip(ctx);
+    if (m) popFrame(ctx);
+    if (outline) popClip(ctx);
   }
 }
 

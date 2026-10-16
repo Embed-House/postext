@@ -3389,6 +3389,15 @@ export type ContentWarning = ContentWarningBase & (
    *  tails point off the panel. Only raised on pages whose pictures mark
    *  anchors. Informational. Points at the first line of that speaker. */
   | { kind: 'comicUnknownSpeaker'; speaker: string }
+  /** A comic panel's frame (#885) cannot do what the panel asks. `reason`:
+   *  `'unknownBox'`, its `box` names no callout style (`style`): the panel
+   *  keeps its panel style; `'textOverflow'`, a text panel's Markdown does
+   *  not fit its frame (`overflowMm` did not): the rest is clipped;
+   *  `'strip'`, `'spread'`, `'flow'`, a text panel on a strip, on a
+   *  spread, or in a document whose flow is vertical or right to left: its
+   *  Markdown is set in the flow after the comic. `panel`: the panel's
+   *  place in the page's source (0-based). Points at the panel. */
+  | { kind: 'comicPanelFrame'; reason: 'unknownBox' | 'textOverflow' | 'strip' | 'spread' | 'flow'; panel: number; style?: string; overflowMm?: number }
   /** A line number set in the side column (`lineNumbers.position:
    *  'side'`, #621) overlaps a side box, a side caption or another float
    *  of that column: both are painted where they are. Points at the line
