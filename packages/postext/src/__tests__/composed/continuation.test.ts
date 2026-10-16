@@ -396,6 +396,6 @@ describe('helpers (#859)', () => {
 
   it('describeReflowEvent names the page', () => {
     expect(describeReflowEvent({ frame: 'dinero', kind: 'continued', toPage: 4 })).toBe('dinero continued on page 5');
-    expect(describeReflowEvent({ frame: 'dinero', kind: 'continued', toPage: 4 }, () => 'xii')).toBe('dinero continued on page xii');
+
   });
 });

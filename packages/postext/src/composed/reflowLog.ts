@@ -92,9 +92,13 @@ const pct = (v: number): string => `${Math.round(v * 1000) / 10} %`;
 
 /** One event in words, in English (the command line's language):
  *  «dinero grew 8 mm», «gasto moved down 8 mm», «foto narrowed 4 mm»,
- *  «dinero continued on page 9». `pageLabel` names a page by its index
- *  (`VDTPage.index`); unset, the index + 1. */
-export function describeReflowEvent(e: ReflowEvent, pageLabel?: (index: number) => string): string {
+ *  «dinero continued on page 9» (the page's index + 1; `composedReflowLog`
+ *  names it by its printed number). */
+export function describeReflowEvent(e: ReflowEvent): string {
+  return describeEvent(e);
+}
+
+function describeEvent(e: ReflowEvent, pageLabel?: (index: number) => string): string {
   const delta = e.fromMm !== undefined && e.toMm !== undefined ? Math.abs(e.toMm - e.fromMm) : undefined;
   const by = delta !== undefined ? ` ${num(delta)} mm` : '';
   const x = e.axis === 'x';
@@ -196,7 +200,7 @@ export function composedReflowLog(doc: Pick<VDTDocument, 'pages'>): ComposedPage
       template: c.template,
       fenceIndex: c.fenceIndex,
       events: c.log.map((e) => ({ ...e })),
-      lines: c.log.map((e) => describeReflowEvent(e, labelOf)),
+      lines: c.log.map((e) => describeEvent(e, labelOf)),
     });
   }
   return out;

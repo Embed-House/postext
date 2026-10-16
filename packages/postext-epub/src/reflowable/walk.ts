@@ -498,9 +498,16 @@ class DocWalker {
     const composed = page.composed!;
     this.book.composed = true;
     const ids = new Set<string>();
-    const node: ComposedNode = { k: 'composed', template: composed.template, pre: this.takePages(), children: [] };
-    this.root.nodes.push(node);
-    const section: Container = { nodes: node.children, lists: [], top: node };
+    // A page added by continuation (#859) holds the rest of stories read
+    // on the pages before it: their blocks go on in those stories' boxes
+    // (by container id), so the section is the one already open.
+    const goesOn = composed.continuationOf !== undefined;
+    let section: Container = this.root;
+    if (!goesOn) {
+      const node: ComposedNode = { k: 'composed', template: composed.template, pre: this.takePages(), children: [] };
+      this.root.nodes.push(node);
+      section = { nodes: node.children, lists: [], top: node };
+    }
     this.lastContainer = undefined;
     const order = composedReadingOrder(composedPaintOrder(page));
     for (const item of order) {
