@@ -3207,6 +3207,7 @@
     "frameStylesSuggestionOnly": "Diese __count__ Stile unterscheiden sich nur in __fields__: zusammenführen?",
     "frameStylesAnd": " und ",
     "frameStylesKeeps": "Behält __name__",
+    "frameStylesMoreNames": "und __count__ weitere",
     "frameStylesMaxFields": "Abweichende Einstellungen",
     "frameStylesMaxFieldsTooltip": "In höchstens so vielen Einstellungen dürfen sich zwei Stile unterscheiden, damit eine Zusammenführung vorgeschlagen wird. Die vier Seiten eines Innenabstands zählen als eine Einstellung.",
     "frameStylesIgnorePosition": "Nur das Aussehen vergleichen",

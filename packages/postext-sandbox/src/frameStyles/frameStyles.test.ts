@@ -249,6 +249,17 @@ describe('the preview of a style', () => {
     expect(config.header).toEqual({ elements: [] });
   });
 
+  it('widens the sample when the padding leaves less than 40 mm of measure', () => {
+    expect(previewConfig({}, { id: 'a' }).page!.width).toEqual(mm(92));
+    expect(previewConfig({}, { id: 'b', padding: { left: mm(114.25) } }).page!.width).toEqual(mm(167));
+  });
+
+  it('keeps a tab set far along a wide frame on the sample box', () => {
+    const style: CalloutStyleConfig = { id: 'pestana', label: { inset: mm(139.74), height: mm(8) } };
+    expect(previewConfig({}, style).calloutStyles![0]!.label).toEqual({ inset: mm(4), height: mm(8) });
+    expect(previewConfig({}, { id: 'x', label: { inset: mm(6) } }).calloutStyles![0]!.label).toEqual({ inset: mm(6) });
+  });
+
   it('is a single box of the style, with the sample label only when the style has a tab', () => {
     const sample = { text: 'Texto de muestra.', label: 'Una "etiqueta" {rara}' };
     expect(previewMarkdown({ id: 'caja', label: {} }, sample)).toBe(':::callout{type="caja" label="Una etiqueta rara"}\nTexto de muestra.\n:::\n');

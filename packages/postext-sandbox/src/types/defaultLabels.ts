@@ -2563,6 +2563,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   frameStylesSuggestionOnly: "These __count__ styles differ only in __fields__: merge?",
   frameStylesAnd: " and ",
   frameStylesKeeps: "Keeps __name__",
+  frameStylesMoreNames: "and __count__ more",
   frameStylesMaxFields: "Settings that may differ",
   frameStylesMaxFieldsTooltip: "The most settings two styles may differ in and still be suggested for a merge. The four sides of a padding count as one setting.",
   frameStylesIgnorePosition: "Compare the look only",

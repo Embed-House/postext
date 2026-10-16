@@ -3206,6 +3206,7 @@
     "frameStylesSuggestionOnly": "这 __count__ 种样式只在__fields__上不同，要合并吗？",
     "frameStylesAnd": "和",
     "frameStylesKeeps": "保留 __name__",
+    "frameStylesMoreNames": "等另外 __count__ 种",
     "frameStylesMaxFields": "允许不同的设置项",
     "frameStylesMaxFieldsTooltip": "两种样式最多在几项设置上不同时仍建议合并。内边距的四条边算作一项。",
     "frameStylesIgnorePosition": "只比较外观",

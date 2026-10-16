@@ -3206,6 +3206,7 @@
     "frameStylesSuggestionOnly": "Ces __count__ styles ne diffèrent que par __fields__ : les fusionner ?",
     "frameStylesAnd": " et ",
     "frameStylesKeeps": "Garde __name__",
+    "frameStylesMoreNames": "et __count__ autres",
     "frameStylesMaxFields": "Réglages qui peuvent différer",
     "frameStylesMaxFieldsTooltip": "Nombre maximal de réglages par lesquels deux styles peuvent différer pour qu’une fusion soit proposée. Les quatre côtés d’une marge intérieure comptent pour un seul réglage.",
     "frameStylesIgnorePosition": "Comparer l’aspect seulement",

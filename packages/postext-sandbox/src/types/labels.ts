@@ -2741,6 +2741,7 @@ export interface SandboxLabels {
   frameStylesSuggestionOnly: string;
   frameStylesAnd: string;
   frameStylesKeeps: string;
+  frameStylesMoreNames: string;
   frameStylesMaxFields: string;
   frameStylesMaxFieldsTooltip: string;
   frameStylesIgnorePosition: string;

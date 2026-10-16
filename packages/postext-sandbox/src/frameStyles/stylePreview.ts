@@ -2,8 +2,8 @@
  * The picture of a box style in the frame-style library (#873): a small
  * document holding one `:::callout` of the style, with a sample paragraph
  * and, when the style has a tab, a sample label, laid out by the engine
- * with the book's settings and painted by its canvas renderer, then cut to
- * what was drawn. The style is drawn as a frame dresses it: in the flow,
+ * with the book's settings on an 80 mm measure and painted by its canvas
+ * renderer, then cut to what was drawn. The style is drawn as a frame dresses it: in the flow,
  * across the measure, without the place a callout style may give its box
  * (DESIGN §2.4).
  */
@@ -28,22 +28,52 @@ export function frameDress(style: CalloutStyleConfig): CalloutStyleConfig {
   return out;
 }
 
-/** The book's settings for a page holding only the sample box: the book's
- *  measure (page width and side margins), one column, no running heads,
- *  templates, line numbers, print marks or debug drawing. */
+const MM_PER: Record<string, number> = { mm: 1, cm: 10, in: 25.4, pt: 25.4 / 72 };
+
+/** The style for the sample: dressed as a frame, its tab kept on the
+ *  sample box (a tab set far along a wide frame would fall off it). */
+export function previewDress(style: CalloutStyleConfig): CalloutStyleConfig {
+  const out = frameDress(style);
+  const inset = out.label?.inset;
+  const per = inset ? MM_PER[inset.unit] : undefined;
+  if (out.label && inset && per !== undefined && inset.value * per > PREVIEW_MEASURE_MM * 0.4) {
+    out.label = { ...out.label, inset: { value: 4, unit: 'mm' } };
+  }
+  return out;
+}
+
+/** Width of the sample box: a frame of a textbook page, wide enough for
+ *  a few words a line at the book's size, narrow enough to read in the
+ *  panel. */
+export const PREVIEW_MEASURE_MM = 80;
+
+/** Width of the sample box: 80 mm, or wider when the style's padding
+ *  leaves less than 40 mm of measure (a port that sets the measure with
+ *  the padding of a page-wide box). */
+export function previewMeasureMm(style: CalloutStyleConfig): number {
+  const side = (d: { value: number; unit: string } | undefined) => (d && MM_PER[d.unit] !== undefined ? d.value * MM_PER[d.unit]! : 0);
+  const padding = side(style.padding?.left) + side(style.padding?.right);
+  return Math.max(PREVIEW_MEASURE_MM, Math.ceil(padding + 40));
+}
+
+/** The book's settings for a page holding only the sample box (see
+ *  {@link previewMeasureMm}): one column, no running heads, templates, line numbers, print
+ *  marks or debug drawing. */
 export function previewConfig(config: PostextConfig, style: CalloutStyleConfig): PostextConfig {
   const page = config.page ?? {};
   const margins = page.margins ?? {};
+  const side = { value: SIDE_MM, unit: 'mm' as const };
   return {
     ...config,
     page: {
       ...page,
+      width: { value: previewMeasureMm(style) + 2 * SIDE_MM, unit: 'mm' },
       height: { value: 200, unit: 'mm' },
-      margins: { ...margins, top: { value: TOP_MM, unit: 'mm' }, bottom: { value: SIDE_MM, unit: 'mm' }, mirror: false },
+      margins: { ...margins, top: { value: TOP_MM, unit: 'mm' }, bottom: side, left: side, right: side, mirror: false },
       cutLines: undefined,
     },
     layout: { ...config.layout, layoutType: 'single' },
-    calloutStyles: [frameDress(style)],
+    calloutStyles: [previewDress(style)],
     pageTemplates: undefined,
     header: { elements: [] },
     footer: { elements: [] },

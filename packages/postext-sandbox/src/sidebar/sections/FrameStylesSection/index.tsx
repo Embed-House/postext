@@ -3,9 +3,10 @@
 import { memo, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { ChevronDown, ChevronRight, LayoutTemplate, Merge, PenLine, SquareArrowOutUpRight, Undo2 } from 'lucide-react';
 import { onFontsChanged, type CalloutStyleConfig, type PostextConfig } from 'postext';
+import type { SandboxLabels } from '../../../types/labels';
 import { useSandboxDispatch, useSandboxLabels, useSandboxResources, useSandboxSelector } from '../../../context/SandboxContext';
-import { CollapsibleSection, NumberInput, ToggleSwitch } from '../../../controls';
-import { Button, SegmentedControl } from '../../../ui';
+import { CollapsibleSection, FieldRow, NumberControl } from '../../../controls';
+import { Button, SegmentedControl, Switch } from '../../../ui';
 import { SearchScope } from '../../search/SearchScope';
 import { CalloutStyleCard, useCalloutStyleEdits } from '../CalloutStylesSection';
 import { bookCompareOptions, frameStyleLibrary, type FrameStyleLibrary } from '../../../frameStyles/library';
@@ -25,6 +26,14 @@ const PREVIEW_WIDTH = 220;
 
 function styleName(s: CalloutStyleConfig | undefined, id: string): string {
   return s?.name && s.name !== s.id ? s.name : id;
+}
+
+const NAMES_SHOWN = 6;
+
+/** The styles a suggestion merges, the first few by name. */
+function mergedNames(ids: readonly string[], byId: ReadonlyMap<string, CalloutStyleConfig>, labels: SandboxLabels): string {
+  const names = ids.slice(0, NAMES_SHOWN).map((id) => styleName(byId.get(id), id)).join(labels.frameStylesListSeparator);
+  return ids.length > NAMES_SHOWN ? `${names} ${labels.frameStylesMoreNames.replace('__count__', String(ids.length - NAMES_SHOWN))}` : names;
 }
 
 function matches(filter: Filter, u: StyleUsage | undefined): boolean {
@@ -135,24 +144,13 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
             <h4 className="mb-1 text-xs font-semibold" style={{ color: 'var(--foreground)' }}>
               {labels.frameStylesSuggestions}
             </h4>
-            <NumberInput
-              label={labels.frameStylesMaxFields}
-              tooltip={labels.frameStylesMaxFieldsTooltip}
-              value={maxFields}
-              min={0}
-              max={8}
-              onChange={(v) => setMaxFields(Math.max(0, Math.round(v)))}
-              isDefault={maxFields === 2}
-              onReset={() => setMaxFields(2)}
-            />
-            <ToggleSwitch
-              label={labels.frameStylesIgnorePosition}
-              tooltip={labels.frameStylesIgnorePositionTooltip}
-              checked={ignorePosition}
-              onChange={setIgnorePosition}
-              isDefault={!ignorePosition}
-              onReset={() => setIgnorePosition(false)}
-            />
+            {/* Settings of the comparison, not of the book: never shown as changed. */}
+            <FieldRow label={labels.frameStylesMaxFields} tooltip={labels.frameStylesMaxFieldsTooltip}>
+              <NumberControl value={maxFields} min={0} max={8} onChange={(v) => setMaxFields(Math.max(0, Math.round(v)))} muted={false} />
+            </FieldRow>
+            <FieldRow label={labels.frameStylesIgnorePosition} tooltip={labels.frameStylesIgnorePositionTooltip}>
+              <Switch ariaLabel={labels.frameStylesIgnorePosition} checked={ignorePosition} onCheckedChange={setIgnorePosition} />
+            </FieldRow>
             <p className="mb-2 text-[0.7rem]" style={{ color: 'var(--slate)' }}>{labels.frameStylesTolerances}</p>
             {library.suggestions.length === 0 && (
               <p className="mb-2 text-xs" style={{ color: 'var(--slate)' }}>{labels.frameStylesSuggestionsNone}</p>
@@ -189,7 +187,7 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
                   <p className="mb-1 text-[0.7rem]" style={{ color: 'var(--slate)' }}>
                     {labels.frameStylesKeeps.replace('__name__', styleName(byId.get(s.keep), s.keep))}
                     {' · '}
-                    <span dir="auto">{s.merge.map((id) => styleName(byId.get(id), id)).join(', ')}</span>
+                    <span dir="auto">{mergedNames(s.merge, byId, labels)}</span>
                   </p>
                   <StylePreview
                     style={byId.get(s.keep)!}

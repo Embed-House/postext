@@ -2542,6 +2542,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     frameStylesSuggestionOnly: t("frameStylesSuggestionOnly"),
     frameStylesAnd: t("frameStylesAnd"),
     frameStylesKeeps: t("frameStylesKeeps"),
+    frameStylesMoreNames: t("frameStylesMoreNames"),
     frameStylesMaxFields: t("frameStylesMaxFields"),
     frameStylesMaxFieldsTooltip: t("frameStylesMaxFieldsTooltip"),
     frameStylesIgnorePosition: t("frameStylesIgnorePosition"),

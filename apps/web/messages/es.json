@@ -1143,6 +1143,7 @@
     "frameStylesSuggestionOnly": "Estos __count__ estilos solo cambian en __fields__: ¿fusionarlos?",
     "frameStylesAnd": " y ",
     "frameStylesKeeps": "Se queda __name__",
+    "frameStylesMoreNames": "y __count__ más",
     "frameStylesMaxFields": "Ajustes que pueden cambiar",
     "frameStylesMaxFieldsTooltip": "Cuántos ajustes como mucho pueden distinguir a dos estilos para proponer fusionarlos. Los cuatro lados de un relleno cuentan como un ajuste.",
     "frameStylesIgnorePosition": "Comparar solo el aspecto",

@@ -4552,6 +4552,7 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'frameStylesMergeInto',
       'frameStylesMerged',
       'frameStylesMergedAll',
+      'frameStylesMoreNames',
       'frameStylesNoDifference',
       'frameStylesOpenFrame',
       'frameStylesPagesHeading',

@@ -3206,6 +3206,7 @@
     "frameStylesSuggestionOnly": "この __count__ 個のスタイルは__fields__だけが違います。統合しますか？",
     "frameStylesAnd": "と",
     "frameStylesKeeps": "__name__ を残す",
+    "frameStylesMoreNames": "ほか __count__ 個",
     "frameStylesMaxFields": "違ってよい設定の数",
     "frameStylesMaxFieldsTooltip": "二つのスタイルがいくつまでの設定で違っていれば統合を提案するか。内側の余白の上下左右はまとめて一つの設定と数えます。",
     "frameStylesIgnorePosition": "見た目だけを比べる",

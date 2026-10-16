@@ -3206,6 +3206,7 @@
     "frameStylesSuggestionOnly": "هذه الأنماط (__count__) لا تختلف إلا في __fields__: أندمجها؟",
     "frameStylesAnd": " و",
     "frameStylesKeeps": "يبقى __name__",
+    "frameStylesMoreNames": "و__count__ أخرى",
     "frameStylesMaxFields": "الإعدادات المسموح باختلافها",
     "frameStylesMaxFieldsTooltip": "أكبر عدد من الإعدادات يجوز أن يختلف فيه نمطان ويبقى دمجهما مقترحًا. تُعدّ جوانب الحشوة الأربعة إعدادًا واحدًا.",
     "frameStylesIgnorePosition": "مقارنة المظهر وحده",

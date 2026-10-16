@@ -3206,6 +3206,7 @@
     "frameStylesSuggestionOnly": "Estes __count__ estilos só mudam em __fields__: fundir?",
     "frameStylesAnd": " e ",
     "frameStylesKeeps": "Fica __name__",
+    "frameStylesMoreNames": "e mais __count__",
     "frameStylesMaxFields": "Ajustes que podem mudar",
     "frameStylesMaxFieldsTooltip": "Em quantos ajustes, no máximo, dois estilos podem diferir para que a fusão seja sugerida. Os quatro lados de um preenchimento contam como um só ajuste.",
     "frameStylesIgnorePosition": "Comparar só a aparência",

@@ -23,7 +23,7 @@ interface StylePreviewProps {
 export function StylePreview({ style, config, contextKey, resources, sample, width, label }: StylePreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [visible, setVisible] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const [retry, setRetry] = useState(0);
   const configRef = useRef(config);
   configRef.current = config;
@@ -61,10 +61,8 @@ export function StylePreview({ style, config, contextKey, resources, sample, wid
         if (!el || !painted) return;
         el.width = painted.canvas.width;
         el.height = painted.canvas.height;
-        el.style.width = `${Math.round(painted.canvas.width / dpr)}px`;
-        el.style.height = `${Math.round(painted.canvas.height / dpr)}px`;
         el.getContext('2d')?.drawImage(painted.canvas, 0, 0);
-        setReady(true);
+        setSize({ w: Math.round(painted.canvas.width / dpr), h: Math.round(painted.canvas.height / dpr) });
         // A picture of the style (an icon, a tab) still decoding: once more.
         if (painted.missing && retry < 4) timer = setTimeout(() => setRetry((n) => n + 1), 800);
       },
@@ -81,7 +79,7 @@ export function StylePreview({ style, config, contextKey, resources, sample, wid
       role="img"
       aria-label={label}
       className="block max-w-full rounded"
-      style={{ width, minHeight: ready ? undefined : 32, background: 'var(--surface)' }}
+      style={size ? { width: size.w, height: size.h } : { width, height: 32, background: 'var(--surface)' }}
     />
   );
 }

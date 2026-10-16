@@ -3207,6 +3207,7 @@
     "frameStylesSuggestionOnly": "Questi __count__ stili cambiano solo in __fields__: unirli?",
     "frameStylesAnd": " e ",
     "frameStylesKeeps": "Resta __name__",
+    "frameStylesMoreNames": "e altri __count__",
     "frameStylesMaxFields": "Impostazioni che possono cambiare",
     "frameStylesMaxFieldsTooltip": "In quante impostazioni al massimo due stili possono differire perché se ne proponga l’unione. I quattro lati di una spaziatura interna contano come una sola impostazione.",
     "frameStylesIgnorePosition": "Confronta solo l’aspetto",

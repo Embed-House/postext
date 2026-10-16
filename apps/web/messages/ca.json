@@ -3206,6 +3206,7 @@
     "frameStylesSuggestionOnly": "Aquests __count__ estils només canvien en __fields__: els fusionem?",
     "frameStylesAnd": " i ",
     "frameStylesKeeps": "Es queda __name__",
+    "frameStylesMoreNames": "i __count__ més",
     "frameStylesMaxFields": "Ajustos que poden canviar",
     "frameStylesMaxFieldsTooltip": "Quants ajustos com a màxim poden distingir dos estils perquè se'n proposi la fusió. Els quatre costats d'un farciment compten com un sol ajust.",
     "frameStylesIgnorePosition": "Comparar només l'aspecte",
