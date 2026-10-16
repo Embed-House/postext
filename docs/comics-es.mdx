@@ -154,6 +154,9 @@ Una línea `::panel{…}` empieza una viñeta; su guion llega hasta la siguiente
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Refleja la imagen de esta viñeta, o la deja como se dibujó cuando la página refleja sus imágenes (véase <a href="#sentido-de-lectura">Sentido de lectura</a>).</td></tr>
     <tr><td><code>alt="…"</code></td><td>El texto alternativo de la viñeta, para el PDF etiquetado, el HTML y el EPUB. Sin él: el <code>altText</code> del recurso.</td></tr>
     <tr><td><code>id=…</code></td><td>Un id para la viñeta, que las salidas HTML y EPUB usan como ancla.</td></tr>
+    <tr><td><code>text</code></td><td>El cuerpo de la viñeta es Markdown compuesto en el marco de la viñeta en lugar de un guion de rotulación (véase <a href="#viñetas-de-texto">Viñetas de texto</a>).</td></tr>
+    <tr><td><code>box=&lt;id&gt;</code></td><td>Viste la viñeta con un estilo de recuadro (véase <a href="#estilos-de-caja">Estilos de caja</a>).</td></tr>
+    <tr><td><code>valign=middle</code>, <code>valign=bottom</code></td><td>Dónde se sitúa el texto de una viñeta de texto en su marco. Sin él: arriba.</td></tr>
   </tbody>
 </table>
 
@@ -482,6 +485,53 @@ Todas las salidas pintan el mismo cómic: los fondos de las viñetas, las imáge
 
 El pie de una tira se pinta con el texto, como el de una figura. En un PDF etiquetado es el `Caption` del `Div` de la tira, que se lee después de sus viñetas (antes, cuando va sobre la tira). En el HTML, en el EPUB de maquetación fija y en el EPUB fluido, la tira y su pie son un solo `<figure>`, con el pie como su `<figcaption>`; en una página vertical o de derecha a izquierda, donde la imagen de la tira queda sobre el pliego, el HTML deja el pie en el texto, aparte.
 
+## Páginas de cómic y páginas compuestas
+
+Una página de cómic es una [página compuesta](/es/docs/composed-pages) cuya plantilla escribe su reparto: el valor de `split` es una forma abreviada que genera los marcos de la página. Cada celda del reparto, una vez quitado el `pad` de su viñeta, es un marco, y también lo es cada viñeta `inset`, una capa por encima del marco sobre el que se apoya. Un marco contiene la imagen, el borde y el fondo de su viñeta; la rotulación se sigue colocando viñeta a viñeta, como se explica más arriba. Una página de imágenes y guion se compone exactamente igual que antes.
+
+<table>
+  <thead>
+    <tr>
+      <th>Lo que genera el reparto</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Marcos</td><td>Uno por celda, en orden de lectura; el marco de una viñeta superpuesta va después del marco sobre el que se apoya.</td></tr>
+    <tr><td>Nombres</td><td>El <code>id</code> de la viñeta, o si no <code>p1</code>, <code>p2</code>… en el orden de las viñetas.</td></tr>
+    <tr><td>Identificadores</td><td>El cómic es <code>cm&lt;n&gt;</code>, siendo <code>n</code> el ordinal de su valla en el capítulo (páginas y tiras se cuentan juntas, desde 0); un marco es <code>cm&lt;n&gt;:&lt;nombre&gt;</code>; un bocadillo es <code>cm&lt;n&gt;:&lt;nombre&gt;:b&lt;k&gt;</code>, siendo <code>k</code> su línea en el guion de la viñeta. Son los mismos en todos los idiomas del capítulo y tras cualquier recomposición.</td></tr>
+    <tr><td>Contorno</td><td>Un marco cortado por una línea inclinada conserva el polígono de la celda: su contenido se recorta a él, y un punto solo cae en el marco si está dentro.</td></tr>
+    <tr><td>En el VDT</td><td><code>page.comic.frames</code>: registros <code>VDTFrame</code>, cada uno con <code>panel</code>, el índice de la viñeta que contiene, y un <code>configPath</code> vacío, porque el marco sale del Markdown y no de la configuración.</td></tr>
+  </tbody>
+</table>
+
+### Viñetas de texto
+
+Una viñeta con la marca `text` lleva Markdown en lugar de un guion de rotulación, y su cuerpo se vierte en el marco de la viñeta igual que una ranura se vierte en un marco de una página compuesta:
+
+```md
+:::page{split="30 / *"}
+::panel{text box=recuadro}
+La tormenta duraba ya tres días cuando se apagó el farol del farero.
+
+Maya subió sola los **ciento doce** escalones.
+::panel{art=lh-stairs}
+maya: ¿Abuelo?
+:::
+```
+
+El cuerpo se compone con el estilo de texto del libro, dentro del borde de la viñeta y del margen de la rotulación (`comics.lettering.inset`), desde arriba del marco (`valign=middle` o `valign=bottom` lo bajan). Es texto de verdad: párrafos, títulos, listas, énfasis, enlaces y etiquetas, que el lector puede seleccionar y buscar, que un lector de pantalla lee y al que apunta el mapa de origen. El cuerpo llega hasta la siguiente línea `::panel`, así que no puede contener bloques `:::`; esas líneas se omiten. El texto se pinta encima del fondo y la imagen de la viñeta y debajo de la rotulación de la página. Un PDF etiquetado y el EPUB adaptable lo leen después de las viñetas de la página.
+
+El texto que no cabe en su marco se recorta en el borde del marco y se avisa con `comicPanelFrame` (motivo `textOverflow`). Ni una tira ni una doble página reciben texto en sus marcos, y tampoco, por ahora, un documento compuesto en vertical o de derecha a izquierda: allí el texto de la viñeta se compone en el flujo después del cómic, y `comicPanelFrame` lo indica.
+
+### Estilos de caja
+
+`box=<id>` viste una viñeta con un estilo de recuadro de `calloutStyles`, los estilos con los que las páginas compuestas dibujan sus marcos: la viñeta toma el fondo del estilo, el color y el grosor de su borde y su radio de esquina, y los `border` y `bg` propios de la viñeta siguen mandando. En una viñeta de texto la caja se dibuja alrededor del texto, como la caja de un marco, con el relleno del estilo, y la viñeta no dibuja ni borde ni fondo propios. Una caja en una celda inclinada se corta siguiendo la inclinación. Un `box` que no nombra ningún estilo de recuadro deja la viñeta con su estilo de viñeta y se avisa con `comicPanelFrame` (motivo `unknownBox`).
+
+### Los marcos en el mapa de origen y en el Sandbox
+
+`sourceAt`, `elementsForSource` y `findElement` ([Páginas compuestas › Mapa de origen](/es/docs/composed-pages#mapa-de-origen)) responden también por los cómics: el glifo de un bocadillo, el bocadillo (nivel `box`), la imagen de una viñeta (`resource`), su marco (`frame`) y el cómic (`template`), con los identificadores de arriba. Las palabras de una viñeta de texto responden como el resto del texto, y después su línea, su párrafo y su caja, el marco y el cómic. En el Sandbox las palabras de una viñeta de texto toman el cursor y la selección como el resto del texto, un clic en una viñeta de texto fuera de sus palabras lleva el cursor a su texto, y un doble clic en uno de sus párrafos lo edita sobre la página. Las líneas del reparto, las viñetas y los bocadillos se editan como antes.
+
 ## Editar cómics en el Sandbox
 
 En el canvas, en las páginas HTML y en el modo de selección del Folio, una página de cómic se puede editar con el puntero, y cada cambio se escribe de vuelta en el Markdown del capítulo (la [guía del Sandbox](/es/docs/sandbox-books-saving#editar-cómics) da los detalles):
@@ -519,6 +569,7 @@ Cada aviso nombra la línea o el atributo al que se refiere, y el panel de revis
     <tr><td>Punto de personaje fuera de la zona segura<br /><code>comicAnchorOutsideSafeArea</code></td><td>Un ancla de una imagen queda fuera de su zona segura, así que un recorte puede dejar fuera al personaje y el rabillo apuntaría entonces fuera de la viñeta.</td><td>Agranda la zona segura para que incluya la boca, o mueve el ancla. No hay nada que corregir si el personaje debe quedar a veces fuera de la viñeta.</td></tr>
     <tr><td>El globo no cabe<br /><code>comicBalloonOverflow</code></td><td>Después de todos los recursos, un bocadillo sigue tapando una cara, otro bocadillo, una zona libre o una boca, su rabillo atraviesa otro bocadillo, o se sale de su viñeta (un cruce pedido con <code>break</code> o con un <code>at=</code> que lo fija no cuenta). El aviso nombra la viñeta y lo que queda tapado. Mientras se arrastra un bocadillo en el Sandbox, la cara o la zona libre que taparía, o el borde que cruzaría, se ve antes de soltarlo.</td><td>Acorta la línea o pártela en dos, da más sitio a la viñeta, fija el bocadillo con <code>at=</code> o deja que cruce el borde con <code>break</code>. El texto nunca se reduce.</td></tr>
     <tr><td>Personaje sin punto<br /><code>comicUnknownSpeaker</code></td><td>Una clave de personaje que ninguna imagen de la página marca con un ancla y que ninguna entrada del reparto nombra, casi siempre una clave mal escrita. Sus rabillos apuntan fuera de la viñeta. Solo se avisa en las páginas cuyas imágenes marcan anclas; es solo informativo.</td><td>Corrige la clave, marca el personaje en la imagen o añade una entrada a <code>comics.cast</code> para un personaje que nunca se ve.</td></tr>
+    <tr><td>El marco de la viñeta no se aplica<br /><code>comicPanelFrame</code></td><td><code>reason</code> dice cuál: <code>unknownBox</code>, un <code>box</code> no nombra ningún estilo de recuadro (la viñeta conserva su estilo de viñeta); <code>textOverflow</code>, el texto de una viñeta de texto es más alto que su marco (lo que sobra se recorta, y el aviso da el exceso en mm); <code>strip</code>, <code>spread</code> o <code>flow</code>, una viñeta de texto en una tira, en una doble página o en un documento vertical o de derecha a izquierda, donde los marcos no reciben texto (el texto se compone en el flujo después del cómic).</td><td>Corrige el nombre o añade el estilo de recuadro; acorta el texto o da a la viñeta una celda mayor; en los demás casos pasa la viñeta de texto a una página de cómic sencilla, o rotula sus palabras como cartela.</td></tr>
   </tbody>
 </table>
 
@@ -540,6 +591,7 @@ El cómic compuesto está en el VDT: `page.comic` (`VDTComicPage`) guarda el mar
 - **Las tiras cómicas** no pueden ocupar menos columnas que las de la página (`columns=2` en una página de tres) y solo se leen en el nivel superior de un capítulo (no dentro de un recuadro, una tabla o una nota al pie). Una cita en el pie de una tira se imprime tal como está escrita.
 - **Dobles páginas.** Una viñeta redondeada cortada en el lomo pierde todas sus esquinas redondeadas. Un cómic de derecha a izquierda en un libro encuadernado por la izquierda sigue abriéndose en la página izquierda, así que su primera viñeta cae en la segunda página de la doble página.
 - **Las imágenes que rompen la viñeta** toman el recorte de la imagen de la viñeta, así que el recorte transparente debe tener el mismo tamaño que esa imagen.
+- **Viñetas de texto**: solo se componen en páginas de cómic sencillas de documentos horizontales de izquierda a derecha. Sus líneas no siguen un borde inclinado (se recortan contra él), el texto nunca se reduce para caber, y un PDF etiquetado lo lee después de las viñetas de la página y no dentro del `Div` del cómic.
 - **Salidas.** El texto alternativo de reserva de una viñeta sin `alt` ni `altText` es «Panel N», en inglés. La navegación por regiones describe las viñetas inclinadas por sus cajas envolventes. Kindle Panel View copia el cómic de una página una vez por viñeta, lo que agranda el archivo, y no se ha comprobado en Kindle Previewer.
 
 ## Referencias

@@ -154,6 +154,9 @@ maya{whisper}: 爷爷？
     <tr><td><code>mirror</code>、<code>mirror=false</code></td><td>左右翻转这一格的画面，或者在页面翻转画面时保持原画（见<a href="#阅读方向">阅读方向</a>）。</td></tr>
     <tr><td><code>alt="…"</code></td><td>分格的替代文字，用于带标签的PDF、HTML和EPUB。未设置时用资源的<code>altText</code>。</td></tr>
     <tr><td><code>id=…</code></td><td>分格的id，HTML和EPUB输出用它作锚点。</td></tr>
+    <tr><td><code>text</code></td><td>该格的正文是排进该格框中的 Markdown，而不是嵌字脚本（见<a href="#文字格">文字格</a>）。</td></tr>
+    <tr><td><code>box=&lt;id&gt;</code></td><td>用一个框样式装饰该格（见<a href="#框样式">框样式</a>）。</td></tr>
+    <tr><td><code>valign=middle</code>、<code>valign=bottom</code></td><td>文字格的文字在框中的位置。不设时在顶部。</td></tr>
   </tbody>
 </table>
 
@@ -482,6 +485,53 @@ tomas: and there's a storm on the way.
 
 漫画条的题注与图的题注一样，随文字一起绘制。在带标签的PDF中，它是漫画条的`Div`中的`Caption`，在各分格之后读出（题注排在漫画条上方时，在分格之前读出）。在HTML、固定版式EPUB和流式EPUB中，漫画条和题注是同一个`<figure>`，题注是其中的`<figcaption>`；在竖排或从右到左的页面上，漫画条的画面叠在纸页上，HTML把题注单独留在文字中。
 
+## 漫画页与模板页
+
+漫画页是一种[模板页](/zh/docs/composed-pages)，它的模板由分割写出：`split` 的值是一种简写，用来生成页面的框。分割中的每个格子在去掉其分格的 `pad` 之后就是一个框，每个 `inset` 分格也是一个框，位于它所叠放的框之上一层。框中放着分格的画面、边框和底色；嵌字仍按上文所述逐格安放。只有画面和脚本的漫画页，排出的结果与以前完全相同。
+
+<table>
+  <thead>
+    <tr>
+      <th>分割生成的内容</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>框</td><td>每个格子一个，按阅读顺序排列；叠放分格的框排在它所叠放的框之后。</td></tr>
+    <tr><td>名称</td><td>分格的 <code>id</code>，没有时按分格顺序为 <code>p1</code>、<code>p2</code>……</td></tr>
+    <tr><td>标识</td><td>漫画为 <code>cm&lt;n&gt;</code>，<code>n</code> 是其围栏在本章中的序号（漫画页与条漫合并计数，从 0 开始）；框为 <code>cm&lt;n&gt;:&lt;名称&gt;</code>；对话框为 <code>cm&lt;n&gt;:&lt;名称&gt;:b&lt;k&gt;</code>，<code>k</code> 是它在该格脚本中的行号。在本章的各个语言版本中、在任何重新排版之后都保持不变。</td></tr>
+    <tr><td>轮廓</td><td>被斜线切开的框保留格子的多边形：内容按它裁切，点只有落在多边形内才算命中该框。</td></tr>
+    <tr><td>在 VDT 中</td><td><code>page.comic.frames</code>：<code>VDTFrame</code> 记录，各带 <code>panel</code>（所含分格的索引）和空的 <code>configPath</code>，因为这些框来自 Markdown，而不是配置。</td></tr>
+  </tbody>
+</table>
+
+### 文字格
+
+带 `text` 标记的分格接收 Markdown 而不是嵌字脚本，其正文像槽位内容注入模板页的框一样注入该格的框：
+
+```md
+:::page{split="30 / *"}
+::panel{text box=recuadro}
+暴风雨已经持续了三天，守塔人的灯熄灭了。
+
+玛雅独自爬上了**一百一十二**级台阶。
+::panel{art=lh-stairs}
+maya: 爷爷？
+:::
+```
+
+正文用全书的正文样式排版，位于分格边框和嵌字内边距（`comics.lettering.inset`）之内，从框的顶部开始（`valign=middle` 或 `valign=bottom` 让它下移）。它是真正的文字：段落、标题、列表、强调、链接和标签，读者可以选中和搜索，读屏软件会朗读，来源映射也能指回原文。正文一直延续到下一个 `::panel` 行，因此不能包含 `:::` 块，这样的行会被略去。文字画在分格的底色和画面之上、页面嵌字之下。带标签的 PDF 和流式 EPUB 在页面各分格之后读出它。
+
+放不进框的文字在框的边缘被裁去，并报告为 `comicPanelFrame`（原因 `textOverflow`）。条漫和跨页的框不接收文字，竖排或从右到左排版的文档目前也不接收：这些情况下分格的文字排在漫画之后的正文流中，并由 `comicPanelFrame` 提示。
+
+### 框样式
+
+`box=<id>` 用 `calloutStyles` 中的一个框样式装饰分格，也就是模板页绘制框所用的样式：分格采用该样式的底色、边框颜色和粗细以及圆角半径，分格自己的 `border` 和 `bg` 仍然优先。在文字格上，这个框像模板页的框一样围绕文字绘制，带有该样式的内边距，分格自身不再画边框和底色。斜切格子中的框沿斜线裁切。`box` 指向不存在的框样式时，分格保留原有的分格样式，并报告为 `comicPanelFrame`（原因 `unknownBox`）。
+
+### 来源映射与 Sandbox 中的框
+
+`sourceAt`、`elementsForSource` 和 `findElement`（[模板页 › 来源映射](/zh/docs/composed-pages#来源映射)）也能回答漫画的元素：对话框中的字形、对话框（层级 `box`）、分格的画面（`resource`）、它的框（`frame`）和漫画本身（`template`），使用上面的标识。文字格中的文字与其他文字一样回答，随后是其行、段落和框盒、框以及漫画。在 Sandbox 中，文字格的文字像其他文字一样接受光标和选区；在文字格内文字以外的地方单击，光标会移到它的文字处；双击其中一段可在页面上直接编辑。分割线、分格和对话框的编辑方式不变。
+
 ## 在沙盒中编辑漫画
 
 在Canvas、HTML页面和Folio的**选择文本**模式中，可以用指针编辑漫画页，每次编辑都会写回章的Markdown（详见[沙盒指南](/zh/docs/sandbox-books-saving#编辑漫画)）：
@@ -519,6 +569,7 @@ tomas: and there's a storm on the way.
     <tr><td>说话点在安全区外<br /><code>comicAnchorOutsideSafeArea</code></td><td>画面的锚点在安全区以外，裁切可能把说话人切掉，这时尾巴会指向格外。</td><td>扩大安全区，把嘴包进去，或者移动锚点。如果说话人本来就会不时出现在分格之外，则不必修改。</td></tr>
     <tr><td>对白框放不下<br /><code>comicBalloonOverflow</code></td><td>用尽所有退路之后，对白框仍然盖住脸、另一个对白框、避让区或嘴，尾巴穿过另一个对白框，或者伸出了分格（用<code>break</code>或<code>at=</code>固定所要求的越界不算）。警告指明是哪一格、盖住了什么。在沙盒中拖动对白框时，它会盖住的脸或避让区、会越过的边框，在松开之前就会显示出来。</td><td>缩短台词或拆成两行，给分格更多空间，用<code>at=</code>固定对白框，或者用<code>break</code>让它越过边框。文字从不缩小。</td></tr>
     <tr><td>没有说话点的角色<br /><code>comicUnknownSpeaker</code></td><td>一个说话人键，本页没有画面用锚点标出它，角色表中也没有它，多半是拼错的键。它的尾巴指向格外。只在画面标了锚点的页面上报告；仅作提示。</td><td>改正键，在画面上标出这个说话人，或者为从不露面的说话人加一个<code>comics.cast</code>条目。</td></tr>
+    <tr><td>分格框未能按要求生效<br /><code>comicPanelFrame</code></td><td><code>reason</code> 说明是哪种情况：<code>unknownBox</code>，<code>box</code> 指向的框样式不存在（分格保留原有分格样式）；<code>textOverflow</code>，文字格的文字比框高（多出的部分被裁去，警告给出超出的毫米数）；<code>strip</code>、<code>spread</code> 或 <code>flow</code>，文字格位于条漫、跨页或竖排、从右到左的文档中，那里的框不接收文字（文字排在漫画之后的正文流中）。</td><td>改正名称或添加该框样式；缩短文字，或给这一格更大的格子；其他情况下把文字格移到单页漫画中，或把文字写成旁白框。</td></tr>
   </tbody>
 </table>
 
@@ -540,6 +591,7 @@ tomas: and there's a storm on the way.
 - **漫画条**不能跨越少于整页的若干栏（在三栏页面上写`columns=2`），并且只在章的顶层读取（标注框、表格或脚注内不读取）。漫画条题注中的引文按原样印出。
 - **跨页。** 在书脊处被切开的圆角分格会失去所有圆角。左侧装订的书中，从右到左的漫画仍然从左页开始，所以它的第一格落在跨页的第二页上。
 - **出格画面**使用分格画面的裁切，所以抠图必须与画面图片尺寸相同。
+- **文字格**只在横排、从左到右文档的单页漫画上排版。它的行不会沿斜边排列（而是按斜边裁切），文字从不为放下而缩小；带标签的 PDF 在页面各分格之后读出它，而不是在漫画的 `Div` 内。
 - **输出。** 既没有`alt`也没有`altText`的分格，后备替代文字是英文的“Panel N”。基于区域的导航用外接矩形描述斜切的分格。Kindle Panel View为每个分格复制一次该页的漫画，文件因此变大，而且尚未在Kindle Previewer中检查过。
 
 ## 参考资料

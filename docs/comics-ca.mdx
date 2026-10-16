@@ -154,6 +154,9 @@ Una línia `::panel{…}` comença una vinyeta; el seu guió arriba fins a la l�
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Gira el dibuix d'aquesta vinyeta en mirall, o el manté tal com està dibuixat quan la pàgina reflecteix els seus dibuixos (vegeu <a href="#sentit-de-lectura">Sentit de lectura</a>).</td></tr>
     <tr><td><code>alt="…"</code></td><td>L'alternativa textual de la vinyeta, per al PDF etiquetat, l'HTML i l'EPUB. Per defecte: l'<code>altText</code> del recurs.</td></tr>
     <tr><td><code>id=…</code></td><td>Un id per a la vinyeta, que les sortides HTML i EPUB fan servir com a àncora.</td></tr>
+    <tr><td><code>text</code></td><td>El cos de la vinyeta és Markdown compost al marc de la vinyeta en lloc d'un guió de retolació (vegeu <a href="#vinyetes-de-text">Vinyetes de text</a>).</td></tr>
+    <tr><td><code>box=&lt;id&gt;</code></td><td>Vesteix la vinyeta amb un estil de requadre (vegeu <a href="#estils-de-caixa">Estils de caixa</a>).</td></tr>
+    <tr><td><code>valign=middle</code>, <code>valign=bottom</code></td><td>On se situa el text d'una vinyeta de text dins el seu marc. Sense: a dalt.</td></tr>
   </tbody>
 </table>
 
@@ -482,6 +485,53 @@ Totes les sortides pinten el mateix còmic: els fons de les vinyetes, els dibuix
 
 El peu d'una tira es pinta amb el text, com el d'una figura. En un PDF etiquetat és el `Caption` del `Div` de la tira, llegit després de les seves vinyetes (abans, quan es compon a sobre de la tira). A l'HTML, a l'EPUB de maquetació fixa i a l'EPUB adaptable, la tira i el seu peu són un sol `<figure>`, i el peu n'és el `<figcaption>`; en una pàgina vertical o de dreta a esquerra, on el dibuix de la tira queda damunt del full, l'HTML manté el peu al text, a part.
 
+## Pàgines de còmic i pàgines compostes
+
+Una pàgina de còmic és una [pàgina composta](/ca/docs/composed-pages) la plantilla de la qual escriu el seu repartiment: el valor de `split` és una forma abreujada que genera els marcs de la pàgina. Cada cel·la del repartiment, un cop tret el `pad` de la seva vinyeta, és un marc, i també ho és cada vinyeta `inset`, una capa per sobre del marc on s'assenta. Un marc conté la imatge, la vora i el fons de la seva vinyeta; la retolació es continua col·locant vinyeta a vinyeta, com s'explica més amunt. Una pàgina d'imatges i guió es compon exactament igual que abans.
+
+<table>
+  <thead>
+    <tr>
+      <th>El que genera el repartiment</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Marcs</td><td>Un per cel·la, en ordre de lectura; el marc d'una vinyeta superposada va després del marc on s'assenta.</td></tr>
+    <tr><td>Noms</td><td>L'<code>id</code> de la vinyeta, i si no <code>p1</code>, <code>p2</code>… en l'ordre de les vinyetes.</td></tr>
+    <tr><td>Identificadors</td><td>El còmic és <code>cm&lt;n&gt;</code>, on <code>n</code> és l'ordinal de la seva tanca al capítol (pàgines i tires es compten juntes, des de 0); un marc és <code>cm&lt;n&gt;:&lt;nom&gt;</code>; un globus és <code>cm&lt;n&gt;:&lt;nom&gt;:b&lt;k&gt;</code>, on <code>k</code> és la seva línia al guió de la vinyeta. Són els mateixos en totes les llengües del capítol i després de qualsevol recomposició.</td></tr>
+    <tr><td>Contorn</td><td>Un marc tallat per una línia inclinada conserva el polígon de la cel·la: el seu contingut s'hi retalla, i un punt només cau al marc si hi és a dins.</td></tr>
+    <tr><td>Al VDT</td><td><code>page.comic.frames</code>: registres <code>VDTFrame</code>, cadascun amb <code>panel</code>, l'índex de la vinyeta que conté, i un <code>configPath</code> buit, perquè el marc surt del Markdown i no de la configuració.</td></tr>
+  </tbody>
+</table>
+
+### Vinyetes de text
+
+Una vinyeta amb la marca `text` porta Markdown en lloc d'un guió de retolació, i el seu cos s'aboca al marc de la vinyeta tal com una ranura s'aboca a un marc d'una pàgina composta:
+
+```md
+:::page{split="30 / *"}
+::panel{text box=recuadro}
+La tempesta ja durava tres dies quan es va apagar el fanal del faroner.
+
+La Maya va pujar sola els **cent dotze** graons.
+::panel{art=lh-stairs}
+maya: Avi?
+:::
+```
+
+El cos es compon amb l'estil de text del llibre, dins la vora de la vinyeta i el marge de la retolació (`comics.lettering.inset`), des de dalt del marc (`valign=middle` o `valign=bottom` el fan baixar). És text de debò: paràgrafs, títols, llistes, èmfasi, enllaços i etiquetes, que el lector pot seleccionar i cercar, que un lector de pantalla llegeix i al qual apunta el mapa de procedència. El cos arriba fins a la línia `::panel` següent, de manera que no pot contenir blocs `:::`; aquestes línies s'ometen. El text es pinta per sobre del fons i la imatge de la vinyeta i per sota de la retolació de la pàgina. Un PDF etiquetat i l'EPUB adaptable el llegeixen després de les vinyetes de la pàgina.
+
+El text que no cap al seu marc es retalla a la vora del marc i s'avisa amb `comicPanelFrame` (motiu `textOverflow`). Ni una tira ni una doble pàgina reben text als seus marcs, i tampoc, de moment, un document compost en vertical o de dreta a esquerra: allà el text de la vinyeta es compon al flux després del còmic, i `comicPanelFrame` ho indica.
+
+### Estils de caixa
+
+`box=<id>` vesteix una vinyeta amb un estil de requadre de `calloutStyles`, els estils amb què les pàgines compostes dibuixen els seus marcs: la vinyeta pren el fons de l'estil, el color i el gruix de la vora i el radi de les cantonades, i els `border` i `bg` propis de la vinyeta continuen manant. En una vinyeta de text la caixa es dibuixa al voltant del text, com la caixa d'un marc, amb el farciment de l'estil, i la vinyeta no dibuixa ni vora ni fons propis. Una caixa en una cel·la inclinada es talla seguint la inclinació. Un `box` que no anomena cap estil de requadre deixa la vinyeta amb el seu estil de vinyeta i s'avisa amb `comicPanelFrame` (motiu `unknownBox`).
+
+### Els marcs al mapa de procedència i al Sandbox
+
+`sourceAt`, `elementsForSource` i `findElement` ([Pàgines compostes › Mapa de procedència](/ca/docs/composed-pages#mapa-de-procedència)) responen també pels còmics: el glif d'un globus, el globus (nivell `box`), la imatge d'una vinyeta (`resource`), el seu marc (`frame`) i el còmic (`template`), amb els identificadors d'abans. Les paraules d'una vinyeta de text responen com la resta del text, i després la seva línia, el paràgraf i la caixa, el marc i el còmic. Al Sandbox les paraules d'una vinyeta de text prenen el cursor i la selecció com la resta del text, un clic en una vinyeta de text fora de les paraules porta el cursor al seu text, i un doble clic en un dels seus paràgrafs l'edita sobre la pàgina. Les línies del repartiment, les vinyetes i els globus s'editen com abans.
+
 ## Editar còmics al Sandbox
 
 Al canvas, a les pàgines HTML i al mode *Seleccionar text* de Folio, una pàgina de còmic es pot editar amb el punter, i cada canvi s'escriu al Markdown del capítol (la [guia del Sandbox](/ca/docs/sandbox-books-saving#editar-còmics) en dona els detalls):
@@ -519,6 +569,7 @@ Cada avís indica la línia o l'atribut a què es refereix, i el tauler Revisió
     <tr><td>Punt de personatge fora de la zona segura<br /><code>comicAnchorOutsideSafeArea</code></td><td>Una àncora d'un dibuix és fora de la seva zona segura, així que un retall pot deixar fora el personatge, i aleshores la cua apuntaria fora de la vinyeta.</td><td>Amplia la zona segura perquè hi entri la boca, o mou l'àncora. No cal arreglar res si el personatge ha de quedar de vegades fora de la vinyeta.</td></tr>
     <tr><td>La bafarada no hi cap<br /><code>comicBalloonOverflow</code></td><td>Després de tots els recursos alternatius, una bafarada encara tapa una cara, una altra bafarada, una zona lliure o una boca, la seva cua travessa una altra bafarada, o surt de la seva vinyeta (un encreuament demanat amb <code>break</code> o amb un punt fixat amb <code>at=</code> no hi compta). L'avís indica la vinyeta i el que queda tapat. Mentre s'arrossega una bafarada al Sandbox, la cara o la zona lliure que taparia, o la vora que travessaria, es veu abans de deixar-la anar.</td><td>Escurça la línia o parteix-la en dues, dona més espai a la vinyeta, fixa la bafarada amb <code>at=</code> o deixa que travessi la vora amb <code>break</code>. El text no es fa mai més petit.</td></tr>
     <tr><td>Personatge sense punt<br /><code>comicUnknownSpeaker</code></td><td>Una clau de personatge que cap dibuix de la pàgina no marca amb una àncora i que cap entrada del repartiment no anomena, molt sovint una clau mal escrita. Les seves cues apunten fora de la vinyeta. Només es genera en pàgines amb dibuixos que marquen àncores; és només informatiu.</td><td>Corregeix la clau, marca el personatge al dibuix, o afegeix una entrada a <code>comics.cast</code> per a un personatge que no surt mai.</td></tr>
+    <tr><td>El marc de la vinyeta no s'aplica<br /><code>comicPanelFrame</code></td><td><code>reason</code> diu quin: <code>unknownBox</code>, un <code>box</code> no anomena cap estil de requadre (la vinyeta manté el seu estil de vinyeta); <code>textOverflow</code>, el text d'una vinyeta de text és més alt que el seu marc (el que sobra es retalla, i l'avís dona l'excés en mm); <code>strip</code>, <code>spread</code> o <code>flow</code>, una vinyeta de text en una tira, en una doble pàgina o en un document vertical o de dreta a esquerra, on els marcs no reben text (el text es compon al flux després del còmic).</td><td>Corregeix el nom o afegeix l'estil de requadre; escurça el text o dona a la vinyeta una cel·la més gran; en els altres casos passa la vinyeta de text a una pàgina de còmic senzilla, o retola les seves paraules com a cartutx.</td></tr>
   </tbody>
 </table>
 
@@ -540,6 +591,7 @@ El còmic compost és al VDT: `page.comic` (`VDTComicPage`) conté el marc, el s
 - Les **tires** no poden abastar un nombre de columnes inferior al de la pàgina (`columns=2` en una pàgina de tres), i només es llegeixen al nivell superior d'un capítol (no dins d'un requadre, una taula o una nota a peu de pàgina). Una citació al peu d'una tira s'imprimeix tal com està escrita.
 - **Dobles pàgines.** Una vinyeta arrodonida tallada al llom perd totes les cantonades arrodonides. Un còmic de dreta a esquerra en un llibre enquadernat per l'esquerra continua obrint-se a la pàgina esquerra, de manera que la seva primera vinyeta cau a la segona pàgina de la doble pàgina.
 - Els **dibuixos que trenquen la vora** prenen el retall del dibuix de la vinyeta, així que el retall transparent ha de tenir la mateixa mida que el dibuix.
+- **Vinyetes de text**: només es componen en pàgines de còmic senzilles de documents horitzontals d'esquerra a dreta. Les seves línies no segueixen una vora inclinada (s'hi retallen), el text no es redueix mai per cabre-hi, i un PDF etiquetat el llegeix després de les vinyetes de la pàgina i no dins el `Div` del còmic.
 - **Sortides.** L'alternativa textual de reserva d'una vinyeta sense `alt` ni `altText` és «Panel N», en anglès. La navegació per regions descriu les vinyetes inclinades amb les seves caixes contenidores. Kindle Panel View copia el còmic d'una pàgina una vegada per vinyeta, cosa que fa el fitxer més gran, i no s'ha comprovat a Kindle Previewer.
 
 ## Referències
