@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'Was ein KI-Agent im Browser mit den 36 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
   lang: 'de',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '12 min',
   order: 43,
   plainSummary: "Diese Seite ist für alle, die einen KI-Helfer für sich an einem Buch in der Sandbox arbeiten lassen möchten. Solange die Sandbox geöffnet ist, gibt sie dem Helfer eine Reihe von Werkzeugen: um jede Seite anzusehen, die Gestaltung zu ändern, den Text zu bearbeiten, Bilder und Tabellen hinzuzufügen, Probleme zu finden und Dateien zu speichern. Sie bitten mit Ihren eigenen Worten, zum Beispiel „mach die Schrift etwas größer und prüf, ob das Buch noch auf 40 Seiten passt“, und der Helfer setzt die Werkzeuge ein und zeigt Ihnen die Seiten. Alles bleibt in Ihrem Browser. Die Seite erklärt, wie Sie einen Helfer verbinden, was er tun kann und wie jedes Werkzeug aufgerufen wird.",
@@ -223,6 +223,8 @@ Tabellenzelle oder Legende einer Ressource. Mit `select: true` tut sie
 außerdem, was ein Klick tut: Das Bedienfeld Text öffnet sich mit der
 Einfügemarke an dieser Stelle (`word: true` wählt das Wort aus, `to` wählt bis
 zu einem zweiten Punkt aus).
+
+Die Antwort enthält außerdem `elements`: was an dem Punkt liegt, von innen nach außen, in der Reihenfolge, in der ein Klick auf der Seite es wählt und jeder weitere Klick oder Esc aufsteigt (ein Zeichen, sein Absatz, der Kasten darum, der Rahmen einer zusammengesetzten Seite, seine Gruppe, die Seite und ihre Vorlage; oder ein Gestaltungselement und sein Slot). Jedes Element bringt seine stabile Id mit, seine Quelle (ein Bereich des Markdowns, ein Konfigurationspfad, ein Attribut, eine Ressource) und seinen Namen im Pfad, den die Sandbox zeigt (`path`). Mit `select: true` wählt `level` (`block`, `frame`, `template`, `design` …) eines davon so aus, wie es ein Mensch täte: Im Modus Inhalt wird sein Markdown ausgewählt, im Modus Gestaltung öffnen sich sein Rahmen, sein Stil oder seine Vorlage. `sandbox_get_state` meldet das ausgewählte Element als `pageSelection`.
 
 ### Die Gestaltung ändern
 

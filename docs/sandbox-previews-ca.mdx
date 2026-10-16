@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Previsualitzacions',
   description: 'Les pestanyes Canvas, PDF, Folio, HTML i EPUB 3 del viewport principal: què mostra cadascuna i què permet fer',
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '16 min',
   order: 38,
   parent: 'sandbox',
@@ -45,6 +45,20 @@ En una pàgina composta (`::::page{template="…"}`) el llenç uneix cada marc a
 - Un marc buit mostra un contorn discontinu, el nom i **Escriu aquí**; un marc que només en continua un altre diu quin. Aquestes marques es dibuixen només damunt del llenç: el PDF, la impressió i qualsevol exportació les deixen fora.
 - Un doble clic a la pestanya d'etiqueta d'una caixa obre al damunt un camp que edita el `label="…"` de la tanca; en un paràgraf, un títol o un element de llista, un camp amb el seu Markdown. **Retorn** desa el canvi, **Maj+Retorn** comença una altra línia i **Esc** deixa el text com era. El canvi s'escriu al capítol i es desfà amb Cmd/Ctrl+Z com qualsevol edició feta a les vistes. Per corregir un peu n'hi ha prou amb un doble clic i les paraules noves, sense obrir cap estil. Un marc girat s'edita al tauler Text.
 - En mode Disseny tots els marcs mostren el contorn i el nom, i un clic en selecciona un per a l'editor de plantilles.
+
+### Seleccionar a la pàgina
+
+Les pàgines i els editors són dues cares del mateix llibre: el que se selecciona en una pàgina queda seleccionat al Markdown o als ajustos, i a l'inrevés. Funciona igual al llenç, al Folio amb el mode **Seleccionar text** i a les pàgines HTML, i una selecció feta en una pestanya hi continua en obrir-ne una altra.
+
+- **Un clic tria l'element més interior.** Un clic en una paraula porta el cursor a aquell caràcter del Markdown, sigui on sigui: un títol, un paràgraf, un element de llista, un xip, la pestanya d'un requadre (el seu `label="…"` a la tanca), un peu de figura, el rètol d'un mapa (`::label`) o un text que mostra un atribut de la tanca de la pàgina (`{attr.tema}`). Un clic en una línia de l'índex passa a la seva pàgina i selecciona, al seu capítol, el títol que recull.
+- **Un altre clic al mateix lloc, o Esc, puja un nivell**: dels caràcters al seu paràgraf, al requadre que l'envolta, al marc, al grup de marcs i a la pàgina composta amb la seva plantilla. Cada nivell selecciona el que té escrit: el Markdown del paràgraf, el contingut del marc, la tanca `::::page` sencera. Esc a l'últim nivell deixa anar la selecció. Un triple clic va directe al paràgraf.
+- **La ruta.** Mentre hi ha alguna cosa triada, una barra al peu de la previsualització diu on és, de la pàgina cap a dins: «Pàgina 8 › cajas › dinero › paràgraf 2». Cada element de la ruta tria el seu nivell. Els nivells per on ha passat un clic en pujar queden darrere del triat, més tènues, per tornar a baixar. El botó ↖ puja un nivell i × deixa anar la selecció.
+- **El que no és contingut porta a la seva forma**, en qualsevol dels dos modes: un clic a la decoració obre la seva plantilla a **Disseny › Pàgina i columnes › Plantilles de pàgina**, una capçalera o un foli obre **Disseny › Capçaleres i peus**, una imatge obre el seu recurs al panell Recursos.
+- **Modes Contingut i Disseny.** En mode Contingut cada nivell obre el Markdown. En mode Disseny un clic tria el marc i l'obre a l'editor de plantilles, en pujar s'arriba al seu grup i després a la seva plantilla, i un requadre, un paràgraf o un títol triats a la ruta obren el seu estil (estils de requadre, text principal, estils de paràgraf, títols).
+- **De l'editor a la pàgina.** En moure el cursor al panell Text, la selecció de la pàgina passa al paràgraf on és, i la ruta el segueix.
+- **Mentre s'edita.** Un ajust canviat o una paraula escrita redibuixen la pàgina de seguida, ja recompaginada, i la selecció es queda al seu element encara que s'hagi mogut o hagi passat a una altra pàgina. En arrossegar un marc en mode Disseny la marca va amb ell, i les propietats del marc mostren la seva caixa en mil·límetres fins que es deixa anar. Canviar l'idioma del llibre deixa la selecció al mateix slot, perquè els elements d'una pàgina composta conserven el nom en tots els idiomes. Els canvis fets a la pàgina es desfan amb Cmd/Ctrl+Z, igual que els escrits a l'editor.
+
+La marca al voltant de l'element triat es dibuixa només damunt de les pàgines: el PDF, la impressió i qualsevol exportació la deixen fora.
 
 ### Pestanya PDF
 

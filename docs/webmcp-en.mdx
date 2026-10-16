@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'What an AI agent in the browser can do with the Sandbox through its 36 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
   lang: 'en',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '12 min',
   order: 43,
   plainSummary: "This page is for people who want an AI helper to work on a book in the Sandbox for them. While the Sandbox is open, it gives the helper a set of tools: to look at any page, change the design, edit the text, add pictures and tables, find problems and save files. You ask in your own words, for example \"make the text a little larger and check the book still fits in 40 pages\", and the helper uses the tools and shows you the pages. Everything stays in your browser. The page explains how to connect a helper, what it can do and how each tool is called.",
@@ -213,6 +213,8 @@ The answer gives the block, the line and column of the Markdown source there
 a resource. With `select: true` it also does what a click does: the
 Manuscript panel opens with the caret at that place (`word: true` selects the
 word, `to` selects up to a second point).
+
+The answer also lists `elements`: what lies at the point, innermost first, in the order a click on the page picks them and each further click or Esc climbs (a glyph, its paragraph, the box round it, the frame of a composed page, its group, the page and its template; or a design element and its slot). Each comes with its stable id, its source (a Markdown range, a config path, an attribute, a resource) and its name in the path the Sandbox shows (`path`). With `select: true`, `level` (`block`, `frame`, `template`, `design`…) picks one of them as a person would: Content mode selects its Markdown, Design mode opens its frame, style or template. `sandbox_get_state` reports the element picked as `pageSelection`.
 
 ### Change the design
 

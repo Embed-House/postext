@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Previews',
   description: 'The Canvas, PDF, Folio, HTML and EPUB 3 tabs of the main viewport: what each shows and what it can do',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '14 min',
   order: 38,
   parent: 'sandbox',
@@ -45,6 +45,20 @@ On a composed page (`::::page{template="…"}`) the canvas links each frame to t
 - An empty frame shows a dashed outline, its name and **Write here**; a frame that only continues another says which. These marks are drawn over the canvas only: the PDF, the print and every export leave them out.
 - A double click on a box's label tab opens a field over it that edits the fence's `label="…"`; on a paragraph, a heading or a list item, a field with its Markdown. **Enter** keeps the change, **Shift+Enter** starts a new line, **Esc** leaves the text as it was. The change is written to the chapter and undone with Cmd/Ctrl+Z like any edit made on the previews. Correcting a caption takes a double click and the new words, and no style is opened. A turned frame is edited in the Text panel.
 - In Design mode every frame shows its outline and its name, and a click picks one for the template editor.
+
+### Selecting on the page
+
+The pages and the editors are two faces of one book: what you select on a page is selected in the Markdown or in the settings, and the other way round. It works the same on the Canvas, on the Folio in its **Select text** mode and on the HTML pages, and a selection made in one tab is still there when you open another.
+
+- **One click picks the innermost element.** A click on a word puts the caret at that character of the Markdown, whatever holds it: a heading, a paragraph, a list item, a chip, the tab of a box (its `label="…"` in the fence), a caption, the label of a map (`::label`), or text that shows an attribute of the page fence (`{attr.tema}`). A click on a row of the contents turns to its page and selects, in its chapter, the heading the row lists.
+- **A click again on the same spot, or Esc, climbs one level**: from the characters to their paragraph, the box round it, the frame, the group of frames and the composed page with its template. Each level selects what it is written as: the paragraph's Markdown, the frame's content, the whole `::::page` fence. Esc on the last level lets the selection go. A triple click goes straight to the paragraph.
+- **The path.** While something is picked, a bar at the foot of the preview shows where it is, from the page down: “Page 8 › cajas › dinero › paragraph 2”. Each item picks its level. The levels a click went through on its way up stay after the element picked, dimmer, so you can step back down. The ↖ button climbs one level and × lets the selection go.
+- **What is not content goes to its form**, in either mode: a click on the decoration opens its page template in **Design › Page & columns › Page templates**, a running head or a folio opens **Design › Headers & footers**, a picture opens its resource in the Resources panel.
+- **Content and Design modes.** In Content mode every level opens the Markdown. In Design mode a click picks the frame and opens it in the template editor, climbing gives its group and then its template, and a box, a paragraph or a heading picked in the path opens its style (box styles, body text, paragraph styles, headings).
+- **From the editor to the page.** When you move the caret in the Text panel, the selection on the page moves to the paragraph it is in, and the path follows it.
+- **While you edit.** A setting changed or a word typed redraws the page at once, laid out again, and the selection stays on its element even when the element moved or went to another page. Dragging a frame in Design mode carries the mark with it, and the frame's properties show its box in millimetres until you let go. Switching the book's language keeps the selection on the same slot, since the elements of a composed page keep their names in every language. Changes made on the page are undone with Cmd/Ctrl+Z, as the ones typed in the editor are.
+
+The mark round the element picked is drawn over the pages only: the PDF, the print and every export leave it out.
 
 ### PDF tab
 

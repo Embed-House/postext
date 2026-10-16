@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 36 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
   lang: 'ca',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
   order: 43,
   plainSummary: "Aquesta pàgina és per a qui vol que un assistent d'intel·ligència artificial treballi per ell en un llibre del Sandbox. Mentre el Sandbox és obert, dona a l'assistent un joc d'eines per mirar qualsevol pàgina, canviar el disseny, editar el text, afegir imatges i taules, trobar problemes i desar fitxers. Li demanes les coses amb les teves paraules, per exemple «fes la lletra una mica més grossa i comprova que el llibre encara cap en 40 pàgines», i l'assistent fa servir les eines i et mostra les pàgines. Tot es queda al teu navegador. La pàgina explica com connectar-hi un assistent, què pot fer i com es crida cada eina.",
@@ -218,6 +218,8 @@ aquell punt (i la paraula), un enllaç i la pàgina on porta, la cel·la de taul
 o el peu d'un recurs. Amb `select: true` també fa el que fa un clic: s'obre el
 tauler Text amb el cursor en aquell lloc (`word: true` selecciona la paraula,
 `to` selecciona fins a un segon punt).
+
+La resposta també porta `elements`: el que hi ha en aquell punt, de dins cap a fora, en l'ordre en què un clic a la pàgina el tria i cada clic més o Esc puja (un caràcter, el seu paràgraf, el requadre que l'envolta, el marc d'una pàgina composta, el seu grup, la pàgina i la seva plantilla; o un element de disseny i el seu slot). Cadascun duu el seu id estable, el seu origen (un tram del Markdown, una ruta de la configuració, un atribut, un recurs) i el seu nom a la ruta que mostra el Sandbox (`path`). Amb `select: true`, `level` (`block`, `frame`, `template`, `design`…) en tria un com ho faria una persona: en mode Contingut en selecciona el Markdown i en mode Disseny n'obre el marc, l'estil o la plantilla. `sandbox_get_state` informa de l'element triat a `pageSelection`.
 
 ### Canviar el disseny
 

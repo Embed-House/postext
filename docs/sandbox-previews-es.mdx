@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Vistas previas',
   description: 'Las pestañas Canvas, PDF, Folio, HTML y EPUB 3 del viewport principal: qué muestra cada una y qué permite hacer',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '16 min',
   order: 38,
   parent: 'sandbox',
@@ -45,6 +45,20 @@ En una página compuesta (`::::page{template="…"}`) el lienzo une cada marco c
 - Un marco vacío muestra un contorno discontinuo, su nombre y **Escribe aquí**; un marco que solo continúa otro dice cuál. Estas marcas se dibujan solo sobre el lienzo: el PDF, la impresión y cualquier exportación las dejan fuera.
 - Un doble clic en la pestaña de etiqueta de una caja abre encima un campo que edita el `label="…"` de la valla; en un párrafo, un título o un elemento de lista, un campo con su Markdown. **Intro** guarda el cambio, **Mayús+Intro** empieza otra línea y **Esc** deja el texto como estaba. El cambio se escribe en el capítulo y se deshace con Cmd/Ctrl+Z como cualquier edición hecha en las vistas. Corregir un pie basta con un doble clic y las palabras nuevas, sin abrir ningún estilo. Un marco girado se edita en el panel Texto.
 - En modo Diseño todos los marcos muestran su contorno y su nombre, y un clic selecciona uno para el editor de plantillas.
+
+### Seleccionar en la página
+
+Las páginas y los editores son dos caras del mismo libro: lo que se selecciona en una página queda seleccionado en el Markdown o en los ajustes, y al revés. Funciona igual en el lienzo, en el Folio con el modo **Seleccionar texto** y en las páginas HTML, y una selección hecha en una pestaña sigue ahí al abrir otra.
+
+- **Un clic elige el elemento más interior.** Un clic en una palabra lleva el cursor a ese carácter del Markdown, esté donde esté: un título, un párrafo, un elemento de lista, un chip, la pestaña de un recuadro (su `label="…"` en la valla), un pie de figura, el rótulo de un mapa (`::label`) o un texto que muestra un atributo de la valla de la página (`{attr.tema}`). Un clic en una línea del índice pasa a su página y selecciona, en su capítulo, el título que esa línea recoge.
+- **Otro clic en el mismo sitio, o Esc, sube un nivel**: de los caracteres a su párrafo, al recuadro que lo rodea, al marco, al grupo de marcos y a la página compuesta con su plantilla. Cada nivel selecciona lo que tiene escrito: el Markdown del párrafo, el contenido del marco, la valla `::::page` entera. Esc en el último nivel suelta la selección. Un triple clic va directo al párrafo.
+- **La ruta.** Mientras hay algo elegido, una barra al pie de la vista previa dice dónde está, de la página hacia dentro: «Página 8 › cajas › dinero › párrafo 2». Cada elemento de la ruta elige su nivel. Los niveles por los que pasó un clic al subir quedan detrás del elegido, más tenues, para volver a bajar. El botón ↖ sube un nivel y × suelta la selección.
+- **Lo que no es contenido lleva a su forma**, en cualquiera de los dos modos: un clic en la decoración abre su plantilla en **Diseño › Página y columnas › Plantillas de página**, una cabecera o un folio abre **Diseño › Cabeceras y pies**, una imagen abre su recurso en el panel Recursos.
+- **Modos Contenido y Diseño.** En modo Contenido cada nivel abre el Markdown. En modo Diseño un clic elige el marco y lo abre en el editor de plantillas, al subir se llega a su grupo y después a su plantilla, y un recuadro, un párrafo o un título elegidos en la ruta abren su estilo (estilos de recuadro, texto principal, estilos de párrafo, títulos).
+- **Del editor a la página.** Al mover el cursor en el panel Texto, la selección de la página pasa al párrafo donde está, y la ruta lo sigue.
+- **Mientras se edita.** Un ajuste cambiado o una palabra escrita redibujan la página al momento, ya recompuesta, y la selección se queda en su elemento aunque este se haya movido o haya pasado a otra página. Al arrastrar un marco en modo Diseño la marca va con él, y las propiedades del marco muestran su caja en milímetros hasta soltarlo. Cambiar el idioma del libro deja la selección en el mismo slot, porque los elementos de una página compuesta conservan su nombre en todos los idiomas. Los cambios hechos en la página se deshacen con Cmd/Ctrl+Z, igual que los escritos en el editor.
+
+La marca alrededor del elemento elegido se dibuja solo sobre las páginas: el PDF, la impresión y cualquier exportación la dejan fuera.
 
 ### Pestaña PDF
 

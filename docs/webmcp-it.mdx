@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'Che cosa può fare con la Sandbox un agente di IA nel browser tramite i suoi 36 strumenti WebMCP (guardare le pagine, cambiare qualunque impostazione, modificare il testo, aggiungere immagini, tabelle e font, eseguire le verifiche, esportare) e come chiamare ciascuno, con argomenti e risposte reali',
   lang: 'it',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '12 min',
   order: 43,
   plainSummary: "Questa pagina è per chi vuole che un assistente di intelligenza artificiale lavori al posto suo su un libro nella Sandbox. Mentre la Sandbox è aperta, dà all’assistente una serie di strumenti: per guardare qualunque pagina, cambiare la grafica, modificare il testo, aggiungere immagini e tabelle, trovare problemi e salvare file. Chiedi con parole tue, per esempio «ingrandisci un po’ il testo e controlla che il libro stia ancora in 40 pagine», e l’assistente usa gli strumenti e ti mostra le pagine. Tutto resta nel tuo browser. La pagina spiega come collegare un assistente, che cosa può fare e come si chiama ogni strumento.",
@@ -213,6 +213,8 @@ La risposta dà il blocco, la riga e la colonna del sorgente Markdown in quel pu
 una risorsa. Con `select: true` fa anche ciò che fa un clic: il
 pannello Testo si apre con il cursore in quel punto (`word: true` seleziona la
 parola, `to` seleziona fino a un secondo punto).
+
+La risposta riporta anche `elements`: ciò che si trova in quel punto, dall’interno verso l’esterno, nell’ordine in cui un clic sulla pagina lo sceglie e ogni clic successivo o Esc sale (un carattere, il suo paragrafo, il riquadro che lo circonda, la cornice di una pagina composta, il suo gruppo, la pagina e il suo modello; oppure un elemento grafico e il suo slot). Ognuno ha il suo id stabile, la sua origine (un tratto del Markdown, un percorso della configurazione, un attributo, una risorsa) e il suo nome nel percorso mostrato dal Sandbox (`path`). Con `select: true`, `level` (`block`, `frame`, `template`, `design`…) ne sceglie uno come farebbe una persona: in modalità Contenuto ne seleziona il Markdown, in modalità Grafica ne apre la cornice, lo stile o il modello. `sandbox_get_state` riporta l’elemento scelto in `pageSelection`.
 
 ### Cambiare la grafica
 

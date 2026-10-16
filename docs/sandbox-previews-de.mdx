@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Vorschauen',
   description: 'Die Tabs Canvas, PDF, Folio, HTML und EPUB 3 im Hauptansichtsbereich: was jeder zeigt und was er kann',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '14 min',
   order: 38,
   parent: 'sandbox',
@@ -45,6 +45,20 @@ Auf einer zusammengesetzten Seite (`::::page{template="…"}`) verbindet die Lei
 - Ein leerer Rahmen zeigt einen gestrichelten Umriss, seinen Namen und **Hier schreiben**; ein Rahmen, der nur einen anderen fortsetzt, sagt, welchen. Diese Markierungen erscheinen nur auf der Leinwand: PDF, Druck und alle Exporte lassen sie weg.
 - Ein Doppelklick auf den Beschriftungsreiter eines Kastens öffnet darüber ein Feld, das das `label="…"` der Begrenzung bearbeitet; auf einem Absatz, einer Überschrift oder einem Listeneintrag ein Feld mit seinem Markdown. **Eingabe** übernimmt die Änderung, **Umschalt+Eingabe** beginnt eine neue Zeile, **Esc** lässt den Text, wie er war. Die Änderung wird ins Kapitel geschrieben und mit Cmd/Strg+Z rückgängig gemacht wie jede Bearbeitung in den Vorschauen. Eine Bildunterschrift zu korrigieren braucht einen Doppelklick und die neuen Wörter, ohne einen Stil zu öffnen. Ein gedrehter Rahmen wird im Bereich Text bearbeitet.
 - Im Modus Gestaltung zeigt jeder Rahmen seinen Umriss und seinen Namen, und ein Klick wählt einen für den Vorlageneditor aus.
+
+### Auf der Seite auswählen
+
+Die Seiten und die Editoren sind zwei Seiten desselben Buchs: Was auf einer Seite ausgewählt wird, ist im Markdown oder in den Einstellungen ausgewählt, und umgekehrt. Das funktioniert auf der Leinwand, im Folio im Modus **Text auswählen** und auf den HTML-Seiten gleich, und eine Auswahl aus einem Tab ist noch da, wenn man einen anderen öffnet.
+
+- **Ein Klick wählt das innerste Element.** Ein Klick auf ein Wort setzt die Einfügemarke an dieses Zeichen im Markdown, wo immer es steht: in einer Überschrift, einem Absatz, einem Listenpunkt, einem Chip, dem Reiter eines Kastens (sein `label="…"` in der Begrenzung), einer Bildunterschrift, der Beschriftung einer Karte (`::label`) oder einem Text, der ein Attribut der Seitenbegrenzung zeigt (`{attr.tema}`). Ein Klick auf eine Zeile des Inhaltsverzeichnisses blättert zu ihrer Seite und wählt in ihrem Kapitel die Überschrift aus, die die Zeile aufführt.
+- **Ein weiterer Klick an derselben Stelle oder Esc steigt eine Ebene auf**: von den Zeichen zu ihrem Absatz, zum Kasten darum, zum Rahmen, zur Rahmengruppe und zur zusammengesetzten Seite mit ihrer Vorlage. Jede Ebene wählt aus, wo sie geschrieben steht: das Markdown des Absatzes, den Inhalt des Rahmens, die ganze Begrenzung `::::page`. Esc auf der obersten Ebene hebt die Auswahl auf. Ein Dreifachklick geht direkt zum Absatz.
+- **Der Pfad.** Solange etwas ausgewählt ist, zeigt eine Leiste am Fuß der Vorschau, wo es liegt, von der Seite nach innen: „Seite 8 › cajas › dinero › Absatz 2“. Jedes Glied des Pfads wählt seine Ebene. Die Ebenen, die ein Klick beim Aufsteigen durchlaufen hat, bleiben blasser hinter dem gewählten Element stehen, um wieder hinabzusteigen. Die Schaltfläche ↖ steigt eine Ebene auf, × hebt die Auswahl auf.
+- **Was kein Inhalt ist, führt zu seiner Form**, in beiden Modi: Ein Klick auf die Dekoration öffnet ihre Vorlage unter **Gestaltung › Seite und Spalten › Seitenvorlagen**, ein Kolumnentitel oder eine Seitenzahl öffnet **Gestaltung › Kopf- & Fußzeilen**, ein Bild öffnet seine Ressource im Bereich Ressourcen.
+- **Modi Inhalt und Gestaltung.** Im Modus Inhalt öffnet jede Ebene das Markdown. Im Modus Gestaltung wählt ein Klick den Rahmen und öffnet ihn im Vorlageneditor, beim Aufsteigen folgen seine Gruppe und dann seine Vorlage, und ein Kasten, ein Absatz oder eine Überschrift, im Pfad gewählt, öffnet seinen Stil (Kastenstile, Grundtext, Absatzstile, Überschriften).
+- **Vom Editor zur Seite.** Wird die Einfügemarke im Bereich Text bewegt, geht die Auswahl auf der Seite zu dem Absatz, in dem sie steht, und der Pfad folgt ihr.
+- **Beim Bearbeiten.** Eine geänderte Einstellung oder ein getipptes Wort zeichnet die Seite sofort neu, neu umbrochen, und die Auswahl bleibt bei ihrem Element, auch wenn es verschoben wurde oder auf eine andere Seite gewandert ist. Zieht man einen Rahmen im Modus Gestaltung, wandert die Markierung mit, und die Eigenschaften des Rahmens zeigen seinen Kasten in Millimetern, bis man loslässt. Ein Wechsel der Buchsprache lässt die Auswahl im selben Slot, denn die Elemente einer zusammengesetzten Seite behalten in jeder Sprache ihren Namen. Änderungen auf der Seite werden mit Cmd/Ctrl+Z rückgängig gemacht, wie die im Editor getippten.
+
+Die Markierung um das ausgewählte Element erscheint nur über den Seiten: PDF, Druck und alle Exporte lassen sie weg.
 
 ### Tab PDF
 

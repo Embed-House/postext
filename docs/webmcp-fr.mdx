@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'Ce qu’un agent IA dans le navigateur peut faire avec le Sandbox grâce à ses 36 outils WebMCP (regarder les pages, changer n’importe quel réglage, modifier le texte, ajouter images, tableaux et polices, lancer les vérifications, exporter) et comment appeler chacun d’eux, avec de vrais arguments et de vraies réponses',
   lang: 'fr',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
   order: 43,
   plainSummary: "Cette page s’adresse aux personnes qui veulent qu’un assistant d’intelligence artificielle travaille pour elles sur un livre dans le Sandbox. Tant que le Sandbox est ouvert, il donne à l’assistant une série d’outils : regarder n’importe quelle page, changer la maquette, modifier le texte, ajouter des images et des tableaux, trouver les problèmes et enregistrer des fichiers. Vous demandez avec vos propres mots, par exemple « grossissez un peu le texte et vérifiez que le livre tient toujours en 40 pages », et l’assistant utilise les outils et vous montre les pages. Tout reste dans votre navigateur. La page explique comment connecter un assistant, ce qu’il peut faire et comment chaque outil s’appelle.",
@@ -213,6 +213,8 @@ La réponse donne le bloc, la ligne et la colonne de la source Markdown à cet e
 ressource. Avec `select: true`, il fait aussi ce que fait un clic : le
 panneau Texte s’ouvre avec le curseur à cet endroit (`word: true` sélectionne le
 mot, `to` sélectionne jusqu’à un second point).
+
+La réponse donne aussi `elements` : ce qui se trouve en ce point, de l’intérieur vers l’extérieur, dans l’ordre où un clic sur la page le choisit et où chaque clic suivant ou Échap remonte (un caractère, son paragraphe, l’encadré qui l’entoure, le bloc d’une page composée, son groupe, la page et son gabarit ; ou un élément de maquette et son slot). Chacun vient avec son id stable, sa source (une plage du Markdown, un chemin de configuration, un attribut, une ressource) et son nom dans le chemin affiché par le Sandbox (`path`). Avec `select: true`, `level` (`block`, `frame`, `template`, `design`…) en choisit un comme le ferait une personne : en mode Contenu il sélectionne son Markdown, en mode Maquette il ouvre son bloc, son style ou son gabarit. `sandbox_get_state` indique l’élément choisi dans `pageSelection`.
 
 ### Changer la maquette
 

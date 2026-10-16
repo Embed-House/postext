@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'Lo que un agente de IA en el navegador puede hacer con el Sandbox mediante sus 36 herramientas WebMCP (mirar las páginas, cambiar cualquier ajuste, editar el texto, añadir imágenes, tablas y fuentes, pasar la revisión, exportar) y cómo se llama cada una, con argumentos y respuestas reales',
   lang: 'es',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
   order: 43,
   plainSummary: "Esta página es para quien quiere que un asistente de inteligencia artificial trabaje por él en un libro del Sandbox. Mientras el Sandbox está abierto, le da al asistente un juego de herramientas: mirar cualquier página, cambiar el diseño, editar el texto, añadir imágenes y tablas, encontrar problemas y guardar archivos. Tú se lo pides con tus palabras, por ejemplo «sube un poco la letra y comprueba que el libro sigue cabiendo en 40 páginas», y el asistente usa las herramientas y te enseña las páginas. Todo se queda en tu navegador. La página explica cómo conectar un asistente, qué puede hacer y cómo se llama cada herramienta.",
@@ -217,6 +217,8 @@ punto (y la palabra), un enlace y la página a la que lleva, o la celda de
 tabla o el pie de un recurso. Con `select: true` hace además lo que hace un
 clic: se abre el panel Texto con el cursor en ese lugar (`word: true`
 selecciona la palabra y `to` selecciona hasta un segundo punto).
+
+La respuesta también trae `elements`: lo que hay en ese punto, de dentro hacia fuera, en el orden en que un clic en la página lo elige y cada clic más o Esc sube (un carácter, su párrafo, el recuadro que lo rodea, el marco de una página compuesta, su grupo, la página y su plantilla; o un elemento de diseño y su slot). Cada uno lleva su id estable, su origen (un tramo del Markdown, una ruta de la configuración, un atributo, un recurso) y su nombre en la ruta que muestra el Sandbox (`path`). Con `select: true`, `level` (`block`, `frame`, `template`, `design`…) elige uno de ellos como lo haría una persona: en modo Contenido selecciona su Markdown y en modo Diseño abre su marco, su estilo o su plantilla. `sandbox_get_state` informa del elemento elegido en `pageSelection`.
 
 ### Cambiar el diseño
 

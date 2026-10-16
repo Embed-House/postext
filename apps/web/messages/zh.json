@@ -2237,7 +2237,7 @@
     "selectionFrameLabel": "框 __name__",
     "selectionDesign": "__name__",
     "selectionDesignLabel": "设计元素 __name__",
-    "selectionBox": "方框 __n__",
+    "selectionBox": "标注框 __n__",
     "selectionParagraph": "第 __n__ 段",
     "selectionHeading": "标题 __n__",
     "selectionListItem": "列表项 __n__",
