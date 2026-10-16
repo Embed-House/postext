@@ -224,6 +224,11 @@ describe('the page selection model (#865)', () => {
     expect(pickedMarkFor(doc, para, page.index)!.rect).toEqual(second.bbox);
     expect(pickedMarkFor(doc, para, page.index + 1)).toBeNull();
     expect(pickedMarkFor(doc, atLevel(sel, 4), page.index)!.rect).toEqual({ x: 0, y: 0, width: page.width, height: page.height });
+    // A group: the box round all its frames (dinero, gasto, ahorro).
+    const group = pickedMarkFor(doc, atLevel(sel, 3), page.index)!.rect;
+    const boxes = page.composed!.frames.filter((f) => ['dinero', 'gasto', 'ahorro'].includes(f.name)).map((f) => f.rect);
+    expect(group.y).toBeCloseTo(Math.min(...boxes.map((r) => r.y)));
+    expect(group.y + group.height).toBeCloseTo(Math.max(...boxes.map((r) => r.y + r.height)));
   });
 
   it('the editor’s caret is followed on the page at block level', () => {

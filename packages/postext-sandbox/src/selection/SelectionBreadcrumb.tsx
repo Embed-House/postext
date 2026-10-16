@@ -66,15 +66,19 @@ export function SelectionBreadcrumb() {
     return onFrameEditorEvent((e) => followFrameEditor(e, docRef.current, apply));
   }, [dispatch, docRef, sourceRef, getState]);
 
-  // Esc climbs (the editor keeps its own Esc otherwise).
+  // Esc climbs a selection made on a page, before the editor's own Esc
+  // (which would only collapse the range the page selected there). Once
+  // the reader moves the caret, the selection follows it and Esc is the
+  // editor's again.
   useEffect(() => {
     const onKey = (ev: KeyboardEvent) => {
       if (!escClimbs(ev)) return;
       ev.preventDefault();
+      ev.stopPropagation();
       climbPageSelection();
     };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    document.addEventListener('keydown', onKey, true);
+    return () => document.removeEventListener('keydown', onKey, true);
   }, []);
 
   // A pick on a page is said (WCAG 4.1.3); the caret's path is not, it

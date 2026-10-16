@@ -213,6 +213,7 @@ export interface PageInteraction {
  */
 export function attachPageInteraction(target: HTMLElement, opts: PageInteractionOptions): PageInteraction {
   const { locate, docRef, dispatchRef, activePanelRef, sourceRef, navigateRef, resourcesRef, pageSourceRef } = opts;
+  const pagesHost = target;
   const on = () => opts.enabled?.() ?? true;
   // The page the drag (or the click) started on: its book maps the offsets.
   let pageIndex = -1;
@@ -587,7 +588,10 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     if (!at) return;
     pageIndex = at.pageIndex;
     const sel = window.getSelection();
-    if (sel && !sel.isCollapsed && sel.toString().length > 0) return;
+    // A text selection the reader made on these pages (the HTML preview's
+    // own text) keeps the click; one in the editor (a range a page pick
+    // selected there, #865) does not.
+    if (sel && !sel.isCollapsed && sel.toString().length > 0 && sel.anchorNode && pagesHost.contains(sel.anchorNode)) return;
     // The page selection (#865); the second click of a double click is the
     // double click's.
     const picked = ev.detail === 2 || touchTap ? null : pick(at, ev.detail);

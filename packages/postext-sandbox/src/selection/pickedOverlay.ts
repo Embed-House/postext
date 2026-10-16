@@ -5,9 +5,9 @@
  * picked shows as the editor's caret instead.
  */
 
-import type { VDTDocument } from 'postext';
+import { resolvePageTemplate, type PageTemplateSource, type VDTDocument } from 'postext';
 import { SVG_NS } from '../viewport/CanvasPreview/dom';
-import { selectedElement, type PageSelection } from './pageSelection';
+import { idName, selectedElement, type PageSelection } from './pageSelection';
 import { frameDragNow, type FrameDrag } from './selectionStore';
 
 export interface PickedMark {
@@ -29,8 +29,10 @@ export function pickedMarkFor(doc: VDTDocument, sel: PageSelection | null, pageI
   if (!rect && el.level === 'template') rect = { x: 0, y: 0, width: page.width, height: page.height };
   if (!rect && el.level === 'group' && page.composed) {
     // A group's box: the union of its frames on the page.
-    const frames = sel.chain.filter((e) => e.level === 'frame');
-    const own = page.composed.frames.filter((f) => frames.some((e) => e.id === f.id));
+    const name = idName(el.id);
+    const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, page.composed.template);
+    const members = new Set(template?.groups.find((g) => g.name === name)?.frames ?? []);
+    const own = page.composed.frames.filter((f) => members.has(f.name));
     const all = own.length > 0 ? own : page.composed.frames;
     if (all.length > 0) {
       const x0 = Math.min(...all.map((f) => f.rect.x));
