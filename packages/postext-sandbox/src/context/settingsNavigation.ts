@@ -61,3 +61,44 @@ export function reportSettingsChangedOnly(on: boolean): void {
 export function settingsChangedOnly(): boolean {
   return changedOnlyShown;
 }
+
+/** A section of the Design panel asked for from the pages (#865): a
+ *  design element, a style, a template picked on a page opens where it is
+ *  edited. */
+export interface SettingsSectionRequest {
+  group: SettingsGroupId;
+  /** The section to bring into view; null: the group's page alone. */
+  section: string | null;
+}
+
+let pendingSection: SettingsSectionRequest | null = null;
+const sectionRequests = new Set<(req: SettingsSectionRequest) => void>();
+
+/** Ask the Design panel for a group and a section in it. The request waits
+ *  for the panel when it is closed (opened by the caller): the panel takes
+ *  it when it mounts. False when no panel took it now. */
+export function requestSettingsSection(req: SettingsSectionRequest): boolean {
+  pendingSection = req;
+  for (const open of sectionRequests) open(req);
+  return sectionRequests.size > 0;
+}
+
+/** The Design panel's side of {@link requestSettingsSection}. */
+export function onSettingsSectionRequest(open: (req: SettingsSectionRequest) => void): () => void {
+  sectionRequests.add(open);
+  return () => { sectionRequests.delete(open); };
+}
+
+/** The section request not yet shown for `group` (taken: it is shown
+ *  once). */
+export function takeSettingsSection(group: SettingsGroupId): string | null {
+  if (!pendingSection || pendingSection.group !== group) return null;
+  const section = pendingSection.section;
+  pendingSection = null;
+  return section;
+}
+
+/** The group of the section request waiting for the panel, if any. */
+export function pendingSettingsGroup(): SettingsGroupId | null {
+  return pendingSection?.group ?? null;
+}

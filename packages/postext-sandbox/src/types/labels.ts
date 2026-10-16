@@ -1700,6 +1700,34 @@ export interface SandboxLabels {
   composedFrameContinues: string;
   composedFrameEdit: string;
   composedFrameEditHint: string;
+  selectionPath: string;
+  selectionUp: string;
+  selectionClear: string;
+  selectionAnnounce: string;
+  selectionPage: string;
+  selectionGroup: string;
+  selectionGroupLabel: string;
+  selectionFrame: string;
+  selectionFrameLabel: string;
+  selectionDesign: string;
+  selectionDesignLabel: string;
+  selectionBox: string;
+  selectionParagraph: string;
+  selectionHeading: string;
+  selectionListItem: string;
+  selectionQuote: string;
+  selectionCode: string;
+  selectionFormula: string;
+  selectionContents: string;
+  selectionFigure: string;
+  selectionBlock: string;
+  selectionPicture: string;
+  selectionLabel: string;
+  selectionAttr: string;
+  selectionText: string;
+  selectionDecoration: string;
+  selectionHeader: string;
+  selectionFooter: string;
 
   // Persistence
   save: string;

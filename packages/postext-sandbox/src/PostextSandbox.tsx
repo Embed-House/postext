@@ -17,6 +17,7 @@ import { ChaptersPanel } from './sidebar/ChaptersPanel';
 import { ResizableHandle } from './panels/ResizableHandle';
 import { ViewportTabs } from './viewport/ViewportTabs';
 import { CanvasViewport } from './viewport/CanvasViewport';
+import { SelectionBreadcrumb } from './selection/SelectionBreadcrumb';
 import { HtmlViewport } from './viewport/HtmlViewport';
 import { PdfViewport } from './viewport/PdfViewport';
 import { ChapterPaginator } from './viewport/ChapterPaginator';
@@ -277,6 +278,7 @@ function SandboxLayout({
           />
           <div className="relative min-h-0 flex-1 overflow-hidden">
             {renderViewport()}
+            <SelectionBreadcrumb />
             {loadingCover}
           </div>
           </div>
@@ -322,6 +324,7 @@ function SandboxLayout({
         <ViewportTabs />
         <div className="relative min-h-0 flex-1 overflow-hidden">
           {renderViewport()}
+          <SelectionBreadcrumb />
           {loadingCover}
         </div>
         <SandboxAnnouncer />

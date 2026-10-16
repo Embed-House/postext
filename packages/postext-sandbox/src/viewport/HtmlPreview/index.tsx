@@ -30,6 +30,9 @@ import { useLayoutWorker } from '../../worker/useLayoutWorker';
 import { onLateFonts } from '../../worker/LayoutService';
 import { createOverlaySvg } from '../CanvasPreview/dom';
 import { drawOverlay, drawBaselines } from '../CanvasPreview/overlay';
+import { drawPickedMark } from '../../selection/pickedOverlay';
+import { onPageSelectionChange } from '../../selection/selectionStore';
+import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection';
 import { attachSlotClickHandler } from '../CanvasPreview/interaction';
 import { syncComicEditors } from '../comics/comicEditing';
 import { usePageNavigator } from '../usePageNavigator';
@@ -679,6 +682,10 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
   // itself changes. Mirrors the effect in CanvasPreview so behavior is shared:
   // the viewport follows the caret only when the selection itself moves.
   const lastFollowedRef = useRef<string | null>(null);
+  const caretFollowRef = useRef<CaretFollow>({ key: null, doc: null });
+  // The element picked on a page (#865) is marked here too.
+  const [pickTick, setPickTick] = useState(0);
+  useEffect(() => onPageSelectionChange(() => setPickTick((t) => t + 1)), []);
   useEffect(() => {
     const doc = docRef.current;
     if (!doc) return;
@@ -708,11 +715,25 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
       caretBlockIdx = doc.blocks.length - 1;
     }
 
+    // The editor's caret, moved there by the reader, is followed on the
+    // page (#865).
+    const caretKey = focused ? `${activeChapterId}:${selection.from}:${selection.to}:${selection.head}` : null;
+    if (focused && !state.selectionFromViewer && followsCaret(caretFollowRef.current, caretKey, doc)) {
+      caretFollowRef.current = { key: caretKey, doc };
+      followEditorCaret(doc, selection.head, {
+        dispatch: () => dispatchRef.current,
+        activePanel: () => activePanelRef.current,
+        sourceOfPage: () => builtSourceRef.current,
+      });
+    }
+    const picked = selectionOn(doc, chapterOfPages(() => builtSourceRef.current));
+
     let activeCursorRect: SVGRectElement | null = null;
     for (const [pageIndex, overlay] of overlayMapRef.current) {
       const page = doc.pages[pageIndex];
       if (!page) continue;
       const rect = drawOverlay(overlay, doc, pageIndex, selection, debug, focused, caretBlockIdx, state.resourceSelection);
+      drawPickedMark(overlay, doc, pageIndex, picked);
       if (rect) activeCursorRect = rect;
     }
 
@@ -746,7 +767,7 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
         scroll.scrollLeft += cr.right - cn.right + padding;
       }
     }
-  }, [state.selection, state.selectionFromViewer, activeChapterId, state.config.debug, state.editorFocused, state.resourceSelection, docVersion]);
+  }, [state.selection, state.selectionFromViewer, activeChapterId, state.config.debug, state.editorFocused, state.resourceSelection, docVersion, pickTick]);
 
   // Imperative API exposed to the viewport toolbar.
   // - regenerate: force a fresh relayout immediately.

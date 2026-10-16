@@ -37,7 +37,7 @@ import { GROUP_ICONS } from './settings/groupIcons';
 import { DesignSummary } from './settings/DesignSummary';
 import { PageGroupPreview } from './settings/PageGroupPreview';
 import { PreviewHighlightProvider } from './settings/previewHighlight';
-import { OpenSettingsGroupContext, onSettingsGroupRequest, onSettingsSwitchesRequest, reportSettingsChangedOnly } from '../context/settingsNavigation';
+import { OpenSettingsGroupContext, onSettingsGroupRequest, onSettingsSectionRequest, onSettingsSwitchesRequest, pendingSettingsGroup, reportSettingsChangedOnly, takeSettingsSection } from '../context/settingsNavigation';
 import { SECTION_COMPONENTS } from './sections/components';
 
 /** The Design panel. Three views share one header and search box:
@@ -73,6 +73,9 @@ export function ConfigPanel() {
   );
 
   const [group, setGroup] = useState<SettingsGroupId | null>(() => {
+    // A section asked for from the pages (#865) opens its group.
+    const asked = pendingSettingsGroup();
+    if (asked) return asked;
     const saved = loadSettingsGroup();
     return isSettingsGroupId(saved) ? saved : null;
   });
@@ -98,6 +101,13 @@ export function ConfigPanel() {
 
   // A group asked for from outside the panel (the WebMCP tools).
   useEffect(() => onSettingsGroupRequest(openGroupFromSection), [openGroupFromSection]);
+  // A section asked for from the pages (#865): its group opens, the group
+  // page brings the section into view.
+  const [sectionAsk, setSectionAsk] = useState(0);
+  useEffect(() => onSettingsSectionRequest(({ group: g }) => {
+    openGroupFromSection(g);
+    setSectionAsk((n) => n + 1);
+  }), [openGroupFromSection]);
 
   // The header's switches set from outside the panel, as their buttons set
   // them; the filter is reported back, since only the panel holds it.
@@ -258,7 +268,7 @@ export function ConfigPanel() {
                 <SettingsHome counts={overrideCounts} onOpen={openGroup} buttonRefs={groupButtons.current} />
               )}
               {view === 'group' && group && (
-                <GroupPage id={group} headingRef={groupHeadingRef} onOpen={openGroup} />
+                <GroupPage id={group} headingRef={groupHeadingRef} onOpen={openGroup} sectionAsk={sectionAsk} />
               )}
               {view === 'search' && <SearchResults plan={plan} query={deferredQuery} />}
             </PanelBody>
@@ -323,10 +333,12 @@ function SettingsHome({ counts, onOpen, buttonRefs }: {
   );
 }
 
-function GroupPage({ id, headingRef, onOpen }: {
+function GroupPage({ id, headingRef, onOpen, sectionAsk }: {
   id: SettingsGroupId;
   headingRef: React.RefObject<HTMLHeadingElement | null>;
   onOpen: (id: SettingsGroupId | null) => void;
+  /** Bumped when a section of a group is asked for from the pages. */
+  sectionAsk: number;
 }) {
   const labels = useSandboxLabels();
   const entry = SETTINGS_GROUPS.find((g) => g.id === id)!;
@@ -347,6 +359,17 @@ function GroupPage({ id, headingRef, onOpen }: {
     scroller.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
     el.querySelector<HTMLElement>('button')?.focus({ preventScroll: true });
   };
+
+  // A section asked for from the pages (#865): brought into view once the
+  // group's sections are mounted.
+  useEffect(() => {
+    // Taken when shown, so an effect run twice (strict mode) still shows it.
+    const raf = requestAnimationFrame(() => {
+      const section = takeSettingsSection(id);
+      if (section) jumpTo(section);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [id, sectionAsk]);
 
   return (
     <PreviewHighlightProvider>

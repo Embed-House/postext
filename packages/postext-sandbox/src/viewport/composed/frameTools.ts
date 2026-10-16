@@ -43,6 +43,9 @@ export interface FrameTools {
   dblclick(pageIndex: number, x: number, y: number): boolean;
   /** Whether the point is on a frame of a composed page. */
   frameAt(pageIndex: number, x: number, y: number): VDTFrame | null;
+  /** Put the caret in the frame's slot (Content mode), writing an empty
+   *  slot first when it has none (#865: a frame picked on the page). */
+  openSlot(pageIndex: number, frame: VDTFrame): boolean;
 }
 
 const inRect = (r: { x: number; y: number; width: number; height: number }, x: number, y: number): boolean =>
@@ -97,6 +100,23 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
     return true;
   };
 
+  const openSlot = (pageIndex: number, frame: VDTFrame): boolean => {
+    const page = pageOf(pageIndex);
+    const book = deps.sourceOfPage(pageIndex);
+    const doc = deps.docRef.current;
+    if (!page?.composed || !book || !doc) return false;
+    const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, page.composed.template);
+    const target = frameClickTarget(book.markdown, page.composed, frame, template);
+    if (!target) return false;
+    if (target.kind === 'caret') {
+      focusAt(book, target.offset, page.composed.sourceStart);
+      return true;
+    }
+    if (!write(book, page.composed.sourceStart, [{ from: target.at, to: target.at, insert: target.insert }])) return false;
+    focusAt(book, target.caret, page.composed.sourceStart);
+    return true;
+  };
+
   return {
     frameAt,
     click(pageIndex, x, y) {
@@ -108,20 +128,9 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
         return true;
       }
       if (onFrameContent(page, frame, x, y)) return false;
-      const book = deps.sourceOfPage(pageIndex);
-      const doc = deps.docRef.current;
-      if (!book || !doc) return false;
-      const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, page.composed.template);
-      const target = frameClickTarget(book.markdown, page.composed, frame, template);
-      if (!target) return false;
-      if (target.kind === 'caret') {
-        focusAt(book, target.offset, page.composed.sourceStart);
-        return true;
-      }
-      if (!write(book, page.composed.sourceStart, [{ from: target.at, to: target.at, insert: target.insert }])) return false;
-      focusAt(book, target.caret, page.composed.sourceStart);
-      return true;
+      return openSlot(pageIndex, frame);
     },
+    openSlot,
     dblclick(pageIndex, x, y) {
       const page = pageOf(pageIndex);
       const frame = page?.composed ? frameHitAt(page, x, y) : null;
