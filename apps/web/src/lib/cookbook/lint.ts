@@ -585,7 +585,7 @@ export function lintPen(
     // A Latin edition that keeps one Japanese sound effect (ドン) stays Latin: the
     // kana must also outweigh its Latin words.
     if (edition && length.japanese * 2 > length.cjk && length.japanese > length.words) japaneseText = true;
-    for (const line of malformedResourceEmbeds(text)) fails.push(`${file}: "${line}" is not \`::resource{id="…"}\` (double quotes, id only)`);
+    for (const line of malformedResourceEmbeds(text)) fails.push(`${file}: "${line}" is not \`::resource{id="…"}\` (double quotes, id only) or, on a composed page, \`::resource{id="…" slot="…"}\``);
     for (const name of markdownConstructs(text).unknown) fails.push(`${file}: ":::${name}" is not a Postext directive (it prints as text)`);
     fails.push(...unquotedFrontmatter(text, file));
     // Original sample prose gets the same voice check as the write-ups
