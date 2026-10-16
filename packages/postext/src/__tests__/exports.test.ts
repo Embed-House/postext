@@ -657,6 +657,7 @@ describe("package exports", () => {
       "groupElementId",
       "labelElementId",
       "designElementId",
+      "composedPagePaintKey",
       "collectConfigWarnings",
       "designTextLiteral",
       "configDesignSlots",

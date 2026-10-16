@@ -17,6 +17,7 @@
  * joining script's tracking) is always laid out afresh.
  */
 import type { ContentBlock, InlineSpan } from '../parse/types';
+import type { VDTPage } from '../vdt';
 import { measurementGeneration } from '../measure/canvas';
 import { layoutComposedPage, type ComposedPageInput, type ComposedPageLayout } from '../pipeline/composedLayout';
 
@@ -277,4 +278,27 @@ export function layoutComposedPageMemo(input: ComposedPageInput, ctx: ComposedMe
   }
   stats.misses++;
   return layout;
+}
+
+/**
+ * What a composed page paints, as a key (#857): its frames' layout key
+ * with what is laid round them (running heads, decoration, page number,
+ * paper, the floats and notes no frame holds). Two pages with the same
+ * key paint the same pixels with the same paint options, so a host can
+ * keep a page's bitmap across a relayout. Undefined for a page without a
+ * layout key (not a composed page, or one laid out afresh every time).
+ */
+export function composedPagePaintKey(page: VDTPage): string | undefined {
+  const composed = page.composed;
+  if (!composed?.layoutKey) return undefined;
+  const inFrames = new Set(composed.frames.flatMap((f) => f.blockIds));
+  const loose = (page.floats ?? []).filter((b) => !inFrames.has(b.id));
+  return digest([
+    composed.layoutKey,
+    JSON.stringify([
+      page.width, page.height, page.pageLabel, page.background ?? null, page.paper ?? null,
+      page.header ?? null, page.footer ?? null, composed.decoration ?? null, page.lineNumbers ?? null,
+      loose, page.marginNotes ?? null, page.footnoteAreas ?? null,
+    ]),
+  ]);
 }

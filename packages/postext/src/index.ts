@@ -619,6 +619,7 @@ export type { FrameAreas, FrameGeometryContext, Rect as FrameRect } from './comp
 export { sourceAt, elementsForSource, findElement } from './composed/sourceMap';
 export type { SourceRef, SourceLevel, SourceElement, SourceMapOptions, SourceMatch } from './composed/sourceMap';
 export { composedPageElementId, frameElementId, groupElementId, labelElementId, designElementId } from './composed/ids';
+export { composedPagePaintKey } from './composed/pageMemo';
 export type {
   FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
   PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,

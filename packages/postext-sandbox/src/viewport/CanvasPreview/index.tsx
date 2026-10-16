@@ -12,6 +12,7 @@ import type { PrintPreview } from 'postext';
 import { previewFor, printsGrayscale, usePrintSetup } from '../../print/printSetup';
 import { usePrintPreview } from '../../print/printPreviewToggle';
 import type { VDTDocument, PostextConfig, RenderPageOptions } from 'postext';
+import { createPaintedPages, type PaintedPages } from './pageReuse';
 import { clearOverlay, drawOverlay } from './overlay';
 import { clearFrameMarks, drawFrameMarks } from '../composed/frameOverlay';
 import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode';
@@ -150,6 +151,9 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   // they next scroll near — a chapter's worth of 300 dpi pages repainted
   // at once blocks the main thread for about a second per rebuild.
   const stalePagesRef = useRef<Set<number>>(new Set());
+  /** What each canvas holds: a composed page a relayout left as it was
+   *  keeps its pixels (#857). */
+  const paintedPagesRef = useRef<PaintedPages>(createPaintedPages());
   // Pages within the observer's margin of the viewport right now.
   const visiblePagesRef = useRef<Set<number>>(new Set());
   const lastGeomRef = useRef<GeomSnapshot | null>(null);
@@ -303,7 +307,10 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
           }
           const canvas = canvasMapRef.current.get(pageIndex);
           const page = doc.pages[pageIndex];
-          if (canvas && page) renderPageToCanvas(page, doc, canvas, opts);
+          if (canvas && page) {
+            renderPageToCanvas(page, doc, canvas, opts);
+            paintedPagesRef.current.painted(pageIndex, page, opts);
+          }
         }
       }
     }
@@ -721,7 +728,15 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
         // The pages in view repaint now; the others keep their old pixels
         // and repaint on their next entry (see the observer below).
         let painted = 0;
+        // A composed page the relayout left as it was (same frames, same
+        // running heads) keeps its pixels, unless the pictures changed.
+        const keep = (pageIndex: number): boolean => {
+          const page = doc.pages[pageIndex];
+          return lastPaintedPaintKeyRef.current === paintKey && !stalePagesRef.current.has(pageIndex)
+            && page !== undefined && paintedPagesRef.current.same(pageIndex, page, renderOpts);
+        };
         for (const pageIndex of renderedPagesRef.current) {
+          if (keep(pageIndex)) continue;
           if (!visiblePagesRef.current.has(pageIndex)) {
             stalePagesRef.current.add(pageIndex);
             continue;
@@ -730,6 +745,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
           const page = doc.pages[pageIndex];
           if (canvas && page) {
             renderPageToCanvas(page, doc, canvas, renderOpts);
+            paintedPagesRef.current.painted(pageIndex, page, renderOpts);
             stalePagesRef.current.delete(pageIndex);
             painted++;
           }
@@ -751,6 +767,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     observerRef.current?.disconnect();
     canvasMapRef.current.clear();
     overlayMapRef.current.clear();
+    paintedPagesRef.current.clear();
     const previouslyVisible = visiblePagesRef.current;
     renderedPagesRef.current = new Set();
     stalePagesRef.current = new Set();
@@ -788,6 +805,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
       const page = doc.pages[pageIndex];
       if (!canvas || !page) continue;
       renderPageToCanvas(page, doc, canvas, renderOpts);
+      paintedPagesRef.current.painted(pageIndex, page, renderOpts);
       renderedSet.add(pageIndex);
     }
     renderedPagesRef.current = renderedSet;
@@ -830,6 +848,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
         }
         rendered.delete(victim);
         stalePagesRef.current.delete(victim);
+        paintedPagesRef.current.forget(victim);
       }
     };
     const observer = new IntersectionObserver(
@@ -844,7 +863,9 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
           if (renderedPagesRef.current.has(idx) && !stalePagesRef.current.has(idx)) continue;
           const canvas = canvasMapRef.current.get(idx);
           if (!canvas || !docRef.current) continue;
-          renderPageToCanvas(docRef.current.pages[idx]!, docRef.current, canvas, paintOptionsRef.current());
+          const opts = paintOptionsRef.current();
+          renderPageToCanvas(docRef.current.pages[idx]!, docRef.current, canvas, opts);
+          paintedPagesRef.current.painted(idx, docRef.current.pages[idx]!, opts);
           renderedPagesRef.current.add(idx);
           stalePagesRef.current.delete(idx);
           trimPaintedPages(idx);
