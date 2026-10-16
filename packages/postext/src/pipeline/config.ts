@@ -49,6 +49,7 @@ import { directionOf, localeScript, presentTag, resolveNumerals } from '../local
 import { configFingerprint } from '../util/stableHash';
 import { forgetFlowColorValues } from './partPalette';
 import { createBoundingBox, type BoundingBox, type ResolvedConfig } from '../vdt';
+import { resolveLabelStyles, stripPageTemplatesDefaults } from '../composed/templates';
 
 // Resolved configs are never mutated (derived variants spread them), so
 // one resolution per config object serves every pass of a build and every
@@ -194,6 +195,17 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
     // Comic pages: only a config that sets the section carries it (a
     // `:::page` without one reads the defaults, `resolvedComics`).
     ...(config?.comics ? { comics: resolveComicsConfig(config.comics, documentLocale) } : {}),
+    // Composed pages (#853): only a config that sets templates or label
+    // styles carries them, so a document without resolves (and hashes) as
+    // before. The templates are kept as written, as a copy of their own
+    // (`resolvePageTemplate` memoises per list): each page resolves its
+    // template with the variant of its side.
+    ...(Array.isArray(config?.pageTemplates) && config.pageTemplates.length > 0
+      ? { pageTemplates: stripPageTemplatesDefaults(config.pageTemplates) }
+      : {}),
+    ...(Array.isArray(config?.labelStyles) && config.labelStyles.length > 0
+      ? { labelStyles: resolveLabelStyles(config.labelStyles) }
+      : {}),
   };
   return applyPaletteToResolvedConfig(resolved, rawConfig?.colorPalette);
 }

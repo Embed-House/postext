@@ -1,4 +1,13 @@
 import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering';
+import type { LabelStyle, PageTemplate } from './composed/types';
+
+// Composed pages (#846): the config types live next to their resolver.
+export type {
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
+  PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
+  PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
+  ResolvedPageTemplate, ResolvedLabelStyle,
+} from './composed/types';
 
 /** @deprecated Legacy content-model resource used by the VDT renderer
  *  (`VDTBlock.resource`). The Resources-panel feature uses the newer
@@ -451,6 +460,20 @@ export interface ResourceAnchor {
   head?: { x: number; y: number };
   /** The face: a region no balloon covers. */
   face?: ResourceSafeArea;
+  // Label fields (composed pages, #846): a `::label` set at this anchor
+  // takes them unless it says otherwise. Comics ignore them.
+  /** The label's measure, a fraction of the picture's width. Unset: the
+   *  label's natural width. */
+  width?: number;
+  /** Which side of the label stands at (x, y): its start, its centre or
+   *  its end, in the label's direction. Default `'center'`. */
+  align?: 'start' | 'center' | 'end';
+  /** Which edge of the label stands at y. Default `'middle'`. */
+  verticalAlign?: 'top' | 'middle' | 'bottom';
+  /** Degrees, clockwise, around (x, y). Default 0. */
+  rotate?: number;
+  /** A `labelStyles` id. */
+  style?: string;
 }
 
 /** A user-managed resource instance. Binary payloads (bitmaps, SVGs) are
@@ -7356,6 +7379,14 @@ export interface PostextConfig {
   /** Comic pages (`:::page`): panel grid, panel and balloon styles,
    *  lettering, cast. */
   comics?: ComicsConfig;
+  /** Page templates (composed pages, #846): named frames, groups and
+   *  decoration that a `::::page{template="…"}` fence pours its Markdown
+   *  into, slot by slot. Validated (see `validatePageTemplates`): a
+   *  template's warnings carry a JSON-pointer `path`. */
+  pageTemplates?: PageTemplate[];
+  /** Named styles of the labels set at a picture's anchors (`::label`,
+   *  `ResourceAnchor.style`). */
+  labelStyles?: LabelStyle[];
 
   pdfGeneration?: PdfGenerationConfig;
 

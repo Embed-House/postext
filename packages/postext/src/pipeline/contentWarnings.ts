@@ -1018,6 +1018,45 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'cjkGridClamped':
       text = `${w.path}: ${w.value} ${w.path.endsWith('charsPerLine') ? 'characters per line' : 'lines'} do not fit inside the margins — the grid is set with ${w.used}`;
       break;
+    // Page templates (#853): `path` is a JSON pointer.
+    case 'templateDuplicate':
+      text = `${w.path}: another template already has the id "${w.value}" — this one is ignored`;
+      break;
+    case 'templateExtendsCycle':
+      text = `${w.path}: the templates extend each other in a loop (${w.value}) — the template is dropped`;
+      break;
+    case 'templateExtendsUnknown':
+      text = `${w.path}: no template has the id "${w.value}"${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the template stands alone`;
+      break;
+    case 'frameDuplicate':
+      text = `${w.path}: the name "${w.value}" is already taken by a frame or group of this template — this one is ignored`;
+      break;
+    case 'frameStyleUnknown':
+      text = `${w.path}: no callout style has the id "${w.value}"${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the frame is drawn without a box`;
+      break;
+    case 'frameAnchorUnknown':
+      text = w.value.includes(' → ')
+        ? `${w.path}: the frames are anchored to each other in a loop (${w.value}) — this anchor reads as the area`
+        : `${w.path}: the template has no frame, group or element "${w.value}"${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the anchor reads as the area`;
+      break;
+    case 'frameMinMax':
+      text = `${w.path}: ${w.value} — the frame takes ${w.used}`;
+      break;
+    case 'groupFrameUnknown':
+      text = `${w.path}: the template has no frame "${w.value}"${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the group skips it`;
+      break;
+    case 'groupFrameTwice':
+      text = `${w.path}: the frame "${w.value}" is already in a group — a frame belongs to one group, this listing is skipped`;
+      break;
+    case 'frameChainLoop':
+      text = `${w.path}: the frames continue into each other in a loop (${w.value}) — this link is dropped`;
+      break;
+    case 'overflowTargetUnknown':
+      text = `${w.path}: "${w.value}" names no frame or template${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the content does not continue there`;
+      break;
+    case 'labelStyleUnknown':
+      text = `${w.path}: an anchor of "${w.resourceId ?? ''}" names the label style "${w.value}", which labelStyles does not have${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — its labels take the default look`;
+      break;
     default:
       // A kind this build does not know (a VDT from a newer engine).
       text = `Warning "${(w as { kind: string }).kind}"`;

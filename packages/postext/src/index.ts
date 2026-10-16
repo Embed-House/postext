@@ -510,6 +510,7 @@ export type {
   BalanceLever,
   LayoutWarning,
   ConfigWarning,
+  PageTemplateWarningKind,
   CalloutOverflowWarning,
   ContentWarning,
   MissingImageWarning,
@@ -574,6 +575,22 @@ export type { NumeralStyle, NumberFormatStyle, EastAsianNumeralStyle, ArabicNume
 export { withDigits, asciiDigits } from './arabicNumerals';
 export { parseChineseNumeral } from './chineseNumerals';
 export { collectConfigWarnings } from './configWarnings';
+export type { ConfigWarningOptions } from './configWarnings';
+// Composed pages (#846): page templates and label styles (#853).
+export {
+  DEFAULT_FRAME, DEFAULT_FRAME_FIT, DEFAULT_FRAME_GROUP, DEFAULT_PAGE_TEMPLATE, DEFAULT_LABEL_STYLE,
+  resolvePageTemplate, normalizeFrame, normalizeFrameSize, templateChain, resolveLabelStyles,
+  stripPageTemplatesDefaults, stripLabelStylesDefaults,
+} from './composed/templates';
+export type { PageTemplateSource } from './composed/templates';
+export { validatePageTemplates } from './composed/validate';
+export type { ValidatePageTemplatesOptions } from './composed/validate';
+export type {
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
+  PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
+  PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
+  ResolvedPageTemplate, ResolvedLabelStyle,
+} from './composed/types';
 export type { MathRender, MathPath, MathViewBox } from './math/types';
 export { initMathEngine, isMathReady, onMathReady, renderMath, placeholderRender, clearMathCache } from './math';
 // The Rust line breaker compiled to WebAssembly (#779): the same breaks as

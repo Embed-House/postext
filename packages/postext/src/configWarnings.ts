@@ -30,6 +30,7 @@ import type {
   TabStop,
   ParagraphDropCap,
   DropCapLeadIn,
+  Resource,
 } from './types';
 import type { ConfigWarning, ResolvedConfig } from './vdt';
 import { parseNumberFormat } from './numbering';
@@ -49,6 +50,8 @@ import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops';
 import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap';
 import { outputProfileInfo } from './color/catalogue';
 import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle';
+import { closestKey } from './util/closestKey';
+import { validatePageTemplates } from './composed/validate';
 import { LINE_NUMBERS_ALIGNS, LINE_NUMBERS_COUNTS, LINE_NUMBERS_MULTI_COLUMN, LINE_NUMBERS_POSITIONS, LINE_NUMBERS_RESTARTS } from './defaults/lineNumbers';
 
 /** The format fields and the decimal spelling each falls back to. A
@@ -84,12 +87,35 @@ function percentText(n: number): string {
  * (`unknownConfigValue`: `direction`, the comics settings' words), and a `numerals` value that names
  * no digit system (`unknownNumerals`). Pure.
  */
-export function collectConfigWarnings(config: PostextConfig | undefined): ConfigWarning[] {
+export function collectConfigWarnings(config: PostextConfig | undefined, options: ConfigWarningOptions = {}): ConfigWarning[] {
   if (!config) return [];
   return [
     ...collectValueWarnings(config), ...collectSideColumnWarnings(config), ...collectColumnCountWarnings(config), ...collectUnknownKeyWarnings(config),
     ...collectCjkGridWarnings(config), ...collectChoiceWarnings(config), ...collectNumeralsWarnings(config),
+    ...collectPageTemplateWarnings(config, options),
   ];
+}
+
+/** What else the config checks may read. */
+export interface ConfigWarningOptions {
+  /** The book's resources: an anchor's label `style` is checked against
+   *  `labelStyles` (`labelStyleUnknown`). */
+  resources?: readonly Resource[];
+}
+
+/** Page templates and label styles (#853): see `validatePageTemplates`.
+ *  Lengths in different units are compared at the page's dpi, an em at
+ *  the body text's size. */
+function collectPageTemplateWarnings(config: PostextConfig, options: ConfigWarningOptions): ConfigWarning[] {
+  const overrides = config.htmlViewer?.overrides;
+  const any = config.pageTemplates !== undefined || config.labelStyles !== undefined
+    || overrides?.pageTemplates !== undefined || overrides?.labelStyles !== undefined
+    || (options.resources ?? []).some((r) => r.anchors?.some((a) => a.style !== undefined));
+  if (!any) return [];
+  const resolved = resolveAllConfig(config);
+  const dpi = resolved.page.dpi;
+  const baseFontSizePx = dimensionToPx(resolved.bodyText.fontSize, dpi, 16);
+  return validatePageTemplates(config, { resources: options.resources, dpi, baseFontSizePx });
 }
 
 /** Settings whose value is one of a few words: one written otherwise is
@@ -501,39 +527,6 @@ const BALLOON_STYLE_KEYS = {
 const CAST_KEYS = {
   id: true, name: true, balloonStyle: true, color: true, fill: true, fontFamily: true,
 } satisfies Record<keyof ComicCastMember, true>;
-
-/** Edit distance with transpositions (optimal string alignment), capped:
- *  anything above `max` returns `max + 1`. */
-function editDistance(a: string, b: string, max: number): number {
-  if (Math.abs(a.length - b.length) > max) return max + 1;
-  const d: number[][] = Array.from({ length: a.length + 1 }, (_, i) => [i, ...new Array<number>(b.length).fill(0)]);
-  for (let j = 1; j <= b.length; j++) d[0]![j] = j;
-  for (let i = 1; i <= a.length; i++) {
-    for (let j = 1; j <= b.length; j++) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      let v = Math.min(d[i - 1]![j]! + 1, d[i]![j - 1]! + 1, d[i - 1]![j - 1]! + cost);
-      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, d[i - 2]![j - 2]! + 1);
-      d[i]![j] = v;
-    }
-  }
-  return d[a.length]![b.length]!;
-}
-
-/** The known key (or word) `key` is a slip of: the same letters in another
- *  case, or one or two letters apart (a longer key allows two). */
-function closestKey(key: string, known: readonly string[]): string | undefined {
-  const lower = key.toLowerCase();
-  const sameCase = known.find((k) => k.toLowerCase() === lower);
-  if (sameCase) return sameCase;
-  const max = key.length >= 8 ? 2 : 1;
-  let best: string | undefined;
-  let bestD = max + 1;
-  for (const k of known) {
-    const dist = editDistance(lower, k.toLowerCase(), max);
-    if (dist < bestD) { best = k; bestD = dist; }
-  }
-  return best;
-}
 
 /**
  * Keys the heading settings do not have (EF-83), or a paragraph style

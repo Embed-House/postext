@@ -47,6 +47,8 @@ import type {
   ResolvedComicsConfig,
   ResolvedLineNumbersConfig,
   ResolvedCodeStyleConfig,
+  PageTemplate,
+  ResolvedLabelStyle,
 } from './types';
 import type { NumeralStyle } from './numbering';
 import type { MathRender } from './math/types';
@@ -147,6 +149,14 @@ export interface ResolvedConfig {
    *  resolved, when the config sets the section; absent otherwise (the
    *  defaults apply, `resolvedCodeStyle`). */
   codeStyle?: ResolvedCodeStyleConfig;
+  /** Page templates (`PostextConfig.pageTemplates`, #853) as written, when
+   *  the config sets any; absent otherwise, so a document without composed
+   *  pages resolves (and hashes) as before. Read one with
+   *  `resolvePageTemplate(config, id, { parity })`. */
+  pageTemplates?: PageTemplate[];
+  /** Label styles (`PostextConfig.labelStyles`, #853), resolved, when the
+   *  config sets any. */
+  labelStyles?: ResolvedLabelStyle[];
 }
 
 // ---------------------------------------------------------------------------
@@ -2564,8 +2574,37 @@ export interface ConfigWarning {
    *  document (#621), which gets no line numbers; `used` is `false`.
    *  `wrapUnsupported`: a resource type's `defaultPlacement.wrap` in a
    *  vertical document (#627), whose figures keep their bands whole;
-   *  `used` is `none`. */
-  kind: 'unknownNumberFormat' | 'fontFamilyStack' | 'sideColumnPercentClamped' | 'columnCountClamped' | 'unknownConfigKey' | 'cjkGridClamped' | 'unknownConfigValue' | 'unknownNumerals' | 'lineNumbersUnsupported' | 'wrapUnsupported';
+   *  `used` is `none`.
+   *
+   *  Page templates (`pageTemplates`, #853; see `validatePageTemplates`),
+   *  whose `path` is a JSON pointer (`/pageTemplates/3/frames/2/style`):
+   *  `templateDuplicate`: a second template with an id already taken; it
+   *  is ignored. `templateExtendsCycle`: a template whose `extends` chain
+   *  comes back to itself (`value` the chain, `a → b → a`); it is dropped.
+   *  `templateExtendsUnknown`: `extends` names no template; the template
+   *  stands alone. `frameDuplicate`: a second frame or group of one list
+   *  with a name already taken (or a group named like a frame); it is
+   *  ignored. `frameStyleUnknown`: a frame `style` no callout style has;
+   *  the frame is frameless. `frameAnchorUnknown`: a frame or group
+   *  anchored (`placement.anchor.to: '#x'`) to a frame or group the
+   *  template does not have, or a decoration element anchored to nothing
+   *  the template has, or anchors that form a loop (`value` the loop);
+   *  the anchor reads as `'container'`. `frameMinMax`: a minimum above its
+   *  maximum, or a fixed size outside them (`value` says which); the
+   *  minimum wins over the maximum and a fixed size is clamped between
+   *  them. `groupFrameUnknown`: a group lists a frame the template does
+   *  not have; it is skipped. `groupFrameTwice`: a frame listed in a
+   *  second group, or twice in one; the later listing is skipped.
+   *  `frameChainLoop`: frames whose `next` (or `overflow.continueIn:
+   *  '#frame'`) come back round (`value` the loop); the link that closes
+   *  it is dropped. `overflowTargetUnknown`: a `next`, an
+   *  `overflow.continueIn` or an `overflowTemplate` that names no frame or
+   *  template, or a `continueIn` in no form the engine knows; the content
+   *  does not continue there. `labelStyleUnknown`: a resource anchor's
+   *  `style` that no `labelStyles` entry has (`resourceId` names the
+   *  resource); the label takes the default look. */
+  kind: 'unknownNumberFormat' | 'fontFamilyStack' | 'sideColumnPercentClamped' | 'columnCountClamped' | 'unknownConfigKey' | 'cjkGridClamped' | 'unknownConfigValue' | 'unknownNumerals' | 'lineNumbersUnsupported' | 'wrapUnsupported'
+    | PageTemplateWarningKind;
   /** Where the value sits in the config, e.g.
    *  `orderedLists.levels[1].numberFormat`, `header.elements[0].fontFamily`,
    *  `headingStyles[2].layout.sideColumnPercent`. */
@@ -2578,9 +2617,28 @@ export interface ConfigWarning {
   used: string;
   /** `unknownConfigKey`: the known key the unknown one is closest to
    *  (another case, a letter or two apart), when there is one. Also on an
-   *  `unknownConfigValue` of a comics setting: the closest of its words. */
+   *  `unknownConfigValue` of a comics setting: the closest of its words,
+   *  and on a page-template warning that names an id or a name (a style,
+   *  a parent, a frame): the closest one that exists. */
   suggestion?: string;
+  /** `labelStyleUnknown`: the resource whose anchor names the style. */
+  resourceId?: string;
 }
+
+/** The kinds of {@link ConfigWarning} a page template gives (#853). */
+export type PageTemplateWarningKind =
+  | 'templateDuplicate'
+  | 'templateExtendsCycle'
+  | 'templateExtendsUnknown'
+  | 'frameDuplicate'
+  | 'frameStyleUnknown'
+  | 'frameAnchorUnknown'
+  | 'frameMinMax'
+  | 'groupFrameUnknown'
+  | 'groupFrameTwice'
+  | 'frameChainLoop'
+  | 'overflowTargetUnknown'
+  | 'labelStyleUnknown';
 
 /** Where a content warning points: the source range of the construct in
  *  the markdown given to the build (frontmatter included), and the page it

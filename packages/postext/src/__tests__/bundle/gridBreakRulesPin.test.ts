@@ -62,7 +62,7 @@ describe('pinLegacyGridBreakRules (#717)', () => {
   });
 
   it('pins every version before 12, none from 12', () => {
-    expect(CONFIG_VERSION).toBe(14);
+    expect(CONFIG_VERSION).toBe(15);
     for (const v of [undefined, 1, 5, 8, 10, 11]) {
       expect(rules(migrateConfig(grid('ja'), v)), String(v)).toEqual(ON);
     }
@@ -127,7 +127,7 @@ describe('a bundle keeps the break rules of its grid (#717)', () => {
     expect(rules(opened.config)).toEqual(ON);
     // Written again from what was read: stamped 14, the rules spelled out.
     const again = await createBundle({ name: 'Old', locale: 'ja', markdown: MD, config: opened.config });
-    expect(again.manifest.configVersion).toBe(14);
+    expect(again.manifest.configVersion).toBe(15);
     expect(again.manifest.config!.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host' });
     expect(rules((await openBundle(again.bytes)).config)).toEqual(ON);
   });

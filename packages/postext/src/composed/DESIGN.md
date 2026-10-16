@@ -32,9 +32,13 @@ pageTemplates: PageTemplate[]
 
 - `id` (required, unique), `name` (UI only).
 - `extends`: id of a template whose fields this one inherits. Merge is by key: scalar fields
-  replace; `frames` and `groups` merge **by name** (a frame with the same name overrides fields of
-  the parent's frame; `remove: true` drops it); `decoration.elements` merge by element `id`.
-  Cycles are an error (`templateExtendsCycle`) and the template is dropped.
+  replace (`header`/`footer` whole); `grid` merges key by key; `frames` and `groups` merge **by
+  name** (a frame with the same name overrides the fields it writes, `fit`/`overflow`/`padding`
+  key by key and `placement` whole; `remove: true` drops it; new names are appended);
+  `decoration.elements` merge by element `id` (new ids appended). `spread`, `gutter` and `role` are
+  inherited; `id`, `name`, `extends` are not. Cycles are an error (`templateExtendsCycle`) and the
+  template is dropped, with every template that extends into the loop. The first template with an
+  id is the one it means (`templateDuplicate` for the others).
 - `area`: the rectangle frame coordinates refer to: `'content'` (default, the page's content area,
   mirrored per parity like the flow), `'trim'` or `'bleed'`.
 - `grid` (optional): `{ columns, rows, columnGap, rowGap }` dividing `area`; frames may then be
@@ -42,7 +46,8 @@ pageTemplates: PageTemplate[]
 - `frames`, `groups`, `decoration`.
 - `header` / `footer`: a design slot, `false` to hide, unset to inherit the running section's.
 - `variants`: `{ recto?: TemplatePatch, verso?: TemplatePatch }`. The patch merges like `extends`
-  on the page of that parity. (Parity is the physical side, so left-to-right and right-to-left books
+  on the page of that parity, after the whole `extends` chain, the root's variant first; a spread
+  takes no variant. (Parity is the physical side, so left-to-right and right-to-left books
   both work.)
 - `spread: true`: the template describes a sheet of two facing pages. `area` spans both pages;
   `gutter` gives the spine band frames must respect or may cross (`crossGutter: true` on a frame).
@@ -78,6 +83,9 @@ interface FrameConfig {
   fit?: { shrinkText?: boolean, minScale?: number, scaleImages?: boolean, imageMinScale?: number }
   overflow?: { continueIn?: string, mark?: string | false }
   writingMode?, direction?      // as the page; for a vertical box on a horizontal page
+  optional?: boolean            // no slotEmpty warning
+  crossGutter?: boolean         // on a spread: may cross the spine band
+  remove?: boolean              // in a patch: drop the inherited frame
 }
 ```
 
@@ -99,15 +107,16 @@ fence: no slot attribute needed.
 ```ts
 interface FrameGroupConfig {
   name: string
-  kind: 'stack' | 'row'
-  frames: string[]          // order = order on the page (top→bottom, start→end)
+  kind?: 'stack' | 'row'     // default 'stack'
+  frames?: string[]          // order = order on the page (top→bottom, start→end)
   gap?: Dimension
   placement?, grid?          // the group's own box; default: union of its frames' declared boxes
   align?: 'start' | 'center' | 'end' | 'space-between'   // where spare space goes
 }
 ```
 
-A frame belongs to at most one group. Inside a group the frames' own `placement` y (stack) or x
+A frame belongs to at most one group. A group's name is distinct from every frame name (anchors
+name both as `'#name'`). Inside a group the frames' own `placement` y (stack) or x
 (row) is ignored: the group lays them out in order with `gap`. A group is itself a box that other
 frames may anchor to (`'#group'`).
 
@@ -160,7 +169,7 @@ they are fractions of the picture, mapped through the crop as `comicArtPointToPa
 Specified in #850: `toc.groups = { keepTogether, head: 'part' | 1…6, minEntriesAfterHead,
 continuation: { enabled, mark } }`, `:::toc{keep="part" levels="1-2"}`. Independent of templates.
 
-### 2.8 Checks
+### 2.8 Checks (#849, not part of P2)
 
 `checks.contentInConfig = { enabled?, allow?: string[], maxWords?: 2, maxChars?: 24 }` (#849).
 Literals allowed without warning: per element at most `maxWords` words and `maxChars` characters
@@ -176,8 +185,17 @@ warnings, shown by `postext check` and the Sandbox): `templateDuplicate`, `templ
 `templateExtendsUnknown`, `frameDuplicate`, `frameStyleUnknown`, `frameAnchorUnknown` (anchor to a
 frame or group that does not exist, or a cycle of anchors), `frameMinMax` (min > max, fixed size
 outside min/max), `groupFrameUnknown`, `groupFrameTwice`, `frameChainLoop` (`next` cycle),
-`overflowTargetUnknown`, `labelStyleUnknown`. Every warning carries the config path
-(`/pageTemplates/3/frames/2`).
+`overflowTargetUnknown`, `labelStyleUnknown`. Every warning carries the config path as a JSON
+pointer: the entry for a duplicate (`/pageTemplates/3/frames/2`), the field at fault otherwise
+(`/pageTemplates/3/frames/2/style`, `/pageTemplates/3/variants/recto/frames/0/next`), in the
+template that wrote the field when it was inherited; `labelStyleUnknown` points into the resources
+(`/resources/4/anchors/0/style`, with `resourceId`). `frameAnchorUnknown` also covers decoration
+elements anchored to nothing the template has. Unknown keys and words of templates, frames, groups,
+grids, `fit`, `overflow`, variants and label styles give `unknownConfigKey`/`unknownConfigValue`.
+`resolvePageTemplate` applies the same fixes the warnings describe (anchor → `'container'`, broken
+`next`/`continueIn` dropped, unknown group members skipped, unknown style → frameless), so the
+layout never meets a dangling reference; min/max contradictions are left to the layout (min wins,
+a fixed size is clamped).
 
 `configVersion` goes from 14 to 15. Nothing older changes meaning, so the migration is a no-op;
 the bump marks bundles that may hold templates so an older reader can warn.

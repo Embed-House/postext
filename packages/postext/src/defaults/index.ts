@@ -29,6 +29,7 @@ import { stripCitationsDefaults } from './citations';
 import { stripIndexDefaults } from './indexConfig';
 import { stripCjkDefaults } from './cjk';
 import { comicReadingDirection, stripComicsDefaults } from './comics';
+import { stripLabelStylesDefaults, stripPageTemplatesDefaults } from '../composed/templates';
 import { stripLineNumbersDefaults } from './lineNumbers';
 import { stripCodeStyleDefaults } from './codeStyle';
 import { presentTag } from '../locale';
@@ -302,6 +303,20 @@ export function stripConfigDefaults(config: PostextConfig): PostextConfig {
     result.comics = {};
   } else {
     delete result.comics;
+  }
+  // Page templates are kept as written (a child's restated default
+  // overrides its parent's); label styles drop their defaults.
+  const strippedTemplates = stripPageTemplatesDefaults(config.pageTemplates);
+  if (strippedTemplates) {
+    result.pageTemplates = strippedTemplates;
+  } else {
+    delete result.pageTemplates;
+  }
+  const strippedLabelStyles = stripLabelStylesDefaults(config.labelStyles);
+  if (strippedLabelStyles) {
+    result.labelStyles = strippedLabelStyles;
+  } else {
+    delete result.labelStyles;
   }
   // `'auto'` is the default direction.
   if (result.direction === 'auto') delete result.direction;

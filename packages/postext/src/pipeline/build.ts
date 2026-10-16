@@ -8637,7 +8637,7 @@ export function* buildDocumentGen(
   // Config values the build replaced (an unknown number format, a font
   // stack, a side column no column width can take): walked once per build,
   // not per pass — they belong to no page.
-  const configWarnings = collectConfigWarnings(config);
+  const configWarnings = collectConfigWarnings(config, { resources: content.resources });
   if (configWarnings.length > 0) doc.configWarnings = configWarnings;
   return doc;
 }
