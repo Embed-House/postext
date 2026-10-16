@@ -1,0 +1,69 @@
+---
+title: "Activity book with boxes that grow"
+summary: "A science activity book on page templates: boxes in a stack grow with their text, answer lines sit on empty frames, a project goes on overleaf."
+plain: "Five pages of a children's science workbook about water. Each question has a coloured box with lines below it. A longer question makes its box taller and moves the rest down. A long project goes on overleaf."
+description: "An activity book in Postext: composed pages whose boxes grow with their text, ruled answer lines on empty frames, and a project continued on an added page."
+question: "How do I make activity boxes grow with their text and carry a long one over to the next page?"
+aliases: ["activity book", "workbook", "worksheet", "answer lines", "writing lines", "lines to write on", "growing boxes", "continued on next page", "page template", "composed page", "fill in the blanks", "tick boxes"]
+pageNotes: { "1": "The cover: a flat drawing of the water cycle runs to the edges over the top two thirds, with a sun, two clouds, rain on a green hill with a snowy peak, a river and a blue sea with dashed white arrows of vapour rising. Below it, the title Water on the move in large blue letters, the series line and a ruled line for the child's name.", "4": "The project page: a blue title band, a short introduction beside a drawing of a cut bottle with a ruler, a cream You will need box and a white Step by step box with an orange border holding seven numbered steps; at its foot the word Continued, in italics.", "5": "The added page: the same unit line at the head, the rest of the steps box (the week's record with a blank for each day and a Think question), then a blue heading, What I noticed, over six ruled lines." }
+---
+
+## What you'll build
+
+Five pages of *Water on the move*, unit 3 of an invented Year 4 science activity book, on a 210 × 280 mm page. A flat drawing of the water cycle fills the cover to the bleed, over a 54 pt title and a line for the child's name. Each sheet is the same page template: a unit line, a blue title band, a short text beside a drawing, then three activity boxes in pale blue with a numbered tab. Ruled lines for the answers sit under the first and the third box. The boxes are as tall as their text, so the French sheet, a line longer here and there, pushes its lines further down the page than the English one, and no position in the template changes. The project, a rain gauge made from a bottle, has more steps than one page holds: its box stops at the foot with *Continued* and goes on at the head of an added page, followed by six lines for the child's notes. Every word, the tabs and the notes heading included, is in the Markdown.
+
+## Method
+
+### 1 · Pour each activity into its box by name
+
+The template is [the short answer](#the-short-answer) above. In the Markdown, a sheet is one `::::page` fence: the first heading goes to the frame that `takes: 'h1'`, the paragraph to the flow frame, and each `:::frame{slot="…"}` to the frame of that name, with its tab words in `label`. The answer frames get nothing, which is why they are `optional: true`: an empty frame would otherwise raise `slotEmpty`. A drawing activity keeps its own blank room inside its box with `:::space{lines=3}`, since how much room a drawing needs is part of the question.
+
+```md
+:::frame{slot="act-1" label="1 · Read and answer"}
+Tom lives in Leeds. The water from his tap comes from a reservoir in the hills…
+:::
+```
+
+### 2 · Let the stack move the lines with the boxes
+
+Each box has a `minHeight` of 22 mm, the height it is drawn at, and an `auto` height above that. The group lays its five frames one under another with 4.5 mm between them, from where `act-1` is placed under the text, so a taller box moves everything after it. The ruled lines are rules of the decoration anchored to their empty frame (`#lineas-1`), and decoration that follows a frame moves with it. Give the answer frames a `minHeight` equal to their height: when a group runs short of room, the [reflow ladder](/en/docs/composed-pages#when-it-still-does-not-fit) takes space back from the frames of the group down to their minimum, and an empty frame's minimum is otherwise nothing, which would leave the lines lying on the next box.
+
+### 3 · Carry the project over the page
+
+<Excerpt region="continue" />
+
+The steps box has no fixed height: it is as tall as its text and stops at the foot of the area. `fit: { shrinkText: false }` keeps the ladder from setting the steps at 90 % to squeeze them in, so the box is cut between two lines at full size, ends with the language's mark (*Continúa*, *Continued*, *À suivre*, from `locale`) and goes on in the frame of the same name on a page of `proyecto-sigue` ([when the text continues](/en/docs/composed-pages#when-the-text-continues)). The added page draws the notes lines under the rest of the box, with the heading that the fence names in `notas="What I noticed"`, so the words stay in the Markdown and change with each edition.
+
+### 4 · Draw the cover to the bleed
+
+<Excerpt region="cover" />
+
+The cover is a composed page too: its picture is decoration anchored to the bleed, and its title, series line and name field are a stack that starts 162 mm down the type area. The name field's rule is anchored to the bottom of its frame, so a two-line name label in another language would keep the line under the words. `header: false` and `footer: false` keep the folio off the cover.
+
+## Variations
+
+### Give an activity more lines
+
+The number of lines is the answer frame's height and the rules drawn over it. Change both in the template, and every sheet that uses it gets the lines.
+
+```diff
+-    answer('lineas-1', 3),
++    answer('lineas-1', 5),
+…
+-  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
++  decoration: { elements: [kicker, ...ruled('lineas-1', 5), ...ruled('lineas-3', 2)] },
+```
+
+### Let the steps shrink before they continue
+
+Without `shrinkText: false`, the ladder first sets the steps smaller, down to `fit.minScale` (90 %), and continues only if that is not enough. For a child's book the type size matters more than one page saved.
+
+```diff
+-      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
++      overflow: { continueIn: 'next-page' } },
+```
+
+## Pitfalls
+
+- A frame that receives nothing raises `slotEmpty` unless it is `optional: true`. Every answer frame here is one.
+- A box in a stack is placed by the group, not by its own `placement`, except the first one: place the first box of the group, or the stack starts at the top of the area, over the title.

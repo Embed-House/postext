@@ -1,0 +1,69 @@
+---
+title: "Caderno de atividades com boxes que crescem"
+summary: "Um caderno de ciências feito com modelos: os boxes de uma pilha crescem com o texto, as linhas ficam em quadros vazios e o projeto continua na página seguinte."
+plain: "Cinco páginas de um caderno de ciências para crianças sobre a água. Cada pergunta tem um boxe colorido com linhas embaixo. Se a pergunta é mais longa, o boxe cresce e empurra o resto para baixo. O projeto continua na página seguinte."
+description: "Um caderno de atividades no Postext: boxes que crescem com o texto, linhas de resposta em quadros vazios e um projeto que continua numa página acrescentada."
+question: "Como faço os boxes de atividade crescerem com o texto e um boxe longo continuar na página seguinte?"
+aliases: ["caderno de atividades", "caderno de exercícios", "ficha", "folha de atividades", "linhas para escrever", "pauta", "boxes que crescem", "continua na próxima página", "modelo de página", "página composta", "complete as frases", "caixas de seleção"]
+pageNotes: { "1": "A capa: um desenho chapado do ciclo da água ocupa os dois terços de cima até as bordas, com um sol, duas nuvens, chuva sobre um morro verde de pico nevado, um rio e um mar azul de onde sobem setas brancas tracejadas de vapor. Embaixo, o título Water on the move em letras azuis grandes, a linha da coleção e uma linha para o nome da criança.", "4": "A página do projeto: uma faixa azul com o título, uma introdução curta ao lado do desenho de uma garrafa cortada com uma régua, um boxe creme You will need e um boxe branco Step by step com borda laranja e sete passos numerados; no pé, a palavra Continued, em itálico.", "5": "A página acrescentada: no alto a mesma linha da unidade, o resto do boxe dos passos (o registro da semana com um espaço por dia e a pergunta Think) e depois um título azul, What I noticed, sobre seis linhas." }
+---
+
+## O que você vai compor
+
+Cinco páginas de *Water on the move*, a unidade 3 de um caderno de ciências inventado para o 4.º ano, em 210 × 280 mm. Na capa, um desenho chapado do ciclo da água vai até a sangria, sobre um título de 54 pt e uma linha para o nome. Todas as fichas saem do mesmo modelo de página: a linha da unidade, uma faixa azul com o título, um texto curto ao lado de um desenho e três boxes de atividade em azul-claro com uma aba numerada. Embaixo do primeiro e do terceiro boxe ficam as linhas para responder. Cada boxe tem a altura do seu texto, então a ficha francesa, uma linha mais longa aqui e ali, desce suas linhas mais que a inglesa sem que mude nenhuma posição do modelo. O projeto, um pluviômetro feito com uma garrafa, tem mais passos do que cabem numa página: o boxe para no pé com *Continued* e continua no alto de uma página acrescentada, seguido de seis linhas para as observações. Todas as palavras, inclusive as das abas e o título das observações, estão no Markdown.
+
+## Preparo
+
+### 1 · Despeje cada atividade no seu boxe pelo nome
+
+O modelo é [a resposta curta](#a-resposta-curta) acima. No Markdown, cada ficha é uma cerca `::::page`: o primeiro título vai para o quadro que tem `takes: 'h1'`, o parágrafo para o quadro de fluxo e cada `:::frame{slot="…"}` para o quadro com esse nome, com as palavras da aba em `label`. Os quadros de resposta não recebem nada e por isso levam `optional: true`: um quadro vazio daria o aviso `slotEmpty`. Uma atividade de desenho guarda o seu espaço em branco dentro do próprio boxe com `:::space{lines=3}`, porque o espaço que o desenho pede faz parte do enunciado.
+
+```md
+:::frame{slot="act-1" label="1 · Read and answer"}
+Tom lives in Leeds. The water from his tap comes from a reservoir in the hills…
+:::
+```
+
+### 2 · Deixe a pilha mover as linhas junto com os boxes
+
+Cada boxe tem um `minHeight` de 22 mm, a altura em que está desenhado, e acima disso uma altura `auto`. O grupo coloca os cinco quadros um embaixo do outro, a 4,5 mm, a partir do lugar onde `act-1` fica sob o texto, de modo que um boxe mais alto desce tudo o que vem depois. As linhas são fios da decoração ancorados ao seu quadro vazio (`#lineas-1`), e a decoração que segue um quadro se move com ele. Dê aos quadros de resposta um `minHeight` igual à sua altura: quando um grupo fica sem espaço, a [escada de reajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) recupera espaço dos quadros do grupo até o mínimo de cada um, e o mínimo de um quadro vazio é zero; as linhas acabariam em cima do boxe seguinte.
+
+### 3 · Leve o projeto para a página seguinte
+
+<Excerpt region="continue" />
+
+O boxe dos passos não tem altura fixa: tem a altura do seu texto e para no pé da área. `fit: { shrinkText: false }` impede a escada de compor os passos a 90 % para que caibam, então o boxe é cortado entre duas linhas em corpo cheio, termina com a marca do idioma (*Continúa*, *Continued*, *À suivre*, conforme `locale`) e continua no quadro de mesmo nome de uma página de `proyecto-sigue` ([quando o texto continua](/pt/docs/composed-pages#quando-o-texto-continua)). A página acrescentada desenha as linhas das observações sob o resto do boxe, com o título que a cerca dá em `notas="What I noticed"`; assim as palavras ficam no Markdown e mudam em cada edição.
+
+### 4 · Desenhe a capa até a sangria
+
+<Excerpt region="cover" />
+
+A capa também é uma página composta: o desenho é decoração ancorada à sangria, e o título, a linha da coleção e o campo do nome formam uma pilha que começa 162 mm abaixo do topo da área. O fio do nome fica ancorado ao pé do seu quadro, de modo que um rótulo que ocupe duas linhas em outro idioma mantém a linha embaixo das palavras. `header: false` e `footer: false` deixam a capa sem fólio.
+
+## Variações
+
+### Dê mais linhas a uma atividade
+
+O número de linhas é a altura do quadro de resposta e os fios desenhados sobre ele. Mude as duas coisas no modelo, e todas as fichas que o usam terão essas linhas.
+
+```diff
+-    answer('lineas-1', 3),
++    answer('lineas-1', 5),
+…
+-  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
++  decoration: { elements: [kicker, ...ruled('lineas-1', 5), ...ruled('lineas-3', 2)] },
+```
+
+### Deixe os passos diminuírem antes de continuar
+
+Sem `shrinkText: false`, a escada primeiro compõe os passos menores, até `fit.minScale` (90 %), e só os leva a outra página se isso não bastar. Num livro para crianças, o corpo da letra importa mais do que uma página a menos.
+
+```diff
+-      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
++      overflow: { continueIn: 'next-page' } },
+```
+
+## Erros comuns
+
+- Um quadro que não recebe nada dá o aviso `slotEmpty` se não tiver `optional: true`. Aqui todos os quadros de resposta têm.
+- Numa pilha, quem posiciona os boxes é o grupo, não o `placement` de cada um, exceto o primeiro: posicione o primeiro boxe do grupo, ou a pilha começa no alto da área, em cima do título.

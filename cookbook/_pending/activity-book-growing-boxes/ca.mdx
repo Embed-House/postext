@@ -1,0 +1,69 @@
+---
+title: "Quadern d’activitats amb requadres que creixen"
+summary: "Un quadern de ciències fet amb plantilles: els requadres d’una pila creixen amb el text, les línies van en marcs buits i el projecte passa de pàgina."
+plain: "Cinc pàgines d’un quadern de ciències sobre l’aigua. Cada pregunta va en un requadre amb línies a sota. Si la pregunta és més llarga, el requadre creix i baixa la resta. Un projecte llarg continua a la pàgina següent."
+description: "Un quadern d’activitats a Postext: requadres que creixen amb el text, línies de resposta en marcs buits i un projecte que continua en una altra pàgina."
+question: "Com faig que els requadres d’activitat creixin amb el text i que un de llarg continuï a la pàgina següent?"
+aliases: ["quadern d’activitats", "quadern d’exercicis", "fitxa", "fitxa de treball", "línies per escriure", "pauta", "requadres que creixen", "continua a la pàgina següent", "plantilla de pàgina", "pàgina composta", "omplir buits", "caselles"]
+pageNotes: { "1": "La coberta: un dibuix pla del cicle de l’aigua arriba fins a les vores en els dos terços de dalt, amb un sol, dos núvols, pluja sobre una muntanya verda de cim nevat, un riu i un mar blau del qual pugen fletxes blanques discontínues de vapor. A sota, el títol El agua, de viaje en lletres blaves grans, la línia de la col·lecció i una línia per al nom de l’alumne.", "4": "La pàgina del projecte: una banda blava amb el títol, una introducció breu al costat del dibuix d’una ampolla tallada amb un regle, un requadre crema Necesitas i un requadre blanc Paso a paso amb vora taronja i set passos numerats; al peu, la paraula Continúa, en cursiva.", "5": "La pàgina afegida: la mateixa línia de la unitat a dalt, la resta del requadre dels passos (el registre de la setmana amb un buit per dia i la pregunta Piensa) i després un títol blau, Mis observaciones, sobre sis línies." }
+---
+
+## Què compondràs
+
+Cinc pàgines d’*El agua, de viaje*, la unitat 3 d’un quadern de Ciències de la Natura inventat per a 4t de Primària, en 210 × 280 mm. A la coberta, un dibuix pla del cicle de l’aigua arriba fins a la sang, sobre un títol de 54 pt i una línia per al nom. Totes les fitxes surten de la mateixa plantilla de pàgina: la línia de la unitat, una banda blava amb el títol, un text breu al costat d’un dibuix i tres requadres d’activitat en blau pàl·lid amb una pestanya numerada. Sota el primer i el tercer requadre hi ha les línies per respondre. Cada requadre fa el que fa el seu text, així que la fitxa francesa, una línia més llarga aquí i allà, baixa les línies més que l’anglesa sense que canviï cap posició de la plantilla. El projecte, un pluviòmetre fet amb una ampolla, té més passos dels que caben en una pàgina: el requadre es talla al peu amb *Continúa* i continua a dalt d’una pàgina afegida, amb sis línies per a les observacions. Totes les paraules, també les de les pestanyes i el títol de les observacions, són al Markdown.
+
+## Elaboració
+
+### 1 · Aboca cada activitat al seu requadre pel nom
+
+La plantilla és [la resposta curta](#la-resposta-curta) de dalt. Al Markdown, cada fitxa és una tanca `::::page`: el primer títol va al marc que té `takes: 'h1'`, el paràgraf al marc de flux i cada `:::frame{slot="…"}` al marc d’aquest nom, amb les paraules de la pestanya a `label`. Els marcs de resposta no reben res, i per això porten `optional: true`: un marc buit donaria l’avís `slotEmpty`. Una activitat de dibuix guarda el seu espai en blanc dins el mateix requadre amb `:::space{lines=3}`, perquè l’espai que necessita el dibuix forma part de la pregunta.
+
+```md
+:::frame{slot="act-1" label="1 · Lee y contesta"}
+Marta vive en Zaragoza. El agua de su grifo sale del río Ebro…
+:::
+```
+
+### 2 · Deixa que la pila mogui les línies amb els requadres
+
+Cada requadre té un `minHeight` de 22 mm, l’alçada a què està dibuixat, i per sobre una alçada `auto`. El grup col·loca els cinc marcs l’un sota l’altre, a 4,5 mm, a partir del lloc on `act-1` es col·loca sota el text, de manera que un requadre més alt baixa tot el que el segueix. Les línies són filets de la decoració ancorats al seu marc buit (`#lineas-1`), i la decoració que segueix un marc es mou amb ell. Dona als marcs de resposta un `minHeight` igual a la seva alçada: quan un grup es queda sense lloc, l’[escala de reajustament](/ca/docs/composed-pages#quan-tot-i-així-no-hi-cap) recupera espai dels marcs del grup fins al seu mínim, i el mínim d’un marc buit és res, amb la qual cosa les línies quedarien damunt del requadre següent.
+
+### 3 · Porta el projecte a la pàgina següent
+
+<Excerpt region="continue" />
+
+El requadre dels passos no té alçada fixa: fa el que fa el seu text i s’atura al peu de l’àrea. `fit: { shrinkText: false }` impedeix que l’escala compongui els passos al 90 % perquè hi càpiguen, així que el requadre es talla entre dues línies a cos complet, acaba amb la marca de la llengua (*Continúa*, *Continued*, *À suivre*, segons `locale`) i continua al marc del mateix nom d’una pàgina de `proyecto-sigue` ([quan el text continua](/ca/docs/composed-pages#quan-el-text-continua)). La pàgina afegida dibuixa les línies de les observacions sota la resta del requadre, amb el títol que la tanca dona a `notas="Mis observaciones"`, de manera que les paraules són al Markdown i canvien amb cada edició.
+
+### 4 · Dibuixa la coberta fins a la sang
+
+<Excerpt region="cover" />
+
+La coberta també és una pàgina composta: el dibuix és decoració ancorada a la sang, i el títol, la línia de la col·lecció i el camp del nom formen una pila que comença 162 mm per sota de la caixa. El filet del nom va ancorat al peu del seu marc, de manera que una etiqueta que ocupi dues línies en una altra llengua manté la línia sota les paraules. `header: false` i `footer: false` deixen la coberta sense foli.
+
+## Variants
+
+### Dona més línies a una activitat
+
+El nombre de línies és l’alçada del marc de resposta i els filets que s’hi dibuixen a sobre. Canvia les dues coses a la plantilla i totes les fitxes que la fan servir tindran aquestes línies.
+
+```diff
+-    answer('lineas-1', 3),
++    answer('lineas-1', 5),
+…
+-  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
++  decoration: { elements: [kicker, ...ruled('lineas-1', 5), ...ruled('lineas-3', 2)] },
+```
+
+### Deixa que els passos es redueixin abans de continuar
+
+Sense `shrinkText: false`, l’escala primer compon els passos més petits, fins a `fit.minScale` (90 %), i només els porta a una altra pàgina si això no n’hi ha prou. En un llibre per a infants importa més el cos de la lletra que estalviar una pàgina.
+
+```diff
+-      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
++      overflow: { continueIn: 'next-page' } },
+```
+
+## Errors freqüents
+
+- Un marc que no rep res dona l’avís `slotEmpty` si no porta `optional: true`. Aquí el porten tots els marcs de resposta.
+- En una pila, el grup col·loca els requadres i no el seu propi `placement`, llevat del primer: col·loca el primer requadre del grup, o la pila començarà a dalt de l’àrea, damunt del títol.

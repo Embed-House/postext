@@ -1,0 +1,69 @@
+---
+title: "Cahier d’activités aux encadrés qui s’agrandissent"
+summary: "Un cahier de sciences fait de gabarits : les encadrés d’une pile grandissent avec leur texte, les lignes sont sur des blocs vides, le projet a sa suite."
+plain: "Cinq pages d’un cahier de sciences pour enfants sur l’eau. Chaque question a son encadré, avec des lignes dessous. Une question plus longue agrandit son encadré et pousse le reste vers le bas. Le projet continue page suivante."
+description: "Un cahier d’activités dans Postext : encadrés qui grandissent avec leur texte, lignes de réponse sur des blocs vides et projet poursuivi sur une page ajoutée."
+question: "Comment faire grandir les encadrés d’activité avec leur texte et poursuivre le plus long page suivante ?"
+aliases: ["cahier d’activités", "cahier d’exercices", "fiche d’exercices", "lignes d’écriture", "lignes pour répondre", "encadrés qui grandissent", "suite page suivante", "à suivre", "gabarit de page", "page composée", "texte à trous", "cases à cocher"]
+pageNotes: { "1": "La couverture : un dessin en aplats du cycle de l’eau occupe les deux tiers supérieurs jusqu’aux bords, avec un soleil, deux nuages, de la pluie sur une colline verte au sommet enneigé, une rivière et une mer bleue d’où montent des flèches blanches en pointillé. Dessous, le titre L’eau en voyage en grandes lettres bleues, la ligne de la collection et une ligne pour le nom de l’élève.", "4": "La page du projet : un bandeau bleu avec le titre, une courte introduction à côté du dessin d’une bouteille coupée avec une règle, un encadré crème Il te faut et un encadré blanc Étape par étape bordé d’orange avec sept étapes numérotées ; au pied, la mention À suivre, en italique.", "5": "La page ajoutée : la même ligne d’unité en tête, la fin de l’encadré des étapes (le relevé de la semaine avec un blanc par jour et la question Réfléchis), puis un titre bleu, Mes observations, sur six lignes." }
+---
+
+## Ce que vous allez composer
+
+Cinq pages de *L’eau en voyage*, l’unité 3 d’un cahier de sciences inventé pour le CM1, au format 210 × 280 mm. Sur la couverture, un dessin en aplats du cycle de l’eau va jusqu’au fond perdu, au-dessus d’un titre de 54 pt et d’une ligne pour le nom. Chaque fiche sort du même gabarit de page : la ligne de l’unité, un bandeau bleu pour le titre, un court texte à côté d’un dessin, puis trois encadrés d’activité bleu pâle avec un onglet numéroté. Des lignes pour répondre suivent le premier et le troisième encadré. Chaque encadré est aussi haut que son texte : la fiche française, plus longue d’une ligne ici et là, descend ses lignes plus bas que la fiche anglaise, sans qu’aucune position du gabarit change. Le projet, un pluviomètre fait d’une bouteille, compte plus d’étapes qu’une page n’en contient : son encadré s’arrête au pied avec *À suivre* et reprend en tête d’une page ajoutée, suivi de six lignes pour les observations. Tous les mots, ceux des onglets et du titre des observations compris, sont dans le Markdown.
+
+## Préparation
+
+### 1 · Verser chaque activité dans son encadré par son nom
+
+Le gabarit est [la réponse courte](#la-réponse-courte) ci-dessus. Dans le Markdown, une fiche est un bloc `::::page` : le premier titre va au bloc qui a `takes: 'h1'`, le paragraphe au bloc de flux, et chaque `:::frame{slot="…"}` au bloc de ce nom, avec les mots de l’onglet dans `label`. Les blocs de réponse ne reçoivent rien, d’où leur `optional: true` : un bloc vide lèverait sinon l’avertissement `slotEmpty`. Une activité de dessin garde son espace blanc dans son propre encadré avec `:::space{lines=3}`, parce que la place qu’il faut pour dessiner fait partie de la consigne.
+
+```md
+:::frame{slot="act-1" label="1 · Lis et réponds"}
+Léa habite à Lyon. L’eau de son robinet est pompée dans la nappe qui longe le Rhône…
+:::
+```
+
+### 2 · Laisser la pile déplacer les lignes avec les encadrés
+
+Chaque encadré a un `minHeight` de 22 mm, la hauteur à laquelle il est dessiné, et au-delà une hauteur `auto`. Le groupe pose ses cinq blocs l’un sous l’autre, à 4,5 mm d’écart, à partir de l’endroit où `act-1` est placé sous le texte : un encadré plus haut fait descendre tout ce qui le suit. Les lignes sont des filets du décor ancrés à leur bloc vide (`#lineas-1`), et un élément du décor qui suit un bloc se déplace avec lui. Donnez aux blocs de réponse un `minHeight` égal à leur hauteur : quand un groupe manque de place, l’[échelle de recomposition](/fr/docs/composed-pages#quand-le-contenu-ne-tient-toujours-pas) reprend de l’espace aux blocs du groupe jusqu’à leur minimum, et le minimum d’un bloc vide est nul ; les lignes finiraient alors sur l’encadré suivant.
+
+### 3 · Faire passer le projet à la page suivante
+
+<Excerpt region="continue" />
+
+L’encadré des étapes n’a pas de hauteur fixe : il est aussi haut que son texte et s’arrête au pied de la zone. `fit: { shrinkText: false }` empêche l’échelle de composer les étapes à 90 % pour les faire tenir ; l’encadré est donc coupé entre deux lignes, en corps plein, se termine par la mention de la langue (*Continúa*, *Continued*, *À suivre*, selon `locale`) et reprend dans le bloc du même nom d’une page de `proyecto-sigue` ([quand le texte se poursuit](/fr/docs/composed-pages#quand-le-texte-se-poursuit)). La page ajoutée trace les lignes des observations sous la fin de l’encadré, avec le titre que le bloc de page donne dans `notas="Mes observations"` : les mots restent dans le Markdown et changent avec chaque édition.
+
+### 4 · Dessiner la couverture jusqu’au fond perdu
+
+<Excerpt region="cover" />
+
+La couverture est elle aussi une page composée : son dessin est un élément du décor ancré au fond perdu, et le titre, la ligne de la collection et le champ du nom forment une pile qui commence 162 mm sous le haut de la zone. Le filet du nom est ancré au pied de son bloc : une étiquette qui tiendrait sur deux lignes dans une autre langue garde la ligne sous les mots. `header: false` et `footer: false` retirent le folio de la couverture.
+
+## Variantes
+
+### Donner plus de lignes à une activité
+
+Le nombre de lignes, c’est la hauteur du bloc de réponse et les filets tracés dessus. Changez les deux dans le gabarit, et toutes les fiches qui l’utilisent auront ces lignes.
+
+```diff
+-    answer('lineas-1', 3),
++    answer('lineas-1', 5),
+…
+-  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
++  decoration: { elements: [kicker, ...ruled('lineas-1', 5), ...ruled('lineas-3', 2)] },
+```
+
+### Laisser les étapes rapetisser avant de continuer
+
+Sans `shrinkText: false`, l’échelle compose d’abord les étapes plus petit, jusqu’à `fit.minScale` (90 %), et ne les envoie sur une autre page que si cela ne suffit pas. Dans un livre pour enfants, le corps du texte compte plus qu’une page économisée.
+
+```diff
+-      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
++      overflow: { continueIn: 'next-page' } },
+```
+
+## Erreurs fréquentes
+
+- Un bloc qui ne reçoit rien lève `slotEmpty` s’il n’a pas `optional: true`. Ici, tous les blocs de réponse l’ont.
+- Dans une pile, c’est le groupe qui place les encadrés, pas leur propre `placement`, sauf pour le premier : placez le premier encadré du groupe, sinon la pile commence en haut de la zone, par-dessus le titre.
