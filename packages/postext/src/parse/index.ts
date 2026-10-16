@@ -33,6 +33,10 @@ export type {
   InlineDirection,
   InlineSideline,
   InlineKunten,
+  ComposedPageFence,
+  BlockSlot,
+  FigureInfo,
+  FigureLabel,
 } from './types';
 export { MATH_PLACEHOLDER } from './inlineMath';
 export { REF_PLACEHOLDER, SWATCH_PLACEHOLDER, CHIP_PLACEHOLDER, extractInlineSwatches, injectSwatchSpans, extractInlineChips, injectChipSpans } from './inlineFormatting';

@@ -559,6 +559,13 @@ export { findAnnotations } from './parse/annotations';
 export type { FoundAnnotation, AnnotationName } from './parse/annotations';
 export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse';
 export { parseMarkdownWithIssues, MATH_PLACEHOLDER, SWATCH_PLACEHOLDER, CHIP_PLACEHOLDER, KNOWN_DIRECTIVES, KNOWN_CONTAINERS, spaceDirectiveLines, MAX_SPACE_LINES } from './parse';
+// Composed pages in the document (#854): each `::::page` fence's content by
+// slot, and the slot checks the content warnings run.
+export { composedPages } from './composed/document';
+export type { ParsedComposedPage, HeadingTake } from './composed/document';
+export { checkComposedSlots } from './composed/slotChecks';
+export type { ComposedSlotWarning } from './composed/slotChecks';
+export type { ComposedPageFence, BlockSlot, FigureInfo, FigureLabel } from './parse';
 export { computeSourceMap, parseInlineSnippetSpans, mapInlineSnippet, orientationMarkAt, contentHasMath, resourceHasMath } from './parse';
 export type { OrientationMark } from './parse';
 export type { InlineSnippetMapping } from './parse';

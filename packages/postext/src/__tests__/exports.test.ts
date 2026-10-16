@@ -587,6 +587,8 @@ describe("package exports", () => {
       "KNOWN_CONTAINERS",
       "spaceDirectiveLines",
       "MAX_SPACE_LINES",
+      "composedPages",
+      "checkComposedSlots",
       "computeSourceMap",
       "parseInlineSnippetSpans",
       "mapInlineSnippet",

@@ -2640,6 +2640,22 @@ export type ContentWarning = ContentWarningBase & (
    *  the group takes the default (`'parallel'` with `breaks`, `'snake'`
    *  without). */
   | { kind: 'columnsFlowUnknown'; value: string }
+  /** A composed page (`::::page{template=…}`, #854) names a template no
+   *  `pageTemplates` entry has (or names none). Until templates are laid
+   *  out its content is set in the flow, on pages of its own. */
+  | { kind: 'templateUnknown'; template: string; fenceIndex: number }
+  /** Content of a composed page names a slot (`slot="…"`,
+   *  `:::frame{slot=…}`) that is no frame of the page's template: it goes
+   *  to the template's flow frame. */
+  | { kind: 'slotUnknown'; template: string; slot: string; fenceIndex: number }
+  /** A frame of a composed page's template receives no content: nothing
+   *  names its slot, it takes no heading, and (the flow frame) no content
+   *  is left without a slot. A frame marked `optional` is not reported. */
+  | { kind: 'slotEmpty'; template: string; frame: string; fenceIndex: number }
+  /** A three-colon `:::page` carries `template=`: a composed page needs
+   *  four colons (`::::page{template=…}` … `::::`). It is read as a comic
+   *  page, as before. */
+  | { kind: 'pageFenceLength' }
   /** A `:::paper{…}` attribute the engine cannot read: an unknown key, a
    *  stock, finish or texture it does not know, a number out of range, a
    *  shade that is neither a hex colour nor a palette id, a `showThrough`

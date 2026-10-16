@@ -34,6 +34,9 @@ import { planHeadingSections, sectionWritingMode } from './headingStyles';
 import { comicSourceWarnings } from '../comics/warnings';
 import { resolvedComics } from '../defaults/comics';
 import { effectiveResourceTypes } from '../defaults/resourceTypes';
+import { composedPages } from '../composed/document';
+import { checkComposedSlots } from '../composed/slotChecks';
+import type { ComposedPagesConfigKeys } from '../composed/types';
 
 /** A `:::name` line: the name starts it, whatever follows (a line the parser
  *  does not take as a fence — an unknown name, or text after the name — is
@@ -280,6 +283,12 @@ export function collectContentWarnings(
         break;
       }
       case 'directive': {
+        // `:::page{template=…}`: a composed page written with three colons
+        // (#854) is read as a comic page; its fence line is the range.
+        if (b.comic && b.directiveName === 'page' && b.comic.attrs.template !== undefined) {
+          const fenceEnd = body.indexOf('\n', b.sourceStart);
+          out.push({ kind: 'pageFenceLength', ...abs({ start: b.sourceStart, end: fenceEnd < 0 || fenceEnd > b.sourceEnd ? b.sourceEnd : fenceEnd }) });
+        }
         // A comic page (#555): its split, panels, script and pictures.
         if (b.comic) {
           comics ??= resolvedComics(resolveAllConfig(config));
@@ -324,6 +333,11 @@ export function collectContentWarnings(
         break;
     }
     scanSpans(b);
+  }
+
+  // Composed pages (#854): templates, slots and frames left empty.
+  for (const w of checkComposedSlots(composedPages(blocks), config as ComposedPagesConfigKeys | undefined)) {
+    out.push({ ...w, ...abs({ start: w.sourceStart ?? 0, end: w.sourceEnd ?? 0 }) });
   }
 
   // Markup typed with fullwidth characters, and attribute keys outside
@@ -787,6 +801,20 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       break;
     case 'unknownCalloutType':
       text = `Unknown callout type "${w.type}" — the box takes the first callout style`;
+      break;
+    case 'templateUnknown':
+      text = w.template === ''
+        ? '::::page names no template — write ::::page{template="…"}; its content is set in the flow'
+        : `Unknown page template "${w.template}" — no pageTemplates entry has this id; the page's content is set in the flow`;
+      break;
+    case 'slotUnknown':
+      text = `Slot "${w.slot}" is no frame of template "${w.template}" — the content goes to the flow frame`;
+      break;
+    case 'slotEmpty':
+      text = `Frame "${w.frame}" of template "${w.template}" receives no content — give it a slot="${w.frame}" piece, or mark the frame optional`;
+      break;
+    case 'pageFenceLength':
+      text = 'A composed page needs four colons (::::page{template="…"} … ::::) — this :::page is read as a comic page';
       break;
     case 'columnsFlowUnknown':
       text = `Unknown flow "${w.value}" for :::columns — the group fills its columns in turn ("snake"), or stream by stream ("parallel") when it sets breaks`;

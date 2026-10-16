@@ -312,15 +312,34 @@ the page, the ladder of §5.4 runs.
 
 ## 4. Document nodes
 
-The parser emits (draft in `types.ts`):
+The parser emits (as built in P3, #854):
 
-- `ComposedPageBlock { type: 'composedPage', template, spread, attrs, attrSources, slots:
-  Map<slot, ContentBlockRange[]>, unassigned, sourceStart, sourceEnd, fenceIndex }`, where
-  `fenceIndex` is the page fence's ordinal in its chapter (stable across locales).
-- Frame containers become `containerStart/End` of name `frame` with `slot`; the pipeline gathers
-  them into the page block's `slots`.
-- `FigureLabel { text (inline spans), at: { anchor } | { x, y }, style, sourceStart, sourceEnd,
-  sourceMap }` on a figure block.
+- The page fence stays in the block stream as a `containerStart` / `containerEnd` pair of
+  `containerName: 'composedPage'` (not in `KNOWN_CONTAINERS`, so `:::page` stays a comic page); the
+  start marker carries `composedPage: ComposedPageFence { template, spread, attrs, attrSources,
+  fenceIndex, colons }`, where `fenceIndex` is the page fence's ordinal in its chapter (stable across
+  locales).
+- Frame containers become `containerStart/End` of name `frame`. Every block that names a slot carries
+  `ContentBlock.slot: { name, sourceStart, sourceEnd }` (a heading's `{slot}`, a `::resource{id slot}`,
+  a code fence's or any `:::` container's, a `:::frame`'s).
+- `composedPages(blocks)` (`composed/document.ts`, pure) gathers one `ParsedComposedPage` per fence —
+  the `ComposedPageNode` of `types.ts` (`slots: Record<slot, blockIndex[]>` in Markdown order,
+  `unassigned`) plus `slotSources`, `firstHeadings` (for `takes`), `fence` and `unclosed`. A frame's own
+  markers are left out of its slot; a nested container goes whole (markers included) to the slot it
+  names, else to `unassigned`. It reads any block array, so P4 calls it on its transformed
+  `contentBlocks`.
+- `:::figure` is not a container in the stream: it is read whole into one `resourceBlock`
+  (`resourceId` = `resource`) with `figure: FigureInfo { attrs, attrSources, labels }`, so the flow
+  sets it as `::resource` until P6. Each `FigureLabel` extends `FigureLabelNode` with `spans`,
+  `sourceMap`, `textStart/End` and `attrSources`; `at` is `{ anchor }` or `{ x, y }` in fractions of
+  the picture (from `at="62% 48%"`).
+- Recovery: a page left open closes at the end of the text; a `::::page` met while one is open closes
+  it there; the closing fence closes any container still open inside the page; each is reported as
+  `unclosedContainer`. A closing fence of another colon count stays text. A `:::figure` whose `:::` is
+  missing ends at its first line that is neither a label nor blank (`unclosedContainer`, name
+  `figure`).
+- Until P4, the layout sets a composed page's content in the flow, in Markdown order, on pages of its
+  own (the page fence breaks the page as `:::paper` does; `build.ts`, `pendingComposedBreak`).
 
 The layout emits (VDT):
 

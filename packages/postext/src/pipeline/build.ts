@@ -4007,6 +4007,9 @@ function placeDocumentPass(
   /** A closed `:::paper` still owes a page break before the next placed
    *  block. */
   let pendingPaperBreak = false;
+  /** A composed page (`::::page`, #854) ended: the next placed block opens
+   *  a new page. */
+  let pendingComposedBreak = false;
   /** A comic page (`:::page`) was laid out on the current page: the next
    *  placed block opens a new one (a page that ends the document leaves no
    *  empty page behind). */
@@ -6501,6 +6504,25 @@ function placeDocumentPass(
     }
     if (pendingPaperBreak) {
       pendingPaperBreak = false;
+      breakForPaper(blockIdx);
+    }
+    // A composed page (`::::page{template=…}`, #854). Until templates are
+    // laid out (P4, #855) its content is set in the flow, in Markdown order
+    // and on pages of its own: the page fence breaks the page as `:::paper`
+    // does, its frames are transparent containers (the generic marker branch
+    // below), and the block after the closing fence opens a new page. P4
+    // replaces this branch with the template layout (DESIGN §5.1).
+    if ((rawBlock.type === 'containerStart' || rawBlock.type === 'containerEnd') && rawBlock.containerName === 'composedPage') {
+      if (rawBlock.type === 'containerStart') {
+        pendingComposedBreak = false;
+        breakForPaper(blockIdx);
+      } else {
+        pendingComposedBreak = true;
+      }
+      continue;
+    }
+    if (pendingComposedBreak) {
+      pendingComposedBreak = false;
       breakForPaper(blockIdx);
     }
     // `:::page`: a comic page owns a fresh page — its panels, split lines
