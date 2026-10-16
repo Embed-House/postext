@@ -5,6 +5,7 @@
 import type { Dispatch } from 'react';
 import { clearMeasurementCache } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
+import { isBundleManifest, pickBundleMeta } from 'postext/bundle';
 import { setCustomFonts } from '../controls/fontLoader';
 import { invalidateResourceImage } from '../controls/resourceImages';
 import { slugify } from '../panels/resources/slugify';
@@ -463,7 +464,9 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         }),
         ...loaded.fonts.map((f) => putFontFile(f)),
       ]);
-      const manifestName = (opened.manifest as { name?: unknown }).name;
+      // The title of the edition imported (`localized.<lang>.name`, #891),
+      // else the manifest's.
+      const manifestName = isBundleManifest(opened.manifest) ? pickBundleMeta(opened.manifest, loaded.locale).name : undefined;
       // The bundle's cover picture (`thumbnail` in the manifest), when it
       // carries one.
       const manifestThumbnail = (opened.manifest as { thumbnail?: unknown }).thumbnail;

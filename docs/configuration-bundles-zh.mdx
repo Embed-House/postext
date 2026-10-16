@@ -53,7 +53,7 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
   </thead>
   <tbody>
     <tr><td><code>manifest</code></td><td>经过校验的<code>preset.json</code>。</td></tr>
-    <tr><td><code>id</code>、<code>name</code>、<code>description</code></td><td>取自清单。</td></tr>
+    <tr><td><code>id</code>、<code>name</code>、<code>description</code></td><td>取自清单。<code>name</code>和<code>description</code>属于所读的版本：所提供的语言给出<code>localized[…].name</code>和<code>description</code>时用它们，否则用清单的。</td></tr>
     <tr><td><code>locale</code>、<code>locales</code></td><td>读取内容时使用的语言，以及双语文件包包含的全部语言。<code>options.locale</code>选择其中之一：先找完全相同的标签，再找基础语言，最后用文件包自己的语言。</td></tr>
     <tr><td><code>chapters</code></td><td>每章一个<code>&#123; title, file, markdown &#125;</code>。清单中没有标题的章，取其第一个<code>#</code>标题的文字。</td></tr>
     <tr><td><code>config</code></td><td>依次叠加：默认调色板和文件包语言下的资源类型，然后是清单的<code>config</code>，最后是该语言的覆盖项。文件包的语言就是上面的<code>locale</code>，因此单一语言的文件包总是得到它自己语言的标签，不论<code>options.locale</code>要求什么。清单没有指明语言时，取其<code>config</code>设定的语言（先看<code>locale</code>，再看断词语言），都没有则用<code>options.locale</code>。<code>customFonts</code>列出文件包中的字体家族。沙盒打开文件包时用的也是这份配置。</td></tr>
@@ -223,7 +223,7 @@ const { bytes, manifest, warnings } = await createBundle({
     <tr><td><code>canvasScope</code></td><td><code>'book'</code>要求查看器把整本书排成一张画布。</td></tr>
     <tr><td><code>start</code></td><td>文件包只含一本更长的书的一部分时，这本书从哪里开始：也就是单独构建一份文档时会传入的<code>continuation</code>。写入清单的<code>start</code>。</td></tr>
     <tr><td><code>mtime</code></td><td>写在压缩包每个文件上的修改日期（<code>Date</code>、时间戳或日期字符串）。省略时取调用时刻，因此相同输入的两次调用会得到不同的字节。传入固定日期，相同输入就得到相同字节，可以用来计算哈希或比较。zip记录的日期和时间不带时区，以两秒为步长，范围是1980年到2099年，并按本机的本地时间写入。要在所有机器上得到相同的字节，请用本地字段构造日期，例如<code>new Date(1980, 0, 1)</code>：时间戳或以<code>Z</code>结尾的字符串表示一个绝对时刻，在不同时区对应不同的本地时间（<code>'1980-01-01T00:00:00Z'</code>在UTC以西仍是1979年）。按本地时间落在这些年份之外的日期会抛出异常。</td></tr>
-    <tr><td><code>localized</code></td><td>同一本书的其他语言，以语言标签为键：<code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>。此时上面的输入就是<code>locale</code>语言的内容，而<code>locale</code>变为必填。见<a href="#双语文件包">双语文件包</a>。</td></tr>
+    <tr><td><code>localized</code></td><td>同一本书的其他语言，以语言标签为键：<code>&#123; es: &#123; name?, description?, chapters?, config?, resources? &#125; &#125;</code>。此时上面的输入就是<code>locale</code>语言的内容，而<code>locale</code>变为必填。见<a href="#双语文件包">双语文件包</a>。</td></tr>
   </tbody>
 </table>
 
@@ -248,6 +248,7 @@ const { bytes, manifest } = await createBundle({
   files: { 'lantern.svg': svgEn, 'lantern-es.svg': svgEs },
   localized: {
     es: {
+      name: 'El farol',
       chapters: [{ markdown: '# Anochecer\n\n…' }, { markdown: '# Noche\n\n…' }],
       config: { headings: { levels: [{ level: 1, numberingTemplate: 'Capítulo {1}' }] } },
       resources: [
@@ -264,6 +265,7 @@ const es = await openBundle(bytes, { locale: 'es' });   // 西班牙语的章节
 - **`chapters`**：该语言的书。章节文件按语言分文件夹存放（`chapters/en/01-dusk.md`、`chapters/es/01-anochecer.md`），清单的`chapters`变成语言 → 章节的映射。没有`chapters`的语言读取主要语言的章节；如果没有任何语言有自己的章节，它们就仍是单一列表。
 - **`config`**：该语言的配置。以该语言读取文件包时，每个顶层键整体取代共享的同名键，所以上例中的`headings`会取代整个`headings`对象。省略的键或与共享值相同的键视为共享，不会写出，因此传入该语言的完整配置和只传入少数改动的键效果一样。如果某个键设为默认值而共享的键不是（`layout: {}`），就照原样写出，从而把共享值重置。字体是共享的：某种语言`customFonts`中的字体家族会并入文件包的`fonts`。
 - **`resources`**：共享资源的文字，按`id`对应：`caption`、`note`、`altText`以及表格的`table`。含有文字的图片可以有自己的图稿：`bitmap.fileId`或`svg.fileId`（以及`svg.pdfFileId`）指向`files`中的另一个数据文件，写为`resources/es/lantern.svg`。其他字段，如类型或位置，都是共享的。不在`resources`中的id会被略去并给出警告；缺少某种语言的图片时，该语言沿用共享的图片，同样给出警告。
+- **`name`**、**`description`**：该语言版本的书名和简介，与共享的不同时写为`localized[…].name`和`description`。以该语言读取时，`openBundle`把它们作为`bundle.name`和`bundle.description`返回；Sandbox在导入时和书库中以这个书名列出该版本；`postext info`和`postext check`也会打印它们。预设源`index.json`中的条目可以把它们复制到`localized`（`localized.ca.name`），书库在打开之前就能用各版本自己的书名列出它们。没有给出的语言沿用清单的`name`和`description`。
 
 清单在`locales`中列出所有语言（`['en', 'es']`），把主要语言保存为`locale`，其余的保存在`localized`下。不指定语言时，`openBundle`读取主要语言。
 

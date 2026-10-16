@@ -54,6 +54,23 @@ describe('parseBundle', () => {
     expect(en.resources[0]!.caption).toBe('shared');
     expect(en.config.resourceTypes?.[0]!.captionPrefix).toBe('Plate');
   });
+  // #891: every edition was listed under the manifest's name.
+  it('names each edition with its own title and description', async () => {
+    const m = manifest({
+      locale: 'es',
+      name: 'Geografía',
+      description: 'Libro de texto',
+      markdown: { es: 'es.md', ca: 'ca.md', en: 'en.md' },
+      localized: { ca: { name: 'Geografia', description: 'Llibre de text' }, en: { name: 'Geography' } },
+    });
+    const files = { 'es.md': 'ES', 'ca.md': 'CA', 'en.md': 'EN' };
+    const read = async (locale: string) => (await parseBundle(m, readerFrom(files), { locale, summary })).summary;
+    expect(await read('ca')).toMatchObject({ name: 'Geografia', description: 'Llibre de text' });
+    expect(await read('en')).toMatchObject({ name: 'Geography', description: 'Libro de texto' });
+    // No name of its own: the name the source lists the preset under.
+    expect(await read('es')).toMatchObject({ name: 'Brochure', description: 'Libro de texto' });
+  });
+
   // EF-150: the built-in resource types under a bundle's configuration were
   // localised to the viewer's locale, so a Spanish book imported at
   // /en/sandbox printed "Figure 1.1" under Spanish text.

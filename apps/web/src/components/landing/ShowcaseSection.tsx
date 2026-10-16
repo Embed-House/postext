@@ -32,6 +32,20 @@ interface PresetEntry {
    *  default) or flattened into it (`fill`), for a cover a little taller than
    *  the frame whose outer border would show the crop (ألف ليلة وليلة). */
   coverFit?: "cover" | "fill";
+  /** Each edition's own title and description, by locale tag (the
+   *  manifest's `localized.<lang>.name`, #891). */
+  localized?: Record<string, { name?: string; description?: string }>;
+}
+
+/** The entry's title and description in the edition `lang`, when the
+ *  index carries them (exact tag, else the same language). */
+function editionNames(p: PresetEntry, lang: string): { name?: string; description?: string } {
+  const map = p.localized;
+  if (!map) return {};
+  const base = lang.split("-")[0]!.toLowerCase();
+  const key = Object.keys(map).find((k) => k.toLowerCase() === lang.toLowerCase())
+    ?? Object.keys(map).find((k) => k.split("-")[0]!.toLowerCase() === base);
+  return key ? map[key]! : {};
 }
 
 /** The bundle's content hash (`fingerprint.json`, rewritten by every build),
@@ -142,12 +156,13 @@ export async function ShowcaseSection() {
         </Book>
         {presets.map((p) => {
           const lang = openLocale(locale, p.locales);
+          const own = editionNames(p, lang);
           return (
           <Book
             key={p.id}
             href={`/${locale}/sandbox#preset=${p.id}&lang=${p.openLocale ?? lang}&view=canvas&restore=ask`}
-            name={t.has(`books.${p.id}`) ? t(`books.${p.id}`) : p.name}
-            description={t.has(`descriptions.${p.id}`) ? t(`descriptions.${p.id}`) : indexDescription(p.description, locale)}
+            name={t.has(`books.${p.id}`) ? t(`books.${p.id}`) : own.name || p.name}
+            description={t.has(`descriptions.${p.id}`) ? t(`descriptions.${p.id}`) : own.description || indexDescription(p.description, locale)}
             binding={p.binding}
           >
             <Image

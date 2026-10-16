@@ -72,6 +72,7 @@ function isChaptersField(v: unknown): v is BundleChapterSpec[] | Record<string, 
 
 function isLocaleOverrides(v: unknown): v is BundleLocaleOverrides {
   if (!isRecord(v)) return false;
+  if (!isOptionalString(v.name) || !isOptionalString(v.description)) return false;
   if (v.config !== undefined && !isRecord(v.config)) return false;
   if (v.view !== undefined && !isViewField(v.view)) return false;
   if (v.start !== undefined && !isRecord(v.start)) return false;
@@ -192,6 +193,24 @@ export function pickLocaleOverrides(manifest: BundleManifest, locale: string): B
   // reword a Traditional edition.
   const found = matchContentLocale(keys, key);
   return found && sameContentLocale(found, key) ? localized[found]! : null;
+}
+
+/** What {@link pickBundleMeta} reads: a manifest, or an index entry that
+ *  carries its names (`name`, `description`, `locale`, `localized`). */
+export type BundleNames = Pick<BundleManifest, 'name' | 'description' | 'locale'> & {
+  localized?: Record<string, Pick<BundleLocaleOverrides, 'name' | 'description'>>;
+};
+
+/** The name and description of the edition served for `locale`: the
+ *  manifest's, with that language's `localized[…].name` and
+ *  `description` over them (#891). An empty localized name keeps the
+ *  manifest's. Given an index entry rather than a manifest, the edition is
+ *  picked among the manifest's locale and the localized keys. */
+export function pickBundleMeta(manifest: BundleManifest | BundleNames, locale: string): { name: string; description?: string } {
+  const own = pickLocaleOverrides(manifest as BundleManifest, locale);
+  const name = own?.name?.trim() ? own.name : manifest.name;
+  const description = own?.description !== undefined && own.description !== '' ? own.description : manifest.description;
+  return { name, ...(description ? { description } : {}) };
 }
 
 /** How the edition served for `locale` opens: the manifest's `view` with

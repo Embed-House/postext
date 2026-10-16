@@ -6,7 +6,7 @@
 // here touches storage or the DOM.
 
 import type { PostextConfig, Resource } from 'postext';
-import { isBundleManifest, pickBundleView, planBundle as planCoreBundle, readBundle, resolveBundleConfigLocale, resolveBundleFiles } from 'postext/bundle';
+import { isBundleManifest, pickBundleMeta, pickBundleView, pickLocaleOverrides, planBundle as planCoreBundle, readBundle, resolveBundleConfigLocale, resolveBundleFiles } from 'postext/bundle';
 import type { BundleByteSources as CoreByteSources, BundleFileReader, BundleIdScheme, PlannedFile } from 'postext/bundle';
 import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from '../book/layoutKeys';
 import { createDefaultConfig } from '../context/defaultConfig';
@@ -90,6 +90,10 @@ export async function parseBundle(
   }
   const bundle = read.manifest;
   const view = pickBundleView(bundle, read.locale);
+  // The edition's own title and description (`localized.<lang>.name`,
+  // #891); without one, the name the source lists the preset under.
+  const meta = pickBundleMeta(bundle, read.locale);
+  const ownName = pickLocaleOverrides(bundle, read.locale)?.name?.trim() ? meta.name : undefined;
   const idOf = (file: string): string => (chapterIds ? chapterIds() : presetChapterId(presetId, file));
   const untitled = untitledChapter ?? ((n: number) => `Chapter ${n}`);
   const chapters: Chapter[] = read.chapters.map((c, i) =>
@@ -124,7 +128,8 @@ export async function parseBundle(
   return {
     summary: {
       ...summary,
-      description: bundle.description ?? summary.description,
+      ...(ownName ? { name: ownName } : {}),
+      description: meta.description ?? summary.description,
       // The locale of *this* load: a project cloned from the English side
       // of a bilingual bundle is an English project.
       locale: read.locale,
