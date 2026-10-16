@@ -848,6 +848,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
         + (fixes.length > 0 ? `; to fit: ${fixes.join('; or ')}` : '; give it more height (height, maxHeight), chain it to another frame with next, or shorten the text');
       break;
     }
+    case 'frameContinuationLimit':
+      text = `Frame "${w.frame}" of template "${w.template}" went on to ${w.pages} added pages, the most a composed page may add, and is still ${w.overflowMm} mm short — the rest is cut at the frame's foot; give the frame there more room, or shorten the text`;
+      break;
     case 'spreadMismatch':
       text = w.templateSpread
         ? `Template "${w.template}" is a spread — the page is laid over two facing pages; write ::::page{template="${w.template}" spread}`

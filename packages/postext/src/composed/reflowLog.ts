@@ -91,8 +91,10 @@ const num = (v: number): string => String(Math.round(v * 10) / 10);
 const pct = (v: number): string => `${Math.round(v * 1000) / 10} %`;
 
 /** One event in words, in English (the command line's language):
- *  «dinero grew 8 mm», «gasto moved down 8 mm», «foto narrowed 4 mm». */
-export function describeReflowEvent(e: ReflowEvent): string {
+ *  «dinero grew 8 mm», «gasto moved down 8 mm», «foto narrowed 4 mm»,
+ *  «dinero continued on page 9». `pageLabel` names a page by its index
+ *  (`VDTPage.index`); unset, the index + 1. */
+export function describeReflowEvent(e: ReflowEvent, pageLabel?: (index: number) => string): string {
   const delta = e.fromMm !== undefined && e.toMm !== undefined ? Math.abs(e.toMm - e.fromMm) : undefined;
   const by = delta !== undefined ? ` ${num(delta)} mm` : '';
   const x = e.axis === 'x';
@@ -114,7 +116,7 @@ export function describeReflowEvent(e: ReflowEvent): string {
     case 'textScaled':
       return `${e.frame}: text at ${pct(e.scale ?? 1)}`;
     case 'continued':
-      return `${e.frame} continued${e.cause ? ` in ${e.cause}` : ''}`;
+      return `${e.frame} continued${e.toPage !== undefined ? ` on page ${pageLabel ? pageLabel(e.toPage) : String(e.toPage + 1)}` : ''}${e.cause ? ` in ${e.cause}` : ''}`;
     default:
       return `${e.frame} ${String(e.kind)}`;
   }
@@ -136,7 +138,7 @@ export function describeFitStep(step: FrameFitStep, at: { scale?: number; imageS
     case 'shrinkText':
       return at.scale !== undefined && at.scale < 1 ? `text down to ${pct(at.scale)}` : 'smaller text';
     case 'continue':
-      return 'continuing on another page (not laid out yet)';
+      return 'continuing on another page (its frame there takes none of it)';
     default:
       return String(step);
   }
@@ -181,6 +183,10 @@ export interface ComposedPageReflow {
 /** The reflow log of every composed page of `doc` that has one. */
 export function composedReflowLog(doc: Pick<VDTDocument, 'pages'>): ComposedPageReflow[] {
   const out: ComposedPageReflow[] = [];
+  const labelOf = (index: number): string => {
+    const p = doc.pages.find((q) => q.index === index);
+    return String(p?.pageLabel ?? p?.pageNumberValue ?? index + 1);
+  };
   for (const page of doc.pages) {
     const c = page.composed;
     if (!c || c.log.length === 0) continue;
@@ -190,7 +196,7 @@ export function composedReflowLog(doc: Pick<VDTDocument, 'pages'>): ComposedPage
       template: c.template,
       fenceIndex: c.fenceIndex,
       events: c.log.map((e) => ({ ...e })),
-      lines: c.log.map(describeReflowEvent),
+      lines: c.log.map((e) => describeReflowEvent(e, labelOf)),
     });
   }
   return out;

@@ -2517,6 +2517,10 @@ export interface ReflowEvent {
   /** The frame whose change caused this event; `'gutter'` when the spine
    *  band of a spread template kept the frame off it (#861). */
   cause?: string;
+  /** `continued` (#859): the page (`VDTPage.index`) the frame's content
+   *  goes on on, and the frame there (`VDTFrame.id`, `cp<n>:<slot>~<k>`). */
+  toPage?: number;
+  toFrame?: string;
 }
 
 /** One frame of a composed page, in sheet coordinates. Its box and its
@@ -2527,8 +2531,10 @@ export interface ReflowEvent {
  *  turn, and how much of its content did not fit. */
 export interface VDTFrame {
   /** `cp<fenceIndex>:<name>`: the same in every locale and across
-   *  relayouts (`~<n>` is reserved for the n-th continuation piece on a
-   *  later page, #859). */
+   *  relayouts. On the n-th page added by continuation (#859) a frame is
+   *  `cp<fenceIndex>:<name>~<n>`, and the frame that takes content from
+   *  the page before is named by the frame of the fence's own page that
+   *  first sent it on (`cp0:dinero~1`). */
   id: string;
   /** The frame's name in its template (the slot it receives). */
   name: string;
@@ -2559,8 +2565,10 @@ export interface VDTFrame {
   /** Height of content that did not fit in the frame, px (0 = it fits).
    *  Past the frame's foot it is clipped on paged output. */
   overflowPx: number;
-  /** The frame of the same page whose content this one goes on with
-   *  (`next`), and the one this frame's content goes on in. */
+  /** The frame whose content this one goes on with (`next`, or on a page
+   *  added by continuation, #859, the frame of the page before), and the
+   *  one this frame's content goes on in (on this page, or on a page added
+   *  after it). */
   continuedFrom?: string;
   continuesTo?: string;
   /** Ids of the blocks set in this frame (its box first), in
@@ -2607,6 +2615,9 @@ export interface VDTComposedPage {
   sheetClip?: { x: number; y: number; width: number; height: number };
   /** The page fence's ordinal in its chapter (stable across locales). */
   fenceIndex: number;
+  /** On a page added by continuation (#859): the index (`VDTPage.index`)
+   *  of the fence's own page, whose frames' content goes on here. */
+  continuationOf?: number;
   /** The role the template reports to design slots (`role`, default
    *  `'composed'`). `page.role` is `'composed'` whatever this says. */
   role: string;
@@ -3083,6 +3094,19 @@ export type ContentWarning = ContentWarningBase & (
     /** Changes that would make the content fit, with their values worked
      *  out from the shortfall (each tried on the page where it can be). */
     proposals: FrameOverflowProposal[];
+  }
+  /** A frame's content went on to other pages (#859) as many times as a
+   *  composed page may add (`pages`, 16) and still does not fit: what is
+   *  left is cut at the foot of the frame on the last page added
+   *  (`overflowMm`, `pageIndex`). */
+  | {
+    kind: 'frameContinuationLimit';
+    template: string;
+    frame: string;
+    fenceIndex: number;
+    pages: number;
+    overflowMm: number;
+    configPath: string;
   }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): `::::page{template spread}` names a template that is a single

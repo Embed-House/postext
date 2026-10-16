@@ -85,7 +85,10 @@ import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowCo
 import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap';
 import { resolvePageTemplate } from '../composed/templates';
 import { layoutComposedSpread } from '../composed/spread';
-import { composedPageAt, frameStyleOf, planComposedPages, type PlannedComposedPage } from './composedLayout';
+import { assignReceivers, continuationTarget, MAX_CONTINUATION_PAGES, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
+import { frameElementId } from '../composed/ids';
+import { nextFrameOf } from '../composed/geometry';
+import { composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
 import { configKeyOf, layoutComposedPageMemo, type ComposedMemoContext } from '../composed/pageMemo';
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline';
 import { expandTocDirectives } from './toc';
@@ -6274,10 +6277,10 @@ function placeDocumentPass(
     });
     const placed: { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[] = [];
     let laid: Set<string>;
-    const sheet = resolvePageTemplate(templateSource, fence.template, { spread: true });
-    if (sheet?.spread) {
-      // A spread opens on a verso, a parity blank before it when needed,
-      // as a comic spread does; the recto after it takes the other half.
+    /** Lay a spread template over the next verso and the recto after it
+     *  (`breakToEvenPage` opens the verso, a parity blank before it when
+     *  needed, as a comic spread does). */
+    const laySpread = (sheet: NonNullable<ReturnType<typeof resolvePageTemplate>>, extra: { stories?: PlannedComposedPage['stories']; continuing?: ComposedContinuationInput }) => {
       breakToEvenPage();
       const verso = doc.pages[cursor.pageIndex]!;
       verso.columns = [createVDTColumn(0, verso.contentArea)];
@@ -6296,6 +6299,7 @@ function placeDocumentPass(
       const right = versoIsLeft ? recto : verso;
       const out = layoutComposedSpread({
         ...common(flowMirrored ? right : left, { id: sheet.id, spread: true }),
+        ...extra,
         template: sheet,
         first: flowMirrored ? right : left,
         second: flowMirrored ? left : right,
@@ -6303,35 +6307,156 @@ function placeDocumentPass(
         trim: pageMetrics.physical.trimBox,
         bleed: pageMetrics.physical.bleedBox,
       });
+      return { sides: out.sides as readonly { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[], warnings: out.warnings, laid: out.laid, continuations: out.continuations };
+    };
+    /** The template `id` for the current page's side, and the boxes its
+     *  `area` reads. */
+    const singleOn = (page: VDTPage, id: string) => {
+      page.columns = [createVDTColumn(0, page.contentArea)];
+      // The physical side: a recto has an odd folio (in either binding).
+      const parity: 'recto' | 'verso' = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
+      const template = resolvePageTemplate(templateSource, id, { parity })!;
+      const frames = designFramesOn(page);
+      const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
+      return { parity, template, areas: { area, page: frames.page, bleed: frames.bleed } };
+    };
+    let continuations: ComposedContinuation[] | undefined;
+    const sheet = resolvePageTemplate(templateSource, fence.template, { spread: true });
+    if (sheet?.spread) {
+      const out = laySpread(sheet, {});
       placed.push(...out.sides);
       composedNotes.push(...out.warnings);
       laid = out.laid;
+      continuations = out.continuations;
     } else {
       const page = doc.pages[cursor.pageIndex]!;
-      page.columns = [createVDTColumn(0, page.contentArea)];
-      // The physical side: a recto has an odd folio (in either binding).
-      const parity = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
-      const template = resolvePageTemplate(templateSource, fence.template, { parity })!;
-      const frames = designFramesOn(page);
-      const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
+      const { parity, template, areas } = singleOn(page, fence.template);
       // Kept by what it reads (#857): a page met again is not set again.
       // A spread is laid out afresh each time (its two sides are one sheet).
       const out = layoutComposedPageMemo({
         ...common(page, { id: template.id, spread: false, parity }),
         page,
         template,
-        areas: { area, page: frames.page, bleed: frames.bleed },
+        areas,
       }, composedMemo);
       placed.push({ page, composed: out.composed, blocks: out.blocks });
       composedNotes.push(...out.warnings);
       laid = out.laid;
+      continuations = out.continuations;
     }
-    for (const { page, composed, blocks } of placed) {
-      page.composed = composed;
-      const floats = (page.floats ??= []);
-      for (const b of blocks) {
-        floats.push(b);
-        doc.blocks.push(b);
+    const commit = (list: readonly { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[]): void => {
+      for (const { page, composed, blocks } of list) {
+        page.composed = composed;
+        const floats = (page.floats ??= []);
+        for (const b of blocks) {
+          floats.push(b);
+          doc.blocks.push(b);
+        }
+      }
+    };
+    commit(placed);
+    // Content that goes on on pages added after this one (#859): one page
+    // (or spread) per template it goes on to, generation after generation,
+    // each laid afresh after the pages before it. The added pages are
+    // ordinary pages (numbered, with running heads, sides kept).
+    const frameAt = new Map<string, { page: VDTPage; frame: VDTComposedPage['frames'][number] }>();
+    const indexFrames = (list: readonly { page: VDTPage; composed: VDTComposedPage }[]): void => {
+      for (const s of list) for (const f of s.composed.frames) if (!f.facingBlocks) frameAt.set(f.id, { page: s.page, frame: f });
+    };
+    indexFrames(placed);
+    const overflowTemplateOf = (id: string): string | undefined => resolvePageTemplate(templateSource, id)?.overflowTemplate;
+    const firstPage = placed[0]?.page.index ?? cursor.pageIndex;
+    let pending = continuations ?? [];
+    for (let generation = 1; pending.length > 0; generation++) {
+      const last = generation >= MAX_CONTINUATION_PAGES;
+      let queue = pending;
+      pending = [];
+      while (queue.length > 0) {
+        const target = continuationTarget(queue[0]!, overflowTemplateOf);
+        const same = (c: ComposedContinuation): boolean => {
+          const t = continuationTarget(c, overflowTemplateOf);
+          return t.template === target.template && t.collapse === target.collapse;
+        };
+        const batch = queue.filter(same);
+        queue = queue.filter((c) => !same(c));
+        const spreadSheetT = resolvePageTemplate(templateSource, target.template, { spread: true });
+        // A template with no frames takes nothing.
+        if (!spreadSheetT || spreadSheetT.frames.length === 0) continue;
+        // A fresh page after the last one laid.
+        const start = cursor.pageIndex;
+        do {
+          advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx);
+        } while (cursor.pageIndex === start);
+        cursor.columnIndex = 0;
+        const storiesOf = (receivers: ReadonlyMap<string, ComposedContinuation>) => new Map([...receivers].map(([name, c]) => [name, c.story]));
+        let sides: readonly { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[];
+        let notes: ContentWarning[];
+        let more: ComposedContinuation[] | undefined;
+        let receivers: Map<string, ComposedContinuation>;
+        let laidTemplate: NonNullable<ReturnType<typeof resolvePageTemplate>>;
+        if (spreadSheetT.spread) {
+          const assigned = assignReceivers(spreadSheetT, batch);
+          receivers = assigned.receivers;
+          queue = [...assigned.left, ...queue];
+          laidTemplate = spreadSheetT;
+          const out = laySpread(spreadSheetT, { stories: storiesOf(receivers), continuing: { receivers, generation, collapse: target.collapse, last } });
+          sides = out.sides;
+          notes = out.warnings;
+          more = out.continuations;
+        } else {
+          const page = doc.pages[cursor.pageIndex]!;
+          const { parity, template, areas } = singleOn(page, target.template);
+          const assigned = assignReceivers(template, batch);
+          receivers = assigned.receivers;
+          queue = [...assigned.left, ...queue];
+          laidTemplate = template;
+          const out = layoutComposedPage({
+            ...common(page, { id: template.id, spread: false, parity }),
+            page,
+            template,
+            areas,
+            stories: storiesOf(receivers),
+            continuing: { receivers, generation, collapse: target.collapse, last },
+          });
+          sides = [{ page, composed: out.composed, blocks: out.blocks }];
+          notes = out.warnings;
+          more = out.continuations;
+        }
+        for (const s of sides) s.composed.continuationOf = firstPage;
+        // On the last page allowed, a frame whose content would still go on
+        // says so (it is cut at its foot).
+        if (last) {
+          const chained = new Set<string>();
+          const nextOf = (n: string): string | undefined => {
+            const f = laidTemplate.frames.find((x) => x.name === n);
+            return f ? nextFrameOf(f) : undefined;
+          };
+          for (const name of receivers.keys()) {
+            for (let n: string | undefined = name; n !== undefined && !chained.has(n); n = nextOf(n)) chained.add(n);
+          }
+          notes = notes.map((w) => (w.kind === 'frameOverflow' && chained.has(w.frame)
+            ? { kind: 'frameContinuationLimit' as const, template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, pages: generation, overflowMm: w.overflowMm, configPath: w.configPath, ...(w.sourceStart !== undefined ? { sourceStart: w.sourceStart, sourceEnd: w.sourceEnd } : {}), ...(w.pageIndex !== undefined ? { pageIndex: w.pageIndex } : {}) }
+            : w));
+        }
+        commit(sides);
+        indexFrames(sides);
+        composedNotes.push(...notes);
+        // Each frame that sent content on points to the frame that took it,
+        // and its page's log says where it went.
+        for (const c of receivers.values()) {
+          const to = frameElementId(fence.fenceIndex, c.slot, generation);
+          const src = frameAt.get(c.fromFrameId);
+          const dst = frameAt.get(to);
+          if (!src || !dst) continue;
+          src.frame.continuesTo = to;
+          const log = src.page.composed!.log;
+          let at = log.length;
+          for (let i = log.length - 1; i >= 0; i--) {
+            if (log[i]!.frame === c.frame) { at = i + 1; break; }
+          }
+          log.splice(at, 0, { frame: c.frame, kind: 'continued', toPage: dst.page.index, toFrame: to });
+        }
+        if (more) pending.push(...more);
       }
     }
     for (const [head, story] of planned.stories) {
