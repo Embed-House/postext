@@ -21,6 +21,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // What `pnpm cookbook sandbox` bundles for its harness (#736):
     ".cache/**",
+    // The composed-page bench's fixture recipe (#869): a pen, linted by
+    // `pnpm cookbook lint` as cookbook/ pens are.
+    "src/lib/cookbook/fixtures/recipes/**",
   ]),
 ]);
 
