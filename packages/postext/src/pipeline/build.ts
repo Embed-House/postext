@@ -83,7 +83,8 @@ import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowCo
 import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap';
 import { resolvePageTemplate } from '../composed/templates';
 import { layoutComposedSpread } from '../composed/spread';
-import { composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
+import { composedPageAt, frameStyleOf, planComposedPages, type PlannedComposedPage } from './composedLayout';
+import { configKeyOf, layoutComposedPageMemo, type ComposedMemoContext } from '../composed/pageMemo';
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline';
 import { expandTocDirectives } from './toc';
 import { expandIndexDirectives, locateIndexMarks } from './indexDirective';
@@ -6158,6 +6159,47 @@ function placeDocumentPass(
   const composedLaid = new Set<number>();
   /** The composed pages' layout warnings (`frameOverflow`). */
   const composedNotes: ContentWarning[] = [];
+  /** What the composed pages' memo (#857) reads of this pass: the
+   *  numbers, part, section and pictures the blocks of a page are set
+   *  with, and the notes a page's layout leaves. */
+  const composedMemo: ComposedMemoContext = {
+    markdown: markdownBody,
+    bodyOffset,
+    configKey: () => configKeyOf(calloutResolved),
+    contextKey: (from, to) => {
+      const ids = new Set<string>();
+      for (let i = from; i <= to; i++) {
+        const b = contentBlocks[i]!;
+        if (b.resourceId) ids.add(b.resourceId);
+      }
+      const pictures = [...ids].sort().map((id) => {
+        const r = resourceById.get(id);
+        return [id, r ?? null, r ? resourceTypeById.get(r.typeId) ?? null : null, resourceNumberById.get(id) ?? null, floatedIds.has(id), captionCitations?.get(id) ?? null];
+      });
+      const parts: unknown[] = [];
+      const sections: unknown[] = [];
+      const out: number[] = [];
+      for (let i = from; i <= to; i++) {
+        const part = partPlan.byBlock[i];
+        parts.push(part ? [part.number, part.title, part.palette] : 0);
+        sections.push(sectionPlan.byBlock[i]?.id ?? 0);
+        if (calloutsOutOfFlow.has(i)) out.push(i - from);
+      }
+      return JSON.stringify([
+        headingPrefixes.slice(from, to + 1),
+        headingNumbers.slice(from, to + 1),
+        parts,
+        sections,
+        out,
+        paragraphContainers.byBlock.slice(from, to + 1).map((c) => (c ? c.style : 0)),
+        pictures,
+      ]);
+    },
+    sideEffectsIn: (from, to) => {
+      for (let i = from; i <= to; i++) if (dropCapNotes.has(i) || joiningLetterSpacing.has(i)) return true;
+      return false;
+    },
+  };
   /** Set the composed page `planned` on a fresh page (#855), or a spread
    *  template on the two facing pages from the next verso (#861). */
   const placeComposedPage = (planned: PlannedComposedPage, fence: ComposedPageFence): void => {
@@ -6221,12 +6263,14 @@ function placeDocumentPass(
       const template = resolvePageTemplate(templateSource, fence.template, { parity })!;
       const frames = designFramesOn(page);
       const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
-      const out = layoutComposedPage({
+      // Kept by what it reads (#857): a page met again is not set again.
+      // A spread is laid out afresh each time (its two sides are one sheet).
+      const out = layoutComposedPageMemo({
         ...common(page),
         page,
         template,
         areas: { area, page: frames.page, bleed: frames.bleed },
-      });
+      }, composedMemo);
       placed.push({ page, composed: out.composed, blocks: out.blocks });
       composedNotes.push(...out.warnings);
       laid = out.laid;

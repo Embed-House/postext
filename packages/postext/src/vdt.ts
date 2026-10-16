@@ -2579,6 +2579,13 @@ export interface VDTComposedPage {
   /** The page fence, opening line to closing fence (absolute offsets). */
   sourceStart: number;
   sourceEnd: number;
+  /** A digest of everything the page's frames were laid out from (#857):
+   *  template, Markdown and blocks, styles, fonts, locale, side and
+   *  geometry. Two pages with the same key hold the same frames (their
+   *  source offsets aside), so a host may keep the pixels it painted for
+   *  one (with the same running heads and decoration). Absent when the
+   *  page reads what the key does not hold (a footnote, a reference). */
+  layoutKey?: string;
 }
 
 /** A comic page (`:::page`): its panels, the split lines between them and
