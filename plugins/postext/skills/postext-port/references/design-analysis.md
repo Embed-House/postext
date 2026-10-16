@@ -26,6 +26,14 @@ Look at page types, and design each one:
 - the chapter's last page;
 - bibliography, index and glossary.
 
+Then mark every page **flow** (running text the engine places, with its
+figures and boxes) or **composed** (boxes, labels, maps and diagrams at set
+positions: a textbook spread, a worksheet, an infographic). Count both in the
+spec sheet. A composed page is built with fixed callouts, text-free image
+elements and live-text SVG resources, never with text in design elements
+(playbooks J); more than a third composed means the user chooses between an
+identical layout and editable, translatable text before you go on.
+
 ## 2. Geometry (mm, from the trim)
 
 `measure_layout.py book.pdf --pages <body pages>` measures from body-size
@@ -248,8 +256,10 @@ paint order: text, rule, box and image elements (configuration.md §7).
   body pages only (`pages: "body"`); give openers a foot folio
   (`pages: "opener"`). Placeholders: `{pageNumber}`, `{chapterTitle}`,
   `{chapterNumber}`, `{partNumber}`, `{partTitle}`, `{title}` and
-  `{attr.<key>}`. For the book title in running heads, a literal string is
-  safer than `{title}`.
+  `{attr.<key>}`. Write the book title as `{title}`: the first chapter's
+  front matter feeds every chapter, and each edition's own front matter
+  translates it. Typed text in a running head is limited to a short label
+  (SKILL.md, "Content in the Markdown").
 - Text element tops from a measured baseline: top ≈ baseline − 0.8 × size ×
   line-height. Cap long running-head titles with `size.maxWidth` (a running
   head ends in `…` by default; opener and part titles wrap, ≥ 1.24, so leave

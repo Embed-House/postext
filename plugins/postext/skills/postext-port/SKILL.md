@@ -50,6 +50,75 @@ If the user states they do not hold the rights and have no permission, say
 the port needs the rights holder's permission and offer to port a
 public-domain or openly licensed sample instead.
 
+## Content in the Markdown, form in the config (hard rule)
+
+Every word a reader reads lives in a chapter, or, for a figure, in its
+resource (caption, note, alt text, the `<text>` labels of an SVG). The config
+holds form only. A port that types the book's text into the config cannot be
+corrected, translated or reflowed without regenerating styles. A 28-page
+textbook ported this way with Postext 1.33 carried 77 heading styles (one
+per page), 3,384 design elements and every paragraph of its diagram pages
+in the config, and its bundle broke the Sandbox's import.
+
+- **Design text elements** (running heads, folios, opener and heading-style
+  designs, part designs, contents rows) hold placeholders (`{titleText}`,
+  `{chapterTitle}`, `{pageNumber}`, `{title}`, `{author}`, `{attr.key}`) and
+  short literals: a label ("Chapter", "Contents"), the publisher's name.
+  Write the book title as `{title}` (front matter), not typed. Literal text
+  of more than 2 words or 24 characters in one element is content: put it in
+  the Markdown, as a heading, a box, a paragraph or a heading attribute the
+  design prints with `{attr.key}`.
+- **Longer literals that are form** (a journal's name in the running head,
+  an imprint line) go in `config.checks.contentInConfig.allow`, a list of
+  strings. The book's own title, subtitle, author and manifest `name` are
+  allowed without listing them.
+- **Check it** at every milestone: `python3 scripts/preset_kit.py lint my-book`
+  exits 1 on any offending element and prints its slot and JSON path;
+  `lint_project.py` reports the same as `contentInConfig` errors, and so does
+  `postext check` in the Postext releases that have the `contentInConfig`
+  warning.
+- **One style per kind of page**, never one per page. Styles named after
+  page numbers (`page-05`, `tema--p13`) are the sign that content went into
+  the config.
+- **Size budget.** The Sandbox keeps the working book in about 5 MB of
+  browser storage. Aim for a config under 1 MB; `preset_kit.py lint` warns
+  from 3 MB and `--max-size 1` makes it fail above 1 MB.
+- **Stop and ask** before breaking this rule. When the source needs
+  something Postext cannot express with its text in the Markdown, do not
+  work around it in the config. Write the gap as an issue draft (what the
+  source does, on which pages, the closest expression Postext has, what that
+  loses), show it to the user and ask whether to accept the closest
+  expression or wait for the feature. Never hard-code a book in the engine.
+
+### Flow pages and composed pages
+
+In the inventory (step 1) classify every page as **flow** (running text with
+figures, boxes and floats the engine places) or **composed** (boxes, labels,
+diagrams and maps at set positions: a children's textbook, a worksheet, an
+infographic page). Postext has no composed pages yet. Until it does, set a
+composed page with this ladder, first rung first (playbooks J):
+
+1. **Placed boxes**: one callout style per position, `placement: "fixed"`
+   with `fixed: {anchor, offset}`; the box's text is a `:::callout{type="…"}`
+   in the chapter, at the page it belongs to.
+2. **Page backgrounds and furniture**: image elements with no text in a
+   heading style's running head or design. One style serves every page of
+   its kind with `resourceId: "{attr.fondo}"`, the picture named by the
+   heading (`# Topic {style="topic" fondo="bg-p05"}`, postext ≥ 1.8).
+3. **Maps and diagrams with many labels**: an SVG resource with live
+   `<text>` labels, translated by `localized.<lang>.resources[].file`
+   (playbooks D6).
+4. **Forbidden**: literal text in design elements; heading styles that hold
+   content (a hidden style per page carrying its text); one preset or bundle
+   per language; the source's line breaks copied into the paragraphs.
+
+With more than a third of the pages composed, go back to the brief and ask
+the user to choose: **identical layout** (rungs 1–3 at the source's
+positions; edited or translated text must still fit its box, and what
+Postext cannot place is listed as a gap) or **editable, translatable text**
+(the composed pages set as flow pages with the source's type, colours and
+boxes, placed by the engine).
+
 ## Read before writing anything
 
 Postext Markdown is **not CommonMark**. These habits break a port:
@@ -283,7 +352,9 @@ Full references (load the one you need):
   horizontally and vertically, CJK fonts, Japanese books (horizontal, and
   vertical bunko or tankōbon) and Japanese fonts, Arabic books (modern and
   classical vocalised editions) and Arabic fonts, the printed object for the
-  Folio 3D viewer…) and which public preset shows each.
+  Folio 3D viewer, fixed-page books such as children's textbooks with their
+  placed boxes, backgrounds and labelled maps…) and which public preset
+  shows each.
 - [references/comics.md](references/comics.md): comic pages, strips and
   spreads: the split grammar, panels, script lines, the `comics` config,
   speaker anchors and safe areas, reading direction, editions per language,
@@ -331,7 +402,9 @@ Ask only what you cannot infer:
 
 - **Faithful** reproduction or a redesign inspired by the source?
 - Which part: the whole book, or a sample chapter first (recommended)?
-- Languages.
+- Languages. Every edition is a set of chapters in **one** bundle
+  (`chapters.<lang>`); a translation is translated Markdown, never another
+  preset.
 - Print (PDF) and/or screen.
 - The printed object, for the Folio 3D viewer: paper stock and weight,
   binding, cover (a case, or the book's own first and last pages). Read it
@@ -371,6 +444,12 @@ pages even when the text comes from DOCX or IDML.
 styles in use, media, vector-heavy pages (infographics) and text-less pages
 (OCR needed). It names the next command. Rasterise pages for a look:
 `pdftoppm -r 50 -png source.pdf /tmp/src/p`.
+
+Classify every page as flow or composed (see "Flow pages and composed
+pages" above; `vector_heavy_pages` and pages with many short text runs at
+scattered positions are the composed candidates) and write the list into
+the spec sheet. More than a third composed: ask the user the layout
+question before measuring further.
 
 ### 2. Measure the design (spec sheet)
 Follow [design-analysis.md](references/design-analysis.md).
@@ -462,6 +541,13 @@ Read each chapter against the source pages and apply
 
 - styles as containers: `:::callout{type}`, `:::paragraphs{style}`;
 - parts at the top of their first chapter;
+- the contents as `:::toc`, always (playbooks A3), never retyped from the
+  source. Where each block (a part, a section heading) must stay with its
+  entries, use `toc.groups` / `:::toc{keep="part"}` when the installed
+  Postext supports `toc.groups` (check with `postext --version` and the
+  docs' contents settings); otherwise a hand-written contents with
+  `:ref{id="…" style="pageNumber"}` is allowed, listed as a documented gap
+  in the report;
 - openers as heading attributes (`# Title {author="…" lead="…"}`);
 - figures cited with `:ref` in the sentence that first mentions them
   (`style="full"`, `case="lower"` to keep the authored form);
@@ -571,16 +657,19 @@ node scripts/render.mjs my-book --lang es --jpeg /tmp/pages --pages '#40' --dpi 
 ```
 
 At each milestone (a chapter done, before delivery) run the full checks, which
-the watch log does not replace: `lint_project.py`, `postext check my-book
---locale es --json` (every warning with chapter file:line and page; exit 3 on
-errors) and, with the Node tools, `render.mjs` for its `SANDBOX-WARN` lines.
+the watch log does not replace: `lint_project.py`, `preset_kit.py lint my-book`
+(content in the config, config size), `postext check my-book --locale es
+--json` for **every** locale (every warning with chapter file:line and page;
+exit 3 on errors) and, with the Node tools, `render.mjs` for its
+`SANDBOX-WARN` lines.
 
 Build the PDF (`postext pdf my-book -o /tmp/my-book.pdf`, or `render.mjs --out`)
 for the print checks and once at the end, not on every iteration.
 
 Fix the config or the Markdown until you reach:
 
-- zero lint errors;
+- zero lint errors, and `preset_kit.py lint` clean (no content in the
+  config, config under 1 MB);
 - `converged=true`;
 - no warnings;
 - the same page breaks on most pages, within ±1 page per chapter.
@@ -591,7 +680,10 @@ and when you look at spreads, the source's odd page is the left one.
 ### 8. Deliver
 ```bash
 python3 scripts/preset_kit.py pack my-book        # my-book.postext
+python3 scripts/preset_kit.py lint my-book.postext --max-size 1   # no content in the config, config under 1 MB
 ```
+
+and `postext check my-book.postext --locale <lang>` for each locale.
 
 Import it at https://postext.dev/en/sandbox (Books → New → Open a .postext file…), or
 serve a presets folder to a local sandbox (`preset_kit.py index <root>` +
@@ -630,9 +722,11 @@ delivered file before handing it over.
 
 ## Rules of thumb
 
-- **Config and Markdown only.** Never ask for engine changes to fit one book.
-  If Postext cannot express something, say so, choose the closest
-  expression, and note it as a gap.
+- **Config and Markdown only, and content only in the Markdown.** Never
+  hard-code a book in the engine. If Postext cannot express something,
+  choose the closest expression that keeps the text in the Markdown and note
+  it as a gap; if the only way left would put content in the config, stop,
+  write the gap as an issue draft and ask the user (see the hard rule).
 - **Measure, don't guess.** Every number in the generator has a source page.
 - **Let it grow with the text.** When Postext can express something as a
   size that follows its content (auto heights, widths as fractions of the
@@ -659,6 +753,11 @@ delivered file before handing it over.
   covers) from the source's specification; layout ignores it, so it costs
   nothing to get right (playbooks A11).
 - **Fidelity where it matters.** Match the grid, type, openers, boxes, figure
-  placement and page breaks. Don't chase individual line breaks.
-- **Bilingual**: one design, per-language wording (`localized`); the same
-  extraction code for both sources.
+  placement and page breaks. Don't chase individual line breaks: never copy
+  the source's line ends into the paragraphs.
+- **Translation is translating Markdown.** One bundle, one design: chapters
+  per locale (`chapters.<lang>`), `localized.<lang>.resources` for captions,
+  alt text, tables and live-text SVGs, `localized.<lang>.config` only for
+  what the language changes (locale, labels, hyphenation, faces). Run
+  `postext check` for every locale. The same extraction code for every
+  source edition.

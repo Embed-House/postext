@@ -106,7 +106,11 @@ only drops the print master). It does **not** check `kind`, `typeId` against
   `headings` object. Typically restate per language: `locale`, `bodyText`
   (hyphenation locale), `headings` (labels such as "Capítulo {1}"),
   `headingStyles`, `parts`, `toc`, `resourceTypes` (Figura/Figure), `header`
-  (literal running-head text).
+  (a running-head label such as "Capítulo"/"Chapter"; the titles come from
+  placeholders). A localized config translates labels, never the book's
+  text: that is in `chapters.<lang>` and `localized.<lang>.resources`
+  (SKILL.md, "Content in the Markdown"). Every edition lives in this one
+  manifest; never ship a preset per language.
 - `localized.<lang>.resources[]`: `{id, caption?, note?, altText?, table?, file?, pdfFile?, width?, height?}`
   merged into the resource with the same id. `table` replaces the whole table
   (model and styleId). `file` swaps the artwork (a diagram with translated
@@ -286,7 +290,10 @@ embeds them with `::resource{id="…"}` (placement `here`).
 - **Import**: zip the folder (`preset_kit.py pack my-book`, or
   `cd my-book && zip -r ../my-book.postext . -x '.*'`) and use Sandbox →
   Books → New → *Open a .postext file…* at https://postext.dev/en/sandbox. The import
-  takes the chapters and wording of the sandbox UI language.
+  takes the chapters and wording of the sandbox UI language. The Sandbox
+  keeps the working book in about 5 MB of browser storage: keep the config
+  under 1 MB (`preset_kit.py lint` prints its size and warns from 3 MB; a
+  config of several MB can break the import and the saves).
 - **Serve a folder of presets** (self-hosted/dev sandbox): put bundles under a
   root with an `index.json` (`preset_kit.py index <root>`):
   `{"version": 1, "presets": [{"id": "my-book", "dir": "my-book", "name": "My Book", "locale": "es"}]}`.
