@@ -708,6 +708,7 @@ describe("package exports", () => {
       "openBundleZip",
       "zipBundle",
       "isBundleManifest",
+      "pickBundleMeta",
       "POSTEXT_EXTENSION",
       "registerCitationEngine",
       "citationEngine",
