@@ -634,6 +634,7 @@ describe("package exports", () => {
       "composedFrameBlockIds",
       "composedPaintOrder",
       "composedReadingOrder",
+      "composedSheetClip",
       "frameMatrix",
       "frameClips",
       "frameBounds",

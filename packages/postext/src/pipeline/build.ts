@@ -16,6 +16,7 @@ import {
   type VDTBlock,
   type VDTColumn,
   type VDTExclusion,
+  type VDTComposedPage,
   type VDTPage,
   type BoundingBox,
   type ResolvedResourceBlock,
@@ -81,6 +82,7 @@ import { SPAN_EMBED_STYLE_ID, isPageSpanStrip, spanEmbedStyle, wrapPageSpanEmbed
 import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowColumns';
 import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap';
 import { resolvePageTemplate } from '../composed/templates';
+import { layoutComposedSpread } from '../composed/spread';
 import { composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline';
 import { expandTocDirectives } from './toc';
@@ -6156,45 +6158,89 @@ function placeDocumentPass(
   const composedLaid = new Set<number>();
   /** The composed pages' layout warnings (`frameOverflow`). */
   const composedNotes: ContentWarning[] = [];
-  /** Set the composed page `planned` on a fresh page (#855). */
+  /** Set the composed page `planned` on a fresh page (#855), or a spread
+   *  template on the two facing pages from the next verso (#861). */
   const placeComposedPage = (planned: PlannedComposedPage, fence: ComposedPageFence): void => {
     pendingSpacing = 0;
     closeFlowSegment(planned.startIdx);
     leaveCurrentPage();
     cursor.columnIndex = 0;
-    const page = doc.pages[cursor.pageIndex]!;
-    page.columns = [createVDTColumn(0, page.contentArea)];
-    // The physical side: a recto has an odd folio (in either binding).
-    const parity = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
-    const template = resolvePageTemplate(templateSource, fence.template, { parity })!;
     const frameless = calloutStyles.find((st) => st.id === FRAME_STYLE_ID)!;
-    const frames = designFramesOn(page);
-    const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
-    const out = layoutComposedPage({
+    const common = (page: VDTPage) => ({
       pass: framePass,
-      page,
-      template,
       fence,
       startIdx: planned.startIdx,
       endIdx: planned.endIdx,
       stories: planned.stories,
-      styleOf: (frame) => frameStyleOf((frame.style ? resolved.calloutStyles.find((st) => st.id === frame.style) : undefined) ?? frameless, frame),
-      areas: { area, page: frames.page, bleed: frames.bleed },
+      styleOf: (frame: Parameters<typeof frameStyleOf>[1]) => frameStyleOf((frame.style ? resolved.calloutStyles.find((st) => st.id === frame.style) : undefined) ?? frameless, frame),
       dpi,
       emPx: bodyStyle.fontSizePx,
       bodyOffset,
       mirrored: mirroredOf(page),
       pushGapPx: wrapGapPx(resolved.layout.wrap?.gap, dpi, bodyStyle.fontSizePx, floatGapPx),
     });
-    page.composed = out.composed;
-    const floats = (page.floats ??= []);
-    for (const b of out.blocks) {
-      floats.push(b);
-      doc.blocks.push(b);
+    const placed: { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[] = [];
+    let laid: Set<string>;
+    const sheet = resolvePageTemplate(templateSource, fence.template, { spread: true });
+    if (sheet?.spread) {
+      // A spread opens on a verso, a parity blank before it when needed,
+      // as a comic spread does; the recto after it takes the other half.
+      breakToEvenPage();
+      const verso = doc.pages[cursor.pageIndex]!;
+      verso.columns = [createVDTColumn(0, verso.contentArea)];
+      const start = cursor.pageIndex;
+      do {
+        advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx);
+      } while (cursor.pageIndex === start);
+      const recto = doc.pages[cursor.pageIndex]!;
+      recto.columns = [createVDTColumn(0, recto.contentArea)];
+      cursor.columnIndex = 0;
+      // The sheet is laid in the pages' flow: the left page first, or the
+      // right one where the flow is mirrored (right to left).
+      const versoIsLeft = resolved.page.binding !== 'right';
+      const flowMirrored = pageIsMirrored(verso);
+      const left = versoIsLeft ? verso : recto;
+      const right = versoIsLeft ? recto : verso;
+      const out = layoutComposedSpread({
+        ...common(flowMirrored ? right : left),
+        template: sheet,
+        first: flowMirrored ? right : left,
+        second: flowMirrored ? left : right,
+        firstSide: flowMirrored ? 'right' : 'left',
+        trim: pageMetrics.physical.trimBox,
+        bleed: pageMetrics.physical.bleedBox,
+      });
+      placed.push(...out.sides);
+      composedNotes.push(...out.warnings);
+      laid = out.laid;
+    } else {
+      const page = doc.pages[cursor.pageIndex]!;
+      page.columns = [createVDTColumn(0, page.contentArea)];
+      // The physical side: a recto has an odd folio (in either binding).
+      const parity = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
+      const template = resolvePageTemplate(templateSource, fence.template, { parity })!;
+      const frames = designFramesOn(page);
+      const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
+      const out = layoutComposedPage({
+        ...common(page),
+        page,
+        template,
+        areas: { area, page: frames.page, bleed: frames.bleed },
+      });
+      placed.push({ page, composed: out.composed, blocks: out.blocks });
+      composedNotes.push(...out.warnings);
+      laid = out.laid;
     }
-    composedNotes.push(...out.warnings);
+    for (const { page, composed, blocks } of placed) {
+      page.composed = composed;
+      const floats = (page.floats ??= []);
+      for (const b of blocks) {
+        floats.push(b);
+        doc.blocks.push(b);
+      }
+    }
     for (const [head, story] of planned.stories) {
-      if (!out.laid.has(head)) continue;
+      if (!laid.has(head)) continue;
       for (let i = story.startIdx; i <= story.plan.endIdx; i++) composedLaid.add(i);
     }
     pendingComposedBreak = 'page';

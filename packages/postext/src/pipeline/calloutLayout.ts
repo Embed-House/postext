@@ -556,7 +556,8 @@ export function offsetBlock(blk: VDTBlock, ox: number, oy: number): void {
   }
 }
 
-function offsetDesignBlock(b: VDTDesignBlock, ox: number, oy: number): void {
+/** Shift one block of a design slot by `(ox, oy)`. */
+export function offsetDesignBlock(b: VDTDesignBlock, ox: number, oy: number): void {
   b.bbox.x += ox;
   b.bbox.y += oy;
   if (b.kind === 'text') {

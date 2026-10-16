@@ -30,6 +30,7 @@ import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type
 import { dimensionToPx } from '../units';
 import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter';
 import { resolvePageTemplate } from '../composed/templates';
+import { splitSpreadDecoration } from '../composed/spread';
 import type { ResolvedConfig } from '../vdt';
 import type { PageRole } from '../types';
 import {
@@ -1139,6 +1140,8 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // links to paints that colour instead.
   stampPageBackgrounds(doc, partPaletteByPageIndex, resolved.page.backgroundColor, resolved.colorPalette);
 
+  /** Pages of a spread whose decoration is laid (#861). */
+  const spreadDecorated = new Set<number>();
   for (const page of doc.pages) {
     // Text in the flow (openers, part pages, in-column designs) reads as the
     // page's flow does; running heads and folios are horizontal on the
@@ -1501,15 +1504,48 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     }
     // The template's decoration, laid with the frames' final boxes (its
     // elements may anchor to `'#frame'`), on the sheet like the running
-    // heads; painted under the frames of layer 1 and up.
-    if (page.composed && template && template.decoration.elements.length > 0) {
+    // heads; painted under the frames of layer 1 and up. A spread's (#861)
+    // is laid once, on the sheet of its two pages, when its first page
+    // comes, and cut for each page.
+    const facing = page.composed?.facingPage !== undefined ? doc.pages[page.composed.facingPage] : undefined;
+    if (page.composed && template && template.decoration.elements.length > 0 && !(facing && spreadDecorated.has(page.index))) {
+      const pair = facing?.composed?.spread && page.composed.spread ? { left: page.composed.spread === 'left' ? page : facing, right: page.composed.spread === 'left' ? facing : page } : undefined;
+      const trimBox = metrics.physical.trimBox;
+      const bleedBox = metrics.physical.bleedBox;
+      const shift = trimBox.width;
+      /** A frame's box on the sheet (of the spread, the right page's set
+       *  `shift` along). */
       const named: Record<string, { x: number; y: number; width: number; height: number }> = {};
+      /** And the box its template gave it, before groups moved it
+       *  (`declaredRect`: what a `pin`ned element keeps to). */
       const declared: Record<string, { x: number; y: number; width: number; height: number }> = {};
-      for (const f of page.composed.frames) {
-        named[f.name] = f.rect;
-        declared[f.name] = f.declaredRect ?? f.rect;
+      const nameFrames = (p: VDTPage, dx: number) => {
+        for (const f of p.composed?.frames ?? []) {
+          if (f.facingBlocks) continue;
+          const r = flowRectToPage(p, f.rect);
+          const d = flowRectToPage(p, f.declaredRect ?? f.rect);
+          named[f.name] = { ...r, x: r.x + dx };
+          declared[f.name] = { ...d, x: d.x + dx };
+        }
+      };
+      let container: { x: number; y: number; width: number; height: number };
+      let slotFrames: { page: typeof trimBox; bleed: typeof trimBox } = physicalFrames;
+      if (pair) {
+        nameFrames(pair.left, 0);
+        nameFrames(pair.right, shift);
+        const spreadTrim = { ...trimBox, width: shift + trimBox.width };
+        const spreadBleed = { ...bleedBox, width: shift + bleedBox.width };
+        const l = flowRectToPage(pair.left, pair.left.contentArea);
+        const r = flowRectToPage(pair.right, pair.right.contentArea);
+        const cx = Math.min(l.x, r.x + shift);
+        const cy = Math.min(l.y, r.y);
+        const content = { x: cx, y: cy, width: Math.max(l.x + l.width, r.x + shift + r.width) - cx, height: Math.max(l.y + l.height, r.y + r.height) - cy };
+        container = template.area === 'trim' ? spreadTrim : template.area === 'bleed' ? spreadBleed : content;
+        slotFrames = { page: spreadTrim, bleed: spreadBleed };
+      } else {
+        nameFrames(page, 0);
+        container = template.area === 'trim' ? trimBox : template.area === 'bleed' ? bleedBox : sheetArea;
       }
-      const container = template.area === 'trim' ? metrics.physical.trimBox : template.area === 'bleed' ? metrics.physical.bleedBox : sheetArea;
       const attrSources: Record<string, { start: number; end: number }> = {};
       for (const [k, v] of Object.entries(page.composed.attrSources)) attrSources[k] = { start: v.sourceStart, end: v.sourceEnd };
       const placeholders: DesignPlaceholderContext = {
@@ -1536,9 +1572,15 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         page.index + pageIndexOffset,
         placeholders,
         dpi,
-        { ...sheetExtras, frames: { ...physicalFrames, named, declared }, attrs: page.composed!.attrs, attrSources },
+        { ...sheetExtras, frames: { ...slotFrames, named, declared }, attrs: page.composed!.attrs, attrSources },
       ));
-      if (decoration) page.composed.decoration = decoration;
+      if (decoration && pair) {
+        const halves = splitSpreadDecoration(decoration, shift, { left: bleedBox, right: { ...bleedBox, x: bleedBox.x + shift } });
+        pair.left.composed!.decoration = halves.left;
+        pair.right.composed!.decoration = halves.right;
+        spreadDecorated.add(pair.left.index);
+        spreadDecorated.add(pair.right.index);
+      } else if (decoration) page.composed.decoration = decoration;
     }
   }
 }

@@ -2,13 +2,16 @@
  * How the backends paint a composed page (#855, DESIGN §4): the frames in
  * layer order with the template's decoration at layer 0, each frame's
  * blocks turned by its matrix and clipped to its box when its content
- * overflows. Shared by canvas, PDF and HTML so the three agree.
+ * overflows; on a page of a spread (#861) all of it clipped to the page's
+ * share of the sheet. Shared by canvas, PDF and HTML so the three agree.
  */
 import type { VDTBlock, VDTComposedPage, VDTFrame, VDTPage } from '../vdt';
 
 /** One step of a composed page's paint order. */
 export type ComposedPaintItem =
-  | { kind: 'frame'; frame: VDTFrame; blocks: VDTBlock[] }
+  /** `facing`: the half of a frame read on the facing page of a spread
+   *  (`VDTFrame.facingBlocks`, #861): painted, never read. */
+  | { kind: 'frame'; frame: VDTFrame; blocks: VDTBlock[]; facing: boolean }
   | { kind: 'decoration' };
 
 /** Ids of the floats a composed page's frames hold: the backends paint
@@ -39,12 +42,16 @@ export function composedPaintOrder(page: VDTPage): ComposedPaintItem[] {
       out.push({ kind: 'decoration' });
       decorated = true;
     }
+    if (frame.facingBlocks) {
+      out.push({ kind: 'frame', frame, blocks: frame.facingBlocks, facing: true });
+      continue;
+    }
     const blocks: VDTBlock[] = [];
     for (const id of frame.blockIds) {
       const b = byId.get(id);
       if (b) blocks.push(b);
     }
-    out.push({ kind: 'frame', frame, blocks });
+    out.push({ kind: 'frame', frame, blocks, facing: false });
   }
   if (!decorated) out.push({ kind: 'decoration' });
   return out;
@@ -77,6 +84,14 @@ export function composedReadingOrder(paint: readonly ComposedPaintItem[]): Compo
     .map((item, order) => ({ item, order, at: firstIndex(item) }))
     .sort((a, b) => (a.at === b.at ? a.order - b.order : a.at - b.at))
     .map((e) => e.item);
+}
+
+/** On a page of a spread (#861): the box the page's frames and decoration
+ *  are painted clipped to (`VDTComposedPage.sheetClip`), so what crosses
+ *  the spine shows its own half on each page; undefined on any other
+ *  page. */
+export function composedSheetClip(page: Pick<VDTPage, 'composed'>): { x: number; y: number; width: number; height: number } | undefined {
+  return page.composed?.sheetClip;
 }
 
 /** The affine matrix `[a, b, c, d, e, f]` (canvas `transform` order,

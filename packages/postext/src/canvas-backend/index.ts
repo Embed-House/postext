@@ -14,7 +14,7 @@ import { setMissingImageSink, setTintUnflagged } from './renderResourceBlock';
 import { setVerticalPaint } from './verticalText';
 import { beginMirroredFlow } from './mirrorFrame';
 import { renderComicPage } from './comic';
-import { renderComposedFrames } from './composed';
+import { renderComposedDecoration, renderComposedFrames } from './composed';
 import { composedFrameBlockIds } from '../composed/paint';
 import { pageComics } from '../comics/transform';
 import { proofPixels, type PrintPreview } from '../color/softProof';
@@ -323,7 +323,7 @@ function paintContext(
     restoreContext(ctx);
   }
   endMirror?.();
-  if (page.composed?.decoration && (flow || endMirror)) renderHeaderFooterSlot(ctx, page.composed.decoration, inkHex);
+  if (page.composed?.decoration && (flow || endMirror)) renderComposedDecoration(ctx, page, inkHex);
 
   // A comic page's panels and lettering (or its half of a spread), and the
   // strips set in its flow, on the sheet (never through the flow frame).

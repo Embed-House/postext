@@ -56,6 +56,11 @@ export interface ComposedPageInput {
   mirrored: boolean;
   /** The gap text keeps from a frame that pushes it. */
   pushGapPx: number;
+  /** The box a frame takes given the one its placement gives: on a spread
+   *  (#861, `composed/spread.ts`), off the spine band unless the frame
+   *  crosses the gutter. An `'auto'` height is measured at the width it
+   *  returns. */
+  fitBox?: (frame: ResolvedFrame, rect: Rect) => Rect;
 }
 
 export interface ComposedPageLayout {
@@ -212,6 +217,17 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
         return r.totalHeight;
       };
     };
+    /** `placeBox`, then the box the page lets the frame take (`fitBox`:
+     *  off a spread's spine band, #861), its `'auto'` height measured at the
+     *  width it is left with. Declared and final boxes alike: the band is
+     *  the template's, not a reflow. */
+    const placeFitted = (frame: ResolvedFrame, placeable: ReturnType<typeof framePlaceable>, ctx: Parameters<typeof placeBox>[2], refs: (n: string) => Rect | undefined, nat: (width: number) => number): Rect => {
+      const r = placeBox(placeable, template, ctx, refs, nat);
+      if (!input.fitBox) return r;
+      const fitted = input.fitBox(frame, r);
+      if (Math.abs(fitted.width - r.width) < 0.01) return fitted;
+      return input.fitBox(frame, placeBox(placeable, template, ctx, refs, () => nat(fitted.width)));
+    };
     /** A frame's height as its template declares it: its `minHeight` where
      *  the height follows the content, else the content's (`natural`). */
     const declaredNatural = (frame: ResolvedFrame, natural: (w: number) => number) => (width: number): number => (frame.minHeight ? 0 : natural(width));
@@ -225,14 +241,14 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
       const placeable = framePlaceable(frame);
       const natural = naturalOf(p);
       const at = (refs: (n: string) => Rect | undefined) => {
-        const r0 = placeBox(placeable, template, input, refs, natural);
+        const r0 = placeFitted(frame, placeable, input, refs, natural);
         if (!p.holds || !exclusionsFor(frame, r0, true)) return { rect: r0, natural };
         const round = naturalOf(p, r0);
-        return { rect: placeBox(placeable, template, input, refs, round), natural: round };
+        return { rect: placeFitted(frame, placeable, input, refs, round), natural: round };
       };
       const decl = frame.pin ? at(declaredRefOf) : undefined;
       const fin = decl ?? at(refOf);
-      const declRect = placeBox(placeable, template, input, declaredRefOf, declaredNatural(frame, fin.natural));
+      const declRect = placeFitted(frame, placeable, input, declaredRefOf, declaredNatural(frame, fin.natural));
       const rect = frame.pin ? declRect : fin.rect;
       declared.set(frame.name, declRect);
       rects.set(frame.name, rect);
@@ -256,7 +272,9 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
           const ctx = ownBox && !f.placement && !f.grid ? { ...input, areas: { ...input.areas, area: ownBox } } : input;
           const natural = naturals[k]!;
           const placeable = framePlaceable(f);
-          const box = placeBox(placeable, template, ctx, memberRefs, declaredNatural(f, natural));
+          // On a spread the member's own box keeps off the spine band, and
+          // the negotiation starts from it (#861).
+          const box = placeFitted(f, placeable, ctx, memberRefs, declaredNatural(f, natural));
           ownRects.set(f.name, box);
           const auto = f.height === 'auto' && !(f.grid && !placeable.heightSet);
           const fill = f.height === 'fill';

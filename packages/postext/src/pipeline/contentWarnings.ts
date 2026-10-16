@@ -356,7 +356,8 @@ export function collectContentWarnings(
     scanSpans(b);
   }
 
-  // Composed pages (#854): templates, slots and frames left empty.
+  // Composed pages (#854): templates, slots and frames left empty, and a
+  // fence that disagrees with its template about spreads (#861).
   for (const w of checkComposedSlots(composedPages(blocks), config as ComposedPagesConfigKeys | undefined)) {
     out.push({ ...w, ...abs({ start: w.sourceStart ?? 0, end: w.sourceEnd ?? 0 }) });
   }
@@ -839,6 +840,11 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       break;
     case 'frameOverflow':
       text = `Frame "${w.frame}" of template "${w.template}" is ${w.overflowMm} mm short of its content — the rest is cut at the frame's foot; give it more height (height, maxHeight), chain it to another frame with next, or shorten the text`;
+      break;
+    case 'spreadMismatch':
+      text = w.templateSpread
+        ? `Template "${w.template}" is a spread — the page is laid over two facing pages; write ::::page{template="${w.template}" spread}`
+        : `Template "${w.template}" is a single page — the page is laid on one page; drop spread from the fence, or use a template with spread: true`;
       break;
     case 'pageFenceLength':
       text = 'A composed page needs four colons (::::page{template="…"} … ::::) — this :::page is read as a comic page';
