@@ -280,6 +280,10 @@ export function layoutComposedPageMemo(input: ComposedPageInput, ctx: ComposedMe
   return layout;
 }
 
+/** Fields of the VDT that say where things come from, not what they look
+ *  like. */
+const PAINT_FREE_KEYS = new Set(['sourceStart', 'sourceEnd', 'sourceMap', 'contentIndex', 'containerId', 'pageIndex', 'attrSources', 'titleSourceStart', 'titleSourceEnd']);
+
 /**
  * What a composed page paints, as a key (#857): its frames' layout key
  * with what is laid round them (running heads, decoration, page number,
@@ -299,6 +303,8 @@ export function composedPagePaintKey(page: VDTPage): string | undefined {
       page.width, page.height, page.pageLabel, page.background ?? null, page.paper ?? null,
       page.header ?? null, page.footer ?? null, composed.decoration ?? null, page.lineNumbers ?? null,
       loose, page.marginNotes ?? null, page.footnoteAreas ?? null,
-    ]),
+      // Where the text is written does not change the pixels: an edit on
+      // an earlier page moves every offset after it.
+    ], (key, value: unknown) => (PAINT_FREE_KEYS.has(key) ? undefined : value)),
   ]);
 }

@@ -632,6 +632,43 @@ Relayout scope: the composed page's layout is memoised by (resolved template, sl
 fonts, locale, page parity); an edit inside one page re-sets that page (and its continuations).
 Budget (P16): < 100 ms for a property change on one page, < 300 ms with reflow.
 
+### 6.1 What P16 built (#857)
+
+- **Query API** (`composed/sourceMap.ts`): `sourceAt(doc, page, x, y, { file })` returns the
+  elements at a point innermost first (`text` → `line` → `block` → `box` → `frame` → `group` →
+  `template`; `design` → `slot` → `template` for decoration and running heads), each with a
+  stable `id`, a `source` (`markdown` | `config` | `attr` | `resource`), `content` (the Markdown a
+  frame or page holds) and `rect`. Hit order follows paint order: running heads, then frames and
+  decoration from the top layer down; a turned frame is hit in its upright box. Reverse:
+  `elementsForSource(doc, start, end)`; `findElement(doc, id)`. Nothing is laid out: the API reads
+  stamps.
+- **Stamps added.** `VDTChip.sourceOffsets` (relative to the chip's `:`, so the rich cache stays
+  valid), `containerAttrSources` on container fences carried to the story box so a frame's tab and
+  title map to `label` / `title`; every design block gets `elementId`, and `configPath` where the
+  slot's pointer is known (decoration through `decorationPaths`, template header/footer through
+  the new `headerPath` / `footerPath`, `/headingStyles/<i>/header`, `/header`); `attr` on a text or
+  image block that shows `{attr.x}`; `{attr.x}` in a composed page's running heads maps to the page
+  fence; `OutlineEntry.headingSource` → `TocBlockInfo` → `tocEntry.headingSource` (body offsets,
+  kept out of `outlineKey`); `FigureLabel.anchorRef` (`resourceId#anchorId`) and `FigureLabel.id`
+  (`cp<n>:<slot>:label:<anchor>`, `@<k>` for a percent label) for P6.
+- **Ids** (`composed/ids.ts`): `cp<n>`, `cp<n>:<frame>` (`~<k>` reserved for continuation pieces
+  on later pages, #859), blocks `cp<n>:<frame>-c<k>`, `cp<n>:group:<name>`,
+  `cp<n>:decoration|header|footer:<elementId>`. A chained piece on the same page keeps P4's
+  `-cont-<k>` block id.
+- **Memo** (`composed/pageMemo.ts`): `layoutComposedPageMemo` keys a page by a 64-bit digest of the
+  resolved config (once per pass), the measurement generation, the resolved template, the fence
+  index, the page's Markdown slice and blocks (offsets relative, container ids by order), the
+  geometry rounded to 1e-6 px, the side's `mirrored`, and a pass context from `build.ts` (heading
+  numbers, part, section, paragraph containers, boxes out of flow, the pictures' resources, types,
+  numbers and floats). Pages with footnotes, refs, citations, contents, index or strips are not
+  kept, nor pages whose layout left drop-cap or joining-script notes. A hit parses the stored JSON
+  and moves source offsets, `contentIndex`, container ids (`calloutPath` too) and `pageIndex`. The
+  digest is `VDTComposedPage.layoutKey`; `composedPagePaintKey(page)` adds what is laid round the
+  frames, and the Sandbox canvas keeps the bitmap of a page whose paint key is unchanged.
+- **Cost.** A warm composed page sets in about 1 ms (stub measure), so the memo saves about half
+  of the composed-page work on a rebuild; the whole chapter build is dominated by the rest of the
+  pipeline. Bench: `__bench__/composedPage.bench.test.ts`.
+
 ## 7. Comics
 
 `:::page{split}`, `::panel` and lettering keep their parser and layout unchanged in this
