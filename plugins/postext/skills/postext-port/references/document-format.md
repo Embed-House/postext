@@ -761,14 +761,17 @@ text flow (newspaper strips). Inside the block nothing is a paragraph,
 heading or list. Grammar, every attribute, the `comics` config, the
 pictures' speaker anchors and the warnings: [comics.md](comics.md).
 
-### 12.2 Composed pages: `::::page`, `:::frame`, `slot=`, `:::figure` + `::label` (postext 1.34)
+### 12.2 Composed pages: `::::page`, `:::frame`, `slot=`, `:::figure` + `::label` (postext ≥ 1.34)
 
-The Markdown side of page templates (configuration.md §19g). Check the
-installed version first (`postext --version`); in 1.34 the engine reads and
-checks these blocks but **does not lay a composed page out yet** (that comes
-with #855): the page's content is set in the running text on pages of its
-own. Judge the warnings, not the page images, until the release that lays
-them out; till then the round-1 ladder (playbooks J) stays the method.
+The Markdown side of page templates (configuration.md §19g); how to port
+with them: [composed-pages.md](composed-pages.md). Postext 1.34.0 reads and
+checks these blocks and sets their content in the running text on pages of
+its own; 1.34.1 lays the frames out; round 2 starts at 1.35.0 (groups,
+spreads, reading order in every output); `::label` words are drawn from
+1.37.0 (before, the figure is set as `::resource`).
+`python3 scripts/composed_check.py round` says which round the installed
+version takes; with an older one the round-1 ladder (playbooks J) stays the
+method.
 
 ```md
 ::::page{template="topic" fondo="banda-retos"}
@@ -812,13 +815,27 @@ North, south, east and west.
   set as `::resource` with its labels.
 - `:::page{split=…}` (three colons) is still a **comic** page (§12.1).
   A composed page written with three colons warns `pageFenceLength`.
+- **Order is meaning.** The frames are read in the order their content
+  first appears (a frame's chain right after it), in HTML, EPUB, tagged PDF
+  and by screen readers: write the page in the source's reading order
+  (title, text, each box then its pictures), never in template or paint
+  order. `composed_check.py check` compares the HTML's order with it.
+- Recovery: a page left open runs to the end of the chapter, a `::::page`
+  met while one is open closes it, the closing fence closes any container
+  still open inside; each is `unclosedContainer`. A fence of another colon
+  count stays text. A `:::figure` ends at its first line that is neither a
+  label nor blank.
 
 Porting rule: a textbook page built by hand from fixed callouts,
 `:::pagebreak` and placed figures (title band, text, coloured boxes each
 with its photo) becomes one `::::page{template=…}` with a `:::frame{slot}`
 per box and `::resource{… slot=…}` per photo; positions, sizes and colours
 go to `pageTemplates`, never into the Markdown. Keep the slot names the same
-in every locale's chapter. Warnings: verification.md, "Composed pages".
+in every locale's chapter. A box whose text runs over to the next page
+stays whole in one `:::frame` (the template continues it, 1.37); never type
+its second half into another page fence. Warnings: verification.md,
+"Composed pages"; `lint_project.py` checks templates, slots, anchors and
+label styles before any layout.
 
 **Directives inside a `:::callout` are ignored** (except `:::space`). An unknown `:::word` is literal text (`unknownDirective`).
 

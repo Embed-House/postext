@@ -23,6 +23,9 @@ as a heading attribute by a design's drop cap); for comics
 (`:::page`, `:::strip`), the split expressions, panels, script lines,
 balloon and panel styles, the `comics` config, speaker anchors and safe
 areas, the lettering faces, and whether every edition sets the same pages;
+for composed pages (`::::page{template}`, `:::frame{slot}`, `:::figure` +
+`::label`, `slot=`; postext >= 1.34), the template, slot, spread, anchor and
+label-style ids against the page templates and resources;
 and the book's text typed into design text elements of the config
 (contentInConfig, the rule of `preset_kit.py lint`) and a config past 3 MB.
 Pure Python otherwise.

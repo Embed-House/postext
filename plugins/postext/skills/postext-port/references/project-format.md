@@ -120,9 +120,12 @@ only drops the print master). It does **not** check `kind`, `typeId` against
   paints whole too slowly while the original opens on the whole book).
   `pickBundleView(manifest, locale)` resolves it; `openBundle` returns it as
   `canvasScope`.
-- `localized.<lang>` has no `name`: the Sandbox's library and `postext check`
-  name every edition after the manifest `name` (#891). The edition's own
-  title is its first chapter's front matter `title` (what `{title}` prints).
+- `localized.<lang>.name` and `.description` (postext ≥ 1.34.1, #891): the
+  title the Sandbox's library, its import and `postext check --locale` give
+  that edition; the primary edition keeps the manifest's `name`. Before
+  1.34.1 every edition is named after the manifest `name`. The title the
+  book prints is its first chapter's front matter `title` (what `{title}`
+  prints).
 - `start` (postext after 1.26.3): where the book starts, for a bundle that
   holds part of a longer publication (an article that runs on pages 58 to 61
   of an issue, one chapter of a textbook ported on its own). It is the

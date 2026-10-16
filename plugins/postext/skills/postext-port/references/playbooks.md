@@ -1140,12 +1140,14 @@ Cookbook's comic recipes) are working pipelines.
 
 A children's textbook, a workbook or an infographic book sets many pages as
 **composed** pages: boxes, labels, maps and diagrams at set places, with
-little running text. Postext 1.34 reads page templates and composed-page
-blocks (`pageTemplates`, `::::page`, configuration.md §19g,
-document-format.md §12.2) but lays no composed page out yet; that comes with
-#855 in a later release. Check `postext --version` and the release notes:
-until the release that lays composed pages out, port them with the ladder
-below (round 1). What went wrong before: a
+little running text. **With postext 1.35.0 or later, port them as composed
+pages (round 2, [composed-pages.md](composed-pages.md))**: page templates in
+the config, `::::page{template}` with `:::frame{slot}` in the chapter, boxes
+that grow with their text. `python3 scripts/composed_check.py round` reads
+the installed version and says which round to use. This section is round 1,
+the fallback for older engines (1.34.0 reads templates and lays none out;
+1.34.1 lays frames out but cannot make them move with their text), and the
+reference for ports made with it. What went wrong before: a
 28-page textbook ported with Postext 1.33 drew every page's diagram text as
 design text elements of a hidden heading style per page, at the source's
 coordinates, and built one bundle per language from them. The English
@@ -1156,7 +1158,8 @@ None of the rungs below puts text in the config.
 ### J1. Classify the pages first
 In the inventory, mark each page **flow** (running text with figures and
 boxes the engine places) or **composed** (positions are the design). Count
-them in the spec sheet. More than a third composed: ask the user before
+them in the spec sheet. In round 2 go on with composed-pages.md §3.1. In
+round 1, more than a third composed: ask the user before
 building whether the port is an **identical layout** (J2–J4 at the source's
 positions; edited or translated text must still fit its box; whatever
 Postext cannot place is a listed gap) or **editable, translatable text**
@@ -1190,9 +1193,9 @@ The Sun rises in the **east** and sets in the **west**.
   for 121 boxes in the 28-page port), named by kind and position
   (`card-top-left`, `aside-right-mid`), never by page number. That is
   expected in round 1 and is no content in the config: the style holds the
-  place, size and colours, the words stay in the fence. Page templates
-  replace them later with one template per page layout and a frame per box
-  (configuration.md §19g).
+  place, size and colours, the words stay in the fence. In round 2
+  page templates replace them with one template per kind of page, a frame
+  per box and one callout style per kind of box (composed-pages.md §4, §9).
 - The box goes on the page where its fence falls in the flow; put the fence
   after the `:::pagebreak` (or heading) that opens that page. If its place
   is taken there, it moves to the next page. **Nothing warns: check the page
@@ -1311,9 +1314,10 @@ holds next to the map is a callout (J2), not part of the picture.
 - In round 1 that strings file (or the SVG) is the **second place the
   book's text lives**, besides the Markdown. Say so in the report, with the
   number of words it holds (670 of 4,990 in the 28-page port), so whoever
-  corrects or translates the book knows where to look. `::label` lines in a
-  `:::figure` (postext 1.34, document-format.md §12.2) bring those words
-  into the Markdown once composed pages are laid out.
+  corrects or translates the book knows where to look. From postext
+  1.37.0 `::label` lines in a `:::figure` are drawn at the picture's
+  anchors and the words live in the Markdown (composed-pages.md §6.4);
+  use that instead whenever the engine has it.
 - The `postext` command line draws SVGs differently from the Sandbox
   (#890). With postext 1.33 an SVG whose `viewBox` did not start at `0 0`
   printed empty in `postext images`: write `viewBox="0 0 w h"` and move the
@@ -1340,8 +1344,9 @@ the source reflows in its box or flow; it is never re-placed line by line
 at the source's coordinates. Run `postext check my-book --locale <lang>` and
 look at the pages of every locale. The Sandbox imports one edition of a
 multi-language bundle (it asks which), so import each edition to look at
-it; every edition is listed under the manifest `name`, since
-`localized.<lang>` has no `name` (#891).
+it; give each edition its own title with `localized.<lang>.name`
+(postext ≥ 1.34.1, #891). Composed pages in several languages: one bundle,
+the same templates, slots and anchors (composed-pages.md §8).
 
 ### J7. Never
 - Literal text in design text elements beyond a label, the publisher's name
@@ -1365,7 +1370,8 @@ outputs would ship in the bundle; `--exclude GLOB` leaves more out.
 ### J9. Stop and ask
 When the source needs something none of these rungs expresses (text that
 must flow around a drawn shape, a box chained to another, labels anchored
-to points of a photograph), stop before reaching for the config. Write the
+to points of a photograph; all of them round 2 features: check
+`composed_check.py round` first), stop before reaching for the config. Write the
 gap as an issue draft for the user:
 
 ```md

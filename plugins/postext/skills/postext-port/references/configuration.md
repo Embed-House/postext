@@ -120,8 +120,8 @@ Conversion at `page.dpi` (default 300):
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
 | `checks` | `{ contentInConfig?: { enabled?, allow?, maxWords?, maxChars? } }` | §19h | the `contentInConfig` check of design texts (postext 1.34; read by `preset_kit.py lint` on any version); out of the layout key; an older engine ignores the key |
-| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (postext 1.34: loaded and checked, laid out from #855) |
-| `labelStyles` | LabelStyle[] | §19g | styles of `::label` words on pictures (postext 1.34) |
+| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (read and checked from 1.34.0, laid out from 1.34.1, groups and spreads from 1.35.0, `fit` from 1.36.0, continuation from 1.37.0; round 2, composed-pages.md) |
+| `labelStyles` | LabelStyle[] | §19g | styles of `::label` words on pictures (read from 1.34.0, drawn from 1.37.0) |
 
 Not configurable (no config exists — don't look for it): margin notes (emulate with
 `span:'side'` callouts; footnotes and endnotes are `footnotes`, §19a), a blockquote's own family, size,
@@ -1781,15 +1781,29 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
 `page.margins.mirror`) and `"lineNumbers": {"enabled": true, "position":
 "side"}`.
 
-## 19g. `pageTemplates[]` and `labelStyles[]` (postext 1.34)
+## 19g. `pageTemplates[]` and `labelStyles[]` (postext ≥ 1.34)
 
-Composed pages (a textbook page of boxes, a worksheet): the template holds the frames' places,
-sizes and styles; the words come from the chapter's `::::page{template}` block
-(document-format.md §12.2). Check `postext --version`: **1.34 loads, resolves and checks
-templates but lays no composed page out**; layout comes with #855 in a later release. Until that
-release, port composed pages with the round-1 ladder (playbooks J) and write templates only when
-the brief asks to prepare for it. Both keys are in the layout key; `configVersion` 15 marks a
-config that may hold templates (14 and older load unchanged).
+Composed pages (a textbook page of boxes, a worksheet, a magazine spread): the template holds
+the frames' places, sizes and styles; the words come from the chapter's `::::page{template}`
+block (document-format.md §12.2). How to port with them, the component library and recipes:
+[composed-pages.md](composed-pages.md). What each release applies (`composed_check.py round`
+says it for the installed one):
+
+```
+1.34.0  read, resolved and checked only (nothing laid out)          → round 1 (playbooks J)
+1.34.1  laid out: grid/placement/anchors, sizes, style, padding, layer, rotate, exclude:'push',
+        flow, takes, next, decoration, header/footer, variants       → round 1
+1.35.0  groups (stack/row, gap, align, grow/shrink/priority), pin, reflow log; spread, gutter,
+        crossGutter; Markdown reading order in HTML, EPUB, tagged PDF → round 2
+1.36.0  fit (the reflow ladder), frameOverflow proposals; wrap:'contour'; source map
+1.37.0  overflow.continueIn 'next-page'|'template:<id>', overflow.mark, overflowTemplate;
+        labelStyles and anchors drawn (::label)
+not yet frame writingMode/direction, template bodyStyle/palette; 'auto' width reads as 'fill'
+```
+
+Both keys are in the layout key; `configVersion` 15 marks a config that may hold templates (14 and
+older load unchanged). With an engine older than 1.35.0 port composed pages with the round-1
+ladder (playbooks J) and write templates only when the brief asks to prepare for them.
 
 ```
 PageTemplate
@@ -1833,7 +1847,21 @@ LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, f
   counts.
 - **Porting rule**: one template per recurring page layout, the variants derived with `extends`
   and small patches, never whole copies. No text in templates: per-page words come from the
-  `::::page` attributes (`{attr.x}`) and from `:::frame{slot label title}` in the Markdown.
+  `::::page` attributes (`{attr.x}`) and from `:::frame{slot label title}` in the Markdown; a
+  sentence in a template's decoration or running heads is `contentInConfig` (`preset_kit.py
+  lint` counts it; the engine from #874).
+- **Frame styles are callout styles** holding the dress only (fill, border, radius, padding, tab
+  `label`, title, `body`); `placement`, `fixed`, `span`, `columns`, `width` and margins are ignored
+  on a frame, so one style serves every box of its kind; position and measure go in the frame.
+- **Sizes that follow the text**: `height` `'auto'` (default) with the drawn height as `minHeight`
+  and the room the page leaves as `maxHeight`; boxes one under another in a `stack` group (the
+  first frame's placement starts it), side by side in a `row`; pictures beside a box are frames
+  of their own anchored to a corner of it (`#box`, `top-right`), outside its group.
+- **fit** (1.36): `{ shrinkText: true, minScale: 0.9, scaleImages: true, imageMinScale: 0.8 }`,
+  2.5 % steps, the largest scale that fits; keep body text at 0.9 or above.
+- **overflow** (1.37): `continueIn: 'next-page'` (the template's `overflowTemplate`, else the same
+  template with only that frame filled), `'template:<id>'`, `'#frame'` (= `next`); `mark`: string,
+  `false`, unset = the style's `continuesMarker` in the document's language; up to 16 added pages.
 - **Resource anchors** gain `width` (a fraction of the picture width), `align` ('center'),
   `verticalAlign` ('middle'), `rotate` and `style` (a `labelStyles` id); comics ignore them.
   Anchors live on the resource, so every locale shares them.
@@ -1853,8 +1881,9 @@ checks.contentInConfig
 
 Out of the layout key (changing it lays nothing out again). A design text (every `text` element
 of `header`, `footer`, `headings.levels[i].advancedDesign.slot`, a heading style's
-`advancedDesign.slot`/`header`/`footer`, `parts.design`/`versoDesign`, `toc.parts.design`, and
-the same under `htmlViewer.overrides`) is content when its literal (the `content` with every
+`advancedDesign.slot`/`header`/`footer`, a page template's `decoration`/`header`/`footer` and its
+variants' (the engine from #874, `preset_kit.py lint` always), `parts.design`/`versoDesign`,
+`toc.parts.design`, and the same under `htmlViewer.overrides`) is content when its literal (the `content` with every
 `{placeholder}` removed, `{{`/`}}` read as braces, white space collapsed) still has more than
 `maxWords` words or weighs more than `maxChars` once the allowed phrases are out. Allowed: `allow`
 plus the document metadata `title`, `subtitle`, `author`, `publisher` (the first chapter's front
