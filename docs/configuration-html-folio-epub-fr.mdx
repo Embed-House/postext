@@ -264,6 +264,12 @@ Le composant `HtmlPreview` du Sandbox (`packages/postext-sandbox/src/viewport/Ht
       <td>Les renvois <code>:ref</code> pointent vers leur ressource ; les lignes de la table des matières, non.</td>
       <td>Les renvois <code>:ref</code> et les lignes de la table des matières, plus les signets (outline).</td>
     </tr>
+    <tr>
+      <td>Pages composées (<code>::::page</code>)</td>
+      <td>Blocs dans l’ordre des calques, tournés et rognés</td>
+      <td>Les mêmes boîtes, écrites dans l’ordre de lecture et peintes dans l’ordre des calques avec <code>z-index</code> ; les étiquettes d’une figure suivent son <code>alt</code></td>
+      <td>La même peinture ; l’arbre de structure lit les blocs dans l’ordre du Markdown</td>
+    </tr>
   </tbody>
 </table>
 
@@ -396,6 +402,8 @@ EPUB 3 définit deux rendus, fixés par la propriété `rendition:layout` du paq
     <tr><td>Adapté à</td><td>Des pages composées avec soin : livres illustrés, manuels, catalogues, magazines ; grands écrans</td><td>Le texte suivi : romans, essais, rapports ; téléphones et liseuses à encre électronique</td></tr>
   </tbody>
 </table>
+
+Une page composée (`::::page{template="…"}`) garde son modèle dans la mise en page fixe. Dans le livre reflowable, elle devient une section de ses blocs dans l’ordre du Markdown, chaque bloc dans son style d’encadré, sans le décor, les étiquettes de chaque figure énumérées après l’image : voir [Hors de l’imprimé](/fr/docs/composed-pages#hors-de-limprimé--html-epub-et-pdf-balisé).
 
 Les deux rendus portent la même navigation : une table des matières tirée des titres et des pages de partie, une liste des pages avec les numéros de pages imprimées, des repères (couverture, table des matières imprimée, début du corps du texte) et un NCX pour les anciens systèmes de lecture.
 

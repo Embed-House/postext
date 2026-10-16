@@ -264,6 +264,12 @@ O componente `HtmlPreview` do Sandbox (`packages/postext-sandbox/src/viewport/Ht
       <td>As citações <code>:ref</code> apontam para o seu recurso; as linhas do sumário, não.</td>
       <td>As citações <code>:ref</code> e as linhas do sumário, além dos marcadores (bookmarks).</td>
     </tr>
+    <tr>
+      <td>Páginas compostas (<code>::::page</code>)</td>
+      <td>Blocos na ordem das camadas, girados e recortados</td>
+      <td>As mesmas caixas, escritas na ordem de leitura e pintadas na ordem das camadas com <code>z-index</code>; os rótulos de uma figura vêm depois do seu <code>alt</code></td>
+      <td>A mesma pintura; a árvore de estrutura lê os blocos na ordem do Markdown</td>
+    </tr>
   </tbody>
 </table>
 
@@ -396,6 +402,8 @@ O EPUB 3 define duas apresentações, escolhidas pela propriedade `rendition:lay
     <tr><td>Indicado para</td><td>Páginas com design: livros ilustrados, livros didáticos, catálogos, revistas; telas grandes</td><td>Texto corrido: romances, ensaios, relatórios; celulares e leitores de tinta eletrônica</td></tr>
   </tbody>
 </table>
+
+Uma página composta (`::::page{template="…"}`) mantém o seu modelo no layout fixo. No livro reflowable ela vira uma seção com os seus blocos na ordem do Markdown, cada bloco no seu estilo de boxe, sem a decoração e com os rótulos de cada figura listados depois da imagem: veja [Fora do papel](/pt/docs/composed-pages#fora-do-papel-html-epub-e-pdf-marcado).
 
 As duas apresentações levam a mesma navegação: um sumário a partir dos títulos e das páginas de parte, uma lista de páginas com os rótulos de página impressos, landmarks (capa, sumário impresso, início do corpo do texto) e um NCX para sistemas de leitura mais antigos.
 

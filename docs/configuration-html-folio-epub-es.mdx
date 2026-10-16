@@ -266,6 +266,12 @@ El componente `HtmlPreview` del sandbox (`packages/postext-sandbox/src/viewport/
       <td>Las citas <code>:ref</code> enlazan con su recurso; las entradas del índice, no.</td>
       <td>Las citas <code>:ref</code> y las entradas del índice, además de los marcadores.</td>
     </tr>
+    <tr>
+      <td>Páginas compuestas (<code>::::page</code>)</td>
+      <td>Marcos en orden de capas, girados y recortados</td>
+      <td>Las mismas cajas, escritas en orden de lectura y pintadas en orden de capas con <code>z-index</code>; los rótulos de una figura siguen a su <code>alt</code></td>
+      <td>El mismo pintado; el árbol de estructura lee los marcos en el orden del Markdown</td>
+    </tr>
   </tbody>
 </table>
 
@@ -398,6 +404,8 @@ EPUB 3 define dos maquetaciones, que el paquete declara con la propiedad `rendit
     <tr><td>Indicada para</td><td>Páginas diseñadas: libros ilustrados, libros de texto, catálogos, revistas; pantallas grandes</td><td>Texto corrido: novelas, ensayos, informes; móviles y lectores de tinta electrónica</td></tr>
   </tbody>
 </table>
+
+Una página compuesta (`::::page{template="…"}`) conserva su plantilla en la maquetación fija. En el libro de maquetación fluida se convierte en una sección con sus marcos en el orden del Markdown, cada marco un bloque con su estilo de aviso, sin la decoración y con los rótulos de cada figura enumerados tras la imagen: véase [Fuera del papel](/es/docs/composed-pages#fuera-del-papel-html-epub-y-pdf-etiquetado).
 
 Las dos maquetaciones llevan la misma navegación: un índice a partir de los títulos y las páginas de parte, una lista de páginas con los números impresos, puntos de referencia (cubierta, índice impreso, comienzo del cuerpo) y un NCX para lectores antiguos.
 

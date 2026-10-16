@@ -191,6 +191,17 @@ Os blocos são pintados na ordem da sua `layer`: a decoração na camada 0, os b
 
 Um bloco cujo conteúdo é mais alto que ele, sem um bloco seguinte onde continuar, guarda todo esse conteúdo no documento, mas só mostra o que cabe: o resto é cortado no pé do bloco na saída paginada, e o aviso [`frameOverflow`](#frameoverflow) diz quanto. O conteúdo que nenhum bloco recebe (não há bloco de fluxo, ou falta um bloco nesse lado) é composto no texto corrido, na página que vem depois da página composta.
 
+## Fora do papel: HTML, EPUB e PDF marcado
+
+Toda saída lê uma página composta na ordem do seu Markdown, e não na ordem em que o modelo lista os seus blocos nem na ordem em que pinta as suas camadas.
+
+- **EPUB reflowable.** A página vira uma seção (`<section class="pt-composed pt-composed-tema-cajas">`) que abre com a marca de quebra de página. Cada bloco do modelo é um bloco dessa seção (`<div class="pt-frame pt-frame-dinero">`), posto onde o seu conteúdo aparece pela primeira vez no Markdown; um bloco e os blocos em que a sua cadeia `next` continua formam um só. Um bloco desenhado com um estilo de boxe mantém a caixa desse estilo: fundo, borda, margens internas, texto e o seu `label` como título do boxe. Um bloco sem estilo é um bloco simples. A decoração (imagens de fundo, cartões, textos de design) pertence à página impressa e fica de fora.
+- **Rótulos das figuras.** A imagem que vai no EPUB não mostra os textos `::label` de uma `:::figure`, então o livro reflowable os lista logo depois da imagem, dentro da figura, na ordem em que foram escritos: uma lista escondida da vista (`pt-figure-labels pt-hidden`) que um leitor de tela lê uma vez só. No visualizador HTML, no EPUB de layout fixo e no PDF marcado eles vêm depois do texto alternativo da imagem, `Uma família com a cesta de compras (Aluguel, Luz, Comida)`; rótulos em chinês e japonês levam `（…、…）`, e os árabes, a vírgula árabe.
+- **Visualizador HTML e EPUB de layout fixo.** Os dois mostram a página impressa com o modelo aplicado: cada bloco na sua caixa, girado conforme `rotate`, recortado quando o conteúdo transborda, pintado sobre os blocos de camadas inferiores, a decoração na camada 0. A marcação lista os blocos na ordem de leitura e os pinta na ordem das camadas com `z-index`, de modo que as tecnologias assistivas seguem o Markdown enquanto a página parece impressa. Imagens decorativas ficam escondidas das tecnologias assistivas (`alt=""`). As fontes da decoração estão entre as que o Sandbox embute num EPUB; um EPUB de layout fixo escrito sem alguma delas avisa com `missingFont`.
+- **PDF marcado.** A árvore de estrutura lê os blocos na mesma ordem. Cada bloco, ou cadeia de blocos, é um `Div` com os seus títulos, parágrafos e listas; as suas imagens são elementos `Figure` cujo `Alt` traz os rótulos; a decoração é um artefato de layout.
+
+No código, os rótulos de uma figura ficam no seu bloco, em `resourceBlock.labels` (texto, âncora ou ponto, estilo e intervalo no fonte), e `composedReadingOrder(composedPaintOrder(page))` dá a decoração e os blocos de uma página na ordem de leitura.
+
 ## Avisos
 
 As verificações leem o Markdown e a configuração antes de qualquer diagramação, então aparecem no painel Verificações enquanto você digita, no `postext check` e nos `contentWarnings` do documento, cada uma com o intervalo de origem daquilo que aponta (veja [Configuração › Avisos no documento](/pt/docs/configuration-programmatic-usage#avisos-no-documento)).

@@ -191,6 +191,17 @@ Frames paint in the order of their `layer`: the decoration at layer 0, frames at
 
 A frame whose content is taller than the frame, with no next frame to go on in, keeps all of it in the document but shows only what fits: the rest is cut at the frame's foot on paged output, and the warning [`frameOverflow`](#frameoverflow) says how much. Content that no frame takes (no flow frame, or a frame missing on this side) is set in the running text on the page after the composed page.
 
+## Outside print: HTML, EPUB and tagged PDF
+
+Every output reads a composed page in the order of its Markdown, not in the order the template lists its frames or paints its layers.
+
+- **Reflowable EPUB.** The page becomes a section (`<section class="pt-composed pt-composed-tema-cajas">`) that opens with the page's page-break marker. Each frame is one block of it (`<div class="pt-frame pt-frame-dinero">`), placed where its content first appears in the Markdown; a frame and the frames its `next` chain goes on in make one block. A frame drawn in a callout style keeps that style's box: background, border, padding, body text, and its `label` as the box's title. A frame with no style is a plain block. The decoration (background pictures, cards, design text) belongs to the printed page and is left out.
+- **Figure labels.** The picture an EPUB carries does not show the `::label` texts of a `:::figure`, so the reflowable book lists them right after the picture, inside its figure, in the order written: a list hidden from sight (`pt-figure-labels pt-hidden`) that a screen reader reads once. In the HTML viewer, the fixed-layout EPUB and the tagged PDF they follow the picture's alternative text, `A family with a shopping basket (Rent, Electricity, Food)`; Chinese and Japanese labels take `（…、…）`, Arabic ones the Arabic comma.
+- **HTML viewer and fixed-layout EPUB.** Both show the printed page with its template applied: each frame in its box, turned by `rotate`, clipped when its content overflows, painted over the frames of lower layers, the decoration at layer 0. The markup lists the frames in reading order and paints them in layer order with `z-index`, so assistive technology follows the Markdown while the page looks as printed. Decorative pictures are hidden from assistive technology (`alt=""`). The decoration's faces are among those the Sandbox embeds in an EPUB; a fixed-layout EPUB written without one of them reports `missingFont`.
+- **Tagged PDF.** The structure tree reads the frames in the same order. Each frame, or chain of frames, is a `Div` holding its headings, paragraphs and lists; its pictures are `Figure` elements whose `Alt` carries the labels; the decoration is a layout artifact.
+
+From code, a figure's labels are on its block as `resourceBlock.labels` (text, anchor or point, style and source range), and `composedReadingOrder(composedPaintOrder(page))` lists a page's decoration and frames in reading order.
+
 ## Warnings
 
 The checks read the Markdown and the configuration before any layout, so they show in the Checks panel as you type, in `postext check` and in the document's `contentWarnings`, each with the source range of what it concerns (see [Configuration › Warnings in the document](/en/docs/configuration-programmatic-usage#warnings-in-the-document)).
