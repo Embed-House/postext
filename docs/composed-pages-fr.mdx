@@ -40,7 +40,7 @@ Une page composée s’ouvre par une ligne de **quatre deux-points** suivie de `
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>Obligatoire. L’id d’une entrée de <code>pageTemplates</code>.</td></tr>
-    <tr><td><code>spread</code></td><td>La page est une double page, sur deux pages en regard ; le modèle doit lui aussi être un modèle de double page.</td></tr>
+    <tr><td><code>spread</code></td><td>La page est une double page, sur deux pages en regard (voir <a href="#doubles-pages">Doubles pages</a>). Elle doit s’accorder avec le <code>spread</code> du modèle ; sinon le modèle décide et <code>spreadMismatch</code> le signale.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Une ancre : un <code>:ref</code> qui la vise imprime le numéro de la page où tombe la page composée.</td></tr>
     <tr><td>tout autre attribut</td><td>Une valeur que le modèle lit sous la forme <code>&#123;attr.name&#125;</code>, par exemple une image de fond choisie page par page : <code>fondo="banda-retos"</code> avec <code>resourceId: "&#123;attr.fondo&#125;"</code> dans le décor.</td></tr>
   </tbody>
@@ -236,6 +236,11 @@ Les vérifications lisent le Markdown et la configuration avant toute mise en pa
       <td>Ouvrir la page avec quatre deux-points, <code>::::page&#123;template="…"&#125;</code>, et la fermer avec <code>::::</code>.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>Le <code>spread</code> de l’ouverture et celui du modèle ne s’accordent pas. La page est composée comme le dit le modèle (voir <a href="#spreadmismatch">spreadMismatch</a>).</td>
+      <td>Écrivez <code>spread</code> dans l’ouverture d’un modèle de double page, ou retirez-le pour un modèle d’une page.</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>Une page composée, un bloc ou une figure n’est jamais fermé (voir plus haut comment l’analyseur se rattrape). Le panneau Vérifications désigne la page composée par <code>::::page</code>.</td>
       <td>Ajouter le délimiteur de fermeture : autant de deux-points que sur la ligne d’ouverture de la page, ou <code>:::</code> pour un bloc ou une figure.</td>
@@ -297,6 +302,38 @@ Les changements de moins d’un demi-millimètre sont omis, et chaque changement
 `postext check` affiche une ligne `reflow` par page composée qui a des événements, après les avertissements ; avec `--json`, le rapport contient un tableau `reflow` avec une entrée par page : `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` et `lines` (les événements rédigés en clair).
 
 Depuis le code, le journal est `VDTPage.composed.log`, et chaque bloc garde dans `VDTFrame.declaredRect` la boîte que son modèle lui déclare quand elle diffère de `rect`. `composedReflowLog(doc)` renvoie les entrées qu’affiche `postext check`, et `describeReflowEvent(event)` rédige un événement en clair.
+
+## Doubles pages
+
+Un modèle avec `spread: true` est une seule feuille de deux pages en regard : un bandeau qui traverse le dos, une frise d’images d’un bord extérieur à l’autre, des fiches de chaque côté. L’ouverture de la page le dit avec `spread` :
+
+```md
+::::page{template="linea-tiempo" spread}
+# Cómo medimos el tiempo
+
+Para saber cuándo comer, trabajar o descansar, las personas siempre han necesitado medir el tiempo…
+
+:::frame{slot="banda-2"}
+Con relojes de máquina
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **Où elle commence.** Une double page commence sur une page paire (la page de gauche d’un livre qui se lit de gauche à droite, celle de droite d’un livre qui se lit de droite à gauche) et prend la page impaire qui suit. Si le texte qui la précède finit sur une page paire, la page suivante reste blanche (un blanc de parité, comme avant une double page de bande dessinée), pour que les deux moitiés se fassent face. Le texte qui suit la fermeture commence sur la page après l’impaire.
+- **Une seule feuille.** Les blocs sont placés sur une feuille aussi large que les deux pages. La zone `content` va de la marge extérieure d’une page à celle de l’autre, les deux marges intérieures comprises ; `trim`, ce sont les deux pages rognées côte à côte ; `bleed` ajoute le fond perdu en tête, en pied et sur les deux bords extérieurs, jamais au dos. Une `grid` divise toute la largeur : six colonnes en mettent trois sur chaque page. Dans un livre qui se lit de droite à gauche, la feuille est mise en miroir comme ses pages, et la première colonne se trouve sur la page de droite.
+- **Le petit fond.** `gutter` est une bande de cette largeur centrée sur le dos. Un bloc sans `crossGutter: true` en est tenu à l’écart : un bloc qui traverse toute la bande est coupé à son bord, du côté de son centre, et un bloc dont le bord intérieur tombe dans la bande en sort tout entier. Une hauteur `auto` est mesurée à la largeur réduite, et le journal de recomposition de la page note le changement (`resized` ou `moved`, avec la cause `gutter`). Sans `gutter`, la bande est le dos lui-même : seuls les blocs qui le demandent passent le pli.
+- **Par-dessus le dos.** Un bloc avec `crossGutter: true` peut le traverser. Son texte est lu une seule fois, sur la page qui contient le centre du bloc ; la page en regard peint sa propre moitié du bloc, coupée à sa feuille, si bien qu’un bandeau ou une image se lit d’un seul tenant sur le livre ouvert. Un PDF balisé marque cette moitié comme artefact, le HTML la cache aux technologies d’assistance, et la sélection ou la recherche trouve le texte une fois.
+- **La décoration** est composée une fois sur toute la feuille et coupée au dos de la même façon : un fond, une carte d’une page à l’autre, un titre courant sur la page de droite. Un élément ancré à `#bloc` suit ce bloc sur la page où il tombe. Une double page ne prend pas de `variants`, puisqu’elle a les deux côtés ; `header` et `footer` s’appliquent à chacune de ses pages comme à toute page.
+
+Sur le canevas, dans la vue en double page du Sandbox et dans le Folio, les deux pages sont côte à côte. Le PDF a deux pages, chacune rognée à son fond perdu. L’EPUB à mise en page fixe leur donne `page-spread-left` et `page-spread-right` avec `rendition:spread-both`, pour qu’une liseuse les montre ensemble dans les deux orientations. L’EPUB recomposable lit les blocs comme pour toute page composée, dans l’ordre du Markdown.
+
+### spreadMismatch
+
+**Cause.** L’ouverture de la page et son modèle ne s’accordent pas : l’ouverture porte `spread` alors que le modèle tient sur une page, ou le modèle est une double page (par son propre `spread: true` ou par `extends`) et l’ouverture ne le dit pas. Le modèle décide : un modèle de double page est composé sur deux pages en regard, tout autre sur une seule. L’avertissement donne le modèle, la marque de l’ouverture (`fence`) et celle du modèle (`templateSpread`), et pointe l’attribut `spread`, ou le nom du modèle quand l’ouverture n’en a pas.
+
+**Correction.** Faites dire à l’ouverture ce qu’est le modèle : écrivez `spread` dans l’ouverture d’un modèle de double page, retirez-le de celle d’un modèle d’une page, ou choisissez un autre modèle.
 
 ## Depuis le code
 

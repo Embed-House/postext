@@ -208,6 +208,7 @@ export const metadata = {
   - *前置元数据被忽略*：除第一章外，某一章以前置元数据块开头（只有第一章的前置元数据属于整本书）；
   - *未知的分栏走向*：`:::columns{flow=…}`既不是`snake`也不是`parallel`，该组采用默认值（`columnsFlowUnknown`）；
   - *未知的页面模板*、*槽位没有对应的框*、*空框*和*模板页只写了三个冒号*：模板不在`pageTemplates`中的`::::page`，指定的名称不是该页模板中任何框的`slot`，在这一页上什么也没收到的模板框（`optional`框不报告），以及带有`template=`却只写了三个冒号的`:::page`（`templateUnknown`、`slotUnknown`、`slotEmpty`、`pageFenceLength`；见[模板页](/zh/docs/composed-pages#警告)）。
+  - *跨页标记与模板不符*：`::::page`的`spread`标记与其模板的`spread`不一致；页面按模板的设定来排，排在两个对页上或一页上（`spreadMismatch`；见[模板页](/zh/docs/composed-pages#spreadmismatch)）。
 - **版面设计**：
   - 不在引擎允许列表中的页眉和页脚占位符名称（`{attr.…}`和篇的占位符是允许的），以及所需文档元数据缺失的占位符；
   - 版面设计元素之间的循环锚定，或锚定到不存在的元素。这一检查和占位符检查覆盖每个版面设计槽位：书眉、篇首页、篇名页之后的空白左页、目录中篇的行、每一级标题的版面设计，以及每种标题样式的版面设计和其所在部分的书眉。来自标题样式的条目会写出样式名，如`{style="index"} header · #rh → #missing`；来自空白左页或目录中篇的行的条目会写出其设置，如`toc.parts.design · #row → #missing`；

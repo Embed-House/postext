@@ -40,7 +40,7 @@ Una página compuesta se abre con una línea de **cuatro dos puntos** seguida de
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>Obligatorio. El id de una entrada de <code>pageTemplates</code>.</td></tr>
-    <tr><td><code>spread</code></td><td>La página es una doble página que ocupa dos páginas enfrentadas; la plantilla también tiene que ser de doble página.</td></tr>
+    <tr><td><code>spread</code></td><td>La página es una doble página que ocupa dos páginas enfrentadas (consulta <a href="#dobles-páginas">Dobles páginas</a>). Tiene que coincidir con el <code>spread</code> de la plantilla; si no, manda la plantilla y <code>spreadMismatch</code> lo avisa.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Un ancla: un <code>:ref</code> que apunta a ella imprime la página en la que cae la página compuesta.</td></tr>
     <tr><td>cualquier otro</td><td>Un valor que la plantilla lee como <code>&#123;attr.name&#125;</code>, por ejemplo una imagen de fondo elegida página a página: <code>fondo="banda-retos"</code> con <code>resourceId: "&#123;attr.fondo&#125;"</code> en la decoración.</td></tr>
   </tbody>
@@ -236,6 +236,11 @@ Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, 
       <td>Abre la página con cuatro dos puntos, <code>::::page&#123;template="…"&#125;</code>, y ciérrala con <code>::::</code>.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>El <code>spread</code> de la apertura y el de la plantilla no coinciden. La página se compone como dice la plantilla (consulta <a href="#spreadmismatch">spreadMismatch</a>).</td>
+      <td>Escribe <code>spread</code> en la apertura de una plantilla de doble página, o quítalo si la plantilla es de una sola.</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>Una página compuesta, un marco o una figura no se cierra nunca (véanse las reglas de recuperación de más arriba). El panel Revisión llama <code>::::page</code> a la página compuesta.</td>
       <td>Añade la valla de cierre: tantos dos puntos como la línea de apertura de la página, o <code>:::</code> para un marco o una figura.</td>
@@ -297,6 +302,38 @@ Los cambios de menos de medio milímetro no se registran, y cada cambio se redon
 `postext check` escribe una línea `reflow` por cada página compuesta con sucesos, después de los avisos; con `--json`, el informe lleva una lista `reflow` con una entrada por página: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` y `lines` (los sucesos en palabras).
 
 Desde el código, el registro es `VDTPage.composed.log`, y cada marco guarda en `VDTFrame.declaredRect` la caja que le declara su plantilla cuando no coincide con `rect`. `composedReflowLog(doc)` devuelve las entradas que escribe `postext check`, y `describeReflowEvent(event)` pone un suceso en palabras.
+
+## Dobles páginas
+
+Una plantilla con `spread: true` es una sola hoja de dos páginas enfrentadas: una banda que cruza el lomo, una tira de dibujos de un borde exterior al otro, fichas a cada lado. La apertura de la página lo dice con `spread`:
+
+```md
+::::page{template="linea-tiempo" spread}
+# Cómo medimos el tiempo
+
+Para saber cuándo comer, trabajar o descansar, las personas siempre han necesitado medir el tiempo…
+
+:::frame{slot="banda-2"}
+Con relojes de máquina
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **Dónde empieza.** Una doble página empieza en una página par (la izquierda en un libro que se lee de izquierda a derecha, la derecha en uno que se lee de derecha a izquierda) y ocupa también la impar que la sigue. Si el texto anterior acaba en una página par, la siguiente queda en blanco (un blanco de paridad, como antes de una doble página de cómic), para que las dos mitades queden enfrentadas. El texto que sigue al cierre empieza en la página siguiente a la impar.
+- **Una sola hoja.** Los marcos se colocan en una hoja tan ancha como las dos páginas. El área `content` va del margen exterior de una página al de la otra, con los dos márgenes interiores dentro; `trim` son las dos páginas cortadas, una junto a otra; `bleed` añade la sangría de cabeza, de pie y de los dos bordes exteriores, nunca en el lomo. Una `grid` divide todo el ancho: seis columnas ponen tres en cada página. En un libro de derecha a izquierda la hoja se refleja como sus páginas, así que la primera columna queda en la página derecha.
+- **El medianil.** `gutter` es una banda de ese ancho centrada en el lomo. Un marco sin `crossGutter: true` se mantiene fuera de ella: si atraviesa la banda entera se corta en su borde, del lado donde está su centro, y si su borde interior cae dentro de la banda sale de ella entero. Una altura `auto` se mide con el ancho más estrecho, y el registro de reajustes de la página anota el cambio (`resized` o `moved`, con la causa `gutter`). Sin `gutter`, la banda es el propio lomo, así que solo cruzan el pliegue los marcos que lo piden.
+- **Por encima del lomo.** Un marco con `crossGutter: true` puede cruzarlo. Su texto se lee una sola vez, en la página que contiene el centro del marco; la página de enfrente pinta su propia mitad del marco, cortada en su hoja, de modo que una banda o un dibujo se ven de una pieza con el libro abierto. Un PDF etiquetado marca esa mitad como artefacto, el HTML la oculta a las tecnologías de apoyo, y al seleccionar o buscar el texto se encuentra una vez.
+- **La decoración** se compone una vez sobre toda la hoja y se corta en el lomo del mismo modo: un fondo, una tarjeta de una página a otra, un titulillo en la página derecha. Un elemento anclado a `#marco` sigue a ese marco a la página en la que cae. Una doble página no admite `variants`, porque tiene los dos lados; `header` y `footer` funcionan en cada una de sus páginas como en cualquier otra.
+
+En el lienzo, en la vista de doble página del Sandbox y en el Folio, las dos páginas aparecen una junto a otra. El PDF tiene dos páginas, cada una recortada en su sangría. El EPUB de maquetación fija les da `page-spread-left` y `page-spread-right` con `rendition:spread-both`, para que el lector las muestre juntas en cualquier orientación. El EPUB adaptable lee los marcos como en cualquier página compuesta, en el orden del Markdown.
+
+### spreadMismatch
+
+**Causa.** La apertura de la página y su plantilla no coinciden: la apertura lleva `spread` y la plantilla es de una sola página, o la plantilla es de doble página (por su propio `spread: true` o a través de `extends`) y a la apertura le falta. Manda la plantilla: una plantilla de doble página se compone en dos páginas enfrentadas, y cualquier otra en una. El aviso da la plantilla, la marca de la apertura (`fence`) y la de la plantilla (`templateSpread`), y señala el atributo `spread`, o el nombre de la plantilla cuando la apertura no lo lleva.
+
+**Corrección.** Haz que la apertura diga lo que es la plantilla: escribe `spread` en la apertura de una plantilla de doble página, quítalo de la de una plantilla de una sola, o elige otra plantilla.
 
 ## Desde el código
 

@@ -40,7 +40,7 @@ A composed page opens with a line of **four colons** followed by `page` and its 
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>Required. The id of an entry of <code>pageTemplates</code>.</td></tr>
-    <tr><td><code>spread</code></td><td>The page is a spread of two facing pages; the template must be a spread template too.</td></tr>
+    <tr><td><code>spread</code></td><td>The page is a spread of two facing pages (see <a href="#spreads">Spreads</a>). It must agree with the template's <code>spread</code>; otherwise the template decides and <code>spreadMismatch</code> says so.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>An anchor: a <code>:ref</code> to it prints the page the composed page lands on.</td></tr>
     <tr><td>any other</td><td>A value the template reads as <code>&#123;attr.name&#125;</code>, such as a background picture chosen page by page: <code>fondo="banda-retos"</code> with <code>resourceId: "&#123;attr.fondo&#125;"</code> in the decoration.</td></tr>
   </tbody>
@@ -236,6 +236,11 @@ The checks read the Markdown and the configuration before any layout, so they sh
       <td>Open the page with four colons, <code>::::page&#123;template="…"&#125;</code>, and close it with <code>::::</code>.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>The fence's <code>spread</code> and the template's disagree. The page is laid as the template says (see <a href="#spreadmismatch">spreadMismatch</a>).</td>
+      <td>Write <code>spread</code> on the fence of a spread template, or remove it for a single-page template.</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>A composed page, a frame or a figure is never closed (see the recovery rules above). The Checks panel names the composed page <code>::::page</code>.</td>
       <td>Add the closing fence: as many colons as the page's opening line, or <code>:::</code> for a frame or a figure.</td>
@@ -297,6 +302,38 @@ Changes under half a millimetre are left out, and each change is rounded once to
 `postext check` prints one `reflow` line per composed page that has events, after the warnings; with `--json`, the report holds a `reflow` array with one entry per page: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` and `lines` (the events in words).
 
 From code, the log is `VDTPage.composed.log`, and each frame keeps the box its template declares in `VDTFrame.declaredRect` when it differs from `rect`. `composedReflowLog(doc)` returns the entries `postext check` prints, and `describeReflowEvent(event)` puts one event in words.
+
+## Spreads
+
+A template with `spread: true` is one sheet of two facing pages: a band running across the spine, a picture strip from one outer edge to the other, cards on either side. The page fence says so with `spread`:
+
+```md
+::::page{template="linea-tiempo" spread}
+# How we measure time
+
+To know when to eat, work or rest, people have always needed to measure time…
+
+:::frame{slot="banda-2"}
+With machine clocks
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **Where it opens.** A spread starts on a verso, the left page of a left-to-right book and the right page of a right-to-left one, and takes the recto after it. When the text before it ends on a verso, the page after that is left blank (a parity blank, as before a comic spread), so the two halves face each other. The text after the closing fence starts on the page after the recto.
+- **One sheet.** The frames are placed on a sheet as wide as both pages. The `content` area runs from the outer margin of one page to the outer margin of the other, with both inner margins inside it; `trim` is the two trimmed pages side by side; `bleed` adds the bleed at the head, the foot and both outer edges, never at the spine. A `grid` divides the whole width: six columns put three on each page. In a right-to-left book the sheet is mirrored as its pages are, so the first column stands on the right page.
+- **The gutter.** `gutter` is a band of that width centred on the spine. A frame without `crossGutter: true` is kept off it: a frame reaching across the whole band is cut at the band's edge on the side of its centre, and one whose inner edge falls inside the band moves out of it whole. An `auto` height is measured at the narrower width, and the page's reflow log records the change (`resized` or `moved`, with cause `gutter`). Without a `gutter` the band is the spine itself, so only frames that ask for it cross the fold.
+- **Across the spine.** A frame with `crossGutter: true` may run across. Its text is read once, on the page that holds the frame's centre; the facing page paints its own half of the frame, cut at its sheet, so a band or a picture reads as one piece across the open book. A tagged PDF marks that half as an artifact, the HTML hides it from assistive technology, and selecting or searching the text finds it once.
+- **Decoration** is laid once over the whole sheet and cut at the spine the same way: a ground, a card from one page to the other, a running head on the right page. An element anchored to `#frame` follows that frame onto the page it lands on. A spread takes no `variants`, since it has both sides; `header` and `footer` work on each of its pages as on any page.
+
+On the canvas, in the Sandbox's spread view and in the Folio the two pages stand side by side. The PDF has two pages, each clipped at its bleed. The fixed-layout EPUB gives them `page-spread-left` and `page-spread-right` with `rendition:spread-both`, so a reader shows them together in either orientation. The reflowable EPUB reads the frames as it reads any composed page, in Markdown order.
+
+### spreadMismatch
+
+**Cause.** The page fence and its template disagree: the fence has `spread` and the template is a single page, or the template is a spread (by its own `spread: true` or through `extends`) and the fence lacks the flag. The template decides: a spread template is laid over two facing pages, any other on one page. The warning gives the template, the fence's flag (`fence`) and the template's (`templateSpread`), and points at the `spread` attribute, or at the template's name when the fence has none.
+
+**Fix.** Make the fence say what the template is: write `spread` on the fence of a spread template, remove it from the fence of a single-page one, or choose another template.
 
 ## From code
 

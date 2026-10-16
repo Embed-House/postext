@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>La sortie paginée coupe ce qui ne tient pas au pied du bloc ; le texte reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>L’ouverture d’une page composée et son modèle ne s’accordent pas sur la double page (<code>template</code>, <code>fenceIndex</code> ; <code>fence</code>, le <code>spread</code> de l’ouverture ; <code>templateSpread</code>, celui du modèle).</td>
+      <td>Le modèle décide : un modèle de double page est composé sur deux pages en regard, tout autre sur une seule.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> ne nomme aucun style de pastille.</td>
       <td>La pastille prend le premier style de pastille.</td>

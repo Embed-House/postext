@@ -116,13 +116,13 @@ const config: PostextConfig = {
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>模板描述两个对页，排成一整张。在从左到右的书中，跨页总是从左页开始（在从右到左的书中从右页开始），需要时会在它前面加一个空白页。</td>
+      <td>模板描述排成一整张版面的两个对页（见<a href="/zh/docs/composed-pages#跨页">模板页 › 跨页</a>）。跨页从偶数页开始：从左往右读的书是左页，从右往左读的书是右页，必要时在前面加一个空白页。页面的开头一行也要写<code>spread</code>；两者不一致时以模板为准（<code>spreadMismatch</code>）。</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>在跨页上，订口处框架要避开的带状区域，框架设了<code>crossGutter: true</code>时除外。</td>
+      <td>在跨页上，以书脊为中心、这么宽的一条带，框要避开它，除非设了<code>crossGutter: true</code>：横跨它的框在中心所在一侧被截到它的边缘，从带里开始的框则移出去。设为<code>0</code>时，这条带就是书脊本身。</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ const config: PostextConfig = {
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>在跨页上，框架可以越过订口的带状区域。</td>
+      <td>在跨页上，框可以跨过书脊带。框里的文字在其中心所在的那一页读；对面那一页画出它的一半。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
@@ -468,7 +468,34 @@ pageTemplates: [
 
 ### 排版实际应用的设置
 
-排版会应用每个框架的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`layer`、`rotate`、`exclude`、`flow`、`takes`、`next`和`overflow.continueIn: "#frame"`，以及模板的`area`、`grid`、`decoration`、`header`、`footer`和`variants`。以下设置会被读取和检查，但还没有应用：组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`；组内框架保持各自的位置）、`fit`、`overflow.continueIn: "next-page"`和`overflowTemplate`、`spread`和`crossGutter`、框架的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`。宽度`'auto'`按`'fill'`处理。
+排版会应用每个框架的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`layer`、`rotate`、`exclude`、`flow`、`takes`、`next`和`overflow.continueIn: "#frame"`，以及模板的`area`、`grid`、`decoration`、`header`、`footer`和`variants`。以下设置会被读取和检查，但还没有应用：组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`；组内框架保持各自的位置）、`fit`、`overflow.continueIn: "next-page"`和`overflowTemplate`、框架的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`。宽度`'auto'`按`'fill'`处理。
+
+### 跨页
+
+在跨页模板里，所有坐标都落在由两页组成的整张版面上，书脊在正中：`area`、`grid`、锚定到`container`、`page`和`bleed`，以及`fill`尺寸，读的都是双倍宽度。`bleed`伸到天头、地脚和两侧外边缘，从不伸到书脊。教科书里的跨页时间线就是一个模板：
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … era-2到era-6，各占网格的一栏，以及插图带下面的注释
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+栏间距比`gutter`宽，对称网格里的卡片就不会碰到书脊，也就不会被移动。第二条色带和插图带设了`crossGutter`来跨过书脊：每一个都在其中心所在的那一页读，并在两页上都画出来。页面上的每个字，包括标签上的时代名称，都留在Markdown里。
 
 ## 注记样式
 

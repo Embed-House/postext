@@ -40,7 +40,7 @@ Uma página composta abre com uma linha de **quatro dois-pontos** seguida de `pa
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>Obrigatório. O id de uma entrada de <code>pageTemplates</code>.</td></tr>
-    <tr><td><code>spread</code></td><td>A página é uma página dupla, que ocupa duas páginas frente a frente; o modelo também precisa ser de página dupla.</td></tr>
+    <tr><td><code>spread</code></td><td>A página é uma página dupla, que ocupa duas páginas lado a lado (veja <a href="#páginas-duplas">Páginas duplas</a>). Ela precisa concordar com o <code>spread</code> do modelo; caso contrário, vale o modelo e <code>spreadMismatch</code> avisa.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Uma âncora: um <code>:ref</code> que aponta para ela imprime a página em que a página composta cai.</td></tr>
     <tr><td>qualquer outro</td><td>Um valor que o modelo lê como <code>&#123;attr.name&#125;</code>, por exemplo uma imagem de fundo escolhida página a página: <code>fondo="banda-retos"</code> com <code>resourceId: "&#123;attr.fondo&#125;"</code> na decoração.</td></tr>
   </tbody>
@@ -236,6 +236,11 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
       <td>Abra a página com quatro dois-pontos, <code>::::page&#123;template="…"&#125;</code>, e feche com <code>::::</code>.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>O <code>spread</code> da abertura e o do modelo não concordam. A página é composta como o modelo diz (veja <a href="#spreadmismatch">spreadMismatch</a>).</td>
+      <td>Escreva <code>spread</code> na abertura de um modelo de página dupla, ou tire-o de um modelo de uma página.</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>Uma página composta, um bloco ou uma figura fica sem fechamento (veja as regras de recuperação acima). O painel Verificações chama a página composta de <code>::::page</code>.</td>
       <td>Acrescente a cerca de fechamento: tantos dois-pontos quanto a linha de abertura da página, ou <code>:::</code> para um bloco ou uma figura.</td>
@@ -297,6 +302,38 @@ Mudanças de menos de meio milímetro ficam de fora, e cada mudança é arredond
 O `postext check` imprime uma linha `reflow` por página composta que tem eventos, depois dos avisos; com `--json`, o relatório traz uma lista `reflow` com uma entrada por página: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` e `lines` (os eventos por extenso).
 
 No código, o registro é `VDTPage.composed.log`, e cada bloco guarda em `VDTFrame.declaredRect` a caixa que o modelo declara para ele quando ela difere de `rect`. `composedReflowLog(doc)` devolve as entradas que o `postext check` imprime, e `describeReflowEvent(event)` descreve um evento por extenso.
+
+## Páginas duplas
+
+Um modelo com `spread: true` é uma só folha de duas páginas lado a lado: uma faixa que atravessa a lombada, uma tira de ilustrações de uma borda externa à outra, fichas dos dois lados. A abertura da página diz isso com `spread`:
+
+```md
+::::page{template="linea-tiempo" spread}
+# Cómo medimos el tiempo
+
+Para saber cuándo comer, trabajar o descansar, las personas siempre han necesitado medir el tiempo…
+
+:::frame{slot="banda-2"}
+Con relojes de máquina
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **Onde começa.** Uma página dupla começa em uma página par (a da esquerda em um livro que se lê da esquerda para a direita, a da direita em um que se lê da direita para a esquerda) e ocupa também a ímpar seguinte. Se o texto anterior termina em uma página par, a próxima fica em branco (um branco de paridade, como antes de uma página dupla de quadrinhos), para que as duas metades fiquem frente a frente. O texto depois do fechamento começa na página depois da ímpar.
+- **Uma só folha.** Os blocos são posicionados em uma folha tão larga quanto as duas páginas. A área `content` vai da margem externa de uma página à da outra, com as duas margens internas dentro; `trim` são as duas páginas refiladas lado a lado; `bleed` acrescenta a sangria na cabeça, no pé e nas duas bordas externas, nunca na lombada. Uma `grid` divide toda a largura: seis colunas põem três em cada página. Em um livro que se lê da direita para a esquerda a folha é espelhada como as suas páginas, e a primeira coluna fica na página da direita.
+- **A medianiz.** `gutter` é uma faixa dessa largura centrada na lombada. Um bloco sem `crossGutter: true` fica fora dela: um bloco que atravessa a faixa inteira é cortado na borda dela, do lado do seu centro, e um bloco cuja borda interna cai dentro da faixa sai dela inteiro. Uma altura `auto` é medida na largura menor, e o registro de reajustes da página anota a mudança (`resized` ou `moved`, com a causa `gutter`). Sem `gutter`, a faixa é a própria lombada, então só cruzam a dobra os blocos que pedem isso.
+- **Por cima da lombada.** Um bloco com `crossGutter: true` pode atravessá-la. O texto dele é lido uma vez só, na página que contém o centro do bloco; a página em frente pinta a sua metade do bloco, cortada na sua folha, de modo que uma faixa ou uma ilustração aparece inteira com o livro aberto. Um PDF com tags marca essa metade como artefato, o HTML a esconde das tecnologias assistivas, e a seleção ou a busca encontram o texto uma vez.
+- **A decoração** é composta uma vez sobre a folha inteira e cortada na lombada do mesmo jeito: um fundo, um cartão de uma página à outra, um título corrente na página da direita. Um elemento ancorado em `#bloco` acompanha esse bloco até a página em que ele cai. Uma página dupla não aceita `variants`, porque tem os dois lados; `header` e `footer` valem em cada uma das suas páginas como em qualquer página.
+
+Na tela, na visualização de página dupla do Sandbox e no Folio, as duas páginas aparecem lado a lado. O PDF tem duas páginas, cada uma recortada na sua sangria. O EPUB de layout fixo dá a elas `page-spread-left` e `page-spread-right` com `rendition:spread-both`, para que o leitor as mostre juntas em qualquer orientação. O EPUB fluido lê os blocos como em qualquer página composta, na ordem do Markdown.
+
+### spreadMismatch
+
+**Causa.** A abertura da página e o seu modelo não concordam: a abertura tem `spread` e o modelo ocupa uma só página, ou o modelo é de página dupla (pelo seu próprio `spread: true` ou por `extends`) e falta a marca na abertura. Vale o modelo: um modelo de página dupla é composto em duas páginas lado a lado, e qualquer outro em uma. O aviso traz o modelo, a marca da abertura (`fence`) e a do modelo (`templateSpread`), e aponta o atributo `spread`, ou o nome do modelo quando a abertura não o tem.
+
+**Correção.** Faça a abertura dizer o que o modelo é: escreva `spread` na abertura de um modelo de página dupla, tire-o da abertura de um modelo de uma página, ou escolha outro modelo.
 
 ## No código
 

@@ -116,13 +116,13 @@ Um modelo que define só o seu `id` e um quadro é uma página inteira com esse 
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>O modelo descreve duas páginas espelhadas diagramadas como uma só folha. Uma página dupla sempre começa numa página par num livro da esquerda para a direita (numa ímpar num da direita para a esquerda), com uma página em branco antes dela quando necessário.</td>
+      <td>O modelo descreve duas páginas lado a lado compostas como uma só folha (veja <a href="/pt/docs/composed-pages#páginas-duplas">Páginas compostas › Páginas duplas</a>). Uma página dupla começa em uma página par, a da esquerda em um livro que se lê da esquerda para a direita e a da direita em um que se lê da direita para a esquerda, com uma página em branco antes quando necessário. A abertura também leva a marca <code>spread</code>; se elas não concordam, vale o modelo (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Numa página dupla, a faixa junto à lombada que os quadros deixam livre, a menos que definam <code>crossGutter: true</code>.</td>
+      <td>Em uma página dupla, uma faixa dessa largura centrada na lombada que os quadros evitam, a menos que tenham <code>crossGutter: true</code>: um quadro que a atravessa é cortado na borda dela, do lado do seu centro, e um que começa dentro dela sai. Com <code>0</code>, a faixa é a própria lombada.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Numa página dupla, o quadro pode atravessar a faixa da lombada.</td>
+      <td>Em uma página dupla, o quadro pode atravessar a faixa da lombada. O texto dele é lido na página que contém o seu centro; a página em frente pinta a metade dele.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -468,7 +468,34 @@ No código, `resolvePageTemplate(config, id, { parity })` devolve um modelo com 
 
 ### O que a diagramação aplica
 
-A diagramação aplica o posicionamento e os tamanhos de cada quadro (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, além de `area`, `grid`, `decoration`, `header`, `footer` e `variants` do modelo. São lidos e verificados, mas ainda não aplicados: a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` de um grupo; os seus quadros mantêm o próprio posicionamento), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, `spread` e `crossGutter`, o `writingMode` e a `direction` de um quadro, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
+A diagramação aplica o posicionamento e os tamanhos de cada quadro (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, além de `area`, `grid`, `decoration`, `header`, `footer` e `variants` do modelo. São lidos e verificados, mas ainda não aplicados: a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` de um grupo; os seus quadros mantêm o próprio posicionamento), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, o `writingMode` e a `direction` de um quadro, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
+
+### Páginas duplas
+
+Em um modelo de página dupla todas as coordenadas valem sobre a folha das suas duas páginas, com a lombada no meio: `area`, `grid`, as âncoras em `container`, `page` e `bleed` e os tamanhos `fill` leem a largura dupla. `bleed` chega à cabeça, ao pé e às duas bordas externas, nunca à lombada. A linha do tempo em página dupla de um livro didático é um só modelo:
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … de era-2 a era-6, uma coluna da grade cada, e as notas sob a tira
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+Um espaço entre colunas maior que o `gutter` mantém as fichas de uma grade simétrica longe da lombada, e nenhuma é movida. A segunda faixa e a tira de ilustrações têm `crossGutter` para atravessá-la: cada uma é lida na página que contém o seu centro e pintada nas duas. Todas as palavras da página, inclusive os nomes das eras nas abas, ficam no Markdown.
 
 ## Estilos de rótulo
 

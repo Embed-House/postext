@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>分页输出在框底裁掉放不下的部分；它仍留在文档、源码映射和流式版式的EPUB中。</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>模板页的开头一行与模板对跨页的设定不一致（<code>template</code>、<code>fenceIndex</code>；<code>fence</code>为开头一行的<code>spread</code>；<code>templateSpread</code>为模板的）。</td>
+      <td>以模板为准：跨页模板排在两个对页上，其他模板排在一页上。</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code>指定的行内标签样式不存在。</td>
       <td>该行内标签采用第一个行内标签样式。</td>

@@ -116,13 +116,13 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Il modello descrive due pagine affiancate disposte come un unico foglio. Una doppia pagina comincia sempre su una pagina di sinistra in un libro da sinistra a destra (su una pagina di destra in uno da destra a sinistra), con una pagina bianca aggiunta prima quando serve.</td>
+      <td>Il modello descrive due pagine affiancate composte come un solo foglio (vedi <a href="/it/docs/composed-pages#doppie-pagine">Pagine composte › Doppie pagine</a>). Una doppia pagina comincia su una pagina pari, la sinistra in un libro che si legge da sinistra a destra e la destra in uno che si legge da destra a sinistra, con una pagina bianca prima se serve. Anche la sua apertura porta il segno <code>spread</code>; se non concordano, decide il modello (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>In una doppia pagina, la fascia sul dorso che le cornici lasciano libera, a meno che impostino <code>crossGutter: true</code>.</td>
+      <td>Su una doppia pagina, una fascia di questa larghezza centrata sul dorso da cui le cornici stanno lontane, a meno che non abbiano <code>crossGutter: true</code>: una cornice che la attraversa viene tagliata al suo bordo, dalla parte del suo centro, e una che comincia dentro ne esce. Con <code>0</code> la fascia è il dorso stesso.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>In una doppia pagina, la cornice può attraversare la fascia del dorso.</td>
+      <td>Su una doppia pagina, la cornice può attraversare la fascia del dorso. Il suo testo si legge sulla pagina che ne contiene il centro; la pagina di fronte ne dipinge la metà.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -468,7 +468,34 @@ Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello
 
 ### Che cosa applica l’impaginazione
 
-L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, oltre ad `area`, `grid`, `decoration`, `header`, `footer` e `variants` del modello. Vengono letti e controllati, ma non ancora applicati: la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` di un gruppo; le sue cornici mantengono la propria collocazione), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, `spread` e `crossGutter`, il `writingMode` e la `direction` di una cornice, e il `bodyStyle` e la `palette` del modello. Una larghezza `'auto'` si legge come `'fill'`.
+L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, oltre ad `area`, `grid`, `decoration`, `header`, `footer` e `variants` del modello. Vengono letti e controllati, ma non ancora applicati: la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` di un gruppo; le sue cornici mantengono la propria collocazione), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, il `writingMode` e la `direction` di una cornice, e il `bodyStyle` e la `palette` del modello. Una larghezza `'auto'` si legge come `'fill'`.
+
+### Doppie pagine
+
+In un modello a doppia pagina tutte le coordinate valgono sul foglio delle sue due pagine, con il dorso al centro: `area`, `grid`, gli ancoraggi a `container`, `page` e `bleed` e le misure `fill` leggono la larghezza doppia. `bleed` arriva alla testa, al piede e ai due bordi esterni, mai al dorso. La linea del tempo a doppia pagina di un libro di testo è un solo modello:
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … da era-2 a era-6, una colonna della griglia ciascuna, e le note sotto la striscia
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+Uno spazio tra le colonne più largo del `gutter` tiene le schede di una griglia simmetrica lontane dal dorso, quindi nessuna si sposta. La seconda fascia e la striscia di immagini hanno `crossGutter` per attraversarlo: ciascuna si legge sulla pagina che ne contiene il centro e si dipinge su entrambe. Tutte le parole della pagina, anche i nomi delle epoche sulle linguette, restano nel Markdown.
 
 ## Stili delle etichette
 

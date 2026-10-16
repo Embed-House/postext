@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>ページ単位の出力では、収まらない部分が枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>テンプレートページの開始行とテンプレートで見開きの指定が食い違っています（<code>template</code>、<code>fenceIndex</code>。<code>fence</code>は開始行の<code>spread</code>、<code>templateSpread</code>はテンプレートの指定）。</td>
+      <td>テンプレートに従います。見開きのテンプレートは向かい合う2ページに、それ以外は1ページに組まれます。</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code>の名前に該当するチップスタイルがない。</td>
       <td>チップには最初のチップスタイルが使われます。</td>

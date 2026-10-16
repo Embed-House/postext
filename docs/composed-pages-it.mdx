@@ -40,7 +40,7 @@ Una pagina composta si apre con una riga di **quattro due punti** seguita da `pa
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>Obbligatorio. L’id di una voce di <code>pageTemplates</code>.</td></tr>
-    <tr><td><code>spread</code></td><td>La pagina è una doppia pagina su due pagine affiancate; anche il modello deve essere un modello di doppia pagina.</td></tr>
+    <tr><td><code>spread</code></td><td>La pagina è una doppia pagina su due pagine affiancate (vedi <a href="#doppie-pagine">Doppie pagine</a>). Deve concordare con lo <code>spread</code> del modello; altrimenti decide il modello e <code>spreadMismatch</code> lo segnala.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Un’ancora: un <code>:ref</code> che la cita stampa la pagina su cui cade la pagina composta.</td></tr>
     <tr><td>qualsiasi altro</td><td>Un valore che il modello legge come <code>&#123;attr.name&#125;</code>, per esempio un’immagine di sfondo scelta pagina per pagina: <code>fondo="banda-retos"</code> con <code>resourceId: "&#123;attr.fondo&#125;"</code> nella decorazione.</td></tr>
   </tbody>
@@ -236,6 +236,11 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
       <td>Apri la pagina con quattro due punti, <code>::::page&#123;template="…"&#125;</code>, e chiudila con <code>::::</code>.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>Lo <code>spread</code> dell’apertura e quello del modello non concordano. La pagina viene composta come dice il modello (vedi <a href="#spreadmismatch">spreadMismatch</a>).</td>
+      <td>Scrivi <code>spread</code> nell’apertura di un modello a doppia pagina, o toglilo per un modello a pagina singola.</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>Una pagina composta, una cornice o una figura non viene mai chiusa (vedi sopra come si riprende il parser). Il pannello Verifiche chiama la pagina composta <code>::::page</code>.</td>
       <td>Aggiungi il recinto di chiusura: tanti due punti quanti ne ha la riga di apertura della pagina, oppure <code>:::</code> per una cornice o una figura.</td>
@@ -297,6 +302,38 @@ Le variazioni inferiori al mezzo millimetro non compaiono, e ogni variazione vie
 `postext check` stampa, dopo gli avvisi, una riga `reflow` per ogni pagina composta che ha eventi. Con `--json` il rapporto contiene un array `reflow` con una voce per pagina: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` e `lines` (gli eventi descritti a parole).
 
 Dal codice, il registro è `VDTPage.composed.log`, e ogni cornice conserva in `VDTFrame.declaredRect` il riquadro dichiarato dal suo modello, quando è diverso da `rect`. `composedReflowLog(doc)` restituisce le voci che stampa `postext check`, e `describeReflowEvent(event)` descrive a parole un singolo evento.
+
+## Doppie pagine
+
+Un modello con `spread: true` è un solo foglio di due pagine affiancate: una fascia che attraversa il dorso, una striscia di immagini da un bordo esterno all’altro, schede da una parte e dall’altra. L’apertura della pagina lo dice con `spread`:
+
+```md
+::::page{template="linea-tiempo" spread}
+# Cómo medimos el tiempo
+
+Para saber cuándo comer, trabajar o descansar, las personas siempre han necesitado medir el tiempo…
+
+:::frame{slot="banda-2"}
+Con relojes de máquina
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **Dove comincia.** Una doppia pagina comincia su una pagina pari (la sinistra in un libro che si legge da sinistra a destra, la destra in uno che si legge da destra a sinistra) e prende anche la dispari che segue. Se il testo precedente finisce su una pagina pari, quella dopo resta bianca (un bianco di parità, come prima di una doppia pagina a fumetti), così le due metà stanno una di fronte all’altra. Il testo dopo la chiusura comincia sulla pagina dopo la dispari.
+- **Un solo foglio.** Le cornici vengono collocate su un foglio largo quanto le due pagine. L’area `content` va dal margine esterno di una pagina a quello dell’altra, con i due margini interni dentro; `trim` sono le due pagine rifilate affiancate; `bleed` aggiunge l’abbondanza in testa, al piede e sui due bordi esterni, mai al dorso. Una `grid` divide tutta la larghezza: sei colonne ne mettono tre su ogni pagina. In un libro che si legge da destra a sinistra il foglio è specchiato come le sue pagine, quindi la prima colonna sta sulla pagina destra.
+- **Il margine interno.** `gutter` è una fascia di quella larghezza centrata sul dorso. Una cornice senza `crossGutter: true` ne resta fuori: una cornice che attraversa tutta la fascia viene tagliata al suo bordo, dalla parte del suo centro, e una il cui bordo interno cade nella fascia ne esce intera. Un’altezza `auto` si misura alla larghezza ridotta, e il registro di riassestamento della pagina annota il cambiamento (`resized` o `moved`, con causa `gutter`). Senza `gutter` la fascia è il dorso stesso, quindi attraversano la piega solo le cornici che lo chiedono.
+- **Sopra il dorso.** Una cornice con `crossGutter: true` può attraversarlo. Il suo testo si legge una sola volta, sulla pagina che contiene il centro della cornice; la pagina di fronte dipinge la propria metà della cornice, tagliata al suo foglio, così una fascia o un’immagine si legge in un pezzo solo a libro aperto. Un PDF con tag marca quella metà come artefatto, l’HTML la nasconde alle tecnologie assistive, e selezione e ricerca trovano il testo una volta.
+- **La decorazione** si compone una volta su tutto il foglio e si taglia al dorso allo stesso modo: uno sfondo, una scheda da una pagina all’altra, un titolo corrente sulla pagina destra. Un elemento ancorato a `#cornice` segue quella cornice sulla pagina in cui cade. Una doppia pagina non prende `variants`, perché ha entrambi i lati; `header` e `footer` valgono su ciascuna delle sue pagine come su qualsiasi pagina.
+
+Sulla tela, nella vista a doppia pagina del Sandbox e nel Folio le due pagine stanno affiancate. Il PDF ha due pagine, ognuna rifilata alla sua abbondanza. L’EPUB a impaginazione fissa dà loro `page-spread-left` e `page-spread-right` con `rendition:spread-both`, perché un lettore le mostri insieme in entrambi gli orientamenti. L’EPUB adattabile legge le cornici come in ogni pagina composta, nell’ordine del Markdown.
+
+### spreadMismatch
+
+**Causa.** L’apertura della pagina e il suo modello non concordano: l’apertura ha `spread` e il modello occupa una sola pagina, oppure il modello è una doppia pagina (per il suo `spread: true` o tramite `extends`) e all’apertura manca. Decide il modello: un modello a doppia pagina viene composto su due pagine affiancate, qualsiasi altro su una. L’avviso indica il modello, il segno dell’apertura (`fence`) e quello del modello (`templateSpread`), e punta all’attributo `spread`, o al nome del modello quando l’apertura non lo ha.
+
+**Correzione.** Fai dire all’apertura quello che è il modello: scrivi `spread` nell’apertura di un modello a doppia pagina, toglilo da quella di un modello a pagina singola, o scegli un altro modello.
 
 ## Dal codice
 

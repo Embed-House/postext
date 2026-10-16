@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>L’uscita impaginata taglia al piede della cornice quello che non entra; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>L’apertura di una pagina composta e il suo modello non concordano sulla doppia pagina (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, lo <code>spread</code> dell’apertura; <code>templateSpread</code>, quello del modello).</td>
+      <td>Decide il modello: un modello a doppia pagina viene composto su due pagine affiancate, qualsiasi altro su una.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> non indica alcuno stile di chip.</td>
       <td>Il chip prende il primo stile di chip.</td>

@@ -40,7 +40,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>必填。<code>pageTemplates</code>中某一项的id。</td></tr>
-    <tr><td><code>spread</code></td><td>这一页是由两个对页组成的跨页；模板也必须是跨页模板。</td></tr>
+    <tr><td><code>spread</code></td><td>这一页是由两个对页组成的跨页（见<a href="#跨页">跨页</a>）。它必须与模板的<code>spread</code>一致；不一致时以模板为准，并给出<code>spreadMismatch</code>警告。</td></tr>
     <tr><td><code>id="…"</code>、<code>#id</code></td><td>锚点：指向它的<code>:ref</code>印出模板页所在的页码。</td></tr>
     <tr><td>其他任何属性</td><td>模板以<code>&#123;attr.name&#125;</code>读取的值，例如逐页选择的背景图：页面上写<code>fondo="banda-retos"</code>，装饰中写<code>resourceId: "&#123;attr.fondo&#125;"</code>。</td></tr>
   </tbody>
@@ -236,6 +236,11 @@ Si necesitas o quieres comprar algo muy caro…
       <td>用四个冒号开启页面，写成<code>::::page&#123;template="…"&#125;</code>，并用<code>::::</code>结束。</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>开头一行的<code>spread</code>与模板的不一致。页面按模板的设定来排（见<a href="#spreadmismatch">spreadMismatch</a>）。</td>
+      <td>跨页模板就在开头一行写上<code>spread</code>，单页模板就去掉它。</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>模板页、框或插图始终没有结束（见上文的恢复规则）。检查面板把模板页称为<code>::::page</code>。</td>
       <td>补上结束围栏：模板页用与开始行同样数目的冒号，框或插图用<code>:::</code>。</td>
@@ -297,6 +302,38 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
 `postext check`在警告之后，为每个有事件的模板页打印一行`reflow`；加上`--json`时，报告中有一个`reflow`数组，每页一项，包括`pageIndex`、`pageLabel`、`template`、`fenceIndex`、`chapter`、`events`和`lines`（用文字写出的事件）。
 
 在代码中，这份记录是`VDTPage.composed.log`；框的`rect`与模板声明的矩形不同时，框在`VDTFrame.declaredRect`中保留声明的矩形。`composedReflowLog(doc)`返回`postext check`打印的那些条目，`describeReflowEvent(event)`把一个事件写成文字。
+
+## 跨页
+
+设了`spread: true`的模板是由两个对页组成的一整张版面：一条横跨书脊的色带，一条从一侧外边缘延伸到另一侧外边缘的插图带，两边各有几张卡片。页面的开头一行用`spread`写明这一点：
+
+```md
+::::page{template="linea-tiempo" spread}
+# Cómo medimos el tiempo
+
+Para saber cuándo comer, trabajar o descansar, las personas siempre han necesitado medir el tiempo…
+
+:::frame{slot="banda-2"}
+Con relojes de máquina
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **从哪里开始。** 跨页总是从偶数页开始（从左往右读的书是左页，从右往左读的书是右页），并占用紧接着的奇数页。前面的文字若在偶数页结束，下一页留空（与漫画跨页之前一样，是为奇偶而留的空白页），让两半正好相对。结束行之后的文字从这个奇数页的下一页开始。
+- **一整张版面。** 框排在一张与两页同宽的版面上。`content`区域从一页的外侧页边一直到另一页的外侧页边，两个内侧页边都包含在内；`trim`是并排的两张裁切后的页面；`bleed`在天头、地脚和两侧外边缘加上出血，书脊处从不加。`grid`划分整个宽度：六栏就是每页三栏。从右往左读的书里，这张版面像它的页面一样左右镜像，所以第一栏落在右页上。
+- **订口。** `gutter`是以书脊为中心、这么宽的一条带。没有`crossGutter: true`的框要避开它：横跨整条带的框在它中心所在的一侧被截到带的边缘；内侧边缘落进带里的框则整个移出去。`auto`高度按变窄后的宽度来量，页面的重排记录会记下这次改动（`resized`或`moved`，原因为`gutter`）。不设`gutter`时，这条带就是书脊本身，只有明确要求的框才会越过折缝。
+- **跨过书脊。** 设了`crossGutter: true`的框可以跨过书脊。框里的文字只读一次，在框的中心所在的那一页；对面那一页画出框属于自己的一半，在自己的版面边缘截断，这样色带或插图在打开的书上看起来是一整块。带标签的PDF把这一半标为工件（artifact），HTML对辅助技术隐藏它，选择或搜索文字时也只会找到一次。
+- **装饰**在整张版面上排一次，再以同样的方式在书脊处切开：底色、从一页延伸到另一页的卡片、右页上的书眉。锚定在`#框名`上的元素会跟着那个框到它所在的页面。跨页有两面，所以不接受`variants`；`header`和`footer`在它的每一页上都和普通页面一样起作用。
+
+在画布上、在Sandbox的跨页视图里和在Folio中，两页并排显示。PDF有两页，各自在出血处截断。固定版式EPUB给这两页加上`page-spread-left`和`page-spread-right`以及`rendition:spread-both`，让阅读器在横竖两种方向上都把它们放在一起显示。流式EPUB像读其他模板页一样，按Markdown的顺序读这些框。
+
+### spreadMismatch
+
+**原因**：页面的开头一行与模板不一致：开头一行写了`spread`而模板只占一页，或者模板是跨页模板（自己设了`spread: true`，或通过`extends`继承）而开头一行没写。以模板为准：跨页模板排在两个对页上，其他模板排在一页上。警告给出模板、开头一行的标记（`fence`）和模板的标记（`templateSpread`），并指向`spread`属性；开头一行没有这个属性时，指向模板名。
+
+**解决**：让开头一行与模板一致：跨页模板就在开头一行写上`spread`，单页模板就去掉它，或者换一个模板。
 
 ## 在代码中使用
 

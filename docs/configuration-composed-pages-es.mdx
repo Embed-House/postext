@@ -116,13 +116,13 @@ Una plantilla que solo fija su `id` y un marco es una página entera con ese mar
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>La plantilla describe dos páginas enfrentadas compuestas como un solo pliego. Una doble página empieza siempre en una página par en un libro de izquierda a derecha (en una impar en uno de derecha a izquierda), con una página en blanco delante cuando hace falta.</td>
+      <td>La plantilla describe dos páginas enfrentadas compuestas como una sola hoja (consulta <a href="/es/docs/composed-pages#dobles-páginas">Páginas compuestas › Dobles páginas</a>). Una doble página empieza en una página par, la izquierda en un libro de izquierda a derecha y la derecha en uno de derecha a izquierda, con una página en blanco delante cuando hace falta. Su apertura lleva también la marca <code>spread</code>; si no coinciden, manda la plantilla (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>En una doble página, la franja junto al lomo que los marcos dejan libre, salvo que fijen <code>crossGutter: true</code>.</td>
+      <td>En una doble página, una banda de este ancho centrada en el lomo de la que los marcos se apartan salvo que pongan <code>crossGutter: true</code>: un marco que la atraviesa se corta en su borde, del lado de su centro, y uno que empieza dentro sale de ella. Con <code>0</code> la banda es el propio lomo.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>En una doble página, el marco puede cruzar la franja del lomo.</td>
+      <td>En una doble página, el marco puede cruzar la banda del lomo. Su texto se lee en la página que contiene su centro; la página de enfrente pinta su mitad.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -468,7 +468,34 @@ Desde código, `resolvePageTemplate(config, id, { parity })` devuelve una planti
 
 ### Lo que aplica la maquetación
 
-La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` y `overflow.continueIn: "#frame"`, y también el `area`, la `grid`, la `decoration`, el `header`, el `footer` y las `variants` de la plantilla. Se leen y se comprueban, pero todavía no se aplican: el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo; sus marcos conservan su propia colocación), `fit`, `overflow.continueIn: "next-page"` y `overflowTemplate`, `spread` y `crossGutter`, el `writingMode` y la `direction` de un marco, y el `bodyStyle` y la `palette` de la plantilla. Un ancho `'auto'` se lee como `'fill'`.
+La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` y `overflow.continueIn: "#frame"`, y también el `area`, la `grid`, la `decoration`, el `header`, el `footer` y las `variants` de la plantilla. Se leen y se comprueban, pero todavía no se aplican: el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo; sus marcos conservan su propia colocación), `fit`, `overflow.continueIn: "next-page"` y `overflowTemplate`, el `writingMode` y la `direction` de un marco, y el `bodyStyle` y la `palette` de la plantilla. Un ancho `'auto'` se lee como `'fill'`.
+
+### Dobles páginas
+
+En una plantilla de doble página todas las coordenadas van sobre la hoja de sus dos páginas, con el lomo en el centro: `area`, `grid`, los anclajes a `container`, `page` y `bleed` y los tamaños `fill` leen el ancho doble. `bleed` llega a la cabeza, al pie y a los dos bordes exteriores, nunca al lomo. La línea del tiempo a doble página de un libro de texto es una sola plantilla:
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … de era-2 a era-6, una columna de la rejilla cada una, y las notas bajo la tira
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+Un espacio entre columnas más ancho que el `gutter` mantiene las fichas de una rejilla simétrica lejos del lomo, así que ninguna se mueve. La segunda banda y la tira de dibujos ponen `crossGutter` para cruzarlo: cada una se lee en la página que contiene su centro y se pinta en las dos. Todas las palabras de la página, también los nombres de las edades de las pestañas, se quedan en el Markdown.
 
 ## Estilos de rótulo
 

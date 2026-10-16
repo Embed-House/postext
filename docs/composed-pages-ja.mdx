@@ -40,7 +40,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>必須。<code>pageTemplates</code>の項目のIDです。</td></tr>
-    <tr><td><code>spread</code></td><td>ページを向かい合う2ページの見開きにします。テンプレートも見開き用でなければなりません。</td></tr>
+    <tr><td><code>spread</code></td><td>ページを向かい合う2ページの見開きにします（<a href="#見開き">見開き</a>を参照）。テンプレートの<code>spread</code>と一致している必要があり、食い違うとテンプレートに従って組まれ、<code>spreadMismatch</code>が出ます。</td></tr>
     <tr><td><code>id="…"</code>、<code>#id</code></td><td>アンカーです。これを指す<code>:ref</code>は、テンプレートページが入ったページの番号を印字します。</td></tr>
     <tr><td>その他の属性</td><td>テンプレートが<code>&#123;attr.name&#125;</code>として読む値です。たとえばページごとに選ぶ背景の絵なら、ページに<code>fondo="banda-retos"</code>、飾りに<code>resourceId: "&#123;attr.fondo&#125;"</code>と書きます。</td></tr>
   </tbody>
@@ -236,6 +236,11 @@ Si necesitas o quieres comprar algo muy caro…
       <td>ページをコロン4つの<code>::::page&#123;template="…"&#125;</code>で開き、<code>::::</code>で閉じます。</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>開始行の<code>spread</code>とテンプレートの指定が食い違っています。ページはテンプレートのとおりに組まれます（<a href="#spreadmismatch">spreadMismatch</a>を参照）。</td>
+      <td>見開きのテンプレートなら開始行に<code>spread</code>を書き、1ページのテンプレートなら外してください。</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>テンプレートページ、枠、図のどれかが閉じられていない（上の立て直しの規則を参照）。検査パネルではテンプレートページを<code>::::page</code>と呼びます。</td>
       <td>閉じるフェンスを加えます。テンプレートページには開始行と同じ数のコロン、枠や図には<code>:::</code>です。</td>
@@ -297,6 +302,38 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
 `postext check`は、警告の後に、イベントのあるテンプレートページごとに`reflow`の行を1行出力します。`--json`を付けると、報告に`reflow`配列が入ります。1ページにつき1項目で、`pageIndex`、`pageLabel`、`template`、`fenceIndex`、`chapter`、`events`、`lines`（イベントを文章にしたもの）を持ちます。
 
 コードからは、記録は`VDTPage.composed.log`にあります。枠の`rect`がテンプレートの宣言した矩形と違うときは、宣言された矩形が`VDTFrame.declaredRect`に残ります。`composedReflowLog(doc)`は`postext check`が出力する項目を返し、`describeReflowEvent(event)`は1つのイベントを文章にします。
+
+## 見開き
+
+`spread: true`のテンプレートは、向かい合う2ページを1枚として扱う版面です。のどをまたぐ帯、片方の小口からもう片方の小口まで続く絵の帯、左右に並ぶカードなどを置けます。ページの開始行では`spread`でそれを示します。
+
+```md
+::::page{template="linea-tiempo" spread}
+# Cómo medimos el tiempo
+
+Para saber cuándo comer, trabajar o descansar, las personas siempre han necesitado medir el tiempo…
+
+:::frame{slot="banda-2"}
+Con relojes de máquina
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **始まる位置**：見開きはいつも偶数ページから始まり（左から右へ読む本では左ページ、右から左へ読む本では右ページ）、続く奇数ページまでを使います。前の本文が偶数ページで終わると、次のページは白ページになり（コミックの見開きの前と同じ、偶奇合わせの白ページ）、二つの半分が向かい合うようにします。終了行の後の本文は、その奇数ページの次のページから始まります。
+- **1枚の版面**：枠は2ページ分の幅をもつ1枚の版面に置かれます。`content`の領域は一方のページの外側の余白からもう一方の外側の余白までで、内側の余白は二つともその中に含まれます。`trim`は仕上がりの2ページを並べたもの、`bleed`は天・地・左右の小口に塗り足しを加えたもので、のどには塗り足しを付けません。`grid`は全体の幅を分けるので、6列なら各ページに3列ずつになります。右から左へ読む本では、版面もページと同じく左右が反転し、最初の列は右ページに来ます。
+- **のど**：`gutter`はのどを中心とするその幅の帯です。`crossGutter: true`のない枠はこの帯に入りません。帯全体をまたぐ枠は、中心のある側で帯の端まで切り詰められ、内側の端が帯の中に入る枠はそのまま帯の外へ移ります。`auto`の高さは狭くなった幅で測り直し、ページの再配置ログにその変更が記録されます（`resized`または`moved`、原因は`gutter`）。`gutter`がなければ帯はのどそのものなので、折り目をまたぐのは指定した枠だけです。
+- **のどをまたぐ枠**：`crossGutter: true`の枠はのどをまたいでかまいません。その本文は、枠の中心があるページで一度だけ読まれます。向かいのページは自分の側の半分を描き、自分の版面の端で切るので、帯や絵は開いた本の上で一続きに見えます。タグ付きPDFではこの半分をアーティファクトとし、HTMLでは支援技術から隠すので、選択や検索でもテキストは一度しか見つかりません。
+- **装飾**は版面全体に一度だけ組まれ、同じようにのどで切り分けられます。地色、2ページにまたがるカード、右ページの柱などです。`#枠名`にアンカーした要素は、その枠が置かれたページについていきます。見開きは両面をもつので`variants`は使えません。`header`と`footer`は各ページで通常のページと同じように働きます。
+
+キャンバス、Sandboxの見開き表示、Folioでは2ページが並んで表示されます。PDFは2ページで、それぞれ塗り足しの位置で切られます。固定レイアウトのEPUBでは2ページに`page-spread-left`と`page-spread-right`、さらに`rendition:spread-both`を付けるので、リーダーは縦向きでも横向きでも2ページを並べて表示します。リフロー型のEPUBは、ほかのテンプレートページと同じくMarkdownの順に枠を読みます。
+
+### spreadMismatch
+
+**原因**：ページの開始行とテンプレートが食い違っています。開始行に`spread`があるのにテンプレートが1ページ分か、テンプレートが見開き（自身の`spread: true`、または`extends`で継承したもの）なのに開始行に指定がありません。組版はテンプレートに従い、見開きのテンプレートは向かい合う2ページに、それ以外は1ページに組まれます。警告にはテンプレート、開始行の指定（`fence`）、テンプレートの指定（`templateSpread`）が入り、`spread`属性を、開始行にそれがなければテンプレート名を指します。
+
+**対処**：開始行をテンプレートに合わせてください。見開きのテンプレートなら開始行に`spread`を書き、1ページのテンプレートなら開始行から外すか、別のテンプレートを選びます。
 
 ## コードから使う
 

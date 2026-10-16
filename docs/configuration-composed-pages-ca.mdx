@@ -116,13 +116,13 @@ Una plantilla que només fixa el seu `id` i un marc és una pàgina sencera amb 
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>La plantilla descriu dues pàgines enfrontades compostes com un sol plec. Una doble pàgina comença sempre en una pàgina parell en un llibre d'esquerra a dreta (en una senar en un de dreta a esquerra), amb una pàgina en blanc al davant quan cal.</td>
+      <td>La plantilla descriu dues pàgines encarades compostes com un sol full (vegeu <a href="/ca/docs/composed-pages#dobles-pàgines">Pàgines compostes › Dobles pàgines</a>). Una doble pàgina comença en una pàgina parella, l'esquerra en un llibre d'esquerra a dreta i la dreta en un de dreta a esquerra, amb una pàgina en blanc al davant quan cal. La seva obertura porta també la marca <code>spread</code>; si no coincideixen, mana la plantilla (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>En una doble pàgina, la franja tocant al llom que els marcs deixen lliure, tret que fixin <code>crossGutter: true</code>.</td>
+      <td>En una doble pàgina, una banda d'aquesta amplada centrada al llom de la qual els marcs s'aparten llevat que posin <code>crossGutter: true</code>: un marc que la travessa es talla a la seva vora, del costat del seu centre, i un que comença a dins en surt. Amb <code>0</code> la banda és el mateix llom.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>En una doble pàgina, el marc pot travessar la franja del llom.</td>
+      <td>En una doble pàgina, el marc pot travessar la banda del llom. El seu text es llegeix a la pàgina que conté el seu centre; la pàgina del davant en pinta la meitat.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -468,7 +468,34 @@ Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantill
 
 ### El que aplica la maquetació
 
-La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` i `overflow.continueIn: "#frame"`, i també l'`area`, la `grid`, la `decoration`, el `header`, el `footer` i les `variants` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup; els seus marcs conserven la seva pròpia col·locació), `fit`, `overflow.continueIn: "next-page"` i `overflowTemplate`, `spread` i `crossGutter`, el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
+La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` i `overflow.continueIn: "#frame"`, i també l'`area`, la `grid`, la `decoration`, el `header`, el `footer` i les `variants` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup; els seus marcs conserven la seva pròpia col·locació), `fit`, `overflow.continueIn: "next-page"` i `overflowTemplate`, el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
+
+### Dobles pàgines
+
+En una plantilla de doble pàgina totes les coordenades van sobre el full de les seves dues pàgines, amb el llom al centre: `area`, `grid`, els ancoratges a `container`, `page` i `bleed` i les mides `fill` llegeixen l'amplada doble. `bleed` arriba a la capçalera, al peu i a les dues vores exteriors, mai al llom. La línia del temps a doble pàgina d'un llibre de text és una sola plantilla:
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … d'era-2 a era-6, una columna de la graella cadascuna, i les notes sota la tira
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+Un espai entre columnes més ample que el `gutter` manté les fitxes d'una graella simètrica lluny del llom, així que cap no es mou. La segona banda i la tira de dibuixos posen `crossGutter` per travessar-lo: cadascuna es llegeix a la pàgina que conté el seu centre i es pinta a totes dues. Totes les paraules de la pàgina, també els noms de les edats de les pestanyes, es queden al Markdown.
 
 ## Estils de rètol
 

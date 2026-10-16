@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Paged output cuts what does not fit at the frame's foot; it stays in the document, the source map and the reflowable EPUB.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>A composed page's fence and its template disagree about spreads (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, the fence's <code>spread</code>; <code>templateSpread</code>, the template's).</td>
+      <td>The template decides: a spread template is laid over two facing pages, any other on one page.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> names no chip style.</td>
       <td>The chip takes the first chip style.</td>

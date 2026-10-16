@@ -40,7 +40,7 @@ Eine zusammengesetzte Seite beginnt mit einer Zeile aus **vier Doppelpunkten**, 
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>Pflicht. Die ID eines Eintrags von <code>pageTemplates</code>.</td></tr>
-    <tr><td><code>spread</code></td><td>Die Seite ist eine Doppelseite aus zwei gegenüberliegenden Seiten; auch die Vorlage muss eine Doppelseitenvorlage sein.</td></tr>
+    <tr><td><code>spread</code></td><td>Die Seite ist eine Doppelseite aus zwei gegenüberliegenden Seiten (siehe <a href="#doppelseiten">Doppelseiten</a>). Sie muss zum <code>spread</code> der Vorlage passen; sonst entscheidet die Vorlage, und <code>spreadMismatch</code> meldet es.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Ein Anker: Ein <code>:ref</code> darauf druckt die Seite, auf der die zusammengesetzte Seite landet.</td></tr>
     <tr><td>jedes andere</td><td>Ein Wert, den die Vorlage als <code>&#123;attr.name&#125;</code> liest, etwa ein Hintergrundbild, das Seite für Seite gewählt wird: <code>fondo="banda-retos"</code> mit <code>resourceId: "&#123;attr.fondo&#125;"</code> im Dekor.</td></tr>
   </tbody>
@@ -236,6 +236,11 @@ Die Prüfungen lesen Markdown und Konfiguration vor jedem Umbruch. Deshalb ersch
       <td>Öffnen Sie die Seite mit vier Doppelpunkten, <code>::::page&#123;template="…"&#125;</code>, und schließen Sie sie mit <code>::::</code>.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>Das <code>spread</code> der Eröffnung und das der Vorlage widersprechen sich. Die Seite wird so gesetzt, wie die Vorlage es sagt (siehe <a href="#spreadmismatch">spreadMismatch</a>).</td>
+      <td>Schreiben Sie <code>spread</code> in die Eröffnung einer Doppelseitenvorlage, oder entfernen Sie es bei einer Einzelseitenvorlage.</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>Eine zusammengesetzte Seite, ein Rahmen oder eine Abbildung wird nie geschlossen (siehe oben, wie sich der Parser fängt). Das Bedienfeld Prüfungen nennt die zusammengesetzte Seite <code>::::page</code>.</td>
       <td>Ergänzen Sie die schließende Zeile: so viele Doppelpunkte wie in der öffnenden Zeile der Seite, oder <code>:::</code> für einen Rahmen oder eine Abbildung.</td>
@@ -297,6 +302,38 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
 `postext check` gibt nach den Warnungen für jede zusammengesetzte Seite mit Ereignissen eine Zeile `reflow` aus. Mit `--json` enthält der Bericht ein Array `reflow` mit einem Eintrag je Seite: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` und `lines` (die Ereignisse in Worten).
 
 Im Code ist das Protokoll `VDTPage.composed.log`, und jeder Rahmen bewahrt den Kasten, den seine Vorlage angibt, in `VDTFrame.declaredRect` auf, sofern er von `rect` abweicht. `composedReflowLog(doc)` liefert die Einträge, die `postext check` ausgibt, und `describeReflowEvent(event)` fasst ein einzelnes Ereignis in Worte.
+
+## Doppelseiten
+
+Eine Vorlage mit `spread: true` ist ein einziger Bogen aus zwei gegenüberliegenden Seiten: ein Band über den Bund, ein Bildstreifen von einem Außenrand zum anderen, Karten auf beiden Seiten. Die Eröffnung der Seite sagt es mit `spread`:
+
+```md
+::::page{template="linea-tiempo" spread}
+# Cómo medimos el tiempo
+
+Para saber cuándo comer, trabajar o descansar, las personas siempre han necesitado medir el tiempo…
+
+:::frame{slot="banda-2"}
+Con relojes de máquina
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **Wo sie beginnt.** Eine Doppelseite beginnt auf einer geraden Seite (der linken in einem Buch, das von links nach rechts gelesen wird, der rechten in einem, das von rechts nach links gelesen wird) und nimmt die ungerade Seite danach dazu. Endet der Text davor auf einer geraden Seite, bleibt die folgende leer (eine Paritätsvakatseite wie vor einer Comic-Doppelseite), damit die beiden Hälften einander gegenüberstehen. Der Text nach dem Schluss beginnt auf der Seite nach der ungeraden.
+- **Ein Bogen.** Die Rahmen werden auf einem Bogen platziert, der so breit ist wie beide Seiten. Der Bereich `content` reicht vom Außenrand der einen Seite bis zu dem der anderen, beide Innenränder eingeschlossen; `trim` sind die beiden beschnittenen Seiten nebeneinander; `bleed` fügt den Beschnitt an Kopf, Fuß und beiden Außenrändern hinzu, nie am Bund. Ein `grid` teilt die ganze Breite: Sechs Spalten setzen drei auf jede Seite. In einem Buch, das von rechts nach links gelesen wird, ist der Bogen wie seine Seiten gespiegelt, sodass die erste Spalte auf der rechten Seite steht.
+- **Der Bundsteg.** `gutter` ist ein Band dieser Breite, zentriert auf dem Bund. Ein Rahmen ohne `crossGutter: true` bleibt außerhalb: Ein Rahmen, der das ganze Band überquert, wird an dessen Rand auf der Seite seiner Mitte abgeschnitten, und einer, dessen Innenkante in das Band fällt, rückt ganz heraus. Eine Höhe `auto` wird mit der schmaleren Breite gemessen, und das Umbruchprotokoll der Seite verzeichnet die Änderung (`resized` oder `moved`, mit der Ursache `gutter`). Ohne `gutter` ist das Band der Bund selbst, sodass nur Rahmen, die es verlangen, über den Falz laufen.
+- **Über den Bund.** Ein Rahmen mit `crossGutter: true` darf ihn überqueren. Sein Text wird einmal gelesen, auf der Seite, die die Mitte des Rahmens enthält; die gegenüberliegende Seite malt ihre eigene Hälfte des Rahmens, an ihrem Bogen abgeschnitten, sodass ein Band oder ein Bild im aufgeschlagenen Buch in einem Stück erscheint. Ein getaggtes PDF kennzeichnet diese Hälfte als Artefakt, das HTML verbirgt sie vor assistiven Technologien, und Auswahl oder Suche finden den Text einmal.
+- **Die Dekoration** wird einmal über den ganzen Bogen gesetzt und am Bund ebenso geteilt: ein Grund, eine Karte von einer Seite zur anderen, ein Kolumnentitel auf der rechten Seite. Ein Element, das an `#rahmen` verankert ist, folgt diesem Rahmen auf die Seite, auf der er landet. Eine Doppelseite nimmt keine `variants`, da sie beide Seiten hat; `header` und `footer` wirken auf jeder ihrer Seiten wie auf jeder Seite.
+
+Auf der Zeichenfläche, in der Doppelseitenansicht des Sandbox und im Folio stehen die beiden Seiten nebeneinander. Das PDF hat zwei Seiten, jede an ihrem Beschnitt abgeschnitten. Das EPUB mit festem Layout gibt ihnen `page-spread-left` und `page-spread-right` mit `rendition:spread-both`, sodass ein Reader sie in jeder Ausrichtung zusammen zeigt. Das umfließende EPUB liest die Rahmen wie bei jeder zusammengesetzten Seite in der Reihenfolge des Markdown.
+
+### spreadMismatch
+
+**Ursache.** Die Eröffnung der Seite und ihre Vorlage widersprechen sich: Die Eröffnung trägt `spread`, die Vorlage ist aber eine Einzelseite, oder die Vorlage ist eine Doppelseite (durch ihr eigenes `spread: true` oder über `extends`) und der Eröffnung fehlt die Angabe. Es entscheidet die Vorlage: Eine Doppelseitenvorlage wird über zwei gegenüberliegende Seiten gesetzt, jede andere auf eine Seite. Die Warnung nennt die Vorlage, die Angabe der Eröffnung (`fence`) und die der Vorlage (`templateSpread`) und zeigt auf das Attribut `spread` oder, wenn die Eröffnung keines hat, auf den Namen der Vorlage.
+
+**Behebung.** Lassen Sie die Eröffnung sagen, was die Vorlage ist: Schreiben Sie `spread` in die Eröffnung einer Doppelseitenvorlage, entfernen Sie es aus der einer Einzelseitenvorlage, oder wählen Sie eine andere Vorlage.
 
 ## Aus dem Code
 

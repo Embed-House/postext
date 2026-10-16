@@ -116,13 +116,13 @@ const config: PostextConfig = {
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>يصف القالب صفحتين متقابلتين تُصفّان ورقةً واحدة. وتبدأ الصفحة المزدوجة دائمًا في صفحة يسرى في الكتاب المكتوب من اليسار إلى اليمين (وفي صفحة يمنى في الكتاب المكتوب من اليمين إلى اليسار)، وتُضاف قبلها صفحة بيضاء عند الحاجة.</td>
+      <td>يصف القالب صفحتين متقابلتين تُصَفّان فرخًا واحدًا (انظر <a href="/ar/docs/composed-pages#الصفحتان-المتقابلتان">الصفحات المركّبة › الصفحتان المتقابلتان</a>). وتبدأ الصفحتان المتقابلتان بصفحة زوجية: اليسرى في كتاب يُقرأ من اليسار إلى اليمين، واليمنى في كتاب يُقرأ من اليمين إلى اليسار، مع صفحة بيضاء قبلهما عند الحاجة. ويحمل سطر فتح الصفحة العلامة <code>spread</code> أيضًا؛ وإذا اختلفا فالحكم للقالب (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>في الصفحة المزدوجة، الشريط المجاور للكعب الذي تبتعد عنه الخانات، إلا إذا حدّدت <code>crossGutter: true</code>.</td>
+      <td>في الصفحتين المتقابلتين، شريط بهذا العرض في وسطه الكعب تبتعد عنه الإطارات ما لم يكن فيها <code>crossGutter: true</code>: الإطار الذي يعبره يُقطع عند حافته من جهة مركزه، والإطار الذي يبدأ داخله يخرج منه. ومع <code>0</code> يكون الشريط هو الكعب نفسه.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ const config: PostextConfig = {
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>في الصفحة المزدوجة، يجوز للخانة أن تعبر شريط الكعب.</td>
+      <td>في الصفحتين المتقابلتين، يجوز للإطار أن يعبر شريط الكعب. ويُقرأ نصه في الصفحة التي فيها مركزه؛ وترسم الصفحة المقابلة نصفه.</td>
     </tr>
     <tr>
       <td><code>writingMode</code> و<code>direction</code></td>
@@ -468,7 +468,34 @@ pageTemplates: [
 
 ### ما يطبّقه التنضيد
 
-يطبّق التنضيد موضع كل خانة وأحجامها (الشبكة، ونقاط التثبيت، و`min`/`max`، و`verticalAlign`)، ونمطها و`padding` الخاص بها، و`columns` و`layer` و`rotate` و`exclude` و`flow` و`takes` و`next` و`overflow.continueIn: "#frame"`، ويطبّق من القالب `area` و`grid` و`decoration` و`header` و`footer` و`variants`. أما ما يُقرأ ويُفحص ولا يُطبَّق بعد فهو: تقاسم المساحة داخل المجموعة (`grow` و`shrink` و`priority` و`pin`، و`gap` و`align` الخاصّان بالمجموعة؛ وتحتفظ خاناتها بمواضعها الخاصة)، و`fit`، و`overflow.continueIn: "next-page"` و`overflowTemplate`، و`spread` و`crossGutter`، و`writingMode` و`direction` في الخانة، و`bodyStyle` و`palette` في القالب. والعرض `'auto'` يُقرأ على أنه `'fill'`.
+يطبّق التنضيد موضع كل خانة وأحجامها (الشبكة، ونقاط التثبيت، و`min`/`max`، و`verticalAlign`)، ونمطها و`padding` الخاص بها، و`columns` و`layer` و`rotate` و`exclude` و`flow` و`takes` و`next` و`overflow.continueIn: "#frame"`، ويطبّق من القالب `area` و`grid` و`decoration` و`header` و`footer` و`variants`. أما ما يُقرأ ويُفحص ولا يُطبَّق بعد فهو: تقاسم المساحة داخل المجموعة (`grow` و`shrink` و`priority` و`pin`، و`gap` و`align` الخاصّان بالمجموعة؛ وتحتفظ خاناتها بمواضعها الخاصة)، و`fit`، و`overflow.continueIn: "next-page"` و`overflowTemplate`، و`writingMode` و`direction` في الخانة، و`bodyStyle` و`palette` في القالب. والعرض `'auto'` يُقرأ على أنه `'fill'`.
+
+### الصفحتان المتقابلتان
+
+في قالب الصفحتين المتقابلتين تقع الإحداثيات كلها على فرخ صفحتيه، والكعب في الوسط: فـ`area` و`grid` والارتكاز إلى `container` و`page` و`bleed` والأحجام `fill` تقرأ العرض المضاعف كلها. وتبلغ `bleed` الرأس والذيل والحافتين الخارجيتين، ولا تبلغ الكعب أبدًا. والخط الزمني الممتد على صفحتين في كتاب مدرسي قالب واحد:
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … من era-2 إلى era-6، لكل منها عمود من الشبكة، والملاحظات تحت الشريط
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+إذا كانت المسافة بين الأعمدة أعرض من `gutter` ابتعدت بطاقات الشبكة المتناظرة عن الكعب، فلا يتحرك أيّ منها. ويحمل الشريط الثاني وشريط الصور `crossGutter` ليعبرا الكعب: يُقرأ كل منهما في الصفحة التي فيها مركزه ويُرسم في الصفحتين. وتبقى كلمات الصفحة كلها في Markdown، ومنها أسماء العصور على الألسنة.
 
 ## أنماط التسميات
 

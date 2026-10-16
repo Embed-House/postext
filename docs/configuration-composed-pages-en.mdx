@@ -116,13 +116,13 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>The template describes two facing pages laid as one sheet. A spread always starts on a left page in a left-to-right book (a right page in a right-to-left one), with a blank page added before it when needed.</td>
+      <td>The template describes two facing pages laid as one sheet (see <a href="/en/docs/composed-pages#spreads">Composed pages › Spreads</a>). A spread starts on a verso, the left page of a left-to-right book and the right page of a right-to-left one, with a blank page before it when needed. Its page fence carries the <code>spread</code> flag too; when they disagree the template decides (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>On a spread, the band at the spine that frames keep clear of, unless they set <code>crossGutter: true</code>.</td>
+      <td>On a spread, a band of this width centred on the spine that frames keep off unless they set <code>crossGutter: true</code>: a frame reaching across it is cut at its edge on the side of its centre, one starting inside it moves out. With <code>0</code> the band is the spine itself.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>On a spread, the frame may cross the spine band.</td>
+      <td>On a spread, the frame may run across the spine band. Its text is read on the page that holds its centre; the facing page paints its half.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -468,7 +468,34 @@ From code, `resolvePageTemplate(config, id, { parity })` returns a template with
 
 ### What the layout applies
 
-The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` and `overflow.continueIn: "#frame"`, and the template's `area`, `grid`, `decoration`, `header`, `footer` and `variants`. Read and checked, but not yet applied: a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and a group's `gap` and `align`; its frames keep their own placement), `fit`, `overflow.continueIn: "next-page"` and `overflowTemplate`, `spread` and `crossGutter`, a frame's `writingMode` and `direction`, and the template's `bodyStyle` and `palette`. An `'auto'` width reads as `'fill'`.
+The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` and `overflow.continueIn: "#frame"`, and the template's `area`, `grid`, `decoration`, `header`, `footer` and `variants`. Read and checked, but not yet applied: a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and a group's `gap` and `align`; its frames keep their own placement), `fit`, `overflow.continueIn: "next-page"` and `overflowTemplate`, a frame's `writingMode` and `direction`, and the template's `bodyStyle` and `palette`. An `'auto'` width reads as `'fill'`.
+
+### Spreads
+
+On a spread template every coordinate runs over the sheet of its two pages, with the spine in the middle: `area`, `grid`, anchors to `container`, `page` and `bleed`, and `fill` sizes all read the double width. `bleed` reaches the head, the foot and both outer edges, never the spine. A textbook's double-page timeline is one template:
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … era-2 to era-6, one grid column each, and the notes under the strip
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+A column gap wider than the `gutter` keeps the cards of a symmetric grid clear of the spine, so none of them is moved. The second band and the picture strip set `crossGutter` to run across it: each is read on the page that holds its centre and painted on both. Every word of the page, the era names on the tabs included, stays in the Markdown.
 
 ## Label styles
 

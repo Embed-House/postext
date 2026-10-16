@@ -116,13 +116,13 @@ const config: PostextConfig = {
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>テンプレートが、1枚として組む向かい合った2ページを表します。見開きは、左から右に読む本では必ず左ページから（右から左に読む本では右ページから）始まり、必要なら前に白ページが加わります。</td>
+      <td>テンプレートが、1枚の版面として組む向かい合わせの2ページを表します（<a href="/ja/docs/composed-pages#見開き">テンプレートページ › 見開き</a>を参照）。見開きは偶数ページから始まります。左から右へ読む本では左ページ、右から左へ読む本では右ページで、必要なら前に白ページが入ります。ページの開始行にも<code>spread</code>を付けます。食い違うときはテンプレートに従います（<code>spreadMismatch</code>）。</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>見開きで、フレームが避けるノドの帯です。<code>crossGutter: true</code>を指定したフレームは避けません。</td>
+      <td>見開きで、のどを中心とするこの幅の帯です。<code>crossGutter: true</code>のない枠はここを避けます。帯をまたぐ枠は中心のある側で帯の端まで切り詰められ、帯の中から始まる枠は外へ移ります。<code>0</code>なら帯はのどそのものです。</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ const config: PostextConfig = {
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>見開きで、フレームがノドの帯をまたいでもかまいません。</td>
+      <td>見開きで、枠がのどの帯をまたいでもかまいません。本文は枠の中心があるページで読まれ、向かいのページはその半分を描きます。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
@@ -468,7 +468,34 @@ Sandboxがテンプレートを保存するとき、既定値と同じ値も捨�
 
 ### 割り付けに反映される設定
 
-割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`、`flow`、`takes`、`next`、`overflow.continueIn: "#frame"`、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`です。次の設定は読み込まれて検査されますが、まだ割り付けには反映されません。グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。グループのフレームはそれぞれの配置を保ちます）、`fit`、`overflow.continueIn: "next-page"`と`overflowTemplate`、`spread`と`crossGutter`、フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`です。幅の`'auto'`は`'fill'`として扱います。
+割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`、`flow`、`takes`、`next`、`overflow.continueIn: "#frame"`、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`です。次の設定は読み込まれて検査されますが、まだ割り付けには反映されません。グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。グループのフレームはそれぞれの配置を保ちます）、`fit`、`overflow.continueIn: "next-page"`と`overflowTemplate`、フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`です。幅の`'auto'`は`'fill'`として扱います。
+
+### 見開き
+
+見開きのテンプレートでは、すべての座標が2ページ分の版面の上にあり、のどがその中央に来ます。`area`、`grid`、`container`・`page`・`bleed`へのアンカー、`fill`のサイズは、どれも2倍の幅で読みます。`bleed`は天・地・左右の小口まで届き、のどには届きません。教科書の見開きの年表は一つのテンプレートで書けます。
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … era-2からera-6まで、それぞれグリッド1列ずつ、さらに帯の下の注記
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+列の間隔を`gutter`より広くしておけば、左右対称のグリッドのカードはのどにかからず、どれも動きません。2本目の帯と絵の帯は`crossGutter`でのどをまたぎ、それぞれ中心のあるページで読まれ、両方のページに描かれます。タブに書く時代の名前も含め、ページの言葉はすべてMarkdownに置きます。
 
 ## ラベルスタイル
 

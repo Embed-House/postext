@@ -130,6 +130,11 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
       <td>La salida paginada corta lo que no cabe al pie del marco; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>La apertura de una página compuesta y su plantilla no coinciden en la doble página (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, el <code>spread</code> de la apertura; <code>templateSpread</code>, el de la plantilla).</td>
+      <td>Manda la plantilla: una plantilla de doble página se compone en dos páginas enfrentadas, y cualquier otra en una.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> no nombra ningún estilo de chip.</td>
       <td>El chip toma el primer estilo de chip.</td>
