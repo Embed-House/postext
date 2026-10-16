@@ -23503,5 +23503,325 @@
       }
     },
     "since": "1.20.0"
+  },
+  "composed-pages": {
+    "label": {
+      "en": "Composed pages",
+      "es": "Páginas compuestas",
+      "ca": "Pàgines compostes",
+      "zh": "模板页",
+      "ar": "الصفحات المركّبة",
+      "ja": "テンプレートページ",
+      "pt": "Páginas compostas",
+      "fr": "Pages composées",
+      "de": "Zusammengesetzte Seiten",
+      "it": "Pagine composte"
+    },
+    "definition": {
+      "en": "A page laid out from a template of named frames in the config, filled by a ::::page fence whose content names each frame by its slot.",
+      "es": "Una página que sale de una plantilla de marcos con nombre en la configuración y se llena con una valla ::::page cuyo contenido nombra cada marco por su slot.",
+      "ca": "Una pàgina que surt d’una plantilla de marcs amb nom a la configuració i s’omple amb una tanca ::::page el contingut de la qual anomena cada marc pel seu slot.",
+      "zh": "按配置中由具名框组成的模板排出的页面；::::page 围栏里的内容按 slot 名称填入各个框。",
+      "ar": "صفحة تُرسم من قالب في الإعدادات يضم إطارات مسمّاة، ويملؤها سياج ‎::::page‎ يسمّي محتواه كل إطار باسم خانته (slot).",
+      "ja": "設定に置いた名前付きフレームのテンプレートから組むページ。::::page フェンスの中身が slot 名で各フレームに流し込まれます。",
+      "pt": "Uma página montada a partir de um modelo de quadros com nome na configuração e preenchida por uma cerca ::::page cujo conteúdo nomeia cada quadro pelo seu slot.",
+      "fr": "Une page tirée d’un gabarit de blocs nommés dans la configuration, remplie par un bloc ::::page dont le contenu désigne chaque bloc par son slot.",
+      "de": "Eine Seite nach einer Vorlage aus benannten Rahmen in der Konfiguration, gefüllt von einem ::::page-Block, dessen Inhalt jeden Rahmen über seinen Slot anspricht.",
+      "it": "Una pagina impaginata da un modello di riquadri con nome nella configurazione e riempita da un recinto ::::page il cui contenuto chiama ogni riquadro per slot."
+    },
+    "aliases": {
+      "en": [
+        "page template",
+        "frames",
+        "slots",
+        "composed page",
+        "pageTemplates"
+      ],
+      "es": [
+        "plantilla de página",
+        "marcos",
+        "slots",
+        "página compuesta",
+        "pageTemplates"
+      ],
+      "ca": [
+        "plantilla de pàgina",
+        "marcs",
+        "slots",
+        "pàgina composta"
+      ],
+      "zh": [
+        "页面模板",
+        "框",
+        "slot",
+        "pageTemplates"
+      ],
+      "ar": [
+        "قالب الصفحة",
+        "إطارات",
+        "خانات",
+        "pageTemplates"
+      ],
+      "ja": [
+        "ページテンプレート",
+        "フレーム",
+        "slot",
+        "pageTemplates"
+      ],
+      "pt": [
+        "modelo de página",
+        "quadros",
+        "slots",
+        "página composta"
+      ],
+      "fr": [
+        "gabarit de page",
+        "blocs",
+        "slots",
+        "page composée"
+      ],
+      "de": [
+        "Seitenvorlage",
+        "Rahmen",
+        "Slots",
+        "pageTemplates"
+      ],
+      "it": [
+        "modello di pagina",
+        "riquadri",
+        "slot",
+        "pagina composta"
+      ]
+    },
+    "group": "page",
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Composed pages",
+        "es": "Páginas compuestas",
+        "ca": "Pàgines compostes",
+        "zh": "模板页",
+        "ar": "الصفحات المركّبة",
+        "ja": "テンプレートページ",
+        "pt": "Páginas compostas",
+        "fr": "Pages composées",
+        "de": "Zusammengesetzte Seiten",
+        "it": "Pagine composte"
+      }
+    },
+    "research": [],
+    "detect": {
+      "config": [
+        "pageTemplates"
+      ],
+      "markdown": [
+        "^::::+\\s*page\\s*\\{[^}\\n]*template="
+      ]
+    }
+  },
+  "frame-groups": {
+    "label": {
+      "en": "Frames that grow in a group",
+      "es": "Marcos que crecen en un grupo",
+      "ca": "Marcs que creixen en un grup",
+      "zh": "组内随文字变高的框",
+      "ar": "إطارات تكبر داخل مجموعة",
+      "ja": "グループの中で伸びるフレーム",
+      "pt": "Quadros que crescem num grupo",
+      "fr": "Blocs qui s’agrandissent dans un groupe",
+      "de": "Rahmen, die in einer Gruppe wachsen",
+      "it": "Riquadri che crescono in un gruppo"
+    },
+    "definition": {
+      "en": "A stack or row of frames on a composed page: a frame as tall as its text, never below its minHeight, pushes the frames after it and what is anchored to them.",
+      "es": "Una pila o una fila de marcos de una página compuesta: un marco tan alto como su texto, nunca por debajo de su minHeight, empuja los marcos que lo siguen y lo que va anclado a ellos.",
+      "ca": "Una pila o una fila de marcs d’una pàgina composta: un marc tan alt com el seu text, mai per sota del seu minHeight, empeny els marcs que el segueixen i el que hi va ancorat.",
+      "zh": "模板页上纵向或横向排列的一组框：框的高度随文字而定、不低于 minHeight，并推动其后的框以及锚定在它们上的元素。",
+      "ar": "رصّة أو صف من إطارات صفحة مركّبة: يطول الإطار بطول نصه ولا يقل عن minHeight، فيدفع الإطارات التي تليه وما ثُبّت عليها.",
+      "ja": "テンプレートページのフレームを縦または横に並べるグループ。フレームは文章の高さに合わせて伸び（minHeight 未満にはならない）、後ろのフレームとそれに固定した要素を押し下げます。",
+      "pt": "Uma pilha ou fila de quadros de uma página composta: um quadro tão alto quanto o seu texto, nunca abaixo do minHeight, empurra os quadros seguintes e o que está ancorado neles.",
+      "fr": "Une pile ou une rangée de blocs d’une page composée : un bloc aussi haut que son texte, jamais sous son minHeight, pousse les blocs qui le suivent et ce qui y est ancré.",
+      "de": "Ein Stapel oder eine Reihe von Rahmen einer zusammengesetzten Seite: Ein Rahmen so hoch wie sein Text, nie unter seiner minHeight, schiebt die folgenden Rahmen und das an ihnen Verankerte weiter.",
+      "it": "Una pila o una fila di riquadri di una pagina composta: un riquadro alto quanto il suo testo, mai sotto il suo minHeight, spinge i riquadri che seguono e ciò che vi è ancorato."
+    },
+    "aliases": {
+      "en": [
+        "stack",
+        "frame group",
+        "growing boxes",
+        "reflow"
+      ],
+      "es": [
+        "pila",
+        "grupo de marcos",
+        "cajas que crecen",
+        "recomposición"
+      ],
+      "ca": [
+        "pila",
+        "grup de marcs",
+        "caixes que creixen"
+      ],
+      "zh": [
+        "堆叠",
+        "框组",
+        "变高的框"
+      ],
+      "ar": [
+        "رصّة",
+        "مجموعة إطارات",
+        "إطارات تكبر"
+      ],
+      "ja": [
+        "スタック",
+        "フレームグループ",
+        "伸びる枠"
+      ],
+      "pt": [
+        "pilha",
+        "grupo de quadros",
+        "caixas que crescem"
+      ],
+      "fr": [
+        "pile",
+        "groupe de blocs",
+        "cadres qui grandissent"
+      ],
+      "de": [
+        "Stapel",
+        "Rahmengruppe",
+        "wachsende Kästen"
+      ],
+      "it": [
+        "pila",
+        "gruppo di riquadri",
+        "riquadri che crescono"
+      ]
+    },
+    "group": "page",
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "When the text grows",
+        "es": "Cuando el texto crece",
+        "ca": "Quan el text creix",
+        "zh": "文字变长时",
+        "ar": "حين يطول النص",
+        "ja": "文章が増えたとき",
+        "pt": "Quando o texto cresce",
+        "fr": "Quand le texte s’allonge",
+        "de": "Wenn der Text wächst",
+        "it": "Quando il testo cresce"
+      }
+    },
+    "research": [],
+    "detect": {
+      "config": [
+        "pageTemplates[].groups"
+      ]
+    }
+  },
+  "frame-continuation": {
+    "label": {
+      "en": "Frames continued on the next page",
+      "es": "Marcos que siguen en la página siguiente",
+      "ca": "Marcs que continuen a la pàgina següent",
+      "zh": "在下一页续排的框",
+      "ar": "إطارات تستمر في الصفحة التالية",
+      "ja": "次のページに続くフレーム",
+      "pt": "Quadros que continuam na página seguinte",
+      "fr": "Blocs poursuivis à la page suivante",
+      "de": "Rahmen, die auf der nächsten Seite weiterlaufen",
+      "it": "Riquadri che proseguono nella pagina seguente"
+    },
+    "definition": {
+      "en": "overflow.continueIn sends what a frame cannot hold to a page added after its composed page, from an overflowTemplate, with the language's continuation mark at the cut.",
+      "es": "overflow.continueIn lleva lo que un marco no cabe a una página añadida tras su página compuesta, hecha con un overflowTemplate, con la marca de continuación del idioma en el corte.",
+      "ca": "overflow.continueIn porta el que un marc no pot contenir a una pàgina afegida després de la seva pàgina composta, feta amb un overflowTemplate, amb la marca de continuació de la llengua al tall.",
+      "zh": "overflow.continueIn 把框装不下的内容送到其模板页之后新增的一页（按 overflowTemplate 排），截断处带有该语言的续排标记。",
+      "ar": "يرسل overflow.continueIn ما لا يتسع له الإطار إلى صفحة تُضاف بعد صفحته المركّبة، تُبنى من overflowTemplate، مع علامة الاستمرار بلغة الوثيقة عند موضع القطع.",
+      "ja": "overflow.continueIn は、フレームに収まらない分をテンプレートページの後ろに追加するページ（overflowTemplate から組む）へ送り、切れ目に言語ごとの続きの印を付けます。",
+      "pt": "overflow.continueIn leva o que um quadro não comporta para uma página acrescentada depois da sua página composta, feita com um overflowTemplate, com a marca de continuação do idioma no corte.",
+      "fr": "overflow.continueIn envoie ce qu’un bloc ne peut contenir sur une page ajoutée après sa page composée, tirée d’un overflowTemplate, avec la mention de suite de la langue à la coupure.",
+      "de": "overflow.continueIn schickt, was ein Rahmen nicht fasst, auf eine nach seiner Seite eingefügte Seite aus einem overflowTemplate, mit dem Fortsetzungsvermerk der Sprache an der Schnittstelle.",
+      "it": "overflow.continueIn manda ciò che un riquadro non contiene su una pagina aggiunta dopo la sua pagina composta, da un overflowTemplate, con il segno di continuazione della lingua nel taglio."
+    },
+    "aliases": {
+      "en": [
+        "continued",
+        "continues on next page",
+        "overflow template",
+        "continuation mark"
+      ],
+      "es": [
+        "continúa",
+        "sigue en la página siguiente",
+        "plantilla de desbordamiento",
+        "marca de continuación"
+      ],
+      "ca": [
+        "continua",
+        "plantilla de desbordament",
+        "marca de continuació"
+      ],
+      "zh": [
+        "接下页",
+        "续排",
+        "溢出模板"
+      ],
+      "ar": [
+        "يتبع",
+        "قالب الفائض",
+        "علامة الاستمرار"
+      ],
+      "ja": [
+        "次ページへ続く",
+        "続き",
+        "オーバーフローテンプレート"
+      ],
+      "pt": [
+        "continua",
+        "modelo de transbordo",
+        "marca de continuação"
+      ],
+      "fr": [
+        "à suivre",
+        "suite page suivante",
+        "gabarit de débordement"
+      ],
+      "de": [
+        "Fortsetzung",
+        "wird fortgesetzt",
+        "Überlaufvorlage"
+      ],
+      "it": [
+        "continua",
+        "segue alla pagina seguente",
+        "modello di trabocco"
+      ]
+    },
+    "group": "page",
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "When the text continues",
+        "es": "Cuando el texto sigue",
+        "ca": "Quan el text continua",
+        "zh": "文字续排时",
+        "ar": "حين يستمر النص في صفحات مضافة",
+        "ja": "文章が追加ページに続くとき",
+        "pt": "Quando o texto continua",
+        "fr": "Quand le texte se poursuit",
+        "de": "Wenn der Text weiterläuft",
+        "it": "Quando il testo prosegue"
+      }
+    },
+    "research": [],
+    "detect": {
+      "config": [
+        "pageTemplates[].frames[].overflow.continueIn",
+        "pageTemplates[].overflowTemplate"
+      ]
+    }
   }
 }

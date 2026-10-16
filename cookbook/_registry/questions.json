@@ -4986,5 +4986,61 @@
       "it": "Pagine di album, con didascalie di narrazione"
     },
     "theme": "comics"
+  },
+  "Q179": {
+    "kind": "how",
+    "text": {
+      "en": "How do I make the boxes of a page grow with their text and push the boxes below them down?",
+      "es": "¿Cómo hago que los recuadros de una página crezcan con su texto y empujen hacia abajo los que tienen debajo?",
+      "ca": "Com faig que els requadres d’una pàgina creixin amb el seu text i empenyin cap avall els que tenen a sota?",
+      "zh": "怎样让页面上的框随文字变高，并把下面的框往下推？",
+      "ar": "كيف أجعل إطارات الصفحة تطول مع نصها وتدفع الإطارات التي تحتها إلى الأسفل؟",
+      "ja": "ページの囲みを文章に合わせて伸ばし、下の囲みを押し下げるには？",
+      "pt": "Como faço os boxes de uma página crescerem com o texto e empurrarem para baixo os que estão embaixo?",
+      "fr": "Comment faire grandir les encadrés d’une page avec leur texte et repousser vers le bas ceux qui les suivent ?",
+      "de": "Wie lasse ich die Kästen einer Seite mit ihrem Text wachsen, sodass sie die Kästen darunter nach unten schieben?",
+      "it": "Come faccio crescere i riquadri di una pagina con il loro testo, spingendo in basso quelli sotto?"
+    },
+    "index": {
+      "en": "Boxes, growing with their text",
+      "es": "Recuadros que crecen con su texto",
+      "ca": "Requadres que creixen amb el seu text",
+      "zh": "框，随文字变高",
+      "ar": "الإطارات، التي تطول مع نصها",
+      "ja": "囲み、文章に合わせて伸びる",
+      "pt": "Boxes que crescem com o texto",
+      "fr": "Encadrés, qui grandissent avec leur texte",
+      "de": "Kästen, mit dem Text wachsend",
+      "it": "Riquadri, che crescono con il testo"
+    },
+    "theme": "boxes"
+  },
+  "Q180": {
+    "kind": "how",
+    "text": {
+      "en": "How do I let an activity that does not fit go on on the next page, with a “Continued” mark?",
+      "es": "¿Cómo hago que una actividad que no cabe siga en la página siguiente, con una marca de «Continúa»?",
+      "ca": "Com faig que una activitat que no hi cap continuï a la pàgina següent, amb una marca de «Continua»?",
+      "zh": "活动内容放不下时，怎样带着“接下页”标记续排到下一页？",
+      "ar": "كيف أجعل نشاطًا لا يتسع يستمر في الصفحة التالية مع علامة «يتبع»؟",
+      "ja": "収まらない活動を「次ページへ続く」の印を付けて次のページに続けるには？",
+      "pt": "Como faço uma atividade que não cabe continuar na página seguinte, com a marca «Continua»?",
+      "fr": "Comment faire continuer à la page suivante une activité qui ne tient pas, avec la mention « À suivre » ?",
+      "de": "Wie lasse ich eine Aufgabe, die nicht passt, mit dem Vermerk „Wird fortgesetzt“ auf der nächsten Seite weiterlaufen?",
+      "it": "Come faccio proseguire nella pagina seguente un’attività che non entra, con il segno «Continua»?"
+    },
+    "index": {
+      "en": "Continued boxes, on an added page",
+      "es": "Recuadros continuados en una página añadida",
+      "ca": "Requadres continuats en una pàgina afegida",
+      "zh": "续排的框，在新增页面上",
+      "ar": "الإطارات المستمرة، في صفحة مضافة",
+      "ja": "続く囲み、追加ページへ",
+      "pt": "Boxes continuados numa página acrescentada",
+      "fr": "Encadrés poursuivis, sur une page ajoutée",
+      "de": "Fortgesetzte Kästen, auf einer eingefügten Seite",
+      "it": "Riquadri proseguiti, su una pagina aggiunta"
+    },
+    "theme": "boxes"
   }
 }
