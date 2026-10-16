@@ -15,6 +15,8 @@ import type { VDTDocument, PostextConfig, RenderPageOptions } from 'postext';
 import { createPaintedPages, type PaintedPages } from './pageReuse';
 import { clearOverlay, drawOverlay } from './overlay';
 import { clearFrameMarks, drawFrameMarks } from '../composed/frameOverlay';
+import { clearFitMarks, drawPageFitMarks } from '../composed/fitMarks';
+import { onFrameJumpChange } from '../../editions/frameJump';
 import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode';
 import { drawPickedMark } from '../../selection/pickedOverlay';
 import { onPageSelectionChange } from '../../selection/selectionStore';
@@ -122,6 +124,8 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   labelsRef.current = labels;
   // The page-template editor reads and writes the book through the canvas (#863).
   useTemplateEditorHost();
+  const uiLocaleRef = useRef(locale);
+  uiLocaleRef.current = locale;
   // Whole-book mode: the chapter of every page of the stitched document,
   // and the book a page's offsets belong to (its chapter's).
   const chapterOfPageRef = useRef<((pageIndex: number) => number) | null>(null);
@@ -901,6 +905,8 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   // The element picked on a page (#865) is marked and named in the path.
   const [pickTick, setPickTick] = useState(0);
   useEffect(() => onPageSelectionChange(() => setPickTick((t) => t + 1)), []);
+  // …and the fit marks the frame a check just reached (#867).
+  useEffect(() => onFrameJumpChange(() => setEditModeTick((t) => t + 1)), []);
   useEffect(() => {
     const doc = docRef.current;
     if (!doc) return;
@@ -956,6 +962,8 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
         if (drawn.delete(pageIndex)) clearOverlay(overlay);
         if (page.composed) clearFrameMarks(overlay);
         drawPickedMark(overlay, doc, pageIndex, null);
+        // A frame that does not fit is marked on every page (#867).
+        if (page.composed) drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current);
         continue;
       }
       const rect = drawOverlay(overlay, doc, pageIndex, selection, debug, focused, caretBlockIdx, resourceSelection);
@@ -971,7 +979,9 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
           writeHere: labelsRef.current.composedFrameWriteHere,
           continues: labelsRef.current.composedFrameContinues,
         });
-      }
+        // Overflow and scale (#867): in the overlay, never on the page.
+        drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current);
+      } else clearFitMarks(overlay);
       drawn.add(pageIndex);
       if (rect) activeCursorRect = rect;
     }

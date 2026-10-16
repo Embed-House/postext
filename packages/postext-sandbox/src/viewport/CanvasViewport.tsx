@@ -8,6 +8,9 @@ import { useViewerControls } from './viewerControls';
 import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
 import { announce } from '../ui/announcer';
 import { useSandboxSelector } from '../context/SandboxContext';
+import { EditionBar } from './composed/EditionBar';
+import { EditionCompare } from './composed/EditionCompare';
+import { useFrameJumpRunner } from '../editions/useFrameJumpRunner';
 import { loadCanvasViewMode, saveCanvasViewMode, loadCanvasFitMode, saveCanvasFitMode, loadCanvasZoom, saveCanvasZoom } from '../storage/persistence';
 
 type ViewMode = 'single' | 'spread';
@@ -95,6 +98,10 @@ export function CanvasViewport() {
   const handleJumpToPage = useCallback((pageIndex: number) => {
     previewRef.current?.jumpToPage(pageIndex);
   }, []);
+  // A check of the Checks panel, or another edition, lands on its frame
+  // (#867); two editions side by side over the canvas.
+  useFrameJumpRunner(handleJumpToPage);
+  const [comparing, setComparing] = useState(false);
 
   // `#chapter=C&page=P` in the URL: restored once the document is laid
   // out, written back as the reader scrolls.
@@ -173,6 +180,8 @@ export function CanvasViewport() {
         onPageCountChange={handlePageCountChange}
         onCurrentPageChange={handleCurrentPageChange}
       />
+      <EditionBar comparing={comparing} onToggleCompare={() => setComparing((c) => !c)} />
+      {comparing && <EditionCompare onClose={() => setComparing(false)} />}
       <div {...shell.hoverStripProps} />
       <CanvasToolbar
         zoom={zoom}
