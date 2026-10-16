@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'it',
   lastUpdated: '2026-10-10',
   readingTime: '40 min',
-  order: 18,
+  order: 19,
   parent: 'configuration',
   plainSummary: "Questa pagina tratta le impostazioni comuni a tutto il libro e quelle di ogni tipo di output. Spiega come scrivere una misura e un colore, e come dare un nome ai colori di una tavolozza. Mostra come aggiungere i tuoi font. Poi tratta la vista web, il file PDF, i file che chiede una tipografia e il libro in 3D. L’ultima sezione attiva le guide e gli avvisi che aiutano mentre lavori.",
 };
@@ -1284,6 +1284,7 @@ Otto errori nella configurazione stessa non passano mai sotto silenzio, e nessun
 - **Valore di impostazione sconosciuto**: un’impostazione che accetta una tra poche parole e ne contiene un’altra, come `direction: 'right'` (accetta `auto`, `ltr` o `rtl`). Il motore legge invece il valore predefinito, e `used` indica a che cosa corrisponde: per `direction`, la direzione della lingua del documento (`unknownConfigValue`). L’`align` di una tabulazione che non è nessuna delle sue quattro parole viene letto come `'start'`, e una `position` che non è né una lunghezza, né `'end'`, né una percentuale tralascia la tabulazione (`used` è `'none'`). Vengono controllate anche le parole delle impostazioni dei fumetti ([Fumetti › Avvisi dei fumetti](/it/docs/comics#avvisi-dei-fumetti)): `used` è il valore a cui l’impostazione si è risolta (il predefinito proprio di uno stile di nuvoletta, per uno stile incorporato), e `suggestion` indica la parola più vicina al valore, quando ce n’è una vicina. Il `level` e il `mode` della verifica del contrasto vengono controllati allo stesso modo: `used` è `'AA'` o `'auto'`.
 - **Numeri di riga nel testo verticale**: `lineNumbers.enabled: true` in un documento composto in verticale (`layout.writingMode: 'vertical-rl'`). Le pagine verticali non hanno numeri di riga, e `used` è `false` (`lineNumbersUnsupported`; vedi [Numeri di riga](/it/docs/configuration-notes-references#numeri-di-riga)).
 - **Scontorno nel testo verticale**: il `defaultPlacement.wrap` di un tipo di risorsa in un documento composto in verticale. Le pagine verticali non compongono testo accanto a una figura, e `used` è `none` (`wrapUnsupported`; vedi [Formato del documento › Scontornatura](/it/docs/document-format-resources#testo-intorno-alle-immagini)). Un `wrap` che non indica nessun lato è un valore di impostazione sconosciuto.
+- **Modelli di pagina e stili delle etichette**: un problema in `pageTemplates` o `labelStyles`: un id o un nome ripetuto, `extends`, ancoraggi o cornici concatenate che girano in cerchio, uno stile, una cornice o un modello che non esiste, un minimo maggiore del suo massimo, uno stile di etichetta di un ancoraggio che `labelStyles` non ha (controllato quando si passano le risorse: `collectConfigWarnings(config, { resources })`). Il loro `path` è un puntatore JSON (`/pageTemplates/3/frames/2/style`); ogni tipo è descritto con causa e rimedio in [Avvisi dei modelli di pagina](/it/docs/configuration-composed-pages#avvisi-dei-modelli-di-pagina).
 
 La Sandbox li elenca nel pannello **Verifiche** con il percorso dell’impostazione. Nel codice, `buildDocument` li mette sul documento come `configWarnings` (assente quando la configurazione è pulita), e `collectConfigWarnings(config)` li restituisce senza impaginare nulla:
 

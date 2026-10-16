@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'ca',
   lastUpdated: '2026-10-10',
   readingTime: '41 min',
-  order: 18,
+  order: 19,
   parent: 'configuration',
   plainSummary: "Aquesta pàgina reuneix els paràmetres que comparteix tot el llibre i els de cada tipus de sortida. Explica com s'escriu una mida i un color, i com es dona nom als colors d'una paleta. Ensenya a afegir les teves pròpies fonts. Després tracta la vista web, el fitxer PDF, els fitxers que demana una impremta i el llibre en 3D. L'última secció activa les guies i els advertiments que ajuden mentre treballes.",
 };
@@ -1283,6 +1283,7 @@ Vuit errors de la configuració mateixa no passen mai en silenci, i cap interrup
 - **Valor d'ajust desconegut**: un ajust que admet unes poques paraules en porta una altra, com ara `direction: 'right'` (admet `auto`, `ltr` o `rtl`). El motor llegeix en el seu lloc el valor per defecte, i `used` diu en què ha quedat: per a `direction`, la direcció de la llengua del document (`unknownConfigValue`). L'`align` d'una tabulació que no és cap de les seves quatre paraules es llegeix com a `'start'`, i una `position` que no és una longitud, `'end'` ni un percentatge deixa fora la tabulació (`used` és `'none'`). També es comproven les paraules dels ajustos de còmic ([Còmics › Avisos de còmic](/ca/docs/comics#avisos-de-còmic)): `used` és el valor en què s'ha resolt l'ajust (el valor per defecte propi d'un estil de bafarada, si és un estil integrat), i `suggestion` anomena la paraula a què més s'assembla el valor, quan n'hi ha una de propera. El `level` i el `mode` de la comprovació del contrast es comproven igual: `used` és `'AA'` o `'auto'`.
 - **Números de línia en text vertical**: `lineNumbers.enabled: true` en un document compost en vertical (`layout.writingMode: 'vertical-rl'`). Les pàgines verticals no porten números de línia, i `used` és `false` (`lineNumbersUnsupported`; vegeu [Numeració de línies](/ca/docs/configuration-notes-references#numeració-de-línies)).
 - **Ajust del text en escriptura vertical** — el `defaultPlacement.wrap` d'un tipus de recurs en un document compost en vertical. Les pàgines verticals no componen text al costat d'una figura, i `used` és `none` (`wrapUnsupported`; vegeu [Format del document › Ajust del text](/ca/docs/document-format-resources#ajust-del-text)). Un `wrap` que no anomena cap costat és un valor d'ajust desconegut.
+- **Plantilles de pàgina i estils de rètol** — un problema a `pageTemplates` o `labelStyles`: un id o un nom repetit, `extends`, ancoratges o marcs encadenats que formen un bucle, un estil, marc o plantilla que no existeix, un mínim més gran que el seu màxim, un estil de rètol d'un ancoratge que `labelStyles` no té (es comprova quan es passen els recursos: `collectConfigWarnings(config, { resources })`). El seu `path` és un punter JSON (`/pageTemplates/3/frames/2/style`); cada tipus apareix amb la causa i la solució a [Avisos de les plantilles de pàgina](/ca/docs/configuration-composed-pages#avisos-de-les-plantilles-de-pàgina).
 
 El Sandbox els mostra al tauler **Revisió** amb la ruta de l'ajust. En codi, `buildDocument` els deixa al document com a `configWarnings` (absent quan la configuració està neta), i `collectConfigWarnings(config)` els retorna sense compondre res:
 

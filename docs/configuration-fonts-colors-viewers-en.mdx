@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'en',
   lastUpdated: '2026-10-10',
   readingTime: '36 min',
-  order: 18,
+  order: 19,
   parent: 'configuration',
   plainSummary: "This page covers the settings shared by the whole book and the settings for each kind of output. It explains how to write a measure and a colour, and how to name the colours of a palette. It shows how to add your own fonts. Then it covers the web view, the PDF file, the files a printing company asks for and the 3D book. The last section turns on the guides and warnings that help while you work.",
 };
@@ -1285,6 +1285,7 @@ Eight mistakes in the configuration itself are never silent, and no toggle hides
 - **Unknown setting value** — a setting that takes one of a few words holding another, such as `direction: 'right'` (it takes `auto`, `ltr` or `rtl`). The engine reads the default instead, and `used` names what that came to: for `direction`, the direction of the document language (`unknownConfigValue`). A tab stop's `align` that is none of its four words is read as `'start'`, and a `position` that is no length, `'end'` or percentage leaves the stop out (`used` is `'none'`). The words of the comics settings are checked too ([Comics › Comic warnings](/en/docs/comics#comic-warnings)): `used` is the value the setting resolved to (a balloon style's own default, for a built-in style), and `suggestion` names the word the value is closest to, when one is close. The `level` and `mode` of the contrast check are checked the same way: `used` is `'AA'` or `'auto'`.
 - **Line numbers in vertical text** — `lineNumbers.enabled: true` in a document set vertically (`layout.writingMode: 'vertical-rl'`). Vertical pages get no line numbers, and `used` is `false` (`lineNumbersUnsupported`; see [Line numbers](/en/docs/configuration-notes-references#line-numbers)).
 - **Text wrap in vertical text** — a resource type's `defaultPlacement.wrap` in a document set vertically. Vertical pages set no text beside a figure, and `used` is `none` (`wrapUnsupported`; see [Document format › Text wrap](/en/docs/document-format-resources#text-wrap)). A `wrap` that names no side is an unknown setting value.
+- **Page templates and label styles** — a problem in `pageTemplates` or `labelStyles`: an id or a name used twice, `extends`, anchors or chained frames that loop, a style, frame or template that does not exist, a minimum above its maximum, an anchor's label style that `labelStyles` lacks (checked when the resources are given: `collectConfigWarnings(config, { resources })`). Their `path` is a JSON pointer (`/pageTemplates/3/frames/2/style`); each kind is listed with its cause and fix in [Page template warnings](/en/docs/configuration-composed-pages#page-template-warnings).
 
 The Sandbox lists them in the **Checks** panel with the path of the setting. In code, `buildDocument` puts them on the document as `configWarnings` (absent when the configuration is clean), and `collectConfigWarnings(config)` returns them without laying anything out:
 

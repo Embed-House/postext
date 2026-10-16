@@ -1,0 +1,633 @@
+{/* docs/configuration-composed-pages-pt.mdx */}
+
+export const metadata = {
+  title: 'Configuração: páginas compostas',
+  sidebarTitle: 'Ajustes de páginas compostas',
+  description: 'Modelos de página para as páginas compostas: quadros, grupos, decoração, herança e variantes de recto e verso, os estilos de rótulo das âncoras de uma imagem e os avisos que um modelo pode dar',
+  lang: 'pt',
+  lastUpdated: '2026-10-16',
+  readingTime: '6 min',
+  order: 18,
+  parent: 'configuration',
+  plainSummary: "Esta página trata dos modelos de página. Um modelo é uma página desenhada nos ajustes: caixas com nome, chamadas quadros, com o lugar de cada uma, o tamanho até o qual podem crescer e a aparência. O Markdown de uma página composta depois preenche esses quadros pelo nome, então o texto nunca guarda posições e os ajustes nunca guardam texto. Um modelo pode partir de outro e mudar só alguns quadros, e pode ser diferente nas páginas pares e nas ímpares. A página também traz os estilos de rótulo para as palavras colocadas sobre uma imagem, e cada aviso que um modelo pode dar com o jeito de corrigi-lo.",
+};
+
+# Configuração: páginas compostas
+
+
+## Modelos de página
+
+Uma página composta é uma página que tira a forma de um **modelo de página** da configuração e o conteúdo do Markdown de um bloco `::::page{template="…"}`. O modelo dá nome a retângulos, chamados **quadros**; o Markdown manda cada parte do conteúdo para um quadro pelo nome (o seu encaixe). A geometria nunca aparece no Markdown, e o texto do conteúdo nunca aparece no modelo. A propriedade `pageTemplates` guarda os modelos do livro:
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [{ id: 'caja-azul' }, { id: 'tab-titulo' }],
+  pageTemplates: [
+    {
+      id: 'tema-cajas',
+      decoration: {
+        elements: [
+          { kind: 'image', id: 'fondo', resourceId: '{attr.fondo}', decorative: true,
+            placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } } },
+        ],
+      },
+      frames: [
+        { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+        { name: 'texto', flow: true },
+        { name: 'dinero', style: 'caja-azul', padding: { right: { value: 62, unit: 'mm' } } },
+        { name: 'dinero-fotos', layer: 2, width: { value: 60, unit: 'mm' },
+          placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+      ],
+      groups: [
+        { name: 'pagina', kind: 'stack', gap: { value: 6, unit: 'mm' }, frames: ['titulo', 'texto', 'dinero'] },
+      ],
+    },
+  ],
+};
+```
+
+Um modelo que define só o seu `id` e um quadro é uma página inteira com esse quadro ocupando a área de texto. Todos os outros campos são opcionais:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriedade</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obrigatório</td>
+      <td>O nome que um bloco de página pede (<code>template="tema-cajas"</code>). Único entre os modelos: um segundo com o mesmo id é ignorado.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>o id</td>
+      <td>O nome exibido no Sandbox. A diagramação nunca o lê.</td>
+    </tr>
+    <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>nenhum</td>
+      <td>O id de um modelo do qual este parte. Veja <a href="#herança-e-variantes">Herança e variantes</a>.</td>
+    </tr>
+    <tr>
+      <td><code>area</code></td>
+      <td><code>'content' | 'trim' | 'bleed'</code></td>
+      <td><code>'content'</code></td>
+      <td>O retângulo ao qual as posições dos quadros se referem. <code>'content'</code> é a área de texto da página, espelhada nas pares e ímpares como o texto corrido; <code>'trim'</code> é a página refilada; <code>'bleed'</code>, a página com a sangria.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
+      <td>nenhuma</td>
+      <td>Divide a área em células, de modo que um quadro ou um grupo pode ser posicionado por célula (<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>, contando a partir de 1) em vez de por <code>placement</code>. Os espaços valem <code>0</code> por padrão.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>FrameConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Os quadros, na ordem do modelo: a ordem em que são medidos e a que desempata. Veja <a href="#quadros">Quadros</a>.</td>
+    </tr>
+    <tr>
+      <td><code>groups</code></td>
+      <td><code>FrameGroupConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Pilhas e fileiras de quadros que dividem o espaço. Veja <a href="#grupos">Grupos</a>.</td>
+    </tr>
+    <tr>
+      <td><code>decoration</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>nenhuma</td>
+      <td>Imagens, fios e caixas pintados com a página, na linguagem de elementos dos <a href="/pt/docs/configuration-headers-footers#cabeços-e-rodapés">cabeços e rodapés</a>. Os elementos de texto só levam marcadores (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> para um atributo do bloco de página). Um elemento pode se ancorar a um quadro ou a um grupo (<code>'#dinero'</code>) e então se move com ele. A decoração é posicionada depois dos quadros e nunca empurra o texto.</td>
+    </tr>
+    <tr>
+      <td><code>header</code>, <code>footer</code></td>
+      <td><code>DesignSlot | false</code></td>
+      <td>herdados</td>
+      <td>O cabeço e o fólio da página. Sem valor, a página mantém os do seu capítulo; <code>false</code> os esconde.</td>
+    </tr>
+    <tr>
+      <td><code>spread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>O modelo descreve duas páginas espelhadas diagramadas como uma só folha. Uma página dupla sempre começa numa página par num livro da esquerda para a direita (numa ímpar num da direita para a esquerda), com uma página em branco antes dela quando necessário.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Numa página dupla, a faixa junto à lombada que os quadros deixam livre, a menos que definam <code>crossGutter: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>variants</code></td>
+      <td><code>&#123; recto?, verso? &#125;</code></td>
+      <td>nenhuma</td>
+      <td>Mudanças para uma página ímpar (<code>recto</code>) ou uma par (<code>verso</code>), escritas como o próprio modelo. O lado é o físico, então funcionam tanto os livros da esquerda para a direita quanto os da direita para a esquerda.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTemplate</code></td>
+      <td><code>string</code></td>
+      <td>este modelo</td>
+      <td>O modelo das páginas acrescentadas quando um quadro continua na página seguinte (<code>overflow.continueIn: 'next-page'</code>). Sem valor, a página acrescentada usa este modelo com apenas os quadros que continuam preenchidos.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>string</code></td>
+      <td>nenhum</td>
+      <td>Um estilo de parágrafo para o texto da página, como os estilos de título têm.</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>string</code></td>
+      <td>nenhuma</td>
+      <td>Uma paleta própria para a página, como os estilos de título e as partes têm.</td>
+    </tr>
+    <tr>
+      <td><code>role</code></td>
+      <td><code>string</code></td>
+      <td><code>'composed'</code></td>
+      <td>O papel de página que os elementos de design com um filtro <code>pages</code> enxergam.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Quadros
+
+Um quadro é um retângulo com nome que recebe conteúdo diagramado. O seu `name` é o encaixe que o Markdown pede, e é único no seu modelo (um grupo também não pode ter o nome de um quadro, já que as âncoras nomeiam os dois do mesmo jeito).
+
+Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e, senão, pelo seu `placement`, que funciona como o de um elemento de design: uma âncora (`'container'` é a área, `'page'`, `'bleed'`, ou `'#name'` para outro quadro ou grupo), uma borda, um deslocamento e um tamanho. Um quadro ancorado a outro se move com ele. Sem nenhum dos dois, o quadro ocupa a área inteira.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriedade</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>obrigatório</td>
+      <td>O nome do encaixe.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>a área inteira</td>
+      <td>Âncora, borda, deslocamento e tamanho, como no <a href="/pt/docs/configuration-headers-footers#posicionamento-de-elementos">posicionamento de elementos</a>. Ignorado quando uma célula da grade posiciona o quadro.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; col, row, cols?, rows? &#125;</code></td>
+      <td>nenhuma</td>
+      <td>Uma célula da grade do modelo, contando a partir de 1, que ocupa <code>cols</code> × <code>rows</code> células (1 por padrão). Uma célula que passa da grade é trazida de volta para dentro dela. Ignorado quando o modelo não tem grade.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>height</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
+      <td><code>'fill'</code>, <code>'auto'</code></td>
+      <td>Um comprimento fixo, uma porcentagem da área (de 0 a 100), <code>'auto'</code> (o tamanho próprio do conteúdo) ou <code>'fill'</code> (o que sobra até a borda à qual o quadro está ancorado). Sem valor, o quadro lê <code>placement.size</code> e depois o padrão: a largura inteira e a altura do seu conteúdo. Um quadro de texto precisa de uma medida, então uma largura <code>'auto'</code> só faz sentido num quadro que contém uma única imagem (a largura da imagem na altura do quadro). Um valor que o motor não consegue usar (um comprimento negativo, uma unidade desconhecida) é lido como o padrão.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>nenhum</td>
+      <td>Limites para um tamanho <code>'auto'</code> ou <code>'fill'</code> e para o espaço que um grupo dá ou tira. O mínimo prevalece sobre o máximo, e um tamanho fixo fora deles é trazido para dentro (<code>frameMinMax</code> avisa dos dois casos).</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>sem caixa</td>
+      <td>O id de um <a href="/pt/docs/configuration-callouts#estilos-de-boxe">estilo de boxe</a>: os quadros são desenhados com estilos de boxe (fundo, borda, preenchimento, faixa, ícone, aba de rótulo, título). As palavras de uma aba vêm do Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Os ajustes de boxe sobre onde uma caixa vai no texto corrido (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) não se aplicam a um quadro.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>o do estilo</td>
+      <td>Substitui o preenchimento do estilo lado a lado: espaço para as fotos que ficam sobre uma caixa, por exemplo.</td>
+    </tr>
+    <tr>
+      <td><code>layer</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Ordem de pintura. A decoração é a camada 0; uma camada negativa é pintada por baixo dela.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Graus, no sentido horário. A caixa e o seu conteúdo giram juntos.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
+      <td><code>'top'</code></td>
+      <td>Onde o conteúdo fica num quadro mais alto que ele.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code>, <code>columnGap</code></td>
+      <td><code>number</code>, <code>Dimension</code></td>
+      <td><code>1</code>, o do estilo</td>
+      <td>Colunas dentro do quadro.</td>
+    </tr>
+    <tr>
+      <td><code>exclude</code></td>
+      <td><code>'none' | 'push'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'push'</code>: o texto dos outros quadros contorna o retângulo deste.</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>O quadro recebe o conteúdo que não nomeia nenhum encaixe.</td>
+    </tr>
+    <tr>
+      <td><code>takes</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td>nenhum</td>
+      <td>O quadro recebe o primeiro título desse nível que não nomeia nenhum encaixe, então o título de uma página é só um <code># Título</code> no começo do bloco.</td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td><code>string</code></td>
+      <td>nenhum</td>
+      <td>Uma cadeia: o conteúdo que não cabe continua no quadro com esse nome, na mesma página.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>string</code></td>
+      <td>nenhum</td>
+      <td>Onde continua o conteúdo que não cabe: <code>'#frame'</code> (outro quadro da página, como <code>next</code>), <code>'next-page'</code> (o mesmo quadro numa página acrescentada depois desta) ou <code>'template:&lt;id&gt;'</code> (uma página desse modelo).</td>
+    </tr>
+    <tr>
+      <td><code>overflow.mark</code></td>
+      <td><code>string | false</code></td>
+      <td>a do idioma</td>
+      <td>A marca no fim de um trecho cortado. Sem valor, a palavra de continuação do idioma do documento (a mesma das tabelas divididas); <code>false</code> não põe nenhuma.</td>
+    </tr>
+    <tr>
+      <td><code>fit.shrinkText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quando nada mais faz o conteúdo caber, o texto pode ser diagramado menor.</td>
+    </tr>
+    <tr>
+      <td><code>fit.minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.9</code></td>
+      <td>A menor escala de texto, acima de 0 e no máximo 1 (um valor maior é lido como 1).</td>
+    </tr>
+    <tr>
+      <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
+      <td><code>boolean</code>, <code>number</code></td>
+      <td><code>true</code>, <code>0.8</code></td>
+      <td>Se as imagens do quadro podem ser diagramadas menores, e até que escala.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>O quadro nunca se move nem muda de tamanho, para uma caixa que precisa ficar alinhada com a arte. Um grupo se arranja em volta dele.</td>
+    </tr>
+    <tr>
+      <td><code>grow</code>, <code>shrink</code>, <code>priority</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Como o quadro divide o espaço do seu grupo: <code>grow</code> fica com uma parte do espaço que sobra, <code>shrink</code> deixa o quadro devolver espaço, e os quadros com <code>priority</code> mais baixa cedem primeiro.</td>
+    </tr>
+    <tr>
+      <td><code>optional</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Nenhum aviso quando o Markdown não manda nada para o quadro.</td>
+    </tr>
+    <tr>
+      <td><code>crossGutter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Numa página dupla, o quadro pode atravessar a faixa da lombada.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code>, <code>direction</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
+      <td>os da página</td>
+      <td>Uma caixa vertical numa página horizontal, ou o contrário.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Num modelo que estende outro, ou numa variante: remove o quadro herdado com esse nome.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Grupos
+
+Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de quadros que dividem o espaço e se movem juntos. Dentro de um grupo, a posição própria dos quadros na direção do grupo é ignorada: o grupo os arranja em ordem, com `gap` entre eles. Quando o texto de um quadro cresce, os quadros que vêm depois se deslocam. Um grupo é uma caixa à qual quadros e decoração podem se ancorar (`'#pagina'`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriedade</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>obrigatório</td>
+      <td>Único entre os quadros e grupos do modelo.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack'</code></td>
+      <td>De cima para baixo, ou do início ao fim.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>string[]</code></td>
+      <td><code>[]</code></td>
+      <td>Os quadros do grupo, na sua ordem na página. Um quadro pertence a um grupo no máximo; um nome que não é nenhum quadro do modelo, ou um quadro já listado, é pulado.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>O espaço entre dois quadros do grupo.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>grid</code></td>
+      <td>como nos quadros</td>
+      <td>a caixa dos seus quadros</td>
+      <td>A caixa própria do grupo. Sem valor, a caixa em volta das caixas declaradas dos seus quadros.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
+      <td><code>'start'</code></td>
+      <td>Para onde vai o espaço que sobra quando nenhum quadro do grupo cresce.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Num modelo que estende outro, ou numa variante: remove o grupo herdado.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Herança e variantes
+
+Um modelo com `extends` parte do modelo que nomeia (que por sua vez pode estender outro) e muda só o que escreve:
+
+- Um campo como `area`, `header` ou `overflowTemplate` substitui o do pai. `grid` é mesclado chave a chave. `spread`, `gutter` e `role` também são herdados; `id`, `name` e `extends` são do próprio modelo.
+- `frames` e `groups` são mesclados **pelo nome**: uma entrada com o nome de uma herdada muda os campos que escreve e mantém o resto (`fit`, `overflow` e `padding` são mesclados chave a chave; `placement` é substituído inteiro); `remove: true` a remove; um nome novo é acrescentado depois dos herdados.
+- Os elementos de decoração são mesclados por `id` do mesmo jeito; um elemento com um id novo, ou sem id, é acrescentado.
+
+`variants.recto` e `variants.verso` são escritos como um modelo e mesclados do mesmo jeito, numa página ímpar ou numa par. Eles se aplicam depois de toda a cadeia de `extends`, primeiro a variante da raiz. Uma página dupla tem os dois lados, então nenhuma variante se aplica a ela.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
+      placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+    variants: { recto: { frames: [{ name: 'margen', placement: { anchor: { to: 'container', edge: 'top-right' } } }] } } },
+  { id: 'tema-sin-margen', extends: 'tema', frames: [{ name: 'margen', remove: true }] },
+]
+```
+
+Quando o Sandbox salva um modelo, um valor igual ao padrão nunca é descartado: num modelo que estende outro, ou numa variante, esse valor substitui o do pai.
+
+No código, `resolvePageTemplate(config, id, { parity })` devolve um modelo com a cadeia mesclada, a variante do lado aplicada, todos os padrões preenchidos e cada referência resolvida como os avisos abaixo descrevem; `validatePageTemplates(config)` devolve os avisos.
+
+## Estilos de rótulo
+
+A propriedade `labelStyles` dá nome às aparências dos rótulos colocados sobre uma imagem: os mares e as cidades de um mapa, as partes de um esquema. Um rótulo fica numa âncora da imagem (um ponto guardado com o recurso, como os falantes de quadrinhos) e usa o estilo que a âncora ou o rótulo nomeia.
+
+```ts
+labelStyles: [
+  { id: 'mar', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: 0.12,
+    color: { hex: '#2b6ca3', model: 'hex' } },
+  { id: 'ciudad', fontWeight: 600, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 0.6, unit: 'pt' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriedade</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obrigatório</td>
+      <td>O nome que âncoras e rótulos usam.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>o id</td>
+      <td>O nome exibido no Sandbox.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStyle</code></td>
+      <td><code>string</code></td>
+      <td>nenhum</td>
+      <td>Um estilo de parágrafo do qual o rótulo toma a fonte; os campos abaixo o substituem.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>os do texto principal</td>
+      <td>A fonte do rótulo.</td>
+    </tr>
+    <tr>
+      <td><code>fontStyle</code></td>
+      <td><code>'normal' | 'italic'</code></td>
+      <td><code>'normal'</code></td>
+      <td>Redondo ou itálico.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>a do texto principal</td>
+      <td>A cor das letras.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Maiúsculas, como os mapas usam para mares e países.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Espaço extra entre as letras, em ems.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>&#123; color, width &#125;</code></td>
+      <td>nenhum</td>
+      <td>Um contorno atrás das letras, para que elas se leiam sobre uma imagem carregada.</td>
+    </tr>
+    <tr>
+      <td><code>background</code>, <code>padding</code></td>
+      <td><code>ColorValue</code>, <code>Dimension</code></td>
+      <td>nenhum</td>
+      <td>Uma placa atrás do rótulo, e o espaço em volta do seu texto.</td>
+    </tr>
+    <tr>
+      <td><code>minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.85</code></td>
+      <td>Até que tamanho um rótulo pode ser reduzido quando não cabe na sua largura.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Campos de rótulo de uma âncora
+
+As âncoras de uma imagem (`Resource.anchors`, os pontos que os quadrinhos usam para os falantes) aceitam alguns campos opcionais para rótulos. São frações da imagem, então valem em todos os idiomas e com qualquer recorte da imagem. Os quadrinhos os ignoram.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>number</code></td>
+      <td>a própria do rótulo</td>
+      <td>A medida do rótulo, como fração da largura da imagem: um nome longo quebra em duas linhas dentro dela.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td><code>'center'</code></td>
+      <td>Qual lado do rótulo fica no ponto da âncora.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom'</code></td>
+      <td><code>'middle'</code></td>
+      <td>Qual borda do rótulo fica na altura da âncora.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Graus, no sentido horário, em volta do ponto da âncora: o nome de um rio ao longo do seu curso.</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>nenhum</td>
+      <td>Um id de <code>labelStyles</code>. Um rótulo que nomeia o seu próprio estilo o substitui.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Avisos dos modelos de página
+
+No resto da configuração, o motor ignora uma chave que não conhece. Os modelos de página e os estilos de rótulo, por outro lado, são verificados, e cada problema é um aviso de configuração no `postext check` e no painel Verificações do Sandbox. O campo `path` desses avisos é um ponteiro JSON para o campo com problema: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quando o campo foi herdado, o ponteiro nomeia o modelo que o escreveu. Um aviso que nomeia um id ou um nome inexistente também sugere o existente mais parecido.
+
+Uma chave digitada errado de um modelo, quadro, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) é um `unknownConfigValue`, e o ajuste mantém o seu padrão. Um modelo sem `id`, ou um quadro ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Aviso</th>
+      <th>Causa</th>
+      <th>Solução</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateDuplicate</code></td>
+      <td>Dois modelos têm o mesmo <code>id</code>. O primeiro é usado e o posterior é ignorado.</td>
+      <td>Renomeie um deles, ou apague a cópia.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsCycle</code></td>
+      <td>Seguindo <code>extends</code> se volta ao mesmo modelo (<code>a → b → a</code>). Todos os modelos do ciclo, e todos os que estendem algum deles, são descartados: nenhuma página pode usá-los.</td>
+      <td>Remova o <code>extends</code> de um modelo do ciclo.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsUnknown</code></td>
+      <td><code>extends</code> nomeia um id que nenhum modelo tem. O modelo é usado sozinho, sem herdar nada.</td>
+      <td>Corrija o id (o aviso sugere o mais parecido), ou acrescente o modelo pai.</td>
+    </tr>
+    <tr>
+      <td><code>frameDuplicate</code></td>
+      <td>Dois quadros, ou dois grupos, de uma mesma lista têm o mesmo <code>name</code>, ou um grupo tem o nome de um quadro. A entrada posterior é ignorada; uma âncora para esse nome lê o quadro.</td>
+      <td>Dê a cada quadro e a cada grupo um nome próprio. Para mudar um quadro herdado, escreva uma única entrada com o nome dele.</td>
+    </tr>
+    <tr>
+      <td><code>frameStyleUnknown</code></td>
+      <td>O <code>style</code> de um quadro não nomeia nenhum estilo de boxe. O quadro é desenhado sem caixa.</td>
+      <td>Corrija o id, ou acrescente o estilo a <code>calloutStyles</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frameAnchorUnknown</code></td>
+      <td>Um quadro, um grupo ou um elemento de decoração está ancorado a <code>'#name'</code> e o modelo não tem nenhum quadro, grupo ou elemento com esse nome; ou quadros e grupos estão ancorados uns nos outros num ciclo (também através de um grupo sem âncora própria, cuja caixa é a dos seus quadros). A âncora é lida como <code>'container'</code>, a área.</td>
+      <td>Ancore a um quadro ou grupo que exista, ou quebre o ciclo ancorando um deles à área.</td>
+    </tr>
+    <tr>
+      <td><code>frameMinMax</code></td>
+      <td>Um mínimo é maior que o seu máximo (<code>minHeight 40mm &gt; maxHeight 30mm</code>), ou um <code>width</code> ou <code>height</code> fixo fica fora deles. O mínimo prevalece, um tamanho fixo é trazido para dentro dos limites e <code>used</code> diz o que o quadro ocupa. Comprimentos em unidades diferentes são comparados na resolução da página, e os ems no corpo do texto principal.</td>
+      <td>Faça o mínimo não passar do máximo, ou tire o limite que o tamanho fixo contradiz.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameUnknown</code></td>
+      <td>Os <code>frames</code> de um grupo listam um nome que não é nenhum quadro do modelo (talvez removido por um modelo filho ou por uma variante). O grupo o pula.</td>
+      <td>Corrija o nome, ou tire-o da lista.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameTwice</code></td>
+      <td>Um quadro aparece em dois grupos, ou duas vezes no mesmo. Um quadro pertence a um só grupo: a aparição posterior é pulada.</td>
+      <td>Deixe o quadro no grupo com o qual ele se move.</td>
+    </tr>
+    <tr>
+      <td><code>frameChainLoop</code></td>
+      <td>Quadros continuam uns nos outros num ciclo através de <code>next</code> ou de <code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). O elo que fecha o ciclo é descartado, então a cadeia termina no quadro anterior a ele.</td>
+      <td>Termine a cadeia no seu último quadro: remova o <code>next</code> dele, ou faça-o continuar na página seguinte.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTargetUnknown</code></td>
+      <td>Um <code>next</code> não nomeia nenhum quadro do modelo; um <code>overflow.continueIn</code> não nomeia nenhum quadro (<code>'#x'</code>) nem nenhum modelo (<code>'template:x'</code>), ou não está em nenhuma das formas <code>'#frame'</code>, <code>'next-page'</code> e <code>'template:&lt;id&gt;'</code>; ou <code>overflowTemplate</code> não nomeia nenhum modelo. O conteúdo que não cabe não continua ali.</td>
+      <td>Corrija o nome ou o id, ou escreva uma das três formas.</td>
+    </tr>
+    <tr>
+      <td><code>labelStyleUnknown</code></td>
+      <td>Uma âncora de uma imagem nomeia um <code>style</code> que <code>labelStyles</code> não tem. O aviso nomeia o recurso. Os rótulos dessa âncora usam a aparência padrão.</td>
+      <td>Corrija o id do estilo na âncora, ou acrescente o estilo a <code>labelStyles</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+A versão da configuração é a 15 desde os modelos de página (pacotes escritos antes continuam carregando sem mudanças: nada do que uma configuração anterior diz muda de sentido).

@@ -42,6 +42,7 @@ const DOC_PAGES: Record<string, string> = {
   "configuration-styles": "Configuration-Styles",
   "configuration-callouts": "Configuration-Callout-Boxes",
   "configuration-comics": "Configuration-Comics",
+  "configuration-composed-pages": "Configuration-Composed-Pages",
   "configuration-fonts-colors-viewers": "Configuration-Fonts-Colors-and-Viewers",
   "configuration-programmatic-usage": "Programmatic-Usage",
   "configuration-pdf-output": "Programmatic-Usage-PDF",
@@ -90,6 +91,7 @@ const CONFIGURATION_PAGES: { slug: string; title: string }[] = [
   { slug: "configuration-styles", title: "Configuration: paragraph, chip, code and heading styles, parts" },
   { slug: "configuration-callouts", title: "Configuration: callout boxes" },
   { slug: "configuration-comics", title: "Configuration: comics" },
+  { slug: "configuration-composed-pages", title: "Configuration: composed pages" },
   {
     slug: "configuration-fonts-colors-viewers",
     title: "Configuration: units, fonts, colours, viewers and debugging",

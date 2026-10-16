@@ -1,0 +1,633 @@
+{/* docs/configuration-composed-pages-de.mdx */}
+
+export const metadata = {
+  title: 'Konfiguration: zusammengesetzte Seiten',
+  sidebarTitle: 'Einstellungen für zusammengesetzte Seiten',
+  description: 'Seitenvorlagen für zusammengesetzte Seiten: Rahmen, Gruppen, Dekoration, Vererbung und Varianten für rechte und linke Seiten, die Beschriftungsstile der Bildanker und die Warnungen, die eine Vorlage auslösen kann',
+  lang: 'de',
+  lastUpdated: '2026-10-16',
+  readingTime: '6 min',
+  order: 18,
+  parent: 'configuration',
+  plainSummary: "Diese Seite behandelt Seitenvorlagen. Eine Vorlage ist eine Seite, die in den Einstellungen gezeichnet wird: benannte Kästen, die Rahmen heißen, mit ihrer Lage, ihrer möglichen Größe und ihrem Aussehen. Das Markdown einer zusammengesetzten Seite füllt die Rahmen dann über ihre Namen, sodass der Text nie Positionen enthält und die Einstellungen nie Text. Eine Vorlage kann von einer anderen ausgehen und nur einige Rahmen ändern, und sie kann auf linken und rechten Seiten verschieden sein. Die Seite führt außerdem die Beschriftungsstile für Wörter auf Bildern auf sowie jede Warnung, die eine Vorlage auslösen kann, mit dem Weg, sie zu beheben.",
+};
+
+# Konfiguration: zusammengesetzte Seiten
+
+
+## Seitenvorlagen
+
+Eine zusammengesetzte Seite ist eine Seite, deren Form aus einer **Seitenvorlage** der Konfiguration stammt und deren Inhalt aus dem Markdown eines Blocks `::::page{template="…"}`. Die Vorlage benennt Rechtecke, die **Rahmen** heißen; das Markdown schickt jedes Inhaltsstück über seinen Namen (seinen Slot) an einen Rahmen. Geometrie steht nie im Markdown, und Inhaltstext steht nie in der Vorlage. Die Eigenschaft `pageTemplates` enthält die Vorlagen des Buchs:
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [{ id: 'caja-azul' }, { id: 'tab-titulo' }],
+  pageTemplates: [
+    {
+      id: 'tema-cajas',
+      decoration: {
+        elements: [
+          { kind: 'image', id: 'fondo', resourceId: '{attr.fondo}', decorative: true,
+            placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } } },
+        ],
+      },
+      frames: [
+        { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+        { name: 'texto', flow: true },
+        { name: 'dinero', style: 'caja-azul', padding: { right: { value: 62, unit: 'mm' } } },
+        { name: 'dinero-fotos', layer: 2, width: { value: 60, unit: 'mm' },
+          placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+      ],
+      groups: [
+        { name: 'pagina', kind: 'stack', gap: { value: 6, unit: 'mm' }, frames: ['titulo', 'texto', 'dinero'] },
+      ],
+    },
+  ],
+};
+```
+
+Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite, deren Satzspiegel dieser Rahmen füllt. Alle anderen Felder sind optional:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>erforderlich</td>
+      <td>Der Name, den ein Seitenblock anfordert (<code>template="tema-cajas"</code>). Eindeutig unter den Vorlagen: Eine zweite Vorlage mit derselben ID wird ignoriert.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>die ID</td>
+      <td>Der Name, den die Sandbox anzeigt. Das Layout liest ihn nie.</td>
+    </tr>
+    <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>keine</td>
+      <td>Die ID einer Vorlage, von der diese ausgeht. Siehe <a href="#vererbung-und-varianten">Vererbung und Varianten</a>.</td>
+    </tr>
+    <tr>
+      <td><code>area</code></td>
+      <td><code>'content' | 'trim' | 'bleed'</code></td>
+      <td><code>'content'</code></td>
+      <td>Das Rechteck, auf das sich die Positionen der Rahmen beziehen. <code>'content'</code> ist der Satzspiegel der Seite, auf linken und rechten Seiten gespiegelt wie der Fließtext; <code>'trim'</code> ist die beschnittene Seite; <code>'bleed'</code> die Seite mit ihrem Anschnitt.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
+      <td>keins</td>
+      <td>Teilt den Bereich in Zellen, sodass sich ein Rahmen oder eine Gruppe über eine Zelle platzieren lässt (<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>, ab 1 gezählt) statt über <code>placement</code>. Die Abstände sind standardmäßig <code>0</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>FrameConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Die Rahmen in der Reihenfolge der Vorlage: In dieser Reihenfolge werden sie gemessen, und sie entscheidet bei Gleichstand. Siehe <a href="#rahmen">Rahmen</a>.</td>
+    </tr>
+    <tr>
+      <td><code>groups</code></td>
+      <td><code>FrameGroupConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Stapel und Reihen von Rahmen, die sich Platz teilen. Siehe <a href="#gruppen">Gruppen</a>.</td>
+    </tr>
+    <tr>
+      <td><code>decoration</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>keine</td>
+      <td>Bilder, Linien und Kästen, die mit der Seite gezeichnet werden, in der Elementsprache der <a href="/de/docs/configuration-headers-footers#kopf--und-fußzeilen">Kopf- und Fußzeilen</a>. Textelemente enthalten nur Platzhalter (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> für ein Attribut des Seitenblocks). Ein Element kann an einem Rahmen oder einer Gruppe verankert werden (<code>'#dinero'</code>) und bewegt sich dann mit. Die Dekoration wird nach den Rahmen gesetzt und verdrängt nie Text.</td>
+    </tr>
+    <tr>
+      <td><code>header</code>, <code>footer</code></td>
+      <td><code>DesignSlot | false</code></td>
+      <td>geerbt</td>
+      <td>Kolumnentitel und Seitenzahl der Seite. Nicht gesetzt, behält die Seite die ihres Kapitels; <code>false</code> blendet sie aus.</td>
+    </tr>
+    <tr>
+      <td><code>spread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Die Vorlage beschreibt zwei gegenüberliegende Seiten, die wie ein einziges Blatt angelegt sind. Eine Doppelseite beginnt in einem Buch mit Schreibrichtung von links nach rechts immer auf einer linken Seite (in einem von rechts nach links auf einer rechten), und bei Bedarf wird davor eine leere Seite eingefügt.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Auf einer Doppelseite der Streifen am Bund, den die Rahmen freihalten, sofern sie nicht <code>crossGutter: true</code> setzen.</td>
+    </tr>
+    <tr>
+      <td><code>variants</code></td>
+      <td><code>&#123; recto?, verso? &#125;</code></td>
+      <td>keine</td>
+      <td>Änderungen für eine rechte (<code>recto</code>) oder eine linke Seite (<code>verso</code>), geschrieben wie die Vorlage selbst. Gemeint ist die physische Seite, daher funktionieren Bücher von links nach rechts und von rechts nach links gleichermaßen.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTemplate</code></td>
+      <td><code>string</code></td>
+      <td>diese Vorlage</td>
+      <td>Die Vorlage der Seiten, die hinzukommen, wenn ein Rahmen auf der nächsten Seite weiterläuft (<code>overflow.continueIn: 'next-page'</code>). Nicht gesetzt, verwendet die hinzugefügte Seite diese Vorlage, in der nur die fortgesetzten Rahmen gefüllt sind.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>string</code></td>
+      <td>keins</td>
+      <td>Ein Absatzformat für den Text der Seite, wie es Überschriftenformate haben.</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>string</code></td>
+      <td>keine</td>
+      <td>Eine abweichende Palette für die Seite, wie sie Überschriftenformate und Teile haben.</td>
+    </tr>
+    <tr>
+      <td><code>role</code></td>
+      <td><code>string</code></td>
+      <td><code>'composed'</code></td>
+      <td>Die Seitenrolle, die Gestaltungselemente mit einem Filter <code>pages</code> sehen.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Rahmen
+
+Ein Rahmen ist ein benanntes Rechteck, das gesetzten Inhalt aufnimmt. Sein `name` ist der Slot, den das Markdown anfordert, und er ist in seiner Vorlage eindeutig (auch eine Gruppe kann nicht den Namen eines Rahmens tragen, da Anker beide auf dieselbe Weise benennen).
+
+Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster hat, sonst über sein `placement`, das wie das eines Gestaltungselements funktioniert: ein Anker (`'container'` ist der Bereich, `'page'`, `'bleed'` oder `'#name'` für einen anderen Rahmen oder eine Gruppe), eine Kante, ein Versatz und eine Größe. Ein Rahmen, der an einem anderen verankert ist, bewegt sich mit ihm. Ohne beides nimmt der Rahmen den ganzen Bereich ein.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>erforderlich</td>
+      <td>Der Name des Slots.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>der ganze Bereich</td>
+      <td>Anker, Kante, Versatz und Größe wie bei der <a href="/de/docs/configuration-headers-footers#platzierung-von-elementen">Platzierung von Elementen</a>. Wird ignoriert, wenn eine Rasterzelle den Rahmen platziert.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; col, row, cols?, rows? &#125;</code></td>
+      <td>keine</td>
+      <td>Eine Zelle des Vorlagenrasters, ab 1 gezählt, über <code>cols</code> × <code>rows</code> Zellen (standardmäßig 1). Eine Zelle außerhalb des Rasters wird hineingeholt. Wird ignoriert, wenn die Vorlage kein Raster hat.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>height</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
+      <td><code>'fill'</code>, <code>'auto'</code></td>
+      <td>Eine feste Länge, ein Prozentsatz des Bereichs (0 bis 100), <code>'auto'</code> (die eigene Größe des Inhalts) oder <code>'fill'</code> (was bis zu der Kante bleibt, an der der Rahmen verankert ist). Nicht gesetzt, liest der Rahmen <code>placement.size</code> und dann den Standard: volle Breite, so hoch wie sein Inhalt. Ein Textrahmen braucht eine Satzbreite, daher ergibt die Breite <code>'auto'</code> nur für einen Rahmen mit einem einzigen Bild Sinn (die Breite des Bilds bei der Höhe des Rahmens). Ein Wert, den die Engine nicht verwenden kann (eine negative Länge, eine unbekannte Einheit), gilt als Standard.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>keine</td>
+      <td>Grenzen für eine Größe <code>'auto'</code> oder <code>'fill'</code> und für den Platz, den eine Gruppe abgibt oder nimmt. Das Minimum hat Vorrang vor dem Maximum, und eine feste Größe außerhalb der Grenzen wird zwischen sie gebracht (<code>frameMinMax</code> warnt in beiden Fällen).</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>ohne Kasten</td>
+      <td>Die ID eines <a href="/de/docs/configuration-callouts#kastenstile">Kastenstils</a>: Rahmen werden mit Kastenstilen gezeichnet (Hintergrund, Kontur, Innenabstand, Streifen, Symbol, Beschriftungsreiter, Titel). Die Wörter eines Reiters kommen aus dem Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Die Kasteneinstellungen dazu, wo ein Kasten im Fließtext steht (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code> …), gelten für einen Rahmen nicht.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>der des Stils</td>
+      <td>Überschreibt den Innenabstand des Stils Kante für Kante: zum Beispiel Platz für die Fotos, die über einem Kasten liegen.</td>
+    </tr>
+    <tr>
+      <td><code>layer</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Die Zeichenreihenfolge. Die Dekoration ist Ebene 0; eine negative Ebene wird darunter gezeichnet.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Grad, im Uhrzeigersinn. Der Kasten und sein Inhalt drehen sich gemeinsam.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
+      <td><code>'top'</code></td>
+      <td>Wo der Inhalt in einem Rahmen steht, der höher ist als er.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code>, <code>columnGap</code></td>
+      <td><code>number</code>, <code>Dimension</code></td>
+      <td><code>1</code>, der des Stils</td>
+      <td>Spalten innerhalb des Rahmens.</td>
+    </tr>
+    <tr>
+      <td><code>exclude</code></td>
+      <td><code>'none' | 'push'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'push'</code>: Der Text anderer Rahmen umfließt das Rechteck dieses Rahmens.</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Der Rahmen nimmt den Inhalt auf, der keinen Slot nennt.</td>
+    </tr>
+    <tr>
+      <td><code>takes</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td>keins</td>
+      <td>Der Rahmen nimmt die erste Überschrift dieser Ebene auf, die keinen Slot nennt; ein Seitentitel ist also einfach <code># Title</code> am Anfang des Blocks.</td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td><code>string</code></td>
+      <td>keins</td>
+      <td>Eine Kette: Inhalt, der nicht passt, läuft im Rahmen dieses Namens auf derselben Seite weiter.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>string</code></td>
+      <td>keins</td>
+      <td>Wo Inhalt weiterläuft, der nicht passt: <code>'#frame'</code> (ein anderer Rahmen der Seite, wie <code>next</code>), <code>'next-page'</code> (derselbe Rahmen auf einer Seite, die nach dieser hinzukommt) oder <code>'template:&lt;id&gt;'</code> (eine Seite dieser Vorlage).</td>
+    </tr>
+    <tr>
+      <td><code>overflow.mark</code></td>
+      <td><code>string | false</code></td>
+      <td>je nach Sprache</td>
+      <td>Die Marke am Ende eines abgeschnittenen Stücks. Nicht gesetzt, das Fortsetzungswort der Dokumentsprache (wie bei geteilten Tabellen); <code>false</code> setzt keine.</td>
+    </tr>
+    <tr>
+      <td><code>fit.shrinkText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Wenn nichts anderes den Inhalt passend macht, darf sein Text kleiner gesetzt werden.</td>
+    </tr>
+    <tr>
+      <td><code>fit.minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.9</code></td>
+      <td>Der kleinste Textmaßstab, über 0 und höchstens 1 (ein größerer Wert gilt als 1).</td>
+    </tr>
+    <tr>
+      <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
+      <td><code>boolean</code>, <code>number</code></td>
+      <td><code>true</code>, <code>0.8</code></td>
+      <td>Ob die Bilder im Rahmen kleiner gesetzt werden dürfen, und bis zu welchem Maßstab.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Der Rahmen bewegt sich nie und ändert nie seine Größe, für einen Kasten, der an der Illustration ausgerichtet bleiben muss. Eine Gruppe ordnet sich um ihn herum an.</td>
+    </tr>
+    <tr>
+      <td><code>grow</code>, <code>shrink</code>, <code>priority</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Wie der Rahmen den Platz seiner Gruppe teilt: <code>grow</code> nimmt einen Anteil am freien Platz, <code>shrink</code> lässt den Rahmen Platz zurückgeben, und Rahmen mit niedrigerer <code>priority</code> geben ihn zuerst ab.</td>
+    </tr>
+    <tr>
+      <td><code>optional</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Keine Warnung, wenn das Markdown dem Rahmen nichts schickt.</td>
+    </tr>
+    <tr>
+      <td><code>crossGutter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Auf einer Doppelseite darf der Rahmen den Streifen am Bund überqueren.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code>, <code>direction</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
+      <td>die der Seite</td>
+      <td>Ein senkrechter Kasten auf einer waagerechten Seite oder umgekehrt.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>In einer Vorlage, die eine andere erweitert, oder in einer Variante: entfernt den geerbten Rahmen dieses Namens.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Gruppen
+
+Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum Ende) von Rahmen, die sich Platz teilen und sich gemeinsam bewegen. Innerhalb einer Gruppe wird die eigene Position der Rahmen in Richtung der Gruppe ignoriert: Die Gruppe ordnet sie der Reihe nach an, mit `gap` dazwischen. Wenn der Text eines Rahmens wächst, rücken die Rahmen danach weiter. Eine Gruppe ist ein Kasten, an dem Rahmen und Dekoration verankert werden können (`'#pagina'`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>erforderlich</td>
+      <td>Eindeutig unter den Rahmen und Gruppen der Vorlage.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack'</code></td>
+      <td>Von oben nach unten oder vom Anfang zum Ende.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>string[]</code></td>
+      <td><code>[]</code></td>
+      <td>Die Rahmen der Gruppe in ihrer Reihenfolge auf der Seite. Ein Rahmen gehört höchstens zu einer Gruppe; ein Name, der kein Rahmen der Vorlage ist, oder ein bereits aufgeführter Rahmen wird übersprungen.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Der Abstand zwischen zwei Rahmen der Gruppe.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>grid</code></td>
+      <td>wie bei Rahmen</td>
+      <td>der Kasten ihrer Rahmen</td>
+      <td>Der eigene Kasten der Gruppe. Nicht gesetzt, der Kasten um die angegebenen Kästen ihrer Rahmen.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
+      <td><code>'start'</code></td>
+      <td>Wohin der freie Platz geht, wenn kein Rahmen der Gruppe wächst.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>In einer Vorlage, die eine andere erweitert, oder in einer Variante: entfernt die geerbte Gruppe.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Vererbung und Varianten
+
+Eine Vorlage mit `extends` geht von der Vorlage aus, die sie nennt (und die selbst eine andere erweitern kann), und ändert nur, was sie schreibt:
+
+- Ein Feld wie `area`, `header` oder `overflowTemplate` ersetzt das der Elternvorlage. `grid` wird Schlüssel für Schlüssel zusammengeführt. Auch `spread`, `gutter` und `role` werden geerbt; `id`, `name` und `extends` gehören der Vorlage selbst.
+- `frames` und `groups` werden **nach Namen** zusammengeführt: Ein Eintrag mit dem Namen eines geerbten ändert die Felder, die er schreibt, und behält die übrigen (`fit`, `overflow` und `padding` werden Schlüssel für Schlüssel zusammengeführt; `placement` wird als Ganzes ersetzt); `remove: true` entfernt ihn; ein neuer Name wird nach den geerbten angefügt.
+- Dekorationselemente werden auf dieselbe Weise nach `id` zusammengeführt; ein Element mit neuer ID oder ohne ID wird angefügt.
+
+`variants.recto` und `variants.verso` werden wie eine Vorlage geschrieben und auf dieselbe Weise zusammengeführt, auf einer rechten oder einer linken Seite. Sie gelten nach der ganzen `extends`-Kette, die Variante der Wurzel zuerst. Eine Doppelseite hat beide Seiten, daher gilt für sie keine Variante.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
+      placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+    variants: { recto: { frames: [{ name: 'margen', placement: { anchor: { to: 'container', edge: 'top-right' } } }] } } },
+  { id: 'tema-sin-margen', extends: 'tema', frames: [{ name: 'margen', remove: true }] },
+]
+```
+
+Ein Wert, der einem Standardwert gleicht, wird beim Speichern einer Vorlage in der Sandbox nie verworfen: In einer Vorlage, die eine andere erweitert, oder in einer Variante überschreibt er den Wert der Elternvorlage.
+
+Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit zusammengeführter Kette, angewandter Variante der jeweiligen Seite, allen eingesetzten Standardwerten und jedem Verweis so aufgelöst, wie es die Warnungen unten beschreiben; `validatePageTemplates(config)` liefert die Warnungen.
+
+## Beschriftungsstile
+
+Die Eigenschaft `labelStyles` benennt das Aussehen der Beschriftungen auf einem Bild: die Meere und Städte einer Karte, die Teile eines Schemas. Eine Beschriftung steht an einem Anker des Bilds (einem Punkt, der mit der Ressource gespeichert ist, wie die Sprecher in Comics) und übernimmt den Stil, den der Anker oder die Beschriftung nennt.
+
+```ts
+labelStyles: [
+  { id: 'mar', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: 0.12,
+    color: { hex: '#2b6ca3', model: 'hex' } },
+  { id: 'ciudad', fontWeight: 600, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 0.6, unit: 'pt' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>erforderlich</td>
+      <td>Der Name, den Anker und Beschriftungen verwenden.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>die ID</td>
+      <td>Der Name, den die Sandbox anzeigt.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStyle</code></td>
+      <td><code>string</code></td>
+      <td>keins</td>
+      <td>Ein Absatzformat, dessen Schrift die Beschriftung übernimmt; die Felder unten überschreiben es.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>die des Fließtexts</td>
+      <td>Die Schrift der Beschriftung.</td>
+    </tr>
+    <tr>
+      <td><code>fontStyle</code></td>
+      <td><code>'normal' | 'italic'</code></td>
+      <td><code>'normal'</code></td>
+      <td>Aufrecht oder kursiv.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Farbe des Fließtexts</td>
+      <td>Die Farbe der Buchstaben.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Versalien, wie Karten Meere und Länder setzen.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Zusätzlicher Abstand zwischen den Buchstaben, in Geviert.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>&#123; color, width &#125;</code></td>
+      <td>keiner</td>
+      <td>Eine Kontur hinter den Buchstaben, damit sie auf einem unruhigen Bild lesbar bleiben.</td>
+    </tr>
+    <tr>
+      <td><code>background</code>, <code>padding</code></td>
+      <td><code>ColorValue</code>, <code>Dimension</code></td>
+      <td>keiner</td>
+      <td>Eine Fläche hinter der Beschriftung und der Raum um ihren Text.</td>
+    </tr>
+    <tr>
+      <td><code>minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.85</code></td>
+      <td>Wie klein eine Beschriftung gesetzt werden darf, wenn sie nicht in ihre Breite passt.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Beschriftungsfelder eines Ankers
+
+Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher verwenden) nehmen einige optionale Felder für Beschriftungen auf. Es sind Bruchteile des Bilds, daher gelten sie in jeder Sprache und bei jedem Zuschnitt des Bilds. Comics ignorieren sie.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Feld</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>number</code></td>
+      <td>die der Beschriftung</td>
+      <td>Die Satzbreite der Beschriftung als Bruchteil der Bildbreite: Ein langer Name bricht darin auf zwei Zeilen um.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td><code>'center'</code></td>
+      <td>Welche Seite der Beschriftung am Ankerpunkt steht.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom'</code></td>
+      <td><code>'middle'</code></td>
+      <td>Welche Kante der Beschriftung auf der Höhe des Ankers steht.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Grad, im Uhrzeigersinn, um den Ankerpunkt: der Name eines Flusses entlang seines Laufs.</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>keiner</td>
+      <td>Eine ID aus <code>labelStyles</code>. Eine Beschriftung, die ihren eigenen Stil nennt, überschreibt ihn.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Warnungen zu Seitenvorlagen
+
+Anderswo ignoriert die Engine einen Schlüssel, den sie nicht kennt. Seitenvorlagen und Beschriftungsstile werden dagegen geprüft, und jedes Problem ist eine Konfigurationswarnung in `postext check` und im Bedienfeld Prüfungen der Sandbox. Der `path` dieser Warnungen ist ein JSON-Pointer auf das fehlerhafte Feld: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Wurde das Feld geerbt, nennt der Pointer die Vorlage, die es geschrieben hat. Eine Warnung, die eine nicht vorhandene ID oder einen nicht vorhandenen Namen nennt, schlägt außerdem den nächstliegenden vorhandenen vor.
+
+Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, eines Rasters, von `fit`, von `overflow`, einer Variante oder eines Beschriftungsstils ist ein `unknownConfigKey`; ein Wort außerhalb der Auswahl einer Einstellung (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) ist ein `unknownConfigValue`, und die Einstellung behält ihren Standardwert. Eine Vorlage ohne `id` oder ein Rahmen oder eine Gruppe ohne `name` wird mit einem `unknownConfigValue` an diesem Feld ignoriert.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Warnung</th>
+      <th>Ursache</th>
+      <th>Abhilfe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateDuplicate</code></td>
+      <td>Zwei Vorlagen haben dieselbe <code>id</code>. Die erste wird verwendet, die spätere ignoriert.</td>
+      <td>Benennen Sie eine davon um, oder löschen Sie die Kopie.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsCycle</code></td>
+      <td>Wer <code>extends</code> folgt, landet wieder bei derselben Vorlage (<code>a → b → a</code>). Jede Vorlage der Schleife und jede Vorlage, die eine davon erweitert, entfällt: Keine Seite kann sie verwenden.</td>
+      <td>Entfernen Sie das <code>extends</code> einer Vorlage der Schleife.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsUnknown</code></td>
+      <td><code>extends</code> nennt eine ID, die keine Vorlage hat. Die Vorlage wird für sich allein verwendet, ohne etwas zu erben.</td>
+      <td>Korrigieren Sie die ID (die Warnung schlägt die nächstliegende vor), oder fügen Sie die Elternvorlage hinzu.</td>
+    </tr>
+    <tr>
+      <td><code>frameDuplicate</code></td>
+      <td>Zwei Rahmen oder zwei Gruppen einer Liste haben denselben <code>name</code>, oder eine Gruppe trägt den Namen eines Rahmens. Der spätere Eintrag wird ignoriert; ein Anker auf diesen Namen liest den Rahmen.</td>
+      <td>Geben Sie jedem Rahmen und jeder Gruppe einen eigenen Namen. Um einen geerbten Rahmen zu ändern, schreiben Sie einen einzigen Eintrag mit seinem Namen.</td>
+    </tr>
+    <tr>
+      <td><code>frameStyleUnknown</code></td>
+      <td>Das <code>style</code> eines Rahmens nennt keinen Kastenstil. Der Rahmen wird ohne Kasten gezeichnet.</td>
+      <td>Korrigieren Sie die ID, oder fügen Sie den Stil zu <code>calloutStyles</code> hinzu.</td>
+    </tr>
+    <tr>
+      <td><code>frameAnchorUnknown</code></td>
+      <td>Ein Rahmen, eine Gruppe oder ein Dekorationselement ist an <code>'#name'</code> verankert, und die Vorlage hat keinen Rahmen, keine Gruppe und kein Element dieses Namens; oder Rahmen und Gruppen sind in einer Schleife aneinander verankert (auch über eine Gruppe ohne eigenen Anker, deren Kasten der ihrer Rahmen ist). Der Anker gilt als <code>'container'</code>, der Bereich.</td>
+      <td>Verankern Sie an einem vorhandenen Rahmen oder einer vorhandenen Gruppe, oder brechen Sie die Schleife auf, indem Sie eines der Glieder am Bereich verankern.</td>
+    </tr>
+    <tr>
+      <td><code>frameMinMax</code></td>
+      <td>Ein Minimum ist größer als sein Maximum (<code>minHeight 40mm &gt; maxHeight 30mm</code>), oder eine feste <code>width</code> oder <code>height</code> liegt außerhalb der Grenzen. Das Minimum hat Vorrang, eine feste Größe wird zwischen die Grenzen gebracht, und <code>used</code> gibt an, was der Rahmen einnimmt. Längen in verschiedenen Einheiten werden in der Auflösung der Seite verglichen, Geviert beim Schriftgrad des Fließtexts.</td>
+      <td>Machen Sie das Minimum nicht größer als das Maximum, oder entfernen Sie die Grenze, der die feste Größe widerspricht.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameUnknown</code></td>
+      <td>Die <code>frames</code> einer Gruppe führen einen Namen auf, der kein Rahmen der Vorlage ist (vielleicht von einer Kindvorlage oder einer Variante entfernt). Die Gruppe überspringt ihn.</td>
+      <td>Korrigieren Sie den Namen, oder entfernen Sie ihn aus der Liste.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameTwice</code></td>
+      <td>Ein Rahmen ist in zwei Gruppen aufgeführt oder zweimal in derselben. Ein Rahmen gehört nur zu einer Gruppe: Die spätere Nennung wird übersprungen.</td>
+      <td>Belassen Sie den Rahmen in der einen Gruppe, mit der er sich bewegt.</td>
+    </tr>
+    <tr>
+      <td><code>frameChainLoop</code></td>
+      <td>Rahmen laufen über <code>next</code> oder <code>overflow.continueIn: '#frame'</code> in einer Schleife ineinander weiter (<code>a → b → a</code>). Die Verbindung, die die Schleife schließt, entfällt, sodass die Kette beim Rahmen davor endet.</td>
+      <td>Lassen Sie die Kette bei ihrem letzten Rahmen enden: Entfernen Sie dessen <code>next</code>, oder lassen Sie ihn auf der nächsten Seite weiterlaufen.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTargetUnknown</code></td>
+      <td>Ein <code>next</code> nennt keinen Rahmen der Vorlage; ein <code>overflow.continueIn</code> nennt keinen Rahmen (<code>'#x'</code>) oder keine Vorlage (<code>'template:x'</code>), oder es hat keine der Formen <code>'#frame'</code>, <code>'next-page'</code> und <code>'template:&lt;id&gt;'</code>; oder <code>overflowTemplate</code> nennt keine Vorlage. Inhalt, der nicht passt, läuft dort nicht weiter.</td>
+      <td>Korrigieren Sie den Namen oder die ID, oder schreiben Sie eine der drei Formen.</td>
+    </tr>
+    <tr>
+      <td><code>labelStyleUnknown</code></td>
+      <td>Ein Anker eines Bilds nennt einen <code>style</code>, den <code>labelStyles</code> nicht hat. Die Warnung nennt die Ressource. Die Beschriftungen an diesem Anker erhalten das Standardaussehen.</td>
+      <td>Korrigieren Sie die Stil-ID am Anker, oder fügen Sie den Stil zu <code>labelStyles</code> hinzu.</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Konfigurationsversion ist seit den Seitenvorlagen 15 (vorher geschriebene Bundles laden weiterhin unverändert: Nichts, was eine ältere Konfiguration sagt, ändert seine Bedeutung).

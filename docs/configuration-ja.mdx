@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Postextの設定',
   sidebarTitle: '設定',
-  description: 'Postextの設定とは何か、そして18ページに分かれたリファレンスのどこに各設定の説明があるか',
+  description: 'Postextの設定とは何か、そして19ページに分かれたリファレンスのどこに各設定の説明があるか',
   lang: 'ja',
   lastUpdated: '2026-10-16',
   readingTime: '5分',
   order: 4,
-  plainSummary: "このページは、ページの見た目を決めるすべての設定を載せたリファレンスの入口です。ページの大きさ、段の数、フォント、文字の大きさ、見出し、囲み、色など、すべての選択は1つの設定のまとまりに入っています。どの設定にも最初から無理のない値が入っているので、書くのは変えたいものだけです。リファレンスは18のページに分かれています。このページの一覧からすべての節へ進めるので、必要なところへ直接進んでください。",
+  plainSummary: "このページは、ページの見た目を決めるすべての設定を載せたリファレンスの入口です。ページの大きさ、段の数、フォント、文字の大きさ、見出し、囲み、色など、すべての選択は1つの設定のまとまりに入っています。どの設定にも最初から無理のない値が入っているので、書くのは変えたいものだけです。リファレンスは19のページに分かれています。このページの一覧からすべての節へ進めるので、必要なところへ直接進んでください。",
 };
 
 # 設定
@@ -33,7 +33,7 @@ const document = buildDocument(content, {
 
 ## 内容一覧
 
-このリファレンスは18のページに分かれています。以下の各グループが1つのページで、その下にそのページの節を挙げます。
+このリファレンスは19のページに分かれています。以下の各グループが1つのページで、その下にそのページの節を挙げます。
 
 **[ページとレイアウト](/ja/docs/configuration-page-layout)**
 
@@ -104,6 +104,10 @@ const document = buildDocument(content, {
 **[漫画の設定](/ja/docs/configuration-comics)**
 
 - [漫画](/ja/docs/configuration-comics#漫画)：`comics`。漫画のページの枠と間白、コマのスタイル、写植、吹き出しのスタイル、登場人物。ガイドは[漫画](/ja/docs/comics)です。
+
+**[テンプレートページの設定](/ja/docs/configuration-composed-pages)**
+
+- [ページテンプレート](/ja/docs/configuration-composed-pages#ページテンプレート)：`pageTemplates`。テンプレートページのフレーム、グループ、装飾、テンプレート間の継承、奇数ページと偶数ページのバリアント。[ラベルスタイル](/ja/docs/configuration-composed-pages#ラベルスタイル)：`labelStyles`。画像のアンカーに置くラベルの見た目。テンプレートで起こりうる問題はすべて[ページテンプレートの警告](/ja/docs/configuration-composed-pages#ページテンプレートの警告)にあります。
 
 **[フォント、色、出力](/ja/docs/configuration-fonts-colors-viewers)**
 

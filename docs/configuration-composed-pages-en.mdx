@@ -1,0 +1,633 @@
+{/* docs/configuration-composed-pages-en.mdx */}
+
+export const metadata = {
+  title: 'Configuration: composed pages',
+  sidebarTitle: 'Composed pages settings',
+  description: 'Page templates for composed pages: frames, groups, decoration, inheritance and recto/verso variants, the label styles of picture anchors, and the warnings a template can give',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '6 min',
+  order: 18,
+  parent: 'configuration',
+  plainSummary: "This page covers page templates. A template is a page drawn in the settings: named boxes called frames, where each one sits, how big it may grow and how it looks. The Markdown of a composed page then fills the frames by name, so the text never holds positions and the settings never hold text. A template can start from another one and change only a few frames, and it can differ on left and right pages. The page also lists the label styles for words set on pictures, and every warning a template can give with the way to fix it.",
+};
+
+# Configuration: composed pages
+
+
+## Page templates
+
+A composed page is a page whose form comes from a **template** in the configuration and whose content comes from the Markdown of a `::::page{template="…"}` fence. The template names rectangles, called **frames**; the Markdown sends each piece of content to a frame by its name (its slot). Geometry never appears in the Markdown, and content text never appears in the template. The `pageTemplates` property holds the templates of the book:
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [{ id: 'caja-azul' }, { id: 'tab-titulo' }],
+  pageTemplates: [
+    {
+      id: 'tema-cajas',
+      decoration: {
+        elements: [
+          { kind: 'image', id: 'fondo', resourceId: '{attr.fondo}', decorative: true,
+            placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } } },
+        ],
+      },
+      frames: [
+        { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+        { name: 'texto', flow: true },
+        { name: 'dinero', style: 'caja-azul', padding: { right: { value: 62, unit: 'mm' } } },
+        { name: 'dinero-fotos', layer: 2, width: { value: 60, unit: 'mm' },
+          placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+      ],
+      groups: [
+        { name: 'pagina', kind: 'stack', gap: { value: 6, unit: 'mm' }, frames: ['titulo', 'texto', 'dinero'] },
+      ],
+    },
+  ],
+};
+```
+
+A template that sets nothing but its `id` and one frame is a whole page with that frame filling the content area. Every other field is optional:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Property</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>required</td>
+      <td>The name a page fence asks for (<code>template="tema-cajas"</code>). Unique among the templates: a second one with the same id is ignored.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>the id</td>
+      <td>The name shown in the Sandbox. Layout never reads it.</td>
+    </tr>
+    <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>none</td>
+      <td>The id of a template this one starts from. See <a href="#inheritance-and-variants">Inheritance and variants</a>.</td>
+    </tr>
+    <tr>
+      <td><code>area</code></td>
+      <td><code>'content' | 'trim' | 'bleed'</code></td>
+      <td><code>'content'</code></td>
+      <td>The rectangle frame positions refer to. <code>'content'</code> is the page's content area, mirrored on left and right pages like the running text; <code>'trim'</code> is the trimmed page; <code>'bleed'</code> the page with its bleed.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
+      <td>none</td>
+      <td>Divides the area into cells, so a frame or a group can be placed by cell (<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>, 1-based) instead of by <code>placement</code>. The gaps default to <code>0</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>FrameConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>The frames, in template order: the order measured first and the one that breaks ties. See <a href="#frames">Frames</a>.</td>
+    </tr>
+    <tr>
+      <td><code>groups</code></td>
+      <td><code>FrameGroupConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Stacks and rows of frames that share space. See <a href="#groups">Groups</a>.</td>
+    </tr>
+    <tr>
+      <td><code>decoration</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>none</td>
+      <td>Images, rules and boxes painted with the page, in the element language of <a href="/en/docs/configuration-headers-footers#headers--footers">headers and footers</a>. Text elements hold placeholders only (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> for an attribute of the page fence). An element may anchor to a frame or a group (<code>'#dinero'</code>) and then moves with it. Decoration is laid after the frames and never pushes text.</td>
+    </tr>
+    <tr>
+      <td><code>header</code>, <code>footer</code></td>
+      <td><code>DesignSlot | false</code></td>
+      <td>inherited</td>
+      <td>The running head and the folio of the page. Unset, the page keeps those of its chapter; <code>false</code> hides them.</td>
+    </tr>
+    <tr>
+      <td><code>spread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>The template describes two facing pages laid as one sheet. A spread always starts on a left page in a left-to-right book (a right page in a right-to-left one), with a blank page added before it when needed.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>On a spread, the band at the spine that frames keep clear of, unless they set <code>crossGutter: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>variants</code></td>
+      <td><code>&#123; recto?, verso? &#125;</code></td>
+      <td>none</td>
+      <td>Changes for a right page (<code>recto</code>) or a left page (<code>verso</code>), written like the template itself. The side is the physical one, so left-to-right and right-to-left books both work.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTemplate</code></td>
+      <td><code>string</code></td>
+      <td>this template</td>
+      <td>The template of the pages added when a frame continues on the next page (<code>overflow.continueIn: 'next-page'</code>). Unset, the added page uses this template with only the continued frames filled.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>string</code></td>
+      <td>none</td>
+      <td>A paragraph style for the text of the page, as heading styles have.</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>string</code></td>
+      <td>none</td>
+      <td>A palette override for the page, as heading styles and parts have.</td>
+    </tr>
+    <tr>
+      <td><code>role</code></td>
+      <td><code>string</code></td>
+      <td><code>'composed'</code></td>
+      <td>The page role that design elements with a <code>pages</code> filter see.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Frames
+
+A frame is a named rectangle that receives typeset content. Its `name` is the slot the Markdown asks for, and it is unique in its template (a group cannot take the name of a frame either, since anchors name both the same way).
+
+A frame is placed by its `grid` cell when the template has a grid, else by its `placement`, which works like a design element's: an anchor (`'container'` is the area, `'page'`, `'bleed'`, or `'#name'` for another frame or group), an edge, an offset and a size. A frame anchored to another one moves with it. Without either, the frame takes the whole area.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Property</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>required</td>
+      <td>The slot name.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>the whole area</td>
+      <td>Anchor, edge, offset and size, as in <a href="/en/docs/configuration-headers-footers#element-placement">element placement</a>. Ignored when a grid cell places the frame.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; col, row, cols?, rows? &#125;</code></td>
+      <td>none</td>
+      <td>A cell of the template grid, 1-based, spanning <code>cols</code> × <code>rows</code> cells (default 1). A cell past the grid is moved back inside it. Ignored when the template has no grid.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>height</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
+      <td><code>'fill'</code>, <code>'auto'</code></td>
+      <td>A fixed length, a percentage of the area (0 to 100), <code>'auto'</code> (the content's own size) or <code>'fill'</code> (what is left up to the edge the frame is anchored to). Unset, the frame reads <code>placement.size</code>, then the default: full width, as tall as its content. A text frame needs a measure, so <code>'auto'</code> width only makes sense for a frame that holds one picture (the picture's width at the frame's height). A value the engine cannot use (a negative length, an unknown unit) reads as the default.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>none</td>
+      <td>Limits for an <code>'auto'</code> or <code>'fill'</code> size and for the space a group gives or takes. The minimum wins over the maximum, and a fixed size outside them is brought between them (<code>frameMinMax</code> warns of both).</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>frameless</td>
+      <td>A <a href="/en/docs/configuration-callouts#callout-styles">callout style</a> id: frames are drawn with callout styles (background, border, padding, stripe, icon, label tab, title). The words of a tab come from the Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). The callout settings about where a box goes in the running text (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) do not apply to a frame.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>the style's</td>
+      <td>Overrides the style's padding side by side: room for the photos that sit over a box, for example.</td>
+    </tr>
+    <tr>
+      <td><code>layer</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Paint order. Decoration is layer 0; a negative layer paints below it.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Degrees, clockwise. The box and its content turn together.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
+      <td><code>'top'</code></td>
+      <td>Where the content sits in a frame taller than it.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code>, <code>columnGap</code></td>
+      <td><code>number</code>, <code>Dimension</code></td>
+      <td><code>1</code>, the style's</td>
+      <td>Columns inside the frame.</td>
+    </tr>
+    <tr>
+      <td><code>exclude</code></td>
+      <td><code>'none' | 'push'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'push'</code>: the text of other frames wraps around this one's rectangle.</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>The frame receives the content that names no slot.</td>
+    </tr>
+    <tr>
+      <td><code>takes</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td>none</td>
+      <td>The frame receives the first heading of that level that names no slot, so a page title is just <code># Title</code> at the top of the fence.</td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td><code>string</code></td>
+      <td>none</td>
+      <td>A chain: content that does not fit continues in the frame of that name, on the same page.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>string</code></td>
+      <td>none</td>
+      <td>Where content that does not fit goes on: <code>'#frame'</code> (another frame of the page, as <code>next</code>), <code>'next-page'</code> (the same frame on a page added after this one) or <code>'template:&lt;id&gt;'</code> (a page of that template).</td>
+    </tr>
+    <tr>
+      <td><code>overflow.mark</code></td>
+      <td><code>string | false</code></td>
+      <td>the language's</td>
+      <td>The mark at the end of a cut piece. Unset, the continuation word of the document language (as split tables use); <code>false</code> sets none.</td>
+    </tr>
+    <tr>
+      <td><code>fit.shrinkText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When nothing else makes the content fit, its text may be set smaller.</td>
+    </tr>
+    <tr>
+      <td><code>fit.minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.9</code></td>
+      <td>The smallest text scale, above 0 and at most 1 (a larger value reads as 1).</td>
+    </tr>
+    <tr>
+      <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
+      <td><code>boolean</code>, <code>number</code></td>
+      <td><code>true</code>, <code>0.8</code></td>
+      <td>Whether the pictures in the frame may be set smaller, and down to what scale.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>The frame never moves or resizes, for a box that must stay aligned with the artwork. A group flows around it.</td>
+    </tr>
+    <tr>
+      <td><code>grow</code>, <code>shrink</code>, <code>priority</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>How the frame shares the space of its group: <code>grow</code> takes a share of the spare space, <code>shrink</code> lets the frame give space back, and frames with a lower <code>priority</code> give it first.</td>
+    </tr>
+    <tr>
+      <td><code>optional</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>No warning when the Markdown sends nothing to the frame.</td>
+    </tr>
+    <tr>
+      <td><code>crossGutter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>On a spread, the frame may cross the spine band.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code>, <code>direction</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
+      <td>the page's</td>
+      <td>A vertical box on a horizontal page, or the other way round.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>In a template that extends another, or in a variant: drop the inherited frame of that name.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Groups
+
+A group is a stack (top to bottom) or a row (start to end) of frames that share space and move together. Inside a group, the frames' own position along the group's direction is ignored: the group lays them out in order, with `gap` between them. When the text of one frame grows, the frames after it move along. A group is a box that frames and decoration can anchor to (`'#pagina'`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Property</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>required</td>
+      <td>Unique among the frames and groups of the template.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack'</code></td>
+      <td>Top to bottom, or start to end.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>string[]</code></td>
+      <td><code>[]</code></td>
+      <td>The frames of the group, in their order on the page. A frame belongs to one group at most; a name that is no frame of the template, or a frame already listed, is skipped.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>The room between two frames of the group.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>grid</code></td>
+      <td>as frames</td>
+      <td>its frames' box</td>
+      <td>The group's own box. Unset, the box around the declared boxes of its frames.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
+      <td><code>'start'</code></td>
+      <td>Where the spare space goes when no frame of the group grows.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>In a template that extends another, or in a variant: drop the inherited group.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Inheritance and variants
+
+A template with `extends` starts from the template it names (which may itself extend another) and changes only what it writes:
+
+- A field such as `area`, `header` or `overflowTemplate` replaces the parent's. `grid` merges key by key. `spread`, `gutter` and `role` are inherited too; `id`, `name` and `extends` are the template's own.
+- `frames` and `groups` merge **by name**: an entry with the name of an inherited one changes the fields it writes and keeps the rest (`fit`, `overflow` and `padding` merge key by key; `placement` is replaced whole); `remove: true` drops it; a new name is added after the inherited ones.
+- Decoration elements merge by `id` the same way; an element with a new id, or none, is added.
+
+`variants.recto` and `variants.verso` are written like a template and merge the same way, on a right or a left page. They apply after the whole `extends` chain, the root's variant first. A spread has both sides, so no variant applies to it.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
+      placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+    variants: { recto: { frames: [{ name: 'margen', placement: { anchor: { to: 'container', edge: 'top-right' } } }] } } },
+  { id: 'tema-sin-margen', extends: 'tema', frames: [{ name: 'margen', remove: true }] },
+]
+```
+
+A value equal to a default is never dropped when the Sandbox saves a template: in a template that extends another, or in a variant, it overrides the parent's value.
+
+From code, `resolvePageTemplate(config, id, { parity })` returns a template with its chain merged, the variant of the side applied, every default filled in and every reference settled as the warnings below describe; `validatePageTemplates(config)` returns the warnings.
+
+## Label styles
+
+The `labelStyles` property names the looks of the labels set on a picture: the seas and towns of a map, the parts of a diagram. A label stands at an anchor of the picture (a point stored with the resource, as comic speakers are) and takes the style the anchor or the label names.
+
+```ts
+labelStyles: [
+  { id: 'mar', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: 0.12,
+    color: { hex: '#2b6ca3', model: 'hex' } },
+  { id: 'ciudad', fontWeight: 600, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 0.6, unit: 'pt' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Property</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>required</td>
+      <td>The name anchors and labels use.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>the id</td>
+      <td>The name shown in the Sandbox.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStyle</code></td>
+      <td><code>string</code></td>
+      <td>none</td>
+      <td>A paragraph style whose type the label borrows; the fields below override it.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>the body text's</td>
+      <td>The type of the label.</td>
+    </tr>
+    <tr>
+      <td><code>fontStyle</code></td>
+      <td><code>'normal' | 'italic'</code></td>
+      <td><code>'normal'</code></td>
+      <td>Upright or italic.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>the body text's</td>
+      <td>The colour of the letters.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Capitals, as maps set seas and countries.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Extra space between letters, in ems.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>&#123; color, width &#125;</code></td>
+      <td>none</td>
+      <td>An outline behind the letters, so they read over a busy picture.</td>
+    </tr>
+    <tr>
+      <td><code>background</code>, <code>padding</code></td>
+      <td><code>ColorValue</code>, <code>Dimension</code></td>
+      <td>none</td>
+      <td>A plate behind the label, and the room around its text.</td>
+    </tr>
+    <tr>
+      <td><code>minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.85</code></td>
+      <td>How small a label may be set when it does not fit its width.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Label fields of an anchor
+
+A picture's anchors (`Resource.anchors`, the points comics use for speakers) take a few optional fields for labels. They are fractions of the picture, so they hold in every language and through any crop of the picture. Comics ignore them.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Field</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>number</code></td>
+      <td>the label's own</td>
+      <td>The measure of the label, as a fraction of the picture's width: a long name breaks onto two lines inside it.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td><code>'center'</code></td>
+      <td>Which side of the label stands at the anchor point.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom'</code></td>
+      <td><code>'middle'</code></td>
+      <td>Which edge of the label stands at the anchor's height.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Degrees, clockwise, around the anchor point: a river's name along its course.</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>none</td>
+      <td>A <code>labelStyles</code> id. A label that names its own style overrides it.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Page template warnings
+
+Elsewhere the engine ignores a key it does not know. Page templates and label styles are checked instead, and every problem is a configuration warning in `postext check` and in the Sandbox's Checks panel. The `path` of these warnings is a JSON pointer to the field at fault: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. When the field was inherited, the pointer names the template that wrote it. A warning that names an id or a name that does not exist also suggests the closest one that does.
+
+A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or label style is an `unknownConfigKey`; a word outside a setting's choices (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) is an `unknownConfigValue`, and the setting keeps its default. A template with no `id`, or a frame or group with no `name`, is ignored with an `unknownConfigValue` at that field.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Warning</th>
+      <th>Cause</th>
+      <th>Fix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateDuplicate</code></td>
+      <td>Two templates have the same <code>id</code>. The first one is used and the later one is ignored.</td>
+      <td>Rename one of them, or delete the copy.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsCycle</code></td>
+      <td>Following <code>extends</code> comes back to the same template (<code>a → b → a</code>). Every template of the loop, and every template that extends one of them, is dropped: no page can use it.</td>
+      <td>Remove the <code>extends</code> of one template of the loop.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsUnknown</code></td>
+      <td><code>extends</code> names an id no template has. The template is used on its own, with nothing inherited.</td>
+      <td>Correct the id (the warning suggests the closest one), or add the parent template.</td>
+    </tr>
+    <tr>
+      <td><code>frameDuplicate</code></td>
+      <td>Two frames, or two groups, of one list have the same <code>name</code>, or a group has the name of a frame. The later entry is ignored; an anchor to that name reads the frame.</td>
+      <td>Give each frame and group a name of its own. To change an inherited frame, write one entry with its name.</td>
+    </tr>
+    <tr>
+      <td><code>frameStyleUnknown</code></td>
+      <td>A frame's <code>style</code> names no callout style. The frame is drawn without a box.</td>
+      <td>Correct the id, or add the style to <code>calloutStyles</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frameAnchorUnknown</code></td>
+      <td>A frame, a group or a decoration element is anchored to <code>'#name'</code> and the template has no frame, group or element of that name; or frames and groups are anchored to each other in a loop (also through a group anchored to nothing of its own, whose box is that of its frames). The anchor reads as <code>'container'</code>, the area.</td>
+      <td>Anchor to a frame or group that exists, or break the loop by anchoring one of them to the area.</td>
+    </tr>
+    <tr>
+      <td><code>frameMinMax</code></td>
+      <td>A minimum is larger than its maximum (<code>minHeight 40mm &gt; maxHeight 30mm</code>), or a fixed <code>width</code> or <code>height</code> lies outside them. The minimum wins, a fixed size is brought between the limits, and <code>used</code> says what the frame takes. Lengths in different units are compared at the page's resolution, ems at the body text size.</td>
+      <td>Make the minimum no larger than the maximum, or drop the limit the fixed size contradicts.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameUnknown</code></td>
+      <td>A group's <code>frames</code> lists a name that is no frame of the template (perhaps removed by a child template or a variant). The group skips it.</td>
+      <td>Correct the name, or remove it from the list.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameTwice</code></td>
+      <td>A frame is listed in two groups, or twice in one. A frame belongs to one group only: the later listing is skipped.</td>
+      <td>Keep the frame in the one group it moves with.</td>
+    </tr>
+    <tr>
+      <td><code>frameChainLoop</code></td>
+      <td>Frames continue into each other in a loop through <code>next</code> or <code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). The link that closes the loop is dropped, so the chain ends at the frame before it.</td>
+      <td>End the chain at its last frame: remove its <code>next</code>, or make it continue on the next page.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTargetUnknown</code></td>
+      <td>A <code>next</code> names no frame of the template; an <code>overflow.continueIn</code> names no frame (<code>'#x'</code>) or no template (<code>'template:x'</code>), or is in none of the forms <code>'#frame'</code>, <code>'next-page'</code> and <code>'template:&lt;id&gt;'</code>; or <code>overflowTemplate</code> names no template. Content that does not fit does not continue there.</td>
+      <td>Correct the name or the id, or write one of the three forms.</td>
+    </tr>
+    <tr>
+      <td><code>labelStyleUnknown</code></td>
+      <td>An anchor of a picture names a <code>style</code> that <code>labelStyles</code> does not have. The warning names the resource. The labels at that anchor take the default look.</td>
+      <td>Correct the style id on the anchor, or add the style to <code>labelStyles</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+The configuration version is 15 since page templates (bundles written before keep loading unchanged: nothing an older configuration says changes meaning).

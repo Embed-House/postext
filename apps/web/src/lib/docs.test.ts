@@ -23,6 +23,7 @@ const CONFIGURATION_PAGES = [
   "configuration-styles",
   "configuration-callouts",
   "configuration-comics",
+  "configuration-composed-pages",
   "configuration-fonts-colors-viewers",
   "configuration-programmatic-usage",
   "configuration-pdf-output",
@@ -99,13 +100,13 @@ describe("docs table of contents", () => {
     }
   });
 
-  it("numbers the pages 1 to 42 and gives Part II the Configuration reference, the craft pages, Comics and Composed pages", () => {
+  it("numbers the pages 1 to 43 and gives Part II the Configuration reference, the craft pages, Comics and Composed pages", () => {
     expect(docs.map((d) => d.locales.en!.order)).toEqual(docs.map((_, i) => i + 1));
     expect(order("configuration")).toBe(4);
     expect(CONFIGURATION_PAGES.map((slug) => order(slug))).toEqual(CONFIGURATION_PAGES.map((_, i) => 5 + i));
-    expect([order("justification"), order("document-format")]).toEqual([23, 24]);
-    expect(order("comics")).toBe(32);
-    expect(order("composed-pages")).toBe(33);
+    expect([order("justification"), order("document-format")]).toEqual([24, 25]);
+    expect(order("comics")).toBe(33);
+    expect(order("composed-pages")).toBe(34);
     for (const slug of ["introduction", "architecture", ...CHAPTER_PAGES.architecture!]) {
       expect(docPart(order(slug)!).key, slug).toBe("foundations");
     }
@@ -115,7 +116,7 @@ describe("docs table of contents", () => {
     for (const slug of ["contributing", "sandbox", ...CHAPTER_PAGES.sandbox!, "skill", "command-line", "webmcp"]) {
       expect(docPart(order(slug)!).key, slug).toBe("practice");
     }
-    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([34, 35, 40, 41, 42]);
+    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([35, 36, 41, 42, 43]);
   });
 
   it("sets the pages of the Configuration reference under its entry page, in every language", () => {
@@ -194,6 +195,10 @@ describe("docs table of contents", () => {
   );
 });
 
+/** The pages the single Configuration page was split into (#655, #884):
+ *  a page added after the split holds none of its old headings. */
+const SPLIT_PAGES = CONFIGURATION_PAGES.filter((slug) => slug !== "configuration-composed-pages");
+
 describe("the Configuration reference, split into pages (#655)", () => {
   const ids = (slug: string, locale: string) => pageIds(getDocSource(slug, locale)!.source);
   const entries = (locale: string) =>
@@ -249,7 +254,7 @@ describe("the Configuration reference, split into pages (#655)", () => {
     const lost: string[] = [];
     for (const locale of LOCALES) {
       const table = oldConfigurationAnchors(locale);
-      expect(Object.keys(table), locale).toEqual([CONFIGURATION_SLUG, ...CONFIGURATION_PAGES]);
+      expect(Object.keys(table), locale).toEqual([CONFIGURATION_SLUG, ...SPLIT_PAGES]);
       const all = entries(locale);
       // The single page had 207 headings in every language, each with its own id.
       expect(all.length, locale).toBe(207);
@@ -266,7 +271,7 @@ describe("the Configuration reference, split into pages (#655)", () => {
   it("hands the entry page only the ids that left it, and none it still has", () => {
     for (const locale of LOCALES) {
       const moved = movedConfigurationAnchors(locale);
-      expect(Object.keys(moved), locale).toEqual(CONFIGURATION_PAGES);
+      expect(Object.keys(moved), locale).toEqual(SPLIT_PAGES);
       const own = ids(CONFIGURATION_SLUG, locale);
       // The page's own headings (its title and the index) stay where they were.
       for (const entry of oldConfigurationAnchors(locale)[CONFIGURATION_SLUG]!.split(" ")) expect(own.has(entry), `${locale} #${entry}`).toBe(true);

@@ -1,0 +1,633 @@
+{/* docs/configuration-composed-pages-es.mdx */}
+
+export const metadata = {
+  title: 'Configuración: páginas compuestas',
+  sidebarTitle: 'Ajustes de páginas compuestas',
+  description: 'Plantillas de página para las páginas compuestas: marcos, grupos, decoración, herencia y variantes de recto y verso, los estilos de rótulo de los anclajes de una imagen y los avisos que puede dar una plantilla',
+  lang: 'es',
+  lastUpdated: '2026-10-16',
+  readingTime: '6 min',
+  order: 18,
+  parent: 'configuration',
+  plainSummary: "Esta página trata de las plantillas de página. Una plantilla es una página dibujada en los ajustes: unas cajas con nombre, llamadas marcos, con su sitio, el tamaño hasta el que pueden crecer y su aspecto. El Markdown de una página compuesta llena después esos marcos por su nombre, así que el texto nunca guarda posiciones y los ajustes nunca guardan texto. Una plantilla puede partir de otra y cambiar solo unos pocos marcos, y puede ser distinta en las páginas pares y en las impares. La página recoge también los estilos de rótulo para las palabras que se ponen sobre una imagen, y cada aviso que puede dar una plantilla con la manera de corregirlo.",
+};
+
+# Configuración: páginas compuestas
+
+
+## Plantillas de página
+
+Una página compuesta es una página que toma su forma de una **plantilla de página** de la configuración y su contenido del Markdown de un bloque `::::page{template="…"}`. La plantilla da nombre a unos rectángulos, llamados **marcos**; el Markdown manda cada pieza de contenido a un marco por su nombre (su hueco). La geometría nunca aparece en el Markdown, y el texto del contenido nunca aparece en la plantilla. La propiedad `pageTemplates` guarda las plantillas del libro:
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [{ id: 'caja-azul' }, { id: 'tab-titulo' }],
+  pageTemplates: [
+    {
+      id: 'tema-cajas',
+      decoration: {
+        elements: [
+          { kind: 'image', id: 'fondo', resourceId: '{attr.fondo}', decorative: true,
+            placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } } },
+        ],
+      },
+      frames: [
+        { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+        { name: 'texto', flow: true },
+        { name: 'dinero', style: 'caja-azul', padding: { right: { value: 62, unit: 'mm' } } },
+        { name: 'dinero-fotos', layer: 2, width: { value: 60, unit: 'mm' },
+          placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+      ],
+      groups: [
+        { name: 'pagina', kind: 'stack', gap: { value: 6, unit: 'mm' }, frames: ['titulo', 'texto', 'dinero'] },
+      ],
+    },
+  ],
+};
+```
+
+Una plantilla que solo fija su `id` y un marco es una página entera con ese marco ocupando el área de texto. Todos los demás campos son opcionales:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propiedad</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obligatorio</td>
+      <td>El nombre que pide un bloque de página (<code>template="tema-cajas"</code>). Único entre las plantillas: una segunda con el mismo id se ignora.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>el id</td>
+      <td>El nombre que muestra el Sandbox. La composición nunca lo lee.</td>
+    </tr>
+    <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>El id de la plantilla de la que parte esta. Ver <a href="#herencia-y-variantes">Herencia y variantes</a>.</td>
+    </tr>
+    <tr>
+      <td><code>area</code></td>
+      <td><code>'content' | 'trim' | 'bleed'</code></td>
+      <td><code>'content'</code></td>
+      <td>El rectángulo al que se refieren las posiciones de los marcos. <code>'content'</code> es el área de texto de la página, reflejada en pares e impares como el texto corrido; <code>'trim'</code> es la página al corte; <code>'bleed'</code>, la página con su sangrado.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
+      <td>ninguna</td>
+      <td>Divide el área en celdas, de modo que un marco o un grupo se puede colocar por celda (<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>, contando desde 1) en lugar de por <code>placement</code>. Los espacios valen <code>0</code> por defecto.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>FrameConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Los marcos, en el orden de la plantilla: el orden en que se miden y el que deshace los empates. Ver <a href="#marcos">Marcos</a>.</td>
+    </tr>
+    <tr>
+      <td><code>groups</code></td>
+      <td><code>FrameGroupConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Pilas y filas de marcos que se reparten el espacio. Ver <a href="#grupos">Grupos</a>.</td>
+    </tr>
+    <tr>
+      <td><code>decoration</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>ninguna</td>
+      <td>Imágenes, filetes y cajas que se pintan con la página, en el lenguaje de elementos de los <a href="/es/docs/configuration-headers-footers#encabezados-y-pies">encabezados y pies</a>. Los elementos de texto solo llevan marcadores (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> para un atributo del bloque de página). Un elemento se puede anclar a un marco o a un grupo (<code>'#dinero'</code>) y entonces se mueve con él. La decoración se coloca después de los marcos y nunca empuja el texto.</td>
+    </tr>
+    <tr>
+      <td><code>header</code>, <code>footer</code></td>
+      <td><code>DesignSlot | false</code></td>
+      <td>heredados</td>
+      <td>La cabecera y el folio de la página. Sin fijar, la página conserva los de su capítulo; <code>false</code> los oculta.</td>
+    </tr>
+    <tr>
+      <td><code>spread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>La plantilla describe dos páginas enfrentadas compuestas como un solo pliego. Una doble página empieza siempre en una página par en un libro de izquierda a derecha (en una impar en uno de derecha a izquierda), con una página en blanco delante cuando hace falta.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>En una doble página, la franja junto al lomo que los marcos dejan libre, salvo que fijen <code>crossGutter: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>variants</code></td>
+      <td><code>&#123; recto?, verso? &#125;</code></td>
+      <td>ninguna</td>
+      <td>Cambios para una página impar (<code>recto</code>) o una par (<code>verso</code>), escritos como la propia plantilla. El lado es el físico, así que funcionan tanto los libros de izquierda a derecha como los de derecha a izquierda.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTemplate</code></td>
+      <td><code>string</code></td>
+      <td>esta plantilla</td>
+      <td>La plantilla de las páginas que se añaden cuando un marco continúa en la página siguiente (<code>overflow.continueIn: 'next-page'</code>). Sin fijar, la página añadida usa esta plantilla con solo los marcos que continúan llenos.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>Un estilo de párrafo para el texto de la página, como el que tienen los estilos de encabezado.</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>string</code></td>
+      <td>ninguna</td>
+      <td>Una paleta propia para la página, como la que tienen los estilos de encabezado y las partes.</td>
+    </tr>
+    <tr>
+      <td><code>role</code></td>
+      <td><code>string</code></td>
+      <td><code>'composed'</code></td>
+      <td>El papel de página que ven los elementos de diseño con un filtro <code>pages</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Marcos
+
+Un marco es un rectángulo con nombre que recibe contenido compuesto. Su `name` es el hueco que pide el Markdown, y es único en su plantilla (un grupo tampoco puede llevar el nombre de un marco, porque los anclajes nombran a los dos de la misma manera).
+
+Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, si no, por su `placement`, que funciona como el de un elemento de diseño: un anclaje (`'container'` es el área, `'page'`, `'bleed'`, o `'#name'` para otro marco o grupo), un borde, un desplazamiento y un tamaño. Un marco anclado a otro se mueve con él. Sin ninguno de los dos, el marco ocupa toda el área.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propiedad</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>obligatorio</td>
+      <td>El nombre del hueco.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>toda el área</td>
+      <td>Anclaje, borde, desplazamiento y tamaño, como en el <a href="/es/docs/configuration-headers-footers#posicionamiento-de-elementos">posicionamiento de elementos</a>. Se ignora cuando una celda de la rejilla coloca el marco.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; col, row, cols?, rows? &#125;</code></td>
+      <td>ninguna</td>
+      <td>Una celda de la rejilla de la plantilla, contando desde 1, que abarca <code>cols</code> × <code>rows</code> celdas (1 por defecto). Una celda que se sale de la rejilla vuelve a meterse en ella. Se ignora cuando la plantilla no tiene rejilla.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>height</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
+      <td><code>'fill'</code>, <code>'auto'</code></td>
+      <td>Una longitud fija, un porcentaje del área (de 0 a 100), <code>'auto'</code> (el tamaño propio del contenido) o <code>'fill'</code> (lo que queda hasta el borde al que está anclado el marco). Sin fijar, el marco lee <code>placement.size</code> y después el valor por defecto: todo el ancho y tan alto como su contenido. Un marco de texto necesita una medida, así que un ancho <code>'auto'</code> solo tiene sentido en un marco que lleva una sola imagen (el ancho de la imagen a la altura del marco). Un valor que el motor no puede usar (una longitud negativa, una unidad desconocida) se lee como el valor por defecto.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>ninguno</td>
+      <td>Límites para un tamaño <code>'auto'</code> o <code>'fill'</code> y para el espacio que un grupo da o quita. El mínimo se impone al máximo, y un tamaño fijo fuera de ellos se lleva dentro (<code>frameMinMax</code> avisa de los dos casos).</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>sin caja</td>
+      <td>El id de un <a href="/es/docs/configuration-callouts#estilos-de-aviso">estilo de aviso</a>: los marcos se dibujan con estilos de aviso (fondo, borde, relleno, banda, icono, pestaña de rótulo, título). Las palabras de una pestaña vienen del Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Los ajustes de aviso que dicen dónde va una caja en el texto corrido (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) no se aplican a un marco.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>el del estilo</td>
+      <td>Sustituye el relleno del estilo lado por lado: sitio para las fotos que van encima de una caja, por ejemplo.</td>
+    </tr>
+    <tr>
+      <td><code>layer</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Orden de pintado. La decoración es la capa 0; una capa negativa se pinta debajo de ella.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Grados, en el sentido de las agujas del reloj. La caja y su contenido giran juntos.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
+      <td><code>'top'</code></td>
+      <td>Dónde se sitúa el contenido en un marco más alto que él.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code>, <code>columnGap</code></td>
+      <td><code>number</code>, <code>Dimension</code></td>
+      <td><code>1</code>, el del estilo</td>
+      <td>Columnas dentro del marco.</td>
+    </tr>
+    <tr>
+      <td><code>exclude</code></td>
+      <td><code>'none' | 'push'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'push'</code>: el texto de los demás marcos rodea el rectángulo de este.</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>El marco recibe el contenido que no nombra ningún hueco.</td>
+    </tr>
+    <tr>
+      <td><code>takes</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td>ninguno</td>
+      <td>El marco recibe el primer encabezado de ese nivel que no nombra ningún hueco, así que el título de una página es solo un <code># Título</code> al principio del bloque.</td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>Una cadena: el contenido que no cabe sigue en el marco de ese nombre, en la misma página.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>Dónde sigue el contenido que no cabe: <code>'#frame'</code> (otro marco de la página, como <code>next</code>), <code>'next-page'</code> (el mismo marco en una página que se añade detrás de esta) o <code>'template:&lt;id&gt;'</code> (una página de esa plantilla).</td>
+    </tr>
+    <tr>
+      <td><code>overflow.mark</code></td>
+      <td><code>string | false</code></td>
+      <td>la del idioma</td>
+      <td>La marca al final de un trozo cortado. Sin fijar, la palabra de continuación del idioma del documento (la misma que usan las tablas partidas); <code>false</code> no pone ninguna.</td>
+    </tr>
+    <tr>
+      <td><code>fit.shrinkText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Cuando nada más consigue que el contenido quepa, su texto se puede componer más pequeño.</td>
+    </tr>
+    <tr>
+      <td><code>fit.minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.9</code></td>
+      <td>La escala de texto más pequeña, mayor que 0 y como mucho 1 (un valor mayor se lee como 1).</td>
+    </tr>
+    <tr>
+      <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
+      <td><code>boolean</code>, <code>number</code></td>
+      <td><code>true</code>, <code>0.8</code></td>
+      <td>Si las imágenes del marco se pueden componer más pequeñas, y hasta qué escala.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>El marco nunca se mueve ni cambia de tamaño, para una caja que debe quedar alineada con la ilustración. Un grupo se coloca alrededor de él.</td>
+    </tr>
+    <tr>
+      <td><code>grow</code>, <code>shrink</code>, <code>priority</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Cómo comparte el marco el espacio de su grupo: <code>grow</code> toma una parte del espacio sobrante, <code>shrink</code> deja que el marco devuelva espacio, y los marcos con una <code>priority</code> más baja lo ceden primero.</td>
+    </tr>
+    <tr>
+      <td><code>optional</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Ningún aviso cuando el Markdown no manda nada al marco.</td>
+    </tr>
+    <tr>
+      <td><code>crossGutter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>En una doble página, el marco puede cruzar la franja del lomo.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code>, <code>direction</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
+      <td>los de la página</td>
+      <td>Una caja vertical en una página horizontal, o al revés.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>En una plantilla que extiende otra, o en una variante: quita el marco heredado con ese nombre.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Grupos
+
+Un grupo es una pila (de arriba abajo) o una fila (del principio al final) de marcos que se reparten el espacio y se mueven juntos. Dentro de un grupo se ignora la posición propia de los marcos en la dirección del grupo: el grupo los coloca en orden, con `gap` entre ellos. Cuando crece el texto de un marco, los marcos que van detrás se desplazan. Un grupo es una caja a la que pueden anclarse marcos y decoración (`'#pagina'`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propiedad</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>obligatorio</td>
+      <td>Único entre los marcos y grupos de la plantilla.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack'</code></td>
+      <td>De arriba abajo, o del principio al final.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>string[]</code></td>
+      <td><code>[]</code></td>
+      <td>Los marcos del grupo, en su orden en la página. Un marco pertenece como mucho a un grupo; un nombre que no es ningún marco de la plantilla, o un marco ya listado, se salta.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>El espacio entre dos marcos del grupo.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>grid</code></td>
+      <td>como en los marcos</td>
+      <td>la caja de sus marcos</td>
+      <td>La caja propia del grupo. Sin fijar, la caja que rodea las cajas declaradas de sus marcos.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
+      <td><code>'start'</code></td>
+      <td>Adónde va el espacio sobrante cuando ningún marco del grupo crece.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>En una plantilla que extiende otra, o en una variante: quita el grupo heredado.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Herencia y variantes
+
+Una plantilla con `extends` parte de la plantilla que nombra (que a su vez puede extender otra) y cambia solo lo que escribe:
+
+- Un campo como `area`, `header` u `overflowTemplate` sustituye al del padre. `grid` se combina clave a clave. `spread`, `gutter` y `role` también se heredan; `id`, `name` y `extends` son propios de la plantilla.
+- `frames` y `groups` se combinan **por nombre**: una entrada con el nombre de una heredada cambia los campos que escribe y conserva el resto (`fit`, `overflow` y `padding` se combinan clave a clave; `placement` se sustituye entero); `remove: true` la quita; un nombre nuevo se añade detrás de los heredados.
+- Los elementos de decoración se combinan por `id` de la misma manera; un elemento con un id nuevo, o sin id, se añade.
+
+`variants.recto` y `variants.verso` se escriben como una plantilla y se combinan igual, en una página impar o en una par. Se aplican después de toda la cadena de `extends`, primero la variante de la raíz. Una doble página tiene los dos lados, así que no se le aplica ninguna variante.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
+      placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+    variants: { recto: { frames: [{ name: 'margen', placement: { anchor: { to: 'container', edge: 'top-right' } } }] } } },
+  { id: 'tema-sin-margen', extends: 'tema', frames: [{ name: 'margen', remove: true }] },
+]
+```
+
+Cuando el Sandbox guarda una plantilla, nunca descarta un valor igual al valor por defecto: en una plantilla que extiende otra, o en una variante, ese valor sustituye al del padre.
+
+Desde código, `resolvePageTemplate(config, id, { parity })` devuelve una plantilla con su cadena combinada, la variante del lado aplicada, todos los valores por defecto rellenos y cada referencia resuelta como describen los avisos de abajo; `validatePageTemplates(config)` devuelve los avisos.
+
+## Estilos de rótulo
+
+La propiedad `labelStyles` da nombre a los aspectos de los rótulos que se ponen sobre una imagen: los mares y las ciudades de un mapa, las partes de un esquema. Un rótulo se sitúa en un anclaje de la imagen (un punto guardado con el recurso, como los hablantes de un cómic) y toma el estilo que nombra el anclaje o el rótulo.
+
+```ts
+labelStyles: [
+  { id: 'mar', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: 0.12,
+    color: { hex: '#2b6ca3', model: 'hex' } },
+  { id: 'ciudad', fontWeight: 600, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 0.6, unit: 'pt' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propiedad</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obligatorio</td>
+      <td>El nombre que usan los anclajes y los rótulos.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>el id</td>
+      <td>El nombre que muestra el Sandbox.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStyle</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>Un estilo de párrafo del que el rótulo toma la letra; los campos de abajo lo sustituyen.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>los del texto general</td>
+      <td>La letra del rótulo.</td>
+    </tr>
+    <tr>
+      <td><code>fontStyle</code></td>
+      <td><code>'normal' | 'italic'</code></td>
+      <td><code>'normal'</code></td>
+      <td>Redonda o cursiva.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>el del texto general</td>
+      <td>El color de las letras.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Mayúsculas, como las que ponen los mapas a mares y países.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Espacio añadido entre letras, en ems.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>&#123; color, width &#125;</code></td>
+      <td>ninguno</td>
+      <td>Un contorno detrás de las letras, para que se lean sobre una imagen cargada.</td>
+    </tr>
+    <tr>
+      <td><code>background</code>, <code>padding</code></td>
+      <td><code>ColorValue</code>, <code>Dimension</code></td>
+      <td>ninguno</td>
+      <td>Una placa detrás del rótulo, y el espacio alrededor de su texto.</td>
+    </tr>
+    <tr>
+      <td><code>minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.85</code></td>
+      <td>Hasta qué tamaño se puede reducir un rótulo cuando no cabe en su ancho.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Campos de rótulo de un anclaje
+
+Los anclajes de una imagen (`Resource.anchors`, los puntos que usan los cómics para los hablantes) admiten unos pocos campos opcionales para rótulos. Son fracciones de la imagen, así que valen en todos los idiomas y con cualquier recorte de la imagen. Los cómics los ignoran.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>number</code></td>
+      <td>el propio del rótulo</td>
+      <td>La medida del rótulo, como fracción del ancho de la imagen: un nombre largo se parte en dos líneas dentro de ella.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td><code>'center'</code></td>
+      <td>Qué lado del rótulo queda en el punto del anclaje.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom'</code></td>
+      <td><code>'middle'</code></td>
+      <td>Qué borde del rótulo queda a la altura del anclaje.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Grados, en el sentido de las agujas del reloj, alrededor del punto del anclaje: el nombre de un río a lo largo de su curso.</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>Un id de <code>labelStyles</code>. Un rótulo que nombra su propio estilo lo sustituye.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Avisos de las plantillas de página
+
+En el resto de la configuración, el motor ignora una clave que no conoce. Las plantillas de página y los estilos de rótulo, en cambio, se comprueban, y cada problema es un aviso de configuración en `postext check` y en el panel Revisión del Sandbox. El campo `path` de estos avisos es un puntero JSON al campo que falla: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Cuando el campo es heredado, el puntero nombra la plantilla que lo escribió. Un aviso que nombra un id o un nombre que no existe propone además el existente que más se le parece.
+
+Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, `overflow`, una variante o un estilo de rótulo es un `unknownConfigKey`; una palabra fuera de las opciones de un ajuste (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) es un `unknownConfigValue`, y el ajuste conserva su valor por defecto. Una plantilla sin `id`, o un marco o un grupo sin `name`, se ignora con un `unknownConfigValue` en ese campo.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Aviso</th>
+      <th>Causa</th>
+      <th>Solución</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateDuplicate</code></td>
+      <td>Dos plantillas tienen el mismo <code>id</code>. Se usa la primera y la posterior se ignora.</td>
+      <td>Cambia el nombre de una de ellas, o borra la copia.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsCycle</code></td>
+      <td>Siguiendo <code>extends</code> se vuelve a la misma plantilla (<code>a → b → a</code>). Todas las plantillas del ciclo, y todas las que extienden alguna de ellas, se descartan: ninguna página puede usarlas.</td>
+      <td>Quita el <code>extends</code> de una plantilla del ciclo.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsUnknown</code></td>
+      <td><code>extends</code> nombra un id que no tiene ninguna plantilla. La plantilla se usa sola, sin heredar nada.</td>
+      <td>Corrige el id (el aviso propone el más parecido), o añade la plantilla padre.</td>
+    </tr>
+    <tr>
+      <td><code>frameDuplicate</code></td>
+      <td>Dos marcos, o dos grupos, de una misma lista tienen el mismo <code>name</code>, o un grupo tiene el nombre de un marco. La entrada posterior se ignora; un anclaje a ese nombre lee el marco.</td>
+      <td>Da a cada marco y a cada grupo un nombre propio. Para cambiar un marco heredado, escribe una sola entrada con su nombre.</td>
+    </tr>
+    <tr>
+      <td><code>frameStyleUnknown</code></td>
+      <td>El <code>style</code> de un marco no nombra ningún estilo de aviso. El marco se dibuja sin caja.</td>
+      <td>Corrige el id, o añade el estilo a <code>calloutStyles</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frameAnchorUnknown</code></td>
+      <td>Un marco, un grupo o un elemento de decoración está anclado a <code>'#name'</code> y la plantilla no tiene ningún marco, grupo ni elemento con ese nombre; o hay marcos y grupos anclados entre sí en un ciclo (también a través de un grupo sin anclaje propio, cuya caja es la de sus marcos). El anclaje se lee como <code>'container'</code>, el área.</td>
+      <td>Ancla a un marco o a un grupo que exista, o rompe el ciclo anclando uno de ellos al área.</td>
+    </tr>
+    <tr>
+      <td><code>frameMinMax</code></td>
+      <td>Un mínimo es mayor que su máximo (<code>minHeight 40mm &gt; maxHeight 30mm</code>), o un <code>width</code> o un <code>height</code> fijo queda fuera de ellos. Se impone el mínimo, un tamaño fijo se lleva dentro de los límites y <code>used</code> dice qué ocupa el marco. Las longitudes en unidades distintas se comparan a la resolución de la página, y los ems al cuerpo del texto general.</td>
+      <td>Haz que el mínimo no supere al máximo, o quita el límite que contradice el tamaño fijo.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameUnknown</code></td>
+      <td>Los <code>frames</code> de un grupo incluyen un nombre que no es ningún marco de la plantilla (quizá lo quitó una plantilla hija o una variante). El grupo se lo salta.</td>
+      <td>Corrige el nombre, o quítalo de la lista.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameTwice</code></td>
+      <td>Un marco figura en dos grupos, o dos veces en uno. Un marco pertenece a un solo grupo: la aparición posterior se salta.</td>
+      <td>Deja el marco en el grupo con el que se mueve.</td>
+    </tr>
+    <tr>
+      <td><code>frameChainLoop</code></td>
+      <td>Unos marcos continúan unos en otros en un ciclo a través de <code>next</code> o de <code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). El enlace que cierra el ciclo se descarta, así que la cadena termina en el marco anterior a él.</td>
+      <td>Termina la cadena en su último marco: quítale el <code>next</code>, o haz que continúe en la página siguiente.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTargetUnknown</code></td>
+      <td>Un <code>next</code> no nombra ningún marco de la plantilla; un <code>overflow.continueIn</code> no nombra ningún marco (<code>'#x'</code>) ni ninguna plantilla (<code>'template:x'</code>), o no tiene ninguna de las formas <code>'#frame'</code>, <code>'next-page'</code> y <code>'template:&lt;id&gt;'</code>; o <code>overflowTemplate</code> no nombra ninguna plantilla. El contenido que no cabe no continúa allí.</td>
+      <td>Corrige el nombre o el id, o escribe una de las tres formas.</td>
+    </tr>
+    <tr>
+      <td><code>labelStyleUnknown</code></td>
+      <td>Un anclaje de una imagen nombra un <code>style</code> que <code>labelStyles</code> no tiene. El aviso nombra el recurso. Los rótulos de ese anclaje toman el aspecto por defecto.</td>
+      <td>Corrige el id del estilo en el anclaje, o añade el estilo a <code>labelStyles</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+La versión de la configuración es la 15 desde las plantillas de página (los paquetes escritos antes se siguen cargando sin cambios: nada de lo que dice una configuración anterior cambia de significado).

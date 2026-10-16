@@ -1,0 +1,633 @@
+{/* docs/configuration-composed-pages-it.mdx */}
+
+export const metadata = {
+  title: 'Configurazione: pagine composte',
+  sidebarTitle: 'Impostazioni delle pagine composte',
+  description: 'I modelli delle pagine composte: cornici, gruppi, decorazione, ereditarietà e varianti recto/verso, gli stili delle etichette degli ancoraggi delle immagini e gli avvisi che un modello può dare',
+  lang: 'it',
+  lastUpdated: '2026-10-16',
+  readingTime: '6 min',
+  order: 18,
+  parent: 'configuration',
+  plainSummary: "Questa pagina presenta i modelli di pagina. Un modello è una pagina disegnata nelle impostazioni: riquadri con un nome, chiamati cornici, dove sta ciascuno, quanto può crescere e che aspetto ha. Il Markdown di una pagina composta riempie poi le cornici per nome, così il testo non contiene mai posizioni e le impostazioni non contengono mai testo. Un modello può partire da un altro e cambiare solo alcune cornici, e può essere diverso sulle pagine di sinistra e di destra. La pagina elenca anche gli stili delle etichette per le parole messe sulle immagini, e ogni avviso che un modello può dare insieme al modo di correggerlo.",
+};
+
+# Configurazione: pagine composte
+
+
+## Modelli di pagina
+
+Una pagina composta è una pagina la cui forma viene da un **modello** della configurazione e il cui contenuto viene dal Markdown di un blocco `::::page{template="…"}`. Il modello dà un nome a dei rettangoli, chiamati **cornici**; il Markdown manda ogni parte del contenuto a una cornice per nome (il suo slot). La geometria non compare mai nel Markdown, e il testo del contenuto non compare mai nel modello. La proprietà `pageTemplates` contiene i modelli del libro:
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [{ id: 'caja-azul' }, { id: 'tab-titulo' }],
+  pageTemplates: [
+    {
+      id: 'tema-cajas',
+      decoration: {
+        elements: [
+          { kind: 'image', id: 'fondo', resourceId: '{attr.fondo}', decorative: true,
+            placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } } },
+        ],
+      },
+      frames: [
+        { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+        { name: 'texto', flow: true },
+        { name: 'dinero', style: 'caja-azul', padding: { right: { value: 62, unit: 'mm' } } },
+        { name: 'dinero-fotos', layer: 2, width: { value: 60, unit: 'mm' },
+          placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+      ],
+      groups: [
+        { name: 'pagina', kind: 'stack', gap: { value: 6, unit: 'mm' }, frames: ['titulo', 'texto', 'dinero'] },
+      ],
+    },
+  ],
+};
+```
+
+Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cui quella cornice riempie l’area del contenuto. Tutti gli altri campi sono facoltativi:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obbligatorio</td>
+      <td>Il nome che chiede un blocco di pagina (<code>template="tema-cajas"</code>). Unico tra i modelli: un secondo modello con lo stesso id viene ignorato.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>l’id</td>
+      <td>Il nome mostrato nella Sandbox. L’impaginazione non lo legge mai.</td>
+    </tr>
+    <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>nessuno</td>
+      <td>L’id del modello da cui parte questo. Vedi <a href="#ereditarietà-e-varianti">Ereditarietà e varianti</a>.</td>
+    </tr>
+    <tr>
+      <td><code>area</code></td>
+      <td><code>'content' | 'trim' | 'bleed'</code></td>
+      <td><code>'content'</code></td>
+      <td>Il rettangolo a cui si riferiscono le posizioni delle cornici. <code>'content'</code> è l’area del contenuto della pagina, speculare sulle pagine di sinistra e di destra come il testo corrente; <code>'trim'</code> è la pagina rifilata; <code>'bleed'</code> la pagina con la sua abbondanza.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
+      <td>nessuna</td>
+      <td>Divide l’area in celle, così una cornice o un gruppo si può collocare per cella (<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>, contando da 1) invece che con <code>placement</code>. Gli spazi valgono <code>0</code> per impostazione predefinita.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>FrameConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Le cornici, nell’ordine del modello: quello in cui vengono misurate e quello che decide i pareggi. Vedi <a href="#cornici">Cornici</a>.</td>
+    </tr>
+    <tr>
+      <td><code>groups</code></td>
+      <td><code>FrameGroupConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Pile e file di cornici che si dividono lo spazio. Vedi <a href="#gruppi">Gruppi</a>.</td>
+    </tr>
+    <tr>
+      <td><code>decoration</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>nessuna</td>
+      <td>Immagini, filetti e riquadri dipinti con la pagina, nel linguaggio di elementi di <a href="/it/docs/configuration-headers-footers#intestazioni-e-piè-di-pagina">intestazioni e piè di pagina</a>. Gli elementi di testo contengono solo segnaposto (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> per un attributo del blocco di pagina). Un elemento si può ancorare a una cornice o a un gruppo (<code>'#dinero'</code>) e allora si sposta con esso. La decorazione si colloca dopo le cornici e non spinge mai il testo.</td>
+    </tr>
+    <tr>
+      <td><code>header</code>, <code>footer</code></td>
+      <td><code>DesignSlot | false</code></td>
+      <td>ereditati</td>
+      <td>Il titolo corrente e il numero di pagina. Se non sono impostati, la pagina tiene quelli del suo capitolo; <code>false</code> li nasconde.</td>
+    </tr>
+    <tr>
+      <td><code>spread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Il modello descrive due pagine affiancate disposte come un unico foglio. Una doppia pagina comincia sempre su una pagina di sinistra in un libro da sinistra a destra (su una pagina di destra in uno da destra a sinistra), con una pagina bianca aggiunta prima quando serve.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>In una doppia pagina, la fascia sul dorso che le cornici lasciano libera, a meno che impostino <code>crossGutter: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>variants</code></td>
+      <td><code>&#123; recto?, verso? &#125;</code></td>
+      <td>nessuna</td>
+      <td>Modifiche per una pagina di destra (<code>recto</code>) o di sinistra (<code>verso</code>), scritte come il modello stesso. Il lato è quello fisico, quindi funzionano sia i libri da sinistra a destra sia quelli da destra a sinistra.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTemplate</code></td>
+      <td><code>string</code></td>
+      <td>questo modello</td>
+      <td>Il modello delle pagine aggiunte quando una cornice continua nella pagina successiva (<code>overflow.continueIn: 'next-page'</code>). Se non è impostato, la pagina aggiunta usa questo modello con riempite solo le cornici che continuano.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>string</code></td>
+      <td>nessuno</td>
+      <td>Uno stile di paragrafo per il testo della pagina, come quello degli stili dei titoli.</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>string</code></td>
+      <td>nessuna</td>
+      <td>Una tavolozza sostitutiva per la pagina, come quella degli stili dei titoli e delle parti.</td>
+    </tr>
+    <tr>
+      <td><code>role</code></td>
+      <td><code>string</code></td>
+      <td><code>'composed'</code></td>
+      <td>Il ruolo di pagina che vedono gli elementi di progetto grafico con un filtro <code>pages</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Cornici
+
+Una cornice è un rettangolo con un nome che riceve contenuto composto. Il suo `name` è lo slot che chiede il Markdown, ed è unico nel suo modello (nemmeno un gruppo può prendere il nome di una cornice, perché gli ancoraggi indicano entrambi allo stesso modo).
+
+Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia, altrimenti con il suo `placement`, che funziona come quello di un elemento di progetto grafico: un ancoraggio (`'container'` è l’area, `'page'`, `'bleed'`, o `'#name'` per un’altra cornice o un altro gruppo), un bordo, uno scostamento e una dimensione. Una cornice ancorata a un’altra si sposta con essa. Senza né l’una né l’altro, la cornice occupa tutta l’area.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>obbligatorio</td>
+      <td>Il nome dello slot.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>tutta l’area</td>
+      <td>Ancoraggio, bordo, scostamento e dimensione, come nella <a href="/it/docs/configuration-headers-footers#collocazione-degli-elementi">collocazione degli elementi</a>. Ignorato quando una cella della griglia colloca la cornice.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; col, row, cols?, rows? &#125;</code></td>
+      <td>nessuna</td>
+      <td>Una cella della griglia del modello, contando da 1, estesa su <code>cols</code> × <code>rows</code> celle (1 per impostazione predefinita). Una cella oltre la griglia viene riportata al suo interno. Ignorato quando il modello non ha una griglia.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>height</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
+      <td><code>'fill'</code>, <code>'auto'</code></td>
+      <td>Una lunghezza fissa, una percentuale dell’area (da 0 a 100), <code>'auto'</code> (la dimensione propria del contenuto) o <code>'fill'</code> (quanto resta fino al bordo a cui la cornice è ancorata). Se non è impostata, la cornice legge <code>placement.size</code> e poi il valore predefinito: tutta la larghezza, alta quanto il suo contenuto. Una cornice di testo ha bisogno di una giustezza, quindi una larghezza <code>'auto'</code> ha senso solo per una cornice che contiene una sola immagine (la larghezza dell’immagine all’altezza della cornice). Un valore che il motore non può usare (una lunghezza negativa, un’unità sconosciuta) vale come il predefinito.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>nessuno</td>
+      <td>Limiti per una dimensione <code>'auto'</code> o <code>'fill'</code> e per lo spazio che un gruppo cede o prende. Il minimo prevale sul massimo, e una dimensione fissa fuori dai limiti viene riportata tra di essi (<code>frameMinMax</code> avvisa di entrambi i casi).</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>senza riquadro</td>
+      <td>L’id di uno <a href="/it/docs/configuration-callouts#stili-dei-riquadri">stile dei riquadri</a>: le cornici si disegnano con gli stili dei riquadri (sfondo, bordo, spaziatura interna, fascia, icona, linguetta dell’etichetta, titolo). Le parole di una linguetta vengono dal Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Le impostazioni dei riquadri che decidono dove va un riquadro nel testo corrente (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) non valgono per una cornice.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>quella dello stile</td>
+      <td>Sostituisce la spaziatura interna dello stile lato per lato: lo spazio per le foto che stanno sopra un riquadro, per esempio.</td>
+    </tr>
+    <tr>
+      <td><code>layer</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>L’ordine di pittura. La decorazione è il livello 0; un livello negativo si dipinge sotto di essa.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Gradi, in senso orario. Il riquadro e il suo contenuto ruotano insieme.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
+      <td><code>'top'</code></td>
+      <td>Dove sta il contenuto in una cornice più alta di lui.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code>, <code>columnGap</code></td>
+      <td><code>number</code>, <code>Dimension</code></td>
+      <td><code>1</code>, quello dello stile</td>
+      <td>Colonne dentro la cornice.</td>
+    </tr>
+    <tr>
+      <td><code>exclude</code></td>
+      <td><code>'none' | 'push'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'push'</code>: il testo delle altre cornici scorre attorno al rettangolo di questa.</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>La cornice riceve il contenuto che non indica nessuno slot.</td>
+    </tr>
+    <tr>
+      <td><code>takes</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td>nessuno</td>
+      <td>La cornice riceve il primo titolo di quel livello che non indica nessuno slot, quindi il titolo di una pagina è solo <code># Title</code> in cima al blocco.</td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td><code>string</code></td>
+      <td>nessuno</td>
+      <td>Una catena: il contenuto che non entra continua nella cornice con quel nome, nella stessa pagina.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>string</code></td>
+      <td>nessuno</td>
+      <td>Dove prosegue il contenuto che non entra: <code>'#frame'</code> (un’altra cornice della pagina, come <code>next</code>), <code>'next-page'</code> (la stessa cornice in una pagina aggiunta dopo questa) o <code>'template:&lt;id&gt;'</code> (una pagina di quel modello).</td>
+    </tr>
+    <tr>
+      <td><code>overflow.mark</code></td>
+      <td><code>string | false</code></td>
+      <td>quello della lingua</td>
+      <td>Il segno alla fine di un pezzo tagliato. Se non è impostato, la parola di continuazione della lingua del documento (quella delle tabelle divise); <code>false</code> non ne mette nessuno.</td>
+    </tr>
+    <tr>
+      <td><code>fit.shrinkText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quando nient’altro fa entrare il contenuto, il suo testo si può comporre più piccolo.</td>
+    </tr>
+    <tr>
+      <td><code>fit.minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.9</code></td>
+      <td>La scala minima del testo, sopra 0 e al massimo 1 (un valore maggiore vale 1).</td>
+    </tr>
+    <tr>
+      <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
+      <td><code>boolean</code>, <code>number</code></td>
+      <td><code>true</code>, <code>0.8</code></td>
+      <td>Se le immagini della cornice si possono rimpicciolire, e fino a quale scala.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>La cornice non si sposta né cambia dimensione, per un riquadro che deve restare allineato con l’illustrazione. Un gruppo si dispone attorno a essa.</td>
+    </tr>
+    <tr>
+      <td><code>grow</code>, <code>shrink</code>, <code>priority</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Come la cornice divide lo spazio del suo gruppo: <code>grow</code> prende una parte dello spazio libero, <code>shrink</code> permette alla cornice di cedere spazio, e le cornici con <code>priority</code> più bassa lo cedono per prime.</td>
+    </tr>
+    <tr>
+      <td><code>optional</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Nessun avviso quando il Markdown non manda nulla alla cornice.</td>
+    </tr>
+    <tr>
+      <td><code>crossGutter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>In una doppia pagina, la cornice può attraversare la fascia del dorso.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code>, <code>direction</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
+      <td>quelli della pagina</td>
+      <td>Un riquadro verticale su una pagina orizzontale, o il contrario.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>In un modello che ne estende un altro, o in una variante: elimina la cornice ereditata con quel nome.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Gruppi
+
+Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine) di cornici che si dividono lo spazio e si spostano insieme. Dentro un gruppo, la posizione propria delle cornici lungo la direzione del gruppo viene ignorata: il gruppo le dispone in ordine, con `gap` tra l’una e l’altra. Quando il testo di una cornice cresce, le cornici che la seguono si spostano. Un gruppo è un riquadro a cui si possono ancorare cornici e decorazione (`'#pagina'`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>obbligatorio</td>
+      <td>Unico tra le cornici e i gruppi del modello.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack'</code></td>
+      <td>Dall’alto in basso, o dall’inizio alla fine.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>string[]</code></td>
+      <td><code>[]</code></td>
+      <td>Le cornici del gruppo, nel loro ordine sulla pagina. Una cornice appartiene al massimo a un gruppo; un nome che non è una cornice del modello, o una cornice già elencata, viene saltato.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Lo spazio tra due cornici del gruppo.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>grid</code></td>
+      <td>come le cornici</td>
+      <td>il riquadro delle sue cornici</td>
+      <td>Il riquadro proprio del gruppo. Se non è impostato, il riquadro che racchiude i riquadri dichiarati delle sue cornici.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
+      <td><code>'start'</code></td>
+      <td>Dove va lo spazio libero quando nessuna cornice del gruppo cresce.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>In un modello che ne estende un altro, o in una variante: elimina il gruppo ereditato.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Ereditarietà e varianti
+
+Un modello con `extends` parte dal modello che indica (che a sua volta può estenderne un altro) e cambia solo ciò che scrive:
+
+- Un campo come `area`, `header` o `overflowTemplate` sostituisce quello del genitore. `grid` si unisce chiave per chiave. Anche `spread`, `gutter` e `role` si ereditano; `id`, `name` ed `extends` sono propri del modello.
+- `frames` e `groups` si uniscono **per nome**: una voce con il nome di una ereditata cambia i campi che scrive e tiene gli altri (`fit`, `overflow` e `padding` si uniscono chiave per chiave; `placement` si sostituisce per intero); `remove: true` la elimina; un nome nuovo si aggiunge dopo quelli ereditati.
+- Gli elementi della decorazione si uniscono per `id` allo stesso modo; un elemento con un id nuovo, o senza id, si aggiunge.
+
+`variants.recto` e `variants.verso` si scrivono come un modello e si uniscono allo stesso modo, su una pagina di destra o di sinistra. Si applicano dopo tutta la catena di `extends`, prima la variante della radice. Una doppia pagina ha entrambi i lati, quindi nessuna variante vale per essa.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
+      placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+    variants: { recto: { frames: [{ name: 'margen', placement: { anchor: { to: 'container', edge: 'top-right' } } }] } } },
+  { id: 'tema-sin-margen', extends: 'tema', frames: [{ name: 'margen', remove: true }] },
+]
+```
+
+Un valore uguale a un predefinito non viene mai scartato quando la Sandbox salva un modello: in un modello che ne estende un altro, o in una variante, sostituisce il valore del genitore.
+
+Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello con la catena unita, la variante del lato applicata, ogni valore predefinito compilato e ogni riferimento risolto come descrivono gli avvisi più sotto; `validatePageTemplates(config)` restituisce gli avvisi.
+
+## Stili delle etichette
+
+La proprietà `labelStyles` dà un nome agli aspetti delle etichette messe su un’immagine: i mari e le città di una carta, le parti di uno schema. Un’etichetta sta in un ancoraggio dell’immagine (un punto salvato con la risorsa, come i personaggi dei fumetti) e prende lo stile che indica l’ancoraggio o l’etichetta.
+
+```ts
+labelStyles: [
+  { id: 'mar', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: 0.12,
+    color: { hex: '#2b6ca3', model: 'hex' } },
+  { id: 'ciudad', fontWeight: 600, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 0.6, unit: 'pt' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obbligatorio</td>
+      <td>Il nome che usano ancoraggi ed etichette.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>l’id</td>
+      <td>Il nome mostrato nella Sandbox.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStyle</code></td>
+      <td><code>string</code></td>
+      <td>nessuno</td>
+      <td>Uno stile di paragrafo da cui l’etichetta prende il carattere; i campi qui sotto lo sostituiscono.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>quelli del testo corrente</td>
+      <td>Il carattere dell’etichetta.</td>
+    </tr>
+    <tr>
+      <td><code>fontStyle</code></td>
+      <td><code>'normal' | 'italic'</code></td>
+      <td><code>'normal'</code></td>
+      <td>Tondo o corsivo.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>colore del testo corrente</td>
+      <td>Il colore delle lettere.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Maiuscole, come le carte scrivono mari e paesi.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Spazio in più tra le lettere, in em.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>&#123; color, width &#125;</code></td>
+      <td>nessuno</td>
+      <td>Un contorno dietro le lettere, perché si leggano su un’immagine carica di dettagli.</td>
+    </tr>
+    <tr>
+      <td><code>background</code>, <code>padding</code></td>
+      <td><code>ColorValue</code>, <code>Dimension</code></td>
+      <td>nessuno</td>
+      <td>Una campitura dietro l’etichetta, e lo spazio attorno al suo testo.</td>
+    </tr>
+    <tr>
+      <td><code>minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.85</code></td>
+      <td>Quanto si può rimpicciolire un’etichetta che non entra nella sua larghezza.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Campi di etichetta di un ancoraggio
+
+Gli ancoraggi di un’immagine (`Resource.anchors`, i punti che i fumetti usano per i personaggi) accettano alcuni campi facoltativi per le etichette. Sono frazioni dell’immagine, quindi valgono in ogni lingua e con qualunque ritaglio dell’immagine. I fumetti li ignorano.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>number</code></td>
+      <td>quella dell’etichetta</td>
+      <td>La giustezza dell’etichetta, come frazione della larghezza dell’immagine: un nome lungo va a capo su due righe al suo interno.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td><code>'center'</code></td>
+      <td>Quale lato dell’etichetta sta sul punto dell’ancoraggio.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom'</code></td>
+      <td><code>'middle'</code></td>
+      <td>Quale bordo dell’etichetta sta all’altezza dell’ancoraggio.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Gradi, in senso orario, attorno al punto dell’ancoraggio: il nome di un fiume lungo il suo corso.</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>nessuno</td>
+      <td>Un id di <code>labelStyles</code>. Un’etichetta che indica il proprio stile lo sostituisce.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Avvisi dei modelli di pagina
+
+Altrove il motore ignora una chiave che non conosce. I modelli di pagina e gli stili delle etichette invece vengono verificati, e ogni problema diventa un avviso di configurazione in `postext check` e nel pannello Verifiche della Sandbox. Il `path` di questi avvisi è un puntatore JSON al campo in errore: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quando il campo è stato ereditato, il puntatore indica il modello che l’ha scritto. Un avviso che cita un id o un nome inesistente suggerisce anche quello esistente più vicino.
+
+Una chiave scritta male di un modello, di una cornice, di un gruppo, di una griglia, di `fit`, di `overflow`, di una variante o di uno stile di etichetta è un `unknownConfigKey`; una parola fuori dalle scelte di un’impostazione (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) è un `unknownConfigValue`, e l’impostazione tiene il suo valore predefinito. Un modello senza `id`, o una cornice o un gruppo senza `name`, viene ignorato con un `unknownConfigValue` su quel campo.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Avviso</th>
+      <th>Causa</th>
+      <th>Rimedio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateDuplicate</code></td>
+      <td>Due modelli hanno lo stesso <code>id</code>. Si usa il primo e quello successivo viene ignorato.</td>
+      <td>Rinomina uno dei due, o elimina la copia.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsCycle</code></td>
+      <td>Seguendo <code>extends</code> si torna allo stesso modello (<code>a → b → a</code>). Tutti i modelli del ciclo, e tutti quelli che ne estendono uno, vengono scartati: nessuna pagina li può usare.</td>
+      <td>Togli l’<code>extends</code> di un modello del ciclo.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsUnknown</code></td>
+      <td><code>extends</code> indica un id che nessun modello ha. Il modello si usa da solo, senza ereditare nulla.</td>
+      <td>Correggi l’id (l’avviso suggerisce quello più vicino), o aggiungi il modello genitore.</td>
+    </tr>
+    <tr>
+      <td><code>frameDuplicate</code></td>
+      <td>Due cornici, o due gruppi, di uno stesso elenco hanno lo stesso <code>name</code>, oppure un gruppo ha il nome di una cornice. La voce successiva viene ignorata; un ancoraggio a quel nome legge la cornice.</td>
+      <td>Dai a ogni cornice e a ogni gruppo un nome proprio. Per cambiare una cornice ereditata, scrivi una sola voce con il suo nome.</td>
+    </tr>
+    <tr>
+      <td><code>frameStyleUnknown</code></td>
+      <td>Lo <code>style</code> di una cornice non indica nessuno stile dei riquadri. La cornice si disegna senza riquadro.</td>
+      <td>Correggi l’id, o aggiungi lo stile a <code>calloutStyles</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frameAnchorUnknown</code></td>
+      <td>Una cornice, un gruppo o un elemento della decorazione è ancorato a <code>'#name'</code> e il modello non ha cornici, gruppi o elementi con quel nome; oppure cornici e gruppi sono ancorati l’uno all’altro in un ciclo (anche attraverso un gruppo senza un proprio ancoraggio, il cui riquadro è quello delle sue cornici). L’ancoraggio vale come <code>'container'</code>, l’area.</td>
+      <td>Ancora a una cornice o a un gruppo che esiste, o rompi il ciclo ancorandone uno all’area.</td>
+    </tr>
+    <tr>
+      <td><code>frameMinMax</code></td>
+      <td>Un minimo è maggiore del suo massimo (<code>minHeight 40mm &gt; maxHeight 30mm</code>), oppure una <code>width</code> o una <code>height</code> fissa sta fuori dai limiti. Il minimo prevale, una dimensione fissa viene riportata tra i limiti, e <code>used</code> dice cosa prende la cornice. Le lunghezze in unità diverse si confrontano alla risoluzione della pagina, gli em al corpo del testo corrente.</td>
+      <td>Rendi il minimo non maggiore del massimo, o togli il limite che la dimensione fissa contraddice.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameUnknown</code></td>
+      <td>Le <code>frames</code> di un gruppo elencano un nome che non è una cornice del modello (forse eliminata da un modello figlio o da una variante). Il gruppo lo salta.</td>
+      <td>Correggi il nome, o toglilo dall’elenco.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameTwice</code></td>
+      <td>Una cornice è elencata in due gruppi, o due volte nello stesso. Una cornice appartiene a un solo gruppo: la voce successiva viene saltata.</td>
+      <td>Tieni la cornice nell’unico gruppo con cui si sposta.</td>
+    </tr>
+    <tr>
+      <td><code>frameChainLoop</code></td>
+      <td>Le cornici continuano l’una nell’altra in un ciclo tramite <code>next</code> o <code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). Il collegamento che chiude il ciclo viene scartato, quindi la catena finisce nella cornice che lo precede.</td>
+      <td>Chiudi la catena nella sua ultima cornice: togli il suo <code>next</code>, o falla continuare nella pagina successiva.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTargetUnknown</code></td>
+      <td>Un <code>next</code> non indica nessuna cornice del modello; un <code>overflow.continueIn</code> non indica nessuna cornice (<code>'#x'</code>) o nessun modello (<code>'template:x'</code>), oppure non ha nessuna delle forme <code>'#frame'</code>, <code>'next-page'</code> e <code>'template:&lt;id&gt;'</code>; oppure <code>overflowTemplate</code> non indica nessun modello. Il contenuto che non entra non prosegue lì.</td>
+      <td>Correggi il nome o l’id, o scrivi una delle tre forme.</td>
+    </tr>
+    <tr>
+      <td><code>labelStyleUnknown</code></td>
+      <td>Un ancoraggio di un’immagine indica uno <code>style</code> che <code>labelStyles</code> non ha. L’avviso cita la risorsa. Le etichette in quell’ancoraggio prendono l’aspetto predefinito.</td>
+      <td>Correggi l’id dello stile nell’ancoraggio, o aggiungi lo stile a <code>labelStyles</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+La versione della configurazione è la 15 dai modelli di pagina in poi (i bundle scritti prima continuano a caricarsi senza modifiche: niente di ciò che dice una configurazione più vecchia cambia significato).

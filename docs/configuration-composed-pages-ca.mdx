@@ -1,0 +1,633 @@
+{/* docs/configuration-composed-pages-ca.mdx */}
+
+export const metadata = {
+  title: 'Configuració: pàgines compostes',
+  sidebarTitle: 'Paràmetres de pàgines compostes',
+  description: "Plantilles de pàgina per a les pàgines compostes: marcs, grups, decoració, herència i variants de recto i verso, els estils de rètol dels ancoratges d'una imatge i els avisos que pot donar una plantilla",
+  lang: 'ca',
+  lastUpdated: '2026-10-16',
+  readingTime: '6 min',
+  order: 18,
+  parent: 'configuration',
+  plainSummary: "Aquesta pàgina tracta de les plantilles de pàgina. Una plantilla és una pàgina dibuixada als paràmetres: unes caixes amb nom, anomenades marcs, amb el seu lloc, la mida fins a la qual poden créixer i el seu aspecte. El Markdown d'una pàgina composta omple després aquests marcs pel seu nom, de manera que el text mai no guarda posicions i els paràmetres mai no guarden text. Una plantilla pot partir d'una altra i canviar només uns quants marcs, i pot ser diferent a les pàgines parells i a les senars. La pàgina recull també els estils de rètol per a les paraules que es posen sobre una imatge, i cada avís que pot donar una plantilla amb la manera de corregir-lo.",
+};
+
+# Configuració: pàgines compostes
+
+
+## Plantilles de pàgina
+
+Una pàgina composta és una pàgina que pren la forma d'una **plantilla de pàgina** de la configuració i el contingut del Markdown d'un bloc `::::page{template="…"}`. La plantilla dona nom a uns rectangles, anomenats **marcs**; el Markdown envia cada peça de contingut a un marc pel seu nom (el seu buit). La geometria mai no apareix al Markdown, i el text del contingut mai no apareix a la plantilla. La propietat `pageTemplates` conté les plantilles del llibre:
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [{ id: 'caja-azul' }, { id: 'tab-titulo' }],
+  pageTemplates: [
+    {
+      id: 'tema-cajas',
+      decoration: {
+        elements: [
+          { kind: 'image', id: 'fondo', resourceId: '{attr.fondo}', decorative: true,
+            placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } } },
+        ],
+      },
+      frames: [
+        { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+        { name: 'texto', flow: true },
+        { name: 'dinero', style: 'caja-azul', padding: { right: { value: 62, unit: 'mm' } } },
+        { name: 'dinero-fotos', layer: 2, width: { value: 60, unit: 'mm' },
+          placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+      ],
+      groups: [
+        { name: 'pagina', kind: 'stack', gap: { value: 6, unit: 'mm' }, frames: ['titulo', 'texto', 'dinero'] },
+      ],
+    },
+  ],
+};
+```
+
+Una plantilla que només fixa el seu `id` i un marc és una pàgina sencera amb aquest marc ocupant l'àrea de text. Tots els altres camps són opcionals:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propietat</th>
+      <th style={{ width: '200px' }}>Tipus</th>
+      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obligatori</td>
+      <td>El nom que demana un bloc de pàgina (<code>template="tema-cajas"</code>). Únic entre les plantilles: una segona amb el mateix id s'ignora.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>l'id</td>
+      <td>El nom que mostra el Sandbox. La composició mai no el llegeix.</td>
+    </tr>
+    <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>L'id de la plantilla de la qual parteix aquesta. Vegeu <a href="#herència-i-variants">Herència i variants</a>.</td>
+    </tr>
+    <tr>
+      <td><code>area</code></td>
+      <td><code>'content' | 'trim' | 'bleed'</code></td>
+      <td><code>'content'</code></td>
+      <td>El rectangle al qual es refereixen les posicions dels marcs. <code>'content'</code> és l'àrea de text de la pàgina, reflectida a parells i senars com el text corregut; <code>'trim'</code> és la pàgina al tall; <code>'bleed'</code>, la pàgina amb el seu sagnat.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
+      <td>cap</td>
+      <td>Divideix l'àrea en cel·les, de manera que un marc o un grup es pot col·locar per cel·la (<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>, comptant des d'1) en lloc de per <code>placement</code>. Els espais valen <code>0</code> per defecte.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>FrameConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Els marcs, en l'ordre de la plantilla: l'ordre en què es mesuren i el que desfà els empats. Vegeu <a href="#marcs">Marcs</a>.</td>
+    </tr>
+    <tr>
+      <td><code>groups</code></td>
+      <td><code>FrameGroupConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Piles i fileres de marcs que es reparteixen l'espai. Vegeu <a href="#grups">Grups</a>.</td>
+    </tr>
+    <tr>
+      <td><code>decoration</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>cap</td>
+      <td>Imatges, filets i caixes que es pinten amb la pàgina, en el llenguatge d'elements de les <a href="/ca/docs/configuration-headers-footers#capçaleres-i-peus">capçaleres i peus</a>. Els elements de text només porten marcadors (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> per a un atribut del bloc de pàgina). Un element es pot ancorar a un marc o a un grup (<code>'#dinero'</code>) i llavors es mou amb ell. La decoració es col·loca després dels marcs i mai no empeny el text.</td>
+    </tr>
+    <tr>
+      <td><code>header</code>, <code>footer</code></td>
+      <td><code>DesignSlot | false</code></td>
+      <td>heretats</td>
+      <td>La capçalera i el foli de la pàgina. Sense fixar, la pàgina conserva els del seu capítol; <code>false</code> els amaga.</td>
+    </tr>
+    <tr>
+      <td><code>spread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>La plantilla descriu dues pàgines enfrontades compostes com un sol plec. Una doble pàgina comença sempre en una pàgina parell en un llibre d'esquerra a dreta (en una senar en un de dreta a esquerra), amb una pàgina en blanc al davant quan cal.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>En una doble pàgina, la franja tocant al llom que els marcs deixen lliure, tret que fixin <code>crossGutter: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>variants</code></td>
+      <td><code>&#123; recto?, verso? &#125;</code></td>
+      <td>cap</td>
+      <td>Canvis per a una pàgina senar (<code>recto</code>) o una parell (<code>verso</code>), escrits com la mateixa plantilla. El costat és el físic, de manera que funcionen tant els llibres d'esquerra a dreta com els de dreta a esquerra.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTemplate</code></td>
+      <td><code>string</code></td>
+      <td>aquesta plantilla</td>
+      <td>La plantilla de les pàgines que s'afegeixen quan un marc continua a la pàgina següent (<code>overflow.continueIn: 'next-page'</code>). Sense fixar, la pàgina afegida fa servir aquesta plantilla amb només els marcs que continuen plens.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>Un estil de paràgraf per al text de la pàgina, com el que tenen els estils d'encapçalament.</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>Una paleta pròpia per a la pàgina, com la que tenen els estils d'encapçalament i les parts.</td>
+    </tr>
+    <tr>
+      <td><code>role</code></td>
+      <td><code>string</code></td>
+      <td><code>'composed'</code></td>
+      <td>El paper de pàgina que veuen els elements de disseny amb un filtre <code>pages</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Marcs
+
+Un marc és un rectangle amb nom que rep contingut compost. El seu `name` és el buit que demana el Markdown, i és únic a la seva plantilla (un grup tampoc no pot portar el nom d'un marc, perquè els ancoratges anomenen tots dos de la mateixa manera).
+
+Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícula i, si no, pel seu `placement`, que funciona com el d'un element de disseny: un ancoratge (`'container'` és l'àrea, `'page'`, `'bleed'`, o `'#name'` per a un altre marc o grup), una vora, un desplaçament i una mida. Un marc ancorat a un altre es mou amb ell. Sense cap dels dos, el marc ocupa tota l'àrea.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propietat</th>
+      <th style={{ width: '200px' }}>Tipus</th>
+      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>obligatori</td>
+      <td>El nom del buit.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>tota l'àrea</td>
+      <td>Ancoratge, vora, desplaçament i mida, com al <a href="/ca/docs/configuration-headers-footers#posicionament-delements">posicionament d'elements</a>. S'ignora quan una cel·la de la retícula col·loca el marc.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; col, row, cols?, rows? &#125;</code></td>
+      <td>cap</td>
+      <td>Una cel·la de la retícula de la plantilla, comptant des d'1, que abasta <code>cols</code> × <code>rows</code> cel·les (1 per defecte). Una cel·la que surt de la retícula hi torna a entrar. S'ignora quan la plantilla no té retícula.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>height</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
+      <td><code>'fill'</code>, <code>'auto'</code></td>
+      <td>Una longitud fixa, un percentatge de l'àrea (de 0 a 100), <code>'auto'</code> (la mida pròpia del contingut) o <code>'fill'</code> (el que queda fins a la vora a la qual està ancorat el marc). Sense fixar, el marc llegeix <code>placement.size</code> i després el valor per defecte: tota l'amplada i tan alt com el seu contingut. Un marc de text necessita una mesura, de manera que una amplada <code>'auto'</code> només té sentit en un marc que porta una sola imatge (l'amplada de la imatge a l'alçada del marc). Un valor que el motor no pot fer servir (una longitud negativa, una unitat desconeguda) es llegeix com el valor per defecte.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>cap</td>
+      <td>Límits per a una mida <code>'auto'</code> o <code>'fill'</code> i per a l'espai que un grup dona o treu. El mínim s'imposa al màxim, i una mida fixa fora d'ells s'hi porta a dins (<code>frameMinMax</code> avisa dels dos casos).</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>sense caixa</td>
+      <td>L'id d'un <a href="/ca/docs/configuration-callouts#estils-davís">estil d'avís</a>: els marcs es dibuixen amb estils d'avís (fons, vora, farciment, franja, icona, pestanya de rètol, títol). Les paraules d'una pestanya vénen del Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Els paràmetres d'avís que diuen on va una caixa en el text corregut (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) no s'apliquen a un marc.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>el de l'estil</td>
+      <td>Substitueix el farciment de l'estil costat per costat: lloc per a les fotos que van damunt d'una caixa, per exemple.</td>
+    </tr>
+    <tr>
+      <td><code>layer</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Ordre de pintura. La decoració és la capa 0; una capa negativa es pinta a sota.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Graus, en el sentit de les agulles del rellotge. La caixa i el seu contingut giren junts.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
+      <td><code>'top'</code></td>
+      <td>On se situa el contingut en un marc més alt que ell.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code>, <code>columnGap</code></td>
+      <td><code>number</code>, <code>Dimension</code></td>
+      <td><code>1</code>, el de l'estil</td>
+      <td>Columnes dins del marc.</td>
+    </tr>
+    <tr>
+      <td><code>exclude</code></td>
+      <td><code>'none' | 'push'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'push'</code>: el text dels altres marcs envolta el rectangle d'aquest.</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>El marc rep el contingut que no anomena cap buit.</td>
+    </tr>
+    <tr>
+      <td><code>takes</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td>cap</td>
+      <td>El marc rep el primer encapçalament d'aquest nivell que no anomena cap buit, de manera que el títol d'una pàgina és només un <code># Títol</code> al principi del bloc.</td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>Una cadena: el contingut que no hi cap continua al marc d'aquest nom, a la mateixa pàgina.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>On continua el contingut que no hi cap: <code>'#frame'</code> (un altre marc de la pàgina, com <code>next</code>), <code>'next-page'</code> (el mateix marc en una pàgina que s'afegeix darrere d'aquesta) o <code>'template:&lt;id&gt;'</code> (una pàgina d'aquesta plantilla).</td>
+    </tr>
+    <tr>
+      <td><code>overflow.mark</code></td>
+      <td><code>string | false</code></td>
+      <td>la de la llengua</td>
+      <td>La marca al final d'un tros tallat. Sense fixar, la paraula de continuació de la llengua del document (la mateixa que fan servir les taules partides); <code>false</code> no en posa cap.</td>
+    </tr>
+    <tr>
+      <td><code>fit.shrinkText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quan res més no aconsegueix que el contingut hi càpiga, el seu text es pot compondre més petit.</td>
+    </tr>
+    <tr>
+      <td><code>fit.minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.9</code></td>
+      <td>L'escala de text més petita, més gran que 0 i com a màxim 1 (un valor més gran es llegeix com a 1).</td>
+    </tr>
+    <tr>
+      <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
+      <td><code>boolean</code>, <code>number</code></td>
+      <td><code>true</code>, <code>0.8</code></td>
+      <td>Si les imatges del marc es poden compondre més petites, i fins a quina escala.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>El marc mai no es mou ni canvia de mida, per a una caixa que ha de quedar alineada amb la il·lustració. Un grup es col·loca al seu voltant.</td>
+    </tr>
+    <tr>
+      <td><code>grow</code>, <code>shrink</code>, <code>priority</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Com comparteix el marc l'espai del seu grup: <code>grow</code> pren una part de l'espai sobrant, <code>shrink</code> deixa que el marc torni espai, i els marcs amb una <code>priority</code> més baixa el cedeixen primer.</td>
+    </tr>
+    <tr>
+      <td><code>optional</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Cap avís quan el Markdown no envia res al marc.</td>
+    </tr>
+    <tr>
+      <td><code>crossGutter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>En una doble pàgina, el marc pot travessar la franja del llom.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code>, <code>direction</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
+      <td>els de la pàgina</td>
+      <td>Una caixa vertical en una pàgina horitzontal, o a l'inrevés.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>En una plantilla que n'estén una altra, o en una variant: treu el marc heretat amb aquest nom.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Grups
+
+Un grup és una pila (de dalt a baix) o una filera (del principi al final) de marcs que es reparteixen l'espai i es mouen junts. Dins d'un grup s'ignora la posició pròpia dels marcs en la direcció del grup: el grup els col·loca en ordre, amb `gap` entre ells. Quan creix el text d'un marc, els marcs que van darrere es desplacen. Un grup és una caixa a la qual es poden ancorar marcs i decoració (`'#pagina'`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propietat</th>
+      <th style={{ width: '200px' }}>Tipus</th>
+      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>obligatori</td>
+      <td>Únic entre els marcs i grups de la plantilla.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack'</code></td>
+      <td>De dalt a baix, o del principi al final.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>string[]</code></td>
+      <td><code>[]</code></td>
+      <td>Els marcs del grup, en el seu ordre a la pàgina. Un marc pertany com a màxim a un grup; un nom que no és cap marc de la plantilla, o un marc ja llistat, se salta.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>L'espai entre dos marcs del grup.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>grid</code></td>
+      <td>com als marcs</td>
+      <td>la caixa dels seus marcs</td>
+      <td>La caixa pròpia del grup. Sense fixar, la caixa que envolta les caixes declarades dels seus marcs.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
+      <td><code>'start'</code></td>
+      <td>On va l'espai sobrant quan cap marc del grup no creix.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>En una plantilla que n'estén una altra, o en una variant: treu el grup heretat.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Herència i variants
+
+Una plantilla amb `extends` parteix de la plantilla que anomena (que al seu torn en pot estendre una altra) i canvia només el que escriu:
+
+- Un camp com `area`, `header` o `overflowTemplate` substitueix el del pare. `grid` es combina clau a clau. `spread`, `gutter` i `role` també s'hereten; `id`, `name` i `extends` són propis de la plantilla.
+- `frames` i `groups` es combinen **per nom**: una entrada amb el nom d'una d'heretada canvia els camps que escriu i conserva la resta (`fit`, `overflow` i `padding` es combinen clau a clau; `placement` se substitueix sencer); `remove: true` la treu; un nom nou s'afegeix darrere dels heretats.
+- Els elements de decoració es combinen per `id` de la mateixa manera; un element amb un id nou, o sense id, s'afegeix.
+
+`variants.recto` i `variants.verso` s'escriuen com una plantilla i es combinen igual, en una pàgina senar o en una parell. S'apliquen després de tota la cadena d'`extends`, primer la variant de l'arrel. Una doble pàgina té els dos costats, de manera que no se li aplica cap variant.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
+      placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+    variants: { recto: { frames: [{ name: 'margen', placement: { anchor: { to: 'container', edge: 'top-right' } } }] } } },
+  { id: 'tema-sin-margen', extends: 'tema', frames: [{ name: 'margen', remove: true }] },
+]
+```
+
+Quan el Sandbox desa una plantilla, mai no descarta un valor igual al valor per defecte: en una plantilla que n'estén una altra, o en una variant, aquest valor substitueix el del pare.
+
+Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantilla amb la seva cadena combinada, la variant del costat aplicada, tots els valors per defecte omplerts i cada referència resolta com descriuen els avisos de més avall; `validatePageTemplates(config)` retorna els avisos.
+
+## Estils de rètol
+
+La propietat `labelStyles` dona nom als aspectes dels rètols que es posen sobre una imatge: els mars i les ciutats d'un mapa, les parts d'un esquema. Un rètol se situa en un ancoratge de la imatge (un punt desat amb el recurs, com els parlants d'un còmic) i pren l'estil que anomena l'ancoratge o el rètol.
+
+```ts
+labelStyles: [
+  { id: 'mar', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: 0.12,
+    color: { hex: '#2b6ca3', model: 'hex' } },
+  { id: 'ciudad', fontWeight: 600, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 0.6, unit: 'pt' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propietat</th>
+      <th style={{ width: '200px' }}>Tipus</th>
+      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obligatori</td>
+      <td>El nom que fan servir els ancoratges i els rètols.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>l'id</td>
+      <td>El nom que mostra el Sandbox.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStyle</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>Un estil de paràgraf del qual el rètol pren la lletra; els camps de més avall el substitueixen.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>els del text general</td>
+      <td>La lletra del rètol.</td>
+    </tr>
+    <tr>
+      <td><code>fontStyle</code></td>
+      <td><code>'normal' | 'italic'</code></td>
+      <td><code>'normal'</code></td>
+      <td>Rodona o cursiva.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>el del text general</td>
+      <td>El color de les lletres.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Majúscules, com les que posen els mapes als mars i als països.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Espai afegit entre lletres, en ems.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>&#123; color, width &#125;</code></td>
+      <td>cap</td>
+      <td>Un contorn darrere de les lletres, perquè es llegeixin sobre una imatge carregada.</td>
+    </tr>
+    <tr>
+      <td><code>background</code>, <code>padding</code></td>
+      <td><code>ColorValue</code>, <code>Dimension</code></td>
+      <td>cap</td>
+      <td>Una placa darrere del rètol, i l'espai al voltant del seu text.</td>
+    </tr>
+    <tr>
+      <td><code>minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.85</code></td>
+      <td>Fins a quina mida es pot reduir un rètol quan no cap en la seva amplada.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Camps de rètol d'un ancoratge
+
+Els ancoratges d'una imatge (`Resource.anchors`, els punts que fan servir els còmics per als parlants) admeten uns quants camps opcionals per a rètols. Són fraccions de la imatge, de manera que valen en totes les llengües i amb qualsevol retall de la imatge. Els còmics els ignoren.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Camp</th>
+      <th style={{ width: '200px' }}>Tipus</th>
+      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>number</code></td>
+      <td>la pròpia del rètol</td>
+      <td>La mesura del rètol, com a fracció de l'amplada de la imatge: un nom llarg es parteix en dues línies a dins.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td><code>'center'</code></td>
+      <td>Quin costat del rètol queda al punt de l'ancoratge.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom'</code></td>
+      <td><code>'middle'</code></td>
+      <td>Quina vora del rètol queda a l'alçada de l'ancoratge.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Graus, en el sentit de les agulles del rellotge, al voltant del punt de l'ancoratge: el nom d'un riu al llarg del seu curs.</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>Un id de <code>labelStyles</code>. Un rètol que anomena el seu propi estil el substitueix.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Avisos de les plantilles de pàgina
+
+A la resta de la configuració, el motor ignora una clau que no coneix. Les plantilles de pàgina i els estils de rètol, en canvi, es comproven, i cada problema és un avís de configuració a `postext check` i al tauler Revisió del Sandbox. El camp `path` d'aquests avisos és un punter JSON al camp que falla: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quan el camp és heretat, el punter anomena la plantilla que el va escriure. Un avís que anomena un id o un nom que no existeix proposa a més l'existent que s'hi assembla més.
+
+Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `overflow`, una variant o un estil de rètol és un `unknownConfigKey`; una paraula fora de les opcions d'un paràmetre (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) és un `unknownConfigValue`, i el paràmetre conserva el seu valor per defecte. Una plantilla sense `id`, o un marc o un grup sense `name`, s'ignora amb un `unknownConfigValue` en aquest camp.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Avís</th>
+      <th>Causa</th>
+      <th>Solució</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateDuplicate</code></td>
+      <td>Dues plantilles tenen el mateix <code>id</code>. Es fa servir la primera i la posterior s'ignora.</td>
+      <td>Canvia el nom d'una de les dues, o esborra la còpia.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsCycle</code></td>
+      <td>Seguint <code>extends</code> es torna a la mateixa plantilla (<code>a → b → a</code>). Totes les plantilles del cicle, i totes les que n'estenen alguna, es descarten: cap pàgina no les pot fer servir.</td>
+      <td>Treu l'<code>extends</code> d'una plantilla del cicle.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsUnknown</code></td>
+      <td><code>extends</code> anomena un id que no té cap plantilla. La plantilla es fa servir sola, sense heretar res.</td>
+      <td>Corregeix l'id (l'avís proposa el més semblant), o afegeix la plantilla pare.</td>
+    </tr>
+    <tr>
+      <td><code>frameDuplicate</code></td>
+      <td>Dos marcs, o dos grups, d'una mateixa llista tenen el mateix <code>name</code>, o un grup té el nom d'un marc. L'entrada posterior s'ignora; un ancoratge a aquest nom llegeix el marc.</td>
+      <td>Dona a cada marc i a cada grup un nom propi. Per canviar un marc heretat, escriu una sola entrada amb el seu nom.</td>
+    </tr>
+    <tr>
+      <td><code>frameStyleUnknown</code></td>
+      <td>L'<code>style</code> d'un marc no anomena cap estil d'avís. El marc es dibuixa sense caixa.</td>
+      <td>Corregeix l'id, o afegeix l'estil a <code>calloutStyles</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frameAnchorUnknown</code></td>
+      <td>Un marc, un grup o un element de decoració està ancorat a <code>'#name'</code> i la plantilla no té cap marc, grup ni element amb aquest nom; o hi ha marcs i grups ancorats entre si en un cicle (també a través d'un grup sense ancoratge propi, la caixa del qual és la dels seus marcs). L'ancoratge es llegeix com a <code>'container'</code>, l'àrea.</td>
+      <td>Ancora a un marc o a un grup que existeixi, o trenca el cicle ancorant-ne un a l'àrea.</td>
+    </tr>
+    <tr>
+      <td><code>frameMinMax</code></td>
+      <td>Un mínim és més gran que el seu màxim (<code>minHeight 40mm &gt; maxHeight 30mm</code>), o un <code>width</code> o un <code>height</code> fix queda fora d'ells. S'imposa el mínim, una mida fixa es porta dins dels límits i <code>used</code> diu què ocupa el marc. Les longituds en unitats diferents es comparen a la resolució de la pàgina, i els ems al cos del text general.</td>
+      <td>Fes que el mínim no superi el màxim, o treu el límit que contradiu la mida fixa.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameUnknown</code></td>
+      <td>Els <code>frames</code> d'un grup inclouen un nom que no és cap marc de la plantilla (potser el va treure una plantilla filla o una variant). El grup se'l salta.</td>
+      <td>Corregeix el nom, o treu-lo de la llista.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameTwice</code></td>
+      <td>Un marc figura en dos grups, o dues vegades en un. Un marc pertany a un sol grup: l'aparició posterior se salta.</td>
+      <td>Deixa el marc al grup amb què es mou.</td>
+    </tr>
+    <tr>
+      <td><code>frameChainLoop</code></td>
+      <td>Uns marcs continuen els uns en els altres en un cicle a través de <code>next</code> o d'<code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). L'enllaç que tanca el cicle es descarta, de manera que la cadena acaba al marc anterior.</td>
+      <td>Acaba la cadena al seu últim marc: treu-li el <code>next</code>, o fes que continuï a la pàgina següent.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTargetUnknown</code></td>
+      <td>Un <code>next</code> no anomena cap marc de la plantilla; un <code>overflow.continueIn</code> no anomena cap marc (<code>'#x'</code>) ni cap plantilla (<code>'template:x'</code>), o no té cap de les formes <code>'#frame'</code>, <code>'next-page'</code> i <code>'template:&lt;id&gt;'</code>; o <code>overflowTemplate</code> no anomena cap plantilla. El contingut que no hi cap no hi continua.</td>
+      <td>Corregeix el nom o l'id, o escriu una de les tres formes.</td>
+    </tr>
+    <tr>
+      <td><code>labelStyleUnknown</code></td>
+      <td>Un ancoratge d'una imatge anomena un <code>style</code> que <code>labelStyles</code> no té. L'avís anomena el recurs. Els rètols d'aquest ancoratge prenen l'aspecte per defecte.</td>
+      <td>Corregeix l'id de l'estil a l'ancoratge, o afegeix l'estil a <code>labelStyles</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+La versió de la configuració és la 15 des de les plantilles de pàgina (els paquets escrits abans es continuen carregant sense canvis: res del que diu una configuració anterior no canvia de significat).
