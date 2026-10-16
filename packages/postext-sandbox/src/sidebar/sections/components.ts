@@ -44,6 +44,7 @@ import { ComicsLetteringSection } from './comics/ComicsLetteringSection';
 import { ComicsBalloonStylesSection } from './comics/ComicsBalloonStylesSection';
 import { ComicsCastSection } from './comics/ComicsCastSection';
 import { PageTemplatesSection } from './PageTemplatesSection';
+import { FrameStylesSection } from './FrameStylesSection';
 
 /** Section id → component. Kept apart from the registry so the registry
  *  stays a pure data module. */
@@ -75,6 +76,7 @@ export const SECTION_COMPONENTS: Record<SettingsSectionId, ComponentType> = {
   'diagramStyle': DiagramStyleSection,
   'videoStyle': VideoStyleSection,
   'calloutStyles': CalloutStylesSection,
+  'frameStyles': FrameStylesSection,
   'chipStyles': ChipStylesSection,
   'markStyles': MarkStylesSection,
   'codeStyle': CodeStyleSection,
