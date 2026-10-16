@@ -186,7 +186,7 @@ function register(face: Face): void {
   // Skia reads the weight and the slant from the file itself, as the
   // browser does from @font-face; the alias is the family the book names.
   GlobalFonts.register(Buffer.from(face.bytes.buffer, face.bytes.byteOffset, face.bytes.byteLength), face.family);
-  noteSvgFont(face.bytes);
+  noteSvgFont(face.bytes, face.family);
 }
 
 /** How much heavier than the face it is drawn from a weight must be for
@@ -248,7 +248,7 @@ function registerStandIns(family: string, faces: readonly Face[], variants: read
     registered.add(key);
     noteSkiaFace(family, v.weight, v.style);
     GlobalFonts.register(Buffer.from(copy.buffer, copy.byteOffset, copy.byteLength), family);
-    noteSvgFont(copy);
+    noteSvgFont(copy, family);
   }
 }
 
