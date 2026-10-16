@@ -716,11 +716,13 @@ function paintComposedFrames(
     if (m) pushFrame(ctx, sheetMatrixToPdf(m, ctx.scale, ctx.pageHeightPt));
     if (clips) pushClipRect(ctx, frame.rect.x, frame.rect.y, frame.rect.width, frame.rect.height);
     try {
-      for (const fb of blocks) {
-        const paint = () => renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
-        if (structure) structure.readFloat(fb, paint, readAt);
-        else paint();
-      }
+      // A frame's blocks are read as one float (#862), so a list in it
+      // stays one list.
+      const paint = () => {
+        for (const fb of blocks) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
+      };
+      if (structure) structure.readFloat(blocks[0]!, paint, readAt);
+      else paint();
     } finally {
       if (clips) popClip(ctx);
       if (m) popFrame(ctx);

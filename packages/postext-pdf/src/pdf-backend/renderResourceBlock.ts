@@ -39,7 +39,7 @@ import type {
   VDTPage,
 } from 'postext';
 import type { PdfColorSpace } from 'postext';
-import { applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
+import { altWithLabels, applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
 import { roundedRectSvgPath } from './headerFooter';
 import { pdfUri } from './links';
 import { parseFontString } from '../fontString';
@@ -831,7 +831,7 @@ function captionText(rb: ResolvedResourceBlock): string {
 function figureAlt(rb: ResolvedResourceBlock): string {
   const label = `${rb.captionPrefix} ${rb.number}`.trim();
   const text = rb.resource.altText?.trim() || captionText(rb);
-  if (rb.kind !== 'video') return text || label;
+  if (rb.kind !== 'video') return altWithLabels(text || label, rb.labels);
   const name = rb.captionPrefix.trim() || 'Video';
   // A Chinese or Japanese name takes the full-width colon (视频：…).
   const colon = /[\u3040-\u30ff\u3400-\u9fff]$/.test(name) ? '：' : ': ';
