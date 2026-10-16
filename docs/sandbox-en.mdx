@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Sandbox',
   description: "The Sandbox's interface: the activity bar and the Text, Books, Chapters, Resources and Fonts panels, and the layout on phones",
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '28 min',
   order: 36,
   plainSummary: "The Sandbox is a free tool on this website for trying Postext without installing anything. You write your text on one side and see the finished pages on the other, and they change as you type. This page explains the parts of the screen and the panels where you write the text, manage books and chapters, add pictures and choose fonts. Other pages cover the design settings, the previews, saving and importing, and putting the Sandbox in your own website.",
@@ -47,6 +47,18 @@ The bar above the preview starts with a switch between the two ways of working o
 - **Design**: page templates and styles are edited. The Text panel shows the chapter read only, with a note and an **Edit the text** button, and its toolbar is off. A click on a frame of a composed page picks that frame for the template editor instead of placing the caret.
 
 **Alt+Shift+M** (**⌥⇧M** on a Mac) switches modes from anywhere in the Sandbox. Switching to Design while the Text panel is open opens the Design panel, and switching back opens the Text panel again. The browser remembers the mode. Agents read and set it with `sandbox_set_view` (`mode`).
+
+### Undo and redo
+
+The Sandbox keeps one history for the text and the design of the open book. **Cmd/Ctrl+Z** takes back the latest change, whichever kind it was: words typed in the Text panel, an edit made on the pages (a frame's text, a comic panel resized), a setting changed in the Design panel, a frame dragged or a page template added in Design mode. **Shift+Cmd/Ctrl+Z** (or **Ctrl+Y**) puts it back. The keys work anywhere in the Sandbox except inside a text box, which keeps its own undo for what you type in it. The **Undo** and **Redo** buttons beside the Content / Design switch, and the first two buttons of the Text panel's toolbar, run the same history, and screen readers hear what was taken back.
+
+- A gesture is one step: a slider dragged, a colour picked by dragging or a number typed digit by digit counts once, as long as the pauses are shorter than a second. Each drop of a frame is a step of its own.
+- Each chapter keeps its own text history. Undoing a text change of another chapter opens that chapter.
+- The history survives the switch between Content and Design: a text edit can be undone in Design mode, and a frame drag in Content mode.
+- Opening another book (from the Books panel, a sample, a `.postext` file or a link) starts a new history, and so does resetting the text or the whole book. Resetting only the design is a step, and can be undone.
+- Chapters added, removed, split, merged or moved, resources and fonts are not in the history. It lasts for the visit: after a reload it is empty.
+
+Agents undo and redo with `sandbox_undo` (see [WebMCP](/en/docs/webmcp)).
 
 ### Sidebar panels
 

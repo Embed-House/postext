@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Sandbox',
   description: 'L’interfaccia della Sandbox: la barra delle attività, i pannelli Testo, Libri, Capitoli, Risorse e Font, e la disposizione sui telefoni',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '30 min',
   order: 36,
   plainSummary: "La Sandbox è uno strumento gratuito di questo sito per provare Postext senza installare nulla. Scrivi il testo da una parte e vedi le pagine finite dall’altra, e cambiano mentre scrivi. Questa pagina spiega le parti dello schermo e i pannelli in cui scrivi il testo, gestisci libri e capitoli, aggiungi immagini e scegli i font. Altre pagine trattano le impostazioni grafiche, le anteprime, il salvataggio e l’importazione, e l’inserimento della Sandbox nel tuo sito.",
@@ -47,6 +47,18 @@ La barra sopra l’anteprima comincia con un selettore tra i due modi di lavorar
 - **Grafica**: si modificano i modelli di pagina e gli stili. Il pannello Testo mostra il capitolo in sola lettura, con un avviso e un pulsante **Modifica il testo**, e la sua barra degli strumenti è disattivata. Un clic su una cornice di una pagina composta seleziona quella cornice per l’editor dei modelli invece di posarvi il cursore.
 
 **Alt+Maiusc+M** (**⌥⇧M** su un Mac) cambia modalità da qualunque punto del Sandbox. Passare a Grafica con il pannello Testo aperto apre il pannello Grafica, e tornando indietro si riapre il pannello Testo. Il browser ricorda la modalità. Gli agenti la leggono e la impostano con `sandbox_set_view` (`mode`).
+
+### Annulla e ripeti
+
+Il Sandbox tiene una sola cronologia per il testo e la grafica del libro aperto. **Cmd/Ctrl+Z** annulla l’ultima modifica, di qualunque tipo sia: quanto scritto nel pannello Testo, una modifica fatta sulle pagine (il testo di una cornice, una vignetta di fumetto ridimensionata), un’impostazione cambiata nel pannello Grafica, una cornice trascinata o un modello di pagina aggiunto in modalità Grafica. **Maiusc+Cmd/Ctrl+Z** (o **Ctrl+Y**) la ripete. I tasti funzionano in tutto il Sandbox tranne dentro una casella di testo, che conserva il proprio annulla per ciò che vi si scrive. I pulsanti **Annulla** e **Ripeti**, accanto al selettore Contenuto / Grafica, e i primi due pulsanti della barra del pannello Testo usano la stessa cronologia, e il lettore di schermo annuncia che cosa è stato annullato.
+
+- Un gesto è un solo passo: un cursore trascinato, un colore scelto trascinando o un numero digitato cifra per cifra contano una volta, purché le pause restino sotto il secondo. Ogni rilascio di una cornice è un passo a sé.
+- Ogni capitolo conserva la propria cronologia del testo. Annullare una modifica al testo di un altro capitolo apre quel capitolo.
+- La cronologia resta passando da Contenuto a Grafica e viceversa: una modifica al testo si annulla in modalità Grafica, una cornice trascinata in modalità Contenuto.
+- Aprire un altro libro (dal pannello Libri, un esempio, un file `.postext` o un link) avvia una cronologia nuova, come ripristinare il testo o l’intero libro. Ripristinare solo la grafica è un passo, e si può annullare.
+- I capitoli aggiunti, eliminati, divisi, uniti o spostati, le risorse e i font non entrano nella cronologia. Dura quanto la visita: dopo un ricaricamento è vuota.
+
+Gli agenti annullano e ripetono con `sandbox_undo` (vedi [WebMCP](/it/docs/webmcp)).
 
 ### Pannelli della barra laterale
 

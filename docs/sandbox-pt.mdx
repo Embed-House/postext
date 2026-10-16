@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Sandbox',
   description: 'A interface do Sandbox: a barra de atividades, os painéis Texto, Livros, Capítulos, Recursos e Fontes, e o layout em celulares',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '31 min',
   order: 36,
   plainSummary: "O Sandbox é uma ferramenta gratuita deste site para experimentar o Postext sem instalar nada. Você escreve o texto de um lado e vê as páginas prontas do outro, e elas mudam enquanto você digita. Esta página explica as partes da tela e os painéis em que você escreve o texto, organiza livros e capítulos, inclui imagens e escolhe fontes. Outras páginas tratam dos ajustes de design, das visualizações, de como salvar e importar, e de como colocar o Sandbox no seu próprio site.",
@@ -47,6 +47,18 @@ A barra acima da visualização começa com um seletor entre as duas maneiras de
 - **Design**: editam-se os modelos de página e os estilos. O painel Texto mostra o capítulo somente para leitura, com um aviso e um botão **Editar o texto**, e a barra de ferramentas fica desativada. Um clique num bloco de uma página composta seleciona esse bloco para o editor de modelos em vez de posicionar o cursor.
 
 **Alt+Shift+M** (**⌥⇧M** no Mac) troca de modo de qualquer ponto do Sandbox. Passar para Design com o painel Texto aberto abre o painel Design, e ao voltar abre-se de novo o painel Texto. O navegador lembra o modo. Os agentes leem e mudam o modo com `sandbox_set_view` (`mode`).
+
+### Desfazer e refazer
+
+O Sandbox mantém um único histórico para o texto e o design do livro aberto. **Cmd/Ctrl+Z** desfaz a última mudança, seja ela qual for: o que foi digitado no painel Texto, uma edição feita nas páginas (o texto de um quadro, um painel de quadrinhos redimensionado), uma configuração alterada no painel Design, um quadro arrastado ou um modelo de página adicionado no modo Design. **Shift+Cmd/Ctrl+Z** (ou **Ctrl+Y**) refaz. As teclas funcionam em qualquer lugar do Sandbox, menos dentro de uma caixa de texto, que mantém o próprio desfazer para o que se digita nela. Os botões **Desfazer** e **Refazer**, ao lado da chave Conteúdo / Design, e os dois primeiros botões da barra do painel Texto usam o mesmo histórico, e o leitor de tela anuncia o que foi desfeito.
+
+- Um gesto é um passo só: um controle deslizante arrastado, uma cor escolhida arrastando ou um número digitado algarismo por algarismo contam uma vez, desde que as pausas fiquem abaixo de um segundo. Cada vez que um quadro é solto conta como um passo.
+- Cada capítulo mantém o próprio histórico de texto. Desfazer uma mudança no texto de outro capítulo abre esse capítulo.
+- O histórico continua ao trocar entre Conteúdo e Design: uma edição do texto pode ser desfeita no modo Design, e um quadro arrastado no modo Conteúdo.
+- Abrir outro livro (pelo painel Livros, por um exemplo, por um arquivo `.postext` ou por um link) começa um histórico novo, assim como redefinir o texto ou o livro inteiro. Redefinir só o design é um passo e pode ser desfeito.
+- Capítulos adicionados, removidos, divididos, unidos ou movidos, recursos e fontes ficam fora do histórico. Ele dura a visita: depois de recarregar a página, está vazio.
+
+Agentes desfazem e refazem com `sandbox_undo` (veja [WebMCP](/pt/docs/webmcp)).
 
 ### Painéis da barra lateral
 

@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP：Sandboxで作業するエージェント',
   sidebarTitle: 'WebMCP',
-  description: 'ブラウザーで動くAIエージェントが、36のWebMCPツールでSandboxを相手にできること（ページを見る、任意の設定を変える、本文を編集する、画像、表、フォントを加える、検査を実行する、書き出す）と、各ツールの呼び出し方を、実際の引数と答えで示します',
+  description: 'ブラウザーで動くAIエージェントが、37のWebMCPツールでSandboxを相手にできること（ページを見る、任意の設定を変える、本文を編集する、画像、表、フォントを加える、検査を実行する、書き出す）と、各ツールの呼び出し方を、実際の引数と答えで示します',
   lang: 'ja',
   lastUpdated: '2026-10-17',
   readingTime: '13分',
@@ -17,7 +17,7 @@ export const metadata = {
 
 [Sandbox](/ja/docs/sandbox)は、[WebMCP](https://webmachinelearning.github.io/webmcp/)を通じてエージェントに専用のツールを渡します。WebMCPはWeb標準の草案で、ページがブラウザーとやり取りしているAIモデルにツールを渡せるようにするものです。エージェントはこのツールを使うので、画面をクリックしてたどる必要がありません。本を読み、12ページの画像を求め、`bodyText.fontSize`を10.5 ptにし、章が18ページから19ページに増えたのを見て、元に戻します。人が目で確かめながらすることを、あなたの本に対して、あなたのブラウザーの中で行います。
 
-ツールは、名前が`sandbox_`で始まるものが36個あり、Sandboxが画面にある間だけ登録されます。ほかに、postext.devのどのページにもあるサイトのツール`site_*`が8個あります。このページでは、エージェントに頼みたい内容ごとにツールを分け、それぞれの呼び出し方を示します。
+ツールは、名前が`sandbox_`で始まるものが37個あり、Sandboxが画面にある間だけ登録されます。ほかに、postext.devのどのページにもあるサイトのツール`site_*`が8個あります。このページでは、エージェントに頼みたい内容ごとにツールを分け、それぞれの呼び出し方を示します。
 
 ## エージェントをつなぐ
 
@@ -25,7 +25,7 @@ export const metadata = {
 
 ツールはSandboxがマウントされたときに`document.modelContext`に登録され、Sandboxを離れると取り下げられます。ブラウザーからページのツールを受け取るエージェントは、そこでツールを見つけます。Postext側でインストールや設定をするものはありません。
 
-WebMCPはまだ草案の段階です。Chromeではオリジントライアルとして、また`chrome://flags/#enable-webmcp-testing`のフラグで使えます。ツールはページに従います。ホームページやドキュメントでは、エージェントが使えるのは`site_*`のツールで、Sandboxが画面に出ると36個の`sandbox_*`のツールが加わります。
+WebMCPはまだ草案の段階です。Chromeではオリジントライアルとして、また`chrome://flags/#enable-webmcp-testing`のフラグで使えます。ツールはページに従います。ホームページやドキュメントでは、エージェントが使えるのは`site_*`のツールで、Sandboxが画面に出ると37個の`sandbox_*`のツールが加わります。
 
 ### そのほかのブラウザー：`window.postextWebMcp`
 
@@ -231,6 +231,8 @@ await browser.close();
 
 `from`は変更前に保存されていた値です（ここでは`null`で、本はこの設定を持っていませんでした）。`from`を値にして同じ呼び出しをすれば、変更が元に戻ります。`followed`には、この設定に連動して変わった設定が並びます。エンジンが求められたものと違う値に解決したとき（上限に当たった、ほかの設定に依存している、など）は`note`が付きます。形の合わない値や、エンジンが解決できない設定は拒否され、何も変わりません。
 
+呼び出しはどれも Sandbox の履歴の一手になります。デザインパネルでの変更を Cmd/Ctrl+Z で取り消すのと同じく、`sandbox_undo`で取り消せます。
+
 大きな変更には、設定にオブジェクトをマージする`patch`（オブジェクトはマージされ、`null`は取り除き、リストは丸ごと置き換わります）と、本の設定を丸ごと別の設定に置き換える`replace`があります。後者には、たとえば書き出した`postext-config.json`を渡せます。`sandbox_reset_to_original`に`part: "config"`を渡すと、本の最初のデザインに戻ります。
 
 フォントも設定です。`sandbox_list_fonts`に`search: "Garamond"`を渡すと公開カタログからファミリーを探し、その名前を`fontFamily`の設定に書き込むとフォントが読み込まれます。
@@ -421,7 +423,7 @@ await browser.close();
 
 - **すべてはブラウザーの中にとどまります**：ツールが届くのは、Sandbox自身が届く範囲だけです。本はこのブラウザーの保存領域にあり、`url`で渡したファイルはページが取得するので、そのサーバーが許可している必要があります（CORS）。`data:` URLや`base64`なら必ず使えます。
 - **長い作業には時間がかかります**：ツールはレイアウトを待ってから答えます。`wait: false`を渡すとすぐに答えます。長い本のPDFやEPUBには数分かかります。
-- **`sandbox_undo_text`が取り消せるもの**：ツールによる本文の編集（1回の呼び出しずつ）と、プレビュー上で行った編集です。**本文**エディターで入力した内容（エディター自身の取り消しで戻します）、章の追加や移動、デザインやリソースの変更は取り消せません。これらには、各答えの`from`を使います。取り消しの履歴は、ページを再読み込みすると失われます。
+- **取り消し**：`sandbox_undo` は、本文でもデザインでも、変更した順に直前の変更を取り消します。Sandbox での Cmd/Ctrl+Z と同じです。本文パネルで入力した文字、ツールによる編集とプレビュー上での編集、`sandbox_set_config`やデザインパネルで変えた設定、動かしたフレームが対象です。`redo: true`でやり直します。`sandbox_undo_text`は本文の編集だけを取り消し、直前の変更がデザインだったときはそう伝えます。章の追加・削除・移動、リソースとフォントは履歴に入りません。別の本を開くと履歴は空になり、ページを再読み込みしても同じです。それぞれが何を取り消すかは`sandbox_get_state`が示します（`history`）。
 - **画面の本が対象です**：ツールは開いている本に対して働きます。開かずに別の本に届くのは、`.postext`ファイルを書き出す`sandbox_export`、`duplicate`を渡した`sandbox_save_book`、`sample`を渡した`sandbox_reset_to_original`だけです。
 
 ## サイトのツール
@@ -446,6 +448,7 @@ Sandboxが登録するときのまとまりで並べています。各ツール�
 - **ページ**：`sandbox_render_page`、`sandbox_inspect_pages`、`sandbox_inspect_point`。
 - **本文**：`sandbox_read_text`、`sandbox_write_text`、`sandbox_edit_text`、`sandbox_undo_text`、`sandbox_select_text`、`sandbox_search_text`、`sandbox_manage_chapters`、`sandbox_remove_chapter`。
 - **デザイン**：`sandbox_get_config`、`sandbox_set_config`、`sandbox_find_setting`、`sandbox_reset_to_original`。
+- **取り消し**：`sandbox_undo`。
 - **表示**：`sandbox_set_view`、`sandbox_go_to_page`、`sandbox_run_viewer`。
 - **リソースとフォント**：`sandbox_list_resources`、`sandbox_save_resource`、`sandbox_delete_resource`、`sandbox_list_fonts`、`sandbox_save_font`。
 - **漫画**：`sandbox_inspect_comic`、`sandbox_edit_comic`。

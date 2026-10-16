@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Sandbox',
   description: 'L’interface du Sandbox : la barre d’activité, les panneaux Texte, Livres, Chapitres, Ressources et Polices, et la disposition sur téléphone',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '32 min',
   order: 36,
   plainSummary: "Le Sandbox est un outil gratuit de ce site pour essayer Postext sans rien installer. Vous écrivez votre texte d’un côté et voyez les pages terminées de l’autre, qui changent à mesure que vous tapez. Cette page présente les parties de l’écran et les panneaux où vous écrivez le texte, gérez les livres et les chapitres, ajoutez des images et choisissez les polices. D’autres pages traitent des réglages de maquette, des aperçus, de l’enregistrement et de l’import, et de l’intégration du Sandbox dans votre propre site.",
@@ -47,6 +47,18 @@ La barre au-dessus de l’aperçu commence par un sélecteur entre les deux faç
 - **Maquette** : on modifie les modèles de page et les styles. Le panneau Texte affiche le chapitre en lecture seule, avec un avertissement et un bouton **Modifier le texte**, et sa barre d’outils est désactivée. Un clic sur un bloc d’une page composée sélectionne ce bloc pour l’éditeur de modèles au lieu d’y placer le curseur.
 
 **Alt+Maj+M** (**⌥⇧M** sur un Mac) change de mode depuis n’importe quel endroit du Sandbox. Passer en Maquette quand le panneau Texte est ouvert ouvre le panneau Maquette, et le retour rouvre le panneau Texte. Le navigateur retient le mode. Les agents le lisent et le règlent avec `sandbox_set_view` (`mode`).
+
+### Annuler et rétablir
+
+Le Sandbox tient un seul historique pour le texte et la maquette du livre ouvert. **Cmd/Ctrl+Z** annule la dernière modification, quelle qu’elle soit : ce qui a été tapé dans le panneau Texte, une modification faite sur les pages (le texte d’un bloc, une case de bande dessinée redimensionnée), un réglage changé dans le panneau Maquette, un bloc déplacé ou un modèle de page ajouté en mode Maquette. **Maj+Cmd/Ctrl+Z** (ou **Ctrl+Y**) la rétablit. Les touches agissent partout dans le Sandbox, sauf dans une zone de saisie, qui garde sa propre annulation pour ce qu’on y tape. Les boutons **Annuler** et **Rétablir**, à côté du sélecteur Contenu / Maquette, et les deux premiers boutons de la barre du panneau Texte passent par le même historique, et le lecteur d’écran annonce ce qui a été annulé.
+
+- Un geste compte pour une étape : un curseur glissé, une couleur choisie en faisant glisser ou un nombre tapé chiffre par chiffre ne comptent qu’une fois tant que les pauses restent sous la seconde. Chaque bloc lâché est une étape à part.
+- Chaque chapitre garde son propre historique de texte. Annuler une modification du texte d’un autre chapitre ouvre ce chapitre.
+- L’historique reste intact quand on passe de Contenu à Maquette et inversement : une modification du texte s’annule en mode Maquette, un bloc déplacé en mode Contenu.
+- Ouvrir un autre livre (depuis le panneau Livres, un exemple, un fichier `.postext` ou un lien) démarre un nouvel historique, tout comme réinitialiser le texte ou le livre entier. Réinitialiser seulement la maquette est une étape, que l’on peut annuler.
+- Les chapitres ajoutés, supprimés, scindés, fusionnés ou déplacés, les ressources et les polices n’entrent pas dans l’historique. Il dure le temps de la visite : après un rechargement, il est vide.
+
+Les agents annulent et rétablissent avec `sandbox_undo` (voir [WebMCP](/fr/docs/webmcp)).
 
 ### Panneaux de la barre latérale
 

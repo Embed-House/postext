@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP：在沙盒里工作的智能体',
   sidebarTitle: 'WebMCP',
-  description: '浏览器里的AI智能体借助沙盒的36个WebMCP工具能做什么：查看页面、修改任何设置、编辑文字、添加图片、表格和字体、运行检查、导出文件，以及每个工具怎样调用，附真实的参数和回答',
+  description: '浏览器里的AI智能体借助沙盒的37个WebMCP工具能做什么：查看页面、修改任何设置、编辑文字、添加图片、表格和字体、运行检查、导出文件，以及每个工具怎样调用，附真实的参数和回答',
   lang: 'zh',
   lastUpdated: '2026-10-17',
   readingTime: '9分钟',
@@ -17,7 +17,7 @@ export const metadata = {
 
 [沙盒](/zh/docs/sandbox)通过[WebMCP](https://webmachinelearning.github.io/webmcp/)把专门的工具交给智能体。WebMCP是一项Web标准草案，让网页可以把工具交给浏览器所连接的AI模型。有了这些工具，智能体不必在界面上一下一下地点：它读这本书，要一张第12页的图像，把`bodyText.fontSize`设为10.5 pt，看到这一章从18页变成了19页，再把值改回去。你凭眼睛做的事，它也照样做，用的是你的书，在你的浏览器里。
 
-以`sandbox_`开头的工具共有36个，沙盒显示在屏幕上时注册；另有8个网站工具`site_*`，postext.dev的每一页上都有。本页按你会请智能体做的事情给它们分类，并给出每个工具的调用方式。
+以`sandbox_`开头的工具共有37个，沙盒显示在屏幕上时注册；另有8个网站工具`site_*`，postext.dev的每一页上都有。本页按你会请智能体做的事情给它们分类，并给出每个工具的调用方式。
 
 ## 接入智能体
 
@@ -25,7 +25,7 @@ export const metadata = {
 
 沙盒挂载时把这些工具注册到`document.modelContext`，离开沙盒时收回。浏览器向其提供页面工具的智能体会在那里找到它们。Postext这边不需要安装或设置任何东西。
 
-WebMCP还是草案。Chrome以来源试用的方式提供它，也可以通过`chrome://flags/#enable-webmcp-testing`标志开启。工具随页面而变：在首页或文档中，智能体拿到的是`site_*`工具；沙盒一出现在屏幕上，36个`sandbox_*`工具也随之出现。
+WebMCP还是草案。Chrome以来源试用的方式提供它，也可以通过`chrome://flags/#enable-webmcp-testing`标志开启。工具随页面而变：在首页或文档中，智能体拿到的是`site_*`工具；沙盒一出现在屏幕上，37个`sandbox_*`工具也随之出现。
 
 ### 在其他浏览器中：`window.postextWebMcp`
 
@@ -231,6 +231,8 @@ await browser.close();
 
 `from`是修改前保存的值（这里是`null`，即书没有设置它），所以拿`from`作为值再调用一次，就能撤销这次修改。`followed`列出依赖这项设置、随它一起变动的其他设置。引擎解析出的结果与所要求的不同时（碰到了限度，或者这项设置取决于另一项），会出现`note`；形状不对的值，或者引擎无法解析的配置，会被拒绝，什么都不改。
 
+每次调用都是沙盒历史中的一步：`sandbox_undo`可以撤回它，就像 Cmd/Ctrl+Z 撤回在设计面板里做的修改一样。
+
 改动较大时，`patch`把一个对象合并进配置（对象合并，`null`删除，列表整个替换），`replace`则用一整份配置取代书的配置，比如导出的`postext-config.json`。`sandbox_reset_to_original`加上`part: "config"`，会恢复这本书最初的设计。
 
 字体也是设置：`sandbox_list_fonts`加上`search: "Garamond"`在开放字体目录中查找字族，把字族名写进某个`fontFamily`设置，字体就会加载。
@@ -421,7 +423,7 @@ await browser.close();
 
 - **一切都留在你的浏览器里**。沙盒本身触及不到的东西，工具也触及不到：你的书保存在这个浏览器的存储里，通过`url`提供的文件由页面去获取，所以文件所在的服务器必须允许这样做（CORS）。`data:` URL或`base64`总是可用。
 - **耗时的工作要等**。工具会等排版完成再回答；加上`wait: false`则立即回答。一本长书的PDF或EPUB要花几分钟。
-- **`sandbox_undo_text`能撤回什么**：工具对文字的修改（每次撤回一次调用）和在预览上做的编辑。你在正文编辑器里输入的内容不在此列（用编辑器自己的撤销），添加或移动的章节、对设计和资源的修改也不在此列：这些修改要用每次回答中的`from`撤回。页面重新加载后，这份记录就不在了。
+- **撤销**：`sandbox_undo` 按修改的先后撤回最近一次修改，无论改的是文字还是设计，和沙盒里的 Cmd/Ctrl+Z 一样：在正文面板里输入的文字、工具做的修改和在预览上做的编辑、用`sandbox_set_config`或在设计面板里改动的设置、拖动的框。`redo: true`重做。`sandbox_undo_text`只撤回文字修改；最近一次修改是设计时，它会说明。新增、删除或移动的章节、资源和字体不在历史中；打开另一本书会清空历史，重新加载页面也会。`sandbox_get_state`会说明两者各自会撤回什么（`history`）。
 - **屏幕上的书**。工具作用于打开的那本书。只有导出`.postext`文件的`sandbox_export`、带`duplicate`的`sandbox_save_book`和带`sample`的`sandbox_reset_to_original`，可以不打开另一本书就对它操作。
 
 ## 网站的工具
@@ -446,6 +448,7 @@ await browser.close();
 - **页面**：`sandbox_render_page`、`sandbox_inspect_pages`、`sandbox_inspect_point`。
 - **文字**：`sandbox_read_text`、`sandbox_write_text`、`sandbox_edit_text`、`sandbox_undo_text`、`sandbox_select_text`、`sandbox_search_text`、`sandbox_manage_chapters`、`sandbox_remove_chapter`。
 - **设计**：`sandbox_get_config`、`sandbox_set_config`、`sandbox_find_setting`、`sandbox_reset_to_original`。
+- **撤销**：`sandbox_undo`。
 - **显示方式**：`sandbox_set_view`、`sandbox_go_to_page`、`sandbox_run_viewer`。
 - **资源和字体**：`sandbox_list_resources`、`sandbox_save_resource`、`sandbox_delete_resource`、`sandbox_list_fonts`、`sandbox_save_font`。
 - **漫画**：`sandbox_inspect_comic`、`sandbox_edit_comic`。
