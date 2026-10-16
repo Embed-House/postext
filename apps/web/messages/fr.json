@@ -2196,7 +2196,7 @@
     "editModeContentHint": "Modifier le texte. Les blocs restent là où leur modèle les place",
     "editModeDesign": "Maquette",
     "editModeDesignHint": "Modifier les modèles de page et les styles. Le texte se lit mais ne se modifie pas",
-    "editorDesignModeNotice": "Mode Maquette : le texte est en lecture seule.",
+    "editorDesignModeNotice": "Mode Maquette : le texte est en lecture seule.",
     "editorSwitchToContent": "Modifier le texte",
     "composedPageInsert": "Page composée",
     "composedPagePicker": "Choisir un modèle de page",

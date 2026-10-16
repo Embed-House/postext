@@ -36,6 +36,16 @@ Uma barra de ferramentas no alto da visualização do canvas oferece:
 
 As páginas são renderizadas sob demanda via `IntersectionObserver`: só as páginas visíveis (mais uma margem de 200 px) são desenhadas no canvas, o que mantém baixo o uso de memória da GPU em documentos longos.
 
+#### Páginas compostas no canvas
+
+Numa página composta (`::::page{template="…"}`), o canvas liga cada bloco ao lugar do Markdown que o preenche:
+
+- Um clique num bloco, fora das palavras, leva o cursor ao seu slot: a primeira linha da cerca `:::frame{slot="…"}`, o bloco que nomeia `slot="…"` ou o título recebido por um bloco com `takes`. Um bloco em que uma cadeia continua leva ao primeiro bloco da cadeia. Um clique num bloco vazio que ainda não tem slot escreve um `:::frame{slot="…"}` vazio antes do fechamento da página e coloca o cursor dentro dele. Um clique nas palavras de um bloco põe o cursor na palavra, como em qualquer página.
+- Enquanto o cursor está num slot, o bloco dele, e os blocos em que o texto continua, aparecem contornados na página.
+- Um bloco vazio mostra um contorno tracejado, o nome e **Escreva aqui**; um bloco que só continua outro diz qual. Essas marcas são desenhadas apenas sobre o canvas: o PDF, a impressão e qualquer exportação as deixam de fora.
+- Um clique duplo na aba de etiqueta de uma caixa abre por cima um campo que edita o `label="…"` da cerca; num parágrafo, num título ou num item de lista, um campo com o seu Markdown. **Enter** guarda a alteração, **Shift+Enter** começa outra linha e **Esc** deixa o texto como estava. A alteração é gravada no capítulo e desfeita com Cmd/Ctrl+Z como qualquer edição feita nas visualizações. Corrigir uma legenda pede um clique duplo e as palavras novas, sem abrir nenhum estilo. Um bloco girado é editado no painel Texto.
+- No modo Design, todos os blocos mostram o contorno e o nome, e um clique seleciona um para o editor de modelos.
+
 ### Aba PDF
 
 Gera um PDF real do documento atual com o pacote `postext-pdf` e o mostra em um visualizador de PDF embutido do navegador. O PDF é refeito automaticamente na primeira montagem e a cada nova geração, a partir do mesmo VDT que alimenta as abas canvas e HTML. Assim as quebras de linha, os limites de página e a colocação dos recursos coincidem pixel a pixel entre os três renderizadores, até na compressão das últimas linhas cheias demais que o Knuth–Plass às vezes aceita.

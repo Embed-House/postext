@@ -36,6 +36,16 @@ Une barre d’outils en haut de la zone d’aperçu du canvas offre :
 
 Les pages sont dessinées à la demande via `IntersectionObserver` : seules les pages visibles (plus une marge de 200 px) sont dessinées sur le canvas, ce qui limite l’usage de la mémoire GPU pour les longs documents.
 
+#### Pages composées sur le canevas
+
+Sur une page composée (`::::page{template="…"}`), le canevas relie chaque bloc à l’endroit du Markdown qui le remplit :
+
+- Un clic sur un bloc, hors de ses mots, place le curseur dans son slot : la première ligne de son délimiteur `:::frame{slot="…"}`, le bloc qui nomme `slot="…"` ou le titre reçu par un bloc doté de `takes`. Un bloc dans lequel une chaîne se poursuit mène au premier bloc de la chaîne. Un clic sur un bloc vide qui n’a pas encore de slot écrit un `:::frame{slot="…"}` vide avant la fermeture de la page et y place le curseur. Un clic sur les mots d’un bloc place le curseur sur le mot, comme sur toute page.
+- Tant que le curseur est dans un slot, son bloc, ainsi que les blocs où son texte se poursuit, sont entourés sur la page.
+- Un bloc vide affiche un contour en pointillés, son nom et **Écrire ici** ; un bloc qui ne fait que prolonger un autre indique lequel. Ces marques ne sont dessinées que sur le canevas : le PDF, l’impression et tous les exports les laissent de côté.
+- Un double clic sur l’onglet d’étiquette d’une boîte ouvre par-dessus un champ qui modifie le `label="…"` du délimiteur ; sur un paragraphe, un titre ou un élément de liste, un champ avec son Markdown. **Entrée** garde la modification, **Maj+Entrée** passe à la ligne, **Échap** laisse le texte tel qu’il était. La modification est écrite dans le chapitre et s’annule avec Cmd/Ctrl+Z comme toute modification faite dans les aperçus. Corriger une légende demande un double clic et les nouveaux mots, sans ouvrir aucun style. Un bloc tourné se modifie dans le panneau Texte.
+- En mode Maquette, chaque bloc affiche son contour et son nom, et un clic en sélectionne un pour l’éditeur de modèles.
+
 ### Onglet PDF
 
 Produit un vrai PDF du document courant avec le package `postext-pdf` et l’affiche dans une visionneuse PDF du navigateur intégrée. Le PDF est reconstruit automatiquement au premier montage et à chaque régénération ultérieure, à partir du même VDT qui alimente les onglets Canvas et HTML : les coupures de ligne, les limites de page et le placement des ressources correspondent donc au pixel près entre les trois moteurs de rendu, jusqu’à la compression des dernières lignes trop pleines que Knuth–Plass accepte parfois.

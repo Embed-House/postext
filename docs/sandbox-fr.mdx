@@ -39,6 +39,15 @@ Cliquer sur le bouton du panneau actif replie la barre latérale, et cliquer sur
 
 L’application hôte peut ajouter ses propres éléments à la barre : un **lien d’accueil sur le logo**, facultatif, dans la case du haut (avec les props `homeUrl` ou `homeLink`), et un **bouton de thème** et un **sélecteur de langue** en bas. Les livres entiers s’échangent sous forme de fichiers `.postext` depuis le panneau Livres, et les en-têtes des panneaux Texte et Maquette exportent leur propre partie (voir [Export et import](/fr/docs/sandbox-books-saving#export-et-import)).
 
+### Modes Contenu et Maquette
+
+La barre au-dessus de l’aperçu commence par un sélecteur entre les deux façons de travailler sur un livre :
+
+- **Contenu** : on modifie le texte, dans le panneau Texte et sur les pages. Les blocs d’une page composée restent là où leur modèle les place.
+- **Maquette** : on modifie les modèles de page et les styles. Le panneau Texte affiche le chapitre en lecture seule, avec un avertissement et un bouton **Modifier le texte**, et sa barre d’outils est désactivée. Un clic sur un bloc d’une page composée sélectionne ce bloc pour l’éditeur de modèles au lieu d’y placer le curseur.
+
+**Alt+Maj+M** (**⌥⇧M** sur un Mac) change de mode depuis n’importe quel endroit du Sandbox. Passer en Maquette quand le panneau Texte est ouvert ouvre le panneau Maquette, et le retour rouvre le panneau Texte. Le navigateur retient le mode. Les agents le lisent et le règlent avec `sandbox_set_view` (`mode`).
+
 ### Panneaux de la barre latérale
 
 La barre latérale est redimensionnable. Faites glisser le séparateur entre la barre latérale et la zone d’aperçu, ou donnez-lui le focus avec Tab et utilisez le clavier : ← / → changent la largeur de 2 % (10 % avec Maj), et **Début** / **Fin** sautent à la largeur la plus étroite et à la plus large. Le séparateur annonce sa valeur courante aux lecteurs d’écran, et la zone d’aperçu garde toujours au moins 200 px. La barre latérale se replie entièrement quand aucun panneau n’est actif, et sa largeur est mémorisée d’une session à l’autre.
@@ -56,11 +65,12 @@ Un éditeur CodeMirror 6 pour le Markdown du chapitre. Les lecteurs d’écran l
 - **Numéros de ligne** et mise en évidence de la ligne active
 - **Retour à la ligne automatique** pour les longs paragraphes
 - **Lignes de droite à gauche** : une ligne dont le texte commence par une lettre arabe ou hébraïque se lit de droite à gauche, et le curseur et les touches fléchées la suivent. Le balisage qu’elle contient (attributs `{…}`, étiquettes `[^id]`, nom d’une directive, un `:ref[fig-1]` entier, maths, code, cibles de liens) reste de gauche à droite, pour se lire tel qu’il a été tapé. Les délimiteurs, le front matter et les lignes qui commencent par un mot latin restent de gauche à droite, comme avant.
-- **Barre d’outils** : elle commence par **Annuler / Rétablir**, suivis du gras, de l’italique, des niveaux de titre 1 à 3, du lien, du code en ligne, de la **pastille** (entoure la sélection de `:chip[…]`), des **petites capitales** (l’entoure de `:smallcaps[…]`), de la citation, des listes numérotées et à puces, plus quatre boutons d’insertion de directives :
+- **Barre d’outils** : elle commence par **Annuler / Rétablir**, suivis du gras, de l’italique, des niveaux de titre 1 à 3, du lien, du code en ligne, de la **pastille** (entoure la sélection de `:chip[…]`), des **petites capitales** (l’entoure de `:smallcaps[…]`), de la citation, des listes numérotées et à puces, plus cinq boutons d’insertion :
   - `:::pagebreak`
   - `:::space` : une ligne d’espace vertical (`:::space{lines=N}` pour davantage)
   - **Colonnes** : un groupe `:::columns{count=2}` à deux colonnes, le curseur sur sa première ligne, dans le texte ou dans un encadré (depuis postext 1.25)
   - `:::numbering{format="decimal" startAt=1}` : inséré avec des attributs d’exemple à ajuster
+  - **Page composée** : ouvre un sélecteur avec les modèles de page du livre, chacun dessiné en vignette avec ses blocs vides. Choisir un modèle écrit un délimiteur `::::page{template="…"}` avec un `:::frame{slot="…"}` vide pour chaque bloc. Un bloc qui ne reçoit que la suite du texte d’un autre n’en a pas ; un bloc qui `takes` un titre reçoit ce titre, avec le nom du bloc sélectionné pour être remplacé à la frappe, et le bloc de flux reçoit une ligne vide pour le texte courant
 
 Un listing de code (un délimiteur ```` ``` ```` ou `~~~` et ses lignes) forme une seule zone dans l’éditeur : il reçoit un fond de code, et le balisage Postext qu’il contient (maths, pastilles, tabulations, marques d’index) reste sans couleur, puisque le moteur ne le lit pas. Les applications hôtes peuvent ajouter leurs propres boutons à la barre d’outils avec `extraActions`. L’éditeur transmet aussi son curseur et sa sélection aux aperçus, ce qui permet la synchronisation clic-curseur : cliquer sur du texte dans le rendu place le curseur à la position correspondante du Markdown, et les aperçus peuvent mettre en évidence la sélection courante.
 
