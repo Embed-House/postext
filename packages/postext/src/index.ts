@@ -548,6 +548,7 @@ export type {
   VDTComicPage,
   VDTComposedPage,
   VDTFrame,
+  VDTFigureLabel,
   ReflowEvent,
   ReflowEventKind,
   VDTStripCaption,
@@ -600,7 +601,8 @@ export type { PageTemplateSource } from './composed/templates';
 export { validatePageTemplates } from './composed/validate';
 export type { ValidatePageTemplatesOptions } from './composed/validate';
 // Composed pages laid out (#855): the frames of a page and how backends paint them.
-export { composedFrameBlockIds, composedPaintOrder, frameMatrix, frameClips, frameBounds, frameOfBlock } from './composed/paint';
+export { altWithLabels } from './composed/labelText';
+export { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, frameMatrix, frameClips, frameBounds, frameOfBlock } from './composed/paint';
 export type { ComposedPaintItem } from './composed/paint';
 // Groups and the reflow log (#856): how frames negotiate space, and what the
 // layout changed from the template's drawing, in data and in words.

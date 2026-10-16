@@ -50,6 +50,35 @@ export function composedPaintOrder(page: VDTPage): ComposedPaintItem[] {
   return out;
 }
 
+/** The items of a paint order (`composedPaintOrder`) in reading order
+ *  (#862): the decoration first, then the frames by the Markdown order of
+ *  their content (the lowest content index of their blocks; a frame with
+ *  no content keeps its place after those that have some). The pieces of
+ *  one story (`next`) follow each other, as their content does. What the
+ *  HTML writes in this order and paints by `z-index`; the tagged PDF reads
+ *  the same order (`readFloat`'s `readAt`). */
+export function composedReadingOrder(paint: readonly ComposedPaintItem[]): ComposedPaintItem[] {
+  const byId = new Map<string, VDTFrame>();
+  for (const item of paint) if (item.kind === 'frame') byId.set(item.frame.id, item.frame);
+  /** How many frames a chain passes through before this one: a piece of a
+   *  paragraph cut at a frame's foot has the head's content index. */
+  const depth = (frame: VDTFrame): number => {
+    let n = 0;
+    for (let f = frame.continuedFrom ? byId.get(frame.continuedFrom) : undefined; f && n < byId.size; f = f.continuedFrom ? byId.get(f.continuedFrom) : undefined) n++;
+    return n;
+  };
+  const firstIndex = (item: ComposedPaintItem): number => {
+    if (item.kind === 'decoration') return -Infinity;
+    let min = Infinity;
+    for (const b of item.blocks) if (b.contentIndex !== undefined && b.contentIndex < min) min = b.contentIndex;
+    return min + depth(item.frame) / 1000;
+  };
+  return paint
+    .map((item, order) => ({ item, order, at: firstIndex(item) }))
+    .sort((a, b) => (a.at === b.at ? a.order - b.order : a.at - b.at))
+    .map((e) => e.item);
+}
+
 /** The affine matrix `[a, b, c, d, e, f]` (canvas `transform` order,
  *  y down) that turns a frame `rotate` degrees clockwise about the centre
  *  of its box; undefined for an upright frame. */

@@ -1523,6 +1523,24 @@ export interface ResolvedResourceBlock {
    *  (`slice.continues`), right-aligned under the slice and painted with the
    *  note fonts and colour. Empty otherwise. */
   continuesLines: VDTLine[];
+  /** The `::label` lines of a `:::figure` (#854), in the order written:
+   *  their plain text, where they go on the picture and their source. What
+   *  outputs that do not draw them read as the figure's text (#862: the
+   *  reflowable EPUB's list after the picture, the tagged PDF's `Alt`).
+   *  Absent when the figure has none. */
+  labels?: VDTFigureLabel[];
+}
+
+/** A `::label` of a figure (#854, DESIGN §3.3) as the VDT carries it:
+ *  its plain text and anchor. P6 (#860) lays it out on the picture. */
+export interface VDTFigureLabel {
+  text: string;
+  /** An anchor of the resource, or a point in fractions of the picture. */
+  at: { anchor: string } | { x: number; y: number };
+  style?: string;
+  /** The label's text in the source (absolute offsets). */
+  sourceStart: number;
+  sourceEnd: number;
 }
 
 /**

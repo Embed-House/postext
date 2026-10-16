@@ -25,7 +25,9 @@ import {
   type VDTLine,
   type ResolvedConfig,
   type ContentWarning,
+  type VDTFigureLabel,
 } from '../vdt';
+import { figureLabels } from './buildMeasurement';
 import { anchorBox } from '../design/layout';
 import { parseMarkdownMemo, spaceDirectiveLines } from '../parse';
 import {
@@ -887,6 +889,13 @@ function placeDocumentPass(
   for (const [id, entry] of Object.entries(resourceNumbering)) {
     resourceNumberById.set(id, entry.number);
   }
+  // The labels of each `:::figure` (#862), by resource: a figure that
+  // floats is laid out by its id alone.
+  const figureLabelsById = new Map<string, VDTFigureLabel[]>();
+  for (const b of contentBlocks) {
+    const labels = b.resourceId !== undefined && !figureLabelsById.has(b.resourceId) ? figureLabels(b) : undefined;
+    if (labels) figureLabelsById.set(b.resourceId!, labels);
+  }
 
   // Resolve styles
   const bodyStyle = resolveBodyStyle(resolved);
@@ -1655,7 +1664,8 @@ function placeDocumentPass(
     const { block: rb, totalHeight } = laid;
     const id = slice && slice.startRow > 0 ? `float-${resourceId}-cont-${slice.startRow}` : `float-${resourceId}`;
     const blk = createVDTBlock(id, 'resource', bodyStyle.fontString, bodyStyle.color, bodyStyle.textAlign);
-    blk.resourceBlock = rb;
+    const labels = figureLabelsById.get(resourceId);
+    blk.resourceBlock = labels ? { ...rb, labels } : rb;
     blk.dirty = false;
     blk.snappedToGrid = false;
     blk.bbox = createBoundingBox(x, 0, width, totalHeight);
