@@ -40,7 +40,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>必填。<code>pageTemplates</code>中某一项的id。</td></tr>
-    <tr><td><code>spread</code></td><td>这一页是由两个对页组成的跨页；模板也必须是跨页模板。</td></tr>
+    <tr><td><code>spread</code></td><td>这一页是由两个对页组成的跨页（见<a href="#跨页">跨页</a>）。它必须与模板的<code>spread</code>一致；不一致时以模板为准，并给出<code>spreadMismatch</code>警告。</td></tr>
     <tr><td><code>id="…"</code>、<code>#id</code></td><td>锚点：指向它的<code>:ref</code>印出模板页所在的页码。</td></tr>
     <tr><td>其他任何属性</td><td>模板以<code>&#123;attr.name&#125;</code>读取的值，例如逐页选择的背景图：页面上写<code>fondo="banda-retos"</code>，装饰中写<code>resourceId: "&#123;attr.fondo&#125;"</code>。</td></tr>
   </tbody>
@@ -191,6 +191,17 @@ Si necesitas o quieres comprar algo muy caro…
 
 框的内容比框高、又没有可以接续的下一个框时，全部内容仍保留在文档中，但只显示放得下的部分：其余部分在分页输出中于框底被裁掉，警告[`frameOverflow`](#frameoverflow)会说明裁掉了多少。没有任何框接收的内容（没有流文框，或这一侧缺少某个框）排进正文，放在模板页之后的那一页。
 
+## 印刷之外：HTML、EPUB与带标签的PDF
+
+所有输出都按Markdown的顺序读模板页，而不是按模板列出框的顺序，也不是按图层绘制的顺序。
+
+- **流式EPUB**：整页变成一个节（`<section class="pt-composed pt-composed-tema-cajas">`），节的开头是该页的分页标记。每个框是节里的一个块（`<div class="pt-frame pt-frame-dinero">`），放在其内容在Markdown中首次出现的位置；一个框和它的`next`链接续的各框合成一个块。用标注框样式绘制的框保留该样式的方框：底色、边框、内边距、正文文字，`label`作为方框的标题。没有样式的框就是普通的块。装饰（背景图、卡片、版面文字）属于印刷页面，不予输出。
+- **插图的标注**：EPUB中的图片不含`:::figure`的`::label`文字，所以流式书把它们列在图片之后、插图之内，按书写顺序排列：这是一个视觉上隐藏的列表（`pt-figure-labels pt-hidden`），读屏软件只读一遍。在HTML查看器、固定版式EPUB和带标签的PDF中，标注跟在图片的替代文字之后，如`一家人提着购物篮（房租、电费、食物）`；中文和日文标注用`（…、…）`，阿拉伯文标注用阿拉伯逗号（،）。
+- **HTML查看器与固定版式EPUB**：两者都按印刷效果显示套用了模板的页面：每个框在自己的方框里，按`rotate`旋转，内容溢出时裁切，画在较低图层的框之上，装饰位于第0层。标记按阅读顺序列出各框，并用`z-index`按图层顺序绘制，所以辅助技术沿Markdown的顺序朗读，页面外观仍与印刷一致。装饰性图片对辅助技术隐藏（`alt=""`）。装饰所用的字体包含在Sandbox嵌入EPUB的字体之中；固定版式EPUB缺少其中某个字体时，会给出`missingFont`。
+- **带标签的PDF**：结构树按同样的顺序读各框。每个框（或一条框链）是一个`Div`，包含其标题、段落和列表；其中的图片是`Figure`元素，标注写在其`Alt`里；装饰是版面工件（artifact）。
+
+在代码中，插图的标注位于其块的`resourceBlock.labels`（文字、锚点或坐标点、样式和源码范围）；`composedReadingOrder(composedPaintOrder(page))`按阅读顺序给出一页的装饰和各框。
+
 ## 警告
 
 这些检查在任何排版之前读取Markdown和配置，所以在你输入时就会出现在检查面板中，也会出现在`postext check`和文档的`contentWarnings`中，每条都带有所涉内容的源码范围（见[配置 › 文档中的警告](/zh/docs/configuration-programmatic-usage#文档中的警告)）。
@@ -225,6 +236,11 @@ Si necesitas o quieres comprar algo muy caro…
       <td>用四个冒号开启页面，写成<code>::::page&#123;template="…"&#125;</code>，并用<code>::::</code>结束。</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>开头一行的<code>spread</code>与模板的不一致。页面按模板的设定来排（见<a href="#spreadmismatch">spreadMismatch</a>）。</td>
+      <td>跨页模板就在开头一行写上<code>spread</code>，单页模板就去掉它。</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>模板页、框或插图始终没有结束（见上文的恢复规则）。检查面板把模板页称为<code>::::page</code>。</td>
       <td>补上结束围栏：模板页用与开始行同样数目的冒号，框或插图用<code>:::</code>。</td>
@@ -239,6 +255,85 @@ Si necesitas o quieres comprar algo muy caro…
 **原因**：灌入某个框的内容（通过它的槽位，或进入流文框的内容）比框高，而这个框已没有可以接续的`next`框。最常见的情况是文字比框能容纳的多：译文比原文长，或者框被固定的`height`或`maxHeight`限住了。放不下的部分在分页输出中于框底被裁掉；它仍留在文档、源码映射和流式版式的EPUB中。警告会给出模板、框、页码、被裁掉的高度（`overflowMm`）以及`configPath`，即该框在配置中的JSON指针（`/pageTemplates/0/frames/2`）。
 
 **解决**：给框更多空间（调高或去掉它的`height`或`maxHeight`），用`next`把它接到另一个框，缩短文字，或者换一个模板来排这一页。目前排版不会为了放下文字而自动缩小它。
+
+## 文字变长时
+
+模板页在模板声明的限度之内自行调整。如果一页上的各个框组成一个纵向组，在第一个框里写更长的文字，这个框就会变高来容纳它，下面的框以及锚定在它们上面的照片和装饰随之下移；模板一行也不用改。文字变短，框就回到声明的高度。标了`pin`的框或装饰元素留在模板放置它的地方，用于必须压在画面上的方框。纵向组和横向组怎样分配空间、哪个框先让步，都在模板中设定：见[配置 › 组如何分配空间](/zh/docs/configuration-composed-pages#组如何分配空间)。
+
+方框排到区域底边、组里再没有框能让出空间时，最后一个框在底边截断，排版报告`frameOverflow`（见[警告](#警告)）。这时可以缩短文字，调低另一个框的`minHeight`，允许某个框缩小，或者给组更多空间。组不会带来别的警告。
+
+## 重排记录
+
+每个模板页都留有一份记录，写明排版相对于模板本身的画法改动了什么：哪个框变高、让出了空间或移动了位置，变化了多少，又是哪个框引起的。文字放得进模板的页面不留任何记录。
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>事件</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>框比声明的高（<code>axis: 'x'</code>时是比声明的宽）：<code>fromMm</code>是声明的尺寸，<code>toMm</code>是实际得到的尺寸。</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>框比声明的小：它把空间让给了<code>cause</code>。</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>框的上边（<code>axis: 'x'</code>时是左边）移动了，以距纸边的毫米数计；<code>cause</code>是因变高而推动它的那个框。</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>内容放不下：<code>toMm</code>是被截掉的高度，与<code>frameOverflow</code>中的相同。</td>
+    </tr>
+  </tbody>
+</table>
+
+小于半毫米的变化不列出。每个变化只取整一次，精确到0.1毫米，所以一起移动的框读数相同。随框移动的装饰不列出。
+
+`postext check`在警告之后，为每个有事件的模板页打印一行`reflow`；加上`--json`时，报告中有一个`reflow`数组，每页一项，包括`pageIndex`、`pageLabel`、`template`、`fenceIndex`、`chapter`、`events`和`lines`（用文字写出的事件）。
+
+在代码中，这份记录是`VDTPage.composed.log`；框的`rect`与模板声明的矩形不同时，框在`VDTFrame.declaredRect`中保留声明的矩形。`composedReflowLog(doc)`返回`postext check`打印的那些条目，`describeReflowEvent(event)`把一个事件写成文字。
+
+## 跨页
+
+设了`spread: true`的模板是由两个对页组成的一整张版面：一条横跨书脊的色带，一条从一侧外边缘延伸到另一侧外边缘的插图带，两边各有几张卡片。页面的开头一行用`spread`写明这一点：
+
+```md
+::::page{template="linea-tiempo" spread}
+# Cómo medimos el tiempo
+
+Para saber cuándo comer, trabajar o descansar, las personas siempre han necesitado medir el tiempo…
+
+:::frame{slot="banda-2"}
+Con relojes de máquina
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **从哪里开始。** 跨页总是从偶数页开始（从左往右读的书是左页，从右往左读的书是右页），并占用紧接着的奇数页。前面的文字若在偶数页结束，下一页留空（与漫画跨页之前一样，是为奇偶而留的空白页），让两半正好相对。结束行之后的文字从这个奇数页的下一页开始。
+- **一整张版面。** 框排在一张与两页同宽的版面上。`content`区域从一页的外侧页边一直到另一页的外侧页边，两个内侧页边都包含在内；`trim`是并排的两张裁切后的页面；`bleed`在天头、地脚和两侧外边缘加上出血，书脊处从不加。`grid`划分整个宽度：六栏就是每页三栏。从右往左读的书里，这张版面像它的页面一样左右镜像，所以第一栏落在右页上。
+- **订口。** `gutter`是以书脊为中心、这么宽的一条带。没有`crossGutter: true`的框要避开它：横跨整条带的框在它中心所在的一侧被截到带的边缘；内侧边缘落进带里的框则整个移出去。`auto`高度按变窄后的宽度来量，页面的重排记录会记下这次改动（`resized`或`moved`，原因为`gutter`）。不设`gutter`时，这条带就是书脊本身，只有明确要求的框才会越过折缝。
+- **跨过书脊。** 设了`crossGutter: true`的框可以跨过书脊。框里的文字只读一次，在框的中心所在的那一页；对面那一页画出框属于自己的一半，在自己的版面边缘截断，这样色带或插图在打开的书上看起来是一整块。带标签的PDF把这一半标为工件（artifact），HTML对辅助技术隐藏它，选择或搜索文字时也只会找到一次。
+- **装饰**在整张版面上排一次，再以同样的方式在书脊处切开：底色、从一页延伸到另一页的卡片、右页上的书眉。锚定在`#框名`上的元素会跟着那个框到它所在的页面。跨页有两面，所以不接受`variants`；`header`和`footer`在它的每一页上都和普通页面一样起作用。
+
+在画布上、在Sandbox的跨页视图里和在Folio中，两页并排显示。PDF有两页，各自在出血处截断。固定版式EPUB给这两页加上`page-spread-left`和`page-spread-right`以及`rendition:spread-both`，让阅读器在横竖两种方向上都把它们放在一起显示。流式EPUB像读其他模板页一样，按Markdown的顺序读这些框。
+
+### spreadMismatch
+
+**原因**：页面的开头一行与模板不一致：开头一行写了`spread`而模板只占一页，或者模板是跨页模板（自己设了`spread: true`，或通过`extends`继承）而开头一行没写。以模板为准：跨页模板排在两个对页上，其他模板排在一页上。警告给出模板、开头一行的标记（`fence`）和模板的标记（`templateSpread`），并指向`spread`属性；开头一行没有这个属性时，指向模板名。
+
+**解决**：让开头一行与模板一致：跨页模板就在开头一行写上`spread`，单页模板就去掉它，或者换一个模板。
 
 ## 在代码中使用
 

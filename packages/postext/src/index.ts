@@ -548,6 +548,7 @@ export type {
   VDTComicPage,
   VDTComposedPage,
   VDTFrame,
+  VDTFigureLabel,
   ReflowEvent,
   ReflowEventKind,
   VDTStripCaption,
@@ -600,8 +601,19 @@ export type { PageTemplateSource } from './composed/templates';
 export { validatePageTemplates } from './composed/validate';
 export type { ValidatePageTemplatesOptions } from './composed/validate';
 // Composed pages laid out (#855): the frames of a page and how backends paint them.
-export { composedFrameBlockIds, composedPaintOrder, frameMatrix, frameClips, frameBounds, frameOfBlock } from './composed/paint';
+export { altWithLabels } from './composed/labelText';
+export { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameMatrix, frameClips, frameBounds, frameOfBlock } from './composed/paint';
 export type { ComposedPaintItem } from './composed/paint';
+// Groups and the reflow log (#856): how frames negotiate space, and what the
+// layout changed from the template's drawing, in data and in words.
+export { layoutGroup, composedOrder } from './composed/groups';
+export type { GroupItem, GroupLayoutInput, ComposedStep } from './composed/groups';
+export { composedReflowLog, describeReflowEvent, reflowEvents } from './composed/reflowLog';
+export type { ComposedPageReflow, FrameMotion } from './composed/reflowLog';
+// Where a template's frames stand (#855), for hosts that draw a template
+// without laying a page out (the Sandbox's template thumbnails, #864).
+export { frameOrder, framePlaceable, groupPlaceable, placeBox as placeFrameBox, unionRect as frameUnionRect } from './composed/geometry';
+export type { FrameAreas, FrameGeometryContext, Rect as FrameRect } from './composed/geometry';
 export type {
   FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
   PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,

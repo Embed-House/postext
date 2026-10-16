@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 029 · Anchoring cheat sheet: a poster built from chained elements ═══
 // https://postext.dev/en/cookbook/anchoring-cheat-sheet
 // Code: MIT · Text: original (CC BY 4.0) · Drawings: generated in code (CC BY 4.0)
-// Fonts: Funnel Display, Funnel Sans, Martian Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Funnel Display, Funnel Sans, Martian Mono (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 // An A3 poster whose elements hang from the bleed, the page, their slot or one another, never
 // from coordinates; the second sheet is the same poster with each element framed and tagged.
 import {
@@ -170,6 +170,7 @@ const config = () => ({
     lineHeight: pt(LEAD * 0.75), color: col('muted') }],
   header: { elements: [] }, // the poster has none; the guides page draws the empty container
   footer,
+  checks: { contentInConfig: { enabled: false } }, // the anchor labels are the subject (#849)
 });
 
 // ─── 2 · Content ────────────────────────────────────────────────────────────

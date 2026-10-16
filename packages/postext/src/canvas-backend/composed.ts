@@ -2,10 +2,11 @@
  * A composed page's frames on the canvas (#855): each frame's blocks
  * painted as floats are, turned by the frame's matrix and clipped to its
  * box when its content overflows, in layer order, with the template's
- * decoration at layer 0 (`composedPaintOrder`).
+ * decoration at layer 0 (`composedPaintOrder`). On a page of a spread
+ * (#861) all of it is clipped to the page's share of the sheet.
  */
 import type { VDTDesignSlot, VDTPage } from '../vdt';
-import { composedPaintOrder, frameClips, frameMatrix } from '../composed/paint';
+import { composedPaintOrder, composedSheetClip, frameClips, frameMatrix } from '../composed/paint';
 import { renderBlock } from './blockRender';
 import { renderHeaderFooterSlot } from './headerFooter';
 import { restoreContext, saveContext } from './contextState';
@@ -22,6 +23,13 @@ export function renderComposedFrames(
   inkHex: string | null,
   decoration: VDTDesignSlot | undefined,
 ): void {
+  const sheet = composedSheetClip(page);
+  if (sheet) {
+    saveContext(ctx);
+    ctx.beginPath();
+    ctx.rect(sheet.x, sheet.y, sheet.width, sheet.height);
+    ctx.clip();
+  }
   for (const item of composedPaintOrder(page)) {
     if (item.kind === 'decoration') {
       if (decoration) renderHeaderFooterSlot(ctx, decoration, inkHex);
@@ -45,4 +53,23 @@ export function renderComposedFrames(
     for (const b of blocks) renderBlock(ctx, b, b.bbox.width, b.bbox.x, inkHex);
     restoreContext(ctx);
   }
+  if (sheet) restoreContext(ctx);
+}
+
+/** A composed page's decoration painted on the sheet (a page painted
+ *  through a flow frame), clipped to its share of a spread's sheet. */
+export function renderComposedDecoration(ctx: CanvasRenderingContext2D, page: VDTPage, inkHex: string | null): void {
+  const decoration = page.composed?.decoration;
+  if (!decoration) return;
+  const sheet = composedSheetClip(page);
+  if (!sheet) {
+    renderHeaderFooterSlot(ctx, decoration, inkHex);
+    return;
+  }
+  saveContext(ctx);
+  ctx.beginPath();
+  ctx.rect(sheet.x, sheet.y, sheet.width, sheet.height);
+  ctx.clip();
+  renderHeaderFooterSlot(ctx, decoration, inkHex);
+  restoreContext(ctx);
 }

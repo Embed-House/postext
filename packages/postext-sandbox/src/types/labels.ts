@@ -302,6 +302,9 @@ export interface SandboxLabels {
   warningsPageFenceLengthDetail: string;
   warningsFrameOverflowTitle: string;
   warningsFrameOverflowDetail: string;
+  warningsSpreadMismatchTitle: string;
+  warningsSpreadMismatchSpreadDetail: string;
+  warningsSpreadMismatchSingleDetail: string;
   warningsUnclosedComposedPageDetail: string;
   warningsUnknownChipStyleTitle: string;
   warningsUnknownChipStyleDetail: string;
@@ -1665,6 +1668,22 @@ export interface SandboxLabels {
   chipInline: string;
   numberingDirective: string;
   numberingDirectiveTooltip: string;
+  editMode: string;
+  editModeContent: string;
+  editModeContentHint: string;
+  editModeDesign: string;
+  editModeDesignHint: string;
+  editorDesignModeNotice: string;
+  editorSwitchToContent: string;
+  composedPageInsert: string;
+  composedPagePicker: string;
+  composedPagePickerHint: string;
+  composedPageNoTemplates: string;
+  composedPageFrameCount: string;
+  composedFrameWriteHere: string;
+  composedFrameContinues: string;
+  composedFrameEdit: string;
+  composedFrameEditHint: string;
 
   // Persistence
   save: string;

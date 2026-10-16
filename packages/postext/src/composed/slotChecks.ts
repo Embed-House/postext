@@ -1,7 +1,8 @@
 /**
  * Content warnings of composed pages (#854, DESIGN §3.2, §5.7): a page
  * fence naming no template, a slot the template lacks, a template frame
- * that receives nothing. Pure: read from the parsed pages and the
+ * that receives nothing, a fence and a template that disagree about
+ * spreads (#861). Pure: read from the parsed pages and the
  * configuration, before any layout.
  */
 import type { ContentWarning } from '../vdt';
@@ -10,7 +11,7 @@ import type { ComposedPagesConfigKeys, FrameConfig, PageTemplate } from './types
 
 /** The composed-page warnings, as {@link checkComposedSlots} returns them
  *  (source offsets as in the pages it read). */
-export type ComposedSlotWarning = Extract<ContentWarning, { kind: 'templateUnknown' | 'slotUnknown' | 'slotEmpty' }>;
+export type ComposedSlotWarning = Extract<ContentWarning, { kind: 'templateUnknown' | 'slotUnknown' | 'slotEmpty' | 'spreadMismatch' }>;
 
 /**
  * The frames a template has: its own and, through `extends`, its
@@ -38,6 +39,17 @@ function templateFrames(template: PageTemplate, byId: ReadonlyMap<string, PageTe
   return [...frames.values()];
 }
 
+/** Whether a template is a spread: its own `spread`, else the nearest
+ *  ancestor's through `extends` (the key is inherited). */
+function templateSpread(template: PageTemplate, byId: ReadonlyMap<string, PageTemplate>): boolean {
+  const seen = new Set<string>();
+  for (let t: PageTemplate | undefined = template; t && !seen.has(t.id); t = t.extends ? byId.get(t.extends) : undefined) {
+    seen.add(t.id);
+    if (t.spread !== undefined) return t.spread === true;
+  }
+  return false;
+}
+
 /** Frame names only a variant (`variants.recto` / `verso`) adds: a slot may
  *  name them, and they are not reported empty. */
 function variantFrameNames(template: PageTemplate): Set<string> {
@@ -60,6 +72,10 @@ function variantFrameNames(template: PageTemplate): Set<string> {
  *   without a slot). Not raised for an `optional` frame, nor for a frame
  *   other frames continue into (`next`, `overflow.continueIn: '#x'`),
  *   which fills only when they overflow.
+ * - `spreadMismatch`: the fence's `spread` flag and the template's `spread`
+ *   (inherited through `extends`) differ. The template decides: a spread
+ *   template is laid over two facing pages, any other on one page. Points
+ *   at the `spread` attribute, else the `template` value.
  */
 export function checkComposedSlots(
   pages: readonly ParsedComposedPage[],
@@ -77,6 +93,12 @@ export function checkComposedSlots(
       const at = page.attrSources.template ?? page.fence;
       out.push({ kind: 'templateUnknown', template: page.template, fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
       continue;
+    }
+    // The template decides how the page is laid; the fence says so too.
+    const spread = templateSpread(template, byId);
+    if (spread !== page.spread) {
+      const at = page.attrSources.spread ?? page.attrSources.template ?? page.fence;
+      out.push({ kind: 'spreadMismatch', template: template.id, fenceIndex: page.fenceIndex, fence: page.spread, templateSpread: spread, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
     }
     const frames = templateFrames(template, byId);
     const known = new Set(frames.map((f) => f.name));

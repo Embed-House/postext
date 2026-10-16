@@ -116,13 +116,13 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Il modello descrive due pagine affiancate disposte come un unico foglio. Una doppia pagina comincia sempre su una pagina di sinistra in un libro da sinistra a destra (su una pagina di destra in uno da destra a sinistra), con una pagina bianca aggiunta prima quando serve.</td>
+      <td>Il modello descrive due pagine affiancate composte come un solo foglio (vedi <a href="/it/docs/composed-pages#doppie-pagine">Pagine composte › Doppie pagine</a>). Una doppia pagina comincia su una pagina pari, la sinistra in un libro che si legge da sinistra a destra e la destra in uno che si legge da destra a sinistra, con una pagina bianca prima se serve. Anche la sua apertura porta il segno <code>spread</code>; se non concordano, decide il modello (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>In una doppia pagina, la fascia sul dorso che le cornici lasciano libera, a meno che impostino <code>crossGutter: true</code>.</td>
+      <td>Su una doppia pagina, una fascia di questa larghezza centrata sul dorso da cui le cornici stanno lontane, a meno che non abbiano <code>crossGutter: true</code>: una cornice che la attraversa viene tagliata al suo bordo, dalla parte del suo centro, e una che comincia dentro ne esce. Con <code>0</code> la fascia è il dorso stesso.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>In una doppia pagina, la cornice può attraversare la fascia del dorso.</td>
+      <td>Su una doppia pagina, la cornice può attraversare la fascia del dorso. Il suo testo si legge sulla pagina che ne contiene il centro; la pagina di fronte ne dipinge la metà.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -374,7 +374,7 @@ Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine
       <td><code>placement</code>, <code>grid</code></td>
       <td>come le cornici</td>
       <td>il riquadro delle sue cornici</td>
-      <td>Il riquadro proprio del gruppo. Se non è impostato, il riquadro che racchiude i riquadri dichiarati delle sue cornici.</td>
+      <td>Il riquadro proprio del gruppo. Se non è impostato, il gruppo comincia dove è collocata la sua prima cornice e arriva fin dove servono le sue cornici.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -390,6 +390,58 @@ Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine
     </tr>
   </tbody>
 </table>
+
+### Come i gruppi si dividono lo spazio
+
+Una cornice dichiara la sua dimensione: un `height` fisso, oppure `'auto'`, cioè l’altezza di ciò che contiene, tenuta fra `minHeight` e `maxHeight`. In un modello ricalcato su una pagina stampata, dai a ogni riquadro come `minHeight` l’altezza che ha su quella pagina: con un testo breve il riquadro resta come è disegnato, con uno più lungo diventa più alto. Nello stesso passaggio la pagina viene disposta due volte, una come la dichiara il modello e una come la richiede il contenuto, e le differenze fra le due finiscono nel [registro di reimpaginazione](/it/docs/composed-pages#registro-di-reimpaginazione).
+
+**Pila.** Le cornici di una pila si dispongono l’una sotto l’altra, ciascuna alla sua altezza, con `gap` fra l’una e l’altra. Ognuna mantiene la propria posizione orizzontale e la propria larghezza; la sua posizione verticale viene ignorata.
+
+- Un gruppo senza `placement` né `grid` propri comincia dove lo porta la collocazione della sua prima cornice e scende quanto serve alle sue cornici, fino al piede dell’area del modello. Quando una cornice cresce, quelle che la seguono scendono della stessa misura.
+- Un gruppo con un riquadro proprio dispone le sue cornici dentro quel riquadro. Se le cornici richiedono più spazio di quanto il riquadro ne offra, cedono spazio quelle con `shrink` maggiore di 0, a cominciare da quelle con la `priority` più bassa; le cornici con la stessa priorità cedono in proporzione al loro `shrink`, e nessuna scende sotto il suo `minHeight`. Lo spazio libero va alle cornici con `grow` maggiore di 0, in proporzione a quel valore e fino al loro `maxHeight`; se nessuna ha `grow`, le cornici vengono collocate secondo `align` (`'end'` al piede, `'center'`, `'space-between'`). Una cornice del gruppo senza una collocazione propria prende come area il riquadro del gruppo.
+- Quando più niente può cedere, nessuna cornice oltrepassa comunque il piede del gruppo: il contenuto che non entra viene tagliato lì e segnalato come `frameOverflow`.
+- Una cornice con `height: 'fill'` chiede il suo `minHeight` e prende lo spazio libero come se avesse `grow: 1`.
+
+**Fila.** Le cornici di una fila si affiancano alle larghezze dichiarate e sono tutte alte quanto la fila, cioè quanto il riquadro del gruppo o, se il gruppo non ne ha uno proprio, quanto la maggiore fra le loro altezze dichiarate (una cornice con altezza fissa tiene la sua). Quando il testo di una cornice supera l’altezza della fila, la cornice si allarga: prima prende la larghezza libera della fila, poi quella delle cornici vicine con `shrink` maggiore di 0, a cominciare da quelle con la `priority` più bassa, e nessuna di queste diventa più stretta della larghezza in cui il suo testo entra ancora. La cornice prende il minor numero di millimetri interi che basta a far entrare il testo; se non basterebbe nemmeno tutto lo spazio disponibile, non prende nulla, e una fila senza riquadro proprio diventa invece più alta. La larghezza libera va alle cornici con `grow` maggiore di 0, e quella che resta si distribuisce secondo `align`. Le file vanno da sinistra a destra.
+
+**Cornici fissate.** Una cornice con `pin: true` mantiene il riquadro che il modello le dichiara anche quando la cornice a cui è ancorata cresce o si sposta: un riquadro disegnato su misura dell’illustrazione le resta sopra. In un gruppo, una cornice fissata tiene il suo posto e le altre cornici la scavalcano, con `gap` su entrambi i lati. Una cornice fissata fuori dal gruppo fa lo stesso con le cornici del gruppo che altrimenti la coprirebbero.
+
+**Decorazione.** Un elemento della decorazione ancorato a una cornice (`anchor: { to: '#dinero' }`) la segue quando la cornice cresce o si sposta. Un elemento con `pin: true` resta dove il modello disegna quella cornice.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pin</code> (elemento della decorazione)</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Nella decorazione di una pagina composta: un elemento ancorato a una cornice resta dove il modello colloca quella cornice, qualunque cosa facciano il contenuto della cornice o il suo gruppo. Ignorato nelle intestazioni, nei piè di pagina e nei design dei titoli.</td>
+    </tr>
+  </tbody>
+</table>
+
+I tre riquadri della pagina di un libro di scuola, ciascuno all’altezza con cui è disegnato e pronto a crescere con il suo testo:
+
+```ts
+frames: [
+  { name: 'dinero', style: 'caja-azul', width: { value: 186, unit: 'mm' }, minHeight: { value: 36, unit: 'mm' },
+    placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: { value: 9, unit: 'mm' } } } },
+  { name: 'dinero-fotos', layer: 2, width: { value: 58, unit: 'mm' },
+    placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+  { name: 'gasto', style: 'caja-verde', width: { value: 186, unit: 'mm' }, minHeight: { value: 62, unit: 'mm' } },
+  { name: 'ahorro', style: 'caja-amarilla', width: { value: 186, unit: 'mm' }, minHeight: { value: 30, unit: 'mm' } },
+],
+groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
+```
+
+Il risultato dipende solo dal contenuto della pagina, dal modello e dalla tipografia: a parità di dati si ottiene la stessa pagina, misurata nello stesso ordine e con gli stessi passi. Mentre divide lo spazio, l’impaginazione non legge mai un’altra pagina, quindi una modifica su una pagina composta lascia invariate tutte le altre, purché il contenuto resti sulla sua pagina.
 
 ### Ereditarietà e varianti
 
@@ -416,7 +468,34 @@ Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello
 
 ### Che cosa applica l’impaginazione
 
-L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, oltre ad `area`, `grid`, `decoration`, `header`, `footer` e `variants` del modello. Vengono letti e controllati, ma non ancora applicati: la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` di un gruppo; le sue cornici mantengono la propria collocazione), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, `spread` e `crossGutter`, il `writingMode` e la `direction` di una cornice, e il `bodyStyle` e la `palette` del modello. Una larghezza `'auto'` si legge come `'fill'`.
+L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, oltre ad `area`, `grid`, `decoration`, `header`, `footer` e `variants` del modello. Vengono letti e controllati, ma non ancora applicati: la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` di un gruppo; le sue cornici mantengono la propria collocazione), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, il `writingMode` e la `direction` di una cornice, e il `bodyStyle` e la `palette` del modello. Una larghezza `'auto'` si legge come `'fill'`.
+
+### Doppie pagine
+
+In un modello a doppia pagina tutte le coordinate valgono sul foglio delle sue due pagine, con il dorso al centro: `area`, `grid`, gli ancoraggi a `container`, `page` e `bleed` e le misure `fill` leggono la larghezza doppia. `bleed` arriva alla testa, al piede e ai due bordi esterni, mai al dorso. La linea del tempo a doppia pagina di un libro di testo è un solo modello:
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … da era-2 a era-6, una colonna della griglia ciascuna, e le note sotto la striscia
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+Uno spazio tra le colonne più largo del `gutter` tiene le schede di una griglia simmetrica lontane dal dorso, quindi nessuna si sposta. La seconda fascia e la striscia di immagini hanno `crossGutter` per attraversarlo: ciascuna si legge sulla pagina che ne contiene il centro e si dipinge su entrambe. Tutte le parole della pagina, anche i nomi delle epoche sulle linguette, restano nel Markdown.
 
 ## Stili delle etichette
 

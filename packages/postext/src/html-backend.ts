@@ -52,7 +52,8 @@ import type { VDTResourceVideo } from './vdt';
 import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
-import { composedFrameBlockIds, composedPaintOrder, frameClips, frameMatrix } from './composed/paint';
+import { altWithLabels } from './composed/labelText';
+import { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameClips, frameMatrix } from './composed/paint';
 import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
 /**
@@ -2802,7 +2803,8 @@ function renderResourceBlockHtml(block: VDTBlock, paint: HtmlPaint): string {
   } else if (rb.kind === 'bitmap' || rb.kind === 'svg') {
     const url = rb.fileId ? imageUrl(options, rb.fileId, rb.resource.id) : undefined;
     // `<img>`, or a neutral placeholder matching the canvas backend's colours.
-    parts.push(renderFittedImage(url, rb.resource.altText ?? '', rb.kind === 'svg' ? 'SVG' : 'Image', bx, by, bw, bh, options, rb.kind === 'svg', rb.bodySource));
+    // A `:::figure`'s labels follow its alternative text (#862).
+    parts.push(renderFittedImage(url, altWithLabels(rb.resource.altText ?? '', rb.labels), rb.kind === 'svg' ? 'SVG' : 'Image', bx, by, bw, bh, options, rb.kind === 'svg', rb.bodySource));
   } else if (rb.kind === 'table') {
     parts.push(renderResourceTable(rb, bx, by, options));
   }
@@ -3276,32 +3278,53 @@ function renderPageDetailed(
     if (frameIds.has(fb.id)) continue;
     blocks.push({ id: fb.id, html: renderBlock(fb, options, stripInBlock(fb)) });
   }
-  // The frames in layer order, each in a box of its own that turns it and
-  // clips it, the template's decoration at layer 0; through a flow frame
-  // the decoration stands on the sheet, after the flow.
+  // The frames, each in a box of its own that turns it and clips it, in
+  // reading order (Markdown order, #862: what a screen reader and a
+  // fixed-layout EPUB read), painted in layer order by their `z-index`
+  // inside one stacking context, the template's decoration at layer 0;
+  // through a flow frame the decoration stands on the sheet, after the flow.
   const composedFlow = page.composed !== undefined && !plainFlow;
-  const composedDecorationHtml = page.composed?.decoration ? renderDesignSlot(page.composed.decoration, composedFlow ? { ...options, vertical: undefined } : options) : '';
+  // On a page of a spread (#861) the frames and the decoration show the
+  // page's share of the sheet only.
+  const sheetClip = composedSheetClip(page);
+  const sheetClipped = (html: string): string => {
+    if (!sheetClip || html === '') return html;
+    const [l, t, r, b] = [sheetClip.x, sheetClip.y, sheetClip.x + sheetClip.width, sheetClip.y + sheetClip.height].map(frameNum);
+    return `<div class="pt-sheet-clip" style="position:absolute;left:0;top:0;width:0;height:0;overflow:visible;clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px);">${html}</div>`;
+  };
+  const composedDecorationHtml = page.composed?.decoration ? sheetClipped(renderDesignSlot(page.composed.decoration, composedFlow ? { ...options, vertical: undefined } : options)) : '';
   const composedParts: string[] = [];
   /** The frames' boxes and the decoration: what a patcher of blocks must
    *  also compare (`decorationHtml`). */
   const composedShape: string[] = [];
-  for (const item of composedPaintOrder(page)) {
-    if (item.kind === 'decoration') {
-      if (!composedFlow) composedParts.push(composedDecorationHtml);
-      continue;
+  if (page.composed) {
+    const paint = composedPaintOrder(page);
+    for (const item of composedReadingOrder(paint)) {
+      const z = paint.indexOf(item) + 1;
+      if (item.kind === 'decoration') {
+        if (!composedFlow && composedDecorationHtml) composedParts.push(`<div class="pt-frame-decoration" style="position:absolute;left:0;top:0;width:0;height:0;z-index:${z};">${composedDecorationHtml}</div>`);
+        continue;
+      }
+      if (item.blocks.length === 0) continue;
+      const open = composedFrameOpen(item.frame, z, item.facing);
+      composedShape.push(open);
+      composedParts.push(open);
+      for (const b of item.blocks) {
+        const html = renderBlock(b, options, stripInBlock(b));
+        // The facing page's half of a frame across a spread's spine is
+        // painted only: no block of the page's to patch or select.
+        if (item.facing) composedShape.push(html);
+        else blocks.push({ id: b.id, html });
+        composedParts.push(html);
+      }
+      composedParts.push('</div>');
     }
-    if (item.blocks.length === 0) continue;
-    const open = composedFrameOpen(item.frame);
-    composedShape.push(open);
-    composedParts.push(open);
-    for (const b of item.blocks) {
-      const html = renderBlock(b, options, stripInBlock(b));
-      blocks.push({ id: b.id, html });
-      composedParts.push(html);
+    if (composedParts.length > 0) {
+      composedParts.unshift('<div class="pt-composed" style="position:absolute;left:0;top:0;width:0;height:0;z-index:0;">');
+      composedParts.push('</div>');
     }
-    composedParts.push('</div>');
   }
-  const blocksHtml = blocks.filter((b) => !frameIds.has(b.id)).map((b) => b.html).join('') + composedParts.join('');
+  const blocksHtml = blocks.filter((b) => !frameIds.has(b.id)).map((b) => b.html).join('') + sheetClipped(composedParts.join(''));
   // Same paint order as the canvas backend: the opener / part band goes
   // under the body (a part page's full-bleed background must not cover its
   // chapter list); header and footer paint on top.
@@ -3373,9 +3396,13 @@ function frameNum(v: number): string {
 /** The opening tag of a composed page's frame (#855): an empty box at the
  *  page's origin, so the frame's blocks keep their page coordinates, turned
  *  about the frame's centre (`frameMatrix`) and, when the frame's content
- *  overflows it, clipped to the frame's box (`frameClips`). */
-function composedFrameOpen(frame: VDTFrame): string {
-  const decls = ['position:absolute', 'left:0', 'top:0', 'width:0', 'height:0'];
+ *  overflows it, clipped to the frame's box (`frameClips`). `z`: its place
+ *  in the paint order (`composedPaintOrder`), as the frames are written
+ *  in reading order. The facing page's half of a frame across a spread's
+ *  spine (#861) is hidden from assistive technology: the text is read on
+ *  the other page. */
+function composedFrameOpen(frame: VDTFrame, z: number, facing = false): string {
+  const decls = ['position:absolute', 'left:0', 'top:0', 'width:0', 'height:0', `z-index:${z}`];
   const m = frameMatrix(frame);
   if (m) decls.push('transform-origin:0 0', `transform:matrix(${m.map(frameNum).join(',')})`);
   if (frameClips(frame)) {
@@ -3383,7 +3410,7 @@ function composedFrameOpen(frame: VDTFrame): string {
     const [l, t, r, b] = [x, y, x + width, y + height].map(frameNum);
     decls.push(`clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px)`);
   }
-  return `<div class="pt-frame" data-frame-id="${esc(frame.id)}" data-layer="${frame.layer}" style="${decls.join(';')};">`;
+  return `<div class="pt-frame" data-frame-id="${esc(frame.id)}" data-layer="${frame.layer}"${facing ? ' data-facing="true" aria-hidden="true"' : ''} style="${decls.join(';')};">`;
 }
 
 /** The markup of a comic on a page (its comic page, a half of a spread or

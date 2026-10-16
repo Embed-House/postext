@@ -380,3 +380,23 @@ export function stripCaptionSampleBook(): VDTDocument[] {
   return buildBundle({ chapters: [{ markdown: chapter }], config: { ...config, comics: {} }, resources });
 }
 
+
+/** A spread template (#861): a band across the spine and a card on each
+ *  page, after a page of text. */
+export function composedSpreadSampleBook(): VDTDocument[] {
+  const mm = (value: number) => ({ value, unit: 'mm' as const });
+  return buildBundle({
+    chapters: [{ markdown: ['# A spread', '', para, '', '::::page{template="tl" spread}', ':::frame{slot="band"}', 'Across the spine', ':::', '', ':::frame{slot="left"}', 'The left card.', ':::', '', ':::frame{slot="right"}', 'The right card.', ':::', '::::', '', 'After the spread.'].join('\n') }],
+    config: {
+      ...config,
+      pageTemplates: [{
+        id: 'tl', spread: true, gutter: mm(6), grid: { columns: 4, rows: 4, columnGap: mm(8) },
+        frames: [
+          { name: 'band', crossGutter: true, grid: { col: 1, row: 1, cols: 4 } },
+          { name: 'left', grid: { col: 1, row: 2 } },
+          { name: 'right', grid: { col: 4, row: 2 } },
+        ],
+      }],
+    } as PostextConfig,
+  });
+}

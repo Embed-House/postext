@@ -264,6 +264,12 @@ Die Komponente `HtmlPreview` der Sandbox (`packages/postext-sandbox/src/viewport
       <td>Zitate mit <code>:ref</code> verlinken auf ihre Ressource; Zeilen des Inhaltsverzeichnisses nicht.</td>
       <td>Zitate mit <code>:ref</code> und Zeilen des Inhaltsverzeichnisses, dazu die Gliederung (Lesezeichen).</td>
     </tr>
+    <tr>
+      <td>Zusammengesetzte Seiten (<code>::::page</code>)</td>
+      <td>Rahmen in Ebenenreihenfolge, gedreht und beschnitten</td>
+      <td>Dieselben Kästen, in Lesereihenfolge geschrieben und mit <code>z-index</code> in Ebenenreihenfolge gezeichnet; die Beschriftungen einer Abbildung folgen ihrem <code>alt</code></td>
+      <td>Dieselbe Zeichnung; der Strukturbaum liest die Rahmen in der Reihenfolge des Markdowns</td>
+    </tr>
   </tbody>
 </table>
 
@@ -396,6 +402,8 @@ EPUB 3 definiert zwei Darstellungen, festgelegt durch die Eigenschaft `rendition
     <tr><td>Geeignet für</td><td>Gestaltete Seiten: illustrierte Bücher, Lehrbücher, Kataloge, Zeitschriften; große Bildschirme</td><td>Fließtext: Romane, Essays, Berichte; Smartphones und E-Ink-Lesegeräte</td></tr>
   </tbody>
 </table>
+
+Eine zusammengesetzte Seite (`::::page{template="…"}`) behält im festen Layout ihre Vorlage. Im umfließenden Buch wird sie zu einem Abschnitt mit ihren Rahmen in der Reihenfolge des Markdowns, jeder Rahmen ein Block in seinem Kastenstil, ohne das Dekor und mit den Beschriftungen jeder Abbildung nach dem Bild: siehe [Jenseits des Drucks](/de/docs/composed-pages#jenseits-des-drucks-html-epub-und-getaggtes-pdf).
 
 Beide Darstellungen tragen dieselbe Navigation: ein Inhaltsverzeichnis aus den Überschriften und Teilseiten, eine Seitenliste mit den gedruckten Seitenbezeichnungen, Landmarks (Umschlag, gedrucktes Inhaltsverzeichnis, Beginn des Haupttextes) und eine NCX für ältere Lesesysteme.
 

@@ -48,6 +48,15 @@ interface UseCodeMirrorOptions {
    *  draws kanji in their Japanese or Chinese forms (直, 骨, 角 differ),
    *  whatever the interface language. */
   lang?: string;
+  /** The text cannot be changed by typing (Design mode, #864): the caret
+   *  still moves and the text can be selected and copied. Edits made on
+   *  the previews still arrive. */
+  readOnly?: boolean;
+}
+
+/** The read-only state of the editor, with the `aria-readonly` that says it. */
+function readOnlyExtensions(readOnly: boolean) {
+  return readOnly ? [EditorState.readOnly.of(true), EditorView.contentAttributes.of({ 'aria-readonly': 'true' })] : [];
 }
 
 /** The `lang` attribute of the editor's text, when there is one. */
@@ -55,11 +64,12 @@ function langAttributes(lang: string | undefined) {
   return EditorView.contentAttributes.of(lang ? { lang } : {});
 }
 
-export function useCodeMirror({ initialValue, externalValue, onChange, onSelectionChange, onFocusChange, isDark = true, persistedStateRef, getRefContext, ariaLabel, ariaDescribedBy, rtl = false, lang }: UseCodeMirrorOptions) {
+export function useCodeMirror({ initialValue, externalValue, onChange, onSelectionChange, onFocusChange, isDark = true, persistedStateRef, getRefContext, ariaLabel, ariaDescribedBy, rtl = false, lang, readOnly = false }: UseCodeMirrorOptions) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const themeCompartment = useRef(new Compartment());
   const langCompartment = useRef(new Compartment());
+  const readOnlyCompartment = useRef(new Compartment());
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
   const onSelectionChangeRef = useRef(onSelectionChange);
@@ -89,6 +99,7 @@ export function useCodeMirror({ initialValue, externalValue, onChange, onSelecti
     const extensions = [
       ...(ariaLabel ? [EditorView.contentAttributes.of({ 'aria-label': ariaLabel, 'aria-multiline': 'true', tabindex: '0', ...(ariaDescribedBy ? { 'aria-describedby': ariaDescribedBy } : {}) })] : []),
       langCompartment.current.of(langAttributes(lang)),
+      readOnlyCompartment.current.of(readOnlyExtensions(readOnly)),
       lineNumbers(),
       highlightActiveLine(),
       history(),
@@ -175,6 +186,12 @@ export function useCodeMirror({ initialValue, externalValue, onChange, onSelecti
     if (!viewRef.current) return;
     viewRef.current.dispatch({ effects: langCompartment.current.reconfigure(langAttributes(lang)) });
   }, [lang]);
+
+  // Design mode makes the text read only (#864).
+  useEffect(() => {
+    if (!viewRef.current) return;
+    viewRef.current.dispatch({ effects: readOnlyCompartment.current.reconfigure(readOnlyExtensions(readOnly)) });
+  }, [readOnly]);
 
   // Sync external value (after hydration or reset, or an edit made on the
   // previews: a comic splitter dragged, #568). Only the part that differs

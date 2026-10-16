@@ -39,6 +39,15 @@ Ein Klick auf die Schaltfläche des aktiven Bedienfelds klappt die Seitenleiste 
 
 Die Host-Anwendung kann der Leiste eigene Elemente hinzufügen: oben im Kopffeld einen optionalen **Logo-Link zur Startseite** (über die Props `homeUrl` oder `homeLink`) und unten einen **Umschalter für das Farbschema** sowie eine **Sprachauswahl**. Ganze Bücher werden im Bedienfeld Bücher als `.postext`-Dateien ausgetauscht, und die Kopfzeilen der Bedienfelder Text und Gestaltung exportieren jeweils ihren eigenen Teil (siehe [Export und Import](/de/docs/sandbox-books-saving#export-und-import)).
 
+### Modi Inhalt und Gestaltung
+
+Die Leiste über der Vorschau beginnt mit einem Umschalter zwischen den zwei Arten, an einem Buch zu arbeiten:
+
+- **Inhalt**: Der Text wird bearbeitet, im Bereich Text und auf den Seiten. Die Rahmen einer zusammengesetzten Seite bleiben, wo ihre Vorlage sie hinsetzt.
+- **Gestaltung**: Seitenvorlagen und Stile werden bearbeitet. Der Bereich Text zeigt das Kapitel schreibgeschützt, mit einem Hinweis und der Schaltfläche **Text bearbeiten**, und seine Werkzeugleiste ist abgeschaltet. Ein Klick auf einen Rahmen einer zusammengesetzten Seite wählt diesen Rahmen für den Vorlageneditor aus, statt die Einfügemarke zu setzen.
+
+**Alt+Umschalt+M** (**⌥⇧M** auf dem Mac) wechselt den Modus von überall im Sandbox aus. Wer bei offenem Bereich Text zu Gestaltung wechselt, bekommt den Bereich Gestaltung, und beim Zurückwechseln wieder den Bereich Text. Der Browser merkt sich den Modus. Agenten lesen und setzen ihn mit `sandbox_set_view` (`mode`).
+
 ### Bedienfelder der Seitenleiste
 
 Die Seitenleiste ist in der Breite verstellbar. Ziehen Sie den Trenner zwischen Seitenleiste und Ansichtsbereich, oder fokussieren Sie ihn mit der Tabulatortaste und verwenden Sie die Tastatur: ← / → ändern die Breite um 2 % (mit Umschalt um 10 %), **Pos1** / **Ende** springen zur schmalsten und zur breitesten Größe. Der Trenner meldet Screenreadern seinen aktuellen Wert, und dem Ansichtsbereich bleiben immer mindestens 200 px. Ist kein Bedienfeld aktiv, klappt die Seitenleiste ganz ein; ihre Breite wird zwischen Sitzungen gespeichert.
@@ -56,11 +65,12 @@ Ein CodeMirror-6-Editor für das Markdown des Kapitels. Screenreader nennen ihn 
 - **Zeilennummern** und Hervorhebung der aktiven Zeile
 - **Zeilenumbruch** für lange Absätze
 - **Zeilen von rechts nach links**: Eine Zeile, deren Text mit einem arabischen oder hebräischen Buchstaben beginnt, läuft von rechts nach links, und Einfügemarke und Pfeiltasten folgen ihr. Das Markup darin (Attribute `{…}`, Marken `[^id]`, der Name einer Direktive, ein ganzes `:ref[fig-1]`, Formeln, Code, Linkziele) bleibt links nach rechts, damit es sich so liest, wie es getippt wurde. Codeblöcke, Front Matter und Zeilen, die mit einem lateinischen Wort beginnen, laufen wie bisher von links nach rechts.
-- **Werkzeugleiste**: beginnt mit **Rückgängig / Wiederholen**, gefolgt von Fett, Kursiv, Überschriftenebenen 1–3, Link, Inline-Code, **Chip** (umschließt die Auswahl mit `:chip[…]`), **Kapitälchen** (umschließt sie mit `:smallcaps[…]`), Zitatblock, nummerierten und unnummerierten Listen sowie vier Schaltflächen zum Einfügen von Direktiven:
+- **Werkzeugleiste**: beginnt mit **Rückgängig / Wiederholen**, gefolgt von Fett, Kursiv, Überschriftenebenen 1–3, Link, Inline-Code, **Chip** (umschließt die Auswahl mit `:chip[…]`), **Kapitälchen** (umschließt sie mit `:smallcaps[…]`), Zitatblock, nummerierten und unnummerierten Listen sowie fünf Schaltflächen zum Einfügen:
   - `:::pagebreak`
   - `:::space`: eine Zeile vertikaler Abstand (`:::space{lines=N}` für mehr)
   - **Spalten**: eine zweispaltige Gruppe `:::columns{count=2}`, die Einfügemarke in ihrer ersten Zeile, im Text oder in einem Kasten (seit postext 1.25)
   - `:::numbering{format="decimal" startAt=1}`: mit Beispielattributen eingefügt, die Sie anpassen können
+  - **Zusammengesetzte Seite**: öffnet eine Auswahl mit den Seitenvorlagen des Buchs, jede als Miniatur mit ihren leeren Rahmen. Die Wahl einer Vorlage schreibt eine Begrenzung `::::page{template="…"}` mit einem leeren `:::frame{slot="…"}` für jeden Rahmen. Ein Rahmen, der nur die Fortsetzung des Textes eines anderen aufnimmt, bekommt keinen; ein Rahmen, der eine Überschrift `takes`, bekommt diese Überschrift, mit dem Rahmennamen markiert, damit man ihn überschreibt, und der Fließrahmen bekommt eine Leerzeile für den Fließtext
 
 Ein Code-Listing (ein Codeblock aus ```` ``` ```` oder `~~~` mit seinen Zeilen) ist im Editor ein einziger Bereich: Es erhält einen Code-Hintergrund, und das Postext-Markup darin (Formeln, Chips, Tabulatoren, Registermarken) bleibt ungefärbt, da die Engine es nicht auswertet. Host-Anwendungen können über `extraActions` eigene Schaltflächen in die Werkzeugleiste setzen. Der Editor meldet außerdem Cursor und Auswahl an die Vorschauen; das ermöglicht die Synchronisierung per Klick: Ein Klick auf Text in der gerenderten Ausgabe setzt die Einfügemarke an die entsprechende Stelle im Markdown, und die Vorschauen können die aktuelle Auswahl hervorheben.
 

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "justification-lab",
-  "sourceHash": "d7640adedce544989fe2a6e5f45e4fa43f9aecd63fc13ec869c27bc518c99348",
+  "sourceHash": "8d044909ecfb5a247304cb5ab698d698d1b4f201adf37ba0b58bcc2a3f76bec8",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:00:04.768Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.854Z",
   "variants": {
     "en": {
-      "hash8": "db17de4d",
+      "hash8": "6aa82565",
       "vdtHash": "44e250c7cea9a957a0d8f249b5b3bfb6a354802c",
       "timings": {
-        "importMs": 759,
+        "importMs": 443,
         "fontsMs": 2,
-        "buildMs": 56,
-        "totalMs": 1867,
+        "buildMs": 28,
+        "totalMs": 1433,
         "builds": 2
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Source Code Pro"
         ],
         "pages": 3,
-        "ownLines": 245
+        "ownLines": 247
       },
       "pages": [
         {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 34440,
+        "bytes": 34477,
         "folio": "aab16fb5",
         "chapters": [
           {
@@ -170,6 +170,9 @@
           "calloutStyles[].titleStyle.gap",
           "calloutStyles[].titleStyle.letterSpacing",
           "calloutStyles[].titleStyle.textTransform",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -246,6 +249,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "checks",
           "colorPalette",
           "footer",
           "header",
@@ -255,7 +259,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 344,
+        "configLeaves": 345,
         "designElements": 13,
         "directives": [
           ":::callout",
@@ -344,21 +348,21 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “Two numbers fence the glue in: a space may shrin…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "55883094",
+      "hash8": "8bbbca83",
       "vdtHash": "a23b6ba3bc41d28d7528646e0414754fe8f2d48a",
       "timings": {
-        "importMs": 890,
+        "importMs": 440,
         "fontsMs": 2,
-        "buildMs": 116,
-        "totalMs": 2205,
+        "buildMs": 48,
+        "totalMs": 1277,
         "builds": 2
       },
       "specimen": {
@@ -381,7 +385,7 @@
           "Source Code Pro"
         ],
         "pages": 3,
-        "ownLines": 245
+        "ownLines": 247
       },
       "pages": [
         {
@@ -442,7 +446,7 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 35407,
+        "bytes": 35443,
         "folio": "aab16fb5",
         "chapters": [
           {
@@ -511,6 +515,9 @@
           "calloutStyles[].titleStyle.gap",
           "calloutStyles[].titleStyle.letterSpacing",
           "calloutStyles[].titleStyle.textTransform",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -587,6 +594,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "checks",
           "colorPalette",
           "footer",
           "header",
@@ -596,7 +604,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 344,
+        "configLeaves": 345,
         "designElements": 13,
         "directives": [
           ":::callout",
@@ -685,9 +693,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “La separación silábica le da al algoritmo más pu…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

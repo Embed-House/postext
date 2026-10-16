@@ -379,6 +379,11 @@ class Writer {
           return `<div class="pt-columns">\n${this.nodes(node.children)}\n</div>`;
         }
         const title = node.title ? `<p class="pt-callout-title">${xmlText(node.title)}</p>\n` : '';
+        // A frame of a composed page (#862): a block of the page's section
+        // (the page's own text, not an aside), with its style's box.
+        if (node.frame !== undefined) {
+          return `<div${this.classAttr(['pt-frame', idOf('pt-frame-', node.frame), node.styleId && 'pt-callout', node.styleId && idOf('pt-callout-', node.styleId)])}>\n${title}${this.nodes(node.children)}\n</div>`;
+        }
         // A pull quote keeps its box on the page; one that repeats the
         // text is hidden from assistive technology (`doc-pullquote`, a
         // presentational role), so its words are read once.
@@ -409,6 +414,11 @@ class Writer {
         return `<div class="pt-marker">${this.inline(node.inl)}</div>`;
       case 'comic':
         return this.comic(node);
+      case 'composed': {
+        // A composed page (#862): its frames in Markdown order.
+        const pre = this.inline(node.pre);
+        return `<section${this.classAttr(['pt-composed', idOf('pt-composed-', node.template)])}>${pre}\n${this.nodes(node.children)}\n</section>`;
+      }
     }
   }
 
@@ -576,11 +586,15 @@ class Writer {
 
   private figure(node: Extract<Node, { k: 'figure' }>): string {
     const href = node.fileId ? this.ctx.imageHref(node.fileId) : undefined;
-    const body = node.video
+    // A `:::figure`'s labels (#862): a list right after the picture, in
+    // the figure, in label order, out of sight (the picture this book shows
+    // does not carry them) and read once, where it stands.
+    const labels = node.labels ? `\n<ul class="pt-figure-labels pt-hidden">${node.labels.map((l) => `<li>${xmlText(l)}</li>`).join('')}</ul>` : '';
+    const body = (node.video
       ? this.videoBody(node.video, href ? relativeHref(this.file.href, href) : undefined, node.alt)
       : href
         ? `<img src="${xmlAttr(relativeHref(this.file.href, href))}" alt="${xmlAttr(node.alt)}"/>`
-        : `<div class="pt-missing" role="img" aria-label="${xmlAttr(node.alt || '?')}">${xmlText(node.alt)}</div>`;
+        : `<div class="pt-missing" role="img" aria-label="${xmlAttr(node.alt || '?')}">${xmlText(node.alt)}</div>`) + labels;
     const pre = this.inline(node.pre);
     const note = node.note.length > 0 ? this.inline(node.note) : '';
     // A figcaption is the figure's first or last child: page starts go

@@ -5,6 +5,7 @@ import { applyHtmlViewerOverrides, resolveDebugConfig, resolveLayoutConfig } fro
 import type { PostextConfig } from 'postext';
 import { requestSettingsGroup, requestSettingsSwitches, settingsChangedOnly } from '../../context/settingsNavigation';
 import { printPreviewOn, setPrintPreview } from '../../print/printPreviewToggle';
+import { EDIT_MODES, editModeNow, selectedFrameNow, setEditMode, type EditMode } from '../../editing/editMode';
 import { SETTINGS_GROUPS, isSettingsGroupId } from '../../sidebar/sections/registry';
 import { loadSettingsHelpMode, saveSettingsGroup, saveSettingsHelpMode } from '../../storage/persistence';
 import { VIEWPORT_TABS, readViewHash, viewHashFragment } from '../../storage/viewHash';
@@ -77,6 +78,8 @@ export function viewState(host: SandboxToolHost): Record<string, unknown> {
   const status = viewerControls(s.activeViewport)?.status();
   return {
     viewer: s.activeViewport,
+    mode: editModeNow(),
+    ...(selectedFrameNow() ? { frame: selectedFrameNow() } : {}),
     panel: s.activePanel ?? 'none',
     ...(s.activeResourceId ? { resource: s.activeResourceId } : {}),
     settingsHelp: loadSettingsHelpMode(),
@@ -116,11 +119,12 @@ export function viewTools(host: SandboxToolHost): WebMcpTool[] {
   const setView: WebMcpTool = {
     name: 'sandbox_set_view',
     title: 'Sandbox: change how the book is shown',
-    description: 'Change what the reader sees of the Sandbox, any number of settings at once: the viewer tab (canvas, pdf, folio, html, epub), the side panel and the resource open in it, the Design panel\'s group, explanations and changed-only filter, whether a viewer shows the chapter or the whole book, the EPUB rendition, the Canvas magnification, fit and facing pages, the type size and columns of the HTML and EPUB readers, the Folio pointer mode, view and magnifying glass, the print preview, pinned toolbars, large touch targets, and the guides drawn on the pages (baseline grid, character grid, loose-line highlight, pages in negative). Answers with the view as it stands afterwards, the status of the viewer on screen included (its page, what it is writing, an EPUB\'s contents and warnings, the videos of its pages). sandbox_go_to_page turns the pages; sandbox_run_viewer presses a viewer\'s buttons (regenerate, print, download, play a video).',
+    description: 'Change what the reader sees of the Sandbox, any number of settings at once: the viewer tab (canvas, pdf, folio, html, epub), the Content or Design mode, the side panel and the resource open in it, the Design panel\'s group, explanations and changed-only filter, whether a viewer shows the chapter or the whole book, the EPUB rendition, the Canvas magnification, fit and facing pages, the type size and columns of the HTML and EPUB readers, the Folio pointer mode, view and magnifying glass, the print preview, pinned toolbars, large touch targets, and the guides drawn on the pages (baseline grid, character grid, loose-line highlight, pages in negative). Answers with the view as it stands afterwards, the status of the viewer on screen included (its page, what it is writing, an EPUB\'s contents and warnings, the videos of its pages). sandbox_go_to_page turns the pages; sandbox_run_viewer presses a viewer\'s buttons (regenerate, print, download, play a video).',
     inputSchema: {
       type: 'object',
       properties: {
         viewer: { type: 'string', enum: VIEWPORT_TABS, description: 'The viewer tab to show.' },
+        mode: { type: 'string', enum: EDIT_MODES, description: 'content: the text is edited (the editor, the frames of composed pages on the page); design: page templates and styles are edited and the text is read only. The person switches with Alt+Shift+M.' },
         panel: { type: 'string', enum: [...PANELS, 'none'], description: 'The side panel to open (projects = Books, markdown = Manuscript, config = Design, warnings = Checks), or none to close it.' },
         sidebarWidth: { type: 'number', minimum: 5, maximum: 80, description: 'Width of the side panel, as a percentage of the window.' },
         settingsGroup: { type: 'string', enum: SETTINGS_GROUPS.map((g) => g.id), description: 'Open the Design panel on this group of settings.' },
@@ -181,6 +185,7 @@ export function viewTools(host: SandboxToolHost): WebMcpTool[] {
       const notes: string[] = [];
 
       if (args.viewer !== undefined && args.viewer !== s.activeViewport) s = await dispatchAndWait(host, { type: 'SET_VIEWPORT', payload: viewer });
+      if (args.mode !== undefined) setEditMode(args.mode as EditMode);
       if (args.scope !== undefined) {
         const scope = args.scope as 'chapter' | 'book';
         s = await dispatchAndWait(host, { type: viewer === 'pdf' ? 'SET_PDF_SCOPE' : 'SET_CANVAS_SCOPE', payload: scope });

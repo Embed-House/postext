@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>تقصّ المخرجات المقسّمة إلى صفحات ما لا يتّسع عند أسفل الإطار، لكنه يبقى في المستند وفي خريطة المصدر وفي EPUB ذي التخطيط المتدفق.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>سطر فتح صفحة مركّبة وقالبها مختلفان في أمر الصفحتين المتقابلتين (<code>template</code> و<code>fenceIndex</code>؛ و<code>fence</code> هي <code>spread</code> في سطر الفتح؛ و<code>templateSpread</code> ما في القالب).</td>
+      <td>الحكم للقالب: قالب الصفحتين يُصَفّ على صفحتين متقابلتين، وغيره على صفحة واحدة.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> يذكر نمط شارة غير موجود.</td>
       <td>تأخذ الشارة أول نمط شارة.</td>

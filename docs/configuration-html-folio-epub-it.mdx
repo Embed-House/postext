@@ -264,6 +264,12 @@ Il componente `HtmlPreview` della Sandbox (`packages/postext-sandbox/src/viewpor
       <td>I rimandi <code>:ref</code> puntano alla loro risorsa; le righe dell’indice no.</td>
       <td>I rimandi <code>:ref</code> e le righe dell’indice, più la struttura (segnalibri).</td>
     </tr>
+    <tr>
+      <td>Pagine composte (<code>::::page</code>)</td>
+      <td>Cornici in ordine di livello, ruotate e ritagliate</td>
+      <td>Gli stessi riquadri, scritti in ordine di lettura e dipinti in ordine di livello con <code>z-index</code>; le etichette di una figura seguono il suo <code>alt</code></td>
+      <td>La stessa pittura; l’albero della struttura legge le cornici nell’ordine del Markdown</td>
+    </tr>
   </tbody>
 </table>
 
@@ -396,6 +402,8 @@ EPUB 3 definisce due rendition, impostate dalla proprietà `rendition:layout` de
     <tr><td>Adatto a</td><td>Pagine progettate: libri illustrati, manuali, cataloghi, riviste; schermi grandi</td><td>Testo continuo: romanzi, saggi, relazioni; telefoni e lettori e-ink</td></tr>
   </tbody>
 </table>
+
+Una pagina composta (`::::page{template="…"}`) conserva il suo modello nel layout fisso. Nel libro reflowable diventa una sezione con le sue cornici nell’ordine del Markdown, ogni cornice un blocco nel suo stile dei riquadri, senza la decorazione e con le etichette di ogni figura elencate dopo l’immagine: vedi [Fuori dalla stampa](/it/docs/composed-pages#fuori-dalla-stampa-html-epub-e-pdf-taggato).
 
 Entrambe le rendition hanno la stessa navigazione: un indice ricavato dai titoli e dalle pagine di parte, un elenco delle pagine con le etichette delle pagine stampate, i punti di riferimento (copertina, indice stampato, inizio del corpo) e un NCX per i sistemi di lettura meno recenti.
 

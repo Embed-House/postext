@@ -116,13 +116,13 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Le gabarit décrit deux pages en vis-à-vis posées comme une seule feuille. Une double page commence toujours sur une page de gauche dans un livre de gauche à droite (sur une page de droite dans un livre de droite à gauche), avec une page blanche ajoutée avant elle si nécessaire.</td>
+      <td>Le gabarit décrit deux pages en regard composées comme une seule feuille (voir <a href="/fr/docs/composed-pages#doubles-pages">Pages composées › Doubles pages</a>). Une double page commence sur une page paire, celle de gauche d’un livre qui se lit de gauche à droite et celle de droite d’un livre qui se lit de droite à gauche, avec une page blanche avant elle si besoin. Son ouverture porte aussi la marque <code>spread</code> ; si elles ne s’accordent pas, le gabarit décide (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Sur une double page, la bande au dos que les blocs laissent libre, sauf s’ils fixent <code>crossGutter: true</code>.</td>
+      <td>Sur une double page, une bande de cette largeur centrée sur le dos que les blocs évitent, sauf s’ils ont <code>crossGutter: true</code> : un bloc qui la traverse est coupé à son bord, du côté de son centre ; un bloc qui commence dedans en sort. Avec <code>0</code>, la bande est le dos lui-même.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Sur une double page, le bloc peut traverser la bande du dos.</td>
+      <td>Sur une double page, le bloc peut traverser la bande du dos. Son texte est lu sur la page qui contient son centre ; la page en regard peint sa moitié.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -374,7 +374,7 @@ Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de 
       <td><code>placement</code>, <code>grid</code></td>
       <td>comme pour les blocs</td>
       <td>la boîte de ses blocs</td>
-      <td>La boîte propre du groupe. Non définie, la boîte qui entoure les boîtes déclarées de ses blocs.</td>
+      <td>La boîte propre du groupe. Non définie, le groupe commence là où est placé son premier bloc et s’étend autant que ses blocs le demandent.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -390,6 +390,58 @@ Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de 
     </tr>
   </tbody>
 </table>
+
+### Comment les groupes se partagent l’espace
+
+Un bloc déclare sa taille : une `height` fixe, ou `'auto'`, la hauteur de ce qu’il contient, maintenue entre `minHeight` et `maxHeight`. Pour un gabarit relevé sur une page imprimée, donnez à chaque boîte comme `minHeight` la hauteur qu’elle a sur la page : avec un texte court, la boîte reste telle qu’elle est dessinée, et un texte plus long l’agrandit. La page est mise en page deux fois au cours du même passage, une fois telle que le gabarit la déclare, une fois selon ce que demande son contenu, et les différences entre les deux forment le [journal de recomposition](/fr/docs/composed-pages#journal-de-recomposition).
+
+**Pile.** Les blocs d’une pile se placent les uns sous les autres, chacun à sa hauteur, séparés par `gap`. Chacun garde sa position horizontale et sa largeur ; sa position verticale propre est ignorée.
+
+- Un groupe sans `placement` ni `grid` à lui commence là où le placement de son premier bloc le met et descend aussi loin que ses blocs l’exigent, jusqu’au pied de la zone du gabarit. Quand un bloc grandit, les blocs qui le suivent descendent d’autant.
+- Un groupe qui a sa propre boîte y dispose ses blocs. Quand ils demandent plus de place que la boîte n’en offre, les blocs dont le `shrink` dépasse 0 rendent de l’espace, ceux de plus basse `priority` en premier ; à priorité égale, chacun cède en proportion de son `shrink`, et aucun ne descend sous son `minHeight`. L’espace libre va aux blocs dont le `grow` dépasse 0, en proportion de cette valeur, jusqu’à leur `maxHeight` ; s’il n’y en a aucun, `align` place les blocs (`'end'` en pied, `'center'`, `'space-between'`). Un bloc du groupe sans placement propre prend la boîte du groupe pour zone.
+- Quand plus rien ne peut céder, aucun bloc ne dépasse le pied du groupe : le contenu qui ne tient pas y est coupé et signalé par `frameOverflow`.
+- Un bloc en `height: 'fill'` demande son `minHeight` et prend l’espace libre comme s’il avait `grow: 1`.
+
+**Rangée.** Les blocs d’une rangée se placent côte à côte à leurs largeurs déclarées, tous à la hauteur de la rangée : celle de la boîte du groupe ou, si le groupe n’a pas de boîte à lui, la plus grande des hauteurs déclarées (un bloc de hauteur fixe garde la sienne). Quand le texte d’un bloc dépasse la hauteur de la rangée, le bloc s’élargit : d’abord sur la largeur libre de la rangée, puis sur celle des autres blocs dont le `shrink` dépasse 0, ceux de plus basse `priority` en premier, sans jamais rendre l’un d’eux plus étroit que la largeur où son propre texte tient encore. La largeur prise est le plus petit nombre de millimètres entiers qui fait tenir le texte ; si toute la place disponible n’y suffit pas, le bloc n’en prend aucune, et une rangée sans boîte à elle gagne en hauteur. La largeur libre va aux blocs dont le `grow` dépasse 0, puis à `align`. Les rangées vont de gauche à droite.
+
+**Blocs épinglés.** Un bloc en `pin: true` garde la boîte que le gabarit lui déclare, même quand le bloc auquel il est ancré grandit ou se déplace : une boîte dessinée pour tomber juste sur l’illustration y reste. Dans un groupe, un bloc épinglé garde sa place et les autres blocs passent au-delà, avec `gap` conservé de part et d’autre ; un bloc épinglé hors du groupe fait de même pour les blocs du groupe qu’il chevaucherait.
+
+**Décor.** Un élément de décor ancré à un bloc (`anchor: { to: '#dinero' }`) suit le bloc quand celui-ci grandit ou se déplace. Un élément en `pin: true` reste là où le gabarit dessine ce bloc.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriété</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pin</code> (élément de décor)</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Dans le décor d’une page composée : un élément ancré à un bloc reste là où le gabarit place ce bloc, quoi que fassent le contenu du bloc ou son groupe. Ignoré dans les en-têtes, les pieds de page et les styles de titre.</td>
+    </tr>
+  </tbody>
+</table>
+
+Les trois boîtes d’une page de manuel, chacune à la hauteur où elle est dessinée, qui grandissent avec leur texte :
+
+```ts
+frames: [
+  { name: 'dinero', style: 'caja-azul', width: { value: 186, unit: 'mm' }, minHeight: { value: 36, unit: 'mm' },
+    placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: { value: 9, unit: 'mm' } } } },
+  { name: 'dinero-fotos', layer: 2, width: { value: 58, unit: 'mm' },
+    placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+  { name: 'gasto', style: 'caja-verde', width: { value: 186, unit: 'mm' }, minHeight: { value: 62, unit: 'mm' } },
+  { name: 'ahorro', style: 'caja-amarilla', width: { value: 186, unit: 'mm' }, minHeight: { value: 30, unit: 'mm' } },
+],
+groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
+```
+
+Le résultat ne dépend que du contenu de la page, du gabarit et de la typographie : la même entrée donne la même page, mesurée dans le même ordre, par les mêmes étapes. La négociation ne lit jamais une autre page ; modifier une page composée laisse donc toutes les autres telles qu’elles étaient, tant que le contenu reste sur sa page.
 
 ### Héritage et variantes
 
@@ -416,7 +468,34 @@ Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit
 
 ### Ce que la mise en page applique
 
-La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` et `overflow.continueIn: "#frame"`, ainsi que l’`area`, la `grid`, le `decoration`, le `header`, le `footer` et les `variants` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` d’un groupe ; ses blocs gardent leur propre placement), `fit`, `overflow.continueIn: "next-page"` et `overflowTemplate`, `spread` et `crossGutter`, le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
+La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` et `overflow.continueIn: "#frame"`, ainsi que l’`area`, la `grid`, le `decoration`, le `header`, le `footer` et les `variants` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` d’un groupe ; ses blocs gardent leur propre placement), `fit`, `overflow.continueIn: "next-page"` et `overflowTemplate`, le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
+
+### Doubles pages
+
+Dans un gabarit de double page, toutes les coordonnées portent sur la feuille de ses deux pages, le dos au milieu : `area`, `grid`, les ancrages à `container`, `page` et `bleed` et les tailles `fill` lisent la double largeur. `bleed` atteint la tête, le pied et les deux bords extérieurs, jamais le dos. La frise chronologique en double page d’un manuel tient en un seul gabarit :
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … de era-2 à era-6, une colonne de la grille chacune, et les notes sous la frise
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+Un écart entre colonnes plus large que le `gutter` tient les fiches d’une grille symétrique à l’écart du dos : aucune n’est déplacée. Le second bandeau et la frise d’images ont `crossGutter` pour le traverser : chacun est lu sur la page qui contient son centre et peint sur les deux. Tous les mots de la page, y compris les noms des époques sur les onglets, restent dans le Markdown.
 
 ## Styles d’étiquette
 

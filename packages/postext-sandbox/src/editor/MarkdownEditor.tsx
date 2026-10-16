@@ -11,6 +11,8 @@ import { useUiRtl } from '../ui/direction';
 import { useSandbox, useSandboxEditorStateRef } from '../context/SandboxContext';
 import { anchorsOf, referencesOf, type RefCompletionContext } from './refCompletion';
 import { indexTermsOf } from './indexSyntax';
+import { useEditMode } from '../editing/editMode';
+import { Button } from '../ui';
 
 interface MarkdownEditorProps {
   isDark?: boolean;
@@ -58,6 +60,9 @@ export function MarkdownEditor({ isDark = true }: MarkdownEditorProps) {
   };
 
   const hintId = useId();
+  // Design mode (#864): the text is read only.
+  const [editMode, setEditMode] = useEditMode();
+  const readOnly = editMode === 'design';
   const rtl = useUiRtl();
   // The text is in the document's language (the interface's when it
   // names none), not the interface's.
@@ -76,6 +81,7 @@ export function MarkdownEditor({ isDark = true }: MarkdownEditorProps) {
     ariaDescribedBy: hintId,
     rtl,
     lang,
+    readOnly,
   });
 
   // Edits made on the previews (#568) undo through this editor's history
@@ -128,7 +134,19 @@ export function MarkdownEditor({ isDark = true }: MarkdownEditorProps) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, flex: '1 1 0%', minHeight: 0 }}>
-      <EditorToolbar viewRef={viewRef} lang={language} />
+      <EditorToolbar viewRef={viewRef} lang={language} readOnly={readOnly} />
+      {readOnly && (
+        <div
+          role="status"
+          className="flex flex-wrap items-center gap-2 border-b px-3 py-1.5 text-[0.7rem]"
+          style={{ borderColor: 'var(--rule)', backgroundColor: 'var(--surface)', color: 'var(--slate)' }}
+        >
+          <span>{state.labels.editorDesignModeNotice}</span>
+          <Button size="sm" variant="ghost" onClick={() => { setEditMode('content'); viewRef.current?.focus(); }}>
+            {state.labels.editorSwitchToContent}
+          </Button>
+        </div>
+      )}
       <p id={hintId} className="sr-only">{state.labels.editorKeyboardHint}</p>
       <div style={{ flex: '1 1 0%', minHeight: 0, position: 'relative' }}>
         <div ref={containerRef} style={{ position: 'absolute', inset: 0, overflow: 'hidden' }} />

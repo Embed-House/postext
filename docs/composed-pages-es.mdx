@@ -40,7 +40,7 @@ Una página compuesta se abre con una línea de **cuatro dos puntos** seguida de
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>Obligatorio. El id de una entrada de <code>pageTemplates</code>.</td></tr>
-    <tr><td><code>spread</code></td><td>La página es una doble página que ocupa dos páginas enfrentadas; la plantilla también tiene que ser de doble página.</td></tr>
+    <tr><td><code>spread</code></td><td>La página es una doble página que ocupa dos páginas enfrentadas (consulta <a href="#dobles-páginas">Dobles páginas</a>). Tiene que coincidir con el <code>spread</code> de la plantilla; si no, manda la plantilla y <code>spreadMismatch</code> lo avisa.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Un ancla: un <code>:ref</code> que apunta a ella imprime la página en la que cae la página compuesta.</td></tr>
     <tr><td>cualquier otro</td><td>Un valor que la plantilla lee como <code>&#123;attr.name&#125;</code>, por ejemplo una imagen de fondo elegida página a página: <code>fondo="banda-retos"</code> con <code>resourceId: "&#123;attr.fondo&#125;"</code> en la decoración.</td></tr>
   </tbody>
@@ -191,6 +191,17 @@ Los marcos se pintan en el orden de su `layer`: la decoración en la capa 0, los
 
 Un marco cuyo contenido es más alto que él, sin un marco siguiente donde continuar, conserva todo ese contenido en el documento pero solo muestra lo que cabe: el resto se corta al pie del marco en la salida paginada, y el aviso [`frameOverflow`](#frameoverflow) dice cuánto. El contenido que no recoge ningún marco (no hay marco de flujo, o en ese lado falta un marco) se compone en el texto corrido, en la página que sigue a la página compuesta.
 
+## Fuera del papel: HTML, EPUB y PDF etiquetado
+
+Todas las salidas leen una página compuesta en el orden de su Markdown, no en el orden en que la plantilla enumera sus marcos ni en el que pinta sus capas.
+
+- **EPUB de maquetación fluida.** La página se convierte en una sección (`<section class="pt-composed pt-composed-tema-cajas">`) que se abre con la marca de salto de página. Cada marco es un bloque de esa sección (`<div class="pt-frame pt-frame-dinero">`), colocado donde su contenido aparece por primera vez en el Markdown; un marco y los marcos en los que sigue su cadena `next` forman un solo bloque. Un marco dibujado con un estilo de aviso conserva la caja de ese estilo: fondo, borde, márgenes interiores, texto del cuerpo y su `label` como título de la caja. Un marco sin estilo es un bloque sin más. La decoración (imágenes de fondo, tarjetas, textos de diseño) pertenece a la página impresa y se deja fuera.
+- **Rótulos de las figuras.** La imagen que lleva el EPUB no muestra los textos `::label` de una `:::figure`, así que el libro fluido los enumera justo después de la imagen, dentro de su figura y en el orden en que se escribieron: una lista oculta a la vista (`pt-figure-labels pt-hidden`) que un lector de pantalla lee una sola vez. En el visor HTML, en el EPUB de maquetación fija y en el PDF etiquetado van detrás del texto alternativo de la imagen, `Una familia con la cesta de la compra (Alquiler, Luz, Comida)`; los rótulos en chino y japonés llevan `（…、…）` y los árabes, la coma árabe.
+- **Visor HTML y EPUB de maquetación fija.** Los dos muestran la página impresa con su plantilla aplicada: cada marco en su caja, girado según `rotate`, recortado cuando su contenido desborda, pintado sobre los marcos de capas inferiores y con la decoración en la capa 0. El marcado enumera los marcos en orden de lectura y los pinta en orden de capas con `z-index`, de modo que las tecnologías de apoyo siguen el Markdown mientras la página se ve como impresa. Las imágenes decorativas quedan ocultas para las tecnologías de apoyo (`alt=""`). Las fuentes de la decoración están entre las que el Sandbox incrusta en un EPUB; un EPUB de maquetación fija escrito sin alguna de ellas avisa con `missingFont`.
+- **PDF etiquetado.** El árbol de estructura lee los marcos en el mismo orden. Cada marco, o cadena de marcos, es un `Div` con sus encabezados, párrafos y listas; sus imágenes son elementos `Figure` cuyo `Alt` incluye los rótulos; la decoración es un artefacto de maquetación.
+
+Desde el código, los rótulos de una figura están en su bloque, en `resourceBlock.labels` (texto, ancla o punto, estilo y rango en el fuente), y `composedReadingOrder(composedPaintOrder(page))` da la decoración y los marcos de una página en orden de lectura.
+
 ## Avisos
 
 Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, así que aparecen en el panel Revisión mientras escribes, en `postext check` y en los `contentWarnings` del documento, cada una con el rango de origen de lo que señala (véase [Configuración › Avisos del documento](/es/docs/configuration-programmatic-usage#avisos-del-documento)).
@@ -225,6 +236,11 @@ Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, 
       <td>Abre la página con cuatro dos puntos, <code>::::page&#123;template="…"&#125;</code>, y ciérrala con <code>::::</code>.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>El <code>spread</code> de la apertura y el de la plantilla no coinciden. La página se compone como dice la plantilla (consulta <a href="#spreadmismatch">spreadMismatch</a>).</td>
+      <td>Escribe <code>spread</code> en la apertura de una plantilla de doble página, o quítalo si la plantilla es de una sola.</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>Una página compuesta, un marco o una figura no se cierra nunca (véanse las reglas de recuperación de más arriba). El panel Revisión llama <code>::::page</code> a la página compuesta.</td>
       <td>Añade la valla de cierre: tantos dos puntos como la línea de apertura de la página, o <code>:::</code> para un marco o una figura.</td>
@@ -239,6 +255,85 @@ Este aviso lo da la maquetación, no las comprobaciones del código fuente de ar
 **Causa.** El contenido que entra en un marco (por su slot, o el que recibe el marco de flujo) es más alto que el marco, y el marco no tiene ningún `next` donde seguir. Casi siempre hay más texto del que cabe: una traducción más larga que el original, o un marco sujeto a un `height` o un `maxHeight` fijos. Lo que no cabe se corta al pie del marco en la salida paginada; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida. El aviso indica la plantilla, el marco, la página, la altura cortada (`overflowMm`) y `configPath`, el puntero JSON del marco en la configuración (`/pageTemplates/0/frames/2`).
 
 **Solución.** Da más sitio al marco (sube o quita su `height` o su `maxHeight`), encadénalo a otro marco con `next`, acorta el texto o compón la página con otra plantilla. Por ahora la maquetación no reduce el texto para que quepa.
+
+## Cuando el texto crece
+
+Una página compuesta se recoloca dentro de los límites que declara su plantilla. Si el texto de la primera caja de una página cuyas cajas forman un grupo apilado se alarga, la caja crece para darle cabida y las cajas de debajo, con las fotos y la decoración ancladas a ellas, bajan; no cambia ni una línea de la plantilla. Con un texto más corto, la caja recupera la altura declarada. Un marco o un elemento de decoración con `pin` se queda donde lo pone la plantilla, para una caja que tiene que caer sobre la ilustración. Cómo se reparten el espacio las pilas y las filas, y qué marco cede primero, se decide en la plantilla: consulta [Configuración › Cómo se reparten el espacio los grupos](/es/docs/configuration-composed-pages#cómo-se-reparten-el-espacio-los-grupos).
+
+Cuando las cajas llegan al pie del área y ningún marco del grupo puede ceder más, el último se corta al pie y la composición avisa con `frameOverflow` (consulta [Avisos](#avisos)): acorta el texto, baja el `minHeight` de otro marco, deja que un marco encoja o da más sitio al grupo. Los grupos no añaden ningún otro aviso.
+
+## Registro de recomposición
+
+Cada página compuesta guarda un registro de lo que la composición cambió respecto al dibujo de su plantilla: qué marco creció, cedió espacio o se movió, cuánto, y qué marco lo provocó. Una página cuyo texto cabe en su plantilla no registra nada.
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Suceso</th>
+      <th>Qué dice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>El marco es más alto (con <code>axis: 'x'</code>, más ancho) que lo declarado: <code>fromMm</code> es el tamaño declarado y <code>toMm</code> el que ha recibido.</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>El marco es más pequeño que lo declarado: ha cedido espacio a <code>cause</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>El borde superior del marco (con <code>axis: 'x'</code>, el izquierdo) se ha movido, en mm desde el borde de la hoja; <code>cause</code> es el marco cuyo crecimiento lo ha desplazado.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>El contenido no cabía: <code>toMm</code> es la altura cortada, como en <code>frameOverflow</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Los cambios de menos de medio milímetro no se registran, y cada cambio se redondea una sola vez a la décima de milímetro, de modo que los marcos que se movieron juntos dan la misma cifra. La decoración que sigue a un marco no aparece en la lista.
+
+`postext check` escribe una línea `reflow` por cada página compuesta con sucesos, después de los avisos; con `--json`, el informe lleva una lista `reflow` con una entrada por página: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` y `lines` (los sucesos en palabras).
+
+Desde el código, el registro es `VDTPage.composed.log`, y cada marco guarda en `VDTFrame.declaredRect` la caja que le declara su plantilla cuando no coincide con `rect`. `composedReflowLog(doc)` devuelve las entradas que escribe `postext check`, y `describeReflowEvent(event)` pone un suceso en palabras.
+
+## Dobles páginas
+
+Una plantilla con `spread: true` es una sola hoja de dos páginas enfrentadas: una banda que cruza el lomo, una tira de dibujos de un borde exterior al otro, fichas a cada lado. La apertura de la página lo dice con `spread`:
+
+```md
+::::page{template="linea-tiempo" spread}
+# Cómo medimos el tiempo
+
+Para saber cuándo comer, trabajar o descansar, las personas siempre han necesitado medir el tiempo…
+
+:::frame{slot="banda-2"}
+Con relojes de máquina
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **Dónde empieza.** Una doble página empieza en una página par (la izquierda en un libro que se lee de izquierda a derecha, la derecha en uno que se lee de derecha a izquierda) y ocupa también la impar que la sigue. Si el texto anterior acaba en una página par, la siguiente queda en blanco (un blanco de paridad, como antes de una doble página de cómic), para que las dos mitades queden enfrentadas. El texto que sigue al cierre empieza en la página siguiente a la impar.
+- **Una sola hoja.** Los marcos se colocan en una hoja tan ancha como las dos páginas. El área `content` va del margen exterior de una página al de la otra, con los dos márgenes interiores dentro; `trim` son las dos páginas cortadas, una junto a otra; `bleed` añade la sangría de cabeza, de pie y de los dos bordes exteriores, nunca en el lomo. Una `grid` divide todo el ancho: seis columnas ponen tres en cada página. En un libro de derecha a izquierda la hoja se refleja como sus páginas, así que la primera columna queda en la página derecha.
+- **El medianil.** `gutter` es una banda de ese ancho centrada en el lomo. Un marco sin `crossGutter: true` se mantiene fuera de ella: si atraviesa la banda entera se corta en su borde, del lado donde está su centro, y si su borde interior cae dentro de la banda sale de ella entero. Una altura `auto` se mide con el ancho más estrecho, y el registro de reajustes de la página anota el cambio (`resized` o `moved`, con la causa `gutter`). Sin `gutter`, la banda es el propio lomo, así que solo cruzan el pliegue los marcos que lo piden.
+- **Por encima del lomo.** Un marco con `crossGutter: true` puede cruzarlo. Su texto se lee una sola vez, en la página que contiene el centro del marco; la página de enfrente pinta su propia mitad del marco, cortada en su hoja, de modo que una banda o un dibujo se ven de una pieza con el libro abierto. Un PDF etiquetado marca esa mitad como artefacto, el HTML la oculta a las tecnologías de apoyo, y al seleccionar o buscar el texto se encuentra una vez.
+- **La decoración** se compone una vez sobre toda la hoja y se corta en el lomo del mismo modo: un fondo, una tarjeta de una página a otra, un titulillo en la página derecha. Un elemento anclado a `#marco` sigue a ese marco a la página en la que cae. Una doble página no admite `variants`, porque tiene los dos lados; `header` y `footer` funcionan en cada una de sus páginas como en cualquier otra.
+
+En el lienzo, en la vista de doble página del Sandbox y en el Folio, las dos páginas aparecen una junto a otra. El PDF tiene dos páginas, cada una recortada en su sangría. El EPUB de maquetación fija les da `page-spread-left` y `page-spread-right` con `rendition:spread-both`, para que el lector las muestre juntas en cualquier orientación. El EPUB adaptable lee los marcos como en cualquier página compuesta, en el orden del Markdown.
+
+### spreadMismatch
+
+**Causa.** La apertura de la página y su plantilla no coinciden: la apertura lleva `spread` y la plantilla es de una sola página, o la plantilla es de doble página (por su propio `spread: true` o a través de `extends`) y a la apertura le falta. Manda la plantilla: una plantilla de doble página se compone en dos páginas enfrentadas, y cualquier otra en una. El aviso da la plantilla, la marca de la apertura (`fence`) y la de la plantilla (`templateSpread`), y señala el atributo `spread`, o el nombre de la plantilla cuando la apertura no lo lleva.
+
+**Corrección.** Haz que la apertura diga lo que es la plantilla: escribe `spread` en la apertura de una plantilla de doble página, quítalo de la de una plantilla de una sola, o elige otra plantilla.
 
 ## Desde el código
 

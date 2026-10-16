@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 090 · A Chinese paper cited to GB/T 7714 ═════════════════
 // https://postext.dev/en/cookbook/gbt7714-chinese-paper
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Noto Serif SC, Noto Sans SC, LXGW WenKai TC (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Noto Serif SC, Noto Sans SC, LXGW WenKai TC (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, registerCitationEngine,
 } from 'https://esm.sh/postext';
@@ -52,13 +52,14 @@ const line = (id, content, family, size, color, placement, extra) => ({ kind: 't
   overflow: 'wrap', placement, ...extra });
 const onBand = (x, y) => ({ anchor: { to: 'page', edge: 'top-left' },
   offset: { x: mm(x), y: mm(y) }, size: { width: mm(AREA) } });
+const [JOURNAL, ISSUE] = ['示例出版研究', '第44卷　第3期　2026年9月']; // the journal's band
 const masthead = { enabled: true, minHeight: pt(9 * LEAD), slot: { elements: [
   { kind: 'box', id: 'band', style: { backgroundColor: col('indigo') },
     placement: { anchor: { to: 'page', edge: 'top-left' },
       size: { width: 'fill', height: mm(BAND) } } },
-  line('journal', '示例出版研究', HEI, 15, 'paper', onBand(15.8, 13),
+  line('journal', JOURNAL, HEI, 15, 'paper', onBand(15.8, 13),
     { fontWeight: 700, align: 'left', letterSpacing: pt(3) }),
-  line('issue', '第44卷　第3期　2026年9月', HEI, 8, 'mist', onBand(15.8, 16),
+  line('issue', ISSUE, HEI, 8, 'mist', onBand(15.8, 16),
     { align: 'right' }),
   line('title', '{titleText}', HEI, 17, 'ink', at('', 'top-left', 14),
     { fontWeight: 700, lineHeight: 1.45 }),
@@ -86,7 +87,7 @@ const head = (id, content, parity, edge, x, extra) => ({ kind: 'text', id, conte
 const folio = { fontWeight: 700, color: col('indigo') };
 const header = { elements: [
   head('v-folio', '{pageNumber}', 'even', 'left', 15.8, folio),
-  head('v-head', '示例出版研究　2026年第3期', 'even', 'left', 24),
+  head('v-head', `${JOURNAL}　2026年第3期`, 'even', 'left', 24),
   head('r-head', '赵一鸣，等：横排中文正文的行长与行距', 'odd', 'right', -24),
   head('r-folio', '{pageNumber}', 'odd', 'right', -15.8, folio),
   { kind: 'rule', id: 'head-rule', pages: 'body', thickness: pt(0.5), color: col('rule'),
@@ -130,6 +131,7 @@ const config = () => ({
     color: col('muted'), firstLineIndent: pt(0), textAlign: 'left', marginTop: pt(LEAD) }],
   header,
   footer: { elements: [] },
+  checks: { contentInConfig: { allow: [JOURNAL, ISSUE] } }, // the journal's furniture (#849)
 });
 
 // ─── 2 · Content ────────────────────────────────────────────────────────────

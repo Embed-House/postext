@@ -266,3 +266,52 @@ describe('fixed layout of a right-to-left book', () => {
     expect(first).toMatch(/<span dir="ltr" style="[^"]*">AAA<\/span>/);
   });
 });
+
+describe('fixed layout of a spread template (#861)', () => {
+  const mm = (value: number) => ({ value, unit: 'mm' as const });
+  const template = {
+    id: 'tl',
+    spread: true,
+    gutter: mm(6),
+    frames: [
+      { name: 'band', crossGutter: true, height: mm(20), width: 'fill' as const, placement: { anchor: { to: 'container' as const, edge: 'top-left' as const } } },
+      { name: 'text', flow: true, placement: { anchor: { to: '#band', edge: 'below' as const } } },
+    ],
+  };
+  const md = 'Before the spread.\n\n::::page{template="tl" spread}\n:::frame{slot="band"}\nBand across the spine\n:::\n\nText under it.\n::::\n\nAfter.';
+  const props = async (docs: VDTDocument[]) =>
+    (await buildFixedPublication(docs, { layout: 'fixed', metadata: { title: 'T', language: docs[0]!.config.locale ?? 'en' } })).spine.map((s) => s.properties);
+
+  it('shows the two pages side by side in any orientation, the verso on the left', async () => {
+    const docs = layOutBook([md], { pageTemplates: [template] } as never);
+    const pages = docs[0]!.pages;
+    expect(pages.filter((p) => p.composed?.spread).map((p) => [p.index, p.composed!.spread])).toEqual([[1, 'left'], [2, 'right']]);
+    expect(await props(docs)).toEqual([['page-spread-right'], ['page-spread-left', 'rendition:spread-both'], ['page-spread-right', 'rendition:spread-both'], ['page-spread-left']]);
+  });
+
+  it('puts the verso on the right in a right-to-left book', async () => {
+    const docs = layOutBook([md], { pageTemplates: [template], locale: 'ar' } as never);
+    expect(docs[0]!.binding).toBe('right');
+    const spread = docs[0]!.pages.filter((p) => p.composed?.spread);
+    expect(spread.map((p) => p.composed!.spread)).toEqual(['right', 'left']);
+    expect((await props(docs)).slice(1, 3)).toEqual([['page-spread-right', 'rendition:spread-both'], ['page-spread-left', 'rendition:spread-both']]);
+  });
+
+  it('reads the band once in the reflowable book', async () => {
+    const docs = layOutBook([md], { pageTemplates: [template] } as never);
+    const made = readEpub(await renderToEpub(docs, { layout: 'reflowable', metadata: { title: 'T', language: 'en', modified: MODIFIED }, fonts: [{ family: 'Lora', weight: 400, style: 'normal', bytes: LORA, format: 'ttf' }] }));
+    const text = made.spine.map((s) => new TextDecoder().decode(made.files.get(s.path)!)).join('\n');
+    expect(text.split('Band across the spine').length - 1).toBe(1);
+    expect(text).toContain('Text under it.');
+  });
+
+  it('paints the facing half of the band hidden from assistive technology', async () => {
+    const docs = layOutBook([md], { pageTemplates: [template] } as never);
+    const pub = await buildFixedPublication(docs, { layout: 'fixed', metadata: { title: 'T', language: 'en' } });
+    const recto = String(pub.items.find((i) => i.id === 'page-0003')!.data);
+    expect(recto).toMatch(/data-facing="true" aria-hidden="true"/);
+    expect(recto).toContain('pt-sheet-clip');
+    const verso = String(pub.items.find((i) => i.id === 'page-0002')!.data);
+    expect(verso).not.toContain('data-facing');
+  });
+});

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 006 · Front matter: roman folios, then page 1 ═══════════
 // https://postext.dev/en/cookbook/front-matter-roman-to-arabic
 // Code: MIT · Text: M. & P. B. Shelley, 1818 (PD) · Pictures: diffusion models; marks drawn in code
-// Fonts: Fanwood Text, Playfair Display SC, Cinzel (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Fanwood Text, Playfair Display SC, Cinzel (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -199,6 +199,9 @@ const header = { elements: [
 const config = () => ({
   locale: 'en-us', // the hyphenation patterns
   colorPalette, layout: { layoutType: 'single' },
+  // 'The text of {publishDate}' on the title page: a label before the front matter's date,
+  // as 'Chapter' is before a number (#849).
+  checks: { contentInConfig: { allow: ['The text of'] } },
   page: { // mirror: left is the inner margin; 150 dpi is for the screen
     sizePreset: 'custom', width: mm(TRIM_W), height: mm(TRIM_H), dpi: 150,
     backgroundColor: col('paper'), pageNumbering,

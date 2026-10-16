@@ -3,7 +3,7 @@ title: "Historia, prueba 2"
 subtitle: "La guerra de Secesión, 1863"
 ---
 
-# Historia {style="cover" session="Simulacro de examen · Primavera de 2026" paper="Prueba 2 · Fuentes e interpretaciones" topic="La guerra de Secesión, 1863" date="Jueves, 14 de mayo de 2026 · 9:00 · Duración: 1 hora y 15 minutos"}
+# Historia {style="cover" notice="No des la vuelta a la hoja hasta que se te indique" session="Simulacro de examen · Primavera de 2026" paper="Prueba 2 · Fuentes e interpretaciones" topic="La guerra de Secesión, 1863" date="Jueves, 14 de mayo de 2026 · 9:00 · Duración: 1 hora y 15 minutos"}
 
 ::resource{id="candidate"}
 

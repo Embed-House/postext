@@ -116,13 +116,13 @@ Um modelo que define só o seu `id` e um quadro é uma página inteira com esse 
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>O modelo descreve duas páginas espelhadas diagramadas como uma só folha. Uma página dupla sempre começa numa página par num livro da esquerda para a direita (numa ímpar num da direita para a esquerda), com uma página em branco antes dela quando necessário.</td>
+      <td>O modelo descreve duas páginas lado a lado compostas como uma só folha (veja <a href="/pt/docs/composed-pages#páginas-duplas">Páginas compostas › Páginas duplas</a>). Uma página dupla começa em uma página par, a da esquerda em um livro que se lê da esquerda para a direita e a da direita em um que se lê da direita para a esquerda, com uma página em branco antes quando necessário. A abertura também leva a marca <code>spread</code>; se elas não concordam, vale o modelo (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Numa página dupla, a faixa junto à lombada que os quadros deixam livre, a menos que definam <code>crossGutter: true</code>.</td>
+      <td>Em uma página dupla, uma faixa dessa largura centrada na lombada que os quadros evitam, a menos que tenham <code>crossGutter: true</code>: um quadro que a atravessa é cortado na borda dela, do lado do seu centro, e um que começa dentro dela sai. Com <code>0</code>, a faixa é a própria lombada.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Numa página dupla, o quadro pode atravessar a faixa da lombada.</td>
+      <td>Em uma página dupla, o quadro pode atravessar a faixa da lombada. O texto dele é lido na página que contém o seu centro; a página em frente pinta a metade dele.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -374,7 +374,7 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
       <td><code>placement</code>, <code>grid</code></td>
       <td>como nos quadros</td>
       <td>a caixa dos seus quadros</td>
-      <td>A caixa própria do grupo. Sem valor, a caixa em volta das caixas declaradas dos seus quadros.</td>
+      <td>A caixa própria do grupo. Sem valor, o grupo começa onde está posicionado o seu primeiro quadro e vai até onde os seus quadros precisarem.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -390,6 +390,58 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
     </tr>
   </tbody>
 </table>
+
+### Como os grupos dividem o espaço
+
+Um quadro declara o seu tamanho: um `height` fixo, ou `'auto'`, a altura do que ele contém, mantida entre `minHeight` e `maxHeight`. Num modelo tirado de uma página impressa, dê a cada caixa como `minHeight` a altura que ela tem na página: com um texto curto a caixa fica como está desenhada, e um texto mais longo a deixa mais alta. A página é diagramada duas vezes na mesma passada, uma como o modelo a declara e outra como o conteúdo precisa, e o que muda de uma para a outra forma o [registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes).
+
+**Pilha.** Os quadros de uma pilha ficam um embaixo do outro, cada um na sua altura, com `gap` entre eles. Cada um mantém a sua posição horizontal e a sua largura; a posição vertical própria é ignorada.
+
+- Um grupo sem `placement` nem `grid` próprios começa onde o posicionamento do seu primeiro quadro o coloca e desce o quanto os quadros precisarem, até o pé da área do modelo. Quando um quadro cresce, os quadros que vêm depois dele descem o mesmo tanto.
+- Um grupo com caixa própria arranja os seus quadros dentro dela. Quando eles precisam de mais do que ela comporta, os quadros com `shrink` acima de 0 devolvem espaço, primeiro os de `priority` mais baixa; quadros da mesma prioridade cedem na proporção do seu `shrink`, e nenhum fica abaixo do seu `minHeight`. O espaço que sobra vai para os quadros com `grow` acima de 0, na proporção desse valor, até o `maxHeight` de cada um; se não houver nenhum, `align` posiciona os quadros (`'end'` no pé, `'center'`, `'space-between'`). Um quadro do grupo sem posicionamento próprio usa a caixa do grupo como área.
+- Quando nada mais pode ceder, nenhum quadro passa do pé do grupo: o conteúdo que não cabe é cortado ali e aparece como `frameOverflow`.
+- Um quadro com `height: 'fill'` pede o seu `minHeight` e fica com o espaço que sobra como se tivesse `grow: 1`.
+
+**Fileira.** Os quadros de uma fileira ficam lado a lado nas larguras declaradas, todos com a altura da fileira: a da caixa do grupo ou, se o grupo não tiver caixa própria, a maior altura declarada entre eles (um quadro de altura fixa mantém a sua). Quando o texto de um quadro passa da altura da fileira, o quadro ganha largura: primeiro a que sobra na fileira, depois a dos outros quadros com `shrink` acima de 0, primeiro os de `priority` mais baixa, sem que nenhum fique mais estreito que a largura em que o seu próprio texto ainda cabe. A largura tomada é o menor número de milímetros inteiros com que o texto cabe; se nem todo o espaço disponível bastar, o quadro não toma nada, e uma fileira sem caixa própria fica mais alta. A largura que sobra vai para os quadros com `grow` acima de 0 e depois para `align`. As fileiras vão da esquerda para a direita.
+
+**Quadros fixos.** Um quadro com `pin: true` mantém a caixa que o modelo declara para ele, mesmo quando o quadro ao qual está ancorado cresce ou se move: uma caixa desenhada para coincidir com a arte continua sobre ela. Num grupo, um quadro fixo não sai do lugar e os outros quadros passam por ele, com o `gap` mantido dos dois lados; um quadro fixo fora do grupo faz o mesmo com os quadros do grupo que ele encobriria.
+
+**Decoração.** Um elemento de decoração ancorado a um quadro (`anchor: { to: '#dinero' }`) acompanha o quadro quando ele cresce ou se move. Um elemento com `pin: true` fica onde o modelo desenha aquele quadro.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriedade</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pin</code> (elemento de decoração)</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Na decoração de uma página composta: um elemento ancorado a um quadro fica onde o modelo coloca esse quadro, não importa o que façam o conteúdo do quadro ou o seu grupo. Ignorado nos cabeços, nos rodapés e nos estilos de título.</td>
+    </tr>
+  </tbody>
+</table>
+
+As três caixas de uma página de livro didático, cada uma na altura em que está desenhada e crescendo com o seu texto:
+
+```ts
+frames: [
+  { name: 'dinero', style: 'caja-azul', width: { value: 186, unit: 'mm' }, minHeight: { value: 36, unit: 'mm' },
+    placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: { value: 9, unit: 'mm' } } } },
+  { name: 'dinero-fotos', layer: 2, width: { value: 58, unit: 'mm' },
+    placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+  { name: 'gasto', style: 'caja-verde', width: { value: 186, unit: 'mm' }, minHeight: { value: 62, unit: 'mm' } },
+  { name: 'ahorro', style: 'caja-amarilla', width: { value: 186, unit: 'mm' }, minHeight: { value: 30, unit: 'mm' } },
+],
+groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
+```
+
+O resultado depende só do conteúdo da página, do modelo e da tipografia: a mesma entrada dá a mesma página, medida na mesma ordem e com os mesmos passos. A negociação nunca lê outra página, então uma mudança numa página composta deixa todas as outras como estavam, desde que o conteúdo continue na sua página.
 
 ### Herança e variantes
 
@@ -416,7 +468,34 @@ No código, `resolvePageTemplate(config, id, { parity })` devolve um modelo com 
 
 ### O que a diagramação aplica
 
-A diagramação aplica o posicionamento e os tamanhos de cada quadro (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, além de `area`, `grid`, `decoration`, `header`, `footer` e `variants` do modelo. São lidos e verificados, mas ainda não aplicados: a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` de um grupo; os seus quadros mantêm o próprio posicionamento), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, `spread` e `crossGutter`, o `writingMode` e a `direction` de um quadro, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
+A diagramação aplica o posicionamento e os tamanhos de cada quadro (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, além de `area`, `grid`, `decoration`, `header`, `footer` e `variants` do modelo. São lidos e verificados, mas ainda não aplicados: a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` de um grupo; os seus quadros mantêm o próprio posicionamento), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, o `writingMode` e a `direction` de um quadro, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
+
+### Páginas duplas
+
+Em um modelo de página dupla todas as coordenadas valem sobre a folha das suas duas páginas, com a lombada no meio: `area`, `grid`, as âncoras em `container`, `page` e `bleed` e os tamanhos `fill` leem a largura dupla. `bleed` chega à cabeça, ao pé e às duas bordas externas, nunca à lombada. A linha do tempo em página dupla de um livro didático é um só modelo:
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … de era-2 a era-6, uma coluna da grade cada, e as notas sob a tira
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+Um espaço entre colunas maior que o `gutter` mantém as fichas de uma grade simétrica longe da lombada, e nenhuma é movida. A segunda faixa e a tira de ilustrações têm `crossGutter` para atravessá-la: cada uma é lida na página que contém o seu centro e pintada nas duas. Todas as palavras da página, inclusive os nomes das eras nas abas, ficam no Markdown.
 
 ## Estilos de rótulo
 

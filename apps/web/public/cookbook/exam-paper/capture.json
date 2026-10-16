@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "exam-paper",
-  "sourceHash": "cb2767e34267f660e545ca86db0dfb07105e7f836b865fe681e910b46a6dad4d",
+  "sourceHash": "7158accf23851203772017aa697919cfb559d7b4db0b65378c6aaa50ae59f87d",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:59:09.681Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.801Z",
   "variants": {
     "en": {
-      "hash8": "9ec357fb",
+      "hash8": "845ad841",
       "vdtHash": "5dc15f53a7659d1a847d37fa73ff2ad3258192ec",
       "timings": {
-        "importMs": 995,
-        "fontsMs": 99,
-        "buildMs": 72,
-        "totalMs": 2124,
+        "importMs": 514,
+        "fontsMs": 61,
+        "buildMs": 71,
+        "totalMs": 1369,
         "builds": 1
       },
       "specimen": {
@@ -113,7 +113,7 @@
       },
       "sandbox": {
         "file": "exam-paper.postext",
-        "bytes": 45458,
+        "bytes": 45522,
         "folio": "059452bc",
         "chapters": [
           {
@@ -192,6 +192,9 @@
           "captionStyle.fontSize",
           "captionStyle.gap",
           "captionStyle.position",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "chipStyles",
           "chipStyles[].background",
           "chipStyles[].bold",
@@ -329,6 +332,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "chipStyles",
           "colorPalette",
           "footer",
@@ -344,7 +348,7 @@
           "tableStyles",
           "unorderedLists"
         ],
-        "configLeaves": 425,
+        "configLeaves": 426,
         "designElements": 16,
         "directives": [
           "::resource",
@@ -434,21 +438,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "982807a3",
+      "hash8": "d75299d4",
       "vdtHash": "32157745d24344c64614996ca7ec7d5714c8c651",
       "timings": {
-        "importMs": 1018,
-        "fontsMs": 101,
-        "buildMs": 75,
-        "totalMs": 2180,
+        "importMs": 439,
+        "fontsMs": 75,
+        "buildMs": 72,
+        "totalMs": 1400,
         "builds": 1
       },
       "specimen": {
@@ -545,7 +549,7 @@
       },
       "sandbox": {
         "file": "exam-paper.postext",
-        "bytes": 46079,
+        "bytes": 46124,
         "folio": "059452bc",
         "chapters": [
           {
@@ -624,6 +628,9 @@
           "captionStyle.fontSize",
           "captionStyle.gap",
           "captionStyle.position",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "chipStyles",
           "chipStyles[].background",
           "chipStyles[].bold",
@@ -761,6 +768,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "chipStyles",
           "colorPalette",
           "footer",
@@ -776,7 +784,7 @@
           "tableStyles",
           "unorderedLists"
         ],
-        "configLeaves": 425,
+        "configLeaves": 426,
         "designElements": 16,
         "directives": [
           "::resource",
@@ -866,9 +874,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

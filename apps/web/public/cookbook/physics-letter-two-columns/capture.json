@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "physics-letter-two-columns",
-  "sourceHash": "f1a9ce9b010f0811d0c56c0fcefeb7506739c239cba5e7dd0c606a3028801772",
+  "sourceHash": "f6f5ba582fa8f5e3090eb93b1cb238eb875492be0b65f1f0804904d54f481926",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:03:18.157Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.947Z",
   "variants": {
     "en": {
-      "hash8": "0c4d011d",
+      "hash8": "d02ad9d5",
       "vdtHash": "fdf66b60c6e725575965247f6435d0be3590aecb",
       "timings": {
-        "importMs": 929,
-        "fontsMs": 180,
-        "buildMs": 207,
-        "totalMs": 2426,
+        "importMs": 540,
+        "fontsMs": 245,
+        "buildMs": 211,
+        "totalMs": 1885,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Gelasio"
         ],
         "pages": 5,
-        "ownLines": 188
+        "ownLines": 189
       },
       "pages": [
         {
@@ -126,12 +126,12 @@
       },
       "pdf": {
         "file": "physics-letter-two-columns.pdf",
-        "bytes": 572994,
+        "bytes": 573010,
         "pages": 5
       },
       "sandbox": {
         "file": "physics-letter-two-columns.postext",
-        "bytes": 151002,
+        "bytes": 150998,
         "folio": "72637274",
         "chapters": [
           {
@@ -201,6 +201,9 @@
           "captionStyle.note",
           "captionStyle.note.color",
           "captionStyle.note.fontSize",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.entrySpacing",
@@ -330,6 +333,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -345,7 +349,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 310,
+        "configLeaves": 311,
         "designElements": 8,
         "directives": [
           "::resource",
@@ -464,9 +468,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 5 −5‰ “[15] R. W. P. Drever, The Detection of Gravitati…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

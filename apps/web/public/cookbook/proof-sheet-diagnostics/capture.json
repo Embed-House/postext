@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "proof-sheet-diagnostics",
-  "sourceHash": "092f94861d06b619581da9f453154bb10457be151fa3abce7303accba6a664dd",
+  "sourceHash": "54ba7ba8c79a07b80ecc8893ada75a5844990c6842dfe036285919847271e81e",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:03:54.355Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.974Z",
   "variants": {
     "en": {
-      "hash8": "81c032fe",
+      "hash8": "daa993f6",
       "vdtHash": "bbf2e803033cdc865c0c79a1eb80c5e70690e8c0",
       "timings": {
-        "importMs": 967,
-        "fontsMs": 268,
-        "buildMs": 8,
-        "totalMs": 2287,
+        "importMs": 1112,
+        "fontsMs": 99,
+        "buildMs": 10,
+        "totalMs": 2282,
         "builds": 2
       },
       "specimen": {
@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 103010,
+        "bytes": 103049,
         "folio": "3db66766",
         "chapters": [
           {
@@ -176,6 +176,9 @@
           "captionStyle.labelBold",
           "captionStyle.labelColor",
           "captionStyle.lineHeight",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -252,6 +255,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "colorPalette",
           "footer",
           "header",
@@ -261,7 +265,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 294,
+        "configLeaves": 295,
         "designElements": 8,
         "directives": [
           ":::callout",
@@ -348,17 +352,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "8dc0b12e",
+      "hash8": "4bd5cfa4",
       "vdtHash": "7865a446137e4ba693e2346a1c2dd66092f97a16",
       "timings": {
-        "importMs": 176,
-        "fontsMs": 32,
-        "buildMs": 14,
-        "totalMs": 979,
+        "importMs": 724,
+        "fontsMs": 256,
+        "buildMs": 10,
+        "totalMs": 2559,
         "builds": 2
       },
       "specimen": {
@@ -431,7 +441,7 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 104014,
+        "bytes": 104059,
         "folio": "3db66766",
         "chapters": [
           {
@@ -518,6 +528,9 @@
           "captionStyle.labelBold",
           "captionStyle.labelColor",
           "captionStyle.lineHeight",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -594,6 +607,7 @@
           "bodyText",
           "calloutStyles",
           "captionStyle",
+          "checks",
           "colorPalette",
           "footer",
           "header",
@@ -603,7 +617,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 294,
+        "configLeaves": 295,
         "designElements": 8,
         "directives": [
           ":::callout",
@@ -690,7 +704,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 139 · A protein paper with a Methods section ════════════
 // https://postext.dev/en/cookbook/protein-paper-methods-section
 // Code: MIT · Text: Jumper et al. 2021, abridged (CC BY 4.0) · Figures: drawn in code
-// Fonts: Noto Serif, Noto Sans (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Noto Serif, Noto Sans (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine, registerResourceImage,
   defaultResourceTypes, inlineSvgFonts,
@@ -87,16 +87,17 @@ const head = (id, content, parity, edge, x, extra) => text(id, content, SANS, 7.
   placement: at('page', edge, x, 12.5, 110), ...extra });
 const folio = { fontWeight: 700, color: col('accent') };
 const right = { align: 'right' };
+// The verso's running head and the licence line are the journal's furniture: the
+// contentInConfig check allows them; the recto prints the front matter's title (#849).
+const FURNITURE = ['Jumper et al. · Abridged from Nature 596, 583–589 (2021)',
+  'Open access · CC BY 4.0 · creativecommons.org/licenses/by/4.0'];
 const header = { elements: [
   head('v-folio', '{pageNumber}', 'even', 'top-left', OUTER, folio),
-  head('v-title', 'Jumper et al. · Abridged from Nature 596, 583–589 (2021)', 'even',
-    'top-left', OUTER + 8),
-  head('r-title', 'Highly accurate protein structure prediction with AlphaFold', 'odd',
-    'top-right', -OUTER - 8, right),
+  head('v-title', FURNITURE[0], 'even', 'top-left', OUTER + 8),
+  head('r-title', '{title}', 'odd', 'top-right', -OUTER - 8, right),
   head('r-folio', '{pageNumber}', 'odd', 'top-right', -OUTER, { ...folio, ...right }),
 ] };
-const footer = { elements: [text('licence', 'Open access · CC BY 4.0 · '
-  + 'creativecommons.org/licenses/by/4.0', SANS, 7, { pages: 'opener',
+const footer = { elements: [text('licence', FURNITURE[1], SANS, 7, { pages: 'opener',
   color: col('muted'), placement: at('page', 'bottom-left', INNER, -12, 150) })] };
 
 const config = () => ({
@@ -105,6 +106,7 @@ const config = () => ({
   resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type,
     numberingTemplate: '{n}', captionPrefix: type.id === 'figure' ? 'Fig.' : type.name })),
   colorPalette, citations, header, footer, calloutStyles,
+  checks: { contentInConfig: { allow: FURNITURE } },
   headingStyles: [
     { id: 'article', numbered: false, span: 'page', advancedDesign: titleBlock },
     methods,

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 049 · Exam paper with an answer sheet ═════════════════
 // https://postext.dev/en/cookbook/exam-paper
 // Code: MIT · Text: Lincoln (PD); questions, Spanish translation (CC BY 4.0) · Art: in code
-// Fonts: PT Serif, Inter Tight (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: PT Serif, Inter Tight (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, prepareFonts, renderPageToCanvas, registerResourceImage, inlineSvgFonts,
 } from 'https://esm.sh/postext';
@@ -123,20 +123,19 @@ const cover = { id: 'cover', span: 'page', margins: { right: mm(LEFT) }, // form
 // #region furniture: margin, folio and 'Turn over' on body pages; a notice on the cover
 const [MARGIN, FOOT] = [LEFT + MEASURE + 7, -13]; // mm: the margin rule, 7 off the text; the foot
 const body = { pages: 'body', ...tag }; // body pages only: never the cover
+const NOTE = t({ en: 'Do not write in this margin', es: 'No escribas en este margen' });
 const header = { elements: [
   text('running', '{title} · {chapterTitle}', LABEL, 7.5, 600, 'muted', at(LEFT, 12), body),
   { kind: 'rule', id: 'margin', direction: 'vertical', pages: 'body', color: col('rule'),
     thickness: pt(0.75), placement: at(MARGIN, TOP, { height: mm(PAGE.h - TOP - BOTTOM) }) },
-  text('note', t({ en: 'Do not write in this margin', es: 'No escribas en este margen' }), LABEL,
-    7.5, 600, 'muted', at(MARGIN + 3, TOP, { width: mm(28) }), { ...body, lineHeight: 1.3 })] };
+  text('note', NOTE, LABEL, 7.5, 600, 'muted', at(MARGIN + 3, TOP, { width: mm(28) }),
+    { ...body, lineHeight: 1.3 })] };
 const footer = { elements: [
-  text('notice', t({ en: 'Do not turn over until you are told to do so',
-    es: 'No des la vuelta a la hoja hasta que se te indique' }), LABEL, 8.5, 700, 'crimson',
-  at(0, FOOT, { width: mm(PAGE.w) }, 'bottom-left'), { pages: 'opener', align: 'center', ...tag }),
+  text('notice', '{attr.notice}', LABEL, 8.5, 700, 'crimson', at(0, FOOT, { width: mm(PAGE.w) },
+    'bottom-left'), { pages: 'opener', align: 'center', ...tag }), // from the cover's H1
   text('folio', '{pageNumber}', LABEL, 9, 700, 'ink', at(LEFT, FOOT, { width: mm(MEASURE) },
     'bottom-left'), { ...body, align: 'center' }), // centred under the text
-  // Rectos only: a verso faces the page that follows it.
-  text('turn', t({ en: 'Turn over ›', es: 'Pasa la página ›' }), LABEL, 9, 700, 'ink',
+  text('turn', t({ en: 'Turn over ›', es: 'Pasa la página ›' }), LABEL, 9, 700, 'ink', // rectos
     at(-RIGHT, FOOT, null, 'bottom-right'), { ...body, parity: 'odd', align: 'right' })] };
 // #endregion
 
@@ -153,6 +152,7 @@ const config = () => ({
   resourceTypes: [{ id: 'form', name: 'Form', shortLabel: '', captionPrefix: '',
     numberingTemplate: '{n}', resetOn: 'never', counterFormat: 'decimal' }], // no label
   colorPalette, chipStyles, tableStyles, captionStyle, orderedLists, header, footer,
+  checks: { contentInConfig: { allow: [NOTE, 'Pasa la página ›'] } }, // the rubric (#849)
   headingStyles: [cover], unorderedLists: unorderedLists(), // measured now that the fonts are in
   page: { width: mm(PAGE.w), height: mm(PAGE.h), dpi: 150, margins: { top: mm(TOP),
     bottom: mm(BOTTOM), left: mm(LEFT), right: mm(RIGHT) } }, layout: { layoutType: 'single' },

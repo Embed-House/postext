@@ -39,6 +39,15 @@ Pulsar el botón del panel activo colapsa la barra lateral, y pulsar otro botón
 
 La aplicación anfitriona puede añadir sus propios elementos a la barra: un **enlace con el logo de inicio** opcional en la celda superior (mediante las props `homeUrl` o `homeLink`), y un **conmutador de tema** y un **selector de idioma** en la parte inferior. Los libros completos se intercambian como archivos `.postext` desde el panel Libros, y las cabeceras de los paneles Texto y Diseño exportan su propia parte (consulta [Exportar e importar](/es/docs/sandbox-books-saving#exportar-e-importar)).
 
+### Modos Contenido y Diseño
+
+La barra que hay sobre la vista empieza con un conmutador entre las dos maneras de trabajar en un libro:
+
+- **Contenido**: se edita el texto, en el panel Texto y sobre las páginas. Los marcos de una página compuesta se quedan donde los pone su plantilla.
+- **Diseño**: se editan las plantillas de página y los estilos. El panel Texto muestra el capítulo en solo lectura, con un aviso y un botón **Editar el texto**, y su barra de herramientas queda desactivada. Un clic en un marco de una página compuesta selecciona ese marco para el editor de plantillas en lugar de colocar el cursor.
+
+**Alt+Mayús+M** (**⌥⇧M** en un Mac) cambia de modo desde cualquier parte del Sandbox. Pasar a Diseño con el panel Texto abierto abre el panel Diseño, y al volver se abre otra vez el panel Texto. El navegador recuerda el modo. Los agentes lo leen y lo cambian con `sandbox_set_view` (`mode`).
+
 ### Paneles laterales
 
 La barra lateral es redimensionable. Arrastra el separador entre la barra lateral y el viewport, o enfócalo con Tab y usa el teclado: ← / → cambian el ancho un 2 % (un 10 % con Mayús), e **Inicio** / **Fin** saltan al ancho mínimo y al máximo. El separador anuncia su valor actual a los lectores de pantalla, y el viewport siempre conserva al menos 200 px. La barra lateral se colapsa por completo cuando no hay ningún panel activo, y su anchura se recuerda entre sesiones.
@@ -56,11 +65,12 @@ Un editor CodeMirror 6 para el Markdown del capítulo. Los lectores de pantalla 
 - **Números de línea** y resaltado de la línea activa
 - **Ajuste de línea** para los párrafos largos
 - **Líneas de derecha a izquierda**: una línea cuyo texto empieza por una letra árabe o hebrea corre de derecha a izquierda, y el cursor y las flechas la siguen. El marcado que contiene (atributos `{…}`, etiquetas `[^id]`, el nombre de una directiva, un `:ref[fig-1]` entero, fórmulas, código, destinos de enlace) se queda de izquierda a derecha, así que se lee tal como se escribió. Las vallas, el preámbulo y las líneas que empiezan por una palabra latina siguen de izquierda a derecha.
-- **Barra de herramientas**: empieza con **Deshacer / Rehacer**, seguidos de negrita, cursiva, títulos de nivel 1–3, enlace, código en línea, **chip** (envuelve la selección en `:chip[…]`), **versalitas** (la envuelve en `:smallcaps[…]`), cita, listas numeradas y con viñetas, más cuatro insertadores de directivas:
+- **Barra de herramientas**: empieza con **Deshacer / Rehacer**, seguidos de negrita, cursiva, títulos de nivel 1–3, enlace, código en línea, **chip** (envuelve la selección en `:chip[…]`), **versalitas** (la envuelve en `:smallcaps[…]`), cita, listas numeradas y con viñetas, más cinco insertadores:
   - `:::pagebreak`
   - `:::space`: una línea de espacio vertical (`:::space{lines=N}` para más)
   - **Columnas**: un grupo `:::columns{count=2}` de dos columnas, con el cursor en su primera línea, en el texto o en un recuadro (desde postext 1.25)
   - `:::numbering{format="decimal" startAt=1}`: se inserta con atributos de ejemplo que puedes ajustar
+  - **Página compuesta**: abre un selector con las plantillas de página del libro, cada una dibujada en miniatura con sus marcos vacíos. Al elegir una se escribe una valla `::::page{template="…"}` con un `:::frame{slot="…"}` vacío por cada marco. Un marco que solo recibe la continuación del texto de otro no lleva ninguno; un marco que `takes` un título recibe ese título, con el nombre del marco seleccionado para escribir encima, y el marco de flujo recibe una línea en blanco para el texto corrido
 
 Un listado de código (una valla ```` ``` ```` o `~~~` y sus líneas) es una sola región en el editor: lleva un fondo de código, y el marcado de Postext que contiene (fórmulas, chips, tabuladores, marcas de índice) se queda sin colorear, igual que el motor lo deja sin leer. Las aplicaciones anfitrionas pueden añadir sus propios botones a la barra con `extraActions`. El editor también comunica su cursor y su selección a las vistas previas, lo que permite la sincronización clic-a-cursor: al hacer clic en el texto de la salida, el cursor salta a la posición correspondiente del Markdown, y las vistas previas pueden resaltar la selección actual.
 

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 142 · A clinical trial report with a CONSORT diagram ══════
 // https://postext.dev/en/cookbook/clinical-trial-consort-flow
 // Code: MIT · Text: Fitzpatrick, Darcy & Vierhile 2017 (CC BY 4.0), abridged · Figures: code
-// Fonts: Lora, Nunito Sans (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Lora, Nunito Sans (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine, registerResourceImage,
   defaultResourceTypes, mergeCells, initMathEngine, inlineSvgFonts,
@@ -102,10 +102,8 @@ const folio = { fontWeight: 800, color: col('accent') };
 const right = { align: 'right' }; // anchored top-right, an element ends at its offset
 const header = { elements: [
   head('v-folio', '{pageNumber}', 'even', 'top-left', OUTER, folio),
-  head('v-title', 'Fitzpatrick, Darcy & Vierhile · JMIR Ment Health 2017;4(2):e19', 'even',
-    'top-left', OUTER + 8),
-  head('r-title', 'Woebot for symptoms of depression and anxiety · a randomized trial', 'odd',
-    'top-right', -OUTER - 8, right),
+  head('v-title', '{attr.verso}', 'even', 'top-left', OUTER + 8), // the H1's
+  head('r-title', '{attr.recto}', 'odd', 'top-right', -OUTER - 8, right),
   head('r-folio', '{pageNumber}', 'odd', 'top-right', -OUTER, { ...folio, ...right }),
 ] };
 const footer = { elements: [head('drop-folio', '{pageNumber}', 'all', 'bottom-right', -OUTER,
@@ -141,8 +139,8 @@ const config = () => ({
     hyphenation: { enabled: true }, optimalLineBreaking: true,
     avoidWidows: true, avoidOrphans: true, avoidRunts: true,
     // A column of Lora at this size holds about 50 characters, and the paper's long terms left
-    // lines at 0.6 of the word space beside others at 2.3. Word spaces stay between 0.75
-    // and 1.9, and a line that would pass either limit takes up to 12 ‰ of tracking.
+    // lines at 0.6 of the word space beside others at 2.3. A line past either limit takes
+    // up to 12 ‰ of tracking.
     minWordSpacing: 0.75, maxWordSpacing: 1.9, maxJustifyTracking: 12 },
   headings: { fontFamily: SANS, color: col('accent'), fontWeight: 800, levels: [
     { level: 1, breakBefore: { enabled: true, parity: 'any' } }, // any page: no forced recto

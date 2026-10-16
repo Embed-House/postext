@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 107 · An Arabic research article with notes, citations and an index ═══
 // https://postext.dev/en/cookbook/arabic-research-article
 // Code: MIT · Text: original Arabic prose (CC BY 4.0) · Pictures: none
-// Fonts: Amiri, Noto Kufi Arabic (SIL OFL 1.1) · Needs postext ≥ 1.26.0
+// Fonts: Amiri, Noto Kufi Arabic (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, registerCitationEngine,
 } from 'https://esm.sh/postext';
@@ -30,6 +30,7 @@ const [BODY, LEAD] = [12, 20]; // pt: Amiri, partly vocalised, at 1.67 × the si
 const TRIM = { width: 170, height: 240 }; // mm: 17 × 24 cm, the Arab journal
 const SIDE = { inner: 22, outer: 18 }; // mm
 const JOURNAL = 'مجلة دراسات الكتاب والنشر';
+const SHORT_TITLE = 'سلمى الخطيب: أثر الكشيدة في سرعة القراءة'; // the recto's running head
 
 // #region answer: notes «(١)» per page, the citations among them, an index without ال
 // Citations are written [@ayalon2016, 45] in the text; a note style puts each one in a
@@ -84,7 +85,7 @@ const folio = (id, parity, edge, x) => ({ ...head(id, '{pageNumber}', parity, ed
 const header = { elements: [
   folio('r-folio', 'even', 'right', -SIDE.outer),
   head('r-head', JOURNAL, 'even', 'right', -(SIDE.outer + 9)),
-  head('l-head', 'سلمى الخطيب: أثر الكشيدة في سرعة القراءة', 'odd', 'left', SIDE.outer + 9),
+  head('l-head', SHORT_TITLE, 'odd', 'left', SIDE.outer + 9),
   folio('l-folio', 'odd', 'left', SIDE.outer),
 ] };
 // #endregion
@@ -92,6 +93,8 @@ const header = { elements: [
 const config = () => ({
   locale: 'ar', // written out, never LANG (gotcha: arabic-locale-tag)
   colorPalette, citations, footnotes, index,
+  // The journal's name and the running heads are its furniture (#849).
+  checks: { contentInConfig: { allow: [JOURNAL, SHORT_TITLE] } },
   page: { width: mm(TRIM.width), height: mm(TRIM.height), dpi: 150,
     backgroundColor: col('paper'), pageNumbering: { startAt: 87 },
     margins: { top: mm(24), bottom: mm(22), left: mm(SIDE.inner), right: mm(SIDE.outer),

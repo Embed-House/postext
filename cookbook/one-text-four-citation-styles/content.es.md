@@ -3,7 +3,7 @@ title: "La página invisible"
 author: "Recetario de Postext"
 ---
 
-# La página que no se ve
+# La página que no se ve {colophon="Compuesto en Source Serif 4 y Source Sans 3 (SIL OFL) · Texto: original, CC BY 4.0"}
 
 La buena tipografía está hecha para pasar inadvertida. @warde1955 lo dijo con una imagen que los impresores aún citan: la página debe ser una copa de cristal, un vidrio transparente que deja ver el vino, y no un cáliz de oro que lo esconde. Tschichold defendió algo parecido sobre el libro, que en sus ensayos sirve a su lector antes que a su diseñador [-@tschichold1991]. El argumento es tan moral como práctico, y @bringhurst2004 [pág. 17] lo convierte en el primer principio de su manual: la tipografía existe para honrar el contenido.
 

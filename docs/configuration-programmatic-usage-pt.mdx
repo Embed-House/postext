@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>A saída paginada corta o que não cabe no pé do bloco; o texto continua no documento, no mapa de origem e no EPUB de layout fluido.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>A abertura de uma página composta e o seu modelo discordam sobre a página dupla (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, o <code>spread</code> da abertura; <code>templateSpread</code>, o do modelo).</td>
+      <td>Vale o modelo: um modelo de página dupla é composto em duas páginas lado a lado, e qualquer outro em uma.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> cita um estilo de chip que não existe.</td>
       <td>O chip recebe o primeiro estilo de chip.</td>

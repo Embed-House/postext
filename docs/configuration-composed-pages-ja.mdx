@@ -116,13 +116,13 @@ const config: PostextConfig = {
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>テンプレートが、1枚として組む向かい合った2ページを表します。見開きは、左から右に読む本では必ず左ページから（右から左に読む本では右ページから）始まり、必要なら前に白ページが加わります。</td>
+      <td>テンプレートが、1枚の版面として組む向かい合わせの2ページを表します（<a href="/ja/docs/composed-pages#見開き">テンプレートページ › 見開き</a>を参照）。見開きは偶数ページから始まります。左から右へ読む本では左ページ、右から左へ読む本では右ページで、必要なら前に白ページが入ります。ページの開始行にも<code>spread</code>を付けます。食い違うときはテンプレートに従います（<code>spreadMismatch</code>）。</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>見開きで、フレームが避けるノドの帯です。<code>crossGutter: true</code>を指定したフレームは避けません。</td>
+      <td>見開きで、のどを中心とするこの幅の帯です。<code>crossGutter: true</code>のない枠はここを避けます。帯をまたぐ枠は中心のある側で帯の端まで切り詰められ、帯の中から始まる枠は外へ移ります。<code>0</code>なら帯はのどそのものです。</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ const config: PostextConfig = {
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>見開きで、フレームがノドの帯をまたいでもかまいません。</td>
+      <td>見開きで、枠がのどの帯をまたいでもかまいません。本文は枠の中心があるページで読まれ、向かいのページはその半分を描きます。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
@@ -374,7 +374,7 @@ const config: PostextConfig = {
       <td><code>placement</code>、<code>grid</code></td>
       <td>フレームと同じ</td>
       <td>フレームを囲む箱</td>
-      <td>グループ自身のボックスです。未設定なら、フレームに宣言したボックスを囲む箱になります。</td>
+      <td>グループ自身のボックスです。未設定なら、グループは最初のフレームの位置から始まり、フレームが必要とするところまで伸びます。</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -390,6 +390,58 @@ const config: PostextConfig = {
     </tr>
   </tbody>
 </table>
+
+### グループが空間を分け合うしくみ
+
+フレームは自分の大きさを宣言します。固定の`height`か、`'auto'`です。`'auto'`は中身の高さで、`minHeight`と`maxHeight`のあいだに収まります。印刷されたページをもとにテンプレートを作るときは、各ボックスのページ上の高さを`minHeight`に指定します。文章が短ければボックスは描いたとおりの大きさのままで、長ければ高くなります。ページは1回の処理の中で2度組まれます。1度はテンプレートの宣言どおりに、もう1度は中身が必要とするとおりに組み、その2つの違いが[リフローの記録](/ja/docs/composed-pages#リフローの記録)になります。
+
+**積み重ね（`stack`）**：積み重ねのフレームは、それぞれの高さで上から順に並び、あいだに`gap`を空けます。横の位置と幅は各フレームのものを保ち、フレーム自身の縦の位置は無視されます。
+
+- 自分の`placement`も`grid`も持たないグループは、最初のフレームの配置が示す位置から始まり、フレームが必要とするだけ下へ伸びます。伸びる先はテンプレートの領域の下端までです。あるフレームが高くなると、その後のフレームが同じだけ下がります。
+- 自分のボックスを持つグループは、そのボックスの中にフレームを並べます。フレームがボックスに入りきらないときは、`shrink`が0より大きいフレームが空間を返します。返すのは`priority`の低いフレームからで、優先度が同じなら`shrink`の比で返し、どのフレームも`minHeight`より小さくはなりません。余った空間は、`grow`が0より大きいフレームにその比で、`maxHeight`まで配られます。そういうフレームがなければ、`align`がフレームの位置を決めます（`'end'`なら下端、`'center'`なら中央、`'space-between'`なら上下の端に寄せてあいだを均等に空けます）。グループの中で自分の配置を持たないフレームは、グループのボックスを領域として使います。
+- どのフレームもそれ以上返せなくなっても、グループの下端を越えるフレームはありません。入りきらない中身はそこで切れ、`frameOverflow`として報告されます。
+- `height: 'fill'`のフレームは、`minHeight`を求めたうえで、`grow: 1`を持つものとして余った空間を受け取ります。
+
+**並び（`row`）**：並びのフレームは、宣言した幅で横に並び、どれも並びと同じ高さになります。その高さはグループのボックスの高さで、グループが自分のボックスを持たなければ、フレームが宣言した高さのうち最も大きいものです（固定の高さを持つフレームは自分の高さを保ちます）。あるフレームの文章が並びの高さを超えると、そのフレームは幅を広げます。まず並びの余った幅を使い、次に`shrink`が0より大きい兄弟のフレームから、`priority`の低い順に幅をもらいます。どのフレームも、自分の文章がまだ収まる幅より狭くはなりません。広げる幅は、文章が収まる最少の整数ミリメートルです。使える空間をすべてもらっても収まらないなら幅は広げず、代わりに、自分のボックスを持たない並びが高くなります。余った幅は`grow`が0より大きいフレームに配られ、残りは`align`に従います。並びは左から右へ進みます。
+
+**ピン留め（`pin`）**：`pin: true`のフレームは、固定先のフレームが高くなったり動いたりしても、テンプレートが宣言したボックスを保ちます。絵柄に合わせて描いたボックスは、絵柄の上から離れません。グループの中では、ピン留めしたフレームは自分の位置を守り、ほかのフレームは前後に`gap`を空けてそれを飛び越えます。グループの外にあるピン留めのフレームも、重なりそうなグループのフレームに対して同じように働きます。
+
+**装飾**：フレームに固定した装飾の要素（`anchor: { to: '#dinero' }`）は、フレームが高くなったり動いたりすると一緒に動きます。`pin: true`の要素は、テンプレートがそのフレームを描く位置にとどまります。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>プロパティ</th>
+      <th style={{ width: '200px' }}>型</th>
+      <th style={{ width: '120px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pin</code>（装飾の要素）</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>テンプレートページの装飾で使います。フレームに固定した要素は、フレームの中身やグループがどう変わっても、テンプレートがそのフレームを置く位置にとどまります。柱、ノンブル、見出しのデザインでは無視されます。</td>
+    </tr>
+  </tbody>
+</table>
+
+教科書のページにある3つのボックスです。それぞれ描かれた高さを持ち、文章に合わせて高くなります。
+
+```ts
+frames: [
+  { name: 'dinero', style: 'caja-azul', width: { value: 186, unit: 'mm' }, minHeight: { value: 36, unit: 'mm' },
+    placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: { value: 9, unit: 'mm' } } } },
+  { name: 'dinero-fotos', layer: 2, width: { value: 58, unit: 'mm' },
+    placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+  { name: 'gasto', style: 'caja-verde', width: { value: 186, unit: 'mm' }, minHeight: { value: 62, unit: 'mm' } },
+  { name: 'ahorro', style: 'caja-amarilla', width: { value: 186, unit: 'mm' }, minHeight: { value: 30, unit: 'mm' } },
+],
+groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
+```
+
+結果を決めるのは、ページの中身、テンプレート、組版の設定だけです。同じ入力からは同じページができ、測る順序も手順も変わりません。この調整はほかのページを読まないので、中身が自分のページに収まっているかぎり、あるテンプレートページを変えてもほかのページは元のままです。
 
 ### 継承とバリアント
 
@@ -416,7 +468,34 @@ Sandboxがテンプレートを保存するとき、既定値と同じ値も捨�
 
 ### 割り付けに反映される設定
 
-割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`、`flow`、`takes`、`next`、`overflow.continueIn: "#frame"`、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`です。次の設定は読み込まれて検査されますが、まだ割り付けには反映されません。グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。グループのフレームはそれぞれの配置を保ちます）、`fit`、`overflow.continueIn: "next-page"`と`overflowTemplate`、`spread`と`crossGutter`、フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`です。幅の`'auto'`は`'fill'`として扱います。
+割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`、`flow`、`takes`、`next`、`overflow.continueIn: "#frame"`、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`です。次の設定は読み込まれて検査されますが、まだ割り付けには反映されません。グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。グループのフレームはそれぞれの配置を保ちます）、`fit`、`overflow.continueIn: "next-page"`と`overflowTemplate`、フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`です。幅の`'auto'`は`'fill'`として扱います。
+
+### 見開き
+
+見開きのテンプレートでは、すべての座標が2ページ分の版面の上にあり、のどがその中央に来ます。`area`、`grid`、`container`・`page`・`bleed`へのアンカー、`fill`のサイズは、どれも2倍の幅で読みます。`bleed`は天・地・左右の小口まで届き、のどには届きません。教科書の見開きの年表は一つのテンプレートで書けます。
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … era-2からera-6まで、それぞれグリッド1列ずつ、さらに帯の下の注記
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+列の間隔を`gutter`より広くしておけば、左右対称のグリッドのカードはのどにかからず、どれも動きません。2本目の帯と絵の帯は`crossGutter`でのどをまたぎ、それぞれ中心のあるページで読まれ、両方のページに描かれます。タブに書く時代の名前も含め、ページの言葉はすべてMarkdownに置きます。
 
 ## ラベルスタイル
 

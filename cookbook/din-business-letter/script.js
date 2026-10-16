@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 058 · Business letter to DIN 5008 ═════════════════════
 // https://postext.dev/en/cookbook/din-business-letter
 // Code: MIT · Text: original, in German (CC BY 4.0) · Logo, signature: drawn in code (CC BY 4.0)
-// Fonts: Nunito Sans, Familjen Grotesk, Reddit Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Nunito Sans, Familjen Grotesk, Reddit Mono (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 // A German quotation on A4 whose H1 design pins the letterhead and the address to DIN 5008.
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
@@ -166,6 +166,9 @@ const config = () => ({
     color: col('ink'), boldColor: col('ink'), firstLineIndent: pt(0), // and hyphenated by default
     paragraphSpacing: true }, // DIN 5008: a blank line between paragraphs, no indent
   headings: headings(), header, footer,
+  // The stationery's printed words: the firm, its trades, register and the labels (#849).
+  checks: { contentInConfig: { allow: [FROM, ...COMPANY, 'Fensterwerkstatt Tessin',
+    'Kastenfenster Holzfenster Denkmalpflege', ...INFO.map(([label]) => label)] } },
   unorderedLists: { bulletChar: '–' }, // in main-color
   paragraphStyles: [
     { id: 'stack', marginBottom: pt(LEAD) }, // name and role, the enclosures: no blank lines

@@ -265,6 +265,12 @@ El component `HtmlPreview` del sandbox (`packages/postext-sandbox/src/viewport/H
       <td>Les cites <code>:ref</code> enllacen amb el seu recurs; les entrades de l'índex, no.</td>
       <td>Les cites <code>:ref</code> i les entrades de l'índex, a més dels marcadors.</td>
     </tr>
+    <tr>
+      <td>Pàgines compostes (<code>::::page</code>)</td>
+      <td>Marcs en ordre de capes, girats i retallats</td>
+      <td>Les mateixes caixes, escrites en ordre de lectura i pintades en ordre de capes amb <code>z-index</code>; els rètols d'una figura segueixen el seu <code>alt</code></td>
+      <td>El mateix pintat; l'arbre d'estructura llegeix els marcs en l'ordre del Markdown</td>
+    </tr>
   </tbody>
 </table>
 
@@ -397,6 +403,8 @@ EPUB 3 defineix dues maquetacions, que el paquet declara amb la propietat `rendi
     <tr><td>Indicada per a</td><td>Pàgines dissenyades: llibres il·lustrats, llibres de text, catàlegs, revistes; pantalles grans</td><td>Text seguit: novel·les, assajos, informes; mòbils i lectors de tinta electrònica</td></tr>
   </tbody>
 </table>
+
+Una pàgina composta (`::::page{template="…"}`) conserva la plantilla a la maquetació fixa. Al llibre de maquetació fluida es converteix en una secció amb els marcs en l'ordre del Markdown, cada marc un bloc amb el seu estil d'avís, sense la decoració i amb els rètols de cada figura enumerats després de la imatge: vegeu [Fora del paper](/ca/docs/composed-pages#fora-del-paper-html-epub-i-pdf-etiquetat).
 
 Les dues maquetacions porten la mateixa navegació: un sumari a partir dels títols i les pàgines de part, una llista de pàgines amb els números impresos, punts de referència (coberta, sumari imprès, començament del cos) i un NCX per a lectors antics.
 

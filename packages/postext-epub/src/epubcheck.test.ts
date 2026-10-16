@@ -10,7 +10,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { renderToEpub } from './index';
 import type { RenderToEpubOptions } from './types';
-import { AMIRI, LORA, MP4, PNG, arabicSampleBook, booktabsSampleBook, wrapSampleBook, comicSampleBook, sampleBook, stripCaptionSampleBook, stripSpreadSampleBook, videoSampleBook, japaneseSampleBook } from './__tests__/sampleBook';
+import { page8Book, page8Bytes } from './__tests__/page8';
+import { AMIRI, LORA, MP4, PNG, arabicSampleBook, booktabsSampleBook, wrapSampleBook, comicSampleBook, composedSpreadSampleBook, sampleBook, stripCaptionSampleBook, stripSpreadSampleBook, videoSampleBook, japaneseSampleBook } from './__tests__/sampleBook';
 
 const available = process.env.EPUBCHECK === '1' && spawnSync('epubcheck', ['--version'], { encoding: 'utf8' }).status === 0;
 
@@ -66,7 +67,15 @@ const japanese = (layout: RenderToEpubOptions['layout']): RenderToEpubOptions =>
   cover: { bytes: PNG, mediaType: 'image/png', alt: '表紙' },
 });
 
-const samples: { name: string; options: RenderToEpubOptions; book?: () => ReturnType<typeof sampleBook> }[] = [
+/** The composed page 8 stand-in (#862), in Spanish, with its photos. */
+const composed = (layout: RenderToEpubOptions['layout']): RenderToEpubOptions => ({
+  layout,
+  metadata: { title: 'El dinero y la vida de cada día', creators: ['Postext'], language: 'es', modified: new Date(Date.UTC(2026, 9, 16)) },
+  resourceBytes: page8Bytes,
+});
+const composedBook = async () => [(await page8Book('es')).doc];
+
+const samples: { name: string; options: RenderToEpubOptions; book?: () => ReturnType<typeof sampleBook> | Promise<ReturnType<typeof sampleBook>> }[] = [
   { name: 'fixed', options: base('fixed') },
   { name: 'fixed-cover', options: { ...base('fixed'), cover: { bytes: PNG, mediaType: 'image/png', alt: 'A red square' } } },
   { name: 'reflowable', options: base('reflowable') },
@@ -96,6 +105,12 @@ const samples: { name: string; options: RenderToEpubOptions; book?: () => Return
   // A figure and a box text wraps round (#627).
   { name: 'wrap-fixed', options: base('fixed'), book: wrapSampleBook },
   { name: 'wrap-reflowable', options: base('reflowable'), book: wrapSampleBook },
+  // A composed page (#862): its frames as a section, a figure's labels.
+  { name: 'composed-fixed', options: composed('fixed'), book: composedBook },
+  { name: 'composed-reflowable', options: composed('reflowable'), book: composedBook },
+  // A spread template across two facing pages (#861).
+  { name: 'composed-spread-fixed', options: base('fixed'), book: composedSpreadSampleBook },
+  { name: 'composed-spread-reflowable', options: base('reflowable'), book: composedSpreadSampleBook },
 ];
 
 describe.skipIf(!available)('EPUBCheck', () => {
@@ -106,7 +121,7 @@ describe.skipIf(!available)('EPUBCheck', () => {
     it(`${sample.name}: 0 errors, 0 warnings`, async () => {
       let bytes: Uint8Array;
       try {
-        bytes = await renderToEpub((sample.book ?? sampleBook)(), sample.options);
+        bytes = await renderToEpub(await (sample.book ?? sampleBook)(), sample.options);
       } catch (e) {
         // A rendition still being written is not checked yet.
         if (/not implemented/.test(String(e))) return;

@@ -155,14 +155,22 @@ describe('a composed page on the canvas (#855)', () => {
 });
 
 describe('a composed page in the HTML (#855)', () => {
-  it('sets each frame in a box of its own, in layer order, the decoration at layer 0', () => {
+  it('writes each frame in a box of its own in reading order, painted in layer order by z-index, the decoration at layer 0 (#862)', () => {
     const { doc } = composedDoc();
     const out = renderToHtmlIndexed(doc);
     const html = out.pages[0]!.innerHtml;
-    const at = ['data-frame-id="cp0:charlie"', 'DECO', 'data-frame-id="cp0:bravo"', 'data-frame-id="cp0:alpha"'].map((s) => html.indexOf(s));
+    // The markup reads the decoration, then alpha, bravo, charlie: the
+    // Markdown order a screen reader (and a fixed-layout EPUB) follows.
+    const at = ['DECO', 'data-frame-id="cp0:alpha"', 'data-frame-id="cp0:bravo"', 'data-frame-id="cp0:charlie"'].map((s) => html.indexOf(s));
     expect(at.every((i) => i >= 0)).toBe(true);
     expect([...at].sort((a, b) => a - b)).toEqual(at);
     expect(html.split('DECO').length - 1).toBe(1);
+    // Painted charlie (layer −1), the decoration (0), bravo (1), alpha (2),
+    // inside one stacking context.
+    const z = (id: string) => Number(new RegExp(`data-frame-id="${id}"[^>]*z-index:(\\d+)`).exec(html)?.[1]);
+    const decoZ = Number(/class="pt-frame-decoration"[^>]*z-index:(\d+)/.exec(html)?.[1]);
+    expect([z('cp0:charlie'), decoZ, z('cp0:bravo'), z('cp0:alpha')]).toEqual([1, 2, 3, 4]);
+    expect(html).toContain('<div class="pt-composed" style="position:absolute;left:0;top:0;width:0;height:0;z-index:0;">');
   });
 
   it('turns the rotated frame and clips the overflowing one', () => {

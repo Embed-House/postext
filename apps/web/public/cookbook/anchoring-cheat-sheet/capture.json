@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "anchoring-cheat-sheet",
-  "sourceHash": "0732514211f4de21cab5fac7432d0e7605e9ad3fca10246ac580da76f955c4f7",
+  "sourceHash": "48a5266b733efa47ba0262eb13e7ef3b0c3c1a8d13ec39d07170d62410b3f4ab",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:50.907Z",
-  "verified": {
-    "postext": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T14:55:41.386Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.660Z",
   "variants": {
     "en": {
-      "hash8": "7a07069a",
+      "hash8": "69f12530",
       "vdtHash": "83b4c5c2478a8640f808f3fe6c6466a94448c263",
       "timings": {
-        "importMs": 183,
+        "importMs": 1482,
         "fontsMs": 5,
-        "buildMs": 54,
-        "totalMs": 866,
+        "buildMs": 53,
+        "totalMs": 2584,
         "builds": 1
       },
       "specimen": {
@@ -44,7 +39,7 @@
           "Martian Mono"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 180
       },
       "pages": [
         {
@@ -90,7 +85,7 @@
       },
       "sandbox": {
         "file": "anchoring-cheat-sheet.postext",
-        "bytes": 42903,
+        "bytes": 42935,
         "folio": "061973f6",
         "chapters": [
           {
@@ -117,6 +112,9 @@
           "bodyText.lineHeight",
           "bodyText.paragraphSpacing",
           "bodyText.textAlign",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.enabled",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -181,6 +179,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "colorPalette",
           "footer",
           "header",
@@ -191,7 +190,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 1053,
+        "configLeaves": 1054,
         "designElements": 67,
         "directives": [
           ":::paragraphs"
@@ -268,6 +267,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
@@ -276,13 +280,13 @@
       }
     },
     "es": {
-      "hash8": "863def41",
+      "hash8": "ad096721",
       "vdtHash": "740960f561a724cb8de0b55f121be0586184cf3c",
       "timings": {
-        "importMs": 254,
-        "fontsMs": 5,
-        "buildMs": 51,
-        "totalMs": 1006,
+        "importMs": 1339,
+        "fontsMs": 11,
+        "buildMs": 58,
+        "totalMs": 2590,
         "builds": 1
       },
       "specimen": {
@@ -305,7 +309,7 @@
           "Martian Mono"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 180
       },
       "pages": [
         {
@@ -351,7 +355,7 @@
       },
       "sandbox": {
         "file": "anchoring-cheat-sheet.postext",
-        "bytes": 42413,
+        "bytes": 42445,
         "folio": "061973f6",
         "chapters": [
           {
@@ -378,6 +382,9 @@
           "bodyText.lineHeight",
           "bodyText.paragraphSpacing",
           "bodyText.textAlign",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.enabled",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -442,6 +449,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "colorPalette",
           "footer",
           "header",
@@ -452,7 +460,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 1053,
+        "configLeaves": 1054,
         "designElements": 67,
         "directives": [
           ":::paragraphs"
@@ -528,6 +536,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

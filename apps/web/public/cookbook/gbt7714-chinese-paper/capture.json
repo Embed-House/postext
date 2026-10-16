@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "gbt7714-chinese-paper",
-  "sourceHash": "2e8260cd57c903df117589ca490fcb1fb00de4fbdc95ef00cff5e76a1efcee39",
+  "sourceHash": "540fd1702ca5a66f107c7924e25490008150485d9c7849a0a2759f7d484a8598",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:57.291Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T14:59:09.746Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.843Z",
   "variants": {
     "en": {
-      "hash8": "d2c75179",
+      "hash8": "751d0f03",
       "vdtHash": "ceff2471240e5acd6fbbeb34ea122a22d36e0df2",
       "timings": {
-        "importMs": 623,
-        "fontsMs": 186,
-        "buildMs": 125,
-        "totalMs": 1712,
+        "importMs": 482,
+        "fontsMs": 574,
+        "buildMs": 139,
+        "totalMs": 1846,
         "builds": 1
       },
       "specimen": {
@@ -46,7 +40,7 @@
           "Noto Serif SC"
         ],
         "pages": 2,
-        "ownLines": 147
+        "ownLines": 149
       },
       "pages": [
         {
@@ -101,7 +95,7 @@
       },
       "sandbox": {
         "file": "gbt7714-chinese-paper.postext",
-        "bytes": 21323,
+        "bytes": 21360,
         "folio": "1668ad62",
         "chapters": [
           {
@@ -152,6 +146,9 @@
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
           "calloutStyles[].span",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "chipStyles",
           "chipStyles[].backgroundEnabled",
           "chipStyles[].bold",
@@ -247,6 +244,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "checks",
           "chipStyles",
           "citations",
           "cjk",
@@ -260,7 +258,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 254,
+        "configLeaves": 255,
         "designElements": 11,
         "directives": [
           ":::callout",
@@ -345,21 +343,21 @@
             "detail": "the hero is 19.1 % colour, pictures or display type (aim for 25 %+)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "170c1da2",
+      "hash8": "b7ee64fe",
       "vdtHash": "5601d7d042f56dda3ee9e1d8e777a0b223ae5f3a",
       "timings": {
-        "importMs": 1155,
-        "fontsMs": 353,
-        "buildMs": 150,
-        "totalMs": 2604,
+        "importMs": 470,
+        "fontsMs": 319,
+        "buildMs": 136,
+        "totalMs": 1512,
         "builds": 1
       },
       "specimen": {
@@ -382,7 +380,7 @@
           "Noto Serif SC"
         ],
         "pages": 2,
-        "ownLines": 147
+        "ownLines": 149
       },
       "pages": [
         {
@@ -437,7 +435,7 @@
       },
       "sandbox": {
         "file": "gbt7714-chinese-paper.postext",
-        "bytes": 21374,
+        "bytes": 21410,
         "folio": "1668ad62",
         "chapters": [
           {
@@ -488,6 +486,9 @@
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
           "calloutStyles[].span",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "chipStyles",
           "chipStyles[].backgroundEnabled",
           "chipStyles[].bold",
@@ -583,6 +584,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "checks",
           "chipStyles",
           "citations",
           "cjk",
@@ -596,7 +598,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 254,
+        "configLeaves": 255,
         "designElements": 11,
         "directives": [
           ":::callout",
@@ -681,9 +683,9 @@
             "detail": "the hero is 19.1 % colour, pictures or display type (aim for 25 %+)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

@@ -24,7 +24,7 @@
   ],
   "workarounds": [],
   "related": ["garden-almanac", "walking-guide-thumb-tabs", "figures-float-where-cited", "textbook-margin-column"],
-  "engine": { "postext": "1.25.0" },
+  "engine": { "postext": "1.34.0" },
   "kit": ["core", "fonts", "viewer", "images"],
   "sample": { "locales": ["en", "es"] },
   "capture": {
@@ -51,5 +51,5 @@
   },
   "license": { "code": "MIT", "content": "CC-BY-4.0" },
   "created": "2026-09-26",
-  "updated": "2026-10-11"
+  "updated": "2026-10-16"
 }

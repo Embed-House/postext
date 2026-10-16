@@ -13,6 +13,8 @@ import { previewFor, printsGrayscale, usePrintSetup } from '../../print/printSet
 import { usePrintPreview } from '../../print/printPreviewToggle';
 import type { VDTDocument, PostextConfig, RenderPageOptions } from 'postext';
 import { clearOverlay, drawOverlay } from './overlay';
+import { clearFrameMarks, drawFrameMarks } from '../composed/frameOverlay';
+import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode';
 import { syncComicEditors } from '../comics/comicEditing';
 import { findResourceLocation } from './geometry';
 import type { BookPageMap } from '../usePageHashSync';
@@ -864,6 +866,9 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   // the editor's reports on the way there (a chapter switch remounts it)
   // would pull the page from under the pointer.
   const lastFollowedRef = useRef<string | null>(null);
+  // The frame marks follow the Content / Design mode and the frame picked.
+  const [editModeTick, setEditModeTick] = useState(0);
+  useEffect(() => onEditModeChange(() => setEditModeTick((t) => t + 1)), []);
   useEffect(() => {
     const doc = docRef.current;
     if (!doc) return;
@@ -902,9 +907,22 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
       if (!page) continue;
       if (chapterPages && (pageIndex < chapterPages.from || pageIndex >= chapterPages.to) && pageIndex !== resourcePage) {
         if (drawn.delete(pageIndex)) clearOverlay(overlay);
+        if (page.composed) clearFrameMarks(overlay);
         continue;
       }
       const rect = drawOverlay(overlay, doc, pageIndex, selection, debug, focused, caretBlockIdx, resourceSelection);
+      // A composed page's empty frames, the caret's frame, the frames in
+      // Design mode (#864): in the overlay, never on the page itself.
+      if (page.composed) {
+        drawFrameMarks(overlay, doc, pageIndex, {
+          mode: editModeNow(),
+          markdown: source?.markdown ?? null,
+          caret: focused ? selection.head : null,
+          selectedFrameId: selectedFrameNow()?.pageIndex === pageIndex ? selectedFrameNow()!.frameId : null,
+          writeHere: labelsRef.current.composedFrameWriteHere,
+          continues: labelsRef.current.composedFrameContinues,
+        });
+      }
       drawn.add(pageIndex);
       if (rect) activeCursorRect = rect;
     }
@@ -939,7 +957,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
         container.scrollLeft += cr.right - cn.right + padding;
       }
     }
-  }, [editorSelection, activeChapterId, config.debug, editorFocused, resourceSelection, docVersion, chapterDocsRef]);
+  }, [editorSelection, activeChapterId, config.debug, editorFocused, resourceSelection, docVersion, chapterDocsRef, editModeTick]);
 
   // Imperative API: regenerate by bumping rebuildKey; jumpToPage by scrolling
   // the slot element with the matching data-page-index into view.

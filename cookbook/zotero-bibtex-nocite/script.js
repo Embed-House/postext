@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 097 · A reading list from a Zotero BibTeX export ═══════
 // https://postext.dev/en/cookbook/zotero-bibtex-nocite
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Spectral, IBM Plex Sans Condensed (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Spectral, IBM Plex Sans Condensed (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine,
 } from 'https://esm.sh/postext';
@@ -80,6 +80,7 @@ const config = () => ({
   locale: t({ en: 'en-us', es: 'es' }),
   colorPalette,
   citations,
+  checks: { contentInConfig: { allow: [listName] } }, // the course's running head (#849)
   page: {
     sizePreset: 'custom', width: mm(210), height: mm(280), dpi: 150,
     margins: { top: mm(TOP), bottom: mm(22), left: mm(20), right: mm(OUTER), mirror: true },

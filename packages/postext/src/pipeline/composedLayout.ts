@@ -19,8 +19,11 @@ import type { ContentWarning, ReflowEvent, VDTBlock, VDTComposedPage, VDTFrame, 
 import { dimensionToPx } from '../units';
 import { frameBounds } from '../composed/paint';
 import { FRAME_ATTR } from '../composed/wrap';
-import { frameOrder, framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
-import type { ResolvedFrame, ResolvedPageTemplate } from '../composed/types';
+import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
+import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups';
+import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
+import { anchorTarget } from '../composed/templates';
+import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { offsetCalloutToAbsolute, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { CUT_START, fragmentRange, makeCalloutLayouter, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
@@ -53,6 +56,11 @@ export interface ComposedPageInput {
   mirrored: boolean;
   /** The gap text keeps from a frame that pushes it. */
   pushGapPx: number;
+  /** The box a frame takes given the one its placement gives: on a spread
+   *  (#861, `composed/spread.ts`), off the spine band unless the frame
+   *  crosses the gutter. An `'auto'` height is measured at the width it
+   *  returns. */
+  fitBox?: (frame: ResolvedFrame, rect: Rect) => Rect;
 }
 
 export interface ComposedPageLayout {
@@ -127,21 +135,31 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
     };
     const atEnd = (st: StoryState): boolean => st.cut.child >= st.L.end.child && st.cut.line === 0 && !st.cut.group;
 
+    /** The frames' boxes as laid, and as the template declares them. */
     const rects = new Map<string, Rect>();
-    const groupRect = (name: string): Rect | undefined => {
+    const declared = new Map<string, Rect>();
+    /** Groups' boxes once their step is laid. */
+    const groupRects = new Map<string, Rect>();
+    const groupDeclared = new Map<string, Rect>();
+    const groupRect = (name: string, boxes: ReadonlyMap<string, Rect>, solved: ReadonlyMap<string, Rect>, refs: (n: string) => Rect | undefined): Rect | undefined => {
+      const done = solved.get(name);
+      if (done) return done;
       const g = template.groups.find((gr) => gr.name === name);
       if (!g) return undefined;
       const own = groupPlaceable(g);
-      if (own) return placeBox(own, template, input, (n) => rects.get(n) ?? groupRect(n), () => 0);
-      return unionRect(g.frames.flatMap((m) => (rects.has(m) ? [rects.get(m)!] : [])));
+      if (own) return placeBox(own, template, input, refs, () => 0);
+      return unionRect(g.frames.flatMap((m) => (boxes.has(m) ? [boxes.get(m)!] : [])));
     };
-    const refOf = (name: string): Rect | undefined => rects.get(name) ?? groupRect(name);
+    const refOf = (name: string): Rect | undefined => rects.get(name) ?? groupRect(name, rects, groupRects, refOf);
+    const declaredRefOf = (name: string): Rect | undefined => declared.get(name) ?? groupRect(name, declared, groupDeclared, declaredRefOf);
+    /** Pinned frames laid so far: a group's frames flow round them. */
+    const pinned: { name: string; rect: Rect }[] = [];
 
     const frames: VDTFrame[] = [];
     const vdtByName = new Map<string, VDTFrame>();
     const blocks: VDTBlock[] = [];
     const warnings: ContentWarning[] = [];
-    const log: ReflowEvent[] = [];
+    const overflowLog: ReflowEvent[] = [];
     const laid = new Set<string>();
     const pushed: { name: string; box: Rect }[] = seed ? [...seed].map(([name, box]) => ({ name, box })) : [];
 
@@ -160,7 +178,16 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
       return out.length > 0 ? out : undefined;
     };
 
-    for (const frame of frameOrder(template)) {
+    /** Where a frame's story stands when the frame is reached. */
+    interface Prep {
+      frame: ResolvedFrame;
+      st: StoryState | undefined;
+      before: string | undefined;
+      holds: boolean;
+      continuation: boolean;
+      blockId: string;
+    }
+    const prepare = (frame: ResolvedFrame): Prep => {
       const st = stateOf(frame);
       // Each frame of a chain sets the story in its own style: the cuts are
       // positions in the story's blocks, the same in any.
@@ -173,21 +200,145 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
       const holds = reached && !atEnd(st!);
       const continuation = st !== undefined && st.pieces > 0;
       const blockId = st && st.pieces > 0 ? `${st.headBlockId}-cont-${st.pieces}` : frameIdOf(frame.name);
-      const style = input.styleOf(frame);
-      const placeable = framePlaceable(frame);
-      /** The content's height at `width`, running round the pushing
-       *  frames below the top of `at` (the frame's box as first placed). */
-      const natural = (at?: Rect) => (width: number): number => {
-        if (!holds) return 0;
-        const exclusions = at ? exclusionsFor(frame, { ...at, width }, true) : undefined;
-        const r = st!.L.layoutRange(st!.cut, st!.L.end, width, blockId, continuation, input.mirrored, exclusions ? { exclusions } : undefined);
+      return { frame, st, before, holds, continuation, blockId };
+    };
+    /** The content's height at `width`, running round the pushing frames
+     *  below the top of `at` (the frame's box as first placed). */
+    const naturalOf = (p: Prep, at?: Rect) => {
+      const memo = new Map<number, number>();
+      return (width: number): number => {
+        if (!p.holds) return 0;
+        const key = Math.round(width * 1000);
+        const known = memo.get(key);
+        if (known !== undefined) return known;
+        const exclusions = at ? exclusionsFor(p.frame, { ...at, width }, true) : undefined;
+        const r = p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, width, p.blockId, p.continuation, input.mirrored, exclusions ? { exclusions } : undefined);
+        memo.set(key, r.totalHeight);
         return r.totalHeight;
       };
-      // The box: placed with the content's own height, then again with the
-      // height it takes running round the frames that push it there.
-      const rect0 = placeBox(placeable, template, input, refOf, natural());
-      const rect = holds && exclusionsFor(frame, rect0, true) ? placeBox(placeable, template, input, refOf, natural(rect0)) : rect0;
+    };
+    /** `placeBox`, then the box the page lets the frame take (`fitBox`:
+     *  off a spread's spine band, #861), its `'auto'` height measured at the
+     *  width it is left with. Declared and final boxes alike: the band is
+     *  the template's, not a reflow. */
+    const placeFitted = (frame: ResolvedFrame, placeable: ReturnType<typeof framePlaceable>, ctx: Parameters<typeof placeBox>[2], refs: (n: string) => Rect | undefined, nat: (width: number) => number): Rect => {
+      const r = placeBox(placeable, template, ctx, refs, nat);
+      if (!input.fitBox) return r;
+      const fitted = input.fitBox(frame, r);
+      if (Math.abs(fitted.width - r.width) < 0.01) return fitted;
+      return input.fitBox(frame, placeBox(placeable, template, ctx, refs, () => nat(fitted.width)));
+    };
+    /** A frame's height as its template declares it: its `minHeight` where
+     *  the height follows the content, else the content's (`natural`). */
+    const declaredNatural = (frame: ResolvedFrame, natural: (w: number) => number) => (width: number): number => (frame.minHeight ? 0 : natural(width));
+
+    /** Place a frame outside any group: its box, placed with the content's
+     *  own height, then again with the height it takes running round the
+     *  frames that push it there; a pinned frame where the template puts
+     *  it. */
+    const placeFrame = (p: Prep): Rect => {
+      const frame = p.frame;
+      const placeable = framePlaceable(frame);
+      const natural = naturalOf(p);
+      const at = (refs: (n: string) => Rect | undefined) => {
+        const r0 = placeFitted(frame, placeable, input, refs, natural);
+        if (!p.holds || !exclusionsFor(frame, r0, true)) return { rect: r0, natural };
+        const round = naturalOf(p, r0);
+        return { rect: placeFitted(frame, placeable, input, refs, round), natural: round };
+      };
+      const decl = frame.pin ? at(declaredRefOf) : undefined;
+      const fin = decl ?? at(refOf);
+      const declRect = placeFitted(frame, placeable, input, declaredRefOf, declaredNatural(frame, fin.natural));
+      const rect = frame.pin ? declRect : fin.rect;
+      declared.set(frame.name, declRect);
       rects.set(frame.name, rect);
+      if (frame.pin) pinned.push({ name: frame.name, rect });
+      return rect;
+    };
+
+    /** Lay a group: its frames' boxes as the template declares them and as
+     *  their content needs (`composed/groups.ts`). */
+    const placeGroup = (group: ResolvedFrameGroup, members: readonly ResolvedFrame[]): Map<string, Rect> => {
+      const own = groupPlaceable(group);
+      const mmPx = dpi / MM_PER_IN;
+      const preps = members.map(prepare);
+      const solve = (mode: 'final' | 'declared', naturals: ((w: number) => number)[]): { rects: Map<string, Rect>; box: Rect } => {
+        const refs = mode === 'final' ? refOf : declaredRefOf;
+        const ownBox = own ? placeBox(own, template, input, refs, () => 0) : undefined;
+        const ownRects = new Map<string, Rect>();
+        const memberRefs = (n: string): Rect | undefined => ownRects.get(n) ?? (n === group.name ? ownBox : refs(n));
+        const items: GroupItem[] = members.map((f, k) => {
+          // A frame placed nowhere stands in its group's box.
+          const ctx = ownBox && !f.placement && !f.grid ? { ...input, areas: { ...input.areas, area: ownBox } } : input;
+          const natural = naturals[k]!;
+          const placeable = framePlaceable(f);
+          // On a spread the member's own box keeps off the spine band, and
+          // the negotiation starts from it (#861).
+          const box = placeFitted(f, placeable, ctx, memberRefs, declaredNatural(f, natural));
+          ownRects.set(f.name, box);
+          const auto = f.height === 'auto' && !(f.grid && !placeable.heightSet);
+          const fill = f.height === 'fill';
+          const minH = f.minHeight ? dimensionToPx(f.minHeight, dpi, input.emPx) : 0;
+          const want = fill ? minH : auto ? (mode === 'final' ? natural(box.width) : declaredNatural(f, natural)(box.width)) : box.height;
+          return {
+            name: f.name,
+            own: box,
+            want,
+            min: minH,
+            max: f.maxHeight ? dimensionToPx(f.maxHeight, dpi, input.emPx) : Infinity,
+            minWidth: f.minWidth ? dimensionToPx(f.minWidth, dpi, input.emPx) : 0,
+            maxWidth: f.maxWidth ? dimensionToPx(f.maxWidth, dpi, input.emPx) : Infinity,
+            grow: fill ? Math.max(1, f.grow) : f.grow,
+            shrink: f.shrink,
+            priority: f.priority,
+            pin: f.pin,
+            fixedHeight: !auto && !fill,
+            need: natural,
+          };
+        });
+        const firstFree = items.find((it) => !it.pin) ?? items[0];
+        const start = firstFree?.own ?? input.areas.area;
+        const box = ownBox ?? { x: start.x, y: start.y, width: 0, height: 0 };
+        const out = layoutGroup({
+          kind: group.kind,
+          box,
+          elastic: !ownBox,
+          limit: input.areas.area,
+          gap: dimensionToPx(group.gap, dpi, input.emPx),
+          align: group.align,
+          items,
+          obstacles: pinned.filter((q) => !members.some((m) => m.name === q.name)).map((q) => q.rect),
+          mmPx,
+          negotiate: mode === 'final',
+        });
+        // A pinned frame of the group stands where the template puts it.
+        for (const it of items) if (it.pin) out.set(it.name, it.own);
+        return { rects: out, box: ownBox ?? unionRect([...out.values()]) ?? box };
+      };
+      let naturals = preps.map((p) => naturalOf(p));
+      let fin = solve('final', naturals);
+      // Text that runs round a pushing frame is taller: measured at the box
+      // first found, then laid again.
+      const round = preps.map((p) => (p.holds && exclusionsFor(p.frame, fin.rects.get(p.frame.name)!, true) ? naturalOf(p, fin.rects.get(p.frame.name)!) : undefined));
+      if (round.some((r) => r !== undefined)) {
+        naturals = naturals.map((n, k) => round[k] ?? n);
+        fin = solve('final', naturals);
+      }
+      const decl = solve('declared', naturals);
+      for (const m of members) {
+        rects.set(m.name, fin.rects.get(m.name)!);
+        declared.set(m.name, decl.rects.get(m.name)!);
+        if (m.pin) pinned.push({ name: m.name, rect: fin.rects.get(m.name)! });
+      }
+      groupRects.set(group.name, fin.box);
+      groupDeclared.set(group.name, decl.box);
+      return fin.rects;
+    };
+
+    /** Pour a frame's content into its box and record the frame. */
+    const fill = (p: Prep, rect: Rect): void => {
+      const { frame, st, holds, continuation, blockId, before } = p;
+      const style = input.styleOf(frame);
       let result: CalloutLayoutResult | undefined;
       let overflowPx = 0;
       const from = st?.cut ?? CUT_START;
@@ -231,10 +382,12 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
         configPath: frame.configPath,
         ...(frame.exclude === 'push' ? { push: true as const } : {}),
       };
+      const decl = declared.get(frame.name);
+      if (decl && !sameRect(decl, rect)) vdt.declaredRect = { ...decl };
       if (before && vdtByName.has(before) && st && st.lastFrameId) {
         vdt.continuedFrom = st.lastFrameId;
-        const p = frames.find((f) => f.id === st.lastFrameId);
-        if (p) p.continuesTo = vdt.id;
+        const q = frames.find((f) => f.id === st.lastFrameId);
+        if (q) q.continuesTo = vdt.id;
       }
       if (result && st) {
         const range = fragmentRange(st.L, from, st.cut);
@@ -245,7 +398,7 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
       }
       if (overflowPx > 0.5) {
         const overflowMm = Math.round((overflowPx / dpi) * MM_PER_IN * 10) / 10;
-        log.push({ frame: frame.name, kind: 'overflow', toMm: overflowMm });
+        overflowLog.push({ frame: frame.name, kind: 'overflow', toMm: overflowMm });
         warnings.push({
           kind: 'frameOverflow',
           template: template.id,
@@ -264,7 +417,20 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
       }
       frames.push(vdt);
       vdtByName.set(frame.name, vdt);
+    };
+
+    for (const step of composedOrder(template)) {
+      if (step.kind === 'frame') {
+        const p = prepare(step.frame);
+        fill(p, placeFrame(p));
+        continue;
+      }
+      const solved = placeGroup(step.group, step.frames);
+      // A frame of a chain inside the group is reached once the frame
+      // before it was filled: each is prepared again as it is filled.
+      for (const f of step.frames) fill(prepare(f), solved.get(f.name)!);
     }
+    const log = mergeLog(reflowEvents(motionsOf(template, rects, declared), dpi / MM_PER_IN), overflowLog, template);
     return { frames, blocks, warnings, log, laid, pushRects };
   };
   const first = run();
@@ -287,6 +453,48 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
     sourceEnd: contentBlocks[input.endIdx]!.sourceEnd + input.bodyOffset,
   };
   return { composed, blocks, warnings, laid };
+}
+
+const sameRect = (a: Rect, b: Rect): boolean =>
+  Math.abs(a.x - b.x) < 0.01 && Math.abs(a.y - b.y) < 0.01 && Math.abs(a.width - b.width) < 0.01 && Math.abs(a.height - b.height) < 0.01;
+
+/** Each laid frame's declared and final boxes, in template order, with
+ *  what moves it: what it anchors to (a group: its frames, last first),
+ *  then, in a group, the frames before it (nearest first), what the group
+ *  anchors to, and the frames after it. */
+function motionsOf(template: ResolvedPageTemplate, rects: ReadonlyMap<string, Rect>, declared: ReadonlyMap<string, Rect>): FrameMotion[] {
+  const groupOf = groupOfFrames(template);
+  const groups = new Map(template.groups.map((g) => [g.name, g]));
+  const expand = (target: string | undefined): string[] => {
+    if (!target) return [];
+    const g = groups.get(target);
+    return g && !rects.has(target) ? [...g.frames].reverse() : [target];
+  };
+  const out: FrameMotion[] = [];
+  for (const f of template.frames) {
+    const fin = rects.get(f.name);
+    const decl = declared.get(f.name);
+    if (!fin || !decl) continue;
+    const deps = f.grid ? [] : expand(anchorTarget(f.placement));
+    const g = groupOf.get(f.name);
+    if (g) {
+      const k = g.frames.indexOf(f.name);
+      deps.push(...g.frames.slice(0, k).reverse());
+      if (!g.grid) deps.push(...expand(anchorTarget(g.placement)));
+      deps.push(...g.frames.slice(k + 1));
+    }
+    out.push({ name: f.name, declared: decl, final: fin, deps });
+  }
+  return out;
+}
+
+/** The page's log: each frame's events in template order, what groups and
+ *  anchors changed first, then its overflow. */
+function mergeLog(reflow: readonly ReflowEvent[], overflow: readonly ReflowEvent[], template: ResolvedPageTemplate): ReflowEvent[] {
+  const order = new Map(template.frames.map((f, i) => [f.name, i]));
+  const all = [...reflow.map((e, i) => ({ e, i })), ...overflow.map((e, i) => ({ e, i: reflow.length + i }))];
+  all.sort((a, b) => (order.get(a.e.frame) ?? 0) - (order.get(b.e.frame) ?? 0) || a.i - b.i);
+  return all.map((x) => x.e);
 }
 
 /** Stamp a frame's laid-out box with its source and page, move it to the

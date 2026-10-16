@@ -402,6 +402,7 @@ function resolveTextElement(el: DesignTextElement, idx: number, kind: DesignSlot
     ...(el.inlineMarks ? { inlineMarks: true } : {}),
     ...(el.stroke ? { stroke: el.stroke } : {}),
     ...(el.reserve === false ? { reserve: false } : {}),
+    ...(el.pin ? { pin: true } : {}),
     ...(el.writingMode === 'vertical-rl' ? { writingMode: 'vertical-rl' as const } : {}),
     ...(el.direction === 'ltr' || el.direction === 'rtl' || el.direction === 'auto' ? { direction: el.direction } : {}),
     box: el.box,
@@ -425,6 +426,7 @@ function resolveRuleElement(el: DesignRuleElement, idx: number): ResolvedDesignR
     color: el.color ?? { ...DEFAULT_RULE_ELEMENT.color },
     thickness: el.thickness ?? { ...DEFAULT_RULE_ELEMENT.thickness },
     ...(el.reserve === false ? { reserve: false } : {}),
+    ...(el.pin ? { pin: true } : {}),
   };
 }
 
@@ -441,6 +443,7 @@ function resolveBoxElement(el: DesignBoxElement, idx: number): ResolvedDesignBox
     },
     style: el.style,
     ...(el.reserve === false ? { reserve: false } : {}),
+    ...(el.pin ? { pin: true } : {}),
   };
 }
 
@@ -457,6 +460,7 @@ function resolveImageElement(el: DesignImageElement, idx: number): ResolvedDesig
     },
     resourceId: el.resourceId,
     ...(el.reserve === false ? { reserve: false } : {}),
+    ...(el.pin ? { pin: true } : {}),
     ...(el.decorative ? { decorative: true } : {}),
   };
 }

@@ -264,6 +264,12 @@ The sandbox's `HtmlPreview` component (`packages/postext-sandbox/src/viewport/Ht
       <td><code>:ref</code> citations link to their resource; contents rows do not.</td>
       <td><code>:ref</code> citations and contents rows, plus the outline (bookmarks).</td>
     </tr>
+    <tr>
+      <td>Composed pages (<code>::::page</code>)</td>
+      <td>Frames in layer order, turned and clipped</td>
+      <td>The same boxes, written in reading order and painted in layer order with <code>z-index</code>; a figure's labels follow its <code>alt</code></td>
+      <td>The same painting; the structure tree reads the frames in Markdown order</td>
+    </tr>
   </tbody>
 </table>
 
@@ -396,6 +402,8 @@ EPUB 3 defines two renditions, set by the package's `rendition:layout` property;
     <tr><td>Suited to</td><td>Designed pages: illustrated books, textbooks, catalogues, magazines; large screens</td><td>Running text: novels, essays, reports; phones and e-ink readers</td></tr>
   </tbody>
 </table>
+
+A composed page (`::::page{template="…"}`) keeps its template in the fixed layout. In the reflowable book it becomes a section of its frames in Markdown order, each frame a block in its callout style, without the decoration, a figure's labels listed after its picture: see [Outside print](/en/docs/composed-pages#outside-print-html-epub-and-tagged-pdf).
 
 Both renditions carry the same navigation: a table of contents from the headings and part pages, a page list with the printed page labels, landmarks (cover, printed contents, start of the body) and an NCX for older reading systems.
 

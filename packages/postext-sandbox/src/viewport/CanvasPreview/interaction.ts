@@ -18,6 +18,8 @@ import {
 import { resourceTextAtPixel, type ResourceTextHit } from './resourceHit';
 import type { SandboxLabels } from '../../types/labels';
 import { createComicEditor, slotComicSurface, type BalloonTextPress, type ComicEditor, type ComicSurface } from '../comics/comicEditing';
+import { createFrameTools, type FrameTools } from '../composed/frameTools';
+import { editModeNow } from '../../editing/editMode';
 
 function sameTarget(a: ResourceFocusTarget, b: ResourceFocusTarget): boolean {
   if (a.kind !== b.kind) return false;
@@ -180,6 +182,9 @@ export interface PageInteractionOptions {
   labelsRef?: MutableRefObject<SandboxLabels>;
   /** Whether the comic tools are on now; `enabled` when left out. */
   comicEnabled?: () => boolean;
+  /** The composed-page tools (#864): a click on a frame goes to its slot,
+   *  a double click edits its text on the page. On unless false. */
+  frameTools?: boolean;
 }
 
 /** The cursors the page interaction sets. */
@@ -189,6 +194,8 @@ export type PageCursor = 'text' | 'pointer' | 'default' | 'row-resize' | 'col-re
 export interface PageInteraction {
   /** The comic tools, when the viewer has them. */
   comic: ComicEditor | null;
+  /** The composed-page tools (#864). */
+  frames: FrameTools | null;
 }
 
 /**
@@ -229,6 +236,18 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
   // A press that went to the comic tools: its click and the mouse events
   // that follow it are not the text's.
   let comicPress = false;
+
+  // The frames of composed pages (#864).
+  const frames = opts.frameTools === false ? null : createFrameTools({
+    docRef,
+    dispatchRef,
+    activePanelRef,
+    sourceOfPage: (page) => sourceOfPage(page),
+    ...(opts.labelsRef ? { labelsRef: opts.labelsRef } : {}),
+    ...(opts.comicSurface ? { surface: opts.comicSurface } : {}),
+  });
+  /** A press on a frame in Design mode picks it: no text is selected. */
+  const designFrameAt = (at: PagePointer): boolean => editModeNow() === 'design' && frames?.frameAt(at.pageIndex, at.x, at.y) != null;
 
   const resolveSheetPoint = (ev: MouseEvent): PagePointer | null => locate(ev);
   // The point in the page's flow frame, where the text, the floats and
@@ -393,6 +412,7 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
       return;
     }
     comicPress = false;
+    if (designFrameAt(at)) return;
     // A balloon's words select text as the body text does (#595): the
     // comic tools left the press alone.
     const balloonText = comic?.balloonText(at) ?? null;
@@ -419,6 +439,11 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
       if (!on()) return;
       if (comicCursor) {
         opts.setCursor(comicCursor as PageCursor);
+        return;
+      }
+      const over = locate(ev);
+      if (over && designFrameAt(over)) {
+        opts.setCursor('pointer');
         return;
       }
       // Hover feedback: refs, contents rows and design images read as links.
@@ -528,6 +553,12 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     // A cover picture or logo drawn by a design slot: open its resource so
     // the image can be replaced.
     if (touchTap) return;
+    // A frame of a composed page, off its words (#864): the caret goes to
+    // its slot (Content), or the frame is picked (Design).
+    if (frames?.click(at.pageIndex, at.x, at.y)) {
+      ev.preventDefault();
+      return;
+    }
     // A comic balloon (#571): the caret goes to the character clicked in
     // its words (#595), else to its script line.
     const balloonOffset = comic?.balloonSourceAt(at) ?? null;
@@ -572,6 +603,11 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
       return;
     }
     pageIndex = at.pageIndex;
+    // A frame's label tab or paragraph is edited on the page (#864).
+    if (frames?.dblclick(at.pageIndex, at.x, at.y)) {
+      ev.preventDefault();
+      return;
+    }
     // A balloon's words: the word double clicked (#595).
     const balloonText = comic?.balloonText(at) ?? null;
     if (balloonText) {
@@ -604,5 +640,5 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     focusEditor(offset, offset, true);
   });
 
-  return { comic };
+  return { comic, frames };
 }

@@ -36,6 +36,16 @@ Una barra d'eines a la part superior del viewport de canvas proporciona:
 
 Les pàgines es renderitzen de manera mandrosa mitjançant `IntersectionObserver` — només les pàgines visibles (més un marge de 200 px) es dibuixen al canvas, cosa que manté baix l'ús de memòria de GPU per a documents llargs.
 
+#### Pàgines compostes al llenç
+
+En una pàgina composta (`::::page{template="…"}`) el llenç uneix cada marc amb el lloc del Markdown que l'omple:
+
+- Un clic en un marc, fora de les seves paraules, porta el cursor al seu slot: la primera línia de la tanca `:::frame{slot="…"}`, el bloc que anomena `slot="…"` o el títol que ha rebut un marc amb `takes`. Un marc on continua una cadena porta al primer marc de la cadena. Un clic en un marc buit que encara no té slot escriu un `:::frame{slot="…"}` buit abans del tancament de la pàgina i hi deixa el cursor. Un clic sobre les paraules d'un marc posa el cursor en aquella paraula, com a qualsevol pàgina.
+- Mentre el cursor és en un slot, el seu marc, i els marcs on continua el text, apareixen contornejats a la pàgina.
+- Un marc buit mostra un contorn discontinu, el nom i **Escriu aquí**; un marc que només en continua un altre diu quin. Aquestes marques es dibuixen només damunt del llenç: el PDF, la impressió i qualsevol exportació les deixen fora.
+- Un doble clic a la pestanya d'etiqueta d'una caixa obre al damunt un camp que edita el `label="…"` de la tanca; en un paràgraf, un títol o un element de llista, un camp amb el seu Markdown. **Retorn** desa el canvi, **Maj+Retorn** comença una altra línia i **Esc** deixa el text com era. El canvi s'escriu al capítol i es desfà amb Cmd/Ctrl+Z com qualsevol edició feta a les vistes. Per corregir un peu n'hi ha prou amb un doble clic i les paraules noves, sense obrir cap estil. Un marc girat s'edita al tauler Text.
+- En mode Disseny tots els marcs mostren el contorn i el nom, i un clic en selecciona un per a l'editor de plantilles.
+
 ### Pestanya PDF
 
 Genera un PDF real del document actual mitjançant el paquet `postext-pdf` i el mostra dins del visor PDF integrat del navegador. El PDF es reconstrueix automàticament en muntar la pestanya per primera vegada i en cada regeneració posterior, amb el mateix VDT que alimenta les pestanyes de canvas i HTML — de manera que els salts de línia, les fronteres entre pàgines i la col·locació de recursos coincideixen al píxel entre els tres backends, inclosa la compressió de les línies finals sobreplenes que Knuth–Plass accepta ocasionalment.

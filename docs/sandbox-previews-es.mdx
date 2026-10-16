@@ -36,6 +36,16 @@ Una barra de herramientas en la parte superior del viewport de canvas proporcion
 
 Las páginas se renderizan de forma perezosa mediante `IntersectionObserver` — solo las páginas visibles (más un margen de 200 px) se dibujan en canvas, manteniendo el uso de memoria de GPU bajo para documentos largos.
 
+#### Páginas compuestas en el lienzo
+
+En una página compuesta (`::::page{template="…"}`) el lienzo une cada marco con el lugar del Markdown que lo llena:
+
+- Un clic en un marco, fuera de sus palabras, lleva el cursor a su slot: la primera línea de su valla `:::frame{slot="…"}`, el bloque que nombra `slot="…"` o el título que recibió un marco con `takes`. Un marco en el que continúa una cadena lleva al primer marco de la cadena. Un clic en un marco vacío que aún no tiene slot escribe un `:::frame{slot="…"}` vacío antes del cierre de la página y deja el cursor dentro. Un clic sobre las palabras de un marco coloca el cursor en esa palabra, como en cualquier página.
+- Mientras el cursor está en un slot, su marco, y los marcos en los que sigue su texto, aparecen contorneados en la página.
+- Un marco vacío muestra un contorno discontinuo, su nombre y **Escribe aquí**; un marco que solo continúa otro dice cuál. Estas marcas se dibujan solo sobre el lienzo: el PDF, la impresión y cualquier exportación las dejan fuera.
+- Un doble clic en la pestaña de etiqueta de una caja abre encima un campo que edita el `label="…"` de la valla; en un párrafo, un título o un elemento de lista, un campo con su Markdown. **Intro** guarda el cambio, **Mayús+Intro** empieza otra línea y **Esc** deja el texto como estaba. El cambio se escribe en el capítulo y se deshace con Cmd/Ctrl+Z como cualquier edición hecha en las vistas. Corregir un pie basta con un doble clic y las palabras nuevas, sin abrir ningún estilo. Un marco girado se edita en el panel Texto.
+- En modo Diseño todos los marcos muestran su contorno y su nombre, y un clic selecciona uno para el editor de plantillas.
+
 ### Pestaña PDF
 
 Genera un PDF real del documento actual mediante el paquete `postext-pdf` y lo muestra dentro del visor PDF integrado del navegador. El PDF se reconstruye automáticamente al montar la pestaña por primera vez y en cada regeneración posterior, usando el mismo VDT que alimenta a las pestañas de canvas y HTML — de modo que los saltos de línea, las fronteras entre páginas y la colocación de recursos coinciden al píxel entre los tres backends, incluida la compresión de las líneas finales sobrellenas que Knuth–Plass acepta ocasionalmente.

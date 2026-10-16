@@ -36,6 +36,16 @@ Eine Werkzeugleiste oben im Canvas-Ansichtsbereich bietet:
 
 Seiten werden verzögert über `IntersectionObserver` gerendert – nur sichtbare Seiten (plus ein Rand von 200 px) werden auf das Canvas gezeichnet, was den GPU-Speicherbedarf bei langen Dokumenten niedrig hält.
 
+#### Zusammengesetzte Seiten auf der Leinwand
+
+Auf einer zusammengesetzten Seite (`::::page{template="…"}`) verbindet die Leinwand jeden Rahmen mit der Stelle im Markdown, die ihn füllt:
+
+- Ein Klick auf einen Rahmen, neben seine Wörter, setzt die Einfügemarke in seinen Slot: in die erste Zeile seiner Begrenzung `:::frame{slot="…"}`, in den Block, der `slot="…"` nennt, oder in die Überschrift, die ein Rahmen mit `takes` aufgenommen hat. Ein Rahmen, in dem eine Kette weiterläuft, führt zum ersten Rahmen der Kette. Ein Klick auf einen leeren Rahmen, der noch keinen Slot hat, schreibt vor dem Abschluss der Seite ein leeres `:::frame{slot="…"}` und setzt die Einfügemarke hinein. Ein Klick auf die Wörter eines Rahmens setzt die Einfügemarke an das Wort, wie auf jeder Seite.
+- Solange die Einfügemarke in einem Slot steht, sind sein Rahmen und die Rahmen, in denen sein Text weiterläuft, auf der Seite umrandet.
+- Ein leerer Rahmen zeigt einen gestrichelten Umriss, seinen Namen und **Hier schreiben**; ein Rahmen, der nur einen anderen fortsetzt, sagt, welchen. Diese Markierungen erscheinen nur auf der Leinwand: PDF, Druck und alle Exporte lassen sie weg.
+- Ein Doppelklick auf den Beschriftungsreiter eines Kastens öffnet darüber ein Feld, das das `label="…"` der Begrenzung bearbeitet; auf einem Absatz, einer Überschrift oder einem Listeneintrag ein Feld mit seinem Markdown. **Eingabe** übernimmt die Änderung, **Umschalt+Eingabe** beginnt eine neue Zeile, **Esc** lässt den Text, wie er war. Die Änderung wird ins Kapitel geschrieben und mit Cmd/Strg+Z rückgängig gemacht wie jede Bearbeitung in den Vorschauen. Eine Bildunterschrift zu korrigieren braucht einen Doppelklick und die neuen Wörter, ohne einen Stil zu öffnen. Ein gedrehter Rahmen wird im Bereich Text bearbeitet.
+- Im Modus Gestaltung zeigt jeder Rahmen seinen Umriss und seinen Namen, und ein Klick wählt einen für den Vorlageneditor aus.
+
 ### Tab PDF
 
 Erzeugt über das Paket `postext-pdf` ein echtes PDF des aktuellen Dokuments und zeigt es in einem eingebetteten PDF-Betrachter des Browsers. Das PDF wird beim ersten Einhängen und bei jeder weiteren Neuerzeugung automatisch neu gebaut, aus demselben VDT, der die Tabs Canvas und HTML speist – deshalb stimmen Zeilenumbrüche, Seitengrenzen und Platzierung der Ressourcen in den drei Backends pixelgenau überein, bis hin zur Stauchung überfüllter Schlusszeilen, die Knuth-Plass gelegentlich zulässt.

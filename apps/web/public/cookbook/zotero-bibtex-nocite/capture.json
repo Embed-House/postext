@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "zotero-bibtex-nocite",
-  "sourceHash": "67e7cf6d42976cd0823c892ca745effdbe071fa4c08259e77dd8253bceff41e5",
+  "sourceHash": "3ca5235c94e2c3fe30a163faf5e68592e746a901197d7497a7ad408d32642920",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:06:54.631Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:55.018Z",
   "variants": {
     "en": {
-      "hash8": "a4407678",
+      "hash8": "16f72c46",
       "vdtHash": "9c12350cd4451185f5f8d2428661609ca85f8a5f",
       "timings": {
-        "importMs": 571,
-        "fontsMs": 5,
-        "buildMs": 658,
-        "totalMs": 2078,
+        "importMs": 641,
+        "fontsMs": 6,
+        "buildMs": 534,
+        "totalMs": 2039,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Spectral"
         ],
         "pages": 2,
-        "ownLines": 120
+        "ownLines": 121
       },
       "pages": [
         {
@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "zotero-bibtex-nocite.postext",
-        "bytes": 19082,
+        "bytes": 19113,
         "folio": "059452bc",
         "chapters": [
           {
@@ -125,6 +125,9 @@
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
           "bodyText.textAlign",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.doi",
@@ -197,6 +200,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -207,7 +211,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 202,
+        "configLeaves": 203,
         "designElements": 9,
         "directives": [
           ":::bibliography",
@@ -273,21 +277,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "52ac8bd6",
+      "hash8": "2916230d",
       "vdtHash": "b810b887425fbfad3e8c177b9b65dd79c0f61b1e",
       "timings": {
-        "importMs": 468,
+        "importMs": 603,
         "fontsMs": 6,
-        "buildMs": 553,
-        "totalMs": 1812,
+        "buildMs": 547,
+        "totalMs": 1953,
         "builds": 1
       },
       "specimen": {
@@ -309,7 +313,7 @@
           "Spectral"
         ],
         "pages": 2,
-        "ownLines": 120
+        "ownLines": 121
       },
       "pages": [
         {
@@ -359,7 +363,7 @@
       },
       "sandbox": {
         "file": "zotero-bibtex-nocite.postext",
-        "bytes": 19700,
+        "bytes": 19733,
         "folio": "059452bc",
         "chapters": [
           {
@@ -396,6 +400,9 @@
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
           "bodyText.textAlign",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.doi",
@@ -468,6 +475,7 @@
         ],
         "configSections": [
           "bodyText",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -478,7 +486,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 202,
+        "configLeaves": 203,
         "designElements": 9,
         "directives": [
           ":::bibliography",
@@ -544,9 +552,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

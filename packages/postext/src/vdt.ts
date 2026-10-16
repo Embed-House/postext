@@ -1523,6 +1523,24 @@ export interface ResolvedResourceBlock {
    *  (`slice.continues`), right-aligned under the slice and painted with the
    *  note fonts and colour. Empty otherwise. */
   continuesLines: VDTLine[];
+  /** The `::label` lines of a `:::figure` (#854), in the order written:
+   *  their plain text, where they go on the picture and their source. What
+   *  outputs that do not draw them read as the figure's text (#862: the
+   *  reflowable EPUB's list after the picture, the tagged PDF's `Alt`).
+   *  Absent when the figure has none. */
+  labels?: VDTFigureLabel[];
+}
+
+/** A `::label` of a figure (#854, DESIGN §3.3) as the VDT carries it:
+ *  its plain text and anchor. P6 (#860) lays it out on the picture. */
+export interface VDTFigureLabel {
+  text: string;
+  /** An anchor of the resource, or a point in fractions of the picture. */
+  at: { anchor: string } | { x: number; y: number };
+  style?: string;
+  /** The label's text in the source (absolute offsets). */
+  sourceStart: number;
+  sourceEnd: number;
 }
 
 /**
@@ -2406,9 +2424,10 @@ export interface VDTComicBalloon {
 // Composed pages (#846, DESIGN §4): a template's frames poured with slots
 // ---------------------------------------------------------------------------
 
-/** What happened to a frame while its page was composed (DESIGN §5.5).
- *  P4 records `overflow` only; the reflow ladder (#858) and groups (#856)
- *  add the rest. */
+/** What happened to a frame while its page was composed (DESIGN §5.5),
+ *  against the box its template declares (`VDTFrame.declaredRect`):
+ *  `grew` / `resized` (smaller) and `moved` from groups and anchors (#856),
+ *  `overflow` (#855); the reflow ladder (#858) adds the rest. */
 export type ReflowEventKind =
   | 'grew'
   | 'moved'
@@ -2422,10 +2441,18 @@ export interface ReflowEvent {
   /** The frame's name in its template. */
   frame: string;
   kind: ReflowEventKind;
+  /** `grew` / `resized`: the frame's height (`axis: 'x'`: width) before
+   *  and after, mm. `moved`: its top (`axis: 'x'`: its left edge) from
+   *  the sheet's top (left) edge, before and after, mm. `overflow`: `toMm`
+   *  is how much did not fit. */
   fromMm?: number;
   toMm?: number;
+  /** `'x'`: a width or a move across. Absent: a height or a move down or
+   *  up. */
+  axis?: 'x' | 'y';
   scale?: number;
-  /** The frame whose change caused this event. */
+  /** The frame whose change caused this event; `'gutter'` when the spine
+   *  band of a spread template kept the frame off it (#861). */
   cause?: string;
 }
 
@@ -2444,6 +2471,11 @@ export interface VDTFrame {
   name: string;
   /** The frame's box, label tab included, before any turn. */
   rect: { x: number; y: number; width: number; height: number };
+  /** The box the template declares for the frame (its fixed size, or its
+   *  `minHeight` where its height follows its content), before groups and
+   *  anchors make room for what it holds (#856); absent when it is `rect`.
+   *  Decoration with `pin` anchors here. */
+  declaredRect?: { x: number; y: number; width: number; height: number };
   /** Degrees, clockwise, about the centre of `rect`: the box and its
    *  content turn together. 0 = upright. */
   rotate: number;
@@ -2472,6 +2504,15 @@ export interface VDTFrame {
   sourceEnd?: number;
   /** Other frames' text wraps round this frame's box (`exclude: 'push'`). */
   push?: true;
+  /** On a page of a spread (#861), a frame crossing the spine that is
+   *  read on the facing page (the one holding its centre): this page
+   *  shows its half. The blocks are copies of the facing page's, moved
+   *  onto this sheet (ids ending in `-facing`); they are in no
+   *  `page.floats` and no `doc.blocks`, so text is read and selected once:
+   *  backends paint them clipped to `VDTComposedPage.sheetClip`, a tagged
+   *  PDF as an artifact, the HTML hidden from assistive technology.
+   *  `blockIds` is empty on such a frame. */
+  facingBlocks?: VDTBlock[];
 }
 
 /** A composed page (`::::page{template}`, #846): the template it was set
@@ -2481,8 +2522,18 @@ export interface VDTComposedPage {
   /** The template's id, and the variant applied on this side. */
   template: string;
   variant?: 'recto' | 'verso';
-  /** The side of a spread template's sheet (#861). */
+  /** The side of a spread template's sheet this page is (#861): its
+   *  physical side of the open book. */
   spread?: 'left' | 'right';
+  /** On a page of a spread: the index (in `doc.pages`) of the facing page
+   *  that holds the other half. */
+  facingPage?: number;
+  /** On a page of a spread: what the page shows of the sheet of two
+   *  pages, its bleed box (page px, in the frame the frames are in; the
+   *  trim at the spine when the book has no bleed). The frames and the
+   *  decoration are painted clipped to it, so a frame or a band crossing
+   *  the spine shows its own half on each page. */
+  sheetClip?: { x: number; y: number; width: number; height: number };
   /** The page fence's ordinal in its chapter (stable across locales). */
   fenceIndex: number;
   /** The role the template reports to design slots (`role`, default
@@ -2908,6 +2959,13 @@ export type ContentWarning = ContentWarningBase & (
    *  source map, this warning). `overflowMm` is the height that is cut.
    *  Provisional: #858 adds the steps tried and the fixes. */
   | { kind: 'frameOverflow'; template: string; frame: string; fenceIndex: number; overflowMm: number; configPath: string }
+  /** A composed page's fence and its template disagree about spreads
+   *  (#861): `::::page{template spread}` names a template that is a single
+   *  page (`fence: true`, `templateSpread: false`; it is laid as one
+   *  page), or the fence lacks `spread` and the template is a spread
+   *  (`fence: false`, `templateSpread: true`; it is laid over two facing
+   *  pages, as the template says). */
+  | { kind: 'spreadMismatch'; template: string; fenceIndex: number; fence: boolean; templateSpread: boolean }
   /** A `:::paper{…}` attribute the engine cannot read: an unknown key, a
    *  stock, finish or texture it does not know, a number out of range, a
    *  shade that is neither a hex colour nor a palette id, a `showThrough`

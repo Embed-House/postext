@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 134 · A business section on salmon newsprint ═══════════════
 // https://postext.dev/en/cookbook/business-section-on-salmon
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated (CC BY 4.0)
-// Fonts: Source Serif 4, Playfair Display, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.28.0
+// Fonts: Source Serif 4, Playfair Display, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 //
 // Eight pages: four of news in five columns, then Business on salmon paper in six.
 // One heading style carries the change; a :::paper run gives Folio the salmon stock.
@@ -51,6 +51,7 @@ const pad = (y, x) => ({ top: mm(y), right: mm(x), bottom: mm(y), left: mm(x) })
 const patch = (fill, padding = pad(1.5, 3)) => ({ backgroundColor: col(fill), padding });
 
 // #region nameplate: page 1's H1 is the paper's name, between the ears and the date line
+const [EAR, FLAG] = ['Business · the salmon pages, 5–8', 'Companies · Markets · Money'];
 const nameplate = { enabled: true, slot: { elements: [
   depth(13),
   rule('foot', 0.5, at('#depth', 'align-bottom', 0, -2)),
@@ -64,7 +65,7 @@ const nameplate = { enabled: true, slot: { elements: [
   text('weather', 'Weather · {attr.weather}', { ...caps(8, 700), box: patch('tint') },
     at('container', 'top-left')),
   // The right ear points to the salmon pages, on a patch of the same colour.
-  text('ear', 'Business · the salmon pages, 5–8', { ...caps(8, 700), box: patch('salmon') },
+  text('ear', EAR, { ...caps(8, 700), box: patch('salmon') },
     at('container', 'top-right')),
 ] } };
 // #endregion
@@ -108,7 +109,7 @@ const front = () => ({ ...business, id: 'business-front', advancedDesign: { enab
   elements: [depth(10),
     text('title', 'Business', { fontFamily: 'Playfair Display', fontSize: pt(58), fontWeight: 900,
       lineHeight: 1, color: col('accent') }, at('container', 'top-left', 0, -1)),
-    text('tag', 'Companies · Markets · Money', caps(9, 700, 'accent'),
+    text('tag', FLAG, caps(9, 700, 'accent'),
       at('#title', 'right-of', 5, 9)),
     rule('top', 3, at('#title', 'below', 0, 2)),
     ...STRIP().flatMap(([name, value, change], i) => [ // the day's close, from the market data
@@ -198,6 +199,7 @@ const config = () => ({
   tableStyles: [{ id: 'prices', headerBackground: col('accent'), headerFontSize: pt(7),
     bodyFontSize: pt(7), cellPadding: mm(0.45) }],
   header, footer: { elements: [] },
+  checks: { contentInConfig: { allow: [EAR, FLAG] } }, // furniture (#849)
   folio: { paper: { type: 'newsprint', grammage: 45, shade: { hex: '#fbfaf8', model: 'hex' } },
     binding: { type: 'folded', cover: 'pages' }, surface: { type: 'oak' },
     lighting: { environment: 'overcast' } },

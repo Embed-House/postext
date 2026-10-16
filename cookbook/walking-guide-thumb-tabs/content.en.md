@@ -4,7 +4,7 @@ subtitle: "Three walks through the old city"
 author: "Postext Cookbook"
 ---
 
-# Lisbon \\ on Foot {style="cover"}
+# Lisbon \\ on Foot {style="cover" kicker="A pocket guide"}
 
 :::pagebreak
 

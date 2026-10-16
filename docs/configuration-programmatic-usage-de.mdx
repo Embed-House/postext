@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Die paginierte Ausgabe schneidet am Fuß des Rahmens ab, was nicht passt; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>Die Eröffnung einer zusammengesetzten Seite und ihre Vorlage widersprechen sich bei der Doppelseite (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, das <code>spread</code> der Eröffnung; <code>templateSpread</code>, das der Vorlage).</td>
+      <td>Es entscheidet die Vorlage: Eine Doppelseitenvorlage wird über zwei gegenüberliegende Seiten gesetzt, jede andere auf eine Seite.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> nennt kein Chip-Format.</td>
       <td>Der Chip erhält das erste Chip-Format.</td>

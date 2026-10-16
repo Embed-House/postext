@@ -39,6 +39,15 @@ Clicar no botão do painel ativo recolhe a barra lateral, e clicar em outro bot�
 
 O aplicativo hospedeiro pode acrescentar itens próprios à barra: um **link opcional com o logotipo** na célula superior (pelas props `homeUrl` ou `homeLink`), e um **seletor de tema** e um **seletor de idioma** na parte de baixo. Livros inteiros são trocados como arquivos `.postext` pelo painel Livros, e os cabeçalhos dos painéis Texto e Design exportam a sua própria parte (veja [Exportar e importar](/pt/docs/sandbox-books-saving#exportar-e-importar)).
 
+### Modos Conteúdo e Design
+
+A barra acima da visualização começa com um seletor entre as duas maneiras de trabalhar num livro:
+
+- **Conteúdo**: edita-se o texto, no painel Texto e nas próprias páginas. Os blocos de uma página composta ficam onde o modelo os coloca.
+- **Design**: editam-se os modelos de página e os estilos. O painel Texto mostra o capítulo somente para leitura, com um aviso e um botão **Editar o texto**, e a barra de ferramentas fica desativada. Um clique num bloco de uma página composta seleciona esse bloco para o editor de modelos em vez de posicionar o cursor.
+
+**Alt+Shift+M** (**⌥⇧M** no Mac) troca de modo de qualquer ponto do Sandbox. Passar para Design com o painel Texto aberto abre o painel Design, e ao voltar abre-se de novo o painel Texto. O navegador lembra o modo. Os agentes leem e mudam o modo com `sandbox_set_view` (`mode`).
+
 ### Painéis da barra lateral
 
 A barra lateral pode ser redimensionada. Arraste o separador entre a barra lateral e a área de visualização, ou dê foco a ele com Tab e use o teclado: ← / → mudam a largura em 2 % (10 % com Shift), e **Home** / **End** levam à largura mínima e à máxima. O separador anuncia o valor atual aos leitores de tela, e a área de visualização sempre mantém pelo menos 200 px. A barra lateral se recolhe por completo quando nenhum painel está ativo, e a largura dela é lembrada entre sessões.
@@ -56,11 +65,12 @@ Um editor CodeMirror 6 para o Markdown do capítulo. Os leitores de tela o anunc
 - **Números de linha** e realce da linha ativa
 - **Quebra automática de linha** para parágrafos longos
 - **Linhas da direita para a esquerda**: uma linha cujo texto começa com uma letra árabe ou hebraica corre da direita para a esquerda, e o cursor e as setas acompanham esse sentido. A marcação dentro dela (atributos `{…}`, rótulos `[^id]`, o nome de uma diretiva, um `:ref[fig-1]` inteiro, fórmulas, código, destinos de links) continua da esquerda para a direita, para ser lida como foi digitada. Cercas de código, front matter e linhas que começam com uma palavra latina continuam da esquerda para a direita, como antes.
-- **Barra de ferramentas**: começa com **Desfazer / Refazer**, seguidos de negrito, itálico, títulos de nível 1 a 3, link, código na linha, **chip** (envolve a seleção em `:chip[…]`), **versaletes** (envolve a seleção em `:smallcaps[…]`), citação, listas numeradas e com marcadores, e mais quatro botões que inserem diretivas:
+- **Barra de ferramentas**: começa com **Desfazer / Refazer**, seguidos de negrito, itálico, títulos de nível 1 a 3, link, código na linha, **chip** (envolve a seleção em `:chip[…]`), **versaletes** (envolve a seleção em `:smallcaps[…]`), citação, listas numeradas e com marcadores, e mais cinco botões de inserção:
   - `:::pagebreak`
   - `:::space`: uma linha de espaço vertical (`:::space{lines=N}` para mais)
   - **Colunas**: um grupo `:::columns{count=2}` de duas colunas, com o cursor na primeira linha dele, no texto ou num boxe (desde o postext 1.25)
   - `:::numbering{format="decimal" startAt=1}`: inserido com atributos de exemplo que você pode ajustar
+  - **Página composta**: abre um seletor com os modelos de página do livro, cada um desenhado em miniatura com os seus blocos vazios. Escolher um escreve uma cerca `::::page{template="…"}` com um `:::frame{slot="…"}` vazio para cada bloco. Um bloco que só recebe a continuação do texto de outro não recebe nenhum; um bloco que `takes` um título recebe esse título, com o nome do bloco selecionado para ser substituído ao digitar, e o bloco de fluxo recebe uma linha em branco para o texto corrido
 
 Uma listagem de código (uma cerca ```` ``` ```` ou `~~~` e as suas linhas) é uma só região no editor: recebe um fundo de código, e a marcação Postext dentro dela (fórmulas, chips, tabulações, marcas de índice) fica sem cor, já que o motor não a lê. Aplicações hospedeiras podem acrescentar botões próprios à barra de ferramentas por meio de `extraActions`. O editor também informa o cursor e a seleção às visualizações, o que permite sincronizar o cursor pelo clique: clicar no texto renderizado leva o cursor à posição correspondente no Markdown, e as visualizações podem destacar a seleção atual.
 

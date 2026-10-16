@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 002 · Two-column paper with numbered equations ══════════
 // https://postext.dev/en/cookbook/journal-article-with-maths
 // Code: MIT · Text: original (CC BY 4.0) · Figures: generated in code (CC BY 4.0)
-// Fonts: STIX Two Text, Schibsted Grotesk, Azeret Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: STIX Two Text, Schibsted Grotesk, Azeret Mono (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 // A research article in a fictional physics journal: a title block across the page, numbered
 // sections, MathJax formulas in the text and in the figures, a table computed from the data.
 import {
@@ -55,6 +55,11 @@ const at = (to, edge, x, y, width) => ({ anchor: { to, edge }, offset: { x: mm(x
 const caps = (size, fontWeight = 600) => ({ fontWeight, letterSpacing: pt(size * 0.18),
   textTransform: 'uppercase' }); // tracked capitals: the band, the abstract, the back matter
 const [RULE_Y, BAND, BYLINE] = [21, 130, 152]; // mm from the top: rule, band foot, byline foot
+// The journal's furniture and running heads: checks.contentInConfig allows them (#849).
+const JOURNAL = { subject: 'Journal of Experimental Physics', issue: 'Vol. 7 · No. 3 · 2026',
+  licence: 'Open access · CC BY 4.0', verso: 'Measure · Vol. 7 · 2026',
+  recto: 'Oyelaran et al. · Pendulum at large amplitudes',
+  cite: 'Measure 7, 213–216 (2026) · doi:10.5555/measure.7.3.213' };
 const titleBlock = {
   enabled: true,
   minHeight: mm(BYLINE - TOP), // from the top margin down to the byline: the abstract follows
@@ -66,9 +71,9 @@ const titleBlock = {
       placement: at('page', 'top-left', 54, RULE_Y, 136) },
     text('journal', 'Measure', SANS, 17, 'paper', at('page', 'top-left', M, 11.2),
       { fontWeight: 700, overflow: 'clip' }),
-    text('subject', 'Journal of Experimental Physics', SANS, 7, 'mist',
+    text('subject', JOURNAL.subject, SANS, 7, 'mist',
       at('#journal', 'right-of', 3, 2.2), { ...caps(7), overflow: 'clip' }),
-    text('issue', 'Vol. 7 · No. 3 · 2026', MONO, 7, 'mist', at('page', 'top-right', -M, 13.3),
+    text('issue', JOURNAL.issue, MONO, 7, 'mist', at('page', 'top-right', -M, 13.3),
       { align: 'right', overflow: 'clip' }),
     { kind: 'rule', id: 'hairline', thickness: pt(0.5), color: col('mist'),
       placement: at('page', 'top-left', M, RULE_Y, MEASURE) },
@@ -83,7 +88,7 @@ const titleBlock = {
     text('affiliations', '{attr.affiliations}', SANS, 7.5, 'muted',
       at('#authors', 'below', 0, 1.6, 120), { lineHeight: 1.35 }),
     ...[['Received {attr.received}', 'muted', 400], ['Accepted {attr.accepted}', 'muted', 400],
-      ['Published {publishDate}', 'muted', 400], ['Open access · CC BY 4.0', 'journal', 600]]
+      ['Published {publishDate}', 'muted', 400], [JOURNAL.licence, 'journal', 600]]
       .map(([content, color, fontWeight], i) => text(`d${i}`, content, MONO, 6.6, color,
         at('page', 'top-right', -M, BAND + 7.6 + 3.4 * i), { align: 'right', fontWeight })),
   ] },
@@ -97,15 +102,15 @@ const head = (id, content, parity, edge, x, extra) => text(id, content, SANS, 7.
 const folio = { fontWeight: 700, color: col('journal'), letterSpacing: pt(0.4) };
 const header = { elements: [
   head('v-folio', '{pageNumber}', 'even', 'left', M, folio),
-  head('v-title', 'Measure · Vol. 7 · 2026', 'even', 'left', M + 10), // 10 mm after the folio
-  head('r-title', 'Oyelaran et al. · Pendulum at large amplitudes', 'odd', 'right', -(M + 10)),
+  head('v-title', JOURNAL.verso, 'even', 'left', M + 10), // 10 mm after the folio
+  head('r-title', JOURNAL.recto, 'odd', 'right', -(M + 10)),
   head('r-folio', '{pageNumber}', 'odd', 'right', -M, folio),
   { kind: 'rule', id: 'head-rule', thickness: pt(0.5), color: col('rule'), pages: 'body',
     placement: at('page', 'top-left', M, 16, MEASURE) },
 ] };
 // The first page carries the citation line and its folio at the foot instead, 12 mm up.
 const footer = { elements: [
-  text('cite', 'Measure 7, 213–216 (2026) · doi:10.5555/measure.7.3.213', MONO, 6.4, 'muted',
+  text('cite', JOURNAL.cite, MONO, 6.4, 'muted',
     at('page', 'bottom-left', M, -12), { pages: 'opener', overflow: 'clip' }),
   text('drop-folio', '{pageNumber}', SANS, 7.5, 'journal', at('page', 'bottom-right', -M, -12),
     { ...folio, align: 'right', pages: 'opener', overflow: 'clip' }),
@@ -130,6 +135,7 @@ const config = () => ({ locale: 'en-us', // the sample is in English
   captionStyle: { fontFamily: SANS, fontSize: pt(8), labelColor: col('journal'), gap: mm(2),
     note: { fontSize: pt(7), color: col('muted') } }, // in the text's ink; labels bold
   header, footer,
+  checks: { contentInConfig: { allow: Object.values(JOURNAL) } },
 });
 
 // #region numbering: numbered sections styled by level, an uncounted title, figures 1, 2, 3

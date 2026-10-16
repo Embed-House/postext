@@ -40,7 +40,7 @@ Une page composée s’ouvre par une ligne de **quatre deux-points** suivie de `
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>Obligatoire. L’id d’une entrée de <code>pageTemplates</code>.</td></tr>
-    <tr><td><code>spread</code></td><td>La page est une double page, sur deux pages en regard ; le modèle doit lui aussi être un modèle de double page.</td></tr>
+    <tr><td><code>spread</code></td><td>La page est une double page, sur deux pages en regard (voir <a href="#doubles-pages">Doubles pages</a>). Elle doit s’accorder avec le <code>spread</code> du modèle ; sinon le modèle décide et <code>spreadMismatch</code> le signale.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Une ancre : un <code>:ref</code> qui la vise imprime le numéro de la page où tombe la page composée.</td></tr>
     <tr><td>tout autre attribut</td><td>Une valeur que le modèle lit sous la forme <code>&#123;attr.name&#125;</code>, par exemple une image de fond choisie page par page : <code>fondo="banda-retos"</code> avec <code>resourceId: "&#123;attr.fondo&#125;"</code> dans le décor.</td></tr>
   </tbody>
@@ -191,6 +191,17 @@ Les blocs se peignent dans l’ordre de leur `layer` : le décor au calque 0, l
 
 Un bloc dont le contenu est plus haut que lui, sans bloc suivant où continuer, garde tout ce contenu dans le document mais n’en montre que ce qui tient : le reste est coupé au pied du bloc dans la sortie paginée, et l’avertissement [`frameOverflow`](#frameoverflow) dit de combien. Le contenu qu’aucun bloc ne prend (pas de bloc de flux, ou un bloc absent de ce côté) est composé dans le texte courant, sur la page qui suit la page composée.
 
+## Hors de l’imprimé : HTML, EPUB et PDF balisé
+
+Toutes les sorties lisent une page composée dans l’ordre de son Markdown, et non dans l’ordre où le modèle énumère ses blocs ni dans celui où il peint ses calques.
+
+- **EPUB reflowable.** La page devient une section (`<section class="pt-composed pt-composed-tema-cajas">`) qui s’ouvre sur le repère de saut de page. Chaque bloc du modèle en est un bloc (`<div class="pt-frame pt-frame-dinero">`), placé là où son contenu apparaît pour la première fois dans le Markdown ; un bloc et ceux où se poursuit sa chaîne `next` n’en font qu’un. Un bloc dessiné dans un style d’encadré garde la boîte de ce style : fond, bordure, marges intérieures, texte courant, et son `label` comme titre de l’encadré. Un bloc sans style est un simple bloc. Le décor (images de fond, cartes, textes de conception) appartient à la page imprimée et reste à l’écart.
+- **Étiquettes des figures.** L’image que contient l’EPUB ne montre pas les textes `::label` d’une `:::figure` ; le livre reflowable les énumère donc juste après l’image, dans sa figure, dans l’ordre où ils sont écrits : une liste masquée à la vue (`pt-figure-labels pt-hidden`) qu’un lecteur d’écran lit une seule fois. Dans la visionneuse HTML, l’EPUB à mise en page fixe et le PDF balisé, elles suivent le texte alternatif de l’image, `Une famille avec un panier de courses (Loyer, Électricité, Nourriture)` ; les étiquettes chinoises et japonaises prennent `（…、…）`, les arabes la virgule arabe.
+- **Visionneuse HTML et EPUB à mise en page fixe.** Les deux montrent la page imprimée avec son modèle appliqué : chaque bloc dans sa boîte, tourné selon `rotate`, rogné quand son contenu déborde, peint par-dessus les blocs des calques inférieurs, le décor au calque 0. Le balisage énumère les blocs dans l’ordre de lecture et les peint dans l’ordre des calques avec `z-index` : les technologies d’assistance suivent le Markdown, tandis que la page garde l’aspect de l’imprimé. Les images décoratives sont masquées aux technologies d’assistance (`alt=""`). Les polices du décor font partie de celles que le Sandbox incorpore dans un EPUB ; un EPUB à mise en page fixe écrit sans l’une d’elles le signale par `missingFont`.
+- **PDF balisé.** L’arbre de structure lit les blocs dans le même ordre. Chaque bloc, ou chaîne de blocs, est un `Div` qui contient ses titres, paragraphes et listes ; ses images sont des éléments `Figure` dont l’`Alt` porte les étiquettes ; le décor est un artefact de mise en page.
+
+Dans le code, les étiquettes d’une figure se trouvent sur son bloc, dans `resourceBlock.labels` (texte, ancre ou point, style et plage dans la source), et `composedReadingOrder(composedPaintOrder(page))` donne le décor et les blocs d’une page dans l’ordre de lecture.
+
 ## Avertissements
 
 Les vérifications lisent le Markdown et la configuration avant toute mise en page. Elles apparaissent donc pendant la frappe dans le panneau Vérifications, ainsi que dans `postext check` et dans les `contentWarnings` du document, chacune avec la plage source de ce qu’elle concerne (voir [Configuration › Avertissements dans le document](/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document)).
@@ -225,6 +236,11 @@ Les vérifications lisent le Markdown et la configuration avant toute mise en pa
       <td>Ouvrir la page avec quatre deux-points, <code>::::page&#123;template="…"&#125;</code>, et la fermer avec <code>::::</code>.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>Le <code>spread</code> de l’ouverture et celui du modèle ne s’accordent pas. La page est composée comme le dit le modèle (voir <a href="#spreadmismatch">spreadMismatch</a>).</td>
+      <td>Écrivez <code>spread</code> dans l’ouverture d’un modèle de double page, ou retirez-le pour un modèle d’une page.</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>Une page composée, un bloc ou une figure n’est jamais fermé (voir plus haut comment l’analyseur se rattrape). Le panneau Vérifications désigne la page composée par <code>::::page</code>.</td>
       <td>Ajouter le délimiteur de fermeture : autant de deux-points que sur la ligne d’ouverture de la page, ou <code>:::</code> pour un bloc ou une figure.</td>
@@ -239,6 +255,85 @@ Cet avertissement vient de la mise en page, pas des vérifications de la source 
 **Cause.** Le contenu versé dans un bloc (par son slot, ou celui que reçoit le bloc de flux) est plus haut que le bloc, et le bloc n’a plus de `next` où continuer. Le plus souvent, il y a plus de texte que le bloc n’en contient : une traduction plus longue que l’original, ou un bloc tenu par un `height` ou un `maxHeight` fixe. Ce qui ne tient pas est coupé au pied du bloc dans la sortie paginée ; il reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable. L’avertissement donne le modèle, le bloc, la page, la hauteur coupée (`overflowMm`) et `configPath`, le pointeur JSON du bloc dans la configuration (`/pageTemplates/0/frames/2`).
 
 **Correction.** Donnez plus de place au bloc (augmentez ou retirez son `height` ou son `maxHeight`), chaînez-le à un autre bloc avec `next`, raccourcissez le texte ou composez la page avec un autre modèle. Pour l’instant, la mise en page ne réduit pas le texte pour le faire tenir.
+
+## Quand le texte s’allonge
+
+Une page composée se réorganise dans les limites que déclare son modèle. Si vous écrivez un texte plus long dans le premier encadré d’une page dont les encadrés forment un groupe en pile, l’encadré grandit pour le contenir et les encadrés du dessous descendent, avec les photos et le décor qui leur sont ancrés ; aucune ligne du modèle ne change. Avec un texte plus court, l’encadré retrouve sa hauteur déclarée. Un bloc ou un élément de décor marqué `pin` reste là où le modèle le place, pour un encadré qui doit tomber juste sur l’illustration. La façon dont les piles et les rangées se partagent l’espace, et le bloc qui cède le premier, se règlent dans le modèle : voir [Configuration › Comment les groupes se partagent l’espace](/fr/docs/configuration-composed-pages#comment-les-groupes-se-partagent-lespace).
+
+Quand les encadrés atteignent le pied de la zone et qu’aucun bloc du groupe ne peut céder plus d’espace, le dernier bloc est coupé au pied et la mise en page signale `frameOverflow` (voir [Avertissements](#avertissements)) : raccourcissez le texte, baissez le `minHeight` d’un autre bloc, laissez un bloc rétrécir ou donnez plus de place au groupe. Les groupes n’ajoutent aucun autre avertissement.
+
+## Journal de recomposition
+
+Chaque page composée tient un journal de ce que la mise en page a changé par rapport au dessin de son modèle : quel bloc a grandi, a rendu de l’espace ou s’est déplacé, de combien, et quel bloc en est la cause. Une page dont le texte tient dans son modèle n’inscrit rien au journal.
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Événement</th>
+      <th>Ce qu’il indique</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>Le bloc est plus haut (ou, avec <code>axis: 'x'</code>, plus large) que déclaré : <code>fromMm</code> est la taille déclarée, <code>toMm</code> celle qu’il a reçue.</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>Le bloc est plus petit que déclaré : il a cédé de l’espace à <code>cause</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>Le bord supérieur du bloc (avec <code>axis: 'x'</code>, son bord gauche) s’est déplacé, en mm depuis le bord de la feuille ; <code>cause</code> est le bloc dont l’agrandissement l’a déplacé.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>Le contenu ne tenait pas : <code>toMm</code> est la hauteur coupée, comme dans <code>frameOverflow</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Les changements de moins d’un demi-millimètre sont omis, et chaque changement n’est arrondi qu’une fois, au dixième de millimètre : des blocs qui se sont déplacés ensemble affichent la même valeur. Le décor qui suit un bloc n’est pas listé.
+
+`postext check` affiche une ligne `reflow` par page composée qui a des événements, après les avertissements ; avec `--json`, le rapport contient un tableau `reflow` avec une entrée par page : `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` et `lines` (les événements rédigés en clair).
+
+Depuis le code, le journal est `VDTPage.composed.log`, et chaque bloc garde dans `VDTFrame.declaredRect` la boîte que son modèle lui déclare quand elle diffère de `rect`. `composedReflowLog(doc)` renvoie les entrées qu’affiche `postext check`, et `describeReflowEvent(event)` rédige un événement en clair.
+
+## Doubles pages
+
+Un modèle avec `spread: true` est une seule feuille de deux pages en regard : un bandeau qui traverse le dos, une frise d’images d’un bord extérieur à l’autre, des fiches de chaque côté. L’ouverture de la page le dit avec `spread` :
+
+```md
+::::page{template="linea-tiempo" spread}
+# Cómo medimos el tiempo
+
+Para saber cuándo comer, trabajar o descansar, las personas siempre han necesitado medir el tiempo…
+
+:::frame{slot="banda-2"}
+Con relojes de máquina
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **Où elle commence.** Une double page commence sur une page paire (la page de gauche d’un livre qui se lit de gauche à droite, celle de droite d’un livre qui se lit de droite à gauche) et prend la page impaire qui suit. Si le texte qui la précède finit sur une page paire, la page suivante reste blanche (un blanc de parité, comme avant une double page de bande dessinée), pour que les deux moitiés se fassent face. Le texte qui suit la fermeture commence sur la page après l’impaire.
+- **Une seule feuille.** Les blocs sont placés sur une feuille aussi large que les deux pages. La zone `content` va de la marge extérieure d’une page à celle de l’autre, les deux marges intérieures comprises ; `trim`, ce sont les deux pages rognées côte à côte ; `bleed` ajoute le fond perdu en tête, en pied et sur les deux bords extérieurs, jamais au dos. Une `grid` divise toute la largeur : six colonnes en mettent trois sur chaque page. Dans un livre qui se lit de droite à gauche, la feuille est mise en miroir comme ses pages, et la première colonne se trouve sur la page de droite.
+- **Le petit fond.** `gutter` est une bande de cette largeur centrée sur le dos. Un bloc sans `crossGutter: true` en est tenu à l’écart : un bloc qui traverse toute la bande est coupé à son bord, du côté de son centre, et un bloc dont le bord intérieur tombe dans la bande en sort tout entier. Une hauteur `auto` est mesurée à la largeur réduite, et le journal de recomposition de la page note le changement (`resized` ou `moved`, avec la cause `gutter`). Sans `gutter`, la bande est le dos lui-même : seuls les blocs qui le demandent passent le pli.
+- **Par-dessus le dos.** Un bloc avec `crossGutter: true` peut le traverser. Son texte est lu une seule fois, sur la page qui contient le centre du bloc ; la page en regard peint sa propre moitié du bloc, coupée à sa feuille, si bien qu’un bandeau ou une image se lit d’un seul tenant sur le livre ouvert. Un PDF balisé marque cette moitié comme artefact, le HTML la cache aux technologies d’assistance, et la sélection ou la recherche trouve le texte une fois.
+- **La décoration** est composée une fois sur toute la feuille et coupée au dos de la même façon : un fond, une carte d’une page à l’autre, un titre courant sur la page de droite. Un élément ancré à `#bloc` suit ce bloc sur la page où il tombe. Une double page ne prend pas de `variants`, puisqu’elle a les deux côtés ; `header` et `footer` s’appliquent à chacune de ses pages comme à toute page.
+
+Sur le canevas, dans la vue en double page du Sandbox et dans le Folio, les deux pages sont côte à côte. Le PDF a deux pages, chacune rognée à son fond perdu. L’EPUB à mise en page fixe leur donne `page-spread-left` et `page-spread-right` avec `rendition:spread-both`, pour qu’une liseuse les montre ensemble dans les deux orientations. L’EPUB recomposable lit les blocs comme pour toute page composée, dans l’ordre du Markdown.
+
+### spreadMismatch
+
+**Cause.** L’ouverture de la page et son modèle ne s’accordent pas : l’ouverture porte `spread` alors que le modèle tient sur une page, ou le modèle est une double page (par son propre `spread: true` ou par `extends`) et l’ouverture ne le dit pas. Le modèle décide : un modèle de double page est composé sur deux pages en regard, tout autre sur une seule. L’avertissement donne le modèle, la marque de l’ouverture (`fence`) et celle du modèle (`templateSpread`), et pointe l’attribut `spread`, ou le nom du modèle quand l’ouverture n’en a pas.
+
+**Correction.** Faites dire à l’ouverture ce qu’est le modèle : écrivez `spread` dans l’ouverture d’un modèle de double page, retirez-le de celle d’un modèle d’une page, ou choisissez un autre modèle.
 
 ## Depuis le code
 

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 015 · Poems set line by line ═════════════════════════════
 // https://postext.dev/en/cookbook/poetry-collection
 // Code: MIT · Text: G. M. Hopkins, Poems, 1918 (PD) · Plate: diffusion models · Sprig: code
-// Fonts: Sorts Mill Goudy, Italiana, Marcellus SC (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Sorts Mill Goudy, Italiana, Marcellus SC (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -99,7 +99,7 @@ const front = [
     face('subtitle', '{subtitle}', 'Sorts Mill Goudy', 13, 80,
       { italic: true, color: col('sage') }),
     image('sprig', onPage(96, 30)),
-    face('press', 'The Herbarium Press', 'Marcellus SC', 8.5, 182,
+    face('press', '{attr.press}', 'Marcellus SC', 8.5, 182,
       { letterSpacing: pt(1.8), color: col('muted') })) },
   { id: 'contents', ...leaf, span: 'column', advancedDesign: { enabled: false },
     fontFamily: 'Italiana', fontSize: pt(24), lineHeight: pt(LEAD * 2), marginBottom: pt(LEAD) },

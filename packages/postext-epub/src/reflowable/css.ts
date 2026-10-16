@@ -31,6 +31,10 @@ export interface StylesheetOptions {
    *  filled dot on the default side): their rules are written only then
    *  (`inline.ts` `dotsClasses`, #428). */
   dots?: readonly string[];
+  /** The book sets composed pages (#862): the frame rules, and the
+   *  callout styles their frames are set in (their boxes are styled on a
+   *  frame's block too). */
+  composed?: { frameStyles: readonly string[] };
 }
 
 /** CSS `line-break` for a Japanese kinsoku level (`cjk.lineBreak`, #417):
@@ -443,8 +447,20 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
   // --- callouts ------------------------------------------------------------
   out.push(rule('aside.pt-callout', ['margin: 1em 0', 'padding: 0.75em 1em', 'page-break-inside: avoid']));
   out.push(rule('.pt-callout-title', ['font-weight: bold', 'text-indent: 0', 'margin-block-end: 0.4em']));
+  // A composed page's frames (#862): blocks of its section, in Markdown
+  // order; a frame set in a callout style is drawn as its box.
+  if (options.composed) {
+    out.push(rule('section.pt-composed', ['margin-block: 1em']));
+    out.push(rule('div.pt-frame', ['margin: 0 0 1em']));
+    out.push(rule('div.pt-frame.pt-callout', ['padding: 0.75em 1em', 'page-break-inside: avoid']));
+  }
+  const frameStyles = new Set(options.composed?.frameStyles ?? []);
   for (const s of config.calloutStyles) {
-    const sel = `aside.${idOf('pt-callout-', s.id)}`;
+    const cls = idOf('pt-callout-', s.id);
+    // The box's selector, and the frames' set in its style (#862).
+    const sels = frameStyles.has(s.id) ? [`aside.${cls}`, `div.pt-frame.${cls}`] : [`aside.${cls}`];
+    const sel = sels.join(', ');
+    const under = (rest: string) => sels.map((x) => `${x} ${rest}`).join(', ');
     const bPx = px(s.body.fontSize);
     const pad = s.padding;
     const stripe = s.stripe.enabled && px(s.stripe.width) > 0 ? `${round(px(s.stripe.width) * (96 / dpi))}px solid ${s.stripe.color.hex}` : undefined;
@@ -466,14 +482,14 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
       s.body.smallCaps && 'font-variant: small-caps',
       `text-align: ${ALIGN[s.body.textAlign] ?? 'start'}`,
     ]));
-    out.push(rule(`${sel} p`, [
+    out.push(rule(under('p'), [
       `text-indent: ${round(px(s.body.firstLineIndent, bPx) / bPx)}em`,
       s.body.paragraphSpacing && `margin-block-end: ${round(px(s.body.lineHeight, bPx) / bPx)}em`,
       lh(s.body.lineHeight, bPx),
     ]));
     const t = s.titleStyle;
     const tPx = px(t.fontSize);
-    out.push(rule(`${sel} > .pt-callout-title`, [
+    out.push(rule(under('> .pt-callout-title'), [
       fam(t.fontFamily),
       `font-size: ${round(tPx / bPx)}em`,
       `font-weight: ${t.fontWeight}`,
@@ -485,7 +501,7 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
       `margin-block-end: ${round(px(t.gap, tPx) / tPx)}em`,
       'text-indent: 0',
     ]));
-    out.push(rule(`${sel} li > .pt-lbl:first-child`, [color(s.lists.color)]));
+    out.push(rule(under('li > .pt-lbl:first-child'), [color(s.lists.color)]));
   }
 
   // --- paragraph styles ----------------------------------------------------

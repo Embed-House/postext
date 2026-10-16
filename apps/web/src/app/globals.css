@@ -1048,10 +1048,10 @@ html {
   padding-top: 0.35rem;
 }
 @container docs-table (max-width: 34rem) {
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last]) {
     display: block;
   }
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) thead {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last]) thead {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -1059,22 +1059,22 @@ html {
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) :is(tbody, tr, td) {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last]) :is(tbody, tr, td) {
     display: block;
   }
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) tr {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last]) tr {
     padding-block: 0.7rem;
     border-bottom: 1px solid var(--rule);
   }
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) tbody tr:first-child {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last]) tbody tr:first-child {
     border-top: 3px solid var(--part, var(--brand));
   }
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) td {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last]) td {
     border: 0;
     padding-block: 0.15rem;
     padding-inline: 7rem 0;
   }
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) td::before {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last]) td::before {
     content: attr(data-label);
     display: inline-block;
     box-sizing: border-box;
@@ -1088,20 +1088,20 @@ html {
     vertical-align: top;
     line-height: 1.9;
   }
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) td:first-child {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last]) td:first-child {
     padding-inline: 0;
     padding-bottom: 0.3rem;
     font-weight: 600;
   }
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) :is(td:first-child, td[data-span], td:not([data-label]))::before,
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"])[data-prose-last] td:last-child::before {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last]) :is(td:first-child, td[data-span], td:not([data-label]))::before,
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last])[data-prose-last] td:last-child::before {
     display: none;
   }
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) :is(td[data-span], td:not([data-label])),
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"])[data-prose-last] td:last-child {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last]) :is(td[data-span], td:not([data-label])),
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last])[data-prose-last] td:last-child {
     padding-inline: 0;
   }
-  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"])[data-prose-last] td:last-child:not(:first-child) {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"], [data-prose-last])[data-prose-last] td:last-child:not(:first-child) {
     padding-top: 0.35rem;
   }
 }
@@ -1589,6 +1589,66 @@ html.light[data-rp-colors="sepia"] :is(.docs-content pre, .cb-excerpt) {
 }
 /* ══ End of reading preferences ═══════════════════════════════════════ */
 
+/* ── Property cards ─────────────────────────────────────────────────────
+   A table whose last column is a description (Property · Type · Default ·
+   Description) reads as a list of cards at every width: the name, then
+   the other short cells with their labels on the same line (wrapping on a
+   phone), then the description at the full measure. In a grid that long
+   text stood in a narrow column beside three mostly empty ones. */
+.docs-content .docs-table[data-prose-last] {
+  display: block;
+}
+.docs-content .docs-table[data-prose-last] thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.docs-content .docs-table[data-prose-last] tbody {
+  display: block;
+  border-top: 3px solid var(--part, var(--brand));
+}
+.docs-content .docs-table[data-prose-last] tr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 1.25rem;
+  row-gap: 0.3rem;
+  padding-block: 0.85rem;
+  border-bottom: 1px solid var(--rule);
+}
+.docs-content .docs-table[data-prose-last] tbody tr:hover {
+  background: none;
+}
+.docs-content .docs-table[data-prose-last] td {
+  display: block;
+  border: 0;
+  padding: 0;
+}
+.docs-content .docs-table[data-prose-last] td::before {
+  content: attr(data-label);
+  margin-inline-end: 0.45rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--slate);
+}
+.docs-content .docs-table[data-prose-last] td:first-child {
+  font-weight: 600;
+  font-size: 1.05em;
+}
+.docs-content .docs-table[data-prose-last] :is(td:first-child, td:last-child, td[data-span], td:not([data-label]))::before {
+  content: none;
+}
+.docs-content .docs-table[data-prose-last] :is(td:last-child, td[data-span]) {
+  flex-basis: 100%;
+}
+.docs-content .docs-table[data-prose-last] td:last-child:not(:first-child) {
+  padding-top: 0.15rem;
+}
+
 /* Links in docs table cells are not inside running text, so they get the
    AAA 44px target (2.5.5) without changing the row's look. */
 .docs-content :is(td, th) a {
@@ -1598,19 +1658,12 @@ html.light[data-rp-colors="sepia"] :is(.docs-content pre, .cb-excerpt) {
   min-height: 2.75rem;
   min-width: 2.75rem;
 }
-/* A stacked row's description is a paragraph: its links are inline in a
-   sentence (the 2.5.5 exception) and keep the line spacing. */
+/* A card's description is a paragraph: its links are inline in a sentence
+   (the 2.5.5 exception) and keep the line spacing. */
 .docs-content .docs-table[data-prose-last] td:last-child a {
   display: inline;
   min-height: 0;
   min-width: 0;
-}
-@container docs-table (min-width: 34.01rem) {
-  .docs-content .docs-table[data-prose-last]:not([data-stack]) td:last-child a {
-    display: inline-flex;
-    min-height: 2.75rem;
-    min-width: 2.75rem;
-  }
 }
 
 /* Pointer cursor on everything clickable, site and Sandbox (Tailwind v4's

@@ -36,6 +36,16 @@ A toolbar at the top of the canvas viewport provides:
 
 Pages render lazily via `IntersectionObserver` — only visible pages (plus a 200px margin) are drawn to canvas, keeping GPU memory usage low for long documents.
 
+#### Composed pages on the canvas
+
+On a composed page (`::::page{template="…"}`) the canvas links each frame to the place in the Markdown that fills it:
+
+- A click on a frame, off its words, puts the caret in its slot: the first line of its `:::frame{slot="…"}` fence, the block that names `slot="…"`, or the heading a `takes` frame received. A frame that a chain continues into leads to the first frame of the chain. A click on an empty frame that has no slot yet writes an empty `:::frame{slot="…"}` before the page's closing fence and puts the caret in it. A click on a frame's words places the caret at the word, as on any page.
+- While the caret is in a slot, its frame, and the frames its text goes on in, are outlined on the page.
+- An empty frame shows a dashed outline, its name and **Write here**; a frame that only continues another says which. These marks are drawn over the canvas only: the PDF, the print and every export leave them out.
+- A double click on a box's label tab opens a field over it that edits the fence's `label="…"`; on a paragraph, a heading or a list item, a field with its Markdown. **Enter** keeps the change, **Shift+Enter** starts a new line, **Esc** leaves the text as it was. The change is written to the chapter and undone with Cmd/Ctrl+Z like any edit made on the previews. Correcting a caption takes a double click and the new words, and no style is opened. A turned frame is edited in the Text panel.
+- In Design mode every frame shows its outline and its name, and a click picks one for the template editor.
+
 ### PDF tab
 
 Generates a real PDF of the current document via the `postext-pdf` package and displays it inside an embedded browser PDF viewer. The PDF is rebuilt automatically on first mount and on every subsequent regeneration, using the same VDT that feeds the canvas and HTML tabs — so line breaks, page boundaries, and resource placement match pixel-for-pixel across the three backends, down to the compression of overfull final lines that Knuth–Plass occasionally accepts.

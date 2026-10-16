@@ -116,13 +116,13 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Die Vorlage beschreibt zwei gegenüberliegende Seiten, die wie ein einziges Blatt angelegt sind. Eine Doppelseite beginnt in einem Buch mit Schreibrichtung von links nach rechts immer auf einer linken Seite (in einem von rechts nach links auf einer rechten), und bei Bedarf wird davor eine leere Seite eingefügt.</td>
+      <td>Die Vorlage beschreibt zwei gegenüberliegende Seiten, die als ein Bogen gesetzt werden (siehe <a href="/de/docs/composed-pages#doppelseiten">Zusammengesetzte Seiten › Doppelseiten</a>). Eine Doppelseite beginnt auf einer geraden Seite, der linken in einem Buch, das von links nach rechts gelesen wird, und der rechten in einem, das von rechts nach links gelesen wird, bei Bedarf mit einer Leerseite davor. Ihre Eröffnung trägt ebenfalls die Angabe <code>spread</code>; widersprechen sie sich, entscheidet die Vorlage (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Auf einer Doppelseite der Streifen am Bund, den die Rahmen freihalten, sofern sie nicht <code>crossGutter: true</code> setzen.</td>
+      <td>Auf einer Doppelseite ein Band dieser Breite, zentriert auf dem Bund, das Rahmen meiden, sofern sie nicht <code>crossGutter: true</code> setzen: Ein Rahmen, der es überquert, wird an seinem Rand auf der Seite seiner Mitte abgeschnitten, einer, der darin beginnt, rückt heraus. Mit <code>0</code> ist das Band der Bund selbst.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -315,7 +315,7 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Auf einer Doppelseite darf der Rahmen den Streifen am Bund überqueren.</td>
+      <td>Auf einer Doppelseite darf der Rahmen über das Bundband laufen. Sein Text wird auf der Seite gelesen, die seine Mitte enthält; die gegenüberliegende Seite malt ihre Hälfte.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -374,7 +374,7 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
       <td><code>placement</code>, <code>grid</code></td>
       <td>wie bei Rahmen</td>
       <td>der Kasten ihrer Rahmen</td>
-      <td>Der eigene Kasten der Gruppe. Nicht gesetzt, der Kasten um die angegebenen Kästen ihrer Rahmen.</td>
+      <td>Der eigene Kasten der Gruppe. Nicht gesetzt, beginnt die Gruppe dort, wo ihr erster Rahmen steht, und reicht so weit, wie ihre Rahmen es brauchen.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -390,6 +390,58 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
     </tr>
   </tbody>
 </table>
+
+### Wie Gruppen den Platz teilen
+
+Ein Rahmen gibt seine Größe an: eine feste `height` oder `'auto'`, die Höhe seines Inhalts, gehalten zwischen `minHeight` und `maxHeight`. Ist eine Vorlage einer gedruckten Seite nachgezeichnet, bekommt jeder Kasten als `minHeight` die Höhe, die er auf dieser Seite hat: Bei einem kurzen Text bleibt der Kasten so, wie er gezeichnet ist, ein längerer Text macht ihn höher. Die Seite wird im selben Durchgang zweimal angelegt, einmal so, wie die Vorlage sie angibt, und einmal so, wie ihr Inhalt es verlangt; was sich zwischen beiden Fassungen unterscheidet, hält das [Umbruchprotokoll](/de/docs/composed-pages#umbruchprotokoll) fest.
+
+**Stapel.** Die Rahmen eines Stapels stehen in ihrer jeweiligen Höhe untereinander, mit `gap` dazwischen. Jeder behält seine eigene waagerechte Lage und seine Breite; seine eigene senkrechte Lage wird ignoriert.
+
+- Eine Gruppe ohne eigenes `placement` oder `grid` beginnt dort, wo die Platzierung ihres ersten Rahmens sie hinsetzt, und reicht so weit nach unten, wie ihre Rahmen es brauchen, höchstens bis zum Fuß des Bereichs der Vorlage. Wächst ein Rahmen, rücken die Rahmen nach ihm um dasselbe Maß nach unten.
+- Eine Gruppe mit eigenem Kasten legt ihre Rahmen in diesen Kasten. Brauchen sie mehr Platz, als er bietet, geben die Rahmen mit `shrink` über 0 Platz ab, die mit der niedrigsten `priority` zuerst; Rahmen derselben Priorität geben im Verhältnis ihres `shrink` nach, und keiner wird niedriger als sein `minHeight`. Freier Platz geht an die Rahmen mit `grow` über 0, im Verhältnis zu diesem Wert und bis zu ihrem `maxHeight`; hat kein Rahmen `grow`, verteilt `align` die Rahmen (`'end'` am Fuß, `'center'`, `'space-between'`). Ein Rahmen der Gruppe ohne eigene Platzierung nimmt den Kasten der Gruppe als seinen Bereich.
+- Kann nichts mehr nachgeben, läuft trotzdem kein Rahmen über den Fuß der Gruppe hinaus: Der Inhalt, der nicht passt, wird dort abgeschnitten und als `frameOverflow` gemeldet.
+- Ein Rahmen mit `height: 'fill'` verlangt sein `minHeight` und nimmt freien Platz, als hätte er `grow: 1`.
+
+**Reihe.** Die Rahmen einer Reihe stehen in ihren angegebenen Breiten nebeneinander und sind alle so hoch wie die Reihe: so hoch wie der Kasten der Gruppe oder, wenn die Gruppe keinen eigenen Kasten hat, wie die größte angegebene Höhe unter ihnen (ein Rahmen mit fester Höhe behält seine). Läuft der Text eines Rahmens über die Höhe der Reihe hinaus, holt sich der Rahmen Breite: zuerst die freie Breite der Reihe, dann Breite von Nachbarn mit `shrink` über 0, die mit der niedrigsten `priority` zuerst, wobei kein Nachbar schmaler wird als die Breite, in die sein eigener Text noch passt. Der Rahmen nimmt so wenige ganze Millimeter, wie sein Text zum Passen braucht; reicht selbst der gesamte verfügbare Platz nicht, nimmt er gar nichts, und eine Reihe ohne eigenen Kasten wird stattdessen höher. Freie Breite geht an die Rahmen mit `grow` über 0, was dann noch bleibt, verteilt `align`. Reihen laufen von links nach rechts.
+
+**Fixierte Rahmen.** Ein Rahmen mit `pin: true` behält den Kasten, den die Vorlage für ihn angibt, auch wenn der Rahmen, an dem er verankert ist, wächst oder sich verschiebt: Ein Kasten, der passend zur Illustration gezeichnet ist, bleibt auf ihr liegen. In einer Gruppe behält ein fixierter Rahmen seinen Platz, und die übrigen Rahmen weichen ihm aus, mit `gap` auf beiden Seiten. Ein fixierter Rahmen außerhalb der Gruppe wirkt ebenso auf die Rahmen der Gruppe, die ihn sonst überdecken würden.
+
+**Dekoration.** Ein Dekorationselement, das an einem Rahmen verankert ist (`anchor: { to: '#dinero' }`), bewegt sich mit, wenn der Rahmen wächst oder sich verschiebt. Ein Element mit `pin: true` bleibt dort, wo die Vorlage diesen Rahmen zeichnet.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pin</code> (Dekorationselement)</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>In der Dekoration einer zusammengesetzten Seite: Ein an einem Rahmen verankertes Element bleibt dort, wo die Vorlage diesen Rahmen hinsetzt, ganz gleich, was der Inhalt des Rahmens oder seine Gruppe bewirken. Wird in Kopf- und Fußzeilen und in Überschriftengestaltungen ignoriert.</td>
+    </tr>
+  </tbody>
+</table>
+
+Die drei Kästen einer Schulbuchseite, jeder so hoch, wie er gezeichnet ist, und jeder wächst mit seinem Text:
+
+```ts
+frames: [
+  { name: 'dinero', style: 'caja-azul', width: { value: 186, unit: 'mm' }, minHeight: { value: 36, unit: 'mm' },
+    placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: { value: 9, unit: 'mm' } } } },
+  { name: 'dinero-fotos', layer: 2, width: { value: 58, unit: 'mm' },
+    placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+  { name: 'gasto', style: 'caja-verde', width: { value: 186, unit: 'mm' }, minHeight: { value: 62, unit: 'mm' } },
+  { name: 'ahorro', style: 'caja-amarilla', width: { value: 186, unit: 'mm' }, minHeight: { value: 30, unit: 'mm' } },
+],
+groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
+```
+
+Das Ergebnis hängt nur vom Inhalt der Seite, von der Vorlage und von der Typografie ab: Aus derselben Eingabe entsteht dieselbe Seite, in derselben Reihenfolge und mit denselben Schritten gemessen. Bei dieser Aufteilung liest der Umbruch nie eine andere Seite. Eine Änderung auf einer zusammengesetzten Seite lässt deshalb alle anderen Seiten unverändert, solange der Inhalt auf seiner Seite bleibt.
 
 ### Vererbung und Varianten
 
@@ -416,7 +468,34 @@ Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit z
 
 ### Was der Umbruch umsetzt
 
-Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Anker, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` und `overflow.continueIn: "#frame"`, dazu `area`, `grid`, `decoration`, `header`, `footer` und `variants` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden: die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` einer Gruppe; ihre Rahmen behalten ihre eigene Platzierung), `fit`, `overflow.continueIn: "next-page"` und `overflowTemplate`, `spread` und `crossGutter`, `writingMode` und `direction` eines Rahmens sowie `bodyStyle` und `palette` der Vorlage. Eine Breite `'auto'` wird als `'fill'` gelesen.
+Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Anker, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` und `overflow.continueIn: "#frame"`, dazu `area`, `grid`, `decoration`, `header`, `footer` und `variants` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden: die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` einer Gruppe; ihre Rahmen behalten ihre eigene Platzierung), `fit`, `overflow.continueIn: "next-page"` und `overflowTemplate`, `writingMode` und `direction` eines Rahmens sowie `bodyStyle` und `palette` der Vorlage. Eine Breite `'auto'` wird als `'fill'` gelesen.
+
+### Doppelseiten
+
+In einer Doppelseitenvorlage beziehen sich alle Koordinaten auf den Bogen ihrer beiden Seiten, mit dem Bund in der Mitte: `area`, `grid`, Anker an `container`, `page` und `bleed` sowie die Größe `fill` lesen die doppelte Breite. `bleed` reicht an Kopf, Fuß und beide Außenränder, nie an den Bund. Die doppelseitige Zeitleiste eines Schulbuchs ist eine einzige Vorlage:
+
+```ts
+pageTemplates: [{
+  id: 'linea-tiempo',
+  spread: true,
+  gutter: { value: 10, unit: 'mm' },
+  grid: { columns: 6, rows: 12, columnGap: { value: 12, unit: 'mm' }, rowGap: { value: 3, unit: 'mm' } },
+  frames: [
+    { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+    { name: 'texto', flow: true, width: { value: 196, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    { name: 'recuadro', style: 'recuadro', grid: { col: 4, row: 1, cols: 3, rows: 4 }, height: 'auto' },
+    { name: 'banda-1', style: 'banda', grid: { col: 1, row: 5, cols: 3 }, height: { value: 8, unit: 'mm' } },
+    { name: 'banda-2', style: 'banda', crossGutter: true, width: 'fill', height: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#banda-1', edge: 'right-of' }, offset: { x: { value: 2, unit: 'mm' } } } },
+    { name: 'era-1', style: 'era', grid: { col: 1, row: 6, rows: 2 }, height: 'auto' },
+    // … era-2 bis era-6, je eine Spalte des Rasters, und die Notizen unter dem Streifen
+    { name: 'tira', crossGutter: true, grid: { col: 1, row: 8, cols: 6, rows: 3 } },
+  ],
+}]
+```
+
+Ein Spaltenabstand, der breiter ist als der `gutter`, hält die Karten eines symmetrischen Rasters vom Bund fern, sodass keine verschoben wird. Das zweite Band und der Bildstreifen setzen `crossGutter`, um ihn zu überqueren: Jedes wird auf der Seite gelesen, die seine Mitte enthält, und auf beiden gemalt. Jedes Wort der Seite, auch die Namen der Zeitalter auf den Reitern, bleibt im Markdown.
 
 ## Beschriftungsstile
 

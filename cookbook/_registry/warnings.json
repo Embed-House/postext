@@ -6381,6 +6381,60 @@
       }
     }
   },
+  "spreadMismatch": {
+    "source": "engine",
+    "label": {
+      "en": "Spread flag and template disagree",
+      "es": "La doble página no coincide con la plantilla",
+      "ca": "La doble pàgina no coincideix amb la plantilla",
+      "zh": "跨页标记与模板不符",
+      "ar": "علامة الصفحتين المتقابلتين لا توافق القالب",
+      "ja": "見開きの指定がテンプレートと一致しません",
+      "pt": "A página dupla não corresponde ao modelo",
+      "fr": "La double page ne correspond pas au modèle",
+      "de": "Doppelseite passt nicht zur Vorlage",
+      "it": "La doppia pagina non corrisponde al modello"
+    },
+    "cause": {
+      "en": "A composed page's ::::page line and its template disagree about spreads: the line has spread and the template is a single page, or the template has spread: true and the line lacks the flag. The template decides: a spread template is laid over two facing pages, any other on one page.",
+      "es": "La línea ::::page de una página compuesta y su plantilla no coinciden en la doble página: la línea lleva spread y la plantilla es de una sola página, o la plantilla tiene spread: true y a la línea le falta. Manda la plantilla: una plantilla de doble página se compone en dos páginas enfrentadas, y cualquier otra en una.",
+      "ca": "La línia ::::page d'una pàgina composta i la seva plantilla no coincideixen en la doble pàgina: la línia porta spread i la plantilla és d'una sola pàgina, o la plantilla té spread: true i a la línia li falta. Mana la plantilla: una plantilla de doble pàgina es compon en dues pàgines encarades, i qualsevol altra en una.",
+      "zh": "模板页的::::page这一行与模板对跨页的说法不一致：这一行写了spread而模板只占一页，或者模板设了spread: true而这一行没写。以模板为准：跨页模板排在相对的两页上，其他模板排在一页上。",
+      "ar": "سطر ⁦::::page⁩ في صفحة مركّبة وقالبها مختلفان في أمر الصفحتين المتقابلتين: في السطر ⁦spread⁩ والقالب لصفحة واحدة، أو في القالب ⁦spread: true⁩ والسطر خالٍ منها. والحكم للقالب: قالب الصفحتين يُصَفّ على صفحتين متقابلتين، وغيره على صفحة واحدة.",
+      "ja": "テンプレートページの::::pageの行とテンプレートで、見開きの指定が食い違っています。行にspreadがあるのにテンプレートが1ページ分か、テンプレートがspread: trueなのに行にspreadがありません。組版はテンプレートに従い、見開きのテンプレートは向かい合う2ページに、それ以外は1ページに組まれます。",
+      "pt": "A linha ::::page de uma página composta e o seu modelo discordam sobre a página dupla: a linha tem spread e o modelo ocupa uma só página, ou o modelo tem spread: true e falta a marca na linha. Vale o modelo: um modelo de página dupla é composto em duas páginas lado a lado, e qualquer outro em uma.",
+      "fr": "La ligne ::::page d’une page composée et son modèle ne s’accordent pas sur la double page : la ligne porte spread alors que le modèle tient sur une page, ou le modèle a spread: true et la ligne ne le dit pas. Le modèle décide : un modèle de double page est composé sur deux pages en regard, tout autre sur une seule.",
+      "de": "Die Zeile ::::page einer zusammengesetzten Seite und ihre Vorlage widersprechen sich bei der Doppelseite: Die Zeile trägt spread, die Vorlage ist aber eine Einzelseite, oder die Vorlage hat spread: true und der Zeile fehlt die Angabe. Es gilt die Vorlage: Eine Doppelseitenvorlage wird über zwei gegenüberliegende Seiten gesetzt, jede andere auf eine Seite.",
+      "it": "La riga ::::page di una pagina composta e il suo modello non concordano sulla doppia pagina: la riga ha spread e il modello occupa una sola pagina, oppure il modello ha spread: true e alla riga manca. Decide il modello: un modello a doppia pagina viene composto su due pagine affiancate, qualsiasi altro su una."
+    },
+    "fix": {
+      "en": "Make the line say what the template is: add spread to the ::::page line of a spread template, or remove it for a single-page one (or pick a template with spread: true).",
+      "es": "Haz que la línea diga lo que es la plantilla: añade spread a la línea ::::page de una plantilla de doble página, o quítalo si es de una sola (o elige una plantilla con spread: true).",
+      "ca": "Fes que la línia digui el que és la plantilla: afegeix spread a la línia ::::page d'una plantilla de doble pàgina, o treu-lo si és d'una sola (o tria una plantilla amb spread: true).",
+      "zh": "让这一行与模板一致：跨页模板就在::::page这一行写上spread，单页模板就去掉它（或换一个spread: true的模板）。",
+      "ar": "اجعل السطر يقول ما هو القالب: أضف ⁦spread⁩ إلى سطر ⁦::::page⁩ لقالب الصفحتين، أو احذفه لقالب الصفحة الواحدة (أو اختر قالبًا فيه ⁦spread: true⁩).",
+      "ja": "行の指定をテンプレートに合わせてください。見開きのテンプレートなら::::pageの行にspreadを書き、1ページのテンプレートなら外します（spread: trueのテンプレートに替えてもかまいません）。",
+      "pt": "Faça a linha dizer o que o modelo é: acrescente spread à linha ::::page de um modelo de página dupla, ou tire-o de um modelo de uma página (ou escolha um modelo com spread: true).",
+      "fr": "Faites dire à la ligne ce qu’est le modèle : ajoutez spread à la ligne ::::page d’un modèle de double page, ou retirez-le pour un modèle d’une page (ou choisissez un modèle avec spread: true).",
+      "de": "Lassen Sie die Zeile sagen, was die Vorlage ist: Ergänzen Sie spread in der Zeile ::::page einer Doppelseitenvorlage, oder entfernen Sie es bei einer Einzelseite (oder wählen Sie eine Vorlage mit spread: true).",
+      "it": "Fai dire alla riga quello che è il modello: aggiungi spread alla riga ::::page di un modello a doppia pagina, o toglilo per uno a pagina singola (oppure scegli un modello con spread: true)."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "spreadMismatch",
+        "es": "spreadMismatch",
+        "ca": "spreadMismatch",
+        "zh": "spreadMismatch",
+        "ar": "spreadMismatch",
+        "ja": "spreadMismatch",
+        "pt": "spreadMismatch",
+        "fr": "spreadMismatch",
+        "de": "spreadMismatch",
+        "it": "spreadMismatch"
+      }
+    }
+  },
   "templateDuplicate": {
     "source": "engine",
     "label": {

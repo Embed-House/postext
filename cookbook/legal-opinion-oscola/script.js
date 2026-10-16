@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 099 · A legal opinion cited in OSCOLA ══════════════════
 // https://postext.dev/en/cookbook/legal-opinion-oscola
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Libre Baskerville, Libre Caslon Display, Libre Franklin (OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Libre Baskerville, Libre Caslon Display, Libre Franklin (OFL 1.1) · Needs postext ≥ 1.34.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine,
 } from 'https://esm.sh/postext';
@@ -108,6 +108,7 @@ const config = () => ({
   colorPalette,
   citations,
   footnotes,
+  checks: { contentInConfig: { allow: [journal] } }, // the series' name heads every verso (#849)
   page: {
     sizePreset: 'custom', width: mm(TRIM.width), height: mm(TRIM.height), dpi: 150,
     backgroundColor: col('paper'),

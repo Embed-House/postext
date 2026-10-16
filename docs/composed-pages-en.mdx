@@ -40,7 +40,7 @@ A composed page opens with a line of **four colons** followed by `page` and its 
   </thead>
   <tbody>
     <tr><td><code>template="…"</code></td><td>Required. The id of an entry of <code>pageTemplates</code>.</td></tr>
-    <tr><td><code>spread</code></td><td>The page is a spread of two facing pages; the template must be a spread template too.</td></tr>
+    <tr><td><code>spread</code></td><td>The page is a spread of two facing pages (see <a href="#spreads">Spreads</a>). It must agree with the template's <code>spread</code>; otherwise the template decides and <code>spreadMismatch</code> says so.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>An anchor: a <code>:ref</code> to it prints the page the composed page lands on.</td></tr>
     <tr><td>any other</td><td>A value the template reads as <code>&#123;attr.name&#125;</code>, such as a background picture chosen page by page: <code>fondo="banda-retos"</code> with <code>resourceId: "&#123;attr.fondo&#125;"</code> in the decoration.</td></tr>
   </tbody>
@@ -191,6 +191,17 @@ Frames paint in the order of their `layer`: the decoration at layer 0, frames at
 
 A frame whose content is taller than the frame, with no next frame to go on in, keeps all of it in the document but shows only what fits: the rest is cut at the frame's foot on paged output, and the warning [`frameOverflow`](#frameoverflow) says how much. Content that no frame takes (no flow frame, or a frame missing on this side) is set in the running text on the page after the composed page.
 
+## Outside print: HTML, EPUB and tagged PDF
+
+Every output reads a composed page in the order of its Markdown, not in the order the template lists its frames or paints its layers.
+
+- **Reflowable EPUB.** The page becomes a section (`<section class="pt-composed pt-composed-tema-cajas">`) that opens with the page's page-break marker. Each frame is one block of it (`<div class="pt-frame pt-frame-dinero">`), placed where its content first appears in the Markdown; a frame and the frames its `next` chain goes on in make one block. A frame drawn in a callout style keeps that style's box: background, border, padding, body text, and its `label` as the box's title. A frame with no style is a plain block. The decoration (background pictures, cards, design text) belongs to the printed page and is left out.
+- **Figure labels.** The picture an EPUB carries does not show the `::label` texts of a `:::figure`, so the reflowable book lists them right after the picture, inside its figure, in the order written: a list hidden from sight (`pt-figure-labels pt-hidden`) that a screen reader reads once. In the HTML viewer, the fixed-layout EPUB and the tagged PDF they follow the picture's alternative text, `A family with a shopping basket (Rent, Electricity, Food)`; Chinese and Japanese labels take `（…、…）`, Arabic ones the Arabic comma.
+- **HTML viewer and fixed-layout EPUB.** Both show the printed page with its template applied: each frame in its box, turned by `rotate`, clipped when its content overflows, painted over the frames of lower layers, the decoration at layer 0. The markup lists the frames in reading order and paints them in layer order with `z-index`, so assistive technology follows the Markdown while the page looks as printed. Decorative pictures are hidden from assistive technology (`alt=""`). The decoration's faces are among those the Sandbox embeds in an EPUB; a fixed-layout EPUB written without one of them reports `missingFont`.
+- **Tagged PDF.** The structure tree reads the frames in the same order. Each frame, or chain of frames, is a `Div` holding its headings, paragraphs and lists; its pictures are `Figure` elements whose `Alt` carries the labels; the decoration is a layout artifact.
+
+From code, a figure's labels are on its block as `resourceBlock.labels` (text, anchor or point, style and source range), and `composedReadingOrder(composedPaintOrder(page))` lists a page's decoration and frames in reading order.
+
 ## Warnings
 
 The checks read the Markdown and the configuration before any layout, so they show in the Checks panel as you type, in `postext check` and in the document's `contentWarnings`, each with the source range of what it concerns (see [Configuration › Warnings in the document](/en/docs/configuration-programmatic-usage#warnings-in-the-document)).
@@ -225,6 +236,11 @@ The checks read the Markdown and the configuration before any layout, so they sh
       <td>Open the page with four colons, <code>::::page&#123;template="…"&#125;</code>, and close it with <code>::::</code>.</td>
     </tr>
     <tr>
+      <td><code>spreadMismatch</code></td>
+      <td>The fence's <code>spread</code> and the template's disagree. The page is laid as the template says (see <a href="#spreadmismatch">spreadMismatch</a>).</td>
+      <td>Write <code>spread</code> on the fence of a spread template, or remove it for a single-page template.</td>
+    </tr>
+    <tr>
       <td><code>unclosedContainer</code></td>
       <td>A composed page, a frame or a figure is never closed (see the recovery rules above). The Checks panel names the composed page <code>::::page</code>.</td>
       <td>Add the closing fence: as many colons as the page's opening line, or <code>:::</code> for a frame or a figure.</td>
@@ -239,6 +255,85 @@ This warning comes from the layout, not from the source checks above: it appears
 **Cause.** The content poured into a frame (through its slot, or as the flow frame's content) is taller than the frame, and the frame has no `next` frame left to continue in. Most often there is more text than the frame holds: a translation that runs longer than the original, or a frame held to a fixed `height` or `maxHeight`. What does not fit is cut at the foot of the frame in paged output; it stays in the document, in the source map and in the reflowable EPUB. The warning gives the template, the frame, the page, the height cut (`overflowMm`) and `configPath`, the JSON pointer of the frame in the configuration (`/pageTemplates/0/frames/2`).
 
 **Fix.** Give the frame more room (raise or remove its `height` or `maxHeight`), chain it to another frame with `next`, shorten the text, or set the page with another template. The layout does not yet shrink the text to make it fit.
+
+## When the text grows
+
+A composed page rearranges itself inside the limits its template declares. Write a longer text in the first box of a page whose boxes form a stack group, and the box grows to hold it while the boxes below, and the photos and decoration anchored to them, move down; no line of the template changes. A shorter text gives the box back its declared height. A frame or a decoration element marked `pin` stays where the template puts it, for a box that has to sit on the artwork. How stacks and rows share space, and which frame gives way first, is set in the template: see [Configuration › How groups share space](/en/docs/configuration-composed-pages#how-groups-share-space).
+
+When the boxes reach the foot of the area and no frame of the group can give more space, the last frame is cut at the foot and the layout reports `frameOverflow` (see [Warnings](#warnings)): shorten the text, lower another frame's `minHeight`, let a frame shrink, or give the group more room. Groups add no other warning.
+
+## Reflow log
+
+Each composed page keeps a log of what the layout changed against the template's own drawing: which frame grew, gave space back or moved, by how much, and which frame set it off. A page whose text fits its template logs nothing.
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Event</th>
+      <th>What it says</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>The frame is taller (or, with <code>axis: 'x'</code>, wider) than declared: <code>fromMm</code> is the declared size, <code>toMm</code> the size it got.</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>The frame is smaller than declared: it gave space to <code>cause</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>The frame's top edge (with <code>axis: 'x'</code>, its left edge) moved, in mm from the sheet's edge; <code>cause</code> is the frame whose growth moved it.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>Content did not fit: <code>toMm</code> is the height cut, as in <code>frameOverflow</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Changes under half a millimetre are left out, and each change is rounded once to a tenth of a millimetre, so frames that moved together read the same. Decoration that follows a frame is not listed.
+
+`postext check` prints one `reflow` line per composed page that has events, after the warnings; with `--json`, the report holds a `reflow` array with one entry per page: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` and `lines` (the events in words).
+
+From code, the log is `VDTPage.composed.log`, and each frame keeps the box its template declares in `VDTFrame.declaredRect` when it differs from `rect`. `composedReflowLog(doc)` returns the entries `postext check` prints, and `describeReflowEvent(event)` puts one event in words.
+
+## Spreads
+
+A template with `spread: true` is one sheet of two facing pages: a band running across the spine, a picture strip from one outer edge to the other, cards on either side. The page fence says so with `spread`:
+
+```md
+::::page{template="linea-tiempo" spread}
+# How we measure time
+
+To know when to eat, work or rest, people have always needed to measure time…
+
+:::frame{slot="banda-2"}
+With machine clocks
+:::
+
+::resource{id="tira-tiempo" slot="tira"}
+::::
+```
+
+- **Where it opens.** A spread starts on a verso, the left page of a left-to-right book and the right page of a right-to-left one, and takes the recto after it. When the text before it ends on a verso, the page after that is left blank (a parity blank, as before a comic spread), so the two halves face each other. The text after the closing fence starts on the page after the recto.
+- **One sheet.** The frames are placed on a sheet as wide as both pages. The `content` area runs from the outer margin of one page to the outer margin of the other, with both inner margins inside it; `trim` is the two trimmed pages side by side; `bleed` adds the bleed at the head, the foot and both outer edges, never at the spine. A `grid` divides the whole width: six columns put three on each page. In a right-to-left book the sheet is mirrored as its pages are, so the first column stands on the right page.
+- **The gutter.** `gutter` is a band of that width centred on the spine. A frame without `crossGutter: true` is kept off it: a frame reaching across the whole band is cut at the band's edge on the side of its centre, and one whose inner edge falls inside the band moves out of it whole. An `auto` height is measured at the narrower width, and the page's reflow log records the change (`resized` or `moved`, with cause `gutter`). Without a `gutter` the band is the spine itself, so only frames that ask for it cross the fold.
+- **Across the spine.** A frame with `crossGutter: true` may run across. Its text is read once, on the page that holds the frame's centre; the facing page paints its own half of the frame, cut at its sheet, so a band or a picture reads as one piece across the open book. A tagged PDF marks that half as an artifact, the HTML hides it from assistive technology, and selecting or searching the text finds it once.
+- **Decoration** is laid once over the whole sheet and cut at the spine the same way: a ground, a card from one page to the other, a running head on the right page. An element anchored to `#frame` follows that frame onto the page it lands on. A spread takes no `variants`, since it has both sides; `header` and `footer` work on each of its pages as on any page.
+
+On the canvas, in the Sandbox's spread view and in the Folio the two pages stand side by side. The PDF has two pages, each clipped at its bleed. The fixed-layout EPUB gives them `page-spread-left` and `page-spread-right` with `rendition:spread-both`, so a reader shows them together in either orientation. The reflowable EPUB reads the frames as it reads any composed page, in Markdown order.
+
+### spreadMismatch
+
+**Cause.** The page fence and its template disagree: the fence has `spread` and the template is a single page, or the template is a spread (by its own `spread: true` or through `extends`) and the fence lacks the flag. The template decides: a spread template is laid over two facing pages, any other on one page. The warning gives the template, the fence's flag (`fence`) and the template's (`templateSpread`), and points at the `spread` attribute, or at the template's name when the fence has none.
+
+**Fix.** Make the fence say what the template is: write `spread` on the fence of a spread template, remove it from the fence of a single-page one, or choose another template.
 
 ## From code
 

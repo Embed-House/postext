@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-facing-verse",
-  "sourceHash": "57759ee59866598d3edbcafa1598b7dda3c470143978754ac8983901ae869200",
+  "sourceHash": "3eb4a2c5f61ccb9c40f83d5cce4c1e6e42fe016716b418206b0ed6600e0af927",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:56:20.732Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.695Z",
   "variants": {
     "en": {
-      "hash8": "9429f3a3",
+      "hash8": "b5ff0967",
       "vdtHash": "5442132a17c4f136038d86759f7cfd49b79a3aa3",
       "timings": {
-        "importMs": 209,
-        "fontsMs": 24,
-        "buildMs": 55,
-        "totalMs": 924,
+        "importMs": 517,
+        "fontsMs": 175,
+        "buildMs": 65,
+        "totalMs": 1525,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Tenor Sans"
         ],
         "pages": 5,
-        "ownLines": 161
+        "ownLines": 164
       },
       "pages": [
         {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "bilingual-facing-verse.postext",
-        "bytes": 212414,
+        "bytes": 212453,
         "folio": "ee93f084",
         "chapters": [
           {
@@ -171,6 +171,9 @@
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
           "calloutStyles[].titleStyle.gap",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -248,6 +251,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "checks",
           "colorPalette",
           "footer",
           "header",
@@ -258,7 +262,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 276,
+        "configLeaves": 277,
         "designElements": 16,
         "directives": [
           ":::paragraphs",
@@ -328,21 +332,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "dd519d59",
+      "hash8": "aebafac8",
       "vdtHash": "13aa8fbb11dfe08e87a8ccb6ad4afcbc32fc492e",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 23,
-        "buildMs": 51,
-        "totalMs": 926,
+        "importMs": 1059,
+        "fontsMs": 50,
+        "buildMs": 63,
+        "totalMs": 2198,
         "builds": 1
       },
       "specimen": {
@@ -364,7 +368,7 @@
           "Tenor Sans"
         ],
         "pages": 5,
-        "ownLines": 161
+        "ownLines": 164
       },
       "pages": [
         {
@@ -451,7 +455,7 @@
       },
       "sandbox": {
         "file": "bilingual-facing-verse.postext",
-        "bytes": 212907,
+        "bytes": 212943,
         "folio": "ee93f084",
         "chapters": [
           {
@@ -497,6 +501,9 @@
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
           "calloutStyles[].titleStyle.gap",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -574,6 +581,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "checks",
           "colorPalette",
           "footer",
           "header",
@@ -584,7 +592,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 276,
+        "configLeaves": 277,
         "designElements": 16,
         "directives": [
           ":::paragraphs",
@@ -654,9 +662,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

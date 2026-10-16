@@ -39,6 +39,15 @@ Un clic sul pulsante del pannello attivo chiude la barra laterale, e un clic su 
 
 L’applicazione host può aggiungere voci proprie alla barra: un **link con logo alla home** facoltativo nella cella superiore (tramite le prop `homeUrl` o `homeLink`), e in basso un **selettore del tema** e un **selettore della lingua**. I libri interi si scambiano come file `.postext` dal pannello Libri, e le intestazioni dei pannelli Testo e Grafica esportano la loro parte (vedi [Esportazione e importazione](/it/docs/sandbox-books-saving#esportazione-e-importazione)).
 
+### Modalità Contenuto e Grafica
+
+La barra sopra l’anteprima comincia con un selettore tra i due modi di lavorare su un libro:
+
+- **Contenuto**: si modifica il testo, nel pannello Testo e sulle pagine. Le cornici di una pagina composta restano dove le mette il loro modello.
+- **Grafica**: si modificano i modelli di pagina e gli stili. Il pannello Testo mostra il capitolo in sola lettura, con un avviso e un pulsante **Modifica il testo**, e la sua barra degli strumenti è disattivata. Un clic su una cornice di una pagina composta seleziona quella cornice per l’editor dei modelli invece di posarvi il cursore.
+
+**Alt+Maiusc+M** (**⌥⇧M** su un Mac) cambia modalità da qualunque punto del Sandbox. Passare a Grafica con il pannello Testo aperto apre il pannello Grafica, e tornando indietro si riapre il pannello Testo. Il browser ricorda la modalità. Gli agenti la leggono e la impostano con `sandbox_set_view` (`mode`).
+
 ### Pannelli della barra laterale
 
 La barra laterale è ridimensionabile. Trascina il separatore tra la barra laterale e l’area di visualizzazione, oppure portaci il focus con Tab e usa la tastiera: ← / → cambiano la larghezza del 2 % (10 % con Maiusc), e **Home** / **Fine** saltano alla larghezza minima e massima. Il separatore annuncia il suo valore corrente agli screen reader, e l’area di visualizzazione conserva sempre almeno 200 px. La barra laterale si chiude del tutto quando nessun pannello è attivo, e la sua larghezza viene ricordata tra una sessione e l’altra.
@@ -56,11 +65,12 @@ Un editor CodeMirror 6 per il Markdown del capitolo. Gli screen reader lo annunc
 - **Numeri di riga** ed evidenziazione della riga attiva
 - **A capo automatico** per i paragrafi lunghi
 - **Righe da destra a sinistra**: una riga il cui testo comincia con una lettera araba o ebraica scorre da destra a sinistra, e il cursore e i tasti freccia la seguono. Il markup al suo interno (attributi `{…}`, etichette `[^id]`, il nome di una direttiva, un intero `:ref[fig-1]`, la matematica, il codice, le destinazioni dei link) resta da sinistra a destra, così si legge come è stato digitato. I recinti di codice, il front matter e le righe che cominciano con una parola latina restano da sinistra a destra come prima.
-- **Barra degli strumenti**: comincia con **Annulla / Ripeti**, seguiti da grassetto, corsivo, titoli di livello 1–3, link, codice in linea, **chip** (avvolge la selezione in `:chip[…]`), **maiuscoletto** (la avvolge in `:smallcaps[…]`), citazione, elenchi numerati e puntati, più quattro inseritori di direttive:
+- **Barra degli strumenti**: comincia con **Annulla / Ripeti**, seguiti da grassetto, corsivo, titoli di livello 1–3, link, codice in linea, **chip** (avvolge la selezione in `:chip[…]`), **maiuscoletto** (la avvolge in `:smallcaps[…]`), citazione, elenchi numerati e puntati, più cinque inseritori:
   - `:::pagebreak`
   - `:::space`: una riga di spazio verticale (`:::space{lines=N}` per averne di più)
   - **Colonne**: un gruppo `:::columns{count=2}` a due colonne, con il cursore sulla sua prima riga, nel testo o in un riquadro (da postext 1.25)
   - `:::numbering{format="decimal" startAt=1}`: inserito con attributi di esempio che puoi modificare
+  - **Pagina composta**: apre un selettore con i modelli di pagina del libro, ognuno disegnato in miniatura con le sue cornici vuote. Sceglierne uno scrive un recinto `::::page{template="…"}` con un `:::frame{slot="…"}` vuoto per ogni cornice. Una cornice che riceve solo il seguito del testo di un’altra non ne ha; una cornice che `takes` un titolo riceve quel titolo, con il nome della cornice selezionato per scriverci sopra, e la cornice di flusso riceve una riga vuota per il testo corrente
 
 Un listato di codice (un recinto ```` ``` ```` o `~~~` e le sue righe) è un’unica zona nell’editor: riceve uno sfondo da codice, e il markup di Postext al suo interno (matematica, chip, tabulazioni, segni d’indice) resta senza colore, così come il motore lo lascia senza leggerlo. Le applicazioni host possono aggiungere pulsanti propri alla barra degli strumenti tramite `extraActions`. L’editor comunica inoltre alle anteprime il cursore e la selezione, il che abilita la sincronizzazione clic-cursore: un clic sul testo dell’output reso sposta il cursore nella posizione corrispondente del Markdown, e le anteprime possono evidenziare la selezione corrente.
 

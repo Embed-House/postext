@@ -3,7 +3,7 @@ title: "Pharmacist-led home blood pressure telemonitoring after an emergency vis
 author: "Lucía Ortega Ramos, Daniel Achterberg, Marta Quiroga Gil and Samuel Okafor"
 ---
 
-# Pharmacist-led home blood pressure telemonitoring after an emergency visit for severe hypertension: a pilot randomised trial {style="article" kind="Original article" authors="Lucía Ortega Ramos^1^, Daniel Achterberg^2^, Marta Quiroga Gil^1^, Samuel Okafor^3^" affiliations="^1^ Department of Internal Medicine, Hospital General de Almenara\n^2^ Community Pharmacy Network, Almenara Health Area\n^3^ Primary Care Research Unit, Almenara Health Area" note="Illustrative article written for the Postext Cookbook: the trial, its authors and its data are invented. The works cited are real."}
+# Pharmacist-led home blood pressure telemonitoring after an emergency visit for severe hypertension: a pilot randomised trial {style="article" issue="2026 · 14(3) · 181–183" verso="Almenara Med J 2026;14(3)" recto="Ortega Ramos et al. · Telemonitoring after severe hypertension" kind="Original article" authors="Lucía Ortega Ramos^1^, Daniel Achterberg^2^, Marta Quiroga Gil^1^, Samuel Okafor^3^" affiliations="^1^ Department of Internal Medicine, Hospital General de Almenara\n^2^ Community Pharmacy Network, Almenara Health Area\n^3^ Primary Care Research Unit, Almenara Health Area" note="Illustrative article written for the Postext Cookbook: the trial, its authors and its data are invented. The works cited are real."}
 
 :::callout{type="abstract" title="Abstract"}
 **Background** Patients discharged from the emergency department after a visit for severe hypertension often wait weeks for a review, and many return with the same readings.

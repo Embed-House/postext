@@ -39,6 +39,15 @@ Clicking the active panel's button collapses the sidebar, and clicking a differe
 
 The host application can add its own items to the bar: an optional **home logo link** in the top cell (via the `homeUrl` or `homeLink` props), and a **theme toggle** and **language switcher** at the bottom. Whole books are exchanged as `.postext` files from the Books panel, and the Text and Design panel headers export their own part (see [Export and import](/en/docs/sandbox-books-saving#export-and-import)).
 
+### Content and Design modes
+
+The bar above the preview starts with a switch between the two ways of working on a book:
+
+- **Content**: the text is edited, in the Text panel and on the pages. The frames of a composed page stay where their template puts them.
+- **Design**: page templates and styles are edited. The Text panel shows the chapter read only, with a note and an **Edit the text** button, and its toolbar is off. A click on a frame of a composed page picks that frame for the template editor instead of placing the caret.
+
+**Alt+Shift+M** (**⌥⇧M** on a Mac) switches modes from anywhere in the Sandbox. Switching to Design while the Text panel is open opens the Design panel, and switching back opens the Text panel again. The browser remembers the mode. Agents read and set it with `sandbox_set_view` (`mode`).
+
 ### Sidebar panels
 
 The sidebar is resizable. Drag the separator between the sidebar and the viewport, or focus it with Tab and use the keyboard: ← / → change the width by 2 % (10 % with Shift), and **Home** / **End** jump to the narrowest and widest sizes. The separator announces its current value to screen readers, and the viewport always keeps at least 200 px. The sidebar collapses entirely when no panel is active, and its width is remembered between sessions.
@@ -56,11 +65,12 @@ A CodeMirror 6 editor for the chapter's Markdown. Screen readers announce it as 
 - **Line numbers** and active-line highlighting
 - **Line wrapping** for long paragraphs
 - **Right-to-left lines**: a line whose text starts with an Arabic or Hebrew letter runs right to left, and the caret and the arrow keys follow it. The markup inside it (`{…}` attributes, `[^id]` labels, the name of a directive, a whole `:ref[fig-1]`, maths, code, link targets) stays left to right, so it reads as typed. Fences, front matter and lines that start in a Latin word are left to right as before.
-- **Toolbar**: starts with **Undo / Redo**, followed by bold, italic, heading levels 1–3, link, inline code, **chip** (wraps the selection in `:chip[…]`), **small caps** (wraps it in `:smallcaps[…]`), blockquote, ordered and unordered lists, plus four directive inserters:
+- **Toolbar**: starts with **Undo / Redo**, followed by bold, italic, heading levels 1–3, link, inline code, **chip** (wraps the selection in `:chip[…]`), **small caps** (wraps it in `:smallcaps[…]`), blockquote, ordered and unordered lists, plus five inserters:
   - `:::pagebreak`
   - `:::space`: one line of vertical space (`:::space{lines=N}` for more)
   - **Columns**: a two-column `:::columns{count=2}` group, the caret on its first line, in the text or in a box (since postext 1.25)
   - `:::numbering{format="decimal" startAt=1}`: inserted with example attributes you can adjust
+  - **Composed page**: opens a picker with the book's page templates, each drawn as a thumbnail of its empty frames. Choosing one writes a `::::page{template="…"}` fence with an empty `:::frame{slot="…"}` for each frame. A frame that only receives what another frame's text continues with gets none; a frame that `takes` a heading gets that heading, with the frame's name selected to type over, and the flow frame gets a blank line for the running text
 
 A code listing (a ```` ``` ```` or `~~~` fence and its lines) is one region in the editor: it gets a code background, and the Postext markup inside it (maths, chips, tabs, index marks) is left uncoloured, as the engine leaves it unread. Host applications can add their own toolbar buttons through `extraActions`. The editor also reports its cursor and selection to the previews, which enables click-to-caret sync: clicking text in the rendered output moves the caret to the matching Markdown position, and the previews can highlight the current selection.
 

@@ -515,9 +515,103 @@ Recorded where the implementation settles a point the sections above leave open,
   carries template, frame, fence index, overflow mm and the frame's config path (P5 adds the steps
   tried and the proposals); the page log gets an `overflow` event.
 - **Not applied yet:** the template's `bodyStyle` and `palette`, a frame's `writingMode` and
-  `direction`, `fit`, group negotiation with `grow`/`shrink`/`priority`/`pin` (P14), `spread` (P7),
+  `direction`, `fit`, group negotiation with `grow`/`shrink`/`priority`/`pin` (P14, §5.9), `spread` (P7, §5.10),
   continuation to other pages (P15), labels (P6). A `exclude: 'push'` frame turned by `rotate` pushes
   with its turned box's bounds.
+
+### 5.9 What P14 built (#856)
+
+- **Declared and final boxes.** Each frame is placed twice in the same pass: as the template
+  declares it (fixed sizes; an `'auto'` height at its `minHeight` when it has one, else at its
+  content's height; anchors read declared boxes) and as its content needs. `VDTFrame.declaredRect`
+  keeps the first when it differs. The reflow log is the difference between the two, so a page whose
+  text fits the template's drawing logs nothing, and the same text gives the same log in any book.
+  A frame with an `'auto'` height and no `minHeight` declares no height of its own: it never "grows",
+  and the frames that follow it do not "move", whatever it holds. Templates drawn from a page give
+  their boxes the drawn height as `minHeight`.
+- **Order of work** (`composed/groups.ts`, `composedOrder`). A group is one step: after everything
+  its frames and its own box anchor to, before anything anchored to the group or to one of its
+  frames; its frames are filled in group order (a chain inside a group is measured with what its
+  frame holds when the group is solved, so a later link of the chain measures empty).
+- **A group with no box of its own** is elastic: a stack starts where its first frame's own
+  placement puts it (members' own `y` is ignored, their `x` and width kept) and runs down as far as
+  its frames need, to the foot of the template's area; only there do `shrink` frames yield. A row
+  starts at its first frame, keeps its frames' widths and grows as tall as the tallest needs.
+  Spare space, `grow` and `align` apply only to a group with its own box (`placement` or `grid`);
+  a frame of such a group with no placement of its own takes the group's box as its area.
+- **Stack.** Heights: fixed, or the content's (`'auto'`), clamped to min/max; `'fill'` asks for its
+  `minHeight` and grows (weight `max(grow, 1)`). Too tall: frames with `shrink > 0` give space back,
+  lowest `priority` first; frames of one priority yield **in proportion to `shrink`** (the number
+  is a weight, not only a flag; §5.3's "later frame first" is not used), down to `minHeight`. When
+  nothing more yields, no frame runs past the group's foot: its content overflows (`frameOverflow`,
+  the ladder of P5). Spare space goes to `grow` frames in proportion, up to `maxHeight`, else to
+  `align`.
+- **Row.** Frames take their declared widths and the row's height (a fixed height keeps its own).
+  A frame whose content runs past the row's height takes width from the spare space first, then
+  from `shrink` siblings, lowest priority first, each down to the narrowest whole-millimetre width
+  at which its own content still fits; the width a frame takes is the fewest whole millimetres that
+  make it fit, found by bisection; when even all the room would not make it fit it takes none. Rows
+  run left to right in every writing direction (right-to-left rows: later).
+- **Pins.** A pinned frame takes its declared box (anchored to declared boxes) whatever its anchor
+  or its group does. In a group, pinned frames and pinned frames outside the group whose box meets
+  a frame across are obstacles: a stack sets the next frame past the pinned frame's band, a row past
+  its column, `gap` kept on both sides; spare space then stays at the foot (no `align`).
+- **Decoration.** Elements anchored to `'#frame'` move with the frame's final box (P4 already laid
+  decoration after the frames); `pin: true` on a decoration element (new on design elements, read
+  only by composed pages) anchors it to the frame's declared box (`DesignFrames.declared`).
+- **Log.** `ReflowEvent` gains `axis: 'x'` for widths and moves across; `grew` / `resized` carry
+  heights (or widths) in mm, `moved` the top (or left) edge in mm from the sheet's edge; the change
+  is rounded once to 0.1 mm and events under 0.5 mm are not logged. `cause` is the nearest frame
+  whose size changed among what the frame anchors to and the frames before it in its group, through
+  frames that only moved. Events follow template order, each frame's size before its moves, its
+  `overflow` last. Decoration moves are not logged (they follow their frame).
+- **Surfaces.** `composedReflowLog(doc)` (per composed page: page index and label, template, fence,
+  events, and `lines` in English from `describeReflowEvent`) is the data API for the Sandbox reflow
+  panel (U8, #868); `postext check` prints one `reflow` line per page that has events and writes
+  the entries under `reflow` in `--json`.
+- **Confinement and determinism.** Nothing of a composed page's negotiation reads another page:
+  boxes, logs and pages after it are unchanged by an edit on it as long as its content stays on it.
+  Fixed iteration order, whole-millimetre widths and memoised measures give the same VDT for the same
+  input.
+
+### 5.10 Spreads (#861)
+
+- **Where.** `placeComposedPage` (build.ts) resolves the template once as a sheet
+  (`resolvePageTemplate(…, { spread: true })`); a `spread` template takes `breakToEvenPage`, the
+  verso and the recto after it (one empty column each), as `placeComicSpread` does, and
+  `layoutComposedSpread` (`composed/spread.ts`) lays it. The template decides; the fence's flag
+  only feeds `spreadMismatch` (source check in `slotChecks.ts`, `spread` read through `extends`).
+- **Sheet.** One `layoutComposedPage` run on spread coordinates: the first page's frame, the
+  second's set `shift` (= the trim's width) along so the trims meet at the spine. The first page is
+  the flow's left: the left page, or the right one on a mirrored (right-to-left) flow, whose frames
+  are in flow coordinates; a right-bound left-to-right book starts the sheet on its left page, the
+  recto. `content` is the union of both content areas (inner margins inside); `trim`/`bleed` run
+  outer edge to outer edge, no bleed at the spine.
+- **Gutter.** `ComposedPageInput.fitBox` (one hook in composedLayout.ts, `placeFitted`) gives
+  `keepOffGutter`. It fits a frame's declared box and its final box alike (the band is the
+  template's, not a reflow, so P14's log does not report it as one), and a group member's own box
+  before the group negotiates (§5.9), so a stack on a spread lays its frames off the band;
+  a frame without `crossGutter` that meets the band is cut at the band's edge (it reached across) or
+  moved out whole (its inner edge was inside), on its centre's side (ties: the first page); an
+  `'auto'` height is re-measured at the new width; the log gets `resized`/`moved` with cause
+  `'gutter'`. A 0 gutter still keeps frames off the spine line.
+- **Cut.** A frame goes to the page holding its bounds; a crossing frame is read on the page of its
+  centre (ties: first page). The facing page gets a frame record with the same id, empty
+  `blockIds` and `facingBlocks`: deep copies moved by `-shift`/`0`, ids `<id>-facing`, in no
+  `page.floats` and no `doc.blocks`, so reflowable output, search, selection and source maps meet
+  the text once. Blocks of frames on the second page are cloned before they are moved.
+- **Paint.** `VDTComposedPage.sheetClip` (the page's bleed box) clips all of a spread page's frames
+  and decoration (canvas, HTML `pt-sheet-clip`, PDF `re W n`); `composedPaintOrder` yields
+  `facing: true` items, which the PDF tags as Layout artifacts and the HTML (written in reading order,
+  §8) marks `aria-hidden`/`data-facing` and leaves out of the patchable blocks. Fixed EPUB adds `rendition:spread-both` to both pages; the
+  page-spread side follows parity as before.
+- **Decoration** is laid once (headerFooter.ts, on the first page of the pair met) over the
+  physical sheet (left page at 0), `#frame` anchors read the frames' physical boxes
+  (`flowRectToPage`, which also fixes `#frame` decoration on single right-to-left pages), then
+  `splitSpreadDecoration` keeps the blocks that reach each page's bleed box, moved onto its sheet.
+- **Not done:** spreads on vertical (`vertical-rl`) pages (the sheet is laid in physical
+  boxes, the flow is rotated); per-side `mirrored` for frames' outer-corner icons (the first page's
+  is used); running-head placeholders in a spread's decoration read the first page met.
 
 ## 6. Source map contract
 
@@ -553,6 +647,22 @@ Cookbook comics recipe must render unchanged before and after.
   a visually hidden list after the image, in label order.
 - Fixed-layout EPUB and the HTML viewer: the template is applied (they render the paged VDT).
 - Tagged PDF: structure order follows the Markdown (`contentIndex`), not paint order.
+
+What P9 (#862) built:
+
+- **Reading order** is `composedReadingOrder(composedPaintOrder(page))`: the decoration first, then the
+  frames by the lowest content index of their blocks (a frame a chain continues into after the frame
+  before it). The HTML viewer (and so the fixed-layout EPUB) writes frames in that order inside one
+  stacking context (`pt-composed`, `z-index: 0`) and paints them by `z-index` = place in the paint
+  order; tagged PDF reads each frame in one `readFloat` call (a list stays one `L`).
+- **Reflowable EPUB**: `ComposedNode` (`<section class="pt-composed pt-composed-<template>">`, the page
+  break first), each story a `CalloutNode` with `frame` (`<div class="pt-frame pt-frame-<name>">`, plus
+  `pt-callout pt-callout-<style>` when the frame has a style); frame CSS only in books that have
+  composed pages. Decoration dropped.
+- **Labels** ride on the VDT as `ResolvedResourceBlock.labels` (`VDTFigureLabel`: text, at, style,
+  source range). Reflowable EPUB: a visually hidden `<ul class="pt-figure-labels pt-hidden">` after the
+  picture, no `aria-describedby` (read once). HTML `alt` and PDF `Alt`: `altWithLabels` (`Alt (A, B)`,
+  `（A、B）` for CJK, `،` for Arabic).
 
 ## 9. Literals allowed in the config
 

@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "walking-guide-thumb-tabs",
-  "sourceHash": "f6b55104c92fedb6245e0a1c6cf362ce7cbb8b7cb5b7e1ae8f5a3641cd85b0b6",
+  "sourceHash": "09dae0a3218986420270fb407c8b96565a5c9414aa7cb81bcb568291f5ecd036",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.334Z",
-  "verified": {
-    "postext": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:06:54.607Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:55.002Z",
   "variants": {
     "en": {
-      "hash8": "5ef13f8a",
+      "hash8": "701841c4",
       "vdtHash": "c010ed3feb0418e4b90b7c1452b0a5ed8382b016",
       "timings": {
-        "importMs": 197,
-        "fontsMs": 20,
-        "buildMs": 52,
-        "totalMs": 964,
+        "importMs": 856,
+        "fontsMs": 23,
+        "buildMs": 60,
+        "totalMs": 2305,
         "builds": 1
       },
       "specimen": {
@@ -156,7 +151,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52370,
+        "bytes": 52386,
         "folio": "98b88fc8",
         "chapters": [
           {
@@ -437,17 +432,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "14d0c52c",
+      "hash8": "e66b241a",
       "vdtHash": "a815c1872f39b5d214ccc846aab8b7ab7cc5016f",
       "timings": {
-        "importMs": 210,
-        "fontsMs": 22,
-        "buildMs": 57,
-        "totalMs": 961,
+        "importMs": 554,
+        "fontsMs": 23,
+        "buildMs": 64,
+        "totalMs": 1744,
         "builds": 1
       },
       "specimen": {
@@ -582,7 +583,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52560,
+        "bytes": 52577,
         "folio": "98b88fc8",
         "chapters": [
           {
@@ -868,6 +869,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.90 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

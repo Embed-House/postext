@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 153 · One page lettered in six languages ═══════════════════
 // https://postext.dev/en/cookbook/one-page-six-languages
 // Code: MIT · Story: written for the recipe (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Comic Neue, Bangers, the comic faces of each script (OFL) · Needs postext ≥ 1.25.0
+// Fonts: Comic Neue, Bangers, the comic faces of each script (OFL) · Needs postext ≥ 1.34.0
 // One comic page, its split and its five pictures fixed, lettered from a script per
 // language: each edition sets its own page, and the French one beside it.
 import {
@@ -53,8 +53,11 @@ const comics = {
 // #endregion
 
 const NAMES = { en: 'English', es: 'Español', ja: '日本語', zh: '中文', ar: 'العربية', fr: 'Français' };
+// The edition's language and the face the engine picks for it: a label of the design, which
+// the contentInConfig check allows (#849).
+const edition = (lang, locale) => `${NAMES[lang]} · ${defaultComicFont(locale)}`;
 const footerFor = (lang, locale) => ({ elements: [{ kind: 'text', id: 'edition',
-  content: `${NAMES[lang]} · ${defaultComicFont(locale)}`, fontFamily: defaultComicFont(locale),
+  content: edition(lang, locale), fontFamily: defaultComicFont(locale),
   fontSize: pt(8), color: col('muted'), align: 'center', pages: 'comic',
   placement: { anchor: { to: 'page', edge: 'bottom' }, offset: { y: mm(-8) } } }] });
 
@@ -73,6 +76,7 @@ const config = () => ({
   comics,
   header: { elements: [] },
   footer: footerFor(LANG, LOCALE),
+  checks: { contentInConfig: { allow: [edition(LANG, LOCALE), edition('fr', 'fr')] } },
 });
 
 // ─── 2 · Content ────────────────────────────────────────────────────────────

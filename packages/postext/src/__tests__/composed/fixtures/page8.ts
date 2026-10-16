@@ -159,13 +159,16 @@ export const PAGE8_CONFIG: PostextConfig = {
     frames: [
       { name: 'titulo', takes: 'h1', style: 'tab-titulo', width: mm(170), placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: mm(-4), y: mm(-2) } } },
       { name: 'texto', flow: true, placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { x: mm(4), y: mm(2) } }, width: mm(182) },
-      { name: 'dinero', style: 'caja-azul', padding: { right: mm(62) }, placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: mm(9) } }, width: mm(186) },
+      { name: 'dinero', style: 'caja-azul', padding: { right: mm(62) }, minHeight: mm(36), placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: mm(9) } }, width: mm(186) },
       { name: 'dinero-fotos', layer: 2, width: mm(58), placement: { anchor: { to: '#dinero', edge: 'top-right' }, offset: { x: mm(-2), y: mm(2) } } },
-      { name: 'gasto', style: 'caja-verde', padding: { left: mm(82) }, minHeight: mm(62), placement: { anchor: { to: '#dinero', edge: 'below' }, offset: { y: mm(12) } }, width: mm(186) },
+      { name: 'gasto', style: 'caja-verde', padding: { left: mm(82) }, minHeight: mm(62), width: mm(186) },
       { name: 'gasto-fotos', layer: 2, width: mm(76), placement: { anchor: { to: '#gasto', edge: 'top-left' }, offset: { x: mm(3), y: mm(9) } } },
-      { name: 'ahorro', style: 'caja-amarilla', padding: { right: mm(50) }, placement: { anchor: { to: '#gasto', edge: 'below' }, offset: { y: mm(12) } }, width: mm(186) },
+      { name: 'ahorro', style: 'caja-amarilla', padding: { right: mm(50) }, minHeight: mm(30), width: mm(186) },
       { name: 'ahorro-fotos', layer: 2, width: mm(44), placement: { anchor: { to: '#ahorro', edge: 'right' }, offset: { x: mm(-3) } } },
     ],
+    // The three boxes, one under another: a box that grows pushes the ones
+    // below it down the page (#856).
+    groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: mm(12) }],
   }],
 };
 

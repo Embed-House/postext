@@ -14,7 +14,8 @@ export function TableFit() {
   useEffect(() => {
     const root = ref.current?.parentElement;
     if (!root) return;
-    const tables = [...root.querySelectorAll<HTMLTableElement>("table.docs-table")];
+    // Property tables (a description last) are cards at every width.
+    const tables = [...root.querySelectorAll<HTMLTableElement>("table.docs-table:not([data-prose-last])")];
     if (tables.length === 0) return;
     const fit = (table: HTMLTableElement) => {
       const box = table.parentElement;
@@ -29,7 +30,7 @@ export function TableFit() {
     const pending = new Set<HTMLTableElement>();
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        const table = (entry.target as HTMLElement).querySelector<HTMLTableElement>(":scope > table.docs-table");
+        const table = (entry.target as HTMLElement).querySelector<HTMLTableElement>(":scope > table.docs-table:not([data-prose-last])");
         if (!table) continue;
         fit(table);
         pending.add(table);

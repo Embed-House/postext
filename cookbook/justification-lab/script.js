@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 014 · Justification lab ════════════════════════════════
 // https://postext.dev/en/cookbook/justification-lab
 // Code: MIT · Text: original (CC BY 4.0) · Diagram: generated in code (CC BY 4.0)
-// Fonts: Petrona, Bricolage Grotesque, Source Code Pro (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Petrona, Bricolage Grotesque, Source Code Pro (SIL OFL 1.1) · Needs postext ≥ 1.34.0
 // A type journal's essay set twice from one design, Knuth–Plass and greedy: the two page 2s
 // side by side with their loose lines marked from the layout tree, then the published pages.
 import {
@@ -132,6 +132,8 @@ const calloutStyles = [
 
 const config = () => ({
   locale, colorPalette,
+  // The diagram's labels belong to the drawing: one prints the stretch it is drawn with (#849).
+  checks: { contentInConfig: { allow: diagramLabels().map(([, words]) => words) } },
   page: { width: mm(TRIM_W), height: mm(TRIM_H), dpi: 150, margins: { top: mm(TOP),
     bottom: mm(BOTTOM), left: mm(INNER), right: mm(OUTER), mirror: true } },
   layout: { layoutType: 'double', gutterWidth: mm(GUTTER) },

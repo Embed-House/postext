@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "outbreak-report-bulletin",
-  "sourceHash": "6c023e9ac30de3d26f462a4f2d3725e722eff4e68bfea53518daa60850aec260",
+  "sourceHash": "79bd8d8c33e2f8ae6ba71ac8332d5719b5b03b12a2020d432eddfdc86754767e",
   "engine": {
-    "postext": "1.32.0",
-    "postextPdf": "1.32.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T22:44:15.530Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.939Z",
   "variants": {
     "en": {
-      "hash8": "2bec385d",
+      "hash8": "de421029",
       "vdtHash": "4765a064c79d1bfe8c38ee93c73aeef4b143fc19",
       "timings": {
-        "importMs": 53775,
-        "fontsMs": 61,
-        "buildMs": 204,
-        "totalMs": 54662,
+        "importMs": 1042,
+        "fontsMs": 75,
+        "buildMs": 213,
+        "totalMs": 3073,
         "builds": 1
       },
       "specimen": {
@@ -142,12 +142,12 @@
       },
       "pdf": {
         "file": "outbreak-report-bulletin.pdf",
-        "bytes": 189445,
+        "bytes": 189441,
         "pages": 6
       },
       "sandbox": {
         "file": "outbreak-report-bulletin.postext",
-        "bytes": 95699,
+        "bytes": 95660,
         "folio": "0cf5d184",
         "chapters": [
           {
@@ -197,6 +197,9 @@
           "captionStyle.note",
           "captionStyle.note.color",
           "captionStyle.note.fontSize",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.entrySpacing",
@@ -337,6 +340,7 @@
         "configSections": [
           "bodyText",
           "captionStyle",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -352,7 +356,7 @@
           "tableStyle",
           "tableStyles"
         ],
-        "configLeaves": 571,
+        "configLeaves": 572,
         "designElements": 26,
         "directives": [
           ":::paragraphs",
@@ -456,14 +460,9 @@
             "detail": "the edition's images weigh 1.07 MB (warning at 0.9 MB for 6 pages)"
           },
           {
-            "check": "C21",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the pen took 54.7 s to finish (warning at 30 s)"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

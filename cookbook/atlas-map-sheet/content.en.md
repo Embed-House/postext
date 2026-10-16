@@ -2,7 +2,7 @@
 title: "The Solan Isles"
 ---
 
-# The islands and their waters {sheet="Sheet 1" lead="Brannay, Orrin, Kellay and the lighthouse rock of Skarra lie some 20 kilometres off the mainland coast at Carrick. The survey of 1874 drew their coasts; this sheet adds the depths, the roads and a grid for every named place."}
+# The islands and their waters {sheet="Sheet 1" imprint="The Solan Isles, sheet 1 · first edition, 2024 · Kirkwick Harbour Trust" lead="Brannay, Orrin, Kellay and the lighthouse rock of Skarra lie some 20 kilometres off the mainland coast at Carrick. The survey of 1874 drew their coasts; this sheet adds the depths, the roads and a grid for every named place."}
 
 The Solan Isles take their name from the solan goose, the old name for the gannet, which nests by the thousand on the cliffs of Kellay. The group spans 34 kilometres from west to east. Two of its islands are lived on: Brannay, with 612 people at the census of 2021, and Orrin, with 188. :ref{id="relief"} gives the lie of the land in three bands of height, and the roads that join the settlements.
 

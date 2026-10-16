@@ -3,7 +3,7 @@ title: "Verra W1 · Bedienungsanleitung"
 author: "Verra Haushaltsgeräte"
 ---
 
-# Verra W1 {style="cover" product="Wasserkocher" model="Modell VW-170 · 1,7 l · 220–240 V · 2200 W"}
+# Verra W1 {style="cover" product="Wasserkocher" keep="Vor dem ersten Gebrauch lesen und aufbewahren." model="Modell VW-170 · 1,7 l · 220–240 V · 2200 W"}
 
 :::pagebreak
 

@@ -264,6 +264,12 @@ export function PostextHtmlViewer({
       <td><code>:ref</code>引用链接到对应资源；目录行不带链接。</td>
       <td><code>:ref</code>引用和目录行，外加文档大纲（书签）。</td>
     </tr>
+    <tr>
+      <td>模板页（<code>::::page</code>）</td>
+      <td>各框按图层顺序绘制，带旋转和裁切</td>
+      <td>同样的方框，按阅读顺序写出，用<code>z-index</code>按图层顺序绘制；插图的标注接在其<code>alt</code>之后</td>
+      <td>绘制方式相同；结构树按Markdown顺序读各框</td>
+    </tr>
   </tbody>
 </table>
 
@@ -396,6 +402,8 @@ EPUB 3定义了两种版式，由包文件的`rendition:layout`属性声明；`l
     <tr><td>适合</td><td>以页面为设计单位的书：图文书、教材、目录册、杂志；大屏幕</td><td>连续的正文：小说、随笔、报告；手机和电子墨水阅读器</td></tr>
   </tbody>
 </table>
+
+模板页（`::::page{template="…"}`）在固定版式中保留其模板。在流式版式的书中，它变成一个节，各框按Markdown顺序排列，每个框是一个带标注框样式的块，不含装饰，插图的标注列在图片之后：参见[印刷之外](/zh/docs/composed-pages#印刷之外htmlepub与带标签的pdf)。
 
 两种版式的导航相同：由标题和篇页生成的目录、带印刷页码的页码列表、地标（封面、印刷目录、正文开始处），以及供旧阅读器使用的NCX。
 

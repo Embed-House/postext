@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-research-article",
-  "sourceHash": "bc512da4e8eb6f7fd56ca82aa485280ec8bd4323c641d1e7ddebc0821d8b1e5a",
+  "sourceHash": "7ef6b149ce49c2c5777ec5a84da255f2ea2819226b5f0dc6537a7599dd040ed4",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.34.0",
+    "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:35:58.738Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T14:55:41.409Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-16T13:50:54.669Z",
   "variants": {
     "en": {
-      "hash8": "4fa99642",
+      "hash8": "ce9b31ff",
       "vdtHash": "83f924f767437bceda389050c85f0b62c13cc3be",
       "timings": {
-        "importMs": 3573,
-        "fontsMs": 346,
-        "buildMs": 674,
-        "totalMs": 6476,
+        "importMs": 1159,
+        "fontsMs": 124,
+        "buildMs": 553,
+        "totalMs": 2634,
         "builds": 1
       },
       "specimen": {
@@ -44,7 +38,7 @@
           "Noto Kufi Arabic"
         ],
         "pages": 5,
-        "ownLines": 142
+        "ownLines": 145
       },
       "pages": [
         {
@@ -132,12 +126,12 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 99389,
+        "bytes": 99403,
         "pages": 5
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14407,
+        "bytes": 14444,
         "folio": "baed3d35",
         "chapters": [
           {
@@ -193,6 +187,9 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.entrySpacing",
@@ -311,6 +308,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -324,7 +322,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 258,
+        "configLeaves": 259,
         "designElements": 10,
         "directives": [
           ":::callout",
@@ -404,21 +402,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "d5e7bfb2",
+      "hash8": "5f989c8d",
       "vdtHash": "c6ecf63c1e19e3f63e497ec1918159ac542e6e05",
       "timings": {
-        "importMs": 3705,
-        "fontsMs": 204,
-        "buildMs": 652,
-        "totalMs": 5927,
+        "importMs": 1255,
+        "fontsMs": 397,
+        "buildMs": 559,
+        "totalMs": 2981,
         "builds": 1
       },
       "specimen": {
@@ -439,7 +437,7 @@
           "Noto Kufi Arabic"
         ],
         "pages": 5,
-        "ownLines": 142
+        "ownLines": 145
       },
       "pages": [
         {
@@ -527,12 +525,12 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 99199,
+        "bytes": 99212,
         "pages": 5
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14480,
+        "bytes": 14517,
         "folio": "baed3d35",
         "chapters": [
           {
@@ -588,6 +586,9 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "checks",
+          "checks.contentInConfig",
+          "checks.contentInConfig.allow",
           "citations",
           "citations.bibliography",
           "citations.bibliography.entrySpacing",
@@ -706,6 +707,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "checks",
           "citations",
           "colorPalette",
           "footer",
@@ -719,7 +721,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 258,
+        "configLeaves": 259,
         "designElements": 10,
         "directives": [
           ":::callout",
@@ -799,9 +801,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
