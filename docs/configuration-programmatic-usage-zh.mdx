@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>分页输出在框底裁掉放不下的部分；它仍留在文档、源码映射和流式版式的EPUB中。</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>模板页某个框的内容续排到模板页之后追加的页上（<code>overflow.continueIn: 'next-page'</code>或<code>'template:&lt;id&gt;'</code>），次数达到一个模板页可追加页数的上限16页，仍然放不下（<code>template</code>和<code>frame</code>为最后一个追加页的模板和框，<code>fenceIndex</code>、<code>pages</code>、<code>overflowMm</code>、<code>configPath</code>）。由排版给出，带有最后一个追加页的<code>pageIndex</code>。</td>
+      <td>分页输出在那个框的底边裁掉剩下的部分；它仍留在文档、源码映射和流式版式的EPUB中。</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>模板页的开头一行与模板对跨页的设定不一致（<code>template</code>、<code>fenceIndex</code>；<code>fence</code>为开头一行的<code>spread</code>；<code>templateSpread</code>为模板的）。</td>
       <td>以模板为准：跨页模板排在两个对页上，其他模板排在一页上。</td>

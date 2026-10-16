@@ -175,7 +175,7 @@ Inhalt, der keinen Slot nennt, kommt in den mit `flow` markierten Rahmen; die er
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-Der Text wird zwischen zwei Zeilen geteilt und läuft im nächsten Rahmen weiter, neu umbrochen auf dessen Breite, ohne dass etwas verloren geht oder doppelt erscheint. `overflow.continueIn: "#frame"` bedeutet dasselbe. Das Weiterlaufen auf der nächsten Seite ist geplant (`"next-page"`).
+Der Text wird zwischen zwei Zeilen geteilt und läuft im nächsten Rahmen weiter, neu umbrochen auf dessen Breite, ohne dass etwas verloren geht oder doppelt erscheint. `overflow.continueIn: "#frame"` bedeutet dasselbe. Wie der Text auf einer Seite weiterläuft, die nach dieser hinzukommt, beschreibt [Wenn der Text weiterläuft](#wenn-der-text-weiterläuft).
 
 ### Rahmen, die Text verdrängen
 
@@ -196,16 +196,16 @@ Rahmen werden in der Reihenfolge ihrer `layer` gezeichnet: das Dekor auf Ebene 0
 
 ### Inhalt, der nicht passt
 
-Ein Rahmen, dessen Inhalt höher ist als der Rahmen und der keinen Folgerahmen hat, behält den ganzen Inhalt im Dokument, zeigt aber nur, was hineinpasst: Der Rest wird in der paginierten Ausgabe am Fuß des Rahmens abgeschnitten, und die Warnung [`frameOverflow`](#frameoverflow) nennt die Menge. Inhalt, den kein Rahmen aufnimmt (kein Flussrahmen, oder auf dieser Seite fehlt ein Rahmen), wird im Fließtext auf der Seite nach der zusammengesetzten Seite gesetzt.
+Ein Rahmen, dessen Inhalt höher ist als der Rahmen und der weder einen Folgerahmen noch eine Seite zum Weiterlaufen hat (`overflow.continueIn`), behält den ganzen Inhalt im Dokument, zeigt aber nur, was hineinpasst: Der Rest wird in der paginierten Ausgabe am Fuß des Rahmens abgeschnitten, und die Warnung [`frameOverflow`](#frameoverflow) nennt die Menge. Inhalt, den kein Rahmen aufnimmt (kein Flussrahmen, oder auf dieser Seite fehlt ein Rahmen), wird im Fließtext auf der Seite nach der zusammengesetzten Seite gesetzt.
 
 ## Jenseits des Drucks: HTML, EPUB und getaggtes PDF
 
 Jede Ausgabe liest eine zusammengesetzte Seite in der Reihenfolge ihres Markdowns, nicht in der Reihenfolge, in der die Vorlage ihre Rahmen aufzählt oder ihre Ebenen zeichnet.
 
-- **Umfließendes EPUB (reflowable).** Die Seite wird zu einem Abschnitt (`<section class="pt-composed pt-composed-tema-cajas">`), der mit der Seitenumbruchmarke beginnt. Jeder Rahmen ist ein Block darin (`<div class="pt-frame pt-frame-dinero">`), an der Stelle, an der sein Inhalt im Markdown zuerst vorkommt; ein Rahmen und die Rahmen, in denen seine `next`-Kette weiterläuft, bilden einen einzigen Block. Ein Rahmen, der in einem Kastenstil gezeichnet wird, behält dessen Kasten: Hintergrund, Rand, Innenabstand, Fließtext und sein `label` als Titel des Kastens. Ein Rahmen ohne Stil ist ein einfacher Block. Das Dekor (Hintergrundbilder, Karten, Gestaltungstexte) gehört zur gedruckten Seite und bleibt weg.
+- **Umfließendes EPUB (reflowable).** Die Seite wird zu einem Abschnitt (`<section class="pt-composed pt-composed-tema-cajas">`), der mit der Seitenumbruchmarke beginnt. Jeder Rahmen ist ein Block darin (`<div class="pt-frame pt-frame-dinero">`), an der Stelle, an der sein Inhalt im Markdown zuerst vorkommt; ein Rahmen und die Rahmen, in denen seine `next`-Kette weiterläuft, bilden einen einzigen Block, ebenso ein Rahmen, dessen Inhalt auf hinzugefügten Seiten weiterläuft: Die Stücke werden zusammengefügt, ein zwischen zwei Seiten geteilter Absatz ist ein einziger Absatz, und die Seitenumbruchmarke der hinzugefügten Seite steht in ihm, dort, wo der Text dieser Seite beginnt. Ein Rahmen, der in einem Kastenstil gezeichnet wird, behält dessen Kasten: Hintergrund, Rand, Innenabstand, Fließtext und sein `label` als Titel des Kastens. Ein Rahmen ohne Stil ist ein einfacher Block. Das Dekor (Hintergrundbilder, Karten, Gestaltungstexte) gehört zur gedruckten Seite und bleibt weg.
 - **Beschriftungen von Abbildungen.** Das Bild im EPUB zeigt die `::label`-Texte einer `:::figure` nicht. Das umfließende Buch führt sie deshalb direkt nach dem Bild auf, innerhalb seiner Abbildung und in der geschriebenen Reihenfolge: eine unsichtbare Liste (`pt-figure-labels pt-hidden`), die ein Screenreader einmal vorliest. Im HTML-Viewer, im EPUB mit festem Layout und im getaggten PDF folgen sie dem Alternativtext des Bilds, `Eine Familie mit einem Einkaufskorb (Miete, Strom, Essen)`; chinesische und japanische Beschriftungen stehen in `（…、…）`, arabische werden mit dem arabischen Komma getrennt.
 - **HTML-Viewer und EPUB mit festem Layout.** Beide zeigen die gedruckte Seite mit angewandter Vorlage: jeden Rahmen in seinem Kasten, gedreht nach `rotate`, beschnitten, wenn sein Inhalt überläuft, über die Rahmen niedrigerer Ebenen gezeichnet, das Dekor auf Ebene 0. Das Markup führt die Rahmen in Lesereihenfolge auf und zeichnet sie mit `z-index` in Ebenenreihenfolge; assistive Technologien folgen so dem Markdown, während die Seite wie gedruckt aussieht. Dekorative Bilder sind vor assistiven Technologien verborgen (`alt=""`). Die Schriften des Dekors gehören zu denen, die die Sandbox in ein EPUB einbettet; ein EPUB mit festem Layout, das ohne eine davon geschrieben wird, meldet `missingFont`.
-- **Getaggtes PDF.** Der Strukturbaum liest die Rahmen in derselben Reihenfolge. Jeder Rahmen oder jede Kette von Rahmen ist ein `Div` mit seinen Überschriften, Absätzen und Listen; seine Bilder sind `Figure`-Elemente, deren `Alt` die Beschriftungen enthält; das Dekor ist ein Layout-Artefakt.
+- **Getaggtes PDF.** Der Strukturbaum liest die Rahmen in derselben Reihenfolge. Jeder Rahmen oder jede Kette von Rahmen ist ein `Div` mit seinen Überschriften, Absätzen und Listen, und die Stücke eines auf hinzugefügten Seiten fortgesetzten Rahmens gehören zu eben diesem `Div` (ein zwischen Seiten geteilter Absatz ist ein einziges `P`, der Fortsetzungsvermerk ein Artefakt); seine Bilder sind `Figure`-Elemente, deren `Alt` die Beschriftungen enthält; das Dekor ist ein Layout-Artefakt.
 
 Im Code stehen die Beschriftungen einer Abbildung an ihrem Block in `resourceBlock.labels` (Text, Anker oder Punkt, Format und Quellbereich), und `composedReadingOrder(composedPaintOrder(page))` liefert Dekor und Rahmen einer Seite in Lesereihenfolge.
 
@@ -265,6 +265,12 @@ Diese Warnung kommt aus dem Umbruch, nicht aus den Quellprüfungen oben: Sie ers
 
 **Behebung.** Übernehmen Sie einen der Vorschläge: Jeder bringt seinen Wert mit, auf der Seite berechnet (siehe [Die Warnung und ihre Vorschläge](#die-warnung-und-ihre-vorschläge)). Andernfalls geben Sie dem Rahmen mehr Platz, verketten Sie ihn mit `next` mit einem weiteren Rahmen, kürzen Sie den Text oder setzen Sie die Seite mit einer anderen Vorlage.
 
+### frameContinuationLimit
+
+**Ursache.** Ein Rahmen, dessen `overflow.continueIn` `'next-page'` oder `'template:<id>'` ist, hat auf eine hinzugefügte Seite geschickt, was er nicht fassen konnte, und der Rahmen dieser Seite hat den Rest weitergeschickt, Seite um Seite, bis die zusammengesetzte Seite so viele Seiten hinzugefügt hatte, wie sie darf: 16 (siehe [Wenn der Text weiterläuft](#wenn-der-text-weiterläuft)). Was dann noch übrig ist, wird auf der letzten hinzugefügten Seite am Fuß des Rahmens abgeschnitten; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten. Die Warnung nennt Vorlage und Rahmen dieser Seite, die Zahl der hinzugefügten Seiten (`pages`), die abgeschnittene Höhe (`overflowMm`), den `configPath` des Rahmens und die Seite. Meist ist der Rahmen, der den Inhalt auf der hinzugefügten Seite aufnimmt, viel zu klein für den Text.
+
+**Behebung.** Geben Sie diesem Rahmen mehr Platz (eine größere Höhe oder ein `overflowTemplate` mit einem größeren Rahmen), oder kürzen Sie den Text. Ein Kasten, der über mehr als ein paar Seiten läuft, gehört meist in den Fließtext.
+
 ## Wenn der Text wächst
 
 Eine zusammengesetzte Seite ordnet sich innerhalb der Grenzen neu an, die ihre Vorlage angibt. Schreiben Sie einen längeren Text in den ersten Kasten einer Seite, deren Kästen eine Stapelgruppe bilden, dann wächst der Kasten, bis der Text hineinpasst, und die Kästen darunter rücken nach unten, mitsamt den Fotos und dem Dekor, die an ihnen verankert sind; an der Vorlage ändert sich dabei keine Zeile. Mit einem kürzeren Text kehrt der Kasten zu seiner angegebenen Höhe zurück. Ein Rahmen oder ein Element des Dekors mit `pin` bleibt dort, wo die Vorlage ihn hinsetzt, etwa ein Kasten, der genau auf der Illustration liegen muss. Wie Stapel und Reihen den Platz teilen und welcher Rahmen zuerst nachgibt, legt die Vorlage fest: siehe [Konfiguration › Wie Gruppen den Platz teilen](/de/docs/configuration-composed-pages#wie-gruppen-den-platz-teilen).
@@ -305,12 +311,12 @@ Ein Rahmen, dessen Inhalt nicht passt, probiert nacheinander die Wege aus, die i
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>Der Rahmen geht auf einer anderen Seite weiter (<code>overflow.continueIn: 'next-page'</code> oder <code>'template:&lt;id&gt;'</code>). Diese Version meldet die Stufe; die hinzugefügte Seite umbricht erst eine spätere Version.</td>
+      <td>Der Rahmen geht auf einer anderen Seite weiter (<code>overflow.continueIn: 'next-page'</code> oder <code>'template:&lt;id&gt;'</code>): Er wird an seinem Fuß mit seinem Vermerk abgeschnitten, und der Rest läuft auf einer Seite weiter, die nach dieser hinzukommt (siehe <a href="#wenn-der-text-weiterläuft">Wenn der Text weiterläuft</a>). Text und Bilder kehren zu voller Größe zurück, denn was nicht passt, läuft ohnehin weiter. Eine Warnung gibt es nicht.</td>
     </tr>
   </tbody>
 </table>
 
-Bringt keine Stufe den Inhalt unter, wird der Rahmen an seinem Fuß abgeschnitten, behält die Skalierungen, die die Stufen erreicht haben, und der Umbruch meldet `frameOverflow`. Jede Stufe umbricht die ganze Seite neu, deshalb hängt das Ergebnis nur von dieser Seite ab: Dieselbe Eingabe ergibt dieselbe Seite, überlaufende Rahmen werden in der Reihenfolge der Vorlage behandelt, und eine Änderung auf einer zusammengesetzten Seite lässt alle anderen Seiten, wie sie waren. Die Einstellungen stehen unter [Konfiguration › Wenn der Inhalt nicht passt](/de/docs/configuration-composed-pages#wenn-der-inhalt-nicht-passt).
+Bringt keine Stufe den Inhalt unter, wird der Rahmen an seinem Fuß abgeschnitten, behält die Skalierungen, die die Stufen erreicht haben, und der Umbruch meldet `frameOverflow`. Ein Rahmen auf einer hinzugefügten Seite, der nichts von dem Inhalt aufnimmt, den er erhält, schickt ihn nicht weiter (er würde endlos Seiten hinzufügen): Auch er meldet `frameOverflow`, mit `continue` unter den versuchten Stufen. Jede Stufe umbricht die ganze Seite neu, deshalb hängt das Ergebnis nur von dieser Seite ab: Dieselbe Eingabe ergibt dieselbe Seite, überlaufende Rahmen werden in der Reihenfolge der Vorlage behandelt, und eine Änderung auf einer zusammengesetzten Seite lässt alle anderen Seiten, wie sie waren. Die Einstellungen stehen unter [Konfiguration › Wenn der Inhalt nicht passt](/de/docs/configuration-composed-pages#wenn-der-inhalt-nicht-passt).
 
 ### Die Warnung und ihre Vorschläge
 
@@ -359,6 +365,81 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
 
 Das Bedienfeld Prüfungen zeigt denselben Eintrag in der Sprache der Oberfläche.
 
+## Wenn der Text weiterläuft
+
+Ein Rahmen kann, was er nicht fasst, auf eine Seite schicken, die nach seiner zusammengesetzten Seite hinzukommt. Die Regel dafür ist das `overflow.continueIn` des Rahmens:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Wert</th>
+      <th>Wo der Inhalt weiterläuft</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'#frame'</code></td>
+      <td>In einem anderen Rahmen derselben Seite, wie mit <code>next</code> (siehe <a href="#rahmen-verketten">Rahmen verketten</a>).</td>
+    </tr>
+    <tr>
+      <td><code>'next-page'</code></td>
+      <td>Im selben Rahmen auf einer Seite, die nach dieser hinzukommt und nach dem <code>overflowTemplate</code> der Vorlage gebaut wird. Fehlt es, ist die Seite dieselbe Vorlage, noch einmal gesetzt, in der nur dieser Rahmen gefüllt ist: Die anderen Rahmen nehmen keinen Platz ein (ihre Höhe folgt ihrem leeren Inhalt, und sie verlassen ihre Gruppen), sodass der Rahmen nahe am Kopf der Seite beginnt; Dekor und Kolumnentitel sind die der Vorlage.</td>
+    </tr>
+    <tr>
+      <td><code>'template:&lt;id&gt;'</code></td>
+      <td>Auf einer Seite dieser Vorlage.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json
+{ "id": "tema-cajas", "overflowTemplate": "tema-sigue",
+  "frames": [
+    { "name": "dinero", "style": "caja-azul", "maxHeight": { "value": 40, "unit": "mm" },
+      "overflow": { "continueIn": "next-page" } } ] },
+{ "id": "tema-sigue",
+  "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
+```
+
+Das Weiterlaufen ist die letzte der [Umbruchstufen](#wenn-der-inhalt-immer-noch-nicht-passt): Ein Rahmen wächst zuerst, schafft Platz in seiner Gruppe und lässt Bilder und Text kleiner setzen, soweit seine Vorlage es erlaubt, und erst wenn das nicht reicht, wird er an seinem Fuß abgeschnitten. Dann kehren Text und Bilder zu voller Größe zurück, das Stück endet mit dem Fortsetzungsvermerk, und der Rest läuft ab der Zeile weiter, an der geschnitten wurde, neu umbrochen auf die Breite des Rahmens, der ihn aufnimmt. Nichts geht verloren oder erscheint doppelt, und eine Warnung gibt es nicht.
+
+- **Welcher Rahmen ihn aufnimmt.** Auf der hinzugefügten Seite läuft der Inhalt im gleichnamigen Rahmen weiter; hat die Vorlage keinen, in ihrem Flussrahmen; andernfalls in ihrem ersten Rahmen, der noch frei ist. Mehrere Rahmen einer Seite, die in dieselbe Vorlage weiterlaufen, teilen sich eine hinzugefügte Seite, wenn diese Vorlage für jeden einen Rahmen hat; sonst bekommt der nächste eine eigene Seite. Ein Rahmen der hinzugefügten Seite, der nichts erhält, bleibt leer.
+- **Seite um Seite.** Ein Stück, das noch immer nicht passt, läuft auf der nächsten hinzugefügten Seite weiter, mit dem eigenen `overflow.continueIn` des Rahmens, wenn er dort eines hat, sonst mit der Regel, die es dorthin gebracht hat. Eine zusammengesetzte Seite fügt höchstens 16 Seiten hintereinander hinzu; was auf der letzten noch immer nicht passt, wird abgeschnitten und als [`frameContinuationLimit`](#framecontinuationlimit) gemeldet. Ein Rahmen einer hinzugefügten Seite, der zu klein ist, um überhaupt etwas davon aufzunehmen, meldet `frameOverflow`, statt Seiten hinzuzufügen.
+- **Gewöhnliche Seiten.** Die hinzugefügten Seiten sind Seiten des Buchs: Sie werden nummeriert, tragen die Kolumnentitel ihrer Vorlage (oder die des Abschnitts), übernehmen die `variants` für gerade oder ungerade Seiten, und das `{attr.x}` der Seitenbegrenzung erreicht weiterhin ihr Dekor. Eine Überlaufvorlage mit `spread: true` beginnt auf der nächsten linken Seite, wenn nötig mit einer Vakatseite davor, und nimmt die rechte Seite danach; eine Doppelseite, deren `overflowTemplate` eine Einzelseite ist, läuft auf Einzelseiten weiter. Der Text nach der Seitenbegrenzung beginnt auf der Seite nach der letzten hinzugefügten Seite.
+- **IDs.** Ein Rahmen der n-ten hinzugefügten Seite ist `cp0:<name>~<n>`; der Rahmen, der den Inhalt aufnimmt, heißt nach dem Rahmen auf der Seite der Begrenzung selbst, der ihn zuerst weitergeschickt hat (`cp0:dinero~1`, `cp0:dinero~2`), sodass eine Auswahl ihr Element behält, gleich welcher Rahmen es aufnimmt. Jeder Rahmen vermerkt den Rahmen, den er fortsetzt oder in dem er weiterläuft (`continuedFrom`, `continuesTo`), `VDTPage.composed.continuationOf` der Seite ist der Index der Seite der Begrenzung selbst, und die Blöcke der Stücke tragen die ID des Kastens mit `-cont-<n>`, wie bei geteilten Kästen.
+- **Neuumbruch.** Eine zusammengesetzte Seite, deren Inhalt weiterläuft, wird bei jedem Build samt ihren hinzugefügten Seiten von Grund auf neu umbrochen: Der Seitencache behält nur Seiten, deren Inhalt auf ihnen bleibt.
+
+### Der Fortsetzungsvermerk
+
+`overflow.mark` legt die Worte am Ende eines abgeschnittenen Stücks fest:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Wert</th>
+      <th>Vermerk</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>nicht gesetzt</td>
+      <td>Die Fortsetzungsworte des Rahmenstils (<code>continuesMarker</code> seines Kastenstils), die der Sprache des Dokuments folgen: „Continued“ auf Englisch, „Continúa“ auf Spanisch, „Continua“ auf Katalanisch, Italienisch und Portugiesisch, „À suivre“ auf Französisch, „Wird fortgesetzt“ auf Deutsch, „接下页“ auf Chinesisch, „次ページへ続く“ auf Japanisch, „يتبع“ auf Arabisch. Es sind dieselben Worte wie bei geteilten Tabellen und geteilten Kästen.</td>
+    </tr>
+    <tr>
+      <td>ein String</td>
+      <td>Genau diese Worte: <code>"weiter auf der nächsten Seite"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>false</code></td>
+      <td>Kein Vermerk; das Stück fasst eine Zeile mehr.</td>
+    </tr>
+  </tbody>
+</table>
+
+Der Vermerk steht unter der letzten Zeile des Stücks, in der Textschrift des Kastens, ausgerichtet und geneigt, wie es `continuesMarkerAlign` und `continuesMarkerItalic` des Stils angeben (standardmäßig rechtsbündig und kursiv). Er gehört zum Seitenapparat: Das EPUB mit fließendem Layout lässt ihn weg, das getaggte PDF kennzeichnet ihn als Artefakt. Ein Rahmen, der auf derselben Seite mit `next` verkettet ist, trägt keinen Vermerk.
+
+Das Stück auf der hinzugefügten Seite beginnt ohne Reiter und Titel des Rahmens, wie die späteren Teile eines geteilten Kastens. Ein Stil mit `repeatTitle: true` wiederholt dort seinen Titel mit seinem `continuedSuffix` (auf Deutsch „(Forts.)“), der anzeigt, woher der Text kommt.
+
 ## Umbruchprotokoll
 
 Jede zusammengesetzte Seite führt ein Protokoll darüber, was der Umbruch gegenüber der Zeichnung der Vorlage verändert hat: welcher Rahmen gewachsen ist, Platz abgegeben oder sich verschoben hat, um wie viel und welcher Rahmen das ausgelöst hat. Passt der Text einer Seite in ihre Vorlage, bleibt das Protokoll leer.
@@ -394,6 +475,10 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>textScaled</code></td>
       <td>Die Umbruchstufen haben den Text des Rahmens auf <code>scale</code> verkleinert.</td>
+    </tr>
+    <tr>
+      <td><code>continued</code></td>
+      <td>Der Inhalt des Rahmens läuft auf einer Seite weiter, die nach dieser hinzukommt: <code>toPage</code> ist der Index dieser Seite im Dokument, <code>toFrame</code> die ID des Rahmens, der ihn dort aufnimmt (<code>cp0:dinero&#126;1</code>). In Worten: „dinero continued on page 9“, mit der gedruckten Seitenzahl.</td>
     </tr>
     <tr>
       <td><code>overflow</code></td>

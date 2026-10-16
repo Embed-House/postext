@@ -130,6 +130,11 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td>La sortida paginada talla el que no hi cap al peu del marc; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida.</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>El contingut d'un marc ha continuat en pàgines afegides darrere de la seva pàgina composta (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>) tantes vegades com pàgines pot afegir una pàgina composta, 16, i encara no hi cap (<code>template</code> i <code>frame</code> de l'última pàgina afegida, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). El dona la maquetació, amb el <code>pageIndex</code> de l'última pàgina afegida.</td>
+      <td>La sortida paginada talla la resta al peu d'aquell marc; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>L'obertura d'una pàgina composta i la seva plantilla no coincideixen en la doble pàgina (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, l'<code>spread</code> de l'obertura; <code>templateSpread</code>, el de la plantilla).</td>
       <td>Mana la plantilla: una plantilla de doble pàgina es compon en dues pàgines encarades, i qualsevol altra en una.</td>

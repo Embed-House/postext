@@ -134,7 +134,7 @@ Um modelo que define só o seu `id` e um quadro é uma página inteira com esse 
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>este modelo</td>
-      <td>O modelo das páginas acrescentadas quando um quadro continua na página seguinte (<code>overflow.continueIn: 'next-page'</code>). Sem valor, a página acrescentada usa este modelo com apenas os quadros que continuam preenchidos.</td>
+      <td>O modelo das páginas acrescentadas quando um quadro continua na página seguinte (<code>overflow.continueIn: 'next-page'</code>). Sem valor, a página acrescentada é este modelo diagramado de novo com apenas os quadros que continuam preenchidos; os outros não ocupam espaço. Uma página dupla aqui faz da continuação uma página dupla. Veja <a href="/pt/docs/composed-pages#quando-o-texto-continua">Páginas compostas › Quando o texto continua</a>.</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -273,13 +273,13 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>nenhum</td>
-      <td>Onde continua o conteúdo que não cabe: <code>'#frame'</code> (outro quadro da página, como <code>next</code>), <code>'next-page'</code> (o mesmo quadro numa página acrescentada depois desta) ou <code>'template:&lt;id&gt;'</code> (uma página desse modelo).</td>
+      <td>Onde continua o conteúdo que não cabe: <code>'#frame'</code> (outro quadro da página, como <code>next</code>), <code>'next-page'</code> (o mesmo quadro numa página acrescentada depois desta, a partir de <code>overflowTemplate</code>) ou <code>'template:&lt;id&gt;'</code> (uma página desse modelo: o quadro de mesmo nome ou, se não houver, o quadro de fluxo dele). Um quadro de uma página acrescentada sem regra própria continua com a regra que trouxe o conteúdo, até 16 páginas acrescentadas.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>a do idioma</td>
-      <td>A marca no fim de um trecho cortado. Sem valor, a palavra de continuação do idioma do documento (a mesma das tabelas divididas); <code>false</code> não põe nenhuma.</td>
+      <td>A marca no fim de um trecho cortado para outra página. Sem valor, o <code>continuesMarker</code> do estilo do quadro, que segue o idioma do documento (“Continued”, “Continúa”, “À suivre”…, as palavras das tabelas divididas); uma string põe essas palavras; <code>false</code> não põe nenhuma. Um quadro encadeado com <code>next</code> na mesma página não leva marca.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -457,7 +457,7 @@ Quando o conteúdo de um quadro é mais alto que o espaço que o grupo lhe dá, 
 - `minHeight` nos outros quadros do grupo: até onde eles devolvem espaço; um quadro nunca fica abaixo do que o próprio conteúdo precisa.
 - `fit.scaleImages` e `fit.imageMinScale`: se as imagens do quadro e do grupo podem ser diagramadas menores, e até que escala (80 % por padrão).
 - `fit.shrinkText` e `fit.minScale`: se o texto do quadro pode ser diagramado menor, e até que escala (90 % por padrão). A escala é a mesma para o corpo, a entrelinha e o espaçamento; o quadro mantém o seu tamanho.
-- `overflow.continueIn`: onde o conteúdo continua quando nada disso basta.
+- `overflow.continueIn`: onde o conteúdo continua quando nada disso basta: em outro quadro ou numa página acrescentada depois desta (`'next-page'`, `'template:<id>'`), onde o texto segue no tamanho integral depois da `overflow.mark` do trecho.
 
 As escalas vão em passos de 2,5 % e a diagramação usa a maior com que o conteúdo cabe, então um texto que passa uma linha do limite fica em 97,5 %, não no mínimo. Uma caixa que precisa manter o corpo do texto usa `fit: { shrinkText: false }`; numa página cujas imagens precisam manter o tamanho, os quadros do grupo usam `fit: { scaleImages: false }`:
 
@@ -493,7 +493,7 @@ No código, `resolvePageTemplate(config, id, { parity })` devolve um modelo com 
 
 ### O que a diagramação aplica
 
-A diagramação aplica o posicionamento e os tamanhos de cada quadro (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `layer`, `rotate`, `exclude` (e o seu `wrap`), `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, além de `area`, `grid`, `decoration`, `header`, `footer` e `variants` do modelo. São lidos e verificados, mas ainda não aplicados: a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` de um grupo; os seus quadros mantêm o próprio posicionamento), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, o `writingMode` e a `direction` de um quadro, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
+A diagramação aplica o posicionamento e os tamanhos de cada quadro (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `layer`, `rotate`, `exclude` (e o seu `wrap`), `flow`, `takes`, `next` e `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`) com `overflow.mark`, além de `area`, `grid`, `decoration`, `header`, `footer`, `variants` e `overflowTemplate` do modelo. São lidos e verificados, mas ainda não aplicados: a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` de um grupo; os seus quadros mantêm o próprio posicionamento), `fit`, o `writingMode` e a `direction` de um quadro, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
 
 ### Páginas duplas
 

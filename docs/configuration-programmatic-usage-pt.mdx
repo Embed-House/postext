@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>A saída paginada corta o que não cabe no pé do bloco; o texto continua no documento, no mapa de origem e no EPUB de layout fluido.</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>O conteúdo de um bloco continuou em páginas acrescentadas depois da sua página composta (<code>overflow.continueIn: 'next-page'</code> ou <code>'template:&lt;id&gt;'</code>) tantas vezes quantas páginas uma página composta pode acrescentar, 16, e ainda não cabe (<code>template</code> e <code>frame</code> da última página acrescentada, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). Vem da diagramação, com o <code>pageIndex</code> da última página acrescentada.</td>
+      <td>A saída paginada corta o resto no pé desse bloco; o texto continua no documento, no mapa de origem e no EPUB de layout fluido.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>A abertura de uma página composta e o seu modelo discordam sobre a página dupla (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, o <code>spread</code> da abertura; <code>templateSpread</code>, o do modelo).</td>
       <td>Vale o modelo: um modelo de página dupla é composto em duas páginas lado a lado, e qualquer outro em uma.</td>

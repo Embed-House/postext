@@ -134,7 +134,7 @@ const config: PostextConfig = {
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>このテンプレート</td>
-      <td>フレームが次のページに続くとき（<code>overflow.continueIn: 'next-page'</code>）に加えるページのテンプレートです。未設定なら、加えたページはこのテンプレートを使い、続きのフレームだけを埋めます。</td>
+      <td>フレームが次のページに続くとき（<code>overflow.continueIn: 'next-page'</code>）に加えるページのテンプレートです。未設定なら、加えたページはこのテンプレートをもう一度組んで続きのフレームだけを埋めたものになり、ほかのフレームは場所をとりません。ここに見開きのテンプレートを指定すると、続きも見開きになります。<a href="/ja/docs/composed-pages#文章が追加ページに続くとき">テンプレートページ › 文章が追加ページに続くとき</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -273,13 +273,13 @@ const config: PostextConfig = {
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>なし</td>
-      <td>入りきらない中身の続く先です。<code>'#frame'</code>（ページのほかのフレームで、<code>next</code>と同じ）、<code>'next-page'</code>（このページの後に加えるページの同じフレーム）、<code>'template:&lt;id&gt;'</code>（そのテンプレートのページ）のいずれかです。</td>
+      <td>入りきらない中身の続く先です。<code>'#frame'</code>（ページのほかのフレームで、<code>next</code>と同じ）、<code>'next-page'</code>（このページの後に<code>overflowTemplate</code>で加えるページの同じフレーム）、<code>'template:&lt;id&gt;'</code>（そのテンプレートのページで、同じ名前のフレーム、なければ<code>flow</code>のフレーム）のいずれかです。追加ページのフレームに自分の規則がなければ、内容を運んできた規則で続け、追加ページは16ページまでです。</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>言語による</td>
-      <td>切れた部分の終わりに付ける目印です。未設定なら、文書の言語の「続く」の語を使います（分割した表と同じ）。<code>false</code>なら何も付けません。</td>
+      <td>別のページへ続けるために切れた部分の終わりに付ける目印です。未設定なら、フレームのスタイルの<code>continuesMarker</code>を使い、これは文書の言語に従います（「Continued」「Continúa」「À suivre」など、分割した表と同じ語）。文字列を指定すればその文字列、<code>false</code>なら何も付けません。同じページで<code>next</code>によってつないだフレームには付きません。</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -457,7 +457,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 - グループのほかのフレームの`minHeight`：それらがどこまで空間を返すかを決めます。どのフレームも、自分の中身に必要な高さより小さくはなりません。
 - `fit.scaleImages`と`fit.imageMinScale`：フレームとそのグループの画像を小さくしてよいか、どこまで小さくしてよいか（既定は80%）。
 - `fit.shrinkText`と`fit.minScale`：フレームのテキストを小さくしてよいか、どこまで小さくしてよいか（既定は90%）。文字サイズ、行送り、アキは同じ比率で縮み、フレームの大きさは変わりません。
-- `overflow.continueIn`：これらのどれでも足りないとき、中身の続きをどこに流すか。
+- `overflow.continueIn`：これらのどれでも足りないとき、中身の続きをどこに流すか。別のフレームか、このページの後に加えるページ（`'next-page'`、`'template:<id>'`）で、追加ページでは断片の`overflow.mark`の後、テキストが元の大きさで続きます。
 
 縮小率は2.5%刻みで、割り付けは収まるもっとも大きな値を選びます。1行だけ長いテキストなら、最小値ではなく97.5%で組まれます。文字サイズを変えてはいけない囲みには`fit: { shrinkText: false }`を、画像の大きさを変えてはいけないページにはグループのフレームに`fit: { scaleImages: false }`を設定します。
 
@@ -493,7 +493,7 @@ Sandboxがテンプレートを保存するとき、既定値と同じ値も捨�
 
 ### 割り付けに反映される設定
 
-割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn: "#frame"`、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`です。次の設定は読み込まれて検査されますが、まだ割り付けには反映されません。グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。グループのフレームはそれぞれの配置を保ちます）、`fit`、`overflow.continueIn: "next-page"`と`overflowTemplate`、フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`です。幅の`'auto'`は`'fill'`として扱います。
+割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`）と`overflow.mark`、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`overflowTemplate`です。次の設定は読み込まれて検査されますが、まだ割り付けには反映されません。グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。グループのフレームはそれぞれの配置を保ちます）、`fit`、フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`です。幅の`'auto'`は`'fill'`として扱います。
 
 ### 見開き
 

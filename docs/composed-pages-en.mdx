@@ -175,7 +175,7 @@ Content that names no slot goes to the frame marked `flow`; the first heading of
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-The text is cut between lines and goes on in the next frame, broken again at that frame's width, with nothing lost or repeated. `overflow.continueIn: "#frame"` means the same. Continuing on the next page is planned (`"next-page"`).
+The text is cut between lines and goes on in the next frame, broken again at that frame's width, with nothing lost or repeated. `overflow.continueIn: "#frame"` means the same. To go on on a page added after this one, see [When the text continues](#when-the-text-continues).
 
 ### Frames that push text
 
@@ -196,16 +196,16 @@ Frames paint in the order of their `layer`: the decoration at layer 0, frames at
 
 ### Content that does not fit
 
-A frame whose content is taller than the frame, with no next frame to go on in, keeps all of it in the document but shows only what fits: the rest is cut at the frame's foot on paged output, and the warning [`frameOverflow`](#frameoverflow) says how much. Content that no frame takes (no flow frame, or a frame missing on this side) is set in the running text on the page after the composed page.
+A frame whose content is taller than the frame, with no next frame to go on in and no page to continue on (`overflow.continueIn`), keeps all of it in the document but shows only what fits: the rest is cut at the frame's foot on paged output, and the warning [`frameOverflow`](#frameoverflow) says how much. Content that no frame takes (no flow frame, or a frame missing on this side) is set in the running text on the page after the composed page.
 
 ## Outside print: HTML, EPUB and tagged PDF
 
 Every output reads a composed page in the order of its Markdown, not in the order the template lists its frames or paints its layers.
 
-- **Reflowable EPUB.** The page becomes a section (`<section class="pt-composed pt-composed-tema-cajas">`) that opens with the page's page-break marker. Each frame is one block of it (`<div class="pt-frame pt-frame-dinero">`), placed where its content first appears in the Markdown; a frame and the frames its `next` chain goes on in make one block. A frame drawn in a callout style keeps that style's box: background, border, padding, body text, and its `label` as the box's title. A frame with no style is a plain block. The decoration (background pictures, cards, design text) belongs to the printed page and is left out.
+- **Reflowable EPUB.** The page becomes a section (`<section class="pt-composed pt-composed-tema-cajas">`) that opens with the page's page-break marker. Each frame is one block of it (`<div class="pt-frame pt-frame-dinero">`), placed where its content first appears in the Markdown; a frame and the frames its `next` chain goes on in make one block, and so does a frame whose content continues on added pages: the pieces are joined, a paragraph cut between two pages is one paragraph, and the added page's page-break marker stands inside it, where that page's text starts. A frame drawn in a callout style keeps that style's box: background, border, padding, body text, and its `label` as the box's title. A frame with no style is a plain block. The decoration (background pictures, cards, design text) belongs to the printed page and is left out.
 - **Figure labels.** The picture an EPUB carries does not show the `::label` texts of a `:::figure`, so the reflowable book lists them right after the picture, inside its figure, in the order written: a list hidden from sight (`pt-figure-labels pt-hidden`) that a screen reader reads once. In the HTML viewer, the fixed-layout EPUB and the tagged PDF they follow the picture's alternative text, `A family with a shopping basket (Rent, Electricity, Food)`; Chinese and Japanese labels take `（…、…）`, Arabic ones the Arabic comma.
 - **HTML viewer and fixed-layout EPUB.** Both show the printed page with its template applied: each frame in its box, turned by `rotate`, clipped when its content overflows, painted over the frames of lower layers, the decoration at layer 0. The markup lists the frames in reading order and paints them in layer order with `z-index`, so assistive technology follows the Markdown while the page looks as printed. Decorative pictures are hidden from assistive technology (`alt=""`). The decoration's faces are among those the Sandbox embeds in an EPUB; a fixed-layout EPUB written without one of them reports `missingFont`.
-- **Tagged PDF.** The structure tree reads the frames in the same order. Each frame, or chain of frames, is a `Div` holding its headings, paragraphs and lists; its pictures are `Figure` elements whose `Alt` carries the labels; the decoration is a layout artifact.
+- **Tagged PDF.** The structure tree reads the frames in the same order. Each frame, or chain of frames, is a `Div` holding its headings, paragraphs and lists, and the pieces of a frame continued on added pages are that same `Div` (a paragraph cut between pages is one `P`, the continuation mark an artifact); its pictures are `Figure` elements whose `Alt` carries the labels; the decoration is a layout artifact.
 
 From code, a figure's labels are on its block as `resourceBlock.labels` (text, anchor or point, style and source range), and `composedReadingOrder(composedPaintOrder(page))` lists a page's decoration and frames in reading order.
 
@@ -265,6 +265,12 @@ This warning comes from the layout, not from the source checks above: it appears
 
 **Fix.** Apply one of the proposals: each comes with its value, worked out on the page (see [The warning and its proposals](#the-warning-and-its-proposals)). Otherwise give the frame more room, chain it to another frame with `next`, shorten the text, or set the page with another template.
 
+### frameContinuationLimit
+
+**Cause.** A frame whose `overflow.continueIn` is `'next-page'` or `'template:<id>'` sent what it could not hold to an added page, and that page's frame sent the rest on again, page after page, until the composed page had added the most pages it may: 16 (see [When the text continues](#when-the-text-continues)). What is left is cut at the foot of the frame on the last added page; it stays in the document, the source map and the reflowable EPUB. The warning gives the template and frame of that page, the number of pages added (`pages`), the height cut (`overflowMm`), the frame's `configPath` and the page. Most often the frame that takes the content on the added page is far smaller than the text.
+
+**Fix.** Give that frame more room (its height, or an `overflowTemplate` with a larger frame), or shorten the text. A box that runs over more than a few pages usually belongs in the running text.
+
 ## When the text grows
 
 A composed page rearranges itself inside the limits its template declares. Write a longer text in the first box of a page whose boxes form a stack group, and the box grows to hold it while the boxes below, and the photos and decoration anchored to them, move down; no line of the template changes. A shorter text gives the box back its declared height. A frame or a decoration element marked `pin` stays where the template puts it, for a box that has to sit on the artwork. How stacks and rows share space, and which frame gives way first, is set in the template: see [Configuration › How groups share space](/en/docs/configuration-composed-pages#how-groups-share-space).
@@ -305,12 +311,12 @@ A frame whose content does not fit tries, one after another, the ways its templa
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>The frame continues on another page (<code>overflow.continueIn: 'next-page'</code> or <code>'template:&lt;id&gt;'</code>). This release reports the step; the added page is laid out by a later one.</td>
+      <td>The frame continues on another page (<code>overflow.continueIn: 'next-page'</code> or <code>'template:&lt;id&gt;'</code>): it is cut at its foot with its mark and the rest goes on on a page added after this one (see <a href="#when-the-text-continues">When the text continues</a>). Its text and pictures go back to full size, since what does not fit goes on anyway. No warning is raised.</td>
     </tr>
   </tbody>
 </table>
 
-When no step makes the content fit, the frame is cut at its foot, keeps the scales the ladder reached, and the layout reports `frameOverflow`. Each step lays the whole page out again, so the result depends only on that page: the same input gives the same page, frames that overflow are taken in template order, and a change on one composed page leaves every other page as it was. The settings are in [Configuration › When content does not fit](/en/docs/configuration-composed-pages#when-content-does-not-fit).
+When no step makes the content fit, the frame is cut at its foot, keeps the scales the ladder reached, and the layout reports `frameOverflow`. A frame on an added page that takes none of the content it receives does not send it on again (it would add pages for ever): it reports `frameOverflow` too, with `continue` among the steps tried. Each step lays the whole page out again, so the result depends only on that page: the same input gives the same page, frames that overflow are taken in template order, and a change on one composed page leaves every other page as it was. The settings are in [Configuration › When content does not fit](/en/docs/configuration-composed-pages#when-content-does-not-fit).
 
 ### The warning and its proposals
 
@@ -359,6 +365,81 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
 
 The Checks panel shows the same entry in the language of the interface.
 
+## When the text continues
+
+A frame can send what it cannot hold to a page added after its composed page. The rule is the frame's `overflow.continueIn`:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Value</th>
+      <th>Where the content goes on</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'#frame'</code></td>
+      <td>Another frame of the same page, as <code>next</code> (see <a href="#chaining-frames">Chaining frames</a>).</td>
+    </tr>
+    <tr>
+      <td><code>'next-page'</code></td>
+      <td>The same frame on a page added after this one, built from the template's <code>overflowTemplate</code>. Without one, the page is the same template laid again with only that frame filled: the other frames take no room (their heights follow their empty content and they leave their groups), so the frame starts near the head of the page, and the decoration and running heads are the template's.</td>
+    </tr>
+    <tr>
+      <td><code>'template:&lt;id&gt;'</code></td>
+      <td>A page of that template.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json
+{ "id": "tema-cajas", "overflowTemplate": "tema-sigue",
+  "frames": [
+    { "name": "dinero", "style": "caja-azul", "maxHeight": { "value": 40, "unit": "mm" },
+      "overflow": { "continueIn": "next-page" } } ] },
+{ "id": "tema-sigue",
+  "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
+```
+
+Continuing is the last step of the [reflow ladder](#when-it-still-does-not-fit): a frame first grows, makes room in its group and has its pictures and text set smaller as its template allows, and only when that is not enough is it cut at its foot. Then its text and pictures go back to full size, the piece ends with the continuation mark, and the rest goes on, broken again at the width of the frame that takes it, from the line where it was cut. Nothing is lost or repeated, and no warning is raised.
+
+- **Which frame takes it.** On the added page the content goes on in the frame of the same name; when the template has none, in its flow frame; failing that, in its first frame not already taken. Several frames of a page that continue to the same template share one added page when that template has a frame for each; otherwise the next one gets a page of its own. A frame of the added page that receives nothing is left empty.
+- **Again and again.** A piece that still does not fit goes on again, on the next added page, with the frame's own `overflow.continueIn` when it has one there, or else with the rule that brought it. A composed page adds at most 16 pages one after another; what still does not fit on the last one is cut and reported as [`frameContinuationLimit`](#framecontinuationlimit). A frame of an added page too small to take any of it reports `frameOverflow` instead of adding pages.
+- **Ordinary pages.** The added pages are pages of the book: they are numbered, carry the running heads of their template (or the section's), take the `variants` of their side, and the `{attr.x}` of the page fence still reaches their decoration. An overflow template with `spread: true` opens on the next verso, with a parity blank before it when needed, and takes the recto after it; a spread whose `overflowTemplate` is a single page continues on single pages. The text after the page fence starts on the page after the last added page.
+- **Ids.** A frame of the n-th added page is `cp0:<name>~<n>`; the frame that takes the content is named after the frame of the fence's own page that first sent it on (`cp0:dinero~1`, `cp0:dinero~2`), so a selection keeps its element whichever frame takes it. Each frame records the frame it continues from or into (`continuedFrom`, `continuesTo`), the page's `VDTPage.composed.continuationOf` is the index of the fence's own page, and the blocks of the pieces carry the box's id with `-cont-<n>`, as split callouts do.
+- **Relayout.** A composed page whose content continues is laid out afresh, with its added pages, on every build: the page memo keeps only pages whose content stays on them.
+
+### The continuation mark
+
+`overflow.mark` sets the words at the end of a cut piece:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Value</th>
+      <th>Mark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>unset</td>
+      <td>The continuation words of the frame's style (<code>continuesMarker</code> of its callout style), which follow the document's language: «Continued» in English, «Continúa» in Spanish, «Continua» in Catalan, Italian and Portuguese, «À suivre» in French, «Wird fortgesetzt» in German, «接下页» in Chinese, «次ページへ続く» in Japanese, «يتبع» in Arabic. They are the words split tables and split boxes use.</td>
+    </tr>
+    <tr>
+      <td>a string</td>
+      <td>Those words: <code>"sigue en la página siguiente"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>false</code></td>
+      <td>No mark; the piece holds a line more.</td>
+    </tr>
+  </tbody>
+</table>
+
+The mark is set under the piece's last line, in the box's body face, aligned and slanted as the style's `continuesMarkerAlign` and `continuesMarkerItalic` say (right and italic by default). It is pagination furniture: the reflowable EPUB leaves it out, the tagged PDF marks it as an artifact. A frame chained with `next` on the same page carries no mark.
+
+The piece on the added page opens without the frame's tab and title, as the later parts of a split box do. A style with `repeatTitle: true` repeats its title there with its `continuedSuffix` («(cont.)»), which serves as a "continued from" mark.
+
 ## Reflow log
 
 Each composed page keeps a log of what the layout changed against the template's own drawing: which frame grew, gave space back or moved, by how much, and which frame set it off. A page whose text fits its template logs nothing.
@@ -394,6 +475,10 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>textScaled</code></td>
       <td>The reflow ladder set the frame's text at <code>scale</code>.</td>
+    </tr>
+    <tr>
+      <td><code>continued</code></td>
+      <td>The frame's content goes on on a page added after this one: <code>toPage</code> is that page's index in the document and <code>toFrame</code> the id of the frame that takes it there (<code>cp0:dinero&#126;1</code>). In words: «dinero continued on page 9», with the page's printed number.</td>
     </tr>
     <tr>
       <td><code>overflow</code></td>

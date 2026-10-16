@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>ページ単位の出力では、収まらない部分が枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>枠の内容が、テンプレートページの後に加えるページへ（<code>overflow.continueIn: 'next-page'</code>または<code>'template:&lt;id&gt;'</code>）、テンプレートページが加えられる上限の16ページ分続いても、まだ収まらない（<code>template</code>と<code>frame</code>は最後の追加ページのもの、<code>fenceIndex</code>、<code>pages</code>、<code>overflowMm</code>、<code>configPath</code>）。割り付けが出す警告で、最後の追加ページの<code>pageIndex</code>が付きます。</td>
+      <td>ページ単位の出力では、残りがその枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>テンプレートページの開始行とテンプレートで見開きの指定が食い違っています（<code>template</code>、<code>fenceIndex</code>。<code>fence</code>は開始行の<code>spread</code>、<code>templateSpread</code>はテンプレートの指定）。</td>
       <td>テンプレートに従います。見開きのテンプレートは向かい合う2ページに、それ以外は1ページに組まれます。</td>

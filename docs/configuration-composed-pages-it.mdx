@@ -134,7 +134,7 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>questo modello</td>
-      <td>Il modello delle pagine aggiunte quando una cornice continua nella pagina successiva (<code>overflow.continueIn: 'next-page'</code>). Se non è impostato, la pagina aggiunta usa questo modello con riempite solo le cornici che continuano.</td>
+      <td>Il modello delle pagine aggiunte quando una cornice continua nella pagina successiva (<code>overflow.continueIn: 'next-page'</code>). Se non è impostato, la pagina aggiunta è questo modello impaginato di nuovo con riempite solo le cornici che continuano; le altre non occupano spazio. Se qui c’è una doppia pagina, anche il proseguimento è una doppia pagina. Vedi <a href="/it/docs/composed-pages#quando-il-testo-prosegue">Pagine composte › Quando il testo prosegue</a>.</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -273,13 +273,13 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>nessuno</td>
-      <td>Dove prosegue il contenuto che non entra: <code>'#frame'</code> (un’altra cornice della pagina, come <code>next</code>), <code>'next-page'</code> (la stessa cornice in una pagina aggiunta dopo questa) o <code>'template:&lt;id&gt;'</code> (una pagina di quel modello).</td>
+      <td>Dove prosegue il contenuto che non entra: <code>'#frame'</code> (un’altra cornice della pagina, come <code>next</code>), <code>'next-page'</code> (la stessa cornice in una pagina aggiunta dopo questa, con <code>overflowTemplate</code>) o <code>'template:&lt;id&gt;'</code> (una pagina di quel modello: la sua cornice con lo stesso nome, altrimenti la sua cornice di flusso). Una cornice di una pagina aggiunta senza una regola propria prosegue con la regola che ha portato il contenuto, fino a 16 pagine aggiunte.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>quello della lingua</td>
-      <td>Il segno alla fine di un pezzo tagliato. Se non è impostato, la parola di continuazione della lingua del documento (quella delle tabelle divise); <code>false</code> non ne mette nessuno.</td>
+      <td>Il segno alla fine di un pezzo tagliato per un’altra pagina. Se non è impostato, il <code>continuesMarker</code> dello stile della cornice, che segue la lingua del documento («Continued», «Continúa», «À suivre»…, le parole delle tabelle divise); una stringa imposta quelle parole; <code>false</code> non ne mette nessuno. Una cornice concatenata con <code>next</code> nella stessa pagina non porta segno.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -457,7 +457,7 @@ Quando il contenuto di una cornice è più alto dello spazio che le dà il suo g
 - `minHeight` sulle altre cornici del gruppo: fin dove restituiscono spazio; una cornice non scende mai sotto quanto richiede il suo contenuto.
 - `fit.scaleImages` e `fit.imageMinScale`: se le immagini della cornice e del suo gruppo si possono rimpicciolire, e fino a quale scala (80 % per impostazione predefinita).
 - `fit.shrinkText` e `fit.minScale`: se il testo della cornice si può rimpicciolire, e fino a quale scala (90 % per impostazione predefinita). La scala è la stessa per il corpo, l’interlinea e le spaziature; la cornice mantiene la sua dimensione.
-- `overflow.continueIn`: dove prosegue il contenuto quando tutto questo non basta.
+- `overflow.continueIn`: dove prosegue il contenuto quando tutto questo non basta, in un’altra cornice o in una pagina aggiunta dopo questa (`'next-page'`, `'template:<id>'`), dove il testo riprende a dimensione piena dopo l’`overflow.mark` del pezzo.
 
 Le scale vanno a passi del 2,5 % e l’impaginazione sceglie la più grande che funziona, così un testo che sfora di una riga viene composto al 97,5 %, non al minimo. Un riquadro che deve mantenere il suo corpo imposta `fit: { shrinkText: false }`; una pagina le cui immagini devono mantenere la loro dimensione imposta `fit: { scaleImages: false }` sulle cornici del suo gruppo:
 
@@ -493,7 +493,7 @@ Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello
 
 ### Che cosa applica l’impaginazione
 
-L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `layer`, `rotate`, `exclude` (e il suo `wrap`), `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, oltre ad `area`, `grid`, `decoration`, `header`, `footer` e `variants` del modello. Vengono letti e controllati, ma non ancora applicati: la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` di un gruppo; le sue cornici mantengono la propria collocazione), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, il `writingMode` e la `direction` di una cornice, e il `bodyStyle` e la `palette` del modello. Una larghezza `'auto'` si legge come `'fill'`.
+L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `layer`, `rotate`, `exclude` (e il suo `wrap`), `flow`, `takes`, `next` e `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`) con `overflow.mark`, oltre ad `area`, `grid`, `decoration`, `header`, `footer`, `variants` e `overflowTemplate` del modello. Vengono letti e controllati, ma non ancora applicati: la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` di un gruppo; le sue cornici mantengono la propria collocazione), `fit`, il `writingMode` e la `direction` di una cornice, e il `bodyStyle` e la `palette` del modello. Una larghezza `'auto'` si legge come `'fill'`.
 
 ### Doppie pagine
 

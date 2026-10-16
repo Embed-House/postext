@@ -175,7 +175,7 @@ O conteúdo que não nomeia nenhum slot vai para o bloco marcado com `flow`; o p
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-O texto é cortado entre duas linhas e continua no bloco seguinte, quebrado de novo na largura desse bloco, sem perder nem repetir nada. `overflow.continueIn: "#frame"` quer dizer o mesmo. Continuar na página seguinte está previsto (`"next-page"`).
+O texto é cortado entre duas linhas e continua no bloco seguinte, quebrado de novo na largura desse bloco, sem perder nem repetir nada. `overflow.continueIn: "#frame"` quer dizer o mesmo. Para continuar em uma página acrescentada depois desta, veja [Quando o texto continua](#quando-o-texto-continua).
 
 ### Blocos que afastam o texto
 
@@ -196,16 +196,16 @@ Os blocos são pintados na ordem da sua `layer`: a decoração na camada 0, os b
 
 ### Conteúdo que não cabe
 
-Um bloco cujo conteúdo é mais alto que ele, sem um bloco seguinte onde continuar, guarda todo esse conteúdo no documento, mas só mostra o que cabe: o resto é cortado no pé do bloco na saída paginada, e o aviso [`frameOverflow`](#frameoverflow) diz quanto. O conteúdo que nenhum bloco recebe (não há bloco de fluxo, ou falta um bloco nesse lado) é composto no texto corrido, na página que vem depois da página composta.
+Um bloco cujo conteúdo é mais alto que ele, sem um bloco seguinte onde continuar nem uma página onde seguir (`overflow.continueIn`), guarda todo esse conteúdo no documento, mas só mostra o que cabe: o resto é cortado no pé do bloco na saída paginada, e o aviso [`frameOverflow`](#frameoverflow) diz quanto. O conteúdo que nenhum bloco recebe (não há bloco de fluxo, ou falta um bloco nesse lado) é composto no texto corrido, na página que vem depois da página composta.
 
 ## Fora do papel: HTML, EPUB e PDF marcado
 
 Toda saída lê uma página composta na ordem do seu Markdown, e não na ordem em que o modelo lista os seus blocos nem na ordem em que pinta as suas camadas.
 
-- **EPUB reflowable.** A página vira uma seção (`<section class="pt-composed pt-composed-tema-cajas">`) que abre com a marca de quebra de página. Cada bloco do modelo é um bloco dessa seção (`<div class="pt-frame pt-frame-dinero">`), posto onde o seu conteúdo aparece pela primeira vez no Markdown; um bloco e os blocos em que a sua cadeia `next` continua formam um só. Um bloco desenhado com um estilo de boxe mantém a caixa desse estilo: fundo, borda, margens internas, texto e o seu `label` como título do boxe. Um bloco sem estilo é um bloco simples. A decoração (imagens de fundo, cartões, textos de design) pertence à página impressa e fica de fora.
+- **EPUB reflowable.** A página vira uma seção (`<section class="pt-composed pt-composed-tema-cajas">`) que abre com a marca de quebra de página. Cada bloco do modelo é um bloco dessa seção (`<div class="pt-frame pt-frame-dinero">`), posto onde o seu conteúdo aparece pela primeira vez no Markdown; um bloco e os blocos em que a sua cadeia `next` continua formam um só, e o mesmo vale para um bloco cujo conteúdo continua em páginas acrescentadas: os pedaços se juntam, um parágrafo cortado entre duas páginas é um só parágrafo, e a marca de quebra da página acrescentada fica dentro dele, onde começa o texto dessa página. Um bloco desenhado com um estilo de boxe mantém a caixa desse estilo: fundo, borda, margens internas, texto e o seu `label` como título do boxe. Um bloco sem estilo é um bloco simples. A decoração (imagens de fundo, cartões, textos de design) pertence à página impressa e fica de fora.
 - **Rótulos das figuras.** A imagem que vai no EPUB não mostra os textos `::label` de uma `:::figure`, então o livro reflowable os lista logo depois da imagem, dentro da figura, na ordem em que foram escritos: uma lista escondida da vista (`pt-figure-labels pt-hidden`) que um leitor de tela lê uma vez só. No visualizador HTML, no EPUB de layout fixo e no PDF marcado eles vêm depois do texto alternativo da imagem, `Uma família com a cesta de compras (Aluguel, Luz, Comida)`; rótulos em chinês e japonês levam `（…、…）`, e os árabes, a vírgula árabe.
 - **Visualizador HTML e EPUB de layout fixo.** Os dois mostram a página impressa com o modelo aplicado: cada bloco na sua caixa, girado conforme `rotate`, recortado quando o conteúdo transborda, pintado sobre os blocos de camadas inferiores, a decoração na camada 0. A marcação lista os blocos na ordem de leitura e os pinta na ordem das camadas com `z-index`, de modo que as tecnologias assistivas seguem o Markdown enquanto a página parece impressa. Imagens decorativas ficam escondidas das tecnologias assistivas (`alt=""`). As fontes da decoração estão entre as que o Sandbox embute num EPUB; um EPUB de layout fixo escrito sem alguma delas avisa com `missingFont`.
-- **PDF marcado.** A árvore de estrutura lê os blocos na mesma ordem. Cada bloco, ou cadeia de blocos, é um `Div` com os seus títulos, parágrafos e listas; as suas imagens são elementos `Figure` cujo `Alt` traz os rótulos; a decoração é um artefato de layout.
+- **PDF marcado.** A árvore de estrutura lê os blocos na mesma ordem. Cada bloco, ou cadeia de blocos, é um `Div` com os seus títulos, parágrafos e listas, e os pedaços de um bloco que continua em páginas acrescentadas formam esse mesmo `Div` (um parágrafo cortado entre páginas é um só `P`, e a marca de continuação, um artefato); as suas imagens são elementos `Figure` cujo `Alt` traz os rótulos; a decoração é um artefato de layout.
 
 No código, os rótulos de uma figura ficam no seu bloco, em `resourceBlock.labels` (texto, âncora ou ponto, estilo e intervalo no fonte), e `composedReadingOrder(composedPaintOrder(page))` dá a decoração e os blocos de uma página na ordem de leitura.
 
@@ -265,6 +265,12 @@ Este aviso vem da diagramação, não das verificações do código-fonte descri
 
 **Correção.** Aplique uma das propostas: cada uma vem com o seu valor, calculado na página (veja [O aviso e suas propostas](#o-aviso-e-suas-propostas)). Se não, dê mais espaço ao bloco, encadeie-o a outro bloco com `next`, encurte o texto ou componha a página com outro modelo.
 
+### frameContinuationLimit
+
+**Causa.** Um bloco com `overflow.continueIn` igual a `'next-page'` ou `'template:<id>'` mandou o que não cabia nele para uma página acrescentada, e o bloco dessa página mandou o resto adiante de novo, página após página, até a página composta acrescentar todas as páginas que pode: 16 (veja [Quando o texto continua](#quando-o-texto-continua)). O que sobra é cortado no pé do bloco na última página acrescentada; continua no documento, no mapa de origem e no EPUB de layout fluido. O aviso informa o modelo e o bloco dessa página, o número de páginas acrescentadas (`pages`), a altura cortada (`overflowMm`), o `configPath` do bloco e a página. Na maioria das vezes, o bloco que recebe o conteúdo na página acrescentada é muito menor que o texto.
+
+**Correção.** Dê mais espaço a esse bloco (mais altura, ou um `overflowTemplate` com um bloco maior) ou encurte o texto. Um boxe que ocupa mais do que algumas páginas costuma ficar melhor no texto corrido.
+
 ## Quando o texto cresce
 
 Uma página composta se reorganiza dentro dos limites que o seu modelo declara. Se você escrever um texto mais longo na primeira caixa de uma página cujas caixas formam um grupo em pilha, a caixa cresce para comportá-lo e as caixas de baixo descem, junto com as fotos e a decoração ancoradas nelas; nenhuma linha do modelo muda. Com um texto mais curto, a caixa volta à altura declarada. Um bloco ou um elemento de decoração marcado com `pin` fica onde o modelo o coloca, para uma caixa que precisa ficar sobre a arte. Como as pilhas e as fileiras dividem o espaço, e qual bloco cede primeiro, é definido no modelo: veja [Configuração › Como os grupos dividem o espaço](/pt/docs/configuration-composed-pages#como-os-grupos-dividem-o-espaço).
@@ -305,12 +311,12 @@ Um bloco cujo conteúdo não cabe tenta, um depois do outro, os meios de abrir e
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>O bloco continua em outra página (<code>overflow.continueIn: 'next-page'</code> ou <code>'template:&lt;id&gt;'</code>). Esta versão informa o passo; a página acrescentada será diagramada por uma versão futura.</td>
+      <td>O bloco continua em outra página (<code>overflow.continueIn: 'next-page'</code> ou <code>'template:&lt;id&gt;'</code>): é cortado no pé com a sua marca, e o resto continua em uma página acrescentada depois desta (veja <a href="#quando-o-texto-continua">Quando o texto continua</a>). O texto e as imagens voltam ao tamanho integral, já que o que não cabe continua de qualquer forma. Nenhum aviso é dado.</td>
     </tr>
   </tbody>
 </table>
 
-Quando nenhum passo faz o conteúdo caber, o bloco é cortado no pé, mantém as escalas a que a escada chegou, e a diagramação dá o aviso `frameOverflow`. Cada passo diagrama a página inteira de novo, então o resultado depende só dessa página: a mesma entrada dá a mesma página, os blocos que transbordam são tratados na ordem do modelo, e uma mudança numa página composta deixa todas as outras como estavam. As configurações ficam em [Configuração › Quando o conteúdo não cabe](/pt/docs/configuration-composed-pages#quando-o-conteúdo-não-cabe).
+Quando nenhum passo faz o conteúdo caber, o bloco é cortado no pé, mantém as escalas a que a escada chegou, e a diagramação dá o aviso `frameOverflow`. Um bloco de uma página acrescentada que não recebe nada do conteúdo que lhe chega não o manda adiante de novo (acrescentaria páginas sem fim): ele também dá o aviso `frameOverflow`, com `continue` entre os passos tentados. Cada passo diagrama a página inteira de novo, então o resultado depende só dessa página: a mesma entrada dá a mesma página, os blocos que transbordam são tratados na ordem do modelo, e uma mudança numa página composta deixa todas as outras como estavam. As configurações ficam em [Configuração › Quando o conteúdo não cabe](/pt/docs/configuration-composed-pages#quando-o-conteúdo-não-cabe).
 
 ### O aviso e suas propostas
 
@@ -359,6 +365,81 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
 
 O painel Verificações mostra a mesma entrada no idioma da interface.
 
+## Quando o texto continua
+
+Um bloco pode mandar o que não cabe nele para uma página acrescentada depois da sua página composta. Quem decide é o `overflow.continueIn` do bloco:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Valor</th>
+      <th>Onde o conteúdo continua</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'#frame'</code></td>
+      <td>Em outro bloco da mesma página, como com <code>next</code> (veja <a href="#encadear-blocos">Encadear blocos</a>).</td>
+    </tr>
+    <tr>
+      <td><code>'next-page'</code></td>
+      <td>No mesmo bloco, em uma página acrescentada depois desta e montada com o <code>overflowTemplate</code> do modelo. Sem ele, a página é o mesmo modelo diagramado de novo só com esse bloco preenchido: os outros blocos não ocupam espaço (a altura deles acompanha o conteúdo vazio e eles saem dos seus grupos), então o bloco começa perto do alto da página, e a decoração e os cabeços são os do modelo.</td>
+    </tr>
+    <tr>
+      <td><code>'template:&lt;id&gt;'</code></td>
+      <td>Em uma página desse modelo.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json
+{ "id": "tema-cajas", "overflowTemplate": "tema-sigue",
+  "frames": [
+    { "name": "dinero", "style": "caja-azul", "maxHeight": { "value": 40, "unit": "mm" },
+      "overflow": { "continueIn": "next-page" } } ] },
+{ "id": "tema-sigue",
+  "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
+```
+
+Continuar em outra página é o último passo da [escada de ajuste](#quando-ainda-assim-não-cabe): o bloco primeiro cresce, abre espaço no seu grupo e diminui as imagens e o texto até onde o modelo permite, e só quando isso não basta é cortado no pé. Então o texto e as imagens voltam ao tamanho integral, o pedaço termina com a marca de continuação e o resto continua a partir da linha onde foi cortado, quebrado de novo na largura do bloco que o recebe. Nada se perde nem se repete, e nenhum aviso é dado.
+
+- **Qual bloco recebe.** Na página acrescentada, o conteúdo continua no bloco de mesmo nome; se o modelo não tem nenhum, no seu bloco de fluxo e, na falta dele, no primeiro bloco que ainda não esteja ocupado. Vários blocos de uma página que continuam no mesmo modelo dividem uma página acrescentada quando esse modelo tem um bloco para cada um; se não, o seguinte ganha uma página só para ele. Um bloco da página acrescentada que não recebe nada fica vazio.
+- **De novo e de novo.** Um pedaço que ainda não cabe continua outra vez, na próxima página acrescentada, com o `overflow.continueIn` que o bloco tiver ali ou, se não tiver, com a regra que o trouxe. Uma página composta acrescenta no máximo 16 páginas seguidas; o que ainda não cabe na última é cortado e gera o aviso [`frameContinuationLimit`](#framecontinuationlimit). Um bloco de uma página acrescentada pequeno demais para receber qualquer parte desse conteúdo dá o aviso `frameOverflow` em vez de acrescentar páginas.
+- **Páginas comuns.** As páginas acrescentadas são páginas do livro: são numeradas, levam os cabeços do seu modelo (ou os da seção) e as `variants` do seu lado, e o `{attr.x}` da cerca de página continua chegando à decoração delas. Um modelo de transbordamento com `spread: true` começa na próxima página par, com um branco de paridade antes quando preciso, e ocupa também a ímpar seguinte; uma página dupla cujo `overflowTemplate` é de página simples continua em páginas simples. O texto depois da cerca de página começa na página seguinte à última acrescentada.
+- **Ids.** Um bloco da n-ésima página acrescentada é `cp0:<name>~<n>`; o bloco que recebe o conteúdo leva o nome do bloco da página da cerca que o mandou adiante primeiro (`cp0:dinero~1`, `cp0:dinero~2`), de modo que uma seleção mantém o seu elemento seja qual for o bloco que o recebe. Cada bloco registra de qual bloco vem e em qual continua (`continuedFrom`, `continuesTo`), o `VDTPage.composed.continuationOf` da página é o índice da página da cerca, e os blocos de conteúdo dos pedaços levam o id do boxe com `-cont-<n>`, como os boxes divididos.
+- **Rediagramação.** Uma página composta cujo conteúdo continua em outras páginas é diagramada de novo, com as páginas acrescentadas, a cada compilação: a memória de páginas só guarda as páginas cujo conteúdo fica nelas.
+
+### A marca de continuação
+
+`overflow.mark` define as palavras com que termina um pedaço cortado:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Valor</th>
+      <th>Marca</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>não definido</td>
+      <td>As palavras de continuação do estilo do bloco (o <code>continuesMarker</code> do seu estilo de boxe), que seguem o idioma do documento: “Continued” em inglês, “Continúa” em espanhol, “Continua” em catalão, italiano e português, “À suivre” em francês, “Wird fortgesetzt” em alemão, “接下页” em chinês, “次ページへ続く” em japonês e “يتبع” em árabe. São as mesmas que as tabelas e os boxes divididos usam.</td>
+    </tr>
+    <tr>
+      <td>uma string</td>
+      <td>Essas palavras: <code>"continua na página seguinte"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>false</code></td>
+      <td>Nenhuma marca; o pedaço comporta uma linha a mais.</td>
+    </tr>
+  </tbody>
+</table>
+
+A marca é composta abaixo da última linha do pedaço, na fonte do texto do boxe, alinhada e inclinada conforme `continuesMarkerAlign` e `continuesMarkerItalic` do estilo (à direita e em itálico por padrão). É um elemento da paginação: o EPUB de layout fluido a deixa de fora e o PDF marcado a marca como artefato. Um bloco encadeado com `next` na mesma página não leva marca.
+
+O pedaço da página acrescentada abre sem a aba e o título do bloco, como as partes seguintes de um boxe dividido. Um estilo com `repeatTitle: true` repete ali o seu título seguido do seu `continuedSuffix` (“(cont.)”), que indica que o texto vem da página anterior.
+
 ## Registro de reajustes
 
 Cada página composta guarda um registro do que a diagramação mudou em relação ao desenho do modelo: qual bloco cresceu, devolveu espaço ou se moveu, quanto, e qual bloco provocou a mudança. Uma página cujo texto cabe no modelo não registra nada.
@@ -394,6 +475,10 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>textScaled</code></td>
       <td>A escada de ajuste diagramou o texto do bloco em <code>scale</code>.</td>
+    </tr>
+    <tr>
+      <td><code>continued</code></td>
+      <td>O conteúdo do bloco continua em uma página acrescentada depois desta: <code>toPage</code> é o índice dessa página no documento, e <code>toFrame</code>, o id do bloco que o recebe lá (<code>cp0:dinero&#126;1</code>). Em palavras: “dinero continued on page 9”, com o número impresso da página.</td>
     </tr>
     <tr>
       <td><code>overflow</code></td>

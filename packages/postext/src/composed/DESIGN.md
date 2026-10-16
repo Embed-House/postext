@@ -1,6 +1,6 @@
 # Composed pages: design (P1, drnachio/postext#847)
 
-Status: approved (P1); §5.8 records what P4 (#855) built. Programme tracker: drnachio/postext#846.
+Status: approved (P1); §5.8–§5.12 record what P4, P14, P7, P5 and P15 built. Programme tracker: drnachio/postext#846.
 Draft types: [`types.ts`](./types.ts) (no runtime effect).
 
 A composed page is a page whose form is a **template** (named frames, groups, decoration) held in
@@ -428,7 +428,7 @@ For a frame whose content does not fit, stop at the first step that makes it fit
 5. **Shrink the frame's text** uniformly in steps of 2.5 % down to `fit.minScale` (default 0.9;
    `fit.shrinkText: false` disables). Font size, leading and spacing scale together; the frame
    records `scale`.
-6. **Continue** (§5.6) when `overflow.continueIn` is set.
+6. **Continue** (§5.6, §5.12) when `overflow.continueIn` sends content to another page.
 7. **Warn** `frameOverflow`. The content that does not fit is clipped at the frame's edge on paged
    output (it is never dropped from reflowable output, the source map, or the warning).
 
@@ -701,6 +701,48 @@ Recorded where the implementation settles a point the sections above leave open,
   reason `noContour` (once per resource per pass). Without contours the VDT is unchanged (preset
   parity harness, 583 chapters, 0 diffs).
 
+### 5.12 What P15 built (#859)
+
+- **Where.** The ladder's step 6 (`layoutComposedPage`): a frame whose `overflow.continueIn` is
+  `'next-page'` or `'template:<id>'` (`continuesOffPage`) and that still overflows after
+  `shrinkText` is composed again with the frame in `FitState.goOn`: it is cut at its foot with
+  `splitCalloutFragment` (as a `next` chain is), its story's text scale and the picture scale its
+  own ladder set are dropped (the rest goes on, so shrinking gains nothing), and the cut
+  (`CalloutCut`, the pieces laid and the head's block id) is handed back as
+  `ComposedPageLayout.continuations`. No `frameOverflow` for it. `build.ts` (`placeComposedPage`)
+  adds the pages: generation after generation, one page per target template (`continuationTarget`:
+  `template:<id>`, else the page's `overflowTemplate`, else the same template *collapsed*), each a
+  fresh page after the last one laid (a spread target opens on the next verso, `breakToEvenPage`),
+  laid with `layoutComposedPage` and `ComposedPageInput.continuing` (no memo).
+- **Receivers** (`composed/continuation.ts`, `assignReceivers`): the frame of the same name, else
+  the flow frame, else the first frame free; a continuation that finds none waits for another page
+  of the same target. A receiver starts its chain on the added page (`chainPrev` ignores links into
+  it) and its story starts at the cut. `continuationTemplate` patches the added page's template:
+  the last frame of each receiver's chain goes on with the rule that brought the content unless it
+  sends content off the page itself; with `collapse` (the template laid again), every other frame is
+  `'auto'` with no min/max and leaves its groups, so it takes no room; on the last generation
+  (`MAX_CONTINUATION_PAGES`, 16) nothing goes on and a remaining overflow is reported as
+  `frameContinuationLimit` instead of `frameOverflow`. A receiver that takes none of its content
+  (the cut does not move) does not go on: the step is reverted and `frameOverflow` lists `continue`.
+- **Marks.** The frame cut for another page is laid in its style with `continuesMarkerEnabled` (the
+  callout layouter's marker under a fragment that goes on): `overflow.mark` string, `false` (none),
+  unset = the style's `continuesMarker`, resolved from `defaultTableContinuationStrings(locale)`
+  (10 site locales and more). Same-page `next` chains carry none. The start of a continuation has
+  no mark of its own: it is a `continuation` fragment (no tab, no title), and a style with
+  `repeatTitle` repeats its title with `continuedSuffix`, which is the "continued from" mark.
+- **VDT and ids.** Added pages are ordinary pages (`role: 'composed'`, numbered, running heads and
+  decoration of their template and side, `{attr.x}` of the fence) with
+  `VDTComposedPage.continuationOf` = the fence's own page. Frames there are `cp<n>:<name>~<k>` (k =
+  generation); a receiver is named by the slot that first sent the content (`cp0:dinero~2`). Blocks
+  go on as `<headBlockId>-cont-<pieces>` with the story's container id. The sending frame gets
+  `continuesTo`, the receiver `continuedFrom`, and the sending page's log a `continued` event with
+  `toPage` and `toFrame` (`composedReflowLog` words it with the page's printed number).
+- **Memo.** A page with continuations is never kept (`layoutComposedPageMemo`), so it and its
+  added pages are always laid together, fresh.
+- **Reflowable / tagged.** The EPUB walk opens no section for a page with `continuationOf`: its
+  blocks go on in the open stories (by container id), so the box is one frame and a cut paragraph
+  one paragraph with the page break inside. Tagged PDF already joins by container id (one `Div`).
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:
@@ -713,7 +755,7 @@ Every painted thing knows its origin:
 - Text produced by `{attr.x}`: the attribute's source range in the page fence (`attrSources`).
 - Contents entries: the heading they come from.
 
-Stable ids: a frame is `cp<fenceIndex>:<slot>` (plus `~<n>` for the n-th continuation piece); a
+Stable ids: a frame is `cp<fenceIndex>:<slot>` (plus `~<n>` on the n-th page added by continuation, §5.12); a
 label is `cp<fenceIndex>:<slot>:label:<anchor>`; same id in every locale and across relayouts.
 
 Relayout scope: the composed page's layout is memoised by (resolved template, slot content,
