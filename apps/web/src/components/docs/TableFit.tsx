@@ -22,11 +22,23 @@ export function TableFit() {
       table.removeAttribute("data-stack");
       if (table.offsetWidth > box.clientWidth + 1) table.setAttribute("data-stack", "");
     };
+    // After a jump in width (a phone turned, a window snapped) the first
+    // layout can still carry the container query of the old width: measure
+    // again on the next frame, once it has settled.
+    let frame = 0;
+    const pending = new Set<HTMLTableElement>();
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const table = (entry.target as HTMLElement).querySelector<HTMLTableElement>(":scope > table.docs-table");
-        if (table) fit(table);
+        if (!table) continue;
+        fit(table);
+        pending.add(table);
       }
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        pending.forEach(fit);
+        pending.clear();
+      });
     });
     for (const table of tables) if (table.parentElement) observer.observe(table.parentElement);
     let live = true;
@@ -35,6 +47,7 @@ export function TableFit() {
     });
     return () => {
       live = false;
+      cancelAnimationFrame(frame);
       observer.disconnect();
     };
   }, []);
