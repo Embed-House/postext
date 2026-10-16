@@ -180,6 +180,15 @@ function renderResourceNumber(
 /** Heading levels that {@link ResourceType.resetOn} may reference. */
 type ResetLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
+/** The heading level a `resetOn` resets at, or null for `'never'`. A type
+ *  written without one (#916) resets on every `h1`, like the built-in
+ *  types; a word that names no level never resets. */
+function resetLevelOf(resetOn: ResourceType['resetOn'] | undefined): ResetLevel | null {
+  if (resetOn === undefined || resetOn === null) return 1;
+  if (typeof resetOn !== 'string' || !/^h[1-6]$/.test(resetOn)) return null;
+  return Number(resetOn.slice(1)) as ResetLevel;
+}
+
 /** Returns true when the heading context crossed a `resetOn` boundary relative
  *  to the previous reference — i.e. the heading number at `resetOn`'s level (or
  *  any ancestor level) changed. */
@@ -337,8 +346,7 @@ export function computeResourceNumberingState(
     const type = typeById.get(typeId)!;
     const tokens = parseResourceTemplate(type.numberingTemplate, locale);
     const style = counterFormatToStyle(type.counterFormat, locale);
-    const resetLevel: ResetLevel | null =
-      type.resetOn === 'never' ? null : (Number(type.resetOn.slice(1)) as ResetLevel);
+    const resetLevel = resetLevelOf(type.resetOn);
 
     const inherited = start?.counters?.[typeId];
     let counter = inherited?.counter ?? 0;
@@ -381,6 +389,6 @@ export function renderTemplateNumber(
 /** Whether a counter reset at `resetOn` starts again between its last
  *  count (`prev`, none yet: `null`) and `cur` (#530). */
 export function counterResets(prev: HeadingContext | null, cur: HeadingContext, resetOn: ResourceType['resetOn']): boolean {
-  if (resetOn === 'never') return false;
-  return shouldResetCounter(prev, cur, Number(resetOn.slice(1)) as ResetLevel);
+  const level = resetLevelOf(resetOn);
+  return level !== null && shouldResetCounter(prev, cur, level);
 }

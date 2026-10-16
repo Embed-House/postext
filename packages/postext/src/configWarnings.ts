@@ -59,6 +59,7 @@ import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap 
 import { outputProfileInfo } from './color/catalogue';
 import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle';
 import { closestKey } from './util/closestKey';
+import { isResourceCounterReset } from './defaults/resourceTypes';
 import { validatePageTemplates } from './composed/validate';
 import { LINE_NUMBERS_ALIGNS, LINE_NUMBERS_COUNTS, LINE_NUMBERS_MULTI_COLUMN, LINE_NUMBERS_POSITIONS, LINE_NUMBERS_RESTARTS } from './defaults/lineNumbers';
 
@@ -305,8 +306,10 @@ function collectLineNumbersWarnings(config: PostextConfig): ConfigWarning[] {
 }
 
 const WRAP_SIDES = ['none', 'left', 'right', 'start', 'end'] as const;
+const RESET_CHOICES = ['never', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
 
-/** Text wrap (#627): a resource type's `defaultPlacement.wrap` that is no
+/** A resource type's `resetOn` that names no level (`unknownConfigValue`,
+ *  #916). Text wrap (#627): a resource type's `defaultPlacement.wrap` that is no
  *  side (`unknownConfigValue`), and one asked of a vertical document,
  *  which sets no text beside a figure (`wrapUnsupported`). */
 function collectWrapWarnings(config: PostextConfig): ConfigWarning[] {
@@ -315,6 +318,13 @@ function collectWrapWarnings(config: PostextConfig): ConfigWarning[] {
   const out: ConfigWarning[] = [];
   let vertical: boolean | undefined;
   types.forEach((t, i) => {
+    // A `resetOn` that names no level counts as `h1` (#916, see
+    // `completeResourceType`).
+    const resetOn = (t as { resetOn?: unknown } | undefined)?.resetOn;
+    if (resetOn !== undefined && !isResourceCounterReset(resetOn)) {
+      const suggestion = closestKey(String(resetOn), RESET_CHOICES);
+      out.push({ kind: 'unknownConfigValue', path: `resourceTypes[${i}].resetOn`, value: String(resetOn), used: 'h1', ...(suggestion ? { suggestion } : {}) });
+    }
     const wrap = (t as { defaultPlacement?: { wrap?: unknown } } | undefined)?.defaultPlacement?.wrap;
     if (wrap === undefined || wrap === 'none') return;
     const path = `resourceTypes[${i}].defaultPlacement.wrap`;

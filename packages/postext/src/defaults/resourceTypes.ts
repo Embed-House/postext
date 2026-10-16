@@ -156,7 +156,48 @@ export function effectiveResourceTypes(
   resources: ReadonlyArray<{ typeId: string }> = [],
 ): ResourceType[] {
   const locale = documentLocale(config);
-  const types = config?.resourceTypes ?? defaultResourceTypes(locale);
+  const types = config?.resourceTypes ? completeResourceTypes(config.resourceTypes, locale) : defaultResourceTypes(locale);
   if (types.some((t) => t.id === 'video') || !resources.some((r) => r.typeId === 'video')) return types;
   return [...types, defaultVideoResourceType(locale)];
+}
+
+const RESET_LEVELS: readonly string[] = ['never', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+
+/** Whether `value` is a `resetOn` the numbering knows. */
+export function isResourceCounterReset(value: unknown): value is ResourceType['resetOn'] {
+  return typeof value === 'string' && RESET_LEVELS.includes(value);
+}
+
+/** A resource type a config wrote in part (#916) with the fields it left out
+ *  filled in: the built-in type of the same id gives them (`figure`,
+ *  `table`, `video` in the document's language), else the built-in
+ *  numbering (`{h1}.{n}`, reset on every `h1`, decimal) and the type's own
+ *  name for the labels (`name` falls back to the id). A `resetOn` that names
+ *  no level becomes `h1` too (`collectConfigWarnings` reports it). */
+export function completeResourceType(type: Partial<ResourceType> & { id: string }, locale = 'en'): ResourceType {
+  const builtIn = defaultResourceTypes(locale).find((t) => t.id === type.id);
+  const str = (v: unknown): v is string => typeof v === 'string';
+  const name = str(type.name) ? type.name : builtIn?.name ?? String(type.id);
+  return {
+    ...builtIn,
+    ...type,
+    name,
+    shortLabel: str(type.shortLabel) ? type.shortLabel : builtIn?.shortLabel ?? name,
+    captionPrefix: str(type.captionPrefix) ? type.captionPrefix : builtIn?.captionPrefix ?? name,
+    numberingTemplate: str(type.numberingTemplate) ? type.numberingTemplate : builtIn?.numberingTemplate ?? stringsForLocale(locale).numberingTemplate ?? '{h1}.{n}',
+    resetOn: isResourceCounterReset(type.resetOn) ? type.resetOn : builtIn?.resetOn ?? 'h1',
+    counterFormat: str(type.counterFormat) ? type.counterFormat : 'decimal',
+  } as ResourceType;
+}
+
+/** A config's resource types, each one whole (see {@link completeResourceType}).
+ *  The same array comes back when none lacks a field, so the memos keyed by
+ *  it keep hitting. */
+export function completeResourceTypes(types: readonly ResourceType[], locale = 'en'): ResourceType[] {
+  const whole = (t: ResourceType): boolean =>
+    typeof t.name === 'string' && typeof t.shortLabel === 'string' && typeof t.captionPrefix === 'string' &&
+    typeof t.numberingTemplate === 'string' && isResourceCounterReset(t.resetOn) && typeof t.counterFormat === 'string';
+  if (!Array.isArray(types)) return defaultResourceTypes(locale);
+  if (types.every((t) => t && whole(t))) return types as ResourceType[];
+  return types.filter((t) => t && typeof t === 'object').map((t) => (whole(t) ? t : completeResourceType(t, locale)));
 }
