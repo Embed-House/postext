@@ -141,6 +141,9 @@ export function orientPageLinesToFrame(page: VDTPage): void {
   for (const col of page.columns) for (const block of col.blocks) orientBlock(block);
   for (const block of page.floats ?? []) orientBlock(block);
   for (const block of page.marginNotes) orientBlock(block);
+  // The half of a spread frame painted on the facing page (#861): a copy
+  // of the frame's blocks, set in this page's mirrored frame like its own.
+  for (const frame of page.composed?.frames ?? []) for (const block of frame.facingBlocks ?? []) orientBlock(block);
 }
 
 /** {@link orientPageLinesToFrame} on every page of `doc`. */

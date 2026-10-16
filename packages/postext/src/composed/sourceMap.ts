@@ -624,6 +624,8 @@ export interface SourceMatch {
   element: SourceElement;
 }
 
+const overlaps = (a: BoundingBox, b: BoundingBox): boolean =>
+  a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 const meets = (a: { start: number; end: number }, start: number, end: number): boolean =>
   end > start ? a.start < end && a.end > start : a.start <= start && a.end >= start;
 
@@ -683,9 +685,13 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
       ...(facing ? { facing: true as const } : {}),
     };
     const id = facing ? unfacing(block.id) : block.id;
+    // A page of a spread shows only its part of the sheet (#861): what a
+    // frame across the spine sets on the other half is the facing page's.
+    const clip = doc.pages[pageIndex]?.composed?.sheetClip;
+    const shown = (r: BoundingBox): boolean => !clip || overlaps(clip, r);
     block.lines.forEach((line, index) => {
       const range = lineRange(block, line);
-      if (!range || !meets(range, start, end)) return;
+      if (!range || !meets(range, start, end) || !shown(uprightRect(held?.frame, line.bbox))) return;
       out.push({
         pageIndex,
         element: {
@@ -703,7 +709,9 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
     for (const label of rb?.labels ?? []) {
       if (!meets({ start: label.sourceStart, end: label.sourceEnd }, start, end)) continue;
       const el = labelChain(label, rb!.resource.id, id, { x: 0, y: 0 }, file).find((e) => e.level === 'label')!;
-      out.push({ pageIndex, element: { ...el, ...(el.rect ? { rect: uprightRect(held?.frame, el.rect) } : {}), ...extra } });
+      const rect = el.rect ? uprightRect(held?.frame, el.rect) : undefined;
+      if (rect && !shown(rect)) continue;
+      out.push({ pageIndex, element: { ...el, ...(rect ? { rect } : {}), ...extra } });
     }
     const el = blockElement(block, file);
     if (el) out.push({ pageIndex, element: { ...el, id, ...(el.rect ? { rect: uprightRect(held?.frame, el.rect) } : {}), ...extra } });

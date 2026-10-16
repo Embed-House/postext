@@ -423,6 +423,10 @@ export function stampFigureLabelRects(doc: VDTDocument): void {
   for (const page of doc.pages) {
     for (const col of page.columns) for (const block of col.blocks) visit(block);
     for (const block of page.floats ?? []) visit(block);
+    // The half of a spread frame painted on the facing page (#861) is a
+    // copy of its blocks moved onto that page: its labels get their boxes
+    // there, so the facing page answers for the labels it shows.
+    for (const frame of page.composed?.frames ?? []) for (const block of frame.facingBlocks ?? []) visit(block);
   }
 }
 
