@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+Une étiquette sans style, ou dont le style ne fixe pas la typographie, prend la famille, le corps, la graisse et la couleur du texte courant. Les lignes d’une étiquette sur plusieurs lignes sont espacées de 1,15 fois son corps, ou de l’interligne du style de paragraphe emprunté. Par `paragraphStyle`, l’étiquette prend aussi l’italique et les capitales de ce style ; `fontStyle: 'italic'` et `textTransform: 'uppercase'` les ajoutent à un style qui n’en emprunte aucun. Une étiquette réduite pour tenir garde son halo en proportion.
+
 ### Champs d’étiquette d’un ancrage
 
 Les ancrages d’une image (`Resource.anchors`, les points que la bande dessinée utilise pour les locuteurs) acceptent quelques champs facultatifs pour les étiquettes. Ce sont des fractions de l’image : ils restent valables dans toutes les langues et quel que soit le recadrage de l’image. La bande dessinée les ignore.
@@ -659,6 +661,8 @@ Les ancrages d’une image (`Resource.anchors`, les points que la bande dessiné
     </tr>
   </tbody>
 </table>
+
+`start` et `end` suivent la direction de l’étiquette : dans une étiquette arabe, `start` est son bord droit. Un ancrage partagé par les éditions de gauche à droite et de droite à gauche d’une même carte se lit mieux avec l’étiquette centrée au-dessus ou au-dessous du point. Une étiquette avec une `width` se coupe entre les mots ; un mot plus large que la justification réduit toute l’étiquette, jusqu’au `minScale` de son style. La façon dont les étiquettes sont dessinées est décrite dans [Pages composées](/fr/docs/composed-pages).
 
 ## Avertissements des gabarits de page
 

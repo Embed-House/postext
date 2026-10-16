@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+Eine Beschriftung ohne Stil, oder mit einem Stil, der keine Schrift festlegt, übernimmt Schriftfamilie, Größe, Strichstärke und Farbe des Grundtexts. Die Zeilen einer mehrzeiligen Beschriftung stehen im 1,15-Fachen ihrer Größe, oder im Zeilenabstand des geliehenen Absatzstils. Über `paragraphStyle` übernimmt die Beschriftung auch Kursive und Versalien dieses Stils; `fontStyle: 'italic'` und `textTransform: 'uppercase'` fügen sie einem Stil hinzu, der nichts leiht. Eine zum Einpassen verkleinerte Beschriftung behält ihren Halo im Verhältnis.
+
 ### Beschriftungsfelder eines Ankers
 
 Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher verwenden) nehmen einige optionale Felder für Beschriftungen auf. Es sind Bruchteile des Bilds, daher gelten sie in jeder Sprache und bei jedem Zuschnitt des Bilds. Comics ignorieren sie.
@@ -659,6 +661,8 @@ Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher 
     </tr>
   </tbody>
 </table>
+
+`start` und `end` folgen der Richtung der Beschriftung: In einer arabischen Beschriftung ist `start` die rechte Kante. Ein Anker, den die links- und die rechtsläufige Ausgabe einer Karte teilen, liest sich am besten mit der Beschriftung zentriert über oder unter dem Punkt. Eine Beschriftung mit `width` bricht zwischen den Wörtern um; ein Wort, das breiter als die Satzbreite ist, verkleinert die ganze Beschriftung bis zum `minScale` ihres Stils. Wie Beschriftungen gezeichnet werden, steht unter [Zusammengesetzte Seiten](/de/docs/composed-pages).
 
 ## Warnungen zu Seitenvorlagen
 

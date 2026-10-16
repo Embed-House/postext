@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+Un’etichetta senza stile, o con uno stile che non fissa il carattere, prende famiglia, corpo, peso e colore del testo corrente. Le righe di un’etichetta su più righe distano 1,15 volte il suo corpo, o l’interlinea dello stile di paragrafo preso in prestito. Con `paragraphStyle` l’etichetta prende anche il corsivo e il maiuscolo di quello stile; `fontStyle: 'italic'` e `textTransform: 'uppercase'` li aggiungono a uno stile che non ne prende in prestito nessuno. Un’etichetta ridotta per entrare mantiene l’alone in proporzione.
+
 ### Campi di etichetta di un ancoraggio
 
 Gli ancoraggi di un’immagine (`Resource.anchors`, i punti che i fumetti usano per i personaggi) accettano alcuni campi facoltativi per le etichette. Sono frazioni dell’immagine, quindi valgono in ogni lingua e con qualunque ritaglio dell’immagine. I fumetti li ignorano.
@@ -659,6 +661,8 @@ Gli ancoraggi di un’immagine (`Resource.anchors`, i punti che i fumetti usano 
     </tr>
   </tbody>
 </table>
+
+`start` ed `end` seguono la direzione dell’etichetta: in un’etichetta araba `start` è il suo bordo destro. Un ancoraggio condiviso dalle edizioni da sinistra a destra e da destra a sinistra della stessa mappa si legge meglio con l’etichetta centrata sopra o sotto il punto. Un’etichetta con `width` va a capo tra le parole; una parola più larga della giustezza riduce tutta l’etichetta, fino al `minScale` del suo stile. Come vengono disegnate le etichette è spiegato in [Pagine composte](/it/docs/composed-pages).
 
 ## Avvisi dei modelli di pagina
 

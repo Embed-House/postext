@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+Um rótulo sem estilo, ou com um estilo que não fixa a fonte, usa a família, o corpo, o peso e a cor do texto corrido. As linhas de um rótulo de várias linhas ficam a 1,15 vez o seu corpo, ou na entrelinha do estilo de parágrafo emprestado. Com `paragraphStyle`, o rótulo também usa o itálico e as maiúsculas desse estilo; `fontStyle: 'italic'` e `textTransform: 'uppercase'` os acrescentam a um estilo que não empresta nenhum. Um rótulo reduzido para caber mantém o halo na proporção.
+
 ### Campos de rótulo de uma âncora
 
 As âncoras de uma imagem (`Resource.anchors`, os pontos que os quadrinhos usam para os falantes) aceitam alguns campos opcionais para rótulos. São frações da imagem, então valem em todos os idiomas e com qualquer recorte da imagem. Os quadrinhos os ignoram.
@@ -659,6 +661,8 @@ As âncoras de uma imagem (`Resource.anchors`, os pontos que os quadrinhos usam 
     </tr>
   </tbody>
 </table>
+
+`start` e `end` seguem a direção do rótulo: num rótulo árabe, `start` é a sua borda direita. Uma âncora compartilhada pelas edições da esquerda para a direita e da direita para a esquerda de um mesmo mapa funciona melhor com o rótulo centrado acima ou abaixo do ponto. Um rótulo com `width` quebra entre palavras; uma palavra mais larga que a medida reduz o rótulo inteiro, até o `minScale` do seu estilo. Como os rótulos são desenhados está em [Páginas compostas](/pt/docs/composed-pages).
 
 ## Avisos dos modelos de página
 

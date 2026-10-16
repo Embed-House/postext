@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+Un rètol sense estil, o amb un estil que no fixa la lletra, pren la família, el cos, el gruix i el color del text general. Les línies d'un rètol de diverses línies van a 1,15 vegades el seu cos, o a l'interlineat de l'estil de paràgraf que pren en préstec. Amb `paragraphStyle`, el rètol pren també la cursiva i les majúscules d'aquest estil; `fontStyle: 'italic'` i `textTransform: 'uppercase'` les afegeixen a un estil que no en pren cap. Un rètol reduït per cabre conserva l'halo en proporció.
+
 ### Camps de rètol d'un ancoratge
 
 Els ancoratges d'una imatge (`Resource.anchors`, els punts que fan servir els còmics per als parlants) admeten uns quants camps opcionals per a rètols. Són fraccions de la imatge, de manera que valen en totes les llengües i amb qualsevol retall de la imatge. Els còmics els ignoren.
@@ -659,6 +661,8 @@ Els ancoratges d'una imatge (`Resource.anchors`, els punts que fan servir els c�
     </tr>
   </tbody>
 </table>
+
+`start` i `end` segueixen la direcció del rètol: en un rètol àrab, `start` és la seva vora dreta. Un ancoratge que comparteixen les edicions d'esquerra a dreta i de dreta a esquerra d'un mateix mapa funciona millor amb el rètol centrat a sobre o a sota del punt. Un rètol amb `width` es talla entre paraules; una paraula més ampla que la mesura redueix tot el rètol, fins al `minScale` del seu estil. Com es dibuixen els rètols s'explica a [Pàgines compostes](/ca/docs/composed-pages).
 
 ## Avisos de les plantilles de pàgina
 

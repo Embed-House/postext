@@ -328,6 +328,36 @@ When the Catalan text of `dinero` is two lines longer, `dinero` grows, `gasto` a
 down, their photos follow their anchors, and the reflow log says so. If the stack no longer fits
 the page, the ladder of §5.4 runs.
 
+### 3.5 What P6 built (#860)
+
+- **Layout** (`composed/labels.ts`): `layOutFigureLabels(labels, parsed, rb, ctx)` runs where the
+  figure's block is measured (`runMeasurement`, and `buildFloatBlock` for a floated figure), on
+  bitmaps and SVGs. Each label gets `VDTFigureLabel.layout`: its point `(x, y)` in px from the body's
+  top-left (the anchor's fractions of the whole picture through `bodySource`, `pictureToBody`), its
+  `rotate`, its lines set as a caption is (`layoutLabelLines` in `resourceLayout.ts`: chips, marks,
+  refs, maths; no hyphenation; `\\` breaks) in the label's own frame, its box, fonts, colour, halo,
+  plate and fit scale. Kept relative to the body, so placement, frames, spreads and the memo move it
+  for free; painters apply `figureLabelMatrix(layout, bodyX, bodyY)`.
+- **Look** (`resolveLabelLook`): body text ← borrowed paragraph style ← label style; the label's
+  `style` beats the anchor's. `fontStyle`/`textTransform` resolve to defaults in P2, so a borrowed
+  paragraph style's italics and capitals hold unless the label style turns them on (it cannot turn
+  them off). Line pitch 1.15 em, or the paragraph style's.
+- **Fit**: wrap at `anchor.width × picture width`; the widest word sets a first scale, then 0.97
+  steps while a word is still divided (`hyphenated && !hardHyphen`), down to `minScale`; `overflow`
+  when it still does not fit. Without `width`, one line.
+- **Alignment**: `start`/`end` in the label's direction (first strong letter); default centre /
+  middle. Anchors shared by LTR and RTL editions read best centred above or below the point.
+- **After the pages**: `stampFigureLabelRects(doc)` (after `orientLinesToFrames`) fills `rect` in
+  the block's frame (quarter-turned blocks included); `orientResourceBlock` mirrors label layouts on
+  RTL pages (`mirrorLabelLayout`); `labelGlyphAt` maps a point to the glyph for `sourceAt`;
+  `figureLabelWarnings` gives `labelAnchorUnknown` / `anchorUnlabelled` with page and locale.
+- **Outputs**: canvas and PDF paint labels in `renderResourceBlock` after the picture (halo: the
+  same line painter through a stroking context on canvas, `ctx.textOutline` hollow strokes in PDF);
+  HTML writes `<div class="pt-figure-label">` with a CSS matrix and `-webkit-text-stroke`. The
+  `alt`/`Alt` keeps only undrawn labels (`undrawnLabels`); tagged PDF reads a `Div` with one `P`
+  per drawn label after the `Figure` (`StructureFlow.figureLabelsElem`), halo and plate artifacts.
+  Reflowable EPUB unchanged (hidden list). Folio uses the canvas.
+
 ## 4. Document nodes
 
 The parser emits (as built in P3, #854):

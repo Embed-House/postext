@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+Un rótulo sin estilo, o con un estilo que no fija la letra, toma la familia, el cuerpo, el grosor y el color del texto general. Las líneas de un rótulo de varias líneas van a 1,15 veces su cuerpo, o al interlineado del estilo de párrafo que toma prestado. Con `paragraphStyle`, el rótulo toma también la cursiva y las mayúsculas de ese estilo; `fontStyle: 'italic'` y `textTransform: 'uppercase'` las añaden a un estilo que no toma ninguno. Un rótulo reducido para caber conserva su halo en proporción.
+
 ### Campos de rótulo de un anclaje
 
 Los anclajes de una imagen (`Resource.anchors`, los puntos que usan los cómics para los hablantes) admiten unos pocos campos opcionales para rótulos. Son fracciones de la imagen, así que valen en todos los idiomas y con cualquier recorte de la imagen. Los cómics los ignoran.
@@ -659,6 +661,8 @@ Los anclajes de una imagen (`Resource.anchors`, los puntos que usan los cómics 
     </tr>
   </tbody>
 </table>
+
+`start` y `end` siguen la dirección del rótulo: en un rótulo árabe, `start` es su borde derecho. Un anclaje que comparten las ediciones de izquierda a derecha y de derecha a izquierda de un mismo mapa funciona mejor con el rótulo centrado encima o debajo del punto. Un rótulo con `width` se corta entre palabras; una palabra más ancha que la medida reduce todo el rótulo, hasta el `minScale` de su estilo. Cómo se dibujan los rótulos se explica en [Páginas compuestas](/es/docs/composed-pages).
 
 ## Avisos de las plantillas de página
 

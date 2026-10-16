@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+A label in no style, or in a style that names no type, takes the body text's family, size, weight and colour. The lines of a label of several lines stand 1.15 times its size apart, or at the borrowed paragraph style's leading. Through `paragraphStyle` a label also takes that style's italics and capitals; `fontStyle: 'italic'` and `textTransform: 'uppercase'` add them to a style that borrows none. A label set smaller to fit keeps its halo in proportion.
+
 ### Label fields of an anchor
 
 A picture's anchors (`Resource.anchors`, the points comics use for speakers) take a few optional fields for labels. They are fractions of the picture, so they hold in every language and through any crop of the picture. Comics ignore them.
@@ -659,6 +661,8 @@ A picture's anchors (`Resource.anchors`, the points comics use for speakers) tak
     </tr>
   </tbody>
 </table>
+
+`start` and `end` follow the label's direction: in an Arabic label, `start` is its right edge. An anchor shared by left-to-right and right-to-left editions of one map reads best with the label centred above or below its point. A label with a `width` breaks between words; a word wider than the measure sets the whole label smaller, down to its style's `minScale`. How labels are drawn is described in [Composed pages](/en/docs/composed-pages).
 
 ## Page template warnings
 
