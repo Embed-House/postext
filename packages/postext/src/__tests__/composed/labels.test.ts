@@ -231,6 +231,44 @@ describe('labels in the source map (#860)', () => {
   });
 });
 
+describe('labels on continued pages and scaled frames (#860 with #858, #859)', () => {
+  const para = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+  const frameOf = (overrides: Record<string, unknown>) => ({ name: 'texto', placement: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: mm(20), y: mm(20) } }, width: mm(120), ...overrides });
+  const fenced = (body: string) => ['::::page{template="t"}', ':::frame{slot="texto"}', body, ':::', '::::', ''].join('\n');
+  const labelled = ':::figure{resource="mapa"}\n::label[Madrid]{at="madrid"}\n::label[Mar Negro]{at="62% 48%"}\n:::';
+
+  it('draws and answers the labels of a figure its frame continues on an added page', () => {
+    const body = [...Array.from({ length: 40 }, () => para), labelled].join('\n\n');
+    const doc = build(fenced(body), { pageTemplates: [{ id: 't', frames: [frameOf({ height: mm(60), overflow: { continueIn: 'next-page' } })] }] as never });
+    const block = figureBlock(doc);
+    expect(block.pageIndex).toBeGreaterThan(0);
+    const [madrid, negro] = block.resourceBlock!.labels!;
+    for (const l of [madrid!, negro!]) {
+      expect(l.layout).toBeDefined();
+      const r = l.rect!;
+      const hit = sourceAt(doc, block.pageIndex, r.x + r.width / 2, r.y + r.height / 2);
+      expect(hit.find((e) => e.level === 'label')?.content).toEqual({ start: l.sourceStart, end: l.sourceEnd });
+    }
+  });
+
+  it('sets the labels on the picture the ladder made smaller, at their anchors', () => {
+    const body = [para, para, labelled].join('\n\n');
+    const doc = build(fenced(body), { pageTemplates: [{ id: 't', frames: [frameOf({ height: mm(28), fit: { shrinkText: false, scaleImages: true, imageMinScale: 0.5 } })] }] as never });
+    const rb = figureBlock(doc).resourceBlock!;
+    const madrid = rb.labels![0]!;
+    close(madrid.layout!.x, 0.25 * rb.bodyRect.width);
+    close(madrid.layout!.y, 0.75 * rb.bodyRect.height);
+    const frame = doc.pages[0]!.composed!.frames.find((f) => f.name === 'texto')!;
+    const log = JSON.stringify(doc.pages[0]!.composed!.log);
+    // The ladder did scale the pictures (or the test proves nothing).
+    expect(log).toContain('imageScaled');
+    expect(frame).toBeDefined();
+    const r = madrid.rect!;
+    const hit = sourceAt(doc, 0, r.x + r.width / 2, r.y + r.height / 2);
+    expect(hit.find((e) => e.level === 'label')?.id).toBe('cp0:texto:label:madrid');
+  });
+});
+
 describe('label warnings (#860)', () => {
   const md = figure('::label[Mar]{at="mediterraneo"}', '::label[Madrid]{at="madrid"}', '::label[Océano]{at="atlantico"}');
   const warnings = (doc: VDTDocument) => (doc.contentWarnings ?? []).filter((w) => w.kind === 'labelAnchorUnknown' || w.kind === 'anchorUnlabelled');

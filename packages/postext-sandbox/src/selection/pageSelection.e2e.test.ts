@@ -349,6 +349,32 @@ describe('labels, contents entries and spreads (#865)', () => {
     expect(selectionTarget(doc, atLevel(sel, 2), 'content')).toEqual({ kind: 'resource', resourceId: 'mapa' });
   });
 
+  it('a drawn figure label (P6 #860) goes to its text in the Markdown, glyph by glyph', () => {
+    const md = '::::page{template="m"}\n:::frame{slot="pic"}\n:::figure{resource="mapa"}\n::label[Madrid]{at="madrid"}\n::label[Mar Negro]{at="70% 40%"}\n:::\n:::\n::::';
+    const config: PostextConfig = {
+      page: { width: { value: 200, unit: 'mm' }, height: { value: 260, unit: 'mm' } } as never,
+      pageTemplates: [{ id: 'm', frames: [{ name: 'pic', width: { value: 120, unit: 'mm' } }] }] as never,
+    };
+    const resources = [{ id: 'mapa', typeId: 'figure', kind: 'bitmap', caption: '', createdAt: 0, updatedAt: 0, anchors: [{ id: 'madrid', x: 0.3, y: 0.6 }], bitmap: { fileId: 'm.png', format: 'png', width: 400, height: 300, resolution: 72 } }] as never;
+    const doc = build(md, config, resources);
+    const page = composedPage(doc);
+    const pic = page.floats!.find((b) => b.resourceBlock)!;
+    for (const [i, word] of [[0, 'Madrid'], [1, 'Mar Negro']] as const) {
+      const label = pic.resourceBlock!.labels![i]!;
+      expect(label.layout).toBeDefined();
+      const r = label.rect!;
+      const sel = pickAt(doc, page.index, r.x + r.width / 2, r.y + r.height / 2, null)!;
+      expect(sel.chain.slice(0, 3).map((e) => e.level)).toEqual(['text', 'label', 'resource']);
+      const t = selectionTarget(doc, atLevel(sel, 1), 'content') as { start: number; end: number };
+      expect(md.slice(t.start, t.end)).toBe(word);
+      // A click on the glyph puts the caret inside that word.
+      const caret = selectionTarget(doc, atLevel(sel, 0), 'content') as { kind: string; offset: number };
+      expect(caret.kind).toBe('caret');
+      expect(caret.offset).toBeGreaterThanOrEqual(t.start);
+      expect(caret.offset).toBeLessThanOrEqual(t.end);
+    }
+  });
+
   it('a contents entry goes to the heading that produced it', () => {
     const md = '---\ntitle: Libro\n---\n:::toc\n:::\n\n# Primero\n\nTexto.\n\n# Segundo\n\nMás texto.\n';
     const config: PostextConfig = { toc: { enabled: true } as never };
