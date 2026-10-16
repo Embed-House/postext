@@ -240,6 +240,53 @@ Este aviso vem da diagramação, não das verificações do código-fonte descri
 
 **Correção.** Dê mais espaço ao bloco (aumente ou remova o `height` ou o `maxHeight` dele), encadeie-o a outro bloco com `next`, encurte o texto ou componha a página com outro modelo. Por enquanto a diagramação não reduz o texto para que ele caiba.
 
+## Quando o texto cresce
+
+Uma página composta se reorganiza dentro dos limites que o seu modelo declara. Se você escrever um texto mais longo na primeira caixa de uma página cujas caixas formam um grupo em pilha, a caixa cresce para comportá-lo e as caixas de baixo descem, junto com as fotos e a decoração ancoradas nelas; nenhuma linha do modelo muda. Com um texto mais curto, a caixa volta à altura declarada. Um bloco ou um elemento de decoração marcado com `pin` fica onde o modelo o coloca, para uma caixa que precisa ficar sobre a arte. Como as pilhas e as fileiras dividem o espaço, e qual bloco cede primeiro, é definido no modelo: veja [Configuração › Como os grupos dividem o espaço](/pt/docs/configuration-composed-pages#como-os-grupos-dividem-o-espaço).
+
+Quando as caixas chegam ao pé da área e nenhum bloco do grupo pode ceder mais espaço, o último bloco é cortado no pé e a diagramação dá o aviso `frameOverflow` (veja [Avisos](#avisos)): encurte o texto, diminua o `minHeight` de outro bloco, deixe um bloco encolher ou dê mais espaço ao grupo. Os grupos não acrescentam nenhum outro aviso.
+
+## Registro de reajustes
+
+Cada página composta guarda um registro do que a diagramação mudou em relação ao desenho do modelo: qual bloco cresceu, devolveu espaço ou se moveu, quanto, e qual bloco provocou a mudança. Uma página cujo texto cabe no modelo não registra nada.
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Evento</th>
+      <th>O que diz</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>O bloco está mais alto (ou, com <code>axis: 'x'</code>, mais largo) do que o declarado: <code>fromMm</code> é o tamanho declarado, e <code>toMm</code>, o que ele recebeu.</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>O bloco está menor do que o declarado: ele cedeu espaço para <code>cause</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>A borda de cima do bloco (com <code>axis: 'x'</code>, a borda esquerda) se deslocou, em mm a partir da borda da folha; <code>cause</code> é o bloco cujo crescimento o deslocou.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>O conteúdo não coube: <code>toMm</code> é a altura cortada, como em <code>frameOverflow</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Mudanças de menos de meio milímetro ficam de fora, e cada mudança é arredondada uma única vez para o décimo de milímetro, então blocos que se moveram juntos mostram o mesmo valor. A decoração que acompanha um bloco não entra na lista.
+
+O `postext check` imprime uma linha `reflow` por página composta que tem eventos, depois dos avisos; com `--json`, o relatório traz uma lista `reflow` com uma entrada por página: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` e `lines` (os eventos por extenso).
+
+No código, o registro é `VDTPage.composed.log`, e cada bloco guarda em `VDTFrame.declaredRect` a caixa que o modelo declara para ele quando ela difere de `rect`. `composedReflowLog(doc)` devolve as entradas que o `postext check` imprime, e `describeReflowEvent(event)` descreve um evento por extenso.
+
 ## No código
 
 `composedPages(blocks)` lê os blocos analisados de um capítulo (`parseMarkdownWithIssues(markdown).blocks`) e devolve um nó por cerca de página, em ordem: o seu `template`, `spread`, `attrs` com o intervalo de origem de cada valor (`attrSources`), o seu `fenceIndex` (o ordinal da cerca no capítulo, o mesmo em todos os idiomas), `slots` (os índices dos blocos de cada slot, na ordem do Markdown), `unassigned` (os blocos sem slot) e o intervalo de origem da página inteira. Um bloco traz o slot que nomeia em `ContentBlock.slot`, com o intervalo de origem do valor; uma figura é um `resourceBlock` cujo `figure` guarda os seus atributos e rótulos, cada rótulo com o seu texto, os seus trechos em linha e um mapa de origem que leva de volta ao Markdown. `checkComposedSlots(pages, config)` devolve os três avisos de slot dessas páginas.

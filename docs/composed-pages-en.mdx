@@ -240,6 +240,53 @@ This warning comes from the layout, not from the source checks above: it appears
 
 **Fix.** Give the frame more room (raise or remove its `height` or `maxHeight`), chain it to another frame with `next`, shorten the text, or set the page with another template. The layout does not yet shrink the text to make it fit.
 
+## When the text grows
+
+A composed page rearranges itself inside the limits its template declares. Write a longer text in the first box of a page whose boxes form a stack group, and the box grows to hold it while the boxes below, and the photos and decoration anchored to them, move down; no line of the template changes. A shorter text gives the box back its declared height. A frame or a decoration element marked `pin` stays where the template puts it, for a box that has to sit on the artwork. How stacks and rows share space, and which frame gives way first, is set in the template: see [Configuration › How groups share space](/en/docs/configuration-composed-pages#how-groups-share-space).
+
+When the boxes reach the foot of the area and no frame of the group can give more space, the last frame is cut at the foot and the layout reports `frameOverflow` (see [Warnings](#warnings)): shorten the text, lower another frame's `minHeight`, let a frame shrink, or give the group more room. Groups add no other warning.
+
+## Reflow log
+
+Each composed page keeps a log of what the layout changed against the template's own drawing: which frame grew, gave space back or moved, by how much, and which frame set it off. A page whose text fits its template logs nothing.
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Event</th>
+      <th>What it says</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>The frame is taller (or, with <code>axis: 'x'</code>, wider) than declared: <code>fromMm</code> is the declared size, <code>toMm</code> the size it got.</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>The frame is smaller than declared: it gave space to <code>cause</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>The frame's top edge (with <code>axis: 'x'</code>, its left edge) moved, in mm from the sheet's edge; <code>cause</code> is the frame whose growth moved it.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>Content did not fit: <code>toMm</code> is the height cut, as in <code>frameOverflow</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Changes under half a millimetre are left out, and each change is rounded once to a tenth of a millimetre, so frames that moved together read the same. Decoration that follows a frame is not listed.
+
+`postext check` prints one `reflow` line per composed page that has events, after the warnings; with `--json`, the report holds a `reflow` array with one entry per page: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` and `lines` (the events in words).
+
+From code, the log is `VDTPage.composed.log`, and each frame keeps the box its template declares in `VDTFrame.declaredRect` when it differs from `rect`. `composedReflowLog(doc)` returns the entries `postext check` prints, and `describeReflowEvent(event)` puts one event in words.
+
 ## From code
 
 `composedPages(blocks)` reads the parsed blocks of a chapter (`parseMarkdownWithIssues(markdown).blocks`) and returns one node per page fence, in order: its `template`, `spread`, `attrs` with the source range of each value (`attrSources`), its `fenceIndex` (the ordinal of the fence in the chapter, the same in every language), `slots` (the indices of the blocks of each slot, in Markdown order), `unassigned` (the blocks with no slot) and the source range of the whole page. A block carries the slot it names in `ContentBlock.slot`, with the source range of the value; a figure is a `resourceBlock` whose `figure` holds its attributes and labels, each label with its text, its inline spans and a source map back to the Markdown. `checkComposedSlots(pages, config)` returns the three slot warnings for those pages.

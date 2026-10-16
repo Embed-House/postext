@@ -240,6 +240,53 @@ Si necesitas o quieres comprar algo muy caro…
 
 **対処**：枠を広げる（`height`や`maxHeight`を大きくするか外す）、`next`で別の枠につなぐ、テキストを短くする、別のテンプレートでそのページを組む、のいずれかです。今のところ、割り付けがテキストを縮めて収めることはしません。
 
+## 文章が増えたとき
+
+テンプレートページは、テンプレートが宣言した範囲の中で形を組み替えます。枠が積み重ねのグループになっているページで、最初の枠に長い文章を書くと、枠はそれが収まるまで高くなり、下の枠と、そこに固定した写真や飾りが下へずれます。テンプレートは1行も変わりません。文章を短くすれば、枠は宣言した高さに戻ります。`pin`を付けた枠や飾りの要素は、テンプレートが置いた位置にとどまるので、絵柄の上に載せておく必要のある囲みに使えます。積み重ねと並びが空間をどう分け合い、どの枠が先に譲るかはテンプレートで決めます。[設定 › グループが空間を分け合うしくみ](/ja/docs/configuration-composed-pages#グループが空間を分け合うしくみ)を参照してください。
+
+枠が領域の下端に届き、グループのどの枠もそれ以上空間を譲れないときは、最後の枠が下端で切れ、組版が`frameOverflow`を報告します（[警告](#警告)を参照）。文章を短くする、ほかの枠の`minHeight`を下げる、縮められる枠を作る、グループに広い場所を与える、のいずれかで直します。グループがこれ以外の警告を出すことはありません。
+
+## リフローの記録
+
+テンプレートページはそれぞれ、組版がテンプレート自身の描き方から何を変えたかを記録します。どの枠が高くなったか、空間を返したか、動いたか、その量はどれだけか、そしてどの枠がきっかけになったかです。文章がテンプレートに収まるページには何も記録されません。
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>イベント</th>
+      <th>意味</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>枠が宣言より高く（<code>axis: 'x'</code>なら広く）なりました。<code>fromMm</code>が宣言した大きさ、<code>toMm</code>が実際の大きさです。</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>枠が宣言より小さくなりました。<code>cause</code>に空間を譲っています。</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>枠の上端（<code>axis: 'x'</code>なら左端）が動きました。値は紙の端からのmmです。<code>cause</code>は、高くなってこの枠を動かした枠です。</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>中身が収まりませんでした。<code>toMm</code>は切れた高さで、<code>frameOverflow</code>と同じです。</td>
+    </tr>
+  </tbody>
+</table>
+
+0.5mm未満の変化は載せません。各変化は一度だけ0.1mm単位に丸めるので、一緒に動いた枠は同じ値になります。枠についていく飾りは載りません。
+
+`postext check`は、警告の後に、イベントのあるテンプレートページごとに`reflow`の行を1行出力します。`--json`を付けると、報告に`reflow`配列が入ります。1ページにつき1項目で、`pageIndex`、`pageLabel`、`template`、`fenceIndex`、`chapter`、`events`、`lines`（イベントを文章にしたもの）を持ちます。
+
+コードからは、記録は`VDTPage.composed.log`にあります。枠の`rect`がテンプレートの宣言した矩形と違うときは、宣言された矩形が`VDTFrame.declaredRect`に残ります。`composedReflowLog(doc)`は`postext check`が出力する項目を返し、`describeReflowEvent(event)`は1つのイベントを文章にします。
+
 ## コードから使う
 
 `composedPages(blocks)`は、章を解析したブロック（`parseMarkdownWithIssues(markdown).blocks`）を読み、ページフェンスごとに1つのノードを順に返します。ノードには、`template`、`spread`、各値のソース範囲（`attrSources`）を伴う`attrs`、`fenceIndex`（章の中でのフェンスの通し番号で、どの言語でも同じ）、`slots`（スロットごとのブロックの添字。Markdownの順）、`unassigned`（スロットのないブロック）、そしてページ全体のソース範囲が入ります。ブロックは、自分が名乗るスロットを、値のソース範囲とともに`ContentBlock.slot`に持ちます。図は`resourceBlock`で、その`figure`が属性とラベルを持ち、各ラベルにはテキスト、インラインのスパン、Markdownへ戻るソースマップがあります。`checkComposedSlots(pages, config)`は、それらのページについてスロットの警告3種を返します。

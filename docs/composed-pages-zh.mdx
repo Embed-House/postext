@@ -240,6 +240,53 @@ Si necesitas o quieres comprar algo muy caro…
 
 **解决**：给框更多空间（调高或去掉它的`height`或`maxHeight`），用`next`把它接到另一个框，缩短文字，或者换一个模板来排这一页。目前排版不会为了放下文字而自动缩小它。
 
+## 文字变长时
+
+模板页在模板声明的限度之内自行调整。如果一页上的各个框组成一个纵向组，在第一个框里写更长的文字，这个框就会变高来容纳它，下面的框以及锚定在它们上面的照片和装饰随之下移；模板一行也不用改。文字变短，框就回到声明的高度。标了`pin`的框或装饰元素留在模板放置它的地方，用于必须压在画面上的方框。纵向组和横向组怎样分配空间、哪个框先让步，都在模板中设定：见[配置 › 组如何分配空间](/zh/docs/configuration-composed-pages#组如何分配空间)。
+
+方框排到区域底边、组里再没有框能让出空间时，最后一个框在底边截断，排版报告`frameOverflow`（见[警告](#警告)）。这时可以缩短文字，调低另一个框的`minHeight`，允许某个框缩小，或者给组更多空间。组不会带来别的警告。
+
+## 重排记录
+
+每个模板页都留有一份记录，写明排版相对于模板本身的画法改动了什么：哪个框变高、让出了空间或移动了位置，变化了多少，又是哪个框引起的。文字放得进模板的页面不留任何记录。
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>事件</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>框比声明的高（<code>axis: 'x'</code>时是比声明的宽）：<code>fromMm</code>是声明的尺寸，<code>toMm</code>是实际得到的尺寸。</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>框比声明的小：它把空间让给了<code>cause</code>。</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>框的上边（<code>axis: 'x'</code>时是左边）移动了，以距纸边的毫米数计；<code>cause</code>是因变高而推动它的那个框。</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>内容放不下：<code>toMm</code>是被截掉的高度，与<code>frameOverflow</code>中的相同。</td>
+    </tr>
+  </tbody>
+</table>
+
+小于半毫米的变化不列出。每个变化只取整一次，精确到0.1毫米，所以一起移动的框读数相同。随框移动的装饰不列出。
+
+`postext check`在警告之后，为每个有事件的模板页打印一行`reflow`；加上`--json`时，报告中有一个`reflow`数组，每页一项，包括`pageIndex`、`pageLabel`、`template`、`fenceIndex`、`chapter`、`events`和`lines`（用文字写出的事件）。
+
+在代码中，这份记录是`VDTPage.composed.log`；框的`rect`与模板声明的矩形不同时，框在`VDTFrame.declaredRect`中保留声明的矩形。`composedReflowLog(doc)`返回`postext check`打印的那些条目，`describeReflowEvent(event)`把一个事件写成文字。
+
 ## 在代码中使用
 
 `composedPages(blocks)`读取一章解析后的块（`parseMarkdownWithIssues(markdown).blocks`），按顺序为每个页面围栏返回一个节点，包括：`template`、`spread`、带有每个值源码范围（`attrSources`）的`attrs`、`fenceIndex`（该围栏在章中的序号，各语言相同）、`slots`（每个槽位的块索引，按Markdown中的顺序）、`unassigned`（没有槽位的块），以及整页的源码范围。块在`ContentBlock.slot`中记录它指定的槽位及该值的源码范围；插图是一个`resourceBlock`，其`figure`含有插图的属性和标注，每个标注带有文字、行内片段和指回Markdown的源码映射。`checkComposedSlots(pages, config)`为这些页面返回三种槽位警告。

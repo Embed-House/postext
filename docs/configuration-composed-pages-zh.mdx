@@ -374,7 +374,7 @@ const config: PostextConfig = {
       <td><code>placement</code>、<code>grid</code></td>
       <td>同框架</td>
       <td>其框架的外框</td>
-      <td>组自己的方框。未设置时，取包住其各框架声明方框的外框。</td>
+      <td>组自己的方框。未设置时，组从其第一个框架所在的位置开始，按各框架的需要向下延伸。</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -390,6 +390,58 @@ const config: PostextConfig = {
     </tr>
   </tbody>
 </table>
+
+### 组如何分配空间
+
+框架声明自己的尺寸：固定的`height`，或者`'auto'`，即所装内容的高度，限定在`minHeight`和`maxHeight`之间。照着印好的页面做模板时，把每个方框在页面上的高度写成它的`minHeight`：文字短，方框保持画出的大小；文字长，方框就变高。页面在同一遍排版中排两次，一次按模板的声明，一次按内容的需要，两次的差别就是[重排记录](/zh/docs/composed-pages#重排记录)。
+
+**纵向组（`stack`）**：纵向组中的框架按各自的高度上下相接，彼此之间留出`gap`。每个框架保留自己的横向位置和宽度，它自己的纵向位置被忽略。
+
+- 没有自己的`placement`或`grid`的组，从第一个框架的定位所在之处开始，按框架的需要往下排，最远到模板区域的底边。一个框架变高时，后面的框架下移同样的距离。
+- 有自己方框的组把框架排在这个方框之内。框架需要的空间超出方框时，`shrink`大于0的框架让出空间，`priority`最低的先让；优先级相同的框架按各自`shrink`的比例让出；任何框架都不会小于它的`minHeight`。多余的空间按比例分给`grow`大于0的框架，最多到它们的`maxHeight`；没有这样的框架时，由`align`决定框架的位置（`'end'`靠底边，`'center'`居中，`'space-between'`首尾贴边、中间均分）。组中没有自己定位的框架以组的方框作为它的区域。
+- 再也没有框架能让出空间时，也没有框架会越过组的底边：放不下的内容在那里截断，并报告为`frameOverflow`。
+- `height: 'fill'`的框架请求它的`minHeight`，并像设了`grow: 1`一样分得多余空间。
+
+**横向组（`row`）**：横向组中的框架按声明的宽度左右并排，高度都与这一行相同。行高就是组的方框的高度；组没有自己的方框时，取各框架声明高度中最大的一个（固定高度的框架保持自己的高度）。某个框架的文字超出行高时，这个框架会加宽：先用行中多余的宽度，再按`priority`从低到高，向`shrink`大于0的同组框架借宽度，每个框架都不会窄过它自己的文字仍能放下的宽度。加宽的量是让文字放下所需的最少整毫米数；即使把能用的空间全部给它也放不下时，它不加宽，没有自己方框的行改为加高。多余的宽度先分给`grow`大于0的框架，剩下的交给`align`。行中的框架从左向右排列。
+
+**固定（`pin`）**：`pin: true`的框架保持模板为它声明的方框，即使它所锚定的框架变高或移动也不变，照着画面画出的方框因此留在画面上。在组中，固定的框架守住自己的位置，其他框架绕过它继续排，两侧都留出`gap`；组外的固定框架，对会与它重叠的组内框架也是这样。
+
+**装饰**：锚定到框架的装饰元素（`anchor: { to: '#dinero' }`）在框架变高或移动时随之移动。`pin: true`的元素留在模板画出那个框架的位置。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>属性</th>
+      <th style={{ width: '200px' }}>类型</th>
+      <th style={{ width: '120px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pin</code>（装饰元素）</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>用于组合页面的装饰：锚定到框架的元素停在模板放置那个框架的位置，不论框架的内容或所在的组怎样变化。在页眉、页脚和标题设计中忽略。</td>
+    </tr>
+  </tbody>
+</table>
+
+课本一页上的三个方框，每个都按画出的高度设置，并随文字变高：
+
+```ts
+frames: [
+  { name: 'dinero', style: 'caja-azul', width: { value: 186, unit: 'mm' }, minHeight: { value: 36, unit: 'mm' },
+    placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: { value: 9, unit: 'mm' } } } },
+  { name: 'dinero-fotos', layer: 2, width: { value: 58, unit: 'mm' },
+    placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+  { name: 'gasto', style: 'caja-verde', width: { value: 186, unit: 'mm' }, minHeight: { value: 62, unit: 'mm' } },
+  { name: 'ahorro', style: 'caja-amarilla', width: { value: 186, unit: 'mm' }, minHeight: { value: 30, unit: 'mm' } },
+],
+groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
+```
+
+结果只取决于页面的内容、模板和排版设置：同样的输入得到同样的页面，测量的顺序和步骤也都相同。这种协调从不读取别的页面，所以只要内容还留在自己的页上，修改一个组合页面不会改变其他任何页面。
 
 ### 继承与变体
 

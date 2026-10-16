@@ -240,6 +240,53 @@ Questo avviso viene dall’impaginazione, non dai controlli sul sorgente descrit
 
 **Correzione.** Dai più spazio alla cornice (alza o togli il suo `height` o il suo `maxHeight`), collegala a un’altra cornice con `next`, accorcia il testo o componi la pagina con un altro modello. Per ora l’impaginazione non riduce il testo per farlo entrare.
 
+## Quando il testo cresce
+
+Una pagina composta si risistema entro i limiti che il suo modello dichiara. Se scrivi un testo più lungo nel primo riquadro di una pagina i cui riquadri formano un gruppo a pila, il riquadro cresce quanto serve a contenerlo e i riquadri sottostanti scendono, insieme alle foto e alla decorazione ancorate a essi; il modello non cambia di una riga. Con un testo più breve il riquadro torna alla sua altezza dichiarata. Una cornice o un elemento della decorazione marcato `pin` resta dove lo mette il modello, come un riquadro che deve stare esattamente sull’illustrazione. Come pile e file si dividono lo spazio, e quale cornice cede per prima, lo stabilisce il modello: vedi [Configurazione › Come i gruppi si dividono lo spazio](/it/docs/configuration-composed-pages#come-i-gruppi-si-dividono-lo-spazio).
+
+Quando i riquadri arrivano al piede dell’area e nessuna cornice del gruppo può cedere altro spazio, l’ultima cornice viene tagliata al piede e l’impaginazione segnala `frameOverflow` (vedi [Avvisi](#avvisi)). In quel caso accorcia il testo, abbassa il `minHeight` di un’altra cornice, lascia che una cornice si restringa oppure dai più spazio al gruppo. I gruppi non producono altri avvisi.
+
+## Registro di reimpaginazione
+
+Ogni pagina composta tiene un registro di ciò che l’impaginazione ha cambiato rispetto al disegno del modello: quale cornice è cresciuta, ha ceduto spazio o si è spostata, di quanto, e quale cornice ha provocato il cambiamento. Se il testo di una pagina entra nel suo modello, il registro resta vuoto.
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Evento</th>
+      <th>Significato</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>La cornice è più alta (o, con <code>axis: 'x'</code>, più larga) di quanto dichiarato: <code>fromMm</code> è la dimensione dichiarata, <code>toMm</code> quella ottenuta.</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>La cornice è più piccola di quanto dichiarato: ha ceduto spazio a <code>cause</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>Il bordo superiore della cornice (con <code>axis: 'x'</code>, quello sinistro) si è spostato, in mm dal bordo del foglio; <code>cause</code> è la cornice la cui crescita l’ha spostata.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>Il contenuto non è entrato: <code>toMm</code> è l’altezza tagliata, come in <code>frameOverflow</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Le variazioni inferiori al mezzo millimetro non compaiono, e ogni variazione viene arrotondata una sola volta al decimo di millimetro, così le cornici che si sono spostate insieme riportano lo stesso valore. La decorazione che segue una cornice non viene elencata.
+
+`postext check` stampa, dopo gli avvisi, una riga `reflow` per ogni pagina composta che ha eventi. Con `--json` il rapporto contiene un array `reflow` con una voce per pagina: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` e `lines` (gli eventi descritti a parole).
+
+Dal codice, il registro è `VDTPage.composed.log`, e ogni cornice conserva in `VDTFrame.declaredRect` il riquadro dichiarato dal suo modello, quando è diverso da `rect`. `composedReflowLog(doc)` restituisce le voci che stampa `postext check`, e `describeReflowEvent(event)` descrive a parole un singolo evento.
+
 ## Dal codice
 
 `composedPages(blocks)` legge i blocchi analizzati di un capitolo (`parseMarkdownWithIssues(markdown).blocks`) e restituisce, in ordine, un nodo per ogni recinto di pagina: il suo `template`, `spread`, `attrs` con l’intervallo di sorgente di ogni valore (`attrSources`), il suo `fenceIndex` (il numero d’ordine del recinto nel capitolo, uguale in ogni lingua), `slots` (gli indici dei blocchi di ogni slot, nell’ordine del Markdown), `unassigned` (i blocchi senza slot) e l’intervallo di sorgente dell’intera pagina. Un blocco porta lo slot che indica in `ContentBlock.slot`, con l’intervallo di sorgente del valore; una figura è un `resourceBlock` il cui `figure` contiene i suoi attributi e le sue etichette, ciascuna con il suo testo, i suoi span in linea e una mappa che la riporta alla sua sorgente nel Markdown. `checkComposedSlots(pages, config)` restituisce i tre avvisi sugli slot per quelle pagine.

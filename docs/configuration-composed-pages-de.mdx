@@ -374,7 +374,7 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
       <td><code>placement</code>, <code>grid</code></td>
       <td>wie bei Rahmen</td>
       <td>der Kasten ihrer Rahmen</td>
-      <td>Der eigene Kasten der Gruppe. Nicht gesetzt, der Kasten um die angegebenen Kästen ihrer Rahmen.</td>
+      <td>Der eigene Kasten der Gruppe. Nicht gesetzt, beginnt die Gruppe dort, wo ihr erster Rahmen steht, und reicht so weit, wie ihre Rahmen es brauchen.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -390,6 +390,58 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
     </tr>
   </tbody>
 </table>
+
+### Wie Gruppen den Platz teilen
+
+Ein Rahmen gibt seine Größe an: eine feste `height` oder `'auto'`, die Höhe seines Inhalts, gehalten zwischen `minHeight` und `maxHeight`. Ist eine Vorlage einer gedruckten Seite nachgezeichnet, bekommt jeder Kasten als `minHeight` die Höhe, die er auf dieser Seite hat: Bei einem kurzen Text bleibt der Kasten so, wie er gezeichnet ist, ein längerer Text macht ihn höher. Die Seite wird im selben Durchgang zweimal angelegt, einmal so, wie die Vorlage sie angibt, und einmal so, wie ihr Inhalt es verlangt; was sich zwischen beiden Fassungen unterscheidet, hält das [Umbruchprotokoll](/de/docs/composed-pages#umbruchprotokoll) fest.
+
+**Stapel.** Die Rahmen eines Stapels stehen in ihrer jeweiligen Höhe untereinander, mit `gap` dazwischen. Jeder behält seine eigene waagerechte Lage und seine Breite; seine eigene senkrechte Lage wird ignoriert.
+
+- Eine Gruppe ohne eigenes `placement` oder `grid` beginnt dort, wo die Platzierung ihres ersten Rahmens sie hinsetzt, und reicht so weit nach unten, wie ihre Rahmen es brauchen, höchstens bis zum Fuß des Bereichs der Vorlage. Wächst ein Rahmen, rücken die Rahmen nach ihm um dasselbe Maß nach unten.
+- Eine Gruppe mit eigenem Kasten legt ihre Rahmen in diesen Kasten. Brauchen sie mehr Platz, als er bietet, geben die Rahmen mit `shrink` über 0 Platz ab, die mit der niedrigsten `priority` zuerst; Rahmen derselben Priorität geben im Verhältnis ihres `shrink` nach, und keiner wird niedriger als sein `minHeight`. Freier Platz geht an die Rahmen mit `grow` über 0, im Verhältnis zu diesem Wert und bis zu ihrem `maxHeight`; hat kein Rahmen `grow`, verteilt `align` die Rahmen (`'end'` am Fuß, `'center'`, `'space-between'`). Ein Rahmen der Gruppe ohne eigene Platzierung nimmt den Kasten der Gruppe als seinen Bereich.
+- Kann nichts mehr nachgeben, läuft trotzdem kein Rahmen über den Fuß der Gruppe hinaus: Der Inhalt, der nicht passt, wird dort abgeschnitten und als `frameOverflow` gemeldet.
+- Ein Rahmen mit `height: 'fill'` verlangt sein `minHeight` und nimmt freien Platz, als hätte er `grow: 1`.
+
+**Reihe.** Die Rahmen einer Reihe stehen in ihren angegebenen Breiten nebeneinander und sind alle so hoch wie die Reihe: so hoch wie der Kasten der Gruppe oder, wenn die Gruppe keinen eigenen Kasten hat, wie die größte angegebene Höhe unter ihnen (ein Rahmen mit fester Höhe behält seine). Läuft der Text eines Rahmens über die Höhe der Reihe hinaus, holt sich der Rahmen Breite: zuerst die freie Breite der Reihe, dann Breite von Nachbarn mit `shrink` über 0, die mit der niedrigsten `priority` zuerst, wobei kein Nachbar schmaler wird als die Breite, in die sein eigener Text noch passt. Der Rahmen nimmt so wenige ganze Millimeter, wie sein Text zum Passen braucht; reicht selbst der gesamte verfügbare Platz nicht, nimmt er gar nichts, und eine Reihe ohne eigenen Kasten wird stattdessen höher. Freie Breite geht an die Rahmen mit `grow` über 0, was dann noch bleibt, verteilt `align`. Reihen laufen von links nach rechts.
+
+**Fixierte Rahmen.** Ein Rahmen mit `pin: true` behält den Kasten, den die Vorlage für ihn angibt, auch wenn der Rahmen, an dem er verankert ist, wächst oder sich verschiebt: Ein Kasten, der passend zur Illustration gezeichnet ist, bleibt auf ihr liegen. In einer Gruppe behält ein fixierter Rahmen seinen Platz, und die übrigen Rahmen weichen ihm aus, mit `gap` auf beiden Seiten. Ein fixierter Rahmen außerhalb der Gruppe wirkt ebenso auf die Rahmen der Gruppe, die ihn sonst überdecken würden.
+
+**Dekoration.** Ein Dekorationselement, das an einem Rahmen verankert ist (`anchor: { to: '#dinero' }`), bewegt sich mit, wenn der Rahmen wächst oder sich verschiebt. Ein Element mit `pin: true` bleibt dort, wo die Vorlage diesen Rahmen zeichnet.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pin</code> (Dekorationselement)</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>In der Dekoration einer zusammengesetzten Seite: Ein an einem Rahmen verankertes Element bleibt dort, wo die Vorlage diesen Rahmen hinsetzt, ganz gleich, was der Inhalt des Rahmens oder seine Gruppe bewirken. Wird in Kopf- und Fußzeilen und in Überschriftengestaltungen ignoriert.</td>
+    </tr>
+  </tbody>
+</table>
+
+Die drei Kästen einer Schulbuchseite, jeder so hoch, wie er gezeichnet ist, und jeder wächst mit seinem Text:
+
+```ts
+frames: [
+  { name: 'dinero', style: 'caja-azul', width: { value: 186, unit: 'mm' }, minHeight: { value: 36, unit: 'mm' },
+    placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: { value: 9, unit: 'mm' } } } },
+  { name: 'dinero-fotos', layer: 2, width: { value: 58, unit: 'mm' },
+    placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+  { name: 'gasto', style: 'caja-verde', width: { value: 186, unit: 'mm' }, minHeight: { value: 62, unit: 'mm' } },
+  { name: 'ahorro', style: 'caja-amarilla', width: { value: 186, unit: 'mm' }, minHeight: { value: 30, unit: 'mm' } },
+],
+groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
+```
+
+Das Ergebnis hängt nur vom Inhalt der Seite, von der Vorlage und von der Typografie ab: Aus derselben Eingabe entsteht dieselbe Seite, in derselben Reihenfolge und mit denselben Schritten gemessen. Bei dieser Aufteilung liest der Umbruch nie eine andere Seite. Eine Änderung auf einer zusammengesetzten Seite lässt deshalb alle anderen Seiten unverändert, solange der Inhalt auf seiner Seite bleibt.
 
 ### Vererbung und Varianten
 

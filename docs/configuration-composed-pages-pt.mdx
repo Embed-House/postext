@@ -374,7 +374,7 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
       <td><code>placement</code>, <code>grid</code></td>
       <td>como nos quadros</td>
       <td>a caixa dos seus quadros</td>
-      <td>A caixa própria do grupo. Sem valor, a caixa em volta das caixas declaradas dos seus quadros.</td>
+      <td>A caixa própria do grupo. Sem valor, o grupo começa onde está posicionado o seu primeiro quadro e vai até onde os seus quadros precisarem.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -390,6 +390,58 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
     </tr>
   </tbody>
 </table>
+
+### Como os grupos dividem o espaço
+
+Um quadro declara o seu tamanho: um `height` fixo, ou `'auto'`, a altura do que ele contém, mantida entre `minHeight` e `maxHeight`. Num modelo tirado de uma página impressa, dê a cada caixa como `minHeight` a altura que ela tem na página: com um texto curto a caixa fica como está desenhada, e um texto mais longo a deixa mais alta. A página é diagramada duas vezes na mesma passada, uma como o modelo a declara e outra como o conteúdo precisa, e o que muda de uma para a outra forma o [registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes).
+
+**Pilha.** Os quadros de uma pilha ficam um embaixo do outro, cada um na sua altura, com `gap` entre eles. Cada um mantém a sua posição horizontal e a sua largura; a posição vertical própria é ignorada.
+
+- Um grupo sem `placement` nem `grid` próprios começa onde o posicionamento do seu primeiro quadro o coloca e desce o quanto os quadros precisarem, até o pé da área do modelo. Quando um quadro cresce, os quadros que vêm depois dele descem o mesmo tanto.
+- Um grupo com caixa própria arranja os seus quadros dentro dela. Quando eles precisam de mais do que ela comporta, os quadros com `shrink` acima de 0 devolvem espaço, primeiro os de `priority` mais baixa; quadros da mesma prioridade cedem na proporção do seu `shrink`, e nenhum fica abaixo do seu `minHeight`. O espaço que sobra vai para os quadros com `grow` acima de 0, na proporção desse valor, até o `maxHeight` de cada um; se não houver nenhum, `align` posiciona os quadros (`'end'` no pé, `'center'`, `'space-between'`). Um quadro do grupo sem posicionamento próprio usa a caixa do grupo como área.
+- Quando nada mais pode ceder, nenhum quadro passa do pé do grupo: o conteúdo que não cabe é cortado ali e aparece como `frameOverflow`.
+- Um quadro com `height: 'fill'` pede o seu `minHeight` e fica com o espaço que sobra como se tivesse `grow: 1`.
+
+**Fileira.** Os quadros de uma fileira ficam lado a lado nas larguras declaradas, todos com a altura da fileira: a da caixa do grupo ou, se o grupo não tiver caixa própria, a maior altura declarada entre eles (um quadro de altura fixa mantém a sua). Quando o texto de um quadro passa da altura da fileira, o quadro ganha largura: primeiro a que sobra na fileira, depois a dos outros quadros com `shrink` acima de 0, primeiro os de `priority` mais baixa, sem que nenhum fique mais estreito que a largura em que o seu próprio texto ainda cabe. A largura tomada é o menor número de milímetros inteiros com que o texto cabe; se nem todo o espaço disponível bastar, o quadro não toma nada, e uma fileira sem caixa própria fica mais alta. A largura que sobra vai para os quadros com `grow` acima de 0 e depois para `align`. As fileiras vão da esquerda para a direita.
+
+**Quadros fixos.** Um quadro com `pin: true` mantém a caixa que o modelo declara para ele, mesmo quando o quadro ao qual está ancorado cresce ou se move: uma caixa desenhada para coincidir com a arte continua sobre ela. Num grupo, um quadro fixo não sai do lugar e os outros quadros passam por ele, com o `gap` mantido dos dois lados; um quadro fixo fora do grupo faz o mesmo com os quadros do grupo que ele encobriria.
+
+**Decoração.** Um elemento de decoração ancorado a um quadro (`anchor: { to: '#dinero' }`) acompanha o quadro quando ele cresce ou se move. Um elemento com `pin: true` fica onde o modelo desenha aquele quadro.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriedade</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pin</code> (elemento de decoração)</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Na decoração de uma página composta: um elemento ancorado a um quadro fica onde o modelo coloca esse quadro, não importa o que façam o conteúdo do quadro ou o seu grupo. Ignorado nos cabeços, nos rodapés e nos estilos de título.</td>
+    </tr>
+  </tbody>
+</table>
+
+As três caixas de uma página de livro didático, cada uma na altura em que está desenhada e crescendo com o seu texto:
+
+```ts
+frames: [
+  { name: 'dinero', style: 'caja-azul', width: { value: 186, unit: 'mm' }, minHeight: { value: 36, unit: 'mm' },
+    placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: { value: 9, unit: 'mm' } } } },
+  { name: 'dinero-fotos', layer: 2, width: { value: 58, unit: 'mm' },
+    placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+  { name: 'gasto', style: 'caja-verde', width: { value: 186, unit: 'mm' }, minHeight: { value: 62, unit: 'mm' } },
+  { name: 'ahorro', style: 'caja-amarilla', width: { value: 186, unit: 'mm' }, minHeight: { value: 30, unit: 'mm' } },
+],
+groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
+```
+
+O resultado depende só do conteúdo da página, do modelo e da tipografia: a mesma entrada dá a mesma página, medida na mesma ordem e com os mesmos passos. A negociação nunca lê outra página, então uma mudança numa página composta deixa todas as outras como estavam, desde que o conteúdo continue na sua página.
 
 ### Herança e variantes
 

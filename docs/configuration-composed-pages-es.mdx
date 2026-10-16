@@ -374,7 +374,7 @@ Un grupo es una pila (de arriba abajo) o una fila (del principio al final) de ma
       <td><code>placement</code>, <code>grid</code></td>
       <td>como en los marcos</td>
       <td>la caja de sus marcos</td>
-      <td>La caja propia del grupo. Sin fijar, la caja que rodea las cajas declaradas de sus marcos.</td>
+      <td>La caja propia del grupo. Sin fijar, el grupo empieza donde está colocado su primer marco y llega hasta donde lo necesiten sus marcos.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -390,6 +390,58 @@ Un grupo es una pila (de arriba abajo) o una fila (del principio al final) de ma
     </tr>
   </tbody>
 </table>
+
+### Cómo se reparten el espacio los grupos
+
+Un marco declara su tamaño: una `height` fija, o `'auto'`, la altura de lo que contiene, entre `minHeight` y `maxHeight`. En una plantilla sacada de una página impresa, da a cada caja como `minHeight` la altura que tiene en esa página: con un texto corto la caja conserva su dibujo, y con uno más largo se alarga. La página se compone dos veces en la misma pasada, una como la declara la plantilla y otra como la pide su contenido, y lo que cambia de una a otra es el [registro de recomposición](/es/docs/composed-pages#registro-de-recomposición).
+
+**Pila.** Los marcos de una pila van uno debajo de otro, cada uno con su altura y con `gap` entre ellos. Cada marco conserva su posición horizontal y su anchura; su posición vertical propia se ignora.
+
+- Un grupo sin `placement` ni `grid` propios empieza donde lo deja la colocación de su primer marco y baja todo lo que necesiten sus marcos, hasta el pie del área de la plantilla. Cuando un marco crece, los que van detrás bajan lo mismo.
+- Un grupo con caja propia coloca sus marcos dentro de ella. Si necesitan más de lo que cabe, los marcos con `shrink` mayor que 0 devuelven espacio, primero los de `priority` más baja; los de la misma prioridad ceden en proporción a su `shrink`, y ninguno baja de su `minHeight`. El espacio sobrante va a los marcos con `grow` mayor que 0, en proporción, hasta su `maxHeight`; si no hay ninguno, `align` coloca los marcos (`'end'` al pie, `'center'`, `'space-between'`). Un marco del grupo sin colocación propia toma la caja del grupo como área.
+- Cuando ya no puede ceder nadie, ningún marco pasa del pie del grupo: lo que no cabe se corta ahí y se avisa con `frameOverflow`.
+- Un marco con `height: 'fill'` pide su `minHeight` y toma espacio sobrante como si tuviera `grow: 1`.
+
+**Fila.** Los marcos de una fila van uno al lado de otro con su anchura declarada y todos con la altura de la fila: la de la caja del grupo o, si el grupo no tiene caja propia, la mayor altura declarada de sus marcos (un marco de altura fija conserva la suya). Cuando el texto de un marco pasa de la altura de la fila, el marco gana anchura: primero la que sobra en la fila y después la de los hermanos con `shrink` mayor que 0, primero los de `priority` más baja, sin dejar a ninguno más estrecho que la anchura en la que todavía cabe su propio texto. Toma los milímetros enteros justos para que el texto quepa; si ni con todo el espacio disponible cabría, no toma nada, y una fila sin caja propia crece en altura. La anchura sobrante va a los marcos con `grow` mayor que 0 y después a `align`. Las filas se colocan de izquierda a derecha.
+
+**Fijados.** Un marco con `pin: true` conserva la caja que le declara la plantilla aunque crezca o se mueva el marco al que está anclado: una caja dibujada sobre la ilustración sigue encima de ella. Dentro de un grupo, un marco fijado mantiene su sitio y los demás pasan de largo, con `gap` a cada lado; un marco fijado fuera del grupo hace lo mismo con los marcos del grupo que pisaría.
+
+**Decoración.** Un elemento de la decoración anclado a un marco (`anchor: { to: '#dinero' }`) se mueve con él cuando el marco crece o se desplaza. Un elemento con `pin: true` se queda donde la plantilla dibuja ese marco.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propiedad</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pin</code> (elemento de decoración)</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>En la decoración de una página compuesta: un elemento anclado a un marco se queda donde la plantilla pone ese marco, haga lo que haga su contenido o su grupo. No tiene efecto en cabeceras, pies ni diseños de título.</td>
+    </tr>
+  </tbody>
+</table>
+
+Las tres cajas de una página de libro de texto, cada una con la altura con que está dibujada y creciendo con su texto:
+
+```ts
+frames: [
+  { name: 'dinero', style: 'caja-azul', width: { value: 186, unit: 'mm' }, minHeight: { value: 36, unit: 'mm' },
+    placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: { value: 9, unit: 'mm' } } } },
+  { name: 'dinero-fotos', layer: 2, width: { value: 58, unit: 'mm' },
+    placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+  { name: 'gasto', style: 'caja-verde', width: { value: 186, unit: 'mm' }, minHeight: { value: 62, unit: 'mm' } },
+  { name: 'ahorro', style: 'caja-amarilla', width: { value: 186, unit: 'mm' }, minHeight: { value: 30, unit: 'mm' } },
+],
+groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
+```
+
+El resultado depende solo del contenido de la página, de la plantilla y de la tipografía: la misma entrada da la misma página, medida en el mismo orden y con los mismos pasos. El reparto nunca lee otra página, así que un cambio en una página compuesta deja todas las demás como estaban, mientras su contenido no salga de ella.
 
 ### Herencia y variantes
 

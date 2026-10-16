@@ -240,6 +240,53 @@ Aquest avís el dona la maquetació, no les comprovacions del codi font d'aquí 
 
 **Solució.** Dona més espai al marc (puja o treu el seu `height` o el seu `maxHeight`), encadena'l a un altre marc amb `next`, escurça el text o compon la pàgina amb una altra plantilla. De moment la maquetació no redueix el text perquè hi càpiga.
 
+## Quan el text creix
+
+Una pàgina composta es reorganitza dins dels límits que declara la seva plantilla. Si escrius un text més llarg a la primera caixa d'una pàgina les caixes de la qual formen un grup de tipus pila, la caixa creix per encabir-lo i les caixes de sota baixen, amb les fotos i la decoració que hi estan ancorades; cap línia de la plantilla no canvia. Amb un text més curt, la caixa recupera l'alçada declarada. Un marc o un element de decoració marcat amb `pin` es queda on el posa la plantilla, per a una caixa que ha de quedar damunt de la il·lustració. Com es reparteixen l'espai les piles i les fileres, i quin marc cedeix primer, es fixa a la plantilla: vegeu [Configuració › Com es reparteixen l'espai els grups](/ca/docs/configuration-composed-pages#com-es-reparteixen-lespai-els-grups).
+
+Quan les caixes arriben al peu de l'àrea i cap marc del grup no pot cedir més espai, l'últim marc es talla al peu i la maquetació dona l'avís `frameOverflow` (vegeu [Avisos](#avisos)): escurça el text, abaixa el `minHeight` d'un altre marc, deixa que un marc s'encongeixi o dona més espai al grup. Els grups no afegeixen cap altre avís.
+
+## Registre de reajustament
+
+Cada pàgina composta guarda un registre del que la maquetació ha canviat respecte del dibuix de la plantilla: quin marc ha crescut, ha tornat espai o s'ha desplaçat, quant, i quin marc ho ha provocat. Una pàgina el text de la qual cap a la plantilla no registra res.
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Esdeveniment</th>
+      <th>Què indica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>El marc és més alt (o, amb <code>axis: 'x'</code>, més ample) del que es declara: <code>fromMm</code> és la mida declarada i <code>toMm</code>, la que ha obtingut.</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>El marc és més petit del que es declara: ha cedit espai a <code>cause</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>La vora superior del marc (amb <code>axis: 'x'</code>, la vora esquerra) s'ha desplaçat, en mm des de la vora del full; <code>cause</code> és el marc que, en créixer, l'ha desplaçat.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>El contingut no hi cabia: <code>toMm</code> és l'alçada tallada, com a <code>frameOverflow</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Els canvis de menys de mig mil·límetre no hi consten, i cada canvi s'arrodoneix una sola vegada a la dècima de mil·límetre, de manera que els marcs que s'han desplaçat junts mostren la mateixa xifra. La decoració que segueix un marc no s'hi llista.
+
+`postext check` imprimeix una línia `reflow` per cada pàgina composta que té esdeveniments, després dels avisos; amb `--json`, l'informe porta una llista `reflow` amb una entrada per pàgina: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` i `lines` (els esdeveniments redactats en paraules).
+
+Des del codi, el registre és `VDTPage.composed.log`, i cada marc guarda a `VDTFrame.declaredRect` la caixa que li declara la plantilla quan és diferent de `rect`. `composedReflowLog(doc)` retorna les entrades que imprimeix `postext check`, i `describeReflowEvent(event)` redacta un esdeveniment en paraules.
+
 ## Des del codi
 
 `composedPages(blocks)` llegeix els blocs analitzats d'un capítol (`parseMarkdownWithIssues(markdown).blocks`) i retorna un node per cada tanca de pàgina, en ordre: el seu `template`, `spread`, `attrs` amb l'interval d'origen de cada valor (`attrSources`), el seu `fenceIndex` (l'ordinal de la tanca dins del capítol, el mateix en totes les llengües), `slots` (els índexs dels blocs de cada slot, en l'ordre del Markdown), `unassigned` (els blocs sense slot) i l'interval d'origen de la pàgina sencera. Un bloc porta el slot que anomena a `ContentBlock.slot`, amb l'interval d'origen del valor; una figura és un `resourceBlock` el `figure` del qual guarda els seus atributs i els seus rètols, cada rètol amb el seu text, els seus trams en línia i un mapa d'origen que remet al Markdown. `checkComposedSlots(pages, config)` retorna els tres avisos de slot d'aquestes pàgines.

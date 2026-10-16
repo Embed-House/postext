@@ -240,6 +240,53 @@ Diese Warnung kommt aus dem Umbruch, nicht aus den Quellprüfungen oben: Sie ers
 
 **Behebung.** Geben Sie dem Rahmen mehr Platz (erhöhen oder entfernen Sie `height` oder `maxHeight`), verketten Sie ihn mit `next` mit einem weiteren Rahmen, kürzen Sie den Text oder setzen Sie die Seite mit einer anderen Vorlage. Der Umbruch verkleinert den Text bisher nicht, damit er passt.
 
+## Wenn der Text wächst
+
+Eine zusammengesetzte Seite ordnet sich innerhalb der Grenzen neu an, die ihre Vorlage angibt. Schreiben Sie einen längeren Text in den ersten Kasten einer Seite, deren Kästen eine Stapelgruppe bilden, dann wächst der Kasten, bis der Text hineinpasst, und die Kästen darunter rücken nach unten, mitsamt den Fotos und dem Dekor, die an ihnen verankert sind; an der Vorlage ändert sich dabei keine Zeile. Mit einem kürzeren Text kehrt der Kasten zu seiner angegebenen Höhe zurück. Ein Rahmen oder ein Element des Dekors mit `pin` bleibt dort, wo die Vorlage ihn hinsetzt, etwa ein Kasten, der genau auf der Illustration liegen muss. Wie Stapel und Reihen den Platz teilen und welcher Rahmen zuerst nachgibt, legt die Vorlage fest: siehe [Konfiguration › Wie Gruppen den Platz teilen](/de/docs/configuration-composed-pages#wie-gruppen-den-platz-teilen).
+
+Erreichen die Kästen den Fuß des Bereichs und kann kein Rahmen der Gruppe mehr Platz abgeben, wird der letzte Rahmen am Fuß abgeschnitten, und der Umbruch meldet `frameOverflow` (siehe [Warnungen](#warnungen)). Kürzen Sie dann den Text, senken Sie das `minHeight` eines anderen Rahmens, lassen Sie einen Rahmen schrumpfen oder geben Sie der Gruppe mehr Raum. Weitere Warnungen erzeugen Gruppen nicht.
+
+## Umbruchprotokoll
+
+Jede zusammengesetzte Seite führt ein Protokoll darüber, was der Umbruch gegenüber der Zeichnung der Vorlage verändert hat: welcher Rahmen gewachsen ist, Platz abgegeben oder sich verschoben hat, um wie viel und welcher Rahmen das ausgelöst hat. Passt der Text einer Seite in ihre Vorlage, bleibt das Protokoll leer.
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Ereignis</th>
+      <th>Bedeutung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>Der Rahmen ist höher (mit <code>axis: 'x'</code> breiter) als angegeben: <code>fromMm</code> ist die angegebene Größe, <code>toMm</code> die tatsächliche.</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>Der Rahmen ist kleiner als angegeben: Er hat Platz an <code>cause</code> abgegeben.</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>Die Oberkante des Rahmens (mit <code>axis: 'x'</code> seine linke Kante) hat sich verschoben, gemessen in mm vom Blattrand; <code>cause</code> ist der Rahmen, dessen Wachstum ihn verschoben hat.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>Der Inhalt hat nicht gepasst: <code>toMm</code> ist die abgeschnittene Höhe, wie bei <code>frameOverflow</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Änderungen unter einem halben Millimeter werden weggelassen, und jede Änderung wird ein einziges Mal auf einen Zehntelmillimeter gerundet, sodass Rahmen, die sich gemeinsam verschoben haben, denselben Wert zeigen. Dekor, das einem Rahmen folgt, wird nicht aufgeführt.
+
+`postext check` gibt nach den Warnungen für jede zusammengesetzte Seite mit Ereignissen eine Zeile `reflow` aus. Mit `--json` enthält der Bericht ein Array `reflow` mit einem Eintrag je Seite: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` und `lines` (die Ereignisse in Worten).
+
+Im Code ist das Protokoll `VDTPage.composed.log`, und jeder Rahmen bewahrt den Kasten, den seine Vorlage angibt, in `VDTFrame.declaredRect` auf, sofern er von `rect` abweicht. `composedReflowLog(doc)` liefert die Einträge, die `postext check` ausgibt, und `describeReflowEvent(event)` fasst ein einzelnes Ereignis in Worte.
+
 ## Aus dem Code
 
 `composedPages(blocks)` liest die geparsten Blöcke eines Kapitels (`parseMarkdownWithIssues(markdown).blocks`) und gibt der Reihe nach je Seitenbegrenzung einen Knoten zurück: `template`, `spread`, `attrs` mit dem Quellbereich jedes Werts (`attrSources`), `fenceIndex` (die Ordnungszahl der Begrenzung im Kapitel, in jeder Sprache dieselbe), `slots` (die Indizes der Blöcke jedes Slots, in der Reihenfolge des Markdowns), `unassigned` (die Blöcke ohne Slot) und den Quellbereich der ganzen Seite. Ein Block trägt den Slot, den er nennt, in `ContentBlock.slot`, mit dem Quellbereich des Werts; eine Abbildung ist ein `resourceBlock`, dessen `figure` ihre Attribute und Beschriftungen enthält, jede Beschriftung mit ihrem Text, ihren Inline-Spans und einer Zuordnung zurück zur Quelle im Markdown. `checkComposedSlots(pages, config)` gibt die drei Slot-Warnungen für diese Seiten zurück.

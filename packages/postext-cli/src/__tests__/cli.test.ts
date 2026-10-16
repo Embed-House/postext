@@ -270,4 +270,29 @@ describe('postext cli', () => {
     expect(JSON.parse(r.stdout).warnings.some((w: { kind: string }) => w.kind === 'unknownResourceId')).toBe(true);
     expect(run(['check', 'ch', '--offline', '-q'], dir).code).toBe(0);
   }, 60_000);
+
+  // #856: a composed page whose first box grows reports it, in words and in --json.
+  it('check reports the reflow log of a composed page', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'postext-cli-'));
+    mkdirSync(join(dir, 'ch'));
+    const mm = (value: number) => ({ value, unit: 'mm' });
+    writeFileSync(join(dir, 'config.json'), JSON.stringify({
+      pageTemplates: [{
+        id: 'boxes',
+        frames: [{ name: 'a', minHeight: mm(10) }, { name: 'b', minHeight: mm(10) }],
+        groups: [{ name: 'g', frames: ['a', 'b'], gap: mm(5) }],
+      }],
+    }));
+    const text = 'Money lets us swap our work for the things we need, because everybody accepts what it is worth. '.repeat(12);
+    writeFileSync(join(dir, 'ch', '01.md'), `::::page{template="boxes"}\n:::frame{slot="a"}\n${text}\n:::\n\n:::frame{slot="b"}\nB.\n:::\n::::\n`);
+    const r = run(['check', 'ch', '--config', 'config.json', '--offline', '--json'], dir);
+    expect(r.code).toBe(0);
+    const reflow = JSON.parse(r.stdout).reflow as { template: string; events: { frame: string; kind: string; cause?: string }[]; lines: string[] }[];
+    expect(reflow).toHaveLength(1);
+    expect(reflow[0]!.template).toBe('boxes');
+    expect(reflow[0]!.events.map((e) => `${e.frame} ${e.kind}`)).toEqual(['a grew', 'b moved']);
+    expect(reflow[0]!.events[1]!.cause).toBe('a');
+    expect(reflow[0]!.lines[0]).toMatch(/^a grew [\d.]+ mm$/);
+    expect(r.stderr).toMatch(/reflow p\. \S+ \(boxes\): a grew [\d.]+ mm; b moved down [\d.]+ mm/);
+  }, 60_000);
 });

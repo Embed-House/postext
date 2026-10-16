@@ -374,7 +374,7 @@ A group is a stack (top to bottom) or a row (start to end) of frames that share 
       <td><code>placement</code>, <code>grid</code></td>
       <td>as frames</td>
       <td>its frames' box</td>
-      <td>The group's own box. Unset, the box around the declared boxes of its frames.</td>
+      <td>The group's own box. Unset, the group starts where its first frame is placed and runs as far as its frames need.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -390,6 +390,58 @@ A group is a stack (top to bottom) or a row (start to end) of frames that share 
     </tr>
   </tbody>
 </table>
+
+### How groups share space
+
+A frame declares its size: a fixed `height`, or `'auto'`, the height of what it holds, kept between `minHeight` and `maxHeight`. For a template drawn from a printed page, give each box the height it has on the page as `minHeight`: a short text keeps the drawn box, a longer one makes it taller. The page is laid twice in the same pass, once as the template declares it and once as its content needs, and what differs between the two is the [reflow log](/en/docs/composed-pages#reflow-log).
+
+**Stack.** The frames of a stack go one under another at their heights, `gap` between them. Each keeps its own horizontal place and width; its own vertical place is ignored.
+
+- A group with no `placement` or `grid` of its own starts where the placement of its first frame puts it and runs down as far as its frames need, to the foot of the template's area. When one frame grows, the frames after it move down by as much.
+- A group with a box of its own lays its frames inside that box. When they need more than it holds, the frames with `shrink` above 0 give space back, the lowest `priority` first; frames of the same priority give in proportion to their `shrink`; none goes below its `minHeight`. Spare space goes to the frames with `grow` above 0, in proportion to it, up to their `maxHeight`; with none, `align` places the frames (`'end'` at the foot, `'center'`, `'space-between'`). A frame of the group with no placement of its own takes the group's box as its area.
+- When nothing more can give, no frame runs past the group's foot: the content that does not fit is cut there and reported as `frameOverflow`.
+- A frame with `height: 'fill'` asks for its `minHeight` and takes spare space as if it had `grow: 1`.
+
+**Row.** The frames of a row go side by side at their declared widths, all as tall as the row: the height of the group's box, or, with no box of its own, the tallest declared height among them (a frame with a fixed height keeps its own). When the text of one frame runs past the row's height, the frame takes width: first the spare width of the row, then width from siblings with `shrink` above 0, the lowest `priority` first, each one never narrower than the width its own text still fits in. The width taken is the fewest whole millimetres that make the text fit; if even all the room there is would not, the frame takes none, and a row with no box of its own grows taller instead. Spare width goes to the frames with `grow` above 0, then to `align`. Rows run from left to right.
+
+**Pins.** A frame with `pin: true` keeps the box the template declares for it, even when the frame it is anchored to grows or moves: a box drawn to match the artwork stays on it. In a group, a pinned frame holds its place and the other frames go past it, `gap` kept on both sides; a pinned frame outside the group does the same for the group's frames it would overlap.
+
+**Decoration.** A decoration element anchored to a frame (`anchor: { to: '#dinero' }`) moves with the frame when the frame grows or moves. An element with `pin: true` stays where the template draws that frame.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Property</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pin</code> (decoration element)</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>On a composed page's decoration: an element anchored to a frame stays where the template puts that frame, whatever the frame's content or group does. Ignored on headers, footers and heading designs.</td>
+    </tr>
+  </tbody>
+</table>
+
+The three boxes of a textbook page, each at the height it is drawn and growing with its text:
+
+```ts
+frames: [
+  { name: 'dinero', style: 'caja-azul', width: { value: 186, unit: 'mm' }, minHeight: { value: 36, unit: 'mm' },
+    placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: { value: 9, unit: 'mm' } } } },
+  { name: 'dinero-fotos', layer: 2, width: { value: 58, unit: 'mm' },
+    placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+  { name: 'gasto', style: 'caja-verde', width: { value: 186, unit: 'mm' }, minHeight: { value: 62, unit: 'mm' } },
+  { name: 'ahorro', style: 'caja-amarilla', width: { value: 186, unit: 'mm' }, minHeight: { value: 30, unit: 'mm' } },
+],
+groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
+```
+
+The result depends only on the page's content, the template and the typography: the same input gives the same page, measured in the same order with the same steps. The negotiation never reads another page, so a change on one composed page leaves every other page as it was, as long as the content stays on its page.
 
 ### Inheritance and variants
 

@@ -240,6 +240,53 @@ Este aviso lo da la maquetación, no las comprobaciones del código fuente de ar
 
 **Solución.** Da más sitio al marco (sube o quita su `height` o su `maxHeight`), encadénalo a otro marco con `next`, acorta el texto o compón la página con otra plantilla. Por ahora la maquetación no reduce el texto para que quepa.
 
+## Cuando el texto crece
+
+Una página compuesta se recoloca dentro de los límites que declara su plantilla. Si el texto de la primera caja de una página cuyas cajas forman un grupo apilado se alarga, la caja crece para darle cabida y las cajas de debajo, con las fotos y la decoración ancladas a ellas, bajan; no cambia ni una línea de la plantilla. Con un texto más corto, la caja recupera la altura declarada. Un marco o un elemento de decoración con `pin` se queda donde lo pone la plantilla, para una caja que tiene que caer sobre la ilustración. Cómo se reparten el espacio las pilas y las filas, y qué marco cede primero, se decide en la plantilla: consulta [Configuración › Cómo se reparten el espacio los grupos](/es/docs/configuration-composed-pages#cómo-se-reparten-el-espacio-los-grupos).
+
+Cuando las cajas llegan al pie del área y ningún marco del grupo puede ceder más, el último se corta al pie y la composición avisa con `frameOverflow` (consulta [Avisos](#avisos)): acorta el texto, baja el `minHeight` de otro marco, deja que un marco encoja o da más sitio al grupo. Los grupos no añaden ningún otro aviso.
+
+## Registro de recomposición
+
+Cada página compuesta guarda un registro de lo que la composición cambió respecto al dibujo de su plantilla: qué marco creció, cedió espacio o se movió, cuánto, y qué marco lo provocó. Una página cuyo texto cabe en su plantilla no registra nada.
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Suceso</th>
+      <th>Qué dice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>El marco es más alto (con <code>axis: 'x'</code>, más ancho) que lo declarado: <code>fromMm</code> es el tamaño declarado y <code>toMm</code> el que ha recibido.</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>El marco es más pequeño que lo declarado: ha cedido espacio a <code>cause</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>El borde superior del marco (con <code>axis: 'x'</code>, el izquierdo) se ha movido, en mm desde el borde de la hoja; <code>cause</code> es el marco cuyo crecimiento lo ha desplazado.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>El contenido no cabía: <code>toMm</code> es la altura cortada, como en <code>frameOverflow</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Los cambios de menos de medio milímetro no se registran, y cada cambio se redondea una sola vez a la décima de milímetro, de modo que los marcos que se movieron juntos dan la misma cifra. La decoración que sigue a un marco no aparece en la lista.
+
+`postext check` escribe una línea `reflow` por cada página compuesta con sucesos, después de los avisos; con `--json`, el informe lleva una lista `reflow` con una entrada por página: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` y `lines` (los sucesos en palabras).
+
+Desde el código, el registro es `VDTPage.composed.log`, y cada marco guarda en `VDTFrame.declaredRect` la caja que le declara su plantilla cuando no coincide con `rect`. `composedReflowLog(doc)` devuelve las entradas que escribe `postext check`, y `describeReflowEvent(event)` pone un suceso en palabras.
+
 ## Desde el código
 
 `composedPages(blocks)` lee los bloques analizados de un capítulo (`parseMarkdownWithIssues(markdown).blocks`) y devuelve un nodo por cada valla de página, en orden: su `template`, `spread`, `attrs` con el rango de origen de cada valor (`attrSources`), su `fenceIndex` (el ordinal de la valla en el capítulo, el mismo en todos los idiomas), `slots` (los índices de los bloques de cada slot, en el orden del Markdown), `unassigned` (los bloques sin slot) y el rango de origen de la página entera. Un bloque lleva el slot que nombra en `ContentBlock.slot`, con el rango de origen del valor; una figura es un `resourceBlock` cuyo `figure` guarda sus atributos y sus rótulos, cada rótulo con su texto, sus tramos en línea y un mapa de origen que remite al Markdown. `checkComposedSlots(pages, config)` devuelve los tres avisos de slot de esas páginas.

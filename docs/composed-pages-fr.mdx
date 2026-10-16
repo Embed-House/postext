@@ -240,6 +240,53 @@ Cet avertissement vient de la mise en page, pas des vérifications de la source 
 
 **Correction.** Donnez plus de place au bloc (augmentez ou retirez son `height` ou son `maxHeight`), chaînez-le à un autre bloc avec `next`, raccourcissez le texte ou composez la page avec un autre modèle. Pour l’instant, la mise en page ne réduit pas le texte pour le faire tenir.
 
+## Quand le texte s’allonge
+
+Une page composée se réorganise dans les limites que déclare son modèle. Si vous écrivez un texte plus long dans le premier encadré d’une page dont les encadrés forment un groupe en pile, l’encadré grandit pour le contenir et les encadrés du dessous descendent, avec les photos et le décor qui leur sont ancrés ; aucune ligne du modèle ne change. Avec un texte plus court, l’encadré retrouve sa hauteur déclarée. Un bloc ou un élément de décor marqué `pin` reste là où le modèle le place, pour un encadré qui doit tomber juste sur l’illustration. La façon dont les piles et les rangées se partagent l’espace, et le bloc qui cède le premier, se règlent dans le modèle : voir [Configuration › Comment les groupes se partagent l’espace](/fr/docs/configuration-composed-pages#comment-les-groupes-se-partagent-lespace).
+
+Quand les encadrés atteignent le pied de la zone et qu’aucun bloc du groupe ne peut céder plus d’espace, le dernier bloc est coupé au pied et la mise en page signale `frameOverflow` (voir [Avertissements](#avertissements)) : raccourcissez le texte, baissez le `minHeight` d’un autre bloc, laissez un bloc rétrécir ou donnez plus de place au groupe. Les groupes n’ajoutent aucun autre avertissement.
+
+## Journal de recomposition
+
+Chaque page composée tient un journal de ce que la mise en page a changé par rapport au dessin de son modèle : quel bloc a grandi, a rendu de l’espace ou s’est déplacé, de combien, et quel bloc en est la cause. Une page dont le texte tient dans son modèle n’inscrit rien au journal.
+
+```text
+dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Événement</th>
+      <th>Ce qu’il indique</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>grew</code></td>
+      <td>Le bloc est plus haut (ou, avec <code>axis: 'x'</code>, plus large) que déclaré : <code>fromMm</code> est la taille déclarée, <code>toMm</code> celle qu’il a reçue.</td>
+    </tr>
+    <tr>
+      <td><code>resized</code></td>
+      <td>Le bloc est plus petit que déclaré : il a cédé de l’espace à <code>cause</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moved</code></td>
+      <td>Le bord supérieur du bloc (avec <code>axis: 'x'</code>, son bord gauche) s’est déplacé, en mm depuis le bord de la feuille ; <code>cause</code> est le bloc dont l’agrandissement l’a déplacé.</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td>Le contenu ne tenait pas : <code>toMm</code> est la hauteur coupée, comme dans <code>frameOverflow</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Les changements de moins d’un demi-millimètre sont omis, et chaque changement n’est arrondi qu’une fois, au dixième de millimètre : des blocs qui se sont déplacés ensemble affichent la même valeur. Le décor qui suit un bloc n’est pas listé.
+
+`postext check` affiche une ligne `reflow` par page composée qui a des événements, après les avertissements ; avec `--json`, le rapport contient un tableau `reflow` avec une entrée par page : `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` et `lines` (les événements rédigés en clair).
+
+Depuis le code, le journal est `VDTPage.composed.log`, et chaque bloc garde dans `VDTFrame.declaredRect` la boîte que son modèle lui déclare quand elle diffère de `rect`. `composedReflowLog(doc)` renvoie les entrées qu’affiche `postext check`, et `describeReflowEvent(event)` rédige un événement en clair.
+
 ## Depuis le code
 
 `composedPages(blocks)` lit les éléments analysés d’un chapitre (`parseMarkdownWithIssues(markdown).blocks`) et renvoie un nœud par délimiteur de page, dans l’ordre, avec son `template`, `spread`, `attrs` et la plage source de chaque valeur (`attrSources`), son `fenceIndex` (le rang du délimiteur dans le chapitre, le même dans toutes les langues), `slots` (les indices des éléments de chaque slot, dans l’ordre du Markdown), `unassigned` (les éléments sans slot) et la plage source de la page entière. Un élément porte le slot qu’il nomme dans `ContentBlock.slot`, avec la plage source de la valeur ; une figure est un `resourceBlock` dont `figure` contient les attributs et les étiquettes, chaque étiquette avec son texte, ses segments en ligne et une correspondance avec sa source dans le Markdown. `checkComposedSlots(pages, config)` renvoie les trois avertissements de slot pour ces pages.
