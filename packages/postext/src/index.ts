@@ -639,7 +639,7 @@ export {
 export { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameMatrix, frameClips, frameBounds, frameContentRect, frameOfBlock } from './composed/paint';
 // The boxes of a template's frames before content is poured (#863: Sandbox thumbnails and editor).
 export { templateFrameRects } from './composed/geometry';
-export type { ComposedPaintItem } from './composed/paint';
+export type { ComposedPaintItem, ComposedPaintPart } from './composed/paint';
 // Groups and the reflow log (#856): how frames negotiate space, and what the
 // layout changed from the template's drawing, in data and in words.
 export { layoutGroup, composedOrder } from './composed/groups';

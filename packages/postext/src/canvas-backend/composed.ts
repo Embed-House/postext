@@ -6,7 +6,7 @@
  * (#861) all of it is clipped to the page's share of the sheet.
  */
 import type { VDTDesignSlot, VDTPage } from '../vdt';
-import { composedPaintOrder, composedSheetClip, frameClips, frameContentRect, frameMatrix } from '../composed/paint';
+import { composedPaintOrder, composedSheetClip, frameClips, frameContentRect, frameMatrix, type ComposedPaintPart } from '../composed/paint';
 import { renderBlock } from './blockRender';
 import { renderHeaderFooterSlot } from './headerFooter';
 import { restoreContext, saveContext } from './contextState';
@@ -15,13 +15,16 @@ import { restoreContext, saveContext } from './contextState';
  * Paint the frames of `page.composed` in their paint order. With
  * `decoration` the template's decoration is painted between the layers
  * below 0 and the rest; without it (a page painted through a flow frame,
- * whose decoration stands on the sheet) it is left to the caller.
+ * whose decoration stands on the sheet) it is left to the caller, who
+ * paints the frames under it (`part: 'below'`) and over it (`'above'`)
+ * in two calls.
  */
 export function renderComposedFrames(
   ctx: CanvasRenderingContext2D,
   page: VDTPage,
   inkHex: string | null,
   decoration: VDTDesignSlot | undefined,
+  part?: ComposedPaintPart,
 ): void {
   const sheet = composedSheetClip(page);
   if (sheet) {
@@ -30,7 +33,7 @@ export function renderComposedFrames(
     ctx.rect(sheet.x, sheet.y, sheet.width, sheet.height);
     ctx.clip();
   }
-  for (const item of composedPaintOrder(page)) {
+  for (const item of composedPaintOrder(page, part)) {
     if (item.kind === 'decoration') {
       if (decoration) renderHeaderFooterSlot(ctx, decoration, inkHex);
       continue;
