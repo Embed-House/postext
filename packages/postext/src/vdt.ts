@@ -268,6 +268,12 @@ export interface VDTChip {
    *  pass joins the pieces that share a line into one box. Never left on a
    *  chip of a finished line. */
   joinNext?: boolean;
+  /** Where each character of the chip's runs (joined, in logical order)
+   *  stands in the source, counted from the chip's leading `:` (#857): add
+   *  the source offset of the chip's plain character (its block's
+   *  `sourceMap`). Absent when the runs do not read as written (a chip in
+   *  small capitals is still mapped; one cut by direction is not). */
+  sourceOffsets?: number[];
 }
 
 export interface VDTLineSegment {
@@ -1688,8 +1694,9 @@ export interface VDTBlock {
    *  make the row a link to it. The contents keep their own rhythm:
    *  entries and part rows neither snap to the baseline grid nor serve as
    *  column-balancing stretch points. `continued`: a repeated head row (see
-   *  `tocPart`). */
-  tocEntry?: { pageIndex?: number; continued?: true };
+   *  `tocPart`). `headingSource`: where the heading the entry lists starts
+   *  in its chapter's Markdown body (`OutlineEntry.headingSource`, #857). */
+  tocEntry?: { pageIndex?: number; continued?: true; headingSource?: number };
   numberPrefix?: string;
   /** What joins {@link numberPrefix} to the title
    *  (`HeadingLevelConfig.numberSeparator`), when it is not one space:
@@ -2131,7 +2138,24 @@ export interface VDTDesignBoxStyle {
 }
 
 /** Text block rendered inside a design slot (header / footer / heading). */
-export interface VDTDesignTextBlock {
+/** Where a design block comes from in the configuration (#857): the
+ *  element of its design slot (`DesignElement.id`) and the JSON pointer of
+ *  that element (`/pageTemplates/0/decoration/elements/2`,
+ *  `/footer/elements/0`). Set on the blocks of a composed page's decoration
+ *  and of the running heads; absent where the slot's origin is not known
+ *  (a heading style's design, a callout's own overlay). */
+export interface VDTDesignBlockOrigin {
+  elementId?: string;
+  configPath?: string;
+  /** The Markdown attribute the block shows: `x` for a text element whose
+   *  content is `{attr.x}` (its `sourceStart`/`sourceEnd` are the value's
+   *  in the page fence or the heading) and for an image whose `resourceId`
+   *  is `{attr.x}`; `label` / `title` for a frame's tab and title (the
+   *  `:::frame` fence's). Absent otherwise. */
+  attr?: string;
+}
+
+export interface VDTDesignTextBlock extends VDTDesignBlockOrigin {
   kind: 'text';
   bbox: BoundingBox;
   fontString: string;
@@ -2202,7 +2226,7 @@ export interface VDTVerticalText {
 }
 
 /** Rendered rule inside a design slot. */
-export interface VDTDesignRuleBlock {
+export interface VDTDesignRuleBlock extends VDTDesignBlockOrigin {
   kind: 'rule';
   bbox: BoundingBox;
   color: string;
@@ -2211,7 +2235,7 @@ export interface VDTDesignRuleBlock {
 }
 
 /** Decorative rounded box. */
-export interface VDTDesignBoxBlock {
+export interface VDTDesignBoxBlock extends VDTDesignBlockOrigin {
   kind: 'box';
   bbox: BoundingBox;
   box: VDTDesignBoxStyle;
@@ -2223,7 +2247,7 @@ export interface VDTDesignBoxBlock {
 }
 
 /** Image drawn from the resource image registry (e.g. a callout icon). */
-export interface VDTDesignImageBlock {
+export interface VDTDesignImageBlock extends VDTDesignBlockOrigin {
   kind: 'image';
   bbox: BoundingBox;
   /** Out-of-band binary id resolved at render time (canvas registry, HTML

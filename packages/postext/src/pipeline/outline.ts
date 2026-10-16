@@ -207,6 +207,7 @@ function computeOutlineEntries(
         ...(style ? { styleId: style.id } : {}),
         ...(b.attrs ? { attrs: b.attrs } : {}),
         ...(b.attrs?.id ? { anchorId: b.attrs.id } : {}),
+        headingSource: b.sourceStart,
       });
       if (b.indexMarks) out.push(...indexMarkEntries(b));
       if (b.anchorMarks) out.push(...anchorEntries(b));
@@ -229,6 +230,7 @@ function computeOutlineEntries(
       ...(style ? { styleId: style.id } : {}),
       ...(b.attrs ? { attrs: b.attrs } : {}),
       ...(b.attrs?.id ? { anchorId: b.attrs.id } : {}),
+      headingSource: b.sourceStart,
     });
     if (b.indexMarks) out.push(...indexMarkEntries(b));
     if (b.anchorMarks) out.push(...anchorEntries(b));

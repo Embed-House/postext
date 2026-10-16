@@ -677,6 +677,8 @@ export function resolveTemplateAt(
     decorationPaths: merged.elements.map((e) => e.configPath),
     ...(f.header === false || isRecord(f.header) ? { header: f.header as DesignSlot | false } : {}),
     ...(f.footer === false || isRecord(f.footer) ? { footer: f.footer as DesignSlot | false } : {}),
+    ...(isRecord(f.header) && merged.fieldPaths.header ? { headerPath: merged.fieldPaths.header } : {}),
+    ...(isRecord(f.footer) && merged.fieldPaths.footer ? { footerPath: merged.fieldPaths.footer } : {}),
     ...settled,
     ...(typeof f.bodyStyle === 'string' ? { bodyStyle: f.bodyStyle } : {}),
     ...(typeof f.palette === 'string' ? { palette: f.palette } : {}),

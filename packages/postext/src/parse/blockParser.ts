@@ -12,6 +12,7 @@ import { parseAttrBlobStrict, parseDirectiveAttrs, scanDirectiveAttrs } from './
 import { extractInlineMath, fixMathSourceMap, injectMathSpans } from './inlineMath';
 import { BREAK_PLACEHOLDER, TITLE_BREAK_RE, extractInlineChips, extractInlineFootnotes, extractInlineRefs, injectFootnoteSpans, extractInlineSwatches, injectChipSpans, injectRefSpans, injectSwatchSpans, parseInlineFormatting, protectCodeSpans, replaceBodyBreaks, BODY_BREAK_MARK, bodyBreakSpans, titleBreakIndices, trimSpans, extractInlineTabs, injectTabSpans } from './inlineFormatting';
 import { buildBlockMapping } from './sourceMapping';
+import { labelElementId } from '../composed/ids';
 import { extractInlineCitations, injectCitationSpans } from './citations';
 import { attachIndexMarks, extractIndexMarks, remapParseOffsets } from './indexMarks';
 import { joinEastAsianLines } from './softBreaks';
@@ -356,6 +357,27 @@ function attachContainerAnchors<T extends { blocks: ContentBlock[] }>(result: T)
   return result;
 }
 
+/** Stamp every chip of a mapped run with where its words stand in the
+ *  source (`chip.sourceOffsets`, #857): the chip's bracketed text mapped as
+ *  a paragraph's is, counted from the chip's leading `:`. */
+function withChipSources<T extends { spans: ContentBlock['spans']; sourceMap: number[] }>(markdown: string, mapping: T): T {
+  let at = 0;
+  for (const span of mapping.spans) {
+    const chip = span.chip;
+    if (chip) {
+      const r = mapping.sourceMap[at];
+      if (r !== undefined && markdown.startsWith(':chip[', r)) {
+        const close = closingBracket(markdown, r + 6);
+        const inner = close < 0 ? undefined : buildBlockMapping(markdown, r + 6, close, chip.spans.map((s) => ({ ...s })));
+        const words = chip.spans.map((s) => s.text).join('');
+        if (inner && inner.text === words && inner.sourceMap.length === words.length) chip.sourceOffsets = inner.sourceMap.map((o) => o - r);
+      }
+    }
+    at += span.text.length;
+  }
+  return mapping;
+}
+
 /** A multi-line block's mapping with its maths placeholders aligned and
  *  the spaces that joined two lines between East Asian characters taken
  *  out (CSS Text 3 §4.1.3, see `softBreaks.ts`). */
@@ -414,7 +436,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       injectMathSpans(injectTabSpans(formatted, tabExtract.tabs), mathExtract.maths), swExtract.swatches), citeExtract.citations),
       refExtract.refs,
     ), fnExtract.markers), chipExtract.chips);
-    return joinedLines(markdown, buildBlockMapping(markdown, srcStart, srcEnd, rawSpans));
+    return withChipSources(markdown, joinedLines(markdown, buildBlockMapping(markdown, srcStart, srcEnd, rawSpans)));
   };
 
   /**
@@ -645,7 +667,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
   // issue pointing at the opening line when EOF arrives first).
   // A composed page's entry (#854) records how many colons opened it: only
   // a bare fence of as many closes it, never a bare `:::`.
-  const containerStack: { id: number; name: ContainerName; sourceStart: number; sourceEnd: number; colons?: number }[] = [];
+  const containerStack: { id: number; name: ContainerName; sourceStart: number; sourceEnd: number; colons?: number; slot?: string }[] = [];
   let nextContainerId = 1;
   /** Composed page fences read so far (`ComposedPageFence.fenceIndex`). */
   let pageFences = 0;
@@ -721,11 +743,23 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       k++;
     }
     const slot = attrsRaw ? slotOf(attrs, attrsRaw, blobStart) : undefined;
+    // Each label's anchor (`resourceId#anchorId`) and, on a composed page,
+    // its stable id (#857): the slot is the figure's own, else the frame's
+    // it stands in.
+    const resourceId = attrs.resource?.trim() ?? '';
+    const pageAt = openPageAt();
+    let slotName = slot?.name;
+    for (let k = containerStack.length - 1; slotName === undefined && k > pageAt && pageAt >= 0; k--) slotName = containerStack[k]!.slot;
+    labels.forEach((label, n) => {
+      const anchor = 'anchor' in label.at ? label.at.anchor : undefined;
+      if (anchor && resourceId) label.anchorRef = `${resourceId}#${anchor}`;
+      if (pageAt >= 0 && slotName !== undefined) label.id = labelElementId(pageFences - 1, slotName, anchor ?? `@${n}`);
+    });
     blocks.push({
       type: 'resourceBlock',
       text: '',
       spans: [],
-      resourceId: attrs.resource?.trim() ?? '',
+      resourceId,
       figure: { attrs, attrSources, labels },
       ...(slot ? { slot } : {}),
       sourceStart: lineOffsets[start]!,
@@ -1172,16 +1206,20 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       const srcStart = lineOffsets[i]!;
       const srcEnd = lineEndOffset(i);
       const id = nextContainerId++;
-      containerStack.push({ id, name, sourceStart: srcStart, sourceEnd: srcEnd });
       const containerAttrs = parseDirectiveAttrs(attrsRaw);
       // `:::frame{slot="…"}` (#854), or any container sent to a slot.
       const slot = containerAttrs.slot !== undefined ? slotOf(containerAttrs, attrsRaw, srcStart + line.indexOf('{') + 1) : undefined;
+      containerStack.push({ id, name, sourceStart: srcStart, sourceEnd: srcEnd, ...(slot ? { slot: slot.name } : {}) });
+      // Where each attribute's value is written (#857): a frame's tab text
+      // (`label`) and title map back to it.
+      const containerAttrSources = attrsRaw ? attrSourcesOf(attrsRaw, srcStart + line.indexOf('{') + 1) : undefined;
       blocks.push({
         type: 'containerStart',
         text: '',
         spans: [],
         containerName: name,
         containerAttrs,
+        ...(containerAttrSources && Object.keys(containerAttrSources).length > 0 ? { containerAttrSources } : {}),
         containerId: id,
         ...(slot ? { slot } : {}),
         sourceStart: srcStart,

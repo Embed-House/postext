@@ -614,6 +614,11 @@ export type { ComposedPageReflow, FrameMotion } from './composed/reflowLog';
 // without laying a page out (the Sandbox's template thumbnails, #864).
 export { frameOrder, framePlaceable, groupPlaceable, placeBox as placeFrameBox, unionRect as frameUnionRect } from './composed/geometry';
 export type { FrameAreas, FrameGeometryContext, Rect as FrameRect } from './composed/geometry';
+// The source map of a laid-out document and the stable ids of a composed
+// page's elements (#857).
+export { sourceAt, elementsForSource, findElement } from './composed/sourceMap';
+export type { SourceRef, SourceLevel, SourceElement, SourceMapOptions, SourceMatch } from './composed/sourceMap';
+export { composedPageElementId, frameElementId, groupElementId, labelElementId, designElementId } from './composed/ids';
 export type {
   FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
   PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,

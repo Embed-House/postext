@@ -25,6 +25,7 @@ import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
 import { anchorTarget } from '../composed/templates';
 import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
+import { frameElementId } from '../composed/ids';
 import { offsetCalloutToAbsolute, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { CUT_START, fragmentRange, makeCalloutLayouter, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
 
@@ -92,7 +93,7 @@ interface StoryState {
 export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout {
   const { pass, page, template, fence, dpi } = input;
   const fi = fence.fenceIndex;
-  const frameIdOf = (name: string): string => `cp${fi}:${name}`;
+  const frameIdOf = (name: string): string => frameElementId(fi, name);
   const byName = new Map(template.frames.map((f) => [f.name, f]));
   const prev = new Map<string, string>();
   for (const f of template.frames) {
@@ -522,6 +523,7 @@ function commitFrame(
   }
   box.pageIndex = page.index;
   box.columnIndex = 0;
+  stampFrameAttrText(box, blocks[story.startIdx]?.containerAttrSources, story.plan.attrs, bodyOffset);
   offsetCalloutToAbsolute(result, rect.x, rect.y);
   out.push(box);
   vdt.blockIds.push(box.id);
@@ -530,6 +532,39 @@ function commitFrame(
     child.columnIndex = 0;
     out.push(child);
     vdt.blockIds.push(child.id);
+  }
+}
+
+/** The frame's tab (`label`) and title (`title`) as the box draws them,
+ *  stamped with where the `:::frame` fence writes them (#857): the
+ *  attribute's value range, and a per-character map when the text is
+ *  printed as written. */
+function stampFrameAttrText(
+  box: VDTBlock,
+  sources: Readonly<Record<string, { sourceStart: number; sourceEnd: number }>> | undefined,
+  attrs: Readonly<Record<string, string>>,
+  bodyOffset: number,
+): void {
+  if (!sources || !box.designOverlay) return;
+  for (const name of ['label', 'title'] as const) {
+    const src = sources[name];
+    const value = attrs[name];
+    if (!src || value === undefined || value.trim() === '') continue;
+    const start = src.sourceStart + bodyOffset;
+    const end = src.sourceEnd + bodyOffset;
+    for (const b of box.designOverlay.blocks) {
+      if (b.kind !== 'text' || b.attr !== undefined) continue;
+      const shown = b.lines.map((l) => l.text).join(' ');
+      if (shown.trim() !== value.trim() && shown.trim().toLocaleLowerCase() !== value.trim().toLocaleLowerCase()) continue;
+      b.sourceStart = start;
+      b.sourceEnd = end;
+      b.attr = name;
+      if (shown === value && end - start === value.length) {
+        b.sourceText = value;
+        b.sourceMap = Array.from({ length: value.length }, (_, i) => start + i);
+      }
+      break;
+    }
   }
 }
 

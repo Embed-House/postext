@@ -160,6 +160,14 @@ export interface FigureLabel extends FigureLabelNode {
   textEnd: number;
   /** Absolute source range of each attribute's value. */
   attrSources: Record<string, SourceRange>;
+  /** The anchor the label is set at, as `resourceId#anchorId` (#857);
+   *  absent for a label placed by `at="x% y%"`. */
+  anchorRef?: string;
+  /** The label's stable id on a composed page (#857):
+   *  `cp<fenceIndex>:<slot>:label:<anchor>` (`@<n>`, the label's ordinal in
+   *  its figure, for one placed by percentages). The same in every locale.
+   *  Absent outside composed pages and for a figure that names no slot. */
+  id?: string;
 }
 
 /** A `:::figure{resource="…" slot="…"}` … `:::` block (#854): one
@@ -308,6 +316,11 @@ export interface InlineSpan {
     /** A piece of inline code that goes on after a space of its own
      *  (`codeSpace`, #845): on one line the two pieces are one box. */
     joinNext?: boolean;
+    /** Where each character of the chip's words (`spans` joined) stands in
+     *  the source, counted from the chip's leading `:` (#857): the chip's
+     *  own source map, relative so a cached measurement stays right where
+     *  the same chip is written elsewhere. Absent when it cannot be read. */
+    sourceOffsets?: number[];
   };
   /** Markdown links (`[text](url)`) inside this span, as ranges of its
    *  `text`. A link never splits a span — the spans are those of the text
@@ -650,6 +663,9 @@ export interface TocBlockInfo {
   pageIndex?: number;
   /** Subtitle line under the title (an entry's `{author}`), when any. */
   subtitle?: string;
+  /** Where the entry's heading starts in its chapter's Markdown body
+   *  (`OutlineEntry.headingSource`, #857). */
+  headingSource?: number;
   /** A numbered entry: the numbers of every numbered entry of its level in
    *  the same contents (one array the entries share), so the number column
    *  takes the widest of them (`الفصل الحادي عشر`) when it is wider than
@@ -882,6 +898,10 @@ export interface ContentBlock {
    *  Always present on a start marker (empty object when the fence carries
    *  no `{…}`). */
   containerAttrs?: DirectiveAttrs;
+  /** For `containerStart` blocks with attributes: the absolute source
+   *  range of each attribute's value (a `:::frame{label="…"}`'s tab text
+   *  maps back to it, #857). */
+  containerAttrSources?: Record<string, SourceRange>;
   /** For container marker blocks: identifier shared by the matching
    *  start/end pair. Ids start at 1 and increase per parse. */
   containerId?: number;

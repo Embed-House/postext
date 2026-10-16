@@ -301,6 +301,10 @@ export interface ResolvedPageTemplate {
   decorationPaths: string[];
   header?: DesignSlot | false;
   footer?: DesignSlot | false;
+  /** JSON pointers of the `header` / `footer` the template takes (its
+   *  own, or the one of the template it extends), when it sets one (#857). */
+  headerPath?: string;
+  footerPath?: string;
   overflowTemplate?: string;
   bodyStyle?: string;
   palette?: string;

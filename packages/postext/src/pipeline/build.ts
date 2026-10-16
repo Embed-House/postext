@@ -3405,7 +3405,7 @@ function placeDocumentPass(
     if (blk.type !== 'resource' && raw.direction !== undefined && raw.direction !== resolvedDirection(resolved)) blk.direction = raw.direction;
     const tocContinued = raw.toc?.group?.role === 'continuation' ? { continued: true as const } : {};
     if (raw.toc?.kind === 'entry') {
-      blk.tocEntry = { ...(raw.toc.pageIndex !== undefined ? { pageIndex: raw.toc.pageIndex } : {}), ...tocContinued };
+      blk.tocEntry = { ...(raw.toc.pageIndex !== undefined ? { pageIndex: raw.toc.pageIndex } : {}), ...(raw.toc.headingSource !== undefined ? { headingSource: raw.toc.headingSource } : {}), ...tocContinued };
     }
     if (raw.toc?.kind === 'part') {
       blk.tocPart = {

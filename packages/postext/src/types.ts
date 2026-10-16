@@ -724,6 +724,11 @@ export interface OutlineEntry {
   /** Source offset of an `'anchor'` entry's mark in its chapter's markdown
    *  body (front matter excluded): identifies it within the chapter. */
   anchorSource?: number;
+  /** Source offset of a `'heading'` entry's heading line in its chapter's
+   *  Markdown body (front matter excluded): what a contents entry points
+   *  back to (#857). Not part of `outlineKey`: an edit that moves the
+   *  heading does not lay the contents out again. */
+  headingSource?: number;
   /** The page-number format of the entry's page, once laid out (an index
    *  merges consecutive pages of one format into a range). */
   pageFormat?: string;

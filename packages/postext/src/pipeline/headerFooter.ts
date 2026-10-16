@@ -433,8 +433,21 @@ export interface SlotLayoutExtras {
   /** Where the slot is painted: a text block cut to fit is flagged with it
    *  (`VDTDesignTextBlock.truncated`, #628). Absent: nothing is flagged. */
   slot?: VDTDesignSlotKind;
+  /** JSON pointer of the slot in the configuration (`/footer`,
+   *  `/pageTemplates/0/decoration`): every block is stamped with its
+   *  element's id and, with this, the element's pointer (`…/elements/<i>`,
+   *  or the one `elementPaths` gives) (#857). */
+  configPath?: string;
+  /** The config pointer of each element by id, where the slot's elements
+   *  are not one array of the configuration (a template's decoration
+   *  merged over the templates it extends). */
+  elementPaths?: ReadonlyMap<string, string>;
 }
 
+/** `{ configPath }` when there is one. */
+const withPath = (configPath: string | undefined): { configPath?: string } => (configPath !== undefined ? { configPath } : {});
+
+const ATTR_ELEMENT = /^\s*\{attr\.([A-Za-z_][A-Za-z0-9_-]*)\}\s*$/;
 const HEADING_LINE_PLACEHOLDER = /\{(number|numberDecimal|numberRoman|numberRomanLower|numberAlpha|numberAlphaLower|numberWords|numberWordsLower|numberOrdinalWords|numberOrdinalWordsLower|numberHan|chapterNumber|chapterTitle)\}/;
 const METADATA_ELEMENT = /^\s*\{(title|subtitle|author|publishDate)\}\s*$/;
 
@@ -529,7 +542,7 @@ export function layoutSlotToVdt(
     pageIndex,
   );
   if (result.primitives.length === 0) return undefined;
-  const sourceByElement = new Map<string, { start: number; end: number; text?: string; sourceMap?: number[]; prefixLen?: number }>();
+  const sourceByElement = new Map<string, { start: number; end: number; text?: string; sourceMap?: number[]; prefixLen?: number; attr?: string }>();
   if (extras) {
     for (const el of slot.elements) {
       if (el.kind !== 'text') continue;
@@ -541,7 +554,9 @@ export function layoutSlotToVdt(
       // maps back.
       const keepMap = !el.inlineMarks || src.text === undefined
         || plainDesignText(resolveDesignText(el.content, placeholders, el.inlineMarks === true)).includes(src.text);
-      sourceByElement.set(el.id, keepMap ? withPrintedTitle(el, src, placeholders) : { start: src.start, end: src.end });
+      const attr = ATTR_ELEMENT.exec(el.content)?.[1];
+      const mapped = keepMap ? withPrintedTitle(el, src, placeholders) : { start: src.start, end: src.end };
+      sourceByElement.set(el.id, attr !== undefined && extras.attrSources?.[attr] ? { ...mapped, attr } : mapped);
     }
   }
   // The texts cut to fit (#628), flagged on the element's own block (not
@@ -552,8 +567,25 @@ export function layoutSlotToVdt(
       if (issue.kind === 'textTruncated') truncated.set(issue.elementId, { mode: issue.mode, text: issue.text });
     }
   }
+  // Where each element is written in the configuration (#857).
+  const pathById = new Map<string, string>();
+  if (extras?.configPath !== undefined) slot.elements.forEach((el, i) => pathById.set(el.id, `${extras.configPath}/elements/${i}`));
+  for (const [id, path] of extras?.elementPaths ?? []) pathById.set(id, path);
+  // An image picked by an attribute (`resourceId: '{attr.fondo}'`).
+  const imageAttrById = new Map<string, string>();
+  for (const el of slot.elements) {
+    const attr = el.kind === 'image' ? ATTR_ELEMENT.exec(el.resourceId ?? '')?.[1] : undefined;
+    if (attr !== undefined && extras?.attrs?.[attr] !== undefined) imageAttrById.set(el.id, attr);
+  }
   const blocks = result.primitives.map((prim) => {
     const block = primitiveToBlock(prim);
+    if (prim.id) {
+      block.elementId = prim.id;
+      const path = pathById.get(prim.id);
+      if (path !== undefined) block.configPath = path;
+      const attr = block.kind === 'image' ? imageAttrById.get(prim.id) : undefined;
+      if (attr !== undefined) block.attr = attr;
+    }
     const cut = prim.kind === 'text' && !prim.dropCap ? truncated.get(prim.id) : undefined;
     if (block.kind === 'text' && cut && extras?.slot) block.truncated = { elementId: prim.id, slot: extras.slot, mode: cut.mode, text: cut.text };
     const src = sourceByElement.get(prim.id);
@@ -565,6 +597,7 @@ export function layoutSlotToVdt(
         block.sourceMap = src.sourceMap;
         if (src.prefixLen) block.sourcePrefixLen = src.prefixLen;
       }
+      if (src.attr !== undefined) block.attr = src.attr;
     }
     return block;
   });
@@ -1184,6 +1217,22 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       own === false ? { elements: [] } : own ? resolveDesignSlot(own, kind) : inherited;
     const headerSlot = templateSlot(template?.header, 'header', section?.header ?? resolved.header);
     const footerSlot = templateSlot(template?.footer, 'footer', section?.footer ?? resolved.footer);
+    // Where each running head is written (#857): the template's own, the
+    // styled section's, or the document's.
+    const sectionAt = section ? resolved.headingStyles.indexOf(section) : -1;
+    const slotPath = (kind: 'header' | 'footer'): string | undefined => {
+      const own = template?.[kind];
+      if (own === false) return undefined;
+      if (own) return kind === 'header' ? template!.headerPath : template!.footerPath;
+      if (section?.[kind] && sectionAt >= 0) return `/headingStyles/${sectionAt}/${kind}`;
+      return `/${kind}`;
+    };
+    // `{attr.x}` of the page fence in the running heads of a composed page
+    // maps back to the attribute (#857).
+    const pageAttrSources: Record<string, { start: number; end: number }> | undefined = page.composed
+      ? Object.fromEntries(Object.entries(page.composed.attrSources).map(([k, v]) => [k, { start: v.sourceStart, end: v.sourceEnd }]))
+      : undefined;
+    const headExtras: SlotLayoutExtras = page.composed ? { ...sheetExtras, attrs: page.composed.attrs, attrSources: pageAttrSources } : sheetExtras;
     // A comic page is all panels: no running heads or folio unless
     // `comics.runningHeads` asks for them (its folio still counts).
     const furniture = !page.comic || resolvedComics(resolved).runningHeads;
@@ -1212,7 +1261,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         page.index + pageIndexOffset,
         placeholders,
         dpi,
-        { ...sheetExtras, slot: 'header' },
+        { ...headExtras, slot: 'header', ...withPath(slotPath('header')) },
       )));
     }
     // Back of a part divider: a blank page right after a part page takes the
@@ -1499,7 +1548,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         page.index + pageIndexOffset,
         placeholders,
         dpi,
-        { ...sheetExtras, slot: 'footer' },
+        { ...headExtras, slot: 'footer', ...withPath(slotPath('footer')) },
       )));
     }
     // The template's decoration, laid with the frames' final boxes (its
@@ -1572,7 +1621,11 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         page.index + pageIndexOffset,
         placeholders,
         dpi,
-        { ...sheetExtras, frames: { ...slotFrames, named, declared }, attrs: page.composed!.attrs, attrSources },
+        {
+          ...sheetExtras, frames: { ...slotFrames, named, declared }, attrs: page.composed!.attrs, attrSources,
+          // Each element's pointer, from the template that sets it (#857).
+          elementPaths: new Map(resolveDesignSlot(template.decoration, 'header').elements.map((el, i) => [el.id, template.decorationPaths[i]!] as const)),
+        },
       ));
       if (decoration && pair) {
         const halves = splitSpreadDecoration(decoration, shift, { left: bleedBox, right: { ...bleedBox, x: bleedBox.x + shift } });
