@@ -146,7 +146,7 @@ export function pageHasContent(page: VDTPage): boolean {
  *  comic page (a page carrying only a drained float band is occupied: the
  *  next chapter must not open on it). */
 export function pageIsOccupied(page: VDTPage): boolean {
-  return pageHasContent(page) || (page.floats?.length ?? 0) > 0 || page.comic !== undefined;
+  return pageHasContent(page) || (page.floats?.length ?? 0) > 0 || page.comic !== undefined || page.composed !== undefined;
 }
 
 // ---------------------------------------------------------------------------

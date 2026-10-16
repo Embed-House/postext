@@ -2,7 +2,7 @@ import { withBitmapResolutions } from '../bitmapResolution';
 import { plainTitleBreaks } from '../parse/inlineFormatting';
 import type { PostextContent, PostextConfig, Resource, ResourceType, ResourceRotation, HeadingBreakParity, ResolvedCalloutStyleConfig, ResolvedHeadingLevelConfig, CalloutSpan } from '../types';
 import type { HeadingPlaceholderInfo } from '../design/placeholders';
-import type { ContentBlock, ListKind } from '../parse';
+import type { ComposedPageFence, ContentBlock, ListKind } from '../parse';
 import { dimensionToPx } from '../units';
 import {
   createVDTDocument,
@@ -77,6 +77,9 @@ import type { AnchorRefContext } from './resourceLayout';
 import { applyStatementNumbering, numberStatements, outlineLookup } from './statementNumbering';
 import { SPAN_EMBED_STYLE_ID, isPageSpanStrip, spanEmbedStyle, wrapPageSpanEmbeds } from './spanEmbeds';
 import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowColumns';
+import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap';
+import { resolvePageTemplate } from '../composed/templates';
+import { composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline';
 import { expandTocDirectives } from './toc';
 import { expandIndexDirectives, locateIndexMarks } from './indexDirective';
@@ -826,7 +829,13 @@ function placeDocumentPass(
   // set by the span-block path like any other.
   // A `:::columns` group in the running text (#634): each in a frameless
   // box the callout machinery places, cuts and splits.
-  const flowGroups = resolved.layout.flowColumns ? wrapFlowColumns(numberedBlocks) : { blocks: numberedBlocks, wrapped: false };
+  // Composed pages (#855): each page's content regrouped into the stories
+  // its template's frames receive, one frameless box each (set at the
+  // page's template, below). Before the main-flow groups: a `:::columns`
+  // in a frame is a group of its box.
+  const templateSource = { pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles };
+  const composedWrap = wrapComposedPages(numberedBlocks, templateSource);
+  const flowGroups = resolved.layout.flowColumns ? wrapFlowColumns(composedWrap.blocks) : { blocks: composedWrap.blocks, wrapped: false };
   const spanEmbeds = wrapPageSpanEmbeds(flowGroups.blocks, content.resources ?? [], effectiveResourceTypes(config, content.resources ?? []));
   // Code listings (#624): each in a box of the code style, which the
   // callout machinery places and splits.
@@ -887,6 +896,8 @@ function placeDocumentPass(
   const syntheticBoxes = [
     ...(spanEmbeds.wrapped ? [spanEmbedStyle(bodyStyle.lineHeightPx, resolved.layout.inlineResourceGap !== 'above')] : []),
     ...(codeBoxes.wrapped ? [codeBoxStyle(resolved)] : []),
+    // The frameless box of a composed page's story (#855).
+    ...(composedWrap.wrapped ? [frameBoxStyle(Math.max(resolved.bodyText.avoidOrphans ? resolved.bodyText.orphanMinLines : 1, resolved.bodyText.avoidWidows ? resolved.bodyText.widowMinLines : 1))] : []),
     // The boxes of main-flow groups: sub-columns a body line apart in the
     // text column, a gutter apart across the page.
     ...(flowGroups.wrapped
@@ -903,7 +914,7 @@ function placeDocumentPass(
     : resolved.calloutStyles;
   // A box nested in another looks its style up in the configuration it is
   // laid out with: the listings' box among them.
-  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped ? { ...resolved, calloutStyles } : resolved;
+  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped ? { ...resolved, calloutStyles } : resolved;
   const blockquoteStyle = resolveBlockquoteStyle(resolved);
   const listLevelIndentsPx = computeLevelIndentsPx(resolved, bodyStyle.fontSizePx);
   const orderedMetrics = computeOrderedListRunMetrics(contentBlocks, resolved, bodyStyle.fontSizePx);
@@ -941,6 +952,20 @@ function placeDocumentPass(
   const floatPlan = computeFloatPlan(contentBlocks, resources, resourceTypes, incorporated,
     (blockIdx) => sectionWritingMode(sectionPlan, resolved, blockIdx) === 'vertical-rl', resolved.layout.floatShrink, resolved.layout.wrap,
     resolved.layout.floatsAtCitingPage);
+  // A composed page's pictures are set in its frames: a `::resource` a
+  // story holds does not float. A reference in a frame to a picture set
+  // elsewhere floats from the page's end, to the pages after it.
+  const composedPlans = planComposedPages(contentBlocks, calloutPlan, templateSource);
+  if (composedPlans.size > 0) {
+    for (let k = floatPlan.length - 1; k >= 0; k--) {
+      const f = floatPlan[k]!;
+      const page = composedPageAt(composedPlans, f.firstBlockIdx);
+      if (!page) continue;
+      const raw = contentBlocks[f.firstBlockIdx];
+      if (raw?.type === 'resourceBlock' && raw.resourceId === f.resourceId && page.storyAt(f.firstBlockIdx)) floatPlan.splice(k, 1);
+      else f.firstBlockIdx = page.endIdx;
+    }
+  }
   const floatedIds = floatedResourceIds(floatPlan, incorporated, resources, resourceTypes);
   const floatsByFirstBlock = new Map<number, PlannedFloat[]>();
   for (const f of floatPlan) {
@@ -3326,7 +3351,7 @@ function placeDocumentPass(
     // a chapter laid out on its own) opening with a styled heading.
     const page = doc.pages[cursor.pageIndex];
     if (
-      page && !page.partInfo && !page.comic && cursor.columnIndex === 0
+      page && !page.partInfo && !page.comic && !page.composed && cursor.columnIndex === 0
       && !pageHasContent(page) && !(page.floats && page.floats.length > 0)
     ) {
       const fresh = createPageWithColumns(page.index, geomResolved, contentArea, pageWidthPx, pageHeightPx, pageIndexOffset);
@@ -3689,7 +3714,7 @@ function placeDocumentPass(
    */
   const openSpanHeadingHere = (blockIdx: number, rawBlock: ContentBlock, level: ResolvedHeadingLevelConfig): boolean => {
     const page = doc.pages[cursor.pageIndex]!;
-    if (page.partInfo || page.comic || currentColumn(doc, cursor).kind === 'span') return false;
+    if (page.partInfo || page.comic || page.composed || currentColumn(doc, cursor).kind === 'span') return false;
     const band = currentBand(page, cursor);
     const cols = bandColumns(page, band);
     if (cols.length === 0) return false;
@@ -3816,7 +3841,7 @@ function placeDocumentPass(
     const balancingCfg = resolved.headings.balancing;
     if (!balancingCfg.enabled || !balancingCfg.trailing) return;
     const page = doc.pages[cursor.pageIndex]!;
-    if (page.columns[cursor.columnIndex]?.kind === 'span' || page.partInfo || page.comic) return;
+    if (page.columns[cursor.columnIndex]?.kind === 'span' || page.partInfo || page.comic || page.composed) return;
     const band = currentBand(page, cursor);
     const cols = bandColumns(page, band).filter((c) => c.bbox.height > 0.5);
     // A band where text wraps round something (#627) is not levelled.
@@ -4015,9 +4040,12 @@ function placeDocumentPass(
   /** A closed `:::paper` still owes a page break before the next placed
    *  block. */
   let pendingPaperBreak = false;
-  /** A composed page (`::::page`, #854) ended: the next placed block opens
-   *  a new page. */
-  let pendingComposedBreak = false;
+  /** A composed page (`::::page`, #854) owes a page break before the next
+   *  placed block: `'page'` once its template was laid on the current page
+   *  (nothing flowed on it), `'flow'` after content set in the flow (a page
+   *  of unknown template, or what no frame took), which closes as a
+   *  `:::paper` run does. */
+  let pendingComposedBreak: false | 'page' | 'flow' = false;
   /** A comic page (`:::page`) was laid out on the current page: the next
    *  placed block opens a new one (a page that ends the document leaves no
    *  empty page behind). */
@@ -4051,7 +4079,7 @@ function placeDocumentPass(
   /** A page holding something the reader sees: column content, a float, a
    *  part opener. A parity blank is not one. */
   const pageTakesNumbering = (page: VDTPage): boolean =>
-    pageHasContent(page) || (page.floats?.length ?? 0) > 0 || page.partInfo !== undefined || page.comic !== undefined;
+    pageHasContent(page) || (page.floats?.length ?? 0) > 0 || page.partInfo !== undefined || page.comic !== undefined || page.composed !== undefined;
 
   /** Commits a pending `:::numbering` change to the first page from the
    *  directive on that receives content: the page the directive opens (the
@@ -4241,7 +4269,7 @@ function placeDocumentPass(
     paragraphContainers,
     // A main-flow group's box sets its blocks as the text around it is
     // set: a styled section's or a part's body (#634).
-    measureCtxFor: (startIdx, style) => (isFlowColumnsStyle(style.id)
+    measureCtxFor: (startIdx, style) => (isFlowColumnsStyle(style.id) || style.id === FRAME_STYLE_ID
       ? (partPlan.byBlock[startIdx] ? partMeasureCtx : sectionMeasureCtx(sectionPlan.byBlock[startIdx]))
       : measureCtx),
     stripBlock: calloutStripBlock,
@@ -6112,6 +6140,56 @@ function placeDocumentPass(
     return out;
   };
 
+  /** Content indices a composed page set in its frames: the main loop
+   *  passes over them. */
+  const composedLaid = new Set<number>();
+  /** The composed pages' layout warnings (`frameOverflow`). */
+  const composedNotes: ContentWarning[] = [];
+  /** Set the composed page `planned` on a fresh page (#855). */
+  const placeComposedPage = (planned: PlannedComposedPage, fence: ComposedPageFence): void => {
+    pendingSpacing = 0;
+    closeFlowSegment(planned.startIdx);
+    leaveCurrentPage();
+    cursor.columnIndex = 0;
+    const page = doc.pages[cursor.pageIndex]!;
+    page.columns = [createVDTColumn(0, page.contentArea)];
+    // The physical side: a recto has an odd folio (in either binding).
+    const parity = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
+    const template = resolvePageTemplate(templateSource, fence.template, { parity })!;
+    const frameless = calloutStyles.find((st) => st.id === FRAME_STYLE_ID)!;
+    const frames = designFramesOn(page);
+    const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
+    const out = layoutComposedPage({
+      pass: framePass,
+      page,
+      template,
+      fence,
+      startIdx: planned.startIdx,
+      endIdx: planned.endIdx,
+      stories: planned.stories,
+      styleOf: (frame) => frameStyleOf((frame.style ? resolved.calloutStyles.find((st) => st.id === frame.style) : undefined) ?? frameless, frame),
+      areas: { area, page: frames.page, bleed: frames.bleed },
+      dpi,
+      emPx: bodyStyle.fontSizePx,
+      bodyOffset,
+      mirrored: mirroredOf(page),
+      pushGapPx: wrapGapPx(resolved.layout.wrap?.gap, dpi, bodyStyle.fontSizePx, floatGapPx),
+    });
+    page.composed = out.composed;
+    const floats = (page.floats ??= []);
+    for (const b of out.blocks) {
+      floats.push(b);
+      doc.blocks.push(b);
+    }
+    composedNotes.push(...out.warnings);
+    for (const [head, story] of planned.stories) {
+      if (!out.laid.has(head)) continue;
+      for (let i = story.startIdx; i <= story.plan.endIdx; i++) composedLaid.add(i);
+    }
+    pendingComposedBreak = 'page';
+    flushPendingNumberingAtBoundary();
+  };
+
   /** The first block of the document that sets something: a heading there
    *  opens the document's first page (`openerPages`, #749). */
   const firstFlowBlockIdx = contentBlocks.findIndex((b) => !isMarkerBlock(b) && b.type !== 'directive');
@@ -6120,6 +6198,8 @@ function placeDocumentPass(
     if (options?.shouldCancel?.()) throw new BuildCancelledError();
     options?.onProgress?.({ pass: 1, blocks: blockIdx, totalBlocks: contentBlocks.length, pages: doc.pages.length });
     const rawBlock = contentBlocks[blockIdx]!;
+    // Blocks a composed page set in its frames (#855) are done.
+    if (composedLaid.has(blockIdx)) continue;
 
     // The styled section this block sits in: its geometry applies to the
     // pages opened from here (a heading with `breakBefore` opens one).
@@ -6331,24 +6411,34 @@ function placeDocumentPass(
       pendingPaperBreak = false;
       breakForPaper(blockIdx);
     }
-    // A composed page (`::::page{template=…}`, #854). Until templates are
-    // laid out (P4, #855) its content is set in the flow, in Markdown order
-    // and on pages of its own: the page fence breaks the page as `:::paper`
-    // does, its frames are transparent containers (the generic marker branch
-    // below), and the block after the closing fence opens a new page. P4
-    // replaces this branch with the template layout (DESIGN §5.1).
-    if ((rawBlock.type === 'containerStart' || rawBlock.type === 'containerEnd') && rawBlock.containerName === 'composedPage') {
-      if (rawBlock.type === 'containerStart') {
-        pendingComposedBreak = false;
-        breakForPaper(blockIdx);
-      } else {
-        pendingComposedBreak = true;
-      }
+    // A composed page (`::::page{template=…}`, #855): it owns a fresh page,
+    // its template's frames filled with its stories (`layoutComposedPage`);
+    // nothing flows on it, and what follows starts on the next page. A
+    // story whose frame this side lacks, and content no frame takes, are
+    // set in the flow there. A page whose template is unknown is set in
+    // the flow on pages of its own (`templateUnknown`).
+    if (rawBlock.type === 'containerStart' && rawBlock.containerName === 'composedPage') {
+      const planned = composedPlans.get(blockIdx);
+      pendingComposedBreak = false;
+      if (planned && rawBlock.composedPage) placeComposedPage(planned, rawBlock.composedPage);
+      else breakForPaper(blockIdx);
       continue;
     }
-    if (pendingComposedBreak) {
+    if (rawBlock.type === 'containerEnd' && rawBlock.containerName === 'composedPage') {
+      // (Set to `'page'` by `placeComposedPage`, a closure the flow
+      // analysis does not follow.)
+      if ((pendingComposedBreak as false | 'page' | 'flow') !== 'page') pendingComposedBreak = 'flow';
+      continue;
+    }
+    const composedBreak = pendingComposedBreak as false | 'page' | 'flow';
+    if (composedBreak === 'flow') {
       pendingComposedBreak = false;
       breakForPaper(blockIdx);
+    } else if (composedBreak === 'page') {
+      pendingComposedBreak = false;
+      pendingSpacing = 0;
+      leaveCurrentPage();
+      flushPendingNumberingAtBoundary();
     }
     // `:::page`: a comic page owns a fresh page — its panels, split lines
     // and lettering laid out on the sheet (`layoutComicPage`); nothing
@@ -8359,6 +8449,8 @@ function placeDocumentPass(
   });
   if (shrunk.length > 0) floatShrinkWarningsByDoc.set(doc, shrunk);
   if (textWrapNotes.length > 0 || columnsNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes]);
+  // Composed pages (#855): frames whose content does not fit.
+  if (composedNotes.length > 0) composedWarningsByDoc.set(doc, composedNotes);
   // The composition rules (#749): short lists cut, floats on opener pages.
   const ruleNotes = [...shortListWarnings(), ...openerFloatNotes, ...tocGroupWarnings()];
   if (ruleNotes.length > 0) compositionWarningsByDoc.set(doc, ruleNotes);
@@ -8458,7 +8550,7 @@ export function* buildDocumentGen(
   // cap; words of a joining script that run past their line, and styles
   // whose letter-spacing such words do not take.
   // Line numbers set over a float of the side column (#621).
-  const loose = [...cjkLooseLineWarnings(doc), ...raggedLineWarnings(doc), ...wordOverflowWarnings(doc), ...(joiningSpacingWarnings.get(doc) ?? []), ...(dropCapWarningsByDoc.get(doc) ?? []), ...lineNumberWarnings(doc), ...codeOverflowWarnings(doc), ...(floatShrinkWarningsByDoc.get(doc) ?? []), ...(textWrapWarningsByDoc.get(doc) ?? []), ...(compositionWarningsByDoc.get(doc) ?? [])];
+  const loose = [...cjkLooseLineWarnings(doc), ...raggedLineWarnings(doc), ...wordOverflowWarnings(doc), ...(joiningSpacingWarnings.get(doc) ?? []), ...(dropCapWarningsByDoc.get(doc) ?? []), ...lineNumberWarnings(doc), ...codeOverflowWarnings(doc), ...(floatShrinkWarningsByDoc.get(doc) ?? []), ...(textWrapWarningsByDoc.get(doc) ?? []), ...(compositionWarningsByDoc.get(doc) ?? []), ...(composedWarningsByDoc.get(doc) ?? [])];
   // Side boxes and side floats set on pages after the text, and what the
   // layout could place nowhere (#639).
   loose.push(...afterTextWarnings(doc), ...(unplacedByDoc.get(doc) ?? []));
@@ -8510,6 +8602,8 @@ const floatShrinkWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
 /** The `textWrap` warnings of a build (#627) and its `columnsTooNarrow`
  *  ones (#634), found by its last pass. */
 const textWrapWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
+/** The composed pages' layout warnings of a pass (`frameOverflow`, #855). */
+const composedWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
 /** The `shortListSplit` and `openerFloat` warnings of a build (#749),
  *  found by its last pass. */
 const compositionWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();

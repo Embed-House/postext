@@ -16,7 +16,11 @@ import {
 
 /** `'part'` is the opener design of a `:::part` page: it resolves the
  *  heading placeholder set with the part's number and title. */
-export type DesignContextKind = 'header' | 'footer' | 'heading' | 'part';
+/** Where a design slot is laid: a running head, a heading's or a part's
+ *  design, or a composed page's template decoration (`'composed'`, #855:
+ *  the running-head placeholders, with `{attr.x}` read from the page
+ *  fence's attributes before the chapter heading's). */
+export type DesignContextKind = 'header' | 'footer' | 'heading' | 'part' | 'composed';
 
 /** Heading-specific fields for placeholder resolution. */
 export interface HeadingPlaceholderInfo {
@@ -82,6 +86,10 @@ export interface DesignPlaceholderContext {
   marksFor?: (key: string) => PageMarks | undefined;
   /** Only present in heading and part contexts. */
   heading?: HeadingPlaceholderInfo;
+  /** A composed page's fence attributes (`::::page{template fondo=…}`),
+   *  for `{attr.<key>}` in its template's decoration and running heads
+   *  (#855). They win over the chapter heading's. */
+  pageAttrs?: Record<string, string>;
 }
 
 const HEADER_FOOTER_PLACEHOLDERS = new Set([
@@ -230,7 +238,9 @@ export function resolveDesignPlaceholders(
       chapterTitleByPageIndex: ctx.chapterTitleByPageIndex,
       chapterTitleAtTopByPageIndex: ctx.chapterTitleAtTopByPageIndex,
       chapterNumberAtTopByPageIndex: ctx.chapterNumberAtTopByPageIndex,
-      chapterAttrsByPageIndex: ctx.chapterAttrsByPageIndex,
+      chapterAttrsByPageIndex: ctx.pageAttrs && Object.keys(ctx.pageAttrs).length > 0
+        ? withPageAttrs(ctx.chapterAttrsByPageIndex, ctx.page.index, ctx.pageAttrs)
+        : ctx.chapterAttrsByPageIndex,
       partTitleByPageIndex: ctx.partTitleByPageIndex,
       partNumberByPageIndex: ctx.partNumberByPageIndex,
       chapterNumberByPageIndex: ctx.chapterNumberByPageIndex,
@@ -312,4 +322,11 @@ export function resolveDesignText(
   const h = ctx.heading;
   const at = inlineMarks && h?.titleMarked !== undefined ? { ...ctx, heading: { ...h, titleText: h.titleMarked } } : ctx;
   return resolveDesignPlaceholders(unescapeLineBreaks(template), at, { attrValue: unescapeLineBreaks }).text;
+}
+
+/** `byPage` with the page `index`'s attributes merged under `attrs`. */
+function withPageAttrs(byPage: Record<string, string>[] | undefined, index: number, attrs: Record<string, string>): Record<string, string>[] {
+  const out = byPage ? byPage.slice() : [];
+  out[index] = { ...(byPage?.[index] ?? {}), ...attrs };
+  return out;
 }

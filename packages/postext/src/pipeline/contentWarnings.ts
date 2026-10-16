@@ -813,6 +813,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'slotEmpty':
       text = `Frame "${w.frame}" of template "${w.template}" receives no content — give it a slot="${w.frame}" piece, or mark the frame optional`;
       break;
+    case 'frameOverflow':
+      text = `Frame "${w.frame}" of template "${w.template}" is ${w.overflowMm} mm short of its content — the rest is cut at the frame's foot; give it more height (height, maxHeight), chain it to another frame with next, or shorten the text`;
+      break;
     case 'pageFenceLength':
       text = 'A composed page needs four colons (::::page{template="…"} … ::::) — this :::page is read as a comic page';
       break;

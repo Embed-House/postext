@@ -6009,8 +6009,10 @@ export type HeaderFooterHAlign = 'left' | 'center' | 'right';
  *  - `'opener'` — the first block in reading order is a heading whose level
  *    spans the page or forces a page break before it (a chapter opener);
  *  - `'comic'` — a comic page (`:::page`, `VDTPage.comic` set);
+ *  - `'composed'` — a composed page (`::::page{template}`, `VDTPage.composed`
+ *    set, #855);
  *  - `'body'` — everything else. */
-export type PageRole = 'body' | 'opener' | 'part' | 'blank' | 'comic';
+export type PageRole = 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed';
 
 /** Which page roles a design element renders on. `'all'` (default) renders
  *  on every page the parity filter admits. */

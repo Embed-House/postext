@@ -8,6 +8,7 @@
  *  - `'part'`   — part-divider pages (`page.partInfo` set), even when the
  *                 body column is empty (the opener design is the content);
  *  - `'comic'`  — a comic page (`page.comic` set, `:::page`);
+ *  - `'composed'` — a composed page (`page.composed` set, `::::page`);
  *  - `'blank'`  — any other page with no content at all (no column blocks
  *                 and no floats);
  *  - `'opener'` — the first block in reading order is a heading whose level
@@ -43,6 +44,7 @@ export function classifyPage(
   if (page.blankForParity || page.blankForForce) return 'blank';
   if (page.partInfo) return 'part';
   if (page.comic) return 'comic';
+  if (page.composed) return 'composed';
   if (pageIsEmpty(page)) return 'blank';
   const first = firstBlockInReadingOrder(page);
   if (first && first.type === 'heading' && first.headingLevel !== undefined) {

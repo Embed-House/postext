@@ -16,6 +16,7 @@ import type { ParagraphContainerPlan } from './paragraphContainers';
 import { isMarkerBlock } from './buildHelpers';
 import {
   layoutCallout,
+  type CalloutLayoutInput,
   type CalloutLayoutResult,
   type CalloutLineWidth,
   type CalloutUnit,
@@ -23,6 +24,11 @@ import {
   type PlannedCallout,
 } from './calloutLayout';
 import { fillGalley, galleyBreaks } from './columnsGroup';
+
+/** What a frame of a composed page (#855) adds to a box's layout: its exact
+ *  height, where content shorter than it sits, and the rectangles its text
+ *  runs round. Absent for callouts. */
+export type FrameBoxOptions = Pick<CalloutLayoutInput, 'boxHeight' | 'verticalAlign' | 'exclusions'>;
 
 /** What the box typesetter reads of a layout pass. */
 export interface FrameLayoutPass {
@@ -91,7 +97,7 @@ export interface CalloutLayouter {
   /** Lay out the children from cut `from` to cut `to` at `width` as one
    *  box — a `continuation` (every fragment after the head) without
    *  title / icon. A cut inside a child keeps only the lines on its side. */
-  layoutRange: (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored?: boolean) => CalloutLayoutResult;
+  layoutRange: (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored?: boolean, frame?: FrameBoxOptions) => CalloutLayoutResult;
 }
 
 export const makeCalloutLayouter = (
@@ -116,7 +122,7 @@ export const makeCalloutLayouter = (
       groups.push([k, e]);
     }
   });
-  const layoutRange = (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored = false) => {
+  const layoutRange = (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored = false, frame?: FrameBoxOptions) => {
     let n = 0;
     // A fragment that opens inside a `:::columns` group starts at its
     // opening marker and one that ends inside it at its closing marker:
@@ -167,6 +173,7 @@ export const makeCalloutLayouter = (
       ...(open.length > 0 ? { openNested: open } : {}),
       mirrored,
       stripBlock: pass.stripBlock,
+      ...frame,
     });
   };
   return { children, childBase: startIdx + 1, realAt, end: { child: children.length, line: 0 }, layoutRange, groups };
@@ -204,8 +211,9 @@ export const splitCalloutFragment = (
   continuation: boolean,
   minLines: number,
   mirrored = false,
+  frame?: FrameBoxOptions,
 ): CalloutFragment | null => {
-  const full = L.layoutRange(from, L.end, width, frameId, continuation, mirrored);
+  const full = L.layoutRange(from, L.end, width, frameId, continuation, mirrored, frame);
   /** Figures, tables and display formulas: never cut, not text lines. */
   const indivisible = (c: VDTBlock): boolean => c.type === 'resource' || c.type === 'mathDisplay';
   const unitBottom = (u: CalloutUnit): number => {
@@ -353,7 +361,7 @@ export const splitCalloutFragment = (
   viable.sort((a, b) => (a.soft ? 1 : 0) - (b.soft ? 1 : 0));
   for (const c of viable) {
     if (c.bottom + tail > roomPx + 0.01) continue;
-    const result = L.layoutRange(from, c.cut, width, frameId, continuation, mirrored);
+    const result = L.layoutRange(from, c.cut, width, frameId, continuation, mirrored, frame);
     if (result.totalHeight <= roomPx + 0.01) return { to: c.cut, result };
   }
   return null;

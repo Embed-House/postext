@@ -83,7 +83,9 @@ import { getMeasureArabicNumbers, getMeasureDirection, shiftLineX } from '../mea
 import { resolvedCodeStyle } from '../defaults/codeStyle';
 import { parseLengthText } from '../defaults/tabStops';
 import { isFlowColumnsStyle } from './flowColumns';
+import { FRAME_STYLE_ID } from '../composed/wrap';
 import { fillGalley, galleyBreaks, minFillHeight, type GalleyItem } from './columnsGroup';
+import type { LineInsetStep } from '../measure/types';
 
 // ---------------------------------------------------------------------------
 // Pre-pass: callout ranges keyed by the start marker's content-block index.
@@ -228,7 +230,9 @@ export function deriveCalloutMeasureContext(
   ctx: BlockMeasureContext,
   style: ResolvedCalloutStyleConfig,
 ): BlockMeasureContext {
-  if (isFlowColumnsStyle(style.id)) return ctx;
+  // A main-flow group's box and a composed page's frameless story (#855)
+  // lend their children nothing: they are set as the text around them.
+  if (isFlowColumnsStyle(style.id) || style.id === FRAME_STYLE_ID) return ctx;
   const resolved = deriveCalloutResolvedConfig(ctx.resolved, style);
   const bodyStyle = resolveBodyStyle(resolved);
   return {
@@ -327,6 +331,20 @@ export interface CalloutLayoutInput {
    *  relative to its box, or undefined to leave it out. Without it strips
    *  are left out, as other directives are. */
   stripBlock?: (raw: ContentBlock, blockIdx: number, width: number) => VDTBlock | undefined;
+  /** A frame of a composed page (#855): the block's exact height (its tab
+   *  included). The box is drawn this tall; content shorter than it sits
+   *  as `verticalAlign` says, content taller runs past the box's foot
+   *  (`CalloutLayoutResult.overflowPx`, clipped by the backends). */
+  boxHeight?: number;
+  /** Where the content sits in a `boxHeight` taller than it. Default
+   *  `'top'`; `'justify'` spreads the space between the box's items. */
+  verticalAlign?: 'top' | 'middle' | 'bottom' | 'justify';
+  /** Rectangles, in the block's coordinates (its origin at the top-left of
+   *  its marker column and tab), that the box's text runs round (#855,
+   *  `exclude: 'push'` frames): a line meeting one is set short on the
+   *  side the rectangle covers. Applied to the text children that open in
+   *  the range laid out; a figure or a formula is not moved. */
+  exclusions?: readonly { x: number; y: number; width: number; height: number }[];
 }
 
 /** The measures of `layoutCallout`'s first child across widths (see
@@ -389,6 +407,9 @@ export interface CalloutLayoutResult {
    *  on (`continuesMarkerEnabled`); 0 without one. The split code ranks its
    *  cuts with it. */
   continuesMarkerPx: number;
+  /** With `boxHeight`: the height of the content that runs past the box's
+   *  foot (0 when it fits). */
+  overflowPx?: number;
   /** The `:::columns` groups among the box's own children (not a nested
    *  box's), as laid out: where a fragment may cut inside them (#634). */
   groups?: CalloutGroupLayout[];
@@ -656,6 +677,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
 
   const innerX = (stripeLeft ? stripeW : 0) + padL + iconColumn;
   const innerTop = (topStripe ? stripeW : 0) + padT;
+  // The label tab's rise (see "Label tab" below), known here so a frame's
+  // exclusions and exact height (#855) are read in box coordinates.
+  const riseAhead = style.label && !input.continuation && labelText.trim().length > 0 ? Math.max(0, px(style.label.offset)) : 0;
+  const exclusions = (input.exclusions ?? []).map((e) => ({ x: e.x - markerColumn, y: e.y - riseAhead, width: e.width, height: e.height }));
 
   // --- Title -----------------------------------------------------------------
   // A continuation repeats the title, with its suffix, only when the style
@@ -958,7 +983,8 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       ?? (lineCut ? undefined : measureFirstChildAcrossWidths(raw, blockIdx, k, width, styleOverride))
       ?? measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride });
     if (!measuredBlock) return undefined;
-    const { kind, measured, prefixLen, absoluteSourceMap, mathDisplayRender, resourceBlock, letterSpacingPx, runtTracking, code } = measuredBlock;
+    const { kind, mathDisplayRender, resourceBlock, code } = measuredBlock;
+    let { measured, prefixLen, absoluteSourceMap, letterSpacingPx, runtTracking } = measuredBlock;
     const { vdtType, headingLevel, numberPrefix, numberSeparator, headingNumber, listBullet, listDepth, listKind, bulletXOffsetInColumn, strikethroughText } = kind;
     // A structural heading (`hidden`) keeps its lines' text but prints
     // nothing and takes no room: no line height, no margins, and the
@@ -992,6 +1018,17 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       spacing = Math.max(st.prevMarginBottom, marginTopPx);
     }
     st.cursorY += spacing;
+    // A frame's text runs round the frames that push it (#855): set again
+    // with its lines short beside them. A child the range opens inside
+    // keeps the lines it was counted with.
+    const opensInside = lineCut ? lineCut.from > 0 : isFirstRealOf(k) && (input.lineFrom ?? 0) > 0;
+    if (exclusions.length > 0 && !opensInside && !(vdtType === 'resource' && resourceBlock) && !(vdtType === 'mathDisplay' && mathDisplayRender)) {
+      const lineInsets = exclusionInsets(exclusions, x, width, st.cursorY, kind.style.lineHeightPx);
+      if (lineInsets.length > 0) {
+        const again = measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride, lineInsets });
+        if (again) ({ measured, prefixLen, absoluteSourceMap, letterSpacingPx, runtTracking } = again);
+      }
+    }
 
     const blk = createVDTBlock(input.nextChildId(), vdtType, bs.fontString, bs.color, bs.textAlign);
     applyStyleAttrs(blk, bs);
@@ -1648,6 +1685,34 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     }
     contentBottom += extra;
   }
+  // A frame's exact height (#855): the box is drawn that tall, the
+  // content placed in it as `verticalAlign` says; content taller than the
+  // room runs past the foot.
+  let overflowPx: number | undefined;
+  if (input.boxHeight !== undefined) {
+    const room = Math.max(innerTop, input.boxHeight - riseAhead - padB);
+    if (contentBottom < room - 0.01) {
+      const extra = room - contentBottom;
+      const align = input.verticalAlign ?? 'top';
+      if (align === 'middle' || align === 'bottom') {
+        const dy = align === 'middle' ? extra / 2 : extra;
+        for (const blk of childBlocks) offsetBlock(blk, 0, dy);
+        for (const r of groupRules) offsetDesignBlock(r, 0, dy);
+        for (const g of groupLayouts) g.top += dy;
+        if (continuesBlock) offsetDesignBlock(continuesBlock, 0, dy);
+      } else if (align === 'justify' && units.length > 1) {
+        units.forEach((u, i) => {
+          const dy = (extra * i) / (units.length - 1);
+          if (dy <= 0) return;
+          const moved = u.kind === 'block' ? [u.block] : [u.box.result.frame, ...u.box.result.children];
+          for (const blk of moved) offsetBlock(blk, 0, dy);
+        });
+      }
+    } else if (contentBottom > room + 0.01) {
+      overflowPx = contentBottom - room;
+    }
+    contentBottom = room;
+  }
   const boxHeight = contentBottom + padB;
   const innerRect = createBoundingBox(innerX, innerTop, innerWidth, Math.max(0, contentBottom - innerTop));
 
@@ -1880,6 +1945,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     marginTopPx: (flowGroupBox ? fenceMarginPx(attrs.marginTop, em, dpi) : undefined) ?? px(style.marginTop),
     marginBottomPx: (flowGroupBox ? fenceMarginPx(attrs.marginBottom, em, dpi) : undefined) ?? px(style.marginBottom),
     continuesMarkerPx,
+    ...(overflowPx !== undefined ? { overflowPx } : {}),
     ...(groupLayouts.length > 0 ? { groups: groupLayouts } : {}),
   };
 }
@@ -1972,4 +2038,39 @@ function buildIconBlock(
       clip: false,
     },
   };
+}
+
+/** The line insets of a text set from `y0` in `[x, x + width]` with lines
+ *  `lineHeight` apart, beside the rectangles of `exclusions` (#855): a line
+ *  that meets one, even in part, is set short on the side the rectangle
+ *  covers (the wider side left free when it stands inside the measure). */
+export function exclusionInsets(
+  exclusions: readonly { x: number; y: number; width: number; height: number }[],
+  x: number,
+  width: number,
+  y0: number,
+  lineHeight: number,
+): LineInsetStep[] {
+  const steps: LineInsetStep[] = [];
+  if (!(lineHeight > 0)) return steps;
+  const right = x + width;
+  for (const ex of exclusions) {
+    const exRight = ex.x + ex.width;
+    if (exRight <= x + 0.01 || ex.x >= right - 0.01) continue;
+    const bottom = ex.y + ex.height;
+    if (bottom <= y0 + 0.01) continue;
+    const from = Math.max(0, Math.floor((ex.y - y0 + 0.01) / lineHeight));
+    const to = Math.ceil((bottom - y0 - 0.01) / lineHeight) - 1;
+    if (to < from) continue;
+    const roomLeft = ex.x - x;
+    const roomRight = right - exRight;
+    const coversLeft = roomLeft <= roomRight;
+    steps.push({
+      fromLine: from,
+      toLine: to,
+      startInsetPx: coversLeft ? Math.min(width, exRight - x) : 0,
+      endInsetPx: coversLeft ? 0 : Math.min(width, right - ex.x),
+    });
+  }
+  return steps;
 }

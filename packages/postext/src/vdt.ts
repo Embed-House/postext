@@ -2359,6 +2359,110 @@ export interface VDTComicBalloon {
   halo?: { width: number; color: string };
 }
 
+// ---------------------------------------------------------------------------
+// Composed pages (#846, DESIGN §4): a template's frames poured with slots
+// ---------------------------------------------------------------------------
+
+/** What happened to a frame while its page was composed (DESIGN §5.5).
+ *  P4 records `overflow` only; the reflow ladder (#858) and groups (#856)
+ *  add the rest. */
+export type ReflowEventKind =
+  | 'grew'
+  | 'moved'
+  | 'resized'
+  | 'imageScaled'
+  | 'textScaled'
+  | 'continued'
+  | 'overflow';
+
+export interface ReflowEvent {
+  /** The frame's name in its template. */
+  frame: string;
+  kind: ReflowEventKind;
+  fromMm?: number;
+  toMm?: number;
+  scale?: number;
+  /** The frame whose change caused this event. */
+  cause?: string;
+}
+
+/** One frame of a composed page, in sheet coordinates. Its box and its
+ *  content are ordinary callout blocks in `page.floats` (and
+ *  `doc.blocks`), listed by `blockIds`: every backend paints, tags and
+ *  selects them as it does a fixed callout. What the frame adds is what
+ *  only the template knows: its name and config path, its layer, its
+ *  turn, and how much of its content did not fit. */
+export interface VDTFrame {
+  /** `cp<fenceIndex>:<name>`: the same in every locale and across
+   *  relayouts (`~<n>` is reserved for the n-th continuation piece on a
+   *  later page, #859). */
+  id: string;
+  /** The frame's name in its template (the slot it receives). */
+  name: string;
+  /** The frame's box, label tab included, before any turn. */
+  rect: { x: number; y: number; width: number; height: number };
+  /** Degrees, clockwise, about the centre of `rect`: the box and its
+   *  content turn together. 0 = upright. */
+  rotate: number;
+  /** Paint order: lower first; the template's decoration paints at 0. */
+  layer: number;
+  /** The callout style the frame is drawn with; absent = frameless. */
+  styleId?: string;
+  /** Text scale the reflow ladder applied (1 = none; #858). */
+  scale: number;
+  /** Height of content that did not fit in the frame, px (0 = it fits).
+   *  Past the frame's foot it is clipped on paged output. */
+  overflowPx: number;
+  /** The frame of the same page whose content this one goes on with
+   *  (`next`), and the one this frame's content goes on in. */
+  continuedFrom?: string;
+  continuesTo?: string;
+  /** Ids of the blocks set in this frame (its box first), in
+   *  `page.floats` and `doc.blocks`. */
+  blockIds: string[];
+  /** JSON pointer of the template entry that sets the frame
+   *  (`/pageTemplates/3/frames/2`). */
+  configPath: string;
+  /** Source range of the content poured into the frame (absolute
+   *  offsets), when it holds any. */
+  sourceStart?: number;
+  sourceEnd?: number;
+  /** Other frames' text wraps round this frame's box (`exclude: 'push'`). */
+  push?: true;
+}
+
+/** A composed page (`::::page{template}`, #846): the template it was set
+ *  with and its frames. The page's columns are empty (one empty column,
+ *  as on a comic page): nothing flows on it. */
+export interface VDTComposedPage {
+  /** The template's id, and the variant applied on this side. */
+  template: string;
+  variant?: 'recto' | 'verso';
+  /** The side of a spread template's sheet (#861). */
+  spread?: 'left' | 'right';
+  /** The page fence's ordinal in its chapter (stable across locales). */
+  fenceIndex: number;
+  /** The role the template reports to design slots (`role`, default
+   *  `'composed'`). `page.role` is `'composed'` whatever this says. */
+  role: string;
+  /** The page fence's attributes (`{attr.x}` in decoration and running
+   *  heads), with their source ranges (absolute offsets). */
+  attrs: Record<string, string>;
+  attrSources: Record<string, { sourceStart: number; sourceEnd: number }>;
+  /** In template order. */
+  frames: VDTFrame[];
+  /** The template's decoration, laid with the frames' final boxes
+   *  (`buildHeadersAndFooters`); painted at layer 0. */
+  decoration?: VDTDesignSlot;
+  /** What the layout changed (DESIGN §5.5). */
+  log: ReflowEvent[];
+  /** JSON pointer of the template (`/pageTemplates/3`). */
+  configPath: string;
+  /** The page fence, opening line to closing fence (absolute offsets). */
+  sourceStart: number;
+  sourceEnd: number;
+}
+
 /** A comic page (`:::page`): its panels, the split lines between them and
  *  the lettering, on the sheet. Also the comic of a strip
  *  (`VDTBlock.comic`, relative to the block's box on the sheet) and each
@@ -2498,6 +2602,11 @@ export interface VDTPage {
    *  split lines and lettering, in sheet coordinates. The page's columns
    *  are empty: nothing flows on it. */
   comic?: VDTComicPage;
+  /** Present on a composed page (`::::page{template}`, `role:
+   *  'composed'`): the template's frames, in sheet coordinates. The
+   *  frames' boxes and content are in `floats`; the page's one column is
+   *  empty. */
+  composed?: VDTComposedPage;
   /** The line numbers printed on the page (`lineNumbers`, #621): one text
    *  block per number, physical like the header and footer, each flagged
    *  `artifact` (a tagged PDF marks it so, the HTML hides it from
@@ -2749,6 +2858,13 @@ export type ContentWarning = ContentWarningBase & (
    *  four colons (`::::page{template=…}` … `::::`). It is read as a comic
    *  page, as before. */
   | { kind: 'pageFenceLength' }
+  /** The content poured into a frame of a composed page does not fit it
+   *  (#855): the frame has no `next` frame left to go on in, or no more
+   *  room in its chain. What does not fit is clipped at the frame's foot
+   *  on paged output; it stays in the document (reflowable output, the
+   *  source map, this warning). `overflowMm` is the height that is cut.
+   *  Provisional: #858 adds the steps tried and the fixes. */
+  | { kind: 'frameOverflow'; template: string; frame: string; fenceIndex: number; overflowMm: number; configPath: string }
   /** A `:::paper{…}` attribute the engine cannot read: an unknown key, a
    *  stock, finish or texture it does not know, a number out of range, a
    *  shade that is neither a hex colour nor a palette id, a `showThrough`

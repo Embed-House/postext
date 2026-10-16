@@ -264,6 +264,11 @@ export interface DesignFrames {
    *  stands upright on the sheet, so its box in the flow is sized with the
    *  picture's width and height swapped (`ResolvedImagePrimitive.upright`). */
   upright?: boolean;
+  /** Boxes outside the slot an element may anchor to as `'#name'`, with
+   *  the element-to-element edges: the frames of a composed page for its
+   *  template's decoration (#855). An element of the slot with the same id
+   *  wins. */
+  named?: Readonly<Record<string, { x: number; y: number; width: number; height: number }>>;
 }
 
 export interface LayoutContext {
@@ -408,6 +413,7 @@ function frameFor(placement: ElementPlacement, frames: DesignFrames | undefined)
 function topoSort(
   elements: ResolvedDesignElement[],
   issues: LayoutIssue[],
+  named?: DesignFrames['named'],
 ): ResolvedDesignElement[] {
   const byId = new Map<string, ResolvedDesignElement>();
   for (const el of elements) byId.set(el.id, el);
@@ -415,7 +421,7 @@ function topoSort(
   // Detect dangling
   for (const el of elements) {
     const target = anchorTargetId(el.placement);
-    if (target && !byId.has(target)) {
+    if (target && !byId.has(target) && !named?.[target]) {
       issues.push({ kind: 'danglingAnchor', elementId: el.id, targetId: target });
     }
   }
@@ -499,6 +505,8 @@ function resolveContainerAnchor(
       return { anchorX: ref.x, anchorY: ref.y, pinX: 'start', pinY: 'start' };
   }
 }
+
+const ELEMENT_TO_ELEMENT_EDGES: ReadonlySet<string> = new Set(['right-of', 'left-of', 'below', 'above', 'align-top', 'align-bottom', 'align-left', 'align-right']);
 
 function resolveElementAnchor(
   edge: AnchorEdge,
@@ -1064,7 +1072,7 @@ export function layoutDesignSlot(
 
   // Topologically sort (dependencies first) to resolve geometry; paint
   // order is still the array order (first = back), restored below.
-  const ordered = topoSort(candidates, issues);
+  const ordered = topoSort(candidates, issues, context.frames?.named);
 
   // Precompute: resolved text contents (placeholder-expanded), with the
   // `\n` escape of the template and of attribute values turned into a
@@ -1107,9 +1115,16 @@ export function layoutDesignSlot(
       fillRef = frame;
     } else if (target) {
       const dep = resolvedGeo.get(target);
+      const outside = dep ? undefined : context.frames?.named?.[target];
       if (dep) {
         refGeo = { x: dep.x, y: dep.y, width: dep.width, height: dep.height };
         useElementEdge = true;
+      } else if (outside) {
+        refGeo = { ...outside };
+        // A nine-point edge on a frame is that point of its box; an
+        // element edge (`below`, `right-of`…) reads as for an element.
+        useElementEdge = ELEMENT_TO_ELEMENT_EDGES.has(el.placement.anchor.edge);
+        if (!useElementEdge) fillRef = refGeo;
       }
     }
     const anchor = useElementEdge

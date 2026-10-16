@@ -4,7 +4,7 @@ import type { PartPageInfo } from './placeholders';
 import { applyPartPalettesToFlow, type FlowColorValues } from './partPalette';
 import { recolorLineNumbers } from './lineNumbers';
 import { applyTitleBreaks, parseInlineFormatting, replaceTitleBreaks } from '../parse/inlineFormatting';
-import type { ColorPaletteEntry, ColorValue, DesignTextAlign, DocumentMetadata, Resource, ResolvedDesignSlot, ResolvedDesignTextElement, ResolvedHeadingLevelConfig, TextAlign } from '../types';
+import type { ColorPaletteEntry, ColorValue, DesignSlot, DesignTextAlign, DocumentMetadata, Resource, ResolvedDesignSlot, ResolvedDesignTextElement, ResolvedHeadingLevelConfig, TextAlign } from '../types';
 import {
   createBoundingBox,
   flowRectToPage,
@@ -28,7 +28,8 @@ import { arabicNumbersOf, resolvedLocale } from './config';
 import { classifyPages } from './pageRoles';
 import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type HeadingLevelResolver } from './headingStyles';
 import { dimensionToPx } from '../units';
-import { resolveDesignLineHeight } from '../defaults/headerFooter';
+import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter';
+import { resolvePageTemplate } from '../composed/templates';
 import type { ResolvedConfig } from '../vdt';
 import type { PageRole } from '../types';
 import {
@@ -1170,14 +1171,23 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       : { x: trim.x, y: sheetArea.y, width: Math.max(0, sheetArea.x - trim.x), height: sheetArea.height };
     const sheetExtras: SlotLayoutExtras = { ...extras, frames: { ...physicalFrames, outer }, mirrored: false };
     const section = sectionByPage[page.index];
-    const headerSlot = section?.header ?? resolved.header;
-    const footerSlot = section?.footer ?? resolved.footer;
+    // A composed page (#855) takes its template's running heads: a slot of
+    // its own, `false` for none, unset for the section's.
+    const template = page.composed
+      ? resolvePageTemplate({ pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles }, page.composed.template, { parity: recto ? 'recto' : 'verso' })
+      : undefined;
+    const pageAttrs = page.composed && Object.keys(page.composed.attrs).length > 0 ? page.composed.attrs : undefined;
+    const templateSlot = (own: DesignSlot | false | undefined, kind: 'header' | 'footer', inherited: ResolvedDesignSlot): ResolvedDesignSlot =>
+      own === false ? { elements: [] } : own ? resolveDesignSlot(own, kind) : inherited;
+    const headerSlot = templateSlot(template?.header, 'header', section?.header ?? resolved.header);
+    const footerSlot = templateSlot(template?.footer, 'footer', section?.footer ?? resolved.footer);
     // A comic page is all panels: no running heads or folio unless
     // `comics.runningHeads` asks for them (its folio still counts).
     const furniture = !page.comic || resolvedComics(resolved).runningHeads;
     if (furniture && headerSlot.elements.length > 0) {
       const placeholders: DesignPlaceholderContext = {
         kind: 'header',
+        ...(pageAttrs ? { pageAttrs } : {}),
         page,
         allPages: doc.pages,
         metadata: doc.metadata,
@@ -1462,6 +1472,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     if (furniture && footerSlot.elements.length > 0) {
       const placeholders: DesignPlaceholderContext = {
         kind: 'footer',
+        ...(pageAttrs ? { pageAttrs } : {}),
         page,
         allPages: doc.pages,
         metadata: doc.metadata,
@@ -1485,6 +1496,43 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         dpi,
         { ...sheetExtras, slot: 'footer' },
       )));
+    }
+    // The template's decoration, laid with the frames' final boxes (its
+    // elements may anchor to `'#frame'`), on the sheet like the running
+    // heads; painted under the frames of layer 1 and up.
+    if (page.composed && template && template.decoration.elements.length > 0) {
+      const named: Record<string, { x: number; y: number; width: number; height: number }> = {};
+      for (const f of page.composed.frames) named[f.name] = f.rect;
+      const container = template.area === 'trim' ? metrics.physical.trimBox : template.area === 'bleed' ? metrics.physical.bleedBox : sheetArea;
+      const attrSources: Record<string, { start: number; end: number }> = {};
+      for (const [k, v] of Object.entries(page.composed.attrSources)) attrSources[k] = { start: v.sourceStart, end: v.sourceEnd };
+      const placeholders: DesignPlaceholderContext = {
+        kind: 'composed',
+        ...(pageAttrs ? { pageAttrs } : {}),
+        page,
+        allPages: doc.pages,
+        metadata: doc.metadata,
+        chapterTitleByPageIndex,
+        chapterTitleAtTopByPageIndex,
+        chapterNumberAtTopByPageIndex,
+        chapterNumberByPageIndex,
+        chapterAttrsByPageIndex,
+        bookTotalPages,
+        numerals,
+        marksFor,
+        partTitleByPageIndex,
+        partNumberByPageIndex,
+        partPaletteByPageIndex,
+      };
+      const decoration = withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(
+        resolveDesignSlot(template.decoration, 'header'),
+        container,
+        page.index + pageIndexOffset,
+        placeholders,
+        dpi,
+        { ...sheetExtras, frames: { ...physicalFrames, named }, attrs: page.composed!.attrs, attrSources },
+      ));
+      if (decoration) page.composed.decoration = decoration;
     }
   }
 }

@@ -542,6 +542,10 @@ export type {
   VDTComicSplitter,
   VDTComicBalloon,
   VDTComicPage,
+  VDTComposedPage,
+  VDTFrame,
+  ReflowEvent,
+  ReflowEventKind,
   VDTStripCaption,
   VDTDropCap,
 } from './vdt';
@@ -591,6 +595,9 @@ export {
 export type { PageTemplateSource } from './composed/templates';
 export { validatePageTemplates } from './composed/validate';
 export type { ValidatePageTemplatesOptions } from './composed/validate';
+// Composed pages laid out (#855): the frames of a page and how backends paint them.
+export { composedFrameBlockIds, composedPaintOrder, frameMatrix, frameClips, frameBounds, frameOfBlock } from './composed/paint';
+export type { ComposedPaintItem } from './composed/paint';
 export type {
   FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
   PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
