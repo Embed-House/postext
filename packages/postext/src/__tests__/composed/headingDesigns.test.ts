@@ -205,6 +205,20 @@ describe('heading designs inside frames and callouts (#906)', () => {
     expect(frame(doc, 'b').blockIds).toContain(headings[0]!.id);
   });
 
+  it('a heading carried on to a page added by continuation draws its design there', () => {
+    const tpl: PageTemplate = { id: 'c', overflowTemplate: 'c', frames: [
+      { name: 'a', flow: true, width: mm(90), height: mm(50), fit: { shrinkText: false }, overflow: { continueIn: 'next-page' }, placement: { anchor: { to: 'container', edge: 'top-left' } } },
+    ] } as PageTemplate;
+    const doc = build(`::::page{template="c"}\n${words(160)}\n\n## Sigue {style="pestana"}\n\n${words(20)}\n::::\n\nAfter.`, [tpl]);
+    const pages = doc.pages.filter((p) => p.composed);
+    expect(pages.length).toBeGreaterThan(1);
+    const found = pages.flatMap((p) => p.composed!.frames.flatMap((f) => blocksOf(p, f).map((b) => ({ p, b })))).filter(({ b }) => b.type === 'heading');
+    expect(found).toHaveLength(1);
+    expect(found[0]!.p).not.toBe(pages[0]);
+    expect(found[0]!.b.designOverlay).toBeDefined();
+    expect(titleOf(found[0]!.b).lines[0]!.text).toBe('Sigue');
+  });
+
   it('a spread frame across the spine draws the design on both pages, the half a moved copy', () => {
     const tpl: PageTemplate = { id: 'tl', spread: true, gutter: mm(10), grid: { columns: 4, rows: 4, columnGap: mm(12) }, frames: [{ name: 'band', crossGutter: true, grid: { col: 1, row: 1, cols: 4 } }] } as PageTemplate;
     const doc = build('::::page{template="tl" spread}\n:::frame{slot="band"}\n## Across {style="pestana"}\n\nBand across the spine\n:::\n::::\n\nAfter.', [tpl]);
