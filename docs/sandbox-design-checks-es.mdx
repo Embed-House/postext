@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Paneles de diseño y de revisión',
   description: 'Los grupos, las páginas, la búsqueda y el resumen del panel Diseño, y los avisos en vivo del panel Revisión, agrupados por tipo',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '39 min',
   order: 37,
   parent: 'sandbox',
@@ -308,3 +308,27 @@ Estas entradas no se repiten en los grupos de debajo.
 Un clic en una entrada lleva a su marco en su edición. Si en pantalla hay otra edición, el libro cambia al idioma de la entrada; después se abren el capítulo y la página, el marco queda seleccionado en la página (su ruta aparece al pie de la vista previa) y el cursor va al principio de su slot en el panel **Texto**. Un aviso de la propia plantilla abre la primera página compuesta con ella, con su marco seleccionado; el texto de diseño con contenido abre el panel **Diseño**.
 
 Un proyecto local guarda una sola edición: un paquete importado como proyecto conserva el idioma elegido al importarlo y solo se revisa esa edición (la línea bajo los controles lo dice). Para revisar todos sus idiomas, abre el paquete desde **Libros**. El contador de la barra de actividad cuenta los avisos del capítulo en pantalla, en la edición en pantalla.
+
+### Pasar el texto al Markdown
+
+Un libro hecho antes de las páginas compuestas puede guardar el texto de páginas enteras en sus estilos de título: un título oculto en cada página cuya cabecera coloca decenas de textos, cajas e imágenes donde los tenía la página impresa. El panel de revisión muestra entonces *Texto guardado en la configuración* y ofrece **Pasar el texto al Markdown** en su cabecera. Un libro con estilos así que se importa desde el panel de libros abre el mismo cuadro justo después de importarlo.
+
+El cuadro explica lo que hará el cambio antes de hacer nada:
+
+- Cada diseño de página pasa a ser una plantilla de página (`pageTemplates`). Cada texto se convierte en un marco donde estaba; los bloques de texto con el mismo aspecto colocados uno bajo otro a la misma distancia forman un solo marco. Las cajas, filetes e imágenes pasan a la decoración de la plantilla, que se pinta sobre el texto corrido de la página como se pintaba la cabecera, y una imagen que cubre la página pasa a ser el atributo `background` de la página, que lee la decoración (`{attr.background}`).
+- Cada página de un capítulo se convierte en una página compuesta, `::::page{template="…"}`, con los títulos y el texto corrido de la página y un `:::frame{slot="…"}` por marco con su texto. Las negritas y cursivas se mantienen; los finales de línea del diseño quedan como saltos de línea forzados.
+- La familia, el cuerpo, el peso, el color, la alineación y el interlineado de cada texto forman un estilo de párrafo: el del libro cuando coincide del todo, si no uno nuevo con el nombre de la familia y el cuerpo. Una caja de color bajo palabras en negrita pasa a ser un chip del estilo de chip del libro de ese color, o de uno nuevo.
+- Las páginas con los marcos en los mismos sitios comparten una plantilla (`page-base`) que amplían sus propias plantillas (`extends`); una página que no añade nada la usa tal cual.
+- Los estilos de título que quedan iguales una vez que se va su cabecera se fusionan (`tema--p04`, `tema--p05` → `tema`) y se cambian en los títulos; los títulos ocultos que solo cambiaban la cabecera desaparecen. Una página que empezaba con un título que pedía página par o impar recibe un `:::pagebreak{parity="…"}` antes de su valla.
+
+Las cifras de **Qué cambia** son los textos y las letras que se pasan, las páginas escritas, las plantillas propuestas, los estilos de título antes y después, los estilos creados, el tamaño de la configuración y los avisos de *Texto guardado en la configuración*, antes y después.
+
+**Antes y después** compone cada capítulo dos veces con la composición del propio Sandbox y dibuja cada página que cambia, la anterior junto a la nueva. La lista de al lado dice qué páginas se ven distintas y por qué, cuando se sabe: un espaciado entre letras que un estilo de párrafo no admite, la caja, el contorno o la capitular propios de un texto, una página de la que no se sabe el lado, texto corrido que ahora va en el marco de flujo de la plantilla. **Marcar en rojo lo que cambia** pinta los píxeles distintos.
+
+Las opciones: **Las páginas con marcos en los mismos sitios comparten plantilla**, **Una caja de resaltado bajo palabras en negrita se convierte en chip** y, cuando los hay, **Borrar los estilos de título con texto que no usa ningún título**.
+
+**Pasar el texto** lo aplica de una vez. El libro tal como estaba se guarda, también al recargar, hasta que se elige **Quedarme con el cambio** en el panel de revisión; hasta entonces **Dejar el libro como estaba** devuelve el diseño y todos los capítulos.
+
+Queda en la configuración, y se enumera en **Queda en la configuración**: un texto que mezcla palabras y marcadores (`Página {pageNumber}`), un texto que cuelga de la caja propia de su cabecera o de otro elemento, y el texto de un diseño de título (que no es una página). En las páginas, el diseño de un título colocado en un marco (la pestaña de un título con caja, las bandas dibujadas alrededor de un título) no se dibuja ahí, así que una página con texto corrido bajo títulos así se ve distinta. La comprobación de contraste mide el texto de un marco contra la página y no contra una caja de la decoración que haya debajo, así que puede señalar una etiqueta blanca sobre una caja de color.
+
+El mismo cambio es una función del motor, `moveTextToMarkdown({ config, chapters, metadata }, options)`, que devuelve la configuración nueva, los capítulos y el informe que muestra el cuadro. Véase [Páginas compuestas](/es/docs/composed-pages#migrar-un-libro-con-el-texto-en-sus-estilos).

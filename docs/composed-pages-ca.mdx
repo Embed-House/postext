@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pàgines compostes',
   description: 'El Markdown de les pàgines compostes: la tanca de pàgina de quatre dos punts que anomena una plantilla de pàgina, els marcs i l’atribut slot que porten el contingut als marcs de la plantilla, les figures amb rètols a les àncores d’una imatge i els avisos que comproven el contingut amb la plantilla',
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 34,
   plainSummary: "Algunes pàgines no són una columna de text corregut, sinó un conjunt de caixes, com la pàgina d'un llibre de text escolar amb una banda per al títol, un text i tres caixes de colors amb fotos. Postext les anomena pàgines compostes. La forma de la pàgina és una plantilla de la configuració, i el Markdown només diu quin tros de text va a cada caixa. Aquesta pàgina explica com s'escriu aquest Markdown: la tanca de la pàgina, els marcs, els noms de slot i les imatges amb rètols, com els noms d'un mapa. També recull els avisos que dona Postext quan el text i la plantilla no lliguen.",
@@ -540,6 +540,10 @@ Al llenç, a la vista de doble pàgina del Sandbox i al Folio, les dues pàgines
 **Causa.** L'obertura de la pàgina i la seva plantilla no coincideixen: l'obertura porta `spread` i la plantilla és d'una sola pàgina, o la plantilla és de doble pàgina (pel seu propi `spread: true` o a través d'`extends`) i a l'obertura li falta. Mana la plantilla: una plantilla de doble pàgina es compon en dues pàgines encarades, i qualsevol altra en una. L'avís dona la plantilla, la marca de l'obertura (`fence`) i la de la plantilla (`templateSpread`), i assenyala l'atribut `spread`, o el nom de la plantilla quan l'obertura no el porta.
 
 **Correcció.** Fes que l'obertura digui el que és la plantilla: escriu `spread` a l'obertura d'una plantilla de doble pàgina, treu-lo de la d'una plantilla d'una sola, o tria una altra plantilla.
+
+## Migrar un llibre amb el text als estils
+
+Un llibre fet abans de les pàgines compostes pot guardar el text de les pàgines en estils de títol: un títol ocult a cada pàgina amb una capçalera que col·loca cada text on el tenia la pàgina impresa. La comprovació *Text desat a la configuració* ho assenyala. Al Sandbox, **Passar el text al Markdown** al tauler de revisió converteix cada disseny de pàgina en una plantilla de pàgina amb els marcs on eren els textos, i cada pàgina en una tanca de pàgina amb el text en slots `:::frame`; mostra cada pàgina abans i després, i es pot desfer. Vegeu [Passar el text al Markdown](/ca/docs/sandbox-design-checks#passar-el-text-al-markdown). Des del codi, `moveTextToMarkdown({ config, chapters, metadata }, options)` fa el mateix i torna la configuració nova, els capítols i un informe.
 
 ## Des del codi
 

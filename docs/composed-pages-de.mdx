@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Zusammengesetzte Seiten',
   description: 'Das Markdown zusammengesetzter Seiten: die Seitenbegrenzung aus vier Doppelpunkten, die eine Seitenvorlage nennt, Rahmen und das Attribut slot, die Inhalt in die Rahmen der Vorlage schicken, Abbildungen mit Beschriftungen an den Ankern eines Bilds und die Warnungen, die den Inhalt mit der Vorlage abgleichen',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 34,
   plainSummary: "Manche Seiten bestehen nicht aus einer Spalte Fließtext, sondern aus mehreren Feldern, so wie eine Schulbuchseite mit einem Titelband, einem Text und drei farbigen Kästen mit Fotos. Postext nennt sie zusammengesetzte Seiten. Die Form der Seite ist eine Vorlage in der Konfiguration, und das Markdown sagt nur, welches Stück Text in welches Feld gehört. Diese Seite zeigt, wie Sie dieses Markdown schreiben: die Seitenbegrenzung, die Rahmen, die Slot-Namen und Bilder mit Beschriftungen wie den Namen auf einer Landkarte. Sie führt außerdem die Warnungen auf, die Postext ausgibt, wenn Text und Vorlage nicht zusammenpassen.",
@@ -540,6 +540,10 @@ Auf der Zeichenfläche, in der Doppelseitenansicht des Sandbox und im Folio steh
 **Ursache.** Die Eröffnung der Seite und ihre Vorlage widersprechen sich: Die Eröffnung trägt `spread`, die Vorlage ist aber eine Einzelseite, oder die Vorlage ist eine Doppelseite (durch ihr eigenes `spread: true` oder über `extends`) und der Eröffnung fehlt die Angabe. Es entscheidet die Vorlage: Eine Doppelseitenvorlage wird über zwei gegenüberliegende Seiten gesetzt, jede andere auf eine Seite. Die Warnung nennt die Vorlage, die Angabe der Eröffnung (`fence`) und die der Vorlage (`templateSpread`) und zeigt auf das Attribut `spread` oder, wenn die Eröffnung keines hat, auf den Namen der Vorlage.
 
 **Behebung.** Lassen Sie die Eröffnung sagen, was die Vorlage ist: Schreiben Sie `spread` in die Eröffnung einer Doppelseitenvorlage, entfernen Sie es aus der einer Einzelseitenvorlage, oder wählen Sie eine andere Vorlage.
+
+## Ein Buch mit Text in seinen Stilen umstellen
+
+Ein Buch aus der Zeit vor den zusammengesetzten Seiten kann den Text seiner Seiten in Überschriftenstilen halten: eine verborgene Überschrift auf jeder Seite, deren Kolumnentitel jeden Text dorthin setzt, wo die gedruckte Seite ihn hatte. Die Prüfung *Text in der Konfiguration* meldet es. Im Sandbox macht **Text ins Markdown verschieben** im Bedienfeld Prüfungen aus jedem Seitendesign eine Seitenvorlage, deren Rahmen dort stehen, wo die Texte standen, und aus jeder Seite eine Seitenbegrenzung mit ihrem Text in `:::frame`-Slots; es zeigt jede Seite vorher und nachher und lässt sich rückgängig machen. Siehe [Text ins Markdown verschieben](/de/docs/sandbox-design-checks#text-ins-markdown-verschieben). Aus dem Code tut `moveTextToMarkdown({ config, chapters, metadata }, options)` dasselbe und gibt die neue Konfiguration, die Kapitel und einen Bericht zurück.
 
 ## Aus dem Code
 

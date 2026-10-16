@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pannelli Grafica e Verifiche',
   description: 'Gruppi, pagine, ricerca e panoramica del pannello Grafica, e gli avvisi dal vivo del pannello Verifiche, raggruppati per tipo',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '38 min',
   order: 37,
   parent: 'sandbox',
@@ -308,3 +308,27 @@ Queste voci non si ripetono nei gruppi sottostanti.
 Un clic su una voce porta alla sua cornice nella sua edizione. Se a schermo c’è un’altra edizione, il libro passa alla lingua della voce; poi si aprono il capitolo e la pagina, la cornice resta selezionata sulla pagina (il suo percorso compare in fondo all’anteprima) e il cursore va all’inizio del suo slot nel pannello **Testo**. Un avviso proprio di un modello apre la prima pagina composta con quel modello, con la cornice selezionata; il testo di grafica che contiene contenuto apre il pannello **Grafica**.
 
 Un progetto locale contiene una sola edizione: un pacchetto importato come progetto conserva la lingua scelta all’importazione, e si controlla solo quella (lo dice la riga sotto i comandi). Per controllare tutte le sue lingue, apri il pacchetto da **Libri**. Il contatore della barra delle attività conta gli avvisi del capitolo a schermo, nell’edizione a schermo.
+
+### Spostare il testo nel Markdown
+
+Un libro fatto prima delle pagine composte può tenere il testo di pagine intere nei suoi stili di titolo: un titolo nascosto in ogni pagina la cui testatina colloca decine di testi, caselle e immagini dove li aveva la pagina stampata. Il pannello Verifiche mostra allora *Testo tenuto nella configurazione* e propone in cima **Spostare il testo nel Markdown**. Un libro fatto così, importato dal pannello dei libri, apre la stessa finestra subito dopo l’importazione.
+
+La finestra dice che cosa farà lo spostamento prima di toccare qualcosa:
+
+- Ogni disegno di pagina diventa un modello di pagina (`pageTemplates`). Ogni testo diventa una cornice dove stava; i blocchi di testo con lo stesso aspetto posti uno sotto l’altro alla stessa distanza diventano una sola cornice. Le caselle, i filetti e le immagini passano alla decorazione del modello, dipinta sopra il testo corrente della pagina come lo era la testatina, e un’immagine che copre la pagina diventa l’attributo `background` della pagina, che la decorazione legge (`{attr.background}`).
+- Ogni pagina di un capitolo diventa una pagina composta, `::::page{template="…"}`, con i titoli e il testo corrente della pagina e un `:::frame{slot="…"}` per cornice con il suo testo. Grassetto e corsivo restano; i fine riga del disegno restano a capo forzati.
+- Il carattere, il corpo, il peso, il colore, l’allineamento e l’interlinea di ogni testo formano uno stile di paragrafo: quello del libro quando coincide del tutto, altrimenti uno nuovo che prende il nome dal carattere e dal corpo. Una casella colorata sotto parole in grassetto diventa un chip dello stile di chip del libro di quel colore, o di uno nuovo.
+- Le pagine con le cornici negli stessi punti condividono un modello (`page-base`) che i loro modelli propri estendono (`extends`); una pagina che non aggiunge nulla lo usa così com’è.
+- Gli stili di titolo che restano uguali una volta tolta la testatina vengono uniti (`tema--p04`, `tema--p05` → `tema`) e rinominati nei titoli; i titoli nascosti che servivano solo a cambiare testatina spariscono. Una pagina che cominciava con un titolo che chiedeva una pagina pari o dispari riceve un `:::pagebreak{parity="…"}` prima del suo recinto.
+
+Le cifre di **Che cosa cambia** sono i testi e le lettere spostati, le pagine scritte, i modelli proposti, gli stili di titolo prima e dopo, gli stili creati, la dimensione della configurazione e gli avvisi *Testo tenuto nella configurazione*, prima e dopo.
+
+**Prima e dopo** impagina ogni capitolo due volte con l’impaginazione dello stesso Sandbox e disegna ogni pagina che cambia, la vecchia accanto alla nuova. L’elenco a fianco dice quali pagine appaiono diverse e perché, quando lo si sa: una spaziatura tra le lettere che uno stile di paragrafo non può portare, la casella, il contorno o il capolettera propri di un testo, una pagina di cui non si sa il lato, testo corrente che ora va nella cornice di flusso del modello. **Segnare in rosso ciò che cambia** dipinge i pixel diversi.
+
+Le opzioni: **Le pagine con cornici negli stessi punti condividono un modello**, **Una casella di evidenziazione sotto parole in grassetto diventa un chip** e, quando ce ne sono, **Eliminare gli stili di titolo con testo che nessun titolo usa**.
+
+**Spostare il testo** lo applica in un colpo. Il libro di prima resta salvato, anche ricaricando, finché nel pannello Verifiche non si sceglie **Tenere lo spostamento**; fino ad allora **Rimettere il libro com’era** restituisce il disegno e tutti i capitoli.
+
+Resta nella configurazione, ed è elencato sotto **Resta nella configurazione**: un testo che mescola parole e segnaposto (`Pagina {pageNumber}`), un testo appeso alla casella della sua testatina o a un altro elemento, e il testo di un disegno di titolo (che non è una pagina). Nelle pagine, il disegno di un titolo posto in una cornice (la linguetta di un titolo incorniciato, le fasce disegnate attorno a un titolo) lì non viene disegnato, quindi una pagina con testo corrente sotto titoli così appare diversa. La verifica del contrasto misura il testo di una cornice contro la pagina e non contro una casella della decorazione che sta sotto, quindi può segnalare un’etichetta bianca su una casella colorata.
+
+Lo stesso spostamento è una funzione del motore, `moveTextToMarkdown({ config, chapters, metadata }, options)`, che restituisce la nuova configurazione, i capitoli e il resoconto che mostra la finestra. Vedi [Pagine composte](/it/docs/composed-pages#migrare-un-libro-con-il-testo-negli-stili).

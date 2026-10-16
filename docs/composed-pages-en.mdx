@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Composed pages',
   description: 'The Markdown of composed pages: the four-colon page fence that names a page template, frames and the slot attribute that send content to the frames of the template, figures with labels at the anchors of a picture, and the warnings that check the content against the template',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 34,
   plainSummary: "Some pages are not one column of running text but a set of boxes, like a page of a school textbook with a title band, a text and three coloured boxes with photos. Postext calls them composed pages. The shape of the page is a template in the configuration, and the Markdown only says which piece of text goes into which box. This page shows how to write that Markdown: the page fence, the frames, the slot names, and pictures with labels such as the names on a map. It also lists the warnings Postext gives when the text and the template do not match.",
@@ -540,6 +540,10 @@ On the canvas, in the Sandbox's spread view and in the Folio the two pages stand
 **Cause.** The page fence and its template disagree: the fence has `spread` and the template is a single page, or the template is a spread (by its own `spread: true` or through `extends`) and the fence lacks the flag. The template decides: a spread template is laid over two facing pages, any other on one page. The warning gives the template, the fence's flag (`fence`) and the template's (`templateSpread`), and points at the `spread` attribute, or at the template's name when the fence has none.
 
 **Fix.** Make the fence say what the template is: write `spread` on the fence of a spread template, remove it from the fence of a single-page one, or choose another template.
+
+## Migrating a book with text in its styles
+
+A book made before composed pages may hold the text of its pages in heading styles: a hidden heading on each page whose running head places every text where the printed page had it. The *Text held in the configuration* check lists it. In the Sandbox, **Move the text to the Markdown** in the Checks panel turns each page design into a page template whose frames stand where the texts stood, and each page into a page fence with its text in `:::frame` slots; it shows every page before and after, and can be undone. See [Moving the text to the Markdown](/en/docs/sandbox-design-checks#moving-the-text-to-the-markdown). From code, `moveTextToMarkdown({ config, chapters, metadata }, options)` does the same and returns the new configuration, the chapters and a report.
 
 ## From code
 

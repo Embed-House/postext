@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Páginas compostas',
   description: 'O Markdown das páginas compostas: a cerca de página de quatro dois-pontos que nomeia um modelo de página, os blocos e o atributo slot que levam o conteúdo aos blocos do modelo, as figuras com rótulos nas âncoras de uma imagem e os avisos que conferem o conteúdo com o modelo',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 34,
   plainSummary: "Algumas páginas não são uma coluna de texto corrido, e sim um conjunto de caixas, como a página de um livro didático com uma faixa para o título, um texto e três caixas coloridas com fotos. O Postext chama essas páginas de páginas compostas. A forma da página é um modelo que fica na configuração, e o Markdown só diz qual trecho de texto vai em cada caixa. Esta página mostra como escrever esse Markdown: a cerca da página, os blocos, os nomes de slot e as imagens com rótulos, como os nomes de um mapa. Ela também lista os avisos que o Postext dá quando o texto e o modelo não batem.",
@@ -540,6 +540,10 @@ Na tela, na visualização de página dupla do Sandbox e no Folio, as duas pági
 **Causa.** A abertura da página e o seu modelo não concordam: a abertura tem `spread` e o modelo ocupa uma só página, ou o modelo é de página dupla (pelo seu próprio `spread: true` ou por `extends`) e falta a marca na abertura. Vale o modelo: um modelo de página dupla é composto em duas páginas lado a lado, e qualquer outro em uma. O aviso traz o modelo, a marca da abertura (`fence`) e a do modelo (`templateSpread`), e aponta o atributo `spread`, ou o nome do modelo quando a abertura não o tem.
 
 **Correção.** Faça a abertura dizer o que o modelo é: escreva `spread` na abertura de um modelo de página dupla, tire-o da abertura de um modelo de uma página, ou escolha outro modelo.
+
+## Migrar um livro com o texto nos estilos
+
+Um livro feito antes das páginas compostas pode guardar o texto das suas páginas em estilos de título: um título oculto em cada página cujo cabeçalho coloca cada texto onde a página impressa o tinha. A verificação *Texto guardado na configuração* aponta isso. No Sandbox, **Levar o texto para o Markdown** no painel Verificações transforma cada desenho de página num modelo de página com os blocos onde os textos estavam, e cada página numa cerca de página com o seu texto em slots `:::frame`; mostra cada página antes e depois, e pode ser desfeito. Veja [Levar o texto para o Markdown](/pt/docs/sandbox-design-checks#levar-o-texto-para-o-markdown). No código, `moveTextToMarkdown({ config, chapters, metadata }, options)` faz o mesmo e devolve a nova configuração, os capítulos e um relatório.
 
 ## No código
 

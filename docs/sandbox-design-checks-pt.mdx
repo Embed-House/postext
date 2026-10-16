@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Painéis Design e Verificações',
   description: 'Os grupos, as páginas, a busca e a visão geral do painel Design, e os avisos ao vivo do painel Verificações, agrupados por tipo',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '38 min',
   order: 37,
   parent: 'sandbox',
@@ -308,3 +308,27 @@ Essas entradas não se repetem nos grupos abaixo.
 Um clique numa entrada leva ao bloco dela na edição dela. Se outra edição estiver na tela, o livro passa para o idioma da entrada; depois abrem o capítulo e a página, o bloco fica selecionado na página (o caminho dele aparece no pé da prévia) e o cursor vai para o começo do slot no painel **Texto**. Um aviso do próprio modelo abre a primeira página composta com ele, com o bloco selecionado; o texto de design com conteúdo abre o painel **Design**.
 
 Um projeto local guarda uma só edição: um pacote importado como projeto mantém o idioma escolhido na importação, e só essa edição é verificada (a linha abaixo dos controles avisa). Para verificar todos os idiomas, abra o pacote em **Livros**. O contador da barra de atividades conta os avisos do capítulo na tela, na edição na tela.
+
+### Levar o texto para o Markdown
+
+Um livro feito antes das páginas compostas pode guardar o texto de páginas inteiras nos estilos de título: um título oculto em cada página cujo cabeçalho coloca dezenas de textos, caixas e imagens onde a página impressa os tinha. O painel Verificações mostra então *Texto guardado na configuração* e oferece **Levar o texto para o Markdown** no topo. Um livro assim, importado pelo painel de livros, abre a mesma janela logo depois da importação.
+
+A janela diz o que a mudança vai fazer antes de mexer em qualquer coisa:
+
+- Cada desenho de página vira um modelo de página (`pageTemplates`). Cada texto vira um bloco onde estava; blocos de texto com a mesma aparência postos um embaixo do outro com o mesmo espaço viram um só bloco. As caixas, os fios e as imagens vão para a decoração do modelo, pintada por cima do texto corrido da página como o cabeçalho era, e uma imagem que cobre a página vira o atributo `background` da página, que a decoração lê (`{attr.background}`).
+- Cada página de um capítulo vira uma página composta, `::::page{template="…"}`, com os títulos e o texto corrido da página e um `:::frame{slot="…"}` por bloco com o seu texto. Negrito e itálico ficam; os fins de linha do desenho ficam como quebras de linha forçadas.
+- A fonte, o corpo, o peso, a cor, o alinhamento e a entrelinha de cada texto formam um estilo de parágrafo: o do livro quando ele coincide por completo, senão um novo, com o nome da fonte e do corpo. Uma caixa colorida sob palavras em negrito vira um chip do estilo de chip do livro daquela cor, ou de um novo.
+- Páginas com os blocos nos mesmos lugares compartilham um modelo (`page-base`) que os seus próprios modelos estendem (`extends`); uma página que não acrescenta nada usa esse modelo como ele é.
+- Estilos de título que ficam iguais depois que o cabeçalho sai são fundidos (`tema--p04`, `tema--p05` → `tema`) e renomeados nos títulos; títulos ocultos que só trocavam o cabeçalho somem. Uma página que começava com um título que pedia página par ou ímpar recebe um `:::pagebreak{parity="…"}` antes da sua cerca.
+
+Os números de **O que muda** são os textos e as letras levados, as páginas escritas, os modelos propostos, os estilos de título antes e depois, os estilos criados, o tamanho da configuração e os avisos *Texto guardado na configuração*, antes e depois.
+
+**Antes e depois** diagrama cada capítulo duas vezes com a diagramação do próprio Sandbox e desenha cada página que muda, a antiga ao lado da nova. A lista ao lado diz quais páginas parecem diferentes e por quê, quando se sabe: um espaçamento entre letras que um estilo de parágrafo não comporta, a caixa, o contorno ou a capitular próprios de um texto, uma página cujo lado não se conhece, texto corrido que agora fica no bloco de fluxo do modelo. **Marcar em vermelho o que muda** pinta os pixels diferentes.
+
+As opções: **Páginas com blocos nos mesmos lugares compartilham um modelo**, **Uma caixa de destaque sob palavras em negrito vira um chip** e, quando houver, **Apagar os estilos de título com texto que nenhum título usa**.
+
+**Levar o texto** aplica tudo de uma vez. O livro de antes fica guardado, mesmo ao recarregar, até você escolher **Ficar com a mudança** no painel Verificações; até lá **Deixar o livro como estava** devolve o desenho e todos os capítulos.
+
+Fica na configuração, e aparece em **Fica na configuração**: um texto que mistura palavras e marcadores (`Página {pageNumber}`), um texto preso à caixa do seu cabeçalho ou a outro elemento, e o texto de um desenho de título (que não é uma página). Nas páginas, o desenho de um título posto num bloco (a aba de um título com caixa, as faixas desenhadas em volta de um título) não é desenhado ali, então uma página com texto corrido sob títulos assim parece diferente. A verificação de contraste mede o texto de um bloco contra a página e não contra uma caixa da decoração que esteja embaixo, então pode apontar um rótulo branco sobre uma caixa colorida.
+
+A mesma mudança é uma função do motor, `moveTextToMarkdown({ config, chapters, metadata }, options)`, que devolve a nova configuração, os capítulos e o relatório que a janela mostra. Veja [Páginas compostas](/pt/docs/composed-pages#migrar-um-livro-com-o-texto-nos-estilos).

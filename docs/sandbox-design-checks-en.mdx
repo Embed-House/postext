@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Design and Checks panels',
   description: "The Design panel's groups, pages, search and summary, and the Checks panel's live warnings, grouped by kind",
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '34 min',
   order: 37,
   parent: 'sandbox',
@@ -308,3 +308,27 @@ These entries are not repeated in the groups below.
 A click on an entry takes you to its frame in its edition. When another edition is on screen, the book switches to the entry's language; then the chapter and the page open, the frame is picked on the page (its path shows at the foot of the preview) and the caret goes to the start of its slot in the **Text** panel. A template's own warning opens the first page set with that template, with its frame picked; design text that holds content opens the **Design** panel.
 
 A local project holds one edition: a bundle imported as a project keeps the language chosen on import, and only that edition is checked (the line under the controls says so). Open the bundle from **Books** to check every language it carries. The badge on the activity bar counts the warnings of the chapter on screen, in the edition on screen.
+
+### Moving the text to the Markdown
+
+A book made before composed pages may keep the text of whole pages in its heading styles: a hidden heading on each page whose running head places dozens of text elements, boxes and pictures where the printed page had them. The Checks panel then lists *Text held in the configuration* and offers **Move the text to the Markdown** at its head. A book imported from the Books panel with such styles opens the same dialog right after the import.
+
+The dialog says what the move will do before it does anything:
+
+- Each page design becomes a page template (`pageTemplates`). Every text becomes a frame where the text stood; text blocks of one look set one under another at an even spacing become one frame. The boxes, rules and pictures become the template's decoration, painted over the page's running text as the running head was, and a picture that covers the page becomes the page's `background` attribute, which the decoration reads (`{attr.background}`).
+- Each page of a chapter becomes a page fence, `::::page{template="…"}`, holding the page's headings and running text and a `:::frame{slot="…"}` per frame with its text. Bold and italics stay; the line ends of the design stay as forced breaks.
+- The face, size, weight, colour, alignment and leading of each text become a paragraph style: the book's own when one matches exactly, else a new one named after the face and the size. A filled box under bold words becomes a chip of the book's chip style of that colour, or of a new one.
+- Pages whose frames stand in the same places share a template (`page-base`) that their own templates extend (`extends`); a page that adds nothing uses it as it is.
+- Heading styles that come out the same once their running heads have left are merged (`tema--p04`, `tema--p05` → `tema`) and the headings are renamed; hidden headings that only switched the running head are dropped. A page that opened with a heading set to an even or odd page gets a `:::pagebreak{parity="…"}` before its fence.
+
+The numbers under **What changes** are the texts and letters moved, the pages written, the templates proposed, the heading styles before and after, the styles created, the size of the configuration and the *Text held in the configuration* warnings, before and after.
+
+**Before and after** lays each chapter out twice with the Sandbox's own layout and draws every page that changes, the old one beside the new one. The list beside them says which pages look different and why, when the reason is known: letter spacing a paragraph style cannot carry, a text's own box, outline or drop cap, a page whose side was not known, running text now set in the template's flow frame. **Mark in red what changed** paints the pixels that differ.
+
+The options: **Pages with frames in the same places share a template**, **A highlight box under bold words becomes a chip**, and, when there are some, **Delete the heading styles with text that no heading uses**.
+
+**Move the text** applies it in one step. The book as it was stays stored, across reloads too, until **Keep the move** in the Checks panel; until then **Put the book back as it was** restores the design and every chapter.
+
+Left in the configuration, and listed under **Left in the configuration**: a text that mixes words with placeholders (`Page {pageNumber}`), a text hung from its running head's own box or from another element, and the text of a heading design (not a page). On the pages, a heading design set in a frame (the tab of a boxed heading, bands drawn around a heading) is not drawn there, so a page with running text under such headings looks different. The contrast check reads a frame's text against the page and not against a box of the decoration under it, so it may list a white label on a coloured box.
+
+The same migration is a function of the engine, `moveTextToMarkdown({ config, chapters, metadata }, options)`, which returns the new configuration, the chapters and the report the dialog shows. See [Composed pages](/en/docs/composed-pages#migrating-a-book-with-text-in-its-styles).

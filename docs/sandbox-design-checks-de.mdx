@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Bedienfelder Gestaltung und Prüfungen',
   description: 'Gruppen, Seiten, Suche und Übersicht des Bedienfelds Gestaltung und die laufenden Warnungen des Bedienfelds Prüfungen, nach Art gruppiert',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '33 min',
   order: 37,
   parent: 'sandbox',
@@ -308,3 +308,27 @@ Diese Einträge werden in den Gruppen darunter nicht wiederholt.
 Ein Klick auf einen Eintrag führt zu seinem Rahmen in seiner Ausgabe. Wird gerade eine andere Ausgabe angezeigt, wechselt das Buch in die Sprache des Eintrags; dann öffnen sich Kapitel und Seite, der Rahmen ist auf der Seite ausgewählt (sein Pfad steht unten in der Vorschau) und der Cursor steht am Anfang seines Slots im Bedienfeld **Text**. Eine Warnung einer Vorlage öffnet die erste Seite, die mit dieser Vorlage gesetzt ist, mit ausgewähltem Rahmen; Gestaltungstext mit Inhalt öffnet das Bedienfeld **Gestaltung**.
 
 Ein lokales Projekt enthält eine einzige Ausgabe: Ein als Projekt importiertes Paket behält die beim Import gewählte Sprache, und nur diese Ausgabe wird geprüft (die Zeile unter den Bedienelementen sagt es). Um alle Sprachen zu prüfen, öffnen Sie das Paket unter **Bücher**. Das Abzeichen in der Aktivitätsleiste zählt die Warnungen des angezeigten Kapitels in der angezeigten Ausgabe.
+
+### Text ins Markdown verschieben
+
+Ein Buch aus der Zeit vor den zusammengesetzten Seiten kann den Text ganzer Seiten in seinen Überschriftenstilen halten: eine verborgene Überschrift auf jeder Seite, deren Kolumnentitel Dutzende Textelemente, Kästen und Bilder dorthin setzt, wo die gedruckte Seite sie hatte. Das Bedienfeld Prüfungen zeigt dann *Text in der Konfiguration* und bietet oben **Text ins Markdown verschieben** an. Ein solches Buch, über das Bedienfeld Bücher importiert, öffnet denselben Dialog gleich nach dem Import.
+
+Der Dialog sagt, was das Verschieben tun wird, bevor er etwas ändert:
+
+- Jedes Seitendesign wird zu einer Seitenvorlage (`pageTemplates`). Jeder Text wird zu einem Rahmen an seiner Stelle; Textblöcke gleichen Aussehens, die in gleichem Abstand untereinanderstehen, werden ein Rahmen. Kästen, Linien und Bilder kommen in die Dekoration der Vorlage, die über den Fließtext der Seite gemalt wird, wie es der Kolumnentitel wurde, und ein Bild, das die Seite bedeckt, wird zum Attribut `background` der Seite, das die Dekoration liest (`{attr.background}`).
+- Jede Seite eines Kapitels wird zu einer zusammengesetzten Seite, `::::page{template="…"}`, mit den Überschriften und dem Fließtext der Seite und einem `:::frame{slot="…"}` je Rahmen mit dessen Text. Fett und kursiv bleiben; die Zeilenenden des Designs bleiben als erzwungene Umbrüche.
+- Schrift, Grad, Stärke, Farbe, Ausrichtung und Zeilenabstand jedes Textes werden ein Absatzstil: der des Buches, wenn er genau passt, sonst ein neuer, benannt nach Schrift und Grad. Ein farbiger Kasten unter fetten Wörtern wird ein Chip des Chip-Stils des Buches in dieser Farbe oder eines neuen.
+- Seiten, deren Rahmen an denselben Stellen stehen, teilen sich eine Vorlage (`page-base`), die ihre eigenen Vorlagen erweitern (`extends`); eine Seite, die nichts hinzufügt, nimmt sie so, wie sie ist.
+- Überschriftenstile, die ohne ihren Kolumnentitel gleich sind, werden zusammengelegt (`tema--p04`, `tema--p05` → `tema`) und in den Überschriften umbenannt; verborgene Überschriften, die nur den Kolumnentitel wechselten, fallen weg. Eine Seite, die mit einer Überschrift für eine gerade oder ungerade Seite begann, bekommt vor ihrer Seitenbegrenzung ein `:::pagebreak{parity="…"}`.
+
+Die Zahlen unter **Was sich ändert** sind die verschobenen Texte und Buchstaben, die geschriebenen Seiten, die vorgeschlagenen Vorlagen, die Überschriftenstile vorher und nachher, die neuen Stile, die Größe der Konfiguration und die Warnungen *Text in der Konfiguration*, vorher und nachher.
+
+**Vorher und nachher** setzt jedes Kapitel zweimal mit dem Satz des Sandbox selbst und zeichnet jede Seite, die sich ändert, die alte neben der neuen. Die Liste daneben sagt, welche Seiten anders aussehen und warum, wenn der Grund bekannt ist: eine Sperrung, die ein Absatzstil nicht tragen kann, ein eigener Kasten, eine Kontur oder Initiale eines Textes, eine Seite, deren Seite des Bogens unbekannt ist, Fließtext, der jetzt im Flussrahmen der Vorlage steht. **Geändertes rot markieren** malt die abweichenden Pixel.
+
+Die Optionen: **Seiten mit Rahmen an denselben Stellen teilen sich eine Vorlage**, **Ein Markierungskasten unter fetten Wörtern wird zum Chip** und, wenn es welche gibt, **Überschriftenstile mit Text löschen, die keine Überschrift verwendet**.
+
+**Text verschieben** wendet alles in einem Schritt an. Das Buch von vorher bleibt gespeichert, auch über ein Neuladen hinweg, bis Sie im Bedienfeld Prüfungen **Änderung behalten** wählen; bis dahin stellt **Buch wiederherstellen** das Design und alle Kapitel zurück.
+
+In der Konfiguration bleibt, und unter **Bleibt in der Konfiguration** aufgeführt: ein Text, der Wörter mit Platzhaltern mischt (`Seite {pageNumber}`), ein Text, der am eigenen Kasten seines Kolumnentitels oder an einem anderen Element hängt, und der Text eines Überschriftendesigns (keine Seite). Auf den Seiten wird das Design einer Überschrift, die in einem Rahmen steht (der Reiter einer gerahmten Überschrift, Bänder um eine Überschrift), dort nicht gezeichnet; eine Seite mit Fließtext unter solchen Überschriften sieht daher anders aus. Die Kontrastprüfung misst den Text eines Rahmens gegen die Seite und nicht gegen einen Kasten der Dekoration darunter und kann daher ein weißes Etikett auf einem farbigen Kasten melden.
+
+Dasselbe Verschieben ist eine Funktion der Engine, `moveTextToMarkdown({ config, chapters, metadata }, options)`, die die neue Konfiguration, die Kapitel und den Bericht des Dialogs zurückgibt. Siehe [Zusammengesetzte Seiten](/de/docs/composed-pages#ein-buch-mit-text-in-seinen-stilen-umstellen).

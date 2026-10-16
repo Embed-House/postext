@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Panneaux Maquette et Vérifications',
   description: 'Les groupes, les pages, la recherche et la vue d’ensemble du panneau Maquette, et les avertissements en direct du panneau Vérifications, regroupés par nature',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '40 min',
   order: 37,
   parent: 'sandbox',
@@ -308,3 +308,27 @@ Ces entrées ne se répètent pas dans les groupes du dessous.
 Un clic sur une entrée mène à son bloc dans son édition. Si une autre édition est à l’écran, le livre passe à la langue de l’entrée ; puis le chapitre et la page s’ouvrent, le bloc est sélectionné sur la page (son chemin s’affiche au bas de l’aperçu) et le curseur se place au début de son slot dans le panneau **Texte**. Un avertissement propre à un modèle ouvre la première page composée avec ce modèle, son bloc sélectionné ; le texte de maquette qui contient du contenu ouvre le panneau **Maquette**.
 
 Un projet local contient une seule édition : un paquet importé comme projet garde la langue choisie à l’import, et seule cette édition est vérifiée (la ligne sous les commandes le dit). Pour vérifier toutes ses langues, ouvrez le paquet depuis **Livres**. La pastille de la barre d’activité compte les avertissements du chapitre à l’écran, dans l’édition à l’écran.
+
+### Déplacer le texte dans le Markdown
+
+Un livre fait avant les pages composées peut garder le texte de pages entières dans ses styles de titre : un titre masqué sur chaque page dont l’en-tête place des dizaines de textes, de boîtes et d’images là où les avait la page imprimée. Le panneau Vérifications affiche alors *Texte rangé dans la configuration* et propose **Déplacer le texte dans le Markdown** en tête. Un livre ainsi fait, importé depuis le panneau des livres, ouvre la même fenêtre juste après l’import.
+
+La fenêtre dit ce que fera le déplacement avant de rien toucher :
+
+- Chaque dessin de page devient un gabarit de page (`pageTemplates`). Chaque texte devient un bloc à la place qu’il occupait ; des blocs de texte de même aspect posés les uns sous les autres à intervalle régulier forment un seul bloc. Les boîtes, filets et images passent dans la décoration du gabarit, peinte par-dessus le texte courant comme l’était l’en-tête, et une image qui couvre la page devient l’attribut `background` de la page, que lit la décoration (`{attr.background}`).
+- Chaque page d’un chapitre devient une page composée, `::::page{template="…"}`, avec les titres et le texte courant de la page et un `:::frame{slot="…"}` par bloc, qui porte son texte. Le gras et l’italique restent ; les fins de ligne du dessin restent des retours à la ligne forcés.
+- La police, le corps, la graisse, la couleur, l’alignement et l’interlignage de chaque texte forment un style de paragraphe : celui du livre quand il correspond exactement, sinon un nouveau, nommé d’après la police et le corps. Une boîte colorée sous des mots en gras devient une pastille du style de pastille du livre de cette couleur, ou d’un nouveau.
+- Les pages dont les blocs occupent les mêmes places partagent un gabarit (`page-base`) que leurs propres gabarits étendent (`extends`) ; une page qui n’ajoute rien l’utilise tel quel.
+- Les styles de titre qui deviennent identiques une fois leur en-tête parti sont fusionnés (`tema--p04`, `tema--p05` → `tema`) et renommés dans les titres ; les titres masqués qui ne servaient qu’à changer d’en-tête disparaissent. Une page qui commençait par un titre demandant une page paire ou impaire reçoit un `:::pagebreak{parity="…"}` avant son délimiteur.
+
+Les chiffres de **Ce qui change** sont les textes et les lettres déplacés, les pages écrites, les gabarits proposés, les styles de titre avant et après, les styles créés, la taille de la configuration et les avertissements *Texte rangé dans la configuration*, avant et après.
+
+**Avant et après** met chaque chapitre en page deux fois avec la mise en page du Sandbox lui-même et dessine chaque page qui change, l’ancienne à côté de la nouvelle. La liste voisine dit quelles pages paraissent différentes et pourquoi, quand on le sait : un interlettrage qu’un style de paragraphe ne peut porter, la boîte, le contour ou la lettrine propres d’un texte, une page dont le côté n’est pas connu, du texte courant désormais dans le bloc de flux du gabarit. **Marquer en rouge ce qui change** peint les pixels qui diffèrent.
+
+Les options : **Les pages aux blocs placés aux mêmes endroits partagent un gabarit**, **Une boîte de surlignage sous des mots en gras devient une pastille** et, s’il y en a, **Supprimer les styles de titre avec du texte qu’aucun titre n’utilise**.
+
+**Déplacer le texte** l’applique d’un coup. Le livre d’avant reste enregistré, même après un rechargement, jusqu’à **Garder le déplacement** dans le panneau Vérifications ; jusque-là **Remettre le livre comme avant** rend le dessin et tous les chapitres.
+
+Restent dans la configuration, et sont listés sous **Reste dans la configuration** : un texte qui mêle des mots et des marqueurs (`Page {pageNumber}`), un texte accroché à la boîte de son en-tête ou à un autre élément, et le texte d’un dessin de titre (qui n’est pas une page). Sur les pages, le dessin d’un titre posé dans un bloc (l’onglet d’un titre encadré, les bandeaux tracés autour d’un titre) n’y est pas dessiné : une page de texte courant sous de tels titres paraît donc différente. Le contrôle de contraste mesure le texte d’un bloc contre la page et non contre une boîte de la décoration placée dessous ; il peut donc signaler une étiquette blanche sur une boîte colorée.
+
+Le même déplacement est une fonction du moteur, `moveTextToMarkdown({ config, chapters, metadata }, options)`, qui rend la nouvelle configuration, les chapitres et le rapport qu’affiche la fenêtre. Voir [Pages composées](/fr/docs/composed-pages#migrer-un-livre-dont-le-texte-est-dans-ses-styles).

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pages composées',
   description: 'Le Markdown des pages composées : le délimiteur de page à quatre deux-points qui nomme un modèle de page, les blocs et l’attribut slot qui envoient le contenu dans les blocs du modèle, les figures dont les étiquettes se posent sur les ancres d’une image, et les avertissements qui confrontent le contenu au modèle',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 34,
   plainSummary: "Certaines pages ne sont pas une simple colonne de texte courant mais un assemblage de blocs, comme une page de manuel scolaire avec un bandeau de titre, un texte et trois encadrés de couleur accompagnés de photos. Postext les appelle des pages composées. La forme de la page est un modèle rangé dans la configuration, et le Markdown se contente de dire quel morceau de texte va dans quel bloc. Cette page montre comment écrire ce Markdown : le délimiteur de page, les blocs, les noms de slot et les images avec des étiquettes, comme les noms sur une carte. Elle liste aussi les avertissements que donne Postext quand le texte et le modèle ne concordent pas.",
@@ -540,6 +540,10 @@ Sur le canevas, dans la vue en double page du Sandbox et dans le Folio, les deux
 **Cause.** L’ouverture de la page et son modèle ne s’accordent pas : l’ouverture porte `spread` alors que le modèle tient sur une page, ou le modèle est une double page (par son propre `spread: true` ou par `extends`) et l’ouverture ne le dit pas. Le modèle décide : un modèle de double page est composé sur deux pages en regard, tout autre sur une seule. L’avertissement donne le modèle, la marque de l’ouverture (`fence`) et celle du modèle (`templateSpread`), et pointe l’attribut `spread`, ou le nom du modèle quand l’ouverture n’en a pas.
 
 **Correction.** Faites dire à l’ouverture ce qu’est le modèle : écrivez `spread` dans l’ouverture d’un modèle de double page, retirez-le de celle d’un modèle d’une page, ou choisissez un autre modèle.
+
+## Migrer un livre dont le texte est dans ses styles
+
+Un livre fait avant les pages composées peut garder le texte de ses pages dans des styles de titre : un titre masqué sur chaque page dont l’en-tête place chaque texte là où l’avait la page imprimée. Le contrôle *Texte rangé dans la configuration* le signale. Dans le Sandbox, **Déplacer le texte dans le Markdown**, dans le panneau Vérifications, fait de chaque dessin de page un gabarit de page dont les blocs sont là où étaient les textes, et de chaque page un délimiteur de page dont le texte va dans des slots `:::frame` ; il montre chaque page avant et après, et peut être annulé. Voir [Déplacer le texte dans le Markdown](/fr/docs/sandbox-design-checks#déplacer-le-texte-dans-le-markdown). Depuis le code, `moveTextToMarkdown({ config, chapters, metadata }, options)` fait la même chose et rend la nouvelle configuration, les chapitres et un rapport.
 
 ## Depuis le code
 

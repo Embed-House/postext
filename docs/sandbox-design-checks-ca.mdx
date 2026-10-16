@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Taulers de disseny i de revisió',
   description: 'Els grups, les pàgines, la cerca i el resum del tauler Disseny, i els avisos en viu del tauler Revisió, agrupats per tipus',
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '40 min',
   order: 37,
   parent: 'sandbox',
@@ -308,3 +308,27 @@ Aquestes entrades no es repeteixen als grups de sota.
 Un clic en una entrada porta al seu marc en la seva edició. Si a la pantalla hi ha una altra edició, el llibre canvia a l'idioma de l'entrada; després s'obren el capítol i la pàgina, el marc queda seleccionat a la pàgina (la seva ruta apareix al peu de la previsualització) i el cursor va al començament del seu slot al tauler **Text**. Un avís de la mateixa plantilla obre la primera pàgina composta amb ella, amb el marc seleccionat; el text de disseny amb contingut obre el tauler **Disseny**.
 
 Un projecte local guarda una sola edició: un paquet importat com a projecte conserva l'idioma triat en importar-lo i només es revisa aquella edició (la línia sota els controls ho diu). Per revisar tots els seus idiomes, obre el paquet des de **Llibres**. El comptador de la barra d'activitat compta els avisos del capítol a la pantalla, en l'edició a la pantalla.
+
+### Passar el text al Markdown
+
+Un llibre fet abans de les pàgines compostes pot guardar el text de pàgines senceres als estils de títol: un títol ocult a cada pàgina amb una capçalera que col·loca desenes de textos, caixes i imatges on els tenia la pàgina impresa. El tauler de revisió mostra llavors *Text desat a la configuració* i ofereix **Passar el text al Markdown** al capdamunt. Un llibre amb estils així que s'importa des del tauler de llibres obre el mateix quadre just després d'importar-lo.
+
+El quadre explica què farà el canvi abans de fer res:
+
+- Cada disseny de pàgina passa a ser una plantilla de pàgina (`pageTemplates`). Cada text es converteix en un marc on era; els blocs de text amb el mateix aspecte col·locats l'un sota l'altre a la mateixa distància formen un sol marc. Les caixes, els filets i les imatges passen a la decoració de la plantilla, que es pinta sobre el text corregut de la pàgina com es pintava la capçalera, i una imatge que cobreix la pàgina passa a ser l'atribut `background` de la pàgina, que llegeix la decoració (`{attr.background}`).
+- Cada pàgina d'un capítol es converteix en una pàgina composta, `::::page{template="…"}`, amb els títols i el text corregut de la pàgina i un `:::frame{slot="…"}` per marc amb el seu text. Les negretes i les cursives es mantenen; els finals de línia del disseny queden com a salts de línia forçats.
+- La família, el cos, el gruix, el color, l'alineació i l'interlineat de cada text formen un estil de paràgraf: el del llibre quan coincideix del tot, si no un de nou amb el nom de la família i el cos. Una caixa de color sota paraules en negreta passa a ser un xip de l'estil de xip del llibre d'aquell color, o d'un de nou.
+- Les pàgines amb els marcs als mateixos llocs comparteixen una plantilla (`page-base`) que amplien les seves plantilles pròpies (`extends`); una pàgina que no hi afegeix res la fa servir tal com és.
+- Els estils de títol que queden iguals un cop se'n va la capçalera es fusionen (`tema--p04`, `tema--p05` → `tema`) i es canvien als títols; els títols ocults que només canviaven la capçalera desapareixen. Una pàgina que començava amb un títol que demanava pàgina parella o senar rep un `:::pagebreak{parity="…"}` abans de la seva tanca.
+
+Les xifres de **Què canvia** són els textos i les lletres que es passen, les pàgines escrites, les plantilles proposades, els estils de títol abans i després, els estils creats, la mida de la configuració i els avisos de *Text desat a la configuració*, abans i després.
+
+**Abans i després** compon cada capítol dues vegades amb la composició del mateix Sandbox i dibuixa cada pàgina que canvia, l'anterior al costat de la nova. La llista del costat diu quines pàgines es veuen diferents i per què, quan se sap: un espaiat entre lletres que un estil de paràgraf no admet, la caixa, el contorn o la caplletra propis d'un text, una pàgina de la qual no se sap el costat, text corregut que ara va al marc de flux de la plantilla. **Marcar en vermell el que canvia** pinta els píxels diferents.
+
+Les opcions: **Les pàgines amb marcs als mateixos llocs comparteixen plantilla**, **Una caixa de ressaltat sota paraules en negreta es converteix en xip** i, quan n'hi ha, **Esborrar els estils de títol amb text que no fa servir cap títol**.
+
+**Passar el text** ho aplica d'un cop. El llibre tal com era es guarda, també en recarregar, fins que es tria **Quedar-me amb el canvi** al tauler de revisió; fins aleshores **Deixar el llibre com estava** torna el disseny i tots els capítols.
+
+Queda a la configuració, i s'enumera a **Queda a la configuració**: un text que barreja paraules i marcadors (`Pàgina {pageNumber}`), un text que penja de la caixa pròpia de la capçalera o d'un altre element, i el text d'un disseny de títol (que no és una pàgina). A les pàgines, el disseny d'un títol col·locat en un marc (la pestanya d'un títol amb caixa, les bandes dibuixades al voltant d'un títol) no s'hi dibuixa, de manera que una pàgina amb text corregut sota títols així es veu diferent. La comprovació de contrast mesura el text d'un marc contra la pàgina i no contra una caixa de la decoració que hi hagi a sota, així que pot assenyalar una etiqueta blanca sobre una caixa de color.
+
+El mateix canvi és una funció del motor, `moveTextToMarkdown({ config, chapters, metadata }, options)`, que torna la configuració nova, els capítols i l'informe que mostra el quadre. Vegeu [Pàgines compostes](/ca/docs/composed-pages#migrar-un-llibre-amb-el-text-als-estils).

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Páginas compuestas',
   description: 'El Markdown de las páginas compuestas: la valla de página de cuatro dos puntos que nombra una plantilla de página, los marcos y el atributo slot que llevan el contenido a los marcos de la plantilla, las figuras con rótulos en las anclas de una imagen y los avisos que comprueban el contenido frente a la plantilla',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 34,
   plainSummary: "Algunas páginas no son una columna de texto corrido, sino un conjunto de cajas, como la página de un libro de texto escolar con una banda para el título, un texto y tres cajas de colores con fotos. Postext las llama páginas compuestas. La forma de la página es una plantilla de la configuración, y el Markdown solo dice qué trozo de texto va en cada caja. Esta página enseña a escribir ese Markdown: la valla de la página, los marcos, los nombres de slot y las imágenes con rótulos, como los nombres de un mapa. También recoge los avisos que da Postext cuando el texto y la plantilla no casan.",
@@ -540,6 +540,10 @@ En el lienzo, en la vista de doble página del Sandbox y en el Folio, las dos p�
 **Causa.** La apertura de la página y su plantilla no coinciden: la apertura lleva `spread` y la plantilla es de una sola página, o la plantilla es de doble página (por su propio `spread: true` o a través de `extends`) y a la apertura le falta. Manda la plantilla: una plantilla de doble página se compone en dos páginas enfrentadas, y cualquier otra en una. El aviso da la plantilla, la marca de la apertura (`fence`) y la de la plantilla (`templateSpread`), y señala el atributo `spread`, o el nombre de la plantilla cuando la apertura no lo lleva.
 
 **Corrección.** Haz que la apertura diga lo que es la plantilla: escribe `spread` en la apertura de una plantilla de doble página, quítalo de la de una plantilla de una sola, o elige otra plantilla.
+
+## Migrar un libro con el texto en sus estilos
+
+Un libro hecho antes de las páginas compuestas puede guardar el texto de sus páginas en estilos de título: un título oculto en cada página cuya cabecera coloca cada texto donde lo tenía la página impresa. La comprobación *Texto guardado en la configuración* lo señala. En el Sandbox, **Pasar el texto al Markdown** en el panel de revisión convierte cada diseño de página en una plantilla de página con los marcos donde estaban los textos, y cada página en una valla de página con su texto en slots `:::frame`; enseña cada página antes y después, y se puede deshacer. Véase [Pasar el texto al Markdown](/es/docs/sandbox-design-checks#pasar-el-texto-al-markdown). Desde el código, `moveTextToMarkdown({ config, chapters, metadata }, options)` hace lo mismo y devuelve la configuración nueva, los capítulos y un informe.
 
 ## Desde el código
 
