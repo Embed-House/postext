@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Postext配置',
   sidebarTitle: '配置',
-  description: '什么是Postext配置，以及参考的九个页面各讲哪一组设置',
+  description: '什么是Postext配置，以及参考的十八个页面各讲哪一组设置',
   lang: 'zh',
-  lastUpdated: '2026-10-10',
-  readingTime: '2分钟',
-  order: 3,
-  plainSummary: "本页是参考的入口，这份参考列出控制页面外观的所有设置。所有选择都放在一组设置里：页面大小、栏数、字体、字号、标题、框、颜色等等。每项设置都有合理的默认值，你只需写出想改的那几项。整份参考分为九个页面。本页的列表链接到每一节，可以直接跳到需要的部分。",
+  lastUpdated: '2026-10-16',
+  readingTime: '3分钟',
+  order: 4,
+  plainSummary: "本页是参考的入口，这份参考列出控制页面外观的所有设置。所有选择都放在一组设置里：页面大小、栏数、字体、字号、标题、框、颜色等等。每项设置都有合理的默认值，你只需写出想改的那几项。整份参考分为十八个页面。本页的列表链接到每一节，可以直接跳到需要的部分。",
 };
 
 # 配置
@@ -33,21 +33,41 @@ const document = buildDocument(content, {
 
 ## 内容一览
 
-这份参考分为九个页面。下面每一组是一个页面，后面列出它包含的各节。
+这份参考分为十八个页面。下面每一组是一个页面，后面列出它包含的各节。
 
 **[页面与版式](/zh/docs/configuration-page-layout)**
 
 - [页面](/zh/docs/configuration-page-layout#页面)：尺寸、页边距、基线网格、裁切线、[装订](/zh/docs/configuration-page-layout#装订)。
 - [版式](/zh/docs/configuration-page-layout#版式)：栏数、栏间距、栏线、[竖排](/zh/docs/configuration-page-layout#竖排)。
-- [页眉与页脚](/zh/docs/configuration-page-layout#页眉与页脚)：每页的文字元素和线条元素，支持占位符、奇偶页和对齐方式。
 
-**[正文与标题](/zh/docs/configuration-text)**
+**[页眉与页脚](/zh/docs/configuration-headers-footers)**
+
+- [页眉与页脚](/zh/docs/configuration-headers-footers#页眉与页脚)：每页的文字元素和线条元素，支持占位符、奇偶页和对齐方式。
+
+**[正文](/zh/docs/configuration-text)**
 
 - [正文](/zh/docs/configuration-text#正文)：排印、断词、制表位、段首孤行与段末孤行。
-- [文档语言](/zh/docs/configuration-text#文档语言)：顶层的`locale`，决定断词的后备语言、内置资源类型、表格和拆分标注框的续接文字、写入无障碍PDF的语言标签，以及由它决定的[数字](/zh/docs/configuration-text#文档数字)（`numerals`）和[文本方向](/zh/docs/configuration-text#文本方向)（`direction`）；另见Postext排版所支持的[语言与文字](/zh/docs/configuration-text#语言与文字)。从右到左书籍的说明见[阿拉伯文排版](/zh/docs/arabic-layout)。
-- [标题](/zh/docs/configuration-text#标题)：共享默认值以及H1–H6各自的覆盖设置。
-- [无序列表](/zh/docs/configuration-text#无序列表)与[有序列表](/zh/docs/configuration-text#有序列表)：项目符号、编号、嵌套。
-- [数学公式](/zh/docs/configuration-text#数学公式)：LaTeX渲染、缩放、颜色、外边距。
+
+**[断词与语言](/zh/docs/configuration-language)**
+
+- [断词](/zh/docs/configuration-language#断词)：断词模式、不拆分的词、不齐行文字。
+- [文档语言](/zh/docs/configuration-language#文档语言)：顶层的`locale`，决定断词的后备语言、内置资源类型、表格和拆分标注框的续接文字、写入无障碍PDF的语言标签，以及由它决定的[数字](/zh/docs/configuration-language#文档数字)（`numerals`）和[文本方向](/zh/docs/configuration-language#文本方向)（`direction`）；另见Postext排版所支持的[语言与文字](/zh/docs/configuration-language#语言与文字)。从右到左书籍的说明见[阿拉伯文排版](/zh/docs/arabic-layout)。
+- [语言与文字](/zh/docs/configuration-language#语言与文字)：Postext 能排的文字体系，以及分别讲解它们的页面。
+- [阿拉伯文](/zh/docs/configuration-language#阿拉伯文)：阿拉伯文的字形、kashida、元音符号与数字。
+
+**[标题](/zh/docs/configuration-headings)**
+
+- [标题](/zh/docs/configuration-headings#标题)：共享默认值以及H1–H6各自的覆盖设置。
+
+**[孤行与各栏齐底](/zh/docs/configuration-page-flow)**
+
+- [段首孤行、段末孤行、孤字与不拆分规则](/zh/docs/configuration-page-flow#段首孤行段末孤行孤字与不拆分规则)：`bodyText`中让行与块在换栏处保持在一起的键。
+- [各栏齐底](/zh/docs/configuration-page-flow#各栏齐底)：让每一栏底部齐平的调整手段，按编辑上的先后顺序排列。
+
+**[列表与数学公式](/zh/docs/configuration-lists-math)**
+
+- [无序列表](/zh/docs/configuration-lists-math#无序列表)与[有序列表](/zh/docs/configuration-lists-math#有序列表)：项目符号、编号、嵌套。
+- [数学公式](/zh/docs/configuration-lists-math#数学公式)：LaTeX渲染、缩放、颜色、外边距。
 
 **[注释与引用](/zh/docs/configuration-notes-references)**
 
@@ -74,9 +94,12 @@ const document = buildDocument(content, {
 - [段落样式](/zh/docs/configuration-styles#段落样式)：供`:::paragraphs`容器使用的命名样式，如参考文献、术语表、注释。
 - [行内标签样式](/zh/docs/configuration-styles#行内标签样式)：`chipStyles`，行内`:chip[…]`的命名样式，如词库里的词框、键帽、标签。
 - [代码清单](/zh/docs/configuration-styles#代码清单)：`codeStyle`，即```` ``` ````清单的字体、框、制表符宽度、过长的行、行号和记号颜色，语法着色及其高亮器接口，以及用代码字体排的行内代码。
-- [标注框样式](/zh/docs/configuration-styles#标注框样式)：供`:::callout`容器使用的带框注释、提示和学习目标。
 - [篇](/zh/docs/configuration-styles#篇)：`:::part`容器生成的篇章分隔页，包括奇偶页、正文区域、篇首页版面设计、正文排印。
 - [标题样式](/zh/docs/configuration-styles#标题样式)：供`{style="…"}`标题使用的命名样式，如不编号的章、带独立书眉的前置部分、页面几何与调色板。
+
+**[标注框](/zh/docs/configuration-callouts)**
+
+- [标注框样式](/zh/docs/configuration-callouts#标注框样式)：供`:::callout`容器使用的带框注释、提示和学习目标。
 
 **[漫画设置](/zh/docs/configuration-comics)**
 
@@ -97,7 +120,17 @@ const document = buildDocument(content, {
 
 - [以编程方式使用](/zh/docs/configuration-programmatic-usage#以编程方式使用)：`buildDocument`、它报告的警告、解析器、缓存。
 - [在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)：在主线程之外构建，并可取消。
-- [集成HTML查看器](/zh/docs/configuration-programmatic-usage#集成html查看器)与[生成PDF](/zh/docs/configuration-programmatic-usage#生成pdf)：端到端的完整做法。
-- [3D书本（`postext-folio`）](/zh/docs/configuration-programmatic-usage#3d书本postext-folio)：把排好的文档显示成一本摊开在桌上的印刷书，读者可以翻页。
-- [EPUB电子书](/zh/docs/configuration-programmatic-usage#epub电子书postext-epub)：由同一份排版生成固定版式和流式版式的EPUB 3文件，并用EPUBCheck检查。
-- [文件包（`.postext`文件）](/zh/docs/configuration-programmatic-usage#文件包postext文件)：整本书装在一个文件里，用代码创建、打开和构建`.postext`文件包。
+
+**[PDF文件](/zh/docs/configuration-pdf-output)**
+
+- [生成PDF](/zh/docs/configuration-pdf-output#生成pdf)：`postext-pdf`，字体提供函数、中日韩字体、工作线程和可付印的文件。
+
+**[HTML、3D书本与EPUB](/zh/docs/configuration-html-folio-epub)**
+
+- [集成HTML查看器](/zh/docs/configuration-html-folio-epub#集成html查看器)与[生成PDF](/zh/docs/configuration-pdf-output#生成pdf)：端到端的完整做法。
+- [3D书本（`postext-folio`）](/zh/docs/configuration-html-folio-epub#3d书本postext-folio)：把排好的文档显示成一本摊开在桌上的印刷书，读者可以翻页。
+- [EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)：由同一份排版生成固定版式和流式版式的EPUB 3文件，并用EPUBCheck检查。
+
+**[.postext文件包](/zh/docs/configuration-bundles)**
+
+- [文件包（`.postext`文件）](/zh/docs/configuration-bundles#文件包postext文件)：整本书装在一个文件里，用代码创建、打开和构建`.postext`文件包。

@@ -16,13 +16,13 @@ Un cuaderno bilingüe de cinco poemas sobre una salina del sur de España, de 15
 
 ### 1 · Un poema es un recuadro con un corte de columna fijo
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. Cada poema es un recuadro con un grupo `:::columns` dentro; su estilo quita el fondo y el relleno e imprime el `title` de la directiva, el número ([`:::columns`](/es/docs/document-format#columns)). Sin `breaks`, el grupo corta donde sus dos columnas quedan igualadas. En estos poemas las dos mitades miden lo mismo y el corte cae de todos modos en el título inglés, pero si alargas dos versos de *The Rake* hasta que no quepan, el corte baja un bloque y THE RAKE se queda al pie de la columna española. `breaks="5"` fija el bloque que abre la segunda columna, así que el título inglés la encabeza midan lo que midan las dos mitades.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. Cada poema es un recuadro con un grupo `:::columns` dentro; su estilo quita el fondo y el relleno e imprime el `title` de la directiva, el número ([`:::columns`](/es/docs/document-format-directives#columns)). Sin `breaks`, el grupo corta donde sus dos columnas quedan igualadas. En estos poemas las dos mitades miden lo mismo y el corte cae de todos modos en el título inglés, pero si alargas dos versos de *The Rake* hasta que no quepan, el corte baja un bloque y THE RAKE se queda al pie de la columna española. `breaks="5"` fija el bloque que abre la segunda columna, así que el título inglés la encabeza midan lo que midan las dos mitades.
 
 ### 2 · Un bloque :::verse por columna, una línea en blanco por salto de estrofa
 
 <Excerpt region="verse" />
 
-Cada mitad de un poema es un bloque `:::verse`: un verso por línea del Markdown, en bandera y sin separación silábica, y una línea en blanco entre estrofas, que deja una línea en blanco en la columna ([`:::verse`](/es/docs/document-format#verse)). Cada estrofa es un bloque, así que `breaks` cuenta estrofas, no versos. El verso inglés *each one standing on its own reflection.* no cabe en su columna de 55 mm y sigue en la línea de abajo, sangrado 2 em; la mitad española cierra su bloque tras la estrofa de enfrente y pone un `:::space{lines=2}` antes de la siguiente, así que las estrofas siguientes empiezan en la misma línea. Un `:::space` no es un bloque, y `breaks` no lo cuenta ([`:::space`](/es/docs/document-format#space)).
+Cada mitad de un poema es un bloque `:::verse`: un verso por línea del Markdown, en bandera y sin separación silábica, y una línea en blanco entre estrofas, que deja una línea en blanco en la columna ([`:::verse`](/es/docs/document-format-directives#verse)). Cada estrofa es un bloque, así que `breaks` cuenta estrofas, no versos. El verso inglés *each one standing on its own reflection.* no cabe en su columna de 55 mm y sigue en la línea de abajo, sangrado 2 em; la mitad española cierra su bloque tras la estrofa de enfrente y pone un `:::space{lines=2}` antes de la siguiente, así que las estrofas siguientes empiezan en la misma línea. Un `:::space` no es un bloque, y `breaks` no lo cuenta ([`:::space`](/es/docs/document-format-directives#space)).
 
 <PageShot page={3} crop="0.1,0.385,0.8,0.248" caption="El poema I en la página 3: reflection. pasa a la línea siguiente en el inglés, y la estrofa española termina con dos líneas en blanco en vez de una." />
 
@@ -42,7 +42,7 @@ Cada uno es un título de nivel 1 con un estilo propio ([estilos de título](/es
 
 <Excerpt region="heads" />
 
-La página par lleva el título español y la impar el inglés, en el orden de las columnas. `pages: 'body'` las quita de las tres páginas que empiezan con un título. La nota y la acuarela llevan en su lugar un folio al pie, y el estilo de la portada deja vacíos su cabecera y su pie ([elementos de texto](/es/docs/configuration-page-layout#elementos-de-texto)).
+La página par lleva el título español y la impar el inglés, en el orden de las columnas. `pages: 'body'` las quita de las tres páginas que empiezan con un título. La nota y la acuarela llevan en su lugar un folio al pie, y el estilo de la portada deja vacíos su cabecera y su pie ([elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)).
 
 ## Variantes
 

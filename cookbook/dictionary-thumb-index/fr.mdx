@@ -22,7 +22,7 @@ Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `TABS` lis
 
 <Excerpt region="running-heads" />
 
-Les titres courants sont des éléments de texte ancrés à la page et filtrés par `parity` et `pages: 'body'` ([éléments de texte](/fr/docs/configuration-page-layout#éléments-de-texte)). Le titre de la page 1 s’étend sur les deux colonnes, ce qui fait de la page 1 une page d’ouverture. Les titres courants l’ignorent, et son folio vient du pied de page, un élément réglé sur `pages: 'opener'` qui s’imprime 6 mm sous le bloc de texte. Sur un recto, `{chapterTitle}` imprime la lettre du dernier titre de niveau 1 placé sur la page ou avant elle, *Letter C*. `{firstMark.<key>}` et `{lastMark.<key>}` imprimeraient plutôt le premier et le dernier mot-vedette de la page, les mots-repères que portent la plupart des dictionnaires ; cette recette garde la lettre, puisque c’est elle qu’indexent les onglets.
+Les titres courants sont des éléments de texte ancrés à la page et filtrés par `parity` et `pages: 'body'` ([éléments de texte](/fr/docs/configuration-headers-footers#éléments-de-texte)). Le titre de la page 1 s’étend sur les deux colonnes, ce qui fait de la page 1 une page d’ouverture. Les titres courants l’ignorent, et son folio vient du pied de page, un élément réglé sur `pages: 'opener'` qui s’imprime 6 mm sous le bloc de texte. Sur un recto, `{chapterTitle}` imprime la lettre du dernier titre de niveau 1 placé sur la page ou avant elle, *Letter C*. `{firstMark.<key>}` et `{lastMark.<key>}` imprimeraient plutôt le premier et le dernier mot-vedette de la page, les mots-repères que portent la plupart des dictionnaires ; cette recette garde la lettre, puisque c’est elle qu’indexent les onglets.
 
 ### 3 · Colorer les mots-vedettes et rien d’autre
 
@@ -40,7 +40,7 @@ Chaque entrée est un paragraphe d’un bloc `:::paragraphs{style="entry"}`, ses
 
 <Excerpt region="title" />
 
-Le style du titre s’étend sur toute la page avec un bandeau qui contient l’ancre, le nom, un sous-titre et une mention d’auteur lus dans les attributs du titre, et un double filet ([largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Le filet fin se termine 45,1 mm sous le haut du bloc de texte : le bandeau se cale donc sur 13 lignes de la grille, soit 47,7 mm. Le filet entre les colonnes commence sous le bandeau, sur la ligne où commence le texte des deux colonnes.
+Le style du titre s’étend sur toute la page avec un bandeau qui contient l’ancre, le nom, un sous-titre et une mention d’auteur lus dans les attributs du titre, et un double filet ([largeur et maquette avancée](/fr/docs/configuration-headings#étendue-et-maquette-avancée)). Le filet fin se termine 45,1 mm sous le haut du bloc de texte : le bandeau se cale donc sur 13 lignes de la grille, soit 47,7 mm. Le filet entre les colonnes commence sous le bandeau, sur la ligne où commence le texte des deux colonnes.
 
 ## Variantes
 

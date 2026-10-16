@@ -22,7 +22,7 @@ La norma pide «et al.» tras los tres primeros autores de una obra occidental y
 
 ### 2 · Las referencias en un bloque CSL-YAML
 
-Las obras van en un bloque `:::references{format=csl-yaml}` al final del Markdown, en el formato que Zotero exporta como CSL YAML ([Citar](/es/docs/document-format#citar)). El tipo CSL decide el código: `book` imprime [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] tras su `//` y las actas, y `webpage` [EB/OL] con la fecha de consulta entre corchetes. Un artículo con DOI pasa a [J/OL] y conserva el DOI, como pide la norma. Los nombres chinos van en `literal`, para que el estilo no los parta en apellido y nombre. `:::bibliography{title=""}` coloca la lista bajo el título sin número 参考文献, y `labelWidth` alinea las líneas siguientes de cada entrada con su texto, no más adentro.
+Las obras van en un bloque `:::references{format=csl-yaml}` al final del Markdown, en el formato que Zotero exporta como CSL YAML ([Citar](/es/docs/document-format-notes-references#citar)). El tipo CSL decide el código: `book` imprime [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] tras su `//` y las actas, y `webpage` [EB/OL] con la fecha de consulta entre corchetes. Un artículo con DOI pasa a [J/OL] y conserva el DOI, como pide la norma. Los nombres chinos van en `literal`, para que el estilo no los parta en apellido y nombre. `:::bibliography{title=""}` coloca la lista bajo el título sin número 参考文献, y `labelWidth` alinea las líneas siguientes de cada entrada con su texto, no más adentro.
 
 <PageShot page={2} crop="0.5,0.08,0.45,0.5" caption="Página 2: entradas occidentales en mayúsculas con et al., entradas chinas con 等, cada una con su código de tipo." />
 
@@ -30,7 +30,7 @@ Las obras van en un bloque `:::references{format=csl-yaml}` al final del Markdow
 
 <Excerpt region="masthead" />
 
-El bloque de título es el diseño del H1, con un estilo de título que ocupa las dos columnas. La banda es una caja anclada al corte, y el nombre de la revista va encima en blanco. El título, los autores y las filiaciones salen del título y sus atributos, cada uno colocado bajo el anterior (`#title`, `below`), de modo que un título de tres líneas empuja el resto hacia abajo ([Span y diseño avanzado](/es/docs/configuration-text#span-y-diseño-avanzado)).
+El bloque de título es el diseño del H1, con un estilo de título que ocupa las dos columnas. La banda es una caja anclada al corte, y el nombre de la revista va encima en blanco. El título, los autores y las filiaciones salen del título y sus atributos, cada uno colocado bajo el anterior (`#title`, `below`), de modo que un título de tres líneas empuja el resto hacia abajo ([Span y diseño avanzado](/es/docs/configuration-headings#span-y-diseño-avanzado)).
 
 ### 4 · El resumen y sus etiquetas
 

@@ -1,0 +1,279 @@
+{/* docs/sandbox-embedding-en.mdx */}
+
+export const metadata = {
+  title: 'Sandbox: agents, embedding and presets',
+  sidebarTitle: 'Agents, embedding and presets',
+  description: 'WebMCP tools for AI agents, the PostextSandbox component in your own app with its props and CSS, and the preset bundle format',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '12 min',
+  order: 38,
+  parent: 'sandbox',
+  plainSummary: "This page is for people who build websites or use AI assistants. An assistant that runs in the browser can read and change the book in the Sandbox through a set of tools. You can put the Sandbox inside your own website as one component, and this page lists its options and the styles it needs. The last section describes the files of a sample book, which the Sandbox can open.",
+};
+
+# Sandbox: agents, embedding and presets
+
+
+## Agents: WebMCP
+
+The Sandbox hands an agent in the browser its own tools through [WebMCP](https://webmachinelearning.github.io/webmcp/) (`document.modelContext`), so an assistant works on the book itself instead of clicking through the interface. There is nothing to set up: the tools are registered while the Sandbox is on screen, and the rest of this site registers a few of its own on every page (search the docs and the Cookbook, read a page as Markdown, open a recipe in the Sandbox, switch language and theme).
+
+They are built for the loop a designer runs by eye — change something, look at the page, change again:
+
+- **See** — `sandbox_get_state`, `sandbox_render_page`, `sandbox_inspect_pages`, `sandbox_inspect_point`, `sandbox_inspect_comic`, `sandbox_get_warnings`: the book with its chapters and page ranges, and what is going on in the interface (the selection, a notice, a question waiting for an answer); any page as a JPEG, PNG or WebP at the width asked for, or a crop of it for a close look, with the print preview on request; the same page as data (its blocks and lines, how full each column is, which lines are loose or end in a broken word); what lies at a point of a page (the line of the source, a link and where it leads, a cell of a table); the panels and balloons of a comic page; and what the checks find in any chapter or in the whole book, whatever chapter and viewer are on screen.
+- **Change** — `sandbox_set_config`, `sandbox_get_config`, `sandbox_find_setting`, `sandbox_edit_text`, `sandbox_write_text`, `sandbox_read_text`, `sandbox_search_text`, `sandbox_select_text`, `sandbox_undo_text`, `sandbox_manage_chapters`, `sandbox_save_resource`, `sandbox_save_font`, `sandbox_edit_comic`, `sandbox_import_word`: any setting by its path (`bodyText.fontSize`, `page.margins.top`, `headings.levels[level=2].fontSize`, `header.elements[id=titleOdd].italic`), the text by exact find-and-replace, with an undo, chapters, pictures, SVG drawings, videos, tables with their formatting, fonts, the panels and balloons of a comic, and a Word document imported with its styles mapped. A change answers with each value before and after and the pages every chapter came to; a setting also says what the engine resolved it to and which other settings followed it, and a value the engine cannot resolve is refused with nothing changed.
+- **Show** — `sandbox_set_view`, `sandbox_go_to_page`, `sandbox_run_viewer`: the viewer tab, the side panel, chapter or whole book, zoom, fit and facing pages, the reader's type size, the print preview, the guides drawn on the pages, the Folio's magnifying glass, and the page on screen (by its number, by a passage, by an anchor or by an entry of an EPUB's contents); writing the PDF or the EPUB again, printing, and playing a video on a page.
+- **Keep** — `sandbox_list_books`, `sandbox_open_book`, `sandbox_save_book`, `sandbox_import_book`, `sandbox_export`, `sandbox_word_templates`, `sandbox_answer`: the samples and your projects with their covers, a `.postext` file imported, the book — or one that is not open — written to PDF, EPUB, `.postext`, Word, Markdown or its settings as JSON, the templates of the Word import, and the answer to a question the Sandbox asks.
+
+A tool that changes the book waits for the layout, so the next picture is always of the new pages; a page is laid out and painted for the tool whatever tab is on screen. What cannot be taken back — deleting a chapter, a resource or a project, putting the original back, importing a Word document over the text, replacing your copy of a book — is marked as consequential, so the browser can ask you first. As with the interface, everything stays in your browser: the tools reach nothing the Sandbox itself does not.
+
+WebMCP is a draft: Chrome offers it as an origin trial, and behind `chrome://flags/#enable-webmcp-testing`. In a browser without it the same tools are on `window.postextWebMcp` (`listTools()`, `executeTool(name, args)`), for an agent that can run script in the page. When you embed the Sandbox, `webmcp={false}` leaves the tools out (see [Props](#props)).
+
+The [WebMCP](/en/docs/webmcp) page shows what an agent can be asked to do and how each tool is called, with examples.
+
+
+## Standalone usage
+
+The Sandbox is available as a standalone React package (`postext-sandbox`) that can be embedded in any React application:
+
+```bash
+npm install postext-sandbox postext
+```
+
+```tsx
+import { PostextSandbox } from 'postext-sandbox';
+
+function App() {
+  return (
+    <PostextSandbox
+      initialMarkdown="# Hello World"
+      initialConfig={{ layout: { layoutType: 'double' } }}
+      onMarkdownChange={(md) => console.log(md)}
+      onConfigChange={(cfg) => console.log(cfg)}
+    />
+  );
+}
+```
+
+### Props
+
+<table>
+  <thead>
+    <tr>
+      <th>Prop</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>initialMarkdown</code></td>
+      <td><code>string</code></td>
+      <td>Starting markdown content</td>
+    </tr>
+    <tr>
+      <td><code>initialConfig</code></td>
+      <td><code>PostextConfig</code></td>
+      <td>Starting layout configuration</td>
+    </tr>
+    <tr>
+      <td><code>className</code></td>
+      <td><code>string</code></td>
+      <td>CSS class for the root container</td>
+    </tr>
+    <tr>
+      <td><code>labels</code></td>
+      <td><code>Partial&lt;SandboxLabels&gt;</code></td>
+      <td>UI label replacements, merged over the built-in English defaults — pass translated labels together with <code>locale</code> when embedding in another language</td>
+    </tr>
+    <tr>
+      <td><code>locale</code></td>
+      <td><code>string</code></td>
+      <td>UI locale (defaults to <code>'en'</code>). Selects the localized default resource types and example resources (a preset or file in one language gets the resource types of its own language), and provides the hyphenation locale the previews use when none is configured</td>
+    </tr>
+    <tr>
+      <td><code>presetSources</code></td>
+      <td><code>&#123; url: string; private?: boolean &#125;[]</code></td>
+      <td>Remote preset sources, tried in order after the built-in preset. Each <code>url</code> is a base URL serving an <code>index.json</code> (see <a href="#preset-bundle-format">Preset bundle format</a>); <code>private: true</code> tags the source's presets as private and makes their <code>default</code> flag eligible for auto-loading. Sources that fail to respond simply contribute nothing</td>
+    </tr>
+    <tr>
+      <td><code>hashBundles</code></td>
+      <td><code>Record&lt;string, (id: string, lang: string | null) =&gt; string | string[] | null&gt;</code></td>
+      <td>Books linked by a fragment key of the host's own: <code>&#123; recipe: (slug, lang) =&gt; `/cookbook/$&#123;slug&#125;/$&#123;lang&#125;/$&#123;slug&#125;.postext` &#125;</code> makes <code>#recipe=&lt;slug&gt;&amp;lang=es</code> open that bundle. Return the URL of a <code>.postext</code> file on the page's own origin, several to try in order (the first that answers wins), or <code>null</code> for an id the host does not serve. The first visit imports the file as a project recorded with the link (<code>recipe:&lt;slug&gt;:&lt;lang&gt;</code>); a later visit asks whether to open that project, edits included, or replace it with the file as served now. The fragment is then rewritten to <code>#project=&lt;id&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>onConfigChange</code></td>
+      <td><code>(config) =&gt; void</code></td>
+      <td>Callback when config changes</td>
+    </tr>
+    <tr>
+      <td><code>onMarkdownChange</code></td>
+      <td><code>(markdown) =&gt; void</code></td>
+      <td>Callback when markdown changes</td>
+    </tr>
+    <tr>
+      <td><code>webmcp</code></td>
+      <td><code>boolean</code></td>
+      <td>Registers the Sandbox's <a href="#agents-webmcp">WebMCP tools</a> for agents in the browser while it is mounted. Default <code>true</code></td>
+    </tr>
+    <tr>
+      <td><code>themeToggle</code></td>
+      <td><code>ReactNode</code></td>
+      <td>Custom theme toggle component, slotted at the bottom of the activity bar</td>
+    </tr>
+    <tr>
+      <td><code>languageSwitcher</code></td>
+      <td><code>ReactNode</code></td>
+      <td>Custom language switcher component, slotted at the bottom of the activity bar</td>
+    </tr>
+    <tr>
+      <td><code>homeUrl</code></td>
+      <td><code>string</code></td>
+      <td>When set, renders a home logo link at the top of the activity bar pointing to this URL</td>
+    </tr>
+    <tr>
+      <td><code>homeLink</code></td>
+      <td><code>ReactNode</code></td>
+      <td>Custom node for the home slot, replacing the default logo link (takes precedence over <code>homeUrl</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+### CSS requirements
+
+The package uses Tailwind CSS utility classes that reference CSS custom properties. Your host application must provide these variables:
+
+- `--background`, `--foreground` — Base colors
+- `--surface` — Elevated surface color; `--surface-2` — Hovered rows and highlighted options (falls back to `--background`)
+- `--slate` — Muted text color
+- `--rule` — Border/divider color; `--rule-strong` — Stronger rule for hovered controls (falls back to `--slate`)
+- `--brand` — Accent color: the active panel marker, focus rings, switches and selected choices
+- `--brand-hover` — Accent color on hover
+- `--brand-soft` — Translucent accent fill behind selected choices (falls back to `--surface`)
+- `--brand-contrast` — Knob of a checked switch (falls back to `--background`)
+- `--destructive` — Color of destructive actions and errors
+- `--accent-blue` — Link/accent color
+- `--font-sans` — UI font family
+- `--font-mono` — Monospace font family (for the code editor)
+- `--font-display`, `--brand-blue`, `--brand-gilt` — Optional face and colours of the default logo mark in the activity bar (fall back to Georgia, `#2b4acb` and `#d8a21a`)
+
+The website sets `--brand` to gilt in the dark theme and blue in the light one. Earlier versions read `--gilt` and `--gilt-hover`; the sandbox no longer uses them.
+
+Popovers, menus and tooltips render in a portal on `document.body`, so define the variables on `:root` (or `body`), not only on the element that wraps the sandbox. The host's Tailwind build must scan the package's sources (`@source "…/postext-sandbox/src/**/*.tsx"` in Tailwind 4) so the utility classes it uses are generated.
+
+
+## Preset bundle format
+
+Appendix. A preset source is a directory (served over HTTP) whose root holds an `index.json` listing preset directories; each directory holds a `preset.json` manifest plus the markdown, resource and font files it refers to. The `scripts/presets/` tooling in the repository scaffolds bundles in exactly this shape, and a `.postext` file exported from the sandbox is one such directory zipped (without the `index.json`).
+
+```
+<presets-root>/
+  index.json
+  <preset-dir>/
+    preset.json
+    chapters/              one .md per chapter, in order (a version 1 manifest names a single document instead)
+    resources/             figures: .svg / .png / .jpg / .jpeg / .webp / .gif (+ optional .pdf print masters)
+    fonts/                 .otf / .ttf / .woff2 single faces
+```
+
+### `index.json`
+
+```jsonc
+{
+  "version": 1,
+  "presets": [
+    {
+      "id": "acme-journal",          // stable id, [a-z0-9-]
+      "dir": "acme-journal",         // directory name relative to index.json
+      "name": "Acme Journal",
+      "description": "Two-column journal article",   // optional
+      "locale": "en",                 // optional
+      "default": true,                // optional, at most one
+      "locales": ["en", "es"],        // optional: every locale the bundle carries
+      "openLocale": "en",             // optional: the locale it opens in when none is asked for
+      "thumbnail": "thumbnail.jpg",   // optional: preview shown in the picker
+      "license": "CC BY 4.0",         // optional: shown as a tag
+      "credits": "Text and images: ESO",  // optional: one line under the description
+      "tags": ["magazine", "two-column"], // optional
+      "binding": "left"               // optional: the edge the website's shelf draws the spine on ("right" for a right-bound book)
+    }
+  ]
+}
+```
+
+### `preset.json`
+
+```jsonc
+{
+  "version": 2,
+  "id": "acme-journal",
+  "name": "Acme Journal",
+  "description": "Two-column journal article",       // optional
+  "locale": "en",                                     // optional
+  "default": true,                                    // optional
+  "configVersion": 8,                                 // optional: the configuration rules `config` is written for
+  // The same optional showcase fields as the index entry:
+  // "locales", "openLocale", "thumbnail", "license", "credits", "tags"
+
+  // The book's chapters, in order — or one list per locale
+  "chapters": [
+    { "title": "Introduction", "file": "chapters/01-introduction.md" },
+    { "title": "Methods", "file": "chapters/02-methods.md" }
+  ],
+  // "chapters": { "en": [ … ], "es": [ … ] },
+  // Version 1 manifests use a single document instead and are still accepted:
+  // "version": 1, "markdown": "article.md"  (or a locale → file map)
+
+  // Optional PostextConfig JSON (page, margins, columns, typography...).
+  // Do NOT put customFonts here: fonts come from the `fonts` array below.
+  "config": { },
+
+  "resources": [
+    {
+      "id": "fig-1-1",                 // referenced from markdown (:ref)
+      "typeId": "figure",              // resource type id (figure, table, ...)
+      "kind": "svg",                   // "svg" | "bitmap" | "table"
+      "file": "resources/fig-1-1.svg", // svg/bitmap only, relative to preset.json
+      "width": 240.5,                  // optional, pt (svg) / px (bitmap)
+      "resolution": 300,               // optional, bitmap only: ppi at its natural print size
+      "pdfFile": "resources/fig-1-1.pdf", // optional, svg only: vector print master (see notes)
+      "height": 180,                   // optional
+      "caption": "Caption text",
+      "altText": "Accessible description",            // optional
+      "safeArea": { "x": 0.18, "y": 0.25, "width": 0.5, "height": 0.6 }, // optional, svg/bitmap only: the part always shown, in fractions of the picture
+      "placement": { "position": "top", "span": "column" },  // optional
+      "note": "Source: ...",                          // optional
+      "table": { "model": { "rows": [[{ "content": "A", "isHeader": true }]], "headerRowCount": 1 } }
+                                                      // kind "table" only
+    }
+  ],
+
+  "fonts": [
+    {
+      "name": "Some Family",           // family name used by the config
+      "variants": [
+        { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
+        { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
+        { "weight": 700, "style": "normal", "file": "fonts/SomeFamily-Bold.otf" }
+      ]
+    }
+  ]
+}
+```
+
+Notes:
+
+- `id` in `preset.json` must match the `index.json` entry; `description`, `locale` and `default` in the manifest override the index values once the preset is loaded, as do the showcase fields `locales`, `openLocale`, `license`, `credits` and `tags`. `openLocale`, one of `locales`, is the language the book opens in when a link or a click asks for none (the home page's shelf links to it too): set it when the original is not in the reader's language, as the 紅樓夢 showcase does with `zh-Hant`, so that its English translation does not open for every English-speaking reader. Without it the interface language picks. The picker shows every locale in `locales` (or `locale`) and the licence as tags, the credits under the description, and `thumbnail` — a small page image relative to the preset directory — in place of the row's check-mark column; a book copied from the preset (**Make my own copy**) keeps it as its cover. The public showcase presets under `apps/web/public/presets/` use every field and carry a `CREDITS.md` with the licence and source of each text and image.
+- `configVersion` (optional) names the configuration rules `config` and the `localized` configurations are written for. Every writer since postext 1.5 sets it to 8. A manifest without it was written by postext 1.4 or earlier, and its heading breaks, maths size, space around inline figures (in the text and in boxes), heading marks, drop caps, room under a colon line, box cuts, breaks at dashes and at compounds' hyphens, ragged text, splits under a heading and space under paragraph containers are read as 1.4 laid them out (see *Heading breaks saved by postext 1.4 or earlier*, *Maths size saved before postext 1.5*, *Inline figures saved before postext 1.5*, *Inline figures in boxes saved before postext 1.5*, *Heading marks and drop caps saved before postext 1.5*, *Lists after a colon saved before postext 1.5*, *Box cuts saved before postext 1.5*, *Dashes and ragged text saved before postext 1.5*, *Compounds saved before postext 1.5*, *Splits under a heading saved before postext 1.5* and *Paragraph containers saved before postext 1.5* under [Persistence](/en/docs/sandbox-books-saving#persistence)); one stamped 3 to 7 (a 1.5 prerelease) gets the pins of the later rules only. With 3 that is the maths size, the inline gap, the five pins of rules 6, the two of rules 7 and the three of rules 8; with 4, the inline gap and the pins of rules 6, 7 and 8; with 5, the pins of rules 6, 7 and 8; with 6, the pins of rules 7 and 8; with 7, the pins of rules 8 alone. Set it to 8 when you write a manifest by hand for today's rules.
+- `view` (optional) says how the sandbox opens the bundle: `{ "canvasScope": "book" }` lays the whole book out on the canvas (see [Books and chapters](/en/docs/sandbox-books-saving#books-and-chapters)); absent, the canvas shows one chapter at a time. Exported books carry it when it is set. A book of more than 200 chapters opens a chapter at a time whatever it asks.
+- `start` (optional) says where the book starts when the bundle holds part of a longer one: `{ "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } }` opens it on page 58, an even page, in chapter 4. It is the `continuation` of the first chapter (`buildDocument`); the sandbox lays the book out from there, keeps it with the book when it is saved as a project and writes it back on export. No panel edits it. A `localized` entry may carry a `start` of its own for its edition.
+- `localized` (optional) holds per-locale overrides for a bilingual bundle: `{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`. The overrides of the locale the chapters were picked from apply on top of the shared `config` (top-level keys replaced wholesale — `resourceTypes` with translated caption prefixes, typically) and `resources` (caption, note, alt text and table cells merged by id); a locale without an entry keeps the shared wording. An entry may also carry a `view` of its own, which applies over the shared one to that edition: 紅樓夢 opens its Chinese editions on the whole book and Joly's English, much slower to paint whole, a chapter at a time (`"en": { "view": { "canvasScope": "chapter" } }`).
+- `chapters` (version 2) is a list of `{ title, file }` in book order, or a locale → list map; `markdown` (version 1) is a file name or a locale → file map. In both cases the sandbox picks the entry matching the locale asked for (exact tag, case aside; then the same language and script, so `zh-TW` reads `zh-Hant` before `zh-Hans`; then the same language in the other script, so a `zh-TW` reader of a bundle keyed by bare `zh` gets the Chinese; then the preset's own `locale`, then the first entry), and only that locale's chapter files are read. An empty chapter `title` is derived from the file's first level-1 heading. The sandbox always writes version 2.
+- `width` / `height` are optional for `svg` and `bitmap` resources — when missing they are read from the file at load time. A bitmap may also carry `resolution` (its ppi at its natural print size) and `fileResolution` (the one its file states, read at load time when the configuration sets `layout.bitmapResolution: 'file'`).
+- `pdfFile` (svg resources only) points to a single-page PDF holding the same figure as vectors — typically the original Illustrator or PDF export the SVG was derived from. The PDF export embeds that page verbatim (fonts, gradients and colour spaces intact) instead of the SVG; the canvas and HTML previews keep using the SVG. It is ignored in single-ink mode, whose recolouring pass only operates on SVG markup, and a missing file only drops the master, never the figure. Editing the SVG source in the resource detail detaches the master (it was made for the source as it was), so the PDF export follows the edited SVG from then on; restore the original (**Restore the original…** in the Books panel) to get it back. SVGs without a master are emitted as vector paths when they stay within the PDF backend's subset (basic shapes, paths, groups, `use`, clip paths, solid fills and strokes, opacity, and `text` / `tspan` runs set in the fonts the document can load — custom fonts first, then Google-hosted families) and rasterised at 600 dpi otherwise.
+- SVG `text` renders in the book's fonts everywhere: the previews and the EPUB embed the faces its text names in the SVG before it is shown (an `<img>` cannot see the page's fonts), custom families as uploaded and Google families as the Fontsource files that hold the characters, and the PDF export sets the runs as real, selectable text in the same embedded faces. Name the family in `font-family` exactly as it appears under Fonts. A resource can opt out with `"inlineFonts": false` in its manifest entry (`svg.inlineFonts`).
+- The SVG source editor only lets you type inside text nodes (tinted) so a figure cannot be broken by accident; the lock button in its header opens the whole source — coordinates, colours, structure — and locking again rescans the text nodes.
+- `table.model` is a Postext `TableModel`: `rows` is a row-major array of cells (`content`, optional `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` the number of leading header rows, and `columnWidths` an optional array of relative column weights. `table.styleId` optionally names one of the config's `tableStyles`.
+- Font files are stored in IndexedDB under ids derived from the preset id and file path, and the families are appended to `config.customFonts` when the preset is applied; a missing or malformed `index.json` yields no presets rather than an error.
+- `<preset-dir>/fingerprint.json` is optional and, on the development route, **virtual**: when no such file exists, `GET` answers `{ "fingerprint": "<sha1 hex>", "files": <n> }` computed from the directory's file metadata (relative path, modification time and size of every file up to four levels deep, dotfiles and `node_modules` skipped), never from file contents, with `Cache-Control: no-store`. The sandbox polls it to follow edits to the bundle (see [Books panel](/en/docs/sandbox#books-panel)). A static host can serve a real `fingerprint.json` with the same shape, or none at all, in which case its presets are not followed.

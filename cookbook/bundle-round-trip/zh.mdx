@@ -18,7 +18,7 @@ pageNotes: { "1": "DL折页的正面：沙色底上是眉题Arenal estuary · Vi
 
 <Excerpt region="answer" highlight="14-17" />
 
-`createBundle`把章节、配置、资源以及它们引用的每个文件压缩成zip；`openBundle`拿到的只有这些字节。字体来自`loadBundleFonts`，图来自`registerBundleImages`，版面设计来自`bundle.config`。`files`里漏掉的字体会用浏览器的后备字体印出；漏掉的图会被丢弃并给出警告，引用它的地方印成(?)。在zip内部，每个`fileId`都变成一个路径（`mill.svg`变成`resources/mill.svg`），`openBundle`返回的资源和`customFonts`已经用上了新名称（[打开文件包](/zh/docs/configuration-programmatic-usage#打开文件包)）。
+`createBundle`把章节、配置、资源以及它们引用的每个文件压缩成zip；`openBundle`拿到的只有这些字节。字体来自`loadBundleFonts`，图来自`registerBundleImages`，版面设计来自`bundle.config`。`files`里漏掉的字体会用浏览器的后备字体印出；漏掉的图会被丢弃并给出警告，引用它的地方印成(?)。在zip内部，每个`fileId`都变成一个路径（`mill.svg`变成`resources/mill.svg`），`openBundle`返回的资源和`customFonts`已经用上了新名称（[打开文件包](/zh/docs/configuration-bundles#打开文件包)）。
 
 ### 2 · 把字体放进文件
 
@@ -42,7 +42,7 @@ pageNotes: { "1": "DL折页的正面：沙色底上是眉题Arenal estuary · Vi
 
 <Excerpt region="handoff" />
 
-链接提供的就是排版所用的`bytes`，连字体共132 KB。在沙盒里导入（*书库 → 新建 → 打开.postext文件…*）后，这个文件变成一本西班牙文或英文的书，封面图是取自`thumbnail`的水轮。PDF从`bundleFontProvider`取字体，它返回文件包里字重最接近的字体，如果有同样风格的就优先用同样风格；图则来自`bundleResourceBytes`，所以不会再下载一遍字体或图片（[排版和渲染文件包](/zh/docs/configuration-programmatic-usage#排版和渲染文件包)）。
+链接提供的就是排版所用的`bytes`，连字体共132 KB。在沙盒里导入（*书库 → 新建 → 打开.postext文件…*）后，这个文件变成一本西班牙文或英文的书，封面图是取自`thumbnail`的水轮。PDF从`bundleFontProvider`取字体，它返回文件包里字重最接近的字体，如果有同样风格的就优先用同样风格；图则来自`bundleResourceBytes`，所以不会再下载一遍字体或图片（[排版和渲染文件包](/zh/docs/configuration-bundles#排版和渲染文件包)）。
 
 ### 6 · 用一个标题画出正面
 
@@ -72,4 +72,4 @@ Postext指南把英文和西班牙文的章节、配置和题注放在一个文�
 
 ## 常见问题
 
-- 这里每个版本各写成一个文件。要把两种语言放进同一个文件，就给`createBundle`传一个`localized`映射（[双语文件包](/zh/docs/configuration-programmatic-usage#双语文件包)）；之后`openBundle(bytes, { locale })`可以读出其中任一版本。
+- 这里每个版本各写成一个文件。要把两种语言放进同一个文件，就给`createBundle`传一个`localized`映射（[双语文件包](/zh/docs/configuration-bundles#双语文件包)）；之后`openBundle(bytes, { locale })`可以读出其中任一版本。

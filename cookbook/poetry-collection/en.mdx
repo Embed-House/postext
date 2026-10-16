@@ -16,7 +16,7 @@ A chapbook of four nature poems by Gerard Manley Hopkins, 140 × 216 mm, in the 
 
 ### 1 · A poem is a :::verse block
 
-A `:::verse` block keeps each line of the Markdown as a line of verse, so the poem is written as it is printed ([`:::verse`](/en/docs/document-format#verse)). Its leading spaces are its indents, two to an em, so the lines that rhyme with one another start the same distance in, as in 1918. A blank line between stanzas leaves one line of the grid, and is dropped at the top of a page. A line too long for the measure turns over at a word space and hangs by the verse style's `hangingIndent`, counted from the line's own start: 2 em past an unindented line, 4 em under a line indented 2 em, so a turnover never reads as a line of its own. `align=start` sets each poem flush with the margin; without it a poem is centred on its longest line. Verse is not hyphenated, and a line never parts from its turnover at a page break.
+A `:::verse` block keeps each line of the Markdown as a line of verse, so the poem is written as it is printed ([`:::verse`](/en/docs/document-format-directives#verse)). Its leading spaces are its indents, two to an em, so the lines that rhyme with one another start the same distance in, as in 1918. A blank line between stanzas leaves one line of the grid, and is dropped at the top of a page. A line too long for the measure turns over at a word space and hangs by the verse style's `hangingIndent`, counted from the line's own start: 2 em past an unindented line, 4 em under a line indented 2 em, so a turnover never reads as a line of its own. `align=start` sets each poem flush with the margin; without it a poem is centred on its longest line. Verse is not hyphenated, and a line never parts from its turnover at a page break.
 
 <PageShot page={6} crop="0.08,0.22,0.86,0.48" caption="The Windhover, page 6: the lines that rhyme in -iding start 2 em in, and the four lines too long for the page turn over and hang 4 em in." />
 
@@ -30,7 +30,7 @@ The dedication above *The Windhover* and the place and date under each poem are 
 
 <Excerpt region="poem-head" />
 
-Instead of its text, the heading prints a design in the column. In that design, `{number}` is the count as `numberingTemplate: '{1:I}'` formats it, I to IV, and `{titleText}` is the title ([span and advanced design](/en/docs/configuration-text#span-and-advanced-design)). The level has no bottom margin, and `minHeight` makes every head six grid lines deep (31.75 mm). The numeral and a one-line title fill four of them, and a title that wraps fills five, so every poem starts on the same line of its page. On <PageRef page={6}>page 6</PageRef> that line holds the dedication. Parity `'any'` breaks to the next page, recto or verso, so there are no blank pages between the poems.
+Instead of its text, the heading prints a design in the column. In that design, `{number}` is the count as `numberingTemplate: '{1:I}'` formats it, I to IV, and `{titleText}` is the title ([span and advanced design](/en/docs/configuration-headings#span-and-advanced-design)). The level has no bottom margin, and `minHeight` makes every head six grid lines deep (31.75 mm). The numeral and a one-line title fill four of them, and a title that wraps fills five, so every poem starts on the same line of its page. On <PageRef page={6}>page 6</PageRef> that line holds the dedication. Parity `'any'` breaks to the next page, recto or verso, so there are no blank pages between the poems.
 
 ### 4 · The front matter is made of headings
 

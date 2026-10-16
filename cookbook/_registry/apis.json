@@ -196,7 +196,7 @@
     }
   },
   "measureGlyphWidth": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-html-folio-epub",
     "heading": {
       "en": "Integrating the HTML viewer",
       "es": "Integrar el visor HTML",
@@ -361,7 +361,7 @@
     }
   },
   "KNOWN_DIRECTIVES": {
-    "slug": "document-format",
+    "slug": "document-format-directives",
     "heading": {
       "en": "Directives",
       "es": "Directivas",
@@ -376,7 +376,7 @@
     }
   },
   "KNOWN_CONTAINERS": {
-    "slug": "document-format",
+    "slug": "document-format-directives",
     "heading": {
       "en": "Containers",
       "es": "Contenedores",
@@ -391,7 +391,7 @@
     }
   },
   "initMathEngine": {
-    "slug": "document-format",
+    "slug": "document-format-inline",
     "heading": {
       "en": "Mathematical formulas",
       "es": "Fórmulas matemáticas",
@@ -406,7 +406,7 @@
     }
   },
   "parseTSV": {
-    "slug": "document-format",
+    "slug": "document-format-resources",
     "heading": {
       "en": "Block embed (optional, explicit inline placement)",
       "es": "Inserción en bloque (opcional, colocación en línea explícita)",
@@ -421,7 +421,7 @@
     }
   },
   "mergeCells": {
-    "slug": "document-format",
+    "slug": "document-format-resources",
     "heading": {
       "en": "Block embed (optional, explicit inline placement)",
       "es": "Inserción en bloque (opcional, colocación en línea explícita)",
@@ -436,7 +436,7 @@
     }
   },
   "setCellBackground": {
-    "slug": "document-format",
+    "slug": "document-format-resources",
     "heading": {
       "en": "Block embed (optional, explicit inline placement)",
       "es": "Inserción en bloque (opcional, colocación en línea explícita)",
@@ -451,7 +451,7 @@
     }
   },
   "setCellImage": {
-    "slug": "document-format",
+    "slug": "document-format-resources",
     "heading": {
       "en": "Block embed (optional, explicit inline placement)",
       "es": "Inserción en bloque (opcional, colocación en línea explícita)",
@@ -466,7 +466,7 @@
     }
   },
   "setAlignment": {
-    "slug": "document-format",
+    "slug": "document-format-resources",
     "heading": {
       "en": "Block embed (optional, explicit inline placement)",
       "es": "Inserción en bloque (opcional, colocación en línea explícita)",
@@ -481,7 +481,7 @@
     }
   },
   "continuationAfter": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Laying out and rendering a bundle",
       "es": "Componer y renderizar un paquete",
@@ -541,7 +541,7 @@
     }
   },
   "openBundle": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Opening a bundle",
       "es": "Abrir un paquete",
@@ -556,7 +556,7 @@
     }
   },
   "createBundle": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Creating a bundle",
       "es": "Crear un paquete",
@@ -571,7 +571,7 @@
     }
   },
   "buildBundle": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Laying out and rendering a bundle",
       "es": "Componer y renderizar un paquete",
@@ -586,7 +586,7 @@
     }
   },
   "loadBundleFonts": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Laying out and rendering a bundle",
       "es": "Componer y renderizar un paquete",
@@ -601,7 +601,7 @@
     }
   },
   "registerBundleImages": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Laying out and rendering a bundle",
       "es": "Componer y renderizar un paquete",
@@ -616,7 +616,7 @@
     }
   },
   "bundleImageUrl": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Laying out and rendering a bundle",
       "es": "Componer y renderizar un paquete",
@@ -631,7 +631,7 @@
     }
   },
   "bundleResourceBytes": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Laying out and rendering a bundle",
       "es": "Componer y renderizar un paquete",
@@ -646,7 +646,7 @@
     }
   },
   "bundleFontProvider": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Laying out and rendering a bundle",
       "es": "Componer y renderizar un paquete",
@@ -661,7 +661,7 @@
     }
   },
   "readBundle": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Low-level API",
       "es": "API de bajo nivel",
@@ -676,7 +676,7 @@
     }
   },
   "zipBundle": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-bundles",
     "heading": {
       "en": "Low-level API",
       "es": "API de bajo nivel",
@@ -691,7 +691,7 @@
     }
   },
   "renderToHtml": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-html-folio-epub",
     "heading": {
       "en": "Integrating the HTML viewer",
       "es": "Integrar el visor HTML",
@@ -706,7 +706,7 @@
     }
   },
   "renderToHtmlIndexed": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-html-folio-epub",
     "heading": {
       "en": "Going further",
       "es": "Siguiente paso",
@@ -736,7 +736,7 @@
     }
   },
   "renderToPdf": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-pdf-output",
     "heading": {
       "en": "Generating PDFs",
       "es": "Generación de PDF",
@@ -751,7 +751,7 @@
     }
   },
   "decompressWoff2": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-pdf-output",
     "heading": {
       "en": "Browser font provider (Fontsource + WOFF2)",
       "es": "Proveedor de fuentes en el navegador (Fontsource + WOFF2)",
@@ -781,7 +781,7 @@
     }
   },
   "registerCitationEngine": {
-    "slug": "document-format",
+    "slug": "document-format-notes-references",
     "heading": {
       "en": "Citations and bibliography",
       "es": "Citas y bibliografía",
@@ -796,7 +796,7 @@
     }
   },
   "createCiteprocEngine": {
-    "slug": "document-format",
+    "slug": "document-format-notes-references",
     "heading": {
       "en": "Citations and bibliography",
       "es": "Citas y bibliografía",
@@ -811,7 +811,7 @@
     }
   },
   "STYLES": {
-    "slug": "document-format",
+    "slug": "document-format-notes-references",
     "heading": {
       "en": "Citations and bibliography",
       "es": "Citas y bibliografía",
@@ -826,7 +826,7 @@
     }
   },
   "LOCALES": {
-    "slug": "document-format",
+    "slug": "document-format-notes-references",
     "heading": {
       "en": "Citations and bibliography",
       "es": "Citas y bibliografía",
@@ -841,7 +841,7 @@
     }
   },
   "createFolioFromDocument": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-html-folio-epub",
     "heading": {
       "en": "A 3D book (`postext-folio`)",
       "es": "Un libro en 3D (`postext-folio`)",
@@ -856,7 +856,7 @@
     }
   },
   "createFolio": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-html-folio-epub",
     "heading": {
       "en": "A 3D book (`postext-folio`)",
       "es": "Un libro en 3D (`postext-folio`)",
@@ -871,7 +871,7 @@
     }
   },
   "renderToEpub": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-html-folio-epub",
     "heading": {
       "en": "Writing a book",
       "es": "Escribir un libro",
@@ -886,7 +886,7 @@
     }
   },
   "readEpub": {
-    "slug": "configuration-programmatic-usage",
+    "slug": "configuration-html-folio-epub",
     "heading": {
       "en": "Writing a book",
       "es": "Escribir un libro",
@@ -901,7 +901,7 @@
     }
   },
   "parseVideoUrl": {
-    "slug": "document-format",
+    "slug": "document-format-resources",
     "heading": {
       "en": "Videos",
       "es": "Vídeos",
@@ -916,7 +916,7 @@
     }
   },
   "youtubePosterUrls": {
-    "slug": "document-format",
+    "slug": "document-format-resources",
     "heading": {
       "en": "Videos",
       "es": "Vídeos",
@@ -931,7 +931,7 @@
     }
   },
   "resourceVideoLink": {
-    "slug": "document-format",
+    "slug": "document-format-resources",
     "heading": {
       "en": "Videos",
       "es": "Vídeos",
@@ -946,7 +946,7 @@
     }
   },
   "videoWatchUrl": {
-    "slug": "document-format",
+    "slug": "document-format-resources",
     "heading": {
       "en": "Videos",
       "es": "Vídeos",
@@ -961,7 +961,7 @@
     }
   },
   "bundleVideoUrl": {
-    "slug": "document-format",
+    "slug": "document-format-resources",
     "heading": {
       "en": "Videos",
       "es": "Vídeos",

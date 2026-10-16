@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Einheiten, Farben und die Palette, eigene Schriften, der HTML-Betrachter, PDF und Druckvorstufe, der Folio-Betrachter und die Debug-Überlagerungen',
   lang: 'de',
   lastUpdated: '2026-10-10',
-  readingTime: '6 min',
-  order: 11,
+  readingTime: '36 min',
+  order: 18,
   parent: 'configuration',
   plainSummary: "Diese Seite behandelt die Einstellungen, die für das ganze Buch gelten, und die Einstellungen für jede Art von Ausgabe. Sie erklärt, wie Sie ein Maß und eine Farbe angeben und wie Sie die Farben einer Palette benennen. Sie zeigt, wie Sie eigene Schriften hinzufügen. Danach geht es um die Webansicht, die PDF-Datei, die Dateien, die eine Druckerei verlangt, und das 3D-Buch. Der letzte Abschnitt schaltet die Hilfslinien und Warnungen ein, die Ihnen bei der Arbeit helfen.",
 };
@@ -307,7 +307,7 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 // => undefined when everything matches the defaults
 ```
 
-Ein vollständiges Beispiel finden Sie unter [Den HTML-Betrachter einbinden](/de/docs/configuration-programmatic-usage#den-html-betrachter-einbinden).
+Ein vollständiges Beispiel finden Sie unter [Den HTML-Betrachter einbinden](/de/docs/configuration-html-folio-epub#den-html-betrachter-einbinden).
 
 
 ## PDF-Erzeugung (Konfiguration)
@@ -395,7 +395,7 @@ const minimal  = stripPdfGenerationDefaults(config.pdfGeneration);
 // => undefined when everything matches the defaults
 ```
 
-Das vollständige Exportrezept finden Sie unter [PDFs erzeugen](/de/docs/configuration-programmatic-usage#pdfs-erzeugen).
+Das vollständige Exportrezept finden Sie unter [PDFs erzeugen](/de/docs/configuration-pdf-output#pdfs-erzeugen).
 
 
 ## Druckvorstufe (Konfiguration)
@@ -930,7 +930,7 @@ interface FolioConfig {
       <td><code>binding.type</code></td>
       <td><code>FolioBindingType</code></td>
       <td><code>'hardcover'</code>; <code>'folded'</code> bei einem Zeitungsformat</td>
-      <td><code>hardcover</code>: Hardcover mit Buchdecke, die Deckel etwas größer als die Seiten. <code>paperback</code>: Klebebindung (gefräst und geleimt), öffnet sich weniger flach. <code>sewn</code>: ein Softcover mit fadengehefteten Lagen. <code>layflat</code>: öffnet sich flach, ohne Senke am Bund. <code>saddleStitch</code>: gefalzte Bogen, durch den Falz geheftet, wie bei einer Zeitschrift oder Broschüre; kein flacher Rücken. <code>folded</code> (seit postext 1.18): eine Zeitung, einmal gefalzte Bogen, ineinandergelegt, ohne dass etwas sie hält; keine Heftklammern, kein Rücken und kein Deckel, und die erste Seite ist die Titelseite. Ein Abschnitt <a href="/de/docs/document-format#paper"><code>:::paper</code></a> mit einem <code>shade</code> druckt einen Zeitungsteil, etwa den Wirtschaftsteil, auf lachsfarbenem Zeitungspapier.</td>
+      <td><code>hardcover</code>: Hardcover mit Buchdecke, die Deckel etwas größer als die Seiten. <code>paperback</code>: Klebebindung (gefräst und geleimt), öffnet sich weniger flach. <code>sewn</code>: ein Softcover mit fadengehefteten Lagen. <code>layflat</code>: öffnet sich flach, ohne Senke am Bund. <code>saddleStitch</code>: gefalzte Bogen, durch den Falz geheftet, wie bei einer Zeitschrift oder Broschüre; kein flacher Rücken. <code>folded</code> (seit postext 1.18): eine Zeitung, einmal gefalzte Bogen, ineinandergelegt, ohne dass etwas sie hält; keine Heftklammern, kein Rücken und kein Deckel, und die erste Seite ist die Titelseite. Ein Abschnitt <a href="/de/docs/document-format-directives#paper"><code>:::paper</code></a> mit einem <code>shade</code> druckt einen Zeitungsteil, etwa den Wirtschaftsteil, auf lachsfarbenem Zeitungspapier.</td>
     </tr>
     <tr>
       <td><code>binding.cover</code></td>
@@ -1049,7 +1049,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 // => { paper: { type: 'bible' } }
 ```
 
-In der Sandbox bilden diese Einstellungen die Gruppe **Folio** des Bedienfelds Gestaltung (**Gestaltung → Folio → Folio-Betrachter (3D)**), und der Tab Folio zeigt Änderungen sofort, ohne das Buch neu zu setzen. Zum Betrachter selbst siehe [Ein 3D-Buch](/de/docs/configuration-programmatic-usage#ein-3d-buch-postext-folio), und zu einer Seitenfolge auf einer anderen Papiersorte [Dokumentformat › `:::paper`](/de/docs/document-format#paper).
+In der Sandbox bilden diese Einstellungen die Gruppe **Folio** des Bedienfelds Gestaltung (**Gestaltung → Folio → Folio-Betrachter (3D)**), und der Tab Folio zeigt Änderungen sofort, ohne das Buch neu zu setzen. Zum Betrachter selbst siehe [Ein 3D-Buch](/de/docs/configuration-html-folio-epub#ein-3d-buch-postext-folio), und zu einer Seitenfolge auf einer anderen Papiersorte [Dokumentformat › `:::paper`](/de/docs/document-format-directives#paper).
 
 ## Debug
 
@@ -1283,7 +1283,7 @@ Acht Fehler in der Konfiguration selbst bleiben nie stumm, und kein Schalter ble
 - **Unbekannte Überschrifteneinstellung** – ein Schlüssel, den `headings`, `headings.balancing`, eine Überschriftenebene, ein Überschriftenformat oder ein Absatzformat nicht kennt: ein falsch geschriebenes `letterSpacng`, ein aus einem anderen Werkzeug entlehntes `tracking`, ein `level` in einem Überschriftenformat, ein `fontStyle: 'italic'` in einem Absatzformat (das `italic: true` erwartet). Ein Tabulator wird genauso geprüft (ein `leaders` statt `leader`). Die Engine ignoriert ihn (bis postext 1.4 tat sie das wortlos). `value` ist der Schlüssel, `used` ist leer, und `suggestion` nennt die Einstellung, der er am nächsten kommt, wenn eine nur ein oder zwei Buchstaben entfernt ist oder sich nur in Groß- und Kleinschreibung unterscheidet (`unknownConfigKey`).
 - **Unbekannter Einstellungswert** – eine Einstellung, die eines von wenigen Wörtern annimmt, aber ein anderes enthält, etwa `direction: 'right'` (sie nimmt `auto`, `ltr` oder `rtl`). Die Engine liest stattdessen den Standardwert, und `used` nennt, was daraus wurde: bei `direction` die Schreibrichtung der Dokumentsprache (`unknownConfigValue`). Ein `align` eines Tabulators, das keines seiner vier Wörter ist, wird als `'start'` gelesen, und eine `position`, die weder Länge noch `'end'` noch Prozentwert ist, lässt den Tabulator weg (`used` ist `'none'`). Auch die Wörter der Comic-Einstellungen werden geprüft ([Comics › Comic-Warnungen](/de/docs/comics#comic-warnungen)): `used` ist der Wert, zu dem die Einstellung aufgelöst wurde (bei einem eingebauten Format der eigene Standardwert des Sprechblasenformats), und `suggestion` nennt das Wort, dem der Wert am nächsten kommt, wenn eines nahe liegt. `level` und `mode` der Kontrastprüfung werden genauso geprüft: `used` ist `'AA'` oder `'auto'`.
 - **Zeilennummern im vertikalen Text** – `lineNumbers.enabled: true` in einem vertikal gesetzten Dokument (`layout.writingMode: 'vertical-rl'`). Vertikale Seiten erhalten keine Zeilennummern, und `used` ist `false` (`lineNumbersUnsupported`; siehe [Zeilennummern](/de/docs/configuration-notes-references#zeilennummern)).
-- **Umfließen in vertikalem Text** – ein `defaultPlacement.wrap` eines Ressourcentyps in einem vertikal gesetzten Dokument. Vertikale Seiten setzen keinen Text neben eine Abbildung, und `used` ist `none` (`wrapUnsupported`; siehe [Dokumentformat › Textumfluss](/de/docs/document-format#textumfluss)). Ein `wrap`, das keine Seite nennt, ist ein unbekannter Einstellungswert.
+- **Umfließen in vertikalem Text** – ein `defaultPlacement.wrap` eines Ressourcentyps in einem vertikal gesetzten Dokument. Vertikale Seiten setzen keinen Text neben eine Abbildung, und `used` ist `none` (`wrapUnsupported`; siehe [Dokumentformat › Textumfluss](/de/docs/document-format-resources#textumfluss)). Ein `wrap`, das keine Seite nennt, ist ein unbekannter Einstellungswert.
 
 Die Sandbox listet sie im Bedienfeld **Prüfungen** mit dem Pfad der Einstellung auf. Im Code legt `buildDocument` sie als `configWarnings` am Dokument ab (das fehlt, wenn die Konfiguration fehlerfrei ist), und `collectConfigWarnings(config)` gibt sie zurück, ohne etwas zu setzen:
 

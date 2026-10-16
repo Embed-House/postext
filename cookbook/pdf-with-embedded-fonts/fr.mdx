@@ -28,7 +28,7 @@ Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Postext mesure 
 
 <Excerpt region="pdf" />
 
-`renderToPdf` appelle `onProgress` en trois phases : `prepare` une fois les polices et la couverture incorporées, `pages` après chaque page, et `save` avant d’écrire le fichier. Il ne demande au fournisseur que les caractères que peignent les pages, ici cinq. La ligne d’état liste les cinq fichiers servis par le fournisseur, exactement ceux de `FONTS`, sans aucun remplaçant. Un remplaçant signale un caractère absent de `FONTS`. Si vous retirez Crimson Text 600, la ligne indique `Crimson Text 600 → 400` et le *The Harbour Consort* en gras de la page 4 s’imprime en graisse normale. L’aperçu de CodePen ne peut pas afficher un PDF : le `offerPdf` du kit remplace donc le bouton par deux liens, l’un qui ouvre le PDF dans un nouvel onglet et l’autre qui le télécharge ([Générer des PDF](/fr/docs/configuration-programmatic-usage#générer-des-pdf)).
+`renderToPdf` appelle `onProgress` en trois phases : `prepare` une fois les polices et la couverture incorporées, `pages` après chaque page, et `save` avant d’écrire le fichier. Il ne demande au fournisseur que les caractères que peignent les pages, ici cinq. La ligne d’état liste les cinq fichiers servis par le fournisseur, exactement ceux de `FONTS`, sans aucun remplaçant. Un remplaçant signale un caractère absent de `FONTS`. Si vous retirez Crimson Text 600, la ligne indique `Crimson Text 600 → 400` et le *The Harbour Consort* en gras de la page 4 s’imprime en graisse normale. L’aperçu de CodePen ne peut pas afficher un PDF : le `offerPdf` du kit remplace donc le bouton par deux liens, l’un qui ouvre le PDF dans un nouvel onglet et l’autre qui le télécharge ([Générer des PDF](/fr/docs/configuration-pdf-output#générer-des-pdf)).
 
 ### 4 · L’arbre des titres est l’arbre des signets
 
@@ -69,4 +69,4 @@ Faites pointer le téléchargement vers vos propres copies des mêmes fichiers W
 
 Listez dans `FONTS` chaque caractère que composent vos pages, le gras et l’italique du texte compris. S’il en manque un, l’écran paraît toujours juste, parce que le kit charge le caractère sans avertissement, mais le PDF imprime le caractère le plus proche du fournisseur, et seuls les remplaçants de la ligne d’état trahissent la substitution.
 
-Utilisez des fichiers statiques, un par graisse et par style. D’un WOFF2 variable, le PDF n’incorpore que l’instance par défaut : un passage en gras s’imprimerait en graisse normale ([Pourquoi un fournisseur de polices ?](/fr/docs/configuration-programmatic-usage#pourquoi-un-fournisseur-de-polices)).
+Utilisez des fichiers statiques, un par graisse et par style. D’un WOFF2 variable, le PDF n’incorpore que l’instance par défaut : un passage en gras s’imprimerait en graisse normale ([Pourquoi un fournisseur de polices ?](/fr/docs/configuration-pdf-output#pourquoi-un-fournisseur-de-polices)).

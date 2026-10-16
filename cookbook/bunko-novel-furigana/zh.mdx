@@ -24,7 +24,7 @@ pageNotes: { "1": "书名页，独自位于书脊左侧：夢十夜用大号粗�
 
 <Excerpt region="nights" />
 
-日文标题占整数个正文行，称为行取り（gyōdori），这样标题后面的行与前面的行在同一套网格上。`lineSpan: 3`把第一夜排在三个15.75 pt行宽的带里，字居于其中；标题的12.5 pt不移动网格，第6页上第二夜占页面开头的三行，它后面的正文从网格的第四行排起。`indent: em(5)`以正文字计（五字下げ），青空文库的文本就是这样标中見出し的，JLReq也这样计算标题的缩进（[按级别覆盖](/zh/docs/configuration-text#按级别覆盖)）。
+日文标题占整数个正文行，称为行取り（gyōdori），这样标题后面的行与前面的行在同一套网格上。`lineSpan: 3`把第一夜排在三个15.75 pt行宽的带里，字居于其中；标题的12.5 pt不移动网格，第6页上第二夜占页面开头的三行，它后面的正文从网格的第四行排起。`indent: em(5)`以正文字计（五字下げ），青空文库的文本就是这样标中見出し的，JLReq也这样计算标题的缩进（[按级别覆盖](/zh/docs/configuration-headings#按级别覆盖)）。
 
 ### 3 · 从青空文库取来正文和读音
 
@@ -34,7 +34,7 @@ pageNotes: { "1": "书名页，独自位于书脊左侧：夢十夜用大号粗�
 
 <Excerpt region="hashira" />
 
-竖排文库本的书眉（柱，hashira）字小，放在外页边距里。`anchor.to: 'outer'`把元素放在那里，在右侧装订的书中，奇数页是左页边距，偶数页是右页边距；`writingMode: 'vertical-rl'`让它从上到下排（[竖排文本元素](/zh/docs/configuration-page-layout#竖排文本元素)）。书名夢十夜只出现在左页（`parity: 'odd'`），`pages: 'body'`会让它避开任何开始一章的页面。`pageNumbering.format: 'japanese-informal'`把页码印成二、三……九（[页码编号](/zh/docs/configuration-page-layout#页码编号)）。
+竖排文库本的书眉（柱，hashira）字小，放在外页边距里。`anchor.to: 'outer'`把元素放在那里，在右侧装订的书中，奇数页是左页边距，偶数页是右页边距；`writingMode: 'vertical-rl'`让它从上到下排（[竖排文本元素](/zh/docs/configuration-headers-footers#竖排文本元素)）。书名夢十夜只出现在左页（`parity: 'odd'`），`pages: 'body'`会让它避开任何开始一章的页面。`pageNumbering.format: 'japanese-informal'`把页码印成二、三……九（[页码编号](/zh/docs/configuration-page-layout#页码编号)）。
 
 ### 5 · 书名页在成品页面上居中
 

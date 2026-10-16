@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Le impostazioni cjk: divisione in righe, larghezza della punteggiatura, spaziatura, griglia di caratteri, ruby e segni del testo cinese, giapponese e coreano',
   lang: 'it',
   lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 7,
+  readingTime: '36 min',
+  order: 13,
   parent: 'configuration',
   plainSummary: "Questa pagina tratta le impostazioni per il testo cinese, giapponese e coreano. Decidono dove può andare a capo una riga e quanto sono larghi i segni di punteggiatura. Fissano lo spazio tra questi caratteri e le lettere o i numeri latini. Controllano anche le piccole guide alla lettura stampate accanto ai caratteri e i segni tracciati accanto a nomi e titoli. Le guide all’impaginazione cinese e giapponese mostrano queste impostazioni all’opera.",
 };
@@ -320,7 +320,7 @@ Nel testo verticale una parola latina o un numero lungo viene coricato, e un num
 - In Giappone anche le coppie `!!`, `!?`, `?!` e `??`, a mezza larghezza o a larghezza piena, stanno in piedi in una sola cella (`すごい！？`), a meno che non le tocchi una lettera latina, una cifra o un terzo segno; una coppia a larghezza piena viene disegnata con i segni a mezza larghezza. I kana piccoli, ：；, “ ” (disegnate 〝〟) e ・ prendono le forme verticali giapponesi (vedi [Impaginazione giapponese › Forme verticali](/it/docs/japanese-layout#forme-verticali)).
 - Il misuratore e ogni renderer trovano le stesse celle: il canvas disegna le cifre raddrizzate e compresse, il PDF lo stesso con il font orizzontale, e l’HTML le racchiude in `text-combine-upright: all`.
 
-A mano, tre segni in linea sostituiscono l’impostazione nel testo verticale e non cambiano nulla nel testo orizzontale (vedi [Formato del documento › Orientamento nel testo verticale](/it/docs/document-format#orientamento-nel-testo-verticale)):
+A mano, tre segni in linea sostituiscono l’impostazione nel testo verticale e non cambiano nulla nel testo orizzontale (vedi [Formato del documento › Orientamento nel testo verticale](/it/docs/document-format-inline#orientamento-nel-testo-verticale)):
 
 ```markdown
 第:tcy[120]回、:upright[GDP]與:sideways[12]
@@ -351,7 +351,7 @@ Due impaginazioni della pratica cinese, a 五号 (10,5 pt) con uno spazio tra le
 
 ### Segni, ruby e warichu
 
-La marcatura dei [segni cinesi, ruby e warichu](/it/docs/document-format#segni-cinesi-ruby-e-warichu) tiene il suo testo nel paragrafo: la ricerca, l’indice, gli ancoraggi dell’indice analitico e il testo copiato leggono i caratteri come sono scritti, e solo ciò che viene disegnato attorno a essi dipende da queste impostazioni.
+La marcatura dei [segni cinesi, ruby e warichu](/it/docs/document-format-inline#segni-cinesi-ruby-e-warichu) tiene il suo testo nel paragrafo: la ricerca, l’indice, gli ancoraggi dell’indice analitico e il testo copiato leggono i caratteri come sono scritti, e solo ciò che viene disegnato attorno a essi dipende da queste impostazioni.
 
 - **Punti di enfasi** (着重号, 傍点; `:dots[…]`, e `*…*` sui caratteri CJK con `emphasis: 'dots'`): un segno per carattere, centrato su di esso (esclusa la spaziatura di una riga giustificata), mai sulla punteggiatura o sugli spazi: sotto il carattere nel testo orizzontale, alla sua destra nel testo verticale (clreq §5.3.1). `style` sceglie un punto pieno, un cerchio vuoto o un punto a sesamo, `fill="open"` disegna il contorno, `pos="over|under"` il lato; `emphasisMark` imposta ciò che un segno lascia non impostato (in Giappone un sesamo sopra il testo, alla sua destra nel testo verticale). Un sesamo sta orientato allo stesso modo sul foglio in entrambe le direzioni di scrittura, e i segni sul lato di una lettura ruby vanno all’esterno di essa.
 - **Linee laterali** (傍線, `:sideline[…]{style pos}`): scorrono accanto al testo, punteggiatura e spazi compresi: `solid`, `double`, `wavy` o `dotted`, per impostazione predefinita sotto il testo che corre lungo la pagina e alla sua destra quando scende lungo la pagina; due linee che si incontrano rinunciano ciascuna a un ottavo di em. Funzionano in qualsiasi scrittura.

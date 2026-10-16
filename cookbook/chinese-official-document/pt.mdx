@@ -26,19 +26,19 @@ Todo sinal ocupa uma casa inteira e não cede nada dela, então numa linha de ch
 
 <Excerpt region="levels" />
 
-A norma compõe 一、 em 黑体, （一） em 楷体, e 1. e （1） na fonte do texto, todos no corpo do texto. `{2:一}` imprime o numeral chinês informal na escrita de `locale` ([numeração](/pt/docs/configuration-page-layout#numeração)). Com o corpo e a entrelinha do texto e sem margens, um título ocupa uma linha da grade, e o texto embaixo dele também fica na grade. `firstLineIndent: em(2)` recua cada título duas casas, contadas em ems do corpo, e um título que passa para uma segunda linha a começa na margem, como a norma pede; o número vem depois do recuo, então o sumário e os marcadores do PDF leem 一、 sem espaços na frente ([configurações por nível](/pt/docs/configuration-text#sobrescritas-por-nível)).
+A norma compõe 一、 em 黑体, （一） em 楷体, e 1. e （1） na fonte do texto, todos no corpo do texto. `{2:一}` imprime o numeral chinês informal na escrita de `locale` ([numeração](/pt/docs/configuration-page-layout#numeração)). Com o corpo e a entrelinha do texto e sem margens, um título ocupa uma linha da grade, e o texto embaixo dele também fica na grade. `firstLineIndent: em(2)` recua cada título duas casas, contadas em ems do corpo, e um título que passa para uma segunda linha a começa na margem, como a norma pede; o número vem depois do recuo, então o sumário e os marcadores do PDF leem 一、 sem espaços na frente ([configurações por nível](/pt/docs/configuration-headings#sobrescritas-por-nível)).
 
 ### 3 · O timbre, linha por linha
 
 <Excerpt region="letterhead" />
 
-O timbre é o design do H1, cujos atributos trazem o número de exemplar, o emissor e o número do documento: a configuração guarda o papel timbrado, e o Markdown, o documento. `lineTop(n)` dá o topo da linha *n* da grade, então cada elemento fica onde a norma o conta: o número, duas linhas em branco abaixo do nome do emissor; o título, duas linhas em branco abaixo do fio vermelho. A 46 pt, a tinta do nome vai de 35 mm abaixo do topo da mancha até o pé da linha 5, o que deixa as linhas 6 e 7 em branco e põe o número na linha 8; a 48 pt ela entraria na linha 6 e empurraria o resto da página uma linha para baixo. A `\\` no título o quebra depois de 关于举办, uma linha curta sobre uma longa: um trapézio, uma das duas formas que a norma admite (a outra é o losango). `minHeight` reserva 13 linhas e `marginBottom`, mais uma, então o destinatário começa na linha 15 ([span e design avançado](/pt/docs/configuration-text#largura-e-design-avançado)).
+O timbre é o design do H1, cujos atributos trazem o número de exemplar, o emissor e o número do documento: a configuração guarda o papel timbrado, e o Markdown, o documento. `lineTop(n)` dá o topo da linha *n* da grade, então cada elemento fica onde a norma o conta: o número, duas linhas em branco abaixo do nome do emissor; o título, duas linhas em branco abaixo do fio vermelho. A 46 pt, a tinta do nome vai de 35 mm abaixo do topo da mancha até o pé da linha 5, o que deixa as linhas 6 e 7 em branco e põe o número na linha 8; a 48 pt ela entraria na linha 6 e empurraria o resto da página uma linha para baixo. A `\\` no título o quebra depois de 关于举办, uma linha curta sobre uma longa: um trapézio, uma das duas formas que a norma admite (a outra é o losango). `minHeight` reserva 13 linhas e `marginBottom`, mais uma, então o destinatário começa na linha 15 ([span e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)).
 
 ### 4 · Fólios sob a mancha
 
 <Excerpt region="folios" />
 
-No rodapé, a borda superior do contêiner é o pé da mancha, então `offset.y` mede para baixo a partir do texto ([cabeçalhos e rodapés](/pt/docs/configuration-page-layout#cabeços-e-rodapés)). Os travessões ficam 7 mm abaixo dela e a uma casa de 四号 da borda externa: `parity` põe os fólios ímpares à direita e os pares à esquerda. A margem superior imprime `{subtitle}`, do frontmatter. Essa linha e o colofão sob o 版记 são tudo o que muda entre a edição em inglês e a em espanhol.
+No rodapé, a borda superior do contêiner é o pé da mancha, então `offset.y` mede para baixo a partir do texto ([cabeçalhos e rodapés](/pt/docs/configuration-headers-footers#cabeços-e-rodapés)). Os travessões ficam 7 mm abaixo dela e a uma casa de 四号 da borda externa: `parity` põe os fólios ímpares à direita e os pares à esquerda. A margem superior imprime `{subtitle}`, do frontmatter. Essa linha e o colofão sob o 版记 são tudo o que muda entre a edição em inglês e a em espanhol.
 
 ### 5 · O anexo e o 版记
 

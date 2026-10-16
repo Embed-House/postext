@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Configuració de Postext',
   sidebarTitle: 'Configuració',
-  description: "Què és una configuració de Postext i en quina de les nou pàgines de la referència s'explica cada grup de paràmetres",
+  description: "Què és una configuració de Postext i en quina de les divuit pàgines de la referència s'explica cada grup de paràmetres",
   lang: 'ca',
-  lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 3,
-  plainSummary: "Aquesta pàgina obre la referència de tots els paràmetres que decideixen l'aspecte de les teves pàgines. Un sol grup de paràmetres desa totes les decisions: mida de pàgina, nombre de columnes, tipografies, cos del text, títols, requadres, colors i molt més. Només escrius els paràmetres que vols canviar, perquè cadascun parteix d'un valor raonable. La referència està repartida en nou pàgines. La llista d'aquesta pàgina enllaça totes les seccions, així que pots anar directament a la part que necessites.",
+  lastUpdated: '2026-10-16',
+  readingTime: '5 min',
+  order: 4,
+  plainSummary: "Aquesta pàgina obre la referència de tots els paràmetres que decideixen l'aspecte de les teves pàgines. Un sol grup de paràmetres desa totes les decisions: mida de pàgina, nombre de columnes, tipografies, cos del text, títols, requadres, colors i molt més. Només escrius els paràmetres que vols canviar, perquè cadascun parteix d'un valor raonable. La referència està repartida en divuit pàgines. La llista d'aquesta pàgina enllaça totes les seccions, així que pots anar directament a la part que necessites.",
 };
 
 # Configuració
@@ -33,21 +33,41 @@ Per a una visió general de com el motor processa aquesta configuració, consult
 
 ## Índex
 
-La referència està repartida en nou pàgines. Cada grup d'aquesta llista és una pàgina, seguida de les seccions que conté.
+La referència està repartida en divuit pàgines. Cada grup d'aquesta llista és una pàgina, seguida de les seccions que conté.
 
 **[Pàgina i disposició](/ca/docs/configuration-page-layout)**
 
 - [Pàgina](/ca/docs/configuration-page-layout#pàgina) — mida, marges, retícula de base, marques de tall, [enquadernació](/ca/docs/configuration-page-layout#enquadernació).
 - [Disposició](/ca/docs/configuration-page-layout#disposició) — nombre de columnes, espai entre columnes, filets, [escriptura vertical](/ca/docs/configuration-page-layout#escriptura-vertical).
-- [Capçaleres i peus](/ca/docs/configuration-page-layout#capçaleres-i-peus) — elements de text i de línia per pàgina amb marcadors, paritat i alineació.
 
-**[Text i encapçalaments](/ca/docs/configuration-text)**
+**[Capçaleres i peus de pàgina](/ca/docs/configuration-headers-footers)**
+
+- [Capçaleres i peus](/ca/docs/configuration-headers-footers#capçaleres-i-peus) — elements de text i de línia per pàgina amb marcadors, paritat i alineació.
+
+**[Text de cos](/ca/docs/configuration-text)**
 
 - [Text de cos](/ca/docs/configuration-text#text-de-cos) — tipografia, partició de mots, tabulacions, vídues i òrfenes.
-- [Llengua del document](/ca/docs/configuration-text#llengua-del-document) — el `locale` de primer nivell: alternativa per a la partició de mots, tipus de recurs integrats i cadenes de continuació de taules i d'avisos partits, llengua etiquetada en un PDF accessible; les [xifres](/ca/docs/configuration-text#xifres-del-document) (`numerals`) i la [direcció del text](/ca/docs/configuration-text#direcció-del-text) (`direction`) que se'n desprenen; i les [llengües i escriptures](/ca/docs/configuration-text#llengües-i-escriptures) que Postext compon. La guia dels llibres de dreta a esquerra és [Composició àrab](/ca/docs/arabic-layout).
-- [Encapçalaments](/ca/docs/configuration-text#encapçalaments) — valors generals i sobreescriptures H1–H6.
-- [Llistes no ordenades](/ca/docs/configuration-text#llistes-no-ordenades) i [Llistes ordenades](/ca/docs/configuration-text#llistes-ordenades) — vinyetes, numeració, imbricació.
-- [Matemàtiques](/ca/docs/configuration-text#matemàtiques) — renderització LaTeX, escala, color, marges.
+
+**[Partició de mots i llengua](/ca/docs/configuration-language)**
+
+- [Partició de mots](/ca/docs/configuration-language#partició-de-mots) — patrons de partició de mots, paraules que no es parteixen, text en bandera.
+- [Llengua del document](/ca/docs/configuration-language#llengua-del-document) — el `locale` de primer nivell: alternativa per a la partició de mots, tipus de recurs integrats i cadenes de continuació de taules i d'avisos partits, llengua etiquetada en un PDF accessible; les [xifres](/ca/docs/configuration-language#xifres-del-document) (`numerals`) i la [direcció del text](/ca/docs/configuration-language#direcció-del-text) (`direction`) que se'n desprenen; i les [llengües i escriptures](/ca/docs/configuration-language#llengües-i-escriptures) que Postext compon. La guia dels llibres de dreta a esquerra és [Composició àrab](/ca/docs/arabic-layout).
+- [Llengües i escriptures](/ca/docs/configuration-language#llengües-i-escriptures) — les escriptures que compon Postext i les pàgines que tracten cadascuna.
+- [Text àrab](/ca/docs/configuration-language#text-àrab) — formes de les lletres, kashida, signes vocàlics i xifres del text àrab.
+
+**[Encapçalaments](/ca/docs/configuration-headings)**
+
+- [Encapçalaments](/ca/docs/configuration-headings#encapçalaments) — valors generals i sobreescriptures H1–H6.
+
+**[Vídues, òrfenes i equilibratge](/ca/docs/configuration-page-flow)**
+
+- [Òrfenes, vídues, *runts* i regles de cohesió](/ca/docs/configuration-page-flow#òrfenes-vídues-runts-i-regles-de-cohesió) — claus de `bodyText` que mantenen junts les línies i els blocs en un salt de columna.
+- [Equilibratge de columnes](/ca/docs/configuration-page-flow#equilibratge-de-columnes) — les palanques que igualen el final de totes les columnes, en ordre editorial.
+
+**[Llistes i matemàtiques](/ca/docs/configuration-lists-math)**
+
+- [Llistes no ordenades](/ca/docs/configuration-lists-math#llistes-no-ordenades) i [Llistes ordenades](/ca/docs/configuration-lists-math#llistes-ordenades) — vinyetes, numeració, imbricació.
+- [Matemàtiques](/ca/docs/configuration-lists-math#matemàtiques) — renderització LaTeX, escala, color, marges.
 
 **[Notes i referències](/ca/docs/configuration-notes-references)**
 
@@ -74,9 +94,12 @@ La referència està repartida en nou pàgines. Cada grup d'aquesta llista és u
 - [Estils de paràgraf](/ca/docs/configuration-styles#estils-de-paràgraf) — estils amb nom per a contenidors `:::paragraphs`: bibliografies, glossaris, notes.
 - [Estils de xip](/ca/docs/configuration-styles#estils-de-xip) — `chipStyles`: estils amb nom per al `:chip[…]` en línia: la caixa d'un banc de paraules, una tecla, una etiqueta.
 - [Llistats de codi](/ca/docs/configuration-styles#llistats-de-codi) — `codeStyle`: la lletra, la caixa, l'amplada del tabulador, les línies llargues, els números de línia i els colors dels elements dels llistats ```` ``` ````, l'acoloriment de sintaxi i el seu punt d'enganxament per a ressaltadors, i el codi en línia en una lletra de codi.
-- [Estils d'avís](/ca/docs/configuration-styles#estils-davís) — notes, consells i objectius en caixa per a contenidors `:::callout`.
 - [Parts](/ca/docs/configuration-styles#parts) — pàgines separadores de part per a contenidors `:::part`: paritat, àrea de cos, disseny d'obertura, tipografia del cos.
 - [Estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) — estils amb nom per a encapçalaments `{style="…"}`: capítols sense numerar, preliminars amb capçaleres pròpies, geometria i paleta.
+
+**[Requadres d'avís](/ca/docs/configuration-callouts)**
+
+- [Estils d'avís](/ca/docs/configuration-callouts#estils-davís) — notes, consells i objectius en caixa per a contenidors `:::callout`.
 
 **[Paràmetres de còmics](/ca/docs/configuration-comics)**
 
@@ -97,7 +120,17 @@ La referència està repartida en nou pàgines. Cada grup d'aquesta llista és u
 
 - [Ús programàtic](/ca/docs/configuration-programmatic-usage#ús-programàtic) — `buildDocument`, els avisos que registra, resolvers, memòries cau.
 - [Executar la composició en un Web Worker](/ca/docs/configuration-programmatic-usage#executar-la-composició-en-un-web-worker) — builds fora del fil principal amb cancel·lació.
-- [Integrar el visor HTML](/ca/docs/configuration-programmatic-usage#integrar-el-visor-html) i [Generació de PDF](/ca/docs/configuration-programmatic-usage#generació-de-pdf) — receptes completes.
-- [Un llibre en 3D (`postext-folio`)](/ca/docs/configuration-programmatic-usage#un-llibre-en-3d-postext-folio) — el document compost com un llibre imprès obert sobre una taula, amb fulls que el lector passa.
-- [Llibres EPUB](/ca/docs/configuration-programmatic-usage#llibres-epub-postext-epub) — fitxers EPUB 3 de maquetació fixa i fluida a partir de la mateixa maquetació, i com comprovar-los amb EPUBCheck.
-- [Paquets (fitxers `.postext`)](/ca/docs/configuration-programmatic-usage#paquets-fitxers-postext) — un llibre sencer en un sol fitxer: crear, obrir i construir fitxers `.postext` des del codi.
+
+**[Fitxers PDF](/ca/docs/configuration-pdf-output)**
+
+- [Generació de PDF](/ca/docs/configuration-pdf-output#generació-de-pdf) — `postext-pdf`: proveïdors de fonts, fonts CJK, workers i fitxers a punt per a impremta.
+
+**[HTML, Folio i EPUB](/ca/docs/configuration-html-folio-epub)**
+
+- [Integrar el visor HTML](/ca/docs/configuration-html-folio-epub#integrar-el-visor-html) i [Generació de PDF](/ca/docs/configuration-pdf-output#generació-de-pdf) — receptes completes.
+- [Un llibre en 3D (`postext-folio`)](/ca/docs/configuration-html-folio-epub#un-llibre-en-3d-postext-folio) — el document compost com un llibre imprès obert sobre una taula, amb fulls que el lector passa.
+- [Llibres EPUB](/ca/docs/configuration-html-folio-epub#llibres-epub-postext-epub) — fitxers EPUB 3 de maquetació fixa i fluida a partir de la mateixa maquetació, i com comprovar-los amb EPUBCheck.
+
+**[Paquets .postext](/ca/docs/configuration-bundles)**
+
+- [Paquets (fitxers `.postext`)](/ca/docs/configuration-bundles#paquets-fitxers-postext) — un llibre sencer en un sol fitxer: crear, obrir i construir fitxers `.postext` des del codi.

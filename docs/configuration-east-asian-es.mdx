@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Los ajustes de cjk: corte de línea, anchura de la puntuación, espaciado, la cuadrícula de caracteres, el ruby y las marcas del texto chino, japonés y coreano',
   lang: 'es',
   lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 7,
+  readingTime: '37 min',
+  order: 13,
   parent: 'configuration',
   plainSummary: "Esta página reúne los ajustes del texto chino, japonés y coreano. Deciden dónde puede cortarse una línea y cuánto ocupan los signos de puntuación. Fijan el espacio entre estos caracteres y las letras latinas o los números. También controlan las pequeñas guías de lectura que se imprimen junto a los caracteres y las marcas que acompañan a nombres y títulos. Las guías de composición china y de composición japonesa muestran estos ajustes en uso.",
 };
@@ -320,7 +320,7 @@ En texto vertical una palabra latina o un número largo se tumban, y un número 
 - En Japón las parejas `!!`, `!?`, `?!` y `??`, de medio ancho o de ancho completo, también van de pie en una casilla (`すごい！？`), salvo que las toque una letra latina, una cifra o un tercer signo; una pareja de ancho completo se pinta con los signos de medio ancho. Los kana pequeños, ：；, “ ” (pintadas 〝〟) y ・ toman las formas verticales japonesas (ver [Composición japonesa › Formas verticales](/es/docs/japanese-layout#formas-verticales)).
 - El medidor y todos los motores de pintado ven las mismas casillas: el canvas pinta las cifras enderezadas y estrechadas, el PDF igual con la fuente horizontal, y el HTML las envuelve en `text-combine-upright: all`.
 
-A mano, tres marcas en línea mandan sobre el ajuste en texto vertical y no cambian nada en texto horizontal (ver [Formato del documento › Orientación en texto vertical](/es/docs/document-format#orientación-en-texto-vertical)):
+A mano, tres marcas en línea mandan sobre el ajuste en texto vertical y no cambian nada en texto horizontal (ver [Formato del documento › Orientación en texto vertical](/es/docs/document-format-inline#orientación-en-texto-vertical)):
 
 ```markdown
 第:tcy[120]回、:upright[GDP]與:sideways[12]
@@ -351,7 +351,7 @@ Dos cajas de la práctica china, en 五号 (10,5 pt) con 6 pt de interlínea (`l
 
 ### Marcas, ruby y warichu
 
-El marcado de [marcas chinas, ruby y warichu](/es/docs/document-format#marcas-chinas-ruby-y-warichu) conserva su texto en el párrafo: la búsqueda, el índice general, las anclas del índice analítico y el texto copiado leen los caracteres tal como se escribieron, y de estos ajustes solo depende lo que se dibuja alrededor.
+El marcado de [marcas chinas, ruby y warichu](/es/docs/document-format-inline#marcas-chinas-ruby-y-warichu) conserva su texto en el párrafo: la búsqueda, el índice general, las anclas del índice analítico y el texto copiado leen los caracteres tal como se escribieron, y de estos ajustes solo depende lo que se dibuja alrededor.
 
 - **Puntos de énfasis** (着重号, 傍点; `:dots[…]`, y `*…*` sobre caracteres CJK con `emphasis: 'dots'`): una marca por carácter, centrada en él (sin contar el espaciado de una línea justificada), nunca en la puntuación ni en los espacios; bajo el carácter en texto horizontal y a su derecha en vertical (clreq §5.3.1). `style` elige punto relleno, círculo o punto sésamo, `fill="open"` dibuja el contorno y `pos="over|under"` el lado; `emphasisMark` fija lo que una marca no indica (en Japón, un sésamo sobre el texto, a su derecha en vertical). Un sésamo tiene la misma orientación sobre el papel en los dos modos de escritura, y las marcas del lado de una lectura ruby van por fuera de ella.
 - **Líneas laterales** (傍線, `:sideline[…]{style pos}`): corren junto al texto, puntuación y espacios incluidos: `solid`, `double`, `wavy` o `dotted`, por defecto bajo el texto en horizontal y a su derecha en vertical; dos líneas que se tocan ceden cada una un octavo de em. Funcionan en cualquier escritura.

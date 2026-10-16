@@ -741,7 +741,7 @@
       "it": "Aumenta `bodyText.lineHeight` (1,7–1,85 em per un testo parzialmente vocalizzato, 1,9–2,1 em per versi completamente vocalizzati), dai al paragrafo uno stile di paragrafo con più interlinea, oppure imposta `bodyText.tashkil: 'strip-vowels'` per un’edizione senza vocali."
     },
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-language",
       "heading": {
         "en": "Arabic text",
         "es": "Texto árabe",
@@ -957,7 +957,7 @@
       "it": "Correggi il TeX, oppure fai l’escape con \\$ di un simbolo del dollaro che non doveva aprire una formula."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Mathematical formulas",
         "es": "Fórmulas matemáticas",
@@ -1011,7 +1011,7 @@
       "it": "Scrivi \\$ per un dollaro letterale, oppure chiudi la formula sulla stessa riga."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Mathematical formulas",
         "es": "Fórmulas matemáticas",
@@ -1065,7 +1065,7 @@
       "it": "Chiudi la formula con $$, sulla stessa riga o su una riga a sé."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Mathematical formulas",
         "es": "Fórmulas matemáticas",
@@ -1173,7 +1173,7 @@
       "it": "Usa un segnaposto supportato ({pageNumber}, {chapterTitle}, {title}, {attr.x}…), oppure scrivi {{ e }} per parentesi graffe letterali."
     },
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Text elements",
         "es": "Elementos de texto",
@@ -1227,7 +1227,7 @@
       "it": "Aggiungi il valore al front matter, tra virgolette, oppure togli il segnaposto."
     },
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Text elements",
         "es": "Elementos de texto",
@@ -1281,7 +1281,7 @@
       "it": "Controlla l’ortografia rispetto ai nomi supportati (pagebreak, columnbreak, numbering, space, toc, callout, paragraphs, part, columns, paper)."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "Directives",
         "es": "Directivas",
@@ -1335,7 +1335,7 @@
       "it": "Aggiungi una riga con un semplice ::: dove finisce il contenitore."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "Containers",
         "es": "Contenedores",
@@ -1443,7 +1443,7 @@
       "it": "Definisci lo stile oppure correggi l’attributo type."
     },
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "The `:::callout` container",
         "es": "El contenedor `:::callout`",
@@ -1551,7 +1551,7 @@
       "it": "Dai a ogni titolo o ancora un id proprio."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Cross-references and anchors",
         "es": "Referencias cruzadas y anclas",
@@ -1605,7 +1605,7 @@
       "it": "Aggiungi il riferimento (references nel front matter o un blocco :::references) oppure correggi la chiave."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Citations and bibliography",
         "es": "Citas y bibliografía",
@@ -1659,7 +1659,7 @@
       "it": "Importa postext-citeproc/register prima di impaginare il documento."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Citations and bibliography",
         "es": "Citas y bibliografía",
@@ -1713,7 +1713,7 @@
       "it": "Controlla l’attributo format del blocco e la sua sintassi."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Citations and bibliography",
         "es": "Citas y bibliografía",
@@ -1929,7 +1929,7 @@
       "it": "Usa uno dei cinque formati dei numeri di pagina; elenchi e risorse scrivono i loro in modo diverso."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::numbering`",
         "es": "`:::numbering`",
@@ -1983,7 +1983,7 @@
       "it": "Dai a startAt un numero intero, come startAt=1."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::numbering`",
         "es": "`:::numbering`",
@@ -2037,7 +2037,7 @@
       "it": "Usa odd o even per aggiungere una pagina bianca solo quando serve, always-odd o always-even per forzare una pagina bianca di separazione."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::pagebreak`",
         "es": "`:::pagebreak`",
@@ -2091,7 +2091,7 @@
       "it": "Dai a lines un numero tra 0 e 20; le frazioni come lines=0.5 sono ammesse."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::space`",
         "es": "`:::space`",
@@ -2145,7 +2145,7 @@
       "it": "Usa any, odd, even, always-odd o always-even."
     },
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-headings",
       "heading": {
         "en": "Break before",
         "es": "Saltar antes",
@@ -2199,7 +2199,7 @@
       "it": "Rivedi le interruzioni always-odd e le parità di breakBefore; per i capitoli brevi, la parità any di solito evita le pagine bianche."
     },
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-headings",
       "heading": {
         "en": "Break before",
         "es": "Saltar antes",
@@ -2307,7 +2307,7 @@
       "it": "Accorcia il riquadro, lascia che si divida con keepTogether: false, abbassa splitMinLines, oppure dagli un altro span."
     },
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "The `:::callout` container",
         "es": "El contenedor `:::callout`",
@@ -2361,7 +2361,7 @@
       "it": "Accorcia la grafica (un `minHeight` minore, un sommario più breve o un’immagine più piccola), oppure dai più spazio alla pagina con un formato più grande o margini più piccoli."
     },
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-headings",
       "heading": {
         "en": "Span and advanced design",
         "es": "Span y diseño avanzado",
@@ -2415,7 +2415,7 @@
       "it": "Ancora un elemento della catena al contenitore, alla pagina o all’abbondanza."
     },
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Element placement",
         "es": "Posicionamiento de elementos",
@@ -2469,7 +2469,7 @@
       "it": "Correggi l’id, oppure aggiungi l’elemento a cui si riferisce."
     },
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Element placement",
         "es": "Posicionamiento de elementos",
@@ -2523,7 +2523,7 @@
       "it": "Ingrandisci il riquadro, oppure usa overflow wrap o i puntini di sospensione."
     },
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Text elements",
         "es": "Elementos de texto",
@@ -2577,7 +2577,7 @@
       "it": "Ridichiara breakBefore: { enabled: true, parity } su quel livello."
     },
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-headings",
       "heading": {
         "en": "Span and advanced design",
         "es": "Span y diseño avanzado",
@@ -2631,7 +2631,7 @@
       "it": "Aggiungi un elemento di testo con {titleText}, a meno che il titolo non debba essere invisibile."
     },
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-headings",
       "heading": {
         "en": "Span and advanced design",
         "es": "Span y diseño avanzado",
@@ -2685,7 +2685,7 @@
       "it": "Correggi l’id (solo virgolette doppie) oppure aggiungi la risorsa."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Inline reference (the primary form)",
         "es": "Referencia en línea (la forma principal)",
@@ -2739,7 +2739,7 @@
       "it": "Dai a ogni risorsa un id univoco."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Inline reference (the primary form)",
         "es": "Referencia en línea (la forma principal)",
@@ -2847,7 +2847,7 @@
       "it": "Fornisci circa 300 dpi alla dimensione di stampa, e dichiara la larghezza e l’altezza reali della bitmap."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Resources",
         "es": "Recursos",
@@ -2901,7 +2901,7 @@
       "it": "Apri la Sandbox in una finestra normale, oppure esporta un pacchetto .postext prima di chiuderla."
     },
     "docs": {
-      "slug": "sandbox",
+      "slug": "sandbox-books-saving",
       "heading": {
         "en": "Persistence",
         "es": "Persistencia",
@@ -2955,7 +2955,7 @@
       "it": "Tieni i metadati del libro nel primo capitolo, e usa gli attributi dei titoli per i valori di ogni capitolo."
     },
     "docs": {
-      "slug": "sandbox",
+      "slug": "sandbox-books-saving",
       "heading": {
         "en": "Books and chapters",
         "es": "Libros y capítulos",
@@ -3117,7 +3117,7 @@
       "it": "Scrivi la chiave con lettere ASCII, cifre, `_` e `-` (`author=曹雪芹`); il valore può restare in qualunque scrittura."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "Attribute values",
         "es": "Valores de los atributos",
@@ -3927,7 +3927,7 @@
       "it": "Scrivi :index[parola] per indicizzare una parola del testo, oppure :index{term=\"…\"} per dare un nome alla voce."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Back-of-book index",
         "es": "Índice analítico",
@@ -3981,7 +3981,7 @@
       "it": "Scrivi la destinazione esattamente come il termine della sua voce (livelli uniti con !), oppure marca il termine di destinazione in qualche punto del testo."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Back-of-book index",
         "es": "Índice analítico",
@@ -4035,7 +4035,7 @@
       "it": "Chiudi l’intervallo con :index{term=\"…\" range=\"end\"} dove finisce la trattazione, scrivendo il termine allo stesso modo."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Back-of-book index",
         "es": "Índice analítico",
@@ -4143,7 +4143,7 @@
       "it": "Passa al PDF i file che contengono quei caratteri (le fette unicode-range numerate di una famiglia CJK di Fontsource), oppure scegli una famiglia che li copra."
     },
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-pdf-output",
       "heading": {
         "en": "Chinese, Japanese and Korean fonts",
         "es": "Fuentes chinas, japonesas y coreanas",
@@ -4197,7 +4197,7 @@
       "it": "Fornisci un file statico per ogni peso (varLib.instancer di fontTools li ricava), oppure usa Fontsource, che serve pesi statici."
     },
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-pdf-output",
       "heading": {
         "en": "Chinese, Japanese and Korean fonts",
         "es": "Fuentes chinas, japonesas y coreanas",
@@ -4251,7 +4251,7 @@
       "it": "Usa la versione TrueType del carattere (Noto Serif CJK da Google Fonts o da Fontsource), che viene ridotta ai glifi usati."
     },
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-pdf-output",
       "heading": {
         "en": "Chinese, Japanese and Korean fonts",
         "es": "Fuentes chinas, japonesas y coreanas",
@@ -4359,7 +4359,7 @@
       "it": "Usa i nomi e i valori degli attributi delle impostazioni della carta del visualizzatore Folio: type, grammage, bulk, finish, texture, textureStrength, shade, showThrough."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::paper`",
         "es": "`:::paper`",
@@ -5502,7 +5502,7 @@
       "it": "Non c’è nulla da fare se la scala si legge bene: l’avviso è informativo. Se l’immagine esce troppo piccola, aumenta minScale (allora passa oltre), dalle più spazio (una didascalia più breve, span: 'page'), oppure imposta shrink su 'never'. Con overflowPx, riduci minScale oppure lascia che l’immagine occupi una pagina tutta sua."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Placement",
         "es": "Colocación",
@@ -5556,7 +5556,7 @@
       "it": "Imposta overflow: 'wrap' sull’elemento per dividere il testo su più righe, dagli più spazio (un size.width o un maxWidth più ampi, un fontSize minore, un letterSpacing più stretto) oppure accorcia il testo. Tieni i puntini di sospensione dove la riga singola fa parte del progetto grafico, come in una testatina; allora l’avviso conferma soltanto che cosa è stato tagliato."
     },
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Text elements",
         "es": "Elementos de texto",
@@ -5610,7 +5610,7 @@
       "it": "tooNarrow: dagli una larghezza minore, oppure riduci layout.wrap.minTextWidth. fewLines: riduci minLinesBeside, oppure lascia wrap disattivato per un elemento così corto. moved: metti la riga ::resource prima, rimpicciolisci l’immagine, oppure accetta lo spostamento. verticalText: togli wrap dall’edizione verticale."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Text wrap",
         "es": "Ajuste del texto",
@@ -5772,7 +5772,7 @@
       "it": "Scrivi flow=\"snake\" per un’unica colonna di testo che riempie le colonne una dopo l’altra, oppure flow=\"parallel\" con interruzioni per flussi che mantengono le proprie colonne."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::columns`",
         "es": "`:::columns`",
@@ -5826,7 +5826,7 @@
       "it": "Imposta meno colonne (count), un intervallo minore, oppure metti il gruppo a tutta larghezza (span=\"page\") o in un riquadro più largo."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::columns`",
         "es": "`:::columns`",
@@ -5880,7 +5880,7 @@
       "it": "Apri il riquadro prima, accanto a un paragrafo la cui pagina ha ancora spazio nella colonna laterale, oppure accorcialo perché condivida la colonna con i riquadri che lo precedono. Un riquadro che non entra nella colonna laterale della sua pagina aspetta la pagina successiva: conta quanto contiene la colonna laterale di ogni pagina quando un capitolo è breve."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Placement",
         "es": "Colocación",
@@ -5934,7 +5934,7 @@
       "it": "Dagli uno span che le sue pagine hanno (span: 'column' in una sezione senza colonna laterale), aprilo dove la sua sezione ha ancora la colonna laterale, oppure dai alla sezione un layout che ne abbia una."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Placement",
         "es": "Colocación",
@@ -5988,7 +5988,7 @@
       "it": "Imposta bodyText.shortListSplit su 'avoid': l’elenco si compone intero e, quando non entra sotto ciò che contiene la sua colonna, apre la colonna successiva con i titoli subito sopra e la riga con i due punti che lo introduce. La colonna che lascia finisce corta. Se l’avviso resta con 'avoid', accorcia l’elenco o le sue voci. Dove un taglio è accettabile, riduci shortListMaxItems o rimetti la regola su 'allow'."
     },
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-page-flow",
       "heading": {
         "en": "Orphans, widows, runts, and keep-together rules",
         "es": "Huérfanas, viudas, *runts* y reglas de cohesión",

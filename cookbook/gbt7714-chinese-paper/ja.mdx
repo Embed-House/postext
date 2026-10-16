@@ -22,7 +22,7 @@ pageNotes: { "1": "架空の学術誌『示例出版研究』に載る論文の1
 
 ### 2 · CSL-YAMLブロックに書く文献
 
-文献はMarkdownの末尾の`:::references{format=csl-yaml}`ブロックに、ZoteroがCSL YAMLとして書き出す形式で並べます（[文献データ](/ja/docs/document-format#文献データ)）。コードはCSLの種別で決まります。`book`は[M]、`article-journal`は[J]、`thesis`は[D]、`paper-conference`は`//`と会議録名のあとに[C]を、`webpage`は[EB/OL]と角かっこに入れた閲覧日を印刷します。DOIのある雑誌論文は[J/OL]になり、規格どおりDOIを残します。中国語の名前は`literal`に入れるので、スタイルが姓と名に分けることはありません。`:::bibliography{title=""}`で一覧を番号のない見出し「参考文献」の下に置き、`labelWidth`で2行目以降を番号の外ではなく項目のテキストの下にそろえます。
+文献はMarkdownの末尾の`:::references{format=csl-yaml}`ブロックに、ZoteroがCSL YAMLとして書き出す形式で並べます（[文献データ](/ja/docs/document-format-notes-references#文献データ)）。コードはCSLの種別で決まります。`book`は[M]、`article-journal`は[J]、`thesis`は[D]、`paper-conference`は`//`と会議録名のあとに[C]を、`webpage`は[EB/OL]と角かっこに入れた閲覧日を印刷します。DOIのある雑誌論文は[J/OL]になり、規格どおりDOIを残します。中国語の名前は`literal`に入れるので、スタイルが姓と名に分けることはありません。`:::bibliography{title=""}`で一覧を番号のない見出し「参考文献」の下に置き、`labelWidth`で2行目以降を番号の外ではなく項目のテキストの下にそろえます。
 
 <PageShot page={2} crop="0.5,0.08,0.45,0.5" caption="2ページ目。大文字の欧文文献にはet al.、中国語文献には等が付き、それぞれに文献種別コードがあります。" />
 
@@ -30,7 +30,7 @@ pageNotes: { "1": "架空の学術誌『示例出版研究』に載る論文の1
 
 <Excerpt region="masthead" />
 
-表題ブロックはH1のデザインで、両段にまたがる見出しスタイルです。帯は仕上がり枠に固定した囲みで、その上に誌名を白で置きます。表題、著者、所属は見出しとその属性から取り、それぞれ直前の要素の下に置く（`#title`、`below`）ので、表題が3行になると残りが押し下げられます（[幅と詳細デザイン](/ja/docs/configuration-text#幅と詳細デザイン)）。
+表題ブロックはH1のデザインで、両段にまたがる見出しスタイルです。帯は仕上がり枠に固定した囲みで、その上に誌名を白で置きます。表題、著者、所属は見出しとその属性から取り、それぞれ直前の要素の下に置く（`#title`、`below`）ので、表題が3行になると残りが押し下げられます（[幅と詳細デザイン](/ja/docs/configuration-headings#幅と詳細デザイン)）。
 
 ### 4 · 要旨とそのラベル
 

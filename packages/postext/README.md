@@ -96,7 +96,7 @@ The resolvers (`resolve*Config`), strippers (`strip*Defaults`), `DEFAULT_*` cons
 | `outline?` | `OutlineEntry[]` | The book's outline, for a `:::toc` in a chapter laid out on its own. |
 | `notes?` | `PostextNote[]` | Accepted, but the engine does not read it: notes are written in the markdown (below). |
 
-Footnotes are written in the markdown: a `[^id]` marker where the note is cited and a paragraph that opens with `[^id]:` for its text. Each note is set at the foot of the column that cites it; `footnotes.placement: 'chapterEnd'` gathers them after the chapter instead. See [Footnotes](https://postext.dev/en/docs/document-format#footnotes).
+Footnotes are written in the markdown: a `[^id]` marker where the note is cited and a paragraph that opens with `[^id]:` for its text. Each note is set at the foot of the column that cites it; `footnotes.placement: 'chapterEnd'` gathers them after the chapter instead. See [Footnotes](https://postext.dev/en/docs/document-format-notes-references#footnotes).
 
 ## Fonts
 
@@ -120,7 +120,7 @@ const canvas = renderPage(docs[0].pages[0], docs[0]);
 const { bytes } = await createBundle({ name: 'My Book', chapters: [{ markdown: '# One\n\n…' }], config });
 ```
 
-See [Bundles](https://postext.dev/en/docs/configuration-programmatic-usage#bundles-postext-files) for the full API, the PDF adapters and live examples.
+See [Bundles](https://postext.dev/en/docs/configuration-bundles#bundles-postext-files) for the full API, the PDF adapters and live examples.
 
 ## With pretext
 

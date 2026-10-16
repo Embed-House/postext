@@ -1,0 +1,277 @@
+{/* docs/architecture-layout-pipeline-it.mdx */}
+
+export const metadata = {
+  title: 'Architettura: la pipeline di impaginazione',
+  sidebarTitle: 'La pipeline di impaginazione',
+  description: 'La passata di posizionamento e i suoi giri: come il motore colloca righe, elementi flottanti, note e colonne, e ripete la passata finché l’impaginazione non si assesta',
+  lang: 'it',
+  lastUpdated: '2026-10-16',
+  readingTime: '29 min',
+  order: 3,
+  parent: 'architecture',
+  plainSummary: "Questa pagina è per chi programma e vuole sapere come Postext colloca le cose sulla pagina. Postext percorre il testo dall’inizio alla fine e mette al suo posto ogni riga, immagine, tabella, nota e riquadro. Quando un passo successivo cambia qualcosa che viene prima, come un numero di pagina in un rimando, ricomincia il percorso. Si ferma quando non si sposta più niente. La pagina elenca ogni passo, che cosa decide e quante volte può ripetersi.",
+};
+
+# Architettura: la pipeline di impaginazione
+
+
+## Pipeline di impaginazione
+
+Una passata di posizionamento, eseguita tutte le volte che l’impaginazione ne ha bisogno. Questa è l’intera pipeline di impaginazione.
+
+La passata (`placeDocumentPass`, in `packages/postext/src/pipeline/build.ts`) percorre il contenuto dal primo blocco all’ultimo. Per ogni blocco fa tutto ciò che serve per comporlo: lo misura alla larghezza della colonna in cui sta per entrare, verifica se ci sta, lo divide o lo sposta avanti secondo le regole di interruzione e di tenuta, offre un posto agli elementi flottanti che cita, e riporta il flusso sulla griglia della linea di base (vedi [Sistema del ritmo verticale](/it/docs/architecture#sistema-del-ritmo-verticale)). Elementi flottanti, vedove e griglia non hanno una passata propria: si sistemano man mano che ogni blocco trova posto.
+
+Alcune decisioni non si possono prendere dentro un solo percorso, perché dipendono da dove il percorso va a finire: i numeri di pagina che stampa un sommario, l’altezza alla quale un riquadro a tutta larghezza taglia le colonne sopra di sé, le righe che servono ancora a una colonna corta. Per queste, `buildDocument` esegue di nuovo la passata con dei *suggerimenti* presi dal risultato della passata precedente. Le cinque fasi qui sotto seguono un blocco attraverso la passata; [Il driver delle passate](#il-driver-delle-passate) e [Bilanciamento delle colonne](#bilanciamento-delle-colonne) trattano le riesecuzioni.
+
+### Fase 1: strutturazione del contenuto
+
+- **Ingresso:** il `PostextContent` grezzo
+- **Azione:** analizza il markdown in blocchi di contenuto, risolve i riferimenti alle risorse in `resources[]` per ID, toglie dal flusso le definizioni delle note (`[^id]:`) e numera i loro richiami in ordine di citazione, numera i titoli e pianifica gli elementi flottanti: quali risorse flottano, e dopo quale blocco (`notes[]` non viene letto)
+- **Uscita:** un elenco piatto di blocchi di contenuto (tipizzati e con il loro contenuto, ma senza assegnazione a pagine o colonne) e il piano degli elementi flottanti
+- **Quando:** all’inizio di ogni passata di posizionamento. Dopo la prima passata l’analisi si legge dalla sua memoizzazione; il resto si ricalcola
+
+### Fase 2: misurazione del testo
+
+- **Ingresso:** un blocco di contenuto con del testo, e la larghezza della colonna in cui sta per entrare
+- **Azione:** misura le righe del blocco a quella larghezza attraverso il **modulo di misura** dedicato (`packages/postext/src/measure/`), che sovrappone a Pretext sillabazione, giustificazione, tratti in linea con formattazione ricca e divisione in righe Knuth-Plass. Il risultato sono le `VDTLine[]` del blocco e la sua altezza totale
+- **Dettaglio chiave:** la misurazione è in cache. `cachedMeasureBlock` / `cachedMeasureRichBlock` (in `measure/cache.ts`) usano come chiave il testo, i font, la larghezza e ogni opzione che influisce sull’impaginazione, quindi rimisurare un paragrafo invariato è una ricerca in una mappa
+- **Uscita:** le righe del blocco, con dimensioni precise in pixel
+- **Quando:** quando il percorso raggiunge il blocco, non prima, perché la larghezza dipende da dove il blocco va a finire: una colonna accanto a una colonna laterale, le righe accanto a una figura scontornata, le sottocolonne di un gruppo `:::columns`. Un blocco che passa a una colonna di altra larghezza viene rimisurato a quella larghezza
+
+Il modulo è diviso con chiarezza per responsabilità: `plain.ts` misura i tratti semplici, `rich.ts` misura i tratti misti in grassetto, corsivo e matematica, `font.ts` costruisce le stringhe dei font e gestisce il ciclo di vita della cache, e `canvas.ts` incapsula le primitive grezze del canvas per la larghezza del testo. Un dettaglio del ciclo di vita conta nella pratica: le larghezze dei glifi misurate su un font di ripiego non devono sopravvivere all’arrivo del font vero. `canvas.ts` tiene le sue larghezze per stringa di font e una generazione di misurazione; `evictFontFamilies` (chiamata quando una composizione scopre che i caratteri di una famiglia sono cambiati, da `watchFonts`, `prepareFonts` e `loadBundleFonts`) elimina le larghezze di quelle famiglie e svuota la cache di Pretext, e una `MeasurementCache` riempita sotto una generazione precedente elimina i suoi blocchi in quelle famiglie alla ricerca successiva. `clearMeasurementCache()` fa lo stesso per tutte le famiglie. I caratteri stessi vengono caricati prima dell’impaginazione da `fonts/prepare.ts` (`prepareFonts`), e `fonts/faces.ts` rilegge i caratteri usati da un documento impaginato, per gli avvisi `fontFallback`.
+
+I paragrafi cinesi, giapponesi e coreani seguono un’altra strada attraverso lo stesso modulo. Un paragrafo con più caratteri CJK che spazi tra parole va al **compositore CJK** (`cjkCompose.ts`). Questo taglia il testo in unità (un carattere, una serie di testo latino, una lineetta doppia o dei puntini di sospensione, un riquadro atomico come un chip o un richiamo di nota), misura ogni unità una sola volta e riempie le righe con il criterio del primo adatto, secondo le regole di inizio e fine riga di `cjkClasses.ts`: una riga accoglie un segno che non può aprire la riga successiva rinunciando al bianco della punteggiatura (`cjkPunctuation.ts`) prima di portare giù un carattere. Una riga giustificata viene poi distribuita tra i suoi caratteri. L’uscita sono normali `VDTLine` i cui segmenti portano ciò che serve ai renderer per dipingerli esattamente come sono stati misurati: `tracking` (pixel dopo ogni carattere, già compresi nella larghezza del segmento), `inkOffset` per un segno che ha ceduto il suo bianco, `hangs`, gli spazi tra han e latino come segmenti `autospace`, e i segni, le letture ruby e le righe warichu delle annotazioni cinesi. In un documento giapponese lo stesso compositore segue JLReq: le classi kinsoku dei livelli giapponesi si leggono dai caratteri ai bordi di ogni unità al momento della divisione, i bianchi della punteggiatura vengono compressi e restituiti nell’ordine di JLReq, i furigana sono disposti da `rubyJis.ts` (spaziatura 1:2:1, sporgenza sui kana, parole jukugo), e i segni kanbun allargano l’unità del loro carattere. Il costo è lineare nella lunghezza del paragrafo: il capitolo 1 del 紅樓夢 (6.949 caratteri) si compone misurando 1.298 caratteri, ogni carattere distinto una volta sola, dove misurare i prefissi del paragrafo ne richiedeva 636.948. Vedi [Impaginazione cinese](/it/docs/chinese-layout).
+
+Sotto, è qui che Pretext si guadagna il posto. La chiamata `prepare()` è la parte costosa: analizza il testo con il motore dei font del canvas e mette in cache il risultato. E la chiamata `layout()`? Pura aritmetica, quasi gratis. Quella separazione è tutto. Una volta preparato il testo, il motore può dividerlo di nuovo a un costo trascurabile: a un’altra larghezza, per un paragrafo che prosegue in una colonna più stretta, o con una riga in più, per un paragrafo che il bilanciamento delle colonne allenta. Prepara una volta, impagina tutte le volte che ti serve.
+
+```typescript
+// Simplified: how the measure module uses pretext internally
+const prepared = prepare(paragraphText, '16px/1.5 Inter');
+const { height } = layout(prepared, columnWidth, 24); // 24px line-height
+// => "This paragraph is 168px tall at 320px column width — that's 7 lines."
+```
+
+### Fase 3: posizionamento in pagine e colonne
+
+- **Ingresso:** un blocco misurato
+- **Azione:** compone il blocco nella colonna corrente. Crea i nodi `VDTPage` e `VDTColumn` man mano che il flusso ne ha bisogno. Tiene traccia di `availableHeight` per ogni colonna. Quando un blocco non ci sta, lo divide (fase 5) o passa alla colonna o alla pagina successiva
+- **Strategia:** posizionamento avido del primo adatto. Le interruzioni di colonna e di pagina seguono l’assegnazione valida più semplice
+- **Uscita:** al blocco vengono assegnati `pageIndex`, `columnIndex` e `bbox`
+
+È il momento in cui il VDT diventa un documento vero. Prima di questa fase un blocco è una voce in un elenco piatto, senza indirizzo. Il posizionamento assegna ognuno a una pagina e a una colonna, come versare acqua in una griglia di contenitori: riempi la colonna 1 finché trabocca, versa nella colonna 2, quando la pagina è piena ne cominci una nuova.
+
+Prima che un qualunque blocco di contenuto arrivi su una pagina, la passata riserva lo spazio per gli elementi strutturali: intestazioni e piè di pagina (impaginati come slot di progetto grafico a partire da `config.header` / `config.footer`) e tutte le fasce di elementi flottanti già in attesa per la pagina appena aperta. Queste riserve riducono la `availableHeight` di ogni colonna, così quando i blocchi di contenuto cominciano a entrare il motore sa già esattamente quanto spazio c’è.
+
+**Fasce di colonne e colonne a tutta larghezza.** `page.columns` è un array piatto in ordine di lettura, ma una pagina non è sempre una sola fila di colonne. In un’impaginazione a più colonne un blocco in linea a tutta larghezza taglia la pagina in *fasce* sovrapposte. Contano come tali quattro cose: un `:::callout` il cui stile o la cui recinzione imposta `span: 'page'`, un gruppo `:::columns{span="page"}` nel testo corrente, un `::resource` in linea il cui posizionamento si risolve in `{ position: 'here', span: 'page' }`, e una striscia a fumetti composta attraverso la pagina nel punto in cui è scritta (`:::strip{span=page}`). Le ultime tre vengono avvolte in un riquadro a tutta larghezza senza cornice prima del posizionamento (`pipeline/flowColumns.ts`, `pipeline/spanEmbeds.ts`), così un solo meccanismo le compone tutte e quattro. Al taglio, le colonne di testo della fascia corrente vengono chiuse alla linea di taglio (altezza limitata, `availableHeight` a zero), il blocco riceve una propria colonna a tutta larghezza con `kind: 'span'`, e una nuova fascia di colonne di testo (`band + 1`, stessa x e stessa larghezza, stesso fondo della fascia che sostituisce) viene aggiunta sotto. Le colonne vengono solo aggiunte, mai tolte, quindi `columnIndex` continua a indirizzare `page.columns[i]`, e i renderer non hanno bisogno di disegni speciali: ogni colonna ritaglia sul proprio bbox (allargato da `columnClipRect`: 2 pt per l’inchiostro dei glifi più quanto sporgono ai lati le sovrapposizioni del progetto grafico della colonna, come la linguetta di un titolo o il badge di un riquadro, e quanto il progetto di un titolo arriva sopra la sua cima; il piede resta il bordo; lo stesso rettangolo nei backend canvas e PDF), e il filetto tra le colonne si disegna per fascia tra colonne di testo adiacenti, cominciando sotto la fascia che un titolo a tutta larghezza occupa in testa alla pagina (`columnRuleSegments`), con il filetto proprio della pagina quando una sezione con stile ne imposta uno (`VDTPage.columnRule`, letto tramite `pageColumnRule`). Il bilanciamento delle colonne ignora le colonne a tutta larghezza, le colonne laterali e le fasce di altezza zero. Un blocco a tutta larghezza taglia direttamente dove la fascia è pari (in cima alla pagina, subito dopo un titolo di apertura, un altro blocco a tutta larghezza o una fascia di elementi flottanti in alto); se arriva in una fascia irregolare propone invece un *limite di fascia* (`packages/postext/src/pipeline/bandCaps.ts`): le colonne della fascia che si apre con un dato blocco di contenuto vengono accorciate a `ceil(Σ used / N / grid)` righe, e `buildDocument` riesegue la passata di posizionamento con il limite (aumentandolo di una riga alla volta quando la fascia limitata trabocca, fino a `MAX_BAND_CAP_RETRIES` = 3 volte, e poi abbandonandolo, così il blocco ricade in cima alla pagina successiva), in modo che il testo riempia le colonne accorciate rispettando ogni regola di posizionamento, finisca pari al taglio, e le colonne chiuse conservino il gioco rimanente come `availableHeight` che il bilanciamento potrà assorbire. Lo stesso meccanismo pareggia la fascia di *chiusura* di un capitolo e del documento (`headings.balancing.trailing`): un’apertura di capitolo, una `:::part`, un riquadro `placement: 'fixed'` che chiude un capitolo o la fine del documento, raggiunti con le colonne della fascia corrente irregolari, propongono un limite di `kind: 'trailing'`, con il blocco di confine come chiave; poiché un limite ha come chiave il blocco che apre la sua fascia, e quel blocco si sposta ogni volta che una pagina precedente assorbe righe di bilanciamento in più, i limiti di chiusura si risolvono *dopo* che il bilanciamento delle colonne si è assestato, con i suggerimenti di bilanciamento congelati, e un breve giro di rifinitura lascia poi che le leve riempiano ciò che il taglio ha lasciato corto. I riquadri `placement: 'fixed'` escono dal flusso: il riquadro è ancorato all’area del contenuto della pagina, al box di rifilo o al box dell’abbondanza, le colonne di testo che copre cedono quella zona (tagliata dal basso o dall’alto come una fascia di elementi flottanti, passando alla pagina successiva in caso di conflitto), e cornice e figli vanno in `page.floats`.
+
+**Pagine verticali.** Con `layout.writingMode: 'vertical-rl'` la passata impagina una pagina orizzontale ruotata di un quarto di giro in senso orario. Su una pagina del genere area del contenuto, colonne, blocchi, righe, elementi flottanti e aree delle note sono in **coordinate del flusso**, e `VDTPage.flow` porta la rotazione che li porta sul foglio: un punto del flusso (x, y) va a finire in (larghezza della pagina − y, x). A valle nessuno ha bisogno di saperlo: divisione, elementi flottanti, regole di tenuta e bilanciamento lavorano nel riferimento del flusso come su qualunque pagina, una colonna del flusso è un registro sul foglio, e ogni backend applica la rotazione quando dipinge (`flowToPage` e `pageToFlow` convertono i punti nei due sensi). Testatine, folio, segni di taglio e sfondo restano in coordinate del foglio. Figure e tabelle si impaginano come blocchi diritti ruotati all’indietro dentro il riferimento, e i caratteri che stanno diritti vengono ruotati all’indietro uno per uno al momento della pittura.
+
+### Fase 4: posizionamento delle risorse
+
+- **Ingresso:** il piano degli elementi flottanti della fase 1, e le pagine come sono state posizionate fin lì
+- **Azione:** fa flottare ogni risorsa citata nel primo posto libero dopo il suo primo riferimento: il fondo della colonna che la cita, la cima o il fondo della colonna vuota successiva, o una fascia della pagina successiva (`packages/postext/src/pipeline/floatPlacement.ts` pianifica gli elementi flottanti, `pipeline/floatSlots.ts` enumera e misura i posti; la passata di posizionamento riserva le fasce mentre procede)
+- **Quando:** appena il blocco che contiene il primo riferimento ha trovato posto, dentro lo stesso percorso; il testo posizionato dopo scorre oltre la fascia
+- **Risoluzione del posizionamento:** per ogni risorsa, il motore risolve `resource.placement` → il `resourceType.defaultPlacement` del tipo → il valore predefinito incorporato `{ position: 'auto', span: 'column' }`
+
+<table>
+  <thead>
+    <tr>
+      <th>Campo di posizionamento</th>
+      <th>Comportamento</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>position: 'auto'</code></td>
+      <td>La risorsa prende il primo posto libero dopo il suo riferimento, in alto o in basso: è il valore predefinito</td>
+    </tr>
+    <tr>
+      <td><code>position: 'top'</code></td>
+      <td>Solo posti in alto: una fascia in cima alla colonna o alla pagina vuota successiva, che spinge sotto di sé il contenuto della colonna</td>
+    </tr>
+    <tr>
+      <td><code>position: 'bottom'</code></td>
+      <td>Solo posti in basso: una fascia in fondo a una colonna o a una pagina, che accorcia la colonna sopra di sé</td>
+    </tr>
+    <tr>
+      <td><code>position: 'here'</code></td>
+      <td>Rinuncia a flottare: la risorsa si incorpora in linea alla sua direttiva <code>::resource</code>, esattamente dove compare nel flusso</td>
+    </tr>
+    <tr>
+      <td><code>span: 'column'</code></td>
+      <td>La fascia occupa una sola colonna (su una pagina appena aperta il motore sceglie la colonna con più spazio rimasto)</td>
+    </tr>
+    <tr>
+      <td><code>span: 'page'</code></td>
+      <td>La fascia occupa l’intera larghezza del contenuto attraverso tutte le colonne, interrompendo il flusso delle colonne; le fasce a tutta larghezza si riservano per prime, così gli elementi flottanti di colonna si annidano nello spazio rimanente</td>
+    </tr>
+    <tr>
+      <td><code>span: 'side'</code></td>
+      <td>La risorsa si compone nella colonna laterale di un’impaginazione a colonna e mezza che riserva quella colonna agli elementi flottanti (<code>layout.sideColumnRole: 'floats'</code>), impilata accanto al paragrafo che la cita per primo. Su una pagina senza una colonna del genere si comporta come <code>'column'</code></td>
+    </tr>
+  </tbody>
+</table>
+
+`ResourcePlacement` ha più campi di questi due: `rotate`, `width`, `align`, `columns`, `captionSide`, `shrink`, `minScale`, `captionMeasure`, `wrap`, `wrapGap` e `citingPage`. [Configurazione → Tipi di risorsa](/it/docs/configuration-resources#tipi-di-risorsa) e [Formato del documento › Posizionamento](/it/docs/document-format-resources#collocazione) spiegano che cosa fa ciascuno.
+
+- **Posizionamento differito:** un elemento flottante che non entra in nessun posto della pagina corrente aspetta la pagina successiva che il flusso apre e, a un confine di capitolo, viene smaltito su pagine aperte prima del confine. Un’immagine mantiene la sua dimensione a meno che `placement.shrink` (o il `layout.floatShrink` del documento) non le permetta di ridursi allo spazio di un posto. Una tabella troppo alta per una pagina nuova viene tagliata tra le righe e prosegue nelle pagine successive con le righe d’intestazione ripetute (`tableStyle.overflow: 'split'`, il valore predefinito)
+- **Uscita:** risorse posizionate in fasce della pagina (`page.floats`), con l’altezza delle colonne interessate ridotta in modo che il testo scorra attorno alle fasce
+
+Il posizionamento delle risorse è dove le cose si fanno interessanti, perché gli elementi flottanti non si limitano a occupare spazio: rimodellano lo spazio attorno a sé. Quando il blocco che contiene un riferimento ha trovato posto, all’elemento flottante in attesa si offrono i posti liberi della pagina corrente dopo di esso: il fondo di quella colonna, poi la cima e il fondo della colonna vuota successiva (per un elemento flottante a tutta larghezza, il fondo della pagina, quando ogni colonna ha ancora spazio); ciò che non entra da nessuna parte aspetta la pagina successiva, dove gli elementi flottanti in attesa reclamano le loro fasce prima che entri qualunque testo. Le colonne si restringono per stare tra le fasce, il testo scorre senza interruzioni nelle colonne ristrette, e il lettore vede la figura vicino al punto in cui viene citata (ma non esattamente lì). È la pratica abituale della composizione professionale; i libri lo fanno di continuo.
+
+**Regole di posizionamento.** Oltre alla scelta del posizionamento, gli elementi flottanti seguono vincoli editoriali rigorosi:
+
+- **Regola del dopo-riferimento.** Un elemento flottante va nel primo posto libero *dopo* il suo primo riferimento nel testo, mai prima. Il lettore incontra prima il riferimento, poi vede la risorsa. Se un elemento flottante non ci sta, viene rimandato in avanti a un posto o a una pagina successivi, mai indietro.
+- **Ordine dei riferimenti dentro una sequenza.** Gli elementi flottanti in attesa si offrono a ogni posto nell’ordine del primo riferimento, e uno che non entra da nessuna parte trattiene quelli che lo seguono nella sua sequenza di numerazione: la tabella 3 non finisce mai dopo la tabella 4, la figura 12 mai prima della figura 11. Le sequenze non si trattengono a vicenda: una tabella in attesa lascia passare una figura successiva. Perché una tabella lunga non debba aspettare una pagina nuova, quella a cui si offre la cima di una colonna vuota viene tagliata a misura di quella colonna e prosegue nel posto successivo (la colonna accanto, o le fasce della pagina successiva), con le righe d’intestazione ripetute.
+- **Barriera di capitolo.** Gli elementi flottanti non escono mai dal loro capitolo. A un’apertura di capitolo (un livello di titolo con `breakBefore` o `span: 'page'`), a una `:::part`, a uno stile di riquadro con `floatBarrier: true` e alla fine del documento, ogni elemento flottante in attesa viene posizionato prima: nei posti liberi della pagina, poi su pagine aperte prima del confine (ciascuna con almeno un elemento flottante posizionato d’autorità), prima dell’interruzione di pagina propria del confine. Prima di aprire una pagina del genere, a una figura o a una tabella ancora in attesa si offrono ancora una volta i posti liberi della pagina corrente, qualunque sia la sua `position`: un elemento flottante di testa pagina citato nella pagina di chiusura di un capitolo prende il piede di quella pagina, sotto le colonne bilanciate, invece di una pagina tutta sua (i riquadri flottanti mantengono il loro posizionamento). Un `:::pagebreak` manda gli elementi flottanti in attesa alla pagina che lo segue, dopo un’eventuale pagina di riempimento per la parità.
+- **Spazio minimo per il testo.** Su una pagina appena aperta una fascia si riserva solo se nelle colonne interessate entrano ancora almeno 3 righe di testo corrente, con un’eccezione: un elemento flottante sovradimensionato può essere posizionato d’autorità in una fascia ancora tutta di testo, così una figura dominante non può bloccare la coda all’infinito. Un posto nella pagina corrente deve stare nell’altezza rimasta della colonna; lì la regola delle 3 righe vale solo accanto a un’altra fascia di elementi flottanti.
+- **Respiro.** Una distanza pari a un’interlinea del testo corrente separa una fascia dal testo accanto.
+- **Allineamento alla griglia della linea di base.** Le fasce in alto si arrotondano *per eccesso* a un multiplo della griglia della linea di base (allargando la distanza sotto l’elemento flottante), così ogni riga spostata cade ancora sulla griglia. Gli elementi flottanti in basso si ancorano in modo che l’ultima linea di base della didascalia stia sulla griglia: la didascalia condivide la linea di base con l’ultima riga di testo delle colonne vicine, e le pagine finiscono alla stessa altezza in tutte le colonne e nelle pagine affiancate.
+
+**Numerazione per tipo al primo riferimento.** Le risorse *non* sono numerate nel markdown. `pipeline/resourceNumbering.ts` assegna a ogni risorsa il suo numero la prima volta che viene citata in ordine di lettura, usando il `ResourceType` della risorsa: il `numberingTemplate` combina il contatore per tipo `{n}` con i contatori dei titoli `{h1}`..`{h6}` in vigore al riferimento (per esempio `'{h1}.{n}'` → «1.7»), `resetOn` decide quando il contatore ricomincia (`'never'` o a qualunque livello di titolo), e `counterFormat` sceglie numeri decimali, romani o alfabetici. I tipi incorporati *Figura* e *Tabella* vengono da `defaultResourceTypes(locale)`, localizzati nella lingua del documento. Poiché la numerazione segue l’ordine del primo riferimento, inserire una nuova figura a metà documento rinumera automaticamente tutto ciò che viene dopo, senza modifiche al sorgente.
+
+### Fase 5: interruzioni e regole di tenuta
+
+È la fase che separa un motore di impaginazione da un riversatore di testo. Applica le regole di qualità editoriale che i compositori professionisti hanno applicato a mano per secoli, e che un rendering ingenuo del testo ignora del tutto.
+
+Tre meccanismi si dividono il lavoro, ciascuno nel punto in cui esiste l’informazione che gli serve: una **penalità per le righe finali troppo corte** dentro l’algoritmo di divisione in righe, una **divisione con punteggio** dove un paragrafo incontra la fine di una colonna, e **regole strutturali di tenuta** tra i blocchi.
+
+#### Vedove, orfane e righe finali troppo corte
+
+**Vedove e orfane** sono i segni più visibili di una composizione dilettantesca:
+
+- Una **vedova** è una sola riga di un paragrafo lasciata da sola in fondo a una colonna. Il paragrafo
+  prosegue nella colonna successiva, ma quella riga isolata sembra abbandonata (come se la colonna
+  fosse finita troppo presto).
+- Un’**orfana** è una sola riga di un paragrafo isolata in cima a una colonna. Il grosso del
+  paragrafo sta nella colonna precedente, ma una riga è traboccata (e sembra staccata dal suo
+  contesto).
+- Una **riga finale troppo corta** è l’ultima riga di un paragrafo formata da una sola parola breve (o due): visivamente troppo corta per sembrare una vera riga di testo. Strutturalmente meno grave di una vedova, ma altrettanto fastidiosa per un lettore attento.
+
+**Le righe finali troppo corte si sistemano nell’algoritmo di divisione in righe.** Una riga finale corta appartiene solo al paragrafo: la sua ultima riga è corta dovunque il paragrafo vada a finire. Per questo è, delle tre, l’unica regola che vede l’algoritmo Knuth-Plass. Quando un insieme di punti di divisione chiuderebbe il paragrafo su una riga il cui contenuto è più stretto di `runtMinCharacters × normalSpaceWidth` (`runtMinCharacters` predefinito 20: venti spazi tra parole di contenuto, circa da 8 a 12 lettere), l’algoritmo aggiunge `runtPenalty` (predefinita 1000) alla bruttezza di quella riga dentro la formula quadratica dei demeriti, così compete sulla stessa scala della bruttezza di riga (che satura a 10000) invece di esserne schiacciata. La penalità si somma ai demeriti abituali (bruttezza, costo della sillabazione, discordanza di classe di adattamento) in un’unica ottimizzazione globale, e l’algoritmo trova quasi sempre un insieme di divisioni senza una riga finale troppo corta. Quando non ci riesce, `bodyText.tightenRunts` compone il paragrafo con una riga in meno se i suoi spazi tra parole, e un poco di tracking negativo, possono assorbire la differenza. Il modulo di misura passa la penalità all’algoritmo (`measure/plain.ts`, `measure/rich.ts`) e `knuthPlass/breakpoints.ts` la applica.
+
+**Vedove e orfane si sistemano a fine colonna.** L’algoritmo di divisione in righe divide un paragrafo per una larghezza. Non sa dove starà il paragrafo sulla pagina, quindi non può sapere quale delle sue righe chiuderà una colonna. La passata di posizionamento lo sa. Quando le righe di un paragrafo non entrano tutte in ciò che resta della colonna, `chooseParagraphSplit` (in `pipeline/orphanWidow.ts`) prova ogni divisione `k` delle righe già divise, da 0 al numero che ci sta: `k` righe restano e il resto apre la colonna successiva. Ogni candidata riceve un punteggio:
+
+- `slackWeight · slack²` per le righe che lascia vuote al piede della colonna, dove `slack` sono le righe che ci stanno meno `k` (`slackWeight` predefinito 10);
+- più `widowPenalty` (predefinita 1000) quando lascia meno di `widowMinLines` righe in fondo alla colonna;
+- più `orphanPenalty` (predefinita 1000) quando porta meno di `orphanMinLines` righe in cima alla successiva.
+
+Vince la divisione con il punteggio più basso, e `k = 0` sposta il paragrafo intero. Le regole sono morbide, e i numeri dicono quanto: una penalità di 1000 è il costo di gioco di dieci righe vuote (10 · 10² = 1000), quindi con i valori predefiniti una divisione che rispetta entrambe le regole vince ogni volta che lascia vuote meno di dieci righe della colonna. Oltre quel punto, una vedova o un’orfana possono essere la scelta più economica. La divisione sceglie tra le righe che l’algoritmo di divisione ha già prodotto; non divide di nuovo il paragrafo. Le voci di elenco passano per la stessa divisione tramite `avoidOrphansInLists` e `avoidWidowsInLists`, e prendono la penalità per le righe finali corte tramite `avoidRuntsInLists` (tutti `true` per impostazione predefinita).
+
+Tutto questo si regola in `BodyTextConfig`: vedi [Configurazione → Orfane, vedove, righe finali corte e regole di tenuta](/it/docs/configuration-page-flow#orfane-vedove-righe-finali-corte-e-regole-per-tenere-unito). Impostare una qualunque `*Penalty` a `0` disattiva di fatto quella regola.
+
+#### Regole strutturali di tenuta
+
+Alcuni raggruppamenti sono più grandi di un singolo paragrafo: si estendono su blocchi adiacenti e non si possono affrontare solo con la divisione in righe. La passata di posizionamento li fa rispettare man mano che ogni blocco trova posto, spostando in avanti interi gruppi quando altrimenti verrebbero divisi da un’interruzione di colonna o di pagina:
+
+- **Titolo con il suo primo paragrafo.** Un titolo non deve mai comparire in fondo a una colonna se il paragrafo che introduce comincerebbe nella colonna successiva. Lo garantisce `headings.keepWithNext` (predefinito `true`): se non c’è spazio per il titolo *più* il minimo per le vedove del testo corrente (`bodyText.widowMinLines`, predefinito `2`) del blocco successivo, o solo una riga quando `avoidWidows` è disattivato, il titolo viene spinto avanti per viaggiare con il suo testo.
+- **Titoli consecutivi.** Quando più titoli compaiono in sequenza (per esempio un h2 seguito da un h3 seguito da un paragrafo), l’intero gruppo deve restare unito. Nessuno dei titoli può restare isolato in fondo a una colonna senza il contenuto che introduce.
+- **Elenchi introdotti dai due punti.** Quando un paragrafo finisce con i due punti che introducono direttamente un elenco, la riga con i due punti deve restare con l’inizio dell’elenco. Lo garantisce `bodyText.keepColonWithList` (predefinito `true`): se posizionare il paragrafo non lascerebbe spazio per l’inizio della prima voce dell’elenco (tutta la voce quando le regole di orfane e vedove per gli elenchi la tengono intera; una riga con `bodyText.colonListRoom: 'line'`, come fino a postext 1.4), l’ultima riga con i due punti (o l’intero paragrafo, se è di una riga) si sposta avanti insieme all’elenco. Ogni volta che questa regola deve spingere l’intero paragrafo e nella colonna lo precede immediatamente una serie di titoli, anche quei titoli vengono tirati avanti, così `keepWithNext` non viene violato in silenzio; l’unica eccezione è quando la colonna contiene solo i titoli che uno spostamento precedente ha già portato avanti, e in quel caso il motore tiene il paragrafo con il titolo e accetta la separazione, più lieve, tra due punti ed elenco per evitare un ciclo.
+- **Figura con la sua didascalia.** Una figura e la sua didascalia sono un’unità inseparabile. Si spostano sempre insieme.
+
+Quando rileva una violazione di tenuta, il motore spinge l’intero gruppo alla colonna o alla pagina successiva. La colonna che ha lasciato finisce allora più corta, delle righe che il gruppo avrebbe occupato. Riempirla è compito del [Bilanciamento delle colonne](#bilanciamento-delle-colonne).
+
+Queste correzioni sono invisibili quando sono fatte bene (un lettore non dovrebbe mai notarle). Ma la loro *assenza* salta subito all’occhio di chiunque legga con attenzione: quella goffa riga isolata in cima a una colonna, quei vuoti irregolari dove il motore ha smesso di cercare di far entrare il testo. Gli editori professionali hanno interi manuali di stile per prevenire esattamente questi problemi. Postext li automatizza.
+
+### Il driver delle passate
+
+<Illustration name="ConvergenceLoop" data='{"title": "La passata di posizionamento e le sue riesecuzioni", "desc": "Una passata di posizionamento porta il contenuto attraverso cinque fasi: struttura, misura, posizionamento, elementi flottanti, e interruzioni e regole di tenuta. buildDocument riesegue l’intera passata con suggerimenti tratti dalla passata precedente: un limite di fascia, leve di bilanciamento, il taglio di una fascia di chiusura, etichette di pagina o numeri di nota assestati.", "caption": "Una passata posiziona l’intero documento. buildDocument la riesegue con dei suggerimenti finché ogni giro si assesta o raggiunge il suo limite.", "passBadges": [{"num": "Fase 1", "name": "struttura"}, {"num": "Fase 2", "name": "misura"}, {"num": "Fase 3", "name": "posizionamento"}, {"num": "Fase 4", "name": "elementi flottanti"}, {"num": "Fase 5", "name": "interruzioni, regole di tenuta"}], "loopBadge": "una passata di posizionamento", "loopCondition": "riesegui con suggerimenti: limiti di fascia, leve di bilanciamento, tagli delle fasce di chiusura"}' />
+
+`buildDocument` è un driver attorno alla passata di posizionamento (`buildDocumentGen` e `buildDocumentBalanced`, in `pipeline/build.ts`). Esegue la passata una volta. Poi legge ciò che la passata ha riportato e, dove una decisione richiede un secondo sguardo, riesegue la passata, intera, con dei suggerimenti (`PassHints`): i limiti, le righe in più e i numeri che la passata successiva deve applicare. Quando non si presenta nessuna delle condizioni della tabella qui sotto, quella prima passata è l’intera composizione.
+
+Le riesecuzioni avvengono a giri, ciascuno dedicato a un tipo di decisione, in quest’ordine:
+
+<table>
+  <thead>
+    <tr>
+      <th>Giro</th>
+      <th>Si esegue quando</th>
+      <th>Alla passata successiva si comunica</th>
+      <th>Limite</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Sommario</strong></td>
+      <td>Il documento stampa numeri di pagina che l’applicazione ospite non ha fornito: un <code>:::toc</code> o un <code>:::index</code> senza <code>outline</code> nel contenuto, o un riferimento che stampa la pagina di un’ancora</td>
+      <td>La struttura con le etichette di pagina della composizione precedente</td>
+      <td><code>MAX_TOC_ROUNDS</code>: 3 composizioni oltre la prima</td>
+    </tr>
+    <tr>
+      <td><strong>2. Numeri delle note</strong></td>
+      <td><code>footnotes.numbering</code> è <code>'page'</code>, <code>'column'</code> o <code>'spread'</code> e le note stanno al piede della colonna o della doppia pagina, quindi il numero di una nota dipende da dove l’impaginazione la colloca</td>
+      <td>Il numero che ogni nota ha avuto nella composizione precedente (<code>footnoteNumbers</code>)</td>
+      <td><code>MAX_FOOTNOTE_ROUNDS</code>: 3 composizioni oltre la prima</td>
+    </tr>
+    <tr>
+      <td><strong>3. Didascalie laterali</strong></td>
+      <td>Un riquadro laterale o un elemento flottante laterale si è sovrapposto alla didascalia che una figura ha collocato nella colonna laterale (<code>placement.captionSide</code>)</td>
+      <td>Quelle didascalie vanno sotto le loro figure (<code>captionUnder</code>)</td>
+      <td>3 passate</td>
+    </tr>
+    <tr>
+      <td><strong>4. Elementi flottanti alla pagina che li cita</strong></td>
+      <td>Un elemento flottante con <code>placement.citingPage</code> è finito su una pagina o colonna successiva alla riga che lo cita</td>
+      <td>Quella pagina, o colonna, si apre con l’elemento flottante in testa (<code>citingPageFloats</code>)</td>
+      <td><code>MAX_CITING_PAGE_ROUNDS</code>: 3 giri di proposte, poi una passata per ogni gruppo di elementi flottanti che una passata non è riuscita a tenere lì</td>
+    </tr>
+    <tr>
+      <td><strong>5. Limiti di fascia</strong></td>
+      <td>Un blocco a tutta larghezza è arrivato in una fascia con le colonne irregolari (vedi <a href="#fase-3-posizionamento-in-pagine-e-colonne">Fase 3</a>)</td>
+      <td>L’altezza a cui tagliare quella fascia (<code>bandCaps</code>)</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 passate di proposte e tentativi. Un limite cresce di una riga fino a 3 volte (<code>MAX_BAND_CAP_RETRIES</code>), poi viene abbandonato</td>
+    </tr>
+    <tr>
+      <td><strong>6. Bilanciamento delle colonne</strong></td>
+      <td><code>headings.balancing.enabled</code> è attivo e una colonna bilanciabile finisce corta</td>
+      <td>Righe di griglia in più per blocco e i paragrafi da dividere con una riga in più (<code>balanceExtraPx</code>, <code>balanceLooseness</code>)</td>
+      <td><code>MAX_BALANCING_PASSES</code>: 10 tentativi per segmento. <code>MAX_BALANCING_PASSES_PER_DOCUMENT</code>: 30 passate per documento</td>
+    </tr>
+    <tr>
+      <td><strong>7. Fasce di chiusura</strong></td>
+      <td>Il bilanciamento è attivo con <code>headings.balancing.trailing</code>, e un capitolo o il documento finisce in una fascia con le colonne irregolari</td>
+      <td>Un limite di chiusura per quella fascia, con i suggerimenti di bilanciamento congelati</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 passate di proposte e tentativi, ogni limite con i suoi 3 tentativi</td>
+    </tr>
+    <tr>
+      <td><strong>8. Rifinitura</strong></td>
+      <td>Il giro 7 ha mantenuto un limite di chiusura</td>
+      <td>Ancora una volta il bilanciamento delle colonne, sull’impaginazione limitata, con nuovi segmenti</td>
+      <td>10 tentativi per segmento e 30 passate, contati da capo</td>
+    </tr>
+  </tbody>
+</table>
+
+I giri da 3 a 8 si eseguono uno dopo l’altro dentro una sola composizione (`buildDocumentBalanced`). I giri 1 e 2 stanno fuori: un giro del sommario o dei numeri delle note è una composizione intera, con i propri giri da 3 a 8. Non c’è un limite per una composizione nel suo insieme, solo questi.
+
+**Ogni riesecuzione è un posizionamento completo.** Un suggerimento non corregge l’albero della passata precedente. La passata posiziona di nuovo il documento con il suggerimento in vigore, così un titolo con due righe in più sopra di sé, o una fascia tagliata sei righe più su, passa per le stesse regole di interruzione e di tenuta di tutto il resto. Il driver poi controlla il risultato: un limite di fascia il cui riquadro non è caduto sul taglio viene aumentato o abbandonato, e una passata di bilanciamento che non ha migliorato un segmento viene scartata per quel segmento. Ciò che il driver restituisce è fatto di pagine posizionate da una passata: l’intera passata, oppure, dopo il bilanciamento delle colonne, le pagine di ogni segmento prese dalla migliore passata che quel segmento ha avuto.
+
+**Che cosa riporta il documento.** `doc.iterationCount` conta le passate di posizionamento dietro l’impaginazione restituita: la prima e quelle dei giri dei limiti di fascia, del bilanciamento e delle fasce di chiusura. Le passate delle didascalie laterali e della pagina che cita non vi rientrano, e nemmeno le composizioni precedenti di un giro del sommario o dei numeri delle note; `BuildDocumentOptions.onPass` viene chiamata per ogni passata, con il suo tempo reale. `doc.converged` riguarda solo il bilanciamento delle colonne. È `true` quando ogni segmento è finito senza righe vuote nelle sue colonne bilanciabili o senza più leve da proporre, e `false` quando un segmento si è fermato su una passata che non lo ha migliorato, o ha esaurito i tentativi, con un vuoto ancora aperto. Con il bilanciamento disattivato è `true`. Un documento con `converged: false` è completo: contiene la migliore impaginazione trovata dal driver, e qualche sua colonna finisce corta.
+
+### Bilanciamento delle colonne
+
+- **Quando:** come giri 6 e 8 del driver (attivo per impostazione predefinita; `headings.balancing.enabled: false` lo disattiva, ed è disattivato per impostazione predefinita nel testo verticale e su una griglia dei caratteri, vedi [Configurazione → Bilanciamento delle colonne](/it/docs/configuration-page-flow#bilanciamento-delle-colonne))
+- **Ingresso:** la migliore impaginazione fin lì e le righe di griglia vuote al piede di ogni colonna bilanciabile (`collectColumnGaps`, in `pipeline/columnBalancing.ts`)
+- **Azione:** propone leve che riempiono sul posto ogni colonna corta, esegue con esse la passata di posizionamento e mantiene il risultato per un segmento quando il suo punteggio dei vuoti è sceso
+- **Uscita:** colonne che finiscono sull’ultima riga di griglia della pagina, con ogni leva registrata sul blocco a cui è stata applicata (`VDTBlock.balancing`)
+
+Le colonne sbilanciate si notano subito. Le regole di interruzione ne lasciano di continuo: un titolo spostato avanti per restare con il suo testo, un paragrafo spostato intero per evitare una vedova, una figura che non entrava. Una colonna che si ferma due righe sopra quella accanto sembra incompiuta, come se l’impaginazione si fosse arresa a metà strada.
+
+Nessun blocco cambia colonna per rimediare. Un’interruzione di colonna è legata all’elemento che non entrava: il blocco che apre la colonna successiva era troppo alto per lo spazio rimasto, e lo è ancora per uno spazio più piccolo. Quindi una colonna corta si può riempire solo dall’interno, al massimo del suo vuoto, e niente passa nella colonna successiva. La correzione è locale, ed è ciò che fa a mano un compositore: aggiungere una riga di spazio dove l’occhio la accetta. Una colonna è bilanciabile quando il contenuto è scorso oltre di essa in una colonna successiva della stessa pagina o, per l’ultima colonna di una pagina, quando la pagina prosegue nella successiva. L’ultima pagina di un capitolo può finire corta; la sua fascia di chiusura viene invece tagliata pari da un limite di chiusura (vedi [Fase 3](#fase-3-posizionamento-in-pagine-e-colonne)).
+
+Per ogni vuoto le leve si propongono in ordine di priorità editoriale, lo stesso ordine in cui le presenta [Configurazione → Bilanciamento delle colonne](/it/docs/configuration-page-flow#bilanciamento-delle-colonne):
+
+1. **Un riquadro che chiude la colonna** prende lo spazio sotto il suo piede come spazio sopra di sé, così il suo piede cade sull’ultima riga di griglia della pagina, pari all’ultima riga della colonna accanto. Registrata come `trailingCallout`.
+2. **Un’immagine con una zona sicura** (`Resource.safeArea`), composta in linea nella colonna o flottante in testa o al piede su quella sola colonna, cresce di righe di griglia intere, ritagliata dentro la sua zona sicura. Un’immagine più alta non lascia buchi sulla pagina, perciò questa leva si applica prima che si aggiunga qualunque spazio. Registrata come `flexFigure`.
+3. **I titoli** prendono righe di griglia intere sopra di sé, una riga alla volta a turno, cominciando dal titolo più importante (il livello più basso), che così ottiene la quota maggiore. Un titolo proprio in cima a una colonna non ne prende, così le colonne continuano a cominciare in cima alla pagina. In questo modo un titolo prende solo le sue prime righe prima che si provino le leve qui sotto, e altre, fino al suo limite, quando quelle non hanno più nulla da dare. Registrata come `heading`.
+4. **Le fini degli elenchi** prendono una riga di griglia dove finisce un elenco. Registrata come `listEnd`.
+5. **Formule, riquadri ed elementi flottanti in alto** prendono una riga di griglia sotto di sé: sotto una formula in display o un riquadro dopo cui il testo riprende (`afterDisplay`), e tra una figura o tabella in testa alla colonna e il testo sotto di essa (`afterFloat`).
+6. **I paragrafi allentati** sono l’ultima risorsa. I paragrafi della colonna, a partire dal più lungo, vengono divisi ciascuno con una riga in più (il `\looseness=+1` di TeX, tramite l’opzione `looseness` dell’algoritmo Knuth-Plass), e la composizione più lunga si accetta solo finché ogni riga resta entro `bodyText.maxWordSpacing`. Quando la sola spaziatura tra le parole non basta a guadagnare la riga, il paragrafo può anche prendere il più piccolo tracking positivo che ci riesce, entro un limite. Registrata come `looseParagraph`.
+
+I limiti, gli interruttori e le eccezioni (una griglia dei caratteri, le pagine di chiusura, un elemento flottante su più colonne) sono chiavi di `headings.balancing`. La pagina Configurazione li elenca ed è tenuta aggiornata; questa pagina non li ripete.
+
+Una proposta si verifica posizionandola. La passata che applica le leve è un posizionamento completo, e di tanto in tanto una leva sposta comunque del contenuto oltre un’interruzione di colonna: un paragrafo diviso la cui testa non entra più, un elemento flottante che ha perso il suo posto. Le pagine dopo quel punto scorrono diversamente e si aprono vuoti altrove. Il driver lo vede nel punteggio, scarta la passata per quel segmento e mette in lista nera le leve appena applicate nella prima colonna cambiata, così la proposta successiva mantiene le leve che hanno funzionato e tralascia quella che ha provocato la cascata.
+
+**Il bilanciamento converge per segmento.** Le pagine tra interruzioni esplicite (un’apertura di capitolo, un `:::pagebreak`) si impaginano indipendentemente le une dalle altre: niente scorre oltre un’interruzione del genere, quindi una leva di bilanciamento dentro una serie di pagine non può mai spostare una riga di un’altra. Il ciclo di bilanciamento delle colonne giudica perciò ogni *segmento* per conto suo. Il suo punteggio dei vuoti è il numero di righe di griglia vuote al piede delle sue colonne bilanciabili. Una passata posiziona comunque l’intero documento, ma ogni segmento accetta o rifiuta la sua parte di leve in base al proprio punteggio dei vuoti, mette in lista nera le proprie cascate, si stabilizza per conto suo e spende il proprio budget di tentativi; un segmento il cui nuovo tentativo è peggiorato riprende le sue pagine dalla migliore passata che ha avuto, mentre gli altri vanno avanti. Un libro di trenta capitoli si bilancia così esattamente come si bilancerebbero i suoi capitoli uno per uno (il PDF del libro intero e il PDF del solo capitolo sono identici per quel capitolo), invece di far costare a ogni pagina del libro una passata per una cascata in un punto qualsiasi.
+
+I limiti sono una valvola di sicurezza. Alcune colonne non si possono chiudere: una che contiene solo paragrafi brevi non ha leve da azionare, e una le cui leve spingono ciascuna un blocco oltre l’interruzione di colonna non ne ha nessuna da mantenere. Il motore conserva la migliore impaginazione trovata e lascia corta quella colonna. Poiché le leve sono registrate sui blocchi, una bozza di controllo o un test possono elencare le colonne che niente ha chiuso (vedi [Configurazione → Quale leva è scattata](/it/docs/configuration-page-flow#quale-leva-è-intervenuta)).

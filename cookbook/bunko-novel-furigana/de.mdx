@@ -24,7 +24,7 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `layout.writing
 
 <Excerpt region="nights" />
 
-Eine japanische Überschrift nimmt eine ganze Zahl von Grundtextzeilen ein, 行取り (Gyōdori), sodass die Zeilen danach im selben Raster stehen wie die Zeilen davor. `lineSpan: 3` setzt 第一夜 in ein Band aus drei Zeilen zu 15,75 pt, die Zeichen quer dazu zentriert; die 12,5 pt der Überschrift verschieben das Raster nicht, und auf Seite 6 nimmt 第二夜 die ersten drei Zeilen der Seite ein, sodass der Text danach auf der vierten Rasterzeile beginnt. `indent: em(5)` zählt in Grundtextzeichen (五字下げ); so kennzeichnet der Aozora-Text eine 中見出し, und so zählt JLReq Einzüge von Überschriften ([Abweichungen pro Ebene](/de/docs/configuration-text#überschreibungen-pro-ebene)).
+Eine japanische Überschrift nimmt eine ganze Zahl von Grundtextzeilen ein, 行取り (Gyōdori), sodass die Zeilen danach im selben Raster stehen wie die Zeilen davor. `lineSpan: 3` setzt 第一夜 in ein Band aus drei Zeilen zu 15,75 pt, die Zeichen quer dazu zentriert; die 12,5 pt der Überschrift verschieben das Raster nicht, und auf Seite 6 nimmt 第二夜 die ersten drei Zeilen der Seite ein, sodass der Text danach auf der vierten Rasterzeile beginnt. `indent: em(5)` zählt in Grundtextzeichen (五字下げ); so kennzeichnet der Aozora-Text eine 中見出し, und so zählt JLReq Einzüge von Überschriften ([Abweichungen pro Ebene](/de/docs/configuration-headings#überschreibungen-pro-ebene)).
 
 ### 3 · Text und Lesungen von Aozora Bunko übernehmen
 
@@ -34,7 +34,7 @@ Die beiden Nächte stammen von Karte 799 bei Aozora Bunko, umgewandelt mit `aozo
 
 <Excerpt region="hashira" />
 
-In einem vertikalen Bunko ist der Kolumnentitel (柱, Hashira) klein und steht im Außensteg. `anchor.to: 'outer'` setzt ein Element dorthin, in den linken Rand einer ungeraden und den rechten einer geraden Seite eines rechts gebundenen Buchs, und `writingMode: 'vertical-rl'` setzt es von oben nach unten ([Vertikale Textelemente](/de/docs/configuration-page-layout#vertikale-textelemente)). Der Titel 夢十夜 steht nur auf den linken Seiten (`parity: 'odd'`), und `pages: 'body'` würde ihn von jeder Seite fernhalten, die ein Kapitel eröffnet. `pageNumbering.format: 'japanese-informal'` druckt die Seitenzahlen 二, 三 … 九 ([Nummerierung](/de/docs/configuration-page-layout#seitennummerierung)).
+In einem vertikalen Bunko ist der Kolumnentitel (柱, Hashira) klein und steht im Außensteg. `anchor.to: 'outer'` setzt ein Element dorthin, in den linken Rand einer ungeraden und den rechten einer geraden Seite eines rechts gebundenen Buchs, und `writingMode: 'vertical-rl'` setzt es von oben nach unten ([Vertikale Textelemente](/de/docs/configuration-headers-footers#vertikale-textelemente)). Der Titel 夢十夜 steht nur auf den linken Seiten (`parity: 'odd'`), und `pages: 'body'` würde ihn von jeder Seite fernhalten, die ein Kapitel eröffnet. `pageNumbering.format: 'japanese-informal'` druckt die Seitenzahlen 二, 三 … 九 ([Nummerierung](/de/docs/configuration-page-layout#seitennummerierung)).
 
 ### 5 · Die Titelseite auf dem Endformat zentrieren
 

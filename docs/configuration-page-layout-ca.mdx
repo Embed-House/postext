@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuració: pàgina i disposició',
   sidebarTitle: 'Pàgina i disposició',
-  description: "La mida de pàgina, els marges i la retícula de base, les columnes i l'espai que les separa, i les capçaleres i els peus de pàgina",
+  description: "La mida de pàgina, els marges i la retícula de base, la numeració de les pàgines, i les columnes i l'espai que les separa",
   lang: 'ca',
-  lastUpdated: '2026-10-10',
-  readingTime: '6 min',
-  order: 4,
+  lastUpdated: '2026-10-16',
+  readingTime: '36 min',
+  order: 5,
   parent: 'configuration',
-  plainSummary: "Aquesta pàgina reuneix els paràmetres del full. Tries la mida de pàgina, els marges, el costat per on s'enquaderna el llibre i la retícula sobre la qual reposen les línies de text. Decideixes quantes columnes té la pàgina i quant d'espai les separa. També decideixes què s'imprimeix a dalt i a baix de cada pàgina, com ara el número de pàgina o el títol del capítol. És una de les nou pàgines de la referència de configuració.",
+  plainSummary: "Aquesta pàgina reuneix els paràmetres del full. Tries la mida de pàgina, els marges, el costat per on s'enquaderna el llibre i la retícula sobre la qual reposen les línies de text. Decideixes com es compten i com s'escriuen els números de pàgina. Decideixes quantes columnes té la pàgina i quant d'espai les separa, i si el text va en línies horitzontals o verticals. Les capçaleres i els peus de pàgina s'expliquen en una altra pàgina.",
 };
 
 # Configuració: pàgina i disposició
@@ -63,7 +63,7 @@ La propietat `page` controla les dimensions físiques i l'aparença de la pàgin
       <td><code>dpi</code></td>
       <td><code>number</code></td>
       <td><code>300</code></td>
-      <td>Els píxels per polzada amb què treballa la maquetació: com es converteixen les unitats físiques (cm, mm, in, pt) en els seus píxels. Un mapa de bits sense resolució pròpia ocupa un píxel de maquetació per cada píxel de la imatge, així que s'imprimeix a aquests ppp: deixa-hi 300 per a impremta, o dona una resolució a les imatges (<code>Resource.bitmap.resolution</code>, <code>layout.bitmapResolution</code>; vegeu [Format del document › Mida dels mapes de bits](/ca/docs/document-format#mida-dels-mapes-de-bits)). El [preflight](/ca/docs/configuration-fonts-colors-viewers#preflight) revisa la resolució efectiva de cada imatge.</td>
+      <td>Els píxels per polzada amb què treballa la maquetació: com es converteixen les unitats físiques (cm, mm, in, pt) en els seus píxels. Un mapa de bits sense resolució pròpia ocupa un píxel de maquetació per cada píxel de la imatge, així que s'imprimeix a aquests ppp: deixa-hi 300 per a impremta, o dona una resolució a les imatges (<code>Resource.bitmap.resolution</code>, <code>layout.bitmapResolution</code>; vegeu [Format del document › Mida dels mapes de bits](/ca/docs/document-format-resources#mida-dels-mapes-de-bits)). El [preflight](/ca/docs/configuration-fonts-colors-viewers#preflight) revisa la resolució efectiva de cada imatge.</td>
     </tr>
     <tr>
       <td><code>cutLines</code></td>
@@ -81,7 +81,7 @@ La propietat `page` controla les dimensions físiques i l'aparença de la pàgin
       <td><code>binding</code></td>
       <td><code>'auto' | 'left' | 'right'</code></td>
       <td><code>'auto'</code></td>
-      <td>La vora per la qual s'enquaderna el llibre. <code>'auto'</code> és <code>'right'</code> quan <code>layout.writingMode</code> és <code>'vertical-rl'</code>, quan el document va de dreta a esquerra (<a href="/ca/docs/configuration-text#direcció-del-text"><code>direction</code></a>) o quan la seva secció <a href="/ca/docs/configuration-comics#còmics"><code>comics</code></a> es llegeix de dreta a esquerra (un manga, una edició japonesa o en xinès tradicional), i <code>'left'</code> en cas contrari. Un llibre enquadernat per la dreta comença en una pàgina esquerra i emmiralla els marges a l'inrevés. Val per a tot el llibre: el <code>layout</code> propi d'un estil de títol no el canvia. Mira <a href="#enquadernació">Enquadernació</a>.</td>
+      <td>La vora per la qual s'enquaderna el llibre. <code>'auto'</code> és <code>'right'</code> quan <code>layout.writingMode</code> és <code>'vertical-rl'</code>, quan el document va de dreta a esquerra (<a href="/ca/docs/configuration-language#direcció-del-text"><code>direction</code></a>) o quan la seva secció <a href="/ca/docs/configuration-comics#còmics"><code>comics</code></a> es llegeix de dreta a esquerra (un manga, una edició japonesa o en xinès tradicional), i <code>'left'</code> en cas contrari. Un llibre enquadernat per la dreta comença en una pàgina esquerra i emmiralla els marges a l'inrevés. Val per a tot el llibre: el <code>layout</code> propi d'un estil de títol no el canvia. Mira <a href="#enquadernació">Enquadernació</a>.</td>
     </tr>
   </tbody>
 </table>
@@ -117,7 +117,7 @@ Amb aquesta configuració tota pàgina senar té 2,2 cm de marge a l'esquerra (e
 
 Els folis i les capçaleres no canvien de costat per si sols: una plantilla que posa el número de pàgina a la cantonada exterior necessita els seus elements de pàgina parella i senar preparats per a la vora dreta (els elements admeten `parity`).
 
-Un llibre escrit de dreta a esquerra (àrab, persa, hebreu…) també s'enquaderna per la dreta: `'auto'` dona la vora dreta quan la [`direction`](/ca/docs/configuration-text#direcció-del-text) del document resulta `'rtl'`. Un llibre així emmiralla a més tot el seu flux: la primera columna és la de la dreta, i els sagnats, els marcadors de llista, els flotants i les notes queden a la dreta; les ranures de capçalera i peu continuen sent físiques. Vegeu [Composició àrab](/ca/docs/arabic-layout#ordre-de-les-pàgines-i-enquadernació-per-la-dreta).
+Un llibre escrit de dreta a esquerra (àrab, persa, hebreu…) també s'enquaderna per la dreta: `'auto'` dona la vora dreta quan la [`direction`](/ca/docs/configuration-language#direcció-del-text) del document resulta `'rtl'`. Un llibre així emmiralla a més tot el seu flux: la primera columna és la de la dreta, i els sagnats, els marcadors de llista, els flotants i les notes queden a la dreta; les ranures de capçalera i peu continuen sent físiques. Vegeu [Composició àrab](/ca/docs/arabic-layout#ordre-de-les-pàgines-i-enquadernació-per-la-dreta).
 
 Un còmic que es llegeix de dreta a esquerra també s'enquaderna per la dreta: `'auto'` dona la vora dreta quan la configuració té una secció `comics` el sentit de lectura de la qual resulta `'rtl'`. És el cas d'un manga (`comics.artDirection: 'rtl'`) i d'una edició japonesa o en xinès tradicional d'un còmic occidental. La secció decideix per tot el llibre, no els blocs `:::page` d'un capítol. Vegeu [Còmics](/ca/docs/comics#sentit-de-lectura).
 
@@ -325,7 +325,7 @@ Els estils de l'Àsia oriental conserven el seu nom de [CSS Counter Styles](http
 
 Els estils japonesos (des de postext 1.16) també segueixen CSS Counter Styles. `japanese-informal` escriu 十 sense 一 al davant i sense 零 per a una posició buida (百一, 千十), i `japanese-formal`, els 大字 壱 弐 参 拾 百 阡, amb 壱 davant de cada unitat (壱拾, 壱百). CSS atura tots dos a 9999; Postext continua per grups de quatre xifres amb 万 億 兆 (en el formal, 萬 億 兆), i cada grup conserva el seu 一 davant d'una unitat: 一万一 és 10 001, i 一億一万, 100 010 000. En un document japonès (`ja`, `ja-JP`…) `一` vol dir `japanese-informal`, així que `第{1:一}章` hi imprimeix 第百一章 i en un de xinès 第一百零一章; `壹` continua sent el dels numerals financers xinesos. Les sèries de kana són les llistes de CSS: 48 kana en l'ordre del gojūon (amb ゐ i ゑ) i 47 en el del poema iroha; després de l'últim continuen amb dos kana (ああ, いい), i no tenen zero, així que un element numerat 0 imprimeix `0`. Les xifres kanji posicionals (二〇二六), la forma dels anys i dels folis, són `cjk-decimal`.
 
-Els estils àrabs conserven el nom CSS quan n'hi ha (`arabic-indic`, `persian`; `urdu` i `maghrebi-abjad`, de la nota del W3C *Ready-made Counter Styles*, es llegeixen com `persian` i `arabic-abjad-maghrebi`). `arabic` manté el sentit de sempre: les xifres europees. `arabic-abjad` escriu els numerals abjad additius de l'àrab clàssic i de la foliació de manuscrits, el valor més gran primer: 11 és يا, 1446 غتمو, i el nombre de milers va abans de غ (2000 بغ, 1002 غب); a partir de 999 999 el número s'imprimeix en xifres. La nota del W3C fa servir aquest nom per a una sèrie de 28 lletres en què 11 és ك; Postext anomena aquesta sèrie `abjad`, la que lletreja els elements de llista en ordre abjad (أ، ب، ج، د، هـ), i `hijai` l'ordre alfabètic (أ، ب، ت، ث). Totes dues escriuen la primera lletra amb la seva hamza (أ) i una he que quedaria aïllada com هـ, amb tatweel, perquè no es llegeixin com les xifres ١ i ٥; passades les 28 lletres es dupliquen, com `lower-alpha` (أأ, أب). Els valors magribins segueixen la regla mnemotècnica صعفض قرست ثخذ ظغش (ص 60, ض 90); la llista del W3C intercanvia ص i ض. Una sola أ no distingeix les dues sèries de lletres, així que el seu token són les seves quatre primeres lletres: `{1:أبجد}`, `{1:أبتث}`. Les xifres del document mateix es trien amb [`numerals`](/ca/docs/configuration-text#xifres-del-document).
+Els estils àrabs conserven el nom CSS quan n'hi ha (`arabic-indic`, `persian`; `urdu` i `maghrebi-abjad`, de la nota del W3C *Ready-made Counter Styles*, es llegeixen com `persian` i `arabic-abjad-maghrebi`). `arabic` manté el sentit de sempre: les xifres europees. `arabic-abjad` escriu els numerals abjad additius de l'àrab clàssic i de la foliació de manuscrits, el valor més gran primer: 11 és يا, 1446 غتمو, i el nombre de milers va abans de غ (2000 بغ, 1002 غب); a partir de 999 999 el número s'imprimeix en xifres. La nota del W3C fa servir aquest nom per a una sèrie de 28 lletres en què 11 és ك; Postext anomena aquesta sèrie `abjad`, la que lletreja els elements de llista en ordre abjad (أ، ب، ج، د، هـ), i `hijai` l'ordre alfabètic (أ، ب، ت، ث). Totes dues escriuen la primera lletra amb la seva hamza (أ) i una he que quedaria aïllada com هـ, amb tatweel, perquè no es llegeixin com les xifres ١ i ٥; passades les 28 lletres es dupliquen, com `lower-alpha` (أأ, أب). Els valors magribins segueixen la regla mnemotècnica صعفض قرست ثخذ ظغش (ص 60, ض 90); la llista del W3C intercanvia ص i ض. Una sola أ no distingeix les dues sèries de lletres, així que el seu token són les seves quatre primeres lletres: `{1:أبجد}`, `{1:أبتث}`. Les xifres del document mateix es trien amb [`numerals`](/ca/docs/configuration-language#xifres-del-document).
 
 Les altres grafies són per a les configuracions que res no comprova en tipus: els presets en JSON i el JavaScript sense tipus. Els tipus de TypeScript continuen anomenant només la grafia pròpia de cada paràmetre —la que escriu el Sandbox i retorna `resolveAllConfig`, amb els noms de l'Àsia oriental inclosos—, així que un `PostextConfig` tipat s'hi cenyeix, i una altra grafia necessita una conversió de tipus (*cast*).
 
@@ -407,25 +407,25 @@ La propietat `layout` controla com s'organitzen les columnes dins de l'àrea de 
       <td><code>bitmapResolution</code></td>
       <td><code>'document' | 'file' | number</code></td>
       <td><code>'document'</code></td>
-      <td>Com pren la seva mida natural d'impressió un mapa de bits sense <code>bitmap.resolution</code> pròpia. <code>'document'</code> llegeix els seus píxels a <code>page.dpi</code>; un nombre és la resolució en ppp de tots aquests mapes de bits (<code>300</code>: una imatge de 2400 px fa 203,2 mm d'amplada siguin quins siguin els dpi de la pàgina); <code>'file'</code> fa servir la resolució que indica el seu fitxer (<code>bitmap.fileResolution</code>), llevat de 72 i 96, que compten com a no indicada, i si no, <code>page.dpi</code>. La columna continua limitant la imatge, i una de més petita no s'amplia mai. Vegeu <a href="/ca/docs/document-format#mida-dels-mapes-de-bits">Format del document › Mida dels mapes de bits</a>. Des de postext 1.24.</td>
+      <td>Com pren la seva mida natural d'impressió un mapa de bits sense <code>bitmap.resolution</code> pròpia. <code>'document'</code> llegeix els seus píxels a <code>page.dpi</code>; un nombre és la resolució en ppp de tots aquests mapes de bits (<code>300</code>: una imatge de 2400 px fa 203,2 mm d'amplada siguin quins siguin els dpi de la pàgina); <code>'file'</code> fa servir la resolució que indica el seu fitxer (<code>bitmap.fileResolution</code>), llevat de 72 i 96, que compten com a no indicada, i si no, <code>page.dpi</code>. La columna continua limitant la imatge, i una de més petita no s'amplia mai. Vegeu <a href="/ca/docs/document-format-resources#mida-dels-mapes-de-bits">Format del document › Mida dels mapes de bits</a>. Des de postext 1.24.</td>
     </tr>
     <tr>
       <td><code>floatShrink</code></td>
       <td><code>FloatShrinkConfig</code></td>
       <td><code>mode: 'never'</code></td>
-      <td>El valor del document per a <code>placement.shrink</code> (<code>mode</code>: <code>'never'</code>, <code>'page'</code> o <code>'slot'</code>) i <code>placement.minScale</code> (<code>minScale</code>, 0.7 si no s'indica) d'una imatge flotant: reduir-la, sense canviar-ne les proporcions, a l'espai del seu buit en lloc de portar-la més endavant (vegeu <a href="/ca/docs/document-format#collocació">Format del document › Col·locació</a>). La col·locació del recurs i després la <code>defaultPlacement</code> del seu tipus el substitueixen. <code>fitFiguresToPage</code> limita tota figura a l'àrea de contingut; <code>floatShrink</code> mira la banda que el flotant ocuparia de debò, sota una obertura, al costat d'altres flotants o damunt de les notes al peu. Des de postext 1.24.</td>
+      <td>El valor del document per a <code>placement.shrink</code> (<code>mode</code>: <code>'never'</code>, <code>'page'</code> o <code>'slot'</code>) i <code>placement.minScale</code> (<code>minScale</code>, 0.7 si no s'indica) d'una imatge flotant: reduir-la, sense canviar-ne les proporcions, a l'espai del seu buit en lloc de portar-la més endavant (vegeu <a href="/ca/docs/document-format-resources#collocació">Format del document › Col·locació</a>). La col·locació del recurs i després la <code>defaultPlacement</code> del seu tipus el substitueixen. <code>fitFiguresToPage</code> limita tota figura a l'àrea de contingut; <code>floatShrink</code> mira la banda que el flotant ocuparia de debò, sota una obertura, al costat d'altres flotants o damunt de les notes al peu. Des de postext 1.24.</td>
     </tr>
     <tr>
       <td><code>wrap</code></td>
       <td><code>TextWrapConfig</code></td>
       <td><code>minTextWidth: 12em</code>, <code>minLinesBeside: 2</code>, <code>defaultWidth: 0.45</code></td>
-      <td>Text compost al costat d'una imatge o una caixa més estreta que la columna (<code>placement.wrap</code>, el <code>wrap</code> d'una caixa): <code>gap</code>, l'espai entre l'element i el text (una línia del cos si no s'indica); <code>minTextWidth</code>, la mesura més estreta que pot tenir el text del costat, una longitud o una part de la columna (més estreta: l'element ocupa la banda sencera, amb un avís <code>textWrap</code>); <code>minLinesBeside</code>, el mínim de línies que val la pena compondre al costat; <code>defaultWidth</code>, la part de la columna que ocupa un element ajustat sense <code>width</code> propi. Vegeu <a href="/ca/docs/document-format#ajust-del-text">Format del document › Ajust del text</a>. Des de postext 1.24.</td>
+      <td>Text compost al costat d'una imatge o una caixa més estreta que la columna (<code>placement.wrap</code>, el <code>wrap</code> d'una caixa): <code>gap</code>, l'espai entre l'element i el text (una línia del cos si no s'indica); <code>minTextWidth</code>, la mesura més estreta que pot tenir el text del costat, una longitud o una part de la columna (més estreta: l'element ocupa la banda sencera, amb un avís <code>textWrap</code>); <code>minLinesBeside</code>, el mínim de línies que val la pena compondre al costat; <code>defaultWidth</code>, la part de la columna que ocupa un element ajustat sense <code>width</code> propi. Vegeu <a href="/ca/docs/document-format-resources#ajust-del-text">Format del document › Ajust del text</a>. Des de postext 1.24.</td>
     </tr>
     <tr>
       <td><code>floatsAtCitingPage</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>El valor per defecte de <code>placement.citingPage</code>: un flotant <code>'top'</code> o <code>'auto'</code> pot ocupar el capdamunt de la pàgina (un flotant a l'amplada de la pàgina) o de la columna (un flotant de columna) on cau la línia que el cita per primer cop, en lloc del primer espai lliure després d'aquesta línia; el text que hi ha damunt de la referència baixa sota seu (vegeu <a href="/ca/docs/document-format#collocació">Format del document › Col·locació</a>). La col·locació del recurs i després el <code>defaultPlacement</code> del seu tipus el substitueixen. Des de postext 1.25.</td>
+      <td>El valor per defecte de <code>placement.citingPage</code>: un flotant <code>'top'</code> o <code>'auto'</code> pot ocupar el capdamunt de la pàgina (un flotant a l'amplada de la pàgina) o de la columna (un flotant de columna) on cau la línia que el cita per primer cop, en lloc del primer espai lliure després d'aquesta línia; el text que hi ha damunt de la referència baixa sota seu (vegeu <a href="/ca/docs/document-format-resources#collocació">Format del document › Col·locació</a>). La col·locació del recurs i després el <code>defaultPlacement</code> del seu tipus el substitueixen. Des de postext 1.25.</td>
     </tr>
     <tr>
       <td><code>maxTopFraction</code></td>
@@ -443,13 +443,13 @@ La propietat `layout` controla com s'organitzen les columnes dins de l'àrea de 
       <td><code>inlineResourceGap</code></td>
       <td><code>'around' | 'above'</code></td>
       <td><code>'around'</code></td>
-      <td>On deixa un recurs en línia (<code>placement.position: 'here'</code>, inserit amb <code>::resource</code>) el buit dels flotants, d'una línia. <code>'around'</code> el conserva damunt i sota el recurs, i el text que segueix torna a la retícula de base sota aquest buit; un encapçalament, una llista, un requadre o un altre recurs en línia just després comparteix el buit de sota amb el seu propi espai superior, i s'aplica el més gran dels dos. <code>'above'</code> el conserva només a sobre: el text que segueix el recurs continua a la línia següent de la retícula, per prop que quedi —entre res i una línia—, com fins a postext 1.4. Les configuracions desades per versions anteriors els capítols de les quals insereixen un recurs es llegeixen amb <code>'above'</code>, perquè les seves pàgines no es moguin (vegeu <a href="/ca/docs/configuration-programmatic-usage#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). Una configuració escrita en codi per a la 1.4 conserva l'espai antic si hi posa ella mateixa <code>'above'</code>, o si passa per <code>pinLegacyInlineGap</code>, de <code>postext/bundle</code>.</td>
+      <td>On deixa un recurs en línia (<code>placement.position: 'here'</code>, inserit amb <code>::resource</code>) el buit dels flotants, d'una línia. <code>'around'</code> el conserva damunt i sota el recurs, i el text que segueix torna a la retícula de base sota aquest buit; un encapçalament, una llista, un requadre o un altre recurs en línia just després comparteix el buit de sota amb el seu propi espai superior, i s'aplica el més gran dels dos. <code>'above'</code> el conserva només a sobre: el text que segueix el recurs continua a la línia següent de la retícula, per prop que quedi —entre res i una línia—, com fins a postext 1.4. Les configuracions desades per versions anteriors els capítols de les quals insereixen un recurs es llegeixen amb <code>'above'</code>, perquè les seves pàgines no es moguin (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). Una configuració escrita en codi per a la 1.4 conserva l'espai antic si hi posa ella mateixa <code>'above'</code>, o si passa per <code>pinLegacyInlineGap</code>, de <code>postext/bundle</code>.</td>
     </tr>
     <tr>
       <td><code>inlineResourceGapInBoxes</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Si un recurs en línia dins d'un requadre (<code>:::callout</code>) conserva el buit que fixa <code>inlineResourceGap</code>, una línia del text del mateix requadre: damunt del recurs i, amb <code>'around'</code>, també a sota, i s'aplica el més gran entre aquest buit i l'espai propi del bloc següent. Al principi o al final del requadre, o d'un fragment d'un requadre partit, ja el separa el farciment i no s'hi afegeix buit. Amb <code>false</code> el recurs queda just sota el text anterior i el text següent just sota el recurs, com fins a postext 1.4. Les configuracions desades per versions anteriors els capítols de les quals insereixen un recurs dins d'un requadre es llegeixen amb <code>false</code> (vegeu <a href="/ca/docs/configuration-programmatic-usage#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>); en codi, <code>pinLegacyBoxResourceGap</code>, de <code>postext/bundle</code>, fa el mateix.</td>
+      <td>Si un recurs en línia dins d'un requadre (<code>:::callout</code>) conserva el buit que fixa <code>inlineResourceGap</code>, una línia del text del mateix requadre: damunt del recurs i, amb <code>'around'</code>, també a sota, i s'aplica el més gran entre aquest buit i l'espai propi del bloc següent. Al principi o al final del requadre, o d'un fragment d'un requadre partit, ja el separa el farciment i no s'hi afegeix buit. Amb <code>false</code> el recurs queda just sota el text anterior i el text següent just sota el recurs, com fins a postext 1.4. Les configuracions desades per versions anteriors els capítols de les quals insereixen un recurs dins d'un requadre es llegeixen amb <code>false</code> (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>); en codi, <code>pinLegacyBoxResourceGap</code>, de <code>postext/bundle</code>, fa el mateix.</td>
     </tr>
     <tr>
       <td><code>inlineCaptionSide</code></td>
@@ -461,13 +461,13 @@ La propietat `layout` controla com s'organitzen les columnes dins de l'àrea de 
       <td><code>boxChildSplitMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>
-      <td>Mínim de línies d'un paràgraf o d'un element de llista que deixa a cada costat un tall dins seu quan una caixa es parteix (<code>splitMinLines</code>, a <a href="/ca/docs/configuration-styles#estils-davís">Estils d'avís</a>, continua comptant totes les línies de la caixa a cada costat del tall). Un nombre enter, com a mínim 1. Amb el valor per defecte, un tall no deixa mai una línia sola d'un paràgraf o element al peu d'una columna ni al principi de la següent; si el <code>splitMinLines</code> de l'estil de la caixa és més petit, mana aquest. Amb <code>1</code> un tall pot deixar una línia del paràgraf o element a un costat, com fins a postext 1.4. Les configuracions desades per versions anteriors els capítols de les quals tenen algun <code>:::callout</code> es llegeixen amb <code>1</code> (vegeu <a href="/ca/docs/configuration-programmatic-usage#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>); en codi, <code>pinLegacyBoxChildCut</code>, de <code>postext/bundle</code>, fa el mateix.</td>
+      <td>Mínim de línies d'un paràgraf o d'un element de llista que deixa a cada costat un tall dins seu quan una caixa es parteix (<code>splitMinLines</code>, a <a href="/ca/docs/configuration-callouts#estils-davís">Estils d'avís</a>, continua comptant totes les línies de la caixa a cada costat del tall). Un nombre enter, com a mínim 1. Amb el valor per defecte, un tall no deixa mai una línia sola d'un paràgraf o element al peu d'una columna ni al principi de la següent; si el <code>splitMinLines</code> de l'estil de la caixa és més petit, mana aquest. Amb <code>1</code> un tall pot deixar una línia del paràgraf o element a un costat, com fins a postext 1.4. Les configuracions desades per versions anteriors els capítols de les quals tenen algun <code>:::callout</code> es llegeixen amb <code>1</code> (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>); en codi, <code>pinLegacyBoxChildCut</code>, de <code>postext/bundle</code>, fa el mateix.</td>
     </tr>
     <tr>
       <td><code>flowColumns</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Una tanca <code>:::columns</code> fora d'un requadre compon els seus blocs en subcolumnes de la columna de text (o a tota l'amplada de la pàgina amb <code>span="page"</code>), i un grup, en un requadre o al text, es talla entre les seves subcolumnes quan no hi cap i continua a la columna o la pàgina següent (vegeu <a href="/ca/docs/document-format#columns">Format del document › <code>:::columns</code></a>). Amb <code>false</code> s'ignora la tanca fora d'un requadre i mai no es talla dins d'un grup, com fins a postext 1.24; les configuracions desades per versions anteriors els capítols de les quals tenen alguna tanca <code>:::columns</code> es llegeixen amb <code>false</code>; en codi, <code>pinLegacyFlowColumns</code>, de <code>postext/bundle</code>, fa el mateix. Una secció amb estil conserva el valor del document. Des de postext 1.25.</td>
+      <td>Una tanca <code>:::columns</code> fora d'un requadre compon els seus blocs en subcolumnes de la columna de text (o a tota l'amplada de la pàgina amb <code>span="page"</code>), i un grup, en un requadre o al text, es talla entre les seves subcolumnes quan no hi cap i continua a la columna o la pàgina següent (vegeu <a href="/ca/docs/document-format-directives#columns">Format del document › <code>:::columns</code></a>). Amb <code>false</code> s'ignora la tanca fora d'un requadre i mai no es talla dins d'un grup, com fins a postext 1.24; les configuracions desades per versions anteriors els capítols de les quals tenen alguna tanca <code>:::columns</code> es llegeixen amb <code>false</code>; en codi, <code>pinLegacyFlowColumns</code>, de <code>postext/bundle</code>, fa el mateix. Una secció amb estil conserva el valor del document. Des de postext 1.25.</td>
     </tr>
     <tr>
       <td><code>floatsUnderOpener</code></td>
@@ -505,7 +505,7 @@ Amb `writingMode: 'vertical-rl'` una pàgina es compon com una pàgina horitzont
 - Les [amplades de la puntuació](/ca/docs/configuration-east-asian#amplades-de-la-puntuació), la [puntuació penjada](/ca/docs/configuration-east-asian#puntuació-penjada) i l'[espai entre xinès i llatí](/ca/docs/configuration-east-asian#espai-entre-xinès-i-llatí) s'apliquen al llarg de la línia vertical igual que en l'horitzontal. El blanc que va davant d'un dibuix queda a sobre i el que va darrere, a sota: un 、 kaiming ocupa mitja cel·la, `」「` es comprimeixen a cel·la i mitja, un parèntesi d'obertura retallat al cap d'una línia comença mitja cel·la més amunt, un 。 penjat queda sota el peu de la seva línia, i l'espai entre xinès i llatí és un quart de quadratí de columna damunt i sota d'una paraula ajaguda. `：；？！` conserven la cel·la sencera en text vertical a totes les regions.
 - La [retícula de caràcters](/ca/docs/configuration-east-asian#retícula-de-caràcters) compta els caràcters al llarg de la línia i les línies a l'amplada de la pàgina: `charsPerLine` fixa el que mesura un pis, `linesPerPage` quantes línies porta una pàgina, i `layoutType: 'double'` dona dos pisos de caràcters sencers amb un espai entre columnes de quadratins sencers entre ells.
 
-Per a qui llegeix la composició: una pàgina vertical porta `VDTPage.flow`. El seu `contentArea`, les seves columnes, blocs, línies, flotants, àrees de notes, banda d'obertura i superposicions de disseny dels blocs són en coordenades del flux; `width`, `height`, `header` i `footer` són al plec. `flowToPage`, `pageToFlow`, `flowRectToPage` i `pageRectToFlow` passen de les unes a les altres, i `verticalOrientation(char, region)` diu com queda un caràcter. `flow.centralBaselines` dona, per família tipogràfica, l'eix sobre el qual la composició ha centrat els caràcters drets: el centre de la tinta de 中, el traç llarg del qual ocupa l'alçada del quadratí (0,38 quadratins sobre la línia de base a Noto Serif i Noto Sans, SC i TC per igual), i que tenen totes les fonts xineses, japoneses i coreanes. Cada línia es centra en aquest eix: la línia de base d'una línia vertical queda, des de la vora de la seva caixa, a la meitat del seu interlineat més la línia de base central de la família (la d'una línia horitzontal, a 0,8 de l'interlineat), així que una columna de caràcters queda al centre del seu pas i un filet traçat entre dues columnes a un pas sencer cau a mig camí entre elles. Un text de disseny vertical es compon igual en les seves pròpies línies. El canvas pinta la pàgina vertical pel seu compte; per pintar la puntuació amb les formes verticals pròpies de la font, un amfitrió al navegador carrega, una vegada per família, una font bessona amb aquestes formes activades: `loadVerticalAlternates(family, faces)`, on `faces` són els orígens de la família (URL o bytes) i els seus descriptors. La bessona només es queda si el navegador aplica la funció al text del canvas (Chrome 140 i posteriors): dibuixa 「（《 amb la bessona i amb una còpia de les mateixes fonts carregada sense la funció, en el pes i l'estil de les fonts rebudes, i es queda amb la bessona quan la tinta és diferent. Una crida posterior amb altres fonts d'una família la bessona de la qual ja és en ús (la negreta després de la rodona) les hi afegeix. El Sandbox ho fa amb totes les famílies d'un document vertical. Sense bessona, els parèntesis es giren sobre el centre del seu quadratí i els signes de pausa i de final de la Xina continental es desplacen dins de la seva cel·la allà on els posen les formes verticals de la font: 、。，． a la cantonada superior dreta (a menys de 0,07 quadratins de les formes verticals de Noto Serif SC) i ！？：； mig quadratí a la dreta i una mica cap amunt (a menys de 0,02). El PDF i l'HTML componen la mateixa pàgina: vegeu [Text vertical al PDF](/ca/docs/configuration-programmatic-usage#text-vertical-en-el-pdf) i la taula d'[En què es diferencia la sortida HTML del canvas i del PDF](/ca/docs/configuration-programmatic-usage#en-què-es-diferencia-la-sortida-html-del-canvas-i-del-pdf). Comparats cel·la a cel·la amb HarfBuzz (composició vertical amb `vert`) a Noto Serif TC i SC, tots els caràcters de 「賈雨村」云云，宜乎？故曰！；：、。“引”‘單’…… queden a menys de 0,02 quadratins d'aquest al canvas i al PDF, i a menys de 0,05 a l'HTML (Chrome centra un glif girat al mig de l'ascendent i el descendent de la font, que a Noto queda 0,05 quadratins per sobre del centre del quadratí). `flow.dashAdvances` dona, per família, l'avanç horitzontal en quadratins de cada guió que la pàgina estira fins a omplir la seva cel·la (— – ― ⸺ ⸻ －), per a qui pinta sense mètriques de font pròpies: l'HTML estira el guió amb aquest valor, com el canvas i el PDF ho fan amb les seves. Les capçaleres i els folis també poden anar en vertical: vegeu [Elements de text verticals](#elements-de-text-verticals).
+Per a qui llegeix la composició: una pàgina vertical porta `VDTPage.flow`. El seu `contentArea`, les seves columnes, blocs, línies, flotants, àrees de notes, banda d'obertura i superposicions de disseny dels blocs són en coordenades del flux; `width`, `height`, `header` i `footer` són al plec. `flowToPage`, `pageToFlow`, `flowRectToPage` i `pageRectToFlow` passen de les unes a les altres, i `verticalOrientation(char, region)` diu com queda un caràcter. `flow.centralBaselines` dona, per família tipogràfica, l'eix sobre el qual la composició ha centrat els caràcters drets: el centre de la tinta de 中, el traç llarg del qual ocupa l'alçada del quadratí (0,38 quadratins sobre la línia de base a Noto Serif i Noto Sans, SC i TC per igual), i que tenen totes les fonts xineses, japoneses i coreanes. Cada línia es centra en aquest eix: la línia de base d'una línia vertical queda, des de la vora de la seva caixa, a la meitat del seu interlineat més la línia de base central de la família (la d'una línia horitzontal, a 0,8 de l'interlineat), així que una columna de caràcters queda al centre del seu pas i un filet traçat entre dues columnes a un pas sencer cau a mig camí entre elles. Un text de disseny vertical es compon igual en les seves pròpies línies. El canvas pinta la pàgina vertical pel seu compte; per pintar la puntuació amb les formes verticals pròpies de la font, un amfitrió al navegador carrega, una vegada per família, una font bessona amb aquestes formes activades: `loadVerticalAlternates(family, faces)`, on `faces` són els orígens de la família (URL o bytes) i els seus descriptors. La bessona només es queda si el navegador aplica la funció al text del canvas (Chrome 140 i posteriors): dibuixa 「（《 amb la bessona i amb una còpia de les mateixes fonts carregada sense la funció, en el pes i l'estil de les fonts rebudes, i es queda amb la bessona quan la tinta és diferent. Una crida posterior amb altres fonts d'una família la bessona de la qual ja és en ús (la negreta després de la rodona) les hi afegeix. El Sandbox ho fa amb totes les famílies d'un document vertical. Sense bessona, els parèntesis es giren sobre el centre del seu quadratí i els signes de pausa i de final de la Xina continental es desplacen dins de la seva cel·la allà on els posen les formes verticals de la font: 、。，． a la cantonada superior dreta (a menys de 0,07 quadratins de les formes verticals de Noto Serif SC) i ！？：； mig quadratí a la dreta i una mica cap amunt (a menys de 0,02). El PDF i l'HTML componen la mateixa pàgina: vegeu [Text vertical al PDF](/ca/docs/configuration-pdf-output#text-vertical-en-el-pdf) i la taula d'[En què es diferencia la sortida HTML del canvas i del PDF](/ca/docs/configuration-html-folio-epub#en-què-es-diferencia-la-sortida-html-del-canvas-i-del-pdf). Comparats cel·la a cel·la amb HarfBuzz (composició vertical amb `vert`) a Noto Serif TC i SC, tots els caràcters de 「賈雨村」云云，宜乎？故曰！；：、。“引”‘單’…… queden a menys de 0,02 quadratins d'aquest al canvas i al PDF, i a menys de 0,05 a l'HTML (Chrome centra un glif girat al mig de l'ascendent i el descendent de la font, que a Noto queda 0,05 quadratins per sobre del centre del quadratí). `flow.dashAdvances` dona, per família, l'avanç horitzontal en quadratins de cada guió que la pàgina estira fins a omplir la seva cel·la (— – ― ⸺ ⸻ －), per a qui pinta sense mètriques de font pròpies: l'HTML estira el guió amb aquest valor, com el canvas i el PDF ho fan amb les seves. Les capçaleres i els folis també poden anar en vertical: vegeu [Elements de text verticals](/ca/docs/configuration-headers-footers#elements-de-text-verticals).
 
 ### Filet de columna
 
@@ -552,701 +552,8 @@ Un estil d'encapçalament pot fixar el seu propi filet al seu `layout` (vegeu [E
 
 - **`'double'`** — Dues columnes d'igual amplada. La disposició editorial clàssica — manté l'amplada de línia en el rang òptim de 40–50 caràcters per a una lectura còmoda.
 
-- **`'oneAndHalf'`** — Una disposició asimètrica amb una columna principal i una columna lateral més estreta. La columna lateral (controlada per `sideColumnPercent`) és ideal per a notes al marge, figures petites o contingut complementari. Els valors entre el 25–40% funcionen bé, i un canal estret per numerar línies o posar marques al marge ocupa al voltant del 10–15%. La columna lateral ocupa el `sideColumnPercent` % de l'amplada de l'àrea de contingut i la principal, el que queda després de l'espai entre columnes — així, amb el 50% la lateral és un espai entre columnes més ampla que la principal. Qualsevol valor es compon tal qual mentre les dues columnes conservin com a mínim l'1% de l'amplada de l'àrea de contingut; un que en deixaria alguna més estreta — 0 o menys, o un de tan gran que la principal desapareix després de l'espai entre columnes — s'ajusta al valor més proper que respecti totes dues, i un valor que no és un nombre pren el valor per defecte, 33. Els `configWarnings` del document porten llavors `{ kind: 'sideColumnPercentClamped', path: 'layout.sideColumnPercent', value, used }` — la ruta del `layout` propi d'un estil d'encapçalament anomena l'estil, com a `headingStyles[2].layout.sideColumnPercent`, i es mesura amb els marges d'aquest estil —, que el Sandbox mostra al tauler **Revisió**; `collectConfigWarnings(config)` retorna la mateixa llista sense compondre res. Una disposició que no és `'oneAndHalf'` no llegeix el valor, i tampoc no n'avisa. Amb `sideColumnRole: 'floats'` el text corregut no entra mai a la columna lateral: es converteix en un canal per a les figures, taules i requadres col·locats amb `span: 'side'`. Una figura o taula lateral s'apila des del cap del canal a la pàgina que la cita per primer cop: la figura marginal d'un llibre de text queda a dalt de tot de la seva pàgina encara que el text la citi més avall, i si no cap en el que queda del canal espera al de la pàgina següent. Un requadre lateral s'apila al costat del text que interromp; si la resta del canal no el pot allotjar allà, puja a la posició més baixa on hi cap (el seu peu al peu del canal) o espera a la pàgina següent. Quan el text que segueix la tanca d'un requadre continua a la pàgina següent (la columna és plena, o les regles de tall porten aquest text més enllà), el requadre es queda a la seva tanca, al costat del text anterior; un estil amb `sideAtColumnEnd: 'after'` el posa en canvi a l'altura de la primera línia del text que segueix la tanca, al canal de la pàgina següent, com necessiten els números de línia i els titolets marginals escrits abans de la seva línia. Un element del disseny d'un encapçalament que cau al canal —un numeral de capítol ancorat al marge exterior— també queda fora de la pila (vegeu [Alçada reservada](/ca/docs/configuration-text#alçada-reservada)). Els flotants i requadres `span: 'page'` continuen creuant totes dues columnes, i un flotant de columna amb `placement.captionSide` posa el seu peu al canal, a l'altura de la figura. Combinada amb marges emmirallats i `sideColumnSide: 'outer'`, el canal queda a la vora exterior de cada pàgina — la columna marginal d'un manual. Des de postext 1.28 una figura o taula posada en el text (`position: 'here'`) amb `captionSide` porta també el seu peu al canal (`inlineCaptionSide`).
+- **`'oneAndHalf'`** — Una disposició asimètrica amb una columna principal i una columna lateral més estreta. La columna lateral (controlada per `sideColumnPercent`) és ideal per a notes al marge, figures petites o contingut complementari. Els valors entre el 25–40% funcionen bé, i un canal estret per numerar línies o posar marques al marge ocupa al voltant del 10–15%. La columna lateral ocupa el `sideColumnPercent` % de l'amplada de l'àrea de contingut i la principal, el que queda després de l'espai entre columnes — així, amb el 50% la lateral és un espai entre columnes més ampla que la principal. Qualsevol valor es compon tal qual mentre les dues columnes conservin com a mínim l'1% de l'amplada de l'àrea de contingut; un que en deixaria alguna més estreta — 0 o menys, o un de tan gran que la principal desapareix després de l'espai entre columnes — s'ajusta al valor més proper que respecti totes dues, i un valor que no és un nombre pren el valor per defecte, 33. Els `configWarnings` del document porten llavors `{ kind: 'sideColumnPercentClamped', path: 'layout.sideColumnPercent', value, used }` — la ruta del `layout` propi d'un estil d'encapçalament anomena l'estil, com a `headingStyles[2].layout.sideColumnPercent`, i es mesura amb els marges d'aquest estil —, que el Sandbox mostra al tauler **Revisió**; `collectConfigWarnings(config)` retorna la mateixa llista sense compondre res. Una disposició que no és `'oneAndHalf'` no llegeix el valor, i tampoc no n'avisa. Amb `sideColumnRole: 'floats'` el text corregut no entra mai a la columna lateral: es converteix en un canal per a les figures, taules i requadres col·locats amb `span: 'side'`. Una figura o taula lateral s'apila des del cap del canal a la pàgina que la cita per primer cop: la figura marginal d'un llibre de text queda a dalt de tot de la seva pàgina encara que el text la citi més avall, i si no cap en el que queda del canal espera al de la pàgina següent. Un requadre lateral s'apila al costat del text que interromp; si la resta del canal no el pot allotjar allà, puja a la posició més baixa on hi cap (el seu peu al peu del canal) o espera a la pàgina següent. Quan el text que segueix la tanca d'un requadre continua a la pàgina següent (la columna és plena, o les regles de tall porten aquest text més enllà), el requadre es queda a la seva tanca, al costat del text anterior; un estil amb `sideAtColumnEnd: 'after'` el posa en canvi a l'altura de la primera línia del text que segueix la tanca, al canal de la pàgina següent, com necessiten els números de línia i els titolets marginals escrits abans de la seva línia. Un element del disseny d'un encapçalament que cau al canal —un numeral de capítol ancorat al marge exterior— també queda fora de la pila (vegeu [Alçada reservada](/ca/docs/configuration-headings#alçada-reservada)). Els flotants i requadres `span: 'page'` continuen creuant totes dues columnes, i un flotant de columna amb `placement.captionSide` posa el seu peu al canal, a l'altura de la figura. Combinada amb marges emmirallats i `sideColumnSide: 'outer'`, el canal queda a la vora exterior de cada pàgina — la columna marginal d'un manual. Des de postext 1.28 una figura o taula posada en el text (`position: 'here'`) amb `captionSide` porta també el seu peu al canal (`inlineCaptionSide`).
 
 - **`'multiple'`** — De tres a vuit columnes iguals, tantes com digui `columnCount` (3 per defecte): la retícula dels diaris i de moltes revistes (des de postext 1.18). Cada columna fa `(amplada del contingut − (n − 1) × gutterWidth) / n`. El text passa d'una columna a la següent com en una disposició a dues columnes; el filet es dibuixa a cada espai entre columnes, l'equilibri de columnes les iguala totes a l'última pàgina d'un capítol i abans d'una caixa a tota l'amplada, les notes al peu funcionen a cada columna, i les figures, caixes i encapçalaments a tota l'amplada creuen la pàgina sencera. Una figura o una caixa flotant pot ocupar només algunes columnes: `placement.columns` (vegeu [Tipus de recurs](/ca/docs/configuration-resources#tipus-de-recurs)) i el `columns` d'un estil de requadre. Un `columnCount` fora de 3–8, o que no és enter, s'arrodoneix i s'ajusta al nombre vàlid més proper (un valor que no és un nombre pren 3), i els `configWarnings` del document porten `{ kind: 'columnCountClamped', path: 'layout.columnCount', value, used }` (el camí del `layout` propi d'un estil d'encapçalament anomena l'estil, com a `headingStyles[1].layout.columnCount`). Una disposició d'un altre tipus no llegeix mai el valor. Un estil d'encapçalament amb un `layout` `'multiple'` pren el `columnCount` del document llevat que en fixi un de propi, de manera que un diari a cinc columnes pot compondre les pàgines d'opinió a quatre.
 
 
-## Capçaleres i peus
-
-Les propietats `header` i `footer` controlen els blocs de capçalera i peu de pàgina. Les capçaleres i els peus es dibuixen **dins dels marges de pàgina existents** — no reserven espai addicional ni redueixen l'àrea de contingut.
-
-**Marc del contenidor.** Un element ancorat a `'container'` es col·loca a la franja de marge entre el cos i la vora de tall, amb l'amplada de l'àrea de contingut. El contenidor de la capçalera va des de la **vora superior de tall** fins a la part superior del cos; el del peu, des de la part inferior del cos fins a la **vora inferior de tall**. Així, els ancoratges `top-*` de la capçalera i `bottom-*` del peu es mesuren des de la vora de tall, mentre que els `bottom-*` de la capçalera i `top-*` del peu es mesuren des de la vora del cos. El contenidor no inclou mai la zona de sang ni la franja de les marques de tall, de manera que una capçalera o un peu queda a la mateixa posició a la pàgina tallada tant si `page.cutLines` està activat com si no. Ancora a `'page'` (la caixa de tall) o a `'bleed'` per sortir de l'amplada de l'àrea de contingut o arribar a la zona de sang.
-
-Els blocs utilitzen el model unificat de **ranura de disseny**: cada element defineix un `placement` amb un `anchor` (al contenidor o a un altre element per `#id`), un `offset` opcional i un `size` opcional. Els camps plans heretats `align`, `marginFromBody`, `marginFromEdge` i `width: 'full'` continuen acceptant-se com a entrada i es migren automàticament al format nou; a sota es documenta l'equivalència.
-
-Cada bloc conté una llista d'elements de **text**, **línia** (`rule`) i **caixa** (`box`). L'ordre de l'array és l'ordre de pintura (el primer element es pinta primer, l'últim es pinta a sobre). Això es compleix siguin quins siguin els ancoratges: un element es pot ancorar a un altre que apareix després a la llista (`anchor.to: '#ttl'`), de manera que una caixa de fons pot anar primer i col·locar-se respecte al text que es pinta a sobre seu.
-
-**Valors per defecte inclosos.** Quan `header` o `footer` són `undefined`, postext aplica un valor per defecte raonable en lloc d'un bloc buit:
-
-- **Capçalera per defecte:** `{title}` alineat a la dreta a les pàgines senars, `{chapterTitle}` alineat a l'esquerra a les pàgines parelles i una línia a tota l'amplada — tots en el color principal de la paleta, Open Sans 8pt/600, `marginFromBody` `16pt` (text) / `13pt` (línia).
-- **Peu per defecte:** `{pageNumber}` centrat a totes les pàgines en el color principal de la paleta, Open Sans 8pt/600, `marginFromBody` `16pt`.
-
-Per renunciar als valors per defecte, estableix `header: { elements: [] }` (o `footer: { elements: [] }`). Un array `elements` buit explícit es conserva com a «sense elements» — només `undefined` activa els valors per defecte.
-
-<table>
-  <thead>
-    <tr>
-      <th>Propietat</th>
-      <th>Tipus</th>
-      <th>Per defecte</th>
-      <th>Descripció</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>elements</code></td>
-      <td><code>HeaderFooterElement[]</code></td>
-      <td>valors per defecte integrats quan és <code>undefined</code>; <code>[]</code> els desactiva</td>
-      <td>Llista ordenada d'elements de text i línia.</td>
-    </tr>
-  </tbody>
-</table>
-### Elements de text
-
-Els elements de text renderitzen una plantilla amb substitució de marcadors. Els marcadors fan servir la sintaxi `{nombre}`; `{{` i `}}` s'emeten com a claus literals.
-
-Els valors per defecte de la taula següent són els d'un element de text que afegeixes tu. La capçalera i el peu integrats descrits a **Valors per defecte inclosos** són elements ja fets amb els seus propis valors (Open Sans 8pt/600 en el color principal de la paleta), no els valors per defecte de l'element.
-
-<table>
-  <thead>
-    <tr>
-      <th>Propietat</th>
-      <th>Tipus</th>
-      <th>Per defecte</th>
-      <th>Descripció</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>kind</code></td>
-      <td><code>'text'</code></td>
-      <td>—</td>
-      <td>Discriminador.</td>
-    </tr>
-    <tr>
-      <td><code>id</code></td>
-      <td><code>string</code></td>
-      <td>—</td>
-      <td>Id estable, únic dins del bloc. Altres elements s'hi ancoren amb <code>anchor.to: '#id'</code>. El sandbox n'assigna un en crear-lo.</td>
-    </tr>
-    <tr>
-      <td><code>content</code></td>
-      <td><code>string</code></td>
-      <td><code>''</code></td>
-      <td>Plantilla. Admet els marcadors que es llisten més avall, a més de <code>{'{attr.<clave>}'}</code> — un atribut escrit a la línia de l'H1 del capítol actual (<code># Título {'{author="I. Zango"}'}</code>). Un atribut absent es resol com a cadena buida sense avís. Un salt de línia —o els dos caràcters <code>\n</code>, escrits a la plantilla o al valor d'un atribut— comença sempre una línia nova, sigui quin sigui l'<code>overflow</code>. El text que un marcador copia del document (un títol, un camp del frontmatter) s'imprimeix tal qual: aquí només un salt de línia real, com el salt d'un títol, comença una línia nova.</td>
-    </tr>
-    <tr>
-      <td><code>align</code></td>
-      <td><code>'left' | 'center' | 'right' | 'justify' | 'start' | 'end'</code></td>
-      <td><code>'center'</code></td>
-      <td>Alineació horitzontal de les línies dins de la caixa de l'element. <code>'justify'</code> eixampla els espais entre paraules de cada línia ajustada, excepte l'última de cada paràgraf, fins que la línia omple la caixa; les línies que acompanyen una caplletra omplen l'espai que queda al seu costat. Amb <code>hyphenate</code>, una paraula que no cap en el que queda d'una línia justificada també es parteix per una síl·laba per omplir-la. L'última línia d'un paràgraf, una línia sense espais per eixamplar i un text que no s'ajusta s'alineen a l'esquerra. El text justificat es compon paràgraf a paràgraf, de manera que diverses línies en blanc entre paràgrafs compten com una. El llenç i el PDF col·loquen cada paraula on la va posar la maquetació; l'HTML eixampla els espais amb <code>word-spacing</code>. <code>'start'</code> i <code>'end'</code> segueixen la <code>direction</code> del text: la dreta i l'esquerra d'un text de dreta a esquerra. <code>'left'</code> i <code>'right'</code> són els costats de la caixa mateixa; en un disseny que es compon en el flux d'una pàgina de dreta a esquerra (una franja d'obertura, el disseny d'un títol) el flux està emmirallat, així que en són l'inici i el final, com al text general.</td>
-    </tr>
-    <tr>
-      <td><code>direction</code></td>
-      <td><code>'ltr' | 'rtl' | 'auto'</code></td>
-      <td>la del document</td>
-      <td>Direcció base del text: on van els seus caràcters neutres, l'ordre dels seus trams en una línia i quins costats volen dir <code>'start'</code> i <code>'end'</code>. <code>'auto'</code> llegeix la primera lletra forta del text resolt i, si no n'hi ha, pren la <a href="/ca/docs/configuration-text#direcció-del-text"><code>direction</code></a> del document. Els trams en àrab o hebreu es llegeixen de dreta a esquerra sigui quina sigui la base. Un text que conté una lletra àrab no s'espaia mai (s'ignora tot el seu <code>letterSpacing</code>) i les seves paraules no es tallen en ajustar ni en truncar; una paraula més ampla que la caixa la desborda i s'avisa com a <code>unbreakableWordOverflow</code>.</td>
-    </tr>
-    <tr>
-      <td><code>parity</code></td>
-      <td><code>'all' | 'odd' | 'even'</code></td>
-      <td><code>'all'</code></td>
-      <td>En quines pàgines apareix l'element (paritat per número de pàgina: la pàgina 1 és senar).</td>
-    </tr>
-    <tr>
-      <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
-      <td><code>'all'</code></td>
-      <td>En quins <em>rols</em> de pàgina apareix l'element, combinat amb <code>parity</code>. Després de la col·locació cada pàgina es classifica com a <code>'blank'</code> (farciment de paritat o separador, o sense contingut), <code>'part'</code> (pàgina divisòria de part), <code>'opener'</code> (el seu primer bloc és un encapçalament el nivell del qual abasta la pàgina o força un salt de pàgina abans — la primera pàgina d'un capítol) o <code>'body'</code> (la resta). <code>pages: 'body'</code> amaga una capçalera corrent a les obertures de capítol; <code>pages: 'opener'</code> mostra un foli només allà.</td>
-    </tr>
-    <tr>
-      <td><code>fontFamily</code></td>
-      <td><code>string</code></td>
-      <td><code>'EB Garamond'</code></td>
-      <td>Família tipogràfica.</td>
-    </tr>
-    <tr>
-      <td><code>fontSize</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>8 pt</code></td>
-      <td>Mida de la font.</td>
-    </tr>
-    <tr>
-      <td><code>fontWeight</code></td>
-      <td><code>number</code></td>
-      <td><code>400</code></td>
-      <td>Gruix de la font (100–900).</td>
-    </tr>
-    <tr>
-      <td><code>italic</code></td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-      <td>Si es renderitza en cursiva.</td>
-    </tr>
-    <tr>
-      <td><code>color</code></td>
-      <td><code>ColorValue</code></td>
-      <td><code>#000000</code></td>
-      <td>Color del text.</td>
-    </tr>
-    <tr>
-      <td><code>overflow</code></td>
-      <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td><code>'wrap'</code> en dissenys de títol i de part; si no, <code>'ellipsis-end'</code></td>
-      <td>Com es gestiona el text que excedeix l'amplada disponible de l'element. <code>'wrap'</code> divideix el text en diverses línies; les variants d'el·lipsi mantenen cada línia en una de sola i la trunquen amb <code>…</code> al principi, al centre o al final; <code>'clip'</code> retalla de manera estricta al rectangle de l'element sense inserir cap caràcter. Els salts de línia del contingut valen en tots els modes: l'el·lipsi i el retall s'apliquen a cada línia per separat. Un element que omet <code>overflow</code> pren el valor per defecte del seu buit: en un disseny de títol (<code>advancedDesign.slot</code>) o en una pàgina de part (<code>parts.design</code>, <code>parts.versoDesign</code>) passa de línia; en una capçalera, un foli o una fila de part de l'índex (<code>toc.parts.design</code>, una fila d'alçada fixa) acaba en <code>…</code>. Fes servir <code>'wrap'</code> en una capçalera que pugui ocupar diverses línies (una adreça), o una el·lipsi en una entradeta que s'hagi de quedar en una línia dins d'una obertura. Una línia tallada amb el·lipsi, o retallada amb tinta fora de la caixa, s'avisa amb l'avís de contingut <code>designTextTruncated</code>, una vegada per element i pàgina (una capçalera o un foli, una vegada per element i capítol). Una configuració desada abans de postext 1.24 (<code>configVersion</code> 9 o anterior) es llegeix amb <code>'ellipsis-end'</code> a cada text de títol o de part que no el fixa, perquè les seves pàgines no es moguin. Un text amb <code>dropCap</code> passa a línia nova digui el que digui aquest valor; amb <code>'clip'</code> les seves línies es continuen tallant a la vora d'una caixa d'alçada fixa. <code>'ellipsis-end'</code> i <code>'ellipsis-start'</code> tallen per un límit de paraula —<em>La història de la…</em>, no <em>La història de la na…</em>—, i cap espai ni signe d'enllaç (coma, dos punts, guió llarg, barra, parèntesi d'obertura) no queda al costat de l'el·lipsi. Només es talla una paraula per on calgui quan el límit, suprimits aquests signes, conservaria menys de la meitat del que hi cap: una paraula llarga o un URL (<em>http://exampl…</em>, no <em>http…</em>). Un espai de no separació o un guionet de no separació (U+2011, com en <em>MS‑DOS</em>) no és un límit de paraula; <code>'ellipsis-middle'</code> talla en qualsevol punt, però suprimeix els espais que l'envolten. Fins a postext 1.4 tots els modes tallaven a l'últim caràcter que hi cabia, espais inclosos.</td>
-    </tr>
-    <tr>
-      <td><code>verticalAlign</code></td>
-      <td><code>'top' | 'middle' | 'bottom'</code></td>
-      <td><code>'middle'</code></td>
-      <td>On se situa el text dins d'una caixa més alta que les seves línies — un <code>placement.size.height</code> fix, o una caixa estirada per un veí ancorat. Si les línies són més altes que la caixa (una xifra gran en una caixa d'alçada fixa, un <code>lineHeight</code> estret), sobresurten pel costat que l'alineació deixa lliure, com a l'alineació flex de CSS: <code>'bottom'</code> manté el peu de la caixa de l'última línia sobre el peu de la caixa i sobresurt per dalt, <code>'middle'</code> sobresurt el mateix pels dos extrems i <code>'top'</code> pel peu. Fins a postext 1.4 aquestes línies penjaven sempre de la part superior, fos quina fos l'alineació. La caplletra (<code>dropCap</code>) es mou amb les seves línies (fins a postext 1.4 es quedava a dalt en una caixa on <code>'middle'</code> o <code>'bottom'</code> les baixaven).</td>
-    </tr>
-    <tr>
-      <td><code>lineHeight</code></td>
-      <td><code>number | Dimension</code></td>
-      <td><code>1.2</code></td>
-      <td>Interlineat de les línies de l'element. Un nombre és un múltiple de <code>fontSize</code>. També s'accepta un <code>Dimension</code>, com s'escriuen tots els altres interlineats de la configuració: <code>em</code> / <code>rem</code> és el mateix múltiple, i una longitud absoluta (<code>pt</code>, <code>mm</code>, <code>px</code>…) és la distància entre línies de base: <code>{"{ value: 15.5, unit: 'pt' }"}</code> fixa un interlineat de 15,5 pt sigui quin sigui el cos. Qualsevol altre valor (zero, un nombre negatiu, una dimensió mal formada) pren el valor per defecte. Fins a postext 1.4 un <code>Dimension</code> aquí feia impossible mesurar l'alçada del disseny: una obertura no reservava llavors cap espai, ni tan sols el seu <code>minHeight</code>, i el cos corria per sota del títol.</td>
-    </tr>
-    <tr>
-      <td><code>letterSpacing</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0</code></td>
-      <td>Tracking: espai addicional que avança després de cada caràcter, espais inclosos, exactament com el <code>letter-spacing</code> de CSS. Les mesures creixen amb ell, de manera que una caixa d'amplada automàtica continua ajustada. No canvia mai els glifs: les lligadures del tipus es conserven a canvas, HTML, EPUB i PDF (fins a postext 1.27 canvas i HTML les perdien en el text de disseny amb tracking, que quedava més ample del que s'havia mesurat). Un tram en hebreu porta tracking com el text llatí; només un text amb lletres àrabs no en porta. El tracking que segueix l'últim caràcter d'una línia no compta per a la seva alineació ni per a una caixa d'amplada automàtica, així que un títol espaiat i centrat queda centrat sobre les seves lletres, un d'alineat a la dreta acaba a la vora i l'última lletra d'una línia justificada arriba a la vora (fins a postext 1.4 quedaven mig espai de tracking, o un de sencer, a l'esquerra, i un element ancorat a la dreta d'un d'espaiat quedava un espai de tracking més lluny). Un valor negatiu estreny les lletres —un títol de 36 pt sol portar <code>&#123; value: -0.3, unit: 'pt' &#125;</code>— i les mesures es redueixen igual; canvas, HTML i PDF el pinten igual (fins a postext 1.4 un valor negatiu es componia com a <code>0</code>, sense avís).</td>
-    </tr>
-    <tr>
-      <td><code>textTransform</code></td>
-      <td><code>'none' | 'uppercase'</code></td>
-      <td><code>'none'</code></td>
-      <td>Transformació de majúscules aplicada al text resolt, marcadors inclosos — el títol d'una part en versals a l'índex.</td>
-    </tr>
-    <tr>
-      <td><code>box</code></td>
-      <td><code>ElementBoxStyle</code></td>
-      <td>—</td>
-      <td>Fons i vora opcionals dibuixats darrere del text: <code>backgroundColor</code>, <code>borderColor</code>, <code>borderWidth</code>, <code>borderRadius</code> i un <code>padding</code> per costat que amplia la caixa més enllà del text (vegeu <a href="#elements-de-caixa">Elements de caixa</a> per als camps).</td>
-    </tr>
-    <tr>
-      <td><code>dropCap</code></td>
-      <td><code>&#123; lines, fontFamily, fontWeight, fontSize, color, gap &#125;</code></td>
-      <td>—</td>
-      <td>Caplletra: la primera lletra, gran, al costat de les primeres <code>lines</code> línies (2 per defecte), amb la seva pròpia font, gruix i color, i a <code>gap</code> del text. La lletra s'assenta a la línia de base de l'última línia que abasta, i <code>fontSize</code> val per defecte la mida que enrasa la seva part alta amb les majúscules de la primera línia: el cos del text més <code>lines</code> − 1 interlineats, prenent l'alçada de les majúscules com a 0,72 del cos (una font amb majúscules molt més altes o més baixes demana el seu propi <code>fontSize</code>). Un text amb caplletra s'ajusta a línies noves sigui quin sigui el seu <code>overflow</code>; amb <code>'clip'</code> les seves línies es continuen tallant a la vora d'una caixa d'alçada fixa. Un <code>color</code> enllaçat a la paleta segueix les paletes de la part i de la secció, com la resta del disseny. En el disseny d'un encapçalament, la lletra no reserva espai per sota del text: la part de la seva caixa de línia que queda sota la seva línia de base no empeny el cos cap avall. Una lletra que baixa de la seva línia de base (la Q o la J de moltes fonts) pot llavors entrar en l'espai que hi ha sota el disseny: dona a l'encapçalament un <code>marginBottom</code> per a ella. Fins a postext 1.4, la mida per defecte feia la lletra tan alta com totes les caixes de línia que abasta, de manera que sobresortia per damunt de la primera línia; qualsevol <code>overflow</code> diferent de <code>'wrap'</code> treia la lletra sense avisar; la paleta d'una secció o d'una part no en canviava el color; i una lletra tan profunda com el text del seu costat podia baixar el cos una línia de la retícula. Les configuracions desades abans conserven la mida de la 1.4, escrita com a <code>fontSize</code> (vegeu <a href="/ca/docs/configuration-programmatic-usage#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). La caplletra del text corrent es fixa en canvi des dels estils de paràgraf i d'encapçalament (vegeu <a href="/ca/docs/configuration-text#caplletres">Caplletres</a>), amb les alçades de les majúscules mesurades a les fonts.</td>
-    </tr>
-    <tr>
-      <td><code>paragraphIndent</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0</code></td>
-      <td>Sagnat de primera línia de cada paràgraf a partir del segon. Un salt de línia en el contingut —o els dos caràcters <code>\n</code>, en un text que ve d'un atribut— separa paràgrafs; diversos salts seguits compten com un.</td>
-    </tr>
-    <tr>
-      <td><code>hyphenate</code></td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-      <td>Quan és <code>true</code> i el text passa a línia nova (<code>overflow: 'wrap'</code>, o un <code>dropCap</code>, que sempre ho fa), les paraules llargues que encara excedirien l'amplada després d'un salt de línia normal es divideixen en límits sil·làbics (fent servir la llengua de partició de mots activa del document) inserint un guionet tou al tall. En un text justificat (<code>align: 'justify'</code>), una paraula que no cap en el que queda d'una línia també es parteix per la seva última divisió sil·làbica que hi càpiga, per omplir la línia.</td>
-    </tr>
-    <tr>
-      <td><code>inlineMarks</code></td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-      <td>Llegeix el text resolt —amb els valors dels marcadors— com a Markdown en línia: <code>**negrita**</code>, <code>*cursiva*</code>, <code>^superíndice^</code>, <code>~subíndice~</code>. Desactivat, els signes de marca s'imprimeixen tal qual. En el disseny d'un encapçalament, <code>{'{titleText}'}</code> conserva llavors els trams del mateix encapçalament en negreta, en cursiva, en superíndex i en subíndex (<code>*Pneumocystis*</code>, <code>CO~2~</code>), amb la resta de caràcters escapats perquè s'imprimeixin tal qual (des de postext 1.19). Vegeu <a href="#marques-en-línia-i-contorns">Marques en línia i contorns</a>.</td>
-    </tr>
-    <tr>
-      <td><code>stroke</code></td>
-      <td><code>&#123; width, color?, hollow? &#125;</code></td>
-      <td>—</td>
-      <td>Contorn traçat al voltant de les lletres: <code>width</code> (un <code>Dimension</code>, centrat a les vores dels glifs), <code>color</code> (per defecte, el del text; la caplletra pren el seu propi color) i <code>hollow</code> (<code>true</code> pinta només el contorn). Vegeu <a href="#marques-en-línia-i-contorns">Marques en línia i contorns</a>.</td>
-    </tr>
-    <tr>
-      <td><code>writingMode</code></td>
-      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
-      <td><code>'horizontal-tb'</code></td>
-      <td><code>'vertical-rl'</code> compon el text de dalt a baix, les línies de dreta a esquerra i els caràcters drets: una capçalera pel marge exterior, un títol vertical al costat d'un capítol horitzontal. Vegeu <a href="#elements-de-text-verticals">Elements de text verticals</a>.</td>
-    </tr>
-    <tr>
-      <td><code>reserve</code></td>
-      <td><code>boolean</code></td>
-      <td><code>true</code></td>
-      <td>Només en dissenys d'encapçalament: si l'element compta per a l'alçada que l'encapçalament reserva en el flux del text. <code>false</code> per a la decoració que pot quedar sota el text (un segell al peu de la pàgina, un marc, una banda lateral). Vegeu <a href="/ca/docs/configuration-text#alçada-reservada">Alçada reservada</a>. Les capçaleres i peus de pàgina i els dissenys de part l'ignoren.</td>
-    </tr>
-    <tr>
-      <td><code>marginFromBody</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>6 pt</code></td>
-      <td>Distància absoluta entre la vora de l'element que mira cap al cos i la vora del cos. Independent d'altres elements. Migrat a <code>placement.offset.y</code>.</td>
-    </tr>
-    <tr>
-      <td><code>marginFromEdge</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0 pt</code></td>
-      <td>Desplaçament horitzontal respecte a la vora a la qual està alineat. Només s'aplica quan <code>align</code> és <code>'left'</code> o <code>'right'</code>. Migrat a <code>placement.offset.x</code>.</td>
-    </tr>
-    <tr>
-      <td><code>placement</code></td>
-      <td><code>ElementPlacement</code></td>
-      <td>derivat d'<code>align</code> + <code>marginFromBody</code> + <code>marginFromEdge</code></td>
-      <td>Posicionament avançat (vegeu més avall). Quan es defineix, preval sobre els camps plans heretats.</td>
-    </tr>
-  </tbody>
-</table>
-
-Marcadors disponibles:
-
-- `{pageNumber}` — número de pàgina actual (1-indexed).
-- `{totalPages}` — total de pàgines del document. En un llibre compost capítol a capítol (el Sandbox, `buildBundle`) cada capítol és un document, de manera que és el recompte del mateix capítol.
-- `{bookTotalPages}` — total de pàgines del llibre sencer: tots els capítols, pàgines en blanc incloses. En un document compost tot sol coincideix amb `{totalPages}`. Consulta [Recompte de pàgines del llibre](#recompte-de-pàgines-del-llibre) més avall.
-- `{title}`, `{subtitle}`, `{author}`, `{publishDate}` — valors llegits de `content.metadata`. Les metadades desconegudes o buides es renderitzen com a cadena buida (i generen un avís al sandbox).
-- `{chapterTitle}` — text de l'H1 més recent a la pàgina actual o abans. Se salta un H1 l'[estil d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) del qual fixa `runningChapter: false` (una làmina, un mapa).
-- `{chapterTitleAtTop}`, `{chapterNumberAtTop}` — títol i número del capítol vigent al cap de la pàgina, que no coincideixen amb `{chapterTitle}` i `{chapterNumber}` en una pàgina on un capítol nou comença sota un altre text. Consulta [Capítol al cap de pàgina](#capítol-al-cap-de-pàgina) més avall.
-- `{partTitle}`, `{partNumber}` — títol i número de la part actual (la pàgina `:::part` més recent a la pàgina actual o abans; les pàgines en blanc de paritat just abans d'una pàgina de part ja hi pertanyen). Buits abans de la primera part.
-- `{firstMark.<clave>}`, `{lastMark.<clave>}` — la primera i l'última paraula guia de la pàgina: un títol d'un nivell (`h1`–`h6`) o una entrada d'un estil de paràgraf. Consulta [Paraules guia](#paraules-guia-primera-i-última-marca) més avall.
-
-#### Recompte de pàgines del llibre
-
-`{bookTotalPages}` imprimeix el nombre de pàgines del llibre sencer, el que el lector veu a «pàgina 12 de 348». Compta pàgines físiques, les blanques incloses, com `{totalPages}`, però al llarg de tots els capítols:
-
-- **Un document compost tot sol** (`buildDocument` sense `continuation`) és el llibre sencer: `{bookTotalPages}` coincideix amb `{totalPages}`.
-- **`buildBundle`** compon el llibre, suma les pàgines de tots els capítols i el compon un cop més amb aquest total, de manera que tots els capítols imprimeixen el mateix nombre. El recompte mai no mou un salt de pàgina, així que n'hi ha prou amb una volta més; una configuració que no imprimeix `{bookTotalPages}` no paga res.
-- **El Sandbox** lliura el total a tots els capítols tan bon punt coneix les pàgines de cadascun. Fins llavors, un capítol imprimeix les pàgines fins al seu propi final. L'exportació del llibre sencer a la pestanya PDF compta les pàgines que maqueta: si un capítol va imprimir un altre recompte, perquè encara no se'n coneixien les pàgines, torna a maquetar el llibre amb el total al qual van arribar els capítols.
-- **Un amfitrió que compon els capítols pel seu compte** passa el total com a `continuation.bookPageCount` (també al primer capítol). Sense això, `{bookTotalPages}` compta les pàgines fins al final del document (`continuation.pageIndexOffset` més les seves), cosa que només és exacta per a l'últim capítol.
-
-```ts
-footer: {
-  elements: [{
-    kind: 'text', id: 'folio', content: '{pageNumber} / {bookTotalPages}',
-    fontSize: { value: 8, unit: 'pt' },
-    placement: { anchor: { to: 'container', edge: 'top' }, size: { width: 'auto', height: 'auto' } },
-  }],
-}
-```
-
-`configUsesPlaceholder(config, 'bookTotalPages')` diu a un amfitrió si val la pena calcular el recompte.
-
-#### Paraules guia: primera i última marca
-
-Un diccionari imprimeix a la capçalera el primer i l'últim lema de cada pàgina («Abacà – Àncora»); una obra de consulta, la primera i l'última secció. `{firstMark.<clave>}` i `{lastMark.<clave>}` els imprimeixen. La clau diu què marca una pàgina:
-
-- **De `h1` a `h6`**: un títol d'aquest nivell. La marca és el seu text, sense el número.
-- **L'id d'un estil de paràgraf** (`entry`): un paràgraf d'un contenidor `:::paragraphs{style="entry"}`. La marca és el tram en negreta amb què obre el paràgraf, el lema, sense la puntuació final: `**Abacá.** Planta de…` marca `Abacá`. Un paràgraf que no obre en negreta no posa marca.
-
-`{firstMark.<clave>}` és la primera marca que comença a la pàgina i `{lastMark.<clave>}` l'última. Una pàgina en què no en comença cap (una entrada llarga que continua) imprimeix en tots dos la marca vigent, l'última anterior. Les pàgines anteriors a la primera marca no imprimeixen res; en un llibre maquetat capítol a capítol és la primera marca del capítol, perquè les marques no passen d'un capítol al següent. Un títol o un paràgraf partit entre pàgines marca només la pàgina en què comença. La clau s'escriu després del punt amb lletres, dígits, `_` i `-`, començant per una lletra o `_`; una clau desconeguda no imprimeix res.
-
-```md
-:::paragraphs{style="entry"}
-**Abacà.** Planta de les Filipines de la fibra de la qual es fan caps.
-
-**Abarloar.** Situar un vaixell al costat d'un altre o al costat d'un moll.
-:::
-```
-
-```ts
-header: {
-  elements: [{
-    kind: 'text', id: 'guia', content: '{firstMark.entry} – {lastMark.entry}',
-    fontSize: { value: 8, unit: 'pt' },
-    placement: { anchor: { to: 'container', edge: 'bottom' }, size: { width: 'auto', height: 'auto' } },
-  }],
-}
-```
-
-Les paraules guia són capçaleres: es resolen a les ranures de capçalera i peu (també al `header` i al `footer` d'un estil de títol) i no imprimeixen res als dissenys de títol, de part i de l'índex; als de títol i de part, el tauler Revisió els assenyala com a marcadors desconeguts. Per mostrar el primer lema als versos i l'últim als rectos, fes servir dos elements amb `parity: 'even'` i `parity: 'odd'`. Un H1 l'estil d'encapçalament del qual fixa `runningChapter: false` no posa marca `h1`.
-
-#### Capítol al cap de pàgina
-
-`{chapterTitle}` i `{chapterNumber}` anomenen l'últim capítol començat a la pàgina o abans. En un llibre els capítols del qual van seguits, sense salt de pàgina entre ells, una pàgina que tanca un capítol i comença el següent a prop del peu porta llavors el títol del capítol nou sobre un text que encara pertany a l'anterior. `{chapterTitleAtTop}` i `{chapterNumberAtTop}` anomenen en canvi el capítol vigent al cap de la pàgina, com fan les novel·les de capítols seguits i moltes obres de consulta:
-
-- una pàgina el primer bloc de la qual és l'H1 d'un capítol anomena aquest capítol;
-- qualsevol altra pàgina anomena el capítol que continua, encara que més avall en comenci un de nou;
-- una pàgina en blanc afegida per paritat va amb la pàgina que la segueix, i la separadora dels modes `always-*` amb la que la precedeix (consulta [Pertinença de les pàgines en blanc](/ca/docs/configuration-text#pertinença-de-les-pàgines-en-blanc)); si la pàgina que segueix una blanca de paritat comença amb el final d'un capítol i no amb el seu H1, la blanca també es queda amb aquest capítol;
-- se salta un H1 amb `runningChapter: false`.
-
-```ts
-header: {
-  elements: [{
-    kind: 'text', id: 'chapter', content: '{chapterTitleAtTop}', parity: 'odd', pages: 'body',
-    fontSize: { value: 8, unit: 'pt' },
-    placement: { anchor: { to: 'container', edge: 'bottom-right' }, size: { width: 'auto', height: 'auto' } },
-  }],
-}
-```
-
-Com les paraules guia, tots dos són capçaleres: es resolen a les ranures de capçalera i peu i no imprimeixen res als dissenys de títol, de part i de l'índex. `{attr.<clave>}` llegeix sempre l'últim capítol començat.
-
-#### Alineació implícita per vora
-
-Quan un element de text té `placement.anchor.to` apuntant a un altre element mitjançant `#id`, la vora de l'ancoratge implica una alineació per defecte per a les línies ajustades:
-
-- `right-of` i `align-left` impliquen `align: 'left'` — les línies ajustades flueixen cap a la dreta des de l'ancoratge.
-- `left-of` i `align-right` impliquen `align: 'right'` — les línies ajustades s'enganxen al costat més proper a l'element de referència.
-
-L'editor d'encapçalaments del sandbox aplica aquestes alineacions implícites automàticament en canviar la vora o el destí de l'ancoratge. Mantenen el text ajustat visualment lligat a l'element amb què es relaciona (de manera que, p. ex., la "P" d'un "Postext" ajustat queda verticalment sota la "I" d'"Introducció").
-
-#### Marques en línia i contorns
-
-Un element de text compon el seu text en una sola font per defecte: `**`, `^` i els altres signes de marca de Markdown s'imprimeixen tal qual. Amb `inlineMarks: true` el text resolt es llegeix com a Markdown en línia, amb les mateixes marques que admet el text de cos (vegeu **Format del document → Format en línia**):
-
-- `**negrita**` compon amb gruix 700 (o amb el `fontWeight` de l'element si és més gruixut); `*cursiva*` inverteix la inclinació de l'element, de manera que l'èmfasi dins d'un element en cursiva surt en rodona; `***ambas***` fa totes dues coses. També valen les formes amb guió baix (`__negrita__`, `_cursiva_`).
-- `^superíndice^` i `~subíndice~` es componen al 58 % de la mida, el superíndex elevat un terç d'aquesta i el subíndex baixat 0,15; un subíndex i un superíndex que es toquen (`T~0~^2^`) s'apilen, com al cos.
-- Una barra inversa compon el mateix signe de marca (`\*`, `\_`, `\^`, `\~`). Un enllaç conserva el seu text; els accents greus de codi desapareixen.
-
-Les marques es llegeixen després de substituir els marcadors, així que un valor les pot portar: la línia d'autors d'un atribut de l'encapçalament rep els seus números de filiació com a superíndexs. L'ajust de línia, la justificació, els modes d'el·lipsi, `dropCap` i `paragraphIndent` funcionen amb text marcat; tots els trams conserven el color de l'element.
-
-```json
-{ "kind": "text", "id": "authors", "content": "{attr.authors}", "inlineMarks": true, "overflow": "wrap",
-  "fontSize": { "value": 11, "unit": "pt" },
-  "placement": { "anchor": { "to": "#title", "edge": "below" }, "offset": { "y": { "value": 6, "unit": "pt" } } } }
-```
-
-```md
-# Innivació i cabal dels rius {authors="Ana Ruiz^1^, Luis Gil^2^ i Marta Sanz^1,3^"}
-```
-
-`stroke` traça un contorn al voltant de les lletres: `width` és el gruix de la línia, centrada a les vores dels glifs (la meitat cau dins de les lletres i la meitat fora; l'amplada mesurada del text no canvia), `color` és per defecte el del text i `hollow: true` deixa les lletres sense farciment, de manera que només es veu el contorn: una xifra de titular perfilada, un títol que es desenganxa d'una fotografia. El contorn es pinta sobre el farciment, igual al llenç, en HTML (`-webkit-text-stroke`) i al PDF (mode de renderització de text 2, o 1 si és buit).
-
-```json
-{ "kind": "text", "id": "year", "content": "1863", "fontFamily": "Bitter", "fontSize": { "value": 120, "unit": "pt" }, "fontWeight": 700,
-  "color": { "hex": "#1d3557", "model": "hex" },
-  "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
-  "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
-```
-
-Al PDF, els trams en negreta i en cursiva incrusten les variants corresponents de la família de l'element, així que el proveïdor de fonts les ha de subministrar.
-
-#### Valors per defecte del text i paranys de l'ancoratge
-
-Un element de text que escrius tu parteix d'aquests valors, i algun sorprèn:
-
-- **`overflow` depèn del buit.** En un disseny de títol o en una pàgina de part, un títol llarg passa a més línies; en una capçalera, un foli o una fila de part de l'índex, un text massa ample per al seu espai es talla en una línia amb `…`. Fes servir `overflow: 'wrap'` en una capçalera que es pugui allargar (una adreça, una signatura) i revisa els avisos `designTextTruncated` dels textos tallats. Un salt de línia en el contingut (un salt real, o `\n` a la plantilla o al valor d'un atribut) comença una línia nova en tots els modes; els modes d'el·lipsi tallen cada línia per separat.
-- **`align` val `'center'` i `verticalAlign` val `'middle'`.** Un element d'amplada automàtica s'ajusta a la seva línia més llarga, de manera que les seves línies queden centrades entre si; fes servir `align: 'left'` per a un bloc alineat a l'esquerra (un element d'amplada automàtica ancorat a un altre element alinea les seves línies tot sol del costat del seu ancoratge, vegeu més amunt).
-- **La font és EB Garamond de 8 pt, en negre, amb `lineHeight` de `1.2`**, sigui quina sigui la del text de cos. A diferència dels altres interlineats de la configuració, el `lineHeight` d'un text de disseny sol ser un múltiple sense unitat (`1.2`); un `Dimension` també val (vegeu més amunt).
-
-Un element sense `placement.size.width` (o amb `'auto'`) pren la mida del seu text, però només dins de l'espai que va del seu punt d'ancoratge a la vora del contenidor cap a la qual creix; per a un ancoratge `top` o `bottom`, el doble de la distància a la vora més propera. El seu `offset` compta. Un desplaçament que l'allunya d'aquesta vora no li treu res: una capçalera corrent ancorada a `top-left` amb una `x` negativa (que penja al marge esquerre) no perd espai, perquè creix cap a la dreta. Un desplaçament cap a aquesta vora li'n treu el mateix (el doble en un ancoratge `top` o `bottom`), i un que empeny el punt d'ancoratge més enllà de la vora el deixa sense espai: un ancoratge `top-right` amb una `x` menor que menys l'amplada del contenidor, o un ancoratge `top` desplaçat de costat més de la meitat d'aquesta amplada. Sense espai, un mode d'el·lipsi no imprimeix res i `'wrap'` apila un caràcter per línia. Hi ha tres sortides:
-
-- donar a l'element un `size.width` fix: les amplades fixes mai no es retallen;
-- ancorar-lo a `'page'` o a `'bleed'`, que converteix el marc de la pàgina (o de l'àrea de sang) en el seu espai;
-- ancorar-lo a la vora oposada del contenidor.
-
-El contenidor de la capçalera va de la vora superior de tall al cos, i el del peu, del cos a la vora inferior de tall: a la capçalera, els ancoratges `top-*` es mesuren des de la vora de tall i els `bottom-*` des del cos, i a l'inrevés al peu (vegeu **Marc del contenidor** més amunt). Una capçalera o un peu mai no desplacen el text de cos i es pinten a sobre, així que un element empès a l'àrea del cos tapa el text. Una banda d'obertura, en canvi, es pinta sota el text de cos; l'espai que ocupa en el flux es descriu a [Alçada reservada](/ca/docs/configuration-text#alçada-reservada).
-
-### Elements de text verticals
-
-Un element de text amb `writingMode: 'vertical-rl'` es compon en vertical en un bloc el text del qual és horitzontal: les capçaleres i els folis de qualsevol llibre, que es queden al plec, i qualsevol disseny d'una pàgina horitzontal. Es compon com un text horitzontal en un marc propi girat un quart de volta en el sentit de les agulles del rellotge, i es retorna girat a la pàgina:
-
-- La seva caixa queda on la posa la col·locació. La seva alçada és la llargada d'una línia: la fixa `size.height` (o `'auto'`, el que mesura el text; `'fill'`, fins a la vora del contenidor), `size.width` fixa quantes línies hi caben d'amplada i `size.maxWidth` limita la llargada d'una línia.
-- `align` col·loca les línies al llarg de la caixa (`'left'` a dalt), `verticalAlign` d'amplada (`'top'` a la dreta, on va la primera línia), i el farciment d'una caixa es queda al costat per al qual està escrit.
-- Els caràcters es mesuren i es pinten com en una pàgina vertical: els hanzi drets, a un quadratí cadascun; la puntuació, en la seva forma vertical; les paraules llatines, ajagudes; els nombres curts, en una casella (`cjk.uprightDigits`). El canvas, el PDF i l'HTML ho posen al mateix rectangle.
-- Amb `inlineMarks: true` les marques d'orientació separen un tram com al cos: `第:tcy[3.0]回` posa 3.0 en una casella, `:upright[GDP]` posa les lletres dretes una sota l'altra, `:sideways[…]` ajau un tram; una línia mai no es talla dins d'una d'elles. Un element horitzontal les ignora.
-- Un element vertical no porta caplletra.
-- En el flux d'una pàgina vertical (una obertura, una pàgina de part, el títol d'un requadre) el text ja va cap avall i `writingMode` no canvia res.
-
-Els llibres xinesos verticals posen capçaleres i folis en un de tres llocs ([clreq §7.2](https://www.w3.org/TR/clreq/#x7-2-page-headers-footers-etc); per al japonès, [JLREQ §2.6](https://www.w3.org/TR/jlreq/#running_heads_and_page_numbers)):
-
-<table>
-  <thead>
-    <tr><th>Convenció</th><th>On</th><th>Com es configura</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Capçalera i peu horitzontals</td><td>Damunt i sota de la caixa de text, com als llibres horitzontals; és el més habitual.</td><td>La capçalera i el peu tal com són.</td></tr>
-    <tr><td>Marge exterior (estil 中缝; 邊峰 a Taiwan)</td><td>Al llarg del marge exterior: el títol del capítol o del llibre des d'uns quatre caràcters per sota del cap de la caixa, i el foli fins a uns cinc per damunt del peu, en nombres xinesos, a un 80 % del cos del text.</td><td>Dos elements verticals ancorats a <code>'outer'</code>, a sota.</td></tr>
-    <tr><td>Cantonada exterior del peu</td><td>El foli al peu de la pàgina, a la cantonada exterior (les normes de Taiwan per a llibres 中式).</td><td>Un element horitzontal al peu a <code>'bottom-left'</code> amb <code>parity: 'odd'</code> i un altre a <code>'bottom-right'</code> amb <code>parity: 'even'</code> en un llibre enquadernat per la dreta (a l'inrevés en un per l'esquerra).</td></tr>
-  </tbody>
-</table>
-
-Les capçaleres del marge exterior, tal com les afegeix el Sandbox (**Encapçalament › Capçaleres al marge exterior (vertical)**), aquí per a un cos de 10 pt (el Sandbox les posa al 80 % del cos del text):
-
-```json
-{
-  "page": { "pageNumbering": { "format": "trad-chinese-informal" } },
-  "header": { "elements": [
-    { "kind": "text", "id": "head", "content": "{chapterTitle}", "writingMode": "vertical-rl",
-      "fontSize": { "value": 8, "unit": "pt" }, "overflow": "clip", "align": "left",
-      "placement": { "anchor": { "to": "outer", "edge": "top" }, "offset": { "y": { "value": 4, "unit": "em" } } } },
-    { "kind": "text", "id": "folio", "content": "{pageNumber}", "writingMode": "vertical-rl",
-      "fontSize": { "value": 8, "unit": "pt" }, "overflow": "clip", "align": "left",
-      "placement": { "anchor": { "to": "outer", "edge": "bottom" }, "offset": { "y": { "value": -5, "unit": "em" } } } }
-  ] }
-}
-```
-
-`anchor.to: 'outer'` (vegeu [Posicionament d'elements](#posicionament-delements)) és el marge exterior de cada pàgina, així que els dos elements baixen per la vora esquerra d'una pàgina senar i per la dreta d'una de parella en un llibre enquadernat per la dreta (`page.binding`). `{pageNumber}` surt en el format de la numeració: `trad-chinese-informal` dona 一百零三 a la pàgina 103, i `cjk-decimal`, 一〇三. Les regles de cada bloc continuen valent: `pages: 'body'` treu una capçalera de les obertures de capítol. Un ornament curt entre capçalera i foli (una cua de peix ︻, un filet) és un element més ancorat al mateix marc.
-
-Al VDT un bloc vertical porta `vertical` (`VDTDesignTextBlock.vertical`: la regió, les xifres dretes i l'eix central de cada família); les seves línies són al marc girat del mateix bloc: `xOffset` cap avall des de la vora superior de la caixa i `baselineY` cap a l'esquerra des de la seva vora dreta. Un tram d'una línia amb marques porta `tcy` o `orientation`, com un segment del cos.
-### Elements de línia
-
-Els elements de línia dibuixen una línia: horitzontal al llarg de l'amplada del bloc, o vertical al llarg de la seva alçada.
-
-<table>
-  <thead>
-    <tr>
-      <th>Propietat</th>
-      <th>Tipus</th>
-      <th>Per defecte</th>
-      <th>Descripció</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>kind</code></td>
-      <td><code>'rule'</code></td>
-      <td>—</td>
-      <td>Discriminador.</td>
-    </tr>
-    <tr>
-      <td><code>id</code></td>
-      <td><code>string</code></td>
-      <td>—</td>
-      <td>Id estable, únic dins del bloc, per a referències <code>anchor.to: '#id'</code>.</td>
-    </tr>
-    <tr>
-      <td><code>direction</code></td>
-      <td><code>'horizontal' | 'vertical'</code></td>
-      <td><code>'horizontal'</code></td>
-      <td>Una línia horitzontal recorre <code>placement.size.width</code> (<code>'fill'</code> = fins a la vora del contenidor) i fa <code>thickness</code> d'alçada. Una vertical recorre <code>placement.size.height</code> (<code>'fill'</code> o sense definir = fins a la vora del contenidor) i fa <code>thickness</code> d'amplada — un separador entre el titolet i el foli.</td>
-    </tr>
-    <tr>
-      <td><code>color</code></td>
-      <td><code>ColorValue</code></td>
-      <td><code>#000000</code></td>
-      <td>Color del traç.</td>
-    </tr>
-    <tr>
-      <td><code>thickness</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0.5 pt</code></td>
-      <td>Gruix de la línia. Una línia que l'omet es dibuixa amb el valor per defecte (fins a postext 1.4 no pintava res).</td>
-    </tr>
-    <tr>
-      <td><code>width</code></td>
-      <td><code>Dimension | 'full'</code></td>
-      <td><code>'full'</code></td>
-      <td><code>'full'</code> abasta l'àrea de contingut; una <code>Dimension</code> restringeix la línia a una llargada fixa posicionada per <code>align</code>.</td>
-    </tr>
-    <tr>
-      <td><code>align</code></td>
-      <td><code>'left' | 'center' | 'right'</code></td>
-      <td><code>'center'</code></td>
-      <td>Alineació quan <code>width</code> no és <code>'full'</code>.</td>
-    </tr>
-    <tr>
-      <td><code>marginFromBody</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>6 pt</code></td>
-      <td>Distància absoluta entre la vora de la línia que mira al cos i la vora del cos. Independent dels altres elements.</td>
-    </tr>
-    <tr>
-      <td><code>marginFromEdge</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0 pt</code></td>
-      <td>Desplaçament horitzontal respecte a la vora alineada. Només s'aplica quan <code>width</code> és una <code>Dimension</code> fixa i <code>align</code> és <code>'left'</code> o <code>'right'</code>.</td>
-    </tr>
-    <tr>
-      <td><code>parity</code></td>
-      <td><code>'all' | 'odd' | 'even'</code></td>
-      <td><code>'all'</code></td>
-      <td>En quines pàgines apareix la línia.</td>
-    </tr>
-    <tr>
-      <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
-      <td><code>'all'</code></td>
-      <td>Rols de pàgina en què apareix la línia (vegeu el camp <code>pages</code> dels elements de text).</td>
-    </tr>
-    <tr>
-      <td><code>reserve</code></td>
-      <td><code>boolean</code></td>
-      <td><code>true</code></td>
-      <td>Només en dissenys d'encapçalament: si la línia compta per a l'alçada que l'encapçalament reserva en el flux del text (vegeu <a href="/ca/docs/configuration-text#alçada-reservada">Alçada reservada</a>).</td>
-    </tr>
-    <tr>
-      <td><code>placement</code></td>
-      <td><code>ElementPlacement</code></td>
-      <td>derivat d'<code>align</code> + <code>marginFromBody</code> + <code>marginFromEdge</code></td>
-      <td>Posicionament avançat (vegeu <a href="#posicionament-delements">Posicionament d'elements</a>). <code>size.width</code> / <code>size.height</code> fixen la longitud de la línia; <code>width: 'fill'</code> és l'antic <code>'full'</code>.</td>
-    </tr>
-  </tbody>
-</table>
-
-### Elements de caixa
-
-Els elements de caixa pinten un rectangle arrodonit dins del bloc — útils com a fons darrere d'un text en obertures de capítol, columnes laterals o peus. Les caixes es posicionen exclusivament mitjançant el camp `placement`; no tenen variant plana heretada. L'emplenament, el traç i el radi de cantonada viuen a l'objecte niat `style` (`ElementBoxStyle`), com a l'exemple JSON de «Posicionament d'elements».
-
-<table>
-  <thead>
-    <tr>
-      <th>Propietat</th>
-      <th>Tipus</th>
-      <th>Per defecte</th>
-      <th>Descripció</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>kind</code></td>
-      <td><code>'box'</code></td>
-      <td>—</td>
-      <td>Discriminador.</td>
-    </tr>
-    <tr>
-      <td><code>id</code></td>
-      <td><code>string</code></td>
-      <td>—</td>
-      <td>Id estable, únic dins del bloc. Els elements germans s'hi ancoren amb <code>anchor.to: '#id'</code>. El sandbox n'assigna un en crear l'element.</td>
-    </tr>
-    <tr>
-      <td><code>style.backgroundColor</code></td>
-      <td><code>ColorValue</code></td>
-      <td><code>transparent</code></td>
-      <td>Color d'emplenament. Posa <code>transparent</code> per a una caixa només de vora.</td>
-    </tr>
-    <tr>
-      <td><code>style.borderColor</code></td>
-      <td><code>ColorValue</code></td>
-      <td><code>transparent</code></td>
-      <td>Color del traç.</td>
-    </tr>
-    <tr>
-      <td><code>style.borderWidth</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0 pt</code></td>
-      <td>Gruix del traç. El traç es pinta cap a l'interior del rectangle de la caixa, de manera que les dimensions exteriors no varien: la vora exterior del traç va per la vora de la caixa, i una caixa arrodonida conserva el seu radi exterior. Un traç tan ample com la caixa l'omple. Canvas, HTML i PDF el dibuixen igual (fins a postext 1.4 el canvas i el PDF centraven el traç a la vora, amb la meitat fora de la caixa).</td>
-    </tr>
-    <tr>
-      <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0 pt</code></td>
-      <td>Radi de cantonada. Es limita a la meitat del costat més curt en temps de renderització.</td>
-    </tr>
-    <tr>
-      <td><code>placement</code></td>
-      <td><code>ElementPlacement</code></td>
-      <td>—</td>
-      <td>Obligatori. Vegeu «Posicionament d'elements» més avall.</td>
-    </tr>
-    <tr>
-      <td><code>parity</code></td>
-      <td><code>'all' | 'odd' | 'even'</code></td>
-      <td><code>'all'</code></td>
-      <td>En quines pàgines apareix la caixa.</td>
-    </tr>
-    <tr>
-      <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
-      <td><code>'all'</code></td>
-      <td>Rols de pàgina en què apareix la caixa (vegeu el camp <code>pages</code> dels elements de text).</td>
-    </tr>
-    <tr>
-      <td><code>reserve</code></td>
-      <td><code>boolean</code></td>
-      <td><code>true</code></td>
-      <td>Només en dissenys d'encapçalament: si la caixa compta per a l'alçada que l'encapçalament reserva en el flux del text (vegeu <a href="/ca/docs/configuration-text#alçada-reservada">Alçada reservada</a>).</td>
-    </tr>
-  </tbody>
-</table>
-
-### Elements d'imatge
-
-Un element `image` dibuixa un recurs de mapa de bits o SVG del document — el logotip de l'editorial a la portada, una marca en una capçalera. La seva mida la fixa `placement.size`: si un dels costats `width` / `height` queda en `'auto'` (el valor per defecte), l'altre segueix la proporció de la imatge; amb tots dos fixats, la imatge s'ajusta dins de la caixa, centrada. Un recurs inexistent o que no sigui una imatge no dibuixa res.
-
-```ts
-{
-  kind: 'image', id: 'logo', resourceId: 'logo-editorial',
-  placement: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: { value: 64, unit: 'mm' }, y: { value: 233, unit: 'mm' } }, size: { width: { value: 83, unit: 'mm' }, height: 'auto' } },
-}
-```
-
-`resourceId` admet els mateixos marcadors que el `content` d'un element de text, de manera que un mateix disseny pot dibuixar una imatge diferent a cada encapçalament. Amb `resourceId: '{attr.vineta}'` en un estil d'encapçalament, `# Capítulo I {style="apertura" vineta="tronco"}` dibuixa el recurs `tronco` i `# Capítulo II {style="apertura" vineta="peluca"}` dibuixa `peluca`: els capítols comparteixen l'estil en lloc de clonar-lo per a cada imatge. Una capçalera o un peu llegeixen els atributs del capítol de la pàgina, com `{attr.<clave>}` en un titolet, i també hi serveixen els altres marcadors (`'mapa-{chapterNumber}'`). Un id que queda buit, com el d'un encapçalament sense l'atribut, no dibuixa res. Des de postext 1.8.
-
-<table>
-  <thead>
-    <tr>
-      <th>Propietat</th>
-      <th>Tipus</th>
-      <th>Per defecte</th>
-      <th>Descripció</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>id</code></td>
-      <td><code>string</code></td>
-      <td>—</td>
-      <td>Identificador estable; altres elements s'hi poden ancorar com a <code>#id</code>.</td>
-    </tr>
-    <tr>
-      <td><code>resourceId</code></td>
-      <td><code>string</code></td>
-      <td>—</td>
-      <td>Id d'un <code>Resource</code> de mapa de bits o SVG del document. Pot portar marcadors, entre els quals <code>&#123;attr.&lt;clave&gt;&#125;</code>, que s'emplenen a cada encapçalament, part o pàgina.</td>
-    </tr>
-    <tr>
-      <td><code>decorative</code></td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-      <td>La imatge és només ornamental (un ornament, una banda): no aporta text alternatiu a la sortida encara que el seu recurs en tingui (vegeu més avall).</td>
-    </tr>
-    <tr>
-      <td><code>placement</code></td>
-      <td><code>ElementPlacement</code></td>
-      <td>—</td>
-      <td>Ancoratge, desplaçament i mida (vegeu <a href="#posicionament-delements">Posicionament d'elements</a>). Un costat <code>'fill'</code> arriba fins a la vora del contenidor.</td>
-    </tr>
-    <tr>
-      <td><code>parity</code>, <code>pages</code></td>
-      <td>com a dalt</td>
-      <td><code>'all'</code></td>
-      <td>En quines pàgines apareix la imatge.</td>
-    </tr>
-    <tr>
-      <td><code>reserve</code></td>
-      <td><code>boolean</code></td>
-      <td><code>true</code></td>
-      <td>Només en dissenys d'encapçalament: si la imatge compta per a l'alçada que l'encapçalament reserva en el flux del text (vegeu <a href="/ca/docs/configuration-text#alçada-reservada">Alçada reservada</a>).</td>
-    </tr>
-  </tbody>
-</table>
-
-El backend PDF incrusta el recurs com una figura (un SVG amb màster d'impressió l'utilitza); el visor HTML el resol mitjançant <code>resourceImageUrl</code>.
-
-Una imatge que dibuixa un disseny és contingut quan el seu recurs la descriu: l'`altText` del recurs, o el seu peu com a text sense format quan no en té (una etiqueta `:chip` es llegeix pel seu text i una `:ref` pel seu `text` si en porta), passa al VDT (`VDTDesignImageBlock.altText`), és l'`alt` del seu `<img>` en HTML i una `Figure` amb `/Alt` en un PDF etiquetat, que es llegeix just després del text del seu disseny (la làmina d'un capítol, després del títol del capítol). Una imatge el recurs de la qual no té ni l'una cosa ni l'altra, i una marcada com a `decorative`, és ornament: `alt=""` amb `role="presentation"`, i un artefacte al PDF. La imatge d'una capçalera o un peu es repeteix a totes les pàgines, així que es tracta com un element de paginació digui el que digui el seu recurs: sense `altText` al VDT, `alt=""` amb `role="presentation"` en HTML i un artefacte de la pàgina al PDF.
-
-### Posicionament d'elements
-
-`ElementPlacement` és el model unificat de posicionament que fan servir tots els tipus d'elements (text, línia, caixa) dins de qualsevol ranura de disseny — capçalera de pàgina, peu de pàgina o ranura de disseny avançat d'un encapçalament. Tres camps descriuen un placement:
-
-```ts
-interface ElementPlacement {
-  /** A què s'ancora aquest element i a quina vora d'aquest destí. */
-  anchor: {
-    to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = el bloc; page = caixa de tall; bleed = caixa de tall + sang; outer = el marge exterior (capçalera, peu); #id = un altre element
-    edge: AnchorEdge;
-  };
-  /** Distància des del punt d'ancoratge. */
-  offset?: { x?: Dimension; y?: Dimension };
-  /** Amplada / alçada opcional. L'amplada admet també 'fill' (estendre al llarg del bloc).
-   *  `maxWidth` limita una amplada 'auto' (text): l'element continua ajustant-se al seu
-   *  contingut, de manera que els elements que s'hi ancoren no se'n desenganxen, però un text llarg
-   *  es talla o es plega allà — una capçalera pot reservar lloc per a l'etiqueta que
-   *  en penja en comptes d'expulsar-la. */
-  size?: { width?: Dimension | 'fill' | 'auto'; height?: Dimension | 'fill' | 'auto'; maxWidth?: Dimension };
-}
-```
-
-`AnchorEdge` admet:
-
-- **Vores del contenidor** (quan `anchor.to` és `'container'`, `'page'` o `'bleed'`): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right`.
-- **Vores relatives a un altre element** (quan `anchor.to === '#someId'`): `right-of`, `left-of`, `below`, `above`, `align-top`, `align-bottom`, `align-left`, `align-right`.
-
-Cada vora relativa a un altre element posa una cantonada de l'element sobre una cantonada de l'element al qual s'ancora, i `offset` el desplaça des d'allà:
-
-- `right-of`: la seva cantonada superior esquerra sobre la superior dreta del de referència (al costat, amb les parts superiors a la mateixa alçada); `left-of`: la seva cantonada superior dreta sobre la superior esquerra del de referència;
-- `below`: la seva cantonada superior esquerra sobre la inferior esquerra del de referència (a sota, amb les vores esquerres alineades); `above`: la seva cantonada inferior esquerra sobre la superior esquerra del de referència;
-- `align-top` i `align-left`: la seva cantonada superior esquerra sobre la superior esquerra del de referència. Els dos noms donen la mateixa col·locació: s'alineen alhora les vores superiors i les esquerres;
-- `align-bottom`: la seva cantonada inferior esquerra sobre la inferior esquerra del de referència;
-- `align-right`: la seva cantonada superior dreta sobre la superior dreta del de referència.
-
-Una vora relativa a un altre element usada amb `'container'`, `'page'` o `'bleed'`, i una vora de contenidor usada amb `'#id'`, es llegeixen com la cantonada superior esquerra.
-
-`anchor.to: 'page'` ancora l'element a la **caixa de tall** (la pàgina física un cop tallada) i `'bleed'` a la caixa de tall ampliada per `cutLines.bleed` a tots els costats (idèntica a la caixa de tall mentre les marques de tall estiguin desactivades). Tots dos marcs passen a ser també la referència de `size: 'fill'` i del retall automàtic d'amplada, de manera que una banda de color pot anar de vora a vora independentment dels marges de pàgina:
-
-```json
-{ "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
-```
-
-Amb les marques de tall activades, el que un element pinta fora de la caixa de sang es retalla (vegeu [Marques de tall](#marques-de-tall)).
-
-`anchor.to: 'outer'` (blocs de capçalera i peu) ancora l'element al **marge exterior** de la pàgina: de la vora de la caixa de text a la vora de tall al costat contrari al llom, i del cap de la caixa de text al seu peu. Queda a la dreta d'una pàgina senar i a l'esquerra d'una parella en un llibre enquadernat per l'esquerra, i al revés en un d'enquadernat per la dreta (`page.binding`), de manera que un sol element serveix per a les dues pàgines d'un plec: una capçalera pel marge exterior (vegeu [Elements de text verticals](#elements-de-text-verticals)). En qualsevol altre bloc es llegeix com `'container'`. L'`offset` d'un element de text pot anar en `em`, quadratins del seu propi `fontSize`: quatre caràcters per sota del cap de la caixa de text és `{ "y": { "value": 4, "unit": "em" } }`.
-
-Dins de la ranura de disseny avançat d'un encapçalament, els elements ancorats a la pàgina o a la sang no augmenten l'alçada reservada per a l'encapçalament llevat que s'estenguin per sota de la seva vora superior (una banda a la part superior de la pàgina queda darrere de l'obertura; una banda que baixi més enllà de l'encapçalament empeny el cos cap avall). Fes servir `advancedDesign.minHeight` per reservar una alçada fixa d'obertura en qualsevol cas, i `reserve: false` en un element que no hagi d'empènyer el text de cap manera. Les regles completes són a [Alçada reservada](/ca/docs/configuration-text#alçada-reservada).
-
-Cada element té un `id` estable (que assigna automàticament el sandbox; també el pots establir a mà). Els elements ancorats a altres elements formen un petit graf de dependències que el motor resol abans de mesurar, així un element es pot encadenar a un altre sense coordenades manuals.
-
-La forma heretada `align` + `marginFromBody` + `marginFromEdge` s'interpreta a l'entrada i es reescriu a un placement en el moment de resoldre la configuració, de manera que les configuracions existents continuen funcionant sense canvis.

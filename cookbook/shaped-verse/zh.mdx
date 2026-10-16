@@ -28,13 +28,13 @@ pageNotes: { "1": "仿1633年版的扉页：紫色大写的THE TEMPLE，斜体�
 
 <Excerpt region="titles" />
 
-各级标题都没有设计，只有字体设置，`headings.textAlign`让三级标题都居中（[标题](/zh/docs/configuration-text#标题)）。奇偶设为`'any'`时，每首诗从下一页开始，不论左右页，所以第2页的祭坛与第3页的翅膀相对。`marginTop`不能把这些标题往下移，因为开页标题上方的空白会被去掉。改由二级标题三行高的行框把每个标题降低约5 mm，两首诗都从版心第5行开始。一级标题是文档的开头，这里不需要分页；仍给它设了分页，是为了让第二个`#`标题从右页开始。三级标题用IM Fell English SC的小型大写字母、正文字号，排第1页和第4页的四个标签。
+各级标题都没有设计，只有字体设置，`headings.textAlign`让三级标题都居中（[标题](/zh/docs/configuration-headings#标题)）。奇偶设为`'any'`时，每首诗从下一页开始，不论左右页，所以第2页的祭坛与第3页的翅膀相对。`marginTop`不能把这些标题往下移，因为开页标题上方的空白会被去掉。改由二级标题三行高的行框把每个标题降低约5 mm，两首诗都从版心第5行开始。一级标题是文档的开头，这里不需要分页；仍给它设了分页，是为了让第二个`#`标题从右页开始。三级标题用IM Fell English SC的小型大写字母、正文字号，排第1页和第4页的四个标签。
 
 ### 4 · 用Markdown安排间距和分页
 
 <Excerpt region="pages" />
 
-段落之间的空行不增加间距，所以这几页上的每一处空白都来自`:::space`：*Easter Wings*的两个诗节之间一行，扉页上《诗篇》标签上方五行、题词下方十行（[`:::space`](/zh/docs/document-format#space)）。按这些行数，第1页的出版信息在版心最后一行结束，《诗篇》上方和说明上方的两个标签都在第13行，距页顶94 mm。`:::pagebreak`开始最后一页（[`:::pagebreak`](/zh/docs/document-format#pagebreak)）。版权信息也是每行一个段落，在短语结束处断开，所以四行逐渐收窄，形成尾饰。
+段落之间的空行不增加间距，所以这几页上的每一处空白都来自`:::space`：*Easter Wings*的两个诗节之间一行，扉页上《诗篇》标签上方五行、题词下方十行（[`:::space`](/zh/docs/document-format-directives#space)）。按这些行数，第1页的出版信息在版心最后一行结束，《诗篇》上方和说明上方的两个标签都在第13行，距页顶94 mm。`:::pagebreak`开始最后一页（[`:::pagebreak`](/zh/docs/document-format-directives#pagebreak)）。版权信息也是每行一个段落，在短语结束处断开，所以四行逐渐收窄，形成尾饰。
 
 ## 变化
 

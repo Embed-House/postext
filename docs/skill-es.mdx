@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Instala la skill postext-port en Claude Code, Codex o cualquier agente y deja que convierta un PDF, Word, PowerPoint, EPUB, InDesign o HTML en un proyecto de Postext que sigue la maquetación original',
   lang: 'es',
   lastUpdated: '2026-10-09',
-  readingTime: '8 min',
-  order: 21,
+  readingTime: '10 min',
+  order: 39,
   plainSummary: "Esta página es para quien ya tiene un libro o un documento en otro formato, como PDF, Word o InDesign, y quiere pasarlo a Postext. Un asistente de inteligencia artificial, al que se llama agente, puede hacer casi todo el trabajo si le das un pequeño complemento llamado skill. La skill le enseña al agente a copiar el texto y a reconstruir el diseño del original. La página explica cómo instalarla, qué pedirle y cómo revisar el resultado. Un vídeo de unos cinco minutos muestra cada paso.",
 };
 
@@ -101,7 +101,7 @@ También en YouTube: [míralo allí](https://www.youtube.com/watch?v=Pcw1ugFyD6Y
     escaneadas con texto o desde un guion con imágenes generadas (véase [Cómics](/es/docs/comics));
   - el objeto impreso: cómo leer el papel, la encuadernación, las cubiertas
     y el lomo de la fuente y fijarlos como los ajustes `folio` que muestra el
-    [visor Folio](/es/docs/sandbox#pestaña-folio), comprobados por el linter.
+    [visor Folio](/es/docs/sandbox-previews#pestaña-folio), comprobados por el linter.
 - **Scripts** (Python y Node), descritos en la sección siguiente.
 
 ## Scripts
@@ -256,7 +256,7 @@ Postext, define `POSTEXT_PRIVATE_PRESETS_DIR` (consulta
 
 ### Cargar el resultado desde código
 
-El archivo entregado no depende del Sandbox. El paquete `postext` lo abre con `openBundle`, compone el libro con `buildBundle` y lo renderiza en canvas, HTML o PDF (consulta [Paquetes](/es/docs/configuration-programmatic-usage#paquetes-archivos-postext)). Así, una adaptación puede alimentar directamente un programa. Cuando lo que produce ese programa necesita ajustes, vuelve a exportarlo a un `.postext` con `createBundle`, retócalo en el Sandbox y carga de nuevo el archivo corregido. El `render.mjs` del skill, que compone sin navegador, acepta tanto un `.postext` empaquetado como una carpeta de proyecto.
+El archivo entregado no depende del Sandbox. El paquete `postext` lo abre con `openBundle`, compone el libro con `buildBundle` y lo renderiza en canvas, HTML o PDF (consulta [Paquetes](/es/docs/configuration-bundles#paquetes-archivos-postext)). Así, una adaptación puede alimentar directamente un programa. Cuando lo que produce ese programa necesita ajustes, vuelve a exportarlo a un `.postext` con `createBundle`, retócalo en el Sandbox y carga de nuevo el archivo corregido. El `render.mjs` del skill, que compone sin navegador, acepta tanto un `.postext` empaquetado como una carpeta de proyecto.
 
 ## Qué esperar
 

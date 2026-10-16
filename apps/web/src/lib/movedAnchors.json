@@ -1,1 +1,346 @@
-{}
+{
+  "architecture": {
+    "en": {
+      "architecture-layout-pipeline": "layout-pipeline stage-1-content-structuring stage-2-text-measurement stage-3-page-and-column-placement stage-4-resource-placement stage-5-breaks-and-keep-rules widows-orphans-and-runts structural-keep-together-rules the-pass-driver column-balancing"
+    },
+    "es": {
+      "architecture-layout-pipeline": "pipeline-de-composición etapa-1-estructuración-del-contenido etapa-2-medición-de-texto etapa-3-colocación-en-páginas-y-columnas etapa-4-colocación-de-recursos etapa-5-cortes-y-reglas-de-cohesión viudas-huérfanas-y-líneas-cortas reglas-estructurales-de-cohesión-keep-together el-controlador-de-pasadas equilibrado-de-columnas"
+    },
+    "ca": {
+      "architecture-layout-pipeline": "pipeline-de-composició etapa-1-estructuració-del-contingut etapa-2-mesura-de-text etapa-3-collocació-en-pàgines-i-columnes etapa-4-collocació-de-recursos etapa-5-talls-i-regles-de-cohesió vídues-òrfenes-i-línies-curtes regles-estructurals-de-cohesió-keep-together el-controlador-de-la-passada equilibrat-de-columnes"
+    },
+    "zh": {
+      "architecture-layout-pipeline": "排版流水线 第1阶段内容结构化 第2阶段文本测量 第3阶段页面与栏的放置 第4阶段资源放置 第5阶段分页与保持同页规则 段首孤行段末孤行和孤字 结构性保持同页规则 放置遍的驱动器 各栏齐底"
+    },
+    "ar": {
+      "architecture-layout-pipeline": "خط-الإخراج المرحلة-1-هيكلة-المحتوى المرحلة-2-قياس-النص المرحلة-3-التوزيع-على-الصفحات-والأعمدة المرحلة-4-وضع-الموارد المرحلة-5-الكسر-وقواعد-الإبقاء-معًا الأرامل-والأسطر-اليتيمة-والكلمات-المعزولة قواعد-الإبقاء-معًا-البنيوية مشغّل-التمريرة موازنة-الأعمدة"
+    },
+    "ja": {
+      "architecture-layout-pipeline": "レイアウトのパイプライン ステージ1内容の構造化 ステージ2テキストの計測 ステージ3ページと段への配置 ステージ4リソースの配置 ステージ5改行改段と分割禁止の規則 ウィドウオーファンラント 構造上の分割禁止の規則 パスのドライバー 段末そろえ"
+    },
+    "pt": {
+      "architecture-layout-pipeline": "pipeline-de-layout etapa-1-estruturação-do-conteúdo etapa-2-medição-do-texto etapa-3-posicionamento-em-páginas-e-colunas etapa-4-posicionamento-de-recursos etapa-5-quebras-e-regras-de-manter-junto viúvas-órfãs-e-runts regras-estruturais-de-coesão-keep-together o-condutor-das-passadas balanceamento-de-colunas"
+    },
+    "fr": {
+      "architecture-layout-pipeline": "chaîne-de-mise-en-page étape-1-structuration-du-contenu étape-2-mesure-du-texte étape-3-placement-dans-les-pages-et-les-colonnes étape-4-placement-des-ressources étape-5-coupures-et-règles-de-maintien veuves-orphelines-et-lignes-creuses règles-structurelles-de-maintien le-pilote-des-passes équilibrage-des-colonnes"
+    },
+    "de": {
+      "architecture-layout-pipeline": "layout-pipeline stufe-1-strukturierung-des-inhalts stufe-2-textmessung stufe-3-platzierung-auf-seiten-und-spalten stufe-4-platzierung-von-ressourcen stufe-5-umbrüche-und-zusammenhalteregeln witwen-waisen-und-zu-kurze-ausgangszeilen strukturelle-zusammenhalteregeln der-durchlaufsteuerer spaltenausgleich"
+    },
+    "it": {
+      "architecture-layout-pipeline": "pipeline-di-impaginazione fase-1-strutturazione-del-contenuto fase-2-misurazione-del-testo fase-3-posizionamento-in-pagine-e-colonne fase-4-posizionamento-delle-risorse fase-5-interruzioni-e-regole-di-tenuta vedove-orfane-e-righe-finali-troppo-corte regole-strutturali-di-tenuta il-driver-delle-passate bilanciamento-delle-colonne"
+    }
+  },
+  "configuration-page-layout": {
+    "en": {
+      "configuration-headers-footers": "headers--footers text-elements book-page-count guide-words-first-and-last-mark chapter-at-the-top-of-the-page edge-implied-alignment inline-marks-and-outlines text-defaults-and-anchoring-traps vertical-text-elements rule-elements box-elements image-elements element-placement"
+    },
+    "es": {
+      "configuration-headers-footers": "encabezados-y-pies elementos-de-texto recuento-de-páginas-del-libro palabras-guía-primera-y-última-marca capítulo-en-cabeza-de-página alineación-implícita-por-borde marcas-en-línea-y-contornos valores-por-defecto-del-texto-y-trampas-del-anclaje elementos-de-texto-verticales elementos-de-línea elementos-de-caja elementos-de-imagen posicionamiento-de-elementos"
+    },
+    "ca": {
+      "configuration-headers-footers": "capçaleres-i-peus elements-de-text recompte-de-pàgines-del-llibre paraules-guia-primera-i-última-marca capítol-al-cap-de-pàgina alineació-implícita-per-vora marques-en-línia-i-contorns valors-per-defecte-del-text-i-paranys-de-lancoratge elements-de-text-verticals elements-de-línia elements-de-caixa elements-dimatge posicionament-delements"
+    },
+    "zh": {
+      "configuration-headers-footers": "页眉与页脚 文本元素 全书页数 检索词首标记与尾标记 页面顶部所属的章 由锚点边隐含的对齐方式 行内标记与描边 文本默认值与锚定陷阱 竖排文本元素 线条元素 方框元素 图像元素 元素定位"
+    },
+    "ar": {
+      "configuration-headers-footers": "رؤوس-الصفحات-وتذييلاتها عناصر-النص عدد-صفحات-الكتاب الكلمات-الدليلية-العلامة-الأولى-والأخيرة الفصل-في-أعلى-الصفحة المحاذاة-المستنتجة-من-الحافة العلامات-المضمّنة-والخطوط-المحيطية القيم-الافتراضية-للنص-ومزالق-التثبيت عناصر-النص-العمودي عناصر-الخط-الفاصل عناصر-الصندوق عناصر-الصورة تموضع-العناصر"
+    },
+    "ja": {
+      "configuration-headers-footers": "柱とノンブル テキスト要素 本全体のページ数 柱の見出し語最初と最後のマーク ページ上端の章 基準辺から決まるそろえ インラインの書式記号と輪郭線 テキストの既定値とアンカーの落とし穴 縦組みのテキスト要素 罫線要素 ボックス要素 画像要素 要素の配置"
+    },
+    "pt": {
+      "configuration-headers-footers": "cabeços-e-rodapés elementos-de-texto contagem-de-páginas-do-livro palavras-guia-primeira-e-última-marca capítulo-no-topo-da-página alinhamento-implícito-pela-borda marcas-inline-e-contornos valores-padrão-do-texto-e-armadilhas-da-ancoragem elementos-de-texto-verticais elementos-de-fio elementos-de-caixa elementos-de-imagem posicionamento-de-elementos"
+    },
+    "fr": {
+      "configuration-headers-footers": "en-têtes-et-pieds-de-page éléments-de-texte nombre-de-pages-du-livre mots-repères-première-et-dernière-marque chapitre-en-haut-de-la-page alignement-induit-par-le-bord-dancrage marques-en-ligne-et-contours valeurs-par-défaut-du-texte-et-pièges-de-lancrage éléments-de-texte-vertical éléments-filet éléments-boîte éléments-image placement-des-éléments"
+    },
+    "de": {
+      "configuration-headers-footers": "kopf--und-fußzeilen textelemente seitenzahl-des-ganzen-buchs leitwörter-erste-und-letzte-marke kapitel-am-kopf-der-seite aus-der-kante-abgeleitete-ausrichtung inline-auszeichnungen-und-konturen standardwerte-für-text-und-fallstricke-beim-verankern vertikale-textelemente linienelemente kastenelemente bildelemente platzierung-von-elementen"
+    },
+    "it": {
+      "configuration-headers-footers": "intestazioni-e-piè-di-pagina elementi-di-testo numero-di-pagine-del-libro parole-guida-primo-e-ultimo-segno il-capitolo-in-cima-alla-pagina allineamento-implicito-dal-bordo segni-in-linea-e-contorni valori-predefiniti-del-testo-e-trappole-dellancoraggio elementi-di-testo-verticale elementi-filetto elementi-riquadro elementi-immagine collocazione-degli-elementi"
+    }
+  },
+  "configuration-text": {
+    "en": {
+      "configuration-text": "configuration-text-and-headings>configuration-body-text",
+      "configuration-language": "hyphenation words-kept-whole ragged-text document-language document-digits text-direction languages-and-scripts arabic-text",
+      "configuration-headings": "headings general-defaults per-level-overrides break-before parity-values blank-page-ownership document-start-exception span-and-advanced-design reserved-height spelled-out-numbers",
+      "configuration-page-flow": "orphans-widows-runts-and-keep-together-rules column-balancing which-lever-fired",
+      "configuration-lists-math": "unordered-lists unordered-list-defaults task-list-extensions unordered-per-level-overrides ordered-lists ordered-list-defaults ordered-per-level-overrides math starting-the-math-engine"
+    },
+    "es": {
+      "configuration-text": "configuración-texto-y-encabezados>configuración-texto-de-cuerpo",
+      "configuration-language": "separación-silábica palabras-que-no-se-dividen texto-en-bandera idioma-del-documento cifras-del-documento dirección-del-texto idiomas-y-escrituras texto-árabe",
+      "configuration-headings": "encabezados valores-generales-por-defecto configuración-por-nivel saltar-antes valores-de-paridad pertenencia-de-las-páginas-en-blanco excepción-al-inicio-del-documento span-y-diseño-avanzado altura-reservada números-con-letras",
+      "configuration-page-flow": "huérfanas-viudas-runts-y-reglas-de-cohesión equilibrado-de-columnas qué-palanca-actuó",
+      "configuration-lists-math": "listas-no-ordenadas valores-por-defecto-de-listas-no-ordenadas extensiones-para-listas-de-tareas sobrescrituras-por-nivel-listas-no-ordenadas listas-ordenadas valores-por-defecto-de-listas-ordenadas sobrescrituras-por-nivel-listas-ordenadas matemáticas arrancar-el-motor-de-fórmulas"
+    },
+    "ca": {
+      "configuration-text": "configuració-text-i-encapçalaments>configuració-text-de-cos",
+      "configuration-language": "partició-de-mots mots-que-no-es-divideixen text-en-bandera llengua-del-document xifres-del-document direcció-del-text llengües-i-escriptures text-àrab",
+      "configuration-headings": "encapçalaments valors-generals-per-defecte configuració-per-nivell saltar-abans valors-de-paritat pertinença-de-les-pàgines-en-blanc excepció-a-linici-del-document span-i-disseny-avançat alçada-reservada nombres-en-lletres",
+      "configuration-page-flow": "òrfenes-vídues-runts-i-regles-de-cohesió equilibratge-de-columnes quina-palanca-ha-actuat",
+      "configuration-lists-math": "llistes-no-ordenades valors-per-defecte-de-les-llistes-no-ordenades extensions-per-a-llistes-de-tasques sobreescriptures-per-nivell-llistes-no-ordenades llistes-ordenades valors-per-defecte-de-les-llistes-ordenades sobreescriptures-per-nivell-llistes-ordenades matemàtiques arrencar-el-motor-de-fórmules"
+    },
+    "zh": {
+      "configuration-text": "配置正文与标题>配置正文",
+      "configuration-language": "断词 不拆分的词 不齐行文字 文档语言 文档数字 文本方向 语言与文字 阿拉伯文",
+      "configuration-headings": "标题 通用默认值 按级别覆盖 前置分页 奇偶取值 空白页的归属 文档开头的例外 通栏与高级设计 保留高度 以文字书写的编号",
+      "configuration-page-flow": "段首孤行段末孤行孤字与不拆分规则 各栏齐底 哪个手段起了作用",
+      "configuration-lists-math": "无序列表 无序列表默认值 任务列表扩展 无序列表的逐层覆盖 有序列表 有序列表默认值 有序列表的逐层覆盖 数学公式 启动公式引擎"
+    },
+    "ar": {
+      "configuration-text": "الإعدادات-النص-والعناوين>الإعدادات-نص-المتن",
+      "configuration-language": "تقسيم-الكلمات-بالواصلة كلمات-لا-تُقسَّم النص-غير-المضبوط لغة-المستند أرقام-المستند اتجاه-النص اللغات-وأنظمة-الكتابة النص-العربي",
+      "configuration-headings": "العناوين القيم-الافتراضية-العامة تجاوزات-كل-مستوى الفاصل-قبل-العنوان قيم-الزوجية تبعية-الصفحات-الفارغة استثناء-بداية-المستند الامتداد-والتصميم-المتقدم الارتفاع-المحجوز الأعداد-المكتوبة-بالحروف",
+      "configuration-page-flow": "الأسطر-اليتيمة-والأرامل-والكلمات-المعزولة-وقواعد-الإبقاء-معًا موازنة-الأعمدة أيّ-أداة-عملت",
+      "configuration-lists-math": "القوائم-غير-المرقّمة القيم-الافتراضية-للقوائم-غير-المرقّمة امتدادات-قوائم-المهام تجاوزات-كل-مستوى-في-القوائم-غير-المرقّمة القوائم-المرقّمة القيم-الافتراضية-للقوائم-المرقّمة تجاوزات-كل-مستوى-في-القوائم-المرقّمة الصيغ-الرياضية تشغيل-محرّك-الرياضيات"
+    },
+    "ja": {
+      "configuration-text": "設定本文と見出し>設定本文",
+      "configuration-language": "ハイフネーション 分割しない語 行末不ぞろいのテキスト 文書の言語 文書の数字 テキストの方向 言語と文字体系 アラビア文字のテキスト",
+      "configuration-headings": "見出し 共通の既定値 レベルごとの上書き 前で改ページ 奇偶の値 白ページの帰属 文書冒頭の例外 幅と詳細デザイン 確保する高さ 語で綴る番号",
+      "configuration-page-flow": "オーファンウィドウラント分割禁止の規則 段末そろえ どの調整手段が働いたか",
+      "configuration-lists-math": "箇条書きリスト 箇条書きリストの既定値 タスクリストの拡張 箇条書きリストのレベル別上書き 番号付きリスト 番号付きリストの既定値 番号付きリストのレベル別上書き 数式 数式エンジンの起動"
+    },
+    "pt": {
+      "configuration-text": "configuração-texto-e-títulos>configuração-texto-do-corpo",
+      "configuration-language": "hifenização palavras-que-não-se-dividem texto-em-bandeira idioma-do-documento algarismos-do-documento direção-do-texto idiomas-e-escritas texto-árabe",
+      "configuration-headings": "títulos padrões-gerais sobrescritas-por-nível quebra-antes valores-de-paridade a-quem-pertencem-as-páginas-em-branco exceção-do-início-do-documento largura-e-design-avançado altura-reservada números-por-extenso",
+      "configuration-page-flow": "órfãs-viúvas-linhas-curtas-e-regras-de-manter-junto equilíbrio-de-colunas qual-recurso-atuou",
+      "configuration-lists-math": "listas-com-marcadores padrões-das-listas-com-marcadores extensões-para-listas-de-tarefas substituições-por-nível-listas-com-marcadores listas-numeradas padrões-das-listas-numeradas substituições-por-nível-listas-numeradas matemática inicializar-o-motor-de-fórmulas"
+    },
+    "fr": {
+      "configuration-text": "configuration-texte-et-titres>configuration-texte-courant",
+      "configuration-language": "césure mots-gardés-entiers texte-en-drapeau langue-du-document chiffres-du-document sens-du-texte langues-et-écritures texte-arabe",
+      "configuration-headings": "titres valeurs-générales réglages-par-niveau saut-avant valeurs-de-parité à-qui-appartiennent-les-pages-blanches exception-du-début-de-document étendue-et-maquette-avancée hauteur-réservée numéros-en-toutes-lettres",
+      "configuration-page-flow": "orphelines-veuves-lignes-creuses-et-règles-de-maintien équilibrage-des-colonnes quel-levier-a-agi",
+      "configuration-lists-math": "listes-à-puces valeurs-par-défaut-des-listes-à-puces extensions-pour-les-listes-de-tâches réglages-par-niveau-des-listes-à-puces listes-numérotées valeurs-par-défaut-des-listes-numérotées réglages-par-niveau-des-listes-numérotées mathématiques démarrer-le-moteur-mathématique"
+    },
+    "de": {
+      "configuration-text": "konfiguration-text-und-überschriften>konfiguration-fließtext",
+      "configuration-language": "silbentrennung ungetrennte-wörter flattersatz dokumentsprache ziffern-des-dokuments schreibrichtung sprachen-und-schriftsysteme arabischer-text",
+      "configuration-headings": "überschriften allgemeine-standardwerte überschreibungen-pro-ebene umbruch-davor paritätswerte zugehörigkeit-leerer-seiten ausnahme-am-dokumentanfang seitenbreite-und-erweiterte-gestaltung reservierte-höhe ausgeschriebene-zahlen",
+      "configuration-page-flow": "waisen-witwen-zu-kurze-ausgangszeilen-und-regeln-zum-zusammenhalten spaltenausgleich welcher-hebel-gegriffen-hat",
+      "configuration-lists-math": "aufzählungen standardwerte-für-aufzählungen erweiterungen-für-aufgabenlisten überschreibungen-pro-ebene-für-aufzählungen nummerierte-listen standardwerte-für-nummerierte-listen überschreibungen-pro-ebene-für-nummerierte-listen mathematik die-mathematik-engine-starten"
+    },
+    "it": {
+      "configuration-text": "configurazione-testo-e-titoli>configurazione-testo-corrente",
+      "configuration-language": "sillabazione parole-tenute-intere testo-in-bandiera lingua-del-documento cifre-del-documento direzione-del-testo lingue-e-scritture testo-arabo",
+      "configuration-headings": "titoli valori-predefiniti-generali sovrascritture-per-livello interruzione-prima-del-titolo valori-di-parità a-chi-appartengono-le-pagine-bianche eccezione-per-linizio-del-documento estensione-e-progetto-grafico-avanzato altezza-riservata numeri-in-lettere",
+      "configuration-page-flow": "orfane-vedove-righe-finali-corte-e-regole-per-tenere-unito bilanciamento-delle-colonne quale-leva-è-intervenuta",
+      "configuration-lists-math": "elenchi-puntati valori-predefiniti-degli-elenchi-puntati estensioni-per-gli-elenchi-di-attività personalizzazioni-per-livello-degli-elenchi-puntati elenchi-numerati valori-predefiniti-degli-elenchi-numerati personalizzazioni-per-livello-degli-elenchi-numerati matematica avviare-il-motore-matematico"
+    }
+  },
+  "configuration-styles": {
+    "en": {
+      "configuration-callouts": "callout-styles the-callout-container numbered-statements-and-proofs typography-inside-a-box marks-on-a-split-box"
+    },
+    "es": {
+      "configuration-callouts": "estilos-de-aviso el-contenedor-callout enunciados-numerados-y-demostraciones tipografía-dentro-de-un-recuadro marcas-de-un-recuadro-partido"
+    },
+    "ca": {
+      "configuration-callouts": "estils-davís el-contenidor-callout enunciats-numerats-i-demostracions tipografia-dins-dun-requadre marques-dun-requadre-partit"
+    },
+    "zh": {
+      "configuration-callouts": "标注框样式 callout容器 编号的命题与证明 框内的排版 拆分框的标记"
+    },
+    "ar": {
+      "configuration-callouts": "أنماط-الإطارات الحاوية-callout المبرهنات-المرقّمة-والبراهين التنسيق-الطباعي-داخل-الإطار علامات-الإطار-المقسوم"
+    },
+    "ja": {
+      "configuration-callouts": "囲みスタイル calloutコンテナー 番号付きの定理と証明 囲みの中の文字組み 分割された囲みの目印"
+    },
+    "pt": {
+      "configuration-callouts": "estilos-de-boxe o-contêiner-callout enunciados-numerados-e-demonstrações tipografia-dentro-de-um-boxe marcas-em-um-boxe-dividido"
+    },
+    "fr": {
+      "configuration-callouts": "styles-dencadré le-conteneur-callout énoncés-numérotés-et-démonstrations typographie-dans-un-encadré marques-sur-un-encadré-coupé"
+    },
+    "de": {
+      "configuration-callouts": "kastenstile der-container-callout nummerierte-aussagen-und-beweise typografie-im-kasten hinweise-an-einem-geteilten-kasten"
+    },
+    "it": {
+      "configuration-callouts": "stili-dei-riquadri il-contenitore-callout enunciati-numerati-e-dimostrazioni tipografia-dentro-un-riquadro segni-su-un-riquadro-diviso"
+    }
+  },
+  "configuration-programmatic-usage": {
+    "en": {
+      "configuration-pdf-output": "generating-pdfs installation public-api-1>public-api minimal-example why-a-font-provider which-faces-the-provider-is-asked-for browser-font-provider-fontsource--woff2 chinese-japanese-and-korean-fonts server-side-font-provider-node-local-files resource-bytes-and-print-masters vertical-text-in-the-pdf links-in-the-pdf complete-browser-example-build-render-download live-example-a-pdf-in-the-browser rendering-the-pdf-on-a-worker print-ready-pdfs reference-implementation",
+      "configuration-html-folio-epub": "integrating-the-html-viewer live-example-an-html-string minimal-integration-1>minimal-integration going-further how-the-html-output-differs-from-canvas-and-pdf a-3d-book-postext-folio appearance live-example-a-book-in-3d live-example-page-images epub-books-postext-epub fixed-layout-and-reflowable writing-a-book checking-a-file-with-epubcheck",
+      "configuration-bundles": "bundles-postext-files opening-a-bundle bundles-written-by-postext-14-or-earlier laying-out-and-rendering-a-bundle live-example-open-a-bundle creating-a-bundle bilingual-bundles live-example-create-a-bundle working-with-bundles low-level-api"
+    },
+    "es": {
+      "configuration-pdf-output": "generación-de-pdf instalación api-pública-1>api-pública ejemplo-mínimo por-qué-un-proveedor-de-fuentes qué-variantes-se-piden-al-proveedor proveedor-de-fuentes-en-el-navegador-fontsource--woff2 fuentes-chinas-japonesas-y-coreanas proveedor-de-fuentes-en-el-servidor-node-archivos-locales bytes-de-recursos-y-másteres-de-impresión texto-vertical-en-el-pdf enlaces-en-el-pdf ejemplo-completo-en-el-navegador-componer-renderizar-descargar ejemplo-en-vivo-un-pdf-en-el-navegador renderizar-el-pdf-en-un-worker pdfs-listos-para-imprenta implementación-de-referencia",
+      "configuration-html-folio-epub": "integrar-el-visor-html ejemplo-en-vivo-una-cadena-html integración-mínima-1>integración-mínima siguiente-paso en-qué-se-diferencia-la-salida-html-del-canvas-y-del-pdf un-libro-en-3d-postext-folio aspecto ejemplo-en-vivo-un-libro-en-3d ejemplo-en-vivo-imágenes-de-página libros-epub-postext-epub maquetación-fija-y-maquetación-fluida escribir-un-libro comprobar-un-archivo-con-epubcheck",
+      "configuration-bundles": "paquetes-archivos-postext abrir-un-paquete paquetes-escritos-por-postext-14-o-anterior componer-y-renderizar-un-paquete ejemplo-en-vivo-abrir-un-paquete crear-un-paquete paquetes-bilingües ejemplo-en-vivo-crear-un-paquete trabajar-con-paquetes api-de-bajo-nivel"
+    },
+    "ca": {
+      "configuration-pdf-output": "generació-de-pdf installació api-pública-1>api-pública exemple-mínim per-què-un-proveïdor-de-fonts quines-variants-es-demanen-al-proveïdor proveïdor-de-fonts-al-navegador-fontsource--woff2 fonts-xineses-japoneses-i-coreanes proveïdor-de-fonts-al-servidor-node-fitxers-locals bytes-de-recursos-i-màsters-dimpressió text-vertical-en-el-pdf enllaços-en-el-pdf exemple-complet-al-navegador-compondre-renderitzar-baixar exemple-en-directe-un-pdf-al-navegador renderitzar-el-pdf-en-un-worker pdf-a-punt-per-a-impremta implementació-de-referència",
+      "configuration-html-folio-epub": "integrar-el-visor-html exemple-en-directe-una-cadena-html integració-mínima-1>integració-mínima pas-següent en-què-es-diferencia-la-sortida-html-del-canvas-i-del-pdf un-llibre-en-3d-postext-folio aspecte exemple-en-directe-un-llibre-en-3d exemple-en-directe-imatges-de-pàgina llibres-epub-postext-epub maquetació-fixa-i-maquetació-fluida escriure-un-llibre comprovar-un-fitxer-amb-epubcheck",
+      "configuration-bundles": "paquets-fitxers-postext obrir-un-paquet paquets-escrits-per-postext-14-o-anterior compondre-i-renderitzar-un-paquet exemple-en-directe-obrir-un-paquet crear-un-paquet paquets-bilingües exemple-en-viu-crear-un-paquet treballar-amb-paquets api-de-baix-nivell"
+    },
+    "zh": {
+      "configuration-pdf-output": "生成pdf 安装 公共api-1>公共api 最简示例 为什么需要字体提供函数 向字体提供函数请求哪些字体 浏览器字体提供函数fontsource--woff2 中文日文和韩文字体 服务端字体提供函数node本地文件 资源字节与印刷母版 pdf中的竖排文字 pdf中的链接 完整的浏览器示例构建渲染下载 在线示例在浏览器中生成pdf 在工作线程上渲染pdf 可付印的pdf 参考实现",
+      "configuration-html-folio-epub": "集成html查看器 在线示例html字符串 最简集成 进一步 html输出与canvas和pdf的区别 3d书本postext-folio 外观 在线示例3d书本 在线示例页面图片 epub电子书postext-epub 固定版式与流式版式 写出一本书 用epubcheck检查文件",
+      "configuration-bundles": "文件包postext文件 打开文件包 postext-14及更早版本写出的文件包 排版和渲染文件包 在线示例打开文件包 创建文件包 双语文件包 在线示例创建文件包 使用文件包 底层api"
+    },
+    "ar": {
+      "configuration-pdf-output": "توليد-ملفات-pdf التثبيت الواجهة-البرمجية-العامة-1>الواجهة-البرمجية-العامة مثال-مختصر لماذا-مزوّد-الخطوط الوجوه-التي-يُسأل-عنها-المزوّد مزوّد-الخطوط-في-المتصفح-fontsource--woff2 خطوط-الصينية-واليابانية-والكورية مزوّد-الخطوط-على-الخادم-node-ملفات-محلية بايتات-الموارد-والنسخ-الأصلية-للطباعة النص-العمودي-في-ملف-pdf الروابط-في-ملف-pdf مثال-كامل-في-المتصفح-البناء-والإنتاج-والتنزيل مثال-حي-ملف-pdf-في-المتصفح إنتاج-ملف-pdf-في-عامل ملفات-pdf-جاهزة-للطباعة التنفيذ-المرجعي",
+      "configuration-html-folio-epub": "دمج-عارض-html مثال-حيّ-سلسلة-html التكامل-الأدنى-1>التكامل-الأدنى أبعد-من-ذلك كيف-يختلف-إخراج-html-عن-canvas-وpdf كتاب-ثلاثي-الأبعاد-postext-folio المظهر مثال-حي-كتاب-ثلاثي-الأبعاد مثال-حي-صور-الصفحات كتب-epub-postext-epub التخطيط-الثابت-والتخطيط-المتدفق كتابة-كتاب فحص-ملف-باستخدام-epubcheck",
+      "configuration-bundles": "الحزم-ملفات-postext فتح-حزمة الحزم-التي-كتبها-postext-14-أو-ما-قبله إخراج-حزمة-ورسمها مثال-حي-فتح-حزمة إنشاء-حزمة الحزم-الثنائية-اللغة مثال-حي-إنشاء-حزمة العمل-بالحزم الواجهة-البرمجية-منخفضة-المستوى"
+    },
+    "ja": {
+      "configuration-pdf-output": "pdfの生成 インストール 公開api-1>公開api 最小限の例 なぜフォントプロバイダーが必要か プロバイダーに要求されるフェイス ブラウザー向けフォントプロバイダーfontsource--woff2 中国語日本語韓国語のフォント サーバー側のフォントプロバイダーnodeローカルファイル リソースのバイト列と印刷用マスター pdfの縦組み pdfのリンク 完全なブラウザーの例構築描画ダウンロード ライブサンプルブラウザーでpdfを作る ワーカーでpdfを描画する 印刷入稿用のpdf リファレンス実装",
+      "configuration-html-folio-epub": "htmlビューアーの統合 ライブサンプルhtml文字列 最小限の統合-1>最小限の統合 さらに進んだ統合 html出力とcanvaspdfとの違い 3dの本postext-folio 外観 ライブサンプル3dの本 ライブサンプルページの画像 epubの本postext-epub 固定レイアウトとリフロー型 本を書き出す epubcheckでファイルを検査する",
+      "configuration-bundles": "バンドルpostextファイル バンドルを開く postext-14以前で書き出したバンドル バンドルを組んで描画する ライブサンプルバンドルを開く バンドルを作成する 多言語のバンドル ライブサンプルバンドルを作成する バンドルの活用 低レベルapi"
+    },
+    "pt": {
+      "configuration-pdf-output": "geração-de-pdf instalação api-pública-1>api-pública exemplo-mínimo por-que-um-provedor-de-fontes quais-variantes-são-pedidas-ao-provedor provedor-de-fontes-no-navegador-fontsource--woff2 fontes-chinesas-japonesas-e-coreanas provedor-de-fontes-no-servidor-node-arquivos-locais bytes-de-recursos-e-matrizes-de-impressão texto-vertical-no-pdf links-no-pdf exemplo-completo-no-navegador-construir-renderizar-baixar exemplo-ao-vivo-um-pdf-no-navegador renderizar-o-pdf-em-um-worker pdfs-prontos-para-impressão implementação-de-referência",
+      "configuration-html-folio-epub": "integração-do-visualizador-html exemplo-ao-vivo-uma-string-html integração-mínima-1>integração-mínima indo-além como-a-saída-html-difere-do-canvas-e-do-pdf um-livro-em-3d-postext-folio aparência exemplo-ao-vivo-um-livro-em-3d exemplo-ao-vivo-imagens-de-página livros-epub-postext-epub layout-fixo-e-refluível gravar-um-livro verificar-um-arquivo-com-o-epubcheck",
+      "configuration-bundles": "pacotes-arquivos-postext abrir-um-pacote pacotes-gravados-pelo-postext-14-ou-anterior diagramar-e-renderizar-um-pacote exemplo-ao-vivo-abrir-um-pacote criar-um-pacote pacotes-bilíngues exemplo-ao-vivo-criar-um-pacote trabalhar-com-pacotes api-de-baixo-nível"
+    },
+    "fr": {
+      "configuration-pdf-output": "générer-des-pdf installation api-publique-1>api-publique exemple-minimal pourquoi-un-fournisseur-de-polices quelles-fontes-sont-demandées-au-fournisseur fournisseur-de-polices-dans-le-navigateur-fontsource--woff2 polices-chinoises-japonaises-et-coréennes fournisseur-de-polices-côté-serveur-node-fichiers-locaux octets-des-ressources-et-originaux-dimpression texte-vertical-dans-le-pdf liens-dans-le-pdf exemple-complet-dans-le-navigateur-construire-rendre-télécharger exemple-en-direct-un-pdf-dans-le-navigateur rendre-le-pdf-dans-un-worker pdf-prêts-pour-limpression implémentation-de-référence",
+      "configuration-html-folio-epub": "intégrer-la-visionneuse-html exemple-en-direct-une-chaîne-html intégration-minimale-1>intégration-minimale aller-plus-loin en-quoi-la-sortie-html-diffère-du-canvas-et-du-pdf un-livre-en-3d-postext-folio apparence exemple-en-direct-un-livre-en-3d exemple-en-direct-des-images-de-pages livres-epub-postext-epub mise-en-page-fixe-et-recomposable écrire-un-livre vérifier-un-fichier-avec-epubcheck",
+      "configuration-bundles": "paquets-fichiers-postext ouvrir-un-paquet paquets-écrits-par-postext-14-ou-antérieur mettre-en-page-et-rendre-un-paquet exemple-en-direct-ouvrir-un-paquet créer-un-paquet paquets-bilingues exemple-en-direct-créer-un-paquet travailler-avec-des-paquets api-de-bas-niveau"
+    },
+    "de": {
+      "configuration-pdf-output": "pdfs-erzeugen installation öffentliche-api-von-postext-pdf minimales-beispiel warum-ein-font-provider welche-schnitte-beim-provider-angefragt-werden font-provider-im-browser-fontsource--woff2 chinesische-japanische-und-koreanische-schriften serverseitiger-font-provider-node-lokale-dateien ressourcenbytes-und-druckoriginale vertikaler-text-im-pdf links-im-pdf vollständiges-browser-beispiel-setzen-rendern-herunterladen live-beispiel-ein-pdf-im-browser das-pdf-in-einem-worker-rendern druckfertige-pdfs referenzimplementierung",
+      "configuration-html-folio-epub": "den-html-betrachter-einbinden live-beispiel-ein-html-string minimale-einbindung weiterführende-schritte wie-sich-die-html-ausgabe-von-canvas-und-pdf-unterscheidet ein-3d-buch-postext-folio erscheinungsbild live-beispiel-ein-buch-in-3d live-beispiel-seitenbilder epub-bücher-postext-epub festes-layout-und-umfließend ein-buch-schreiben eine-datei-mit-epubcheck-prüfen",
+      "configuration-bundles": "pakete-dateien-im-format-postext ein-paket-öffnen pakete-die-postext-14-oder-früher-geschrieben-hat ein-paket-setzen-und-rendern live-beispiel-ein-paket-öffnen ein-paket-erstellen zweisprachige-pakete live-beispiel-ein-paket-erstellen mit-paketen-arbeiten api-der-unteren-ebene"
+    },
+    "it": {
+      "configuration-pdf-output": "generare-pdf installazione api-pubblica-1>api-pubblica esempio-minimo perché-un-provider-di-font quali-font-vengono-chiesti-al-provider provider-di-font-per-il-browser-fontsource--woff2 font-cinesi-giapponesi-e-coreani provider-di-font-lato-server-node-file-locali byte-delle-risorse-e-master-di-stampa testo-verticale-nel-pdf link-nel-pdf esempio-completo-per-il-browser-costruire-rendere-scaricare esempio-dal-vivo-un-pdf-nel-browser rendere-il-pdf-in-un-worker pdf-pronti-per-la-stampa implementazione-di-riferimento",
+      "configuration-html-folio-epub": "integrare-il-visualizzatore-html esempio-dal-vivo-una-stringa-html integrazione-minima-1>integrazione-minima andare-oltre in-che-cosa-loutput-html-differisce-da-canvas-e-pdf un-libro-in-3d-postext-folio aspetto esempio-dal-vivo-un-libro-in-3d esempio-dal-vivo-immagini-di-pagina libri-epub-postext-epub layout-fisso-e-fluido scrivere-un-libro verificare-un-file-con-epubcheck",
+      "configuration-bundles": "pacchetti-file-postext aprire-un-pacchetto pacchetti-scritti-da-postext-14-o-precedenti impaginare-e-disegnare-un-pacchetto esempio-dal-vivo-aprire-un-pacchetto creare-un-pacchetto pacchetti-bilingui esempio-dal-vivo-creare-un-pacchetto lavorare-con-i-pacchetti api-di-basso-livello"
+    }
+  },
+  "document-format": {
+    "en": {
+      "document-format-directives": "directives attribute-values containers columns splitting-a-group paper pagebreak parity-attribute blank-page-ownership document-start-exception numbering space verse line-by-line classical-arabic-layout toc index line-breaks line-breaks-in-titles comics page panels script-lines strip spreads",
+      "document-format-inline": "inline-formatting links inline-chips small-capitals tabs-and-tab-stops orientation-in-vertical-text chinese-marks-ruby-and-warichu text-direction-in-the-markup mathematical-formulas",
+      "document-format-notes-references": "footnotes cross-references-and-anchors citations-and-bibliography citing references the-bibliography styles back-of-book-index index-marks printing-the-index",
+      "document-format-resources": "resources inline-reference-the-primary-form block-embed-optional-explicit-inline-placement reference-options first-reference-numbering placement where-a-float-can-land text-wrap bitmap-size safe-area speaker-anchors-and-avoid-zones videos videos-on-folios-pages"
+    },
+    "es": {
+      "document-format-directives": "directivas valores-de-los-atributos contenedores columns partir-un-grupo paper pagebreak atributo-parity pertenencia-de-las-páginas-en-blanco excepción-al-inicio-del-documento numbering space verse línea-a-línea manera-árabe-clásica toc index saltos-de-línea saltos-de-línea-en-los-títulos cómics page viñetas líneas-de-guion strip dobles-páginas",
+      "document-format-inline": "formato-en-línea enlaces chips-en-línea versalitas tabuladores-y-tabulaciones orientación-en-texto-vertical marcas-chinas-ruby-y-warichu dirección-del-texto-en-el-marcado fórmulas-matemáticas",
+      "document-format-notes-references": "notas-al-pie referencias-cruzadas-y-anclas citas-y-bibliografía citar referencias la-bibliografía estilos índice-analítico marcas-de-índice imprimir-el-índice",
+      "document-format-resources": "recursos referencia-en-línea-la-forma-principal inserción-en-bloque-opcional-colocación-en-línea-explícita opciones-de-la-referencia numeración-por-primera-referencia colocación dónde-puede-caer-un-flotante ajuste-del-texto tamaño-de-los-mapas-de-bits zona-segura anclas-de-personaje-y-zonas-libres vídeos vídeos-en-las-páginas-de-folio"
+    },
+    "ca": {
+      "document-format-directives": "directives valors-dels-atributs contenidors columns partir-un-grup paper pagebreak atribut-parity pertinença-de-les-pàgines-en-blanc excepció-a-linici-del-document numbering space verse línia-a-línia manera-àrab-clàssica toc index salts-de-línia salts-de-línia-als-títols còmics page vinyetes línies-de-guió strip dobles-pàgines",
+      "document-format-inline": "format-en-línia enllaços xips-en-línia versaletes tabuladors-i-tabulacions orientació-en-text-vertical marques-xineses-ruby-i-warichu direcció-del-text-al-marcatge fórmules-matemàtiques",
+      "document-format-notes-references": "notes-a-peu-de-pàgina referències-creuades-i-àncores citacions-i-bibliografia citar referències la-bibliografia estils índex-analític marques-díndex imprimir-líndex",
+      "document-format-resources": "recursos referència-en-línia-la-forma-principal inserció-en-bloc-opcional-collocació-en-línia-explícita opcions-de-la-referència numeració-per-primera-referència collocació on-pot-caure-un-flotant ajust-del-text mida-dels-mapes-de-bits zona-segura àncores-dels-personatges-i-zones-lliures vídeos vídeos-a-les-pàgines-de-folio"
+    },
+    "zh": {
+      "document-format-directives": "指令 属性值 容器 columns 分栏组的拆分 paper pagebreak 奇偶属性 空白页的归属 文档开头的例外 numbering space verse 逐行 古典阿拉伯排法 toc index 段落内的换行 标题中的换行 漫画 page 分格 台词行 strip 跨页",
+      "document-format-inline": "行内格式 链接 行内标签 小型大写字母 制表符与制表位 竖排中的文字方向 中文标记注音和双行夹注 标记中的文本方向 数学公式",
+      "document-format-notes-references": "脚注 交叉引用与锚点 引用与参考文献 引用 参考文献数据 参考文献表 样式 索引 索引标记 印出索引",
+      "document-format-resources": "资源 行内引用主要写法 块级嵌入可选显式的行内放置 引用选项 按首次引用编号 位置 浮动体可以落在哪里 文字绕排 位图尺寸 安全区 说话人锚点与避让区 视频 folio视图中的视频"
+    },
+    "ar": {
+      "document-format-directives": "التوجيهات قيم-السمات الحاويات columns تقسيم-المجموعة paper pagebreak سمة-الزوجية-parity لمن-تتبع-الصفحة-الفارغة استثناء-بداية-المستند numbering space verse سطرًا-سطرًا التخطيط-العربي-الكلاسيكي toc index فواصل-الأسطر فواصل-الأسطر-في-العناوين القصص-المصورة page الإطارات أسطر-الحوار strip الصفحات-المزدوجة",
+      "document-format-inline": "التنسيق-المضمّن الروابط الشارات-المضمّنة الحروف-الكبيرة-المصغّرة الجدولة-ومواضع-الجدولة الاتجاه-في-النص-العمودي العلامات-الصينية-والقراءات-ruby-والتعليقات-السطرية-warichu اتجاه-النص-في-الترميز الصيغ-الرياضية",
+      "document-format-notes-references": "الحواشي-السفلية الإحالات-والمراسي الاستشهادات-وقائمة-المراجع الاستشهاد المراجع قائمة-المراجع الأنماط الفهرس-الأبجدي علامات-الفهرس طباعة-الفهرس",
+      "document-format-resources": "الموارد الإحالة-داخل-السطر-الصيغة-الأساسية التضمين-في-كتلة-اختياري-لوضع-صريح-داخل-التدفق خيارات-الإحالة الترقيم-بحسب-الإحالة-الأولى الموضع أين-يمكن-أن-يستقر-العنصر-العائم التفاف-النص مقاس-الصورة-النقطية المنطقة-الآمنة نقاط-ارتكاز-المتحدثين-ومناطق-التجنب مقاطع-الفيديو مقاطع-الفيديو-على-صفحات-folio"
+    },
+    "ja": {
+      "document-format-directives": "ディレクティブ 属性の値 コンテナー columns グループの分割 paper pagebreak 奇偶の属性 白ページの帰属 文書冒頭の例外 numbering space verse 行ごと 古典アラビア語の配置 toc index 段落内の改行 タイトル内の改行 漫画 page コマ 台本の行 strip 見開き",
+      "document-format-inline": "インライン書式 リンク インラインのチップ スモールキャピタル タブとタブ位置 縦組みでの文字の向き 中国語の記号ルビ割注 マークアップでの文字方向 数式",
+      "document-format-notes-references": "脚注 相互参照とアンカー 引用と参考文献 引用の書き方 文献データ 参考文献の一覧 スタイル 索引 索引マーク 索引の出力",
+      "document-format-resources": "リソース インライン参照基本の形 ブロック埋め込み任意本文中への明示的な配置 参照のオプション 初出順の番号付け 配置 フロートが置かれる場所 回り込み ビットマップのサイズ セーフエリア 話者のアンカーと回避エリア 動画 folioのページで再生する動画"
+    },
+    "pt": {
+      "document-format-directives": "diretivas valores-de-atributo contêineres columns dividir-um-grupo paper pagebreak atributo-de-paridade a-quem-pertence-a-página-em-branco exceção-no-início-do-documento numbering space verse linha-a-linha disposição-árabe-clássica toc index quebras-de-linha quebras-de-linha-em-títulos quadrinhos page quadros linhas-de-roteiro strip páginas-duplas",
+      "document-format-inline": "formatação-em-linha links chips-em-linha versaletes tabulações-e-paradas-de-tabulação orientação-no-texto-vertical marcas-chinesas-rubi-e-warichu direção-do-texto-na-marcação fórmulas-matemáticas",
+      "document-format-notes-references": "notas-de-rodapé referências-cruzadas-e-âncoras citações-e-bibliografia como-citar referências a-bibliografia estilos índice-remissivo marcas-de-índice como-imprimir-o-índice",
+      "document-format-resources": "recursos referência-em-linha-a-forma-principal inserção-em-bloco-opcional-posicionamento-explícito-em-linha opções-de-referência numeração-pela-primeira-referência posicionamento onde-um-flutuante-pode-ficar contorno-de-texto tamanho-do-bitmap área-segura âncoras-de-falante-e-zonas-a-evitar vídeos vídeos-nas-páginas-do-folio"
+    },
+    "fr": {
+      "document-format-directives": "directives valeurs-dattribut conteneurs columns couper-un-groupe paper pagebreak attribut-de-parité à-qui-appartient-la-page-blanche exception-en-début-de-document numbering space verse vers-par-vers disposition-arabe-classique toc index sauts-de-ligne sauts-de-ligne-dans-les-titres bandes-dessinées page cases lignes-de-script strip doubles-pages",
+      "document-format-inline": "mise-en-forme-en-ligne liens pastilles-en-ligne petites-capitales tabulations-et-taquets orientation-dans-le-texte-vertical marques-chinoises-ruby-et-warichu sens-du-texte-dans-le-balisage formules-mathématiques",
+      "document-format-notes-references": "notes-de-bas-de-page renvois-et-ancres citations-et-bibliographie citer références la-bibliographie styles index-1>index marques-dindex imprimer-lindex",
+      "document-format-resources": "ressources renvoi-dans-le-texte-la-forme-principale insertion-en-bloc-facultative-placement-explicite-dans-le-texte options-du-renvoi numérotation-au-premier-renvoi placement où-un-flottant-peut-se-placer habillage-du-texte taille-des-bitmaps zone-de-sécurité ancres-des-personnages-et-zones-à-éviter vidéos les-vidéos-sur-les-pages-de-folio"
+    },
+    "de": {
+      "document-format-directives": "direktiven attributwerte container columns eine-gruppe-teilen paper pagebreak das-attribut-parity zugehörigkeit-leerer-seiten ausnahme-am-dokumentanfang numbering space verse zeile-für-zeile klassisches-arabisches-layout toc index zeilenumbrüche zeilenumbrüche-in-titeln comics page panels skriptzeilen strip doppelseiten",
+      "document-format-inline": "inline-formatierung links inline-chips kapitälchen tabulatoren-und-tabstopps ausrichtung-in-senkrechtem-text chinesische-zeichen-ruby-und-warichu schreibrichtung-in-der-auszeichnung mathematische-formeln",
+      "document-format-notes-references": "fußnoten querverweise-und-anker zitate-und-literaturverzeichnis zitieren literaturangaben das-literaturverzeichnis zitierstile register registermarken das-register-drucken",
+      "document-format-resources": "ressourcen verweis-im-text-die-hauptform blockeinbettung-optional-ausdrückliche-platzierung-im-text verweisoptionen nummerierung-beim-ersten-verweis platzierung wo-ein-gleitobjekt-landen-kann textumfluss bitmap-größe sicherheitsbereich sprecheranker-und-sperrzonen videos videos-auf-den-seiten-von-folio"
+    },
+    "it": {
+      "document-format-directives": "direttive valori-degli-attributi contenitori columns dividere-un-gruppo paper pagebreak attributo-di-parità a-chi-appartengono-le-pagine-bianche eccezione-allinizio-del-documento numbering space verse verso-per-verso impaginazione-araba-classica toc index a-capo a-capo-nei-titoli fumetti page vignette righe-di-sceneggiatura strip doppie-pagine",
+      "document-format-inline": "formattazione-in-linea link chip-in-linea maiuscoletto tabulazioni-e-tabulatori orientamento-nel-testo-verticale segni-cinesi-ruby-e-warichu la-direzione-del-testo-nel-markup formule-matematiche",
+      "document-format-notes-references": "note-a-piè-di-pagina rimandi-e-ancore citazioni-e-bibliografia citare riferimenti la-bibliografia stili indice-analitico segni-dellindice stampare-lindice",
+      "document-format-resources": "risorse rimando-in-linea-la-forma-principale inserimento-di-blocco-facoltativo-collocazione-in-linea-esplicita opzioni-del-rimando numerazione-al-primo-rimando collocazione dove-può-finire-un-elemento-flottante testo-intorno-alle-immagini dimensione-delle-bitmap zona-sicura ancore-dei-personaggi-e-zone-da-evitare video video-sulle-pagine-di-folio"
+    }
+  },
+  "sandbox": {
+    "en": {
+      "sandbox-design-checks": "design-panel checks-panel",
+      "sandbox-previews": "main-viewport canvas-tab pdf-tab folio-tab html-tab epub-3-tab",
+      "sandbox-books-saving": "books-and-chapters editing-comics word-documents persistence export-and-import",
+      "sandbox-embedding": "agents-webmcp standalone-usage props css-requirements preset-bundle-format indexjson presetjson"
+    },
+    "es": {
+      "sandbox-design-checks": "panel-de-diseño panel-de-revisión",
+      "sandbox-previews": "viewport-principal pestaña-canvas pestaña-pdf pestaña-folio pestaña-html pestaña-epub-3",
+      "sandbox-books-saving": "libros-y-capítulos editar-cómics documentos-de-word persistencia exportar-e-importar",
+      "sandbox-embedding": "agentes-webmcp uso-standalone props requisitos-de-css formato-de-paquete-de-preset indexjson presetjson"
+    },
+    "ca": {
+      "sandbox-design-checks": "tauler-de-disseny tauler-de-revisió",
+      "sandbox-previews": "viewport-principal pestanya-canvas pestanya-pdf pestanya-folio pestanya-html pestanya-epub-3",
+      "sandbox-books-saving": "llibres-i-capítols editar-còmics documents-de-word persistència exportar-i-importar",
+      "sandbox-embedding": "agents-webmcp ús-standalone props requisits-de-css format-de-paquet-de-preset indexjson presetjson"
+    },
+    "zh": {
+      "sandbox-design-checks": "版面设计面板 检查面板",
+      "sandbox-previews": "主视口 canvas标签页 pdf标签页 书页标签页 html标签页 epub-3标签页",
+      "sandbox-books-saving": "书与章 编辑漫画 word文档 持久化 导出与导入",
+      "sandbox-embedding": "智能体webmcp 独立使用 属性 css要求 预设文件包格式 indexjson presetjson"
+    },
+    "ar": {
+      "sandbox-design-checks": "لوحة-التصميم لوحة-الفحوص",
+      "sandbox-previews": "منطقة-العرض-الرئيسية تبويب-canvas تبويب-pdf تبويب-folio تبويب-html تبويب-epub-3",
+      "sandbox-books-saving": "الكتب-والفصول تحرير-القصص-المصورة مستندات-word حفظ-العمل التصدير-والاستيراد",
+      "sandbox-embedding": "الوكلاء-webmcp الاستخدام-المستقل الخصائص-props متطلبات-css صيغة-حزمة-الإعداد-المسبق indexjson presetjson"
+    },
+    "ja": {
+      "sandbox-design-checks": "デザインパネル 検査パネル",
+      "sandbox-previews": "メインビューポート canvasタブ pdfタブ folioタブ htmlタブ epub-3タブ",
+      "sandbox-books-saving": "本と章 漫画の編集 word文書 作業内容の保存 書き出しと読み込み",
+      "sandbox-embedding": "エージェントwebmcp 単体での利用 props cssの要件 プリセットバンドルの形式 indexjson presetjson"
+    },
+    "pt": {
+      "sandbox-design-checks": "painel-design painel-verificações",
+      "sandbox-previews": "área-de-visualização-principal aba-canvas aba-pdf aba-folio aba-html aba-epub-3",
+      "sandbox-books-saving": "livros-e-capítulos editar-quadrinhos documentos-do-word persistência exportar-e-importar",
+      "sandbox-embedding": "agentes-webmcp uso-independente props requisitos-de-css formato-do-pacote-de-predefinição indexjson presetjson"
+    },
+    "fr": {
+      "sandbox-design-checks": "panneau-maquette panneau-vérifications",
+      "sandbox-previews": "zone-daperçu-principale onglet-canvas onglet-pdf onglet-folio onglet-html onglet-epub-3",
+      "sandbox-books-saving": "livres-et-chapitres modifier-une-bande-dessinée documents-word persistance export-et-import",
+      "sandbox-embedding": "agents-webmcp utilisation-autonome props prérequis-css format-des-paquets-de-préréglage indexjson presetjson"
+    },
+    "de": {
+      "sandbox-design-checks": "bedienfeld-gestaltung bedienfeld-prüfungen",
+      "sandbox-previews": "hauptansichtsbereich tab-canvas tab-pdf tab-folio tab-html tab-epub-3",
+      "sandbox-books-saving": "bücher-und-kapitel comics-bearbeiten word-dokumente persistenz export-und-import",
+      "sandbox-embedding": "agenten-webmcp eigenständige-verwendung props css-anforderungen format-der-vorlagenpakete indexjson presetjson"
+    },
+    "it": {
+      "sandbox-design-checks": "pannello-grafica pannello-verifiche",
+      "sandbox-previews": "area-di-visualizzazione-principale scheda-canvas scheda-pdf scheda-folio scheda-html scheda-epub-3",
+      "sandbox-books-saving": "libri-e-capitoli modificare-i-fumetti documenti-word persistenza esportazione-e-importazione",
+      "sandbox-embedding": "agenti-webmcp uso-autonomo props requisiti-css formato-dei-pacchetti-preset indexjson presetjson"
+    }
+  }
+}

@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Footnotes, line numbers, cross-references and citations, the table of contents and the back-of-book index',
   lang: 'en',
   lastUpdated: '2026-10-10',
-  readingTime: '4 min',
-  order: 6,
+  readingTime: '27 min',
+  order: 12,
   parent: 'configuration',
   plainSummary: "This page covers the settings for the parts of a book that point somewhere else. Footnotes sit at the bottom of the page, and line numbers stand in the margin. Cross-references name a figure, a section or a page, and citations name the works you quote. The table of contents lists the chapters, and the index at the back lists terms with their pages. Each section says how these pieces look and how they are numbered.",
 };
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Footnotes
 
-The `footnotes` property sets where the notes cited with `[^id]` go, how they are numbered and how they look. The markup is described in [Document format](/en/docs/document-format#footnotes).
+The `footnotes` property sets where the notes cited with `[^id]` go, how they are numbered and how they look. The markup is described in [Document format](/en/docs/document-format-notes-references#footnotes).
 
 ```ts
 interface FootnotesConfig {
@@ -378,7 +378,7 @@ What is counted, and what is not:
 
 - **Never counted**: headings, captions, tables and pictures, display formulas, design text (openers, running heads), footnotes and chapter-end notes, the contents, the entries of the index and of the bibliography, and blank pages.
 - **Boxes and prose.** The text of a callout is not counted, and under `count: 'verse'` neither is prose, unless the paragraph style it is set in says `lineNumbers: true`; a style with `lineNumbers: false` is never counted (see [Paragraph styles](/en/docs/configuration-styles#paragraph-styles)).
-- **One poem.** A poem's fence takes `numbered=false` (its lines are not counted), `lineStart=N` (its first line is N, and the count starts again there) and `interval=N`. `:::numbering{lines=N}` numbers the next counted line N, wherever it stands. See [Document format › `:::verse`](/en/docs/document-format#verse) and [`:::numbering`](/en/docs/document-format#numbering).
+- **One poem.** A poem's fence takes `numbered=false` (its lines are not counted), `lineStart=N` (its first line is N, and the count starts again there) and `interval=N`. `:::numbering{lines=N}` numbers the next counted line N, wherever it stands. See [Document format › `:::verse`](/en/docs/document-format-directives#verse) and [`:::numbering`](/en/docs/document-format-directives#numbering).
 
 In a book laid out chapter by chapter, `restart: 'document'` carries the count from one chapter to the next through `continuation.lineNumber`. `continuationAfter` counts the lines of verse from the text; with `count: 'all'` the count depends on the layout, so the host passes on the `lastLineNumber` of the previous chapter's document, as the Sandbox does.
 
@@ -399,7 +399,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // unset font, w
 
 ## Cross-references
 
-The `crossRefs` property sets the words a [cross-reference](/en/docs/document-format#cross-references-and-anchors) prints around a number or a page, and the style a `:ref` takes when it sets none. Each template holds `{n}` where the number goes; one without it gets the number after a no-break space (`"§"` prints *§ 3.2*). An unset template follows the document language: *chapter / section / p.* in English, *capítulo / sección / pág.* in Spanish, `第{n}章` / `第{n}节` / `第{n}页` in Chinese, and so on for French, German, Italian, Portuguese, Catalan and Dutch.
+The `crossRefs` property sets the words a [cross-reference](/en/docs/document-format-notes-references#cross-references-and-anchors) prints around a number or a page, and the style a `:ref` takes when it sets none. Each template holds `{n}` where the number goes; one without it gets the number after a no-break space (`"§"` prints *§ 3.2*). An unset template follows the document language: *chapter / section / p.* in English, *capítulo / sección / pág.* in Spanish, `第{n}章` / `第{n}节` / `第{n}页` in Chinese, and so on for French, German, Italian, Portuguese, Catalan and Dutch.
 
 ```ts
 interface CrossRefsConfig {
@@ -449,7 +449,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Let a line break at the spaces of a reference whose label is words: the text of a <code>[words]{'{#id}'}</code> anchor, the title of a heading or a box, a <code>text="…"</code> override (on a reference to a figure or a table too). The label's spaces then stretch and shrink with the line, and the reference stays one link; its words are not hyphenated. A number, a Roman numeral or a single letter inside such a label keeps to the word before it (<code>Fig. 1a</code>, <code>plate IV</code>). A label with a number or a page (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) never breaks, even when its template holds an ordinary space. <code>false</code> sets every label as one word no line breaks inside, as up to postext 1.27. A configuration stored before <code>configVersion</code> 12 whose text holds a reference reads with <code>false</code>, so its lines stay where they were (see <a href="/en/docs/configuration-programmatic-usage#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>).</td>
+      <td>Let a line break at the spaces of a reference whose label is words: the text of a <code>[words]{'{#id}'}</code> anchor, the title of a heading or a box, a <code>text="…"</code> override (on a reference to a figure or a table too). The label's spaces then stretch and shrink with the line, and the reference stays one link; its words are not hyphenated. A number, a Roman numeral or a single letter inside such a label keeps to the word before it (<code>Fig. 1a</code>, <code>plate IV</code>). A label with a number or a page (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) never breaks, even when its template holds an ordinary space. <code>false</code> sets every label as one word no line breaks inside, as up to postext 1.27. A configuration stored before <code>configVersion</code> 12 whose text holds a reference reads with <code>false</code>, so its lines stay where they were (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -458,7 +458,7 @@ References take the colour, weight and slant of every reference (`bodyText.refer
 
 ## Citations
 
-The `citations` property chooses the citation style and how citations and the bibliography look. The markup is described in [Citations and bibliography](/en/docs/document-format#citations-and-bibliography); the style is applied by the `postext-citeproc` package.
+The `citations` property chooses the citation style and how citations and the bibliography look. The markup is described in [Citations and bibliography](/en/docs/document-format-notes-references#citations-and-bibliography); the style is applied by the `postext-citeproc` package.
 
 ```ts
 interface CitationsConfig {
@@ -502,7 +502,7 @@ interface CitationsConfig {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td><code>'apa'</code></td>
-      <td>A bundled style id (see <a href="/en/docs/document-format#styles">Styles</a>) or <code>'custom'</code>. The style decides what citations and entries say: names, dates, order, punctuation, and whether citations are notes.</td>
+      <td>A bundled style id (see <a href="/en/docs/document-format-notes-references#styles">Styles</a>) or <code>'custom'</code>. The style decides what citations and entries say: names, dates, order, punctuation, and whether citations are notes.</td>
     </tr>
     <tr>
       <td><code>customStyle</code></td>
@@ -550,7 +550,7 @@ interface CitationsConfig {
       <td><code>hyphenateNames</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Let the dictionary divide the names of the cited authors. <code>false</code> keeps whole the family name of every person in the references (authors, editors, translators) and every name given as one string, wherever it stands with its capital: in a citation, in the running text and in the list, so no line ends on <code>(Lup-</code>. A double name is read part by part, and an author called Baker does not keep the word <code>baker</code> whole. See <a href="/en/docs/configuration-text#words-kept-whole">Words kept whole</a>.</td>
+      <td>Let the dictionary divide the names of the cited authors. <code>false</code> keeps whole the family name of every person in the references (authors, editors, translators) and every name given as one string, wherever it stands with its capital: in a citation, in the running text and in the list, so no line ends on <code>(Lup-</code>. A double name is read part by part, and an author called Baker does not keep the word <code>baker</code> whole. See <a href="/en/docs/configuration-language#words-kept-whole">Words kept whole</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -629,7 +629,7 @@ interface CitationsConfig {
 
 ## Table of contents
 
-The `toc` property configures what a `:::toc` directive prints (see [Document format](/en/docs/document-format#toc)). The contents are assembled from the document's **outline** — every heading with its number and page label, every `:::part` — so they follow the chapters: rename one, move it to another part, change its authors, and the entries change with it. An entry is the heading's number in a column of its own, the title, a leader and the page label at the right edge, then an optional subtitle line; a part is a row designed by `parts.design`.
+The `toc` property configures what a `:::toc` directive prints (see [Document format](/en/docs/document-format-directives#toc)). The contents are assembled from the document's **outline** — every heading with its number and page label, every `:::part` — so they follow the chapters: rename one, move it to another part, change its authors, and the entries change with it. An entry is the heading's number in a column of its own, the title, a leader and the page label at the right edge, then an optional subtitle line; a part is a row designed by `parts.design`.
 
 ```ts
 const config: PostextConfig = {
@@ -719,7 +719,7 @@ The page labels are the ones the document prints. `buildDocument()` lays a docum
 
 ## Back-of-book index
 
-The `index` property configures what a `:::index` directive prints (see [Document format](/en/docs/document-format#back-of-book-index)): the terms marked with `:index[…]` and `:index{term="…"}` in the text, sorted, grouped by first letter (by pinyin initial or stroke count in Chinese, by gojūon row in Japanese, see `groupBy`), each with the pages it falls on. An entry is its term, a separator and its page numbers; its sub-entries follow, one indent step per level, and wrapped lines hang by `turnoverIndent` so they never line up with a sub-entry.
+The `index` property configures what a `:::index` directive prints (see [Document format](/en/docs/document-format-notes-references#back-of-book-index)): the terms marked with `:index[…]` and `:index{term="…"}` in the text, sorted, grouped by first letter (by pinyin initial or stroke count in Chinese, by gojūon row in Japanese, see `groupBy`), each with the pages it falls on. An entry is its term, a separator and its page numbers; its sub-entries follow, one indent step per level, and wrapped lines hang by `turnoverIndent` so they never line up with a sub-entry.
 
 ```ts
 const config: PostextConfig = {

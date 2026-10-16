@@ -6,8 +6,8 @@ export const metadata = {
   description: "Les notes a peu de pàgina, la numeració de línies, les referències creuades i les cites, l'índex de continguts i l'índex analític",
   lang: 'ca',
   lastUpdated: '2026-10-10',
-  readingTime: '4 min',
-  order: 6,
+  readingTime: '29 min',
+  order: 12,
   parent: 'configuration',
   plainSummary: "Aquesta pàgina reuneix els paràmetres de les parts del llibre que remeten a un altre lloc. Les notes van a peu de pàgina i els números de línia van al marge. Les referències creuades anomenen una figura, una secció o una pàgina, i les cites anomenen les obres que esmentes. L'índex de continguts enumera els capítols i l'índex analític, al final, enumera termes amb les seves pàgines. Cada secció explica l'aspecte d'aquestes peces i com es numeren.",
 };
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Notes a peu de pàgina
 
-La propietat `footnotes` fixa on van les notes citades amb `[^id]`, com es numeren i quin aspecte tenen. El marcatge es descriu a [Format del document](/ca/docs/document-format#notes-a-peu-de-pàgina).
+La propietat `footnotes` fixa on van les notes citades amb `[^id]`, com es numeren i quin aspecte tenen. El marcatge es descriu a [Format del document](/ca/docs/document-format-notes-references#notes-a-peu-de-pàgina).
 
 ```ts
 interface FootnotesConfig {
@@ -378,7 +378,7 @@ Què es compta i què no:
 
 - **No es compten mai** els encapçalaments, els peus, les taules i les imatges, les fórmules en bloc, el text de disseny (obertures, capçaleres), les notes a peu de pàgina i les notes de final de capítol, l'índex de continguts, les entrades de l'índex alfabètic i de la bibliografia, ni les pàgines en blanc.
 - **Requadres i prosa.** El text d'un requadre no es compta, i amb `count: 'verse'` tampoc la prosa, llevat que l'estil de paràgraf amb què es compon digui `lineNumbers: true`; un estil amb `lineNumbers: false` no es compta mai (vegeu [Estils de paràgraf](/ca/docs/configuration-styles#estils-de-paràgraf)).
-- **Un poema.** L'obertura d'un poema admet `numbered=false` (els seus versos no es compten), `lineStart=N` (el seu primer vers és l'N, i el compte torna a començar aquí) i `interval=N`. `:::numbering{lines=N}` dona el número N a la línia comptada següent, sigui on sigui. Vegeu [Format del document › `:::verse`](/ca/docs/document-format#verse) i [`:::numbering`](/ca/docs/document-format#numbering).
+- **Un poema.** L'obertura d'un poema admet `numbered=false` (els seus versos no es compten), `lineStart=N` (el seu primer vers és l'N, i el compte torna a començar aquí) i `interval=N`. `:::numbering{lines=N}` dona el número N a la línia comptada següent, sigui on sigui. Vegeu [Format del document › `:::verse`](/ca/docs/document-format-directives#verse) i [`:::numbering`](/ca/docs/document-format-directives#numbering).
 
 En un llibre compost capítol a capítol, `restart: 'document'` porta el compte d'un capítol al següent a `continuation.lineNumber`. `continuationAfter` compta els versos a partir del text; amb `count: 'all'` el compte depèn de la composició, així que l'aplicació passa el `lastLineNumber` del document del capítol anterior, com fa el Sandbox.
 
@@ -399,7 +399,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // font, pes i c
 
 ## Referències creuades
 
-La propietat `crossRefs` fixa les paraules que una [referència creuada](/ca/docs/document-format#referències-creuades-i-àncores) imprimeix al voltant d'un número o d'una pàgina, i l'estil que pren un `:ref` que no n'indica cap. Cada plantilla porta `{n}` on va el número; una que no el porta rep el número després d'un espai no separable (`"§"` imprimeix *§ 3.2*). Una plantilla sense definir segueix la llengua del document: *capítulo / sección / pág.* en castellà, *chapter / section / p.* en anglès, `第{n}章` / `第{n}节` / `第{n}页` en xinès, i el mateix per al francès, l'alemany, l'italià, el portuguès, el català i el neerlandès.
+La propietat `crossRefs` fixa les paraules que una [referència creuada](/ca/docs/document-format-notes-references#referències-creuades-i-àncores) imprimeix al voltant d'un número o d'una pàgina, i l'estil que pren un `:ref` que no n'indica cap. Cada plantilla porta `{n}` on va el número; una que no el porta rep el número després d'un espai no separable (`"§"` imprimeix *§ 3.2*). Una plantilla sense definir segueix la llengua del document: *capítulo / sección / pág.* en castellà, *chapter / section / p.* en anglès, `第{n}章` / `第{n}节` / `第{n}页` en xinès, i el mateix per al francès, l'alemany, l'italià, el portuguès, el català i el neerlandès.
 
 ```ts
 interface CrossRefsConfig {
@@ -449,7 +449,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Deixa que una línia es talli pels espais d'una referència el rètol de la qual són paraules: el text d'una àncora <code>[paraules]{'{#id}'}</code>, el text d'un títol o el títol d'una caixa, un <code>text="…"</code> propi (també en una referència a una figura o a una taula). Els espais del rètol s'estiren i s'encongeixen llavors amb la línia, i la referència continua sent un sol enllaç; les seves paraules no es parteixen amb guionet. Dins d'un rètol així, un número, un nombre romà o una lletra sola no se separen de la paraula anterior (<code>Fig. 1a</code>, <code>làmina IV</code>). Un rètol amb un número o una pàgina (<em>secció 3.2</em>, <em>pàg. 112</em>, <em>Fig. 1.7</em>, <em>Teorema 2</em>) no es talla mai, ni tan sols quan la seva plantilla porta un espai normal. <code>false</code> compon cada rètol com una sola paraula, sense cap tall de línia a dins, com fins a postext 1.27. Una configuració desada abans de <code>configVersion</code> 12 el text de la qual conté una referència es llegeix amb <code>false</code>, així que les seves línies es queden on eren (vegeu <a href="/ca/docs/configuration-programmatic-usage#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>).</td>
+      <td>Deixa que una línia es talli pels espais d'una referència el rètol de la qual són paraules: el text d'una àncora <code>[paraules]{'{#id}'}</code>, el text d'un títol o el títol d'una caixa, un <code>text="…"</code> propi (també en una referència a una figura o a una taula). Els espais del rètol s'estiren i s'encongeixen llavors amb la línia, i la referència continua sent un sol enllaç; les seves paraules no es parteixen amb guionet. Dins d'un rètol així, un número, un nombre romà o una lletra sola no se separen de la paraula anterior (<code>Fig. 1a</code>, <code>làmina IV</code>). Un rètol amb un número o una pàgina (<em>secció 3.2</em>, <em>pàg. 112</em>, <em>Fig. 1.7</em>, <em>Teorema 2</em>) no es talla mai, ni tan sols quan la seva plantilla porta un espai normal. <code>false</code> compon cada rètol com una sola paraula, sense cap tall de línia a dins, com fins a postext 1.27. Una configuració desada abans de <code>configVersion</code> 12 el text de la qual conté una referència es llegeix amb <code>false</code>, així que les seves línies es queden on eren (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -458,7 +458,7 @@ Les referències prenen el color, el pes i la inclinació de totes les referènc
 
 ## Cites
 
-La propietat `citations` tria l'estil de cita i com es veuen les cites i la bibliografia. El marcatge es descriu a [Cites i bibliografia](/ca/docs/document-format#citacions-i-bibliografia); l'estil l'aplica el paquet `postext-citeproc`.
+La propietat `citations` tria l'estil de cita i com es veuen les cites i la bibliografia. El marcatge es descriu a [Cites i bibliografia](/ca/docs/document-format-notes-references#citacions-i-bibliografia); l'estil l'aplica el paquet `postext-citeproc`.
 
 ```ts
 interface CitationsConfig {
@@ -502,7 +502,7 @@ interface CitationsConfig {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td><code>'apa'</code></td>
-      <td>L'id d'un estil inclòs (vegeu <a href="/ca/docs/document-format#estils">Estils</a>) o <code>'custom'</code>. L'estil decideix el que diuen les cites i les entrades: noms, dates, ordre, puntuació i si les cites són notes.</td>
+      <td>L'id d'un estil inclòs (vegeu <a href="/ca/docs/document-format-notes-references#estils">Estils</a>) o <code>'custom'</code>. L'estil decideix el que diuen les cites i les entrades: noms, dates, ordre, puntuació i si les cites són notes.</td>
     </tr>
     <tr>
       <td><code>customStyle</code></td>
@@ -550,7 +550,7 @@ interface CitationsConfig {
       <td><code>hyphenateNames</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permet que el diccionari divideixi els noms dels autors citats. <code>false</code> deixa sencer el cognom de cada persona de les referències (autors, editors, traductors) i tot nom donat com una sola cadena, allà on aparegui amb la seva majúscula: en una citació, en el text corregut i a la llista, de manera que cap línia no acaba en <code>(Lup-</code>. Un cognom doble es llegeix part per part, i un autor que es diu Baker no deixa sencera la paraula <code>baker</code>. Vegeu <a href="/ca/docs/configuration-text#mots-que-no-es-divideixen">Mots que no es divideixen</a>.</td>
+      <td>Permet que el diccionari divideixi els noms dels autors citats. <code>false</code> deixa sencer el cognom de cada persona de les referències (autors, editors, traductors) i tot nom donat com una sola cadena, allà on aparegui amb la seva majúscula: en una citació, en el text corregut i a la llista, de manera que cap línia no acaba en <code>(Lup-</code>. Un cognom doble es llegeix part per part, i un autor que es diu Baker no deixa sencera la paraula <code>baker</code>. Vegeu <a href="/ca/docs/configuration-language#mots-que-no-es-divideixen">Mots que no es divideixen</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -628,7 +628,7 @@ interface CitationsConfig {
 </table>
 ## Índex de continguts
 
-La propietat `toc` configura el que imprimeix una directiva `:::toc` (vegeu [Format del document](/ca/docs/document-format#toc)). L'índex es munta a partir de l'**esquema** del document — cada encapçalament amb el seu número i la seva etiqueta de pàgina, cada `:::part` — de manera que segueix els capítols: canvia el nom d'un, mou-lo a una altra part, canvia'n els autors, i les entrades canvien amb ell. Una entrada és el número de l'encapçalament en una columna pròpia, el títol, una línia de punts i l'etiqueta de pàgina a la vora dreta, i després una línia de subtítol opcional; una part és una fila dissenyada per `parts.design`.
+La propietat `toc` configura el que imprimeix una directiva `:::toc` (vegeu [Format del document](/ca/docs/document-format-directives#toc)). L'índex es munta a partir de l'**esquema** del document — cada encapçalament amb el seu número i la seva etiqueta de pàgina, cada `:::part` — de manera que segueix els capítols: canvia el nom d'un, mou-lo a una altra part, canvia'n els autors, i les entrades canvien amb ell. Una entrada és el número de l'encapçalament en una columna pròpia, el títol, una línia de punts i l'etiqueta de pàgina a la vora dreta, i després una línia de subtítol opcional; una part és una fila dissenyada per `parts.design`.
 
 ```ts
 const config: PostextConfig = {
@@ -718,7 +718,7 @@ Les etiquetes de pàgina són les que imprimeix el document. `buildDocument()` t
 
 ## Índex analític
 
-La propietat `index` configura el que imprimeix una directiva `:::index` (vegeu [Format del document](/ca/docs/document-format#índex-analític)): els termes marcats amb `:index[…]` i `:index{term="…"}` al text, ordenats, agrupats per inicial (en xinès, per la inicial del pinyin o per traços, i en japonès per files del gojūon; vegeu `groupBy`) i cadascun amb les pàgines on cau. Una entrada és el seu terme, un separador i els seus números de pàgina; al darrere van les seves subentrades, amb un pas de sagnat per nivell, i les línies que continuen una entrada pengen `turnoverIndent` per no alinear-se mai amb una subentrada.
+La propietat `index` configura el que imprimeix una directiva `:::index` (vegeu [Format del document](/ca/docs/document-format-notes-references#índex-analític)): els termes marcats amb `:index[…]` i `:index{term="…"}` al text, ordenats, agrupats per inicial (en xinès, per la inicial del pinyin o per traços, i en japonès per files del gojūon; vegeu `groupBy`) i cadascun amb les pàgines on cau. Una entrada és el seu terme, un separador i els seus números de pàgina; al darrere van les seves subentrades, amb un pas de sagnat per nivell, i les línies que continuen una entrada pengen `turnoverIndent` per no alinear-se mai amb una subentrada.
 
 ```ts
 const config: PostextConfig = {

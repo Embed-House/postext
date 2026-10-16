@@ -1,0 +1,386 @@
+{/* docs/configuration-pdf-output-de.mdx */}
+
+export const metadata = {
+  title: 'Programmatische Nutzung: PDF-Dateien',
+  sidebarTitle: 'PDF-Dateien',
+  description: 'postext-pdf aus Code: Installation, API, Font-Provider im Browser und in Node, CJK-Schriften, Ressourcenbytes, vertikaler Text, Worker und druckfertige Dateien',
+  lang: 'de',
+  lastUpdated: '2026-10-16',
+  readingTime: '20 min',
+  order: 20,
+  parent: 'configuration',
+  plainSummary: "Diese Seite richtet sich an Menschen, die Code schreiben und eine PDF-Datei brauchen. Sie zeigt, wie Sie das PDF-Paket installieren und ein gesetztes Buch mit wenigen Zeilen in eine Datei verwandeln. Das Paket braucht die Schriftdateien, deshalb erklärt die Seite, wie Sie sie ihm übergeben, im Browser oder auf einem Server. Sie behandelt Schriften für Chinesisch, Japanisch und Koreanisch, Bilder, Text, der von oben nach unten läuft, und Links. Am Ende stehen ein vollständiges Beispiel und Dateien, die eine Druckerei übernehmen kann.",
+};
+
+# Programmatische Nutzung: PDF-Dateien
+
+
+## PDFs erzeugen
+
+Die PDF-Ausgabe liegt in einem eigenen Paket, **`postext-pdf`**, damit reine Web-Integrationen nicht die Kosten von `pdf-lib` und `@pdf-lib/fontkit` tragen. Das PDF-Backend misst Text nicht neu: Es verarbeitet genau dasselbe `VDTDocument`, das Sie auch an `renderToCanvas` oder `renderToHtml` übergeben würden, und übersetzt dessen Koordinaten im Pixelraum in PDF-Punkte. Die drei Ausgaben stimmen deshalb garantiert in Zeilenumbrüchen, Spaltenhöhen und der Platzierung von Ressourcen überein.
+
+> **Setzen Sie den VDT im Browser über den [Web Worker](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen).** `renderToPdf` selbst ist schnell, sobald der VDT existiert – der aufwendige Teil ist die Layout-Pipeline, die ihn erzeugt hat. Läuft diese Pipeline im Worker, bleibt die Oberfläche reaktionsfähig, und ein PDF-Export kann denselben Mess-Cache wiederverwenden, den die Live-Vorschau bereits gefüllt hat. Den empfohlenen Ablauf finden Sie unter [PDF-Export über den Worker](/de/docs/configuration-programmatic-usage#pdf-export-über-den-worker). Die Beispiele für den Haupt-Thread weiter unten dienen als Referenz dafür, *was die Argumente bedeuten* – setzen Sie in UI-Code den VDT zuerst im Worker und rufen Sie nur `renderToPdf` direkt auf.
+
+### Installation
+
+```bash
+npm install postext postext-pdf
+```
+
+`postext` ist eine Peer-Abhängigkeit von `postext-pdf`. Jede Version von `postext-pdf` braucht die Version von `postext`, mit der sie veröffentlicht wurde, oder eine spätere derselben Hauptversion (ihr Peer-Bereich ist `^` diese Version, `^1.5.0` für 1.5.0), weil sie Hilfsfunktionen importiert, die `postext` in dieser Version hinzugefügt hat. Aktualisieren Sie die beiden gemeinsam, und legen Sie sie auf einem CDN auf dieselbe Version fest.
+
+### Öffentliche API von postext-pdf
+
+Das Paket bietet einen einzigen Einstiegspunkt und eine Handvoll Typen:
+
+- **`renderToPdf(doc, options): Promise<Uint8Array>`** – nimmt ein `VDTDocument` (oder die Kapitel eines Buches als Array solcher Dokumente) und gibt die rohen PDF-Bytes zurück.
+- **`PdfFontProvider`** – die Callback-Signatur `(family, weight, style, request?) => Promise<Uint8Array | Uint8Array[]>`, mit der `renderToPdf` Schriftbytes anfordert, wenn es eine neue Kombination aus Familie, Stärke und Stil einbetten muss. `request.codePoints` enthält die Zeichen, die die Seiten in diesem Schnitt setzen; die Antwort ist eine Datei oder mehrere, die zusammen den Schnitt bilden (siehe [Chinesische, japanische und koreanische Schriften](#chinesische-japanische-und-koreanische-schriften)).
+- **`declaredFontFile(bytes, { unicodeRange?, order? }): PdfFontFile`** – eine Datei eines Schnitts, die angibt, wie die Seite sie deklariert hat: die `unicode-range` ihrer Regel `@font-face` und ihre Stelle in der Deklarationsreihenfolge. Ein `PdfFontFile` ist ein `Uint8Array` mit diesen beiden optionalen Eigenschaften (siehe [Chinesische, japanische und koreanische Schriften](#chinesische-japanische-und-koreanische-schriften)). Seit postext-pdf 1.30.
+- **`RenderToPdfOptions`** – `{ fontProvider, resourceBytes?, outlines?, accessible?, colorSpace?, pageNegative?, characterGrid?, onProgress?, onWarning?, rasterizeSvg?, harfbuzzWasm?, print?, outputProfile?, profileBaseUrl?, date? }`. `outlines`, `accessible` und `colorSpace` fallen auf das `pdfGeneration` des Dokuments zurück, wenn sie fehlen (siehe [PDF-Erzeugung (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#pdf-erzeugung-konfiguration)). `resourceBytes` ist unter [Ressourcenbytes und Druckoriginale](#ressourcenbytes-und-druckoriginale) beschrieben, `onWarning` unter [Welche Schnitte beim Provider angefragt werden](#welche-schnitte-beim-provider-angefragt-werden) und [Warnungen im Dokument](/de/docs/configuration-programmatic-usage#warnungen-im-dokument). `characterGrid: true` druckt das Raster, das `cjk.grid.show` auf dem Bildschirm zeichnet und das PDF sonst weglässt (siehe [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster)). `harfbuzzWasm` gibt an, woher HarfBuzz’ `harfbuzz.wasm` geladen wird (eine URL, relativ zur Seite, oder die Bytes der Datei), für ein Dokument mit Text von rechts nach links oder verbundener Schrift; fehlt die Angabe, die Kopie neben dem Modul von postext-pdf, dann dieselbe Version von harfbuzzjs von jsDelivr und esm.sh. `print` nimmt die Einstellungen der Druckproduktion (PDF/X-Standard, Ausgabeprofil, Schwarz, Preflight) und fällt auf das `print` des Dokuments zurück; mit einem PDF/X-Standard oder `colorSpace: 'cmyk'` wird jede Farbe über das ICC-Ausgabeprofil separiert, dessen Bytes `outputProfile` liefert (sonst wird es von `profileBaseUrl` abgerufen, standardmäßig der Kopie des Ordners `icc/` von postext auf dem npm-CDN). `date` (ein `Date`, eine Zeit in Millisekunden oder ein Datumsstring, wie `mtime` von `createBundle`) ist das Erstellungs- und Änderungsdatum der Datei und in einer PDF/X-Datei auch das Datum ihres XMP-Pakets und die Quelle ihrer Dokument-ID: Dasselbe Dokument, zweimal mit einem `date` gerendert, ergibt dieselben Bytes. Fehlt es, trägt die Datei die Zeit des Aufrufs. Ein ungültiges Datum wirft einen Fehler.
+- **`PdfWarning`** – ein nicht fatales Problem, gemeldet über `onWarning`; unterscheiden Sie nach `kind`: `'fontFallback'` (`PdfFontFallbackWarning`), ein Schnitt, der in einem anderen Schnitt seiner Familie gesetzt wurde; `'missingGlyph'` (`PdfMissingGlyphWarning`), Zeichen, für die keine Datei eines Schnitts eine Glyphe hat; `'variableFontDefaultInstance'` (`PdfVariableFontWarning`), eine variable Schrift, die in einer anderen Stärke als ihrer Standardinstanz angefragt wurde; `'cffEmbeddedWhole'` (`PdfCffEmbeddedWholeWarning`), ein CFF-Schnitt über 2 MB, der ganz eingebettet wurde; `'complexShapingUnavailable'` (`PdfComplexShapingWarning`), Text von rechts nach links oder mit verbundener Schrift, gezeichnet ohne HarfBuzz, das nicht geladen werden konnte (`reason` nennt die durchsuchten Orte), sodass arabische Zeichen falsch platziert sind; `'outputProfileUnavailable'` (`PdfPrintWarning`), ein CMYK-Rendering, dessen Ausgabeprofil nicht geladen werden konnte und das mit der naiven Formel umgerechnet wurde; `'pageNegativeIgnored'` (`PdfPrintWarning`), das Seitennegativ, das in einer PDF/X-1a-Datei weggelassen wurde; oder `'missingImage'`, ein Bild ohne Bytes, als Platzhalter gezeichnet (nur an ein von Ihnen übergebenes `onWarning` gemeldet; die Schriftwarnungen gehen ohne ein solches an `console.warn`).
+- **`decompressWoff2(bytes): Uint8Array`** – Hilfsfunktion, die eine WOFF2-Datei in TTF-Bytes umwandelt, das Format, das `pdf-lib` direkt einbetten kann.
+- **`createPdfWorker(options?)`** aus `postext-pdf/worker` – dasselbe Rendering in einem Web Worker; siehe [Das PDF in einem Worker rendern](#das-pdf-in-einem-worker-rendern).
+
+### Minimales Beispiel
+
+```ts
+import { buildDocument } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+
+const vdt = buildDocument(
+  { markdown: '# Chapter One\n\nThe story begins here…' },
+  {
+    page: { sizePreset: '17x24' },
+    layout: { layoutType: 'double' },
+    bodyText: { fontFamily: 'EB Garamond', fontSize: { value: 9, unit: 'pt' } }, // 9 pt overrides the 8 pt default
+  },
+);
+
+const pdfBytes = await renderToPdf(vdt, {
+  fontProvider: async (family, weight, style) => {
+    // Return TTF bytes for this family/weight/style.
+    // See the "Font provider" section below for a real implementation.
+    const res = await fetch(`/fonts/${family}-${weight}${style === 'italic' ? 'i' : ''}.ttf`);
+    return new Uint8Array(await res.arrayBuffer());
+  },
+});
+
+// `pdfBytes` is a Uint8Array — save, download, or stream it.
+const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+const url = URL.createObjectURL(blob);
+window.open(url);
+```
+
+### Warum ein Font-Provider?
+
+`pdf-lib` bettet echte Schriftdateien in das PDF ein – die im Browser installierten Schriften stehen beim Rendern nicht zur Verfügung, und eine Schrift, die Sie nur für die Messung auf dem Bildschirm geladen haben, reicht für sich allein nicht aus, um ein in sich geschlossenes PDF zu erzeugen. `renderToPdf` durchsucht die Seiten nach jedem Schnitt, den sie zeichnen (einer pro Kombination `family|weight|style` – siehe [Welche Schnitte beim Provider angefragt werden](#welche-schnitte-beim-provider-angefragt-werden)), und ruft Ihren Provider einmal pro eindeutiger Kombination auf. Der Provider gibt ein `Uint8Array` mit **TTF- oder OTF**-Bytes zurück oder eine Liste davon für einen Schnitt, der als mehrere Dateien ausgeliefert wird (siehe [Chinesische, japanische und koreanische Schriften](#chinesische-japanische-und-koreanische-schriften)); `pdf-lib` bildet Teilmengen von TrueType-Konturen und bettet CFF-Dateien (`.otf`) ganz ein. Schnitte, auf die der Provider mit derselben Datei antwortet, etwa ein normaler Schnitt, der für den fehlenden fetten Schnitt einer Familie einspringt, teilen sich eine eingebettete Schrift. Ein Schnitt, mit dem am Ende keine Seite zeichnet, etwa der Schnitt des Textes einer SVG-Abbildung, die als Bild gezeichnet wird, bleibt aus der Datei heraus.
+
+**Verwenden Sie statische Schriften pro Stärke, keine einzelne variable Schrift.** Google Fonts liefert pro Familie oft eine variable WOFF2-Datei, die die ganze Stärkeachse abdeckt. `pdf-lib` kann aus einer variablen Datei nur die Standardinstanz einbetten, sodass ein fetter Absatz in normaler Stärke erschiene. Fontsource veröffentlicht statische WOFF2-Dateien pro Stärke, die dieses Problem sauber lösen – nach diesem Muster arbeitet die Sandbox. Eine variable Datei, die in einer anderen Stärke als ihrer Standardinstanz angefragt wird, wird als Warnung `variableFontDefaultInstance` gemeldet.
+
+**Jedes Wort des Textes landet dort, wo das Layout es hingesetzt hat.** In Absätzen, Listenpunkten, Zitaten, Kästen und anderem fließendem Text beginnt jedes Wort an der Position, die der VDT gemessen hat, sodass sich ein Unterschied zwischen den Breiten des Browsers und denen des eingebetteten Schnitts nie entlang einer Zeile aufsummiert. Eine Zeile ohne Inline-Formatierung wird als ein Textobjekt gezeichnet, das den Stift zwischen den Wörtern bewegt; Zeilen im Blocksatz, zentrierte Zeilen und Zeilen mit Formatierung werden Wort für Wort gezeichnet. Ein Zeichen, für das der Schnitt keine Glyphe hat, das der Browser in einer anderen Schrift gemessen hat und das das PDF als Kasten für fehlende Glyphen des Schnitts zeichnet, verschiebt keines der folgenden Wörter und wird einmal pro Schnitt als Warnung `missingGlyph` gemeldet. Ein Leerzeichen, das dem Schnitt fehlt, etwa ein schmales geschütztes Leerzeichen oder ein Ziffernleerzeichen, erhält die Breite, die der Browser ihm gegeben hat, und unsichtbare Zeichen wie der Word Joiner und das Leerzeichen ohne Breite werden nicht gezeichnet. Ein geschützter Bindestrich (U+2011), der dem Schnitt fehlt, wird mit dem Bindestrich des Schnitts (U+2010) gezeichnet oder, wenn dieser auch fehlt, mit dessen Hyphen-Minus, so wie der Browser ihn zeigt; Open Sans und Outfit etwa fehlen beide. Keiner der beiden Fälle zählt als fehlende Glyphe. Es gibt zwei Ausnahmen. Eine Zeile mit Buchstaben, die von rechts nach links laufen, wird weiterhin als eine Folge gezeichnet (siehe [Sprachen und Schriftsysteme](/de/docs/configuration-language#sprachen-und-schriftsysteme)). Text, den eine Gestaltung platziert (Kolumnentitel und Fußzeilen, Auftakte, Kastentitel und andere Gestaltungselemente), wird mit den eigenen Breiten des eingebetteten Schnitts gesetzt, sodass eine dort fehlende Glyphe den Rest ihrer Zeile weiterhin verschiebt.
+
+### Welche Schnitte beim Provider angefragt werden
+
+`renderToPdf` geht die Seiten so durch, wie es sie zeichnet, und fragt beim Provider nur die Schnitte an, die sie zeichnen:
+
+- den normalen Schnitt eines Blocks, der irgendeine Zeile setzt, und den fetten, kursiven oder fettkursiven Schnitt jeder Folge, die tatsächlich so gesetzt ist;
+- Chip-Folgen, Listenzeichen und den Text von Gestaltungsplätzen (Kolumnentitel, Paginas, Bänder von Auftakten und Teilen);
+- den Text von Legende, Anmerkung und Tabellenzellen jeder Ressource;
+- die Schnitte, die das `<text>` einer SVG-Abbildung nennt, wenn die Abbildung eingebettet wird. Eine Familie, die der Provider überhaupt nicht liefern kann, fällt auf die nächste Familie in der Liste `font-family` des SVG durch.
+
+Eine Überschriftenfamilie, die niemand kursiv setzt, wird also nie nach ihrer Kursiven gefragt, und eine Abbildung ohne Anmerkung braucht nie die Schnitte für Anmerkungen.
+
+Lehnt der Provider einen Schnitt ab, geht das Rendering weiter. Ein anderer Schnitt derselben Familie wird an seiner Stelle eingebettet, und eine `PdfWarning` wird gemeldet. Der Ersatz ist der erste Schnitt, der lädt; versucht werden die neun Standardstärken (100 bis 900) in der Reihenfolge, die der CSS-Schriftabgleich verwendet, was auch der Schnitt ist, den der Browser in der Vorschau zeigt:
+
+1. zuerst derselbe Stil. Bei einer Stärke von 400 bis 500 kommen zuerst die Stärken bis 500, dann die leichteren von der nächstgelegenen abwärts, dann die schwereren ab 600 aufwärts. Bei einer Stärke unter 400 kommen zuerst die leichteren Stärken, von der nächstgelegenen abwärts, dann die schwereren. Bei einer Stärke über 500 kommen zuerst die schwereren Stärken, dann die leichteren;
+2. dann der andere Stil, kursiv statt aufrecht und aufrecht statt kursiv, in der angefragten Stärke und den anderen Stärken in derselben Reihenfolge.
+
+Eine Familie ohne Kursive setzt ihre kursiven Folgen daher aufrecht, eine Familie, die nur 400 und 700 mitbringt, nimmt für eine 600 die 700, und eine Familie mit einem einzigen Schnitt setzt alles darin. Der Provider wird Schnitt für Schnitt in dieser Reihenfolge gefragt und nie zweimal nach demselben Schnitt, sodass ein Schnitt, den nichts verwendet, nie eingebettet wird. Eine Familie, die der Provider überhaupt nicht liefern kann, wird nach jedem dieser 18 Schnitte gefragt, bevor das Rendering fehlschlägt.
+
+```ts
+const bytes = await renderToPdf(doc, {
+  fontProvider,
+  onWarning: (w) => {
+    // { kind: 'fontFallback', family: 'Oswald', weight: 700, style: 'italic',
+    //   fallback: { weight: 700, style: 'normal' }, reason: '…', message: '…' }
+    console.info(w.message);
+  },
+});
+```
+
+Ohne `onWarning` geht die Meldung an `console.warn`. Der Text behält seine Positionen, die aus dem VDT stammen und mit den Schnitten gemessen wurden, die der Browser hatte; ein Ersatz mit anderen Breiten kann daher eng oder locker wirken. Liefern Sie den echten Schnitt, um das zu beheben. Ein Rendering schlägt (`postext-pdf: failed to load font(s): …`) nur dann noch fehl, wenn der Provider keinen einzigen Schnitt einer Familie in einer Standardstärke liefern kann, weder aufrecht noch kursiv.
+
+### Font-Provider im Browser (Fontsource + WOFF2)
+
+Die Sandbox liefert `createPdfFontProvider()` (`packages/postext-sandbox/src/viewport/pdfFontProvider.ts`), das Sie in jede Browser-App übernehmen können. Das Wesentliche:
+
+```ts
+import type { PdfFontProvider } from 'postext-pdf';
+import { decompressWoff2 } from 'postext-pdf';
+
+const bytesCache = new Map<string, Promise<Uint8Array>>();
+
+function fontsourceId(family: string): string {
+  return family.toLowerCase().replace(/\s+/g, '-');
+}
+
+function fontsourceWoff2Url(
+  family: string,
+  weight: number,
+  style: 'normal' | 'italic',
+): string {
+  const id = fontsourceId(family);
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
+}
+
+export function createPdfFontProvider(): PdfFontProvider {
+  return async (family, weight, style) => {
+    const key = `${family}|${weight}|${style}`;
+    const cached = bytesCache.get(key);
+    if (cached) return cached;
+
+    const promise = (async (): Promise<Uint8Array> => {
+      const url = fontsourceWoff2Url(family, weight, style);
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) throw new Error(`font fetch failed: ${res.status} ${url}`);
+      // pdf-lib needs TTF bytes, so decompress the WOFF2 wrapper client-side.
+      return decompressWoff2(new Uint8Array(await res.arrayBuffer()));
+    })();
+
+    bytesCache.set(key, promise);
+    return promise;
+  };
+}
+```
+
+Eine produktive Version sollte außerdem:
+
+- **die verfügbaren Stärken abfragen** (über `https://api.fontsource.org/v1/fonts/{id}`) und die angefragte Stärke auf die nächstgelegene einrasten, die die Familie tatsächlich mitbringt, sodass eine Anfrage nach `weight: 600` bei einer Familie, die nur `{400, 700}` hat, trotzdem gelingt.
+- **von kursiv auf normal zurückfallen**, wenn eine Familie für die angefragte Stärke keinen kursiven Schnitt hat, statt das ganze Rendering scheitern zu lassen.
+- **den Cache über Renderings hinweg wiederverwenden** (den `bytesCache` auf Modulebene halten, nicht pro Aufruf), sodass das erneute Erzeugen des PDFs nach einer Konfigurationsänderung praktisch nichts kostet.
+
+### Chinesische, japanische und koreanische Schriften
+
+Ein CJK-Schnitt kommt nicht als eine kleine Datei. Fontsource liefert Noto Serif SC als etwa hundert Dateien pro Stärke aus, von denen jede einen Teil der Zeichen enthält und im Stylesheet der Familie mit ihrer `unicode-range` deklariert ist (`@fontsource/noto-serif-sc/400.css`); der Browser lädt die Dateien herunter, die der Text einer Seite berührt. Die Datei `latin`, die der Provider oben abruft, enthält überhaupt keine Han-Zeichen, und die benannten Teilmengen sind unvollständig: `chinese-simplified` von Noto Serif SC fehlt 釵, und `chinese-traditional` von Noto Serif TC hat keines der Satzzeichen voller Breite （），！？：；.
+
+Ein Provider darf einen Schnitt daher mit mehreren Dateien beantworten. `renderToPdf` übergibt ihm die Zeichen, die die Seiten in diesem Schnitt setzen (`request.codePoints`), gesammelt aus allen Kapiteln, bevor irgendetwas gezeichnet wird, und der Provider gibt die Dateien zurück, die sie enthalten, in der Reihenfolge, in der der Browser sie nachschlägt. Jede Datei wird als eigene Teilmenge eingebettet, und jedes Zeichen wird aus der ersten Datei gezeichnet, die eine Glyphe dafür hat: Ein Kapitel, das 60 Teile berührt, bettet 60 kleine Teilmengen ein. Wird ein Schnitt erneut angefragt, etwa für den Text einer SVG-Abbildung, wird er nur nach den Zeichen gefragt, die seinen Dateien fehlen. Ein Provider, der ein einzelnes `Uint8Array` zurückgibt, funktioniert wie bisher. Der Provider der Sandbox liest das Fontsource-Stylesheet der Stärke und des Stils und ruft die Dateien ab, deren Bereiche den Text enthalten; sein Kern:
+
+```ts
+import type { PdfFontProvider } from 'postext-pdf';
+import { decompressWoff2 } from 'postext-pdf';
+
+type Slice = { url: string; ranges: Array<[number, number]> };
+
+async function fontsourceSlices(family: string, weight: number, style: 'normal' | 'italic'): Promise<Slice[]> {
+  const id = family.toLowerCase().replace(/\s+/g, '-');
+  const cssUrl = `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/${weight}${style === 'italic' ? '-italic' : ''}.css`;
+  const css = await (await fetch(cssUrl)).text();
+  return [...css.matchAll(/@font-face\s*{([^}]*)}/g)].map(([, rule]) => ({
+    url: new URL(/url\(\.?\/?([^)]+\.woff2)\)/.exec(rule)![1], cssUrl).href,
+    ranges: /unicode-range:\s*([^;]+);/.exec(rule)![1].split(',').map((part) => {
+      const [lo, hi = lo] = part.trim().slice(2).split('-');
+      return [parseInt(lo, 16), parseInt(hi, 16)] as [number, number];
+    }),
+  }));
+}
+
+export const sliceFontProvider: PdfFontProvider = async (family, weight, style, request) => {
+  // Where ranges overlap, the browser tries the last rule first.
+  const slices = (await fontsourceSlices(family, weight, style)).reverse();
+  const picked = new Set<Slice>();
+  for (const cp of request?.codePoints ?? []) {
+    const slice = slices.find((s) => s.ranges.some(([lo, hi]) => cp >= lo && cp <= hi));
+    if (slice) picked.add(slice);
+  }
+  if (picked.size === 0) picked.add(slices[0]!);
+  return Promise.all(slices.filter((s) => picked.has(s)).map(async (s) =>
+    decompressWoff2(new Uint8Array(await (await fetch(s.url)).arrayBuffer()))));
+};
+```
+
+Eine lateinische Familie durchläuft denselben Code: Englischer Text erhält nur seine Datei `latin`, Tschechisch erhält `latin` und `latin-ext`.
+
+Ein Browser hört nicht bei der ersten Datei mit einer Glyphe auf. Er setzt ein Zeichen in der zuletzt deklarierten Datei unter denen, deren `unicode-range` es enthält, und die Dateien einer Familie überschneiden sich: Fontsource wiederholt die ASCII-Buchstaben von Noto Serif JP in seiner Datei `latin` und in seinen nummerierten Teilen. Zwei Zeichen, die in zwei Dateien gesetzt sind, werden nicht unterschnitten, also entscheidet die Datei über die Breite: Chrome 154 setzt `Shift_JIS` mit den nach `latin` deklarierten Teilen 4,25 em breit, und die Datei `latin` allein, die `t_` und `_J` unterschneidet, setzt es 4,32 em breit. Seit postext-pdf 1.30 kann ein Provider angeben, wie die Seite jede Datei deklariert hat: `declaredFontFile(bytes, { unicodeRange, order })` gibt dieselben Bytes zurück, versehen mit der `unicode-range` der Regel der Datei, wie CSS sie schreibt, und der Stelle dieser Regel unter den Regeln des Schnitts, eine beliebige Zahl, die mit der Deklarationsreihenfolge wächst (die größte ist zuletzt deklariert).
+
+```ts
+import { declaredFontFile } from 'postext-pdf';
+
+declaredFontFile(bytes, { unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153', order: 0 });
+```
+
+Tragen die Dateien eines Schnitts ihre Bereiche, wird in einem Dokument, das in seiner eigenen Sprache geformt wird ([`bodyText.shapingLanguage: 'document'`](/de/docs/configuration-text#fließtext), der Standard), ein Zeichen aus der zuletzt deklarierten Datei gezeichnet, deren Bereich es enthält und die eine Glyphe dafür hat, so wie ein Browser zwischen Regeln `@font-face` wählt, und ein Buchstabe bleibt mit seinen kombinierenden Zeichen in einer Datei. Ein Zeichen, das kein Bereich enthält, wird aus der ersten Datei mit einer Glyphe gezeichnet. Einfache Dateien und jede Datei in einem Dokument mit `'host'` werden wie bisher in der angegebenen Reihenfolge gelesen, sodass ein Provider, der seine Dateien beschreibt, die zuletzt deklarierte weiterhin zuerst aufführt. Ein so beschriebener Schnitt wird erneut nach jedem Zeichen gefragt, nach dem er vorher nicht gefragt wurde, da eine später deklarierte Datei es enthalten kann. Der Provider der Sandbox beschreibt seine Dateien.
+
+Zeichen, für die keine Datei des Schnitts eine Glyphe hat, werden als Glyphe `.notdef` der Schrift gezeichnet (in den meisten Schriften ein leerer Kasten), und `renderToPdf` meldet sie einmal pro Schnitt, nachdem die Seiten gezeichnet sind:
+
+```ts
+// { kind: 'missingGlyph', family: 'Noto Serif TC', weight: 400, style: 'normal',
+//   characters: ['，', '！', '？'], message: '…' }
+```
+
+Die Sandbox listet diese und die beiden folgenden Warnungen nach jedem erzeugten PDF in ihrem Bedienfeld Prüfungen auf. Ändern sich das Buch, seine Einstellungen oder seine Ressourcen, werden sie als aus einem früheren PDF stammend markiert, bis das nächste sie ersetzt; das Öffnen eines anderen Buches löscht sie.
+
+- **Fett braucht eine statische Datei pro Stärke.** Fontsource liefert jede Stärke von Noto Serif SC und TC als eigene statische Dateien aus, sodass Fett in der Sandbox funktioniert. Die Dateien von Google Fonts (`NotoSerifSC[wght].ttf`, 25 MB) sind variable Schriften: pdf-lib bettet ihre Standardinstanz ein, sodass ein Schnitt 700 in 400 gedruckt wird, und `renderToPdf` meldet das als `variableFontDefaultInstance`. Schneiden Sie für ein Paket mit fontTools eine statische Instanz pro Stärke (`fonttools varLib.instancer NotoSerifSC[wght].ttf wght=700`) und reduzieren Sie sie mit `pyftsubset` auf die Zeichen des Buches.
+- **Verwenden Sie TrueType-Ausgaben.** Source Han Serif und die Dateien `.otf` von Noto Serif CJK haben CFF-Konturen, die postext-pdf ganz einbettet, 8 bis 25 MB pro Stärke; ein CFF-Schnitt über 2 MB wird als `cffEmbeddedWhole` gemeldet. Die TrueType-Ausgaben (Google Fonts, Fontsource) werden auf die verwendeten Glyphen reduziert. Für Japanisch liegen Noto Serif JP und Noto Sans JP (Google Fonts oder die nummerierten Teile von Fontsource), Shippori Mincho, Zen Old Mincho und BIZ UDMincho als TrueType vor; Source Han Serif JP und die Dateien `.otf` mit `JP` von Noto Serif CJK sind CFF.
+- **Japanische Formen eines pan-CJK-Schnitts.** Ein Codepunkt der Han-Zeichen, der Interpunktion oder der Anführungszeichen kann in Japan anders gezeichnet werden als in China, und ein pan-CJK-Schnitt (Source Han, Noto CJK) enthält beide Formen. Das PDF formt ein japanisches Dokument (`locale: 'ja'`) und eine japanische Isolierung (`:ltr[…]{lang=ja}`) in jedem Dokument mit dem OpenType-Sprachsystem `JAN `, sodass das Feature `locl` des Schnitts die japanischen Formen druckt, die Canvas und HTML über `lang` drucken. Eine Isolierung in einer anderen Sprache innerhalb eines japanischen Buches wird mit den Formen dieser Sprache geformt (für Chinesisch mit `'host'` mit den Standardformen der Schrift) und als `Span` mit ihrem `/Lang` getaggt. Mit [`bodyText.shapingLanguage: 'document'`](/de/docs/configuration-text#fließtext), dem Standard seit postext 1.30, wird jedes Dokument und jede Isolierung in ihrer eigenen Sprache geformt (`ZHS` für vereinfachtes Chinesisch), so wie das Layout es gemessen hat; mit `'host'` werden chinesische und andere Dokumente wie bisher mit den Standardformen der Schrift geformt. Ein für Japanisch gemachter Schnitt wie Noto Serif JP hat japanische Standardformen; er setzt die “ ” japanischen Textes dennoch in ihren Formen für `JAN `.
+
+Ein Zeichen, das einer Familie fehlt, wird nicht aus einer anderen genommen: Noto Serif TC borgt nicht bei Noto Serif SC. Klären Sie die Abdeckung, wenn Sie die Schriftdateien erstellen; das Schaustück 红楼梦 kopiert die Glyphen, die seinen TC-Teilmengen fehlen, aus dem SC-Schnitt.
+
+### Serverseitiger Font-Provider (Node, lokale Dateien)
+
+In Node können Sie den WOFF2-Schritt ganz überspringen und TTF/OTF-Dateien von der Festplatte lesen:
+
+```ts
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { PdfFontProvider } from 'postext-pdf';
+
+const FONT_DIR = '/path/to/fonts';
+
+function filename(family: string, weight: number, style: 'normal' | 'italic'): string {
+  const slug = family.replace(/\s+/g, '');
+  const styleSuffix = style === 'italic' ? 'Italic' : '';
+  const weightName =
+    weight >= 700 ? 'Bold'
+    : weight >= 600 ? 'SemiBold'
+    : weight >= 500 ? 'Medium'
+    : weight >= 300 ? 'Light'
+    : 'Regular';
+  return `${slug}-${weightName}${styleSuffix}.ttf`;
+}
+
+export const localFontProvider: PdfFontProvider = async (family, weight, style) => {
+  const buf = await readFile(join(FONT_DIR, filename(family, weight, style)));
+  return new Uint8Array(buf);
+};
+```
+
+### Ressourcenbytes und Druckoriginale
+
+`resourceBytes(fileId)` gibt die rohen Bytes eines Bildes zurück, und das Backend erkennt ihr Format:
+
+- PNG, JPEG, GIF und WebP werden als Bilder eingebettet;
+- SVG-Markup wird als Vektorpfade gezeichnet, sein `text` als echter Text in den eingebetteten Schriften des Dokuments gesetzt, oder im Browser mit 600 dpi gerastert, wenn es Funktionen außerhalb der Vektorteilmenge verwendet. Ein `<style>`, das nur Regeln `@font-face` enthält (von einer Autorin oder einem Autor eingebettete Schnitte), wird übersprungen und lässt die Abbildung vektoriell (seit postext-pdf 1.25); jedes andere Stylesheet macht sie zu einem Rasterbild, das mit den Schnitten erzeugt wird, die ihr Text nennt, eingebettet aus `fontProvider` (sofern nicht `diagramStyle.inlineFonts` oder das `svg.inlineFonts` der Ressource `false` ist);
+- bei einem PDF wird die erste Seite unverändert als Form-XObject eingebettet.
+
+Jedes Bild wird einmal in der Datei gespeichert, wie oft es auch gezeichnet wird. Ein als Vektorpfade gezeichnetes SVG wird zu einem Form-XObject, das jede Seite zeichnet, sodass ein Rahmen oder ein Logo in der Seitengestaltung eines dreißigseitigen Dokuments einmal geschrieben wird, nicht dreißigmal; jede weitere Seite fügt einige hundert Bytes hinzu. Bis postext-pdf 1.4 trug jede Seite ihre eigene Kopie der Pfade.
+
+Eine SVG-Abbildung kann in `svg.pdfFileId` ein **Druckoriginal** nennen: ein einseitiges PDF derselben Abbildung, typischerweise das Original, aus dem das SVG exportiert wurde. `renderToPdf` fragt `resourceBytes` zuerst nach der ID des Originals. Es bettet diese Seite anstelle des SVG ein, mit ihren Schriften, Verläufen und Farbräumen unversehrt, überall dort, wo das SVG gezeichnet wird: als Abbildung, als Bild einer Tabellenzelle (`TableCell.image`), als Gestaltungsbild oder als Kastensymbol (auch sein `marker`). Der VDT trägt die ID des Originals bei jeder dieser Verwendungen (`svg.pdfFileId` an der Ressource der Abbildung, `pdfFileId` an einem Zellbild und an einem Block für ein Gestaltungsbild), sodass in einem Buch jedes Kapitel das Original erhält. Die Backends für Canvas und HTML zeichnen weiterhin das SVG. Stattdessen werden in drei Fällen die eigenen Bytes des SVG verwendet: Das Original fehlt, es ist kein PDF, oder die Einfarbigkeit ist eingeschaltet (`diagramStyle.singleInk` färbt nur SVG-Markup um).
+
+```ts
+const resources: Resource[] = [{
+  id: 'map', typeId: 'figure', kind: 'svg', createdAt: 0, updatedAt: 0,
+  svg: { fileId: 'map.svg', width: 800, height: 600, pdfFileId: 'map.pdf' },
+}];
+const files = new Map([['map.svg', svgBytes], ['map.pdf', masterPdfBytes]]);
+const pdf = await renderToPdf(buildDocument({ markdown, resources }, config), {
+  fontProvider,
+  resourceBytes: (fileId) => files.get(fileId),
+});
+```
+
+Ein Host kann die Bytes des Originals auch für die eigene ID des SVG zurückgeben, wie es `bundleResourceBytes` tut; beide Wege funktionieren.
+
+### Vertikaler Text im PDF
+
+Eine vertikale Seite (`layout.writingMode: 'vertical-rl'`) wird über einen um eine Vierteldrehung gedrehten Rahmen gezeichnet, so wie der Canvas sie zeichnet, und ihr Text wird die Spalte hinab gesetzt:
+
+- **Aufrechte Zeichen** werden über eine zweite Type0-Schrift derselben eingebetteten Datei dargestellt: dieselbe CIDFont, dieselben Breiten und dieselbe ToUnicode-Tabelle, mit `Encoding /Identity-V` (vertikaler Modus). Eine Folge von Zeichen ist ein Textobjekt, dessen Glyphen von selbst je ein Geviert die Spalte hinab vorrücken (`DW2 [880 −1000]`), sodass Leseprogramme eine Spalte als eine Zeile auswählen und extrahieren. Die Glyphen werden mit den OpenType-Features `vert` und `fwid` geformt, die Klammern, Anführungszeichen, den Pausenzeichen des Festlands, Auslassungspunkten und Strichen ihre vertikalen Formen geben; ein Zeichen, das so, wie es ist, aufrecht steht, behält seine horizontale Glyphe. Nichts von der Schrift wird doppelt eingebettet.
+- **Lateinische Wörter und lange Zahlen** laufen mit der horizontalen Schrift seitwärts; **eine Zahl in einer Zelle** steht aufrecht und wird, wenn sie breiter ist, quer auf das Geviert gestaucht; ein Zeichen, für das die Schrift keine vertikale Form hat, wird gedreht oder verschoben, wie auf dem Canvas.
+- **Die Laufweite** zwischen Zeichen wird als Zahlen in `TJ` geschrieben, die im vertikalen Modus den Stift die Spalte hinab bewegen.
+- **Jede vertikale Zeile** ist mit einem `/ActualText` ihres Textes markiert, sodass Kopieren und Textextraktion sie wie geschrieben lesen. `pdftotext` und pdf.js lesen die Spalten von oben nach unten und von rechts nach links; pdf.js beginnt bei einer in einer Zelle gesetzten Zahl eine neue Zeile.
+- **Links, Lesezeichen und Sprungziele** werden auf den Bogen abgebildet: Ein Link über einer vertikalen Zeile ist ein hohes, schmales Rechteck, und ein Lesezeichen öffnet die Seite oben an der Spalte seiner Überschrift.
+- **Ein getaggtes PDF** deklariert die Schreibrichtung an seinem Element `Document` (das Layout-Attribut `WritingMode /TbRl`, das jedes Element erbt); die Validierung nach PDF/UA-1 (veraPDF) besteht ein vertikales Kapitel.
+- **Betrachter:** Acrobat, Vorschau, Chrome (PDFium), pdf.js und Poppler rendern die vertikalen Schriften. Ein rechts gebundenes Buch (`page.binding`) bittet die Betrachter außerdem, seine Doppelseiten von rechts nach links anzuordnen (`/Direction /R2L`, `/PageLayout /TwoPageRight`); Acrobat und Foxit folgen dem, Chrome nicht.
+
+Ein 43-seitiges Kapitel in Noto Serif TC (die Zeichen des Buches, TrueType) hat etwa 820 KB, wovon die beiden Schrift-Teilmengen den größten Teil ausmachen.
+
+### Links im PDF
+
+Die Wörter eines Markdown-Links (siehe [Dokumentformat › Links](/de/docs/document-format-inline#links)) werden zu URI-Link-Annotationen, eine pro Folge verlinkter Wörter in einer Zeile. Jede deckt den Zeilenkasten ab und hat keinen Rahmen. In einem barrierefreien Rendering ist jede Folge ein Element `Link`, dessen `/Contents` sein Text ist. Verlinkt werden nur absolute Ziele mit `http:`, `https:`, `mailto:`, `tel:` und `ftp:`, weil eine relative URL innerhalb eines PDFs keine Basis hat. Zeichen außerhalb des druckbaren ASCII werden prozentkodiert. Zitate mit `:ref` und Zeilen des Inhaltsverzeichnisses behalten ihre Links innerhalb des Dokuments.
+
+### Vollständiges Browser-Beispiel: setzen, rendern, herunterladen
+
+Alles zusammengesetzt – den VDT setzen, als PDF rendern und im Browser einen Download auslösen:
+
+```tsx
+import { buildDocument, createMeasurementCache } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+import { createPdfFontProvider } from './pdfFontProvider';
+
+const fontProvider = createPdfFontProvider();
+
+export async function downloadPdf(markdown: string, config: PostextConfig) {
+  const cache = createMeasurementCache();
+  const vdt = buildDocument({ markdown }, config, cache);
+
+  const bytes = await renderToPdf(vdt, { fontProvider });
+
+  const blob = new Blob([bytes.slice().buffer], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'document.pdf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+```
+
+**Wichtig:** Rufen Sie `ensureConfigFontsLoaded(config)` (oder etwas Gleichwertiges) *vor* `buildDocument` auf, wenn Ihre Konfiguration Webschriften verwendet. Das Layout wird mit den Schriftmetriken gemessen, die der Browser gerade für diese Familie hat – ist die echte Schrift noch nicht eingetroffen, wird der VDT mit einer Ersatzschrift gemessen, und das PDF stimmt nicht mit der Ausgabe von Canvas oder HTML überein. Die Sandbox tut das vor jedem Rendering ausdrücklich (siehe `packages/postext-sandbox/src/viewport/PdfViewport.tsx`).
+
+### Live-Beispiel: ein PDF im Browser
+
+Der vollständige Ablauf von oben, im Browser ausgeführt: Der Pen importiert `postext` und `postext-pdf` von einem CDN, lädt die Webschriften, setzt das Dokument, bettet die Fontsource-Schnitte über den Font-Provider ein und übergibt die Bytes an einen Link, der die Datei in einem neuen Tab öffnet, und an einen Download-Link. Das PDF, das Sie erhalten, hat dieselben Zeilenumbrüche wie die Ausgabe von Canvas und HTML, echte eingebettete Schriften und Lesezeichen für die Gliederung.
+
+<CodePenExample name="render-pdf" title="Postext · ein PDF im Browser erzeugen" description="Ein Markdown-Dokument mit postext setzen und mit postext-pdf als PDF rendern." height={600} />
+
+### Das PDF in einem Worker rendern
+
+`postext-pdf/worker` verlagert `renderToPdf` aus dem Haupt-Thread. Der Worker schreibt den Text, die Vektorabbildungen, den Strukturbaum und die Datei selbst. Zwei Aufgaben brauchen die Seite, deshalb bittet der Worker den Haupt-Thread darum: das Abrufen von Schriften und das Rastern eines SVG über ein `<img>`. Bei einem Buch von Hunderten Seiten dauert das Rendern Sekunden, die sonst die Seite einfrieren würden; bei wenigen Seiten ist der direkte Aufruf von `renderToPdf` einfacher.
+
+```ts
+import { createPdfWorker } from 'postext-pdf/worker';
+
+const pdfWorker = createPdfWorker();
+const bytes = await pdfWorker.render(docs, {
+  fontProvider,                                     // runs on this thread
+  resourceBytes: new Map([['map.svg', svgBytes]]),  // a Map; its buffers move to the worker
+  onProgress: ({ phase, pages, totalPages }) => showProgress(phase, pages, totalPages),
+  onWarning: (w) => console.info(w.message),
+});
+pdfWorker.dispose();
+```
+
+- `render(docs, options)` nimmt ein Dokument oder das Array der Kapiteldokumente eines Buches. Es nimmt die Optionen von `renderToPdf`, mit zwei Unterschieden. `resourceBytes` ist eine `Map<string, Uint8Array>`, deren Puffer übertragen werden; übergeben Sie also Kopien von Bytes, die Sie behalten. `rasterizeSvg` läuft, wenn angegeben, im Haupt-Thread; standardmäßig erledigen das eigene `Image` und der Canvas der Seite diese Aufgabe.
+- Ein Handle rendert jeweils ein Dokument. `dispose()` beendet den Worker und weist jedes noch ausstehende Rendering zurück.
+- `createPdfWorker({ worker })` nimmt einen `Worker`, den Sie selbst erzeugen, für Build-Werkzeuge, die die URLs von Workern kontrollieren. Dieser Worker muss `postext-pdf/worker/entry` ausführen.
+
+**Von einem CDN.** Standardmäßig wird das Worker-Skript von der eigenen URL des Pakets geladen (`new URL('./pdf.worker.js', import.meta.url)`). Eine Seite eines anderen Ursprungs darf es unter Umständen nicht starten: Aus `esm.sh` importiert, wirft `createPdfWorker()` den Fehler `Failed to construct 'Worker': Script at 'https://esm.sh/postext-pdf@…/pdf.worker.js' cannot be accessed from origin …`. Starten Sie stattdessen einen Modul-Worker desselben Ursprungs, der den Einstieg importiert (wenn Sie eine Version festlegen, legen Sie in beiden URLs dieselbe fest):
+
+```js
+import { createPdfWorker } from 'https://esm.sh/postext-pdf/worker';
+
+const entry = URL.createObjectURL(new Blob(
+  ["import 'https://esm.sh/postext-pdf/worker/entry';"],
+  { type: 'text/javascript' },
+));
+const pdfWorker = createPdfWorker({ worker: new Worker(entry, { type: 'module' }) });
+```
+
+Der Layout-Worker aus `postext/worker` braucht dieselbe Hülle um `postext/worker/entry` (siehe [Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen)).
+
+### Druckfertige PDFs
+
+Für produktive Druckabläufe stimmen Sie vor dem Rendern diese Konfigurationsoptionen ab:
+
+- **`page.cutLines.enabled: true`** – fügt um das Endformat einen Anschnittbereich und Schnittmarken hinzu und gibt jeder Seite eine TrimBox und eine BleedBox. Siehe [Schnittmarken](/de/docs/configuration-page-layout#schnittmarken).
+- **`print: { standard: 'pdfx4', outputProfile: 'fogra51' }`** (oder `'pdfx1a'`) – eine PDF/X-Datei mit dem Output Intent, der Kennung und den Boxen, die eine Druckerei prüft; jede Farbe und jedes RGB-Bild über das ICC-Profil separiert, 100 % K überdruckend und große schwarze Flächen in Tiefschwarz. Siehe [Druckvorstufe (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#druckvorstufe-konfiguration).
+- **`colorSpace: 'cmyk'`** (oder `pdfGeneration: { forceColorSpace: true, colorSpace: 'cmyk' }`) – dieselbe Separation ohne die PDF/X-Kennung (Schnittmarken stehen immer in Passerfarbe). PDF-Druckoriginale werden so eingebettet, wie sie sind.
+- **`page.dpi: 300`** – die px pro Zoll des Layouts: Eine Bitmap ohne eigene Auflösung wird in ihrer natürlichen Größe mit dieser Auflösung gedruckt. Der [Preflight](/de/docs/configuration-fonts-colors-viewers#preflight) meldet Bilder unter 300 ppi in ihrer gedruckten Größe.
+- **`ColorValue.cmyk`** – eine in CMYK angelegte Farbe wird mit ihren genauen Werten gedruckt.
+- **`{ pageNegative: true }`** in `RenderToPdfOptions` – kehrt den Bereich des Endformats mit dem Mischmodus Differenz um (Schnittmarken bleiben unverändert). Nützlich für Preflight-Prüfungen bei dunkler Typografie auf hellem Grund.
+
+### Referenzimplementierung
+
+Die Komponente `PdfViewport` der Sandbox (`packages/postext-sandbox/src/viewport/PdfViewport.tsx`) verbindet die Teile oben zu einer Live-Vorschau mit Schaltflächen zum Neuerzeugen, Herunterladen und Drucken und ist ein guter Ausgangspunkt für jede PDF-Integration im Browser. Sie setzt den VDT über den gemeinsamen Layout-Worker (siehe [Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen)), sodass ein Klick auf *Neu berechnen* die Oberfläche nicht einfriert, während die Pipeline läuft – der Haupt-Thread übernimmt nur `renderToPdf` (das schnell ist, sobald der VDT existiert).

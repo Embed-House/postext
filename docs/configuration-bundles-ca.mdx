@@ -1,0 +1,294 @@
+{/* docs/configuration-bundles-ca.mdx */}
+
+export const metadata = {
+  title: 'Ús programàtic: paquets .postext',
+  sidebarTitle: 'Paquets .postext',
+  description: "Obrir, compondre, renderitzar i crear fitxers .postext des del codi, els paquets bilingües, els fitxers de versions anteriors i l'API de baix nivell",
+  lang: 'ca',
+  lastUpdated: '2026-10-16',
+  readingTime: '30 min',
+  order: 22,
+  parent: 'configuration',
+  plainSummary: "Aquesta pàgina és per a qui escriu codi. Un fitxer .postext desa un llibre sencer en un sol fitxer: el text, els paràmetres, les fonts i les imatges. La pàgina ensenya a obrir un d'aquests fitxers, compondre'n les pàgines i dibuixar-les. Ensenya a crear un fitxer nou a partir del teu propi text i a desar dues llengües d'un llibre en el mateix fitxer. També explica com es llegeixen els fitxers creats amb versions anteriors de Postext.",
+};
+
+# Ús programàtic: paquets .postext
+
+
+## Paquets (fitxers `.postext`)
+
+Un **fitxer `.postext`** és un llibre sencer en un sol fitxer: un zip amb un manifest `preset.json`, un fitxer markdown per capítol, les dades dels recursos (mapes de bits, SVG, màsters PDF d'impressió) i els fitxers de les fonts que anomena la configuració. El [Sandbox](/ca/docs/sandbox-embedding#ús-standalone) l'exporta i l'importa i l'[skill per a agents](/ca/docs/skill) el lliura. El paquet `postext` també el sap crear i obrir, així que un llibre pot passar d'aquestes eines al teu propi programa, i a l'inrevés, sense perdre res.
+
+```
+mi-libro.postext
+├── preset.json            manifest: nom, llengua, capítols, configuració, recursos, fonts
+├── chapters/01-anochecer.md
+├── chapters/02-noche.md
+├── resources/farol.svg
+└── fonts/ebgaramond-400-normal.woff2
+```
+
+El manifest es descriu camp per camp a l'apèndix [Format de paquet de preset](/ca/docs/sandbox-embedding#indexjson) del Sandbox. Un fitxer pot portar a més `layouts.json`, el recompte de pàgines del Sandbox, perquè el llibre s'hi obri ja paginat, o un per edició d'un llibre en diverses llengües (`layouts.zh-Hant.json`, que es llegeix primer). `openBundle` els ignora.
+
+L'API s'exporta des de `postext` i des del subpath `postext/bundle`, que afegeix les utilitats de baix nivell. Importa des de `postext` quan a més hagis de renderitzar. Així els adaptadors de paquets i els renderitzadors comparteixen una sola instància del mòdul, cosa que importa en un CDN com esm.sh, on cada punt d'entrada és un build diferent.
+
+### Obrir un paquet
+
+`openBundle` rep els bytes del fitxer (un `Uint8Array`, un `ArrayBuffer`, o un `Blob` / `File` d'un `<input type="file">`) i retorna tot el que necessiten el motor i els seus backends:
+
+```ts
+import { openBundle } from 'postext';
+
+const bundle = await openBundle(await file.arrayBuffer(), { locale: 'es' });
+
+bundle.chapters;   // [{ title, file, markdown }, …] en l'ordre del llibre
+bundle.config;     // PostextConfig, a punt per a buildDocument
+bundle.resources;  // Resource[]
+bundle.files;      // Map<ruta, Uint8Array>: tots els fitxers del paquet
+```
+
+<table>
+  <thead>
+    <tr><th>Camp</th><th>Què conté</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>manifest</code></td><td>El <code>preset.json</code> ja validat.</td></tr>
+    <tr><td><code>id</code>, <code>name</code>, <code>description</code></td><td>Presos del manifest.</td></tr>
+    <tr><td><code>locale</code>, <code>locales</code></td><td>La llengua en què s'ha llegit el contingut, i totes les llengües que porta un paquet bilingüe. <code>options.locale</code> en tria una: primer l'etiqueta exacta, després la llengua base, després la llengua pròpia del paquet.</td></tr>
+    <tr><td><code>chapters</code></td><td><code>&#123; title, file, markdown &#125;</code> per capítol. Un capítol sense títol al manifest pren el text del seu primer encapçalament <code>#</code>.</td></tr>
+    <tr><td><code>config</code></td><td>La paleta de colors per defecte i els tipus de recurs en la llengua del paquet, després la <code>config</code> del manifest i després la configuració pròpia de la llengua. La llengua del paquet és el <code>locale</code> de dalt, així que un paquet en una sola llengua rep els seus propis rètols, demani el que demani <code>options.locale</code>. Un manifest que no anomena cap llengua pren la que fixa la seva <code>config</code> (<code>locale</code> i, si falta, la de la partició de mots) i, si tampoc no n'hi ha, <code>options.locale</code>. <code>customFonts</code> llista les famílies tipogràfiques del paquet. És la mateixa configuració amb què el Sandbox obre el paquet.</td></tr>
+    <tr><td><code>resources</code></td><td>Els recursos, amb els peus de la llengua triada. Una mida que falti al manifest es llegeix del fitxer.</td></tr>
+    <tr><td><code>fonts</code></td><td>Una entrada per variant: <code>&#123; family, weight, style, format, file, bytes &#125;</code>.</td></tr>
+    <tr><td><code>files</code></td><td>Tots els fitxers del zip, per la seva ruta.</td></tr>
+    <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>La ruta de la portada, i com demana el paquet que es mostri: la <code>view</code> del manifest, amb la <code>localized[…].view</code> de la llengua servida per sobre.</td></tr>
+    <tr><td><code>start</code></td><td>On comença el llibre, per a un paquet que conté part d'un de més llarg: el <code>start</code> del manifest, o el <code>localized[…].start</code> de la llengua servida. No hi és en un llibre que comença pel principi.</td></tr>
+    <tr><td><code>warnings</code></td><td>Problemes que no impedeixen obrir-lo: un fitxer de font no admès, un màster d'impressió que falta.</td></tr>
+  </tbody>
+</table>
+
+El **`fileId` de cada fitxer és la seva ruta dins del paquet**. `resource.svg.fileId`, `resource.bitmap.fileId` i el `fileId` de cada variant de `customFonts` es cerquen directament a `bundle.files`. `openBundle` llança un error si els bytes no són un zip, si no hi ha un `preset.json` vàlid (a l'arrel o sota una única carpeta) o si falta un fitxer que el manifest anomena.
+
+#### Paquets escrits per postext 1.4 o anterior
+
+Tot manifest que escriuen `createBundle` i el Sandbox porta `configVersion: 14`: les regles de configuració per a les quals es va escriure la seva `config`. Un manifest sense aquest camp el va escriure postext 1.4 o anterior, que resolia divuit coses d'una altra manera:
+
+- **Els salts d'encapçalament** (regles 3): fins a la 1.4, un objecte `headings` sense salt d'H1 no en tenia cap (vegeu [Configuració per nivell](/ca/docs/configuration-headings#configuració-per-nivell)).
+- **La mida de les fórmules** (regles 4): fins a la 1.4, les fórmules sortien 1,131 vegades més grans del que diu `fontSizeScale` (vegeu [Mida de les fórmules](/ca/docs/configuration-lists-math#matemàtiques)).
+- **L'espai sota un recurs en línia** (regles 5): fins a la 1.4, el text que segueix una figura o taula amb `placement.position: 'here'` continuava a la línia següent de la retícula, sense l'espai dels flotants a sota (vegeu `layout.inlineResourceGap` a [Disposició](/ca/docs/configuration-page-layout#disposició)).
+- **L'espai al voltant d'un recurs en línia dins d'un requadre** (regles 6): fins a la 1.4, aquest recurs quedava enganxat al text del requadre que l'envolta (vegeu `layout.inlineResourceGapInBoxes` a [Disposició](/ca/docs/configuration-page-layout#disposició)).
+- **Les marques en línia dels encapçalaments** (regles 6): fins a la 1.4, un encapçalament imprimia les paraules de la seva `*cursiva*`, la seva `**negrita**` i les seves altres marques amb el seu propi estil, sense marques (vegeu `headings.inlineMarks` a [Encapçalaments](/ca/docs/configuration-headings#encapçalaments)).
+- **La mida d'una caplletra** (regles 6): fins a la 1.4, el `dropCap` d'un text de disseny sense `fontSize` era tan alt com totes les caixes de línia que abasta, amb la part alta per damunt de la primera línia (vegeu `dropCap` a [Elements de text](/ca/docs/configuration-headers-footers#elements-de-text)).
+- **El lloc sota una línia de dos punts** (regles 6): fins a la 1.4, `keepColonWithList` donava per bona per a la llista una línia de lloc sota la línia que acaba en dos punts, i un primer element de dues línies que les regles d'òrfenes i vídues mantenen sencer passava a la columna següent sense aquesta línia (vegeu `bodyText.colonListRoom`).
+- **Les línies que deixa el tall d'una caixa** (regles 6): fins a la 1.4, una caixa que es partia dins d'un paràgraf o d'un element de llista podia deixar-ne una sola línia a un costat, sempre que cada costat de la caixa sumés les seves `splitMinLines` línies (vegeu `layout.boxChildSplitMinLines` a [Disposició](/ca/docs/configuration-page-layout#disposició)).
+- **Els salts de línia després d'un guió llarg** (regles 7): fins a la 1.4, Knuth-Plass mai no acabava una línia després d'un guió llarg o un guió mitjà posat entre dues paraules sense espais (`Madrid–Barcelona`, `I.—Que trata`), i el divisor línia a línia del text amb format només entre dues lletres (vegeu `bodyText.breakAfterDashes` a [Text de cos](/ca/docs/configuration-text#text-de-cos)).
+- **El text en bandera** (regles 7): fins a la 1.4, el text corregut en bandera es componia línia a línia, omplint cada línia abans de passar a la següent, digués el que digués `optimalLineBreaking` (vegeu `bodyText.optimalRagged` a [Text de cos](/ca/docs/configuration-text#text-de-cos)).
+- **La divisió sota un encapçalament** (regles 8): fins a la 1.4, el paràgraf que segueix un encapçalament al peu d'una columna hi conservava totes les línies que hi cabien, encara que en passessin molt poques a la columna següent (vegeu `headings.keepWithNextSplit` a [Encapçalaments](/ca/docs/configuration-headings#encapçalaments)).
+- **L'espai sota un contenidor `:::paragraphs`** (regles 8): fins a la 1.4, l'espai de l'estil es posava sota l'últim paràgraf abans de l'ajust a la retícula, l'espai del bloc següent (el `marginTop` d'un encapçalament) se sumava a sota i la separació entre paràgrafs del text no comptava (vegeu `bodyText.paragraphContainerSpacing` a [Text de cos](/ca/docs/configuration-text#text-de-cos)).
+- **Els salts de línia després del guionet d'un compost** (regles 8): fins a la 1.4, Knuth-Plass mai no acabava una línia justificada després d'un guionet entre dues lletres (`físico-química`) en un paràgraf sense format en línia, i sí que ho feia en un amb format (vegeu `bodyText.breakAfterHyphens` a [Text de cos](/ca/docs/configuration-text#text-de-cos)).
+- **Els poemes sense separador** (regles 9): fins a la 1.22, un poema `:::verse` les línies del qual no portaven `||` es componia en hemistiquis solts, cada línia centrada (vegeu `bodyText.verse.layout` a [Vers](/ca/docs/configuration-text#vers)).
+- **Un sagnat de primera línia al costat d'un de francès** (regles 9): fins a la 1.22, la `hangingIndent` d'un estil de paràgraf substituïa la seva `firstLineIndent`, i la primera línia començava a `indent` (vegeu [Estils de paràgraf](/ca/docs/configuration-styles#estils-de-paràgraf)).
+- **Una barra inversa al final d'una línia** (regles 9): fins a la 1.22, una barra inversa al final d'una línia d'un paràgraf, una cita o un element de llista, i `\\` davant d'un espai, s'imprimien, i les línies s'unien amb un espai (vegeu `bodyText.hardLineBreaks` a [Text de cos](/ca/docs/configuration-text#text-de-cos)).
+- **Les tanques de codi** (regles 9): fins a la 1.22, una tanca ```` ``` ```` o `~~~` i les línies de dins es llegien com a Markdown: les línies s'unien en paràgrafs, una línia amb `#` es convertia en un encapçalament i les tanques s'imprimien (vegeu `codeStyle.blocks` a [Llistats de codi](/ca/docs/configuration-styles#llistats-de-codi)).
+- **Els versos partits** (regles 10): a la 1.23, un vers d'un poema compost vers a vers més ample que la caixa es partia amb el seu espaiat natural, per poc que sobrés (vegeu `bodyText.verse.tighten` a [Vers](/ca/docs/configuration-text#vers)).
+
+`openBundle` i `readBundle` llegeixen la `config` d'un manifest així, i la configuració de cada llengua a `localized`, a través de `migrateConfig`, que escriu els salts tal com els componia la 1.4 i multiplica l'escala de les fórmules per 1,131 (i divideix per aquest factor els marges de les fórmules en bloc donats en `em`). A un manifest marcat de `3` a `7`, que va escriure una versió preliminar de la 1.5, només se li apliquen les fixacions de les regles posteriors a la seva marca: amb `3`, la mida de les fórmules, l'espai en línia, les cinc fixacions de les regles 6, les dues de les regles 7 i les tres de les regles 8; amb `4`, l'espai en línia i les de les regles 6, 7 i 8; amb `5`, les de les regles 6, 7 i 8; amb `6`, les de les regles 7 i 8; amb `7`, només les de les regles 8. La divisió sota un encapçalament (`pinLegacyHeadingSplit`) s'escriu com a `headings.keepWithNextSplit: 'fill'` sobre el `headings` que deixen en vigor les capes, quan algun capítol llegit té un encapçalament i la configuració no anomena un valor propi, manté activat `headings.keepWithNext` i no desactiva `bodyText.avoidOrphans`. Els salts després del guionet d'un compost (`pinLegacyHyphenBreaks`) s'escriuen com a `bodyText.breakAfterHyphens: false` sobre el `bodyText` en vigor quan un capítol llegit té un guionet entre dues lletres i la configuració ni el fixa ja ni desactiva `optimalLineBreaking`. L'espai sota els contenidors (`pinLegacyParagraphContainerSpacing`) s'escriu com a `bodyText.paragraphContainerSpacing: 'add'` sobre el `bodyText` en vigor quan la configuració declara algun estil de paràgraf (a `paragraphStyles` o a la configuració pròpia del visor HTML), un capítol llegit obre un contenidor `:::paragraphs` en una línia pròpia i la configuració no el fixa ja. Els salts després d'un guió llarg (`pinLegacyDashBreaks`) s'escriuen com a `bodyText.breakAfterDashes: false` sobre el `bodyText` en vigor quan un capítol llegit té un guió llarg o un guió mitjà entre paraules sense espais (una lletra, una xifra o un signe de tancament davant, i una lletra, una xifra o un signe d'obertura darrere; unes cometes davant del guió compten quan les precedeix una lletra, una xifra, un signe de tancament o un espai de no separació, com a `«no»—y`, no a `dijo "—Hola`; una marca en línia enganxada al guió o a les cometes, com els `**` de `**I.**—Que`, compta a qualsevol dels dos costats) i la configuració no el fixa ja. La composició del text en bandera (`pinLegacyRaggedBreaking`) s'escriu com a `bodyText.optimalRagged: false` sobre el `bodyText` en vigor quan la configuració posa en bandera algun text corregut (un `textAlign` diferent de `'justify'` al text de cos, un estil de paràgraf, el cos d'un requadre, el d'una part o el d'un estil de secció (`headingStyles[].bodyStyle`), o a la configuració pròpia del visor HTML), no el fixa ja i no desactiva `optimalLineBreaking`. L'espai als requadres (`pinLegacyBoxResourceGap`) s'escriu com a `layout.inlineResourceGapInBoxes: false` sobre el `layout` en vigor quan un recurs s'insereix en una línia pròpia dins d'un `:::callout` dels capítols llegits i la configuració no el fixa ja. El tall de les caixes (`pinLegacyBoxChildCut`) s'escriu com a `layout.boxChildSplitMinLines: 1` sobre el `layout` en vigor quan un capítol llegit obre un `:::callout` en una línia pròpia i la configuració no el fixa ja. Les marques dels encapçalaments (`pinLegacyHeadingMarks`) s'escriuen com a `headings.inlineMarks: false` sobre el `headings` que deixen en vigor les capes, quan algun encapçalament dels capítols llegits porta una marca (`*`, `_`, `^`, `~`, `:smallcaps[` o un enllaç al títol) i la configuració no anomena un valor propi. A les caplletres (`pinLegacyDropCapSize`) se'ls escriu la mida de la 1.4 com a `dropCap.fontSize`, siguin on siguin: en la unitat de l'interlineat de l'element quan és una longitud, i si no, en la unitat del seu cos. El lloc sota els dos punts (`pinLegacyColonListRoom`) s'escriu com a `bodyText.colonListRoom: 'line'` sobre el `bodyText` en vigor quan una llista dels capítols llegits segueix una línia que acaba en dos punts (encara que hi hagi línies en blanc entre elles) i la configuració ni anomena un lloc ni desactiva `keepColonWithList`. L'espai en línia (`pinLegacyInlineGap`) s'escriu com a `layout.inlineResourceGap: 'above'` sobre el `layout` que deixen en vigor les capes, quan una línia dels capítols llegits insereix un recurs (`::resource{id="…"}` sola a la seva línia, tal com la llegeix l'analitzador: una menció al text o en un fragment de codi no compta) i la configuració no anomena un espai propi. La mida es fixa sobre el `math` que deixen en vigor les capes (el `math` propi d'una llengua substitueix el compartit), i només quan els capítols llegits tenen algun `$`: un paquet sense fórmules conserva la seva `config` tal com es va escriure. Si ni el manifest ni la llengua donen un `math`, el que queda en vigor és el de la `baseConfig` de `readBundle` (la del lector), i també es fixa, perquè la 1.4 componia les fórmules del paquet a aquesta mida: una base amb `fontSizeScale: 1.5` es llegeix com a 1,5 × 1,1312. Els salts d'encapçalament de la base es prenen tal com vénen. Així un paquet antic conserva el que componien aquestes regles, i `bundle.config` mostra els salts, la mida de les fórmules, els espais, les marques dels encapçalaments, la mida de les caplletres, el lloc sota els dos punts, el tall de les caixes, els salts després d'un guió llarg, els salts després del guionet d'un compost, la composició del text en bandera, la divisió sota un encapçalament i l'espai sota els contenidors amb què es compon. Les correccions de composició de la 1.5 no tenen fixació i se li apliquen com a qualsevol llibre, així que una pàgina a la qual afectin encara es pot moure (la llista és a [Mida de les fórmules](/ca/docs/configuration-lists-math#matemàtiques)). Un `preset.json` escrit a mà per a les regles actuals posa `"configVersion": 14`; marcar així el manifest d'un paquet antic és també la manera de llegir-lo, amb una línia, amb les regles actuals (un paquet sense versió perd llavors també la fixació dels seus salts d'encapçalament). Un manifest marcat `8`, escrit per postext 1.5 a 1.22, rep només les quatre fixacions de les regles 9, com també tots els anteriors: la composició del vers (`pinLegacyVerseLayout`) s'escriu com a `bodyText.verse.layout: 'bayt'` al `bodyText` vigent, quan un capítol llegit compon un poema `:::verse` l'obertura del qual no anomena composició i les línies del qual no porten separador d'hemistiquis, i la configuració no el fixa ja; els sagnats aparellats (`pinLegacyPairedIndents`) treuen la `firstLineIndent` de tot estil de paràgraf (a `paragraphStyles` o als ajustos del visor HTML) que fixa també una `hangingIndent` diferent de zero; els salts de línia forçats (`pinLegacyHardBreaks`) s'escriuen com a `bodyText.hardLineBreaks: false` al `bodyText` vigent, quan un capítol llegit acaba una línia d'un paràgraf, una cita o un element de llista amb una barra inversa i el bloc continua a sota, o posa `\\` davant d'un espai i més text (llevat del codi en línia i les fórmules, les fórmules destacades, els títols i els poemes `:::verse`), i la configuració no el fixa ja; i les tanques de codi (`pinLegacyCodeBlocks`) s'escriuen com a `codeStyle.blocks: false` quan un capítol llegit obre una tanca ```` ``` ```` o `~~~` (de tres caràcters o més, amb tres espais de sagnat com a màxim) i la configuració no el fixa ja. Un manifest marcat `9`, escrit per postext 1.23, rep només la fixació de les regles 10, com també tots els anteriors: els versos partits (`pinLegacyVerseTightening`) s'escriuen com a `bodyText.verse.tighten: false` al `bodyText` vigent, quan un capítol llegit compon un poema vers a vers (una obertura `:::verse` que anomena `layout=lines`, o que no anomena composició sobre versos sense separador d'hemistiquis mentre la configuració no compongui aquests poemes com a bayts) i la configuració no el fixa ja. Un manifest marcat `10`, escrit per postext 1.24, rep només la fixació de les regles 11, com també tots els anteriors: l'equilibratge d'una retícula de caràcters (`pinLegacyGridBalancing`) s'escriu com a `headings.balancing.enabled: true` al `headings` vigent, quan la configuració combinada fixa `cjk.grid.enabled` en text horitzontal i no fixa ella mateixa `enabled`, perquè la 1.24 equilibrava aquestes pàgines per defecte. Les regles 11 també impedeixen que un títol d'obra es parteixi després d'un sol caràcter, componen els números en cercle com a caràcters xinesos i el text de disseny CJK amb les regles del cos (#637): un manifest marcat `10` o anterior rep `cjk.titleMinChars: 1` (`pinLegacyTitleBreaks`) quan un capítol llegit té un títol (《, 〈 o `:book[`), `cjk.circledNumbers: 'western'` (`pinLegacyCircledNumbers`) quan un en té un número en cercle (U+2460–U+24FF, U+2776–U+2793) i `cjk.composeDesignText: false` (`pinLegacyDesignText`) quan un capítol llegit o la mateixa configuració tenen text CJK; cadascun a la `cjk` vigent i només si la configuració no el fixa ja. També tallen les taules en línia i componen `:::columns` al text corregut (#634): un manifest marcat `10` o anterior rep `tableStyle.splitInline: false` (`pinLegacyInlineTableSplit`) al `tableStyle` vigent quan un capítol llegit insereix un recurs, i `layout.flowColumns: false` (`pinLegacyFlowColumns`) al `layout` vigent quan un capítol llegit obre una tanca `:::columns` en una línia pròpia, cadascun només si la configuració no el fixa ja. També ofereixen a un flotant el capdamunt de la columna d'una obertura a amplada de pàgina (#639): un manifest marcat `10` o anterior rep `layout.floatsUnderOpener: false` (`pinLegacyOpenerHeadFloats`) al `layout` vigent quan la configuració combinada defineix un nivell o un estil d'encapçalament amb `span: 'page'` i un capítol llegit té un encapçalament, només si la configuració no el fixa ja. Les regles de 12 fan que una pàgina en una retícula de caràcters contingui les seves línies (#717): un manifest marcat `11` o anterior la configuració combinada del qual activa `cjk.grid.enabled` rep `bodyText.avoidWidows: true`, i a la regió `japan` `bodyText.avoidOrphans: true` (`pinLegacyGridBreakRules`), al `bodyText` vigent, cadascuna només si la configuració no la fixa ja. També mantenen dos caràcters d'una nota en dues files a cada costat d'un tall de línia (#720): un manifest així rep `cjk.warichu.minChars: 1` (`pinLegacyNoteBreaks`) al `cjk` vigent quan un capítol llegit té una nota `:warichu[` o la configuració combinada fixa `citations.notes: 'warichu'`, només si la configuració no el fixa ja. I a la regió del Japó una paraula occidental porta l'espai entre xinès i llatí al costat dels seus parèntesis i signes (#721): un manifest marcat `11` o anterior la configuració combinada del qual es resol a la regió del Japó rep `cjk.latinSpacingEdge: 'letters'` (`pinLegacyLatinSpacingEdge`) al `cjk` vigent quan un capítol llegit té kana o kanji, només si la configuració no el fixa ja. I un recurs posat en el text admet `placement.captionSide` com un flotant de columna (#729): un manifest marcat `11` o anterior la configuració combinada del qual fixa `layout.layoutType: 'oneAndHalf'` rep `layout.inlineCaptionSide: false` (`pinLegacyInlineCaptionSide`) quan un capítol llegit incrusta un recurs, només si la configuració no el fixa ja.
+
+Les regles de 12 canvien a més com s'equilibra una columna curta, i un manifest marcat `11` o anterior conserva allò amb què es va compondre. L'ordre de les palanques (#707): rep `headings.balancing.maxLinesBeforeLoose` amb el valor del seu propi `maxLinesPerHeading`, o `4` si no en fixa cap (`pinLegacyLooseOrder`), al `headings` vigent, quan un capítol llegit té un encapçalament i la configuració combinada equilibra les seves columnes, deixa que un encapçalament prengui més de dues línies i no fixa ja la clau. La línia sota una figura a diverses columnes (#708): rep `headings.balancing.stretchAfterWideFloats: 'always'` (`pinLegacyWideFloatStretch`) al `headings` vigent, quan un capítol llegit incrusta o cita un recurs o fa flotar una caixa, i la configuració combinada equilibra les seves columnes, no desactiva `stretchAfterFloats` i no fixa ja la clau. Els talls dins dels grups d'un índex (#712): rep `index.groups.splitMinEntries: 1` (`pinLegacyIndexGroupSplit`) a l'`index` vigent, quan un capítol llegit té una tanca `:::index` en una línia pròpia i la configuració no fixa ja la clau. La unitat del tall a nivell (#711): rep `headings.balancing.trailingStep: 'grid'` (`pinLegacyTrailingStep`) al `headings` vigent, quan un capítol llegit pot posar text fora de l'interlineat base (una tanca `:::`, una tanca de codi, una citació en bloc, una llista, una fórmula en bloc o una citació bibliogràfica), i la configuració combinada equilibra les seves columnes, manté actiu `trailing` o `beforeSpan` i no fixa ja la clau.
+
+Les regles de 12 tallen el rètol d'una referència pels seus espais quan el rètol són paraules (#702). Un manifest marcat `11` o anterior rep `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) al `crossRefs` vigent, quan un capítol llegit conté una referència (`:ref{…}`, `\ref{…}`, `\eqref{…}` o un `@id` de pandoc-crossref) i la configuració no anomena l'ajust: cada rètol continua sent la paraula única amb què es va compondre.
+
+Les regles de 12 componen una paraula sense lletres (`46.`, `1367)`) en l'escriptura del text que l'envolta (#725). Un manifest marcat `11` o anterior rep `bodyText.scriptContext: false` (`pinLegacyScriptContext`) sobre el `bodyText` vigent, continguin el que continguin els seus capítols, quan la configuració no anomena l'ajust: aquesta paraula es compon aïllada, com es va maquetar. La regla actua en una font que dibuixa la puntuació segons l'escriptura, i en llegir un manifest no se sap quines fonts carrega el llibre.
+
+Les regles de 13 converteixen en un ajust la llengua en què es compon el text (#764), i les de 14 fan de la llengua del mateix document el seu valor per defecte (#770). Un manifest marcat `13` o anterior rep `bodyText.shapingLanguage: 'host'` (`pinLegacyShapingLanguage`) sobre el `bodyText` vigent, continguin el que continguin els seus capítols, quan la configuració no anomena l'ajust; el que anomena un valor el conserva. El seu text es mesura en la llengua de la pàgina que allotja la maquetació, i en cap dins d'un worker, com es va maquetar. Un manifest marcat `13` el va escriure postext 1.29: la 1.29.1 i la 1.29.2 maquetaven en la llengua de l'amfitrió un llibre que no anomena cap valor, com fa la fixació; la 1.29.0, que tenia `'document'` com a valor per defecte, el maquetava en la del document amb un canvas i un PDF que no seguien la mesura, i també es llegeix amb `'host'`. Un manifest marcat `14` que no anomena cap valor es maqueta en la llengua del document.
+
+Les regles de 13 també dibuixen la casella d'un element de tasca (`- [ ]`, `- [x]`): un quadrat que dibuixa el motor, amb una marca quan la tasca està feta, i que ocupa un espai propi abans del text de l'element (#765). Un manifest marcat `12` o anterior rep `unorderedLists.taskBox: 'character'` (`pinLegacyTaskBox`) sobre l'`unorderedLists` vigent, quan algun capítol conté un element de tasca i la configuració no anomena l'ajust. La casella continua sent el caràcter `☐` o `☑` compost en la font de la llista, i el text de l'element comença després de l'amplada d'aquest caràcter, com es va maquetar. Aquesta amplada la donava la font que tingués el caràcter, una del sistema en la majoria de llibres, i en llegir el manifest no se sap.
+
+```ts
+import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
+
+migrateConfig({ headings: { fontFamily: 'Georgia' } }, undefined, { content: 'Un llibre sense fórmules.' });
+// => { headings: { fontFamily: 'Georgia', levels: [{ level: 1, breakBefore: { enabled: false } }] } }
+migrateConfig({ math: { fontSizeScale: 1.2 } }, 3);
+// => { math: { fontSizeScale: 1.35746…, marginTop: { value: 0.7072, unit: 'em' }, marginBottom: { value: 0.7072, unit: 'em' } },
+//      layout: { inlineResourceGap: 'above', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1 },
+//      headings: { inlineMarks: false, keepWithNextSplit: 'fill' }, bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false } }
+migrateConfig({ layout: { layoutType: 'single' } }, 4, { content: 'Text.\n\n::resource{id="fig"}' });
+// => { layout: { layoutType: 'single', inlineResourceGap: 'above' } }
+migrateConfig({ layout: { layoutType: 'single' } }, 5, { content: ':::callout\nText.\n\n::resource{id="fig"}\n:::' });
+// => { layout: { layoutType: 'single', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1 } }
+migrateConfig({ bodyText: { textAlign: 'left' } }, 6, { content: 'Et dic—i això és tot.' });
+// => { bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false } }
+migrateConfig({ paragraphStyles: [{ id: 'verso' }] }, 7, { content: ':::paragraphs{style="verso"}\nUn vers.\n:::' });
+// => { paragraphStyles: [{ id: 'verso' }], bodyText: { paragraphContainerSpacing: 'add' } }
+migrateConfig({ bodyText: { fontFamily: 'Georgia' } }, 7, { content: 'Un exercici teòric-pràctic.' });
+// => { bodyText: { fontFamily: 'Georgia', breakAfterHyphens: false } }
+migrateConfig(config, CONFIG_VERSION); // regles actuals: la mateixa `config`
+```
+
+`content` és el markdown que compon la configuració (una cadena o una llista de capítols). Sense aquest camp, els dos espais, les marques dels encapçalaments, el lloc sota els dos punts, el tall de les caixes, els salts després d'un guió llarg, la divisió sota un encapçalament i els salts després del guionet d'un compost es fixen sempre, la mida de les fórmules sempre que les matemàtiques estiguin activades i l'espai sota els contenidors sempre que la configuració declari algun estil de paràgraf, perquè el motor no pot saber si el llibre té cap fórmula, cap contenidor `:::paragraphs`, cap figura en línia, cap encapçalament amb marques, cap llista introduïda amb dos punts, cap caixa, cap guió llarg entre paraules, cap encapçalament o cap compost. La composició del text en bandera es fixa només segons la configuració, hi hagi contingut o no. Migra una configuració desada una sola vegada i torna-la a desar amb `CONFIG_VERSION`: la fixació de la mida multiplica l'escala, així que una configuració migrada dues vegades creixeria dues vegades. Sense ell també es fixen la composició del vers i les tanques de codi, perquè el llibre pot tenir un poema `:::verse` sense separador o una tanca, i els sagnats aparellats es fixen només per la configuració. També es fixen els versos partits de la 1.23, perquè el llibre pot compondre un poema vers a vers.
+
+### Compondre i renderitzar un paquet
+
+Quatre utilitats connecten un paquet obert amb el motor i els backends:
+
+- **`loadBundleFonts(bundle)`** registra les fonts del paquet a `document.fonts`, i els seus bytes al registre de fonts del motor per a les imatges SVG (`registerFontBytes`). Espera-la abans de compondre, perquè la composició mesura el text amb les fonts que té el navegador. Les famílies que el paquet anomena però no inclou (Google Fonts) les has de carregar tu, com en qualsevol altre document.
+- **`registerBundleImages(bundle)`** descodifica les imatges per al backend canvas (`renderPage`, `renderToCanvas`), incloses les portades dels vídeos. **`bundleImageUrl(bundle)`** és el resolvedor `resourceImageUrl` de `renderToHtml`, i **`bundleVideoUrl(bundle)`** el seu resolvedor `resourceVideoUrl` per als fitxers de vídeo que porta un paquet. Totes dues recoloren les figures SVG quan `diagramStyle.singleInk` és actiu, una sola vegada: recoloren el marcatge i marquen les imatges perquè cap backend no les torni a tenyir (consulta [Tinta única en canvas i en HTML](/ca/docs/configuration-resources#tinta-única-en-canvas-i-en-html)). Totes dues incrusten, a més, a cada SVG les variants que anomena el seu text, primer des de les fonts del mateix paquet i després des de les variants registrades al motor (consulta [Fonts al text dels SVG](/ca/docs/configuration-resources#fonts-al-text-dels-svg)); `registerBundleImages(bundle, { onWarning })` i `bundleImageUrl(bundle, { onWarning })` avisen d'una família sense variant.
+- **`buildBundle(bundle)`** compon els capítols en ordre i retorna un `VDTDocument` per capítol. Cada capítol continua l'anterior: comptadors d'encapçalaments i de recursos, la part oberta, la paritat de pàgina i la numeració. Un capítol que imprimeix l'índex de continguts (`:::toc`) o l'analític (`:::index`) rep l'esquema del llibre sencer. Admet les mateixes opcions que `buildDocument`, més `config` per substituir la configuració del paquet, `cache` per compartir una memòria cau de mesures i `metadata` (vegeu més avall).
+- **`bundleResourceBytes(bundle)`** i **`bundleFontProvider(bundle, { decodeWoff2, fallback })`** són les opcions `resourceBytes` i `fontProvider` de `renderToPdf` de `postext-pdf`. El proveïdor de fonts tria del paquet el pes més proper de l'estil demanat. Per a una variant `.woff2` necessita `decompressWoff2`, i per a una família que el paquet no inclou crida `fallback` amb els arguments del renderitzador, `request` inclòs, i lliura el que retorni. Un `fallback` que només baixa el fitxer `latin` de la família imprimeix com a caixes buides una família xinesa que el paquet no incrusta; un que respon amb els fragments, com `sliceFontProvider` a [Fonts xineses, japoneses i coreanes](/ca/docs/configuration-pdf-output#fonts-xineses-japoneses-i-coreanes), la imprimeix completa.
+
+```ts
+import { openBundle, loadBundleFonts, registerBundleImages, buildBundle, renderPage,
+  bundleResourceBytes, bundleFontProvider } from 'postext';
+import { renderToPdf, decompressWoff2 } from 'postext-pdf';
+
+const bundle = await openBundle(bytes);
+await loadBundleFonts(bundle);
+await registerBundleImages(bundle);
+
+const docs = buildBundle(bundle);                        // un VDTDocument per capítol
+const primeraPagina = renderPage(docs[0].pages[0], docs[0]); // un <canvas>
+
+const pdf = await renderToPdf(docs, {                    // el llibre sencer
+  fontProvider: bundleFontProvider(bundle, { decodeWoff2: decompressWoff2, fallback: fontsource }),
+  resourceBytes: bundleResourceBytes(bundle),
+});
+```
+
+Per compondre un sol capítol pel teu compte, passa `bundle.chapters[i].markdown`, `bundle.resources` i `bundle.config` a `buildDocument`, com amb qualsevol document.
+
+**Les metadades del llibre.** Com al Sandbox, el frontmatter del primer capítol és el del llibre: `buildBundle` lliura el seu `title`, el seu `author` i els altres a tots els capítols, de manera que les capçaleres amb `{title}` i `{author}` es mantenen a totes les pàgines i el `doc.metadata` de cada capítol els porta. Un bloc de frontmatter al principi d'un capítol posterior s'ignora: es localitza per les seves línies `---` i es deixa en blanc sense analitzar-lo, així que un YAML que l'analitzador rebutjaria no causa cap problema. `options.metadata` aporta valors que el frontmatter no fixa (el frontmatter preval). El recompte de pàgines del llibre també arriba a tots els capítols: `{bookTotalPages}` l'imprimeix, mentre que `{totalPages}` compta el capítol (consulta [Recompte de pàgines del llibre](/ca/docs/configuration-headers-footers#recompte-de-pàgines-del-llibre)).
+
+```ts
+const docs = buildBundle(bundle, { metadata: { author: 'A. Autora' } });
+docs[3].metadata.title;   // el `title:` del primer capítol
+```
+
+**On comença el llibre.** Un paquet pot contenir part d'una publicació més llarga: les pàgines 58 a 61 d'un número, el capítol 4 d'un llibre de text. El seu `start` diu què el precedeix, en els termes de la `continuation` de `buildDocument`: les pàgines anteriors a la primera (`pageIndexOffset`, que decideix de quin costat cau la pàgina 1 i, amb ell, els marges en mirall i les capçaleres de pàgines parelles i senars), la numeració de pàgina vigent (`pageNumbering`), els comptadors de títols (`headings`), la part oberta (`part`) i els comptadors de recursos, enunciats, notes a peu de pàgina i línies. `createBundle` l'escriu com a `start` a `preset.json`, `openBundle` el retorna a `bundle.start`, i `buildBundle` compon amb ell el primer capítol, com faria `buildDocument({ markdown, continuation: start }, config)`, i encadena a partir d'aquí els següents; `{bookTotalPages}` compta també les pàgines anteriors al llibre. Un manifest sense `start` es llegeix com abans, i un lector que no coneix el camp l'ignora. `bookPageCount` no en forma part: les pàgines les compta qui llegeix. En un paquet amb diverses llengües, `localized[…].start` dona a una edició el seu propi començament.
+
+```ts
+const { bytes } = await createBundle({
+  name: 'Field notes, chapter 4',
+  markdown,
+  config,
+  // Pàgina 58, parella, al capítol 4.
+  start: { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } },
+});
+const bundle = await openBundle(bytes);
+bundle.start;                 // { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, … } }
+const [doc] = buildBundle(bundle);
+doc.pages[0].pageLabel;       // '58'
+```
+
+### Exemple en directe: obrir un paquet
+
+El pen carrega un llibre d'exemple de dos capítols (`lantern.postext`, amb la seva pròpia tipografia, una figura SVG i una taula) des del repositori. Registra les fonts i imatges del paquet, compon el llibre amb `buildBundle` i pinta totes les pàgines. *Make the PDF* renderitza els mateixos documents amb `postext-pdf`, incrustant les fonts del paquet. Tria un `.postext` teu, per exemple un d'exportat del Sandbox, per veure'l igual.
+
+<CodePenExample name="open-bundle" title="Postext · obrir un paquet .postext" description="Obrir un fitxer .postext amb postext, compondre el llibre i renderitzar-lo en canvas i PDF." height={640} />
+### Crear un paquet
+
+`createBundle` escriu un fitxer `.postext` a partir d'un document: els seus capítols, la seva configuració, els seus recursos i les dades a què aquests fan referència.
+
+```ts
+import { createBundle } from 'postext';
+
+const { bytes, manifest, warnings } = await createBundle({
+  name: 'El farol',
+  locale: 'es',
+  chapters: [
+    { markdown: '# Anochecer\n\nSe dibuja en :ref{id="farol"}.' },
+    { title: 'Noche', markdown: '# Noche\n\n…' },
+  ],
+  config,
+  resources: [{
+    id: 'farol', typeId: 'figure', kind: 'svg', caption: 'El farol.',
+    svg: { fileId: 'farol.svg', width: 240, height: 150 },
+    createdAt: 0, updatedAt: 0,
+  }],
+  files: { 'farol.svg': svgMarkup, 'garamond-regular': fontBytes },
+});
+```
+
+<table>
+  <thead>
+    <tr><th>Entrada</th><th>Significat</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>name</code>, <code>id</code>, <code>description</code>, <code>locale</code></td><td>Les metadades del manifest. Per defecte <code>id</code> és un slug de <code>name</code>.</td></tr>
+    <tr><td><code>chapters</code> o <code>markdown</code></td><td>El llibre, un <code>&#123; title?, markdown &#125;</code> per capítol, o un document únic.</td></tr>
+    <tr><td><code>config</code></td><td>La <code>PostextConfig</code>. Els valors iguals als predeterminats no s'escriuen al manifest.</td></tr>
+    <tr><td><code>resources</code></td><td>Els recursos. Una imatge anomena les seves dades amb <code>bitmap.fileId</code> / <code>svg.fileId</code> (i <code>svg.pdfFileId</code> per a un màster d'impressió).</td></tr>
+    <tr><td><code>files</code></td><td>Les dades per <code>fileId</code> (un objecte o un <code>Map</code>): les imatges que citen els recursos i els fitxers de font que citen les variants de <code>config.customFonts</code>. Cada valor pot ser un <code>Uint8Array</code>, un <code>ArrayBuffer</code>, un <code>Blob</code> o un text (el codi d'un SVG).</td></tr>
+    <tr><td><code>thumbnail</code></td><td><code>&#123; data, mime &#125;</code>: una portada (PNG, JPEG, WebP, GIF o SVG).</td></tr>
+    <tr><td><code>canvasScope</code></td><td><code>'book'</code> demana als visors que componguin el llibre sencer com un sol llenç.</td></tr>
+    <tr><td><code>start</code></td><td>On comença el llibre, per a un paquet que conté part d'un de més llarg: la <code>continuation</code> amb què es compondria un document sol. S'escriu com a <code>start</code> del manifest.</td></tr>
+    <tr><td><code>mtime</code></td><td>La data de modificació que s'escriu a cada fitxer del zip (un <code>Date</code>, una marca de temps o una data en text). Si falta, és l'hora de la crida, de manera que dues crides amb les mateixes dades donen bytes diferents. Amb una data fixa, les mateixes dades donen sempre els mateixos bytes, que es poden comparar o resumir amb un hash. Un zip desa una data i una hora sense zona horària, en passos de dos segons, de 1980 a 2099, i la data s'escriu en l'hora local de la màquina. Perquè els bytes coincideixin en qualsevol màquina, construeix la data amb camps locals, com <code>new Date(1980, 0, 1)</code>: una marca de temps o un text que acaba en <code>Z</code> anomenen un instant, que cau en una hora local diferent a cada zona horària (<code>'1980-01-01T00:00:00Z'</code> encara és 1979 a l'oest d'UTC). Una data fora d'aquests anys, en hora local, llança un error.</td></tr>
+    <tr><td><code>localized</code></td><td>Altres llengües del mateix llibre, per etiqueta de llengua: <code>&#123; en: &#123; chapters?, config?, resources? &#125; &#125;</code>. Les entrades anteriors passen a ser el contingut de <code>locale</code>, que llavors és obligatori. Consulta <a href="#paquets-bilingües">Paquets bilingües</a>.</td></tr>
+  </tbody>
+</table>
+
+Retorna els `bytes` del fitxer, el `manifest` escrit com a `preset.json`, tots els fitxers a `files` (ruta → bytes) i una llista de `warnings`. Els fitxers s'anomenen per l'id del seu recurs (`resources/farol.svg`) o pel nom del fitxer de font (`fonts/…`), i els capítols pel seu ordre i títol (`chapters/01-anochecer.md`). Les fonts es declaren al camp `fonts` del manifest, mai dins de `config.customFonts`. Algunes coses es deixen fora, cadascuna amb un avís:
+- un recurs o una variant tipogràfica les dades de la qual no són a `files`
+- una variant `.woff` (el backend PDF no la pot incrustar)
+- una família marcada `redistributable: false`
+
+Al navegador, passa `bytes` a un enllaç de baixada: `URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }))`. A Node, escriu-los amb `fs.writeFile`. `createBundle` i `openBundle` no necessiten DOM. Els dists fan servir rutes de mòdul sense extensió, de manera que amb Node a seques, sense bundler, necessiten un hook de resolució. El fitxer `docs/examples/open-bundle/build-sample.mjs` del repositori en mostra un en poques línies.
+
+### Paquets bilingües
+
+Un fitxer `.postext` pot portar un llibre en diverses llengües, i `openBundle(bytes, { locale })` el llegeix en qualsevol d'elles. `createBundle` n'escriu un a partir de `localized`: una entrada per cada llengua addicional, amb allò que difereix del contingut principal (el de `locale`):
+
+```ts
+const { bytes, manifest } = await createBundle({
+  name: 'El farol',
+  locale: 'es',
+  chapters: [{ markdown: '# Anochecer\n\n…' }, { markdown: '# Noche\n\n…' }],
+  config,
+  resources: [figuraFarol, tablaHoras],
+  files: { 'farol.svg': svgEs, 'lantern.svg': svgEn },
+  localized: {
+    en: {
+      chapters: [{ markdown: '# Dusk\n\n…' }, { markdown: '# Night\n\n…' }],
+      config: { headings: { levels: [{ level: 1, numberingTemplate: 'Chapter {1}' }] } },
+      resources: [
+        { id: 'farol', caption: 'The lantern.', svg: { fileId: 'lantern.svg', width: 240, height: 150 } },
+        { id: 'horas', caption: 'Hours of light.' },
+      ],
+    },
+  },
+});
+
+const en = await openBundle(bytes, { locale: 'en' });   // capítols, configuració i peus en anglès
+```
+
+- **`chapters`**: el llibre en aquesta llengua. Els fitxers de capítol van a una carpeta per llengua (`chapters/es/01-anochecer.md`, `chapters/en/01-dusk.md`) i el camp `chapters` del manifest passa a ser un mapa llengua → capítols. Una llengua sense `chapters` llegeix els principals; quan cap llengua no té capítols propis, continuen sent una sola llista.
+- **`config`**: la configuració d'aquesta llengua. Cada clau de primer nivell substitueix completament la compartida quan el paquet es llegeix en aquesta llengua, de manera que aquí `headings` substitueix l'objecte `headings` sencer. Les claus que falten, o que són iguals a les compartides, es comparteixen i no s'escriuen, de manera que passar la configuració completa de la llengua funciona igual que passar les poques claus que canvien. Una clau amb els seus valors per defecte quan la compartida no els té (`layout: {}`) s'escriu tal qual, així que restableix el valor compartit. Les fonts es comparteixen: les famílies del `customFonts` d'una llengua se sumen al `fonts` del paquet.
+- **`resources`**: el text dels recursos compartits, aparellats per `id`: `caption`, `note`, `altText` i el `table` d'una taula. Una imatge amb paraules pot tenir el seu propi dibuix: `bitmap.fileId` o `svg.fileId` (i `svg.pdfFileId`) anomenen altres dades de `files`, que s'escriuen com a `resources/en/farol.svg`. La resta de camps, com el tipus o la col·locació, es comparteixen. Un id que no és entre els `resources` es deixa fora amb un avís, i si falta la imatge d'una llengua, aquesta llengua es queda amb la compartida, també amb un avís.
+
+El manifest enumera totes les llengües a `locales` (`['es', 'en']`), conserva la principal com a `locale` i desa la resta a `localized`. `openBundle` sense llengua llegeix la principal.
+
+**Quina llengua rep el lector.** `openBundle(bytes, { locale })` serveix la llengua exacta, si no la seva llengua base (`es-MX` llegeix `es`), i si no la principal; `bundle.locale` diu quina ha servit. Capítols i textos vénen sempre de la mateixa llengua. La llengua principal conserva els textos compartits encara que `localized` porti una variant regional seva: un paquet `pt-PT` amb una entrada `pt-BR` llegeix els peus brasilers només per a `pt-BR`, i els compartits per a `pt-PT` i `pt`.
+
+### Exemple en viu: crear un paquet
+
+El pen compon un llibre de dos capítols amb una figura SVG i llista els fitxers que ha escrit `createBundle` juntament amb el manifest. Ofereix el fitxer per baixar-lo, el torna a obrir amb `openBundle` i en pinta la primera pàgina: l'anada i tornada completa en poques línies. Importa el fitxer baixat al Sandbox per continuar-hi treballant.
+
+<CodePenExample name="create-bundle" title="Postext · crear un paquet .postext" description="Escriure un fitxer .postext amb createBundle de postext, baixar-lo i tornar-lo a obrir." height={640} />
+
+### Treballar amb paquets
+
+Com que el Sandbox, l'skill per a agents i el paquet `postext` llegeixen i escriuen el mateix fitxer, un `.postext` és una manera còmoda de passar un llibre d'una eina a una altra:
+
+- **Partir d'un paquet.** Porta una publicació existent amb l'[skill per a agents](/ca/docs/skill), o dissenya un llibre al [Sandbox](/ca/sandbox) i exporta'l (**Baixar (.postext)** al menú ⋯ de la seva fila del tauler Llibres). Carrega el fitxer des del teu programa amb `openBundle` per renderitzar-lo en canvas, HTML o PDF. Conserva el fitxer com a font del llibre: edita en codi els capítols, la configuració o els recursos i torna'l a escriure amb `createBundle`, o simplement torna'l a carregar cada vegada que canviï.
+- **Depurar i ajustar al Sandbox.** Quan alguna cosa del que produeix el teu programa necessita retocs (una figura que cau a la pàgina equivocada, un estil d'encapçalament, l'equilibri de columnes), exporta el que compon el teu programa amb `createBundle`. Importa aquest fitxer al Sandbox (*Llibres → Nou → Obrir un fitxer .postext…*), corregeix el text, el disseny o les figures amb la previsualització en viu, el tauler Revisió i la vista PDF, i torna'l a exportar. Després el teu programa carrega el fitxer corregit amb `openBundle`. O trasllada al teu codi el que ha canviat: la `config` del manifest només desa els valors diferents dels predeterminats, així que es llegeix com una diferència curta.
+
+### API de baix nivell
+
+`postext/bundle` exporta també les peces sobre les quals es construeixen `openBundle` i `createBundle`, per a aplicacions que desen o serveixen paquets a la seva manera (un directori descomprimit per HTTP, registres en una base de dades):
+
+- **`openBundleZip(bytes)` / `zipBundle(files, { mtime })`**: la capa del zip. En obrir tolera una carpeta arrel i ignora les entrades `__MACOSX` i els fitxers ocults. Es rebutgen les rutes que surten del paquet. `mtime` data els fitxers com la dada del mateix nom de `createBundle`.
+- **`readBundle(manifest, readFile, options)`** llegeix un manifest més una funció `readFile(ruta)` i retorna capítols, configuració, recursos, imatges i fonts. `options` fixa la llengua, com s'anomenen els identificadors de fitxer (`ids`), la configuració base (`baseConfig`, sota la del manifest; per defecte la paleta i els tipus de recurs de `bundleBaseConfig` en la llengua del paquet, que retorna `resolveBundleConfigLocale(manifest, locale)`, i qui passi la seva pròpia `baseConfig` l'ha de traduir a aquesta llengua; amb un manifest anterior a `configVersion: 4`, el seu `math` es fixa amb el del paquet; amb un d'anterior a 5, l'espai en línia del seu `layout`; amb un d'anterior a 6, l'espai als requadres del seu `layout`, el lloc sota els dos punts del seu `bodyText`, les marques en línia dels seus `headings` i la mida de les seves caplletres; amb un d'anterior a 7, els talls després d'un guió llarg i la composició del text en bandera del seu `bodyText`; i amb un d'anterior a 8, la divisió sota un encapçalament dels seus `headings` i els talls després del guionet d'un compost i l'espai sota els contenidors `:::paragraphs` del seu `bodyText`; vegeu [Paquets escrits per postext 1.4 o anterior](#paquets-escrits-per-postext-14-o-anterior)) i com es mesuren les mides intrínseques. `readResolution` llegeix la resolució de cada mapa de bits del seu fitxer i la desa a `bitmap.fileResolution`; per defecte és true quan el paquet fixa `layout.bitmapResolution: 'file'`.
+- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**: el costat d'escriptura, separat en un pla pur (noms de fitxer i manifest) i la resolució dels bytes mitjançant les funcions `readBlob` / `readFont`.
+- **`isBundleManifest(value)`**, les funcions que trien llengua (`pickChapterSpecs`, `pickLocaleOverrides`, `pickBundleView`, `resolveBundleLocale`, `resolveBundleConfigLocale`), `svgSize` / `bitmapSize` / `bitmapInfo` (els píxels d'un mapa de bits i la resolució que indica el seu fitxer) i els tipus del format (`BundleManifest`, `BundleResourceSpec`, `BundleFontFamilySpec`, …).
+- **`CONFIG_VERSION`, `migrateConfig(config, configVersion, { content })`, `pinLegacyHeadingBreaks(config)`, `pinLegacyMathSize(config)`, `pinLegacyInlineGap(config)`, `pinLegacyBoxResourceGap(config)`, `pinLegacyHeadingMarks(config)`, `pinLegacyDropCapSize(config)`, `pinLegacyColonListRoom(config)`, `pinLegacyBoxChildCut(config)`, `pinLegacyDashBreaks(config)`, `pinLegacyRaggedBreaking(config)`, `pinLegacyHeadingSplit(config)`, `pinLegacyParagraphContainerSpacing(config)`, `pinLegacyHyphenBreaks(config)` i `LEGACY_MATH_SIZE`** (0,5 ÷ 0,442): una configuració desada, en els termes actuals (vegeu [Paquets escrits per postext 1.4 o anterior](#paquets-escrits-per-postext-14-o-anterior)). `readBundle` l'aplica; una aplicació que desa configuracions a la seva manera també ho pot fer, una vegada per còpia desada.
+
+El Sandbox està construït sobre aquestes peces. Hi afegeix els seus propis identificadors d'emmagatzematge i els registres de pàgines de `layouts.json`.

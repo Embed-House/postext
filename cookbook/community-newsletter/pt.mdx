@@ -16,13 +16,13 @@ A edição de primavera de *The Allotment Gazette*, boletim de uma associação 
 
 ### 1 · Deixe o Markdown encher cada coluna
 
-As configurações de layout estão [na resposta curta](#a-resposta-curta), lá em cima. Num layout `oneAndHalf` a coluna estreita recebe texto por padrão, e o texto desce pela coluna larga, depois pela estreita, depois pela coluna larga da página seguinte ([tipos de layout](/pt/docs/configuration-page-layout#tipos-de-layout)). Um `:::columnbreak` encerra a coluna onde está ([diretivas](/pt/docs/document-format#diretivas)): depois da etiqueta “Continued on page 2” da matéria, ele abre a coluna estreita para as notas, e depois da última nota, na última coluna da página, abre a página 2. Nesta edição as duas colunas da página 1 foram ajustadas para terminar na mesma linha da grade, a 275 mm da borda superior, então apagar qualquer uma das duas quebras deixa as páginas como estão. As quebras fazem diferença quando o texto muda. Corte o segundo parágrafo da matéria e, sem a primeira quebra, “In brief” começa a 247 mm, na coluna larga, embaixo da etiqueta, e a primeira nota transborda para a coluna estreita, onde a segunda metade é quebrada de novo para a medida de 57 mm dessa coluna.
+As configurações de layout estão [na resposta curta](#a-resposta-curta), lá em cima. Num layout `oneAndHalf` a coluna estreita recebe texto por padrão, e o texto desce pela coluna larga, depois pela estreita, depois pela coluna larga da página seguinte ([tipos de layout](/pt/docs/configuration-page-layout#tipos-de-layout)). Um `:::columnbreak` encerra a coluna onde está ([diretivas](/pt/docs/document-format-directives#diretivas)): depois da etiqueta “Continued on page 2” da matéria, ele abre a coluna estreita para as notas, e depois da última nota, na última coluna da página, abre a página 2. Nesta edição as duas colunas da página 1 foram ajustadas para terminar na mesma linha da grade, a 275 mm da borda superior, então apagar qualquer uma das duas quebras deixa as páginas como estão. As quebras fazem diferença quando o texto muda. Corte o segundo parágrafo da matéria e, sem a primeira quebra, “In brief” começa a 247 mm, na coluna larga, embaixo da etiqueta, e a primeira nota transborda para a coluna estreita, onde a segunda metade é quebrada de novo para a medida de 57 mm dessa coluna.
 
 ### 2 · Monte o cabeçalho a partir do frontmatter
 
 <Excerpt region="masthead" />
 
-O H1 recebe um estilo de título cujo design desenha o cabeçalho do boletim, e `span: 'page'` põe esse design por cima das duas colunas. `{titleText}` em 60 pt quebra em duas linhas na sua caixa de 178 mm. A aba junta `{attr.issue}`, escrito na linha do H1, e `{publishDate}`, do frontmatter ([elementos de texto](/pt/docs/configuration-page-layout#elementos-de-texto)). Sem `minHeight`, o cabeçalho reservaria espaço até a borda inferior da faixa, a 62 mm da borda superior, e o texto começaria na linha seguinte da grade, a 62,5 mm, encostado na faixa. Um `minHeight` de dez linhas da grade faz o texto começar a 67 mm.
+O H1 recebe um estilo de título cujo design desenha o cabeçalho do boletim, e `span: 'page'` põe esse design por cima das duas colunas. `{titleText}` em 60 pt quebra em duas linhas na sua caixa de 178 mm. A aba junta `{attr.issue}`, escrito na linha do H1, e `{publishDate}`, do frontmatter ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). Sem `minHeight`, o cabeçalho reservaria espaço até a borda inferior da faixa, a 62 mm da borda superior, e o texto começaria na linha seguinte da grade, a 62,5 mm, encostado na faixa. Um `minHeight` de dez linhas da grade faz o texto começar a 67 mm.
 
 ### 3 · Marque as notas com chips
 
@@ -34,13 +34,13 @@ Declarar `chipStyles` substitui o chip azul-claro padrão, e um chip sem `style`
 
 <Excerpt region="wrap" />
 
-`wrap: 'right'` põe o desenho do canteiro na borda direita da coluna de 113 mm, com 45 % da largura dela (51 mm), e o parágrafo depois da linha `::resource` é composto ao lado dele nos 57 mm que sobram, a uma linha do corpo de distância do desenho e da legenda ([contorno de texto](/pt/docs/document-format#contorno-de-texto)). O topo do desenho fica na altura da primeira linha do parágrafo, e todas as linhas ficam na grade de 13,4 pt. Um parágrafo mais longo continuaria embaixo do desenho nos 113 mm inteiros, como um parágrafo só; um título ou outra figura que viesse com o desenho ainda ao lado do texto iria para baixo dele. O título de nível 4 em cima dele usa um estilo de título que só muda a cor para o verde-folha.
+`wrap: 'right'` põe o desenho do canteiro na borda direita da coluna de 113 mm, com 45 % da largura dela (51 mm), e o parágrafo depois da linha `::resource` é composto ao lado dele nos 57 mm que sobram, a uma linha do corpo de distância do desenho e da legenda ([contorno de texto](/pt/docs/document-format-resources#contorno-de-texto)). O topo do desenho fica na altura da primeira linha do parágrafo, e todas as linhas ficam na grade de 13,4 pt. Um parágrafo mais longo continuaria embaixo do desenho nos 113 mm inteiros, como um parágrafo só; um título ou outra figura que viesse com o desenho ainda ao lado do texto iria para baixo dele. O título de nível 4 em cima dele usa um estilo de título que só muda a cor para o verde-folha.
 
 ### 5 · Centralize um gráfico estreito na sua faixa
 
 <Excerpt region="band" />
 
-`width: 0.62` dá ao gráfico 70,1 mm de largura na coluna de 113 mm, e `align: 'center'` deixa 21,5 mm de papel de cada lado ([posicionamento](/pt/docs/document-format#posicionamento)). O texto acima e abaixo mantém a medida inteira e nunca entra nesse branco. Os desenhos pertencem a um tipo de recurso com `captionPrefix` vazio, então cada legenda começa com as próprias palavras em negrito, sem “Figura 1” na frente.
+`width: 0.62` dá ao gráfico 70,1 mm de largura na coluna de 113 mm, e `align: 'center'` deixa 21,5 mm de papel de cada lado ([posicionamento](/pt/docs/document-format-resources#posicionamento)). O texto acima e abaixo mantém a medida inteira e nunca entra nesse branco. Os desenhos pertencem a um tipo de recurso com `captionPrefix` vazio, então cada legenda começa com as próprias palavras em negrito, sem “Figura 1” na frente.
 
 ## Variações
 

@@ -1,0 +1,463 @@
+{/* docs/document-format-resources-it.mdx */}
+
+export const metadata = {
+  title: 'Formato del documento: immagini, tabelle e video',
+  sidebarTitle: 'Immagini, tabelle e video',
+  description: 'Le risorse nel testo: rimandi e inserimenti, numerazione, collocazione e dove finisce un elemento flottante, testo intorno alle immagini, dimensione delle bitmap, zone sicure, ancore dei personaggi e video',
+  lang: 'it',
+  lastUpdated: '2026-10-16',
+  readingTime: '42 min',
+  order: 28,
+  parent: 'document-format',
+  plainSummary: "Questa pagina riguarda le immagini, le tabelle e i video di un libro. Li aggiungi una volta e li citi nel testo, e Postext mette ciascuno vicino al punto in cui è citato per la prima volta. Puoi scegliere dove va: in cima a una pagina, su tutte le colonne o esattamente dove è scritto. Il testo può scorrere intorno a un’immagine. Un’immagine può indicare la parte che deve restare sempre visibile quando viene ritagliata. I video si riproducono nella vista web e negli e-book, e nella stampa al loro posto compare un’immagine.",
+};
+
+# Formato del documento: immagini, tabelle e video
+
+
+## Risorse
+
+Immagini, SVG, tabelle e video non si scrivono in linea. Si dichiarano una volta come **risorse** (gestite nel [pannello Risorse](/it/docs/sandbox#pannello-risorse) della Sandbox, che si occupa del caricamento di immagini e SVG, di un editor interattivo delle tabelle, dei video di YouTube, Vimeo o caricati, e della modifica di didascalie e collocazione) e poi si collegano alla prosa tramite id. **Fare riferimento a una risorsa basta per incorporarla**: la citi una volta con un `:ref{id="…"}` in linea e il motore fa flottare la figura o la tabella nel primo spazio libero dopo quel rimando (il fondo della colonna in cui la citi, la cima della colonna successiva, una fascia della pagina seguente), proprio come farebbe un compositore tipografico. Non devi collocarla una seconda volta.
+
+Entrambe le forme qui sotto sono sintassi nuova che non entra in conflitto con CommonMark, quindi un documento che le usa si legge ancora come testo semplice in qualsiasi altro visualizzatore markdown.
+
+### Rimando in linea (la forma principale)
+
+Fai riferimento a una risorsa dall’interno della prosa con `:ref{id="…"}`. Il primo rimando **incorpora** la risorsa (che quindi viene collocata sulla pagina) e insieme mostra il suo numero calcolato, preceduto per impostazione predefinita dall’etichetta breve del tipo:
+
+```md
+As shown in :ref{id="lighthouse-diagram"}, the lantern room sits above the gallery.
+```
+
+viene reso come: *As shown in Fig. 1.7, the lantern room sits above the gallery.*, mentre il diagramma flotta nel primo spazio libero dopo la frase (il fondo di questa colonna, la cima della successiva o una fascia della pagina seguente), e questa frase e il testo che la segue scorrono senza interruzioni.
+
+Il testo corrente non viene mai spezzato nel punto del rimando. Dove finisce la risorsa (il primo spazio libero, oppure solo uno spazio in alto o in basso; in una sola colonna o su tutta la larghezza) dipende dalla sua **collocazione** (vedi [Collocazione](#collocazione) più sotto) e dal punto in cui la citi: la ricerca parte subito dopo il rimando.
+
+### Inserimento di blocco (facoltativo, collocazione in linea esplicita)
+
+A volte vuoi che una risorsa stia in un punto preciso del flusso invece di flottare. Escludila dagli elementi flottanti dando alla risorsa `placement.position: "here"` e inseriscila con `::resource{id="…"}` su una riga a sé:
+
+```md
+Here is the floor plan we discussed.
+
+::resource{id="lighthouse-diagram"}
+
+The keeper's quarters occupy the eastern wing.
+```
+
+Per una risorsa flottante la direttiva `::resource` non serve: il `:ref` l’ha già collocata, e un `::resource` superfluo per lo stesso id viene trattato semplicemente come un altro rimando, non come una seconda copia. Un `::resource` disegna la risorsa in linea solo quando la sua collocazione risolta è `"here"`. Una risorsa in linea mantiene sopra di sé lo spazio di una riga (la distanza degli elementi flottanti), come farebbe un elemento flottante, a meno che il blocco precedente non ne chieda di più. Nel testo corrente mantiene lo stesso spazio sotto di sé; poi il testo che segue torna sulla griglia della linea di base, il che può aggiungere fino a una riga in più. Un titolo, un elenco, un riquadro o un’altra risorsa in linea subito dopo condivide quello spazio con il proprio spazio superiore: si applica il maggiore dei due, non entrambi. (Fino a postext 1.4 lo spazio sotto era solo quello lasciato dall’aggancio alla griglia, da nulla a una riga; `layout.inlineResourceGap: 'above'` mantiene quella regola, e i libri salvati prima della 1.5 vengono letti con essa.) Dentro un riquadro (`:::callout`) la risorsa mantiene lo stesso spazio, una riga del testo del riquadro sopra di sé e, con `'around'`, sotto; in cima o in fondo al riquadro la separa invece il margine interno. (Fino a postext 1.4 stava a contatto con il testo del riquadro; `layout.inlineResourceGapInBoxes: false` mantiene quel comportamento, e i libri salvati prima della 1.5 i cui riquadri incorporano una risorsa vengono letti con esso.)
+
+Una risorsa in linea la cui collocazione indica anche `span: 'page'` (`placement: { position: 'here', span: 'page' }`) occupa tutta la larghezza della pagina nel punto della sua direttiva in un’impaginazione a più colonne, come fa un riquadro a tutta larghezza: le colonne sopra di essa si chiudono pareggiate (bilanciate, oppure la risorsa passa in cima alla pagina seguente quando non è possibile), viene composta su tutta la larghezza del contenuto con lo stesso spazio sopra e sotto, e il testo prosegue in ogni colonna sotto di essa. Su una pagina a una colonna viene composta come prima, a piena giustezza. Una risorsa `span: 'column'` con `columns` impostato resta nella sua colonna quando è inserita in linea: le colonne contano solo per gli elementi flottanti. Da postext 1.19.
+
+L’`id` deve corrispondere a una risorsa definita nel pannello Risorse. Il motore disegna la risorsa (bitmap, SVG o tabella) con la sua didascalia sotto, come piede di figura o di tabella. Il testo della didascalia è composto dal `captionPrefix` del tipo di risorsa, dal numero calcolato e dalla didascalia propria della risorsa, per esempio **Figura 1.7. La pianta originale del faro.** La sua tipografia è regolata da [Configurazione › Stile delle didascalie](/it/docs/configuration-resources#stile-delle-didascalie): etichetta e descrizione condividono carattere e corpo, mentre l’etichetta mantiene impostazioni indipendenti di grassetto, corsivo e colore; la distanza sopra la didascalia è per impostazione predefinita `0.75em` e l’allineamento a sinistra. La didascalia può invece stare sopra la risorsa (`captionStyle.position: 'above'`, in generale o per tipo di risorsa), eventualmente su una barra colorata. Una risorsa può avere anche una `note`, una breve riga di fonte o di credito con la stessa formattazione in linea e gli stessi segni `:ref` della didascalia, composta in corpo più piccolo sotto la risorsa (sotto la didascalia quando la didascalia sta sotto, sotto il corpo quando sta sopra) e regolata con `captionStyle.note`.
+
+**A capo nelle didascalie e nelle note.** Una didascalia o una nota è un unico paragrafo composto alla giustezza del suo spazio, e un a capo digitato al suo interno vale come spazio. Per iniziare una nuova riga scrivi `\\` (l’a capo forzato dei titoli) oppure termina la riga con una barra rovesciata, l’a capo forzato di Markdown: `¹ Measured at 20 °C. \\ ² Mean of three runs.` compone ogni nota di una tabella larga su una riga propria. La riga prima di un a capo conserva la sua larghezza naturale, senza mai essere allargata fino alla giustezza, e due a capo di seguito non creano una riga vuota (uno spazio indivisibile tra i due invece sì). In una cella di tabella `\\` fa ciò che fa un a capo: apre un nuovo paragrafo; il rientro della riga che segue viene mantenuto, quindi due spazi iniziali annidano ancora una voce di elenco. Nel testo vero e proprio le due barre rovesciate sono sempre un a capo, senza escape: per stamparle, mettile in codice in linea, dove le barre rovesciate si stampano così come sono. Nella destinazione di un link restano parte dell’URL, e negli attributi di una direttiva (il `text` di un `:ref`) parte del valore; dentro un chip, che si compone su una riga sola, un a capo vale come spazio. (Fino a postext 1.4 le barre rovesciate venivano stampate, e una didascalia o una nota andava a capo solo dove finiva la giustezza.)
+
+Le risorse tabella disegnano la propria griglia, regolata con [Configurazione › Stile delle tabelle](/it/docs/configuration-resources#stile-delle-tabelle): le celle del corpo e quelle di intestazione hanno tipografie del tutto indipendenti, lo sfondo dell’intestazione è per impostazione predefinita `#f0f0f0`, i bordi `0.75pt` e `cellPadding` `0.375em`; ogni campo non impostato eredita dal testo corrente. Le larghezze delle colonne fanno parte della tabella stessa: `TableModel.columnWidths` contiene un peso relativo per colonna (`[2, 1, 1]` dà alla prima colonna metà della larghezza); se non è impostato, le colonne si dividono la larghezza in parti uguali. Una tabella può anche essere composta in una variante con nome: `table.styleId` sceglie uno dei `tableStyles` del documento (vedi [Configurazione › Stili di tabella con nome](/it/docs/configuration-resources#stili-di-tabella-con-nome)), i cui campi non impostati ereditano da `tableStyle`; un id sconosciuto o assente mantiene `tableStyle`.
+
+Una cella colloca il suo contenuto con `TableCell.align` (`left`, `center`, `right`; le voci di elenco restano allineate a sinistra) e `TableCell.verticalAlign` (`top`, il valore predefinito, `middle` o `bottom`). L’allineamento verticale sposta l’intero contenuto della cella (l’immagine e il testo sotto di essa, come un’unità) dentro una cella più alta del contenuto: una riga allungata da una cella vicina più lunga, o le righe coperte da un `rowSpan`. Vale in ogni output (canvas, HTML, PDF), nelle tabelle ruotate e in ciascuna parte di una tabella divisa su più pagine. Entrambi si impostano cella per cella dai pulsanti di allineamento della barra degli strumenti dell’editor delle tabelle della Sandbox.
+
+Una cella di tabella può contenere anche un’immagine. `TableCell.image` indica per id una risorsa bitmap o SVG (`{ "resourceId": "fig-arm", "width": 0.7 }`): l’immagine viene disegnata dentro la cella (mai numerata, flottante o con didascalia), adattata alla larghezza interna della cella (o alla frazione indicata da `width`, predefinita `1`) conservando le proporzioni, allineata come il testo della cella, e l’eventuale testo della cella scorre sotto di essa. La riga cresce per contenerla. Nell’editor delle tabelle della Sandbox il pulsante immagine della barra degli strumenti sceglie la risorsa per la cella attiva e un campo larghezza imposta la frazione. Un id che non corrisponde a nessuna risorsa immagine lascia la cella con il solo testo.
+
+Una cella può avere un riempimento proprio. `TableCell.background` è un valore di colore (`{ "hex": "#c1dfd6", "model": "hex" }`, eventualmente collegato a una voce della tavolozza del documento con `paletteId`) dipinto al posto dello sfondo di intestazione o di corpo dello stile: una matrice di compatibilità colora così le sue celle di verde, rosso e giallo. L’editor delle tabelle della Sandbox lo imposta dal controllo di riempimento della barra degli strumenti. Per fare la legenda di questi riempimenti, la didascalia, la nota e qualsiasi blocco di testo accettano un **campione di colore** in linea: `:swatch{color="#c1dfd6"}` (un esadecimale, o l’id di una voce della tavolozza: `:swatch{color="table-compatible"}`) compone sulla linea di base un quadratino grande tre quarti del corpo, riempito con il colore e contornato nel colore del testo, così una nota può dire `:swatch{color="ok"}: compatible; :swatch{color="no"}: incompatible`. Un colore che non si risolve in nulla disegna un contorno vuoto. L’esadecimale può avere un canale alfa (`#rrggbbaa`, `#rgba`), e funzionano anche i colori `rgb()` / `rgba()`, così un riempimento di cella traslucido ha un campione altrettanto traslucido (vedi [Configurazione › Trasparenza](/it/docs/configuration-fonts-colors-viewers#trasparenza)).
+
+Le risorse SVG si possono inoltre ricolorare per la stampa con un solo colore piatto tramite `diagramStyle.singleInk` (predefinito `false`). Quando è attivo, ogni colore di un diagramma SVG viene rimappato su una tinta di `diagramStyle.inkColor` ricavata dalla luminanza (`inkColor` ha come valore predefinito il colore principale della tavolozza, `#295AA3`): il bianco diventa carta, il nero l’inchiostro pieno, così le figure si riproducono fedelmente quando il documento viene stampato con un unico colore piatto. Vedi [Configurazione › Stile dei diagrammi](/it/docs/configuration-resources#stile-dei-diagrammi).
+
+Un inserimento malformato (`id` mancante o vuoto, `id` senza virgolette o tra apici singoli, attributi in più) non viene promosso a blocco di risorsa; ricade nell’analisi come paragrafo ordinario e resta visibile nell’output. Lo stesso vale per una riga di inserimento ben formata attaccata sotto una riga di paragrafo senza una riga vuota in mezzo: viene letta come parte di quel paragrafo. Entrambi i casi generano un avviso `malformedEmbed`, una voce **Incorporamento composto come testo** nel pannello Verifiche della Sandbox.
+
+I rimandi in linea sono riconosciuti in qualsiasi blocco di testo (paragrafi, titoli, citazioni e voci di elenco) e possono stare accanto a grassetto, corsivo, codice in linea e matematica in linea.
+
+#### Opzioni del rimando
+
+La direttiva `:ref` accetta tre attributi facoltativi, in qualsiasi ordine. `style` sceglie come viene reso l’etichetta calcolata: `style="number"` stampa il numero nudo (`1.7`), `style="full"` stampa il nome completo del tipo più il numero (`Figure 1.7`), e quando `style` non è impostato si usa lo `shortLabel` del tipo più il numero (`Fig. 1.7`). `case` cambia maiuscole e minuscole solo nella parte dell’etichetta (`lower`, `upper` o `capitalize`), senza toccare il numero. `text` è una sostituzione letterale che rimpiazza qualsiasi etichetta calcolata e prevale sia su `style` sia su `case`. Le opzioni di resa a confronto:
+
+<table>
+  <thead>
+    <tr>
+      <th>Sintassi</th>
+      <th>Risultato</th>
+      <th>Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:ref&#123;id="…"&#125;</code></td>
+      <td><code>Fig. 1.7</code></td>
+      <td>Stile predefinito: lo <code>shortLabel</code> del tipo seguito dal numero, uniti da uno spazio indivisibile perché non vadano mai a capo separati.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" style="number"&#125;</code></td>
+      <td><code>1.7</code></td>
+      <td>Il numero calcolato nudo, senza etichetta.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" style="full"&#125;</code></td>
+      <td><code>Figure 1.7</code></td>
+      <td>Il <code>name</code> completo del tipo seguito dal numero. Usalo a inizio frase o dove l’abbreviazione suona male.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" case="lower"&#125;</code></td>
+      <td><code>fig. 1.7</code></td>
+      <td>Cambia maiuscole e minuscole solo nell’etichetta: <code>lower</code> (<code>fig. 1.7</code>), <code>upper</code> (<code>FIG. 1.7</code>) o <code>capitalize</code> (prima lettera maiuscola). Si combina con <code>style="full"</code> (<code>figure 1.7</code>); il numero non viene mai toccato, e un valore non riconosciuto viene ignorato.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" text="see the plan"&#125;</code></td>
+      <td><code>see the plan</code></td>
+      <td>Una sostituzione esplicita. Il testo indicato viene usato alla lettera al posto di qualsiasi etichetta calcolata: utile per rimandi in prosa come «come abbiamo visto prima». Quando è presente, <code>text</code> prevale su <code>style</code> e <code>case</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Se un `:ref` (o un `::resource`) indica un id senza risorsa corrispondente, l’etichetta ripiega su `?` (viene stampata invece un’etichetta `text=`, sempre senza numero né link) e la Sandbox genera un avviso di **risorsa sconosciuta**. Il motore lo registra come voce `unknownResourceId` nei `contentWarnings` del documento, con l’intervallo del sorgente e la pagina del rimando, anche per un `:ref` dentro una didascalia, una nota o una cella di tabella di una risorsa usata dal testo.
+
+### Numerazione al primo rimando
+
+Il numero di una risorsa viene assegnato **la prima volta che viene citata nell’ordine di lettura**, che questa prima citazione sia un inserimento di blocco `::resource` o un `:ref` in linea. Da lì in poi, ogni rimando allo stesso id stampa quello stesso numero.
+
+Questo significa che i numeri seguono l’ordine in cui chi legge li incontra, non l’ordine in cui le risorse sono state create nel pannello:
+
+- Se fai un `:ref` a una figura nell’introduzione e la inserisci (`::resource`) solo due pagine dopo, prende comunque il numero dell’introduzione: il rimando è venuto prima.
+- Inserire un nuovo rimando *prima* nel documento rinumera automaticamente tutto ciò che segue. Non c’è nessuna numerazione manuale da tenere allineata.
+
+La numerazione è per tipo di risorsa e rispetta l’ambito di azzeramento e il formato del contatore di ogni tipo: vedi [Configurazione › Tipi di risorsa](/it/docs/configuration-resources#tipi-di-risorsa) per i token del modello (`{h1}`, `{n}`), `resetOn` e `counterFormat`.
+
+Viene contato solo ciò a cui il testo fa riferimento: una risorsa che solo un design disegna (per esempio un elemento immagine di un’apertura di capitolo) non riceve un numero e lascia il contatore com’era. E `{h1}` conta ogni titolo di livello 1 il cui stile non sia `numbered: false`, anche uno il cui `numberingTemplate` è vuoto, quindi un articolo il cui unico H1 è il titolo numera le sue figure 1.1, 1.2… per impostazione predefinita. [Configurazione › Che cosa viene numerato](/it/docs/configuration-resources#che-cosa-viene-numerato) riporta entrambe le regole e le impostazioni per Figura 1, 2….
+
+### Collocazione
+
+Ogni risorsa ha una **collocazione** che decide dove finisce il suo elemento flottante, risolta per risorsa (il suo `placement`), poi dal `defaultPlacement` del suo tipo, poi dal valore predefinito integrato `auto` / `column`:
+
+<table>
+  <thead>
+    <tr>
+      <th>Campo</th>
+      <th>Valori</th>
+      <th>Significato</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>position</code></td>
+      <td><code>"auto"</code> · <code>"top"</code> · <code>"bottom"</code> · <code>"here"</code></td>
+      <td><code>"auto"</code> (il valore predefinito) prende il primo spazio libero dopo il rimando, in alto o in basso; <code>"top"</code> / <code>"bottom"</code> accettano solo spazi di quel tipo; <code>"here"</code> esclude la risorsa dagli elementi flottanti e la inserisce in linea nel punto della direttiva <code>::resource</code> (una tabella collocata lì viene tagliata tra due righe quando non entra nel resto della sua colonna, vedi <a href="/it/docs/configuration-resources#tabelle-più-alte-della-pagina">Tabelle più alte della pagina</a>).</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>align</code></td>
+      <td><code>0 &lt; width &lt; 1</code>; <code>"left"</code> · <code>"center"</code> · <code>"right"</code></td>
+      <td>Una risorsa più stretta del suo spazio: <code>width</code> è la frazione della larghezza della colonna (o della pagina) che occupa, <code>align</code> dove si colloca nello spazio (una piccola tabella centrata nella sua colonna; una fascia a tutta pagina la cui immagine occupa una colonna). Un’immagine più stretta del suo spazio (una bitmap più piccola della colonna, o una che <code>layout.fitFiguresToPage</code> ha rimpicciolito) si colloca anch’essa secondo <code>align</code>, sotto una didascalia che mantiene la giustezza dello spazio. Vale sia per gli elementi flottanti sia per gli inserimenti in linea <code>::resource</code>.</td>
+    </tr>
+    <tr>
+      <td><code>captionSide</code></td>
+      <td><code>true</code> · <code>false</code></td>
+      <td>In un’impaginazione a colonna e mezza la cui colonna laterale è riservata agli elementi flottanti (<code>layout.sideColumnRole: 'floats'</code>), un elemento flottante <code>"column"</code> con <code>captionSide</code> tiene il corpo nella colonna principale e compone la didascalia (e la nota) nella colonna laterale, all’altezza della cima della figura, o del suo fondo per un elemento flottante in basso; la colonna laterale cede quella fascia. Una pagina senza questa colonna tiene la didascalia sotto la figura. Da postext 1.28 la prende anche una risorsa composta nel testo (<code>"here"</code>) larga una colonna: la sua didascalia e la sua nota stanno nella colonna laterale, all’altezza della cima del corpo, il blocco nel testo è alto quanto il solo corpo, e le figure e i riquadri laterali composti dopo stanno alla larga dalla didascalia. Dove la colonna laterale accanto all’inserimento è occupata, la didascalia resta sotto il corpo; un inserimento che passa alla colonna o alla pagina successiva decide di nuovo lì. Non dentro un riquadro, su una pagina verticale o per un’immagine con il testo che le scorre intorno. <code>layout.inlineCaptionSide: false</code> limita le didascalie laterali agli elementi flottanti di colonna.</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>"column"</code> · <code>"page"</code></td>
+      <td>Occupa una sola colonna, oppure interrompe il flusso delle colonne e occupa l’intera larghezza del contenuto su tutte le colonne. In un’impaginazione a una colonna i due valori coincidono.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td>un numero intero, predefinito <code>1</code></td>
+      <td>Su una pagina a più colonne, un elemento flottante <code>"column"</code> esteso su quel numero di colonne adiacenti, intercolonne comprese: un’immagine su due delle cinque colonne di un giornale. Prende la cima di una serie di colonne vuote che iniziano alla stessa altezza, oppure il fondo della colonna che lo cita e delle colonne vuote che la seguono. Tante colonne quante ne ha la pagina, o di più, lo rendono un elemento flottante a tutta larghezza. Ignorato dagli span <code>"page"</code> e <code>"side"</code>, da una risorsa ruotata e da un inserimento in linea (<code>"here"</code>); <code>captionSide</code> vale solo per un elemento flottante largo una colonna. Da postext 1.18.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>"ccw"</code> · <code>"cw"</code></td>
+      <td>Compone la risorsa ruotata di un quarto di giro: una tabella orizzontale in un libro verticale. <code>"ccw"</code> la ruota in senso antiorario, con la sua cima rivolta verso il bordo sinistro della pagina (chi legge ruota il libro in senso orario), la convenzione abituale; <code>"cw"</code> nell’altro senso. Una risorsa ruotata è sempre un elemento flottante a tutta larghezza su una pagina propria: viene impaginata lungo l’altezza dell’area del contenuto, arrotondata per difetto a righe intere della griglia della linea di base e diminuita di una riga di testo, la distanza che ogni fascia flottante mantiene (un’area del testo di 237 mm su una griglia di 14 pt contiene 47 righe, 232,1 mm, quindi la risorsa ne riceve 46, 227,2 mm), si appoggia al dorso quando i margini sono speculari (altrimenti a sinistra), e una tabella troppo larga per una pagina viene tagliata tra due righe e prosegue, ruotata, nelle pagine seguenti con l’intestazione ripetuta, esattamente come una tabella diritta più alta di una pagina. Una figura ruotata viene ridimensionata per entrare nella pagina. Ignorato per un inserimento in linea (<code>"here"</code>).</td>
+    </tr>
+    <tr>
+      <td><code>shrink</code>, <code>minScale</code></td>
+      <td><code>"never"</code> · <code>"page"</code> · <code>"slot"</code>; <code>0 &lt; minScale ≤ 1</code>, predefinito <code>0.7</code></td>
+      <td>Riduce un’immagine flottante (bitmap, SVG, il poster di un video), conservandone le proporzioni, allo spazio che uno slot ha a disposizione invece di spostarla oltre. <code>"never"</code> (il valore predefinito) la compone alla sua dimensione. <code>"page"</code> la riduce solo quando è troppo alta per la fascia di una pagina nuova: l’area del contenuto meno ciò che già vi si trova (un’apertura, altri elementi flottanti, note a piè di pagina) e la distanza degli elementi flottanti, come per una tavola di catalogo dimensionata sulla sua pagina. <code>"slot"</code> la riduce anche per farla entrare in uno spazio della pagina che la cita, o nello spazio rimasto accanto a un’altra fascia, quando lì entra a <code>minScale</code> o più; altrimenti passa oltre come prima. Gli spazi vengono provati nel loro ordine abituale, e la fascia termina comunque sulla griglia della linea di base. Un’immagine con una zona sicura viene ritagliata al suo interno prima di essere ridotta (vedi <a href="#zona-sicura">Zona sicura</a>). Su una pagina nuova, dove non ha altro posto in cui andare, un’immagine che non entra neppure a <code>minScale</code> viene composta a quella scala e sborda dalla fascia. L’impaginazione segnala ogni elemento flottante ridotto con un avviso <code>floatShrunk</code>. Le tabelle (che si dividono), i riquadri flottanti, le strisce a fumetti, le risorse ruotate e gli inserimenti in linea non vengono mai ridimensionati. Il valore predefinito del documento è <code>layout.floatShrink</code>. Da postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>captionMeasure</code></td>
+      <td><code>"slot"</code> · <code>"body"</code></td>
+      <td>La giustezza della didascalia e della nota di un’immagine più stretta del suo spazio (ridotta, o una bitmap più piccola della colonna): <code>"slot"</code> (il valore predefinito) mantiene la giustezza dello spazio; <code>"body"</code> le compone larghe quanto l’immagine, sotto di essa secondo <code>align</code>, così una tavola centrata ha la didascalia centrata sotto. Vale sia per gli elementi flottanti sia per gli inserimenti in linea. Da postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>wrap</code>, <code>wrapGap</code></td>
+      <td><code>"none"</code> · <code>"left"</code> · <code>"right"</code> · <code>"start"</code> · <code>"end"</code>; una lunghezza</td>
+      <td>Fa scorrere il testo accanto alla risorsa: questa si colloca su quel lato della sua colonna, e le righe accanto vengono composte alla giustezza rimasta, a <code>wrapGap</code> di distanza dal suo riquadro (didascalia compresa), per poi tornare alla piena giustezza sotto di essa. Lo accettano un inserimento in linea (<code>"here"</code>) e un elemento flottante di una colonna in cima o in fondo a una colonna; gli elementi flottanti a tutta larghezza, su più colonne, nella colonna laterale e ruotati mantengono la loro fascia. La risorsa occupa la <code>width</code> della colonna, oppure <code>layout.wrap.defaultWidth</code> (0,45). <code>wrapGap</code> vale per impostazione predefinita <code>layout.wrap.gap</code>, altrimenti una riga di testo. Vedi <a href="#testo-intorno-alle-immagini">Testo intorno alle immagini</a>. Da postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>citingPage</code></td>
+      <td><code>true</code> · <code>false</code>, predefinito <code>false</code></td>
+      <td>Consente a un elemento flottante <code>"top"</code> o <code>"auto"</code> di prendere la cima della pagina (un elemento flottante a tutta larghezza) o della colonna (un elemento flottante di colonna, anche esteso su <code>columns</code>) in cui finisce la riga che lo cita per la prima volta, come fa la collocazione <code>t</code> di LaTeX, invece del primo spazio libero dopo quella riga. Il testo sopra il rimando scende sotto l’elemento flottante. Lo fa solo quando l’elemento flottante vi entra entro <code>layout.maxTopFraction</code> della colonna (0,7 per impostazione predefinita), quando gli elementi flottanti precedenti della sua sequenza di numerazione sono già composti, quando nessuna interruzione esplicita apre la pagina (la prima pagina di un capitolo, una parte, un <code>:::pagebreak</code>) e nulla a tutta larghezza sta sopra la riga che lo cita, e quando, composta così, la riga che lo cita finisce ancora su quella pagina (nella colonna in cima alla quale sta l’elemento flottante); altrimenti l’elemento flottante prende il suo spazio abituale. Gli elementi flottanti ruotati, quelli della colonna laterale e il resto di una tabella divisa su più pagine non si spostano mai in questo modo. Predefinito: il <code>defaultPlacement</code> del tipo, poi <code>layout.floatsAtCitingPage</code>. Da postext 1.25.</td>
+    </tr>
+  </tbody>
+</table>
+
+Un elemento flottante va nel **primo spazio libero dopo il suo primo rimando**, in ordine di lettura: il fondo della colonna in cui si trova il rimando, poi la cima e il fondo della successiva colonna vuota della stessa pagina, poi le fasce della pagina successiva che il flusso apre (un elemento flottante a tutta larghezza prende il fondo della pagina quando ogni colonna ha ancora spazio per esso, altrimenti una fascia della pagina seguente). Conta anche una pagina aperta da una figura o una tabella in linea: un elemento flottante in attesa di quella pagina ne prende la cima, sopra la figura o la tabella, quando entrambi ci stanno; quando non ci stanno, la figura o la tabella tiene la pagina e l’elemento flottante aspetta la successiva. Fino a postext 1.4 una pagina del genere veniva saltata, e l’elemento flottante aspettava la pagina dopo anche quando entrambi ci stavano. Viene composto alla sua dimensione, a meno che il suo `shrink` non gli consenta di ridursi allo spazio di uno slot (vedi la tabella qui sopra), e non finisce mai prima del suo rimando. Gli elementi flottanti di una stessa sequenza di numerazione compaiono nell’ordine dei rimandi: una figura che non trova posto in una pagina trattiene le figure che la seguono (una tabella in attesa non trattiene una figura, né viceversa), così la figura 12 non compare mai prima della figura 11. Una tabella che altrimenti dovrebbe aspettare viene invece tagliata: se le si offre la cima di una colonna vuota, prende le righe che ci stanno e prosegue nello spazio successivo (la colonna accanto o la pagina seguente) con le righe di intestazione ripetute (vedi `tableStyle.overflow`). Un elemento flottante `top` o `auto` con `citingPage` attivo può invece stare in cima alla pagina (o alla colonna) in cui finisce la riga che lo cita, con il testo sopra il rimando che scende sotto di esso: viene allora disegnato sopra il suo rimando nella stessa pagina, mai in una precedente, e viene comunque letto dopo di esso in un PDF con tag e nell’HTML. Il motore lo stabilisce con qualche passata in più e lo mantiene solo finché la riga che lo cita resta su quella pagina.
+
+Gli elementi flottanti non escono mai dal loro capitolo: a un’apertura di capitolo (un livello di titolo con `breakBefore` o `span: 'page'`), a un `:::part`, a uno stile di riquadro con `floatBarrier: true` (il riquadro dei «punti chiave» che chiude un capitolo) e alla fine del documento, ogni elemento flottante ancora in sospeso viene collocato prima: negli spazi liberi della pagina, oppure su pagine aperte prima del confine. Un elemento flottante citato per la prima volta dall’apertura stessa (un titolo di capitolo che nomina la sua figura), o dal primo blocco dopo un `:::part`, appartiene al nuovo capitolo: finisce dopo quella riga, come qualsiasi altro. Una figura o una tabella che chiedeva la cima di una pagina può allora prendere il fondo della pagina di chiusura del capitolo, sotto le sue colonne bilanciate, invece di una pagina propria. Un `:::pagebreak` manda semplicemente gli elementi flottanti in sospeso alla pagina che lo segue.
+
+Sotto un’apertura a tutta pagina composta sopra due o più colonne di testo, la colonna dell’apertura conta come vuota in cima finché in essa non segue nulla all’apertura: un riquadro flottante racchiuso subito dopo l’apertura, o una risorsa inserita lì con `::resource`, prende la cima della prima colonna, sotto l’apertura e alla stessa altezza delle cime delle altre colonne (su più colonne a partire da essa con `columns`), e il testo della colonna inizia sotto di esso. Un elemento flottante citato nel testo corrente segue comunque la sua riga di citazione. Fino a postext 1.24 la prima colonna non offriva spazio lì e un elemento flottante del genere finiva dalla seconda colonna in poi; `layout.floatsUnderOpener: false` mantiene quel comportamento (vedi [Configurazione › Impaginazione](/it/docs/configuration-page-layout#impaginazione)).
+
+Anche i riquadri laterali (`span="side"`) restano nel loro capitolo. Un riquadro che la colonna laterale della sua pagina non riesce a contenere prende la colonna laterale della pagina seguente; dove finisce prima il capitolo, o il documento, ogni riquadro ancora in attesa viene composto nella colonna laterale di una pagina aperta dopo il testo, nell’ordine delle loro recinzioni, e una figura laterale citata dopo di essi sta dietro di loro. Una pagina del genere non contiene testo, quindi la costruzione segnala ogni riquadro e ogni figura che vi si trova (`afterText`). Un riquadro più alto di una colonna laterale vuota viene composto comunque e segnalato (`calloutOverflow`), e anche tutto ciò che non trova ancora una pagina viene segnalato (`unplaced`) invece di essere scartato. Fino a postext 1.24 veniva aperta solo la prima di queste pagine e i riquadri rimasti andavano persi senza avviso.
+
+Le fasce degli elementi flottanti vengono corrette rispetto alla griglia della linea di base, così il testo intorno mantiene il ritmo verticale dell’intera pagina. Una fascia **in alto** allunga il proprio margine inferiore fino alla linea successiva della griglia, così il testo sotto l’elemento flottante resta allineato con le colonne vicine e con la pagina a fronte. Un elemento flottante **in basso** viene ancorato in modo che l’ultima riga della sua didascalia condivida la linea di base con l’ultima riga di testo delle altre colonne (un contenuto senza didascalia allinea il suo bordo inferiore all’ultima posizione della griglia): le pagine piene finiscono quindi alla stessa altezza in tutte le colonne e nelle pagine affiancate.
+
+Nella pagina di chiusura di un capitolo, e del documento, nulla segue le figure e le tabelle a tutta pagina composte sotto l’ultima fascia di testo, quindi risalgono fino a stare a una distanza di elemento flottante sotto di essa, impilate nel loro ordine, invece di lasciare del bianco tra il testo e una figura al piede della pagina. Questo vale anche per un elemento flottante `position: 'bottom'`. Per tenerle al piede, come in ogni altra pagina, imposta `layout.hugClosingFloats: false` (vedi [Configurazione › Impaginazione](/it/docs/configuration-page-layout#impaginazione)). Le pagine con una colonna laterale non le spostano mai.
+
+Tutti e tre i backend (l’anteprima su canvas, il visualizzatore HTML e l’output PDF) disegnano le risorse. Nel backend HTML i contenuti delle immagini vivono fuori banda, quindi l’applicazione ospite li fornisce tramite l’opzione di risoluzione `resourceImageUrl(fileId)`; quando la funzione di risoluzione manca (o non restituisce nulla per un file), la risorsa viene disegnata come un riquadro segnaposto neutro, così l’impaginazione resta stabile. Il file di un video arriva allo stesso modo tramite `resourceVideoUrl(fileId)` (vedi [Video](#video)).
+
+#### Dove può finire un elemento flottante
+
+«Mai prima del suo rimando» si conta dalla riga che cita l’elemento flottante: l’elemento flottante aspetta che quella riga sia composta e prende il primo spazio libero dopo di essa in ordine di lettura; la cima della pagina su cui è composta la riga viene prima di essa. Un elemento flottante laterale (`span: 'side'`, nella colonna laterale riservata agli elementi flottanti di un’impaginazione a colonna e mezza) è l’eccezione: si impila nella colonna laterale accanto al testo che lo cita e può stare più in alto sulla pagina rispetto alla riga che lo cita. Per una figura citata a pagina 5:
+
+<table>
+  <thead>
+    <tr>
+      <th>Collocazione</th>
+      <th>A pagina 5</th>
+      <th>Altrimenti</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>top</code>, <code>span: 'page'</code></td>
+      <td>Mai: la fascia in cima alla pagina sta sopra la riga che lo cita.</td>
+      <td>La fascia superiore di pagina 6.</td>
+    </tr>
+    <tr>
+      <td><code>top</code>, <code>span: 'column'</code></td>
+      <td>La cima di una colonna successiva ancora vuota: citato nella prima di due colonne, può aprire la seconda.</td>
+      <td>La cima di una colonna di pagina 6.</td>
+    </tr>
+    <tr>
+      <td><code>auto</code> o <code>bottom</code>, <code>span: 'page'</code></td>
+      <td>La fascia al piede di pagina 5, quando ogni colonna ha ancora spazio per esso.</td>
+      <td>Una fascia di pagina 6.</td>
+    </tr>
+    <tr>
+      <td><code>auto</code> o <code>bottom</code>, <code>span: 'column'</code></td>
+      <td>Il piede della colonna che lo cita; poi il piede (entrambi) o la cima (solo <code>auto</code>) di una colonna vuota successiva.</td>
+      <td>Pagina 6.</td>
+    </tr>
+  </tbody>
+</table>
+
+- Una pagina di apertura di capitolo segue le stesse regole: un elemento flottante `auto` o `bottom` a tutta larghezza citato nel primo paragrafo dell’apertura può prendere la fascia al piede di quella pagina, sotto il suo testo; uno `top` apre la pagina seguente. Per avere l’immagine sulla pagina che la cita, usa `auto` o `bottom`, oppure disegnala come elemento immagine del design dell’apertura.
+- Due elementi flottanti di colonna citati nello stesso paragrafo prendono i due spazi successivi: di solito il primo il piede della colonna che li cita, il secondo la cima della colonna vuota successiva, affiancati sulla pagina.
+- In un’impaginazione a una colonna un elemento flottante a tutta larghezza è un elemento flottante di colonna, e valgono le stesse regole: un elemento flottante `top` citato su una pagina finisce in cima alla successiva.
+- Anche un paragrafo che passa da una pagina alla successiva conta dalla sua riga di citazione. Quando il paragrafo inizia al piede di pagina 5 e il rimando cade a pagina 6 (oppure l’intero paragrafo passa a pagina 6, perché al piede di pagina 5 non entrano abbastanza sue righe), il rimando è a pagina 6: un elemento flottante `top` apre pagina 7, e uno `auto` prende il piede di pagina 6 quando c’è spazio. Lo stesso vale tra le colonne di una pagina, e per un riquadro diviso su più pagine: una figura citata dalla sua seconda parte aspetta quella parte.
+- **Cambiato in postext 1.5.** Fino a postext 1.4 un elemento flottante veniva messo in coda quando l’impaginazione raggiungeva il paragrafo che lo cita, quindi la pagina su cui un paragrafo del genere proseguiva (o si spostava) poteva aprirsi con l’elemento flottante, sopra la riga con il rimando. Ora una figura del genere finisce una pagina dopo, o al piede della pagina quando chiede `auto`; può seguirne una variazione del numero di pagine.
+
+### Testo intorno alle immagini
+
+Un’immagine, una tabella o un riquadro più stretti della loro colonna possono stare su un lato della colonna con il testo che scorre accanto, come in una rivista o in una newsletter. Dai alla sua collocazione un lato di `wrap` e, se vuoi, una `width`:
+
+```json
+{ "id": "bed", "typeId": "figure", "kind": "svg", "caption": "The new planting bed.",
+  "placement": { "position": "here", "wrap": "right", "width": 0.4 } }
+```
+
+- **In linea (`"here"`).** La risorsa sta sul suo lato della colonna, con la cima allineata alla cima della riga successiva nel punto della riga `::resource`, e i paragrafi, le citazioni e le voci di elenco che seguono le scorrono accanto alla giustezza rimasta, poi sotto a piena giustezza. Un paragrafo che inizia accanto alla risorsa e finisce sotto resta un unico paragrafo: nessuna interruzione, nessuno spazio in più al piede dell’immagine. Ogni riga resta sulla griglia della linea di base; lo spazio sotto l’immagine è la sua distanza arrotondata per eccesso a righe intere della griglia.
+- **Un elemento flottante di colonna.** Un elemento flottante `span: "column"` largo una colonna, in cima (`"top"`, o `"auto"` in cima a una colonna) o al piede (`"bottom"`, `"auto"`) di una colonna, viene collocato nella sua fascia come ogni elemento flottante; le prime righe della colonna, o le ultime, gli scorrono poi accanto. Su una pagina a due colonne l’elemento flottante appartiene alla sua colonna, e l’altra resta a piena giustezza.
+- **Un riquadro.** Un `:::callout` accetta le stesse impostazioni come attributi: `:::callout{wrap="right" width=0.4}` compone una citazione in evidenza o un box laterale nel punto in cui compare, con il testo che segue accanto, e `placement="top"` o `"bottom"` con `wrap` lo fa flottare in cima o al piede di una colonna. Un riquadro con testo intorno viene impaginato per intero e non si divide mai.
+- **Che cosa va sotto.** Un titolo, una formula in evidenza, una figura o una tabella, un riquadro e una poesia non scorrono accanto a un elemento con testo intorno: vanno sotto di esso, e il bianco accanto all’elemento sopra di loro resta vuoto. Lasciare la colonna (il suo piede, un `:::columnbreak`, un’interruzione di pagina) chiude lì lo scorrimento: l’elemento appartiene alla sua colonna. Quando il blocco subito dopo una risorsa in linea non può scorrerle accanto, la risorsa prende la sua fascia, come senza `wrap`.
+- **Distanza e limiti.** `wrapGap` (altrimenti `layout.wrap.gap`, altrimenti una riga di testo) separa l’elemento, didascalia compresa, dal testo accanto e dal testo sotto. Dove il testo accanto sarebbe più stretto di `layout.wrap.minTextWidth` (12 em di testo corrente), o l’elemento è più basso di `layout.wrap.minLinesBeside` righe (2), l’elemento prende la sua fascia per intero e un avviso `textWrap` lo segnala. Uno in linea troppo alto per lo spazio rimasto nella sua colonna passa alla successiva con la sua ancora, con lo stesso avviso.
+- **Lati.** `left` e `right` sono lati del flusso del testo, come per `align`: in un libro da destra a sinistra `left` è il lato destro del foglio. `start` ed `end` indicano gli stessi lati.
+- **Output.** Il canvas, il visualizzatore HTML, il PDF e l’EPUB a layout fisso compongono le righe come sono state impaginate; un PDF con tag legge l’immagine o il riquadro prima del paragrafo che le scorre accanto. Un EPUB a layout fluido lo fa flottare sul suo lato con il CSS, nella stessa proporzione della larghezza del testo.
+- **Non ancora.** Testo su entrambi i lati di un’immagine, scorrimento lungo il contorno, scorrimento dentro il contenuto di un riquadro e scorrimento nel testo verticale (l’elemento mantiene la sua fascia, con un avviso). Le colonne con un elemento con testo intorno sono escluse dal bilanciamento delle colonne.
+
+### Dimensione delle bitmap
+
+Una bitmap dichiara i suoi pixel: `bitmap.width` e `bitmap.height` sono il numero di pixel del file, non una dimensione di stampa. Quanti di questi pixel stanno in un pollice decide quanto grande viene composta l’immagine prima che il suo spazio la limiti. Ci sono tre modi di dimensionarla:
+
+- **I suoi pixel ai dpi della pagina** (il valore predefinito). Senza una risoluzione, un pixel dell’immagine è un pixel dell’impaginazione (`page.dpi`, 300 se non impostato): una fotografia di 2400 px è larga 8 in (203,2 mm) su una pagina a 300 dpi, e il doppio su una a 150 dpi.
+- **Una risoluzione.** `bitmap.resolution` è la risoluzione in ppi dell’immagine alla sua dimensione di stampa naturale, quindi la sua larghezza naturale è `width × page.dpi / resolution` su una pagina con qualsiasi dpi: 2400 px a `resolution: 300` sono larghi 203,2 mm su una pagina impaginata a 150 dpi o a 300. `layout.bitmapResolution` dà una risoluzione a ogni bitmap che non ne ha una propria: un numero (`300`), oppure `'file'`, la risoluzione dichiarata dal suo file (`bitmap.fileResolution`: il `pHYs` di un PNG, la densità JFIF o EXIF di un JPEG, l’EXIF di un WebP; per un’immagine importata da Word, la dimensione a cui Word la stampava). Fotocamere, screenshot ed esportazioni per il web dichiarano spesso 72 o 96 ppi quando non sanno nulla di una dimensione di stampa, quindi con `'file'` questi due valori contano come non impostati e l’immagine mantiene i suoi pixel ai dpi della pagina; un 72 dichiarato sulla risorsa stessa viene preso così com’è scritto. `'document'`, il valore predefinito, è il primo modo.
+- **Una porzione della colonna.** `placement.width` restringe un elemento flottante o un inserimento in linea a una frazione della sua colonna (o della pagina), e un’immagine più grande di quella porzione viene ridotta fino a essa, qualunque siano i suoi pixel (vedi [Collocazione](#collocazione)).
+
+In ogni caso lo spazio limita l’immagine, conservandone le proporzioni, e un’immagine più piccola non viene mai ingrandita. La stessa dimensione naturale vale per un’immagine in una cella di tabella e per l’elemento `image` di un design con dimensione `'auto'`. Il PDF incorpora il file così com’è, alla dimensione con cui è collocato. La [verifica preliminare](/it/docs/configuration-fonts-colors-viewers#preflight) controlla la risoluzione a cui viene stampata ogni immagine, e il [pannello Risorse](/it/docs/sandbox#pannello-risorse) della Sandbox la mostra per ciascuna immagine. Da postext 1.24.
+
+```json
+{ "id": "harbour", "typeId": "figure", "kind": "bitmap", "caption": "The harbour at dawn.",
+  "bitmap": { "fileId": "harbour.jpg", "format": "jpeg", "width": 2400, "height": 1600, "resolution": 300 } }
+```
+
+`bitmapInfo(bytes)` (da `postext` e `postext/bundle`) legge i pixel di un file e la risoluzione che dichiara, `{ width, height, resolution?: { x, y, source } }`; un pacchetto aperto con `'file'` ne riempie `fileResolution`, e la Sandbox lo conserva per ogni immagine che carica.
+
+### Zona sicura
+
+Una risorsa bitmap o SVG può indicare una **zona sicura**: il rettangolo dell’immagine che contiene ciò che conta (una persona e una striscia del paesaggio alle sue spalle, la parte tracciata di un grafico) e che viene sempre mostrato. È il `safeArea` della risorsa, quattro frazioni (0–1) della dimensione intrinseca dell’immagine misurate dal suo angolo in alto a sinistra: `x` e `width` sono frazioni della larghezza, `y` e `height` dell’altezza. Il nome dice che cosa va conservato; un riquadro di ritaglio direbbe dove tagliare.
+
+```ts
+const harbour: Resource = {
+  id: 'harbour', typeId: 'figure', kind: 'bitmap', caption: 'The harbour at dawn.',
+  createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'harbour.jpg', format: 'jpeg', width: 2400, height: 1600 },
+  // the boats and the quay: 18–68 % of the width, 25–85 % of the height
+  safeArea: { x: 0.18, y: 0.25, width: 0.5, height: 0.6 },
+};
+```
+
+Viene ritagliata solo un’immagine con una zona sicura. Il motore può allora mostrarla con qualsiasi proporzione compresa tra l’immagine intera e la zona sicura: più alta della proporzione propria dell’immagine ritagliando i lati, al massimo fino alla larghezza della zona sicura, oppure più bassa ritagliando sopra e sotto, al massimo fino alla sua altezza. La larghezza della figura non cambia mai, solo la sua altezza. Ciò che sta fuori dalla zona sicura viene ritagliato su entrambi i lati in proporzione ai margini che vi si trovano, così un soggetto a sinistra del centro resta a sinistra del centro. Composto largo 60 mm, il porto qui sopra è alto 40 mm quando è intero, e può essere mostrato con un’altezza qualsiasi da 24 mm (sopra e sotto ritagliati fino al 60% dell’altezza) a 80 mm (i lati ritagliati fino a metà della larghezza). I valori oltre i bordi dell’immagine vengono limitati a essi; una zona con un valore che non è un numero o con un lato inferiore al 2% dell’immagine, o una che copre l’intera immagine, viene ignorata, e lo stesso vale per il campo su una tabella. Senza zona sicura un’immagine viene sempre mostrata intera, come prima.
+
+Il motore usa questo margine in quattro punti:
+
+- **Lo spazio rimasto in una colonna.** Un’immagine in linea (`position: 'here'`) un po’ troppo alta per lo spazio rimasto nella sua colonna, compresa una la cui didascalia sborderebbe oltre il piede della pagina, viene ritagliata entro la sua zona sicura per restare lì, invece di passare alla colonna o alla pagina successiva lasciando questa corta.
+- **Pagine più basse della figura.** Con `layout.fitFiguresToPage`, un’immagine troppo alta per la pagina viene prima ritagliata entro la sua zona sicura, mantenendo la larghezza, e ridotta solo se è ancora troppo alta (vedi [Configurazione › Impaginazione](/it/docs/configuration-page-layout#impaginazione)).
+- **Fasce più basse della figura.** Un elemento flottante il cui `placement.shrink` lo riduce allo spazio del suo slot viene prima ritagliato entro la sua zona sicura, mantenendo la larghezza, e solo dopo ridotto; la leva `flexFigure` descritta sotto non lo fa mai crescere oltre quello spazio.
+- **Bilanciamento delle colonne.** Un’immagine con zona sicura composta in linea in una colonna corta, o flottante in cima o al piede di quella colonna sulla sola colonna, cresce di righe intere della griglia della linea di base per riempire le righe vuote della colonna. Un’immagine più alta non lascia un buco visibile, quindi questa leva, `flexFigure`, viene provata subito dopo il riquadro che chiude la colonna e prima di aggiungere spazio sopra i titoli o dopo gli elenchi. Un elemento flottante in cima a una colonna nella pagina di chiusura di un capitolo o in una fascia di chiusura non cresce, perché quelle cime di colonna restano allineate (vedi [Configurazione › Bilanciamento delle colonne](/it/docs/configuration-page-flow#bilanciamento-delle-colonne)).
+
+Il VDT registra il ritaglio sul blocco della risorsa: `bodySource` è la parte dell’immagine mostrata in `bodyRect`, nelle stesse frazioni (assente quando l’immagine intera lo riempie), e `bodyFlex` indica i px di cui il corpo potrebbe ancora ridursi e crescere e i px di cui le leve lo hanno già modificato (`{ shrink, grow, delta }`). L’anteprima su canvas e il PDF ritagliano sul corpo e disegnano l’immagine intera alla sua dimensione non ritagliata; il visualizzatore HTML e l’EPUB a layout fisso compongono l’immagine con `object-fit: cover` e un `object-position` corrispondente; un EPUB a layout fluido, che non ha una pagina da riempire, mostra l’immagine intera. Un’applicazione ospite che disegna da sé le immagini può usare le funzioni esportate da `postext`: `resourceSafeArea` e `normalizeSafeArea` (la zona come la legge il motore, o `undefined`), `safeAreaHeightRange` (il corpo più basso e più alto a una data larghezza), `safeAreaSource` (la parte mostrata a una data altezza) e `uncroppedPictureBox` (dove disegnare l’immagine intera prima del ritaglio), con il tipo `ResourceSafeArea`. Nella Sandbox il campo è **Zona sicura** su un’immagine del [pannello Risorse](/it/docs/sandbox#pannello-risorse).
+
+La ricetta Nº 116 del Ricettario, [Foto che crescono per riempire una colonna corta](/it/cookbook/photos-fill-short-columns), compone due volte un servizio di rivista a due colonne, senza e con zone sicure, così puoi confrontare le pagine una accanto all’altra.
+
+
+### Ancore dei personaggi e zone da evitare
+
+Un’immagine che costituisce il disegno di una vignetta di fumetto può anche indicare dove si trovano i suoi personaggi, per il lettering (vedi [Fumetti](/it/docs/document-format-directives#fumetti)). `anchors` elenca un punto per ogni personaggio che parla e `avoid` le zone che nessuna nuvoletta copre, entrambi in frazioni dell’immagine come la zona sicura:
+
+```ts
+const radio: Resource = {
+  id: 'lh-radio', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'lh-radio.jpg', format: 'jpeg', width: 1000, height: 1000 },
+  safeArea: { x: 0, y: 0.36, width: 0.62, height: 0.56 },
+  anchors: [
+    // the keeper: mouth, head (for thought balloons) and face
+    { id: 'tomas', x: 0.345, y: 0.52, head: { x: 0.38, y: 0.44 }, face: { x: 0.29, y: 0.4, width: 0.16, height: 0.18 } },
+  ],
+  avoid: [{ x: 0, y: 0.44, width: 0.22, height: 0.26 }], // the radio
+};
+```
+
+L’`id` di un’ancora è la chiave del personaggio nella sceneggiatura (`tomas: …`), oppure `sfx` per il punto in cui si raccolgono gli effetti sonori della vignetta; `x` e `y` sono la bocca verso cui punta la coda di una nuvoletta di dialogo, `head` il punto verso cui puntano le bollicine di una nuvoletta di pensiero (la bocca se non è impostato) e `face` un rettangolo che nessuna nuvoletta copre. Il motore trasforma ogni punto secondo il ritaglio e il ribaltamento della vignetta, così una coda resta sul suo personaggio qualunque forma prenda la vignetta; un’ancora fuori dalla zona sicura genera `comicAnchorOutsideSafeArea`, perché un ritaglio potrebbe tagliarla via. Un terzo elenco, `faces`, contiene i volti delle persone che non parlano, come rettangoli simili a quelli di `avoid`: nessuna nuvoletta li copre, mentre una zona da evitare cede quando una vignetta non ha altro spazio. Le ancore appartengono all’immagine e servono a ogni traduzione del fumetto. Le leggono solo le vignette di fumetto; una figura le ignora. Nella Sandbox si segnano nella finestra **Zona sicura e lettering** del [pannello Risorse](/it/docs/sandbox#pannello-risorse).
+
+### Video
+
+Una risorsa **video** (`kind: 'video'`) è un video di YouTube o Vimeo, oppure un video tuo: un file conservato nel libro (MP4, WebM) o uno a un indirizzo web, un file su un server o uno **stream HLS** (una playlist `.m3u8`). Viene collocato, dotato di didascalia, fatto flottare e citato come un’immagine, e numerato in una sequenza propria: il tipo integrato `video` stampa *Video 1.1*, *Video 1.2*… accanto a *Figura 1.1* e *Tabella 1.1* (vedi [Configurazione › Tipi di risorsa](/it/docs/configuration-resources#tipi-di-risorsa)). Ogni output lo mostra come può:
+
+<table>
+  <thead>
+    <tr>
+      <th>Output</th>
+      <th>Che cosa mostra</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Canvas, PDF</td>
+      <td>Il <strong>poster</strong>, un fotogramma del video, con un simbolo di riproduzione e un codice QR che apre il video (<a href="/it/docs/configuration-resources#stile-dei-video">Configurazione › Stile dei video</a>). Nel PDF il poster è anche un link al video.</td>
+    </tr>
+    <tr>
+      <td>Folio</td>
+      <td>Il poster, come stampato. Un clic sul poster riproduce il video <strong>sulla pagina stessa</strong>, e la riproduzione continua mentre il foglio gira (vedi <a href="#video-sulle-pagine-di-folio">Video sulle pagine di Folio</a> più sotto). I video di YouTube e Vimeo restano poster.</td>
+    </tr>
+    <tr>
+      <td>Visualizzatore HTML</td>
+      <td>Il <strong>player</strong> del video: quello di YouTube o di Vimeo, oppure il player HTML5 del browser per un file o un indirizzo. Uno stream HLS viene riprodotto in modo nativo in Safari e nelle versioni recenti di Chrome; altrove l’applicazione ospite collega un player come hls.js, come fa la Sandbox. Con <code>videoStyle.html: 'poster'</code> mostra invece il poster stampato.</td>
+    </tr>
+    <tr>
+      <td>EPUB</td>
+      <td>Un file viene riprodotto nel player del sistema di lettura, incluso nel libro o letto dal suo indirizzo di produzione. Un video di YouTube o Vimeo è il suo poster, con un link al video: un EPUB non può incorporare il player di una pagina web. Anche uno stream HLS è il suo poster con link: una playlist HLS non è un tipo di media che un EPUB possa riprodurre. Dove il sistema di lettura esegue script, i file di una stessa pagina o di uno stesso capitolo rispettano <code>player.exclusive</code>: avviarne uno mette in pausa gli altri che non si riproducono insieme a esso.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+const talk: Resource = {
+  id: 'keeper-talk', typeId: 'video', kind: 'video',
+  caption: 'The keeper explains the lamp.',
+  altText: 'A lighthouse keeper beside the lamp',
+  createdAt: 0, updatedAt: 0,
+  video: {
+    source: 'youtube',                        // 'youtube' | 'vimeo' | 'file'
+    url: 'https://youtu.be/aqz-KE-bpKQ',
+    poster: { fileId: 'talk.jpg', format: 'jpeg', width: 1280, height: 720 },
+    start: 30,                                // plays from 0:30; the printed link starts there too
+  },
+};
+```
+
+Il testo cita un video come cita una figura: `:ref{id="keeper-talk"}` stampa *Video 1.1* e fa flottare il poster nel primo spazio libero dopo il rimando, e `::resource{id="keeper-talk"}` con `placement.position: 'here'` lo compone in linea. I campi di `Resource.video` (`ResourceVideo`):
+
+<table>
+  <thead>
+    <tr>
+      <th>Campo</th>
+      <th>Tipo</th>
+      <th>Significato</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>source</code></td>
+      <td><code>'youtube'</code> · <code>'vimeo'</code> · <code>'file'</code></td>
+      <td>Da dove viene riprodotto il video: una pagina di YouTube o Vimeo, oppure un video tuo (<code>'file'</code>), caricato o a un indirizzo.</td>
+    </tr>
+    <tr>
+      <td><code>url</code></td>
+      <td><code>string</code></td>
+      <td>YouTube o Vimeo: l’indirizzo del video, in qualsiasi forma (una pagina di visione, <code>youtu.be</code>, Shorts, un link di incorporamento, <code>youtube-nocookie.com</code>; una pagina Vimeo, una pagina di canale o un link non in elenco con il suo hash). Un file: il suo <strong>indirizzo di produzione</strong>, dove il libro pubblicato lo troverà. Un video tuo senza un file proprio viene riprodotto da questo indirizzo: un MP4 o un WebM su un server, oppure uno stream HLS (<code>…/master.m3u8</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fileId</code>, <code>format</code></td>
+      <td><code>string</code></td>
+      <td>Un file: il video caricato, conservato fuori banda come una bitmap, e il suo formato: <code>'mp4'</code>, <code>'webm'</code>, <code>'ogv'</code>, <code>'mov'</code>, oppure <code>'hls'</code> per uno stream HLS. Senza formato lo indica l’estensione dell’indirizzo (<code>.m3u8</code> è <code>'hls'</code>), altrimenti <code>'mp4'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>poster</code></td>
+      <td><code>{'{ fileId, format, width, height }'}</code></td>
+      <td>Il fotogramma del poster, una bitmap.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>height</code>, <code>duration</code></td>
+      <td><code>number</code></td>
+      <td>La dimensione del fotogramma del video in px (le sue proporzioni quando non c’è un poster) e la durata in secondi.</td>
+    </tr>
+    <tr>
+      <td><code>posterTime</code></td>
+      <td><code>number</code></td>
+      <td>Il secondo del fotogramma di un file usato come poster, conservato per poterlo scegliere di nuovo.</td>
+    </tr>
+    <tr>
+      <td><code>start</code>, <code>end</code></td>
+      <td><code>number</code></td>
+      <td>Riproduce da <code>start</code> a <code>end</code> secondi. Anche il codice QR e il link del PDF partono da <code>start</code>.</td>
+    </tr>
+    <tr>
+      <td><code>player</code></td>
+      <td><code>VideoPlayerOptions</code></td>
+      <td>Le opzioni del player di questo video, sovrapposte a <code>videoStyle.player</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+**Il poster.** Viene composto alla giustezza del suo spazio (o alla frazione `placement.width` di essa), nelle sue proporzioni, qualunque sia la sua dimensione in pixel: un fotogramma a dimensione di schermo viene ingrandito invece di essere stampato piccolo. Come una bitmap, può avere una [zona sicura](#zona-sicura) e seguire `placement.align`. Un video senza poster stampa un riquadro scuro nelle proporzioni del video (16:9 quando nulla le indica) con le sue sovrimpressioni, e genera un avviso sul contenuto `videoWithoutPoster`. Nella Sandbox il poster di un video di YouTube o Vimeo viene scaricato dalla piattaforma quando ne inserisci l’indirizzo, e quello di un file è un fotogramma che scegli nel video.
+
+**L’indirizzo.** Il codice QR e il link del PDF aprono la pagina del video, `https://youtu.be/<id>` o `https://vimeo.com/<id>`, a partire da `start`. Un file non ha una pagina: aprono il suo indirizzo di produzione, che è anche l’indirizzo da cui viene riprodotto un video senza un file proprio (un MP4 su un server, uno stream HLS). Senza indirizzo, la stampa non ha codice QR né link (`videoWithoutUrl`), e un output HTML o EPUB che non contiene il file mostra il poster. Un indirizzo di YouTube o Vimeo che non indica nessun video di quella piattaforma genera `videoUrlInvalid`; al posto di un player viene mostrato il poster.
+
+**I player.** Le opzioni del player (controlli, pulsante di download, schermo intero, menu della velocità, picture in picture, trasmissione, riproduzione automatica, avvio senza audio, ripetizione, precaricamento, incorporamenti con privacy avanzata) si impostano per l’intero libro in `videoStyle.player` e per un singolo video in `video.player`; ogni player rispetta ciò che può (vedi [Configurazione › Stile dei video](/it/docs/configuration-resources#stile-dei-video)). Il backend HTML prende l’URL riproducibile di un file tramite l’opzione `resourceVideoUrl(fileId)`, come prende le immagini tramite `resourceImageUrl`, e in sua assenza ripiega sull’indirizzo di produzione. La sua opzione `videos: { files, streams, hls }` sceglie tra player e poster per ogni sorgente, prevalendo su `videoStyle.html` (`hls`, un video riprodotto da un indirizzo HLS, segue `files` se non è impostato); la usa il generatore di EPUB. Un `<video>` che riproduce un indirizzo HLS porta `data-pt-hls`, così un’applicazione ospite può dargli un player nei browser senza HLS nativo (Safari e le versioni recenti di Chrome lo riproducono così com’è). In un libro da destra a sinistra il player e le sovrimpressioni del poster vengono raddrizzati come un’immagine, così il codice QR resta leggibile.
+
+**Nel VDT.** Il blocco di risorsa di un video ha `kind: 'video'`, il suo poster come `fileId` / `format` (disegnato come una bitmap) e `video` (`VDTResourceVideo`): il `link` a cui viene mandato chi legge, l’`embedUrl` di YouTube o Vimeo con le opzioni del player applicate, il `fileId` di un file, il `mimeType` di un video tuo (del suo file o del solo indirizzo, `application/vnd.apple.mpegurl` per HLS), l’intervallo `start` / `end`, il `player` risolto, `linkPoster`, `html` e le sovrimpressioni `playMark` e `qr` (i moduli del QR come righe di `'0'` / `'1'`), con rettangoli relativi all’angolo in alto a sinistra del corpo. Un’applicazione ospite che disegna da sé i video può usare le funzioni esportate da `postext`: `parseVideoUrl`, `videoWatchUrl`, `resourceVideoLink`, `videoEmbedUrl`, `videoEmbedAllow`, `videoElementAttributes`, `mediaFragment`, `videoMimeType`, `videoFormatOfUrl`, `resourceVideoFormat`, `isHlsMimeType`, `HLS_MIME_TYPE`, `youtubePosterUrls`, `encodeQr`, `layoutVideo`, `playMarkTriangle` e `qrModuleRuns`.
+
+**In un pacchetto.** Un `.postext` contiene un file (`resources/<id>.mp4`) e il poster (`resources/<id>.poster.jpg`): la voce del manifest li indica in `file` e `poster`, dà la dimensione del poster in `width` / `height` e conserva il resto in `video` senza gli id dei file. `bundleVideoUrl(bundle)` è la funzione di risoluzione `resourceVideoUrl` sui file di un pacchetto. Un video riprodotto solo da un indirizzo non contiene file: la sua voce ha soltanto il poster. In un pacchetto bilingue una lingua può dare a un video il proprio `poster` e il proprio `video` (un altro montaggio, al suo indirizzo) in `localized[…].resources`.
+
+#### Video sulle pagine di Folio
+
+Nel [libro 3D](/it/docs/configuration-html-folio-epub#un-libro-in-3d-postext-folio) un video tuo si riproduce sulla pagina su cui è stampato. Un clic sul poster lo avvia lì, qualunque cosa faccia il puntatore sul libro (girare le pagine, ruotare la vista o selezionare il testo): lo shader della pagina disegna i fotogrammi del video sopra il poster, così l’immagine si piega e si incurva con la carta mentre il foglio gira, e la riproduzione continua durante la girata. Un clic su un video in riproduzione lo mette in pausa, un clic su uno in pausa lo riprende, e Spazio o Invio fanno lo stesso per il primo video della doppia pagina aperta. Avviare un altro video ferma quello in riproduzione (che torna al suo poster), e un video si ferma quando il libro si posa su una doppia pagina che non lo mostra più, oppure al suo `end`. Il puntatore diventa una mano sopra un video che può riprodurre; un trascinamento che parte da un video gira comunque la pagina o la vista. Un video impostato per partire da solo (`video.player.autoplay`) si avvia da sé la prima volta che il libro si posa sulla sua doppia pagina, una volta che il libro si è assestato (anche quando l’applicazione ospite lo impagina a passi), e mai più in quel visualizzatore.
+
+Un video che si riproduce insieme agli altri (`video.player.exclusive: false`, da postext 1.18) cambia entrambe le regole. Avviarlo ferma solo i video esclusivi, quindi più video di questo tipo si riproducono insieme; avviare un video esclusivo ferma anche lui. Con `autoplay` parte, senza audio, ogni volta che il libro si posa sulla sua doppia pagina, e si ferma quando la doppia pagina viene girata: i loop muti (`loop`) di una pagina partono insieme ogni volta che chi legge ci arriva.
+
+- **Che cosa si riproduce.** Un file (l’applicazione ospite trasforma il suo `fileId` in un URL con l’opzione `videoUrl`, un object URL nella Sandbox) oppure, in sua assenza, il suo indirizzo: MP4, WebM o uno stream HLS. Uno stream HLS si riproduce con [hls.js](https://github.com/video-dev/hls.js) ovunque il browser abbia le Media Source Extensions (caricato alla prima riproduzione; una dipendenza peer facoltativa di `postext-folio`), limitato alla variante più vicina alla dimensione dell’immagine sullo schermo, così un’immagine alta poche centinaia di pixel non scarica mai una variante 4K; in alternativa si usa l’HLS del browser. Le sue richieste portano una query `pt-cors` propria, così la cache del browser non restituisce mai loro una copia scaricata da un altro player senza CORS. YouTube e Vimeo si riproducono in iframe, che WebGL non può disegnare: un clic sul loro poster gira la pagina come in qualsiasi altro punto.
+- **Letture da altre origini.** WebGL disegna un video solo quando il suo server consente la lettura (CORS, `Access-Control-Allow-Origin`). Un video che non si può leggere resta un poster, e `onVideo` riceve `error`.
+- **Audio.** Il clic consente al video di partire con l’audio; un browser che rifiuta comunque lo riceve senza audio. Un video che parte da solo ha l’audio una volta che chi legge ha fatto clic o digitato sulla pagina (arrivarci girando le pagine conta); prima parte senza audio, e un clic su di esso attiva l’audio prima che il clic successivo lo metta in pausa. `video.player.muted` lo avvia senza audio, `loop` lo riproduce di nuovo, e `start` / `end` indicano la parte che viene riprodotta.
+- **Su ogni pagina.** L’immagine viene disegnata dove la colloca l’impaginazione: ruotata con una risorsa ruotata, diritta su una pagina verticale e non specchiata in un libro da destra a sinistra, come il poster. Un poster ritagliato entro la sua [zona sicura](#zona-sicura) ritaglia il video allo stesso modo.
+- **Senza WebGL2**, o con il movimento ridotto, il video si riproduce in un `<video>` HTML sovrapposto alla pagina.
+
+```ts
+const book = createFolioFromDocument(container, doc, {
+  // An uploaded video's playable URL (an object URL over its bytes).
+  videoUrl: (fileId) => urls.get(fileId),
+  onVideo: ({ resourceId, state }) => console.log(resourceId, state), // playing | paused | stopped | error
+});
+book.stopVideo();
+```
+
+`videos: false` lo disattiva. `toggleVideoAt({ page, x, y })` fa ciò che fa un clic in quel punto, e `pageVideoSpots(page, doc)` elenca dove si trova ogni video su una pagina, per un’applicazione ospite che disegna i propri controlli.
+
+Due ricette del Ricettario compongono video: la Nº 131, [Un programma di cineclub con codici QR sui poster](/it/cookbook/film-club-video-qr), stampa ogni film come un cartello con il titolo, un simbolo di riproduzione e un codice QR, e la Nº 132, [Una scheda di laboratorio i cui filmati si riproducono sullo schermo e nell’EPUB](/it/cookbook/pendulum-lab-video-players), imposta le opzioni del player per l’edizione HTML e include i propri filmati in un EPUB a layout fisso.

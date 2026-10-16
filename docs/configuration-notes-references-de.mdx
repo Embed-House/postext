@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Fußnoten, Zeilennummern, Querverweise und Zitationen, das Inhaltsverzeichnis und das Register',
   lang: 'de',
   lastUpdated: '2026-10-10',
-  readingTime: '4 min',
-  order: 6,
+  readingTime: '27 min',
+  order: 12,
   parent: 'configuration',
   plainSummary: "Diese Seite behandelt die Einstellungen für die Teile eines Buchs, die auf etwas anderes verweisen. Fußnoten stehen unten auf der Seite, Zeilennummern am Rand. Querverweise nennen eine Abbildung, einen Abschnitt oder eine Seite, Zitationen nennen die Werke, aus denen Sie zitieren. Das Inhaltsverzeichnis führt die Kapitel auf, das Register am Ende des Buchs die Begriffe mit ihren Seiten. Jeder Abschnitt erklärt, wie diese Teile aussehen und wie sie nummeriert werden.",
 };
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Fußnoten
 
-Die Eigenschaft `footnotes` legt fest, wohin die mit `[^id]` zitierten Anmerkungen kommen, wie sie nummeriert werden und wie sie aussehen. Das Markup ist unter [Dokumentformat](/de/docs/document-format#fußnoten) beschrieben.
+Die Eigenschaft `footnotes` legt fest, wohin die mit `[^id]` zitierten Anmerkungen kommen, wie sie nummeriert werden und wie sie aussehen. Das Markup ist unter [Dokumentformat](/de/docs/document-format-notes-references#fußnoten) beschrieben.
 
 ```ts
 interface FootnotesConfig {
@@ -378,7 +378,7 @@ Was gezählt wird und was nicht:
 
 - **Nie gezählt** werden Überschriften, Legenden, Tabellen und Bilder, abgesetzte Formeln, Gestaltungstext (Kapitelauftakte, Kolumnentitel), Fußnoten und Anmerkungen am Kapitelende, das Inhaltsverzeichnis, die Einträge von Register und Literaturverzeichnis sowie Vakatseiten.
 - **Kästen und Prosa.** Der Text eines Kastens wird nicht gezählt, und unter `count: 'verse'` auch keine Prosa, es sei denn, das Absatzformat, in dem sie gesetzt ist, gibt `lineNumbers: true` an; ein Format mit `lineNumbers: false` wird nie gezählt (siehe [Absatzformate](/de/docs/configuration-styles#absatzformate)).
-- **Ein einzelnes Gedicht.** Der Zaun eines Gedichts nimmt `numbered=false` (seine Zeilen werden nicht gezählt), `lineStart=N` (seine erste Zeile ist N, und die Zählung beginnt dort neu) und `interval=N` an. `:::numbering{lines=N}` gibt der nächsten gezählten Zeile die Nummer N, wo immer sie steht. Siehe [Dokumentformat › `:::verse`](/de/docs/document-format#verse) und [`:::numbering`](/de/docs/document-format#numbering).
+- **Ein einzelnes Gedicht.** Der Zaun eines Gedichts nimmt `numbered=false` (seine Zeilen werden nicht gezählt), `lineStart=N` (seine erste Zeile ist N, und die Zählung beginnt dort neu) und `interval=N` an. `:::numbering{lines=N}` gibt der nächsten gezählten Zeile die Nummer N, wo immer sie steht. Siehe [Dokumentformat › `:::verse`](/de/docs/document-format-directives#verse) und [`:::numbering`](/de/docs/document-format-directives#numbering).
 
 In einem Buch, das Kapitel für Kapitel umbrochen wird, trägt `restart: 'document'` die Zählung über `continuation.lineNumber` von einem Kapitel ins nächste. `continuationAfter` zählt die Verse aus dem Text; mit `count: 'all'` hängt die Zählung vom Layout ab, deshalb gibt die Host-Anwendung das `lastLineNumber` aus dem Dokument des vorigen Kapitels weiter, wie es die Sandbox tut.
 
@@ -399,7 +399,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // unset font, w
 
 ## Querverweise
 
-Die Eigenschaft `crossRefs` legt die Wörter fest, die ein [Querverweis](/de/docs/document-format#querverweise-und-anker) um eine Nummer oder eine Seite herum druckt, sowie den Stil, den ein `:ref` ohne eigenen Stil erhält. Jede Vorlage enthält `{n}` an der Stelle der Nummer; eine Vorlage ohne `{n}` erhält die Nummer nach einem geschützten Leerzeichen (`"§"` druckt *§ 3.2*). Eine nicht gesetzte Vorlage folgt der Sprache des Dokuments: *chapter / section / p.* im Englischen, *capítulo / sección / pág.* im Spanischen, `第{n}章` / `第{n}节` / `第{n}页` im Chinesischen und entsprechend im Französischen, Deutschen, Italienischen, Portugiesischen, Katalanischen und Niederländischen.
+Die Eigenschaft `crossRefs` legt die Wörter fest, die ein [Querverweis](/de/docs/document-format-notes-references#querverweise-und-anker) um eine Nummer oder eine Seite herum druckt, sowie den Stil, den ein `:ref` ohne eigenen Stil erhält. Jede Vorlage enthält `{n}` an der Stelle der Nummer; eine Vorlage ohne `{n}` erhält die Nummer nach einem geschützten Leerzeichen (`"§"` druckt *§ 3.2*). Eine nicht gesetzte Vorlage folgt der Sprache des Dokuments: *chapter / section / p.* im Englischen, *capítulo / sección / pág.* im Spanischen, `第{n}章` / `第{n}节` / `第{n}页` im Chinesischen und entsprechend im Französischen, Deutschen, Italienischen, Portugiesischen, Katalanischen und Niederländischen.
 
 ```ts
 interface CrossRefsConfig {
@@ -449,7 +449,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Erlaubt einen Zeilenumbruch an den Leerzeichen eines Verweises, dessen Beschriftung aus Wörtern besteht: der Text eines Ankers <code>[words]{'{#id}'}</code>, der Titel einer Überschrift oder eines Kastens, eine Überschreibung mit <code>text="…"</code> (auch bei einem Verweis auf eine Abbildung oder Tabelle). Die Leerzeichen der Beschriftung dehnen und stauchen sich dann mit der Zeile, und der Verweis bleibt ein einziger Link; seine Wörter werden nicht getrennt. Eine Zahl, eine römische Zahl oder ein einzelner Buchstabe in einer solchen Beschriftung bleibt beim vorangehenden Wort (<code>Fig. 1a</code>, <code>plate IV</code>). Eine Beschriftung mit einer Nummer oder einer Seite (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) bricht nie um, auch wenn ihre Vorlage ein gewöhnliches Leerzeichen enthält. <code>false</code> setzt jede Beschriftung als ein Wort, in dem keine Zeile umbricht, wie bis postext 1.27. Eine Konfiguration, die vor <code>configVersion</code> 12 gespeichert wurde und deren Text einen Verweis enthält, wird mit <code>false</code> gelesen, damit ihre Zeilen bleiben, wo sie waren (siehe <a href="/de/docs/configuration-programmatic-usage#pakete-die-postext-14-oder-früher-geschrieben-hat">Pakete, die postext 1.4 oder früher geschrieben hat</a>).</td>
+      <td>Erlaubt einen Zeilenumbruch an den Leerzeichen eines Verweises, dessen Beschriftung aus Wörtern besteht: der Text eines Ankers <code>[words]{'{#id}'}</code>, der Titel einer Überschrift oder eines Kastens, eine Überschreibung mit <code>text="…"</code> (auch bei einem Verweis auf eine Abbildung oder Tabelle). Die Leerzeichen der Beschriftung dehnen und stauchen sich dann mit der Zeile, und der Verweis bleibt ein einziger Link; seine Wörter werden nicht getrennt. Eine Zahl, eine römische Zahl oder ein einzelner Buchstabe in einer solchen Beschriftung bleibt beim vorangehenden Wort (<code>Fig. 1a</code>, <code>plate IV</code>). Eine Beschriftung mit einer Nummer oder einer Seite (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) bricht nie um, auch wenn ihre Vorlage ein gewöhnliches Leerzeichen enthält. <code>false</code> setzt jede Beschriftung als ein Wort, in dem keine Zeile umbricht, wie bis postext 1.27. Eine Konfiguration, die vor <code>configVersion</code> 12 gespeichert wurde und deren Text einen Verweis enthält, wird mit <code>false</code> gelesen, damit ihre Zeilen bleiben, wo sie waren (siehe <a href="/de/docs/configuration-bundles#pakete-die-postext-14-oder-früher-geschrieben-hat">Pakete, die postext 1.4 oder früher geschrieben hat</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -458,7 +458,7 @@ Verweise erhalten Farbe, Schriftstärke und Neigung, die für alle Verweise gelt
 
 ## Zitationen
 
-Die Eigenschaft `citations` wählt den Zitierstil und bestimmt, wie Zitationen und Literaturverzeichnis aussehen. Das Markup ist unter [Zitate und Literaturverzeichnis](/de/docs/document-format#zitate-und-literaturverzeichnis) beschrieben; den Stil wendet das Paket `postext-citeproc` an.
+Die Eigenschaft `citations` wählt den Zitierstil und bestimmt, wie Zitationen und Literaturverzeichnis aussehen. Das Markup ist unter [Zitate und Literaturverzeichnis](/de/docs/document-format-notes-references#zitate-und-literaturverzeichnis) beschrieben; den Stil wendet das Paket `postext-citeproc` an.
 
 ```ts
 interface CitationsConfig {
@@ -502,7 +502,7 @@ interface CitationsConfig {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td><code>'apa'</code></td>
-      <td>Die ID eines mitgelieferten Stils (siehe <a href="/de/docs/document-format#zitierstile">Zitierstile</a>) oder <code>'custom'</code>. Der Stil entscheidet, was Zitationen und Einträge enthalten: Namen, Daten, Reihenfolge, Zeichensetzung und ob Zitationen Anmerkungen sind.</td>
+      <td>Die ID eines mitgelieferten Stils (siehe <a href="/de/docs/document-format-notes-references#zitierstile">Zitierstile</a>) oder <code>'custom'</code>. Der Stil entscheidet, was Zitationen und Einträge enthalten: Namen, Daten, Reihenfolge, Zeichensetzung und ob Zitationen Anmerkungen sind.</td>
     </tr>
     <tr>
       <td><code>customStyle</code></td>
@@ -550,7 +550,7 @@ interface CitationsConfig {
       <td><code>hyphenateNames</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Erlaubt dem Wörterbuch, die Namen der zitierten Autoren zu trennen. <code>false</code> hält den Familiennamen jeder Person in den Literaturangaben (Autoren, Herausgeber, Übersetzer) und jeden als eine Zeichenkette angegebenen Namen ungetrennt, wo immer er mit seinem Großbuchstaben steht: in einer Zitation, im Fließtext und in der Liste, sodass keine Zeile auf <code>(Lup-</code> endet. Ein Doppelname wird Teil für Teil gelesen, und ein Autor namens Baker hält das Wort <code>baker</code> nicht zusammen. Siehe <a href="/de/docs/configuration-text#ungetrennte-wörter">Ungetrennte Wörter</a>.</td>
+      <td>Erlaubt dem Wörterbuch, die Namen der zitierten Autoren zu trennen. <code>false</code> hält den Familiennamen jeder Person in den Literaturangaben (Autoren, Herausgeber, Übersetzer) und jeden als eine Zeichenkette angegebenen Namen ungetrennt, wo immer er mit seinem Großbuchstaben steht: in einer Zitation, im Fließtext und in der Liste, sodass keine Zeile auf <code>(Lup-</code> endet. Ein Doppelname wird Teil für Teil gelesen, und ein Autor namens Baker hält das Wort <code>baker</code> nicht zusammen. Siehe <a href="/de/docs/configuration-language#ungetrennte-wörter">Ungetrennte Wörter</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -629,7 +629,7 @@ interface CitationsConfig {
 
 ## Inhaltsverzeichnis
 
-Die Eigenschaft `toc` konfiguriert, was eine Direktive `:::toc` druckt (siehe [Dokumentformat](/de/docs/document-format#toc)). Das Inhaltsverzeichnis wird aus der **Gliederung** des Dokuments zusammengestellt – jede Überschrift mit ihrer Nummer und ihrer Seitenbezeichnung, jeder `:::part` –, es folgt also den Kapiteln: Benennen Sie eines um, verschieben Sie es in einen anderen Teil, ändern Sie seine Autoren, und die Einträge ändern sich mit. Ein Eintrag besteht aus der Nummer der Überschrift in einer eigenen Spalte, dem Titel, Füllzeichen und der Seitenbezeichnung am rechten Rand, dann optional einer Untertitelzeile; ein Teil ist eine Zeile, die `parts.design` gestaltet.
+Die Eigenschaft `toc` konfiguriert, was eine Direktive `:::toc` druckt (siehe [Dokumentformat](/de/docs/document-format-directives#toc)). Das Inhaltsverzeichnis wird aus der **Gliederung** des Dokuments zusammengestellt – jede Überschrift mit ihrer Nummer und ihrer Seitenbezeichnung, jeder `:::part` –, es folgt also den Kapiteln: Benennen Sie eines um, verschieben Sie es in einen anderen Teil, ändern Sie seine Autoren, und die Einträge ändern sich mit. Ein Eintrag besteht aus der Nummer der Überschrift in einer eigenen Spalte, dem Titel, Füllzeichen und der Seitenbezeichnung am rechten Rand, dann optional einer Untertitelzeile; ein Teil ist eine Zeile, die `parts.design` gestaltet.
 
 ```ts
 const config: PostextConfig = {
@@ -719,7 +719,7 @@ Die Seitenbezeichnungen sind diejenigen, die das Dokument druckt. `buildDocument
 
 ## Register
 
-Die Eigenschaft `index` konfiguriert, was eine Direktive `:::index` druckt (siehe [Dokumentformat](/de/docs/document-format#register)): die im Text mit `:index[…]` und `:index{term="…"}` markierten Begriffe, sortiert, nach Anfangsbuchstaben gruppiert (im Chinesischen nach Pinyin-Anlaut oder Strichzahl, im Japanischen nach Gojūon-Reihe, siehe `groupBy`), jeder mit den Seiten, auf die er fällt. Ein Eintrag besteht aus seinem Begriff, einem Trennzeichen und seinen Seitenzahlen; seine Untereinträge folgen, eine Einzugsstufe pro Ebene, und umbrochene Zeilen hängen um `turnoverIndent`, sodass sie nie mit einem Untereintrag fluchten.
+Die Eigenschaft `index` konfiguriert, was eine Direktive `:::index` druckt (siehe [Dokumentformat](/de/docs/document-format-notes-references#register)): die im Text mit `:index[…]` und `:index{term="…"}` markierten Begriffe, sortiert, nach Anfangsbuchstaben gruppiert (im Chinesischen nach Pinyin-Anlaut oder Strichzahl, im Japanischen nach Gojūon-Reihe, siehe `groupBy`), jeder mit den Seiten, auf die er fällt. Ein Eintrag besteht aus seinem Begriff, einem Trennzeichen und seinen Seitenzahlen; seine Untereinträge folgen, eine Einzugsstufe pro Ebene, und umbrochene Zeilen hängen um `turnoverIndent`, sodass sie nie mit einem Untereintrag fluchten.
 
 ```ts
 const config: PostextConfig = {

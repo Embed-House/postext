@@ -1,14 +1,14 @@
-{/* docs/configuration-en.mdx */}
+{/* docs/configuration-de.mdx */}
 
 export const metadata = {
   title: 'Konfiguration von Postext',
   sidebarTitle: 'Konfiguration',
-  description: 'Was eine Postext-Konfiguration ist und auf welcher der neun Seiten der Referenz jede Gruppe von Einstellungen erklärt wird',
+  description: 'Was eine Postext-Konfiguration ist und auf welcher der achtzehn Seiten der Referenz jede Gruppe von Einstellungen erklärt wird',
   lang: 'de',
-  lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 3,
-  plainSummary: "Diese Seite eröffnet die Referenz aller Einstellungen, die das Aussehen Ihrer Seiten bestimmen. Eine einzige Gruppe von Einstellungen enthält alle Entscheidungen: Seitenformat, Spaltenzahl, Schriften, Schriftgröße, Überschriften, Kästen, Farben und mehr. Sie schreiben nur die Einstellungen auf, die Sie ändern wollen, denn jede beginnt mit einem sinnvollen Wert. Die Referenz ist auf neun Seiten verteilt. Die Liste auf dieser Seite verlinkt jeden Abschnitt, springen Sie also direkt zu dem Teil, den Sie brauchen.",
+  lastUpdated: '2026-10-16',
+  readingTime: '4 min',
+  order: 4,
+  plainSummary: "Diese Seite eröffnet die Referenz aller Einstellungen, die das Aussehen Ihrer Seiten bestimmen. Eine einzige Gruppe von Einstellungen enthält alle Entscheidungen: Seitenformat, Spaltenzahl, Schriften, Schriftgröße, Überschriften, Kästen, Farben und mehr. Sie schreiben nur die Einstellungen auf, die Sie ändern wollen, denn jede beginnt mit einem sinnvollen Wert. Die Referenz ist auf achtzehn Seiten verteilt. Die Liste auf dieser Seite verlinkt jeden Abschnitt, springen Sie also direkt zu dem Teil, den Sie brauchen.",
 };
 
 # Konfiguration
@@ -33,21 +33,41 @@ Einen Überblick darüber, wie die Engine diese Konfiguration verarbeitet, gibt 
 
 ## Übersicht
 
-Die Referenz ist auf neun Seiten verteilt. Jede Gruppe unten ist eine Seite, gefolgt von den Abschnitten, die sie enthält.
+Die Referenz ist auf achtzehn Seiten verteilt. Jede Gruppe unten ist eine Seite, gefolgt von den Abschnitten, die sie enthält.
 
 **[Seite und Layout](/de/docs/configuration-page-layout)**
 
 - [Seite](/de/docs/configuration-page-layout#seite) – Format, Ränder, Grundlinienraster, Schnittmarken, [Bindung](/de/docs/configuration-page-layout#bindung).
 - [Layout](/de/docs/configuration-page-layout#layout) – Spaltenzahl, Spaltenabstände, Linien, [vertikale Schrift](/de/docs/configuration-page-layout#vertikale-schrift).
-- [Kopf- und Fußzeilen](/de/docs/configuration-page-layout#kopf--und-fußzeilen) – Text- und Linienelemente je Seite mit Platzhaltern, Seitenparität und Ausrichtung.
 
-**[Text und Überschriften](/de/docs/configuration-text)**
+**[Kopf- und Fußzeilen](/de/docs/configuration-headers-footers)**
+
+- [Kopf- und Fußzeilen](/de/docs/configuration-headers-footers#kopf--und-fußzeilen) – Text- und Linienelemente je Seite mit Platzhaltern, Seitenparität und Ausrichtung.
+
+**[Fließtext](/de/docs/configuration-text)**
 
 - [Fließtext](/de/docs/configuration-text#fließtext) – Typografie, Silbentrennung, Tabulatoren, Waisen und Witwen.
-- [Dokumentsprache](/de/docs/configuration-text#dokumentsprache) – das oberste `locale`: Rückfall für die Silbentrennung, eingebaute Ressourcentypen und die Fortsetzungstexte von Tabellen und geteilten Kästen, die Sprache, die in ein barrierefreies PDF eingetragen wird; die [Ziffern](/de/docs/configuration-text#ziffern-des-dokuments) (`numerals`) und die [Schreibrichtung](/de/docs/configuration-text#schreibrichtung) (`direction`), die daraus folgen; und die [Sprachen und Schriftsysteme](/de/docs/configuration-text#sprachen-und-schriftsysteme), die Postext setzt. Der Leitfaden für Bücher von rechts nach links ist [Arabischer Satz](/de/docs/arabic-layout).
-- [Überschriften](/de/docs/configuration-text#überschriften) – gemeinsame Voreinstellungen und eigene Werte für H1–H6.
-- [Aufzählungen](/de/docs/configuration-text#aufzählungen) und [Nummerierte Listen](/de/docs/configuration-text#nummerierte-listen) – Aufzählungszeichen, Nummerierung, Verschachtelung.
-- [Mathematik](/de/docs/configuration-text#mathematik) – LaTeX-Darstellung, Skalierung, Farbe, Ränder.
+
+**[Silbentrennung und Sprache](/de/docs/configuration-language)**
+
+- [Silbentrennung](/de/docs/configuration-language#silbentrennung) – Trennmuster, ungetrennte Wörter, Flattersatz.
+- [Dokumentsprache](/de/docs/configuration-language#dokumentsprache) – das oberste `locale`: Rückfall für die Silbentrennung, eingebaute Ressourcentypen und die Fortsetzungstexte von Tabellen und geteilten Kästen, die Sprache, die in ein barrierefreies PDF eingetragen wird; die [Ziffern](/de/docs/configuration-language#ziffern-des-dokuments) (`numerals`) und die [Schreibrichtung](/de/docs/configuration-language#schreibrichtung) (`direction`), die daraus folgen; und die [Sprachen und Schriftsysteme](/de/docs/configuration-language#sprachen-und-schriftsysteme), die Postext setzt. Der Leitfaden für Bücher von rechts nach links ist [Arabischer Satz](/de/docs/arabic-layout).
+- [Sprachen und Schriftsysteme](/de/docs/configuration-language#sprachen-und-schriftsysteme) – die Schriftsysteme, die Postext setzt, und die Seiten, die jedes erklären.
+- [Arabischer Text](/de/docs/configuration-language#arabischer-text) – Formung, Kaschida, Vokalzeichen und Ziffern arabischer Texte.
+
+**[Überschriften](/de/docs/configuration-headings)**
+
+- [Überschriften](/de/docs/configuration-headings#überschriften) – gemeinsame Voreinstellungen und eigene Werte für H1–H6.
+
+**[Witwen, Waisen und Spaltenausgleich](/de/docs/configuration-page-flow)**
+
+- [Waisen, Witwen, zu kurze Ausgangszeilen und Regeln zum Zusammenhalten](/de/docs/configuration-page-flow#waisen-witwen-zu-kurze-ausgangszeilen-und-regeln-zum-zusammenhalten) – Schlüssel von `bodyText`, die Zeilen und Blöcke über einen Spaltenumbruch hinweg zusammenhalten.
+- [Spaltenausgleich](/de/docs/configuration-page-flow#spaltenausgleich) – die Hebel, mit denen jede Spalte auf gleicher Höhe endet, in redaktioneller Rangfolge.
+
+**[Listen und Mathematik](/de/docs/configuration-lists-math)**
+
+- [Aufzählungen](/de/docs/configuration-lists-math#aufzählungen) und [Nummerierte Listen](/de/docs/configuration-lists-math#nummerierte-listen) – Aufzählungszeichen, Nummerierung, Verschachtelung.
+- [Mathematik](/de/docs/configuration-lists-math#mathematik) – LaTeX-Darstellung, Skalierung, Farbe, Ränder.
 
 **[Anmerkungen und Verweise](/de/docs/configuration-notes-references)**
 
@@ -74,9 +94,12 @@ Die Referenz ist auf neun Seiten verteilt. Jede Gruppe unten ist eine Seite, gef
 - [Absatzformate](/de/docs/configuration-styles#absatzformate) – benannte Formate für Container `:::paragraphs`: Literaturverzeichnisse, Glossare, Anmerkungen.
 - [Chip-Stile](/de/docs/configuration-styles#chip-stile) – `chipStyles`: benannte Formate für das Inline-Element `:chip[…]`: der Kasten einer Wortbank, eine Taste, ein Schlagwort.
 - [Code-Listings](/de/docs/configuration-styles#code-listings) – `codeStyle`: Schrift, Kasten, Tabulatorbreite, lange Zeilen, Zeilennummern und Token-Farben von Listings mit ```` ``` ````, die Syntaxhervorhebung mit ihrem Highlighter-Hook und Inline-Code in einer Codeschrift.
-- [Kastenstile](/de/docs/configuration-styles#kastenstile) – umrahmte Hinweise, Tipps und Lernziele für Container `:::callout`.
 - [Teile](/de/docs/configuration-styles#teile) – Teiltitelseiten für Container `:::part`: Seitenparität, Textbereich, Gestaltung des Auftakts, Typografie des Texts.
 - [Überschriftenstile](/de/docs/configuration-styles#überschriftenstile) – benannte Formate für Überschriften mit `{style="…"}`: unnummerierte Kapitel, Titelei mit eigenen Kolumnentiteln, Geometrie und Farbpalette.
+
+**[Kästen](/de/docs/configuration-callouts)**
+
+- [Kastenstile](/de/docs/configuration-callouts#kastenstile) – umrahmte Hinweise, Tipps und Lernziele für Container `:::callout`.
 
 **[Comic-Einstellungen](/de/docs/configuration-comics)**
 
@@ -97,7 +120,17 @@ Die Referenz ist auf neun Seiten verteilt. Jede Gruppe unten ist eine Seite, gef
 
 - [Programmatische Nutzung](/de/docs/configuration-programmatic-usage#programmatische-nutzung) – `buildDocument`, die Warnungen, die es meldet, Resolver, Caches.
 - [Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen) – Builds außerhalb des Hauptthreads mit Abbruch.
-- [Den HTML-Betrachter einbinden](/de/docs/configuration-programmatic-usage#den-html-betrachter-einbinden) und [PDFs erzeugen](/de/docs/configuration-programmatic-usage#pdfs-erzeugen) – Anleitungen von Anfang bis Ende.
-- [Ein 3D-Buch (`postext-folio`)](/de/docs/configuration-programmatic-usage#ein-3d-buch-postext-folio) – das gesetzte Dokument als gedrucktes Buch, das aufgeschlagen auf einem Tisch liegt, mit Blättern, die der Leser umblättert.
-- [EPUB-Bücher](/de/docs/configuration-programmatic-usage#epub-bücher-postext-epub) – EPUB-3-Dateien mit festem Layout und umfließend aus demselben Layout, und ihre Prüfung mit EPUBCheck.
-- [Pakete (Dateien im Format `.postext`)](/de/docs/configuration-programmatic-usage#pakete-dateien-im-format-postext) – ein ganzes Buch in einer Datei: `.postext`-Archive aus Code erstellen, öffnen und bauen.
+
+**[PDF-Dateien](/de/docs/configuration-pdf-output)**
+
+- [PDFs erzeugen](/de/docs/configuration-pdf-output#pdfs-erzeugen) – `postext-pdf`: Font-Provider, CJK-Schriften, Worker und druckfertige Dateien.
+
+**[HTML, Folio und EPUB](/de/docs/configuration-html-folio-epub)**
+
+- [Den HTML-Betrachter einbinden](/de/docs/configuration-html-folio-epub#den-html-betrachter-einbinden) und [PDFs erzeugen](/de/docs/configuration-pdf-output#pdfs-erzeugen) – Anleitungen von Anfang bis Ende.
+- [Ein 3D-Buch (`postext-folio`)](/de/docs/configuration-html-folio-epub#ein-3d-buch-postext-folio) – das gesetzte Dokument als gedrucktes Buch, das aufgeschlagen auf einem Tisch liegt, mit Blättern, die der Leser umblättert.
+- [EPUB-Bücher](/de/docs/configuration-html-folio-epub#epub-bücher-postext-epub) – EPUB-3-Dateien mit festem Layout und umfließend aus demselben Layout, und ihre Prüfung mit EPUBCheck.
+
+**[.postext-Pakete](/de/docs/configuration-bundles)**
+
+- [Pakete (Dateien im Format `.postext`)](/de/docs/configuration-bundles#pakete-dateien-im-format-postext) – ein ganzes Buch in einer Datei: `.postext`-Archive aus Code erstellen, öffnen und bauen.

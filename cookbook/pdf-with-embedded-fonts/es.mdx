@@ -28,7 +28,7 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. Postext mide 
 
 <Excerpt region="pdf" />
 
-`renderToPdf` llama a `onProgress` en tres fases: `prepare` cuando ya ha incrustado las fuentes y la cubierta, `pages` tras cada página y `save` antes de escribir el archivo. Solo pide al proveedor las fuentes que pintan las páginas, aquí cinco. La línea de estado enumera los cinco archivos que sirvió el proveedor, que son exactamente los de `FONTS`, y ninguna sustituta. Una sustituta delata una fuente que falta en `FONTS`. Si quitas Crimson Text 600, la línea muestra `Crimson Text 600 → 400` y la negrita de *The Harbour Consort*, en la página 4, sale con el peso normal. La vista previa de CodePen no puede mostrar un PDF, así que `offerPdf`, del kit, cambia el botón por dos enlaces: uno abre el PDF en otra pestaña y el otro lo descarga ([Generación de PDF](/es/docs/configuration-programmatic-usage#generación-de-pdf)).
+`renderToPdf` llama a `onProgress` en tres fases: `prepare` cuando ya ha incrustado las fuentes y la cubierta, `pages` tras cada página y `save` antes de escribir el archivo. Solo pide al proveedor las fuentes que pintan las páginas, aquí cinco. La línea de estado enumera los cinco archivos que sirvió el proveedor, que son exactamente los de `FONTS`, y ninguna sustituta. Una sustituta delata una fuente que falta en `FONTS`. Si quitas Crimson Text 600, la línea muestra `Crimson Text 600 → 400` y la negrita de *The Harbour Consort*, en la página 4, sale con el peso normal. La vista previa de CodePen no puede mostrar un PDF, así que `offerPdf`, del kit, cambia el botón por dos enlaces: uno abre el PDF en otra pestaña y el otro lo descarga ([Generación de PDF](/es/docs/configuration-pdf-output#generación-de-pdf)).
 
 ### 4 · El árbol de títulos es el árbol de marcadores
 
@@ -69,4 +69,4 @@ Cambia la URL de Fontsource por la de tus copias de los mismos archivos WOFF2 es
 
 Enumera en `FONTS` todas las fuentes que componen tus páginas, también la negrita y la cursiva del texto. Si olvidas una, en pantalla no lo notarás, porque el kit la carga sin avisar; el PDF, en cambio, imprime la fuente más próxima que tenga el proveedor, y solo lo delatan las sustitutas de la línea de estado.
 
-Usa archivos estáticos, uno por peso y estilo. De un WOFF2 variable solo se incrusta la instancia por defecto, así que una negrita saldría con el peso normal ([¿Por qué un proveedor de fuentes?](/es/docs/configuration-programmatic-usage#por-qué-un-proveedor-de-fuentes)).
+Usa archivos estáticos, uno por peso y estilo. De un WOFF2 variable solo se incrusta la instancia por defecto, así que una negrita saldría con el peso normal ([¿Por qué un proveedor de fuentes?](/es/docs/configuration-pdf-output#por-qué-un-proveedor-de-fuentes)).

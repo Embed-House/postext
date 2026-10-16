@@ -6,8 +6,8 @@ export const metadata = {
   description: '脚注、行番号、相互参照と引用、目次、巻末の索引',
   lang: 'ja',
   lastUpdated: '2026-10-10',
-  readingTime: '4分',
-  order: 6,
+  readingTime: '27分',
+  order: 12,
   parent: 'configuration',
   plainSummary: "このページでは、本の中でほかの場所を指し示す部分の設定を説明します。脚注はページの下に、行番号は余白に入ります。相互参照は図や節やページを指し、引用はあなたが挙げる文献を指します。目次は章を並べ、巻末の索引は用語とそのページを並べます。各節で、これらの見た目と番号の付け方を説明します。",
 };
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## 脚注
 
-`footnotes`プロパティは、`[^id]`で引用した注をどこに置き、どのように番号を付け、どのような見た目にするかを設定します。記法は[文書形式](/ja/docs/document-format#脚注)で説明しています。
+`footnotes`プロパティは、`[^id]`で引用した注をどこに置き、どのように番号を付け、どのような見た目にするかを設定します。記法は[文書形式](/ja/docs/document-format-notes-references#脚注)で説明しています。
 
 ```ts
 interface FootnotesConfig {
@@ -378,7 +378,7 @@ lineNumbers: {
 
 - **数えないもの**：見出し、キャプション、表と画像、別行立て数式、デザインのテキスト（扉、柱）、脚注と章末の注、目次、索引と参考文献の項目、白ページ。
 - **囲みと散文。** 囲みの中のテキストは数えません。`count: 'verse'`では散文も数えません。ただし、そのテキストを組む段落スタイルが`lineNumbers: true`を指定していれば数えます。`lineNumbers: false`のスタイルは決して数えません（[段落スタイル](/ja/docs/configuration-styles#段落スタイル)を参照）。
-- **1つの詩。** 詩の開始行には`numbered=false`（その詩の行を数えない）、`lineStart=N`（最初の行をNとし、そこから数え直す）、`interval=N`を書けます。`:::numbering{lines=N}`は、どこにあっても、次に数える行をNにします。[文書の書式 › `:::verse`](/ja/docs/document-format#verse)と[`:::numbering`](/ja/docs/document-format#numbering)を参照してください。
+- **1つの詩。** 詩の開始行には`numbered=false`（その詩の行を数えない）、`lineStart=N`（最初の行をNとし、そこから数え直す）、`interval=N`を書けます。`:::numbering{lines=N}`は、どこにあっても、次に数える行をNにします。[文書の書式 › `:::verse`](/ja/docs/document-format-directives#verse)と[`:::numbering`](/ja/docs/document-format-directives#numbering)を参照してください。
 
 章ごとにレイアウトする本では、`restart: 'document'`は`continuation.lineNumber`で章から次の章へ数を引き継ぎます。`continuationAfter`は詩の行をテキストから数えます。`count: 'all'`では数がレイアウトによって決まるので、ホストは前の章の文書の`lastLineNumber`を渡します。Sandboxはそうしています。
 
@@ -399,7 +399,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // 未設定の�
 
 ## 相互参照
 
-`crossRefs`プロパティは、[相互参照](/ja/docs/document-format#相互参照とアンカー)が番号やページの前後に印字する語と、スタイルを指定しない`:ref`に使うスタイルを設定します。各テンプレートには、番号が入る位置に`{n}`を書きます。これを含まないテンプレートでは、ノーブレークスペースの後に番号が入ります（`"§"`は「*§ 3.2*」と印字されます）。未設定のテンプレートは文書の言語に従い、英語では*chapter / section / p.*、スペイン語では*capítulo / sección / pág.*、中国語では`第{n}章` / `第{n}节` / `第{n}页`となります。フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語も同様です。
+`crossRefs`プロパティは、[相互参照](/ja/docs/document-format-notes-references#相互参照とアンカー)が番号やページの前後に印字する語と、スタイルを指定しない`:ref`に使うスタイルを設定します。各テンプレートには、番号が入る位置に`{n}`を書きます。これを含まないテンプレートでは、ノーブレークスペースの後に番号が入ります（`"§"`は「*§ 3.2*」と印字されます）。未設定のテンプレートは文書の言語に従い、英語では*chapter / section / p.*、スペイン語では*capítulo / sección / pág.*、中国語では`第{n}章` / `第{n}节` / `第{n}页`となります。フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語も同様です。
 
 ```ts
 interface CrossRefsConfig {
@@ -449,7 +449,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>ラベルが語である参照の、スペースの位置での改行を許します。対象は、<code>[語]{'{#id}'}</code>アンカーのテキスト、見出しや囲みのタイトル、<code>text="…"</code>による上書き（図や表への参照でも同じ）です。ラベルのスペースは行に合わせて伸縮し、参照は1つのリンクのままです。語はハイフネーションされません。このようなラベルの中では、数字、ローマ数字、1文字だけの語は前の語から離れません（<code>Fig. 1a</code>、<code>plate IV</code>）。番号やページを含むラベル（<em>section 3.2</em>、<em>p. 112</em>、<em>Fig. 1.7</em>、<em>Theorem 2</em>）は、テンプレートに通常のスペースがあっても改行されません。<code>false</code>は、postext 1.27までと同じく、すべてのラベルを内側で改行しない1語として組みます。<code>configVersion</code> 12より前に保存した設定で、テキストに参照があるものは<code>false</code>で読み込まれるので、行の位置は変わりません（<a href="/ja/docs/configuration-programmatic-usage#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。</td>
+      <td>ラベルが語である参照の、スペースの位置での改行を許します。対象は、<code>[語]{'{#id}'}</code>アンカーのテキスト、見出しや囲みのタイトル、<code>text="…"</code>による上書き（図や表への参照でも同じ）です。ラベルのスペースは行に合わせて伸縮し、参照は1つのリンクのままです。語はハイフネーションされません。このようなラベルの中では、数字、ローマ数字、1文字だけの語は前の語から離れません（<code>Fig. 1a</code>、<code>plate IV</code>）。番号やページを含むラベル（<em>section 3.2</em>、<em>p. 112</em>、<em>Fig. 1.7</em>、<em>Theorem 2</em>）は、テンプレートに通常のスペースがあっても改行されません。<code>false</code>は、postext 1.27までと同じく、すべてのラベルを内側で改行しない1語として組みます。<code>configVersion</code> 12より前に保存した設定で、テキストに参照があるものは<code>false</code>で読み込まれるので、行の位置は変わりません（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。</td>
     </tr>
   </tbody>
 </table>
@@ -458,7 +458,7 @@ interface CrossRefsConfig {
 
 ## 引用
 
-`citations`プロパティでは、引用スタイルと、引用と参考文献の見た目を選びます。記法は[引用と参考文献](/ja/docs/document-format#引用と参考文献)で説明しています。スタイルは`postext-citeproc`パッケージが適用します。
+`citations`プロパティでは、引用スタイルと、引用と参考文献の見た目を選びます。記法は[引用と参考文献](/ja/docs/document-format-notes-references#引用と参考文献)で説明しています。スタイルは`postext-citeproc`パッケージが適用します。
 
 ```ts
 interface CitationsConfig {
@@ -502,7 +502,7 @@ interface CitationsConfig {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td><code>'apa'</code></td>
-      <td>同梱のスタイルのID（<a href="/ja/docs/document-format#スタイル">スタイル</a>を参照）または<code>'custom'</code>です。スタイルは、引用と文献項目の内容（名前、日付、順序、句読点、引用を注にするかどうか）を決めます。</td>
+      <td>同梱のスタイルのID（<a href="/ja/docs/document-format-notes-references#スタイル">スタイル</a>を参照）または<code>'custom'</code>です。スタイルは、引用と文献項目の内容（名前、日付、順序、句読点、引用を注にするかどうか）を決めます。</td>
     </tr>
     <tr>
       <td><code>customStyle</code></td>
@@ -550,7 +550,7 @@ interface CitationsConfig {
       <td><code>hyphenateNames</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>引用した著者の名前を辞書で分割できるようにします。<code>false</code>にすると、参考文献に現れるすべての人物（著者、編者、訳者）の姓と、1つの文字列で指定した名前を、大文字で始まる形で現れるかぎり、どこでも分割しません。引用の中でも、本文でも、一覧でも同じなので、行が<code>(Lup-</code>で終わることはありません。二重姓は部分ごとに扱います。著者の姓がBakerでも、<code>baker</code>という語が分割されなくなることはありません。<a href="/ja/docs/configuration-text#分割しない語">分割しない語</a>を参照してください。</td>
+      <td>引用した著者の名前を辞書で分割できるようにします。<code>false</code>にすると、参考文献に現れるすべての人物（著者、編者、訳者）の姓と、1つの文字列で指定した名前を、大文字で始まる形で現れるかぎり、どこでも分割しません。引用の中でも、本文でも、一覧でも同じなので、行が<code>(Lup-</code>で終わることはありません。二重姓は部分ごとに扱います。著者の姓がBakerでも、<code>baker</code>という語が分割されなくなることはありません。<a href="/ja/docs/configuration-language#分割しない語">分割しない語</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -629,7 +629,7 @@ interface CitationsConfig {
 
 ## 目次
 
-`toc`プロパティは、`:::toc`ディレクティブが印刷する内容を設定します（[文書形式](/ja/docs/document-format#toc)を参照）。目次は文書の**アウトライン**、つまり番号とページラベルの付いたすべての見出しと、すべての`:::part`から組み立てられるため、章に追従します。章の名前を変える、別の部へ移す、著者を変えると、項目もそれに合わせて変わります。項目は、独立した欄に置く見出しの番号、タイトル、リーダー、右端のページラベル、そして任意のサブタイトル行からなります。部は`parts.design`でデザインする行になります。
+`toc`プロパティは、`:::toc`ディレクティブが印刷する内容を設定します（[文書形式](/ja/docs/document-format-directives#toc)を参照）。目次は文書の**アウトライン**、つまり番号とページラベルの付いたすべての見出しと、すべての`:::part`から組み立てられるため、章に追従します。章の名前を変える、別の部へ移す、著者を変えると、項目もそれに合わせて変わります。項目は、独立した欄に置く見出しの番号、タイトル、リーダー、右端のページラベル、そして任意のサブタイトル行からなります。部は`parts.design`でデザインする行になります。
 
 ```ts
 const config: PostextConfig = {
@@ -719,7 +719,7 @@ const config: PostextConfig = {
 
 ## 索引
 
-`index`プロパティは、`:::index`ディレクティブが印刷する内容を設定します（[文書形式](/ja/docs/document-format#索引)を参照）。索引は、本文中で`:index[…]`と`:index{term="…"}`で印を付けた語を並べ替え、先頭の文字でグループにまとめ（中国語ではピンインの頭文字または画数、日本語では五十音の行。`groupBy`を参照）、それぞれに出現するページを添えたものです。項目は見出し語、区切り、ページ番号からなります。副項目はそのあとに続き、レベルごとに1段階ずつ字下げされます。折り返した行は`turnoverIndent`の分だけ下げるため、副項目と位置がそろうことはありません。
+`index`プロパティは、`:::index`ディレクティブが印刷する内容を設定します（[文書形式](/ja/docs/document-format-notes-references#索引)を参照）。索引は、本文中で`:index[…]`と`:index{term="…"}`で印を付けた語を並べ替え、先頭の文字でグループにまとめ（中国語ではピンインの頭文字または画数、日本語では五十音の行。`groupBy`を参照）、それぞれに出現するページを添えたものです。項目は見出し語、区切り、ページ番号からなります。副項目はそのあとに続き、レベルごとに1段階ずつ字下げされます。折り返した行は`turnoverIndent`の分だけ下げるため、副項目と位置がそろうことはありません。
 
 ```ts
 const config: PostextConfig = {

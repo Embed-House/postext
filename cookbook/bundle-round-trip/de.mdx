@@ -18,7 +18,7 @@ Beide Seiten eines Besucherfaltblatts im Format DL, 99 × 210 mm, für eine Geze
 
 <Excerpt region="answer" highlight="14-17" />
 
-`createBundle` packt Kapitel, Konfiguration, Ressourcen und jede Datei, die sie nennen, in ein Zip; `openBundle` bekommt nichts als diese Bytes. Die Schriften kommen aus `loadBundleFonts`, die Zeichnungen aus `registerBundleImages` und die Gestaltung aus `bundle.config`. Eine Schrift, die in `files` fehlt, druckt in der Ersatzschrift des Browsers, und eine fehlende Zeichnung entfällt mit einer Warnung, während ihr Verweis (?) druckt. Im Zip wird jede `fileId` zu einem Pfad (`mill.svg` heißt jetzt `resources/mill.svg`), und die Ressourcen und `customFonts`, die `openBundle` zurückgibt, verwenden bereits die neuen Namen ([ein Paket öffnen](/de/docs/configuration-programmatic-usage#ein-paket-öffnen)).
+`createBundle` packt Kapitel, Konfiguration, Ressourcen und jede Datei, die sie nennen, in ein Zip; `openBundle` bekommt nichts als diese Bytes. Die Schriften kommen aus `loadBundleFonts`, die Zeichnungen aus `registerBundleImages` und die Gestaltung aus `bundle.config`. Eine Schrift, die in `files` fehlt, druckt in der Ersatzschrift des Browsers, und eine fehlende Zeichnung entfällt mit einer Warnung, während ihr Verweis (?) druckt. Im Zip wird jede `fileId` zu einem Pfad (`mill.svg` heißt jetzt `resources/mill.svg`), und die Ressourcen und `customFonts`, die `openBundle` zurückgibt, verwenden bereits die neuen Namen ([ein Paket öffnen](/de/docs/configuration-bundles#ein-paket-öffnen)).
 
 ### 2 · Die Schriften in die Datei legen
 
@@ -42,7 +42,7 @@ Ein Leser baut die eingebauten Typen in der Sprache, die die Datei ausliefert: O
 
 <Excerpt region="handoff" />
 
-Der Link bietet die `bytes` an, aus denen die Seiten gesetzt wurden, 132 KB mit den Schriften. In der Sandbox importiert (*Bücher → Neu → Eine .postext-Datei öffnen …*), wird die Datei zu einem spanischen oder englischen Buch mit dem Rad als Bild, entnommen aus `thumbnail`. Das PDF nimmt seine Schriften aus `bundleFontProvider`, das die Schrift des Pakets mit der nächstliegenden Strichstärke zurückgibt, im selben Stil, wenn es einen gibt, und seine Zeichnungen aus `bundleResourceBytes`, sodass keine Schrift und kein Bild ein zweites Mal heruntergeladen wird ([ein Paket setzen und rendern](/de/docs/configuration-programmatic-usage#ein-paket-setzen-und-rendern)).
+Der Link bietet die `bytes` an, aus denen die Seiten gesetzt wurden, 132 KB mit den Schriften. In der Sandbox importiert (*Bücher → Neu → Eine .postext-Datei öffnen …*), wird die Datei zu einem spanischen oder englischen Buch mit dem Rad als Bild, entnommen aus `thumbnail`. Das PDF nimmt seine Schriften aus `bundleFontProvider`, das die Schrift des Pakets mit der nächstliegenden Strichstärke zurückgibt, im selben Stil, wenn es einen gibt, und seine Zeichnungen aus `bundleResourceBytes`, sodass keine Schrift und kein Bild ein zweites Mal heruntergeladen wird ([ein Paket setzen und rendern](/de/docs/configuration-bundles#ein-paket-setzen-und-rendern)).
 
 ### 6 · Die Vorderseite mit einer Überschrift zeichnen
 
@@ -72,4 +72,4 @@ Ohne die Typen baut der Leser sie in der Sprache der Datei mit den Standardnumme
 
 ## Häufige Fehler
 
-- Jede Ausgabe ist hier eine eigene Datei. Um beide Sprachen in einer Datei zu tragen, geben Sie `createBundle` eine Zuordnung `localized` ([Zweisprachige Pakete](/de/docs/configuration-programmatic-usage#zweisprachige-pakete)); `openBundle(bytes, { locale })` liest dann jede der beiden Ausgaben.
+- Jede Ausgabe ist hier eine eigene Datei. Um beide Sprachen in einer Datei zu tragen, geben Sie `createBundle` eine Zuordnung `localized` ([Zweisprachige Pakete](/de/docs/configuration-bundles#zweisprachige-pakete)); `openBundle(bytes, { locale })` liest dann jede der beiden Ausgaben.

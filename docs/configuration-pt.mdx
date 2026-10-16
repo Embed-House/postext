@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Configuração do Postext',
   sidebarTitle: 'Configuração',
-  description: 'O que é uma configuração do Postext e em qual das nove páginas da referência cada grupo de ajustes é explicado',
+  description: 'O que é uma configuração do Postext e em qual das dezoito páginas da referência cada grupo de ajustes é explicado',
   lang: 'pt',
-  lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 3,
-  plainSummary: "Esta página abre a referência de todos os ajustes que definem a aparência das suas páginas. Um só grupo de ajustes reúne todas as escolhas: tamanho da página, número de colunas, fontes, tamanho do texto, títulos, boxes, cores e muito mais. Você só escreve os ajustes que quer mudar, porque cada um já começa com um valor sensato. A referência está dividida em nove páginas. A lista desta página tem um link para cada seção, então vá direto à parte de que precisa.",
+  lastUpdated: '2026-10-16',
+  readingTime: '5 min',
+  order: 4,
+  plainSummary: "Esta página abre a referência de todos os ajustes que definem a aparência das suas páginas. Um só grupo de ajustes reúne todas as escolhas: tamanho da página, número de colunas, fontes, tamanho do texto, títulos, boxes, cores e muito mais. Você só escreve os ajustes que quer mudar, porque cada um já começa com um valor sensato. A referência está dividida em dezoito páginas. A lista desta página tem um link para cada seção, então vá direto à parte de que precisa.",
 };
 
 # Configuração
@@ -33,21 +33,41 @@ Para uma visão geral de como o motor processa essa configuração, veja a pági
 
 ## Índice
 
-A referência está dividida em nove páginas. Cada grupo desta lista é uma página, seguida das seções que ela contém.
+A referência está dividida em dezoito páginas. Cada grupo desta lista é uma página, seguida das seções que ela contém.
 
 **[Página e diagramação](/pt/docs/configuration-page-layout)**
 
 - [Página](/pt/docs/configuration-page-layout#página) — tamanho, margens, grade de linhas de base, marcas de corte, [encadernação](/pt/docs/configuration-page-layout#encadernação).
 - [Diagramação](/pt/docs/configuration-page-layout#diagramação) — número de colunas, medianizes, fios, [escrita vertical](/pt/docs/configuration-page-layout#escrita-vertical).
-- [Cabeços e rodapés](/pt/docs/configuration-page-layout#cabeços-e-rodapés) — elementos de texto e de fio por página, com marcadores, paridade e alinhamento.
 
-**[Texto e títulos](/pt/docs/configuration-text)**
+**[Cabeços e rodapés](/pt/docs/configuration-headers-footers)**
+
+- [Cabeços e rodapés](/pt/docs/configuration-headers-footers#cabeços-e-rodapés) — elementos de texto e de fio por página, com marcadores, paridade e alinhamento.
+
+**[Texto do corpo](/pt/docs/configuration-text)**
 
 - [Texto do corpo](/pt/docs/configuration-text#texto-do-corpo) — tipografia, hifenização, paradas de tabulação, órfãs e viúvas.
-- [Idioma do documento](/pt/docs/configuration-text#idioma-do-documento) — o `locale` de nível superior: alternativa para a hifenização, tipos de recurso embutidos e textos de continuação de tabelas e de boxes divididos, idioma marcado num PDF acessível; os [algarismos](/pt/docs/configuration-text#algarismos-do-documento) (`numerals`) e a [direção do texto](/pt/docs/configuration-text#direção-do-texto) (`direction`) que dele decorrem; e os [idiomas e sistemas de escrita](/pt/docs/configuration-text#idiomas-e-escritas) que o Postext compõe. O guia dos livros da direita para a esquerda é [Composição árabe](/pt/docs/arabic-layout).
-- [Títulos](/pt/docs/configuration-text#títulos) — padrões comuns e substituições de H1 a H6.
-- [Listas com marcadores](/pt/docs/configuration-text#listas-com-marcadores) e [Listas numeradas](/pt/docs/configuration-text#listas-numeradas) — marcadores, numeração, aninhamento.
-- [Matemática](/pt/docs/configuration-text#matemática) — renderização de LaTeX, escala, cor, margens.
+
+**[Hifenização e idioma](/pt/docs/configuration-language)**
+
+- [Hifenização](/pt/docs/configuration-language#hifenização) — padrões de hifenização, palavras que não se dividem, texto em bandeira.
+- [Idioma do documento](/pt/docs/configuration-language#idioma-do-documento) — o `locale` de nível superior: alternativa para a hifenização, tipos de recurso embutidos e textos de continuação de tabelas e de boxes divididos, idioma marcado num PDF acessível; os [algarismos](/pt/docs/configuration-language#algarismos-do-documento) (`numerals`) e a [direção do texto](/pt/docs/configuration-language#direção-do-texto) (`direction`) que dele decorrem; e os [idiomas e sistemas de escrita](/pt/docs/configuration-language#idiomas-e-escritas) que o Postext compõe. O guia dos livros da direita para a esquerda é [Composição árabe](/pt/docs/arabic-layout).
+- [Idiomas e escritas](/pt/docs/configuration-language#idiomas-e-escritas) — os sistemas de escrita que o Postext compõe e as páginas que tratam de cada um.
+- [Texto árabe](/pt/docs/configuration-language#texto-árabe) — formas das letras, kashida, sinais vocálicos e algarismos do texto árabe.
+
+**[Títulos](/pt/docs/configuration-headings)**
+
+- [Títulos](/pt/docs/configuration-headings#títulos) — padrões comuns e substituições de H1 a H6.
+
+**[Viúvas, órfãs e equilíbrio](/pt/docs/configuration-page-flow)**
+
+- [Órfãs, viúvas, linhas curtas e regras de manter junto](/pt/docs/configuration-page-flow#órfãs-viúvas-linhas-curtas-e-regras-de-manter-junto) — chaves de `bodyText` que mantêm linhas e blocos juntos numa quebra de coluna.
+- [Equilíbrio de colunas](/pt/docs/configuration-page-flow#equilíbrio-de-colunas) — os recursos que fazem todas as colunas terminarem na mesma altura, na ordem editorial.
+
+**[Listas e matemática](/pt/docs/configuration-lists-math)**
+
+- [Listas com marcadores](/pt/docs/configuration-lists-math#listas-com-marcadores) e [Listas numeradas](/pt/docs/configuration-lists-math#listas-numeradas) — marcadores, numeração, aninhamento.
+- [Matemática](/pt/docs/configuration-lists-math#matemática) — renderização de LaTeX, escala, cor, margens.
 
 **[Notas e referências](/pt/docs/configuration-notes-references)**
 
@@ -74,9 +94,12 @@ A referência está dividida em nove páginas. Cada grupo desta lista é uma pá
 - [Estilos de parágrafo](/pt/docs/configuration-styles#estilos-de-parágrafo) — estilos nomeados para contêineres `:::paragraphs`: bibliografias, glossários, notas.
 - [Estilos de chip](/pt/docs/configuration-styles#estilos-de-chip) — `chipStyles`: estilos nomeados para o `:chip[…]` em linha: a caixa de um banco de palavras, uma tecla, uma etiqueta.
 - [Listagens de código](/pt/docs/configuration-styles#listagens-de-código) — `codeStyle`: a fonte, a caixa, a largura da tabulação, as linhas longas, os números de linha e as cores dos elementos das listagens ```` ``` ````, a coloração de sintaxe e o seu gancho para realçadores, e o código em linha numa fonte de código.
-- [Estilos de boxe](/pt/docs/configuration-styles#estilos-de-boxe) — notas, dicas e objetivos em boxe para contêineres `:::callout`.
 - [Partes](/pt/docs/configuration-styles#partes) — páginas divisórias de parte para contêineres `:::part`: paridade, área do corpo, design de abertura, tipografia do corpo.
 - [Estilos de título](/pt/docs/configuration-styles#estilos-de-título) — estilos nomeados para títulos `{style="…"}`: capítulos sem número, elementos pré-textuais com seus próprios cabeços, geometria e paleta.
+
+**[Boxes](/pt/docs/configuration-callouts)**
+
+- [Estilos de boxe](/pt/docs/configuration-callouts#estilos-de-boxe) — notas, dicas e objetivos em boxe para contêineres `:::callout`.
 
 **[Ajustes de quadrinhos](/pt/docs/configuration-comics)**
 
@@ -97,7 +120,17 @@ A referência está dividida em nove páginas. Cada grupo desta lista é uma pá
 
 - [Uso programático](/pt/docs/configuration-programmatic-usage#uso-programático) — `buildDocument`, os avisos que ele informa, resolvers, caches.
 - [Executar a diagramação num Web Worker](/pt/docs/configuration-programmatic-usage#executar-o-layout-em-um-web-worker) — builds fora da thread principal, com cancelamento.
-- [Integrar o visualizador HTML](/pt/docs/configuration-programmatic-usage#integração-do-visualizador-html) e [Gerar PDFs](/pt/docs/configuration-programmatic-usage#geração-de-pdf) — receitas completas, de ponta a ponta.
-- [Um livro em 3D (`postext-folio`)](/pt/docs/configuration-programmatic-usage#um-livro-em-3d-postext-folio) — o documento diagramado como um livro impresso aberto sobre uma mesa, com folhas que o leitor vira.
-- [Livros EPUB](/pt/docs/configuration-programmatic-usage#livros-epub-postext-epub) — arquivos EPUB 3 de layout fixo e refluível a partir da mesma diagramação, e como verificá-los com o EPUBCheck.
-- [Pacotes (arquivos `.postext`)](/pt/docs/configuration-programmatic-usage#pacotes-arquivos-postext) — um livro inteiro em um só arquivo: criar, abrir e montar arquivos `.postext` a partir do código.
+
+**[Arquivos PDF](/pt/docs/configuration-pdf-output)**
+
+- [Geração de PDF](/pt/docs/configuration-pdf-output#geração-de-pdf) — `postext-pdf`: provedores de fontes, fontes CJK, workers e arquivos prontos para impressão.
+
+**[HTML, Folio e EPUB](/pt/docs/configuration-html-folio-epub)**
+
+- [Integrar o visualizador HTML](/pt/docs/configuration-html-folio-epub#integração-do-visualizador-html) e [Gerar PDFs](/pt/docs/configuration-pdf-output#geração-de-pdf) — receitas completas, de ponta a ponta.
+- [Um livro em 3D (`postext-folio`)](/pt/docs/configuration-html-folio-epub#um-livro-em-3d-postext-folio) — o documento diagramado como um livro impresso aberto sobre uma mesa, com folhas que o leitor vira.
+- [Livros EPUB](/pt/docs/configuration-html-folio-epub#livros-epub-postext-epub) — arquivos EPUB 3 de layout fixo e refluível a partir da mesma diagramação, e como verificá-los com o EPUBCheck.
+
+**[Pacotes .postext](/pt/docs/configuration-bundles)**
+
+- [Pacotes (arquivos `.postext`)](/pt/docs/configuration-bundles#pacotes-arquivos-postext) — um livro inteiro em um só arquivo: criar, abrir e montar arquivos `.postext` a partir do código.

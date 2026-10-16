@@ -18,13 +18,13 @@ Le pagine da 29 a 33 di un’edizione tascabile dei *Saggi* di Montaigne nell’
 
 <Excerpt region="palette" />
 
-Ogni colore della configurazione rimanda a una di queste voci. Se lasci `header` non definito, il motore disegna la sua testatina predefinita: `{title}` sui recti e `{chapterTitle}` sui versi sopra un filetto da 1 pt, in Open Sans 600 a 8 pt e nel blu `#295AA3` ([intestazioni e piè di pagina](/it/docs/configuration-page-layout#intestazioni-e-piè-di-pagina)). Puntare `main-color` sul seppia ricolora i valori predefiniti del testo e con essi quella testatina, ma il carattere, il filetto e il lato su cui si stampa ciascun titolo restano quelli del motore. Per questo qui ogni testatina è scritta per intero, con ogni colore collegato a una voce della tavolozza. Anche grassetto, corsivo e rimandi usano per impostazione predefinita `main-color`, e `bodyText` li riporta all’inchiostro.
+Ogni colore della configurazione rimanda a una di queste voci. Se lasci `header` non definito, il motore disegna la sua testatina predefinita: `{title}` sui recti e `{chapterTitle}` sui versi sopra un filetto da 1 pt, in Open Sans 600 a 8 pt e nel blu `#295AA3` ([intestazioni e piè di pagina](/it/docs/configuration-headers-footers#intestazioni-e-piè-di-pagina)). Puntare `main-color` sul seppia ricolora i valori predefiniti del testo e con essi quella testatina, ma il carattere, il filetto e il lato su cui si stampa ciascun titolo restano quelli del motore. Per questo qui ogni testatina è scritta per intero, con ogni colore collegato a una voce della tavolozza. Anche grassetto, corsivo e rimandi usano per impostazione predefinita `main-color`, e `bodyText` li riporta all’inchiostro.
 
 ### 2 · Costruisci ogni testatina da un’unica linguetta
 
 <Excerpt region="tab" />
 
-La risposta breve ancora la linguetta di ogni testatina a `'page'`, quindi i suoi scostamenti si misurano dal rifilo. Dall’angolo `top-right` una `x` positiva esce dalla pagina, ed è per questo che la linguetta del recto ne prende una negativa. Il divisore pende dalla linguetta e il titolo dal divisore ([posizionamento degli elementi](/it/docs/configuration-page-layout#collocazione-degli-elementi)). Le misure della linguetta sono costanti con nome perché gli altri pezzi si misurano a partire da esse. Il divisore è alto `TAB_H`. Il folio e i due titoli condividono un riquadro di riga da 9 pt, e la linea di base di un testo di design sta all’80% dell’altezza del suo riquadro di riga, quindi tutti e tre stanno sulla stessa linea di base con qualsiasi corpo.
+La risposta breve ancora la linguetta di ogni testatina a `'page'`, quindi i suoi scostamenti si misurano dal rifilo. Dall’angolo `top-right` una `x` positiva esce dalla pagina, ed è per questo che la linguetta del recto ne prende una negativa. Il divisore pende dalla linguetta e il titolo dal divisore ([posizionamento degli elementi](/it/docs/configuration-headers-footers#collocazione-degli-elementi)). Le misure della linguetta sono costanti con nome perché gli altri pezzi si misurano a partire da esse. Il divisore è alto `TAB_H`. Il folio e i due titoli condividono un riquadro di riga da 9 pt, e la linea di base di un testo di design sta all’80% dell’altezza del suo riquadro di riga, quindi tutti e tre stanno sulla stessa linea di base con qualsiasi corpo.
 
 <PageShot page={2} crop="0.04,0.045,0.6,0.05" caption="Pagina 30, un verso: linguetta, divisore e titolo del libro, letti verso l’interno dal margine esterno." />
 
@@ -40,13 +40,13 @@ Con `mirror: true`, il margine `right` è quello esterno su un recto e passa a s
 
 <Excerpt region="opener" />
 
-L’apertura compone il titolo per intero con `overflow: 'wrap'` e lo manda a capo a ogni `\\` della riga del titolo. Solo un’apertura a tutta larghezza rispetta questi a capo, quindi il livello ha `span: 'page'` ([a capo nei titoli](/it/docs/document-format#a-capo-nei-titoli)). Nella testatina, `{chapterTitle}` dà sempre il titolo su una sola riga, e i puntini tagliano quella riga. Il numerale viene dall’attributo `{num="IV"}` del titolo e il maiuscoletto accanto alla targa dal `subtitle` del frontmatter.
+L’apertura compone il titolo per intero con `overflow: 'wrap'` e lo manda a capo a ogni `\\` della riga del titolo. Solo un’apertura a tutta larghezza rispetta questi a capo, quindi il livello ha `span: 'page'` ([a capo nei titoli](/it/docs/document-format-directives#a-capo-nei-titoli)). Nella testatina, `{chapterTitle}` dà sempre il titolo su una sola riga, e i puntini tagliano quella riga. Il numerale viene dall’attributo `{num="IV"}` del titolo e il maiuscoletto accanto alla targa dal `subtitle` del frontmatter.
 
 ### 5 · Apri ogni saggio su un recto
 
 <Excerpt region="levels" />
 
-Con `'odd'`, un saggio che finisce su un recto è seguito da un verso bianco. L’edizione spagnola ne ha uno, perché il suo capitolo IV finisce a pagina 31; qui il capitolo IV finisce a pagina 32, un verso, e il capitolo V si apre a pagina 33. Il `pages: 'body'` delle testatine le tiene lontane dalle pagine bianche e dalle aperture (le pagine il cui primo blocco è questo titolo). Il `pages: 'opener'` del piè di pagina stampa il folio a piè di pagina solo sulle aperture ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)).
+Con `'odd'`, un saggio che finisce su un recto è seguito da un verso bianco. L’edizione spagnola ne ha uno, perché il suo capitolo IV finisce a pagina 31; qui il capitolo IV finisce a pagina 32, un verso, e il capitolo V si apre a pagina 33. Il `pages: 'body'` delle testatine le tiene lontane dalle pagine bianche e dalle aperture (le pagine il cui primo blocco è questo titolo). Il `pages: 'opener'` del piè di pagina stampa il folio a piè di pagina solo sulle aperture ([elementi di testo](/it/docs/configuration-headers-footers#elementi-di-testo)).
 
 ### 6 · Fai partire i folio da 29
 

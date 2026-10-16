@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Postext Configuration',
   sidebarTitle: 'Configuration',
-  description: 'What a Postext configuration is, and where each group of settings is explained in the nine pages of the reference',
+  description: 'What a Postext configuration is, and where each group of settings is explained in the eighteen pages of the reference',
   lang: 'en',
-  lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 3,
-  plainSummary: "This page opens the reference for every setting that controls how your pages look. One group of settings holds all the choices: page size, number of columns, fonts, text size, headings, boxes, colours and more. You only write the settings you want to change, because each one starts with a sensible value. The reference is split into nine pages. The list on this page links every section, so jump to the part you need.",
+  lastUpdated: '2026-10-16',
+  readingTime: '4 min',
+  order: 4,
+  plainSummary: "This page opens the reference for every setting that controls how your pages look. One group of settings holds all the choices: page size, number of columns, fonts, text size, headings, boxes, colours and more. You only write the settings you want to change, because each one starts with a sensible value. The reference is split into eighteen pages. The list on this page links every section, so jump to the part you need.",
 };
 
 # Configuration
@@ -33,21 +33,41 @@ For an overview of how the engine processes this configuration, see the [Archite
 
 ## Index
 
-The reference is split into nine pages. Each group below is one page, followed by the sections it holds.
+The reference is split into eighteen pages. Each group below is one page, followed by the sections it holds.
 
 **[Page and layout](/en/docs/configuration-page-layout)**
 
 - [Page](/en/docs/configuration-page-layout#page) — size, margins, baseline grid, cut lines, [binding](/en/docs/configuration-page-layout#binding).
 - [Layout](/en/docs/configuration-page-layout#layout) — column count, gutters, rules, [vertical writing](/en/docs/configuration-page-layout#vertical-writing).
-- [Headers & footers](/en/docs/configuration-page-layout#headers--footers) — per-page text and rule elements with placeholders, parity, and alignment.
 
-**[Text and headings](/en/docs/configuration-text)**
+**[Headers and footers](/en/docs/configuration-headers-footers)**
+
+- [Headers & footers](/en/docs/configuration-headers-footers#headers--footers) — per-page text and rule elements with placeholders, parity, and alignment.
+
+**[Body text](/en/docs/configuration-text)**
 
 - [Body text](/en/docs/configuration-text#body-text) — typography, hyphenation, tab stops, orphans and widows.
-- [Document language](/en/docs/configuration-text#document-language) — the top-level `locale`: hyphenation fallback, built-in resource types and the continuation strings of tables and split callouts, the language tagged into an accessible PDF; the [digits](/en/docs/configuration-text#document-digits) (`numerals`) and the [text direction](/en/docs/configuration-text#text-direction) (`direction`) it implies; and the [languages and scripts](/en/docs/configuration-text#languages-and-scripts) Postext sets. The guide to right-to-left books is [Arabic layout](/en/docs/arabic-layout).
-- [Headings](/en/docs/configuration-text#headings) — shared defaults and H1–H6 overrides.
-- [Unordered lists](/en/docs/configuration-text#unordered-lists) and [Ordered lists](/en/docs/configuration-text#ordered-lists) — bullets, numbering, nesting.
-- [Math](/en/docs/configuration-text#math) — LaTeX rendering, scale, colour, margins.
+
+**[Hyphenation and language](/en/docs/configuration-language)**
+
+- [Hyphenation](/en/docs/configuration-language#hyphenation) — hyphenation patterns, words kept whole, ragged text.
+- [Document language](/en/docs/configuration-language#document-language) — the top-level `locale`: hyphenation fallback, built-in resource types and the continuation strings of tables and split callouts, the language tagged into an accessible PDF; the [digits](/en/docs/configuration-language#document-digits) (`numerals`) and the [text direction](/en/docs/configuration-language#text-direction) (`direction`) it implies; and the [languages and scripts](/en/docs/configuration-language#languages-and-scripts) Postext sets. The guide to right-to-left books is [Arabic layout](/en/docs/arabic-layout).
+- [Languages and scripts](/en/docs/configuration-language#languages-and-scripts) — the writing systems Postext sets, and the pages that explain each.
+- [Arabic text](/en/docs/configuration-language#arabic-text) — shaping, kashida, vowel marks and digits of Arabic text.
+
+**[Headings](/en/docs/configuration-headings)**
+
+- [Headings](/en/docs/configuration-headings#headings) — shared defaults and H1–H6 overrides.
+
+**[Widows, orphans and balancing](/en/docs/configuration-page-flow)**
+
+- [Orphans, widows, runts, and keep-together rules](/en/docs/configuration-page-flow#orphans-widows-runts-and-keep-together-rules) — `bodyText` keys that keep lines and blocks together across a column break.
+- [Column balancing](/en/docs/configuration-page-flow#column-balancing) — the levers that make every column end level, in editorial order.
+
+**[Lists and maths](/en/docs/configuration-lists-math)**
+
+- [Unordered lists](/en/docs/configuration-lists-math#unordered-lists) and [Ordered lists](/en/docs/configuration-lists-math#ordered-lists) — bullets, numbering, nesting.
+- [Math](/en/docs/configuration-lists-math#math) — LaTeX rendering, scale, colour, margins.
 
 **[Notes and references](/en/docs/configuration-notes-references)**
 
@@ -74,9 +94,12 @@ The reference is split into nine pages. Each group below is one page, followed b
 - [Paragraph styles](/en/docs/configuration-styles#paragraph-styles) — named styles for `:::paragraphs` containers: bibliographies, glossaries, notes.
 - [Chip styles](/en/docs/configuration-styles#chip-styles) — `chipStyles`: named styles for the inline `:chip[…]`: the box of a word bank, a keyboard key, a tag.
 - [Code listings](/en/docs/configuration-styles#code-listings) — `codeStyle`: the face, box, tab width, long lines, line numbers and token colours of ```` ``` ```` listings, the syntax colouring and its highlighter hook, and inline code in a code face.
-- [Callout styles](/en/docs/configuration-styles#callout-styles) — boxed notes, tips and objectives for `:::callout` containers.
 - [Parts](/en/docs/configuration-styles#parts) — part-divider pages for `:::part` containers: parity, body area, opener design, body typography.
 - [Heading styles](/en/docs/configuration-styles#heading-styles) — named styles for `{style="…"}` headings: unnumbered chapters, front matter with its own running heads, geometry and palette.
+
+**[Callout boxes](/en/docs/configuration-callouts)**
+
+- [Callout styles](/en/docs/configuration-callouts#callout-styles) — boxed notes, tips and objectives for `:::callout` containers.
 
 **[Comics settings](/en/docs/configuration-comics)**
 
@@ -97,7 +120,17 @@ The reference is split into nine pages. Each group below is one page, followed b
 
 - [Programmatic use](/en/docs/configuration-programmatic-usage#programmatic-usage) — `buildDocument`, the warnings it reports, resolvers, caches.
 - [Running layout in a Web Worker](/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker) — off-main-thread builds with cancellation.
-- [Integrating the HTML viewer](/en/docs/configuration-programmatic-usage#integrating-the-html-viewer) and [Generating PDFs](/en/docs/configuration-programmatic-usage#generating-pdfs) — end-to-end recipes.
-- [A 3D book (`postext-folio`)](/en/docs/configuration-programmatic-usage#a-3d-book-postext-folio) — the laid-out document as a printed book lying open on a desk, with leaves the reader turns.
-- [EPUB books](/en/docs/configuration-programmatic-usage#epub-books-postext-epub) — fixed-layout and reflowable EPUB 3 files from the same layout, and checking them with EPUBCheck.
-- [Bundles (`.postext` files)](/en/docs/configuration-programmatic-usage#bundles-postext-files) — a whole book in one file: creating, opening and building `.postext` archives from code.
+
+**[PDF files](/en/docs/configuration-pdf-output)**
+
+- [Generating PDFs](/en/docs/configuration-pdf-output#generating-pdfs) — `postext-pdf`: font providers, CJK fonts, workers and print-ready files.
+
+**[HTML, Folio and EPUB](/en/docs/configuration-html-folio-epub)**
+
+- [Integrating the HTML viewer](/en/docs/configuration-html-folio-epub#integrating-the-html-viewer) and [Generating PDFs](/en/docs/configuration-pdf-output#generating-pdfs) — end-to-end recipes.
+- [A 3D book (`postext-folio`)](/en/docs/configuration-html-folio-epub#a-3d-book-postext-folio) — the laid-out document as a printed book lying open on a desk, with leaves the reader turns.
+- [EPUB books](/en/docs/configuration-html-folio-epub#epub-books-postext-epub) — fixed-layout and reflowable EPUB 3 files from the same layout, and checking them with EPUBCheck.
+
+**[.postext bundles](/en/docs/configuration-bundles)**
+
+- [Bundles (`.postext` files)](/en/docs/configuration-bundles#bundles-postext-files) — a whole book in one file: creating, opening and building `.postext` archives from code.

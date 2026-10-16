@@ -18,7 +18,7 @@ Quatre pàgines, en anglès, del manual d'identitat del Metro de Alba, una xarxa
 
 <Excerpt region="build" />
 
-La composició mesura cada paraula amb les fonts de `document.fonts`, així que `loadBrandFonts()`, a [la resposta curta](#la-resposta-curta), baixa cada fitxer una sola vegada, en desa els bytes i hi registra un `FontFace` abans de cridar `buildDocument`. El `kitFonts` del kit només baixa de Fontsource, i una marca serveix els seus fitxers des del seu propi servidor. `renderToPdf` demana les variants que pinten les pàgines, i `brandFontProvider` respon cada petició amb els bytes ja baixats; a un pes o una cursiva que la marca no tingui li donaria el fitxer més proper de la mateixa família ([Per què un proveïdor de fonts?](/ca/docs/configuration-programmatic-usage#per-què-un-proveïdor-de-fonts)). El PDF incrusta els sis fitxers que va mesurar el canvas, una vegada cadascun.
+La composició mesura cada paraula amb les fonts de `document.fonts`, així que `loadBrandFonts()`, a [la resposta curta](#la-resposta-curta), baixa cada fitxer una sola vegada, en desa els bytes i hi registra un `FontFace` abans de cridar `buildDocument`. El `kitFonts` del kit només baixa de Fontsource, i una marca serveix els seus fitxers des del seu propi servidor. `renderToPdf` demana les variants que pinten les pàgines, i `brandFontProvider` respon cada petició amb els bytes ja baixats; a un pes o una cursiva que la marca no tingui li donaria el fitxer més proper de la mateixa família ([Per què un proveïdor de fonts?](/ca/docs/configuration-pdf-output#per-què-un-proveïdor-de-fonts)). El PDF incrusta els sis fitxers que va mesurar el canvas, una vegada cadascun.
 
 ### 2 · El sistema de color és una sola llista
 
@@ -42,7 +42,7 @@ Un tipus de recurs admet un `captionStyle` parcial, i aquests dos només canvien
 
 <Excerpt region="bundle" />
 
-`createBundle` llegeix `config.customFonts`, busca a `files` els bytes de cada variant pel seu `fileId` i els desa a `fonts/`, amb una entrada `fonts` al manifest. La família de rètols porta `redistributable: false`, que aquí simula una llicència que no deixa repartir els fitxers (la de Big Shoulders Display, l'OFL, sí que ho permet). El seu fitxer es queda fora i `warnings` anomena la família. El fitxer de 81 KB conté el capítol, la configuració, els tres dibuixos i cinc fitxers de font. La composició no llegeix mai `customFonts`, i sense ell les pàgines surten iguals ([Crear un paquet](/ca/docs/configuration-programmatic-usage#crear-un-paquet)).
+`createBundle` llegeix `config.customFonts`, busca a `files` els bytes de cada variant pel seu `fileId` i els desa a `fonts/`, amb una entrada `fonts` al manifest. La família de rètols porta `redistributable: false`, que aquí simula una llicència que no deixa repartir els fitxers (la de Big Shoulders Display, l'OFL, sí que ho permet). El seu fitxer es queda fora i `warnings` anomena la família. El fitxer de 81 KB conté el capítol, la configuració, els tres dibuixos i cinc fitxers de font. La composició no llegeix mai `customFonts`, i sense ell les pàgines surten iguals ([Crear un paquet](/ca/docs/configuration-bundles#crear-un-paquet)).
 
 ## Variants
 

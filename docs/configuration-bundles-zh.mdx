@@ -1,0 +1,295 @@
+{/* docs/configuration-bundles-zh.mdx */}
+
+export const metadata = {
+  title: '以编程方式使用：.postext文件包',
+  sidebarTitle: '.postext文件包',
+  description: '用代码打开、排版、渲染和创建.postext文件，双语文件包，旧版本的文件，以及底层API',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '20分钟',
+  order: 22,
+  parent: 'configuration',
+  plainSummary: "本页写给写代码的人。一个.postext文件把整本书装在一个文件里：文字、设置、字体和图片。本页说明怎样打开这样的文件、给它排版并画出页面。它说明怎样用你自己的文字做一个新文件，以及怎样把一本书的两种语言放在同一个文件里。本页还说明旧版本Postext做出的文件怎样读取。",
+};
+
+# 以编程方式使用：.postext文件包
+
+
+## 文件包（`.postext`文件）
+
+**`.postext`文件**把整本书装进一个文件：它是一个zip压缩包，里面有`preset.json`清单、每章一个Markdown文件、资源的数据文件（位图、SVG、PDF印刷母版），以及配置中用到的字体文件。[沙盒](/zh/docs/sandbox-books-saving#导出与导入)可以导出和导入它，[智能体技能](/zh/docs/skill)以它作为交付物。`postext`包同样能创建和打开它，所以一本书可以在这些工具和你自己的程序之间来回传递，不丢失任何内容。
+
+```
+my-book.postext
+├── preset.json            清单：名称、语言、章节、配置、资源、字体
+├── chapters/01-dusk.md
+├── chapters/02-night.md
+├── resources/lantern.svg
+└── fonts/ebgaramond-400-normal.woff2
+```
+
+清单的各个字段在沙盒文档的附录[预设文件包格式](/zh/docs/sandbox-embedding#预设文件包格式)中逐一说明。文件里还可以带一个`layouts.json`，即沙盒记录的页数，这样书在沙盒中打开时就已经分好页；多语言的书也可以每个版本带一个（如`layouts.zh-Hant.json`，优先读取）。`openBundle`会忽略这些文件。
+
+这套API既从`postext`本身导出，也从`postext/bundle`子路径导出，后者还提供底层辅助函数。如果你同时要渲染，就从`postext`导入。这样文件包适配器和渲染器共用同一个模块实例；在esm.sh这类CDN上，每个入口都是单独构建的，这一点就很重要。
+
+### 打开文件包
+
+`openBundle`接收文件的字节（`Uint8Array`、`ArrayBuffer`，或来自`<input type="file">`的`Blob` / `File`），返回引擎及其各个后端所需的全部内容：
+
+```ts
+import { openBundle } from 'postext';
+
+const bundle = await openBundle(await file.arrayBuffer(), { locale: 'es' });
+
+bundle.chapters;   // [{ title, file, markdown }, …]，按书中顺序排列
+bundle.config;     // PostextConfig，可直接交给buildDocument
+bundle.resources;  // Resource[]
+bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
+```
+
+<table>
+  <thead>
+    <tr><th>字段</th><th>内容</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>manifest</code></td><td>经过校验的<code>preset.json</code>。</td></tr>
+    <tr><td><code>id</code>、<code>name</code>、<code>description</code></td><td>取自清单。</td></tr>
+    <tr><td><code>locale</code>、<code>locales</code></td><td>读取内容时使用的语言，以及双语文件包包含的全部语言。<code>options.locale</code>选择其中之一：先找完全相同的标签，再找基础语言，最后用文件包自己的语言。</td></tr>
+    <tr><td><code>chapters</code></td><td>每章一个<code>&#123; title, file, markdown &#125;</code>。清单中没有标题的章，取其第一个<code>#</code>标题的文字。</td></tr>
+    <tr><td><code>config</code></td><td>依次叠加：默认调色板和文件包语言下的资源类型，然后是清单的<code>config</code>，最后是该语言的覆盖项。文件包的语言就是上面的<code>locale</code>，因此单一语言的文件包总是得到它自己语言的标签，不论<code>options.locale</code>要求什么。清单没有指明语言时，取其<code>config</code>设定的语言（先看<code>locale</code>，再看断词语言），都没有则用<code>options.locale</code>。<code>customFonts</code>列出文件包中的字体家族。沙盒打开文件包时用的也是这份配置。</td></tr>
+    <tr><td><code>resources</code></td><td>各个资源，带有所选语言的题注。清单中缺少的尺寸从文件本身读取。</td></tr>
+    <tr><td><code>fonts</code></td><td>每个字面一项：<code>&#123; family, weight, style, format, file, bytes &#125;</code>。</td></tr>
+    <tr><td><code>files</code></td><td>压缩包中的所有文件，以路径为键。</td></tr>
+    <tr><td><code>thumbnail</code>、<code>canvasScope</code></td><td>封面图片的路径，以及文件包希望的查看方式：清单的<code>view</code>，再以所提供语言的<code>localized[…].view</code>覆盖。</td></tr>
+    <tr><td><code>start</code></td><td>文件包只含一本更长的书的一部分时，这本书从哪里开始：清单的<code>start</code>，或所提供语言的<code>localized[…].start</code>。从头开始的书没有这一项。</td></tr>
+    <tr><td><code>warnings</code></td><td>不致命的问题：不支持的字体文件、缺失的印刷母版等。</td></tr>
+  </tbody>
+</table>
+
+数据文件的<strong>`fileId`就是它在文件包内的路径</strong>。`resource.svg.fileId`、`resource.bitmap.fileId`以及每个`customFonts`变体的`fileId`都可以直接在`bundle.files`中查到。以下情况`openBundle`会抛出异常：字节不是zip；找不到有效的`preset.json`（在根目录或某个顶层文件夹下）；清单中列出的某个文件缺失。
+
+#### postext 1.4及更早版本写出的文件包
+
+`createBundle`和沙盒写出的每份清单都带有`configVersion: 14`，表示其`config`是按哪一版配置规则写的。没有这个字段的清单出自postext 1.4或更早版本，当时有十八处设定与现在不同：
+
+- **标题分页**（规则3）：1.4及以前，`headings`对象若没有给H1设置分页，H1就不分页（见[按级别覆盖](/zh/docs/configuration-headings#按级别覆盖)）。
+- **公式字号**（规则4）：1.4及以前，公式排出的大小是`fontSizeScale`所规定的1.131倍（见[公式字号](/zh/docs/configuration-lists-math#数学公式)）。
+- **行内资源下方的间距**（规则5）：1.4及以前，`placement.position: 'here'`的图或表之后，正文从下一条网格线接着排，下方没有浮动体间距（见[版式](/zh/docs/configuration-page-layout#版式)中的`layout.inlineResourceGap`）。
+- **框内行内资源周围的间距**（规则6）：1.4及以前，这类资源紧贴着所在框的文字（见[版式](/zh/docs/configuration-page-layout#版式)中的`layout.inlineResourceGapInBoxes`）。
+- **标题中的行内标记**（规则6）：1.4及以前，标题中`*italic*`、`**bold**`等标记的文字按标题本身的普通样式排出（见[标题](/zh/docs/configuration-headings#标题)中的`headings.inlineMarks`）。
+- **首字下沉的大小**（规则6）：1.4及以前，设计文本的`dropCap`若没有`fontSize`，其高度等于它跨越的全部行框之和，顶端高出第一行（见[文本元素](/zh/docs/configuration-headers-footers#文本元素)中的`dropCap`）。
+- **冒号行下方的空间**（规则6）：1.4及以前，`keepColonWithList`认为以冒号结尾的那一行下方留出一行空间就足以放列表，于是一个被段首、段末孤行规则保持完整的两行首项会单独移到下一栏，冒号行留在原处（见`bodyText.colonListRoom`）。
+- **框切分后留下的行数**（规则6）：1.4及以前，在段落或列表项内部切分的框，只要框的每一侧总共有`splitMinLines`行，就可能在某一侧只留下该段的一行（见[版式](/zh/docs/configuration-page-layout#版式)中的`layout.boxChildSplitMinLines`）。
+- **破折号处断行**（规则7）：1.4及以前，Knuth-Plass从不在两词之间不留空格的长破折号或短破折号（`say—that’s`）之后断行，带格式文本的逐行断行器也只在两个字母之间的破折号之后断行（见[正文](/zh/docs/configuration-text#正文)中的`bodyText.breakAfterDashes`）。
+- **齐左文本**（规则7）：1.4及以前，齐左的正文逐行排版，排满一行再排下一行，不管`optimalLineBreaking`如何设置（见[正文](/zh/docs/configuration-text#正文)中的`bodyText.optimalRagged`）。
+- **标题下方的切分**（规则8）：1.4及以前，位于栏底的标题下面的段落，能在该栏放下几行就留几行，不管移到下一栏的有多少行（见[标题](/zh/docs/configuration-headings#标题)中的`headings.keepWithNextSplit`）。
+- **`:::paragraphs`容器下方的间距**（规则8）：1.4及以前，样式的间距在网格对齐之前加在最后一段下方，下一个块的上方间距（如标题的`marginTop`）又叠加在其下，而正文的段间距没有计入（见[正文](/zh/docs/configuration-text#正文)中的`bodyText.paragraphContainerSpacing`）。
+- **复合词连字符处断行**（规则8）：1.4及以前，在不含行内格式的段落中，Knuth-Plass从不在两个字母之间的连字符（`well-known`）之后结束两端对齐的行，而在含格式的段落中却会（见[正文](/zh/docs/configuration-text#正文)中的`bodyText.breakAfterHyphens`）。
+- **无分隔符的诗**（规则9）：1.22及以前，各行不含`||`的`:::verse`诗按单独的半句排，每行居中（见[诗歌](/zh/docs/configuration-text#诗歌)下的`bodyText.verse.layout`）。
+- **首行缩进与悬挂缩进并用**（规则9）：1.22及以前，段落样式的`hangingIndent`取代其`firstLineIndent`，首行从`indent`开始（见[段落样式](/zh/docs/configuration-styles#段落样式)）。
+- **行末的反斜杠**（规则9）：1.22及以前，段落、引文或列表项中行末的反斜杠，以及后跟空格的`\\`，都照样印出，各行用空格连接（见[正文](/zh/docs/configuration-text#正文)下的`bodyText.hardLineBreaks`）。
+- **代码围栏**（规则9）：1.22及以前，```` ``` ````或`~~~`围栏及其中的行按Markdown读取：各行合并成段落，以`#`开头的行变成标题，围栏照样印出（见[代码清单](/zh/docs/configuration-styles#代码清单)下的`codeStyle.blocks`）。
+- **诗行转行**（规则10）：在1.23中，逐行排的诗里比版心宽的诗行一律以自然词距转行，哪怕只超出一点（见[诗歌](/zh/docs/configuration-text#诗歌)下的`bodyText.verse.tighten`）。
+
+`openBundle`和`readBundle`读取这类清单的`config`以及每种语言的`localized`配置时，会经过`migrateConfig`：它把1.4排出的分页明确写出来，并把公式缩放乘以1.131（其以`em`为单位的公式外边距则除以1.131）。标记为`3`到`7`的清单出自1.5的预发布版本，只会补上其标记之后那些规则的固定值。标记为`3`时，固定公式字号、行内间距、规则6的五项、规则7的两项和规则8的三项；为`4`时，固定行内间距以及规则6、7、8的各项；为`5`时，固定规则6、7、8的各项；为`6`时，固定规则7和8的各项；为`7`时，只固定规则8的各项。标题下方的切分（`pinLegacyHeadingSplit`）写成`headings.keepWithNextSplit: 'fill'`，加在各层叠加后生效的`headings`上，条件是：读取的某一章有标题，配置本身没有给出值，`headings.keepWithNext`保持开启，且没有关闭`bodyText.avoidOrphans`。复合词断行（`pinLegacyHyphenBreaks`）写成`bodyText.breakAfterHyphens: false`，加在生效的`bodyText`上，条件是：读取的某一章在两个字母之间用了连字符，且配置既没有设置该项，也没有关闭`optimalLineBreaking`。容器下方的间距（`pinLegacyParagraphContainerSpacing`）写成`bodyText.paragraphContainerSpacing: 'add'`，加在生效的`bodyText`上，条件是：配置声明了段落样式（在`paragraphStyles`或HTML查看器的覆盖项中），读取的某一章在单独一行打开了`:::paragraphs`容器，且配置没有设置该项。破折号断行（`pinLegacyDashBreaks`）写成`bodyText.breakAfterDashes: false`，加在生效的`bodyText`上，条件是：读取的某一章在两词之间不留空格地使用了长破折号或短破折号（前面是字母、数字或闭合标点，后面是字母、数字或开括号、开引号；前面是引号时，只要引号前是字母、数字、闭合标点或不间断空格也算，如`"no"—and`，而`said "—Hola`不算；紧贴破折号或引号的行内标记，如`**riddles.**—I`中的`**`，在哪一侧都算），且配置没有设置该项。齐左断行（`pinLegacyRaggedBreaking`）写成`bodyText.optimalRagged: false`，加在生效的`bodyText`上，条件是：配置把某些正文设为齐左（正文、段落样式、框体、篇的正文或章节样式的正文（`headingStyles[].bodyStyle`）的`textAlign`不是`'justify'`，或在HTML查看器的覆盖项中如此设置），没有设置该项，也没有关闭`optimalLineBreaking`。框内间距（`pinLegacyBoxResourceGap`）写成`layout.inlineResourceGapInBoxes: false`，加在生效的`layout`上，条件是：读取的章节中，某个`:::callout`内有单独一行嵌入的资源，且配置没有设置该项。框的切分（`pinLegacyBoxChildCut`）写成`layout.boxChildSplitMinLines: 1`，加在生效的`layout`上，条件是：读取的某一章在单独一行打开了`:::callout`，且配置没有设置该项。标题标记（`pinLegacyHeadingMarks`）写成`headings.inlineMarks: false`，加在各层叠加后生效的`headings`上，条件是：读取的章节中某个标题带有标记（标题中有`*`、`_`、`^`、`~`、`:smallcaps[`或链接），且配置本身没有给出值。首字下沉（`pinLegacyDropCapSize`）不论位于何处，都把1.4时的大小写成`dropCap.fontSize`：元素的行距是长度时用行距的单位，否则用其字号的单位。冒号行下方的空间（`pinLegacyColonListRoom`）写成`bodyText.colonListRoom: 'line'`，加在生效的`bodyText`上，条件是：读取的章节中有列表紧跟在以冒号结尾的行之后（中间允许有空行），且配置既没有指定空间，也没有关闭`keepColonWithList`。行内间距（`pinLegacyInlineGap`）写成`layout.inlineResourceGap: 'above'`，加在各层叠加后生效的`layout`上，条件是：读取的章节中有一行嵌入了资源（按解析器的读法，`::resource{id="…"}`单独占一行；正文或代码片段中提及不算），且配置本身没有给出间距。公式字号固定在各层叠加后生效的`math`上（某种语言自己的`math`会取代共享的那个），而且只在读取的章节中有`$`时才这样做：没有公式的文件包保持其`config`原样。若清单和语言都没有给出`math`，生效的就是`readBundle`的`baseConfig`（读取方自己的配置），它也会被固定，因为1.4就是按这个字号排文件包里的公式的：基础配置的`fontSizeScale: 1.5`读出来是1.5 × 1.1312。基础配置的标题分页保持原样。因此，旧文件包会保留这些规则排出的效果，`bundle.config`会显示排版时所用的分页、公式字号、各项间距、标题标记、首字下沉大小、冒号行下方空间、框的切分、破折号断行、复合词断行、齐左断行、标题下方的切分和容器下方的间距。1.5的版面修正没有对应的固定值，对它和对其他书一样生效，所以受影响的页面仍可能有变化（清单见[公式字号](/zh/docs/configuration-lists-math#数学公式)）。为现行规则手写的`preset.json`应设置`"configVersion": 14`；给旧文件包的清单加上这个标记，也是用现行规则读取它的一行做法（此时没有版本号的文件包也会失去标题分页的固定值）。标为`8`的清单（由postext 1.5至1.22写出）只得到规则9的四项固定，更早的清单也会得到：诗的排法（`pinLegacyVerseLayout`）写成生效的`bodyText`上的`bodyText.verse.layout: 'bayt'`，条件是读取的章节中有开始标记未指定排法、各行不带半句分隔符的`:::verse`诗，且配置尚未设置该项；成对的缩进（`pinLegacyPairedIndents`）去掉同时设置了非零`hangingIndent`的每个段落样式（在`paragraphStyles`或HTML查看器的覆盖设置中）的`firstLineIndent`；强制换行（`pinLegacyHardBreaks`）写成生效的`bodyText`上的`bodyText.hardLineBreaks: false`，条件是读取的章节中有段落、引文或列表项的某行以反斜杠结尾且该块在下一行继续，或有后跟空格和其他文字的`\\`（行内代码和公式、独立公式、标题和`:::verse`诗除外），且配置尚未设置该项；代码围栏（`pinLegacyCodeBlocks`）写成`codeStyle.blocks: false`，条件是读取的章节中打开了```` ``` ````或`~~~`围栏（三个或更多字符，最多缩进三个空格），且配置尚未设置该项。标为`9`的清单（由postext 1.23写出）只得到规则10的固定值，更早的清单也都会得到：诗行转行（`pinLegacyVerseTightening`）写成生效的`bodyText`上的`bodyText.verse.tighten: false`，条件是读取的章节中有逐行排的诗（`:::verse`开始标记写明`layout=lines`，或未写排法且各行没有半句分隔符，而配置并未把这类诗排成双半句），且配置尚未设置该项。标为`10`的清单（由postext 1.24写出）只得到规则11的固定值，更早的清单也都会得到：字符网格的齐底（`pinLegacyGridBalancing`）写成生效的`headings`上的`headings.balancing.enabled: true`，条件是合并后的配置在横排中设置了`cjk.grid.enabled`，且本身没有设置`enabled`，因为1.24默认会对这样的页面做齐底。规则11还使书名不在第一个字之后断开、带圈数字按汉字排、CJK设计文字按正文规则排版（#637）：标为`10`或更早的清单，若读取的章节含有书名（《、〈或`:book[`），会在生效的`cjk`上得到`cjk.titleMinChars: 1`（`pinLegacyTitleBreaks`）；若含有带圈数字（U+2460—U+24FF、U+2776—U+2793），得到`cjk.circledNumbers: 'western'`（`pinLegacyCircledNumbers`）；若读取的章节或配置本身含有CJK文字，得到`cjk.composeDesignText: false`（`pinLegacyDesignText`）。以上各项都只在配置尚未设置该项时写入。规则11还会切开行内表，并在正文中排`:::columns`（#634）：标为`10`或更早的清单，若读取的章节嵌入了资源，会在生效的`tableStyle`上得到`tableStyle.splitInline: false`（`pinLegacyInlineTableSplit`）；若读取的章节在单独一行上开启`:::columns`围栏，会在生效的`layout`上得到`layout.flowColumns: false`（`pinLegacyFlowColumns`）。两项都只在配置尚未设置该项时写入。这些规则还把通栏标题所在栏的栏首作为浮动体的空位（#639）：标为`10`或更早的清单，若合并后的配置设有`span: 'page'`的标题级别或标题样式，且读取的章节含有标题，会在生效的`layout`上得到`layout.floatsUnderOpener: false`（`pinLegacyOpenerHeadFloats`），同样只在配置尚未设置该项时写入。规则12让字符网格上的页面排满应有的行数（#717）：标为`11`或更早的清单，若合并后的配置开启了`cjk.grid.enabled`，会在生效的`bodyText`上得到`bodyText.avoidWidows: true`，在`japan`地区还会得到`bodyText.avoidOrphans: true`（`pinLegacyGridBreakRules`），每一项都只在配置尚未设置时写入。这些规则还让双行夹注在断行处两侧各留两个字（#720）：这样的清单，若读取的章节含有`:warichu[`夹注，或合并后的配置设有`citations.notes: 'warichu'`，会在生效的`cjk`上得到`cjk.warichu.minChars: 1`（`pinLegacyNoteBreaks`），同样只在配置尚未设置该项时写入。在日本地区，西文单词的括号和符号旁边也加中西文间距（#721）：标为`11`或更早的清单，若合并后的配置属于日本地区，且读取的章节含有假名或汉字，会在生效的`cjk`上得到`cjk.latinSpacingEdge: 'letters'`（`pinLegacyLatinSpacingEdge`），同样只在配置尚未设置该项时写入。随文放置的资源也像栏内浮动体那样采用`placement.captionSide`（#729）：标为`11`或更早的清单，若合并后的配置设置了`layout.layoutType: 'oneAndHalf'`，且读取的章节嵌入了资源，会得到`layout.inlineCaptionSide: false`（`pinLegacyInlineCaptionSide`），同样只在配置尚未设置该项时写入。
+
+规则12还改变了短栏的齐底方式，标为`11`或更早的清单保持它原来排版时的做法。各手段的顺序（#707）：若读取的章节含有标题，且合并后的配置对各栏做齐底、允许一个标题加两行以上、又尚未设置该项，清单会在生效的`headings`上得到`headings.balancing.maxLinesBeforeLoose`，其值取自己的`maxLinesPerHeading`，未设置时为`4`（`pinLegacyLooseOrder`）。跨栏图下方的加行（#708）：若读取的章节嵌入或引用了资源，或让一个框浮动，且合并后的配置对各栏做齐底、没有关闭`stretchAfterFloats`、又尚未设置该项，清单会在生效的`headings`上得到`headings.balancing.stretchAfterWideFloats: 'always'`（`pinLegacyWideFloatStretch`）。索引各组内部的换栏（#712）：若读取的章节有独占一行的`:::index`围栏，且配置尚未设置该项，清单会在生效的`index`上得到`index.groups.splitMinEntries: 1`（`pinLegacyIndexGroupSplit`）。截平的单位（#711）：若读取的章节可能排出不在正文行距上的文字（`:::`围栏、代码围栏、引文、列表、独立公式或文献引用），且合并后的配置对各栏做齐底、保留`trailing`或`beforeSpan`、又尚未设置该项，清单会在生效的`headings`上得到`headings.balancing.trailingStep: 'grid'`（`pinLegacyTrailingStep`）。
+
+规则12让以文字印出的引用在引用文字的空格处断开（#702）。若读取的章节含有引用（`:ref{…}`、`\ref{…}`、`\eqref{…}`或pandoc-crossref的`@id`），且配置没有设置该项，标为`11`或更早的清单会在生效的`crossRefs`上得到`crossRefs.breakLabels: false`（`pinLegacyRefLabelBreaks`）：每个引用文字仍是原来排版时的那一个词。
+
+规则12让没有字母的词（`46.`、`1367)`）按周围文字的书写系统成形（#725）。标记为`11`或更早的清单，只要配置没有写明这项设置，不论章节内容如何，都会在生效的`bodyText`上得到`bodyText.scriptContext: false`（`pinLegacyScriptContext`）：这类词仍然单独成形，与当初排版时一样。这条规则只对按书写系统绘制标点的字体起作用，而读取清单时并不知道这本书加载哪些字体。
+
+规则13把文字成形所用的语言做成一项设置（#764），规则14把文档自己的语言定为它的默认值（#770）。标为`13`或更早的清单，只要配置没有写明这项设置，不论章节内容如何，都会在生效的`bodyText`上得到`bodyText.shapingLanguage: 'host'`（`pinLegacyShapingLanguage`）；写明了值的清单保持它的值。它的文字按承载排版的页面的语言测量，在工作线程里不带语言，与当初排版时一样。标为`13`的清单由postext 1.29写出：1.29.1和1.29.2按宿主的语言排没有写明这个值的书，固定值也是这样；1.29.0的默认值是`'document'`，它按文档的语言排这样的书，Canvas和PDF却没有跟着测量走，这样的书现在也按`'host'`读取。标为`14`而没有写明这个值的清单，按文档的语言排版。
+
+规则13还由引擎绘制任务项（`- [ ]`、`- [x]`）的方框：一个方形轮廓，任务完成时带一个勾，在列表项文字之前占有自己的宽度（#765）。标为`12`或更早的清单，只要有章节含有任务项而配置没有写明这项设置，就会在生效的`unorderedLists`上得到`unorderedLists.taskBox: 'character'`（`pinLegacyTaskBox`）。它的方框仍是按列表字体排出的字符`☐`或`☑`，列表项的文字从这个字符的宽度之后开始，与当初排版时一样。这个宽度来自含有该字符的字体，多数书里是系统的某个字体，而读取清单时并不知道它。
+
+```ts
+import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
+
+migrateConfig({ headings: { fontFamily: 'Georgia' } }, undefined, { content: 'A book with no maths.' });
+// => { headings: { fontFamily: 'Georgia', levels: [{ level: 1, breakBefore: { enabled: false } }] } }
+migrateConfig({ math: { fontSizeScale: 1.2 } }, 3);
+// => { math: { fontSizeScale: 1.35746…, marginTop: { value: 0.7072, unit: 'em' }, marginBottom: { value: 0.7072, unit: 'em' } },
+//      layout: { inlineResourceGap: 'above', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1 },
+//      headings: { inlineMarks: false, keepWithNextSplit: 'fill' }, bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false } }
+migrateConfig({ layout: { layoutType: 'single' } }, 4, { content: 'Text.\n\n::resource{id="fig"}' });
+// => { layout: { layoutType: 'single', inlineResourceGap: 'above' } }
+migrateConfig({ layout: { layoutType: 'single' } }, 5, { content: ':::callout\nText.\n\n::resource{id="fig"}\n:::' });
+// => { layout: { layoutType: 'single', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1 } }
+migrateConfig({ bodyText: { textAlign: 'left' } }, 6, { content: 'I say—that is all.' });
+// => { bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false } }
+migrateConfig({ paragraphStyles: [{ id: 'verse' }] }, 7, { content: ':::paragraphs{style="verse"}\nA line.\n:::' });
+// => { paragraphStyles: [{ id: 'verse' }], bodyText: { paragraphContainerSpacing: 'add' } }
+migrateConfig({ bodyText: { fontFamily: 'Georgia' } }, 7, { content: 'A well-known tale.' });
+// => { bodyText: { fontFamily: 'Georgia', breakAfterHyphens: false } }
+migrateConfig(config, CONFIG_VERSION); // 现行规则：返回`config`本身
+```
+
+`content`是该配置要排版的Markdown（一个字符串或一组章节）。不提供它时，只要开启了公式就固定公式字号，只要配置声明了段落样式就固定容器下方的间距，而两项间距、标题标记、冒号行下方空间、框的切分、破折号断行、标题下方的切分和复合词断行总是固定，因为引擎无法判断书中是否有公式、`:::paragraphs`容器、行内图、带标记的标题、冒号引出的列表、框、不留空格的破折号、标题或复合词。齐左断行只看配置决定是否固定，与有无内容无关。存储的配置只迁移一次，然后以`CONFIG_VERSION`重新存储：公式的固定值会乘以缩放，迁移两次就会放大两次。没有它时，诗的排法和代码围栏也会被固定，因为书中可能有不带分隔符的`:::verse`诗或围栏；成对的缩进则只看配置本身。1.23的诗行转行也会被固定，因为书中可能有逐行排的诗。
+
+### 排版和渲染文件包
+
+有四个辅助函数把打开的文件包接到引擎和各个后端上：
+
+- <strong>`loadBundleFonts(bundle)`</strong>把文件包的字面注册到`document.fonts`，并把它们的字节注册到引擎的字体注册表，供SVG图片使用（`registerFontBytes`）。排版前要等它完成，因为排版时是用浏览器已有的字体测量文字的。文件包中提到但没有携带的字体家族（Google Fonts）仍需你自己加载，和其他文档一样。
+- <strong>`registerBundleImages(bundle)`</strong>为Canvas后端（`renderPage`、`renderToCanvas`）解码图片，包括视频封面。<strong>`bundleImageUrl(bundle)`</strong>是`renderToHtml`的`resourceImageUrl`解析器，<strong>`bundleVideoUrl(bundle)`</strong>则是它的`resourceVideoUrl`解析器，用于文件包携带的视频文件。开启`diagramStyle.singleInk`时，两者都会对SVG图重新着色一次：它们改写标记本身并给图片打上标记，任何后端都不会再次着色（见[Canvas与HTML中的单色墨](/zh/docs/configuration-resources#canvas与html中的单色模式)）。两者还会在每个SVG中嵌入其文字指定的字面，先取文件包自己的字体，再取向引擎注册的字体（见[SVG文字中的字体](/zh/docs/configuration-resources#svg文字中的字体)）；`registerBundleImages(bundle, { onWarning })`和`bundleImageUrl(bundle, { onWarning })`会报告没有字面可用的字体族。
+- <strong>`buildBundle(bundle)`</strong>按顺序排版各章，每章返回一个`VDTDocument`。每一章都接续前一章：标题和资源的计数器、当前所在的篇、页的奇偶和页码。印出目录（`:::toc`）或索引（`:::index`）的章会拿到整本书的大纲。它接受与`buildDocument`相同的选项，另加用来覆盖文件包配置的`config`、共享测量缓存的`cache`，以及`metadata`（见下文）。
+- <strong>`bundleResourceBytes(bundle)`</strong>和<strong>`bundleFontProvider(bundle, { decodeWoff2, fallback })`</strong>分别对应`postext-pdf`的`renderToPdf`的`resourceBytes`和`fontProvider`选项。字体提供器从文件包中为所请求的样式挑选最接近的字重。对`.woff2`字面，它需要`decompressWoff2`；对文件包没有携带的字体家族，它以渲染器传来的参数（包括`request`）调用`fallback`，并原样转交其返回值。如果后备函数只获取某个家族的`latin`文件，文件包没有嵌入的中文字体就会印成空方框；如果它按分片应答，例如[中文、日文和韩文字体](/zh/docs/configuration-pdf-output#中文日文和韩文字体)中的`sliceFontProvider`，就能完整印出。
+
+```ts
+import { openBundle, loadBundleFonts, registerBundleImages, buildBundle, renderPage,
+  bundleResourceBytes, bundleFontProvider } from 'postext';
+import { renderToPdf, decompressWoff2 } from 'postext-pdf';
+
+const bundle = await openBundle(bytes);
+await loadBundleFonts(bundle);
+await registerBundleImages(bundle);
+
+const docs = buildBundle(bundle);                        // 每章一个VDTDocument
+const firstPage = renderPage(docs[0].pages[0], docs[0]); // 一个<canvas>
+
+const pdf = await renderToPdf(docs, {                    // 整本书
+  fontProvider: bundleFontProvider(bundle, { decodeWoff2: decompressWoff2, fallback: fontsource }),
+  resourceBytes: bundleResourceBytes(bundle),
+});
+```
+
+如果要自己排某一章，把`bundle.chapters[i].markdown`、`bundle.resources`和`bundle.config`传给`buildDocument`，和其他文档一样。
+
+**书的元数据**。和沙盒一样，第一章的前置元数据就是整本书的元数据：`buildBundle`把其中的`title`、`author`等传给每一章，所以`{title}`和`{author}`书眉在每一页都有效，每章的`doc.metadata`也都带有这些值。后面各章开头的前置元数据块会被忽略：它按`---`行识别，不经解析直接清空，所以解析器无法接受的YAML也不会造成问题。`options.metadata`提供前置元数据没有设置的值（以前置元数据为准）。整本书的页数也会传到每一章：`{bookTotalPages}`印出它，而`{totalPages}`只计本章（见[全书页数](/zh/docs/configuration-headers-footers#全书页数)）。
+
+```ts
+const docs = buildBundle(bundle, { metadata: { author: 'A. Author' } });
+docs[3].metadata.title;   // 第一章的`title:`
+```
+
+**书从哪里开始**。一个文件包可以只含一部更长出版物的一部分：某期刊物的第58到61页，某本教材的第4章。它的`start`说明前面有什么，用的是`buildDocument`的`continuation`的字段：第一页之前的页数（`pageIndexOffset`，它决定第1页落在哪一面，镜像的页边距和奇偶页的页眉也随之而定）、当前生效的页码编排（`pageNumbering`）、标题计数器（`headings`）、尚未结束的部分（`part`），以及资源、编号条目、脚注和行号的计数器。`createBundle`把它写成`preset.json`的`start`，`openBundle`通过`bundle.start`返回它，`buildBundle`用它排第一章，结果与`buildDocument({ markdown, continuation: start }, config)`相同，后面的各章从这里接着排；`{bookTotalPages}`也把书之前的页数算在内。没有`start`的清单照旧读取，不认识这个字段的读取程序会忽略它。`bookPageCount`不在其中：页数由读取方来数。在多语言的文件包里，`localized[…].start`可以给某个版本单独指定起点。
+
+```ts
+const { bytes } = await createBundle({
+  name: 'Field notes, chapter 4',
+  markdown,
+  config,
+  // 第58页（偶数页），第4章。
+  start: { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } },
+});
+const bundle = await openBundle(bytes);
+bundle.start;                 // { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, … } }
+const [doc] = buildBundle(bundle);
+doc.pages[0].pageLabel;       // '58'
+```
+
+### 在线示例：打开文件包
+
+这个pen从仓库加载一本两章的示例书（`lantern.postext`，带有自己的字体、一幅SVG图和一张表）。它注册文件包的字体和图片，用`buildBundle`排版全书并绘制每一页。*Make the PDF*用`postext-pdf`渲染同样的文档，并嵌入文件包中的字体。选择一个你自己的`.postext`文件（比如从沙盒导出的），也能以同样的方式查看。
+
+<CodePenExample name="open-bundle" title="Postext · 打开.postext文件包" description="用postext打开.postext文件，排版全书并渲染到Canvas和PDF。" height={640} />
+
+### 创建文件包
+
+`createBundle`根据一份文档写出`.postext`文件：包括它的章节、配置、资源以及资源引用的数据文件。
+
+```ts
+import { createBundle } from 'postext';
+
+const { bytes, manifest, warnings } = await createBundle({
+  name: 'The Lantern',
+  locale: 'en',
+  chapters: [
+    { markdown: '# Dusk\n\nIt is drawn in :ref{id="lantern"}.' },
+    { title: 'Night', markdown: '# Night\n\n…' },
+  ],
+  config,
+  resources: [{
+    id: 'lantern', typeId: 'figure', kind: 'svg', caption: 'The lantern.',
+    svg: { fileId: 'lantern.svg', width: 240, height: 150 },
+    createdAt: 0, updatedAt: 0,
+  }],
+  files: { 'lantern.svg': svgMarkup, 'garamond-regular': fontBytes },
+});
+```
+
+<table>
+  <thead>
+    <tr><th>输入</th><th>含义</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>name</code>、<code>id</code>、<code>description</code>、<code>locale</code></td><td>清单的元数据。<code>id</code>默认取<code>name</code>的slug。</td></tr>
+    <tr><td><code>chapters</code>或<code>markdown</code></td><td>书的内容，每章一个<code>&#123; title?, markdown &#125;</code>，或者单个文档。</td></tr>
+    <tr><td><code>config</code></td><td><code>PostextConfig</code>。与默认值相同的值不写入清单。</td></tr>
+    <tr><td><code>resources</code></td><td>各个资源。图片通过<code>bitmap.fileId</code> / <code>svg.fileId</code>指明其数据文件（印刷母版用<code>svg.pdfFileId</code>）。</td></tr>
+    <tr><td><code>files</code></td><td>按<code>fileId</code>给出的数据文件（对象或<code>Map</code>）：资源引用的图片，以及<code>config.customFonts</code>各变体引用的字体文件。值可以是<code>Uint8Array</code>、<code>ArrayBuffer</code>、<code>Blob</code>或字符串（SVG标记）。</td></tr>
+    <tr><td><code>thumbnail</code></td><td><code>&#123; data, mime &#125;</code>：封面图片（PNG、JPEG、WebP、GIF或SVG）。</td></tr>
+    <tr><td><code>canvasScope</code></td><td><code>'book'</code>要求查看器把整本书排成一张画布。</td></tr>
+    <tr><td><code>start</code></td><td>文件包只含一本更长的书的一部分时，这本书从哪里开始：也就是单独构建一份文档时会传入的<code>continuation</code>。写入清单的<code>start</code>。</td></tr>
+    <tr><td><code>mtime</code></td><td>写在压缩包每个文件上的修改日期（<code>Date</code>、时间戳或日期字符串）。省略时取调用时刻，因此相同输入的两次调用会得到不同的字节。传入固定日期，相同输入就得到相同字节，可以用来计算哈希或比较。zip记录的日期和时间不带时区，以两秒为步长，范围是1980年到2099年，并按本机的本地时间写入。要在所有机器上得到相同的字节，请用本地字段构造日期，例如<code>new Date(1980, 0, 1)</code>：时间戳或以<code>Z</code>结尾的字符串表示一个绝对时刻，在不同时区对应不同的本地时间（<code>'1980-01-01T00:00:00Z'</code>在UTC以西仍是1979年）。按本地时间落在这些年份之外的日期会抛出异常。</td></tr>
+    <tr><td><code>localized</code></td><td>同一本书的其他语言，以语言标签为键：<code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>。此时上面的输入就是<code>locale</code>语言的内容，而<code>locale</code>变为必填。见<a href="#双语文件包">双语文件包</a>。</td></tr>
+  </tbody>
+</table>
+
+它返回压缩包的`bytes`、写成`preset.json`的`manifest`、以`files`给出的所有文件（路径 → 字节），以及一个`warnings`列表。文件按资源id（`resources/lantern.svg`）或字体文件名（`fonts/…`）命名，章节按顺序和标题命名（`chapters/01-dusk.md`）。字体声明在清单的`fonts`中，从不放在`config.customFonts`里。以下内容会被略去，并各给出一条警告：
+- 数据文件不在`files`中的资源或字面
+- `.woff`字面（PDF后端无法嵌入）
+- 标记为`redistributable: false`的字体家族
+
+在浏览器中，把`bytes`交给下载链接：`URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }))`。在Node中，用`fs.writeFile`写出。`createBundle`和`openBundle`不需要DOM。发布包中的模块路径不带扩展名，所以在不用打包工具的纯Node环境下需要一个解析钩子。仓库中的`docs/examples/open-bundle/build-sample.mjs`用几行代码展示了一个。
+
+### 双语文件包
+
+一个`.postext`文件可以包含一本书的多种语言版本，`openBundle(bytes, { locale })`可以按其中任何一种读取。`createBundle`根据`localized`写出这种文件：每种额外语言一项，每项只写与主要内容（`locale`输入）不同的部分：
+
+```ts
+const { bytes, manifest } = await createBundle({
+  name: 'The Lantern',
+  locale: 'en',
+  chapters: [{ markdown: '# Dusk\n\n…' }, { markdown: '# Night\n\n…' }],
+  config,
+  resources: [lanternFigure, hoursTable],
+  files: { 'lantern.svg': svgEn, 'lantern-es.svg': svgEs },
+  localized: {
+    es: {
+      chapters: [{ markdown: '# Anochecer\n\n…' }, { markdown: '# Noche\n\n…' }],
+      config: { headings: { levels: [{ level: 1, numberingTemplate: 'Capítulo {1}' }] } },
+      resources: [
+        { id: 'lantern', caption: 'El farol.', svg: { fileId: 'lantern-es.svg', width: 240, height: 150 } },
+        { id: 'hours', caption: 'Horas de luz.' },
+      ],
+    },
+  },
+});
+
+const es = await openBundle(bytes, { locale: 'es' });   // 西班牙语的章节、配置和题注
+```
+
+- **`chapters`**：该语言的书。章节文件按语言分文件夹存放（`chapters/en/01-dusk.md`、`chapters/es/01-anochecer.md`），清单的`chapters`变成语言 → 章节的映射。没有`chapters`的语言读取主要语言的章节；如果没有任何语言有自己的章节，它们就仍是单一列表。
+- **`config`**：该语言的配置。以该语言读取文件包时，每个顶层键整体取代共享的同名键，所以上例中的`headings`会取代整个`headings`对象。省略的键或与共享值相同的键视为共享，不会写出，因此传入该语言的完整配置和只传入少数改动的键效果一样。如果某个键设为默认值而共享的键不是（`layout: {}`），就照原样写出，从而把共享值重置。字体是共享的：某种语言`customFonts`中的字体家族会并入文件包的`fonts`。
+- **`resources`**：共享资源的文字，按`id`对应：`caption`、`note`、`altText`以及表格的`table`。含有文字的图片可以有自己的图稿：`bitmap.fileId`或`svg.fileId`（以及`svg.pdfFileId`）指向`files`中的另一个数据文件，写为`resources/es/lantern.svg`。其他字段，如类型或位置，都是共享的。不在`resources`中的id会被略去并给出警告；缺少某种语言的图片时，该语言沿用共享的图片，同样给出警告。
+
+清单在`locales`中列出所有语言（`['en', 'es']`），把主要语言保存为`locale`，其余的保存在`localized`下。不指定语言时，`openBundle`读取主要语言。
+
+**读者得到哪种语言。**`openBundle(bytes, { locale })`先提供完全匹配的语言，其次是其基础语言（`es-MX`读取`es`），最后是主要语言，`bundle.locale`说明实际提供的是哪一种。章节和文字总是来自同一种语言。即使`localized`带有主要语言的某个地区变体，主要语言也保留共享的文字：一个`pt-PT`文件包带有`pt-BR`项时，只有`pt-BR`读到巴西葡萄牙语的题注，`pt-PT`和`pt`读到的都是共享题注。
+
+### 在线示例：创建文件包
+
+这个pen构建一本带有一幅SVG图的两章书，列出`createBundle`写出的文件以及清单。它提供压缩包下载，然后用`openBundle`重新打开并绘制第一页：几行代码走完整个往返过程。把下载的文件导入沙盒，就可以在那里继续编辑。
+
+<CodePenExample name="create-bundle" title="Postext · 创建.postext文件包" description="用postext的createBundle写出.postext文件，下载后再重新打开。" height={640} />
+
+### 使用文件包
+
+沙盒、智能体技能和`postext`包读写的是同一种文件，所以`.postext`文件很适合在工具之间传递一本书：
+
+- **从文件包开始**。用[智能体技能](/zh/docs/skill)移植一本现有出版物，或者在[沙盒](/zh/sandbox)中设计一本书并导出（在书籍面板中该书那一行的⋯菜单里选**下载（.postext）**）。在你的程序中用`openBundle`加载文件，渲染到Canvas、HTML或PDF。把这个文件当作书的源文件：在代码中编辑章节、配置或资源，再用`createBundle`写回；或者在文件变动时重新加载即可。
+- **在沙盒中调试和微调**。当程序的输出有地方需要调整时（某幅图落错了页、某个标题样式、各栏齐底），用`createBundle`把程序排版的内容导出。在沙盒中导入该文件（*书库 → 新建 → 打开.postext文件…*），借助实时预览、检查面板和PDF视图修改文字、设计或图，然后再次导出。你的程序随后用`openBundle`加载修正后的文件。也可以把改动抄回代码：清单的`config`只包含与默认值不同的值，读起来就像一份简短的diff。
+
+### 底层API
+
+`postext/bundle`还导出了`openBundle`和`createBundle`背后的构建模块，供以自己的方式存储或提供文件包的宿主使用（例如通过HTTP提供的解压目录、数据库中的记录）：
+
+- **`openBundleZip(bytes)` / `zipBundle(files, { mtime })`**：压缩包层。打开时允许有一个顶层文件夹，并忽略`__MACOSX`条目和点文件。会拒绝逃出文件包范围的路径。`mtime`给文件标注日期的方式与`createBundle`的同名输入相同。
+- <strong>`readBundle(manifest, readFile, options)`</strong>根据清单和一个`readFile(path)`回调读出章节、配置、资源、图片和字体。`options`设置语言、文件id的命名方式（`ids`）、基础配置（`baseConfig`，位于清单配置之下；默认是文件包语言下`bundleBaseConfig`的调色板和资源类型，该语言由`resolveBundleConfigLocale(manifest, locale)`返回，传入自己的`baseConfig`的宿主应把它本地化为该语言；清单早于`configVersion: 4`时，其`math`与文件包的一起固定；早于5时，固定其`layout`的行内间距；早于6时，固定其`layout`的框内间距、`bodyText`的冒号行下方空间、`headings`的行内标记和首字下沉大小；早于7时，固定其`bodyText`的破折号断行和齐左断行；早于8时，固定其`headings`的标题下方切分，以及`bodyText`的复合词断行和`:::paragraphs`容器下方的间距，见[postext 1.4及更早版本写出的文件包](#postext-14及更早版本写出的文件包)），以及固有尺寸的测量方式。`readResolution`从文件读取每张位图的分辨率，写入`bitmap.fileResolution`；文件包设了`layout.bitmapResolution: 'file'`时默认为true。
+- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**：写出的一侧，分为一个纯粹的计划（文件名和清单）和通过`readBlob` / `readFont`回调解析字节两步。
+- **`isBundleManifest(value)`**、语言选择函数（`pickChapterSpecs`、`pickLocaleOverrides`、`pickBundleView`、`resolveBundleLocale`、`resolveBundleConfigLocale`）、`svgSize` / `bitmapSize` / `bitmapInfo`（位图的像素及其文件标明的分辨率），以及格式类型（`BundleManifest`、`BundleResourceSpec`、`BundleFontFamilySpec`……）。
+- **`CONFIG_VERSION`、`migrateConfig(config, configVersion, { content })`、`pinLegacyHeadingBreaks(config)`、`pinLegacyMathSize(config)`、`pinLegacyInlineGap(config)`、`pinLegacyBoxResourceGap(config)`、`pinLegacyHeadingMarks(config)`、`pinLegacyDropCapSize(config)`、`pinLegacyColonListRoom(config)`、`pinLegacyBoxChildCut(config)`、`pinLegacyDashBreaks(config)`、`pinLegacyRaggedBreaking(config)`、`pinLegacyHeadingSplit(config)`、`pinLegacyParagraphContainerSpacing(config)`、`pinLegacyHyphenBreaks(config)`和`LEGACY_MATH_SIZE`**（0.5 ÷ 0.442）：把存储的配置转换为现行规则的表述（见[postext 1.4及更早版本写出的文件包](#postext-14及更早版本写出的文件包)）。`readBundle`会应用它们；以自己的方式存储配置的宿主也可以使用，每份存储的副本用一次。
+
+沙盒就建立在这些函数之上，另外加上它自己的存储id和`layouts.json`页数记录。

@@ -18,7 +18,7 @@ Três folhas do comentário de Zhu Xi aos *Analectos* (論語集註), o começo 
 
 O código é [a resposta curta](#a-resposta-curta) acima. Uma matriz imprimia a folha (葉) inteira de uma vez, com as duas metades de cada lado da faixa central; o impressor dobrava o papel na faixa, com o lado impresso para fora, e costurava as bordas abertas, de modo que a faixa virava o corte da frente do livro. Estas páginas ficam como a folha saía da matriz. Cada página é meia folha. Num [livro encadernado pela direita](/pt/docs/configuration-page-layout#encadernação), a página 1 fica sozinha à esquerda da lombada e cada página dupla seguinte junta uma página par à direita com a ímpar que vem depois, então, com a folha de rosto na página 1, cada página dupla contém uma folha. A [grade de caracteres](/pt/docs/configuration-east-asian#grade-de-caracteres) define o 行款 da matriz, nove colunas de 17 caracteres, e as margens que ela deixa são exatas: a interna mede metade da faixa.
 
-O Postext numera páginas, não folhas. Cada folha abre com um título de nível 1 [oculto](/pt/docs/configuration-text#sobrescritas-por-nível): ele não imprime nada nem ocupa espaço, mas o seu `breakBefore` com `parity: 'even'` abre uma página direita, e o seu número, 一, 二, 三 por `numberingTemplate: '{1:一}'`, é o `{chapterNumber}` da faixa.
+O Postext numera páginas, não folhas. Cada folha abre com um título de nível 1 [oculto](/pt/docs/configuration-headings#sobrescritas-por-nível): ele não imprime nada nem ocupa espaço, mas o seu `breakBefore` com `parity: 'even'` abre uma página direita, e o seu número, 一, 二, 三 por `numberingTemplate: '{1:一}'`, é o `{chapterNumber}` da faixa.
 
 ### 2 · Cortar o texto onde cada folha termina
 
@@ -32,13 +32,13 @@ O copista que passava um texto a limpo para o entalhador o ajustava à matriz, f
 :warichu[外務以悦人則人欲肆而本心之德亡矣…]
 ```
 
-A matriz não tem pontuação, então nenhuma regra de quebra de linha move um caractere, e toda coluna termina no 17º: as quebras de folha são contadas uma vez e não saem do lugar. As notas de Zhu Xi são trechos [`:warichu[…]`](/pt/docs/document-format#marcas-chinesas-rubi-e-warichu) com metade do corpo, o padrão, 34 caracteres pequenos por fileira, com um ○ entre a leitura e a glosa, como na matriz.
+A matriz não tem pontuação, então nenhuma regra de quebra de linha move um caractere, e toda coluna termina no 17º: as quebras de folha são contadas uma vez e não saem do lugar. As notas de Zhu Xi são trechos [`:warichu[…]`](/pt/docs/document-format-inline#marcas-chinesas-rubi-e-warichu) com metade do corpo, o padrão, 34 caracteres pequenos por fileira, com um ○ entre a leitura e a glosa, como na matriz.
 
 ### 3 · Desenhar a matriz com os números da grade
 
 <Excerpt region="frame" />
 
-O cabeço é disposto sobre a folha de papel, então a moldura, os fios e a faixa são posicionados em pontos a partir do canto da página com os mesmos números que definem a grade: um [elemento de fio](/pt/docs/configuration-page-layout#elementos-de-fio) a cada 29 pt na largura da mancha, uma [caixa](/pt/docs/configuration-page-layout#elementos-de-caixa) a 4,5 pt do texto para a linha fina e outra 4,5 pt mais para fora para a grossa. Cada coluna de caracteres fica no meio do seu passo, então os fios caem a meio caminho entre as colunas. O texto da faixa desce a página em [elementos de texto vertical](/pt/docs/configuration-page-layout#elementos-de-texto-verticais), e o rabo de peixe é um SVG num [elemento de imagem](/pt/docs/configuration-page-layout#elementos-de-imagem), os dois centralizados entre os dois fios da faixa, sobre a dobra: cada página mostra 17 pt da faixa. Cada página desenha inteiros o texto da faixa e o rabo de peixe e mostra a parte do seu lado, e lado a lado as partes se encontram. As molduras passam da dobra pelo mesmo motivo.
+O cabeço é disposto sobre a folha de papel, então a moldura, os fios e a faixa são posicionados em pontos a partir do canto da página com os mesmos números que definem a grade: um [elemento de fio](/pt/docs/configuration-headers-footers#elementos-de-fio) a cada 29 pt na largura da mancha, uma [caixa](/pt/docs/configuration-headers-footers#elementos-de-caixa) a 4,5 pt do texto para a linha fina e outra 4,5 pt mais para fora para a grossa. Cada coluna de caracteres fica no meio do seu passo, então os fios caem a meio caminho entre as colunas. O texto da faixa desce a página em [elementos de texto vertical](/pt/docs/configuration-headers-footers#elementos-de-texto-verticais), e o rabo de peixe é um SVG num [elemento de imagem](/pt/docs/configuration-headers-footers#elementos-de-imagem), os dois centralizados entre os dois fios da faixa, sobre a dobra: cada página mostra 17 pt da faixa. Cada página desenha inteiros o texto da faixa e o rabo de peixe e mostra a parte do seu lado, e lado a lado as partes se encontram. As molduras passam da dobra pelo mesmo motivo.
 
 ### 4 · Dar à folha de rosto um estilo próprio
 

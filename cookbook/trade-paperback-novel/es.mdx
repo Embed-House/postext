@@ -16,9 +16,9 @@ Los dos primeros capítulos de *The Awakening* (1899), de Kate Chopin, ocupan oc
 
 ### 1 · La apertura sale del título y de su atributo
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. Los capítulos de Chopin solo llevan número, así que el título de cada uno en Markdown es ese número (`# I`), y `{titleText}` lo imprime. `{attr.lead}` imprime el atributo `lead` del título, que contiene la primera frase del capítulo; el párrafo de Markdown que va debajo empieza por la frase siguiente ([atributos de encabezado](/es/docs/document-format#atributos-de-encabezado)). La primera frase va centrada, y el `\n` de cada atributo la corta por el sentido, tras *cage* y tras *bright;*. La frase empieza nueve líneas de la rejilla por debajo del borde superior de la caja de texto, y un `minHeight` de 12 líneas deja una línea en blanco debajo; sin `minHeight`, el texto arranca pegado a la frase ([span y diseño avanzado](/es/docs/configuration-text#span-y-diseño-avanzado)). `marginBottom: pt(0)` sustituye el margen de medio cuerpo que el nivel trae por defecto y que bajaría el texto una línea.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. Los capítulos de Chopin solo llevan número, así que el título de cada uno en Markdown es ese número (`# I`), y `{titleText}` lo imprime. `{attr.lead}` imprime el atributo `lead` del título, que contiene la primera frase del capítulo; el párrafo de Markdown que va debajo empieza por la frase siguiente ([atributos de encabezado](/es/docs/document-format#atributos-de-encabezado)). La primera frase va centrada, y el `\n` de cada atributo la corta por el sentido, tras *cage* y tras *bright;*. La frase empieza nueve líneas de la rejilla por debajo del borde superior de la caja de texto, y un `minHeight` de 12 líneas deja una línea en blanco debajo; sin `minHeight`, el texto arranca pegado a la frase ([span y diseño avanzado](/es/docs/configuration-headings#span-y-diseño-avanzado)). `marginBottom: pt(0)` sustituye el margen de medio cuerpo que el nivel trae por defecto y que bajaría el texto una línea.
 
-`breakBefore` con paridad `'odd'` lleva cada capítulo a una página impar, con una par en blanco solo tras un capítulo que acaba en impar ([saltar antes](/es/docs/configuration-text#saltar-antes)). Para forzar una página impar donde no hay título, escribe `:::pagebreak{parity="odd"}` en el Markdown; en una maquetación de dos o más columnas, `:::columnbreak` pasa el texto a la columna siguiente ([`:::pagebreak`](/es/docs/document-format#pagebreak)).
+`breakBefore` con paridad `'odd'` lleva cada capítulo a una página impar, con una par en blanco solo tras un capítulo que acaba en impar ([saltar antes](/es/docs/configuration-headings#saltar-antes)). Para forzar una página impar donde no hay título, escribe `:::pagebreak{parity="odd"}` en el Markdown; en una maquetación de dos o más columnas, `:::columnbreak` pasa el texto a la columna siguiente ([`:::pagebreak`](/es/docs/document-format-directives#pagebreak)).
 
 ### 2 · Una página de rústica con líneas enteras
 
@@ -30,7 +30,7 @@ El margen inferior es lo que queda de los 216 mm de alto tras el margen superior
 
 <Excerpt region="heads" />
 
-`parity: 'even'` pone el nombre de la autora, en versalitas de Cormorant SC, en las páginas pares, y `'odd'`, el título en cursiva en las impares; los folios van en el borde exterior de la caja de texto. `pages: 'body'` aparta los cuatro elementos de las aperturas y de la página 6, la par en blanco que añade el salto con paridad. Con `pages: 'all'`, esa página imprimiría *6* y *Kate Chopin*. Las aperturas llevan en su lugar un folio al pie, un elemento del `footer` que `pages: 'opener'` reserva para ellas ([elementos de texto](/es/docs/configuration-page-layout#elementos-de-texto)).
+`parity: 'even'` pone el nombre de la autora, en versalitas de Cormorant SC, en las páginas pares, y `'odd'`, el título en cursiva en las impares; los folios van en el borde exterior de la caja de texto. `pages: 'body'` aparta los cuatro elementos de las aperturas y de la página 6, la par en blanco que añade el salto con paridad. Con `pages: 'all'`, esa página imprimiría *6* y *Kate Chopin*. Las aperturas llevan en su lugar un folio al pie, un elemento del `footer` que `pages: 'opener'` reserva para ellas ([elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)).
 
 ### 4 · La cubierta es una sección sin cabeceras
 
@@ -44,7 +44,7 @@ La cubierta es un título, `# The Awakening {style="cover"}`. Su estilo coloca l
 
 <Excerpt region="tailpiece" />
 
-El tipo de adorno no tiene prefijo de pie, así que la flor de manzanilla se imprime sin rótulo, con un ancho del 17 % de la medida, en el lugar de `::resource{id="tailpiece-1"}` ([tipos de recurso](/es/docs/configuration-resources#tipos-de-recurso)). Una inserción en línea deja una línea de la rejilla por encima, y el `:::space` que la precede añade otra entre la última línea del capítulo y la flor ([`:::space`](/es/docs/document-format#space)). Los dos florones usan el mismo archivo, `fleuron.svg`, con dos identificadores distintos, porque cada recurso se coloca una sola vez.
+El tipo de adorno no tiene prefijo de pie, así que la flor de manzanilla se imprime sin rótulo, con un ancho del 17 % de la medida, en el lugar de `::resource{id="tailpiece-1"}` ([tipos de recurso](/es/docs/configuration-resources#tipos-de-recurso)). Una inserción en línea deja una línea de la rejilla por encima, y el `:::space` que la precede añade otra entre la última línea del capítulo y la flor ([`:::space`](/es/docs/document-format-directives#space)). Los dos florones usan el mismo archivo, `fleuron.svg`, con dos identificadores distintos, porque cada recurso se coloca una sola vez.
 
 ## Variantes
 

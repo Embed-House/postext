@@ -6,8 +6,8 @@ export const metadata = {
   description: 'How Postext sets Arabic: text direction and the bidirectional algorithm, right-bound books, joined words that are never cut or spaced, kashida justification, vowel marks, emphasis, digits and numeral styles, ordinal words, footnotes, classical verse, contents, index, citations and fonts',
   lang: 'en',
   lastUpdated: '2026-10-04',
-  readingTime: '24 min',
-  order: 16,
+  readingTime: '29 min',
+  order: 30,
   plainSummary: "This page explains how Postext lays out Arabic. Arabic is read from right to left, so the lines, the columns and the pages of the book run that way, while numbers and English words inside the text still read from left to right. The letters of a word join each other, so Postext never splits a word, never spreads its letters apart and stretches a line by lengthening some joins instead. The page also covers the vowel signs above and below the letters, the digits used in each region, notes and poems. It ends with two complete examples and the limits that remain.",
 };
 
@@ -15,7 +15,7 @@ export const metadata = {
 
 **An Arabic book runs from right to left, from its letters to its spreads, and its words are joined strokes that cannot be cut.**
 
-Postext sets Modern Standard Arabic and Classical Arabic from the same Markdown and configuration as any other language. One setting, the document language, turns the whole book around: the lines start on the right, the first column is the right one, the book is bound on the right edge and its spreads read from right to left, while Latin words and numbers inside a line keep reading from left to right. Words are measured and painted whole, shaped by the font, and a justified line is stretched at its spaces and by elongating the joins between letters (kashida), never by spacing the letters apart. This page explains what the engine does and which settings control it. The [configuration reference](/en/docs/configuration-text#text-direction) lists every key with its default, and the [document format](/en/docs/document-format#text-direction-in-the-markup) describes the markup.
+Postext sets Modern Standard Arabic and Classical Arabic from the same Markdown and configuration as any other language. One setting, the document language, turns the whole book around: the lines start on the right, the first column is the right one, the book is bound on the right edge and its spreads read from right to left, while Latin words and numbers inside a line keep reading from left to right. Words are measured and painted whole, shaped by the font, and a justified line is stretched at its spaces and by elongating the joins between letters (kashida), never by spacing the letters apart. This page explains what the engine does and which settings control it. The [configuration reference](/en/docs/configuration-language#text-direction) lists every key with its default, and the [document format](/en/docs/document-format-inline#text-direction-in-the-markup) describes the markup.
 
 The rules follow the W3C *Arabic & Persian Layout Requirements* ([alreq](https://www.w3.org/TR/alreq/)) and the Unicode Bidirectional Algorithm ([UAX #9](https://www.unicode.org/reports/tr9/)), and, for the book conventions, the printed books of Cairo, Beirut and the Būlāq press. The sources are listed at the end.
 
@@ -211,7 +211,7 @@ Arabic is written with three sets of digits, chosen by region:
   </tbody>
 </table>
 
-The top-level `numerals` sets the digits of every number the engine writes: folios and the page numbers of the contents and the index, list and footnote numbers, heading and chapter counters, figure numbers and the references to them, `{totalPages}`. `'auto'` takes the region's digits from `locale` (`ar` without a region, and `ar-AE`, are Mashriqi, as Arabic books there print them); a tag can name its own (`ar-MA-u-nu-arab`). Numbers the author types are never changed, and are read in any system: a list item `٣.` starts at 3, and `{startAt=٥}` is 5. See [Document digits](/en/docs/configuration-text#document-digits).
+The top-level `numerals` sets the digits of every number the engine writes: folios and the page numbers of the contents and the index, list and footnote numbers, heading and chapter counters, figure numbers and the references to them, `{totalPages}`. `'auto'` takes the region's digits from `locale` (`ar` without a region, and `ar-AE`, are Mashriqi, as Arabic books there print them); a tag can name its own (`ar-MA-u-nu-arab`). Numbers the author types are never changed, and are read in any system: a list item `٣.` starts at 3, and `{startAt=٥}` is 5. See [Document digits](/en/docs/configuration-language#document-digits).
 
 A format named in the configuration prints as named, so a book can mix systems. The Arabic numeral styles:
 
@@ -270,7 +270,7 @@ headings: {
 },
 ```
 
-That prints الليلة الأولى, الليلة الحادية عشرة, الليلة الخامسة والأربعون بعد الثلاثمئة and, at 1001, الليلة الحادية بعد الألف; `'الفصل {1:ordinal}'` prints الفصل الأول, الفصل الحادي عشر. Ordinals are written up to 9 999 and cardinals up to 99 999; past them the number prints in digits. The design placeholders `{numberWords}` and `{numberOrdinalWords}` give the masculine forms. See [Spelled-out numbers](/en/docs/configuration-text#spelled-out-numbers).
+That prints الليلة الأولى, الليلة الحادية عشرة, الليلة الخامسة والأربعون بعد الثلاثمئة and, at 1001, الليلة الحادية بعد الألف; `'الفصل {1:ordinal}'` prints الفصل الأول, الفصل الحادي عشر. Ordinals are written up to 9 999 and cardinals up to 99 999; past them the number prints in digits. The design placeholders `{numberWords}` and `{numberOrdinalWords}` give the masculine forms. See [Spelled-out numbers](/en/docs/configuration-headings#spelled-out-numbers).
 
 ## Footnotes
 
@@ -310,9 +310,9 @@ Write the poem in a `:::verse` block, one bayt a line, its hemistichs separated 
 - **Type.** The poem takes the body's face and size; `style` names a paragraph style, which is how a vocalised poem gets the leading its marks need. A poem in Latin transliteration in an English book is set the same way, its ṣadr on the left.
 - **Line numbers.** With `lineNumbers` on, a poem counts one number per bayt, printed in the margin beside it; the ʿajuz of a staggered bayt, on a line of its own, takes no number. `position: 'start'` puts the numbers on the right of every page of an Arabic book. See [Configuration › Line numbers](/en/docs/configuration-notes-references#line-numbers).
 
-The plain text keeps the poem as written, one bayt per line, and leaves out the kashidas and the ornament. See [`:::verse`](/en/docs/document-format#verse) in the document format.
+The plain text keeps the poem as written, one bayt per line, and leaves out the kashidas and the ornament. See [`:::verse`](/en/docs/document-format-directives#verse) in the document format.
 
-**Free verse and Latin poems.** A poem whose lines carry no `||` — modern free verse, or a Latin poem quoted in an Arabic book (`:::verse{dir=ltr lang=en}`) — is set line by line instead: each source line a line of verse, blank lines between stanzas, leading spaces an indent measured from the poem's own start side, overlong lines turned over with a hanging indent. See [`:::verse` › Line by line](/en/docs/document-format#line-by-line).
+**Free verse and Latin poems.** A poem whose lines carry no `||` — modern free verse, or a Latin poem quoted in an Arabic book (`:::verse{dir=ltr lang=en}`) — is set line by line instead: each source line a line of verse, blank lines between stanzas, leading spaces an indent measured from the poem's own start side, overlong lines turned over with a hanging indent. See [`:::verse` › Line by line](/en/docs/document-format-directives#line-by-line).
 
 ## Contents and index
 
@@ -326,7 +326,7 @@ The plain text keeps the poem as written, one bayt per line, and leaves out the 
 
 A contents row is set right to left: the number and title on the right, the leader, the page number on the left. A Latin title in an Arabic book keeps its page number on the left, and its own words read left to right.
 
-**Tab stops.** Tab stops in body text work the same way (see [Tabs and tab stops](/en/docs/document-format#tabs-and-tab-stops)): a stop's position is measured from the right edge of the measure, an `end` stop sits at the left, and a leader runs between the parts in visual order. A price list or a list of contents typed as paragraphs, `الفصل الأول :tab 12` under a style whose stop is `{ position: 'end', align: 'end', leader: '.' }`, sets the title on the right and the number on the left, behind dots.
+**Tab stops.** Tab stops in body text work the same way (see [Tabs and tab stops](/en/docs/document-format-inline#tabs-and-tab-stops)): a stop's position is measured from the right edge of the measure, an `end` stop sits at the left, and a leader runs between the parts in visual order. A price list or a list of contents typed as paragraphs, `الفصل الأول :tab 12` under a style whose stop is `{ position: 'end', align: 'end', leader: '.' }`, sets the title on the right and the number on the left, behind dots.
 
 **Index.** A back-of-book index of an Arabic book sorts its entries in alphabetical (hijāʾī) order and groups them under their first letter. It ignores the definite article: البصرة files under ب, between بدر and بغداد, and prints as written (`index.ignoreArticle`, on by default when the index language is Arabic; الله keeps its article). It also ignores the vowel marks and the tatweel, files أ إ آ ٱ under ا, and sorts ة with ه and ى with ي. The page numbers are joined with the Arabic comma (، ) and a cross-reference reads انظر or انظر أيضًا. An entry with its own `sort` key keeps that key's article. See [Back-of-book index](/en/docs/configuration-notes-references#back-of-book-index).
 
@@ -355,7 +355,7 @@ Postext sets each style in one family and does not fall back to another for a mi
 
 Markazi Text and Noto Kufi Arabic serve modern books (text and headings), and El Messiri modern display. At one nominal size a Naskh face looks smaller than a Latin one: Arabic book text is commonly 13–15 pt where Latin text would be 10–11 pt.
 
-- **In the browser and the Sandbox**, Google Fonts and Fontsource serve each family as a file per subset: `latin`, `latin-ext` and `arabic`. The browser loads the `arabic` file only once a character needs it, and a layout measured before it arrives is measured in a fallback face. The Sandbox loads it before the first layout; a host checks it with a sample that holds an Arabic letter (`document.fonts.load('16px Amiri', 'ب')`). The PDF font provider must hand `renderToPdf` the `arabic` file for Arabic text; the provider in [Browser font provider](/en/docs/configuration-programmatic-usage#browser-font-provider-fontsource--woff2) picks the slice by code point.
+- **In the browser and the Sandbox**, Google Fonts and Fontsource serve each family as a file per subset: `latin`, `latin-ext` and `arabic`. The browser loads the `arabic` file only once a character needs it, and a layout measured before it arrives is measured in a fallback face. The Sandbox loads it before the first layout; a host checks it with a sample that holds an Arabic letter (`document.fonts.load('16px Amiri', 'ب')`). The PDF font provider must hand `renderToPdf` the `arabic` file for Arabic text; the provider in [Browser font provider](/en/docs/configuration-pdf-output#browser-font-provider-fontsource--woff2) picks the slice by code point.
 - **In a bundle**, ship the faces whole or subset to the book's characters, keeping the OpenType layout tables (`GSUB`, `GPOS`): the joining forms, ligatures, mark positions and the mirrored brackets live there. A subset without them prints isolated letters.
 - **Missing glyphs** print as the font's empty box; `renderToPdf` reports them per face (`missingGlyph`), and the Sandbox lists them in the Checks panel.
 - **Latin inside Arabic text** is set in the same family. Amiri carries its own Latin; with a Naskh face whose Latin is poor, set long Latin passages in a paragraph style with a Latin face.
@@ -364,7 +364,7 @@ Markazi Text and Noto Kufi Arabic serve modern books (text and headings), and El
 
 Under **Design › Writing system**, the Document language select offers العربية, العربية (مصر) and العربية (المغرب), and **Text direction** and **Digits** show what *Auto* resolves to. **Arabic defaults › Review…** lists what setting the book up for Arabic changes before applying it, with a choice of faces (*Classical*, Amiri; *Modern*, Noto Naskh Arabic with Noto Kufi Arabic headings): the direction and the binding back to *Auto*, running heads and folios in a face with Arabic letters, a leading of 1.75 em, justified text, the region's digits, شكل and جدول numbered by chapter, captions set شكل ١-١: العنوان, chapters numbered الفصل الأول, lists numbered ١- أ- (١) and notes numbered on every page. Every font picker lists the Arabic families first.
 
-The editor gives each line the direction of its first letter: a line of Arabic runs from the right, and the caret and the arrow keys follow the visual order, while the markup inside it (`{…}` attributes, `[^id]`, a `:ref[…]`, maths, link targets) stays left to right. See [Sandbox](/en/docs/sandbox#design-panel).
+The editor gives each line the direction of its first letter: a line of Arabic runs from the right, and the caret and the arrow keys follow the visual order, while the markup inside it (`{…}` attributes, `[^id]`, a `:ref[…]`, maths, link targets) stays left to right. See [Sandbox](/en/docs/sandbox-design-checks#design-panel).
 
 ## Two complete configurations
 

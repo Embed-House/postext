@@ -1,0 +1,255 @@
+{/* docs/sandbox-design-checks-en.mdx */}
+
+export const metadata = {
+  title: 'Sandbox: the Design and Checks panels',
+  sidebarTitle: 'Design and Checks panels',
+  description: "The Design panel's groups, pages, search and summary, and the Checks panel's live warnings, grouped by kind",
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '34 min',
+  order: 35,
+  parent: 'sandbox',
+  plainSummary: "This page covers two panels of the Sandbox. The Design panel holds every setting of the book, such as the page size, the fonts and the colours, sorted into groups with a search box. The Checks panel lists the problems Postext finds while you work, such as a missing picture or a line that is too loose. Each problem says where it is and takes you there when you click it.",
+};
+
+# Sandbox: the Design and Checks panels
+
+
+## Design panel
+
+A form-based editor for `PostextConfig`, with more than five hundred fields.
+
+**Overview.** When the Design panel opens, it shows an overview:
+
+- A **This book** card with a live drawing of the page. The drawing uses true proportions and shows the margins, the columns and the page and ink colours, as a spread when the margins are mirrored. A vertical book's lines are drawn down the page from the right, its columns as tiers. Beside it are the trim size, the column layout, the writing system, the body typeface and size, and the palette. The writing system line names the document language and, when they are a choice, the direction and the binding (*Vertical · bound on the right · 中文（繁體）*, *Right to left · bound on the right · العربية*); it opens **Writing system**.
+- The list of the thirteen **settings groups**. Each group has a one-sentence description and the number of sections you have changed in it.
+
+**One page per group.** Opening a group shows that group's sections as their own page. Only that group is built, which keeps the panel fast even on large books.
+
+- A breadcrumb (**Design › group**) leads back to the overview.
+- Chips under the page heading jump to each section on the page.
+- A **Next** link at the bottom opens the following group.
+- Focus moves to the page heading when you open a group, and back to the group's row when you return.
+- The open group is remembered between sessions.
+
+The groups, in browsing order:
+
+- **Page & columns**
+  - *Page*: fields are grouped as **Size**, **Margins**, **Paper** and **Numbering**.
+    - **Size**: the size presets say what they are for: *Pocket book* 11 × 17, *Novel, narrative* 12 × 19, *Essay, handbook* 17 × 24 and *Textbook, magazine* 21 × 28; the newspaper trims *Broadsheet* 37.5 × 59.7, *Berliner* 31.5 × 47, *Tabloid* 28 × 43 and *Compact* 29.7 × 42 (since postext 1.18); or *Custom*. **Layout resolution (px per inch)** (`page.dpi`) is here too: the pixels the layout works in, not the resolution of pictures, though a bitmap with no resolution of its own prints at that many ppi.
+    - **Margins**: each margin is tied to the page drawing. Pointing at a margin field or focusing it tints that margin on the drawing. A **mirrored** switch turns left/right into inner/outer margins for facing pages.
+    - **Paper**: the page background colour.
+    - **Numbering**: the page-number format and the number the pages start at.
+  - *Columns*: the layout is chosen from picture cards: *One column* (novels, essays), *Two columns* (textbooks, magazines, reference works), *Column and a half* (a main column plus a narrow side column for notes and small figures) or *Multiple columns* (three to eight equal columns for newspapers and magazines, with a **Columns** count; since postext 1.18). The section also has the gutter, the side column, **Shrink figures that don't fit** (`layout.fitFiguresToPage`), **Bitmap resolution** (`layout.bitmapResolution`: *Page dpi*, *From file*, which also reads the resolution of pictures uploaded before, or *Fixed* with its ppi), **Shrink floated pictures** with its **Smallest scale** (`layout.floatShrink`), **Floats head the page that cites them** (`layout.floatsAtCitingPage`) with **Largest float at the head of its citing page** (`layout.maxTopFraction`), **Floats under a page-wide heading, from the first column** (`layout.floatsUnderOpener`, on by default since postext 1.25: a float fenced right after a heading set across several columns takes the head of the first one), **Space around inline figures** (`layout.inlineResourceGap`), **Space around figures in boxes** (`layout.inlineResourceGapInBoxes`), **Lines of a paragraph at a box cut** (`layout.boxChildSplitMinLines`), **Columns in the text, and groups that split** (`layout.flowColumns`, on by default since postext 1.25: a `:::columns` group outside a box sets its blocks in columns, and a group that does not fit goes on in the next column or page) and **Closing floats hug the text** (`layout.hugClosingFloats`).
+  - *Text wrap*: **Text wrap gap**, **Narrowest text beside**, **Fewest lines beside** and **Wrapped width** (`layout.wrap`), the defaults of the pictures and boxes the text runs beside.
+- **Writing system**. The page opens with the drawing of Page & columns. Its spread carries folios: 2 | 3 in a book bound on the left, 3 | 2 in one bound on the right, whose odd page is the left one; the caption says when the book is bound on the right and when its lines are vertical.
+  - *Language and direction*:
+    - **Document language**, with Chinese as 中文（简体）, 中文（繁體） and 中文（香港）, and Arabic as العربية, العربية (مصر) and العربية (المغرب) (the region sets regional defaults such as the digits). A tag the list lacks (`es-ES`, `zh-TW`, `sv`) shows as an extra option, named after the language it reads as. Changing it renames the built-in figure and table types when they are still the ones of the previous language (a Spanish book switched to Chinese prints 图 and 表, not *Figura* and *Tabla*); types you renamed keep their names.
+    - **Text direction**: *Auto*, which names what it resolves to (right to left for Arabic), *Left to right* or *Right to left* (`direction`).
+    - **Writing mode**, from picture cards: *Horizontal*, or *Vertical*, lines running top to bottom and right to left (`layout.writingMode`).
+    - **Binding**: *Auto*, which names what it resolves to (the right edge for a vertical or right-to-left book and for a comic book read right to left), *Left edge* or *Right edge* (`page.binding`).
+    - **Digits**: *Auto*, which names the digits the language gives (٠ ١ ٢ ٣ for Arabic, 0 1 2 3 for the Arabic of the Maghreb and every other language), *European*, *Arabic-Indic* or *Persian* (`numerals`).
+    - **Chinese defaults**: **Review…** lists what setting the book up for Chinese changes. Pick *Simplified 简体* or *Traditional 繁體* and the direction: a new Traditional book starts vertical, a new Simplified one horizontal, and a book already in Chinese keeps its direction. Each row shows the setting as it is and as it becomes: the document language (a Chinese tag of the same script, such as `zh-TW`, is kept), the writing mode with the binding it gives, Noto Serif and Noto Sans in SC, TC or HK for the body and the headings (the heading row also names the faces heading levels and heading styles set for themselves, and ticked it sets those in the Chinese face too), a 2 em first-line indent, indent after headings, no space between paragraphs, justified text, no hyphenation, 图 or 圖 and 表 numbered by chapter (`{h1}-{n}`), captions set 图1-1　标题 (nothing before the number, an ideographic space after it), chapters numbered 第一章 (`第{1:一}章`, an ideographic space before the title) and numbered lists 一、 （一） 1. （1） ①. Only what differs is listed. A setting you changed yourself comes unticked, marked *your setting*, and stays as it is unless you tick it; the language and the direction always apply, and so does hyphenation, which a Chinese document turns off by itself (unless you turned it on for a Latin language you named in the hyphenation language). **Apply** makes the ticked changes in one step, and **Undo** beside the confirmation takes that step back in the same book: every setting it changed returns to what it was, even when you have changed other settings of the same group since; one you have changed again since stays as you left it, and the confirmation says so. Opening another book drops the Undo.
+    - **Arabic defaults** (in a document in Arabic): **Review…** lists what setting the book up for Arabic changes. Pick the typefaces: *Classical*, Amiri for the body and the headings, or *Modern*, Noto Naskh Arabic with Noto Kufi Arabic headings. The rows: the direction back to *Auto* when the book was set left to right (always applied), the binding back to *Auto* (the right edge), the two typefaces, the typeface of design texts (running heads, folio, opener and heading designs) set in a face with no Arabic letters, moved to the heading face so the PDF does not print empty boxes, a leading of 1.75 em, justified text, no hyphenation, the digits of the region when the book names others, شكل and جدول numbered by chapter, captions set شكل ١-١: العنوان, chapters numbered الفصل الأول (`الفصل {1:ordinal}`, a colon before the title), numbered lists ١- أ- (١) and footnotes numbered again on every page, all in the document's digits. Ticks, *your setting*, **Apply** and **Undo** work as in the Chinese list.
+    - **Japanese defaults** (in a document in Japanese): **Review…** lists what setting the book up for Japanese changes. Pick the kind of book: *Vertical 縦組*, a bunko or tankōbon novel bound on the right on a character grid, or *Horizontal 横組*, a technical book bound on the left. The rows: the document language and the writing mode (always applied), the binding back to *Auto*, Noto Serif JP and Noto Sans JP for the body and the headings (and for design texts set in a face with no kana), a leading of 1.75 em, the character grid a vertical page holds at that size (at most 52 characters), a one-em indent with no extra space between paragraphs, justified text without hyphenation, the Chinese typographic settings back to *Auto* so the Japanese ones apply, 図 and 表 with captions set 図1-1　…, chapters numbered 第一章 (vertical) or 第1章 (horizontal), headings in three and two lines (行取り) with their indents, Japanese list numbers, Chinese note settings back to *Auto*, and kanji folios when a vertical folio is set down the fore-edge. **Apply** and **Undo** work as for Chinese. In a Japanese book the editor's toolbar adds **Ruby** and **Across in vertical text**. See [Japanese layout](/en/docs/japanese-layout#in-the-sandbox-and-the-cookbook).
+  - *East Asian typography* (`cjk`): **Regional conventions** (mainland China, Taiwan, Hong Kong, Japan) at the top, then the fields in nine groups: **Line edges** (**Line breaking**: none, basic, GB, strict, Japanese very strict, Japanese strict, Japanese loose; **Breaks between characters**; **Book titles: characters at a break**, `cjk.titleMinChars`; **Circled numbers**: as Chinese characters or as Latin letters; **CJK rules in design text**; **Trim brackets at line edges**; **Bracket opening a paragraph**: ①, ③ or flush; **Hanging punctuation**), **Punctuation widths** (**Punctuation width**: kaiming, full width, half at line end, half width; **Compress adjacent marks**), **Spacing** (**Space between Han and Latin**; **Space after ？ and ！**), **Vertical text** (**Numbers in one upright cell**: off, or up to 2, 3 or 4 digits, `cjk.uprightDigits`), **Annotations** (**Emphasis in Chinese and Japanese text**: what `*…*` prints, marks or italics; **Emphasis mark**, **Mark fill** and **Mark side**; **Book titles (:book)**: brackets, a wavy line or nothing, and their **Brackets**, 《》 〈〉 or 『』 「」; **Mark colour**), **Ruby** (the readings' typeface, size, colour and position, **Reading overhang**, **Reading alignment** and **Small kana in readings**), **Warichu notes** (the notes' size, colour and opening and closing brackets), **Kanbun marks** (their size, colour and where the return marks go) and **Character grid** (characters per line, lines per page, the grid drawn on screen, and the 字 × 行 read-out with the margins the grid sets). Every *Auto* follows the document language and names what it resolves to. In a document whose language is not Chinese, Japanese or Korean and that sets none of these, the section shows one line saying so and a **Show the settings** button; a search shows the fields in any document. [Chinese layout](/en/docs/chinese-layout) and [Japanese layout](/en/docs/japanese-layout) explain what these settings do; the keys are under [East Asian typography](/en/docs/configuration-east-asian#east-asian-typography), [Vertical writing](/en/docs/configuration-page-layout#vertical-writing), [Numbers in vertical text](/en/docs/configuration-east-asian#numbers-in-vertical-text) and [Binding](/en/docs/configuration-page-layout#binding).
+- **Colours**
+  - *Palette*: named colours reused by every colour picker. Changing an entry updates every reference to it.
+  - *Contrast* (`contrast`): **Check contrast**, the **Level** (AA or AAA), **Checked for** (*Automatic*, *Screen*, *Print*, *Screen and print*) and, under **Reversed text**, the sizes under which light text on an inked ground is reported. Changing them lays no page out again. See [Contrast check](/en/docs/configuration-fonts-colors-viewers#contrast-check-config).
+  - *The ratio beside a colour*: a colour field whose colour the pages set as text, or as the ground of text, shows the lowest contrast ratio it has there, with a tick when it reaches the level and a warning mark when it does not. Opening the field lists each colour it is set with (*Text on #ffffff*, *Ground of #1a1a1a text*), the smallest size, and the ratio on screen and, for a book set up for print, on paper. The numbers follow the picker while you drag, before the page is laid out again. A colour used only for rules or borders shows no ratio.
+- **Typography**
+  - *Body text*: opens with a true-size **type specimen** set in the current typeface, size, leading and colour, in the document's language: a Chinese book shows the opening of 紅樓夢 in its script, `*…*` with emphasis dots, and sets it top to bottom when its lines are vertical. Its line breaks are the browser's; the page uses Postext's. The fields are grouped as:
+    - **Typeface**: font, size, line height, and the regular and bold weights.
+    - **Paragraphs**: alignment (with hyphenation, the justification limits and **Most letter-spacing to justify** (`bodyText.maxJustifyTracking`) when the text is justified, and **Hyphenate ragged text** with its zone, **Optimal Line Breaking** and **Optimal Breaking of Ragged Text** (`bodyText.optimalRagged`) when it is not; under a justified body **Optimal Breaking of Ragged Text** follows **Optimal Line Breaking**, for the ragged paragraph styles and boxes; **Hyphenate across columns** (`bodyText.hyphenateAcrossColumns`) under hyphenation when the body is justified, and under **Optimal Breaking of Ragged Text**, while that is on, when the body is ragged; **Hyphenate compounds** (`bodyText.hyphenation.compounds`) with the hyphenation language), **Break After Dashes** (`bodyText.breakAfterDashes`), **Break After Hyphens** (`bodyText.breakAfterHyphens`), **Repeat Hyphen on Next Line** (`bodyText.repeatHyphen`), **Forced Line Breaks** (`bodyText.hardLineBreaks`), **Tab stops** (`bodyText.tabStops`: a list of stops, each with its position, alignment, leader, leader gap and decimal character) with **Default tab interval** (`bodyText.tabInterval`), indents and paragraph spacing.
+    - **Colour**: the text, bold and italic colours.
+    - **Language**: the document language, named in its own language. It is set under **Writing system**; the row opens that group.
+    - **Widows, orphans and short lines** (collapsible): includes **Graded runt penalty** (`bodyText.gradedRuntPenalty`), **Tighten to pull a runt back** (`bodyText.tightenRunts`), **Most letter-spacing tightening** (`bodyText.maxRuntTracking`), and **Keep colon with list** with **Room Under the Colon** (`bodyText.colonListRoom`): how much room the line ending in a colon needs under it to stay with its list, what the first item needs or one line as up to postext 1.4.
+    - **Blockquotes** (collapsible): the colour of `>` quotes, **Italic Blockquotes**, **Blockquote Indent** and **Blockquote First Line Indent** (`bodyText.blockquote`).
+    - **Verse** (collapsible): **Poems Without Separator** (*Line by line*, or *As hemistichs (1.22)*), **Indent per Space**, **Turnover** (*Hanging* or *Flush right*) with its **Turnover Indent** or **Turnover Mark**, **Space Between Stanzas**, **Keep Short Stanzas Whole** and **Tighten Before Turning Over** (`bodyText.verse`, the defaults of `:::verse` poems set line by line).
+    - **Cross-references** (collapsible).
+  - *Paragraph styles* (`paragraphStyles`): named styles for `:::paragraphs{style="…"}` containers. You can add, remove and rename ids, then set the font, size, line height, colour, the colours of bold and italic runs, regular and bold weights, **italic** and **small caps** switches, alignment, hyphenation, the left indent of every line, first-line and hanging indents (measured from the left indent), space between paragraphs, margins, **Snap to grid** (`paragraphStyles[].snapToGrid`), **Letter case** (`textTransform`, capitals), **Line numbers** (`paragraphStyles[].lineNumbers`: *As the document*, *Counted* or *Not counted*), **Tab stops** with **Default tab interval** (`paragraphStyles[].tabStops`, `tabInterval`), set as in the body text, and **Drop cap** (`paragraphStyles[].dropCap`): the lines it spans and sinks, the letters set large, its face, weight, italics, size, colour and gap, the **Opening mark** (*With the initial*, *Hung outside*, *In the first line*), the **Lead-in** (none, a number of words or the first line, in small capitals or capitals), what a **Short paragraph** does (*Keep the room*, *Shrink the initial*, *No drop cap*) and **Every paragraph** for a catalogue of entries (see [Drop caps](/en/docs/configuration-text#drop-caps)). Unset fields inherit the body text. Above the styles, **Space under a container** (`bodyText.paragraphContainerSpacing`) says how the space under a container meets the block after it: *Collapse*, or *Add (1.4)*.
+  - *Inline labels* (`chipStyles`): named styles for the inline `:chip[text]{style="…"}`. The built-in `chip` style is shown while the configuration has none. You can add, remove and rename ids, then set:
+    - **Text**: font, size, colour, bold and italic. Each inherits the surrounding text until you set it.
+    - **Box**: fill, outline width and colour, corner radius, horizontal and vertical padding (with **Top padding** and **Bottom padding** to pad them apart, which centres a capital in a round chip), and the minimum gap to the neighbouring words.
+  - *Code* (`codeStyle`): **Code fences** and **Indented code** (how listings are read); the **Code face**, size, leading, **Snap to grid**, colour and **Tab width**; the **Box** (page span, background, border, corner radius, padding, space above and below); **Long lines** (**A line wider than the box**: *Turn over*, *Set smaller* with its **Smallest size**, or *Cut*; the **Turnover indent** and **Turnover mark**); **Numbers and highlighted lines** (**Number the lines**, the numbers' colour and the room after them, the tint of the lines a fence highlights); the split **Across columns and pages** (keep together, lines on each side, repeat the title, the continued mark); **Syntax colours** (*Built-in* or *None*, and a colour and a style per kind of token, palette colours included); and **Inline code** in a code face with its fill. See [Code listings](/en/docs/configuration-styles#code-listings).
+  - *Formulas* (`math`), with **Indent after a display** (`math.indentAfterDisplay`) and **Keep with its lead-in line** (`math.keepWithLeadIn`).
+  - *Footnotes* (`footnotes`): **Placement** (column foot or end of chapter), **Position in the column** at the end of a chapter, **Numbering** (per chapter or continuous), the note size, leading, colour, alignment and hanging indent, the spaces above and between the notes, and the **Separator rule** (length, thickness, colour). See [Footnotes](/en/docs/configuration-notes-references#footnotes).
+  - *Line numbers* (`lineNumbers`): **Number lines**, **Count** (*Verse* or *Every line*), **Every** (the interval), **Number the first line**, **Start again** (never, or at each chapter, section, page or poem) with the **First number**, **Position** (outer or inner margin, left, right, line start, line end, side column), **With columns** (outer edges, in the gutters, beside each column), **Distance from the text**, **Alignment**, and the typeface, size, weight, italics, colour and **Number format** of the numbers. See [Line numbers](/en/docs/configuration-notes-references#line-numbers).
+- **Headings & contents**
+  - *Headings*: general defaults plus per-level H1–H6 settings. They include:
+    - letter case, **Letter spacing** (`levels[].letterSpacing`, negative to tighten), alignment (ragged right, justified, centred or ragged left), break-before with parity, and span;
+    - a **Snap back to the grid after headings** switch (`headings.snapToGrid`, on by default: the text snaps back to the baseline grid under a heading), and per level **Snap back to the grid after this heading** (`levels[].snapToGrid`), which overrides it for that level;
+    - an **Inline marks in headings** switch (`headings.inlineMarks`, on by default): a heading sets the italic, bold, scripts, small capitals and links written in it, as a paragraph does; off, it prints the marked words in its own style;
+    - per level, **Hidden (structural)** (`levels[].hidden`): the heading prints nothing and takes no room, but still breaks, numbers and feeds the contents, the running heads and the PDF bookmarks;
+    - per level, **Drop cap after the heading** (`levels[].dropCap`): the first paragraph after a heading of the level opens with a drop cap, with the same fields as a paragraph style's;
+    - an advanced per-level design slot editor with a minimum opener height; each element of a heading design has a **Reserves space** switch (off: it paints without adding to the height the heading reserves);
+    - the column-balancing levers, with their per-lever caps, and **Box Closing a Column** (`balancing.closingBox`): when a box that ends a short column moves down to the column's foot — first, after the other levers, or never.
+  - *Heading styles* (`headingStyles`): named styles applied with `{style="…"}` on a heading line. You can add, remove and rename ids, and for each style:
+    - choose whether the heading is numbered and listed in the contents, and give it a numbering template of its own;
+    - turn off **Named in running heads** (`runningChapter`) for a plate or a map set as an H1 inside a chapter, so the running heads keep naming the chapter it interrupts;
+    - override the heading typography (letter spacing included), break and span, **Snap back to the grid after this heading** and **Hidden (structural)**, and choose the **Drop cap after the heading**: *As the level*, *Own* (its fields as a paragraph style's) or *None*;
+    - give the section its own running heads, optionally starting from the document's;
+    - set its margins and column layout (with the side column's role and edge, as in *Columns*, and its own *Shrink figures that don't fit*);
+    - set the body style, list overrides and palette colours.
+  - *Contents* (`toc`): the heading levels a `:::toc` lists, with the entry typography of each. It also covers the unnumbered entries, page numbers, leader dots, the subtitle line read from a heading attribute, and the part rows with their own design slot.
+- **Lists**
+  - *Bulleted lists*, with **Snap Top to Grid** (`unorderedLists.snapTopToGrid`), which rounds the space above a list up so its first item sits on the baseline grid.
+  - *Numbered lists*: for each level, the separator's font, weight, italic, colour and gap next to its numbering; **Snap Top to Grid** (`orderedLists.snapTopToGrid`), as for bulleted lists; and **Number column** (`orderedLists.numberWidth`): where the text of an item starts, after the widest number of its own run (*Per run*) or of its level in the chapter (*Per level*), or after the item's own number (*Per item*), so each text follows its label by the gap. **Number alignment** (`orderedLists.numberAlign`) sets the numbers against the text, ending together (*Against the text*), or at the start of their column, beginning together (*At the start*).
+- **Figures & tables**
+  - *Numbering & placement* (`resourceTypes`): for each resource type:
+    - names and short labels;
+    - numbering templates with `{n}` and `{h1}`…`{h6}` placeholders, the counter format and reset level, and the caption prefix, with a live "Fig. 1.7"-style preview;
+    - a **Placement** group: the type's default position, span (column, page or the side column), **Columns** (how many adjacent columns a column float of the type takes on a page of several columns; as many as the page has makes it page-wide) and rotation, a width fraction, an alignment for resources narrower than their slot (floats and embeds narrowed by the width, and pictures narrower than the column), and a caption-beside-figure switch;
+    - a collapsible **caption style override** that replaces only the caption fields you set for that type (position, bar, colours, typeface) and inherits the rest.
+  - *Captions* (`captionStyle`): typeface, size, alignment and **position** above or below the resource. There is an optional **background bar** with its colour and padding, and the label and description are styled independently. A **Note** group sets the resource note's size, colour, slant, alignment and gap.
+  - *Tables* (`tableStyle`):
+    - body and header typography, with the header's **Letter spacing** (`headerLetterSpacing`) and **Letter case** (`headerTextTransform`), and fills;
+    - borders, with a **rules** pattern: full grid, horizontal only, outer frame, none or **Booktabs** (a heavy rule above and under the table, a light one under the header, trimmed rules under spanning heads). Booktabs shows its rule widths, the rules under spanning heads and their trim, **Group rules** and, under *Tables taller than the page*, the rule under a part that goes on overleaf, and hides the border width and the corner radius;
+    - a **corner radius** for the outer frame;
+    - cell padding;
+    - under *Tables taller than the page*, **When a table does not fit** (`overflow`) and **Apply to tables set in the text** (`splitInline`, on by default since postext 1.25: a table placed `here` that does not fit the rest of its column is cut between rows and goes on in the next column);
+    - under *Body cells*, **Zebra rows** (`bodyAlternateBackgroundEnabled`), which fills every second body row with the **Alternate row color** (`bodyAlternateBackground`) shown while it is on.
+  - *Table styles* (`tableStyles`): named table styles. You can add, remove and rename ids (renaming carries along the tables that use the id), then set any of the *Tables* fields. Each control shows the value inherited from *Tables* until you set it.
+  - *Diagrams* (`diagramStyle`): a **single-ink** switch that recolours SVG diagrams to tints of one ink for single-colour printing, plus an ink-colour picker that defaults to the palette's main colour, and **Embed fonts in SVG text** (`inlineFonts`, on by default), which sets the text of every SVG in the book's fonts (see [Configuration › Fonts in SVG text](/en/docs/configuration-resources#fonts-in-svg-text)).
+  - *Video style* (`videoStyle`): the **Play mark** (shape, position, size, distance from the edge, colours and background opacity) and the **QR code** (position, size, distance from the edge, error correction, margin, colours and corner radius) printed on a video's poster; **Outputs**: whether the poster links to the video, and whether the HTML viewer shows the player or the poster; and the **Player** switches every video starts from. Among them, **Play alongside other videos**: on, starting a video file leaves the others playing, so the silent loops of a page run together; off, starting one pauses the others. It applies in the HTML viewer and in Folio.
+- **Boxes**
+  - *Box styles* (`calloutStyles`): named styles for `:::callout{type="…"}`. You can add, duplicate, remove and rename ids, then set:
+    - the default title, span, placement and width, and **Columns**: how many adjacent columns a floated box (placement *Auto*, *Top* or *Bottom*, column span) takes on a page of several columns. The `columns` attribute of a `:::callout` overrides it;
+    - the background, border, corner radius and padding, and an edge **stripe**;
+    - an **icon**: either a text glyph or an SVG/bitmap picked from the Resources panel. It can be set inline or as a corner badge, with its corner side and a width for non-square artwork.
+    - a **Label tab** group (`calloutStyles[].label`): font, size, weight, colour, fill, corner, height, padding, offset and inset, an icon resource beside the tab, and a rule along the top edge;
+    - title typography, with letter spacing, indent and **Title line height** (`titleStyle.lineHeight`);
+    - body and list overrides that inherit the document text. These include the body's bold and **italic colours**, its regular and bold weights, **italic** and **small caps** switches, its **Tab stops** and **Default tab interval** (`body.tabStops`, `body.tabInterval`), and the bullet's size and weight.
+    - a column gap for `:::columns` groups inside the box;
+    - a **Snap to grid** switch (`calloutStyles[].snapToGrid`, on by default; off keeps the exact bottom margin for stacked boxes);
+    - the marker column, a fixed anchor, keep-together and split-min-lines, and the float-barrier controls;
+    - a **Side Box at a Column End** choice (`sideAtColumnEnd`) for side boxes whose text does not go on in the same column: beside the text before the fence, or beside the text after it;
+    - a **Split boxes** group: repeat the title with a suffix on every continuation (`repeatTitle`, `continuedSuffix`), and a continuation marker under each part that goes on, with its text, alignment and italic (`continuesMarkerEnabled`, `continuesMarker`, `continuesMarkerAlign`, `continuesMarkerItalic`). The strings default to the document language.
+- **Headers & footers**
+  - *Headers & footers*: per-slot text, rule, box and image elements.
+    - **Text elements**: vertical alignment, **text alignment** within their own box (`align`: flush left, centred or flush right, visible when the box is wider than the text, or justified, which stretches the spaces of every line but the last of each paragraph to fill the box and, with **Hyphenation** on, splits a word at a syllable to fill a line), line height, letter spacing (negative to tighten a display title), letter case, a fitted, filled or fixed width and height, and a maximum width. **Inline marks** (`inlineMarks`) sets `**bold**`, `*italic*` and the other inline marks in the element's text, and an outline draws the letters' contour: **Outline width**, **Outline color** and **Hollow letters** (`stroke`).
+    - **Rules**: horizontal or vertical.
+    - **Placeholders**, picked from the engine allow-list: page number, total pages, book total pages, title, subtitle, author, publish date, chapter title and number, part title and number, and `{attr.key}` for a chapter attribute. Headers and footers also take the chapter title and number at the top of the page, `{chapterTitleAtTop}` / `{chapterNumberAtTop}` (see [Chapter at the top of the page](/en/docs/configuration-headers-footers#chapter-at-the-top-of-the-page)), and the guide words `{firstMark.h2}` / `{lastMark.h2}` (a heading level or a paragraph style id after the dot; see [Guide words](/en/docs/configuration-headers-footers#guide-words-first-and-last-mark)).
+    - **Where a slot appears**: parity, and a **pages** filter: all, body, chapter openers, part dividers or blank pages.
+    - **Placement**: overflow, and an anchor to the container, to a sibling element, or to the **page** / **bleed** frame for edge-to-edge bands; header and footer elements can also anchor to the **Outer margin** (`'outer'`), the margin away from the spine.
+    - **Writing mode** of a text element: *Horizontal*, or *Vertical, lines right to left* (`writingMode`), for running heads set down the fore-edge of a vertical book. The header editor's **Fore-edge heads (vertical)** adds the chapter title four characters below the head of the type area and the folio five above its foot, both vertical, at 80 % of the body size, anchored to the outer margin (see [Vertical text elements](/en/docs/configuration-headers-footers#vertical-text-elements)).
+    - A **Drop cap** group (lines, font, weight, size, colour and gap) and a paragraph indent. A text with a drop cap wraps whatever its **Overflow**, and with no size set the letter's top is level with the capitals of the first line.
+    - Every other design slot offers the same text controls.
+- **Parts**
+  - *Parts* (`parts`):
+    - **Part title page** (`parts.page`): turning it off opens no page, and the part's number, title and colours simply apply from the next content. It also hides the settings below.
+    - the parity of the page a `:::part` opens on, and an optional break after the part with its own parity;
+    - the margins of the part page. They inherit the page margins, with the same mirrored inner/outer labels.
+    - an **opener design** slot laid out against the page trim box. Its placeholder picker adds the heading set: the current title, and its number in decimal, roman or alphabetic form.
+    - a **body style** for the blocks inside the part. It inherits the body text and the list colours, and it includes the list overrides (numbering format and offsets, margins, hanging indent, and the task-list fields).
+- **Export**
+  - *Print preparation* (`print`, and `page.cutLines`), in four groups:
+    - **Crop marks and bleed**: the cut lines, the bleed, the marks' length, offset and width, and their screen colour.
+    - **PDF/X and colour**: **PDF standard** (*None*, *PDF/X-1a:2003*, *PDF/X-4*); **Output profile**, from the fifteen free profiles (FOGRA39 by default, FOGRA51 and FOGRA52 for the PSO v3 conditions, GRACoL, SWOP, newsprint); **Upload an ICC profile** for the one your printer gives you, with its **Printing condition** (the registry name the PDF/X output intent names) and a button that removes it; **Rendering intent**, **Black point compensation**, **Convert pictures to CMYK** (hidden for PDF/X-1a, which always converts) and **Ink limit**.
+    - **Black**: **Greys and black in K only**, **Overprint 100 % black**, **Rich black for large areas** with its C/M/Y/K recipe and the size from which an area turns rich.
+    - **Preflight**: **Preflight in Checks**, the minimum and critical image resolution, the minimum rule width, the size under which text in several inks is flagged, the safe zone, the distance under which a box should bleed, and **Check fonts of placed PDFs**.
+
+    See [Configuration › Print production](/en/docs/configuration-fonts-colors-viewers#print-production-config).
+  - *PDF*: bookmarks, the accessible (tagged) PDF and the forced colour space. CMYK is separated with the profile of *Print preparation*.
+  - *Web reader (HTML)*: the `htmlViewer` settings.
+- **Folio**
+  - *Folio viewer (3D)* (`folio`), in five groups: **View** (the tilt and the turn), **Paper** (stock, grammage, bulk with the resulting caliper, finish, texture and its strength, shade, show-through), **Binding** (type, covers, cover material and colour, spine image; the *Folded (newspaper)* type lays sheets folded once one inside the other with nothing holding them, as a newspaper, and since it has no spine to print on, like *Saddle-stitched (stapled)*, the spine image is hidden), **Surface** (the desk material and its tint) and **Lighting** (environment, exposure, shadows). Picking another paper stock fills the fields you have not changed with that stock's values; the ones you changed keep yours. On a newspaper trim the stock and the binding you have not chosen show as *Newsprint* and *Folded (newspaper)*. The spine image is chosen from the bitmaps and SVGs of the Resources panel. See [Folio tab](/en/docs/sandbox-previews#folio-tab).
+- **Advanced**
+  - *On-screen aids* (`debug`): the **baseline grid** (`page.baselineGrid`), which lives here rather than under *Page*, and the other layout-checking overlays.
+  - *Warnings*: which problems the Checks panel reports, and their thresholds.
+
+**Finding a setting.** The toolbar under the header works across every group:
+
+- **Search settings…** filters every field in every section by its label, help text and option names. It ignores accents and matches the start of words: *marg* finds *Top margin* and *Margen superior*, and *h3* opens *Headings › H3*. Results are grouped by settings group. Matching sections open automatically, non-matching rows and sections are hidden, and hits are highlighted. Escape clears the search, then leaves the field.
+- **Changed** shows only the fields whose value differs from its default.
+
+**Help text.** Every field has a short explanation. Screen readers hear it as the field's description, and it stays hidden on screen until you open it with the row's **?** button (*What is "…"?*). The header's **Show every explanation** switch opens every explanation at once, and the choice is remembered.
+
+**Changed values.** The panel follows a consistent **override model**:
+
+- Section headers carry a badge with the number of changed fields inside, counted through nested groups.
+- A section header shows a reset button (which asks for confirmation) only while it contains changes.
+- A changed field has a dot beside its label (read as *changed*) and a small reset button of its own.
+- Only the changed subtree is ever saved or exported. Defaults are stripped, so a pristine Sandbox stores an empty configuration.
+- Resetting *Page* leaves the baseline grid alone, since the grid is edited under *Advanced*.
+
+**The controls:**
+
+- Choices are dropdowns whose options can carry a one-line description, or segmented buttons when there are only a few.
+- On/off settings are switches.
+- Numbers have − / + steppers. The arrow keys step the value, ten times as much with Shift and a tenth with Alt.
+- Lengths have a unit selector that converts the value when the unit changes (cm, mm, in, pt, px, em, rem).
+- A colour is a single button showing the swatch and the value.
+- The font picker can be navigated with the arrow keys.
+
+Controls are context-aware. The gutter width only appears for multi-column layouts, the justification settings only appear when text is justified (ragged text shows **Hyphenate ragged text** instead, and a paragraph style or box shows its hyphenation switch when it is justified or ragged hyphenation is on), and the side-column percentage only appears for the column-and-a-half layout. Changes take effect immediately in the viewport preview. For a full reference of every configuration option and its default, see the [Configuration](/en/docs/configuration) page.
+
+The panel header also offers **Reset** (asks for confirmation; only shown when the design differs from the open sample book's, and it restores that sample's design, fonts included), **Export** and **Import**. See [Export and import](/en/docs/sandbox-books-saving#export-and-import).
+
+
+## Checks panel
+
+Live diagnostics, recomputed from the text, the design, the figures and the last build. The count matches the badge on the activity bar button. Warnings are grouped by kind, in triage order: what breaks the output first, then the markup, then the fine typesetting that usually comes in many small items. Each group is collapsible and shows its count:
+
+- **Fonts**: a missing font family, or missing or duplicate weight/style variants in a custom family, and *Font stack in a font family*: a `fontFamily` setting that holds a CSS font stack (the text is set in its first family; the entry names the setting's path)
+- **Figures & tables**: an unknown resource id in a `::resource` / `:ref` — also in the caption, note or cells of a figure the text uses, or as a table cell's image — duplicate resource ids, references to a resource type that does not exist, bitmaps rendered substantially larger than their pixel size, a table whose style id names no table style, a table grid left irregular (a merged cell whose covered cells are missing, or a row with a hole: merge the cells again in the table editor), an image whose file is missing from storage or does not decode (it shows as a placeholder), an SVG whose text names a family with no font file to embed (*Font missing in an SVG*: the picture sets it in a fallback face) or whose fonts exceed the 2 MB cap (*SVG fonts too large to embed*), and a video without a poster, a video file without a production address (no QR code or link in print) or a YouTube or Vimeo address that names no video, and a floated picture set smaller to fit the room on its page (*Picture shrunk to fit*: the entry gives the scale, and the overrun in mm when even its smallest scale runs past the text block), and a picture or a box that does not wrap the text as asked (*Wrapped picture or box*: too narrow a measure beside it, too short for lines beside it, moved on to the next column, or set in vertical text)
+- **Text & markup**:
+  - heading-hierarchy skips (for example H1 → H3), and consecutive headings with no body text between them;
+  - invalid or unclosed `$…$` / `$$…$$` formulas;
+  - unknown directive names (every name the parser knows is accepted: `pagebreak`, `columnbreak`, `space`, `numbering`, `toc`, `callout`, `paragraphs`, `part` and `columns`), invalid numbering or parity attributes, and a `:::space{lines=N}` outside 0–20 lines;
+  - a `:::` container fence left unclosed at the end of the document (clicking it focuses its opening line);
+  - a `:::paragraphs{style="…"}`, `:::callout{type="…"}`, `:chip[…]{style="…"}` or heading `{style="…"}` whose style is not configured;
+  - a `::resource` line that prints as text — malformed, or glued under a paragraph without a blank line;
+  - *Fullwidth markup*: markup typed with a Chinese or Japanese input method (`：：：`, `＃`, `［＾…］`, `｛…｝`, `＊＊…＊＊`), which prints as text; the entry shows the ASCII form to type;
+  - *Attribute key not read*: an attribute key written outside ASCII (`作者=曹雪芹`), which the parser ignores;
+  - *Unclosed code fence*: a ```` ``` ```` or `~~~` fence with no closing fence, so the rest of the text is set as code (`unclosedCodeBlock`; clicking it focuses the fence);
+  - *Tab in vertical text*: a `:tab` in text set vertically, which is set as a word space, since tab stops are set in horizontal text only (`tabInVerticalText`);
+  - *Front matter ignored*: a chapter other than the first that starts with a front-matter block (only the first chapter's front matter belongs to the book);
+  - *Unknown column flow*: a `:::columns{flow=…}` that is neither `snake` nor `parallel`; the group takes the default (`columnsFlowUnknown`).
+- **Design**:
+  - header and footer placeholder names outside the engine allow-list (`{attr.…}` and the part placeholders are accepted), and placeholders whose document metadata is missing;
+  - cyclic anchors between design elements, or anchors to an element that does not exist. This check and the placeholder check cover every design slot: the running heads, the part opener, the blank verso after a part page, the part rows of the contents, each heading level's design, and each heading style's design and the running heads of its section. An entry from a heading style names the style, as in `{style="index"} header · #rh → #missing`, and one from the verso or the contents' part rows names its setting, as in `toc.parts.design · #row → #missing`;
+  - text elements whose clip overflow always truncates;
+  - *Design text cut short*: a design text that did not fit its width and ends in an ellipsis, or was clipped with ink past its box (`designTextTruncated`). The entry names the slot and the element and gives the whole text; clicking it opens the page it was cut on, and selects a heading or front-matter title in the editor. A running head cut on every page of a chapter is listed once;
+  - *Heading design cut off*: a heading design taller than its page can hold — text of an opener laid out past the foot of the page, or of an in-column design past the foot of its column (a long lead on a small screen page). The heading claims the rest of its page or column, so the text after it starts on the next one, but that part of the design is lost; clicking the entry focuses the heading;
+  - *Side column out of range*: a column-and-a-half side column the engine had to clamp to leave room for the main column;
+  - *Column count out of range*: a `multiple` layout's column count that is not a whole number from 3 to 8, which the engine clamped;
+  - *Unknown number format*: a list, page or resource-type number format the engine does not know, which numbers in decimal;
+  - *Unknown setting*: a key that the headings, a heading level, a heading style or a tab stop does not have (a misspelt `letterSpacng`), which the engine ignores; the entry suggests the setting it is closest to, when one is.
+  - *No line numbers in vertical text*: line numbers turned on in a vertical document, which gets none.
+
+  These last four, like *Font stack in a font family*, come from the configuration rather than the text: the entry names the setting's path, and clicking it does not move the editor.
+- **Contrast**:
+  - *Low contrast*: a text colour under the ratio its size and weight ask at the book's level (`contrast.level`), against the ground it is set on. The entry quotes the text and gives both colours, the size, and the ratio on screen and, for a book set up for print, on the paper of its output profile. A pair is listed once, with the number of places set so;
+  - *Reversed text too fine for the press*: light text on an inked ground under the sizes of **Colours → Contrast → Reversed text**, in a book set up for print.
+
+  Each entry names the page of its first occurrence; clicking it opens that page and selects the text in the editor.
+- **Typesetting**:
+  - loose lines (word spacing stretched past the configured threshold);
+  - *Justified line set ragged*: a line of a justified paragraph left short because reaching the measure would stretch its word spaces past 3× their width; the entry quotes the line and gives the stretch it would have needed, and a click selects the line;
+  - *CJK line set short*: a line of Chinese, Japanese or Korean text left short of its measure because filling it would spread its characters past the limit;
+  - *Marks crowd the next line* and *Readings crowd the next line*: emphasis dots, name and title lines, or ruby readings that need more line gap than the paragraph has; the entry gives both, in em;
+  - boxes that overflow their column;
+  - *Chips touch the next line*: a chip whose box runs into a chip on the line above or below (the overlap is given in points); a tall chip with no chip above or below it is not flagged;
+  - parity cascades;
+  - *Line number over a side box*: a line number in the side column (`lineNumbers.position: 'side'`) that stands over a box, a caption or a figure there; both are printed where they are;
+  - *Drop cap not set as configured*: a paragraph shorter than its drop cap sinks (the entry says whether the room was kept, the initial shrunk or left out), one broken before the initial's last line in a column too short for it, one whose first letter joins the next (Arabic), one in vertical text, or one that opens with no letter (`dropCap`);
+  - *Code line wider than its box*: a listing with lines wider than its box, turned over, set smaller (the entry gives the size) or cut, as **Code → Long lines** says (`codeOverflow`);
+  - *Columns too narrow*: a `:::columns` group whose columns are narrower than six ems of their text (`columnsTooNarrow`);
+  - *Side box or figure after the end of the text*: a side box, or a figure of the side column, set on a page with no text because its chapter's text ended while it waited for room in the side column; the entry names the page (`afterText`);
+  - *Not on any page*: a box or a float still waiting for a slot when the layout ended, which is on no page (`unplaced`);
+  - *Short list cut between columns*: a list of a few items set in two columns or pages; listed when **Body text → Short lists cut between columns** is on *Warn*, and on *Avoid* for a list no column could hold whole (`shortListSplit`);
+  - *Float on an opener page*: a figure, a table or a floated box on the page a chapter or a part opens; listed when **Columns → Floats on opener pages** is on *Warn* (`openerFloat`);
+  - *No hyphenation patterns for this language*: the document language (its hyphenation locale, else `locale`) has no bundled patterns, so its text is hyphenated with the US English ones. It goes away when hyphenation is switched off.
+- **Preflight**, for a book set up for print (a PDF/X standard, a CMYK PDF or crop marks), critical findings first:
+  - *Low image resolution*: a picture under the minimum resolution at its printed size (critical under the critical one), worked out from the pixels its file really has;
+  - *Declared pixels differ from the file*: a bitmap whose declared width and height are not the file's (a warning when it declares more);
+  - *RGB picture*: separated into CMYK on export, or kept RGB by a PDF/X-4 that does not convert pictures;
+  - *Rule too thin*, *Small text in several inks*, *Ink coverage over the limit* (an authored CMYK colour, the rich-black recipe);
+  - *Text in the safe zone* and *Stops just short of the trim* (a box or picture that should bleed);
+  - *Fonts not embedded in a placed PDF*, *RGB in a placed PDF* and *Transparency in a placed PDF* (critical in PDF/X-1a), from each figure's print master.
+
+  Each entry names its page; clicking it opens that page in the viewer.
+- **Browser**: storage unavailable (IndexedDB missing)
+
+Each entry shows an icon, a title, a one-line detail and, where it applies, the chapter and source line (*Ch. 2 · Line 12* in a multi-chapter book). Clicking an entry with a source location switches to that chapter and focuses the editor at that spot. When nothing is wrong, the panel shows **All clear**. Which checks run is set in **Design → Advanced → Warnings**.

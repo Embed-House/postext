@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Os ajustes de cjk: quebra de linha, largura da pontuação, espaçamento, a grade de caracteres, o ruby e as marcas do texto chinês, japonês e coreano',
   lang: 'pt',
   lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 7,
+  readingTime: '36 min',
+  order: 13,
   parent: 'configuration',
   plainSummary: "Esta página reúne os ajustes do texto chinês, japonês e coreano. Eles decidem onde uma linha pode quebrar e quanto espaço os sinais de pontuação ocupam. Definem o espaço entre esses caracteres e as letras latinas ou os números. Também controlam os pequenos guias de leitura impressos ao lado dos caracteres e as marcas que acompanham nomes e títulos. Os guias de composição chinesa e de composição japonesa mostram esses ajustes em uso.",
 };
@@ -320,7 +320,7 @@ No texto vertical, uma palavra latina ou um número longo é composto deitado, e
 - No Japão, os pares `!!`, `!?`, `?!` e `??`, de meia largura ou de largura cheia, também ficam em pé numa única célula (`すごい！？`), a menos que uma letra latina, um algarismo ou um terceiro sinal os toque; um par de largura cheia é pintado com os sinais de meia largura. Kana pequenos, ：；, “ ” (pintados 〝〟) e ・ usam as formas verticais japonesas (veja [Composição japonesa › Formas verticais](/pt/docs/japanese-layout#formas-verticais)).
 - O medidor e todos os renderizadores encontram as mesmas células: o canvas pinta os algarismos de volta em pé e comprimidos, o PDF faz o mesmo com a fonte horizontal, e o HTML os envolve em `text-combine-upright: all`.
 
-À mão, três marcas inline substituem o ajuste no texto vertical e não mudam nada no texto horizontal (veja [Formato do documento › Orientação no texto vertical](/pt/docs/document-format#orientação-no-texto-vertical)):
+À mão, três marcas inline substituem o ajuste no texto vertical e não mudam nada no texto horizontal (veja [Formato do documento › Orientação no texto vertical](/pt/docs/document-format-inline#orientação-no-texto-vertical)):
 
 ```markdown
 第:tcy[120]回、:upright[GDP]與:sideways[12]
@@ -351,7 +351,7 @@ Duas diagramações da prática chinesa, em 五号 (10,5 pt) com 6 pt de espaço
 
 ### Marcas, rubi e warichu
 
-A marcação de [marcas chinesas, rubi e warichu](/pt/docs/document-format#marcas-chinesas-rubi-e-warichu) mantém o texto no parágrafo: a busca, o sumário, as âncoras do índice remissivo e o texto copiado leem os caracteres como foram escritos, e só o que se desenha em volta deles depende destes ajustes.
+A marcação de [marcas chinesas, rubi e warichu](/pt/docs/document-format-inline#marcas-chinesas-rubi-e-warichu) mantém o texto no parágrafo: a busca, o sumário, as âncoras do índice remissivo e o texto copiado leem os caracteres como foram escritos, e só o que se desenha em volta deles depende destes ajustes.
 
 - **Pontos de ênfase** (着重号, 傍点; `:dots[…]`, e `*…*` sobre caracteres CJK com `emphasis: 'dots'`) põem uma marca por caractere, centralizada nele (sem contar o espaçamento de uma linha justificada), nunca na pontuação nem nos espaços: sob o caractere no texto horizontal, à direita dele no texto vertical (clreq §5.3.1). `style` escolhe um ponto cheio, um círculo vazado ou um gergelim, `fill="open"` desenha o contorno, `pos="over|under"` o lado; `emphasisMark` define o que uma marca deixa sem definir (no Japão, um gergelim sobre o texto, à direita dele no texto vertical). Um gergelim fica na mesma posição na folha nos dois modos de escrita, e as marcas do lado de uma leitura em rubi ficam por fora dela.
 - **Linhas laterais** (傍線, `:sideline[…]{style pos}`) correm ao lado do texto, incluindo pontuação e espaços: `solid`, `double`, `wavy` ou `dotted`, sob o texto na horizontal e à direita dele na vertical, por padrão; duas linhas que se encontram cedem cada uma um oitavo de eme. Funcionam em qualquer escrita.

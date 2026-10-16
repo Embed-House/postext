@@ -6,8 +6,8 @@ export const metadata = {
   description: 'As notas de rodapé, a numeração de linhas, as referências cruzadas e as citações, o sumário e o índice remissivo',
   lang: 'pt',
   lastUpdated: '2026-10-10',
-  readingTime: '4 min',
-  order: 6,
+  readingTime: '29 min',
+  order: 12,
   parent: 'configuration',
   plainSummary: "Esta página reúne os ajustes das partes do livro que remetem a outro lugar. As notas ficam no pé da página e os números de linha ficam na margem. As referências cruzadas indicam uma figura, uma seção ou uma página, e as citações indicam as obras que você menciona. O sumário lista os capítulos e o índice remissivo, no fim, lista termos com suas páginas. Cada seção explica a aparência dessas peças e como elas são numeradas.",
 };
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Notas de rodapé
 
-A propriedade `footnotes` define onde ficam as notas citadas com `[^id]`, como são numeradas e qual é a sua aparência. A marcação é descrita em [Formato do documento](/pt/docs/document-format#notas-de-rodapé).
+A propriedade `footnotes` define onde ficam as notas citadas com `[^id]`, como são numeradas e qual é a sua aparência. A marcação é descrita em [Formato do documento](/pt/docs/document-format-notes-references#notas-de-rodapé).
 
 ```ts
 interface FootnotesConfig {
@@ -378,7 +378,7 @@ O que é contado e o que não é:
 
 - **Nunca são contados** os títulos, as legendas, as tabelas e as imagens, as fórmulas em destaque, o texto de design (aberturas, cabeços), as notas de rodapé e as notas de fim de capítulo, o sumário, as entradas do índice remissivo e da bibliografia, nem as páginas em branco.
 - **Boxes e prosa.** O texto de um boxe não é contado, e com `count: 'verse'` a prosa também não, a menos que o estilo de parágrafo em que é composta diga `lineNumbers: true`; um estilo com `lineNumbers: false` nunca é contado (veja [Estilos de parágrafo](/pt/docs/configuration-styles#estilos-de-parágrafo)).
-- **Um poema.** A abertura de um poema aceita `numbered=false` (os seus versos não são contados), `lineStart=N` (o seu primeiro verso é o N, e a contagem recomeça ali) e `interval=N`. `:::numbering{lines=N}` dá o número N à próxima linha contada, onde quer que esteja. Veja [Formato do documento › `:::verse`](/pt/docs/document-format#verse) e [`:::numbering`](/pt/docs/document-format#numbering).
+- **Um poema.** A abertura de um poema aceita `numbered=false` (os seus versos não são contados), `lineStart=N` (o seu primeiro verso é o N, e a contagem recomeça ali) e `interval=N`. `:::numbering{lines=N}` dá o número N à próxima linha contada, onde quer que esteja. Veja [Formato do documento › `:::verse`](/pt/docs/document-format-directives#verse) e [`:::numbering`](/pt/docs/document-format-directives#numbering).
 
 Num livro diagramado capítulo por capítulo, `restart: 'document'` leva a contagem de um capítulo para o seguinte em `continuation.lineNumber`. `continuationAfter` conta os versos a partir do texto; com `count: 'all'` a contagem depende da diagramação, então a aplicação repassa o `lastLineNumber` do documento do capítulo anterior, como faz o Sandbox.
 
@@ -399,7 +399,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // fonte, peso e
 
 ## Referências cruzadas
 
-A propriedade `crossRefs` define as palavras que uma [referência cruzada](/pt/docs/document-format#referências-cruzadas-e-âncoras) imprime em volta de um número ou de uma página, e o estilo que um `:ref` assume quando não define nenhum. Cada modelo contém `{n}` onde vai o número; um modelo sem ele recebe o número depois de um espaço inseparável (`"§"` imprime *§ 3.2*). Um modelo não definido segue o idioma do documento: *chapter / section / p.* em inglês, *capítulo / sección / pág.* em espanhol, `第{n}章` / `第{n}节` / `第{n}页` em chinês, e assim por diante em francês, alemão, italiano, português, catalão e neerlandês.
+A propriedade `crossRefs` define as palavras que uma [referência cruzada](/pt/docs/document-format-notes-references#referências-cruzadas-e-âncoras) imprime em volta de um número ou de uma página, e o estilo que um `:ref` assume quando não define nenhum. Cada modelo contém `{n}` onde vai o número; um modelo sem ele recebe o número depois de um espaço inseparável (`"§"` imprime *§ 3.2*). Um modelo não definido segue o idioma do documento: *chapter / section / p.* em inglês, *capítulo / sección / pág.* em espanhol, `第{n}章` / `第{n}节` / `第{n}页` em chinês, e assim por diante em francês, alemão, italiano, português, catalão e neerlandês.
 
 ```ts
 interface CrossRefsConfig {
@@ -449,7 +449,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Deixa uma linha quebrar nos espaços de uma referência cujo rótulo são palavras: o texto de uma âncora <code>[palavras]{'{#id}'}</code>, o texto de um título ou o título de um boxe, um <code>text="…"</code> próprio (também numa referência a uma figura ou a uma tabela). Os espaços do rótulo então esticam e encolhem com a linha, e a referência continua sendo um só link; as suas palavras não são hifenizadas. Dentro de um rótulo assim, um número, um numeral romano ou uma letra sozinha não se separam da palavra anterior (<code>Fig. 1a</code>, <code>lâmina IV</code>). Um rótulo com um número ou uma página (<em>seção 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Teorema 2</em>) nunca quebra, mesmo quando o seu modelo traz um espaço comum. <code>false</code> compõe todo rótulo como uma só palavra, sem quebra de linha dentro, como até o postext 1.27. Uma configuração salva antes do <code>configVersion</code> 12 cujo texto contém uma referência é lida com <code>false</code>, de modo que as suas linhas ficam onde estavam (veja <a href="/pt/docs/configuration-programmatic-usage#pacotes-gravados-pelo-postext-14-ou-anterior">Pacotes gravados pelo postext 1.4 ou anterior</a>).</td>
+      <td>Deixa uma linha quebrar nos espaços de uma referência cujo rótulo são palavras: o texto de uma âncora <code>[palavras]{'{#id}'}</code>, o texto de um título ou o título de um boxe, um <code>text="…"</code> próprio (também numa referência a uma figura ou a uma tabela). Os espaços do rótulo então esticam e encolhem com a linha, e a referência continua sendo um só link; as suas palavras não são hifenizadas. Dentro de um rótulo assim, um número, um numeral romano ou uma letra sozinha não se separam da palavra anterior (<code>Fig. 1a</code>, <code>lâmina IV</code>). Um rótulo com um número ou uma página (<em>seção 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Teorema 2</em>) nunca quebra, mesmo quando o seu modelo traz um espaço comum. <code>false</code> compõe todo rótulo como uma só palavra, sem quebra de linha dentro, como até o postext 1.27. Uma configuração salva antes do <code>configVersion</code> 12 cujo texto contém uma referência é lida com <code>false</code>, de modo que as suas linhas ficam onde estavam (veja <a href="/pt/docs/configuration-bundles#pacotes-gravados-pelo-postext-14-ou-anterior">Pacotes gravados pelo postext 1.4 ou anterior</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -458,7 +458,7 @@ As referências recebem a cor, o peso e a inclinação de todas as referências 
 
 ## Citações
 
-A propriedade `citations` escolhe o estilo de citação e a aparência das citações e da bibliografia. A marcação é descrita em [Citações e bibliografia](/pt/docs/document-format#citações-e-bibliografia); o estilo é aplicado pelo pacote `postext-citeproc`.
+A propriedade `citations` escolhe o estilo de citação e a aparência das citações e da bibliografia. A marcação é descrita em [Citações e bibliografia](/pt/docs/document-format-notes-references#citações-e-bibliografia); o estilo é aplicado pelo pacote `postext-citeproc`.
 
 ```ts
 interface CitationsConfig {
@@ -502,7 +502,7 @@ interface CitationsConfig {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td><code>'apa'</code></td>
-      <td>O id de um estilo incluído (veja <a href="/pt/docs/document-format#estilos">Estilos</a>) ou <code>'custom'</code>. O estilo decide o que as citações e as entradas dizem: nomes, datas, ordem, pontuação e se as citações são notas.</td>
+      <td>O id de um estilo incluído (veja <a href="/pt/docs/document-format-notes-references#estilos">Estilos</a>) ou <code>'custom'</code>. O estilo decide o que as citações e as entradas dizem: nomes, datas, ordem, pontuação e se as citações são notas.</td>
     </tr>
     <tr>
       <td><code>customStyle</code></td>
@@ -550,7 +550,7 @@ interface CitationsConfig {
       <td><code>hyphenateNames</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Deixa o dicionário dividir os nomes dos autores citados. <code>false</code> mantém inteiro o sobrenome de cada pessoa das referências (autores, organizadores, tradutores) e todo nome informado como uma única string, onde quer que apareça com a sua maiúscula: numa citação, no texto corrido e na lista, de modo que nenhuma linha termina em <code>(Lup-</code>. Um sobrenome duplo é lido parte por parte, e um autor chamado Baker não mantém inteira a palavra <code>baker</code>. Veja <a href="/pt/docs/configuration-text#palavras-que-não-se-dividem">Palavras que não se dividem</a>.</td>
+      <td>Deixa o dicionário dividir os nomes dos autores citados. <code>false</code> mantém inteiro o sobrenome de cada pessoa das referências (autores, organizadores, tradutores) e todo nome informado como uma única string, onde quer que apareça com a sua maiúscula: numa citação, no texto corrido e na lista, de modo que nenhuma linha termina em <code>(Lup-</code>. Um sobrenome duplo é lido parte por parte, e um autor chamado Baker não mantém inteira a palavra <code>baker</code>. Veja <a href="/pt/docs/configuration-language#palavras-que-não-se-dividem">Palavras que não se dividem</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -629,7 +629,7 @@ interface CitationsConfig {
 
 ## Sumário
 
-A propriedade `toc` configura o que uma diretiva `:::toc` imprime (veja [Formato do documento](/pt/docs/document-format#toc)). O sumário é montado a partir da **estrutura** do documento (cada título com o seu número e o rótulo da sua página, cada `:::part`), então acompanha os capítulos: renomeie um, mova-o para outra parte, mude os seus autores, e as entradas mudam junto. Uma entrada é o número do título numa coluna própria, o título, uma linha de pontos e o rótulo da página na margem direita, e depois uma linha de subtítulo opcional; uma parte é uma linha desenhada por `parts.design`.
+A propriedade `toc` configura o que uma diretiva `:::toc` imprime (veja [Formato do documento](/pt/docs/document-format-directives#toc)). O sumário é montado a partir da **estrutura** do documento (cada título com o seu número e o rótulo da sua página, cada `:::part`), então acompanha os capítulos: renomeie um, mova-o para outra parte, mude os seus autores, e as entradas mudam junto. Uma entrada é o número do título numa coluna própria, o título, uma linha de pontos e o rótulo da página na margem direita, e depois uma linha de subtítulo opcional; uma parte é uma linha desenhada por `parts.design`.
 
 ```ts
 const config: PostextConfig = {
@@ -719,7 +719,7 @@ Os rótulos de página são os que o documento imprime. `buildDocument()` diagra
 
 ## Índice remissivo
 
-A propriedade `index` configura o que uma diretiva `:::index` imprime (veja [Formato do documento](/pt/docs/document-format#índice-remissivo)): os termos marcados com `:index[…]` e `:index{term="…"}` no texto, ordenados, agrupados pela letra inicial (pela inicial do pinyin ou pelo número de traços em chinês, pela linha do gojūon em japonês, veja `groupBy`), cada um com as páginas em que aparece. Uma entrada é o seu termo, um separador e os seus números de página; as subentradas vêm em seguida, com um passo de recuo por nível, e as linhas quebradas recuam por `turnoverIndent` para nunca se alinharem com uma subentrada.
+A propriedade `index` configura o que uma diretiva `:::index` imprime (veja [Formato do documento](/pt/docs/document-format-notes-references#índice-remissivo)): os termos marcados com `:index[…]` e `:index{term="…"}` no texto, ordenados, agrupados pela letra inicial (pela inicial do pinyin ou pelo número de traços em chinês, pela linha do gojūon em japonês, veja `groupBy`), cada um com as páginas em que aparece. Uma entrada é o seu termo, um separador e os seus números de página; as subentradas vêm em seguida, com um passo de recuo por nível, e as linhas quebradas recuam por `turnoverIndent` para nunca se alinharem com uma subentrada.
 
 ```ts
 const config: PostextConfig = {

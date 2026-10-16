@@ -630,7 +630,7 @@
       "it": "Risolto in postext 1.24: placement.wrap mette un’immagine più stretta della sua colonna su un lato di essa, e il testo che la segue scorre al suo fianco, poi a tutta larghezza sotto: un ::resource collocato 'here', o un elemento flottante a una colonna in testa o al piede di una colonna. layout.wrap contiene la distanza, il testo più stretto ammesso accanto e la larghezza predefinita. Un riquadro prende :::callout{wrap=\"right\" width=0.4}. Fino alla 1.23 il testo accanto a un’immagine richiedeva un gruppo :::columns che contenesse entrambi."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Text wrap",
         "es": "Ajuste del texto",
@@ -1195,7 +1195,7 @@
       "it": "Risolto in postext 1.24: placement.shrink scala un’immagine flottante, mantenendo le proporzioni, allo spazio del suo posto invece di spostarla oltre. 'page' riduce un elemento flottante troppo alto per la fascia di una pagina nuova (l’area del contenuto meno un’apertura, altri elementi flottanti e note) a quella fascia; 'slot' lo riduce anche per farlo restare sulla pagina che lo cita quando ci sta a minScale (0.7 per impostazione predefinita) o più. Prima si ritaglia la zona sicura, captionMeasure: 'body' compone la didascalia alla larghezza dell’immagine e layout.floatShrink dà il valore predefinito del documento. Fino alla 1.23 un elemento flottante o entrava alla sua dimensione o veniva spostato oltre (fitFiguresToPage agisce solo sulle figure più alte della pagina), quindi le tavole si restringevano con una larghezza calcolata dal loro rapporto d’aspetto."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Placement",
         "es": "Colocación",
@@ -1294,7 +1294,7 @@
       "it": "Risolto in postext 1.19: la matematica in linea $…$ si compone in didascalie, note e celle di tabella, nella riga con il testo e con l’allineamento della cella; secondo la regola di Pandoc, così i prezzi di «$5 to $10» restano testo. Gli attributi dei titoli stampano ancora una formula così come è scritta. Fino alla 1.18 le formule si componevano solo nel testo corrente, e didascalie e celle usavano ^apici^, ~pedici~ e simboli Unicode."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Mathematical formulas",
         "es": "Fórmulas matemáticas",
@@ -1857,7 +1857,7 @@
       "it": "Risolto in postext 1.5: bodyText.hyphenation.ragged: true sillaba anche il testo in bandiera, entro una zona di sillabazione (3 em per impostazione predefinita), così una parola si divide solo quando mandarla intera alla riga successiva lascerebbe vuoto più della zona. È disattivata per impostazione predefinita: il testo in bandiera tiene intere le parole finché non lo chiedi. Fino alla 1.4 si sillabava solo il testo giustificato, e le righe che finivano molto corte si giustificavano o si riformulavano a mano."
     },
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-language",
       "heading": {
         "en": "Hyphenation",
         "es": "Separación silábica",
@@ -2099,7 +2099,7 @@
       "it": "postext-pdf scrive ogni pagina come un’unica MediaBox, il foglio con l’abbondanza e i segni di taglio, senza TrimBox, BleedBox né output intent, e converte i colori in CMYK con una formula semplice, senza profilo ICC. I segni di taglio mostrano dove tagliare; un master di stampa porta gli inchiostri esatti di una figura; uno strumento di prestampa aggiunge le box e il profilo quando uno stampatore chiede un PDF/X."
     },
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-pdf-output",
       "heading": {
         "en": "Print-ready PDFs",
         "es": "PDFs listos para imprenta",
@@ -2242,7 +2242,7 @@
       "it": "Risolto in postext 1.23: un blocco :::verse conserva una poesia così come è scritta. Ogni riga di Markdown è un verso, una riga vuota comincia una nuova strofa e gli spazi iniziali fanno rientrare il verso (due spazi un em). Un verso troppo lungo va a capo con un rientro sospeso, o allineato a destra dietro una parentesi quadra, e keepStanzas tiene intero un haiku o un tanka. Uno stile di paragrafo che imposta il suo firstLineIndent lo accoppia con il suo hangingIndent. Nel testo corrente una barra rovesciata a fine riga, o \\\\ prima di uno spazio, manda a capo la riga senza cominciare un nuovo paragrafo (un indirizzo, il saluto di una lettera). Fino alla 1.22 ogni verso di una poesia richiedeva un paragrafo tutto suo in un contenitore :::paragraphs, con il rientro scritto come spazi em (U+2003) dietro un word joiner (U+2060), e una barra rovesciata a fine riga si stampava."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::verse`",
         "es": "`:::verse`",
@@ -2977,7 +2977,7 @@
       "it": "Niente si compone tra due righe o due colonne di testo: la glossa scritta sopra una parola di un manoscritto medievale, o il commento in rosso (側批) che un manoscritto cinese scrive accanto a una colonna, non ha un posto proprio. Il ruby porta una lettura di pochi caratteri accanto alla sua base. Una nota più lunga va nella riga come warichu (:warichu[…], due file a metà corpo), o in una colonna laterale come riquadro recintato con span=\"side\"."
     },
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Chinese marks, ruby and warichu",
         "es": "Marcas chinas, ruby y warichu",

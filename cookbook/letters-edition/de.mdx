@@ -22,13 +22,13 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jeder Brief ist
 
 <Excerpt region="letters" />
 
-Mit ausgeschaltetem `breakBefore` beginnt ein Brief zwei Rasterzeilen (`marginTop`) unter der Rasterzeile, auf der der vorige endet. Auf <PageRef page={4}>Seite 4</PageRef> endet die Nachschrift, gesetzt mit 12,6 pt Zeilenabstand, zwischen zwei Rasterzeilen, sodass über Brief III etwa drei Zeilen Weißraum stehen. Auf Seite 2 läuft Brief I bis an den Fuß der Seite, und Brief II eröffnet Seite 3. Bei ihrer Voreinstellung würde die Ebene 1 jeden Brief auf einer rechten Seite beginnen ([Umbruch davor](/de/docs/configuration-text#umbruch-davor)). `numberingTemplate: '{1:I}'` nummeriert die Briefe von I bis III, und der Briefkopf druckt die Ziffer über `{number}`.
+Mit ausgeschaltetem `breakBefore` beginnt ein Brief zwei Rasterzeilen (`marginTop`) unter der Rasterzeile, auf der der vorige endet. Auf <PageRef page={4}>Seite 4</PageRef> endet die Nachschrift, gesetzt mit 12,6 pt Zeilenabstand, zwischen zwei Rasterzeilen, sodass über Brief III etwa drei Zeilen Weißraum stehen. Auf Seite 2 läuft Brief I bis an den Fuß der Seite, und Brief II eröffnet Seite 3. Bei ihrer Voreinstellung würde die Ebene 1 jeden Brief auf einer rechten Seite beginnen ([Umbruch davor](/de/docs/configuration-headings#umbruch-davor)). `numberingTemplate: '{1:I}'` nummeriert die Briefe von I bis III, und der Briefkopf druckt die Ziffer über `{number}`.
 
 ### 3 · Die rechte Seite mit dem Brief datieren
 
 <Excerpt region="running-heads" />
 
-In einer Kopfzeile nimmt `{attr.date}` das Attribut der letzten Überschrift der Ebene 1, die auf oder vor der Seite beginnt. Seite 3 druckt „12 juin 1740“, und Seite 5, auf der Voltaires Brief von Seite 4 weiterläuft, druckt „1er avril 1778“ mit hochgestellter Ordnungszahl ([Textelemente](/de/docs/configuration-page-layout#textelemente)). Die Kolumnentitel stehen 12 mm unter der Oberkante der Seite, die Pagina am Außensteg und die Wörter 8 mm weiter innen. `pages: 'body'` hält sie vom Umschlag fern, der als Auftaktseite zählt, weil seine Überschrift über die ganze Seite reicht. Das Datum steht in der Crimson Pro kursiv der Datumszeile, die es wiederholt, und die Namen auf der linken Seite in den Kapitälchen der Briefnummern.
+In einer Kopfzeile nimmt `{attr.date}` das Attribut der letzten Überschrift der Ebene 1, die auf oder vor der Seite beginnt. Seite 3 druckt „12 juin 1740“, und Seite 5, auf der Voltaires Brief von Seite 4 weiterläuft, druckt „1er avril 1778“ mit hochgestellter Ordnungszahl ([Textelemente](/de/docs/configuration-headers-footers#textelemente)). Die Kolumnentitel stehen 12 mm unter der Oberkante der Seite, die Pagina am Außensteg und die Wörter 8 mm weiter innen. `pages: 'body'` hält sie vom Umschlag fern, der als Auftaktseite zählt, weil seine Überschrift über die ganze Seite reicht. Das Datum steht in der Crimson Pro kursiv der Datumszeile, die es wiederholt, und die Namen auf der linken Seite in den Kapitälchen der Briefnummern.
 
 ### 4 · Den Umschlag zu einer Überschrift machen
 

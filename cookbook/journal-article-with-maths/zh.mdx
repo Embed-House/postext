@@ -16,7 +16,7 @@ pageNotes: { "1": "一条墨绿色色带上印着刊头Measure，一幅从刊头
 
 ### 1 · 启动MathJax，给公式编号
 
-代码就是上面的[简短回答](#简短回答)。[数学公式](/zh/docs/configuration-text#数学公式)由MathJax排出，它随包一起提供：`initMathEngine`和其他符号一样从`https://esm.sh/postext`导入，而且`await initMathEngine()`必须在第一次构建之前运行，否则每个公式都会画成一个灰框。此后，`$…$`排行内公式，`$$…$$`排行间公式，`renderToPdf`把每个公式写成矢量路径。在行间公式末尾写`\tag{1}`就给它编了号：公式占满所在栏的宽度，式子居中，编号在同一行右对齐。这里的编号是手写的，正文也照样引用，写作“Eq. (6)”。
+代码就是上面的[简短回答](#简短回答)。[数学公式](/zh/docs/configuration-lists-math#数学公式)由MathJax排出，它随包一起提供：`initMathEngine`和其他符号一样从`https://esm.sh/postext`导入，而且`await initMathEngine()`必须在第一次构建之前运行，否则每个公式都会画成一个灰框。此后，`$…$`排行内公式，`$$…$$`排行间公式，`renderToPdf`把每个公式写成矢量路径。在行间公式末尾写`\tag{1}`就给它编了号：公式占满所在栏的宽度，式子居中，编号在同一行右对齐。这里的编号是手写的，正文也照样引用，写作“Eq. (6)”。
 
 ### 2 · 用标题样式绘制标题区
 

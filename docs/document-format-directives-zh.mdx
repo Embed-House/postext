@@ -1,0 +1,713 @@
+{/* docs/document-format-directives-zh.mdx */}
+
+export const metadata = {
+  title: '文档格式：指令',
+  sidebarTitle: '指令',
+  description: ':::指令：容器、分栏、纸张、分页、编号、空白、诗歌、目录和索引、换行，以及漫画页的标记',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '23分钟',
+  order: 25,
+  parent: 'document-format',
+  plainSummary: "指令是以三个冒号开头的块，比如:::callout或:::columns。本页列出每一种指令和它的作用。有的把文字放进框里、排成几栏，或印在另一种纸上。有的另起一页、改变编号、加一段空白、逐行排一首诗，或印出目录和索引。最后一节讲漫画页、分格和人物台词用的标记。",
+};
+
+# 文档格式：指令
+
+
+## 指令
+
+指令是单行控制标记，单独写在一行，形式为`:::name`或`:::name{attrs}`。它们不产生可见输出，而是驱动定位和编号流程。
+
+<table>
+  <thead>
+    <tr>
+      <th>语法</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:::pagebreak</code></td>
+      <td>强制下一个块在新页开始。</td>
+    </tr>
+    <tr>
+      <td><code>:::pagebreak&#123;parity="odd"&#125;</code></td>
+      <td>同上，并确保新页是奇数页（右页）。必要时插入一个空白补位页。</td>
+    </tr>
+    <tr>
+      <td><code>:::pagebreak&#123;parity="even"&#125;</code></td>
+      <td>同上，但目标是偶数页（左页）。</td>
+    </tr>
+    <tr>
+      <td><code>:::pagebreak&#123;parity="always-odd"&#125;</code></td>
+      <td>保证在落到奇数页之前至少有一个必需的空白分隔页。这个分隔空白页属于前面的内容；此外的奇偶补位页属于后面的内容。适合每章都必须从新跨页开始的情况。</td>
+    </tr>
+    <tr>
+      <td><code>:::pagebreak&#123;parity="always-even"&#125;</code></td>
+      <td>同上，但目标是偶数页。</td>
+    </tr>
+    <tr>
+      <td><code>:::numbering&#123;format="decimal" startAt=1&#125;</code></td>
+      <td>在下一个页面边界切换页码序列。两个属性都是可选的：省略<code>format</code>则保留原格式，省略<code>startAt</code>则继续计数。</td>
+    </tr>
+    <tr>
+      <td><code>:::columnbreak</code></td>
+      <td>在此结束当前栏：下一个块从同一页的下一栏开始（指令落在最后一栏时则从新页开始）。在空栏中不起作用，因此不会产生空白栏或空白页。被结束的栏保留底部空白，各栏齐底不会拉伸它。</td>
+    </tr>
+    <tr>
+      <td><code>:::space</code></td>
+      <td>在此留出一行正文的空白，这是在两个块之间稍加留白的明确方式。<code>:::space&#123;lines=2&#125;</code>留出两行（也可以用<code>0.5</code>这样的小数）。它叠加在块之间的外边距上，在栏顶或页顶会被丢弃。见<a href="#space">下文</a>。</td>
+    </tr>
+    <tr>
+      <td><code>:::toc</code></td>
+      <td>在此输出目录：所列级别的每个标题一条（标题、编号、页码，可选附上本章作者），每个篇分隔页一行，按<code>toc</code>配置排版。条目跟随文档：重命名、移动章或重新编号，目录都会随之更新。</td>
+    </tr>
+    <tr>
+      <td><code>:::index</code></td>
+      <td>在此输出索引：书中用<code>:index</code>标记的每个词条，排序并按字母分组，附上所在页码，按<code>index</code>配置排版。<code>:::index&#123;index="names"&#125;</code>输出一个命名索引。见<a href="/zh/docs/document-format-notes-references#索引">索引</a>。</td>
+    </tr>
+    <tr>
+      <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
+      <td>一页漫画：其中的<code>::panel</code>行和各自的台词行，排成单独一页上的分格和嵌好字的对白框。见<a href="#漫画">漫画</a>。</td>
+    </tr>
+    <tr>
+      <td><code>:::strip&#123;…&#125;</code> … <code>:::</code></td>
+      <td>正文流中的漫画条，一栏宽或一页宽。见<a href="#strip"><code>:::strip</code></a>。</td>
+    </tr>
+    <tr>
+      <td><code>:::verse</code> … <code>:::</code></td>
+      <td>一首诗：按书写逐行排（每行一行诗，空行分隔诗节，行首空格为缩进）；各行用<code>||</code>分开两个半行时，按古典阿拉伯排法排。见<a href="#verse">下文</a>。</td>
+    </tr>
+  </tbody>
+</table>
+
+属性值可以用双引号（<code>"…"</code>）、单引号（<code>'…'</code>）或不加引号（<code>startAt=17</code>）。没有`=`的单独键被视为存在但为空的标志。
+
+目前只有`pagebreak`、`numbering`、`columnbreak`、`space`、`toc`和`index`被识别为单行指令（`references`、`verse`、`page`和`strip`则是带围栏的块）；其他任何不是容器（见下文）的`:::name`行都按段落解析，并在沙盒中显示**未知指令**警告。引擎也会记录它，作为文档`contentWarnings`中的一条`unknownDirective`（见[配置 › 文档中的警告](/zh/docs/configuration-programmatic-usage#文档中的警告)）。
+
+### 属性值
+
+同一套`key="value"`语法用于标题属性、指令和容器的起始行（`:::name{…}`）、行内引用（`:ref{…}`）、行内标签（`:chip[…]{…}`）、色块（`:swatch{…}`）和索引标记（`:index[…]{…}`）。规则如下：
+
+- **键**以ASCII字母或`_`开头，后面可以是ASCII字母、数字、`_`或`-`。`=`两侧可以有空格；中文输入法打出的全角`＝`与`=`等效；重复的键取最后一个值；没有`=`的键是值为空的标志。用其他文字书写的键（`作者=曹雪芹`）不会被读取，并触发`attributeKeyInvalid`警告；块中的其他键仍然生效。值可以用任何文字。
+- **带引号的值**。双引号值可以包含除`"`以外的任何字符，包括单引号；单引号值可以包含除`'`以外的任何字符。因此含双引号的值要放在单引号里：`lead='He said "hi"'`。没有转义，反斜杠是普通字符，所以同时需要两种ASCII引号的值要改用印刷引号（`“…”`、`’`）。值也可以用中文输入法打出的弯引号`“`或直角引号`「`开头，一直延续到对应的`”`或`」`，中间可以有空格：`title=“甲戌本 眉批”`、`title=「脂批」`。
+- **不加引号的值**（`startAt=17`、`year=1998`）延续到下一个空格：`title=Hello world`等于`title="Hello"`加上一个标志`world`。
+- **不能有花括号。**`{`和`}`不能出现在值中。第一个`}`就结束属性块：值中含花括号的起始行不再是指令，而是段落；在行内，值的剩余部分会溢出到正文中。在标题中，值里的花括号会使整个块留在标题里：`# Title {note="a {b"}`原样排出。（在postext 1.8及以前，空格后的`{`会重新开始一个块，`b`被当作标志读取。）
+- **美元符号是普通文本**。属性在行内公式之前读取，所以`lead="from $5 to $6"`只是文本。
+- **只占一行**。属性块从不跨行。
+
+```markdown
+# The Long Road {lead='A "road novel", they said' price="$18"}
+
+:::callout{type="note" title='The "fast" path'}
+…
+:::
+```
+
+`::resource{id="…"}`更严格：id必须用双引号，且不能有其他属性（见[资源](/zh/docs/document-format-resources#资源)）。
+
+### 容器
+
+容器用围栏包住一段块：起始行为`:::name`或`:::name{attrs}`，接着是任意普通内容（段落、标题、列表、引用块、公式，甚至其他指令），结束行只有一个`:::`。容器可以嵌套；每个结束的`:::`关闭最内层尚未关闭的容器。
+
+```
+:::callout{type="note"}
+Keep the lantern lit **every** night.
+
+- Check the wick.
+- Trim it at dusk.
+:::
+```
+
+正文流中可识别的容器名有五个。各自渲染成什么，由配置中对应的部分设置：
+
+<table>
+  <thead>
+    <tr>
+      <th>语法</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:::callout&#123;…&#125;</code> … <code>:::</code></td>
+      <td>框内内容：用带边框或底色的框与正文区分开的注释、提示或警告。</td>
+    </tr>
+    <tr>
+      <td><code>:::paragraphs&#123;…&#125;</code> … <code>:::</code></td>
+      <td>一段用命名段落样式（导语、题词、一组小字注释）而不是正文样式排版的段落。<code>align</code>、<code>indent</code>和<code>endIndent</code>设置对齐和缩进，有没有样式都可以：<code>:::paragraphs&#123;align=end endIndent=1&#125;</code>把日期排在离行尾一个字的位置（地から1字上げ）。<code>dropcap</code>切换其第一段的<a href="/zh/docs/document-format#首字下沉">首字下沉</a>。</td>
+    </tr>
+    <tr>
+      <td><code>:::part&#123;…&#125;</code> … <code>:::</code></td>
+      <td>篇或部分的开篇页：其中的标题和正文构成一个大分部的开篇页。</td>
+    </tr>
+    <tr>
+      <td><code>:::paper&#123;…&#125;</code> … <code>:::</code></td>
+      <td>换用另一种纸张印刷的一组页面，例如哑粉纸书中的一组光面铜版插图。只有Folio视图显示它。</td>
+    </tr>
+    <tr>
+      <td><code>:::columns&#123;…&#125;</code> … <code>:::</code></td>
+      <td>排进若干栏的一组块：在框内、在正文栏中，或者横跨多栏页面的整页。见下文的<a href="#columns"><code>:::columns</code></a>。</td>
+    </tr>
+  </tbody>
+</table>
+
+每种容器接受的属性及其样式设置见[配置](/zh/docs/configuration)。属性值的语法与指令相同。`:::callout`起始行接受`type`（已配置的标注框样式的id；未知或缺少的类型回退到第一个样式）、`title`（覆盖样式的默认标题），以及`span` / `placement`（`column`、`page`或`side`；`here`、`top`、`bottom`或`fixed`），用来为这个框覆盖样式的范围和位置：
+
+```
+:::callout{type="objectives" title="What you will learn" span="page" placement="top"}
+- Name the parts of the lantern.
+- Trim the wick without touching the glass.
+:::
+```
+
+浮动框（`placement`为`auto`、`top`或`bottom`）还接受`columns`，即它在多栏页面上横跨的相邻栏数，例如`:::callout{placement="top" columns="2"}`（postext 1.18起）。
+
+框也可以让后面的正文排在它旁边：`wrap`（`left`、`right`、`start`或`end`）、`width`（占栏宽的比例，0 到 1；未设置时取`layout.wrap.defaultWidth`）和`wrapGap`（长度，如`6pt`），例如`:::callout{wrap="right" width=0.4}`（见[文字绕排](/zh/docs/document-format-resources#文字绕排)；postext 1.24起）。
+
+标注框按框来排版：可选的标题，接着是用样式自身的正文和列表排版设置排出的内容。默认情况下它保持完整，放不下时整体移到下一栏或下一页（比整栏还高的框同样会拆分，而不是溢出）；样式设为`keepTogether: false`时，框可以在块之间或行之间拆分，切口两侧至少各留`splitMinLines`行文本，或者一个图、表、行间公式或嵌套框（在段落或列表项内部切开时，切口两侧还至少各留该段落或列表项的`layout.boxChildSplitMinLines`行：默认两行，`splitMinLines`更小时取`splitMinLines`；1.5之前保存、章中含框的书按1读取，即1.4的切法）。第一部分之后的各部分开头不带图标，但文字仍保留图标所占的栏位；也不带标题，除非样式要求重复标题（`repeatTitle`：“Key points (cont.)”）；样式还可以在每个有后续的部分下方加一个“续”标记（`continuesMarkerEnabled`），见[拆分框上的标记](/zh/docs/configuration-callouts#拆分框的标记)。通栏框（`span="page"`）把页面切成若干栏带；`span="side"`框离开正文流，进入一栏半版式中只放浮动体的侧栏（`layout.sideColumnRole: 'floats'`），叠放在它所打断的文字旁边，在没有这种侧栏的地方按栏内框排版；`placement="fixed"`框离开正文流，固定在页面坐标上（比如章末页左下角的自我评估徽标），它所覆盖的栏让出这块区域；浮动框（`placement="top"` / `"bottom"`）在出现处离开正文流，占据该位置之后第一个空闲的栏带，即本页底部，或下一页的顶部或底部，而它后面的文字填满它离开的那一页。设为`floatBarrier: true`的样式（通常是章末的“要点”框）使该框成为**浮动体屏障**：在它之前引用的每个图或表都放在它之前，放在页面的空闲位置，或放在框之前新开的页上，因此不会有浮动体越过本章结尾。未知的`:::name`起始行不是容器，该行按文本处理，与未知指令完全相同。
+
+`:::part`起始行接受`number`（按你希望输出的样子写，如`"I"`、`"IV"`、`"3"`；它也会被解析，以便设计重新格式化）和`title`，两者都是可选的。第三个属性`palette="band=#hex"`（多个`id=#hex`对，用逗号分隔）为该篇及其后的各章（直到下一篇）重新着色：所有链接到这些调色板id的设计颜色（书眉、开篇页色带、篇的设计），以及与它们共享基础值的文本流颜色（标题、粗体、引用、项目符号、题注、表格、框、行内标签）；见[配置 › 篇](/zh/docs/configuration-styles#篇)。这个容器总是独占一页：前面有一个按配置奇偶性的分页，使用`parts.margins`页边距的单栏正文，整页铺满开篇页设计，结束围栏之后再分一次页。正文通常是该篇所含各章的列表，也可以什么都没有，按`parts.bodyStyle`排版：
+
+```
+:::part{number="I" title="Foundations"}
+1. The lantern and its parts
+2. Trimming the wick
+:::
+
+# The lantern and its parts
+```
+
+在默认的标题设置下，这会得到经典的顺序：篇页在右页，接着是一个空白左页，章从下一个右页开始。该页报告为`role: 'part'`，所以页眉和页脚可以跳过它；`{partTitle}` / `{partNumber}`在其后的每一页都解析为当前的篇。见配置参考中的[篇](/zh/docs/configuration-styles#篇)。
+
+围栏前面不需要空行：起始或结束围栏紧贴在段落、列表或引用块下方时，会结束那个块。文档结尾仍未关闭的容器会在那里自动关闭，沙盒会给出指向起始行的**容器未关闭**警告。没有打开的容器时出现的多余`:::`会作为可见的段落留在文本中，而不会被悄悄丢弃。
+
+### `:::columns`
+
+`:::columns{count=2}` … `:::`组把围栏之间的块排成`count`个等宽的栏（2到6栏），组之后的文字重新占满整个宽度。在`:::callout`内部，各栏分享框的内宽，栏间距为样式的`columnGap`，按框的正文和列表排版设置排，框的高度随最高的一栏增长。在正文中（postext 1.25起），各栏分享正文栏，栏间距为一行正文，块保留正文自身的排版设置；在多栏页面上加`span="page"`时，组像通栏框一样把页面切成栏带：它上方的各栏齐平收尾，组横跨整个版心宽度排出（栏间距为栏间空白），文字在它下方的每一栏中继续。在单栏页面上，`span="page"`把组排在栏内。组内的标题保留各自的样式、编号和目录条目，组内引用的脚注排到正文栏的底部，组内引用的图照常浮动。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>count</code></td>
+      <td>栏数，2到6。默认为2。</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td>栏与栏之间的距离，取长度（<code>12pt</code>、<code>1em</code>、<code>4mm</code>）。默认值：在框内为框样式的<code>columnGap</code>，在正文栏中为一行正文，横跨整页时为<code>layout.gutterWidth</code>。</td>
+    </tr>
+    <tr>
+      <td><code>rule</code></td>
+      <td>在每条栏间空白中画一条竖线，颜色和粗细取<code>layout.columnRule</code>：<code>:::columns&#123;count=3 rule&#125;</code>。</td>
+    </tr>
+    <tr>
+      <td><code>breaks</code></td>
+      <td>第一栏之后每一栏从哪个块开始，用来代替平衡：<code>breaks="4"</code>让第二栏从组内第四个块开始（栏更多时用逗号分隔的列表）。计数方法见下文。</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td>放不下的组如何接续：<code>snake</code>（没有<code>breaks</code>时的默认值）或<code>parallel</code>（有<code>breaks</code>时的默认值）。见<a href="#分栏组的拆分">分栏组的拆分</a>。</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td>只用于正文中：<code>column</code>（默认）或<code>page</code>。</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td>组上方的间距，取长度，写法同<code>gap</code>。它与组上方待用的间距合并；位于栏首，或组是框里的第一个块时，不留间距。自postext 1.28起提供。</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td>组下方的间距，取长度；<code>0</code>表示不留。在正文中它取代正文的段间距；在框内它是到下一个块之前的间距。自postext 1.28起提供。</td>
+    </tr>
+  </tbody>
+</table>
+
+整体排出的组在各栏最齐平的地方切开，可以在块之间，也可以在段落或列表项的行之间，后者的剩余部分在下一栏顶部接着排，不带项目符号；如果用`breaks`固定了各栏的起点，则不会在段落内部切开，适合文字栏旁边配一栏图的情况。
+
+**组前后的间距**。在正文中，组之后跟着正文的段间距（开启`bodyText.paragraphSpacing`时为一行，否则没有），在框内则没有自己的间距。在围栏上写`marginTop`和`marginBottom`可以设定：`:::columns{count=3 span="page" marginBottom="0.75em"}`。两者都是最小值，与相邻块自身保留的间距合并，同框的外边距一样。在正文中，文字在组之下回到基线网格，所以间距总是整行；跨栏或跨页拆开的组，上边距归第一部分，下边距归最后一部分。`em`按组所在文字的字号计算；不是长度的值和负值都被忽略。
+
+```md
+:::callout{type="summary"}
+:::columns{count=2}
+- Every element is one kind of atom.
+- Electrons live in orbitals.
+- A bond shares or transfers electrons.
+:::
+:::
+```
+
+**`breaks`如何计数。**`breaks`按顺序给组内的块编号：段落、列表项（每项一个块）、行间公式、图和表；嵌套的`:::callout`无论包含多少内容都算一个块。指令不算块：两节诗之间的`:::space`不会改变计数。小于2、超出组内最后一个块或不在前一个断点之后的数字会被忽略。在组内，`:::space`像在框内其他地方一样分隔两个块，在组的顶部和各栏的顶部（`breaks`位置或齐平切口）消失；如果想让组从更低的位置开始，把空白放在`:::columns`起始行之前。因此，间距相同的两栏会逐节对齐：
+
+```md
+:::callout{type="verse"}
+:::columns{count=2 breaks="4"}
+The lamp is lit at dusk,
+
+and trimmed before the dawn.
+
+:::space
+
+The keeper sleeps by day.
+
+La lámpara se enciende al anochecer,
+
+y se despabila antes del alba.
+
+:::space
+
+El farero duerme de día.
+:::
+:::
+```
+
+这里第四个块“La lámpara…”开启第二栏；两行`:::space`不计数，在两栏中留出相同的间隙。
+
+#### 分栏组的拆分
+
+自postext 1.25起，组放不进它所有的空间时，就在各栏之间切开，接到下一栏或下一页。这个空间在正文中是本栏剩余的部分，在框内是拆分的框（`keepTogether: false`，或比一栏还高的框）的某一部分；框内的组接续在一个新的框片段中：
+
+- **`flow="snake"`**，没有`breaks`时的默认值：组内的块连成一条长条，就像报纸上一篇报道的正文。还要接续的部分依次填满各栏，在切口允许的范围内尽量齐平，可在块之间或段落、列表项的行之间切开（切口两侧至少各留该段落或列表项的`layout.boxChildSplitMinLines`行，默认两行）；最后一部分像整组一样做平衡。
+- **`flow="parallel"`**，有`breaks`时的默认值：由断点开启的每一段内容是一条流，始终留在自己的栏中。每一部分把每条流都排到可用空间的底部，各条流在下一部分的同一栏中接续，因此并排的一首诗和它的译文逐节保持平齐。没有`breaks`的平行组按蛇形组接续。
+
+组内的嵌套框保持完整，移到下一部分；嵌套框内的组从不切开。放得下的组与以前排得完全一样。`layout.flowColumns: false`保留postext 1.24的规则：框外的围栏被忽略，组从不切开；1.25之前保存、含有`:::columns`组的书按这种方式读取。沙盒会报告它不认识的`flow`（**未知的分栏走向**），以及窄于其文字6 em的栏（**分栏过窄**）。
+
+```md
+## 简讯
+
+:::columns{count=3 span="page" rule}
+**港口。** 新码头周一启用……
+
+**市场。** 摊位租金维持不变……
+
+**天气。** 傍晚起西部有雨……
+:::
+```
+
+`:::callout`起始行还接受`label="…"`：带`label`标签的样式在框的顶角输出的文字（`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`）。
+
+嵌在另一个`:::callout`里的`:::callout`是一个独立的框，比如装着若干答题框的练习卡片。它使用自己的样式（底色、边框、圆角、内边距、标题、图标），宽度为外框的整个内宽，与外框的其他块依次堆叠；它的`span`和`placement`会被忽略，因为嵌套框总是在父框内排版。每个围栏关闭最内层仍未关闭的框：
+
+```md
+:::callout{type="card"}
+The statement of the exercise.
+
+:::callout{type="answer"}
+A white answer box with its own border and padding.
+:::
+
+:::callout{type="answer"}
+A second answer box.
+:::
+:::
+```
+
+外框跨栏或跨页拆分时（`keepTogether: false`，或比一栏还高），嵌套框整体移到下一个片段，除非它自己的样式也允许拆分；每个片段重新绘制其中的边框；续排的嵌套框不带图标，也不带标题，除非它的样式要求重复标题（`repeatTitle`）。
+
+### `:::paper`
+
+一本书可以在一组页面上换用别的纸张：用胶版纸印刷的书中夹一组光面铜版纸插图、一张卡纸插页、几页色纸。把这部分内容放进`:::paper`容器：
+
+```md
+:::paper{type=coatedGloss grammage=130}
+## 插图
+::resource{id="plate-1"}
+::resource{id="plate-2"}
+:::
+```
+
+一种纸张占用整张纸页，所以围栏内的内容从新的一页开始，结束的`:::`之后的内容也从新的一页开始。如果这组页面位于文档末尾，它后面不会留下空白页。在其中引用的图和表在它结束之前排完。凡是排入该容器内容的页面，都在版面数据中带有这种纸张（`VDTPage.paper`，即围栏所写的属性）；容器之外的页面不带。Folio视图读取它，按纸张的颜色、表面、厚度和挺度绘制这些纸页。canvas、PDF和HTML输出忽略它：这些页面的排版和印刷与其他页面相同。
+
+这些属性与`folio.paper`设置相同，全部可选。围栏没有写的属性沿用文档的纸张，再往后沿用该纸张种类的默认值：
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>取值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>type</code></td>
+      <td>纸张种类：<code>uncoated</code>, <code>bookWove</code>, <code>coatedMatte</code>, <code>coatedSilk</code>, <code>coatedGloss</code>, <code>bible</code>, <code>newsprint</code>, <code>cardStock</code>, <code>board</code>。它决定下列属性的默认值。</td>
+    </tr>
+    <tr>
+      <td><code>grammage</code></td>
+      <td>克重，单位g/m²，大于0的数。纸越重，越厚、越硬、越不透明。</td>
+    </tr>
+    <tr>
+      <td><code>bulk</code></td>
+      <td>松厚度，单位cm³/g，大于0的数（厚度µm = 克重 × 松厚度）。</td>
+    </tr>
+    <tr>
+      <td><code>finish</code></td>
+      <td>表面处理：<code>auto</code>, <code>uncoated</code>, <code>matte</code>, <code>silk</code>, <code>gloss</code>。</td>
+    </tr>
+    <tr>
+      <td><code>texture</code></td>
+      <td>表面纹理：<code>auto</code>, <code>smooth</code>, <code>vellum</code>, <code>wove</code>, <code>laid</code>, <code>linen</code>, <code>felt</code>。</td>
+    </tr>
+    <tr>
+      <td><code>textureStrength</code></td>
+      <td>纹理的明显程度，0到2。</td>
+    </tr>
+    <tr>
+      <td><code>shade</code></td>
+      <td>纸张颜色：<code>#rgb</code>、<code>#rrggbb</code>或<code>colorPalette</code>中某一项的id。</td>
+    </tr>
+    <tr>
+      <td><code>showThrough</code></td>
+      <td><code>true</code>或<code>false</code>：背面的页面是否隐约透出。只写<code>showThrough</code>不带值等于<code>true</code>。</td>
+    </tr>
+  </tbody>
+</table>
+
+嵌套在另一个`:::paper`里的`:::paper`只覆盖它写出的属性，同样在前后分页。在`:::callout`内，这对围栏被忽略。引擎无法读取的值会被丢弃，沙盒将其列为**纸张属性无效**警告（文档`contentWarnings`中的`paperAttributeInvalid`）。
+
+### `:::pagebreak`
+
+这个指令本身并不强制奇偶，只影响下一个块的版面。可以用它结束前言、让献词独占一页，或者标记一节的结束。如果同一处既要分页又要重置编号，就在`:::pagebreak`后面接`:::numbering`：编号切换作用于`:::pagebreak`刚刚新开的那一页。
+
+在仍为空的页上分页不起作用，因此它不会添加空白页。它也不会取代紧随其后的标题的`breakBefore`（1级标题默认有）：标题仍会应用自己的奇偶设置，这可能在指令新开的那一页之后再加一个空白页。要让标题恰好从那里开始，关掉它的分页（见**配置 → 标题样式**）。在铺满整页的封面标题之后，分页是可选的：无论单栏还是多栏版式，封面都已占用本页余下的部分，紧接着写一个`:::pagebreak`也无妨。只有当封面的设计没有延伸到页脚，而正文仍应从下一页开始时，才需要分页（见**配置 → 预留高度**）。
+
+```md
+The old chapter ends here.
+
+:::pagebreak{parity="odd"}
+
+# A new chapter
+```
+
+开关`center`（`:::pagebreak{center}`，用`center=false`关闭）让分页开启的那一页上的文字在版心的上下之间居中，竖排时在左右之间居中：即日文篇名页或献词页的ページの左右中央。浮动体、注释和书眉位置不变，已经排满的页面保持原样。这个开关不会结束这一页：请再用一个`:::pagebreak`结束它。
+
+```md
+:::pagebreak{center}
+
+# 上　先生と私
+
+:::pagebreak
+```
+
+#### 奇偶属性
+
+`parity`属性接受的五个值与`headings.levels[*].breakBefore.parity`相同：
+
+- `'any'`：默认值，没有奇偶约束，分页只是开一个新页。
+- `'odd'` / `'even'`：新页从跨页中指定的一侧开始；只有当自然的下一页落在错误的一侧时，才插入一个空白页。
+- `'always-odd'` / `'always-even'`：保证在前面的内容和新页之间至少有一个必需的空白分隔页，然后再满足奇偶要求。这个分隔空白页属于**前一**章；此外的奇偶补位页属于后面的内容。
+
+#### 空白页的归属
+
+`:::pagebreak`（以及`breakBefore`）可能引入的两类空白页在`VDTPage`模型中加以区分：
+
+- `blankForParity: true`：为满足奇偶约束而插入。在`{chapterTitle}`页眉中，这一页显示**即将开始**的那一章的标题，因为这个空白页只是为了把那一章推到正确的奇偶页上。
+- `blankForForce: true`：`'always-*'`模式中必需的前导分隔页。它属于**前一**章，是有意在章末留出的停顿，而不是为下一章补的奇偶页。
+
+同样这两条规则也让空白页获得带样式部分的书眉和调色板，见[配置 › 标题样式](/zh/docs/configuration-styles#标题样式)。
+
+#### 文档开头的例外
+
+当`:::pagebreak`是文档中的第一个结构（或者带`breakBefore`的标题会引入一个分页）时，只要第一页仍为空，就不执行奇偶约束。下一个块照写的那样落在第1页，与要求的奇偶无关，不会在开头多出一个空白页。
+
+### `:::numbering`
+
+`:::numbering`用来在文档中途重新开始页码计数。典型的图书示例：
+
+```md
+---
+title: "A Book With Front Matter"
+---
+
+# Preface
+
+…
+
+:::pagebreak{parity="odd"}
+:::numbering{format="decimal" startAt=1}
+
+# Chapter 1
+```
+
+前言各页的页码为`i`、`ii`、`iii`……；第一章从页码为`1`的右页开始。
+
+只改格式（不带`startAt`）时计数器继续累加，这在从`lower-alpha`切换到`upper-alpha`而不重置时很有用。
+
+`format`接受编号格式的任何写法：`roman-lower`和`i`与`lower-roman`等效，`arabic`与`decimal`等效，`一`和`あ`与`japanese-informal`和`hiragana`等效（见[配置 › 编号格式的写法](/zh/docs/configuration-page-layout#编号格式的写法)）。不属于其中任何一种的值会保留原有格式，沙盒会标出它。
+
+`lines`重新开始的是[行号](/zh/docs/configuration-notes-references#行号)的计数，而不是页码：下一个计入的行编为给定的号，不论`lineNumbers.restart`怎样设置。不是0或更大整数的值会被忽略。
+
+```md
+## 第二幕
+
+:::numbering{lines=1}
+```
+
+### `:::space`
+
+`:::space`在两个块之间留出垂直空白：把结尾的一行与上方文字隔开，把题词或署名稍稍往下推，或者在两段文字之间形成*空行分隔*。Markdown中多余的空行做不到这一点：与任何Markdown一样，连续的空行只是一个段落分隔符，这样编辑器或格式化工具增删空白时，文档的版面不会改变。
+
+```md
+The last paragraph of the scene.
+
+:::space
+
+A new scene begins one line lower.
+
+:::space{lines=2}
+
+Two lines lower still.
+```
+
+- **`lines`**：空白的大小，以正文行（基线网格）为单位。默认为`1`。整数能让每行文字都保持在网格上，页面上各栏仍能对齐；小数（`lines=0.5`）会精确执行，代价是在下一个对齐网格的块之前失去这种对齐。不是大于0且不超过20的数字时，回退为一行，沙盒会标出它（**空白大小无效**）。
+- **它会叠加**。空白加在两个块之间已有的外边距上（标题的上外边距、列表的下外边距），而不是与之合并。连续两行`:::space`会加两行。
+- **遇到断开处就丢弃**，与LaTeX的`\vspace`一样：在栏顶或页顶它会消失，所以页面不会以一块空洞开头；在栏底放不下时，它只是结束这一栏，不把剩余部分带到下一栏。
+- **其后的段落顶格排。**`bodyText.indentAfterHeading`关闭时，紧跟在`:::space`后面的段落不带首行缩进，与标题之后一样，这是空行之后继续正文的通常做法。
+- **在标注框内**（或`:::columns`组内），它以同样的方式分隔框的子块，以框自身的正文行为单位计量。在框的第一个块之前它会被丢弃，与在栏顶一样（内边距已经把内容与边框隔开），但有两种情况例外，此时它会留出相应的空间：紧接在框的标题下方，以及框里没有其他内容时（答题框、以行计量的书写空间）。它在`:::columns`组的顶部、组内各栏的顶部，以及拆分框续排到下一栏或下一页的部分的顶部，总是会消失。在`:::paragraphs`容器内，它的作用与正文段落之间相同。
+- **与下文同页**时会把它计算在内：标题后面跟着`:::space`时，如果空白和其后文字的前几行放不下，标题会移到后面。
+
+练习册的答题框就是一个只有空白的框：问题写在标题里，下面留四行空间。
+
+```md
+:::callout{type="answer" title="1. Name the three parts of the lantern."}
+:::space{lines=4}
+:::
+```
+
+如果需要固定的断开而不是空白，请用`:::columnbreak`或`:::pagebreak`。
+
+
+### `:::verse`
+
+一首诗。`:::verse`有两种排法：**逐行**，大多数诗都这样印；或者qaṣīda的**古典阿拉伯排法**，每一联分成两个半行并排。各行带有半行分隔符（`||`，或两边有空格的`\\`）的诗按阿拉伯排法排，其他的诗逐行排；开始标记上的`layout=lines`或`layout=bayt`可以指定其一。
+
+#### 逐行
+
+照印出来的样子写诗：Markdown的一行就是一行诗，诗节之间空一行，行首加空格表示缩进。
+
+```md
+:::verse
+轻轻的我走了，
+  正如我轻轻的来；
+我轻轻的招手，
+  作别西天的云彩。
+
+那河畔的金柳，
+  是夕阳中的新娘；
+:::
+```
+
+- **诗行。** 每个非空行是一行诗，单独按行内Markdown读取：斜体、小型大写、注释和引用都可用。连续的空行只算一次换节。
+- **缩进。** 每个行首空格宽`indentStep`，默认0.5 em，所以两个空格缩进一个字；制表符算四个空格，全角空格（U+3000）算两个。
+- **转行。** 比版心稍宽的诗行先收紧词间空格，最多收到其自然宽度的`bodyText.minWordSpacing`（两端对齐文字的收紧下限），保持一行；在开始标记上写`tighten=false`或设`bodyText.verse.tighten: false`则改为转行。收紧后仍放不下的诗行在词间空格处转行（中文诗行按中文的断行规则在字间转行）。`turnover=hang`（默认）时，余下部分悬挂在下一行，从该行自身的起点缩进`hang`：诗的段落样式的`hangingIndent`，没有则为2 em（`bodyText.verse.hang`）。`turnover=right`时，余下部分贴齐版心末端，前面加开方括号（`turnoverMark`，默认`[`），这是英语和西班牙语诗集的做法。诗行不加连字符断词，除非其段落样式自己设置了`hyphenation: true`。一行诗和它的转行绝不在分栏或分页处分开。
+- **诗节。** 两个诗节之间的间距是诗的一行行距；`stanzaSpace=0.5`为半行，长度值（`stanzaSpace=6pt`）则精确设定。在基线网格上取整到网格行。分栏和分页优先落在诗节之间；在诗节内部则按孤行和寡行规则断开，这时只计该诗节的行数。`keepStanzas=N`让不超过N行的诗节保持完整：俳句用`keepStanzas=3`，短歌用`keepStanzas=5`。
+- **位置。** 诗以最长的一行为准在版心中居中，各行与诗的起点对齐（`align=center`，散文中引诗的常见排法）；`align=start`让诗与版心起点对齐，这也是竖排的默认值。引出诗的段落，其最后一行与诗的前几行留在一起。
+- **错行。** 写成`+ …`的行从上一行结束处、隔一个词间空格开始，即诗剧中两个角色共用的一行。以加号开头的行写作`\+`。
+- **停顿。** 开始标记上有`keepSpaces`时，行内两个及以上的连续空格保持其宽度；没有时，空格像在任何段落中一样合并为一个。
+- **字体与方向。** `style`指定一个段落样式，给出字体、字号、行距、`indent`以及诗上下的间距。`dir`和`lang`设置诗的方向和语言：阿拉伯文书中的拉丁文诗（`dir=ltr`）从其自身的起始一侧缩进。竖排时每行诗是一列，从天头起缩进。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>layout</code></td><td><code>auto</code></td><td><code>lines</code>、<code>bayt</code>或<code>auto</code>：某行带分隔符时用阿拉伯排法。</td></tr>
+    <tr><td><code>indentStep</code></td><td><code>0.5em</code></td><td>一个行首空格的宽度。</td></tr>
+    <tr><td><code>turnover</code></td><td><code>hang</code></td><td><code>hang</code>或<code>right</code>。</td></tr>
+    <tr><td><code>hang</code></td><td>样式的<code>hangingIndent</code>，没有则为<code>2em</code></td><td>悬挂转行从该行起点缩进的量。</td></tr>
+    <tr><td><code>turnoverMark</code></td><td><code>[</code></td><td>靠右转行前的标记。</td></tr>
+    <tr><td><code>stanzaSpace</code></td><td><code>1</code></td><td>诗节间距：单独的数字按诗的行距计行数，长度值即为该长度。</td></tr>
+    <tr><td><code>keepStanzas</code></td><td><code>0</code></td><td>不超过此行数的诗节保持完整；0为关闭。</td></tr>
+    <tr><td><code>tighten</code></td><td><code>true</code></td><td>稍宽的诗行转行之前先收紧词间空格，最多到<code>bodyText.minWordSpacing</code>。</td></tr>
+    <tr><td><code>keepSpaces</code></td><td>关闭</td><td>保留行内两个及以上的连续空格。</td></tr>
+    <tr><td><code>align</code></td><td><code>center</code>（竖排为<code>start</code>）</td><td>以最长的一行为准居中，或与起点对齐。</td></tr>
+    <tr><td><code>style</code>、<code>dir</code>、<code>lang</code></td><td>—</td><td>诗的段落样式、方向和语言。</td></tr>
+    <tr><td><code>numbered</code></td><td><code>true</code></td><td><code>false</code>让这首诗不参加行号：它的诗行不计数。</td></tr>
+    <tr><td><code>lineStart</code></td><td>—</td><td>诗第一行的行号。计数从这里重新开始，不论<code>lineNumbers.restart</code>怎样设置。</td></tr>
+    <tr><td><code>interval</code></td><td><code>lineNumbers.interval</code></td><td>这首诗自己的间隔：每第N行印出行号。</td></tr>
+  </tbody>
+</table>
+
+`bodyText.verse`设置所有诗的默认值（见[配置 › 诗歌](/zh/docs/configuration-text#诗歌)）。纯文本按原样保留诗：行与行之间一个换行，诗节之间一个空行，所以复制的段落和搜索都逐行读取；流式EPUB把每个诗节排成一个元素，其中各行悬挂转行，带标签的PDF把每个诗节标为一个段落。
+
+**行号。** 打开`lineNumbers`时，诗的诗行会被计数（见[配置 › 行号](/zh/docs/configuration-notes-references#行号)）。每个诗行只数一次：转行的部分不编号，诗节之间的空白也不计数。默认每第五行在外侧页边印出行号，每首诗重新计数。按古典阿拉伯排法排的诗每联数一行。开始标记可以调整单首诗：`lineStart=N`给它的第一行编号，`interval=N`设定它自己的间隔，`numbered=false`让它不参加计数。
+
+```md
+:::verse{lineStart=37}
+…
+:::
+```
+
+按默认间隔5，这首诗在诗行旁印出40、45等行号。
+
+#### 古典阿拉伯排法
+
+按古典阿拉伯排法排的诗（qaṣīda、qiṭʿa）：每一联（*bayt*）排一行，分成两半，前半行（*ṣadr*）在起始一侧（阿拉伯文为右侧），后半行（*ʿajuz*）在结束一侧，中间留空。每行写一联，两个半行用`||`分开（也可以像维基文库的文本那样，用两边各有一个空格的`\\`）。没有分隔符的行是单独的半行，在诗中居中。
+
+```md
+فأنشد يقول:
+
+:::verse
+يَا حُرْقَةَ الدَّهْرِ كُفِّي || إِنْ لَمْ تَكُفِّي فَعِفِّي
+فَلَا بِحَظِّيَ أُعْطِي || وَلَا بِصَنْعَةِ كَفِّي
+:::
+```
+
+- **同一宽度。** 一首诗的所有半行都排成同一宽度，因此每个前半行都从同一条竖线开始，每个后半行都在另一条竖线结束，韵脚字母上下对齐。宽度取最宽的半行，最多为行长减去中间空白后的一半；用`width`可以指定（`width=55mm`）。每个半行先用卡希达拉到这个宽度（诗比散文拉得更长：`bodyText.kashidaMaxLength`的两倍），再用词间空格；只有一个词、填不满的半行把余下的部分留在中间空白里。
+- **中间空白**默认为2 em；用`gap`指定（`gap=3em`，不带单位的数字按em计）。`ornament`在空白正中印一个记号（`ornament="٭"`），它不属于正文。
+- **太宽时。** 比共同宽度更宽的半行先把词间空格收紧到`bodyText.minWordSpacing`。如果仍然放不下，这一联就错开排：前半行单独一行，靠起始一侧；后半行排在下一行，靠结束一侧。
+- **位置。** 诗在栏中居中；`align=start`让它靠起始一侧。一联绝不会被分到两栏或两页，整首诗遵循段落的孤行与寡行规则（三联或更少的诗不拆开）。诗前面引出它的段落（«فأنشد يقول:»）会把最后一行留在前几联旁边。
+- **字体。** 诗使用正文的字体、字号和行距；`style`为它指定一个段落样式（`style="verse"`），带元音符号（harakat）的诗就是这样得到所需的额外行距的。`dir=ltr`或`dir=rtl`像其他块一样设定方向；在从左到右的书中，用拉丁字母写的诗前半行在左。
+
+诗的纯文本把半行和联分开（一个制表符和一个换行），所以搜索或复制的段落读起来与原文一致；卡希达和装饰记号不包括在内。
+
+### `:::toc`
+
+`:::toc`在所在位置输出目录。它展开为普通的块：`toc.levels`所列级别（默认为1级）的每个标题一个，每个`:::part`一个，所以目录像其他文字一样跨栏跨页排版，点击条目会跳到指令所在行。条目显示标题的编号（`numberingTemplate`的输出，没有时为章的序号）、标题、点线前导符和它起始页的页码；启用`toc.subtitle`时，还有第二行，显示某个标题属性，如本章的`{author="…"}`。篇有单独的一行，由`toc.parts.design`设计，用该篇自己的`palette`着色。样式为`numbered: false`的标题列出时不带编号；标题上的`{toc="false"}`会把它排除在外（通常是目录本身的标题）。
+
+```md
+# Contents {style="front-matter" toc="false"}
+
+:::toc
+```
+
+页码就是文档实际输出的页码。单独排版的文档会用上一遍的页码标签重新排版，直到页码不再变化；如果编号在前置部分之后重新开始（即上面的`:::numbering`做法），多排一遍就能稳定下来。单独排版的一章（沙盒预览）则从其宿主处接收全书的大纲。见配置参考中的[目录](/zh/docs/configuration-notes-references#目录)。
+
+### `:::index`
+
+`:::index`在所在位置输出索引：全书中用`:index[…]`或`:index{term="…"}`标记的词条及其页码，页码随文字移动而更新。它与这些标记一起在[索引](/zh/docs/document-format-notes-references#索引)中介绍。一栏不会在一组的第一条之后结束，也不会在最后一条之前结束：该组留下两条、转走两条，否则整组移到下一栏（`index.groups.splitMinEntries`）。
+
+```md
+# Index {style="index"}
+
+:::index
+```
+
+### 段落内的换行
+
+段落的各行用空格连接（中文字符之间不加空格）。要在段落内换行而不另起一段（地址、书信的称呼、题献），在源文本的行末写一个反斜杠，即CommonMark的硬换行，或者写`\\`再加一个空格：
+
+```md
+致北码头尽头的\
+守塔人：
+
+李明 \\ 北京市东城区王府井大街1号 \\ 100006
+```
+
+- 换行前的一行按自然宽度排，与段落末行一样，不拉伸到版心宽度。换行后的文字在同一段落中另起一行，没有首行缩进，上方也不加段间距；有悬挂缩进时，它和首行之后的各行一样悬挂。
+- 段落、引文（`> 第一行\`下接`> 第二行`）、脚注和列表项都可以这样换行。列表项在源文本中只占一行，所以用`\\`换行。
+- 段落末尾的反斜杠照样印出，与CommonMark相同；连续两个换行只算一个：要空一行，请另起一段或加一个[`:::space`](#space)。
+- 紧贴下一个字符的`\\`不是换行：`\\*`印出一个反斜杠和一个转义的星号，`C:\\Temp`印出两个反斜杠。行内代码和公式中的反斜杠属于代码和公式。
+- 行末两个空格是CommonMark的另一种硬换行，这里不算换行：编辑器里看不见，许多编辑器还会留下多余的空格，会在无意之处断行。
+- 从HTML查看器复制的文字在换行处有换行符，流式EPUB写成`<br/>`，PDF提取的文字在此处断行，导出到Word时写成手动换行符（Shift+Enter），从Word导入时又读回为换行。
+- 诗歌请放进[`:::verse`](#verse)块，各行、缩进和诗节都会保留，不必每行写反斜杠。
+
+在postext 1.22及以前，反斜杠会照样印出，各行用空格连接。当时保存、文字中有行以反斜杠结尾或有后跟空格的`\\`的书，仍按原来的方式读取（`bodyText.hardLineBreaks: false`，见[配置 › postext 1.4及更早版本写出的文件包](/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包)）。
+
+### 标题中的换行
+
+在标题中（或在篇的`title`属性中）写`\\`，可以在标题作为标题显示的地方强制换行：栏内标题继续排，在该处显示一个空格，而开篇页设计的`{titleText}`在该处换行（文本元素的每种`overflow`模式都是如此）。书眉、`{chapterTitle}`、`{partTitle}`和PDF大纲总是把标题渲染为一行。在中文或日文中，这个换行在两个该文字的字符之间读作一个表意空格（对联式标题）；如果其中一侧是数字或拉丁文字（`关于举办 \\ 2026年…`），页面上排出汉字与拉丁文字之间的间距，而PDF书签和文档标题则直接把两半连在一起，与普通中文的写法相同。
+
+```md
+# Concepts of health and illness. \\ Community health {author="I. Zango Martín"}
+```
+
+
+## 漫画
+
+漫画页、漫画条和跨页写在两种带围栏的块中，块的内容由引擎自己逐行读取：`:::page`和`:::strip`。块内由`::panel`行开始各个分格，由台词行为分格嵌字。包括版面规则、嵌字和输出在内的完整指南见[漫画](/zh/docs/comics)；设置见[配置 › 漫画](/zh/docs/configuration-comics#漫画)。
+
+### `:::page`
+
+```md
+:::page{split="30 [30 | 20 | *] / *" gutter=4mm}
+::panel{art=lh-arrive}
+caption: 每年夏天，玛雅都要到灯塔住上一个星期。
+maya: 爷爷！我来啦！
+::panel{art=lh-radio focus="40% 50%"}
+tomas: 来得正好。
+::panel{art=lh-maya}
+maya{thought}: 那个阀门好像松了……
+::panel{art=lh-beam bleed}
+sfx{rotate=-8}: 咔啦
+:::
+```
+
+一个`:::page`块就是一页漫画：它另起新页，占满整页，结束的`:::`之后的文字从下一页开始。它的属性有`split`（页面怎样切成格子：以百分比表示的尺寸，行与行之间用`/`分隔，左右并排的分格之间用`|`分隔；方括号列表把一个格子再切一次；`*`表示其余部分；`a~b`表示斜线）、`gutter`（一个长度，或者两个：行与行之间的和分格之间的；不带单位的数字以毫米计）、`style`（命名分格样式）、`bleed`、`direction`（`ltr`或`rtl`，也可以写成`dir`）和`spread`（见[跨页](#跨页)）。没有`split`时，各分格按等高的行堆叠。块内不读取Markdown块、容器和指令；`<!-- 注释 -->`仍被识别为注释。
+
+### 分格
+
+`::panel{…}`一行开始一个分格，它按阅读顺序填入下一个格子，一直延续到下一个`::panel`行或结束围栏：
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>art=&lt;id&gt;</code></td><td>画面：一个位图或SVG资源。没有它时分格是空的。</td></tr>
+    <tr><td><code>fit=cover</code>、<code>fit=contain</code></td><td>裁切画面以填满格子（绝不切进安全区），或者完整显示画面。</td></tr>
+    <tr><td><code>focus="x% y%"</code></td><td>安全区留有余地时要保持居中的点。</td></tr>
+    <tr><td><code>style=…</code>、<code>border=none</code>、<code>border=0.5mm</code>、<code>bg=#hex</code></td><td>命名分格样式、边框、底色（一个颜色、一个调色板id或<code>none</code>）。</td></tr>
+    <tr><td><code>bleed</code>、<code>bleed="top start"</code>、<code>bleed=false</code></td><td>让贴着画框的边延伸到裁切线和出血位。</td></tr>
+    <tr><td><code>pad="…"</code></td><td>让分格比它的格子小：一到四个长度或百分比（上、末尾、下、起始）。</td></tr>
+    <tr><td><code>inset="x y w h"</code></td><td>把分格叠在前一个分格上，放在以它的百分比表示的框中，而不给它格子。</td></tr>
+    <tr><td><code>pop=&lt;id&gt;</code></td><td>一张透明抠图，按画面的裁切画在边框之上（破格）。</td></tr>
+    <tr><td><code>mirror</code>、<code>mirror=false</code></td><td>左右翻转画面，或者在翻转的页面上保持原画。</td></tr>
+    <tr><td><code>alt="…"</code>、<code>id=…</code></td><td>替代文字（否则用资源的<code>altText</code>）和锚点id。</td></tr>
+  </tbody>
+</table>
+
+### 台词行
+
+分格中的每一行是一个对白框、旁白框或拟声词，写作`键{属性}: 文字`：
+
+```md
+maya: 爷爷！我来啦！
+tomas{whisper}: 嘘，你听。
+caption{at=bottom-end}: 三条街以外。
+sfx{at="62% 40%" rotate=-8 size=1.4}: 咔啦
+ben{tail=start}: （从格外）在这儿！
+sfx{vertical size=2.6 font="Dela Gothic One"}: ドン
+maya: 这句话
+  接着写在下一行，\
+  在这里换行。
+```
+
+- **键**是说话人的id（字母、数字、`_`、`.`、`-`），在每个译本中都相同；`caption`、`sfx`和`note`是保留键。冒号也可以是全角的`：`。
+- 花括号里单独的一个词是**对白框样式**（`thought`、`whisper`、`shout`、`radio`、`inner`，或者`comics.balloonStyles`中的样式）；`style=`的作用相同。
+- `at`固定对白框的位置：以分格画面的百分比表示的一个点（`at="62% 40%"`），或者一个角或一条边（`top-start`、`top-end`、`bottom-start`、`bottom-end`、`top`、`bottom`）。`to`让尾巴指向画面上的一个点；`tail=none`去掉尾巴，`tail=top|bottom|start|end|left|right`让尾巴指向格外。`join`和`join=false`把对白框与同一说话人的前一个连起来或分开；`break`允许它越过边框，这种越界不作为溢出报告。`rotate`（度）、`size`（缩放比例，用于拟声词）、`color`和`font`改变它的嵌字。
+- `vertical`和`horizontal`（或`mode=vertical`、`mode=horizontal`）设定这一行的书写方向，优先于全书的设置：不翻译的`ドン`在横排版本中排成一列，横写的招牌在竖排版本中排成一行。在另一种语言的书中排成的列，遵循它自身文字的规则（含假名时按日文规则）。在竖排的书中，不含中文或日文字符的行本来就横排。
+- 缩进两个空格或一个制表符的行接续上面的对白框；行末的反斜杠让文字在那里换行。空行被忽略。
+- 文字是行内Markdown：强调（嵌成粗斜体）、`:tcy`、`:ruby`（注音排在基字上，基字从右到左时除外）、`:ltr`和`:rtl`（一段文字保持自己的方向）。脚注和`:ref`标记不被读取。
+
+### `:::strip`
+
+```md
+:::strip{split="* | * | *" aspect=3 span=page placement=top}
+::panel{art=pip-1}
+pip: 早上好，奥托！
+::panel{art=pip-2}
+::panel{art=pip-3}
+otto: 好吗？
+:::
+```
+
+`:::strip`的内容与漫画页相同，但它作为一个不可拆分的框排在正文中，切成若干分格：`span`（`column`为默认值，或者`page`）、`placement`（`here`为默认值，排在写它的地方；或者`top`、`bottom`、`auto`，像图一样浮动），以及它的尺寸，用`height`（一个长度，不带单位的数字以毫米计）或`aspect`（宽高比：`3`、`4/1`、`4:1`；默认取让分格成为正方形的比例）表示。在多栏页面上设为`here`的通栏漫画条，像通栏框一样在它所在的地方切断各栏。`width`让它比所跨的宽度窄（该宽度的`60%`，或者一个长度），`align`沿文字方向把它放在这个宽度的`start`、`center`（默认值）或`end`。`caption="…"`在它下方按题注样式排出题注；加上`type=figure`（一个资源类型）时，题注带上该类型的标签和编号，漫画条计入该类型的编号序列；加上`id=…`后，可以用`:ref`指称它。没有`split`时，各分格左右并排。漫画条只在章的顶层读取。
+
+### 跨页
+
+`:::page{spread}`把一页铺在两个对页上：切分覆盖隔着书脊连在一起的两个版心，去掉它们的内侧边距，分格可以跨过书脊。跨页从偶数页开始，需要时先加一个空白页。见[漫画 › 跨页](/zh/docs/comics#跨页)。

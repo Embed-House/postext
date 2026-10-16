@@ -34,13 +34,13 @@ Both editions share one design, so every difference between the two page 2s come
 
 <Excerpt region="bench" />
 
-A box sets all the columns of a [`:::columns`](/en/docs/document-format#columns) group in one body style, so each slip is a nested box with a `body` of its own, and `breaks="3"` stacks the ragged and the unhyphenated slips in the first column. The ragged slip needs no `hyphenation: false`: ragged text keeps its words whole unless `bodyText.hyphenation.ragged` is switched on. The bench floats to the foot of page 3 with `placement: 'bottom'`, and its bottom padding repeats the 4 mm frame because the last slip's `marginBottom` is dropped at the end of the box.
+A box sets all the columns of a [`:::columns`](/en/docs/document-format-directives#columns) group in one body style, so each slip is a nested box with a `body` of its own, and `breaks="3"` stacks the ragged and the unhyphenated slips in the first column. The ragged slip needs no `hyphenation: false`: ragged text keeps its words whole unless `bodyText.hyphenation.ragged` is switched on. The bench floats to the foot of page 3 with `placement: 'bottom'`, and its bottom padding repeats the 4 mm frame because the last slip's `marginBottom` is dropped at the end of the box.
 
 ### 5 · Draw the model into the opener
 
 <Excerpt region="opener" />
 
-The diagram is an [image element](/en/docs/configuration-page-layout#image-elements) of the H1's design. As a figure it would be a page-wide `top` float, and a `top` float cited on page 1 opens page 2. The band reaches below the diagram, and an opener reserves height down to its lowest element, so the text starts under the band without a `minHeight`, a line further down because of the H1's default `marginBottom`. The labels are design text laid on the drawing's own coordinates, set and tracked like the opener's other labels.
+The diagram is an [image element](/en/docs/configuration-headers-footers#image-elements) of the H1's design. As a figure it would be a page-wide `top` float, and a `top` float cited on page 1 opens page 2. The band reaches below the diagram, and an opener reserves height down to its lowest element, so the text starts under the band without a `minHeight`, a line further down because of the H1's default `marginBottom`. The labels are design text laid on the drawing's own coordinates, set and tracked like the opener's other labels.
 
 ## Variations
 

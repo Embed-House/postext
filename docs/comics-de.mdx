@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Wie Postext Comics und Manga aus Markdown setzt: Comicseiten, die ein Teilungsbaum zerschneidet, Panelbilder, die um ihren Sicherheitsbereich zugeschnitten werden, Lettering aus einem Skript (Rede, Gedanke, Flüstern, Schrei, Funk, Textkästen, Soundeffekte), Sprechblasenstile, Sprecheranker auf den Bildern, Strips im Text, Doppelseiten, Leserichtung von rechts nach links und senkrechtes Lettering, Übersetzungen sowie die Ausgaben Canvas, PDF, HTML und EPUB',
   lang: 'de',
   lastUpdated: '2026-10-07',
-  readingTime: '25 min',
-  order: 18,
+  readingTime: '37 min',
+  order: 32,
   plainSummary: "Diese Seite erklärt, wie Sie mit Postext einen Comic machen. Die Bilder sind die Panels, und alles, was die Figuren sagen, denken oder hören, steht als Text in der Markdown-Datei. Postext ordnet die Panels auf der Seite an und zeichnet die Sprechblasen, Textkästen und Soundeffekte selbst um die Wörter herum. Um den Comic zu übersetzen, schreiben Sie nur die Wörter neu, und Postext lettert die neue Sprache von Grund auf: Japanisch in Spalten, Arabisch von rechts nach links. Außerdem geht es um Comicstrips in einem Buch, Seiten über zwei gegenüberliegende Seiten, die Ausgaben und die Grenzen, die es noch gibt.",
 };
 
@@ -17,7 +17,7 @@ export const metadata = {
 
 Ein Comic besteht in Postext aus einer Reihe von Bildern und einem Skript. Die Bilder sind gewöhnliche Bitmap- oder SVG-Ressourcen, ohne Lettering gezeichnet. Das Skript steht im Markdown des Kapitels: Ein `:::page`-Block zerschneidet eine Seite in Panels, gibt jedem Panel sein Bild und führt Zeile für Zeile die Sprechblasen, Textkästen und Soundeffekte dieses Panels auf. Postext ordnet die Panels an, schneidet jedes Bild auf seine Zelle zu, ohne in das Wesentliche zu schneiden, setzt den Text in der Lettering-Schrift des Buchs in einer einzigen Größe, zeichnet eine Sprechblase darum, richtet den Dorn (die Spitze, die zur sprechenden Figur zeigt) auf den Sprecher und platziert die Sprechblasen in Lesereihenfolge dort, wo sie kein Gesicht verdecken. Eine Übersetzung ist eine weitere Markdown-Datei mit denselben Panels und anderen Wörtern; Postext lettert sie von Grund auf neu, für Japanisch in Spalten und für Arabisch von rechts nach links.
 
-Comics sind optional: Ein Dokument ohne `:::page` oder `:::strip` wird genau wie zuvor umbrochen. Die Einstellungen stehen im [Abschnitt `comics` der Konfiguration](/de/docs/configuration-comics#comics), und die Auszeichnung ist in [Dokumentformat › Comics](/de/docs/document-format#comics) zusammengefasst.
+Comics sind optional: Ein Dokument ohne `:::page` oder `:::strip` wird genau wie zuvor umbrochen. Die Einstellungen stehen im [Abschnitt `comics` der Konfiguration](/de/docs/configuration-comics#comics), und die Auszeichnung ist in [Dokumentformat › Comics](/de/docs/document-format-directives#comics) zusammengefasst.
 
 ## Comicseiten
 
@@ -159,7 +159,7 @@ Eine Zeile `::panel{…}` beginnt ein Panel; sein Skript reicht bis zur nächste
 
 ### Das Bild auf seine Zelle zuschneiden
 
-Panelbilder werden ohne Rücksicht auf die Form der Zelle gezeichnet, in der sie landen: Eine Seite kann neu geteilt, eine Trennlinie verschoben werden, eine Übersetzung kann eine höhere Reihe brauchen. Der **Sicherheitsbereich** des Bilds (`Resource.safeArea`, siehe [Dokumentformat › Sicherheitsbereich](/de/docs/document-format#sicherheitsbereich)) gibt an, was sichtbar bleiben muss, und der Zuschnitt wird für jede Zelle berechnet:
+Panelbilder werden ohne Rücksicht auf die Form der Zelle gezeichnet, in der sie landen: Eine Seite kann neu geteilt, eine Trennlinie verschoben werden, eine Übersetzung kann eine höhere Reihe brauchen. Der **Sicherheitsbereich** des Bilds (`Resource.safeArea`, siehe [Dokumentformat › Sicherheitsbereich](/de/docs/document-format-resources#sicherheitsbereich)) gibt an, was sichtbar bleiben muss, und der Zuschnitt wird für jede Zelle berechnet:
 
 1. Mit `fit=cover` hat das sichtbare Fenster die Proportionen der Zelle und ist so groß, wie das Bild es zulässt.
 2. Es wird so platziert, dass der Sicherheitsbereich darin liegt. Wo das Spielraum lässt, wird das Fenster auf `focus` zentriert, wenn das Panel einen angibt; sonst werden die Ränder außerhalb des Sicherheitsbereichs im Verhältnis ihrer Größen beschnitten, sodass ein Motiv links der Mitte links der Mitte bleibt.
@@ -484,7 +484,7 @@ Die Legende eines Strips wird mit dem Text gemalt, wie die einer Abbildung. In e
 
 ## Comics in der Sandbox bearbeiten
 
-Im Canvas, in den HTML-Seiten und im Auswahlmodus von Folio lässt sich eine Comicseite mit dem Zeiger bearbeiten, und jede Änderung wird in das Markdown des Kapitels zurückgeschrieben (der [Sandbox-Leitfaden](/de/docs/sandbox#comics-bearbeiten) hat die Einzelheiten):
+Im Canvas, in den HTML-Seiten und im Auswahlmodus von Folio lässt sich eine Comicseite mit dem Zeiger bearbeiten, und jede Änderung wird in das Markdown des Kapitels zurückgeschrieben (der [Sandbox-Leitfaden](/de/docs/sandbox-books-saving#comics-bearbeiten) hat die Einzelheiten):
 
 - **Trennlinien.** Über einem Zwischenraum wird der Zeiger zum Größenänderungscursor. Ziehen verschiebt die Teilungslinie; beim Loslassen wird der neue Prozentwert in den `split`-Wert der Seite geschrieben (das Attribut wird ergänzt, wenn die Seite keines hat), und die Seite wird neu umbrochen. Umschalt rastet in Schritten von 5 % ein, Alt verschiebt nur das nähere Ende und neigt so die Linie, und keine Zelle wird schmaler als 5 %. Beim Ziehen wird ein Panel markiert, dessen Bild nur mit Streifen ganz gezeigt werden könnte. Jede Trennlinie ist auch ein fokussierbarer Trenner: Die Pfeiltasten verschieben sie um 1 % (mit Umschalt um 5 %), Eingabe schreibt die Position, Escape setzt sie zurück.
 - **Panels.** Eine kleine Werkzeugleiste über einem Panel teilt es mit einer waagerechten oder senkrechten Linie und fügt dahinter ein leeres `::panel` für die neue Zelle ein, oder verbindet es mit dem nächsten Panel: Die Teilungslinie verschwindet, und das verbundene Panel behält das Bild des ersten Panels und beide Skripte.

@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Els paràmetres de cjk: tall de línia, amplada de la puntuació, espaiat, la quadrícula de caràcters, el ruby i les marques del text xinès, japonès i coreà',
   lang: 'ca',
   lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 7,
+  readingTime: '37 min',
+  order: 13,
   parent: 'configuration',
   plainSummary: "Aquesta pàgina reuneix els paràmetres del text xinès, japonès i coreà. Decideixen on es pot tallar una línia i quant ocupen els signes de puntuació. Fixen l'espai entre aquests caràcters i les lletres llatines o els números. També controlen les petites guies de lectura que s'imprimeixen al costat dels caràcters i les marques que acompanyen noms i títols. Les guies de composició xinesa i de composició japonesa mostren aquests paràmetres en ús.",
 };
@@ -320,7 +320,7 @@ En text vertical una paraula llatina o un nombre llarg s'ajeuen, i un nombre cur
 - Al Japó les parelles `!!`, `!?`, `?!` i `??`, de mitja amplada o d'amplada completa, també van dretes en una casella (`すごい！？`), tret que les toqui una lletra llatina, una xifra o un tercer signe; una parella d'amplada completa es pinta amb els signes de mitja amplada. Els kana petits, ：；, “ ” (pintades 〝〟) i ・ prenen les formes verticals japoneses (vegeu [Composició japonesa › Formes verticals](/ca/docs/japanese-layout#formes-verticals)).
 - El mesurador i tots els motors de pintura veuen les mateixes caselles: el canvas pinta les xifres redreçades i estretes, el PDF igual amb la font horitzontal, i l'HTML les embolcalla en `text-combine-upright: all`.
 
-A mà, tres marques en línia manen sobre l'ajust en text vertical i no canvien res en text horitzontal (vegeu [Format del document › Orientació en text vertical](/ca/docs/document-format#orientació-en-text-vertical)):
+A mà, tres marques en línia manen sobre l'ajust en text vertical i no canvien res en text horitzontal (vegeu [Format del document › Orientació en text vertical](/ca/docs/document-format-inline#orientació-en-text-vertical)):
 
 ```markdown
 第:tcy[120]回、:upright[GDP]與:sideways[12]
@@ -350,7 +350,7 @@ Dues caixes de la pràctica xinesa, en 五号 (10,5 pt) amb 6 pt d'interlineat (
 `fullLines` és per al paper de manuscrit (原稿用紙), on s'escriu a totes les caselles d'una línia completa. Un paràgraf no acaba en un sol caràcter (vegeu `bodyText.avoidRunts`): la línia anterior li cedeix el seu últim caràcter, i quan aquesta línia no està justificada queda amb una casella buida. Amb `fullLines: true` una línia sense justificar conserva totes les caselles i el paràgraf pot acabar en un sol caràcter; una línia justificada continua cedint el seu caràcter i es reparteix fins a la mesura. Desactivat per defecte. Des de postext 1.28.
 ### Marques, ruby i warichu
 
-El marcatge de [marques xineses, ruby i warichu](/ca/docs/document-format#marques-xineses-ruby-i-warichu) conserva el seu text al paràgraf: la cerca, l'índex general, les àncores de l'índex analític i el text copiat llegeixen els caràcters tal com es van escriure, i d'aquesta configuració només depèn el que es dibuixa al voltant.
+El marcatge de [marques xineses, ruby i warichu](/ca/docs/document-format-inline#marques-xineses-ruby-i-warichu) conserva el seu text al paràgraf: la cerca, l'índex general, les àncores de l'índex analític i el text copiat llegeixen els caràcters tal com es van escriure, i d'aquesta configuració només depèn el que es dibuixa al voltant.
 
 - **Punts d'èmfasi** (着重号, 傍点; `:dots[…]`, i `*…*` sobre caràcters CJK amb `emphasis: 'dots'`): una marca per caràcter, centrada en ell (sense comptar l'espaiat d'una línia justificada), mai a la puntuació ni als espais; sota el caràcter en text horitzontal i a la seva dreta en vertical (clreq §5.3.1). `style` tria punt ple, cercle o punt de sèsam, `fill="open"` dibuixa el contorn i `pos="over|under"` el costat; `emphasisMark` fixa el que una marca no indica (al Japó, un sèsam sobre el text, a la seva dreta en vertical). Un sèsam té la mateixa orientació sobre el paper en els dos modes d'escriptura, i les marques del costat d'una lectura ruby van per fora d'aquesta.
 - **Línies laterals** (傍線, `:sideline[…]{style pos}`): corren al costat del text, puntuació i espais inclosos: `solid`, `double`, `wavy` o `dotted`, per defecte sota el text en horitzontal i a la seva dreta en vertical; dues línies que es toquen cedeixen cadascuna un vuitè d'em. Funcionen en qualsevol escriptura.

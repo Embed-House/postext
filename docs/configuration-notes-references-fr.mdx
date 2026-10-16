@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Les notes de bas de page, les numéros de ligne, les renvois et les citations, la table des matières et l’index',
   lang: 'fr',
   lastUpdated: '2026-10-10',
-  readingTime: '4 min',
-  order: 6,
+  readingTime: '30 min',
+  order: 12,
   parent: 'configuration',
   plainSummary: "Cette page réunit les réglages des parties d’un livre qui renvoient ailleurs. Les notes se placent en bas de page, et les numéros de ligne dans la marge. Les renvois désignent une figure, une section ou une page, et les citations désignent les ouvrages que vous citez. La table des matières liste les chapitres, et l’index, en fin d’ouvrage, liste des termes avec leurs pages. Chaque section explique l’aspect de ces éléments et leur numérotation.",
 };
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Notes de bas de page
 
-La propriété `footnotes` définit où vont les notes appelées avec `[^id]`, comment elles sont numérotées et à quoi elles ressemblent. Le balisage est décrit dans [Format du document](/fr/docs/document-format#notes-de-bas-de-page).
+La propriété `footnotes` définit où vont les notes appelées avec `[^id]`, comment elles sont numérotées et à quoi elles ressemblent. Le balisage est décrit dans [Format du document](/fr/docs/document-format-notes-references#notes-de-bas-de-page).
 
 ```ts
 interface FootnotesConfig {
@@ -378,7 +378,7 @@ Ce qui est compté, et ce qui ne l’est pas :
 
 - **Jamais comptés** : les titres, les légendes, les tableaux et les images, les formules hors texte, le texte de maquette (ouvertures, titres courants), les notes de bas de page et de fin de chapitre, la table des matières, les entrées de l’index et de la bibliographie, et les pages blanches.
 - **Encadrés et prose.** Le texte d’un encadré n’est pas compté, et avec `count: 'verse'` la prose non plus, sauf si le style de paragraphe dans lequel elle est composée indique `lineNumbers: true` ; un style avec `lineNumbers: false` n’est jamais compté (voir [Styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)).
-- **Un poème.** La directive d’un poème accepte `numbered=false` (ses lignes ne sont pas comptées), `lineStart=N` (sa première ligne porte le numéro N, et le compte repart là) et `interval=N`. `:::numbering{lines=N}` donne le numéro N à la ligne comptée suivante, où qu’elle se trouve. Voir [Format du document › `:::verse`](/fr/docs/document-format#verse) et [`:::numbering`](/fr/docs/document-format#numbering).
+- **Un poème.** La directive d’un poème accepte `numbered=false` (ses lignes ne sont pas comptées), `lineStart=N` (sa première ligne porte le numéro N, et le compte repart là) et `interval=N`. `:::numbering{lines=N}` donne le numéro N à la ligne comptée suivante, où qu’elle se trouve. Voir [Format du document › `:::verse`](/fr/docs/document-format-directives#verse) et [`:::numbering`](/fr/docs/document-format-directives#numbering).
 
 Dans un livre mis en page chapitre par chapitre, `restart: 'document'` reporte le compte d’un chapitre au suivant par `continuation.lineNumber`. `continuationAfter` compte les vers à partir du texte ; avec `count: 'all'`, le compte dépend de la mise en page, si bien que l’hôte transmet le `lastLineNumber` du document du chapitre précédent, comme le fait le Sandbox.
 
@@ -399,7 +399,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // unset font, w
 
 ## Renvois
 
-La propriété `crossRefs` définit les mots qu’un [renvoi](/fr/docs/document-format#renvois-et-ancres) imprime autour d’un numéro ou d’une page, et le style que prend un `:ref` qui n’en définit aucun. Chaque modèle contient `{n}` à l’endroit du numéro ; un modèle qui ne le contient pas reçoit le numéro après une espace insécable (`"§"` imprime *§ 3.2*). Un modèle non défini suit la langue du document : *chapter / section / p.* en anglais, *capítulo / sección / pág.* en espagnol, `第{n}章` / `第{n}节` / `第{n}页` en chinois, et ainsi de suite pour le français, l’allemand, l’italien, le portugais, le catalan et le néerlandais.
+La propriété `crossRefs` définit les mots qu’un [renvoi](/fr/docs/document-format-notes-references#renvois-et-ancres) imprime autour d’un numéro ou d’une page, et le style que prend un `:ref` qui n’en définit aucun. Chaque modèle contient `{n}` à l’endroit du numéro ; un modèle qui ne le contient pas reçoit le numéro après une espace insécable (`"§"` imprime *§ 3.2*). Un modèle non défini suit la langue du document : *chapter / section / p.* en anglais, *capítulo / sección / pág.* en espagnol, `第{n}章` / `第{n}节` / `第{n}页` en chinois, et ainsi de suite pour le français, l’allemand, l’italien, le portugais, le catalan et le néerlandais.
 
 ```ts
 interface CrossRefsConfig {
@@ -449,7 +449,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Autoriser une ligne à se couper aux espaces d’un renvoi dont l’étiquette est faite de mots : le texte d’une ancre <code>[words]{'{#id}'}</code>, l’intitulé d’un titre ou d’un encadré, un remplacement <code>text="…"</code> (y compris sur un renvoi à une figure ou à un tableau). Les espaces de l’étiquette s’étirent et se resserrent alors avec la ligne, et le renvoi reste un seul lien ; ses mots ne reçoivent pas de césure. Un nombre, un chiffre romain ou une lettre isolée dans une telle étiquette reste attaché au mot qui le précède (<code>Fig. 1a</code>, <code>plate IV</code>). Une étiquette qui contient un numéro ou une page (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) ne se coupe jamais, même quand son modèle contient une espace ordinaire. <code>false</code> compose chaque étiquette comme un seul mot, sans coupure de ligne à l’intérieur, comme jusqu’à postext 1.27. Une configuration enregistrée avant la <code>configVersion</code> 12 dont le texte contient un renvoi est lue avec <code>false</code>, pour que ses lignes restent en place (voir <a href="/fr/docs/configuration-programmatic-usage#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>).</td>
+      <td>Autoriser une ligne à se couper aux espaces d’un renvoi dont l’étiquette est faite de mots : le texte d’une ancre <code>[words]{'{#id}'}</code>, l’intitulé d’un titre ou d’un encadré, un remplacement <code>text="…"</code> (y compris sur un renvoi à une figure ou à un tableau). Les espaces de l’étiquette s’étirent et se resserrent alors avec la ligne, et le renvoi reste un seul lien ; ses mots ne reçoivent pas de césure. Un nombre, un chiffre romain ou une lettre isolée dans une telle étiquette reste attaché au mot qui le précède (<code>Fig. 1a</code>, <code>plate IV</code>). Une étiquette qui contient un numéro ou une page (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) ne se coupe jamais, même quand son modèle contient une espace ordinaire. <code>false</code> compose chaque étiquette comme un seul mot, sans coupure de ligne à l’intérieur, comme jusqu’à postext 1.27. Une configuration enregistrée avant la <code>configVersion</code> 12 dont le texte contient un renvoi est lue avec <code>false</code>, pour que ses lignes restent en place (voir <a href="/fr/docs/configuration-bundles#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -458,7 +458,7 @@ Les renvois prennent la couleur, la graisse et l’inclinaison communes à tous 
 
 ## Citations
 
-La propriété `citations` choisit le style de citation et l’apparence des citations et de la bibliographie. Le balisage est décrit dans [Citations et bibliographie](/fr/docs/document-format#citations-et-bibliographie) ; le style est appliqué par le package `postext-citeproc`.
+La propriété `citations` choisit le style de citation et l’apparence des citations et de la bibliographie. Le balisage est décrit dans [Citations et bibliographie](/fr/docs/document-format-notes-references#citations-et-bibliographie) ; le style est appliqué par le package `postext-citeproc`.
 
 ```ts
 interface CitationsConfig {
@@ -502,7 +502,7 @@ interface CitationsConfig {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td><code>'apa'</code></td>
-      <td>L’identifiant d’un style fourni (voir <a href="/fr/docs/document-format#styles">Styles</a>) ou <code>'custom'</code>. Le style décide de ce que disent les citations et les entrées : noms, dates, ordre, ponctuation, et si les citations sont des notes.</td>
+      <td>L’identifiant d’un style fourni (voir <a href="/fr/docs/document-format-notes-references#styles">Styles</a>) ou <code>'custom'</code>. Le style décide de ce que disent les citations et les entrées : noms, dates, ordre, ponctuation, et si les citations sont des notes.</td>
     </tr>
     <tr>
       <td><code>customStyle</code></td>
@@ -550,7 +550,7 @@ interface CitationsConfig {
       <td><code>hyphenateNames</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Laisser le dictionnaire couper les noms des auteurs cités. <code>false</code> garde entier le nom de famille de chaque personne des références (auteurs, éditeurs, traducteurs) et chaque nom donné en une seule chaîne, partout où il apparaît avec sa majuscule : dans une citation, dans le texte courant et dans la liste, si bien qu’aucune ligne ne finit sur <code>(Lup-</code>. Un nom double est lu partie par partie, et un auteur nommé Baker ne garde pas entier le mot <code>baker</code>. Voir <a href="/fr/docs/configuration-text#mots-gardés-entiers">Mots gardés entiers</a>.</td>
+      <td>Laisser le dictionnaire couper les noms des auteurs cités. <code>false</code> garde entier le nom de famille de chaque personne des références (auteurs, éditeurs, traducteurs) et chaque nom donné en une seule chaîne, partout où il apparaît avec sa majuscule : dans une citation, dans le texte courant et dans la liste, si bien qu’aucune ligne ne finit sur <code>(Lup-</code>. Un nom double est lu partie par partie, et un auteur nommé Baker ne garde pas entier le mot <code>baker</code>. Voir <a href="/fr/docs/configuration-language#mots-gardés-entiers">Mots gardés entiers</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -629,7 +629,7 @@ interface CitationsConfig {
 
 ## Table des matières
 
-La propriété `toc` configure ce qu’imprime une directive `:::toc` (voir [Format du document](/fr/docs/document-format#toc)). La table est assemblée à partir du **plan** du document (chaque titre avec son numéro et l’étiquette de sa page, chaque `:::part`), si bien qu’elle suit les chapitres : renommez-en un, déplacez-le dans une autre partie, changez ses auteurs, et les entrées changent avec lui. Une entrée se compose du numéro du titre dans une colonne à part, de l’intitulé, de points de conduite et de l’étiquette de page au bord droit, puis d’une ligne de sous-titre facultative ; une partie est une rangée dessinée par `parts.design`.
+La propriété `toc` configure ce qu’imprime une directive `:::toc` (voir [Format du document](/fr/docs/document-format-directives#toc)). La table est assemblée à partir du **plan** du document (chaque titre avec son numéro et l’étiquette de sa page, chaque `:::part`), si bien qu’elle suit les chapitres : renommez-en un, déplacez-le dans une autre partie, changez ses auteurs, et les entrées changent avec lui. Une entrée se compose du numéro du titre dans une colonne à part, de l’intitulé, de points de conduite et de l’étiquette de page au bord droit, puis d’une ligne de sous-titre facultative ; une partie est une rangée dessinée par `parts.design`.
 
 ```ts
 const config: PostextConfig = {
@@ -719,7 +719,7 @@ Les étiquettes de page sont celles que le document imprime. `buildDocument()` r
 
 ## Index
 
-La propriété `index` configure ce qu’imprime une directive `:::index` (voir [Format du document](/fr/docs/document-format#index-1)) : les termes marqués avec `:index[…]` et `:index{term="…"}` dans le texte, triés, regroupés par première lettre (par initiale pinyin ou par nombre de traits en chinois, par rangée du gojūon en japonais, voir `groupBy`), chacun avec les pages où il apparaît. Une entrée se compose de son terme, d’un séparateur et de ses numéros de page ; ses sous-entrées suivent, avec un cran de retrait par niveau, et les lignes suivantes d’une entrée sont décalées de `turnoverIndent` pour ne jamais s’aligner sur une sous-entrée.
+La propriété `index` configure ce qu’imprime une directive `:::index` (voir [Format du document](/fr/docs/document-format-notes-references#index)) : les termes marqués avec `:index[…]` et `:index{term="…"}` dans le texte, triés, regroupés par première lettre (par initiale pinyin ou par nombre de traits en chinois, par rangée du gojūon en japonais, voir `groupBy`), chacun avec les pages où il apparaît. Une entrée se compose de son terme, d’un séparateur et de ses numéros de page ; ses sous-entrées suivent, avec un cran de retrait par niveau, et les lignes suivantes d’une entrée sont décalées de `turnoverIndent` pour ne jamais s’aligner sur une sous-entrée.
 
 ```ts
 const config: PostextConfig = {

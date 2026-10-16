@@ -34,13 +34,13 @@ Le due edizioni condividono un’unica grafica, quindi ogni differenza tra le du
 
 <Excerpt region="bench" />
 
-Un riquadro compone tutte le colonne di un gruppo [`:::columns`](/it/docs/document-format#columns) in un solo stile di testo, quindi ogni striscia è un riquadro annidato con un proprio `body`, e `breaks="3"` impila la striscia in bandiera e quella senza trattini nella prima colonna. La striscia in bandiera non ha bisogno di `hyphenation: false`: il testo in bandiera tiene intere le parole a meno che non si attivi `bodyText.hyphenation.ragged`. La prova al banco flotta al piede di pagina 3 con `placement: 'bottom'`, e il suo padding inferiore ripete la cornice di 4 mm perché il `marginBottom` dell’ultima striscia si perde alla fine del riquadro.
+Un riquadro compone tutte le colonne di un gruppo [`:::columns`](/it/docs/document-format-directives#columns) in un solo stile di testo, quindi ogni striscia è un riquadro annidato con un proprio `body`, e `breaks="3"` impila la striscia in bandiera e quella senza trattini nella prima colonna. La striscia in bandiera non ha bisogno di `hyphenation: false`: il testo in bandiera tiene intere le parole a meno che non si attivi `bodyText.hyphenation.ragged`. La prova al banco flotta al piede di pagina 3 con `placement: 'bottom'`, e il suo padding inferiore ripete la cornice di 4 mm perché il `marginBottom` dell’ultima striscia si perde alla fine del riquadro.
 
 ### 5 · Disegna il modello nell’apertura
 
 <Excerpt region="opener" />
 
-Il diagramma è un [elemento immagine](/it/docs/configuration-page-layout#elementi-immagine) della grafica dell’H1. Come figura sarebbe un elemento flottante `top` a tutta pagina, e un elemento flottante `top` citato a pagina 1 apre pagina 2. La fascia scende sotto il diagramma, e un’apertura riserva l’altezza fino al suo elemento più basso, quindi il testo comincia sotto la fascia senza un `minHeight`, una riga più in basso a causa del `marginBottom` predefinito dell’H1. Le etichette sono testo della grafica posato sulle coordinate stesse del disegno, composto e spaziato come le altre etichette dell’apertura.
+Il diagramma è un [elemento immagine](/it/docs/configuration-headers-footers#elementi-immagine) della grafica dell’H1. Come figura sarebbe un elemento flottante `top` a tutta pagina, e un elemento flottante `top` citato a pagina 1 apre pagina 2. La fascia scende sotto il diagramma, e un’apertura riserva l’altezza fino al suo elemento più basso, quindi il testo comincia sotto la fascia senza un `minHeight`, una riga più in basso a causa del `marginBottom` predefinito dell’H1. Le etichette sono testo della grafica posato sulle coordinate stesse del disegno, composto e spaziato come le altre etichette dell’apertura.
 
 ## Varianti
 

@@ -18,13 +18,13 @@ Die Seiten 29 bis 33 einer Taschenausgabe von Montaignes *Essays* in der englisc
 
 <Excerpt region="palette" />
 
-Jede Farbe der Konfiguration ist mit einem dieser Einträge verknüpft. Lassen Sie `header` undefiniert, zeichnet die Engine ihren eingebauten Kolumnentitel: `{title}` auf rechten und `{chapterTitle}` auf linken Seiten über einer Linie von 1 pt, in Open Sans 600 zu 8 pt und im Blau `#295AA3` ([Kopf- und Fußzeilen](/de/docs/configuration-page-layout#kopf--und-fußzeilen)). Richtet man `main-color` auf das Sepia, färbt das die Vorgaben des Texts und mit ihnen diesen Kolumnentitel um, doch Schrift, Linie und die Seite, auf der jeder Titel steht, bleiben die der Engine. Deshalb ist jeder Kolumnentitel hier vollständig ausgeschrieben, mit jeder Farbe an einen Paletteneintrag geknüpft. Auch Fett, Kursiv und Verweise nehmen standardmäßig `main-color` an, und `bodyText` setzt sie auf die Textfarbe zurück.
+Jede Farbe der Konfiguration ist mit einem dieser Einträge verknüpft. Lassen Sie `header` undefiniert, zeichnet die Engine ihren eingebauten Kolumnentitel: `{title}` auf rechten und `{chapterTitle}` auf linken Seiten über einer Linie von 1 pt, in Open Sans 600 zu 8 pt und im Blau `#295AA3` ([Kopf- und Fußzeilen](/de/docs/configuration-headers-footers#kopf--und-fußzeilen)). Richtet man `main-color` auf das Sepia, färbt das die Vorgaben des Texts und mit ihnen diesen Kolumnentitel um, doch Schrift, Linie und die Seite, auf der jeder Titel steht, bleiben die der Engine. Deshalb ist jeder Kolumnentitel hier vollständig ausgeschrieben, mit jeder Farbe an einen Paletteneintrag geknüpft. Auch Fett, Kursiv und Verweise nehmen standardmäßig `main-color` an, und `bodyText` setzt sie auf die Textfarbe zurück.
 
 ### 2 · Jeden Kolumnentitel aus einer einzigen Marke bauen
 
 <Excerpt region="tab" />
 
-Die kurze Antwort verankert die Marke jedes Kolumnentitels an `'page'`, sodass ihre Versätze ab dem Endformat gemessen werden. Von der Ecke `top-right` aus läuft ein positives `x` aus der Seite hinaus, deshalb nimmt die Marke der rechten Seite ein negatives. Die Trennlinie hängt an der Marke und der Titel an der Trennlinie ([Platzierung von Elementen](/de/docs/configuration-page-layout#platzierung-von-elementen)). Die Maße der Marke sind benannte Konstanten, weil die übrigen Teile von ihnen aus gemessen werden. Die Trennlinie ist `TAB_H` hoch. Pagina und beide Titel teilen sich eine Zeilenhöhe von 9 pt, und die Grundlinie eines Designtexts liegt bei 80 % seiner Zeilenhöhe; so stehen alle drei bei jedem Schriftgrad auf einer Grundlinie.
+Die kurze Antwort verankert die Marke jedes Kolumnentitels an `'page'`, sodass ihre Versätze ab dem Endformat gemessen werden. Von der Ecke `top-right` aus läuft ein positives `x` aus der Seite hinaus, deshalb nimmt die Marke der rechten Seite ein negatives. Die Trennlinie hängt an der Marke und der Titel an der Trennlinie ([Platzierung von Elementen](/de/docs/configuration-headers-footers#platzierung-von-elementen)). Die Maße der Marke sind benannte Konstanten, weil die übrigen Teile von ihnen aus gemessen werden. Die Trennlinie ist `TAB_H` hoch. Pagina und beide Titel teilen sich eine Zeilenhöhe von 9 pt, und die Grundlinie eines Designtexts liegt bei 80 % seiner Zeilenhöhe; so stehen alle drei bei jedem Schriftgrad auf einer Grundlinie.
 
 <PageShot page={2} crop="0.04,0.045,0.6,0.05" caption="Seite 30, eine linke Seite: Marke, Trennlinie und Titel des Buchs, vom Außensteg nach innen gelesen." />
 
@@ -40,13 +40,13 @@ Mit `mirror: true` ist der Rand `right` auf einer rechten Seite der äußere und
 
 <Excerpt region="opener" />
 
-Die Auftaktseite setzt den Titel mit `overflow: 'wrap'` vollständig und bricht ihn an jedem `\\` der Überschriftenzeile um. Nur ein Auftakt über die ganze Seitenbreite beachtet diese Umbrüche, deshalb hat die Ebene `span: 'page'` ([Zeilenumbrüche in Titeln](/de/docs/document-format#zeilenumbrüche-in-titeln)). Im Kolumnentitel liefert `{chapterTitle}` den Titel immer in einer Zeile, und die Auslassungspunkte kürzen diese Zeile. Die Ziffer stammt aus dem Attribut `{num="IV"}` der Überschrift und die Kapitälchen neben dem Schild aus `subtitle` im Frontmatter.
+Die Auftaktseite setzt den Titel mit `overflow: 'wrap'` vollständig und bricht ihn an jedem `\\` der Überschriftenzeile um. Nur ein Auftakt über die ganze Seitenbreite beachtet diese Umbrüche, deshalb hat die Ebene `span: 'page'` ([Zeilenumbrüche in Titeln](/de/docs/document-format-directives#zeilenumbrüche-in-titeln)). Im Kolumnentitel liefert `{chapterTitle}` den Titel immer in einer Zeile, und die Auslassungspunkte kürzen diese Zeile. Die Ziffer stammt aus dem Attribut `{num="IV"}` der Überschrift und die Kapitälchen neben dem Schild aus `subtitle` im Frontmatter.
 
 ### 5 · Jeden Essay auf einer rechten Seite beginnen
 
 <Excerpt region="levels" />
 
-Mit `'odd'` folgt auf einen Essay, der auf einer rechten Seite endet, eine leere linke Seite. Die spanische Ausgabe hat eine, weil ihr Kapitel IV auf Seite 31 endet; hier endet Kapitel IV auf Seite 32, einer linken Seite, und Kapitel V beginnt auf Seite 33. `pages: 'body'` der Kolumnentitel hält sie von Vakatseiten und von Auftaktseiten fern (den Seiten, deren erster Block diese Überschrift ist). `pages: 'opener'` der Fußzeile druckt die Pagina am Fuß nur auf Auftaktseiten ([Textelemente](/de/docs/configuration-page-layout#textelemente)).
+Mit `'odd'` folgt auf einen Essay, der auf einer rechten Seite endet, eine leere linke Seite. Die spanische Ausgabe hat eine, weil ihr Kapitel IV auf Seite 31 endet; hier endet Kapitel IV auf Seite 32, einer linken Seite, und Kapitel V beginnt auf Seite 33. `pages: 'body'` der Kolumnentitel hält sie von Vakatseiten und von Auftaktseiten fern (den Seiten, deren erster Block diese Überschrift ist). `pages: 'opener'` der Fußzeile druckt die Pagina am Fuß nur auf Auftaktseiten ([Textelemente](/de/docs/configuration-headers-footers#textelemente)).
 
 ### 6 · Die Paginas bei 29 beginnen
 

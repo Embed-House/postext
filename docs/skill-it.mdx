@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Installa la skill postext-port in Claude Code, Codex o in qualunque agente e lasciale trasformare un sorgente PDF, Word, PowerPoint, EPUB, InDesign o HTML in un progetto Postext che segue l’impaginazione originale',
   lang: 'it',
   lastUpdated: '2026-10-09',
-  readingTime: '8 min',
-  order: 21,
+  readingTime: '10 min',
+  order: 39,
   plainSummary: "Questa pagina è per chi ha già un libro o un documento in un altro formato, come PDF, Word o InDesign, e vuole portarlo in Postext. Un assistente di intelligenza artificiale, chiamato agente, può fare gran parte del lavoro se gli dai un piccolo componente aggiuntivo chiamato skill. La skill insegna all’agente come copiare il testo e ricostruire la grafica dell’originale. La pagina spiega come installarla, che cosa chiedere e come controllare il risultato. Un video di circa cinque minuti mostra ogni passaggio.",
 };
 
@@ -93,7 +93,7 @@ Anche su YouTube: [guardalo lì](https://www.youtube.com/watch?v=EBKvuJlg1UQ&lis
     disegni senza testo più le traduzioni, da scansioni già letterizzate o da un copione
     con disegni generati (vedi [Fumetti](/it/docs/comics));
   - l’oggetto stampato: come leggere carta, rilegatura, copertine e dorso del
-    sorgente e impostarli come le impostazioni `folio` che il [visualizzatore Folio](/it/docs/sandbox#scheda-folio)
+    sorgente e impostarli come le impostazioni `folio` che il [visualizzatore Folio](/it/docs/sandbox-previews#scheda-folio)
     mostra, controllate dal linter.
 - **Script** (Python e Node), descritti nella sezione successiva.
 
@@ -245,7 +245,7 @@ su una cartella di progetti in una copia locale di Postext, imposta
 
 ### Caricare il risultato dal codice
 
-Il file consegnato non è legato alla Sandbox. Il pacchetto `postext` lo apre con `openBundle`, impagina il libro con `buildBundle` e lo rende su canvas, in HTML o in PDF (vedi [Pacchetti](/it/docs/configuration-programmatic-usage#pacchetti-file-postext)). Un porting può quindi alimentare direttamente un programma. Quando l’output di quel programma va ritoccato, esportalo di nuovo in un file `.postext` con `createBundle`, rifiniscilo nella Sandbox e carica di nuovo il file corretto. Anche lo script senza interfaccia `render.mjs` della skill accetta un file `.postext` impacchettato oltre a una cartella di progetto.
+Il file consegnato non è legato alla Sandbox. Il pacchetto `postext` lo apre con `openBundle`, impagina il libro con `buildBundle` e lo rende su canvas, in HTML o in PDF (vedi [Pacchetti](/it/docs/configuration-bundles#pacchetti-file-postext)). Un porting può quindi alimentare direttamente un programma. Quando l’output di quel programma va ritoccato, esportalo di nuovo in un file `.postext` con `createBundle`, rifiniscilo nella Sandbox e carica di nuovo il file corretto. Anche lo script senza interfaccia `render.mjs` della skill accetta un file `.postext` impacchettato oltre a una cartella di progetto.
 
 ## Che cosa aspettarsi
 

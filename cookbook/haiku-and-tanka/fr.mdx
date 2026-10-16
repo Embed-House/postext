@@ -22,13 +22,13 @@ Le code est [la réponse courte](#la-réponse-courte) plus haut. Un haïku tient
 
 <Excerpt region="tanka" />
 
-Les tankas de Takuboku forment un bloc `:::verse`, chaque tanka une strophe : ses trois lignes sont trois lignes du Markdown, et la ligne blanche entre deux tankas dans la source laisse une ligne blanche de la grille entre les poèmes. Le style du poème donne le retrait de deux caractères et la ligne sous le groupe, et les lignes pendent de la tête comme dans toute colonne. `keepStanzas=3` garde entière chaque strophe de trois lignes : en page 5, le troisième tanka ne tient pas sous le titre de la partie et les deux premiers, il ouvre donc la page 6 en entier, au lieu d’abandonner sa première ligne derrière lui. L’ornement entre deux groupes introduit le suivant : il passe donc avec son premier tanka au lieu de rester seul au pied d’une page ([`:::verse`](/fr/docs/document-format#verse)).
+Les tankas de Takuboku forment un bloc `:::verse`, chaque tanka une strophe : ses trois lignes sont trois lignes du Markdown, et la ligne blanche entre deux tankas dans la source laisse une ligne blanche de la grille entre les poèmes. Le style du poème donne le retrait de deux caractères et la ligne sous le groupe, et les lignes pendent de la tête comme dans toute colonne. `keepStanzas=3` garde entière chaque strophe de trois lignes : en page 5, le troisième tanka ne tient pas sous le titre de la partie et les deux premiers, il ouvre donc la page 6 en entier, au lieu d’abandonner sa première ligne derrière lui. L’ornement entre deux groupes introduit le suivant : il passe donc avec son premier tanka au lieu de rester seul au pied d’une page ([`:::verse`](/fr/docs/document-format-directives#verse)).
 
 ### 3 · Espacer les noms de lieux sur une même largeur
 
 <Excerpt region="places" />
 
-Les étapes de la route de Bashō sont des titres de niveau 2 hauts de deux lignes de texte (2行取り) : la prose et les haïkus qui les suivent restent sur la grille. `jidori: 3` espace un nom plus court sur trois de ses propres caractères (字取り) : 平泉 s’imprime 平　泉 avec un caractère plein entre les deux, et chaque nom se termine à la même hauteur que 立石寺 et 最上川. Un nom qui fait déjà trois caractères n’est pas touché ([Réglages par niveau](/fr/docs/configuration-text#réglages-par-niveau)).
+Les étapes de la route de Bashō sont des titres de niveau 2 hauts de deux lignes de texte (2行取り) : la prose et les haïkus qui les suivent restent sur la grille. `jidori: 3` espace un nom plus court sur trois de ses propres caractères (字取り) : 平泉 s’imprime 平　泉 avec un caractère plein entre les deux, et chaque nom se termine à la même hauteur que 立石寺 et 最上川. Un nom qui fait déjà trois caractères n’est pas touché ([Réglages par niveau](/fr/docs/configuration-headings#réglages-par-niveau)).
 
 ### 4 · Ouvrir chaque partie sur sa propre page
 
@@ -40,7 +40,7 @@ Chaque partie est un titre de niveau 1 dont la maquette compose le titre, un pet
 
 <Excerpt region="voices" />
 
-La prose de Bashō écrit les mots répétés avec l’ancien signe d’itération 〻 (日〻, 人〻), et les textes plus anciens emploient aussi le long くの字点 〳〵. Zen Old Mincho n’a ni l’un ni l’autre : le canvas les emprunterait à une police système et le PDF dessinerait des boîtes vides. Shippori Mincho, Noto Serif JP et Shippori Mincho B1 ont les deux : les poèmes sont donc composés en Shippori Mincho ([Polices chinoises, japonaises et coréennes](/fr/docs/configuration-programmatic-usage#polices-chinoises-japonaises-et-coréennes)). Le texte d’Aozora garde aussi les notes de l’éditeur sur les graphies anciennes, `とら{え|（へ）}て`, qui impriment le kana attendu à côté de celui qu’a écrit Bashō.
+La prose de Bashō écrit les mots répétés avec l’ancien signe d’itération 〻 (日〻, 人〻), et les textes plus anciens emploient aussi le long くの字点 〳〵. Zen Old Mincho n’a ni l’un ni l’autre : le canvas les emprunterait à une police système et le PDF dessinerait des boîtes vides. Shippori Mincho, Noto Serif JP et Shippori Mincho B1 ont les deux : les poèmes sont donc composés en Shippori Mincho ([Polices chinoises, japonaises et coréennes](/fr/docs/configuration-pdf-output#polices-chinoises-japonaises-et-coréennes)). Le texte d’Aozora garde aussi les notes de l’éditeur sur les graphies anciennes, `とら{え|（へ）}て`, qui impriment le kana attendu à côté de celui qu’a écrit Bashō.
 
 ## Variantes
 

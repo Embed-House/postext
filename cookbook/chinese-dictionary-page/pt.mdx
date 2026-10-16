@@ -16,13 +16,13 @@ Quatro páginas do miolo de uma edição de leitura do Dicionário Kangxi (康�
 
 ### 1 · Palavras-guia a partir das entradas
 
-O código é [a resposta curta](#a-resposta-curta) lá em cima. Cada entrada é um título de nível 2, e `{firstMark.h2}` e `{lastMark.h2}` imprimem o texto do primeiro e do último título de nível 2 que começam na página ([elementos de texto](/pt/docs/configuration-page-layout#elementos-de-texto)). A marca são os caracteres do título: `## {天|tiān}` marca 天, e a leitura fica sobre a entrada. Um verbete que passa de uma página para a seguinte só conta onde está a sua entrada: a <PageRef page={2}>página 635</PageRef> começa com o fim de 殄 e é encabeçada por 腆—髫. O nível 1 fica para as letras: nenhuma começa nestas quatro páginas, mas o título de uma letra não contaria como palavra-guia.
+O código é [a resposta curta](#a-resposta-curta) lá em cima. Cada entrada é um título de nível 2, e `{firstMark.h2}` e `{lastMark.h2}` imprimem o texto do primeiro e do último título de nível 2 que começam na página ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). A marca são os caracteres do título: `## {天|tiān}` marca 天, e a leitura fica sobre a entrada. Um verbete que passa de uma página para a seguinte só conta onde está a sua entrada: a <PageRef page={2}>página 635</PageRef> começa com o fim de 殄 e é encabeçada por 腆—髫. O nível 1 fica para as letras: nenhuma começa nestas quatro páginas, mas o título de uma letra não contaria como palavra-guia.
 
 ### 2 · O pinyin sobre as entradas
 
 <Excerpt region="headwords" />
 
-`{天|tiān}` é a forma curta de `:ruby[天]{rt="tiān"}`, uma leitura sobre um caractere ([marcas chinesas, rubi e warichu](/pt/docs/document-format#marcas-chinesas-rubi-e-warichu)). Um título sem design próprio compõe a sua leitura; um design de título imprimiria 天 sozinho. A leitura usa a fonte do próprio título, a extranegra, a não ser que `cjk.ruby.fontFamily` indique outra, e por isso a Song regular é indicada. Metade de 15 pt são 7,5 pt, e a linha de 30 pt do título deixa espaço para a leitura sobre a entrada, então o título ocupa duas linhas da grade e o texto embaixo continua nas linhas de 15 pt das duas colunas. Uma leitura em pinyin sobe o tanto das descendentes da sua fonte mais 0,04 em, então o g de tīng termina 0,6 pt acima da caixa do eme de 汀.
+`{天|tiān}` é a forma curta de `:ruby[天]{rt="tiān"}`, uma leitura sobre um caractere ([marcas chinesas, rubi e warichu](/pt/docs/document-format-inline#marcas-chinesas-rubi-e-warichu)). Um título sem design próprio compõe a sua leitura; um design de título imprimiria 天 sozinho. A leitura usa a fonte do próprio título, a extranegra, a não ser que `cjk.ruby.fontFamily` indique outra, e por isso a Song regular é indicada. Metade de 15 pt são 7,5 pt, e a linha de 30 pt do título deixa espaço para a leitura sobre a entrada, então o título ocupa duas linhas da grade e o texto embaixo continua nas linhas de 15 pt das duas colunas. Uma leitura em pinyin sobe o tanto das descendentes da sua fonte mais 0,04 em, então o g de tīng termina 0,6 pt acima da caixa do eme de 汀.
 
 ### 3 · Um parágrafo para cada verbete
 

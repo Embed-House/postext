@@ -22,7 +22,7 @@ Lo stile è [la risposta breve](#la-risposta-breve) qui sopra. Uno stile di tito
 
 <Excerpt region="frame" />
 
-Un elemento immagine disegna una risorsa alle dimensioni della sua collocazione ([elementi immagine](/it/docs/configuration-page-layout#elementi-immagine)): ancorato all’angolo superiore sinistro della pagina con entrambi i lati `'fill'`, il guilloché copre il riquadro del formato rifilato, e l’SVG, dichiarato con le proporzioni della pagina, lo riempie senza deformarsi. L’intestazione lo dipinge sopra `page.backgroundColor` e non riserva spazio, quindi sono i soli margini a tenere il testo ad almeno 32 mm dal rifilo, dentro il filetto interno a 26 mm. Una filigrana collocata nell’intestazione si stamperebbe sopra le parole, perché l’intestazione viene dipinta dopo il testo. In un’intestazione, `{attr.serial}` legge l’attributo del titolo alla cui sezione appartiene la pagina, così ogni attestato stampa il proprio numero.
+Un elemento immagine disegna una risorsa alle dimensioni della sua collocazione ([elementi immagine](/it/docs/configuration-headers-footers#elementi-immagine)): ancorato all’angolo superiore sinistro della pagina con entrambi i lati `'fill'`, il guilloché copre il riquadro del formato rifilato, e l’SVG, dichiarato con le proporzioni della pagina, lo riempie senza deformarsi. L’intestazione lo dipinge sopra `page.backgroundColor` e non riserva spazio, quindi sono i soli margini a tenere il testo ad almeno 32 mm dal rifilo, dentro il filetto interno a 26 mm. Una filigrana collocata nell’intestazione si stamperebbe sopra le parole, perché l’intestazione viene dipinta dopo il testo. In un’intestazione, `{attr.serial}` legge l’attributo del titolo alla cui sezione appartiene la pagina, così ogni attestato stampa il proprio numero.
 
 ### 3 · Tieni nell’apertura solo il blocco del titolo
 
@@ -34,7 +34,7 @@ Ogni riga è ancorata al bordo `'top'` della pagina, il che la centra, con una `
 
 <Excerpt region="signatures" />
 
-Tutto ciò che sta nel piè di pagina è misurato da `SIGN`, il bordo superiore del sigillo, e il margine inferiore dello stile chiude l’area del testo sullo stesso bordo, così una motivazione troppo lunga per la pagina passa alla successiva invece di scorrere sotto il sigillo. Spostate nell’apertura, le righe e i nomi conterebbero per la sua altezza ([span e progetto grafico avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)); poiché arrivano sotto l’area del testo, l’apertura reclamerebbe l’intera pagina e manderebbe la motivazione alla successiva. `LINE` prende la larghezza tra i margini della pagina, sottrae il disco del sigillo da 34 mm, dimezza il resto e toglie 3 mm, così ogni riga si ferma 3 mm prima del sigillo in entrambi i formati (lunga 56 mm in Letter, 53 mm in A4). Ogni nome e ruolo è un elemento di testo largo quanto la sua riga, il che lo centra sotto di essa.
+Tutto ciò che sta nel piè di pagina è misurato da `SIGN`, il bordo superiore del sigillo, e il margine inferiore dello stile chiude l’area del testo sullo stesso bordo, così una motivazione troppo lunga per la pagina passa alla successiva invece di scorrere sotto il sigillo. Spostate nell’apertura, le righe e i nomi conterebbero per la sua altezza ([span e progetto grafico avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)); poiché arrivano sotto l’area del testo, l’apertura reclamerebbe l’intera pagina e manderebbe la motivazione alla successiva. `LINE` prende la larghezza tra i margini della pagina, sottrae il disco del sigillo da 34 mm, dimezza il resto e toglie 3 mm, così ogni riga si ferma 3 mm prima del sigillo in entrambi i formati (lunga 56 mm in Letter, 53 mm in A4). Ogni nome e ruolo è un elemento di testo largo quanto la sua riga, il che lo centra sotto di essa.
 
 ### 5 · Unisci l’elenco della classe ai titoli
 
@@ -46,7 +46,7 @@ Ogni riga diventa un titolo `#` che nomina lo stile e porta il numero di serie c
 
 <Excerpt region="pdf" />
 
-La classe è un unico documento, quindi `renderToPdf` scrive un solo file di tre pagine con un segnalibro per titolo, ciascuno intitolato a un allievo. `renderToPdf` accetta anche un array di documenti, come i capitoli di un libro, ma un documento per allievo significa una chiamata a `buildDocument` per ciascuno. Sotto forma di titoli, l’intera classe viene impaginata in una sola build, e il visualizzatore mostra i tre attestati di quella build. Il PDF incorpora i quattro caratteri che le pagine stampano, che il font provider del kit scarica da Fontsource ([perché un font provider?](/it/docs/configuration-programmatic-usage#perché-un-provider-di-font)).
+La classe è un unico documento, quindi `renderToPdf` scrive un solo file di tre pagine con un segnalibro per titolo, ciascuno intitolato a un allievo. `renderToPdf` accetta anche un array di documenti, come i capitoli di un libro, ma un documento per allievo significa una chiamata a `buildDocument` per ciascuno. Sotto forma di titoli, l’intera classe viene impaginata in una sola build, e il visualizzatore mostra i tre attestati di quella build. Il PDF incorpora i quattro caratteri che le pagine stampano, che il font provider del kit scarica da Fontsource ([perché un font provider?](/it/docs/configuration-pdf-output#perché-un-provider-di-font)).
 
 ## Varianti
 

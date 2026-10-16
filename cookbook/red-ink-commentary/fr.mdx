@@ -18,7 +18,7 @@ Le début du chapitre 1 du manuscrit Jiaxu du *Rêve dans le pavillon rouge* (*T
 
 Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Une page verticale est une page horizontale tournée d’un quart de tour : la colonne latérale d’une [mise en page à colonne et demie](/fr/docs/configuration-page-layout#types-de-mise-en-page) devient un étage qui traverse la page, et `sideColumnSide: 'left'` place cet étage en tête ([écriture verticale](/fr/docs/configuration-page-layout#écriture-verticale)). La [grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères) arrondit `sideColumnPercent: 19` à 10 caractères du corps, 120 pt, et la gouttière à deux ; le filet de colonne devient le filet fin entre les commentaires et le texte. Le style de commentaire n’a pas d’encadré : Kai de 7 pt, 17 caractères par colonne, un corps auquel aucun des dix commentaires ne finit sur une colonne d’un seul caractère, et `snapToGrid: false` pour que les commentaires s’empilent à leur propre pas de 10 pt au lieu des 21 pt du corps.
 
-Les deux types de commentaire sont balisés là où le manuscrit les porte. Une annotation latérale est un span [`:warichu[…]`](/fr/docs/document-format#marques-chinoises-ruby-et-warichu), que `cjk.warichu` colore ; un commentaire de marge de tête est un encadré ouvert avec `span="side"` juste avant le passage qu’il discute :
+Les deux types de commentaire sont balisés là où le manuscrit les porte. Une annotation latérale est un span [`:warichu[…]`](/fr/docs/document-format-inline#marques-chinoises-ruby-et-warichu), que `cjk.warichu` colore ; un commentaire de marge de tête est un encadré ouvert avec `span="side"` juste avant le passage qu’il discute :
 
 ```markdown
 :::callout{type="meipi" span="side"}
@@ -38,7 +38,7 @@ Sur une page verticale, une ouverture se met en page dans le repère du flux : 
 
 <Excerpt region="fore-edge" />
 
-Ce sont les titres de marge extérieure des [éléments de texte vertical](/fr/docs/configuration-page-layout#éléments-de-texte-vertical) : `anchor.to: 'outer'` désigne la marge opposée au dos, la gauche d’un recto et la droite d’un verso dans un livre relié à droite, et `writingMode: 'vertical-rl'` compose le texte de haut en bas. Le bloc de texte inclut ici l’étage des commentaires : « quatre caractères sous la tête » se mesure donc depuis le haut des commentaires rouges. `trad-chinese-informal` imprime les folios de 一 à 六.
+Ce sont les titres de marge extérieure des [éléments de texte vertical](/fr/docs/configuration-headers-footers#éléments-de-texte-vertical) : `anchor.to: 'outer'` désigne la marge opposée au dos, la gauche d’un recto et la droite d’un verso dans un livre relié à droite, et `writingMode: 'vertical-rl'` compose le texte de haut en bas. Le bloc de texte inclut ici l’étage des commentaires : « quatre caractères sous la tête » se mesure donc depuis le haut des commentaires rouges. `trad-chinese-informal` imprime les folios de 一 à 六.
 
 ### 4 · Charger chaque voix avec le texte qu’elle compose
 

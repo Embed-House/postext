@@ -6,8 +6,8 @@ export const metadata = {
   description: '一个适用于macOS、Linux和Windows的独立可执行文件，把.postext图书、图书文件夹或零散的Markdown文件转换成PDF、HTML、EPUB、页面图像和Word文档，打包文件包并检查图书，还为脚本和智能体输出JSON',
   lang: 'zh',
   lastUpdated: '2026-10-09',
-  readingTime: '10分钟',
-  order: 22,
+  readingTime: '9分钟',
+  order: 40,
   plainSummary: "本页写给想在终端里而不是在网站上用Postext做书的人。你为自己的电脑下载一个文件，直接运行它，不用安装别的东西。你把书或者几个文本文件交给它，它就能做出PDF、网页、电子书、页面图片或Word文档。它还能检查书里的问题，并把书的所有文件打包成一个文件。其他程序和AI助手也能使用它，因为它可以用这些程序容易读懂的格式回答。",
 };
 
@@ -89,7 +89,7 @@ postext image my-book.postext --page 1 -o cover.png
 
 每个读取图书的命令都接受以下任意一种：
 
-- **`.postext`文件**：沙盒导出和打开的文件包（见[文件包](/zh/docs/configuration-programmatic-usage#文件包postext文件)）。
+- **`.postext`文件**：沙盒导出和打开的文件包（见[文件包](/zh/docs/configuration-bundles#文件包postext文件)）。
 - **图书文件夹**：解包后的文件包，含有它的`preset.json`、各章、资源和字体。智能体技能交付的就是这种文件夹，`postext unpack`也会写出一个。
 - **零散的Markdown**：一个或多个`.md`文件，按给出的顺序每个文件一章；或者一个文件夹，其中的`.md`文件按文件名排序（`01-intro.md`、`02-method.md`…）。与它们一起使用：
   - `--config design.json`：配置，可以是单纯的配置对象，也可以是完整的`preset.json`；
@@ -156,7 +156,7 @@ postext epub book.postext -o book.epub
 postext epub book.postext --layout reflowable --cover cover.jpg
 ```
 
-`--layout fixed`（默认）让每一页保持印刷时的样子，文字可以选取；`--layout reflowable`让阅读系统按自己的屏幕重新排列文字（见[EPUB电子书](/zh/docs/configuration-programmatic-usage#epub电子书postext-epub)）。封面是书的缩略图，除非`--cover`给出一张图片。包的元数据（书名、作者、语言、标识符）来自第一章的前置元数据，与沙盒中相同。
+`--layout fixed`（默认）让每一页保持印刷时的样子，文字可以选取；`--layout reflowable`让阅读系统按自己的屏幕重新排列文字（见[EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)）。封面是书的缩略图，除非`--cover`给出一张图片。包的元数据（书名、作者、语言、标识符）来自第一章的前置元数据，与沙盒中相同。
 
 ### image和images
 

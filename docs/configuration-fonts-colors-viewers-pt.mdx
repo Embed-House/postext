@@ -6,8 +6,8 @@ export const metadata = {
   description: 'As unidades, as cores e a paleta, as fontes personalizadas, o visualizador HTML, o PDF e a produção gráfica, o visualizador Folio e a depuração',
   lang: 'pt',
   lastUpdated: '2026-10-10',
-  readingTime: '6 min',
-  order: 11,
+  readingTime: '41 min',
+  order: 18,
   parent: 'configuration',
   plainSummary: "Esta página reúne os ajustes compartilhados por todo o livro e os de cada tipo de saída. Explica como escrever uma medida e uma cor, e como dar nome às cores de uma paleta. Mostra como adicionar suas próprias fontes. Depois trata da visualização web, do arquivo PDF, dos arquivos que uma gráfica pede e do livro em 3D. A última seção ativa as guias e os avisos que ajudam enquanto você trabalha.",
 };
@@ -307,7 +307,7 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 // => undefined quando tudo coincide com os valores padrão
 ```
 
-Veja [Como integrar o visualizador HTML](/pt/docs/configuration-programmatic-usage#integração-do-visualizador-html) abaixo para um exemplo completo.
+Veja [Como integrar o visualizador HTML](/pt/docs/configuration-html-folio-epub#integração-do-visualizador-html) abaixo para um exemplo completo.
 
 
 ## Geração de PDF (configuração)
@@ -395,7 +395,7 @@ const minimal  = stripPdfGenerationDefaults(config.pdfGeneration);
 // => undefined quando tudo coincide com os valores padrão
 ```
 
-Veja [Como gerar PDFs](/pt/docs/configuration-programmatic-usage#geração-de-pdf) abaixo para a receita completa de exportação.
+Veja [Como gerar PDFs](/pt/docs/configuration-pdf-output#geração-de-pdf) abaixo para a receita completa de exportação.
 
 
 ## Produção gráfica (configuração)
@@ -930,7 +930,7 @@ interface FolioConfig {
       <td><code>binding.type</code></td>
       <td><code>FolioBindingType</code></td>
       <td><code>'hardcover'</code>; <code>'folded'</code> num formato de jornal</td>
-      <td><code>hardcover</code>: capa dura, com as pastas um pouco maiores que as páginas. <code>paperback</code>: brochura com lombada quadrada colada (fresada e colada), abre menos plana. <code>sewn</code>: capa flexível com cadernos costurados. <code>layflat</code>: abre totalmente plana, sem afundar na medianiz. <code>saddleStitch</code>: folhas dobradas e grampeadas pela dobra, como numa revista ou num livreto; sem lombada plana. <code>folded</code> (desde o postext 1.18): um jornal, folhas dobradas uma vez e encaixadas umas dentro das outras sem nada que as prenda; sem grampos, sem lombada e sem capa rígida, e a primeira página é a capa. Uma sequência <a href="/pt/docs/document-format#paper"><code>:::paper</code></a> com um <code>shade</code> imprime um caderno, as páginas de economia, digamos, em papel-jornal salmão.</td>
+      <td><code>hardcover</code>: capa dura, com as pastas um pouco maiores que as páginas. <code>paperback</code>: brochura com lombada quadrada colada (fresada e colada), abre menos plana. <code>sewn</code>: capa flexível com cadernos costurados. <code>layflat</code>: abre totalmente plana, sem afundar na medianiz. <code>saddleStitch</code>: folhas dobradas e grampeadas pela dobra, como numa revista ou num livreto; sem lombada plana. <code>folded</code> (desde o postext 1.18): um jornal, folhas dobradas uma vez e encaixadas umas dentro das outras sem nada que as prenda; sem grampos, sem lombada e sem capa rígida, e a primeira página é a capa. Uma sequência <a href="/pt/docs/document-format-directives#paper"><code>:::paper</code></a> com um <code>shade</code> imprime um caderno, as páginas de economia, digamos, em papel-jornal salmão.</td>
     </tr>
     <tr>
       <td><code>binding.cover</code></td>
@@ -1049,7 +1049,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 // => { paper: { type: 'bible' } }
 ```
 
-No Sandbox, esses ajustes formam o grupo **Folio** do painel Design (**Design → Folio → Visualizador Folio (3D)**), e a aba Folio os mostra à medida que você os muda, sem refazer o layout do livro. Veja [Um livro em 3D](/pt/docs/configuration-programmatic-usage#um-livro-em-3d-postext-folio) para o próprio visualizador, e [Formato do documento › `:::paper`](/pt/docs/document-format#paper) para uma sequência de páginas em outro papel.
+No Sandbox, esses ajustes formam o grupo **Folio** do painel Design (**Design → Folio → Visualizador Folio (3D)**), e a aba Folio os mostra à medida que você os muda, sem refazer o layout do livro. Veja [Um livro em 3D](/pt/docs/configuration-html-folio-epub#um-livro-em-3d-postext-folio) para o próprio visualizador, e [Formato do documento › `:::paper`](/pt/docs/document-format-directives#paper) para uma sequência de páginas em outro papel.
 
 
 ## Depuração
@@ -1284,7 +1284,7 @@ Oito erros na própria configuração nunca passam em silêncio, e nenhuma opç�
 - **Configuração de título desconhecida**: uma chave que `headings`, `headings.balancing`, um nível de título, um estilo de título ou um estilo de parágrafo não tem: um `letterSpacng` com erro de digitação, um `tracking` emprestado de outra ferramenta, um `level` em um estilo de título, um `fontStyle: 'italic'` em um estilo de parágrafo (que usa `italic: true`). Uma parada de tabulação é verificada da mesma forma (um `leaders` em vez de `leader`). O motor a ignora (até o postext 1.4, fazia isso sem dizer nada). `value` é a chave, `used` fica vazio e `suggestion` indica a configuração mais próxima, quando há uma a uma ou duas letras de distância ou que difere só em maiúsculas e minúsculas (`unknownConfigKey`).
 - **Valor de configuração desconhecido**: uma configuração que aceita uma entre poucas palavras contendo outra, como `direction: 'right'` (ela aceita `auto`, `ltr` ou `rtl`). O motor lê o valor padrão no lugar, e `used` informa no que ele resultou: para `direction`, a direção do idioma do documento (`unknownConfigValue`). Um `align` de uma parada de tabulação que não é nenhuma das suas quatro palavras é lido como `'start'`, e uma `position` que não é um comprimento, `'end'` nem uma porcentagem deixa a parada de fora (`used` é `'none'`). As palavras das configurações de quadrinhos também são verificadas ([Quadrinhos › Avisos de quadrinhos](/pt/docs/comics#avisos-de-quadrinhos)): `used` é o valor em que a configuração se resolveu (o padrão próprio de um estilo de balão, no caso de um estilo embutido), e `suggestion` indica a palavra mais próxima do valor, quando há uma próxima. O `level` e o `mode` da verificação de contraste são verificados da mesma forma: `used` é `'AA'` ou `'auto'`.
 - **Números de linha em texto vertical**: `lineNumbers.enabled: true` num documento composto na vertical (`layout.writingMode: 'vertical-rl'`). Páginas verticais não recebem números de linha, e `used` é `false` (`lineNumbersUnsupported`; veja [Numeração de linhas](/pt/docs/configuration-notes-references#numeração-de-linhas)).
-- **Contorno de texto na escrita vertical** — o `defaultPlacement.wrap` de um tipo de recurso num documento composto na vertical. Páginas verticais não compõem texto ao lado de uma figura, e `used` é `none` (`wrapUnsupported`; veja [Formato do documento › Contorno de texto](/pt/docs/document-format#contorno-de-texto)). Um `wrap` que não nomeia um lado é um valor de configuração desconhecido.
+- **Contorno de texto na escrita vertical** — o `defaultPlacement.wrap` de um tipo de recurso num documento composto na vertical. Páginas verticais não compõem texto ao lado de uma figura, e `used` é `none` (`wrapUnsupported`; veja [Formato do documento › Contorno de texto](/pt/docs/document-format-resources#contorno-de-texto)). Um `wrap` que não nomeia um lado é um valor de configuração desconhecido.
 
 O Sandbox os lista no painel **Verificações** com o caminho da configuração. No código, `buildDocument` os coloca no documento como `configWarnings` (ausente quando a configuração está limpa), e `collectConfigWarnings(config)` os devolve sem diagramar nada:
 

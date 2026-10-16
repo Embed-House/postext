@@ -34,13 +34,13 @@ Les dues edicions surten del mateix disseny, així que qualsevol diferència ent
 
 <Excerpt region="bench" />
 
-Un requadre compon totes les columnes d'un grup [`:::columns`](/ca/docs/document-format#columns) amb un únic estil de text, així que cada fitxa és un requadre niat amb el seu propi `body`, i `breaks="3"` apila a la primera columna la fitxa en bandera i la que no parteix paraules. La fitxa en bandera no necessita `hyphenation: false`: el text en bandera no parteix paraules si no s'activa `bodyText.hyphenation.ragged`. El banc flota al peu de la pàgina 3 amb `placement: 'bottom'`, i el seu farciment inferior repeteix el marc de 4 mm perquè el `marginBottom` de l'última fitxa es perd al final del requadre.
+Un requadre compon totes les columnes d'un grup [`:::columns`](/ca/docs/document-format-directives#columns) amb un únic estil de text, així que cada fitxa és un requadre niat amb el seu propi `body`, i `breaks="3"` apila a la primera columna la fitxa en bandera i la que no parteix paraules. La fitxa en bandera no necessita `hyphenation: false`: el text en bandera no parteix paraules si no s'activa `bodyText.hyphenation.ragged`. El banc flota al peu de la pàgina 3 amb `placement: 'bottom'`, i el seu farciment inferior repeteix el marc de 4 mm perquè el `marginBottom` de l'última fitxa es perd al final del requadre.
 
 ### 5 · Dibuixa el model a l'obertura
 
 <Excerpt region="opener" />
 
-El diagrama és un [element d'imatge](/ca/docs/configuration-page-layout#elements-dimatge) del disseny de l'H1. Com a figura seria un flotant `top` a tota l'amplada, i un flotant `top` citat a la pàgina 1 obre la pàgina 2. La banda baixa més que el diagrama, i una obertura reserva alçada fins al seu element més baix, així que el text comença sota la banda sense `minHeight`, una línia més avall pel `marginBottom` que l'H1 porta per defecte. Els rètols són text de disseny col·locat sobre les coordenades del mateix dibuix, compost i espaiat com els altres rètols de l'obertura.
+El diagrama és un [element d'imatge](/ca/docs/configuration-headers-footers#elements-dimatge) del disseny de l'H1. Com a figura seria un flotant `top` a tota l'amplada, i un flotant `top` citat a la pàgina 1 obre la pàgina 2. La banda baixa més que el diagrama, i una obertura reserva alçada fins al seu element més baix, així que el text comença sota la banda sense `minHeight`, una línia més avall pel `marginBottom` que l'H1 porta per defecte. Els rètols són text de disseny col·locat sobre les coordenades del mateix dibuix, compost i espaiat com els altres rètols de l'obertura.
 
 ## Variants
 

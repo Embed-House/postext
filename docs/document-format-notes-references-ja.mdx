@@ -1,0 +1,270 @@
+{/* docs/document-format-notes-references-ja.mdx */}
+
+export const metadata = {
+  title: '文書形式：注と参照',
+  sidebarTitle: '注と参照',
+  description: '脚注、相互参照とアンカー、引用と参考文献、巻末の索引のマーク',
+  lang: 'ja',
+  lastUpdated: '2026-10-16',
+  readingTime: '14分',
+  order: 27,
+  parent: 'document-format',
+  plainSummary: "このページでは、本の中のほかの場所や本の外を指す記号を説明します。脚注の記号は、読者をページの下の注へ案内します。相互参照は、図、節、ページを番号で示します。引用は取り上げる本や論文を示し、参考文献はそれをすべて並べます。索引マークは、巻末の索引にページと一緒に載せる語を選びます。",
+};
+
+# 文書形式：注と参照
+
+
+## 脚注
+
+脚注は2つの部分からなります。注を引用する箇所に置く合印`[^id]`と、定義です。定義は`[^id]:`で始まる独立した段落で、章の中のどこに書いてもかまいません。
+
+```md
+The keeper climbed the tower every evening.[^steps] The wind put out his candle,
+so he learned to count the steps in the dark.
+
+[^steps]: The cast-iron staircase has 112 steps; the tower was built in 1861.
+```
+
+- **合印**：`[^id]`は注の番号を上付きで印刷し、直前の語にくっつけます（上の例のように句読点のあとに書きます）。idには文字、数字、`-`、`_`、`.`、`:`を使えます。合印は段落、リスト項目、引用ブロック、囲みで有効です。見出し、キャプション、表のセルでは書いたとおりに印刷されます。
+- **定義**：`[^id]:`で始まる段落です。テキストは次の空行まで続き、通常のインライン書式（太字、イタリック、リンク、`:ref`、数式、チップ）が使えます。定義はどこに書いても本文の流れから外れるので、引用する段落の下に置いても、章末にまとめて置いてもかまいません。同じidの定義が複数あれば最初のものが使われます。
+- **番号**：注は最初に引用された順に番号が振られ、章ごと（レベル1の見出し、および本の各文書）に振り直されます。2回引用された注は最初の番号を保ち、1回だけ組まれます。`footnotes.numbering: 'document'`では本全体の通し番号になり、`'page'`では中国の本のようにページごとに振り直します。`footnotes.numberFormat: 'circled-decimal'`は① ② ③をベースライン上に書きます。`footnotes.numberFormat: 'symbols'`は、学術誌のように`*`、`†`、`‡`、`§`、`‖`、`¶`（使い切ると二つ重ね）で注を示し、ページごとに振り直します。
+- **日本語のテキスト**：合印は文末の。の前に書きます（`先生[^1]。`）。合印は直前の文字とともに残り、。が行頭に来ることはありません。日本語の縦組みの本では、既定で合印（1）を行の右に組み、注を章のあとに置きます。`footnotes.markerPosition: 'side'`は小さな合印を語の横に組み、行の中で場所を取りません。`footnotes.placement: 'spread'`は見開きごとに本文の横に注を組みます（[設定 › 脚注](/ja/docs/configuration-notes-references#脚注)を参照）。
+- **注の置き場所**：既定では、注を引用する行を含む段の下端に、短い罫線をはさんで置きます。行とその注は必ず同じ段に入り、注が収まらない行は注とともに次へ送られます。1段組みのレイアウトでは、それはページの下端です。`footnotes.placement: 'chapterEnd'`を指定すると、章のすべての注を章の最後のブロックのあとに置きます。その場合も既定では、注が締めくくる段の下端に置かれます。サイズ、罫線、間隔については、設定リファレンスの[脚注](/ja/docs/configuration-notes-references#脚注)を参照してください。
+- **検査**：定義のない合印（`undefinedFootnote`）は空の注の上に番号を印刷します。どの合印からも引用されない定義（`unusedFootnote`）は組まれません。Sandboxは両方を**検査**パネルに表示します。
+
+
+## 相互参照とアンカー
+
+相互参照は本の中の場所を指し、その番号、タイトル、ページを印刷します。「3.2節を参照」「第4章で説明するとおり」「112ページ」のような表現です。語と番号はテキストに従うので、節を移動しても、章の番号を振り直しても、本を組み直しても、すべての参照が更新されます。PDF、HTML、Sandboxのプレビューでは各参照がリンクになり、クリックすると、別の章であっても参照先へ移動します。
+
+**アンカー**：参照には指す対象が必要です。
+
+- **見出し**：識別子を付けた見出し。`## Method {#sec-method}`（Pandocの形式。`id="sec-method"`も使えます）。
+- **ボックスやその他のコンテナー**：識別子を付けて開いたもの。`:::callout{#box-safety title="Safety"}`。番号付きのスタイルの囲み（定理など）は、ラベルと番号で参照されます（*定理2*）。
+- **別行立ての数式**：`\label{eq:x}`を付けたもの（[数式](/ja/docs/document-format-inline#数式)を参照）。参照は数式と同じ形で番号を印刷します（*(3)*）。
+- **テキストの中の位置**：`:anchor{#key-idea}`は見えないアンカーを置きます。`[the key idea]{#key-idea}`は語をそのまま残し、その語に名前を付けます。
+
+識別子には文字、数字、`-`、`_`、`.`、`:`を使えます。識別子は本の中で一意でなければなりません。2回設定された識別子は**検査**パネルに表示され（`duplicateAnchor`）、参照は最初に設定された位置を指します。
+
+**参照**：`:ref{id="…"}`は、図や表と同じ方法でアンカーを参照します。
+
+```md
+## Method {#sec-method}
+
+The results of :ref{id="sec-method"} hold on :ref{id="sec-method" style=page}.
+```
+
+<table>
+<thead><tr><th><code>style</code></th><th>印刷される内容</th></tr></thead>
+<tbody>
+<tr><td><em>指定なし</em></td><td>番号付きの見出しは語と番号（<em>3.2節</em>、<em>第4章</em>）、番号のない見出しはタイトル、アンカーはそのテキスト、数式は印刷されたとおりの番号（<em>(3)</em>）、番号付きの囲みはラベルと番号（<em>定理2</em>）</td></tr>
+<tr><td><code>number</code></td><td>番号だけ（<em>3.2</em>、<em>3</em>、<em>2</em>）</td></tr>
+<tr><td><code>title</code></td><td>見出しのタイトル、アンカーのテキスト、またはボックスの<code>title</code></td></tr>
+<tr><td><code>page</code></td><td>参照先が置かれたページ（<em>112ページ</em>）</td></tr>
+<tr><td><code>pageNumber</code></td><td>ページ番号だけ（<em>112</em>）</td></tr>
+</tbody>
+</table>
+
+LaTeXの`\eqref{x}`と`\ref{x}`も本文で使えます。`\eqref`は`style`を指定しない参照として、`\ref`は`style=number`として働くので、`\ref{thm:main}`は*2*を、`\ref{fig:map}`は図の番号を印刷します。直前に置いた`~`は改行しないスペースです（`Theorem~\ref{thm:main}`）。`$…$`の中では、これらは数式に属します。
+
+`text="…"`は独自の語を印刷し、リンクも保ちます。`case=capitalize`はラベルを大文字で始めます（文頭の*Section 3.2*）。語は文書の言語に従い（*sección 3.2*、*第3.2节*、*S. 112*）、設定の[相互参照](/ja/docs/configuration-notes-references#相互参照)で変更できます。見出しのテンプレートが番号をすでに語で書き表している場合（*Chapter 4*、*第四章*）、その番号はそのまま印刷されます。
+
+**改行**：語を印刷する参照は、まわりのテキストと同じようにスペースの位置で改行されます。アンカーのテキスト（`[close the lever so that it points backwards]{#step}`）、タイトル、独自の`text="…"`がそうです。参照の中のスペースは行のスペースなので、両端そろえの行ではほかのスペースと一緒に伸びます。参照は1つのリンクのままで、2行にわたるときは2つに分かれます。参照の語がハイフネーションされることはありません。このようなラベルの中では、数字、ローマ数字、1文字だけの語は前の語から離れないので、`text="Fig. 1a"`や`text="plate IV"`が2行に分かれることはありません。番号やページを含むラベル（*section 3.2*、*p. 112*、*Fig. 1.7*、*Theorem 2*）は、テンプレートにどのスペースがあっても改行されず、ラベルの中の改行しないスペースはほかの場所と同じく前後をつなぎます。`crossRefs.breakLabels: false`は、postext 1.27までと同じく、すべてのラベルを分割せずに保ちます。そのころのラベルは1語で、前の行に空きがあっても上がれませんでした。[相互参照](/ja/docs/configuration-notes-references#相互参照)を参照してください。
+
+**ページ参照**は、本を組み終えてはじめて決まります。エンジンは目次と同じく、前回のパスのページを使って文書を組み直し、ページが変わらなくなるまで繰り返します。それまでのあいだ、ページは「?」と印刷されます。
+
+**pandoc-crossref**：pandoc-crossref向けに書いたテキストも同じように読めます。`@sec:method`、`[@fig:map]`、番号だけを出す`[-@tbl:data]`です。接頭辞（`sec`、`fig`、`tbl`、`eq`、`lst`）は識別子に含めても（`{#sec:method}`）、省いても（`{#method}`）かまいません。メールアドレスのように語にくっついた`@`はテキストのままです。
+
+何も設定されていないidへの参照は「?」と印刷され、**検査**パネルに表示されます（`unknownResourceId`）。Sandboxのエディターでは、`@`を入力すると本の図、表、idを持つ見出し、アンカーが候補として表示されます。
+
+
+## 引用と参考文献
+
+引用はPandocが読む形式で書き、文献データは文書の中に置き、引用スタイルは設定で選びます。APAからIEEEへ、あるいはChicagoの注方式へ切り替えるときに変えるのはスタイルの設定で、テキストではありません。すべての引用は、参考文献の該当する項目にリンクします。
+
+### 引用の書き方
+
+```md
+As [@garcia2020, p. 33] shows, reading on paper is faster [see @lopez2019, chap. 2; @bringhurst2004].
+@garcia2020 [p. 4] says it plainly; the 2020 study [-@garcia2020] agrees.
+```
+
+- **`[@key]`**：かっこ付きで引用します。複数の文献は、1組の角かっこの中に`;`で区切って書きます。
+- **ロケーター**：コンマのあとに`p. 33`、`pp. 4–6`、`chap. 2`、`sec. IV`、`fig. 3`、`vol. 2`、`n. 12`、`l. 4`、`§ 4.2`と書きます。数字だけならページです。スペイン語（`pág.`、`cap.`）や中国語（`页`、`章`）の語も使えます。範囲はenダッシュで書くか、TeXの二重ハイフンで書きます。`pp. 4--6`は*4–6*と刷られます。
+- **前置きと後置き**：`@`の前のテキスト（`see`）と、キーまたはロケーターのあとのテキスト（`, emphasis added`）です。後置きは、ロケーターの有無にかかわらず、前に書いた読点（カンマ）を保ちます。`[@brown2020, inter alia]`は Pandoc と同じく*(Brown et al., 2020, inter alia)*と印刷され、カンマなしで書けば（`[@brown2020 inter alia]`）カンマは付きません。前置きと後置きの強調は、どのスタイルでも強調として組まれます：`[*e.g.*, @brown2020, *inter alia*]`。
+- **`[-@key]`**：著者名を省きます。すでに著者名を挙げている文に使います。
+- **`@key`**：文中で引用します（*García (2020)*）。`@key [p. 4]`でロケーターを加えます。
+- **キャプション内の引用**：図や表のキャプションとその注は、本文と同じように引用できます（`従来の最高値は[@cobbe2021]。`）。その文献は`nocite`なしで参考文献に入り、番号方式のスタイルでは資源が置かれる位置で番号が付きます。つまり、その資源を最初に参照する段落（`::resource`ブロックまたは最初の`:ref`）の引用のあとです。表のセル内の引用は文字のまま残ります。
+- 文字や数字にくっついた`@`（メールアドレス）、インラインコードの中の`@`、`\@`はテキストです。本に文献データのない引用は書いたとおりに印刷されるので、文献データのない文書はこれまでどおりに読めます。複数の文献をまとめた引用で、どの文献データにも定義されていないキーがあると、そのキーはほかの文献のあとに太字で印刷されます（`(Glen, 1955) **@nye1953**`）。そのため、欠けている文献は警告の一覧にもページの上にも現れます。引用のあとのコロンはテキストです。`[@french2018]: the land…`。
+- 中国語、日本語、韓国語のテキストでは、引用は最後の文字のあとにスペースなしで続き（`周明远@zhou2019认为`）、著者・出版年方式の引用は周囲のテキストに合わせて全角の記号を使います。`（施雅风等，1988；刘时银等，2015）`。
+
+### 文献データ
+
+文献データは、CSL形式（ZoteroとPandocのデータモデル）で文書の中に書きます。
+
+```md
+---
+references:
+  - id: garcia2020
+    type: book
+    author: [{family: García, given: Ana}]
+    title: Tipografía y lectura
+    issued: 2020
+    publisher: Trea
+nocite: "@lopez2019"
+---
+```
+
+または、`:::references`ブロックの中に、BibTeX（Zotero、JabRef、Google Scholarの書き出し）、CSL-JSON、CSL-YAMLで書きます。
+
+```md
+:::references{format=bibtex}
+@article{lopez2019, author = {López, Luis and Ruiz, Eva}, title = {Leer en pantalla},
+  journal = {Revista de Letras}, year = 2019, volume = 12, pages = {45--67}, doi = {10.1000/xyz}}
+:::
+```
+
+このブロックは何も印刷しません。`nocite`は引用せずに文献を挙げます（`@*`ですべて）。本では、どの章に書いた文献データも本全体で有効です。
+
+BibTeX の名前リストでは、`and others`は省いた著者を表します（`author = {Tan, Wei and others}`）。どのスタイルもその位置に「ほか」や *et al.* を印刷します。YAML では、リストの最後の名前として`others`と書きます。
+
+### 参考文献の一覧
+
+`:::bibliography`は、置いた位置に引用文献の一覧を組みます。これがない場合、一覧は最後の章のあとに続き、文書の言語のタイトル（「References」「Referencias」「参考文献」）が付きます。`:::bibliography{title="Works cited"}`でタイトルを変更でき、`title=""`でタイトルを省けます。`scope=chapter`は、その章で引用された文献を挙げます（編著書向け）。各項目はアンカー（`ref-<key>`）なので、`#ref-garcia2020`へのMarkdownリンクで到達でき、PDFでは`BibEntry`としてタグ付けされます。
+
+`scope=new`は、文書のその位置までに引用され、前の一覧にまだ載っていない文献を、スタイルの順序と番号で挙げます。本文のあとに`:::bibliography{scope=new}`を、方法のあとにもう一つ置けば、Nature 論文の二つの一覧になり、二つ目は一つ目の続きの番号になります。番号方式のスタイルは本全体で引用を数えます。`citations.numbering: 'chapter'`では、各章（各文書、および引用のあとの各レベル1見出し）が自分の引用を 1 から数え、章の一覧もその番号を使います。会報の各報告や論文集の各論文の組み方です。
+
+### スタイル
+
+スタイルは、引用と文献項目に何を書くかを決めます。同梱のスタイルは下の表のとおりです。それ以外のCSLスタイル（Zoteroのスタイルリポジトリには1万以上あります）は、**設定 → 引用**で`.csl`ファイルから読み込めます。
+
+<table>
+  <thead>
+    <tr><th><code>citations.style</code></th><th>名前</th><th>方式</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>apa</code></td><td>APA 7</td><td>著者・出版年</td></tr>
+    <tr><td><code>chicago-author-date</code></td><td>Chicago（著者・出版年）</td><td>著者・出版年</td></tr>
+    <tr><td><code>harvard-cite-them-right</code></td><td>Harvard</td><td>著者・出版年</td></tr>
+    <tr><td><code>iso690-author-date-en</code>、<code>iso690-author-date-es</code></td><td>ISO 690</td><td>著者・出版年</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2025-author-date</code></td><td>GB/T 7714—2025 著者-出版年</td><td>著者・出版年</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2015-author-date</code></td><td>GB/T 7714—2015 著者-出版年</td><td>著者・出版年</td></tr>
+    <tr><td><code>modern-language-association</code></td><td>MLA 9</td><td>著者・ページ</td></tr>
+    <tr><td><code>ieee</code></td><td>IEEE</td><td>番号</td></tr>
+    <tr><td><code>elsevier-vancouver</code></td><td>Vancouver</td><td>番号</td></tr>
+    <tr><td><code>american-medical-association</code></td><td>AMA</td><td>番号</td></tr>
+    <tr><td><code>nature</code></td><td>Nature</td><td>番号</td></tr>
+    <tr><td><code>iso690-numeric-en</code></td><td>ISO 690</td><td>番号</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2025-numeric</code></td><td>GB/T 7714—2025 顺序编码</td><td>番号</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2015-numeric</code></td><td>GB/T 7714—2015 顺序编码</td><td>番号</td></tr>
+    <tr><td><code>sist02</code></td><td>SIST 02 参照文献の書き方</td><td>番号</td></tr>
+    <tr><td><code>chicago-notes-bibliography</code></td><td>Chicago（注）</td><td>注</td></tr>
+    <tr><td><code>oscola</code></td><td>OSCOLA</td><td>注</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2025-note</code></td><td>GB/T 7714—2025 注释</td><td>注</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2015-note</code></td><td>GB/T 7714—2015 注释</td><td>注</td></tr>
+  </tbody>
+</table>
+
+**注方式**のスタイルでは、各引用は脚注になり、脚注の設定どおりに配置され、番号が振られます。同じ文献を再び引用すると短縮形になります。中国語のテキストでは、`citations.notes: 'warichu'`で注を行の中の2行の注（夹注）として組みます。中国語の約物（`，`、`。`）が続く注は、自身の句点を省きます。
+
+**中国語**：GB/T 7714-2015のスタイルは文献種別コード（`[M]`、`[J]`、`[D]`、`[EB/OL]`）を書き、中国人の名前は省略せずに書きます。中国語の文献では著者3人のあとに`等`、欧文の文献では`et al.`を書き、どちらにするかは各文献の`language`で決まります。縦組みでは、上付きの番号は文字の右に置かれます。`citations.marker: 'corner'`は`〔1〕`と書き、これは正立します。
+
+**エンジン**：引用は`postext-citeproc`パッケージ（citeproc-jsとCSLスタイル）で整形されます。Sandboxは引用を含む文書でこれを読み込みます。独自のコードでは、レイアウトの前に登録してください。
+
+```ts
+import 'postext-citeproc/register';
+```
+
+**検査**パネルには、どの文献データにも定義されていないキー（`unknownCitationKey`）と、読み取れない文献ブロック（`referencesUnreadable`）が表示されます。
+
+
+## 索引
+
+索引は、本の用語とそれが現れるページを挙げるものです。本文で用語を扱う箇所ごとに印を付け、索引を置きたい場所（ふつうは巻末の独立した章）で`:::index`を使って印刷します。エンジンはレイアウトのあとにすべての印のページを調べるので、番号はテキストに従います。段落を加えても、章を移動しても、仕上がりサイズを変えても、索引は新しいページを印刷します。
+
+```md
+Iron-deficiency :index[anaemia] is the most common kind.
+The pulse is taken at the wrist.:index{term="Pulse!radial" main}
+
+# Index {style="index"}
+
+:::index
+```
+
+### 索引マーク
+
+- **`:index[text]`**：`text`を印刷し、その語自体の項目に登録します。中のインライン書式は印刷されますが、項目からは取り除かれます。角かっこのあとの属性で別の項目に登録できます。`:index[iron deficiency]{term="Anaemia!iron-deficiency"}`。
+- **`:index{term="…"}`**：何も印刷しません。印は、同じ行で直前に書かれた語のページをとり、行頭にある場合は直後の語のページをとります。印だけの行は取り除かれるので、独立した行に置いた印が段落を分けたりスペースを加えたりすることはありません。
+- **使える場所**：段落、見出し、リスト項目、引用ブロック、囲み、脚注の定義。キャプション、表のセル、デザインの要素では、印は書いたとおりに印刷されます。インラインコードの中とバックスラッシュのあと（`\:index`）ではテキストです。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>効果</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>term</code></td>
+      <td>項目です。レベルは<code>!</code>で区切ります。<code>term="Heart!valves!mitral"</code>は、そのページを<em>Heart</em>の下位項目<em>valves</em>の、さらに下位項目<em>mitral</em>に登録します。レベルにはインライン書式を含められ（<code>term="&#42;Escherichia coli&#42;"</code>）、並べ替えでは書式を除いて扱います。<code>term</code>がない場合、<code>:index[text]</code>はそのテキストを使います。</td>
+    </tr>
+    <tr>
+      <td><code>sub</code></td>
+      <td><code>term</code>のあとに加えるレベルです。<code>term="Heart" sub="valves"</code>は<code>term="Heart!valves"</code>と同じです。</td>
+    </tr>
+    <tr>
+      <td><code>sort</code></td>
+      <td>最後のレベルをほかの文字列で並べたいときの並べ替えキーです。<code>:index[St Kilda]&#123;sort="Saint Kilda"&#125;</code>、<code>term="20th century" sort="twentieth century"</code>。中国語の索引は、照合規則（collator）が文字に与えるよみで並べ替えとグループ分けをします。複数のよみを持つ文字を別のよみで扱うには、目的のよみしか持たない文字でキーを書きます。<code>:index[重阳]&#123;sort="崇阳"&#125;</code>は、重阳をZではなくCの、程と崔のあいだに登録します。ピンインのキー（<code>sort="chong yang"</code>）でもCに入りますが、照合規則がラテン文字を漢字のあとに置くため、Cの中国語の項目すべてのあとに並びます（<a href="/ja/docs/configuration-notes-references#索引">設定 › 索引</a>の<code>groupBy</code>を参照）。</td>
+    </tr>
+    <tr>
+      <td><code>yomi</code>、<code>reading</code></td>
+      <td>最後のレベルの仮名によるよみです。日本語の索引はこれで並べ替えとグループ分けをします。<code>:index[夏目漱石]&#123;yomi="なつめそうせき"&#125;</code>は、な行の「な」に登録されます。これがない場合、仮名のふりがなを含む印はそのふりがなで読まれ（<code>:index[&#123;東京|とう|きょう&#125;]</code>はとうきょうとして並びます）、次に<code>sort</code>、次にテキストが使われます。それでも漢字で始まる項目は<code>indexReadingMissing</code>として報告されます。ほかの言語の索引では、<code>yomi</code>は<code>sort</code>として働きます。印の中のふりがなは簡易形式で書いてください。<code>:ruby[…]</code>では角かっこをエスケープする必要があります。postext 1.16から使えます。</td>
+    </tr>
+    <tr>
+      <td><code>main</code></td>
+      <td>フラグです。用語を主に扱う箇所を示し、そのページ番号は太字で組まれます（<code>index.main</code>）。両方の方法で印を付けたページは太字になります。</td>
+    </tr>
+    <tr>
+      <td><code>range</code></td>
+      <td>同じ用語に<code>range="start"</code>と<code>range="end"</code>を付けると、複数ページにわたる記述の範囲を示し、項目は<code>34–37</code>と印刷されます。終わりのない始まりや始まりのない終わりは、その1ページを印刷し、<code>indexRangeUnclosed</code>を発生させます。</td>
+    </tr>
+    <tr>
+      <td><code>see</code></td>
+      <td>ページ番号の代わりに置く相互参照です。<code>:index&#123;term="Cardiac insufficiency" see="Heart failure"&#125;</code>は<em>Cardiac insufficiency. See Heart failure</em>と印刷します。参照先のレベルは<code>!</code>で区切り、印刷ではコロンでつながれます（<em>See Heart: valves</em>）。索引の項目にない参照先は<code>indexSeeUnknown</code>を発生させます。</td>
+    </tr>
+    <tr>
+      <td><code>seealso</code></td>
+      <td>項目のページ番号のあとに置く相互参照です。<em>Heart, 12, 40. See also Circulation</em>。印自身のページはほかの印と同じく数えられるので、1つの印で箇所を索引に載せ、同時に関連項目を指せます。<code>see</code>の印はページを加えません。</td>
+    </tr>
+    <tr>
+      <td><code>index</code></td>
+      <td>別の索引の名前です。<code>index="names"</code>は、その印をメインの索引ではなく、<code>:::index&#123;index="names"&#125;</code>が印刷する索引に登録します。</td>
+    </tr>
+  </tbody>
+</table>
+
+用語のない印（`:index{}`や、`:index{see="…"}`だけのもの）は何も索引に載せず、`indexMarkInvalid`を発生させます。
+
+### 索引の出力
+
+`:::index`は置いた位置にメインの索引を印刷し、`:::index{index="names"}`は名前付きの索引を印刷します。このディレクティブは項目ごとに1つの通常のブロックに展開され、テキストと同じように段やページを流れます。[見出しスタイル](/ja/docs/configuration-styles#見出しスタイル)で2段組みの`layout`を指定した見出しの下に置けば、一般的な2段組みの索引になります。項目をクリックすると、ディレクティブの行に移動します。
+
+```md
+# Index of names {style="index"}
+
+:::index{index="names"}
+
+# Index of subjects {style="index"}
+
+:::index
+```
+
+- **並び順**：項目は文書の言語（`locale`または`index.locale`）のアルファベット順に並びます。アクセント付きの文字は基本の文字と同じ扱いになり（「Árbol」はAの下）、スペイン語では「ñ」が「n」のあとに独自の見出しで並びます。記号で始まる項目が最初に、次に数字で始まる項目、その後に文字で始まる項目が並びます。下位項目も項目の下で同じように並び、レベルごとに1段ずつ字下げされます。日本語の索引は、JIS X 4061の順序でよみによって並べ替え、五十音の行（あ行、か行…）でグループ分けし、ラテン文字の項目を仮名の項目の前に置きます（[日本語の組版 › 五十音順の索引](/ja/docs/japanese-layout#五十音順の索引)を参照）。
+- **グループ**：最初の文字が変わるたびに新しいグループが始まり、文字の見出し（`index.groups`）とその上の1行分のスペースが入ります（最初のグループの上には入りません）。見出しはグループの最初の項目と1つのブロックとして組まれるので、段の終わりに単独で残ることはありません。自身のページを持たない項目（下位項目をまとめるだけの項目）も、同じ理由で最初の下位項目と一緒に組まれます。
+- **ページ番号**：各ページが印刷するラベルで、前付けのローマ数字も含みます。項目のページは並べ替えられ、それぞれ1回だけ挙げられます。連続するページは範囲にまとめられ（`12–14`、`index.mergeRanges`）、同じ項目の範囲に含まれるページはその範囲に吸収されます（そこに主要な箇所のページがあれば範囲が太字になります）。`index.rangeFormat: 'chicago'`は2つ目の数字を短縮します（`234–37`）。太字（主要な箇所）のページは範囲にまとめられません。PDFでは、各番号はそのページへのリンクになります。
+- **相互参照**は項目の最後に置かれます。ページのない項目では*Term. See Target*、ページのある項目では*Term, 12. See also Target*となります。ラベルは文書の言語に従い（*See*、*Véase*…）、`index.see`で設定できます。
+- **本**：章ごとに組まれる本（Sandbox、`buildBundle`）では、索引を印刷する章がすべての章の印とそのページを受け取り、そのいずれかが移動したときだけ組み直されます。印と索引の両方を含む文書は、`:::toc`と同じく、番号が落ち着くまで組み直されます。
+
+索引の文字組み、字下げ、区切り記号については、設定リファレンスの[索引](/ja/docs/configuration-notes-references#索引)を参照してください。

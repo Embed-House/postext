@@ -22,13 +22,13 @@ The code is [the short answer](#the-short-answer) above. Each letter is a level-
 
 <Excerpt region="letters" />
 
-With `breakBefore` off, a letter starts two grid lines (`marginTop`) below the grid line where the one before ends. On <PageRef page={4}>page 4</PageRef> the postscript, set on 12.6 pt leading, ends between grid lines, so about three lines of white stand above Letter III. On page 2, Letter I runs to the foot of the page and Letter II opens page 3. Left at its default, level 1 would open every letter on a recto ([break before](/en/docs/configuration-text#break-before)). `numberingTemplate: '{1:I}'` numbers the letters I to III, and the head prints the numeral through `{number}`.
+With `breakBefore` off, a letter starts two grid lines (`marginTop`) below the grid line where the one before ends. On <PageRef page={4}>page 4</PageRef> the postscript, set on 12.6 pt leading, ends between grid lines, so about three lines of white stand above Letter III. On page 2, Letter I runs to the foot of the page and Letter II opens page 3. Left at its default, level 1 would open every letter on a recto ([break before](/en/docs/configuration-headings#break-before)). `numberingTemplate: '{1:I}'` numbers the letters I to III, and the head prints the numeral through `{number}`.
 
 ### 3 · Date the recto with the letter
 
 <Excerpt region="running-heads" />
 
-In a page header, `{attr.date}` takes the attribute of the last level-1 heading that starts on or before the page. Page 3 prints 12 juin 1740, and page 5, where Voltaire’s letter continues from page 4, prints 1er avril 1778 with its ordinal raised ([text elements](/en/docs/configuration-page-layout#text-elements)). The heads sit 12 mm below the top edge of the page, the folio on the outer margin and the words 8 mm further in. `pages: 'body'` keeps them off the cover, which counts as an opener because its heading spans the page. The date is set in the Crimson Pro italic of the dateline it repeats, and the names on the verso in the small capitals of the letter numbers.
+In a page header, `{attr.date}` takes the attribute of the last level-1 heading that starts on or before the page. Page 3 prints 12 juin 1740, and page 5, where Voltaire’s letter continues from page 4, prints 1er avril 1778 with its ordinal raised ([text elements](/en/docs/configuration-headers-footers#text-elements)). The heads sit 12 mm below the top edge of the page, the folio on the outer margin and the words 8 mm further in. `pages: 'body'` keeps them off the cover, which counts as an opener because its heading spans the page. The date is set in the Crimson Pro italic of the dateline it repeats, and the names on the verso in the small capitals of the letter numbers.
 
 ### 4 · Make the cover a heading
 

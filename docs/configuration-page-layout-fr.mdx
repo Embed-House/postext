@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuration : page et mise en page',
   sidebarTitle: 'Page et mise en page',
-  description: 'Le format de la page, les marges et la grille de ligne de base, les colonnes et leurs gouttières, les en-têtes et pieds de page',
+  description: 'Le format de la page, les marges et la grille de ligne de base, la numérotation des pages, les colonnes et leurs gouttières',
   lang: 'fr',
-  lastUpdated: '2026-10-10',
-  readingTime: '6 min',
-  order: 4,
+  lastUpdated: '2026-10-16',
+  readingTime: '37 min',
+  order: 5,
   parent: 'configuration',
-  plainSummary: "Cette page réunit les réglages de la feuille elle-même. Vous choisissez le format de la page, les marges, le côté de la reliure et la grille sur laquelle reposent les lignes de texte. Vous fixez le nombre de colonnes d’une page et l’espace qui les sépare. Vous décidez aussi de ce qui s’imprime en haut et en bas de chaque page, comme le numéro de page ou le titre du chapitre. C’est l’une des neuf pages de la référence Configuration.",
+  plainSummary: "Cette page réunit les réglages de la feuille elle-même. Vous choisissez le format de la page, les marges, le côté de la reliure et la grille sur laquelle reposent les lignes de texte. Vous fixez la façon dont les pages sont comptées et dont leur numéro s’écrit. Vous fixez le nombre de colonnes d’une page et l’espace qui les sépare, et vous décidez si le texte court en travers de la page ou de haut en bas. Les en-têtes et pieds de page ont leur propre page.",
 };
 
 # Configuration : page et mise en page
@@ -63,7 +63,7 @@ La propriété `page` contrôle les dimensions physiques et l’apparence de la 
       <td><code>dpi</code></td>
       <td><code>number</code></td>
       <td><code>300</code></td>
-      <td>Le nombre de pixels par pouce dans lequel travaille la mise en page : la façon dont les unités physiques (cm, mm, in, pt) deviennent ses pixels. Une image matricielle sans résolution propre prend un pixel de mise en page par pixel d’image, si bien qu’elle s’imprime à cette résolution en ppp : gardez 300 pour l’impression, ou donnez une résolution aux images (<code>Resource.bitmap.resolution</code>, <code>layout.bitmapResolution</code> ; voir [Format du document › Taille des images matricielles](/fr/docs/document-format#taille-des-bitmaps)). Le [contrôle en amont](/fr/docs/configuration-fonts-colors-viewers#contrôle-en-amont) vérifie la résolution effective de chaque image.</td>
+      <td>Le nombre de pixels par pouce dans lequel travaille la mise en page : la façon dont les unités physiques (cm, mm, in, pt) deviennent ses pixels. Une image matricielle sans résolution propre prend un pixel de mise en page par pixel d’image, si bien qu’elle s’imprime à cette résolution en ppp : gardez 300 pour l’impression, ou donnez une résolution aux images (<code>Resource.bitmap.resolution</code>, <code>layout.bitmapResolution</code> ; voir [Format du document › Taille des images matricielles](/fr/docs/document-format-resources#taille-des-bitmaps)). Le [contrôle en amont](/fr/docs/configuration-fonts-colors-viewers#contrôle-en-amont) vérifie la résolution effective de chaque image.</td>
     </tr>
     <tr>
       <td><code>cutLines</code></td>
@@ -81,7 +81,7 @@ La propriété `page` contrôle les dimensions physiques et l’apparence de la 
       <td><code>binding</code></td>
       <td><code>'auto' | 'left' | 'right'</code></td>
       <td><code>'auto'</code></td>
-      <td>Le bord sur lequel le livre est relié. <code>'auto'</code> vaut <code>'right'</code> quand <code>layout.writingMode</code> vaut <code>'vertical-rl'</code>, quand le document s’écrit de droite à gauche (<a href="/fr/docs/configuration-text#sens-du-texte"><code>direction</code></a>) ou quand sa section <a href="/fr/docs/configuration-comics#bande-dessinée"><code>comics</code></a> se lit de droite à gauche (un manga, une édition japonaise ou en chinois traditionnel), et <code>'left'</code> sinon. Un livre relié à droite s’ouvre sur une page de gauche et inverse ses marges dans l’autre sens. Réglage du livre : la <code>layout</code> propre d’un style de titre ne le change jamais. Voir <a href="#reliure">Reliure</a>.</td>
+      <td>Le bord sur lequel le livre est relié. <code>'auto'</code> vaut <code>'right'</code> quand <code>layout.writingMode</code> vaut <code>'vertical-rl'</code>, quand le document s’écrit de droite à gauche (<a href="/fr/docs/configuration-language#sens-du-texte"><code>direction</code></a>) ou quand sa section <a href="/fr/docs/configuration-comics#bande-dessinée"><code>comics</code></a> se lit de droite à gauche (un manga, une édition japonaise ou en chinois traditionnel), et <code>'left'</code> sinon. Un livre relié à droite s’ouvre sur une page de gauche et inverse ses marges dans l’autre sens. Réglage du livre : la <code>layout</code> propre d’un style de titre ne le change jamais. Voir <a href="#reliure">Reliure</a>.</td>
     </tr>
   </tbody>
 </table>
@@ -117,7 +117,7 @@ Avec cette configuration, chaque page impaire a une marge de 2,2 cm à gauche (l
 
 Les folios et les titres courants ne se déplacent pas d’eux-mêmes : un modèle qui imprime le numéro de page à l’angle extérieur doit avoir ses éléments impairs et pairs réglés pour le bord droit (les éléments acceptent une `parity`).
 
-Un livre écrit de droite à gauche (arabe, persan, hébreu…) est lui aussi relié à droite : `'auto'` donne le bord droit quand la [`direction`](/fr/docs/configuration-text#sens-du-texte) du document se résout en `'rtl'`. Un tel livre inverse aussi tout son flux, si bien que sa première colonne est celle de droite et que ses retraits, ses puces de liste, ses flottants et ses notes se placent à droite ; les emplacements d’en-tête et de pied de page restent physiques. Voir [Mise en page arabe](/fr/docs/arabic-layout#ordre-des-pages-et-reliure-à-droite).
+Un livre écrit de droite à gauche (arabe, persan, hébreu…) est lui aussi relié à droite : `'auto'` donne le bord droit quand la [`direction`](/fr/docs/configuration-language#sens-du-texte) du document se résout en `'rtl'`. Un tel livre inverse aussi tout son flux, si bien que sa première colonne est celle de droite et que ses retraits, ses puces de liste, ses flottants et ses notes se placent à droite ; les emplacements d’en-tête et de pied de page restent physiques. Voir [Mise en page arabe](/fr/docs/arabic-layout#ordre-des-pages-et-reliure-à-droite).
 
 Une bande dessinée lue de droite à gauche est elle aussi reliée à droite : `'auto'` donne le bord droit quand la configuration a une section `comics` dont le sens de lecture se résout en `'rtl'`. C’est le cas d’un manga (`comics.artDirection: 'rtl'`) et d’une édition japonaise ou en chinois traditionnel d’une bande dessinée occidentale. C’est la section qui décide pour tout le livre, et non les blocs `:::page` d’un chapitre. Voir [Bande dessinée](/fr/docs/comics#sens-de-lecture).
 
@@ -325,7 +325,7 @@ Les styles d’Asie orientale gardent leurs noms [CSS Counter Styles](https://ww
 
 Les styles japonais (depuis postext 1.16) suivent eux aussi CSS Counter Styles. `japanese-informal` écrit 十 sans 一 initial et sans 零 pour une position vide (百一, 千十), et `japanese-formal` les 大字 壱 弐 参 拾 百 阡, avec 壱 conservé devant chaque unité (壱拾, 壱百). CSS arrête les deux à 9 999 ; Postext continue par groupes de quatre chiffres avec 万 億 兆 (en formel 萬 億 兆), chaque groupe gardant son 一 devant une unité : 一万一 vaut 10 001, 一億一万 100 010 000. Dans un document japonais (`ja`, `ja-JP`…), `一` signifie `japanese-informal`, si bien que `第{1:一}章` y imprime 第百一章, et 第一百零一章 dans un document chinois ; `壹` reste la numération formelle chinoise. Les séries de kana sont les listes CSS : 48 kana dans l’ordre du gojūon (ゐ et ゑ compris) et 47 dans l’ordre du poème iroha ; après le dernier, elles continuent avec deux kana (ああ, いい), et elles n’ont pas de zéro, si bien qu’un élément numéroté 0 imprime `0`. Les chiffres kanji positionnels (二〇二六), la forme des années et des folios, relèvent de `cjk-decimal`.
 
-Les styles arabes gardent le nom CSS quand CSS en a un (`arabic-indic`, `persian` ; `urdu` et `maghrebi-abjad`, issus des *Ready-made Counter Styles* du W3C, sont lus comme `persian` et `arabic-abjad-maghrebi`). `arabic` garde son ancien sens, les chiffres européens. `arabic-abjad` écrit la numération abjad additive de l’arabe classique et de la foliotation des manuscrits, la plus haute valeur en premier : 11 s’écrit يا, 1446 غتمو, et le nombre de milliers se place avant غ (2000 بغ, 1002 غب) ; au-delà de 999 999, le nombre s’imprime en chiffres. La note du W3C utilise ce nom pour une série de 28 lettres où 11 vaut ك ; Postext appelle cette série `abjad`, la numérotation par lettres des éléments de liste dans l’ordre abjad (أ، ب، ج، د، هـ), et `hijai` l’ordre alphabétique (أ، ب، ت، ث). Les deux écrivent la première lettre avec sa hamza (أ), et un hâ qui serait isolé sous la forme هـ, avec un tatweel, pour qu’aucune ne soit lue comme les chiffres ١ et ٥ ; au-delà de 28, elles doublent, comme le fait `lower-alpha` (أأ, أب). Les valeurs maghrébines suivent le moyen mnémotechnique صعفض قرست ثخذ ظغش (ص 60, ض 90) ; la liste du W3C intervertit ص et ض. Un أ seul ne permet pas de distinguer les deux séries de lettres, si bien que leurs jetons sont leurs quatre premières lettres : `{1:أبجد}`, `{1:أبتث}`. Les chiffres propres d’un document se règlent avec [`numerals`](/fr/docs/configuration-text#chiffres-du-document).
+Les styles arabes gardent le nom CSS quand CSS en a un (`arabic-indic`, `persian` ; `urdu` et `maghrebi-abjad`, issus des *Ready-made Counter Styles* du W3C, sont lus comme `persian` et `arabic-abjad-maghrebi`). `arabic` garde son ancien sens, les chiffres européens. `arabic-abjad` écrit la numération abjad additive de l’arabe classique et de la foliotation des manuscrits, la plus haute valeur en premier : 11 s’écrit يا, 1446 غتمو, et le nombre de milliers se place avant غ (2000 بغ, 1002 غب) ; au-delà de 999 999, le nombre s’imprime en chiffres. La note du W3C utilise ce nom pour une série de 28 lettres où 11 vaut ك ; Postext appelle cette série `abjad`, la numérotation par lettres des éléments de liste dans l’ordre abjad (أ، ب، ج، د، هـ), et `hijai` l’ordre alphabétique (أ، ب، ت، ث). Les deux écrivent la première lettre avec sa hamza (أ), et un hâ qui serait isolé sous la forme هـ, avec un tatweel, pour qu’aucune ne soit lue comme les chiffres ١ et ٥ ; au-delà de 28, elles doublent, comme le fait `lower-alpha` (أأ, أب). Les valeurs maghrébines suivent le moyen mnémotechnique صعفض قرست ثخذ ظغش (ص 60, ض 90) ; la liste du W3C intervertit ص et ض. Un أ seul ne permet pas de distinguer les deux séries de lettres, si bien que leurs jetons sont leurs quatre premières lettres : `{1:أبجد}`, `{1:أبتث}`. Les chiffres propres d’un document se règlent avec [`numerals`](/fr/docs/configuration-language#chiffres-du-document).
 
 Les autres graphies sont destinées aux configurations que rien ne vérifie par typage : préréglages JSON et JavaScript simple. Les types TypeScript ne nomment toujours que la graphie propre de chaque réglage (celle qu’écrit le Sandbox et que renvoie `resolveAllConfig`, noms d’Asie orientale compris), si bien qu’une `PostextConfig` typée s’y tient, et qu’une autre graphie nécessite un cast.
 
@@ -409,25 +409,25 @@ La propriété `layout` contrôle la disposition des colonnes dans la zone de co
       <td><code>bitmapResolution</code></td>
       <td><code>'document' | 'file' | number</code></td>
       <td><code>'document'</code></td>
-      <td>La façon dont une image matricielle sans <code>bitmap.resolution</code> propre prend sa taille d’impression naturelle. <code>'document'</code> lit ses pixels à <code>page.dpi</code> ; un nombre est la résolution en ppp de toutes ces images (<code>300</code> : une image de 2400 px fait 203,2 mm de large, quel que soit le dpi de la page) ; <code>'file'</code> utilise la résolution qu’indique son fichier (<code>bitmap.fileResolution</code>), 72 et 96 valant comme non définies, et sinon <code>page.dpi</code>. La colonne limite toujours l’image, et une image plus petite n’est jamais agrandie. Voir <a href="/fr/docs/document-format#taille-des-bitmaps">Format du document › Taille des images matricielles</a>. Depuis postext 1.24.</td>
+      <td>La façon dont une image matricielle sans <code>bitmap.resolution</code> propre prend sa taille d’impression naturelle. <code>'document'</code> lit ses pixels à <code>page.dpi</code> ; un nombre est la résolution en ppp de toutes ces images (<code>300</code> : une image de 2400 px fait 203,2 mm de large, quel que soit le dpi de la page) ; <code>'file'</code> utilise la résolution qu’indique son fichier (<code>bitmap.fileResolution</code>), 72 et 96 valant comme non définies, et sinon <code>page.dpi</code>. La colonne limite toujours l’image, et une image plus petite n’est jamais agrandie. Voir <a href="/fr/docs/document-format-resources#taille-des-bitmaps">Format du document › Taille des images matricielles</a>. Depuis postext 1.24.</td>
     </tr>
     <tr>
       <td><code>floatShrink</code></td>
       <td><code>FloatShrinkConfig</code></td>
       <td><code>mode: 'never'</code></td>
-      <td>La valeur par défaut du document pour le <code>placement.shrink</code> d’une image flottante (<code>mode</code> : <code>'never'</code>, <code>'page'</code> ou <code>'slot'</code>) et pour son <code>placement.minScale</code> (<code>minScale</code>, 0.7 si non défini) : réduire l’image, en gardant ses proportions, à la place disponible dans son emplacement au lieu de la repousser plus loin (voir <a href="/fr/docs/document-format#placement">Format du document › Placement</a>). Le placement d’une ressource, puis le <code>defaultPlacement</code> de son type, la remplacent. <code>fitFiguresToPage</code> limite chaque figure à la zone de contenu ; <code>floatShrink</code> regarde la bande que prendrait réellement un flottant, sous une ouverture, à côté d’autres flottants ou au-dessus de notes de bas de page. Depuis postext 1.24.</td>
+      <td>La valeur par défaut du document pour le <code>placement.shrink</code> d’une image flottante (<code>mode</code> : <code>'never'</code>, <code>'page'</code> ou <code>'slot'</code>) et pour son <code>placement.minScale</code> (<code>minScale</code>, 0.7 si non défini) : réduire l’image, en gardant ses proportions, à la place disponible dans son emplacement au lieu de la repousser plus loin (voir <a href="/fr/docs/document-format-resources#placement">Format du document › Placement</a>). Le placement d’une ressource, puis le <code>defaultPlacement</code> de son type, la remplacent. <code>fitFiguresToPage</code> limite chaque figure à la zone de contenu ; <code>floatShrink</code> regarde la bande que prendrait réellement un flottant, sous une ouverture, à côté d’autres flottants ou au-dessus de notes de bas de page. Depuis postext 1.24.</td>
     </tr>
     <tr>
       <td><code>wrap</code></td>
       <td><code>TextWrapConfig</code></td>
       <td><code>minTextWidth: 12em</code>, <code>minLinesBeside: 2</code>, <code>defaultWidth: 0.45</code></td>
-      <td>Le texte qui court à côté d’une image ou d’un encadré plus étroit que sa colonne (<code>placement.wrap</code>, le <code>wrap</code> d’un encadré) : <code>gap</code>, l’espace entre l’élément et le texte (une ligne de texte courant si non défini) ; <code>minTextWidth</code>, la justification la plus étroite que peut prendre le texte à côté, en longueur ou en part de la colonne (plus étroite, l’élément prend sa bande entière, avec un avertissement <code>textWrap</code>) ; <code>minLinesBeside</code>, le nombre minimal de lignes qui vaut la peine d’être composé à côté ; <code>defaultWidth</code>, la part de la colonne que prend un élément habillé qui ne définit pas de <code>width</code>. Voir <a href="/fr/docs/document-format#habillage-du-texte">Format du document › Habillage</a>. Depuis postext 1.24.</td>
+      <td>Le texte qui court à côté d’une image ou d’un encadré plus étroit que sa colonne (<code>placement.wrap</code>, le <code>wrap</code> d’un encadré) : <code>gap</code>, l’espace entre l’élément et le texte (une ligne de texte courant si non défini) ; <code>minTextWidth</code>, la justification la plus étroite que peut prendre le texte à côté, en longueur ou en part de la colonne (plus étroite, l’élément prend sa bande entière, avec un avertissement <code>textWrap</code>) ; <code>minLinesBeside</code>, le nombre minimal de lignes qui vaut la peine d’être composé à côté ; <code>defaultWidth</code>, la part de la colonne que prend un élément habillé qui ne définit pas de <code>width</code>. Voir <a href="/fr/docs/document-format-resources#habillage-du-texte">Format du document › Habillage</a>. Depuis postext 1.24.</td>
     </tr>
     <tr>
       <td><code>floatsAtCitingPage</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>La valeur par défaut du document pour <code>placement.citingPage</code> : un flottant <code>'top'</code> ou <code>'auto'</code> peut prendre la tête de la page (un flottant sur toute la largeur de la page) ou de la colonne (un flottant de colonne) où tombe la ligne qui l’appelle pour la première fois, au lieu du premier emplacement libre après cette ligne ; le texte au-dessus du renvoi descend sous lui (voir <a href="/fr/docs/document-format#placement">Format du document › Placement</a>). Le placement d’une ressource, puis le <code>defaultPlacement</code> de son type, la remplacent. Depuis postext 1.25.</td>
+      <td>La valeur par défaut du document pour <code>placement.citingPage</code> : un flottant <code>'top'</code> ou <code>'auto'</code> peut prendre la tête de la page (un flottant sur toute la largeur de la page) ou de la colonne (un flottant de colonne) où tombe la ligne qui l’appelle pour la première fois, au lieu du premier emplacement libre après cette ligne ; le texte au-dessus du renvoi descend sous lui (voir <a href="/fr/docs/document-format-resources#placement">Format du document › Placement</a>). Le placement d’une ressource, puis le <code>defaultPlacement</code> de son type, la remplacent. Depuis postext 1.25.</td>
     </tr>
     <tr>
       <td><code>maxTopFraction</code></td>
@@ -445,13 +445,13 @@ La propriété `layout` contrôle la disposition des colonnes dans la zone de co
       <td><code>inlineResourceGap</code></td>
       <td><code>'around' | 'above'</code></td>
       <td><code>'around'</code></td>
-      <td>L’endroit où une ressource en ligne (<code>placement.position: 'here'</code>, incorporée avec <code>::resource</code>) garde l’écart de flottant, une ligne. <code>'around'</code> le garde au-dessus et au-dessous de la ressource, et le texte qui la suit revient sur la grille de ligne de base sous cet écart ; un titre, une liste, un encadré ou une autre ressource en ligne placés juste après partagent l’écart du dessous avec leur propre espace au-dessus, le plus grand des deux s’appliquant. <code>'above'</code> ne le garde qu’au-dessus : le texte qui suit la ressource reprend à la ligne de grille suivante, aussi proche soit-elle (de rien du tout à une ligne), comme jusqu’à postext 1.4. Les configurations enregistrées par des versions antérieures dont les chapitres incorporent une ressource sont lues avec <code>'above'</code>, pour que leurs pages ne bougent pas (voir <a href="/fr/docs/configuration-programmatic-usage#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>). Une configuration écrite en code pour la 1.4 garde l’ancien espacement en définissant elle-même <code>'above'</code>, ou par <code>pinLegacyInlineGap</code> de <code>postext/bundle</code>.</td>
+      <td>L’endroit où une ressource en ligne (<code>placement.position: 'here'</code>, incorporée avec <code>::resource</code>) garde l’écart de flottant, une ligne. <code>'around'</code> le garde au-dessus et au-dessous de la ressource, et le texte qui la suit revient sur la grille de ligne de base sous cet écart ; un titre, une liste, un encadré ou une autre ressource en ligne placés juste après partagent l’écart du dessous avec leur propre espace au-dessus, le plus grand des deux s’appliquant. <code>'above'</code> ne le garde qu’au-dessus : le texte qui suit la ressource reprend à la ligne de grille suivante, aussi proche soit-elle (de rien du tout à une ligne), comme jusqu’à postext 1.4. Les configurations enregistrées par des versions antérieures dont les chapitres incorporent une ressource sont lues avec <code>'above'</code>, pour que leurs pages ne bougent pas (voir <a href="/fr/docs/configuration-bundles#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>). Une configuration écrite en code pour la 1.4 garde l’ancien espacement en définissant elle-même <code>'above'</code>, ou par <code>pinLegacyInlineGap</code> de <code>postext/bundle</code>.</td>
     </tr>
     <tr>
       <td><code>inlineResourceGapInBoxes</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Si une ressource en ligne à l’intérieur d’un encadré (<code>:::callout</code>) garde l’écart que fixe <code>inlineResourceGap</code>, une ligne du texte propre à l’encadré : au-dessus de la ressource, et aussi au-dessous avec <code>'around'</code>, le plus grand de cet écart et de l’espace propre du bloc suivant s’appliquant. En haut ou au pied de l’encadré, ou d’un fragment d’un encadré coupé, c’est la marge intérieure qui détache la ressource et aucun écart n’est ajouté. <code>false</code> place la ressource juste sous le texte qui la précède et le texte qui la suit juste sous la ressource, comme jusqu’à postext 1.4. Les configurations enregistrées par des versions antérieures dont les chapitres incorporent une ressource dans un encadré sont lues avec <code>false</code> (voir <a href="/fr/docs/configuration-programmatic-usage#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>) ; en code, <code>pinLegacyBoxResourceGap</code> de <code>postext/bundle</code> fait de même.</td>
+      <td>Si une ressource en ligne à l’intérieur d’un encadré (<code>:::callout</code>) garde l’écart que fixe <code>inlineResourceGap</code>, une ligne du texte propre à l’encadré : au-dessus de la ressource, et aussi au-dessous avec <code>'around'</code>, le plus grand de cet écart et de l’espace propre du bloc suivant s’appliquant. En haut ou au pied de l’encadré, ou d’un fragment d’un encadré coupé, c’est la marge intérieure qui détache la ressource et aucun écart n’est ajouté. <code>false</code> place la ressource juste sous le texte qui la précède et le texte qui la suit juste sous la ressource, comme jusqu’à postext 1.4. Les configurations enregistrées par des versions antérieures dont les chapitres incorporent une ressource dans un encadré sont lues avec <code>false</code> (voir <a href="/fr/docs/configuration-bundles#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>) ; en code, <code>pinLegacyBoxResourceGap</code> de <code>postext/bundle</code> fait de même.</td>
     </tr>
     <tr>
       <td><code>inlineCaptionSide</code></td>
@@ -463,13 +463,13 @@ La propriété `layout` contrôle la disposition des colonnes dans la zone de co
       <td><code>boxChildSplitMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>
-      <td>Le nombre minimal de lignes d’un paragraphe ou d’un élément de liste qu’une coupe à l’intérieur de celui-ci laisse de chaque côté quand un encadré se coupe (<code>splitMinLines</code>, sous <a href="/fr/docs/configuration-styles#styles-dencadré">Styles d’encadré</a>, compte toujours toutes les lignes de l’encadré de chaque côté de la coupe). Un entier, au moins 1. Avec la valeur par défaut, une coupe ne laisse jamais une ligne isolée d’un paragraphe ou d’un élément au pied d’une colonne ou en tête de la suivante ; un style d’encadré dont le <code>splitMinLines</code> est plus bas fixe la limite à la place. <code>1</code> permet à une coupe de laisser une seule ligne du paragraphe ou de l’élément d’un côté, comme jusqu’à postext 1.4. Les configurations enregistrées par des versions antérieures dont les chapitres contiennent un <code>:::callout</code> sont lues avec <code>1</code> (voir <a href="/fr/docs/configuration-programmatic-usage#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>) ; en code, <code>pinLegacyBoxChildCut</code> de <code>postext/bundle</code> fait de même.</td>
+      <td>Le nombre minimal de lignes d’un paragraphe ou d’un élément de liste qu’une coupe à l’intérieur de celui-ci laisse de chaque côté quand un encadré se coupe (<code>splitMinLines</code>, sous <a href="/fr/docs/configuration-callouts#styles-dencadré">Styles d’encadré</a>, compte toujours toutes les lignes de l’encadré de chaque côté de la coupe). Un entier, au moins 1. Avec la valeur par défaut, une coupe ne laisse jamais une ligne isolée d’un paragraphe ou d’un élément au pied d’une colonne ou en tête de la suivante ; un style d’encadré dont le <code>splitMinLines</code> est plus bas fixe la limite à la place. <code>1</code> permet à une coupe de laisser une seule ligne du paragraphe ou de l’élément d’un côté, comme jusqu’à postext 1.4. Les configurations enregistrées par des versions antérieures dont les chapitres contiennent un <code>:::callout</code> sont lues avec <code>1</code> (voir <a href="/fr/docs/configuration-bundles#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>) ; en code, <code>pinLegacyBoxChildCut</code> de <code>postext/bundle</code> fait de même.</td>
     </tr>
     <tr>
       <td><code>flowColumns</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Une directive <code>:::columns</code> hors d’un encadré compose ses blocs en sous-colonnes de la colonne de texte (ou sur toute la largeur de la page avec <code>span="page"</code>), et un groupe, dans un encadré ou dans le texte, est coupé entre ses sous-colonnes quand il ne tient pas, et continue dans la colonne ou la page suivante (voir <a href="/fr/docs/document-format#columns">Format du document › <code>:::columns</code></a>). <code>false</code> ignore la directive hors d’un encadré et ne coupe jamais à l’intérieur d’un groupe, comme jusqu’à postext 1.24 ; les configurations enregistrées par des versions antérieures dont les chapitres contiennent une directive <code>:::columns</code> sont lues avec <code>false</code> ; en code, <code>pinLegacyFlowColumns</code> de <code>postext/bundle</code> fait de même. Une section stylée garde la valeur du document. Depuis postext 1.25.</td>
+      <td>Une directive <code>:::columns</code> hors d’un encadré compose ses blocs en sous-colonnes de la colonne de texte (ou sur toute la largeur de la page avec <code>span="page"</code>), et un groupe, dans un encadré ou dans le texte, est coupé entre ses sous-colonnes quand il ne tient pas, et continue dans la colonne ou la page suivante (voir <a href="/fr/docs/document-format-directives#columns">Format du document › <code>:::columns</code></a>). <code>false</code> ignore la directive hors d’un encadré et ne coupe jamais à l’intérieur d’un groupe, comme jusqu’à postext 1.24 ; les configurations enregistrées par des versions antérieures dont les chapitres contiennent une directive <code>:::columns</code> sont lues avec <code>false</code> ; en code, <code>pinLegacyFlowColumns</code> de <code>postext/bundle</code> fait de même. Une section stylée garde la valeur du document. Depuis postext 1.25.</td>
     </tr>
     <tr>
       <td><code>floatsUnderOpener</code></td>
@@ -507,7 +507,7 @@ Avec `writingMode: 'vertical-rl'`, une page est mise en page comme une page hori
 - Les [largeurs de ponctuation](/fr/docs/configuration-east-asian#chasse-de-la-ponctuation), la [ponctuation suspendue](/fr/docs/configuration-east-asian#ponctuation-en-débord) et l’[espace entre han et latin](/fr/docs/configuration-east-asian#espace-entre-han-et-latin) s’appliquent le long de la ligne comme en travers. Le blanc avant un glyphe se trouve au-dessus de lui et le blanc après, en dessous : un 、 Kaiming prend une demi-cellule, `」「` se resserrent à une cellule et demie, un crochet ouvrant rogné en tête de ligne commence une demi-cellule plus haut, un 。 suspendu se place sous le pied de sa ligne, et l’espace han–latin vaut un quart de cadratin de la colonne au-dessus et au-dessous d’un mot couché. `：；？！` gardent une cellule entière en texte vertical dans toutes les régions.
 - La [grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères) compte les caractères le long de la ligne et les lignes en travers de la page : `charsPerLine` fixe la longueur d’un étage, `linesPerPage` le nombre de lignes d’une page, et `layoutType: 'double'` donne deux étages de caractères entiers séparés par une gouttière d’un nombre entier de cadratins.
 
-Pour les hôtes qui lisent la mise en page : une page verticale porte `VDTPage.flow`. Sa `contentArea`, ses colonnes, blocs, lignes, flottants, zones de notes, bande d’ouverture et surcouches de maquette de bloc sont en coordonnées de flux ; `width`, `height`, `header` et `footer` sont sur la feuille. `flowToPage`, `pageToFlow`, `flowRectToPage` et `pageRectToFlow` convertissent de l’un à l’autre, et `verticalOrientation(char, region)` indique comment se tient un caractère. `flow.centralBaselines` donne, par famille de police, l’axe sur lequel la mise en page a centré les caractères droits : le centre de l’encre de 中, dont le long trait occupe toute la hauteur du cadratin (0,38 em au-dessus de la ligne de base dans Noto Serif et Noto Sans, SC comme TC), et que possède toute police chinoise, japonaise et coréenne. Chaque ligne est centrée sur cet axe : la ligne de base d’une ligne verticale se trouve, sous le haut de sa boîte de ligne, à la moitié de sa hauteur de ligne plus la ligne de base centrale de la famille (celle d’une ligne horizontale se trouve à 0,8 de sa hauteur de ligne), si bien qu’une colonne de caractères se tient au milieu de son pas et qu’un filet tracé entre deux colonnes à un pas entier tombe à mi-chemin entre elles. Un texte de maquette vertical est composé de la même façon dans ses propres lignes. Le canvas peint lui-même une page verticale ; pour peindre la ponctuation avec les formes verticales propres de la police, un hôte navigateur charge, une fois par famille, une police jumelle où ces formes sont activées : `loadVerticalAlternates(family, faces)`, où `faces` sont les sources de la famille (URL ou octets) et ses descripteurs. La jumelle n’est gardée que là où le navigateur applique la fonctionnalité au texte du canvas (Chrome 140 et ultérieur) : il dessine 「（《 avec la jumelle et avec une copie des mêmes polices chargée sans la fonctionnalité, dans la graisse et le style des polices données, et garde la jumelle quand leur encre diffère. Un appel ultérieur pour d’autres polices d’une famille dont la jumelle est en usage (le gras après le romain) les lui ajoute. Le Sandbox fait cela pour chaque famille d’un document vertical. Sans jumelle, les parenthèses et crochets sont tournés autour de leur cadratin et les signes de pause et de fin de phrase du continent déplacés dans leur cellule là où les formes verticales de la police les placent : 、。，． vers le coin supérieur droit (à 0,07 em près des formes verticales de Noto Serif SC), ！？：； d’un demi-cadratin vers la droite et un peu vers le haut (à 0,02 em près). Le PDF et le HTML composent la même page : voir [Texte vertical dans le PDF](/fr/docs/configuration-programmatic-usage#texte-vertical-dans-le-pdf) et le tableau sous [En quoi la sortie HTML diffère du canvas et du PDF](/fr/docs/configuration-programmatic-usage#en-quoi-la-sortie-html-diffère-du-canvas-et-du-pdf). Vérifié cellule par cellule par rapport à HarfBuzz (mise en page verticale avec `vert`) en Noto Serif TC et SC, chaque caractère de 「賈雨村」云云，宜乎？故曰！；：、。“引”‘單’…… se tient à 0,02 em près sur le canvas et dans le PDF, et à 0,05 em près en HTML (Chrome centre un glyphe tourné sur le milieu de l’ascendante et de la descendante de la police, qui dans Noto se trouve 0,05 em au-dessus du centre de son cadratin). `flow.dashAdvances` donne, par famille, la chasse horizontale en em de chaque tiret que la page étire pour remplir sa cellule (— – ― ⸺ ⸻ －), pour un moteur de rendu sans métriques de police propres : le HTML étire le tiret d’autant, comme le canvas et le PDF le font à partir des leurs. Les titres courants et les folios peuvent aussi être composés verticalement : voir [Éléments de texte vertical](#éléments-de-texte-vertical).
+Pour les hôtes qui lisent la mise en page : une page verticale porte `VDTPage.flow`. Sa `contentArea`, ses colonnes, blocs, lignes, flottants, zones de notes, bande d’ouverture et surcouches de maquette de bloc sont en coordonnées de flux ; `width`, `height`, `header` et `footer` sont sur la feuille. `flowToPage`, `pageToFlow`, `flowRectToPage` et `pageRectToFlow` convertissent de l’un à l’autre, et `verticalOrientation(char, region)` indique comment se tient un caractère. `flow.centralBaselines` donne, par famille de police, l’axe sur lequel la mise en page a centré les caractères droits : le centre de l’encre de 中, dont le long trait occupe toute la hauteur du cadratin (0,38 em au-dessus de la ligne de base dans Noto Serif et Noto Sans, SC comme TC), et que possède toute police chinoise, japonaise et coréenne. Chaque ligne est centrée sur cet axe : la ligne de base d’une ligne verticale se trouve, sous le haut de sa boîte de ligne, à la moitié de sa hauteur de ligne plus la ligne de base centrale de la famille (celle d’une ligne horizontale se trouve à 0,8 de sa hauteur de ligne), si bien qu’une colonne de caractères se tient au milieu de son pas et qu’un filet tracé entre deux colonnes à un pas entier tombe à mi-chemin entre elles. Un texte de maquette vertical est composé de la même façon dans ses propres lignes. Le canvas peint lui-même une page verticale ; pour peindre la ponctuation avec les formes verticales propres de la police, un hôte navigateur charge, une fois par famille, une police jumelle où ces formes sont activées : `loadVerticalAlternates(family, faces)`, où `faces` sont les sources de la famille (URL ou octets) et ses descripteurs. La jumelle n’est gardée que là où le navigateur applique la fonctionnalité au texte du canvas (Chrome 140 et ultérieur) : il dessine 「（《 avec la jumelle et avec une copie des mêmes polices chargée sans la fonctionnalité, dans la graisse et le style des polices données, et garde la jumelle quand leur encre diffère. Un appel ultérieur pour d’autres polices d’une famille dont la jumelle est en usage (le gras après le romain) les lui ajoute. Le Sandbox fait cela pour chaque famille d’un document vertical. Sans jumelle, les parenthèses et crochets sont tournés autour de leur cadratin et les signes de pause et de fin de phrase du continent déplacés dans leur cellule là où les formes verticales de la police les placent : 、。，． vers le coin supérieur droit (à 0,07 em près des formes verticales de Noto Serif SC), ！？：； d’un demi-cadratin vers la droite et un peu vers le haut (à 0,02 em près). Le PDF et le HTML composent la même page : voir [Texte vertical dans le PDF](/fr/docs/configuration-pdf-output#texte-vertical-dans-le-pdf) et le tableau sous [En quoi la sortie HTML diffère du canvas et du PDF](/fr/docs/configuration-html-folio-epub#en-quoi-la-sortie-html-diffère-du-canvas-et-du-pdf). Vérifié cellule par cellule par rapport à HarfBuzz (mise en page verticale avec `vert`) en Noto Serif TC et SC, chaque caractère de 「賈雨村」云云，宜乎？故曰！；：、。“引”‘單’…… se tient à 0,02 em près sur le canvas et dans le PDF, et à 0,05 em près en HTML (Chrome centre un glyphe tourné sur le milieu de l’ascendante et de la descendante de la police, qui dans Noto se trouve 0,05 em au-dessus du centre de son cadratin). `flow.dashAdvances` donne, par famille, la chasse horizontale en em de chaque tiret que la page étire pour remplir sa cellule (— – ― ⸺ ⸻ －), pour un moteur de rendu sans métriques de police propres : le HTML étire le tiret d’autant, comme le canvas et le PDF le font à partir des leurs. Les titres courants et les folios peuvent aussi être composés verticalement : voir [Éléments de texte vertical](/fr/docs/configuration-headers-footers#éléments-de-texte-vertical).
 
 ### Filet entre colonnes
 
@@ -554,702 +554,7 @@ Un style de titre peut définir son propre filet dans sa `layout` (voir [Styles 
 
 - **`'double'`** : deux colonnes de même largeur. La mise en page éditoriale classique, qui maintient la longueur de ligne dans la plage optimale de 40 à 50 caractères pour une lecture confortable.
 
-- **`'oneAndHalf'`** : une mise en page asymétrique avec une colonne principale et une colonne latérale plus étroite. La colonne latérale (réglée par `sideColumnPercent`) convient aux notes marginales, aux petites figures ou aux contenus d’appui. Les valeurs entre 25 et 40 % fonctionnent bien, et un canal étroit pour des numéros de ligne ou des marques marginales prend autour de 10 à 15 %. La colonne latérale fait `sideColumnPercent` % de la largeur du contenu et la colonne principale prend ce qui reste après la gouttière ; à 50 %, la colonne latérale est donc plus large que la principale d’une gouttière. Toute valeur est mise en page telle quelle tant que les deux colonnes gardent au moins 1 % de la largeur du contenu ; une valeur qui rendrait l’une d’elles plus étroite (0 ou moins, ou une valeur si grande que la colonne principale disparaît derrière la gouttière) est ramenée à la valeur la plus proche qui préserve les deux, et une valeur qui n’est pas un nombre prend la valeur par défaut, 33. Les `configWarnings` du document portent alors `{ kind: 'sideColumnPercentClamped', path: 'layout.sideColumnPercent', value, used }` (le chemin de la `layout` propre à un style de titre nomme le style, comme dans `headingStyles[2].layout.sideColumnPercent`, et se mesure sur les marges de ce style), que le Sandbox liste dans son panneau **Vérifications** ; `collectConfigWarnings(config)` renvoie la même liste sans rien mettre en page. Une mise en page autre que `'oneAndHalf'` ne lit jamais cette valeur et ne la signale jamais. Avec `sideColumnRole: 'floats'`, le texte courant n’entre jamais dans la colonne latérale : elle devient un canal pour les figures, tableaux et encadrés placés avec `span: 'side'`. Une figure ou un tableau latéral s’empile depuis la tête du canal sur la page qui l’appelle pour la première fois (la figure marginale d’un manuel se place en haut de sa page même quand le texte l’appelle plus bas) ; celui qui ne tient pas dans le reste du canal attend celui de la page suivante. Un encadré latéral s’empile à côté du texte qu’il interrompt, et quand le reste du canal ne peut pas le contenir à cet endroit, il remonte jusqu’à la position la plus basse où il tient encore (son pied sur le pied du canal), ou attend la page suivante. Quand le texte qui suit la directive d’un encadré continue sur la page suivante (la colonne est pleine, ou les règles de coupure repoussent ce texte), l’encadré reste au niveau de sa directive, à côté du texte qui la précède ; un style avec `sideAtColumnEnd: 'after'` le place plutôt au niveau de la première ligne du texte qui suit la directive, dans le canal de la page suivante, comme l’exigent les numéros de ligne et les titres marginaux écrits avant leur ligne. Un élément de maquette de titre qui se trouve dans le canal (un numéro de chapitre ancré dans la marge extérieure) est lui aussi tenu à l’écart de la pile (voir [Hauteur réservée](/fr/docs/configuration-text#hauteur-réservée)). Les flottants et encadrés `span: 'page'` traversent toujours les deux colonnes, et un flottant de colonne avec `placement.captionSide` met sa légende dans le canal, au niveau de la figure. Combiné à des marges en miroir et à `sideColumnSide: 'outer'`, le canal se place au bord extérieur de chaque page : la colonne marginale d’un manuel. Depuis postext 1.28, une figure ou un tableau placé dans le texte (`position: 'here'`) avec `captionSide` met lui aussi sa légende dans le canal (`inlineCaptionSide`).
+- **`'oneAndHalf'`** : une mise en page asymétrique avec une colonne principale et une colonne latérale plus étroite. La colonne latérale (réglée par `sideColumnPercent`) convient aux notes marginales, aux petites figures ou aux contenus d’appui. Les valeurs entre 25 et 40 % fonctionnent bien, et un canal étroit pour des numéros de ligne ou des marques marginales prend autour de 10 à 15 %. La colonne latérale fait `sideColumnPercent` % de la largeur du contenu et la colonne principale prend ce qui reste après la gouttière ; à 50 %, la colonne latérale est donc plus large que la principale d’une gouttière. Toute valeur est mise en page telle quelle tant que les deux colonnes gardent au moins 1 % de la largeur du contenu ; une valeur qui rendrait l’une d’elles plus étroite (0 ou moins, ou une valeur si grande que la colonne principale disparaît derrière la gouttière) est ramenée à la valeur la plus proche qui préserve les deux, et une valeur qui n’est pas un nombre prend la valeur par défaut, 33. Les `configWarnings` du document portent alors `{ kind: 'sideColumnPercentClamped', path: 'layout.sideColumnPercent', value, used }` (le chemin de la `layout` propre à un style de titre nomme le style, comme dans `headingStyles[2].layout.sideColumnPercent`, et se mesure sur les marges de ce style), que le Sandbox liste dans son panneau **Vérifications** ; `collectConfigWarnings(config)` renvoie la même liste sans rien mettre en page. Une mise en page autre que `'oneAndHalf'` ne lit jamais cette valeur et ne la signale jamais. Avec `sideColumnRole: 'floats'`, le texte courant n’entre jamais dans la colonne latérale : elle devient un canal pour les figures, tableaux et encadrés placés avec `span: 'side'`. Une figure ou un tableau latéral s’empile depuis la tête du canal sur la page qui l’appelle pour la première fois (la figure marginale d’un manuel se place en haut de sa page même quand le texte l’appelle plus bas) ; celui qui ne tient pas dans le reste du canal attend celui de la page suivante. Un encadré latéral s’empile à côté du texte qu’il interrompt, et quand le reste du canal ne peut pas le contenir à cet endroit, il remonte jusqu’à la position la plus basse où il tient encore (son pied sur le pied du canal), ou attend la page suivante. Quand le texte qui suit la directive d’un encadré continue sur la page suivante (la colonne est pleine, ou les règles de coupure repoussent ce texte), l’encadré reste au niveau de sa directive, à côté du texte qui la précède ; un style avec `sideAtColumnEnd: 'after'` le place plutôt au niveau de la première ligne du texte qui suit la directive, dans le canal de la page suivante, comme l’exigent les numéros de ligne et les titres marginaux écrits avant leur ligne. Un élément de maquette de titre qui se trouve dans le canal (un numéro de chapitre ancré dans la marge extérieure) est lui aussi tenu à l’écart de la pile (voir [Hauteur réservée](/fr/docs/configuration-headings#hauteur-réservée)). Les flottants et encadrés `span: 'page'` traversent toujours les deux colonnes, et un flottant de colonne avec `placement.captionSide` met sa légende dans le canal, au niveau de la figure. Combiné à des marges en miroir et à `sideColumnSide: 'outer'`, le canal se place au bord extérieur de chaque page : la colonne marginale d’un manuel. Depuis postext 1.28, une figure ou un tableau placé dans le texte (`position: 'here'`) avec `captionSide` met lui aussi sa légende dans le canal (`inlineCaptionSide`).
 
 - **`'multiple'`** : de trois à huit colonnes égales, autant que l’indique `columnCount` (3 par défaut) : la grille des journaux et de nombreux magazines (depuis postext 1.18). Chaque colonne mesure `(content width − (n − 1) × gutterWidth) / n` de large. Le texte passe d’une colonne à la suivante comme dans une mise en page à deux colonnes ; le filet entre colonnes est tracé dans chaque gouttière, l’équilibrage des colonnes égalise toutes les colonnes sur la page de clôture d’un chapitre et avant un encadré sur toute la largeur de la page, les notes de bas de page fonctionnent dans chaque colonne, et les figures, encadrés et titres sur toute la largeur de la page traversent la page entière. Une figure ou un encadré flottant peut ne prendre qu’une partie des colonnes : `placement.columns` (voir [Types de ressources](/fr/docs/configuration-resources#types-de-ressources)) et le `columns` d’un style d’encadré. Un `columnCount` hors de 3–8, ou non entier, est arrondi et ramené au nombre valide le plus proche (une valeur qui n’est pas un nombre prend 3), et les `configWarnings` du document portent `{ kind: 'columnCountClamped', path: 'layout.columnCount', value, used }` (le chemin de la `layout` propre à un style de titre nomme le style, comme dans `headingStyles[1].layout.columnCount`). Une mise en page d’un autre type ne lit jamais cette valeur. Un style de titre dont la `layout` vaut `'multiple'` prend le `columnCount` du document sauf s’il définit le sien, si bien qu’un journal composé sur cinq colonnes peut composer ses pages d’opinion sur quatre.
 
-## En-têtes et pieds de page
-
-Les propriétés `header` et `footer` règlent les emplacements d’en-tête et de pied de page de chaque page. En-têtes et pieds de page sont rendus **à l’intérieur des marges existantes** : ils ne réservent aucun espace supplémentaire et ne réduisent pas la zone de contenu.
-
-**Cadre du conteneur.** Un élément ancré à `'container'` est placé dans la bande de marge comprise entre le corps du texte et le bord de coupe, sur toute la largeur de la zone de contenu. Le conteneur de l’en-tête va du **haut de la coupe** jusqu’au haut du corps ; celui du pied de page, du bas du corps jusqu’au **bas de la coupe**. Les ancres `top-*` d’un en-tête et `bottom-*` d’un pied de page se mesurent donc depuis le bord de coupe, tandis que les ancres `bottom-*` d’un en-tête et `top-*` d’un pied de page se mesurent depuis le bord du corps. Le conteneur n’inclut jamais le fond perdu ni la bande des traits de coupe, si bien qu’un en-tête ou un pied de page tombe au même endroit sur la page rognée, que `page.cutLines` soit activé ou non. Ancrez l’élément à `'page'` (la zone de coupe) ou à `'bleed'` pour dépasser la largeur de la zone de contenu ou atteindre le fond perdu.
-
-Les emplacements suivent le modèle unifié des **emplacements de design** : chaque élément a un `placement` doté d’une `anchor` (au conteneur, ou à un autre élément par `#id`), d’un `offset` facultatif et d’une `size` facultative. Les anciens champs à plat `align`, `marginFromBody`, `marginFromEdge` et `width: 'full'` sont toujours acceptés en entrée et migrés automatiquement vers la nouvelle forme ; la description équivalente dans la nouvelle forme est documentée plus bas.
-
-Chaque emplacement contient une liste d’éléments **texte**, **filet** et **boîte**. L’ordre du tableau est l’ordre de peinture (le premier élément est peint en premier, le dernier par-dessus tous les autres). Cela vaut quelles que soient les ancres : un élément peut s’ancrer à un élément listé après lui (`anchor.to: '#ttl'`), de sorte qu’une boîte de fond peut venir en premier et être tout de même positionnée par rapport au texte derrière lequel elle se trouve.
-
-**Valeurs par défaut intégrées.** Lorsque `header` ou `footer` vaut `undefined`, postext applique une valeur par défaut intégrée raisonnable plutôt qu’un emplacement vide :
-
-- **En-tête par défaut :** `{title}` aligné à droite sur les pages impaires, `{chapterTitle}` aligné à gauche sur les pages paires, et un filet sur toute la largeur, le tout dans la couleur principale de la palette, en Open Sans 8 pt/600, `marginFromBody` `16pt` (texte) / `13pt` (filet).
-- **Pied de page par défaut :** `{pageNumber}` centré sur chaque page, dans la couleur principale de la palette, en Open Sans 8 pt/600, `marginFromBody` `16pt`.
-
-Pour renoncer aux valeurs par défaut intégrées, définissez `header: { elements: [] }` (ou `footer: { elements: [] }`). Un tableau `elements` vide explicite est conservé comme « aucun élément » : seul `undefined` déclenche les valeurs par défaut.
-
-<table>
-  <thead>
-    <tr>
-      <th>Propriété</th>
-      <th>Type</th>
-      <th>Défaut</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>elements</code></td>
-      <td><code>HeaderFooterElement[]</code></td>
-      <td>valeurs par défaut intégrées si <code>undefined</code> ; <code>[]</code> les désactive</td>
-      <td>Liste ordonnée d’éléments texte et filet.</td>
-    </tr>
-  </tbody>
-</table>
-
-### Éléments de texte
-
-Les éléments de texte affichent une chaîne modèle dont les variables sont remplacées. Les variables s’écrivent `{name}` ; `{{` et `}}` produisent des accolades littérales.
-
-Les valeurs par défaut du tableau ci-dessous sont celles d’un élément de texte que vous ajoutez vous-même. L’en-tête et le pied de page intégrés décrits plus haut sous **Valeurs par défaut intégrées** sont des éléments tout faits avec leurs propres valeurs (Open Sans 8 pt/600 dans la couleur principale de la palette), et non les valeurs par défaut de l’élément.
-
-<table>
-  <thead>
-    <tr>
-      <th>Propriété</th>
-      <th>Type</th>
-      <th>Défaut</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>kind</code></td>
-      <td><code>'text'</code></td>
-      <td>—</td>
-      <td>Discriminant.</td>
-    </tr>
-    <tr>
-      <td><code>id</code></td>
-      <td><code>string</code></td>
-      <td>—</td>
-      <td>Identifiant stable, unique dans l’emplacement. Les autres éléments s’y ancrent avec <code>anchor.to: '#id'</code>. Le Sandbox en attribue un à la création.</td>
-    </tr>
-    <tr>
-      <td><code>content</code></td>
-      <td><code>string</code></td>
-      <td><code>''</code></td>
-      <td>Chaîne modèle. Accepte les variables listées ci-dessous, plus <code>{'{attr.<key>}'}</code> : un attribut écrit sur la ligne du H1 du chapitre courant (<code># Title {'{author="I. Zango"}'}</code>). Un attribut absent donne une chaîne vide, sans avertissement. Un saut de ligne, ou les deux caractères <code>\n</code> écrits dans le modèle ou dans la valeur d’un attribut, commence toujours une nouvelle ligne, quel que soit <code>overflow</code>. Le texte qu’une variable copie du document (un titre, un champ du frontmatter) s’imprime tel qu’il est écrit : là, seul un vrai saut de ligne, comme une coupure de titre, commence une nouvelle ligne.</td>
-    </tr>
-    <tr>
-      <td><code>align</code></td>
-      <td><code>'left' | 'center' | 'right' | 'justify' | 'start' | 'end'</code></td>
-      <td><code>'center'</code></td>
-      <td>Alignement horizontal des lignes dans la boîte de l’élément. <code>'justify'</code> étire les espaces entre mots de chaque ligne coupée, sauf la dernière de chaque paragraphe, pour que la ligne remplisse la boîte ; les lignes voisines d’une lettrine remplissent la place à côté d’elle. Avec <code>hyphenate</code>, un mot qui ne tient pas dans le reste d’une ligne justifiée est aussi coupé à une syllabe pour la remplir. La dernière ligne d’un paragraphe, une ligne sans espace à étirer et un texte qui ne passe pas à la ligne sont composés au fer à gauche. Le texte justifié est mis en page paragraphe par paragraphe, si bien que plusieurs lignes vides entre deux paragraphes comptent pour une seule. Le canvas et le PDF placent chaque mot là où la mise en page l’a mis ; le HTML élargit les espaces avec <code>word-spacing</code>. <code>'start'</code> et <code>'end'</code> suivent la <code>direction</code> du texte : la droite et la gauche d’un texte écrit de droite à gauche. <code>'left'</code> et <code>'right'</code> sont les côtés propres de la boîte ; dans un design composé dans le flux d’une page de droite à gauche (une bande d’ouverture, un design de titre), le flux est inversé en miroir : ce sont donc son début et sa fin, comme dans le texte courant.</td>
-    </tr>
-    <tr>
-      <td><code>direction</code></td>
-      <td><code>'ltr' | 'rtl' | 'auto'</code></td>
-      <td>celle du document</td>
-      <td>Direction de base du texte : la place de ses caractères neutres, l’ordre de ses segments sur une ligne et le sens des côtés <code>'start'</code> et <code>'end'</code>. <code>'auto'</code> lit la première lettre forte du texte résolu et se rabat sur la <a href="/fr/docs/configuration-text#sens-du-texte"><code>direction</code></a> du document. Les segments arabes et hébreux se lisent de droite à gauche quelle que soit la base. Un texte qui contient une lettre arabe n’est jamais interlettré (<code>letterSpacing</code> est ignoré pour tout le texte) et ses mots ne sont jamais coupés lors du passage à la ligne ou de la troncature ; un mot plus large que la boîte déborde et est signalé comme <code>unbreakableWordOverflow</code>.</td>
-    </tr>
-    <tr>
-      <td><code>parity</code></td>
-      <td><code>'all' | 'odd' | 'even'</code></td>
-      <td><code>'all'</code></td>
-      <td>Pages sur lesquelles l’élément apparaît (parité du numéro de page : la page 1 est impaire).</td>
-    </tr>
-    <tr>
-      <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
-      <td><code>'all'</code></td>
-      <td>Les <em>rôles</em> de page sur lesquels l’élément apparaît, combinés avec <code>parity</code>. Après le placement, chaque page est classée comme <code>'blank'</code> (remplissage de parité ou séparateur, ou page sans contenu), <code>'part'</code> (une page de partie), <code>'opener'</code> (son premier bloc est un titre dont le niveau s’étend sur toute la page ou force un saut de page avant lui : la première page d’un chapitre) ou <code>'body'</code> (tout le reste). <code>pages: 'body'</code> masque un titre courant sur les ouvertures de chapitre ; <code>pages: 'opener'</code> n’affiche un folio que là.</td>
-    </tr>
-    <tr>
-      <td><code>fontFamily</code></td>
-      <td><code>string</code></td>
-      <td><code>'EB Garamond'</code></td>
-      <td>Famille de caractères.</td>
-    </tr>
-    <tr>
-      <td><code>fontSize</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>8 pt</code></td>
-      <td>Corps du caractère.</td>
-    </tr>
-    <tr>
-      <td><code>fontWeight</code></td>
-      <td><code>number</code></td>
-      <td><code>400</code></td>
-      <td>Graisse (100–900).</td>
-    </tr>
-    <tr>
-      <td><code>italic</code></td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-      <td>Composer ou non en italique.</td>
-    </tr>
-    <tr>
-      <td><code>color</code></td>
-      <td><code>ColorValue</code></td>
-      <td><code>#000000</code></td>
-      <td>Couleur du texte.</td>
-    </tr>
-    <tr>
-      <td><code>overflow</code></td>
-      <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td><code>'wrap'</code> dans les designs de titre et de partie, sinon <code>'ellipsis-end'</code></td>
-      <td>Ce que fait le moteur d’un texte qui dépasse la largeur disponible de l’élément. <code>'wrap'</code> répartit la ligne sur plusieurs lignes ; les variantes à points de suspension gardent chaque ligne sur une seule ligne et la tronquent avec <code>…</code> au début, au milieu ou à la fin ; <code>'clip'</code> rogne net au cadre de l’élément sans insérer de caractère. Les sauts de ligne du contenu s’appliquent dans tous les modes : les modes à points de suspension et de rognage tronquent ou rognent chaque ligne séparément. Un élément qui omet <code>overflow</code> prend la valeur par défaut de son emplacement : dans un design de titre (<code>advancedDesign.slot</code>) ou sur une page de partie (<code>parts.design</code>, <code>parts.versoDesign</code>), il passe à la ligne ; dans un titre courant, un folio ou une ligne de partie de la table des matières (<code>toc.parts.design</code>, une ligne de hauteur fixe), il se termine par <code>…</code>. Définissez <code>'wrap'</code> sur un titre courant qui peut occuper plusieurs lignes (une adresse), ou des points de suspension sur un surtitre qui doit tenir sur une ligne dans une ouverture. Une ligne coupée par des points de suspension, ou rognée avec de l’encre au-delà de la boîte, est signalée par un avertissement de contenu <code>designTextTruncated</code>, une fois par élément et par page (une fois par élément et par chapitre pour un titre courant ou un folio). Une configuration enregistrée avant postext 1.24 (<code>configVersion</code> 9 ou antérieure) est lue avec <code>'ellipsis-end'</code> sur chaque texte de titre et de partie qui n’en définit pas, afin que ses pages ne bougent pas. Un texte doté d’une <code>dropCap</code> passe à la ligne quoi que dise cette propriété ; avec <code>'clip'</code>, ses lignes sont tout de même coupées au bord d’une boîte de hauteur fixe. <code>'ellipsis-end'</code> et <code>'ellipsis-start'</code> coupent à une limite de mot (<em>The history of…</em>, et non <em>The history of th…</em>) et aucune espace ni ponctuation de liaison (virgule, deux-points, tiret, barre oblique, parenthèse ouvrante) ne touche les points de suspension. Un mot n’est coupé là où il le faut que lorsque la limite de mot, une fois cette ponctuation retirée, garderait moins de la moitié de ce qui tient : un seul mot long, ou une URL (<em>http://exampl…</em>, et non <em>http…</em>). Une espace insécable ou un trait d’union insécable (U+2011, comme dans <em>MS‑DOS</em>) n’est pas une limite de mot ; <code>'ellipsis-middle'</code> coupe n’importe où mais supprime les espaces qui l’entourent. Jusqu’à postext 1.4, tous les modes coupaient au dernier caractère qui tenait, espaces compris.</td>
-    </tr>
-    <tr>
-      <td><code>verticalAlign</code></td>
-      <td><code>'top' | 'middle' | 'bottom'</code></td>
-      <td><code>'middle'</code></td>
-      <td>Position du texte dans une boîte plus haute que ses lignes : une <code>placement.size.height</code> fixe, ou une boîte étirée par un voisin ancré. Quand les lignes sont plus hautes que la boîte (un grand chiffre dans une boîte de hauteur fixe, une <code>lineHeight</code> serrée), elles débordent du côté que l’alignement laisse libre, comme l’alignement flex de CSS : <code>'bottom'</code> garde le pied de la boîte de la dernière ligne sur le pied de la boîte et déborde en haut, <code>'middle'</code> déborde également aux deux extrémités, <code>'top'</code> au pied. Jusqu’à postext 1.4, ces lignes pendaient toujours depuis le haut, quel que soit l’alignement. Une <code>dropCap</code> se déplace avec ses lignes (jusqu’à postext 1.4, elle restait en haut d’une boîte dans laquelle <code>'middle'</code> ou <code>'bottom'</code> les faisait descendre).</td>
-    </tr>
-    <tr>
-      <td><code>lineHeight</code></td>
-      <td><code>number | Dimension</code></td>
-      <td><code>1.2</code></td>
-      <td>Interlignage des lignes de l’élément. Un nombre est un multiple de <code>fontSize</code>. Une <code>Dimension</code> est aussi acceptée, comme s’écrit tout autre interlignage de la configuration : <code>em</code> / <code>rem</code> donne le même multiple, et une longueur absolue (<code>pt</code>, <code>mm</code>, <code>px</code>…) est la distance entre lignes de base : <code>{"{ value: 15.5, unit: 'pt' }"}</code> fixe un interlignage de 15,5 pt quel que soit le corps. Toute autre valeur (zéro, un nombre négatif, une dimension mal formée) prend la valeur par défaut. Jusqu’à postext 1.4, une <code>Dimension</code> à cet endroit rendait la hauteur du design impossible à mesurer : une ouverture ne réservait alors aucune place, pas même sa <code>minHeight</code>, et le corps du texte passait sous le titre.</td>
-    </tr>
-    <tr>
-      <td><code>letterSpacing</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0</code></td>
-      <td>Approche : espace supplémentaire ajoutée après chaque caractère, espaces compris, exactement comme le <code>letter-spacing</code> de CSS. Les largeurs mesurées augmentent d’autant, si bien qu’une boîte à largeur automatique reste ajustée. Elle ne change jamais les glyphes : les ligatures de la police restent actives dans le canvas, en HTML, en EPUB et dans le PDF (jusqu’à postext 1.27, le canvas et le HTML les supprimaient du texte de design interlettré, qui sortait plus large que mesuré). Un segment hébreu est interlettré comme du texte latin ; seul un texte comportant des lettres arabes ne l’est pas. L’approche qui suit le dernier caractère d’une ligne est exclue de son alignement et d’une boîte à largeur automatique, si bien qu’un titre interlettré centré est centré sur ses lettres, qu’un titre aligné à droite finit sur le bord et que la dernière lettre d’une ligne justifiée atteint le bord (jusqu’à postext 1.4, ils se trouvaient une demi-unité d’approche, ou une unité entière, trop à gauche, et un élément ancré à droite d’un élément interlettré s’en trouvait éloigné d’une unité d’approche de plus). Une valeur négative resserre les lettres (un grand titre à 36 pt prend souvent <code>&#123; value: -0.3, unit: 'pt' &#125;</code>) et les largeurs diminuent de la même façon ; canvas, HTML et PDF la peignent à l’identique (jusqu’à postext 1.4, une valeur négative était ramenée à <code>0</code>, sans avertissement).</td>
-    </tr>
-    <tr>
-      <td><code>textTransform</code></td>
-      <td><code>'none' | 'uppercase'</code></td>
-      <td><code>'none'</code></td>
-      <td>Transformation de casse appliquée au texte résolu, variables comprises : un titre de partie composé en capitales dans la table des matières.</td>
-    </tr>
-    <tr>
-      <td><code>box</code></td>
-      <td><code>ElementBoxStyle</code></td>
-      <td>—</td>
-      <td>Fond et bordure facultatifs dessinés derrière le texte : <code>backgroundColor</code>, <code>borderColor</code>, <code>borderWidth</code>, <code>borderRadius</code> et un <code>padding</code> par côté qui agrandit la boîte au-delà du texte (voir <a href="#éléments-boîte">Éléments boîte</a> pour les champs).</td>
-    </tr>
-    <tr>
-      <td><code>dropCap</code></td>
-      <td><code>&#123; lines, fontFamily, fontWeight, fontSize, color, gap &#125;</code></td>
-      <td>—</td>
-      <td>Lettrine : la première lettre composée en grand à côté des <code>lines</code> premières lignes (2 par défaut), dans sa propre police, sa propre graisse et sa propre couleur, à <code>gap</code> du texte. La lettre repose sur la ligne de base de la dernière ligne qu’elle couvre, et <code>fontSize</code> vaut par défaut le corps qui aligne son sommet sur les capitales de la première ligne : le corps du texte plus <code>lines</code> − 1 interlignes, les capitales étant comptées pour 0,72 du corps d’une lettre (une police dont les capitales sont nettement plus hautes ou plus basses demande une <code>fontSize</code> à elle). Un texte avec lettrine passe à la ligne quel que soit son <code>overflow</code> ; avec <code>'clip'</code>, ses lignes sont tout de même coupées au bord d’une boîte de hauteur fixe. Une <code>color</code> liée à la palette suit les palettes de partie et de section comme le reste du design. Dans un design de titre, la lettre ne réserve aucune place sous le texte : la partie de sa boîte de ligne située sous sa ligne de base ne repousse pas le corps du texte. Une lettre qui descend sous sa ligne de base (un Q ou un J dans beaucoup de polices) peut alors empiéter sur l’espace situé sous le design : donnez au titre une <code>marginBottom</code> pour cela. Jusqu’à postext 1.4, le corps par défaut rendait la lettre aussi haute que toutes les boîtes de ligne qu’elle couvre, si bien que son sommet dépassait la première ligne ; un <code>overflow</code> autre que <code>'wrap'</code> supprimait la lettre sans avertissement ; une palette de section ou de partie laissait sa couleur inchangée ; et une lettre aussi profonde que le texte voisin pouvait repousser le corps du texte d’une ligne de grille. Les configurations enregistrées auparavant gardent le corps de 1.4, écrit sous forme de <code>fontSize</code> (voir <a href="/fr/docs/configuration-programmatic-usage#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>). Une lettrine dans le texte courant se règle plutôt depuis les styles de paragraphe et de titre (voir <a href="/fr/docs/configuration-text#lettrines">Lettrines</a>), ses hauteurs de capitales étant mesurées sur les polices.</td>
-    </tr>
-    <tr>
-      <td><code>paragraphIndent</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0</code></td>
-      <td>Retrait de première ligne de chaque paragraphe après le premier. Un saut de ligne dans le contenu, ou les deux caractères <code>\n</code> pour un texte issu d’une valeur d’attribut, sépare les paragraphes ; plusieurs sauts de ligne consécutifs comptent pour un seul.</td>
-    </tr>
-    <tr>
-      <td><code>hyphenate</code></td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-      <td>Si <code>true</code> et que le texte passe à la ligne (<code>overflow: 'wrap'</code>, ou une <code>dropCap</code>, qui passe toujours à la ligne), les mots longs qui déborderaient encore après un saut de ligne normal sont coupés aux limites de syllabe (selon la langue de césure active du document), avec un trait d’union conditionnel à la coupure. Dans un texte justifié (<code>align: 'justify'</code>), un mot qui ne tient pas dans le reste d’une ligne est aussi coupé à sa dernière coupure syllabique qui tient, pour remplir la ligne.</td>
-    </tr>
-    <tr>
-      <td><code>inlineMarks</code></td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-      <td>Lit le texte résolu, valeurs des variables comprises, comme du Markdown en ligne : <code>**bold**</code>, <code>*italic*</code>, <code>^superscript^</code>, <code>~subscript~</code>. Désactivé, les marqueurs s’impriment tels quels. Dans un design de titre, <code>{'{titleText}'}</code> garde alors les segments en gras, en italique, en exposant et en indice du titre lui-même (<code>*Pneumocystis*</code>, <code>CO~2~</code>), ses autres caractères étant échappés pour s’imprimer tels quels (depuis postext 1.19). Voir <a href="#marques-en-ligne-et-contours">Marques en ligne et contours</a>.</td>
-    </tr>
-    <tr>
-      <td><code>stroke</code></td>
-      <td><code>&#123; width, color?, hollow? &#125;</code></td>
-      <td>—</td>
-      <td>Contour tracé autour des lettres : <code>width</code> (une <code>Dimension</code>, centrée sur les bords des glyphes), <code>color</code> (par défaut, la couleur du texte ; une lettrine prend sa propre couleur) et <code>hollow</code> (<code>true</code> ne peint que le contour). Voir <a href="#marques-en-ligne-et-contours">Marques en ligne et contours</a>.</td>
-    </tr>
-    <tr>
-      <td><code>writingMode</code></td>
-      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
-      <td><code>'horizontal-tb'</code></td>
-      <td><code>'vertical-rl'</code> compose le texte de haut en bas, les lignes de droite à gauche, les caractères debout : un titre courant le long de la marge extérieure, un titre vertical à côté d’un chapitre horizontal. Voir <a href="#éléments-de-texte-vertical">Éléments de texte vertical</a>.</td>
-    </tr>
-    <tr>
-      <td><code>reserve</code></td>
-      <td><code>boolean</code></td>
-      <td><code>true</code></td>
-      <td>Designs de titre uniquement : indique si l’élément compte dans la hauteur que le titre réserve dans le flux du texte. <code>false</code> pour une décoration qui peut passer sous le texte (un sceau en pied de page, un cadre, une bande latérale). Voir <a href="/fr/docs/configuration-text#hauteur-réservée">Hauteur réservée</a>. Les designs d’en-tête, de pied de page et de partie l’ignorent.</td>
-    </tr>
-    <tr>
-      <td><code>marginFromBody</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>6 pt</code></td>
-      <td>Distance absolue entre le bord de l’élément tourné vers le corps et le bord du corps. Indépendante des autres éléments. Migrée vers <code>placement.offset.y</code>.</td>
-    </tr>
-    <tr>
-      <td><code>marginFromEdge</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0 pt</code></td>
-      <td>Retrait horizontal depuis le bord de contenu aligné. Ne s’applique que si <code>align</code> vaut <code>'left'</code> ou <code>'right'</code>. Migré vers <code>placement.offset.x</code>.</td>
-    </tr>
-    <tr>
-      <td><code>placement</code></td>
-      <td><code>ElementPlacement</code></td>
-      <td>dérivé de <code>align</code> + <code>marginFromBody</code> + <code>marginFromEdge</code></td>
-      <td>Placement avancé (voir plus bas). S’il est défini, il prime sur les anciens champs à plat.</td>
-    </tr>
-  </tbody>
-</table>
-
-Variables disponibles :
-
-- `{pageNumber}` : numéro de la page courante, à partir de 1.
-- `{totalPages}` : nombre total de pages du document. Dans un livre mis en page chapitre par chapitre (le Sandbox, `buildBundle`), chaque chapitre est un document : c’est donc le nombre de pages du chapitre lui-même.
-- `{bookTotalPages}` : nombre total de pages du livre entier, tous les chapitres et toutes les pages blanches compris. Pour un document mis en page seul, il est égal à `{totalPages}`. Voir [Nombre de pages du livre](#nombre-de-pages-du-livre) plus bas.
-- `{title}`, `{subtitle}`, `{author}`, `{publishDate}` : valeurs lues dans `content.metadata`. Une métadonnée inconnue ou vide donne une chaîne vide (et lève un avertissement dans le Sandbox).
-- `{chapterTitle}` : texte du dernier H1 situé sur la page courante ou avant elle. Un H1 dont le [style de titre](/fr/docs/configuration-styles#styles-de-titre) définit `runningChapter: false` (une planche, une carte) est ignoré.
-- `{chapterTitleAtTop}`, `{chapterNumberAtTop}` : titre et numéro du chapitre en cours en haut de la page, qui diffèrent de `{chapterTitle}` et de `{chapterNumber}` sur une page où un nouveau chapitre commence sous d’autre texte. Voir [Chapitre en haut de la page](#chapitre-en-haut-de-la-page) plus bas.
-- `{partTitle}`, `{partNumber}` : titre et numéro de la partie courante (la dernière page `:::part` située sur la page courante ou avant elle ; les pages blanches de parité placées juste avant une page de partie lui appartiennent déjà). Vides avant la première partie.
-- `{firstMark.<key>}`, `{lastMark.<key>}` : premier et dernier mot-repère de la page, soit un titre d’un niveau donné (`h1`–`h6`), soit une entrée d’un style de paragraphe. Voir [Mots-repères](#mots-repères-première-et-dernière-marque) plus bas.
-
-#### Nombre de pages du livre
-
-`{bookTotalPages}` imprime le nombre de pages du livre entier, celui qu’un lecteur voit dans « page 12 sur 348 ». Il compte les pages physiques, pages blanches comprises, comme `{totalPages}`, mais sur l’ensemble des chapitres :
-
-- **Un document mis en page seul** (`buildDocument` sans `continuation`) constitue le livre entier : `{bookTotalPages}` est égal à `{totalPages}`.
-- **`buildBundle`** met le livre en page, additionne les pages de chaque chapitre et le remet en page une fois avec ce total, si bien que tous les chapitres impriment le même nombre. Ce nombre ne déplace jamais un saut de page : un tour de plus suffit donc ; une configuration qui n’imprime pas `{bookTotalPages}` ne coûte rien.
-- **Le Sandbox** transmet le total à chaque chapitre dès que les pages de tous les chapitres sont connues. D’ici là, un chapitre imprime le nombre de pages jusqu’à sa propre fin. L’export du livre entier de l’onglet PDF compte les pages qu’il met en page : lorsqu’un chapitre a imprimé un autre nombre, parce que ses pages n’étaient pas encore connues, il remet le livre en page une fois de plus avec le nombre auquel les chapitres sont arrivés.
-- **Un hôte qui met lui-même les chapitres en page** passe le total dans `continuation.bookPageCount` (pour le premier chapitre aussi). Sans cela, `{bookTotalPages}` compte les pages jusqu’à la fin du document (`continuation.pageIndexOffset` plus ses propres pages), ce qui n’est juste que pour le dernier chapitre.
-
-```ts
-footer: {
-  elements: [{
-    kind: 'text', id: 'folio', content: '{pageNumber} / {bookTotalPages}',
-    fontSize: { value: 8, unit: 'pt' },
-    placement: { anchor: { to: 'container', edge: 'top' }, size: { width: 'auto', height: 'auto' } },
-  }],
-}
-```
-
-`configUsesPlaceholder(config, 'bookTotalPages')` indique à un hôte si le calcul de ce nombre en vaut la peine.
-
-#### Mots-repères : première et dernière marque
-
-Un dictionnaire imprime dans son titre courant le premier et le dernier mot-vedette de chaque page (« Aback – Anchor ») ; un ouvrage de référence, la première et la dernière section. `{firstMark.<key>}` et `{lastMark.<key>}` les impriment. La clé désigne ce qui marque une page :
-
-- **`h1` à `h6`** : un titre de ce niveau. La marque est son texte, sans le numéro.
-- **Un identifiant de style de paragraphe** (`entry`) : un paragraphe d’un conteneur `:::paragraphs{style="entry"}`. La marque est le segment en gras qui ouvre le paragraphe, le mot-vedette, sans sa ponctuation finale : `**Aback.** Said of…` marque `Aback`. Un paragraphe qui ne commence pas par du gras ne pose aucune marque.
-
-`{firstMark.<key>}` est la première marque qui commence sur la page et `{lastMark.<key>}` la dernière. Une page sur laquelle aucune marque ne commence (une longue entrée qui se poursuit) imprime pour les deux la marque en vigueur, la dernière avant elle. Les pages qui précèdent la première marque n’impriment rien ; dans un livre mis en page chapitre par chapitre, il s’agit de la première marque du chapitre, car les marques ne passent pas d’un chapitre au suivant. Un titre ou un paragraphe coupé entre deux pages ne marque que la page où il commence. La clé s’écrit après le point en lettres, chiffres, `_` et `-`, et commence par une lettre ou par `_` ; une clé inconnue n’imprime rien.
-
-```md
-:::paragraphs{style="entry"}
-**Aback.** Said of the sails when pressed back against the mast.
-
-**Abaft.** Towards the stern, or behind a given point.
-:::
-```
-
-```ts
-header: {
-  elements: [{
-    kind: 'text', id: 'guide', content: '{firstMark.entry} – {lastMark.entry}',
-    fontSize: { value: 8, unit: 'pt' },
-    placement: { anchor: { to: 'container', edge: 'bottom' }, size: { width: 'auto', height: 'auto' } },
-  }],
-}
-```
-
-Les mots-repères sont des titres courants : ils se résolvent dans les emplacements d’en-tête et de pied de page (y compris le `header` et le `footer` d’un style de titre) et n’impriment rien dans les designs de titre, de partie et de table des matières ; dans les designs de titre et de partie, le panneau Vérifications les signale comme variables inconnues. Pour afficher le premier mot-vedette sur les versos et le dernier sur les rectos, donnez à deux éléments `parity: 'even'` et `parity: 'odd'`. Un H1 dont le style de titre définit `runningChapter: false` ne pose aucune marque `h1`.
-
-#### Chapitre en haut de la page
-
-`{chapterTitle}` et `{chapterNumber}` nomment le dernier chapitre commencé sur la page ou avant elle. Dans un livre dont les chapitres s’enchaînent sans saut de page, une page qui termine un chapitre et commence le suivant près de son pied porte alors le titre du nouveau chapitre au-dessus d’un texte qui appartient encore à l’ancien. `{chapterTitleAtTop}` et `{chapterNumberAtTop}` nomment plutôt le chapitre en cours en haut de la page, comme le font les romans aux chapitres enchaînés et de nombreux ouvrages de référence :
-
-- une page dont le premier bloc est le H1 d’un chapitre nomme ce chapitre ;
-- toute autre page nomme le chapitre qui s’y poursuit, même lorsqu’un nouveau chapitre commence plus bas ;
-- une page blanche ajoutée pour la parité va avec la page qui la suit, et le séparateur des modes `always-*` avec la page qui le précède (voir [Appartenance des pages blanches](/fr/docs/configuration-text#à-qui-appartiennent-les-pages-blanches)) ; lorsque la page qui suit une page blanche de parité s’ouvre sur la fin d’un chapitre, et non sur son H1, la page blanche garde elle aussi ce chapitre ;
-- un H1 avec `runningChapter: false` est ignoré.
-
-```ts
-header: {
-  elements: [{
-    kind: 'text', id: 'chapter', content: '{chapterTitleAtTop}', parity: 'odd', pages: 'body',
-    fontSize: { value: 8, unit: 'pt' },
-    placement: { anchor: { to: 'container', edge: 'bottom-right' }, size: { width: 'auto', height: 'auto' } },
-  }],
-}
-```
-
-Comme les mots-repères, ces deux variables sont des titres courants : elles se résolvent dans les emplacements d’en-tête et de pied de page et n’impriment rien dans les designs de titre, de partie et de table des matières. `{attr.<key>}` lit toujours le dernier chapitre commencé.
-
-#### Alignement induit par le bord d’ancrage
-
-Lorsque le `placement.anchor.to` d’un élément de texte désigne un autre élément par `#id`, le bord d’ancrage induit un alignement de texte par défaut pour les lignes coupées :
-
-- `right-of` et `align-left` induisent `align: 'left'` : les lignes coupées partent de l’ancre vers la droite.
-- `left-of` et `align-right` induisent `align: 'right'` : les lignes coupées se serrent contre le côté le plus proche de la cible d’ancrage.
-
-L’éditeur de titres du Sandbox applique automatiquement ces alignements induits lorsque vous changez le bord ou la cible d’ancrage. Ils gardent un texte coupé sur plusieurs lignes visuellement ancré à l’élément auquel il se rapporte (de sorte que, par exemple, le « P » d’un « Postext » coupé s’aligne verticalement sous le « I » d’« Introduction »).
-
-#### Marques en ligne et contours
-
-Par défaut, un élément de texte compose son texte dans une seule police : `**`, `^` et les autres marqueurs Markdown s’impriment tels quels. Avec `inlineMarks: true`, le texte résolu est lu comme du Markdown en ligne, avec les mêmes marques que le texte courant (voir **Format du document → Mise en forme en ligne**) :
-
-- `**bold**` applique la graisse 700 (ou la `fontWeight` propre de l’élément si elle est plus forte) ; `*italic*` inverse l’inclinaison de l’élément, si bien que l’emphase à l’intérieur d’un élément en italique ressort en romain ; `***both***` fait les deux. Les formes avec tiret bas (`__bold__`, `_italic_`) fonctionnent aussi.
-- `^superscript^` et `~subscript~` sont composés à 58 % du corps, l’exposant surélevé d’un tiers de celui-ci et l’indice abaissé de 0,15 ; un indice et un exposant qui se touchent (`T~0~^2^`) sont superposés, comme dans le corps du texte.
-- Une barre oblique inverse compose le caractère marqueur lui-même (`\*`, `\_`, `\^`, `\~`). Un lien garde son texte ; les accents graves du code sont supprimés.
-
-Les marques sont lues une fois les variables remplies, si bien qu’une valeur peut en contenir : une ligne d’auteurs dans un attribut de titre reçoit ses numéros d’affiliation en exposant. Le passage à la ligne, la justification, les modes à points de suspension, `dropCap` et `paragraphIndent` fonctionnent tous sur le texte marqué ; chaque segment garde la couleur de l’élément.
-
-```json
-{ "kind": "text", "id": "authors", "content": "{attr.authors}", "inlineMarks": true, "overflow": "wrap",
-  "fontSize": { "value": 11, "unit": "pt" },
-  "placement": { "anchor": { "to": "#title", "edge": "below" }, "offset": { "y": { "value": 6, "unit": "pt" } } } }
-```
-
-```md
-# Snow cover and river flow {authors="Ana Ruiz^1^, Luis Gil^2^ and Marta Sanz^1,3^"}
-```
-
-`stroke` trace un contour autour des lettres : `width` est l’épaisseur du trait, centrée sur les bords des glyphes (une moitié tombe à l’intérieur des lettres, l’autre à l’extérieur ; la largeur mesurée du texte ne change pas), `color` vaut par défaut la couleur du texte, et `hollow: true` laisse les lettres sans remplissage pour ne montrer que le contour : un grand chiffre détouré, un titre qui se détache sur une photographie. Le contour est peint par-dessus le remplissage, de la même façon dans le canvas, en HTML (`-webkit-text-stroke`) et dans le PDF (mode de rendu du texte 2, ou 1 s’il est évidé).
-
-```json
-{ "kind": "text", "id": "year", "content": "1863", "fontFamily": "Bitter", "fontSize": { "value": 120, "unit": "pt" }, "fontWeight": 700,
-  "color": { "hex": "#1d3557", "model": "hex" },
-  "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
-  "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
-```
-
-Dans le PDF, les segments en gras et en italique incorporent les polices correspondantes de la famille de l’élément : le fournisseur de polices doit donc les fournir.
-
-#### Valeurs par défaut du texte et pièges de l’ancrage
-
-Un élément de texte que vous écrivez vous-même part de ces valeurs, dont certaines surprennent :
-
-- **`overflow` suit l’emplacement.** Dans un design de titre ou sur une page de partie, un long titre passe sur plusieurs lignes ; dans un titre courant, un folio ou une ligne de partie de la table des matières, un texte trop large pour sa place est ramené à une ligne terminée par `…`. Définissez `overflow: 'wrap'` sur un titre courant qui peut s’allonger (une adresse, une signature), et consultez les avertissements `designTextTruncated` pour repérer les textes coupés. Un saut de ligne dans le contenu (un retour à la ligne, ou `\n` dans le modèle ou dans une valeur d’attribut) commence une nouvelle ligne dans tous les modes ; les modes à points de suspension coupent chaque ligne séparément.
-- **`align` vaut `'center'` et `verticalAlign` vaut `'middle'`.** Un élément à largeur automatique s’ajuste à sa ligne la plus longue, si bien que ses lignes sont centrées les unes par rapport aux autres ; définissez `align: 'left'` pour un bloc au fer à gauche (un élément à largeur automatique ancré à un autre élément aligne de lui-même ses lignes du côté de son ancre, voir plus haut).
-- **La police est EB Garamond 8 pt, en noir, `lineHeight` 1,2**, quelle que soit celle du texte courant. Contrairement aux autres interlignages de la configuration, la `lineHeight` d’un texte de design est en général un simple multiple (`1.2`) ; une `Dimension` fonctionne aussi (voir plus haut).
-
-Un élément sans `placement.size.width` (ou avec `'auto'`) prend la taille de son texte, mais seulement dans la place comprise entre son point d’ancrage et le bord du conteneur vers lequel il s’étend : pour une ancre `top` ou `bottom`, deux fois la distance au bord le plus proche. Son `offset` compte. Un décalage qui l’éloigne de ce bord ne coûte rien : un titre courant ancré `top-left` avec un `x` négatif (qui déborde dans la marge de gauche) ne perd aucune place, car il s’étend vers la droite. Un décalage vers ce bord réduit la place d’autant (du double pour une ancre `top` ou `bottom`), et un décalage qui pousse l’ancre au-delà du bord n’en laisse aucune : une ancre `top-right` dont le `x` est inférieur à moins la largeur du conteneur, ou une ancre `top` déplacée latéralement de plus de la moitié de cette largeur. Sans place, un mode à points de suspension n’imprime rien et `'wrap'` empile un caractère par ligne. Trois façons d’en sortir :
-
-- donnez à l’élément une `size.width` fixe : les largeurs fixes ne sont jamais bridées ;
-- ancrez-le à `'page'` ou à `'bleed'`, ce qui fait de la page (ou du fond perdu) le cadre de sa place ;
-- ancrez-le au bord opposé du conteneur.
-
-Le conteneur d’un en-tête va du haut de la coupe jusqu’au corps, et celui d’un pied de page du corps jusqu’au bas de la coupe : dans un en-tête, les ancres `top-*` se mesurent depuis le bord de coupe et les ancres `bottom-*` depuis le corps, et l’inverse dans un pied de page (voir **Cadre du conteneur** plus haut). Un en-tête ou un pied de page ne déplace jamais le texte courant et se peint par-dessus : un élément poussé dans la zone du corps recouvre donc le texte. Une bande d’ouverture, à l’inverse, se peint sous le texte courant ; la place qu’elle prend dans le flux est décrite sous [Hauteur réservée](/fr/docs/configuration-text#hauteur-réservée).
-
-### Éléments de texte vertical
-
-Un élément de texte avec `writingMode: 'vertical-rl'` est composé verticalement dans un emplacement dont le texte est horizontal : les titres courants et les folios de n’importe quel livre, qui restent sur la feuille, et tous les designs d’une page horizontale. Il est mis en page comme un texte horizontal dans son propre cadre tourné d’un quart de tour dans le sens horaire, puis ramené sur la page :
-
-- Sa boîte reste là où le placement la met. Sa hauteur est la longueur d’une ligne : `size.height` la fixe (ou `'auto'`, la longueur du texte ; `'fill'`, jusqu’au bord du conteneur), `size.width` fixe le nombre de lignes qui tiennent en travers, et `size.maxWidth` plafonne la longueur d’une ligne.
-- `align` place les lignes le long de la boîte (`'left'` en haut), `verticalAlign` en travers (`'top'` à droite, là où se trouve la première ligne), et le padding d’une boîte reste du côté pour lequel il est écrit.
-- Les caractères sont mesurés et peints comme dans une page verticale : les caractères han debout, un cadratin chacun, la ponctuation sous sa forme verticale, les mots latins couchés, les nombres courts dans une seule case (`cjk.uprightDigits`). Le canvas, le PDF et le HTML le placent dans le même rectangle.
-- Avec `inlineMarks: true`, les marques d’orientation isolent un segment comme dans le corps du texte : `第:tcy[3.0]回` compose 3.0 dans une seule case, `:upright[GDP]` met les lettres debout l’une sous l’autre, `:sideways[…]` couche un segment ; une ligne ne se coupe jamais à l’intérieur de l’une d’elles. Un élément horizontal les ignore.
-- Aucune lettrine n’est composée sur un élément vertical.
-- Dans le flux d’une page verticale (une ouverture, une page de partie, un titre d’encadré), le texte descend déjà, et `writingMode` n’y change rien.
-
-Les livres chinois verticaux placent leurs titres courants et leurs folios à l’un de trois endroits ([clreq §7.2](https://www.w3.org/TR/clreq/#x7-2-page-headers-footers-etc) ; [JLREQ §2.6](https://www.w3.org/TR/jlreq/#running_heads_and_page_numbers) pour le japonais) :
-
-<table>
-  <thead>
-    <tr><th>Convention</th><th>Emplacement</th><th>Comment le régler</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Tête et pied horizontaux</td><td>Au-dessus et au-dessous du bloc de texte, comme dans les livres horizontaux ; c’est le plus courant.</td><td>L’en-tête et le pied de page tels quels.</td></tr>
-    <tr><td>Marge extérieure (style 中缝, 邊峰 à Taïwan)</td><td>Le long de la marge extérieure : le titre du chapitre ou du livre à partir d’environ quatre caractères sous la tête du bloc de texte, le folio se terminant environ cinq caractères au-dessus de son pied, en chiffres chinois, à environ 80 % du corps du texte.</td><td>Deux éléments verticaux ancrés à <code>'outer'</code>, ci-dessous.</td></tr>
-    <tr><td>Coin extérieur du pied</td><td>Le folio en pied de page, dans le coin extérieur (règles de Taïwan pour les livres 中式).</td><td>Un élément horizontal dans le pied de page à <code>'bottom-left'</code> avec <code>parity: 'odd'</code> et un autre à <code>'bottom-right'</code> avec <code>parity: 'even'</code> dans un livre relié à droite (l’inverse dans un livre relié à gauche).</td></tr>
-  </tbody>
-</table>
-
-Voici les titres en marge extérieure tels que le Sandbox les ajoute (**En-tête › Titres en marge extérieure (vertical)**), ici pour un texte courant de 10 pt (le Sandbox les compose à 80 % du corps du texte) :
-
-```json
-{
-  "page": { "pageNumbering": { "format": "trad-chinese-informal" } },
-  "header": { "elements": [
-    { "kind": "text", "id": "head", "content": "{chapterTitle}", "writingMode": "vertical-rl",
-      "fontSize": { "value": 8, "unit": "pt" }, "overflow": "clip", "align": "left",
-      "placement": { "anchor": { "to": "outer", "edge": "top" }, "offset": { "y": { "value": 4, "unit": "em" } } } },
-    { "kind": "text", "id": "folio", "content": "{pageNumber}", "writingMode": "vertical-rl",
-      "fontSize": { "value": 8, "unit": "pt" }, "overflow": "clip", "align": "left",
-      "placement": { "anchor": { "to": "outer", "edge": "bottom" }, "offset": { "y": { "value": -5, "unit": "em" } } } }
-  ] }
-}
-```
-
-`anchor.to: 'outer'` (voir [Placement des éléments](#placement-des-éléments)) désigne la marge extérieure de chaque page : les deux éléments descendent donc le long du bord gauche d’un recto et du bord droit d’un verso dans un livre relié à droite (`page.binding`). `{pageNumber}` s’imprime dans le format de numérotation des pages : `trad-chinese-informal` donne 一百零三 en page 103, `cjk-decimal` 一〇三. Les règles propres à chaque emplacement s’appliquent toujours : `pages: 'body'` tient un titre courant à l’écart des ouvertures de chapitre. Un court ornement entre le titre courant et le folio (une queue de poisson ︻, un filet) est un élément ordinaire ancré au même cadre.
-
-Dans le VDT, un bloc vertical porte `vertical` (`VDTDesignTextBlock.vertical` : la région, les chiffres debout et l’axe central de chaque famille) ; ses lignes sont exprimées dans le cadre tourné propre au bloc, `xOffset` vers le bas depuis le haut de la boîte, `baselineY` vers la gauche depuis son bord droit. Un segment d’une ligne marquée porte `tcy` ou `orientation`, comme un segment du corps du texte.
-
-### Éléments filet
-
-Les éléments filet tracent une ligne : horizontale en travers de l’emplacement, ou verticale de haut en bas.
-
-<table>
-  <thead>
-    <tr>
-      <th>Propriété</th>
-      <th>Type</th>
-      <th>Défaut</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>kind</code></td>
-      <td><code>'rule'</code></td>
-      <td>—</td>
-      <td>Discriminant.</td>
-    </tr>
-    <tr>
-      <td><code>id</code></td>
-      <td><code>string</code></td>
-      <td>—</td>
-      <td>Identifiant stable, unique dans l’emplacement, pour les références <code>anchor.to: '#id'</code>.</td>
-    </tr>
-    <tr>
-      <td><code>direction</code></td>
-      <td><code>'horizontal' | 'vertical'</code></td>
-      <td><code>'horizontal'</code></td>
-      <td>Un filet horizontal s’étend sur <code>placement.size.width</code> (<code>'fill'</code> = jusqu’au bord du conteneur) et a une hauteur de <code>thickness</code>. Un filet vertical descend sur <code>placement.size.height</code> (<code>'fill'</code> ou non défini = jusqu’au bord du conteneur) et a une largeur de <code>thickness</code> : un séparateur entre un titre courant et un folio.</td>
-    </tr>
-    <tr>
-      <td><code>color</code></td>
-      <td><code>ColorValue</code></td>
-      <td><code>#000000</code></td>
-      <td>Couleur du trait.</td>
-    </tr>
-    <tr>
-      <td><code>thickness</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0.5 pt</code></td>
-      <td>Épaisseur du trait. Un filet qui l’omet est tracé à la valeur par défaut (jusqu’à postext 1.4, il ne peignait rien).</td>
-    </tr>
-    <tr>
-      <td><code>width</code></td>
-      <td><code>Dimension | 'full'</code></td>
-      <td><code>'full'</code></td>
-      <td><code>'full'</code> couvre la zone de contenu ; une Dimension limite la ligne à une longueur fixe positionnée par <code>align</code>.</td>
-    </tr>
-    <tr>
-      <td><code>align</code></td>
-      <td><code>'left' | 'center' | 'right'</code></td>
-      <td><code>'center'</code></td>
-      <td>Alignement lorsque <code>width</code> ne vaut pas <code>'full'</code>.</td>
-    </tr>
-    <tr>
-      <td><code>marginFromBody</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>6 pt</code></td>
-      <td>Distance absolue entre le bord du filet tourné vers le corps et le bord du corps. Indépendante des autres éléments.</td>
-    </tr>
-    <tr>
-      <td><code>marginFromEdge</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0 pt</code></td>
-      <td>Retrait horizontal depuis le bord de contenu aligné. Ne s’applique que si <code>width</code> est une <code>Dimension</code> fixe et si <code>align</code> vaut <code>'left'</code> ou <code>'right'</code>.</td>
-    </tr>
-    <tr>
-      <td><code>parity</code></td>
-      <td><code>'all' | 'odd' | 'even'</code></td>
-      <td><code>'all'</code></td>
-      <td>Pages sur lesquelles le filet apparaît.</td>
-    </tr>
-    <tr>
-      <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
-      <td><code>'all'</code></td>
-      <td>Rôles de page sur lesquels le filet apparaît (voir le champ <code>pages</code> des éléments de texte).</td>
-    </tr>
-    <tr>
-      <td><code>reserve</code></td>
-      <td><code>boolean</code></td>
-      <td><code>true</code></td>
-      <td>Designs de titre uniquement : indique si le filet compte dans la hauteur que le titre réserve dans le flux du texte (voir <a href="/fr/docs/configuration-text#hauteur-réservée">Hauteur réservée</a>).</td>
-    </tr>
-    <tr>
-      <td><code>placement</code></td>
-      <td><code>ElementPlacement</code></td>
-      <td>dérivé de <code>align</code> + <code>marginFromBody</code> + <code>marginFromEdge</code></td>
-      <td>Placement avancé (voir <a href="#placement-des-éléments">Placement des éléments</a>). <code>size.width</code> / <code>size.height</code> fixent la longueur du filet ; <code>width: 'fill'</code> correspond à l’ancien <code>'full'</code>.</td>
-    </tr>
-  </tbody>
-</table>
-
-### Éléments boîte
-
-Les éléments boîte peignent un rectangle aux coins arrondis dans l’emplacement : un fond derrière le texte d’une ouverture de chapitre, d’un encart latéral ou d’un pied de page, par exemple. Les éléments boîte se positionnent exclusivement par le champ `placement` ; ils n’ont pas d’ancienne forme abrégée à plat. Le remplissage, le trait et le rayon des coins se trouvent dans l’objet imbriqué `style` (`ElementBoxStyle`), comme dans l’exemple JSON de « Placement des éléments ».
-
-<table>
-  <thead>
-    <tr>
-      <th>Propriété</th>
-      <th>Type</th>
-      <th>Défaut</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>kind</code></td>
-      <td><code>'box'</code></td>
-      <td>—</td>
-      <td>Discriminant.</td>
-    </tr>
-    <tr>
-      <td><code>id</code></td>
-      <td><code>string</code></td>
-      <td>—</td>
-      <td>Identifiant stable, unique dans l’emplacement. Les éléments voisins s’y ancrent avec <code>anchor.to: '#id'</code>. Le Sandbox en attribue un à la création.</td>
-    </tr>
-    <tr>
-      <td><code>style.backgroundColor</code></td>
-      <td><code>ColorValue</code></td>
-      <td><code>transparent</code></td>
-      <td>Couleur de remplissage. Réglez-la sur <code>transparent</code> pour une boîte réduite à son contour.</td>
-    </tr>
-    <tr>
-      <td><code>style.borderColor</code></td>
-      <td><code>ColorValue</code></td>
-      <td><code>transparent</code></td>
-      <td>Couleur du trait.</td>
-    </tr>
-    <tr>
-      <td><code>style.borderWidth</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0 pt</code></td>
-      <td>Épaisseur du trait. Les traits sont peints à l’intérieur du rectangle englobant de la boîte afin que ses dimensions extérieures restent constantes : le bord extérieur du trait suit le bord de la boîte, et une boîte arrondie garde son rayon extérieur. Un trait aussi large que la boîte la remplit. Canvas, HTML et PDF le dessinent à l’identique (jusqu’à postext 1.4, le canvas et le PDF centraient le trait sur le bord, une moitié hors de la boîte).</td>
-    </tr>
-    <tr>
-      <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
-      <td><code>0 pt</code></td>
-      <td>Rayon des coins. Limité à la moitié du plus petit côté au moment du rendu.</td>
-    </tr>
-    <tr>
-      <td><code>placement</code></td>
-      <td><code>ElementPlacement</code></td>
-      <td>—</td>
-      <td>Obligatoire. Voir « Placement des éléments » ci-dessous.</td>
-    </tr>
-    <tr>
-      <td><code>parity</code></td>
-      <td><code>'all' | 'odd' | 'even'</code></td>
-      <td><code>'all'</code></td>
-      <td>Pages sur lesquelles la boîte apparaît.</td>
-    </tr>
-    <tr>
-      <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
-      <td><code>'all'</code></td>
-      <td>Rôles de page sur lesquels la boîte apparaît (voir le champ <code>pages</code> des éléments de texte).</td>
-    </tr>
-    <tr>
-      <td><code>reserve</code></td>
-      <td><code>boolean</code></td>
-      <td><code>true</code></td>
-      <td>Designs de titre uniquement : indique si la boîte compte dans la hauteur que le titre réserve dans le flux du texte (voir <a href="/fr/docs/configuration-text#hauteur-réservée">Hauteur réservée</a>).</td>
-    </tr>
-  </tbody>
-</table>
-
-### Éléments image
-
-Un élément `image` dessine une ressource bitmap ou SVG du document : le logo d’un éditeur sur une page de titre, une marque dans un titre courant. Sa taille vient de son `placement.size` : si l’un des côtés `width` / `height` est laissé à `'auto'` (la valeur par défaut), l’autre suit les proportions de l’image ; si les deux sont définis, l’image est ajustée dans la boîte et centrée. Une ressource absente ou qui n’est pas une image ne dessine rien.
-
-```ts
-{
-  kind: 'image', id: 'logo', resourceId: 'logo-publisher',
-  placement: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: { value: 64, unit: 'mm' }, y: { value: 233, unit: 'mm' } }, size: { width: { value: 83, unit: 'mm' }, height: 'auto' } },
-}
-```
-
-`resourceId` accepte les variables que prend le `content` d’un élément de texte, si bien qu’un même design peut dessiner une image différente pour chaque titre. Avec `resourceId: '{attr.vignette}'` dans un style de titre, `# Chapter I {style="opener" vignette="log"}` dessine la ressource `log` et `# Chapter II {style="opener" vignette="wig"}` dessine `wig` : les chapitres partagent le style au lieu d’en avoir un clone par image. Un en-tête ou un pied de page lit les attributs du chapitre de la page, comme le fait `{attr.<key>}` dans un titre courant, et les autres variables fonctionnent aussi (`'map-{chapterNumber}'`). Un identifiant qui ressort vide, par exemple pour un titre sans l’attribut, ne dessine rien. Depuis postext 1.8.
-
-<table>
-  <thead>
-    <tr>
-      <th>Propriété</th>
-      <th>Type</th>
-      <th>Défaut</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>id</code></td>
-      <td><code>string</code></td>
-      <td>—</td>
-      <td>Identifiant stable ; d’autres éléments peuvent s’y ancrer sous la forme <code>#id</code>.</td>
-    </tr>
-    <tr>
-      <td><code>resourceId</code></td>
-      <td><code>string</code></td>
-      <td>—</td>
-      <td>Identifiant d’une <code>Resource</code> bitmap ou SVG du document. Il peut contenir des variables, dont <code>&#123;attr.&lt;key&gt;&#125;</code>, remplies par titre, par partie ou par page.</td>
-    </tr>
-    <tr>
-      <td><code>decorative</code></td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-      <td>L’image n’est qu’une décoration (un ornement, une bande) : elle ne fournit aucun texte alternatif à la sortie, même si sa ressource en a un (voir plus bas).</td>
-    </tr>
-    <tr>
-      <td><code>placement</code></td>
-      <td><code>ElementPlacement</code></td>
-      <td>—</td>
-      <td>Ancre, décalage et taille (voir <a href="#placement-des-éléments">Placement des éléments</a>). Un côté <code>'fill'</code> s’étend jusqu’au bord du conteneur.</td>
-    </tr>
-    <tr>
-      <td><code>parity</code>, <code>pages</code></td>
-      <td>comme ci-dessus</td>
-      <td><code>'all'</code></td>
-      <td>Pages sur lesquelles l’image apparaît.</td>
-    </tr>
-    <tr>
-      <td><code>reserve</code></td>
-      <td><code>boolean</code></td>
-      <td><code>true</code></td>
-      <td>Designs de titre uniquement : indique si l’image compte dans la hauteur que le titre réserve dans le flux du texte (voir <a href="/fr/docs/configuration-text#hauteur-réservée">Hauteur réservée</a>).</td>
-    </tr>
-  </tbody>
-</table>
-
-Le moteur de rendu PDF incorpore la ressource comme une figure (un SVG doté d’un original d’impression utilise celui-ci) ; la visionneuse HTML la résout par <code>resourceImageUrl</code>.
-
-Une image dessinée par un design est du contenu lorsque sa ressource la décrit : l’`altText` de la ressource, ou à défaut sa légende en texte brut (une pastille lue par son libellé, un `:ref` par son `text` s’il en a un), entre dans le VDT (`VDTDesignImageBlock.altText`), devient l’`alt` de son `<img>` en HTML et une `Figure` avec `/Alt` dans un PDF balisé, lue juste après le texte de son design (la planche d’un chapitre après le titre du chapitre). Une image dont la ressource n’a ni l’un ni l’autre, ou qui est marquée `decorative`, est une décoration : `alt=""` avec `role="presentation"`, et un artefact dans le PDF. L’image d’un titre courant ou d’un pied de page se répète sur chaque page : elle relève donc de l’habillage de la page, quoi que dise sa ressource : pas d’`altText` dans le VDT, `alt=""` avec `role="presentation"` en HTML, un artefact de la page dans le PDF.
-
-### Placement des éléments
-
-`ElementPlacement` est le modèle de positionnement unifié qu’utilisent tous les types d’éléments (texte, filet, boîte) dans n’importe quel emplacement de design : en-tête de page, pied de page ou emplacement de design avancé d’un niveau de titre. Trois données décrivent un placement :
-
-```ts
-interface ElementPlacement {
-  /** What this element anchors to and which edge of that target. */
-  anchor: {
-    to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = the slot; page = trim box; bleed = trim box + bleed; outer = the outer margin (header, footer); #id = another element
-    edge: AnchorEdge;
-  };
-  /** Distance from the anchor point. */
-  offset?: { x?: Dimension; y?: Dimension };
-  /** Optional fixed width / height. Width also accepts 'fill' (span the slot).
-   *  `maxWidth` caps an 'auto' width (text): the element still shrink-wraps its
-   *  content, so elements anchored to it stay attached, but a long text wraps or
-   *  ellipsizes there — a running head can reserve room for the label hanging
-   *  off it instead of squeezing that label out. */
-  size?: { width?: Dimension | 'fill' | 'auto'; height?: Dimension | 'fill' | 'auto'; maxWidth?: Dimension };
-}
-```
-
-`AnchorEdge` accepte :
-
-- **Bords du conteneur** (lorsque `anchor.to` vaut `'container'`, `'page'` ou `'bleed'`) : `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right`.
-- **Bords relatifs à un élément** (lorsque `anchor.to === '#someId'`) : `right-of`, `left-of`, `below`, `above`, `align-top`, `align-bottom`, `align-left`, `align-right`.
-
-Chaque bord relatif à un élément place un coin de l’élément sur un coin de l’élément auquel il s’ancre, et `offset` le déplace à partir de là :
-
-- `right-of` : son coin supérieur gauche sur le coin supérieur droit de la cible (à côté d’elle, sommets alignés) ; `left-of` : son coin supérieur droit sur le coin supérieur gauche de la cible ;
-- `below` : son coin supérieur gauche sur le coin inférieur gauche de la cible (en dessous, bords gauches alignés) ; `above` : son coin inférieur gauche sur le coin supérieur gauche de la cible ;
-- `align-top` et `align-left` : son coin supérieur gauche sur le coin supérieur gauche de la cible. Les deux noms donnent le même placement : les bords supérieurs comme les bords gauches s’alignent ;
-- `align-bottom` : son coin inférieur gauche sur le coin inférieur gauche de la cible ;
-- `align-right` : son coin supérieur droit sur le coin supérieur droit de la cible.
-
-Un bord relatif à un élément utilisé avec `'container'`, `'page'` ou `'bleed'`, et un bord de conteneur utilisé avec `'#id'`, sont lus comme le coin supérieur gauche.
-
-`anchor.to: 'page'` ancre l’élément à la **zone de coupe** (la page physique après rognage) et `'bleed'` à la zone de coupe agrandie de `cutLines.bleed` de chaque côté (identique à la zone de coupe tant que les traits de coupe sont désactivés). Ces deux cadres servent aussi de référence pour `size: 'fill'` et pour la limitation automatique de la largeur, si bien qu’une bande de couleur peut aller d’un bord à l’autre quelles que soient les marges de la page :
-
-```json
-{ "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
-```
-
-Avec les traits de coupe activés, tout ce qu’un élément peint au-delà de la zone de fond perdu est rogné (voir [Traits de coupe](#traits-de-coupe)).
-
-`anchor.to: 'outer'` (emplacements d’en-tête et de pied de page) ancre l’élément à la **marge extérieure** de la page : du bord du bloc de texte au bord de coupe, du côté opposé au dos, et de la tête du bloc de texte à son pied. Elle se trouve à droite d’un recto et à gauche d’un verso dans un livre relié à gauche, et inversement dans un livre relié à droite (`page.binding`), si bien qu’un seul élément sert aux deux pages d’une double page : un titre courant le long de la marge extérieure, par exemple (voir [Éléments de texte vertical](#éléments-de-texte-vertical)). Dans tout autre emplacement, elle se lit comme `'container'`. L’`offset` d’un élément de texte peut s’écrire en `em`, c’est-à-dire en cadratins de sa propre `fontSize` : quatre caractères sous la tête du bloc de texte s’écrivent `{ "y": { "value": 4, "unit": "em" } }`.
-
-Dans l’emplacement de design avancé d’un titre, les éléments ancrés à la page ou au fond perdu n’augmentent pas la hauteur réservée au titre, sauf s’ils descendent sous le bord supérieur du titre (une bande en haut de la page se place derrière l’ouverture ; une bande qui descend sous le titre repousse le texte courant). Utilisez `advancedDesign.minHeight` pour réserver malgré tout une hauteur d’ouverture fixe, et `reserve: false` sur un élément qui ne doit pas du tout repousser le texte. Les règles complètes se trouvent sous [Hauteur réservée](/fr/docs/configuration-text#hauteur-réservée).
-
-Chaque élément a un `id` stable (attribué automatiquement par le Sandbox ; vous pouvez aussi le définir à la main). Les éléments ancrés à d’autres éléments forment un petit graphe de dépendances que le moteur résout avant la mesure, si bien qu’un élément peut s’enchaîner à un autre sans coordonnées manuelles.
-
-L’ancienne forme `align` + `marginFromBody` + `marginFromEdge` est analysée en entrée et réécrite en placement au moment de la résolution de la configuration : les configurations existantes continuent donc de fonctionner sans changement.

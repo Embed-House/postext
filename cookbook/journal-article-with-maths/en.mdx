@@ -16,7 +16,7 @@ A research article from the September issue of *Measure*, a fictional open-acces
 
 ### 1 · Start MathJax and number the equations
 
-The code is [the short answer](#the-short-answer) above. [Maths](/en/docs/configuration-text#math) is set by MathJax, which ships inside the package: `initMathEngine` is imported from `https://esm.sh/postext` with every other symbol, and `await initMathEngine()` has to run before the first build, or every formula paints as a grey box. From then on `$…$` sets inline maths and `$$…$$` display maths, and `renderToPdf` writes each formula as vector paths. A `\tag{1}` at the end of a display formula numbers it: the formula takes the width of its column, with the equation centred and the number flush right on its line. The numbers are typed by hand here, and the text cites them as written, “Eq. (6)”.
+The code is [the short answer](#the-short-answer) above. [Maths](/en/docs/configuration-lists-math#math) is set by MathJax, which ships inside the package: `initMathEngine` is imported from `https://esm.sh/postext` with every other symbol, and `await initMathEngine()` has to run before the first build, or every formula paints as a grey box. From then on `$…$` sets inline maths and `$$…$$` display maths, and `renderToPdf` writes each formula as vector paths. A `\tag{1}` at the end of a display formula numbers it: the formula takes the width of its column, with the equation centred and the number flush right on its line. The numbers are typed by hand here, and the text cites them as written, “Eq. (6)”.
 
 ### 2 · Draw the title block from a heading style
 

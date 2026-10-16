@@ -18,7 +18,7 @@ Cuatro páginas, en inglés, del manual de identidad del Metro de Alba, una red 
 
 <Excerpt region="build" />
 
-La composición mide cada palabra con las fuentes de `document.fonts`, así que `loadBrandFonts()`, en [la respuesta corta](#la-respuesta-corta), descarga cada archivo una sola vez, guarda los bytes y registra con ellos un `FontFace` antes de llamar a `buildDocument`. El `kitFonts` del kit solo descarga de Fontsource, y una marca sirve sus archivos desde su propio servidor. `renderToPdf` pide las variantes que pintan las páginas, y `brandFontProvider` responde a cada petición con los bytes ya descargados; a un peso o una cursiva que la marca no tenga le daría el archivo más cercano de la misma familia ([¿Por qué un proveedor de fuentes?](/es/docs/configuration-programmatic-usage#por-qué-un-proveedor-de-fuentes)). El PDF incrusta los seis archivos que midió el canvas, una vez cada uno.
+La composición mide cada palabra con las fuentes de `document.fonts`, así que `loadBrandFonts()`, en [la respuesta corta](#la-respuesta-corta), descarga cada archivo una sola vez, guarda los bytes y registra con ellos un `FontFace` antes de llamar a `buildDocument`. El `kitFonts` del kit solo descarga de Fontsource, y una marca sirve sus archivos desde su propio servidor. `renderToPdf` pide las variantes que pintan las páginas, y `brandFontProvider` responde a cada petición con los bytes ya descargados; a un peso o una cursiva que la marca no tenga le daría el archivo más cercano de la misma familia ([¿Por qué un proveedor de fuentes?](/es/docs/configuration-pdf-output#por-qué-un-proveedor-de-fuentes)). El PDF incrusta los seis archivos que midió el canvas, una vez cada uno.
 
 ### 2 · El sistema de color es una sola lista
 
@@ -42,7 +42,7 @@ Un tipo de recurso admite un `captionStyle` parcial, y estos dos solo cambian el
 
 <Excerpt region="bundle" />
 
-`createBundle` lee `config.customFonts`, busca en `files` los bytes de cada variante por su `fileId` y los guarda en `fonts/`, con una entrada `fonts` en el manifiesto. La familia de rótulos lleva `redistributable: false`, que aquí simula una licencia que no deja repartir los archivos (la de Big Shoulders Display, la OFL, sí lo permite). Su archivo se queda fuera y `warnings` nombra la familia. El archivo de 81 KB contiene el capítulo, la configuración, los tres dibujos y cinco archivos de fuente. La composición nunca lee `customFonts`, y sin él las páginas salen iguales ([Crear un paquete](/es/docs/configuration-programmatic-usage#crear-un-paquete)).
+`createBundle` lee `config.customFonts`, busca en `files` los bytes de cada variante por su `fileId` y los guarda en `fonts/`, con una entrada `fonts` en el manifiesto. La familia de rótulos lleva `redistributable: false`, que aquí simula una licencia que no deja repartir los archivos (la de Big Shoulders Display, la OFL, sí lo permite). Su archivo se queda fuera y `warnings` nombra la familia. El archivo de 81 KB contiene el capítulo, la configuración, los tres dibujos y cinco archivos de fuente. La composición nunca lee `customFonts`, y sin él las páginas salen iguales ([Crear un paquete](/es/docs/configuration-bundles#crear-un-paquete)).
 
 ## Variantes
 

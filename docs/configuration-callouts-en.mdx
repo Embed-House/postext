@@ -1,0 +1,414 @@
+{/* docs/configuration-callouts-en.mdx */}
+
+export const metadata = {
+  title: 'Configuration: callout boxes',
+  sidebarTitle: 'Callout boxes',
+  description: 'Named styles for :::callout boxes: frame, fill, stripe, title, icon and marker, numbered statements, typography inside the box and boxes split across pages',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '25 min',
+  order: 16,
+  parent: 'configuration',
+  plainSummary: "This page covers the boxes that set a note, a tip, a warning or a list of goals apart from the text. You give each kind of box a name and a look: its background, its border, a coloured stripe, a title and an icon. A box can carry a number, as a theorem or an example does in a textbook. You choose the fonts inside the box. When a long box goes on to the next page, you choose what marks the break.",
+};
+
+# Configuration: callout boxes
+
+
+## Callout styles
+
+The `calloutStyles` property declares the named box styles a document applies with a `:::callout{type="…"}` container — notes, tips, warnings, learning objectives, any content set apart from the running text in a tinted or bordered box. One neutral style, `note`, ships by default (light grey background, no border, no stripe, no icon, no title), so `:::callout` works without any configuration; declaring `calloutStyles` replaces that default list.
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [
+    { id: 'note', name: 'Note' },
+    {
+      id: 'objectives',
+      name: 'Learning objectives',
+      title: 'Objectives',
+      stripe: { enabled: true, side: 'left' },
+      icon: { kind: 'glyph', glyph: '✓' },
+      titleStyle: { textTransform: 'uppercase' },
+      lists: { bulletChar: '–' },
+    },
+    {
+      id: 'warning',
+      title: 'Warning',
+      backgroundEnabled: false,
+      border: { enabled: true, color: { hex: '#AA0000', model: 'hex' }, width: { value: 1, unit: 'pt' } },
+      borderRadius: { value: 1, unit: 'mm' },
+      titleStyle: { color: { hex: '#AA0000', model: 'hex' } },
+    },
+  ],
+};
+```
+
+```md
+:::callout{type="objectives"}
+- Describe the parts of the lantern.
+- Trim the wick at dusk.
+:::
+
+:::callout{type="warning" title="Do not touch the lens"}
+The glass stays hot for an hour after the flame is out.
+:::
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Identifier selected by <code>:::callout&#123;type="…"&#125;</code>. A fence with an unknown or missing <code>type</code> uses the first configured style (the sandbox flags unknown types).</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Human-readable name (editor UI only).</td>
+    </tr>
+    <tr>
+      <td><code>title</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>Default title text; empty means no title. The fence <code>title</code> attribute overrides it per instance.</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>'column' | 'page' | 'side'</code></td>
+      <td><code>'column'</code></td>
+      <td>Horizontal extent: the column, the full content width, or the float-only side column of a one-and-a-half layout (<code>layout.sideColumnRole: 'floats'</code>) — the box then leaves the flow and stacks in that column beside the text it interrupts. Overridable per instance with the <code>span</code> attribute. In multi-column layouts a <code>'page'</code> box becomes a <em>span block</em>: it splits the page into column bands and sits in its own full-width column (see the container section below). A side box its page's side column cannot hold takes the side column of the next page; where the chapter (or the document) ends first, each box still waiting is set in the side column of a page after the text, in the order of their fences, and the build reports it (<code>afterText</code>; up to postext 1.24 the boxes after the first such page were dropped).</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>How many adjacent columns a floated box (<code>placement</code> <code>'auto'</code>, <code>'top'</code> or <code>'bottom'</code>, with <code>span: 'column'</code>) takes, as <code>placement.columns</code> does for a figure: a story's box across three of a newspaper's five columns. As many columns as the page has, or more, make it a page-wide box. A box set in the flow (<code>'here'</code>) keeps to its column. Overridable per instance with the <code>columns</code> attribute. Since postext 1.18.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>'here' | 'auto' | 'top' | 'bottom' | 'fixed'</code></td>
+      <td><code>'here'</code></td>
+      <td>Where the box goes. <code>'here'</code> sets it inline in the flow; <code>'top'</code> / <code>'bottom'</code> <strong>float</strong> it like a resource (<code>'auto'</code> takes whichever band is free first, head or foot) — it leaves the flow where it occurs and takes the first free band at or after that point (the foot of the current page, or the head / foot of the next page the flow opens), and the text after it fills the page around it; <code>'fixed'</code> anchors it at page coordinates through <code>fixed</code> below, out of the column flow. See the container section for the details. Overridable per instance with the <code>placement</code> attribute.</td>
+    </tr>
+    <tr>
+      <td><code>sideAtColumnEnd</code></td>
+      <td><code>'before' | 'after'</code></td>
+      <td><code>'before'</code></td>
+      <td>Where a side box (<code>span: 'side'</code>) stands when the text after its fence does not go on in the same column: the column has no room left for it, or the break rules send it on (a paragraph the widow and orphan rules move whole, a heading kept with its text). <code>'before'</code> keeps it at its fence, on that page, beside the text before it, sliding up from the column's foot when it does not fit below the fence: the place for a gloss written after the passage it explains. <code>'after'</code> sets it level with the first line of the text after the fence, in the side column of the page where that text goes on: the place for a line number or a marginal heading written before its line. When the text goes on in the same column, both set the box at its fence. A box nothing follows in its chapter stays with the text before it either way, and side boxes fenced one after another keep their order. Up to postext 1.4 every side box behaved as <code>'before'</code>, which stays the default: a style for glosses keeps its boxes on the page of the passage they explain.</td>
+    </tr>
+    <tr>
+      <td><code>fixed</code></td>
+      <td><code>{'{ anchor?, offset? }'}</code></td>
+      <td><code>{'{ anchor: { to: \'container\', edge: \'bottom-left\' } }'}</code></td>
+      <td>Position of a <code>'fixed'</code> box: an <code>ElementAnchor</code> (<code>to</code>: <code>'container'</code> = the page content area, mirrored on even pages; <code>'page'</code> = the trim box; <code>'bleed'</code> = the bleed box; <code>edge</code>: one of the nine container edges) plus an optional <code>offset</code> (<code>x</code> / <code>y</code> dimensions).</td>
+    </tr>
+    <tr>
+      <td><code>floatBarrier</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Make the box a float barrier: every figure or table referenced before it is placed before it — in the page's free slots, else on pages opened ahead of the box — so no float escapes past a chapter's closing box (a "key points" summary, typically). Chapter openers, <code>:::part</code> and the end of the document are always barriers.</td>
+    </tr>
+    <tr>
+      <td colSpan="4">A <code>span: 'page'</code> box on a multi-column page cuts the band under the text it follows; a full-width figure referenced before it takes that cut first — the text is levelled, the figure sits right where it ended, and the box goes on below it (or to the next page when it no longer fits). A figure too tall to follow the levelled text opens the next page instead, the box after it, and the band it left still ends level. A splittable box (<code>keepTogether: false</code>) opens under the text and figure with as many items as fit, the rest continuing on the next page.</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>'fill' | 'auto'</code></td>
+      <td><code>'fill'</code></td>
+      <td><code>'fill'</code> spans the available width; <code>'auto'</code> shrink-wraps the title (badge use) and ignores the children.</td>
+    </tr>
+    <tr>
+      <td><code>backgroundEnabled</code> / <code>background</code></td>
+      <td><code>boolean</code> / <code>ColorValue</code></td>
+      <td><code>true</code> / <code>#f4f4f4</code></td>
+      <td>Box fill.</td>
+    </tr>
+    <tr>
+      <td><code>border</code></td>
+      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>false</code>, <code>#cccccc</code>, <code>0.5pt</code></td>
+      <td>Box outline, stroked inside the box edge as a box element's border is (see <a href="/en/docs/configuration-headers-footers#box-elements">Box elements</a>).</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Corner radius of the background / border (clamped to half the box's width and height). The stripe follows it: on a rounded box the stripe is clipped to the rounded frame, as CSS clips a <code>border-left</code> to <code>border-radius</code>. The <code>label</code> tab keeps square corners.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top, right, bottom, left &#125;</code></td>
+      <td><code>0.75em</code> each</td>
+      <td>Inset between the box edge and its content. <code>em</code> values are relative to the callout body size.</td>
+    </tr>
+    <tr>
+      <td><code>stripe</code></td>
+      <td><code>&#123; enabled, side, width, color &#125;</code></td>
+      <td><code>false</code>, <code>'left'</code>, <code>1.5em</code>, main colour</td>
+      <td>Solid band along one edge. A <code>'left'</code> / <code>'right'</code> stripe narrows the content; a <code>'top'</code> stripe pushes it down. <code>'left'</code> and <code>'right'</code> are sides of the body flow (in a right-to-left book <code>'left'</code> is the sheet's right); <code>'start'</code> and <code>'end'</code> follow the box's own direction, so a <code>:::callout&#123;dir=ltr&#125;</code> in an Arabic book puts a <code>'start'</code> stripe on its left. On a box with a <code>borderRadius</code> its outer corners are rounded with the frame's (up to postext 1.4 they stayed square and stuck out past the rounding).</td>
+    </tr>
+    <tr>
+      <td><code>icon</code></td>
+      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
+      <td><code>'none'</code>, headings font, <code>400</code>, <code>1.5em</code>, main colour, <code>'top'</code>, <code>'inline'</code>, <code>'right'</code></td>
+      <td>A text glyph (<code>kind: 'glyph'</code>) or a bitmap / SVG resource (<code>kind: 'resource'</code> + <code>resourceId</code>) beside the content. With a side stripe the icon is centred over the stripe; otherwise it reserves its own column (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> centres it vertically on the content. A resource image is fitted inside the square keeping its aspect ratio — or inside a <code>width</code> × <code>size</code> box when <code>width</code> is set (a wide strip of icons); an icon taller than the content grows the box to fit it (and, with <code>align: 'center'</code>, centres the content on it). <code>position: 'corner'</code> hangs the icon on a top corner as a badge, half of it past the border, taking no room from the content; a wide icon (<code>width</code>) is centred on the corner by the width it is drawn at, and on the left corner the title starts past its inner half (up to postext 1.4 it was placed by its height, so a wide strip hung past the box and over the title); <code>cornerSide</code> picks the corner — <code>'right'</code> / <code>'left'</code>, or <code>'outer'</code> / <code>'inner'</code>, which follow the page parity of mirrored margins (outer = right on a recto, left on a verso).</td>
+    </tr>
+    <tr>
+      <td><code>marker</code></td>
+      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, color, align, gap, rule &#125;</code></td>
+      <td><code>'none'</code>, headings font, <code>400</code>, <code>1.5em</code>, main colour, <code>'center'</code>, <code>0.5em</code>, rule off (<code>0.5pt</code>, main colour, length <code>0</code>)</td>
+      <td>A second icon drawn <em>outside</em> the box, in a column on its left, with an optional vertical <code>rule</code> between it and the box — the "tap here" hand beside a self-assessment badge. The frame becomes <code>[marker][rule][gap][box]</code> and as tall as the tallest of the three; <code>align</code> centres them on each other or top-aligns them. <code>rule.length</code> is a minimum: the rule always spans at least the box height.</td>
+    </tr>
+    <tr>
+      <td><code>titleStyle</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, italic, color, textTransform, gap, letterSpacing, indent, lineHeight &#125;</code></td>
+      <td>headings font, body size, <code>700</code>, <code>false</code>, main colour, <code>'none'</code>, <code>0.5em</code>, <code>0</code>, <code>0</code>, <code>1.2em</code></td>
+      <td>Title typography. <code>gap</code> is the space between the title and the first child (and the icon column gap). <code>lineHeight</code> is the leading of the title's lines, <code>em</code> counting the title's own size; the baseline sits 0.8 of it down each line, as in running text, so a title on the body leading (<code>lineHeight: 12pt</code> over a 12 pt grid) keeps a box a whole number of lines and its title on the grid, where the default 1.2 em adds a fraction of a line to every box. <code>textTransform: 'uppercase'</code> is length-preserving. <code>letterSpacing</code> tracks the title (canvas <code>letterSpacing</code> / PDF <code>Tc</code>); <code>indent</code> pushes it right of the box's inner edge. A corner badge hanging on the title's side (the left corner) reserves its own room first — the badge's inner half plus <code>gap</code> — so the title clears it whichever page it lands on; <code>indent</code> only adds beyond that.</td>
+    </tr>
+    <tr>
+      <td><code>body</code></td>
+      <td><code>&#123; fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight, italic, smallCaps, textAlign, hyphenation, paragraphSpacing, firstLineIndent, tabStops, tabInterval &#125;</code></td>
+      <td>inherits <code>bodyText</code>; <code>italic</code> / <code>smallCaps</code> <code>false</code></td>
+      <td>Typography of the paragraphs and list items inside the box. Every field inherits the body text when unset; <code>italicColor</code> sets the colour of italic runs (a pull quote in italics in the box's colour). <code>fontWeight</code> / <code>boldFontWeight</code> set the weights of the regular and bold runs; <code>italic</code> sets the box in italics, with <code>*…*</code> runs turning upright; <code>smallCaps</code> sets it in small capitals; <code>tabStops</code> and <code>tabInterval</code> replace the body's inside the box (see <a href="/en/docs/configuration-text#tab-stops">Tab stops</a>). See <a href="#typography-inside-a-box">Typography inside a box</a> for what else the box's text takes.</td>
+    </tr>
+    <tr>
+      <td><code>lists</code></td>
+      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight &#125;</code></td>
+      <td>inherits <code>unorderedLists</code></td>
+      <td>List typography inside the box (<code>color</code>, <code>indent</code>, <code>gap</code> and <code>itemSpacing</code> also apply to ordered lists). <code>bulletFontSize</code> / <code>bulletFontWeight</code> set the bullet glyph in the box's body face at that size and weight (a heavy coloured bullet).</td>
+    </tr>
+    <tr>
+      <td><code>label</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
+      <td>unset (no tab)</td>
+      <td>A tab on the box's top edge that prints the fence's <code>label</code> attribute — the number of a numbered box ("BOX 1-1"). It hugs the <code>position</code> corner (<code>'top-right'</code> / <code>'top-left'</code>), inset by <code>inset</code>, rises <code>offset</code> above the box top (that room is part of the block, on top of <code>marginTop</code>, so the tab keeps it at a column head too), is <code>height</code> tall with <code>paddingX</code> on each side of the text, and may carry an <code>icon</code> resource beside it (<code>&#123; resourceId, width, gap &#125;</code>, on the side away from the corner) and a <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) along the top edge from the far corner up to it. Defaults: headings font, body size, <code>700</code>, white on the main colour, <code>1.4em</code> tall, <code>0.6em</code> padding. The tab is its own shape standing on the frame, so it keeps square corners whatever the box's <code>borderRadius</code>.</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5em</code></td>
+      <td>Gap between the columns of a <code>:::columns</code> group inside the box (see the container section below).</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.75em</code> / <code>0.75em</code></td>
+      <td>Space above the box (collapses with the previous block's margin) and minimum space below it (the exact space with <code>snapToGrid: false</code>). A floated box (<code>placement: 'top'</code>, <code>'bottom'</code> or <code>'auto'</code>) keeps the float gap, one body line, between its band and the text; a <code>marginBottom</code> wider than that sets the space under a box in a top band, and a wider <code>marginTop</code> the space over a box in a bottom band, rounded up to the grid with the band. Up to postext 1.4 a floated box ignored its margins.</td>
+    </tr>
+    <tr>
+      <td><code>snapToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When <code>true</code> the flow after the box snaps back to the baseline grid, so the space under it is <code>marginBottom</code> rounded up to whole grid lines. When <code>false</code> the box keeps its exact <code>marginBottom</code>, which collapses with the next block's top margin — two consecutive boxes of such a style sit exactly <code>max(marginBottom, marginTop)</code> apart — and the text after it may sit off the grid until the next snap point (a heading, the end of a list), as after a heading with <code>headings.snapToGrid: false</code>. Meant for documents made of stacked boxes (worksheets, forms). It applies to boxes in the flow; page-span boxes in a multi-column layout, floated, fixed and side boxes keep the grid, since column bands and float zones are laid out on it. The column-balancing levers are unchanged: a box closing a column is still pushed down to the column's last grid slot.</td>
+    </tr>
+    <tr>
+      <td><code>keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When <code>true</code> the box is kept whole: a callout that does not fit the remaining space moves whole to the next column or page. Only a box taller than an empty, full column — a whole page for a <code>span: 'page'</code> box — cannot be kept whole: it splits by the <code>false</code> rules below instead of overflowing, starting where it occurs, and a continuation that fits a column then moves on whole; a floated box (<code>placement: 'top' | 'bottom' | 'auto'</code>) that tall does not float but stays in the flow where it occurs. When <code>false</code> any box may break between its child blocks or between the lines of a paragraph or list item: the deepest cut that fits closes the current column (or, for a <code>span: 'page'</code> box, the page, flush with the bottom of the columns) and the rest continues at the top of the next one in a box of its own — same frame and stripe, no icon, and no title unless <code>repeatTitle</code> repeats it — splitting again if it is still too tall. The text of every fragment keeps the column an inline icon takes on the head, empty, so the box has one measure on every page. A cut inside a list item leaves its bullet with the head. Every fragment's frame shares the fence's <code>contentIndex</code> / <code>containerId</code> and records <code>callout.part</code> / <code>callout.continued</code>. Use it on a long closing "key points" box together with <code>headings.balancing.beforeSpan</code>, or on a note style whose boxes must never push a figure off the page. A nested box (a <code>:::callout</code> inside another) is one child of its parent: a cut may fall before or after it, and inside it only when its own style allows splitting (<code>keepTogether: false</code>, or taller than a full column), by its own <code>splitMinLines</code>.</td>
+    </tr>
+    <tr>
+      <td><code>splitMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Fewest text lines a fragment of a split box (<code>keepTogether: false</code>, or a keep-together box taller than a full column) keeps on either side of the cut. It guards text only: a side holding at least one figure, table, display formula or nested box is acceptable whatever its line count, so a box of pictures may leave a single one on a page. A cut inside a paragraph or list item still counts every line on each side (a figure or formula there as one line), and it also leaves at least <code>layout.boxChildSplitMinLines</code> lines of that paragraph or item on each side (two by default; this minimum when it is lower, so 1 allows one). With the defaults a two- or three-line item is never split and a four-line one splits only two and two. With the default no box breaks leaving a lone text line at the foot of a column or at the head of the next; when no cut satisfies the minimum the box moves whole. (Before postext 1.5 a cut inside a paragraph checked only the lines of the whole side, so a two-line item could split one and one when other lines of the box made up the minimum.)</td>
+    </tr>
+    <tr>
+      <td><code>repeatTitle</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Repeat the title at the head of every continuation of a split box, followed by <code>continuedSuffix</code> ("Key points (cont.)"). The repeat takes the title style. A box without a title repeats nothing. See <a href="#marks-on-a-split-box">Marks on a split box</a>.</td>
+    </tr>
+    <tr>
+      <td><code>continuedSuffix</code></td>
+      <td><code>string</code></td>
+      <td><code>'(cont.)'</code></td>
+      <td>Text after the repeated title, in the document language (<code>locale</code>, else the hyphenation locale), like a split table's, and joined to the title as a table's is.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerEnabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Set <code>continuesMarker</code> under the last line of every part of a split box that goes on, inside the box.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarker</code></td>
+      <td><code>string</code></td>
+      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
+      <td>Text of that marker (a screenplay's "(MORE)"), in the box's body face and size, per document language.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerAlign</code></td>
+      <td><code>'left' | 'center' | 'right'</code></td>
+      <td><code>'right'</code></td>
+      <td>Where the marker sits in the box's inner width.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerItalic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Set the marker in italics.</td>
+    </tr>
+    <tr>
+      <td><code>numbering</code></td>
+      <td><code>&#123; label, counter, numberingTemplate, resetOn, counterFormat, placement, bold, italic, suffix &#125;</code></td>
+      <td>unset</td>
+      <td>Count the boxes of this style as numbered statements: theorems, lemmas, definitions. See <a href="#numbered-statements-and-proofs">Numbered statements and proofs</a>.</td>
+    </tr>
+    <tr>
+      <td><code>endMark</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>A mark set flush right at the end of the box's last line, as a proof ends with <code>'∎'</code> or <code>'□'</code>: on the last line when it fits after a space, else on a line of its own. A box that ends in a display formula with no number takes it as the formula's tag. With maths on, the squares (∎ □ ■ ▪ ◻ ▫) are drawn from TeX's own glyphs, so a face without them (Fontsource's latin files) still prints them; with maths off they are set in the box's body face.</td>
+    </tr>
+  </tbody>
+</table>
+
+### The `:::callout` container
+
+A `:::callout{type="<id>"}` line opens the box and a bare `:::` line closes it. The fence accepts five attributes — `type` (the style id), `title` (overrides the style's title), `span`, `placement` and `columns` (override the style's values) — and the content in between is laid out inside the box: an optional title, then the paragraphs, lists, blockquotes, formulas or resource embeds, each typeset with the style's `body` / `lists` typography (headings keep their usual styles). Margins between children collapse as in the running text; the interior leaves the baseline grid, and the flow snaps back onto it after the box with at least `marginBottom` below (the grid wins; the margin is a minimum — the same convention resources follow). A style with `snapToGrid: false` keeps the exact `marginBottom` instead, and the text after the box stays off the grid until the next heading or list end. A heading immediately before a callout keeps with it.
+
+Limits in this version:
+
+- A callout is kept whole unless its style sets `keepTogether: false`. When it does not fit the remaining column space it moves whole to the next column or page — also out of an empty column that float bands or a band cap have cut short, as long as a full column would hold it. A box taller than a full column splits instead, like a splittable one; only one that no cut can split (a figure or table taller than the column, or a `splitMinLines` no cut satisfies) is placed anyway and overflows; the layout then records a `calloutOverflow` warning (`VDTDocument.warnings`), which the sandbox lists. A `:::columns` group is cut like the box around it, between its sub-columns (since postext 1.25); it stays whole, and can overflow the same way, only with `layout.flowColumns: false` or inside a nested box. A splittable box leaves the part that fits behind — whole children, or the lines of a paragraph down to `splitMinLines` on each side (a figure, table or display formula alone is enough for a side) — and continues in a box without icon on the next column or page, without the title unless the style repeats it, and optionally with a marker under the part it leaves (see [Marks on a split box](#marks-on-a-split-box)).
+- Floats yield to an unbreakable box. When the block right after a figure's reference is a `keepTogether` callout, a slot that would leave the box no column of the current band to land in (the referencing column or an empty one after it, which held it before the float) is not taken: the figure moves on to its next slot, usually the next page, and the box stays in flow — as a compositor would set it, rather than pushing the box off the page and leaving the column with the figure alone.
+- `span: 'page'` in a multi-column layout makes the box a **span block**: it is laid out at the full content width and splits the page into column bands — the text columns above it are closed at the cut line, the box takes its own full-width column, and a fresh band of text columns opens below it, so the flow continues under the box in every column. Where the columns are *level* — at the top of a page, right below a `span: 'page'` opener heading, right below another span block, or right below a top float band — the box simply cuts there. Arriving mid-page, with the columns uneven, it is set the way a compositor would: the text above it is cut level across all columns (the engine re-runs placement with the band's columns shortened to the same number of grid lines, so the text overflows from column to column naturally and every orphan, widow and keep-with-next rule still applies), the box spans the page, and the columns resume below it. The cut takes a couple of extra placement passes; when the cut line would leave no room for the box plus the widow minimum of body lines below it, or no arrangement fits after a few attempts, the box moves to the top of the next page. The text above keeps to the cut: a paragraph that cannot start in the few lines a column under a figure keeps above it goes on to the next column (the figure then stands alone in its column), and when a block would still run past the cut, the cut is taken a line lower rather than where that block ends. A split box that opens the band is cut there too, so its rest never runs past the cut. With `headings.balancing.beforeSpan` (the default) the band it leaves is cut level behind it — like a chapter's closing band — and, when the style allows splitting (`keepTogether: false`), the part of the box that fits under the levelled columns closes the page and the rest opens the next one; with `beforeSpan: false` the page it leaves is simply balanced as usual, without forcing a page break. A heading right before a span block does not travel with it. In single-column layouts `span: 'page'` is simply inline.
+- `placement: 'fixed'` takes the box out of the flow: it is laid out (`width: 'auto'` shrink-wraps the title; `'fill'` takes the width of the text column under the anchor point) and pinned to the page where it occurs in the flow at the position `fixed.anchor` / `fixed.offset` describe — the bottom-left corner of the content area by default. The text columns it covers give up that zone (cut from the bottom, or from the top when the column is still empty), exactly like a float band; when the zone already holds text, a float or a span block, the box moves to the next page. A fixed box that closes the chapter (the next block is a chapter opener, a `:::part`, a float-barrier box or the end of the document) first levels the columns above it (`headings.balancing.trailing`), so a short closing page ends level with the badge beneath. Frame and children live in `page.floats` and render outside the column clip in every backend.
+- `placement: 'top' | 'bottom'` **floats** the box like a resource: it leaves the flow where it occurs and takes the first free band after that point — the foot of the current page (`'bottom'`), or the head / foot of the next page the flow opens — at the column width (`span: 'column'`) or the full content width (`span: 'page'`); the text after it fills the page it left. Its frame and children go to `page.floats`, as a fixed box does. A floated box heading a fresh page is set before the figures waiting for that page, and a figure cited on an earlier page that then fits under it takes the rest of that page even when fewer than three text lines would remain (a gallery page: box plus figure, no text between them). A `span: 'side'` box never floats: it stacks beside the text whatever its placement. With `columns` above 1 (in the style or as the fence's attribute, since postext 1.18) a `span: 'column'` box takes that many adjacent columns: the head of a run of empty columns that start level, or the foot of the current column and of the empty ones after it, as in `:::callout{placement="top" columns="2"}`.
+- `width: 'auto'` shrink-wraps the title only; children are ignored.
+- A `:::callout` nested inside another callout is a box of its own: it is laid out with its own style (background, border, radius, padding, stripe, title, icon, marker, label, typography) at the full inner width of its parent and stacks as one child of it, its `marginTop` / `marginBottom` collapsing with its neighbours. Its `span` and `placement` (fence or style) are ignored — a nested box always flows inside its parent — and so are `floatBarrier` and `snapToGrid`. Boxes nest to any depth and may sit inside a `:::columns` group (each one whole, in one column). When the parent splits, the cut falls before or after a nested box, or inside it when the nested style allows splitting; every fragment redraws the frames it cuts through, and a nested box continued from the previous fragment drops its title and icon, like a top-level continuation.
+- A `:::columns{count=N}` … `:::` group among the children lays those children out in `N` columns of equal width, `columnGap` apart, inside the box: the run is cut at the block or line boundaries that level the columns best (a paragraph or list item cut mid-way continues at the head of the next column without its bullet), every column starts at the group's top and the group is as tall as its tallest column; the children after it return to the full width. A box that splits (`keepTogether: false`, or taller than a column) cuts inside a group too, between its columns: a snake group fills its columns in turn and goes on in the next fragment, a parallel one (`breaks`) goes on stream by stream (since postext 1.25; see [Document format › `:::columns`](/en/docs/document-format-directives#columns)). A `gap` on the fence replaces `columnGap` for that group, and `rule` draws a rule down each gutter. Use it for a two-column summary of key points, or the tables of a wide box set side by side.
+- The fence's sixth attribute, `label`, prints on the style's label tab (see `label` above) — `:::callout{type="box" label="BOX 1-1" title="The octet rule"}`; without a `label` style the attribute is ignored.
+
+In the VDT the box is a `type: 'callout'` frame block whose decoration (background, stripe, icon, title) lives on `designOverlay`, followed by its child blocks in the same column; the frame and every child carry the fence's `containerId`. A nested box is a `type: 'callout'` frame of its own among the children, followed by its blocks; they keep the top-level fence's `containerId` (placement and balancing still see one unit) and add `calloutPath`, the container ids of the nested fences around them, outermost first (a nested frame's own id is the last entry). The tagged PDF gives each nested box a `Div` inside its parent's. Icon images resolve like resource images: the canvas image registry, the HTML `resourceImageUrl` option and the PDF `resourceBytes` provider.
+
+```ts
+const resolved = resolveCalloutStylesConfig(config.calloutStyles, resolvedBodyText, resolvedHeadings, resolvedUnorderedLists, config.locale);
+// => every inherited field filled from the resolved sections; the optional
+//    locale picks the language of the continuation strings
+
+const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
+// => undefined for the built-in `note` default; static defaults dropped
+```
+
+### Numbered statements and proofs
+
+A style with `numbering` counts its boxes, as LaTeX's `amsthm` counts theorem environments (since postext 1.19). Each box prints its label and number — "**Theorem 2.**" opening its first paragraph — and the fence's `title` follows the number in parentheses: `:::callout{type="theorem" title="Bradley–Terry"}` opens with "**Theorem 2** (Bradley–Terry)**.**". A box opened with an identifier (`{#thm:main}`) is a target of cross-references, which print "Theorem 2" (`:ref{id="thm:main"}`), and `\ref{thm:main}` or `style=number` prints 2.
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>label</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>The word before the number: <code>'Theorem'</code>, <code>'Lemma'</code>, <code>'Definición'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>counter</code></td>
+      <td><code>string | false</code></td>
+      <td>the style's <code>id</code></td>
+      <td>The counter the boxes advance. Styles that name one counter share it, as <code>\newtheorem&#123;lemma&#125;[theorem]</code> does: Theorem 1, Lemma 2, Theorem 3. <code>'equation'</code> counts with the labelled equations. <code>false</code> prints the label with no number (a proof's "<em>Proof.</em>").</td>
+    </tr>
+    <tr>
+      <td><code>numberingTemplate</code> / <code>resetOn</code> / <code>counterFormat</code></td>
+      <td><code>string</code> / <code>ResourceCounterReset</code> / <code>ResourceCounterFormat</code></td>
+      <td><code>'&#123;n&#125;'</code> / <code>'never'</code> / <code>'decimal'</code></td>
+      <td>As a resource type's: <code>'&#123;h1&#125;.&#123;n&#125;'</code> with <code>resetOn: 'h1'</code> numbers Theorem 2.1, 2.2… by chapter; <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> with <code>'h2'</code> by section. A counter shared by several styles counts on whatever their templates print. A token takes a style after a colon, as a resource type's does: <code>'&#123;h1:A&#125;.&#123;n&#125;'</code> prints <em>Theorem A.1</em> in a lettered appendix.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>'runIn' | 'title'</code></td>
+      <td><code>'runIn'</code></td>
+      <td><code>'runIn'</code> opens the box's first paragraph with the label (a box that opens with a list, a formula or another box gets a paragraph for it); <code>'title'</code> makes the label the box's title, in its <code>titleStyle</code>: "Theorem 2 (Bradley–Terry)".</td>
+    </tr>
+    <tr>
+      <td><code>bold</code> / <code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code> / <code>false</code></td>
+      <td>The face of the run-in label and its suffix, whatever the box's body: an italic body (<code>body.italic</code>) keeps an upright label upright. The title in parentheses is set upright in the regular weight.</td>
+    </tr>
+    <tr>
+      <td><code>suffix</code></td>
+      <td><code>string</code></td>
+      <td><code>'.'</code></td>
+      <td>Set after the run-in label and its title.</td>
+    </tr>
+  </tbody>
+</table>
+
+A proof is a style with an unnumbered label and an end mark:
+
+```ts
+calloutStyles: [
+  { id: 'theorem', numbering: { label: 'Theorem' }, body: { italic: true } },
+  { id: 'lemma', numbering: { label: 'Lemma', counter: 'theorem' }, body: { italic: true } },
+  { id: 'definition', numbering: { label: 'Definition' } },
+  { id: 'proof', backgroundEnabled: false, endMark: '□',
+    numbering: { label: 'Proof', counter: false, bold: false, italic: true } },
+]
+```
+
+In a book laid out chapter by chapter the counters go on from the previous chapter (`LayoutContinuation.statementCounters`, which `continuationAfter` fills), and the book outline gives each numbered box's anchor its label (`OutlineEntry.numberLabel`), so a reference from another chapter prints it.
+
+### Typography inside a box
+
+A box sets its content with its own `body` and `lists` typography; everything else keeps the document's styles:
+
+- **Paragraphs** take the box's `body`: face, size, leading, colour, emphasis colours, weights, `italic`, `smallCaps`, alignment, hyphenation, indent and paragraph spacing. A field left unset inherits `bodyText`. An inherited emphasis colour keeps its palette link, so bold, italics and `:ref` labels in a box change with `colorPalette` as they do outside it. (Up to postext 1.4 bold in a box stayed `#295AA3` whatever the Main Color was.)
+- **Bullet lists** take the box's `lists` (bullet character, colour, glyph size and weight, indent, gap, item spacing) over `unorderedLists`, and their text is the box's body text. A `lists.bulletChar` or `lists.color` that differs from the document's (`unorderedLists`) replaces the bullet or colour of every level; one that repeats it, or is left unset, leaves each level its own (`unorderedLists.levels`), so nested dashes survive in the box.
+- **Ordered lists** take `lists.indent`, `gap` and `itemSpacing`, and `lists.color` whenever the style sets it — also when it is the document's bullet colour; a style that leaves it unset keeps the numbers in `orderedLists.color`. (Up to postext 1.4 the colour reached the numbers only when it differed from `unorderedLists.color`, so setting it to that very colour did nothing.) The number itself — its face, size and separator — comes from the global `orderedLists`, since `lists` has bullet fields only: style a box's numbers there.
+- **`:::paragraphs` inside a box** use their paragraph style, in nested boxes too. The fields the style leaves unset inherit the document's `bodyText`, not the box's `body` (nor its italics or small capitals).
+- **`:::columns` groups** have no style of their own: every column shares the box's body and list typography, and `columnGap` sets the gap between them.
+- **Blockquotes** take the box's body face, size and weights (italic and grey, as in the running text), and its small capitals. **Headings** keep the heading styles; **display formulas** the math settings.
+- **Figures and tables** keep the document's caption and table styles, at the box's inner width; their regular and bold weights follow the box's `body` weights.
+- **Chips** keep their chip style; an `em` size is read against the box's body size.
+- **`:::space`** is measured in the box's body lines (see [`:::space`](/en/docs/document-format-directives#space) for where it is dropped).
+- **A nested box** takes its own style in full; its `span`, `placement`, `floatBarrier` and `snapToGrid` are ignored.
+
+### Marks on a split box
+
+When a box splits across columns or pages (`keepTogether: false`, or a box taller than a column), each part after the first opens without the title and the icon, and by default nothing tells the reader that the box goes on. Two options add the marks a book or a script uses:
+
+- **`repeatTitle: true`** repeats the title at the head of every continuation, followed by `continuedSuffix` — "Key points (cont.)" by default. The repeat takes the title style, so with `textTransform: 'uppercase'` it gives a screenplay's "HAMLET (CONT'D)". The icon and the label tab stay on the first part.
+- **`continuesMarkerEnabled: true`** sets `continuesMarker` — "Continued", or "Continúa" in a Spanish document — under the last line of every part that goes on, inside the box, in the box's body face and size: italic unless `continuesMarkerItalic` is `false`, flush right unless `continuesMarkerAlign` says `'left'` or `'center'`. The marker takes room in the part it closes, and the cut is chosen so that it fits.
+
+```ts
+calloutStyles: [{
+  id: 'speech',
+  keepTogether: false,
+  titleStyle: { textTransform: 'uppercase' },
+  repeatTitle: true,
+  continuedSuffix: "(CONT'D)",
+  continuesMarkerEnabled: true,
+  continuesMarker: '(MORE)',
+  continuesMarkerAlign: 'center',
+  continuesMarkerItalic: false,
+}],
+```
+
+```md
+:::callout{type="speech" title="Hamlet"}
+A speech long enough to run over the foot of the page…
+:::
+```
+
+The part that closes the page ends with "(MORE)", and the next page opens with "HAMLET (CONT'D)". Both are pagination furniture: in an accessible PDF they are artifacts and in the HTML they are hidden from assistive technology, so the title is read once. In the VDT they are `designOverlay` text blocks flagged `artifact: true`.

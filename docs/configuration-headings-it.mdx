@@ -1,0 +1,554 @@
+{/* docs/configuration-headings-it.mdx */}
+
+export const metadata = {
+  title: 'Configurazione: titoli',
+  sidebarTitle: 'Titoli',
+  description: 'I valori predefiniti dei titoli, le personalizzazioni per livello, le interruzioni di pagina prima di un titolo, le aperture di capitolo a tutta pagina e i numeri scritti in lettere',
+  lang: 'it',
+  lastUpdated: '2026-10-16',
+  readingTime: '34 min',
+  order: 9,
+  parent: 'configuration',
+  plainSummary: "Questa pagina riguarda le impostazioni dei titoli. Dai a tutti un font, una dimensione e un colore, e puoi cambiarne uno per un solo livello, come i titoli dei capitoli. Decidi se un titolo comincia una nuova pagina e se quella pagina deve stare a sinistra o a destra. Il titolo di un capitolo può aprirsi su tutta la larghezza della pagina con un progetto grafico proprio. I numeri dei titoli possono essere scritti in lettere, come «Capitolo primo».",
+};
+
+# Configurazione: titoli
+
+
+## Titoli
+
+La proprietà `headings` controlla la tipografia di tutti i livelli di titolo (H1–H6). Puoi impostare valori predefiniti generali che valgono per tutti i livelli, e poi sovrascrivere proprietà specifiche per ciascun livello.
+
+### Valori predefiniti generali
+
+<table>
+  <thead>
+    <tr>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td><code>'Open Sans'</code></td>
+      <td>Famiglia di caratteri per tutti i titoli.</td>
+    </tr>
+    <tr>
+      <td><code>lineHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.2 em</code></td>
+      <td>Interlinea dei titoli. Più stretta di quella del testo del corpo.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Colore principale (<code>#295AA3</code>)</td>
+      <td>Colore del testo dei titoli. Collegato alla voce <code>main-color</code> della palette predefinita, quindi cambiando il colore della palette si ritingono tutti i titoli.</td>
+    </tr>
+    <tr>
+      <td><code>textAlign</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
+      <td><code>'left'</code></td>
+      <td>Allineamento di tutti i livelli di titolo (non esiste un valore per livello): a bandiera a sinistra, giustificato, centrato o a bandiera a destra. Un titolo giustificato compone l’ultima riga allineata a sinistra, come un paragrafo, quindi un titolo di una riga si legge come <code>'left'</code>. Canvas, HTML e PDF collocano le righe allo stesso modo, prefisso numerico compreso. Anche l’apertura predefinita di un titolo <code>span: 'page'</code> senza un progetto grafico avanzato lo segue (il giustificato si compone allineato a sinistra); un progetto grafico avanzato allinea i propri elementi di testo con il loro <code>align</code>.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>Peso del carattere dei titoli (100–900).</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>Spazio sopra i titoli. Viene eliminato per un titolo che apre una colonna (vedi <code>columnHeadSpace</code>).</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>Spazio sotto i titoli.</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNext</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Con <code>true</code>, un titolo non viene mai collocato come ultimo elemento di una colonna o di una pagina. Se il blocco successivo non avesse spazio per almeno <code>bodyText.widowMinLines</code> righe dopo il titolo (o per una riga quando <code>bodyText.avoidWidows</code> è <code>false</code>), il titolo viene spinto avanti così da restare unito al suo testo. Interagisce con <code>bodyText.keepColonWithList</code>: se quella regola deve spostare per intero un paragrafo che termina con i due punti, gli eventuali titoli che lo precedono nella colonna si spostano con esso invece di restare isolati.</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNextSpread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Con <code>keepWithNext</code>, permette comunque a un titolo di chiudere l’ultima colonna di testo di una pagina pari, dato che il suo testo apre allora la pagina dispari a fronte della stessa doppia pagina (JLReq §4.1.7). Le doppie pagine sono la pagina 1 da sola, poi 2–3, 4–5…, contate con <code>pageIndexOffset</code>, nei libri rilegati a sinistra come in quelli rilegati a destra. Da postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNextSplit</code></td>
+      <td><code>'rules' | 'fill'</code></td>
+      <td><code>'rules'</code></td>
+      <td>Come si divide il paragrafo sotto un titolo quando il titolo finisce al piede di una colonna e spostare per intero il paragrafo lascerebbe indietro il titolo. <code>'rules'</code>: il maggior numero di righe che entrano, purché almeno <code>bodyText.widowMinLines</code> restino sotto il titolo e almeno <code>bodyText.orphanMinLines</code> passino alla colonna successiva; quando nessuna divisione rispetta entrambe le condizioni, il titolo si sposta con il suo paragrafo, e il bilanciamento delle colonne riempie lo spazio che lascia. <code>'fill'</code>: quante più righe entrano, per poche che ne passino oltre, quindi un paragrafo di quattro righe con spazio per tre si divide 3 + 1. Fino a postext 1.4 ogni titolo si divideva così, e le configurazioni salvate prima di <code>configVersion</code> 8 mantengono questo comportamento (vedi <a href="/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti">Pacchetti scritti da postext 1.4 o precedenti</a>). Con <code>avoidWidows</code> o <code>avoidOrphans</code> disattivati, quel lato della regola viene abbandonato.</td>
+    </tr>
+    <tr>
+      <td><code>snapToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Se il flusso torna sulla griglia della linea di base sotto un titolo. Con <code>true</code> il <code>marginBottom</code> del titolo viene arrotondato per eccesso a righe intere della griglia; con <code>false</code> si mantiene il margine esatto e il testo sotto il titolo può restare fuori griglia fino al punto di allineamento successivo (la fine di un elenco, una coda di <code>:::paragraphs</code>, una formula in display), come molti libri compongono una riga e mezza sotto un titolo. Un livello (<code>levels[].snapToGrid</code>) o uno stile di titolo può impostare un valore proprio; questo è quello che ereditano.</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>Che cosa conserva del suo spazio superiore un titolo allineato alla griglia quando apre una colonna, in testa alla pagina o sotto una figura o una tabella in testa alla colonna. <code>'none'</code>: l’intero spazio viene eliminato e il titolo sta sulla prima riga della colonna, alla stessa altezza della colonna accanto; l’allineamento alla griglia mette poi sotto il titolo la frazione di riga che gli serve, quindi il suo testo può trovarsi più lontano da esso che dopo un paragrafo. <code>'remainder'</code>: lo spazio viene eliminato solo per righe intere della griglia e la frazione di riga che resta rimane sopra il titolo, così il testo sotto di esso comincia alla distanza a cui comincia dopo un paragrafo; il titolo comincia un po’ più in basso della testa della colonna e nessuna riga del testo del corpo si sposta. È adatto a un libro a una colonna, dove nessuna testa di colonna accanto mostra la differenza. Qualsiasi altro valore si legge come <code>'none'</code>. Non sotto un’apertura a tutta larghezza, e non per un titolo <code>span: 'page'</code>, <code>lineSpan</code>, nascosto o con progetto grafico (<code>advancedDesign</code>). Da postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>inlineMarks</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Se un titolo legge i suoi marcatori in linea come fa un paragrafo: <code>*italic*</code>, <code>**bold**</code>, <code>^superscript^</code>, <code>~subscript~</code>, <code>:smallcaps[…]</code> e i link. Un tratto in corsivo inverte l’inclinazione del titolo, quindi esce in tondo in un titolo in corsivo; un tratto in grassetto prende <code>bodyText.boldFontWeight</code>, o il peso proprio del titolo quando questo è più pesante. Anche l’indice riporta i tratti in grassetto e in corsivo; le testatine e i segnalibri PDF stampano solo il testo. Con <code>false</code> i marcatori vengono eliminati e le parole vengono stampate nello stile proprio del titolo, come fino a postext 1.4. Anche l’apertura predefinita di un titolo <code>span: 'page'</code> senza progetto grafico compone i tratti in grassetto, corsivo, apice e pedice; un progetto grafico del titolo (una banda di apertura progettata o un <code>advancedDesign</code> in colonna) stampa <code>{'{titleText}'}</code> come testo semplice in entrambi i casi, a meno che il suo elemento di testo non legga i marcatori in linea (<code>inlineMarks: true</code>): lì <code>{'{titleText}'}</code> mantiene i tratti in grassetto, corsivo e apice/pedice del titolo (da postext 1.19). Le configurazioni salvate in precedenza i cui titoli contengono marcatori vengono lette con <code>false</code> (vedi <a href="/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti">Pacchetti scritti da postext 1.4 o precedenti</a>).</td>
+    </tr>
+    <tr>
+      <td><code>balancing</code></td>
+      <td><code>ColumnBalancingConfig</code></td>
+      <td>attivo</td>
+      <td>Bilanciamento verticale delle colonne: spazio extra sopra i titoli perché le colonne finiscano a filo con il fondo della pagina. Vedi sotto.</td>
+    </tr>
+  </tbody>
+</table>
+
+Titoli centrati per poesie o per gli atti di un’opera teatrale, senza slot di progetto grafico:
+
+```ts
+headings: {
+  textAlign: 'center',
+  levels: [{ level: 2, textTransform: 'uppercase' }],
+}
+```
+
+Passare un oggetto `headings` mantiene tutti i valori predefiniti dei livelli che non riscrivi, compresa l’interruzione di pagina dell’H1 (vedi [Sovrascritture per livello](#sovrascritture-per-livello)).
+
+### Sovrascritture per livello
+
+Ogni livello di titolo può sovrascrivere i valori predefiniti generali tramite l’array `levels`. Per impostazione predefinita cambia solo `fontSize` (più il `breakBefore` dell’H1, indicato sotto): tutte le altre proprietà vengono ereditate dalle impostazioni generali dei titoli.
+
+<table>
+  <thead>
+    <tr>
+      <th>Livello</th>
+      <th>Corpo predefinito</th>
+      <th><code>breakBefore</code> predefinito</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>H1</td><td><code>18 pt</code></td><td><code>&#123; enabled: true, parity: 'always-odd' &#125;</code></td></tr>
+    <tr><td>H2</td><td><code>15 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H3</td><td><code>12 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H4</td><td><code>10 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H5</td><td><code>9 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H6</td><td><code>8 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+  </tbody>
+</table>
+
+Il valore predefinito dell’H1 riproduce l’impaginazione dei capitoli di un libro: ogni titolo di primo livello si apre su una pagina destra (dispari) nuova, con una pagina bianca di separazione obbligatoria dopo il capitolo precedente. Sovrascrivilo in `levels[0].breakBefore` se il tuo documento è più semplice di un libro.
+
+Il `breakBefore` di un livello si fonde campo per campo con quel valore predefinito, e un oggetto `headings` che non lo menziona lo mantiene. `{ parity: 'odd' }` sull’H1 mantiene l’interruzione e cambia solo la parità; `{ enabled: false }` lascia che i capitoli si susseguano senza interruzione:
+
+```ts
+headings: {
+  fontFamily: 'Merriweather',                               // H1 still breaks to a fresh recto (always-odd)
+  levels: [{ level: 1, breakBefore: { parity: 'odd' } }],    // …or: a recto, with no mandatory blank
+}
+
+headings: { levels: [{ level: 1, breakBefore: { enabled: false } }] } // chapters run on
+```
+
+**Cambiato in postext 1.5.** Fino a postext 1.4, qualsiasi oggetto `headings` disattivava l’interruzione dell’H1 a meno che `levels[0].breakBefore` non venisse riscritto, e un `breakBefore` parziale riempiva il campo mancante con il valore predefinito senza interruzione. Quindi una configurazione scritta in codice per la 1.4 con un oggetto `headings` e senza interruzione dell’H1 ora apre ogni capitolo su un recto nuovo, con versi bianchi dove servono. Per mantenere i capitoli di seguito, dai un campo alla voce H1 di `levels`:
+
+```ts
+headings: { fontFamily: 'Merriweather', levels: [{ level: 1, breakBefore: { enabled: false } }] } // as 1.4 laid it out
+```
+
+Dove la configurazione è stata salvata, il motore può accorgersene e lo fa per te: la Sandbox per i libri e le configurazioni che ha salvato allora (vedi **Sandbox → Persistenza**), e `openBundle` / `readBundle` per un pacchetto `.postext` scritto da postext 1.4 o precedenti (vedi [Pacchetti scritti da postext 1.4 o precedenti](/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti)). Una configurazione che hai salvato da te può passare per `migrateConfig(config)` di `postext/bundle`, che scrive esplicitamente le interruzioni che la 1.4 impaginava (`pinLegacyHeadingBreaks`): `enabled: false` su un H1 che non aveva interruzione, e `parity: 'any'` accanto a un `enabled: true` che non indicava alcuna parità, sull’H1 e sugli stili dei titoli. Fissa anche la dimensione delle formule, lo spazio attorno alle figure in linea (anche nei riquadri), i marcatori in linea dei titoli, le dimensioni dei capilettera, lo spazio sotto una riga con i due punti che introduce un elenco, le righe di un paragrafo o di una voce di elenco che lascia il taglio di un riquadro, gli a capo ai trattini, la divisione riga per riga del testo a bandiera, la divisione di un paragrafo sotto un titolo, gli a capo al trattino di una parola composta e lo spazio sotto i contenitori `:::paragraphs`, come li componeva la 1.4. Passa il markdown del libro come terzo argomento, `{ content }`, ed esclude la fissazione delle formule quando il testo non ha `$`, quelle degli intervalli quando nessuna riga incorpora una risorsa (quella dell’intervallo nei riquadri quando nessuna lo fa dentro un riquadro), quella dei marcatori dei titoli quando nessun titolo contiene un marcatore, quella della riga con i due punti quando nessun elenco segue una riga che termina con i due punti, quella del taglio dei riquadri quando il testo non apre alcun `:::callout`, quella dei trattini quando nessun trattino è composto chiuso tra due parole, quella della divisione sotto i titoli quando il testo non ha titoli, quella dei contenitori quando il testo non apre alcun contenitore `:::paragraphs`, e quella delle parole composte quando nessun trattino sta tra due lettere; la fissazione della divisione a bandiera va solo a una configurazione che compone a bandiera una parte del testo corrente, e quella dei contenitori solo a una che dichiara uno stile di paragrafo (vedi [Pacchetti scritti da postext 1.4 o precedenti](/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti)). Per le sole interruzioni, chiama `pinLegacyHeadingBreaks(config)`.
+
+Le sovrascritture per livello supportano le stesse proprietà dei valori predefiniti generali (`fontSize`, `lineHeight`, `fontFamily`, `color`, `fontWeight`, `marginTop`, `marginBottom`, `snapToGrid`) più questi campi propri dei livelli (che accetta anche uno [stile di titolo](/it/docs/configuration-styles#stili-dei-titoli)):
+
+<table>
+  <thead>
+    <tr>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Compone il titolo in corsivo. Si applica in aggiunta a <code>fontWeight</code>.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Mette in maiuscolo il titolo (un prefisso di numerazione resta come scritto, come pure un chip e l’etichetta di un <code>:ref</code> al suo interno). Conserva la lunghezza così la mappa del sorgente dell’editor resta 1:1: i caratteri la cui forma maiuscola si espande (<code>ß</code> → <code>SS</code>) restano come sono. Il titolo trasformato alimenta anche il segnaposto <code>&#123;titleText&#125;</code> dei progetti grafici avanzati e delle aperture di capitolo. I segnalibri PDF mantengono il titolo come è scritto (<em>Author contributions</em>, non <em>AUTHOR CONTRIBUTIONS</em>), come il <code>text-transform</code> del CSS lascia stare il testo vero e proprio (fino a postext 1.4 prendevano le maiuscole).</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Tracking dopo ogni glifo del titolo, spazi e prefisso di numerazione compresi, come il <code>letter-spacing</code> del CSS. Un valore positivo spazia le lettere (le maiuscole composte con <code>textTransform: 'uppercase'</code> di solito ne vogliono un po’: <code>&#123; value: 0.12, unit: 'em' &#125;</code>), uno negativo stringe un corpo da titolo. Un valore in <code>em</code> è relativo al <code>fontSize</code> del livello. Le righe del titolo vengono misurate con esso, quindi vanno a capo dove finisce il testo spaziato, e canvas, HTML e PDF lo dipingono allo stesso modo. La spaziatura tra le lettere non cambia mai i glifi: le legature del carattere (fi, fl) restano, in ogni output. Una riga centrata o allineata a destra viene collocata in base alle sue lettere: il tracking dopo l’ultimo glifo viene escluso, come nel testo di progetto grafico, così un titolo centrato si allinea con l’apertura predefinita di un titolo <code>span: 'page'</code>. Un livello disegnato dal suo <code>advancedDesign</code> lo ignora, come gli altri campi tipografici qui: ogni elemento di testo del progetto grafico ha il proprio <code>letterSpacing</code>. Lo imposta anche uno <a href="/it/docs/configuration-styles#stili-dei-titoli">stile di titolo</a>, per i titoli che lo usano. Fino a postext 1.4 i titoli non avevano tracking, e la chiave veniva scartata senza avviso.</td>
+    </tr>
+    <tr>
+      <td><code>lineSpan</code></td>
+      <td><code>number</code></td>
+      <td>non impostato</td>
+      <td>Righe occupate (行取り, JLReq §4.1.6): il titolo viene composto in una banda di altrettante righe del corpo, con i caratteri centrati al suo interno, al posto di <code>marginTop</code> e <code>marginBottom</code>; <code>3</code> è un titolo 3行取り. La banda comincia su una riga del corpo quando il titolo si allinea alla griglia, e il testo che lo segue resta sulla griglia, in entrambe le direzioni di scrittura e con <code>cjk.grid</code>; un titolo le cui righe hanno bisogno di più spazio prende il numero intero successivo. Il centro è quello dei caratteri (la linea di base meno il centro ideografico del carattere), come lo misura JLReq, non quello dei riquadri delle righe. Non si applica alle aperture (<code>span: 'page'</code>), ai titoli disegnati da un <code>advancedDesign</code>, ai titoli nascosti né ai titoli dentro i riquadri. Uno stile di titolo può impostare <code>0</code> per togliere quello del suo livello. Da postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Rientro del titolo dall’inizio della riga (字下げ), dove <code>em</code> è il corpo del <strong>testo</strong>, come i libri giapponesi contano i rientri dei titoli in caratteri del corpo (JLReq §4.1.3): <code>&#123; value: 6, unit: 'em' &#125;</code> è 6字下げ qualunque sia il corpo del titolo. La giustezza si restringe di quel valore, e un titolo centrato si centra nello spazio restante. Da postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>firstLineIndent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Rientro della sola prima riga del titolo, misurato da <code>indent</code> e, come questo, in em del <strong>testo</strong>: le righe su cui va a capo un titolo lungo cominciano a <code>indent</code> (all’inizio della riga quando non è impostato), come la GB/T 9704 compone ogni livello di titolo rientrato di due celle con il seguito al margine: <code>&#123; value: 2, unit: 'em' &#125;</code>. Con <code>cjk.grid</code> attivo, due em del testo sono due celle della griglia. Un titolo numerato stampa il suo numero dopo il rientro, quindi il modello di numerazione non ha bisogno di spazi ideografici, che verrebbero stampati anche nell’indice e nei segnalibri PDF. Funziona nel testo verticale (dalla cima della riga), con il compositore CJK (una parentesi di apertura all’inizio del titolo segue le regole di inizio riga, come in un paragrafo) e con Knuth–Plass. Un titolo centrato lo applica come un paragrafo centrato: la sua prima riga si centra nello spazio dopo il rientro. <code>&#123;firstLineIndent=N&#125;</code> dopo il titolo di un titolo imposta quel solo titolo, e <code>&#123;firstLineIndent=0&#125;</code> toglie quello del suo livello. Da postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>jidori</code></td>
+      <td><code>number</code></td>
+      <td>non impostato</td>
+      <td>Spaziatura uniforme (字取り): un titolo di una riga più stretto di altrettanti em <strong>propri</strong> viene spaziato uniformemente fino a quella larghezza esatta, quindi <code>3</code> compone 序章 come 序　章. I titoli più larghi e i titoli di più righe restano come sono. <code>&#123;jidori=N&#125;</code> dopo il testo di un titolo imposta quel solo titolo, e <code>&#123;jidori=0&#125;</code> disattiva quello del suo livello. Da postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>dropCap</code></td>
+      <td><code>ParagraphDropCap | false</code></td>
+      <td>nessuno</td>
+      <td>Un capolettera che apre il primo paragrafo del corpo dopo un titolo di questo livello (vedi <a href="/it/docs/configuration-text#capilettera">Capilettera</a>): una sola impostazione dà a ogni capitolo la sua iniziale. Un titolo lo disattiva con <code>&#123;dropcap=false&#125;</code> o ne imposta le righe con <code>&#123;dropcap=2&#125;</code>. Da postext 1.23.</td>
+    </tr>
+    <tr>
+      <td><code>numberingTemplate</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>Modello del numero automatico del livello. Un token <code>{'{1}'}</code> … <code>{'{6}'}</code> stampa il contatore corrente di quel livello di titolo, facoltativamente formattato da un suffisso (<code>{'{1:I}'}</code> romano maiuscolo, <code>{'{1:i}'}</code> romano minuscolo, <code>{'{1:A}'}</code> / <code>{'{1:a}'}</code> alfabetico, <code>{'{1:01}'}</code> con zeri iniziali, <code>{'{1:words}'}</code> in lettere (<em>ventuno</em>), <code>{'{1:ordinal}'}</code> come ordinale (<em>ventunesimo</em>), <code>{'{1:一}'}</code> in numeri cinesi (giapponesi in un documento giapponese: 第百一章), <code>{'{1:〇}'}</code> cifra per cifra, <code>{'{1:壹}'}</code> in numeri finanziari e <code>{'{1:①}'}</code> cerchiato, o qualsiasi nome di <a href="/it/docs/configuration-page-layout#grafie-dei-formati-di-numerazione">Grafie dei formati di numerazione</a>), e qualsiasi altro testo è letterale (<code>'Chapter {'{1}'}. '</code>, <code>'{'{1}'}.{'{2}'}'</code>, <code>'第{'{1:一}'}回'</code> per 第一百二十回; una barra rovesciata rende letterale una graffa). Un token il cui contatore è ancora vuoto scompare insieme al separatore adiacente. Vuoto (il valore predefinito) significa nessun numero automatico. Il numero composto viene anteposto al titolo nel flusso, alimenta il segnaposto <code>{'{number}'}</code> di uno slot di progetto grafico avanzato (dove il prefisso in sé non viene anteposto) e viene stampato nell’indice. Vedi <a href="#numeri-in-lettere">Numeri in lettere</a> per le parole, e <a href="/it/docs/configuration-styles#stili-dei-titoli">Stili dei titoli</a> per un modello proprio su alcuni titoli di un livello.</td>
+    </tr>
+    <tr>
+      <td><code>numberSeparator</code></td>
+      <td><code>string</code></td>
+      <td><code>' '</code></td>
+      <td>Che cosa sta tra il numero e il titolo: nella colonna, nell’apertura predefinita di un livello <code>span: 'page'</code>, nelle testatine che stampano la riga del titolo e nei segnalibri PDF. Il separatore del livello 1 unisce anche il numero e il titolo di una parte nella pagina di parte predefinita e nella riga di parte predefinita dell’indice. I titoli di capitolo cinesi prendono uno spazio ideografico o nulla (<code>'　'</code>: 第一回　甄士隱夢幻識通靈). L’indice mantiene la propria colonna dei numeri (<code>toc.levels[].numberGap</code>). Uno <a href="/it/docs/configuration-styles#stili-dei-titoli">stile di titolo</a> può impostarne uno proprio. Quando un titolo viene spezzato in due con <code>{'\\\\'}</code>, come i titoli a distico dei romanzi cinesi, le forme su una riga (la colonna, l’indice, le testatine) uniscono le due metà con uno spazio ideografico quando entrambi i lati sono caratteri cinesi o giapponesi, e con uno spazio negli altri casi.</td>
+    </tr>
+    <tr>
+      <td><code>numberPosition</code></td>
+      <td><code>'before' | 'replace'</code></td>
+      <td><code>'before'</code></td>
+      <td>Dove sta il numero generato. <code>'before'</code>: prima del titolo, unito da <code>numberSeparator</code>. <code>'replace'</code>: il numero è l’intero titolo e il titolo scritto nel sorgente non viene stampato, quindi <code># Night</code> sotto <code>numberingTemplate: 'الليلة &#123;1:ordinal-feminine&#125;'</code> stampa الليلة الثانية. L’indice riporta il numero come titolo della voce (senza colonna dei numeri), e lo leggono anche le testatine (<code>{chapterTitle}</code>, <code>{titleText}</code>) e i segnalibri PDF; <code>{number}</code> è vuoto per un titolo del genere. Solo per i titoli numerati con un modello (quello del livello o del loro stile); qualsiasi altro mantiene il suo titolo. Uno <a href="/it/docs/configuration-styles#stili-dei-titoli">stile di titolo</a> può impostare il proprio, <code>'before'</code> per mantenere i titoli che il suo livello sostituirebbe.</td>
+    </tr>
+    <tr>
+      <td><code>breakBefore</code></td>
+      <td><code>HeadingBreakBeforeConfig</code></td>
+      <td>H1: <code>&#123; enabled: true, parity: 'always-odd' &#125;</code><br/>H2–H6: <code>&#123; enabled: false, parity: 'any' &#125;</code></td>
+      <td>Forza un’interruzione di pagina prima di ogni titolo di questo livello. <code>parity: 'odd'</code> / <code>'even'</code> vincola inoltre il lato della doppia pagina su cui si apre il titolo: se serve viene inserita una pagina bianca di riempimento (contata comunque nella numerazione delle pagine). <code>'always-odd'</code> / <code>'always-even'</code> garantiscono in più almeno una pagina bianca di separazione obbligatoria tra il contenuto precedente e il nuovo titolo (la pagina di separazione appartiene al capitolo precedente; l’eventuale ulteriore riempimento di parità appartiene a quello nuovo). Quando il titolo è il primissimo blocco del documento e la prima pagina è ancora vuota, il vincolo di parità viene saltato: il titolo finisce a pagina 1 come è scritto. Un campo non impostato mantiene il valore predefinito del livello: il <code>&#123; parity: 'odd' &#125;</code> dell’H1 interrompe comunque.</td>
+    </tr>
+    <tr>
+      <td><code>hidden</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Un titolo strutturale: non stampa nulla e non occupa spazio nella colonna né in un riquadro (niente testo, niente margini, nessuna banda di apertura) ma fa tutto il resto che fa un titolo. Il suo <code>breakBefore</code> apre comunque una pagina, apre la sezione del suo stile, viene contato (a meno che il suo stile non dica <code>numbered: false</code>), e viene elencato da <code>:::toc</code>, nominato dalle testatine <code>{'{chapterTitle}'}</code> e inserito nei segnalibri del PDF. Per una dedica, una pagina con epigrafe o un colophon di cui hanno bisogno l’indice e i segnalibri del lettore, ma che la pagina non mostra. Impostalo su uno <a href="/it/docs/configuration-styles#stili-dei-titoli">stile di titolo</a> piuttosto che su un intero livello; un titolo lo sovrascrive con <code>{'{hidden="true"}'}</code> / <code>{'{hidden="false"}'}</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+headings: {
+  fontFamily: 'Merriweather',
+  levels: [
+    // Canonical book preset: chapters on a right-hand (odd) page.
+    { level: 1, fontSize: { value: 24, unit: 'pt' }, breakBefore: { enabled: true, parity: 'odd' } },
+    { level: 2, fontSize: { value: 18, unit: 'pt' }, italic: true },
+  ]
+}
+```
+
+Anche `snapToGrid` funziona per livello. Se non impostato, un livello segue `headings.snapToGrid`; se impostato, lo sovrascrive, così un documento può comporre i suoi H2 una riga e mezza sopra il loro testo, fuori griglia fino al punto di allineamento successivo, mentre i suoi H3 arrotondano lo spazio sotto di essi a righe intere della griglia. Può impostarlo anche uno stile di titolo, per i titoli che lo usano.
+
+```ts
+headings: {
+  marginBottom: { value: 1.5, unit: 'em' },
+  levels: [
+    { level: 2, snapToGrid: false }, // exactly 1.5 em under every H2
+    { level: 3 },                    // inherits headings.snapToGrid: true
+  ],
+}
+```
+
+### Interruzione prima del titolo
+
+`breakBefore` è indipendente dai controlli di numerazione: attivarlo forza un’interruzione di pagina, ma il contatore numerico si azzera solo quando inserisci esplicitamente una direttiva `:::numbering`. Le pagine bianche di parità contano come pagine vere nella sequenza e ricevono intestazioni e piè di pagina secondo le normali regole per pagine dispari e pari.
+
+Un `:::pagebreak` subito prima di un titolo del genere non sostituisce la sua interruzione: il titolo applica comunque la sua parità dopo la pagina aperta dalla direttiva, il che può aggiungere una pagina bianca. Vedi [Stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli) per un titolo che deve cominciare subito dopo un’interruzione manuale.
+
+#### Valori di parità
+
+<table>
+  <thead>
+    <tr>
+      <th>Valore</th>
+      <th>Comportamento</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'any'</code> (predefinito)</td>
+      <td>Nessun vincolo di parità. Il titolo si apre semplicemente nella pagina successiva.</td>
+    </tr>
+    <tr>
+      <td><code>'odd'</code></td>
+      <td>Garantisce che il titolo si apra su una pagina dispari (destra). Una sola pagina bianca viene inserita solo quando la pagina successiva naturale è pari.</td>
+    </tr>
+    <tr>
+      <td><code>'even'</code></td>
+      <td>Lo stesso, ma per una pagina pari (sinistra).</td>
+    </tr>
+    <tr>
+      <td><code>'always-odd'</code></td>
+      <td>Garantisce <strong>almeno una pagina bianca di separazione obbligatoria</strong> tra il contenuto precedente e il nuovo titolo, poi assicura la parità dispari. Utile quando ogni capitolo deve cominciare in una doppia pagina nuova.</td>
+    </tr>
+    <tr>
+      <td><code>'always-even'</code></td>
+      <td>Lo stesso, ma per una pagina pari.</td>
+    </tr>
+  </tbody>
+</table>
+
+#### A chi appartengono le pagine bianche
+
+Le pagine bianche inserite da `breakBefore` portano intestazioni con il titolo del capitolo in base al *motivo* per cui sono state inserite:
+
+- Le pagine inserite per soddisfare un vincolo di parità (`'odd'`, `'even'`, o la coda di parità di `'always-*'`) appartengono al capitolo **seguente**. Il loro segnaposto di intestazione `{chapterTitle}` si risolve nel titolo del nuovo capitolo, perché la pagina bianca esiste solo per portare il nuovo capitolo sulla parità corretta.
+- La pagina di separazione obbligatoria iniziale inserita da `'always-odd'` / `'always-even'` appartiene al capitolo **precedente**. È una pausa voluta di fine capitolo, quindi l’intestazione `{chapterTitle}` mostra ancora il titolo del vecchio capitolo.
+
+Le testatine e la palette di una sezione con stile (vedi [Stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)) seguono le stesse due regole nelle pagine bianche.
+
+#### Eccezione per l’inizio del documento
+
+Quando il primissimo blocco del documento è un titolo con `breakBefore` attivo (o il sorgente si apre con `:::pagebreak`), il vincolo di parità viene saltato finché la prima pagina è ancora vuota. Il titolo finisce a pagina 1 come è scritto, qualunque sia la parità configurata, così un documento che comincia con un `# Chapter 1` configurato con `parity: 'odd'` non eredita una pagina bianca iniziale indesiderata. Una volta collocato un qualsiasi contenuto, il vincolo di parità funziona normalmente.
+
+### Estensione e progetto grafico avanzato
+
+Ogni livello di titolo accetta due campi aggiuntivi che controllano come il titolo viene composto come apertura di capitolo a tutta pagina.
+
+<table>
+  <thead>
+    <tr>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>'column' | 'page'</code></td>
+      <td><code>'column'</code></td>
+      <td>Con <code>'page'</code>, il titolo viene trattato come apertura di capitolo e il suo progetto grafico avanzato (se attivo) viene collegato alla pagina come banda di apertura sopra il corpo. Abbinalo a <code>breakBefore.enabled: true</code> perché l’apertura cominci sempre una nuova pagina. Senza un progetto grafico proprio, il titolo viene dipinto da un’apertura predefinita su tutta l’area del contenuto, nella tipografia e nell’interlinea del livello, con i suoi tratti in grassetto, corsivo e apice/pedice (<code>headings.inlineMarks</code>), e la banda viene misurata a quella larghezza. La banda contiene ogni riga che l’apertura dipinge: dove l’apertura prende più righe della giustezza propria del titolo (un titolo giustificato i cui spazi si stringerebbero su una riga, un a capo forzato <code>{'\\\\'}</code>), le prende anche la banda. Fino a postext 1.4 la banda veniva misurata con il titolo diviso alla larghezza della colonna, quindi un titolo che entra in una riga dell’area del contenuto prendeva una banda alta due righe, con la riga centrata al suo interno. Le altre colonne cominciano sotto la banda come la colonna propria del titolo. Il testo che apre una di esse comincia dove comincerebbe il testo subito sotto l’apertura, qualunque cosa segua l’apertura nella sua colonna: il <code>marginBottom</code> dell’apertura sotto il suo titolo o il suo progetto grafico, portato alla riga successiva della griglia quando il livello si allinea. Un titolo, una formula in display o una riga dell’indice che apre una di esse viene composta alla stessa altezza del primo titolo o della prima formula in display sotto l’apertura, margini compresi come lì; quando la colonna dell’apertura prosegue con qualcos’altro, comincia dove comincia quel testo. Un titolo nascosto sotto l’apertura non conta, e lo spazio che il <a href="/it/docs/configuration-page-flow#bilanciamento-delle-colonne">bilanciamento delle colonne</a> aggiunge sopra il titolo sotto l’apertura non viene ripetuto nelle altre colonne. Ciò che queste colonne allineano alla griglia cade sulla griglia della pagina. Fino a postext 1.4 il loro primo blocco stava al piede della banda: fuori griglia quando la banda finiva tra due righe, e addossato alla banda, senza margine, quando un titolo seguiva l’apertura (una riga più in alto di adesso quando la banda finiva sulla griglia); un titolo lì perdeva anche il margine superiore che manteneva il titolo della prima colonna.</td>
+    </tr>
+    <tr>
+      <td><code>spanBreak</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Se un titolo <code>span: 'page'</code> comincia una nuova pagina. <code>true</code> apre la pagina successiva (con il lato scelto da <code>breakBefore</code>). <code>false</code>, con <code>breakBefore.enabled: false</code>, lo apre dove arriva il testo, come fa un riquadro a tutta larghezza: le colonne sopra di esso finiscono alla stessa altezza (la banda viene bilanciata quando <code>headings.balancing.trailing</code> è attivo), il progetto grafico o l’apertura predefinita del titolo viene composto su tutta l’area del contenuto sotto di esse, e il testo prosegue in ogni colonna sottostante: un secondo articolo di un notiziario sotto la fine del primo. Quando lo spazio rimasto non conterrebbe il titolo e il minimo di righe per le vedove sotto di esso, apre la pagina successiva come con <code>true</code>. Il ruolo della pagina resta quello che le dà il suo primo blocco. Nessun effetto su un titolo <code>span: 'column'</code>. Anche su uno stile di titolo. Da postext 1.19.</td>
+    </tr>
+    <tr>
+      <td><code>advancedDesign</code></td>
+      <td><code>HeadingAdvancedDesignConfig</code></td>
+      <td><code>{'{ enabled: false, slot: { elements: [] } }'}</code></td>
+      <td>Slot di progetto grafico a composizione libera per questo livello. Quando è <code>enabled</code>, gli elementi dello slot compongono l’apertura. Usa <code>{'{titleText}'}</code> dentro un elemento di testo per comporre il testo del titolo; usa <code>{'{number}'}</code>, <code>{'{numberRoman}'}</code>, ecc. per inserire il numero formattato del titolo.</td>
+    </tr>
+    <tr>
+      <td><code>advancedDesign.minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>Altezza minima riservata al titolo nel flusso della colonna. Il titolo prende <code>max(design content bottom, minHeight)</code>, poi il <code>marginBottom</code> del titolo sotto di esso (dal suo stile di titolo, dal suo livello o da <code>headings.marginBottom</code>; 0,5 em del corpo del titolo per impostazione predefinita), e la somma viene arrotondata per eccesso alla griglia della linea di base quando i titoli si allineano. Così un’apertura può spingere in basso il testo del corpo (o reclamare l’intera pagina) anche quando i suoi elementi sono bassi o ancorati alle cornici della pagina o dell’abbondanza sopra il titolo. Per una banda alta esattamente <code>minHeight</code>, imposta quel <code>marginBottom</code> a 0 e fai di <code>minHeight</code> un numero intero di righe della griglia. Si applica ogni volta che <code>enabled</code> è true, anche con uno slot vuoto. Vedi <a href="#altezza-riservata">Altezza riservata</a> per che cosa conta come fondo del contenuto del progetto grafico.</td>
+    </tr>
+  </tbody>
+</table>
+
+**Un’apertura alta quanto la pagina.** Quando l’altezza riservata arriva oltre il piede della colonna (una copertina il cui `minHeight` è l’altezza della pagina, un’immagine o un riquadro ancorato alla pagina o all’abbondanza che scende fino al rifilo), l’apertura reclama il resto della pagina: il testo che la segue comincia nella pagina successiva, in ogni colonna di un’impaginazione a due colonne come di una a colonna e mezza. Una copertina quindi non ha bisogno di un `:::pagebreak` dopo di sé (metterlo non fa danni: non aggiunge alcuna pagina bianca). Un titolo in colonna (`span: 'column'`) il cui progetto grafico è più alto della colonna reclama quella colonna, e il testo comincia in testa alla successiva. Il blocco del titolo scende allora fino al piede della colonna che reclama, e il suo progetto grafico viene impaginato su quella banda: gli elementi ancorati in alto restano dove sono ancorati, e quelli che seguono la banda (ancorati al suo centro o al suo piede, o alti `'fill'`) si attengono allo spazio che il titolo reclama, come si attengono all’altezza riservata quando questa entra (fino a postext 1.4 il blocco manteneva l’altezza del suo testo, quindi quegli elementi venivano impaginati su una banda alta quanto il titolo, e il testo che seguiva scorreva sotto il progetto grafico). Gli elementi fissi della pagina che non devono reclamarla (una banda lungo il taglio esterno per tutta la pagina, un ornamento al piede della pagina) vanno invece nel progetto grafico dell’intestazione o del piè di pagina: ancorati a `'page'` o `'bleed'` e mostrati con `pages: 'opener'`, vengono dipinti nella pagina di apertura e non riservano spazio nel corpo.
+
+Esempio: un’apertura di capitolo minimalista che mostra «Chapter N» sopra il titolo:
+
+```json
+{
+  "headings": {
+    "levels": [
+      {
+        "level": 1,
+        "span": "page",
+        "breakBefore": { "enabled": true, "parity": "always-odd" },
+        "advancedDesign": {
+          "enabled": true,
+          "slot": {
+            "elements": [
+              {
+                "kind": "text",
+                "id": "chapterLabel",
+                "placement": {
+                  "anchor": { "to": "container", "edge": "top" },
+                  "offset": { "y": { "value": 48, "unit": "pt" } },
+                  "size": { "width": "fill" }
+                },
+                "content": "Chapter {numberRoman}",
+                "fontSize": { "value": 10, "unit": "pt" },
+                "align": "center",
+                "overflow": "ellipsis-end"
+              },
+              {
+                "kind": "text",
+                "id": "chapterTitle",
+                "placement": {
+                  "anchor": { "to": "#chapterLabel", "edge": "below" },
+                  "offset": { "y": { "value": 12, "unit": "pt" } },
+                  "size": { "width": "fill" }
+                },
+                "content": "{titleText}",
+                "fontSize": { "value": 24, "unit": "pt" },
+                "fontWeight": 700,
+                "align": "center",
+                "overflow": "wrap",
+                "hyphenate": true
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}
+```
+
+Segnaposto dei titoli disponibili nello slot di progetto grafico di un livello:
+
+- `{titleText}`: il testo semplice del titolo (senza prefisso di numerazione). Un a capo forzato nel titolo (`\\`) è qui un a capo, in una banda di apertura come in un progetto grafico in colonna (fino a postext 1.4 un progetto grafico in colonna stampava lì uno spazio, mentre la sua altezza veniva misurata con l’a capo). Le righe in cui il titolo nascosto va a capo nella sua colonna vengono ricongiunte nel titolo come è scritto: una parola spezzata dopo il proprio trattino mantiene il trattino senza spazio dopo, una parola che la colonna ha diviso torna intera senza il trattino aggiunto dalla divisione, un gruppo legato da uno spazio indivisibile che era più largo della colonna ed è stato separato in quello spazio riprende il suo spazio indivisibile (`Capítulo XVIII`, non `CapítuloXVIII`), e ogni altro a capo restituisce il suo spazio. Fino a postext 1.4 ogni a capo diventava uno spazio, quindi un titolo andato a capo a un trattino stampava `Word- Book`, e un a capo forzato in un titolo del genere veniva eliminato.
+- `{number}`: il numero formattato secondo il `numberingTemplate` del livello.
+- `{numberDecimal}`, `{numberRoman}`, `{numberRomanLower}`, `{numberAlpha}`, `{numberAlphaLower}`: il contatore del titolo (il conteggio corrente del suo livello, qualunque cosa stampi il modello) in altri formati numerici: il terzo capitolo dà `3`, `III`, `iii`, `C`, `c`, con o senza un `numberingTemplate`. Un titolo non numerato (uno stile con `numbered: false`) li lascia vuoti.
+- `{numberWords}`, `{numberWordsLower}`, `{numberOrdinalWords}`, `{numberOrdinalWordsLower}`: lo stesso contatore in lettere, con l’iniziale maiuscola o in minuscolo: *Tre* / *tre*, *Terzo* / *terzo* (vedi [Numeri in lettere](#numeri-in-lettere)).
+- `{numberHan}`: lo stesso contatore in numeri cinesi, nella scrittura del `locale` del documento: un’apertura composta con `第{numberHan}回` stampa 第十二回 per il dodicesimo capitolo mentre l’indice riporta `12`.
+- `{chapterNumber}`, `{chapterTitle}`, `{pageNumber}`, `{totalPages}`, `{bookTotalPages}`, `{title}`, `{subtitle}`, `{author}`, `{publishDate}`: segnaposto di metadati condivisi.
+- `{attr.<key>}`: un attributo scritto sulla riga del titolo stessa (`# Title {author="I. Zango Martín"}`), che ripiega sull’attributo dell’H1 del capitolo corrente. Gli attributi mancanti si risolvono in una stringa vuota senza avviso.
+
+`{chapterNumber}` stampa ciò che le testatine stampano per il capitolo: il numero dell’H1 quando il suo livello (o stile) ha un `numberingTemplate`, altrimenti l’ordinale del capitolo (`1`, `2`…, che prosegue oltre i capitoli impaginati prima di questo) e nulla per un capitolo non numerato o per uno stile il cui modello è `''`. Il progetto grafico di un titolo legge il capitolo a cui appartiene il suo titolo: un titolo di livello 1 il proprio, un titolo inferiore l’ultimo titolo di livello 1 che lo precede. Questo vale anche dove due capitoli si incontrano in una pagina, mentre le testatine di quella pagina stampano il capitolo successivo. L’altezza che un’apertura riserva viene misurata con quello stesso valore. Fino a postext 1.4 veniva misurata con il prefisso numerico del titolo (vuoto senza modello), quindi un progetto grafico la cui altezza dipende da `{chapterNumber}` poteva dipingere più in alto dello spazio che prendeva; e il progetto grafico stampava il capitolo della pagina, quindi il primo di due capitoli che condividono una pagina mostrava il numero del secondo.
+
+I segnaposto dei contatori seguono il libro attraverso i capitoli impaginati uno alla volta (i contatori che passa `continuationAfter()`), e l’attributo `startAt` di un titolo li fa ripartire (vedi **Formato del documento → Attributi dei titoli**). Un’apertura che dice *Chapter III* sopra un titolo numerato `3.` nel flusso e nell’indice:
+
+```ts
+{
+  level: 1,
+  span: 'page',
+  numberingTemplate: '{1}.',
+  advancedDesign: {
+    enabled: true,
+    slot: { elements: [
+      { kind: 'text', id: 'label', content: 'Chapter {numberRoman}', fontSize: { value: 10, unit: 'pt' }, overflow: 'ellipsis-end',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: 'fill', height: 'auto' } } },
+      { kind: 'text', id: 'title', content: '{titleText}', fontSize: { value: 24, unit: 'pt' }, overflow: 'wrap',
+        placement: { anchor: { to: '#label', edge: 'below' }, size: { width: 'fill', height: 'auto' } } },
+    ] },
+  },
+}
+```
+
+#### Altezza riservata
+
+Un titolo con un progetto grafico avanzato occupa spazio nella colonna come qualsiasi blocco: il testo del corpo che lo segue comincia sotto quello spazio. Lo spazio è la maggiore di tre altezze, tutte misurate verso il basso dalla cima del titolo (la cima dell’area del contenuto per un’apertura che comincia la sua pagina):
+
+1. il testo proprio del titolo, composto nella tipografia del livello (è nascosto sotto il progetto grafico, ma mantiene le sue righe);
+2. il fondo del contenuto del progetto grafico: il bordo inferiore più basso tra gli elementi che contano (vedi sotto);
+3. `advancedDesign.minHeight`.
+
+Dopo di esso si aggiunge il `marginBottom` del titolo (dal suo stile di titolo, dal suo livello o da `headings.marginBottom`; 0,5 em per impostazione predefinita), e il risultato viene arrotondato per eccesso alla griglia della linea di base quando i titoli si allineano. Per un’apertura (`span: 'page'`) la stessa banda viene tenuta libera in ogni colonna della pagina. Per un titolo in colonna che entra nella sua colonna, il progetto grafico viene impaginato nel riquadro del titolo, che è alto esattamente quanto quello spazio.
+
+**Quali elementi contano.** Conta ogni elemento del progetto grafico (testi, filetti, riquadri e immagini allo stesso modo; fino a postext 1.4 un elemento `image` non contava mai, quindi il testo poteva cominciare sopra l’immagine di una banda a meno che `minHeight` non lo tenesse lontano), tranne:
+
+- **gli elementi con `reserve: false`**: decorazioni che possono stare sotto il testo;
+- **gli elementi che seguono la banda stessa**: ancorati alla fila centrale del contenitore (`left`, `center`, `right`) o alla fila inferiore (`bottom-left`, `bottom`, `bottom-right`), con un’altezza `'fill'` rispetto al contenitore (un riquadro o un filetto verticale senza altezza lo riempie per impostazione predefinita), e qualsiasi elemento ancorato a uno di questi. Il contenitore è la banda riservata, quindi questi elementi stanno sul suo piede o la attraversano: un filetto sotto la banda, un pannello colorato dietro il titolo. Seguono l’altezza; non la stabiliscono mai. Un testo tra di essi che mantiene la propria altezza ha comunque bisogno di spazio: un titolo ancorato al piede della banda rende la banda alta almeno quanto il titolo, così il titolo non comincia mai sopra la cima del titolo strutturale. Con `minHeight: 36mm` e il titolo ancorato `bottom-left`, il riquadro del titolo è 36 mm più il suo `marginBottom`, arrotondato per eccesso alla griglia, e il titolo sta al piede di quel riquadro, subito sopra il testo che segue; senza `minHeight`, un titolo che prende più righe del testo proprio del titolo rende la banda profonda quanto il titolo. Fino a postext 1.4 un titolo del genere veniva dipinto in alto sopra il testo che precede il titolo. Riquadri, filetti e immagini che seguono la banda non stabiliscono un minimo del genere, quindi un pannello ancorato al piede può arrivare sopra il titolo.
+
+Gli elementi ancorati alla pagina e all’abbondanza contano per quanto arrivano sotto la cima del titolo. Una banda in cima alla pagina che finisce sopra il titolo non conta nulla; un’immagine al vivo che va oltre spinge il testo in basso fino al suo bordo inferiore. Lo stesso fa qualsiasi cosa in basso nella pagina: un sigillo 25 mm sopra il piede della pagina, una banda laterale a tutta altezza o una cornice riservano la pagina fino al loro bordo inferiore, e il testo di solito comincia nella pagina successiva. Marca queste decorazioni con `reserve: false` (vengono comunque dipinte e gli elementi possono comunque ancorarsi a esse) e dai al titolo lo spazio di cui ha bisogno con i suoi elementi di testo o con `minHeight`:
+
+```json
+{
+  "kind": "image", "id": "seal", "resourceId": "seal", "reserve": false,
+  "placement": {
+    "anchor": { "to": "page", "edge": "bottom-right" },
+    "offset": { "x": { "value": -25, "unit": "mm" }, "y": { "value": -25, "unit": "mm" } },
+    "size": { "width": { "value": 30, "unit": "mm" } }
+  }
+}
+```
+
+Un elemento ancorato a uno che non riserva spazio conta comunque, a meno che non sia marcato anch’esso (una didascalia posta sul sigillo ha bisogno di un proprio `reserve: false`).
+
+**Dove viene dipinto.** Il progetto grafico di un’apertura (`span: 'page'`) viene disegnato prima del corpo, quindi le decorazioni che non riservano nulla stanno sotto il testo. Il progetto grafico di un titolo in colonna viene disegnato con il blocco del titolo (sopra i blocchi che lo precedono nella colonna, sotto quelli che lo seguono) ovunque sia collocato sopra il piede della sua colonna: anche nei margini laterali, nel margine superiore, nell’abbondanza e nelle colonne vicine. Il piede della colonna lo taglia, nel canvas e nel PDF, perché il flusso finisce lì (vedi **Più alto della colonna** qui sotto). Fino a postext 1.4 il canvas e il PDF lo tagliavano anche in cima alla sua colonna, quindi una banda ancorata alla cima della pagina o dell’abbondanza entrava nei margini laterali ma si fermava al margine superiore. Le decorazioni ancorate al piede della pagina vanno in un’apertura, o nel progetto grafico del piè di pagina con `pages: 'opener'`.
+
+**Più alto della colonna.** Quando lo spazio arriva oltre il piede della colonna (un `minHeight` alto quanto la pagina, un’immagine o una cornice che scende fino al rifilo), il titolo reclama il resto della sua pagina (un’apertura, in ogni colonna) o della sua colonna (un titolo in colonna), e il testo che lo segue comincia nella pagina o nella colonna successiva. Il suo blocco scende allora fino al piede della colonna, senza mai essere riportato all’altezza del suo testo, quindi la banda su cui viene impaginato il suo progetto grafico è lo spazio che reclama (`minHeight` compreso, fino al piede). Un progetto grafico più alto della pagina stessa (un lungo attacco su una pagina di schermo piccola) viene comunque tagliato al piede della pagina (un progetto grafico in colonna, a quello della sua colonna): la Sandbox lo elenca nel pannello **Verifiche** come *Grafica del titolo tagliata*. L’impaginazione non solleva alcun avviso per questo (una copertina che reclama la sua pagina è il caso abituale e non perde nulla), ma qualsiasi host può eseguire lo stesso controllo sull’impaginazione finita: `collectHeadingDesignCuts(doc)` restituisce un `{ kind: 'headingDesignCut', pageIndex, level, where, overflowPx, sourceStart, sourceEnd }` per ogni titolo il cui testo di progetto grafico sta oltre il piede del rifilo della pagina (`where: 'page'`, un’apertura) o della sua colonna (`where: 'column'`), e `formatWarning` descrive ciascuno. Vedi **Un’apertura alta quanto la pagina** in [Estensione e progetto grafico avanzato](#estensione-e-progetto-grafico-avanzato).
+
+**La colonna laterale.** In un’impaginazione a colonna e mezza la cui colonna laterale contiene elementi flottanti (`sideColumnRole: 'floats'`), un elemento del progetto grafico di un titolo in colonna che sta nella colonna laterale (un numero di capitolo ancorato alla pagina nella colonna del margine esterno dell’apertura di un manuale) tiene lontana da sé la pila laterale. Ogni figura, tabella o riquadro `span: 'side'` che la pagina colloca dopo il titolo mantiene un intervallo da elemento flottante libero da ognuno di questi elementi: resta dove la pila lo mette quando entra sopra l’elemento, e altrimenti va sotto di esso, oppure aspetta la pagina successiva quando il resto della colonna laterale non può contenerlo lì. Così un numero in testa al canale tiene sotto di sé l’intera pila, mentre un numero di sezione appeso nel margine accanto a un titolo più in basso nella pagina lascia la testa del canale alle figure che la pagina cita (la figura a margine sta comunque in cima alla sua pagina). Ciò che la colonna laterale contiene già quando il titolo viene collocato non viene spostato: una figura impilata prima nella pagina che scende fino all’elemento del titolo resta dov’è, sotto l’elemento, quindi un progetto grafico il cui elemento sta nella colonna laterale a metà pagina vuole le sue figure citate dopo il titolo. Gli elementi con `reserve: false` lasciano libera la colonna laterale, come lasciano libero il testo. Un’apertura (`span: 'page'`) non ha bisogno di nulla del genere: la sua banda è riservata in ogni colonna, colonna laterale compresa. Fino a postext 1.4 una figura laterale citata in un’apertura del genere veniva collocata in testa alla colonna laterale, sopra il numero.
+
+**Copertine.** Un titolo di copertina che riempie la sua pagina (`minHeight` alto quanto la pagina, o un’immagine a tutta pagina nel suo progetto grafico) manda quindi da solo il testo che lo segue alla pagina successiva, nelle impaginazioni a una colonna come in quelle a più colonne. Un `:::pagebreak` subito dopo è facoltativo e non fa danni: un’interruzione di pagina in una pagina ancora vuota non fa nulla, quindi non aggiunge mai una pagina bianca. Serve solo quando il progetto grafico della copertina si ferma prima del piede della pagina e il testo deve comunque cominciare in una pagina nuova.
+
+```md
+# Annual report 2026 {style="cover"}
+
+:::pagebreak
+
+# Letter from the chair
+```
+
+### Numeri in lettere
+
+Due suffissi dei modelli di numerazione scrivono un contatore in lettere, nella lingua del documento (il `locale` di primo livello, altrimenti il locale della sillabazione; vedi [Lingua del documento](/it/docs/configuration-language#lingua-del-documento)): `words` per il cardinale e `ordinal` per l’ordinale. Le maiuscole e minuscole del suffisso stabiliscono quelle delle parole, come fa `A` / `a` per le lettere:
+
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Inglese (21)</th>
+      <th>Spagnolo (21)</th>
+      <th>Cinese (21)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>{'{1:words}'}</code></td><td>twenty-one</td><td>veintiuno</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:Words}'}</code></td><td>Twenty-one</td><td>Veintiuno</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:WORDS}'}</code></td><td>TWENTY-ONE</td><td>VEINTIUNO</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:ordinal}'}</code></td><td>twenty-first</td><td>vigesimoprimero</td><td>第二十一</td></tr>
+    <tr><td><code>{'{1:Ordinal}'}</code></td><td>Twenty-first</td><td>Vigesimoprimero</td><td>第二十一</td></tr>
+    <tr><td><code>{'{1:ORDINAL}'}</code></td><td>TWENTY-FIRST</td><td>VIGESIMOPRIMERO</td><td>第二十一</td></tr>
+  </tbody>
+</table>
+
+Inglese, spagnolo, francese, italiano, tedesco, catalano, portoghese, cinese, giapponese e arabo vengono scritti in lettere; qualsiasi altra lingua prende le parole inglesi, come fanno le stringhe predefinite di continuazione delle tabelle. Il cinese scrive i numeri informali di `simp-chinese-informal` o `trad-chinese-informal`, secondo la scrittura di `locale` (一万 / 一萬), con 第 davanti a un ordinale; i caratteri Han non hanno maiuscole, quindi le tre grafie di un suffisso stampano la stessa cosa. L’inglese segue l’uso americano (*one hundred five*, senza *and*). Lo spagnolo usa per impostazione predefinita le forme maschili, come si numera un *capítulo* o un *libro* (*capítulo primero*, *tercero*, *veintiuno*), e scrive gli ordinali da 13 a 29 in una sola parola, come preferisce la RAE (*decimotercero*, *vigesimoprimero*). I cardinali vengono scritti in lettere fino a 999 999 e gli ordinali spagnoli, catalani e portoghesi fino a 999; i numeri più grandi vengono stampati in cifre.
+
+Il francese segue l’ortografia tradizionale (*vingt et un*, *soixante et onze*, *quatre-vingts*, *deux cent un*) e scrive *premier* per uno (*Chapitre premier*, ma *vingt et unième*); l’italiano scrive ogni numero in una sola parola (*ventuno*, *ventitré*, *duemilaventiquattro*; *primo*, *ventunesimo*), e così il tedesco (*einundzwanzig*, *hunderteins*; *erste*, *einundzwanzigste*), con *ss* per *ß* nel tedesco svizzero (`de-CH`); il catalano segue l’IEC (*vint-i-u*, *dos-cents*; *primer*, *cinquè*, *vint-i-unè*), e il portoghese è quello del Brasile (*dezesseis*) a meno che `locale` non indichi un’altra regione (`pt-PT`: *dezasseis*), con gli ordinali latini (*vigésimo primeiro*). Gli ordinali catalani e portoghesi, come quelli spagnoli, vengono scritti fino a 999.
+
+Le lingue romanze leggono il modificatore di genere: `-feminine` (o `-f`) accorda le parole con un nome femminile (`Parte {1:ordinal-f}` dà *Parte prima*, `{1:Ordinal-f} partie` dà in francese *Première partie*; così anche *una*, *veintiuna*, *vint-i-una*, *duzentas*), e `-masculine` (`-m`) è il valore predefinito. In tedesco il cardinale non cambia (*Kapitel eins*), l’ordinale sì: senza modificatore prende la desinenza che ha dopo l’articolo, uguale nei tre generi (`Das {1:ordinal} Kapitel` dà *Das erste Kapitel*); davanti a un nome senza articolo, `-masculine` dà *Erster Teil*, `-feminine` *Erste Lektion* e `-neuter` (`-n`) *Erstes Kapitel*. I numeri tedeschi si scrivono in minuscolo, come vuole la lingua (`Kapitel {1:words}` dà *Kapitel eins*); `{1:Words}` mette la maiuscola iniziale, per la parola che apre il titolo, e `{1:WORDS}` scrive ß come SS.
+
+I numeri arabi concordano nel genere con il nome che contano, quindi il suffisso accetta un modificatore: `-feminine` (o `-f`) per un nome femminile, `-masculine` (`-m`, il valore predefinito) per uno maschile; `-classical` scrive le centinaia مائة, come fanno Bulaq e la maggior parte delle stampe egiziane, invece del moderno مئة. `{1:ordinal}` scrive l’ordinale determinato al nominativo che usa un titolo: `الفصل {1:ordinal}` dà *الفصل الأول*, *الفصل الحادي عشر*, *الفصل الحادي والعشرون*; `الليلة {1:ordinal-feminine}` dà *الليلة الأولى*, *الليلة الحادية عشرة*, *الليلة الحادية والعشرون*, *الليلة المئتان*, e oltre il cento la formula classica con «dopo»: *الليلة الخامسة والأربعون بعد الثلاثمئة*, *الليلة الحادية بعد الألف*. `{1:words}` scrive il cardinale (واحد وعشرون; al femminile إحدى عشرة, واحدة وعشرون). Gli ordinali vengono scritti in lettere fino a 9 999 e i cardinali fino a 99 999; i modificatori si combinano (`{1:ordinal-f-classical}`); le lingue romanze e il tedesco ne leggono solo il genere (vedi sopra), e le altre lingue li ignorano. L’arabo non ha maiuscole, quindi le maiuscole e minuscole del suffisso non cambiano nulla. I segnaposto di progetto grafico `{numberWords}` e `{numberOrdinalWords}` scrivono le forme maschili; per un’apertura al femminile, metti l’ordinale nel modello del livello e stampalo con `{number}`.
+
+In un progetto grafico del titolo, `{numberWords}` / `{numberWordsLower}` e `{numberOrdinalWords}` / `{numberOrdinalWordsLower}` scrivono in lettere il contatore del titolo allo stesso modo, così l’apertura può dire *Chapter One* mentre l’indice riporta `1`. Il `textTransform: 'uppercase'` di un elemento di testo dà le maiuscole:
+
+```ts
+// Spanish novel: "CAPÍTULO PRIMERO" above the title, "1." in the contents.
+{ level: 1, numberingTemplate: '{1}.', span: 'page',
+  advancedDesign: { enabled: true, slot: { elements: [
+    { kind: 'text', id: 'n', content: 'Capítulo {numberOrdinalWordsLower}', textTransform: 'uppercase', /* … */ },
+    { kind: 'text', id: 't', content: '{titleText}', /* … */ },
+  ] } } }
+```

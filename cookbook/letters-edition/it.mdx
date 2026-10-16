@@ -22,13 +22,13 @@ Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni lettera 
 
 <Excerpt region="letters" />
 
-Con `breakBefore` disattivato, una lettera comincia due linee di griglia (`marginTop`) sotto la linea di griglia dove finisce la precedente. A <PageRef page={4}>pagina 4</PageRef> il poscritto, composto su un’interlinea di 12,6 pt, finisce tra due linee di griglia, così sopra la lettera III restano circa tre righe di bianco. A pagina 2, la lettera I arriva al piede della pagina e la lettera II apre la pagina 3. Lasciato al suo valore predefinito, il livello 1 aprirebbe ogni lettera su un recto ([interruzione prima](/it/docs/configuration-text#interruzione-prima-del-titolo)). `numberingTemplate: '{1:I}'` numera le lettere da I a III, e l’intestazione stampa il numero romano tramite `{number}`.
+Con `breakBefore` disattivato, una lettera comincia due linee di griglia (`marginTop`) sotto la linea di griglia dove finisce la precedente. A <PageRef page={4}>pagina 4</PageRef> il poscritto, composto su un’interlinea di 12,6 pt, finisce tra due linee di griglia, così sopra la lettera III restano circa tre righe di bianco. A pagina 2, la lettera I arriva al piede della pagina e la lettera II apre la pagina 3. Lasciato al suo valore predefinito, il livello 1 aprirebbe ogni lettera su un recto ([interruzione prima](/it/docs/configuration-headings#interruzione-prima-del-titolo)). `numberingTemplate: '{1:I}'` numera le lettere da I a III, e l’intestazione stampa il numero romano tramite `{number}`.
 
 ### 3 · Data il recto con la lettera
 
 <Excerpt region="running-heads" />
 
-In un’intestazione di pagina, `{attr.date}` prende l’attributo dell’ultimo titolo di livello 1 che comincia su quella pagina o prima. La pagina 3 stampa «12 juin 1740», e la pagina 5, dove continua la lettera di Voltaire cominciata a pagina 4, stampa «1er avril 1778» con l’ordinale in esponente ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)). Le testatine stanno 12 mm sotto il bordo superiore della pagina, il folio sul margine esterno e le parole 8 mm più all’interno. `pages: 'body'` le tiene fuori dalla copertina, che conta come apertura perché il suo titolo occupa tutta la pagina. La data è composta nel corsivo Crimson Pro della data topica che ripete, e i nomi sul verso nel maiuscoletto dei numeri delle lettere.
+In un’intestazione di pagina, `{attr.date}` prende l’attributo dell’ultimo titolo di livello 1 che comincia su quella pagina o prima. La pagina 3 stampa «12 juin 1740», e la pagina 5, dove continua la lettera di Voltaire cominciata a pagina 4, stampa «1er avril 1778» con l’ordinale in esponente ([elementi di testo](/it/docs/configuration-headers-footers#elementi-di-testo)). Le testatine stanno 12 mm sotto il bordo superiore della pagina, il folio sul margine esterno e le parole 8 mm più all’interno. `pages: 'body'` le tiene fuori dalla copertina, che conta come apertura perché il suo titolo occupa tutta la pagina. La data è composta nel corsivo Crimson Pro della data topica che ripete, e i nomi sul verso nel maiuscoletto dei numeri delle lettere.
 
 ### 4 · Fai della copertina un titolo
 

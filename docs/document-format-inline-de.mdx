@@ -1,0 +1,372 @@
+{/* docs/document-format-inline-de.mdx */}
+
+export const metadata = {
+  title: 'Dokumentformat: Inline-Formatierung und Formeln',
+  sidebarTitle: 'Inline-Formatierung und Formeln',
+  description: 'Auszeichnungen innerhalb einer Zeile: Hervorhebung, Links, Chips, Kapitälchen, Tabulatoren, senkrechter Text, chinesische und japanische Zeichen, Schreibrichtung und LaTeX-Formeln',
+  lang: 'de',
+  lastUpdated: '2026-10-16',
+  readingTime: '24 min',
+  order: 26,
+  parent: 'document-format',
+  plainSummary: "Diese Seite behandelt die Zeichen, die Sie innerhalb einer Textzeile verwenden. Sie machen Wörter fett oder kursiv, fügen Links ein, zeichnen kleine Marken, setzen Kapitälchen und richten Text an Tabstopps aus. Andere Zeichen sind für chinesische und japanische Bücher gedacht, etwa kleine Aussprachehilfen über einem Schriftzeichen, oder für eine Wendung in der anderen Schreibrichtung, etwa Englisch in einem arabischen Buch. Der letzte Abschnitt zeigt, wie Sie mathematische Formeln schreiben.",
+};
+
+# Dokumentformat: Inline-Formatierung und Formeln
+
+
+## Inline-Formatierung
+
+Inline-Auszeichnungen werden in jedem Textblock erkannt (Überschriften, Absätze, Zitate, Listeneinträge). In einer Überschrift folgen sie `headings.inlineMarks`, standardmäßig eingeschaltet: Kursives, Fettes, Hoch- und Tiefstellungen, Kapitälchen und Links des Titels werden wie in einem Absatz gedruckt, und eine kursive Folge in einer kursiven Überschrift erscheint aufrecht. Ist es ausgeschaltet, entfallen die Markierungen, und der Titel wird im eigenen Format der Überschrift gedruckt; Konfigurationen, die mit postext 1.4 oder früher gespeichert wurden und deren Überschriften Auszeichnungen tragen, werden so gelesen (siehe [Konfiguration › Überschriften](/de/docs/configuration-headings#überschriften)). Eine Überschriftengestaltung druckt `{titleText}` in jedem Fall als einfachen Text.
+
+<Illustration name="InlineFormatting" data='{"title": "Inline-Formatierung auf einen Blick", "desc": "Gegenüberstellung von Markdown und Ergebnis für fett, kursiv, fett kursiv, Inline-Code und Links.", "caption": "Links das Markdown, rechts das gesetzte Ergebnis.", "rows": [{"markdown": "**fett**", "rendered": "fett", "style": "bold"}, {"markdown": "*kursiv*", "rendered": "kursiv", "style": "italic"}, {"markdown": "***beides***", "rendered": "beides", "style": "bold-italic"}, {"markdown": "`code`", "rendered": "code", "style": "code"}, {"markdown": "[Link](https://…)", "rendered": "Link", "style": "link"}]}' />
+
+<table>
+  <thead>
+    <tr>
+      <th>Auszeichnung</th>
+      <th>Syntax</th>
+      <th>Hinweise</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Fett</td>
+      <td><code>**bold**</code> oder <code>__bold__</code></td>
+      <td>Gesetzt mit <code>bodyText.boldFontWeight</code>. Ein optionales <code>bodyText.boldColor</code> ersetzt für fette Folgen die Standardfarbe des Fließtexts.</td>
+    </tr>
+    <tr>
+      <td>Kursiv</td>
+      <td><code>*italic*</code> oder <code>_italic_</code></td>
+      <td>Gesetzt mit dem kursiven Schnitt der aktuellen Schriftfamilie. Ein optionales <code>bodyText.italicColor</code> ersetzt für kursive Folgen die Standardfarbe des Fließtexts. Ein Unterstrich kennzeichnet Hervorhebung nur an einer Wortgrenze, wie in CommonMark: Einer zwischen zwei Buchstaben oder Ziffern – <code>snake_case_name</code>, das <code>SR_AIR_EN.pdf</code> einer URL – ist Text (auch bei <code>__bold__</code>); innerhalb eines Worts verwenden Sie Sternchen (<code>un*believ*able</code>). Chinesische, japanische und koreanische Zeichen zählen hier nicht, da diese Schriften keine Leerzeichen kennen: <code>中文_斜体_中文</code> und <code>中文__粗体__中文</code> sind kursiv bzw. fett. Ein <code>__</code>, das keinen Fettdruck ergibt, wird nie zu Kursivschrift: <code>foo__bar__baz</code> bleibt Text.</td>
+    </tr>
+    <tr>
+      <td>Fett kursiv</td>
+      <td><code>***both***</code> oder <code>___both___</code></td>
+      <td>Beide Kennzeichen werden kombiniert.</td>
+    </tr>
+    <tr>
+      <td>Hochgestellt</td>
+      <td><code>^text^</code></td>
+      <td>Gesetzt in 58 % der Textgröße und um ein Drittel davon angehoben – ein Exponent (<code>10^-8^</code>), eine Ionenladung (<code>Na^+^</code>). Der markierte Text beginnt und endet mit einem Zeichen, das kein Leerzeichen ist; ein einzelnes Caret im Text bleibt wörtlich stehen, ebenso die Gesichter <code>^_^</code> und <code>^o^</code> (<code>n.^o^</code> und <code>1^o^</code> sind dennoch hochgestellt).</td>
+    </tr>
+    <tr>
+      <td>Tiefgestellt</td>
+      <td><code>~text~</code></td>
+      <td>Gleiche Größe, um 0,15 der Textgröße abgesenkt, sodass es innerhalb der Unterlängen bleibt – ein chemischer Index (<code>H~2~O</code>, <code>p<em>K</em>~a~</code>). Eine Tilde mit einer Ziffer auf jeder Seite ist ein Bereich und bleibt wörtlich stehen: <code>3~5 days</code>, <code>需要3~5天</code>. Ebenso eine zwischen zwei chinesischen Wörtern, die keine Tiefstellung öffnet: <code>周一~周五</code>, <code>北京~上海</code>; eine Tiefstellung schließt aber weiterhin vor einem chinesischen Zeichen (<code>F~合~等于</code>). Lässt sich mit fett und kursiv kombinieren (<code>**H~2~O**</code>). Eine Tiefstellung und eine Hochstellung, die ohne etwas dazwischen zusammen geschrieben sind, werden wie in einer Formel gestapelt: <code>*T*~0~^2^</code> setzt die 2 über die 0, gleich welche zuerst kommt, die Tiefstellung um 0,25 der Textgröße abgesenkt, damit sie der Hochstellung ausweicht, und das Paar nimmt die Breite des breiteren Teils ein. Ein Leerzeichen oder ein Buchstabe dazwischen setzt sie nacheinander; ein Wortverbinder (U+2060) ebenso, ohne dass dazwischen etwas sichtbar ist. Ein gestapeltes Paar wird nie an einem Zeilenumbruch getrennt: Ein für die Zeile zu breites Wort bricht vor dem Paar um.</td>
+    </tr>
+    <tr>
+      <td>Kapitälchen</td>
+      <td><code>:smallcaps[text]</code></td>
+      <td>Kleinbuchstaben als Großbuchstaben in 70 % der Textgröße gesetzt – der Name einer Figur in einem Theaterstück, ein Akronym im Fließtext. Nimmt andere Auszeichnungen in sich und um sich herum an; siehe <a href="#kapitälchen">Kapitälchen</a>.</td>
+    </tr>
+    <tr>
+      <td>Ausrichtung in senkrechtem Text</td>
+      <td><code>:tcy[12]</code>, <code>:upright[GDP]</code>, <code>:sideways[12]</code></td>
+      <td>In senkrechtem Text: eine aufrechte Zelle (Tate-chū-yoko), jedes Zeichen aufrecht in einer eigenen Zelle oder die ganze Folge gedreht. Keine Wirkung in waagerechtem Text; siehe <a href="#ausrichtung-in-senkrechtem-text">Ausrichtung in senkrechtem Text</a>.</td>
+    </tr>
+    <tr>
+      <td>Chinesische Zeichen</td>
+      <td><code>:dots[不可]</code>, <code>:name[賈寶玉]</code>, <code>:book[石頭記]</code></td>
+      <td>Betonungspunkte (着重号), die Eigennamenlinie (专名号) und das Buchtitelzeichen (书名号: 《》 oder eine Wellenlinie, je nach <code>cjk.bookTitleMark</code>). Der Text bleibt so, wie er geschrieben ist; siehe <a href="#chinesische-zeichen-ruby-und-warichu">Chinesische Zeichen, Ruby und Warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Ruby</td>
+      <td><code>:ruby[紅樓]&#123;rt="hóng lóu"&#125;</code> oder <code>&#123;紅樓|hóng|lóu&#125;</code></td>
+      <td>Lesungen in Pinyin oder Zhuyin über (oder neben) den Grundzeichen. Die Kurzform braucht eine Basis aus Han-Zeichen, Kana oder Bopomofo, daher bleibt <code>&#123;x|x&gt;0&#125;</code> Text.</td>
+    </tr>
+    <tr>
+      <td>Warichu</td>
+      <td><code>:warichu[note]&#123;open="〔" close="〕"&#125;</code></td>
+      <td>Eine Anmerkung, in zwei Zeilen halber Größe innerhalb der Zeile gesetzt (双行夹注), über Zeilen und Seiten umbrochen.</td>
+    </tr>
+    <tr>
+      <td>Inline-Code</td>
+      <td><code>`code`</code></td>
+      <td>Die Backticks werden entfernt; die Folge wird als einfacher Text gesetzt, genau so, wie sie geschrieben ist: Ein <code>{':ref{…}'}</code>, ein Chip, eine Formel, ein Link oder eine Hervorhebungsmarkierung darin wird wörtlich gedruckt, und so zeigt ein Text die Syntax. Gesetzt wird sie in der Schrift des Texts oder, mit <code>codeStyle.inline</code>, als Einheit in der Code-Schrift (siehe <a href="/de/docs/configuration-styles#code-listings">Konfiguration › Code-Listings</a>). Ein Listing gehört in einen <a href="/de/docs/document-format#codeblöcke">Codeblock</a>.</td>
+    </tr>
+    <tr>
+      <td>Escape</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
+      <td>Ein Backslash setzt das Markierungszeichen selbst – das Sternchen einer Tabellenfußnote (<code>{'\\* pOH = −log [OH^−^]'}</code>), ein wörtliches Caret, ein Dollarzeichen, das keine Formel öffnet –, statt eine Folge zu öffnen. Funktioniert im Fließtext, in Chips sowie in Legenden, Zellen und Anmerkungen. (Bis postext 1.4 druckten Legenden, Zellen, Anmerkungen und Chips den Backslash von <code>{'\\$'}</code> mit.)</td>
+    </tr>
+    <tr>
+      <td>Geschütztes Leerzeichen</td>
+      <td>das Zeichen selbst: U+00A0, U+202F, U+2007</td>
+      <td>Verbindet die Wörter zu beiden Seiten, sodass eine Zeile nie zwischen ihnen umbricht: eine Zahl und ihre Einheit (37 °C), eine Seitenangabe (S. 12), eine Tausendergruppe (225 000). Das geschützte Leerzeichen (U+00A0), das schmale geschützte Leerzeichen (U+202F) und der Ziffernabstand (U+2007) verbinden alle – im Fließtext, in Legenden, Zellen, Kästen und Kolumnentiteln –, und jedes behält seine eigene Breite: Der Blocksatz dehnt nur die Wortzwischenräume. Viele Schriften haben kein Glyph für das schmale geschützte Leerzeichen oder den Ziffernabstand; diese werden dann so gesetzt, wie Browser sie setzen, im Canvas, im HTML und im PDF gleichermaßen: als halber Wortzwischenraum bzw. in der Breite einer Ziffer. Praktisch jede Schrift hat U+00A0, daher ist es die sichere Wahl. Eine so verbundene Gruppe, die breiter ist als die ganze Zeile, bricht an ihrem letzten geschützten Leerzeichen um statt innerhalb eines Worts. Der Wortverbinder (U+2060) verbindet, ohne Platz einzunehmen. Tippen Sie das Zeichen selbst: Eine HTML-Entität wie <code>{'&nbsp;'}</code> wird so gedruckt, wie sie geschrieben ist. Siehe <a href="/de/docs/justification#wo-eine-zeile-nie-umbricht">Wo eine Zeile nie umbricht</a>.</td>
+    </tr>
+    <tr>
+      <td>Bedingter Trennstrich</td>
+      <td>das Zeichen selbst: U+00AD</td>
+      <td>Eine Stelle, an der das Wort getrennt werden darf, mit einem hinzugefügten Trennstrich, wenn dort eine Zeile endet: nur zwischen zwei Buchstaben oder Ziffern. Ein Wort, das einen enthält, erhält aus dem Wörterbuch keine weitere Trennstelle, sodass der bedingte Trennstrich seine einzige Trennung ist; vor dem ersten Buchstaben eines Worts getippt, trennt er nichts und hält dieses Vorkommen ganz. Neben einer Klammer, einem Anführungszeichen oder einem Satzzeichen bewirkt er nichts. Siehe <a href="/de/docs/justification#wo-eine-zeile-nie-umbricht">Wo eine Zeile nie umbricht</a>.</td>
+    </tr>
+    <tr>
+      <td>Link</td>
+      <td><code>[text](https://…)</code></td>
+      <td>Der sichtbare Text bleibt im Fluss und wird genau so gesetzt wie ohne den Link. Die URL macht die Wörter in der HTML- und PDF-Ausgabe zu einem aktiven Link; siehe <a href="#links">Links</a>.</td>
+    </tr>
+    <tr>
+      <td>Bild</td>
+      <td><code>![alt](src)</code></td>
+      <td>Markdown für Inline-Bilder wird aus dem Text <strong>entfernt</strong>. Bilder müssen in <code>PostextContent.resources</code> deklariert werden, damit die Layout-Engine sie nach den Regeln von <code>resourcePlacement</code> platzieren kann.</td>
+    </tr>
+    <tr>
+      <td>Chip</td>
+      <td><code>:chip[text]</code></td>
+      <td>Eine eingerahmte Textfolge, die als Einheit umbricht – eine Wortbank, eine Taste, ein Tag. Gestaltet über <code>chipStyles</code>; siehe <a href="#inline-chips">Inline-Chips</a>.</td>
+    </tr>
+    <tr>
+      <td>Tabulator</td>
+      <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
+      <td>Schickt die Wörter danach zum nächsten Tabstopp: einem der Tabstopps des Absatzformats oder dem, den seine Attribute festlegen. Ein im Text getippter Tabulator ist nur dort ein Tabulator, wo das Format Tabstopps setzt. Siehe <a href="#tabulatoren-und-tabstopps">Tabulatoren und Tabstopps</a>.</td>
+    </tr>
+    <tr>
+      <td>Inline-Formel</td>
+      <td><code>$…$</code></td>
+      <td>Eine LaTeX-Formel, die mit dem umgebenden Text fließt, z. B. <code>$e^{'{i\\pi}'}+1=0$</code>. Gesetzt von MathJax und auf jedem Backend als Vektorpfade gerendert. Verwenden Sie <code>\\$</code> für ein wörtliches Dollarzeichen. Skalierung, die abgesetzte Form (<code>$$ … $$</code>) und die Fehlerbehandlung werden unter <a href="#mathematische-formeln">Mathematische Formeln</a> behandelt.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Links
+
+Ein Markdown-Link, `[text](url)`, behält seinen Text im Fluss genau so, wie der Text ohne ihn gesetzt würde: Der Link ändert nie Zeilenumbrüche, Abstände oder Farbe. Er behält seine URL für die Ausgaben, die ihr folgen können:
+
+- **HTML** (`renderToHtml`): Die verlinkten Wörter werden in `<a href="…" rel="noopener noreferrer">` eingeschlossen, das die Textfarbe übernimmt und nicht unterstrichen ist. Je Folge verlinkter Wörter auf einer Zeile gibt es einen Anker.
+- **PDF** (`postext-pdf`): Jede Folge verlinkter Wörter auf einer Zeile wird zu einer anklickbaren URI-Link-Annotation. In einem getaggten PDF ist sie ein Element `Link`, dessen Text die verlinkten Wörter sind.
+- **Canvas**: als einfacher Text gemalt, da ein Canvas keine Klickfläche hat.
+
+```markdown
+Read the [configuration guide](https://postext.dev/en/docs/configuration "Configuration")
+or write to [the team](mailto:team@example.com).
+```
+
+- Das Ziel kann einen Titel tragen, der ignoriert wird (`[text](https://example.com "Title")`). Es kann auch in spitze Klammern eingeschlossen sein, wobei Leerzeichen zu `%20` werden (`[text](<https://example.com/a b>)`).
+- Nur sichere Ziele bleiben erhalten: `http:`, `https:`, `mailto:`, `tel:`, `ftp:` und relative URLs (`../guide`, `#top`). Jedes andere Schema (`javascript:`, `data:`, `file:` …) setzt den Text ohne Link. Das PDF verlinkt nur absolute URLs.
+- Das Ziel darf Klammern enthalten, solange sie ausgeglichen sind, wie in CommonMark: `[photo](https://commons.wikimedia.org/wiki/File:Bike_(Unsplash).jpg)` verlinkt die ganze URL. Ein Backslash maskiert ein Zeichen (`\(`, `\_`). Sind die Klammern nicht ausgeglichen, endet das Ziel an seiner ersten `)`, und der Text wird ohne Link gesetzt; kodieren Sie eine einzelne Klammer als `%28` oder `%29`. Auch ein Leerzeichen beendet das Ziel, sofern es nicht in spitze Klammern eingeschlossen ist.
+- Ein Wort, das direkt am Linktext klebt, gehört mit zum Link. In `see [the site](https://example.com).` ist der Punkt Teil der anklickbaren Fläche.
+- Der Linktext kann Hervorhebungen enthalten (`[**bold** words](…)`) und selbst darin stehen (`**[words](…)**`).
+- Links funktionieren in Absätzen, Listeneinträgen, Zitaten, Kästen, Legenden, Anmerkungen und Tabellenzellen sowie in Überschriften, solange `headings.inlineMarks` eingeschaltet ist (die Voreinstellung). Kolumnentitel, die Gliederung und die aus einer Überschrift erzeugten Zeilen des Inhaltsverzeichnisses behalten nur den Text, ebenso der Text eines `:chip[…]`.
+- Links im Referenzstil (`[text][id]`) und Autolinks (`<https://…>`) werden nicht erkannt (siehe [Was NICHT unterstützt wird](/de/docs/document-format#was-nicht-unterstützt-wird)).
+
+Im VDT steht das Ziel an jedem verlinkten Segment, als `VDTLineSegment.href`. Der Parser hält die Links einer Folge als Bereiche ihres Texts in `InlineSpan.links` fest und teilt eine Folge nie wegen eines Links; deshalb kann ein Link das Layout nicht verändern.
+
+### Inline-Chips
+
+`:chip[text]` setzt `text` in einen Kasten – einen abgerundeten, getönten „Chip“ –, der mit der Zeile fließt: die Wörter einer Wortbank oder einer Zuordnungsübung, Tastaturtasten, Tags. `:chip[text]{style="key"}` wählt ein benanntes Format aus `chipStyles` (siehe die Konfigurationsreferenz); ohne `style` oder mit einer ID, die kein Format deklariert, erhält der Chip das erste Format (ein eingebautes Format `chip`, wenn die Konfiguration keines hat; die Sandbox warnt vor einer unbekannten ID).
+
+```markdown
+Classify: :chip[battery] :chip[cable] :chip[switch] :chip[bulb]
+
+Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
+```
+
+- **Eine Einheit.** Ein Chip wird innen nie umbrochen oder getrennt; die Zeile bricht zwischen Chips um, an den Wortzwischenräumen um sie herum. Ein Chip, der breiter ist als die ganze Zeile, ragt über sie hinaus, statt geteilt zu werden.
+- **Breite.** Seine Laufweite ist der Text plus der waagerechte Innenabstand und die Kontur auf beiden Seiten. Der Blocksatz dehnt nur die Wortzwischenräume, nie das Innere eines Chips. Das `gap` des Formats ist der geringste Abstand, der über einen Zwischenraum hinweg zwischen dem Kasten und einem benachbarten Wort oder Chip bleibt – ein schmalerer Zwischenraum wird aufgefüllt (nicht an einem Zeilenrand und nicht vor anhängender Interpunktion wie in `:chip[a],`).
+- **Höhe.** Der Kasten ist ein Band um die Grundlinie, 0,8 em darüber und 0,25 em darunter in der Größe des Chips, erweitert um den senkrechten Innenabstand und die Kontur. Der senkrechte Innenabstand wird außerhalb des Zeilenkastens gemalt und ändert nie die Zeilenhöhe, sodass das Grundlinienraster hält; ein Kasten, der höher ist als der Zeilenabstand, kann in einen Chip der Zeile darüber oder darunter hineinreichen, und die Sandbox kennzeichnet zwei Chips auf verschiedenen Zeilen, die sich überlappen („Chips berühren die nächste Zeile“), damit Innenabstand, Kontur oder Größe verringert werden können.
+- **Text.** Der Text des Chips nimmt eigene Inline-Auszeichnungen an (`:chip[**bold** word]`, `:chip[x^2^]`) sowie die Hervorhebung um ihn herum (`**:chip[a]**`); das Format kann Familie, Größe, Farbe, fett und kursiv festlegen. Schreiben Sie `\]` für eine wörtliche Klammer darin. Verweise, Farbfelder und Formeln in einem Chip bleiben wörtlich, und `\$` druckt ein Dollarzeichen (bis postext 1.4 wurde auch der Backslash gedruckt).
+- **Leer.** Ein Chip nur aus Leerzeichen (`:chip[ ]`, geschützte Leerzeichen eingeschlossen) ist ein leerer Kasten – eine Antwortlücke, ein Schlusszeichen: so breit wie waagerechter Innenabstand und Kontur seines Formats, so hoch wie ein Chip mit Wörtern. Die Breite der Lücke bestimmen Sie über das `paddingX` eines Formats (`:chip[ ]{style="blank"}`). Steht gar nichts zwischen den Klammern, bleibt `:chip[]` wörtlicher Text.
+- **Wo.** Absätze, Listeneinträge, Zitate, Kästen, Tabellenzellen, Legenden und Anmerkungen. Überschriften behalten `:chip[…]` als wörtlichen Text.
+- **Ausgabe.** Canvas, HTML und PDF malen den Kasten und setzen die Wörter als echten Text: im HTML auswählbar, im PDF extrahierbar und in Lesereihenfolge (in einem getaggten PDF ist der Kasten ein Layout-Artefakt, und die Wörter gehören zum Absatz).
+
+### Kapitälchen
+
+`:smallcaps[text]` setzt `text` in Kapitälchen – die Namen der Figuren in einem Theaterstück, ein Akronym im Fließtext, die ersten Wörter eines Kapitels. Kleinbuchstaben werden als Großbuchstaben in 70 % der Textgröße gesetzt, während Großbuchstaben, Ziffern und Satzzeichen die volle Größe behalten; `:smallcaps[Hamlet]` druckt also ein H in voller Größe, gefolgt von AMLET in Kapitälchen.
+
+```markdown
+Enter :smallcaps[Hamlet] and :smallcaps[Horatio], reading.
+
+The :smallcaps[unesco] report and the :smallcaps[who] guidelines.
+```
+
+- **Synthetisch.** Die Kapitälchen werden aus den Großbuchstaben der Schrift selbst gebildet, auf dem Canvas, im HTML und im PDF auf dieselbe Weise, sodass der Text überall gleich gemessen und umbrochen wird. Echte Kapitälchen einer Schrift (das OpenType-Feature `smcp`) werden nicht verwendet; für sie setzen Sie den Text über ein Absatzformat in einer Kapitälchenfamilie (etwa einer Familie, deren Name auf „SC“ endet).
+- **Auszeichnungen.** Der Text nimmt eigene Inline-Auszeichnungen an (`:smallcaps[**Ophelia**]`) sowie die Hervorhebung um ihn herum (`*:smallcaps[Act I]*`); schreiben Sie `\]` für eine wörtliche Klammer darin. Ein Verweis oder ein Chip darin wird ebenfalls in Kapitälchen gesetzt, und ein Verweis bleibt im HTML und im PDF ein einziger Link; eine Formel nicht.
+- **Umbruch.** Wörter werden wie üblich umbrochen und getrennt; die Silbentrennung liest jedes Wort in seiner eigenen Schreibung.
+- **Wo.** Absätze, Listeneinträge, Zitate, Kästen, Tabellenzellen, Legenden und Anmerkungen sowie Überschriften, solange `headings.inlineMarks` eingeschaltet ist (die Voreinstellung); ist es ausgeschaltet, wird die Auszeichnung aus einer Überschrift entfernt und der Text so gedruckt, wie er geschrieben ist.
+- **Ganze Absätze.** Ein Absatzformat oder der Inhalt eines Kastens mit `smallCaps: true` setzt seinen ganzen Text auf diese Weise (siehe [Absatzformate](/de/docs/configuration-styles#absatzformate)).
+- **Text.** Canvas, HTML und PDF enthalten die Buchstaben so, wie sie gemalt sind: Wer `:smallcaps[Hamlet]` kopiert, erhält „HAMLET“.
+
+### Tabulatoren und Tabstopps
+
+Ein Tabulator schickt die Wörter danach zu einem Stopp auf der Zeile: den Preis eines Gerichts bündig am Ende der Zeilenbreite hinter einer Punktreihe, den Darsteller hinter der Rolle in einer Besetzungsliste, die Punktzahl einer Prüfungsfrage am Rand. Schreiben Sie `:tab` dort, wo der Tabulator hingehört; die Leerzeichen um ihn herum gehen in ihm auf. Die Tabstopps werden in der Konfiguration festgelegt: `bodyText.tabStops` für jeden Absatz, Listeneintrag und jedes Zitat, das `tabStops` eines Absatzformats für die Absätze einer Gruppe `:::paragraphs` und das `body.tabStops` eines Kastenformats innerhalb seiner Kästen (siehe [Konfiguration › Tabulatoren](/de/docs/configuration-text#tabulatoren)). Eine Speisekarte, deren Preise am Ende der Zeilenbreite hinter Punkten enden:
+
+```ts
+paragraphStyles: [
+  { id: 'menu', firstLineIndent: { value: 0, unit: 'em' }, tabStops: [{ position: 'end', align: 'end', leader: '. ' }] },
+],
+```
+
+```markdown
+:::paragraphs{style="menu"}
+Onion soup :tab 8.50
+
+Grilled sea bream with fennel and lemon :tab 21.00
+:::
+```
+
+`:tab{…}` setzt einen Stopp für genau diesen einen Tabulator, ohne Format: die Lücke eines Formulars bis zum Zeilenende, einen Betrag an seinem Dezimaltrennzeichen.
+
+```markdown
+Name and surname :tab{at=end leader=rule}
+
+Total due :tab{at=80% align=decimal} 1,234.50
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribut</th>
+      <th>Bedeutung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>at</code></td>
+      <td>Wo der Stopp steht, gemessen vom Anfangsrand der Zeilenbreite des Absatzes: eine Länge (<code>120mm</code>, <code>4cm</code>, <code>2em</code>; eine bloße Zahl gilt in Punkt), <code>end</code> für das Ende der Zeilenbreite oder ein Anteil davon (<code>60%</code>). Ohne <code>at</code> geht <code>:tab&#123;…&#125;</code> zu den Stopps des Formats, wie ein bloßes <code>:tab</code>.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>start</code> (die Voreinstellung): Der Text nach dem Tabulator beginnt am Stopp. <code>end</code>: Er endet dort (der Text bis zum nächsten Tabulator oder zum Ende des Absatzes). <code>center</code>: Er wird auf dem Stopp zentriert. <code>decimal</code>: Sein Dezimaltrennzeichen steht auf dem Stopp; eine Folge ohne eines endet dort.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td>Text, der über den Raum vor dem Stopp wiederholt wird: <code>"."</code>, <code>". "</code>, <code>"·"</code>, <code>"_"</code>, <code>"-"</code> oder ein anderer kurzer Text, in Schrift und Farbe des Absatzes. <code>rule</code> zieht eine Linie knapp unter der Grundlinie, die Lücke eines Formulars. Standardmäßig keiner.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td>Abstand, der zwischen der Füllung und dem Text auf beiden Seiten bleibt. Standardmäßig <code>0.5em</code> der Größe des Absatzes; eine bloße Zahl gilt in Punkt.</td>
+    </tr>
+    <tr>
+      <td><code>decimal</code></td>
+      <td>Das Trennzeichen, an dem ein Stopp <code>decimal</code> ausrichtet. Standardmäßig das der Dokumentsprache: <code>.</code> in Englisch, Chinesisch, Japanisch und Arabisch, <code>,</code> in Spanisch, Katalanisch, Portugiesisch, Französisch, Deutsch und anderen.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Wohin ein Tabulator geht.** Zum ersten Stopp hinter dem Text davor, unter den Stopps nach demjenigen, den der vorige Tabulator der Zeile genommen hat; der zweite Tabulator einer Zeile nimmt daher meist den zweiten Stopp. Hinter dem letzten Stopp setzt `tabInterval` weitere Stopps in jedem Intervall ab dem Anfang der Zeilenbreite; ohne es ist der Tabulator ein Wortzwischenraum.
+- **Tabulatorzeichen.** Ein im Text getippter Tabulator (U+0009) ist nur in einem Absatz ein Tabulator, dessen Format `tabStops` oder `tabInterval` setzt. Überall sonst ist er der Wortzwischenraum, der er immer war, sodass ein Dokument, das Tabulatoren statt Leerzeichen verwendet, sein Layout behält. Mehrere Tabulatorzeichen hintereinander gehen ebenso viele Stopps weiter. Ein Tabulator am Anfang einer Quellzeile wird mit den übrigen führenden Leerräumen der Zeile entfernt: Schreiben Sie `:tab`, um eine Zeile an einem Stopp zu beginnen.
+- **Was Text bleibt.** Ein `:tab`, auf das ein Buchstabe folgt (`3:table`), sowie ein `:tab` in Inline-Code, in einer Formel, in der Adresse eines Links oder in den Attributen einer Direktive.
+- **Wo.** Absätze, Listeneinträge, Zitate, Kästen und Gruppen `:::paragraphs`. Überschriften, Legenden, Tabellenzellen und die Texte von Gestaltungen (Kapitelauftakte, Kolumnentitel) haben keine Tabstopps.
+- **Text hinter dem Stopp.** Hat der Text vor einem Tabulator bereits jeden auf seiner Zeile verbliebenen Stopp überschritten, nimmt ein Stopp `end`, `center` oder `decimal` das letzte Wort vor dem Tabulator zusammen mit dem Text am Stopp in die nächste Zeile mit, und der Text davor wird schmaler gesetzt, so wie eine Zeile des Inhaltsverzeichnisses ihren Titel umbricht, um die Seitenzahl zu behalten. Ein Stopp `start` bricht die Zeile vor dem Tabulator um, und der Text danach beginnt die nächste Zeile an seinem Stopp. Ein Tabulator, der seine Zeile eröffnet und trotzdem keinen Stopp findet, nimmt keinen Platz ein.
+- **Füllzeichen.** Eine Füllung füllt den Raum vor ihrem Stopp und endet bündig mit dem Ende dieses Raums, sodass die Punkte mehrerer Zeilen untereinander stehen, gleich welcher Text davor steht. `gap` hält sie vom Text auf beiden Seiten fern; davor gibt es keinen Abstand, wenn der Tabulator die Zeile eröffnet, und danach keinen, wenn nichts folgt. Eine Füllung wird ab drei Wiederholungen gesetzt; ein Raum für eine oder zwei bleibt leer, wie im Inhaltsverzeichnis.
+- **Zeilenumbruch.** Ein Absatz mit einem Tabulator wird Zeile für Zeile gesetzt, nie mit Knuth-Plass. Im Blocksatz nehmen nur die Wortzwischenräume nach dem letzten Tabulator einer Zeile den Ausgleich auf, und die letzte Zeile des Absatzes wird nicht gedehnt (siehe [Blocksatz › Zeilen mit Tabulatoren](/de/docs/justification#zeilen-mit-tabulatoren)). Ein zentrierter oder rechtsbündiger Absatz setzt seine Zeilen mit Tabulatoren von der Anfangsseite aus, da die Stopps Positionen auf der Zeilenbreite sind. Von rechts nach links werden die Stopps von rechts gemessen, und ein Stopp `end` steht links (siehe [Arabischer Satz](/de/docs/arabic-layout#inhaltsverzeichnis-und-register)). In senkrechtem Text ist ein Tabulator ein Wortzwischenraum, und ein `:tab` löst dort die Inhaltswarnung `tabInVerticalText` aus.
+- **Text und Ausgaben.** Der reine Text enthält an jedem Tabulator ein Tabulatorzeichen (`\t`); die Füllzeichen sind kein Text, und Kopien, Suchen und die Source-Map lassen sie weg. Canvas, HTML-Betrachter und EPUB mit festem Layout malen sie (im HTML vor Screenreadern verborgen); ein getaggtes PDF kennzeichnet sie als Artefakte, sodass sein Text `Onion soup 8.50` lautet. Das umfließende EPUB kann die Stopps nicht exakt halten: Jede Zeile eines Absatzes mit Tabulatoren wird zu einer Reihe aus den Teilen zwischen ihren Tabulatoren, in der ein Stopp `end`, `center` oder `decimal` oder einer mit Füllung den nächsten Teil an das Ende der Reihe schiebt (seine Füllung als gepunkteter oder durchgezogener Rand), und ein Stopp `start` den Teil davor in seiner gedruckten Breite hält. Ein Word-Export schreibt `:tab` als Word-Tabulator, und der Word-Import liest einen Tabulator im Fließtext als `:tab` mit dem Stopp zurück, den Word dafür gesetzt hat (siehe [Sandbox › Word-Dokumente](/de/docs/sandbox-books-saving#word-dokumente)).
+
+### Ausrichtung in senkrechtem Text
+
+In senkrechtem Text (`layout.writingMode: 'vertical-rl'`) stehen chinesische Zeichen aufrecht, lateinische Wörter und lange Zahlen werden seitlich gedreht, und eine Zahl mit höchstens zwei Ziffern steht aufrecht in einer Zelle, es sei denn, sie steht in einem lateinischen Satz, dessen Wörtern sie folgt (siehe [Konfiguration › Zahlen im vertikalen Text](/de/docs/configuration-east-asian#zahlen-im-vertikalen-text)). Drei Auszeichnungen heben eine Folge von Hand ab:
+
+```markdown
+第:tcy[120]回，:upright[GDP]增長:sideways[12]倍。
+```
+
+- `:tcy[…]` (Tate-chū-yoko, 縱中橫) setzt seinen Text nebeneinander in eine aufrechte Zelle von einem Geviert, quer gestaucht, wenn er breiter ist: `:tcy[120]`, `:tcy[3.0]`, `:tcy[A+]`. Bis zu etwa vier Zeichen lesen sich gut.
+- `:upright[…]` stellt jedes Zeichen aufrecht in eine eigene Zelle, lateinische Buchstaben darin zentriert: ein Akronym, das Buchstabe für Buchstabe die Spalte hinab gelesen wird. Darin bricht nie eine Zeile um.
+- `:sideways[…]` dreht die ganze Folge mit der Zeile, auch chinesische Zeichen: eine zweistellige Zahl, die der Autor seitlich haben will.
+- Der Text bleibt im reinen Text erhalten; die Auszeichnungen nehmen andere Inline-Auszeichnungen in sich auf (`:tcy[**12**]`), einen Link (`:sideways[[iPhone](https://…)]`) und einander, wobei die innerste gewinnt (`:tcy[:upright[AB]]` stellt A und B aufrecht), und für eine wörtliche Klammer schreiben Sie `\]`. In waagerechtem Text ändern sie nichts.
+- Ein Verweis, eine Anmerkungsmarke, eine Formel, ein Chip oder ein Farbfeld innerhalb einer Auszeichnung behält seine eigene Einstellung: `:sideways[iPhone[^1]]` dreht iPhone und lässt die Anmerkungsnummer so, wie jede Anmerkungsnummer gesetzt wird; die Nummer eines Verweises steht nach `cjk.uprightDigits` wie jede kurze Zahl in einer Zelle.
+- Ein Textelement einer Gestaltung mit `inlineMarks: true` nimmt sie ebenfalls an, wenn es senkrecht gesetzt wird (siehe [Konfiguration › Vertikale Textelemente](/de/docs/configuration-headers-footers#vertikale-textelemente)).
+- Für Umbruch und Blocksatz zählen eine Zelle `:tcy` und jedes Zeichen von `:upright` als chinesische Zeichen, und neben ihnen wird kein Han-Latein-Abstand gesetzt.
+
+
+### Chinesische Zeichen, Ruby und Warichu
+
+Chinesische und japanische Ausgaben kennzeichnen Text zwischen den Zeilen statt mit Kursivschrift oder Unterstreichung, versehen Zeichen mit ihren Lesungen und setzen Kommentare in die Zeile. Sieben Direktiven leisten das. [Chinesischer Satz](/de/docs/chinese-layout) und [Japanischer Satz](/de/docs/japanese-layout) erklären die Konventionen dahinter. Sie behalten ihren Text: Die Zeichen zwischen den Klammern bleiben im Absatz (Suche, Inhaltsverzeichnis, Registeranker und kopierter Text lesen sie so, wie sie geschrieben sind), und die Direktiven nehmen die anderen Inline-Auszeichnungen in sich und um sich herum an, verschachtelte eingeschlossen. Schreiben Sie `\]` für eine wörtliche Klammer.
+
+```markdown
+此事:dots[不可]輕忽。:name[賈寶玉]與:name[林黛玉]讀:book[西廂記]。
+
+{滿紙|mǎn|zhǐ}荒唐言，:ruby[一把]{rt="yì bǎ"}辛酸淚！:ruby[都]{rt="ㄉㄡ"}云作者痴。
+
+寶玉:warichu[甲戌側批：此是第一首標題詩。]{open="〔" close="〕"}道：……
+
+{東京|とう|きょう}の:ruby[紫陽花]{rt="あじさい"}は*とんと*:sideline[見事]だ。:book[こころ]を読む。
+
+:kunten[學]{okuri="ビテ"}而:kunten[時]{okuri="ニ"}:kunten[習]{kaeri="二" okuri="フ"}:kunten[之]{kaeri="一" okuri="ヲ"}。
+```
+
+- **`:dots[text]`** setzt einen Betonungspunkt (着重号) unter jedes Zeichen in waagerechtem Text, rechts daneben in senkrechtem Text, und keinen auf Satzzeichen oder Leerzeichen. `style="dot|circle|sesame"` (Standard `dot`), `fill="open"` für eine Kontur, `pos="over|under"` für die andere Seite. Markdown-Hervorhebung `*…*` auf chinesischen oder japanischen Zeichen bewirkt dasselbe unter `cjk.emphasis: 'dots'`, der Voreinstellung in einem chinesischen oder japanischen Dokument; lateinische Buchstaben in derselben Hervorhebung bleiben kursiv. Weggelassene Attribute übernehmen `cjk.emphasisMark`: im Chinesischen ein Punkt unter dem Text, im Japanischen ein Sesam darüber (in senkrechtem Text rechts daneben).
+- **`:name[text]`** zieht die Eigennamenlinie (专名号) unter den Text (in senkrechtem Text links daneben), und **`:book[text]`** setzt das Buchtitelzeichen (书名号): 《》 um den Titel (〈〉 für einen Titel in einem anderen), die Wellenlinie klassischer und taiwanischer Ausgaben oder nichts, wie `cjk.bookTitleMark` es angibt (standardmäßig Klammern auf dem Festland und in Japan, die Wellenlinie in Taiwan und Hongkong). In einem japanischen Dokument sind die Klammern 『』 und 「」 für einen Titel in einem anderen (`cjk.bookTitleBrackets`). Eine Quelle dient so einer modernen Festlandausgabe wie einer klassischen. Zwei Namen oder Titel nebeneinander halten ihre Linien getrennt.
+- **`:ruby[base]{rt="…"}`** setzt Lesungen über die Basis (Pinyin) oder rechts neben jedes Zeichen (Zhuyin, die Voreinstellung für Bopomofo-Lesungen). Bei ebenso vielen Lesungen wie Zeichen, getrennt durch Leerzeichen oder `|`, erhält jedes Zeichen seine eigene, und zwischen ihnen darf eine Zeile umbrechen (Mono-Ruby); `group` oder eine Anzahl, die nicht passt, setzt eine Lesung zentriert über die ganze Basis, die nie umbricht. `pos="over|under|right"` wählt die Seite. Die Kurzform `{紅樓|hóng|lóu}` (eine Lesung je `|`) oder `{紅樓|hónglóu}` (eine Lesung für die ganze Basis) liest sich gleich, aber nur, wenn die Basis ein Han-, Kana- oder Bopomofo-Zeichen enthält, und außerhalb von Formeln, Code und Attributen, sodass `{x|x>0}` in lateinischem Text Text bleibt. Ein Backslash vor der Klammer oder dem Strich lässt eine chinesische Kurzform Text bleiben: `\{紅|hóng}` und `{紅\|hóng}` drucken `{紅|hóng}`. Eine Basis, die eine Zeile eröffnet oder schließt, richtet sich mitsamt ihrer Lesung an diesem Rand aus. `mode=mono|group|jukugo` wählt, wie die Lesungen über die Basis verteilt werden (`mode=group` entspricht `group`), und `align=center|jis|start`, wie eine Lesung, die kürzer ist als ihre Basis, gesperrt wird. In einem japanischen Dokument ist die Form je Zeichen für ein Wort aus zwei oder mehr Zeichen (`{東京|とう|きょう}`, `rt="とう|きょう"`) Jukugo-Ruby: Jedes Zeichen behält seine Lesung, die auf das nächste Zeichen des Worts übergreifen darf, die Zeile darf zwischen ihnen umbrechen, und die Lesungen werden so gesperrt und greifen so auf Kana über, wie `cjk.ruby.align` und `cjk.ruby.overhang` es angeben; eine Lesung für die ganze Basis (`{紫陽花|あじさい}`, das `《》` von Aozora) ist Gruppen-Ruby; `mode=mono` behält eine Lesung je Zeichen, ohne Übergreifen auf die Nachbarn.
+- **`:sideline[text]`** zieht eine Seitenlinie (傍線) neben den Text, Satzzeichen und Leerzeichen eingeschlossen: darunter in waagerechtem Text, rechts daneben in senkrechtem Text. `style="solid|double|wavy|dotted"` (Standard `solid`), `pos="over|under"` (in senkrechtem Text ist „over“ rechts und „under“ links; `position=` funktioniert ebenfalls). Es funktioniert in jeder Schrift, auch für eine unterstrichene englische Wendung.
+- **`:warichu[note]`** setzt eine Anmerkung (双行夹注) in zwei Zeilen in halber Textgröße innerhalb der Zeile, die obere Zeile wird zuerst gelesen (in senkrechtem Text die rechte). Eine lange Anmerkung füllt den Rest der Zeile und setzt sich in der nächsten Zeile, Spalte oder Seite fort, mit mindestens zwei ihrer Zeichen auf jeder Seite des Umbruchs (`cjk.warichu.minChars`). `open` und `close` schließen sie in Klammern in Textgröße ein; `cjk.warichu` legt Größe, Farbe und Standardklammern fest (（） in einem japanischen Dokument). Eine Anmerkung in lateinischer Schrift bricht zwischen ihren Wörtern um.
+- **`:kunten[字]{kaeri="…" okuri="…" tate}`** setzt die Kanbun-Zeichen des letzten Zeichens zwischen den Klammern: `kaeri` das Rückkehrzeichen (レ, 一 二 三, 上 中 下, 甲 乙 丙, 天 地 人 sowie 一レ 上レ 甲レ 天レ; die Codepunkte ㆑ ㆒ … werden gleich gelesen), `okuri` das Okurigana (die Klammern `（ヲ）` von Aozora entfallen) und der Schalter `tate` den Tatesen, der es mit dem nächsten Zeichen verbindet. Der Text wird nicht umgestellt: Die Zeichen werden in halber Größe daneben gesetzt (`cjk.kunten`), und kopierter Text lautet 學ビテ而時ニ習フ之ヲ, mit dem Okurigana und ohne die Rückkehrzeichen. Ein Ruby darin funktioniert für zweimal gelesene Zeichen: `:kunten[:ruby[未]{rt="ザル" pos=under}]{kaeri="レ" okuri="ダ"}`.
+
+Der Zeilenabstand ändert sich nie: Zeichen und Lesungen sitzen im Durchschuss, und der Build warnt, wenn der Zeilenzwischenraum eines Absatzes für sie zu schmal ist (`cjkMarksExceedLeading`, `rubyExceedsLeading`, `kuntenExceedsLeading`) und wenn die Zeichen unter einer Zeile und die Lesungen über der nächsten nicht in den Zwischenraum passen, den sie sich teilen, in einem Absatz oder über zwei hinweg. Geben Sie annotierten Absätzen ein Absatzformat mit mehr Zeilenabstand. Zeichen, Lesungen und Anmerkungen werden in Absätzen, Überschriften, Listeneinträgen, Zitaten und Kästen gezeichnet, ebenso in Legenden, Tabellenzellen und Anmerkungen, deren Zeilenabstand auf dieselbe Weise geprüft wird; in Kolumnentiteln und Gestaltungen wird der Text ohne sie gedruckt. Unter `cjk.bookTitleMark: 'brackets'` sind die 《》 eines Titels Satzzeichen des Texts: Legenden, Zellen, Anmerkungen, Zeilen des Inhaltsverzeichnisses, Lesezeichen und Registereinträge behalten sie. Siehe [Konfiguration › Zeichen, Ruby und Warichu](/de/docs/configuration-east-asian#zeichen-ruby-und-warichu).
+
+
+### Schreibrichtung in der Auszeichnung
+
+Ein Dokument läuft in der Richtung, die sein `locale` vorgibt (`direction` in der Konfiguration: von rechts nach links für Arabisch, Persisch, Urdu oder Hebräisch). Darin legt die Auszeichnung die Richtung eines Blocks oder einer Textfolge fest, für ein englisches Zitat in einem arabischen Buch oder ein arabisches in einem englischen Buch.
+
+- **Eine Überschrift oder ein Container**: `{dir=ltr}` oder `{dir=rtl}` in ihren Attributen, `# Introduction {dir=ltr}`, `:::paragraphs{dir=ltr}`, `:::callout{dir=rtl}`. Jeder Block in einem Container übernimmt die Richtung, bis hinab zu einem verschachtelten Container oder einer Überschrift, die eine andere festlegt. Ein einfacher Absatz, eine Liste oder ein Zitat hat keine eigenen Attribute: Schließen Sie ihn in `:::paragraphs{dir=…}` ein. Andere Werte werden ignoriert. Das `lang` eines Containers (`:::paragraphs{dir=ltr lang=en}`) benennt auf dieselbe Weise die Sprache der Blöcke darin: Ihre geordneten Listen zählen in den Ziffern dieser Sprache.
+- **Eine Textfolge**: `:ltr[…]` und `:rtl[…]` isolieren ihren Text (die LRI…PDI und RLI…PDI des Unicode-Bidi-Algorithmus): Innen wird er geordnet, und der umgebende Absatz sieht ein einziges neutrales Zeichen. `{lang=…}` kennzeichnet die Sprache der Folge im HTML und im PDF. Eine Anmerkungsmarke, ein `:ref` oder eine Formel darin gehört zur Isolierung, und Isolierungen lassen sich verschachteln.
+
+```markdown
+:::paragraphs{dir=ltr}
+The opening of the *Nights* in Lane's translation.
+:::
+
+ترجمها :ltr[Edward William Lane]{lang=en} سنة ١٨٣٩.
+```
+
+Ein Block, der gegen die Richtung des Dokuments gesetzt ist, behält seine eigene Anfangsseite: Einzug, Listenmarken und das bündige Ende seiner letzten Zeile wandern auf die Seite, auf der sein Text beginnt. Verwenden Sie eine Isolierung, wenn ein lateinischer Titel auf ein neutrales Zeichen endet (einen Punkt, eine Klammer), das sich sonst dem umgebenden Arabisch anschließen würde. Die Unicode-Steuerzeichen selbst (U+2066–2069, U+202A–202E, U+200E, U+200F, U+061C) werden ebenfalls beachtet. Im Editor der Sandbox läuft jede Zeile in der Richtung ihres ersten Buchstabens. Siehe [Arabischer Satz](/de/docs/arabic-layout#richtung-und-bidirektionaler-algorithmus).
+
+
+## Mathematische Formeln
+
+Formelsatz ist ein vollwertiger Bestandteil des Dokumentformats. Postext liest `$…$` als Formel im Text und `$$…$$` als abgesetzte Formel (Blockformel) und rendert beide mit [MathJax](https://www.mathjax.org/) im SVG-Modus. Dieselben Vektorpfade speisen alle drei Backends, sodass die Canvas-Vorschau, der HTML-Export und die PDF-Ausgabe pixelgenau übereinstimmen – und das PDF bleibt bei jeder Vergrößerung vollständig vektoriell.
+
+- **Im Text:** `$…$`. Wird in jedem Textblock erkannt (Absatz, Überschrift, Zitat, Listenpunkt). Bildet in der Zeile eine einzige unteilbare Box ohne Umbruchstelle; Knuth-Plass behandelt sie wie ein Wort, das nicht getrennt werden darf. Würde die natürliche Höhe der Formel die Zeilenbox sprengen, wird sie gleichmäßig verkleinert, damit das Grundlinienraster erhalten bleibt – sehr hohe Ausdrücke gehören in eine abgesetzte Formel.
+- **Abgesetzt:** `$$…$$`. Entweder in einer eigenen Zeile (`$$\int_0^1 x^2\,dx$$`) oder über mehrere Zeilen, eingefasst von `$$`-Markierungen in eigenen Zeilen. Wird in der Spalte zentriert und mit einstellbarem Abstand oben und unten (`math.marginTop`, `math.marginBottom`) auf das Grundlinienraster gesetzt – mit genau demselben Korrekturmechanismus wie bei Überschriften, sodass der Absatz nach der Formel wieder auf dem Raster steht.
+- **Text um eine abgesetzte Formel:** Eine abgesetzte Formel in einer eigenen Zeile unterbricht einen Absatz auch ohne Leerzeile darüber. Der Text davor ist ein Absatz, der zu ihr hinführt; Text, der direkt unter dem schließenden `$$` ohne Leerzeile steht, setzt den unterbrochenen Absatz fort und wird ohne Erstzeileneinzug gesetzt, so wie TeX das „wobei …“ nach einer abgesetzten Formel setzt. Eine Formel, die vom Text darüber durch eine Leerzeile getrennt ist (oder die auf eine Liste, ein Zitat oder eine Überschrift folgt), unterbricht nichts: Der Text danach ist ein neuer Absatz, wie gewohnt eingezogen, ob mit Leerzeile oder ohne (`math.indentAfterDisplay: false` setzt ihn ebenfalls stumpf). Nur eine vollständige abgesetzte Formel unterbricht einen Absatz – eine Formel allein in der Zeile oder ein `$$`-Block, der vor der nächsten Leerzeile geschlossen wird; eine Zeile wie `$$a$$ and $$b$$` bleibt Text. `math.keepWithLeadIn` hält eine Formel in der Spalte der Zeile, die sie einleitet. (Bis postext 1.4 wurde eine `$$…$$`-Zeile ohne Leerzeile darüber als Teil des Absatzes gelesen und so gedruckt, wie sie geschrieben war.)
+- **Gleichungsnummern:** `\label{eq:x}` in einer abgesetzten Formel nummeriert sie in Lesereihenfolge: (1), (2) … Eine nummerierte Formel nimmt die ganze Spaltenbreite ein (oder die Innenbreite des Kastens), die Gleichung zentriert und ihre Nummer rechtsbündig in ihrer Zeile. In einem `align`, `gather`, `alignat`, `flalign` oder `eqnarray` erhält jede Zeile mit einem `\label` eine eigene Nummer, sofern die Zeile nicht `\nonumber` oder `\notag` enthält. Eine Formel ohne `\label` wird nicht nummeriert, wie `$$…$$` es nie wurde. `\tag{…}` nummeriert eine Formel weiterhin mit dem angegebenen Text (`\tag*{…}` ohne Klammern) und wird nicht mitgezählt; ein `\label` daneben benennt diesen Text. Format, Kapitel- oder Abschnittsnummern (2.3) und Neubeginn der Zählung werden in [`math.equationNumbering`](/de/docs/configuration-lists-math#mathematik) eingestellt. Setzen Sie das `\label` auf die oberste Ebene der Formel oder ihrer Zeile, nicht in `aligned`, `split` oder `cases`.
+- **Verweise auf Gleichungen:** `\eqref{eq:x}` im Text druckt die Nummer so, wie die Formel sie trägt, (3), und `\ref{eq:x}` die bloße Nummer, 3; beide sind Links, wie jeder [Querverweis](/de/docs/document-format-notes-references#querverweise-und-anker). `Eq.~\eqref{eq:x}` behandelt `~` wie LaTeX: als geschütztes Leerzeichen. `:ref{id="eq:x"}` und `@eq:x` drucken ebenfalls (3). Innerhalb einer Formel drucken `\eqref` und `\ref` die Nummer (ohne Link). Ein Label, das nirgends gesetzt wird, druckt *?* und erscheint im Bedienfeld Prüfungen.
+- **Maskieren:** `\$` ist ein wörtliches Dollarzeichen. Nicht geschlossene `$`- oder `$$`-Begrenzer erzeugen im Bedienfeld Prüfungen der Sandbox einen Eintrag `unclosedMath` mit einem Quellanker, der per Klick die Stelle anspringt.
+- **Legenden, Anmerkungen und Tabellenzellen** setzen ebenfalls Formeln im Text (seit postext 1.19), in der Zeile mit dem Text, mit der Ausrichtung der Zelle und in der Größe des Textstücks. Dort eröffnet ein `$` nur nach der Pandoc-Regel eine Formel: kein Leerzeichen nach dem öffnenden `$`, keines vor dem schließenden und keine Ziffer direkt danach, sodass die Preise in *$5 to $10* Text bleiben; `\$` druckt ein Dollarzeichen, sodass ein maskierter String im Text und in einer Tabelle gleich gelesen wird. Die Beschriftung eines Chips nimmt keine Formeln auf. Bis postext 1.18 wurde ein `$` dort immer so gedruckt, wie es geschrieben war.
+- **Fehler:** TeX-Quelltext, den MathJax ablehnt (undefinierte Makros, Syntaxfehler), erscheint als Warnung `invalidMath`. Die Formel wird durch einen kleinen roten Platzhalter ersetzt, damit die Geometrie des Layouts gültig bleibt.
+- **Konfiguration:** Der Abschnitt `math` der Konfiguration bietet `enabled`, `fontSizeScale` (relativ zur Größe des umgebenden Textes: bei 1.0 ist ein Geviert der Formel so groß wie dieser – die Grundschriftgröße bei abgesetzten Formeln und bei Formeln im Grundtext; seit postext 1.5, das Formeln etwa 13 % kleiner setzt als 1.4, während Pakete und Sandbox-Bücher, die mit 1.4 gespeichert wurden, ihre Größe behalten – siehe [Formelgröße](/de/docs/configuration-lists-math#mathematik)), `color` (übernimmt ohne eigene Angabe die Farbe des Grundtextes) und die Abstände abgesetzter Formeln.
+- **Die Engine:** MathJax wird bei Bedarf geladen. Die Sandbox und der Layout-Worker starten es selbst; in Ihrem eigenen Code rufen Sie `await initMathEngine()` vor `buildDocument` auf, sonst wird jede Formel als grauer Platzhalterkasten gesetzt (siehe [Die Mathematik-Engine starten](/de/docs/configuration-lists-math#die-mathematik-engine-starten)).
+
+```md
+The Euler identity $e^{i\pi}+1=0$ links the five fundamental constants.
+
+$$
+\int_0^{\infty} e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}
+$$
+```
+
+Eine Formel mitten im Satz, und der Satz geht danach ohne Einzug weiter:
+
+```md
+For a pendulum of length $L$ the period is
+$$T_0 = 2\pi\sqrt{L/g}$$
+where $g$ is the acceleration of free fall.
+```
+
+Nummerierte Gleichungen und Verweise darauf:
+
+```md
+The energy is conserved,
+$$
+\begin{align}
+E &= T + V \label{eq:energy} \\
+  &= \tfrac12 m v^2 + m g h \nonumber
+\end{align}
+$$
+and Eq.~\eqref{eq:energy} holds at every instant.
+```
+
+**Sätze, Lemmata und Beweise.** Ein Kastenformat mit `numbering` zählt seine Kästen, so wie `amsthm` in LaTeX Theorem-Umgebungen zählt: Jeder Kasten beginnt mit seiner Bezeichnung und Nummer in Fett, „**Theorem 2.**“, der `title` des Blocks folgt der Nummer in Klammern, „**Theorem 2** (Bradley–Terry)**.**“, und ein Verweis auf seine `{#id}` druckt „Theorem 2“ (`\ref{thm:x}` oder `style=number` die bloße 2). Formate, die denselben Zähler nennen, teilen ihn, sodass ein Lemma nach einem Theorem Lemma 3 ist. Das `endMark` eines Beweisformats schließt seine Kästen mit ∎ oder □ ab, rechtsbündig in der letzten Zeile. Die Formate finden Sie unter [Nummerierte Aussagen und Beweise](/de/docs/configuration-callouts#nummerierte-aussagen-und-beweise).
+
+```md
+:::callout{type="theorem" #thm:main title="Bradley–Terry"}
+Every reward class holds one reparameterised reward.
+:::
+
+:::callout{type="proof"}
+Apply the projection of \eqref{eq:projection} to any member of the class.
+:::
+
+By :ref{id="thm:main"}, the objective is unchanged.
+```

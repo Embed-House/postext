@@ -1,0 +1,554 @@
+{/* docs/configuration-headings-es.mdx */}
+
+export const metadata = {
+  title: 'Configuración: encabezados',
+  sidebarTitle: 'Encabezados',
+  description: 'Los valores por defecto de los encabezados, la configuración de cada nivel, los saltos de página antes de un encabezado, las aperturas de capítulo a todo el ancho de la página y los números escritos con letras',
+  lang: 'es',
+  lastUpdated: '2026-10-16',
+  readingTime: '35 min',
+  order: 9,
+  parent: 'configuration',
+  plainSummary: "Esta página reúne los ajustes de los títulos. Les das a todos una tipografía, un cuerpo y un color, y cambias cualquiera de ellos para un solo nivel, como los títulos de capítulo. Decides si un título empieza una página nueva y si esa página debe quedar a la izquierda o a la derecha. Un título de capítulo puede abrir a todo el ancho de la página con un diseño propio. Los números de los títulos pueden escribirse con letras, como en Capítulo tres.",
+};
+
+# Configuración: encabezados
+
+
+## Encabezados
+
+La propiedad `headings` controla la tipografía de todos los niveles de encabezado (H1–H6). Puedes establecer valores generales por defecto que aplican a todos los niveles, y después sobrescribir propiedades específicas por nivel.
+
+### Valores generales por defecto
+
+<table>
+  <thead>
+    <tr>
+      <th>Propiedad</th>
+      <th>Tipo</th>
+      <th>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td><code>'Open Sans'</code></td>
+      <td>Familia tipográfica para todos los encabezados.</td>
+    </tr>
+    <tr>
+      <td><code>lineHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.2 em</code></td>
+      <td>Altura de línea para encabezados. Más ajustada que el cuerpo de texto.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Color principal (<code>#295AA3</code>)</td>
+      <td>Color del texto de encabezado. Enlazado a la entrada <code>main-color</code> de la paleta por defecto, de modo que cambiar ese color retintea todos los encabezados.</td>
+    </tr>
+    <tr>
+      <td><code>textAlign</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
+      <td><code>'left'</code></td>
+      <td>Alineación de todos los niveles de encabezado (no hay un valor por nivel): en bandera, justificada, centrada o alineada a la derecha. Un encabezado justificado compone su última línea a la izquierda, como un párrafo, así que un encabezado de una sola línea se ve como <code>'left'</code>. Canvas, HTML y PDF colocan las líneas del mismo modo, prefijo de numeración incluido. La apertura por defecto de un encabezado <code>span: 'page'</code> sin diseño avanzado la sigue también (justificada queda a la izquierda); un diseño avanzado alinea sus propios elementos de texto con su <code>align</code>.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>Peso de fuente para encabezados (100–900).</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>Espacio sobre los encabezados. Se quita en un encabezado que abre una columna (véase <code>columnHeadSpace</code>).</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>Espacio bajo los encabezados.</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNext</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Cuando es <code>true</code>, un encabezado nunca se coloca como último elemento de una columna o página. Si el siguiente bloque no tuviera al menos <code>bodyText.widowMinLines</code> líneas de hueco tras el encabezado (o una línea cuando <code>bodyText.avoidWidows</code> es <code>false</code>), el encabezado se empuja hacia delante para quedar unido a su texto. Interactúa con <code>bodyText.keepColonWithList</code>: si esa regla tiene que empujar el párrafo de dos puntos por completo, los encabezados que lo preceden en la columna viajan con él en vez de quedar varados.</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNextSpread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Con <code>keepWithNext</code>, deja aun así que un encabezado cierre la última columna de texto de una página par, porque su texto abre entonces la página impar de enfrente, en el mismo pliego (JLReq §4.1.7). Los pliegos son la página 1 sola y después 2–3, 4–5…, contados con <code>pageIndexOffset</code>, tanto en libros encuadernados por la izquierda como por la derecha. Desde postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNextSplit</code></td>
+      <td><code>'rules' | 'fill'</code></td>
+      <td><code>'rules'</code></td>
+      <td>Cómo se divide el párrafo que sigue a un encabezado cuando el encabezado queda al pie de una columna y empujar el párrafo entero lo dejaría atrás. <code>'rules'</code>: todas las líneas que quepan, siempre que queden al menos <code>bodyText.widowMinLines</code> bajo el encabezado y pasen al menos <code>bodyText.orphanMinLines</code> a la columna siguiente; si ninguna división cumple las dos cosas, el encabezado pasa a la columna siguiente con su párrafo, y el equilibrado de columnas rellena el hueco que deja. <code>'fill'</code>: todas las líneas que quepan, aunque pasen muy pocas, así que un párrafo de cuatro líneas con sitio para tres se divide 3 + 1. Hasta postext 1.4 todos los encabezados se dividían así, y las configuraciones guardadas antes de <code>configVersion</code> 8 lo conservan (ver <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). Con <code>avoidWidows</code> o <code>avoidOrphans</code> desactivado, esa parte de la regla no se aplica.</td>
+    </tr>
+    <tr>
+      <td><code>snapToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Si el flujo vuelve a la retícula base bajo un título. Con <code>true</code> el <code>marginBottom</code> del título se redondea a líneas enteras de la retícula; con <code>false</code> se conserva el margen exacto y el texto bajo el título puede quedar fuera de la retícula hasta el siguiente punto de ajuste (el final de una lista, la cola de un <code>:::paragraphs</code>, una ecuación) — como muchos libros, que dejan línea y media bajo el título. Un nivel (<code>levels[].snapToGrid</code>) o un estilo de encabezado pueden fijar su propio valor; este es el que heredan.</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>Qué conserva de su espacio superior un encabezado que se ajusta a la rejilla cuando abre una columna, en cabeza de página o bajo una figura o tabla que encabeza la columna. <code>'none'</code>: se quita todo el espacio y el encabezado queda en la primera línea de la columna, a la altura de la columna vecina; el ajuste a la rejilla pone entonces bajo el encabezado la fracción de línea que necesita, de modo que su texto puede quedar más lejos de él que tras un párrafo. <code>'remainder'</code>: el espacio se quita solo en líneas completas de rejilla y la fracción de línea que sobra queda sobre el encabezado, de modo que el texto empieza bajo él a la distancia a la que empieza tras un párrafo; el encabezado empieza un poco más abajo que la cabeza de la columna y ninguna línea de texto se mueve. Conviene a un libro a una columna, donde ninguna cabeza de columna vecina delata la diferencia. Cualquier otro valor se lee como <code>'none'</code>. No se aplica bajo una apertura a toda página ni a un encabezado <code>span: 'page'</code>, con <code>lineSpan</code>, oculto o con diseño (<code>advancedDesign</code>). Desde postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>inlineMarks</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Si un encabezado lee sus marcas en línea como lo hace un párrafo: <code>*cursiva*</code>, <code>**negrita**</code>, <code>^superíndice^</code>, <code>~subíndice~</code>, <code>:smallcaps[…]</code> y enlaces. Un tramo en cursiva invierte la inclinación del encabezado, así que en un encabezado en cursiva sale en redonda; un tramo en negrita toma <code>bodyText.boldFontWeight</code>, o el peso del propio encabezado si es mayor. El índice también recoge los tramos en negrita y en cursiva; los titulillos y los marcadores del PDF imprimen solo el texto. Con <code>false</code> se quitan los marcadores y las palabras se imprimen con el estilo del encabezado, como hasta postext 1.4. La apertura por defecto de un encabezado <code>span: 'page'</code> sin diseño compone también los tramos en negrita, en cursiva, en superíndice y en subíndice; el diseño de un encabezado (una banda de apertura con diseño o un <code>advancedDesign</code> de columna) imprime <code>{'{titleText}'}</code> como texto sin marcas en ambos casos, salvo que su elemento de texto lea las marcas en línea (<code>inlineMarks: true</code>): entonces <code>{'{titleText}'}</code> conserva los tramos en negrita, en cursiva y en índice del encabezado (desde postext 1.19). Las configuraciones guardadas antes cuyos encabezados llevan marcas se leen con <code>false</code> (ver <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>).</td>
+    </tr>
+    <tr>
+      <td><code>balancing</code></td>
+      <td><code>ColumnBalancingConfig</code></td>
+      <td>activado</td>
+      <td>Equilibrado vertical de columnas — espacio adicional sobre los encabezados para que las columnas terminen alineadas con el pie de página. Ver más abajo.</td>
+    </tr>
+  </tbody>
+</table>
+
+Encabezados centrados para poemas o los actos de una obra de teatro, sin ranura de diseño:
+
+```ts
+headings: {
+  textAlign: 'center',
+  levels: [{ level: 2, textTransform: 'uppercase' }],
+}
+```
+
+Un objeto `headings` conserva todos los valores por defecto de nivel que no repitas, incluido el salto de página de H1 (ver [Configuración por nivel](#configuración-por-nivel)).
+
+### Configuración por nivel
+
+Cada nivel de encabezado puede sobrescribir los valores generales a través del array `levels`. Solo `fontSize` (más el `breakBefore` de H1, indicado abajo) difiere por defecto — todas las demás propiedades se heredan de la configuración general de encabezados.
+
+<table>
+  <thead>
+    <tr>
+      <th>Nivel</th>
+      <th>Tamaño de fuente por defecto</th>
+      <th><code>breakBefore</code> por defecto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>H1</td><td><code>18 pt</code></td><td><code>&#123; enabled: true, parity: 'always-odd' &#125;</code></td></tr>
+    <tr><td>H2</td><td><code>15 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H3</td><td><code>12 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H4</td><td><code>10 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H5</td><td><code>9 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H6</td><td><code>8 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+  </tbody>
+</table>
+
+El valor por defecto de H1 reproduce la maqueta clásica de un libro: cada encabezado de nivel superior se abre en una página derecha (impar) nueva, con una página separadora en blanco obligatoria que cierra el capítulo anterior. Anula `levels[0].breakBefore` si tu documento es más plano que un libro.
+
+El `breakBefore` de un nivel se combina campo a campo con ese valor por defecto, y un objeto `headings` que no lo menciona lo conserva. `{ parity: 'odd' }` en H1 mantiene el salto y solo cambia la paridad; `{ enabled: false }` deja que los capítulos vayan seguidos:
+
+```ts
+headings: {
+  fontFamily: 'Merriweather',                               // H1 sigue saltando a una página impar nueva (always-odd)
+  levels: [{ level: 1, breakBefore: { parity: 'odd' } }],    // …o: a una impar, sin página en blanco obligatoria
+}
+
+headings: { levels: [{ level: 1, breakBefore: { enabled: false } }] } // capítulos seguidos
+```
+
+**Cambia en postext 1.5.** Hasta postext 1.4, cualquier objeto `headings` desactivaba el salto de H1 salvo que se repitiera `levels[0].breakBefore`, y un `breakBefore` parcial completaba el campo que faltaba con el valor sin salto. Por eso una configuración escrita en código para la 1.4 con un objeto `headings` y sin salto de H1 abre ahora cada capítulo en una página impar nueva, con páginas pares en blanco donde haga falta. Para que los capítulos sigan yendo seguidos, basta un campo en la entrada de H1 de `levels`:
+
+```ts
+headings: { fontFamily: 'Merriweather', levels: [{ level: 1, breakBefore: { enabled: false } }] } // como lo componía la 1.4
+```
+
+Donde la configuración estaba guardada, el motor puede saberlo y lo hace por ti: el Sandbox con los libros y las configuraciones que guardó entonces (ver **Sandbox → Persistencia**), y `openBundle` / `readBundle` con un paquete `.postext` escrito por postext 1.4 o anterior (ver [Paquetes escritos por postext 1.4 o anterior](/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior)). Una configuración que guardaste tú puede pasar por `migrateConfig(config)` de `postext/bundle`, que escribe los saltos tal como los componía la 1.4 (`pinLegacyHeadingBreaks`): `enabled: false` en un H1 que no tenía salto, y `parity: 'any'` junto a un `enabled: true` que no indicaba paridad, en H1 y en los estilos de encabezado. También fija el tamaño de las fórmulas, el espacio en torno a las figuras en línea (también en los recuadros), las marcas en línea de los encabezados, el tamaño de las letras capitales, el sitio bajo una línea de dos puntos que introduce una lista, las líneas que deja de un párrafo o de un elemento de lista el corte de una caja, los cortes de línea tras una raya, la composición línea a línea del texto en bandera, la división de un párrafo bajo un encabezado, los cortes de línea tras el guion de un compuesto y el espacio bajo los contenedores `:::paragraphs`, tal como los componía la 1.4. Si le pasas el markdown del libro como tercer argumento, `{ content }`, omite la fijación de las fórmulas cuando el texto no tiene ningún `$`, las de los huecos cuando ninguna línea inserta un recurso (la del hueco en los recuadros cuando ninguna lo hace dentro de un recuadro), la de las marcas cuando ningún encabezado lleva ninguna, la de los dos puntos cuando ninguna lista sigue a una línea que termina en dos puntos, la del corte de las cajas cuando el texto no abre ningún `:::callout`, la de las rayas cuando ninguna raya va entre palabras sin espacios, la de la división bajo un encabezado cuando el texto no tiene ningún encabezado, la de los contenedores cuando el texto no abre ningún contenedor `:::paragraphs`, y la de los compuestos cuando ningún guion va entre dos letras; la del texto en bandera solo se aplica a una configuración que pone en bandera algún texto corrido, y la de los contenedores solo a una que declara algún estilo de párrafo (ver [Paquetes escritos por postext 1.4 o anterior](/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior)). Para fijar solo los saltos, llama a `pinLegacyHeadingBreaks(config)`.
+
+Las configuraciones por nivel soportan las mismas propiedades que los valores generales — `fontSize`, `lineHeight`, `fontFamily`, `color`, `fontWeight`, `marginTop`, `marginBottom`, `snapToGrid` — más estos campos exclusivos de cada nivel (un [estilo de encabezado](/es/docs/configuration-styles#estilos-de-encabezado) también los admite):
+
+<table>
+  <thead>
+    <tr>
+      <th>Propiedad</th>
+      <th>Tipo</th>
+      <th>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Renderiza el encabezado en cursiva. Se combina con el <code>fontWeight</code>.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Pasa a mayúsculas el título del encabezado (el prefijo de numeración se conserva tal cual, igual que un chip o la etiqueta de una <code>:ref</code> que haya en él). Conserva la longitud del texto para que el mapa de origen del editor siga siendo 1:1: los caracteres cuya mayúscula se expande (<code>ß</code> → <code>SS</code>) se dejan como están. El título transformado alimenta también el marcador <code>&#123;titleText&#125;</code> de los diseños avanzados y los abridores de capítulo. Los marcadores del PDF conservan el título tal como se escribió —<em>Contribuciones de los autores</em>, no <em>CONTRIBUCIONES DE LOS AUTORES</em>—, igual que <code>text-transform</code> en CSS no toca el texto en sí (hasta postext 1.4 salían en mayúsculas).</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Espaciado entre letras tras cada glifo del encabezado —espacios y prefijo de numeración incluidos—, como <code>letter-spacing</code> en CSS. Un valor positivo abre las letras (las versales compuestas con <code>textTransform: 'uppercase'</code> suelen pedir un poco: <code>&#123; value: 0.12, unit: 'em' &#125;</code>); uno negativo aprieta un cuerpo de titular. Un valor en <code>em</code> es relativo al <code>fontSize</code> del nivel. Las líneas del encabezado se miden con él, de modo que cortan donde acaba el texto espaciado, y canvas, HTML y PDF lo pintan igual. El espaciado nunca cambia los glifos: las ligaduras del tipo (fi, fl) se conservan en todas las salidas. Una línea centrada o alineada a la derecha se coloca por sus letras: el espaciado que sigue a su último glifo no cuenta, como en el texto de los diseños, así que un encabezado centrado queda alineado con la apertura por defecto de un encabezado <code>span: 'page'</code>. Un nivel dibujado con su <code>advancedDesign</code> lo ignora, como los demás campos tipográficos de esta tabla: cada elemento de texto del diseño tiene su propio <code>letterSpacing</code>. Un <a href="/es/docs/configuration-styles#estilos-de-encabezado">estilo de encabezado</a> también puede fijarlo, para los encabezados que lo usan. Hasta postext 1.4 los encabezados no tenían espaciado entre letras, y la clave se descartaba sin aviso.</td>
+    </tr>
+    <tr>
+      <td><code>lineSpan</code></td>
+      <td><code>number</code></td>
+      <td>sin fijar</td>
+      <td>Líneas que ocupa (行取り, JLReq §4.1.6): el encabezado se compone en una banda de ese número de líneas del texto, con sus caracteres centrados en ella, en lugar de <code>marginTop</code> y <code>marginBottom</code>; <code>3</code> es un encabezado 3行取り. La banda empieza en una línea del texto cuando el encabezado se ajusta a la rejilla, y el texto que lo sigue se queda en la rejilla, en los dos modos de escritura y con <code>cjk.grid</code>; un encabezado cuyas líneas necesitan más toma el siguiente número entero. El centro es el de los caracteres (la línea base menos el centro ideográfico de la fuente), como lo mide JLReq, no el de las cajas de línea. No se aplica a las aperturas (<code>span: 'page'</code>), a los encabezados dibujados con un <code>advancedDesign</code>, a los encabezados ocultos ni a los encabezados dentro de recuadros. Un estilo de encabezado puede fijar <code>0</code> para quitar el de su nivel. Desde postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Sangría del encabezado desde el principio de la línea (字下げ), con <code>em</code> igual al cuerpo del <strong>texto</strong>, porque los libros japoneses cuentan las sangrías de los títulos en caracteres del texto (JLReq §4.1.3): <code>&#123; value: 6, unit: 'em' &#125;</code> es 6字下げ sea cual sea el cuerpo del encabezado. La medida se estrecha en esa cantidad, y un encabezado centrado se centra en lo que queda. Desde postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>firstLineIndent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Sangría solo de la primera línea del encabezado, contada desde <code>indent</code> y, como ella, en cuadratines del <strong>texto</strong>: las líneas siguientes de un encabezado largo empiezan en <code>indent</code> (al principio de la línea si no se fija), como la GB/T 9704 compone todos los niveles de título dos caracteres adentro con las líneas siguientes al margen: <code>&#123; value: 2, unit: 'em' &#125;</code>. Con <code>cjk.grid</code> activado, dos cuadratines del texto son dos celdas de la retícula. Un encabezado numerado imprime su número después de la sangría, así que la plantilla de numeración no necesita espacios ideográficos, que se imprimirían también en el índice y en los marcadores del PDF. Funciona en texto vertical (desde la cabeza de la línea), con el compositor CJK (un paréntesis de apertura al principio del encabezado sigue las reglas de principio de línea, como en un párrafo) y con Knuth–Plass. Un encabezado centrado la toma como un párrafo centrado: su primera línea se centra en lo que queda después de la sangría. <code>&#123;firstLineIndent=N&#125;</code> tras el título de un encabezado la fija para ese encabezado, y <code>&#123;firstLineIndent=0&#125;</code> quita la de su nivel. Desde postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>jidori</code></td>
+      <td><code>number</code></td>
+      <td>sin fijar</td>
+      <td>Espaciado uniforme (字取り): un encabezado de una línea más estrecho que ese número de sus cuadratines <strong>propios</strong> se espacia por igual hasta medir exactamente ese ancho, así que <code>3</code> compone 序章 como 序　章. Los títulos más anchos y los encabezados de varias líneas se quedan como están. <code>&#123;jidori=N&#125;</code> tras el título de un encabezado lo fija para ese encabezado, y <code>&#123;jidori=0&#125;</code> desactiva el de su nivel. Desde postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>dropCap</code></td>
+      <td><code>ParagraphDropCap | false</code></td>
+      <td>ninguno</td>
+      <td>Una capitular que abre el primer párrafo de cuerpo tras un encabezado de este nivel (ver <a href="/es/docs/configuration-text#letras-capitulares">Letras capitulares</a>): con un solo ajuste, cada capítulo tiene su capitular. Un encabezado la quita con <code>&#123;dropcap=false&#125;</code> o fija sus líneas con <code>&#123;dropcap=2&#125;</code>. Desde postext 1.23.</td>
+    </tr>
+    <tr>
+      <td><code>numberingTemplate</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>Plantilla del número automático del nivel. Un token <code>{'{1}'}</code> … <code>{'{6}'}</code> imprime el contador acumulado de ese nivel de encabezado, opcionalmente formateado con un sufijo — <code>{'{1:I}'}</code> romanos en mayúscula, <code>{'{1:i}'}</code> romanos en minúscula, <code>{'{1:A}'}</code> / <code>{'{1:a}'}</code> alfabético, <code>{'{1:01}'}</code> con cero a la izquierda, <code>{'{1:words}'}</code> con letras (<em>veintiuno</em>), <code>{'{1:ordinal}'}</code> como ordinal (<em>vigesimoprimero</em>), <code>{'{1:一}'}</code> en numerales chinos (japoneses en un documento japonés: 第百一章), <code>{'{1:〇}'}</code> cifra a cifra, <code>{'{1:壹}'}</code> en numerales financieros y <code>{'{1:①}'}</code> en círculo, o cualquier nombre de <a href="/es/docs/configuration-page-layout#grafías-de-los-formatos-de-numeración">Grafías de los formatos de numeración</a> — y el resto del texto es literal (<code>'Capítulo {'{1}'}. '</code>, <code>'{'{1}'}.{'{2}'}'</code>, <code>'第{'{1:一}'}回'</code> para 第一百二十回; una barra invertida escapa una llave literal). Un token cuyo contador aún está vacío se pliega junto con el separador contiguo. Vacía (el valor por defecto) significa sin número automático. El número resultante se antepone al título en el flujo, alimenta el marcador <code>{'{number}'}</code> de una ranura de diseño avanzado (donde el prefijo no se antepone) y se imprime en el índice de contenidos. Ver <a href="#números-con-letras">Números con letras</a> para las palabras, y <a href="/es/docs/configuration-styles#estilos-de-encabezado">Estilos de encabezado</a> para dar a algunos encabezados de un nivel una plantilla propia.</td>
+    </tr>
+    <tr>
+      <td><code>numberSeparator</code></td>
+      <td><code>string</code></td>
+      <td><code>' '</code></td>
+      <td>Lo que separa el número del título: en la columna, en la apertura por defecto de un nivel <code>span: 'page'</code>, en los titulillos que imprimen la línea del encabezado y en los marcadores del PDF. El separador del nivel 1 une también el número y el título de una parte en la página de parte y en la fila de parte del índice de contenidos cuando no tienen diseño propio. Los capítulos chinos llevan un espacio ideográfico o nada (<code>'　'</code>: 第一回　甄士隱夢幻識通靈). El índice de contenidos conserva su propia columna de números (<code>toc.levels[].numberGap</code>). Un <a href="/es/docs/configuration-styles#estilos-de-encabezado">estilo de encabezado</a> puede fijar el suyo. Cuando un título se parte en dos con <code>{'\\\\'}</code>, como los títulos pareados de las novelas chinas, las formas de una sola línea (la columna, el índice de contenidos, los titulillos) unen las dos mitades con un espacio ideográfico si a ambos lados hay caracteres chinos o japoneses, y con un espacio en los demás casos.</td>
+    </tr>
+    <tr>
+      <td><code>numberPosition</code></td>
+      <td><code>'before' | 'replace'</code></td>
+      <td><code>'before'</code></td>
+      <td>Dónde va el número generado. <code>'before'</code>: delante del título, unido por <code>numberSeparator</code>. <code>'replace'</code>: el número es el título entero y el título escrito en el texto fuente no se imprime, así que <code># Noche</code> con <code>numberingTemplate: 'الليلة &#123;1:ordinal-feminine&#125;'</code> imprime الليلة الثانية. El índice general lista el número como título de la entrada (sin columna de número), y las cabeceras (<code>{chapterTitle}</code>, <code>{titleText}</code>) y los marcadores del PDF también lo leen; <code>{number}</code> queda vacío en ese título. Solo para títulos numerados con plantilla (la del nivel o la de su estilo); los demás conservan su título. Un <a href="/es/docs/configuration-styles#estilos-de-encabezado">estilo de título</a> puede fijar el suyo, <code>'before'</code> para conservar los títulos que su nivel sustituiría.</td>
+    </tr>
+    <tr>
+      <td><code>breakBefore</code></td>
+      <td><code>HeadingBreakBeforeConfig</code></td>
+      <td>H1: <code>&#123; enabled: true, parity: 'always-odd' &#125;</code><br/>H2–H6: <code>&#123; enabled: false, parity: 'any' &#125;</code></td>
+      <td>Fuerza un salto de página antes de cada encabezado de este nivel. <code>parity: 'odd'</code> / <code>'even'</code> restringe además en qué lado del pliego se abrirá — se inserta una página en blanco de relleno cuando sea necesario (sigue contando para la numeración). <code>'always-odd'</code> / <code>'always-even'</code> garantizan además al menos una página separadora en blanco obligatoria entre el contenido anterior y el nuevo encabezado (la separadora pertenece al capítulo anterior; cualquier relleno de paridad adicional pertenece al nuevo). Cuando el encabezado es el primer bloque del documento y la primera página sigue vacía, la imposición de paridad se omite — el encabezado aterriza en la página 1 tal cual. Un campo sin definir conserva el valor por defecto del nivel: <code>&#123; parity: 'odd' &#125;</code> en H1 sigue saltando.</td>
+    </tr>
+    <tr>
+      <td><code>hidden</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Un encabezado estructural: no imprime nada ni ocupa espacio en la columna ni dentro de una caja `:::callout` — ni texto, ni márgenes, ni banda de apertura —, pero hace todo lo demás que hace un encabezado. Su <code>breakBefore</code> sigue abriendo página, abre la sección de su estilo, cuenta (salvo que su estilo diga <code>numbered: false</code>) y aparece en <code>:::toc</code>, en las cabeceras con <code>{'{chapterTitle}'}</code> y en los marcadores del PDF. Para una dedicatoria, una página de epígrafe o un colofón que el índice y los marcadores del lector necesitan, pero que la página no muestra. Mejor en un <a href="/es/docs/configuration-styles#estilos-de-encabezado">estilo de encabezado</a> que en un nivel entero; un encabezado lo sobrescribe con <code>{'{hidden="true"}'}</code> / <code>{'{hidden="false"}'}</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+headings: {
+  fontFamily: 'Merriweather',
+  levels: [
+    // Preajuste canónico de libro: los capítulos se abren en la página derecha (impar).
+    { level: 1, fontSize: { value: 24, unit: 'pt' }, breakBefore: { enabled: true, parity: 'odd' } },
+    { level: 2, fontSize: { value: 18, unit: 'pt' }, italic: true },
+  ]
+}
+```
+
+`snapToGrid` también funciona por nivel. Sin fijar, un nivel sigue a `headings.snapToGrid`; fijado, lo sustituye — así un mismo documento puede dejar sus H2 a línea y media de su texto, fuera de la retícula hasta el siguiente punto de ajuste, mientras sus H3 redondean el espacio inferior a líneas enteras de la retícula. Un estilo de encabezado también puede fijarlo, para los encabezados que lo usan.
+
+```ts
+headings: {
+  marginBottom: { value: 1.5, unit: 'em' },
+  levels: [
+    { level: 2, snapToGrid: false }, // exactamente 1,5 em bajo cada H2
+    { level: 3 },                    // hereda headings.snapToGrid: true
+  ],
+}
+```
+
+### Saltar antes
+
+`breakBefore` es ortogonal a los controles de numeración: activarlo fuerza un salto de página, pero el contador numérico solo se reinicia cuando insertas explícitamente una directiva `:::numbering`. Las páginas de relleno por paridad cuentan como páginas reales en la secuencia y reciben encabezados/pies según sus reglas normales de impar/par.
+
+Un `:::pagebreak` justo antes de uno de estos encabezados no sustituye a su salto: el encabezado aplica igualmente su paridad tras la página que abrió la directiva, lo que puede añadir una página en blanco. Véase [Estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado) para un encabezado que deba empezar justo después de un salto manual.
+
+#### Valores de paridad
+
+<table>
+  <thead>
+    <tr>
+      <th>Valor</th>
+      <th>Comportamiento</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'any'</code> (por defecto)</td>
+      <td>Sin restricción de paridad. El encabezado simplemente se abre en la siguiente página.</td>
+    </tr>
+    <tr>
+      <td><code>'odd'</code></td>
+      <td>Garantiza que el encabezado se abra en una página impar (lado derecho). Solo se inserta una página en blanco si la siguiente página natural sería par.</td>
+    </tr>
+    <tr>
+      <td><code>'even'</code></td>
+      <td>Igual pero para una página par (lado izquierdo).</td>
+    </tr>
+    <tr>
+      <td><code>'always-odd'</code></td>
+      <td>Garantiza <strong>al menos una página separadora en blanco obligatoria</strong> entre el contenido anterior y el nuevo encabezado, y después fuerza la paridad impar. Útil cuando cada capítulo debe empezar un pliego nuevo.</td>
+    </tr>
+    <tr>
+      <td><code>'always-even'</code></td>
+      <td>Igual pero para una página par.</td>
+    </tr>
+  </tbody>
+</table>
+
+#### Pertenencia de las páginas en blanco
+
+Las páginas en blanco que inserta `breakBefore` reciben el encabezado `{chapterTitle}` en función del motivo de su inserción:
+
+- Las páginas insertadas para satisfacer una restricción de paridad (`'odd'`, `'even'`, o la cola de paridad de `'always-*'`) pertenecen al capítulo **entrante**. Su marcador `{chapterTitle}` resuelve al título del nuevo capítulo — porque la página en blanco solo existe para empujar al nuevo capítulo hasta la paridad correcta.
+- La página separadora obligatoria que inserta `'always-odd'` / `'always-even'` pertenece al capítulo **anterior**. Es una pausa de cierre de capítulo deliberada, así que `{chapterTitle}` sigue mostrando el título del capítulo saliente.
+
+Las cabeceras y la paleta de una sección con estilo (véase [Estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)) siguen las mismas dos reglas en las páginas en blanco.
+
+#### Excepción al inicio del documento
+
+Cuando el primer bloque del documento es un encabezado con `breakBefore` activado — o la fuente empieza con `:::pagebreak` —, la imposición de paridad se omite mientras la primera página siga vacía. El encabezado aterriza en la página 1 tal cual, independientemente de la paridad configurada, de modo que un documento que comienza con `# Capítulo 1` con `parity: 'odd'` no arrastra una página en blanco inicial innecesaria. Una vez que se ha colocado cualquier contenido, la imposición de paridad funciona de forma habitual.
+
+### Span y diseño avanzado
+
+Cada nivel de encabezado admite dos campos adicionales que controlan cómo se renderiza el encabezado como apertura de capítulo a página completa.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propiedad</th>
+      <th>Tipo</th>
+      <th>Predeterminado</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>'column' | 'page'</code></td>
+      <td><code>'column'</code></td>
+      <td>Cuando es <code>'page'</code>, el encabezado se trata como apertura de capítulo y su diseño avanzado (si está habilitado) se adjunta a la página como una banda de apertura por encima del cuerpo. Combínalo con <code>breakBefore.enabled: true</code> para que la apertura comience fiablemente en una nueva página. Sin un diseño propio, el título lo pinta una apertura por defecto a lo ancho de toda la caja de texto, con la tipografía y el interlineado del nivel y con sus tramos en negrita, en cursiva, en superíndice y en subíndice (<code>headings.inlineMarks</code>), y la banda se mide a ese ancho. La banda reserva todas las líneas que pinta la apertura: si esta ocupa más líneas que la medida del propio encabezado (un título justificado cuyos espacios cabrían apretados en una línea, un salto forzado <code>{'\\\\'}</code>), la banda también las toma. Hasta postext 1.4 la banda se medía con el título ajustado al ancho de la columna, así que un título que cabe en una línea a lo ancho de la caja ocupaba una banda de dos líneas, con la línea centrada en ella. Las demás columnas empiezan bajo la banda como la columna del propio encabezado. El texto que abre una de ellas empieza donde empezaría el texto justo debajo de la apertura, venga lo que venga después de la apertura en su columna: el <code>marginBottom</code> de la apertura por debajo de su título o de su diseño, llevado a la línea siguiente de la retícula cuando el nivel se ajusta a ella. Un encabezado, una fórmula en bloque o una entrada del índice que abre una de ellas queda a la altura del primer encabezado o fórmula en bloque que hay bajo la apertura, con los márgenes que tiene allí; si la columna de la apertura sigue con otra cosa, empieza donde empieza ese texto. Un encabezado oculto bajo la apertura no cuenta, y el espacio que el <a href="/es/docs/configuration-page-flow#equilibrado-de-columnas">equilibrado de columnas</a> añade encima del encabezado que hay bajo la apertura no se repite en las demás columnas. Lo que esas columnas ajustan a la retícula cae en la retícula de la página. Hasta postext 1.4 su primer bloque quedaba en el pie de la banda: fuera de la retícula cuando la banda acababa entre dos líneas, y pegado a la banda, sin margen, cuando a la apertura la seguía un encabezado (una línea más arriba que ahora si la banda acababa en la retícula); además, un encabezado ahí perdía el margen superior que conservaba el de la primera columna.</td>
+    </tr>
+    <tr>
+      <td><code>spanBreak</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Si un encabezado <code>span: 'page'</code> empieza una página nueva. <code>true</code> abre la página siguiente (con el lado que elija <code>breakBefore</code>). <code>false</code>, con <code>breakBefore.enabled: false</code>, lo abre donde llega el texto, como un recuadro de página: las columnas de encima terminan a la misma altura (la banda se equilibra cuando <code>headings.balancing.trailing</code> está activo), el diseño del encabezado o la apertura por defecto se compone a todo el ancho de la caja bajo ellas y el texto sigue en todas las columnas por debajo: el segundo artículo de un boletín bajo el final del primero. Si el espacio que queda no da para el encabezado y el mínimo de líneas viudas bajo él, abre la página siguiente como con <code>true</code>. El papel de la página sigue siendo el que le da su primer bloque. No afecta a un encabezado <code>span: 'column'</code>. También en un estilo de encabezado. Desde postext 1.19.</td>
+    </tr>
+    <tr>
+      <td><code>advancedDesign</code></td>
+      <td><code>HeadingAdvancedDesignConfig</code></td>
+      <td><code>{'{ enabled: false, slot: { elements: [] } }'}</code></td>
+      <td>Ranura de diseño de composición libre para este nivel. Cuando está <code>enabled</code>, los elementos de la ranura componen la apertura. Utiliza <code>{'{titleText}'}</code> dentro de un elemento de texto para renderizar el texto del título; <code>{'{number}'}</code>, <code>{'{numberRoman}'}</code>, etc. para insertar el número del encabezado.</td>
+    </tr>
+    <tr>
+      <td><code>advancedDesign.minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>Altura mínima reservada para el encabezado en el flujo de la columna. El encabezado ocupa <code>max(fondo del contenido del diseño, minHeight)</code> y, debajo, el <code>marginBottom</code> del encabezado (el de su estilo de encabezado, el de su nivel o <code>headings.marginBottom</code>; 0,5 em del cuerpo del encabezado si ninguno fija otro); la suma se redondea hacia arriba a la rejilla base cuando los encabezados se ajustan a ella. Así una apertura puede empujar el cuerpo hacia abajo (o reclamar la página entera) aunque sus elementos sean bajos o estén anclados a los marcos de página/sangre por encima del encabezado. Para una franja de exactamente <code>minHeight</code>, pon ese <code>marginBottom</code> a 0 y da a <code>minHeight</code> un número entero de líneas de la rejilla. Se aplica siempre que <code>enabled</code> sea true, incluso con la ranura vacía. Ver <a href="#altura-reservada">Altura reservada</a> para saber qué cuenta en el fondo del contenido del diseño.</td>
+    </tr>
+  </tbody>
+</table>
+
+**Una apertura tan alta como la página.** Cuando la altura reservada llega más allá del pie de la columna — una portada cuyo `minHeight` es la altura de la página, una imagen o una caja anclada a la página o a la sangre que baja hasta el corte —, la apertura reclama el resto de la página: el texto que la sigue empieza en la página siguiente, igual en todas las columnas de una disposición a dos columnas o de columna y media. Por eso una portada no necesita un `:::pagebreak` detrás (ponerlo no hace daño: no añade ninguna página en blanco). Un encabezado de columna (`span: 'column'`) cuyo diseño es más alto que su columna reclama esa columna, y el texto empieza en la cabeza de la siguiente. El bloque del encabezado baja entonces hasta el pie de la columna que reclama, y su diseño se compone contra esa banda: los elementos anclados arriba se quedan donde están anclados, y los que siguen a la banda —anclados a su centro o a su pie, o con altura `'fill'`— se ajustan al espacio que reclama el encabezado, igual que se ajustan a la altura reservada cuando cabe (hasta postext 1.4 el bloque conservaba la altura de su texto, de modo que esos elementos se componían contra una banda de la altura del título, y el texto que lo seguía se colaba bajo el diseño). Los adornos de página que no deben reclamarla — una franja a lo largo de todo el corte delantero, un ornamento al pie de la página — van en el diseño de la cabecera o del pie: anclados a `'page'` o a `'bleed'` y mostrados con `pages: 'opener'`, se pintan en la página de apertura sin reservar espacio del cuerpo.
+
+Ejemplo — una apertura de capítulo minimalista que muestra «Capítulo N» encima del título:
+
+```json
+{
+  "headings": {
+    "levels": [
+      {
+        "level": 1,
+        "span": "page",
+        "breakBefore": { "enabled": true, "parity": "always-odd" },
+        "advancedDesign": {
+          "enabled": true,
+          "slot": {
+            "elements": [
+              {
+                "kind": "text",
+                "id": "chapterLabel",
+                "placement": {
+                  "anchor": { "to": "container", "edge": "top" },
+                  "offset": { "y": { "value": 48, "unit": "pt" } },
+                  "size": { "width": "fill" }
+                },
+                "content": "Capítulo {numberRoman}",
+                "fontSize": { "value": 10, "unit": "pt" },
+                "align": "center",
+                "overflow": "ellipsis-end"
+              },
+              {
+                "kind": "text",
+                "id": "chapterTitle",
+                "placement": {
+                  "anchor": { "to": "#chapterLabel", "edge": "below" },
+                  "offset": { "y": { "value": 12, "unit": "pt" } },
+                  "size": { "width": "fill" }
+                },
+                "content": "{titleText}",
+                "fontSize": { "value": 24, "unit": "pt" },
+                "fontWeight": 700,
+                "align": "center",
+                "overflow": "wrap",
+                "hyphenate": true
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}
+```
+
+Marcadores disponibles dentro de una ranura de diseño de encabezado:
+
+- `{titleText}` — texto plano del encabezado (sin prefijo numérico). Un salto forzado en el título (`\\`) es aquí un salto de línea, tanto en una banda de apertura como en un diseño dentro de la columna (hasta postext 1.4 un diseño dentro de la columna imprimía un espacio, aunque su altura se medía con el salto). Las líneas en que el encabezado oculto se reparte en su columna se vuelven a unir en el título tal como está escrito: una palabra cortada tras su propio guion conserva el guion y no lleva espacio detrás, una palabra que la columna dividió vuelve a quedar entera, sin el guion que añadió el corte, un grupo unido por un espacio de no separación que no cabía en la columna y se partió en ese espacio lo recupera (`Capítulo XVIII`, no `CapítuloXVIII`), y cada uno de los demás cortes devuelve su espacio. Hasta postext 1.4 cada salto de línea se convertía en un espacio, así que un título partido en un guion imprimía `Word- Book`, y en ese título se perdía un salto forzado.
+- `{number}` — número formateado según `numberingTemplate`.
+- `{numberDecimal}`, `{numberRoman}`, `{numberRomanLower}`, `{numberAlpha}`, `{numberAlphaLower}` — el contador del encabezado (la cuenta acumulada de su nivel, imprima lo que imprima la plantilla) en otros formatos de numeración: el tercer capítulo da `3`, `III`, `iii`, `C`, `c`, con o sin `numberingTemplate`. Un encabezado sin numerar (un estilo con `numbered: false`) los deja vacíos.
+- `{numberWords}`, `{numberWordsLower}`, `{numberOrdinalWords}`, `{numberOrdinalWordsLower}` — el mismo contador con letras, con mayúscula inicial o en minúscula: *Tres* / *tres*, *Tercero* / *tercero* (ver [Números con letras](#números-con-letras)).
+- `{numberHan}` — el mismo contador en numerales chinos, en la escritura del `locale` del documento: una apertura compuesta con `第{numberHan}回` imprime 第十二回 en el duodécimo capítulo mientras el índice muestra `12`.
+- `{chapterNumber}`, `{chapterTitle}`, `{pageNumber}`, `{totalPages}`, `{bookTotalPages}`, `{title}`, `{subtitle}`, `{author}`, `{publishDate}` — metadatos compartidos.
+- `{attr.<clave>}` — un atributo escrito en la propia línea del encabezado (`# Título {author="I. Zango Martín"}`), con el atributo del H1 del capítulo actual como respaldo. Los atributos ausentes se resuelven como cadena vacía sin aviso.
+
+`{chapterNumber}` imprime lo mismo que las cabeceras para ese capítulo: el número del H1 cuando su nivel (o su estilo) tiene `numberingTemplate`; si no, el ordinal del capítulo —`1`, `2`…, continuando tras los capítulos maquetados antes que este—, y nada para un capítulo sin numerar o un estilo cuya plantilla es `''`. El diseño de un encabezado lee el capítulo al que pertenece su encabezado: uno de nivel 1, el suyo; uno de nivel inferior, el del último encabezado de nivel 1 anterior. Así es también cuando dos capítulos coinciden en una página, aunque las cabeceras de esa página impriman el segundo. La altura que reserva una apertura se mide con ese mismo valor. Hasta postext 1.4 se medía con el prefijo numérico del encabezado (vacío sin plantilla), así que un diseño cuya altura dependiera de `{chapterNumber}` podía pintarse más alto que el espacio que había reservado; y el diseño imprimía el capítulo de la página, de modo que el primero de dos capítulos que compartían página mostraba el número del segundo.
+
+Los marcadores del contador siguen al libro a lo largo de los capítulos compuestos uno a uno (los contadores que entrega `continuationAfter()`), y el atributo `startAt` de un encabezado los reinicia (ver **Formato de documento → Atributos de encabezado**). Una apertura que dice *Capítulo III* sobre un título numerado `3.` en el flujo y en el índice:
+
+```ts
+{
+  level: 1,
+  span: 'page',
+  numberingTemplate: '{1}.',
+  advancedDesign: {
+    enabled: true,
+    slot: { elements: [
+      { kind: 'text', id: 'label', content: 'Capítulo {numberRoman}', fontSize: { value: 10, unit: 'pt' }, overflow: 'ellipsis-end',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: 'fill', height: 'auto' } } },
+      { kind: 'text', id: 'title', content: '{titleText}', fontSize: { value: 24, unit: 'pt' }, overflow: 'wrap',
+        placement: { anchor: { to: '#label', edge: 'below' }, size: { width: 'fill', height: 'auto' } } },
+    ] },
+  },
+}
+```
+
+#### Altura reservada
+
+Un encabezado con diseño avanzado ocupa espacio en la columna como cualquier bloque: el texto de cuerpo que lo sigue empieza debajo de ese espacio. El espacio es la mayor de tres alturas, todas medidas hacia abajo desde la parte superior del encabezado (la parte superior del área de contenido en una apertura que empieza su página):
+
+1. el propio texto del encabezado, con la tipografía del nivel (queda oculto bajo el diseño, pero conserva sus líneas);
+2. el fondo del contenido del diseño: el borde inferior más bajo entre los elementos que cuentan (ver abajo);
+3. `advancedDesign.minHeight`.
+
+A continuación se suma el `marginBottom` del encabezado (el de su estilo de encabezado, el de su nivel o `headings.marginBottom`; 0,5 em si ninguno fija otro) y el resultado se ajusta hacia arriba a la rejilla base cuando los encabezados se ajustan a ella. En una apertura (`span: 'page'`) la misma franja queda libre en todas las columnas de la página. En un encabezado de columna que no la desborda, el diseño se compone dentro de la caja del encabezado, que tiene exactamente esa altura.
+
+**Qué elementos cuentan.** Cuentan todos los elementos del diseño —textos, filetes, cajas e imágenes por igual (hasta postext 1.4 un elemento `image` nunca contaba, así que el texto podía empezar encima de una imagen de banda si `minHeight` no lo impedía)—, salvo:
+
+- **los que tienen `reserve: false`**: decoración que puede quedar bajo el texto;
+- **los que siguen a la propia franja**: los anclados a la fila central del contenedor (`left`, `center`, `right`) o a la inferior (`bottom-left`, `bottom`, `bottom-right`), los que tienen una altura `'fill'` respecto al contenedor (una caja o una línea vertical sin altura lo rellenan por defecto) y cualquier elemento anclado a uno de ellos. El contenedor es la franja reservada, así que estos elementos se apoyan en su pie o la abarcan: una línea bajo la franja, un panel de color tras el título. Siguen a la altura; nunca la fijan. Un texto de entre ellos que conserva su propia altura sí necesita sitio: un título anclado al pie de la franja hace que la franja mida al menos lo que el título, de modo que nunca empieza por encima del borde superior del encabezado. Con `minHeight: 36mm` y el título anclado en `bottom-left`, la caja del encabezado mide 36 mm más su `marginBottom`, ajustada hacia arriba a la retícula, y el título queda al pie de esa caja, justo encima del texto que sigue; sin `minHeight`, un título que ocupa más líneas que el texto del propio encabezado hace la franja tan alta como el título. Hasta postext 1.4 ese título se pintaba hacia arriba, sobre el texto que precede al encabezado. Las cajas, los filetes y las imágenes que siguen a la franja no fijan ese mínimo, así que un panel anclado al pie puede sobresalir por encima del encabezado.
+
+Los elementos anclados a la página o al sangrado cuentan según cuánto bajen por debajo de la parte superior del encabezado. Una banda en lo alto de la página que termina por encima del encabezado no cuenta nada; una imagen a sangre que lo sobrepasa empuja el texto hasta su borde inferior. Lo mismo ocurre con todo lo que está abajo en la página: un sello a 25 mm del pie, una banda lateral a toda altura o un marco reservan la página hasta su borde inferior, y el texto suele empezar en la página siguiente. Marca esa decoración con `reserve: false` —se sigue pintando y otros elementos pueden seguir anclándose a ella— y da al encabezado el espacio que necesita con sus elementos de texto o con `minHeight`:
+
+```json
+{
+  "kind": "image", "id": "seal", "resourceId": "seal", "reserve": false,
+  "placement": {
+    "anchor": { "to": "page", "edge": "bottom-right" },
+    "offset": { "x": { "value": -25, "unit": "mm" }, "y": { "value": -25, "unit": "mm" } },
+    "size": { "width": { "value": 30, "unit": "mm" } }
+  }
+}
+```
+
+Un elemento anclado a otro que no reserva sigue contando salvo que también lo marques (un rótulo compuesto sobre el sello necesita su propio `reserve: false`).
+
+**Dónde se pinta.** El diseño de una apertura (`span: 'page'`) se dibuja antes que el cuerpo, así que la decoración que no reserva espacio queda bajo el texto. El diseño de un encabezado de columna se dibuja con el bloque del encabezado —encima de los bloques que lo preceden en la columna y debajo de los que lo siguen— allí donde esté colocado por encima del pie de su columna: también en los márgenes laterales, en el margen superior, en el sangrado y en las columnas vecinas. El pie de la columna lo corta, en el lienzo y en el PDF, porque ahí termina el flujo (ver **Más alto que la columna** más abajo). Hasta postext 1.4 el lienzo y el PDF también lo cortaban en la parte alta de su columna, de modo que una banda anclada a la parte alta de la página o del sangrado entraba en los márgenes laterales pero se detenía en el margen superior. La decoración anclada al pie de la página va en una apertura, o en el diseño del pie con `pages: 'opener'`.
+
+**Más alto que la columna.** Cuando el espacio llega más allá del pie de la columna —un `minHeight` tan alto como la página, una imagen o un marco que bajan hasta el corte—, el encabezado reclama el resto de su página (una apertura, en todas sus columnas) o de su columna (un encabezado de columna), y el texto que lo sigue empieza en la página o en la columna siguiente. Su bloque llega entonces hasta el pie de la columna, sin recortarse nunca a la altura de su texto, de modo que la banda contra la que se compone su diseño es el espacio que reclama (`minHeight` incluido, hasta el pie). Un diseño más alto que la propia página —una entradilla larga en una página de pantalla pequeña— sigue cortándose en el pie de la página (un diseño de columna, en el de su columna): el Sandbox lo señala en el panel **Revisión** como *Diseño de título cortado*. La maquetación no emite ningún aviso por ello —una portada que reclama su página es lo habitual y no pierde nada—, pero cualquier anfitrión puede hacer la misma comprobación sobre la maquetación terminada: `collectHeadingDesignCuts(doc)` devuelve un `{ kind: 'headingDesignCut', pageIndex, level, where, overflowPx, sourceStart, sourceEnd }` por cada encabezado cuyo texto de diseño queda más allá del pie del corte de la página (`where: 'page'`, una apertura) o de su columna (`where: 'column'`), y `formatWarning` describe cada uno. Ver **Una apertura tan alta como la página** en [Span y diseño avanzado](#span-y-diseño-avanzado).
+
+**La columna lateral.** En una disposición de columna y media cuya columna lateral aloja flotantes (`sideColumnRole: 'floats'`), un elemento del diseño de un encabezado de columna que cae en la columna lateral —un numeral de capítulo anclado a la página en la columna del margen exterior, en la apertura de un libro de texto— mantiene la pila lateral apartada. Cada figura, tabla o recuadro con `span: 'side'` que la página coloca después del encabezado deja un hueco de flotante libre alrededor de cada uno de esos elementos: se queda donde lo pone la pila cuando cabe por encima del elemento y, si no, pasa por debajo de él —o espera a la página siguiente cuando el resto de la columna lateral no puede alojarlo ahí—. Así, un numeral en la cabeza del canal mantiene toda la pila por debajo, mientras que un número de sección colgado en el margen junto a un encabezado más abajo en la página deja la cabeza del canal a las figuras que cita la página (la figura marginal sigue en lo alto de su página). Lo que la columna lateral ya aloja cuando se coloca el encabezado no se mueve: una figura apilada antes en la página que llega hasta el elemento del encabezado se queda donde está, debajo del elemento; por eso, si el diseño tiene un elemento en la columna lateral a media página, conviene citar sus figuras después del encabezado. Los elementos con `reserve: false` dejan libre la columna lateral, igual que dejan libre el texto. Una apertura (`span: 'page'`) no necesita nada de esto: su banda se reserva en todas las columnas, la lateral incluida. Hasta postext 1.4 una figura lateral citada en una apertura así se colocaba en la cabeza de la columna lateral, encima del numeral.
+
+**Portadas.** Por eso un encabezado de portada que llena su página —con un `minHeight` tan alto como la página, o con una imagen a página completa en su diseño— envía por sí solo el texto que lo sigue a la página siguiente, tanto en disposiciones de una columna como de varias. Un `:::pagebreak` justo detrás es opcional y no hace daño: un salto de página en una página todavía vacía no hace nada, así que nunca añade una página en blanco. Solo hace falta cuando el diseño de la portada termina antes del pie de la página y aun así el texto debe empezar en una página nueva.
+
+```md
+# Memoria anual 2026 {style="portada"}
+
+:::pagebreak
+
+# Carta de la presidenta
+```
+
+### Números con letras
+
+Dos sufijos de las plantillas de numeración escriben un contador con letras, en el idioma del documento (el `locale` de primer nivel o, si no está definido, el idioma de partición — ver [Idioma del documento](/es/docs/configuration-language#idioma-del-documento)): `words` para el cardinal y `ordinal` para el ordinal. La caja del sufijo fija la de las palabras, como hacen `A` / `a` con las letras:
+
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Inglés (21)</th>
+      <th>Español (21)</th>
+      <th>Chino (21)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>{'{1:words}'}</code></td><td>twenty-one</td><td>veintiuno</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:Words}'}</code></td><td>Twenty-one</td><td>Veintiuno</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:WORDS}'}</code></td><td>TWENTY-ONE</td><td>VEINTIUNO</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:ordinal}'}</code></td><td>twenty-first</td><td>vigesimoprimero</td><td>第二十一</td></tr>
+    <tr><td><code>{'{1:Ordinal}'}</code></td><td>Twenty-first</td><td>Vigesimoprimero</td><td>第二十一</td></tr>
+    <tr><td><code>{'{1:ORDINAL}'}</code></td><td>TWENTY-FIRST</td><td>VIGESIMOPRIMERO</td><td>第二十一</td></tr>
+  </tbody>
+</table>
+
+Se escriben con letras el inglés, el español, el francés, el italiano, el alemán, el catalán, el portugués, el chino, el japonés y el árabe; cualquier otro idioma toma las palabras en inglés, como hacen las cadenas integradas de continuación de tablas. El chino escribe los numerales informales de `simp-chinese-informal` o `trad-chinese-informal`, según la escritura de `locale` (一万 / 一萬), con 第 delante del ordinal; los caracteres han no tienen caja, así que las tres grafías de un sufijo imprimen lo mismo. El inglés sigue el uso estadounidense (*one hundred five*, sin *and*). El español usa por defecto las formas masculinas, como se numera un *capítulo* o un *libro* (*capítulo primero*, *tercero*, *veintiuno*), y escribe los ordinales del 13 al 29 en una sola palabra, como prefiere la RAE (*decimotercero*, *vigesimoprimero*). Los cardinales se escriben hasta 999 999 y los ordinales españoles, catalanes y portugueses hasta 999; los números mayores se imprimen en cifras.
+
+El francés sigue la ortografía tradicional (*vingt et un*, *soixante et onze*, *quatre-vingts*, *deux cent un*) y escribe *premier* para el uno (*Chapitre premier*, pero *vingt et unième*); el italiano escribe cada número en una sola palabra (*ventuno*, *ventitré*, *duemilaventiquattro*; *primo*, *ventunesimo*), y el alemán también (*einundzwanzig*, *hunderteins*; *erste*, *einundzwanzigste*), con *ss* en lugar de *ß* en el alemán de Suiza (`de-CH`); el catalán sigue al IEC (*vint-i-u*, *dos-cents*; *primer*, *cinquè*, *vint-i-unè*), y el portugués es el de Brasil (*dezesseis*) salvo que `locale` indique otra región (`pt-PT`: *dezasseis*), con los ordinales latinos (*vigésimo primeiro*). Los ordinales catalanes y portugueses, como los españoles, se escriben hasta 999.
+
+Las lenguas románicas leen el modificador de género: `-feminine` (o `-f`) hace concordar las palabras con un sustantivo femenino (`Lección {1:ordinal-f}` da *Lección primera*, `{1:Ordinal-f} partie` da en francés *Première partie*; y así *veintiuna*, *doscientas*, *vint-i-una*, *duzentas*), y `-masculine` (`-m`) es el valor por defecto. En alemán el cardinal no varía (*Kapitel eins*), pero el ordinal sí: sin modificador lleva la terminación que tiene tras el artículo, igual en los tres géneros (`Das {1:ordinal} Kapitel` da *Das erste Kapitel*); delante de un sustantivo sin artículo, `-masculine` da *Erster Teil*, `-feminine` *Erste Lektion* y `-neuter` (`-n`) *Erstes Kapitel*. Los números alemanes van en minúscula, como los escribe el idioma (`Kapitel {1:words}` da *Kapitel eins*); `{1:Words}` pone la inicial en mayúscula, para la palabra que abre el título, y `{1:WORDS}` escribe la ß como SS.
+
+Los números árabes concuerdan en género con el sustantivo que cuentan, así que el sufijo admite un modificador: `-feminine` (o `-f`) para un sustantivo femenino, `-masculine` (`-m`, el valor por defecto) para uno masculino; `-classical` escribe las centenas مائة, como las ediciones de Bulaq y la mayoría de las egipcias, en lugar del moderno مئة. `{1:ordinal}` escribe el ordinal definido en nominativo que usa un título: `الفصل {1:ordinal}` da *الفصل الأول*, *الفصل الحادي عشر*, *الفصل الحادي والعشرون*; `الليلة {1:ordinal-feminine}` da *الليلة الأولى*, *الليلة الحادية عشرة*, *الليلة الحادية والعشرون*, *الليلة المئتان* y, por encima de cien, la fórmula clásica de «después de»: *الليلة الخامسة والأربعون بعد الثلاثمئة*, *الليلة الحادية بعد الألف*. `{1:words}` escribe el cardinal (واحد وعشرون; en femenino إحدى عشرة, واحدة وعشرون). Los ordinales se escriben con letras hasta 9 999 y los cardinales hasta 99 999; los modificadores se combinan (`{1:ordinal-f-classical}`); las lenguas románicas y el alemán solo leen el género (ver arriba), y los demás idiomas los ignoran. El árabe no tiene mayúsculas, así que la caja del sufijo no cambia nada. Los marcadores de diseño `{numberWords}` y `{numberOrdinalWords}` escriben las formas masculinas; para una apertura en femenino, pon el ordinal en la plantilla del nivel e imprímelo con `{number}`.
+
+En un diseño de encabezado, `{numberWords}` / `{numberWordsLower}` y `{numberOrdinalWords}` / `{numberOrdinalWordsLower}` escriben el contador del encabezado del mismo modo, así la apertura puede decir *Capítulo uno* mientras el índice muestra `1`. El `textTransform: 'uppercase'` de un elemento de texto da las mayúsculas:
+
+```ts
+// Novela en español: «CAPÍTULO PRIMERO» sobre el título, «1.» en el índice.
+{ level: 1, numberingTemplate: '{1}.', span: 'page',
+  advancedDesign: { enabled: true, slot: { elements: [
+    { kind: 'text', id: 'n', content: 'Capítulo {numberOrdinalWordsLower}', textTransform: 'uppercase', /* … */ },
+    { kind: 'text', id: 't', content: '{titleText}', /* … */ },
+  ] } } }
+```

@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Cómo compone Postext cómics y manga desde Markdown: páginas de cómic cortadas por un árbol de divisiones, imágenes de viñeta recortadas alrededor de su zona segura, rotulación generada a partir de un guion (diálogo, pensamiento, susurro, grito, radio, cartelas, onomatopeyas), estilos de bocadillo, anclas de los personajes en las imágenes, tiras dentro del texto, dobles páginas, lectura de derecha a izquierda y rotulación vertical, traducciones, y las salidas en canvas, PDF, HTML y EPUB',
   lang: 'es',
   lastUpdated: '2026-10-07',
-  readingTime: '25 min',
-  order: 18,
+  readingTime: '43 min',
+  order: 32,
   plainSummary: "Esta página explica cómo hacer un cómic con Postext. Los dibujos son las viñetas, y todo lo que los personajes dicen, piensan u oyen se escribe como texto en el archivo Markdown. Postext coloca las viñetas en la página y dibuja por su cuenta los bocadillos, las cartelas y las onomatopeyas alrededor de las palabras. Para traducir el cómic solo se reescriben las palabras, y Postext rotula de nuevo el otro idioma: el japonés en columnas, el árabe de derecha a izquierda. La página trata también las tiras cómicas dentro de un libro, las páginas que ocupan dos caras enfrentadas, las salidas y los límites que quedan.",
 };
 
@@ -17,7 +17,7 @@ export const metadata = {
 
 Un cómic en Postext es un conjunto de imágenes y un guion. Las imágenes son recursos bitmap o SVG corrientes, dibujados sin ningún rótulo encima. El guion está en el Markdown del capítulo: un bloque `:::page` corta una página en viñetas, da a cada viñeta su imagen y enumera, línea a línea, los bocadillos, las cartelas y las onomatopeyas de esa viñeta. Postext dispone las viñetas, recorta cada imagen a su celda sin cortar lo que importa, compone el texto en la letra de rotulación del libro a un solo cuerpo, dibuja un bocadillo a su alrededor, dirige el rabillo hacia quien habla y coloca los bocadillos en orden de lectura donde no tapan ninguna cara. Una traducción es otro archivo Markdown con las mismas viñetas y otras palabras; Postext la rotula de nuevo desde cero, en columnas para el japonés y de derecha a izquierda para el árabe.
 
-Los cómics solo actúan cuando se usan: un documento sin `:::page` ni `:::strip` se compone exactamente igual que antes. Los ajustes están en la [sección `comics` de la configuración](/es/docs/configuration-comics#cómics), y el marcado se resume en [Formato del documento › Cómics](/es/docs/document-format#cómics).
+Los cómics solo actúan cuando se usan: un documento sin `:::page` ni `:::strip` se compone exactamente igual que antes. Los ajustes están en la [sección `comics` de la configuración](/es/docs/configuration-comics#cómics), y el marcado se resume en [Formato del documento › Cómics](/es/docs/document-format-directives#cómics).
 
 ## Páginas de cómic
 
@@ -159,7 +159,7 @@ Una línea `::panel{…}` empieza una viñeta; su guion llega hasta la siguiente
 
 ### Recortar la imagen a su celda
 
-Las imágenes de las viñetas se dibujan sin saber qué forma tendrá la celda en la que acabarán: una página puede volver a dividirse, un separador puede arrastrarse, una traducción puede necesitar una tira más alta. La **zona segura** de la imagen (`Resource.safeArea`, véase [Formato del documento › Zona segura](/es/docs/document-format#zona-segura)) dice qué tiene que seguir a la vista, y el recorte se calcula para cada celda:
+Las imágenes de las viñetas se dibujan sin saber qué forma tendrá la celda en la que acabarán: una página puede volver a dividirse, un separador puede arrastrarse, una traducción puede necesitar una tira más alta. La **zona segura** de la imagen (`Resource.safeArea`, véase [Formato del documento › Zona segura](/es/docs/document-format-resources#zona-segura)) dice qué tiene que seguir a la vista, y el recorte se calcula para cada celda:
 
 1. Con `fit=cover`, la ventana visible tiene las proporciones de la celda y es tan grande como la imagen permite.
 2. Se coloca de modo que la zona segura quede dentro. Donde eso deja margen, la ventana se centra en `focus` si la viñeta lo indica; si no, lo que queda fuera de la zona segura se recorta en proporción a su tamaño, así que un motivo a la izquierda del centro sigue a la izquierda del centro.
@@ -484,7 +484,7 @@ El pie de una tira se pinta con el texto, como el de una figura. En un PDF etiqu
 
 ## Editar cómics en el Sandbox
 
-En el canvas, en las páginas HTML y en el modo de selección del Folio, una página de cómic se puede editar con el puntero, y cada cambio se escribe de vuelta en el Markdown del capítulo (la [guía del Sandbox](/es/docs/sandbox#editar-cómics) da los detalles):
+En el canvas, en las páginas HTML y en el modo de selección del Folio, una página de cómic se puede editar con el puntero, y cada cambio se escribe de vuelta en el Markdown del capítulo (la [guía del Sandbox](/es/docs/sandbox-books-saving#editar-cómics) da los detalles):
 
 - **Separadores.** Sobre una calle el puntero se convierte en un cursor de cambio de tamaño. Al arrastrarlo se mueve la línea de división; al soltar, el nuevo porcentaje se escribe en el valor `split` de la página (el atributo se añade si la página no lo tiene), y la página se vuelve a componer. Mayús ajusta a pasos del 5 %, Alt mueve solo el extremo más cercano e inclina la línea, y ninguna celda queda más estrecha que el 5 %. Durante el arrastre se marca la viñeta cuya imagen quedaría con bandas. Cada separador puede recibir además el foco: las flechas lo mueven un 1 % (un 5 % con Mayús), Intro escribe la posición y Escape la devuelve a donde estaba.
 - **Viñetas.** Una pequeña barra de herramientas sobre una viñeta la divide con una línea horizontal o vertical, y añade tras ella un `::panel` vacío para la nueva celda, o la une con la viñeta siguiente: la línea de división desaparece, y la viñeta resultante conserva la imagen de la primera y los guiones de las dos.

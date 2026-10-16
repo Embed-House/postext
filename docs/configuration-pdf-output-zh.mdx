@@ -1,0 +1,386 @@
+{/* docs/configuration-pdf-output-zh.mdx */}
+
+export const metadata = {
+  title: '以编程方式使用：PDF文件',
+  sidebarTitle: 'PDF文件',
+  description: '用代码调用postext-pdf：安装、API、浏览器和Node中的字体提供函数、中日韩字体、资源字节、竖排文字、工作线程和可付印的文件',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '15分钟',
+  order: 20,
+  parent: 'configuration',
+  plainSummary: "本页写给写代码、想得到PDF文件的人。它说明怎样安装PDF包，并用几行代码把排好的书变成文件。这个包需要字体文件，所以本页说明在浏览器或服务器上怎样把字体交给它。本页还讲中文、日文和韩文字体，图片，从上往下排的文字，以及链接。最后给出一个完整的例子，以及可以直接交给印刷厂的文件。",
+};
+
+# 以编程方式使用：PDF文件
+
+
+## 生成PDF
+
+PDF输出位于单独的包<strong>`postext-pdf`</strong>中，只面向Web的集成因此不必承担`pdf-lib`和`@pdf-lib/fontkit`的开销。PDF后端不会重新测量文字：它读取的正是你交给`renderToCanvas`或`renderToHtml`的同一个`VDTDocument`，并把其中的像素坐标换算成PDF的点。因此三种输出在断行、栏高和资源位置上必定一致。
+
+> <strong>在浏览器中，请通过[Web Worker](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)构建VDT。</strong>VDT一旦存在，`renderToPdf`本身很快，耗时的是生成VDT的排版流水线。在工作线程上运行这条流水线，界面能保持响应，PDF导出也能复用实时预览已经预热好的测量缓存。推荐的流程见[从工作线程驱动PDF导出](/zh/docs/configuration-programmatic-usage#从工作线程驱动pdf导出)。下面在主线程上的示例用来说明*各参数的含义*；在界面代码中，先在工作线程里构建VDT，再直接调用`renderToPdf`。
+
+### 安装
+
+```bash
+npm install postext postext-pdf
+```
+
+`postext`是`postext-pdf`的peer依赖。每个`postext-pdf`版本都需要与之一起发布的`postext`，或同一主版本中更新的版本（它的peer范围是该版本前加`^`，1.5.0对应`^1.5.0`），因为它会导入`postext`在那个版本中新增的辅助函数。两者要一起升级；使用CDN时，把它们固定到同一个版本。
+
+### 公共API
+
+这个包只有一个入口，外加几个类型：
+
+- **`renderToPdf(doc, options): Promise<Uint8Array>`**：接收一个`VDTDocument`（或一本书各章组成的数组），返回原始的PDF字节。
+- **`PdfFontProvider`**：回调签名`(family, weight, style, request?) => Promise<Uint8Array | Uint8Array[]>`，`renderToPdf`需要嵌入新的family/weight/style组合时，用它请求字体字节。`request.codePoints`包含页面中用该字体排出的字符；返回值是一个文件，或者合起来构成该字体的多个文件（见[中文、日文和韩文字体](#中文日文和韩文字体)）。
+- **`declaredFontFile(bytes, { unicodeRange?, order? }): PdfFontFile`**：一种字体的一个文件，并说明页面怎样声明它：它的`@font-face`规则的`unicode-range`，以及这条规则在声明顺序里的位置。`PdfFontFile`是带这两个可选属性的`Uint8Array`（见[中文、日文和韩文字体](#中文日文和韩文字体)）。postext-pdf 1.30起。
+- **`RenderToPdfOptions`**：`{ fontProvider, resourceBytes?, outlines?, accessible?, colorSpace?, pageNegative?, characterGrid?, onProgress?, onWarning?, rasterizeSvg?, harfbuzzWasm?, print?, outputProfile?, profileBaseUrl?, date? }`。省略`outlines`、`accessible`和`colorSpace`时，取文档的`pdfGeneration`（见[PDF生成（配置）](/zh/docs/configuration-fonts-colors-viewers#pdf生成配置)）。`resourceBytes`的说明见[资源字节与印刷母版](#资源字节与印刷母版)；`onWarning`见[向字体提供函数请求哪些字体](#向字体提供函数请求哪些字体)和[文档中的警告](/zh/docs/configuration-programmatic-usage#文档中的警告)。`characterGrid: true`会把`cjk.grid.show`在屏幕上画的网格印进PDF，否则PDF不含这层网格（见[字符网格](/zh/docs/configuration-east-asian#字格)）。`harfbuzzWasm`指定含从右向左或连写文字的文档从哪里加载HarfBuzz的`harfbuzz.wasm`（URL，相对于页面；或文件字节）；省略时先找postext-pdf模块旁的副本，再依次找jsDelivr和esm.sh上同一版本的harfbuzzjs。`print`接收印刷输出设置（PDF/X标准、输出特性文件、黑色处理、印前检查），省略时取文档的`print`；设定PDF/X标准或`colorSpace: 'cmyk'`时，所有颜色都经ICC输出特性文件分色，其字节由`outputProfile`给出（否则从`profileBaseUrl`下载，默认是npm CDN上postext的`icc/`文件夹）。`date`（`Date`、毫秒时间戳或日期字符串，与`createBundle`的`mtime`同类型）是文件的创建日期和修改日期；在PDF/X文件中，它还是XMP数据包里的日期，文档标识也由它算出：同一份文档用同一个`date`生成两次，得到的字节完全相同。省略时，文件记下调用时的时间。日期无效时抛出错误。
+- **`PdfWarning`**：通过`onWarning`报告的非致命问题；按`kind`区分：`'fontFallback'`（`PdfFontFallbackWarning`），某个字体改用了同一家族的另一款字体；`'missingGlyph'`（`PdfMissingGlyphWarning`），字体的所有文件都没有字形的字符；`'variableFontDefaultInstance'`（`PdfVariableFontWarning`），以默认实例之外的字重请求可变字体；`'cffEmbeddedWhole'`（`PdfCffEmbeddedWholeWarning`），超过2 MB的CFF字体被整体嵌入；`'complexShapingUnavailable'`（`PdfComplexShapingWarning`），HarfBuzz未能加载（`reason`列出查找过的位置），从右向左或连写的文字没有经它成形，阿拉伯文的标音符号位置不对；或`'missingImage'`，没有字节、画成占位框的图像（只报告给你传入的`onWarning`；未传入时，字体类警告输出到`console.warn`）。
+- **`decompressWoff2(bytes): Uint8Array`**：辅助函数，把WOFF2文件转成TTF字节，`pdf-lib`可以直接嵌入这种格式。
+- **`createPdfWorker(options?)`**，来自`postext-pdf/worker`：在Web Worker上进行同样的渲染；见[在工作线程上渲染PDF](#在工作线程上渲染pdf)。
+
+### 最简示例
+
+```ts
+import { buildDocument } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+
+const vdt = buildDocument(
+  { markdown: '# Chapter One\n\nThe story begins here…' },
+  {
+    page: { sizePreset: '17x24' },
+    layout: { layoutType: 'double' },
+    bodyText: { fontFamily: 'EB Garamond', fontSize: { value: 9, unit: 'pt' } }, // 9 pt覆盖默认的8 pt
+  },
+);
+
+const pdfBytes = await renderToPdf(vdt, {
+  fontProvider: async (family, weight, style) => {
+    // 返回这个family/weight/style对应的TTF字节。
+    // 真实的实现见下文的“字体提供函数”一节。
+    const res = await fetch(`/fonts/${family}-${weight}${style === 'italic' ? 'i' : ''}.ttf`);
+    return new Uint8Array(await res.arrayBuffer());
+  },
+});
+
+// `pdfBytes`是一个Uint8Array，可以保存、下载或以流的方式发送。
+const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+const url = URL.createObjectURL(blob);
+window.open(url);
+```
+
+### 为什么需要字体提供函数？
+
+`pdf-lib`把真实的字体文件嵌入PDF：渲染时无法使用浏览器已安装的字体，而仅为屏幕测量加载的字体，本身也不足以生成自包含的PDF。`renderToPdf`扫描页面中绘制用到的每一种字体（每个`family|weight|style`组合一种，见[向字体提供函数请求哪些字体](#向字体提供函数请求哪些字体)），每个不同的组合调用一次你的提供函数。提供函数返回一个包含**TTF或OTF**字节的`Uint8Array`；如果字体由多个文件提供，则返回它们组成的列表（见[中文、日文和韩文字体](#中文日文和韩文字体)）。`pdf-lib`对TrueType轮廓做子集化，CFF（`.otf`）文件则整体嵌入。提供函数用同一个文件回应的多种字体（例如某个家族缺少粗体，用常规体代替）共享一份嵌入字体。最终没有任何页面用来绘制的字体不会写进文件，例如SVG图作为图片绘制时，其中文字所用的字体。
+
+<strong>使用按字重分开的静态字体，而不是单个可变字体。</strong>Google Fonts通常为每个家族提供一个覆盖整个字重轴的可变WOFF2文件。`pdf-lib`只能嵌入可变文件的默认实例，于是粗体段落会以常规字重渲染。Fontsource发布按字重分开的静态WOFF2文件，可以干净地解决这个问题，沙盒用的就是这种方式。以默认实例之外的字重请求可变文件时，会报告`variableFontDefaultInstance`警告。
+
+**文字中的每个词都落在排版确定的位置上**。在段落、列表项、引文、框和其他流动文字中，每个词都从VDT测得的位置开始，所以浏览器宽度与嵌入字体宽度之间的差异不会沿着一行累积。没有行内格式的行作为一个文本对象绘制，在词之间移动画笔；两端对齐的行、居中的行和带格式的行逐词绘制。字体中没有字形的字符，浏览器用另一种字体测量，PDF则画成该字体的缺字框，它不会移动后面的任何词，并且每种字体报告一次`missingGlyph`警告。字体缺少的空格，例如窄不换行空格或数字空格，取浏览器给出的宽度；词连接符、零宽空格等不可见字符不绘制。字体缺少的不换行连字符（U+2011）用该字体的连字符（U+2010）绘制，连字符也没有时用连字符减号，与浏览器的显示一致；Open Sans和Outfit等字体两者都缺。这两种情况都不算缺字。有两个例外。含有从右向左字母的行仍作为一整串绘制（见[语言与文字](/zh/docs/configuration-language#语言与文字)）。由版面设计放置的文字（书眉和页脚、章首页、框标题及其他设计元素）用嵌入字体自身的宽度排版，所以在那里字体缺少的字形仍会移动该行其余的文字。
+
+### 向字体提供函数请求哪些字体
+
+`renderToPdf`按绘制页面的方式遍历页面，只向提供函数请求实际绘制用到的字体：
+
+- 排出任何一行的块所用的常规字体，以及实际以粗体、斜体或粗斜体排出的每一串文字所用的对应字体；
+- 行内标签的文字、列表标记，以及设计槽位中的文字（书眉、页码、章首页和篇的色带）；
+- 每个资源的题注、注释和表格单元格文字；
+- 嵌入SVG图时，其`<text>`指定的字体。提供函数完全无法提供的家族，会依次落到SVG的`font-family`列表中的下一个家族。
+
+所以，一个没有人设为斜体的标题家族永远不会被请求斜体，没有注释的图也永远不需要注释所用的字体。
+
+提供函数拒绝某种字体时，渲染会继续。同一家族的另一种字体会嵌入代替它，并报告一条`PdfWarning`。替代字体是第一个加载成功的字体，按CSS字体匹配的顺序尝试九个标准字重（100到900），这也是浏览器在预览中显示的字体：
+
+1. 先试同一样式。请求的字重在400到500之间时，先试不超过500的字重，然后从最近的开始往下试更细的字重，再从600开始往上试更粗的字重。请求的字重低于400时，先从最近的开始往下试更细的字重，再试更粗的字重。请求的字重高于500时，先试更粗的字重，再试更细的字重；
+2. 再试另一种样式，即直立体请求试斜体、斜体请求试直立体，先试请求的字重，其他字重按同样的顺序。
+
+因此，没有斜体的家族把斜体文字排成直立体；只提供400和700的家族把600当作700；只有一款字体的家族全部用它排。提供函数按这个顺序一次只被请求一种字体，同一种字体不会被请求两次，所以没用到的字体永远不会被嵌入。提供函数完全无法提供的家族，要把这18种字体都请求一遍，渲染才会失败。
+
+```ts
+const bytes = await renderToPdf(doc, {
+  fontProvider,
+  onWarning: (w) => {
+    // { kind: 'fontFallback', family: 'Oswald', weight: 700, style: 'italic',
+    //   fallback: { weight: 700, style: 'normal' }, reason: '…', message: '…' }
+    console.info(w.message);
+  },
+});
+```
+
+没有`onWarning`时，消息输出到`console.warn`。文字保持原来的位置，这些位置来自VDT，是用浏览器当时拥有的字体测得的，所以宽度不同的替代字体可能显得偏紧或偏松。提供真正的字体即可解决。只有当提供函数无法以任何标准字重提供某个家族的任何字体（直立或斜体）时，渲染才会失败（`postext-pdf: failed to load font(s): …`）。
+
+### 浏览器字体提供函数（Fontsource + WOFF2）
+
+沙盒附带`createPdfFontProvider()`（`packages/postext-sandbox/src/viewport/pdfFontProvider.ts`），你可以把它复制到任何浏览器应用中。核心部分如下：
+
+```ts
+import type { PdfFontProvider } from 'postext-pdf';
+import { decompressWoff2 } from 'postext-pdf';
+
+const bytesCache = new Map<string, Promise<Uint8Array>>();
+
+function fontsourceId(family: string): string {
+  return family.toLowerCase().replace(/\s+/g, '-');
+}
+
+function fontsourceWoff2Url(
+  family: string,
+  weight: number,
+  style: 'normal' | 'italic',
+): string {
+  const id = fontsourceId(family);
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
+}
+
+export function createPdfFontProvider(): PdfFontProvider {
+  return async (family, weight, style) => {
+    const key = `${family}|${weight}|${style}`;
+    const cached = bytesCache.get(key);
+    if (cached) return cached;
+
+    const promise = (async (): Promise<Uint8Array> => {
+      const url = fontsourceWoff2Url(family, weight, style);
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) throw new Error(`font fetch failed: ${res.status} ${url}`);
+      // pdf-lib需要TTF字节，所以在客户端解开WOFF2封装。
+      return decompressWoff2(new Uint8Array(await res.arrayBuffer()));
+    })();
+
+    bytesCache.set(key, promise);
+    return promise;
+  };
+}
+```
+
+用于生产的版本还应当：
+
+- **查询可用的字重**（通过`https://api.fontsource.org/v1/fonts/{id}`），把请求的字重对齐到该家族实际提供的最接近的字重，这样对只有`{400, 700}`的家族请求`weight: 600`也能成功。
+- **从斜体回退到正体**：某个家族在请求的字重下没有斜体时，回退而不是让整个渲染失败。
+- **跨渲染复用缓存**（把`bytesCache`放在模块作用域，而不是每次调用新建），这样修改配置后重新生成PDF几乎没有额外开销。
+
+### 中文、日文和韩文字体
+
+CJK字体不是一个小文件。Fontsource把Noto Serif SC的每个字重拆成约一百个文件，每个文件包含一部分字符，并在该家族的样式表（`@fontsource/noto-serif-sc/400.css`）中用`unicode-range`声明；浏览器只下载页面文字用到的文件。上面的提供函数获取的`latin`文件完全不含汉字，而命名的子集也不完整：Noto Serif SC的`chinese-simplified`缺少“釵”，Noto Serif TC的`chinese-traditional`则连（），！？：；这些全角标点一个也没有。
+
+所以提供函数可以用多个文件回应一种字体。`renderToPdf`把页面中用该字体排出的字符（`request.codePoints`）传给它，这些字符在绘制任何内容之前就从所有章节收集好；提供函数按浏览器查找的顺序返回包含这些字符的文件。每个文件各自作为子集嵌入，每个字符取自第一个有其字形的文件：一章用到60个切片，就嵌入60个小子集。再次请求同一种字体时（比如为SVG图中的文字），只请求它的文件所缺的字符。返回单个`Uint8Array`的提供函数照常工作。沙盒的提供函数读取对应字重和样式的Fontsource样式表，获取范围覆盖文字的文件；核心代码如下：
+
+```ts
+import type { PdfFontProvider } from 'postext-pdf';
+import { decompressWoff2 } from 'postext-pdf';
+
+type Slice = { url: string; ranges: Array<[number, number]> };
+
+async function fontsourceSlices(family: string, weight: number, style: 'normal' | 'italic'): Promise<Slice[]> {
+  const id = family.toLowerCase().replace(/\s+/g, '-');
+  const cssUrl = `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/${weight}${style === 'italic' ? '-italic' : ''}.css`;
+  const css = await (await fetch(cssUrl)).text();
+  return [...css.matchAll(/@font-face\s*{([^}]*)}/g)].map(([, rule]) => ({
+    url: new URL(/url\(\.?\/?([^)]+\.woff2)\)/.exec(rule)![1], cssUrl).href,
+    ranges: /unicode-range:\s*([^;]+);/.exec(rule)![1].split(',').map((part) => {
+      const [lo, hi = lo] = part.trim().slice(2).split('-');
+      return [parseInt(lo, 16), parseInt(hi, 16)] as [number, number];
+    }),
+  }));
+}
+
+export const sliceFontProvider: PdfFontProvider = async (family, weight, style, request) => {
+  // 范围重叠时，浏览器先尝试最后一条规则。
+  const slices = (await fontsourceSlices(family, weight, style)).reverse();
+  const picked = new Set<Slice>();
+  for (const cp of request?.codePoints ?? []) {
+    const slice = slices.find((s) => s.ranges.some(([lo, hi]) => cp >= lo && cp <= hi));
+    if (slice) picked.add(slice);
+  }
+  if (picked.size === 0) picked.add(slices[0]!);
+  return Promise.all(slices.filter((s) => picked.has(s)).map(async (s) =>
+    decompressWoff2(new Uint8Array(await (await fetch(s.url)).arrayBuffer()))));
+};
+```
+
+拉丁字母家族也走同样的代码：英文文字只取`latin`文件，捷克文取`latin`和`latin-ext`。
+
+浏览器并不是取第一个有字形的文件。`unicode-range`包含某个字符的文件里，它用最后声明的那一个排这个字符，而一个家族的文件互有重叠：Fontsource把Noto Serif JP的ASCII字母同时放在`latin`文件和各个编号切片里。分属两个文件的两个字符之间不调整字偶间距，所以用哪个文件决定了宽度：切片在`latin`之后声明时，Chrome 154把`Shift_JIS`排成4.25 em宽；只用`latin`文件时，`t_`和`_J`之间调整了字偶间距，宽4.32 em。postext-pdf 1.30起，提供函数可以说明页面怎样声明每个文件：`declaredFontFile(bytes, { unicodeRange, order })`返回同样的字节，并带上该文件规则的`unicode-range`（照CSS的写法）和这条规则在该字体各条规则中的位置，可以是随声明顺序增大的任何数字（最大的是最后声明的）。
+
+```ts
+import { declaredFontFile } from 'postext-pdf';
+
+declaredFontFile(bytes, { unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153', order: 0 });
+```
+
+一种字体的文件带有各自的范围时，在按自己的语言成形的文档里（[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)，默认值），每个字符取自范围包含它、又有其字形的文件中最后声明的那一个，与浏览器在`@font-face`规则之间的取法相同；字母和它的组合符号留在同一个文件里。没有哪个范围包含的字符，取自第一个有其字形的文件。不带这些信息的文件，以及使用`'host'`的文档里的所有文件，照旧按给出的顺序读取，所以说明了文件的提供函数仍然把最后声明的文件排在最前。这样说明的字体，会就此前没有请求过的每个字符再被请求一次，因为后声明的文件里可能有它。沙盒的提供函数会说明它的文件。
+
+字体的所有文件都没有字形的字符，画成字体的`.notdef`字形（多数字体中是一个空框），`renderToPdf`在绘制完页面后按字体各报告一次：
+
+```ts
+// { kind: 'missingGlyph', family: 'Noto Serif TC', weight: 400, style: 'normal',
+//   characters: ['，', '！', '？'], message: '…' }
+```
+
+沙盒每生成一个PDF，就在检查面板中列出这些字符以及下面两种警告。书、书的设置或资源发生变化后，这些条目会标为来自之前的PDF，直到下一个PDF取代它们；打开另一本书会清除它们。
+
+- **粗体需要每个字重一个静态文件**。Fontsource把Noto Serif SC和TC的每个字重作为单独的静态文件提供，所以在沙盒中粗体可以正常使用。Google Fonts的文件（`NotoSerifSC[wght].ttf`，25 MB）是可变字体：pdf-lib嵌入其默认实例，700的字体会按400印出，`renderToPdf`将其报告为`variableFontDefaultInstance`。制作文件包时，用fontTools为每个字重切出一个静态实例（`fonttools varLib.instancer NotoSerifSC[wght].ttf wght=700`），再用`pyftsubset`把它子集化到书中用到的字符。
+- **使用TrueType版本**。思源宋体（Source Han Serif）和Noto Serif CJK的`.otf`文件是CFF轮廓，postext-pdf会整体嵌入，每个字重8到25 MB；超过2 MB的CFF字体会报告为`cffEmbeddedWhole`。TrueType版本（Google Fonts、Fontsource）会子集化到实际用到的字形。日文方面，Noto Serif JP和Noto Sans JP（Google Fonts，或Fontsource的编号分片）、Shippori Mincho、Zen Old Mincho和BIZ UDMincho都是TrueType；思源宋体日文版（Source Han Serif JP）和Noto Serif CJK的`JP` `.otf`文件是CFF。
+- **泛CJK字体中的日文字形**。同一个码位的汉字、标点或引号，在日本和中国可能写法不同，泛CJK字体（思源、Noto CJK）两种字形都有。PDF对日文文档（`locale: 'ja'`），以及任何文档中标为日文的隔离段（`:ltr[…]{lang=ja}`），按OpenType语言系统`JAN `成形，字体的`locl`特性因此印出日文字形，与画布和HTML通过`lang`印出的一致。日文书中标为其他语言的隔离段按该语言的字形成形（设为`'host'`时，中文即字体的默认字形），并标记为带`/Lang`的`Span`。设了[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)（postext 1.30起的默认值），每份文档和每个隔离段都按自己的语言成形（简体中文是`ZHS`），与排版测量时一致；设为`'host'`时，中文及其他文档仍按字体的默认字形成形，与以前相同。专为日文设计的字体（如Noto Serif JP）默认字形就是日文的；不过日文文字中的“ ”仍会换成`JAN `字形。
+
+一个家族缺少的字符不会从另一个家族借用：Noto Serif TC不会借用Noto Serif SC的字形。字符覆盖要在制作字体文件时解决；《红楼梦》示例就把TC子集缺少的字形从SC字体复制了过去。
+
+### 服务端字体提供函数（Node，本地文件）
+
+在Node中可以完全跳过WOFF2这一步，直接从磁盘读取TTF/OTF文件：
+
+```ts
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { PdfFontProvider } from 'postext-pdf';
+
+const FONT_DIR = '/path/to/fonts';
+
+function filename(family: string, weight: number, style: 'normal' | 'italic'): string {
+  const slug = family.replace(/\s+/g, '');
+  const styleSuffix = style === 'italic' ? 'Italic' : '';
+  const weightName =
+    weight >= 700 ? 'Bold'
+    : weight >= 600 ? 'SemiBold'
+    : weight >= 500 ? 'Medium'
+    : weight >= 300 ? 'Light'
+    : 'Regular';
+  return `${slug}-${weightName}${styleSuffix}.ttf`;
+}
+
+export const localFontProvider: PdfFontProvider = async (family, weight, style) => {
+  const buf = await readFile(join(FONT_DIR, filename(family, weight, style)));
+  return new Uint8Array(buf);
+};
+```
+
+### 资源字节与印刷母版
+
+`resourceBytes(fileId)`返回图片的原始字节，后端会识别其格式：
+
+- PNG、JPEG、GIF和WebP作为图像嵌入；
+- SVG标记绘制为矢量路径，其中的`text`作为真正的文字，用文档嵌入的字体排出；如果用到矢量子集之外的特性，则在浏览器中以600 dpi栅格化。只含`@font-face`规则的`<style>`（作者嵌入的字体）会被跳过，图仍保持矢量（自postext-pdf 1.25起）；其他任何样式表都会使图成为栅格图，生成时从`fontProvider`取来其文字指定的字体嵌入（除非`diagramStyle.inlineFonts`或资源的`svg.inlineFonts`为`false`）；
+- PDF的第一页原样嵌入，作为一个表单XObject。
+
+每张图片在文件中只存一次，不论绘制多少次。绘制为矢量路径的SVG会成为一个表单XObject，由每一页绘制，所以一份三十页的文档，页面设计中的边框或标志只写入一次，而不是三十次；每多一页只增加几百字节。postext-pdf 1.4及以前，每一页都带着自己的一份路径。
+
+SVG图可以在`svg.pdfFileId`中指定一个**印刷母版**：同一张图的单页PDF，通常就是导出该SVG的原稿。`renderToPdf`先向`resourceBytes`请求母版的id。只要SVG被绘制，无论是作为图、表格单元格中的图片（`TableCell.image`）、设计图像还是框的图标（包括它的`marker`），都会用母版的那一页代替SVG嵌入，其中的字体、渐变和色彩空间都完好保留。VDT在每一种用法上都带有母版的id（图的资源上是`svg.pdfFileId`，单元格图像和设计图像块上是`pdfFileId`），所以在一本书中每一章都能拿到母版。Canvas和HTML后端仍然绘制SVG。以下三种情况改用SVG自身的字节：母版缺失、母版不是PDF，或打开了单色模式（`diagramStyle.singleInk`只重新着色SVG标记）。
+
+```ts
+const resources: Resource[] = [{
+  id: 'map', typeId: 'figure', kind: 'svg', createdAt: 0, updatedAt: 0,
+  svg: { fileId: 'map.svg', width: 800, height: 600, pdfFileId: 'map.pdf' },
+}];
+const files = new Map([['map.svg', svgBytes], ['map.pdf', masterPdfBytes]]);
+const pdf = await renderToPdf(buildDocument({ markdown, resources }, config), {
+  fontProvider,
+  resourceBytes: (fileId) => files.get(fileId),
+});
+```
+
+宿主也可以像`bundleResourceBytes`那样，对SVG自己的id返回母版的字节；两种方式都可行。
+
+### PDF中的竖排文字
+
+竖排页面（`layout.writingMode: 'vertical-rl'`）通过一个旋转四分之一圈的坐标系绘制，与Canvas的画法相同，文字沿栏向下排：
+
+- **直立字符**通过同一个嵌入文件的第二个Type0字体显示：相同的CIDFont、宽度和ToUnicode映射，使用`Encoding /Identity-V`（竖排模式）。一串字符是一个文本对象，其字形自行沿栏向下每次推进一个em（`DW2 [880 −1000]`），所以阅读器把一栏作为一行来选取和提取。字形用OpenType的`vert`和`fwid`特性塑形，括号、引号、大陆的顿号、省略号和破折号由此得到竖排字形；本身就直立的字符保留横排字形。字体的任何部分都不会嵌入两次。
+- **拉丁单词和长数字**用横排字体侧转排出；**占一个字格的数字**直立，比em宽时横向压缩到一个em；字体中没有竖排字形的标点会旋转或移位，与Canvas上相同。
+- 字符之间的**字距**写成`TJ`中的数字，在竖排模式下它们沿栏向下移动画笔。
+- **每一个竖排行**都用`/ActualText`标出其文字，所以复制和文字提取按书写顺序读取。`pdftotext`和pdf.js从上到下、从右到左读取各栏；遇到占一个字格的数字时，pdf.js会另起一行。
+- **链接、书签和目标位置**映射到页面上：竖排行上的链接是一个又高又窄的矩形，书签打开页面时定位到其标题所在栏的顶端。
+- **带标签的PDF**在其`Document`元素上声明书写模式（Layout属性`WritingMode /TbRl`，所有元素都继承它）；竖排章节可以通过PDF/UA-1验证（veraPDF）。
+- **阅读器**：Acrobat、Preview、Chrome（PDFium）、pdf.js和Poppler都能渲染竖排字体。右侧装订的书（`page.binding`）还会请求阅读器从右向左排列跨页（`/Direction /R2L`、`/PageLayout /TwoPageRight`）；Acrobat和Foxit照办，Chrome不会。
+
+一个用Noto Serif TC（书中用到的字符，TrueType）排的43页章节约为820 KB，其中大部分是两个字体子集。
+
+### PDF中的链接
+
+Markdown链接中的词（见[文档格式 › 链接](/zh/docs/document-format-inline#链接)）成为URI链接注释，一行中每一串相连的链接词对应一个注释。每个注释覆盖行框，没有边框。在无障碍渲染中，每一串是一个`Link`元素，其`/Contents`为该串文字。只有绝对的`http:`、`https:`、`mailto:`、`tel:`和`ftp:`目标会生成链接，因为在PDF中相对URL没有基准地址。可打印ASCII以外的字符会做百分号编码。`:ref`引用和目录行保留指向文档内部的链接。
+
+### 完整的浏览器示例：构建、渲染、下载
+
+把所有部分组合起来：构建VDT，渲染为PDF，并在浏览器中触发下载：
+
+```tsx
+import { buildDocument, createMeasurementCache } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+import { createPdfFontProvider } from './pdfFontProvider';
+
+const fontProvider = createPdfFontProvider();
+
+export async function downloadPdf(markdown: string, config: PostextConfig) {
+  const cache = createMeasurementCache();
+  const vdt = buildDocument({ markdown }, config, cache);
+
+  const bytes = await renderToPdf(vdt, { fontProvider });
+
+  const blob = new Blob([bytes.slice().buffer], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'document.pdf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+```
+
+**重要**：如果配置引用了Web字体，要在`buildDocument`*之前*调用`ensureConfigFontsLoaded(config)`（或等效的做法）。排版按浏览器当时拥有的该家族字体度量来测量；如果真正的字体还没到达，VDT就会按后备字体测量，PDF将与Canvas或HTML输出不一致。沙盒在每次渲染前都显式做了这一步（见`packages/postext-sandbox/src/viewport/PdfViewport.tsx`）。
+
+### 在线示例：在浏览器中生成PDF
+
+上面的完整流程在浏览器中运行：这个pen从CDN导入`postext`和`postext-pdf`，加载Web字体，构建文档，通过字体提供函数嵌入Fontsource的字体，再把字节交给一个在新标签页中打开文件的链接和一个下载链接。得到的PDF与Canvas和HTML输出断行相同，嵌入了真实字体，并带有大纲书签。
+
+<CodePenExample name="render-pdf" title="Postext · 在浏览器中生成PDF" description="用postext排版一篇Markdown文档，并用postext-pdf渲染为PDF。" height={600} />
+
+### 在工作线程上渲染PDF
+
+`postext-pdf/worker`把`renderToPdf`移出主线程。工作线程写入文字、矢量图、结构树和文件本身。有两项工作需要页面，所以工作线程会请主线程来做：获取字体，以及通过`<img>`栅格化SVG。对于几百页的书，渲染要花几秒钟，否则页面会在这段时间卡住；如果只有几页，直接调用`renderToPdf`更简单。
+
+```ts
+import { createPdfWorker } from 'postext-pdf/worker';
+
+const pdfWorker = createPdfWorker();
+const bytes = await pdfWorker.render(docs, {
+  fontProvider,                                     // 在当前线程运行
+  resourceBytes: new Map([['map.svg', svgBytes]]),  // 一个Map；其中的buffer会转移给工作线程
+  onProgress: ({ phase, pages, totalPages }) => showProgress(phase, pages, totalPages),
+  onWarning: (w) => console.info(w.message),
+});
+pdfWorker.dispose();
+```
+
+- `render(docs, options)`接收一个文档，或一本书各章文档组成的数组。它接受`renderToPdf`的选项，有两处不同。`resourceBytes`是一个`Map<string, Uint8Array>`，其中的buffer会被转移，所以对你还要保留的字节，请传入副本。`rasterizeSvg`如果提供，在主线程上运行；默认由页面自己的`Image`和canvas完成这项工作。
+- 一个句柄一次渲染一个文档。`dispose()`终止工作线程，并拒绝所有仍在进行的渲染。
+- `createPdfWorker({ worker })`接收你自己创建的`Worker`，适用于控制worker URL的构建工具。这个worker必须运行`postext-pdf/worker/entry`。
+
+**从CDN加载**。默认情况下，worker脚本从包自身的URL加载（`new URL('./pdf.worker.js', import.meta.url)`）。其他源上的页面可能无法启动它：从`esm.sh`导入时，`createPdfWorker()`会抛出`Failed to construct 'Worker': Script at 'https://esm.sh/postext-pdf@…/pdf.worker.js' cannot be accessed from origin …`。这时改为启动一个同源的模块worker，由它导入入口（如果固定了版本，两个URL要固定到同一个版本）：
+
+```js
+import { createPdfWorker } from 'https://esm.sh/postext-pdf/worker';
+
+const entry = URL.createObjectURL(new Blob(
+  ["import 'https://esm.sh/postext-pdf/worker/entry';"],
+  { type: 'text/javascript' },
+));
+const pdfWorker = createPdfWorker({ worker: new Worker(entry, { type: 'module' }) });
+```
+
+`postext/worker`中的排版工作线程也需要用同样的方式包装`postext/worker/entry`（见[在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)）。
+
+### 可付印的PDF
+
+用于正式印刷流程时，在渲染前调整以下配置选项：
+
+- **`page.cutLines.enabled: true`**：在成品尺寸周围加上出血区域和裁切标记，并给每一页设置TrimBox和BleedBox。见[裁切线](/zh/docs/configuration-page-layout#裁切线)。
+- **`print: { standard: 'pdfx4', outputProfile: 'fogra51' }`**（或`'pdfx1a'`）：写出PDF/X文件，带有印厂会检查的输出意图、标识和页面框；所有颜色和RGB图片都经ICC特性文件分色，100% K叠印，大面积黑色用复合黑。见[印刷输出（配置）](/zh/docs/configuration-fonts-colors-viewers#印刷输出配置)。
+- **`colorSpace: 'cmyk'`**（或`pdfGeneration: { forceColorSpace: true, colorSpace: 'cmyk' }`）：同样的分色，但没有PDF/X标识（裁切标记始终用套准色）。PDF印刷母版原样嵌入。
+- **`page.dpi: 300`**：排版的每英寸像素数；没有自身分辨率的位图按自然尺寸以这个分辨率印刷。[印前检查](/zh/docs/configuration-fonts-colors-viewers#印前检查)会报告印刷尺寸下不足300 ppi的图片。
+- **`ColorValue.cmyk`**：以CMYK定义的颜色按其准确数值印刷。
+- `RenderToPdfOptions`中的<strong>`{ pageNegative: true }`</strong>：用Difference混合模式反转成品区域（裁切标记不反转）。适合对浅底深字的排版做印前检查。
+
+### 参考实现
+
+沙盒的`PdfViewport`组件（`packages/postext-sandbox/src/viewport/PdfViewport.tsx`）把上述各部分接成一个实时预览，带有重新生成、下载和打印按钮，是任何浏览器内PDF集成的良好起点。它通过共享的排版工作线程构建VDT（见[在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)），所以点击*重新生成*时，流水线运行期间界面不会卡住；主线程只负责`renderToPdf`（VDT一旦存在，它已经很快）。

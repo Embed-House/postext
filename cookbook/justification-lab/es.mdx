@@ -34,13 +34,13 @@ Las dos ediciones salen del mismo diseño, así que cualquier diferencia entre l
 
 <Excerpt region="bench" />
 
-Un recuadro compone todas las columnas de un grupo [`:::columns`](/es/docs/document-format#columns) con un único estilo de texto, así que cada ficha es un recuadro anidado con su propio `body`, y `breaks="3"` apila en la primera columna la ficha en bandera y la que no parte palabras. La ficha en bandera no necesita `hyphenation: false`: el texto en bandera no parte palabras salvo que se active `bodyText.hyphenation.ragged`. El banco flota al pie de la página 3 con `placement: 'bottom'`, y su relleno inferior repite el marco de 4 mm porque el `marginBottom` de la última ficha se pierde al final del recuadro.
+Un recuadro compone todas las columnas de un grupo [`:::columns`](/es/docs/document-format-directives#columns) con un único estilo de texto, así que cada ficha es un recuadro anidado con su propio `body`, y `breaks="3"` apila en la primera columna la ficha en bandera y la que no parte palabras. La ficha en bandera no necesita `hyphenation: false`: el texto en bandera no parte palabras salvo que se active `bodyText.hyphenation.ragged`. El banco flota al pie de la página 3 con `placement: 'bottom'`, y su relleno inferior repite el marco de 4 mm porque el `marginBottom` de la última ficha se pierde al final del recuadro.
 
 ### 5 · Dibuja el modelo en la apertura
 
 <Excerpt region="opener" />
 
-El diagrama es un [elemento de imagen](/es/docs/configuration-page-layout#elementos-de-imagen) del diseño del H1. Como figura sería un flotante `top` a todo el ancho, y un flotante `top` citado en la página 1 abre la página 2. La banda baja más que el diagrama, y una apertura reserva altura hasta su elemento más bajo, así que el texto empieza bajo la banda sin `minHeight`, una línea más abajo por el `marginBottom` que el H1 trae por defecto. Los rótulos son texto de diseño colocado sobre las coordenadas del propio dibujo, compuesto y espaciado como los demás rótulos de la apertura.
+El diagrama es un [elemento de imagen](/es/docs/configuration-headers-footers#elementos-de-imagen) del diseño del H1. Como figura sería un flotante `top` a todo el ancho, y un flotante `top` citado en la página 1 abre la página 2. La banda baja más que el diagrama, y una apertura reserva altura hasta su elemento más bajo, así que el texto empieza bajo la banda sin `minHeight`, una línea más abajo por el `marginBottom` que el H1 trae por defecto. Los rótulos son texto de diseño colocado sobre las coordenadas del propio dibujo, compuesto y espaciado como los demás rótulos de la apertura.
 
 ## Variantes
 

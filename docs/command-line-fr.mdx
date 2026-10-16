@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Un exécutable autonome pour macOS, Linux et Windows qui transforme un livre .postext, un dossier de livre ou des fichiers Markdown isolés en PDF, HTML, EPUB, images de pages et Word, crée des paquets et vérifie des livres, avec une sortie JSON pour les scripts et les agents',
   lang: 'fr',
   lastUpdated: '2026-10-09',
-  readingTime: '10 min',
-  order: 22,
+  readingTime: '13 min',
+  order: 40,
   plainSummary: "Cette page s’adresse à ceux qui veulent faire des livres avec Postext depuis un terminal plutôt que depuis le site. Vous téléchargez un seul fichier pour votre ordinateur et vous le lancez, sans rien installer. Vous lui donnez votre livre, ou quelques fichiers texte, et il produit un PDF, une page web, un livre numérique, des images des pages ou un document Word. Il peut aussi vérifier qu’un livre n’a pas de problème et réunir ses fichiers en un seul. Les programmes et les assistants d’IA peuvent l’utiliser eux aussi, car il sait répondre dans un format qu’ils lisent facilement.",
 };
 
@@ -116,7 +116,7 @@ postext image my-book.postext --page 1 -o cover.png
 Toute commande qui lit un livre accepte l’une de ces formes :
 
 - **Un fichier `.postext`** : le paquet que le Sandbox exporte et ouvre (voir
-  [Paquets](/fr/docs/configuration-programmatic-usage#paquets-fichiers-postext)).
+  [Paquets](/fr/docs/configuration-bundles#paquets-fichiers-postext)).
 - **Un dossier de livre** : un paquet décompressé, avec son `preset.json`, ses
   chapitres, ses ressources et ses polices. C’est ce que livre le skill pour
   agents, et `postext unpack` en écrit un.
@@ -212,7 +212,7 @@ postext epub book.postext --layout reflowable --cover cover.jpg
 
 `--layout fixed` (par défaut) garde chaque page comme à l’impression, avec un
 texte sélectionnable ; `--layout reflowable` laisse le système de lecture
-recomposer le texte pour son écran (voir [Livres EPUB](/fr/docs/configuration-programmatic-usage#livres-epub-postext-epub)). La
+recomposer le texte pour son écran (voir [Livres EPUB](/fr/docs/configuration-html-folio-epub#livres-epub-postext-epub)). La
 couverture est la vignette du livre, sauf si `--cover` donne une image. Les
 métadonnées du paquet EPUB (titre, auteurs, langue, identifiant) viennent du
 front matter du premier chapitre, comme dans le Sandbox.

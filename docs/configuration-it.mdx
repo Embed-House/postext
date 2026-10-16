@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Configurazione di Postext',
   sidebarTitle: 'Configurazione',
-  description: 'Che cos’è una configurazione di Postext e in quale delle nove pagine del riferimento è spiegato ogni gruppo di impostazioni',
+  description: 'Che cos’è una configurazione di Postext e in quale delle diciotto pagine del riferimento è spiegato ogni gruppo di impostazioni',
   lang: 'it',
-  lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 3,
-  plainSummary: "Questa pagina apre il riferimento di tutte le impostazioni che decidono l’aspetto delle tue pagine. Un solo gruppo di impostazioni raccoglie tutte le scelte: formato della pagina, numero di colonne, font, corpo del testo, titoli, riquadri, colori e altro ancora. Scrivi solo le impostazioni che vuoi cambiare, perché ognuna parte da un valore ragionevole. Il riferimento è diviso in nove pagine. L’elenco di questa pagina rimanda a ogni sezione: vai direttamente alla parte che ti serve.",
+  lastUpdated: '2026-10-16',
+  readingTime: '5 min',
+  order: 4,
+  plainSummary: "Questa pagina apre il riferimento di tutte le impostazioni che decidono l’aspetto delle tue pagine. Un solo gruppo di impostazioni raccoglie tutte le scelte: formato della pagina, numero di colonne, font, corpo del testo, titoli, riquadri, colori e altro ancora. Scrivi solo le impostazioni che vuoi cambiare, perché ognuna parte da un valore ragionevole. Il riferimento è diviso in diciotto pagine. L’elenco di questa pagina rimanda a ogni sezione: vai direttamente alla parte che ti serve.",
 };
 
 # Configurazione
@@ -33,23 +33,43 @@ Per una panoramica di come il motore elabora questa configurazione, consulta la 
 
 ## Indice
 
-Il riferimento è diviso in nove pagine. Ogni gruppo qui sotto è una pagina, seguita dalle sezioni che contiene.
+Il riferimento è diviso in diciotto pagine. Ogni gruppo qui sotto è una pagina, seguita dalle sezioni che contiene.
 
 **[Pagina e impaginazione](/it/docs/configuration-page-layout)**
 
 - [Pagina](/it/docs/configuration-page-layout#pagina) — formato, margini, griglia della linea di base, segni di taglio, [rilegatura](/it/docs/configuration-page-layout#rilegatura).
 - [Impaginazione](/it/docs/configuration-page-layout#impaginazione) — numero di colonne, intercolonne, filetti, [scrittura verticale](/it/docs/configuration-page-layout#scrittura-verticale).
-- [Intestazioni e piè di pagina](/it/docs/configuration-page-layout#intestazioni-e-piè-di-pagina) — elementi di testo e filetti per pagina, con segnaposto, parità e allineamento.
 
-**[Testo e titoli](/it/docs/configuration-text)**
+**[Intestazioni e piè di pagina](/it/docs/configuration-headers-footers)**
+
+- [Intestazioni e piè di pagina](/it/docs/configuration-headers-footers#intestazioni-e-piè-di-pagina) — elementi di testo e filetti per pagina, con segnaposto, parità e allineamento.
+
+**[Testo corrente](/it/docs/configuration-text)**
 
 - [Testo corrente](/it/docs/configuration-text#testo-corrente) — tipografia, sillabazione, tabulazioni, orfane e vedove.
-- [Lingua del documento](/it/docs/configuration-text#lingua-del-documento) — il `locale` di primo livello: la sillabazione di ripiego, i tipi di risorsa predefiniti e le diciture di continuazione delle tabelle e dei riquadri divisi, la lingua marcata in un PDF accessibile; le [cifre](/it/docs/configuration-text#cifre-del-documento) (`numerals`) e la [direzione del testo](/it/docs/configuration-text#direzione-del-testo) (`direction`) che ne derivano; e le [lingue e scritture](/it/docs/configuration-text#lingue-e-scritture) che Postext compone. La guida ai libri da destra a sinistra è [Impaginazione araba](/it/docs/arabic-layout).
-- [Titoli](/it/docs/configuration-text#titoli) — valori predefiniti comuni e sostituzioni per H1–H6.
-- [Elenchi puntati](/it/docs/configuration-text#elenchi-puntati) ed [Elenchi numerati](/it/docs/configuration-text#elenchi-numerati) — punti elenco, numerazione, annidamento.
-- [Matematica](/it/docs/configuration-text#matematica) — rendering LaTeX, scala, colore, margini.
 
-**[Note e rimandi](/it/docs/configuration-notes-references)**
+**[Sillabazione e lingua](/it/docs/configuration-language)**
+
+- [Sillabazione](/it/docs/configuration-language#sillabazione) — pattern di sillabazione, parole tenute intere, testo in bandiera.
+- [Lingua del documento](/it/docs/configuration-language#lingua-del-documento) — il `locale` di primo livello: la sillabazione di ripiego, i tipi di risorsa predefiniti e le diciture di continuazione delle tabelle e dei riquadri divisi, la lingua marcata in un PDF accessibile; le [cifre](/it/docs/configuration-language#cifre-del-documento) (`numerals`) e la [direzione del testo](/it/docs/configuration-language#direzione-del-testo) (`direction`) che ne derivano; e le [lingue e scritture](/it/docs/configuration-language#lingue-e-scritture) che Postext compone. La guida ai libri da destra a sinistra è [Impaginazione araba](/it/docs/arabic-layout).
+- [Lingue e scritture](/it/docs/configuration-language#lingue-e-scritture) — i sistemi di scrittura che Postext compone e le pagine che spiegano ciascuno.
+- [Testo arabo](/it/docs/configuration-language#testo-arabo) — shaping, kashida, segni vocalici e cifre del testo arabo.
+
+**[Titoli](/it/docs/configuration-headings)**
+
+- [Titoli](/it/docs/configuration-headings#titoli) — valori predefiniti comuni e sostituzioni per H1–H6.
+
+**[Vedove, orfane e bilanciamento](/it/docs/configuration-page-flow)**
+
+- [Orfane, vedove, righe finali corte e regole per tenere unito](/it/docs/configuration-page-flow#orfane-vedove-righe-finali-corte-e-regole-per-tenere-unito) — le chiavi di `bodyText` che tengono unite righe e blocchi a cavallo di un’interruzione di colonna.
+- [Bilanciamento delle colonne](/it/docs/configuration-page-flow#bilanciamento-delle-colonne) — le leve che fanno finire ogni colonna alla stessa altezza, in ordine di priorità editoriale.
+
+**[Elenchi e matematica](/it/docs/configuration-lists-math)**
+
+- [Elenchi puntati](/it/docs/configuration-lists-math#elenchi-puntati) ed [Elenchi numerati](/it/docs/configuration-lists-math#elenchi-numerati) — punti elenco, numerazione, annidamento.
+- [Matematica](/it/docs/configuration-lists-math#matematica) — rendering LaTeX, scala, colore, margini.
+
+**[Note e riferimenti](/it/docs/configuration-notes-references)**
 
 - [Note a piè di pagina](/it/docs/configuration-notes-references#note-a-piè-di-pagina) — `footnotes`: dove vanno le note citate con `[^id]`, come sono numerate e che aspetto hanno.
 - [Numeri di riga](/it/docs/configuration-notes-references#numeri-di-riga) — `lineNumbers`: il numero di ogni quinta riga dei versi, o del testo, nel margine; che cosa si conta, dove il conteggio ricomincia, su quale lato stanno i numeri.
@@ -74,9 +94,12 @@ Il riferimento è diviso in nove pagine. Ogni gruppo qui sotto è una pagina, se
 - [Stili di paragrafo](/it/docs/configuration-styles#stili-di-paragrafo) — stili con nome per i contenitori `:::paragraphs`: bibliografie, glossari, note.
 - [Stili dei chip](/it/docs/configuration-styles#stili-dei-chip) — `chipStyles`: stili con nome per il `:chip[…]` in linea: la casella di una banca di parole, un tasto della tastiera, un’etichetta.
 - [Listati di codice](/it/docs/configuration-styles#listati-di-codice) — `codeStyle`: il carattere, il riquadro, la larghezza della tabulazione, le righe lunghe, i numeri di riga e i colori dei token dei listati ```` ``` ````, la colorazione della sintassi e il suo hook per l’evidenziatore, e il codice in linea in un carattere monospaziato.
-- [Stili dei riquadri](/it/docs/configuration-styles#stili-dei-riquadri) — note, suggerimenti e obiettivi incorniciati per i contenitori `:::callout`.
 - [Parti](/it/docs/configuration-styles#parti) — pagine di parte per i contenitori `:::part`: parità, area del testo, progetto dell’apertura, tipografia del testo.
 - [Stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli) — stili con nome per i titoli `{style="…"}`: capitoli non numerati, pagine preliminari con le proprie testatine, geometria e tavolozza.
+
+**[Riquadri](/it/docs/configuration-callouts)**
+
+- [Stili dei riquadri](/it/docs/configuration-callouts#stili-dei-riquadri) — note, suggerimenti e obiettivi incorniciati per i contenitori `:::callout`.
 
 **[Impostazioni dei fumetti](/it/docs/configuration-comics)**
 
@@ -97,7 +120,17 @@ Il riferimento è diviso in nove pagine. Ogni gruppo qui sotto è una pagina, se
 
 - [Uso programmatico](/it/docs/configuration-programmatic-usage#uso-programmatico) — `buildDocument`, gli avvisi che riporta, i resolver, le cache.
 - [Impaginare in un Web Worker](/it/docs/configuration-programmatic-usage#eseguire-limpaginazione-in-un-web-worker) — composizioni fuori dal thread principale, con annullamento.
-- [Integrare il visualizzatore HTML](/it/docs/configuration-programmatic-usage#integrare-il-visualizzatore-html) e [Generare PDF](/it/docs/configuration-programmatic-usage#generare-pdf) — procedure complete dall’inizio alla fine.
-- [Un libro in 3D (`postext-folio`)](/it/docs/configuration-programmatic-usage#un-libro-in-3d-postext-folio) — il documento impaginato come un libro stampato aperto su una scrivania, con fogli che il lettore sfoglia.
-- [Libri EPUB](/it/docs/configuration-programmatic-usage#libri-epub-postext-epub) — file EPUB 3 a layout fisso e a layout fluido dalla stessa impaginazione, e la loro verifica con EPUBCheck.
-- [Pacchetti (file `.postext`)](/it/docs/configuration-programmatic-usage#pacchetti-file-postext) — un libro intero in un solo file: creare, aprire e comporre archivi `.postext` dal codice.
+
+**[File PDF](/it/docs/configuration-pdf-output)**
+
+- [Generare PDF](/it/docs/configuration-pdf-output#generare-pdf) — `postext-pdf`: provider di font, font CJK, worker e file pronti per la stampa.
+
+**[HTML, Folio ed EPUB](/it/docs/configuration-html-folio-epub)**
+
+- [Integrare il visualizzatore HTML](/it/docs/configuration-html-folio-epub#integrare-il-visualizzatore-html) e [Generare PDF](/it/docs/configuration-pdf-output#generare-pdf) — procedure complete dall’inizio alla fine.
+- [Un libro in 3D (`postext-folio`)](/it/docs/configuration-html-folio-epub#un-libro-in-3d-postext-folio) — il documento impaginato come un libro stampato aperto su una scrivania, con fogli che il lettore sfoglia.
+- [Libri EPUB](/it/docs/configuration-html-folio-epub#libri-epub-postext-epub) — file EPUB 3 a layout fisso e a layout fluido dalla stessa impaginazione, e la loro verifica con EPUBCheck.
+
+**[Pacchetti .postext](/it/docs/configuration-bundles)**
+
+- [Pacchetti (file `.postext`)](/it/docs/configuration-bundles#pacchetti-file-postext) — un libro intero in un solo file: creare, aprire e comporre archivi `.postext` dal codice.

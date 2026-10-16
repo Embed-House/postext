@@ -18,7 +18,7 @@ Quattro pagine del manuale d’identità di Metro de Alba, una metropolitana imm
 
 <Excerpt region="build" />
 
-L’impaginazione misura ogni parola con i caratteri in `document.fonts`, quindi `loadBrandFonts()` nella [risposta breve](#la-risposta-breve) scarica ogni file una volta, ne conserva i byte e registra un `FontFace` costruito da essi prima che giri `buildDocument`. I `kitFonts` del kit scaricano solo da Fontsource, mentre un marchio serve i suoi file dal proprio server. `renderToPdf` chiede i caratteri che le pagine disegnano, e `brandFontProvider` risponde a ogni richiesta con i byte già scaricati; un peso o un’inclinazione che il marchio non ha riceverebbe il file più vicino della stessa famiglia ([Why a font provider?](/it/docs/configuration-programmatic-usage#perché-un-provider-di-font)). Il PDF incorpora i sei file che il canvas ha misurato, ognuno una volta.
+L’impaginazione misura ogni parola con i caratteri in `document.fonts`, quindi `loadBrandFonts()` nella [risposta breve](#la-risposta-breve) scarica ogni file una volta, ne conserva i byte e registra un `FontFace` costruito da essi prima che giri `buildDocument`. I `kitFonts` del kit scaricano solo da Fontsource, mentre un marchio serve i suoi file dal proprio server. `renderToPdf` chiede i caratteri che le pagine disegnano, e `brandFontProvider` risponde a ogni richiesta con i byte già scaricati; un peso o un’inclinazione che il marchio non ha riceverebbe il file più vicino della stessa famiglia ([Why a font provider?](/it/docs/configuration-pdf-output#perché-un-provider-di-font)). Il PDF incorpora i sei file che il canvas ha misurato, ognuno una volta.
 
 ### 2 · Il sistema dei colori è un solo elenco
 
@@ -42,7 +42,7 @@ Un tipo di risorsa può avere un `captionStyle` parziale, e questi due impostano
 
 <Excerpt region="bundle" />
 
-`createBundle` legge `config.customFonts`, cerca i byte di ogni variante in `files` tramite il suo `fileId` e li scrive sotto `fonts/`, con una voce `fonts` nel manifest. La famiglia da titolo porta `redistributable: false`, al posto di una licenza che vieti di cedere i file (Big Shoulders Display in realtà è sotto OFL). Il suo file resta fuori, e `warnings` nomina la famiglia. Il file da 81 KB contiene il capitolo, la configurazione, i tre disegni e cinque file di font. L’impaginazione non legge mai `customFonts`; le pagine escono identiche senza ([Creating a bundle](/it/docs/configuration-programmatic-usage#creare-un-pacchetto)).
+`createBundle` legge `config.customFonts`, cerca i byte di ogni variante in `files` tramite il suo `fileId` e li scrive sotto `fonts/`, con una voce `fonts` nel manifest. La famiglia da titolo porta `redistributable: false`, al posto di una licenza che vieti di cedere i file (Big Shoulders Display in realtà è sotto OFL). Il suo file resta fuori, e `warnings` nomina la famiglia. Il file da 81 KB contiene il capitolo, la configurazione, i tre disegni e cinque file di font. L’impaginazione non legge mai `customFonts`; le pagine escono identiche senza ([Creating a bundle](/it/docs/configuration-bundles#creare-un-pacchetto)).
 
 ## Varianti
 

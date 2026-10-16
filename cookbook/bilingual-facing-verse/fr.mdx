@@ -16,13 +16,13 @@ Une plaquette bilingue de cinq poèmes sur un marais salant du sud de l’Espagn
 
 ### 1 · Un poème est un encadré avec un saut de colonne fixe
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque poème est un encadré autour d’un groupe `:::columns` ; son style supprime le fond et la marge intérieure et imprime le `title` de la clôture, le numéro ([`:::columns`](/fr/docs/document-format#columns)). Sans `breaks`, le groupe se coupe là où ses deux colonnes sortent de même hauteur. Les deux moitiés de ces poèmes ont la même hauteur : la coupure tombe donc de toute façon sur le titre anglais. Allongez deux vers de *The Rake* jusqu’à ce qu’ils passent à la ligne, et la coupure descend d’un bloc et laisse THE RAKE au pied de la colonne espagnole. `breaks="5"` désigne le bloc qui ouvre la seconde colonne : le titre anglais la coiffe ainsi, quelle que soit la hauteur des deux moitiés.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque poème est un encadré autour d’un groupe `:::columns` ; son style supprime le fond et la marge intérieure et imprime le `title` de la clôture, le numéro ([`:::columns`](/fr/docs/document-format-directives#columns)). Sans `breaks`, le groupe se coupe là où ses deux colonnes sortent de même hauteur. Les deux moitiés de ces poèmes ont la même hauteur : la coupure tombe donc de toute façon sur le titre anglais. Allongez deux vers de *The Rake* jusqu’à ce qu’ils passent à la ligne, et la coupure descend d’un bloc et laisse THE RAKE au pied de la colonne espagnole. `breaks="5"` désigne le bloc qui ouvre la seconde colonne : le titre anglais la coiffe ainsi, quelle que soit la hauteur des deux moitiés.
 
 ### 2 · Un bloc :::verse par colonne, une ligne blanche par changement de strophe
 
 <Excerpt region="verse" />
 
-Chaque moitié d’un poème est un bloc `:::verse` : un vers par ligne du Markdown, en drapeau et jamais coupé, et une ligne blanche entre les strophes, qui laisse une ligne blanche dans la colonne ([`:::verse`](/fr/docs/document-format#verse)). Chaque strophe est un bloc : `breaks` compte donc les strophes, pas les vers. Le vers anglais *each one standing on its own reflection.* est trop long pour sa colonne de 55 mm et se rejette à la ligne avec un retrait de 2 em ; la moitié espagnole ferme son bloc après la strophe d’en face et place un `:::space{lines=2}` avant la suivante, si bien que les strophes suivantes commencent sur la même ligne. Un `:::space` n’est pas un bloc, et `breaks` ne le compte pas ([`:::space`](/fr/docs/document-format#space)).
+Chaque moitié d’un poème est un bloc `:::verse` : un vers par ligne du Markdown, en drapeau et jamais coupé, et une ligne blanche entre les strophes, qui laisse une ligne blanche dans la colonne ([`:::verse`](/fr/docs/document-format-directives#verse)). Chaque strophe est un bloc : `breaks` compte donc les strophes, pas les vers. Le vers anglais *each one standing on its own reflection.* est trop long pour sa colonne de 55 mm et se rejette à la ligne avec un retrait de 2 em ; la moitié espagnole ferme son bloc après la strophe d’en face et place un `:::space{lines=2}` avant la suivante, si bien que les strophes suivantes commencent sur la même ligne. Un `:::space` n’est pas un bloc, et `breaks` ne le compte pas ([`:::space`](/fr/docs/document-format-directives#space)).
 
 <PageShot page={3} crop="0.1,0.385,0.8,0.248" caption="Le poème I, page 3 : reflection. est rejeté à la ligne dans l’anglais, et la strophe espagnole se termine par deux lignes blanches au lieu d’une." />
 
@@ -42,7 +42,7 @@ Chacune est un titre de niveau 1 avec son propre style ([styles de titre](/fr/do
 
 <Excerpt region="heads" />
 
-Le verso porte le titre espagnol et le recto le titre anglais, dans l’ordre des colonnes. `pages: 'body'` les tient à l’écart des trois pages qui s’ouvrent sur un titre. La note et l’aquarelle reçoivent à la place un folio en pied, et le style de la page de titre vide son en-tête et son pied de page ([éléments de texte](/fr/docs/configuration-page-layout#éléments-de-texte)).
+Le verso porte le titre espagnol et le recto le titre anglais, dans l’ordre des colonnes. `pages: 'body'` les tient à l’écart des trois pages qui s’ouvrent sur un titre. La note et l’aquarelle reçoivent à la place un folio en pied, et le style de la page de titre vide son en-tête et son pied de page ([éléments de texte](/fr/docs/configuration-headers-footers#éléments-de-texte)).
 
 ## Variantes
 

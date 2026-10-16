@@ -24,7 +24,7 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. `layout.writi
 
 <Excerpt region="nights" />
 
-Un título japonés ocupa un número entero de líneas del texto, 行取り (gyōdori), para que las líneas que lo siguen queden en la misma retícula que las anteriores. `lineSpan: 3` compone 第一夜 en una franja de tres líneas de 15,75 pt con sus caracteres centrados en ella; el cuerpo de 12,5 pt del título no mueve la retícula, y en la página 6 第二夜 ocupa las tres primeras líneas de la página, de modo que el texto que lo sigue empieza en la cuarta línea de la retícula. `indent: em(5)` cuenta caracteres del texto (五字下げ), que es como marca el texto de Aozora un 中見出し y como cuenta JLReq las sangrías de los títulos ([Configuración por nivel](/es/docs/configuration-text#configuración-por-nivel)).
+Un título japonés ocupa un número entero de líneas del texto, 行取り (gyōdori), para que las líneas que lo siguen queden en la misma retícula que las anteriores. `lineSpan: 3` compone 第一夜 en una franja de tres líneas de 15,75 pt con sus caracteres centrados en ella; el cuerpo de 12,5 pt del título no mueve la retícula, y en la página 6 第二夜 ocupa las tres primeras líneas de la página, de modo que el texto que lo sigue empieza en la cuarta línea de la retícula. `indent: em(5)` cuenta caracteres del texto (五字下げ), que es como marca el texto de Aozora un 中見出し y como cuenta JLReq las sangrías de los títulos ([Configuración por nivel](/es/docs/configuration-headings#configuración-por-nivel)).
 
 ### 3 · Trae el texto y sus lecturas de Aozora Bunko
 
@@ -34,7 +34,7 @@ Las dos noches vienen de la ficha 799 de Aozora Bunko, convertida con `aozora.py
 
 <Excerpt region="hashira" />
 
-En un bunko vertical la cabecera (柱, hashira) es pequeña y va en el margen exterior. `anchor.to: 'outer'` coloca allí un elemento, el margen izquierdo de una página impar y el derecho de una par en un libro encuadernado a la derecha, y `writingMode: 'vertical-rl'` lo compone de arriba abajo ([Elementos de texto verticales](/es/docs/configuration-page-layout#elementos-de-texto-verticales)). El título 夢十夜 va solo en las páginas izquierdas (`parity: 'odd'`), y `pages: 'body'` lo apartaría de cualquier página que abra un capítulo. `pageNumbering.format: 'japanese-informal'` imprime los folios 二, 三 … 九 ([Numeración](/es/docs/configuration-page-layout#numeración)).
+En un bunko vertical la cabecera (柱, hashira) es pequeña y va en el margen exterior. `anchor.to: 'outer'` coloca allí un elemento, el margen izquierdo de una página impar y el derecho de una par en un libro encuadernado a la derecha, y `writingMode: 'vertical-rl'` lo compone de arriba abajo ([Elementos de texto verticales](/es/docs/configuration-headers-footers#elementos-de-texto-verticales)). El título 夢十夜 va solo en las páginas izquierdas (`parity: 'odd'`), y `pages: 'body'` lo apartaría de cualquier página que abra un capítulo. `pageNumbering.format: 'japanese-informal'` imprime los folios 二, 三 … 九 ([Numeración](/es/docs/configuration-page-layout#numeración)).
 
 ### 5 · Centra la portada en el formato
 

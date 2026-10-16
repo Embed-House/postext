@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Postextの設定',
   sidebarTitle: '設定',
-  description: 'Postextの設定とは何か、そして9ページに分かれたリファレンスのどこに各設定の説明があるか',
+  description: 'Postextの設定とは何か、そして18ページに分かれたリファレンスのどこに各設定の説明があるか',
   lang: 'ja',
-  lastUpdated: '2026-10-10',
-  readingTime: '2分',
-  order: 3,
-  plainSummary: "このページは、ページの見た目を決めるすべての設定を載せたリファレンスの入口です。ページの大きさ、段の数、フォント、文字の大きさ、見出し、囲み、色など、すべての選択は1つの設定のまとまりに入っています。どの設定にも最初から無理のない値が入っているので、書くのは変えたいものだけです。リファレンスは9つのページに分かれています。このページの一覧からすべての節へ進めるので、必要なところへ直接進んでください。",
+  lastUpdated: '2026-10-16',
+  readingTime: '5分',
+  order: 4,
+  plainSummary: "このページは、ページの見た目を決めるすべての設定を載せたリファレンスの入口です。ページの大きさ、段の数、フォント、文字の大きさ、見出し、囲み、色など、すべての選択は1つの設定のまとまりに入っています。どの設定にも最初から無理のない値が入っているので、書くのは変えたいものだけです。リファレンスは18のページに分かれています。このページの一覧からすべての節へ進めるので、必要なところへ直接進んでください。",
 };
 
 # 設定
@@ -33,21 +33,41 @@ const document = buildDocument(content, {
 
 ## 内容一覧
 
-このリファレンスは9つのページに分かれています。以下の各グループが1つのページで、その下にそのページの節を挙げます。
+このリファレンスは18のページに分かれています。以下の各グループが1つのページで、その下にそのページの節を挙げます。
 
 **[ページとレイアウト](/ja/docs/configuration-page-layout)**
 
 - [ページ](/ja/docs/configuration-page-layout#ページ)：サイズ、余白、ベースライングリッド、トンボ、[綴じ](/ja/docs/configuration-page-layout#綴じ)。
 - [レイアウト](/ja/docs/configuration-page-layout#レイアウト)：段数、段間、段間罫、[縦組み](/ja/docs/configuration-page-layout#縦組み)。
-- [柱とノンブル](/ja/docs/configuration-page-layout#柱とノンブル)：ページごとに置くテキスト要素と罫線要素。プレースホルダー、奇偶、そろえ位置を指定できます。
 
-**[本文と見出し](/ja/docs/configuration-text)**
+**[柱とノンブル](/ja/docs/configuration-headers-footers)**
+
+- [柱とノンブル](/ja/docs/configuration-headers-footers#柱とノンブル)：ページごとに置くテキスト要素と罫線要素。プレースホルダー、奇偶、そろえ位置を指定できます。
+
+**[本文](/ja/docs/configuration-text)**
 
 - [本文](/ja/docs/configuration-text#本文)：文字組み、ハイフネーション、タブ位置、オーファンとウィドウ。
-- [文書の言語](/ja/docs/configuration-text#文書の言語)：最上位の`locale`。ハイフネーションのフォールバック、組み込みのリソースタイプ、表と分割された囲みの続きを示す文字列、アクセシブルなPDFにタグ付けされる言語を決めます。そこから導かれる[数字](/ja/docs/configuration-text#文書の数字)（`numerals`）と[テキストの方向](/ja/docs/configuration-text#テキストの方向)（`direction`）、Postextが組める[言語と文字体系](/ja/docs/configuration-text#言語と文字体系)もここで説明します。右から左に組む本のガイドは[アラビア語の組版](/ja/docs/arabic-layout)です。
-- [見出し](/ja/docs/configuration-text#見出し)：共通の既定値と、H1〜H6ごとの上書き。
-- [箇条書きリスト](/ja/docs/configuration-text#箇条書きリスト)と[番号付きリスト](/ja/docs/configuration-text#番号付きリスト)：行頭記号、番号付け、入れ子。
-- [数式](/ja/docs/configuration-text#数式)：LaTeXの描画、倍率、色、余白。
+
+**[ハイフネーションと言語](/ja/docs/configuration-language)**
+
+- [ハイフネーション](/ja/docs/configuration-language#ハイフネーション)：ハイフネーションのパターン、分割しない語、行末不ぞろいのテキスト。
+- [文書の言語](/ja/docs/configuration-language#文書の言語)：最上位の`locale`。ハイフネーションのフォールバック、組み込みのリソースタイプ、表と分割された囲みの続きを示す文字列、アクセシブルなPDFにタグ付けされる言語を決めます。そこから導かれる[数字](/ja/docs/configuration-language#文書の数字)（`numerals`）と[テキストの方向](/ja/docs/configuration-language#テキストの方向)（`direction`）、Postextが組める[言語と文字体系](/ja/docs/configuration-language#言語と文字体系)もここで説明します。右から左に組む本のガイドは[アラビア語の組版](/ja/docs/arabic-layout)です。
+- [言語と文字体系](/ja/docs/configuration-language#言語と文字体系)：Postext が組める文字体系と、それぞれを説明するページ。
+- [アラビア文字のテキスト](/ja/docs/configuration-language#アラビア文字のテキスト)：アラビア文字の字形、カシーダ、母音記号、数字。
+
+**[見出し](/ja/docs/configuration-headings)**
+
+- [見出し](/ja/docs/configuration-headings#見出し)：共通の既定値と、H1〜H6ごとの上書き。
+
+**[オーファン、ウィドウ、段末そろえ](/ja/docs/configuration-page-flow)**
+
+- [オーファン、ウィドウ、ラント、分割禁止の規則](/ja/docs/configuration-page-flow#オーファンウィドウラント分割禁止の規則)：段の区切りをまたいで行やブロックを離さないための`bodyText`のキー。
+- [段末そろえ](/ja/docs/configuration-page-flow#段末そろえ)：すべての段の終わりをそろえる調整手段。編集上の優先順に並べています。
+
+**[リストと数式](/ja/docs/configuration-lists-math)**
+
+- [箇条書きリスト](/ja/docs/configuration-lists-math#箇条書きリスト)と[番号付きリスト](/ja/docs/configuration-lists-math#番号付きリスト)：行頭記号、番号付け、入れ子。
+- [数式](/ja/docs/configuration-lists-math#数式)：LaTeXの描画、倍率、色、余白。
 
 **[注と参照](/ja/docs/configuration-notes-references)**
 
@@ -74,9 +94,12 @@ const document = buildDocument(content, {
 - [段落スタイル](/ja/docs/configuration-styles#段落スタイル)：`:::paragraphs`コンテナー用の名前付きスタイル。参考文献、用語集、注記などに使います。
 - [チップスタイル](/ja/docs/configuration-styles#チップスタイル)：`chipStyles`。行内の`:chip[…]`用の名前付きスタイル。語群の枠、キーボードのキー、タグなどに使います。
 - [コードリスト](/ja/docs/configuration-styles#コードリスト)：`codeStyle`。```` ``` ````のコードリストの書体、枠、タブ幅、長い行、行番号、字句の色、構文の色分けとそのハイライタのフック、そしてコードの書体で組むインラインコード。
-- [囲みスタイル](/ja/docs/configuration-styles#囲みスタイル)：`:::callout`コンテナー用の、枠で囲んだ注記、ヒント、学習目標。
 - [部](/ja/docs/configuration-styles#部)：`:::part`コンテナー用の部扉ページ。奇偶、本文領域、扉のデザイン、本文の文字組み。
 - [見出しスタイル](/ja/docs/configuration-styles#見出しスタイル)：`{style="…"}`を付けた見出し用の名前付きスタイル。番号のない章や、独自の柱、ジオメトリー、パレットを持つ前付けに使います。
+
+**[囲み](/ja/docs/configuration-callouts)**
+
+- [囲みスタイル](/ja/docs/configuration-callouts#囲みスタイル)：`:::callout`コンテナー用の、枠で囲んだ注記、ヒント、学習目標。
 
 **[漫画の設定](/ja/docs/configuration-comics)**
 
@@ -97,7 +120,17 @@ const document = buildDocument(content, {
 
 - [プログラムからの利用](/ja/docs/configuration-programmatic-usage#プログラムからの利用)：`buildDocument`とそれが報告する警告、リゾルバー、キャッシュ。
 - [Web Workerでレイアウトを実行する](/ja/docs/configuration-programmatic-usage#web-workerでレイアウトを実行する)：キャンセルできる、メインスレッド外でのビルド。
-- [HTMLビューアーの統合](/ja/docs/configuration-programmatic-usage#htmlビューアーの統合)と[PDFの生成](/ja/docs/configuration-programmatic-usage#pdfの生成)：最初から最後まで通した実例。
-- [3Dの本（`postext-folio`）](/ja/docs/configuration-programmatic-usage#3dの本postext-folio)：組み上がった文書を、机の上に開いて置いた印刷本として表示します。読者はページをめくれます。
-- [EPUBの本](/ja/docs/configuration-programmatic-usage#epubの本postext-epub)：同じレイアウトから作る固定レイアウトとリフロー型のEPUB 3ファイルと、EPUBCheckによる検査。
-- [バンドル（`.postext`ファイル）](/ja/docs/configuration-programmatic-usage#バンドルpostextファイル)：本をまるごと1つのファイルに収めます。コードから`.postext`アーカイブを作成し、開き、ビルドします。
+
+**[PDFファイル](/ja/docs/configuration-pdf-output)**
+
+- [PDFの生成](/ja/docs/configuration-pdf-output#pdfの生成)：`postext-pdf`。フォントプロバイダー、CJKフォント、ワーカー、印刷入稿用のファイル。
+
+**[HTML、Folio、EPUB](/ja/docs/configuration-html-folio-epub)**
+
+- [HTMLビューアーの統合](/ja/docs/configuration-html-folio-epub#htmlビューアーの統合)と[PDFの生成](/ja/docs/configuration-pdf-output#pdfの生成)：最初から最後まで通した実例。
+- [3Dの本（`postext-folio`）](/ja/docs/configuration-html-folio-epub#3dの本postext-folio)：組み上がった文書を、机の上に開いて置いた印刷本として表示します。読者はページをめくれます。
+- [EPUBの本](/ja/docs/configuration-html-folio-epub#epubの本postext-epub)：同じレイアウトから作る固定レイアウトとリフロー型のEPUB 3ファイルと、EPUBCheckによる検査。
+
+**[.postextバンドル](/ja/docs/configuration-bundles)**
+
+- [バンドル（`.postext`ファイル）](/ja/docs/configuration-bundles#バンドルpostextファイル)：本をまるごと1つのファイルに収めます。コードから`.postext`アーカイブを作成し、開き、ビルドします。

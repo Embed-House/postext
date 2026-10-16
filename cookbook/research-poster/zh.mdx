@@ -24,13 +24,13 @@ pageNotes: { "1": "顶部一条绿色色带，上面是会议名称、粗白字�
 
 <Excerpt region="band" />
 
-H1把会议名称、海报编号、作者和单位写成属性，它的版面设计把这些内容排在一个锚定在页面上、158 mm深的绿色框上（[通栏与高级版面设计](/zh/docs/configuration-text#通栏与高级设计)）。这个框在上页边距下方133 mm处结束。不设`minHeight`时，摘要会从绿色下方0.9 mm处开始；`minHeight`设为十一个网格行，留出14 mm。单位标记用的是字符¹ ² ³，它们是Latin-1范围内仅有的上标数字。
+H1把会议名称、海报编号、作者和单位写成属性，它的版面设计把这些内容排在一个锚定在页面上、158 mm深的绿色框上（[通栏与高级版面设计](/zh/docs/configuration-headings#通栏与高级设计)）。这个框在上页边距下方133 mm处结束。不设`minHeight`时，摘要会从绿色下方0.9 mm处开始；`minHeight`设为十一个网格行，留出14 mm。单位标记用的是字符¹ ² ³，它们是Latin-1范围内仅有的上标数字。
 
 ### 3 · 把面板排进一个通栏的分栏组
 
 <Excerpt region="answer" highlight="3-10,19" />
 
-正文排两栏，面板排三栏，所以网格是直接写在正文里的一个`:::columns{count=3}`分栏组，`span="page"`让它在摘要下方横跨两个正文栏，各栏之间隔着页面的栏间距（[`:::columns`](/zh/docs/document-format#columns)）。不另作设定时，正文里的分栏组下方会跟一行段间距，这里是38 pt，关键词长条就会移到第二页；在围栏上写`marginBottom="0.75em"`，用它取代这一行（postext 1.28），长条就能留在页脚。每块面板是分栏组里的一个标注框：它有自己的样式，宽度取栏宽175 mm，与上方面板之间有18 mm的`marginTop`（[`:::callout`容器](/zh/docs/configuration-styles#callout容器)）。`breaks="3,4"`把第三块面板Results送到中间一栏顶部，把第四块Conclusions送到最后一栏顶部。不设它时，分栏组会自行齐底，在最接近总高三分之一处的面板切开。按现在的文字，切点正好落在这两块面板上；文字改动后，这个属性让切点保持不变。
+正文排两栏，面板排三栏，所以网格是直接写在正文里的一个`:::columns{count=3}`分栏组，`span="page"`让它在摘要下方横跨两个正文栏，各栏之间隔着页面的栏间距（[`:::columns`](/zh/docs/document-format-directives#columns)）。不另作设定时，正文里的分栏组下方会跟一行段间距，这里是38 pt，关键词长条就会移到第二页；在围栏上写`marginBottom="0.75em"`，用它取代这一行（postext 1.28），长条就能留在页脚。每块面板是分栏组里的一个标注框：它有自己的样式，宽度取栏宽175 mm，与上方面板之间有18 mm的`marginTop`（[`:::callout`容器](/zh/docs/configuration-callouts#callout容器)）。`breaks="3,4"`把第三块面板Results送到中间一栏顶部，把第四块Conclusions送到最后一栏顶部。不设它时，分栏组会自行齐底，在最接近总高三分之一处的面板切开。按现在的文字，切点正好落在这两块面板上；文字改动后，这个属性让切点保持不变。
 
 ### 4 · 让每幅图留在自己的面板里
 
@@ -42,7 +42,7 @@ placement为`'here'`的图留在`::resource`所在的面板里；用默认placem
 
 <Excerpt region="palette" />
 
-热力图的格子和图例的四个`:swatch{color="…"}`片段引用相同的调色板条目，所以给`cool`换一个值，热力图和图例会一起重新着色（[行内格式](/zh/docs/document-format#行内格式)）。图例是Results面板里的第二个`:::columns`分栏组，每栏两个条目。
+热力图的格子和图例的四个`:swatch{color="…"}`片段引用相同的调色板条目，所以给`cool`换一个值，热力图和图例会一起重新着色（[行内格式](/zh/docs/document-format-inline#行内格式)）。图例是Results面板里的第二个`:::columns`分栏组，每栏两个条目。
 
 ### 6 · 用段落样式排核心数字
 

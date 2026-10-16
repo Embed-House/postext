@@ -46,7 +46,7 @@
     }
   },
   "headings": {
-    "slug": "configuration-text",
+    "slug": "configuration-headings",
     "heading": {
       "en": "Headings",
       "es": "Encabezados",
@@ -136,7 +136,7 @@
     }
   },
   "calloutStyles": {
-    "slug": "configuration-styles",
+    "slug": "configuration-callouts",
     "heading": {
       "en": "Callout styles",
       "es": "Estilos de aviso",
@@ -211,7 +211,7 @@
     }
   },
   "unorderedLists": {
-    "slug": "configuration-text",
+    "slug": "configuration-lists-math",
     "heading": {
       "en": "Unordered Lists",
       "es": "Listas no ordenadas",
@@ -226,7 +226,7 @@
     }
   },
   "orderedLists": {
-    "slug": "configuration-text",
+    "slug": "configuration-lists-math",
     "heading": {
       "en": "Ordered Lists",
       "es": "Listas ordenadas",
@@ -241,7 +241,7 @@
     }
   },
   "math": {
-    "slug": "configuration-text",
+    "slug": "configuration-lists-math",
     "heading": {
       "en": "Math",
       "es": "Matemáticas",
@@ -271,7 +271,7 @@
     }
   },
   "header": {
-    "slug": "configuration-page-layout",
+    "slug": "configuration-headers-footers",
     "heading": {
       "en": "Headers & footers",
       "es": "Encabezados y pies",
@@ -286,7 +286,7 @@
     }
   },
   "footer": {
-    "slug": "configuration-page-layout",
+    "slug": "configuration-headers-footers",
     "heading": {
       "en": "Headers & footers",
       "es": "Encabezados y pies",
@@ -301,7 +301,7 @@
     }
   },
   "locale": {
-    "slug": "configuration-text",
+    "slug": "configuration-language",
     "heading": {
       "en": "Hyphenation",
       "es": "Separación silábica",
@@ -316,7 +316,7 @@
     }
   },
   "direction": {
-    "slug": "configuration-text",
+    "slug": "configuration-language",
     "heading": {
       "en": "Languages and scripts",
       "es": "Idiomas y escrituras",
@@ -331,7 +331,7 @@
     }
   },
   "numerals": {
-    "slug": "configuration-text",
+    "slug": "configuration-language",
     "heading": {
       "en": "Document language",
       "es": "Idioma del documento",

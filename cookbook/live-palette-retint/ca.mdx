@@ -30,13 +30,13 @@ El blau del motor és una entrada de la paleta, `main-color` (#295AA3), i [per d
 
 <Excerpt region="opener" />
 
-L'obertura és una [ranura de disseny](/ca/docs/configuration-page-layout#elements-de-caixa) amb una caixa a sang pel límit superior, 29 barres arrodonides per a l'ona i tres textos: el mateix títol, més l'avanttítol i l'entradeta, que surten dels seus atributs. Les barres són caixes i no un SVG, així que el seu emplenament és un altre enllaç a `tint` que segueix la paleta; un SVG caldria redibuixar-lo i registrar-lo de nou per a cada combinació. Amb la caixa de la banda sola, el text començaria a la línia de la retícula de base que queda 2,4 mm per sota; `minHeight`, 18 línies o 85,1 mm sota el marge superior, reserva més espai i baixa la primera línia a 7 mm de la banda.
+L'obertura és una [ranura de disseny](/ca/docs/configuration-headers-footers#elements-de-caixa) amb una caixa a sang pel límit superior, 29 barres arrodonides per a l'ona i tres textos: el mateix títol, més l'avanttítol i l'entradeta, que surten dels seus atributs. Les barres són caixes i no un SVG, així que el seu emplenament és un altre enllaç a `tint` que segueix la paleta; un SVG caldria redibuixar-lo i registrar-lo de nou per a cada combinació. Amb la caixa de la banda sola, el text començaria a la línia de la retícula de base que queda 2,4 mm per sota; `minHeight`, 18 línies o 85,1 mm sota el marge superior, reserva més espai i baixa la primera línia a 7 mm de la banda.
 
 ### 4 · Deixa que la paleta ompli la taula
 
 <Excerpt region="grid" />
 
-La quadrícula és un recurs de taula i queda fora de la configuració. Tot i això, els seus [emplenaments de cel·la](/ca/docs/document-format#inserció-en-bloc-opcional-collocació-en-línia-explícita) porten ids de paleta, i el motor els resol amb la paleta del document en compondre la taula; els `:swatch{color="band"}` i `:swatch{color="tint"}` de la llegenda, a la nota de la taula, es resolen igual. Els xips de la programació fan servir els mateixos dos ids, així que la casella plena, el xip al costat de cada hora i la mostra de la llegenda coincideixen en totes les combinacions.
+La quadrícula és un recurs de taula i queda fora de la configuració. Tot i això, els seus [emplenaments de cel·la](/ca/docs/document-format-resources#inserció-en-bloc-opcional-collocació-en-línia-explícita) porten ids de paleta, i el motor els resol amb la paleta del document en compondre la taula; els `:swatch{color="band"}` i `:swatch{color="tint"}` de la llegenda, a la nota de la taula, es resolen igual. Els xips de la programació fan servir els mateixos dos ids, així que la casella plena, el xip al costat de cada hora i la mostra de la llegenda coincideixen en totes les combinacions.
 
 ### 5 · Canvia la paleta i torna a compondre
 

@@ -18,7 +18,7 @@ Fünf Textseiten vom Ende von *Dom Casmurro*, Machado de Assis’ Roman von 1899
 
 <Excerpt region="answer" highlight="17-24" />
 
-Bei der Kapitelebene ist der Umbruch abgeschaltet, und `marginTop` setzt jeden Kopf zwei Zeilen unter die letzte Zeile des vorigen Kapitels. Seine Gestaltung hat kein `span`, deshalb wird der Kopf in der Spalte gezeichnet, in einem Block von drei Zeilen Tiefe, und der Text darunter bleibt im Raster ([Umbruch davor](/de/docs/configuration-text#umbruch-davor), [Span und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). Die Regeln zum Zusammenhalten bleiben auf ihren Standardwerten. Die vierzeiligen Absätze unter CXIX und CXXI lassen je zwei Zeilen am Fuß ihrer Seite und nehmen zwei mit hinüber; mit `avoidOrphans: false` teilten sie sich drei zu eins, und die Seiten 214 und 215 begännen mit einer einzelnen Zeile ([Waisen, Witwen, zu kurze Ausgangszeilen](/de/docs/configuration-text#waisen-witwen-zu-kurze-ausgangszeilen-und-regeln-zum-zusammenhalten)). Der Spaltenausgleich fügt über CXIX eine dritte Zeile Abstand ein, sodass Seite 213 auf Zeile 33 endet ([Spaltenausgleich](/de/docs/configuration-text#spaltenausgleich)).
+Bei der Kapitelebene ist der Umbruch abgeschaltet, und `marginTop` setzt jeden Kopf zwei Zeilen unter die letzte Zeile des vorigen Kapitels. Seine Gestaltung hat kein `span`, deshalb wird der Kopf in der Spalte gezeichnet, in einem Block von drei Zeilen Tiefe, und der Text darunter bleibt im Raster ([Umbruch davor](/de/docs/configuration-headings#umbruch-davor), [Span und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)). Die Regeln zum Zusammenhalten bleiben auf ihren Standardwerten. Die vierzeiligen Absätze unter CXIX und CXXI lassen je zwei Zeilen am Fuß ihrer Seite und nehmen zwei mit hinüber; mit `avoidOrphans: false` teilten sie sich drei zu eins, und die Seiten 214 und 215 begännen mit einer einzelnen Zeile ([Waisen, Witwen, zu kurze Ausgangszeilen](/de/docs/configuration-page-flow#waisen-witwen-zu-kurze-ausgangszeilen-und-regeln-zum-zusammenhalten)). Der Spaltenausgleich fügt über CXIX eine dritte Zeile Abstand ein, sodass Seite 213 auf Zeile 33 endet ([Spaltenausgleich](/de/docs/configuration-page-flow#spaltenausgleich)).
 
 <PageShot page={3} crop="0,.683,1,.317" caption="Seite 213: Kapitel CXIX beginnt drei Zeilen unter dem Ende von CXVIII und hält zwei Zeilen seines Textes am Fuß." />
 
@@ -32,7 +32,7 @@ Der untere Rand beträgt 16,3 mm, das, was die Höhe von 178 mm nach dem oberen 
 
 <Excerpt region="heads" />
 
-`{title}` druckt den Titel aus dem Frontmatter und `{chapterTitle}` das letzte Kapitel, das auf oder vor der Seite beginnt, sodass Seite 217 CXXIII nennt, das auf Seite 216 begann ([Textelemente](/de/docs/configuration-page-layout#textelemente)). Seite 213 nennt CXIX, das an ihrem Fuß beginnt, obwohl ihre ersten 25 Zeilen CXVIII abschließen. `{chapterTitleAtTop}` nennt stattdessen das Kapitel, in dem eine Seite beginnt, aber dieser Auszug enthält keine Überschrift für CXVIII. `SHIFT` rückt die Kolumnentitel auf die Mitte des Satzspiegels, 1 mm neben der Seitenmitte, weil der Bundsteg 2 mm breiter ist als der Außensteg.
+`{title}` druckt den Titel aus dem Frontmatter und `{chapterTitle}` das letzte Kapitel, das auf oder vor der Seite beginnt, sodass Seite 217 CXXIII nennt, das auf Seite 216 begann ([Textelemente](/de/docs/configuration-headers-footers#textelemente)). Seite 213 nennt CXIX, das an ihrem Fuß beginnt, obwohl ihre ersten 25 Zeilen CXVIII abschließen. `{chapterTitleAtTop}` nennt stattdessen das Kapitel, in dem eine Seite beginnt, aber dieser Auszug enthält keine Überschrift für CXVIII. `SHIFT` rückt die Kolumnentitel auf die Mitte des Satzspiegels, 1 mm neben der Seitenmitte, weil der Bundsteg 2 mm breiter ist als der Außensteg.
 
 ### 4 · Umschlag und Bildtafel als Überschriften zeichnen
 
@@ -44,7 +44,7 @@ Beide sind [Überschriftenformate](/de/docs/configuration-styles#überschriftens
 
 <Excerpt region="excerpt" />
 
-`continuation.headings` gibt die Überschriftenzähler an, bei denen der Auszug beginnt. Mit `h1: 118` ist die erste nummerierte Überschrift Kapitel CXIX; ohne das werden die fünf Kapitel I bis V nummeriert. `numberingTemplate: '{1:I}'` in der Kapitelebene setzt diese Nummern in römischen Ziffern, und die Gestaltung druckt sie mit `{number}`. `:::numbering{startAt=212}` nach dem Umschlag nummeriert die Tafel mit 212 und die Textseiten mit 213 bis 217 ([Nummerierung](/de/docs/document-format#numbering)).
+`continuation.headings` gibt die Überschriftenzähler an, bei denen der Auszug beginnt. Mit `h1: 118` ist die erste nummerierte Überschrift Kapitel CXIX; ohne das werden die fünf Kapitel I bis V nummeriert. `numberingTemplate: '{1:I}'` in der Kapitelebene setzt diese Nummern in römischen Ziffern, und die Gestaltung druckt sie mit `{number}`. `:::numbering{startAt=212}` nach dem Umschlag nummeriert die Tafel mit 212 und die Textseiten mit 213 bis 217 ([Nummerierung](/de/docs/document-format-directives#numbering)).
 
 ## Varianten
 

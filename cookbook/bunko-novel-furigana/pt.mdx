@@ -24,7 +24,7 @@ O código está [na resposta curta](#a-resposta-curta), mais acima. `layout.writ
 
 <Excerpt region="nights" />
 
-Um título japonês ocupa um número inteiro de linhas do texto, 行取り (gyōdori), para que as linhas depois dele fiquem na mesma grade que as anteriores. `lineSpan: 3` compõe 第一夜 numa faixa de três linhas de 15,75 pt com os caracteres centralizados nela; os 12,5 pt do título não deslocam a grade, e na página 6 第二夜 ocupa as três primeiras linhas da página, de modo que o texto seguinte começa na quarta linha da grade. `indent: em(5)` conta caracteres do texto (五字下げ), que é como o texto do Aozora marca um 中見出し e como o JLReq conta os recuos de títulos ([Ajustes por nível](/pt/docs/configuration-text#sobrescritas-por-nível)).
+Um título japonês ocupa um número inteiro de linhas do texto, 行取り (gyōdori), para que as linhas depois dele fiquem na mesma grade que as anteriores. `lineSpan: 3` compõe 第一夜 numa faixa de três linhas de 15,75 pt com os caracteres centralizados nela; os 12,5 pt do título não deslocam a grade, e na página 6 第二夜 ocupa as três primeiras linhas da página, de modo que o texto seguinte começa na quarta linha da grade. `indent: em(5)` conta caracteres do texto (五字下げ), que é como o texto do Aozora marca um 中見出し e como o JLReq conta os recuos de títulos ([Ajustes por nível](/pt/docs/configuration-headings#sobrescritas-por-nível)).
 
 ### 3 · Trazer o texto e as leituras do Aozora Bunko
 
@@ -34,7 +34,7 @@ As duas noites vêm da ficha 799 do Aozora Bunko, convertida com o `aozora.py` d
 
 <Excerpt region="hashira" />
 
-Num bunko vertical, o cabeço (柱, hashira) é pequeno e fica na margem externa. `anchor.to: 'outer'` põe um elemento ali, na margem esquerda de uma página ímpar e na direita de uma par num livro encadernado pela direita, e `writingMode: 'vertical-rl'` o compõe de cima para baixo ([Elementos de texto verticais](/pt/docs/configuration-page-layout#elementos-de-texto-verticais)). O título 夢十夜 aparece só nas páginas da esquerda (`parity: 'odd'`), e `pages: 'body'` o tiraria de qualquer página que abra um capítulo. `pageNumbering.format: 'japanese-informal'` imprime os fólios 二, 三 … 九 ([Numeração](/pt/docs/configuration-page-layout#numeração)).
+Num bunko vertical, o cabeço (柱, hashira) é pequeno e fica na margem externa. `anchor.to: 'outer'` põe um elemento ali, na margem esquerda de uma página ímpar e na direita de uma par num livro encadernado pela direita, e `writingMode: 'vertical-rl'` o compõe de cima para baixo ([Elementos de texto verticais](/pt/docs/configuration-headers-footers#elementos-de-texto-verticais)). O título 夢十夜 aparece só nas páginas da esquerda (`parity: 'odd'`), e `pages: 'body'` o tiraria de qualquer página que abra um capítulo. `pageNumbering.format: 'japanese-informal'` imprime os fólios 二, 三 … 九 ([Numeração](/pt/docs/configuration-page-layout#numeração)).
 
 ### 5 · Centralizar a folha de rosto no formato
 

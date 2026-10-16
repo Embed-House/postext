@@ -1,0 +1,372 @@
+{/* docs/document-format-inline-fr.mdx */}
+
+export const metadata = {
+  title: 'Format du document : mise en forme en ligne et formules',
+  sidebarTitle: 'Mise en forme en ligne et formules',
+  description: 'Les marques dans une ligne : emphase, liens, pastilles, petites capitales, tabulations, texte vertical, marques chinoises et japonaises, sens du texte, et formules LaTeX',
+  lang: 'fr',
+  lastUpdated: '2026-10-16',
+  readingTime: '29 min',
+  order: 26,
+  parent: 'document-format',
+  plainSummary: "Cette page traite des marques que vous utilisez dans une ligne de texte. Elles mettent des mots en gras ou en italique, ajoutent des liens, dessinent de petites étiquettes, composent des petites capitales et alignent le texte sur des taquets de tabulation. D’autres marques servent aux livres chinois et japonais, comme les petites indications de prononciation au-dessus d’un caractère, ou à une phrase écrite dans l’autre sens, comme de l’anglais dans un livre arabe. La dernière section montre comment écrire des formules mathématiques.",
+};
+
+# Format du document : mise en forme en ligne et formules
+
+
+## Mise en forme en ligne
+
+Le balisage en ligne est reconnu dans tout bloc de texte (titres, paragraphes, citations, éléments de liste). Dans un titre, il suit `headings.inlineMarks`, activé par défaut : l’italique, le gras, les exposants et indices, les petites capitales et les liens du titre s’impriment comme dans un paragraphe, et un passage en italique dans un titre en italique sort en romain. Désactivé, les marqueurs sont supprimés et le titre s’imprime dans le style propre au titre ; les configurations enregistrées par postext 1.4 ou antérieur dont les titres portent des marques sont lues de cette façon (voir [Configuration › Titres](/fr/docs/configuration-headings#titres)). Une maquette de titre imprime `{titleText}` en texte brut dans les deux cas.
+
+<Illustration name="InlineFormatting" data='{"title": "La mise en forme en ligne en un coup d’œil", "desc": "Comparaison entre le Markdown et le rendu pour le gras, l’italique, le gras italique, le code en ligne et les liens.", "caption": "Le Markdown à gauche, le rendu à droite.", "rows": [{"markdown": "**gras**", "rendered": "gras", "style": "bold"}, {"markdown": "*italique*", "rendered": "italique", "style": "italic"}, {"markdown": "***les deux***", "rendered": "les deux", "style": "bold-italic"}, {"markdown": "`code`", "rendered": "code", "style": "code"}, {"markdown": "[lien](https://…)", "rendered": "lien", "style": "link"}]}' />
+
+<table>
+  <thead>
+    <tr>
+      <th>Balisage</th>
+      <th>Syntaxe</th>
+      <th>Remarques</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Gras</td>
+      <td><code>**bold**</code> ou <code>__bold__</code></td>
+      <td>Rendu avec <code>bodyText.boldFontWeight</code>. Un <code>bodyText.boldColor</code> facultatif remplace la couleur du texte courant pour les passages en gras.</td>
+    </tr>
+    <tr>
+      <td>Italique</td>
+      <td><code>*italic*</code> ou <code>_italic_</code></td>
+      <td>Rendu avec la variante italique de la famille de caractères en cours. Un <code>bodyText.italicColor</code> facultatif remplace la couleur du texte courant pour les passages en italique. Un tiret bas ne marque l’emphase qu’en limite de mot, comme en CommonMark : placé entre deux lettres ou deux chiffres (<code>snake_case_name</code>, le <code>SR_AIR_EN.pdf</code> d’une URL), c’est du texte (de même pour <code>__bold__</code>) ; à l’intérieur d’un mot, utilisez des astérisques (<code>un*believ*able</code>). Les caractères chinois, japonais et coréens ne comptent pas ici, puisque ces écritures n’ont pas d’espaces : <code>中文_斜体_中文</code> et <code>中文__粗体__中文</code> sont en italique et en gras. Un <code>__</code> qui ne produit pas de gras ne devient jamais de l’italique : <code>foo__bar__baz</code> reste du texte.</td>
+    </tr>
+    <tr>
+      <td>Gras italique</td>
+      <td><code>***both***</code> ou <code>___both___</code></td>
+      <td>Les deux attributs se combinent.</td>
+    </tr>
+    <tr>
+      <td>Exposant</td>
+      <td><code>^text^</code></td>
+      <td>Composé à 58 % de la taille du texte et surélevé d’un tiers de celle-ci : un exposant (<code>10^-8^</code>), la charge d’un ion (<code>Na^+^</code>). Le texte marqué commence et se termine par un caractère autre qu’une espace ; un accent circonflexe isolé dans la prose reste littéral, de même que les émoticônes <code>^_^</code> et <code>^o^</code> (<code>n.^o^</code> et <code>1^o^</code> restent des exposants).</td>
+    </tr>
+    <tr>
+      <td>Indice</td>
+      <td><code>~text~</code></td>
+      <td>Même taille, abaissé de 0,15 de la taille du texte, pour rester dans les descendantes : un indice chimique (<code>H~2~O</code>, <code>p<em>K</em>~a~</code>). Un tilde encadré de deux chiffres est un intervalle et reste littéral : <code>3~5 days</code>, <code>需要3~5天</code>. De même pour un tilde entre deux mots chinois, qui n’ouvre aucun indice : <code>周一~周五</code>, <code>北京~上海</code> ; un indice se ferme néanmoins devant un caractère chinois (<code>F~合~等于</code>). Se combine avec le gras et l’italique (<code>**H~2~O**</code>). Un indice et un exposant écrits ensemble, sans rien entre eux, sont superposés comme dans une formule : <code>*T*~0~^2^</code> place le 2 au-dessus du 0, quel que soit l’ordre d’écriture, l’indice étant abaissé de 0,25 de la taille du texte pour dégager l’exposant, et la paire prend la largeur du plus large des deux. Une espace ou une lettre entre eux les compose l’un après l’autre ; un gluon de mots (U+2060) aussi, sans rien de visible entre eux. Une paire superposée n’est jamais séparée par un saut de ligne : un mot trop large pour la ligne est coupé avant la paire.</td>
+    </tr>
+    <tr>
+      <td>Petites capitales</td>
+      <td><code>:smallcaps[text]</code></td>
+      <td>Les minuscules sont composées en capitales à 70 % de la taille du texte : le nom d’un personnage dans une pièce de théâtre, un sigle dans le texte courant. Accepte d’autres marques à l’intérieur et autour ; voir <a href="#petites-capitales">Petites capitales</a>.</td>
+    </tr>
+    <tr>
+      <td>Orientation dans le texte vertical</td>
+      <td><code>:tcy[12]</code>, <code>:upright[GDP]</code>, <code>:sideways[12]</code></td>
+      <td>Dans le texte vertical : une seule cellule debout (tate-chu-yoko), chaque caractère debout dans sa propre cellule, ou tout le passage pivoté. Sans effet dans le texte horizontal ; voir <a href="#orientation-dans-le-texte-vertical">Orientation dans le texte vertical</a>.</td>
+    </tr>
+    <tr>
+      <td>Marques chinoises</td>
+      <td><code>:dots[不可]</code>, <code>:name[賈寶玉]</code>, <code>:book[石頭記]</code></td>
+      <td>Les points d’emphase (着重号), le trait des noms propres (专名号) et la marque de titre d’ouvrage (书名号 : 《》 ou une ligne ondulée, selon <code>cjk.bookTitleMark</code>). Le texte reste tel qu’il est écrit ; voir <a href="#marques-chinoises-ruby-et-warichu">Marques chinoises, ruby et warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Ruby</td>
+      <td><code>:ruby[紅樓]&#123;rt="hóng lóu"&#125;</code> ou <code>&#123;紅樓|hóng|lóu&#125;</code></td>
+      <td>Lectures en pinyin ou en zhuyin au-dessus (ou à côté) des caractères de base. La forme compacte exige une base en caractères han, en kana ou en bopomofo, si bien que <code>&#123;x|x&gt;0&#125;</code> reste du texte.</td>
+    </tr>
+    <tr>
+      <td>Warichu</td>
+      <td><code>:warichu[note]&#123;open="〔" close="〕"&#125;</code></td>
+      <td>Une note composée sur deux rangées à demi-taille à l’intérieur de la ligne (双行夹注), coupée d’une ligne et d’une page à l’autre.</td>
+    </tr>
+    <tr>
+      <td>Code en ligne</td>
+      <td><code>`code`</code></td>
+      <td>Les accents graves sont retirés ; le passage est rendu en texte brut, exactement comme il est écrit : un <code>{':ref{…}'}</code>, une pastille, une formule, un lien ou un marqueur d’emphase qu’il contient s’imprime littéralement, ce qui permet à un texte de montrer la syntaxe. Il est composé dans le caractère du texte ou, avec <code>codeStyle.inline</code>, dans le caractère du code, comme une seule unité (voir <a href="/fr/docs/configuration-styles#listings-de-code">Configuration › Listings de code</a>). Un listing se place dans un <a href="/fr/docs/document-format#blocs-de-code">bloc de code</a>.</td>
+    </tr>
+    <tr>
+      <td>Échappement</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
+      <td>Une barre oblique inverse compose le caractère marqueur lui-même (l’astérisque d’une note de tableau, <code>{'\\* pOH = −log [OH^−^]'}</code>, un accent circonflexe littéral, un signe dollar qui n’ouvre aucune formule) au lieu d’ouvrir un passage. Fonctionne dans le corps du texte, dans les pastilles ainsi que dans les légendes, les cellules et les notes. (Jusqu’à postext 1.4, les légendes, les cellules, les notes et les pastilles imprimaient la barre oblique inverse de <code>{'\\$'}</code>.)</td>
+    </tr>
+    <tr>
+      <td>Espace insécable</td>
+      <td>le caractère lui-même : U+00A0, U+202F, U+2007</td>
+      <td>Lie les mots de part et d’autre, si bien qu’une ligne n’est jamais coupée entre eux : un nombre et son unité (37 °C), un renvoi de page (p. 12), une tranche de milliers (225 000). L’espace insécable (U+00A0), l’espace fine insécable (U+202F) et l’espace tabulaire (U+2007) lient toutes les trois (dans le corps du texte, les légendes, les cellules, les encadrés et les titres courants) et chacune garde sa propre largeur : la justification n’étire que les espaces entre les mots. Beaucoup de caractères n’ont pas de glyphe pour l’espace fine insécable ou pour l’espace tabulaire ; elles sont alors composées comme les navigateurs les composent, dans le canvas, le HTML et le PDF à l’identique : une demi-espace de mot et la largeur d’un chiffre. Pratiquement tous les caractères ont U+00A0, c’est donc le choix sûr. Un groupe ainsi lié qui est plus large que la ligne entière est coupé à sa dernière espace insécable plutôt qu’à l’intérieur d’un mot. Le gluon de mots (U+2060) lie sans occuper de place. Tapez le caractère lui-même : une entité HTML comme <code>{'&nbsp;'}</code> s’imprime telle qu’elle est écrite. Voir <a href="/fr/docs/justification#où-une-ligne-ne-se-coupe-jamais">Là où une ligne n’est jamais coupée</a>.</td>
+    </tr>
+    <tr>
+      <td>Trait d’union conditionnel</td>
+      <td>le caractère lui-même : U+00AD</td>
+      <td>Un endroit où le mot peut être divisé, avec un trait d’union ajouté si une ligne s’y termine : seulement entre deux lettres ou deux chiffres. Un mot qui en porte un ne reçoit aucune autre coupure du dictionnaire, si bien que le trait d’union conditionnel est sa seule division ; tapé avant la première lettre d’un mot, il ne divise rien et garde cette occurrence entière. À côté d’une parenthèse, d’un guillemet ou d’une ponctuation, il n’a aucun effet. Voir <a href="/fr/docs/justification#où-une-ligne-ne-se-coupe-jamais">Là où une ligne n’est jamais coupée</a>.</td>
+    </tr>
+    <tr>
+      <td>Lien</td>
+      <td><code>[text](https://…)</code></td>
+      <td>Le texte visible reste dans le flux, composé exactement comme sans le lien. L’URL fait des mots un lien actif dans les sorties HTML et PDF ; voir <a href="#liens">Liens</a>.</td>
+    </tr>
+    <tr>
+      <td>Image</td>
+      <td><code>![alt](src)</code></td>
+      <td>Le Markdown d’image en ligne est <strong>supprimé</strong> du texte. Les images doivent être déclarées dans <code>PostextContent.resources</code> pour que le moteur de mise en page puisse les placer selon les règles de <code>resourcePlacement</code>.</td>
+    </tr>
+    <tr>
+      <td>Pastille</td>
+      <td><code>:chip[text]</code></td>
+      <td>Un passage de texte encadré qui passe à la ligne comme une seule unité : une banque de mots, une touche, une étiquette. Mis en forme par <code>chipStyles</code> ; voir <a href="#pastilles-en-ligne">Pastilles en ligne</a>.</td>
+    </tr>
+    <tr>
+      <td>Tabulation</td>
+      <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
+      <td>Envoie les mots qui la suivent au taquet de tabulation suivant : l’un des taquets du style du paragraphe, ou celui que fixent ses attributs. Un caractère de tabulation tapé dans le texte n’est une tabulation que là où le style définit des taquets. Voir <a href="#tabulations-et-taquets">Tabulations et taquets</a>.</td>
+    </tr>
+    <tr>
+      <td>Formule en ligne</td>
+      <td><code>$…$</code></td>
+      <td>Une formule LaTeX qui suit le flux du texte environnant, par exemple <code>$e^{'{i\\pi}'}+1=0$</code>. Composée par MathJax et rendue en tracés vectoriels sur tous les moteurs de rendu. Utilisez <code>\\$</code> pour un signe dollar littéral. La mise à l’échelle, la forme en display (<code>$$ … $$</code>) et le traitement des erreurs sont décrits dans <a href="#formules-mathématiques">Formules mathématiques</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Liens
+
+Un lien Markdown, `[text](url)`, garde son texte dans le flux exactement comme le texte serait composé sans lui : le lien ne change jamais les sauts de ligne, l’espacement ni la couleur. Il conserve son URL pour les sorties qui peuvent la suivre :
+
+- **HTML** (`renderToHtml`) : les mots liés sont enveloppés dans `<a href="…" rel="noopener noreferrer">`, qui prend la couleur du texte et n’est pas souligné. Il y a une ancre par suite de mots liés sur une ligne.
+- **PDF** (`postext-pdf`) : chaque suite de mots liés sur une ligne devient une annotation de lien URI cliquable. Dans un PDF balisé, c’est un élément `Link` dont le texte est celui des mots liés.
+- **Canvas** : peint comme du texte brut, puisqu’un canvas n’a pas de surface cliquable.
+
+```markdown
+Read the [configuration guide](https://postext.dev/en/docs/configuration "Configuration")
+or write to [the team](mailto:team@example.com).
+```
+
+- La destination peut porter un titre, qui est ignoré (`[text](https://example.com "Title")`). Elle peut aussi être placée entre chevrons, où les espaces deviennent `%20` (`[text](<https://example.com/a b>)`).
+- Seules les cibles sûres sont conservées : `http:`, `https:`, `mailto:`, `tel:`, `ftp:` et les URL relatives (`../guide`, `#top`). Tout autre schéma (`javascript:`, `data:`, `file:`…) compose le texte sans lien. Le PDF ne lie que les URL absolues.
+- La destination peut contenir des parenthèses tant qu’elles sont équilibrées, comme en CommonMark : `[photo](https://commons.wikimedia.org/wiki/File:Bike_(Unsplash).jpg)` lie l’URL entière. Une barre oblique inverse échappe un caractère (`\(`, `\_`). Quand les parenthèses ne sont pas équilibrées, la destination s’arrête à sa première `)` et le texte est composé sans lien ; encodez une parenthèse isolée en `%28` ou `%29`. Une espace termine aussi la destination, sauf si celle-ci est placée entre chevrons.
+- Un mot collé au texte du lien partage le lien. Dans `see [the site](https://example.com).`, le point final fait partie de la zone cliquable.
+- Le texte du lien peut porter une emphase (`[**bold** words](…)`) et peut se trouver à l’intérieur d’une emphase (`**[words](…)**`).
+- Les liens fonctionnent dans les paragraphes, les éléments de liste, les citations, les encadrés, les légendes, les notes et les cellules de tableau, ainsi que dans les titres tant que `headings.inlineMarks` est activé (par défaut). Les titres courants, le plan et les lignes de la table des matières tirés d’un titre ne gardent que le texte, de même que le texte d’un `:chip[…]`.
+- Les liens par référence (`[text][id]`) et les liens automatiques (`<https://…>`) ne sont pas reconnus (voir [Ce qui n’est PAS pris en charge](/fr/docs/document-format#ce-qui-nest-pas-pris-en-charge)).
+
+Dans le VDT, la cible se trouve sur chaque segment lié, sous la forme `VDTLineSegment.href`. L’analyseur conserve les liens d’un passage comme des plages de son texte, dans `InlineSpan.links`, et ne scinde jamais un passage à cause d’un lien : c’est pourquoi un lien ne peut pas modifier la mise en page.
+
+### Pastilles en ligne
+
+`:chip[text]` compose `text` dans une boîte (une « pastille » arrondie et teintée) qui suit le flux de la ligne : les mots d’une banque de mots ou d’un exercice de classement, les touches du clavier, les étiquettes. `:chip[text]{style="key"}` choisit un style nommé dans `chipStyles` (voir la référence de configuration) ; sans `style`, ou avec un identifiant qu’aucun style ne déclare, la pastille prend le premier style (un style `chip` intégré quand la configuration n’en a aucun ; le Sandbox signale un identifiant inconnu).
+
+```markdown
+Classify: :chip[battery] :chip[cable] :chip[switch] :chip[bulb]
+
+Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
+```
+
+- **Une seule unité.** Une pastille n’est jamais coupée ni divisée par une césure à l’intérieur ; la ligne est coupée entre les pastilles, aux espaces qui les entourent. Une pastille plus large que la ligne entière déborde plutôt que de se scinder.
+- **Largeur.** Sa chasse est celle du texte plus la marge intérieure horizontale et le contour des deux côtés. La justification n’étire que les espaces entre les mots, jamais l’intérieur d’une pastille. Le `gap` du style est l’espace minimal conservé entre la boîte et un mot ou une pastille voisins de l’autre côté d’une espace ; une espace plus étroite est complétée (pas en bord de ligne, ni contre une ponctuation collée comme `:chip[a],`).
+- **Hauteur.** La boîte est une bande autour de la ligne de base, 0,8 em au-dessus et 0,25 em en dessous à la taille de la pastille, agrandie de la marge intérieure verticale et du contour. La marge intérieure verticale est peinte hors de la boîte de ligne et ne change jamais la hauteur de ligne, si bien que la grille de ligne de base tient ; une boîte plus haute que le pas de ligne peut empiéter sur une pastille de la ligne au-dessus ou en dessous, et le Sandbox signale deux pastilles de lignes différentes qui se chevauchent (« Chips touch the next line ») pour que vous puissiez réduire la marge intérieure, le contour ou la taille.
+- **Texte.** Le texte de la pastille accepte ses propres marques en ligne (`:chip[**bold** word]`, `:chip[x^2^]`) et l’emphase qui l’entoure (`**:chip[a]**`) ; le style peut fixer sa famille, sa taille, sa couleur, le gras et l’italique. Écrivez `\]` pour un crochet littéral à l’intérieur. Les renvois, les pastilles de couleur et les formules à l’intérieur d’une pastille restent littéraux, et `\$` imprime un signe dollar (jusqu’à postext 1.4, il imprimait aussi la barre oblique inverse).
+- **Vide.** Une pastille composée seulement d’espaces (`:chip[ ]`, espaces insécables comprises) est une boîte vide (un blanc à remplir, une marque de fin) : aussi large que la marge intérieure horizontale et le contour de son style, aussi haute qu’une pastille contenant des mots. Dimensionnez le blanc avec le `paddingX` d’un style (`:chip[ ]{style="blank"}`). Sans rien du tout entre les crochets, `:chip[]` reste du texte littéral.
+- **Où.** Paragraphes, éléments de liste, citations, encadrés, cellules de tableau, légendes et notes. Les titres gardent `:chip[…]` comme texte littéral.
+- **Sortie.** Le canvas, le HTML et le PDF peignent la boîte et composent les mots comme du vrai texte : sélectionnable dans le HTML, extractible et dans l’ordre de lecture dans le PDF (dans un PDF balisé, la boîte est un artefact de mise en page et les mots appartiennent au paragraphe).
+
+### Petites capitales
+
+`:smallcaps[text]` compose `text` en petites capitales : les noms des personnages d’une pièce de théâtre, un sigle dans le texte courant, les premiers mots d’un chapitre. Les minuscules sont composées en capitales à 70 % de la taille du texte, tandis que les capitales, les chiffres et la ponctuation gardent la taille entière, si bien que `:smallcaps[Hamlet]` imprime un H en pleine taille suivi de AMLET en petites capitales.
+
+```markdown
+Enter :smallcaps[Hamlet] and :smallcaps[Horatio], reading.
+
+The :smallcaps[unesco] report and the :smallcaps[who] guidelines.
+```
+
+- **Synthétisées.** Les petites capitales sont dessinées à partir des capitales du caractère lui-même, de la même façon dans le canvas, dans le HTML et dans le PDF, si bien que le texte se mesure et se coupe à l’identique partout. Les vraies petites capitales d’un caractère (la fonctionnalité OpenType `smcp`) ne sont pas utilisées ; pour les obtenir, composez le texte dans une famille de petites capitales (une famille dont le nom se termine par « SC », par exemple) au moyen d’un style de paragraphe.
+- **Marques.** Le texte accepte ses propres marques en ligne (`:smallcaps[**Ophelia**]`) et l’emphase qui l’entoure (`*:smallcaps[Act I]*`) ; écrivez `\]` pour un crochet littéral à l’intérieur. Un renvoi ou une pastille à l’intérieur est aussi composé en petites capitales, et un renvoi reste un seul lien dans le HTML et le PDF ; une formule, non.
+- **Coupure.** Les mots passent à la ligne et reçoivent la césure comme d’habitude ; la césure lit chaque mot dans sa propre casse.
+- **Où.** Paragraphes, éléments de liste, citations, encadrés, cellules de tableau, légendes et notes, ainsi que les titres tant que `headings.inlineMarks` est activé (par défaut) ; désactivé, le balisage est retiré du titre et le texte s’imprime tel qu’il est écrit.
+- **Paragraphes entiers.** Un style de paragraphe ou le corps d’un encadré avec `smallCaps: true` compose tout son texte de cette façon (voir [Styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)).
+- **Texte.** Le canvas, le HTML et le PDF portent les lettres telles qu’elles sont peintes : copier `:smallcaps[Hamlet]` donne « HAMLET ».
+
+### Tabulations et taquets
+
+Une tabulation envoie les mots qui la suivent à un taquet de la ligne : le prix d’un plat aligné sur la fin de la justification derrière une ligne de points, l’acteur après le rôle dans une distribution, le barème d’une question d’examen dans la marge. Écrivez `:tab` là où va la tabulation ; les espaces qui l’entourent y sont absorbées. Les taquets se définissent dans la configuration : `bodyText.tabStops` pour chaque paragraphe, élément de liste et citation, le `tabStops` d’un style de paragraphe pour les paragraphes d’un groupe `:::paragraphs`, et le `body.tabStops` d’un style d’encadré dans ses boîtes (voir [Configuration › Taquets de tabulation](/fr/docs/configuration-text#taquets-de-tabulation)). Un menu dont les prix s’alignent sur la fin de la justification, derrière des points :
+
+```ts
+paragraphStyles: [
+  { id: 'menu', firstLineIndent: { value: 0, unit: 'em' }, tabStops: [{ position: 'end', align: 'end', leader: '. ' }] },
+],
+```
+
+```markdown
+:::paragraphs{style="menu"}
+Onion soup :tab 8.50
+
+Grilled sea bream with fennel and lemon :tab 21.00
+:::
+```
+
+`:tab{…}` définit un taquet pour cette seule tabulation, sans style : le blanc d’un formulaire jusqu’à la fin de la ligne, un montant aligné sur sa virgule décimale.
+
+```markdown
+Name and surname :tab{at=end leader=rule}
+
+Total due :tab{at=80% align=decimal} 1,234.50
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribut</th>
+      <th>Signification</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>at</code></td>
+      <td>L’emplacement du taquet, à partir du bord de début de la justification du paragraphe : une longueur (<code>120mm</code>, <code>4cm</code>, <code>2em</code> ; un nombre seul est en points), <code>end</code> pour la fin de la justification, ou une fraction de celle-ci (<code>60%</code>). Sans <code>at</code>, <code>:tab&#123;…&#125;</code> va aux taquets du style comme un <code>:tab</code> seul.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>start</code> (par défaut) : le texte qui suit la tabulation commence au taquet. <code>end</code> : il s’y termine (le texte jusqu’à la tabulation suivante ou jusqu’à la fin du paragraphe). <code>center</code> : il est centré sur le taquet. <code>decimal</code> : son séparateur décimal se place sur le taquet ; un passage qui n’en a pas s’y termine.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td>Texte répété sur l’espace qui précède le taquet : <code>"."</code>, <code>". "</code>, <code>"·"</code>, <code>"_"</code>, <code>"-"</code> ou un autre texte court, dans le caractère et la couleur du paragraphe. <code>rule</code> trace une ligne un peu sous la ligne de base, le blanc d’un formulaire. Par défaut, aucun.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td>Espace conservé entre les points de conduite et le texte de chaque côté. Par défaut <code>0.5em</code> de la taille du paragraphe ; un nombre seul est en points.</td>
+    </tr>
+    <tr>
+      <td><code>decimal</code></td>
+      <td>Le séparateur sur lequel s’aligne un taquet <code>decimal</code>. Par défaut, celui de la langue du document : <code>.</code> en anglais, en chinois, en japonais et en arabe, <code>,</code> en espagnol, en catalan, en portugais, en français, en allemand et dans d’autres langues.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Où va une tabulation.** Au premier taquet situé au-delà du texte qui la précède, parmi les taquets qui suivent celui qu’a pris la tabulation précédente de la ligne, si bien que la deuxième tabulation d’une ligne prend en général le deuxième taquet. Au-delà du dernier taquet, `tabInterval` ajoute des taquets à chaque intervalle depuis le début de la justification ; sans lui, la tabulation est une espace de mot.
+- **Caractères de tabulation.** Une tabulation tapée dans le texte (U+0009) n’est une tabulation que dans un paragraphe dont le style définit `tabStops` ou `tabInterval`. Partout ailleurs, c’est l’espace de mot qu’elle a toujours été, si bien qu’un document écrit avec des tabulations en guise d’espaces conserve sa mise en page. Plusieurs caractères de tabulation à la suite avancent d’autant de taquets. Une tabulation en début de ligne source est supprimée avec les autres blancs de tête de la ligne : écrivez `:tab` pour commencer une ligne à un taquet.
+- **Ce qui reste du texte.** Un `:tab` suivi d’une lettre (`3:table`), et un `:tab` dans du code en ligne, dans une formule, dans l’adresse d’un lien ou dans les attributs d’une directive.
+- **Où.** Paragraphes, éléments de liste, citations, encadrés et groupes `:::paragraphs`. Les titres, les légendes, les cellules de tableau et le texte des maquettes (ouvertures, titres courants) n’ont pas de taquets.
+- **Texte au-delà du taquet.** Quand le texte qui précède une tabulation a déjà dépassé tous les taquets restants de sa ligne, un taquet `end`, `center` ou `decimal` emmène le dernier mot avant la tabulation à la ligne suivante avec le texte au taquet, et le texte qui le précède est composé plus étroit, comme une ligne de la table des matières fait passer son titre à la ligne pour garder le numéro de page. Un taquet `start` coupe la ligne avant la tabulation, et le texte qui la suit commence la ligne suivante à son taquet. Une tabulation qui ouvre sa ligne et ne trouve toujours pas de taquet n’occupe aucune place.
+- **Points de conduite.** Les points de conduite remplissent l’espace qui précède leur taquet et se terminent alignés sur la fin de cet espace, si bien que les points de plusieurs lignes s’alignent quel que soit le texte qui les précède. `gap` les tient à l’écart du texte des deux côtés ; il n’y a pas d’écart avant eux quand la tabulation ouvre la ligne, ni après eux quand rien ne suit. Les points de conduite sont composés à partir de trois répétitions ; un espace qui n’en contient qu’une ou deux est laissé vide, comme dans la table des matières.
+- **Coupure des lignes.** Un paragraphe qui contient une tabulation est composé ligne par ligne, jamais avec Knuth–Plass. Dans un texte justifié, seules les espaces de mot qui suivent la dernière tabulation d’une ligne absorbent le jeu, et la dernière ligne du paragraphe n’est pas étirée (voir [Justification › Lignes tabulées](/fr/docs/justification#lignes-avec-tabulations)). Un paragraphe centré ou aligné à droite compose ses lignes tabulées depuis le côté de début, puisque les taquets sont des positions sur la justification. De droite à gauche, les taquets se mesurent depuis la droite et un taquet `end` se place à gauche (voir [Mise en page arabe](/fr/docs/arabic-layout#table-des-matières-et-index)). Dans le texte vertical, une tabulation est une espace de mot, et un `:tab` y déclenche l’avertissement de contenu `tabInVerticalText`.
+- **Texte et sorties.** Le texte brut contient un caractère de tabulation (`\t`) à chaque tabulation ; les points de conduite ne sont pas du texte, et les copies, les recherches et la table de correspondance des sources les laissent de côté. Le canvas, la visionneuse HTML et l’EPUB à mise en page fixe les peignent (masqués aux lecteurs d’écran dans le HTML) ; un PDF balisé les marque comme artefacts, si bien que son texte se lit `Onion soup 8.50`. L’EPUB recomposable ne peut pas conserver les taquets exactement : chaque ligne d’un paragraphe tabulé devient une rangée des parties comprises entre ses tabulations, où un taquet `end`, `center` ou `decimal`, ou un taquet avec points de conduite, repousse la partie suivante à la fin de la rangée (ses points de conduite devenant une bordure pointillée ou pleine), et un taquet `start` garde la partie qui le précède à sa largeur imprimée. Un export Word écrit `:tab` sous forme de tabulation Word, et l’import Word relit une tabulation du corps du texte comme un `:tab` avec le taquet que Word lui a attribué (voir [Sandbox › Documents Word](/fr/docs/sandbox-books-saving#documents-word)).
+
+### Orientation dans le texte vertical
+
+Dans le texte vertical (`layout.writingMode: 'vertical-rl'`), les caractères chinois sont debout, les mots latins et les nombres longs sont pivotés sur le côté, et un nombre d’au plus deux chiffres se tient debout dans une seule cellule, sauf s’il se trouve dans une phrase latine, dont il suit alors les mots (voir [Configuration › Nombres dans le texte vertical](/fr/docs/configuration-east-asian#nombres-en-texte-vertical)). Trois marques permettent de distinguer un passage à la main :
+
+```markdown
+第:tcy[120]回，:upright[GDP]增長:sideways[12]倍。
+```
+
+- `:tcy[…]` (tate-chu-yoko, 縱中橫) compose son texte côte à côte dans une seule cellule debout d’un em, resserrée en largeur quand elle est plus large : `:tcy[120]`, `:tcy[3.0]`, `:tcy[A+]`. Jusqu’à environ quatre caractères se lisent bien.
+- `:upright[…]` place chaque caractère debout dans sa propre cellule, les lettres latines centrées dedans : un sigle lu lettre par lettre le long de la colonne. Une ligne n’est jamais coupée à l’intérieur.
+- `:sideways[…]` fait pivoter tout le passage avec la ligne, caractères chinois compris : un nombre de deux chiffres que l’auteur veut voir couché.
+- Le texte reste dans le texte brut ; les marques acceptent à l’intérieur d’autres marques en ligne (`:tcy[**12**]`), un lien (`:sideways[[iPhone](https://…)]`) et les unes les autres, la plus intérieure l’emportant (`:tcy[:upright[AB]]` met A et B debout), et `\]` s’écrit pour un crochet littéral. Dans le texte horizontal, elles ne changent rien.
+- Un renvoi, un appel de note, une formule, une pastille ou une pastille de couleur à l’intérieur d’une marque garde sa propre composition : `:sideways[iPhone[^1]]` fait pivoter iPhone et laisse le numéro de note composé comme tous les numéros de note ; le numéro d’un renvoi se tient debout dans une cellule selon `cjk.uprightDigits`, comme tout nombre court.
+- Un élément de texte de maquette avec `inlineMarks: true` les accepte aussi quand il est composé verticalement (voir [Configuration › Éléments de texte vertical](/fr/docs/configuration-headers-footers#éléments-de-texte-vertical)).
+- Pour la coupure et la justification, une cellule `:tcy` et chaque caractère `:upright` comptent comme des caractères chinois, et aucune espace han–latin n’est placée à côté d’eux.
+
+
+### Marques chinoises, ruby et warichu
+
+Les éditions chinoises et japonaises marquent le texte dans l’interligne plutôt qu’avec l’italique ou le soulignement, glosent les caractères avec leur lecture et placent le commentaire à l’intérieur de la ligne. Sept directives s’en chargent. [Mise en page chinoise](/fr/docs/chinese-layout) et [Mise en page japonaise](/fr/docs/japanese-layout) expliquent les conventions sur lesquelles elles reposent. Elles conservent leur texte : les caractères entre les crochets restent dans le paragraphe (la recherche, la table des matières, les ancres d’index et le texte copié les lisent tels qu’ils sont écrits), et les directives acceptent les autres marques en ligne à l’intérieur et autour d’elles, y compris imbriquées. Écrivez `\]` pour un crochet littéral.
+
+```markdown
+此事:dots[不可]輕忽。:name[賈寶玉]與:name[林黛玉]讀:book[西廂記]。
+
+{滿紙|mǎn|zhǐ}荒唐言，:ruby[一把]{rt="yì bǎ"}辛酸淚！:ruby[都]{rt="ㄉㄡ"}云作者痴。
+
+寶玉:warichu[甲戌側批：此是第一首標題詩。]{open="〔" close="〕"}道：……
+
+{東京|とう|きょう}の:ruby[紫陽花]{rt="あじさい"}は*とんと*:sideline[見事]だ。:book[こころ]を読む。
+
+:kunten[學]{okuri="ビテ"}而:kunten[時]{okuri="ニ"}:kunten[習]{kaeri="二" okuri="フ"}:kunten[之]{kaeri="一" okuri="ヲ"}。
+```
+
+- **`:dots[text]`** place un point d’emphase (着重号) sous chaque caractère dans le texte horizontal, à sa droite dans le texte vertical, et aucun sur la ponctuation ni sur les espaces. `style="dot|circle|sesame"` (par défaut `dot`), `fill="open"` pour un contour, `pos="over|under"` pour l’autre côté. L’emphase Markdown `*…*` sur des caractères chinois ou japonais fait de même avec `cjk.emphasis: 'dots'`, la valeur par défaut dans un document chinois ou japonais ; les lettres latines de la même emphase restent en italique. Les attributs omis prennent `cjk.emphasisMark` : un point sous le texte en chinois, un sésame au-dessus (à sa droite dans le texte vertical) en japonais.
+- **`:name[text]`** trace le trait des noms propres (专名号) sous le texte (à sa gauche dans le texte vertical), et **`:book[text]`** la marque de titre d’ouvrage (书名号) : 《》 autour du titre (〈〉 pour un titre à l’intérieur d’un autre), la ligne ondulée des éditions classiques et taïwanaises, ou rien, selon `cjk.bookTitleMark` (par défaut des crochets en Chine continentale et au Japon, la ligne ondulée à Taïwan et à Hong Kong). Dans un document japonais, les crochets sont 『』, et 「」 pour un titre à l’intérieur d’un autre (`cjk.bookTitleBrackets`). Une même source sert une édition moderne de Chine continentale et une édition classique. Deux noms ou titres côte à côte gardent leurs traits séparés.
+- **`:ruby[base]{rt="…"}`** compose les lectures au-dessus de la base (pinyin), ou à droite de chaque caractère (zhuyin, la valeur par défaut pour les lectures en bopomofo). Avec autant de lectures que de caractères, séparées par des espaces ou par `|`, chaque caractère reçoit la sienne et une ligne peut être coupée entre eux (mono ruby) ; `group`, ou un nombre qui ne correspond pas, compose une seule lecture centrée sur toute la base, qui n’est jamais coupée. `pos="over|under|right"` choisit le côté. La forme compacte `{紅樓|hóng|lóu}` (une lecture par `|`) ou `{紅樓|hónglóu}` (une lecture pour toute la base) se lit de la même façon, seulement quand la base contient un caractère han, kana ou bopomofo, en dehors des formules, du code et des attributs, si bien que `{x|x>0}` dans une prose latine reste du texte. Une barre oblique inverse devant l’accolade ou la barre verticale garde une forme chinoise comme texte : `\{紅|hóng}` et `{紅\|hóng}` impriment `{紅|hóng}`. Une base qui ouvre ou ferme une ligne s’aligne sur ce bord avec sa lecture. `mode=mono|group|jukugo` choisit la façon dont les lectures se placent sur la base (`mode=group` équivaut à `group`), et `align=center|jis|start` la façon dont est espacée une lecture plus courte que sa base. Dans un document japonais, la forme par caractère d’un mot de deux caractères ou plus (`{東京|とう|きょう}`, `rt="とう|きょう"`) est un ruby jukugo : chaque caractère garde sa lecture, qui peut déborder sur le caractère suivant du mot, la ligne peut être coupée entre eux, et les lectures sont espacées et débordent sur les kana selon `cjk.ruby.align` et `cjk.ruby.overhang` ; une seule lecture pour toute la base (`{紫陽花|あじさい}`, le `《》` d’Aozora) est un ruby de groupe ; `mode=mono` garde une lecture par caractère sans débordement sur les voisins.
+- **`:sideline[text]`** trace un trait latéral (傍線) à côté du texte, ponctuation et espaces compris : en dessous dans le texte horizontal et à droite dans le texte vertical. `style="solid|double|wavy|dotted"` (par défaut `solid`), `pos="over|under"` (dans le texte vertical, over correspond à la droite et under à la gauche ; `position=` fonctionne aussi). Il fonctionne dans toutes les écritures, y compris pour une expression anglaise soulignée.
+- **`:warichu[note]`** compose une note (双行夹注) sur deux rangées à la moitié de la taille du texte à l’intérieur de la ligne, la rangée supérieure se lisant en premier (celle de droite dans le texte vertical). Une note longue remplit ce qui reste de la ligne et se poursuit sur la ligne, la colonne ou la page suivante, avec au moins deux de ses caractères de chaque côté de la coupure (`cjk.warichu.minChars`). `open` et `close` l’encadrent de crochets à la taille du texte ; `cjk.warichu` fixe la taille, la couleur et les crochets par défaut (（） dans un document japonais). Une note en écriture latine est coupée entre ses mots.
+- **`:kunten[字]{kaeri="…" okuri="…" tate}`** compose les marques kanbun du dernier caractère entre les crochets : `kaeri` la marque de retour (レ, 一 二 三, 上 中 下, 甲 乙 丙, 天 地 人, et 一レ 上レ 甲レ 天レ ; les points de code ㆑ ㆒ … se lisent de la même façon), `okuri` les okurigana (les parenthèses d’Aozora `（ヲ）` sont supprimées), et l’indicateur `tate` le tatesen qui le relie au caractère suivant. Le texte n’est pas réordonné : les marques sont composées à demi-taille à côté de lui (`cjk.kunten`), et le texte copié se lit 學ビテ而時ニ習フ之ヲ, avec les okurigana et sans les marques de retour. Un ruby à l’intérieur convient aux caractères lus deux fois : `:kunten[:ruby[未]{rt="ザル" pos=under}]{kaeri="レ" okuri="ダ"}`.
+
+Le pas de ligne ne change jamais : les marques et les lectures se logent dans l’interlignage, et la composition émet un avertissement quand l’interligne d’un paragraphe est trop étroit pour elles (`cjkMarksExceedLeading`, `rubyExceedsLeading`, `kuntenExceedsLeading`), et quand les marques sous une ligne et les lectures au-dessus de la suivante ne tiennent pas dans l’interligne qu’elles partagent, dans un même paragraphe ou entre deux paragraphes. Donnez aux paragraphes annotés un style de paragraphe avec un interlignage plus grand. Les marques, les lectures et les notes sont dessinées dans les paragraphes, les titres, les éléments de liste, les citations et les encadrés, ainsi que dans les légendes, les cellules de tableau et les notes, dont l’interlignage est vérifié de la même façon ; dans les titres courants et les maquettes, le texte s’imprime sans elles. Avec `cjk.bookTitleMark: 'brackets'`, les 《》 d’un titre sont une ponctuation du texte : les légendes, les cellules, les notes, les lignes de la table des matières, les signets et les entrées d’index les conservent. Voir [Configuration › Marques, ruby et warichu](/fr/docs/configuration-east-asian#signes-ruby-et-warichu).
+
+
+### Sens du texte dans le balisage
+
+Un document s’écrit dans le sens qu’implique sa `locale` (`direction` dans la configuration : de droite à gauche pour l’arabe, le persan, l’ourdou ou l’hébreu). À l’intérieur, le balisage fixe le sens d’un bloc ou d’un passage de texte, pour une citation anglaise dans un livre arabe ou une citation arabe dans un livre anglais.
+
+- **Un titre ou un conteneur** : `{dir=ltr}` ou `{dir=rtl}` dans ses attributs, `# Introduction {dir=ltr}`, `:::paragraphs{dir=ltr}`, `:::callout{dir=rtl}`. Chaque bloc à l’intérieur d’un conteneur prend ce sens, jusqu’à un conteneur imbriqué ou un titre qui en fixe un autre. Un paragraphe simple, une liste ou une citation n’a pas d’attributs propres : enveloppez-le dans `:::paragraphs{dir=…}`. Les autres valeurs sont ignorées. Le `lang` d’un conteneur (`:::paragraphs{dir=ltr lang=en}`) nomme de la même façon la langue des blocs qu’il contient : leurs listes ordonnées sont numérotées avec les chiffres de cette langue.
+- **Un passage de texte** : `:ltr[…]` et `:rtl[…]` isolent leur texte (les LRI…PDI et RLI…PDI de l’algorithme bidirectionnel Unicode) : il est ordonné à l’intérieur, et le paragraphe qui l’entoure n’y voit qu’un caractère neutre. `{lang=…}` indique la langue du passage dans le HTML et le PDF. Un appel de note, un `:ref` ou une formule à l’intérieur fait partie de l’isolat, et les isolats s’imbriquent.
+
+```markdown
+:::paragraphs{dir=ltr}
+The opening of the *Nights* in Lane's translation.
+:::
+
+ترجمها :ltr[Edward William Lane]{lang=en} سنة ١٨٣٩.
+```
+
+Un bloc composé à l’inverse du sens du document garde son propre côté de début : son retrait, ses marqueurs de liste et la fin alignée de sa dernière ligne passent du côté où commence son texte. Utilisez un isolat quand un titre latin se termine par un caractère neutre (un point, une parenthèse) qui sinon se joindrait à l’arabe qui l’entoure. Les caractères de contrôle Unicode eux-mêmes (U+2066–2069, U+202A–202E, U+200E, U+200F, U+061C) sont aussi respectés. Dans l’éditeur du Sandbox, chaque ligne s’écrit dans le sens de sa première lettre. Voir [Mise en page arabe](/fr/docs/arabic-layout#sens-décriture-et-algorithme-bidirectionnel).
+
+
+## Formules mathématiques
+
+Les formules mathématiques font pleinement partie du format de document. Postext analyse `$…$` pour les formules en ligne et `$$…$$` pour les formules en display (en bloc), et les rend avec [MathJax](https://www.mathjax.org/) en mode SVG. Les mêmes tracés vectoriels alimentent les trois moteurs de rendu, si bien que l’aperçu canvas, l’export HTML et la sortie PDF sont identiques au pixel près, et le PDF reste entièrement vectoriel quel que soit le niveau de zoom.
+
+- **En ligne :** `$…$`. Reconnue dans tout bloc de texte (paragraphe, titre, citation, élément de liste). Ajoute à la ligne une seule boîte atomique et insécable ; Knuth-Plass la traite comme un mot qui ne doit pas être coupé. Si la hauteur naturelle de la formule devait rompre la boîte de ligne, elle est réduite uniformément pour préserver la grille de ligne de base ; les expressions très hautes relèvent du mode display.
+- **Display :** `$$…$$`. Soit sur une ligne à part (`$$\int_0^1 x^2\,dx$$`), soit répartie sur plusieurs lignes entre des marqueurs `$$` placés sur leur propre ligne. Rendue centrée sur la colonne et calée sur la grille de ligne de base avec des marges haute et basse configurables (`math.marginTop`, `math.marginBottom`) : exactement le même mécanisme de correction que celui des titres, si bien que le paragraphe qui suit la formule retombe sur la grille.
+- **Texte autour d’une formule en display :** une formule en display sur une ligne à part interrompt un paragraphe même sans ligne vide au-dessus. Le texte qui la précède est un paragraphe qui l’introduit ; le texte écrit juste sous le `$$` de fermeture, sans ligne vide, continue le paragraphe interrompu et est composé sans retrait de première ligne, comme TeX compose le « où … » qui suit une formule en display. Une formule séparée du texte qui la précède par une ligne vide (ou qui suit une liste, une citation ou un titre) n’interrompt rien : le texte qui la suit est un nouveau paragraphe, en retrait comme d’habitude, avec ou sans ligne vide (`math.indentAfterDisplay: false` le compose aussi sans retrait). Seule une formule en display entière interrompt un paragraphe : une seule formule sur la ligne, ou une clôture `$$` refermée avant la ligne vide suivante ; une ligne comme `$$a$$ and $$b$$` reste du texte. `math.keepWithLeadIn` garde une formule dans la colonne de la ligne qui l’introduit. (Jusqu’à postext 1.4, une ligne `$$…$$` sans ligne vide au-dessus était lue comme faisant partie du paragraphe et s’imprimait telle qu’elle était écrite.)
+- **Numéros d’équation :** `\label{eq:x}` dans une formule en display la numérote, dans l’ordre de lecture : (1), (2)… Une formule numérotée occupe toute la largeur de la colonne (ou la largeur intérieure de l’encadré), l’équation centrée et son numéro aligné à droite sur sa ligne. Dans un `align`, `gather`, `alignat`, `flalign` ou `eqnarray`, chaque rangée qui porte un `\label` reçoit son propre numéro, sauf si la rangée indique `\nonumber` ou `\notag`. Une formule sans `\label` n’est pas numérotée, comme `$$…$$` ne l’a jamais été. `\tag{…}` numérote toujours une formule avec le texte que vous fournissez (`\tag*{…}` sans les parenthèses) et n’est pas compté ; un `\label` à côté désigne ce texte. Le format, les numéros de chapitre ou de section (2.3) et les remises à zéro se règlent dans [`math.equationNumbering`](/fr/docs/configuration-lists-math#mathématiques). Placez le `\label` au niveau supérieur de la formule ou de sa rangée : pas à l’intérieur de `aligned`, `split` ou `cases`.
+- **Renvois aux équations :** `\eqref{eq:x}` dans le texte imprime le numéro comme le fait la formule, (3), et `\ref{eq:x}` le numéro seul, 3 ; tous deux sont des liens, comme tout [renvoi](/fr/docs/document-format-notes-references#renvois-et-ancres). `Eq.~\eqref{eq:x}` conserve le `~` comme le fait LaTeX : une espace insécable. `:ref{id="eq:x"}` et `@eq:x` impriment aussi (3). À l’intérieur d’une formule, `\eqref` et `\ref` impriment le numéro (sans lien). Une étiquette que rien ne définit imprime *?* et figure dans le panneau Vérifications.
+- **Échappement :** `\$` est un signe dollar littéral. Les délimiteurs `$` ou `$$` non appariés produisent une entrée `unclosedMath` dans le panneau Vérifications du Sandbox, avec une ancre vers la source qui y mène d’un clic.
+- **Légendes, notes et cellules de tableau** composent aussi les formules en ligne (depuis postext 1.19), dans la ligne avec le texte et avec l’alignement de la cellule, à la taille de l’extrait. Là, un `$` n’ouvre une formule que selon la règle de Pandoc : pas d’espace après le `$` ouvrant, pas d’espace avant celui de fermeture et pas de chiffre juste après celui-ci, si bien que les prix de *$5 to $10* restent du texte ; `\$` imprime un signe dollar, si bien qu’une même chaîne échappée se lit de la même façon dans le texte et dans un tableau. Le libellé d’une pastille n’accepte pas de formule. Jusqu’à postext 1.18, un `$` à ces endroits s’imprimait toujours tel quel.
+- **Erreurs :** une source TeX que MathJax rejette (macros non définies, erreurs de syntaxe) remonte sous la forme d’un avertissement `invalidMath`. La formule est remplacée par un petit espace réservé rouge pour que la géométrie de la mise en page reste valide.
+- **Configuration :** la section `math` de la configuration expose `enabled`, `fontSizeScale` (relatif à la taille du texte environnant : à 1,0, un em de la formule vaut cette taille, soit la taille du texte courant pour les formules en display et pour les formules en ligne dans le texte courant ; depuis postext 1.5, qui compose les formules environ 13 % plus petites que la 1.4, tandis que les paquets et les livres du Sandbox enregistrés par la 1.4 gardent leur taille ; voir [Taille des formules](/fr/docs/configuration-lists-math#mathématiques)), `color` (hérite de la couleur du texte courant quand elle n’est pas définie) et les marges des formules en display.
+- **Le moteur :** MathJax se charge à la demande. Le Sandbox et le worker de mise en page le démarrent eux-mêmes ; dans votre propre code, appelez `await initMathEngine()` avant `buildDocument`, sinon chaque formule est mise en page comme une boîte grise de substitution (voir [Démarrer le moteur mathématique](/fr/docs/configuration-lists-math#démarrer-le-moteur-mathématique)).
+
+```md
+The Euler identity $e^{i\pi}+1=0$ links the five fundamental constants.
+
+$$
+\int_0^{\infty} e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}
+$$
+```
+
+Une formule au milieu d’une phrase, et la phrase qui se poursuit après elle sans retrait :
+
+```md
+For a pendulum of length $L$ the period is
+$$T_0 = 2\pi\sqrt{L/g}$$
+where $g$ is the acceleration of free fall.
+```
+
+Des équations numérotées et les renvois qui y mènent :
+
+```md
+The energy is conserved,
+$$
+\begin{align}
+E &= T + V \label{eq:energy} \\
+  &= \tfrac12 m v^2 + m g h \nonumber
+\end{align}
+$$
+and Eq.~\eqref{eq:energy} holds at every instant.
+```
+
+**Théorèmes, lemmes et démonstrations.** Un style d’encadré avec `numbering` compte ses boîtes, comme le `amsthm` de LaTeX compte les environnements de théorème : chaque boîte s’ouvre sur son libellé et son numéro en gras, « **Théorème 2.** », le `title` de la clôture suivant le numéro entre parenthèses, « **Théorème 2** (Bradley–Terry)**.** », et un renvoi à son `{#id}` imprime « Théorème 2 » (`\ref{thm:x}` ou `style=number` le 2 seul). Les styles qui nomment un même compteur le partagent : un lemme qui suit un théorème est donc le Lemme 3. Le `endMark` d’un style de démonstration termine ses boîtes par ∎ ou □, aligné à droite sur la dernière ligne. Voir [Énoncés numérotés et démonstrations](/fr/docs/configuration-callouts#énoncés-numérotés-et-démonstrations) pour les styles.
+
+```md
+:::callout{type="theorem" #thm:main title="Bradley–Terry"}
+Every reward class holds one reparameterised reward.
+:::
+
+:::callout{type="proof"}
+Apply the projection of \eqref{eq:projection} to any member of the class.
+:::
+
+By :ref{id="thm:main"}, the objective is unchanged.
+```

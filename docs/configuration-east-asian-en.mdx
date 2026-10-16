@@ -6,8 +6,8 @@ export const metadata = {
   description: 'The cjk settings: line breaking, punctuation widths, spacing, the character grid, ruby and the marks of Chinese, Japanese and Korean text',
   lang: 'en',
   lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 7,
+  readingTime: '34 min',
+  order: 13,
   parent: 'configuration',
   plainSummary: "This page covers the settings for Chinese, Japanese and Korean text. They decide where a line may break and how wide the punctuation marks are. They set the space between these characters and Latin letters or numbers. They also control the small reading guides printed beside characters, and the marks drawn next to names and titles. The Chinese layout and Japanese layout guides show these settings at work.",
 };
@@ -320,7 +320,7 @@ In vertical text a Latin word or a long number is turned sideways, and a short n
 - In Japan the pairs `!!`, `!?`, `?!` and `??`, half-width or full-width, stand in one upright cell too (`すごい！？`), unless a Latin letter, a digit or a third mark touches them; a full-width pair is painted with the half-width marks. Small kana, ：；, “ ” (painted 〝〟) and ・ take the Japanese vertical forms (see [Japanese layout › Vertical forms](/en/docs/japanese-layout#vertical-forms)).
 - The measurer and every renderer find the same cells: the canvas paints the digits turned back upright and squeezed, the PDF likewise with the horizontal font, and the HTML wraps them in `text-combine-upright: all`.
 
-By hand, three inline marks override the setting in vertical text and change nothing in horizontal text (see [Document format › Orientation in vertical text](/en/docs/document-format#orientation-in-vertical-text)):
+By hand, three inline marks override the setting in vertical text and change nothing in horizontal text (see [Document format › Orientation in vertical text](/en/docs/document-format-inline#orientation-in-vertical-text)):
 
 ```markdown
 第:tcy[120]回、:upright[GDP]與:sideways[12]
@@ -351,7 +351,7 @@ Two layouts from Chinese practice, at 五号 (10.5 pt) with a 6 pt line gap (`li
 
 ### Marks, ruby and warichu
 
-The markup of [Chinese marks, ruby and warichu](/en/docs/document-format#chinese-marks-ruby-and-warichu) keeps its text in the paragraph: search, the contents, index anchors and copied text read the characters as written, and only what is drawn around them depends on these settings.
+The markup of [Chinese marks, ruby and warichu](/en/docs/document-format-inline#chinese-marks-ruby-and-warichu) keeps its text in the paragraph: search, the contents, index anchors and copied text read the characters as written, and only what is drawn around them depends on these settings.
 
 - **Emphasis dots** (着重号, 傍点; `:dots[…]`, and `*…*` on CJK characters under `emphasis: 'dots'`) take one mark per character, centred on it (the spacing of a justified line left out), never on punctuation or spaces: under the character in horizontal text, right of it in vertical text (clreq §5.3.1). `style` picks a filled dot, an open circle or a sesame dot, `fill="open"` draws the outline, `pos="over|under"` the side; `emphasisMark` sets what a mark leaves unset (in Japan a sesame over the text, right of it in vertical text). A sesame stands the same way on the sheet in both writing modes, and marks on the side of a ruby reading go outside it.
 - **Side lines** (傍線, `:sideline[…]{style pos}`) run beside the text, punctuation and spaces included: `solid`, `double`, `wavy` or `dotted`, under the text across the page and right of it down the page by default; two lines that meet each give up an eighth of an em. They work in any script.

@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Unités, couleurs et palette, polices personnalisées, visionneuse HTML, PDF et production pour l’impression, visionneuse Folio et calques de débogage',
   lang: 'fr',
   lastUpdated: '2026-10-10',
-  readingTime: '6 min',
-  order: 11,
+  readingTime: '41 min',
+  order: 18,
   parent: 'configuration',
   plainSummary: "Cette page présente les réglages communs à tout le livre et les réglages propres à chaque type de sortie. Elle explique comment écrire une mesure et une couleur, et comment nommer les couleurs d’une palette. Elle montre comment ajouter vos propres polices. Elle traite ensuite de la vue web, du fichier PDF, des fichiers que demande un imprimeur et du livre en 3D. La dernière section active les repères et les avertissements qui vous aident pendant le travail.",
 };
@@ -307,7 +307,7 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 // => undefined when everything matches the defaults
 ```
 
-Voir [Intégrer la visionneuse HTML](/fr/docs/configuration-programmatic-usage#intégrer-la-visionneuse-html) plus bas pour un exemple complet.
+Voir [Intégrer la visionneuse HTML](/fr/docs/configuration-html-folio-epub#intégrer-la-visionneuse-html) plus bas pour un exemple complet.
 
 
 ## Génération PDF (configuration)
@@ -395,7 +395,7 @@ const minimal  = stripPdfGenerationDefaults(config.pdfGeneration);
 // => undefined when everything matches the defaults
 ```
 
-Voir [Générer des PDF](/fr/docs/configuration-programmatic-usage#générer-des-pdf) plus bas pour la marche à suivre complète de l’export.
+Voir [Générer des PDF](/fr/docs/configuration-pdf-output#générer-des-pdf) plus bas pour la marche à suivre complète de l’export.
 
 
 ## Production pour l’impression (configuration)
@@ -930,7 +930,7 @@ interface FolioConfig {
       <td><code>binding.type</code></td>
       <td><code>FolioBindingType</code></td>
       <td><code>'hardcover'</code> ; <code>'folded'</code> sur un format de journal</td>
-      <td><code>hardcover</code> : reliure cartonnée (emboîtée), plats légèrement plus grands que les pages. <code>paperback</code> : dos collé (fraisé et collé), s’ouvre moins à plat. <code>sewn</code> : une couverture souple avec cahiers cousus. <code>layflat</code> : s’ouvre à plat, sans creux au petit fond. <code>saddleStitch</code> : feuilles pliées et agrafées dans le pli, comme un magazine ou une brochure ; pas de dos plat. <code>folded</code> (depuis postext 1.18) : un journal, feuilles pliées une fois et glissées les unes dans les autres sans rien pour les tenir ; pas d’agrafes, pas de dos ni de plat de couverture, et la première page est la une. Une suite <a href="/fr/docs/document-format#paper"><code>:::paper</code></a> avec un <code>shade</code> imprime une section, par exemple les pages économie, sur papier journal saumon.</td>
+      <td><code>hardcover</code> : reliure cartonnée (emboîtée), plats légèrement plus grands que les pages. <code>paperback</code> : dos collé (fraisé et collé), s’ouvre moins à plat. <code>sewn</code> : une couverture souple avec cahiers cousus. <code>layflat</code> : s’ouvre à plat, sans creux au petit fond. <code>saddleStitch</code> : feuilles pliées et agrafées dans le pli, comme un magazine ou une brochure ; pas de dos plat. <code>folded</code> (depuis postext 1.18) : un journal, feuilles pliées une fois et glissées les unes dans les autres sans rien pour les tenir ; pas d’agrafes, pas de dos ni de plat de couverture, et la première page est la une. Une suite <a href="/fr/docs/document-format-directives#paper"><code>:::paper</code></a> avec un <code>shade</code> imprime une section, par exemple les pages économie, sur papier journal saumon.</td>
     </tr>
     <tr>
       <td><code>binding.cover</code></td>
@@ -1049,7 +1049,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 // => { paper: { type: 'bible' } }
 ```
 
-Dans le Sandbox, ces réglages forment le groupe **Folio** du panneau Maquette (**Maquette → Folio → Visionneuse Folio (3D)**), et l’onglet Folio les montre au fil de vos modifications, sans relancer la mise en page du livre. Voir [Un livre en 3D](/fr/docs/configuration-programmatic-usage#un-livre-en-3d-postext-folio) pour la visionneuse elle-même, et [Format du document › `:::paper`](/fr/docs/document-format#paper) pour une suite de pages sur un autre papier.
+Dans le Sandbox, ces réglages forment le groupe **Folio** du panneau Maquette (**Maquette → Folio → Visionneuse Folio (3D)**), et l’onglet Folio les montre au fil de vos modifications, sans relancer la mise en page du livre. Voir [Un livre en 3D](/fr/docs/configuration-html-folio-epub#un-livre-en-3d-postext-folio) pour la visionneuse elle-même, et [Format du document › `:::paper`](/fr/docs/document-format-directives#paper) pour une suite de pages sur un autre papier.
 
 ## Débogage
 
@@ -1283,7 +1283,7 @@ Huit erreurs dans la configuration elle-même ne passent jamais sous silence, et
 - **Réglage de titre inconnu** : une clé que n’ont pas `headings`, `headings.balancing`, un niveau de titre, un style de titre ou un style de paragraphe : un `letterSpacng` mal orthographié, un `tracking` emprunté à un autre outil, un `level` sur un style de titre, un `fontStyle: 'italic'` sur un style de paragraphe (qui attend `italic: true`). Une tabulation est vérifiée de la même façon (un `leaders` au lieu de `leader`). Le moteur l’ignore (jusqu’à postext 1.4, il le faisait sans rien dire). `value` est la clé, `used` est vide, et `suggestion` nomme le réglage le plus proche, quand il n’en diffère que d’une ou deux lettres ou seulement par la casse (`unknownConfigKey`).
 - **Valeur de réglage inconnue** : un réglage qui accepte un mot parmi quelques-uns et qui en contient un autre, comme `direction: 'right'` (il accepte `auto`, `ltr` ou `rtl`). Le moteur lit la valeur par défaut à la place, et `used` nomme ce qu’elle donne : pour `direction`, le sens de la langue du document (`unknownConfigValue`). Un `align` de tabulation qui n’est aucun de ses quatre mots est lu comme `'start'`, et une `position` qui n’est ni une longueur, ni `'end'`, ni un pourcentage fait ignorer la tabulation (`used` vaut `'none'`). Les mots des réglages de bande dessinée sont vérifiés aussi ([Bande dessinée › Avertissements de bande dessinée](/fr/docs/comics#avertissements-de-bande-dessinée)) : `used` est la valeur à laquelle le réglage s’est résolu (la valeur par défaut propre d’un style de bulle, pour un style intégré), et `suggestion` nomme le mot le plus proche de la valeur, quand il y en a un. Le `level` et le `mode` du contrôle du contraste sont vérifiés de la même façon : `used` vaut `'AA'` ou `'auto'`.
 - **Numéros de ligne en texte vertical** : `lineNumbers.enabled: true` dans un document composé verticalement (`layout.writingMode: 'vertical-rl'`). Les pages verticales n’ont pas de numéros de ligne, et `used` vaut `false` (`lineNumbersUnsupported` ; voir [Numéros de ligne](/fr/docs/configuration-notes-references#numéros-de-ligne)).
-- **Habillage en texte vertical** : le `defaultPlacement.wrap` d’un type de ressource dans un document composé verticalement. Les pages verticales ne composent pas de texte à côté d’une figure, et `used` vaut `none` (`wrapUnsupported` ; voir [Format du document › Habillage](/fr/docs/document-format#habillage-du-texte)). Un `wrap` qui ne nomme aucun côté est une valeur de réglage inconnue.
+- **Habillage en texte vertical** : le `defaultPlacement.wrap` d’un type de ressource dans un document composé verticalement. Les pages verticales ne composent pas de texte à côté d’une figure, et `used` vaut `none` (`wrapUnsupported` ; voir [Format du document › Habillage](/fr/docs/document-format-resources#habillage-du-texte)). Un `wrap` qui ne nomme aucun côté est une valeur de réglage inconnue.
 
 Le Sandbox les liste dans le panneau **Vérifications** avec le chemin du réglage. Dans le code, `buildDocument` les place sur le document sous `configWarnings` (absent quand la configuration est propre), et `collectConfigWarnings(config)` les renvoie sans rien mettre en page :
 

@@ -6,8 +6,8 @@ export const metadata = {
   description: '脚注、行号、交叉引用与引用，目录和书末索引',
   lang: 'zh',
   lastUpdated: '2026-10-10',
-  readingTime: '4分钟',
-  order: 6,
+  readingTime: '19分钟',
+  order: 12,
   parent: 'configuration',
   plainSummary: "本页讲书中指向别处的那些部分的设置。脚注排在页面底部，行号排在页边。交叉引用指向某张图、某一节或某一页，引用指向你提到的文献。目录列出各章，书末的索引列出词条和它们所在的页码。每一节说明这些部分的样子和编号方式。",
 };
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## 脚注
 
-`footnotes`属性设置以`[^id]`引用的注释放在哪里、如何编号、外观如何。标记写法见[文档格式](/zh/docs/document-format#脚注)。
+`footnotes`属性设置以`[^id]`引用的注释放在哪里、如何编号、外观如何。标记写法见[文档格式](/zh/docs/document-format-notes-references#脚注)。
 
 ```ts
 interface FootnotesConfig {
@@ -378,7 +378,7 @@ lineNumbers: {
 
 - **从不计数**：标题、题注、表格和图片、独立公式、版面设计文字（章首、页眉）、脚注和章末注、目录、索引和参考文献的条目，以及空白页。
 - **标注框和散文。** 标注框中的文字不计数；`count: 'verse'`时散文也不计数，除非排它所用的段落样式写了`lineNumbers: true`；设了`lineNumbers: false`的样式从不计数（见[段落样式](/zh/docs/configuration-styles#段落样式)）。
-- **单首诗。** 诗的开始标记可以写`numbered=false`（它的诗行不计数）、`lineStart=N`（它的第一行为N，并从这里重新计数）和`interval=N`。`:::numbering{lines=N}`让下一个计入的行编为N，不论它在哪里。见[文档格式 › `:::verse`](/zh/docs/document-format#verse)和[`:::numbering`](/zh/docs/document-format#numbering)。
+- **单首诗。** 诗的开始标记可以写`numbered=false`（它的诗行不计数）、`lineStart=N`（它的第一行为N，并从这里重新计数）和`interval=N`。`:::numbering{lines=N}`让下一个计入的行编为N，不论它在哪里。见[文档格式 › `:::verse`](/zh/docs/document-format-directives#verse)和[`:::numbering`](/zh/docs/document-format-directives#numbering)。
 
 逐章排版的书中，`restart: 'document'`通过`continuation.lineNumber`把计数从一章带到下一章。`continuationAfter`根据文本数诗行；`count: 'all'`时计数取决于排版结果，所以宿主程序要传入上一章文档的`lastLineNumber`，沙盒就是这样做的。
 
@@ -399,7 +399,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // 未设置的�
 
 ## 交叉引用
 
-`crossRefs`属性设定[交叉引用](/zh/docs/document-format#交叉引用与锚点)在编号或页码前后印出的文字，以及未设`style`的`:ref`采用的样式。每个模板用`{n}`表示编号的位置；没有`{n}`的模板，编号放在文字之后，中间用不换行空格（`"§"`印为*§ 3.2*）。未设定的模板随文档语言：中文为`第{n}章` / `第{n}节` / `第{n}页`，英文为*chapter / section / p.*，西班牙文为*capítulo / sección / pág.*，法文、德文、意大利文、葡萄牙文、加泰罗尼亚文和荷兰文亦各有默认文字。
+`crossRefs`属性设定[交叉引用](/zh/docs/document-format-notes-references#交叉引用与锚点)在编号或页码前后印出的文字，以及未设`style`的`:ref`采用的样式。每个模板用`{n}`表示编号的位置；没有`{n}`的模板，编号放在文字之后，中间用不换行空格（`"§"`印为*§ 3.2*）。未设定的模板随文档语言：中文为`第{n}章` / `第{n}节` / `第{n}页`，英文为*chapter / section / p.*，西班牙文为*capítulo / sección / pág.*，法文、德文、意大利文、葡萄牙文、加泰罗尼亚文和荷兰文亦各有默认文字。
 
 ```ts
 interface CrossRefsConfig {
@@ -449,7 +449,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>允许行在以文字印出的引用内部的空格处断开：<code>[文字]{'{#id}'}</code>锚点的文字、标题或框的标题、自定的<code>text="…"</code>（指向图或表的引用也一样）。引用文字中的空格随行拉伸和压缩，引用仍是一个链接；其中的词不断词。在这样的引用文字里，数字、罗马数字或单个字母与它前面的词不分开（<code>Fig. 1a</code>、<code>plate IV</code>）。带编号或页码的引用文字（<em>section 3.2</em>、<em>p. 112</em>、<em>Fig. 1.7</em>、<em>Theorem 2</em>）从不断开，即使模板里是普通空格。<code>false</code>把每个引用文字排成一个词，中间不换行，与postext 1.27及更早版本相同。在<code>configVersion</code> 12之前保存、正文含有引用的配置，读取时采用<code>false</code>，各行留在原处（见<a href="/zh/docs/configuration-programmatic-usage#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。</td>
+      <td>允许行在以文字印出的引用内部的空格处断开：<code>[文字]{'{#id}'}</code>锚点的文字、标题或框的标题、自定的<code>text="…"</code>（指向图或表的引用也一样）。引用文字中的空格随行拉伸和压缩，引用仍是一个链接；其中的词不断词。在这样的引用文字里，数字、罗马数字或单个字母与它前面的词不分开（<code>Fig. 1a</code>、<code>plate IV</code>）。带编号或页码的引用文字（<em>section 3.2</em>、<em>p. 112</em>、<em>Fig. 1.7</em>、<em>Theorem 2</em>）从不断开，即使模板里是普通空格。<code>false</code>把每个引用文字排成一个词，中间不换行，与postext 1.27及更早版本相同。在<code>configVersion</code> 12之前保存、正文含有引用的配置，读取时采用<code>false</code>，各行留在原处（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。</td>
     </tr>
   </tbody>
 </table>
@@ -458,7 +458,7 @@ interface CrossRefsConfig {
 
 ## 引用
 
-`citations`属性选择引用样式，并决定引用和参考文献表的外观。标记语法见[引用与参考文献](/zh/docs/document-format#引用与参考文献)；样式由`postext-citeproc`包执行。
+`citations`属性选择引用样式，并决定引用和参考文献表的外观。标记语法见[引用与参考文献](/zh/docs/document-format-notes-references#引用与参考文献)；样式由`postext-citeproc`包执行。
 
 ```ts
 interface CitationsConfig {
@@ -502,7 +502,7 @@ interface CitationsConfig {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td><code>'apa'</code></td>
-      <td>内置样式的id（见<a href="/zh/docs/document-format#样式">样式</a>）或<code>'custom'</code>。样式决定引用和条目的内容：姓名、日期、顺序、标点，以及引用是否为注释。</td>
+      <td>内置样式的id（见<a href="/zh/docs/document-format-notes-references#样式">样式</a>）或<code>'custom'</code>。样式决定引用和条目的内容：姓名、日期、顺序、标点，以及引用是否为注释。</td>
     </tr>
     <tr>
       <td><code>customStyle</code></td>
@@ -550,7 +550,7 @@ interface CitationsConfig {
       <td><code>hyphenateNames</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>允许词典拆分所引作者的姓名。设为<code>false</code>时，参考文献中每个人（作者、编者、译者）的姓氏，以及以单个字符串给出的每个名称，只要以大写字母开头出现，都保持完整：在引用中、正文中和文献表中都一样，所以不会有哪一行以<code>(Lup-</code>结束。复姓逐个部分处理；作者姓Baker，并不会让<code>baker</code>这个词保持完整。见<a href="/zh/docs/configuration-text#不拆分的词">不拆分的词</a>。</td>
+      <td>允许词典拆分所引作者的姓名。设为<code>false</code>时，参考文献中每个人（作者、编者、译者）的姓氏，以及以单个字符串给出的每个名称，只要以大写字母开头出现，都保持完整：在引用中、正文中和文献表中都一样，所以不会有哪一行以<code>(Lup-</code>结束。复姓逐个部分处理；作者姓Baker，并不会让<code>baker</code>这个词保持完整。见<a href="/zh/docs/configuration-language#不拆分的词">不拆分的词</a>。</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -629,7 +629,7 @@ interface CitationsConfig {
 
 ## 目录
 
-`toc`属性配置`:::toc`指令印出的内容（参见[文档格式](/zh/docs/document-format#toc)）。目录由文档的**大纲**汇编而成，大纲包含每个标题及其编号和页码标签，以及每个`:::part`，所以目录会跟着各章变化：给某章改名、把它移到另一篇、修改它的作者，条目都会随之改变。一个条目依次是：单独一栏的标题编号、标题、前导符、右边缘的页码标签，然后是可选的副标题行；篇则是由`parts.design`设计的一行。
+`toc`属性配置`:::toc`指令印出的内容（参见[文档格式](/zh/docs/document-format-directives#toc)）。目录由文档的**大纲**汇编而成，大纲包含每个标题及其编号和页码标签，以及每个`:::part`，所以目录会跟着各章变化：给某章改名、把它移到另一篇、修改它的作者，条目都会随之改变。一个条目依次是：单独一栏的标题编号、标题、前导符、右边缘的页码标签，然后是可选的副标题行；篇则是由`parts.design`设计的一行。
 
 ```ts
 const config: PostextConfig = {
@@ -719,7 +719,7 @@ const config: PostextConfig = {
 
 ## 索引
 
-`index`属性配置`:::index`指令印出的内容（参见[文档格式](/zh/docs/document-format#索引)）：正文中用`:index[…]`和`:index{term="…"}`标记的词条，经过排序，按首字母分组（中文按拼音首字母或笔画数分组，日文按五十音行分组，参见`groupBy`），每条附上它所在的页码。一个条目由词条、分隔符和页码组成；其下的子条目逐级缩进一步，折行按`turnoverIndent`悬挂缩进，因此不会与子条目对齐。
+`index`属性配置`:::index`指令印出的内容（参见[文档格式](/zh/docs/document-format-notes-references#索引)）：正文中用`:index[…]`和`:index{term="…"}`标记的词条，经过排序，按首字母分组（中文按拼音首字母或笔画数分组，日文按五十音行分组，参见`groupBy`），每条附上它所在的页码。一个条目由词条、分隔符和页码组成；其下的子条目逐级缩进一步，折行按`turnoverIndent`悬挂缩进，因此不会与子条目对齐。
 
 ```ts
 const config: PostextConfig = {

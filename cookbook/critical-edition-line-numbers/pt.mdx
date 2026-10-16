@@ -28,13 +28,13 @@ Com `sideColumnRole: 'floats'`, a coluna estreita de um layout `oneAndHalf` nunc
 
 <Excerpt region="verse" />
 
-Um bloco `:::verse` mantém o poema como ele é escrito: cada linha de Markdown é um verso, uma linha em branco separa as estrofes e os espaços antes de um verso são o seu recuo ([`:::verse`](/pt/docs/document-format#verse)). A abertura do bloco indica o estilo do poema e `align=start`, que alinha o poema com a margem em vez de centralizá-lo pelo verso mais longo. Entre duas estrofes fica uma linha em branco da grade (`stanzaSpace`, uma linha). Os catorze versos curtos de Milton, o 4 entre eles, começam com dois espaços, e `indentStep: em(1)` faz deles 2 em. O espaço entre estrofes é descartado no alto de uma página, então a página 2 começa com o verso 15 no alto da mancha, e a troca de estrofe entre os versos 14 e 15 não aparece (veja “Erros comuns”).
+Um bloco `:::verse` mantém o poema como ele é escrito: cada linha de Markdown é um verso, uma linha em branco separa as estrofes e os espaços antes de um verso são o seu recuo ([`:::verse`](/pt/docs/document-format-directives#verse)). A abertura do bloco indica o estilo do poema e `align=start`, que alinha o poema com a margem em vez de centralizá-lo pelo verso mais longo. Entre duas estrofes fica uma linha em branco da grade (`stanzaSpace`, uma linha). Os catorze versos curtos de Milton, o 4 entre eles, começam com dois espaços, e `indentStep: em(1)` faz deles 2 em. O espaço entre estrofes é descartado no alto de uma página, então a página 2 começa com o verso 15 no alto da mancha, e a troca de estrofe entre os versos 14 e 15 não aparece (veja “Erros comuns”).
 
 ### 4 · O louro, o título e a nota preliminar
 
 <Excerpt region="opener" />
 
-O título de nível 1 imprime um design no lugar do próprio texto ([span e design avançado](/pt/docs/configuration-text#largura-e-design-avançado)). `{author}` vem do frontmatter, e a nota preliminar, de um atributo na linha do título, `# Lycidas {headnote="In this Monody …"}` ([atributos de título](/pt/docs/document-format#atributos-de-título)). O louro termina acima do antetítulo, então a profundidade da abertura vem dos textos abaixo dele: o antetítulo, a 50 mm do alto da mancha, o título e as quatro linhas da nota preliminar chegam até a linha 20 das 34 da página, e a primeira estrofe, de 14 versos, ocupa o resto. `minHeight` é um piso na mesma profundidade: corte a nota preliminar para três linhas e o poema continua começando na linha 21, enquanto sem o piso ele sobe para a linha 20. `marginBottom: pt(0)` tira do vão a margem padrão do título; com ela, o poema começaria na linha 22 e mandaria o verso 14 para a página 2. O design fica na coluna, e o louro, ancorado no canto superior direito da página, é pintado desde o refile do mesmo jeito: só o pé da coluna corta um design mantido nela.
+O título de nível 1 imprime um design no lugar do próprio texto ([span e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)). `{author}` vem do frontmatter, e a nota preliminar, de um atributo na linha do título, `# Lycidas {headnote="In this Monody …"}` ([atributos de título](/pt/docs/document-format#atributos-de-título)). O louro termina acima do antetítulo, então a profundidade da abertura vem dos textos abaixo dele: o antetítulo, a 50 mm do alto da mancha, o título e as quatro linhas da nota preliminar chegam até a linha 20 das 34 da página, e a primeira estrofe, de 14 versos, ocupa o resto. `minHeight` é um piso na mesma profundidade: corte a nota preliminar para três linhas e o poema continua começando na linha 21, enquanto sem o piso ele sobe para a linha 20. `marginBottom: pt(0)` tira do vão a margem padrão do título; com ela, o poema começaria na linha 22 e mandaria o verso 14 para a página 2. O design fica na coluna, e o louro, ancorado no canto superior direito da página, é pintado desde o refile do mesmo jeito: só o pé da coluna corta um design mantido nela.
 
 ### 5 · Notas ligadas aos números dos versos
 
@@ -48,7 +48,7 @@ As notas remetem aos números dos versos, então o poema não leva chamadas, e e
 
 <Excerpt region="heads" />
 
-Cada elemento é ancorado à página e filtrado por `parity` e `pages: 'body'` ([elementos de texto](/pt/docs/configuration-page-layout#elementos-de-texto)). A página par leva o autor, e a ímpar, `{chapterTitle}`, que diz LYCIDAS sobre o poema e NOTES sobre as notas, porque as notas abrem com um título próprio. O fólio fica na borda externa da mancha; as duas páginas de abertura, a 1 e a 8, o levam no pé.
+Cada elemento é ancorado à página e filtrado por `parity` e `pages: 'body'` ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). A página par leva o autor, e a ímpar, `{chapterTitle}`, que diz LYCIDAS sobre o poema e NOTES sobre as notas, porque as notas abrem com um título próprio. O fólio fica na borda externa da mancha; as duas páginas de abertura, a 1 e a 8, o levam no pé.
 
 ## Variações
 

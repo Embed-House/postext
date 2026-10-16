@@ -71,4 +71,4 @@ pageNotes: { "1": "第1页：书名页，上方三分之二是印刷红色的色
 - `scope: 'chapter'`列出的是文档在`:::bibliography`之前引用的文献，不是某个H1小节引用的文献。如果所有论文都写在同一个Markdown文件里，第二份表会重复第一篇的文献，第三份表会重复前两篇的。
 - 全书以每个代号的第一次定义为准。两位作者若都用`smith2001`指不同的书，后一篇会悄悄引用前一位作者的那本：给每位作者的代号加前缀，或者拿文献表和原稿核对。
 - 消歧在全书范围内进行。不同章里两部不同的Smith 2001年著作可能印成2001a和2001b，即使某一章的表里只有其中一部。
-- 开页的小标题默认会去掉上方的全部空白，对齐网格所需的不足一行的空白于是落在它下方：第10页页首的*Whose letters*离正文会比同页下方的*What the reader sees*更远。`headings.columnHeadSpace: 'remainder'`把这不足一行的空白留在小标题上方（[标题](/zh/docs/configuration-text#标题)）。它适合单栏的书：旁边没有另一栏，看不出小标题比页首略低。
+- 开页的小标题默认会去掉上方的全部空白，对齐网格所需的不足一行的空白于是落在它下方：第10页页首的*Whose letters*离正文会比同页下方的*What the reader sees*更远。`headings.columnHeadSpace: 'remainder'`把这不足一行的空白留在小标题上方（[标题](/zh/docs/configuration-headings#标题)）。它适合单栏的书：旁边没有另一栏，看不出小标题比页首略低。

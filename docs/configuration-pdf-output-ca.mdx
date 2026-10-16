@@ -1,0 +1,385 @@
+{/* docs/configuration-pdf-output-ca.mdx */}
+
+export const metadata = {
+  title: 'Ús programàtic: fitxers PDF',
+  sidebarTitle: 'Fitxers PDF',
+  description: "postext-pdf des del codi: instal·lació, l'API, els proveïdors de fonts al navegador i a Node, les fonts CJK, els bytes de recursos, el text vertical, els workers i els fitxers a punt per a impremta",
+  lang: 'ca',
+  lastUpdated: '2026-10-16',
+  readingTime: '22 min',
+  order: 20,
+  parent: 'configuration',
+  plainSummary: "Aquesta pàgina és per a qui escriu codi i vol un fitxer PDF. Ensenya a instal·lar el paquet de PDF i a convertir un llibre compost en un fitxer amb unes quantes línies. El paquet necessita els fitxers de les fonts, i la pàgina explica d'on els pot treure, en un navegador o en un servidor. Tracta les fonts per al xinès, el japonès i el coreà, les imatges, el text que va de dalt a baix i els enllaços. Acaba amb un exemple complet i amb fitxers a punt per a la impremta.",
+};
+
+# Ús programàtic: fitxers PDF
+
+
+## Generació de PDF
+
+La sortida PDF viu en un paquet separat, **`postext-pdf`**, perquè les integracions purament web no paguin el cost de `pdf-lib` ni de `@pdf-lib/fontkit`. El backend de PDF no torna a mesurar el text: consumeix exactament el mateix `VDTDocument` que passaries a `renderToCanvas` o `renderToHtml` i tradueix les seves coordenades en píxels a punts PDF. Per tant, les tres sortides tenen garantit que coincideixen en salts de línia, alçades de columna i col·locació de recursos.
+
+> **Al navegador, construeix el VDT a través del [Web Worker](/ca/docs/configuration-programmatic-usage#executar-la-composició-en-un-web-worker).** `renderToPdf` en si és ràpid un cop existeix el VDT — la part costosa és el pipeline de composició que el va produir. Executar aquest pipeline al worker manté la UI fluida i permet que una exportació PDF reutilitzi la mateixa memòria cau de mesura que ja va escalfar la previsualització en directe. Consulta [Exportar PDF des del worker](/ca/docs/configuration-programmatic-usage#exportar-pdf-des-del-worker) per al flux recomanat. Els exemples al fil principal que segueixen són la referència de *què signifiquen els arguments* — per a codi d'UI, construeix primer el VDT al worker i crida `renderToPdf` directament.
+
+### Instal·lació
+
+```bash
+npm install postext postext-pdf
+```
+
+`postext` és una *peer dependency* de `postext-pdf`. Cada versió de `postext-pdf` necessita el `postext` amb què es va publicar, o un de posterior de la mateixa versió major (el seu rang és `^` aquesta versió, `^1.5.0` per a la 1.5.0), perquè importa funcions que `postext` va afegir en aquesta versió. Actualitza'ls tots dos alhora i, en un CDN, fixa'ls a la mateixa versió.
+
+### API pública
+
+El paquet exposa un únic punt d'entrada i un grapat de tipus:
+
+- **`renderToPdf(doc, options): Promise<Uint8Array>`** — pren un `VDTDocument` (o els capítols d'un llibre, com una llista d'aquests) i retorna els bytes en brut del PDF.
+- **`PdfFontProvider`** — la signatura de callback `(family, weight, style, request?) => Promise<Uint8Array | Uint8Array[]>` que `renderToPdf` fa servir per demanar els bytes d'una font quan necessita incrustar una combinació family/weight/style nova. `request.codePoints` conté els caràcters que les pàgines componen en aquesta variant; la resposta és un fitxer, o diversos que junts formen la variant (consulta [Fonts xineses, japoneses i coreanes](#fonts-xineses-japoneses-i-coreanes)).
+- **`declaredFontFile(bytes, { unicodeRange?, order? }): PdfFontFile`** — un fitxer d'una variant que diu com el va declarar la pàgina: l'`unicode-range` de la seva regla `@font-face` i el seu lloc en l'ordre de declaració. Un `PdfFontFile` és un `Uint8Array` amb aquestes dues propietats opcionals (vegeu [Fonts xineses, japoneses i coreanes](#fonts-xineses-japoneses-i-coreanes)). Des de postext-pdf 1.30.
+- **`RenderToPdfOptions`** — `{ fontProvider, resourceBytes?, outlines?, accessible?, colorSpace?, pageNegative?, characterGrid?, onProgress?, onWarning?, rasterizeSvg?, harfbuzzWasm?, print?, outputProfile?, profileBaseUrl?, date? }`. `outlines`, `accessible` i `colorSpace` prenen el valor del `pdfGeneration` del document quan no es passen (vegeu [Generació de PDF (configuració)](/ca/docs/configuration-fonts-colors-viewers#generació-de-pdf-configuració)). `resourceBytes` es descriu a [Bytes de recursos i màsters d'impressió](#bytes-de-recursos-i-màsters-dimpressió); `onWarning`, a [Quines variants es demanen al proveïdor](#quines-variants-es-demanen-al-proveïdor) i a [Avisos del document](/ca/docs/configuration-programmatic-usage#avisos-del-document). Amb `characterGrid: true` el PDF imprimeix la retícula que `cjk.grid.show` dibuixa en pantalla i que altrament deixa fora (vegeu [Retícula de caràcters](/ca/docs/configuration-east-asian#retícula-de-caràcters)). `harfbuzzWasm` indica d'on carregar el `harfbuzz.wasm` de HarfBuzz (una URL, relativa a la pàgina, o els bytes del fitxer) per a un document amb text de dreta a esquerra o de lletres enllaçades; si no es passa, la còpia al costat del mòdul de postext-pdf i, després, la mateixa versió de harfbuzzjs a jsDelivr i a esm.sh. `print` rep els ajustos de sortida a impremta (norma PDF/X, perfil de sortida, negre, preflight) i, si no es passa, pren el `print` del document; amb una norma PDF/X, o amb `colorSpace: 'cmyk'`, cada color se separa amb el perfil ICC de sortida, els bytes del qual dona `outputProfile` (si no, es baixa de `profileBaseUrl`, per defecte la còpia de la carpeta `icc/` de postext a la CDN de npm). `date` (un `Date`, un temps en mil·lisegons o una data escrita, com el `mtime` de `createBundle`) és la data de creació i de modificació del fitxer i, en un PDF/X, les dates del seu paquet XMP i l'origen del seu identificador de document: el mateix document, generat dues vegades amb un mateix `date`, dona els mateixos bytes. Si no es passa, el fitxer porta l'hora de la crida. Una data no vàlida llança un error.
+- **`PdfWarning`** — un problema no fatal que es notifica per `onWarning`; es distingeix per `kind`: `'fontFallback'` (`PdfFontFallbackWarning`), una variant composta amb un altre tall de la seva família; `'missingGlyph'` (`PdfMissingGlyphWarning`), caràcters per als quals cap fitxer d'una variant té glif; `'variableFontDefaultInstance'` (`PdfVariableFontWarning`), una font variable demanada amb un pes diferent del de la seva instància per defecte; `'cffEmbeddedWhole'` (`PdfCffEmbeddedWholeWarning`), una font CFF de més de 2 MB incrustada sencera; `'complexShapingUnavailable'` (`PdfComplexShapingWarning`), text de dreta a esquerra o de lletres enllaçades dibuixat sense HarfBuzz, que no s'ha pogut carregar (`reason` diu on s'ha buscat), de manera que les marques de l'àrab queden mal col·locades; `'outputProfileUnavailable'` (`PdfPrintWarning`), un render CMYK el perfil de sortida del qual no s'ha pogut carregar i que s'ha convertit amb la fórmula simple; `'pageNegativeIgnored'` (`PdfPrintWarning`), el negatiu de pàgina que s'omet en un PDF/X-1a; o `'missingImage'`, una imatge sense bytes dibuixada com a marcador de posició (aquesta només es notifica a un `onWarning` propi; sense ell, els avisos de fonts van a `console.warn`).
+- **`decompressWoff2(bytes): Uint8Array`** — helper que converteix un fitxer WOFF2 en bytes TTF, que és el format que `pdf-lib` pot incrustar directament.
+- **`createPdfWorker(options?)`**, de `postext-pdf/worker` — el mateix render en un Web Worker; consulta [Renderitzar el PDF en un worker](#renderitzar-el-pdf-en-un-worker).
+
+### Exemple mínim
+
+```ts
+import { buildDocument } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+
+const vdt = buildDocument(
+  { markdown: '# Capítol u\n\nLa història comença aquí…' },
+  {
+    page: { sizePreset: '17x24' },
+    layout: { layoutType: 'double' },
+    bodyText: { fontFamily: 'EB Garamond', fontSize: { value: 9, unit: 'pt' } }, // 9 pt sobreescriu el valor per defecte de 8 pt
+  },
+);
+
+const pdfBytes = await renderToPdf(vdt, {
+  fontProvider: async (family, weight, style) => {
+    // Retorna els bytes TTF per a aquesta family/weight/style.
+    // Consulta la secció "Proveïdor de fonts" més avall per a una implementació real.
+    const res = await fetch(`/fonts/${family}-${weight}${style === 'italic' ? 'i' : ''}.ttf`);
+    return new Uint8Array(await res.arrayBuffer());
+  },
+});
+
+// `pdfBytes` és un Uint8Array — desa'l, baixa'l o envia'l per streaming.
+const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+const url = URL.createObjectURL(blob);
+window.open(url);
+```
+
+### Per què un proveïdor de fonts?
+
+`pdf-lib` incrusta fitxers de font reals dins del PDF — les fonts instal·lades al navegador no estan disponibles en el moment del render, i una font que només vas carregar per a la mesura en pantalla no basta, per si sola, per produir un PDF autocontingut. `renderToPdf` recorre les pàgines buscant cada variant que pinten (una per cada combinació `family|weight|style`; consulta [Quines variants es demanen al proveïdor](#quines-variants-es-demanen-al-proveïdor)) i invoca el teu proveïdor una sola vegada per combinació única. El proveïdor retorna un `Uint8Array` amb bytes **TTF o OTF**, o una llista d'aquests per a una variant servida en diversos fitxers (consulta [Fonts xineses, japoneses i coreanes](#fonts-xineses-japoneses-i-coreanes)); `pdf-lib` redueix els contorns TrueType als glifs usats i incrusta sencers els fitxers CFF (`.otf`). Les variants a les quals el proveïdor respon amb el mateix fitxer, com una rodona que substitueix la negreta que falta en una família, comparteixen una sola font incrustada. Una variant amb què cap pàgina arriba a dibuixar, com la del text d'una figura SVG que acaba dibuixada com a imatge, no s'escriu al fitxer.
+
+**Fes servir fonts estàtiques per pes, no una única font variable.** Google Fonts sovint serveix un únic WOFF2 variable per família que cobreix tot l'eix de pesos. `pdf-lib` només pot incrustar la instància per defecte d'un fitxer variable, de manera que un paràgraf en negreta es renderitzaria amb pes regular. Fontsource publica fitxers WOFF2 estàtics per pes que resolen això netament — és el patró que fa servir el sandbox. Un fitxer variable demanat amb un pes diferent del de la seva instància per defecte es notifica amb un avís `variableFontDefaultInstance`.
+
+**Cada paraula del text cau on la va posar la maquetació.** En els paràgrafs, els elements de llista, les cites, els requadres i la resta del text corregut, cada paraula comença a la posició que va mesurar el VDT, de manera que una diferència entre les amplades del navegador i les de la font incrustada mai no s'acumula al llarg d'una línia. Una línia sense format en línia es pinta com un sol objecte de text que mou el punt d'escriptura entre paraula i paraula; les línies justificades, les centrades i les que porten format es pinten paraula a paraula. Un caràcter per al qual la font no té glif, que el navegador va mesurar amb una altra font i que el PDF pinta com la caixa de glif absent de la font, no mou cap de les paraules que el segueixen, i es notifica una vegada per variant amb un avís `missingGlyph`. Un espai que la font no té, com l'espai fi de no separació o l'espai de xifra, pren l'amplada que li va donar el navegador, i els caràcters invisibles, com la unió de paraules i l'espai d'amplada zero, no es dibuixen. Un guionet de no separació (U+2011) que la font no té es dibuixa amb el guionet de la font (U+2010), o amb el seu guionet-menys si tampoc no té guionet, tal com el mostra el navegador; Open Sans i Outfit, entre d'altres, no tenen cap dels dos. Cap d'aquests casos no compta com a glif absent. Hi ha dues excepcions. Una línia amb lletres de dreta a esquerra es continua pintant com un sol tram (consulta [Llengües i escriptures](/ca/docs/configuration-language#llengües-i-escriptures)). El text que col·loca un disseny (capçaleres i peus correguts, obertures, títols de requadre i altres elements de disseny) es compon amb les amplades pròpies de la font incrustada, de manera que allà un glif que falta a la font continua movent la resta de la seva línia.
+
+### Quines variants es demanen al proveïdor
+
+`renderToPdf` recorre les pàgines en el mateix ordre en què les pinta i només demana al proveïdor les variants que dibuixen:
+
+- la variant regular d'un bloc que compon alguna línia, i la negreta, cursiva o negreta cursiva de cada tram que de debò porta aquest estil;
+- els trams dels xips, les marques de llista i el text dels dissenys (titolets, folis, bandes d'obertura i de part);
+- el text del peu, de la nota i de les cel·les de taula de cada recurs;
+- les variants que anomena el `<text>` d'una figura SVG, en incrustar-la. Si el proveïdor no pot servir cap variant d'una família, es passa a la família següent de la llista `font-family` de l'SVG.
+
+Així, mai no es demana la cursiva d'una família d'encapçalaments que ningú no inclina, i una figura sense nota no necessita les variants de la nota.
+
+Quan el proveïdor rebutja una variant, el render continua endavant. S'incrusta al seu lloc una altra variant de la mateixa família i s'emet un `PdfWarning`. La substituta és la primera variant que carrega, provant els nou pesos estàndard (de 100 a 900) en l'ordre que fa servir la selecció de fonts de CSS, que és també la variant que el navegador mostra a la previsualització:
+
+1. primer el mateix estil. Per a un pes entre 400 i 500, van primer els pesos fins a 500, després els més lleugers, del més proper cap avall, i després els més gruixuts, de 600 cap amunt. Per a un pes per sota de 400, van primer els més lleugers, del més proper cap avall, i després els més gruixuts. Per a un pes per sobre de 500, van primer els més gruixuts i després els més lleugers;
+2. després l'altre estil, cursiva per a la rodona i rodona per a la cursiva, en el pes demanat i en els altres pesos amb el mateix ordre.
+
+Per això una família sense cursives compon els seus trams en cursiva en rodona, una família que només publica 400 i 700 pren un 600 com a 700, i una família que publica un únic tall ho compon tot amb ell. Al proveïdor se li demana una variant cada vegada, en aquest ordre, i mai dues vegades la mateixa, de manera que mai no s'incrusta una variant que res no fa servir. A una família que el proveïdor no pot servir en absolut se li demanen aquestes 18 variants abans que el render falli.
+
+```ts
+const bytes = await renderToPdf(doc, {
+  fontProvider,
+  onWarning: (w) => {
+    // { kind: 'fontFallback', family: 'Oswald', weight: 700, style: 'italic',
+    //   fallback: { weight: 700, style: 'normal' }, reason: '…', message: '…' }
+    console.info(w.message);
+  },
+});
+```
+
+Sense `onWarning`, el missatge va a `console.warn`. El text conserva les seves posicions, que vénen del VDT i es van mesurar amb les variants que tenia el navegador, de manera que una substituta amb altres amplades es pot veure atapeïda o fluixa. Per corregir-ho, serveix la variant real. Un render només falla (`postext-pdf: failed to load font(s): …`) quan el proveïdor no pot servir cap variant d'una família en un pes estàndard, ni rodona ni cursiva.
+
+### Proveïdor de fonts al navegador (Fontsource + WOFF2)
+
+El sandbox distribueix `createPdfFontProvider()` (`packages/postext-sandbox/src/viewport/pdfFontProvider.ts`), que pots copiar a qualsevol app de navegador. L'essencial:
+
+```ts
+import type { PdfFontProvider } from 'postext-pdf';
+import { decompressWoff2 } from 'postext-pdf';
+
+const bytesCache = new Map<string, Promise<Uint8Array>>();
+
+function fontsourceId(family: string): string {
+  return family.toLowerCase().replace(/\s+/g, '-');
+}
+
+function fontsourceWoff2Url(
+  family: string,
+  weight: number,
+  style: 'normal' | 'italic',
+): string {
+  const id = fontsourceId(family);
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
+}
+
+export function createPdfFontProvider(): PdfFontProvider {
+  return async (family, weight, style) => {
+    const key = `${family}|${weight}|${style}`;
+    const cached = bytesCache.get(key);
+    if (cached) return cached;
+
+    const promise = (async (): Promise<Uint8Array> => {
+      const url = fontsourceWoff2Url(family, weight, style);
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) throw new Error(`font fetch failed: ${res.status} ${url}`);
+      // pdf-lib necessita bytes TTF, així que descomprimim l'embolcall WOFF2 al client.
+      return decompressWoff2(new Uint8Array(await res.arrayBuffer()));
+    })();
+
+    bytesCache.set(key, promise);
+    return promise;
+  };
+}
+```
+
+Una versió de producció hauria de, a més:
+
+- **Consultar els pesos disponibles** (via `https://api.fontsource.org/v1/fonts/{id}`) i ajustar el pes demanat al més proper que la família distribueix realment, perquè una petició de `weight: 600` sobre una família que només té `{400, 700}` continuï funcionant.
+- **Passar d'italic a normal** quan una família no tingui tallada la itàlica per al pes sol·licitat, en lloc de fer fallar tot el render.
+- **Reutilitzar la memòria cau entre renders** (mantén `bytesCache` a nivell de mòdul, no per crida) perquè regenerar el PDF després d'un canvi de configuració sigui pràcticament gratuït.
+
+### Fonts xineses, japoneses i coreanes
+
+Una font CJK no ve en un sol fitxer petit. Fontsource distribueix Noto Serif SC en un centenar de fitxers per pes, cadascun amb una part dels caràcters i declarat al full d'estils de la família amb el seu `unicode-range` (`@fontsource/noto-serif-sc/400.css`); el navegador baixa els fitxers que toca el text de la pàgina. El fitxer `latin` que demana el proveïdor de dalt no té ni un sol caràcter han, i els subconjunts amb nom estan incomplets: al `chinese-simplified` de Noto Serif SC li falta 釵, i el `chinese-traditional` de Noto Serif TC no té cap dels signes d'amplada completa （），！？：；.
+
+Per això un proveïdor pot respondre a una variant amb diversos fitxers. `renderToPdf` li passa els caràcters que les pàgines componen en aquesta variant (`request.codePoints`), reunits de tots els capítols abans de dibuixar res, i el proveïdor retorna els fitxers que els contenen, en l'ordre en què el navegador els consulta. Cada fitxer s'incrusta com un subconjunt propi i cada caràcter es dibuixa amb el primer fitxer que té glif per a ell: un capítol que toca 60 fragments incrusta 60 subconjunts petits. Si es torna a demanar la variant, per exemple per al text d'una figura SVG, només es demanen els caràcters que falten als seus fitxers. Un proveïdor que retorna un sol `Uint8Array` funciona com abans. El proveïdor del sandbox llegeix el full d'estils de Fontsource del pes i l'estil i baixa els fitxers els intervals dels quals contenen el text; el seu nucli:
+
+```ts
+import type { PdfFontProvider } from 'postext-pdf';
+import { decompressWoff2 } from 'postext-pdf';
+
+type Slice = { url: string; ranges: Array<[number, number]> };
+
+async function fontsourceSlices(family: string, weight: number, style: 'normal' | 'italic'): Promise<Slice[]> {
+  const id = family.toLowerCase().replace(/\s+/g, '-');
+  const cssUrl = `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/${weight}${style === 'italic' ? '-italic' : ''}.css`;
+  const css = await (await fetch(cssUrl)).text();
+  return [...css.matchAll(/@font-face\s*{([^}]*)}/g)].map(([, rule]) => ({
+    url: new URL(/url\(\.?\/?([^)]+\.woff2)\)/.exec(rule)![1], cssUrl).href,
+    ranges: /unicode-range:\s*([^;]+);/.exec(rule)![1].split(',').map((part) => {
+      const [lo, hi = lo] = part.trim().slice(2).split('-');
+      return [parseInt(lo, 16), parseInt(hi, 16)] as [number, number];
+    }),
+  }));
+}
+
+export const sliceFontProvider: PdfFontProvider = async (family, weight, style, request) => {
+  // Where ranges overlap, the browser tries the last rule first.
+  const slices = (await fontsourceSlices(family, weight, style)).reverse();
+  const picked = new Set<Slice>();
+  for (const cp of request?.codePoints ?? []) {
+    const slice = slices.find((s) => s.ranges.some(([lo, hi]) => cp >= lo && cp <= hi));
+    if (slice) picked.add(slice);
+  }
+  if (picked.size === 0) picked.add(slices[0]!);
+  return Promise.all(slices.filter((s) => picked.has(s)).map(async (s) =>
+    decompressWoff2(new Uint8Array(await (await fetch(s.url)).arrayBuffer()))));
+};
+```
+
+Una família llatina passa pel mateix codi: un text en anglès rep només el seu fitxer `latin`, un en txec rep `latin` i `latin-ext`.
+
+Un navegador no es queda amb el primer fitxer que té glif. Compon cada caràcter amb el fitxer declarat en darrer lloc entre aquells l'`unicode-range` dels quals el conté, i els fitxers d'una família se solapen: Fontsource repeteix les lletres ASCII de Noto Serif JP al fitxer `latin` i als fragments numerats. Entre dos caràcters compostos amb dos fitxers no hi ha kerning, de manera que el fitxer decideix l'amplada: Chrome 154 compon `Shift_JIS` amb 4,25 quadratins d'amplada quan els fragments es declaren després de `latin`, i el fitxer `latin` tot sol, que aplica kerning a `t_` i a `_J`, el compon amb 4,32. Des de postext-pdf 1.30 un proveïdor pot dir com va declarar la pàgina cada fitxer: `declaredFontFile(bytes, { unicodeRange, order })` retorna els mateixos bytes amb l'`unicode-range` de la regla del fitxer, tal com l'escriu CSS, i el lloc d'aquesta regla entre les de la variant, un nombre qualsevol que creix amb l'ordre de declaració (el més gran és el declarat en darrer lloc).
+
+```ts
+import { declaredFontFile } from 'postext-pdf';
+
+declaredFontFile(bytes, { unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153', order: 0 });
+```
+
+Quan els fitxers d'una variant porten els seus intervals, en un document compost en la seva pròpia llengua ([`bodyText.shapingLanguage: 'document'`](/ca/docs/configuration-text#text-de-cos), el valor per defecte) cada caràcter es dibuixa amb el fitxer declarat en darrer lloc l'interval del qual el conté i que té glif per a ell, tal com tria un navegador entre les regles `@font-face`, i una lletra i els seus signes combinants queden en un mateix fitxer. Un caràcter que cap interval no conté es dibuixa amb el primer fitxer que té glif. Els fitxers sense aquestes dades, i tots els d'un document amb `'host'`, es llegeixen en l'ordre donat, com abans, de manera que un proveïdor que descriu els seus fitxers continua posant primer el declarat en darrer lloc. A una variant descrita així se li tornen a demanar tots els caràcters que no se li havien demanat abans, perquè els pot tenir un fitxer declarat més tard. El proveïdor del sandbox descriu els seus fitxers.
+
+Els caràcters per als quals cap fitxer de la variant té glif es dibuixen amb el glif `.notdef` de la font (una caixa buida en la majoria), i `renderToPdf` els notifica una vegada per variant quan acaba de dibuixar les pàgines:
+
+```ts
+// { kind: 'missingGlyph', family: 'Noto Serif TC', weight: 400, style: 'normal',
+//   characters: ['，', '！', '？'], message: '…' }
+```
+
+El Sandbox mostra aquests avisos, i els dos següents, al seu tauler Revisió després de cada PDF que genera. Si canvien el llibre, la seva configuració o els seus recursos, es marquen com d'un PDF anterior fins que el següent els substitueix; obrir un altre llibre els retira.
+
+- **La negreta necessita un fitxer estàtic per pes.** Fontsource serveix cada pes de Noto Serif SC i TC en fitxers estàtics propis, de manera que la negreta funciona al Sandbox. Els fitxers de Google Fonts (`NotoSerifSC[wght].ttf`, 25 MB) són fonts variables: pdf-lib incrusta la seva instància per defecte, de manera que una variant 700 s'imprimeix amb pes 400, i `renderToPdf` ho notifica com a `variableFontDefaultInstance`. Per a un paquet, treu una instància estàtica per pes amb fontTools (`fonttools varLib.instancer NotoSerifSC[wght].ttf wght=700`) i redueix-la als caràcters del llibre amb `pyftsubset`.
+- **Fes servir les versions TrueType.** Source Han Serif i els fitxers `.otf` de Noto Serif CJK tenen contorns CFF, que postext-pdf incrusta sencers, de 8 a 25 MB per pes; una font CFF de més de 2 MB es notifica com a `cffEmbeddedWhole`. Les versions TrueType (Google Fonts, Fontsource) es redueixen als glifs usats. Per al japonès, Noto Serif JP i Noto Sans JP (Google Fonts, o els fragments numerats de Fontsource), Shippori Mincho, Zen Old Mincho i BIZ UDMincho són TrueType; Source Han Serif JP i els fitxers `.otf` `JP` de Noto Serif CJK són CFF.
+- **Formes japoneses d'una font panCJK.** Un mateix punt de codi d'un caràcter han, de la puntuació o de les cometes es pot dibuixar d'una manera al Japó i d'una altra a la Xina, i una font panCJK (Source Han, Noto CJK) té totes dues. El PDF compon un document japonès (`locale: 'ja'`), i un aïllat en japonès (`:ltr[…]{lang=ja}`) en qualsevol document, amb el sistema d'idioma OpenType `JAN `, de manera que la funció `locl` de la font imprimeix les formes japoneses que el llenç i l'HTML imprimeixen gràcies a `lang`. Un aïllat en un altre idioma dins d'un llibre japonès es compon amb les formes d'aquest idioma (les de la font per defecte, per al xinès, amb `'host'`) i s'etiqueta com un `Span` amb el seu `/Lang`. Amb [`bodyText.shapingLanguage: 'document'`](/ca/docs/configuration-text#text-de-cos), el valor per defecte des de postext 1.30, tot document i tot aïllat es compon en la seva pròpia llengua (`ZHS` per al xinès simplificat), tal com el va mesurar la maquetació; amb `'host'`, els documents xinesos i els altres es componen amb les formes per defecte de la font, com fins ara. Una font feta per al japonès, com Noto Serif JP, ja té formes japoneses per defecte; tot i així posa les “ ” del text japonès en la seva forma `JAN `.
+
+Un caràcter que falta en una família no es pren d'una altra: Noto Serif TC no manlleva res de Noto Serif SC. Resol la cobertura en preparar els fitxers de font; l'exemple de 红楼梦 copia als seus subconjunts TC els glifs que els falten des de la font SC.
+
+### Proveïdor de fonts al servidor (Node, fitxers locals)
+
+A Node pots saltar-te completament el pas WOFF2 i llegir fitxers TTF/OTF des del disc:
+
+```ts
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { PdfFontProvider } from 'postext-pdf';
+
+const FONT_DIR = '/ruta/a/fuentes';
+
+function filename(family: string, weight: number, style: 'normal' | 'italic'): string {
+  const slug = family.replace(/\s+/g, '');
+  const styleSuffix = style === 'italic' ? 'Italic' : '';
+  const weightName =
+    weight >= 700 ? 'Bold'
+    : weight >= 600 ? 'SemiBold'
+    : weight >= 500 ? 'Medium'
+    : weight >= 300 ? 'Light'
+    : 'Regular';
+  return `${slug}-${weightName}${styleSuffix}.ttf`;
+}
+
+export const localFontProvider: PdfFontProvider = async (family, weight, style) => {
+  const buf = await readFile(join(FONT_DIR, filename(family, weight, style)));
+  return new Uint8Array(buf);
+};
+```
+
+### Bytes de recursos i màsters d'impressió
+
+`resourceBytes(fileId)` retorna els bytes en brut d'una imatge, i el backend els identifica pel seu contingut:
+
+- PNG, JPEG, GIF i WebP s'incrusten com a imatges;
+- el marcatge SVG es dibuixa com a traçats vectorials, amb el seu `text` compost com a text real amb les fonts incrustades del document, o es rasteritza a 600 ppp al navegador quan fa servir funcions que queden fora del subconjunt vectorial. Un `<style>` que només conté regles `@font-face` (variants que va incrustar l'autor) s'omet i la figura continua sent vectorial (des de postext-pdf 1.25); qualsevol altre full d'estil la converteix en ràster, fet amb les variants que anomena el seu text incrustades des de `fontProvider` (llevat que `diagramStyle.inlineFonts` o el `svg.inlineFonts` del recurs sigui `false`);
+- d'un PDF s'incrusta tal qual la primera pàgina, com un XObject de formulari.
+
+Cada imatge es desa una sola vegada al fitxer, encara que es dibuixi moltes vegades. Un SVG dibuixat amb traçats vectorials es converteix en un XObject de formulari que pinta cada pàgina, de manera que un marc o un logotip en el disseny de pàgina d'un document de trenta pàgines s'escriu una vegada i no trenta; cada pàgina més afegeix uns centenars de bytes. Fins a postext-pdf 1.4 cada pàgina portava la seva pròpia còpia dels traçats.
+
+Una figura SVG pot anomenar un **màster d'impressió** a `svg.pdfFileId`: un PDF d'una sola pàgina amb la mateixa figura, normalment l'original del qual es va exportar l'SVG. `renderToPdf` demana primer a `resourceBytes` l'identificador del màster. Incrusta aquesta pàgina en lloc de l'SVG, amb les seves fonts, degradats i espais de color intactes, allà on es dibuixi l'SVG: com a figura, com a imatge d'una cel·la de taula (`TableCell.image`), com a imatge de disseny o com a icona d'una caixa (també el seu `marker`). El VDT porta l'identificador del màster en cadascun d'aquests usos (`svg.pdfFileId` al recurs de la figura, `pdfFileId` a la imatge d'una cel·la i en un bloc d'imatge de disseny), de manera que en un llibre tots els capítols reben el màster. Els backends canvas i HTML continuen dibuixant l'SVG. En canvi, es fan servir els bytes del mateix SVG en tres casos: falta el màster, no és un PDF, o la tinta única està activa (`diagramStyle.singleInk` només recoloreja marcatge SVG).
+
+```ts
+const resources: Resource[] = [{
+  id: 'mapa', typeId: 'figure', kind: 'svg', createdAt: 0, updatedAt: 0,
+  svg: { fileId: 'mapa.svg', width: 800, height: 600, pdfFileId: 'mapa.pdf' },
+}];
+const archivos = new Map([['mapa.svg', bytesSvg], ['mapa.pdf', bytesMasterPdf]]);
+const pdf = await renderToPdf(buildDocument({ markdown, resources }, config), {
+  fontProvider,
+  resourceBytes: (fileId) => archivos.get(fileId),
+});
+```
+
+Un amfitrió també pot retornar els bytes del màster per a l'identificador del mateix SVG, com fa `bundleResourceBytes`; les dues formes funcionen.
+
+### Text vertical en el PDF
+
+Una pàgina vertical (`layout.writingMode: 'vertical-rl'`) es dibuixa a través d'un marc girat un quart de volta, tal com la pinta el canvas, i el seu text es compon columna avall:
+
+- **Els caràcters drets** es mostren amb una segona font Type0 del mateix fitxer incrustat: la mateixa CIDFont, les mateixes amplades i el mateix mapa ToUnicode, amb `Encoding /Identity-V` (mode vertical). Un tram de caràcters és un sol objecte de text els glifs del qual baixen un quadratí per la columna per si mateixos (`DW2 [880 −1000]`), de manera que els lectors seleccionen i extreuen una columna com una línia. Els glifs es conformen amb `vert` i `fwid` d'OpenType, que donen la seva forma vertical als parèntesis, les cometes, els signes de pausa de la Xina continental, els punts suspensius i els guions llargs; un caràcter que queda dret tal qual conserva el seu glif horitzontal. No s'incrusta res de la font dues vegades.
+- **Les paraules llatines i els números llargs** van ajaguts amb la font horitzontal; **un número en una casella** queda dret, estrenyit fins al quadratí si és més ample; un signe sense forma vertical a la font es gira o es desplaça, com al canvas.
+- **L'espaiat** entre caràcters s'escriu com a números de `TJ`, que en mode vertical baixen el punt d'escriptura per la columna.
+- **Cada línia vertical** porta un `/ActualText` amb el seu text, de manera que copiar i extreure el text la llegeixen tal com es va escriure. `pdftotext` i pdf.js llegeixen les columnes de dalt a baix i de dreta a esquerra; pdf.js comença una línia nova en un número compost en una casella.
+- **Els enllaços, els marcadors i les destinacions** es porten al plec: un enllaç sobre una línia vertical és un rectangle alt i estret, i un marcador obre la pàgina a dalt de la columna del seu encapçalament.
+- **Un PDF etiquetat** declara el sentit d'escriptura al seu element `Document` (l'atribut de maquetació `WritingMode /TbRl`, que hereten tots els elements); la validació PDF/UA-1 (veraPDF) passa en un capítol vertical.
+- **Visors:** Acrobat, Previsualització, Chrome (PDFium), pdf.js i Poppler pinten les fonts verticals. Un llibre enquadernat per la dreta (`page.binding`) demana a més als visors que mostrin els plecs de dreta a esquerra (`/Direction /R2L`, `/PageLayout /TwoPageRight`); Acrobat i Foxit ho segueixen, Chrome no.
+
+Un capítol de 43 pàgines compost en Noto Serif TC (els caràcters del llibre, TrueType) ocupa uns 820 KB, gairebé tot dels dos subconjunts de la font.
+
+### Enllaços en el PDF
+
+Les paraules d'un enllaç Markdown (consulta [Format del document › Enllaços](/ca/docs/document-format-inline#enllaços)) es converteixen en anotacions d'enllaç URI, una per cada tram de paraules enllaçades d'una línia. Cada anotació cobreix la caixa de la línia i no porta vora. En un render accessible, cada tram és un element `Link` el `/Contents` del qual és el seu text. Només s'enllacen destinacions absolutes `http:`, `https:`, `mailto:`, `tel:` i `ftp:`, perquè una URL relativa no té base dins d'un PDF. Els caràcters que queden fora de l'ASCII imprimible es codifiquen amb percentatges. Les cites `:ref` i les files de l'índex conserven els seus enllaços interns al document.
+
+### Exemple complet al navegador: compondre, renderitzar, baixar
+
+Ajuntant-ho tot — construir el VDT, renderitzar a PDF i disparar la baixada des del navegador:
+
+```tsx
+import { buildDocument, createMeasurementCache } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+import { createPdfFontProvider } from './pdfFontProvider';
+
+const fontProvider = createPdfFontProvider();
+
+export async function downloadPdf(markdown: string, config: PostextConfig) {
+  const cache = createMeasurementCache();
+  const vdt = buildDocument({ markdown }, config, cache);
+
+  const bytes = await renderToPdf(vdt, { fontProvider });
+
+  const blob = new Blob([bytes.slice().buffer], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'document.pdf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+```
+
+**Important:** crida `ensureConfigFontsLoaded(config)` (o equivalent) *abans* de `buildDocument` quan la teva configuració faci referència a web fonts. La maquetació es mesura amb les mètriques de font que el navegador tingui en aquell moment per a aquella família — si la font real encara no ha arribat, el VDT es mesura amb una de reserva i el PDF no coincidirà amb la sortida de canvas o HTML. El sandbox ho fa explícitament abans de cada render (vegeu `packages/postext-sandbox/src/viewport/PdfViewport.tsx`).
+
+### Exemple en directe: un PDF al navegador
+
+El flux complet de dalt, executant-se al navegador: el pen importa `postext` i `postext-pdf` des d'un CDN, carrega les fonts web, construeix el document, incrusta els talls de Fontsource a través del proveïdor de fonts i lliura els bytes a un enllaç que obre el fitxer en una pestanya nova i a un altre de baixada. El PDF resultant té els mateixos salts de línia que la sortida en canvas i HTML, fonts incrustades reals i marcadors d'esquema.
+
+<CodePenExample name="render-pdf" title="Postext · generar un PDF al navegador" description="Compon un document markdown amb postext i renderitza'l a PDF amb postext-pdf." height={600} />
+
+### Renderitzar el PDF en un worker
+
+`postext-pdf/worker` treu `renderToPdf` del fil principal. El worker escriu el text, les figures vectorials, l'arbre d'estructura i el mateix fitxer. Hi ha dues tasques que necessiten la pàgina, així que el worker les demana al fil principal: baixar les fonts i rasteritzar un SVG a través d'un `<img>`. En un llibre de centenars de pàgines el render triga segons que, altrament, congelarien la pàgina; per a unes poques pàgines, cridar directament `renderToPdf` és més senzill.
+
+```ts
+import { createPdfWorker } from 'postext-pdf/worker';
+
+const pdfWorker = createPdfWorker();
+const bytes = await pdfWorker.render(docs, {
+  fontProvider,                                     // s'executa en aquest fil
+  resourceBytes: new Map([['mapa.svg', bytesSvg]]), // un Map; els seus buffers passen al worker
+  onProgress: ({ phase, pages, totalPages }) => mostrarProgreso(phase, pages, totalPages),
+  onWarning: (w) => console.info(w.message),
+});
+pdfWorker.dispose();
+```
+
+- `render(docs, options)` accepta un document o la llista de documents dels capítols d'un llibre. Accepta les opcions de `renderToPdf`, amb dues diferències. `resourceBytes` és un `Map<string, Uint8Array>` els buffers del qual es transfereixen, així que passa còpies dels bytes que vulguis conservar. `rasterizeSvg`, si s'indica, s'executa al fil principal; per defecte ho fan l'`Image` i el canvas de la mateixa pàgina.
+- Un handle renderitza un document cada vegada. `dispose()` acaba el worker i rebutja qualsevol render que continuï pendent.
+- `createPdfWorker({ worker })` accepta un `Worker` que creïs tu, per a les eines de build que controlen les URL dels workers. Aquest worker ha d'executar `postext-pdf/worker/entry`.
+
+**Des d'un CDN.** Per defecte, l'script del worker es carrega des de la URL del mateix paquet (`new URL('./pdf.worker.js', import.meta.url)`). Una pàgina d'un altre origen pot no poder arrencar-lo: importat des d'`esm.sh`, `createPdfWorker()` llança `Failed to construct 'Worker': Script at 'https://esm.sh/postext-pdf@…/pdf.worker.js' cannot be accessed from origin …`. Arrenca en el seu lloc un worker de mòdul del mateix origen que importi l'entrada (si fixes una versió, fixa la mateixa a les dues URL):
+
+```js
+import { createPdfWorker } from 'https://esm.sh/postext-pdf/worker';
+
+const entrada = URL.createObjectURL(new Blob(
+  ["import 'https://esm.sh/postext-pdf/worker/entry';"],
+  { type: 'text/javascript' },
+));
+const pdfWorker = createPdfWorker({ worker: new Worker(entrada, { type: 'module' }) });
+```
+
+El worker de composició de `postext/worker` necessita el mateix embolcall al voltant de `postext/worker/entry` (consulta [Executar la composició en un Web Worker](/ca/docs/configuration-programmatic-usage#executar-la-composició-en-un-web-worker)).
+### PDF a punt per a impremta
+
+Per a fluxos de treball d'impressió en producció, ajusta aquestes opcions de configuració abans de renderitzar:
+
+- **`page.cutLines.enabled: true`** — afegeix àrea de sang i marques de tall al voltant del trim, i dona a cada pàgina una TrimBox i una BleedBox. Vegeu [Marques de tall](/ca/docs/configuration-page-layout#marques-de-tall).
+- **`print: { standard: 'pdfx4', outputProfile: 'fogra51' }`** (o `'pdfx1a'`) — un fitxer PDF/X amb la condició de sortida, la identificació i les caixes que revisa una impremta; cada color i cada imatge RGB separats amb el perfil ICC, el 100 % K sobreimprès i les masses negres grans en negre enriquit. Vegeu [Producció per a impremta (configuració)](/ca/docs/configuration-fonts-colors-viewers#producció-per-a-impremta-configuració).
+- **`colorSpace: 'cmyk'`** (o `pdfGeneration: { forceColorSpace: true, colorSpace: 'cmyk' }`) — la mateixa separació sense la identificació PDF/X (les marques de tall van sempre en color de registre). Els màsters d'impressió en PDF s'insereixen tal com són.
+- **`page.dpi: 300`** — els px per polzada de la maquetació: un mapa de bits sense resolució pròpia s'imprimeix a aquesta resolució a la seva mida natural. El [preflight](/ca/docs/configuration-fonts-colors-viewers#preflight) avisa de les imatges per sota de 300 ppp a la seva mida impresa.
+- **`ColorValue.cmyk`** — un color definit en CMYK s'imprimeix amb els seus valors exactes.
+- **`{ pageNegative: true }`** a `RenderToPdfOptions` — inverteix l'àrea de trim amb un blend mode de tipus Difference (les marques de tall queden sense invertir). Útil per a comprovacions de preflight sobre tipografia fosca sobre clar.
+
+### Implementació de referència
+
+El component `PdfViewport` del sandbox (`packages/postext-sandbox/src/viewport/PdfViewport.tsx`) connecta les peces anteriors en una previsualització en directe amb botons de regenerar, baixar i imprimir, i és un bon punt de partida per a qualsevol integració PDF al navegador. Construeix el VDT a través del worker de layout compartit (consulta [Executar la composició en un Web Worker](/ca/docs/configuration-programmatic-usage#executar-la-composició-en-un-web-worker)) perquè prémer *Regenerar* no congeli la UI mentre s'executa el pipeline — el fil principal només s'encarrega de `renderToPdf` (que ja és ràpid un cop existeix el VDT).

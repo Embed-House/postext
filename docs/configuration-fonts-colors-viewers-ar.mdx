@@ -6,8 +6,8 @@ export const metadata = {
   description: 'الوحدات والألوان ولوحة الألوان، والخطوط المخصّصة، وعارض HTML، وإنتاج PDF والإنتاج الطباعي، وعارض Folio، والتصحيح',
   lang: 'ar',
   lastUpdated: '2026-10-10',
-  readingTime: '6 دقائق',
-  order: 11,
+  readingTime: '39 دقيقة',
+  order: 18,
   parent: 'configuration',
   plainSummary: "تتناول هذه الصفحة الإعدادات المشتركة في الكتاب كله وإعدادات كل نوع من المُخرجات. تشرح طريقة كتابة القياس واللون، وطريقة تسمية ألوان اللوحة. وتبيّن كيف تضيف خطوطك الخاصة. ثم تتناول عرض الويب وملف PDF والملفات التي تطلبها المطبعة والكتاب ثلاثي الأبعاد. ويفعّل القسم الأخير الأدلة والتحذيرات التي تساعدك أثناء العمل.",
 };
@@ -307,7 +307,7 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 // => undefined when everything matches the defaults
 ```
 
-انظر [دمج عارض HTML](/ar/docs/configuration-programmatic-usage#دمج-عارض-html) أدناه لمثال كامل من البداية إلى النهاية.
+انظر [دمج عارض HTML](/ar/docs/configuration-html-folio-epub#دمج-عارض-html) أدناه لمثال كامل من البداية إلى النهاية.
 
 
 ## إنتاج PDF (الإعدادات)
@@ -395,7 +395,7 @@ const minimal  = stripPdfGenerationDefaults(config.pdfGeneration);
 // => undefined when everything matches the defaults
 ```
 
-انظر [إنتاج ملفات PDF](/ar/docs/configuration-programmatic-usage#توليد-ملفات-pdf) أدناه لوصفة التصدير الكاملة.
+انظر [إنتاج ملفات PDF](/ar/docs/configuration-pdf-output#توليد-ملفات-pdf) أدناه لوصفة التصدير الكاملة.
 
 
 ## الإنتاج الطباعي (الإعدادات)
@@ -930,7 +930,7 @@ interface FolioConfig {
       <td><code>binding.type</code></td>
       <td><code>FolioBindingType</code></td>
       <td><code>'hardcover'</code>؛ و<code>'folded'</code> في مقاسات الصحف</td>
-      <td><code>hardcover</code>: تجليد بغلاف صلب، ألواحه أكبر قليلًا من الصفحات. <code>paperback</code>: تجليد بالغراء (تُفرز الكعوب وتُلصق)، ينفتح أقل استواءً. <code>sewn</code>: غلاف ليّن بملازم مخيطة. <code>layflat</code>: ينفتح مستويًا، بلا انخفاض عند الفاصل الداخلي. <code>saddleStitch</code>: أوراق مطوية مدبّسة عبر الطيّة، كالمجلة أو الكتيّب؛ بلا كعب مسطّح. <code>folded</code> (منذ postext 1.18): جريدة، أفرخ مطوية مرة واحدة يوضع بعضها داخل بعض بلا شيء يمسكها؛ بلا دبابيس ولا كعب ولا غلاف مقوّى، والصفحة الأولى هي الواجهة. ومقطع <a href="/ar/docs/document-format#paper"><code>:::paper</code></a> ذو <code>shade</code> يطبع قسمًا، كصفحات الاقتصاد، على ورق صحف بلون السلمون.</td>
+      <td><code>hardcover</code>: تجليد بغلاف صلب، ألواحه أكبر قليلًا من الصفحات. <code>paperback</code>: تجليد بالغراء (تُفرز الكعوب وتُلصق)، ينفتح أقل استواءً. <code>sewn</code>: غلاف ليّن بملازم مخيطة. <code>layflat</code>: ينفتح مستويًا، بلا انخفاض عند الفاصل الداخلي. <code>saddleStitch</code>: أوراق مطوية مدبّسة عبر الطيّة، كالمجلة أو الكتيّب؛ بلا كعب مسطّح. <code>folded</code> (منذ postext 1.18): جريدة، أفرخ مطوية مرة واحدة يوضع بعضها داخل بعض بلا شيء يمسكها؛ بلا دبابيس ولا كعب ولا غلاف مقوّى، والصفحة الأولى هي الواجهة. ومقطع <a href="/ar/docs/document-format-directives#paper"><code>:::paper</code></a> ذو <code>shade</code> يطبع قسمًا، كصفحات الاقتصاد، على ورق صحف بلون السلمون.</td>
     </tr>
     <tr>
       <td><code>binding.cover</code></td>
@@ -1049,7 +1049,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 // => { paper: { type: 'bible' } }
 ```
 
-في Sandbox، هذه الإعدادات هي مجموعة **Folio** في لوحة التصميم (**التصميم › Folio › عارض Folio (ثلاثي الأبعاد)**)، ويعرضها تبويب Folio وأنت تغيّرها، دون إعادة إخراج الكتاب. انظر [كتاب ثلاثي الأبعاد](/ar/docs/configuration-programmatic-usage#كتاب-ثلاثي-الأبعاد-postext-folio) للعارض نفسه، و[صيغة المستند › `:::paper`](/ar/docs/document-format#paper) لسلسلة صفحات على نوع ورق آخر.
+في Sandbox، هذه الإعدادات هي مجموعة **Folio** في لوحة التصميم (**التصميم › Folio › عارض Folio (ثلاثي الأبعاد)**)، ويعرضها تبويب Folio وأنت تغيّرها، دون إعادة إخراج الكتاب. انظر [كتاب ثلاثي الأبعاد](/ar/docs/configuration-html-folio-epub#كتاب-ثلاثي-الأبعاد-postext-folio) للعارض نفسه، و[صيغة المستند › `:::paper`](/ar/docs/document-format-directives#paper) لسلسلة صفحات على نوع ورق آخر.
 
 
 ## التصحيح
@@ -1284,7 +1284,7 @@ debug: {
 - **إعداد عنوان غير معروف**: مفتاح لا يوجد في `headings`، أو `headings.balancing`، أو مستوى عنوان، أو نمط عنوان، أو نمط فقرة: مثل `letterSpacng` مكتوبًا خطأً، أو `tracking` مستعارًا من أداة أخرى، أو `level` في نمط عنوان، أو `fontStyle: 'italic'` في نمط فقرة (الذي يأخذ `italic: true`). ويُفحص موضع الجدولة بالطريقة نفسها (`leaders` بدل `leader`). يتجاهله المحرّك (وحتى postext 1.4 كان يفعل ذلك دون أي إشعار). `value` هو المفتاح، و`used` فارغ، و`suggestion` يسمّي الإعداد الأقرب إليه، حين يبعد عنه حرفًا أو حرفين أو لا يختلف عنه إلا في حالة الأحرف (`unknownConfigKey`).
 - **قيمة إعداد غير معروفة**: إعداد يأخذ كلمة من بضع كلمات يحمل كلمة أخرى، مثل `direction: 'right'` (الذي يأخذ `auto` أو `ltr` أو `rtl`). يقرأ المحرّك القيمة الافتراضية بدلًا منها، ويسمّي `used` ما آلت إليه: في `direction`، اتجاه لغة المستند (`unknownConfigValue`). ويُقرأ `align` في موضع الجدولة الذي ليس إحدى كلماته الأربع `'start'`، و`position` الذي ليس طولًا ولا `'end'` ولا نسبة مئوية يستبعد الموضع (`used` هو `'none'`). وتُفحص كلمات إعدادات القصص المصورة أيضًا ([القصص المصورة › تحذيرات القصص المصورة](/ar/docs/comics#تحذيرات-القصص-المصورة)): `used` هي القيمة التي آل إليها الإعداد (القيمة الافتراضية لنمط الفقاعة نفسه، في النمط المدمج)، و`suggestion` تسمّي الكلمة الأقرب إلى القيمة، حين تكون إحداها قريبة. ويُفحص `level` و`mode` في فحص التباين بالطريقة نفسها: `used` هي `'AA'` أو `'auto'`.
 - **أرقام الأسطر في النص العمودي**: `lineNumbers.enabled: true` في مستند منضّد عموديًا (`layout.writingMode: 'vertical-rl'`). الصفحات العمودية لا تأخذ أرقام أسطر، و`used` هو `false` (`lineNumbersUnsupported`؛ انظر [ترقيم الأسطر](/ar/docs/configuration-notes-references#ترقيم-الأسطر)).
-- **التفاف النص في الكتابة العمودية** — `defaultPlacement.wrap` لنوع مورد في مستند مكتوب عموديًا. الصفحات العمودية لا تصفّ نصًا بجانب الشكل، و`used` هي `none` (`wrapUnsupported`؛ انظر [تنسيق المستند › التفاف النص](/ar/docs/document-format#التفاف-النص)). و`wrap` لا يسمّي جانبًا قيمةُ إعداد غير معروفة.
+- **التفاف النص في الكتابة العمودية** — `defaultPlacement.wrap` لنوع مورد في مستند مكتوب عموديًا. الصفحات العمودية لا تصفّ نصًا بجانب الشكل، و`used` هي `none` (`wrapUnsupported`؛ انظر [تنسيق المستند › التفاف النص](/ar/docs/document-format-resources#التفاف-النص)). و`wrap` لا يسمّي جانبًا قيمةُ إعداد غير معروفة.
 
 يُدرجها Sandbox في لوحة **الفحوص** مع مسار الإعداد. وفي الشيفرة، يضعها `buildDocument` على المستند باسم `configWarnings` (وتغيب حين تكون الإعدادات سليمة)، ويعيدها `collectConfigWarnings(config)` دون إخراج أي شيء:
 

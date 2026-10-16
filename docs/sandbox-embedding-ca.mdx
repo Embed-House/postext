@@ -1,0 +1,278 @@
+{/* docs/sandbox-embedding-ca.mdx */}
+
+export const metadata = {
+  title: 'Sandbox: agents, incrustació i presets',
+  sidebarTitle: 'Agents, incrustació i presets',
+  description: "Les eines WebMCP per a agents d'IA, el component PostextSandbox dins de la teva aplicació amb les seves props i el seu CSS, i el format de paquet de preset",
+  lang: 'ca',
+  lastUpdated: '2026-10-16',
+  readingTime: '13 min',
+  order: 38,
+  parent: 'sandbox',
+  plainSummary: "Aquesta pàgina és per a qui crea llocs web o fa servir assistents d'IA. Un assistent que funciona al navegador pot llegir i canviar el llibre del Sandbox amb un conjunt d'eines. Pots posar el Sandbox dins del teu propi web com un sol component, i aquesta pàgina n'enumera les opcions i els estils que necessita. L'última secció descriu els fitxers d'un llibre d'exemple, que el Sandbox pot obrir.",
+};
+
+# Sandbox: agents, incrustació i presets
+
+
+## Agents: WebMCP
+
+El Sandbox lliura a un agent que treballi al navegador les seves pròpies eines mitjançant [WebMCP](https://webmachinelearning.github.io/webmcp/) (`document.modelContext`), de manera que un assistent actua sobre el llibre mateix en lloc d'anar fent clic per la interfície. No cal configurar res: les eines queden registrades mentre el Sandbox és a la pantalla, i la resta d'aquest lloc en registra unes quantes de pròpies a cada pàgina (cercar a la documentació i al Receptari, llegir una pàgina com a Markdown, obrir una recepta al Sandbox, canviar d'idioma i de tema).
+
+Estan pensades per al cicle que un dissenyador recorre a ull: canviar alguna cosa, mirar la pàgina, tornar a canviar.
+
+- **Veure** — `sandbox_get_state`, `sandbox_render_page`, `sandbox_inspect_pages`, `sandbox_inspect_point`, `sandbox_inspect_comic`, `sandbox_get_warnings`: el llibre amb els seus capítols i els seus rangs de pàgines, i el que passa a la interfície (la selecció, un avís, una pregunta pendent de resposta); qualsevol pàgina com a JPEG, PNG o WebP a l'amplada demanada, o un retall per veure-la de prop, amb la previsualització d'impressió si es demana; la mateixa pàgina com a dades (els seus blocs i línies, com s'omple cada columna, quines línies queden fluixes o acaben en paraula partida); el que hi ha en un punt de la pàgina (la línia del text font, un enllaç i on porta, la cel·la d'una taula); les vinyetes i les bafarades d'una pàgina de còmic; i el que troba la revisió en qualsevol capítol o en el llibre sencer, siguin quins siguin el capítol i el visor a la pantalla.
+- **Canviar** — `sandbox_set_config`, `sandbox_get_config`, `sandbox_find_setting`, `sandbox_edit_text`, `sandbox_write_text`, `sandbox_read_text`, `sandbox_search_text`, `sandbox_select_text`, `sandbox_undo_text`, `sandbox_manage_chapters`, `sandbox_save_resource`, `sandbox_save_font`, `sandbox_edit_comic`, `sandbox_import_word`: qualsevol ajust per la seva ruta (`bodyText.fontSize`, `page.margins.top`, `headings.levels[level=2].fontSize`, `header.elements[id=titleOdd].italic`), el text mitjançant cerca i substitució exactes, amb desfer, els capítols, les imatges, els dibuixos SVG, els vídeos, les taules amb el seu format, les fonts, les vinyetes i les bafarades d'un còmic i un document de Word importat amb els seus estils assignats. Un canvi respon amb cada valor abans i després i amb les pàgines que ocupa cada capítol; un ajust diu a més en què el resol el motor i quins altres ajustos l'han seguit, i un valor que el motor no pot resoldre es rebutja sense canviar res.
+- **Mostrar** — `sandbox_set_view`, `sandbox_go_to_page`, `sandbox_run_viewer`: la pestanya del visor, el panell lateral, capítol o llibre sencer, el zoom, l'ajust i les pàgines encarades, la mida de lletra del lector, la previsualització d'impressió, les guies dibuixades sobre les pàgines, la lupa del Folio i la pàgina a la pantalla (pel seu número, per un passatge, per una àncora o per una entrada del sumari d'un EPUB); tornar a generar el PDF o l'EPUB, imprimir i reproduir un vídeo d'una pàgina.
+- **Desar** — `sandbox_list_books`, `sandbox_open_book`, `sandbox_save_book`, `sandbox_import_book`, `sandbox_export`, `sandbox_word_templates`, `sandbox_answer`: les mostres i els teus projectes amb les seves portades, un fitxer `.postext` importat, el llibre —o un que no és obert— exportat a PDF, EPUB, `.postext`, Word, Markdown o els seus ajustos en JSON, les plantilles de la importació de Word i la resposta a una pregunta que fa el Sandbox.
+
+Una eina que canvia el llibre espera la maquetació, de manera que la imatge següent és sempre la de les pàgines noves; la pàgina es maqueta i es pinta per a l'eina sigui quina sigui la pestanya a la pantalla. El que no es pot desfer —esborrar un capítol, un recurs o un projecte, restaurar l'original, importar un document de Word sobre el text, substituir la teva còpia d'un llibre— va marcat com a conseqüent, perquè el navegador et pugui preguntar abans. Igual que amb la interfície, tot es queda al teu navegador: les eines no arriben a res que el Sandbox mateix no arribi.
+
+WebMCP és un esborrany: Chrome l'ofereix com a prova d'origen i darrere de `chrome://flags/#enable-webmcp-testing`. En un navegador que no el tingui, les mateixes eines són a `window.postextWebMcp` (`listTools()`, `executeTool(name, args)`), per a un agent que pugui executar codi a la pàgina. En incrustar el Sandbox, `webmcp={false}` les deixa fora (vegeu [Props](#props)).
+
+La pàgina [WebMCP](/ca/docs/webmcp) explica què es pot demanar a un agent i com es crida cada eina, amb exemples.
+
+
+## Ús standalone
+
+El Sandbox està disponible com un paquet React independent (`postext-sandbox`) que es pot incrustar en qualsevol aplicació React:
+
+```bash
+npm install postext-sandbox postext
+```
+
+```tsx
+import { PostextSandbox } from 'postext-sandbox';
+
+function App() {
+  return (
+    <PostextSandbox
+      initialMarkdown="# Hola món"
+      initialConfig={{ layout: { layoutType: 'double' } }}
+      onMarkdownChange={(md) => console.log(md)}
+      onConfigChange={(cfg) => console.log(cfg)}
+    />
+  );
+}
+```
+
+### Props
+
+<table>
+  <thead>
+    <tr>
+      <th>Prop</th>
+      <th>Tipus</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>initialMarkdown</code></td>
+      <td><code>string</code></td>
+      <td>Contingut markdown inicial</td>
+    </tr>
+    <tr>
+      <td><code>initialConfig</code></td>
+      <td><code>PostextConfig</code></td>
+      <td>Configuració de maquetació inicial</td>
+    </tr>
+    <tr>
+      <td><code>className</code></td>
+      <td><code>string</code></td>
+      <td>Classe CSS per al contenidor arrel</td>
+    </tr>
+    <tr>
+      <td><code>labels</code></td>
+      <td><code>Partial&lt;SandboxLabels&gt;</code></td>
+      <td>Substitucions de les etiquetes de la interfície, combinades sobre els valors per defecte en anglès — passa etiquetes traduïdes juntament amb <code>locale</code> en incrustar-lo en un altre idioma</td>
+    </tr>
+    <tr>
+      <td><code>locale</code></td>
+      <td><code>string</code></td>
+      <td>Idioma de la interfície (<code>'en'</code> per defecte). Selecciona els tipus de recurs i els recursos d'exemple localitzats (un preset o un fitxer en una sola llengua rep els tipus de recurs de la seva pròpia llengua), i proporciona la configuració regional de partició de mots que fan servir les previsualitzacions quan no n'hi ha cap de configurada</td>
+    </tr>
+    <tr>
+      <td><code>presetSources</code></td>
+      <td><code>&#123; url: string; private?: boolean &#125;[]</code></td>
+      <td>Fonts de presets remotes, consultades en ordre després del preset integrat. Cada <code>url</code> és un URL base que serveix un <code>index.json</code> (consulta <a href="#format-de-paquet-de-preset">Format de paquet de preset</a>); <code>private: true</code> etiqueta els presets de la font com a privats i fa que la seva marca <code>default</code> es pugui carregar automàticament. Les fonts que no responen simplement no aporten res</td>
+    </tr>
+    <tr>
+      <td><code>hashBundles</code></td>
+      <td><code>Record&lt;string, (id: string, lang: string | null) =&gt; string | string[] | null&gt;</code></td>
+      <td>Llibres enllaçats amb una clau de fragment pròpia de l'integrador: <code>&#123; recipe: (slug, lang) =&gt; `/cookbook/$&#123;slug&#125;/$&#123;lang&#125;/$&#123;slug&#125;.postext` &#125;</code> fa que <code>#recipe=&lt;slug&gt;&amp;lang=es</code> obri aquest paquet. Retorna l'URL d'un fitxer <code>.postext</code> del mateix origen que la pàgina, diversos per provar en ordre (guanya el primer que respon) o <code>null</code> per a un id que no se serveix. La primera visita importa el fitxer com un projecte que recorda l'enllaç (<code>recipe:&lt;slug&gt;:&lt;lang&gt;</code>); una visita posterior pregunta si cal obrir aquest projecte, amb els seus canvis, o substituir-lo pel fitxer tal com se serveix ara. Després el fragment passa a ser <code>#project=&lt;id&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>onConfigChange</code></td>
+      <td><code>(config) =&gt; void</code></td>
+      <td>Callback quan canvia la configuració</td>
+    </tr>
+    <tr>
+      <td><code>onMarkdownChange</code></td>
+      <td><code>(markdown) =&gt; void</code></td>
+      <td>Callback quan canvia el markdown</td>
+    </tr>
+    <tr>
+      <td><code>webmcp</code></td>
+      <td><code>boolean</code></td>
+      <td>Registra les <a href="#agents-webmcp">eines WebMCP</a> del Sandbox per a agents al navegador mentre està muntat. Per defecte <code>true</code></td>
+    </tr>
+    <tr>
+      <td><code>themeToggle</code></td>
+      <td><code>ReactNode</code></td>
+      <td>Component personalitzat per al commutador de tema, allotjat a la part inferior de la barra d'activitat</td>
+    </tr>
+    <tr>
+      <td><code>languageSwitcher</code></td>
+      <td><code>ReactNode</code></td>
+      <td>Component personalitzat per al selector d'idioma, allotjat a la part inferior de la barra d'activitat</td>
+    </tr>
+    <tr>
+      <td><code>homeUrl</code></td>
+      <td><code>string</code></td>
+      <td>Si s'estableix, renderitza un enllaç amb el logotip d'inici a la part superior de la barra d'activitat que apunta a aquest URL</td>
+    </tr>
+    <tr>
+      <td><code>homeLink</code></td>
+      <td><code>ReactNode</code></td>
+      <td>Node personalitzat per a l'espai d'inici, que substitueix l'enllaç amb el logotip per defecte (té prioritat sobre <code>homeUrl</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+### Requisits de CSS
+
+El paquet fa servir classes utilitàries de Tailwind CSS que fan referència a variables CSS personalitzades. L'aplicació amfitriona ha de proporcionar aquestes variables:
+
+- `--background`, `--foreground` — Colors base
+- `--surface` — Color per a superfícies elevades; `--surface-2` — Files sota el punter i opcions ressaltades (per defecte, `--background`)
+- `--slate` — Color per a text atenuat
+- `--rule` — Color de vores/divisors; `--rule-strong` — Filet més marcat per als controls sota el punter (per defecte, `--slate`)
+- `--brand` — Color d'accent: la marca del tauler actiu, els anells de focus, els interruptors i les opcions seleccionades
+- `--brand-hover` — Color d'accent en passar-hi el punter
+- `--brand-soft` — Farciment d'accent translúcid darrere de les opcions seleccionades (per defecte, `--surface`)
+- `--brand-contrast` — Botó d'un interruptor activat (per defecte, `--background`)
+- `--destructive` — Color de les accions destructives i els errors
+- `--accent-blue` — Color d'enllaç/accent
+- `--font-sans` — Família tipogràfica de la interfície
+- `--font-mono` — Família monoespaiada (per a l'editor de codi)
+- `--font-display`, `--brand-blue`, `--brand-gilt` — Tipus de lletra i colors opcionals de la marca del logotip per defecte a la barra d'activitat (per defecte, Georgia, `#2b4acb` i `#d8a21a`)
+
+El lloc web assigna a `--brand` el daurat en el tema fosc i el blau en el clar. Les versions anteriors llegien `--gilt` i `--gilt-hover`; el sandbox ja no les fa servir.
+
+Els popovers, menús i tooltips es renderitzen en un portal sobre `document.body`, així que defineix les variables a `:root` (o `body`), no només a l'element que embolcalla el sandbox. La compilació de Tailwind de l'aplicació amfitriona ha d'escanejar el codi font del paquet (`@source "…/postext-sandbox/src/**/*.tsx"` a Tailwind 4) perquè es generin les classes utilitàries que fa servir.
+
+
+## Format de paquet de preset
+
+Apèndix. Una font de presets és un directori (servit per HTTP) l'arrel del qual conté un `index.json` que llista directoris de preset; cada directori conté un manifest `preset.json` més els fitxers de markdown, recursos i fonts als quals es refereix. Les eines de `scripts/presets/` del repositori generen paquets exactament amb aquesta forma, i un fitxer `.postext` exportat des del sandbox és un d'aquests directoris comprimit en zip (sense l'`index.json`).
+
+```
+<raíz-de-presets>/
+  index.json
+  <directorio-del-preset>/
+    preset.json
+    chapters/              un .md per capítol, en ordre (un manifest versió 1 anomena un únic document)
+    resources/             figures: .svg / .png / .jpg / .jpeg / .webp / .gif (+ originals d'impremta .pdf opcionals)
+    fonts/                 .otf / .ttf / .woff2, una cara per fitxer
+```
+
+### `index.json`
+
+```jsonc
+{
+  "version": 1,
+  "presets": [
+    {
+      "id": "acme-journal",          // id estable, [a-z0-9-]
+      "dir": "acme-journal",         // nom del directori relatiu a index.json
+      "name": "Acme Journal",
+      "description": "Article de revista a dues columnes",   // opcional
+      "locale": "es",                 // opcional
+      "default": true,                // opcional, com a màxim un
+      "locales": ["es", "en"],        // opcional: totes les llengües del paquet
+      "openLocale": "es",             // opcional: la llengua en què s'obre si no se'n demana cap
+      "thumbnail": "thumbnail.jpg",   // opcional: previsualització al selector
+      "license": "CC BY 4.0",         // opcional: es mostra com a etiqueta
+      "credits": "Textos i imatges: ESO",  // opcional: una línia sota la descripció
+      "tags": ["revista", "dues-columnes"],  // opcional
+      "binding": "left"               // opcional: la vora on la prestatgeria del web dibuixa el llom ("right" per a un llibre enquadernat a la dreta)
+    }
+  ]
+}
+```
+### `preset.json`
+
+```jsonc
+{
+  "version": 2,
+  "id": "acme-journal",
+  "name": "Acme Journal",
+  "description": "Article de revista a dues columnes",       // opcional
+  "locale": "es",                                     // opcional
+  "default": true,                                    // opcional
+  "configVersion": 8,                                 // opcional: les regles de configuració per a les quals es va escriure `config`
+  // Els mateixos camps opcionals d'aparador que l'entrada de l'índex:
+  // "locales", "openLocale", "thumbnail", "license", "credits", "tags"
+
+  // Els capítols del llibre, en ordre — o una llista per llengua
+  "chapters": [
+    { "title": "Introducció", "file": "chapters/01-introduccion.md" },
+    { "title": "Mètodes", "file": "chapters/02-metodos.md" }
+  ],
+  // "chapters": { "en": [ … ], "es": [ … ] },
+  // Els manifestos versió 1 fan servir un únic document i encara s'accepten:
+  // "version": 1, "markdown": "article.md"  (o un mapa llengua → fitxer)
+
+  // JSON de PostextConfig opcional (pàgina, marges, columnes, tipografia...).
+  // NO hi incloguis customFonts: les fonts vénen de l'array `fonts` de més avall.
+  "config": { },
+
+  "resources": [
+    {
+      "id": "fig-1-1",                 // referenciat des del markdown (:ref)
+      "typeId": "figure",              // id del tipus de recurs (figure, table, ...)
+      "kind": "svg",                   // "svg" | "bitmap" | "table"
+      "file": "resources/fig-1-1.svg", // només svg/bitmap, relatiu a preset.json
+      "width": 240.5,                  // opcional, pt (svg) / px (bitmap)
+      "resolution": 300,               // opcional, només bitmap: ppp a la seva mida natural d'impressió
+      "pdfFile": "resources/fig-1-1.pdf", // opcional, només svg: original d'impremta vectorial (vegeu les notes)
+      "height": 180,                   // opcional
+      "caption": "Text de la llegenda",
+      "altText": "Descripció accessible",             // opcional
+      "safeArea": { "x": 0.18, "y": 0.25, "width": 0.5, "height": 0.6 }, // opcional, només svg/bitmap: la part que sempre es veu, en fraccions de la imatge
+      "placement": { "position": "top", "span": "column" },  // opcional
+      "note": "Font: ...",                            // opcional
+      "table": { "model": { "rows": [[{ "content": "A", "isHeader": true }]], "headerRowCount": 1 } }
+                                                      // només kind "table"
+    }
+  ],
+
+  "fonts": [
+    {
+      "name": "Some Family",           // nom de família que fa servir la configuració
+      "variants": [
+        { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
+        { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
+        { "weight": 700, "style": "normal", "file": "fonts/SomeFamily-Bold.otf" }
+      ]
+    }
+  ]
+}
+```
+
+Notes:
+
+- L'`id` de `preset.json` ha de coincidir amb l'entrada d'`index.json`; `description`, `locale` i `default` del manifest prevalen sobre els valors de l'índex un cop carregat el preset, igual que els camps d'aparador `locales`, `openLocale`, `license`, `credits` i `tags`. `openLocale`, un dels `locales`, és la llengua en què s'obre el llibre quan un enllaç o un clic no en demanen cap (la prestatgeria de la portada web també hi enllaça): fes-lo servir quan l'original no és en la llengua del lector, com fa l'aparador de 紅樓夢 amb `zh-Hant`, perquè la seva traducció anglesa no s'obri a qualsevol lector de parla anglesa. Sense aquest camp decideix l'idioma de la interfície. El selector mostra com a etiquetes cada llengua de `locales` (o `locale`) i la llicència, els crèdits sota la descripció, i `thumbnail` — una petita imatge de pàgina relativa al directori del preset — en lloc de la columna de la marca de verificació; un llibre copiat del preset (**Fer-ne una còpia pròpia**) la conserva com a portada. Els presets públics d'aparador d'`apps/web/public/presets/` fan servir tots els camps i porten un `CREDITS.md` amb la llicència i la procedència de cada text i imatge.
+- `configVersion` (opcional) anomena les regles de configuració per a les quals es van escriure `config` i les configuracions de `localized`. Tot el que s'escriu des de postext 1.5 el fixa en 8. Un manifest sense aquest camp el va escriure postext 1.4 o anterior, i els salts d'encapçalament, la mida de les fórmules, l'espai al voltant de les figures en línia (en el text i en els requadres), les marques dels títols, les caplletres, el lloc sota una línia de dos punts, els talls dels requadres, els talls després d'una ratlla i després del guionet d'un compost, el text en bandera, les divisions sota un títol i l'espai sota els contenidors de paràgrafs es llegeixen tal com els componia la 1.4 (consulta *Salts d'encapçalament desats amb postext 1.4 o anterior*, *Mida de les fórmules desada abans de postext 1.5*, *Figures en línia desades abans de postext 1.5*, *Figures en línia dels requadres desades abans de postext 1.5*, *Marques dels títols i caplletres desades abans de postext 1.5*, *Llistes després de dos punts desades abans de postext 1.5*, *Talls dels requadres desats abans de postext 1.5*, *Ratlles i text en bandera desats abans de postext 1.5*, *Compostos desats abans de postext 1.5*, *Divisions sota un títol desades abans de postext 1.5* i *Contenidors de paràgrafs desats abans de postext 1.5* a [Persistència](/ca/docs/sandbox-books-saving#persistència)); a un manifest marcat amb un valor de 3 a 7 (una versió preliminar de la 1.5) només se li apliquen les fixacions de les regles posteriors: amb 3, la mida de les fórmules, el buit en línia, les cinc fixacions de les regles 6, les dues de les regles 7 i les tres de les regles 8; amb 4, el buit en línia i les de les regles 6, 7 i 8; amb 5, les de les regles 6, 7 i 8; amb 6, les de les regles 7 i 8; amb 7, només les de les regles 8. Fixa'l en 8 quan escriguis a mà un manifest per a les regles actuals.
+- `view` (opcional) indica com obre el sandbox el paquet: `{ "canvasScope": "book" }` maqueta el llibre sencer al canvas (consulta [Llibres i capítols](/ca/docs/sandbox-books-saving#llibres-i-capítols)); si hi falta, el canvas mostra un capítol cada vegada. Els llibres exportats el porten quan és actiu. Un llibre de més de 200 capítols s'obre capítol a capítol, demani el que demani.
+- `start` (opcional) indica on comença el llibre quan el paquet conté part d'un de més llarg: `{ "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } }` l'obre a la pàgina 58, parella, al capítol 4. És la `continuation` del seu primer capítol (`buildDocument`); el sandbox maqueta el llibre des d'aquí, el conserva amb el llibre en desar-lo com a projecte i el torna a escriure en exportar. Cap panell l'edita. Una entrada de `localized` pot portar un `start` propi per a la seva edició.
+- `localized` (opcional) conté les variants per llengua d'un paquet bilingüe: `{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`. Les variants de la llengua de la qual es van prendre els capítols s'apliquen sobre el `config` compartit (les claus de primer nivell se substitueixen senceres — típicament `resourceTypes` amb els prefixos de peu traduïts) i sobre `resources` (peu, nota, text alternatiu i cel·les de taula, fusionats per id); una llengua sense entrada conserva la redacció compartida. Una entrada també pot portar la seva pròpia `view`, que s'aplica sobre la compartida en aquella edició: 紅樓夢 obre les seves edicions xineses en el llibre complet i l'anglesa de Joly, molt més lenta de pintar sencera, capítol a capítol (`"en": { "view": { "canvasScope": "chapter" } }`).
+- `chapters` (versió 2) és una llista de `{ title, file }` en l'ordre del llibre, o un mapa llengua → llista; `markdown` (versió 1) és un nom de fitxer o un mapa llengua → fitxer. En tots dos casos el sandbox tria l'entrada que coincideix amb la llengua demanada (etiqueta exacta, sense distingir majúscules; després la mateixa llengua i la mateixa escriptura, de manera que `zh-TW` llegeix `zh-Hant` abans que `zh-Hans`; després la mateixa llengua en l'altra escriptura, de manera que qui demana `zh-TW` a un paquet amb la clau `zh` sola rep el xinès; després el `locale` del mateix preset i, finalment, la primera entrada), i només es llegeixen els fitxers de capítol d'aquella llengua. Un `title` buit es deriva del primer títol de nivell 1 del fitxer. El sandbox sempre escriu la versió 2.
+- `width` / `height` són opcionals per als recursos `svg` i `bitmap` — si hi falten, es llegeixen del fitxer en carregar-lo. Un mapa de bits també pot portar `resolution` (els seus ppp a la seva mida natural d'impressió) i `fileResolution` (la que indica el seu fitxer, llegida en carregar-lo quan la configuració fixa `layout.bitmapResolution: 'file'`).
+- `pdfFile` (només recursos `svg`) apunta a un PDF d'una pàgina amb la mateixa figura en vectors — normalment l'exportació original d'Illustrator o PDF de la qual es va derivar l'SVG. L'exportació a PDF incrusta aquesta pàgina tal qual (fonts, degradats i espais de color intactes) en lloc de l'SVG; les previsualitzacions en canvas i HTML continuen fent servir l'SVG. S'ignora en mode d'una tinta, el recoloreig del qual només opera sobre el codi SVG, i si el fitxer hi falta només es perd l'original, mai la figura. Editar el codi de l'SVG al detall del recurs treu l'original (es va fer per al codi tal com era), de manera que l'exportació a PDF segueix l'SVG editat a partir d'aleshores; restaura l'original (**Restaurar l'original…** al tauler Llibres) per recuperar-lo. Els SVG sense original s'emeten com a traçats vectorials quan es mantenen dins del subconjunt del backend PDF (formes bàsiques, traçats, grups, `use`, retalls, emplenaments i traços sòlids, opacitat, i textos `text` / `tspan` compostos amb les fonts que el document pot carregar — primer les fonts personalitzades, després les famílies de Google) i es rasteritzen a 600 ppp en cas contrari.
+- El `text` d'un SVG es renderitza amb les fonts del llibre a tot arreu: les previsualitzacions i l'EPUB incrusten a l'SVG les variants que anomena el seu text abans de mostrar-lo (un `<img>` no veu les fonts de la pàgina), les famílies personalitzades tal com es van pujar i les de Google com els fitxers de Fontsource que contenen els seus caràcters, i l'exportació a PDF compon els textos com a text real i seleccionable amb les mateixes fonts incrustades. Escriu la família a `font-family` exactament com apareix a Fonts. Un recurs pot quedar-ne exclòs amb `"inlineFonts": false` a la seva entrada del manifest (`svg.inlineFonts`).
+- L'editor de codi de l'SVG només permet escriure dins dels nodes de text (ressaltats) perquè una figura no es trenqui per accident; el botó de cadenat de la seva capçalera obre tot el codi — coordenades, colors, estructura — i, en tornar a bloquejar-lo, es tornen a detectar els nodes de text.
+- `table.model` és un `TableModel` de Postext: `rows` és un array de cel·les per files (`content` i, opcionalment, `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` el nombre de files de capçalera inicials i `columnWidths` un array opcional de pesos relatius de columna. `table.styleId` anomena, opcionalment, un dels `tableStyles` de la configuració.
+- Els fitxers de font es desen a IndexedDB amb ids derivats de l'id del preset i la ruta del fitxer, i les famílies s'afegeixen a `config.customFonts` en aplicar el preset; un `index.json` absent o mal format no produeix cap preset en lloc d'un error.
+- `<directorio-del-preset>/fingerprint.json` és opcional i, a la ruta de desenvolupament, **virtual**: quan no existeix aquest fitxer, `GET` respon `{ "fingerprint": "<sha1 hex>", "files": <n> }` calculat a partir de les metadades dels fitxers del directori (ruta relativa, data de modificació i mida de cada fitxer fins a quatre nivells de profunditat, ometent els fitxers ocults i `node_modules`), mai a partir del seu contingut, amb `Cache-Control: no-store`. El sandbox el consulta per seguir les edicions del paquet (consulta [Tauler de llibres](/ca/docs/sandbox#tauler-de-llibres)). Un servidor estàtic pot servir un `fingerprint.json` real amb la mateixa forma, o cap, i en aquest cas els seus presets no se segueixen.

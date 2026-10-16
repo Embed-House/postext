@@ -6,8 +6,8 @@ export const metadata = {
   description: '单位、颜色与调色板，自定义字体，HTML查看器，PDF与印刷输出，书页视图和调试',
   lang: 'zh',
   lastUpdated: '2026-10-10',
-  readingTime: '6分钟',
-  order: 11,
+  readingTime: '28分钟',
+  order: 18,
   parent: 'configuration',
   plainSummary: "本页讲整本书共用的设置，以及每种输出各自的设置。它说明尺寸和颜色怎样写，调色板里的颜色怎样命名。它说明怎样加入你自己的字体。接着讲网页视图、PDF文件、印刷厂要的文件和3D书本。最后一节用来打开工作时帮得上忙的参考线和警告。",
 };
@@ -307,7 +307,7 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 // => 所有值都与默认值相同时为undefined
 ```
 
-完整示例见下文的[集成HTML查看器](/zh/docs/configuration-programmatic-usage#集成html查看器)。
+完整示例见下文的[集成HTML查看器](/zh/docs/configuration-html-folio-epub#集成html查看器)。
 
 
 ## PDF生成（配置）
@@ -395,7 +395,7 @@ const minimal  = stripPdfGenerationDefaults(config.pdfGeneration);
 // => 所有值都与默认值相同时为undefined
 ```
 
-完整的导出流程见下文的[生成PDF](/zh/docs/configuration-programmatic-usage#生成pdf)。
+完整的导出流程见下文的[生成PDF](/zh/docs/configuration-pdf-output#生成pdf)。
 
 
 ## 印刷输出（配置）
@@ -930,7 +930,7 @@ interface FolioConfig {
       <td><code>binding.type</code></td>
       <td><code>FolioBindingType</code></td>
       <td><code>'hardcover'</code>；报纸开本为<code>'folded'</code></td>
-      <td><code>hardcover</code>：精装，硬纸板封面略大于书页。<code>paperback</code>：无线胶装（铣背上胶），打开不够平。<code>sewn</code>：锁线平装。<code>layflat</code>：平摊装，书脊处不下陷。<code>saddleStitch</code>：骑马钉，折好的纸张在折缝处装订，如杂志或小册子，没有平书脊。<code>folded</code>（postext 1.18起）：报纸，纸张对折一次，一张套一张，没有任何东西固定；没有订书钉、没有书脊、没有封面板，第一页就是头版。带<code>shade</code>的<a href="/zh/docs/document-format#paper"><code>:::paper</code></a>段可以把某一版（例如财经版）印在鲑鱼色新闻纸上。</td>
+      <td><code>hardcover</code>：精装，硬纸板封面略大于书页。<code>paperback</code>：无线胶装（铣背上胶），打开不够平。<code>sewn</code>：锁线平装。<code>layflat</code>：平摊装，书脊处不下陷。<code>saddleStitch</code>：骑马钉，折好的纸张在折缝处装订，如杂志或小册子，没有平书脊。<code>folded</code>（postext 1.18起）：报纸，纸张对折一次，一张套一张，没有任何东西固定；没有订书钉、没有书脊、没有封面板，第一页就是头版。带<code>shade</code>的<a href="/zh/docs/document-format-directives#paper"><code>:::paper</code></a>段可以把某一版（例如财经版）印在鲑鱼色新闻纸上。</td>
     </tr>
     <tr>
       <td><code>binding.cover</code></td>
@@ -1049,7 +1049,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 // => { paper: { type: 'bible' } }
 ```
 
-在沙盒中，这些设置是版面设计面板中的**Folio**组（**版面设计 → Folio → 书页视图（3D）**）。修改时书页标签页会随即显示效果，不必重新排版。查看器本身见[3D书本](/zh/docs/configuration-programmatic-usage#3d书本postext-folio)；要让一段页面换用另一种纸，见[文档格式 › `:::paper`](/zh/docs/document-format#paper)。
+在沙盒中，这些设置是版面设计面板中的**Folio**组（**版面设计 → Folio → 书页视图（3D）**）。修改时书页标签页会随即显示效果，不必重新排版。查看器本身见[3D书本](/zh/docs/configuration-html-folio-epub#3d书本postext-folio)；要让一段页面换用另一种纸，见[文档格式 › `:::paper`](/zh/docs/document-format-directives#paper)。
 
 
 ## 调试
@@ -1284,7 +1284,7 @@ debug: {
 - **未知标题设置**：`headings`、`headings.balancing`、某个标题级别、标题样式或段落样式中没有的键：拼错的`letterSpacng`、从其他工具借来的`tracking`、标题样式上的`level`、段落样式上的`fontStyle: 'italic'`（段落样式要用`italic: true`）。制表位也同样检查（用`leaders`代替`leader`）。引擎会忽略它（postext 1.4及以前是悄无声息地忽略）。`value`是这个键，`used`为空，如果某个设置与它只差一两个字母或只有大小写不同，`suggestion`会给出最接近的那个设置（`unknownConfigKey`）。
 - **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。对比度检查的`level`和`mode`同样会检查：`used`为`'AA'`或`'auto'`。
 - **竖排文字中的行号**：竖排文档（`layout.writingMode: 'vertical-rl'`）中写了`lineNumbers.enabled: true`。竖排页面不标行号，`used`为`false`（`lineNumbersUnsupported`；见[行号](/zh/docs/configuration-notes-references#行号)）。
-- **竖排中的文字绕排** — 竖排文档中资源类型的`defaultPlacement.wrap`。竖排页面不在图旁排正文，`used`为`none`（`wrapUnsupported`；见[文档格式 › 文字绕排](/zh/docs/document-format#文字绕排)）。不指明一侧的`wrap`是未知的设置值。
+- **竖排中的文字绕排** — 竖排文档中资源类型的`defaultPlacement.wrap`。竖排页面不在图旁排正文，`used`为`none`（`wrapUnsupported`；见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。不指明一侧的`wrap`是未知的设置值。
 
 沙盒在**检查**面板中列出这些警告，并附上设置的路径。在代码中，`buildDocument`把它们作为`configWarnings`放在文档上（配置没有问题时不存在该字段），`collectConfigWarnings(config)`则不做排版直接返回它们：
 

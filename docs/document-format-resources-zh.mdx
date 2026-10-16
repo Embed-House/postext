@@ -1,0 +1,464 @@
+{/* docs/document-format-resources-zh.mdx */}
+
+export const metadata = {
+  title: '文档格式：图片、表格与视频',
+  sidebarTitle: '图片、表格与视频',
+  description: '正文中的资源：引用与嵌入、编号、位置与浮动体落在哪里、文字绕排、位图尺寸、安全区、漫画锚点和视频',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '28分钟',
+  order: 28,
+  parent: 'document-format',
+  plainSummary: "本页讲书中的图片、表格和视频。你添加一次，在正文里提到它，Postext就把它放在第一次提到的地方附近。你可以选择它的位置：页面顶部、横跨所有栏，或者正好在写它的地方。文字可以绕着图片排。图片被裁切以适应版面时，你可以标出必须始终看得见的部分。视频在网页视图和电子书里播放，印刷时显示为一张图片。",
+};
+
+# 文档格式：图片、表格与视频
+
+
+## 资源
+
+图片、SVG、表格和视频不直接写在正文里。它们作为**资源**声明一次（在沙盒的[“资源”面板](/zh/docs/sandbox#资源面板)中管理，这个面板负责上传图片和SVG，提供交互式表格编辑器，处理YouTube、Vimeo和上传的视频，也用来编辑题注和位置），再通过id与正文关联。**引用一个资源就足以把它放进文档**：你只需用行内的`:ref{id="…"}`提到它一次，引擎就会把这幅图或这张表浮动到该引用之后的第一个空位，可能是提到它的那一栏的栏底、下一栏的栏顶，或者下一页的一个横带，和印刷排版师的做法一样。你不需要再摆放它第二次。
+
+下面两种写法都是新增的语法，不与CommonMark冲突，所以用到它们的文档在其他任何Markdown查看器里仍然能当作普通文本阅读。
+
+### 行内引用（主要写法）
+
+在正文中用`:ref{id="…"}`引用资源。第一次引用既会**引入**这个资源（使它被放到页面上），也会渲染出它经过计算的编号，默认在编号前加上该类型的简称：
+
+```md
+As shown in :ref{id="lighthouse-diagram"}, the lantern room sits above the gallery.
+```
+
+渲染结果为：*As shown in Fig. 1.7, the lantern room sits above the gallery.*，而这幅示意图本身会浮动到这句话之后最近的空位（本栏栏底、下一栏栏顶，或者下一页的一个横带），这句话和它后面的文字则不受打断，继续排下去。
+
+正文永远不会在引用处断开。资源落在哪里（第一个空位，还是只接受顶部或底部的空位；限于一栏之内，还是占满全宽），由它的**位置**决定（见下文的[位置](#位置)），也取决于你在哪里提到它：搜索从引用之后开始。
+
+### 块级嵌入（可选，显式的行内放置）
+
+偶尔你会希望资源停在文字流中的某个确切位置，而不是浮动。这时把资源的`placement.position`设为`"here"`以取消浮动，并在单独的一行用`::resource{id="…"}`嵌入它：
+
+```md
+Here is the floor plan we discussed.
+
+::resource{id="lighthouse-diagram"}
+
+The keeper's quarters occupy the eastern wing.
+```
+
+对浮动资源来说，`::resource`指令是多余的：`:ref`已经放置了它，同一id多出来的`::resource`只会被当作又一次引用，而不是第二份副本。只有当资源解析后的位置是`"here"`时，`::resource`才会把它以行内方式渲染出来。行内资源上方保留一行的空白（浮动间距），与浮动体一样，除非前面的块要求更多。在正文中，它下方也保留同样的空白；随后，它后面的文字回到基线网格上，这可能再多出最多一行。紧跟在它后面的标题、列表、框或另一个行内资源，会把这段空白与自己上方的空白合并：取两者中较大的一个，而不是两者相加。（在postext 1.4及以前，下方的空白只是对齐网格后剩下的部分，从零到一行不等；`layout.inlineResourceGap: 'above'`保留这条规则，1.5之前保存的书也按它读取。）在标注框（`:::callout`）内，资源保留同样的空白：上方是一行框内文字的高度，设为`'around'`时下方也是；位于框的顶部或底部时，则由内边距把它隔开。（在postext 1.4及以前，它紧贴着框内的文字；`layout.inlineResourceGapInBoxes: false`保留这种做法，1.5之前保存且框内嵌有资源的书也按它读取。）
+
+在多栏版式中，若行内资源的位置还设置了`span: 'page'`（`placement: { position: 'here', span: 'page' }`），它会像跨页框一样在指令所在处横跨整页：上方各栏齐平收束（经过平衡；无法齐平时资源移到下一页顶部），资源按版心全宽排出，上下保留同样的空白，正文在其下方的各栏中继续。在单栏页面上仍像以前一样按全栏宽排。设置了`columns`的`span: 'column'`资源以行内方式嵌入时仍留在本栏：栏数只对浮动体生效。postext 1.19 起。
+
+`id`必须与“资源”面板中定义的某个资源对应。引擎渲染资源（位图、SVG或表格），并在下方画出题注，作为图脚或表脚。题注文字由资源类型的`captionPrefix`、计算出的编号和资源本身的题注组成，例如**Figure 1.7. The original lighthouse plan.**。题注的排印由[配置 › 题注样式](/zh/docs/configuration-resources#题注样式)控制：标签和说明共用同一种字体和字号，标签单独保留粗体、斜体和颜色设置；题注上方的间距默认为`0.75em`，对齐方式默认为左对齐。题注也可以放在资源上方（`captionStyle.position: 'above'`，可全局设置，也可按资源类型设置），还可以衬一条色带。资源还可以带一个`note`：一行简短的来源说明或出处，支持与题注相同的行内格式和`:ref`标记，以较小的字号排在资源下方（题注在下时排在题注下方，题注在上时排在资源主体下方），样式通过`captionStyle.note`设置。
+
+**题注和附注中的换行**。题注或附注是按其所在位置的行长排出的一个段落，在其中键入的换行符相当于一个空格。要另起一行，写`\\`（标题中使用的强制换行），或者在行尾加一个反斜杠，即Markdown的硬换行：`¹ Measured at 20 °C. \\ ² Mean of three runs.`会把一张宽表的每条脚注各排一行。换行前的那一行保持自然宽度，不会被拉伸到行长；连续两个换行不会产生空行（两者之间加一个不换行空格才会）。在表格单元格中，`\\`的作用与换行符相同：开始一个新段落；它后面那一行的缩进会保留，所以行首两个空格仍然会把列表项嵌套一级。在正文中，两个反斜杠总是表示换行，没有转义方式：要把它们印出来，就放在行内代码里，那里的反斜杠照原样印出。在链接的目标地址中，它们仍是URL的一部分；在指令的属性中（例如`:ref`的`text`），它们是属性值的一部分；在只排一行的行内标签中，换行相当于一个空格。（在postext 1.4及以前，这些反斜杠会被印出来，题注或附注只在行长用尽时才换行。）
+
+表格资源自己画出表格线，样式由[配置 › 表格样式](/zh/docs/configuration-resources#表格样式)控制：表体单元格和表头单元格的排印完全独立；表头背景默认为`#f0f0f0`，边框默认为`0.75pt`，`cellPadding`默认为`0.375em`；未设置的字段都继承正文的设置。列宽属于表格本身：`TableModel.columnWidths`为每一列保存一个相对权重（`[2, 1, 1]`让第一列占一半宽度）；未设置时各列平分宽度。表格也可以使用某个命名变体：`table.styleId`从文档的`tableStyles`中选一个（见[配置 › 命名表格样式](/zh/docs/configuration-resources#命名表格样式)），其中未设置的字段继承`tableStyle`；id未知或缺失时沿用`tableStyle`。
+
+单元格用`TableCell.align`（`left`、`center`、`right`；列表项始终齐左）和`TableCell.verticalAlign`（`top`为默认值，另有`middle`或`bottom`）来摆放内容。垂直对齐会在比内容高的单元格里移动整个单元格内容（图片及其下方的文字作为一个整体），比如被更高的相邻单元格撑高的行，或者`rowSpan`覆盖的多行。它在所有输出中都生效（Canvas、HTML、PDF），也适用于旋转的表格，以及跨页拆分的表格的每一段。两者都可以在沙盒表格编辑器工具栏的对齐按钮中逐个单元格设置。
+
+表格单元格还可以容纳图片。`TableCell.image`按id指定一个位图或SVG资源（`{ "resourceId": "fig-arm", "width": 0.7 }`）：图片画在单元格内，不编号、不浮动、不带题注，按单元格的内宽（或由`width`给出的比例，默认为`1`）缩放并保持宽高比，对齐方式与单元格文字相同，单元格中的文字排在它下方。行高会随之增加以容纳图片。在沙盒的表格编辑器中，工具栏的图片按钮为当前单元格选择资源，宽度字段设置比例。id与任何图片资源都不对应时，单元格只显示文字。
+
+单元格可以有自己的填充色。`TableCell.background`是一个颜色值（`{ "hex": "#c1dfd6", "model": "hex" }`，可以用`paletteId`关联到文档调色板中的某一项），用它代替样式中的表头或表体背景色；兼容性矩阵就是这样把单元格涂成绿、红、黄三色的。沙盒的表格编辑器通过工具栏的填充控件设置它。为了给这些填充色加图例，题注、附注和任何文本块都接受行内**色块**：`:swatch{color="#c1dfd6"}`（一个十六进制值，或调色板某一项的id，如`:swatch{color="table-compatible"}`）会在基线上排一个小方块，边长为字号的四分之三，用该颜色填充，并以文字颜色描边，所以附注可以写成`:swatch{color="ok"}: compatible; :swatch{color="no"}: incompatible`。颜色解析不出任何值时，只画一个空的边框。十六进制值可以带alpha通道（`#rrggbbaa`、`#rgba`），`rgb()` / `rgba()`颜色也可以用，所以半透明的单元格填充色可以有同样半透明的图例（见[配置 › 透明度](/zh/docs/configuration-fonts-colors-viewers#透明度)）。
+
+SVG资源还可以通过`diagramStyle.singleInk`（默认为`false`）重新着色，以便用单一专色印刷。启用后，SVG示意图中的每一种颜色都会按亮度映射为`diagramStyle.inkColor`（默认为主调色板颜色`#295AA3`）的某个色调：白色对应纸色，黑色对应满版油墨。这样文档用单一专色印刷时，图仍能如实再现。见[配置 › 示意图样式](/zh/docs/configuration-resources#图示样式)。
+
+格式错误的嵌入（缺少`id`或`id`为空、`id`没有加引号或用了单引号、带有多余的属性）不会被提升为资源块；它会退回到普通的段落解析，在输出中仍然可见。格式正确、但紧贴在某个段落行下方、中间没有空行的嵌入行也是如此：它会被当作那个段落的一部分。两种情况都会发出`malformedEmbed`警告，即沙盒“检查”面板中的一条**嵌入被排成文字**。
+
+行内引用在任何文本块中都能识别，包括段落、标题、引文块和列表项，并且可以与粗体、斜体、行内代码和行内公式并用。
+
+#### 引用选项
+
+`:ref`指令接受三个可选属性，顺序不限。`style`选择计算出的标签如何渲染：`style="number"`只印编号（`1.7`），`style="full"`印出类型全称加编号（`Figure 1.7`），未设置`style`时使用类型的`shortLabel`加编号（`Fig. 1.7`）。`case`只改变标签部分的大小写，取值为`lower`、`upper`或`capitalize`，编号不受影响。`text`是原样使用的替换文字，会取代任何计算出的标签，优先级高于`style`和`case`。各种渲染选项对照如下：
+
+<table>
+  <thead>
+    <tr>
+      <th>语法</th>
+      <th>渲染结果</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:ref&#123;id="…"&#125;</code></td>
+      <td><code>Fig. 1.7</code></td>
+      <td>默认样式：类型的<code>shortLabel</code>后接编号，两者之间用不换行空格连接，永远不会被拆到两行。</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" style="number"&#125;</code></td>
+      <td><code>1.7</code></td>
+      <td>只有计算出的编号，不带标签。</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" style="full"&#125;</code></td>
+      <td><code>Figure 1.7</code></td>
+      <td>类型的完整<code>name</code>后接编号。用在句首，或者缩写读起来别扭的地方。</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" case="lower"&#125;</code></td>
+      <td><code>fig. 1.7</code></td>
+      <td>只改变标签的大小写：<code>lower</code>（<code>fig. 1.7</code>）、<code>upper</code>（<code>FIG. 1.7</code>）或<code>capitalize</code>（首字母大写）。可以与<code>style="full"</code>组合（<code>figure 1.7</code>）；编号始终不变，无法识别的值会被忽略。</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" text="see the plan"&#125;</code></td>
+      <td><code>see the plan</code></td>
+      <td>显式替换。给出的文字原样使用，取代任何计算出的标签，适合写成“前面已经看到”这类行文式的链接。提供<code>text</code>时，它优先于<code>style</code>和<code>case</code>。</td>
+    </tr>
+  </tbody>
+</table>
+
+如果`:ref`（或`::resource`）指定的id没有对应的资源，标签会退回为`?`（设了`text=`时印出该标签，同样不带编号和链接），沙盒会发出**未知资源**警告。引擎把它记为文档`contentWarnings`中的一条`unknownResourceId`，附上引用的源码范围和页码；正文所用资源的题注、附注或表格单元格中的`:ref`也同样记录。
+
+### 按首次引用编号
+
+资源的编号在它**按阅读顺序第一次被提到时**分配，不论这第一次是`::resource`块级嵌入还是行内`:ref`。此后，对同一id的每一次引用都印出同一个编号。
+
+也就是说，编号遵循读者遇到它们的顺序，而不是资源在面板中创建的顺序：
+
+- 如果你在引言中`:ref`了一幅图，两页之后才嵌入它（`::resource`），它仍然采用引言处的编号，因为引用在先。
+- 在文档*较前*的位置插入一个新引用，其后的所有编号都会自动重排。没有需要手动保持同步的编号。
+
+编号按资源类型分别计数，并遵守每种类型的重置范围和计数格式。模板标记（`{h1}`、`{n}`）、`resetOn`和`counterFormat`见[配置 › 资源类型](/zh/docs/configuration-resources#资源类型)。
+
+只有正文引用的资源才会计数：只由版面设计画出的资源（比如章首页的一个图片元素）不编号，计数器保持原样。`{h1}`会计入每一个样式不是`numbered: false`的一级标题，即使它的`numberingTemplate`为空，所以一篇只有标题是H1的文章，默认会把图编为1.1、1.2……。[配置 › 哪些内容编号](/zh/docs/configuration-resources#哪些资源会编号)列出了这两条规则，以及把图编为Figure 1、2……的设置。
+
+### 位置
+
+每个资源都有一个**位置**设置，决定它的浮动体落在哪里。解析顺序是：资源自己的`placement`，然后是其类型的`defaultPlacement`，最后是内置默认值`auto` / `column`：
+
+<table>
+  <thead>
+    <tr>
+      <th>字段</th>
+      <th>取值</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>position</code></td>
+      <td><code>"auto"</code> · <code>"top"</code> · <code>"bottom"</code> · <code>"here"</code></td>
+      <td><code>"auto"</code>（默认值）占用引用之后的第一个空位，顶部或底部均可；<code>"top"</code> / <code>"bottom"</code>只接受相应类型的空位；<code>"here"</code>取消浮动，在<code>::resource</code>指令处以行内方式嵌入（排在那里的表放不进本栏剩余空间时，在行与行之间切开，见<a href="/zh/docs/configuration-resources#比页面还高的表">比页面还高的表</a>）。</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>align</code></td>
+      <td><code>0 &lt; width &lt; 1</code>; <code>"left"</code> · <code>"center"</code> · <code>"right"</code></td>
+      <td>用于比所在位置窄的资源：<code>width</code>是它所占栏宽（或页宽）的比例，<code>align</code>是它在该位置中的摆放方式（在栏中居中的小表格；占满页宽的横带中只跨一栏的图片）。比所在位置窄的图片（比栏窄的位图，或被<code>layout.fitFiguresToPage</code>缩小的图）同样按<code>align</code>摆放，下方的题注仍保持该位置的行长。浮动体和行内<code>::resource</code>嵌入都适用。</td>
+    </tr>
+    <tr>
+      <td><code>captionSide</code></td>
+      <td><code>true</code> · <code>false</code></td>
+      <td>在侧栏专供浮动体使用的一栏半版式中（<code>layout.sideColumnRole: 'floats'</code>），带<code>captionSide</code>的<code>"column"</code>浮动体把主体留在主栏，把题注（和附注）排在侧栏，与图的顶边齐平（底部浮动体则与底边齐平）；侧栏让出这一段横带。没有这种侧栏的页面，题注仍排在图的下方。自postext 1.28起，随文放置（<code>"here"</code>）且占一栏的资源同样适用：题注和附注排在侧栏，与主体顶边齐平，正文中的块只有主体那么高，之后排入的侧栏图和方框会避开这段题注。侧栏在资源旁边已被占用时，题注仍排在主体下方；移到下一栏或下一页的资源在那里重新判断。方框内的资源、竖排页面和文字绕排的图片不适用。<code>layout.inlineCaptionSide: false</code>让侧栏题注只用于栏内浮动体。</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>"column"</code> · <code>"page"</code></td>
+      <td>占一栏，或者打断分栏文字流，横跨所有栏、占满版心宽度。在单栏版式中两者没有区别。</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td>整数，默认<code>1</code></td>
+      <td>在多栏页面上，让<code>"column"</code>浮动体横跨这么多相邻的栏，包括栏间距：例如报纸五栏中横跨两栏的照片。它占用一组顶端平齐的空栏的栏首，或者引用它的那一栏及其后空栏的栏脚。栏数等于或大于页面的栏数时，就是通栏浮动体。<code>"page"</code>和<code>"side"</code>跨度、旋转的资源以及行内嵌入（<code>"here"</code>）忽略此项；<code>captionSide</code>只对一栏宽的浮动体有效。postext 1.18起。</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>"ccw"</code> · <code>"cw"</code></td>
+      <td>把资源旋转四分之一圈排出，比如竖开本书中的一张横向表格。<code>"ccw"</code>逆时针旋转，资源顶部朝向页面左边缘（读者把书顺时针转过来看），这是通常的惯例；<code>"cw"</code>方向相反。旋转的资源总是独占一页的通栏浮动体：它沿版心的高度排版，高度向下取整到基线网格的整行，再减去一行正文，即每个浮动横带都保留的浮动间距（在14 pt网格上，237 mm高的版心能容纳47行，即232.1 mm，所以资源得到其中46行，即227.2 mm）；页边距为对称镜像时它紧贴书脊（否则齐左）；一张太宽、一页放不下的表格会在行与行之间切开，在后续页面上继续旋转排出，并重复表头，与比一页还高的直立表格完全一样。旋转的图会缩放到适合页面。对行内（<code>"here"</code>）嵌入无效。</td>
+    </tr>
+    <tr>
+      <td><code>shrink</code>, <code>minScale</code></td>
+      <td><code>"never"</code> · <code>"page"</code> · <code>"slot"</code>；<code>0 &lt; minScale ≤ 1</code>，默认<code>0.7</code></td>
+      <td>把浮动的图片（位图、SVG、视频的封面）按原比例缩小到某个位置实有的空间，而不是把它移到后面。<code>"never"</code>（默认）按原尺寸排入。<code>"page"</code>只在图片高于新页的横带时才缩小：横带是版心减去该页已有的内容（篇章页、其他浮动体、脚注）和浮动间距，比如按页面大小排的图录插图。<code>"slot"</code>还会在图片不小于<code>minScale</code>就能放进引用它的那一页的某个位置、或另一条横带旁剩下的空间时，把它缩小放进去；否则照旧移到后面。各个位置仍按通常的顺序尝试，横带仍然结束在基线网格上。有安全区的图片先在安全区内裁切，再缩小（见<a href="#安全区">安全区</a>）。在新页上，图片没有别处可去，即使缩到<code>minScale</code>也放不下时，就按这个比例排入并超出横带。排版会为每个缩小的浮动体发出<code>floatShrunk</code>警告。表格（会拆分）、浮动的框、漫画条、旋转的资源和行内嵌入从不缩放。文档级默认值是<code>layout.floatShrink</code>。postext 1.24起。</td>
+    </tr>
+    <tr>
+      <td><code>captionMeasure</code></td>
+      <td><code>"slot"</code> · <code>"body"</code></td>
+      <td>比所在位置窄的图片（被缩小，或位图比栏窄）的题注和说明的行宽：<code>"slot"</code>（默认）保持位置的宽度；<code>"body"</code>让它们与图片同宽，按<code>align</code>排在图下，居中的插图因此题注也居中在图下。浮动体和行内嵌入都适用。postext 1.24起。</td>
+    </tr>
+    <tr>
+      <td><code>wrap</code>, <code>wrapGap</code></td>
+      <td><code>"none"</code> · <code>"left"</code> · <code>"right"</code> · <code>"start"</code> · <code>"end"</code>; 长度</td>
+      <td>让正文排在资源旁边：资源放在栏的这一侧，旁边的行按剩下的行宽排，与资源的框（含图注）相隔<code>wrapGap</code>，排到它下方后恢复全宽。适用于行内嵌入（<code>"here"</code>）以及位于栏首或栏尾、宽一栏的浮动体；通栏、跨多栏、侧栏和旋转的浮动体保持整条。资源占栏宽的<code>width</code>，未设置时取<code>layout.wrap.defaultWidth</code>（0.45）。<code>wrapGap</code>默认取<code>layout.wrap.gap</code>，再无则为一行正文。见<a href="#文字绕排">文字绕排</a>。postext 1.24起。</td>
+    </tr>
+    <tr>
+      <td><code>citingPage</code></td>
+      <td><code>true</code> · <code>false</code>，默认<code>false</code></td>
+      <td>让<code>"top"</code>或<code>"auto"</code>浮动体像 LaTeX 的<code>t</code>位置那样，占据首次引用它的那一行所在页面（通栏浮动体）或栏（单栏浮动体，跨<code>columns</code>栏的也一样）的顶部，而不是该行之后的第一个空位。引用处之上的文字移到浮动体下方。只有在以下条件都满足时才这样放：浮动体在该处所占不超过栏高的<code>layout.maxTopFraction</code>（默认 0.7）；同一编号序列中更早的浮动体都已排定；该页不是由显式分页开启的（章首页、部分页、<code>:::pagebreak</code>之后），引用行之上也没有通栏的内容；而且这样放之后，引用行仍落在该页（落在浮动体所占的栏中）。否则浮动体放在通常的位置。旋转的浮动体、旁栏浮动体以及跨页拆分的表格的后续部分都不会这样移动。默认值：类型的<code>defaultPlacement</code>，其次是<code>layout.floatsAtCitingPage</code>。自 postext 1.25 起。</td>
+    </tr>
+  </tbody>
+</table>
+
+浮动体按阅读顺序进入**第一次引用之后的第一个空位**：先是引用所在栏的栏底，然后是同一页下一个空栏的栏顶和栏底，再然后是文字流打开的下一页的各个横带（通栏浮动体在每一栏都还有空间容纳它时占用页面底部，否则占用下一页的一个横带）。由行内图或表打开的页面也算在内：等待该页的浮动体，在两者都放得下时占用页首，位于那幅图或那张表的上方；放不下时，那幅图或那张表保留这一页，浮动体等下一页。在postext 1.4及以前，这样的页面会被跳过，即使两者都放得下，浮动体也要等到再下一页。浮动体按原尺寸排入，除非它的`shrink`允许它缩小到某个位置的空间（见上表）；它也从不落在它的引用之前。同一编号序列的浮动体按引用顺序出现：在一页上哪里都放不下的图，会挡住排在它后面的图（等待中的表不会挡住图，反之亦然），所以图12永远不会出现在图11之前。本来要等待的表格会被切开：遇到空栏的栏顶时，它先占用放得下的那些行，然后在下一个空位（旁边的栏或下一页）继续，并重复表头行（见`tableStyle.overflow`）。开启了`citingPage`的`top`或`auto`浮动体也可以置于其引用行所在页（或栏）的顶部，引用处之上的文字移到它下方：这时它排在同一页中引用处的上方，绝不会排到更早的页上，在带标签的 PDF 和 HTML 中仍在引用处之后被读到。引擎用几轮额外的排版来确定这一位置，只有在引用行仍留在该页时才保留它。
+
+浮动体永远不会越出所在的章：在章首页（带`breakBefore`或`span: 'page'`的标题级别）、`:::part`、带`floatBarrier: true`的标注框样式（一章末尾的“要点”框）以及文档末尾，所有仍在等待的浮动体都会先被放置，放在该页的空位里，或者放在边界之前新开的页面上。由章首页本身（标题中提到了自己的图的章标题）或`:::part`之后第一个块首次引用的浮动体，属于新的一章：它和其他浮动体一样，落在那一行之后。要求放在页首的图或表，这时可以占用本章最后一页的底部，位于已齐底的各栏下方，而不必独占一页。`:::pagebreak`只是把等待中的浮动体送到它后面的那一页。
+
+通栏的章首标题排在两栏或更多正文栏之上时，只要标题所在的那一栏在标题之后还没有别的内容，它的栏首就算空着：紧跟在标题后面的浮动框，或在那里用`::resource`嵌入的资源，占据第一栏的栏首，位于标题下方，与其他各栏的栏首齐平（带`columns`时从第一栏起跨多栏），该栏的正文从它下面开始。在正文中被引用的浮动体仍排在引用它的那一行之后。在postext 1.24及以前，第一栏在此处不提供空位，这类浮动体从第二栏起排；`layout.floatsUnderOpener: false`保留这一做法（见[配置 › 版面](/zh/docs/configuration-page-layout#版式)）。
+
+侧栏框（`span="side"`）同样不会越出所在的章。本页侧栏放不下的框排进下一页的侧栏；如果所在章或文档先结束，每个仍在等待的框按围栏的先后排进正文之后新开页面的侧栏，在它们之后才被引用的侧栏图排在它们后面。这样的页面没有正文，所以排版会报告其上的每个框和图（`afterText`）。比空侧栏还高的框照样排出并报告（`calloutOverflow`），仍然找不到页面的内容也会报告（`unplaced`），而不是丢掉。在postext 1.24及以前，只会开出第一个这样的页面，其余的框无声无息地丢失。
+
+浮动横带会根据基线网格调整，使周围的文字保持全页统一的垂直节奏。**顶部**横带把下外边距增加到下一条网格线，让浮动体下方的文字与相邻各栏和对页保持对齐。**底部**浮动体的定位方式是让其题注的最后一行与其他各栏最后一行文字共用一条基线（没有题注的内容则让底边对齐最后一个网格位置），因此排满的页面在各栏之间、对页之间都结束在同一高度。
+
+在一章（以及整个文档）的最后一页，排在最后一段文字下方的通栏图和表后面再没有内容，所以它们会上移，依次叠放在文字下方一个浮动间距处，而不是在文字与页面底部的图之间留出空白。`position: 'bottom'`的浮动体也是如此。要让它们像其他页面一样留在页面底部，设置`layout.hugClosingFloats: false`（见[配置 › 版面](/zh/docs/configuration-page-layout#版式)）。有侧栏的页面从不移动它们。
+
+三个后端，即Canvas预览、HTML查看器和PDF输出，都会渲染资源。在HTML后端中，图片数据不随版面一起传递，所以由宿主通过`resourceImageUrl(fileId)`解析器选项提供；缺少解析器（或它对某个文件没有返回内容）时，资源会渲染成一个中性的占位框，使版面保持稳定。视频自身的文件同样通过`resourceVideoUrl(fileId)`提供（见[视频](#视频)）。
+
+#### 浮动体可以落在哪里
+
+“从不落在引用之前”是从引用浮动体的那一行算起的：浮动体要等那一行排好，再按阅读顺序占用它之后的第一个空位；那一行所在页面的页首位于它之前。侧边浮动体（`span: 'side'`，位于一栏半版式中专供浮动体使用的侧栏）是例外：它在侧栏中叠放在引用它的文字旁边，可以比引用行在页面上的位置更高。以第5页引用的一幅图为例：
+
+<table>
+  <thead>
+    <tr>
+      <th>位置</th>
+      <th>在第5页</th>
+      <th>否则</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>top</code>, <code>span: 'page'</code></td>
+      <td>不可能：页首的横带在引用行之上。</td>
+      <td>第6页的顶部横带。</td>
+    </tr>
+    <tr>
+      <td><code>top</code>, <code>span: 'column'</code></td>
+      <td>后面某个仍为空的栏的栏顶：在两栏中的第一栏引用时，它可以排在第二栏开头。</td>
+      <td>第6页某一栏的栏顶。</td>
+    </tr>
+    <tr>
+      <td><code>auto</code>或<code>bottom</code>, <code>span: 'page'</code></td>
+      <td>第5页的底部横带，前提是每一栏都还有空间容纳它。</td>
+      <td>第6页的一个横带。</td>
+    </tr>
+    <tr>
+      <td><code>auto</code>或<code>bottom</code>, <code>span: 'column'</code></td>
+      <td>引用所在栏的栏底；然后是后面某个空栏的栏底（两者皆可）或栏顶（仅限<code>auto</code>）。</td>
+      <td>第6页。</td>
+    </tr>
+  </tbody>
+</table>
+
+- 章首页遵循同样的规则：在章首页第一段中引用的通栏`auto`或`bottom`浮动体可以占用该页的底部横带，排在文字下方；`top`浮动体则排在下一页开头。要让图片出现在引用它的那一页，用`auto`或`bottom`，或者把它画成章首页版面设计中的一个图片元素。
+- 在同一段中引用的两个栏浮动体占用接下来的两个空位：通常第一个在引用所在栏的栏底，第二个在下一个空栏的栏顶，在页面上并排。
+- 在单栏版式中，通栏浮动体就是栏浮动体，规则相同：在某一页引用的`top`浮动体落在下一页的页首。
+- 从一页延续到下一页的段落，同样从引用行算起。段落从第5页底部开始，而引用落在第6页时（或者因为第5页底部放不下足够多的行，整段移到了第6页），引用就在第6页：`top`浮动体排在第7页开头，`auto`浮动体在有空间时占用第6页底部。同一页的各栏之间也是如此，跨页拆分的框也一样：由框的第二部分引用的图要等到那一部分。
+- **postext 1.5中的变化**。在postext 1.4及以前，版面排到引用浮动体的段落时，浮动体就进入等待队列，所以这样的段落延续到（或移到）的那一页，可能以该浮动体开头，排在含有引用的那一行之上。现在这样的图会晚一页出现，或者在它要求`auto`时落在该页底部；页数可能随之变化。
+
+### 文字绕排
+
+比栏窄的图片、表格或框可以放在栏的一侧，正文排在它旁边，就像杂志或简报那样。给它的位置设置`wrap`一侧，如需要再设`width`：
+
+```json
+{ "id": "bed", "typeId": "figure", "kind": "svg", "caption": "新的种植床。",
+  "placement": { "position": "here", "wrap": "right", "width": 0.4 } }
+```
+
+- **行内（`"here"`）。** 资源放在栏的这一侧，顶端与`::resource`行之后下一行的顶端齐平，后面的段落、引文和列表项按剩下的行宽排在它旁边，到它下方后恢复全宽。在它旁边开始、在它下方结束的段落仍是一个段落：不断开，图片底部也不加空。每一行都在基线网格上；图片下方的空间是绕排间距向上取整到整行网格。
+- **栏浮动体。** 宽一栏的`span: "column"`浮动体，位于栏首（`"top"`，或栏首的`"auto"`）或栏尾（`"bottom"`、`"auto"`），像其他浮动体一样放进它的条带；栏的前几行或最后几行随后排在它旁边。在双栏页面上，浮动体属于它所在的栏，另一栏照常全宽。
+- **框。** `:::callout`以属性接受同样的设置：`:::callout{wrap="right" width=0.4}`在出现处放一段引语或一个边栏，后面的正文排在旁边；`placement="top"`或`"bottom"`加上`wrap`则让它浮到栏首或栏尾。绕排的框整体排版，从不拆分。
+- **排到下方的块。** 标题、独立公式、图或表、框和诗不排在绕排对象旁边：它们排到下方，上方旁边的空白保持空着。离开所在栏（栏尾、`:::columnbreak`、换页）即在那里结束绕排：对象属于它所在的栏。行内资源之后紧接的块不能排在旁边时，资源占满整条，与不设`wrap`时相同。
+- **间距与限制。** `wrapGap`（否则`layout.wrap.gap`，再否则一行正文）把对象（含图注）与旁边和下方的正文隔开。若旁边的正文会窄于`layout.wrap.minTextWidth`（正文12 em），或对象矮于`layout.wrap.minLinesBeside`行（2），它就占满整条，并给出`textWrap`警告。行内对象高于所在栏剩余空间时，随锚点移到下一栏，给出同样的警告。
+- **左右。** `left`和`right`是正文流的两侧，与`align`相同：从右到左的书里`left`是纸面的右侧。`start`和`end`指同样的两侧。
+- **输出。** 画布、HTML 查看器、PDF 和固定版式 EPUB 按排版结果排出各行；带标签的 PDF 先读图片或框，再读旁边的段落。可重排 EPUB 用 CSS 让它浮到自己一侧，占正文宽度的同样比例。
+- **尚不支持。** 图片两侧都排正文、按轮廓绕排、在框的内容内部绕排，以及竖排中的绕排（对象保持整条，并给出警告）。含绕排对象的栏不参与栏平衡。
+
+### 位图尺寸
+
+位图声明的是它的像素：`bitmap.width`和`bitmap.height`是文件的像素数，不是印刷尺寸。每英寸分到多少像素，决定了图片在受所在位置限制之前排成多大。确定尺寸有三种方式：
+
+- **按页面的dpi取像素**（默认）。没有分辨率时，图片的一个像素就是排版的一个像素（`page.dpi`，未设时为300）：2400 px的照片在300 dpi的页面上宽8英寸（203.2 mm），在150 dpi的页面上则是两倍宽。
+- **分辨率**。`bitmap.resolution`是图片在自然印刷尺寸下的ppi，所以无论页面是多少dpi，它的自然宽度都是`width × page.dpi / resolution`：`resolution: 300`的2400 px宽203.2 mm，页面按150 dpi还是300 dpi排版都一样。`layout.bitmapResolution`给所有没有自身分辨率的位图一个分辨率：一个数字（`300`），或者`'file'`，即文件标明的分辨率（`bitmap.fileResolution`：PNG的`pHYs`，JPEG的JFIF或EXIF密度，WebP的EXIF；从Word导入的图片则是它在Word中的打印尺寸）。相机、截图和网页导出的文件对印刷尺寸一无所知时，常常标为72或96 ppi，所以在`'file'`下这两个值算作未标明，图片仍按页面的dpi取像素；直接写在资源上的72则照写的用。默认的`'document'`就是第一种方式。
+- **占栏宽的比例**。`placement.width`把浮动体或行内嵌入收窄到所在栏（或页面）的一个比例，比这个宽度大的图片会缩小到这个宽度，与它有多少像素无关（见[位置](#位置)）。
+
+无论哪种方式，图片都受所在位置限制，保持宽高比，较小的图片从不放大。表格单元格中的图片和版面设计中尺寸为`'auto'`的`image`元素，也采用同样的自然尺寸。PDF原样嵌入文件，按放置的尺寸显示。[印前检查](/zh/docs/configuration-fonts-colors-viewers#印前检查)检查每张图片印刷时的分辨率，Sandbox的[资源面板](/zh/docs/sandbox#资源面板)为每张图片显示这个值。postext 1.24起。
+
+```json
+{ "id": "harbour", "typeId": "figure", "kind": "bitmap", "caption": "清晨的港口。",
+  "bitmap": { "fileId": "harbour.jpg", "format": "jpeg", "width": 2400, "height": 1600, "resolution": 300 } }
+```
+
+`bitmapInfo(bytes)`（由`postext`和`postext/bundle`导出）读取文件的像素和它标明的分辨率，返回`{ width, height, resolution?: { x, y, source } }`；以`'file'`打开的文件包用它填写`fileResolution`，Sandbox也为上传的每张图片保存这个值。
+
+### 安全区
+
+位图或SVG资源可以标出一个**安全区**：图片中承载要紧内容、任何时候都要显示出来的那个矩形（一个人和他身后的一条风景，图表中画了数据的部分）。它写在资源的`safeArea`字段里，是四个以图片固有尺寸为单位的比例值（0–1），从左上角起算：`x`和`width`是宽度的比例，`y`和`height`是高度的比例。这个名字说的是必须保留的部分；裁切框说的则是从哪里下刀。
+
+```ts
+const harbour: Resource = {
+  id: 'harbour', typeId: 'figure', kind: 'bitmap', caption: '清晨的港口。',
+  createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'harbour.jpg', format: 'jpeg', width: 2400, height: 1600 },
+  // 船和码头：宽度的18%–68%，高度的25%–85%
+  safeArea: { x: 0.18, y: 0.25, width: 0.5, height: 0.6 },
+};
+```
+
+只有设了安全区的图片才会被裁切。这时引擎可以按整幅图片与安全区之间的任意宽高比显示它：裁去左右两侧，使它比自身比例更高，最多裁到安全区的宽度；或者裁去上下两边，使它更矮，最多裁到安全区的高度。图的宽度始终不变，变的只是高度。安全区以外的部分按两侧余量的大小成比例裁去，所以偏在中心左边的主体仍然偏在左边。上例的港口排成60 mm宽时，完整显示高40 mm，可以显示成24 mm（上下裁到高度的60%）到80 mm（左右裁到宽度的一半）之间的任意高度。超出图片边缘的数值会被收回到边缘以内；含有非数字的值、某一边小于图片的2%、或者覆盖整幅图片的安全区会被忽略，表格上的这个字段也会被忽略。没有安全区的图片总是完整显示，与以前一样。
+
+引擎在四种情况下利用这段余地：
+
+- **栏中剩下的空间**。行内图片（`position: 'here'`）比所在栏剩下的空间稍高一点时（包括题注会超出页面底部的情况），会在安全区以内裁切，留在这一栏，而不是移到下一栏或下一页、让这一栏留空。
+- **比图还矮的页面**。开启`layout.fitFiguresToPage`时，对页面来说太高的图片先在安全区以内裁切，保持宽度不变，仍然太高时才缩小（见[配置 › 版式](/zh/docs/configuration-page-layout#版式)）。
+- **比图还矮的横带**。`placement.shrink`把浮动体缩小到所在位置的空间时，先在安全区内裁切（宽度不变），然后才缩小；下面的`flexFigure`杠杆不会让它长过这个空间。
+- **各栏齐底**。设了安全区的图片，如果以行内方式排在一个短栏里，或者作为只占这一栏的浮动体排在这一栏的栏顶或栏底，就会按整条基线网格行增高，填满这一栏空着的行。图片变高不会在页面上留下看得见的空洞，所以这个手段（`flexFigure`）紧接在收尾的框之后、在标题上方或列表之后加空之前尝试。章末页或收尾区段中位于栏顶的浮动体不会增高，因为那里各栏的栏顶要保持齐平（见[配置 › 各栏齐底](/zh/docs/configuration-page-flow#各栏齐底)）。
+
+VDT把裁切记录在资源块上：`bodySource`是图片在`bodyRect`中显示出来的部分，用同样的比例表示（完整显示时不出现）；`bodyFlex`给出图片主体还能缩短和增高的px数，以及各个手段已经改变的px数（`{ shrink, grow, delta }`）。Canvas预览和PDF把绘制范围限定在图片主体内，按未裁切的尺寸画出整幅图片；HTML查看器和固定版式EPUB用`object-fit: cover`加上相应的`object-position`显示图片；流式EPUB没有要填满的页面，显示整幅图片。自己绘制图片的宿主可以使用`postext`导出的函数：`resourceSafeArea`和`normalizeSafeArea`（引擎读到的安全区，或`undefined`）、`safeAreaHeightRange`（某一宽度下主体的最小和最大高度）、`safeAreaSource`（某一高度下显示的部分）和`uncroppedPictureBox`（裁切前整幅图片应画在哪里），以及类型`ResourceSafeArea`。在Sandbox中，这个字段是[资源面板](/zh/docs/sandbox#资源面板)里图片的**安全区**。
+
+排版食谱第116号[长高以填满短栏的照片](/zh/cookbook/photos-fill-short-columns)把一篇双栏杂志报道排了两遍，一遍没有安全区，一遍有，可以把页面并排对照。
+
+
+### 说话人锚点与避让区
+
+作为漫画分格画面的图片，还可以为嵌字标明画中人物的位置（见[漫画](/zh/docs/document-format-directives#漫画)）。`anchors`为每个说话人列出一个点，`avoid`列出不让对白框遮挡的区域，两者都和安全区一样以图片的比例表示：
+
+```ts
+const radio: Resource = {
+  id: 'lh-radio', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'lh-radio.jpg', format: 'jpeg', width: 1000, height: 1000 },
+  safeArea: { x: 0, y: 0.36, width: 0.62, height: 0.56 },
+  anchors: [
+    // 灯塔看守人：嘴、头（供心声使用）和脸
+    { id: 'tomas', x: 0.345, y: 0.52, head: { x: 0.38, y: 0.44 }, face: { x: 0.29, y: 0.4, width: 0.16, height: 0.18 } },
+  ],
+  avoid: [{ x: 0, y: 0.44, width: 0.22, height: 0.26 }], // 收音机
+};
+```
+
+锚点的`id`是脚本中的说话人键（`tomas: …`），或者是`sfx`，表示这一格的拟声词聚集的点；`x`和`y`是嘴，对白的尾巴指向这里；`head`是心声的气泡所指的点（未设置时为嘴）；`face`是一个不让对白框遮挡的矩形。引擎把每个点经过分格的裁切和翻转映射到页面上，所以不管分格是什么形状，尾巴都指向它的说话人；安全区以外的锚点会引发`comicAnchorOutsideSafeArea`，因为裁切可能把它切掉。第三个列表`faces`用和`avoid`一样的矩形记下不说话的人的脸：任何对白框都不会盖住它们，而一格里别无他处时，避让区会让步。锚点属于图片，供这部漫画的每个译本使用。只有漫画分格读取锚点；图会忽略它们。在沙盒中，它们在[资源面板](/zh/docs/sandbox#资源面板)的**安全区与嵌字**对话框里标出。
+
+
+### 视频
+
+**视频**资源（`kind: 'video'`）是一段YouTube或Vimeo视频，或者你自己的视频：保存在书中的文件（MP4、WebM），或者位于某个网址的视频，即服务器上的文件或**HLS流**（`.m3u8`播放列表）。它像图片一样放置、加题注、浮动和引用，并单独编号：内置的`video`类型印出*Video 1.1*、*Video 1.2*……，与*Figure 1.1*和*Table 1.1*并列（中文文档中为视频1-1，见[配置 › 资源类型](/zh/docs/configuration-resources#资源类型)）。各种输出按各自的能力显示它：
+
+<table>
+  <thead>
+    <tr>
+      <th>输出</th>
+      <th>显示的内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Canvas、PDF</td>
+      <td><strong>封面</strong>，即视频中的一帧，上面有播放标记和一个打开视频的二维码（<a href="/zh/docs/configuration-resources#视频样式">配置 › 视频样式</a>）。在PDF中，封面同时是指向视频的链接。</td>
+    </tr>
+    <tr>
+      <td>Folio</td>
+      <td>封面，与印刷版相同。点击封面，视频就<strong>在页面上</strong>播放，翻动这一叶时也不停（见下文<a href="#folio视图中的视频">Folio视图中的视频</a>）。YouTube和Vimeo视频仍只显示封面。</td>
+    </tr>
+    <tr>
+      <td>HTML查看器</td>
+      <td>视频的<strong>播放器</strong>：YouTube或Vimeo的播放器，文件或网址则用浏览器的HTML5播放器。HLS流在Safari和较新的Chrome中可以直接播放；在其他浏览器中，由宿主接上hls.js之类的播放器，沙盒就是这样做的。设置<code>videoStyle.html: 'poster'</code>时改为显示印刷封面。</td>
+    </tr>
+    <tr>
+      <td>EPUB</td>
+      <td>文件在阅读系统自己的播放器中播放，文件打包在书中，或从正式发布地址读取。YouTube或Vimeo视频显示为封面，链接到视频：EPUB不能嵌入网页的播放器。HLS流同样显示为带链接的封面：HLS播放列表不属于EPUB可以播放的媒体类型。如果阅读系统运行脚本，同一页面或章节中的文件遵守<code>player.exclusive</code>：开始播放一段，会暂停不与它同时播放的其他视频。</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+const talk: Resource = {
+  id: 'keeper-talk', typeId: 'video', kind: 'video',
+  caption: '看守人讲解灯具。',
+  altText: '灯塔看守人站在灯旁',
+  createdAt: 0, updatedAt: 0,
+  video: {
+    source: 'youtube',                        // 'youtube' | 'vimeo' | 'file'
+    url: 'https://youtu.be/aqz-KE-bpKQ',
+    poster: { fileId: 'talk.jpg', format: 'jpeg', width: 1280, height: 720 },
+    start: 30,                                // 从0:30开始播放；印出的链接也从这里开始
+  },
+};
+```
+
+正文引用视频的方式与引用图相同：`:ref{id="keeper-talk"}`印出*Video 1.1*，并把封面浮动到该引用之后的第一个空位；`::resource{id="keeper-talk"}`配合`placement.position: 'here'`则把它行内嵌入。`Resource.video`（`ResourceVideo`）的字段：
+
+<table>
+  <thead>
+    <tr>
+      <th>字段</th>
+      <th>类型</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>source</code></td>
+      <td><code>'youtube'</code> · <code>'vimeo'</code> · <code>'file'</code></td>
+      <td>视频从哪里播放：YouTube或Vimeo的页面，或者你自己的视频（<code>'file'</code>），上传的文件或某个网址均可。</td>
+    </tr>
+    <tr>
+      <td><code>url</code></td>
+      <td><code>string</code></td>
+      <td>YouTube或Vimeo：视频的地址，任何形式均可（观看页、<code>youtu.be</code>、Shorts、嵌入链接、<code>youtube-nocookie.com</code>；Vimeo的视频页、频道页，或带哈希的不公开链接）。文件：它的<strong>正式发布地址</strong>，即出版后的书找到它的位置。自己的视频如果没有上传文件，就从这个地址播放：服务器上的MP4或WebM，或者HLS流（<code>…/master.m3u8</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>fileId</code>、<code>format</code></td>
+      <td><code>string</code></td>
+      <td>文件：上传的视频，像位图一样在带外存储，以及它的格式：<code>'mp4'</code>、<code>'webm'</code>、<code>'ogv'</code>、<code>'mov'</code>，HLS流则为<code>'hls'</code>。不写格式时由地址的扩展名判断（<code>.m3u8</code>即<code>'hls'</code>），否则为<code>'mp4'</code>。</td>
+    </tr>
+    <tr>
+      <td><code>poster</code></td>
+      <td><code>{'{ fileId, format, width, height }'}</code></td>
+      <td>封面帧，一张位图。</td>
+    </tr>
+    <tr>
+      <td><code>width</code>、<code>height</code>、<code>duration</code></td>
+      <td><code>number</code></td>
+      <td>视频画面的px尺寸（没有封面时用它的宽高比）和以秒计的时长。</td>
+    </tr>
+    <tr>
+      <td><code>posterTime</code></td>
+      <td><code>number</code></td>
+      <td>文件中用作封面的那一帧所在的秒数，保留下来以便重新选取。</td>
+    </tr>
+    <tr>
+      <td><code>start</code>、<code>end</code></td>
+      <td><code>number</code></td>
+      <td>从第<code>start</code>秒播放到第<code>end</code>秒。二维码和PDF链接也从<code>start</code>开始。</td>
+    </tr>
+    <tr>
+      <td><code>player</code></td>
+      <td><code>VideoPlayerOptions</code></td>
+      <td>这个视频的播放器选项，覆盖在<code>videoStyle.player</code>之上。</td>
+    </tr>
+  </tbody>
+</table>
+
+**封面**。封面按所在空位的行长（或其`placement.width`比例）排版，保持自身的宽高比，与像素尺寸无关：屏幕大小的帧会被放大，而不是印得很小。和位图一样，它可以带[安全区](#安全区)，也遵循`placement.align`。没有封面的视频印出一个按视频宽高比（没有说明时为16:9）的深色方框，上面照样有叠加元素，并发出`videoWithoutPoster`内容警告。在沙盒中，填入YouTube或Vimeo视频的地址时会从平台获取封面；文件的封面则是你在视频中选取的一帧。
+
+**地址**。二维码和PDF链接打开视频的页面，即`https://youtu.be/<id>`或`https://vimeo.com/<id>`，从`start`开始。文件没有页面，所以打开它的正式发布地址；没有自带文件的视频（服务器上的MP4、HLS流）也从这个地址播放。没有这个地址时，印刷版既没有二维码也没有链接（`videoWithoutUrl`），不携带文件的HTML或EPUB输出则显示封面。YouTube或Vimeo地址不指向该平台的任何视频时，发出`videoUrlInvalid`，并以封面代替播放器。
+
+**播放器**。播放器选项（控件、下载按钮、全屏、倍速菜单、画中画、投屏、自动播放、静音开始、循环、预加载、增强隐私的嵌入）在`videoStyle.player`中为全书设定，在`video.player`中为单个视频设定；每种播放器支持它能支持的那些（见[配置 › 视频样式](/zh/docs/configuration-resources#视频样式)）。HTML后端通过`resourceVideoUrl(fileId)`选项取得文件可播放的URL，就像通过`resourceImageUrl`取得图片一样，没有时退回正式发布地址。它的`videos: { files, streams, hls }`选项按来源在播放器和封面之间选择，优先于`videoStyle.html`（`hls`指从HLS地址播放的视频，不设置时随`files`）；EPUB写入器就使用这个选项。播放HLS地址的`<video>`带有`data-pt-hls`，宿主可以据此在不能原生播放HLS的浏览器中为它接上播放器（Safari和较新的Chrome直接就能播放）。在从右到左的书中，播放器和封面上的叠加元素像图片一样转回来，使二维码能被读出。
+
+**在VDT中**。视频的资源块带有`kind: 'video'`，以`fileId` / `format`表示它的封面（像位图一样绘制），还有`video`（`VDTResourceVideo`）：读者被引向的`link`、应用了播放器选项的YouTube或Vimeo `embedUrl`、文件的`fileId`、自己的视频的`mimeType`（取自它的文件，或仅取自它的地址；HLS为`application/vnd.apple.mpegurl`）、`start` / `end`范围、解析后的`player`、`linkPoster`、`html`，以及叠加元素`playMark`和`qr`（二维码模块表示为由`'0'` / `'1'`组成的行），各矩形相对于主体的左上角。自己绘制视频的宿主可以使用`postext`导出的函数：`parseVideoUrl`、`videoWatchUrl`、`resourceVideoLink`、`videoEmbedUrl`、`videoEmbedAllow`、`videoElementAttributes`、`mediaFragment`、`videoMimeType`、`videoFormatOfUrl`、`resourceVideoFormat`、`isHlsMimeType`、`HLS_MIME_TYPE`、`youtubePosterUrls`、`encodeQr`、`layoutVideo`、`playMarkTriangle`和`qrModuleRuns`。
+
+**在文件包中。**`.postext`携带视频文件（`resources/<id>.mp4`）和封面（`resources/<id>.poster.jpg`）：清单条目在`file`和`poster`中写明它们，在`width` / `height`中给出封面的尺寸，其余内容放在不含文件id的`video`中。`bundleVideoUrl(bundle)`是基于文件包中文件的`resourceVideoUrl`解析函数。只从网址播放的视频不携带文件，它的条目中只有封面。在双语文件包中，一种语言可以在`localized[…].resources`中给视频指定自己的`poster`和`video`（另一个剪辑版本，放在它自己的地址）。
+
+#### Folio视图中的视频
+
+在[3D书本](/zh/docs/configuration-html-folio-epub#3d书本postext-folio)中，你自己的视频就在印着它的那一页上播放。无论指针在书上做什么（翻页、转动视角还是选择文字），点击封面，视频就在那里开始播放：页面的着色器把视频画面画在封面之上，所以翻动这一叶时，画面随纸张一起弯曲卷起，翻页过程中也照常播放。点击正在播放的视频会暂停，再点击则继续；空格键或回车键对打开的跨页上的第一个视频起同样的作用。开始播放另一个视频时，正在播放的那个会停止，回到封面；书停在不再显示某个视频的跨页上，或播到它的`end`时，这个视频也会停止。指针移到可以播放的视频上时变成手形；从视频上开始的拖动仍然翻页或转动视角。设为自动播放的视频（`video.player.autoplay`）在书第一次停在它的跨页上、且书已经稳定下来之后（包括宿主分几步排版的情况）自动开始播放，在这个查看器中不会再自动播放第二次。
+
+与其他视频同时播放的视频（`video.player.exclusive: false`，postext 1.18起）改变了这两条规则。开始播放它只会停止独占的视频，因此几段这样的视频可以同时播放；开始播放独占的视频也会让它停止。设了`autoplay`时，书每次停在它所在的跨页上，它都静音开始，翻走时停止：一页上无声的循环片段（`loop`）在读者每次翻到这一页时一起播放。
+
+- **能播放什么。** 文件（宿主用`videoUrl`选项把它的`fileId`换成URL，沙盒中是一个对象URL），没有文件时则用它的地址：MP4、WebM或HLS流。只要浏览器支持Media Source Extensions，HLS流就通过[hls.js](https://github.com/video-dev/hls.js)播放（在第一次播放时加载；它是`postext-folio`的可选对等依赖），清晰度以最接近画面在屏幕上尺寸的那一档为上限，所以几百像素高的画面不会去拉取4K版本；浏览器自带的HLS播放作为后备。这些请求带有专用的`pt-cors`查询参数，这样浏览器缓存就不会把另一个播放器在没有CORS的情况下取得的副本交给它们。YouTube和Vimeo在iframe中播放，WebGL无法绘制iframe，所以点击它们的封面和点击页面其他地方一样会翻页。
+- **跨源读取。** 只有视频所在的服务器允许读取时（CORS，`Access-Control-Allow-Origin`），WebGL才能绘制它。无法读取的视频仍显示为封面，`onVideo`会收到`error`。
+- **声音。** 点击之后视频带声音播放；仍然拒绝的浏览器则让它静音播放。自动开始的视频，要等读者在页面上点击或按过键（翻到这一页也算）才有声音；在此之前它静音开始，点击它会先打开声音，再点击一次才暂停。`video.player.muted`让它静音开始，`loop`让它循环播放，`start` / `end`给出播放的片段。
+- **在每一种页面上。** 画面画在版面安排的位置：资源转向时它也转向，在竖排页面上保持正立，在从右到左的书中不作镜像，都和封面一样。封面按[安全区](#安全区)裁切时，视频也以同样的方式裁切。
+- **没有WebGL2**，或要求减少动画时，视频在叠放于页面之上的HTML `<video>`中播放。
+
+```ts
+const book = createFolioFromDocument(container, doc, {
+  // 上传视频可播放的URL（基于其字节的对象URL）。
+  videoUrl: (fileId) => urls.get(fileId),
+  onVideo: ({ resourceId, state }) => console.log(resourceId, state), // playing | paused | stopped | error
+});
+book.stopVideo();
+```
+
+`videos: false`关闭这项功能。`toggleVideoAt({ page, x, y })`的作用与在该处点击相同；`pageVideoSpots(page, doc)`列出一页上每个视频的位置，供自己绘制控件的宿主使用。
+
+排版食谱中有两篇用到视频：第131号[封面印有二维码的电影俱乐部节目单](/zh/cookbook/film-club-video-qr)把每部影片印成带播放标记和二维码的片名卡；第132号[视频在屏幕和EPUB里都能播放的实验报告单](/zh/cookbook/pendulum-lab-video-players)为HTML版设定播放器选项，并把自己的视频片段打包进固定版式EPUB。

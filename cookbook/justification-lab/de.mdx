@@ -34,13 +34,13 @@ Beide Ausgaben teilen sich eine Gestaltung, deshalb kommt jeder Unterschied zwis
 
 <Excerpt region="bench" />
 
-Ein Kasten setzt alle Spalten einer Gruppe [`:::columns`](/de/docs/document-format#columns) in einem Textformat, deshalb ist jeder Streifen ein verschachtelter Kasten mit eigenem `body`, und `breaks="3"` stapelt den Streifen im Flattersatz und den ohne Trennung in der ersten Spalte. Der Streifen im Flattersatz braucht kein `hyphenation: false`: Flattersatz hält seine Wörter ganz, es sei denn, `bodyText.hyphenation.ragged` ist eingeschaltet. Der Prüfstand gleitet mit `placement: 'bottom'` an den Fuß von Seite 3, und sein unterer Innenabstand wiederholt den Rahmen von 4 mm, weil das `marginBottom` des letzten Streifens am Ende des Kastens wegfällt.
+Ein Kasten setzt alle Spalten einer Gruppe [`:::columns`](/de/docs/document-format-directives#columns) in einem Textformat, deshalb ist jeder Streifen ein verschachtelter Kasten mit eigenem `body`, und `breaks="3"` stapelt den Streifen im Flattersatz und den ohne Trennung in der ersten Spalte. Der Streifen im Flattersatz braucht kein `hyphenation: false`: Flattersatz hält seine Wörter ganz, es sei denn, `bodyText.hyphenation.ragged` ist eingeschaltet. Der Prüfstand gleitet mit `placement: 'bottom'` an den Fuß von Seite 3, und sein unterer Innenabstand wiederholt den Rahmen von 4 mm, weil das `marginBottom` des letzten Streifens am Ende des Kastens wegfällt.
 
 ### 5 · Das Modell in den Auftakt zeichnen
 
 <Excerpt region="opener" />
 
-Das Diagramm ist ein [Bildelement](/de/docs/configuration-page-layout#bildelemente) der Gestaltung der H1. Als Abbildung wäre es ein Gleitobjekt `top` über die ganze Seitenbreite, und ein auf Seite 1 zitiertes Gleitobjekt `top` eröffnet Seite 2. Das Band reicht unter das Diagramm, und ein Auftakt reserviert die Höhe bis zu seinem tiefsten Element, sodass der Text ohne `minHeight` unter dem Band beginnt, wegen des standardmäßigen `marginBottom` der H1 eine Zeile tiefer. Die Beschriftungen sind Gestaltungstext auf den eigenen Koordinaten der Zeichnung, gesetzt und gesperrt wie die übrigen Beschriftungen des Auftakts.
+Das Diagramm ist ein [Bildelement](/de/docs/configuration-headers-footers#bildelemente) der Gestaltung der H1. Als Abbildung wäre es ein Gleitobjekt `top` über die ganze Seitenbreite, und ein auf Seite 1 zitiertes Gleitobjekt `top` eröffnet Seite 2. Das Band reicht unter das Diagramm, und ein Auftakt reserviert die Höhe bis zu seinem tiefsten Element, sodass der Text ohne `minHeight` unter dem Band beginnt, wegen des standardmäßigen `marginBottom` der H1 eine Zeile tiefer. Die Beschriftungen sind Gestaltungstext auf den eigenen Koordinaten der Zeichnung, gesetzt und gesperrt wie die übrigen Beschriftungen des Auftakts.
 
 ## Varianten
 
