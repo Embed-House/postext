@@ -907,7 +907,7 @@
     "warningsFrameOverflowTried": "試した手段：__steps__。",
     "warningsFrameOverflowFixes": "次のどれかで収まります：__fixes__。",
     "warningsFitStepFree": "空きスペース",
-    "warningsFitStepPush": "グループ内の配置調整",
+    "warningsFitStepPush": "周りの枠をずらして空けた場所",
     "warningsFitStepScaleImages": "画像を__pct__まで縮小",
     "warningsFitStepRedistribute": "グループ内のほかの枠を最小まで縮める",
     "warningsFitStepShrinkText": "文字を__pct__まで縮小",

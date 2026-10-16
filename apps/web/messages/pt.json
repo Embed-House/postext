@@ -907,7 +907,7 @@
     "warningsFrameOverflowTried": "Tentado: __steps__.",
     "warningsFrameOverflowFixes": "Qualquer uma destas mudanças faz caber: __fixes__.",
     "warningsFitStepFree": "o espaço livre",
-    "warningsFitStepPush": "o espaço que o grupo cede",
+    "warningsFitStepPush": "o espaço que os blocos ao redor cedem",
     "warningsFitStepScaleImages": "imagens reduzidas a __pct__",
     "warningsFitStepRedistribute": "os outros blocos do grupo até o mínimo",
     "warningsFitStepShrinkText": "texto reduzido a __pct__",

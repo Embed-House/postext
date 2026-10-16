@@ -144,6 +144,13 @@ describe('the reflow ladder on the page-8 stand-in (#858)', () => {
     expect(frameBounds(d).width).toBeCloseTo(d.rect.width, 6);
     expect(frameBounds(d).height).toBeCloseTo(d.rect.height, 6);
     expect(frameMatrix(d)).toEqual([d.scale, 0, 0, d.scale, d.rect.x * (1 - d.scale), d.rect.y * (1 - d.scale)]);
+    // The box keeps its drawn padding: the text stays clear of the photos
+    // set over the box's right 62 mm, whatever the scale.
+    const blocks = d.blockIds.map((id) => page0(doc).floats!.find((b) => b.id === id)!);
+    const rightOnSheet = Math.max(...blocks.flatMap((b) => b.lines.filter((l) => l.text.length > 0).map((l) => d.rect.x + (l.bbox.x + l.bbox.width - d.rect.x) * d.scale)));
+    // (A line's box may carry its trailing space: about one stub character.)
+    expect(rightOnSheet).toBeLessThanOrEqual(d.rect.x + d.rect.width - 62 * MM + 8 * d.scale);
+    expect(rightOnSheet).toBeGreaterThan(d.rect.x + d.rect.width - 62 * MM - 10 * MM);
     // One step larger overflows.
     if (d.scale < 0.975) {
       const larger = build(standIn({ frames: { dinero: { ...fixed, fit: { minScale: d.scale + 0.025 } } }, markdown: moreWords(40) }));

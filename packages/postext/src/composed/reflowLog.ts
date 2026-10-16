@@ -129,7 +129,7 @@ export function describeFitStep(step: FrameFitStep, at: { scale?: number; imageS
     case 'free':
       return 'free space';
     case 'push':
-      return 'room from its group (frames moved, shrink frames yielding)';
+      return 'room from the frames around it (moved, or yielding with shrink)';
     case 'scaleImages':
       return at.imageScale !== undefined ? `pictures down to ${pct(at.imageScale)}` : 'smaller pictures';
     case 'redistribute':

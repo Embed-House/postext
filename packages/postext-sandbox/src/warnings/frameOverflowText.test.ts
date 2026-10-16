@@ -17,7 +17,7 @@ describe('frameOverflow in the Checks panel (#858)', () => {
       ],
     }, DEFAULT_LABELS);
     expect(text).toContain('page 17 · 4.3 mm past the foot of this frame of template tema');
-    expect(text).toContain('Tried: free space, room from its group, pictures down to 80 %, text down to 90 %.');
+    expect(text).toContain('Tried: free space, room from the frames around it, pictures down to 80 %, text down to 90 %.');
     expect(text).toContain('Any of these makes it fit: let the text shrink to 85 % (fit.minScale); raise maxHeight to 68 mm; lower the minHeight of gasto to 40 mm; continue it on the next page (overflow.continueIn); set the page with template tema-amplio; cut about 120 characters.');
   });
 

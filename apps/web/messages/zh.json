@@ -907,7 +907,7 @@
     "warningsFrameOverflowTried": "已尝试：__steps__。",
     "warningsFrameOverflowFixes": "以下任一改动都能放下：__fixes__。",
     "warningsFitStepFree": "空余空间",
-    "warningsFitStepPush": "所在组让出的空间",
+    "warningsFitStepPush": "周围各框让出的空间",
     "warningsFitStepScaleImages": "图片缩到__pct__",
     "warningsFitStepRedistribute": "组内其他框缩到最小高度",
     "warningsFitStepShrinkText": "文字缩到__pct__",

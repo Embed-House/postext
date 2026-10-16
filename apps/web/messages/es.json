@@ -1626,7 +1626,7 @@
     "warningsFrameOverflowTried": "Se probó: __steps__.",
     "warningsFrameOverflowFixes": "Cualquiera de estos cambios lo hace caber: __fixes__.",
     "warningsFitStepFree": "el espacio libre",
-    "warningsFitStepPush": "el sitio que deja su grupo",
+    "warningsFitStepPush": "el sitio que dejan los marcos de alrededor",
     "warningsFitStepScaleImages": "imágenes reducidas al __pct__",
     "warningsFitStepRedistribute": "los demás marcos del grupo hasta su mínimo",
     "warningsFitStepShrinkText": "texto reducido al __pct__",

@@ -907,7 +907,7 @@
     "warningsFrameOverflowTried": "جُرِّب: __steps__.",
     "warningsFrameOverflowFixes": "يكفي أحد هذه التغييرات ليتّسع النص: __fixes__.",
     "warningsFitStepFree": "المساحة الفارغة",
-    "warningsFitStepPush": "ما تفسحه مجموعته",
+    "warningsFitStepPush": "ما تفسحه الإطارات المحيطة",
     "warningsFitStepScaleImages": "تصغير الصور إلى __pct__",
     "warningsFitStepRedistribute": "تقليص إطارات المجموعة الأخرى إلى حدّها الأدنى",
     "warningsFitStepShrinkText": "تصغير النص إلى __pct__",

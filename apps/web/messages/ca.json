@@ -907,7 +907,7 @@
     "warningsFrameOverflowTried": "Provat: __steps__.",
     "warningsFrameOverflowFixes": "Qualsevol d'aquests canvis el fa cabre: __fixes__.",
     "warningsFitStepFree": "l'espai lliure",
-    "warningsFitStepPush": "el lloc que deixa el seu grup",
+    "warningsFitStepPush": "el lloc que deixen els marcs del voltant",
     "warningsFitStepScaleImages": "imatges reduïdes al __pct__",
     "warningsFitStepRedistribute": "els altres marcs del grup fins al seu mínim",
     "warningsFitStepShrinkText": "text reduït al __pct__",

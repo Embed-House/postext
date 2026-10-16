@@ -908,7 +908,7 @@
     "warningsFrameOverflowTried": "Versucht: __steps__.",
     "warningsFrameOverflowFixes": "Mit jeder dieser Änderungen passt er: __fixes__.",
     "warningsFitStepFree": "freier Platz",
-    "warningsFitStepPush": "Platz aus seiner Gruppe",
+    "warningsFitStepPush": "Platz von den Rahmen ringsum",
     "warningsFitStepScaleImages": "Bilder auf __pct__ verkleinert",
     "warningsFitStepRedistribute": "die anderen Rahmen der Gruppe bis zu ihrem Minimum",
     "warningsFitStepShrinkText": "Text auf __pct__ verkleinert",

@@ -908,7 +908,7 @@
     "warningsFrameOverflowTried": "Tentato: __steps__.",
     "warningsFrameOverflowFixes": "Basta una di queste modifiche: __fixes__.",
     "warningsFitStepFree": "lo spazio libero",
-    "warningsFitStepPush": "lo spazio lasciato dal suo gruppo",
+    "warningsFitStepPush": "lo spazio lasciato dalle cornici vicine",
     "warningsFitStepScaleImages": "immagini ridotte al __pct__",
     "warningsFitStepRedistribute": "le altre cornici del gruppo fino al loro minimo",
     "warningsFitStepShrinkText": "testo ridotto al __pct__",

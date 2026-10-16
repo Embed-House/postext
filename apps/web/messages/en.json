@@ -908,7 +908,7 @@
     "warningsFrameOverflowTried": "Tried: __steps__.",
     "warningsFrameOverflowFixes": "Any of these makes it fit: __fixes__.",
     "warningsFitStepFree": "free space",
-    "warningsFitStepPush": "room from its group",
+    "warningsFitStepPush": "room from the frames around it",
     "warningsFitStepScaleImages": "pictures down to __pct__",
     "warningsFitStepRedistribute": "the other frames of its group down to their minimum",
     "warningsFitStepShrinkText": "text down to __pct__",

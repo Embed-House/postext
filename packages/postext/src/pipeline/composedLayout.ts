@@ -511,6 +511,28 @@ function overflowProposals(c: ProposalContext): FrameOverflowProposal[] {
   return out;
 }
 
+/** A frame style whose box keeps its drawn size when the frame's text is
+ *  set at `scale` (#858): the frame is laid out `1 / scale` as large and
+ *  painted at `scale`, so its padding, border, corner radius, stripe and
+ *  tab are laid out `1 / scale` as large to come out as drawn. Only the
+ *  text and what it holds shrink: padding that keeps room for the photos
+ *  set over a box stays that room. */
+export function keepChromeAt(style: ResolvedCalloutStyleConfig, scale: number): ResolvedCalloutStyleConfig {
+  if (scale === 1) return style;
+  const d = (v: Dimension): Dimension => ({ ...v, value: v.value / scale });
+  const p = style.padding;
+  return {
+    ...style,
+    padding: { top: d(p.top), right: d(p.right), bottom: d(p.bottom), left: d(p.left) },
+    border: { ...style.border, width: d(style.border.width) },
+    borderRadius: d(style.borderRadius),
+    stripe: { ...style.stripe, width: d(style.stripe.width) },
+    ...(style.label
+      ? { label: { ...style.label, height: d(style.label.height), paddingX: d(style.label.paddingX), offset: d(style.label.offset), inset: d(style.label.inset), rule: { ...style.label.rule, width: d(style.label.rule.width) } } }
+      : {}),
+  };
+}
+
 /** Lay out every frame of the page once, with the reflow ladder's `fit`. */
 function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, fit: FitState): Composition {
   const { pass, fence, dpi } = input;
@@ -534,6 +556,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
   };
   /** The text scale of a frame's story (#858). */
   const textScale = (frame: ResolvedFrame): number => fit.text.get(headOf(frame.name)) ?? 1;
+  /** The style a frame is laid out in: its box as drawn at any text scale. */
+  const styleOf = (frame: ResolvedFrame): ResolvedCalloutStyleConfig => keepChromeAt(input.styleOf(frame), textScale(frame));
   /** The scale of a frame's pictures (#858), below 1, or undefined. */
   const pictureScale = (frame: ResolvedFrame): number | undefined => fit.pictures.get(headOf(frame.name))?.scale;
   /** Rectangles in a frame's box coordinates, in its laid-out (scaled)
@@ -555,7 +579,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       if (!story || !headFrame) return undefined;
       const st: StoryState = {
         story,
-        L: makeCalloutLayouter(pass, story.startIdx, story.plan, input.styleOf(frame)),
+        L: makeCalloutLayouter(pass, story.startIdx, story.plan, styleOf(frame)),
         cut: CUT_START,
         pieces: 0,
         headBlockId: frameIdOf(head),
@@ -623,7 +647,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       const st = stateOf(frame);
       // Each frame of a chain sets the story in its own style: the cuts are
       // positions in the story's blocks, the same in any.
-      if (st) st.L = makeCalloutLayouter(pass, st.story.startIdx, st.story.plan, input.styleOf(frame));
+      if (st) st.L = makeCalloutLayouter(pass, st.story.startIdx, st.story.plan, styleOf(frame));
       // A frame continues its story only once the frame before it in the
       // chain was filled (a frame placed before it, through an anchor, starts
       // empty).
@@ -792,7 +816,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
      *  as large, painted at `scale` (`frameMatrix`). */
     const fill = (p: Prep, rect: Rect): void => {
       const { frame, st, holds, continuation, blockId, before } = p;
-      const style = input.styleOf(frame);
+      const style = styleOf(frame);
       const s = textScale(frame);
       const pic = pictureScale(frame);
       const laidW = rect.width / s;
