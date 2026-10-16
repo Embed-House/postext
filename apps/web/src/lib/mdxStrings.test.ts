@@ -20,6 +20,11 @@ describe("literalStringExpressions", () => {
     expect(out).toContain("<code>*a* _b_ &lt;i&gt; [c](d) &amp; \\</code>");
   });
 
+  it("keeps Markdown marks literal inside a JSX code span", async () => {
+    const out = await html("<code>**bold**</code>, <code>*…*</code>, <code>[^id]</code>, <code>~s~</code> and <code>Na^+^</code>");
+    expect(out).toContain("<code>**bold**</code>, <code>*…*</code>, <code>[^id]</code>, <code>~s~</code> and <code>Na^+^</code>");
+  });
+
   it("leaves code, backtick spans and attribute values as written", () => {
     const fenced = "```ts\nconst a = {'x'};\n```";
     expect(literalStringExpressions(fenced)).toBe(fenced);
