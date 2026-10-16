@@ -9,6 +9,7 @@ import type { EpubLayout, SandboxLabels, ViewportTab } from '../types';
 import { SegmentedControl, cn, useUiRtl } from '../ui';
 import { VIEWPORT_TABS as ALL_TABS } from '../storage/viewHash';
 import { folioSupported } from './folioSupport';
+import { EditModeSwitch } from '../editing/EditModeSwitch';
 
 /** The expansion of each tab label that is an abbreviation. */
 const TAB_ABBR: Partial<Record<ViewportTab, keyof SandboxLabels>> = { pdf: 'abbrPdf', html: 'abbrHtml', epub: 'abbrEpub' };
@@ -81,6 +82,7 @@ export function ViewportTabs({ compact = false, leading, trailing }: { compact?:
   // (kept while the margins are thin, so the choice cannot flip back and
   // forth); the copies follow the locale and large targets.
   const slotRef = useRef<HTMLDivElement>(null);
+  const modeRef = useRef<HTMLDivElement>(null);
   const labelsRef = useRef<HTMLDivElement>(null);
   const iconsRef = useRef<HTMLDivElement>(null);
   const [fit, setFit] = useState<'labels' | 'icons' | 'tight'>('labels');
@@ -98,14 +100,16 @@ export function ViewportTabs({ compact = false, leading, trailing }: { compact?:
       const icons = iconsRef.current?.offsetWidth;
       if (labelled === undefined || icons === undefined) return;
       if (fitRef.current !== 'tight') tabsWidthRef.current = tabs.offsetWidth;
-      // The slot's usual margin (px-3) at both ends.
-      const room = (slot.parentElement?.clientWidth ?? 0) - tabsWidthRef.current - 24;
+      // The slot's usual margin (px-3) at both ends, and the Content /
+      // Design switch before it.
+      const room = (slot.parentElement?.clientWidth ?? 0) - tabsWidthRef.current - (modeRef.current?.offsetWidth ?? 0) - 24;
       setFit(labelled <= room ? 'labels' : icons <= room ? 'icons' : 'tight');
     };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(slot);
     observer.observe(tabs);
+    if (modeRef.current) observer.observe(modeRef.current);
     if (labelsRef.current) observer.observe(labelsRef.current);
     if (iconsRef.current) observer.observe(iconsRef.current);
     return () => observer.disconnect();
@@ -159,6 +163,10 @@ export function ViewportTabs({ compact = false, leading, trailing }: { compact?:
       style={{ borderBottom: '1px solid var(--rule)', backgroundColor: 'var(--background)' }}
     >
       {leading && <div className={cn('flex shrink-0 items-center border-e px-1 pt-large:px-0', compact && 'h-11 pt-large:min-h-12')} style={{ borderColor: 'var(--rule)' }}>{leading}</div>}
+      {/* Content / Design (#864): always in view. */}
+      <div ref={modeRef} className={cn('flex shrink-0 items-center border-e', compact ? 'h-11 px-1.5 pt-large:min-h-12' : tight ? 'px-1' : 'px-2')} style={{ borderColor: 'var(--rule)' }}>
+        <EditModeSwitch icons={compact} />
+      </div>
       <div ref={slotRef} className={cn('relative flex min-w-0 flex-1 items-center overflow-hidden', compact ? 'h-11 px-1.5 pt-large:min-h-12' : tight ? 'px-1' : 'px-3')}>
         {scopeControl(useIcons)}
         {/* Both forms of the switch, unseen, to learn which one fits. */}

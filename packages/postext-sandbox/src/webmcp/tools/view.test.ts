@@ -11,6 +11,7 @@ import {
 } from '../../viewport/viewerControls';
 import { pickVideo, type PlayableVideo } from '../../viewport/viewerVideos';
 import { runTool } from '../modelContext';
+import { editModeNow, resetEditMode } from '../../editing/editMode';
 import { sourcePlace } from '../pagePoint';
 import { compactStatus } from '../viewerStatus';
 import { chapter, harness } from './testHarness';
@@ -125,6 +126,17 @@ describe('sandbox_set_view', () => {
     await call('sandbox_set_view', { settingsChangedOnly: false });
     expect(taken[2]).toEqual({ changedOnly: false });
     expect((await call('sandbox_set_view', { settingsChangedOnly: true, panel: 'fonts' })).error).toMatch(/filter of the Design panel/);
+  });
+
+  it('switches between the Content and Design modes (#864)', async () => {
+    const { call } = harness();
+    cleanups.push(() => resetEditMode());
+    const design = await call('sandbox_set_view', { mode: 'design' });
+    expect(design.view).toMatchObject({ mode: 'design' });
+    expect(editModeNow()).toBe('design');
+    const content = await call('sandbox_set_view', { mode: 'content' });
+    expect(content.view).toMatchObject({ mode: 'content' });
+    expect((await call('sandbox_set_view', { mode: 'layout' })).error).toBeTruthy();
   });
 
   it("holds the Folio's magnifying glass, and says what it switched", async () => {

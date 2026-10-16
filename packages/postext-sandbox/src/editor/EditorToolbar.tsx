@@ -21,14 +21,17 @@ import {
   ALargeSmall,
   Languages,
   ArrowLeftRight,
+  LayoutTemplate,
 } from 'lucide-react';
 import { isCjkLanguage } from 'postext';
 import type { EditorView } from '@codemirror/view';
 import { undo, redo } from '@codemirror/commands';
-import type { ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { useSandbox } from '../context/SandboxContext';
 import type { ToolbarAction } from '../types';
 import { IconButton } from '../ui';
+import { composedPageInsertion } from './composedInsert';
+import { TemplatePicker } from './TemplatePicker';
 
 interface EditorToolbarProps {
   viewRef: React.RefObject<EditorView | null>;
@@ -36,18 +39,22 @@ interface EditorToolbarProps {
   /** The document language: a Chinese or Japanese one adds the ruby and
    *  tate-chū-yoko buttons. */
   lang?: string;
+  /** Design mode (#864): the text is read only, so nothing here edits it. */
+  readOnly?: boolean;
 }
 
 function ToolbarButton({
   icon,
   label,
   onClick,
+  disabled,
 }: {
   icon: ReactNode;
   label: string;
   onClick: () => void;
+  disabled?: boolean;
 }) {
-  return <IconButton label={label} icon={icon} onClick={onClick} tooltipSide="bottom" />;
+  return <IconButton label={label} icon={icon} onClick={onClick} tooltipSide="bottom" disabled={disabled} />;
 }
 
 function wrapSelection(view: EditorView, before: string, after: string) {
@@ -116,9 +123,29 @@ function insertBlockLine(view: EditorView, text: string, cursorOffset?: number) 
   view.focus();
 }
 
-export function EditorToolbar({ viewRef, extraActions, lang }: EditorToolbarProps) {
+/** Insert a block (a composed page, #864) as {@link insertBlockLine} does,
+ *  leaving the selection at `[anchor, head)` of `text`. */
+export function insertBlockSelecting(view: EditorView, text: string, anchor: number, head: number) {
+  const { from } = view.state.selection.main;
+  const line = view.state.doc.lineAt(from);
+  const lineIsEmpty = line.text.trim() === '';
+  const insertAt = lineIsEmpty ? line.from : line.to;
+  const leading = lineIsEmpty ? '' : '\n\n';
+  const insert = `${leading}${text}\n\n`;
+  const base = insertAt + leading.length;
+  view.dispatch({
+    changes: { from: insertAt, to: lineIsEmpty ? line.to : insertAt, insert },
+    selection: { anchor: base + anchor, head: base + head },
+    scrollIntoView: true,
+  });
+  view.focus();
+}
+
+export function EditorToolbar({ viewRef, extraActions, lang, readOnly = false }: EditorToolbarProps) {
   const { state } = useSandbox();
   const { labels } = state;
+  const composedRef = useRef<HTMLButtonElement>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   const getView = () => viewRef.current;
 
@@ -255,16 +282,43 @@ export function EditorToolbar({ viewRef, extraActions, lang }: EditorToolbarProp
     >
       {actions.map((a, i) => (
         <span key={i} className="contents">
-          <ToolbarButton icon={a.icon} label={a.label} onClick={a.action} />
+          <ToolbarButton icon={a.icon} label={a.label} onClick={a.action} disabled={readOnly} />
           {a.separator && (
             <div className="mx-1 h-5 w-px shrink-0" style={{ backgroundColor: 'var(--rule)' }} aria-hidden="true" />
           )}
         </span>
       ))}
 
+      {/* A composed page from one of the book's templates (#864). */}
+      <IconButton
+        ref={composedRef}
+        label={labels.composedPageInsert}
+        icon={<LayoutTemplate size={16} aria-hidden="true" />}
+        tooltipSide="bottom"
+        aria-haspopup="dialog"
+        aria-expanded={pickerOpen}
+        onClick={() => setPickerOpen((o) => !o)}
+        disabled={readOnly}
+        data-action="composed-page"
+      />
+      <TemplatePicker
+        open={pickerOpen && !readOnly}
+        onOpenChange={setPickerOpen}
+        anchor={composedRef}
+        config={state.config}
+        labels={labels}
+        onPick={(template) => {
+          const v = getView();
+          if (!v) return;
+          const ins = composedPageInsertion(template);
+          insertBlockSelecting(v, ins.text, ins.anchor, ins.head);
+        }}
+      />
+
       {extraActions?.map((a) => (
         <ToolbarButton
           key={a.id}
+          disabled={readOnly}
           icon={a.icon}
           label={a.label}
           onClick={() =>

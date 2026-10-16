@@ -3,6 +3,7 @@ import { buildDocument, resolvePageTemplate } from 'postext';
 import type { PostextConfig, VDTDocument, VDTPage } from 'postext';
 import { frameByName, frameHitAt, frameIsEmpty } from './frameHit';
 import { chainHeadOf, frameAtCaret, frameClickTarget, frameTextChange, frameTextTargetAt } from './frameLink';
+import { frameMarksFor } from './frameOverlay';
 
 class StubCtx {
   font = '';
@@ -131,5 +132,19 @@ describe('frame ↔ slot on a laid-out composed page', () => {
     const body = frameTextTargetAt(doc, page, MD, caja, para.bbox.x + 4, para.bbox.y + 4);
     expect(body).toMatchObject({ kind: 'block', text: 'El dinero nos deja cambiar nuestro trabajo por cosas.' });
     expect(frameTextChange(body!, body!.text)).toBeNull();
+  });
+
+  it('marks the empty frames, the caret\'s frame, and every frame in Design mode', () => {
+    const base = { markdown: MD, caret: null, selectedFrameId: null, writeHere: 'Write here', continues: 'Continues __frame__' };
+    const content = frameMarksFor(doc, page, { ...base, mode: 'content' });
+    const marks = content.map((m) => `${m.kind}:${m.frame.name}:${m.text.join('|')}`);
+    expect(marks).toContain('empty:vacio:vacio|Write here');
+    // A frame a chain continues into never asks to be written in.
+    const sigue = frameByName(page, 'sigue')!;
+    expect(marks.filter((m) => m.startsWith('empty:sigue'))).toEqual(frameIsEmpty(sigue) ? ['empty:sigue:sigue|Continues caja'] : []);
+    const inBox = frameMarksFor(doc, page, { ...base, mode: 'content', caret: MD.indexOf('nos deja') });
+    expect(inBox.find((m) => m.kind === 'active')?.frame.name).toBe('caja');
+    const design = frameMarksFor(doc, page, { ...base, mode: 'design', selectedFrameId: 'cp0:texto' });
+    expect(design.map((m) => m.kind)).toEqual(['outline', 'selected', 'outline', 'outline', 'outline']);
   });
 });
