@@ -6176,6 +6176,11 @@ export interface DesignTextElement {
   parity?: PageParity;
   /** Page roles this element renders on (see `PageRoleFilter`). Default
    *  `'all'`. */
+  /** On a composed page's decoration (#856): anchored to a frame
+   *  (`'#frame'`), stay where the template puts that frame even when its
+   *  group or its content moves it (art drawn to the page). Default
+   *  `false`: the element moves with the frame. Ignored elsewhere. */
+  pin?: boolean;
   pages?: PageRoleFilter;
   /** Heading designs only: whether the element counts toward the height
    *  the heading reserves in the text flow. Default `true`. Set `false` on
@@ -6298,6 +6303,11 @@ export interface DesignRuleElement {
   id: string;
   parity?: PageParity;
   /** Page roles this element renders on. Default `'all'`. */
+  /** On a composed page's decoration (#856): anchored to a frame
+   *  (`'#frame'`), stay where the template puts that frame even when its
+   *  group or its content moves it (art drawn to the page). Default
+   *  `false`: the element moves with the frame. Ignored elsewhere. */
+  pin?: boolean;
   pages?: PageRoleFilter;
   /** Heading designs only: whether the element counts toward the height
    *  the heading reserves (see `DesignTextElement.reserve`). Default
@@ -6321,6 +6331,11 @@ export interface DesignBoxElement {
   id: string;
   parity?: PageParity;
   /** Page roles this element renders on. Default `'all'`. */
+  /** On a composed page's decoration (#856): anchored to a frame
+   *  (`'#frame'`), stay where the template puts that frame even when its
+   *  group or its content moves it (art drawn to the page). Default
+   *  `false`: the element moves with the frame. Ignored elsewhere. */
+  pin?: boolean;
   pages?: PageRoleFilter;
   /** Heading designs only: whether the element counts toward the height
    *  the heading reserves (see `DesignTextElement.reserve`). Default
@@ -6340,6 +6355,11 @@ export interface DesignImageElement {
   id: string;
   parity?: PageParity;
   /** Page roles this element renders on. Default `'all'`. */
+  /** On a composed page's decoration (#856): anchored to a frame
+   *  (`'#frame'`), stay where the template puts that frame even when its
+   *  group or its content moves it (art drawn to the page). Default
+   *  `false`: the element moves with the frame. Ignored elsewhere. */
+  pin?: boolean;
   pages?: PageRoleFilter;
   /** Heading designs only: whether the element counts toward the height
    *  the heading reserves (see `DesignTextElement.reserve`). Default

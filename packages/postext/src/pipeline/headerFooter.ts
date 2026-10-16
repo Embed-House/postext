@@ -1504,7 +1504,11 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     // heads; painted under the frames of layer 1 and up.
     if (page.composed && template && template.decoration.elements.length > 0) {
       const named: Record<string, { x: number; y: number; width: number; height: number }> = {};
-      for (const f of page.composed.frames) named[f.name] = f.rect;
+      const declared: Record<string, { x: number; y: number; width: number; height: number }> = {};
+      for (const f of page.composed.frames) {
+        named[f.name] = f.rect;
+        declared[f.name] = f.declaredRect ?? f.rect;
+      }
       const container = template.area === 'trim' ? metrics.physical.trimBox : template.area === 'bleed' ? metrics.physical.bleedBox : sheetArea;
       const attrSources: Record<string, { start: number; end: number }> = {};
       for (const [k, v] of Object.entries(page.composed.attrSources)) attrSources[k] = { start: v.sourceStart, end: v.sourceEnd };
@@ -1532,7 +1536,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         page.index + pageIndexOffset,
         placeholders,
         dpi,
-        { ...sheetExtras, frames: { ...physicalFrames, named }, attrs: page.composed!.attrs, attrSources },
+        { ...sheetExtras, frames: { ...physicalFrames, named, declared }, attrs: page.composed!.attrs, attrSources },
       ));
       if (decoration) page.composed.decoration = decoration;
     }

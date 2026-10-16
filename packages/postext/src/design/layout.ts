@@ -272,6 +272,10 @@ export interface DesignFrames {
    *  template's decoration (#855). An element of the slot with the same id
    *  wins. */
   named?: Readonly<Record<string, { x: number; y: number; width: number; height: number }>>;
+  /** The same frames' boxes as their template declares them, before
+   *  groups and content move them (#856): an element with `pin` anchors
+   *  here. Absent: `named`. */
+  declared?: Readonly<Record<string, { x: number; y: number; width: number; height: number }>>;
 }
 
 export interface LayoutContext {
@@ -1118,7 +1122,7 @@ export function layoutDesignSlot(
       fillRef = frame;
     } else if (target) {
       const dep = resolvedGeo.get(target);
-      const outside = dep ? undefined : context.frames?.named?.[target];
+      const outside = dep ? undefined : (el.pin ? context.frames?.declared?.[target] : undefined) ?? context.frames?.named?.[target];
       if (dep) {
         refGeo = { x: dep.x, y: dep.y, width: dep.width, height: dep.height };
         useElementEdge = true;

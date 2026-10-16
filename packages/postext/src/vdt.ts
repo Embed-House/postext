@@ -2406,9 +2406,10 @@ export interface VDTComicBalloon {
 // Composed pages (#846, DESIGN §4): a template's frames poured with slots
 // ---------------------------------------------------------------------------
 
-/** What happened to a frame while its page was composed (DESIGN §5.5).
- *  P4 records `overflow` only; the reflow ladder (#858) and groups (#856)
- *  add the rest. */
+/** What happened to a frame while its page was composed (DESIGN §5.5),
+ *  against the box its template declares (`VDTFrame.declaredRect`):
+ *  `grew` / `resized` (smaller) and `moved` from groups and anchors (#856),
+ *  `overflow` (#855); the reflow ladder (#858) adds the rest. */
 export type ReflowEventKind =
   | 'grew'
   | 'moved'
@@ -2422,8 +2423,15 @@ export interface ReflowEvent {
   /** The frame's name in its template. */
   frame: string;
   kind: ReflowEventKind;
+  /** `grew` / `resized`: the frame's height (`axis: 'x'`: width) before
+   *  and after, mm. `moved`: its top (`axis: 'x'`: its left edge) from
+   *  the sheet's top (left) edge, before and after, mm. `overflow`: `toMm`
+   *  is how much did not fit. */
   fromMm?: number;
   toMm?: number;
+  /** `'x'`: a width or a move across. Absent: a height or a move down or
+   *  up. */
+  axis?: 'x' | 'y';
   scale?: number;
   /** The frame whose change caused this event. */
   cause?: string;
@@ -2444,6 +2452,11 @@ export interface VDTFrame {
   name: string;
   /** The frame's box, label tab included, before any turn. */
   rect: { x: number; y: number; width: number; height: number };
+  /** The box the template declares for the frame (its fixed size, or its
+   *  `minHeight` where its height follows its content), before groups and
+   *  anchors make room for what it holds (#856); absent when it is `rect`.
+   *  Decoration with `pin` anchors here. */
+  declaredRect?: { x: number; y: number; width: number; height: number };
   /** Degrees, clockwise, about the centre of `rect`: the box and its
    *  content turn together. 0 = upright. */
   rotate: number;
