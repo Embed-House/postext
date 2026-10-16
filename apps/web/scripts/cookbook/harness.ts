@@ -191,6 +191,8 @@ export interface SandboxBundle {
  *  noise (#734, lib/probe.js `PAGE_DIFFERENCE`). */
 export interface PageChange {
   n: number;
+  /** The worst cell's mean difference (of 255), when both images decoded. */
+  worst?: number;
   /** "worst cell 36.2 of 255, 14 cells over 12", "no committed image". */
   detail: string;
 }
@@ -223,6 +225,16 @@ export interface RunOptions {
    *  the new pages are compared with its images and its bundle is read
    *  back by the run's engine, so files that say nothing new stay (#734). */
   committedDir?: string;
+  /** The largest mean difference of a cell (of 255) a page may show
+   *  against its committed image (`--max-diff`, C39); lib/probe.js
+   *  `PAGE_DIFFERENCE.max` by default. */
+  maxDiff?: number;
+  /** Each content file of the edition as the pen inlines it: the stress
+   *  test's longer text (#869). */
+  transformContent?: (text: string, key: string) => string;
+  /** Only the facts: no PDF, pages, card or bundle (the stretched run of
+   *  the stress test). */
+  factsOnly?: boolean;
 }
 
 const PROBE = "/__cb/probe.js";
@@ -262,7 +274,10 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
   // recipe runs unintercepted: its page rewrites jsDelivr and postext.dev
   // URLs in fetch() to the local server, and hosts are checked after the fact.
   const passive = !!meta.engine.worker;
-  const server = await startPenServer({ slug: opts.slug, variant: opts.variant, engine: opts.engine, rewriteFetch: passive });
+  const server = await startPenServer({
+    slug: opts.slug, variant: opts.variant, engine: opts.engine, rewriteFetch: passive,
+    ...(opts.transformContent ? { transformContent: opts.transformContent } : {}),
+  });
   const netStats = { cached: 0, fetched: 0 };
   const run: VariantRun = {
     slug: opts.slug,
@@ -378,7 +393,7 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
     run.kit = await within("kit", () => probe(page, "kitState"));
     run.epubs = await within("epubs", () => probe<EpubRecord[]>(page, "epubState"));
 
-    if (meta.downloads?.pdf && !opts.sandboxOnly) {
+    if (meta.downloads?.pdf && !opts.sandboxOnly && !opts.factsOnly) {
       const button = await within("pdfButton", () => page.$("[data-postext-pdf]"));
       const pdf: NonNullable<VariantRun["pdf"]> = {
         wanted: true, button: !!button, timedOut: false, error: null, fontFailures: [], ms: 0, bytes: null,
@@ -417,7 +432,7 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
       run.facts.systemFont = await within("systemFont", () => probe<NonNullable<ProbeFacts["systemFont"]>>(page, "systemFontChars", { select }));
     }
     const all = (run.facts.pages ?? []).map((p) => p.n);
-    if (run.facts.selected < 0 || all.length === 0) return run;
+    if (run.facts.selected < 0 || all.length === 0 || opts.factsOnly) return run;
     const keep = meta.capture.sandbox ?? null;
     if (opts.sandboxOnly) {
       const sandbox = opts.sandbox;
@@ -441,7 +456,7 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
 
     if (opts.committedDir && !run.renderError) {
       const dir = opts.committedDir;
-      run.pageChanges = await within("compare", () => changedPages(page, dir, run.pages));
+      run.pageChanges = await within("compare", () => changedPages(page, dir, run.pages, opts.maxDiff));
     }
 
     let shot: string | null = null;
@@ -533,7 +548,7 @@ async function sandboxBundle(
 /** The published pages whose image is not the committed one (#734): equal
  *  bytes pass at once; the rest are decoded in the page, both sides, and
  *  compared cell by cell (lib/probe.js `comparePages`). */
-async function changedPages(page: Page, dir: string, pages: RenderedPage[]): Promise<PageChange[]> {
+async function changedPages(page: Page, dir: string, pages: RenderedPage[], max?: number): Promise<PageChange[]> {
   const changes: PageChange[] = [];
   const pairs: { n: number; committed: string; fresh: string }[] = [];
   for (const p of pages) {
@@ -547,9 +562,9 @@ async function changedPages(page: Page, dir: string, pages: RenderedPage[]): Pro
   }
   // A few at a time: each pair is two images through the protocol.
   for (let i = 0; i < pairs.length; i += 4) {
-    const compared = await probe<{ n: number; differ: boolean; worst: number; cells: number; error?: string }[]>(page, "comparePages", pairs.slice(i, i + 4));
+    const compared = await probe<{ n: number; differ: boolean; worst: number; cells: number; error?: string }[]>(page, "comparePages", pairs.slice(i, i + 4), max === undefined ? {} : { max });
     for (const c of compared) {
-      if (c.differ) changes.push({ n: c.n, detail: c.error ?? `worst cell ${c.worst} of 255, ${c.cells} cell${c.cells === 1 ? "" : "s"} over the threshold` });
+      if (c.differ) changes.push({ n: c.n, worst: c.worst, detail: c.error ?? `worst cell ${c.worst} of 255, ${c.cells} cell${c.cells === 1 ? "" : "s"} over the threshold` });
     }
   }
   return changes.sort((a, b) => a.n - b.n);
