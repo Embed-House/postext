@@ -139,6 +139,22 @@ export interface CalloutNode {
   pullQuote?: 'echo' | 'own';
   /** Text wrapped round the box in print (#627). */
   wrap?: WrapFloat;
+  /** A frame of a composed page (#862): the name of the frame its story
+   *  starts in (the slot). Written as a block of the page's section, with
+   *  the frame's callout style when it has one (`styleId`). */
+  frame?: string;
+}
+
+/** A composed page (`::::page{template}`, #862): a section holding its
+ *  frames' stories in Markdown order, each a box (`CalloutNode.frame`). The
+ *  template's decoration is print furniture, left out. */
+export interface ComposedNode {
+  k: 'composed';
+  /** The template the page was set with. */
+  template: string;
+  /** The page's start (its page-break marker). */
+  pre: InlineItem[];
+  children: Node[];
 }
 
 /** A figure or a box text wrapped round in print (#627): the reflowable
@@ -165,6 +181,10 @@ export interface FigureNode {
   video?: VDTResourceVideo;
   /** Text wrapped round it in print (#627). */
   wrap?: WrapFloat;
+  /** The labels a `:::figure` sets on the picture (#862), in the order
+   *  written: read as a list after the picture, out of sight (the
+   *  picture this book shows does not carry them). */
+  labels?: string[];
 }
 
 export interface TableCellNode {
@@ -353,6 +373,7 @@ export type Node =
   | CodeNode
   | TocNode
   | ComicNode
+  | ComposedNode
   | MarkerNode;
 
 /** A footnote: its paragraph and the file of its first marker. */

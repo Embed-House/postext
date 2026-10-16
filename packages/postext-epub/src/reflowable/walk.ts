@@ -17,11 +17,12 @@
 //   - a part (a divider page, or `partMarks` without one) opens a
 //     document of its own and the chapter goes on in a new one.
 
-import type { ResolvedConfig, VDTBlock, VDTComicPage, VDTDocument, VDTLine, VDTLineSegment } from 'postext';
-import { canonicalLocaleTag, comicBalloonKind, comicBalloonText, comicSpeakerName, dimensionToPx, isComicSpreadPartner, joinComicSpread, pickTableStyle, primaryFontFamily } from 'postext';
+import type { ResolvedConfig, VDTBlock, VDTComicPage, VDTDocument, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from 'postext';
+import { canonicalLocaleTag, comicBalloonKind, comicBalloonText, comicSpeakerName, composedPaintOrder, composedReadingOrder, dimensionToPx, isComicSpreadPartner, joinComicSpread, pickTableStyle, primaryFontFamily } from 'postext';
 import type {
   CalloutNode,
   ComicNode,
+  ComposedNode,
   FileModel,
   FigureNode,
   HeadingEntry,
@@ -81,6 +82,10 @@ export interface BookModel {
   code?: boolean;
   /** Whether a figure or a box text wraps round was read (#627). */
   wraps?: boolean;
+  /** Whether a composed page was read (#862), and the callout styles its
+   *  frames are set in: the stylesheet styles a frame's block with them. */
+  composed?: boolean;
+  frameStyles?: Set<string>;
   /** The drop caps the paragraphs open with (#623), as `lines-sink`
    *  pairs: one rule each. */
   dropCaps?: Set<string>;
@@ -233,6 +238,9 @@ class DocWalker {
 
   /** Figures and boxes text wraps round (#627), by block id. */
   private readonly wraps = new Map<string, WrapFloat>();
+  /** The frames of the composed pages read so far (#862), by the id of
+   *  the box each frame's blocks open with. */
+  private readonly frameBoxes = new Map<string, VDTFrame>();
 
   constructor(
     private readonly book: BookModel,
@@ -300,6 +308,8 @@ class DocWalker {
         for (const block of col.blocks) this.place(block, this.root);
       }
       if (page.comic) this.comicPage(page.comic);
+      // A composed page's frames are its text, read now (#862).
+      const frameIds = page.composed ? this.composedPage(page) : undefined;
       // Floats: footnotes are collected now; the rest is read later, in
       // groups (a floated box with its content).
       let group: VDTBlock[] = [];
@@ -312,6 +322,7 @@ class DocWalker {
           this.note(f);
           continue;
         }
+        if (frameIds?.has(f.id)) continue;
         if (group.length > 0 && (f.containerId === undefined || f.containerId !== group[0]!.containerId)) flush();
         group.push(f);
         if (f.containerId === undefined) flush();
@@ -470,6 +481,40 @@ class DocWalker {
     }
     this.lastContainer = undefined;
     root.nodes.push(node);
+  }
+
+  // --- composed pages -------------------------------------------------------
+
+  /**
+   * A composed page (#862, DESIGN §8): a section that opens with the page's
+   * start and holds its frames in Markdown order — each frame's story (a
+   * frame and the frames its `next` chain goes on in) one box, with the
+   * frame's callout style, its pictures and their labels inside — read as
+   * the page's text, so floats and the next pages come after it. The
+   * template's decoration is left out. Returns the ids of the frames'
+   * blocks, which the page's floats skip.
+   */
+  private composedPage(page: VDTPage): Set<string> {
+    const composed = page.composed!;
+    this.book.composed = true;
+    const ids = new Set<string>();
+    const node: ComposedNode = { k: 'composed', template: composed.template, pre: this.takePages(), children: [] };
+    this.root.nodes.push(node);
+    const section: Container = { nodes: node.children, lists: [], top: node };
+    this.lastContainer = undefined;
+    const order = composedReadingOrder(composedPaintOrder(page));
+    for (const item of order) {
+      if (item.kind !== 'frame') continue;
+      for (const id of item.frame.blockIds) ids.add(id);
+      const box = item.frame.blockIds[0];
+      if (box !== undefined && !this.frameBoxes.has(box)) this.frameBoxes.set(box, item.frame);
+    }
+    for (const item of order) {
+      if (item.kind !== 'frame') continue;
+      for (const block of item.blocks) this.place(block, section);
+    }
+    this.lastContainer = undefined;
+    return ids;
   }
 
   // --- containers ----------------------------------------------------------
@@ -677,7 +722,20 @@ class DocWalker {
     const path = block.calloutPath ?? [];
     this.calloutState(cid, path, root);
     const own = this.callouts.get(path.length > 0 ? path[path.length - 1]! : cid)!.node;
-    if (block.callout?.styleId) own.styleId = block.callout.styleId;
+    // A frame of a composed page (#862): its story takes the name and the
+    // style of the frame it starts in (a frameless frame has none).
+    const frame = path.length === 0 ? this.frameBoxes.get(block.id) : undefined;
+    if (frame) {
+      if (own.frame === undefined) {
+        own.frame = frame.name;
+        if (frame.styleId) {
+          own.styleId = frame.styleId;
+          (this.book.frameStyles ??= new Set()).add(frame.styleId);
+        }
+      }
+    } else if (block.callout?.styleId) {
+      own.styleId = block.callout.styleId;
+    }
     const wrap = this.wraps.get(block.id);
     if (wrap && own.wrap === undefined) {
       own.wrap = wrap;
@@ -1241,6 +1299,8 @@ class DocWalker {
       note: lines(rb.noteLines),
       ...(rb.video ? { video: rb.video } : {}),
       ...(this.wraps.has(block.id) ? { wrap: this.wraps.get(block.id)! } : {}),
+      // A `:::figure`'s labels (#862): the picture's text, in label order.
+      ...(rb.labels?.some((l) => l.text.trim()) ? { labels: rb.labels.map((l) => l.text.trim()).filter(Boolean) } : {}),
     };
     if (node.wrap) this.book.wraps = true;
     if (rb.fileId) this.book.images.add(rb.fileId);
@@ -1317,7 +1377,13 @@ class DocWalker {
       for (const n of nodes) {
         switch (n.k) {
           case 'callout':
-            boxes.push(n);
+            // A frame of a composed page is the page's text, never a pull
+            // quote (#862).
+            if (n.frame !== undefined) collect(n.children);
+            else boxes.push(n);
+            break;
+          case 'composed':
+            collect(n.children);
             break;
           case 'p':
           case 'h':
