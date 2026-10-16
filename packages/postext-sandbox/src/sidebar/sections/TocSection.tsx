@@ -8,6 +8,7 @@ import type {
   ResolvedTocEntryStyleConfig,
   TocConfig,
   TocEntryStyleConfig,
+  TocGroupHead,
   TocLevelConfig,
 } from 'postext';
 import { DEFAULT_TOC_CONFIG, resolveBodyTextConfig, resolveDesignSlot, resolveTocConfig } from 'postext';
@@ -19,6 +20,7 @@ import {
   FontPicker,
   NestedGroup,
   NumberInput,
+  SelectInput,
   TextInput,
   ToggleSwitch,
 } from '../../controls';
@@ -37,6 +39,8 @@ type PageNumberConfig = NonNullable<TocConfig['pageNumber']>;
 type LeaderConfig = NonNullable<TocConfig['leader']>;
 type SubtitleConfig = NonNullable<TocConfig['subtitle']>;
 type PartsRowConfig = NonNullable<TocConfig['parts']>;
+type GroupsConfig = NonNullable<TocConfig['groups']>;
+type ContinuationConfig = NonNullable<GroupsConfig['continuation']>;
 
 /** Copy of `obj` without `key`; `undefined` when nothing remains. */
 function omit<T extends object, K extends keyof T>(obj: T | undefined, key: K): T | undefined {
@@ -238,7 +242,7 @@ export const TocSection = memo(function TocSection() {
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
   const documentLocale = useSandboxSelector((s) => s.config.locale);
   const bodyText = resolveBodyTextConfig(bodyTextRaw, documentLocale);
-  const resolved = resolveTocConfig(raw, bodyText);
+  const resolved = resolveTocConfig(raw, bodyText, documentLocale);
 
   // The levels shown: the raw ones, or the default level 1 when unset.
   const rawLevels: TocLevelConfig[] = raw?.levels && raw.levels.length > 0
@@ -290,6 +294,17 @@ export const TocSection = memo(function TocSection() {
   const resetSubtitleField = (field: keyof SubtitleConfig) => setGroup('subtitle', omit(raw?.subtitle, field));
   const updateParts = (partial: Partial<PartsRowConfig>) => setGroup('parts', merge(raw?.parts, partial));
   const resetPartsField = (field: keyof PartsRowConfig) => setGroup('parts', omit(raw?.parts, field));
+  // Blocks kept together (#850).
+  const updateGroups = (partial: Partial<GroupsConfig>) => setGroup('groups', merge(raw?.groups, partial));
+  const resetGroupsField = (field: keyof GroupsConfig) => setGroup('groups', omit(raw?.groups, field));
+  const updateContinuation = (partial: Partial<ContinuationConfig>) =>
+    updateGroups({ continuation: merge(raw?.groups?.continuation, partial) });
+  const resetContinuationField = (field: keyof ContinuationConfig) =>
+    updateGroups({ continuation: omit(raw?.groups?.continuation, field) });
+  const groupHeadOptions = [
+    { value: 'part', label: labels.tocGroupsHeadPart },
+    ...[1, 2, 3, 4, 5, 6].map((n) => ({ value: String(n), label: labels.tocGroupsHeadLevel.replace('__n__', String(n)) })),
+  ];
 
   const firstLevel = resolved.levels[0]!;
   const unnumberedResolved: ResolvedTocEntryStyleConfig = { ...firstLevel, ...resolved.unnumbered };
@@ -647,6 +662,70 @@ export const TocSection = memo(function TocSection() {
                 updateParts({ design: slot && slot.elements.length > 0 ? slot : undefined })
               }
             />
+          </NestedGroup>
+        )}
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        title={labels.tocGroups}
+        sectionId="toc-groups"
+        onReset={() => setGroup('groups', undefined)}
+        hasOverrides={hasKeys(raw?.groups)}
+        resetLabel={labels.reset}
+        resetConfirmMessage={labels.resetSectionConfirm}
+      >
+        <p className="px-2 py-1 text-xs" style={infoStyle}>
+          {labels.tocGroupsInfo}
+        </p>
+        <ToggleSwitch
+          label={labels.tocGroupsKeepTogether}
+          checked={resolved.groups.keepTogether}
+          onChange={(v) => updateGroups({ keepTogether: v })}
+          tooltip={labels.tocGroupsKeepTogetherTooltip}
+          isDefault={raw?.groups?.keepTogether === undefined}
+          onReset={() => resetGroupsField('keepTogether')}
+        />
+        {resolved.groups.keepTogether && (
+          <NestedGroup>
+            <SelectInput
+              label={labels.tocGroupsHead}
+              value={String(resolved.groups.head)}
+              options={groupHeadOptions}
+              onChange={(v) => updateGroups({ head: (v === 'part' ? 'part' : Number(v)) as TocGroupHead })}
+              tooltip={labels.tocGroupsHeadTooltip}
+              isDefault={raw?.groups?.head === undefined}
+              onReset={() => resetGroupsField('head')}
+            />
+            <NumberInput
+              label={labels.tocGroupsMinEntries}
+              value={resolved.groups.minEntriesAfterHead}
+              onChange={(v) => updateGroups({ minEntriesAfterHead: Math.max(0, Math.round(v)) })}
+              min={0}
+              max={20}
+              step={1}
+              tooltip={labels.tocGroupsMinEntriesTooltip}
+              isDefault={raw?.groups?.minEntriesAfterHead === undefined}
+              onReset={() => resetGroupsField('minEntriesAfterHead')}
+            />
+            <ToggleSwitch
+              label={labels.tocGroupsContinuation}
+              checked={resolved.groups.continuation.enabled}
+              onChange={(v) => updateContinuation({ enabled: v })}
+              tooltip={labels.tocGroupsContinuationTooltip}
+              isDefault={raw?.groups?.continuation?.enabled === undefined}
+              onReset={() => resetContinuationField('enabled')}
+            />
+            {resolved.groups.continuation.enabled && (
+              <TextInput
+                label={labels.tocGroupsMark}
+                value={resolved.groups.continuation.mark}
+                onChange={(v) => updateContinuation({ mark: v.length > 0 ? v : undefined })}
+                tooltip={labels.tocGroupsMarkTooltip}
+                isDefault={raw?.groups?.continuation?.mark === undefined}
+                onReset={() => resetContinuationField('mark')}
+                widthCh={12}
+              />
+            )}
           </NestedGroup>
         )}
       </CollapsibleSection>
