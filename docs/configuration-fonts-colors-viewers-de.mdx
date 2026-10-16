@@ -818,6 +818,66 @@ Die Maße werden für Ihre eigenen Werkzeuge exportiert:
 Resolver und Stripper entsprechen den anderen Abschnitten: `resolveContrastConfig` und `stripContrastDefaults`, mit `DEFAULT_CONTRAST_CONFIG`, `DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`, `CONTRAST_LEVELS` und `CONTRAST_MODES`.
 
 
+## Inhaltsprüfung (Konfiguration)
+
+Die Eigenschaft `checks` fasst die Prüfungen zusammen, die die Konfiguration selbst lesen. Bisher ist es eine, `contentInConfig`: Sie warnt, wenn eine Gestaltung den Text des Buches enthält. Ein Kolumnentitel, die Gestaltung einer Überschrift, eine Teilseite und die Zeile eines Teils im Inhaltsverzeichnis sind Form: Sie enthalten Platzhalter (`{chapterTitle}`, `{titleText}`, `{number}`) und höchstens ein oder zwei eigene Wörter, etwa *Kapitel* vor `{chapterNumber}`. Text, der zum Buch gehört, steht im Markdown, wo ihn das Inhaltsverzeichnis, die Suche, Übersetzungen, das getaggte PDF und das EPUB sehen. Der Satz liest die Prüfung nicht, eine Änderung verschiebt also keine Zeile.
+
+```ts
+interface ChecksConfig {
+  contentInConfig?: {
+    enabled?: boolean;
+    allow?: string[];
+    maxWords?: number;
+    maxChars?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>Eigenschaft</th>
+      <th style={{ width: '110px' }}>Typ</th>
+      <th style={{ width: '100px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Führt die Prüfung aus.</td></tr>
+    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>Wendungen, die eine Gestaltung in jeder Länge wiederholen darf: der Buchtitel, der Name des Verlags. Verglichen wird ohne Groß- und Kleinschreibung, Leerraum und die Satzzeichen um die Wörter; eine Wendung in einem längeren Text wird herausgenommen, bevor der Rest gezählt wird.</td></tr>
+    <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>So viele Wörter darf ein Gestaltungstext neben seinen Platzhaltern höchstens enthalten.</td></tr>
+    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>So viele Buchstaben und Ziffern darf ein Gestaltungstext neben seinen Platzhaltern höchstens enthalten. Ein chinesisches, japanisches, koreanisches oder thailändisches Zeichen zählt dreifach, es gehen also etwa acht durch.</td></tr>
+  </tbody>
+</table>
+
+### Wie ein Gestaltungstext gelesen wird
+
+- Sein wörtlicher Text ist sein `content` ohne jeden Platzhalter (`{name}`, `{attr.key}`, `{firstMark.key}`), die Maskierungen `{{` und `}}` als Klammern und `\n` als Zeilenumbruch gelesen.
+- Ein Text ohne Buchstaben oder Ziffern (eine Reihe Führungspunkte, ein Ornament, ein `·`) ist nie Inhalt.
+- Ein Wort ist, was zwischen Leerzeichen steht und einen Buchstaben oder eine Ziffer enthält: Ein einzelnes `·` oder `|` ist kein Wort, eine Adresse wie `postext.dev` ist eines.
+- Zuerst werden die Wendungen aus `allow` herausgenommen, ebenso `title`, `subtitle`, `author` und `publisher` aus den Metadaten des Dokuments (seinem Front Matter), die ein Kolumnentitel oft wiederholt.
+- Was übrig bleibt, ist Inhalt, wenn es mehr als `maxWords` Wörter oder mehr als `maxChars` Buchstaben und Ziffern hat.
+
+Gelesen werden alle Gestaltungsplätze: `header`, `footer`, das `advancedDesign.slot` jeder Überschriftenebene, `advancedDesign.slot`, `header` und `footer` jedes Überschriftenstils, `parts.design`, `parts.versoDesign`, `toc.parts.design` und dasselbe in `htmlViewer.overrides`. `configDesignSlots(config)` zählt sie mit ihren Pfaden auf, `designTextLiteral(content)` gibt den wörtlichen Text einer Vorlage zurück.
+
+### Die Warnung
+
+`collectConfigWarnings` (und `VDTDocument.configWarnings`) gibt eine `contentInConfig`-Warnung je Einstellung mit Inhalt: ein Überschriftenstil (seine `id` in `ownerId`), eine Überschriftenebene, die Kopfzeile, die Gestaltung der Teile. `path` nennt die Einstellung, `count` die betroffenen Gestaltungstexte, `chars` ihre Buchstaben und Ziffern, `elements` den Pfad jedes Textes (die ersten 20) und `value` den Anfang des ersten (höchstens 40 Zeichen). Übergeben Sie die Metadaten des Dokuments als zweites Argument, um seinen Titel und Autor zu erlauben; ein Satzlauf tut das selbst.
+
+```js
+import { collectConfigWarnings } from 'postext';
+
+collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+// [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
+//    value: 'Look at the picture and answer the questi…', used: '',
+//    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
+```
+
+**Abhilfe:** Verschieben Sie den Text ins Markdown, als Überschrift, Kasten oder Absatz des Kapitels, zu dem er gehört, und lassen Sie in der Gestaltung nur Platzhalter. Ein Wert, der sich je Kapitel ändert, kann in der Überschriftenzeile stehen und mit `{attr.key}` gelesen werden: `# Karten {kicker="Lektion 4"}` und `{attr.kicker}` in der Gestaltung. Eine Wendung, die Form ist, etwa der Verlagsname in einem Kolumnentitel, gehört in `allow`.
+
+Die Sandbox zeigt die Warnung im Bedienfeld **Prüfungen** und führt die Prüfung unter **Gestaltung → Erweitert → Inhalt in der Konfiguration**; `postext check` gibt sie aus.
+
+
 ## Folio-Betrachter (Konfiguration)
 
 Die Eigenschaft `folio` legt fest, wie der Folio-Betrachter (`postext-folio`) das gedruckte Buch in 3D zeigt: den Blickwinkel, das Papier, die Bindung, die Unterlage, auf der das Buch liegt, und das Licht. Das Layout ignoriert sie, ebenso die Ausgaben Canvas, HTML und PDF. `buildDocument` trägt die aufgelösten Einstellungen im VDT als `doc.config.folio`, wenn die Konfiguration welche setzt; ein Dokument ohne sie behält also seinen Layout-Hash.
@@ -1285,6 +1345,7 @@ Acht Fehler in der Konfiguration selbst bleiben nie stumm, und kein Schalter ble
 - **Zeilennummern im vertikalen Text** – `lineNumbers.enabled: true` in einem vertikal gesetzten Dokument (`layout.writingMode: 'vertical-rl'`). Vertikale Seiten erhalten keine Zeilennummern, und `used` ist `false` (`lineNumbersUnsupported`; siehe [Zeilennummern](/de/docs/configuration-notes-references#zeilennummern)).
 - **Umfließen in vertikalem Text** – ein `defaultPlacement.wrap` eines Ressourcentyps in einem vertikal gesetzten Dokument. Vertikale Seiten setzen keinen Text neben eine Abbildung, und `used` ist `none` (`wrapUnsupported`; siehe [Dokumentformat › Textumfluss](/de/docs/document-format-resources#textumfluss)). Ein `wrap`, das keine Seite nennt, ist ein unbekannter Einstellungswert.
 - **Seitenvorlagen und Beschriftungsstile** – ein Problem in `pageTemplates` oder `labelStyles`: eine doppelte ID oder ein doppelter Name, `extends`, Anker oder verkettete Rahmen im Kreis, ein Stil, Rahmen oder eine Vorlage, die es nicht gibt, ein Minimum über seinem Maximum, ein Beschriftungsstil eines Ankers, den `labelStyles` nicht hat (geprüft, wenn die Ressourcen übergeben werden: `collectConfigWarnings(config, { resources })`). Ihr `path` ist ein JSON-Pointer (`/pageTemplates/3/frames/2/style`); jede Art steht mit Ursache und Abhilfe unter [Warnungen zu Seitenvorlagen](/de/docs/configuration-composed-pages#warnungen-zu-seitenvorlagen).
+- **Inhalt in einer Gestaltung** – ein Gestaltungstext, dessen Text neben den Platzhaltern länger ist als eine kurze Beschriftung: der Text des Buches in der Konfiguration. Eine Warnung je Einstellung (ein Überschriftenstil, die Kopfzeile, die Gestaltung der Teile) mit dem Pfad jedes Textes (`contentInConfig`; siehe [Inhaltsprüfung](#inhaltsprüfung-konfiguration)). Anders als die übrigen lässt sie sich abschalten: `checks.contentInConfig.enabled: false`.
 
 Die Sandbox listet sie im Bedienfeld **Prüfungen** mit dem Pfad der Einstellung auf. Im Code legt `buildDocument` sie als `configWarnings` am Dokument ab (das fehlt, wenn die Konfiguration fehlerfrei ist), und `collectConfigWarnings(config)` gibt sie zurück, ohne etwas zu setzen:
 

@@ -295,6 +295,12 @@ cores, com a razão na tela e, para impressão, no papel do perfil de saída. Ca
 problema indica o arquivo do capítulo, a linha e a página. O código de saída é
 3 quando se encontra um erro, ou qualquer aviso com `--strict`.
 
+Também avisa dos textos de design da configuração que guardam o texto do livro
+em vez de marcadores (`contentInConfig`), uma vez por estilo de título, cabeço
+ou design de parte, com o caminho de cada texto: leve esse texto para o
+Markdown, ou acrescente o título ou o nome da editora a
+`checks.contentInConfig.allow`.
+
 ### build e --watch
 
 ```bash

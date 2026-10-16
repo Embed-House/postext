@@ -818,6 +818,66 @@ As medidas são exportadas para as suas próprias ferramentas:
 O resolvedor e o redutor seguem o padrão das outras seções: `resolveContrastConfig` e `stripContrastDefaults`, com `DEFAULT_CONTRAST_CONFIG`, `DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`, `CONTRAST_LEVELS` e `CONTRAST_MODES`.
 
 
+## Verificação do conteúdo (configuração)
+
+A propriedade `checks` reúne as verificações que leem a própria configuração. Hoje ela tem uma, `contentInConfig`, que avisa quando um design guarda o texto do livro. Um cabeço, o design de um título, uma página de parte e a linha de uma parte no sumário são forma: levam marcadores (`{chapterTitle}`, `{titleText}`, `{number}`) e no máximo uma ou duas palavras próprias, como *Capítulo* antes de `{chapterNumber}`. O texto que faz parte do livro vai no Markdown, onde o sumário, a busca, as traduções, o PDF etiquetado e o EPUB o enxergam. A diagramação não lê essa verificação, então mudá-la nunca desloca uma linha.
+
+```ts
+interface ChecksConfig {
+  contentInConfig?: {
+    enabled?: boolean;
+    allow?: string[];
+    maxWords?: number;
+    maxChars?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>Propriedade</th>
+      <th style={{ width: '110px' }}>Tipo</th>
+      <th style={{ width: '100px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Faz a verificação.</td></tr>
+    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>Frases que um design pode repetir de qualquer tamanho: o título do livro, o nome da editora. São comparadas sem maiúsculas, espaços nem a pontuação em volta das palavras, e uma frase encontrada dentro de um texto mais longo é retirada antes de contar o resto.</td></tr>
+    <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>Quantas palavras um texto de design pode ter no máximo além dos marcadores.</td></tr>
+    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>Quantas letras e algarismos um texto de design pode ter no máximo além dos marcadores. Um caractere chinês, japonês, coreano ou tailandês conta por três, então passam uns oito.</td></tr>
+  </tbody>
+</table>
+
+### Como um texto de design é lido
+
+- Seu texto literal é o `content` sem nenhum marcador (`{name}`, `{attr.key}`, `{firstMark.key}`), com os escapes `{{` e `}}` lidos como chaves e `\n` como quebra de linha.
+- Um texto sem letras nem algarismos (uma fileira de pontos guia, um ornamento, um `·`) nunca é conteúdo.
+- Uma palavra é o que fica entre espaços e tem uma letra ou um algarismo: um `·` ou uma `|` soltos não são palavras, e um endereço como `postext.dev` é uma.
+- Primeiro saem as frases de `allow`, e também `title`, `subtitle`, `author` e `publisher` dos metadados do documento (o front matter), que um cabeço costuma repetir.
+- O que sobra é conteúdo quando tem mais de `maxWords` palavras ou mais de `maxChars` letras e algarismos.
+
+Todos os espaços de design são lidos: `header`, `footer`, o `advancedDesign.slot` de cada nível de título, o `advancedDesign.slot`, o `header` e o `footer` de cada estilo de título, `parts.design`, `parts.versoDesign`, `toc.parts.design`, e os mesmos dentro de `htmlViewer.overrides`. `configDesignSlots(config)` lista todos com seus caminhos, e `designTextLiteral(content)` devolve o texto literal de um modelo.
+
+### O aviso
+
+`collectConfigWarnings` (e `VDTDocument.configWarnings`) dá um aviso `contentInConfig` por configuração que guarda conteúdo: um estilo de título (com seu `id` em `ownerId`), um nível de título, o cabeçalho, o design das partes. `path` nomeia a configuração, `count` os textos de design afetados, `chars` suas letras e algarismos, `elements` o caminho de cada um (os 20 primeiros) e `value` o início do primeiro (no máximo 40 caracteres). Passe os metadados do documento como segundo argumento para permitir o título e o autor; uma diagramação já faz isso sozinha.
+
+```js
+import { collectConfigWarnings } from 'postext';
+
+collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+// [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
+//    value: 'Look at the picture and answer the questi…', used: '',
+//    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
+```
+
+**Correção:** leve o texto para o Markdown, como título, boxe ou parágrafo do capítulo a que pertence, e deixe só marcadores no design. Um valor que muda a cada capítulo pode ir na linha do título e ser lido com `{attr.key}`: `# Mapas {kicker="Lição 4"}` e `{attr.kicker}` no design. Uma frase que é forma, como o nome da editora em um cabeço, vai em `allow`.
+
+O Sandbox mostra o aviso no painel **Verificações** e traz a verificação em **Design → Avançado → Conteúdo na configuração**; `postext check` o imprime.
+
+
 ## Visualizador Folio (configuração)
 
 A propriedade `folio` define como o visualizador Folio (`postext-folio`) apresenta o livro impresso em 3D: o ângulo de visão, o papel, a encadernação, a superfície onde o livro está e a luz. O layout a ignora, assim como as saídas de canvas, HTML e PDF. `buildDocument` leva os ajustes resolvidos na VDT como `doc.config.folio` quando a configuração define algum, de modo que um documento sem eles mantém seu hash de layout.
@@ -1286,6 +1346,7 @@ Oito erros na própria configuração nunca passam em silêncio, e nenhuma opç�
 - **Números de linha em texto vertical**: `lineNumbers.enabled: true` num documento composto na vertical (`layout.writingMode: 'vertical-rl'`). Páginas verticais não recebem números de linha, e `used` é `false` (`lineNumbersUnsupported`; veja [Numeração de linhas](/pt/docs/configuration-notes-references#numeração-de-linhas)).
 - **Contorno de texto na escrita vertical** — o `defaultPlacement.wrap` de um tipo de recurso num documento composto na vertical. Páginas verticais não compõem texto ao lado de uma figura, e `used` é `none` (`wrapUnsupported`; veja [Formato do documento › Contorno de texto](/pt/docs/document-format-resources#contorno-de-texto)). Um `wrap` que não nomeia um lado é um valor de configuração desconhecido.
 - **Modelos de página e estilos de rótulo** — um problema em `pageTemplates` ou `labelStyles`: um id ou nome repetido, `extends`, âncoras ou quadros encadeados que formam um círculo, um estilo, quadro ou modelo que não existe, um mínimo maior que o seu máximo, um estilo de rótulo de uma âncora que `labelStyles` não tem (verificado quando os recursos são passados: `collectConfigWarnings(config, { resources })`). O `path` deles é um ponteiro JSON (`/pageTemplates/3/frames/2/style`); cada tipo aparece com a causa e a solução em [Avisos dos modelos de página](/pt/docs/configuration-composed-pages#avisos-dos-modelos-de-página).
+- **Conteúdo em um design** — um elemento de texto de design cujo texto, além dos marcadores, é mais longo que um rótulo curto: o texto do livro guardado na configuração. Um aviso por configuração (um estilo de título, o cabeçalho, o design das partes), com o caminho de cada texto (`contentInConfig`; veja [Verificação do conteúdo](#verificação-do-conteúdo-configuração)). Ao contrário dos outros, pode ser desligado: `checks.contentInConfig.enabled: false`.
 
 O Sandbox os lista no painel **Verificações** com o caminho da configuração. No código, `buildDocument` os coloca no documento como `configWarnings` (ausente quando a configuração está limpa), e `collectConfigWarnings(config)` os devolve sem diagramar nada:
 

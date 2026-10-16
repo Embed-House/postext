@@ -818,6 +818,66 @@ The measures are exported for your own tools:
 The resolver and stripper match the other sections: `resolveContrastConfig` and `stripContrastDefaults`, with `DEFAULT_CONTRAST_CONFIG`, `DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`, `CONTRAST_LEVELS` and `CONTRAST_MODES`.
 
 
+## Content check (config)
+
+The `checks` property holds the checks that read the configuration itself. It has one today, `contentInConfig`, which warns when a design keeps the book's text. A running head, a heading design, a part page and a contents part row are form: they hold placeholders (`{chapterTitle}`, `{titleText}`, `{number}`) and at most a word or two of their own, such as *Chapter* before `{chapterNumber}`. Text that is part of the book belongs in the Markdown, where the contents, the search, translations, the tagged PDF and the EPUB see it. Layout ignores the check, so changing it never moves a line.
+
+```ts
+interface ChecksConfig {
+  contentInConfig?: {
+    enabled?: boolean;
+    allow?: string[];
+    maxWords?: number;
+    maxChars?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>Property</th>
+      <th style={{ width: '110px' }}>Type</th>
+      <th style={{ width: '100px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Run the check.</td></tr>
+    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>Phrases a design may repeat at any length: the book's title, the publisher's name. They are compared without case, spacing or the punctuation around words, and a phrase found inside a longer text is taken out before the rest is counted.</td></tr>
+    <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>Most words a design text may hold beyond its placeholders.</td></tr>
+    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>Most letters and digits a design text may hold beyond its placeholders. A Chinese, Japanese, Korean or Thai character counts as three, so about eight of them pass.</td></tr>
+  </tbody>
+</table>
+
+### How a design text is read
+
+- Its literal text is its `content` with every placeholder taken out (`{name}`, `{attr.key}`, `{firstMark.key}`), the `{{` and `}}` escapes read as braces and `\n` as a line break.
+- A text with no letter or digit (a row of leader dots, an ornament, a `·`) is never content.
+- A word is what stands between spaces and holds a letter or a digit: a lone `·` or `|` is no word, and an address such as `postext.dev` is one.
+- The phrases of `allow` are taken out first, and so are the `title`, `subtitle`, `author` and `publisher` of the document's metadata (its front matter), which a running head often repeats.
+- What is left is content when it has more than `maxWords` words or more than `maxChars` letters and digits.
+
+Every design slot is read: `header`, `footer`, each heading level's `advancedDesign.slot`, each heading style's `advancedDesign.slot`, `header` and `footer`, `parts.design`, `parts.versoDesign`, `toc.parts.design`, and the same under `htmlViewer.overrides`. `configDesignSlots(config)` lists them with their paths, and `designTextLiteral(content)` returns the literal text of a template.
+
+### The warning
+
+`collectConfigWarnings` (and `VDTDocument.configWarnings`) gives one `contentInConfig` warning per setting that holds content: a heading style (its `id` in `ownerId`), a heading level, the header, a part design. `path` names the setting, `count` the design texts at fault, `chars` their letters and digits, `elements` the path of each (the first 20) and `value` the start of the first text (40 characters at most). Pass the document's metadata as the second argument to allow its title and author; a build does it on its own.
+
+```js
+import { collectConfigWarnings } from 'postext';
+
+collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+// [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
+//    value: 'Look at the picture and answer the questi…', used: '',
+//    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
+```
+
+**Fix:** move the text into the Markdown, as a heading, a callout or a paragraph of the chapter it belongs to, and keep only placeholders in the design. A value that changes per chapter can travel on the heading line and be read with `{attr.key}`: `# Maps {kicker="Lesson 4"}` and `{attr.kicker}` in the design. A phrase that is form, such as the publisher's name in a running head, goes in `allow`.
+
+The Sandbox lists the warning in **Checks** and sets the check under **Design → Advanced → Content in the configuration**; `postext check` prints it.
+
+
 ## Folio viewer (config)
 
 The `folio` property sets how the Folio viewer (`postext-folio`) presents the printed book in 3D: the angle of the view, the paper, the binding, the surface the book lies on and the light. Layout ignores it, and so do the canvas, HTML and PDF output. `buildDocument` carries the resolved settings in the VDT as `doc.config.folio` when the config sets any, so a document without them keeps its layout hash.
@@ -1286,6 +1346,7 @@ Eight mistakes in the configuration itself are never silent, and no toggle hides
 - **Line numbers in vertical text** — `lineNumbers.enabled: true` in a document set vertically (`layout.writingMode: 'vertical-rl'`). Vertical pages get no line numbers, and `used` is `false` (`lineNumbersUnsupported`; see [Line numbers](/en/docs/configuration-notes-references#line-numbers)).
 - **Text wrap in vertical text** — a resource type's `defaultPlacement.wrap` in a document set vertically. Vertical pages set no text beside a figure, and `used` is `none` (`wrapUnsupported`; see [Document format › Text wrap](/en/docs/document-format-resources#text-wrap)). A `wrap` that names no side is an unknown setting value.
 - **Page templates and label styles** — a problem in `pageTemplates` or `labelStyles`: an id or a name used twice, `extends`, anchors or chained frames that loop, a style, frame or template that does not exist, a minimum above its maximum, an anchor's label style that `labelStyles` lacks (checked when the resources are given: `collectConfigWarnings(config, { resources })`). Their `path` is a JSON pointer (`/pageTemplates/3/frames/2/style`); each kind is listed with its cause and fix in [Page template warnings](/en/docs/configuration-composed-pages#page-template-warnings).
+- **Content in a design** — a design text element whose text, beyond its placeholders, is longer than a short label: the book's text kept in the configuration. One warning per setting (a heading style, the header, a part design), with the path of each text (`contentInConfig`; see [Content check](#content-check-config)). Unlike the others, it can be turned off: `checks.contentInConfig.enabled: false`.
 
 The Sandbox lists them in the **Checks** panel with the path of the setting. In code, `buildDocument` puts them on the document as `configWarnings` (absent when the configuration is clean), and `collectConfigWarnings(config)` returns them without laying anything out:
 

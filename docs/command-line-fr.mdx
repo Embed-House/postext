@@ -302,6 +302,12 @@ rapport à l’écran et, pour l’impression, sur le papier du profil de sortie
 Chaque problème nomme le fichier du chapitre, la ligne et la page. Le code de sortie est 3 quand une erreur est trouvée, ou n’importe quel avertissement
 avec `--strict`.
 
+Il signale aussi les textes de maquette de la configuration qui gardent le
+texte du livre au lieu de variables (`contentInConfig`), une fois par style de
+titre, titre courant ou maquette de partie, avec le chemin de chaque texte :
+déplacez ce texte dans le Markdown, ou ajoutez le titre ou le nom de l’éditeur
+à `checks.contentInConfig.allow`.
+
 ### build et --watch
 
 ```bash

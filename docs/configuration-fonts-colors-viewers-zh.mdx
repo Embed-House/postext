@@ -818,6 +818,66 @@ for (const issue of contrastDocument(doc, { transform })) {
 解析函数和精简函数与其他部分一致：`resolveContrastConfig`和`stripContrastDefaults`，以及`DEFAULT_CONTRAST_CONFIG`、`DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`、`CONTRAST_LEVELS`和`CONTRAST_MODES`。
 
 
+## 正文检查（配置）
+
+`checks`属性汇集读取配置本身的检查。目前只有一项：`contentInConfig`，在设计中存放了书的正文时发出警告。页眉、标题设计、部分页和目录中的部分行都属于版式：它们放的是占位符（`{chapterTitle}`、`{titleText}`、`{number}`），自己的文字最多一两个词，例如`{chapterNumber}`两侧的“第”和“章”。属于书本身的文字应写在 Markdown 中，目录、搜索、翻译、带标签的 PDF 和 EPUB 才能看到它。排版不读取这项检查，修改它不会移动任何一行。
+
+```ts
+interface ChecksConfig {
+  contentInConfig?: {
+    enabled?: boolean;
+    allow?: string[];
+    maxWords?: number;
+    maxChars?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>属性</th>
+      <th style={{ width: '110px' }}>类型</th>
+      <th style={{ width: '100px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>执行检查。</td></tr>
+    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>设计可以不限长度重复的短语：书名、出版社名称。比较时不区分大小写，忽略空格和词两侧的标点；长文字中含有的短语先被去掉，再计算剩余部分。</td></tr>
+    <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>设计文字在占位符之外最多可含的词数。</td></tr>
+    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>设计文字在占位符之外最多可含的字母和数字。一个中文、日文、韩文或泰文字符按三个计，因此大约八个字可以通过。</td></tr>
+  </tbody>
+</table>
+
+### 设计文字如何读取
+
+- 它的字面文字是去掉所有占位符（`{name}`、`{attr.key}`、`{firstMark.key}`）后的`content`，转义`{{`和`}}`读作花括号，`\n`读作换行。
+- 没有字母和数字的文字（一排引导点、装饰符、一个`·`）永远不算正文。
+- 词是空格之间含有字母或数字的部分：单独的`·`或`|`不算词，`postext.dev`这样的地址算一个词。中文、日文等不用空格分词的文字不数词，只按字数计算。
+- 先去掉`allow`中的短语，以及文档元数据（front matter）中的`title`、`subtitle`、`author`和`publisher`，页眉常常重复它们。
+- 剩下的部分超过`maxWords`个词或`maxChars`个字母和数字时，就算正文。
+
+所有设计槽都会读取：`header`、`footer`、各级标题的`advancedDesign.slot`、各标题样式的`advancedDesign.slot`、`header`和`footer`、`parts.design`、`parts.versoDesign`、`toc.parts.design`，以及`htmlViewer.overrides`中的相同位置。`configDesignSlots(config)`列出它们及其路径，`designTextLiteral(content)`返回模板的字面文字。
+
+### 警告
+
+`collectConfigWarnings`（以及`VDTDocument.configWarnings`）为每个存放正文的设置给出一条`contentInConfig`警告：一个标题样式（其`id`在`ownerId`中）、一级标题、页眉、部分设计。`path`指出该设置，`count`是有问题的设计文字数，`chars`是它们的字母和数字数，`elements`是每条文字的路径（前20条），`value`是第一条的开头（最多40个字符）。把文档的元数据作为第二个参数传入，即可允许其书名和作者；排版时会自动这样做。
+
+```js
+import { collectConfigWarnings } from 'postext';
+
+collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+// [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
+//    value: 'Look at the picture and answer the questi…', used: '',
+//    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
+```
+
+**解决方法**：把文字移到 Markdown 中，作为所属章节的标题、标注框或段落，设计中只保留占位符。每章不同的值可以写在标题行上，用`{attr.key}`读取：`# 地图 {kicker="第四课"}`，设计中写`{attr.kicker}`。属于版式的短语，例如页眉中的出版社名称，放进`allow`。
+
+沙盒在**检查**面板中列出这条警告，并在**版面设计 → 高级 → 配置中的正文**中提供这项检查；`postext check`会打印它。
+
+
 ## 书页视图（配置）
 
 `folio`属性决定书页视图（`postext-folio`）怎样以3D呈现印好的书：视角、纸张、装订、书下面的台面和光照。排版不读取它，Canvas、HTML和PDF输出也不读取。配置设置了其中任何一项时，`buildDocument`把解析后的设置放进VDT，即`doc.config.folio`；不设置的文档，其排版哈希保持不变。
@@ -1286,6 +1346,7 @@ debug: {
 - **竖排文字中的行号**：竖排文档（`layout.writingMode: 'vertical-rl'`）中写了`lineNumbers.enabled: true`。竖排页面不标行号，`used`为`false`（`lineNumbersUnsupported`；见[行号](/zh/docs/configuration-notes-references#行号)）。
 - **竖排中的文字绕排** — 竖排文档中资源类型的`defaultPlacement.wrap`。竖排页面不在图旁排正文，`used`为`none`（`wrapUnsupported`；见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。不指明一侧的`wrap`是未知的设置值。
 - **页面模板和注记样式** — `pageTemplates`或`labelStyles`中的问题：id或名称重复，`extends`、锚定或框架接续成环，样式、框架或模板不存在，最小值大于最大值，锚点的注记样式不在`labelStyles`中（传入资源时检查：`collectConfigWarnings(config, { resources })`）。这些警告的`path`是JSON指针（`/pageTemplates/3/frames/2/style`）；每种警告的原因和解决办法见[页面模板警告](/zh/docs/configuration-composed-pages#页面模板警告)。
+- **设计中的正文** — 设计文字元素在占位符之外的文字超过一个简短标签的长度：也就是存放在配置中的书的正文。每个设置（一个标题样式、页眉、部分设计）一条警告，附每条文字的路径（`contentInConfig`；见[正文检查](#正文检查配置)）。与其他警告不同，它可以关闭：`checks.contentInConfig.enabled: false`。
 
 沙盒在**检查**面板中列出这些警告，并附上设置的路径。在代码中，`buildDocument`把它们作为`configWarnings`放在文档上（配置没有问题时不存在该字段），`collectConfigWarnings(config)`则不做排版直接返回它们：
 

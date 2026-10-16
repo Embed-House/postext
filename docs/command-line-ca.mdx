@@ -302,6 +302,12 @@ impremta, sobre el paper del perfil de sortida. Cada problema indica el fitxer
 del capítol, la línia i la pàgina. El codi de sortida és 3 quan troba un error, o qualsevol avís amb
 `--strict`.
 
+També avisa dels textos de disseny de la configuració que desen el text del
+llibre en lloc de marcadors (`contentInConfig`), un cop per estil de títol,
+títol corrent o disseny de part, amb el camí de cada text: porta aquest text al
+Markdown, o afegeix el títol o el nom de l'editorial a
+`checks.contentInConfig.allow`.
+
 ### build i --watch
 
 ```bash

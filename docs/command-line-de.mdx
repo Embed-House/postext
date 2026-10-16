@@ -289,6 +289,12 @@ und für den Druck auf dem Papier des Ausgabeprofils. Jedes Problem nennt die
 Kapiteldatei, die Zeile und die Seite. Der Exit-Code ist 3, wenn ein Fehler gefunden wird, oder mit `--strict`
 bei jeder Warnung.
 
+Außerdem meldet es Gestaltungstexte der Konfiguration, die den Text des
+Buches statt Platzhaltern enthalten (`contentInConfig`), einmal je
+Überschriftenstil, Kolumnentitel oder Teilgestaltung, mit dem Pfad jedes
+Textes: Verschieben Sie diesen Text ins Markdown oder tragen Sie Titel oder
+Verlagsnamen in `checks.contentInConfig.allow` ein.
+
 ### build und --watch
 
 ```bash

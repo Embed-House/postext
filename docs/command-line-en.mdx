@@ -289,6 +289,11 @@ and, for print, on the paper of the output profile. Each problem names the
 chapter file, the line and the page. The exit code is 3 when an error is found, or any warning
 with `--strict`.
 
+It also reports design texts of the configuration that hold the book's text
+instead of placeholders (`contentInConfig`), once per heading style, running
+head or part design, with the path of each text: move that text into the
+Markdown, or list a title or a publisher's name in `checks.contentInConfig.allow`.
+
 ### build and --watch
 
 ```bash

@@ -289,6 +289,12 @@ e, per la stampa, sulla carta del profilo di output. Ogni problema indica il
 file del capitolo, la riga e la pagina. Il codice di uscita è 3 quando si trova un errore, o un avviso qualsiasi
 con `--strict`.
 
+Segnala anche i testi di design della configurazione che tengono il testo del
+libro al posto dei segnaposto (`contentInConfig`), una volta per stile di
+titolo, titolo corrente o design di parte, con il percorso di ogni testo:
+sposta quel testo nel Markdown, oppure aggiungi il titolo o il nome
+dell’editore a `checks.contentInConfig.allow`.
+
 ### build e --watch
 
 ```bash

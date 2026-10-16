@@ -301,6 +301,12 @@ imprenta, sobre el papel del perfil de salida. Cada problema indica el archivo
 del capítulo, la línea y la página. El código de salida es 3 cuando se encuentra un error, o cualquier
 aviso con `--strict`.
 
+También avisa de los textos de diseño de la configuración que guardan el texto
+del libro en lugar de marcadores (`contentInConfig`), una vez por estilo de
+título, titulillo o diseño de parte, con la ruta de cada texto: lleva ese texto
+al Markdown, o añade el título o el nombre de la editorial a
+`checks.contentInConfig.allow`.
+
 ### build y --watch
 
 ```bash

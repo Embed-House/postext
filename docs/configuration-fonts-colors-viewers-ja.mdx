@@ -818,6 +818,66 @@ for (const issue of contrastDocument(doc, { transform })) {
 リゾルバーとストリッパーはほかのセクションと同じです。`resolveContrastConfig`と`stripContrastDefaults`、そして`DEFAULT_CONTRAST_CONFIG`、`DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`、`CONTRAST_LEVELS`、`CONTRAST_MODES`があります。
 
 
+## 本文の検査（設定）
+
+`checks`プロパティは、設定そのものを読む検査をまとめます。現在は`contentInConfig`の1つで、デザインが本の本文を抱えているときに警告します。柱、見出しのデザイン、部扉、目次の部の行は体裁です。中身はプレースホルダー（`{chapterTitle}`、`{titleText}`、`{number}`）と、`{chapterNumber}`の前の「第」「章」のような1、2語にとどめます。本の一部である文章はMarkdownに書きます。そうすれば目次、検索、翻訳、タグ付きPDF、EPUBがその文章を扱えます。組版はこの検査を読まないので、変えても行は動きません。
+
+```ts
+interface ChecksConfig {
+  contentInConfig?: {
+    enabled?: boolean;
+    allow?: string[];
+    maxWords?: number;
+    maxChars?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>プロパティ</th>
+      <th style={{ width: '110px' }}>型</th>
+      <th style={{ width: '100px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>検査を行います。</td></tr>
+    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>デザインが長さに関係なく繰り返してよい語句です。書名や出版社名など。大文字と小文字、空白、語の前後の約物を無視して比べ、長い文の中にある語句は、残りを数える前に取り除きます。</td></tr>
+    <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>デザインのテキストがプレースホルダー以外に含められる語数の上限です。</td></tr>
+    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>デザインのテキストがプレースホルダー以外に含められる文字と数字の上限です。中国語・日本語・韓国語・タイ語の文字は1字を3として数えるので、8字ほどまで通ります。</td></tr>
+  </tbody>
+</table>
+
+### デザインのテキストの読み方
+
+- 字面のテキストは、すべてのプレースホルダー（`{name}`、`{attr.key}`、`{firstMark.key}`）を取り除いた`content`です。エスケープの`{{`と`}}`は波括弧、`\n`は改行として読みます。
+- 文字も数字も含まないテキスト（リーダーの点の列、飾り、`·`）は本文とみなしません。
+- 語は空白で区切られ、文字か数字を含むものです。単独の`·`や`|`は語ではなく、`postext.dev`のようなアドレスは1語です。空白で分かち書きしない日本語や中国語は語を数えず、字数だけで判定します。
+- まず`allow`の語句を取り除き、文書のメタデータ（フロントマター）の`title`、`subtitle`、`author`、`publisher`も取り除きます。柱はこれらを繰り返すことが多いためです。
+- 残りが`maxWords`語、または`maxChars`字（文字と数字）を超えると本文とみなします。
+
+読むのはすべてのデザインスロットです。`header`、`footer`、各見出しレベルの`advancedDesign.slot`、各見出しスタイルの`advancedDesign.slot`・`header`・`footer`、`parts.design`、`parts.versoDesign`、`toc.parts.design`、そして`htmlViewer.overrides`内の同じ場所です。`configDesignSlots(config)`はそれらをパス付きで列挙し、`designTextLiteral(content)`はテンプレートの字面のテキストを返します。
+
+### 警告
+
+`collectConfigWarnings`（と`VDTDocument.configWarnings`）は、本文を抱える設定ごとに`contentInConfig`警告を1つ出します。見出しスタイル（`id`は`ownerId`に入ります）、見出しレベル、ヘッダー、部扉のデザインなどです。`path`は設定、`count`は該当するデザインのテキストの数、`chars`はその文字と数字の数、`elements`は各テキストのパス（最初の20件）、`value`は最初のテキストの冒頭（最大40字）です。文書のメタデータを第2引数に渡すと、書名と著者が許可されます。組版時には自動でそうします。
+
+```js
+import { collectConfigWarnings } from 'postext';
+
+collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+// [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
+//    value: 'Look at the picture and answer the questi…', used: '',
+//    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
+```
+
+**直し方**：文章をMarkdownに移し、その章の見出し、囲み、段落にします。デザインにはプレースホルダーだけを残します。章ごとに変わる値は見出しの行に書いて`{attr.key}`で読めます。`# 地図 {kicker="第4課"}`と書き、デザインに`{attr.kicker}`を置きます。柱の出版社名のように体裁に属する語句は`allow`に入れます。
+
+Sandboxはこの警告を**検査**パネルに表示し、検査の設定を**デザイン → 詳細設定 → 設定内の本文**に置いています。`postext check`も出力します。
+
+
 ## Folioビューアー（設定）
 
 `folio`プロパティは、Folioビューアー（`postext-folio`）が印刷された本を3Dでどう見せるかを設定します。対象は視点の角度、紙、製本、本を置く台、照明です。レイアウトはこれを無視し、canvas、HTML、PDFの出力も同様です。`buildDocument`は、設定がいずれかの値を指定しているときに限り、解決した設定をVDTの`doc.config.folio`として持ち運びます。そのため、これらを指定しない文書のレイアウトハッシュは変わりません。
@@ -1286,6 +1346,7 @@ debug: {
 - **縦組みの行番号**：縦組みの文書（`layout.writingMode: 'vertical-rl'`）で`lineNumbers.enabled: true`を指定した場合です。縦組みのページには行番号が付かず、`used`は`false`です（`lineNumbersUnsupported`。[行番号](/ja/docs/configuration-notes-references#行番号)を参照）。
 - **縦組みでの回り込み** — 縦組みの文書でのリソースタイプの`defaultPlacement.wrap`。縦組みのページでは図版の横に本文を組まず、`used`は`none`です（`wrapUnsupported`。[文書の書式 › 回り込み](/ja/docs/document-format-resources#回り込み)を参照）。側を指さない`wrap`は不明な設定値です。
 - **ページテンプレートとラベルスタイル** — `pageTemplates`または`labelStyles`の問題。idや名前の重複、`extends`・アンカー・フレームの続き先の循環、存在しないスタイル・フレーム・テンプレート、最大値より大きい最小値、`labelStyles`にないアンカーのラベルスタイル（リソースを渡したときに検査：`collectConfigWarnings(config, { resources })`）。これらの警告の`path`はJSONポインター（`/pageTemplates/3/frames/2/style`）です。種類ごとの原因と直し方は[ページテンプレートの警告](/ja/docs/configuration-composed-pages#ページテンプレートの警告)にあります。
+- **デザイン内の本文** — デザインのテキスト要素で、プレースホルダー以外の文字が短いラベルより長いもの。つまり設定に置かれた本の本文です。設定（見出しスタイル、ヘッダー、部扉のデザイン）ごとに警告を1つ出し、各テキストのパスを添えます（`contentInConfig`、[本文の検査](#本文の検査設定)を参照）。ほかの警告と違い、`checks.contentInConfig.enabled: false`で止められます。
 
 Sandboxはこれらを**検査**パネルに、設定のパスとともに表示します。コードでは、`buildDocument`が文書に`configWarnings`として付け（設定に問題がなければ存在しません）、`collectConfigWarnings(config)`はレイアウトを行わずにこれらを返します：
 
